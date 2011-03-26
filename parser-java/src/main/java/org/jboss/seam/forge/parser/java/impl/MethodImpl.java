@@ -297,6 +297,12 @@ public class MethodImpl<O extends JavaSource<O>> implements Method<O>
    }
 
    @Override
+   public Method<O> setStatic() {
+       modifiers.addModifier(method, ModifierKeyword.STATIC_KEYWORD);
+       return this;
+   }
+
+    @Override
    public String getName()
    {
       return method.getName().getFullyQualifiedName();

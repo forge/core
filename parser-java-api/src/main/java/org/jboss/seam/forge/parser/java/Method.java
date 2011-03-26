@@ -46,6 +46,8 @@ public interface Method<O> extends Abstractable<Method<O>>, Member<O, Method<O>>
 
    public Method<O> setFinal();
 
+   public  Method<O> setStatic();
+
    public Method<O> setName(final String name);
 
    /**
