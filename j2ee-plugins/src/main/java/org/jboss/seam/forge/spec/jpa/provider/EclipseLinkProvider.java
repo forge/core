@@ -1,18 +1,24 @@
 package org.jboss.seam.forge.spec.jpa.provider;
 
+import org.jboss.seam.forge.project.dependencies.Dependency;
+import org.jboss.seam.forge.project.dependencies.DependencyBuilder;
+import org.jboss.seam.forge.project.dependencies.ScopeType;
 import org.jboss.seam.forge.spec.jpa.api.DatabaseType;
 import org.jboss.seam.forge.spec.jpa.api.JPADataSource;
 import org.jboss.seam.forge.spec.jpa.api.PersistenceProvider;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceUnitDef;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class EclipseLinkProvider implements PersistenceProvider
 {
    private static Map<DatabaseType, String> platforms = new HashMap<DatabaseType, String>();
+    private static final String PROVIDER_VERSION = "2.2.0";
 
-   static
+    static
    {
 
       /*
@@ -79,4 +85,28 @@ public class EclipseLinkProvider implements PersistenceProvider
       return unit;
    }
 
+   @Override
+   public List<Dependency> listDependencies() {
+       return listDependencies(PROVIDER_VERSION);
+   }
+
+   @Override
+   public List<Dependency> listDependencies(String providerVersion) {
+       DependencyBuilder dep1 = DependencyBuilder.create()
+               .setGroupId("org.eclipse.persistence")
+               .setArtifactId("eclipselink")
+               .setVersion(providerVersion)
+               .setScopeType(ScopeType.PROVIDED);
+       DependencyBuilder dep2 = DependencyBuilder.create()
+               .setGroupId("org.eclipse.persistence")
+               .setArtifactId("javax.persistence")
+               .setVersion(providerVersion)
+               .setScopeType(ScopeType.PROVIDED);
+
+       List<Dependency> dependencies = new ArrayList<Dependency>();
+       dependencies.add(dep1);
+       dependencies.add(dep2);
+
+       return dependencies;
+   }
 }

@@ -26,6 +26,8 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
 import org.jboss.seam.forge.project.Project;
+import org.jboss.seam.forge.project.dependencies.Dependency;
+import org.jboss.seam.forge.project.facets.DependencyFacet;
 import org.jboss.seam.forge.project.facets.JavaSourceFacet;
 import org.jboss.seam.forge.shell.events.InstallFacets;
 import org.jboss.seam.forge.shell.plugins.Alias;
@@ -41,6 +43,8 @@ import org.jboss.seam.forge.spec.jpa.api.PersistenceContainer;
 import org.jboss.seam.forge.spec.jpa.api.PersistenceProvider;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceUnitDef;
+
+import java.util.List;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -66,6 +70,7 @@ public class PersistencePlugin implements Plugin
    @Command("setup")
    public void setup(
             @Option(name = "provider", required = true) JPAProvider jpap,
+            @Option(name = "provider-version", required = false) String providerVersion,
             @Option(name = "container", required = true) JPAContainer jpac,
             @Option(name = "database", defaultValue = "DEFAULT") DatabaseType databaseType,
             @Option(name = "jndiDataSource") String jtaDataSource,
@@ -76,7 +81,7 @@ public class PersistencePlugin implements Plugin
             @Option(name = "named", defaultValue = DEFAULT_UNIT_NAME) String unitName)
    {
       installPersistence();
-
+      DependencyFacet dependencyFacet = project.getFacet(DependencyFacet.class);
       PersistenceFacet jpa = project.getFacet(PersistenceFacet.class);
       PersistenceDescriptor config = jpa.getConfig();
 
@@ -99,6 +104,17 @@ public class PersistencePlugin implements Plugin
       provider.setup(unit, ds);
 
       jpa.saveConfig(config);
+
+      List<Dependency> dependencies;
+      if(providerVersion != null) {
+           dependencies = provider.listDependencies(providerVersion);
+      } else {
+           dependencies = provider.listDependencies();
+      }
+
+       for (Dependency dependency : dependencies) {
+           dependencyFacet.addDependency(dependency);
+       }
    }
 
    private void installPersistence()

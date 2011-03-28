@@ -21,7 +21,10 @@
  */
 package org.jboss.seam.forge.spec.jpa.api;
 
+import org.jboss.seam.forge.project.dependencies.Dependency;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceUnitDef;
+
+import java.util.List;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -29,4 +32,6 @@ import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceUnitD
 public interface PersistenceProvider
 {
    PersistenceUnitDef setup(PersistenceUnitDef unit, JPADataSource ds);
+   List<Dependency> listDependencies();
+   List<Dependency> listDependencies(String providerVersion);
 }
