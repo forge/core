@@ -19,38 +19,53 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.seam.forge.scaffold;
+package org.jboss.seam.forge.spec.javaee6.jsf;
+
+import java.io.File;
 
 import org.jboss.seam.forge.project.facets.BaseFacet;
-import org.jboss.seam.forge.project.packaging.PackagingType;
+import org.jboss.seam.forge.project.facets.WebResourceFacet;
+import org.jboss.seam.forge.resources.DirectoryResource;
+import org.jboss.seam.forge.resources.FileResource;
 import org.jboss.seam.forge.shell.plugins.Alias;
 import org.jboss.seam.forge.shell.plugins.RequiresFacet;
-import org.jboss.seam.forge.shell.plugins.RequiresPackagingType;
-import org.jboss.seam.forge.spec.javaee6.cdi.CDIFacet;
-import org.jboss.seam.forge.spec.javaee6.jpa.PersistenceFacet;
-import org.jboss.seam.forge.spec.javaee6.jsf.FacesFacet;
 import org.jboss.seam.forge.spec.javaee6.servlet.ServletFacet;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Alias("forge.scaffold")
-@RequiresFacet({ ServletFacet.class, CDIFacet.class, FacesFacet.class, PersistenceFacet.class })
-@RequiresPackagingType(PackagingType.WAR)
-public class ScaffoldFacet extends BaseFacet
+@Alias("forge.spec.jsf")
+@RequiresFacet(ServletFacet.class)
+public class FacesFacet extends BaseFacet
 {
+   public FileResource<?> getConfigFile()
+   {
+      DirectoryResource webRoot = project.getFacet(WebResourceFacet.class).getWebRootDirectory();
+      return (FileResource<?>) webRoot.getChild("WEB-INF" + File.separator + "faces-config.xml");
+   }
+
+   /*
+    * Facet Methods
+    */
    @Override
    public boolean isInstalled()
    {
-      return project.hasFacet(ServletFacet.class) && project.hasFacet(FacesFacet.class)
-               && project.hasFacet(CDIFacet.class);
+      return getConfigFile().exists();
    }
 
    @Override
    public boolean install()
    {
-      project.registerFacet(this);
+      if (!isInstalled())
+      {
+         // Create faces-config
+         if (!getConfigFile().createNewFile())
+         {
+            throw new RuntimeException("Failed to create required [" + getConfigFile().getFullyQualifiedName() + "]");
+         }
+         getConfigFile().setContents(getClass()
+                  .getResourceAsStream("/org/jboss/seam/forge/web/faces-config.xml"));
+      }
       return true;
    }
-
 }
