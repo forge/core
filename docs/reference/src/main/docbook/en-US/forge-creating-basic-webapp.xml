@@ -112,8 +112,7 @@ Customer.java $</programlisting>
                and set your JBOSS_HOME environment variable to the location of your JBoss AS server installation folder,
                you can also build and deploy your application with the following commands.
             
-               <programlisting>$ cd -
-$ mvn clean package
+               <programlisting>$ mvn clean package
 $ mvn jboss:hard-deploy
 $ mvn jboss:start</programlisting>
 
