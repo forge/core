@@ -171,6 +171,38 @@ public class FieldImpl<O extends JavaSource<O>> implements Field<O>
     */
 
    @Override
+   public boolean isFinal()
+   {
+      return modifiers.hasModifier(field, ModifierKeyword.FINAL_KEYWORD);
+   }
+
+   @Override
+   public Field<O> setFinal(boolean finl)
+   {
+      if (finl)
+         modifiers.addModifier(field, ModifierKeyword.FINAL_KEYWORD);
+      else
+         modifiers.removeModifier(field, ModifierKeyword.FINAL_KEYWORD);
+      return this;
+   }
+
+   @Override
+   public boolean isStatic()
+   {
+      return modifiers.hasModifier(field, ModifierKeyword.STATIC_KEYWORD);
+   }
+
+   @Override
+   public Field<O> setStatic(boolean statc)
+   {
+      if (statc)
+         modifiers.addModifier(field, ModifierKeyword.STATIC_KEYWORD);
+      else
+         modifiers.removeModifier(field, ModifierKeyword.STATIC_KEYWORD);
+      return this;
+   }
+
+   @Override
    public boolean isPackagePrivate()
    {
       return (!isPublic() && !isPrivate() && !isProtected());

@@ -290,19 +290,38 @@ public class MethodImpl<O extends JavaSource<O>> implements Method<O>
    }
 
    @Override
-   public Method<O> setFinal()
+   public boolean isFinal()
    {
-      modifiers.addModifier(method, ModifierKeyword.FINAL_KEYWORD);
+      return modifiers.hasModifier(method, ModifierKeyword.FINAL_KEYWORD);
+   }
+
+   @Override
+   public Method<O> setFinal(boolean finl)
+   {
+      if (finl)
+         modifiers.addModifier(method, ModifierKeyword.FINAL_KEYWORD);
+      else
+         modifiers.removeModifier(method, ModifierKeyword.FINAL_KEYWORD);
       return this;
    }
 
    @Override
-   public Method<O> setStatic() {
-       modifiers.addModifier(method, ModifierKeyword.STATIC_KEYWORD);
-       return this;
+   public boolean isStatic()
+   {
+      return modifiers.hasModifier(method, ModifierKeyword.STATIC_KEYWORD);
    }
 
-    @Override
+   @Override
+   public Method<O> setStatic(boolean statc)
+   {
+      if (statc)
+         modifiers.addModifier(method, ModifierKeyword.STATIC_KEYWORD);
+      else
+         modifiers.removeModifier(method, ModifierKeyword.STATIC_KEYWORD);
+      return this;
+   }
+
+   @Override
    public String getName()
    {
       return method.getName().getFullyQualifiedName();
