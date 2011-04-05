@@ -21,15 +21,21 @@
  */
 package org.jboss.seam.forge.spec.jpa.provider;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
+import org.jboss.seam.forge.project.Project;
 import org.jboss.seam.forge.project.dependencies.Dependency;
 import org.jboss.seam.forge.project.dependencies.DependencyBuilder;
-import org.jboss.seam.forge.project.dependencies.ScopeType;
+import org.jboss.seam.forge.shell.ShellPrompt;
 import org.jboss.seam.forge.spec.jpa.api.DatabaseType;
 import org.jboss.seam.forge.spec.jpa.api.JPADataSource;
 import org.jboss.seam.forge.spec.jpa.api.PersistenceProvider;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceUnitDef;
-
-import java.util.*;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -38,9 +44,8 @@ import java.util.*;
 public class HibernateProvider implements PersistenceProvider
 {
    private static Map<DatabaseType, String> dialects = new HashMap<DatabaseType, String>();
-    private static final String PROVIDER_VERSION = "3.6.1.Final";
 
-    static
+   static
    {
       dialects.put(DatabaseType.DERBY, "org.hibernate.dialect.DerbyDialect");
       dialects.put(DatabaseType.DB2, "org.hibernate.dialect.DB2Dialect");
@@ -70,6 +75,12 @@ public class HibernateProvider implements PersistenceProvider
       dialects.put(DatabaseType.FIREBIRD, "org.hibernate.dialect.FirebirdDialect");
    }
 
+   @Inject
+   private Project project;
+
+   @Inject
+   private ShellPrompt prompt;
+
    @Override
    public PersistenceUnitDef setup(PersistenceUnitDef unit, JPADataSource ds)
    {
@@ -94,24 +105,9 @@ public class HibernateProvider implements PersistenceProvider
       return unit;
    }
 
-    @Override
-    public List<Dependency> listDependencies()
-    {
-        return listDependencies(PROVIDER_VERSION);
-    }
-
-    @Override
-    public List<Dependency> listDependencies(String providerVersion)
-    {
-        DependencyBuilder builder = DependencyBuilder.create()
-            .setGroupId("org.hibernate")
-            .setArtifactId("hibernate-entitymanager")
-            .setVersion(providerVersion)
-            .setScopeType(ScopeType.PROVIDED);
-
-        List<Dependency> dependencies = new ArrayList<Dependency>();
-        dependencies.add(builder);
-
-        return dependencies;
-    }
+   @Override
+   public List<Dependency> listDependencies()
+   {
+      return Arrays.asList((Dependency) DependencyBuilder.create("org.hibernate:hibernate-entitymanager"));
+   }
 }

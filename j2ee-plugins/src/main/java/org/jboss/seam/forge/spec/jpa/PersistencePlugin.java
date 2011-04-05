@@ -21,18 +21,26 @@
  */
 package org.jboss.seam.forge.spec.jpa;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
 import org.jboss.seam.forge.project.Project;
 import org.jboss.seam.forge.project.dependencies.Dependency;
+import org.jboss.seam.forge.project.dependencies.DependencyBuilder;
+import org.jboss.seam.forge.project.dependencies.ScopeType;
 import org.jboss.seam.forge.project.facets.DependencyFacet;
 import org.jboss.seam.forge.project.facets.JavaSourceFacet;
+import org.jboss.seam.forge.shell.ShellMessages;
+import org.jboss.seam.forge.shell.ShellPrompt;
 import org.jboss.seam.forge.shell.events.InstallFacets;
 import org.jboss.seam.forge.shell.plugins.Alias;
 import org.jboss.seam.forge.shell.plugins.Command;
 import org.jboss.seam.forge.shell.plugins.Option;
+import org.jboss.seam.forge.shell.plugins.PipeOut;
 import org.jboss.seam.forge.shell.plugins.Plugin;
 import org.jboss.seam.forge.shell.plugins.RequiresFacet;
 import org.jboss.seam.forge.spec.jpa.api.DatabaseType;
@@ -41,10 +49,9 @@ import org.jboss.seam.forge.spec.jpa.api.JPADataSource;
 import org.jboss.seam.forge.spec.jpa.api.JPAProvider;
 import org.jboss.seam.forge.spec.jpa.api.PersistenceContainer;
 import org.jboss.seam.forge.spec.jpa.api.PersistenceProvider;
+import org.jboss.seam.forge.spec.jpa.container.JavaEEDefaultContainer;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceUnitDef;
-
-import java.util.List;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -65,6 +72,9 @@ public class PersistencePlugin implements Plugin
    private Event<InstallFacets> request;
 
    @Inject
+   private ShellPrompt prompt;
+
+   @Inject
    private BeanManager manager;
 
    @Command("setup")
@@ -78,7 +88,8 @@ public class PersistencePlugin implements Plugin
             @Option(name = "jdbcURL") String jdbcURL,
             @Option(name = "jdbcUsername") String jdbcUsername,
             @Option(name = "jdbcPassword") String jdbcPassword,
-            @Option(name = "named", defaultValue = DEFAULT_UNIT_NAME) String unitName)
+            @Option(name = "named", defaultValue = DEFAULT_UNIT_NAME) String unitName,
+            PipeOut out)
    {
       installPersistence();
       DependencyFacet dependencyFacet = project.getFacet(DependencyFacet.class);
@@ -105,16 +116,47 @@ public class PersistencePlugin implements Plugin
 
       jpa.saveConfig(config);
 
-      List<Dependency> dependencies;
-      if(providerVersion != null) {
-           dependencies = provider.listDependencies(providerVersion);
-      } else {
-           dependencies = provider.listDependencies();
+      List<Dependency> dependencies = new ArrayList<Dependency>();
+      if (providerVersion != null)
+      {
+         for (Dependency dependency : provider.listDependencies())
+         {
+            if (container instanceof JavaEEDefaultContainer)
+            {
+               dependency = DependencyBuilder.create(dependency).setScopeType(ScopeType.PROVIDED);
+            }
+            dependencies.add(DependencyBuilder.create(dependency).setVersion(providerVersion));
+         }
+      }
+      else
+      {
+         DependencyFacet deps = project.getFacet(DependencyFacet.class);
+         List<Dependency> required = provider.listDependencies();
+
+         for (Dependency dependency : required)
+         {
+            List<Dependency> versions = deps.resolveAvailableVersions(dependency);
+            if (!versions.isEmpty())
+            {
+               Dependency choice = prompt.promptChoiceTyped(unitName, versions, versions.get(versions.size() - 1));
+
+               if (container instanceof JavaEEDefaultContainer)
+               {
+                  choice = DependencyBuilder.create(choice).setScopeType(ScopeType.PROVIDED);
+               }
+               dependencies.add(choice);
+            }
+            else
+            {
+               ShellMessages.info(out, "Could not resolve versions for dependency [" + dependency + "]");
+            }
+         }
       }
 
-       for (Dependency dependency : dependencies) {
-           dependencyFacet.addDependency(dependency);
-       }
+      for (Dependency dependency : dependencies)
+      {
+         dependencyFacet.addDependency(dependency);
+      }
    }
 
    private void installPersistence()

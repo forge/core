@@ -21,18 +21,17 @@
  */
 package org.jboss.seam.forge.spec.jpa.provider;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.jboss.seam.forge.project.dependencies.Dependency;
 import org.jboss.seam.forge.project.dependencies.DependencyBuilder;
-import org.jboss.seam.forge.project.dependencies.ScopeType;
 import org.jboss.seam.forge.spec.jpa.api.DatabaseType;
 import org.jboss.seam.forge.spec.jpa.api.JPADataSource;
 import org.jboss.seam.forge.spec.jpa.api.PersistenceProvider;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceUnitDef;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -40,8 +39,6 @@ import java.util.Map;
  */
 public class OpenJPAProvider implements PersistenceProvider
 {
-   private static final String PROVIDER_VERSION = "2.1.0";
-
    private static Map<DatabaseType, String> dictionary = new HashMap<DatabaseType, String>();
 
    static
@@ -96,24 +93,9 @@ public class OpenJPAProvider implements PersistenceProvider
    }
 
    @Override
-    public List<Dependency> listDependencies()
-    {
-        return listDependencies(PROVIDER_VERSION);
-    }
-
-    @Override
-    public List<Dependency> listDependencies(String providerVersion)
-    {
-        DependencyBuilder builder = DependencyBuilder.create()
-            .setGroupId("org.apache.openjpa")
-            .setArtifactId("openjpa-all")
-            .setVersion(providerVersion)
-            .setScopeType(ScopeType.PROVIDED);
-
-        List<Dependency> dependencies = new ArrayList<Dependency>();
-        dependencies.add(builder);
-
-        return dependencies;
-    }
+   public List<Dependency> listDependencies()
+   {
+      return Arrays.asList((Dependency) DependencyBuilder.create("org.apache.openjpa:openjpa-all"));
+   }
 
 }
