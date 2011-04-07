@@ -4,7 +4,7 @@
 <book lang="en" xmlns:xi="http://www.w3.org/2001/XInclude">
    <title>Seam Forge Reference Guide</title>
    
-   <xi:include href="book_info.xml" />
+   <xi:include href="Book_Info.xml" />
 
    <toc />
 
