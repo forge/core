@@ -1,12 +1,16 @@
 package org.jboss.seam.forge.spec.jpa.provider;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.jboss.seam.forge.project.dependencies.Dependency;
+import org.jboss.seam.forge.project.dependencies.DependencyBuilder;
 import org.jboss.seam.forge.spec.jpa.api.DatabaseType;
 import org.jboss.seam.forge.spec.jpa.api.JPADataSource;
 import org.jboss.seam.forge.spec.jpa.api.PersistenceProvider;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceUnitDef;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class EclipseLinkProvider implements PersistenceProvider
 {
@@ -77,6 +81,13 @@ public class EclipseLinkProvider implements PersistenceProvider
       }
 
       return unit;
+   }
+
+   @Override
+   public List<Dependency> listDependencies()
+   {
+      return Arrays.asList((Dependency) DependencyBuilder.create("org.eclipse.persistence:eclipselink"),
+               (Dependency) DependencyBuilder.create("org.eclipse.persistence:javax.persistence"));
    }
 
 }

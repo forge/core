@@ -79,8 +79,8 @@ public class ProjectPlugin implements Plugin
    }
 
    @Inject
-   public ProjectPlugin(final Project project, final Shell shell, FacetFactory factory,
-            Event<InstallFacets> installFacets)
+   public ProjectPlugin(final Project project, final Shell shell, final FacetFactory factory,
+            final Event<InstallFacets> installFacets)
    {
       this.project = project;
       this.shell = shell;
@@ -101,14 +101,6 @@ public class ProjectPlugin implements Plugin
       out.println(project.getFacet(PackagingFacet.class).getPackagingType().getType());
       out.print(ShellColor.BOLD, " dir:  ");
       out.println(project.getProjectRoot().getFullyQualifiedName());
-   }
-
-   @Command("build")
-   public void build(PipeOut out,
-            @Option(description = "build arguments") String... args)
-   {
-      PackagingFacet packaging = project.getFacet(PackagingFacet.class);
-      packaging.executeBuild(args);
    }
 
    @Command("install-facet")
@@ -343,38 +335,40 @@ public class ProjectPlugin implements Plugin
    /*
     * Repositories
     */
-   @Command("add-repository")
+   @Command("add-known-repository")
    public void repoAdd(
             @Option(description = "type...", required = true) final KnownRepository repo,
             final PipeOut out)
    {
       DependencyFacet deps = project.getFacet(DependencyFacet.class);
 
-      if (KnownRepository.CUSTOM.equals(repo))
+      if (deps.hasRepository(repo))
       {
-         String name = shell.prompt("What is the name of the repository?");
-         String url = shell.prompt("What is the URL of the repository?");
-         if (deps.hasRepository(url))
-         {
-            out.println("Repository exists [" + url + "]");
-         }
-         else
-         {
-            deps.addRepository(name, url);
-            out.println("Added repository [" + name + "->" + url + "]");
-         }
+         out.println("Repository exists [" + repo.name() + "->" + repo.getUrl() + "]");
       }
       else
       {
-         if (deps.hasRepository(repo))
-         {
-            out.println("Repository exists [" + repo.name() + "->" + repo.getUrl() + "]");
-         }
-         else
-         {
-            deps.addRepository(repo);
-            out.println("Added repository [" + repo.name() + "->" + repo.getUrl() + "]");
-         }
+         deps.addRepository(repo);
+         out.println("Added repository [" + repo.name() + "->" + repo.getUrl() + "]");
+      }
+   }
+
+   @Command("add-repository")
+   public void repoAdd(
+            @Option(description = "repository name...", required = true) final String name,
+            @Option(description = "repository URL...", required = true) final String url,
+            final PipeOut out)
+   {
+      DependencyFacet deps = project.getFacet(DependencyFacet.class);
+
+      if (deps.hasRepository(url))
+      {
+         out.println("Repository exists [" + url + "]");
+      }
+      else
+      {
+         deps.addRepository(name, url);
+         out.println("Added repository [" + name + "->" + url + "]");
       }
    }
 

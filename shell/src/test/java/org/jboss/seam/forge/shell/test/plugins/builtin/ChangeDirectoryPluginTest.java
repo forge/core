@@ -34,6 +34,7 @@ import org.jboss.seam.forge.project.services.ResourceFactory;
 import org.jboss.seam.forge.resources.DirectoryResource;
 import org.jboss.seam.forge.resources.Resource;
 import org.jboss.seam.forge.shell.Shell;
+import org.jboss.seam.forge.shell.util.OSUtils;
 import org.jboss.seam.forge.test.AbstractShellTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,7 +52,7 @@ public class ChangeDirectoryPluginTest extends AbstractShellTest
    public void testTildeAliasesHomeDir() throws Exception
    {
 
-      DirectoryResource home = new DirectoryResource(factory, new File(System.getProperty("user.home")));
+      DirectoryResource home = new DirectoryResource(factory, OSUtils.getUserHomeDir());
 
       Shell shell = getShell();
       Resource<?> currentDirectory = shell.getCurrentResource();
@@ -70,7 +71,20 @@ public class ChangeDirectoryPluginTest extends AbstractShellTest
       shell.execute("cd ~");
       Resource<?> currentDirectory = shell.getCurrentResource();
 
-      shell.execute("cd ./");
+      shell.execute("cd .");
+
+      Resource<?> newDir = shell.getCurrentResource();
+      assertEquals(currentDirectory.getFullyQualifiedName(), newDir.getFullyQualifiedName());
+   }
+
+   @Test
+   public void testDotMeansSameDirectoryWithTrailingSlash() throws Exception
+   {
+      Shell shell = getShell();
+      shell.execute("cd ~");
+      Resource<?> currentDirectory = shell.getCurrentResource();
+
+      shell.execute("cd ." + File.separator);
 
       Resource<?> newDir = shell.getCurrentResource();
       assertEquals(currentDirectory.getFullyQualifiedName(), newDir.getFullyQualifiedName());
@@ -84,7 +98,7 @@ public class ChangeDirectoryPluginTest extends AbstractShellTest
 
       Resource<?> parentDir = shell.getCurrentResource().getParent();
 
-      shell.execute("cd ../");
+      shell.execute("cd ..\\");
 
       Resource<?> newDir = shell.getCurrentResource();
       assertEquals(newDir.getFullyQualifiedName(), parentDir.getFullyQualifiedName());

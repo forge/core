@@ -23,6 +23,8 @@
 package org.jboss.seam.forge.shell.plugins.builtin;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.enterprise.event.Event;
@@ -34,13 +36,20 @@ import org.jboss.seam.forge.git.GitUtils;
 import org.jboss.seam.forge.project.Project;
 import org.jboss.seam.forge.project.dependencies.Dependency;
 import org.jboss.seam.forge.project.dependencies.DependencyBuilder;
+import org.jboss.seam.forge.project.dependencies.DependencyRepository;
+import org.jboss.seam.forge.project.dependencies.DependencyRepositoryImpl;
+import org.jboss.seam.forge.project.dependencies.DependencyResolver;
 import org.jboss.seam.forge.project.facets.DependencyFacet;
 import org.jboss.seam.forge.project.facets.DependencyFacet.KnownRepository;
 import org.jboss.seam.forge.project.facets.MetadataFacet;
 import org.jboss.seam.forge.project.facets.PackagingFacet;
+import org.jboss.seam.forge.resources.DependencyResource;
 import org.jboss.seam.forge.resources.DirectoryResource;
 import org.jboss.seam.forge.resources.FileResource;
 import org.jboss.seam.forge.resources.Resource;
+import org.jboss.seam.forge.resources.ResourceFilter;
+import org.jboss.seam.forge.shell.PluginJar;
+import org.jboss.seam.forge.shell.PluginJar.IllegalNameException;
 import org.jboss.seam.forge.shell.Shell;
 import org.jboss.seam.forge.shell.ShellColor;
 import org.jboss.seam.forge.shell.ShellMessages;
@@ -56,6 +65,7 @@ import org.jboss.seam.forge.shell.plugins.Plugin;
 import org.jboss.seam.forge.shell.plugins.Topic;
 import org.jboss.seam.forge.shell.util.PluginRef;
 import org.jboss.seam.forge.shell.util.PluginUtil;
+import org.jboss.shrinkwrap.descriptor.impl.base.Strings;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -65,14 +75,17 @@ import org.jboss.seam.forge.shell.util.PluginUtil;
 @Help("Forge control and shell environment commands. Manage plugins and other forge addons.")
 public class ForgePlugin implements Plugin
 {
+
    private final Event<ReinitializeEnvironment> reinitializeEvent;
    private final Shell shell;
+   private final DependencyResolver resolver;
 
    @Inject
-   public ForgePlugin(Event<ReinitializeEnvironment> reinitializeEvent, Shell shell)
+   public ForgePlugin(Event<ReinitializeEnvironment> reinitializeEvent, Shell shell, DependencyResolver resolver)
    {
       this.reinitializeEvent = reinitializeEvent;
       this.shell = shell;
+      this.resolver = resolver;
    }
 
    /*
@@ -102,9 +115,84 @@ public class ForgePlugin implements Plugin
    }
 
    @Command(value = "list-plugins", help = "List all installed plugin JAR files.")
-   public void listInstalled()
+   public void listInstalled(
+            @Option(name = "all",
+                     shortName = "a",
+                     description = "Show extra information about each installed plugin",
+                     defaultValue = "false") boolean showAll)
    {
-      shell.execute("find " + shell.getPluginDirectory().getFullyQualifiedName());
+      DirectoryResource pluginDir = shell.getPluginDirectory();
+      List<Resource<?>> list = pluginDir.listResources();
+      List<Resource<?>> untracked = new ArrayList<Resource<?>>();
+      List<PluginJar> installed = new ArrayList<PluginJar>();
+
+      if (!list.isEmpty())
+      {
+         RES: for (Resource<?> res : list)
+         {
+            try
+            {
+               PluginJar jar = new PluginJar(res.getName());
+
+               for (PluginJar p : installed)
+               {
+                  if (p.isSamePlugin(jar))
+                  {
+                     if (p.getVersion() < jar.getVersion())
+                     {
+                        installed.remove(p);
+                        installed.add(jar);
+                     }
+                     continue RES;
+                  }
+               }
+               installed.add(jar);
+            }
+            catch (IllegalNameException e)
+            {
+               untracked.add(res);
+            }
+         }
+
+         if (!installed.isEmpty())
+         {
+            shell.println();
+            shell.println(ShellColor.RED, "[installed plugins]");
+            for (PluginJar jar : installed)
+            {
+               shell.print(ShellColor.ITALIC, jar.getDependency().getGroupId());
+               shell.print(" : ");
+               shell.print(ShellColor.BOLD, jar.getDependency().getArtifactId());
+               shell.print(" : ");
+               if (Strings.isNullOrEmpty(jar.getDependency().getVersion()))
+               {
+                  shell.print(ShellColor.RED, "unversioned");
+               }
+               else
+               {
+                  shell.print(ShellColor.YELLOW, jar.getDependency().getVersion());
+               }
+
+               if (showAll)
+               {
+                  shell.print(ShellColor.ITALIC,
+                           " - " + shell.getPluginDirectory().getFullyQualifiedName() + "/" + jar.getFullName());
+               }
+               shell.println();
+            }
+         }
+
+         if (!untracked.isEmpty())
+         {
+            shell.println();
+            shell.println(ShellColor.RED, "[untracked plugins]");
+            for (Resource<?> resource : untracked)
+            {
+               shell.println(" " + resource.getFullyQualifiedName());
+            }
+            shell.println();
+         }
+      }
    }
 
    /*
@@ -149,14 +237,7 @@ public class ForgePlugin implements Plugin
 
          if (!ref.isGit())
          {
-            FileResource<?> jar = PluginUtil.downloadFromIndexRef(ref, out, shell.getPluginDirectory());
-            if (jar == null)
-            {
-               throw new RuntimeException("Could not install plugin [" + ref.getName() + "]");
-            }
-
-            ShellMessages.success(out, "Installed [" + ref.getName() + "] successfully.");
-            restart();
+            installFromMvnRepos(ref.getArtifact(), out, new DependencyRepositoryImpl("custom", ref.getHomeRepo()));
          }
          else if (ref.isGit())
          {
@@ -165,35 +246,116 @@ public class ForgePlugin implements Plugin
       }
    }
 
-   @Command(value = "mvn-plugin",
-            help = "Download and install a plugin from a maven repository")
-   public void installFromMvnRepos(@Option(description = "plugin-identifier", required = true) Dependency plugin,
-            @Option(description = "target repository") KnownRepository repo,
-            final PipeOut out) throws Exception
+   private void installFromMvnRepos(Dependency dep, PipeOut out, final DependencyRepository... repoList)
+            throws Exception
    {
-      // TODO implement - this will be pretty useful for drag&drop plugin installation.
-      throw new RuntimeException("Not yet implemented... use 'forge url-plugin' isntead.");
+      installFromMvnRepos(dep, out, Arrays.asList(repoList));
    }
 
-   @Command(value = "url-plugin",
-            help = "Download and install a plugin from the given URL")
-   public void installFromRemoteURL(
-            @Option(description = "URL of jar file", required = true) URL url,
-            @Option(description = "plugin name", required = true) String name,
+   private void installFromMvnRepos(Dependency dep, PipeOut out, final List<DependencyRepository> repoList)
+            throws Exception
+   {
+      List<DependencyResource> temp = resolver.resolveArtifacts(dep, repoList);
+      List<DependencyResource> artifacts = new ArrayList<DependencyResource>();
+
+      for (DependencyResource d : temp)
+      {
+         if (d.exists())
+         {
+            artifacts.add(d);
+         }
+      }
+
+      DependencyResource artifact = null;
+      if (artifacts.isEmpty())
+      {
+         throw new RuntimeException("No artifacts found for [" + dep + "]");
+      }
+      else if (artifacts.size() > 1)
+      {
+         artifact = shell.promptChoiceTyped("Install which version?", artifacts, artifacts.get(artifacts.size() - 1));
+      }
+      else
+      {
+         artifact = artifacts.get(0);
+      }
+      FileResource<?> jar = createIncrementedPluginJarFile(artifact.getDependency());
+      jar.setContents(artifact.getResourceInputStream());
+      ShellMessages.success(out, "Installed from [" + dep.toCoordinates() + "] successfully.");
+
+      restart();
+   }
+
+   @Command(value = "mvn-plugin",
+            help = "Download and install a plugin from a maven repository")
+   public void installFromMvnRepos(@Option(description = "plugin-identifier", required = true) Dependency dep,
+            @Option(name = "knownRepo", description = "target repository") KnownRepository repo,
+            @Option(name = "repoUrl", description = "target repository URL") String repoURL,
             final PipeOut out) throws Exception
    {
-      if (url == null)
+      if (repoURL != null)
       {
-         throw new IllegalArgumentException("Project folder must be specified.");
+         installFromMvnRepos(dep, out,
+                  new DependencyRepositoryImpl("custom", repoURL));
+      }
+      else if (repo == null)
+      {
+         List<DependencyRepository> repos = new ArrayList<DependencyRepository>();
+         for (KnownRepository r : KnownRepository.values())
+         {
+            repos.add(new DependencyRepositoryImpl(r));
+         }
+         installFromMvnRepos(dep, out, repos);
+      }
+      else
+         installFromMvnRepos(dep, out, new DependencyRepositoryImpl(repo));
+   }
+
+   @Command(value = "jar-plugin",
+            help = "Install a plugin from a local project folder")
+   public void installFromLocalJar(
+            @Option(name = "jar", description = "jar file to install", required = true) Resource<?> resource,
+            @Option(name = "id", description = "plugin identifier, [e.g. \"com.example.group : example-plugin\"]", required = true) Dependency dep,
+            final PipeOut out) throws Exception
+   {
+      FileResource<?> source = resource.reify(FileResource.class);
+      if (source == null || !source.exists())
+      {
+         throw new IllegalArgumentException("JAR file must be specified.");
+      }
+
+      if (shell.getPluginDirectory().equals(source.getParent()))
+      {
+         throw new IllegalArgumentException("Plugin is already installed.");
       }
 
       ShellMessages.info(out, "WARNING!");
       if (shell.promptBoolean(
                "Installing plugins from remote sources is dangerous, and can leave untracked plugins. Continue?", true))
       {
-         FileResource<?> jar = shell.getPluginDirectory().getChild(name).reify(FileResource.class);
-         PluginUtil.downloadFromURL(out, url, jar);
+         FileResource<?> target = createIncrementedPluginJarFile(dep);
+         target.setContents(source.getResourceInputStream());
 
+         ShellMessages.success(out, "Installed from [" + resource + "] successfully.");
+         restart();
+      }
+      else
+         throw new RuntimeException("Aborted.");
+   }
+
+   @Command(value = "url-plugin",
+            help = "Download and install a plugin from the given URL")
+   public void installFromRemoteURL(
+            @Option(description = "URL of jar file", required = true) URL url,
+            @Option(name = "id", description = "plugin identifier, [e.g. \"com.example.group : example-plugin\"]", required = true) Dependency dep,
+            final PipeOut out) throws Exception
+   {
+      ShellMessages.info(out, "WARNING!");
+      if (shell.promptBoolean(
+               "Installing plugins from remote sources is dangerous, and can leave untracked plugins. Continue?", true))
+      {
+         FileResource<?> jar = createIncrementedPluginJarFile(dep);
+         PluginUtil.downloadFromURL(out, url, jar);
          ShellMessages.success(out, "Installed from [" + url.toExternalForm() + "] successfully.");
          restart();
       }
@@ -204,24 +366,6 @@ public class ForgePlugin implements Plugin
    @Command(value = "source-plugin",
             help = "Install a plugin from a local project folder")
    public void installFromLocalProject(
-            @Option(description = "project directory", required = true) Resource<?> projectFolder,
-            final PipeOut out) throws Exception
-   {
-      DirectoryResource workspace = projectFolder.reify(DirectoryResource.class);
-      if (workspace == null || !workspace.exists())
-      {
-         throw new IllegalArgumentException("Project folder must be specified.");
-      }
-
-      buildFromCurrentProject(out, workspace);
-
-      ShellMessages.success(out, "Installed from [" + workspace + "] successfully.");
-      restart();
-   }
-
-   @Command(value = "jar-plugin",
-            help = "Install a plugin from a local project folder")
-   public void installFromLocalJar(
             @Option(description = "project directory", required = true) Resource<?> projectFolder,
             final PipeOut out) throws Exception
    {
@@ -292,6 +436,7 @@ public class ForgePlugin implements Plugin
 
       ShellMessages.success(out, "Installed from [" + gitRepo + "] successfully.");
       restart();
+
    }
 
    /*
@@ -323,23 +468,11 @@ public class ForgePlugin implements Plugin
          if (artifact.exists())
          {
             MetadataFacet meta = project.getFacet(MetadataFacet.class);
-            DirectoryResource pluginDir = shell.getPluginDirectory();
+            Dependency dep = meta.getOutputDependency();
 
-            FileResource<?> jar = (FileResource<?>) pluginDir.getChild(meta.getTopLevelPackage() + "_"
-                     + meta.getProjectName() + ".jar");
-
-            if (jar.exists() && !shell.promptBoolean(
-                              "An existing version of this plugin was found. Replace it?", true))
-            {
-               throw new RuntimeException("Aborted.");
-            }
-            else if (jar.exists())
-            {
-               jar.delete();
-            }
+            FileResource<?> jar = createIncrementedPluginJarFile(dep);
 
             ShellMessages.info(out, "Installing plugin artifact.");
-
             jar.setContents(artifact.getResourceInputStream());
          }
          else
@@ -352,5 +485,52 @@ public class ForgePlugin implements Plugin
       {
          shell.setCurrentResource(savedLocation);
       }
+   }
+
+   private FileResource<?> createIncrementedPluginJarFile(Dependency dep)
+   {
+      int version = 0;
+      PluginJar pluginJar = new PluginJar(dep);
+      DirectoryResource pluginDir = shell.getPluginDirectory();
+      List<Resource<?>> list = pluginDir.listResources(new StartsWith(pluginJar.getName()));
+
+      if (list.size() > 0 && !shell.promptBoolean(
+                        "An existing version of this plugin was found. Replace it?", true))
+      {
+         throw new RuntimeException("Aborted.");
+      }
+
+      for (Resource<?> res : list)
+      {
+         PluginJar jar = new PluginJar(res.getName());
+         if (jar.getVersion() > version)
+         {
+            version = jar.getVersion();
+         }
+         if (res instanceof FileResource<?>)
+            ((FileResource<?>) res).deleteOnExit();
+      }
+
+      String finalName = new PluginJar(dep, version + 1).getFullName();
+      FileResource<?> jar = (FileResource<?>) pluginDir.getChild(finalName);
+      jar.createNewFile();
+      return jar;
+   }
+
+   private class StartsWith implements ResourceFilter
+   {
+      private final String prefix;
+
+      public StartsWith(String prefix)
+      {
+         this.prefix = prefix;
+      }
+
+      @Override
+      public boolean accept(Resource<?> resource)
+      {
+         return resource != null && resource.getName() != null && resource.getName().startsWith(prefix);
+      }
+
    }
 }

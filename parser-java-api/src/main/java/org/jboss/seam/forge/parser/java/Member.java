@@ -25,8 +25,7 @@ package org.jboss.seam.forge.parser.java;
 import org.jboss.seam.forge.parser.Origin;
 
 /**
- * Represents a {@link JavaClass} member. (E.g.: a {@link Field} or
- * {@link Method})
+ * Represents a {@link JavaClass} member. (E.g.: a {@link Field} or {@link Method})
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
@@ -34,4 +33,12 @@ import org.jboss.seam.forge.parser.Origin;
 public interface Member<O, T> extends VisibilityScoped<T>, AnnotationTarget<O, T>, Origin<O>
 {
    public String getName();
+
+   public boolean isFinal();
+
+   public T setFinal(boolean finl);
+
+   public boolean isStatic();
+
+   public T setStatic(boolean statc);
 }

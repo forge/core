@@ -39,6 +39,7 @@ import org.jboss.seam.forge.project.dependencies.Dependency;
 import org.jboss.seam.forge.project.dependencies.DependencyBuilder;
 import org.jboss.seam.forge.project.dependencies.DependencyRepository;
 import org.jboss.seam.forge.project.dependencies.DependencyRepositoryImpl;
+import org.jboss.seam.forge.project.dependencies.DependencyResolver;
 import org.jboss.seam.forge.project.dependencies.MavenDependencyAdapter;
 import org.jboss.seam.forge.project.facets.BaseFacet;
 import org.jboss.seam.forge.project.facets.DependencyFacet;
@@ -55,12 +56,12 @@ import org.jboss.seam.forge.shell.plugins.RequiresFacet;
 @RequiresFacet(MavenCoreFacet.class)
 public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, Facet
 {
-   private final RepositoryLookup lookup;
+   private final DependencyResolver resolver;
 
    @Inject
-   public MavenDependencyFacet(final RepositoryLookup lookup)
+   public MavenDependencyFacet(final DependencyResolver resolver)
    {
-      this.lookup = lookup;
+      this.resolver = resolver;
    }
 
    @Override
@@ -244,39 +245,25 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
    }
 
    @Override
-   public List<Dependency> resolveAvailableVersions(final Dependency dep)
+   public List<Dependency> resolveAvailableVersions(Dependency dep)
    {
-      List<Dependency> results = new ArrayList<Dependency>();
-
-      String groupId = dep.getGroupId();
-      String artifactId = dep.getArtifactId();
-      String version = dep.getVersion();
-
-      if (version == null || version.trim().isEmpty())
-      {
-         version = "[0,)";
-      }
-
-      List<String> versions = lookup.getAvailableVersions(groupId + ":" + artifactId + ":"
-               + version, getRepositories());
-
-      for (String v : versions)
-      {
-         results.add(DependencyBuilder.create(dep).setVersion(v));
-      }
-      return results;
+      List<Dependency> versions = resolver.resolveVersions(dep, getRepositories());
+      return versions;
    }
 
    @Override
    public void addRepository(final String name, final String url)
    {
-      MavenCoreFacet maven = project.getFacet(MavenCoreFacet.class);
-      Model pom = maven.getPOM();
-      Repository repo = new Repository();
-      repo.setId(name);
-      repo.setUrl(url);
-      pom.getRepositories().add(repo);
-      maven.setPOM(pom);
+      if (!hasRepository(url))
+      {
+         MavenCoreFacet maven = project.getFacet(MavenCoreFacet.class);
+         Model pom = maven.getPOM();
+         Repository repo = new Repository();
+         repo.setId(name);
+         repo.setUrl(url);
+         pom.getRepositories().add(repo);
+         maven.setPOM(pom);
+      }
    }
 
    @Override

@@ -1,5 +1,5 @@
 /*
- * JBoss, Home of Professional Open Source
+ * JBoss, by Red Hat.
  * Copyright 2011, Red Hat, Inc., and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -19,40 +19,53 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.seam.forge.dev.mvn;
 
-import java.util.ArrayList;
-import java.util.List;
+package org.jboss.seam.forge.shell.plugins.builtin.project;
 
 import javax.inject.Inject;
 
 import org.jboss.seam.forge.project.Project;
-import org.jboss.seam.forge.project.dependencies.Dependency;
 import org.jboss.seam.forge.project.facets.DependencyFacet;
-import org.jboss.seam.forge.shell.completer.SimpleTokenCompleter;
+import org.jboss.seam.forge.project.facets.PackagingFacet;
+import org.jboss.seam.forge.shell.plugins.Alias;
+import org.jboss.seam.forge.shell.plugins.DefaultCommand;
+import org.jboss.seam.forge.shell.plugins.Help;
+import org.jboss.seam.forge.shell.plugins.Option;
+import org.jboss.seam.forge.shell.plugins.PipeOut;
+import org.jboss.seam.forge.shell.plugins.Plugin;
+import org.jboss.seam.forge.shell.plugins.RequiresFacet;
+import org.jboss.seam.forge.shell.plugins.RequiresProject;
+import org.jboss.seam.forge.shell.plugins.Topic;
 
 /**
- * Provides completion for project build properties
- * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class InstalledDependencyCompleter extends SimpleTokenCompleter
+@Alias("build")
+@Topic("Project")
+@RequiresProject
+@RequiresFacet({ DependencyFacet.class, PackagingFacet.class })
+@Help("Perform a build using the underlying build system.")
+public class BuildPlugin implements Plugin
 {
-   @Inject
+
    private Project project;
 
-   @Override
-   public List<Object> getCompletionTokens()
+   public BuildPlugin()
    {
-      List<Object> result = new ArrayList<Object>();
+   }
 
-      DependencyFacet deps = project.getFacet(DependencyFacet.class);
-      List<Dependency> dependencies = deps.getDependencies();
-      for (Dependency d : dependencies)
-      {
-         result.add(d.toCoordinates());
-      }
-      return result;
+   @Inject
+   public BuildPlugin(final Project project)
+   {
+      this.project = project;
+   }
+
+   @DefaultCommand
+   public void build(final PipeOut out,
+            @Option(description = "build arguments") final String... args)
+   {
+      PackagingFacet packaging = project.getFacet(PackagingFacet.class);
+      packaging.executeBuild(args);
    }
 
 }

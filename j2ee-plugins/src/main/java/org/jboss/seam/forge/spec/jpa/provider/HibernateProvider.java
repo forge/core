@@ -21,13 +21,21 @@
  */
 package org.jboss.seam.forge.spec.jpa.provider;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
+import org.jboss.seam.forge.project.Project;
+import org.jboss.seam.forge.project.dependencies.Dependency;
+import org.jboss.seam.forge.project.dependencies.DependencyBuilder;
+import org.jboss.seam.forge.shell.ShellPrompt;
 import org.jboss.seam.forge.spec.jpa.api.DatabaseType;
 import org.jboss.seam.forge.spec.jpa.api.JPADataSource;
 import org.jboss.seam.forge.spec.jpa.api.PersistenceProvider;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceUnitDef;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -67,6 +75,12 @@ public class HibernateProvider implements PersistenceProvider
       dialects.put(DatabaseType.FIREBIRD, "org.hibernate.dialect.FirebirdDialect");
    }
 
+   @Inject
+   private Project project;
+
+   @Inject
+   private ShellPrompt prompt;
+
    @Override
    public PersistenceUnitDef setup(PersistenceUnitDef unit, JPADataSource ds)
    {
@@ -91,4 +105,9 @@ public class HibernateProvider implements PersistenceProvider
       return unit;
    }
 
+   @Override
+   public List<Dependency> listDependencies()
+   {
+      return Arrays.asList((Dependency) DependencyBuilder.create("org.hibernate:hibernate-entitymanager"));
+   }
 }
