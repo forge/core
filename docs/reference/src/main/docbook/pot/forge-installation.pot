@@ -1,0 +1,64 @@
+# 
+# AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0\n"
+"POT-Creation-Date: 2011-04-07T04:14:07\n"
+"PO-Revision-Date: 2011-04-07T04:14:07\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: None\n"
+"MIME-Version: 1.0\n"
+"Content-Type: application/x-publican; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Tag: title
+#, no-c-format
+msgid "Installation"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "Installing Forge is a relatively short process, and this guide will take you through the fundamentals (providing links to external materials if required;) however, if you encounter any issues with this process, please ask in the <ulink url=\"https://lists.jboss.org/mailman/listinfo/forge-users\">Forge Users</ulink> mailing list, or if you think something is wrong with this guide, <ulink url=\"http://bit.ly/forgeissues\">report a defect</ulink> under \"Documentation\"."
+msgstr ""
+
+#. Tag: title
+#, no-c-format
+msgid "Installing a distribution download"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "Follow these steps to install a Forge distribution: <orderedlist> <listitem>Ensure that you have already installed a <ulink url=\"http://www.oracle.com/technetwork/java/javase/downloads/index.html\">Java 6+ JDK</ulink> and <ulink url=\"http://maven.apache.org/download.html\">Apache Maven 3.0+</ulink></listitem> <listitem><ulink url=\"http://sourceforge.net/projects/jboss/files/Forge/\">Download</ulink> and Un-zip Forge (or a recent <ulink url=\"http://repository.jboss.org/nexus/content/groups/public/org/jboss/seam/forge/forge-distribution/\">snapshot build</ulink>) into a folder on your hard-disk, this folder will be your <literal>FORGE_HOME</literal></listitem> <listitem>Add '<literal>$FORGE_HOME/bin</literal>' to your path (<ulink url=\"http://www.google.com/search?q=windows+edit+path\">windows</ulink>, <ulink url=\"http://www.google.com/search?q=linux+set+path\">linux</ulink>, <ulink url=\"http://www.google.com/search?q=mac+osx+edit+path\">mac osx</ulink>)</listitem> <listitem>Consider installing <ulink url=\"http://git-scm.com/\">Git</ulink> and <ulink url=\"http://maven.apache.org/\">Maven 3</ulink> (both optional) </listitem> <listitem>Open a command prompt and run 'forge'</listitem> </orderedlist>"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "That's it, you've now got Forge installed, but what to do next?"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "<tip> Having problems? <ulink url=\"https://issues.jboss.org/secure/CreateIssue.jspa?pid=12311102&amp;issuetype=1\">Tell us</ulink>. </tip>"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "There are a few things you should probably check-out. If you are confused at any time, try pressing &lt;TAB&gt;. For instance, if you have not yet seen the Forge built-in commands, you may either press &lt;TAB&gt; to see a list of the currently available commands, or get a more descriptive list by typing:"
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "$ list-commands --all"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "You may also use the 'help' command for more detailed information about available Forge, a plugin, or a command."
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "$ help {plugin-name} {command-name}"
+msgstr ""
+

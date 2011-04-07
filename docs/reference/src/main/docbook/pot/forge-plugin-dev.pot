@@ -1,0 +1,814 @@
+# 
+# AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0\n"
+"POT-Creation-Date: 2011-04-07T04:14:07\n"
+"PO-Revision-Date: 2011-04-07T04:14:07\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: None\n"
+"MIME-Version: 1.0\n"
+"Content-Type: application/x-publican; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Tag: title
+#, no-c-format
+msgid "Developing a Plugin"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "Part of Forge's architecture is to allow extensions to be created with extreme ease. This is done using the same programming model that you would use for any CDI or Java EE application, and you should quickly recognize the annotation-driven patterns and practices applied."
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "A Forge plugin could be as simple as a tool to print files to the console, or as complex as deploying an application to a server, 'tweet'ing the status of your latest source-code commit, or even sending commands to a home-automation system; the sky is the limit!"
+msgstr ""
+
+#. Tag: title
+#, no-c-format
+msgid "Referencing the Forge APIs"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "Because Forge is based on Maven, the easiest way to get started quickly writing a plugin is to create a new maven Java project. This can be done by hand, or using Forge's build in plugin project facet."
+msgstr ""
+
+#. Tag: title
+#, no-c-format
+msgid "Using Forge"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "In two short steps, you can have a new plugin-project up and running; this can be done using Forge itself!"
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "$ new-project --named {name} --topLevelPackage {com.package} --projectFolder {/directory/path}"
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "$ project install-facet forge.api"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "That's it! Now your project is ready to be compiled and installed in Forge, but you may still want to <link linkend=\"plugin.dev.interface\">create some Plugins</link>."
+msgstr ""
+
+#. Tag: title
+#, no-c-format
+msgid "Creating a new Forge Plugin Project"
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "\n"
+"[no project] Desktop $\n"
+"[no project] Desktop $ new-project --named example-plugin --topLevelPackage com.example.forge.plugin\n"
+"Use [~/Desktop/example-plugin] as project directory? [Y/n] Y\n"
+"Wrote ~/Desktop/example-plugin/src/main/resources/META-INF/forge.xml\n"
+"***SUCCESS*** Created project [example-plugin] in new working directory [~/Desktop/example-plugin]\n"
+"[example-plugin] example-plugin $\n"
+"[example-plugin] example-plugin $ \n"
+"[example-plugin] example-plugin $ project install-facet forge.api\n"
+"The [forge.api] facet depends on the following missing facet(s): [forge.spec.cdi]. Install as well? [Y/n] Y\n"
+"Wrote ~/Desktop/example-plugin/src/main/resources/META-INF/beans.xml\n"
+"***SUCCESS*** Installed [forge.spec.cdi] successfully.\n"
+"Install which version of the Forge API?\n"
+"\n"
+"  1 - [org.jboss.seam.forge:forge-shell-api:1.0.0-SNAPSHOT]\n"
+"  2 - [org.jboss.seam.forge:forge-shell-api:1.0.0.Alpha2]\n"
+"\n"
+"Choose an option by typing the number of the selection: 1\n"
+"***SUCCESS*** Installed [forge.api] successfully.\n"
+"[example-plugin] example-plugin $"
+msgstr ""
+
+#. Tag: title
+#, no-c-format
+msgid "With Maven"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "If you do not wish to create a new plugin project using Forge itself, you will need to manually include the Forge-API dependencies. For purposes of simplicity, we have pasted a sample Maven POM file which can be used as a starting point for a new plugin:"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "NOTE: You must also create a <literal>beans.xml</literal> file in the <literal>src/main/resources/META-INF/</literal> directory of your project, or your plugin will not be detected by Forge. <tip> <literal>'org.jboss.seam.forge : forge-shell-api : {version}' </literal> is the only dependency you must include in your project. </tip>"
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;\n"
+"&lt;project xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 \n"
+"                             http://maven.apache.org/xsd/maven-4.0.0.xsd\" \n"
+"    xmlns=\"http://maven.apache.org/POM/4.0.0\"\n"
+"    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"&gt;\n"
+"  &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;\n"
+"\n"
+"  &lt;groupId&gt;com.example.plugin&lt;/groupId&gt;\n"
+"  &lt;artifactId&gt;example&lt;/artifactId&gt;\n"
+"  &lt;version&gt;1.0.0-SNAPSHOT&lt;/version&gt;\n"
+"\n"
+"  &lt;properties&gt;\n"
+"    &lt;forge.api.version&gt;[1.0.0-SNAPSHOT,)&lt;/forge.api.version&gt;\n"
+"  &lt;/properties&gt;\n"
+"  \n"
+"  &lt;dependencies&gt;\n"
+"    &lt;dependency&gt;\n"
+"      &lt;groupId&gt;org.jboss.seam.forge&lt;/groupId&gt;\n"
+"      &lt;artifactId&gt;forge-shell-api&lt;/artifactId&gt;\n"
+"      &lt;version&gt;${forge.api.version}&lt;/version&gt;\n"
+"    &lt;/dependency&gt;\n"
+"  &lt;/dependencies&gt;\n"
+"  \n"
+"  &lt;repositories&gt;\n"
+"    &lt;repository&gt;\n"
+"      &lt;id&gt;jboss&lt;/id&gt;\n"
+"      &lt;url&gt;https://repository.jboss.org/nexus/content/groups/public/&lt;/url&gt;\n"
+"    &lt;/repository&gt;\n"
+"  &lt;/repositories&gt;\n"
+"  \n"
+"  &lt;build&gt;\n"
+"    &lt;plugins&gt;\n"
+"      &lt;plugin&gt;\n"
+"        &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;\n"
+"        &lt;configuration&gt;\n"
+"          &lt;source&gt;1.6&lt;/source&gt;\n"
+"          &lt;target&gt;1.6&lt;/target&gt;\n"
+"        &lt;/configuration&gt;\n"
+"      &lt;/plugin&gt;\n"
+"    &lt;/plugins&gt;\n"
+"  &lt;/build&gt;\n"
+"&lt;/project&gt;"
+msgstr ""
+
+#. Tag: title
+#, no-c-format
+msgid "Implementing the Plugin interface"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "The first thing you must do in order to create a forge plugin, is create a new class and implement the <literal>org.jboss.seam.forge.shell.plugins.Plugin</literal> interface. Notice that the interface has no methods, this is because you will be adding your own custom commands later."
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "import org.jboss.seam.forge.shell.plugins.Plugin;\n"
+"         \n"
+"public class ExamplePlugin implements Plugin {\n"
+"}"
+msgstr ""
+
+#. Tag: title
+#, no-c-format
+msgid "Naming your plugin"
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "$ exampleplugin "
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "@Alias(\"example\")\n"
+"public class ExamplePlugin implements Plugin {\n"
+"   // commands\n"
+"}"
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "$ example "
+msgstr ""
+
+#. Tag: title
+#, no-c-format
+msgid "Add commands to your plugin"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "Now that you have implemented the <literal>Plugin</literal> interface, it's time to add some functionality. This is done by adding \"Commands\" to your plugin class. Commands are plain Java methods in your plugin Class. Plugin methods must be annotated as either a <literal>@DefaultCommand</literal>, the method to be invoked if the plugin is called by name (with no additional commands), or <literal>@Command(name=\"...\")</literal>, in which case the plugin name and command name must both be used to invoke the method."
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "Commands also accept <literal>@Options</literal> parameters as arguments. These are <link linkend=\"plugins.dev.options\">described in detail</link> later in this section."
+msgstr ""
+
+#. Tag: title
+#, no-c-format
+msgid "Default commands"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "Default commands must be annotated with <literal>@DefaultCommand</literal>, and are not named; you may still provide help text or command metadata. Each plugin may have only one <literal>@DefaultCommand</literal>."
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "The following default command would be executed by executing the plugin by its name:"
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "public class ExamplePlugin implements Plugin {\n"
+"   @DefaultCommand\n"
+"   public void exampleDefaultCommand( @Option String opt ) {\n"
+"      // this method will be invoked, and 'opt' will be passed from the command line\n"
+"   }\n"
+"}"
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "$ exampleplugin some-input"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "In this case, the value of '<literal>opt</literal>' will be \"some-input\". <literal>@Options</literal> are <link linkend=\"plugin.dev.options\">described in detail</link> later in this section."
+msgstr ""
+
+#. Tag: title
+#, no-c-format
+msgid "Named commands"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "Named commands must, to little surprise, be given a name with which they are invoked. This is done by placing the <literal>@Command(name=\"...\")</literal> annotation on a public Java method in your <literal>Plugin</literal> class."
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "The following command would be executed by executing the plugin by its name, followed by the name of the command:"
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "public class ExamplePlugin implements Plugin {\n"
+"   @Command(name=\"perform\")\n"
+"   public void exampleCommand( @Option(required=false) String opt, PipeOut out) {\n"
+"       out.println(\"&gt;&gt; the command \\\"perform\\\" was invoked with the value: \" + opt);\n"
+"   }\n"
+"}"
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "$ exampleplugin perform\n"
+"&gt;&gt; the command \"perform\" was invoked with the value: null"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "Notice that our command method has a parameter called \"<literal>PipeOut</literal>,\" in addition to our 'opt' parameter. <literal>PipeOut</literal> is a special parameter, which can be placed in any order. It provides access to a variety of shell output functions, including enabling color and controlling piping between plugins."
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "Along with <literal>PipeOut</literal>, there is also a <literal>@PipeIn InputStream stream</literal> annotation, which is used to inject a piped input stream (output from another Plugin's <literal>PipeOut</literal>.) These concepts will be described more in the section on <link linkend=\"plugin.dev.piping\">piping</link>, but for now, you should just know that <literal>PipeOut</literal> is used to write output to the Forge console."
+msgstr ""
+
+#. Tag: title
+#, no-c-format
+msgid "Understanding command @Options"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "Once we have a command or two in our Plugin, it's time to give our users some control over what it does; to do this, we use <literal>@Option</literal> params; options enable users to pass information of various types into our commands."
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "Options can be named, in which case they are set by passing the <literal>--name</literal> followed immediately by the value, or if the option is a boolean flag, simply passing the flag will signal a `true` value. Named parameters may be passed into a command in any order, while unnamed parameters must be passed into the command in the order with which they were defined."
+msgstr ""
+
+#. Tag: title
+#, no-c-format
+msgid "--named options"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "As mentioned above, options can be given both a long-name and/or a short-name. in which case, they would be defined like this:"
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "@Option(name=\"one\", shortName=\"o\")"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "Short named parameters are called using a single dash '-' followed by the letter assigned '-o'; whereas long-named parameters are called using a double dash '--' immediately followed by the name '--one'. )"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "For example, the following command accepts several options, named 'one', and 'two':"
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "public class ExamplePlugin implements Plugin {\n"
+"   @Command(name=\"perform\")\n"
+"   public void exampleCommand( \n"
+"                  @Option(name=\"one\", shortName=\"o\") String one,\n"
+"                  @Option(name=\"two\") String two,\n"
+"                  PipeOut out) {\n"
+"       out.println(\"&gt;&gt; option one equals: \" + one);\n"
+"       out.println(\"&gt;&gt; option two equals: \" + two);\n"
+"   }\n"
+"}"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "The above command, when executed, would produce the following output:"
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "$ example-plugin perform --one cat --two dog \n"
+"&gt;&gt; option one equals: cat\n"
+"&gt;&gt; option two equals: dog"
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "$ example-plugin perform --one cat --two dog\n"
+"$ example-plugin perform --two dog --one cat\n"
+"$ example-plugin perform --two dog -o cat"
+msgstr ""
+
+#. Tag: title
+#, no-c-format
+msgid "Ordered options"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "In addition to <literal>--named</literal> option parameters, as described <link linkend=\"plugin.dev.options.named\">above</link>, parameters may also be passed on the command line by the order in which they are entered. These are called \"ordered option parameters\", and do not require any parameters other than help or description information."
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "@Option String value"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "The order of the options in the method signature controls how values are assigned from parsed Forge shell command statements."
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "public class ExamplePlugin implements Plugin {\n"
+"   @Command(name=\"perform\")\n"
+"   public void exampleCommand( \n"
+"                  @Option String one,\n"
+"                  @Option String two,\n"
+"                  PipeOut out) {\n"
+"       out.println(\"&gt;&gt; option one equals: \" + one);\n"
+"       out.println(\"&gt;&gt; option two equals: \" + two);\n"
+"   }\n"
+"}"
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "$ example-plugin cat dog \n"
+"&gt;&gt; option one equals: cat\n"
+"&gt;&gt; option two equals: dog"
+msgstr ""
+
+#. Tag: title
+#, no-c-format
+msgid "Combining --named and ordered options"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "Both <link linkend=\"plugin.dev.options.named\"><literal>--named</literal></link> and <link linkend=\"plugin.dev.options.ordered\">ordered</link> option parameters can be mixed in the same command; there are some constraints on how commands must be typed, but there is a great deal of flexibility as well."
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "@Option String value,\n"
+"@Option(name=\"num\") int number"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "The order of ordered options in the method signature controls how values are assigned from the command line shell, whereas the named options have no bearing on the order in which inputs are provided on the command line."
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "For example, the following command accepts several options, named 'one', 'two', and several more options that are not named:"
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "public class ExamplePlugin implements Plugin {\n"
+"   @Command(name=\"perform\")\n"
+"   public void exampleCommand( \n"
+"                  @Option(name=\"one\") String one,\n"
+"                  @Option(name=\"two\") String two,\n"
+"                  @Option String three,\n"
+"                  @Option String four,\n"
+"                  PipeOut out) {\n"
+"       out.println(\"&gt;&gt; option one equals: \" + one);\n"
+"       out.println(\"&gt;&gt; option two equals: \" + two);\n"
+"       out.println(\"&gt;&gt; option three equals: \" + three);\n"
+"       out.println(\"&gt;&gt; option four equals: \" + four);\n"
+"   }\n"
+"}"
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "$ example-plugin --one cat --two dog bird lizard  \n"
+"&gt;&gt; option one equals: cat\n"
+"&gt;&gt; option two equals: dog \n"
+"&gt;&gt; option three equals: bird\n"
+"&gt;&gt; option four equals: lizard"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "However, we could also achieve the same result by re-arranging parameters, and as long as the name-value pairs remain together, and the ordered values are passed in the correct order, interpretation will remain the same:"
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "$ example-plugin --two dog bird --one cat lizard  \n"
+"&gt;&gt; option one equals: cat\n"
+"&gt;&gt; option two equals: dog \n"
+"&gt;&gt; option three equals: bird\n"
+"&gt;&gt; option four equals: lizard"
+msgstr ""
+
+#. Tag: title
+#, no-c-format
+msgid "Piping output between plugins"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "Much like a standard UNIX-style shell, the Forge shell supports piping IO between executables; however in the case of forge, piping actually occurs between plugins, commands, for example:"
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "$ cat /home/username/.forge/config | grep automatic \n"
+"@/* Automatically generated config file */;"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "This might look like a typical BASH command, but if you run forge and try it, you may be surprised to find that the results are the same as on your system command prompt, and in this example, we are demonstrating the pipe: '|'"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "In order to enable piping in your plugins, you must use one or both of the <literal>@PipeIn InputStream stream</literal> or <literal>PipeOut out</literal> command arguments. Notice that <literal>PipeOut</literal> is a java type that must be used as a Method parameter, whereas <literal>@PipeIn</literal> is an annotation that must be placed on a Java <literal>@PipeIn InputStream stream</literal> or <literal>@PipeIn String in</literal> Method parameter."
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "`<literal>PipeOut out</literal>` - by default - is used to print output to the shell console; however, if the plugin on the left-hand-side is piped to a secondary plugin on the command line, the output will be written to the `<literal>@PipeIn InputStream stream</literal>` of the plugin on the right-hand-side:"
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "$ left | right"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "Or in terms of pipes, this could be thought of as a flow of data from left to right:"
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "$ PipeOut out -&gt; @PipeIn InputStream stream"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "Notice that you can pipe output between any number of plugins as long as each uses both a <literal>@PipeIn InputStream</literal> and <literal>PipeOut</literal>:"
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "$ first command | second command | third command"
+msgstr ""
+
+#. Tag: title
+#, no-c-format
+msgid "@PipeIn InputStream stream"
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "\n"
+"   @Command(\"example-command\")\n"
+"   public void exampleCommand(\n"
+"            @PipeIn final InputStream in,\n"
+"            @Option(required = false) final boolean option,\n"
+"            PipeOut out)\n"
+"   { ... }"
+msgstr ""
+
+#. Tag: title
+#, no-c-format
+msgid "@PipeIn String in"
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "\n"
+"   @Command(\"example-command\")\n"
+"   public void exampleCommand(\n"
+"            @PipeIn final String in,\n"
+"            @Option(required = false) final boolean option,\n"
+"            PipeOut out)\n"
+"   { ... }"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "Take the '<literal>grep</literal>' command itself, for example, which supports two methods of invocation: Invocation on one or more <literal>Resource&lt;?&gt;</literal> objects, or invocation on a piped <literal>InputStream</literal>."
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "If no piping is invoked (e.g: via standalone execution of the plugin), a piped <literal>InputStream</literal> will be null. In addition, piped <literal>InputStream</literal>s do not need to be closed; Forge will handle cleanup of these streams."
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "@Alias(\"grep\")\n"
+"@Topic(\"File &amp; Resources\")\n"
+"@Help(\"print lines matching a pattern\")\n"
+"public class GrepPlugin implements Plugin\n"
+"{\n"
+"   @DefaultCommand\n"
+"   public void run(\n"
+"         @PipeIn final InputStream pipeIn,\n"
+"         @Option(name = \"ignore-case\", shortName = \"i\", flagOnly = true) boolean ignoreCase,\n"
+"         @Option(name = \"regexp\", shortName = \"e\") String regExp,\n"
+"         @Option(description = \"PATTERN\") String pattern,\n"
+"         @Option(description = \"FILE ...\") Resource&lt;?&gt;[] resources, \n"
+"         final PipeOut pipeOut\n"
+"   ) throws IOException \n"
+"   {\n"
+"      Pattern matchPattern = /* determine pattern (omitted for space) */;\n"
+"\n"
+"      if (resources != null) {\n"
+"      \n"
+"         /* User passed file(s) on the command line; grep those. */\n"
+"      \n"
+"         for (Resource&lt;?&gt; r : resources) {\n"
+"            InputStream inputStream = r.getResourceInputStream();\n"
+"            try {\n"
+"               match(inputStream, matchPattern, pipeOut, ignoreCase);\n"
+"            }\n"
+"            finally {\n"
+"               inputStream.close();\n"
+"            }\n"
+"         }\n"
+"      }\n"
+"      else if (pipeIn != null) {\n"
+"      \n"
+"         /* No files were passed on the command line; check for a \n"
+"          * piped InputStream and use that.\n"
+"          */\n"
+"      \n"
+"         match(pipeIn, matchPattern, pipeOut, ignoreCase);\n"
+"      }\n"
+"      else {\n"
+"      \n"
+"         /* No input was passed to the plugin. */\n"
+"      \n"
+"         throw new RuntimeException(\"Error: arguments required\");\n"
+"      }\n"
+"   }\n"
+"\n"
+"   private void match(InputStream instream, Pattern pattern, PipeOut pipeOut, boolean caseInsensitive) throws IOException {\n"
+"      StringAppender buf = new StringAppender();\n"
+"\n"
+"      int c;\n"
+"      while ((c = instream.read()) != -1) { /* Read from the given stream. */\n"
+"         switch (c) {\n"
+"         case '\\r':\n"
+"         case '\n"
+"':\n"
+"            String s = caseInsensitive ? buf.toString().toLowerCase() : buf.toString();\n"
+"\n"
+"            if (pattern.matcher(s).matches()) {\n"
+"               pipeOut.println(s); /* Write to the output pipe. */\n"
+"            }\n"
+"            buf.reset();\n"
+"            break;\n"
+"         default:\n"
+"            buf.append((char) c);\n"
+"            break;\n"
+"         }\n"
+"      }\n"
+"   }\n"
+"}"
+msgstr ""
+
+#. Tag: title
+#, no-c-format
+msgid "Ensure all referenced libraries are on the CLASSPATH"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "If your Plugin depends on classes or libraries that are not provided by Forge, then you must either package those classes in the JAR file containing your Plugin (for instance, using the maven <ulink url=\"http://maven.apache.org/plugins/maven-shade-plugin/\"> shade plugin</ulink>), or you must ensure that the required dependencies are also placed on the <literal>CLASSPATH</literal> (typically in the <literal>$FORGE_HOME/lib</literal> folder,) otherwise your plugin will *not* be loaded."
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "NOTE: This is required even if dependencies are specified directly in your pom.xml file. Transitive dependencies WILL NOT BE INSTALLED with your plugin; they must be packaged via shade."
+msgstr ""
+
+#. Tag: title
+#, no-c-format
+msgid "Using Forge to set up Shading"
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "[example-plugin] example-plugin $ shade setup\n"
+"***SUCCESS*** Shade plugin is installed.\n"
+"[example-plugin] example-plugin $              \n"
+"[example-plugin] example-plugin $ shade include commons-collections:commons-collections:3.2.1\n"
+""
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "Notice that the pom.xml file has been modified and now includes a shade configuration including commons-collections."
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "      &lt;plugin&gt;\n"
+"        &lt;artifactId&gt;maven-shade-plugin&lt;/artifactId&gt;\n"
+"        &lt;version&gt;1.4&lt;/version&gt;\n"
+"        &lt;executions&gt;\n"
+"          &lt;execution&gt;\n"
+"            &lt;phase&gt;package&lt;/phase&gt;\n"
+"            &lt;goals&gt;\n"
+"              &lt;goal&gt;shade&lt;/goal&gt;\n"
+"            &lt;/goals&gt;\n"
+"            &lt;configuration&gt;\n"
+"              &lt;artifactSet&gt;\n"
+"                &lt;includes&gt;\n"
+"                  &lt;include&gt;commons-collections:commons-collections&lt;/include&gt;\n"
+"                &lt;/includes&gt;\n"
+"              &lt;/artifactSet&gt;\n"
+"            &lt;/configuration&gt;\n"
+"          &lt;/execution&gt;\n"
+"        &lt;/executions&gt;\n"
+"      &lt;/plugin&gt;\n"
+"		"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "Do NOT include Forge provided libraries with shade, or you will very likely create a non-functional plugin."
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "It it also recommended, however, to relocate shaded class files to a new package. Your code will access the bundled code at this new location, and will prevent version conflicts if another plugin bundles a different version of the same library. For this, we use the following command."
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "$ shade relocate --pattern {ORIGINAL PGK} --shadedPattern {NEW PKG} --excludes {EXCLUDED PKGS...}"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "For the purposes of this example, let us assume that our Plugin depends on the Apache Commons Collections library (<literal>org.apache.commons.collections</literal>), and we want to make sure that no conflicts occur."
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "[example-plugin] example-plugin $ shade relocate --pattern org.apache.commons.collections --shadedPattern ~.shaded.apache.collections\n"
+"***SUCCESS*** Relocating [org.apache.commons.collections] to [com.example.forge.plugin.shaded.apache.collections]\n"
+"[example-plugin] example-plugin $ \n"
+"      	"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "This should be repeated for each dependency as necessary. Notice that our POM has been updated with the configuration:"
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "   &lt;plugin&gt;\n"
+"     &lt;artifactId&gt;maven-shade-plugin&lt;/artifactId&gt;\n"
+"     &lt;version&gt;1.4&lt;/version&gt;\n"
+"     &lt;executions&gt;\n"
+"       &lt;execution&gt;\n"
+"         &lt;phase&gt;package&lt;/phase&gt;\n"
+"         &lt;goals&gt;\n"
+"           &lt;goal&gt;shade&lt;/goal&gt;\n"
+"         &lt;/goals&gt;\n"
+"         &lt;configuration&gt;\n"
+"           &lt;relocations&gt;\n"
+"             &lt;relocation&gt;\n"
+"               &lt;pattern&gt;org.apache.commons.collections&lt;/pattern&gt;\n"
+"               &lt;shadedPattern&gt;com.example.forge.plugin.shaded.apache.collections&lt;/shadedPattern&gt;\n"
+"             &lt;/relocation&gt;\n"
+"           &lt;/relocations&gt;\n"
+"         &lt;/configuration&gt;\n"
+"       &lt;/execution&gt;\n"
+"     &lt;/executions&gt;\n"
+"   &lt;/plugin&gt;"
+msgstr ""
+
+#. Tag: title
+#, no-c-format
+msgid "Make your Plugin available to Forge"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "After following all of the steps in <link linkend=\"forge.plugin.dev\">this section</link>, you should now be ready to install your Plugin into the Forge environment. There are several methods for installing and distributing your plugin; these methods are described in this section."
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "All plugin installation should take place using the '<literal>$ forge</literal>' meta-command. For more information on this command, type:"
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "$ help forge"
+msgstr ""
+
+#. Tag: title
+#, no-c-format
+msgid "As local source files (for development)"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "Perhaps the simplest form of plugin installation is when the plugin source files are stored locally in a project on the local computer. If a plugin project is already checked out locally, it may be built and installed using the following command:"
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "$ forge source-plugin {PATH}"
+msgstr ""
+
+#. Tag: title
+#, no-c-format
+msgid "Installing a local plugin project"
+msgstr ""
+
+#. Tag: title
+#, no-c-format
+msgid "As a git repository"
+msgstr ""
+
+#. Tag: title
+#, no-c-format
+msgid "As a distributable JAR file"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "The"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "You must include a /META-INF/beans.xml file in your JAR, or none of the classes in your archive will be discovered; therefore, your Plugin will not be made available to Forge."
+msgstr ""
+

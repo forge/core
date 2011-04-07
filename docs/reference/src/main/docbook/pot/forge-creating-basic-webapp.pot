@@ -1,0 +1,56 @@
+# 
+# AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0\n"
+"POT-Creation-Date: 2011-04-07T04:14:06\n"
+"PO-Revision-Date: 2011-04-07T04:14:06\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: None\n"
+"MIME-Version: 1.0\n"
+"Content-Type: application/x-publican; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Tag: title
+#, no-c-format
+msgid "Generating a basic Java EE web-application"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "For the most part, people interested in Forge are likely interested in creating web-applications. Thusly, this chapter will overview the basic steps to generate such an application using Forge."
+msgstr ""
+
+#. Tag: title
+#, no-c-format
+msgid "First steps with Scaffolding"
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "Assuming you have already completed the steps to <link linkend=\"forge.installation\"> install Forge</link>, the first thing you'll need to do is download and install <ulink url=\"http://www.jboss.org/jbossas/downloads.html\">JBoss Application Server 6.0 or 7.0</ulink>. This server will host your application once it is built."
+msgstr ""
+
+#. Tag: para
+#, no-c-format
+msgid "Next, follow these steps to create your skeleton web-application; be sure to replace any {ARGS} with your own personal values. Also keep in mind that while typing commands, you may press &lt;TAB&gt; at any time to see command completion options:"
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "$ new-project --named {name} --topLevelPackage {com.package} --projectFolder {/directory/path}"
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "$ scaffold setup "
+msgstr ""
+
+#. Tag: programlisting
+#, no-c-format
+msgid "$ mvn clean package\n"
+"$ mvn jboss:hard-deploy\n"
+"$ mvn jboss:start"
+msgstr ""
+
