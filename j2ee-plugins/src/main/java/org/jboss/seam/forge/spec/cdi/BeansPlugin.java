@@ -21,34 +21,28 @@
  */
 package org.jboss.seam.forge.spec.cdi;
 
-import java.io.FileNotFoundException;
-import java.util.List;
-
-import javax.enterprise.context.Conversation;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-
 import org.jboss.seam.forge.parser.JavaParser;
 import org.jboss.seam.forge.parser.java.JavaClass;
 import org.jboss.seam.forge.parser.java.Method;
 import org.jboss.seam.forge.parser.java.SyntaxError;
 import org.jboss.seam.forge.project.Project;
+import org.jboss.seam.forge.project.dependencies.Dependency;
+import org.jboss.seam.forge.project.dependencies.DependencyBuilder;
+import org.jboss.seam.forge.project.dependencies.ScopeType;
+import org.jboss.seam.forge.project.facets.DependencyFacet;
 import org.jboss.seam.forge.project.facets.JavaSourceFacet;
+import org.jboss.seam.forge.project.facets.WebResourceFacet;
 import org.jboss.seam.forge.resources.java.JavaResource;
-import org.jboss.seam.forge.shell.PromptType;
-import org.jboss.seam.forge.shell.ShellColor;
-import org.jboss.seam.forge.shell.ShellMessages;
-import org.jboss.seam.forge.shell.ShellPrompt;
+import org.jboss.seam.forge.shell.*;
 import org.jboss.seam.forge.shell.events.InstallFacets;
 import org.jboss.seam.forge.shell.events.PickupResource;
-import org.jboss.seam.forge.shell.plugins.Alias;
-import org.jboss.seam.forge.shell.plugins.Command;
-import org.jboss.seam.forge.shell.plugins.Current;
-import org.jboss.seam.forge.shell.plugins.Option;
-import org.jboss.seam.forge.shell.plugins.PipeOut;
-import org.jboss.seam.forge.shell.plugins.Plugin;
-import org.jboss.seam.forge.shell.plugins.RequiresFacet;
-import org.jboss.seam.forge.shell.plugins.RequiresResource;
+import org.jboss.seam.forge.shell.plugins.*;
+
+import javax.enterprise.context.Conversation;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import java.io.FileNotFoundException;
+import java.util.List;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -58,6 +52,8 @@ import org.jboss.seam.forge.shell.plugins.RequiresResource;
 @RequiresFacet(JavaSourceFacet.class)
 public class BeansPlugin implements Plugin
 {
+   private static final String JAVAEE6_DEPENDENCY = "org.jboss.spec:jboss-javaee-6.0";
+   private static final String JAVAEE6_CDI = "javax.enterprise:cdi-api";
    @Inject
    private Event<InstallFacets> install;
 
@@ -71,18 +67,97 @@ public class BeansPlugin implements Plugin
    private ShellPrompt prompt;
 
    @Inject
+   Shell shell;
+
+   @Inject
    @Current
    private JavaResource resource;
+
+   DependencyFacet dependencyFacet;
 
    @Command("setup")
    public void setup(final PipeOut out)
    {
       if (!project.hasFacet(CDIFacet.class))
       {
+         dependencyFacet = project.getFacet(DependencyFacet.class);
+
          install.fire(new InstallFacets(CDIFacet.class));
+         installDependencies();
       }
 
    }
+
+   private void installDependencies()
+   {
+      if (needToInstallDependencies())
+      {
+         Dependency dependency = chooseDependency();
+
+         addDependency(dependency);
+      }
+   }
+
+   private boolean needToInstallDependencies()
+   {
+      return !containsCDIDependency(dependencyFacet) &&
+              !containsJavaEEDependency();
+   }
+
+   private boolean containsJavaEEDependency()
+   {
+      return dependencyFacet.hasDependency(DependencyBuilder.create(JAVAEE6_DEPENDENCY));
+   }
+
+   private boolean containsCDIDependency(DependencyFacet dependencyFacet)
+   {
+      return dependencyFacet.hasDependency(DependencyBuilder.create(JAVAEE6_CDI));
+   }
+
+   private Dependency chooseDependency()
+   {
+      int choice = prompt.promptChoice("Do you want to add CDI dependencies?", JAVAEE6_DEPENDENCY, JAVAEE6_CDI, "no");
+      Dependency dependency = null;
+
+      if (choice == 0)
+      {
+         dependency = promtForVersion(JAVAEE6_DEPENDENCY);
+      } else if (choice == 1)
+      {
+         dependency = promtForVersion(JAVAEE6_CDI);
+      }
+      return dependency;
+   }
+
+   private void addDependency(Dependency dependency)
+   {
+      if (dependency != null)
+      {
+         dependency = promptForDependencyScope(dependency);
+
+         dependencyFacet.addDependency(dependency);
+         shell.println("Added " + dependency.toString());
+      }
+   }
+
+   private Dependency promptForDependencyScope(Dependency dependency)
+   {
+      boolean defaultScopeProvided = project.hasFacet(WebResourceFacet.class);
+      boolean addAsProvided = prompt.promptBoolean("Should the scope be 'provided'?", defaultScopeProvided);
+      if (addAsProvided)
+      {
+         dependency = DependencyBuilder.create(dependency).setScopeType(ScopeType.PROVIDED);
+      }
+      return dependency;
+   }
+
+   private Dependency promtForVersion(String dependency)
+   {
+      List<Dependency> dependencyList = dependencyFacet.resolveAvailableVersions(dependency);
+      int choice = prompt.promptChoice("Which version of " + dependency + " do you want to install?", dependencyList);
+      return dependencyList.get(choice);
+   }
+
 
    @Command("list-interceptors")
    public void listInterceptors(final PipeOut out)
