@@ -71,7 +71,7 @@ public abstract class ProjectModelTest
    @Inject
    private ResourceFactory resourceFactory;
 
-   private static Project project;
+   protected static Project project;
 
    @Before
    @SuppressWarnings("unchecked")
