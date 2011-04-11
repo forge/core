@@ -1,3 +1,5 @@
+package org.jboss.seam.forge.spec.jpa.test.plugins;
+
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2010, Red Hat, Inc., and individual contributors
@@ -19,38 +21,39 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.seam.forge.scaffold;
 
-import org.jboss.seam.forge.project.facets.BaseFacet;
-import org.jboss.seam.forge.project.packaging.PackagingType;
-import org.jboss.seam.forge.shell.plugins.Alias;
-import org.jboss.seam.forge.shell.plugins.RequiresFacet;
-import org.jboss.seam.forge.shell.plugins.RequiresPackagingType;
-import org.jboss.seam.forge.spec.javaee6.cdi.CDIFacet;
+import java.io.FileNotFoundException;
+
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.seam.forge.project.Project;
+import org.jboss.seam.forge.project.facets.JavaSourceFacet;
+import org.jboss.seam.forge.shell.util.Packages;
 import org.jboss.seam.forge.spec.javaee6.jpa.PersistenceFacet;
-import org.jboss.seam.forge.spec.javaee6.jsf.FacesFacet;
-import org.jboss.seam.forge.spec.javaee6.servlet.ServletFacet;
+import org.jboss.seam.forge.spec.jpa.test.plugins.util.AbstractJPATest;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Alias("forge.scaffold")
-@RequiresFacet({ ServletFacet.class, CDIFacet.class, FacesFacet.class, PersistenceFacet.class })
-@RequiresPackagingType(PackagingType.WAR)
-public class ScaffoldFacet extends BaseFacet
+@RunWith(Arquillian.class)
+public class NewFieldPluginNegativeTest extends AbstractJPATest
 {
-   @Override
-   public boolean isInstalled()
-   {
-      return project.hasFacet(ServletFacet.class) && project.hasFacet(FacesFacet.class)
-               && project.hasFacet(CDIFacet.class);
-   }
 
-   @Override
-   public boolean install()
+   @Test(expected = FileNotFoundException.class)
+   public void testNewFieldWithoutEntityDoesNotCreateFile() throws Exception
    {
-      project.registerFacet(this);
-      return true;
-   }
+      Project project = getProject();
+      String entityName = "Goofy";
 
+      queueInputLines(entityName);
+      getShell().execute("new-field int --named gamesPlayed");
+
+      String pkg = project.getFacet(PersistenceFacet.class).getEntityPackage() + "." + entityName;
+      String path = Packages.toFileSyntax(pkg) + ".java";
+
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+
+      java.getJavaResource(path).getJavaSource(); // exception here or die
+   }
 }

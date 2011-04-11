@@ -19,38 +19,37 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.seam.forge.scaffold;
 
-import org.jboss.seam.forge.project.facets.BaseFacet;
-import org.jboss.seam.forge.project.packaging.PackagingType;
-import org.jboss.seam.forge.shell.plugins.Alias;
-import org.jboss.seam.forge.shell.plugins.RequiresFacet;
-import org.jboss.seam.forge.shell.plugins.RequiresPackagingType;
-import org.jboss.seam.forge.spec.javaee6.cdi.CDIFacet;
-import org.jboss.seam.forge.spec.javaee6.jpa.PersistenceFacet;
-import org.jboss.seam.forge.spec.javaee6.jsf.FacesFacet;
+package org.jboss.seam.forge.spec.servlet;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.seam.forge.project.Project;
 import org.jboss.seam.forge.spec.javaee6.servlet.ServletFacet;
+import org.jboss.seam.forge.test.SingletonAbstractShellTest;
+import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Alias("forge.scaffold")
-@RequiresFacet({ ServletFacet.class, CDIFacet.class, FacesFacet.class, PersistenceFacet.class })
-@RequiresPackagingType(PackagingType.WAR)
-public class ScaffoldFacet extends BaseFacet
+@RunWith(Arquillian.class)
+public class ServletFacetTest extends SingletonAbstractShellTest
 {
-   @Override
-   public boolean isInstalled()
+   @Test
+   public void testWebXMLCreatedWhenInstalled() throws Exception
    {
-      return project.hasFacet(ServletFacet.class) && project.hasFacet(FacesFacet.class)
-               && project.hasFacet(CDIFacet.class);
-   }
+      Project project = initializeJavaProject();
+      queueInputLines("", "");
+      getShell().execute("project install-facet forge.spec.servlet");
+      assertTrue(project.hasFacet(ServletFacet.class));
+      WebAppDescriptor config = project.getFacet(ServletFacet.class).getConfig();
 
-   @Override
-   public boolean install()
-   {
-      project.registerFacet(this);
-      return true;
+      assertNotNull(config);
+      assertTrue(config.exportAsString().contains("3.0"));
    }
 
 }

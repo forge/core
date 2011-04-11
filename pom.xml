@@ -32,7 +32,7 @@
 		<module>shell-api</module>
 		<module>test-harness</module>
 		<module>shell</module>
-		<module>j2ee-plugins</module>
+		<module>java-ee6-plugins</module>
 		<module>scaffold-plugin</module>
 		<module>dev-plugins</module>
 	</modules>
@@ -109,7 +109,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.jboss.seam.forge</groupId>
-				<artifactId>forge-j2ee-plugins</artifactId>
+				<artifactId>forge-javaee-6.0-plugins</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

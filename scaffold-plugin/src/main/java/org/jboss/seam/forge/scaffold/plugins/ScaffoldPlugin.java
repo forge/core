@@ -55,10 +55,10 @@ import org.jboss.seam.forge.shell.plugins.Plugin;
 import org.jboss.seam.forge.shell.plugins.RequiresProject;
 import org.jboss.seam.forge.shell.plugins.Topic;
 import org.jboss.seam.forge.shell.util.ConstraintInspector;
-import org.jboss.seam.forge.spec.cdi.CDIFacet;
-import org.jboss.seam.forge.spec.jpa.PersistenceFacet;
-import org.jboss.seam.forge.spec.jsf.FacesFacet;
-import org.jboss.seam.forge.spec.servlet.ServletFacet;
+import org.jboss.seam.forge.spec.javaee6.cdi.CDIFacet;
+import org.jboss.seam.forge.spec.javaee6.jpa.PersistenceFacet;
+import org.jboss.seam.forge.spec.javaee6.jsf.FacesFacet;
+import org.jboss.seam.forge.spec.javaee6.servlet.ServletFacet;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
