@@ -42,23 +42,31 @@ public abstract class SimpleTokenCompleter implements CommandCompleter
    @Override
    public void complete(final CommandCompleterState state)
    {
-      List<Object> values = getCompletionTokens();
-      String peek = state.getTokens().peek();
-
-      if ((state.getTokens().size() <= 1))
+      List<Object> values;
+      try
       {
-         for (Object val : values)
+         values = getCompletionTokens();
+         String peek = state.getTokens().peek();
+
+         if ((state.getTokens().size() <= 1) && values != null)
          {
-            if (val != null)
+            for (Object val : values)
             {
-               String prop = val.toString();
-               if (prop.startsWith(peek == null ? "" : peek))
+               if (val != null)
                {
-                  state.getCandidates().add(prop + " ");
-                  state.setIndex(state.getOriginalIndex() - (peek == null ? 0 : peek.length()));
+                  String prop = val.toString();
+                  if (prop.startsWith(peek == null ? "" : peek))
+                  {
+                     state.getCandidates().add(prop + " ");
+                     state.setIndex(state.getOriginalIndex() - (peek == null ? 0 : peek.length()));
+                  }
                }
             }
          }
+      }
+      catch (Exception e)
+      {
+         // TODO could not get options. this should eventually be logged
       }
    }
 
