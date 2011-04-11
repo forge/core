@@ -44,13 +44,6 @@
 			<groupId>org.jboss.logging</groupId>
 			<artifactId>jboss-logging</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.jboss.spec</groupId>
-			<artifactId>jboss-javaee-6.0</artifactId>
-			<version>1.0.0.CR1</version>
-			<type>pom</type>
-			<scope>provided</scope>
-		</dependency>
 	</dependencies>
 	<build>
 		<finalName>forge</finalName>

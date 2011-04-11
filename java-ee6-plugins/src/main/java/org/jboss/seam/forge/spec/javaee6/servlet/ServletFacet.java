@@ -53,7 +53,7 @@ public class ServletFacet extends BaseFacet
 {
 
    private static final Dependency dep =
-            DependencyBuilder.create("org.jboss.spec:jboss-javaee-6.0:1.0.0.CR1:provided:basic");
+            DependencyBuilder.create("org.jboss.spec:jboss-javaee-6.0:1.0.0.Final:provided:basic");
 
    public WebAppDescriptor getConfig()
    {
