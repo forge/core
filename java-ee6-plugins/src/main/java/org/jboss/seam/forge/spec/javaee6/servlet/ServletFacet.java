@@ -22,7 +22,6 @@
 package org.jboss.seam.forge.spec.javaee6.servlet;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +35,7 @@ import org.jboss.seam.forge.project.packaging.PackagingType;
 import org.jboss.seam.forge.resources.DirectoryResource;
 import org.jboss.seam.forge.resources.FileResource;
 import org.jboss.seam.forge.resources.Resource;
+import org.jboss.seam.forge.resources.ResourceFilter;
 import org.jboss.seam.forge.shell.plugins.Alias;
 import org.jboss.seam.forge.shell.plugins.RequiresFacet;
 import org.jboss.seam.forge.shell.plugins.RequiresPackagingType;
@@ -83,13 +83,25 @@ public class ServletFacet extends BaseFacet
       return listChildrenRecursively(webRoot);
    }
 
-   public List<Resource<?>> getResources(final FileFilter filter)
+   private List<Resource<?>> listChildrenRecursively(DirectoryResource webRoot)
    {
-      DirectoryResource webRoot = project.getFacet(WebResourceFacet.class).getWebRootDirectory();
-      return listChildrenRecursively(webRoot);
+      return listChildrenRecursively(webRoot, new ResourceFilter()
+      {
+         @Override
+         public boolean accept(Resource<?> resource)
+         {
+            return true;
+         }
+      });
    }
 
-   private List<Resource<?>> listChildrenRecursively(final DirectoryResource current)
+   public List<Resource<?>> getResources(final ResourceFilter filter)
+   {
+      DirectoryResource webRoot = project.getFacet(WebResourceFacet.class).getWebRootDirectory();
+      return listChildrenRecursively(webRoot, filter);
+   }
+
+   private List<Resource<?>> listChildrenRecursively(final DirectoryResource current, ResourceFilter filter)
    {
       List<Resource<?>> result = new ArrayList<Resource<?>>();
       List<Resource<?>> list = current.listResources();
@@ -99,9 +111,10 @@ public class ServletFacet extends BaseFacet
          {
             if (file instanceof DirectoryResource)
             {
-               result.addAll(listChildrenRecursively((DirectoryResource) file));
+               result.addAll(listChildrenRecursively((DirectoryResource) file, filter));
             }
-            result.add(file);
+            if (filter.accept(file))
+               result.add(file);
          }
       }
       return result;
