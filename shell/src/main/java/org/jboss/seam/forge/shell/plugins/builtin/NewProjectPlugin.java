@@ -90,6 +90,8 @@ public class NewProjectPlugin implements Plugin
                      required = false,
                      defaultValue = "false",
                      flagOnly = true) final boolean createMain,
+            @Option(name = "finalName",
+                     description = "The final artifact name of the new project") final String finalName,
             final PipeOut out
             ) throws IOException
    {
@@ -209,6 +211,15 @@ public class NewProjectPlugin implements Plugin
                   .setBody("System.out.println(\"Hi there! I was forged as part of the project you call " + name
                            + ".\");")
                   .getOrigin());
+      }
+
+      if (finalName != null)
+      {
+         packaging.setFinalName(finalName);
+      }
+      else
+      {
+         packaging.setFinalName(name);
       }
 
       project.getFacet(ResourceFacet.class).createResource("<forge/>".toCharArray(), "META-INF/forge.xml");

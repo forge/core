@@ -153,4 +153,20 @@ public class MavenPackagingFacet extends BaseFacet implements PackagingFacet, Fa
       }
    }
 
+   @Override
+   public String getFinalName()
+   {
+      MavenCoreFacet mavenFacet = project.getFacet(MavenCoreFacet.class);
+      Model pom = mavenFacet.getPOM();
+      return pom.getBuild().getFinalName();
+   }
+
+   @Override
+   public void setFinalName(String finalName)
+   {
+      MavenCoreFacet mavenFacet = project.getFacet(MavenCoreFacet.class);
+      Model pom = mavenFacet.getPOM();
+      pom.getBuild().setFinalName(finalName);
+      mavenFacet.setPOM(pom);
+   }
 }

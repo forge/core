@@ -56,4 +56,14 @@ public interface PackagingFacet extends Facet
     * @see {@link #getFinalArtifact()}
     */
    Resource<?> executeBuild(String... args);
+
+   /**
+    * Get the final name of this project's build output artifact. This represents the name without file extension.
+    */
+   String getFinalName();
+
+   /**
+    * Set the final name of this project's build output artifact. This represents the name without file extension.
+    */
+   void setFinalName(String finalName);
 }
