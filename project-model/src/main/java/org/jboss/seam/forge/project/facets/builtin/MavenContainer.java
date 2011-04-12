@@ -65,7 +65,18 @@ public class MavenContainer
          container.setLoggerManager(loggerManager);
 
          builder = container.lookup(ProjectBuilder.class);
+      }
+      catch (Exception e)
+      {
+         throw new ProjectModelException(
+                  "Could not initialize Maven", e);
+      }
+   }
 
+   public ProjectBuildingRequest getRequest()
+   {
+      try
+      {
          // TODO this needs to be configurable via .forge
          // TODO this reference to the M2_REPO should probably be centralized
          String localRepositoryPath = OSUtils.getUserHomeDir().getAbsolutePath() + "/.m2/repository";
@@ -89,18 +100,13 @@ public class MavenContainer
          request.setProcessPlugins(false);
          request.setPluginArtifactRepositories(Arrays.asList(localRepository));
          request.setResolveDependencies(true);
-
+         return request;
       }
       catch (Exception e)
       {
          throw new ProjectModelException(
-                  "Could not initialize maven", e);
+                  "Could not create Maven project building request", e);
       }
-   }
-
-   public ProjectBuildingRequest getRequest()
-   {
-      return request;
    }
 
    public ProjectBuilder getBuilder()
