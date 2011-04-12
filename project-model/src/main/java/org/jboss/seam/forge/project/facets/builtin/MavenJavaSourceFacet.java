@@ -169,8 +169,10 @@ public class MavenJavaSourceFacet extends BaseFacet implements JavaSourceFacet, 
          if (javaSourcePlugin == null)
          {
             javaSourcePlugin = new Plugin();
+            // FIXME this should find the most recent version using DependencyResolver
             javaSourcePlugin.setGroupId("org.apache.maven.plugins");
             javaSourcePlugin.setArtifactId("maven-compiler-plugin");
+            javaSourcePlugin.setVersion("2.3.2");
 
             try
             {

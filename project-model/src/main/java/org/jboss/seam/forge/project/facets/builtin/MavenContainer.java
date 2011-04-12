@@ -24,6 +24,7 @@ package org.jboss.seam.forge.project.facets.builtin;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -67,24 +68,26 @@ public class MavenContainer
 
          // TODO this needs to be configurable via .forge
          // TODO this reference to the M2_REPO should probably be centralized
-         String localRepository = OSUtils.getUserHomeDir().getAbsolutePath() + "/.m2/repository";
+         String localRepositoryPath = OSUtils.getUserHomeDir().getAbsolutePath() + "/.m2/repository";
 
          request = new DefaultProjectBuildingRequest();
-         request.setLocalRepository(new MavenArtifactRepository(
-                  "local", new File(localRepository).toURI().toURL().toString(),
+         ArtifactRepository localRepository = new MavenArtifactRepository(
+                  "local", new File(localRepositoryPath).toURI().toURL().toString(),
                   container.lookup(ArtifactRepositoryLayout.class),
                   new ArtifactRepositoryPolicy(true, ArtifactRepositoryPolicy.UPDATE_POLICY_NEVER,
                            ArtifactRepositoryPolicy.CHECKSUM_POLICY_WARN),
                   new ArtifactRepositoryPolicy(true, ArtifactRepositoryPolicy.UPDATE_POLICY_NEVER,
-                           ArtifactRepositoryPolicy.CHECKSUM_POLICY_WARN)));
+                           ArtifactRepositoryPolicy.CHECKSUM_POLICY_WARN));
+         request.setLocalRepository(localRepository);
          request.setRemoteRepositories(new ArrayList<ArtifactRepository>());
 
          DefaultRepositorySystemSession repositorySession = new DefaultRepositorySystemSession();
-         repositorySession.setLocalRepositoryManager(new SimpleLocalRepositoryManager(localRepository));
+         repositorySession.setLocalRepositoryManager(new SimpleLocalRepositoryManager(localRepositoryPath));
          repositorySession.setOffline(true);
 
          request.setRepositorySession(repositorySession);
-         request.setProcessPlugins(true);
+         request.setProcessPlugins(false);
+         request.setPluginArtifactRepositories(Arrays.asList(localRepository));
          request.setResolveDependencies(true);
 
       }
