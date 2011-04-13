@@ -28,6 +28,7 @@ public class PersistenceUtil implements Serializable
    protected <T> void delete(final T entity) throws NoResultException
    {
       getEntityManager().remove(entity);
+      getEntityManager().joinTransaction();
    }
 
    protected <T> T deleteById(final Class<T> type, final Long id) throws NoResultException
@@ -52,6 +53,7 @@ public class PersistenceUtil implements Serializable
    protected <T> void save(final T entity)
    {
       getEntityManager().merge(entity);
+      getEntityManager().joinTransaction();
    }
 
    protected <T> void refresh(final T entity)

@@ -281,7 +281,9 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
          }
          finally
          {
-            data.close();
+            if (data != null)
+               data.close();
+
             out.flush();
             out.close();
             if (OSUtils.isWindows())

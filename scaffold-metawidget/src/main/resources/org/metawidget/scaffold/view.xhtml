@@ -5,7 +5,8 @@
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:m="http://metawidget.org/faces">
+    xmlns:m="http://metawidget.org/faces"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
 <f:metadata>
     <f:viewParam name="id" value="#{@{beanName}.id}">
@@ -46,9 +47,13 @@
 		    <m:metawidget value="#{@{beanName}.@{entity.getName().toLowerCase()}}" readOnly="#{ _editMode == null or _editMode eq 'false' }" />
 		    
 		    <br/>
-		    <h:commandButton value="Save" action="#{@{beanName}.save()}" rendered="#{ _editMode != null and _editMode ne 'false' }" />
+			<c:if test="#{ _editMode != null and _editMode ne 'false' }">
+				<h:commandButton value="Save" action="#{@{beanName}.save()}" />
+			</c:if>
 		    <h:commandButton value="Delete" action="#{@{beanName}.delete()}" />
-		    <h:button value="Cancel" outcome="view" includeViewParams="true" rendered="#{ _editMode != null and _editMode ne 'false' }" />
+		    <h:button value="Cancel" outcome="view" includeViewParams="true" rendered="#{ _editMode != null and _editMode ne 'false' }">
+				<f:param name="edit" value="false" />
+			</h:button>
 		</h:form>
 	</ui:define>
 

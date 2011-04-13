@@ -22,14 +22,33 @@
 package org.jboss.seam.forge.spec.javaee6.jsf;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.inject.Inject;
 
 import org.jboss.seam.forge.project.facets.BaseFacet;
 import org.jboss.seam.forge.project.facets.WebResourceFacet;
 import org.jboss.seam.forge.resources.DirectoryResource;
 import org.jboss.seam.forge.resources.FileResource;
+import org.jboss.seam.forge.resources.Resource;
+import org.jboss.seam.forge.shell.ShellMessages;
+import org.jboss.seam.forge.shell.ShellPrintWriter;
 import org.jboss.seam.forge.shell.plugins.Alias;
 import org.jboss.seam.forge.shell.plugins.RequiresFacet;
 import org.jboss.seam.forge.spec.javaee6.servlet.ServletFacet;
+import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.FacesProjectStage;
+import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.ServletDef;
+import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.ServletMappingDef;
+import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -38,6 +57,9 @@ import org.jboss.seam.forge.spec.javaee6.servlet.ServletFacet;
 @RequiresFacet(ServletFacet.class)
 public class FacesFacet extends BaseFacet
 {
+   @Inject
+   private ShellPrintWriter out;
+
    public FileResource<?> getConfigFile()
    {
       DirectoryResource webRoot = project.getFacet(WebResourceFacet.class).getWebRootDirectory();
@@ -58,7 +80,6 @@ public class FacesFacet extends BaseFacet
    {
       if (!isInstalled())
       {
-         // Create faces-config
          if (!getConfigFile().createNewFile())
          {
             throw new RuntimeException("Failed to create required [" + getConfigFile().getFullyQualifiedName() + "]");
@@ -67,5 +88,189 @@ public class FacesFacet extends BaseFacet
                   .getResourceAsStream("/org/jboss/seam/forge/web/faces-config.xml"));
       }
       return true;
+   }
+
+   public FacesProjectStage getProjectStage()
+   {
+      ServletFacet facet = project.getFacet(ServletFacet.class);
+      WebAppDescriptor config = facet.getConfig();
+      return config.getFacesProjectStage();
+   }
+
+   public List<String> getFacesServletMappings()
+   {
+      List<String> results = new ArrayList<String>();
+      ServletFacet facet = project.getFacet(ServletFacet.class);
+      WebAppDescriptor webXml = facet.getConfig();
+
+      // TODO should probably take into account faces default suffixes
+      // javax.faces.DEFAULT_SUFFIX
+      // facelets.VIEW_MAPPINGS
+
+      if (webXml.hasFacesServlet())
+      {
+         List<ServletDef> servlets = webXml.getServlets();
+         for (ServletDef servlet : servlets)
+         {
+            if ("javax.faces.webapp.FacesServlet".equals(servlet.getServletClass()))
+            {
+               List<ServletMappingDef> mappings = servlet.getMappings();
+               for (ServletMappingDef mapping : mappings)
+               {
+                  results.addAll(mapping.getUrlPatterns());
+               }
+            }
+         }
+      }
+      else
+      {
+         if (webXml.getVersion().startsWith("3"))
+         {
+            results.add("*.jsf");
+            results.add("/faces/*");
+         }
+         else
+            ShellMessages.info(out, "FacesServlet not found in web.xml and Servlet " +
+                      "Version not >= 3.0, could not discover FacesServlet mappings");
+      }
+      return results;
+   }
+
+   public List<String> getWebPaths(Resource<?> r)
+   {
+      List<String> results = new ArrayList<String>();
+
+      if (r != null)
+      {
+         WebResourceFacet web = project.getFacet(WebResourceFacet.class);
+         List<DirectoryResource> webRootDirectories = web.getWebRootDirectories();
+         for (DirectoryResource d : webRootDirectories)
+         {
+            if (r.getFullyQualifiedName().startsWith(d.getFullyQualifiedName()))
+            {
+               String path = r.getFullyQualifiedName().substring(d.getFullyQualifiedName().length());
+
+               List<String> mappings = getFacesServletMappings();
+               for (String mapping : mappings)
+               {
+                  results.add(buildFacesViewId(mapping, path));
+               }
+               break;
+            }
+         }
+      }
+      return results;
+   }
+
+   public Resource<?> getResourceForWebPath(String path)
+   {
+      if (path != null)
+      {
+         WebResourceFacet web = project.getFacet(WebResourceFacet.class);
+         List<DirectoryResource> webRootDirectories = web.getWebRootDirectories();
+
+         boolean matches = false;
+         for (String mapping : getFacesServletMappings())
+         {
+            Matcher matcher = Pattern.compile(ServletFacet.mappingToRegex(mapping)).matcher(path);
+            if (matcher.matches())
+            {
+               path = matcher.group(1);
+               matches = true;
+               break;
+            }
+         }
+
+         while (path.startsWith("/"))
+         {
+            path = path.substring(1);
+         }
+
+         if (!matches)
+         {
+            return null;
+         }
+
+         List<String> strings = Arrays.asList(path.split("/"));
+         for (DirectoryResource d : webRootDirectories)
+         {
+            Queue<String> queue = new LinkedList<String>();
+            queue.addAll(strings);
+
+            Resource<?> temp = d;
+            while (!queue.isEmpty())
+            {
+               Resource<?> child = temp.getChild(queue.remove());
+               if (child.exists())
+               {
+                  temp = child;
+
+                  if (queue.size() == 1)
+                  {
+                     List<Resource<?>> list = temp.listResources();
+                     for (Resource<?> r : list)
+                     {
+                        if (r.getName().equals(queue.peek()))
+                        {
+                           return r;
+                        }
+                        else
+                        {
+                           String name = queue.peek();
+                           if (r.getName().startsWith(name))
+                           {
+                              return r;
+                           }
+                        }
+                     }
+                  }
+               }
+               else
+               {
+                  break;
+               }
+            }
+         }
+      }
+      return null;
+   }
+
+   /**
+    * Build a Faces view ID for the given resource path, return null if not mapped by Faces Servlet
+    */
+   private String buildFacesViewId(final String servletMapping, final String resourcePath)
+   {
+      StringBuffer result = new StringBuffer();
+
+      Map<Pattern, String> patterns = new HashMap<Pattern, String>();
+
+      Pattern pathMapping = Pattern.compile("^(/.*)/\\*$");
+      Pattern extensionMapping = Pattern.compile("^\\*(\\..*)$");
+      Pattern defaultMapping = Pattern.compile("^/\\*$");
+
+      patterns.put(pathMapping, "$1" + resourcePath);
+      patterns.put(extensionMapping, resourcePath.replaceAll("^(.*)(\\.\\w+)$", "$1") + "$1");
+      patterns.put(defaultMapping, resourcePath);
+
+      boolean matched = false;
+      Iterator<Pattern> iterator = patterns.keySet().iterator();
+      while (matched == false && iterator.hasNext())
+      {
+         Pattern p = iterator.next();
+         Matcher m = p.matcher(servletMapping);
+         if (m.matches())
+         {
+            String replacement = patterns.get(p);
+            m.appendReplacement(result, replacement);
+            matched = true;
+         }
+      }
+
+      if (matched == false)
+      {
+         return null;
+      }
+
+      return result.toString();
    }
 }

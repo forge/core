@@ -40,11 +40,10 @@ import org.jboss.seam.forge.resources.FileResource;
 import org.jboss.seam.forge.resources.Resource;
 import org.jboss.seam.forge.resources.java.JavaResource;
 import org.jboss.seam.forge.scaffold.ScaffoldProvider;
-import org.jboss.seam.forge.scaffold.providers.MetawidgetScaffold;
+import org.jboss.seam.forge.scaffold.plugins.events.GeneratedWebResources;
 import org.jboss.seam.forge.scaffold.shell.ScaffoldProviderCompleter;
 import org.jboss.seam.forge.shell.ShellMessages;
 import org.jboss.seam.forge.shell.ShellPrompt;
-import org.jboss.seam.forge.shell.events.InstallFacets;
 import org.jboss.seam.forge.shell.plugins.Alias;
 import org.jboss.seam.forge.shell.plugins.Command;
 import org.jboss.seam.forge.shell.plugins.Current;
@@ -55,10 +54,6 @@ import org.jboss.seam.forge.shell.plugins.Plugin;
 import org.jboss.seam.forge.shell.plugins.RequiresProject;
 import org.jboss.seam.forge.shell.plugins.Topic;
 import org.jboss.seam.forge.shell.util.ConstraintInspector;
-import org.jboss.seam.forge.spec.javaee6.cdi.CDIFacet;
-import org.jboss.seam.forge.spec.javaee6.jpa.PersistenceFacet;
-import org.jboss.seam.forge.spec.javaee6.jsf.FacesFacet;
-import org.jboss.seam.forge.spec.javaee6.servlet.ServletFacet;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -83,71 +78,37 @@ public class ScaffoldPlugin implements Plugin
    private Instance<ScaffoldProvider> impls;
 
    @Inject
-   private MetawidgetScaffold defaultScaffold;
+   private Event<GeneratedWebResources> generatedEvent;
 
-   @Inject
-   private Event<InstallFacets> install;
-
-   @Command("setup")
-   @SuppressWarnings("unchecked")
-   public void setup(final PipeOut out)
+   @Command("gen-indexes")
+   public void generateIndex(
+            final PipeOut out,
+            @Option(name = "scaffoldType", required = false,
+                     completer = ScaffoldProviderCompleter.class) final String scaffoldType,
+            @Option(flagOnly = true, name = "overwrite") final boolean overwrite)
    {
-      /*
-       * TODO this should probably accept a scaffold type object itself other methods should check to see if any
-       * scaffold providers have been installed
-       */
-      if (!(project.hasFacet(WebResourceFacet.class) && project.hasFacet(PersistenceFacet.class)
-               && project.hasFacet(CDIFacet.class) && project.hasFacet(FacesFacet.class)))
-      {
-         install.fire(new InstallFacets(WebResourceFacet.class, PersistenceFacet.class, CDIFacet.class,
-                  FacesFacet.class));
+      ScaffoldProvider provider = getScaffoldType(scaffoldType);
+      List<Resource<?>> generatedResources = provider.generateIndex(project, overwrite);
 
-         if (project.hasFacet(WebResourceFacet.class) && project.hasFacet(PersistenceFacet.class)
-                  && project.hasFacet(CDIFacet.class) && project.hasFacet(FacesFacet.class))
-         {
-            ShellMessages.success(out, "Scaffolding installed.");
-         }
-      }
+      // TODO give plugins a chance to react to generated resources, use event bus?
+      generatedEvent.fire(new GeneratedWebResources(provider, generatedResources));
    }
 
-   @Command("create-indexes")
-   public void createIndex(
+   @Command("gen-templates")
+   public void generateTemplates(
+            @Option(name = "scaffoldType", required = false,
+                     completer = ScaffoldProviderCompleter.class) final String scaffoldType,
             final PipeOut out,
             @Option(flagOnly = true, name = "overwrite") final boolean overwrite)
    {
-      setup(out);
-      WebResourceFacet web = project.getFacet(WebResourceFacet.class);
+      ScaffoldProvider provider = getScaffoldType(scaffoldType);
+      List<Resource<?>> generatedResources = provider.generateTemplates(project, overwrite);
 
-      project.getFacet(ServletFacet.class).getConfig().welcomeFile("index.html");
-
-      createOrOverwrite(prompt, web.getWebResource("index.html"), getClass()
-               .getResourceAsStream("/org/jboss/seam/forge/jsf/index.html"), overwrite);
-
-      createOrOverwrite(prompt, web.getWebResource("index.xhtml"),
-               getClass().getResourceAsStream("/org/jboss/seam/forge/jsf/index.xhtml"), overwrite);
-
-      createDefaultTemplate(out, overwrite);
+      // TODO give plugins a chance to react to generated resources, use event bus?
+      generatedEvent.fire(new GeneratedWebResources(provider, generatedResources));
    }
 
-   @Command("create-default-template")
-   public void createDefaultTemplate(
-            final PipeOut out,
-            @Option(flagOnly = true, name = "overwrite") final boolean overwrite)
-   {
-      setup(out);
-      WebResourceFacet web = project.getFacet(WebResourceFacet.class);
-
-      createOrOverwrite(prompt, web.getWebResource("/resources/forge-template.xhtml"),
-               getClass().getResourceAsStream("/org/jboss/seam/forge/jsf/forge-template.xhtml"), overwrite);
-
-      createOrOverwrite(prompt, web.getWebResource("/resources/forge.css"),
-               getClass().getResourceAsStream("/org/jboss/seam/forge/jsf/forge.css"), overwrite);
-
-      createOrOverwrite(prompt, web.getWebResource("/resources/favicon.ico"),
-               getClass().getResourceAsStream("/org/jboss/seam/forge/web/favicon.ico"), overwrite);
-   }
-
-   @Command("from-entity")
+   @Command("gen-from-entity")
    public void generateFromEntity(
             @Option(name = "scaffoldType", required = false,
                      completer = ScaffoldProviderCompleter.class) final String scaffoldType,
@@ -155,7 +116,6 @@ public class ScaffoldPlugin implements Plugin
             @Option(required = false) JavaResource[] targets,
             final PipeOut out) throws FileNotFoundException
    {
-      setup(out);
       if (((targets == null) || (targets.length < 1))
                && (currentResource instanceof JavaResource))
       {
@@ -170,31 +130,33 @@ public class ScaffoldPlugin implements Plugin
       }
 
       ScaffoldProvider provider = getScaffoldType(scaffoldType);
-      if (provider == null)
-      {
-         ShellMessages.error(out, "Aborted - no scaffold type selected.");
-         return;
-      }
-
-      if (!provider.isInstalledIn(project))
-      {
-         provider.installInto(project);
-      }
-
-      createDefaultTemplate(out, overwrite);
 
       for (JavaResource jr : javaTargets)
       {
          JavaClass entity = (JavaClass) (jr).getJavaSource();
-         provider.fromEntity(project, entity, overwrite);
+         List<Resource<?>> generatedResources = provider.generateFromEntity(project, entity, overwrite);
+
+         // TODO give plugins a chance to react to generated resources, use event bus?
+         generatedEvent.fire(new GeneratedWebResources(provider, generatedResources));
+
          ShellMessages.success(out, "Generated UI for [" + entity.getQualifiedName() + "]");
       }
 
    }
 
-   private ScaffoldProvider getScaffoldType(final String scaffoldType)
+   private ScaffoldProvider getScaffoldType(String scaffoldType)
    {
       ScaffoldProvider scaffoldImpl = null;
+      if (scaffoldType == null
+               && prompt.promptBoolean("No scaffold type was selected, use default (Metawidget & JSF)?"))
+      {
+         scaffoldType = "metawidget";
+      }
+      else if (scaffoldType == null)
+      {
+         throw new RuntimeException("Re-run with --scaffoldType {...}");
+      }
+
       for (ScaffoldProvider type : impls)
       {
          if (ConstraintInspector.getName(type.getClass()).equals(scaffoldType))
@@ -203,16 +165,25 @@ public class ScaffoldPlugin implements Plugin
          }
       }
 
-      if ((scaffoldImpl == null) && (scaffoldType != null)
-               && prompt.promptBoolean("No scaffold found for [" + scaffoldType + "], use Forge default?", true))
+      if (!scaffoldImpl.installed(project)
+               && prompt.promptBoolean("Scaffold provider [" + scaffoldType + "] is not installed. Install it?"))
       {
-         scaffoldImpl = defaultScaffold;
+         scaffoldImpl.install(project);
       }
-      else if ((scaffoldImpl == null)
-               && prompt.promptBoolean("No scaffold type was provided, use Forge default?", true))
+      else if (!scaffoldImpl.installed(project))
       {
-         scaffoldImpl = defaultScaffold;
+         throw new RuntimeException("Aborted.");
       }
+
+      if (project.hasFacet(WebResourceFacet.class))
+      {
+         FileResource<?> favicon = project.getFacet(WebResourceFacet.class).getWebResource("/favicon.ico");
+         if (!favicon.exists())
+         {
+            favicon.setContents(getClass().getResourceAsStream("/org/jboss/seam/forge/scaffold/favicon.ico"));
+         }
+      }
+
       return scaffoldImpl;
    }
 
@@ -258,7 +229,7 @@ public class ScaffoldPlugin implements Plugin
       }
    }
 
-   public static void createOrOverwrite(final ShellPrompt prompt, final FileResource<?> resource,
+   public static Resource<?> createOrOverwrite(final ShellPrompt prompt, final FileResource<?> resource,
             final InputStream contents,
             final boolean overwrite)
    {
@@ -267,10 +238,12 @@ public class ScaffoldPlugin implements Plugin
       {
          resource.createNewFile();
          resource.setContents(contents);
+         return resource;
       }
+      return null;
    }
 
-   public static void createOrOverwrite(final ShellPrompt prompt, final FileResource<?> resource,
+   public static Resource<?> createOrOverwrite(final ShellPrompt prompt, final FileResource<?> resource,
             final String contents,
             final boolean overwrite)
    {
@@ -279,6 +252,8 @@ public class ScaffoldPlugin implements Plugin
       {
          resource.createNewFile();
          resource.setContents(contents);
+         return resource;
       }
+      return null;
    }
 }

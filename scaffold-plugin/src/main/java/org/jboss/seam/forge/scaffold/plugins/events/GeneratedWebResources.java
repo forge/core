@@ -19,32 +19,35 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.seam.forge.scaffold;
+package org.jboss.seam.forge.scaffold.plugins.events;
 
 import java.util.List;
 
-import org.jboss.seam.forge.parser.java.JavaClass;
-import org.jboss.seam.forge.project.Project;
 import org.jboss.seam.forge.resources.Resource;
+import org.jboss.seam.forge.scaffold.ScaffoldProvider;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public interface ScaffoldProvider
+public class GeneratedWebResources
 {
-   List<Resource<?>> generateFromEntity(Project project, JavaClass entity, boolean overwrite);
+   private final List<Resource<?>> generatedViews;
+   private final ScaffoldProvider provider;
 
-   List<Resource<?>> generateIndex(Project project, boolean overwrite);
+   public GeneratedWebResources(ScaffoldProvider provider, List<Resource<?>> generatedViews)
+   {
+      this.generatedViews = generatedViews;
+      this.provider = provider;
+   }
 
-   List<Resource<?>> getGeneratedResources(Project project);
+   public List<Resource<?>> getGeneratedViews()
+   {
+      return generatedViews;
+   }
 
-   List<Resource<?>> generateTemplates(Project project, boolean overwrite);
-
-   AccessStrategy getAccessStrategy(Project project);
-
-   void install(Project project);
-
-   boolean installed(Project project);
-
+   public ScaffoldProvider getProvider()
+   {
+      return provider;
+   }
 }

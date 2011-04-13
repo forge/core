@@ -68,7 +68,7 @@ public class ServletFacet extends BaseFacet
       getConfigFile().setContents(output);
    }
 
-   private FileResource<?> getConfigFile()
+   public FileResource<?> getConfigFile()
    {
       DirectoryResource webRoot = project.getFacet(WebResourceFacet.class).getWebRootDirectory();
       return (FileResource<?>) webRoot.getChild("WEB-INF" + File.separator + "web.xml");
@@ -165,6 +165,13 @@ public class ServletFacet extends BaseFacet
                   "</html>");
       }
       return true;
+   }
+
+   public static String mappingToRegex(String mapping)
+   {
+      return mapping.replaceAll("\\.", "\\.")
+               .replaceAll("^\\*(.*)", "^(.*)$1\\$")
+               .replaceAll("(.*)\\*$", "^$1(.*)\\$");
    }
 
 }

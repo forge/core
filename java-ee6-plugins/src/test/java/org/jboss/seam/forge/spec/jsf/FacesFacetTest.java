@@ -22,11 +22,17 @@
 
 package org.jboss.seam.forge.spec.jsf;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+import java.util.List;
+
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.forge.project.Project;
+import org.jboss.seam.forge.project.facets.WebResourceFacet;
+import org.jboss.seam.forge.resources.DirectoryResource;
 import org.jboss.seam.forge.resources.FileResource;
 import org.jboss.seam.forge.spec.javaee6.jsf.FacesFacet;
 import org.jboss.seam.forge.test.SingletonAbstractShellTest;
@@ -42,13 +48,56 @@ public class FacesFacetTest extends SingletonAbstractShellTest
    @Test
    public void testFacesConfigCreatedWhenInstalled() throws Exception
    {
-      Project project = initializeJavaProject();
-      queueInputLines("", "", "");
-      getShell().execute("project install-facet forge.spec.jsf");
-      assertTrue(project.hasFacet(FacesFacet.class));
+      Project project = setUpJSF();
       FileResource<?> config = project.getFacet(FacesFacet.class).getConfigFile();
 
       assertNotNull(config);
       assertTrue(config.exists());
+
+      WebResourceFacet web = project.getFacet(WebResourceFacet.class);
+      DirectoryResource child = web.getWebRootDirectory().getOrCreateChildDirectory("views")
+               .getOrCreateChildDirectory("test");
+
+      FileResource<?> view = (FileResource<?>) child.getChild("view.xhtml");
+      view.createNewFile();
+
+      FacesFacet faces = project.getFacet(FacesFacet.class);
+      List<String> webPaths = faces.getWebPaths(view);
+
+      assertEquals(2, webPaths.size());
+      assertEquals("/views/test/view.jsf", webPaths.get(0));
+      assertEquals("/faces/views/test/view.xhtml", webPaths.get(1));
+   }
+
+   @Test
+   public void testFacesFacetConvertsFromResourceToWebPathRoundTrip() throws Exception
+   {
+      Project project = setUpJSF();
+
+      WebResourceFacet web = project.getFacet(WebResourceFacet.class);
+      DirectoryResource child = web.getWebRootDirectory().getOrCreateChildDirectory("views")
+               .getOrCreateChildDirectory("test");
+
+      FileResource<?> view = (FileResource<?>) child.getChild("view.xhtml");
+      view.createNewFile();
+
+      FacesFacet faces = project.getFacet(FacesFacet.class);
+      List<String> webPaths = faces.getWebPaths(view);
+
+      assertEquals(2, webPaths.size());
+      assertEquals("/views/test/view.jsf", webPaths.get(0));
+      assertEquals("/faces/views/test/view.xhtml", webPaths.get(1));
+
+      assertEquals(view, faces.getResourceForWebPath(webPaths.get(0)));
+      assertEquals(view, faces.getResourceForWebPath(webPaths.get(1)));
+   }
+
+   private Project setUpJSF() throws IOException
+   {
+      Project project = initializeJavaProject();
+      queueInputLines("", "", "");
+      getShell().execute("project install-facet forge.spec.jsf");
+      assertTrue(project.hasFacet(FacesFacet.class));
+      return project;
    }
 }

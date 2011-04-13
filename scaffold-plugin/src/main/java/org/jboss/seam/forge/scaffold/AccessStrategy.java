@@ -23,28 +23,16 @@ package org.jboss.seam.forge.scaffold;
 
 import java.util.List;
 
-import org.jboss.seam.forge.parser.java.JavaClass;
-import org.jboss.seam.forge.project.Project;
 import org.jboss.seam.forge.resources.Resource;
 
 /**
- * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * Defines how a user will interact with a given web-resource.
  * 
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface ScaffoldProvider
+public interface AccessStrategy
 {
-   List<Resource<?>> generateFromEntity(Project project, JavaClass entity, boolean overwrite);
+   public List<String> getWebPaths(Resource<?> r);
 
-   List<Resource<?>> generateIndex(Project project, boolean overwrite);
-
-   List<Resource<?>> getGeneratedResources(Project project);
-
-   List<Resource<?>> generateTemplates(Project project, boolean overwrite);
-
-   AccessStrategy getAccessStrategy(Project project);
-
-   void install(Project project);
-
-   boolean installed(Project project);
-
+   public Resource<?> fromWebPath(String path);
 }

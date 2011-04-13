@@ -19,13 +19,15 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.seam.forge.scaffold.providers;
+package org.metawidget.forge;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.jboss.seam.forge.parser.JavaParser;
@@ -37,12 +39,19 @@ import org.jboss.seam.forge.project.dependencies.DependencyBuilder;
 import org.jboss.seam.forge.project.facets.DependencyFacet;
 import org.jboss.seam.forge.project.facets.JavaSourceFacet;
 import org.jboss.seam.forge.project.facets.WebResourceFacet;
+import org.jboss.seam.forge.resources.Resource;
 import org.jboss.seam.forge.resources.java.JavaResource;
+import org.jboss.seam.forge.scaffold.AccessStrategy;
 import org.jboss.seam.forge.scaffold.ScaffoldProvider;
 import org.jboss.seam.forge.scaffold.plugins.ScaffoldPlugin;
+import org.jboss.seam.forge.shell.ShellMessages;
+import org.jboss.seam.forge.shell.ShellPrintWriter;
 import org.jboss.seam.forge.shell.ShellPrompt;
+import org.jboss.seam.forge.shell.events.InstallFacets;
 import org.jboss.seam.forge.shell.plugins.Alias;
 import org.jboss.seam.forge.spec.javaee6.cdi.CDIFacet;
+import org.jboss.seam.forge.spec.javaee6.jpa.PersistenceFacet;
+import org.jboss.seam.forge.spec.javaee6.jsf.FacesFacet;
 import org.jboss.seam.forge.spec.javaee6.servlet.ServletFacet;
 import org.jboss.seam.render.TemplateCompiler;
 import org.jboss.seam.render.template.CompiledTemplateResource;
@@ -60,12 +69,13 @@ public class MetawidgetScaffold implements ScaffoldProvider
    private static final String PARTIAL_STATE_SAVING = "javax.faces.PARTIAL_STATE_SAVING";
    private static final String SEAM_PERSIST_TRANSACTIONAL_ANNO = "org.jboss.seam.transaction.Transactional";
    private static final String SEAM_PERSIST_INTERCEPTOR = "org.jboss.seam.transaction.TransactionInterceptor";
-   private static final String BACKING_BEAN_TEMPLATE = "org/jboss/seam/forge/scaffold/templates/BackingBean.jv";
-   private static final String VIEW_TEMPLATE = "org/jboss/seam/forge/scaffold/templates/view.xhtml";
-   private static final String CREATE_TEMPLATE = "org/jboss/seam/forge/scaffold/templates/create.xhtml";
-   private static final String LIST_TEMPLATE = "org/jboss/seam/forge/scaffold/templates/list.xhtml";
-   private static final String CONFIG_TEMPLATE = "org/metawidget/metawidget.xml";
    private static final String METAWIDGET_DISABLE_EVENT = "org.metawidget.faces.component.DONT_USE_PRERENDER_VIEW_EVENT";
+
+   private static final String BACKING_BEAN_TEMPLATE = "org/metawidget/scaffold/BackingBean.jv";
+   private static final String VIEW_TEMPLATE = "org/metawidget/scaffold/view.xhtml";
+   private static final String CREATE_TEMPLATE = "org/metawidget/scaffold/create.xhtml";
+   private static final String LIST_TEMPLATE = "org/metawidget/scaffold/list.xhtml";
+   private static final String CONFIG_TEMPLATE = "org/metawidget/metawidget.xml";
 
    private final Dependency metawidget = DependencyBuilder.create("org.metawidget:metawidget");
    private final Dependency seamPersist = DependencyBuilder
@@ -80,7 +90,13 @@ public class MetawidgetScaffold implements ScaffoldProvider
    private ShellPrompt prompt;
 
    @Inject
+   private ShellPrintWriter writer;
+
+   @Inject
    private TemplateCompiler compiler;
+
+   @Inject
+   private Event<InstallFacets> install;
 
    @PostConstruct
    public void init()
@@ -92,8 +108,9 @@ public class MetawidgetScaffold implements ScaffoldProvider
    }
 
    @Override
-   public void fromEntity(final Project project, final JavaClass entity, final boolean overwrite)
+   public List<Resource<?>> generateFromEntity(final Project project, final JavaClass entity, final boolean overwrite)
    {
+      List<Resource<?>> result = new ArrayList<Resource<?>>();
       try
       {
          JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
@@ -102,7 +119,10 @@ public class MetawidgetScaffold implements ScaffoldProvider
          if (!entity.hasMethodSignature("toString"))
          {
             Refactory.createToStringFromFields(entity);
-            ScaffoldPlugin.createOrOverwrite(prompt, java.getJavaResource(entity), entity.toString(), overwrite);
+            ShellMessages.info(writer, "Entity [" + entity.getName()
+                     + "] does not have a .toString() method. Generating...");
+            result.add(ScaffoldPlugin.createOrOverwrite(prompt, java.getJavaResource(entity), entity.toString(),
+                     overwrite));
          }
 
          CompiledTemplateResource backingBeanTemplate = compiler.compile(BACKING_BEAN_TEMPLATE);
@@ -113,7 +133,8 @@ public class MetawidgetScaffold implements ScaffoldProvider
          JavaClass viewBean = JavaParser.parse(JavaClass.class, backingBeanTemplate.render(context));
          viewBean.setPackage(java.getBasePackage() + ".view");
          viewBean.addAnnotation(SEAM_PERSIST_TRANSACTIONAL_ANNO);
-         ScaffoldPlugin.createOrOverwrite(prompt, java.getJavaResource(viewBean), viewBean.toString(), overwrite);
+         result.add(ScaffoldPlugin.createOrOverwrite(prompt, java.getJavaResource(viewBean), viewBean.toString(),
+                  overwrite));
 
          // Set context for view generation
          context = new HashMap<Object, Object>();
@@ -124,18 +145,19 @@ public class MetawidgetScaffold implements ScaffoldProvider
 
          // Generate views
          String type = entity.getName().toLowerCase();
-         ScaffoldPlugin.createOrOverwrite(prompt, web.getWebResource("scaffold/" + type + "/view.xhtml"),
-                  viewTemplate.render(context), overwrite);
-         ScaffoldPlugin.createOrOverwrite(prompt, web.getWebResource("scaffold/" + type + "/create.xhtml"),
+         result.add(ScaffoldPlugin.createOrOverwrite(prompt, web.getWebResource("scaffold/" + type + "/view.xhtml"),
+                  viewTemplate.render(context), overwrite));
+         result.add(ScaffoldPlugin.createOrOverwrite(prompt, web.getWebResource("scaffold/" + type + "/create.xhtml"),
                   createTemplate.render(context),
-                  overwrite);
-         ScaffoldPlugin.createOrOverwrite(prompt, web.getWebResource("scaffold/" + type + "/list.xhtml"),
-                  listTemplate.render(context), overwrite);
+                  overwrite));
+         result.add(ScaffoldPlugin.createOrOverwrite(prompt, web.getWebResource("scaffold/" + type + "/list.xhtml"),
+                  listTemplate.render(context), overwrite));
       }
       catch (Exception e)
       {
          throw new RuntimeException("Error generating default scaffolding.", e);
       }
+      return result;
    }
 
    public void createMetawidgetConfig(final Project project, final boolean overwrite)
@@ -148,11 +170,10 @@ public class MetawidgetScaffold implements ScaffoldProvider
 
    public void createPersistenceUtils(final Project project, final boolean overwrite)
    {
-      ClassLoader loader = Thread.currentThread().getContextClassLoader();
       JavaClass util = JavaParser.parse(JavaClass.class,
-               loader.getResourceAsStream("org/jboss/seam/forge/jpa/PersistenceUtil.jv"));
+               getClass().getResourceAsStream("/org/metawidget/persistence/PersistenceUtil.jv"));
       JavaClass producer = JavaParser.parse(JavaClass.class,
-               loader.getResourceAsStream("org/jboss/seam/forge/jpa/DatasourceProducer.jv"));
+               getClass().getResourceAsStream("/org/metawidget/persistence/DatasourceProducer.jv"));
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
 
       try
@@ -170,8 +191,16 @@ public class MetawidgetScaffold implements ScaffoldProvider
    }
 
    @Override
-   public void installInto(final Project project)
+   @SuppressWarnings("unchecked")
+   public void install(final Project project)
    {
+      if (!(project.hasFacet(WebResourceFacet.class) && project.hasFacet(PersistenceFacet.class)
+               && project.hasFacet(CDIFacet.class) && project.hasFacet(FacesFacet.class)))
+      {
+         install.fire(new InstallFacets(WebResourceFacet.class, PersistenceFacet.class, CDIFacet.class,
+                  FacesFacet.class));
+      }
+
       DependencyFacet df = project.getFacet(DependencyFacet.class);
       CDIFacet cdi = project.getFacet(CDIFacet.class);
       ServletFacet servlet = project.getFacet(ServletFacet.class);
@@ -187,6 +216,7 @@ public class MetawidgetScaffold implements ScaffoldProvider
       List<Node> list = webxml.getRootNode().get("context-param/param-name");
 
       // Hack to support JSF2 and metawidget
+      ShellMessages.info(writer, "JSF2 and Metawidget currently require Partial State Saving to be disabled.");
       boolean pssUpdated = false;
       boolean mweUpdated = false;
       for (Node node : list)
@@ -224,18 +254,82 @@ public class MetawidgetScaffold implements ScaffoldProvider
       }
       createPersistenceUtils(project, true);
       createMetawidgetConfig(project, true);
+      generateTemplates(project, true);
    }
 
    @Override
-   public boolean isInstalledIn(final Project project)
+   public boolean installed(final Project project)
    {
       DependencyFacet df = project.getFacet(DependencyFacet.class);
-      CDIFacet cdi = project.getFacet(CDIFacet.class);
-      WebResourceFacet web = project.getFacet(WebResourceFacet.class);
 
       return df.hasDependency(metawidget) && df.hasDependency(seamPersist)
-               && cdi.getConfig().getInterceptors().contains(SEAM_PERSIST_INTERCEPTOR)
-               && web.getWebResource("/WEB-INF/metawidget.xml").exists();
+               && project.hasFacet(WebResourceFacet.class)
+               && project.hasFacet(PersistenceFacet.class)
+               && project.hasFacet(CDIFacet.class)
+               && project.hasFacet(FacesFacet.class)
+               && project.getFacet(CDIFacet.class).getConfig().getInterceptors().contains(SEAM_PERSIST_INTERCEPTOR)
+               && project.getFacet(WebResourceFacet.class).getWebResource("/WEB-INF/metawidget.xml").exists();
+   }
+
+   @Override
+   public List<Resource<?>> generateIndex(Project project, boolean overwrite)
+   {
+      List<Resource<?>> result = new ArrayList<Resource<?>>();
+      WebResourceFacet web = project.getFacet(WebResourceFacet.class);
+
+      project.getFacet(ServletFacet.class).getConfig().welcomeFile("index.html");
+
+      result.add(ScaffoldPlugin.createOrOverwrite(prompt, web.getWebResource("index.html"), getClass()
+               .getResourceAsStream("/org/metawidget/templates/index.html"), overwrite));
+
+      result.add(ScaffoldPlugin.createOrOverwrite(prompt, web.getWebResource("index.xhtml"),
+               getClass().getResourceAsStream("/org/metawidget/templates/index.xhtml"), overwrite));
+
+      generateTemplates(project, overwrite);
+      return result;
+   }
+
+   @Override
+   public List<Resource<?>> getGeneratedResources(Project project)
+   {
+      // TODO Auto-generated method stub
+      return null;
+   }
+
+   @Override
+   public AccessStrategy getAccessStrategy(Project project)
+   {
+      final FacesFacet faces = project.getFacet(FacesFacet.class);
+
+      return new AccessStrategy()
+      {
+         @Override
+         public List<String> getWebPaths(Resource<?> r)
+         {
+            return faces.getWebPaths(r);
+         }
+
+         @Override
+         public Resource<?> fromWebPath(String path)
+         {
+            return faces.getResourceForWebPath(path);
+         }
+      };
+   }
+
+   @Override
+   public List<Resource<?>> generateTemplates(Project project, boolean overwrite)
+   {
+      List<Resource<?>> result = new ArrayList<Resource<?>>();
+      WebResourceFacet web = project.getFacet(WebResourceFacet.class);
+
+      result.add(ScaffoldPlugin.createOrOverwrite(prompt, web.getWebResource("/resources/forge-template.xhtml"),
+               getClass().getResourceAsStream("/org/metawidget/templates/forge-template.xhtml"), overwrite));
+
+      result.add(ScaffoldPlugin.createOrOverwrite(prompt, web.getWebResource("/resources/forge.css"),
+               getClass().getResourceAsStream("/org/metawidget/templates/forge.css"), overwrite));
+
+      return result;
    }
 
 }
