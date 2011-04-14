@@ -1091,12 +1091,13 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    }
 
    @Override
-   protected String promptWithCompleter(String message, final Completer tempCompleter)
+   public String promptWithCompleter(String message, final Completer tempCompleter)
    {
       if (!message.isEmpty() && message.matches("^.*\\S$"))
       {
          message = message + " ";
       }
+      message = renderColor(ShellColor.CYAN, " \u00BB ") + message;
 
       try
       {

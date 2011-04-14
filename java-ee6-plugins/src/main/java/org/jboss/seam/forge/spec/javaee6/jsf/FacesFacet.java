@@ -103,8 +103,7 @@ public class FacesFacet extends BaseFacet
       ServletFacet facet = project.getFacet(ServletFacet.class);
       WebAppDescriptor webXml = facet.getConfig();
 
-      // TODO should probably take into account faces default suffixes
-      // javax.faces.DEFAULT_SUFFIX
+      // TODO should probably take into account facelets view mappings
       // facelets.VIEW_MAPPINGS
 
       if (webXml.hasFacesServlet())
@@ -150,13 +149,29 @@ public class FacesFacet extends BaseFacet
             {
                String path = r.getFullyQualifiedName().substring(d.getFullyQualifiedName().length());
 
-               List<String> mappings = getFacesServletMappings();
-               for (String mapping : mappings)
+               for (String p : getWebPaths(path))
                {
-                  results.add(buildFacesViewId(mapping, path));
+                  if (!results.contains(p))
+                     results.add(p);
                }
                break;
             }
+         }
+      }
+      return results;
+   }
+
+   public List<String> getWebPaths(String path)
+   {
+      List<String> results = new ArrayList<String>();
+      if (getResourceForWebPath(path) == null)
+      {
+         List<String> mappings = getFacesServletMappings();
+         for (String mapping : mappings)
+         {
+            String viewId = buildFacesViewId(mapping, path);
+            if (!results.contains(viewId))
+               results.add(viewId);
          }
       }
       return results;
@@ -198,36 +213,42 @@ public class FacesFacet extends BaseFacet
             queue.addAll(strings);
 
             Resource<?> temp = d;
-            while (!queue.isEmpty())
+            while (queue.size() > 1)
             {
                Resource<?> child = temp.getChild(queue.remove());
-               if (child.exists())
+               if (child != null && child.exists())
                {
                   temp = child;
-
-                  if (queue.size() == 1)
-                  {
-                     List<Resource<?>> list = temp.listResources();
-                     for (Resource<?> r : list)
-                     {
-                        if (r.getName().equals(queue.peek()))
-                        {
-                           return r;
-                        }
-                        else
-                        {
-                           String name = queue.peek();
-                           if (r.getName().startsWith(name))
-                           {
-                              return r;
-                           }
-                        }
-                     }
-                  }
                }
                else
                {
                   break;
+               }
+
+               if (queue.isEmpty())
+               {
+                  return child;
+               }
+            }
+
+            if (temp != null)
+            {
+               String name = queue.remove();
+               for (String suffix : getFacesSuffixes())
+               {
+                  Resource<?> child = null;
+                  if (name.endsWith(suffix))
+                  {
+                     child = temp.getChild(name);
+                  }
+                  else
+                  {
+                     child = temp.getChild(name + suffix);
+                  }
+                  if (child != null && child.exists())
+                  {
+                     return child;
+                  }
                }
             }
          }
@@ -240,37 +261,76 @@ public class FacesFacet extends BaseFacet
     */
    private String buildFacesViewId(final String servletMapping, final String resourcePath)
    {
-      StringBuffer result = new StringBuffer();
-
-      Map<Pattern, String> patterns = new HashMap<Pattern, String>();
-
-      Pattern pathMapping = Pattern.compile("^(/.*)/\\*$");
-      Pattern extensionMapping = Pattern.compile("^\\*(\\..*)$");
-      Pattern defaultMapping = Pattern.compile("^/\\*$");
-
-      patterns.put(pathMapping, "$1" + resourcePath);
-      patterns.put(extensionMapping, resourcePath.replaceAll("^(.*)(\\.\\w+)$", "$1") + "$1");
-      patterns.put(defaultMapping, resourcePath);
-
-      boolean matched = false;
-      Iterator<Pattern> iterator = patterns.keySet().iterator();
-      while (matched == false && iterator.hasNext())
+      for (String suffix : getFacesSuffixes())
       {
-         Pattern p = iterator.next();
-         Matcher m = p.matcher(servletMapping);
-         if (m.matches())
+         if (resourcePath.endsWith(suffix))
          {
-            String replacement = patterns.get(p);
-            m.appendReplacement(result, replacement);
-            matched = true;
+            StringBuffer result = new StringBuffer();
+
+            Map<Pattern, String> patterns = new HashMap<Pattern, String>();
+
+            Pattern pathMapping = Pattern.compile("^(/.*)/\\*$");
+            Pattern extensionMapping = Pattern.compile("^\\*(\\..*)$");
+            Pattern defaultMapping = Pattern.compile("^/\\*$");
+
+            patterns.put(pathMapping, "$1" + resourcePath);
+            patterns.put(extensionMapping, resourcePath.replaceAll("^(.*)(\\.\\w+)$", "$1") + "$1");
+            patterns.put(defaultMapping, resourcePath);
+
+            boolean matched = false;
+            Iterator<Pattern> iterator = patterns.keySet().iterator();
+            while (matched == false && iterator.hasNext())
+            {
+               Pattern p = iterator.next();
+               Matcher m = p.matcher(servletMapping);
+               if (m.matches())
+               {
+                  String replacement = patterns.get(p);
+                  m.appendReplacement(result, replacement);
+                  matched = true;
+               }
+            }
+
+            if (matched == false)
+            {
+               return null;
+            }
+
+            return result.toString();
          }
       }
+      return resourcePath;
+   }
 
-      if (matched == false)
+   public List<String> getFacesSuffixes()
+   {
+      List<String> suffixes = getFacesDefaultSuffixes();
+      for (String s : getFaceletsDefaultSuffixes())
       {
-         return null;
+         if (!suffixes.contains(s))
+            suffixes.add(s);
       }
+      return suffixes;
+   }
 
-      return result.toString();
+   public List<String> getFacesDefaultSuffixes()
+   {
+      ServletFacet facet = project.getFacet(ServletFacet.class);
+      WebAppDescriptor webXml = facet.getConfig();
+      return webXml.getFacesDefaultSuffixes();
+   }
+
+   public List<String> getFaceletsDefaultSuffixes()
+   {
+      ServletFacet facet = project.getFacet(ServletFacet.class);
+      WebAppDescriptor webXml = facet.getConfig();
+      return webXml.getFaceletsDefaultSuffixes();
+   }
+
+   public List<String> getFaceletsViewMapping()
+   {
+      ServletFacet facet = project.getFacet(ServletFacet.class);
+      WebAppDescriptor webXml = facet.getConfig();
+      return webXml.getFaceletsViewMappings();
    }
 }

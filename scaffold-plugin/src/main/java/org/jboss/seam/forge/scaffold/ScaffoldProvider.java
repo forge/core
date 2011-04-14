@@ -43,8 +43,7 @@ public interface ScaffoldProvider
 
    AccessStrategy getAccessStrategy(Project project);
 
-   void install(Project project);
+   List<Resource<?>> install(Project project);
 
    boolean installed(Project project);
-
 }

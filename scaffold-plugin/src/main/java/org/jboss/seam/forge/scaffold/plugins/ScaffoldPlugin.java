@@ -40,7 +40,7 @@ import org.jboss.seam.forge.resources.FileResource;
 import org.jboss.seam.forge.resources.Resource;
 import org.jboss.seam.forge.resources.java.JavaResource;
 import org.jboss.seam.forge.scaffold.ScaffoldProvider;
-import org.jboss.seam.forge.scaffold.plugins.events.GeneratedWebResources;
+import org.jboss.seam.forge.scaffold.plugins.events.ScaffoldGeneratedResources;
 import org.jboss.seam.forge.scaffold.shell.ScaffoldProviderCompleter;
 import org.jboss.seam.forge.shell.ShellMessages;
 import org.jboss.seam.forge.shell.ShellPrompt;
@@ -78,7 +78,7 @@ public class ScaffoldPlugin implements Plugin
    private Instance<ScaffoldProvider> impls;
 
    @Inject
-   private Event<GeneratedWebResources> generatedEvent;
+   private Event<ScaffoldGeneratedResources> generatedEvent;
 
    @Command("gen-indexes")
    public void generateIndex(
@@ -91,7 +91,8 @@ public class ScaffoldPlugin implements Plugin
       List<Resource<?>> generatedResources = provider.generateIndex(project, overwrite);
 
       // TODO give plugins a chance to react to generated resources, use event bus?
-      generatedEvent.fire(new GeneratedWebResources(provider, generatedResources));
+      if (!generatedResources.isEmpty())
+         generatedEvent.fire(new ScaffoldGeneratedResources(provider, generatedResources));
    }
 
    @Command("gen-templates")
@@ -105,43 +106,8 @@ public class ScaffoldPlugin implements Plugin
       List<Resource<?>> generatedResources = provider.generateTemplates(project, overwrite);
 
       // TODO give plugins a chance to react to generated resources, use event bus?
-      generatedEvent.fire(new GeneratedWebResources(provider, generatedResources));
-   }
-
-   @Command("gen-from-entity")
-   public void generateFromEntity(
-            @Option(name = "scaffoldType", required = false,
-                     completer = ScaffoldProviderCompleter.class) final String scaffoldType,
-            @Option(flagOnly = true, name = "overwrite") final boolean overwrite,
-            @Option(required = false) JavaResource[] targets,
-            final PipeOut out) throws FileNotFoundException
-   {
-      if (((targets == null) || (targets.length < 1))
-               && (currentResource instanceof JavaResource))
-      {
-         targets = new JavaResource[] { (JavaResource) currentResource };
-      }
-
-      List<JavaResource> javaTargets = selectTargets(out, targets);
-      if (javaTargets.isEmpty())
-      {
-         ShellMessages.error(out, "Must specify a domain entity on which to operate.");
-         return;
-      }
-
-      ScaffoldProvider provider = getScaffoldType(scaffoldType);
-
-      for (JavaResource jr : javaTargets)
-      {
-         JavaClass entity = (JavaClass) (jr).getJavaSource();
-         List<Resource<?>> generatedResources = provider.generateFromEntity(project, entity, overwrite);
-
-         // TODO give plugins a chance to react to generated resources, use event bus?
-         generatedEvent.fire(new GeneratedWebResources(provider, generatedResources));
-
-         ShellMessages.success(out, "Generated UI for [" + entity.getQualifiedName() + "]");
-      }
-
+      if (!generatedResources.isEmpty())
+         generatedEvent.fire(new ScaffoldGeneratedResources(provider, generatedResources));
    }
 
    private ScaffoldProvider getScaffoldType(String scaffoldType)
@@ -227,6 +193,43 @@ public class ScaffoldPlugin implements Plugin
          ShellMessages.info(out, "Skipped non-@Entity Java resource ["
                   + entity.getQualifiedName() + "]");
       }
+   }
+
+   @Command("gen-from-entity")
+   public void generateFromEntity(
+            @Option(name = "scaffoldType", required = false,
+                     completer = ScaffoldProviderCompleter.class) final String scaffoldType,
+            @Option(flagOnly = true, name = "overwrite") final boolean overwrite,
+            @Option(required = false) JavaResource[] targets,
+            final PipeOut out) throws FileNotFoundException
+   {
+      if (((targets == null) || (targets.length < 1))
+               && (currentResource instanceof JavaResource))
+      {
+         targets = new JavaResource[] { (JavaResource) currentResource };
+      }
+
+      List<JavaResource> javaTargets = selectTargets(out, targets);
+      if (javaTargets.isEmpty())
+      {
+         ShellMessages.error(out, "Must specify a domain entity on which to operate.");
+         return;
+      }
+
+      ScaffoldProvider provider = getScaffoldType(scaffoldType);
+
+      for (JavaResource jr : javaTargets)
+      {
+         JavaClass entity = (JavaClass) (jr).getJavaSource();
+         List<Resource<?>> generatedResources = provider.generateFromEntity(project, entity, overwrite);
+
+         // TODO give plugins a chance to react to generated resources, use event bus?
+         if (!generatedResources.isEmpty())
+            generatedEvent.fire(new ScaffoldGeneratedResources(provider, generatedResources));
+
+         ShellMessages.success(out, "Generated UI for [" + entity.getQualifiedName() + "]");
+      }
+
    }
 
    public static Resource<?> createOrOverwrite(final ShellPrompt prompt, final FileResource<?> resource,

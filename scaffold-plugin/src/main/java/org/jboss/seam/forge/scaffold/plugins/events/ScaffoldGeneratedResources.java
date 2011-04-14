@@ -30,18 +30,18 @@ import org.jboss.seam.forge.scaffold.ScaffoldProvider;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class GeneratedWebResources
+public class ScaffoldGeneratedResources
 {
    private final List<Resource<?>> generatedViews;
    private final ScaffoldProvider provider;
 
-   public GeneratedWebResources(ScaffoldProvider provider, List<Resource<?>> generatedViews)
+   public ScaffoldGeneratedResources(ScaffoldProvider provider, List<Resource<?>> generatedViews)
    {
       this.generatedViews = generatedViews;
       this.provider = provider;
    }
 
-   public List<Resource<?>> getGeneratedViews()
+   public List<Resource<?>> getResources()
    {
       return generatedViews;
    }

@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jboss.seam.forge.resources.FileResource;
+import org.jboss.seam.forge.shell.completer.CommandCompleter;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -204,4 +205,13 @@ public interface ShellPrompt
     * @param defaultIfEmpty The value to be returned when an empty or whitespace-only user input is read.
     */
    <T> T prompt(String message, Class<T> clazz, T defaultIfEmpty);
+
+   /**
+    * Prompt for user input, first printing the given line, then returning user input with help from the given
+    * completer.
+    * 
+    * @param message The prompt message to display until valid input is entered
+    * @param completer The command completer instance to use during completion
+    */
+   String promptCompleter(String string, CommandCompleter completer);
 }

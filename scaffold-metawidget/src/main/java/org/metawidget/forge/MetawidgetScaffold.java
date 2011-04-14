@@ -192,7 +192,7 @@ public class MetawidgetScaffold implements ScaffoldProvider
 
    @Override
    @SuppressWarnings("unchecked")
-   public void install(final Project project)
+   public List<Resource<?>> install(final Project project)
    {
       if (!(project.hasFacet(WebResourceFacet.class) && project.hasFacet(PersistenceFacet.class)
                && project.hasFacet(CDIFacet.class) && project.hasFacet(FacesFacet.class)))
@@ -254,7 +254,7 @@ public class MetawidgetScaffold implements ScaffoldProvider
       }
       createPersistenceUtils(project, true);
       createMetawidgetConfig(project, true);
-      generateTemplates(project, true);
+      return generateTemplates(project, true);
    }
 
    @Override
