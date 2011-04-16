@@ -296,11 +296,15 @@ public abstract class AbstractShellPrompt implements Shell
          println();
          for (T entry : options)
          {
-            if (entry != null)
+            if (entry != null && entry.equals(defaultIfEmpty))
+            {
+               print(ShellColor.BOLD, "  " + count + " - [" + entry + "]");
+            }
+            else if (entry != null)
             {
                print("  " + count + " - [" + entry + "]");
             }
-            else
+            else if (defaultIfEmpty == null)
             {
                print(ShellColor.BOLD, "  " + count + " - (none)");
             }

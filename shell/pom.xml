@@ -29,7 +29,7 @@
    <properties>
 		<mvel.version>2.1.beta1</mvel.version>
 		<jansi.version>1.5</jansi.version>
-		<jline.version>2.5</jline.version>
+		<jline.version>2.6-SNAPSHOT</jline.version>
 		<httpclient.version>4.0.1</httpclient.version>
 		<yaml.version>1.7</yaml.version>
    </properties>
@@ -157,6 +157,17 @@
       <repository>
          <id>codehaus</id>
          <url>http://snapshots.repository.codehaus.org/</url>
+         <layout>default</layout>
+         <releases>
+            <enabled>false</enabled>
+         </releases>
+         <snapshots>
+            <enabled>true</enabled>
+         </snapshots>
+      </repository>
+      <repository>
+         <id>sonatype</id>
+         <url>https://repository.sonatype.org/</url>
          <layout>default</layout>
          <releases>
             <enabled>false</enabled>
