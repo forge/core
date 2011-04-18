@@ -1,0 +1,34 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+
+   <parent>
+      <groupId>org.jboss.seam.forge</groupId>
+      <artifactId>forge-parent</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+      <relativePath>../pom.xml</relativePath>
+   </parent>
+
+   <artifactId>forge-project-model-maven-tests</artifactId>
+   <packaging>jar</packaging>
+   <name>Seam Forge - Project Model Maven Tests</name>
+	<description>Tests for implementation of the Forge Project Model API using Maven</description>
+
+   <dependencies>
+      <dependency>
+         <groupId>org.jboss.seam.forge</groupId>
+         <artifactId>forge-project-model-maven</artifactId>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.seam.forge</groupId>
+         <artifactId>forge-test-harness</artifactId>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.seam.forge</groupId>
+         <artifactId>forge-shell</artifactId>
+         <scope>test</scope>
+      </dependency>
+   </dependencies>
+
+</project>

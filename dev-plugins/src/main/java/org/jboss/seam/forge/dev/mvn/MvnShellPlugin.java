@@ -26,7 +26,7 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 
-import org.jboss.seam.forge.project.facets.MavenCoreFacet;
+import org.jboss.seam.forge.maven.MavenCoreFacet;
 import org.jboss.seam.forge.shell.Shell;
 import org.jboss.seam.forge.shell.plugins.Alias;
 import org.jboss.seam.forge.shell.plugins.DefaultCommand;

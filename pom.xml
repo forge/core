@@ -22,18 +22,21 @@
 	</prerequisites>
 
 	<modules>
-		<module>event-bus</module>
+		<module>event-bus-api</module>
 		<module>git-tools</module>
 		<module>parser-java-api</module>
 		<module>parser-java</module>
 		<module>parser-xml</module>
-		<module>project-model</module>
-		<module>project-model-tests</module>
 		<module>shell-api</module>
+		<module>maven-api</module>
+		<module>project-model-maven</module>
+		<module>project-model-maven-tests</module>
 		<module>test-harness</module>
 		<module>shell</module>
-		<module>java-ee6-plugins</module>
-		<module>scaffold-plugin</module>
+		<module>javaee-api</module>
+		<module>javaee-impl</module>
+		<module>scaffold-api</module>
+		<module>scaffold-plugins</module>
 		<module>scaffold-metawidget</module>
 		<module>dev-plugins</module>
 	</modules>
@@ -95,7 +98,12 @@
 			</dependency>
 			<dependency>
 				<groupId>org.jboss.seam.forge</groupId>
-				<artifactId>forge-project-model</artifactId>
+				<artifactId>forge-maven-api</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.seam.forge</groupId>
+				<artifactId>forge-project-model-maven</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -110,12 +118,22 @@
 			</dependency>
 			<dependency>
 				<groupId>org.jboss.seam.forge</groupId>
-				<artifactId>forge-javaee-6.0-plugins</artifactId>
+				<artifactId>forge-javaee-api</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jboss.seam.forge</groupId>
-				<artifactId>forge-scaffold</artifactId>
+				<artifactId>forge-javaee-integration</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.seam.forge</groupId>
+				<artifactId>forge-scaffold-api</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.seam.forge</groupId>
+				<artifactId>forge-scaffold-plugins</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

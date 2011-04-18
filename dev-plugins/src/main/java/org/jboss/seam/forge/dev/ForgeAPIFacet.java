@@ -18,7 +18,7 @@ import org.jboss.seam.forge.shell.Shell;
 import org.jboss.seam.forge.shell.plugins.Alias;
 import org.jboss.seam.forge.shell.plugins.RequiresFacet;
 import org.jboss.seam.forge.shell.plugins.RequiresPackagingType;
-import org.jboss.seam.forge.spec.javaee6.cdi.CDIFacet;
+import org.jboss.seam.forge.spec.javaee.CDIFacet;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

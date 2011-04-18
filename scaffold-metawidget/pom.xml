@@ -28,26 +28,20 @@
    <dependencies>
       <dependency>
          <groupId>org.jboss.seam.forge</groupId>
-         <artifactId>forge-shell-api</artifactId>
+         <artifactId>forge-scaffold-api</artifactId>
          <scope>provided</scope>
       </dependency>
       <dependency>
          <groupId>org.jboss.seam.forge</groupId>
-         <artifactId>forge-scaffold</artifactId>
+         <artifactId>forge-javaee-api</artifactId>
          <scope>provided</scope>
       </dependency>
+
       <dependency>
          <groupId>org.jboss.seam.render</groupId>
          <artifactId>seam-render</artifactId>
          <version>${seam.render.version}</version>
       </dependency>
-
-      <dependency>
-         <groupId>org.jboss.seam.forge</groupId>
-         <artifactId>forge-javaee-6.0-plugins</artifactId>
-         <scope>provided</scope>
-      </dependency>
-
       <dependency>
          <groupId>org.metawidget</groupId>
          <artifactId>metawidget</artifactId>

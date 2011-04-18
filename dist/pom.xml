@@ -16,12 +16,8 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.jboss.weld</groupId>
-			<artifactId>weld-core</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.jboss.seam.forge</groupId>
-			<artifactId>forge-javaee-6.0-plugins</artifactId>
+			<artifactId>forge-javaee-impl</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -31,7 +27,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.seam.forge</groupId>
-			<artifactId>forge-scaffold</artifactId>
+			<artifactId>forge-scaffold-plugins</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -44,6 +40,11 @@
 			<artifactId>forge-reference-guide</artifactId>
 			<version>${project.version}</version>
 			<type>war</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.jboss.weld</groupId>
+			<artifactId>weld-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.logging</groupId>

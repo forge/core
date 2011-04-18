@@ -29,7 +29,7 @@
    <properties>
 		<mvel.version>2.1.beta1</mvel.version>
 		<jansi.version>1.5</jansi.version>
-		<jline.version>2.6-SNAPSHOT</jline.version>
+		<jline.version>2.5</jline.version>
 		<httpclient.version>4.0.1</httpclient.version>
 		<yaml.version>1.7</yaml.version>
    </properties>
@@ -37,7 +37,7 @@
    <dependencies>
       <dependency>
          <groupId>org.jboss.seam.forge</groupId>
-         <artifactId>forge-project-model</artifactId>
+         <artifactId>forge-project-model-maven</artifactId>
       </dependency>
       <dependency>
          <groupId>org.jboss.seam.forge</groupId>
