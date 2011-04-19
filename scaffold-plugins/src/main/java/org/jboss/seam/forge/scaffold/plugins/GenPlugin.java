@@ -39,7 +39,7 @@ import org.jboss.fpak.strategy.ParseStrategy;
 import org.jboss.fpak.strategy.RunStrategy;
 import org.jboss.fpak.strategy.builtin.DefaultParseStrategy;
 import org.jboss.fpak.strategy.builtin.DefaultRunStrategy;
-import org.jboss.seam.forge.scaffold.plugins.events.AdvertiseGenProfile;
+import org.jboss.seam.forge.scaffold.events.AdvertiseGenProfile;
 import org.jboss.seam.forge.scaffold.plugins.shell.ProfileCompleter;
 import org.jboss.seam.forge.shell.Shell;
 import org.jboss.seam.forge.shell.plugins.Alias;

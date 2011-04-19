@@ -26,7 +26,7 @@ import java.util.List;
 import org.jboss.seam.forge.resources.Resource;
 
 /**
- * Defines how a user will interact with a given web-resource.
+ * Defines how a web-user will interact with a given web-resource.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */

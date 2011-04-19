@@ -1097,7 +1097,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       {
          message = message + " ";
       }
-      message = renderColor(ShellColor.CYAN, " \u00BB ") + message;
+      message = renderColor(ShellColor.CYAN, " ? ") + message;
 
       try
       {

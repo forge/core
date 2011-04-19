@@ -39,7 +39,7 @@ import org.jboss.seam.forge.resources.FileResource;
 import org.jboss.seam.forge.resources.Resource;
 import org.jboss.seam.forge.resources.java.JavaResource;
 import org.jboss.seam.forge.scaffold.ScaffoldProvider;
-import org.jboss.seam.forge.scaffold.plugins.events.ScaffoldGeneratedResources;
+import org.jboss.seam.forge.scaffold.events.ScaffoldGeneratedResources;
 import org.jboss.seam.forge.scaffold.plugins.shell.ScaffoldProviderCompleter;
 import org.jboss.seam.forge.shell.ShellMessages;
 import org.jboss.seam.forge.shell.ShellPrompt;
