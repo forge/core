@@ -28,12 +28,11 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.jboss.seam.forge.dev.mvn.resources.MavenDependencyResource;
-import org.jboss.seam.forge.dev.mvn.resources.MavenPomResource;
-import org.jboss.seam.forge.dev.mvn.resources.MavenProfileResource;
-import org.jboss.seam.forge.dev.mvn.resources.MavenRepositoryResource;
-import org.jboss.seam.forge.project.dependencies.Dependency;
-import org.jboss.seam.forge.project.dependencies.ScopeType;
+import org.apache.maven.model.Dependency;
+import org.jboss.seam.forge.maven.resources.MavenDependencyResource;
+import org.jboss.seam.forge.maven.resources.MavenPomResource;
+import org.jboss.seam.forge.maven.resources.MavenProfileResource;
+import org.jboss.seam.forge.maven.resources.MavenRepositoryResource;
 import org.jboss.seam.forge.resources.Resource;
 import org.jboss.seam.forge.shell.ShellColor;
 import org.jboss.seam.forge.shell.plugins.Alias;
@@ -106,13 +105,13 @@ public class LsMavenPomPlugin implements Plugin
                                  +
                                  out.renderColor(ShellColor.BOLD, " : ")
                                  +
-                                 out.renderColor(ShellColor.NONE, dep.getPackagingType() == null ? "" : dep
-                                          .getPackagingType().toLowerCase())
+                                 out.renderColor(ShellColor.NONE, dep.getType() == null ? "" : dep
+                                          .getType().toLowerCase())
                                  +
                                  out.renderColor(ShellColor.BOLD, " : ")
                                  +
-                                 out.renderColor(determineDependencyShellColor(dep.getScopeTypeEnum()),
-                                          dep.getScopeType() == null ? "compile" : dep.getScopeType()
+                                 out.renderColor(determineDependencyShellColor(dep.getScope()),
+                                          dep.getScope() == null ? "compile" : dep.getScope()
                                                    .toLowerCase()));
             }
          }
@@ -143,27 +142,23 @@ public class LsMavenPomPlugin implements Plugin
       }
    }
 
-   private ShellColor determineDependencyShellColor(final ScopeType type)
+   private ShellColor determineDependencyShellColor(final String string)
    {
-      if (type == null)
+      if (string == null)
       {
          return ShellColor.YELLOW;
       }
-      switch (type)
-      {
-      case PROVIDED:
+      if ("provided".equalsIgnoreCase(string))
          return ShellColor.GREEN;
-      case COMPILE:
+      else if ("compile".equalsIgnoreCase(string))
          return ShellColor.YELLOW;
-      case RUNTIME:
+      else if ("runtime".equalsIgnoreCase(string))
          return ShellColor.MAGENTA;
-      case OTHER:
+      else if ("system".equalsIgnoreCase(string))
          return ShellColor.BLACK;
-      case SYSTEM:
-         return ShellColor.BLACK;
-      case TEST:
+      else if ("test".equalsIgnoreCase(string))
          return ShellColor.BLUE;
-      }
+
       return ShellColor.NONE;
    }
 }

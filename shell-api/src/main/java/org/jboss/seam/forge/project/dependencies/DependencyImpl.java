@@ -34,11 +34,12 @@ import org.jboss.seam.forge.project.packaging.PackagingType;
  */
 public class DependencyImpl implements Dependency
 {
-   private String scopeType;
-   private String version;
    private String groupId;
    private String artifactId;
+   private String version;
+   private String scopeType;
    private String packagingType;
+   private String classifier;
    private List<Dependency> excludedDependencies = new ArrayList<Dependency>();
 
    DependencyImpl()
@@ -107,6 +108,17 @@ public class DependencyImpl implements Dependency
    }
 
    @Override
+   public String getClassifier()
+   {
+      return classifier;
+   }
+
+   public void setClassifier(String classifier)
+   {
+      this.classifier = classifier;
+   }
+
+   @Override
    public List<Dependency> getExcludedDependencies()
    {
       return excludedDependencies;
@@ -166,21 +178,44 @@ public class DependencyImpl implements Dependency
       {
          return true;
       }
-      if (!(o instanceof DependencyImpl))
+      if (!(o instanceof Dependency))
       {
          return false;
       }
 
-      DependencyImpl that = (DependencyImpl) o;
+      Dependency that = (Dependency) o;
 
-      return !(artifactId != null ? !artifactId.equals(that.artifactId) : that.artifactId != null)
-               &&
-               !(excludedDependencies != null ? !excludedDependencies.equals(that.excludedDependencies)
-                        : that.excludedDependencies != null) &&
-               !(groupId != null ? !groupId.equals(that.groupId) : that.groupId != null) &&
-               !(packagingType != null ? !packagingType.equals(that.packagingType) : that.packagingType != null) &&
-               !(scopeType != null ? !scopeType.equals(that.scopeType) : that.scopeType != null) &&
-               !(version != null ? !version.equals(that.version) : that.version != null);
+      boolean exclusionsEqual = false;
+
+      if (excludedDependencies != null)
+      {
+         if (that.getExcludedDependencies() != null)
+         {
+            List<Dependency> temp = new ArrayList<Dependency>();
+            temp.addAll(excludedDependencies);
+            if (temp.containsAll(that.getExcludedDependencies()))
+            {
+               temp.removeAll(that.getExcludedDependencies());
+               if (temp.isEmpty())
+               {
+                  return true;
+               }
+            }
+         }
+      }
+      else
+      {
+         exclusionsEqual = that.getExcludedDependencies() == null;
+      }
+
+      return !(artifactId != null ? !artifactId.equals(that.getArtifactId()) : that.getArtifactId() != null)
+               && exclusionsEqual
+               && !(groupId != null ? !groupId.equals(that.getGroupId()) : that.getGroupId() != null)
+               && !(packagingType != null ? !packagingType.equals(that.getPackagingType())
+                        : that.getPackagingType() != null) &&
+               !(scopeType != null ? !scopeType.equals(that.getScopeType()) : that.getScopeType() != null) &&
+               !(version != null ? !version.equals(that.getVersion()) : that.getVersion() != null) &&
+               !(classifier != null ? !classifier.equals(that.getClassifier()) : that.getClassifier() != null);
 
    }
 

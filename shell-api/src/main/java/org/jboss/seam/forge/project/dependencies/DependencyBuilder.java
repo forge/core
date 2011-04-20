@@ -55,6 +55,7 @@ public class DependencyBuilder implements Dependency
       builder.setVersion(dep.getVersion());
       builder.setPackagingType(dep.getPackagingType());
       builder.setScopeType(dep.getScopeType());
+      builder.setClassifier(dep.getClassifier());
       return builder;
    }
 
@@ -176,6 +177,12 @@ public class DependencyBuilder implements Dependency
       return this;
    }
 
+   public DependencyBuilder setClassifier(String classifier)
+   {
+      dep.setClassifier(classifier);
+      return this;
+   }
+
    @Override
    public String getArtifactId()
    {
@@ -234,6 +241,12 @@ public class DependencyBuilder implements Dependency
    public ScopeType getScopeTypeEnum()
    {
       return dep.getScopeTypeEnum();
+   }
+
+   @Override
+   public String getClassifier()
+   {
+      return dep.getClassifier();
    }
 
    /**

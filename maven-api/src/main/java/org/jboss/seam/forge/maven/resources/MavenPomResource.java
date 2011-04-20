@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.seam.forge.dev.mvn.resources;
+package org.jboss.seam.forge.maven.resources;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,12 +23,11 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Profile;
 import org.apache.maven.model.Repository;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.jboss.seam.forge.maven.dependencies.MavenDependencyAdapter;
-import org.jboss.seam.forge.project.dependencies.Dependency;
 import org.jboss.seam.forge.project.services.ResourceFactory;
 import org.jboss.seam.forge.resources.FileResource;
 import org.jboss.seam.forge.resources.Resource;
@@ -94,8 +93,7 @@ public class MavenPomResource extends FileResource<MavenPomResource>
    private void listDependencies(List<Resource<?>> children)
    {
       Model model = getCurrentModel();
-      List<Dependency> dependencies = MavenDependencyAdapter.fromMavenList(model.getDependencies());
-      for (Dependency dep : dependencies)
+      for (Dependency dep : model.getDependencies())
       {
          children.add(new MavenDependencyResource(this, dep));
       }

@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jboss.seam.forge.parser.java.Field;
+import org.jboss.seam.forge.parser.java.FieldHolder;
 import org.jboss.seam.forge.parser.java.JavaSource;
 import org.jboss.seam.forge.resources.Resource;
 import org.jboss.seam.forge.resources.ResourceFlag;
@@ -73,5 +74,28 @@ public class JavaFieldResource extends JavaMemberResource<Field<JavaSource<?>>>
    public String toString()
    {
       return field.toString();
+   }
+
+   @Override
+   @SuppressWarnings({ "unchecked", "rawtypes" })
+   public boolean delete() throws UnsupportedOperationException
+   {
+      JavaSource<?> origin = field.getOrigin();
+      if (origin instanceof FieldHolder)
+      {
+         ((FieldHolder) origin).removeField(field);
+         if (!((FieldHolder) origin).hasField(field))
+         {
+            ((JavaResource) this.getParent()).setContents(origin.toString());
+            return true;
+         }
+      }
+      return false;
+   }
+
+   @Override
+   public boolean delete(boolean recursive) throws UnsupportedOperationException
+   {
+      return delete();
    }
 }

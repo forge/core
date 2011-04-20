@@ -132,6 +132,12 @@ public class ExcludedDependencyBuilder implements Dependency
    }
 
    @Override
+   public String getClassifier()
+   {
+      throw new IllegalStateException("Not implemented for Exclusions");
+   }
+
+   @Override
    public String toCoordinates()
    {
       return DependencyBuilder.toId(this);

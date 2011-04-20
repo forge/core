@@ -28,11 +28,16 @@
   </dependencies>
   <repositories>
     <repository>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
       <id>jgit-repository</id>
       <url>http://download.eclipse.org/jgit/maven</url>
+      <snapshots>
+      	<enabled>false</enabled>
+      	<updatePolicy>never</updatePolicy>
+      </snapshots>
+      <releases>
+      	<enabled>true</enabled>
+      	<updatePolicy>never</updatePolicy>
+      </releases>
     </repository>
   </repositories>
   <build>

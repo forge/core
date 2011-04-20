@@ -24,8 +24,6 @@ package org.jboss.seam.forge.shell.plugins.builtin;
 
 import javax.inject.Inject;
 
-import org.jboss.seam.forge.resources.DirectoryResource;
-import org.jboss.seam.forge.resources.FileResource;
 import org.jboss.seam.forge.resources.Resource;
 import org.jboss.seam.forge.shell.Shell;
 import org.jboss.seam.forge.shell.plugins.Alias;
@@ -33,7 +31,6 @@ import org.jboss.seam.forge.shell.plugins.DefaultCommand;
 import org.jboss.seam.forge.shell.plugins.Help;
 import org.jboss.seam.forge.shell.plugins.Option;
 import org.jboss.seam.forge.shell.plugins.Plugin;
-import org.jboss.seam.forge.shell.plugins.RequiresResource;
 import org.jboss.seam.forge.shell.plugins.Topic;
 
 /**
@@ -41,8 +38,7 @@ import org.jboss.seam.forge.shell.plugins.Topic;
  */
 @Alias("rm")
 @Topic("File & Resources")
-@RequiresResource(DirectoryResource.class)
-@Help("Removes a file or directory")
+@Help("Removes a resource")
 public class RmPlugin implements Plugin
 {
    private final Shell shell;
@@ -55,22 +51,17 @@ public class RmPlugin implements Plugin
 
    @DefaultCommand
    public void rm(
-            @Option(name = "recursive", shortName = "r", help = "recursively delete files and directories", flagOnly = true) final boolean recursive,
+            @Option(name = "recursive", shortName = "r", help = "recursively delete resources", flagOnly = true) final boolean recursive,
                   @Option(name = "force", shortName = "f", help = "do not prompt to confirm operations", flagOnly = true) final boolean force,
                   @Option(description = "path", required = true) final Resource<?>[] paths)
    {
       for (Resource<?> resource : paths)
       {
-         if (resource instanceof FileResource)
+         if (force || shell.promptBoolean("delete: " + resource.getName() + ": are you sure?"))
          {
-            FileResource<?> fResource = (FileResource<?>) resource;
-
-            if (force || shell.promptBoolean("delete: " + resource.toString() + ": are you sure?"))
+            if (!resource.delete(recursive))
             {
-               if (!fResource.delete(recursive))
-               {
-                  throw new RuntimeException("error deleting files.");
-               }
+               throw new RuntimeException("error deleting files.");
             }
          }
       }

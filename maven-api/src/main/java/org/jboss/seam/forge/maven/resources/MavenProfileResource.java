@@ -14,14 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.seam.forge.dev.mvn.resources;
+package org.jboss.seam.forge.maven.resources;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Profile;
-import org.jboss.seam.forge.maven.dependencies.MavenDependencyAdapter;
-import org.jboss.seam.forge.project.dependencies.Dependency;
 import org.jboss.seam.forge.resources.Resource;
 import org.jboss.seam.forge.resources.VirtualResource;
 
@@ -51,8 +50,7 @@ public class MavenProfileResource extends VirtualResource<Profile>
    public List<Resource<?>> listResources()
    {
       List<Resource<?>> children = new ArrayList<Resource<?>>();
-      List<Dependency> dependencies = MavenDependencyAdapter.fromMavenList(profile.getDependencies());
-      for (Dependency dep : dependencies)
+      for (Dependency dep : profile.getDependencies())
       {
          children.add(new MavenDependencyResource(this, dep));
       }
@@ -63,5 +61,17 @@ public class MavenProfileResource extends VirtualResource<Profile>
    public Profile getUnderlyingResourceObject()
    {
       return profile;
+   }
+
+   @Override
+   public boolean delete() throws UnsupportedOperationException
+   {
+      throw new UnsupportedOperationException("not supported");
+   }
+
+   @Override
+   public boolean delete(boolean recursive) throws UnsupportedOperationException
+   {
+      throw new UnsupportedOperationException("not supported");
    }
 }

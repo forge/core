@@ -10,7 +10,7 @@
    <groupId>org.jboss.seam.forge</groupId>
    <artifactId>forge-javaee-api</artifactId>
    <packaging>jar</packaging>
-   <name>Seam Forge - J2EE APIs</name>
+   <name>Seam Forge - Java EE APIs</name>
 
    <dependencies>
       <dependency>

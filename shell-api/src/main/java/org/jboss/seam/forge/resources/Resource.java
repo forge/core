@@ -41,12 +41,22 @@ import java.util.Set;
 public interface Resource<T>
 {
 
-   /*
-    * TODO Add a ResourceFilter API/Utility
+   /**
+    * Delete this resource, return true if successful, false if not.
     * 
-    * Resource.listResources(ResourceFilter filter) <T> List<T> Filter.apply(ResourceFilter<T> filter, List<Resource<?>>
-    * resources) List<Resource<?>> Filter.apply(ResourceFilter<?> filter, List<Resource<?>> resources)
+    * @throws UnsupportedOperationException if deleting is not supported by the underlying implementation.
     */
+   public boolean delete() throws UnsupportedOperationException;
+
+   /**
+    * Delete this resource, return true if successful, false if not.
+    * 
+    * @param recursive if false and this resource both supports recursive deletion and contains children, deletion will
+    *           not occur; otherwise, if true, deletion will propagate to all child resources. Implementations may
+    *           choose simply to delegate to {@link #delete()}
+    * @throws UnsupportedOperationException if deleting is not supported by the underlying implementation.
+    */
+   public boolean delete(boolean recursive) throws UnsupportedOperationException;
 
    /**
     * Return the common name of the resource. If it's a file, for instance, just the file name.

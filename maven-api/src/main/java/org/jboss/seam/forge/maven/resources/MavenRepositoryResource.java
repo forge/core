@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.seam.forge.dev.mvn.resources;
+package org.jboss.seam.forge.maven.resources;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,16 +25,17 @@ import org.jboss.seam.forge.resources.VirtualResource;
 
 /**
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @version $Revision: $
  */
 public class MavenRepositoryResource extends VirtualResource<Repository>
 {
    private final Repository repo;
 
-   public MavenRepositoryResource(Resource<?> parent, Repository repo)
+   public MavenRepositoryResource(Resource<?> parent, Repository repository)
    {
       super(parent);
-      this.repo = repo;
+      this.repo = repository;
    }
 
    @Override
@@ -59,5 +60,17 @@ public class MavenRepositoryResource extends VirtualResource<Repository>
    public Repository getUnderlyingResourceObject()
    {
       return repo;
+   }
+
+   @Override
+   public boolean delete() throws UnsupportedOperationException
+   {
+      throw new UnsupportedOperationException("not supported");
+   }
+
+   @Override
+   public boolean delete(boolean recursive) throws UnsupportedOperationException
+   {
+      throw new UnsupportedOperationException("not supported");
    }
 }

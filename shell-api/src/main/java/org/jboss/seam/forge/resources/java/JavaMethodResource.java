@@ -28,6 +28,7 @@ import java.util.List;
 
 import org.jboss.seam.forge.parser.java.JavaSource;
 import org.jboss.seam.forge.parser.java.Method;
+import org.jboss.seam.forge.parser.java.MethodHolder;
 import org.jboss.seam.forge.parser.java.Parameter;
 import org.jboss.seam.forge.resources.Resource;
 
@@ -90,5 +91,28 @@ public class JavaMethodResource extends JavaMemberResource<Method<JavaSource<?>>
    public String toString()
    {
       return method.toString();
+   }
+
+   @Override
+   @SuppressWarnings({ "unchecked", "rawtypes" })
+   public boolean delete() throws UnsupportedOperationException
+   {
+      JavaSource<?> origin = method.getOrigin();
+      if (origin instanceof MethodHolder)
+      {
+         ((MethodHolder) origin).removeMethod(method);
+         if (!((MethodHolder) origin).hasMethodSignature(method))
+         {
+            ((JavaResource) this.getParent()).setContents(origin.toString());
+            return true;
+         }
+      }
+      return false;
+   }
+
+   @Override
+   public boolean delete(boolean recursive) throws UnsupportedOperationException
+   {
+      return delete();
    }
 }

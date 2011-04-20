@@ -30,6 +30,7 @@ import java.util.List;
 import org.jboss.seam.forge.project.services.ResourceFactory;
 import org.jboss.seam.forge.resources.DirectoryResource;
 import org.jboss.seam.forge.resources.Resource;
+import org.jboss.seam.forge.resources.ResourceFilter;
 
 /**
  * A set of utilities to work with the resources API.
@@ -96,19 +97,32 @@ public class ResourceUtil
    }
 
    @SuppressWarnings("unchecked")
-   public static <E extends Resource<?>, R extends Collection<E>, I extends Collection<Resource<?>>> R filterByType(
-            final Class<E> type, final I list)
+   public static <E extends Resource<?>, R extends Collection<E>> R filter(ResourceFilter filter, Collection<E> list)
    {
-      ArrayList<E> result = new ArrayList<E>();
-
-      for (Resource<?> r : list)
+      List<E> result = new ArrayList<E>();
+      for (E resource : list)
       {
-         if (type.isAssignableFrom(r.getClass()))
+         if (filter.accept(resource))
          {
-            result.add((E) r);
+            result.add(resource);
          }
       }
       return (R) result;
    }
 
+   @SuppressWarnings("unchecked")
+   public static <E extends Resource<?>, R extends Collection<E>, I extends Collection<Resource<?>>> R filterByType(
+            final Class<E> type, final I list)
+   {
+      ResourceFilter filter = new ResourceFilter()
+      {
+         @Override
+         public boolean accept(Resource<?> resource)
+         {
+            return type.isAssignableFrom(resource.getClass());
+         }
+      };
+
+      return (R) filter(filter, list);
+   }
 }

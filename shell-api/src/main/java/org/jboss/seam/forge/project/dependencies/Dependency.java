@@ -39,6 +39,11 @@ public interface Dependency
    String getArtifactId();
 
    /**
+    * Get the classifier for this {@link Dependency}
+    */
+   String getClassifier();
+
+   /**
     * Get the major identifier for this {@link Dependency}.
     */
    String getGroupId();

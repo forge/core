@@ -68,5 +68,5 @@ public interface FieldHolder<T> extends MemberHolder<T, Member>
    /**
     * Remove the given {@link Field} from this {@link T} instance, if it exists; otherwise, do nothing.
     */
-   public T removeField(final Field<T> method);
+   public T removeField(final Field<T> field);
 }

@@ -18,6 +18,7 @@ package org.jboss.seam.forge.dev.mvn.resources;
 
 import java.io.File;
 
+import org.jboss.seam.forge.maven.resources.MavenPomResource;
 import org.junit.Test;
 
 

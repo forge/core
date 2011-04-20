@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.seam.forge.dev.mvn.resources;
+package org.jboss.seam.forge.maven.resources;
 
 import java.util.Collections;
 import java.util.List;
 
-import org.jboss.seam.forge.project.dependencies.Dependency;
+import org.apache.maven.model.Dependency;
 import org.jboss.seam.forge.resources.Resource;
 import org.jboss.seam.forge.resources.ResourceFlag;
 import org.jboss.seam.forge.resources.VirtualResource;
@@ -73,7 +73,20 @@ public class MavenDependencyResource extends VirtualResource<Dependency>
       return dependency.getGroupId() + ":" +
                dependency.getArtifactId() + ":" +
                dependency.getVersion() + ":" +
-               dependency.getPackagingType() + ":" +
-               dependency.getScopeType();
+               dependency.getType() + ":" +
+               dependency.getScope() + ":" +
+               dependency.getClassifier();
+   }
+
+   @Override
+   public boolean delete() throws UnsupportedOperationException
+   {
+      throw new UnsupportedOperationException("not supported");
+   }
+
+   @Override
+   public boolean delete(boolean recursive) throws UnsupportedOperationException
+   {
+      throw new UnsupportedOperationException("not supported");
    }
 }
