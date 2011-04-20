@@ -33,6 +33,7 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Repository;
 import org.jboss.seam.forge.maven.MavenCoreFacet;
@@ -183,6 +184,116 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
          if (areEquivalent(dependency, dep))
          {
             return dependency;
+         }
+      }
+      return null;
+   }
+
+   @Override
+   public void addManagedDependency(final Dependency manDep)
+   {
+      if (!hasManagedDependency(manDep))
+      {
+         MavenCoreFacet maven = project.getFacet(MavenCoreFacet.class);
+         Model pom = maven.getPOM();
+         DependencyManagement depMan = pom.getDependencyManagement();
+         depMan = depMan != null ? depMan : new DependencyManagement();
+
+         List<Dependency> managedDependencies = MavenDependencyAdapter.fromMavenList(depMan.getDependencies());
+         managedDependencies.add(manDep);
+         depMan.setDependencies(MavenDependencyAdapter.toMavenList(managedDependencies));
+         pom.setDependencyManagement(depMan);
+         maven.setPOM(pom);
+      }
+   }
+
+   @Override
+   public boolean hasManagedDependency(final Dependency manDep)
+   {
+      MavenCoreFacet maven = project.getFacet(MavenCoreFacet.class);
+      Model pom = maven.getPOM();
+      DependencyManagement depMan = pom.getDependencyManagement();
+
+      List<Dependency> managedDependencies = depMan != null ? MavenDependencyAdapter.fromMavenList(depMan.getDependencies()) : new ArrayList<Dependency>();
+
+      for (Dependency managedDependency : managedDependencies)
+      {
+         if (areEquivalent(managedDependency, manDep))
+         {
+            return true;
+         }
+      }
+      return false;
+   }
+
+   @Override
+   public boolean hasDirectManagedDependency(final Dependency managedDependency)
+   {
+      MavenCoreFacet maven = project.getFacet(MavenCoreFacet.class);
+      Model pom = maven.getPOM();
+      DependencyManagement depMan = pom.getDependencyManagement();
+
+      List<Dependency> managedDependencies = depMan != null ? MavenDependencyAdapter.fromMavenList(depMan.getDependencies()) : new ArrayList<Dependency>();
+
+      for (Dependency manDep : managedDependencies)
+      {
+         if (areEquivalent(managedDependency, manDep))
+         {
+            return true;
+         }
+      }
+      return false;
+   }
+
+   @Override
+   public void removeManagedDependency(final Dependency manDep)
+   {
+      MavenCoreFacet maven = project.getFacet(MavenCoreFacet.class);
+      Model pom = maven.getPOM();
+      DependencyManagement depMan = pom.getDependencyManagement();
+      depMan = depMan != null ? depMan : new DependencyManagement();
+
+      List<Dependency> managedDependencies = MavenDependencyAdapter.fromMavenList(depMan.getDependencies());
+
+      List<Dependency> toBeRemoved = new ArrayList<Dependency>();
+      for (Dependency managedDependency : managedDependencies)
+      {
+         if (areEquivalent(managedDependency, manDep))
+         {
+            toBeRemoved.add(managedDependency);
+         }
+      }
+      managedDependencies.removeAll(toBeRemoved);
+      depMan.setDependencies(MavenDependencyAdapter.toMavenList(managedDependencies));
+      pom.setDependencyManagement(depMan);
+      maven.setPOM(pom);
+   }
+
+   @Override
+   public List<Dependency> getManagedDependencies()
+   {
+      MavenCoreFacet maven = project.getFacet(MavenCoreFacet.class);
+      Model pom = maven.getPOM();
+      DependencyManagement depMan = pom.getDependencyManagement();
+
+      List<Dependency> managedDependencies = depMan != null ? MavenDependencyAdapter.fromMavenList(depMan.getDependencies()) : new ArrayList<Dependency>();
+      return Collections.unmodifiableList(managedDependencies != null ? managedDependencies : new ArrayList<Dependency>());
+   }
+
+   @Override
+   public Dependency getManagedDependency(final Dependency manDep)
+   {
+      MavenCoreFacet maven = project.getFacet(MavenCoreFacet.class);
+      Model pom = maven.getPOM();
+      DependencyManagement depMan = pom.getDependencyManagement();
+
+      List<Dependency> managedDependencies = depMan != null ? MavenDependencyAdapter.fromMavenList(depMan.getDependencies()) : new ArrayList<Dependency>();
+
+      for (Dependency managedDependency : managedDependencies)
+      {
+         if (areEquivalent(managedDependency, manDep))
+         {
+            return managedDependency;
          }
       }
       return null;

@@ -141,4 +141,40 @@ public class MavenDependencyFacetTest extends ProjectModelTest
       List<Dependency> versions = deps.resolveAvailableVersions("com.ocpsoft:prettyfaces-jsf2");
       assertTrue(versions.size() > 4);
    }
+
+   @Test
+   public void testHasManagedDependency() throws Exception
+   {
+       DependencyFacet manDeps = testProject.getFacet(DependencyFacet.class);
+
+      DependencyBuilder javaeeSpec = DependencyBuilder.create("org.jboss.spec:jboss-javaee-6.0:1.0.0.Final:import:pom");
+      assertTrue(manDeps.hasManagedDependency(javaeeSpec));
+   }
+
+   @Test
+   public void testAddManagedDependency() throws Exception
+   {
+      Dependency dependency =
+               DependencyBuilder.create("org.jboss.seam:seam-bom:3.0.0.Final:import:pom");
+
+      Project project = getProject();
+      DependencyFacet manDeps = project.getFacet(DependencyFacet.class);
+      assertFalse(manDeps.hasManagedDependency(dependency));
+      manDeps.addManagedDependency(dependency);
+      assertTrue(manDeps.hasManagedDependency(dependency));
+   }
+
+   @Test
+   public void testRemoveManagedDependency() throws Exception
+   {
+      Dependency dependency =
+               DependencyBuilder.create("org.jboss.seam:seam-bom:3.0.0.Final:import:pom");
+
+      Project project = getProject();
+      DependencyFacet manDeps = project.getFacet(DependencyFacet.class);
+
+      assertTrue(manDeps.hasManagedDependency(dependency));
+      manDeps.removeManagedDependency(dependency);
+      assertFalse(manDeps.hasManagedDependency(dependency));
+   }
 }

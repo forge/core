@@ -121,6 +121,70 @@ public interface DependencyFacet extends Facet
    public Dependency getDependency(Dependency dependency);
 
    /**
+    * Return true if this {@link Project} contains a managed dependency matching the given {@link Dependency}
+    * at any level of the project hierarchy; return false otherwise. This method ignores
+    * {@link Dependency#getScopeType()}
+    * <p/>
+    * See also: {@link DependencyBuilder}.
+    * <p/>
+    * <b>Notice:</b> This method checks the entire project managed dependency structure, meaning that if a
+    * managed dependency is declared somewhere else in the hierarchy, it will not be detected by
+    * {@link #hasDirectManagedDependency(Dependency)} and
+    * will not be removable via {@link #removeManagedDependency(Dependency)}.
+    */
+   public boolean hasManagedDependency(Dependency managedDependency);
+
+   /**
+    * Return true if this {@link Project} contains a managed dependency matching the given
+    * {@link Dependency}; return false otherwise. This method ignores {@link Dependency#getScopeType()}
+    * <p/>
+    * See also: {@link DependencyBuilder}.
+    * <p/>
+    * <b>Notice:</b> This method checks only the immediate project managed dependencies, meaning that if a
+    * managed dependency is declared somewhere else in the hierarchy, it will not be detected by this method,
+    * even though {@link #hasManagedDependency(Dependency)} may return true.
+    */
+   public boolean hasDirectManagedDependency(Dependency managedDependency);
+
+   /**
+    * Add the given managed {@link Dependency} to this {@link Project}'s immediate list of managed dependencies.
+    * This method first calls {@link #hasManagedDependency(Dependency)} before making changes to the
+    * managed dependency list.
+    * <p/>
+    * See also: {@link DependencyBuilder}.
+    */
+   public void addManagedDependency(Dependency managedDependency);
+
+   /**
+    * Remove the given managed {@link Dependency} from this facet's {@link Project}. This method ignores
+    * {@link Dependency#getScopeType()}
+    * <p/>
+    * See also: {@link DependencyBuilder}.
+    * <p/>
+    * <b>Notice:</b> This method operates only the immediate project managed dependencies, meaning that if a
+    * managed dependency is declared somewhere else in the hierarchy, it will not be removable by this method.
+    * You should call {@link #hasDirectManagedDependency(Dependency)} first in order to check if the managed
+    * dependency exists in this projects immediate managed dependencies.
+    */
+   public void removeManagedDependency(Dependency managedDependency);
+
+   /**
+    * Return an immutable list of all direct managed {@link Dependencies} contained within this project.
+    * (i.e.: all managed dependencies for which {@link ManagedDependencyFacet#hasDirectManagedDependency(Dependency)}
+    * returns true;
+    */
+   public List<Dependency> getManagedDependencies();
+
+   /**
+    * Attempt to locate the given managed {@link Dependency}, if it exists in the {@link Project}, and return it.
+    * <p/>
+    * See also: {@link DependencyBuilder}. See also: {@link #hasManagedDependency(Dependency)}.
+    * 
+    * @return
+    */
+   public Dependency getManagedDependency(Dependency managedDependency);
+
+   /**
     * Return a list of all build dependency properties.(Build properties such, as ${my.version}, can be used anywhere in
     * a dependency, and will be expanded during building to their property value.)
     */

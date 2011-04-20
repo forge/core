@@ -252,6 +252,128 @@ public class ProjectPlugin implements Plugin
    }
 
    /*
+    * Managed Dependency manipulation
+    */
+   @Command(value = "add-managed-dependency", help = "Add a managed dependency to this project.")
+   public void addManDep(
+            @Option(required = true,
+                     type = PromptType.DEPENDENCY_ID,
+                     description = "[ groupId :artifactId {:version :scope :packaging} ]",
+                     help = "managed dependency identifier, ex: \"org.jboss.seam.forge:forge-api:1.0.0\"") Dependency gav,
+            final PipeOut out
+            )
+   {
+      DependencyFacet manDeps = project.getFacet(DependencyFacet.class);
+
+      if (!manDeps.hasManagedDependency(gav)
+               || shell.promptBoolean("Managed dependency already exists [" + gav.getGroupId() + ":" + gav.getArtifactId()
+                        + "], continue?", true))
+      {
+         DependencyBuilder search = DependencyBuilder.create(gav).setVersion("[0,)");
+         List<Dependency> availableVersions = manDeps.resolveAvailableVersions(search);
+
+         if (availableVersions.isEmpty())
+         {
+            throw new RuntimeException("No available versions resolved for managed dependency [" + gav + "]");
+         }
+
+         if (!availableVersions.contains(gav))
+         {
+            ShellMessages.info(out, "No artifact found for managed dependency [" + gav + "]");
+            if (availableVersions.size() > 1)
+            {
+               gav = shell.promptChoiceTyped("Add which version?", availableVersions);
+            }
+            else if (shell.promptBoolean("Use [" + availableVersions.get(0) + "] instead?", true))
+            {
+               gav = availableVersions.get(0);
+            }
+            else
+            {
+               throw new RuntimeException("Could not add managed dependency [" + gav + "]");
+            }
+         }
+
+         if (manDeps.hasManagedDependency(gav))
+         {
+            Dependency managedDependency = manDeps.getManagedDependency(gav);
+            manDeps.removeManagedDependency(managedDependency);
+         }
+         manDeps.addManagedDependency(gav);
+         out.println("Added managed dependency [" + gav + "]");
+      }
+      else
+      {
+         ShellMessages.info(out, "Aborted.");
+      }
+   }
+
+   @Command(value = "find-managed-dependency", help = "Search for managed dependencies in all configured project repositories.")
+   public void searchManDep(
+            @Option(required = true,
+                     help = "managed dependency identifier, ex: \"org.jboss.seam.forge:forge-api:1.0.0\"",
+                     description = "[ groupId:artifactId {:version:scope:packaging} ]",
+                     type = PromptType.DEPENDENCY_ID
+                     ) Dependency gav,
+            @Option(required = false,
+                     flagOnly = true,
+                     help = "Perform a search only within the locally configured repository",
+                     name = "offlineSearch"
+                        ) final boolean offline,
+            final PipeOut out
+            )
+   {
+       DependencyFacet manDeps = project.getFacet(DependencyFacet.class);
+      if ((gav.getVersion() == null) || gav.getVersion().trim().isEmpty())
+      {
+         gav = DependencyBuilder.create(gav).setVersion("[0,)");
+      }
+      List<Dependency> versions = manDeps.resolveAvailableVersions(gav);
+
+      for (Dependency manDep : versions)
+      {
+         out.println(DependencyBuilder.toString(manDep));
+      }
+
+      if (versions.isEmpty())
+      {
+         out.println("No artifacts found for the query [" + gav + "]");
+      }
+   }
+
+   @Command(value = "remove-managed-dependency", help = "Remove a managed dependency from this project")
+   public void removeManDep(
+            @Option(required = true,
+                     type = PromptType.DEPENDENCY_ID,
+                     description = "[ groupId :artifactId {:version :scope :packaging} ]",
+                     help = "managed dependency identifier, ex: \"org.jboss.seam.forge:forge-api:1.0.0\"") final Dependency gav,
+            final PipeOut out
+            )
+   {
+       DependencyFacet manDeps = project.getFacet(DependencyFacet.class);
+      if (manDeps.hasManagedDependency(gav))
+      {
+         manDeps.removeManagedDependency(gav);
+         out.println("Removed managed dependency [" + gav + "]");
+      }
+      else
+      {
+         out.println("Managed dependency [" + gav + "] not found in project... ");
+      }
+   }
+
+   @Command(value = "list-managed-dependencies", help = "List all managed dependencies this project includes")
+   public void listManDeps(final PipeOut out)
+   {
+       DependencyFacet manDeps = project.getFacet(DependencyFacet.class);
+
+      for (Dependency manDep : manDeps.getManagedDependencies())
+      {
+         printDep(out, manDep);
+      }
+   }
+
+   /*
     * Property manipulation
     */
    @Command("set-property")
