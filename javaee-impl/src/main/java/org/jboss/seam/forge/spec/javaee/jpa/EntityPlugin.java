@@ -53,18 +53,18 @@ import org.jboss.seam.forge.spec.javaee.PersistenceFacet;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Alias("new-entity")
+@Alias("entity")
 @RequiresProject
 @RequiresFacet(PersistenceFacet.class)
 @Help("A plugin to manage simple @Entity and View creation; a basic MVC framework plugin.")
-public class NewEntityPlugin implements Plugin
+public class EntityPlugin implements Plugin
 {
    private final Project project;
 
    private final Shell shell;
 
    @Inject
-   public NewEntityPlugin(final Project project, final Shell shell)
+   public EntityPlugin(final Project project, final Shell shell)
    {
       this.project = project;
       this.shell = shell;

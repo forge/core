@@ -50,10 +50,10 @@
             </listitem>
             <listitem>
                Create some JPA entities:
-               <programlisting>$ new-entity --named Customer</programlisting>
+               <programlisting>$ entity --named Customer</programlisting>
                At which point Forge should automatically pick-up the newly created entity, and will be ready to add fields.
-               <programlisting>Customer.java $ new-field string --named firstName
-Customer.java $ new-field string --named lastName</programlisting>
+               <programlisting>Customer.java $ field string --named firstName
+Customer.java $ field string --named lastName</programlisting>
                You may inspect the entity using 'ls'.
                <programlisting>Customer.java $ ls
 

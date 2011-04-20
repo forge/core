@@ -31,8 +31,11 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.forge.parser.java.JavaClass;
 import org.jboss.seam.forge.project.Project;
 import org.jboss.seam.forge.project.facets.JavaSourceFacet;
+import org.jboss.seam.forge.shell.util.ConstraintInspector;
 import org.jboss.seam.forge.shell.util.Packages;
 import org.jboss.seam.forge.spec.javaee.PersistenceFacet;
+import org.jboss.seam.forge.spec.javaee.jpa.EntityPlugin;
+import org.jboss.seam.forge.spec.javaee.jpa.FieldPlugin;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -50,7 +53,7 @@ public class NewEntityPluginTest extends AbstractJPATest
 
       String entityName = "Goofy";
       queueInputLines("");
-      getShell().execute("new-entity --named " + entityName);
+      getShell().execute(ConstraintInspector.getName(EntityPlugin.class) + " --named " + entityName);
 
       String pkg = project.getFacet(PersistenceFacet.class).getEntityPackage() + "." + entityName;
       String path = Packages.toFileSyntax(pkg) + ".java";
@@ -73,10 +76,10 @@ public class NewEntityPluginTest extends AbstractJPATest
       JavaClass javaClass = generateEntity(project);
 
       queueInputLines("gamesWon");
-      getShell().execute("new-field int --fieldName int");
+      getShell().execute(ConstraintInspector.getName(FieldPlugin.class) + " int --fieldName int");
 
       queueInputLines("gamesLost");
-      getShell().execute("new-field int --fieldName #$%#");
+      getShell().execute(ConstraintInspector.getName(FieldPlugin.class) + " int --fieldName #$%#");
 
       javaClass = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(javaClass).getJavaSource();
       assertTrue(javaClass.hasAnnotation(Entity.class));

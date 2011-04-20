@@ -37,7 +37,7 @@ public class DefaultProjectLocator implements ProjectLocator
    public Project createProject(final DirectoryResource dir)
    {
       Project result = null;
-      if (dir.exists())
+      if (dir != null && dir.exists())
       {
          result = new ProjectImpl(dir);
       }

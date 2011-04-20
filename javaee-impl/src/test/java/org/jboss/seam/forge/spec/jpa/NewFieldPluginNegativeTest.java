@@ -27,8 +27,10 @@ import java.io.FileNotFoundException;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.forge.project.Project;
 import org.jboss.seam.forge.project.facets.JavaSourceFacet;
+import org.jboss.seam.forge.shell.util.ConstraintInspector;
 import org.jboss.seam.forge.shell.util.Packages;
 import org.jboss.seam.forge.spec.javaee.PersistenceFacet;
+import org.jboss.seam.forge.spec.javaee.jpa.FieldPlugin;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -46,7 +48,7 @@ public class NewFieldPluginNegativeTest extends AbstractJPATest
       String entityName = "Goofy";
 
       queueInputLines(entityName);
-      getShell().execute("new-field int --named gamesPlayed");
+      getShell().execute(ConstraintInspector.getName(FieldPlugin.class) + " int --named gamesPlayed");
 
       String pkg = project.getFacet(PersistenceFacet.class).getEntityPackage() + "." + entityName;
       String path = Packages.toFileSyntax(pkg) + ".java";

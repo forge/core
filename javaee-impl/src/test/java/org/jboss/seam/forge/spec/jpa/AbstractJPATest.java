@@ -29,8 +29,10 @@ import java.io.IOException;
 import org.jboss.seam.forge.parser.java.JavaClass;
 import org.jboss.seam.forge.project.Project;
 import org.jboss.seam.forge.project.facets.JavaSourceFacet;
+import org.jboss.seam.forge.shell.util.ConstraintInspector;
 import org.jboss.seam.forge.shell.util.Packages;
 import org.jboss.seam.forge.spec.javaee.PersistenceFacet;
+import org.jboss.seam.forge.spec.javaee.jpa.EntityPlugin;
 import org.jboss.seam.forge.test.SingletonAbstractShellTest;
 import org.junit.Before;
 
@@ -57,7 +59,7 @@ public abstract class AbstractJPATest extends SingletonAbstractShellTest
    {
       String entityName = "Goofy" + count++;
       queueInputLines("");
-      getShell().execute("new-entity --named " + entityName);
+      getShell().execute(ConstraintInspector.getName(EntityPlugin.class) + " --named " + entityName);
 
       String pkg = project.getFacet(PersistenceFacet.class).getEntityPackage() + "." + entityName;
       String path = Packages.toFileSyntax(pkg) + ".java";

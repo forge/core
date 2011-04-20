@@ -61,18 +61,18 @@ import org.jboss.seam.forge.spec.javaee.PersistenceFacet;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Alias("new-field")
+@Alias("field")
 @RequiresProject
 @RequiresFacet(PersistenceFacet.class)
 @RequiresResource(JavaResource.class)
 @Help("A plugin to manage simple @Entity and View creation; a basic MVC framework plugin.")
-public class NewFieldPlugin implements Plugin
+public class FieldPlugin implements Plugin
 {
    private final Project project;
    private final Shell shell;
 
    @Inject
-   public NewFieldPlugin(final Project project, final Shell shell)
+   public FieldPlugin(final Project project, final Shell shell)
    {
       this.project = project;
       this.shell = shell;
