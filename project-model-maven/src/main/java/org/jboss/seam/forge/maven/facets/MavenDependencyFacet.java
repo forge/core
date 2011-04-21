@@ -30,6 +30,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.apache.maven.model.Model;
@@ -42,6 +43,8 @@ import org.jboss.seam.forge.project.dependencies.DependencyBuilder;
 import org.jboss.seam.forge.project.dependencies.DependencyRepository;
 import org.jboss.seam.forge.project.dependencies.DependencyRepositoryImpl;
 import org.jboss.seam.forge.project.dependencies.DependencyResolver;
+import org.jboss.seam.forge.project.dependencies.events.AddedDependencies;
+import org.jboss.seam.forge.project.dependencies.events.RemovedDependencies;
 import org.jboss.seam.forge.project.facets.BaseFacet;
 import org.jboss.seam.forge.project.facets.DependencyFacet;
 import org.jboss.seam.forge.project.facets.FacetNotFoundException;
@@ -57,11 +60,16 @@ import org.jboss.seam.forge.shell.plugins.RequiresFacet;
 public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, Facet
 {
    private final DependencyResolver resolver;
+   private final Event<AddedDependencies> added;
+   private final Event<RemovedDependencies> removed;
 
    @Inject
-   public MavenDependencyFacet(final DependencyResolver resolver)
+   public MavenDependencyFacet(final DependencyResolver resolver, final Event<AddedDependencies> added,
+            final Event<RemovedDependencies> removed)
    {
       this.resolver = resolver;
+      this.added = added;
+      this.removed = removed;
    }
 
    @Override
@@ -95,6 +103,7 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
          dependencies.add(dep);
          pom.setDependencies(MavenDependencyAdapter.toMavenList(dependencies));
          maven.setPOM(pom);
+         added.fire(new AddedDependencies(project, dep));
       }
    }
 
@@ -150,6 +159,7 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
       dependencies.removeAll(toBeRemoved);
       pom.setDependencies(MavenDependencyAdapter.toMavenList(dependencies));
       maven.setPOM(pom);
+      removed.fire(new RemovedDependencies(project, toBeRemoved));
    }
 
    @Override

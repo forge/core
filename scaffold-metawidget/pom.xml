@@ -1,66 +1,71 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-   <modelVersion>4.0.0</modelVersion>
-   <parent>
-      <artifactId>forge-parent</artifactId>
-      <groupId>org.jboss.seam.forge</groupId>
-      <version>1.0.0-SNAPSHOT</version>
-      <relativePath>../pom.xml</relativePath>
-   </parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>forge-parent</artifactId>
+		<groupId>org.jboss.seam.forge</groupId>
+		<version>1.0.0-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
 
-   <groupId>org.metawidget</groupId>
-   <artifactId>metawidget-forge</artifactId>
-   <packaging>jar</packaging>
-   <name>Seam Forge - Scaffold Provider for Metawidget</name>
+	<groupId>org.metawidget</groupId>
+	<artifactId>metawidget-forge</artifactId>
+	<packaging>jar</packaging>
+	<name>Seam Forge - Scaffold Provider for Metawidget</name>
 
-   <repositories>
-      <repository>
-         <id>sun</id>
-         <url>http://download.java.net/maven/2/</url>
-      </repository>
-   </repositories>
-   
-   <properties>
-   		<el.version>2.2</el.version>
-   		<metawidget.version>1.10</metawidget.version>
-   		<seam.render.version>1.0.0.Alpha1</seam.render.version>
-   </properties>
+	<repositories>
+		<repository>
+			<id>sun</id>
+			<url>http://download.java.net/maven/2/</url>
+		</repository>
+		<repository>
+			<id>jboss-snapshots</id>
+			<url>https://repository.jboss.org/nexus/content/repositories/snapshots</url>
+		</repository>
+	</repositories>
 
-   <dependencies>
-      <dependency>
-         <groupId>org.jboss.seam.forge</groupId>
-         <artifactId>forge-scaffold-api</artifactId>
-         <scope>provided</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.seam.forge</groupId>
-         <artifactId>forge-javaee-api</artifactId>
-         <scope>provided</scope>
-      </dependency>
+	<properties>
+		<el.version>2.2</el.version>
+		<metawidget.version>1.15-SNAPSHOT</metawidget.version>
+		<seam.render.version>1.0.0.Alpha3</seam.render.version>
+	</properties>
 
-      <dependency>
-         <groupId>org.jboss.seam.render</groupId>
-         <artifactId>seam-render</artifactId>
-         <version>${seam.render.version}</version>
-      </dependency>
-      <dependency>
-         <groupId>org.metawidget</groupId>
-         <artifactId>metawidget</artifactId>
-         <version>${metawidget.version}</version>
-      </dependency>
+	<dependencies>
+		<dependency>
+			<groupId>org.jboss.seam.forge</groupId>
+			<artifactId>forge-scaffold-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.seam.forge</groupId>
+			<artifactId>forge-javaee-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
 
-      <!-- Test Dependencies -->
-      <dependency>
-         <groupId>org.jboss.seam.forge</groupId>
-         <artifactId>forge-test-harness</artifactId>
-         <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.seam.forge</groupId>
-         <artifactId>forge-shell</artifactId>
-         <scope>test</scope>
-      </dependency>
+		<dependency>
+			<groupId>org.jboss.seam.render</groupId>
+			<artifactId>seam-render</artifactId>
+			<version>${seam.render.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.metawidget.modules</groupId>
+			<artifactId>metawidget-all</artifactId>
+			<version>${metawidget.version}</version>
+		</dependency>
 
-   </dependencies>
+		<!-- Test Dependencies -->
+		<dependency>
+			<groupId>org.jboss.seam.forge</groupId>
+			<artifactId>forge-test-harness</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.seam.forge</groupId>
+			<artifactId>forge-shell</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
 
 
 </project>

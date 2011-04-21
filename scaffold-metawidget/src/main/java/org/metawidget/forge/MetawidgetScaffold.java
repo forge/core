@@ -26,15 +26,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.jboss.seam.forge.parser.JavaParser;
 import org.jboss.seam.forge.parser.java.JavaClass;
 import org.jboss.seam.forge.parser.java.util.Refactory;
+import org.jboss.seam.forge.project.Project;
 import org.jboss.seam.forge.project.dependencies.Dependency;
 import org.jboss.seam.forge.project.dependencies.DependencyBuilder;
+import org.jboss.seam.forge.project.dependencies.events.AddedDependencies;
 import org.jboss.seam.forge.project.facets.BaseFacet;
 import org.jboss.seam.forge.project.facets.DependencyFacet;
 import org.jboss.seam.forge.project.facets.JavaSourceFacet;
@@ -44,6 +46,7 @@ import org.jboss.seam.forge.resources.java.JavaResource;
 import org.jboss.seam.forge.scaffold.AccessStrategy;
 import org.jboss.seam.forge.scaffold.ScaffoldProvider;
 import org.jboss.seam.forge.scaffold.util.ScaffoldUtil;
+import org.jboss.seam.forge.shell.ShellColor;
 import org.jboss.seam.forge.shell.ShellMessages;
 import org.jboss.seam.forge.shell.ShellPrintWriter;
 import org.jboss.seam.forge.shell.ShellPrompt;
@@ -86,27 +89,28 @@ public class MetawidgetScaffold extends BaseFacet implements ScaffoldProvider
    private final Dependency metawidget = DependencyBuilder.create("org.metawidget:metawidget");
    private final Dependency seamPersist = DependencyBuilder
             .create("org.jboss.seam.persistence:seam-persistence:[3.0.0-SNAPSHOT],[3.0.0.CR4,)");
+   private final Dependency richfacesUI = DependencyBuilder.create("org.richfaces.ui:richfaces-ui:3.3.3.Final");
+   private final Dependency richfacesImpl = DependencyBuilder
+            .create("org.richfaces.framework:richfaces-impl:3.3.3.Final");
 
-   private CompiledTemplateResource viewTemplate;
-   private CompiledTemplateResource createTemplate;
-   private CompiledTemplateResource listTemplate;
-   private CompiledTemplateResource configTemplate;
+   private final CompiledTemplateResource viewTemplate;
+   private final CompiledTemplateResource createTemplate;
+   private final CompiledTemplateResource listTemplate;
+   private final CompiledTemplateResource configTemplate;
+
+   private final ShellPrompt prompt;
+   private final ShellPrintWriter writer;
+   private final TemplateCompiler compiler;
+   private final Event<InstallFacets> install;
 
    @Inject
-   private ShellPrompt prompt;
-
-   @Inject
-   private ShellPrintWriter writer;
-
-   @Inject
-   private TemplateCompiler compiler;
-
-   @Inject
-   private Event<InstallFacets> install;
-
-   @PostConstruct
-   public void init()
+   public MetawidgetScaffold(ShellPrompt prompt, ShellPrintWriter writer, TemplateCompiler compiler,
+            Event<InstallFacets> install)
    {
+      this.prompt = prompt;
+      this.writer = writer;
+      this.compiler = compiler;
+      this.install = install;
       viewTemplate = compiler.compile(VIEW_TEMPLATE);
       createTemplate = compiler.compile(CREATE_TEMPLATE);
       listTemplate = compiler.compile(LIST_TEMPLATE);
@@ -116,9 +120,57 @@ public class MetawidgetScaffold extends BaseFacet implements ScaffoldProvider
    @Override
    public List<Resource<?>> setup(final boolean overwrite)
    {
-      createPersistenceUtils(overwrite);
-      createMetawidgetConfig(overwrite);
-      return generateTemplates(overwrite);
+      if (!isInstalled())
+      {
+         createPersistenceUtils(overwrite);
+         createMetawidgetConfig(overwrite);
+         return generateTemplates(overwrite);
+      }
+      return new ArrayList<Resource<?>>();
+   }
+
+   public void handleAddedDependencies(@Observes AddedDependencies event)
+   {
+      Project project = event.getProject();
+      if (project.hasFacet(MetawidgetScaffold.class))
+      {
+         boolean richFacesUI = false;
+         boolean richFacesImpl = false;
+         for (Dependency d : event.getDependencies())
+         {
+            if (DependencyBuilder.areEquivalent(richfacesUI, d))
+            {
+               richFacesUI = true;
+            }
+            if (DependencyBuilder.areEquivalent(richfacesImpl, d))
+            {
+               richFacesImpl = true;
+            }
+         }
+
+         if (richFacesImpl || richFacesUI)
+         {
+            setupRichFaces(project);
+         }
+      }
+   }
+
+   private void setupRichFaces(Project project)
+   {
+      if (project.getFacet(DependencyFacet.class).hasDependency(richfacesUI)
+               && project.getFacet(DependencyFacet.class).hasDependency(richfacesImpl))
+      {
+         if (prompt
+                  .promptBoolean(writer.renderColor(ShellColor.YELLOW, "Metawidget")
+                           + " has detected RichFaces installed in this project. Would you like to configure Metawidget to use RichFaces?"))
+         {
+
+            WebResourceFacet web = project.getFacet(WebResourceFacet.class);
+
+            ScaffoldUtil.createOrOverwrite(prompt, web.getWebResource("WEB-INF/metawidget.xml"),
+                     getClass().getResourceAsStream("/org/metawidget/metawidget-richfaces.xml"), true);
+         }
+      }
    }
 
    @Override
@@ -268,6 +320,7 @@ public class MetawidgetScaffold extends BaseFacet implements ScaffoldProvider
       }
       createMetawidgetConfig(false);
       createPersistenceUtils(false);
+      setupRichFaces(project);
 
       return true;
    }

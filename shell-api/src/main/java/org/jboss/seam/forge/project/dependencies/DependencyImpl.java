@@ -198,7 +198,7 @@ public class DependencyImpl implements Dependency
                temp.removeAll(that.getExcludedDependencies());
                if (temp.isEmpty())
                {
-                  return true;
+                  exclusionsEqual = true;
                }
             }
          }
