@@ -23,12 +23,12 @@
 
 	<modules>
 		<module>event-bus-api</module>
-		<module>git-tools</module>
 		<module>parser-java-api</module>
-		<module>parser-java</module>
 		<module>parser-xml</module>
-		<module>shell-api</module>
 		<module>maven-api</module>
+		<module>shell-api</module>
+		<module>git-tools</module>
+		<module>parser-java</module>
 		<module>project-model-maven</module>
 		<module>project-model-maven-tests</module>
 		<module>test-harness</module>

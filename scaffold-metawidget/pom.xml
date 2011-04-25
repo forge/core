@@ -26,7 +26,7 @@
 
 	<properties>
 		<el.version>2.2</el.version>
-		<metawidget.version>1.15-SNAPSHOT</metawidget.version>
+		<metawidget.version>1.10</metawidget.version>
 		<seam.render.version>1.0.0.Alpha3</seam.render.version>
 	</properties>
 
@@ -48,10 +48,17 @@
 			<version>${seam.render.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.metawidget</groupId>
+			<artifactId>metawidget</artifactId>
+			<version>${metawidget.version}</version>
+		</dependency>
+		<!--
+		<dependency>
 			<groupId>org.metawidget.modules</groupId>
 			<artifactId>metawidget-all</artifactId>
 			<version>${metawidget.version}</version>
 		</dependency>
+		-->
 
 		<!-- Test Dependencies -->
 		<dependency>
