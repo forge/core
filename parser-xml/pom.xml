@@ -11,7 +11,7 @@
 	<groupId>org.jboss.forge</groupId>
 	<artifactId>forge-parser-xml</artifactId>
 	
-	<name>Seam Forge - Parser/XML</name>
+	<name>Forge - Parser/XML</name>
 	
 	<dependencies>
 		<dependency>

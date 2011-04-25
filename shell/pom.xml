@@ -24,7 +24,7 @@
 
    <artifactId>forge-shell</artifactId>
    <packaging>jar</packaging>
-   <name>Seam Forge - Shell</name>
+   <name>Forge - Shell</name>
    
    <properties>
 		<mvel.version>2.1.beta1</mvel.version>

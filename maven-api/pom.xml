@@ -10,7 +10,7 @@
 
 	<artifactId>forge-maven-api</artifactId>
 	<packaging>jar</packaging>
-	<name>Seam Forge - Maven Integration APIs</name>
+	<name>Forge - Maven Integration APIs</name>
 
 	<properties>
 		<maven.version>3.0.3</maven.version>

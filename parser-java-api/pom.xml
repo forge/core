@@ -10,7 +10,7 @@
 
     <artifactId>forge-parser-java-api</artifactId>
     <packaging>jar</packaging>
-    <name>Seam Forge - Parser/Java API</name>
+    <name>Forge - Parser/Java API</name>
 
     <dependencies>
         <dependency>

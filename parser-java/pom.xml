@@ -11,7 +11,7 @@
 
 	<artifactId>forge-parser-java</artifactId>
 	<packaging>jar</packaging>
-	<name>Seam Forge - Parser/Java</name>
+	<name>Forge - Parser/Java</name>
 
 	<dependencies>
 		<dependency>

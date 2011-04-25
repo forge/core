@@ -10,7 +10,7 @@
    <groupId>org.jboss.forge</groupId>
    <artifactId>forge-scaffold-api</artifactId>
    <packaging>jar</packaging>
-   <name>Seam Forge - Scaffolding APIs</name>
+   <name>Forge - Scaffolding APIs</name>
 
    <properties>
    		<fpak.version>1.0.Alpha2</fpak.version>

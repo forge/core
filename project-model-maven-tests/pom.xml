@@ -10,7 +10,7 @@
 
    <artifactId>forge-project-model-maven-tests</artifactId>
    <packaging>jar</packaging>
-   <name>Seam Forge - Project Model Maven Tests</name>
+   <name>Forge - Project Model Maven Tests</name>
 	<description>Tests for implementation of the Forge Project Model API using Maven</description>
 
    <dependencies>

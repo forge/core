@@ -9,7 +9,7 @@
 
 	<artifactId>forge-test-harness</artifactId>
 	<packaging>jar</packaging>
-	<name>Seam Forge - Test Harness</name>
+	<name>Forge - Test Harness</name>
 
 	<dependencies>
 		<dependency>

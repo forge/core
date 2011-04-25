@@ -9,7 +9,7 @@
 	</parent>
 	<groupId>org.jboss.forge</groupId>
 	<artifactId>forge-dev-plugins</artifactId>
-	<name>Seam Forge - Dev Plugins</name>
+	<name>Forge - Dev Plugins</name>
 	<dependencies>
 		<dependency>
 			<groupId>org.jboss.forge</groupId>

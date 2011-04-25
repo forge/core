@@ -9,7 +9,7 @@
 	</parent>
 
 	<artifactId>forge-shell-api</artifactId>
-	<name>Seam Forge - Shell API</name>
+	<name>Forge - Shell API</name>
 	<packaging>jar</packaging>
 
 	<dependencies>

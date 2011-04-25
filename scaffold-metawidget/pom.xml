@@ -11,7 +11,7 @@
 	<groupId>org.metawidget</groupId>
 	<artifactId>metawidget-forge</artifactId>
 	<packaging>jar</packaging>
-	<name>Seam Forge - Scaffold Provider for Metawidget</name>
+	<name>Forge - Scaffold Provider for Metawidget</name>
 
 	<repositories>
 		<repository>

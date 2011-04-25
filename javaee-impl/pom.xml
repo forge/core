@@ -10,7 +10,7 @@
    <groupId>org.jboss.forge</groupId>
    <artifactId>forge-javaee-impl</artifactId>
    <packaging>jar</packaging>
-   <name>Seam Forge - Java EE Integration Impl &amp; Plugins</name>
+   <name>Forge - Java EE Integration Impl &amp; Plugins</name>
 
    <dependencies>
       <dependency>

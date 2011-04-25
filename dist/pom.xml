@@ -8,7 +8,7 @@
 	</parent>
 	<artifactId>forge-distribution</artifactId>
 	<groupId>org.jboss.forge</groupId>
-	<name>Seam Forge - Distribution</name>
+	<name>Forge - Distribution</name>
 	<dependencies>
 		<dependency>
 			<groupId>org.jboss.forge</groupId>

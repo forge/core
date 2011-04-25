@@ -10,7 +10,7 @@
 
    <artifactId>forge-event-bus</artifactId>
    <packaging>jar</packaging>
-   <name>Seam Forge - Targeted Event Bus</name>
+   <name>Forge - Targeted Event Bus</name>
 
    <dependencies>
       <dependency>

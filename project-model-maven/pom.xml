@@ -10,7 +10,7 @@
 
 	<artifactId>forge-project-model-maven</artifactId>
 	<packaging>jar</packaging>
-	<name>Seam Forge - Maven Project Model</name>
+	<name>Forge - Maven Project Model</name>
 	<description>Implementation of the Forge Project Model API using Maven</description>
 
 	<properties>
