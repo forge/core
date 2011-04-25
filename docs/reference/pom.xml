@@ -2,14 +2,14 @@
 
    <modelVersion>4.0.0</modelVersion>
 
-   <groupId>org.jboss.seam.forge</groupId>
+   <groupId>org.jboss.forge</groupId>
    <artifactId>forge-reference-guide</artifactId>
    <version>1.0.0-SNAPSHOT</version>
    <packaging>jdocbook</packaging>
    <name>Seam Forge - Reference Guide</name>
 
    <parent>
-      <groupId>org.jboss.seam.forge</groupId>
+      <groupId>org.jboss.forge</groupId>
       <artifactId>forge-parent</artifactId>
       <version>1.0.0-SNAPSHOT</version>
       <relativePath>../../pom.xml</relativePath>

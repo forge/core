@@ -2,31 +2,31 @@
    <modelVersion>4.0.0</modelVersion>
    <parent>
       <artifactId>forge-parent</artifactId>
-      <groupId>org.jboss.seam.forge</groupId>
+      <groupId>org.jboss.forge</groupId>
       <version>1.0.0-SNAPSHOT</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
 
-   <groupId>org.jboss.seam.forge</groupId>
+   <groupId>org.jboss.forge</groupId>
    <artifactId>forge-javaee-impl</artifactId>
    <packaging>jar</packaging>
    <name>Seam Forge - Java EE Integration Impl &amp; Plugins</name>
 
    <dependencies>
       <dependency>
-         <groupId>org.jboss.seam.forge</groupId>
+         <groupId>org.jboss.forge</groupId>
          <artifactId>forge-javaee-api</artifactId>
          <scope>provided</scope>
       </dependency>
 
       <!-- Test Dependencies -->
       <dependency>
-         <groupId>org.jboss.seam.forge</groupId>
+         <groupId>org.jboss.forge</groupId>
          <artifactId>forge-test-harness</artifactId>
          <scope>test</scope>
       </dependency>
       <dependency>
-         <groupId>org.jboss.seam.forge</groupId>
+         <groupId>org.jboss.forge</groupId>
          <artifactId>forge-shell</artifactId>
          <scope>test</scope>
       </dependency>

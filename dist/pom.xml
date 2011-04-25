@@ -3,30 +3,30 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>forge-parent</artifactId>
-		<groupId>org.jboss.seam.forge</groupId>
+		<groupId>org.jboss.forge</groupId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>forge-distribution</artifactId>
-	<groupId>org.jboss.seam.forge</groupId>
+	<groupId>org.jboss.forge</groupId>
 	<name>Seam Forge - Distribution</name>
 	<dependencies>
 		<dependency>
-			<groupId>org.jboss.seam.forge</groupId>
+			<groupId>org.jboss.forge</groupId>
 			<artifactId>forge-shell</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.jboss.seam.forge</groupId>
+			<groupId>org.jboss.forge</groupId>
 			<artifactId>forge-javaee-impl</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.jboss.seam.forge</groupId>
+			<groupId>org.jboss.forge</groupId>
 			<artifactId>forge-dev-plugins</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.jboss.seam.forge</groupId>
+			<groupId>org.jboss.forge</groupId>
 			<artifactId>forge-scaffold-plugins</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -36,7 +36,7 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.jboss.seam.forge</groupId>
+			<groupId>org.jboss.forge</groupId>
 			<artifactId>forge-reference-guide</artifactId>
 			<version>${project.version}</version>
 			<type>war</type>
@@ -71,10 +71,10 @@
 				<configuration>
 					<executable>java</executable>
 					<includeProjectDependencies>true</includeProjectDependencies>
-					<mainClass>org.jboss.seam.forge.shell.Bootstrap</mainClass>
+					<mainClass>org.jboss.forge.shell.Bootstrap</mainClass>
 					<systemProperties>
 						<systemProperty>
-							<key>seam.forge.shell.colorEnabled</key>
+							<key>forge.shell.colorEnabled</key>
 							<value>true</value>
 						</systemProperty>
 					</systemProperties>
@@ -105,7 +105,7 @@
 						<configuration>
 							<systemProperties>
 								<systemProperty>
-									<key>seam.forge.shell.colorEnabled</key>
+									<key>forge.shell.colorEnabled</key>
 									<value>false</value>
 								</systemProperty>
 							</systemProperties>

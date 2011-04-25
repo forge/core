@@ -3,16 +3,16 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>forge-parent</artifactId>
-    <groupId>org.jboss.seam.forge</groupId>
+    <groupId>org.jboss.forge</groupId>
     <version>1.0.0-SNAPSHOT</version>
     <relativePath>../</relativePath>
   </parent>
-  <groupId>org.jboss.seam.forge</groupId>
+  <groupId>org.jboss.forge</groupId>
   <artifactId>forge-git-tools</artifactId>
    <name>Seam Forge - Git Integration</name>
   <description>Isolates Forge build from the addition of another Maven repository for Git</description>
   <properties>
-    <forge.api.version>1.0.0.Alpha3</forge.api.version>
+    <forge.api.version>1.0.0-SNAPSHOT</forge.api.version>
   </properties>
   <dependencies>
     <dependency>
@@ -21,7 +21,7 @@
       <version>0.10.1</version>
     </dependency>
     <dependency>
-      <groupId>org.jboss.seam.forge</groupId>
+      <groupId>org.jboss.forge</groupId>
       <artifactId>forge-shell-api</artifactId>
       <version>${forge.api.version}</version>
     </dependency>
