@@ -62,8 +62,8 @@ Wrote ~/Desktop/example-plugin/src/main/resources/META-INF/beans.xml
 ***SUCCESS*** Installed [forge.spec.cdi] successfully.
 Install which version of the Forge API?
 
-  1 - [org.jboss.seam.forge:forge-shell-api:1.0.0-SNAPSHOT]
-  2 - [org.jboss.seam.forge:forge-shell-api:1.0.0.Alpha2]
+  1 - [org.jboss.forge:forge-shell-api:1.0.0-SNAPSHOT]
+  2 - [org.jboss.forge:forge-shell-api:1.0.0.Alpha2]
 
 Choose an option by typing the number of the selection: 1
 ***SUCCESS*** Installed [forge.api] successfully.
@@ -85,7 +85,7 @@ Choose an option by typing the number of the selection: 1
 	         project, or your plugin will not be detected by Forge.
 	         
             <tip>
-               <literal>'org.jboss.seam.forge : forge-shell-api : {version}'
+               <literal>'org.jboss.forge : forge-shell-api : {version}'
                </literal> is the only dependency you must include in your project. 
             </tip>
             
@@ -106,7 +106,7 @@ Choose an option by typing the number of the selection: 1
   
   <dependencies>
     <dependency>
-      <groupId>org.jboss.seam.forge</groupId>
+      <groupId>org.jboss.forge</groupId>
       <artifactId>forge-shell-api</artifactId>
       <version>${forge.api.version}</version>
     </dependency>
@@ -139,10 +139,10 @@ Choose an option by typing the number of the selection: 1
       <title>Implementing the Plugin interface</title>
       <para>
       	The first thing you must do in order to create a forge plugin, is create a new class
-      	and implement the <literal>org.jboss.seam.forge.shell.plugins.Plugin</literal> interface.
+      	and implement the <literal>org.jboss.forge.shell.plugins.Plugin</literal> interface.
       	Notice that the interface has no methods, this is because you will be adding your own
       	custom commands later.
-         <programlisting>import org.jboss.seam.forge.shell.plugins.Plugin;
+         <programlisting>import org.jboss.forge.shell.plugins.Plugin;
          
 public class ExamplePlugin implements Plugin {
 }</programlisting>
@@ -152,7 +152,7 @@ public class ExamplePlugin implements Plugin {
    <section id="plugin.dev.naming">
       <title>Naming your plugin</title>
       Each plugin should be given a name. This is done by adding the 
-      <literal>@org.jboss.seam.forge.shell.plugins.Alias</literal> annotation to your plugin class.
+      <literal>@org.jboss.forge.shell.plugins.Alias</literal> annotation to your plugin class.
       
       By default, if no <literal>@Alias</literal> annotation is found, the 
       lower-case Class name will be used; for instance, our <literal>ExamplePlugin</literal>,
@@ -665,9 +665,9 @@ public class GrepPlugin implements Plugin
       looking something like this:
       
       <programlisting>[INFO] --- maven-shade-plugin:1.4:shade (default) @ example-plugin ---
-[INFO] Excluding org.jboss.seam.forge:forge-shell-api:jar:{version} from the shaded jar.
-[INFO] Excluding org.jboss.seam.forge:forge-parser-java-api:jar:{version} from the shaded jar.
-[INFO] Excluding org.jboss.seam.forge:forge-parser-xml:jar:{version} from the shaded jar.
+[INFO] Excluding org.jboss.forge:forge-shell-api:jar:{version} from the shaded jar.
+[INFO] Excluding org.jboss.forge:forge-parser-java-api:jar:{version} from the shaded jar.
+[INFO] Excluding org.jboss.forge:forge-parser-xml:jar:{version} from the shaded jar.
 [INFO] Excluding org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api:jar:{version} from the shaded jar.
 [INFO] Excluding javax.enterprise:cdi-api:jar:{version} from the shaded jar.
 [INFO] Excluding org.jboss.spec.javax.interceptor:jboss-interceptors-api:jar:{version} from the shaded jar.
@@ -735,9 +735,9 @@ There are no tests to run.
 [INFO] Building jar: /home/lb3/Desktop/example-plugin/target/example-plugin-1.0.0-SNAPSHOT.jar
 [INFO] 
 [INFO] --- maven-shade-plugin:1.4:shade (default) @ example-plugin ---
-[INFO] Excluding org.jboss.seam.forge:forge-shell-api:jar:1.0.0-SNAPSHOT from the shaded jar.
-[INFO] Excluding org.jboss.seam.forge:forge-parser-java-api:jar:1.0.0-SNAPSHOT from the shaded jar.
-[INFO] Excluding org.jboss.seam.forge:forge-parser-xml:jar:1.0.0-SNAPSHOT from the shaded jar.
+[INFO] Excluding org.jboss.forge:forge-shell-api:jar:1.0.0-SNAPSHOT from the shaded jar.
+[INFO] Excluding org.jboss.forge:forge-parser-java-api:jar:1.0.0-SNAPSHOT from the shaded jar.
+[INFO] Excluding org.jboss.forge:forge-parser-xml:jar:1.0.0-SNAPSHOT from the shaded jar.
 [INFO] Excluding org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api:jar:0.1.4 from the shaded jar.
 [INFO] Excluding javax.enterprise:cdi-api:jar:1.0-SP4 from the shaded jar.
 [INFO] Excluding org.jboss.spec.javax.interceptor:jboss-interceptors-api_1.1_spec:jar:1.0.0.Beta1 from the shaded jar.

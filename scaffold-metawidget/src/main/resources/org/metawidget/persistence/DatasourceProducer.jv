@@ -1,4 +1,4 @@
-package org.jboss.seam.forge.persistence;
+package org.jboss.forge.persistence;
 
 import java.io.Serializable;
 

@@ -14,7 +14,7 @@ msgstr ""
 
 #. Tag: title
 #, no-c-format
-msgid "SeamForge Reference Guide"
+msgid "Seam Forge Reference Guide"
 msgstr ""
 
 #. Tag: productname

@@ -14,7 +14,7 @@
 @REM ----------------------------------------------------------------------------
 
 @REM ----------------------------------------------------------------------------
-@REM Seam Forge Startup script
+@REM Forge Startup script
 @REM
 @REM Required Environment vars:
 @REM ------------------
@@ -139,8 +139,8 @@ goto runForge
 
 @REM Start Forge
 :runForge
-set FORGE_MAIN_CLASS=org.jboss.seam.forge.shell.Bootstrap
-%FORGE_JAVA_EXE% %FORGE_OPTS% -classpath %FORGE_JARS% "-Dforge.home=%FORGE_HOME%" -Dseam.forge.shell.colorEnabled=true %FORGE_MAIN_CLASS% %FORGE_CMD_LINE_ARGS%
+set FORGE_MAIN_CLASS=org.jboss.forge.shell.Bootstrap
+%FORGE_JAVA_EXE% %FORGE_OPTS% -classpath %FORGE_JARS% "-Dforge.home=%FORGE_HOME%" -Dforge.shell.colorEnabled=true %FORGE_MAIN_CLASS% %FORGE_CMD_LINE_ARGS%
 if ERRORLEVEL 1 goto error
 goto end
 

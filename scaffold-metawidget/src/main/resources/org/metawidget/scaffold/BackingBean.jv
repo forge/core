@@ -5,7 +5,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 
 import @{entity.getQualifiedName()};
-import org.jboss.seam.forge.persistence.PersistenceUtil;
+import org.jboss.forge.persistence.PersistenceUtil;
 
 @Named
 @Stateful

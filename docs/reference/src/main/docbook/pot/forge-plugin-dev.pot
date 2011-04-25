@@ -83,8 +83,8 @@ msgid "\n"
 "***SUCCESS*** Installed [forge.spec.cdi] successfully.\n"
 "Install which version of the Forge API?\n"
 "\n"
-"  1 - [org.jboss.seam.forge:forge-shell-api:1.0.0-SNAPSHOT]\n"
-"  2 - [org.jboss.seam.forge:forge-shell-api:1.0.0.Alpha2]\n"
+"  1 - [org.jboss.forge:forge-shell-api:1.0.0-SNAPSHOT]\n"
+"  2 - [org.jboss.forge:forge-shell-api:1.0.0.Alpha2]\n"
 "\n"
 "Choose an option by typing the number of the selection: 1\n"
 "***SUCCESS*** Installed [forge.api] successfully.\n"
@@ -103,7 +103,7 @@ msgstr ""
 
 #. Tag: para
 #, no-c-format
-msgid "NOTE: You must also create a <literal>beans.xml</literal> file in the <literal>src/main/resources/META-INF/</literal> directory of your project, or your plugin will not be detected by Forge. <tip> <literal>'org.jboss.seam.forge : forge-shell-api : {version}' </literal> is the only dependency you must include in your project. </tip>"
+msgid "NOTE: You must also create a <literal>beans.xml</literal> file in the <literal>src/main/resources/META-INF/</literal> directory of your project, or your plugin will not be detected by Forge. <tip> <literal>'org.jboss.forge : forge-shell-api : {version}' </literal> is the only dependency you must include in your project. </tip>"
 msgstr ""
 
 #. Tag: programlisting
@@ -125,7 +125,7 @@ msgid "&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;\n"
 "  \n"
 "  &lt;dependencies&gt;\n"
 "    &lt;dependency&gt;\n"
-"      &lt;groupId&gt;org.jboss.seam.forge&lt;/groupId&gt;\n"
+"      &lt;groupId&gt;org.jboss.forge&lt;/groupId&gt;\n"
 "      &lt;artifactId&gt;forge-shell-api&lt;/artifactId&gt;\n"
 "      &lt;version&gt;${forge.api.version}&lt;/version&gt;\n"
 "    &lt;/dependency&gt;\n"
@@ -159,12 +159,12 @@ msgstr ""
 
 #. Tag: para
 #, no-c-format
-msgid "The first thing you must do in order to create a forge plugin, is create a new class and implement the <literal>org.jboss.seam.forge.shell.plugins.Plugin</literal> interface. Notice that the interface has no methods, this is because you will be adding your own custom commands later."
+msgid "The first thing you must do in order to create a forge plugin, is create a new class and implement the <literal>org.jboss.forge.shell.plugins.Plugin</literal> interface. Notice that the interface has no methods, this is because you will be adding your own custom commands later."
 msgstr ""
 
 #. Tag: programlisting
 #, no-c-format
-msgid "import org.jboss.seam.forge.shell.plugins.Plugin;\n"
+msgid "import org.jboss.forge.shell.plugins.Plugin;\n"
 "         \n"
 "public class ExamplePlugin implements Plugin {\n"
 "}"

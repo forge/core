@@ -35,11 +35,11 @@
          <outputDirectory>lib</outputDirectory>
          <useProjectArtifact>false</useProjectArtifact>
          <includes>
-            <include>org.jboss.seam.forge.*</include>
+            <include>org.jboss.forge.*</include>
          </includes>
          <excludes>
-            <exclude>org.jboss.seam.forge.*:*:*:javadoc</exclude>
-            <exclude>org.jboss.seam.forge.*:*:*:sources</exclude>
+            <exclude>org.jboss.forge.*:*:*:javadoc</exclude>
+            <exclude>org.jboss.forge.*:*:*:sources</exclude>
          </excludes>
          <outputFileNameMapping>${artifact.artifactId}${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
       </dependencySet>
@@ -49,8 +49,8 @@
          <useProjectArtifact>false</useProjectArtifact>
          <useTransitiveDependencies>true</useTransitiveDependencies>
          <excludes>
-            <exclude>org.jboss.seam.forge:*:*:javadoc</exclude>
-            <exclude>org.jboss.seam.forge:*:*:sources</exclude>
+            <exclude>org.jboss.forge:*:*:javadoc</exclude>
+            <exclude>org.jboss.forge:*:*:sources</exclude>
          </excludes>
          <outputFileNameMapping>${artifact.artifactId}${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
       </dependencySet>
@@ -60,32 +60,27 @@
          <outputDirectory>doc/javadoc</outputDirectory>
          <useProjectArtifact>false</useProjectArtifact>
          <includes>
-            <include>org.jboss.seam.forge:*:*:javadoc</include>
+            <include>org.jboss.forge:*:*:javadoc</include>
          </includes>
          <outputFileNameMapping>${artifact.artifactId}${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
       </dependencySet>
+      
       <!-- Add necessary sources jars -->
       <dependencySet>
          <outputDirectory>sources</outputDirectory>
          <useProjectArtifact>false</useProjectArtifact>
          <includes>
-            <include>org.jboss.seam.forge:*:*:sources</include>
+            <include>org.jboss.forge:*:*:sources</include>
          </includes>
          <outputFileNameMapping>${artifact.artifactId}${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
       </dependencySet>
 
-
-      <!-- Pull in the example projects <dependencySet> <outputDirectory>examples</outputDirectory> 
-         <unpack>true</unpack> <useProjectArtifact>false</useProjectArtifact> <includes> 
-         <include>org.jboss.seam.faces:seam-faces-examples-short-ly</include> <include>org.jboss.seam.xml:seam-xml-examples-princess-rescue</include> 
-         <include>org.jboss.seam.remoting:seam-remoting-model-example</include> <include>org.jboss.seam.remoting:seam-remoting-helloworld-example</include> 
-         </includes> </dependencySet> -->
       <dependencySet>
          <outputDirectory>doc/reference</outputDirectory>
          <unpack>true</unpack>
          <useProjectArtifact>false</useProjectArtifact>
          <includes>
-            <include>org.jboss.seam.forge:forge-reference-guide</include>
+            <include>org.jboss.forge:forge-reference-guide</include>
          </includes>
          <unpackOptions>
             <excludes>
