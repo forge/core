@@ -24,6 +24,7 @@ package org.jboss.forge.spec.javaee.jpa;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -34,6 +35,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.jboss.forge.parser.java.Annotation;
 import org.jboss.forge.parser.java.Field;
@@ -223,6 +226,26 @@ public class FieldPlugin implements Plugin
       {
          shell.println("Sorry, I don't think [" + type
                   + "] is a valid Java number type. Try something in the 'java.lang.* or java.math*' packages.");
+      }
+   }
+
+   @Command(value = "temporal", help = "Add a temporal field (java.util.Date) to an existing @Entity class")
+   public void newTemporalField(
+            @Option(name = "type",
+                     required = true) TemporalType temporalType,
+            @Option(name = "named",
+                     required = true,
+                     description = "The field name",
+                     type = PromptType.JAVA_VARIABLE_NAME) final String fieldName)
+   {
+      try
+      {
+         JavaClass entity = getJavaClass();
+         addTemporalFieldTo(entity, Date.class, fieldName, temporalType);
+      }
+      catch (FileNotFoundException e)
+      {
+         shell.println("Could not locate the @Entity requested. No update was made.");
       }
    }
 
@@ -464,6 +487,27 @@ public class FieldPlugin implements Plugin
       Field<JavaClass> field = targetEntity.addField();
       field.setName(fieldName).setPrivate().setType(Types.toSimpleName(fieldType)).addAnnotation(annotation);
       targetEntity.addImport(fieldType);
+      Refactory.createGetterAndSetter(targetEntity, field);
+      java.saveJavaSource(targetEntity);
+      shell.println("Added field to " + targetEntity.getQualifiedName() + ": " + field);
+   }
+
+   private void addTemporalFieldTo(final JavaClass targetEntity, final Class<?> fieldType, final String fieldName,
+                           TemporalType temporalType)
+            throws FileNotFoundException
+   {
+      if (targetEntity.hasField(fieldName))
+      {
+         throw new IllegalStateException("Entity already has a field named [" + fieldName + "]");
+      }
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+
+      Field<JavaClass> field = targetEntity.addField();
+      field.setName(fieldName).setPrivate().setType(fieldType).addAnnotation(Temporal.class).setEnumValue(temporalType);
+      if (!fieldType.getName().startsWith("java.lang.") && !fieldType.isPrimitive())
+      {
+         targetEntity.addImport(fieldType);
+      }
       Refactory.createGetterAndSetter(targetEntity, field);
       java.saveJavaSource(targetEntity);
       shell.println("Added field to " + targetEntity.getQualifiedName() + ": " + field);

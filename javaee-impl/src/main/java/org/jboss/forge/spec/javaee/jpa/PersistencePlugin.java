@@ -93,7 +93,6 @@ public class PersistencePlugin implements Plugin
             PipeOut out)
    {
       installPersistence();
-      DependencyFacet dependencyFacet = project.getFacet(DependencyFacet.class);
       PersistenceFacet jpa = project.getFacet(PersistenceFacet.class);
       PersistenceDescriptor config = jpa.getConfig();
 
@@ -117,46 +116,59 @@ public class PersistencePlugin implements Plugin
 
       jpa.saveConfig(config);
 
+      installAdditionalDependencies(out, container, jpap, provider, providerVersion);
+   }
+
+   private void installAdditionalDependencies(PipeOut out, PersistenceContainer container,
+            JPAProvider jpap, PersistenceProvider provider,
+            String providerVersion)
+   {
+      DependencyFacet dependencyFacet = project.getFacet(DependencyFacet.class);
+
       List<Dependency> dependencies = new ArrayList<Dependency>();
-      if (providerVersion != null)
+      if (!provider.listDependencies().isEmpty()
+               && prompt.promptBoolean("The JPA provider [" + jpap
+                        + "], also supplies extended APIs. Install these as well?", false))
       {
-         for (Dependency dependency : provider.listDependencies())
+         if (providerVersion != null)
          {
-            if (container instanceof JavaEEDefaultContainer)
+            for (Dependency dependency : provider.listDependencies())
             {
-               dependency = DependencyBuilder.create(dependency).setScopeType(ScopeType.PROVIDED);
-            }
-            dependencies.add(DependencyBuilder.create(dependency).setVersion(providerVersion));
-         }
-      }
-      else
-      {
-         DependencyFacet deps = project.getFacet(DependencyFacet.class);
-         List<Dependency> required = provider.listDependencies();
-
-         for (Dependency dependency : required)
-         {
-            List<Dependency> versions = deps.resolveAvailableVersions(dependency);
-            if (!versions.isEmpty())
-            {
-               Dependency choice = prompt.promptChoiceTyped(unitName, versions, versions.get(versions.size() - 1));
-
                if (container instanceof JavaEEDefaultContainer)
                {
-                  choice = DependencyBuilder.create(choice).setScopeType(ScopeType.PROVIDED);
+                  dependency = DependencyBuilder.create(dependency).setScopeType(ScopeType.PROVIDED);
                }
-               dependencies.add(choice);
-            }
-            else
-            {
-               ShellMessages.info(out, "Could not resolve versions for dependency [" + dependency + "]");
+               dependencies.add(DependencyBuilder.create(dependency).setVersion(providerVersion));
             }
          }
-      }
+         else
+         {
+            DependencyFacet deps = project.getFacet(DependencyFacet.class);
+            for (Dependency dependency : provider.listDependencies())
+            {
+               List<Dependency> versions = deps.resolveAvailableVersions(dependency);
+               if (!versions.isEmpty())
+               {
+                  Dependency choice = prompt.promptChoiceTyped("Install which version of [" + dependency + "]?",
+                           versions, versions.get(versions.size() - 1));
 
-      for (Dependency dependency : dependencies)
-      {
-         dependencyFacet.addDependency(dependency);
+                  if (container instanceof JavaEEDefaultContainer)
+                  {
+                     choice = DependencyBuilder.create(choice).setScopeType(ScopeType.PROVIDED);
+                  }
+                  dependencies.add(choice);
+               }
+               else
+               {
+                  ShellMessages.info(out, "Could not resolve versions for dependency [" + dependency + "]");
+               }
+            }
+         }
+
+         for (Dependency dependency : dependencies)
+         {
+            dependencyFacet.addDependency(dependency);
+         }
       }
    }
 

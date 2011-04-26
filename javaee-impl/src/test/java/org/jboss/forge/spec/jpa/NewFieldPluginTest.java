@@ -28,12 +28,15 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.parser.java.JavaClass;
@@ -83,6 +86,25 @@ public class NewFieldPluginTest extends AbstractJPATest
       assertTrue(javaClass.hasField("gamesPlayed"));
       assertEquals("CustomType", javaClass.getField("gamesPlayed").getType());
       assertTrue(javaClass.hasImport("org.jboss.CustomType"));
+      assertFalse(javaClass.hasSyntaxErrors());
+   }
+
+   @Test
+   public void testNewTemporalField() throws Exception
+   {
+      Project project = getProject();
+      JavaClass javaClass = generateEntity(project);
+
+      getShell().execute(ConstraintInspector.getName(FieldPlugin.class)
+                        + " temporal --named time --type TIME");
+
+      javaClass = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(javaClass).getJavaSource();
+      assertTrue(javaClass.hasField("time"));
+      assertEquals("Date", javaClass.getField("time").getType());
+      assertEquals(TemporalType.TIME,
+               javaClass.getField("time").getAnnotation(Temporal.class).getEnumValue(TemporalType.class));
+      assertTrue(javaClass.hasImport(TemporalType.class));
+      assertTrue(javaClass.hasImport(Date.class));
       assertFalse(javaClass.hasSyntaxErrors());
    }
 
@@ -192,7 +214,9 @@ public class NewFieldPluginTest extends AbstractJPATest
       JavaClass rightEntity = generateEntity(project);
       JavaClass leftEntity = generateEntity(project);
 
-      getShell().execute(ConstraintInspector.getName(FieldPlugin.class) + " oneToOne --named right --fieldType ~.domain." + rightEntity.getName()
+      getShell().execute(
+               ConstraintInspector.getName(FieldPlugin.class) + " oneToOne --named right --fieldType ~.domain."
+                        + rightEntity.getName()
                         + " --inverseFieldName left");
 
       leftEntity = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(leftEntity).getJavaSource();
@@ -222,7 +246,9 @@ public class NewFieldPluginTest extends AbstractJPATest
       JavaClass rightEntity = generateEntity(project);
       JavaClass leftEntity = generateEntity(project);
 
-      getShell().execute(ConstraintInspector.getName(FieldPlugin.class) + " manyToMany --named right --fieldType ~.domain." + rightEntity.getName());
+      getShell().execute(
+               ConstraintInspector.getName(FieldPlugin.class) + " manyToMany --named right --fieldType ~.domain."
+                        + rightEntity.getName());
 
       leftEntity = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(leftEntity).getJavaSource();
 
@@ -250,7 +276,9 @@ public class NewFieldPluginTest extends AbstractJPATest
       JavaClass rightEntity = generateEntity(project);
       JavaClass leftEntity = generateEntity(project);
 
-      getShell().execute(ConstraintInspector.getName(FieldPlugin.class) + " oneToMany --named right --fieldType ~.domain." + rightEntity.getName());
+      getShell().execute(
+               ConstraintInspector.getName(FieldPlugin.class) + " oneToMany --named right --fieldType ~.domain."
+                        + rightEntity.getName());
 
       leftEntity = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(leftEntity).getJavaSource();
 
@@ -278,7 +306,9 @@ public class NewFieldPluginTest extends AbstractJPATest
       JavaClass rightEntity = generateEntity(project);
       JavaClass leftEntity = generateEntity(project);
 
-      getShell().execute(ConstraintInspector.getName(FieldPlugin.class) + " manyToMany --named right --fieldType ~.domain." + rightEntity.getName()
+      getShell().execute(
+               ConstraintInspector.getName(FieldPlugin.class) + " manyToMany --named right --fieldType ~.domain."
+                        + rightEntity.getName()
                         + " --inverseFieldName left");
 
       leftEntity = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(leftEntity).getJavaSource();
@@ -309,7 +339,9 @@ public class NewFieldPluginTest extends AbstractJPATest
       JavaClass rightEntity = generateEntity(project);
       JavaClass leftEntity = generateEntity(project);
 
-      getShell().execute(ConstraintInspector.getName(FieldPlugin.class) + " oneToMany --named right --fieldType ~.domain." + rightEntity.getName()
+      getShell().execute(
+               ConstraintInspector.getName(FieldPlugin.class) + " oneToMany --named right --fieldType ~.domain."
+                        + rightEntity.getName()
                         + " --inverseFieldName left");
 
       leftEntity = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(leftEntity).getJavaSource();
@@ -341,7 +373,9 @@ public class NewFieldPluginTest extends AbstractJPATest
       JavaClass rightEntity = generateEntity(project);
       JavaClass leftEntity = generateEntity(project);
 
-      getShell().execute(ConstraintInspector.getName(FieldPlugin.class) + " manyToOne --named right --fieldType ~.domain." + rightEntity.getName()
+      getShell().execute(
+               ConstraintInspector.getName(FieldPlugin.class) + " manyToOne --named right --fieldType ~.domain."
+                        + rightEntity.getName()
                         + " --inverseFieldName left");
 
       leftEntity = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(leftEntity).getJavaSource();

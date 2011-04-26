@@ -32,7 +32,6 @@ import javax.inject.Inject;
 
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.util.Refactory;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
@@ -86,12 +85,14 @@ public class MetawidgetScaffold extends BaseFacet implements ScaffoldProvider
    private static final String LIST_TEMPLATE = "org/metawidget/scaffold/list.xhtml";
    private static final String CONFIG_TEMPLATE = "org/metawidget/metawidget.xml";
 
-   private final Dependency metawidget = DependencyBuilder.create("org.metawidget:metawidget");
+   private final Dependency metawidget = DependencyBuilder.create("org.metawidget.modules:metawidget-all");
    private final Dependency seamPersist = DependencyBuilder
-            .create("org.jboss.seam.persistence:seam-persistence:[3.0.0-SNAPSHOT],[3.0.0.CR4,)");
-   private final Dependency richfacesUI = DependencyBuilder.create("org.richfaces.ui:richfaces-ui:3.3.3.Final");
-   private final Dependency richfacesImpl = DependencyBuilder
-            .create("org.richfaces.framework:richfaces-impl:3.3.3.Final");
+            .create("org.jboss.seam.persistence:seam-persistence:[3.0.0.Final,)");
+
+   private final Dependency richfaces3UI = DependencyBuilder.create("org.richfaces.ui:richfaces-ui");
+   private final Dependency richfaces3Impl = DependencyBuilder.create("org.richfaces.framework:richfaces-impl");
+   private final Dependency richfaces4UI = DependencyBuilder.create("org.richfaces.ui:richfaces-components-ui");
+   private final Dependency richfaces4Impl = DependencyBuilder.create("org.richfaces.core:richfaces-core-impl");
 
    private final CompiledTemplateResource viewTemplate;
    private final CompiledTemplateResource createTemplate;
@@ -120,13 +121,11 @@ public class MetawidgetScaffold extends BaseFacet implements ScaffoldProvider
    @Override
    public List<Resource<?>> setup(final boolean overwrite)
    {
-      if (!isInstalled())
-      {
-         createPersistenceUtils(overwrite);
-         createMetawidgetConfig(overwrite);
-         return generateTemplates(overwrite);
-      }
-      return new ArrayList<Resource<?>>();
+      createPersistenceUtils(overwrite);
+      createMetawidgetConfig(overwrite);
+      List<Resource<?>> resources = generateIndex(overwrite);
+      resources.addAll(generateTemplates(overwrite));
+      return resources;
    }
 
    public void handleAddedDependencies(@Observes AddedDependencies event)
@@ -138,11 +137,19 @@ public class MetawidgetScaffold extends BaseFacet implements ScaffoldProvider
          boolean richFacesImpl = false;
          for (Dependency d : event.getDependencies())
          {
-            if (DependencyBuilder.areEquivalent(richfacesUI, d))
+            if (DependencyBuilder.areEquivalent(richfaces3UI, d))
             {
                richFacesUI = true;
             }
-            if (DependencyBuilder.areEquivalent(richfacesImpl, d))
+            if (DependencyBuilder.areEquivalent(richfaces3Impl, d))
+            {
+               richFacesImpl = true;
+            }
+            if (DependencyBuilder.areEquivalent(richfaces4UI, d))
+            {
+               richFacesUI = true;
+            }
+            if (DependencyBuilder.areEquivalent(richfaces4Impl, d))
             {
                richFacesImpl = true;
             }
@@ -157,8 +164,10 @@ public class MetawidgetScaffold extends BaseFacet implements ScaffoldProvider
 
    private void setupRichFaces(Project project)
    {
-      if (project.getFacet(DependencyFacet.class).hasDependency(richfacesUI)
-               && project.getFacet(DependencyFacet.class).hasDependency(richfacesImpl))
+      if ((project.getFacet(DependencyFacet.class).hasDependency(richfaces3UI)
+               && project.getFacet(DependencyFacet.class).hasDependency(richfaces3Impl))
+               || (project.getFacet(DependencyFacet.class).hasDependency(richfaces4UI)
+                        && project.getFacet(DependencyFacet.class).hasDependency(richfaces4Impl)))
       {
          if (prompt
                   .promptBoolean(writer.renderColor(ShellColor.YELLOW, "Metawidget")
@@ -181,15 +190,6 @@ public class MetawidgetScaffold extends BaseFacet implements ScaffoldProvider
       {
          JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
          WebResourceFacet web = project.getFacet(WebResourceFacet.class);
-
-         if (!entity.hasMethodSignature("toString"))
-         {
-            Refactory.createToStringFromFields(entity);
-            ShellMessages.info(writer, "Entity [" + entity.getName()
-                     + "] does not have a .toString() method. Generating...");
-            result.add(ScaffoldUtil.createOrOverwrite(prompt, java.getJavaResource(entity), entity.toString(),
-                     overwrite));
-         }
 
          CompiledTemplateResource backingBeanTemplate = compiler.compile(BACKING_BEAN_TEMPLATE);
          HashMap<Object, Object> context = new HashMap<Object, Object>();

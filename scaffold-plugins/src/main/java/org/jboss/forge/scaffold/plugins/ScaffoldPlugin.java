@@ -98,7 +98,7 @@ public class ScaffoldPlugin implements Plugin
          generatedEvent.fire(new ScaffoldGeneratedResources(provider, prepareResources(generatedResources)));
    }
 
-   @Command("gen-indexes")
+   @Command("indexes")
    public void generateIndex(
             final PipeOut out,
             @Option(name = "scaffoldType", required = false,
@@ -113,7 +113,7 @@ public class ScaffoldPlugin implements Plugin
          generatedEvent.fire(new ScaffoldGeneratedResources(provider, prepareResources(generatedResources)));
    }
 
-   @Command("gen-templates")
+   @Command("templates")
    public void generateTemplates(
             @Option(name = "scaffoldType", required = false,
                      completer = ScaffoldProviderCompleter.class) final String scaffoldType,
@@ -213,7 +213,7 @@ public class ScaffoldPlugin implements Plugin
       }
    }
 
-   @Command("gen-from-entity")
+   @Command("from-entity")
    public void generateFromEntity(
             @Option(name = "scaffoldType", required = false,
                      completer = ScaffoldProviderCompleter.class) final String scaffoldType,
