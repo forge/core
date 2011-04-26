@@ -449,8 +449,8 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       if (Boolean.getBoolean("forge.compatibility.IDE"))
       {
          this.reader = new ConsoleReader(inputStream, new OutputStreamWriter(outputStream), null, new IdeTerminal());
-      }
-      if (OSUtils.isWindows())
+      } 
+      else if (OSUtils.isWindows())
       {
          this.reader = setupReaderForWindows(inputStream, outputStream);
       }
