@@ -62,9 +62,6 @@ import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.resources.java.JavaResource;
-import org.jboss.forge.shell.Shell;
-import org.jboss.forge.shell.ShellColor;
-import org.jboss.forge.shell.ShellMessages;
 import org.jboss.forge.shell.command.CommandMetadata;
 import org.jboss.forge.shell.command.PluginMetadata;
 import org.jboss.forge.shell.command.PromptTypeConverter;
@@ -314,6 +311,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
 
       projectContext.setCurrentResource(resourceFactory.getResourceFrom(event.getWorkingDirectory()));
       properties.put("CWD", getCurrentDirectory().getFullyQualifiedName());
+      properties.put("SHELL", this);
 
       configureOSTerminal();
       initReaderAndStreams();
@@ -393,7 +391,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    }
 
    @Override
-   public void setHistoryOutputStream(OutputStream stream)
+   public void setHistoryOutputStream(final OutputStream stream)
    {
       historyOutstream = stream;
       Runtime.getRuntime().addShutdownHook(new Thread()
@@ -414,7 +412,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    }
 
    @Override
-   public void setHistory(List<String> lines)
+   public void setHistory(final List<String> lines)
    {
       MemoryHistory history = new MemoryHistory();
 
@@ -449,7 +447,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       if (Boolean.getBoolean("forge.compatibility.IDE"))
       {
          this.reader = new ConsoleReader(inputStream, new OutputStreamWriter(outputStream), null, new IdeTerminal());
-      } 
+      }
       else if (OSUtils.isWindows())
       {
          this.reader = setupReaderForWindows(inputStream, outputStream);
@@ -580,7 +578,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       }
    }
 
-   private String formatSourcedError(PluginMetadata plugin)
+   private String formatSourcedError(final PluginMetadata plugin)
    {
       return (plugin == null ? "" : ("[" + plugin.toString() + "] "));
    }
@@ -607,7 +605,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    {
       String line = reader.readLine();
 
-      if (isExecuting() && line == null)
+      if (isExecuting() && (line == null))
       {
          reader.println();
          reader.flush();
@@ -799,7 +797,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    @Override
    public void printlnVerbose(final String line)
    {
-      if (line != null && isVerbose())
+      if ((line != null) && isVerbose())
       {
          try
          {
@@ -1147,7 +1145,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    }
 
    @Override
-   public void setAnsiSupported(boolean value)
+   public void setAnsiSupported(final boolean value)
    {
       if (value != isAnsiSupported())
       {
@@ -1191,7 +1189,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       initReaderAndStreams();
    }
 
-   private ConsoleReader setupReaderForWindows(InputStream inputStream, OutputStream outputStream)
+   private ConsoleReader setupReaderForWindows(final InputStream inputStream, final OutputStream outputStream)
    {
       try
       {
