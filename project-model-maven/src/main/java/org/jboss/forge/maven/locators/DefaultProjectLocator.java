@@ -24,8 +24,11 @@ package org.jboss.forge.maven.locators;
 import org.jboss.forge.maven.ProjectImpl;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.locator.ProjectLocator;
+import org.jboss.forge.project.services.ProjectFactory;
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.shell.plugins.Alias;
+
+import com.google.inject.Inject;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -33,19 +36,22 @@ import org.jboss.forge.shell.plugins.Alias;
 @Alias("default-project-locator")
 public class DefaultProjectLocator implements ProjectLocator
 {
+   @Inject
+   private ProjectFactory factory;
+
    @Override
    public Project createProject(final DirectoryResource dir)
    {
       Project result = null;
-      if (dir != null && dir.exists())
+      if ((dir != null) && dir.exists())
       {
-         result = new ProjectImpl(dir);
+         result = new ProjectImpl(factory, dir);
       }
       return result;
    }
 
    @Override
-   public boolean containsProject(DirectoryResource dir)
+   public boolean containsProject(final DirectoryResource dir)
    {
       return false;
    }

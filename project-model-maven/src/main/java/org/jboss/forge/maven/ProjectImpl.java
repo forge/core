@@ -24,6 +24,9 @@ package org.jboss.forge.maven;
 import javax.enterprise.inject.Typed;
 
 import org.jboss.forge.project.BaseProject;
+import org.jboss.forge.project.Facet;
+import org.jboss.forge.project.facets.FacetNotFoundException;
+import org.jboss.forge.project.services.ProjectFactory;
 import org.jboss.forge.resources.DirectoryResource;
 
 /**
@@ -34,10 +37,26 @@ import org.jboss.forge.resources.DirectoryResource;
 public class ProjectImpl extends BaseProject
 {
    private DirectoryResource projectRoot = null;
+   private final ProjectFactory factory;
 
-   public ProjectImpl(final DirectoryResource dir)
+   public ProjectImpl(final ProjectFactory factory, final DirectoryResource dir)
    {
-      projectRoot = dir;
+      this.factory = factory;
+      this.projectRoot = dir;
+   }
+
+   @Override
+   public <F extends Facet> F getFacet(final Class<F> type)
+   {
+      try
+      {
+         return super.getFacet(type);
+      }
+      catch (FacetNotFoundException e)
+      {
+         factory.registerSingleFacet(this, type);
+         return super.getFacet(type);
+      }
    }
 
    @Override
@@ -49,7 +68,7 @@ public class ProjectImpl extends BaseProject
    @Override
    public boolean exists()
    {
-      return projectRoot != null && projectRoot.exists();
+      return (projectRoot != null) && projectRoot.exists();
    }
 
    @Override

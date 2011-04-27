@@ -31,6 +31,7 @@ import org.jboss.forge.maven.facets.MavenCoreFacetImpl;
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.locator.ProjectLocator;
+import org.jboss.forge.project.services.ProjectFactory;
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.shell.plugins.Alias;
@@ -46,10 +47,12 @@ import org.jboss.forge.shell.plugins.Alias;
 public class MavenProjectLocator implements ProjectLocator
 {
    private final MavenContainer container;
+   private final ProjectFactory factory;
 
    @Inject
-   public MavenProjectLocator(MavenContainer container)
+   public MavenProjectLocator(final MavenContainer container, final ProjectFactory factory)
    {
+      this.factory = factory;
       this.container = container;
    }
 
@@ -61,7 +64,7 @@ public class MavenProjectLocator implements ProjectLocator
       Project result = null;
       if (pom.exists())
       {
-         result = new ProjectImpl(dir);
+         result = new ProjectImpl(factory, dir);
          Facet facet = new MavenCoreFacetImpl(container);
          facet.setProject(result);
          result.registerFacet(facet);

@@ -27,12 +27,14 @@ import java.util.List;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.locator.ProjectLocator;
 import org.jboss.forge.resources.DirectoryResource;
+import org.jboss.forge.shell.util.BeanManagerUtils;
 import org.jboss.forge.shell.util.ConstraintInspector;
 import org.jboss.forge.shell.util.ResourceUtil;
 
@@ -45,22 +47,29 @@ import org.jboss.forge.shell.util.ResourceUtil;
 public class ProjectFactory
 {
    private final FacetFactory facetFactory;
-   private final List<ProjectLocator> locators;
+   private List<ProjectLocator> locators;
+   private final BeanManager manager;
+   private final Instance<ProjectLocator> locatorInstance;
 
    @Inject
-   public ProjectFactory(final FacetFactory facetFactory,
-                         final Instance<ProjectLocator> locatorInstance)
+   public ProjectFactory(final FacetFactory facetFactory, final BeanManager manager,
+            final Instance<ProjectLocator> locatorInstance)
    {
       this.facetFactory = facetFactory;
+      this.locatorInstance = locatorInstance;
+      this.manager = manager;
+   }
+
+   public void init()
+   {
       Iterator<ProjectLocator> iterator = locatorInstance.iterator();
       List<ProjectLocator> result = new ArrayList<ProjectLocator>();
       while (iterator.hasNext())
       {
-         ProjectLocator element = iterator.next();
+         ProjectLocator element = BeanManagerUtils.getContextualInstance(manager, iterator.next().getClass());
          result.add(element);
       }
       this.locators = result;
-
    }
 
    public DirectoryResource findProjectRootRecusively(final DirectoryResource currentDirectory)
@@ -181,6 +190,12 @@ public class ProjectFactory
       }
    }
 
+   public void registerSingleFacet(final Project project, final Class<? extends Facet> type)
+   {
+      Facet facet = facetFactory.getFacet(type);
+      registerSingleFacet(project, facet);
+   }
+
    private void registerSingleFacet(final Project project, final Facet facet)
    {
       List<Class<? extends Facet>> dependencies = ConstraintInspector.getFacetDependencies(facet.getClass());
@@ -237,6 +252,7 @@ public class ProjectFactory
 
    private List<ProjectLocator> getLocators()
    {
+      init();
       return locators;
    }
 }

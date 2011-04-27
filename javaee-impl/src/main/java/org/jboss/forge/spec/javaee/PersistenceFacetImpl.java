@@ -44,7 +44,6 @@ import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresPackagingType;
-import org.jboss.forge.spec.javaee.PersistenceFacet;
 import org.jboss.shrinkwrap.descriptor.api.DescriptorImporter;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceDescriptor;
@@ -71,7 +70,14 @@ public class PersistenceFacetImpl extends BaseFacet implements PersistenceFacet
    public DirectoryResource getEntityPackageDir()
    {
       JavaSourceFacet sourceFacet = project.getFacet(JavaSourceFacet.class);
-      return sourceFacet.getBasePackageResource().getChildDirectory("domain");
+
+      DirectoryResource entityRoot = sourceFacet.getBasePackageResource().getChildDirectory("domain");
+      if (!entityRoot.exists())
+      {
+         entityRoot.mkdirs();
+      }
+
+      return entityRoot;
    }
 
    @Override
@@ -150,12 +156,6 @@ public class PersistenceFacetImpl extends BaseFacet implements PersistenceFacet
             deps.addDependency(dep);
          }
 
-         DirectoryResource entityRoot = getEntityPackageDir();
-         if (!entityRoot.exists())
-         {
-            entityRoot.mkdirs();
-         }
-
          FileResource<?> descriptor = getConfigFile();
          if (!descriptor.exists())
          {
@@ -174,6 +174,6 @@ public class PersistenceFacetImpl extends BaseFacet implements PersistenceFacet
    {
       DependencyFacet deps = project.getFacet(DependencyFacet.class);
       boolean hasDependency = deps.hasDependency(dep);
-      return hasDependency && getEntityPackageDir().exists() && getConfigFile().exists();
+      return hasDependency && getConfigFile().exists();
    }
 }

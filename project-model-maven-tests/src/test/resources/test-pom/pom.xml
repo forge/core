@@ -16,11 +16,23 @@
     <arquillian.version>1.0.0.Alpha3</arquillian.version>
     <jbossas.client.version>6.0.0.20100721-M4</jbossas.client.version>
     <prettyfaces.version>3.0.2-SNAPSHOT</prettyfaces.version>
+    <version>1.0.2.Final</version>
     <seam.faces.version>3.0.0.Alpha3</seam.faces.version>
+    <jboss-javaee6-spec.version>1.0.0.Final</jboss-javaee6-spec.version>
     <hibernate.version>3.5.2-Final</hibernate.version>
     <cdi.version>1.0-SP1</cdi.version>
-    <jboss-javaee6-spec.version>1.0.0.Final</jboss-javaee6-spec.version>
   </properties>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.jboss.spec</groupId>
+        <artifactId>jboss-javaee-6.0</artifactId>
+        <version>${jboss-javaee6-spec.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   <dependencies>
     <dependency>
       <groupId>com.ocpsoft</groupId>
@@ -67,18 +79,12 @@
       <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jboss</groupId>
+      <artifactId>test-dependency</artifactId>
+      <version>1.0.0.Final</version>
+    </dependency>
   </dependencies>
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.jboss.spec</groupId>
-        <artifactId>jboss-javaee-6.0</artifactId>
-        <version>${jboss-javaee6-spec.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
   <repositories>
     <repository>
       <snapshots>
@@ -128,7 +134,7 @@
           <failOnMissingWebXml>false</failOnMissingWebXml>
         </configuration>
       </plugin>
-       <plugin>
+      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>findbugs-maven-plugin</artifactId>
         <version>2.3.2</version>

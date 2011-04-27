@@ -62,15 +62,20 @@ public abstract class BaseProject implements Project
    @Override
    public boolean hasFacet(final Class<? extends Facet> type)
    {
-      try
+      Facet result = null;
+      for (Facet facet : facets)
       {
-         getFacet(type);
+         if ((facet != null) && type.isAssignableFrom(facet.getClass()))
+         {
+            result = facet;
+            break;
+         }
+      }
+      if (result != null)
+      {
          return true;
       }
-      catch (FacetNotFoundException e)
-      {
-         return false;
-      }
+      return false;
    }
 
    @Override
