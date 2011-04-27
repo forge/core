@@ -50,6 +50,6 @@ public class WaitPlugin implements Plugin
    @DefaultCommand
    public void waitCommand()
    {
-      shell.prompt("Press <ENTER> to continue.");
+      shell.prompt("Press <ENTER> to continue...");
    }
 }
