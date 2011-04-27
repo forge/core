@@ -89,7 +89,7 @@ public class FSHParser
          String scriptTk = new String(expr, start, cursor - start);
          return new ScriptNode(new TokenNode(scriptTk), true);
 
-      // literals
+         // literals
       case '\'':
       case '"':
          cursor = balancedCapture(expr, cursor, expr[cursor]);
@@ -107,8 +107,7 @@ public class FSHParser
             boolean block = "for".equals(tk) || "if".equals(tk) || "while".equals(tk) || "def".equals(tk);
 
             start = cursor;
-            SkipLoop:
-            while (cursor <= length)
+            SkipLoop: while (cursor <= length)
             {
                switch (expr[cursor])
                {
@@ -171,7 +170,7 @@ public class FSHParser
                         }
                         while (ifThenElseBlockContinues());
 
-                        return new ScriptNode(new TokenNode(tk), false);
+                        return new ScriptNode(new TokenNode(tk), true);
                      }
                   }
                   break;
@@ -202,8 +201,8 @@ public class FSHParser
          skipWhitespace();
 
          if ((expr[cursor] == 'e') && (expr[cursor + 1] == 'l') && (expr[cursor + 2] == 's')
-               && (expr[cursor + 3] == 'e')
-               && (isWhitespace(expr[cursor + 4]) || (expr[cursor + 4] == '{')))
+                  && (expr[cursor + 3] == 'e')
+                  && (isWhitespace(expr[cursor + 4]) || (expr[cursor + 4] == '{')))
          {
 
             cursor += 4;
@@ -369,7 +368,7 @@ public class FSHParser
             {
                int start = ++i;
                buf.append(shellToMVEL(subStmt.substring(start,
-                     i = balancedCapture(subStmt.toCharArray(), i, '{')), false)).append('}');
+                        i = balancedCapture(subStmt.toCharArray(), i, '{')), false)).append('}');
             }
 
             break;
@@ -528,8 +527,7 @@ public class FSHParser
       }
       else
       {
-         Skip:
-         while (cursor != length)
+         Skip: while (cursor != length)
          {
             switch (expr[cursor])
             {
