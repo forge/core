@@ -7,6 +7,8 @@ import jline.TerminalSupport;
 
 public class IdeTerminal extends TerminalSupport 
 {
+	
+	public final int DEFAULT_WIDTH = Integer.MAX_VALUE;
    
 	public IdeTerminal() 
 	{
@@ -20,5 +22,10 @@ public class IdeTerminal extends TerminalSupport
 	   int result = in.read();
 	   return result == '\r' ? in.read() : result;
 	}
+
+    public int getWidth() 
+    {
+       return DEFAULT_WIDTH;
+    }
 
 }
