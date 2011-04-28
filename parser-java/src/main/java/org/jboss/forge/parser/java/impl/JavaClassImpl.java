@@ -125,10 +125,6 @@ public class JavaClassImpl extends AbstractJavaSourceMemberHolder<JavaClass> imp
    @Override
    public JavaClass setSuperType(final String type)
    {
-      if (!hasImport(type))
-      {
-         addImport(type);
-      }
       SimpleType simpleType = unit.getAST().newSimpleType(unit.getAST().newSimpleName(Types.toSimpleName(type)));
       getBodyDeclaration().setStructuralProperty(TypeDeclaration.SUPERCLASS_TYPE_PROPERTY, simpleType);
       return this;
