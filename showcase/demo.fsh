@@ -2,43 +2,26 @@
 @v = SHELL.prompt("Start at which step?");
 @startAt = Integer.parseInt( "".equals(v.trim()) ? 1 : v );
 
-@doGit = SHELL.promptBoolean("Track changes with Git?");
-
 def step( cmd ) { 
 
 	if ( startAt <= currentStep )
 	{
 		@SHELL.println();
-		@SHELL.prompt("" + currentStep + ": " + $cmd + " ");
-		@SHELL.println();
-		$cmd;
-		if ( doGit && currentStep > 1 )
+		if ( SHELL.promptBoolean("Execute " + currentStep + ": " + cmd + " ?") )
 		{
-			git add -A;
-		};
-		@SHELL.println();
-		wait;
-		if ( doGit && currentStep > 1)
-		{
-			git commit -m "step";
-		};
-		@SHELL.println();
+			@SHELL.println();
+			$cmd;
+			@SHELL.println();
+			wait;
+			clear;
+		}
 	}
 	currentStep ++;
 
 };
 
+clear;
 @step("new-project --named conftrack --topLevelPackage com.conftrack");
-
-if ( doGit )
-{
-
-	git init;
-	git add -A;
-	git commit -m 'Initial revision';
-
-};
-
 @step("scaffold setup"); 
 @step("persistence setup");
 @step("prettyfaces setup");
