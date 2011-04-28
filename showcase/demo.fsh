@@ -23,27 +23,20 @@ def step( cmd ) {
 clear;
 @step("new-project --named conftrack --topLevelPackage com.conftrack");
 @step("scaffold setup"); 
-@step("persistence setup");
-@step("prettyfaces setup");
+@step("persistence setup --provider HIBERNATE --container JBOSS_AS6");
 @step("entity --named Conference");
-
 @step("ls");
+
 @step("ls id::long");
 @step("field string --named name");
 @step("ls");
 @step("scaffold from-entity");
-
 @step("build");
+
 @step("mvn jboss:hard-deploy");
 @step("field temporal --type DATE --named begins");
 @step("field temporal --type DATE --named ends");
 @step("ls");
-
-@step("richfaces setup");
 @step("build");
+
 @step("mvn jboss:hard-deploy");
-@step("beans new-bean --type com.conftrack.model.Scheduler --scoped REQUEST");
-@step("arquillian create-test --class com.conftrack.model.Scheduler");
-
-@step("build test -Pjbossas-remote-6");
-
