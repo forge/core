@@ -58,7 +58,7 @@ import org.jboss.forge.spec.javaee.PersistenceFacet;
 import org.jboss.forge.spec.javaee.ServletFacet;
 import org.jboss.seam.render.TemplateCompiler;
 import org.jboss.seam.render.template.CompiledTemplateResource;
-import org.jboss.shrinkwrap.descriptor.api.Node;
+import org.jboss.shrinkwrap.descriptor.spi.Node;
 import org.jboss.shrinkwrap.descriptor.api.spec.cdi.beans.BeansDescriptor;
 import org.jboss.shrinkwrap.descriptor.impl.spec.servlet.web.WebAppDescriptorImpl;
 
@@ -85,7 +85,12 @@ public class MetawidgetScaffold extends BaseFacet implements ScaffoldProvider
    private static final String LIST_TEMPLATE = "org/metawidget/scaffold/list.xhtml";
    private static final String CONFIG_TEMPLATE = "org/metawidget/metawidget.xml";
 
-   private final Dependency metawidget = DependencyBuilder.create("org.metawidget.modules:metawidget-all");
+   private final Dependency metawidgetAnnotation = DependencyBuilder.create("org.metawidget.modules:metawidget-annotation");
+   private final Dependency metawidgetJava5 = DependencyBuilder.create("org.metawidget.modules:metawidget-java5");
+   private final Dependency metawidgetBeanvalidation = DependencyBuilder.create("org.metawidget.modules:metawidget-beanvalidation");
+   private final Dependency metawidgetJpa = DependencyBuilder.create("org.metawidget.modules:metawidget-jpa");
+   private final Dependency metawidgetFaces = DependencyBuilder.create("org.metawidget.modules.faces:metawidget-faces");
+   
    private final Dependency seamPersist = DependencyBuilder
             .create("org.jboss.seam.persistence:seam-persistence:[3.0.0.Final,)");
 
@@ -270,10 +275,17 @@ public class MetawidgetScaffold extends BaseFacet implements ScaffoldProvider
       DependencyFacet df = project.getFacet(DependencyFacet.class);
       CDIFacet cdi = project.getFacet(CDIFacet.class);
       ServletFacet servlet = project.getFacet(ServletFacet.class);
-      if (!df.hasDependency(metawidget))
+      if (!df.hasDependency(metawidgetAnnotation))
       {
-         df.addDependency(prompt.promptChoiceTyped("Install which version of Metawidget?",
-                  df.resolveAvailableVersions(metawidget)));
+         Dependency dependency = prompt.promptChoiceTyped("Install which version of Metawidget?",
+                  df.resolveAvailableVersions(metawidgetAnnotation));
+         df.addDependency(dependency);
+         final String version = dependency.getVersion();
+         
+         df.addDependency(DependencyBuilder.create(metawidgetBeanvalidation).setVersion(version));
+         df.addDependency(DependencyBuilder.create(metawidgetFaces).setVersion(version));
+         df.addDependency(DependencyBuilder.create(metawidgetJava5).setVersion(version));
+         df.addDependency(DependencyBuilder.create(metawidgetJpa).setVersion(version));
       }
 
       // fixme this needs to be fixed in SHRINKDESC
@@ -328,10 +340,15 @@ public class MetawidgetScaffold extends BaseFacet implements ScaffoldProvider
    @Override
    public boolean isInstalled()
    {
-      return project.getFacet(DependencyFacet.class).hasDependency(metawidget)
-               && project.getFacet(DependencyFacet.class).hasDependency(seamPersist)
-               && project.getFacet(CDIFacet.class).getConfig().getInterceptors().contains(SEAM_PERSIST_INTERCEPTOR)
-               && project.getFacet(WebResourceFacet.class).getWebResource("/WEB-INF/metawidget.xml").exists();
+      final DependencyFacet df = project.getFacet(DependencyFacet.class);
+      return df.hasDependency(metawidgetAnnotation)
+            && df.hasDependency(metawidgetBeanvalidation)
+            && df.hasDependency(metawidgetFaces)
+            && df.hasDependency(metawidgetJava5)
+            && df.hasDependency(metawidgetJpa)
+            && df.hasDependency(seamPersist)
+            && project.getFacet(CDIFacet.class).getConfig().getInterceptors().contains(SEAM_PERSIST_INTERCEPTOR)
+            && project.getFacet(WebResourceFacet.class).getWebResource("/WEB-INF/metawidget.xml").exists();
    }
 
    @Override
