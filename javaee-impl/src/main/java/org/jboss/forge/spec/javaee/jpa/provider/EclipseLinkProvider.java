@@ -63,10 +63,8 @@ public class EclipseLinkProvider implements PersistenceProvider
    }
 
    @Override
-   public PersistenceUnitDef setup(PersistenceUnitDef unit, JPADataSource ds)
+   public PersistenceUnitDef configure(final PersistenceUnitDef unit, final JPADataSource ds)
    {
-      unit.provider("org.eclipse.persistence.jpa.PersistenceProvider");
-
       unit.includeUnlistedClasses();
       unit.property("eclipselink.ddl-generation", "drop-and-create-tables");
 
@@ -81,6 +79,12 @@ public class EclipseLinkProvider implements PersistenceProvider
       }
 
       return unit;
+   }
+
+   @Override
+   public String getProvider()
+   {
+      return "org.eclipse.persistence.jpa.PersistenceProvider";
    }
 
    @Override

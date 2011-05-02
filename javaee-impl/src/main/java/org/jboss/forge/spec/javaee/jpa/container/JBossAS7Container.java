@@ -19,21 +19,26 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.spec.javaee.jpa.api;
+package org.jboss.forge.spec.javaee.jpa.container;
 
-import java.util.List;
-
-import org.jboss.forge.project.dependencies.Dependency;
+import org.jboss.forge.spec.javaee.jpa.api.DatabaseType;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceUnitDef;
+import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.TransactionType;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * 
  */
-public interface PersistenceProvider
+public class JBossAS7Container extends JavaEEDefaultContainer
 {
-   String getProvider();
+   private static final String DEFAULT_DS = "java:/H2DS";
 
-   PersistenceUnitDef configure(PersistenceUnitDef unit, JPADataSource ds);
-
-   List<Dependency> listDependencies();
+   @Override
+   public DatabaseType setup(final PersistenceUnitDef unit)
+   {
+      unit.transactionType(TransactionType.JTA);
+      unit.jtaDataSource(DEFAULT_DS);
+      unit.nonJtaDataSource(null);
+      return DatabaseType.HSQLDB;
+   }
 }

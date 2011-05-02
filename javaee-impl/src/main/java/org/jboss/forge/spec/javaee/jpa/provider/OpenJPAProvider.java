@@ -73,10 +73,8 @@ public class OpenJPAProvider implements PersistenceProvider
    }
 
    @Override
-   public PersistenceUnitDef setup(PersistenceUnitDef unit, JPADataSource ds)
+   public PersistenceUnitDef configure(final PersistenceUnitDef unit, final JPADataSource ds)
    {
-      unit.provider("org.apache.openjpa.persistence.PersistenceProviderImpl");
-
       unit.includeUnlistedClasses();
 
       if (!DatabaseType.DEFAULT.equals(ds.getDatabase()))
@@ -90,6 +88,12 @@ public class OpenJPAProvider implements PersistenceProvider
       }
 
       return unit;
+   }
+
+   @Override
+   public String getProvider()
+   {
+      return "org.apache.openjpa.persistence.PersistenceProviderImpl";
    }
 
    @Override

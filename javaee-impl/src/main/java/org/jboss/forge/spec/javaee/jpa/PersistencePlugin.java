@@ -80,17 +80,17 @@ public class PersistencePlugin implements Plugin
 
    @Command("setup")
    public void setup(
-            @Option(name = "provider", required = true) JPAProvider jpap,
-            @Option(name = "provider-version", required = false) String providerVersion,
-            @Option(name = "container", required = true) JPAContainer jpac,
-            @Option(name = "database", defaultValue = "DEFAULT") DatabaseType databaseType,
-            @Option(name = "jndiDataSource") String jtaDataSource,
-            @Option(name = "jdbcDriver") String jdbcDriver,
-            @Option(name = "jdbcURL") String jdbcURL,
-            @Option(name = "jdbcUsername") String jdbcUsername,
-            @Option(name = "jdbcPassword") String jdbcPassword,
-            @Option(name = "named", defaultValue = DEFAULT_UNIT_NAME) String unitName,
-            PipeOut out)
+            @Option(name = "provider", required = true) final JPAProvider jpap,
+            @Option(name = "provider-version", required = false) final String providerVersion,
+            @Option(name = "container", required = true) final JPAContainer jpac,
+            @Option(name = "database", defaultValue = "DEFAULT") final DatabaseType databaseType,
+            @Option(name = "jndiDataSource") final String jtaDataSource,
+            @Option(name = "jdbcDriver") final String jdbcDriver,
+            @Option(name = "jdbcURL") final String jdbcURL,
+            @Option(name = "jdbcUsername") final String jdbcUsername,
+            @Option(name = "jdbcPassword") final String jdbcPassword,
+            @Option(name = "named", defaultValue = DEFAULT_UNIT_NAME) final String unitName,
+            final PipeOut out)
    {
       installPersistence();
       PersistenceFacet jpa = project.getFacet(PersistenceFacet.class);
@@ -111,17 +111,18 @@ public class PersistencePlugin implements Plugin
       PersistenceContainer container = jpac.getContainer(manager);
       PersistenceProvider provider = jpap.getProvider(manager);
 
+      unit.provider(provider.getProvider());
       container.setupConnection(unit, ds);
-      provider.setup(unit, ds);
+      provider.configure(unit, ds);
 
       jpa.saveConfig(config);
 
       installAdditionalDependencies(out, container, jpap, provider, providerVersion);
    }
 
-   private void installAdditionalDependencies(PipeOut out, PersistenceContainer container,
-            JPAProvider jpap, PersistenceProvider provider,
-            String providerVersion)
+   private void installAdditionalDependencies(final PipeOut out, final PersistenceContainer container,
+            final JPAProvider jpap, final PersistenceProvider provider,
+            final String providerVersion)
    {
       DependencyFacet dependencyFacet = project.getFacet(DependencyFacet.class);
 

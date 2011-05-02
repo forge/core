@@ -72,10 +72,8 @@ public class HibernateProvider implements PersistenceProvider
    }
 
    @Override
-   public PersistenceUnitDef setup(PersistenceUnitDef unit, JPADataSource ds)
+   public PersistenceUnitDef configure(final PersistenceUnitDef unit, final JPADataSource ds)
    {
-      unit.provider("org.hibernate.ejb.HibernatePersistence");
-
       unit.includeUnlistedClasses();
       unit.property("hibernate.hbm2ddl.auto", "create-drop");
       unit.property("hibernate.show_sql", "true");
@@ -93,6 +91,12 @@ public class HibernateProvider implements PersistenceProvider
       }
 
       return unit;
+   }
+
+   @Override
+   public String getProvider()
+   {
+      return "org.hibernate.ejb.HibernatePersistence";
    }
 
    @Override
