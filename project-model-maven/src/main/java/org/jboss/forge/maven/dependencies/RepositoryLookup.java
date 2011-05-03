@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.jboss.forge.environment.ForgeEnvironment;
 import org.jboss.forge.maven.facets.MavenContainer;
 import org.jboss.forge.parser.java.util.Strings;
 import org.jboss.forge.project.ProjectModelException;
@@ -51,6 +52,7 @@ public class RepositoryLookup implements DependencyResolverProvider
 {
    private PlexusContainer container;
    private ResourceFactory factory;
+   private ForgeEnvironment environment;
 
    public RepositoryLookup()
    {
@@ -71,14 +73,16 @@ public class RepositoryLookup implements DependencyResolverProvider
    // }
 
    @Inject
-   public RepositoryLookup(final MavenContainer container, ResourceFactory factory)
+   public RepositoryLookup(final MavenContainer container, final ResourceFactory factory,
+            final ForgeEnvironment environment)
    {
       this.container = container.getContainer();
       this.factory = factory;
+      this.environment = environment;
    }
 
    @Override
-   public List<DependencyResource> resolveArtifacts(Dependency query)
+   public List<DependencyResource> resolveArtifacts(final Dependency query)
    {
       return resolveArtifacts(query, new ArrayList<DependencyRepository>());
    }
@@ -90,7 +94,7 @@ public class RepositoryLookup implements DependencyResolverProvider
    }
 
    @Override
-   public List<DependencyResource> resolveArtifacts(Dependency dep, final List<DependencyRepository> repositories)
+   public List<DependencyResource> resolveArtifacts(final Dependency dep, final List<DependencyRepository> repositories)
    {
       List<DependencyResource> result = new ArrayList<DependencyResource>();
 
@@ -195,13 +199,13 @@ public class RepositoryLookup implements DependencyResolverProvider
    }
 
    @Override
-   public DependencyMetadata resolveDependencyMetadata(Dependency query)
+   public DependencyMetadata resolveDependencyMetadata(final Dependency query)
    {
       return resolveDependencyMetadata(query, new ArrayList<DependencyRepository>());
    }
 
    @Override
-   public DependencyMetadata resolveDependencyMetadata(Dependency query, DependencyRepository repository)
+   public DependencyMetadata resolveDependencyMetadata(final Dependency query, final DependencyRepository repository)
    {
       return resolveDependencyMetadata(query, Arrays.asList(repository));
    }
@@ -266,20 +270,20 @@ public class RepositoryLookup implements DependencyResolverProvider
       return result;
    }
 
-   private MavenRepositorySystemSession setupRepoSession(RepositorySystem repoSystem)
+   private MavenRepositorySystemSession setupRepoSession(final RepositorySystem repoSystem)
    {
       MavenRepositorySystemSession session = new MavenRepositorySystemSession();
+      session.setOffline(!environment.isOnline());
 
       LocalRepository localRepo = new LocalRepository(OSUtils.getUserHomeDir().getAbsolutePath() + "/.m2/repository");
       session.setLocalRepositoryManager(repoSystem.newLocalRepositoryManager(localRepo));
-      session.setOffline(false);
 
       session.setTransferErrorCachingEnabled(false);
       session.setNotFoundCachingEnabled(false);
       return session;
    }
 
-   private RemoteRepository convertToMavenRepo(DependencyRepository repo)
+   private RemoteRepository convertToMavenRepo(final DependencyRepository repo)
    {
       return new RemoteRepository(repo.getId(), "default", repo.getUrl());
    }

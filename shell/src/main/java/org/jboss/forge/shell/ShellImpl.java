@@ -121,6 +121,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    public static final String FORGE_CONFIG_DIR = System.getProperty("user.home") + "/.forge/";
    public static final String FORGE_COMMAND_HISTORY_FILE = "cmd_history";
    public static final String FORGE_CONFIG_FILE = "config";
+   public static final String OFFLINE_FLAG = "OFFLINE";
 
    private final Map<String, Object> properties = new HashMap<String, Object>();
 
@@ -335,6 +336,15 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       properties.put(PROP_PROMPT_NO_PROJ, "> ");
 
       shellConfig.loadConfig(this);
+
+      if (Boolean.getBoolean("forge.offline") == true)
+      {
+         this.setProperty(OFFLINE_FLAG, true);
+      }
+      else
+      {
+         this.setProperty(OFFLINE_FLAG, false);
+      }
 
       postStartup.fire(new PostStartup());
    }

@@ -33,6 +33,7 @@
 		<module>project-model-maven-tests</module>
 		<module>test-harness</module>
 		<module>shell</module>
+		<module>plugin-loader</module>
 		<module>javaee-api</module>
 		<module>javaee-impl</module>
 		<module>scaffold-api</module>

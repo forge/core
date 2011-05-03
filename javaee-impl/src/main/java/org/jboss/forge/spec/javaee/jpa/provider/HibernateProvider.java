@@ -96,7 +96,7 @@ public class HibernateProvider implements PersistenceProvider
    @Override
    public String getProvider()
    {
-      return "org.hibernate.ejb.HibernatePersistence";
+      return "org.hibernate.ejb.HibernatePersistence" ;
    }
 
    @Override
