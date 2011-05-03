@@ -22,6 +22,9 @@
 package org.jboss.forge.maven.facets;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
@@ -29,6 +32,7 @@ import javax.inject.Inject;
 
 import org.apache.maven.cli.MavenCli;
 import org.apache.maven.model.Model;
+import org.jboss.forge.environment.ForgeEnvironment;
 import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.facets.BaseFacet;
@@ -60,6 +64,9 @@ public class MavenPackagingFacet extends BaseFacet implements PackagingFacet, Fa
 
    @Inject
    private Shell shell;
+
+   @Inject
+   private ForgeEnvironment environment;
 
    @Override
    public void setPackagingType(final PackagingType type)
@@ -129,15 +136,23 @@ public class MavenPackagingFacet extends BaseFacet implements PackagingFacet, Fa
    }
 
    @Override
-   public Resource<?> executeBuild(String... args)
+   public Resource<?> executeBuild(final String... args)
    {
       MavenCli cli = new MavenCli();
       String[] defaults = new String[] { "clean", "package" };
       String[] selected = defaults;
-      if (args != null && args.length > 0)
+      if ((args != null) && (args.length > 0))
       {
          selected = args;
       }
+
+      if (!environment.isOnline())
+      {
+         List<String> list = new ArrayList<String>(Arrays.asList(selected));
+         list.add("--offline");
+         selected = list.toArray(new String[list.size()]);
+      }
+
       int i = cli.doMain(selected, project.getProjectRoot().getFullyQualifiedName(),
                System.out, System.err);
 
@@ -162,7 +177,7 @@ public class MavenPackagingFacet extends BaseFacet implements PackagingFacet, Fa
    }
 
    @Override
-   public void setFinalName(String finalName)
+   public void setFinalName(final String finalName)
    {
       MavenCoreFacet mavenFacet = project.getFacet(MavenCoreFacet.class);
       Model pom = mavenFacet.getPOM();

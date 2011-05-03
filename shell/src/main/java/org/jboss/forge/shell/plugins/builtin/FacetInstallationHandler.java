@@ -48,11 +48,7 @@ import org.jboss.forge.shell.util.ConstraintInspector;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Alias("install")
-@Help("Installs a facet into a project.")
-@Topic("Project")
-@RequiresProject
-public class InstallFacetPlugin implements Plugin
+public class FacetInstallationHandler
 {
    @Inject
    private FacetFactory factory;
@@ -63,7 +59,7 @@ public class InstallFacetPlugin implements Plugin
    @Inject
    private Project project;
 
-   public void installRequest(@Observes InstallFacets request)
+   public void installRequest(@Observes final InstallFacets request)
    {
       shell.printlnVerbose("Received Facet installation request " + request.getFacetTypes());
       if (!request.promptRequested()
@@ -75,7 +71,7 @@ public class InstallFacetPlugin implements Plugin
             Facet facet = factory.getFacet(type);
             if (!project.hasFacet(type))
             {
-               beginInstallation(facet);
+               beginInstallation(facet, false);
             }
             else
             {
@@ -89,16 +85,16 @@ public class InstallFacetPlugin implements Plugin
       }
    }
 
-   private void beginInstallation(Facet facet)
+   private void beginInstallation(final Facet facet, final boolean prompt)
    {
-      if (!performInstallation(facet))
+      if (!performInstallation(facet, prompt))
       {
          ShellMessages.error(shell, "Failed to install [" + ConstraintInspector.getName(facet.getClass())
                   + "]; there may be a mess!");
       }
    }
 
-   private boolean performInstallation(Facet facet)
+   private boolean performInstallation(final Facet facet, final boolean prompt)
    {
       if (project.hasFacet(facet.getClass()))
       {
@@ -110,7 +106,7 @@ public class InstallFacetPlugin implements Plugin
 
          try
          {
-            installDependencies(facet);
+            installDependencies(facet, prompt);
             PackagingType type = updatePackaging(facet);
 
             if (!facet.isInstalled() || !project.hasFacet(facet.getClass()))
@@ -138,7 +134,7 @@ public class InstallFacetPlugin implements Plugin
       return false;
    }
 
-   private void installDependencies(Facet facet) throws Abort
+   private void installDependencies(final Facet facet, final boolean prompt) throws Abort
    {
       List<Class<? extends Facet>> deps = ConstraintInspector.getFacetDependencies(facet.getClass());
 
@@ -155,7 +151,7 @@ public class InstallFacetPlugin implements Plugin
             }
          }
 
-         if (!shell.promptBoolean("The ["
+         if (prompt && !shell.promptBoolean("The ["
                   + ConstraintInspector.getName(facet.getClass())
                   + "] facet depends on the following missing facet(s): "
                   + facetNames
@@ -169,7 +165,7 @@ public class InstallFacetPlugin implements Plugin
             for (Class<? extends Facet> d : missingDeps)
             {
                Facet instance = factory.getFacet(d);
-               if (performInstallation(instance))
+               if (performInstallation(instance, prompt))
                {
                   installed.add(instance);
                }

@@ -58,9 +58,9 @@ import org.jboss.forge.spec.javaee.PersistenceFacet;
 import org.jboss.forge.spec.javaee.ServletFacet;
 import org.jboss.seam.render.TemplateCompiler;
 import org.jboss.seam.render.template.CompiledTemplateResource;
-import org.jboss.shrinkwrap.descriptor.spi.Node;
 import org.jboss.shrinkwrap.descriptor.api.spec.cdi.beans.BeansDescriptor;
 import org.jboss.shrinkwrap.descriptor.impl.spec.servlet.web.WebAppDescriptorImpl;
+import org.jboss.shrinkwrap.descriptor.spi.Node;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -85,12 +85,14 @@ public class MetawidgetScaffold extends BaseFacet implements ScaffoldProvider
    private static final String LIST_TEMPLATE = "org/metawidget/scaffold/list.xhtml";
    private static final String CONFIG_TEMPLATE = "org/metawidget/metawidget.xml";
 
-   private final Dependency metawidgetAnnotation = DependencyBuilder.create("org.metawidget.modules:metawidget-annotation");
+   private final Dependency metawidgetAnnotation = DependencyBuilder
+            .create("org.metawidget.modules:metawidget-annotation");
    private final Dependency metawidgetJava5 = DependencyBuilder.create("org.metawidget.modules:metawidget-java5");
-   private final Dependency metawidgetBeanvalidation = DependencyBuilder.create("org.metawidget.modules:metawidget-beanvalidation");
+   private final Dependency metawidgetBeanvalidation = DependencyBuilder
+            .create("org.metawidget.modules:metawidget-beanvalidation");
    private final Dependency metawidgetJpa = DependencyBuilder.create("org.metawidget.modules:metawidget-jpa");
    private final Dependency metawidgetFaces = DependencyBuilder.create("org.metawidget.modules.faces:metawidget-faces");
-   
+
    private final Dependency seamPersist = DependencyBuilder
             .create("org.jboss.seam.persistence:seam-persistence:[3.0.0.Final,)");
 
@@ -110,8 +112,8 @@ public class MetawidgetScaffold extends BaseFacet implements ScaffoldProvider
    private final Event<InstallFacets> install;
 
    @Inject
-   public MetawidgetScaffold(ShellPrompt prompt, ShellPrintWriter writer, TemplateCompiler compiler,
-            Event<InstallFacets> install)
+   public MetawidgetScaffold(final ShellPrompt prompt, final ShellPrintWriter writer, final TemplateCompiler compiler,
+            final Event<InstallFacets> install)
    {
       this.prompt = prompt;
       this.writer = writer;
@@ -126,14 +128,13 @@ public class MetawidgetScaffold extends BaseFacet implements ScaffoldProvider
    @Override
    public List<Resource<?>> setup(final boolean overwrite)
    {
-      createPersistenceUtils(overwrite);
-      createMetawidgetConfig(overwrite);
+      createPersistenceUtils(false);
       List<Resource<?>> resources = generateIndex(overwrite);
-      resources.addAll(generateTemplates(overwrite));
+      setupRichFaces(project);
       return resources;
    }
 
-   public void handleAddedDependencies(@Observes AddedDependencies event)
+   public void handleAddedDependencies(@Observes final AddedDependencies event)
    {
       Project project = event.getProject();
       if (project.hasFacet(MetawidgetScaffold.class))
@@ -167,7 +168,7 @@ public class MetawidgetScaffold extends BaseFacet implements ScaffoldProvider
       }
    }
 
-   private void setupRichFaces(Project project)
+   private void setupRichFaces(final Project project)
    {
       if ((project.getFacet(DependencyFacet.class).hasDependency(richfaces3UI)
                && project.getFacet(DependencyFacet.class).hasDependency(richfaces3Impl))
@@ -281,7 +282,7 @@ public class MetawidgetScaffold extends BaseFacet implements ScaffoldProvider
                   df.resolveAvailableVersions(metawidgetAnnotation));
          df.addDependency(dependency);
          final String version = dependency.getVersion();
-         
+
          df.addDependency(DependencyBuilder.create(metawidgetBeanvalidation).setVersion(version));
          df.addDependency(DependencyBuilder.create(metawidgetFaces).setVersion(version));
          df.addDependency(DependencyBuilder.create(metawidgetJava5).setVersion(version));
@@ -331,8 +332,6 @@ public class MetawidgetScaffold extends BaseFacet implements ScaffoldProvider
          cdi.saveConfig(config);
       }
       createMetawidgetConfig(false);
-      createPersistenceUtils(false);
-      setupRichFaces(project);
 
       return true;
    }
@@ -342,17 +341,17 @@ public class MetawidgetScaffold extends BaseFacet implements ScaffoldProvider
    {
       final DependencyFacet df = project.getFacet(DependencyFacet.class);
       return df.hasDependency(metawidgetAnnotation)
-            && df.hasDependency(metawidgetBeanvalidation)
-            && df.hasDependency(metawidgetFaces)
-            && df.hasDependency(metawidgetJava5)
-            && df.hasDependency(metawidgetJpa)
-            && df.hasDependency(seamPersist)
-            && project.getFacet(CDIFacet.class).getConfig().getInterceptors().contains(SEAM_PERSIST_INTERCEPTOR)
-            && project.getFacet(WebResourceFacet.class).getWebResource("/WEB-INF/metawidget.xml").exists();
+               && df.hasDependency(metawidgetBeanvalidation)
+               && df.hasDependency(metawidgetFaces)
+               && df.hasDependency(metawidgetJava5)
+               && df.hasDependency(metawidgetJpa)
+               && df.hasDependency(seamPersist)
+               && project.getFacet(CDIFacet.class).getConfig().getInterceptors().contains(SEAM_PERSIST_INTERCEPTOR)
+               && project.getFacet(WebResourceFacet.class).getWebResource("/WEB-INF/metawidget.xml").exists();
    }
 
    @Override
-   public List<Resource<?>> generateIndex(boolean overwrite)
+   public List<Resource<?>> generateIndex(final boolean overwrite)
    {
       List<Resource<?>> result = new ArrayList<Resource<?>>();
       WebResourceFacet web = project.getFacet(WebResourceFacet.class);
@@ -383,13 +382,13 @@ public class MetawidgetScaffold extends BaseFacet implements ScaffoldProvider
       return new AccessStrategy()
       {
          @Override
-         public List<String> getWebPaths(Resource<?> r)
+         public List<String> getWebPaths(final Resource<?> r)
          {
             return faces.getWebPaths(r);
          }
 
          @Override
-         public Resource<?> fromWebPath(String path)
+         public Resource<?> fromWebPath(final String path)
          {
             return faces.getResourceForWebPath(path);
          }
@@ -397,7 +396,7 @@ public class MetawidgetScaffold extends BaseFacet implements ScaffoldProvider
    }
 
    @Override
-   public List<Resource<?>> generateTemplates(boolean overwrite)
+   public List<Resource<?>> generateTemplates(final boolean overwrite)
    {
       List<Resource<?>> result = new ArrayList<Resource<?>>();
       WebResourceFacet web = project.getFacet(WebResourceFacet.class);

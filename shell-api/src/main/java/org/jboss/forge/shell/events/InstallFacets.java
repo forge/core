@@ -44,7 +44,7 @@ public class InstallFacets
    /**
     * Install the given facet without prompting for confirmation
     */
-   public InstallFacets(Class<? extends Facet> facetType)
+   public InstallFacets(final Class<? extends Facet> facetType)
    {
       Assert.notNull(facetType, "Facet type may not be null.");
       this.facetTypes = new ArrayList<Class<? extends Facet>>();
@@ -53,9 +53,9 @@ public class InstallFacets
 
    /**
     * Install the given facet but first prompt for confirmation. If the user aborts, a {@link FacetInstallationAborted}
-    * will be thrown.
+    * will be thrown from the statement where this event was fired.
     */
-   public InstallFacets(boolean prompt, Class<? extends Facet> facetType)
+   public InstallFacets(final boolean prompt, final Class<? extends Facet> facetType)
    {
       this(facetType);
       this.prompt = prompt;
@@ -64,7 +64,7 @@ public class InstallFacets
    /**
     * Install the given facets without prompting for confirmation
     */
-   public InstallFacets(Class<? extends Facet>... facetTypes)
+   public InstallFacets(final Class<? extends Facet>... facetTypes)
    {
       // FIXME This method causes warnings when used as intended... fix?
       Assert.notNull(facetTypes, "Facet types may not be null.");
@@ -75,7 +75,7 @@ public class InstallFacets
     * Install the given facets but first prompt for confirmation. If the user aborts, a {@link FacetInstallationAborted}
     * will be thrown.
     */
-   public InstallFacets(boolean prompt, Class<? extends Facet>... facetTypes)
+   public InstallFacets(final boolean prompt, final Class<? extends Facet>... facetTypes)
    {
       this(facetTypes);
       this.prompt = prompt;
