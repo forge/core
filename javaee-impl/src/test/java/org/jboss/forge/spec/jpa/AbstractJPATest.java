@@ -21,20 +21,22 @@
  */
 package org.jboss.forge.spec.jpa;
 
-import static org.junit.Assert.assertFalse;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
+import org.jboss.forge.resources.java.JavaResource;
+import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.util.ConstraintInspector;
 import org.jboss.forge.shell.util.Packages;
 import org.jboss.forge.spec.javaee.PersistenceFacet;
 import org.jboss.forge.spec.javaee.jpa.EntityPlugin;
 import org.jboss.forge.test.SingletonAbstractShellTest;
 import org.junit.Before;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import static org.junit.Assert.assertFalse;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -57,15 +59,36 @@ public abstract class AbstractJPATest extends SingletonAbstractShellTest
 
    protected JavaClass generateEntity(final Project project) throws FileNotFoundException
    {
-      String entityName = "Goofy" + count++;
-      queueInputLines("");
-      getShell().execute(ConstraintInspector.getName(EntityPlugin.class) + " --named " + entityName);
+       return generateEntity(project, null);
+   }
 
-      String pkg = project.getFacet(PersistenceFacet.class).getEntityPackage() + "." + entityName;
-      String path = Packages.toFileSyntax(pkg) + ".java";
-      JavaClass javaClass = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(path).getJavaSource();
+    protected JavaClass generateEntity(Project project, String pkg) throws FileNotFoundException
+    {
+        final String entityName = "Goofy" + count++;
+        queueInputLines("");
+        final StringBuilder commandBuilder = new StringBuilder(ConstraintInspector.getName(EntityPlugin.class))
+                .append(" --named ").append(entityName);
 
-      assertFalse(javaClass.hasSyntaxErrors());
-      return javaClass;
+        if (pkg != null)
+        {
+            commandBuilder.append(" --package ").append(pkg);
+        }
+        final Shell shell = getShell();
+        shell.execute(commandBuilder.toString());
+
+        JavaClass javaClass;
+        if (shell.getCurrentResource() instanceof JavaResource)
+        {
+            javaClass = (JavaClass) ((JavaResource) shell.getCurrentResource()).getJavaSource();
+        }
+        else
+        {
+            final String entityClass = project.getFacet(PersistenceFacet.class).getEntityPackage() + "." + entityName;
+            final String path = Packages.toFileSyntax(entityClass) + ".java";
+            javaClass = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(path).getJavaSource();
+        }
+
+        assertFalse(javaClass.hasSyntaxErrors());
+        return javaClass;
    }
 }

@@ -21,34 +21,24 @@
  */
 package org.jboss.forge.spec.javaee.jpa;
 
-import java.io.FileNotFoundException;
-import java.io.Serializable;
-
-import javax.inject.Inject;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Version;
-
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.util.Refactory;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
+import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.shell.PromptType;
 import org.jboss.forge.shell.Shell;
-import org.jboss.forge.shell.plugins.Alias;
-import org.jboss.forge.shell.plugins.DefaultCommand;
-import org.jboss.forge.shell.plugins.Help;
-import org.jboss.forge.shell.plugins.Option;
-import org.jboss.forge.shell.plugins.Plugin;
-import org.jboss.forge.shell.plugins.RequiresFacet;
-import org.jboss.forge.shell.plugins.RequiresProject;
+import org.jboss.forge.shell.plugins.*;
+import org.jboss.forge.shell.util.ResourceUtil;
 import org.jboss.forge.spec.javaee.PersistenceFacet;
+
+import javax.inject.Inject;
+import javax.persistence.*;
+import java.io.FileNotFoundException;
+import java.io.Serializable;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -74,25 +64,42 @@ public class EntityPlugin implements Plugin
    public void newEntity(
             @Option(required = true,
                      name = "named",
-                     description = "The @Entity name") final String entityName) throws FileNotFoundException
+                     description = "The @Entity name") final String entityName,
+            @Option(required = false,
+                    name = "package",
+                    description = "The package name") final String packageName) throws FileNotFoundException
    {
       // TODO this should accept a qualified name as a parameter instead of
       // prompting for the package later
-      PersistenceFacet jpa = project.getFacet(PersistenceFacet.class);
-      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+      final PersistenceFacet jpa = project.getFacet(PersistenceFacet.class);
+      final JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
 
-      String entityPackage = shell.promptCommon(
-               "In which package you'd like to create this @Entity, or enter for default:",
-               PromptType.JAVA_PACKAGE, jpa.getEntityPackage());
+      String entityPackage;
 
-      JavaClass javaClass = JavaParser.create(JavaClass.class)
+       if (packageName != null && !"".equals(packageName))
+       {
+           entityPackage = packageName;
+       }
+       else if (getPackagePortionOfCurrentDirectory() != null)
+       {
+           entityPackage = getPackagePortionOfCurrentDirectory();
+       }
+       else
+       {
+           entityPackage = shell.promptCommon(
+                   "In which package you'd like to create this @Entity, or enter for default:",
+                   PromptType.JAVA_PACKAGE, jpa.getEntityPackage());
+       }
+
+
+       JavaClass javaClass = JavaParser.create(JavaClass.class)
                .setPackage(entityPackage)
                .setName(entityName)
                .setPublic()
                .addAnnotation(Entity.class).getOrigin()
                .addInterface(Serializable.class);
 
-      Field<JavaClass> id = javaClass.addField("private long id = 0;");
+      Field<JavaClass> id = javaClass.addField("private Long id = 0;");
       id.addAnnotation(Id.class);
       id.addAnnotation(GeneratedValue.class)
                .setEnumValue("strategy", GenerationType.AUTO);
@@ -101,7 +108,7 @@ public class EntityPlugin implements Plugin
                .setLiteralValue("updatable", "false")
                .setLiteralValue("nullable", "false");
 
-      Field<JavaClass> version = javaClass.addField("private int version = 0;");
+      Field<JavaClass> version = javaClass.addField("private int version = null;");
       version.addAnnotation(Version.class);
       version.addAnnotation(Column.class).setStringValue("name", "version");
 
@@ -116,5 +123,23 @@ public class EntityPlugin implements Plugin
        * Pick up the generated resource.
        */
       shell.execute("pick-up " + javaFileLocation.getFullyQualifiedName());
+   }
+
+    /**
+     * Retrieves the package portion of the current directory if it is a package, null otherwise.
+     * @return String representation of the current package, or null
+     */
+   private String getPackagePortionOfCurrentDirectory()
+   {
+       for (DirectoryResource r : project.getFacet(JavaSourceFacet.class).getSourceFolders())
+       {
+           final DirectoryResource currentDirectory = shell.getCurrentDirectory();
+           if (ResourceUtil.isChildOf(r, currentDirectory))
+           {
+               // Have to remember to include the last slash so it's not part of the package
+               return currentDirectory.getFullyQualifiedName().replace(r.getFullyQualifiedName() + "/", "").replaceAll("/", ".");
+           }
+       }
+       return null;
    }
 }
