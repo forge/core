@@ -49,6 +49,8 @@ public class HibernateProvider implements PersistenceProvider
       dialects.put(DatabaseType.DB2_OS390, "org.hibernate.dialect.DB2390Dialect");
       dialects.put(DatabaseType.POSTGRES, "org.hibernate.dialect.PostgreSQLDialect");
       dialects.put(DatabaseType.MYSQL, "org.hibernate.dialect.MySQLDialect");
+      dialects.put(DatabaseType.MYSQL5_INNODB, "org.hibernate.dialect.MySQL5InnoDBDialect");
+      dialects.put(DatabaseType.MYSQL5_ISAM, "org.hibernate.dialect.MySQL5MyISAMDialect");
       dialects.put(DatabaseType.MYSQL_INNODB, "org.hibernate.dialect.MySQLInnoDBDialect");
       dialects.put(DatabaseType.MYSQL_ISAM, "org.hibernate.dialect.MySQLMyISAMDialect");
       dialects.put(DatabaseType.ORACLE, "org.hibernate.dialect.OracleDialect");
