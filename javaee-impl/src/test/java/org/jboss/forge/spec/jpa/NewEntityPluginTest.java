@@ -22,6 +22,14 @@ package org.jboss.forge.spec.jpa;
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.io.FileNotFoundException;
+
+import javax.persistence.Entity;
+
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.project.Project;
@@ -33,14 +41,6 @@ import org.jboss.forge.spec.javaee.jpa.EntityPlugin;
 import org.jboss.forge.spec.javaee.jpa.FieldPlugin;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.persistence.Entity;
-
-import java.io.FileNotFoundException;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -70,6 +70,8 @@ public class NewEntityPluginTest extends AbstractJPATest
       assertTrue(javaClass.hasImport(Entity.class));
       assertTrue(javaClass.hasField("id"));
       assertTrue(javaClass.hasField("version"));
+      assertEquals("0", javaClass.getField("version").getLiteralInitializer());
+      assertEquals("null", javaClass.getField("id").getLiteralInitializer());
    }
 
    @Test
@@ -94,26 +96,29 @@ public class NewEntityPluginTest extends AbstractJPATest
    }
 
    @Test
-   public void assertPackageOptionCreatesEntityInTheCorrectPackage() throws FileNotFoundException {
-       final Project project = getProject(); // setCurrentResource or setResource
-       final String pkgName = "com.test.domain";
-       final JavaClass entityClass = generateEntity(project, pkgName);
+   public void assertPackageOptionCreatesEntityInTheCorrectPackage() throws FileNotFoundException
+   {
+      final Project project = getProject(); // setCurrentResource or setResource
+      final String pkgName = "com.test.domain";
+      final JavaClass entityClass = generateEntity(project, pkgName);
 
-       final JavaClass entitySource = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(entityClass).getJavaSource();
+      final JavaClass entitySource = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(entityClass)
+               .getJavaSource();
 
-       assertEquals(entitySource.getPackage(), pkgName);
+      assertEquals(entitySource.getPackage(), pkgName);
    }
 
    @Test
    public void assertEntityCreatedInPackageWhenWithinAPackage() throws FileNotFoundException
    {
-       final Project project = getProject();
-       final String pkgName = project.getFacet(JavaSourceFacet.class).getBasePackage();
-       getShell().setCurrentResource(project.getFacet(JavaSourceFacet.class).getBasePackageResource());
-       final JavaClass entityClass = generateEntity(project);
+      final Project project = getProject();
+      final String pkgName = project.getFacet(JavaSourceFacet.class).getBasePackage();
+      getShell().setCurrentResource(project.getFacet(JavaSourceFacet.class).getBasePackageResource());
+      final JavaClass entityClass = generateEntity(project);
 
-       final JavaClass entitySource = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(entityClass).getJavaSource();
+      final JavaClass entitySource = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(entityClass)
+               .getJavaSource();
 
-       assertEquals(entitySource.getPackage(), pkgName);
+      assertEquals(entitySource.getPackage(), pkgName);
    }
 }
