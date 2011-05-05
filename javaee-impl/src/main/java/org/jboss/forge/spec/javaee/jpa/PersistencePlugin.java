@@ -101,14 +101,29 @@ public class PersistencePlugin implements Plugin
       unit.name(unitName).description(DEFAULT_UNIT_DESC);
 
       JPADataSource ds = new JPADataSource()
-               .setJndiDataSource(jtaDataSource)
-               .setDatabaseType(databaseType)
-               .setJdbcDriver(jdbcDriver)
-               .setDatabaseURL(jdbcURL)
-               .setUsername(jdbcUsername)
-               .setPassword(jdbcPassword);
+              .setJndiDataSource(jtaDataSource)
+              .setDatabaseType(databaseType)
+              .setJdbcDriver(jdbcDriver)
+              .setDatabaseURL(jdbcURL)
+              .setUsername(jdbcUsername)
+              .setPassword(jdbcPassword);
 
-      PersistenceContainer container = jpac.getContainer(manager);
+      PersistenceContainer container = null;
+
+      if (containerConflictsWithOtherSettings(jpac, ds))
+      {
+         boolean useContainer = prompt.promptBoolean("You specified a non-custom container, this will overwrite other settings you provided. Do you want to do this?", false);
+         if (!useContainer)
+         {
+            container = setCustomContainer(ds);
+         }
+      }
+
+      if (container == null)
+      {
+         container = jpac.getContainer(manager);
+      }
+
       PersistenceProvider provider = jpap.getProvider(manager);
 
       unit.provider(provider.getProvider());
@@ -120,16 +135,42 @@ public class PersistencePlugin implements Plugin
       installAdditionalDependencies(out, container, jpap, provider, providerVersion);
    }
 
+   private boolean containerConflictsWithOtherSettings(JPAContainer jpac, JPADataSource ds)
+   {
+      return !isCustomerContainer(jpac) && ds.getDatabase() != null;
+   }
+
+   private PersistenceContainer setCustomContainer(JPADataSource ds)
+   {
+      PersistenceContainer container;JPAContainer customContainer;
+
+      if (ds.getJndiDataSource() != null)
+      {
+         customContainer = JPAContainer.CUSTOM_JTA;
+      } else
+      {
+         customContainer = JPAContainer.CUSTOM_JDBC;
+      }
+
+      container = customContainer.getContainer(manager);
+      return container;
+   }
+
+   private boolean isCustomerContainer(JPAContainer jpac)
+   {
+      return jpac == JPAContainer.CUSTOM_JTA || jpac == JPAContainer.CUSTOM_NON_JTA || jpac == JPAContainer.CUSTOM_JDBC;
+   }
+
    private void installAdditionalDependencies(final PipeOut out, final PersistenceContainer container,
-            final JPAProvider jpap, final PersistenceProvider provider,
-            final String providerVersion)
+                                              final JPAProvider jpap, final PersistenceProvider provider,
+                                              final String providerVersion)
    {
       DependencyFacet dependencyFacet = project.getFacet(DependencyFacet.class);
 
       List<Dependency> dependencies = new ArrayList<Dependency>();
       if (!provider.listDependencies().isEmpty()
-               && prompt.promptBoolean("The JPA provider [" + jpap
-                        + "], also supplies extended APIs. Install these as well?", false))
+              && prompt.promptBoolean("The JPA provider [" + jpap
+              + "], also supplies extended APIs. Install these as well?", false))
       {
          if (providerVersion != null)
          {
