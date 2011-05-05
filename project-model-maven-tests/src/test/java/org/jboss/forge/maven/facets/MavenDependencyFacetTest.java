@@ -94,6 +94,15 @@ public class MavenDependencyFacetTest extends ProjectModelTest
    }
 
    @Test
+   public void testHasImportedManagedDependency() throws Exception
+   {
+      DependencyFacet deps = testProject.getFacet(DependencyFacet.class);
+
+      DependencyBuilder ejb = DependencyBuilder.create("org.jboss.spec.javax.ejb:jboss-ejb-api_3.1_spec:1.0.0.Final");
+      assertTrue(deps.hasEffectiveManagedDependency(ejb));
+   }
+
+   @Test
    public void testAddDependency() throws Exception
    {
       Dependency dependency =
@@ -143,7 +152,7 @@ public class MavenDependencyFacetTest extends ProjectModelTest
    }
 
    @Test
-   public void testHasManagedDependency() throws Exception
+   public void testHasManagedDependencyImport() throws Exception
    {
       DependencyFacet manDeps = testProject.getFacet(DependencyFacet.class);
 

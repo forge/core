@@ -36,10 +36,10 @@ import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.dependencies.DependencyRepository;
 import org.jboss.forge.project.dependencies.ScopeType;
 import org.jboss.forge.project.facets.DependencyFacet;
+import org.jboss.forge.project.facets.DependencyFacet.KnownRepository;
 import org.jboss.forge.project.facets.FacetNotFoundException;
 import org.jboss.forge.project.facets.MetadataFacet;
 import org.jboss.forge.project.facets.PackagingFacet;
-import org.jboss.forge.project.facets.DependencyFacet.KnownRepository;
 import org.jboss.forge.project.services.FacetFactory;
 import org.jboss.forge.shell.PromptType;
 import org.jboss.forge.shell.Shell;
@@ -265,9 +265,10 @@ public class ProjectPlugin implements Plugin
    {
       DependencyFacet manDeps = project.getFacet(DependencyFacet.class);
 
-      if (!manDeps.hasManagedDependency(gav)
-               || shell.promptBoolean("Managed dependency already exists [" + gav.getGroupId() + ":" + gav.getArtifactId()
-                        + "], continue?", true))
+      if (!manDeps.hasEffectiveManagedDependency(gav)
+               || shell.promptBoolean(
+                        "Managed dependency already exists [" + gav.getGroupId() + ":" + gav.getArtifactId()
+                                 + "], continue?", true))
       {
          DependencyBuilder search = DependencyBuilder.create(gav).setVersion("[0,)");
          List<Dependency> availableVersions = manDeps.resolveAvailableVersions(search);
@@ -323,7 +324,7 @@ public class ProjectPlugin implements Plugin
             final PipeOut out
             )
    {
-       DependencyFacet manDeps = project.getFacet(DependencyFacet.class);
+      DependencyFacet manDeps = project.getFacet(DependencyFacet.class);
       if ((gav.getVersion() == null) || gav.getVersion().trim().isEmpty())
       {
          gav = DependencyBuilder.create(gav).setVersion("[0,)");
@@ -350,8 +351,8 @@ public class ProjectPlugin implements Plugin
             final PipeOut out
             )
    {
-       DependencyFacet manDeps = project.getFacet(DependencyFacet.class);
-      if (manDeps.hasManagedDependency(gav))
+      DependencyFacet manDeps = project.getFacet(DependencyFacet.class);
+      if (manDeps.hasEffectiveManagedDependency(gav))
       {
          manDeps.removeManagedDependency(gav);
          out.println("Removed managed dependency [" + gav + "]");
@@ -365,7 +366,7 @@ public class ProjectPlugin implements Plugin
    @Command(value = "list-managed-dependencies", help = "List all managed dependencies this project includes")
    public void listManDeps(final PipeOut out)
    {
-       DependencyFacet manDeps = project.getFacet(DependencyFacet.class);
+      DependencyFacet manDeps = project.getFacet(DependencyFacet.class);
 
       for (Dependency manDep : manDeps.getManagedDependencies())
       {

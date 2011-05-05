@@ -129,10 +129,10 @@ public interface DependencyFacet extends Facet
     * <p/>
     * <b>Notice:</b> This method checks the entire project managed dependency structure, meaning that if a managed
     * dependency is declared somewhere else in the hierarchy, it will not be detected by
-    * {@link #hasDirectManagedDependency(Dependency)} and will not be removable via
+    * {@link #hasManagedDependency(Dependency)} and will not be removable via
     * {@link #removeManagedDependency(Dependency)}.
     */
-   public boolean hasManagedDependency(Dependency managedDependency);
+   public boolean hasEffectiveManagedDependency(Dependency managedDependency);
 
    /**
     * Return true if this {@link Project} contains a managed dependency matching the given {@link Dependency}; return
@@ -142,13 +142,13 @@ public interface DependencyFacet extends Facet
     * <p/>
     * <b>Notice:</b> This method checks only the immediate project managed dependencies, meaning that if a managed
     * dependency is declared somewhere else in the hierarchy, it will not be detected by this method, even though
-    * {@link #hasManagedDependency(Dependency)} may return true.
+    * {@link #hasEffectiveManagedDependency(Dependency)} may return true.
     */
-   public boolean hasDirectManagedDependency(Dependency managedDependency);
+   public boolean hasManagedDependency(Dependency managedDependency);
 
    /**
     * Add the given managed {@link Dependency} to this {@link Project}'s immediate list of managed dependencies. This
-    * method first calls {@link #hasManagedDependency(Dependency)} before making changes to the managed dependency list.
+    * method first calls {@link #hasEffectiveManagedDependency(Dependency)} before making changes to the managed dependency list.
     * <p/>
     * See also: {@link DependencyBuilder}.
     */
@@ -162,21 +162,21 @@ public interface DependencyFacet extends Facet
     * <p/>
     * <b>Notice:</b> This method operates only the immediate project managed dependencies, meaning that if a managed
     * dependency is declared somewhere else in the hierarchy, it will not be removable by this method. You should call
-    * {@link #hasDirectManagedDependency(Dependency)} first in order to check if the managed dependency exists in this
+    * {@link #hasManagedDependency(Dependency)} first in order to check if the managed dependency exists in this
     * projects immediate managed dependencies.
     */
    public void removeManagedDependency(Dependency managedDependency);
 
    /**
     * Return an immutable list of all direct managed {@link Dependencies} contained within this project. (i.e.: all
-    * managed dependencies for which {@link ManagedDependencyFacet#hasDirectManagedDependency(Dependency)} returns true;
+    * managed dependencies for which {@link ManagedDependencyFacet#hasManagedDependency(Dependency)} returns true;
     */
    public List<Dependency> getManagedDependencies();
 
    /**
     * Attempt to locate the given managed {@link Dependency}, if it exists in the {@link Project}, and return it.
     * <p/>
-    * See also: {@link DependencyBuilder}. See also: {@link #hasManagedDependency(Dependency)}.
+    * See also: {@link DependencyBuilder}. See also: {@link #hasEffectiveManagedDependency(Dependency)}.
     * 
     * @return
     */

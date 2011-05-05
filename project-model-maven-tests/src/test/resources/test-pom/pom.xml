@@ -51,13 +51,6 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.jboss.spec</groupId>
-      <artifactId>jboss-javaee-6.0</artifactId>
-      <version>${javaee.spec.version}</version>
-      <type>pom</type>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>org.jboss.arquillian</groupId>
       <artifactId>arquillian-junit</artifactId>
       <version>${arquillian.version}</version>

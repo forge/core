@@ -192,7 +192,7 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
    @Override
    public void addManagedDependency(final Dependency manDep)
    {
-      if (!hasManagedDependency(manDep))
+      if (!hasEffectiveManagedDependency(manDep))
       {
          MavenCoreFacet maven = project.getFacet(MavenCoreFacet.class);
          Model pom = maven.getPOM();
@@ -208,13 +208,12 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
    }
 
    @Override
-   public boolean hasManagedDependency(final Dependency manDep)
+   public boolean hasEffectiveManagedDependency(final Dependency manDep)
    {
       MavenCoreFacet maven = project.getFacet(MavenCoreFacet.class);
-      Model pom = maven.getPOM();
-      DependencyManagement depMan = pom.getDependencyManagement();
-
-      List<Dependency> managedDependencies = depMan != null ? MavenDependencyAdapter.fromMavenList(depMan.getDependencies()) : new ArrayList<Dependency>();
+      DependencyManagement depMan = maven.getProjectBuildingResult().getProject().getDependencyManagement();
+      List<Dependency> managedDependencies = (depMan != null ? MavenDependencyAdapter.fromMavenList(depMan
+               .getDependencies()) : new ArrayList<Dependency>());
 
       for (Dependency managedDependency : managedDependencies)
       {
@@ -227,13 +226,14 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
    }
 
    @Override
-   public boolean hasDirectManagedDependency(final Dependency managedDependency)
+   public boolean hasManagedDependency(final Dependency managedDependency)
    {
       MavenCoreFacet maven = project.getFacet(MavenCoreFacet.class);
       Model pom = maven.getPOM();
       DependencyManagement depMan = pom.getDependencyManagement();
 
-      List<Dependency> managedDependencies = depMan != null ? MavenDependencyAdapter.fromMavenList(depMan.getDependencies()) : new ArrayList<Dependency>();
+      List<Dependency> managedDependencies = depMan != null ? MavenDependencyAdapter.fromMavenList(depMan
+               .getDependencies()) : new ArrayList<Dependency>();
 
       for (Dependency manDep : managedDependencies)
       {
@@ -276,8 +276,10 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
       Model pom = maven.getPOM();
       DependencyManagement depMan = pom.getDependencyManagement();
 
-      List<Dependency> managedDependencies = depMan != null ? MavenDependencyAdapter.fromMavenList(depMan.getDependencies()) : new ArrayList<Dependency>();
-      return Collections.unmodifiableList(managedDependencies != null ? managedDependencies : new ArrayList<Dependency>());
+      List<Dependency> managedDependencies = depMan != null ? MavenDependencyAdapter.fromMavenList(depMan
+               .getDependencies()) : new ArrayList<Dependency>();
+      return Collections.unmodifiableList(managedDependencies != null ? managedDependencies
+               : new ArrayList<Dependency>());
    }
 
    @Override
@@ -287,7 +289,8 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
       Model pom = maven.getPOM();
       DependencyManagement depMan = pom.getDependencyManagement();
 
-      List<Dependency> managedDependencies = depMan != null ? MavenDependencyAdapter.fromMavenList(depMan.getDependencies()) : new ArrayList<Dependency>();
+      List<Dependency> managedDependencies = depMan != null ? MavenDependencyAdapter.fromMavenList(depMan
+               .getDependencies()) : new ArrayList<Dependency>();
 
       for (Dependency managedDependency : managedDependencies)
       {
@@ -366,7 +369,7 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
    }
 
    @Override
-   public List<Dependency> resolveAvailableVersions(Dependency dep)
+   public List<Dependency> resolveAvailableVersions(final Dependency dep)
    {
       List<Dependency> versions = resolver.resolveVersions(dep, getRepositories());
       return versions;
@@ -388,7 +391,7 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
    }
 
    @Override
-   public void addRepository(KnownRepository repository)
+   public void addRepository(final KnownRepository repository)
    {
       addRepository(repository.name(), repository.getUrl());
    }
@@ -429,7 +432,7 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
    }
 
    @Override
-   public boolean hasRepository(KnownRepository repository)
+   public boolean hasRepository(final KnownRepository repository)
    {
       return hasRepository(repository.getUrl());
    }
