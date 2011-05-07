@@ -22,6 +22,8 @@
 
 package org.jboss.forge.maven.plugins;
 
+import java.util.List;
+
 /**
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
  */
@@ -119,6 +121,31 @@ public class MavenPluginConfigurationElementBuilder implements MavenPluginConfig
       return builder;
    }
 
+   public static MavenPluginConfigurationElementBuilder createFromExisting(MavenPluginConfigurationElement element)
+   {
+
+      if (element instanceof MavenPluginConfigurationElementBuilder)
+      {
+         MavenPluginConfigurationElementBuilder elementBuilder = (MavenPluginConfigurationElementBuilder) element;
+         MavenPluginConfigurationElementBuilder builder = new MavenPluginConfigurationElementBuilder(elementBuilder);
+
+         builder.configurationElement.setName(element.getName());
+         builder.configurationElement.setText(element.getText());
+         builder.configurationElement.setChildren(element.getChildren());
+         return builder;
+
+      } else if (element instanceof MavenPluginConfigurationElementImpl)
+      {
+         MavenPluginConfigurationElementBuilder builder = new MavenPluginConfigurationElementBuilder();
+
+         builder.configurationElement = (MavenPluginConfigurationElementImpl) element;
+         return builder;
+      } else
+      {
+         throw new IllegalArgumentException("Unsupported type: " + element.getClass());
+      }
+   }
+
    public MavenPluginConfigurationElementBuilder setName(String name)
    {
       configurationElement.setName(name);
@@ -131,6 +158,11 @@ public class MavenPluginConfigurationElementBuilder implements MavenPluginConfig
       builder.setName(name);
       configurationElement.addChild(builder);
       return builder;
+   }
+
+   @Override public List<MavenPluginElement> getChildren()
+   {
+      return configurationElement.getChildren();
    }
 
    @Override public String toString()

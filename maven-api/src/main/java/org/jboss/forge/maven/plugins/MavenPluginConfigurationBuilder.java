@@ -32,6 +32,11 @@ public class MavenPluginConfigurationBuilder implements MavenPluginConfiguration
    private MavenPluginConfigurationImpl mavenPluginConfiguration = new MavenPluginConfigurationImpl();
    private MavenPluginBuilder origin;
 
+   @Override public MavenPluginConfigurationElement getConfigurationElement(String element)
+   {
+      return mavenPluginConfiguration.getConfigurationElement(element);
+   }
+
    @Override public boolean hasConfigurationElement(String configElement)
    {
       return mavenPluginConfiguration.hasConfigurationElement(configElement);
@@ -45,6 +50,11 @@ public class MavenPluginConfigurationBuilder implements MavenPluginConfiguration
    @Override public MavenPluginConfiguration addConfigurationElement(MavenPluginConfigurationElement element)
    {
       return mavenPluginConfiguration.addConfigurationElement(element);
+   }
+
+   @Override public void removeConfigurationElement(String elementName)
+   {
+      mavenPluginConfiguration.removeConfigurationElement(elementName);
    }
 
    @Override public String toString()

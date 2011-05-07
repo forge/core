@@ -22,6 +22,8 @@
 
 package org.jboss.forge.maven.plugins;
 
+import java.util.List;
+
 /**
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
  */
@@ -34,4 +36,6 @@ public interface MavenPluginConfigurationElement extends MavenPluginElement
    boolean hasChilderen();
 
    String getText();
+
+   List<MavenPluginElement> getChildren();
 }

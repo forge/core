@@ -58,6 +58,19 @@ public class MavenPluginConfigurationImpl implements MavenPluginConfiguration
       }
    }
 
+   @Override public MavenPluginConfigurationElement getConfigurationElement(String configElement)
+   {
+      for (MavenPluginConfigurationElement configurationElement : configurationElements)
+      {
+         if (configurationElement.getName().equals(configElement))
+         {
+            return configurationElement;
+         }
+      }
+
+      throw new RuntimeException("Configuration '" + configElement + "' not found");
+   }
+
    @Override public boolean hasConfigurationElement(String configElement)
    {
 
@@ -95,10 +108,20 @@ public class MavenPluginConfigurationImpl implements MavenPluginConfiguration
 
       configurationElements.add(element);
 
-
       return this;
    }
 
+   @Override public void removeConfigurationElement(String elementName)
+   {
+      for (MavenPluginConfigurationElement configurationElement : configurationElements)
+      {
+         if (configurationElement.getName().equals(elementName))
+         {
+            configurationElements.remove(configurationElement);
+            break;
+         }
+      }
+   }
 
    @Override public String toString()
    {
