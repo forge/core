@@ -70,6 +70,15 @@ public class MavenPluginConfigurationElementImpl implements MavenPluginConfigura
       children.add(element);
    }
 
+   public List<MavenPluginElement> getChildren()
+   {
+      return children;
+   }
+
+   public void setChildren(List<MavenPluginElement> children)
+   {
+      this.children = children;
+   }
 
    @Override public String toString()
    {
