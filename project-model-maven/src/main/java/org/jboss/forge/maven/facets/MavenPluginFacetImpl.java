@@ -23,7 +23,6 @@
 package org.jboss.forge.maven.facets;
 
 import org.apache.maven.model.Model;
-import org.apache.maven.model.Plugin;
 import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.maven.MavenPluginFacet;
 import org.jboss.forge.maven.facets.exceptions.PluginNotFoundException;
@@ -70,10 +69,10 @@ public class MavenPluginFacetImpl extends BaseFacet implements MavenPluginFacet,
     @Override
     public List<MavenPlugin> listConfiguredPlugins() {
         MavenCoreFacet mavenCoreFacet = project.getFacet(MavenCoreFacet.class);
-        List<Plugin> pomPlugins = mavenCoreFacet.getPOM().getBuild().getPlugins();
+        List<org.apache.maven.model.Plugin> pomPlugins = mavenCoreFacet.getPOM().getBuild().getPlugins();
         List<MavenPlugin> plugins = new ArrayList<MavenPlugin>();
 
-        for (Plugin plugin : pomPlugins) {
+        for (org.apache.maven.model.Plugin plugin : pomPlugins) {
             MavenPluginAdapter adapter = new MavenPluginAdapter(plugin);
             MavenPluginBuilder pluginBuilder = MavenPluginBuilder.create()
                     .setDependency(
@@ -134,8 +133,8 @@ public class MavenPluginFacetImpl extends BaseFacet implements MavenPluginFacet,
     @Override
     public void removePlugin(Dependency dependency) {
         MavenCoreFacet mavenCoreFacet = project.getFacet(MavenCoreFacet.class);
-        List<Plugin> pomPlugins = mavenCoreFacet.getPOM().getBuild().getPlugins();
-        for (Plugin pomPlugin : pomPlugins) {
+        List<org.apache.maven.model.Plugin> pomPlugins = mavenCoreFacet.getPOM().getBuild().getPlugins();
+        for (org.apache.maven.model.Plugin pomPlugin : pomPlugins) {
             if (pomPlugin.getGroupId().equals(dependency.getGroupId())
                     && pomPlugin.getArtifactId().equals(dependency.getArtifactId())) {
                 Model pom = mavenCoreFacet.getPOM();

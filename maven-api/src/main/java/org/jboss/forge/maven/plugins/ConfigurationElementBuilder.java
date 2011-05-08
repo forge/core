@@ -27,11 +27,11 @@ import java.util.List;
 /**
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
  */
-public class MavenPluginConfigurationElementBuilder implements MavenPluginConfigurationElement
+public class ConfigurationElementBuilder implements ConfigurationElement
 {
-   private MavenPluginConfigurationElementImpl configurationElement;
-   private MavenPluginConfigurationBuilder configurationBuilder;
-   private MavenPluginConfigurationElementBuilder elementBuilder;
+   private ConfigurationElementImpl configurationElement;
+   private ConfigurationBuilder configurationBuilder;
+   private ConfigurationElementBuilder elementBuilder;
 
    @Override public String getName()
    {
@@ -53,92 +53,92 @@ public class MavenPluginConfigurationElementBuilder implements MavenPluginConfig
       return configurationElement.getText();
    }
 
-   public MavenPluginConfigurationElementBuilder setText(String text)
+   public ConfigurationElementBuilder setText(String text)
    {
       configurationElement.setText(text);
       return this;
    }
 
-   public MavenPluginConfigurationElementBuilder addChild(String configElement)
+   public ConfigurationElementBuilder addChild(String configElement)
    {
-      MavenPluginConfigurationElementBuilder builder =
-              MavenPluginConfigurationElementBuilder.create(this)
+      ConfigurationElementBuilder builder =
+              ConfigurationElementBuilder.create(this)
                       .setName(configElement);
       configurationElement.addChild(builder);
       return builder;
    }
 
-   public MavenPluginConfigurationElementBuilder addChild(MavenPluginElement element)
+   public ConfigurationElementBuilder addChild(PluginElement element)
    {
       configurationElement.addChild(element);
       return this;
    }
 
 
-   public MavenPluginConfigurationBuilder getParentPluginConfig()
+   public ConfigurationBuilder getParentPluginConfig()
    {
       return configurationBuilder;
    }
 
-   public MavenPluginConfigurationElementBuilder getParentElement()
+   public ConfigurationElementBuilder getParentElement()
    {
       return elementBuilder;
    }
 
-   private MavenPluginConfigurationElementBuilder()
+   private ConfigurationElementBuilder()
    {
-      configurationElement = new MavenPluginConfigurationElementImpl();
+      configurationElement = new ConfigurationElementImpl();
    }
 
-   private MavenPluginConfigurationElementBuilder(MavenPluginConfigurationBuilder configurationBuilder)
+   private ConfigurationElementBuilder(ConfigurationBuilder configurationBuilder)
    {
-      configurationElement = new MavenPluginConfigurationElementImpl();
+      configurationElement = new ConfigurationElementImpl();
       this.configurationBuilder = configurationBuilder;
    }
 
-   private MavenPluginConfigurationElementBuilder(MavenPluginConfigurationElementBuilder elementBuilder)
+   private ConfigurationElementBuilder(ConfigurationElementBuilder elementBuilder)
    {
-      configurationElement = new MavenPluginConfigurationElementImpl();
+      configurationElement = new ConfigurationElementImpl();
       this.elementBuilder = elementBuilder;
    }
 
-   public static MavenPluginConfigurationElementBuilder create()
+   public static ConfigurationElementBuilder create()
    {
-      return new MavenPluginConfigurationElementBuilder();
+      return new ConfigurationElementBuilder();
    }
 
-   public static MavenPluginConfigurationElementBuilder create(MavenPluginConfigurationBuilder configurationBuilder)
+   public static ConfigurationElementBuilder create(ConfigurationBuilder configurationBuilder)
    {
-      MavenPluginConfigurationElementBuilder builder = new MavenPluginConfigurationElementBuilder(configurationBuilder);
+      ConfigurationElementBuilder builder = new ConfigurationElementBuilder(configurationBuilder);
       builder.configurationBuilder = configurationBuilder;
       return builder;
    }
 
-   public static MavenPluginConfigurationElementBuilder create(MavenPluginConfigurationElementBuilder elementBuilder)
+   public static ConfigurationElementBuilder create(ConfigurationElementBuilder elementBuilder)
    {
-      MavenPluginConfigurationElementBuilder builder = new MavenPluginConfigurationElementBuilder(elementBuilder);
+      ConfigurationElementBuilder builder = new ConfigurationElementBuilder(elementBuilder);
       builder.elementBuilder = elementBuilder;
       return builder;
    }
 
-   public static MavenPluginConfigurationElementBuilder createFromExisting(MavenPluginConfigurationElement element)
+   public static ConfigurationElementBuilder createFromExisting(ConfigurationElement element)
    {
 
-      if (element instanceof MavenPluginConfigurationElementBuilder)
+      if (element instanceof ConfigurationElementBuilder)
       {
-         MavenPluginConfigurationElementBuilder elementBuilder = (MavenPluginConfigurationElementBuilder) element;
-         MavenPluginConfigurationElementBuilder builder = new MavenPluginConfigurationElementBuilder(elementBuilder);
+         ConfigurationElementBuilder elementBuilder = (ConfigurationElementBuilder) element;
+         ConfigurationElementBuilder builder = new ConfigurationElementBuilder(elementBuilder);
 
          builder.configurationElement.setName(element.getName());
          builder.configurationElement.setText(element.getText());
          builder.configurationElement.setChildren(element.getChildren());
          return builder;
 
-      } else if (element instanceof MavenPluginConfigurationElementImpl)
+      } else if (element instanceof ConfigurationElementImpl)
       {
-         MavenPluginConfigurationElementBuilder builder = new MavenPluginConfigurationElementBuilder();
+         ConfigurationElementBuilder builder = new ConfigurationElementBuilder();
 
-         builder.configurationElement = (MavenPluginConfigurationElementImpl) element;
+         builder.configurationElement = (ConfigurationElementImpl) element;
          return builder;
       } else
       {
@@ -146,21 +146,21 @@ public class MavenPluginConfigurationElementBuilder implements MavenPluginConfig
       }
    }
 
-   public MavenPluginConfigurationElementBuilder setName(String name)
+   public ConfigurationElementBuilder setName(String name)
    {
       configurationElement.setName(name);
       return this;
    }
 
-   public MavenPluginConfigurationElementBuilder createConfigurationElement(String name)
+   public ConfigurationElementBuilder createConfigurationElement(String name)
    {
-      MavenPluginConfigurationElementBuilder builder = MavenPluginConfigurationElementBuilder.create(this);
+      ConfigurationElementBuilder builder = ConfigurationElementBuilder.create(this);
       builder.setName(name);
       configurationElement.addChild(builder);
       return builder;
    }
 
-   @Override public List<MavenPluginElement> getChildren()
+   @Override public List<PluginElement> getChildren()
    {
       return configurationElement.getChildren();
    }

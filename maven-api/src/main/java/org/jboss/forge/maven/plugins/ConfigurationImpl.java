@@ -30,17 +30,17 @@ import java.util.List;
 /**
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
  */
-public class MavenPluginConfigurationImpl implements MavenPluginConfiguration
+public class ConfigurationImpl implements Configuration
 {
    private Xpp3Dom configuration;
-   private List<MavenPluginConfigurationElement> configurationElements = new ArrayList<MavenPluginConfigurationElement>();
+   private List<ConfigurationElement> configurationElements = new ArrayList<ConfigurationElement>();
 
-   public MavenPluginConfigurationImpl()
+   public ConfigurationImpl()
    {
       configuration = new Xpp3Dom("configuration");
    }
 
-   public MavenPluginConfigurationImpl(Xpp3Dom configXml)
+   public ConfigurationImpl(Xpp3Dom configXml)
    {
       this.configuration = configXml;
       if (configuration != null)
@@ -48,7 +48,7 @@ public class MavenPluginConfigurationImpl implements MavenPluginConfiguration
 
          for (Xpp3Dom xpp3Dom : configuration.getChildren())
          {
-            MavenPluginConfigurationElementBuilder builder = MavenPluginConfigurationElementBuilder.create()
+            ConfigurationElementBuilder builder = ConfigurationElementBuilder.create()
                     .setName(xpp3Dom.getName()).setText(xpp3Dom.getValue());
             addChilds(xpp3Dom, builder);
             configurationElements.add(builder);
@@ -58,9 +58,9 @@ public class MavenPluginConfigurationImpl implements MavenPluginConfiguration
       }
    }
 
-   @Override public MavenPluginConfigurationElement getConfigurationElement(String configElement)
+   @Override public ConfigurationElement getConfigurationElement(String configElement)
    {
-      for (MavenPluginConfigurationElement configurationElement : configurationElements)
+      for (ConfigurationElement configurationElement : configurationElements)
       {
          if (configurationElement.getName().equals(configElement))
          {
@@ -74,7 +74,7 @@ public class MavenPluginConfigurationImpl implements MavenPluginConfiguration
    @Override public boolean hasConfigurationElement(String configElement)
    {
 
-      for (MavenPluginConfigurationElement configurationElement : configurationElements)
+      for (ConfigurationElement configurationElement : configurationElements)
       {
          if (configurationElement.getName().equals(configElement))
          {
@@ -85,25 +85,25 @@ public class MavenPluginConfigurationImpl implements MavenPluginConfiguration
       return false;
    }
 
-   @Override public List<MavenPluginConfigurationElement> listConfigurationElements()
+   @Override public List<ConfigurationElement> listConfigurationElements()
    {
       return configurationElements;
    }
 
-   private void addChilds(Xpp3Dom xpp3Dom, MavenPluginConfigurationElementBuilder builder)
+   private void addChilds(Xpp3Dom xpp3Dom, ConfigurationElementBuilder builder)
    {
       builder.setText(xpp3Dom.getValue());
 
       for (Xpp3Dom child : xpp3Dom.getChildren())
       {
 
-         MavenPluginConfigurationElementBuilder elementBuilder = builder.addChild(child.getName());
+         ConfigurationElementBuilder elementBuilder = builder.addChild(child.getName());
          addChilds(child, elementBuilder);
 
       }
    }
 
-   @Override public MavenPluginConfiguration addConfigurationElement(MavenPluginConfigurationElement element)
+   @Override public Configuration addConfigurationElement(ConfigurationElement element)
    {
 
       configurationElements.add(element);
@@ -113,7 +113,7 @@ public class MavenPluginConfigurationImpl implements MavenPluginConfiguration
 
    @Override public void removeConfigurationElement(String elementName)
    {
-      for (MavenPluginConfigurationElement configurationElement : configurationElements)
+      for (ConfigurationElement configurationElement : configurationElements)
       {
          if (configurationElement.getName().equals(elementName))
          {
@@ -128,7 +128,7 @@ public class MavenPluginConfigurationImpl implements MavenPluginConfiguration
       StringBuilder b = new StringBuilder();
       b.append("<configuration>");
 
-      for (MavenPluginConfigurationElement configurationElement : configurationElements)
+      for (ConfigurationElement configurationElement : configurationElements)
       {
          b.append(configurationElement.toString());
       }

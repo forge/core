@@ -25,10 +25,6 @@ package org.jboss.forge.maven.plugins;
 /**
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
  */
-public class MavenPluginConfigurationException extends RuntimeException
+public interface PluginElement
 {
-   public MavenPluginConfigurationException(String s, Exception ex)
-   {
-      super(s, ex);
-   }
 }

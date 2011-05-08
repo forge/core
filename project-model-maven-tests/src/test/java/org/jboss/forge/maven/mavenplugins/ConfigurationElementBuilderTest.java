@@ -22,9 +22,9 @@
 
 package org.jboss.forge.maven.mavenplugins;
 
+import org.jboss.forge.maven.plugins.ConfigurationElementBuilder;
 import org.jboss.forge.maven.plugins.MavenPlugin;
 import org.jboss.forge.maven.plugins.MavenPluginBuilder;
-import org.jboss.forge.maven.plugins.MavenPluginConfigurationElementBuilder;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.junit.Test;
 
@@ -33,7 +33,8 @@ import static org.junit.Assert.assertEquals;
 /**
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
  */
-public class MavenPluginConfigurationElementBuilderTest {
+public class ConfigurationElementBuilderTest
+{
     private static final String XML = "<additionalClasspathElements><additionalClasspathElement>test</additionalClasspathElement></additionalClasspathElements>";
     private static final String XML_WITH_SUB_PLUGIN = "<reportPlugins><plugin><groupId>org.codehaus.mojo</groupId><artifactId>findbugs-maven-plugin</artifactId><version>2.3.2</version></plugin></reportPlugins>";
     private static final String XML_WITH_SUB_PLUGIN_AND_CONFIGURATION = "<reportPlugins><plugin><groupId>org.codehaus.mojo</groupId><artifactId>findbugs-maven-plugin</artifactId><version>2.3.2</version><configuration><xmlOutput>true</xmlOutput></configuration></plugin></reportPlugins>";
@@ -44,7 +45,7 @@ public class MavenPluginConfigurationElementBuilderTest {
 
     @Test
     public void testCreateConfigElement() {
-        MavenPluginConfigurationElementBuilder builder = MavenPluginConfigurationElementBuilder.create()
+        ConfigurationElementBuilder builder = ConfigurationElementBuilder.create()
                 .setName("additionalClasspathElements")
                 .addChild("additionalClasspathElement").setText("test").getParentElement();
 
@@ -62,7 +63,7 @@ public class MavenPluginConfigurationElementBuilderTest {
                                 .setVersion("2.3.2")
                 );
 
-        MavenPluginConfigurationElementBuilder builder = MavenPluginConfigurationElementBuilder.create()
+        ConfigurationElementBuilder builder = ConfigurationElementBuilder.create()
                 .setName("reportPlugins")
                 .addChild(findbugsPlugin);
 
@@ -84,7 +85,7 @@ public class MavenPluginConfigurationElementBuilderTest {
                 .getOrigin();
 
 
-        MavenPluginConfigurationElementBuilder builder = MavenPluginConfigurationElementBuilder.create()
+        ConfigurationElementBuilder builder = ConfigurationElementBuilder.create()
                 .setName("reportPlugins")
                 .addChild(findbugsPlugin);
 

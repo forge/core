@@ -22,7 +22,6 @@
 
 package org.jboss.forge.maven.plugins;
 
-import org.apache.maven.model.Plugin;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.jboss.forge.project.dependencies.Dependency;
@@ -34,7 +33,8 @@ import java.io.ByteArrayInputStream;
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
  */
 
-public class MavenPluginAdapter extends Plugin implements MavenPlugin {
+public class MavenPluginAdapter extends org.apache.maven.model.Plugin implements MavenPlugin
+{
     public MavenPluginAdapter(MavenPlugin mavenPlugin) {
         Dependency dependency = mavenPlugin.getDependency();
 
@@ -58,8 +58,8 @@ public class MavenPluginAdapter extends Plugin implements MavenPlugin {
         }
     }
 
-    public MavenPluginAdapter(Plugin plugin) {
-        Plugin clone = plugin.clone();
+    public MavenPluginAdapter(org.apache.maven.model.Plugin plugin) {
+        org.apache.maven.model.Plugin clone = plugin.clone();
 
         setGroupId(clone.getGroupId());
         setArtifactId(clone.getArtifactId());
@@ -68,11 +68,11 @@ public class MavenPluginAdapter extends Plugin implements MavenPlugin {
     }
 
     @Override
-    public MavenPluginConfiguration getConfig() {
+    public Configuration getConfig() {
         Xpp3Dom dom = (Xpp3Dom) super.getConfiguration();
 
 
-        return new MavenPluginConfigurationImpl(dom);
+        return new ConfigurationImpl(dom);
     }
 
     @Override
