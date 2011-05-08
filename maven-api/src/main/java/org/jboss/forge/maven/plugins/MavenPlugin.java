@@ -30,9 +30,9 @@ import org.jboss.forge.project.dependencies.Dependency;
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
  */
 
-public interface MavenPlugin extends MavenPluginElement
+public interface MavenPlugin extends PluginElement
 {
    Dependency getDependency();
 
-   MavenPluginConfiguration getConfig();
+   Configuration getConfig();
 }

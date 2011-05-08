@@ -25,10 +25,10 @@ package org.jboss.forge.maven.mavenplugins;
 import org.apache.maven.model.Plugin;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
+import org.jboss.forge.maven.plugins.Configuration;
 import org.jboss.forge.maven.plugins.MavenPluginAdapter;
-import org.jboss.forge.maven.plugins.MavenPluginConfiguration;
-import org.jboss.forge.maven.plugins.MavenPluginConfigurationElement;
-import org.jboss.forge.maven.plugins.MavenPluginConfigurationElementBuilder;
+import org.jboss.forge.maven.plugins.ConfigurationElement;
+import org.jboss.forge.maven.plugins.ConfigurationElementBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -43,10 +43,10 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
  */
-public class MavenPluginConfigurationImplTest
+public class ConfigurationImplTest
 {
 
-   private MavenPluginConfiguration pluginConfiguration;
+   private Configuration pluginConfiguration;
 
    @Before
    public void setup() throws Exception
@@ -72,9 +72,9 @@ public class MavenPluginConfigurationImplTest
    @Test
    public void testListConfigurationElements() throws Exception
    {
-      List<MavenPluginConfigurationElement> plugins = pluginConfiguration.listConfigurationElements();
+      List<ConfigurationElement> plugins = pluginConfiguration.listConfigurationElements();
       assertThat(plugins.size(), is(1));
-      MavenPluginConfigurationElement configurationElement = plugins.get(0);
+      ConfigurationElement configurationElement = plugins.get(0);
       assertThat(configurationElement.getName(), is("reportPlugins"));
       assertFalse(configurationElement.isPlugin());
    }
@@ -82,12 +82,12 @@ public class MavenPluginConfigurationImplTest
    @Test
    public void testAddConfigurationElement() throws Exception
    {
-      List<MavenPluginConfigurationElement> plugins = pluginConfiguration.listConfigurationElements();
+      List<ConfigurationElement> plugins = pluginConfiguration.listConfigurationElements();
       int pluginSize = plugins.size();
       assertThat(pluginSize, is(1));
 
-      MavenPluginConfigurationElementBuilder element =
-              MavenPluginConfigurationElementBuilder.create()
+      ConfigurationElementBuilder element =
+              ConfigurationElementBuilder.create()
                       .setName("testElement");
 
       pluginConfiguration.addConfigurationElement(element);

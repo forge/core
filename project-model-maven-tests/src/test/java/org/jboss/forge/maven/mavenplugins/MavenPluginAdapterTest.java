@@ -25,8 +25,8 @@ package org.jboss.forge.maven.mavenplugins;
 import org.apache.maven.model.Plugin;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
+import org.jboss.forge.maven.plugins.Configuration;
 import org.jboss.forge.maven.plugins.MavenPluginAdapter;
-import org.jboss.forge.maven.plugins.MavenPluginConfiguration;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -43,7 +43,7 @@ public class MavenPluginAdapterTest
    public void testGetPluginConfiguration() throws Exception
    {
       MavenPluginAdapter adapter = new MavenPluginAdapter(createMavenPlugin());
-      MavenPluginConfiguration pluginConfiguration = adapter.getConfig();
+      Configuration pluginConfiguration = adapter.getConfig();
       assertNotNull(pluginConfiguration);
    }
 

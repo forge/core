@@ -27,12 +27,12 @@ import java.util.List;
 /**
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
  */
-public class MavenPluginConfigurationBuilder implements MavenPluginConfiguration
+public class ConfigurationBuilder implements Configuration
 {
-   private MavenPluginConfigurationImpl mavenPluginConfiguration = new MavenPluginConfigurationImpl();
+   private ConfigurationImpl mavenPluginConfiguration = new ConfigurationImpl();
    private MavenPluginBuilder origin;
 
-   @Override public MavenPluginConfigurationElement getConfigurationElement(String element)
+   @Override public ConfigurationElement getConfigurationElement(String element)
    {
       return mavenPluginConfiguration.getConfigurationElement(element);
    }
@@ -42,12 +42,12 @@ public class MavenPluginConfigurationBuilder implements MavenPluginConfiguration
       return mavenPluginConfiguration.hasConfigurationElement(configElement);
    }
 
-   @Override public List<MavenPluginConfigurationElement> listConfigurationElements()
+   @Override public List<ConfigurationElement> listConfigurationElements()
    {
       return mavenPluginConfiguration.listConfigurationElements();
    }
 
-   @Override public MavenPluginConfiguration addConfigurationElement(MavenPluginConfigurationElement element)
+   @Override public Configuration addConfigurationElement(ConfigurationElement element)
    {
       return mavenPluginConfiguration.addConfigurationElement(element);
    }
@@ -62,41 +62,41 @@ public class MavenPluginConfigurationBuilder implements MavenPluginConfiguration
       return mavenPluginConfiguration.toString();
    }
 
-   private MavenPluginConfigurationBuilder() {
+   private ConfigurationBuilder() {
 
    }
 
-   public MavenPluginConfigurationElementBuilder createConfigurationElement(String name)
+   public ConfigurationElementBuilder createConfigurationElement(String name)
    {
-      MavenPluginConfigurationElementBuilder builder = MavenPluginConfigurationElementBuilder.create(this);
+      ConfigurationElementBuilder builder = ConfigurationElementBuilder.create(this);
       builder.setName(name);
       mavenPluginConfiguration.addConfigurationElement(builder);
       return builder;
    }
 
-   private MavenPluginConfigurationBuilder(MavenPluginBuilder pluginBuilder) {
+   private ConfigurationBuilder(MavenPluginBuilder pluginBuilder) {
       origin = pluginBuilder;
    }
 
 
-   private MavenPluginConfigurationBuilder(MavenPluginConfiguration existingConfig, MavenPluginBuilder pluginBuilder) {
+   private ConfigurationBuilder(Configuration existingConfig, MavenPluginBuilder pluginBuilder) {
       origin = pluginBuilder;
-      for (MavenPluginConfigurationElement element : existingConfig.listConfigurationElements())
+      for (ConfigurationElement element : existingConfig.listConfigurationElements())
       {
          mavenPluginConfiguration.addConfigurationElement(element);
       }
    }
 
-   public static MavenPluginConfigurationBuilder create() {
-      return new MavenPluginConfigurationBuilder();
+   public static ConfigurationBuilder create() {
+      return new ConfigurationBuilder();
    }
 
-   public static MavenPluginConfigurationBuilder create(MavenPluginBuilder pluginBuilder) {
-      return new MavenPluginConfigurationBuilder(pluginBuilder);
+   public static ConfigurationBuilder create(MavenPluginBuilder pluginBuilder) {
+      return new ConfigurationBuilder(pluginBuilder);
    }
 
-   public static MavenPluginConfigurationBuilder create(MavenPluginConfiguration existingConfig, MavenPluginBuilder pluginBuilder) {
-      return new MavenPluginConfigurationBuilder(existingConfig, pluginBuilder);
+   public static ConfigurationBuilder create(Configuration existingConfig, MavenPluginBuilder pluginBuilder) {
+      return new ConfigurationBuilder(existingConfig, pluginBuilder);
    }
 
    public MavenPluginBuilder getOrigin()

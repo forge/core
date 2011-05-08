@@ -27,7 +27,8 @@ import org.jboss.forge.project.dependencies.Dependency;
 /**
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
  */
-public class MavenPluginBuilder implements MavenPlugin, MavenPluginElement {
+public class MavenPluginBuilder implements MavenPlugin, PluginElement
+{
     private MavenPluginImpl plugin = new MavenPluginImpl();
 
     private MavenPluginBuilder() {
@@ -45,7 +46,7 @@ public class MavenPluginBuilder implements MavenPlugin, MavenPluginElement {
         return new MavenPluginBuilder(plugin);
     }
 
-    public MavenPluginBuilder setConfiguration(MavenPluginConfiguration configuration) {
+    public MavenPluginBuilder setConfiguration(Configuration configuration) {
         plugin.setConfiguration(configuration);
         return this;
     }
@@ -61,7 +62,7 @@ public class MavenPluginBuilder implements MavenPlugin, MavenPluginElement {
     }
 
     @Override
-    public MavenPluginConfiguration getConfig() {
+    public Configuration getConfig() {
         return plugin.getConfig();
     }
 
@@ -71,12 +72,12 @@ public class MavenPluginBuilder implements MavenPlugin, MavenPluginElement {
     }
 
 
-    public MavenPluginConfigurationBuilder createConfiguration() {
-        MavenPluginConfigurationBuilder builder;
+    public ConfigurationBuilder createConfiguration() {
+        ConfigurationBuilder builder;
         if (plugin.getConfig() != null) {
-            builder = MavenPluginConfigurationBuilder.create(plugin.getConfig(), this);
+            builder = ConfigurationBuilder.create(plugin.getConfig(), this);
         } else {
-            builder = MavenPluginConfigurationBuilder.create(this);
+            builder = ConfigurationBuilder.create(this);
         }
 
         plugin.setConfiguration(builder);
