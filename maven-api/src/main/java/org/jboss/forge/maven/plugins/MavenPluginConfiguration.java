@@ -30,7 +30,9 @@ import java.util.List;
 public interface MavenPluginConfiguration extends MavenPluginElement
 {
    boolean hasConfigurationElement(String element);
+   MavenPluginConfigurationElement getConfigurationElement(String element);
    List<MavenPluginConfigurationElement> listConfigurationElements();
    MavenPluginConfiguration addConfigurationElement(MavenPluginConfigurationElement element);
+   void removeConfigurationElement(String elementName);
 
 }
