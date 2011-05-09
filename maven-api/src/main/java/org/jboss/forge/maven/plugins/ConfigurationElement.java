@@ -27,12 +27,15 @@ import java.util.List;
 /**
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
  */
-public interface MavenPluginConfiguration extends MavenPluginElement
+public interface ConfigurationElement extends PluginElement
 {
-   boolean hasConfigurationElement(String element);
-   MavenPluginConfigurationElement getConfigurationElement(String element);
-   List<MavenPluginConfigurationElement> listConfigurationElements();
-   MavenPluginConfiguration addConfigurationElement(MavenPluginConfigurationElement element);
-   void removeConfigurationElement(String elementName);
+   String getName();
 
+   boolean isPlugin();
+
+   boolean hasChilderen();
+
+   String getText();
+
+   List<PluginElement> getChildren();
 }

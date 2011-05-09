@@ -27,9 +27,10 @@ import org.jboss.forge.project.dependencies.Dependency;
 /**
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
  */
-public class MavenPluginImpl implements MavenPlugin {
+public class MavenPluginImpl implements MavenPlugin
+{
     private Dependency dependency;
-    private MavenPluginConfiguration configuration;
+    private Configuration configuration;
 
     public MavenPluginImpl() {
     }
@@ -50,7 +51,7 @@ public class MavenPluginImpl implements MavenPlugin {
     }
 
     @Override
-    public MavenPluginConfiguration getConfig() {
+    public Configuration getConfig() {
         return configuration;
     }
 
@@ -77,7 +78,7 @@ public class MavenPluginImpl implements MavenPlugin {
         return b.toString();
     }
 
-    public void setConfiguration(MavenPluginConfiguration configuration) {
+    public void setConfiguration(Configuration configuration) {
         this.configuration = configuration;
     }
 }

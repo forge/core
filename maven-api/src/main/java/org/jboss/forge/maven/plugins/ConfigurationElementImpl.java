@@ -28,11 +28,11 @@ import java.util.List;
 /**
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
  */
-public class MavenPluginConfigurationElementImpl implements MavenPluginConfigurationElement
+public class ConfigurationElementImpl implements ConfigurationElement
 {
    private String name;
    private String text;
-   private List<MavenPluginElement> children = new ArrayList<MavenPluginElement>();
+   private List<PluginElement> children = new ArrayList<PluginElement>();
 
 
    public void setName(String name)
@@ -65,17 +65,17 @@ public class MavenPluginConfigurationElementImpl implements MavenPluginConfigura
       return text;
    }
 
-   public void addChild(MavenPluginElement element)
+   public void addChild(PluginElement element)
    {
       children.add(element);
    }
 
-   public List<MavenPluginElement> getChildren()
+   public List<PluginElement> getChildren()
    {
       return children;
    }
 
-   public void setChildren(List<MavenPluginElement> children)
+   public void setChildren(List<PluginElement> children)
    {
       this.children = children;
    }
@@ -84,7 +84,7 @@ public class MavenPluginConfigurationElementImpl implements MavenPluginConfigura
    {
       StringBuilder b = new StringBuilder();
       b.append("<").append(name).append(">");
-      for (MavenPluginElement child : children)
+      for (PluginElement child : children)
       {
          b.append(child.toString());
       }
