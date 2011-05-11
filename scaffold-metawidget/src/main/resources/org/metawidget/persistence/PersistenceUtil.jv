@@ -124,4 +124,21 @@ public class PersistenceUtil implements Serializable
 
       return (T) query.getSingleResult();
    }
+    public <T> int count(Class<T> type) {
+      CriteriaQuery<Long> cq = getEntityManager().getCriteriaBuilder().createQuery(Long.class);
+      javax.persistence.criteria.Root<T> rt = cq.from(type);
+      cq.select(getEntityManager().getCriteriaBuilder().count(rt));
+      javax.persistence.Query q = getEntityManager().createQuery(cq);
+      return ((Long) q.getSingleResult()).intValue();
+  }
+  @SuppressWarnings("unchecked")  
+  public <T> List<T> findAll(Class<T> type,int firstResult, int maxResults) 
+  {
+      CriteriaQuery<T> cq = getEntityManager().getCriteriaBuilder().createQuery(type);
+      cq.select(cq.from(type));
+      javax.persistence.Query q = getEntityManager().createQuery(cq);
+      q.setMaxResults(maxResults);
+      q.setFirstResult(firstResult);      
+      return q.getResultList();
+  }
 }
