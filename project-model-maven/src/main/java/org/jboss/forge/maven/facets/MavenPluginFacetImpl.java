@@ -23,6 +23,7 @@
 package org.jboss.forge.maven.facets;
 
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Repository;
 import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.maven.MavenPluginFacet;
 import org.jboss.forge.maven.facets.exceptions.PluginNotFoundException;
@@ -32,13 +33,17 @@ import org.jboss.forge.maven.plugins.MavenPluginBuilder;
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
+import org.jboss.forge.project.dependencies.DependencyRepository;
+import org.jboss.forge.project.dependencies.DependencyRepositoryImpl;
 import org.jboss.forge.project.facets.BaseFacet;
+import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.facets.FacetNotFoundException;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 
 import javax.enterprise.context.Dependent;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -144,4 +149,83 @@ public class MavenPluginFacetImpl extends BaseFacet implements MavenPluginFacet,
         }
 
     }
+
+   @Override public void addPluginRepository(KnownRepository repository)
+   {
+      addPluginRepository(repository.name(), repository.getUrl());
+   }
+
+   @Override public void addPluginRepository(String name, String url)
+   {
+      if (!hasPluginRepository(url))
+      {
+         MavenCoreFacet maven = project.getFacet(MavenCoreFacet.class);
+         Model pom = maven.getPOM();
+         Repository repo = new Repository();
+         repo.setId(name);
+         repo.setUrl(url);
+         pom.getPluginRepositories().add(repo);
+         maven.setPOM(pom);
+      }
+   }
+
+   @Override public boolean hasPluginRepository(KnownRepository repository)
+   {
+      return hasPluginRepository(repository.getUrl());
+   }
+
+   @Override public boolean hasPluginRepository(String url)
+   {
+      if (url != null)
+      {
+         MavenCoreFacet maven = project.getFacet(MavenCoreFacet.class);
+         Model pom = maven.getPOM();
+         List<Repository> repositories = pom.getPluginRepositories();
+         for (Repository repo : repositories)
+         {
+            if (repo.getUrl().trim().equals(url.trim()))
+            {
+               repositories.remove(repo);
+               maven.setPOM(pom);
+               return true;
+            }
+         }
+      }
+      return false;
+   }
+
+   @Override public DependencyRepository removePluginRepository(String url)
+   {
+      if (url != null)
+      {
+         MavenCoreFacet maven = project.getFacet(MavenCoreFacet.class);
+         Model pom = maven.getPOM();
+         List<Repository> repos = pom.getPluginRepositories();
+         for (Repository repo : repos)
+         {
+            if (repo.getUrl().equals(url.trim()))
+            {
+               repos.remove(repo);
+               maven.setPOM(pom);
+               return new DependencyRepositoryImpl(repo.getId(), repo.getUrl());
+            }
+         }
+      }
+      return null;
+   }
+
+   @Override
+   public List<DependencyRepository> getPluginRepositories()
+   {
+      List<DependencyRepository> results = new ArrayList<DependencyRepository>();
+      MavenCoreFacet maven = project.getFacet(MavenCoreFacet.class);
+      Model pom = maven.getPOM();
+      List<Repository> repos = pom.getPluginRepositories();
+
+      for (Repository repo : repos)
+      {
+         results.add(new DependencyRepositoryImpl(repo.getId(), repo.getUrl()));
+      }
+      return Collections.unmodifiableList(results);
+   }
 }
