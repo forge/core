@@ -40,6 +40,6 @@ public class ForgeEnvironmentImpl implements ForgeEnvironment
    public boolean isOnline()
    {
       Object offline = shell.getProperty(ShellImpl.OFFLINE_FLAG);
-      return offline == null ? false : !Boolean.parseBoolean(offline.toString());
+      return offline == null ? true : !Boolean.parseBoolean(offline.toString());
    }
 }
