@@ -21,35 +21,58 @@
  */
 package org.jboss.forge.pluginloader;
 
-import org.jboss.modules.DependencySpec;
-import org.jboss.modules.ModuleIdentifier;
-import org.jboss.modules.ModuleLoadException;
-import org.jboss.modules.ModuleLoader;
-import org.jboss.modules.ModuleSpec;
-import org.jboss.modules.ModuleSpec.Builder;
+import java.io.IOException;
+import java.util.Collection;
+
+import org.jboss.modules.ClassSpec;
+import org.jboss.modules.PackageSpec;
+import org.jboss.modules.Resource;
+import org.jboss.modules.ResourceLoader;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class PluginLoader extends ModuleLoader
+public class LocalResourceLoader implements ResourceLoader
 {
-   // ConcurrentClassLoader - for parallel classloading
 
    @Override
-   protected ModuleSpec findModule(final ModuleIdentifier module) throws ModuleLoadException
+   public String getRootName()
    {
-      String name = module.getName();
-      String slot = module.getSlot();
-      Builder builder = ModuleSpec.build(module);
-      DependencySpec dep = DependencySpec.createModuleDependencySpec(module);
-      builder.addDependency(dep);
-      return builder.create();
+      return "org.jboss.forge";
    }
 
    @Override
-   public String toString()
+   public ClassSpec getClassSpec(final String fileName) throws IOException
    {
-      return "Forge Plugin Loader";
+      return null;
    }
+
+   @Override
+   public PackageSpec getPackageSpec(final String name) throws IOException
+   {
+      return null;
+   }
+
+   @Override
+   public Resource getResource(final String name)
+   {
+      // TODO Auto-generated method stub
+      return null;
+   }
+
+   @Override
+   public String getLibrary(final String name)
+   {
+      // TODO Auto-generated method stub
+      return null;
+   }
+
+   @Override
+   public Collection<String> getPaths()
+   {
+      // TODO Auto-generated method stub
+      return null;
+   }
+
 }

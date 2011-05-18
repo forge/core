@@ -34,7 +34,7 @@
 
 	<ui:define name="main">
 		<h:form id="form">
-		    <h:messages />
+		    <h:messages globalOnly="true"/>
 		    <br/>
 		
 		    <h:button value="View all" outcome="list" rendered="#{ _editMode == null or _editMode eq 'false' }" />

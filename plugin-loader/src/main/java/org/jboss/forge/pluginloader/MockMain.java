@@ -21,35 +21,16 @@
  */
 package org.jboss.forge.pluginloader;
 
-import org.jboss.modules.DependencySpec;
-import org.jboss.modules.ModuleIdentifier;
-import org.jboss.modules.ModuleLoadException;
-import org.jboss.modules.ModuleLoader;
-import org.jboss.modules.ModuleSpec;
-import org.jboss.modules.ModuleSpec.Builder;
-
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class PluginLoader extends ModuleLoader
+public class MockMain
 {
-   // ConcurrentClassLoader - for parallel classloading
+   public static boolean ran = false;
 
-   @Override
-   protected ModuleSpec findModule(final ModuleIdentifier module) throws ModuleLoadException
+   public static void main(final String[] args)
    {
-      String name = module.getName();
-      String slot = module.getSlot();
-      Builder builder = ModuleSpec.build(module);
-      DependencySpec dep = DependencySpec.createModuleDependencySpec(module);
-      builder.addDependency(dep);
-      return builder.create();
-   }
-
-   @Override
-   public String toString()
-   {
-      return "Forge Plugin Loader";
+      ran = true;
    }
 }
