@@ -28,10 +28,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.jboss.forge.shell.events.CommandExecuted;
 
@@ -40,7 +40,7 @@ import org.jboss.forge.shell.events.CommandExecuted;
  * 
  */
 // TODO @CommandScoped
-@ApplicationScoped
+@Singleton
 public class EventBus
 {
    @Inject
