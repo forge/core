@@ -28,12 +28,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
-import org.jboss.forge.shell.events.CommandExecuted;
 
 /**
  * Simple bus for postponing event firing.
@@ -92,11 +89,5 @@ public class EventBus
 
       if (!thrown.isEmpty())
          throw new EventBusQueuedException(thrown);
-   }
-
-   @SuppressWarnings("unused")
-   private void fire(@Observes final CommandExecuted event)
-   {
-      fireAll();
    }
 }
