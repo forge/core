@@ -42,6 +42,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 
+import static org.jboss.forge.parser.xml.NodeType.CDATA_SECTION;
+import static org.jboss.forge.parser.xml.NodeType.COMMENT;
+
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
@@ -153,15 +156,23 @@ public class XMLParser
       {
          owned = (Document) target;
       }
-      org.w3c.dom.Node targetChild = null;
-      if (source.text() != null)
+
+      org.w3c.dom.Node targetChild;
+      if (COMMENT.getNodeName().equals(source.name()))
       {
-         targetChild = owned.createElement(source.name());
-         targetChild.appendChild(owned.createTextNode(source.text()));
+         targetChild = owned.createComment(source.text());
+      }
+      else if (CDATA_SECTION.getNodeName().equals(source.name()))
+      {
+         targetChild = owned.createCDATASection(source.text());
       }
       else
       {
          targetChild = owned.createElement(source.name());
+         if (source.text() != null)
+         {
+            targetChild.appendChild(owned.createTextNode(source.text()));
+         }
       }
 
       target.appendChild(targetChild);
