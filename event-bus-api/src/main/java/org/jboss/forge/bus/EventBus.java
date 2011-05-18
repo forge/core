@@ -36,10 +36,11 @@ import javax.inject.Singleton;
 import org.jboss.forge.shell.events.CommandExecuted;
 
 /**
- * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * Simple bus for postponing event firing.
  * 
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-// TODO @CommandScoped
+// TODO @CommandScoped, and this should be used by another bean in Shell
 @Singleton
 public class EventBus
 {
@@ -48,18 +49,26 @@ public class EventBus
 
    private final Map<Object, Annotation[]> map = new HashMap<Object, Annotation[]>();
 
+   /**
+    * Add the given event to the queue.
+    */
    public void enqueue(final Object event)
    {
       map.put(event, new Annotation[] {});
    }
 
+   /**
+    * Add the given event to the queue; this event will be fired with the supplied qualifiers.
+    */
    public void enqueue(final Object event, final Annotation[] qualifiers)
    {
       map.put(event, qualifiers);
    }
 
-   @SuppressWarnings("unused")
-   private void fire(@Observes final CommandExecuted event)
+   /**
+    * Fire all queued events.
+    */
+   public void fireAll()
    {
       List<Exception> thrown = new ArrayList<Exception>();
       try
@@ -83,5 +92,11 @@ public class EventBus
 
       if (!thrown.isEmpty())
          throw new EventBusQueuedException(thrown);
+   }
+
+   @SuppressWarnings("unused")
+   private void fire(@Observes final CommandExecuted event)
+   {
+      fireAll();
    }
 }
