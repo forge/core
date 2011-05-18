@@ -31,7 +31,7 @@ import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.FacetInstallationAborted;
 
 /**
- * Instruct Forge to install the given {@link Facet} into the current {@link Project}
+ * Event to instruct Forge to install the given {@link Facet} into the current {@link Project}
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 

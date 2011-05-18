@@ -14,6 +14,11 @@
 
    <dependencies>
       <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-shell-api</artifactId>
+      </dependency>
+   
+      <dependency>
          <groupId>javax.enterprise</groupId>
          <artifactId>cdi-api</artifactId>
       </dependency>
@@ -22,6 +27,7 @@
          <artifactId>seam-solder</artifactId>
       </dependency>
       
+      <!-- Test Dependencies -->
       <dependency>
          <groupId>org.jboss.arquillian</groupId>
          <artifactId>arquillian-junit</artifactId>

@@ -28,21 +28,18 @@ import java.util.List;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.jboss.forge.bus.EventBus;
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.FacetInstallationAborted;
 import org.jboss.forge.project.facets.PackagingFacet;
+import org.jboss.forge.project.facets.events.FacetInstalled;
 import org.jboss.forge.project.packaging.PackagingType;
 import org.jboss.forge.project.services.FacetFactory;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.ShellMessages;
 import org.jboss.forge.shell.events.InstallFacets;
 import org.jboss.forge.shell.exceptions.Abort;
-import org.jboss.forge.shell.plugins.Alias;
-import org.jboss.forge.shell.plugins.Help;
-import org.jboss.forge.shell.plugins.Plugin;
-import org.jboss.forge.shell.plugins.RequiresProject;
-import org.jboss.forge.shell.plugins.Topic;
 import org.jboss.forge.shell.util.ConstraintInspector;
 
 /**
@@ -59,8 +56,12 @@ public class FacetInstallationHandler
    @Inject
    private Project project;
 
+   @Inject
+   private EventBus bus;
+
    public void installRequest(@Observes final InstallFacets request)
    {
+      List<Facet> installed = new ArrayList<Facet>();
       shell.printlnVerbose("Received Facet installation request " + request.getFacetTypes());
       if (!request.promptRequested()
                || shell.promptBoolean("An action has requested to install the following facets into your project "
@@ -71,7 +72,8 @@ public class FacetInstallationHandler
             Facet facet = factory.getFacet(type);
             if (!project.hasFacet(type))
             {
-               beginInstallation(facet, false);
+               install(facet, false);
+               installed.add(facet);
             }
             else
             {
@@ -83,9 +85,14 @@ public class FacetInstallationHandler
       {
          throw new FacetInstallationAborted("Facet installation aborted.");
       }
+
+      for (Facet facet : installed)
+      {
+         bus.enqueue(new FacetInstalled(facet));
+      }
    }
 
-   private void beginInstallation(final Facet facet, final boolean prompt)
+   private void install(final Facet facet, final boolean prompt)
    {
       if (!performInstallation(facet, prompt))
       {

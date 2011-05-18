@@ -30,12 +30,12 @@ import java.util.Map.Entry;
 import java.util.Properties;
 
 import javax.enterprise.context.Dependent;
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Repository;
+import org.jboss.forge.bus.EventBus;
 import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.maven.dependencies.MavenDependencyAdapter;
 import org.jboss.forge.project.Facet;
@@ -61,16 +61,13 @@ import org.jboss.forge.shell.plugins.RequiresFacet;
 public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, Facet
 {
    private final DependencyResolver resolver;
-   private final Event<AddedDependencies> added;
-   private final Event<RemovedDependencies> removed;
+   private final EventBus bus;
 
    @Inject
-   public MavenDependencyFacet(final DependencyResolver resolver, final Event<AddedDependencies> added,
-            final Event<RemovedDependencies> removed)
+   public MavenDependencyFacet(final DependencyResolver resolver, final EventBus bus)
    {
       this.resolver = resolver;
-      this.added = added;
-      this.removed = removed;
+      this.bus = bus;
    }
 
    @Override
@@ -104,7 +101,7 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
          dependencies.add(dep);
          pom.setDependencies(MavenDependencyAdapter.toMavenList(dependencies));
          maven.setPOM(pom);
-         added.fire(new AddedDependencies(project, dep));
+         bus.enqueue(new AddedDependencies(project, dep));
       }
    }
 
@@ -160,7 +157,7 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
       dependencies.removeAll(toBeRemoved);
       pom.setDependencies(MavenDependencyAdapter.toMavenList(dependencies));
       maven.setPOM(pom);
-      removed.fire(new RemovedDependencies(project, toBeRemoved));
+      bus.enqueue(new RemovedDependencies(project, toBeRemoved));
    }
 
    @Override

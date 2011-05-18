@@ -22,9 +22,20 @@
 
 package org.jboss.forge.shell.command;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.Set;
+
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.inject.Inject;
+
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.constraint.ConstraintEnforcer;
 import org.jboss.forge.shell.constraint.ConstraintException;
+import org.jboss.forge.shell.events.CommandExecuted;
+import org.jboss.forge.shell.events.CommandExecuted.Status;
 import org.jboss.forge.shell.exceptions.CommandExecutionException;
 import org.jboss.forge.shell.exceptions.NoSuchCommandException;
 import org.jboss.forge.shell.plugins.PipeOut;
@@ -32,13 +43,6 @@ import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.util.Enums;
 import org.mvel2.DataConversion;
 import org.mvel2.util.ParseTools;
-
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.inject.Inject;
-import java.lang.reflect.Method;
-import java.util.Set;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -76,7 +80,7 @@ public class Execution
    }
 
    @SuppressWarnings("unchecked")
-   public void perform(PipeOut pipeOut)
+   public void perform(final PipeOut pipeOut)
    {
       if (command != null)
       {
@@ -134,13 +138,22 @@ public class Execution
             {
                plugin = (Plugin) manager.getReference(bean, pluginType, context);
 
+               boolean success = false;
                try
                {
                   command.getMethod().invoke(plugin, paramStaging);
+                  success = true;
                }
                catch (Exception e)
                {
                   throw new CommandExecutionException(command, e);
+               }
+               finally
+               {
+                  if (success)
+                     manager.fireEvent(new CommandExecuted(Status.SUCCESS), new Annotation[] {});
+                  else
+                     manager.fireEvent(new CommandExecuted(Status.FAILURE), new Annotation[] {});
                }
             }
          }
@@ -173,7 +186,7 @@ public class Execution
       return scriptOnly;
    }
 
-   public void setScriptOnly(boolean scriptOnly)
+   public void setScriptOnly(final boolean scriptOnly)
    {
       this.scriptOnly = scriptOnly;
    }

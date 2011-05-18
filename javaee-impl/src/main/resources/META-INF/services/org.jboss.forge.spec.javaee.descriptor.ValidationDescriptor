@@ -1,0 +1,3 @@
+implClass=org.jboss.forge.spec.javaee.validation.ValidationDescriptorImpl
+importerClass=org.jboss.shrinkwrap.descriptor.impl.base.XMLImporter
+defaultName=validation.xml
