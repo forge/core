@@ -22,6 +22,7 @@
          <artifactId>seam-solder</artifactId>
       </dependency>
       
+      <!-- Test Dependencies -->
       <dependency>
          <groupId>org.jboss.arquillian</groupId>
          <artifactId>arquillian-junit</artifactId>

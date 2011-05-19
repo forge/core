@@ -9,7 +9,7 @@
 
 <f:metadata>
     <f:viewParam name="id" value="#{@{beanName}.id}">
-        <f:validateLongRange minimum="1" />
+       <!-- <f:validateLongRange minimum="1" />  --> 
     </f:viewParam>
 </f:metadata>
 
@@ -47,6 +47,15 @@
 		         </li>
 		    </ui:repeat>
 		    </ul>
+		
+		    <h:outputText
+				value="#{@{beanName}.pagination.pageFirstItem + 1}..#{@{beanName}.pagination.pageLastItem + 1}/#{@{beanName}.pagination.itemsCount}" />&nbsp;
+                    <h:commandLink action="#{@{beanName}.previous}"
+				value="Previous #{@{beanName}.pagination.pageSize}"
+				rendered="#{@{beanName}.pagination.hasPreviousPage}" />&nbsp;
+                    <h:commandLink action="#{@{beanName}.next}"
+				value="Next #{@{beanName}.pagination.pageSize}"
+				rendered="#{@{beanName}.pagination.hasNextPage}" />&nbsp;
 		
 		</h:form>
 	</ui:define>

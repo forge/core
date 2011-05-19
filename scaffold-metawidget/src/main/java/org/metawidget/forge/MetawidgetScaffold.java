@@ -124,6 +124,7 @@ public class MetawidgetScaffold extends BaseFacet implements ScaffoldProvider
    public List<Resource<?>> setup(final boolean overwrite)
    {
       createPersistenceUtils(false);
+      createFacesUtils(false);
       List<Resource<?>> resources = generateIndex(overwrite);
       setupRichFaces(project);
       return resources;
@@ -257,6 +258,23 @@ public class MetawidgetScaffold extends BaseFacet implements ScaffoldProvider
       }
    }
 
+   public void createFacesUtils(final boolean overwrite)
+   {
+      JavaClass util = JavaParser.parse(JavaClass.class,
+               getClass().getResourceAsStream("/org/metawidget/persistence/PaginationHelper.jv"));
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+
+      try
+      {         
+         JavaResource utilResource = java.getJavaResource(util);
+         ScaffoldUtil.createOrOverwrite(prompt, utilResource, util.toString(), overwrite);
+      }
+      catch (FileNotFoundException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+   
    @Override
    @SuppressWarnings("unchecked")
    public boolean install()

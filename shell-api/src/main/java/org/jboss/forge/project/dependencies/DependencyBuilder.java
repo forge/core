@@ -251,13 +251,22 @@ public class DependencyBuilder implements Dependency
 
    /**
     * Convenience method which should be used to convert a {@link Dependency} object into its id representation, for
-    * example: "groupId:artifactId:version"
+    * example: "groupId:artifactId:version" or "groupId:artifactId:packaging:version" or
+    * "groupId:artifactId:packaging:scope:version"
     * 
     * @see {@link Dependency#toCoordinates()}
     */
    public static String toId(Dependency dep)
    {
       String gav = dep.getGroupId() + ":" + dep.getArtifactId();
+      if (dep.getPackagingType() != null)
+      {
+         gav += ":" + dep.getPackagingType();
+      }
+      if (dep.getScopeType() != null)
+      {
+         gav += ":" + dep.getScopeType();
+      }
       if (dep.getVersion() != null)
       {
          gav += ":" + dep.getVersion();
@@ -272,14 +281,6 @@ public class DependencyBuilder implements Dependency
    public static String toString(final Dependency dep)
    {
       String gav = dep.toCoordinates();
-      if (dep.getScopeType() != null)
-      {
-         gav += ":" + dep.getScopeType();
-      }
-      if (dep.getPackagingType() != null)
-      {
-         gav += ":" + dep.getPackagingType();
-      }
       return gav;
    }
 

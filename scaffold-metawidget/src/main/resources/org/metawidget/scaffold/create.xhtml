@@ -28,7 +28,7 @@
 	<ui:define name="main">
 		<h:form id="form">
 		
-		    <h:messages />
+		    <h:messages globalOnly="true" />
 		    
 		    <m:metawidget value="#{@{beanName}.@{entity.getName().toLowerCase()}}" readOnly="#{false}" />
 		    

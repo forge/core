@@ -11,6 +11,14 @@
    <artifactId>forge-javaee-impl</artifactId>
    <packaging>jar</packaging>
    <name>Forge - Java EE Integration Impl &amp; Plugins</name>
+   
+    <developers>
+        <developer>
+            <id>kevinpollet</id>
+            <name>Kevin Pollet</name>
+            <email>pollet.kevin@gmail.com</email>
+        </developer>
+    </developers>
 
    <dependencies>
       <dependency>

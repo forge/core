@@ -21,10 +21,12 @@
  */
 package org.jboss.forge.pluginloader;
 
+import org.jboss.modules.DependencySpec;
 import org.jboss.modules.ModuleIdentifier;
 import org.jboss.modules.ModuleLoadException;
 import org.jboss.modules.ModuleLoader;
 import org.jboss.modules.ModuleSpec;
+import org.jboss.modules.ModuleSpec.Builder;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -35,17 +37,19 @@ public class PluginLoader extends ModuleLoader
    // ConcurrentClassLoader - for parallel classloading
 
    @Override
-   protected ModuleSpec findModule(final ModuleIdentifier arg0) throws ModuleLoadException
+   protected ModuleSpec findModule(final ModuleIdentifier module) throws ModuleLoadException
    {
-      // TODO Auto-generated method stub
-      return null;
+      String name = module.getName();
+      String slot = module.getSlot();
+      Builder builder = ModuleSpec.build(module);
+      DependencySpec dep = DependencySpec.createModuleDependencySpec(module);
+      builder.addDependency(dep);
+      return builder.create();
    }
 
    @Override
    public String toString()
    {
-      // TODO Auto-generated method stub
-      return null;
+      return "Forge Plugin Loader";
    }
-
 }
