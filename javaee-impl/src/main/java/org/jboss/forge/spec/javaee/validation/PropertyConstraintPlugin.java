@@ -252,8 +252,8 @@ public class PropertyConstraintPlugin implements Plugin
     @Command(value = "Digits", help = "Adds @Digits constraint on the specified property")
     public void addDigitsConstraint(@Option(name = "onProperty", completer = PropertyCompleter.class, required = true) String property,
                                     @Option(name = "onAccessor", flagOnly = true) boolean onAccessor,
-                                    @Option(name = "integer") int integer,
-                                    @Option(name = "fraction") int fraction,
+                                    @Option(name = "integer", required = true) int integer,
+                                    @Option(name = "fraction", required = true) int fraction,
                                     @Option(name = "message") String message,
                                     @Option(name = "groups", type = JAVA_CLASS) String[] groups,
                                     PipeOut pipeOut) throws FileNotFoundException
@@ -377,6 +377,6 @@ public class PropertyConstraintPlugin implements Plugin
 
     private void outputConstraintAdded(PipeOut pipeOut, String property, Class<? extends java.lang.annotation.Annotation> constraintClass)
     {
-        pipeOut.println("Constraint " + constraintClass.getSimpleName() + " has been successfully added on property named '" + property + "'");
+        pipeOut.println("Constraint " + constraintClass.getSimpleName() + " has been successfully added on property named '" + property + "'\n");
     }
 }
