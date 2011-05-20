@@ -30,16 +30,17 @@ import javax.inject.Inject;
 import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.resources.Resource;
-import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.completer.SimpleTokenCompleter;
+
+import static org.jboss.forge.spec.javaee.validation.util.ResourceHelper.getJavaClassFromResource;
 
 /**
  * @author Kevin Pollet
  */
 public class PropertyCompleter extends SimpleTokenCompleter
 {
-    private Shell shell;
+    private final Shell shell;
 
     @Inject
     public PropertyCompleter(Shell shell)
@@ -51,23 +52,22 @@ public class PropertyCompleter extends SimpleTokenCompleter
     public List<Object> getCompletionTokens()
     {
         final List<Object> tokens = new ArrayList<Object>();
-        final Resource<?> resource = shell.getCurrentResource();
-        if (resource instanceof JavaResource)
-        {
-            final JavaResource javaResource = (JavaResource) resource;
-            try
-            {
-                final JavaClass javaClass = (JavaClass) javaResource.getJavaSource();
-                for (Field<JavaClass> oneField : javaClass.getFields())
-                {
-                    tokens.add(oneField.getName());
-                }
+        final Resource<?> currentResource = shell.getCurrentResource();
 
-            } catch (FileNotFoundException e)
+        try
+        {
+
+            final JavaClass javaClass = getJavaClassFromResource(currentResource);
+            for (Field<JavaClass> oneField : javaClass.getFields())
             {
-                throw new RuntimeException(e);
+                tokens.add(oneField.getName());
             }
+
+        } catch (FileNotFoundException e)
+        {
+            throw new RuntimeException(e);
         }
+
         return tokens;
     }
 }

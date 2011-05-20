@@ -113,7 +113,7 @@ public class ValidationPlugin implements Plugin
     {
         for (Dependency oneDependency : dependencies)
         {
-            // let the user the choice of the version
+            // let to the user the choice of the version
             final List<Dependency> versions = dependencyFacet.resolveAvailableVersions(oneDependency);
             final Dependency selected = prompt.promptChoiceTyped("Which version of " + oneDependency.getArtifactId() + " would you like to use?", versions, versions.get(versions.size() - 1));
             if (!dependencyFacet.hasDependency(selected))

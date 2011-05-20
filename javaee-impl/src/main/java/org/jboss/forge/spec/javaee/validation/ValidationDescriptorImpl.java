@@ -44,7 +44,7 @@ public class ValidationDescriptorImpl extends NodeProviderImplBase implements Va
                 .attribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance"));
     }
 
-    private ValidationDescriptorImpl(String descriptorName, Node model)
+    public ValidationDescriptorImpl(String descriptorName, Node model)
     {
         super(descriptorName);
         this.model = model;
@@ -81,7 +81,6 @@ public class ValidationDescriptorImpl extends NodeProviderImplBase implements Va
     @Override
     public ValidationDescriptor constraintMapping(String constraintMapping)
     {
-
         model.create("constraint-mapping").text(constraintMapping);
         return this;
     }
@@ -89,25 +88,29 @@ public class ValidationDescriptorImpl extends NodeProviderImplBase implements Va
     @Override
     public String getDefaultProvider()
     {
-        return model.getSingle("default-provider").text();
+        final Node defaultProvider = model.getSingle("default-provider");
+        return defaultProvider == null ? null : defaultProvider.text();
     }
 
     @Override
     public String getMessageInterpolator()
     {
-        return model.getSingle("message-interpolator").text();
+        final Node messageInterpolator = model.getSingle("message-interpolator");
+        return messageInterpolator == null ? null : messageInterpolator.text();
     }
 
     @Override
     public String getTraversableResolver()
     {
-        return model.getSingle("traversable-resolver").text();
+        final Node traversableResolver = model.getSingle("traversable-resolver");
+        return traversableResolver == null ? null : traversableResolver.text();
     }
 
     @Override
     public String getConstraintValidatorFactory()
     {
-        return model.getSingle("constraint-validator-factory").text();
+        final Node constraintValidatorFactory = model.getSingle("constraint-validator-factory");
+        return constraintValidatorFactory == null ? null : constraintValidatorFactory.text();
     }
 
     @Override
