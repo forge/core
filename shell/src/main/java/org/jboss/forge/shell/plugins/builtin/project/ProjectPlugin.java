@@ -148,7 +148,23 @@ public class ProjectPlugin implements Plugin
                || shell.promptBoolean("Dependency already exists [" + gav.getGroupId() + ":" + gav.getArtifactId()
                         + "], continue?", true))
       {
-         DependencyBuilder search = DependencyBuilder.create(gav).setVersion("[0,)");
+         if (deps.hasEffectiveManagedDependency(gav))
+         {
+        	 Dependency existingDep = deps.getEffectiveManagedDependency(gav);
+        	 if (shell.promptBoolean("Dependency is managed [" + 
+        			 existingDep.getGroupId() + ":" + 
+        			 existingDep.getArtifactId() + ":" + existingDep.getVersion() + "], reference the managed dependency?", true))
+        	 {
+        		 DependencyBuilder depToAdd = DependencyBuilder.create();
+        		 depToAdd.setGroupId(gav.getGroupId());
+        		 depToAdd.setArtifactId(gav.getArtifactId());
+        		 deps.addDependency(depToAdd);
+                 out.println("Added dependency [" + depToAdd + "]");
+        	 }
+         }
+         else
+         {
+    	 DependencyBuilder search = DependencyBuilder.create(gav).setVersion("[0,)");
          List<Dependency> availableVersions = deps.resolveAvailableVersions(search);
 
          if (availableVersions.isEmpty())
@@ -180,6 +196,7 @@ public class ProjectPlugin implements Plugin
          }
          deps.addDependency(gav);
          out.println("Added dependency [" + gav + "]");
+         }
       }
       else
       {
