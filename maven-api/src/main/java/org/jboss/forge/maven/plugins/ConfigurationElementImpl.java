@@ -57,7 +57,7 @@ public class ConfigurationElementImpl implements ConfigurationElement
 
    @Override public boolean hasChilderen()
    {
-      return false;
+      return children != null && children.size() > 0;
    }
 
    @Override public String getText()
