@@ -61,7 +61,9 @@ import org.jboss.forge.shell.plugins.RequiresFacet;
 public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, Facet
 {
    private final DependencyResolver resolver;
+
    private final EventBus bus;
+
 
    @Inject
    public MavenDependencyFacet(final DependencyResolver resolver, final EventBus bus)
@@ -207,6 +209,12 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
    @Override
    public boolean hasEffectiveManagedDependency(final Dependency manDep)
    {
+      return (getEffectiveManagedDependency(manDep) != null);
+   }
+
+   @Override
+   public Dependency getEffectiveManagedDependency(final Dependency manDep)
+   {
       MavenCoreFacet maven = project.getFacet(MavenCoreFacet.class);
       DependencyManagement depMan = maven.getProjectBuildingResult().getProject().getDependencyManagement();
       List<Dependency> managedDependencies = (depMan != null ? MavenDependencyAdapter.fromMavenList(depMan
@@ -216,11 +224,12 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
       {
          if (areEquivalent(managedDependency, manDep))
          {
-            return true;
+            return managedDependency;
          }
       }
-      return false;
+      return null;
    }
+
 
    @Override
    public boolean hasManagedDependency(final Dependency managedDependency)
