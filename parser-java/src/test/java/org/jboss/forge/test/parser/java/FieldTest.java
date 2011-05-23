@@ -81,7 +81,18 @@ public class FieldTest
    {
       Field<JavaClass> field = javaClass.addField().setType(FieldTest.class).setPublic().setName("test");
       assertTrue(field.isType(FieldTest.class));
+      assertTrue(field.isType(FieldTest.class.getName()));
       assertTrue(javaClass.hasImport(FieldTest.class));
+   }
+
+   @Test
+   public void testIsTypeChecksImportsIgnoresJavaLang() throws Exception
+   {
+      Field<JavaClass> field = javaClass.addField("private Boolean bar;").setPublic().setName("test");
+      assertTrue(field.isType(Boolean.class));
+      assertTrue(field.isType("Boolean"));
+      assertTrue(field.isType(Boolean.class.getName()));
+      assertFalse(javaClass.hasImport(Boolean.class));
    }
 
    @Test
@@ -90,6 +101,21 @@ public class FieldTest
       Field<JavaClass> field = javaClass.addField().setType(FieldTest.class.getName()).setPublic().setName("test");
       assertTrue(field.isType(FieldTest.class.getSimpleName()));
       assertTrue(javaClass.hasImport(FieldTest.class));
+   }
+
+   @Test
+   public void testIsTypeChecksImportsTypes() throws Exception
+   {
+      Field<JavaClass> field = javaClass.addField("private org.jboss.FieldTest test;");
+      Field<JavaClass> field2 = javaClass.addField().setType(FieldTest.class).setName("test2").setPrivate();
+
+      assertTrue(field.isType(FieldTest.class.getSimpleName()));
+      assertFalse(field.isType(FieldTest.class));
+      assertTrue(field.isType("org.jboss.FieldTest"));
+
+      assertTrue(field2.isType(FieldTest.class.getSimpleName()));
+      assertTrue(field2.isType(FieldTest.class));
+      assertFalse(field2.isType("org.jboss.FieldTest"));
    }
 
    @Test

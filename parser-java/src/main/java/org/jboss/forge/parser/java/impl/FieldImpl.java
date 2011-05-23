@@ -320,7 +320,7 @@ public class FieldImpl<O extends JavaSource<O>> implements Field<O>
       }
 
       String simpleName = type.getSimpleName();
-      if (Strings.areEqual(simpleName, getType()) && getOrigin().hasImport(type))
+      if (Strings.areEqual(simpleName, getType()) && (getOrigin().hasImport(type) || !getOrigin().requiresImport(type)))
       {
          return true;
       }
@@ -335,13 +335,10 @@ public class FieldImpl<O extends JavaSource<O>> implements Field<O>
          return true;
       }
 
-      String simpleName = Types.toSimpleName(name);
-      if (Strings.areEqual(simpleName, Types.toSimpleName(getType())))
+      if ((!Types.isQualified(name) || getOrigin().hasImport(name) || !getOrigin().requiresImport(name))
+               && Types.areEquivalent(name, getType()))
       {
-         if (Types.toSimpleName(getType()).equals(getType()) || getOrigin().hasImport(getType()))
-         {
-            return true;
-         }
+         return true;
       }
       return false;
    }
