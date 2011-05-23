@@ -164,7 +164,7 @@ public class ConfigurationElementImpl implements ConfigurationElement
 
                else if (filterType.equals(FilterType.NAME) && filter.equals(element.getName()))
                {
-                  return parent;
+                  return element;
                }
             }
 
