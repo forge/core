@@ -28,6 +28,7 @@ import java.util.Arrays;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
@@ -36,13 +37,21 @@ import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.repository.internal.MavenRepositorySystemSession;
+import org.apache.maven.settings.Settings;
+import org.apache.maven.settings.building.DefaultSettingsBuilderFactory;
+import org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
+import org.apache.maven.settings.building.SettingsBuilder;
+import org.apache.maven.settings.building.SettingsBuildingException;
+import org.apache.maven.settings.building.SettingsBuildingRequest;
+import org.apache.maven.settings.building.SettingsBuildingResult;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.logging.console.ConsoleLoggerManager;
+import org.jboss.forge.environment.ForgeEnvironment;
 import org.jboss.forge.project.ProjectModelException;
 import org.jboss.forge.shell.util.OSUtils;
 import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManager;
-import org.sonatype.aether.util.DefaultRepositorySystemSession;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -50,9 +59,14 @@ import org.sonatype.aether.util.DefaultRepositorySystemSession;
 @ApplicationScoped
 public class MavenContainer
 {
+   private static final String M2_HOME = System.getenv().get("M2_HOME");
+
    private ProjectBuildingRequest request;
    private DefaultPlexusContainer container = null;
    private ProjectBuilder builder = null;
+
+   @Inject
+   private ForgeEnvironment environment;
 
    @PostConstruct
    public void bootstrapMaven()
@@ -77,13 +91,13 @@ public class MavenContainer
    {
       try
       {
+         Settings settings = getSettings();
          // TODO this needs to be configurable via .forge
          // TODO this reference to the M2_REPO should probably be centralized
-         String localRepositoryPath = OSUtils.getUserHomeDir().getAbsolutePath() + "/.m2/repository";
 
          request = new DefaultProjectBuildingRequest();
          ArtifactRepository localRepository = new MavenArtifactRepository(
-                  "local", new File(localRepositoryPath).toURI().toURL().toString(),
+                  "local", new File(settings.getLocalRepository()).toURI().toURL().toString(),
                   container.lookup(ArtifactRepositoryLayout.class),
                   new ArtifactRepositoryPolicy(true, ArtifactRepositoryPolicy.UPDATE_POLICY_NEVER,
                            ArtifactRepositoryPolicy.CHECKSUM_POLICY_WARN),
@@ -92,9 +106,9 @@ public class MavenContainer
          request.setLocalRepository(localRepository);
          request.setRemoteRepositories(new ArrayList<ArtifactRepository>());
 
-         DefaultRepositorySystemSession repositorySession = new DefaultRepositorySystemSession();
-         repositorySession.setLocalRepositoryManager(new SimpleLocalRepositoryManager(localRepositoryPath));
-         repositorySession.setOffline(true);
+         MavenRepositorySystemSession repositorySession = new MavenRepositorySystemSession();
+         repositorySession.setLocalRepositoryManager(new SimpleLocalRepositoryManager(settings.getLocalRepository()));
+         repositorySession.setOffline(environment.isOnline() == false);
 
          request.setRepositorySession(repositorySession);
          request.setProcessPlugins(false);
@@ -106,6 +120,34 @@ public class MavenContainer
       {
          throw new ProjectModelException(
                   "Could not create Maven project building request", e);
+      }
+   }
+
+   public Settings getSettings()
+   {
+      try
+      {
+         SettingsBuilder settingsBuilder = new DefaultSettingsBuilderFactory().newInstance();
+         SettingsBuildingRequest settingsRequest = new DefaultSettingsBuildingRequest();
+         settingsRequest
+                  .setUserSettingsFile(new File(OSUtils.getUserHomeDir().getAbsolutePath() + "/.m2/settings.xml"));
+
+         if (M2_HOME != null)
+            settingsRequest.setGlobalSettingsFile(new File(M2_HOME + "/conf/settings.xml"));
+
+         SettingsBuildingResult settingsBuildingResult = settingsBuilder.build(settingsRequest);
+         Settings effectiveSettings = settingsBuildingResult.getEffectiveSettings();
+
+         if (effectiveSettings.getLocalRepository() == null)
+         {
+            effectiveSettings.setLocalRepository(OSUtils.getUserHomeDir().getAbsolutePath() + "/.m2/repository");
+         }
+
+         return effectiveSettings;
+      }
+      catch (SettingsBuildingException e)
+      {
+         throw new ProjectModelException(e);
       }
    }
 

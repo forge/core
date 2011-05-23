@@ -9,7 +9,6 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
-import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.jboss.forge.environment.ForgeEnvironment;
 import org.jboss.forge.maven.facets.MavenContainer;
@@ -24,7 +23,6 @@ import org.jboss.forge.project.dependencies.DependencyResolverProvider;
 import org.jboss.forge.project.facets.DependencyFacet.KnownRepository;
 import org.jboss.forge.project.services.ResourceFactory;
 import org.jboss.forge.resources.DependencyResource;
-import org.jboss.forge.shell.util.OSUtils;
 import org.sonatype.aether.RepositorySystem;
 import org.sonatype.aether.artifact.Artifact;
 import org.sonatype.aether.collection.CollectRequest;
@@ -50,7 +48,7 @@ import org.sonatype.aether.version.Version;
 @Dependent
 public class RepositoryLookup implements DependencyResolverProvider
 {
-   private PlexusContainer container;
+   private MavenContainer container;
    private ResourceFactory factory;
    private ForgeEnvironment environment;
 
@@ -76,7 +74,7 @@ public class RepositoryLookup implements DependencyResolverProvider
    public RepositoryLookup(final MavenContainer container, final ResourceFactory factory,
             final ForgeEnvironment environment)
    {
-      this.container = container.getContainer();
+      this.container = container;
       this.factory = factory;
       this.environment = environment;
    }
@@ -100,7 +98,7 @@ public class RepositoryLookup implements DependencyResolverProvider
 
       try
       {
-         RepositorySystem system = container.lookup(RepositorySystem.class);
+         RepositorySystem system = container.getContainer().lookup(RepositorySystem.class);
          MavenRepositorySystemSession session = setupRepoSession(system);
 
          session.setIgnoreInvalidArtifactDescriptor(true);
@@ -171,7 +169,7 @@ public class RepositoryLookup implements DependencyResolverProvider
             dep = DependencyBuilder.create(dep).setVersion("[,)");
          }
 
-         RepositorySystem system = container.lookup(RepositorySystem.class);
+         RepositorySystem system = container.getContainer().lookup(RepositorySystem.class);
          MavenRepositorySystemSession session = setupRepoSession(system);
 
          DefaultArtifact artifact = new DefaultArtifact(dep.toCoordinates());
@@ -221,7 +219,7 @@ public class RepositoryLookup implements DependencyResolverProvider
             query = DependencyBuilder.create(query).setVersion("[,)");
          }
 
-         RepositorySystem system = container.lookup(RepositorySystem.class);
+         RepositorySystem system = container.getContainer().lookup(RepositorySystem.class);
          MavenRepositorySystemSession session = setupRepoSession(system);
 
          DefaultArtifact artifact = new DefaultArtifact(query.toCoordinates());
@@ -275,7 +273,7 @@ public class RepositoryLookup implements DependencyResolverProvider
       MavenRepositorySystemSession session = new MavenRepositorySystemSession();
       session.setOffline(!environment.isOnline());
 
-      LocalRepository localRepo = new LocalRepository(OSUtils.getUserHomeDir().getAbsolutePath() + "/.m2/repository");
+      LocalRepository localRepo = new LocalRepository(container.getSettings().getLocalRepository());
       session.setLocalRepositoryManager(repoSystem.newLocalRepositoryManager(localRepo));
 
       session.setTransferErrorCachingEnabled(false);
@@ -327,7 +325,7 @@ public class RepositoryLookup implements DependencyResolverProvider
             dep = DependencyBuilder.create(dep).setVersion("[" + version + "]");
          }
 
-         RepositorySystem maven = container.lookup(RepositorySystem.class);
+         RepositorySystem maven = container.getContainer().lookup(RepositorySystem.class);
          MavenRepositorySystemSession session = setupRepoSession(maven);
 
          VersionRangeRequest rangeRequest = new VersionRangeRequest(new DefaultArtifact(dep.toCoordinates()),
