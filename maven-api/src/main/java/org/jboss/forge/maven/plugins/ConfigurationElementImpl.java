@@ -138,14 +138,25 @@ public class ConfigurationElementImpl implements ConfigurationElement
       return b.toString();
    }
 
-   private ConfigurationElement getConfigElementRecursiveByContent(ConfigurationElement parent, String filter, FilterType filterType,  boolean directChildsOnly)
+   private ConfigurationElement getConfigElementRecursiveByContent(ConfigurationElement parent, String filter, FilterType filterType, boolean directChildsOnly)
    {
       List<PluginElement> children = parent.getChildren();
       for (PluginElement child : children)
       {
          if (child instanceof ConfigurationElement)
          {
+
+
             ConfigurationElement element = (ConfigurationElement) child;
+
+            if (filterType.equals(FilterType.CONTENT) && filter.equals(element.getText()))
+            {
+               return parent;
+            } else if (filterType.equals(FilterType.NAME) && filter.equals(element.getName()))
+            {
+               return element;
+            }
+
             if (!directChildsOnly && element.hasChilderen())
             {
                try
@@ -155,19 +166,7 @@ public class ConfigurationElementImpl implements ConfigurationElement
                {
                   //Do nothing, first check other childs
                }
-            } else
-            {
-               if (filterType.equals(FilterType.CONTENT) && filter.equals(element.getText()))
-               {
-                  return parent;
-               }
-
-               else if (filterType.equals(FilterType.NAME) && filter.equals(element.getName()))
-               {
-                  return element;
-               }
             }
-
 
          } else
          {
@@ -191,7 +190,8 @@ public class ConfigurationElementImpl implements ConfigurationElement
 
    }
 
-    private enum FilterType {
-       NAME, CONTENT
-    }
+   private enum FilterType
+   {
+      NAME, CONTENT
+   }
 }

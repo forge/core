@@ -102,6 +102,15 @@ public class ConfigurationElementImplTest
       assertThat(findbugsPlugin.getText(), is("findbugs-maven-plugin"));
    }
 
+   @Test
+   public void testGetChildByNameWithChilds() {
+      sitePlugin = createSitePluginWithConfigElements();
+      ConfigurationElement findbugsPlugin = sitePlugin.getConfig().getConfigurationElement("reportPlugins").getChildByName("plugin");
+      assertNotNull(findbugsPlugin);
+      assertThat(findbugsPlugin.getName(), is("plugin"));
+      assertThat(findbugsPlugin.hasChilderen(), is(true));
+   }
+
    @Test(expected = ConfigurationElementNotFoundException.class)
    public void testGetChildByNameNotExisting() {
       sitePlugin = createSitePluginWithConfigElements();
