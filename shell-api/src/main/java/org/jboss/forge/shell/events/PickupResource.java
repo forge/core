@@ -21,6 +21,7 @@
  */
 package org.jboss.forge.shell.events;
 
+import org.jboss.forge.ForgeEvent;
 import org.jboss.forge.resources.Resource;
 
 /**
@@ -28,6 +29,7 @@ import org.jboss.forge.resources.Resource;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
+@ForgeEvent
 public class PickupResource
 {
    private final Resource<?> resource;

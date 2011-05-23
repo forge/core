@@ -19,37 +19,36 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.shell.events;
-
-import org.jboss.forge.ForgeEvent;
+package org.jboss.forge.project.facets;
 
 /**
- * Fired after a plugin/command has been executed and has finished processing.
+ * Thrown when a user aborts installation of a given Facet.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-@ForgeEvent
-public final class CommandExecuted
+public class FacetActionAborted extends RuntimeException
 {
-   public enum Status
+   private static final long serialVersionUID = -1271812418795623520L;
+
+   public FacetActionAborted()
    {
-      SUCCESS, FAILURE
+      super();
    }
 
-   private Status status = Status.SUCCESS;
-
-   public CommandExecuted()
+   public FacetActionAborted(String message, Throwable cause)
    {
+      super(message, cause);
    }
 
-   public CommandExecuted(final Status status)
+   public FacetActionAborted(String message)
    {
-      this.status = status;
+      super(message);
    }
 
-   public Status getStatus()
+   public FacetActionAborted(Throwable cause)
    {
-      return status;
+      super(cause);
    }
+
 }

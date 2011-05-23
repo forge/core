@@ -32,7 +32,7 @@ import javax.inject.Inject;
 
 import org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode;
 import org.eclipse.jgit.api.Git;
-import org.jboss.forge.environment.ForgeEnvironment;
+import org.jboss.forge.ForgeEnvironment;
 import org.jboss.forge.git.GitUtils;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.Dependency;

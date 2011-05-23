@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.forge.shell.plugins.builtin;
+package org.jboss.forge.shell.project;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,14 +31,14 @@ import javax.inject.Inject;
 import org.jboss.forge.bus.EventBus;
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.Project;
-import org.jboss.forge.project.facets.FacetInstallationAborted;
+import org.jboss.forge.project.facets.FacetActionAborted;
 import org.jboss.forge.project.facets.PackagingFacet;
 import org.jboss.forge.project.facets.events.FacetInstalled;
+import org.jboss.forge.project.facets.events.InstallFacets;
 import org.jboss.forge.project.packaging.PackagingType;
 import org.jboss.forge.project.services.FacetFactory;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.ShellMessages;
-import org.jboss.forge.shell.events.InstallFacets;
 import org.jboss.forge.shell.exceptions.Abort;
 import org.jboss.forge.shell.util.ConstraintInspector;
 
@@ -83,7 +83,7 @@ public class FacetInstallationHandler
       }
       else if (request.promptRequested())
       {
-         throw new FacetInstallationAborted("Facet installation aborted.");
+         throw new FacetActionAborted("Facet installation aborted.");
       }
 
       for (Facet facet : installed)

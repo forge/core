@@ -4,7 +4,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.environment.ForgeEnvironment;
+import org.jboss.forge.ForgeEnvironment;
 import org.jboss.forge.shell.ShellPrintWriter;
 import org.jboss.forge.shell.completer.EnvironmentPropertiesCompleter;
 import org.jboss.forge.shell.plugins.Alias;

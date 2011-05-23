@@ -27,7 +27,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.environment.ForgeEnvironment;
+import org.jboss.forge.ForgeEnvironment;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

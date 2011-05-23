@@ -21,7 +21,7 @@ import static org.junit.Assert.assertTrue;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.environment.ForgeEnvironment;
+import org.jboss.forge.ForgeEnvironment;
 import org.jboss.forge.test.AbstractShellTest;
 import org.junit.Test;
 

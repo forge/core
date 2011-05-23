@@ -19,36 +19,44 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.project.facets;
+package org.jboss.forge.project.packaging.events;
+
+import org.jboss.forge.ForgeEvent;
+import org.jboss.forge.project.Project;
+import org.jboss.forge.project.packaging.PackagingType;
 
 /**
- * Thrown when a user aborts installation of a given Facet.
+ * This event is fired when the current {@link Project}'s {@link PackagingType} is changed.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class FacetInstallationAborted extends RuntimeException
+@ForgeEvent
+public final class PackagingChanged
 {
-   private static final long serialVersionUID = -1271812418795623520L;
+   private final PackagingType oldPackagingType;
+   private final PackagingType newPackagingType;
+   private final Project project;
 
-   public FacetInstallationAborted()
+   public PackagingChanged(final Project project, final PackagingType old, final PackagingType newType)
    {
-      super();
+      this.project = project;
+      this.oldPackagingType = old;
+      this.newPackagingType = newType;
    }
 
-   public FacetInstallationAborted(String message, Throwable cause)
+   public PackagingType getOldPackagingType()
    {
-      super(message, cause);
+      return oldPackagingType;
    }
 
-   public FacetInstallationAborted(String message)
+   public PackagingType getNewPackagingType()
    {
-      super(message);
+      return newPackagingType;
    }
 
-   public FacetInstallationAborted(Throwable cause)
+   public Project getProject()
    {
-      super(cause);
+      return project;
    }
-
 }

@@ -19,16 +19,17 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.shell.events;
+package org.jboss.forge.project.facets.events;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.jboss.forge.ForgeEvent;
 import org.jboss.forge.parser.java.util.Assert;
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.Project;
-import org.jboss.forge.project.facets.FacetInstallationAborted;
+import org.jboss.forge.project.facets.FacetActionAborted;
 
 /**
  * Event to instruct Forge to install the given {@link Facet} into the current {@link Project}
@@ -36,7 +37,8 @@ import org.jboss.forge.project.facets.FacetInstallationAborted;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class InstallFacets
+@ForgeEvent
+public class RemoveFacets
 {
    private final List<Class<? extends Facet>> facetTypes;
    private boolean prompt = false;
@@ -44,7 +46,7 @@ public class InstallFacets
    /**
     * Install the given facet without prompting for confirmation
     */
-   public InstallFacets(final Class<? extends Facet> facetType)
+   public RemoveFacets(final Class<? extends Facet> facetType)
    {
       Assert.notNull(facetType, "Facet type may not be null.");
       this.facetTypes = new ArrayList<Class<? extends Facet>>();
@@ -52,10 +54,10 @@ public class InstallFacets
    }
 
    /**
-    * Install the given facet but first prompt for confirmation. If the user aborts, a {@link FacetInstallationAborted}
+    * Install the given facet but first prompt for confirmation. If the user aborts, a {@link FacetActionAborted}
     * will be thrown from the statement where this event was fired.
     */
-   public InstallFacets(final boolean prompt, final Class<? extends Facet> facetType)
+   public RemoveFacets(final boolean prompt, final Class<? extends Facet> facetType)
    {
       this(facetType);
       this.prompt = prompt;
@@ -64,7 +66,7 @@ public class InstallFacets
    /**
     * Install the given facets without prompting for confirmation
     */
-   public InstallFacets(final Class<? extends Facet>... facetTypes)
+   public RemoveFacets(final Class<? extends Facet>... facetTypes)
    {
       // FIXME This method causes warnings when used as intended... fix?
       Assert.notNull(facetTypes, "Facet types may not be null.");
@@ -72,10 +74,10 @@ public class InstallFacets
    }
 
    /**
-    * Install the given facets but first prompt for confirmation. If the user aborts, a {@link FacetInstallationAborted}
+    * Install the given facets but first prompt for confirmation. If the user aborts, a {@link FacetActionAborted}
     * will be thrown.
     */
-   public InstallFacets(final boolean prompt, final Class<? extends Facet>... facetTypes)
+   public RemoveFacets(final boolean prompt, final Class<? extends Facet>... facetTypes)
    {
       this(facetTypes);
       this.prompt = prompt;

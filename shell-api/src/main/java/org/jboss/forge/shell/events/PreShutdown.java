@@ -21,6 +21,8 @@
  */
 package org.jboss.forge.shell.events;
 
+import org.jboss.forge.ForgeEvent;
+
 /**
  * Fired in response to receipt of the shell {@link Shutdown} command event. This event must be fired before the
  * {@link Shell} continues shutdown procedures.
@@ -35,6 +37,7 @@ package org.jboss.forge.shell.events;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
+@ForgeEvent
 public final class PreShutdown
 {
    private final Shutdown.Status status;

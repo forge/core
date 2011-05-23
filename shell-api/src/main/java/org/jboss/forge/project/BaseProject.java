@@ -182,6 +182,70 @@ public abstract class BaseProject implements Project
       return this;
    }
 
+   @Override
+   public Project removeFacet(Facet facet)
+   {
+      if (facet.isInstalled() && hasFacet(facet.getClass()))
+      {
+         performRemoval(facet);
+      }
+      else if (facet.isInstalled())
+      {
+         performRemoval(facet);
+      }
+      else if (hasFacet(facet.getClass()))
+      {
+         unregisterFacet(facet);
+      }
+      return this;
+   }
+
+   @Override
+   public Project unregisterFacet(final Facet facet)
+   {
+      if (facet == null)
+      {
+         throw new IllegalArgumentException("Attempted to deregister 'null' as a Facet; Facets cannot be null.");
+      }
+
+      List<Facet> dependents = new ArrayList<Facet>();
+      for (Facet f : getFacets())
+      {
+         if (ConstraintInspector.getFacetDependencies(f.getClass()).contains(facet.getClass()))
+         {
+            dependents.add(f);
+         }
+      }
+
+      for (Facet f : dependents)
+      {
+         if (hasFacet(f.getClass()))
+         {
+            removeFacet(f);
+         }
+      }
+
+      if (!facet.isInstalled())
+      {
+         facets.remove(facet);
+      }
+      return this;
+   }
+
+   private void performRemoval(Facet facet)
+   {
+      if (facet.uninstall())
+      {
+         facets.remove(facet);
+      }
+      else
+      {
+         throw new ProjectModelException("Could not remove " +
+                  "facet: [" + ConstraintInspector.getName(facet.getClass()) + "]. " +
+                        "Removal was unsuccessful.");
+      }
+   }
+
    private void performInstallation(final Facet facet)
    {
       if (facet.install())

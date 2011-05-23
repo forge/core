@@ -21,6 +21,8 @@
  */
 package org.jboss.forge.shell.events;
 
+import org.jboss.forge.ForgeEvent;
+
 /**
  * Fired by the {@link Shell} when it has successfully started up and is ready to accept user input. If plugins need to
  * take action before the user is given a chance to interact, they should observe this event.
@@ -35,6 +37,7 @@ package org.jboss.forge.shell.events;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
+@ForgeEvent
 public final class PostStartup
 {
 

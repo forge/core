@@ -19,42 +19,30 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.shell.events;
+package org.jboss.forge;
 
-import org.jboss.forge.project.Project;
-import org.jboss.forge.project.packaging.PackagingType;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import javax.inject.Qualifier;
 
 /**
- * This event is fired when the current {@link Project}'s {@link PackagingType} is changed.
- * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public final class PackagingChanged
+@Qualifier
+@Inherited
+@Documented
+@Target({ TYPE, METHOD, FIELD })
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ForgeEvent
 {
-   private final PackagingType oldPackagingType;
-   private final PackagingType newPackagingType;
-   private final Project project;
 
-   public PackagingChanged(final Project project, final PackagingType old, final PackagingType newType)
-   {
-      this.project = project;
-      this.oldPackagingType = old;
-      this.newPackagingType = newType;
-   }
-
-   public PackagingType getOldPackagingType()
-   {
-      return oldPackagingType;
-   }
-
-   public PackagingType getNewPackagingType()
-   {
-      return newPackagingType;
-   }
-
-   public Project getProject()
-   {
-      return project;
-   }
 }

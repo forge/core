@@ -23,6 +23,8 @@ package org.jboss.forge.shell.events;
 
 import java.io.File;
 
+import org.jboss.forge.ForgeEvent;
+
 /**
  * Fired as a signal to the shell to bootstrap and accept user input. Should be fired only once per application runtime
  * unless followed by a subsequent {@link Shutdown} event.
@@ -32,9 +34,10 @@ import java.io.File;
  * <code>@Inject Event&lt;Startup&gt startup; <br/>...<br/>
  * startup.fire(new Startup());
  * </code>
- *
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
+@ForgeEvent
 public final class Startup
 {
    private File workingDirectory = new File("").getAbsoluteFile();

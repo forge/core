@@ -83,6 +83,18 @@ public interface Project
    public Project registerFacet(Facet facet);
 
    /**
+    * Remove the given {@link Facet} from this {@link Project}'s internal collection of installed facets.
+    */
+   public Project unregisterFacet(Facet facet);
+
+   /**
+    * Remove the given {@link Facet} from this {@link Project}'s internal collection of installed facets.
+    * 
+    * @return
+    */
+   public Project removeFacet(Facet facet);
+
+   /**
     * Get the {@link File} representing the root directory of this {@link Project}
     */
    public DirectoryResource getProjectRoot();

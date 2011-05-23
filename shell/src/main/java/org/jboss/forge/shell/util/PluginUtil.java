@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.jboss.forge.environment.ForgeEnvironment;
+import org.jboss.forge.ForgeEnvironment;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.shell.plugins.PipeOut;
 import org.yaml.snakeyaml.Yaml;

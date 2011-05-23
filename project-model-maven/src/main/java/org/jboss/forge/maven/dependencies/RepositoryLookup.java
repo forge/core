@@ -10,7 +10,7 @@ import javax.inject.Inject;
 
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.jboss.forge.environment.ForgeEnvironment;
+import org.jboss.forge.ForgeEnvironment;
 import org.jboss.forge.maven.facets.MavenContainer;
 import org.jboss.forge.parser.java.util.Strings;
 import org.jboss.forge.project.ProjectModelException;

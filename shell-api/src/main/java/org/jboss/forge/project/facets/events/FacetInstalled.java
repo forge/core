@@ -21,6 +21,7 @@
  */
 package org.jboss.forge.project.facets.events;
 
+import org.jboss.forge.ForgeEvent;
 import org.jboss.forge.project.Facet;
 
 /**
@@ -29,6 +30,7 @@ import org.jboss.forge.project.Facet;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
+@ForgeEvent
 public final class FacetInstalled
 {
    private final Facet facet;

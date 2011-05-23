@@ -41,12 +41,13 @@ import org.jboss.forge.project.facets.DependencyFacet.KnownRepository;
 import org.jboss.forge.project.facets.FacetNotFoundException;
 import org.jboss.forge.project.facets.MetadataFacet;
 import org.jboss.forge.project.facets.PackagingFacet;
+import org.jboss.forge.project.facets.events.InstallFacets;
+import org.jboss.forge.project.facets.events.RemoveFacets;
 import org.jboss.forge.project.services.FacetFactory;
 import org.jboss.forge.shell.PromptType;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.ShellColor;
 import org.jboss.forge.shell.ShellMessages;
-import org.jboss.forge.shell.events.InstallFacets;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.Command;
 import org.jboss.forge.shell.plugins.DefaultCommand;
@@ -65,7 +66,7 @@ import org.jboss.forge.shell.util.ConstraintInspector;
 @Alias("project")
 @Topic("Project")
 @RequiresProject
-@RequiresFacet({DependencyFacet.class, MavenPluginFacet.class, PackagingFacet.class})
+@RequiresFacet({ DependencyFacet.class, MavenPluginFacet.class, PackagingFacet.class })
 @Help("Perform actions involving the project status, build system, or dependency management system.")
 public class ProjectPlugin implements Plugin
 {
@@ -74,6 +75,7 @@ public class ProjectPlugin implements Plugin
    private Shell shell;
    private FacetFactory factory;
    private Event<InstallFacets> installFacets;
+   private Event<RemoveFacets> removeFacets;
 
    public ProjectPlugin()
    {
@@ -127,7 +129,16 @@ public class ProjectPlugin implements Plugin
             description = "Name of the facet to install") final String facetName)
    {
       // TODO implement facet removal SEAMFORGE-90
-      throw new RuntimeException("Removing facets is not yet implemented");
+      try
+      {
+         Facet facet = factory.getFacetByName(facetName);
+         removeFacets.fire(new RemoveFacets(facet.getClass()));
+      }
+      catch (FacetNotFoundException e)
+      {
+         throw new RuntimeException("Could not find a facet with the name: " + facetName
+                  + "; use 'project list-facets' to list all available facets.", e);
+      }
    }
 
    /*
@@ -543,15 +554,16 @@ public class ProjectPlugin implements Plugin
 
    @Command("add-known-plugin-repository")
    public void pluginRepoAdd(
-           @Option(description = "type...", required = true) final MavenPluginFacet.KnownRepository repo,
-           final PipeOut out)
+            @Option(description = "type...", required = true) final MavenPluginFacet.KnownRepository repo,
+            final PipeOut out)
    {
       MavenPluginFacet deps = project.getFacet(MavenPluginFacet.class);
 
       if (deps.hasPluginRepository(repo))
       {
          out.println("Plugin repository exists [" + repo.name() + "->" + repo.getUrl() + "]");
-      } else
+      }
+      else
       {
          deps.addPluginRepository(repo);
          out.println("Added plugin repository [" + repo.name() + "->" + repo.getUrl() + "]");
@@ -560,16 +572,17 @@ public class ProjectPlugin implements Plugin
 
    @Command("add-plugin-repository")
    public void pluginRepoAdd(
-           @Option(description = "repository name...", required = true) final String name,
-           @Option(description = "repository URL...", required = true) final String url,
-           final PipeOut out)
+            @Option(description = "repository name...", required = true) final String name,
+            @Option(description = "repository URL...", required = true) final String url,
+            final PipeOut out)
    {
       MavenPluginFacet deps = project.getFacet(MavenPluginFacet.class);
 
       if (deps.hasPluginRepository(url))
       {
          out.println("Plugin repository exists [" + url + "]");
-      } else
+      }
+      else
       {
          deps.addPluginRepository(name, url);
          out.println("Added plugin repository [" + name + "->" + url + "]");
@@ -578,9 +591,9 @@ public class ProjectPlugin implements Plugin
 
    @Command("remove-plugin-repository")
    public void pluginRepoRemove(
-           @Option(required = true, description = "repo url...",
-                   completer = PluginRepositoryCompleter.class) final String url,
-           final PipeOut out)
+            @Option(required = true, description = "repo url...",
+                     completer = PluginRepositoryCompleter.class) final String url,
+            final PipeOut out)
    {
       MavenPluginFacet deps = project.getFacet(MavenPluginFacet.class);
 
@@ -588,38 +601,39 @@ public class ProjectPlugin implements Plugin
       if ((rep = deps.removePluginRepository(url)) != null)
       {
          out.println("Removed plugin repository [" + rep.getId() + "->" + rep.getUrl() + "]");
-      } else
+      }
+      else
       {
          out.println("No plugin repository with url [" + url + "]");
       }
    }
 
    /*
-   * Utils
-   */
+    * Utils
+    */
    private void printDep(final PipeOut out, final Dependency dep)
    {
       out.println(
-              out.renderColor(ShellColor.BLUE, dep.getGroupId())
-                      +
-                      out.renderColor(ShellColor.BOLD, " : ")
-                      +
-                      out.renderColor(ShellColor.BLUE, dep.getArtifactId())
-                      +
-                      out.renderColor(ShellColor.BOLD, " : ")
-                      +
-                      out.renderColor(ShellColor.NONE, dep.getVersion() == null ? "" : dep.getVersion())
-                      +
-                      out.renderColor(ShellColor.BOLD, " : ")
-                      +
-                      out.renderColor(ShellColor.NONE, dep.getPackagingType() == null ? "" : dep
-                              .getPackagingType().toLowerCase())
-                      +
-                      out.renderColor(ShellColor.BOLD, " : ")
-                      +
-                      out.renderColor(determineDependencyShellColor(dep.getScopeTypeEnum()),
-                              dep.getScopeType() == null ? "compile" : dep.getScopeType()
-                                      .toLowerCase()));
+               out.renderColor(ShellColor.BLUE, dep.getGroupId())
+                        +
+                        out.renderColor(ShellColor.BOLD, " : ")
+                        +
+                        out.renderColor(ShellColor.BLUE, dep.getArtifactId())
+                        +
+                        out.renderColor(ShellColor.BOLD, " : ")
+                        +
+                        out.renderColor(ShellColor.NONE, dep.getVersion() == null ? "" : dep.getVersion())
+                        +
+                        out.renderColor(ShellColor.BOLD, " : ")
+                        +
+                        out.renderColor(ShellColor.NONE, dep.getPackagingType() == null ? "" : dep
+                                 .getPackagingType().toLowerCase())
+                        +
+                        out.renderColor(ShellColor.BOLD, " : ")
+                        +
+                        out.renderColor(determineDependencyShellColor(dep.getScopeTypeEnum()),
+                                 dep.getScopeType() == null ? "compile" : dep.getScopeType()
+                                          .toLowerCase()));
    }
 
    private ShellColor determineDependencyShellColor(final ScopeType type)
