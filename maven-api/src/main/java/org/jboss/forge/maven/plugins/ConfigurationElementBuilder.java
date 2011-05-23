@@ -165,6 +165,46 @@ public class ConfigurationElementBuilder implements ConfigurationElement
       return configurationElement.getChildren();
    }
 
+   @Override public boolean hasChildByContent(String content, boolean directChildsOnly)
+   {
+      return configurationElement.hasChildByContent(content, directChildsOnly);
+   }
+
+   @Override public boolean hasChildByContent(String content)
+   {
+      return configurationElement.hasChildByContent(content);
+   }
+
+   @Override public ConfigurationElement getChildByContent(String content, boolean directChildsOnly)
+   {
+      return configurationElement.getChildByContent(content, directChildsOnly);
+   }
+
+   @Override public ConfigurationElement getChildByContent(String content)
+   {
+      return configurationElement.getChildByContent(content);
+   }
+
+   @Override public boolean hasChildByName(String name, boolean directChildsOnly)
+   {
+      return configurationElement.hasChildByName(name, directChildsOnly);
+   }
+
+   @Override public boolean hasChildByName(String name)
+   {
+      return configurationElement.hasChildByName(name);
+   }
+
+   @Override public ConfigurationElement getChildByName(String name, boolean directChildsOnly)
+   {
+      return configurationElement.getChildByName(name, directChildsOnly);
+   }
+
+   @Override public ConfigurationElement getChildByName(String name)
+   {
+      return configurationElement.getChildByName(name);
+   }
+
    @Override public String toString()
    {
       return configurationElement.toString();
