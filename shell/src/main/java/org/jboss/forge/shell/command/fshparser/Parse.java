@@ -22,14 +22,14 @@
 
 package org.jboss.forge.shell.command.fshparser;
 
-import org.mvel2.MVEL;
+import static java.lang.Character.isJavaIdentifierPart;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Queue;
 import java.util.Set;
 
-import static java.lang.Character.isJavaIdentifierPart;
+import org.mvel2.MVEL;
 
 /**
  * @author Mike Brock .
@@ -109,13 +109,13 @@ public abstract class Parse
          if (n instanceof PipeNode)
          {
             build.append('|')
-                  .append(disassemble(((NestedNode) n).getNest()));
+                     .append(disassemble(((NestedNode) n).getNest()));
          }
          else if (n instanceof NestedNode)
          {
             build.append('(')
-                  .append(disassemble(((NestedNode) n).getNest()))
-                  .append(')');
+                     .append(disassemble(((NestedNode) n).getNest()))
+                     .append(')');
          }
          else if (n instanceof TokenNode)
          {
@@ -149,9 +149,9 @@ public abstract class Parse
    {
       String toExec = queueToString(new AutoReducingQueue(node.getNest(), runtime));
 
-      //System.out.println("\n----\n" + toExec + "\n========\n");
+      // System.out.println("\n----\n" + toExec + "\n========\n");
 
-      Object r = MVEL.eval(toExec, runtime, runtime.getShell().getProperties());
+      Object r = MVEL.eval(toExec, runtime, runtime.getShell().getEnvironment().getProperties());
       if (r == null)
       {
          return null;

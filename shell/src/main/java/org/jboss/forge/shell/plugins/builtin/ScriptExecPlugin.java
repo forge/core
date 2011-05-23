@@ -61,7 +61,7 @@ public class ScriptExecPlugin implements Plugin
          appender.append(s);
       }
 
-      Object retVal = eval(appender.toString(), new ScriptContext(), shell.getProperties());
+      Object retVal = eval(appender.toString(), new ScriptContext(), shell.getEnvironment().getProperties());
 
       if (retVal != null)
       {

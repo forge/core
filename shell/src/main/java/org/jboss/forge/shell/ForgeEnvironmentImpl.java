@@ -21,10 +21,17 @@
  */
 package org.jboss.forge.shell;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.jboss.forge.environment.ForgeEnvironment;
+import org.jboss.forge.project.services.ResourceFactory;
+import org.jboss.forge.resources.DirectoryResource;
+import org.jboss.forge.resources.FileResource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -33,13 +40,51 @@ import org.jboss.forge.environment.ForgeEnvironment;
 @ApplicationScoped
 public class ForgeEnvironmentImpl implements ForgeEnvironment
 {
+   private final Map<String, Object> properties = new HashMap<String, Object>();
+
    @Inject
-   private Shell shell;
+   private ResourceFactory resourceFactory;
+
+   @Override
+   public DirectoryResource getPluginDirectory()
+   {
+      String pluginPath = getProperty("FORGE_CONFIG_DIR") + "plugins/";
+      FileResource<?> resource = (FileResource<?>) resourceFactory.getResourceFrom(new File(pluginPath));
+      if (!resource.exists())
+      {
+         resource.mkdirs();
+      }
+      return resource.reify(DirectoryResource.class);
+   }
 
    @Override
    public boolean isOnline()
    {
-      Object offline = shell.getProperty(ShellImpl.OFFLINE_FLAG);
+      Object offline = getProperty(ShellImpl.OFFLINE_FLAG);
       return offline == null ? true : !Boolean.parseBoolean(offline.toString());
+   }
+
+   @Override
+   public void setProperty(final String name, final Object value)
+   {
+      properties.put(name, value);
+   }
+
+   @Override
+   public Object getProperty(final String name)
+   {
+      return properties.get(name);
+   }
+
+   @Override
+   public Map<String, Object> getProperties()
+   {
+      return properties;
+   }
+
+   @Override
+   public void removeProperty(String name)
+   {
+      properties.remove(name);
    }
 }

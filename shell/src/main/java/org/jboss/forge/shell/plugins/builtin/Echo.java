@@ -105,13 +105,13 @@ public class Echo implements Plugin
 
                case 'w':
                   builder.append(new String(expr, start, i - start - 1));
-                  builder.append(shell.getProperty("CWD"));
+                  builder.append(shell.getEnvironment().getProperty("CWD"));
                   start = i + 1;
                   break;
 
                case 'W':
                   builder.append(new String(expr, start, i - start - 1));
-                  String v = (String) shell.getProperty("CWD");
+                  String v = (String) shell.getEnvironment().getProperty("CWD");
                   builder.append(v.substring(v.lastIndexOf('/') + 1));
                   start = i + 1;
                   break;
@@ -284,9 +284,9 @@ public class Echo implements Plugin
             }
 
             String var = new String(expr, start, i - start);
-            if (shell.getProperties().containsKey(var))
+            if (shell.getEnvironment().getProperties().containsKey(var))
             {
-               out.append(String.valueOf(shell.getProperties().get(var)));
+               out.append(String.valueOf(shell.getEnvironment().getProperties().get(var)));
             }
 
             start = i;

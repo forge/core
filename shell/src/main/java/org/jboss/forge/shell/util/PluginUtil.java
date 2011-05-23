@@ -33,8 +33,8 @@ import java.util.regex.Pattern;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.jboss.forge.environment.ForgeEnvironment;
 import org.jboss.forge.resources.FileResource;
-import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.plugins.PipeOut;
 import org.yaml.snakeyaml.Yaml;
 
@@ -51,9 +51,9 @@ public class PluginUtil
    private static final String PROP_NAME = "name";
    private static final Object PROP_GIT_REF = "gitref";
 
-   private static String getDefaultRepo(Shell shell)
+   private static String getDefaultRepo(ForgeEnvironment environment)
    {
-      String defaultRepo = (String) shell.getProperty("DEFFAULT_PLUGIN_REPO");
+      String defaultRepo = (String) environment.getProperty("DEFFAULT_PLUGIN_REPO");
       if (defaultRepo == null)
       {
          throw new RuntimeException("no default repository set: (to set, type: set DEFAULT_PLUGIN_REPO <repository>)");
@@ -62,9 +62,10 @@ public class PluginUtil
    }
 
    @SuppressWarnings("unchecked")
-   public static List<PluginRef> findPlugin(Shell sh, String searchString, PipeOut out) throws Exception
+   public static List<PluginRef> findPlugin(ForgeEnvironment environment, String searchString, PipeOut out)
+            throws Exception
    {
-      String defaultRepo = getDefaultRepo(sh);
+      String defaultRepo = getDefaultRepo(environment);
       HttpGet httpGet = new HttpGet(defaultRepo);
 
       out.print("Connecting to remote repository [" + defaultRepo + "]... ");

@@ -26,8 +26,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Map;
 
+import org.jboss.forge.environment.ForgeEnvironment;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.Resource;
@@ -78,11 +78,6 @@ public interface Shell extends ShellPrintWriter, ShellPrompt, ShellHistory
    Project getCurrentProject();
 
    /**
-    * Return the directory this shell is using to store and load third-party plugins.
-    */
-   DirectoryResource getPluginDirectory();
-
-   /**
     * Return true if this shell is currently running in pretend mode.
     * <p/>
     * Modifications to files made while running in pretend mode are made in a temporary directory, and the output is
@@ -117,30 +112,26 @@ public interface Shell extends ShellPrintWriter, ShellPrompt, ShellHistory
 
    /**
     * Execute a shell command.
-    * 
-    * @param command
     */
    void execute(String command);
 
    /**
     * Execute a shell script from the specified file.
-    * 
-    * @param file
     */
    void execute(File file) throws IOException;
 
    /**
     * Execute a shell script from the specified file, passing the given arguments as input.
-    * 
-    * @param file
-    * @param args
     */
    void execute(File file, String... args) throws IOException;
 
    /**
+    * Return true if the {@link Shell} is currently executing a plugin; otherwise, return false.
+    */
+   boolean isExecuting();
+
+   /**
     * Wait for input. Return as soon as any key is pressed and return the scancode.
-    * 
-    * @return
     */
    int scan();
 
@@ -151,33 +142,8 @@ public interface Shell extends ShellPrintWriter, ShellPrompt, ShellHistory
 
    /**
     * Move the cursor x the specified number of positions.
-    * 
-    * @param x
     */
    void cursorLeft(int x);
-
-   /**
-    * Set a property in the shell context.
-    * 
-    * @param name
-    * @param value
-    */
-   void setProperty(String name, Object value);
-
-   /**
-    * Get a map of properties for the current shell context.
-    * 
-    * @return
-    */
-   Map<String, Object> getProperties();
-
-   /**
-    * Get a named property for the shell context
-    * 
-    * @param name
-    * @return
-    */
-   Object getProperty(String name);
 
    /**
     * Reset the shell prompt to default.
@@ -227,11 +193,6 @@ public interface Shell extends ShellPrintWriter, ShellPrompt, ShellHistory
    String readLine() throws IOException;
 
    /**
-    * Return true if the {@link Shell} is currently executing a plugin; otherwise, return false.
-    */
-   boolean isExecuting();
-
-   /**
     * Controls the shell's usage of ANSI escape code support. This method does not guarantee ANSI will function
     * properly, as the underlying Terminal must also support it.
     */
@@ -241,4 +202,9 @@ public interface Shell extends ShellPrintWriter, ShellPrompt, ShellHistory
     * Returns whether or not this shell supports ANSI escape codes.
     */
    boolean isAnsiSupported();
+
+   /**
+    * Get the current Forge environment.
+    */
+   ForgeEnvironment getEnvironment();
 }

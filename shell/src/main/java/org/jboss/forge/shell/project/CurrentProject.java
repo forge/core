@@ -42,7 +42,7 @@ import org.jboss.forge.shell.project.resources.CurrentResource;
 @Singleton
 public class CurrentProject
 {
-   // TODO separate project-specific shell impl into separate project!
+   // TODO separate project-specific forge impl into separate project!
    private Project currentProject;
 
    @Inject

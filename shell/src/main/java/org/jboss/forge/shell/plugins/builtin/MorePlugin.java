@@ -248,7 +248,7 @@ public class MorePlugin implements Plugin
             // continue Bufferloop;
          case ' ':
             // y = 0;
-            // height = shell.getHeight() - 1;
+            // height = forge.getHeight() - 1;
             lineBuffer.setLineWidth(shell.getWidth());
 
             shell.clearLine();

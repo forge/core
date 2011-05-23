@@ -53,7 +53,7 @@ import org.jboss.forge.shell.util.GeneralUtils;
  */
 @Alias("list-commands")
 @Topic("Shell Environment")
-@Help("Lists executable shell commands")
+@Help("Lists executable forge commands")
 public class ListCommandsPlugin implements Plugin
 {
    final PluginRegistry registry;

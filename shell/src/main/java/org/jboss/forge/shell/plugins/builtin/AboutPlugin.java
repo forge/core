@@ -33,7 +33,7 @@ import org.jboss.forge.shell.plugins.Topic;
 
 @Alias("about")
 @Topic("Shell Environment")
-@Help("Display information about this shell.")
+@Help("Display information about this forge.")
 public class AboutPlugin implements Plugin
 {
    @Inject

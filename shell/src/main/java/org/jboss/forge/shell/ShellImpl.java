@@ -35,9 +35,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
@@ -54,12 +52,12 @@ import jline.console.history.MemoryHistory;
 
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
+import org.jboss.forge.environment.ForgeEnvironment;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.project.services.ResourceFactory;
 import org.jboss.forge.resources.DirectoryResource;
-import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.shell.command.CommandMetadata;
@@ -123,8 +121,6 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    public static final String FORGE_CONFIG_FILE = "config";
    public static final String OFFLINE_FLAG = "OFFLINE";
 
-   private final Map<String, Object> properties = new HashMap<String, Object>();
-
    @Inject
    @Parameters
    private List<String> parameters;
@@ -140,6 +136,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
 
    @Inject
    ResourceFactory resourceFactory;
+
    private Resource<?> lastResource;
 
    @Inject
@@ -150,6 +147,9 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
 
    @Inject
    private CompletedCommandHolder commandHolder;
+
+   @Inject
+   private ForgeEnvironment environment;
 
    private ConsoleReader reader;
    private Completer completer;
@@ -311,8 +311,8 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       });
 
       projectContext.setCurrentResource(resourceFactory.getResourceFrom(event.getWorkingDirectory()));
-      properties.put("CWD", getCurrentDirectory().getFullyQualifiedName());
-      properties.put("SHELL", this);
+      environment.setProperty("CWD", getCurrentDirectory().getFullyQualifiedName());
+      environment.setProperty("SHELL", this);
 
       configureOSTerminal();
       initReaderAndStreams();
@@ -323,27 +323,27 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       if (event.isRestart())
       {
          // suppress the MOTD if this is a restart.
-         properties.put("NO_MOTD", true);
+         environment.setProperty("NO_MOTD", true);
       }
       else
       {
-         properties.put("NO_MOTD", false);
+         environment.setProperty("NO_MOTD", false);
       }
 
-      properties.put("OS_NAME", OSUtils.getOsName());
-      properties.put(PROP_FORGE_CONFIG_DIR, FORGE_CONFIG_DIR);
-      properties.put(PROP_PROMPT, "> ");
-      properties.put(PROP_PROMPT_NO_PROJ, "> ");
+      environment.setProperty("OS_NAME", OSUtils.getOsName());
+      environment.setProperty(PROP_FORGE_CONFIG_DIR, FORGE_CONFIG_DIR);
+      environment.setProperty(PROP_PROMPT, "> ");
+      environment.setProperty(PROP_PROMPT_NO_PROJ, "> ");
 
       shellConfig.loadConfig(this);
 
       if (Boolean.getBoolean("forge.offline") == true)
       {
-         this.setProperty(OFFLINE_FLAG, true);
+         environment.setProperty(OFFLINE_FLAG, true);
       }
       else
       {
-         this.setProperty(OFFLINE_FLAG, false);
+         environment.setProperty(OFFLINE_FLAG, false);
       }
 
       postStartup.fire(new PostStartup());
@@ -470,7 +470,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
 
    private void initParameters()
    {
-      properties.put(PROP_VERBOSE, String.valueOf(parameters.contains("--verbose")));
+      environment.setProperty(PROP_VERBOSE, String.valueOf(parameters.contains("--verbose")));
 
       if (parameters.contains("--pretend"))
       {
@@ -623,7 +623,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       }
       else if (line == null)
       {
-         String eofs = (String) getProperty(PROP_IGNORE_EOF);
+         String eofs = (String) environment.getProperty(PROP_IGNORE_EOF);
 
          int propEOFs;
          try
@@ -796,7 +796,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       }
       finally
       {
-         properties.remove(funcName);
+         environment.removeProperty(funcName);
          instream.close();
       }
    }
@@ -961,14 +961,14 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    @Override
    public boolean isVerbose()
    {
-      Object s = properties.get(PROP_VERBOSE);
+      Object s = environment.getProperty(PROP_VERBOSE);
       return (s != null) && "true".equals(s);
    }
 
    @Override
    public void setVerbose(final boolean verbose)
    {
-      properties.put(PROP_VERBOSE, String.valueOf(verbose));
+      environment.setProperty(PROP_VERBOSE, String.valueOf(verbose));
    }
 
    @Override
@@ -998,24 +998,6 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    }
 
    @Override
-   public void setProperty(final String name, final Object value)
-   {
-      properties.put(name, value);
-   }
-
-   @Override
-   public Object getProperty(final String name)
-   {
-      return properties.get(name);
-   }
-
-   @Override
-   public Map<String, Object> getProperties()
-   {
-      return properties;
-   }
-
-   @Override
    public void setDefaultPrompt()
    {
       setPrompt("");
@@ -1024,7 +1006,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    @Override
    public void setPrompt(final String prompt)
    {
-      setProperty(PROP_PROMPT, prompt);
+      environment.setProperty(PROP_PROMPT, prompt);
    }
 
    @Override
@@ -1032,11 +1014,12 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    {
       if (projectContext.getCurrent() != null)
       {
-         return Echo.echo(this, Echo.promptExpressionParser(this, (String) properties.get(PROP_PROMPT)));
+         return Echo.echo(this, Echo.promptExpressionParser(this, (String) environment.getProperty(PROP_PROMPT)));
       }
       else
       {
-         return Echo.echo(this, Echo.promptExpressionParser(this, (String) properties.get(PROP_PROMPT_NO_PROJ)));
+         return Echo.echo(this,
+                  Echo.promptExpressionParser(this, (String) environment.getProperty(PROP_PROMPT_NO_PROJ)));
       }
    }
 
@@ -1050,7 +1033,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    @Override
    public DirectoryResource getConfigDir()
    {
-      return resourceFactory.getResourceFrom(new File((String) getProperty(PROP_FORGE_CONFIG_DIR))).reify(
+      return resourceFactory.getResourceFrom(new File((String) environment.getProperty(PROP_FORGE_CONFIG_DIR))).reify(
                DirectoryResource.class);
    }
 
@@ -1061,7 +1044,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       if (result == null)
       {
          result = this.resourceFactory.getResourceFrom(Files.getWorkingDirectory());
-         properties.put("CWD", result.getFullyQualifiedName());
+         environment.setProperty("CWD", result.getFullyQualifiedName());
       }
 
       return result;
@@ -1079,7 +1062,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    {
       lastResource = getCurrentResource();
       projectContext.setCurrentResource(resource);
-      properties.put("CWD", resource.getFullyQualifiedName());
+      environment.setProperty("CWD", resource.getFullyQualifiedName());
    }
 
    @Override
@@ -1226,14 +1209,8 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    }
 
    @Override
-   public DirectoryResource getPluginDirectory()
+   public ForgeEnvironment getEnvironment()
    {
-      String pluginPath = getProperty("FORGE_CONFIG_DIR") + "plugins/";
-      FileResource<?> resource = (FileResource<?>) resourceFactory.getResourceFrom(new File(pluginPath));
-      if (!resource.exists())
-      {
-         resource.mkdirs();
-      }
-      return resource.reify(DirectoryResource.class);
+      return environment;
    }
 }

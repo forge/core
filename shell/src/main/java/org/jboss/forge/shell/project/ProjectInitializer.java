@@ -26,7 +26,6 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.MetadataFacet;
 import org.jboss.forge.project.services.ProjectFactory;
@@ -91,7 +90,7 @@ public class ProjectInitializer
 
       if (newProject != null)
       {
-         shell.setProperty("PROJECT_NAME", newProject.getFacet(MetadataFacet.class).getProjectName());
+         shell.getEnvironment().setProperty("PROJECT_NAME", newProject.getFacet(MetadataFacet.class).getProjectName());
       }
 
       cp.setCurrentProject(newProject);

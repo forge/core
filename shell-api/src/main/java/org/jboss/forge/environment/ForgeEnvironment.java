@@ -21,11 +21,44 @@
  */
 package org.jboss.forge.environment;
 
+import java.util.Map;
+
+import org.jboss.forge.resources.DirectoryResource;
+
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
 public interface ForgeEnvironment
 {
+
+   /**
+    * Return the directory Forge is using to store and load third-party plugins.
+    */
+   DirectoryResource getPluginDirectory();
+
+   /**
+    * Return true if Forge is currently operating with the assumption that an Internet connection is available.
+    */
    boolean isOnline();
+
+   /**
+    * Set a configuration property for the current Forge execution.
+    */
+   void setProperty(String name, Object value);
+
+   /**
+    * Get a map of all configuration properties for the current Forge execution.
+    */
+   Map<String, Object> getProperties();
+
+   /**
+    * Get a named property for the current Forge execution
+    */
+   Object getProperty(String name);
+
+   /**
+    * Get a named property for the current Forge execution
+    */
+   void removeProperty(String funcName);
 }

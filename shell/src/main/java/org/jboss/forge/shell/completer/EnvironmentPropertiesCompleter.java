@@ -27,21 +27,20 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.shell.Shell;
-import org.jboss.forge.shell.completer.SimpleTokenCompleter;
+import org.jboss.forge.environment.ForgeEnvironment;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class ShellEnvCompleter extends SimpleTokenCompleter
+public class EnvironmentPropertiesCompleter extends SimpleTokenCompleter
 {
    @Inject
-   private Shell shell;
+   private ForgeEnvironment environment;
 
    @Override
    public List<Object> getCompletionTokens()
    {
-      Map<String, Object> props = shell.getProperties();
+      Map<String, Object> props = environment.getProperties();
       return new ArrayList<Object>(props.keySet());
    }
 }

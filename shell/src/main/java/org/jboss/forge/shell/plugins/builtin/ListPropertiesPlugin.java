@@ -27,7 +27,8 @@ import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.shell.Shell;
+import org.jboss.forge.environment.ForgeEnvironment;
+import org.jboss.forge.shell.ShellPrintWriter;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.DefaultCommand;
 import org.jboss.forge.shell.plugins.Help;
@@ -39,33 +40,35 @@ import org.jboss.forge.shell.plugins.Topic;
  */
 @Alias("list-properties")
 @Topic("Shell Environment")
-@Help("Lists all current shell properties")
+@Help("Lists all current forge properties")
 public class ListPropertiesPlugin implements Plugin
 {
-   final Shell shell;
+   final ForgeEnvironment forge;
+   private final ShellPrintWriter writer;
 
    @Inject
-   public ListPropertiesPlugin(final Shell shell)
+   public ListPropertiesPlugin(final ForgeEnvironment forge, ShellPrintWriter writer)
    {
-      this.shell = shell;
+      this.forge = forge;
+      this.writer = writer;
    }
 
    @DefaultCommand
    public void listProperties()
    {
-      Map<String, Object> properties = shell.getProperties();
+      Map<String, Object> properties = forge.getProperties();
 
       for (Entry<String, Object> entry : properties.entrySet())
       {
          String key = entry.getKey();
          Object value = entry.getValue();
 
-         shell.print(key + "=");
+         writer.print(key + "=");
          if (value != null)
          {
-            shell.print(value.toString());
+            writer.print(value.toString());
          }
-         shell.println();
+         writer.println();
       }
    }
 }

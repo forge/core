@@ -32,7 +32,9 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.forge.shell.Shell;
+import javax.inject.Inject;
+
+import org.jboss.forge.environment.ForgeEnvironment;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -40,10 +42,12 @@ import org.jboss.forge.shell.Shell;
  */
 public class ShellConfig
 {
+   @Inject
+   private ForgeEnvironment environment;
 
    public void loadConfig(Shell shell)
    {
-      File configDir = new File((String) shell.getProperty(ShellImpl.PROP_FORGE_CONFIG_DIR));
+      File configDir = new File((String) environment.getProperty(ShellImpl.PROP_FORGE_CONFIG_DIR));
 
       if (!configDir.exists())
       {
@@ -118,7 +122,7 @@ public class ShellConfig
       }
       catch (FileNotFoundException e)
       {
-         throw new RuntimeException("error setting shell history output stream to file: "
+         throw new RuntimeException("error setting forge history output stream to file: "
                   + historyFile.getAbsolutePath());
       }
 

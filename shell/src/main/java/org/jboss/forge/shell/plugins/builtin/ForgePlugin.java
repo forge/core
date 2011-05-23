@@ -32,6 +32,7 @@ import javax.inject.Inject;
 
 import org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode;
 import org.eclipse.jgit.api.Git;
+import org.jboss.forge.environment.ForgeEnvironment;
 import org.jboss.forge.git.GitUtils;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.Dependency;
@@ -40,19 +41,21 @@ import org.jboss.forge.project.dependencies.DependencyRepository;
 import org.jboss.forge.project.dependencies.DependencyRepositoryImpl;
 import org.jboss.forge.project.dependencies.DependencyResolver;
 import org.jboss.forge.project.facets.DependencyFacet;
+import org.jboss.forge.project.facets.DependencyFacet.KnownRepository;
 import org.jboss.forge.project.facets.MetadataFacet;
 import org.jboss.forge.project.facets.PackagingFacet;
-import org.jboss.forge.project.facets.DependencyFacet.KnownRepository;
 import org.jboss.forge.resources.DependencyResource;
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.resources.ResourceFilter;
 import org.jboss.forge.shell.PluginJar;
+import org.jboss.forge.shell.PluginJar.IllegalNameException;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.ShellColor;
 import org.jboss.forge.shell.ShellMessages;
-import org.jboss.forge.shell.PluginJar.IllegalNameException;
+import org.jboss.forge.shell.ShellPrintWriter;
+import org.jboss.forge.shell.ShellPrompt;
 import org.jboss.forge.shell.events.ReinitializeEnvironment;
 import org.jboss.forge.shell.exceptions.Abort;
 import org.jboss.forge.shell.plugins.Alias;
@@ -72,18 +75,24 @@ import org.jboss.shrinkwrap.descriptor.impl.base.Strings;
  */
 @Alias("forge")
 @Topic("Shell Environment")
-@Help("Forge control and shell environment commands. Manage plugins and other forge addons.")
+@Help("Forge control and writer environment commands. Manage plugins and other forge addons.")
 public class ForgePlugin implements Plugin
 {
-
    private final Event<ReinitializeEnvironment> reinitializeEvent;
-   private final Shell shell;
+   private final ShellPrintWriter writer;
    private final DependencyResolver resolver;
+   private final ForgeEnvironment environment;
+   private final ShellPrompt prompt;
+   private final Shell shell;
 
    @Inject
-   public ForgePlugin(Event<ReinitializeEnvironment> reinitializeEvent, Shell shell, DependencyResolver resolver)
+   public ForgePlugin(ForgeEnvironment environment, Event<ReinitializeEnvironment> reinitializeEvent,
+            ShellPrintWriter writer, ShellPrompt prompt, DependencyResolver resolver, Shell shell)
    {
+      this.environment = environment;
       this.reinitializeEvent = reinitializeEvent;
+      this.writer = writer;
+      this.prompt = prompt;
       this.shell = shell;
       this.resolver = resolver;
    }
@@ -121,7 +130,7 @@ public class ForgePlugin implements Plugin
                      description = "Show extra information about each installed plugin",
                      defaultValue = "false") boolean showAll)
    {
-      DirectoryResource pluginDir = shell.getPluginDirectory();
+      DirectoryResource pluginDir = environment.getPluginDirectory();
       List<Resource<?>> list = pluginDir.listResources();
       List<Resource<?>> untracked = new ArrayList<Resource<?>>();
       List<PluginJar> installed = new ArrayList<PluginJar>();
@@ -156,41 +165,41 @@ public class ForgePlugin implements Plugin
 
          if (!installed.isEmpty())
          {
-            shell.println();
-            shell.println(ShellColor.RED, "[installed plugins]");
+            writer.println();
+            writer.println(ShellColor.RED, "[installed plugins]");
             for (PluginJar jar : installed)
             {
-               shell.print(ShellColor.ITALIC, jar.getDependency().getGroupId());
-               shell.print(" : ");
-               shell.print(ShellColor.BOLD, jar.getDependency().getArtifactId());
-               shell.print(" : ");
+               writer.print(ShellColor.ITALIC, jar.getDependency().getGroupId());
+               writer.print(" : ");
+               writer.print(ShellColor.BOLD, jar.getDependency().getArtifactId());
+               writer.print(" : ");
                if (Strings.isNullOrEmpty(jar.getDependency().getVersion()))
                {
-                  shell.print(ShellColor.RED, "unversioned");
+                  writer.print(ShellColor.RED, "unversioned");
                }
                else
                {
-                  shell.print(ShellColor.YELLOW, jar.getDependency().getVersion());
+                  writer.print(ShellColor.YELLOW, jar.getDependency().getVersion());
                }
 
                if (showAll)
                {
-                  shell.print(ShellColor.ITALIC,
-                           " - " + shell.getPluginDirectory().getFullyQualifiedName() + "/" + jar.getFullName());
+                  writer.print(ShellColor.ITALIC,
+                           " - " + environment.getPluginDirectory().getFullyQualifiedName() + "/" + jar.getFullName());
                }
-               shell.println();
+               writer.println();
             }
          }
 
          if (!untracked.isEmpty())
          {
-            shell.println();
-            shell.println(ShellColor.RED, "[untracked plugins]");
+            writer.println();
+            writer.println(ShellColor.RED, "[untracked plugins]");
             for (Resource<?> resource : untracked)
             {
-               shell.println(" " + resource.getFullyQualifiedName());
+               writer.println(" " + resource.getFullyQualifiedName());
             }
-            shell.println();
+            writer.println();
          }
       }
    }
@@ -205,7 +214,7 @@ public class ForgePlugin implements Plugin
    {
       // TODO remove this message once stabilized.
       ShellMessages.info(out, "This is a prototype feature and has limited functionality.");
-      List<PluginRef> pluginList = PluginUtil.findPlugin(shell, searchString, out);
+      List<PluginRef> pluginList = PluginUtil.findPlugin(environment, searchString, out);
 
       for (PluginRef ref : pluginList)
       {
@@ -220,7 +229,7 @@ public class ForgePlugin implements Plugin
    {
       // TODO remove this message once stabilized.
       ShellMessages.info(out, "This is a prototype feature and has limited functionality.");
-      List<PluginRef> plugins = PluginUtil.findPlugin(shell, pluginName, out);
+      List<PluginRef> plugins = PluginUtil.findPlugin(environment, pluginName, out);
 
       if (plugins.isEmpty())
       {
@@ -273,7 +282,7 @@ public class ForgePlugin implements Plugin
       }
       else if (artifacts.size() > 1)
       {
-         artifact = shell.promptChoiceTyped("Install which version?", artifacts, artifacts.get(artifacts.size() - 1));
+         artifact = prompt.promptChoiceTyped("Install which version?", artifacts, artifacts.get(artifacts.size() - 1));
       }
       else
       {
@@ -324,13 +333,13 @@ public class ForgePlugin implements Plugin
          throw new IllegalArgumentException("JAR file must be specified.");
       }
 
-      if (shell.getPluginDirectory().equals(source.getParent()))
+      if (environment.getPluginDirectory().equals(source.getParent()))
       {
          throw new IllegalArgumentException("Plugin is already installed.");
       }
 
       ShellMessages.info(out, "WARNING!");
-      if (shell.promptBoolean(
+      if (prompt.promptBoolean(
                "Installing plugins from remote sources is dangerous, and can leave untracked plugins. Continue?", true))
       {
          FileResource<?> target = createIncrementedPluginJarFile(dep);
@@ -351,7 +360,7 @@ public class ForgePlugin implements Plugin
             final PipeOut out) throws Exception
    {
       ShellMessages.info(out, "WARNING!");
-      if (shell.promptBoolean(
+      if (prompt.promptBoolean(
                "Installing plugins from remote sources is dangerous, and can leave untracked plugins. Continue?", true))
       {
          FileResource<?> jar = createIncrementedPluginJarFile(dep);
@@ -456,8 +465,8 @@ public class ForgePlugin implements Plugin
          }
 
          DependencyFacet deps = project.getFacet(DependencyFacet.class);
-         if (!deps.hasDependency(DependencyBuilder.create("org.jboss.forge:forge-shell-api"))
-                  && !shell.promptBoolean("The project does not appear to be a Forge Plugin Project, install anyway?",
+         if (!deps.hasDependency(DependencyBuilder.create("org.jboss.forge:forge-writer-api"))
+                  && !prompt.promptBoolean("The project does not appear to be a Forge Plugin Project, install anyway?",
                            false))
          {
             throw new Abort("Installation aborted");
@@ -491,10 +500,10 @@ public class ForgePlugin implements Plugin
    {
       int version = 0;
       PluginJar pluginJar = new PluginJar(dep);
-      DirectoryResource pluginDir = shell.getPluginDirectory();
+      DirectoryResource pluginDir = environment.getPluginDirectory();
       List<Resource<?>> list = pluginDir.listResources(new StartsWith(pluginJar.getName()));
 
-      if (list.size() > 0 && !shell.promptBoolean(
+      if (list.size() > 0 && !prompt.promptBoolean(
                         "An existing version of this plugin was found. Replace it?", true))
       {
          throw new RuntimeException("Aborted.");

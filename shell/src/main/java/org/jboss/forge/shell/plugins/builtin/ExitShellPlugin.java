@@ -33,7 +33,7 @@ import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.Topic;
 
 /**
- * Implements a {@link Plugin} that fires the shell {@link ShutdownStatus#NORMAL} event.
+ * Implements a {@link Plugin} that fires the forge {@link ShutdownStatus#NORMAL} event.
  * 
  * 
  * 
@@ -41,7 +41,7 @@ import org.jboss.forge.shell.plugins.Topic;
  */
 @Alias("exit")
 @Topic("Shell Environment")
-@Help("Exits the shell.")
+@Help("Exits the forge.")
 public class ExitShellPlugin implements Plugin
 {
    @Inject
