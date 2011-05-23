@@ -30,6 +30,7 @@ import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Modifier.ModifierKeyword;
+import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.VariableDeclaration;
@@ -42,6 +43,7 @@ import org.jboss.forge.parser.java.Parameter;
 import org.jboss.forge.parser.java.Visibility;
 import org.jboss.forge.parser.java.ast.AnnotationAccessor;
 import org.jboss.forge.parser.java.ast.ModifierAccessor;
+import org.jboss.forge.parser.java.util.Types;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -500,5 +502,87 @@ public class MethodImpl<O extends JavaSource<O>> implements Method<O>
          return false;
       }
       return true;
+   }
+
+   @Override
+   public Method<O> addThrows(Class<? extends Exception> type)
+   {
+      return addThrows(type.getName());
+   }
+
+   @Override
+   @SuppressWarnings({ "unchecked", "rawtypes" })
+   public Method<O> addThrows(String type)
+   {
+      String packg = Types.getPackage(type);
+      String name = Types.toSimpleName(type);
+
+      if (!packg.isEmpty())
+      {
+         getOrigin().addImport(type);
+      }
+
+      SimpleName simpleName = method.getAST().newSimpleName(name);
+
+      List list = (List) method.getStructuralProperty(MethodDeclaration.THROWN_EXCEPTIONS_PROPERTY);
+      list.add(simpleName);
+
+      return this;
+   }
+
+   @Override
+   public List<String> getThrownExceptions()
+   {
+      ArrayList<String> result = new ArrayList<String>();
+      List<?> list = (List<?>) method.getStructuralProperty(MethodDeclaration.THROWN_EXCEPTIONS_PROPERTY);
+
+      for (Object object : list)
+      {
+         result.add(object.toString());
+      }
+
+      return result;
+   }
+
+   @Override
+   public Method<O> removeThrows(Class<? extends Exception> type)
+   {
+      return removeThrows(type.getName());
+   }
+
+   @Override
+   public Method<O> removeThrows(String type)
+   {
+      List<?> list = (List<?>) method.getStructuralProperty(MethodDeclaration.THROWN_EXCEPTIONS_PROPERTY);
+
+      for (Object object : list)
+      {
+         String thrown = object.toString();
+         if (type.equals(thrown))
+         {
+            list.remove(object);
+            return this;
+         }
+         else if (Types.areEquivalent(type, thrown))
+         {
+            if (!Types.isQualified(type) && getOrigin().hasImport(thrown))
+            {
+               list.remove(object);
+               return this;
+            }
+            else if (!Types.isQualified(thrown) && getOrigin().hasImport(type))
+            {
+               list.remove(object);
+               return this;
+            }
+            else if (!getOrigin().hasImport(type) && !getOrigin().hasImport(thrown))
+            {
+               list.remove(object);
+               return this;
+            }
+         }
+      }
+
+      return this;
    }
 }

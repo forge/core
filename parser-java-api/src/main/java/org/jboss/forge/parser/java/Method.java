@@ -27,13 +27,21 @@ import java.util.List;
 import org.jboss.forge.parser.Origin;
 
 /**
+ * Represents a Java Method.
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
 public interface Method<O> extends Abstractable<Method<O>>, Member<O, Method<O>>, Origin<O>
 {
+   /**
+    * Get the inner body of this {@link Method}
+    */
    public String getBody();
 
+   /**
+    * Set the inner body of this {@link Method}
+    */
    public Method<O> setBody(final String body);
 
    /**
@@ -42,8 +50,14 @@ public interface Method<O> extends Abstractable<Method<O>>, Member<O, Method<O>>
     */
    public Method<O> setConstructor(final boolean constructor);
 
+   /**
+    * Return true if this {@link Method} is a constructor for the class in which it is defined.
+    */
    public boolean isConstructor();
 
+   /**
+    * Set the name of this {@link Method}
+    */
    public Method<O> setName(final String name);
 
    /**
@@ -51,18 +65,64 @@ public interface Method<O> extends Abstractable<Method<O>>, Member<O, Method<O>>
     */
    public String getReturnType();
 
+   /**
+    * Set this {@link Method} to return the given type.
+    */
    public Method<O> setReturnType(final Class<?> type);
 
+   /**
+    * Set this {@link Method} to return the given type.
+    */
    public Method<O> setReturnType(final String type);
 
+   /**
+    * Return true if this {@link Method} has a return type of 'void'
+    */
    public boolean isReturnTypeVoid();
 
+   /**
+    * Set this {@link Method} to return 'void'
+    */
    public Method<O> setReturnTypeVoid();
 
+   /**
+    * Set this {@link Method}'s parameters.
+    */
    public Method<O> setParameters(String string);
 
+   /**
+    * Get a list of this {@link Method}'s parameters.
+    */
    public List<Parameter> getParameters();
 
+   /**
+    * Convert this {@link Method} into a string representing its unique signature.
+    */
    public String toSignature();
+
+   /**
+    * Add a thrown {@link Exception} to this method's signature.
+    */
+   public Method<O> addThrows(String type);
+
+   /**
+    * Add a thrown {@link Exception} to this method's signature.
+    */
+   public Method<O> addThrows(Class<? extends Exception> type);
+
+   /**
+    * Get a list of qualified (if possible) {@link Exception} class names thrown by this method.
+    */
+   public List<String> getThrownExceptions();
+
+   /**
+    * Remove a thrown {@link Exception} to this method's signature.
+    */
+   public Method<O> removeThrows(String type);
+
+   /**
+    * Remove a thrown {@link Exception} to this method's signature.
+    */
+   public Method<O> removeThrows(Class<? extends Exception> type);
 
 }
