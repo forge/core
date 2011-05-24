@@ -35,10 +35,12 @@ import org.jboss.forge.project.dependencies.ScopeType;
 import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.project.facets.events.InstallFacets;
+import org.jboss.forge.shell.ShellColor;
 import org.jboss.forge.shell.ShellMessages;
 import org.jboss.forge.shell.ShellPrompt;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.Command;
+import org.jboss.forge.shell.plugins.DefaultCommand;
 import org.jboss.forge.shell.plugins.Option;
 import org.jboss.forge.shell.plugins.PipeOut;
 import org.jboss.forge.shell.plugins.Plugin;
@@ -53,6 +55,7 @@ import org.jboss.forge.spec.javaee.jpa.api.PersistenceProvider;
 import org.jboss.forge.spec.javaee.jpa.container.JavaEEDefaultContainer;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceUnitDef;
+import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.Property;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -77,6 +80,69 @@ public class PersistencePlugin implements Plugin
 
    @Inject
    private BeanManager manager;
+
+   @DefaultCommand
+   public void show(final PipeOut out, @Option(name = "all", shortName = "a") final boolean showAll)
+   {
+      if (project.hasFacet(PersistenceFacet.class))
+      {
+         PersistenceFacet jpa = project.getFacet(PersistenceFacet.class);
+         PersistenceDescriptor config = jpa.getConfig();
+
+         ShellMessages.info(out, "Displaying current JPA configuration:");
+
+         if (!config.listUnits().isEmpty())
+            out.println();
+
+         for (PersistenceUnitDef unit : config.listUnits())
+         {
+            out.println(out.renderColor(ShellColor.BOLD, "Unit: ") + unit.getName() + "\t"
+                     + out.renderColor(ShellColor.BOLD, "transaction-type: ") + unit.getTransactionType());
+            out.println("description:\t" + unit.getDescription());
+            out.println("provider:\t" + unit.getProvider());
+            out.println("jta-data-source:\t" + unit.getJtaDataSource());
+            out.println("non-jta-data-source:\t" + unit.getNonJtaDataSource());
+            out.println("exclude-unlisted-classes:\t" + !unit.includesUnlistedClasses());
+            out.println("shared-cache-mode:\t" + unit.getSharedCacheMode());
+            out.println("validation-mode:\t" + unit.getValidationMode());
+
+            if (!unit.getProperties().isEmpty())
+            {
+               out.println();
+               out.println(ShellColor.BOLD, "Properties:");
+               for (Property p : unit.getProperties())
+               {
+                  out.println(p.getName() + ":\t" + p.getValue());
+               }
+            }
+
+            if (!unit.getClasses().isEmpty() && showAll)
+            {
+               out.println();
+               out.println(ShellColor.BOLD, "Selected Entity Classes:");
+               for (String c : unit.getClasses())
+               {
+                  out.println(c);
+               }
+            }
+
+            if (!unit.getMappingFiles().isEmpty() && showAll)
+            {
+               out.println();
+               out.println(ShellColor.BOLD, "Mapping Files:");
+               for (String f : unit.getMappingFiles())
+               {
+                  out.println(f);
+               }
+            }
+            out.println();
+         }
+      }
+      else
+      {
+         ShellMessages.info(out, "JPA is not installed. Use 'setup persistence' to continue.");
+      }
+   }
 
    @Command("setup")
    public void setup(
