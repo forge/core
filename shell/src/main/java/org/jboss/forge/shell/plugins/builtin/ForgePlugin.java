@@ -465,7 +465,7 @@ public class ForgePlugin implements Plugin
          }
 
          DependencyFacet deps = project.getFacet(DependencyFacet.class);
-         if (!deps.hasDependency(DependencyBuilder.create("org.jboss.forge:forge-writer-api"))
+         if (!deps.hasDependency(DependencyBuilder.create("org.jboss.forge:forge-shell-api")) 
                   && !prompt.promptBoolean("The project does not appear to be a Forge Plugin Project, install anyway?",
                            false))
          {
