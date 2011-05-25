@@ -135,6 +135,19 @@ public interface DependencyFacet extends Facet
    public boolean hasEffectiveManagedDependency(Dependency managedDependency);
 
    /**
+    * Searches {@link Project} and returns a managed dependency matching the given {@link Dependency} at any
+    * level of the project hierarchy; return null otherwise. This method ignores {@link Dependency#getScopeType()}
+    * <p/>
+    * See also: {@link DependencyBuilder}.
+    * <p/>
+    * <b>Notice:</b> This method checks the entire project managed dependency structure, meaning that if a managed
+    * dependency is declared somewhere else in the hierarchy, it will not be detected by
+    * {@link #getManagedDependency(Dependency)} and will not be removable via
+    * {@link #removeManagedDependency(Dependency)}.
+    */
+   public Dependency getEffectiveManagedDependency(Dependency manDep);
+
+   /**
     * Return true if this {@link Project} contains a managed dependency matching the given {@link Dependency}; return
     * false otherwise. This method ignores {@link Dependency#getScopeType()}
     * <p/>
@@ -260,5 +273,6 @@ public interface DependencyFacet extends Facet
     * {@link DependencyResolver}
     */
    public List<Dependency> resolveAvailableVersions(final Dependency dep);
+
 
 }
