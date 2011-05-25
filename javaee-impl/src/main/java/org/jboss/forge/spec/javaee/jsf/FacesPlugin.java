@@ -21,16 +21,19 @@
  */
 package org.jboss.forge.spec.javaee.jsf;
 
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.jboss.forge.project.Project;
+import org.jboss.forge.project.facets.events.InstallFacets;
+import org.jboss.forge.shell.ShellColor;
 import org.jboss.forge.shell.ShellMessages;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.Command;
+import org.jboss.forge.shell.plugins.DefaultCommand;
 import org.jboss.forge.shell.plugins.Option;
 import org.jboss.forge.shell.plugins.PipeOut;
 import org.jboss.forge.shell.plugins.Plugin;
-import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.spec.javaee.FacesFacet;
 import org.jboss.forge.spec.javaee.ServletFacet;
 import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.FacesProjectStage;
@@ -41,15 +44,36 @@ import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
  * 
  */
 @Alias("faces")
-@RequiresFacet(FacesFacet.class)
 public class FacesPlugin implements Plugin
 {
    @Inject
    private Project project;
 
-   @Command("project-stage")
-   public void setProjectStage(@Option(name = "set") FacesProjectStage stage, PipeOut out)
+   @Inject
+   private Event<InstallFacets> request;
+
+   @Command("setup")
+   public void setup(final PipeOut out)
    {
+      if (!project.hasFacet(FacesFacet.class))
+      {
+         request.fire(new InstallFacets(FacesFacet.class));
+      }
+
+      if (project.hasFacet(FacesFacet.class))
+      {
+         ShellMessages.success(out, "JavaServer Faces is installed.");
+      }
+   }
+
+   @Command("project-stage")
+   public void setProjectStage(@Option(name = "set") final FacesProjectStage stage, final PipeOut out)
+   {
+      if (!project.hasFacet(FacesFacet.class))
+      {
+         throw new RuntimeException("JSF is not installed. Use 'setup faces' to continue.");
+      }
+
       ServletFacet srv = project.getFacet(ServletFacet.class);
       WebAppDescriptor config = srv.getConfig();
       if (stage == null)
@@ -61,6 +85,28 @@ public class FacesPlugin implements Plugin
          config.facesProjectStage(stage);
          srv.saveConfig(config);
          ShellMessages.success(out, "Faces PROJECT_STAGE updated to: " + stage.getStage());
+      }
+   }
+
+   @DefaultCommand
+   public void show(final PipeOut out)
+   {
+      if (project.hasFacet(FacesFacet.class))
+      {
+         FacesFacet facet = project.getFacet(FacesFacet.class);
+         ShellMessages.info(out, "Displaying current JSF configuration:");
+
+         out.println();
+         out.println(out.renderColor(ShellColor.BOLD, "Project State: ") + facet.getProjectStage());
+         out.println(out.renderColor(ShellColor.BOLD, "FacesServlet Mappings: ") + facet.getFacesServletMappings());
+         out.println(out.renderColor(ShellColor.BOLD, "Faces Default Suffixes: ") + facet.getFacesDefaultSuffixes());
+         out.println(out.renderColor(ShellColor.BOLD, "Facelets Default Suffixes: ")
+                  + facet.getFaceletsDefaultSuffixes());
+         out.println(out.renderColor(ShellColor.BOLD, "Facelets View Mappings: ") + facet.getFaceletsViewMapping());
+      }
+      else
+      {
+         ShellMessages.info(out, "JSF is not installed. Use 'setup faces' to continue.");
       }
    }
 }
