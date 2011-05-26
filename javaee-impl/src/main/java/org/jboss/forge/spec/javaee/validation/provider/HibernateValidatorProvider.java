@@ -21,6 +21,7 @@
  */
 package org.jboss.forge.spec.javaee.validation.provider;
 
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -40,7 +41,6 @@ public class HibernateValidatorProvider implements ValidationProvider
 {
     private final ValidationDescriptor defaultDescriptor;
     private final Set<Dependency> dependencies;
-    private final Set<Dependency> additionalDependencies;
 
     public HibernateValidatorProvider()
     {
@@ -62,24 +62,6 @@ public class HibernateValidatorProvider implements ValidationProvider
         dependenciesTmpSet.add(hibernateValidator);
 
         this.dependencies = unmodifiableSet(dependenciesTmpSet);
-
-        // add hibernate validator additional dependencies
-        final DependencyBuilder seamValidationAPI = DependencyBuilder.create()
-                .setGroupId("org.jboss.seam.validation")
-                .setArtifactId("seam-validation-api")
-                .setVersion("[3.0.0.Final,)");
-
-        final DependencyBuilder seamValidationImpl = DependencyBuilder.create()
-                .setGroupId("org.jboss.seam.validation")
-                .setArtifactId("seam-validation-impl")
-                .setVersion("[3.0.0.Final,)")
-                .setScopeType(RUNTIME);
-
-        final Set<Dependency> additionalDependenciesTmpSet = new LinkedHashSet<Dependency>();
-        additionalDependenciesTmpSet.add(seamValidationAPI);
-        additionalDependenciesTmpSet.add(seamValidationImpl);
-
-        this.additionalDependencies = unmodifiableSet(additionalDependenciesTmpSet);
     }
 
     @Override
@@ -97,6 +79,6 @@ public class HibernateValidatorProvider implements ValidationProvider
     @Override
     public Set<Dependency> getAdditionalDependencies()
     {
-        return additionalDependencies;
+        return Collections.emptySet();
     }
 }

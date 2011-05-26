@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.spec.javaee.validation;
+package org.jboss.forge.spec.javaee;
 
 import java.io.File;
 
@@ -60,10 +60,10 @@ public class ValidationFacetImpl extends BaseFacet implements ValidationFacet
     public ValidationDescriptor getConfig()
     {
         final FileResource<?> fileResource = getConfigFile();
-        if (!fileResource.exists())
+        if (fileResource.exists())
         {
             final DescriptorImporter<ValidationDescriptor> importer = Descriptors.importAs(ValidationDescriptor.class);
-            return importer.from(getConfigFile().getResourceInputStream());
+            return importer.from(fileResource.getResourceInputStream());
         }
         return null;
     }

@@ -42,16 +42,20 @@ public final class JavaHelper
     {
         if (field == null)
         {
-            throw new IllegalArgumentException("The given field cannot be null");
+            throw new IllegalArgumentException("The parameter 'field' cannot be null");
         }
 
         final JavaClass javaClass = field.getOrigin();
         final String accessorMethodSuffix = getAccessorMethodSuffix(field);
 
-        Method<JavaClass> method = javaClass.getMethod(GET_PREFIX + accessorMethodSuffix);
-        if (method == null && field.isType(Boolean.class))
+        Method<JavaClass> method = null;
+        if (field.isType(Boolean.class) || field.isType(Boolean.TYPE))
         {
             method = javaClass.getMethod(IS_PREFIX + accessorMethodSuffix);
+        }
+        if (method == null)
+        {
+            method = javaClass.getMethod(GET_PREFIX + accessorMethodSuffix);
         }
         return method;
     }
