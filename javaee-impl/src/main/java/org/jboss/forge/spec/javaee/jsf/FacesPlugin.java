@@ -109,4 +109,10 @@ public class FacesPlugin implements Plugin
          ShellMessages.info(out, "JSF is not installed. Use 'setup faces' to continue.");
       }
    }
+
+   @Command("new-view")
+   public void newView(final PipeOut out)
+   {
+      throw new RuntimeException("Not yet implemented.");
+   }
 }

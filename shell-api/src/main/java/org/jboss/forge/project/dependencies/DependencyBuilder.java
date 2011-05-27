@@ -62,17 +62,17 @@ public class DependencyBuilder implements Dependency
    /**
     * Return true if the groupId and artifactId of the two given dependencies are equal.
     */
-   public static boolean areEquivalent(Dependency l, Dependency r)
+   public static boolean areEquivalent(final Dependency l, final Dependency r)
    {
       if (l == r)
       {
          return true;
       }
-      if (l == null && r == null)
+      if ((l == null) && (r == null))
       {
          return true;
       }
-      else if (l == null || r == null)
+      else if ((l == null) || (r == null))
       {
          return false;
       }
@@ -83,7 +83,11 @@ public class DependencyBuilder implements Dependency
    }
 
    /**
-    * @param identifier of the form "groupId:artifactId:version:scope
+    * @param identifier of the form "groupId:artifactId", "groupId:artifactId:version",
+    *           "groupId:artifactId:scope, "groupId
+    *           :artifactId:version:scope", "groupId:artifactId:version:scope:packaging"
+    * 
+    *           For classifier specification, see {@link #setClassifier(String)}
     */
    public static DependencyBuilder create(final String identifier)
    {
@@ -177,7 +181,7 @@ public class DependencyBuilder implements Dependency
       return this;
    }
 
-   public DependencyBuilder setClassifier(String classifier)
+   public DependencyBuilder setClassifier(final String classifier)
    {
       dep.setClassifier(classifier);
       return this;
@@ -251,26 +255,17 @@ public class DependencyBuilder implements Dependency
 
    /**
     * Convenience method which should be used to convert a {@link Dependency} object into its id representation, for
-    * example: "groupId:artifactId:version" or "groupId:artifactId:packaging:version" or
-    * "groupId:artifactId:packaging:scope:version"
+    * example: "groupId:artifactId:::version", "groupId:artifactId:packaging::version" or
+    * "groupId:artifactId:packaging:classifier:version"
     * 
     * @see {@link Dependency#toCoordinates()}
     */
-   public static String toId(Dependency dep)
+   public static String toId(final Dependency dep)
    {
-      String gav = dep.getGroupId() + ":" + dep.getArtifactId();
-      if (dep.getPackagingType() != null)
-      {
-         gav += ":" + dep.getPackagingType();
-      }
-      if (dep.getScopeType() != null)
-      {
-         gav += ":" + dep.getScopeType();
-      }
-      if (dep.getVersion() != null)
-      {
-         gav += ":" + dep.getVersion();
-      }
+      String gav = (dep.getGroupId() + ":" + dep.getArtifactId());
+      gav += ":" + (dep.getPackagingType() == null ? "" : dep.getPackagingType());
+      gav += ":" + (dep.getClassifier() == null ? "" : dep.getClassifier());
+      gav += ":" + (dep.getVersion() == null ? "" : dep.getVersion());
       return gav;
    }
 
