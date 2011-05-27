@@ -38,6 +38,7 @@ import org.jboss.forge.project.dependencies.DependencyMetadata;
 import org.jboss.forge.project.dependencies.DependencyRepository;
 import org.jboss.forge.project.dependencies.DependencyRepositoryImpl;
 import org.jboss.forge.project.dependencies.DependencyResolver;
+import org.jboss.forge.project.dependencies.ScopeType;
 import org.jboss.forge.project.facets.DependencyFacet.KnownRepository;
 import org.jboss.forge.resources.DependencyResource;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -119,6 +120,16 @@ public class RepositoryLookupTest extends ProjectModelTest
    public void testResolveDependenciesStaticVersion() throws Exception
    {
       Dependency dep = DependencyBuilder.create("org.jboss.seam.international:seam-international:[3.0.0,)");
+      DependencyRepository repo = new DependencyRepositoryImpl(KnownRepository.JBOSS_NEXUS);
+      List<DependencyResource> artifacts = resolver.resolveDependencies(dep, Arrays.asList(repo));
+      assertTrue(artifacts.size() >= 1);
+   }
+
+   @Test
+   public void testResolveNonJarArtifact() throws Exception
+   {
+      Dependency dep = DependencyBuilder.create("org.richfaces:richfaces-bom:4.0.0.Final")
+               .setScopeType(ScopeType.IMPORT).setPackagingType("pom");
       DependencyRepository repo = new DependencyRepositoryImpl(KnownRepository.JBOSS_NEXUS);
       List<DependencyResource> artifacts = resolver.resolveDependencies(dep, Arrays.asList(repo));
       assertTrue(artifacts.size() >= 1);

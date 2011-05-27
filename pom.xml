@@ -7,7 +7,7 @@
       <artifactId>weld-parent</artifactId>
       <version>15</version>
    </parent>
-
+ 
    <groupId>org.jboss.forge</groupId>
    <artifactId>forge-parent</artifactId>
    <version>1.0.0-SNAPSHOT</version>
