@@ -24,13 +24,16 @@ package org.jboss.forge.maven.plugins;
 
 import org.jboss.forge.project.dependencies.Dependency;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
  */
-public class MavenPluginImpl implements MavenPlugin
-{
+public class MavenPluginImpl implements MavenPlugin {
     private Dependency dependency;
     private Configuration configuration;
+    private List<Execution> executions = new ArrayList<Execution>();
 
     public MavenPluginImpl() {
     }
@@ -55,6 +58,10 @@ public class MavenPluginImpl implements MavenPlugin
         return configuration;
     }
 
+    @Override public List<Execution> listExecutions() {
+        return executions;
+    }
+
     @Override
     public String toString() {
         StringBuilder b = new StringBuilder("<plugin>");
@@ -74,11 +81,24 @@ public class MavenPluginImpl implements MavenPlugin
             b.append(configuration.toString());
         }
 
+        if (executions.size() > 0) {
+            b.append("<executions>");
+            for (Execution execution : executions) {
+                b.append(execution.toString());
+            }
+            b.append("</executions>");
+        }
+
+
         b.append("</plugin>");
         return b.toString();
     }
 
     public void setConfiguration(Configuration configuration) {
         this.configuration = configuration;
+    }
+
+    public void addExecution(Execution execution) {
+        executions.add(execution);
     }
 }

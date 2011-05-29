@@ -22,12 +22,15 @@
 
 package org.jboss.forge.maven.plugins;
 
+import org.apache.maven.model.PluginExecution;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
@@ -41,18 +44,36 @@ public class MavenPluginAdapter extends org.apache.maven.model.Plugin implements
         setGroupId(dependency.getGroupId());
         setArtifactId(dependency.getArtifactId());
         setVersion(dependency.getVersion());
-        setConfiguration(parseConfig(mavenPlugin));
+        setConfiguration(parseConfig(mavenPlugin.getConfig()));
+        setExecutions(transformExecutions(mavenPlugin));
     }
 
-    private Xpp3Dom parseConfig(MavenPlugin mavenPlugin) {
-        if (mavenPlugin.getConfig() == null) {
+    private List<PluginExecution> transformExecutions(MavenPlugin mavenPlugin) {
+        List<PluginExecution> executions = new ArrayList<PluginExecution>();
+
+        for (Execution execution : mavenPlugin.listExecutions()) {
+            PluginExecution pluginExecution = new PluginExecution();
+            pluginExecution.setId(execution.getId());
+            pluginExecution.setPhase(execution.getPhase());
+            pluginExecution.setGoals(execution.getGoals());
+            pluginExecution.setConfiguration(parseConfig(execution.getConfig()));
+
+            executions.add(pluginExecution);
+        }
+
+        return executions;
+
+    }
+
+    private Xpp3Dom parseConfig(Configuration configuration) {
+        if (configuration == null) {
             return null;
         }
 
         try {
             return Xpp3DomBuilder.build(
                     new ByteArrayInputStream(
-                            mavenPlugin.getConfig().toString().getBytes()), "UTF-8");
+                            configuration.toString().getBytes()), "UTF-8");
         } catch (Exception ex) {
             throw new RuntimeException("Exception while parsing configuration", ex);
         }
@@ -65,6 +86,22 @@ public class MavenPluginAdapter extends org.apache.maven.model.Plugin implements
         setArtifactId(clone.getArtifactId());
         setVersion(clone.getVersion());
         setConfiguration(plugin.getConfiguration());
+        setExecutions(clone.getExecutions());
+    }
+
+    @Override public List<Execution> listExecutions() {
+        List<Execution> executions = new ArrayList<Execution>();
+
+        for (PluginExecution pluginExecution : getExecutions()) {
+            ExecutionBuilder executionBuilder = ExecutionBuilder.create()
+                    .setId(pluginExecution.getId()).setPhase(pluginExecution.getPhase());
+            for (String goal : pluginExecution.getGoals()) {
+                executionBuilder.addGoal(goal);
+            }
+            executions.add(executionBuilder);
+        }
+
+        return executions;
     }
 
     @Override

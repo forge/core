@@ -24,6 +24,8 @@ package org.jboss.forge.maven.plugins;
 
 import org.jboss.forge.project.dependencies.Dependency;
 
+import java.util.List;
+
 /**
  * Represents a Maven plugin
  *
@@ -35,4 +37,6 @@ public interface MavenPlugin extends PluginElement
    Dependency getDependency();
 
    Configuration getConfig();
+
+   List<Execution> listExecutions();
 }
