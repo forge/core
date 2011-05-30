@@ -116,7 +116,7 @@ public class RepositoryLookup implements DependencyResolverProvider
                            ((RemoteRepository) ar).getUrl());
                request.addRepository(remoteRepo);
                DependencyBuilder currentVersion = DependencyBuilder.create(dep).setVersion(version.toString());
-               request.setArtifact(new DefaultArtifact(currentVersion.toCoordinates()));
+               request.setArtifact(dependencyToMavenArtifact(currentVersion));
 
                try
                {
@@ -172,7 +172,7 @@ public class RepositoryLookup implements DependencyResolverProvider
          RepositorySystem system = container.getContainer().lookup(RepositorySystem.class);
          MavenRepositorySystemSession session = setupRepoSession(system);
 
-         DefaultArtifact artifact = new DefaultArtifact(dep.toCoordinates());
+         Artifact artifact = dependencyToMavenArtifact(dep);
          CollectRequest collectRequest = new CollectRequest(new org.sonatype.aether.graph.Dependency(
                   artifact, null), convertToMavenRepos(repositories));
          DependencyRequest request = new DependencyRequest(collectRequest, null);
@@ -222,7 +222,7 @@ public class RepositoryLookup implements DependencyResolverProvider
          RepositorySystem system = container.getContainer().lookup(RepositorySystem.class);
          MavenRepositorySystemSession session = setupRepoSession(system);
 
-         DefaultArtifact artifact = new DefaultArtifact(query.toCoordinates());
+         Artifact artifact = dependencyToMavenArtifact(query);
 
          ArtifactDescriptorRequest ar = new ArtifactDescriptorRequest(artifact, convertToMavenRepos(repositories), null);
          ArtifactDescriptorResult results = system.readArtifactDescriptor(session, ar);
@@ -328,7 +328,8 @@ public class RepositoryLookup implements DependencyResolverProvider
          RepositorySystem maven = container.getContainer().lookup(RepositorySystem.class);
          MavenRepositorySystemSession session = setupRepoSession(maven);
 
-         VersionRangeRequest rangeRequest = new VersionRangeRequest(new DefaultArtifact(dep.toCoordinates()),
+         Artifact artifact = dependencyToMavenArtifact(dep);
+         VersionRangeRequest rangeRequest = new VersionRangeRequest(artifact,
                   repositories, null);
 
          VersionRangeResult rangeResult = maven.resolveVersionRange(session, rangeRequest);
@@ -338,6 +339,13 @@ public class RepositoryLookup implements DependencyResolverProvider
       {
          throw new ProjectModelException("Failed to look up versions for [" + dep + "]", e);
       }
+   }
+
+   public Artifact dependencyToMavenArtifact(final Dependency dep)
+   {
+      Artifact artifact = new DefaultArtifact(dep.getGroupId(), dep.getArtifactId(), dep.getClassifier(),
+               dep.getPackagingType() == null ? "jar" : dep.getPackagingType(), dep.getVersion());
+      return artifact;
    }
 
 }
