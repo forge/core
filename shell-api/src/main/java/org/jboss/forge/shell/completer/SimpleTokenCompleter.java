@@ -35,14 +35,16 @@ public abstract class SimpleTokenCompleter implements CommandCompleter
 {
    /**
     * Return a list of tokens to be considered as possible completions for the current input buffer. Typically, this
-    * should be a list of all possible candidates, but might vary depending on current state.
+    * should be a list of all possible candidates, but might vary depending on current state. If returning Objects,
+    * ensure that their {{@link #toString()} method is appropriately overloaded; the value returned will be used in
+    * completion.
     */
-   public abstract List<Object> getCompletionTokens();
+   public abstract List<?> getCompletionTokens();
 
    @Override
    public void complete(final CommandCompleterState state)
    {
-      List<Object> values;
+      List<?> values;
       try
       {
          values = getCompletionTokens();
