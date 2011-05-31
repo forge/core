@@ -130,7 +130,11 @@ public class ChangeDirectoryPluginTest extends AbstractShellTest
 
       String parentPath = parent.getFullyQualifiedName();
 
-      shell.execute("cd " + parentPath);
+      if (parentPath.indexOf(' ') == -1) {
+         shell.execute("cd " + parentPath);
+      } else {
+         shell.execute("cd '" + parentPath + "'");
+      }
 
       Resource<?> newDir = shell.getCurrentResource();
       assertEquals(newDir.getFullyQualifiedName(), parent.getFullyQualifiedName());

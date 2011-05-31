@@ -36,6 +36,7 @@ import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresProject;
 import org.jboss.forge.shell.plugins.Topic;
 import org.jboss.forge.shell.util.NativeSystemCall;
+import org.jboss.forge.shell.util.OSUtils;
 
 /**
  * @author Mike Brock .
@@ -60,11 +61,17 @@ public class MvnShellPlugin implements Plugin
    {
       if (shell.getCurrentProject() != null)
       {
-         NativeSystemCall.execFromPath("mvn", parms, out, shell.getCurrentProject().getProjectRoot());
+         NativeSystemCall.execFromPath(getMvnCommand(), parms, out, shell.getCurrentProject().getProjectRoot());
       }
       else
       {
-         NativeSystemCall.execFromPath("mvn", parms, out, shell.getCurrentDirectory());
+         NativeSystemCall.execFromPath(getMvnCommand(), parms, out, shell.getCurrentDirectory());
       }
    }
+
+   private String getMvnCommand()
+   {
+      return OSUtils.isWindows() ? "mvn.bat" : "mvn";
+   }
+
 }

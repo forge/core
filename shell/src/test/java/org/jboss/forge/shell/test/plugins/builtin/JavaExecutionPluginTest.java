@@ -78,7 +78,6 @@ public class JavaExecutionPluginTest extends AbstractShellTest
       assertTrue(testFile.exists());
    }
 
-
    @Test
    public void testExecuteClassWithSingleArgument() throws FileNotFoundException
    {
@@ -90,6 +89,7 @@ public class JavaExecutionPluginTest extends AbstractShellTest
       String s = scanner.nextLine();
       assertThat(s, is("a"));
    }
+
    @Test
    public void testExecuteClassWithMultipleArguments() throws FileNotFoundException
    {
