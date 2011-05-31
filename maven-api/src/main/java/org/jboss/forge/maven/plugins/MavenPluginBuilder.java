@@ -24,6 +24,8 @@ package org.jboss.forge.maven.plugins;
 
 import org.jboss.forge.project.dependencies.Dependency;
 
+import java.util.List;
+
 /**
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
  */
@@ -64,6 +66,15 @@ public class MavenPluginBuilder implements MavenPlugin, PluginElement
     @Override
     public Configuration getConfig() {
         return plugin.getConfig();
+    }
+
+    @Override public List<Execution> listExecutions() {
+        return plugin.listExecutions();
+    }
+
+    public MavenPluginBuilder addExecution(Execution execution) {
+        plugin.addExecution(execution);
+        return this;
     }
 
     @Override
