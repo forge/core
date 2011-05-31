@@ -37,6 +37,7 @@ import java.util.Set;
  * data.
  * 
  * @author Mike Brock
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public interface Resource<T>
 {
