@@ -21,6 +21,8 @@
  */
 package org.jboss.forge.maven;
 
+import java.io.PrintStream;
+
 import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingResult;
@@ -63,5 +65,17 @@ public interface MavenCoreFacet extends Facet
     * Return the fully-resolved POM/{@link MavenProject} for this Maven enabled {@link Project}
     */
    public MavenProject getMavenProject();
+
+   /**
+    * Execute a command using the embedded Maven shell. Return the exit status code. 0 = success, anything else =
+    * failure.
+    */
+   public boolean executeMavenShell(String[] parms);
+
+   /**
+    * Execute a command using the embedded Maven shell, using the given PrintStreams for output and error output. Return
+    * the exit status code. 0 = success, anything else = failure.
+    */
+   boolean executeMavenShell(String[] parms, PrintStream out, PrintStream err);
 
 }

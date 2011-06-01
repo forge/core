@@ -27,6 +27,7 @@ import java.io.IOException;
 import javax.inject.Inject;
 
 import org.jboss.forge.maven.MavenCoreFacet;
+import org.jboss.forge.project.Project;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.DefaultCommand;
@@ -49,27 +50,30 @@ import org.jboss.forge.shell.util.OSUtils;
 public class MvnShellPlugin implements Plugin
 {
    private final Shell shell;
+   private final Project project;
 
    @Inject
-   public MvnShellPlugin(final Shell shell)
+   public MvnShellPlugin(final Shell shell, final Project project)
    {
       this.shell = shell;
+      this.project = project;
    }
 
    @DefaultCommand
-   public void run(final PipeOut out, final String... parms) throws IOException
+   public void run(final PipeOut out, final String... parms)
    {
-      if (shell.getCurrentProject() != null)
+      try
       {
          NativeSystemCall.execFromPath(getMvnCommand(), parms, out, shell.getCurrentProject().getProjectRoot());
       }
-      else
+      catch (IOException e)
       {
-         NativeSystemCall.execFromPath(getMvnCommand(), parms, out, shell.getCurrentDirectory());
+         project.getFacet(MavenCoreFacet.class).executeMavenShell(parms);
       }
    }
+
    private String getMvnCommand()
    {
-      return OSUtils.isWindows() ? "mvn.bat" : "mvn";
+      return OSUtils.isWindows() ? "mvn.bat" : "mvon";
    }
 }
