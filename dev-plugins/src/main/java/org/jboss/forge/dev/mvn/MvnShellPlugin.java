@@ -74,6 +74,6 @@ public class MvnShellPlugin implements Plugin
 
    private String getMvnCommand()
    {
-      return OSUtils.isWindows() ? "mvn.bat" : "mvon";
+      return OSUtils.isWindows() ? "mvn.bat" : "mvn";
    }
 }
