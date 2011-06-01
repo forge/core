@@ -30,6 +30,7 @@ import org.jboss.forge.shell.ShellPrintWriter;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.util.NativeSystemCall;
+import org.jboss.forge.shell.util.OSUtils;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -63,12 +64,16 @@ public class JavaExecutionFacetImpl extends BaseFacet implements JavaExecutionFa
       executeClass(commandBuilder.build());
    }
 
+   private String getMvnCommand()
+   {
+      return OSUtils.isWindows() ? "mvn.bat" : "mvn";
+   }
 
    private void executeClass(String[] mvnArguments)
    {
       try
       {
-         NativeSystemCall.execFromPath("mvn", mvnArguments, out, project.getProjectRoot());
+         NativeSystemCall.execFromPath(getMvnCommand(), mvnArguments, out, project.getProjectRoot());
       } catch (IOException e)
       {
          e.printStackTrace();
@@ -81,7 +86,7 @@ public class JavaExecutionFacetImpl extends BaseFacet implements JavaExecutionFa
 
       try
       {
-         NativeSystemCall.execFromPath("mvn", compileArgs, out, project.getProjectRoot());
+         NativeSystemCall.execFromPath(getMvnCommand(), compileArgs, out, project.getProjectRoot());
       } catch (IOException e)
       {
          throw new RuntimeException("Error while invoking mvn test-compile", e);
@@ -125,7 +130,7 @@ public class JavaExecutionFacetImpl extends BaseFacet implements JavaExecutionFa
       {
          if (arguments.length > 0)
          {
-            StringBuilder argBuilder = new StringBuilder("-Dexec.args=\"");
+            StringBuilder argBuilder = new StringBuilder("-Dexec.args='");
 
             boolean first = true;
             for (String argument : arguments)
@@ -138,7 +143,7 @@ public class JavaExecutionFacetImpl extends BaseFacet implements JavaExecutionFa
                first = false;
             }
 
-            argBuilder.append("\" ");
+            argBuilder.append("' ");
             commands.add(argBuilder.toString());
 
          }
