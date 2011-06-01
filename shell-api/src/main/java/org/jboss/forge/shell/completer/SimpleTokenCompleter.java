@@ -21,7 +21,6 @@
  */
 package org.jboss.forge.shell.completer;
 
-import java.util.List;
 
 /**
  * The simplest possible command option completer. Matching of tokens is handled automatically based on comparing the
@@ -39,12 +38,12 @@ public abstract class SimpleTokenCompleter implements CommandCompleter
     * ensure that their {{@link #toString()} method is appropriately overloaded; the value returned will be used in
     * completion.
     */
-   public abstract List<?> getCompletionTokens();
+   public abstract Iterable<?> getCompletionTokens();
 
    @Override
    public void complete(final CommandCompleterState state)
    {
-      List<?> values;
+      Iterable<?> values;
       try
       {
          values = getCompletionTokens();
