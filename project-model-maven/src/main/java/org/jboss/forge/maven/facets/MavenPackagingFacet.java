@@ -30,7 +30,6 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import org.apache.maven.cli.MavenCli;
 import org.apache.maven.model.Model;
 import org.jboss.forge.ForgeEnvironment;
 import org.jboss.forge.maven.MavenCoreFacet;
@@ -138,7 +137,6 @@ public class MavenPackagingFacet extends BaseFacet implements PackagingFacet, Fa
    @Override
    public Resource<?> executeBuild(final String... args)
    {
-      MavenCli cli = new MavenCli();
       String[] defaults = new String[] { "clean", "package" };
       String[] selected = defaults;
       if ((args != null) && (args.length > 0))
@@ -153,10 +151,9 @@ public class MavenPackagingFacet extends BaseFacet implements PackagingFacet, Fa
          selected = list.toArray(new String[list.size()]);
       }
 
-      int i = cli.doMain(selected, project.getProjectRoot().getFullyQualifiedName(),
-               System.out, System.err);
+      boolean success = project.getFacet(MavenCoreFacet.class).executeMavenShell(selected);
 
-      if (i == 0)
+      if (success)
       {
          ShellMessages.success(shell, "Build successful.");
          return getFinalArtifact();

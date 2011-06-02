@@ -24,10 +24,12 @@ package org.jboss.forge.maven.facets;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintStream;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import org.apache.maven.cli.MavenCli;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
@@ -191,5 +193,24 @@ public class MavenCoreFacetImpl extends BaseFacet implements MavenCoreFacet, Fac
    public MavenProject getMavenProject()
    {
       return getProjectBuildingResult().getProject();
+   }
+
+   @Override
+   public boolean executeMavenShell(String[] parms)
+   {
+      return executeMavenShell(parms, System.out, System.err);
+   }
+
+   @Override
+   public boolean executeMavenShell(String[] parms, PrintStream out, PrintStream err)
+   {
+      if (parms == null || parms.length == 0)
+      {
+         parms = new String[] { "" };
+      }
+      MavenCli cli = new MavenCli();
+      int i = cli.doMain(parms, project.getProjectRoot().getFullyQualifiedName(),
+               out, err);
+      return i == 0;
    }
 }
