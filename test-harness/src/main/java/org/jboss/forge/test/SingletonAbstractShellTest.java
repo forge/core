@@ -167,7 +167,7 @@ public abstract class SingletonAbstractShellTest
    {
       getShell().setCurrentResource(createTempFolder());
       queueInputLines("", "");
-      getShell().execute("new-project --named test --topLevelPackage com.test");
+      getShell().execute("new-project --named test --groupId com.test");
 
       Project project = getProject();
       tempFolder = project.getProjectRoot();

@@ -39,6 +39,7 @@ import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.Root;
 import org.jboss.forge.project.Project;
+import org.jboss.forge.project.packaging.PackagingType;
 import org.jboss.forge.project.services.ResourceFactory;
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.FileResource;
@@ -171,12 +172,17 @@ public abstract class AbstractShellTest
       return project.get();
    }
 
+   protected Project initializeProject(PackagingType type) throws IOException
+   {
+	      getShell().setCurrentResource(createTempFolder());
+	      queueInputLines("", "Y");
+	      getShell().execute("new-project --named test --groupId com.test --type " + type.toString());
+	      return getProject();
+	   
+   }
    protected Project initializeJavaProject() throws IOException
    {
-      getShell().setCurrentResource(createTempFolder());
-      queueInputLines("", "");
-      getShell().execute("new-project --named test --topLevelPackage com.test");
-      return getProject();
+      return initializeProject(PackagingType.JAR);
    }
 
 }

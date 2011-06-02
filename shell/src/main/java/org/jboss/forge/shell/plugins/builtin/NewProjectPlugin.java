@@ -23,6 +23,8 @@
 package org.jboss.forge.shell.plugins.builtin;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -30,11 +32,11 @@ import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.DependencyFacet;
+import org.jboss.forge.project.facets.DependencyFacet.KnownRepository;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.project.facets.MetadataFacet;
 import org.jboss.forge.project.facets.PackagingFacet;
 import org.jboss.forge.project.facets.ResourceFacet;
-import org.jboss.forge.project.facets.DependencyFacet.KnownRepository;
 import org.jboss.forge.project.packaging.PackagingType;
 import org.jboss.forge.project.services.ProjectFactory;
 import org.jboss.forge.project.services.ResourceFactory;
@@ -78,15 +80,19 @@ public class NewProjectPlugin implements Plugin
             @Option(name = "named",
                      description = "The name of the new project",
                      required = true) final String name,
-            @Option(name = "topLevelPackage",
-                     description = "The top level package for your Java source files [e.g: \"com.example.project\"] ",
+            @Option(name = "groupId",
+                     description = "The groupId and top level java package for the project [e.g: \"com.example.project\"] ",
                      required = true,
-                     type = PromptType.JAVA_PACKAGE) final String groupId,
+                     type = PromptType.JAVA_PACKAGE) String groupId,
+			@Option(name = "type",
+			         description = "The project type, defaults to jar",
+			         required = false,
+			         defaultValue = "jar") final String type,
             @Option(name = "projectFolder",
                      description = "The folder in which to create this project [e.g: \"~/Desktop/...\"] ",
                      required = false) final Resource<?> projectFolder,
             @Option(name = "createMain",
-                     description = "Toggle creation of a simple Main() script in the root package",
+                     description = "Toggle creation of a simple Main() script in the root package, valid for jar projects only",
                      required = false,
                      defaultValue = "false",
                      flagOnly = true) final boolean createMain,
@@ -187,25 +193,52 @@ public class NewProjectPlugin implements Plugin
          dir.mkdirs();
       }
 
-      Project project = projectFactory.createProject(dir, DependencyFacet.class,
-               MetadataFacet.class,
-               JavaSourceFacet.class, ResourceFacet.class);
+      
+	  while (!validatePackageName(groupId))
+      {
+		  groupId = shell.prompt("The groupId [" + groupId
+                  + "], is not valid, please enter a valid groupId.");
+
+      }
+      
+	  Project project = null;
+	  List<PackagingType> validTypes = getValidPackagingTypes();
+	  
+      PackagingType packageType = PackagingType.from(type);
+	  while (!validTypes.contains(packageType))
+      {
+    	  int index = shell.promptChoice("[" + type + "] is not a supported packaging type", validTypes);
+    	  packageType = validTypes.get(index);
+      }
+	  
+	  if (packageType.equals(PackagingType.JAR) || packageType.equals(PackagingType.WAR))
+	  {
+		  project = projectFactory.createProject(dir, DependencyFacet.class,
+	               MetadataFacet.class,
+	               JavaSourceFacet.class, ResourceFacet.class);		  
+	  }
+	  else
+	  {
+		  project = projectFactory.createProject(dir, DependencyFacet.class,
+	               MetadataFacet.class);		  
+	  }
 
       MetadataFacet meta = project.getFacet(MetadataFacet.class);
       meta.setProjectName(name);
       meta.setTopLevelPackage(groupId);
+      String javaPackage = null;
 
       PackagingFacet packaging = project.getFacet(PackagingFacet.class);
-      packaging.setPackagingType(PackagingType.JAR);
+      packaging.setPackagingType(packageType);
 
       DependencyFacet deps = project.getFacet(DependencyFacet.class);
       deps.addRepository(KnownRepository.JBOSS_NEXUS);
 
-      if (createMain)
+      if (packaging.getPackagingType().equals(PackagingType.JAR) && createMain)
       {
          project.getFacet(JavaSourceFacet.class).saveJavaSource(JavaParser
                   .create(JavaClass.class)
-                  .setPackage(groupId)
+                  .setPackage(javaPackage)
                   .setName("Main")
                   .addMethod("public static void main(String[] args) {}")
                   .setBody("System.out.println(\"Hi there! I was forged as part of the project you call " + name
@@ -222,13 +255,28 @@ public class NewProjectPlugin implements Plugin
          packaging.setFinalName(name);
       }
 
-      project.getFacet(ResourceFacet.class).createResource("<forge/>".toCharArray(), "META-INF/forge.xml");
-
+      if (project.hasFacet(ResourceFacet.class))
+      {
+    	  project.getFacet(ResourceFacet.class).createResource("<forge/>".toCharArray(), "META-INF/forge.xml");
+      }
       /*
        * Only change the environment after success!
        */
       shell.setCurrentResource(project.getProjectRoot());
       ShellMessages.success(out,
                "Created project [" + name + "] in new working directory [" + dir.getFullyQualifiedName() + "]");
+   }
+
+private List<PackagingType> getValidPackagingTypes() {
+	List<PackagingType> validTypes = new ArrayList<PackagingType>();
+	validTypes.add(PackagingType.BASIC);
+	validTypes.add(PackagingType.JAR);
+	validTypes.add(PackagingType.WAR);
+	return validTypes;
+}
+   
+   private boolean validatePackageName(String packageName)
+   {
+	   return true;
    }
 }
