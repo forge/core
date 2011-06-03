@@ -58,7 +58,7 @@ public class ShellConfig
          }
       }
 
-      File historyFile = new File(configDir.getPath() + "/" + ShellImpl.FORGE_COMMAND_HISTORY_FILE);
+      File historyFile = new File(configDir.getPath(),ShellImpl.FORGE_COMMAND_HISTORY_FILE);
 
       try
       {
@@ -96,7 +96,7 @@ public class ShellConfig
          throw new RuntimeException("error loading file: " + historyFile.getAbsolutePath());
       }
 
-      File configFile = new File(configDir.getPath() + "/" + ShellImpl.FORGE_CONFIG_FILE);
+      File configFile = new File(configDir.getPath(),ShellImpl.FORGE_CONFIG_FILE);
 
       if (!configFile.exists())
       {
