@@ -28,9 +28,12 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.shell.InvalidInput;
 import org.jboss.forge.shell.test.completer.MockEnum;
 import org.jboss.forge.test.AbstractShellTest;
 import org.junit.Test;
@@ -137,6 +140,58 @@ public class ShellPromptTest extends AbstractShellTest
       List<String> choices = null;
       getShell().promptChoiceTyped("What is your favorite color?", choices);
       fail();
+   }
+
+   @Test
+   public void testPromptChoiceMapByIndex() throws Exception
+   {
+      Map<String, String> options = new HashMap<String, String>();
+      options.put("blue", "option1");
+      options.put("green", "option2");
+      options.put("red", "option3");
+
+      queueInputLines("2");
+      String choice = getShell().promptChoice("What is your favorite color?", options);
+      assertEquals("option1", choice);
+   }
+
+   @Test
+   public void testPromptChoiceMapByName() throws Exception
+   {
+      Map<String, String> options = new HashMap<String, String>();
+      options.put("blue", "option1");
+      options.put("green", "option2");
+      options.put("red", "option3");
+
+      queueInputLines("green");
+      String choice = getShell().promptChoice("What is your favorite color?", options);
+      assertEquals("option2", choice);
+   }
+
+   @Test
+   public void testPromptChoiceMapLoopsIfNonExistingIndex() throws Exception
+   {
+      Map<String, String> options = new HashMap<String, String>();
+      options.put("blue", "option1");
+      options.put("green", "option2");
+      options.put("red", "option3");
+
+      queueInputLines("5", "2");
+      String choice = getShell().promptChoice("What is your favorite color?", options);
+      assertEquals("option1", choice);
+   }
+
+   @Test
+   public void testPromptChoiceMapLoopsInvalidInput() throws Exception
+   {
+      Map<String, String> options = new HashMap<String, String>();
+      options.put("blue", "option1");
+      options.put("green", "option2");
+      options.put("red", "option3");
+
+      queueInputLines("bla", "2");
+      String choice = getShell().promptChoice("What is your favorite color?", options);
+      assertEquals("option1", choice);
    }
 
    @Test
