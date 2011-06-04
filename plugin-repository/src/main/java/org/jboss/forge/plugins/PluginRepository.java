@@ -47,7 +47,7 @@ public class PluginRepository implements Plugin{
     @Command("install")
     public void installPlugin() {
         try {
-            URL url = new URL("http://localhost/~paul/pluginrepo.xml");
+            URL url = new URL("http://jboss-forge.s3.amazonaws.com/pluginrepo.xml");
             InputStream inputStream = url.openStream();
             Node parse = XMLParser.parse(inputStream);
             Map<String, String> plugins = new HashMap<String,String>();
