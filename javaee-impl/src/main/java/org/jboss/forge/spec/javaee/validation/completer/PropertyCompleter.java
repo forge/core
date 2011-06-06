@@ -49,9 +49,9 @@ public class PropertyCompleter extends SimpleTokenCompleter
     }
 
     @Override
-    public List<Object> getCompletionTokens()
+    public List<String> getCompletionTokens()
     {
-        final List<Object> tokens = new ArrayList<Object>();
+        final List<String> tokens = new ArrayList<String>();
         final Resource<?> currentResource = shell.getCurrentResource();
 
         try
