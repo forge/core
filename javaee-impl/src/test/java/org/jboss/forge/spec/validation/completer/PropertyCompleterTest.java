@@ -63,7 +63,7 @@ public class PropertyCompleterTest extends SingletonAbstractShellTest
         getShell().execute("pick-up " + createdResource.getFullyQualifiedName());
 
         final PropertyCompleter propertyCompleter = new PropertyCompleter(getShell());
-        final List<Object> properties = propertyCompleter.getCompletionTokens();
+        final List<String> properties = propertyCompleter.getCompletionTokens();
 
         assertEquals(3, properties.size());
         assertEquals("property1", properties.get(0));
@@ -79,7 +79,7 @@ public class PropertyCompleterTest extends SingletonAbstractShellTest
         getShell().execute("pick-up " + createdResource.getFullyQualifiedName());
 
         final PropertyCompleter propertyCompleter = new PropertyCompleter(getShell());
-        final List<Object> properties = propertyCompleter.getCompletionTokens();
+        final List<String> properties = propertyCompleter.getCompletionTokens();
 
         assertTrue(properties.isEmpty());
     }
