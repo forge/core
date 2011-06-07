@@ -22,19 +22,23 @@
 
 package org.jboss.forge.shell.test.plugins.builtin;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeThat;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Scanner;
+
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.test.AbstractShellTest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.*;
-import java.util.Scanner;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeThat;
 
 public class JavaExecutionPluginTest extends AbstractShellTest
 {
@@ -78,7 +82,6 @@ public class JavaExecutionPluginTest extends AbstractShellTest
       assertTrue(testFile.exists());
    }
 
-
    @Test
    public void testExecuteClassWithSingleArgument() throws FileNotFoundException
    {
@@ -88,8 +91,9 @@ public class JavaExecutionPluginTest extends AbstractShellTest
 
       Scanner scanner = new Scanner(testFile);
       String s = scanner.nextLine();
-      assertThat(s, is("a"));
+      assertEquals("a", s);
    }
+
    @Test
    public void testExecuteClassWithMultipleArguments() throws FileNotFoundException
    {
@@ -99,7 +103,7 @@ public class JavaExecutionPluginTest extends AbstractShellTest
 
       Scanner scanner = new Scanner(testFile);
       String s = scanner.nextLine();
-      assertThat(s, is("a b c"));
+      assertEquals("a b c", s);
    }
 
    @After
