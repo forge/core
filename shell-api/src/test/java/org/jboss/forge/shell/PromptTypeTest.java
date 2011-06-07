@@ -25,7 +25,6 @@ package org.jboss.forge.shell;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.jboss.forge.shell.PromptType;
 import org.jboss.forge.shell.util.Patterns;
 import org.junit.Test;
 
@@ -43,6 +42,16 @@ public class PromptTypeTest
       assertFalse("org.jboss.".matches(PromptType.JAVA_PACKAGE.getPattern()));
       assertTrue("org.jboss_project".matches(PromptType.JAVA_PACKAGE.getPattern()));
       assertFalse("org.jboss_$f00".matches(PromptType.JAVA_PACKAGE.getPattern()));
+   }
+
+   @Test
+   public void testJavaPackageCannotContainKeywords() throws Exception
+   {
+      assertFalse("org.jboss.package".matches(PromptType.JAVA_PACKAGE.getPattern()));
+      assertFalse("org.jboss.private".matches(PromptType.JAVA_PACKAGE.getPattern()));
+      assertFalse("org.public".matches(PromptType.JAVA_PACKAGE.getPattern()));
+      assertFalse("public".matches(PromptType.JAVA_PACKAGE.getPattern()));
+      assertFalse("org.synchronized.foo".matches(PromptType.JAVA_PACKAGE.getPattern()));
    }
 
    @Test
