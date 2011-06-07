@@ -23,9 +23,6 @@ package org.jboss.forge.shell.completer;
 
 import java.util.List;
 
-import org.jboss.forge.shell.completer.CommandCompleter;
-import org.jboss.forge.shell.completer.CommandCompleterState;
-
 import jline.console.completer.Completer;
 
 /**
@@ -36,18 +33,21 @@ public class CompleterAdaptor implements Completer
 {
    private final CommandCompleter wrapped;
 
-   public CompleterAdaptor(CommandCompleter wrapped)
+   public CompleterAdaptor(final CommandCompleter wrapped)
    {
       this.wrapped = wrapped;
    }
 
    @Override
-   public int complete(String buffer, int cursor, List<CharSequence> candidates)
+   public int complete(final String buffer, final int cursor, final List<CharSequence> candidates)
    {
       CommandCompleterState state = new BaseCommandCompleterState(buffer, null, cursor);
 
-      wrapped.complete(state);
-      candidates.addAll(state.getCandidates());
+      if (wrapped != null)
+      {
+         wrapped.complete(state);
+         candidates.addAll(state.getCandidates());
+      }
 
       return state.getIndex();
    }

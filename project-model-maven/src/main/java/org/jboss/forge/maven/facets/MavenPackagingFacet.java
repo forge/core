@@ -151,7 +151,7 @@ public class MavenPackagingFacet extends BaseFacet implements PackagingFacet, Fa
          selected = list.toArray(new String[list.size()]);
       }
 
-      boolean success = project.getFacet(MavenCoreFacet.class).executeMavenShell(selected);
+      boolean success = project.getFacet(MavenCoreFacet.class).executeMavenEmbedded(selected);
 
       if (success)
       {

@@ -25,6 +25,8 @@ package org.jboss.forge.shell.command;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -32,6 +34,7 @@ import java.util.Set;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.jboss.forge.resources.Resource;
 import org.jboss.forge.shell.PromptType;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.ShellMessages;
@@ -134,6 +137,22 @@ public class ExecutionParser
                         + "], available commands: " + plugin.getCommands(shell));
             }
          }
+         else
+         {
+            List<PluginMetadata> pluginMetadata = registry.getPluginMetadata(first);
+            if ((pluginMetadata != null) && !pluginMetadata.isEmpty())
+            {
+               Set<Class<? extends Resource<?>>> aggregate = new HashSet<Class<? extends Resource<?>>>();
+               for (PluginMetadata meta : pluginMetadata)
+               {
+                  Set<Class<? extends Resource<?>>> scopes = meta.getResourceScopes();
+                  aggregate.addAll(scopes);
+               }
+
+               throw new PluginExecutionException(pluginMetadata.get(0),
+                        "Plugin is not usable in current scope or project.");
+            }
+         }
       }
 
       return execution;
@@ -230,7 +249,7 @@ public class ExecutionParser
                   {
                      value = shell.promptFile(optionDescriptor);
                   }
-                  else if (promptType != null && !PromptType.ANY.equals(promptType))
+                  else if ((promptType != null) && !PromptType.ANY.equals(promptType))
                   {
                      // make sure an omitted required option value is OK
                      value = shell.promptCommon(optionDescriptor, promptType);

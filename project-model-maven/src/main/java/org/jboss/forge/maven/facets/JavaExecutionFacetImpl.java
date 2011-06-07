@@ -22,7 +22,6 @@
 
 package org.jboss.forge.maven.facets;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,8 +35,6 @@ import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.ShellPrintWriter;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
-import org.jboss.forge.shell.util.NativeSystemCall;
-import org.jboss.forge.shell.util.OSUtils;
 
 @Dependent
 @Alias("forge.maven.JavaExecutionFacet")
@@ -67,35 +64,16 @@ public class JavaExecutionFacetImpl extends BaseFacet implements JavaExecutionFa
       executeClass(commandBuilder.build());
    }
 
-   private String getMvnCommand()
-   {
-      return OSUtils.isWindows() ? "mvn.bat" : "mvn";
-   }
-
    private void executeClass(final String[] mvnArguments)
    {
-      try
-      {
-         NativeSystemCall.execFromPath(getMvnCommand(), mvnArguments, out, project.getProjectRoot());
-      }
-      catch (IOException e)
-      {
-         e.printStackTrace();
-      }
+      project.getFacet(MavenCoreFacet.class).executeMaven(out, mvnArguments);
    }
 
    private void compileProjectClasses()
    {
       String[] compileArgs = { "test-compile" };
 
-      try
-      {
-         NativeSystemCall.execFromPath(getMvnCommand(), compileArgs, out, project.getProjectRoot());
-      }
-      catch (IOException e)
-      {
-         throw new RuntimeException("Error while invoking mvn test-compile", e);
-      }
+      project.getFacet(MavenCoreFacet.class).executeMaven(out, compileArgs);
    }
 
    @Override
