@@ -34,6 +34,7 @@ import org.jboss.forge.project.locator.ProjectLocator;
 import org.jboss.forge.project.services.ProjectFactory;
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.Resource;
+import org.jboss.forge.shell.ShellPrintWriter;
 import org.jboss.forge.shell.plugins.Alias;
 
 /**
@@ -48,12 +49,15 @@ public class MavenProjectLocator implements ProjectLocator
 {
    private final MavenContainer container;
    private final ProjectFactory factory;
+   private final ShellPrintWriter writer;
 
    @Inject
-   public MavenProjectLocator(final MavenContainer container, final ProjectFactory factory)
+   public MavenProjectLocator(final MavenContainer container, final ProjectFactory factory,
+            final ShellPrintWriter writer)
    {
       this.factory = factory;
       this.container = container;
+      this.writer = writer;
    }
 
    @Override
@@ -65,7 +69,7 @@ public class MavenProjectLocator implements ProjectLocator
       if (pom.exists())
       {
          result = new ProjectImpl(factory, dir);
-         Facet facet = new MavenCoreFacetImpl(container);
+         Facet facet = new MavenCoreFacetImpl(container, writer);
          facet.setProject(result);
          result.registerFacet(facet);
       }
