@@ -83,12 +83,13 @@ public class ProjectPlugin implements Plugin
 
    @Inject
    public ProjectPlugin(final Project project, final Shell shell, final FacetFactory factory,
-            final Event<InstallFacets> installFacets)
+            final Event<InstallFacets> installFacets, final Event<RemoveFacets> removeFacets)
    {
       this.project = project;
       this.shell = shell;
       this.factory = factory;
       this.installFacets = installFacets;
+      this.removeFacets = removeFacets;
    }
 
    @DefaultCommand
@@ -128,7 +129,6 @@ public class ProjectPlugin implements Plugin
             completer = InstalledFacetsCompleter.class,
             description = "Name of the facet to install") final String facetName)
    {
-      // TODO implement facet removal SEAMFORGE-90
       try
       {
          Facet facet = factory.getFacetByName(facetName);
@@ -160,55 +160,56 @@ public class ProjectPlugin implements Plugin
                         + "], continue?", true))
       {
          boolean requestProcessed = false;
-    	 if (deps.hasEffectiveManagedDependency(gav))
+         if (deps.hasEffectiveManagedDependency(gav))
          {
-        	 Dependency existingDep = deps.getEffectiveManagedDependency(gav);
-        	 if (shell.promptBoolean("Dependency is managed [" + 
-        			 existingDep.getGroupId() + ":" + 
-        			 existingDep.getArtifactId() + ":" + existingDep.getVersion() + "], reference the managed dependency?", true))
-        	 {
-        		 DependencyBuilder depToAdd = DependencyBuilder.create();
-        		 depToAdd.setGroupId(gav.getGroupId());
-        		 depToAdd.setArtifactId(gav.getArtifactId());
-        		 deps.addDependency(depToAdd);
-                 out.println("Added dependency [" + depToAdd + "]");
-                 requestProcessed = true;
-        	 }
+            Dependency existingDep = deps.getEffectiveManagedDependency(gav);
+            if (shell.promptBoolean("Dependency is managed [" +
+                     existingDep.getGroupId() + ":" +
+                     existingDep.getArtifactId() + ":" + existingDep.getVersion()
+                     + "], reference the managed dependency?", true))
+            {
+               DependencyBuilder depToAdd = DependencyBuilder.create();
+               depToAdd.setGroupId(gav.getGroupId());
+               depToAdd.setArtifactId(gav.getArtifactId());
+               deps.addDependency(depToAdd);
+               out.println("Added dependency [" + depToAdd + "]");
+               requestProcessed = true;
+            }
          }
          if (!requestProcessed)
          {
-    	 DependencyBuilder search = DependencyBuilder.create(gav).setVersion("[0,)");
-         List<Dependency> availableVersions = deps.resolveAvailableVersions(search);
+            DependencyBuilder search = DependencyBuilder.create(gav).setVersion("[0,)");
+            List<Dependency> availableVersions = deps.resolveAvailableVersions(search);
 
-         if (availableVersions.isEmpty())
-         {
-            throw new RuntimeException("No available versions resolved for dependency [" + gav + "]");
-         }
+            if (availableVersions.isEmpty())
+            {
+               throw new RuntimeException("No available versions resolved for dependency [" + gav + "]");
+            }
 
-         if (!availableVersions.contains(gav))
-         {
-            ShellMessages.info(out, "No artifact found for dependency [" + gav + "]");
-            if (availableVersions.size() > 1)
+            if (!availableVersions.contains(gav))
             {
-               gav = shell.promptChoiceTyped("Add which version?", availableVersions);
+               ShellMessages.info(out, "No artifact found for dependency [" + gav + "]");
+               if (availableVersions.size() > 1)
+               {
+                  gav = shell.promptChoiceTyped("Add which version?", availableVersions);
+               }
+               else if (shell.promptBoolean("Use [" + availableVersions.get(0) + "] instead?", true))
+               {
+                  gav = availableVersions.get(0);
+               }
+               else
+               {
+                  throw new RuntimeException("Could not add dependency [" + gav + "]");
+               }
             }
-            else if (shell.promptBoolean("Use [" + availableVersions.get(0) + "] instead?", true))
-            {
-               gav = availableVersions.get(0);
-            }
-            else
-            {
-               throw new RuntimeException("Could not add dependency [" + gav + "]");
-            }
-         }
 
-         if (deps.hasDependency(gav))
-         {
-            Dependency dependency = deps.getDependency(gav);
-            deps.removeDependency(dependency);
-         }
-         deps.addDependency(gav);
-         out.println("Added dependency [" + gav + "]");
+            if (deps.hasDependency(gav))
+            {
+               Dependency dependency = deps.getDependency(gav);
+               deps.removeDependency(dependency);
+            }
+            deps.addDependency(gav);
+            out.println("Added dependency [" + gav + "]");
          }
       }
       else
