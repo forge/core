@@ -365,6 +365,12 @@ public abstract class AbstractShellPrompt implements Shell
          if (options.containsKey(input))
          {
             result = options.get(input);
+         } else if (input.matches("[0-9]+"))
+         {
+            int choice = Integer.parseInt(input);
+            if(choice > 0 && choice < options.size()) {
+               result = entries.get(choice - 1).getValue();
+            }
          }
          else if (input.matches("[0-9]+"))
          {
