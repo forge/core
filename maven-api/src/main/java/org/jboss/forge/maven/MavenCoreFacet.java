@@ -82,7 +82,15 @@ public interface MavenCoreFacet extends Facet
    /**
     * Execute a command using the native Maven installation. If native Maven is not available, fall back to the embedded
     * Maven provider built in to Forge.
+    * 
+    * @return
     */
-   public void executeMaven(ShellPrintWriter out, String[] parameters);
+   public boolean executeMaven(ShellPrintWriter out, String[] parameters);
+
+   /**
+    * Execute a command using the native Maven installation. If native Maven is not available, fall back to the embedded
+    * Maven provider built in to Forge.
+    */
+   public boolean executeMaven(String[] selected);
 
 }

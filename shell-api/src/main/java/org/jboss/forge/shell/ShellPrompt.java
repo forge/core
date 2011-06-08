@@ -207,11 +207,11 @@ public interface ShellPrompt
    <T> T prompt(String message, Class<T> clazz, T defaultIfEmpty);
 
    /**
-    * Prompt for user input, first printing the given line, then returning user input with help from the given
-    * completer.
+    * Prompt for user input, first printing the given line, then returning user input with help from the given completer
+    * type.
     * 
     * @param message The prompt message to display until valid input is entered
-    * @param completer The command completer instance to use during completion
+    * @param type The command completer type to instantiate and use during completion
     */
-   String promptCompleter(String string, CommandCompleter completer);
+   String promptCompleter(String string, Class<? extends CommandCompleter> type);
 }

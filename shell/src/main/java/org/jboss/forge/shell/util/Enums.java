@@ -39,7 +39,8 @@ public class Enums
          List<?> enums = Arrays.asList(type.getEnumConstants());
          for (Object e : enums)
          {
-            if (e.toString().equals(value.toString()))
+            if (e.toString().equals(value.toString())
+                     || ((Enum<?>) e).name().equals(value.toString()))
             {
                return (Enum<?>) e;
             }

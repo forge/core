@@ -207,4 +207,5 @@ public interface Shell extends ShellPrintWriter, ShellPrompt, ShellHistory
     * Get the current Forge environment.
     */
    ForgeEnvironment getEnvironment();
+
 }

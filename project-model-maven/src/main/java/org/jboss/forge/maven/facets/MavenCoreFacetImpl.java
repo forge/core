@@ -218,15 +218,21 @@ public class MavenCoreFacetImpl extends BaseFacet implements MavenCoreFacet, Fac
    }
 
    @Override
-   public void executeMaven(final ShellPrintWriter out, final String[] parms)
+   public boolean executeMaven(final String[] selected)
+   {
+      return executeMaven(null, selected);
+   }
+
+   @Override
+   public boolean executeMaven(final ShellPrintWriter out, final String[] parms)
    {
       try
       {
-         NativeSystemCall.execFromPath(getMvnCommand(), parms, out, project.getProjectRoot());
+         return 0 == NativeSystemCall.execFromPath(getMvnCommand(), parms, out, project.getProjectRoot());
       }
       catch (IOException e)
       {
-         executeMavenEmbedded(parms);
+         return executeMavenEmbedded(parms);
       }
    }
 

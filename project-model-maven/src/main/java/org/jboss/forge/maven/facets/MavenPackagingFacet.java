@@ -30,6 +30,7 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.jboss.forge.ForgeEnvironment;
 import org.jboss.forge.maven.MavenCoreFacet;
@@ -151,7 +152,7 @@ public class MavenPackagingFacet extends BaseFacet implements PackagingFacet, Fa
          selected = list.toArray(new String[list.size()]);
       }
 
-      boolean success = project.getFacet(MavenCoreFacet.class).executeMavenEmbedded(selected);
+      boolean success = project.getFacet(MavenCoreFacet.class).executeMaven(selected);
 
       if (success)
       {
@@ -178,6 +179,12 @@ public class MavenPackagingFacet extends BaseFacet implements PackagingFacet, Fa
    {
       MavenCoreFacet mavenFacet = project.getFacet(MavenCoreFacet.class);
       Model pom = mavenFacet.getPOM();
+      Build build = pom.getBuild();
+      if (build == null)
+      {
+         build = new Build();
+         pom.setBuild(build);
+      }
       pom.getBuild().setFinalName(finalName);
       mavenFacet.setPOM(pom);
    }

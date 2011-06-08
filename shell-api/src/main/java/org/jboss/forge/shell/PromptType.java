@@ -26,32 +26,41 @@ import org.jboss.forge.shell.util.Patterns;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
  */
 public enum PromptType
 {
-   ANY(".*"),
-   DEPENDENCY_ID("[^:]+:[^:]+:?([^:]+:?){0,3}"),
-   JAVA_PACKAGE("(?i)(~\\.)?((?!(" + Patterns.JAVA_KEYWORDS + "))[a-z0-9_]+\\.?)+[a-z0-9_]"),
-   JAVA_VARIABLE_NAME("^(?!(" + Patterns.JAVA_KEYWORDS + ")$)[A-Za-z0-9$_]+$"),
-   JAVA_CLASS(JAVA_PACKAGE.pattern + "\\.?[a-z0-9$_]"),
-   FILE_PATH(".*");
+   ANY(new String[] { ".*" }),
+   DEPENDENCY_ID(new String[] { "[^:]+:[^:]+:?([^:]+:?){0,3}" }),
+   JAVA_PACKAGE(
+            new String[] { "(?i)(~\\.)?([a-z0-9_]+\\.?)+[a-z0-9_]",
+                     "^(?!.*\\b(" + Patterns.JAVA_KEYWORDS + ")\\b.*).*$" }),
+   JAVA_VARIABLE_NAME(new String[] { "^(?!(" + Patterns.JAVA_KEYWORDS + ")$)[A-Za-z0-9$_]+$" }),
+   JAVA_CLASS(new String[] { "(?i)(~\\.)?([a-z0-9_]+\\.?)+[a-z0-9_]",
+            "^(?!.*\\b(" + Patterns.JAVA_KEYWORDS + ")\\b.*).*$" }),
+   FILE_PATH(new String[] { ".*" });
 
-   private final String pattern;
+   private final String[] patterns;
 
-   private PromptType(final String pattern)
+   private PromptType(final String[] patterns)
    {
-      this.pattern = pattern;
-   }
-
-   public String getPattern()
-   {
-      return pattern;
+      this.patterns = patterns;
    }
 
    public boolean matches(final String value)
    {
-      return (value != null) && value.matches(pattern);
+      if (value == null)
+      {
+         return false;
+      }
+
+      for (int i = 0; i < patterns.length; i++)
+      {
+         if (!value.matches(patterns[i]))
+         {
+            return false;
+         }
+      }
+      return true;
    }
 
 }

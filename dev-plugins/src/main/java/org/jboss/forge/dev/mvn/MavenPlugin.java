@@ -75,6 +75,49 @@ public class MavenPlugin implements Plugin
       this.resources = resources;
    }
 
+   @Command("set-groupid")
+   public void setGroupId(final PipeOut out,
+            @Option(description = "the new groupId; for example: \"org.jboss.forge\"") final String groupId)
+   {
+      Assert.notNull(groupId, "GroupId must not be empty");
+
+      MavenCoreFacet mvn = project.getFacet(MavenCoreFacet.class);
+
+      Model pom = mvn.getPOM();
+      pom.setGroupId(groupId);
+      mvn.setPOM(pom);
+      out.println("Set groupId [ " + groupId + " ]");
+   }
+
+   @Command("set-artifactid")
+   public void setArtifactId(final PipeOut out,
+            @Option(description = "the new artifactId; for example: \"forge-shell\"") final String artifactId)
+   {
+      Assert.notNull(artifactId, "GroupId must not be empty");
+
+      MavenCoreFacet mvn = project.getFacet(MavenCoreFacet.class);
+
+      Model pom = mvn.getPOM();
+      pom.setArtifactId(artifactId);
+      mvn.setPOM(pom);
+      out.println("Set artifactId [ " + artifactId + " ]");
+   }
+
+   @Command("set-version")
+   public void setVersion(final PipeOut out,
+            @Option(description = "the new version; for example: \"1.0.0.Final\"") final String version)
+   {
+      Assert.notNull(version, "GroupId must not be empty");
+
+      MavenCoreFacet mvn = project.getFacet(MavenCoreFacet.class);
+
+      Model pom = mvn.getPOM();
+      pom.setVersion(version);
+      mvn.setPOM(pom);
+
+      out.println("Set version [ " + version + " ]");
+   }
+
    @Command("set-parent")
    public void setParent(
             @Option(name = "parentId",

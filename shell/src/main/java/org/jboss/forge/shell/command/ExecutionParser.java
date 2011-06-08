@@ -225,9 +225,16 @@ public class ExecutionParser
             if ((value != null) && option.getBoxedType().isEnum() && !Enums.hasValue(option.getType(), value))
             {
                ShellMessages.info(shell, "Could not parse [" + value + "]... please try again...");
-               value = shell.promptEnum(optionDescriptor, (Class<Enum>) option.getType());
+               if (!option.hasCustomCompleter())
+               {
+                  value = shell.promptEnum(optionDescriptor, (Class<Enum>) option.getType());
+               }
+               else
+               {
+                  value = shell.promptCompleter(optionDescriptor, option.getCompleterType());
+               }
             }
-            else if (((value != null) && (promptType != null)) && !value.toString().matches(promptType.getPattern()))
+            else if (((value != null) && (promptType != null)) && !promptType.matches(value.toString()))
             {
                // make sure the current option value is OK
                ShellMessages.info(shell, "Could not parse [" + value + "]... please try again...");
@@ -273,6 +280,7 @@ public class ExecutionParser
          }
 
          parameters[option.getIndex()] = value;
+         // Default values seem to be ignored for Enums
       }
 
       return parameters;
