@@ -42,6 +42,8 @@ public class NativeSystemCall
     * @param parms the command parameters
     * @param out a print writer to which command output will be streamed
     * @param path the path from which to execute the command
+    * 
+    * @return 0 on successful completion, any other return code denotes failure
     */
    public static int execFromPath(final String command, final String[] parms, final ShellPrintWriter out,
             final DirectoryResource path) throws IOException
@@ -90,7 +92,12 @@ public class NativeSystemCall
       }
    }
 
-   public static void exec(boolean wait, String command, final String... parms)
+   /**
+    * Execute the given system command
+    * 
+    * @return 0 on successful completion, any other return code denotes failure
+    */
+   public static void exec(final boolean wait, final String command, final String... parms)
             throws IOException
    {
       String[] commandTokens = parms == null ? new String[1] : new String[parms.length + 1];

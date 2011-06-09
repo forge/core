@@ -29,6 +29,7 @@ import org.apache.maven.project.ProjectBuildingResult;
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.resources.FileResource;
+import org.jboss.forge.shell.ShellPrintWriter;
 
 /**
  * Provides *DIRECT* access to a Project's Maven POM and Build artifacts. Should only be used by extremely low-level
@@ -70,12 +71,26 @@ public interface MavenCoreFacet extends Facet
     * Execute a command using the embedded Maven shell. Return the exit status code. 0 = success, anything else =
     * failure.
     */
-   public boolean executeMavenShell(String[] parms);
+   public boolean executeMavenEmbedded(String[] parameters);
 
    /**
     * Execute a command using the embedded Maven shell, using the given PrintStreams for output and error output. Return
     * the exit status code. 0 = success, anything else = failure.
     */
-   boolean executeMavenShell(String[] parms, PrintStream out, PrintStream err);
+   boolean executeMavenEmbedded(PrintStream out, PrintStream err, String[] parameters);
+
+   /**
+    * Execute a command using the native Maven installation. If native Maven is not available, fall back to the embedded
+    * Maven provider built in to Forge.
+    * 
+    * @return
+    */
+   public boolean executeMaven(ShellPrintWriter out, String[] parameters);
+
+   /**
+    * Execute a command using the native Maven installation. If native Maven is not available, fall back to the embedded
+    * Maven provider built in to Forge.
+    */
+   public boolean executeMaven(String[] selected);
 
 }

@@ -45,7 +45,7 @@ public class ExecutionParserTest extends AbstractShellTest
    @Test
    public void testInvalidSuppliedOptionIsCorrected() throws Exception
    {
-      String packg = "com.example.good.package";
+      String packg = "com.example.good.pkg";
       queueInputLines(packg);
       getShell().execute("motp suppliedOption --package bad_%package");
       assertEquals(packg, plugin.getSuppliedOption());
@@ -54,7 +54,7 @@ public class ExecutionParserTest extends AbstractShellTest
    @Test
    public void testOmittedRequiredOptionIsFilled() throws Exception
    {
-      String packg = "com.example.good.package";
+      String packg = "com.example.good.pkg";
       queueInputLines("another#$%bad($package", packg);
       getShell().execute("motp requiredOption");
       assertEquals(packg, plugin.getRequiredOption());

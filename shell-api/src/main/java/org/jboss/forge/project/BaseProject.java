@@ -183,7 +183,7 @@ public abstract class BaseProject implements Project
    }
 
    @Override
-   public Project removeFacet(Facet facet)
+   public Project removeFacet(final Facet facet)
    {
       if (facet.isInstalled() && hasFacet(facet.getClass()))
       {
@@ -232,11 +232,18 @@ public abstract class BaseProject implements Project
       return this;
    }
 
-   private void performRemoval(Facet facet)
+   private void performRemoval(final Facet facet)
    {
       if (facet.uninstall())
       {
-         facets.remove(facet);
+         for (Facet f : facets)
+         {
+            if (f.getClass().isAssignableFrom(facet.getClass()))
+            {
+               facets.remove(f);
+               break;
+            }
+         }
       }
       else
       {
@@ -258,5 +265,37 @@ public abstract class BaseProject implements Project
                   "facet: [" + ConstraintInspector.getName(facet.getClass()) + "]. " +
                         "Installation was aborted by the Facet during installation.");
       }
+   }
+
+   /*
+    * Project instances are the same if they share a common root directory.
+    */
+   @Override
+   public int hashCode()
+   {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((getProjectRoot() == null) ? 0 : getProjectRoot().hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(final Object obj)
+   {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      BaseProject other = (BaseProject) obj;
+      if (getProjectRoot() == null)
+      {
+         if (other.getProjectRoot() != null)
+            return false;
+      }
+      else if (!getProjectRoot().equals(other.getProjectRoot()))
+         return false;
+      return true;
    }
 }

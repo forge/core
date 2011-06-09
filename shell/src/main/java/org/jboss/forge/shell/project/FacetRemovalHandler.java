@@ -33,7 +33,7 @@ import org.jboss.forge.bus.EventBus;
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.FacetActionAborted;
-import org.jboss.forge.project.facets.events.FacetInstalled;
+import org.jboss.forge.project.facets.events.FacetRemoved;
 import org.jboss.forge.project.facets.events.RemoveFacets;
 import org.jboss.forge.project.services.FacetFactory;
 import org.jboss.forge.shell.Shell;
@@ -68,7 +68,7 @@ public class FacetRemovalHandler
          for (Class<? extends Facet> type : request.getFacetTypes())
          {
             Facet facet = factory.getFacet(type);
-            if (!project.hasFacet(type))
+            if (project.hasFacet(type))
             {
                removed.addAll(remove(facet, false));
             }
@@ -85,7 +85,7 @@ public class FacetRemovalHandler
 
       for (Facet facet : removed)
       {
-         bus.enqueue(new FacetInstalled(facet));
+         bus.enqueue(new FacetRemoved(facet));
       }
    }
 

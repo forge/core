@@ -25,7 +25,6 @@ package org.jboss.forge.shell;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.jboss.forge.shell.PromptType;
 import org.jboss.forge.shell.util.Patterns;
 import org.junit.Test;
 
@@ -37,21 +36,37 @@ public class PromptTypeTest
    @Test
    public void testJavaPackage() throws Exception
    {
-      assertTrue("org".matches(PromptType.JAVA_PACKAGE.getPattern()));
-      assertFalse("org.".matches(PromptType.JAVA_PACKAGE.getPattern()));
-      assertTrue("org.jboss".matches(PromptType.JAVA_PACKAGE.getPattern()));
-      assertFalse("org.jboss.".matches(PromptType.JAVA_PACKAGE.getPattern()));
-      assertTrue("org.jboss_project".matches(PromptType.JAVA_PACKAGE.getPattern()));
-      assertFalse("org.jboss_$f00".matches(PromptType.JAVA_PACKAGE.getPattern()));
+      assertTrue(PromptType.JAVA_PACKAGE.matches("org"));
+      assertFalse(PromptType.JAVA_PACKAGE.matches("org."));
+      assertTrue(PromptType.JAVA_PACKAGE.matches("org.jboss.forge"));
+      assertFalse(PromptType.JAVA_PACKAGE.matches("org.jboss."));
+      assertTrue(PromptType.JAVA_PACKAGE.matches("org.jboss_project"));
+      assertFalse(PromptType.JAVA_PACKAGE.matches("org.jboss_$f00"));
+   }
+
+   @Test
+   public void testJavaClass() throws Exception
+   {
+      assertTrue(PromptType.JAVA_CLASS.matches("org.jboss.forge.spec.validation.MockMessageInterpolator"));
+   }
+
+   @Test
+   public void testJavaPackageCannotContainKeywords() throws Exception
+   {
+      assertFalse(PromptType.JAVA_PACKAGE.matches("org.jboss.package"));
+      assertFalse(PromptType.JAVA_PACKAGE.matches("org.jboss.private"));
+      assertFalse(PromptType.JAVA_PACKAGE.matches("org.public"));
+      assertFalse(PromptType.JAVA_PACKAGE.matches("public"));
+      assertFalse(PromptType.JAVA_PACKAGE.matches("org.synchronized.foo"));
    }
 
    @Test
    public void testJavaVariableName() throws Exception
    {
-      assertTrue("gamesPlayed".matches(PromptType.JAVA_VARIABLE_NAME.getPattern()));
-      assertFalse("(*#$%".matches(PromptType.JAVA_VARIABLE_NAME.getPattern()));
-      assertFalse("public".matches(PromptType.JAVA_VARIABLE_NAME.getPattern()));
-      assertTrue("privateIpAddress".matches(PromptType.JAVA_VARIABLE_NAME.getPattern()));
+      assertTrue(PromptType.JAVA_VARIABLE_NAME.matches("gamesPlayed"));
+      assertFalse(PromptType.JAVA_VARIABLE_NAME.matches("(*#$%"));
+      assertFalse(PromptType.JAVA_VARIABLE_NAME.matches("public"));
+      assertTrue(PromptType.JAVA_VARIABLE_NAME.matches("privateIpAddress"));
    }
 
    @Test
@@ -68,12 +83,12 @@ public class PromptTypeTest
    @Test
    public void testDependencyId() throws Exception
    {
-      assertFalse("group.id".matches(PromptType.DEPENDENCY_ID.getPattern()));
-      assertTrue("group.id:artifact.id".matches(PromptType.DEPENDENCY_ID.getPattern()));
-      assertTrue("group.id:artifact.id:1.0.0".matches(PromptType.DEPENDENCY_ID.getPattern()));
-      assertTrue("group.id:artifact.id:2.0.0-SNAPSHOT:scope".matches(PromptType.DEPENDENCY_ID.getPattern()));
-      assertTrue("group.id:artifact.id:3.0.Final:scope:packaging".matches(PromptType.DEPENDENCY_ID.getPattern()));
-      assertFalse("group.id:artifact.id:3.0.Final:scope:packaging:extra".matches(PromptType.DEPENDENCY_ID.getPattern()));
+      assertFalse(PromptType.DEPENDENCY_ID.matches("group.id"));
+      assertTrue(PromptType.DEPENDENCY_ID.matches("group.id:artifact.id"));
+      assertTrue(PromptType.DEPENDENCY_ID.matches("group.id:artifact.id:1.0.0"));
+      assertTrue(PromptType.DEPENDENCY_ID.matches("group.id:artifact.id:2.0.0-SNAPSHOT:scope"));
+      assertTrue(PromptType.DEPENDENCY_ID.matches("group.id:artifact.id:3.0.Final:scope:packaging"));
+      assertFalse(PromptType.DEPENDENCY_ID.matches("group.id:artifact.id:3.0.Final:scope:packaging:extra"));
    }
 
 }

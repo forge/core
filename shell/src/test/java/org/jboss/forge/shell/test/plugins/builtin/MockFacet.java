@@ -1,5 +1,5 @@
 /*
- * JBoss, by Red Hat.
+ * JBoss, Home of Professional Open Source
  * Copyright 2011, Red Hat, Inc., and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -19,42 +19,37 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.jboss.forge.shell.test.plugins.builtin;
 
-package org.jboss.forge.dev.mvn;
-
-import javax.inject.Inject;
-
-import org.jboss.forge.maven.MavenCoreFacet;
-import org.jboss.forge.project.Project;
+import org.jboss.forge.project.facets.BaseFacet;
+import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.shell.plugins.Alias;
-import org.jboss.forge.shell.plugins.DefaultCommand;
-import org.jboss.forge.shell.plugins.PipeOut;
-import org.jboss.forge.shell.plugins.Plugin;
-import org.jboss.forge.shell.plugins.RequiresFacet;
-import org.jboss.forge.shell.plugins.RequiresProject;
-import org.jboss.forge.shell.plugins.Topic;
 
 /**
- * @author Mike Brock .
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * 
  */
-@Alias("mvn")
-@Topic("Project")
-@RequiresProject
-@RequiresFacet(MavenCoreFacet.class)
-public class MvnShellPlugin implements Plugin
+@Alias("mockfacet")
+public class MockFacet extends BaseFacet
 {
-   private final Project project;
 
-   @Inject
-   public MvnShellPlugin(final Project project)
+   @Override
+   public boolean install()
    {
-      this.project = project;
+      FileResource<?> child = (FileResource<?>) project.getProjectRoot().getChild("mockFacet.installed");
+      return child.createNewFile();
    }
 
-   @DefaultCommand
-   public void run(final PipeOut out, final String... parms)
+   @Override
+   public boolean isInstalled()
    {
-      project.getFacet(MavenCoreFacet.class).executeMaven(out, parms);
+      return project.getProjectRoot().getChild("mockFacet.installed").exists();
    }
+
+   @Override
+   public boolean uninstall()
+   {
+      return project.getProjectRoot().getChild("mockFacet.installed").delete();
+   }
+
 }

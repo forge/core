@@ -44,7 +44,10 @@ import org.jboss.forge.project.ProjectModelException;
 import org.jboss.forge.project.facets.BaseFacet;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.Resource;
+import org.jboss.forge.shell.ShellPrintWriter;
 import org.jboss.forge.shell.plugins.Alias;
+import org.jboss.forge.shell.util.NativeSystemCall;
+import org.jboss.forge.shell.util.OSUtils;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -196,15 +199,15 @@ public class MavenCoreFacetImpl extends BaseFacet implements MavenCoreFacet, Fac
    }
 
    @Override
-   public boolean executeMavenShell(String[] parms)
+   public boolean executeMavenEmbedded(final String[] parms)
    {
-      return executeMavenShell(parms, System.out, System.err);
+      return executeMavenEmbedded(System.out, System.err, parms);
    }
 
    @Override
-   public boolean executeMavenShell(String[] parms, PrintStream out, PrintStream err)
+   public boolean executeMavenEmbedded(final PrintStream out, final PrintStream err, String[] parms)
    {
-      if (parms == null || parms.length == 0)
+      if ((parms == null) || (parms.length == 0))
       {
          parms = new String[] { "" };
       }
@@ -212,5 +215,29 @@ public class MavenCoreFacetImpl extends BaseFacet implements MavenCoreFacet, Fac
       int i = cli.doMain(parms, project.getProjectRoot().getFullyQualifiedName(),
                out, err);
       return i == 0;
+   }
+
+   @Override
+   public boolean executeMaven(final String[] selected)
+   {
+      return executeMaven(null, selected);
+   }
+
+   @Override
+   public boolean executeMaven(final ShellPrintWriter out, final String[] parms)
+   {
+      try
+      {
+         return 0 == NativeSystemCall.execFromPath(getMvnCommand(), parms, out, project.getProjectRoot());
+      }
+      catch (IOException e)
+      {
+         return executeMavenEmbedded(parms);
+      }
+   }
+
+   private String getMvnCommand()
+   {
+      return OSUtils.isWindows() ? "mvn.bat" : "mvn";
    }
 }

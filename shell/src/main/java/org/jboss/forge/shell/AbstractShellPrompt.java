@@ -28,19 +28,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.enterprise.inject.spi.BeanManager;
+
 import jline.console.completer.Completer;
 import jline.console.completer.FileNameCompleter;
 
 import org.jboss.forge.project.services.ResourceFactory;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.Resource;
-import org.jboss.forge.shell.PromptType;
-import org.jboss.forge.shell.Shell;
-import org.jboss.forge.shell.ShellColor;
 import org.jboss.forge.shell.command.PromptTypeConverter;
 import org.jboss.forge.shell.completer.CommandCompleter;
 import org.jboss.forge.shell.completer.CompleterAdaptor;
 import org.jboss.forge.shell.completer.EnumCompleter;
+import org.jboss.forge.shell.util.BeanManagerUtils;
 import org.jboss.forge.shell.util.Enums;
 import org.jboss.forge.shell.util.Files;
 import org.mvel2.DataConversion;
@@ -51,6 +51,7 @@ import org.mvel2.DataConversion;
  */
 public abstract class AbstractShellPrompt implements Shell
 {
+   abstract BeanManager getBeanManager();
 
    public AbstractShellPrompt()
    {
@@ -101,9 +102,10 @@ public abstract class AbstractShellPrompt implements Shell
    }
 
    @Override
-   public String promptCompleter(String string, CommandCompleter completer)
+   public String promptCompleter(final String string, final Class<? extends CommandCompleter> type)
    {
-      return promptWithCompleter(string, new CompleterAdaptor(completer));
+      return promptWithCompleter(string,
+               new CompleterAdaptor(BeanManagerUtils.getContextualInstance(getBeanManager(), type)));
    }
 
    @Override
@@ -277,7 +279,7 @@ public abstract class AbstractShellPrompt implements Shell
 
    @Override
    @SuppressWarnings("unchecked")
-   public <T> T promptChoiceTyped(final String message, final List<T> options, T defaultIfEmpty)
+   public <T> T promptChoiceTyped(final String message, final List<T> options, final T defaultIfEmpty)
    {
       if ((options == null) || options.isEmpty())
       {
@@ -299,7 +301,7 @@ public abstract class AbstractShellPrompt implements Shell
          println();
          for (T entry : options)
          {
-            if (entry != null && entry.equals(defaultIfEmpty))
+            if ((entry != null) && entry.equals(defaultIfEmpty))
             {
                print(ShellColor.BOLD, "  " + count + " - [" + entry + "]");
             }
@@ -312,7 +314,7 @@ public abstract class AbstractShellPrompt implements Shell
                print(ShellColor.BOLD, "  " + count + " - (none)");
             }
 
-            if (entry == defaultIfEmpty || (entry != null && entry.equals(defaultIfEmpty)))
+            if ((entry == defaultIfEmpty) || ((entry != null) && entry.equals(defaultIfEmpty)))
             {
                print("*");
             }
@@ -364,6 +366,14 @@ public abstract class AbstractShellPrompt implements Shell
          {
             result = options.get(input);
          }
+         else if (input.matches("[0-9]+"))
+         {
+            int choice = Integer.parseInt(input);
+            if ((choice > 0) && (choice < options.size()))
+            {
+               result = entries.get(choice - 1).getValue();
+            }
+         }
       }
       return (T) result;
    }
@@ -371,9 +381,15 @@ public abstract class AbstractShellPrompt implements Shell
    @Override
    public String promptCommon(final String message, final PromptType type)
    {
-      String result = promptRegex(message, type.getPattern());
-      result = getPromptTypeConverter().convert(type, result);
-      return result;
+
+      String input;
+      do
+      {
+         input = prompt(message);
+      }
+      while (!type.matches(input));
+      input = getPromptTypeConverter().convert(type, input);
+      return input;
    }
 
    @Override
@@ -383,17 +399,26 @@ public abstract class AbstractShellPrompt implements Shell
       {
          throw new IllegalArgumentException("Default value [" + defaultIfEmpty
                   + "] is not a valid match for the given prompt type ["
-                  + type.name() + ", " + type.getPattern() + "]");
+                  + type.name() + "]");
       }
 
-      String result = promptRegex(message, type.getPattern(), defaultIfEmpty);
-      result = getPromptTypeConverter().convert(type, result);
-      return result;
+      String input;
+      do
+      {
+         input = prompt(message);
+         if ((input == null) || input.isEmpty())
+         {
+            input = defaultIfEmpty;
+         }
+      }
+      while (!type.matches(input));
+      input = getPromptTypeConverter().convert(type, input);
+      return input;
    }
 
    @Override
    @SuppressWarnings("unchecked")
-   public <T extends Enum<T>> T promptEnum(String message, Class<T> type)
+   public <T extends Enum<T>> T promptEnum(final String message, final Class<T> type)
    {
       String value = "";
       while ((value == null) || value.trim().isEmpty())
@@ -411,7 +436,7 @@ public abstract class AbstractShellPrompt implements Shell
 
    @Override
    @SuppressWarnings("unchecked")
-   public <T extends Enum<T>> T promptEnum(String message, Class<T> type, T defaultIfEmpty)
+   public <T extends Enum<T>> T promptEnum(final String message, final Class<T> type, final T defaultIfEmpty)
    {
       T result;
       do
@@ -419,7 +444,7 @@ public abstract class AbstractShellPrompt implements Shell
          String value = promptWithCompleter(message, new CompleterAdaptor(
                   new EnumCompleter(type)));
 
-         if (value == null || value.trim().isEmpty())
+         if ((value == null) || value.trim().isEmpty())
          {
             result = defaultIfEmpty;
          }

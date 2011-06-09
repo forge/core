@@ -40,6 +40,7 @@ import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
 import jline.Terminal;
@@ -124,6 +125,9 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    @Inject
    @Parameters
    private List<String> parameters;
+
+   @Inject
+   private BeanManager manager;
 
    @Inject
    private Event<PostStartup> postStartup;
@@ -551,7 +555,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       }
       catch (CommandParserException e)
       {
-         ShellMessages.error(this, "[" + formatSourcedError(e.getCommand()) + "] " + e.getMessage());
+         ShellMessages.error(this, formatSourcedError(e.getCommand()) + e.getMessage());
          if (isVerbose())
          {
             e.printStackTrace();
@@ -559,7 +563,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       }
       catch (PluginExecutionException e)
       {
-         ShellMessages.error(this, "[" + formatSourcedError(e.getPlugin()) + "] " + e.getMessage());
+         ShellMessages.error(this, formatSourcedError(e.getPlugin()) + e.getMessage());
          if (isVerbose())
          {
             e.printStackTrace();
@@ -1212,5 +1216,11 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    public ForgeEnvironment getEnvironment()
    {
       return environment;
+   }
+
+   @Override
+   BeanManager getBeanManager()
+   {
+      return manager;
    }
 }

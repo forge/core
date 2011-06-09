@@ -28,8 +28,8 @@ package org.jboss.forge.shell.util;
 public interface Patterns
 {
    /**
-    * A group of terms that are illegal to use as Java identifiers. For example:
-    * "(if|package|public...while)" and so on.
+    * A group of terms that are illegal to use as Java identifiers. For example: "(if|package|public...while)" and so
+    * on.
     */
    public static final String JAVA_KEYWORDS = "abstract|" +
             "continue|" + "for|" + "new|" + "switch|" + "assert|" + "default|" +

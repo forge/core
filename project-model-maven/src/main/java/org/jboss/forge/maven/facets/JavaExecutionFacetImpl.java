@@ -22,6 +22,12 @@
 
 package org.jboss.forge.maven.facets;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+
 import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.project.facets.BaseFacet;
 import org.jboss.forge.project.facets.JavaExecutionFacet;
@@ -29,14 +35,6 @@ import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.ShellPrintWriter;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
-import org.jboss.forge.shell.util.NativeSystemCall;
-import org.jboss.forge.shell.util.OSUtils;
-
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Dependent
 @Alias("forge.maven.JavaExecutionFacet")
@@ -46,51 +44,36 @@ public class JavaExecutionFacetImpl extends BaseFacet implements JavaExecutionFa
    @Inject
    ShellPrintWriter out;
 
-   @Inject Shell shell;
+   @Inject
+   Shell shell;
 
    @Override
-   public void executeProjectClass(String fullyQualifiedClassName, String... arguments)
+   public void executeProjectClass(final String fullyQualifiedClassName, final String... arguments)
    {
       compileProjectClasses();
 
       CommandBuilder commandBuilder = CommandBuilder.getBuilder()
-              .mainClass(fullyQualifiedClassName)
-              .withArguments(arguments);
+               .mainClass(fullyQualifiedClassName)
+               .withArguments(arguments);
 
-      if(shell.isVerbose()) {
+      if (shell.isVerbose())
+      {
          commandBuilder.setVerbose();
       }
 
       executeClass(commandBuilder.build());
    }
 
-   private String getMvnCommand()
+   private void executeClass(final String[] mvnArguments)
    {
-      return OSUtils.isWindows() ? "mvn.bat" : "mvn";
-   }
-
-   private void executeClass(String[] mvnArguments)
-   {
-      try
-      {
-         NativeSystemCall.execFromPath(getMvnCommand(), mvnArguments, out, project.getProjectRoot());
-      } catch (IOException e)
-      {
-         e.printStackTrace();
-      }
+      project.getFacet(MavenCoreFacet.class).executeMaven(out, mvnArguments);
    }
 
    private void compileProjectClasses()
    {
-      String[] compileArgs = {"test-compile"};
+      String[] compileArgs = { "test-compile" };
 
-      try
-      {
-         NativeSystemCall.execFromPath(getMvnCommand(), compileArgs, out, project.getProjectRoot());
-      } catch (IOException e)
-      {
-         throw new RuntimeException("Error while invoking mvn test-compile", e);
-      }
+      project.getFacet(MavenCoreFacet.class).executeMaven(out, compileArgs);
    }
 
    @Override
@@ -107,8 +90,7 @@ public class JavaExecutionFacetImpl extends BaseFacet implements JavaExecutionFa
 
    private static class CommandBuilder
    {
-      private List<String> commands = new ArrayList<String>();
-
+      private final List<String> commands = new ArrayList<String>();
 
       public static CommandBuilder getBuilder()
       {
@@ -119,18 +101,18 @@ public class JavaExecutionFacetImpl extends BaseFacet implements JavaExecutionFa
          return builder;
       }
 
-      public CommandBuilder mainClass(String mainClass)
+      public CommandBuilder mainClass(final String mainClass)
       {
          commands.add("-Dexec.mainClass=" + mainClass);
 
          return this;
       }
 
-      public CommandBuilder withArguments(String[] arguments)
+      public CommandBuilder withArguments(final String[] arguments)
       {
          if (arguments.length > 0)
          {
-            StringBuilder argBuilder = new StringBuilder("-Dexec.args='");
+            StringBuilder argBuilder = new StringBuilder("-Dexec.args=\"");
 
             boolean first = true;
             for (String argument : arguments)
@@ -143,7 +125,7 @@ public class JavaExecutionFacetImpl extends BaseFacet implements JavaExecutionFa
                first = false;
             }
 
-            argBuilder.append("' ");
+            argBuilder.append("\" ");
             commands.add(argBuilder.toString());
 
          }
