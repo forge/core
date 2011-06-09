@@ -122,7 +122,7 @@ public class PluginRegistry
    public List<PluginMetadata> getPluginMetadata(final String plugin)
    {
       List<PluginMetadata> list = plugins.get(plugin);
-      if (!list.isEmpty() && (list != null))
+      if ((list != null) && !list.isEmpty())
          return Collections.unmodifiableList(list);
       else
          return new ArrayList<PluginMetadata>();
