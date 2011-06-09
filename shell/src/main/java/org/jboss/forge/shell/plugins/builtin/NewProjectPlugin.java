@@ -37,6 +37,7 @@ import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.project.facets.MetadataFacet;
 import org.jboss.forge.project.facets.PackagingFacet;
 import org.jboss.forge.project.facets.ResourceFacet;
+import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.project.packaging.PackagingType;
 import org.jboss.forge.project.services.ProjectFactory;
 import org.jboss.forge.project.services.ResourceFactory;
@@ -201,11 +202,20 @@ public class NewProjectPlugin implements Plugin
 
       Project project = null;
 
-      if (type.equals(PackagingType.JAR) || type.equals(PackagingType.WAR))
+      if (type.equals(PackagingType.JAR))
       {
          project = projectFactory.createProject(dir,
                   DependencyFacet.class,
                   MetadataFacet.class,
+                  JavaSourceFacet.class,
+                  ResourceFacet.class);
+      }
+      else if (type.equals(PackagingType.WAR))
+      {
+         project = projectFactory.createProject(dir,
+                  DependencyFacet.class,
+                  MetadataFacet.class,
+                  WebResourceFacet.class,
                   JavaSourceFacet.class,
                   ResourceFacet.class);
       }
