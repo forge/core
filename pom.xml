@@ -380,9 +380,9 @@
    </reporting>
 
    <scm>
-      <connection>scm:git:git://github.com/seam/forge.git</connection>
-      <developerConnection>scm:git:git@github.com:seam/forge.git</developerConnection>
-      <url>http://github.com/seam/forge</url>
+      <connection>scm:git:git://github.com/forge/core.git</connection>
+      <developerConnection>scm:git:git@github.com:forge/core.git</developerConnection>
+      <url>http://github.com/forge/core</url>
    </scm>
 
 </project>
