@@ -79,10 +79,9 @@ public class EntityPlugin implements Plugin
                      description = "The @Entity name") final String entityName,
             @Option(required = false,
                      name = "package",
+                     type = PromptType.JAVA_PACKAGE,
                      description = "The package name") final String packageName) throws FileNotFoundException
    {
-      // TODO this should accept a qualified name as a parameter instead of
-      // prompting for the package later
       final PersistenceFacet jpa = project.getFacet(PersistenceFacet.class);
       final JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
 

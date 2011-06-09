@@ -60,11 +60,13 @@ public class MavenCoreFacetImpl extends BaseFacet implements MavenCoreFacet, Fac
    private Project project;
    private ProjectBuildingResult buildingResult;
    private final MavenContainer container;
+   private final ShellPrintWriter writer;
 
    @Inject
-   public MavenCoreFacetImpl(final MavenContainer container)
+   public MavenCoreFacetImpl(final MavenContainer container, final ShellPrintWriter writer)
    {
       this.container = container;
+      this.writer = writer;
    }
 
    /*
@@ -220,7 +222,7 @@ public class MavenCoreFacetImpl extends BaseFacet implements MavenCoreFacet, Fac
    @Override
    public boolean executeMaven(final String[] selected)
    {
-      return executeMaven(null, selected);
+      return executeMaven(writer, selected);
    }
 
    @Override

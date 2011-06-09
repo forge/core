@@ -12,7 +12,7 @@
    <name>Forge - Git Integration</name>
   <description>Isolates Forge build from the addition of another Maven repository for Git</description>
   <properties>
-    <forge.api.version>1.0.0-SNAPSHOT</forge.api.version>
+    <forge.api.version>1.0.0.Alpha4</forge.api.version>
   </properties>
   <dependencies>
     <dependency>

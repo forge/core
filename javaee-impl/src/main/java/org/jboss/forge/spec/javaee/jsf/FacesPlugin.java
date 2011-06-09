@@ -110,7 +110,7 @@ public class FacesPlugin implements Plugin
       }
    }
 
-   @Command("new-view")
+   // @Command("new-view")
    public void newView(final PipeOut out)
    {
       throw new RuntimeException("Not yet implemented.");
