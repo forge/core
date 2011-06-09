@@ -4,12 +4,12 @@
    <parent>
       <artifactId>forge-parent</artifactId>
       <groupId>org.jboss.forge</groupId>
-      <version>1.0.0.Alpha4</version>
+      <version>1.0.0-SNAPSHOT</version>
       <relativePath>../</relativePath>
    </parent>
    <groupId>org.jboss.forge</groupId>
    <artifactId>forge-plugin-loader</artifactId>
-   <version>1.0.0.Alpha4</version>
+   <version>1.0.0-SNAPSHOT</version>
 
    <name>Forge - Plugin Loader</name>
    <description>Responsible for building classpath isolation for plugins using JBoss Modules</description>
