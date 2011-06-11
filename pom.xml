@@ -53,6 +53,7 @@
       <module>scaffold-plugins</module>
       <module>scaffold-metawidget</module>
       <module>dev-plugins</module>
+      <module>plugin-repository</module>
    </modules>
 
    <properties>
