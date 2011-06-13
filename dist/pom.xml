@@ -30,6 +30,11 @@
 			<artifactId>forge-scaffold-plugins</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+        <dependency>
+			<groupId>org.jboss.forge</groupId>
+			<artifactId>plugin-repository</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.metawidget</groupId>
 			<artifactId>metawidget-forge</artifactId>
