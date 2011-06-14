@@ -26,7 +26,6 @@
 	<properties>
 		<el.version>2.2</el.version>
 		<metawidget.version>1.10</metawidget.version>
-		<seam.render.version>1.0.0.Alpha3</seam.render.version>
 	</properties>
 
 	<dependencies>
@@ -44,7 +43,6 @@
 		<dependency>
 			<groupId>org.jboss.seam.render</groupId>
 			<artifactId>seam-render</artifactId>
-			<version>${seam.render.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.metawidget</groupId>

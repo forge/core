@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
    <modelVersion>4.0.0</modelVersion>
    <parent>
       <artifactId>forge-parent</artifactId>
@@ -11,20 +12,25 @@
    <artifactId>forge-javaee-impl</artifactId>
    <packaging>jar</packaging>
    <name>Forge - Java EE Integration Impl &amp; Plugins</name>
-   
-    <developers>
-        <developer>
-            <id>kevinpollet</id>
-            <name>Kevin Pollet</name>
-            <email>pollet.kevin@gmail.com</email>
-        </developer>
-    </developers>
 
+   <developers>
+      <developer>
+         <id>kevinpollet</id>
+         <name>Kevin Pollet</name>
+         <email>pollet.kevin@gmail.com</email>
+      </developer>
+   </developers>
+
+   
    <dependencies>
       <dependency>
          <groupId>org.jboss.forge</groupId>
          <artifactId>forge-javaee-api</artifactId>
          <scope>provided</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.seam.render</groupId>
+         <artifactId>seam-render</artifactId>
       </dependency>
 
       <!-- Test Dependencies -->

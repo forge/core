@@ -71,6 +71,7 @@
       <slf4j.version>1.5.10</slf4j.version>
       <weld.version>1.1.0.Final</weld.version>
       <weld.bom.version>1.1.0.Final</weld.bom.version>
+      <seam.render.version>1.0.0.Alpha3</seam.render.version>
       <solder.version>3.0.0.CR4</solder.version>
    </properties>
 
@@ -173,6 +174,11 @@
             <version>${weld.version}</version>
          </dependency>
 
+         <dependency>
+            <groupId>org.jboss.seam.render</groupId>
+            <artifactId>seam-render</artifactId>
+            <version>${seam.render.version}</version>
+         </dependency>
          <dependency>
             <groupId>org.jboss.seam.solder</groupId>
             <artifactId>seam-solder</artifactId>

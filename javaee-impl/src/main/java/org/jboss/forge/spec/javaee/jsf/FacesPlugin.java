@@ -22,12 +22,16 @@
 package org.jboss.forge.spec.javaee.jsf;
 
 import javax.enterprise.event.Event;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.events.InstallFacets;
+import org.jboss.forge.resources.FileResource;
+import org.jboss.forge.resources.Resource;
 import org.jboss.forge.shell.ShellColor;
 import org.jboss.forge.shell.ShellMessages;
+import org.jboss.forge.shell.ShellPrompt;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.Command;
 import org.jboss.forge.shell.plugins.DefaultCommand;
@@ -36,6 +40,8 @@ import org.jboss.forge.shell.plugins.PipeOut;
 import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.spec.javaee.FacesFacet;
 import org.jboss.forge.spec.javaee.ServletFacet;
+import org.jboss.seam.render.TemplateCompiler;
+import org.jboss.seam.render.template.CompiledTemplateResource;
 import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.FacesProjectStage;
 import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
 
@@ -51,6 +57,12 @@ public class FacesPlugin implements Plugin
 
    @Inject
    private Event<InstallFacets> request;
+
+   @Inject
+   private Instance<TemplateCompiler> compiler;
+
+   @Inject
+   private ShellPrompt prompt;
 
    @Command("setup")
    public void setup(final PipeOut out)
@@ -110,9 +122,30 @@ public class FacesPlugin implements Plugin
       }
    }
 
-   // @Command("new-view")
-   public void newView(final PipeOut out)
+   private static final String VIEW_TEMPLATE = "org/jboss/forge/web/empty-view.xhtml";
+
+   @Command("new-view")
+   public void newView(final PipeOut out,
+            @Option(name = "target") final Resource<?> target)
    {
-      throw new RuntimeException("Not yet implemented.");
+      if (!project.hasFacet(FacesFacet.class))
+      {
+         throw new RuntimeException("JSF is not installed. Use 'setup faces' to continue.");
+      }
+
+      CompiledTemplateResource viewTemplate = compiler.get().compile(VIEW_TEMPLATE);
+      if (!target.exists())
+      {
+         ((FileResource<?>) target).createNewFile();
+         ((FileResource<?>) target).setContents(viewTemplate.render());
+      }
+      else if (prompt.promptBoolean("File exists. Overwrite with blank view?"))
+      {
+         ((FileResource<?>) target).setContents(viewTemplate.render());
+      }
+      else
+      {
+         throw new RuntimeException("Aborted. File exists [" + target.getFullyQualifiedName() + "].");
+      }
    }
 }
