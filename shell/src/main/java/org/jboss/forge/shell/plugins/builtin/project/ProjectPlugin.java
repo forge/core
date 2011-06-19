@@ -60,6 +60,8 @@ import org.jboss.forge.shell.plugins.RequiresProject;
 import org.jboss.forge.shell.plugins.Topic;
 import org.jboss.forge.shell.util.ConstraintInspector;
 
+import com.google.common.base.Strings;
+
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -148,8 +150,12 @@ public class ProjectPlugin implements Plugin
    public void addDep(
             @Option(required = true,
                      type = PromptType.DEPENDENCY_ID,
-                     description = "[ groupId :artifactId {:version :scope :packaging} ]",
+                     description = "[ groupId:artifactId {:version :scope :packaging} ]",
                      help = "dependency identifier, ex: \"org.jboss.forge:forge-api:1.0.0\"") Dependency gav,
+            @Option(type = PromptType.DEPENDENCY_ID,
+                     name = "exclude",
+                     description = "[ groupId:artifactId ]",
+                     help = "exclusion identifier, ex: \"org.jboss.forge:forge-api\"") final Dependency exclusion,
             final PipeOut out
             )
    {
@@ -183,10 +189,13 @@ public class ProjectPlugin implements Plugin
 
             if (availableVersions.isEmpty())
             {
-               throw new RuntimeException("No available versions resolved for dependency [" + gav + "]");
+               if (Strings.isNullOrEmpty(gav.getVersion())
+                        || !shell.promptBoolean("No artifacts resolved from available repositories, install anyway?"))
+               {
+                  throw new RuntimeException("No available versions resolved for dependency [" + gav + "]");
+               }
             }
-
-            if (!availableVersions.contains(gav))
+            else if (!availableVersions.contains(gav))
             {
                ShellMessages.info(out, "No artifact found for dependency [" + gav + "]");
                if (availableVersions.size() > 1)
@@ -208,8 +217,12 @@ public class ProjectPlugin implements Plugin
                Dependency dependency = deps.getDependency(gav);
                deps.removeDependency(dependency);
             }
+            if (exclusion != null)
+            {
+               gav.getExcludedDependencies().add(exclusion);
+            }
             deps.addDependency(gav);
-            out.println("Added dependency [" + gav + "]");
+            out.println("Added dependency [" + gav + "]" + (exclusion != null ? " excluding [" + exclusion + "]" : ""));
          }
       }
       else
@@ -225,11 +238,6 @@ public class ProjectPlugin implements Plugin
                      description = "[ groupId:artifactId {:version:scope:packaging} ]",
                      type = PromptType.DEPENDENCY_ID
                      ) Dependency gav,
-            @Option(required = false,
-                     flagOnly = true,
-                     help = "Perform a search only within the locally configured repository",
-                     name = "offlineSearch"
-                        ) final boolean offline,
             final PipeOut out
             )
    {
