@@ -27,7 +27,7 @@ clear;
 @step("entity --named Conference");
 @step("ls");
 
-@step("ls id::long");
+@step("ls id::Long");
 @step("field string --named name");
 @step("ls");
 @step("scaffold from-entity");
