@@ -38,6 +38,7 @@ import javax.inject.Inject;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.PluginJar.IllegalNameException;
 import org.jboss.forge.shell.events.AcceptUserInput;
+import org.jboss.forge.shell.events.PreStartup;
 import org.jboss.forge.shell.events.ReinitializeEnvironment;
 import org.jboss.forge.shell.events.Shutdown;
 import org.jboss.forge.shell.events.Startup;
@@ -47,6 +48,7 @@ import org.jboss.weld.environment.se.WeldContainer;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author Mike Brock
+ * @author Ronald van Kuijk
  */
 public class Bootstrap
 {
@@ -89,6 +91,7 @@ public class Bootstrap
                Weld weld = new Weld();
                WeldContainer container = weld.initialize();
                BeanManager manager = container.getBeanManager();
+               manager.fireEvent(new PreStartup());
                manager.fireEvent(new Startup(workingDir, restarting));
                manager.fireEvent(new AcceptUserInput());
                weld.shutdown();
