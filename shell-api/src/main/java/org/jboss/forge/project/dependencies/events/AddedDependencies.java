@@ -40,13 +40,13 @@ public final class AddedDependencies
    private final List<Dependency> dependencies;
    private final Project project;
 
-   public AddedDependencies(Project project, Dependency... dependencies)
+   public AddedDependencies(final Project project, final Dependency... dependencies)
    {
       this.dependencies = Arrays.asList(dependencies);
       this.project = project;
    }
 
-   public AddedDependencies(Project project, List<Dependency> dependencies)
+   public AddedDependencies(final Project project, final List<Dependency> dependencies)
    {
       this.dependencies = dependencies;
       this.project = project;

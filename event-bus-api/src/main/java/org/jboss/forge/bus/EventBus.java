@@ -23,6 +23,7 @@ package org.jboss.forge.bus;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,9 @@ import java.util.Map.Entry;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import org.jboss.forge.bus.cdi.BusManaged;
+import org.jboss.forge.bus.cdi.ObserverCaptureExtension;
 
 /**
  * Simple bus for postponing event firing.
@@ -44,6 +48,9 @@ public class EventBus
    @Inject
    private BeanManager manager;
 
+   @Inject
+   private ObserverCaptureExtension extension;
+
    private final Map<Object, Annotation[]> map = new HashMap<Object, Annotation[]>();
 
    /**
@@ -52,6 +59,7 @@ public class EventBus
    public void enqueue(final Object event)
    {
       map.put(event, new Annotation[] {});
+      // map.put(event, new Annotation[] { new BusManagedLiteral() });
    }
 
    /**
@@ -59,6 +67,8 @@ public class EventBus
     */
    public void enqueue(final Object event, final Annotation[] qualifiers)
    {
+      // Annotation[] annotations = Arrays.copyOf(qualifiers, qualifiers.length + 1);
+      // annotations[annotations.length - 1] = new BusManagedLiteral();
       map.put(event, qualifiers);
    }
 
@@ -74,11 +84,21 @@ public class EventBus
          {
             try
             {
-               manager.fireEvent(e.getKey(), e.getValue());
+               Object key = e.getKey();
+               Annotation[] value = e.getValue();
+
+               List<Annotation> toFire = new ArrayList<Annotation>();
+               List<BusManaged> qualifiers = extension.getEventQualifiers(key
+                        .getClass());
+
+               toFire.addAll(qualifiers);
+               toFire.addAll(Arrays.asList(value));
+
+               manager.fireEvent(key, toFire.toArray(new Annotation[] {}));
             }
             catch (Exception e1)
             {
-               e1.printStackTrace();
+               thrown.add(e1);
             }
          }
       }

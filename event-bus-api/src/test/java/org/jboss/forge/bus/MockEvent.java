@@ -21,11 +21,13 @@
  */
 package org.jboss.forge.bus;
 
+import org.jboss.forge.bus.event.BusEvent;
+
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- *
+ * 
  */
+@BusEvent
 public class MockEvent
 {
-
 }

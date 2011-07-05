@@ -1,6 +1,6 @@
 /*
- * JBoss, by Red Hat.
- * Copyright 2010, Red Hat, Inc., and individual contributors
+ * JBoss, Home of Professional Open Source
+ * Copyright 2011, Red Hat, Inc., and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,13 +19,25 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.bus.event;
+package org.jboss.forge.shell.spi;
+
+import org.jboss.forge.shell.Shell;
 
 /**
+ * Listens for all or specific events produced by Forge and plugins on the event bus.
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- *
  */
-public interface BaseEvent
+public interface EventSubscriber
 {
+   /**
+    * Returns true if this subscriber should handle events of the given type. Returns false if the given event type
+    * should be ignored.
+    */
+   boolean handles(Class<?> eventType);
 
+   /**
+    * Handles an event.
+    */
+   void eventReceived(Shell shell, Object event);
 }

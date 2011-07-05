@@ -30,6 +30,8 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.bus.cdi.ObserverCaptureExtension;
+import org.jboss.forge.bus.event.BusEvent;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;
@@ -44,15 +46,15 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class EventBusTest
 {
-
    @Deployment
    public static JavaArchive createTestArchive()
    {
       return ShrinkWrap.create(JavaArchive.class, "test.jar")
-               .addClass(EventBus.class)
-               .addClass(EventBusQueuedException.class)
-               .addClass(MockEvent.class)
+               .addClass(ObserverCaptureExtension.class)
                .addClass(MockEventObserver.class)
+               .addClass(EventBus.class)
+               .addClass(BusEvent.class)
+               .addManifestResource("META-INF/services/javax.enterprise.inject.spi.Extension")
                .addManifestResource(new ByteArrayAsset("<beans/>".getBytes()), ArchivePaths.create("beans.xml"));
    }
 

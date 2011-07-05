@@ -19,31 +19,15 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.bus;
+package org.jboss.forge.bus.cdi;
 
-import java.util.Collections;
-import java.util.List;
+import javax.enterprise.util.AnnotationLiteral;
 
 /**
- * An exception queued and re-thrown during the event bus firing process.
- * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * 
  */
-public class EventBusQueuedException extends RuntimeException
+public class BusManagedLiteral extends AnnotationLiteral<BusManaged>
 {
-   private static final long serialVersionUID = -2585821467963985204L;
-   private final List<Exception> queuedExceptions;
-
-   EventBusQueuedException(final List<Exception> thrown)
-   {
-      super("Aggregated [" + thrown.size() + "] caught exceptions during event bus firing.");
-      queuedExceptions = thrown;
-   }
-
-   public List<Exception> getQueuedExceptions()
-   {
-      return Collections.unmodifiableList(queuedExceptions);
-   }
-
-   // TODO override Exception methods to provide aggregate trace reporting
+   private static final long serialVersionUID = -5725272248887531106L;
 }

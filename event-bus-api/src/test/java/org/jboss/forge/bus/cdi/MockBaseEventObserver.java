@@ -24,7 +24,7 @@ package org.jboss.forge.bus.cdi;
 import javax.enterprise.event.Observes;
 import javax.inject.Singleton;
 
-import org.jboss.forge.bus.event.BaseEvent;
+import org.jboss.forge.bus.MockEvent;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -36,12 +36,12 @@ public class MockBaseEventObserver
    private boolean observedRemoved2 = false;
    private boolean observedNormal = false;
 
-   public void managedObserver(@Observes final BaseEvent event)
+   public void managedObserver(@Observes final MockEvent event)
    {
       observedRemoved = true;
    }
 
-   public void managedObserver2(@Observes final BaseEvent event)
+   public void managedObserver2(@Observes final MockEvent event)
    {
       observedRemoved2 = true;
    }

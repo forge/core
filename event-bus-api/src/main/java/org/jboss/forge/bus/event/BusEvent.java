@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc., and individual contributors
+ * JBoss, by Red Hat.
+ * Copyright 2010, Red Hat, Inc., and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,31 +19,29 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.bus;
+package org.jboss.forge.bus.event;
 
-import java.util.Collections;
-import java.util.List;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import javax.inject.Qualifier;
 
 /**
- * An exception queued and re-thrown during the event bus firing process.
- * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * 
  */
-public class EventBusQueuedException extends RuntimeException
+@Qualifier
+@Target({ TYPE, METHOD, PARAMETER, FIELD })
+@Retention(RUNTIME)
+@Documented
+public @interface BusEvent
 {
-   private static final long serialVersionUID = -2585821467963985204L;
-   private final List<Exception> queuedExceptions;
 
-   EventBusQueuedException(final List<Exception> thrown)
-   {
-      super("Aggregated [" + thrown.size() + "] caught exceptions during event bus firing.");
-      queuedExceptions = thrown;
-   }
-
-   public List<Exception> getQueuedExceptions()
-   {
-      return Collections.unmodifiableList(queuedExceptions);
-   }
-
-   // TODO override Exception methods to provide aggregate trace reporting
 }
