@@ -21,8 +21,6 @@
  */
 package org.jboss.forge.spec.javaee;
 
-import java.io.File;
-
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.facets.BaseFacet;
@@ -31,12 +29,11 @@ import org.jboss.forge.project.facets.ResourceFacet;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
-import org.jboss.forge.spec.javaee.ValidationFacet;
 import org.jboss.forge.spec.javaee.descriptor.ValidationDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.DescriptorImporter;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 
-import static org.jboss.forge.project.dependencies.ScopeType.PROVIDED;
+import java.io.File;
 
 /**
  * @author Kevin Pollet
@@ -49,11 +46,7 @@ public class ValidationFacetImpl extends BaseFacet implements ValidationFacet
 
     public ValidationFacetImpl()
     {
-        this.javaee6SpecAPI = DependencyBuilder.create()
-                .setGroupId("org.jboss.spec")
-                .setArtifactId("jboss-javaee-6.0")
-                .setVersion("1.0.0.Final")
-                .setScopeType(PROVIDED);
+        this.javaee6SpecAPI = DependencyBuilder.create("org.jboss.spec:jboss-javaee-6.0:1.0.0.Final:provided:basic");
     }
 
     @Override

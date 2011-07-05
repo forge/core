@@ -44,7 +44,7 @@ import static org.jboss.forge.project.dependencies.DependencyBuilder.create;
 @RunWith(Arquillian.class)
 public class ValidationFacetTest extends SingletonAbstractShellTest
 {
-    private static final Dependency JAVAEE_6_SPEC = create("org.jboss.spec:jboss-javaee-6.0:1.0.0.Final:provided");
+    private static final Dependency JAVAEE_6_SPEC = create("org.jboss.spec:jboss-javaee-6.0:1.0.0.Final:provided:basic");
 
     @Before
     @Override
