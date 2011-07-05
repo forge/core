@@ -53,7 +53,6 @@ public class PluginRepository implements Plugin
       try
       {
          URL url = new URL("http://jboss-forge.s3.amazonaws.com/pluginrepo.xml");
-         //URL url = new URL("http://localhost/~paul/pluginrepo.xml");
          InputStream inputStream = url.openStream();
          Node parse = XMLParser.parse(inputStream);
          Map<String, Node> categories = new HashMap<String, Node>();
@@ -71,7 +70,7 @@ public class PluginRepository implements Plugin
             List<Node> pluginGroups = category.getSingle("groups").get("group");
             for (Node pluginGroup : pluginGroups)
             {
-               pluginsChoices.put(pluginGroup.attribute("name"), pluginGroup);
+               pluginsChoices.put("* " + pluginGroup.attribute("name"), pluginGroup);
             }
          }
 
