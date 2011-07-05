@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jboss.forge.QueuedEvent;
 import org.jboss.forge.parser.java.util.Assert;
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.Project;
@@ -37,7 +36,6 @@ import org.jboss.forge.project.facets.FacetActionAborted;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-@QueuedEvent
 public class RemoveFacets
 {
    private final List<Class<? extends Facet>> facetTypes;
@@ -54,8 +52,8 @@ public class RemoveFacets
    }
 
    /**
-    * Install the given facet but first prompt for confirmation. If the user aborts, a {@link FacetActionAborted}
-    * will be thrown from the statement where this event was fired.
+    * Install the given facet but first prompt for confirmation. If the user aborts, a {@link FacetActionAborted} will
+    * be thrown from the statement where this event was fired.
     */
    public RemoveFacets(final boolean prompt, final Class<? extends Facet> facetType)
    {
@@ -74,8 +72,8 @@ public class RemoveFacets
    }
 
    /**
-    * Install the given facets but first prompt for confirmation. If the user aborts, a {@link FacetActionAborted}
-    * will be thrown.
+    * Install the given facets but first prompt for confirmation. If the user aborts, a {@link FacetActionAborted} will
+    * be thrown.
     */
    public RemoveFacets(final boolean prompt, final Class<? extends Facet>... facetTypes)
    {
