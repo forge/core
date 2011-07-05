@@ -9,6 +9,8 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
+import org.apache.maven.settings.Proxy;
+import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.jboss.forge.ForgeEnvironment;
 import org.jboss.forge.maven.facets.MavenContainer;
@@ -27,6 +29,7 @@ import org.sonatype.aether.RepositorySystem;
 import org.sonatype.aether.artifact.Artifact;
 import org.sonatype.aether.collection.CollectRequest;
 import org.sonatype.aether.repository.ArtifactRepository;
+import org.sonatype.aether.repository.Authentication;
 import org.sonatype.aether.repository.LocalRepository;
 import org.sonatype.aether.repository.RemoteRepository;
 import org.sonatype.aether.repository.RepositoryPolicy;
@@ -55,20 +58,6 @@ public class RepositoryLookup implements DependencyResolverProvider
    public RepositoryLookup()
    {
    }
-
-   // public static final String ALT_USER_SETTINGS_XML_LOCATION = "org.apache.maven.user-settings";
-   // public static final String ALT_GLOBAL_SETTINGS_XML_LOCATION = "org.apache.maven.global-settings";
-
-   // public static final String ALT_LOCAL_REPOSITORY_LOCATION = "maven.repo.local";
-
-   // private static final String DEFAULT_USER_SETTINGS_PATH = OSUtils.getUserHomePath().concat( "/.m2/settings.xml");
-   // private static final String DEFAULT_REPOSITORY_PATH = OSUtils.getUserHomePath().concat( "/.m2/repository");
-
-   // public static void setRemoteRepository()
-   // {
-   // System.setProperty(ALT_USER_SETTINGS_XML_LOCATION, "target/settings/profiles/settings.xml");
-   // System.setProperty(ALT_LOCAL_REPOSITORY_LOCATION, "target/the-other-repository");
-   // }
 
    @Inject
    public RepositoryLookup(final MavenContainer container, final ResourceFactory factory,
@@ -113,7 +102,7 @@ public class RepositoryLookup implements DependencyResolverProvider
             if (ar instanceof RemoteRepository)
             {
                RemoteRepository remoteRepo = new RemoteRepository(ar.getId(), ar.getContentType(),
-                           ((RemoteRepository) ar).getUrl());
+                        ((RemoteRepository) ar).getUrl());
                request.addRepository(remoteRepo);
                DependencyBuilder currentVersion = DependencyBuilder.create(dep).setVersion(version.toString());
                request.setArtifact(dependencyToMavenArtifact(currentVersion));
@@ -151,8 +140,7 @@ public class RepositoryLookup implements DependencyResolverProvider
    }
 
    @Override
-   public List<DependencyResource> resolveDependencies(final Dependency query,
-            final DependencyRepository repository)
+   public List<DependencyResource> resolveDependencies(final Dependency query, final DependencyRepository repository)
    {
       return resolveDependencies(query, Arrays.asList(repository));
    }
@@ -173,8 +161,8 @@ public class RepositoryLookup implements DependencyResolverProvider
          MavenRepositorySystemSession session = setupRepoSession(system);
 
          Artifact artifact = dependencyToMavenArtifact(dep);
-         CollectRequest collectRequest = new CollectRequest(new org.sonatype.aether.graph.Dependency(
-                  artifact, null), convertToMavenRepos(repositories));
+         CollectRequest collectRequest = new CollectRequest(new org.sonatype.aether.graph.Dependency(artifact, null),
+                  convertToMavenRepos(repositories));
          DependencyRequest request = new DependencyRequest(collectRequest, null);
 
          DependencyResult artifacts = system.resolveDependencies(session, request);
@@ -183,8 +171,7 @@ public class RepositoryLookup implements DependencyResolverProvider
          {
             File file = a.getArtifact().getFile();
             Dependency d = DependencyBuilder.create().setArtifactId(a.getArtifact().getArtifactId())
-                     .setGroupId(a.getArtifact().getGroupId())
-                     .setVersion(a.getArtifact().getVersion());
+                     .setGroupId(a.getArtifact().getGroupId()).setVersion(a.getArtifact().getVersion());
             DependencyResource resource = new DependencyResource(factory, file, d);
             result.add(resource);
          }
@@ -209,8 +196,7 @@ public class RepositoryLookup implements DependencyResolverProvider
    }
 
    @Override
-   public DependencyMetadata resolveDependencyMetadata(Dependency query,
-            final List<DependencyRepository> repositories)
+   public DependencyMetadata resolveDependencyMetadata(Dependency query, final List<DependencyRepository> repositories)
    {
       try
       {
@@ -228,9 +214,8 @@ public class RepositoryLookup implements DependencyResolverProvider
          ArtifactDescriptorResult results = system.readArtifactDescriptor(session, ar);
 
          Artifact a = results.getArtifact();
-         Dependency d = DependencyBuilder.create().setArtifactId(a.getArtifactId())
-                     .setGroupId(a.getGroupId())
-                     .setVersion(a.getVersion());
+         Dependency d = DependencyBuilder.create().setArtifactId(a.getArtifactId()).setGroupId(a.getGroupId())
+                  .setVersion(a.getVersion());
 
          return new DependencyMetadataImpl(d, results);
       }
@@ -272,18 +257,26 @@ public class RepositoryLookup implements DependencyResolverProvider
    {
       MavenRepositorySystemSession session = new MavenRepositorySystemSession();
       session.setOffline(!environment.isOnline());
+      Settings settings = container.getSettings();
 
-      LocalRepository localRepo = new LocalRepository(container.getSettings().getLocalRepository());
+      LocalRepository localRepo = new LocalRepository(settings.getLocalRepository());
       session.setLocalRepositoryManager(repoSystem.newLocalRepositoryManager(localRepo));
-
       session.setTransferErrorCachingEnabled(false);
       session.setNotFoundCachingEnabled(false);
+
       return session;
    }
 
    private RemoteRepository convertToMavenRepo(final DependencyRepository repo)
    {
-      return new RemoteRepository(repo.getId(), "default", repo.getUrl());
+      RemoteRepository remoteRepository = new RemoteRepository(repo.getId(), "default", repo.getUrl());
+      Settings settings = container.getSettings();
+      Proxy activeProxy = settings.getActiveProxy();
+      if (activeProxy != null)
+      {
+         remoteRepository.setProxy(convertFromMavenProxy(activeProxy));
+      }
+      return remoteRepository;
    }
 
    private List<RemoteRepository> convertToMavenRepos(final List<DependencyRepository> repositories)
@@ -329,8 +322,7 @@ public class RepositoryLookup implements DependencyResolverProvider
          MavenRepositorySystemSession session = setupRepoSession(maven);
 
          Artifact artifact = dependencyToMavenArtifact(dep);
-         VersionRangeRequest rangeRequest = new VersionRangeRequest(artifact,
-                  repositories, null);
+         VersionRangeRequest rangeRequest = new VersionRangeRequest(artifact, repositories, null);
 
          VersionRangeResult rangeResult = maven.resolveVersionRange(session, rangeRequest);
          return rangeResult;
@@ -346,6 +338,17 @@ public class RepositoryLookup implements DependencyResolverProvider
       Artifact artifact = new DefaultArtifact(dep.getGroupId(), dep.getArtifactId(), dep.getClassifier(),
                dep.getPackagingType() == null ? "jar" : dep.getPackagingType(), dep.getVersion());
       return artifact;
+   }
+
+   private static org.sonatype.aether.repository.Proxy convertFromMavenProxy(org.apache.maven.settings.Proxy proxy)
+   {
+      org.sonatype.aether.repository.Proxy result = null;
+      if (proxy != null)
+      {
+         Authentication auth = new Authentication(proxy.getUsername(), proxy.getPassword());
+         result = new org.sonatype.aether.repository.Proxy(proxy.getProtocol(), proxy.getHost(), proxy.getPort(), auth);
+      }
+      return result;
    }
 
 }
