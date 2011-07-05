@@ -7,44 +7,31 @@
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>forge-distribution</artifactId>
-	<groupId>org.jboss.forge</groupId>
 	<name>Forge - Distribution</name>
 	<dependencies>
 		<dependency>
 			<groupId>org.jboss.forge</groupId>
 			<artifactId>forge-shell</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.forge</groupId>
-			<artifactId>forge-javaee-impl</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.forge</groupId>
-			<artifactId>forge-dev-plugins</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.forge</groupId>
 			<artifactId>forge-scaffold-plugins</artifactId>
-			<version>${project.version}</version>
 		</dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-javaee-impl</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-dev-plugins</artifactId>
+      </dependency>
         <dependency>
 			<groupId>org.jboss.forge</groupId>
 			<artifactId>plugin-repository</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.metawidget</groupId>
 			<artifactId>metawidget-forge</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.forge</groupId>
-			<artifactId>forge-reference-guide</artifactId>
-			<version>${project.version}</version>
-			<type>war</type>
 		</dependency>
 		
 		<dependency>
@@ -65,7 +52,6 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.1.1</version>
 				<executions>
 					<execution>
 						<goals>
