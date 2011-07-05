@@ -38,6 +38,7 @@ import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
+import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.building.DefaultSettingsBuilderFactory;
 import org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
@@ -49,9 +50,11 @@ import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.logging.console.ConsoleLoggerManager;
 import org.jboss.forge.ForgeEnvironment;
+import org.jboss.forge.maven.RepositoryUtils;
 import org.jboss.forge.project.ProjectModelException;
 import org.jboss.forge.shell.util.OSUtils;
 import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManager;
+import org.sonatype.aether.util.repository.DefaultProxySelector;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -107,6 +110,12 @@ public class MavenContainer
          request.setRemoteRepositories(new ArrayList<ArtifactRepository>());
 
          MavenRepositorySystemSession repositorySession = new MavenRepositorySystemSession();
+         Proxy activeProxy = settings.getActiveProxy();
+         if (activeProxy != null) {
+            DefaultProxySelector dps = new DefaultProxySelector();
+            dps.add(RepositoryUtils.convertFromMavenProxy(activeProxy), activeProxy.getNonProxyHosts());
+            repositorySession.setProxySelector(dps);
+         }
          repositorySession.setLocalRepositoryManager(new SimpleLocalRepositoryManager(settings.getLocalRepository()));
          repositorySession.setOffline(environment.isOnline() == false);
 
