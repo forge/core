@@ -13,6 +13,7 @@ import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.jboss.forge.ForgeEnvironment;
+import org.jboss.forge.maven.RepositoryUtils;
 import org.jboss.forge.maven.facets.MavenContainer;
 import org.jboss.forge.parser.java.util.Strings;
 import org.jboss.forge.project.ProjectModelException;
@@ -29,7 +30,6 @@ import org.sonatype.aether.RepositorySystem;
 import org.sonatype.aether.artifact.Artifact;
 import org.sonatype.aether.collection.CollectRequest;
 import org.sonatype.aether.repository.ArtifactRepository;
-import org.sonatype.aether.repository.Authentication;
 import org.sonatype.aether.repository.LocalRepository;
 import org.sonatype.aether.repository.RemoteRepository;
 import org.sonatype.aether.repository.RepositoryPolicy;
@@ -274,7 +274,7 @@ public class RepositoryLookup implements DependencyResolverProvider
       Proxy activeProxy = settings.getActiveProxy();
       if (activeProxy != null)
       {
-         remoteRepository.setProxy(convertFromMavenProxy(activeProxy));
+         remoteRepository.setProxy(RepositoryUtils.convertFromMavenProxy(activeProxy));
       }
       return remoteRepository;
    }
@@ -339,16 +339,4 @@ public class RepositoryLookup implements DependencyResolverProvider
                dep.getPackagingType() == null ? "jar" : dep.getPackagingType(), dep.getVersion());
       return artifact;
    }
-
-   private static org.sonatype.aether.repository.Proxy convertFromMavenProxy(org.apache.maven.settings.Proxy proxy)
-   {
-      org.sonatype.aether.repository.Proxy result = null;
-      if (proxy != null)
-      {
-         Authentication auth = new Authentication(proxy.getUsername(), proxy.getPassword());
-         result = new org.sonatype.aether.repository.Proxy(proxy.getProtocol(), proxy.getHost(), proxy.getPort(), auth);
-      }
-      return result;
-   }
-
 }
