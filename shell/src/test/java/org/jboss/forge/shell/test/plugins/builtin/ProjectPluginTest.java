@@ -36,7 +36,7 @@ public class ProjectPluginTest extends AbstractShellTest
       Parent parent = new Parent();
       parent.setArtifactId("weld-api-bom");
       parent.setGroupId("org.jboss.weld");
-      parent.setVersion("1.0");
+      parent.setVersion("1.1.Final");
       Model pom = mvnFacet.getPOM();
       pom.setParent(parent);
       mvnFacet.setPOM(pom);
@@ -76,7 +76,7 @@ public class ProjectPluginTest extends AbstractShellTest
       Parent parent = new Parent();
       parent.setArtifactId("weld-api-bom");
       parent.setGroupId("org.jboss.weld");
-      parent.setVersion("1.0");
+      parent.setVersion("1.1.Final");
       Model pom = mvnFacet.getPOM();
       pom.setParent(parent);
       mvnFacet.setPOM(pom);
@@ -109,7 +109,7 @@ public class ProjectPluginTest extends AbstractShellTest
    {
       initializeJavaProject();
       // commons-httpclient v 3.1 is in the depManagement section of the weld-api-bom
-      getShell().execute("project add-managed-dependency org.jboss.weld:weld-api-bom:1.0:import:pom");
+      getShell().execute("project add-managed-dependency org.jboss.weld:weld-api-bom:1.1.Final:import:pom");
 
       MavenCoreFacet mvnFacet = getProject().getFacet(MavenCoreFacet.class);
 
