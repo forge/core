@@ -19,17 +19,20 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.shell.util;
+package org.jboss.forge.bus.util;
 
-import javax.enterprise.inject.Stereotype;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.enterprise.inject.Stereotype;
 
 /**
  * Utility class for common @{@link Annotation} operations.
  * <p/>
  * TODO: This should probably go into weld-extensions so other portable extensions can leverage it.
- *
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com>Lincoln Baxter, III</a>
  */
 public class Annotations
@@ -37,8 +40,8 @@ public class Annotations
    /**
     * Discover if a Method <b>m</b> has been annotated with <b>type</b>. This also discovers annotations defined through
     * a @{@link Stereotype}.
-    *
-    * @param m    The method to inspect.
+    * 
+    * @param m The method to inspect.
     * @param type The targeted annotation class
     * @return True if annotation is present either on the method itself, or on the declaring class of the method.
     *         Returns false if the annotation is not present.
@@ -54,9 +57,10 @@ public class Annotations
       {
          for (Annotation a : m.getAnnotations())
          {
-            if (a.annotationType().isAnnotationPresent(type))
+            if (isAnnotationPresent(a, type))
             {
                result = true;
+               break;
             }
          }
       }
@@ -68,11 +72,32 @@ public class Annotations
       return result;
    }
 
+   private static boolean isAnnotationPresent(final Annotation a, final Class<? extends Annotation> type)
+   {
+      boolean result = false;
+      if (a.annotationType().isAnnotationPresent(type))
+      {
+         result = true;
+      }
+      else
+      {
+         for (Annotation nested : a.getClass().getAnnotations()) {
+            if (isAnnotationPresent(nested, type))
+            {
+               result = true;
+               break;
+            }
+         }
+      }
+
+      return result;
+   }
+
    /**
     * Discover if a Class <b>c</b> has been annotated with <b>type</b>. This also discovers annotations defined through
     * a @{@link Stereotype}.
-    *
-    * @param c    The class to inspect.
+    * 
+    * @param c The class to inspect.
     * @param type The targeted annotation class
     * @return True if annotation is present either on class, false if the annotation is not present.
     */
@@ -87,9 +112,10 @@ public class Annotations
       {
          for (Annotation a : c.getAnnotations())
          {
-            if (a.annotationType().isAnnotationPresent(type))
+            if (isAnnotationPresent(a, type))
             {
                result = true;
+               break;
             }
          }
       }
@@ -99,8 +125,8 @@ public class Annotations
    /**
     * Inspect method <b>m</b> for a specific <b>type</b> of annotation. This also discovers annotations defined through
     * a @ {@link Stereotype}.
-    *
-    * @param m    The method to inspect.
+    * 
+    * @param m The method to inspect.
     * @param type The targeted annotation class
     * @return The annotation instance found on this method or enclosing class, or null if no matching annotation was
     *         found.
@@ -112,9 +138,11 @@ public class Annotations
       {
          for (Annotation a : m.getAnnotations())
          {
-            if (a.annotationType().isAnnotationPresent(type))
+            result = getAnnotation(a, type);
+
+            if (result != null)
             {
-               result = a.annotationType().getAnnotation(type);
+               break;
             }
          }
       }
@@ -126,26 +154,85 @@ public class Annotations
    }
 
    /**
+    * Inspect annotation <b>a</b> for a specific <b>type</b> of annotation. This also discovers annotations defined
+    * through a @ {@link Stereotype}.
+    * 
+    * @param m The method to inspect.
+    * @param type The targeted annotation class
+    * @return The annotation instance found on this method or enclosing class, or null if no matching annotation was
+    *         found.
+    */
+   public static <A extends Annotation> A getAnnotation(final Annotation a, final Class<A> type)
+   {
+      Set<Annotation> seen = new HashSet<Annotation>();
+      return getAnnotation(seen, a, type);
+   }
+
+   @SuppressWarnings("unchecked")
+   private static <A extends Annotation> A getAnnotation(final Set<Annotation> seen, final Annotation a,
+            final Class<A> type)
+   {
+      seen.add(a);
+
+      A result = null;
+      if (type.isAssignableFrom(a.getClass()))
+      {
+         result = (A) a;
+      }
+
+      if (result == null)
+      {
+         result = a.annotationType().getAnnotation(type);
+      }
+
+      if (result == null)
+      {
+         result = getAnnotation(a.annotationType().getDeclaringClass(), type);
+      }
+
+      if (result == null)
+      {
+         for (Annotation nested : a.annotationType().getAnnotations())
+         {
+            if (!seen.contains(nested))
+            {
+               result = getAnnotation(seen, nested, type);
+
+               if (result != null)
+               {
+                  break;
+               }
+            }
+         }
+      }
+      return result;
+   }
+
+   /**
     * Inspect class <b>c</b> for a specific <b>type</b> of annotation. This also discovers annotations defined through a @
     * {@link Stereotype}.
-    *
-    * @param c    The class to inspect.
+    * 
+    * @param c The class to inspect.
     * @param type The targeted annotation class
     * @return The annotation instance found on this class, or null if no matching annotation was found.
     */
    public static <A extends Annotation> A getAnnotation(final Class<?> c, final Class<A> type)
    {
-      A result = c.getAnnotation(type);
-      if (result == null)
+      if (c != null)
       {
-         for (Annotation a : c.getAnnotations())
+         A result = c.getAnnotation(type);
+         if (result == null)
          {
-            if (a.annotationType().isAnnotationPresent(type))
+            for (Annotation a : c.getAnnotations())
             {
-               result = a.annotationType().getAnnotation(type);
+               if (a.annotationType().isAnnotationPresent(type))
+               {
+                  result = a.annotationType().getAnnotation(type);
+               }
             }
          }
+         return result;
       }
-      return result;
+      return null;
    }
 }

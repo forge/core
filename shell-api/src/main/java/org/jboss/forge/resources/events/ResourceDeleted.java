@@ -1,13 +1,6 @@
-package org.jboss.forge.shell.cdi;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.spi.BeanManager;
-
-import org.jboss.seam.solder.beanManager.BeanManagerProvider;
-
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat, Inc., and individual contributors
+ * Copyright 2011, Red Hat, Inc., and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -26,20 +19,22 @@ import org.jboss.seam.solder.beanManager.BeanManagerProvider;
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.jboss.forge.resources.events;
 
-public class ObserverBeanManagerLocator implements BeanManagerProvider
+import org.jboss.forge.QueuedEvent;
+import org.jboss.forge.resources.Resource;
+
+/**
+ * Fired when a {@link Resource} has been deleted.
+ * 
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * 
+ */
+@QueuedEvent
+public class ResourceDeleted extends ResourceEvent
 {
-
-   @Override
-   public BeanManager getBeanManager()
+   public ResourceDeleted(final Resource<?> resource)
    {
-      return BeanManagerCaptureExtension.getManager();
+      super(resource);
    }
-
-   @Override
-   public int getPrecedence()
-   {
-      return 12;
-   }
-
 }

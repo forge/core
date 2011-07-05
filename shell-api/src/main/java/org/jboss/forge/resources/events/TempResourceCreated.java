@@ -19,25 +19,22 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.shell.spi;
+package org.jboss.forge.resources.events;
 
-import org.jboss.forge.shell.Shell;
+import org.jboss.forge.QueuedEvent;
+import org.jboss.forge.resources.Resource;
 
 /**
- * Listens for all or specific events produced by Forge and plugins on the event bus.
+ * Fired when a temporary {@link Resource} has been created.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * 
  */
-public interface EventSubscriber
+@QueuedEvent
+public class TempResourceCreated extends ResourceEvent
 {
-   /**
-    * Returns true if this subscriber should handle events of the given type. Returns false if the given event type
-    * should be ignored.
-    */
-   boolean handles(Class<?> eventType);
-
-   /**
-    * Handles an event.
-    */
-   void eventReceived(Shell shell, Object event);
+   public TempResourceCreated(final Resource<?> resource)
+   {
+      super(resource);
+   }
 }

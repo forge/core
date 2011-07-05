@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jboss.forge.ForgeEvent;
+import org.jboss.forge.QueuedEvent;
 import org.jboss.forge.parser.java.util.Assert;
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.Project;
@@ -37,7 +37,7 @@ import org.jboss.forge.project.facets.FacetActionAborted;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-@ForgeEvent
+@QueuedEvent
 public class RemoveFacets
 {
    private final List<Class<? extends Facet>> facetTypes;

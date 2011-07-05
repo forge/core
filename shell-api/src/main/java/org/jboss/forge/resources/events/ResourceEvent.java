@@ -19,52 +19,57 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.project.dependencies.events;
-
-import java.util.Arrays;
-import java.util.List;
+package org.jboss.forge.resources.events;
 
 import org.jboss.forge.QueuedEvent;
-import org.jboss.forge.project.Project;
-import org.jboss.forge.project.dependencies.Dependency;
+import org.jboss.forge.resources.Resource;
 
 /**
- * Fired when dependencies are added to the current {@link Project}
- * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
 @QueuedEvent
-public final class AddedDependencies
+public abstract class ResourceEvent
 {
-   private final List<Dependency> dependencies;
-   private final Project project;
+   private final Resource<?> resource;
 
-   public AddedDependencies(final Project project, final Dependency... dependencies)
+   public ResourceEvent(final Resource<?> resource)
    {
-      this.dependencies = Arrays.asList(dependencies);
-      this.project = project;
+      this.resource = resource;
    }
 
-   public AddedDependencies(final Project project, final List<Dependency> dependencies)
+   public Resource<?> getResource()
    {
-      this.dependencies = dependencies;
-      this.project = project;
+      return resource;
    }
 
-   /**
-    * Return a list of all added {@link Dependency} objects
-    */
-   public List<Dependency> getDependencies()
+   @Override
+   public int hashCode()
    {
-      return dependencies;
+      final int prime = 31;
+      int result = 1;
+      result = (prime * result)
+               + ((resource.getFullyQualifiedName() == null) ? 0 : resource.getFullyQualifiedName().hashCode());
+      return result;
    }
 
-   /**
-    * Get the {@link Project} from which this event was fired.
-    */
-   public Project getProject()
+   @Override
+   public boolean equals(final Object obj)
    {
-      return project;
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      ResourceEvent other = (ResourceEvent) obj;
+      if (resource == null) {
+         if (other.resource != null)
+            return false;
+      }
+      else if (!resource.getFullyQualifiedName().equals(other.resource.getFullyQualifiedName()))
+         return false;
+      return true;
    }
+
 }

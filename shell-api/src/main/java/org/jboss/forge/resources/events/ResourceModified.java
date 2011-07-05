@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat, Inc., and individual contributors
+ * Copyright 2011, Red Hat, Inc., and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,33 +19,22 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.shell.cdi;
+package org.jboss.forge.resources.events;
 
-import javax.enterprise.event.Observes;
-
-import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.Extension;
-
-import org.jboss.forge.shell.events.PreStartup;
-
+import org.jboss.forge.QueuedEvent;
+import org.jboss.forge.resources.Resource;
 
 /**
+ * Fired when a {@link Resource} has been modified.
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * @author Ronald van Kuijk
  * 
  */
-public class BeanManagerCaptureExtension implements Extension
+@QueuedEvent
+public class ResourceModified extends ResourceEvent
 {
-
-   private static BeanManager manager;
-
-   public void grab(@Observes final PreStartup event, final BeanManager m)
+   public ResourceModified(final Resource<?> resource)
    {
-      manager = m;
-   }
-
-   public static BeanManager getManager()
-   {
-      return manager;
+      super(resource);
    }
 }

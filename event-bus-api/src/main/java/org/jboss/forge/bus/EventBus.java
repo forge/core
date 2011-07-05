@@ -29,12 +29,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.enterprise.event.Observes;
+import javax.enterprise.inject.Any;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jboss.forge.bus.cdi.BusManaged;
 import org.jboss.forge.bus.cdi.ObserverCaptureExtension;
+import org.jboss.forge.bus.event.BusEvent;
+import org.jboss.forge.bus.util.Annotations;
 
 /**
  * Simple bus for postponing event firing.
@@ -53,13 +57,24 @@ public class EventBus
 
    private final Map<Object, Annotation[]> map = new HashMap<Object, Annotation[]>();
 
+   boolean firing = false;
+
+   @SuppressWarnings("unused")
+   private void observeAll(@Observes @Any final Object event)
+   {
+      if (handles(event) && !hasQueued(event))
+      {
+         enqueue(event);
+      }
+   }
+
    /**
     * Add the given event to the queue.
     */
    public void enqueue(final Object event)
    {
-      map.put(event, new Annotation[] {});
-      // map.put(event, new Annotation[] { new BusManagedLiteral() });
+      if (!firing)
+         map.put(event, new Annotation[] {});
    }
 
    /**
@@ -67,9 +82,8 @@ public class EventBus
     */
    public void enqueue(final Object event, final Annotation[] qualifiers)
    {
-      // Annotation[] annotations = Arrays.copyOf(qualifiers, qualifiers.length + 1);
-      // annotations[annotations.length - 1] = new BusManagedLiteral();
-      map.put(event, qualifiers);
+      if (!firing)
+         map.put(event, qualifiers);
    }
 
    /**
@@ -77,6 +91,7 @@ public class EventBus
     */
    public void fireAll()
    {
+      firing = true;
       List<Exception> thrown = new ArrayList<Exception>();
       try
       {
@@ -87,14 +102,7 @@ public class EventBus
                Object key = e.getKey();
                Annotation[] value = e.getValue();
 
-               List<Annotation> toFire = new ArrayList<Annotation>();
-               List<BusManaged> qualifiers = extension.getEventQualifiers(key
-                        .getClass());
-
-               toFire.addAll(qualifiers);
-               toFire.addAll(Arrays.asList(value));
-
-               manager.fireEvent(key, toFire.toArray(new Annotation[] {}));
+               fireSingle(key, value);
             }
             catch (Exception e1)
             {
@@ -104,10 +112,43 @@ public class EventBus
       }
       finally
       {
+         firing = false;
          map.clear();
       }
 
       if (!thrown.isEmpty())
          throw new EventBusQueuedException(thrown);
+   }
+
+   public boolean hasQueued(final Object event)
+   {
+      return map.containsKey(event);
+   }
+
+   public void fireSingle(final Object event)
+   {
+      List<BusManaged> qualifiers = extension.getEventQualifiers(event
+               .getClass());
+
+      fireSingle(event, qualifiers.toArray(new Annotation[] {}));
+   }
+
+   public void fireSingle(final Object event, final Annotation... annotations)
+   {
+      List<BusManaged> qualifiers = extension.getEventQualifiers(event
+               .getClass());
+
+      for (BusManaged managed : qualifiers) {
+         List<Annotation> toFire = new ArrayList<Annotation>();
+         toFire.addAll(Arrays.asList(annotations));
+         toFire.add(managed);
+         manager.fireEvent(event, toFire.toArray(new Annotation[] {}));
+      }
+
+   }
+
+   public boolean handles(final Object event)
+   {
+      return Annotations.isAnnotationPresent(event.getClass(), BusEvent.class);
    }
 }

@@ -21,7 +21,6 @@
  */
 package org.jboss.forge.shell.events;
 
-import org.jboss.forge.ForgeEvent;
 
 /**
  * Fired by the {@link Shell} when it has successfully started up and is ready to accept user input. If plugins need to
@@ -37,7 +36,6 @@ import org.jboss.forge.ForgeEvent;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-@ForgeEvent
 public final class PostStartup
 {
 

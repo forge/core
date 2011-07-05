@@ -19,52 +19,57 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.project.dependencies.events;
+package org.jboss.forge.shell.test.resources;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.forge.QueuedEvent;
-import org.jboss.forge.project.Project;
-import org.jboss.forge.project.dependencies.Dependency;
+import javax.enterprise.event.Observes;
+import javax.inject.Singleton;
+
+import org.jboss.forge.resources.Resource;
+import org.jboss.forge.resources.events.ResourceCreated;
+import org.jboss.forge.resources.events.ResourceDeleted;
+import org.jboss.forge.resources.events.ResourceModified;
 
 /**
- * Fired when dependencies are added to the current {@link Project}
- * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-@QueuedEvent
-public final class AddedDependencies
+@Singleton
+public class ResourceEventObserver
 {
-   private final List<Dependency> dependencies;
-   private final Project project;
+   private final List<Resource<?>> created = new ArrayList<Resource<?>>();
+   private final List<Resource<?>> modified = new ArrayList<Resource<?>>();
+   private final List<Resource<?>> deleted = new ArrayList<Resource<?>>();
 
-   public AddedDependencies(final Project project, final Dependency... dependencies)
+   void created(@Observes final ResourceCreated event)
    {
-      this.dependencies = Arrays.asList(dependencies);
-      this.project = project;
+      this.created.add(event.getResource());
    }
 
-   public AddedDependencies(final Project project, final List<Dependency> dependencies)
+   void modified(@Observes final ResourceModified event)
    {
-      this.dependencies = dependencies;
-      this.project = project;
+      this.modified.add(event.getResource());
    }
 
-   /**
-    * Return a list of all added {@link Dependency} objects
-    */
-   public List<Dependency> getDependencies()
+   void modified(@Observes final ResourceDeleted event)
    {
-      return dependencies;
+      this.deleted.add(event.getResource());
    }
 
-   /**
-    * Get the {@link Project} from which this event was fired.
-    */
-   public Project getProject()
+   public List<Resource<?>> getCreated()
    {
-      return project;
+      return created;
+   }
+
+   public List<Resource<?>> getModified()
+   {
+      return modified;
+   }
+
+   public List<Resource<?>> getDeleted()
+   {
+      return deleted;
    }
 }

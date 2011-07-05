@@ -1,6 +1,15 @@
+package org.jboss.forge.shell.cdi;
+
+import javax.enterprise.event.Observes;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.inject.Singleton;
+
+import org.jboss.forge.shell.events.PreStartup;
+import org.jboss.seam.solder.beanManager.BeanManagerProvider;
+
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc., and individual contributors
+ * Copyright 2010, Red Hat, Inc., and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,30 +28,26 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge;
-
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-import javax.inject.Qualifier;
-
-/**
- * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
- */
-@Qualifier
-@Inherited
-@Documented
-@Target({ TYPE, METHOD, FIELD })
-@Retention(RetentionPolicy.RUNTIME)
-public @interface ForgeEvent
+@Singleton
+public class ObserverBeanManagerProvider implements BeanManagerProvider
 {
+   private BeanManager manager;
+
+   public void grab(@Observes final PreStartup event, final BeanManager m)
+   {
+      manager = m;
+   }
+
+   @Override
+   public BeanManager getBeanManager()
+   {
+      return manager;
+   }
+
+   @Override
+   public int getPrecedence()
+   {
+      return 12;
+   }
 
 }

@@ -1,5 +1,5 @@
 /*
- * JBoss, Home of Professional Open Source
+ * JBoss, by Red Hat.
  * Copyright 2010, Red Hat, Inc., and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -19,47 +19,42 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.shell.events;
 
+package org.jboss.forge.shell.test.resources;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.project.Project;
+import org.jboss.forge.resources.Resource;
+import org.jboss.forge.test.AbstractShellTest;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
- * An event that notifies observers immediately after the current {@link Project} has changed.
- * <p>
- * <strong>For example:</strong>
- * <p>
- * <code>public void myObserver(@Observes {@link ProjectChanged} event)<br/>
- * {<br/>
- *    // do something<br/>
- * }<br/>
- * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
  */
-public final class ProjectChanged
+@RunWith(Arquillian.class)
+public class ResourceEventsTest extends AbstractShellTest
 {
-   private final Project oldProject;
-   private final Project newProject;
+   @Inject
+   private ResourceEventObserver observer;
 
-   public ProjectChanged(final Project oldProject, final Project newProject)
+   @Test
+   public void testMethodParameterInjection() throws Exception
    {
-      this.oldProject = oldProject;
-      this.newProject = newProject;
-   }
+      Project javaProject = initializeJavaProject();
+      List<Resource<?>> created = observer.getCreated();
+      Assert.assertFalse(created.isEmpty());
 
-   /**
-    * @return the old {@link Project}
-    */
-   public Project getOldProject()
-   {
-      return oldProject;
-   }
+      List<Resource<?>> modified = observer.getModified();
+      Assert.assertFalse(modified.isEmpty());
 
-   /**
-    * @return the new {@link Project}
-    */
-   public Project getNewProject()
-   {
-      return newProject;
+      List<Resource<?>> deleted = observer.getDeleted();
+      Assert.assertFalse(deleted.isEmpty());
+
    }
 }

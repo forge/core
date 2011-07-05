@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat, Inc., and individual contributors
+ * Copyright 2011, Red Hat, Inc., and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,47 +19,33 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.shell.events;
+package org.jboss.forge;
 
-import org.jboss.forge.project.Project;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import javax.inject.Qualifier;
+
+import org.jboss.forge.bus.event.BusEvent;
 
 /**
- * An event that notifies observers immediately after the current {@link Project} has changed.
- * <p>
- * <strong>For example:</strong>
- * <p>
- * <code>public void myObserver(@Observes {@link ProjectChanged} event)<br/>
- * {<br/>
- *    // do something<br/>
- * }<br/>
+ * Used to qualify events which should be queued until the end of the current plugin execution.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
  */
-public final class ProjectChanged
+@Qualifier
+@Target({ TYPE, METHOD, PARAMETER, FIELD })
+@Retention(RUNTIME)
+@Documented
+@BusEvent
+public @interface QueuedEvent
 {
-   private final Project oldProject;
-   private final Project newProject;
 
-   public ProjectChanged(final Project oldProject, final Project newProject)
-   {
-      this.oldProject = oldProject;
-      this.newProject = newProject;
-   }
-
-   /**
-    * @return the old {@link Project}
-    */
-   public Project getOldProject()
-   {
-      return oldProject;
-   }
-
-   /**
-    * @return the new {@link Project}
-    */
-   public Project getNewProject()
-   {
-      return newProject;
-   }
 }

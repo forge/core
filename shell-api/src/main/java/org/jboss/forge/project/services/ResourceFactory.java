@@ -29,16 +29,19 @@ import java.util.regex.Pattern;
 
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessBean;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.resources.ResourceHandles;
 import org.jboss.forge.resources.UnknownFileResource;
+import org.jboss.forge.shell.events.PostStartup;
 
 /**
  * @author Mike Brock <cbrock@redhat.com>
@@ -46,7 +49,11 @@ import org.jboss.forge.resources.UnknownFileResource;
 @Singleton
 public class ResourceFactory implements Extension
 {
+   @Inject
+   private Instance<BeanManager> managerInstance;
+
    private final List<ResourceGenerator> resourceGenerators = new ArrayList<ResourceGenerator>();
+
    /**
     * Most directories will tend to contain the same type of file (such as .java, .jar, .xml, etc). So we will remember
     * the last resource type we tested against and always re-try on subsequent queries before doing a comprehensive
@@ -60,6 +67,11 @@ public class ResourceFactory implements Extension
          return false;
       }
    };
+
+   public void setManager(@Observes final PostStartup event, final Instance<BeanManager> manager)
+   {
+      this.managerInstance = manager;
+   }
 
    public void scan(@Observes final ProcessBean<?> event, final BeanManager manager)
    {
@@ -80,7 +92,7 @@ public class ResourceFactory implements Extension
    }
 
    @SuppressWarnings("unchecked")
-   public <E, T extends Resource<E>> T createFromType(Class<T> type, E underlyingResource)
+   public <E, T extends Resource<E>> T createFromType(final Class<T> type, final E underlyingResource)
    {
       synchronized (this)
       {
@@ -133,14 +145,22 @@ public class ResourceFactory implements Extension
       return new UnknownFileResource(this, file);
    }
 
+   public BeanManager getManagerInstance()
+   {
+      if (managerInstance != null)
+      {
+         return managerInstance.get();
+      }
+      return null;
+   }
+
    static class ResourceGenerator
    {
       private Pattern pattern;
       private Resource<?> resource;
 
       ResourceGenerator()
-      {
-      }
+      {}
 
       ResourceGenerator(final Pattern pattern, final Resource<?> resource)
       {

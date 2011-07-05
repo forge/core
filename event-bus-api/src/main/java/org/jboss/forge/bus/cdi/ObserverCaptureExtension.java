@@ -47,6 +47,7 @@ import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.inject.Singleton;
 
 import org.jboss.forge.bus.event.BusEvent;
+import org.jboss.forge.bus.util.Annotations;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -75,7 +76,7 @@ public class ObserverCaptureExtension implements Extension
                for (Type type : typeClosure) {
                   if (type instanceof Class)
                   {
-                     if (((Class<?>) type).isAnnotationPresent(BusEvent.class))
+                     if (Annotations.isAnnotationPresent((Class<?>) type, BusEvent.class))
                      {
                         replacementMethods.add(qualifyObservedEvent(method, param));
                         obsoleteMethods.add(method);
@@ -87,7 +88,7 @@ public class ObserverCaptureExtension implements Extension
                      Type rawType = ((ParameterizedType) type).getRawType();
                      if (rawType instanceof Class)
                      {
-                        if (((Class<?>) rawType).isAnnotationPresent(BusEvent.class))
+                        if (Annotations.isAnnotationPresent((Class<?>) rawType, (BusEvent.class)))
                         {
                            replacementMethods.add(qualifyObservedEvent(method, param));
                            obsoleteMethods.add(method);
@@ -96,12 +97,6 @@ public class ObserverCaptureExtension implements Extension
                      }
                   }
                }
-
-               // if (param.isAnnotationPresent(BusEvent.class))
-               // {
-               // replacementMethods.add(qualifyObservedEvent(method, param));
-               // obsoleteMethods.add(method);
-               // }
             }
          }
       }
@@ -212,8 +207,8 @@ public class ObserverCaptureExtension implements Extension
       final List<AnnotatedParameter> parameters = new ArrayList<AnnotatedParameter>();
 
       parameters.addAll(method.getParameters());
+      parameters.set(parameters.indexOf(param), addUniqueQualifier(method, param));
       parameters.remove(param);
-      parameters.add(addUniqueQualifier(method, param));
 
       return new AnnotatedMethod()
       {

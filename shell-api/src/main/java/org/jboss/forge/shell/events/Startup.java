@@ -23,8 +23,6 @@ package org.jboss.forge.shell.events;
 
 import java.io.File;
 
-import org.jboss.forge.ForgeEvent;
-
 /**
  * Fired as a signal to the shell to bootstrap and accept user input. Should be fired only once per application runtime
  * unless followed by a subsequent {@link Shutdown} event.
@@ -37,22 +35,20 @@ import org.jboss.forge.ForgeEvent;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@ForgeEvent
 public final class Startup
 {
    private File workingDirectory = new File("").getAbsoluteFile();
    private boolean restart;
 
    public Startup()
-   {
-   }
+   {}
 
-   public Startup(File workingDirectory)
+   public Startup(final File workingDirectory)
    {
       this.workingDirectory = workingDirectory;
    }
 
-   public Startup(File workingDirectory, boolean restart)
+   public Startup(final File workingDirectory, final boolean restart)
    {
       this.workingDirectory = workingDirectory;
       this.restart = restart;

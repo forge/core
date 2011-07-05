@@ -92,13 +92,11 @@ public abstract class AbstractShellTest
 
    @BeforeClass
    public static void before() throws IOException
-   {
-   }
+   {}
 
    @AfterClass
    public static void after()
-   {
-   }
+   {}
 
    @Before
    public void beforeTest() throws IOException

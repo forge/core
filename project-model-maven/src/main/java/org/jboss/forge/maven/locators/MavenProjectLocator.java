@@ -23,6 +23,7 @@ package org.jboss.forge.maven.locators;
 
 import java.io.File;
 
+import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
 import org.jboss.forge.maven.ProjectImpl;
@@ -50,14 +51,16 @@ public class MavenProjectLocator implements ProjectLocator
    private final MavenContainer container;
    private final ProjectFactory factory;
    private final ShellPrintWriter writer;
+   private final BeanManager manager;
 
    @Inject
    public MavenProjectLocator(final MavenContainer container, final ProjectFactory factory,
-            final ShellPrintWriter writer)
+            final ShellPrintWriter writer, final BeanManager manager)
    {
       this.factory = factory;
       this.container = container;
       this.writer = writer;
+      this.manager = manager;
    }
 
    @Override
@@ -69,7 +72,7 @@ public class MavenProjectLocator implements ProjectLocator
       if (pom.exists())
       {
          result = new ProjectImpl(factory, dir);
-         Facet facet = new MavenCoreFacetImpl(container, writer);
+         Facet facet = new MavenCoreFacetImpl(container, writer, manager);
          facet.setProject(result);
          result.registerFacet(facet);
       }

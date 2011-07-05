@@ -40,12 +40,11 @@ public interface DependencyFacet extends Facet
    {
       CENTRAL("http://repo1.maven.org/maven2/"),
       JBOSS_NEXUS("http://repository.jboss.org/nexus/content/groups/public"),
-      JBOSS_LEGACY("http://repository.jboss.org/maven2"),
       JAVA_NET("http://download.java.net/maven/2/");
 
       private final String url;
 
-      private KnownRepository(String url)
+      private KnownRepository(final String url)
       {
          this.url = url;
       }
@@ -135,8 +134,8 @@ public interface DependencyFacet extends Facet
    public boolean hasEffectiveManagedDependency(Dependency managedDependency);
 
    /**
-    * Searches {@link Project} and returns a managed dependency matching the given {@link Dependency} at any
-    * level of the project hierarchy; return null otherwise. This method ignores {@link Dependency#getScopeType()}
+    * Searches {@link Project} and returns a managed dependency matching the given {@link Dependency} at any level of
+    * the project hierarchy; return null otherwise. This method ignores {@link Dependency#getScopeType()}
     * <p/>
     * See also: {@link DependencyBuilder}.
     * <p/>
@@ -161,7 +160,8 @@ public interface DependencyFacet extends Facet
 
    /**
     * Add the given managed {@link Dependency} to this {@link Project}'s immediate list of managed dependencies. This
-    * method first calls {@link #hasEffectiveManagedDependency(Dependency)} before making changes to the managed dependency list.
+    * method first calls {@link #hasEffectiveManagedDependency(Dependency)} before making changes to the managed
+    * dependency list.
     * <p/>
     * See also: {@link DependencyBuilder}.
     */
@@ -273,6 +273,5 @@ public interface DependencyFacet extends Facet
     * {@link DependencyResolver}
     */
    public List<Dependency> resolveAvailableVersions(final Dependency dep);
-
 
 }
