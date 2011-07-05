@@ -783,7 +783,7 @@ Wrote ~/.forge/plugins/com.example.forge.plugin$example-plugin$1$1.0.0-SNAPSHOT.
       		<programlisting>$ forge git-plugin git://github.com/username/repository.git --ref 1.0.0.Alpha1</programlisting>
       		
       		Notice that a --ref may be specified if a specific branch or tag should be built. This is
-      		recommended, since snapshots are more likelty to contain unstable code.
+      		recommended, since snapshots are more likely to contain unstable code.
       	</para>
       </section>
       
@@ -811,7 +811,7 @@ Wrote ~/.forge/plugins/com.example.forge.plugin$example-plugin$1$1.0.0-SNAPSHOT.
       		
       		Notice that you must specify a Dependency ID for the plugin. Forge uses these identifiers to
       		track installed versions of plugins. This means that if you use an incorrect identifier and 
-      		attempt to ugprade the plugin, Forge may not detect the duplicate version. If this occurs,
+      		attempt to upgrade the plugin, Forge may not detect the duplicate version. If this occurs,
       		it could prevent Forge from running, in which case, a manual cleanup of plugin files is required.
       	</para>
       	<para>
