@@ -77,7 +77,7 @@ public class DirectoryResource extends FileResource<DirectoryResource>
    @Override
    public Resource<?> getChild(final String name)
    {
-      return resourceFactory.getResourceFrom(new File(file.getAbsolutePath() + File.separator + name));
+      return resourceFactory.getResourceFrom(new File(file.getAbsolutePath(), name));
    }
 
    /**
@@ -98,7 +98,7 @@ public class DirectoryResource extends FileResource<DirectoryResource>
 
       if (!(result instanceof DirectoryResource))
       {
-         result = new DirectoryResource(resourceFactory, new File(file.getAbsoluteFile() + File.separator + name));
+         result = new DirectoryResource(resourceFactory, new File(file.getAbsoluteFile(), name));
       }
       return (DirectoryResource) result;
    }
