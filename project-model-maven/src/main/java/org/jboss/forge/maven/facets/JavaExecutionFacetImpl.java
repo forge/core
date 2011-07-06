@@ -35,6 +35,7 @@ import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.ShellPrintWriter;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
+import org.jboss.forge.shell.util.OSUtils;
 
 @Dependent
 @Alias("forge.maven.JavaExecutionFacet")
@@ -112,7 +113,8 @@ public class JavaExecutionFacetImpl extends BaseFacet implements JavaExecutionFa
       {
          if (arguments.length > 0)
          {
-            StringBuilder argBuilder = new StringBuilder("-Dexec.args=\\\"");
+            String quotes = OSUtils.isWindows() ? "\\\"" : "\"";
+            StringBuilder argBuilder = new StringBuilder("-Dexec.args=").append(quotes);
 
             boolean first = true;
             for (String argument : arguments)
@@ -125,7 +127,7 @@ public class JavaExecutionFacetImpl extends BaseFacet implements JavaExecutionFa
                first = false;
             }
 
-            argBuilder.append("\\\" ");
+            argBuilder.append(quotes).append(" ");
             commands.add(argBuilder.toString());
 
          }
