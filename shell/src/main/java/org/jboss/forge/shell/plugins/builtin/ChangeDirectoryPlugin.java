@@ -51,15 +51,8 @@ public class ChangeDirectoryPlugin implements Plugin
    }
 
    @DefaultCommand
-   public void run(@Option(description = "The new directory", defaultValue = "~") final Resource<?>[] dirs)
+   public void run(@Option(description = "The new directory", defaultValue = "~") final Resource<?> r)
    {
-      Resource<?> r = null;
-
-      for (Resource<?> dir : dirs)
-      {
-         r = dir;
-      }
-
       if (r != null)
       {
          if (!r.exists())
