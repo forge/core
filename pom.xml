@@ -295,7 +295,6 @@
          <id>dist</id>
          <modules>
             <module>dist</module>
-            <module>docs/reference</module>
          </modules>
       </profile>
    </profiles>
