@@ -112,7 +112,7 @@ public class JavaExecutionFacetImpl extends BaseFacet implements JavaExecutionFa
       {
          if (arguments.length > 0)
          {
-            StringBuilder argBuilder = new StringBuilder("-Dexec.args=\"");
+            StringBuilder argBuilder = new StringBuilder("-Dexec.args=\\\"");
 
             boolean first = true;
             for (String argument : arguments)
@@ -125,7 +125,7 @@ public class JavaExecutionFacetImpl extends BaseFacet implements JavaExecutionFa
                first = false;
             }
 
-            argBuilder.append("\" ");
+            argBuilder.append("\\\" ");
             commands.add(argBuilder.toString());
 
          }
