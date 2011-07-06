@@ -246,7 +246,10 @@ public class CommandMetadata
    {
       for (OptionMetadata option : options)
       {
-         if (option.isNamed() && option.getName().equals(name))
+         if (option.isNamed() &&
+                  (option.getName().equals(name)
+                  || ((option.getShortName().equals(name))
+                  && !option.getShortName().isEmpty())))
          {
             return true;
          }
@@ -280,5 +283,16 @@ public class CommandMetadata
    public void setParmLength(final int parmLength)
    {
       this.parmLength = parmLength;
+   }
+
+   public boolean hasOrderedOptions()
+   {
+      try {
+         getOrderedOptionByIndex(0);
+         return true;
+      }
+      catch (Exception e) {
+         return false;
+      }
    }
 }

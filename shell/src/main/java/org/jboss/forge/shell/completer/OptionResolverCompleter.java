@@ -16,8 +16,6 @@ import org.jboss.forge.shell.command.parser.NamedValueOptionParser;
 import org.jboss.forge.shell.command.parser.NamedValueVarargsOptionParser;
 import org.jboss.forge.shell.command.parser.OrderedValueOptionParser;
 import org.jboss.forge.shell.command.parser.OrderedValueVarargsOptionParser;
-import org.jboss.forge.shell.completer.CommandCompleter;
-import org.jboss.forge.shell.completer.CommandCompleterState;
 
 public class OptionResolverCompleter implements CommandCompleter
 {
@@ -47,17 +45,20 @@ public class OptionResolverCompleter implements CommandCompleter
    {
       ArrayList<String> results = new ArrayList<String>();
       Queue<String> tokens = state.getTokens();
-      CommandParserContext commandContext = commandParser.parse(state.getCommand(), tokens,
-               new CommandParserContext());
-      state.setCommandContext(commandContext);
-      Map<OptionMetadata, Object> valueMap = commandContext.getValueMap();
+      CommandParserContext context = new CommandParserContext();
+      context.setCompleting(true);
+      context.setFinalTokenComplete(state.isFinalTokenComplete());
+      commandParser.parse(state.getCommand(), tokens,
+               context);
+      state.setCommandContext(context);
+      Map<OptionMetadata, Object> valueMap = context.getValueMap();
       List<OptionMetadata> options = command.getOptions();
 
       if (tokens.isEmpty())
       {
          if (state.isFinalTokenComplete())
          {
-            if ((commandContext.isEmpty() || commandContext.isLastOptionValued()))
+            if ((context.isEmpty() || context.isLastOptionValued()))
             {
                for (OptionMetadata option : options)
                {
@@ -81,20 +82,20 @@ public class OptionResolverCompleter implements CommandCompleter
                   }
                }
             }
-            else if (!commandContext.isEmpty() && !commandContext.isLastOptionValued())
+            else if (!context.isEmpty() && !context.isLastOptionValued())
             {
-               state.setOption(commandContext.getLastParsed());
+               state.setOption(context.getLastParsed());
             }
          }
          else
          {
-            if (!state.isFinalTokenComplete() && !commandContext.isEmpty())
+            if (!state.isFinalTokenComplete() && !context.isEmpty())
             {
-               state.setOption(commandContext.getLastParsed());
+               state.setOption(context.getLastParsed());
 
-               if (commandContext.isLastOptionValued())
+               if (context.isLastOptionValued())
                {
-                  state.getTokens().add(commandContext.getLastParsedToken());
+                  state.getTokens().add(context.getLastParsedToken());
                }
             }
          }
@@ -179,7 +180,7 @@ public class OptionResolverCompleter implements CommandCompleter
          // add to state
          if (!state.isFinalTokenComplete() && finalTokenIsValue)
          {
-            state.setOption(commandContext.getLastParsed());
+            state.setOption(context.getLastParsed());
             results.clear();
             if (state.isDuplicateBuffer())
             {

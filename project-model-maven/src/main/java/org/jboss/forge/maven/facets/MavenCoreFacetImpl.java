@@ -21,6 +21,7 @@
  */
 package org.jboss.forge.maven.facets;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -37,11 +38,11 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingResult;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.project.Facet;
-import org.jboss.forge.project.Project;
 import org.jboss.forge.project.ProjectModelException;
 import org.jboss.forge.project.facets.BaseFacet;
 import org.jboss.forge.resources.FileResource;
@@ -59,20 +60,19 @@ import org.jboss.forge.shell.util.OSUtils;
 @Alias("forge.maven.MavenCoreFacet")
 public class MavenCoreFacetImpl extends BaseFacet implements MavenCoreFacet, Facet
 {
-
-   private Project project;
    private ProjectBuildingResult buildingResult;
-   private final MavenContainer container;
-   private final ShellPrintWriter writer;
-   private final BeanManager manager;
 
    @Inject
-   public MavenCoreFacetImpl(final MavenContainer container, final ShellPrintWriter writer, final BeanManager manager)
-   {
-      this.container = container;
-      this.writer = writer;
-      this.manager = manager;
-   }
+   private MavenContainer container;
+
+   @Inject
+   private ShellPrintWriter writer;
+
+   @Inject
+   private BeanManager manager;
+
+   public MavenCoreFacetImpl()
+   {}
 
    /*
     * POM manipulation methods
@@ -80,22 +80,36 @@ public class MavenCoreFacetImpl extends BaseFacet implements MavenCoreFacet, Fac
    @Override
    public ProjectBuildingResult getProjectBuildingResult()
    {
-      // FIXME This method is SLOW: about 2-5 seconds/call (needs optimization!)
-      try
+      if (this.buildingResult == null)
       {
-         if (this.buildingResult == null)
+         ProjectBuildingRequest request = null;
+         File pomFile = getPOMFile().getUnderlyingResourceObject();
+         try
          {
-            // FIXME this should not use the file API if we are going to abstract file APIs
-            // there could be complications with this abstraction and Maven's need for operating on a file-system.
-            buildingResult = container.getBuilder().build(getPOMFile().getUnderlyingResourceObject(),
-                     container.getRequest());
+            // Attempt partial build first
+            request = container.getRequest();
+            buildingResult = container.getBuilder().build(pomFile, request);
          }
-         return buildingResult;
+         catch (ProjectBuildingException partial)
+         {
+            // try full build if that fails
+            if (request != null)
+            {
+               try {
+                  request.setResolveDependencies(true);
+                  buildingResult = container.getBuilder().build(pomFile, request);
+               }
+               catch (Exception full) {
+                  throw new ProjectModelException(full);
+               }
+            }
+            else
+            {
+               throw new ProjectModelException(partial);
+            }
+         }
       }
-      catch (ProjectBuildingException e)
-      {
-         throw new ProjectModelException(e);
-      }
+      return buildingResult;
    }
 
    private void invalidateBuildingResult()
@@ -173,18 +187,6 @@ public class MavenCoreFacetImpl extends BaseFacet implements MavenCoreFacet, Fac
    {
       Resource<?> file = project.getProjectRoot().getChild("pom.xml");
       return (FileResource<?>) file;
-   }
-
-   @Override
-   public Project getProject()
-   {
-      return project;
-   }
-
-   @Override
-   public void setProject(final Project project)
-   {
-      this.project = project;
    }
 
    @Override

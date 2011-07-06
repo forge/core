@@ -73,7 +73,6 @@ import org.jboss.forge.shell.completer.CompletedCommandHolder;
 import org.jboss.forge.shell.completer.OptionAwareCompletionHandler;
 import org.jboss.forge.shell.completer.PluginCommandCompleter;
 import org.jboss.forge.shell.events.AcceptUserInput;
-import org.jboss.forge.shell.events.PostStartup;
 import org.jboss.forge.shell.events.PreShutdown;
 import org.jboss.forge.shell.events.Shutdown;
 import org.jboss.forge.shell.events.Startup;
@@ -128,9 +127,6 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
 
    @Inject
    private BeanManager manager;
-
-   @Inject
-   private Event<PostStartup> postStartup;
 
    @Inject
    private Event<Shutdown> shutdown;
@@ -349,8 +345,6 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       {
          environment.setProperty(OFFLINE_FLAG, false);
       }
-
-      postStartup.fire(new PostStartup());
    }
 
    private void initSignalHandlers()
@@ -400,8 +394,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          historyOutstream.flush();
       }
       catch (IOException e)
-      {
-      }
+      {}
    }
 
    @Override
@@ -419,8 +412,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
                historyOutstream.close();
             }
             catch (Exception e)
-            {
-            }
+            {}
          }
       });
    }
@@ -746,7 +738,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          for (int i = 0; i < args.length; i++)
          {
             buf.append("_").append(String.valueOf(i));
-            if (i + 1 < args.length)
+            if ((i + 1) < args.length)
             {
                buf.append(", ");
             }
@@ -787,7 +779,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
             for (int i = 0; i < args.length; i++)
             {
                buf.append("\"").append(args[i].replaceAll("\\\"", "\\\\\\\"")).append("\"");
-               if (i + 1 < args.length)
+               if ((i + 1) < args.length)
                {
                   buf.append(", ");
                }
@@ -1195,9 +1187,9 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          TerminalFactory.configure(Type.WINDOWS);
          Terminal terminal = TerminalFactory.get();
          ConsoleReader consoleReader = new ConsoleReader(inputStream, new PrintWriter(
-                             new OutputStreamWriter(ansiOut, System.getProperty(
-                                      "jline.WindowsTerminal.output.encoding", System.getProperty("file.encoding")))),
-                    null, terminal);
+                  new OutputStreamWriter(ansiOut, System.getProperty(
+                           "jline.WindowsTerminal.output.encoding", System.getProperty("file.encoding")))),
+                  null, terminal);
          return consoleReader;
       }
       catch (Exception e)

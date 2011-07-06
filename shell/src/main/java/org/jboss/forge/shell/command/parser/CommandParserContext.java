@@ -22,9 +22,13 @@
 
 package org.jboss.forge.shell.command.parser;
 
-import org.jboss.forge.shell.command.OptionMetadata;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import java.util.*;
+import org.jboss.forge.shell.command.OptionMetadata;
 
 /**
  * @author Mike Brock .
@@ -32,25 +36,30 @@ import java.util.*;
  */
 public class CommandParserContext
 {
+   private boolean completing = false;
    private int paramCount;
    private final Map<OptionMetadata, Object> valueMap = new HashMap<OptionMetadata, Object>();
    private OptionMetadata lastParsed;
    private String lastParsedToken;
    private final List<String> warnings = new ArrayList<String>();
    private final List<String> ignoredTokens = new ArrayList<String>();
+   private boolean finalTokenComplete = false;
+
+   public CommandParserContext()
+   {}
 
    public void incrementParmCount()
    {
       paramCount++;
    }
 
-   public void addWarning(String message)
+   public void addWarning(final String message)
    {
       if (!warnings.contains(message))
          warnings.add(message);
    }
 
-   public void addIgnoredToken(String token)
+   public void addIgnoredToken(final String token)
    {
       ignoredTokens.add(token);
    }
@@ -130,4 +139,23 @@ public class CommandParserContext
       return lastParsedToken;
    }
 
+   public void setCompleting(final boolean completing)
+   {
+      this.completing = completing;
+   }
+
+   public boolean isCompleting()
+   {
+      return completing;
+   }
+
+   public void setFinalTokenComplete(final boolean finalTokenComplete)
+   {
+      this.finalTokenComplete = finalTokenComplete;
+   }
+
+   public boolean isTokenComplete()
+   {
+      return finalTokenComplete;
+   }
 }

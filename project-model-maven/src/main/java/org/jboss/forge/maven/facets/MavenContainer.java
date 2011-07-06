@@ -92,6 +92,16 @@ public class MavenContainer
 
    public ProjectBuildingRequest getRequest()
    {
+      return getBuildingRequest(environment.isOnline() == false);
+   }
+
+   public ProjectBuildingRequest getOfflineRequest()
+   {
+      return getBuildingRequest(true);
+   }
+
+   public ProjectBuildingRequest getBuildingRequest(final boolean offline)
+   {
       try
       {
          Settings settings = getSettings();
@@ -117,12 +127,12 @@ public class MavenContainer
             repositorySession.setProxySelector(dps);
          }
          repositorySession.setLocalRepositoryManager(new SimpleLocalRepositoryManager(settings.getLocalRepository()));
-         repositorySession.setOffline(environment.isOnline() == false);
+         repositorySession.setOffline(offline);
 
          request.setRepositorySession(repositorySession);
          request.setProcessPlugins(false);
          request.setPluginArtifactRepositories(Arrays.asList(localRepository));
-         request.setResolveDependencies(true);
+         request.setResolveDependencies(false);
          return request;
       }
       catch (Exception e)

@@ -35,9 +35,9 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
-import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.PluginJar.IllegalNameException;
 import org.jboss.forge.shell.events.AcceptUserInput;
+import org.jboss.forge.shell.events.PostStartup;
 import org.jboss.forge.shell.events.PreStartup;
 import org.jboss.forge.shell.events.ReinitializeEnvironment;
 import org.jboss.forge.shell.events.Shutdown;
@@ -93,6 +93,7 @@ public class Bootstrap
                BeanManager manager = container.getBeanManager();
                manager.fireEvent(new PreStartup());
                manager.fireEvent(new Startup(workingDir, restarting));
+               manager.fireEvent(new PostStartup());
                manager.fireEvent(new AcceptUserInput());
                weld.shutdown();
             }

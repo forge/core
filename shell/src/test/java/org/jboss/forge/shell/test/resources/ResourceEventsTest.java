@@ -44,7 +44,7 @@ public class ResourceEventsTest extends AbstractShellTest
    private ResourceEventObserver observer;
 
    @Test
-   public void testMethodParameterInjection() throws Exception
+   public void testEventsPropagateToObservers() throws Exception
    {
       Project javaProject = initializeJavaProject();
       List<Resource<?>> created = observer.getCreated();

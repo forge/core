@@ -26,7 +26,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -43,6 +42,7 @@ import org.jboss.forge.project.services.ResourceFactory;
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.shell.Shell;
+import org.jboss.forge.shell.events.PostStartup;
 import org.jboss.forge.shell.events.Startup;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -95,7 +95,8 @@ public abstract class SingletonAbstractShellTest
       {
          shell.setVerbose(true);
          shell.setCurrentResource(createTempFolder());
-         beanManager.fireEvent(new Startup(), new Annotation[] {});
+         beanManager.fireEvent(new Startup());
+         beanManager.fireEvent(new PostStartup());
 
          resetInputQueue();
          shell.setOutputStream(System.out);
