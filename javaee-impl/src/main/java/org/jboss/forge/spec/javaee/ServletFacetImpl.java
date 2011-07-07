@@ -23,11 +23,7 @@ package org.jboss.forge.spec.javaee;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
 
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
@@ -43,8 +39,6 @@ import org.jboss.forge.resources.ResourceFilter;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresPackagingType;
-import org.jboss.seam.render.TemplateCompiler;
-import org.jboss.seam.render.template.CompiledTemplateResource;
 import org.jboss.shrinkwrap.descriptor.api.DescriptorImporter;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
@@ -60,9 +54,6 @@ public class ServletFacetImpl extends BaseFacet implements ServletFacet
 
    private static final Dependency dep =
             DependencyBuilder.create("org.jboss.spec:jboss-javaee-6.0:1.0.0.Final:provided:basic");
-
-   @Inject
-   private TemplateCompiler compiler;
 
    @Override
    public WebAppDescriptor getConfig()
@@ -170,13 +161,8 @@ public class ServletFacetImpl extends BaseFacet implements ServletFacet
             descriptor.setContents(unit.exportAsString());
          }
 
-         CompiledTemplateResource template = compiler.compileResource(getClass().getResourceAsStream(
+         ((FileResource<?>) webRoot.getChild("index.html")).setContents(getClass().getResourceAsStream(
                   "/org/jboss/forge/web/index.html"));
-         FileResource<?> welcomePage = (FileResource<?>) webRoot.getChild("index.html");
-         Map<Object, Object> settings = new HashMap<Object, Object>();
-         settings.put("name", projectName);
-         welcomePage.setContents(template.render(settings));
-
          ((FileResource<?>) webRoot.getChild("forge-logo.png")).setContents(getClass().getResourceAsStream(
                   "/org/jboss/forge/web/forge-logo.png"));
          ((FileResource<?>) webRoot.getChild("forge-style.css")).setContents(getClass().getResourceAsStream(

@@ -21,6 +21,11 @@
  */
 package org.jboss.forge.spec;
 
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertTrue;
+import static org.jboss.forge.project.dependencies.DependencyBuilder.create;
+
 import java.io.IOException;
 
 import org.jboss.arquillian.junit.Arquillian;
@@ -28,67 +33,62 @@ import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.spec.javaee.ValidationFacet;
 import org.jboss.forge.spec.javaee.descriptor.ValidationDescriptor;
-import org.jboss.forge.test.SingletonAbstractShellTest;
+import org.jboss.forge.spec.jpa.AbstractJPATest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertTrue;
-import static org.jboss.forge.project.dependencies.DependencyBuilder.create;
 
 /**
  * @author Kevin Pollet
  */
 @RunWith(Arquillian.class)
-public class ValidationFacetTest extends SingletonAbstractShellTest
+public class ValidationFacetTest extends AbstractJPATest
 {
-    private static final Dependency JAVAEE_6_SPEC = create("org.jboss.spec:jboss-javaee-6.0:1.0.0.Final:provided:basic");
+   private static final Dependency JAVAEE_6_SPEC = create("org.jboss.spec:jboss-javaee-6.0:1.0.0.Final:provided:basic");
 
-    @Before
-    @Override
-    public void beforeTest() throws IOException
-    {
-        super.beforeTest();
-        initializeJavaProject();
-        if (getProject() != null && !getProject().hasFacet(ValidationFacet.class))
-        {
-            getShell().execute("project install-facet forge.spec.validation");
-        }
-    }
+   @Before
+   @Override
+   public void beforeTest() throws IOException
+   {
+      super.beforeTest();
+      initializeJavaProject();
+      if ((getProject() != null) && !getProject().hasFacet(ValidationFacet.class))
+      {
+         getShell().execute("project install-facet forge.spec.validation");
+      }
+   }
 
-    @Test
-    public void testFacetAddedWhenInstalled()
-    {
-        final ValidationFacet facet = getProject().getFacet(ValidationFacet.class);
+   @Test
+   public void testFacetAddedWhenInstalled()
+   {
+      final ValidationFacet facet = getProject().getFacet(ValidationFacet.class);
 
-        assertNotNull(facet);
-        assertTrue(facet.isInstalled());
-    }
+      assertNotNull(facet);
+      assertTrue(facet.isInstalled());
+   }
 
-    @Test
-    public void testSpecDependenciesAddedWhenInstalled()
-    {
-        final DependencyFacet facet = getProject().getFacet(DependencyFacet.class);
+   @Test
+   public void testSpecDependenciesAddedWhenInstalled()
+   {
+      final DependencyFacet facet = getProject().getFacet(DependencyFacet.class);
 
-        assertNotNull(facet);
-        assertTrue(facet.hasDependency(JAVAEE_6_SPEC));
-    }
+      assertNotNull(facet);
+      assertTrue(facet.hasDependency(JAVAEE_6_SPEC));
+   }
 
-    @Test
-    public void testEmptyConfigFileCreatedWhenInstalled()
-    {
-        final ValidationFacet facet = getProject().getFacet(ValidationFacet.class);
-        assertNotNull(facet);
+   @Test
+   public void testEmptyConfigFileCreatedWhenInstalled()
+   {
+      final ValidationFacet facet = getProject().getFacet(ValidationFacet.class);
+      assertNotNull(facet);
 
-        final ValidationDescriptor descriptor = facet.getConfig();
+      final ValidationDescriptor descriptor = facet.getConfig();
 
-        assertNotNull(descriptor);
-        assertNull(descriptor.getDefaultProvider());
-        assertNull(descriptor.getMessageInterpolator());
-        assertNull(descriptor.getConstraintValidatorFactory());
-        assertNull(descriptor.getTraversableResolver());
-        assertTrue(descriptor.getConstraintMappings().isEmpty());
-    }
+      assertNotNull(descriptor);
+      assertNull(descriptor.getDefaultProvider());
+      assertNull(descriptor.getMessageInterpolator());
+      assertNull(descriptor.getConstraintValidatorFactory());
+      assertNull(descriptor.getTraversableResolver());
+      assertTrue(descriptor.getConstraintMappings().isEmpty());
+   }
 }
