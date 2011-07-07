@@ -23,7 +23,11 @@ package org.jboss.forge.spec.javaee;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
 
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
@@ -39,6 +43,8 @@ import org.jboss.forge.resources.ResourceFilter;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresPackagingType;
+import org.jboss.seam.render.TemplateCompiler;
+import org.jboss.seam.render.template.CompiledTemplateResource;
 import org.jboss.shrinkwrap.descriptor.api.DescriptorImporter;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
@@ -54,6 +60,9 @@ public class ServletFacetImpl extends BaseFacet implements ServletFacet
 
    private static final Dependency dep =
             DependencyBuilder.create("org.jboss.spec:jboss-javaee-6.0:1.0.0.Final:provided:basic");
+
+   @Inject
+   private TemplateCompiler compiler;
 
    @Override
    public WebAppDescriptor getConfig()
@@ -87,12 +96,12 @@ public class ServletFacetImpl extends BaseFacet implements ServletFacet
       return listChildrenRecursively(webRoot);
    }
 
-   private List<Resource<?>> listChildrenRecursively(DirectoryResource webRoot)
+   private List<Resource<?>> listChildrenRecursively(final DirectoryResource webRoot)
    {
       return listChildrenRecursively(webRoot, new ResourceFilter()
       {
          @Override
-         public boolean accept(Resource<?> resource)
+         public boolean accept(final Resource<?> resource)
          {
             return true;
          }
@@ -106,7 +115,7 @@ public class ServletFacetImpl extends BaseFacet implements ServletFacet
       return listChildrenRecursively(webRoot, filter);
    }
 
-   private List<Resource<?>> listChildrenRecursively(final DirectoryResource current, ResourceFilter filter)
+   private List<Resource<?>> listChildrenRecursively(final DirectoryResource current, final ResourceFilter filter)
    {
       List<Resource<?>> result = new ArrayList<Resource<?>>();
       List<Resource<?>> list = current.listResources();
@@ -161,13 +170,23 @@ public class ServletFacetImpl extends BaseFacet implements ServletFacet
             descriptor.setContents(unit.exportAsString());
          }
 
+         CompiledTemplateResource template = compiler.compileResource(getClass().getResourceAsStream(
+                  "/org/jboss/forge/web/index.html"));
          FileResource<?> welcomePage = (FileResource<?>) webRoot.getChild("index.html");
-         welcomePage.setContents("<html><head><title>Welcome to Forge</title></head>" +
-                  "<body>" +
-                  "<h1> [" + projectName + "] is Online</h1>" +
-                  "Powered by <a href=\"http://bit.ly/seamforge\">Forge</a>" +
-                  "</body>" +
-                  "</html>");
+         Map<Object, Object> settings = new HashMap<Object, Object>();
+         settings.put("name", projectName);
+         welcomePage.setContents(template.render(settings));
+
+         ((FileResource<?>) webRoot.getChild("forge-logo.png")).setContents(getClass().getResourceAsStream(
+                  "/org/jboss/forge/web/forge-logo.png"));
+         ((FileResource<?>) webRoot.getChild("forge-style.css")).setContents(getClass().getResourceAsStream(
+                  "/org/jboss/forge/web/forge-style.css"));
+         ((FileResource<?>) webRoot.getChild("jboss-community.png")).setContents(getClass().getResourceAsStream(
+                  "/org/jboss/forge/web/jboss-community.png"));
+         ((FileResource<?>) webRoot.getChild("bkg.gif")).setContents(getClass().getResourceAsStream(
+                  "/org/jboss/forge/web/bkg.gif"));
+         ((FileResource<?>) webRoot.getChild("favicon.ico")).setContents(getClass().getResourceAsStream(
+                  "/org/jboss/forge/web/favicon.ico"));
       }
       return true;
    }
