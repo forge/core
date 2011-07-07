@@ -110,6 +110,7 @@ public class NewProjectPlugin implements Plugin
          throw new RuntimeException("Unsupported packaging type: " + type);
       }
 
+      boolean skipFolderPrompt = false;
       try
       {
          if (projectFolder instanceof FileResource<?>)
@@ -118,10 +119,12 @@ public class NewProjectPlugin implements Plugin
             {
                ((FileResource<?>) projectFolder).mkdirs();
                dir = projectFolder.reify(DirectoryResource.class);
+               skipFolderPrompt = true;
             }
             else if (projectFolder instanceof DirectoryResource)
             {
                dir = (DirectoryResource) projectFolder;
+               skipFolderPrompt = true;
             }
             else
             {
@@ -136,11 +139,10 @@ public class NewProjectPlugin implements Plugin
          }
       }
       catch (ResourceException e)
-      {
-      }
+      {}
 
-      if (projectFactory.containsProject(dir)
-               || !shell.promptBoolean("Use [" + dir.getFullyQualifiedName() + "] as project directory?"))
+      if (!skipFolderPrompt && (projectFactory.containsProject(dir)
+               || !shell.promptBoolean("Use [" + dir.getFullyQualifiedName() + "] as project directory?")))
       {
          if (projectFactory.containsProject(dir))
          {

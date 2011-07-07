@@ -35,11 +35,11 @@ import org.jboss.forge.shell.ShellPrintWriter;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class DefaultResourceEventPublisher
+public class ResourceEventPublisher
 {
    public void created(@Observes final ResourceCreated event, final ShellPrintWriter writer)
    {
-      writer.println("Created " + event.getResource().getFullyQualifiedName());
+      writer.println("Wrote " + event.getResource().getFullyQualifiedName());
    }
 
    public void modified(@Observes final ResourceModified event, final ShellPrintWriter writer)

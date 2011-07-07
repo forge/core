@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.ServiceLoader;
 
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Any;
@@ -38,6 +38,7 @@ import javax.inject.Singleton;
 import org.jboss.forge.bus.cdi.BusManaged;
 import org.jboss.forge.bus.cdi.ObserverCaptureExtension;
 import org.jboss.forge.bus.event.BusEvent;
+import org.jboss.forge.bus.spi.EventBusGroomer;
 import org.jboss.forge.bus.util.Annotations;
 
 /**
@@ -56,8 +57,11 @@ public class EventBus
    private ObserverCaptureExtension extension;
 
    private final Map<Object, Annotation[]> map = new HashMap<Object, Annotation[]>();
+   private List<Object> events = new ArrayList<Object>();
 
    boolean firing = false;
+
+   private ArrayList<EventBusGroomer> groomers;
 
    @SuppressWarnings("unused")
    private void observeAll(@Observes @Any final Object event)
@@ -74,7 +78,10 @@ public class EventBus
    public void enqueue(final Object event)
    {
       if (!firing)
+      {
+         events.add(event);
          map.put(event, new Annotation[] {});
+      }
    }
 
    /**
@@ -83,7 +90,10 @@ public class EventBus
    public void enqueue(final Object event, final Annotation[] qualifiers)
    {
       if (!firing)
+      {
+         events.add(event);
          map.put(event, qualifiers);
+      }
    }
 
    /**
@@ -93,20 +103,39 @@ public class EventBus
    {
       firing = true;
       List<Exception> thrown = new ArrayList<Exception>();
+
+      if (groomers == null)
+      {
+         groomers = new ArrayList<EventBusGroomer>();
+         ServiceLoader<EventBusGroomer> services = ServiceLoader.load(EventBusGroomer.class);
+         for (EventBusGroomer groomer : services) {
+            groomers.add(groomer);
+         }
+      }
+
+      for (EventBusGroomer groomer : groomers) {
+         events = groomer.groom(events);
+      }
+
       try
       {
-         for (Entry<Object, Annotation[]> e : map.entrySet())
+         for (Object event : events)
          {
-            try
+            if (map.containsKey(event))
             {
-               Object key = e.getKey();
-               Annotation[] value = e.getValue();
-
-               fireSingle(key, value);
+               try
+               {
+                  Annotation[] value = map.get(event);
+                  fireSingle(event, value);
+               }
+               catch (Exception e1)
+               {
+                  thrown.add(e1);
+               }
             }
-            catch (Exception e1)
+            else
             {
-               thrown.add(e1);
+               throw new IllegalStateException("Queued event was not found in event Map");
             }
          }
       }
@@ -114,6 +143,7 @@ public class EventBus
       {
          firing = false;
          map.clear();
+         events.clear();
       }
 
       if (!thrown.isEmpty())

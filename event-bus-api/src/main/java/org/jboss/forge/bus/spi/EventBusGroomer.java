@@ -1,6 +1,6 @@
 /*
- * JBoss, by Red Hat.
- * Copyright 2010, Red Hat, Inc., and individual contributors
+ * JBoss, Home of Professional Open Source
+ * Copyright 2011, Red Hat, Inc., and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,32 +19,18 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.jboss.forge.bus.spi;
 
-package org.jboss.forge.shell.plugins.builtin;
+import java.util.List;
 
-import javax.inject.Inject;
-
-import org.jboss.forge.shell.Shell;
-import org.jboss.forge.shell.plugins.Alias;
-import org.jboss.forge.shell.plugins.DefaultCommand;
-import org.jboss.forge.shell.plugins.Help;
-import org.jboss.forge.shell.plugins.Topic;
+import org.jboss.forge.bus.EventBus;
 
 /**
- * @author <a href="mailto:rdruss@gmail.com">Rodney Russ</a>
+ * Service enabling classes to groom the {@link EventBus} before any events are fired via {@link EventBus#fireAll()}
+ * 
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Alias("pwr")
-@Topic("File & Resources")
-@Help("Prints the current working resource.")
-public class PwrPlugin implements org.jboss.forge.shell.plugins.Plugin
+public interface EventBusGroomer
 {
-
-   @Inject
-   private Shell shell;
-
-   @DefaultCommand
-   public void run()
-   {
-      shell.println(shell.getCurrentResource().getFullyQualifiedName());
-   }
+   List<Object> groom(List<Object> events);
 }
