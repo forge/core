@@ -68,37 +68,37 @@ public class ResourceEventGroomer implements EventBusGroomer
    {
       private Placeholder(final Resource<?> parent)
       {
-         super(parent);
+         super(null);
       }
 
       @Override
       public boolean delete() throws UnsupportedOperationException
       {
-         return false;
+         return true;
       }
 
       @Override
       public boolean delete(final boolean recursive) throws UnsupportedOperationException
       {
-         return false;
+         return true;
       }
 
       @Override
       public String getName()
       {
-         return null;
+         return "";
       }
 
       @Override
       public List<Resource<?>> listResources()
       {
-         return null;
+         return new ArrayList<Resource<?>>();
       }
 
       @Override
       public Object getUnderlyingResourceObject()
       {
-         return null;
+         return new Object();
       }
    }
 }

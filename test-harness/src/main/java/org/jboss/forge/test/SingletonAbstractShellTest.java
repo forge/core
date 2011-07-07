@@ -93,10 +93,10 @@ public abstract class SingletonAbstractShellTest
 
       if (tempFolder == null)
       {
-         shell.setVerbose(true);
          shell.setCurrentResource(createTempFolder());
          beanManager.fireEvent(new Startup());
          beanManager.fireEvent(new PostStartup());
+         shell.setVerbose(true);
 
          resetInputQueue();
          shell.setOutputStream(System.out);

@@ -102,10 +102,10 @@ public abstract class AbstractShellTest
    @Before
    public void beforeTest() throws IOException
    {
-      shell.setVerbose(true);
       shell.setCurrentResource(createTempFolder());
       beanManager.fireEvent(new Startup());
       beanManager.fireEvent(new PostStartup());
+      shell.setVerbose(true);
 
       resetInputQueue();
       shell.setOutputStream(System.out);
