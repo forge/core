@@ -54,7 +54,7 @@ public class ResourceEventsTest extends AbstractShellTest
       Assert.assertFalse(modified.isEmpty());
 
       List<Resource<?>> deleted = observer.getDeleted();
-      Assert.assertFalse(deleted.isEmpty());
+      Assert.assertTrue(deleted.isEmpty());
 
    }
 }
