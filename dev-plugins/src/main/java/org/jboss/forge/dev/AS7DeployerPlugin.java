@@ -87,8 +87,14 @@ public class AS7DeployerPlugin implements Plugin
    }
 
    @Command
-   public void deployExploded(@Option(name = "triggerDeploy", flagOnly = true) boolean triggerDeploy, final PipeOut out) throws Exception
+   public void deployExploded(@Option(name = "triggerDeploy", flagOnly = true) boolean triggerDeploy,
+                              @Option(name = "build", flagOnly = true) boolean build,
+                              final PipeOut out) throws Exception
    {
+      if(build) {
+          shell.execute("mvn compile war:exploded");
+      }
+       
       FileResource<?> finalArtifact = getExploded();
 
       String artifactName = finalArtifact.getName() + ".war";
