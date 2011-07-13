@@ -21,7 +21,6 @@
  */
 package org.jboss.forge.shell.events;
 
-import org.jboss.forge.ForgeEvent;
 import org.jboss.forge.project.Project;
 
 /**
@@ -37,7 +36,6 @@ import org.jboss.forge.project.Project;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-@ForgeEvent
 public final class ProjectChanged
 {
    private final Project oldProject;

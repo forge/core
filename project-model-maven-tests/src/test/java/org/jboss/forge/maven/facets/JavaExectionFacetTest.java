@@ -22,16 +22,34 @@
 
 package org.jboss.forge.maven.facets;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Scanner;
+
+import javax.enterprise.inject.spi.BeanManager;
+import javax.inject.Inject;
+
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.Root;
 import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.maven.MavenFacetsTest;
 import org.jboss.forge.project.Project;
-import org.jboss.forge.project.facets.*;
+import org.jboss.forge.project.facets.DependencyFacet;
+import org.jboss.forge.project.facets.JavaExecutionFacet;
+import org.jboss.forge.project.facets.JavaSourceFacet;
+import org.jboss.forge.project.facets.PackagingFacet;
+import org.jboss.forge.project.facets.ResourceFacet;
+import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.project.services.ProjectFactory;
 import org.jboss.forge.project.services.ResourceFactory;
 import org.jboss.forge.shell.Shell;
+import org.jboss.forge.shell.events.PostStartup;
 import org.jboss.forge.shell.events.Startup;
 import org.jboss.forge.shell.util.ResourceUtil;
 import org.jboss.shrinkwrap.api.ArchivePaths;
@@ -43,15 +61,6 @@ import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.enterprise.event.Event;
-import javax.enterprise.inject.Any;
-import javax.inject.Inject;
-import java.io.*;
-import java.util.Scanner;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 
 @RunWith(Arquillian.class)
 public class JavaExectionFacetTest
@@ -68,10 +77,10 @@ public class JavaExectionFacetTest
    public static JavaArchive createTestArchive()
    {
       return ShrinkWrap.create(JavaArchive.class, "test.jar")
-              .addPackages(true, Root.class.getPackage())
-              .addClass(ResourceFactory.class)
-              .addManifestResource(new ByteArrayAsset("<beans/>".getBytes()), ArchivePaths.create("beans.xml"))
-              .addManifestResource("META-INF/services/javax.enterprise.inject.spi.Extension");
+               .addPackages(true, Root.class.getPackage())
+               .addClass(ResourceFactory.class)
+               .addManifestResource(new ByteArrayAsset("<beans/>".getBytes()), ArchivePaths.create("beans.xml"))
+               .addManifestResource("META-INF/services/javax.enterprise.inject.spi.Extension");
    }
 
    @Inject
@@ -83,8 +92,7 @@ public class JavaExectionFacetTest
    protected static Project project;
 
    @Inject
-   @Any
-   Event<Startup> startupEvent;
+   BeanManager beanManager;
 
    @Before
    @SuppressWarnings("unchecked")
@@ -106,15 +114,15 @@ public class JavaExectionFacetTest
             out.write(b);
          }
 
-
          out.close();
          resourceAsStream.close();
          project = projectFactory.createProject(
-                 ResourceUtil.getContextDirectory(resourceFactory.getResourceFrom(tempFolder)),
-                 MavenCoreFacet.class, JavaSourceFacet.class, ResourceFacet.class, WebResourceFacet.class,
-                 DependencyFacet.class, PackagingFacet.class, JavaExecutionFacet.class);
+                  ResourceUtil.getContextDirectory(resourceFactory.getResourceFrom(tempFolder)),
+                  MavenCoreFacet.class, JavaSourceFacet.class, ResourceFacet.class, WebResourceFacet.class,
+                  DependencyFacet.class, PackagingFacet.class, JavaExecutionFacet.class);
 
-         startupEvent.fire(new Startup());
+         beanManager.fireEvent(new Startup());
+         beanManager.fireEvent(new PostStartup());
       }
 
       executionFacet = project.getFacet(JavaExecutionFacet.class);

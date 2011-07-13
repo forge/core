@@ -29,6 +29,7 @@ import java.util.List;
 
 import org.jboss.forge.project.ProjectModelException;
 import org.jboss.forge.project.services.ResourceFactory;
+import org.jboss.forge.shell.util.OSUtils;
 
 /**
  * A standard, build-in, resource for representing directories on the file-system.
@@ -77,7 +78,7 @@ public class DirectoryResource extends FileResource<DirectoryResource>
    @Override
    public Resource<?> getChild(final String name)
    {
-      return resourceFactory.getResourceFrom(new File(file.getAbsolutePath() + File.separator + name));
+      return resourceFactory.getResourceFrom(new File(file.getAbsolutePath(), name));
    }
 
    /**
@@ -98,7 +99,7 @@ public class DirectoryResource extends FileResource<DirectoryResource>
 
       if (!(result instanceof DirectoryResource))
       {
-         result = new DirectoryResource(resourceFactory, new File(file.getAbsoluteFile() + File.separator + name));
+         result = new DirectoryResource(resourceFactory, new File(file.getAbsoluteFile(), name));
       }
       return (DirectoryResource) result;
    }
@@ -189,7 +190,9 @@ public class DirectoryResource extends FileResource<DirectoryResource>
    @Override
    public String getName()
    {
-      return file.getName();
+      String fileName = file.getName();
+      // Windows: drive letter is needed. If filename is empty, we are on a root folder
+      return (OSUtils.isWindows() && fileName.length() == 0) ? file.getPath() : fileName;
    }
 
    @Override

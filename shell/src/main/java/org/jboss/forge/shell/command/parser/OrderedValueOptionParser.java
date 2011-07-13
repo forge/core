@@ -38,11 +38,18 @@ public class OrderedValueOptionParser implements CommandParser
    public CommandParserContext parse(final CommandMetadata command, final Queue<String> tokens,
             final CommandParserContext ctx)
    {
-      int numberOrderedParams = ctx.getOrderedParamCount();
-      try
+      String currentToken = tokens.peek();
+      if (command.hasOrderedOptions()
+               && !command.hasOption(currentToken.replaceAll("^--?", "")))
       {
-         String currentToken = tokens.peek();
-         if (!currentToken.startsWith("-"))
+
+         if (currentToken.matches("^--?$") && ctx.isCompleting() && !ctx.isTokenComplete())
+         {
+            return ctx;
+         }
+
+         int numberOrderedParams = ctx.getOrderedParamCount();
+         try
          {
             OptionMetadata option = command.getOrderedOptionByIndex(numberOrderedParams);
             if (!option.isVarargs())
@@ -51,12 +58,13 @@ public class OrderedValueOptionParser implements CommandParser
                ctx.incrementParmCount();
             }
          }
-      }
-      catch (IllegalArgumentException e)
-      {
-         ctx.addWarning("The command [" + command + "] takes ["
-                  + command.getNumOrderedOptions() + "] unnamed argument(s), but found [" + (numberOrderedParams + 1)
-                  + "].");
+         catch (IllegalArgumentException e)
+         {
+            ctx.addWarning("The command [" + command + "] takes ["
+                     + command.getNumOrderedOptions() + "] unnamed argument(s), but found ["
+                     + (numberOrderedParams + 1)
+                     + "].");
+         }
       }
       return ctx;
    }

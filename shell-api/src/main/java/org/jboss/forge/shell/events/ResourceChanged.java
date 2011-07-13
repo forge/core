@@ -21,11 +21,11 @@
  */
 package org.jboss.forge.shell.events;
 
-import org.jboss.forge.ForgeEvent;
 import org.jboss.forge.resources.Resource;
 
 /**
- * An event that notifies observers immediately after the current {@link Resource} has changed.
+ * An event that notifies observers immediately after the current {@link Resource} has been changed to a new
+ * {@link Resource}.
  * <p>
  * <strong>For example:</strong>
  * <p>
@@ -37,7 +37,6 @@ import org.jboss.forge.resources.Resource;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-@ForgeEvent
 public final class ResourceChanged
 {
    private final Resource<?> oldResource;

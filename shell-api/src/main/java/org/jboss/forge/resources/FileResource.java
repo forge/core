@@ -31,9 +31,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.annotation.Annotation;
+
+import javax.enterprise.inject.spi.BeanManager;
 
 import org.jboss.forge.project.ProjectModelException;
 import org.jboss.forge.project.services.ResourceFactory;
+import org.jboss.forge.resources.events.ResourceCreated;
+import org.jboss.forge.resources.events.ResourceDeleted;
+import org.jboss.forge.resources.events.ResourceModified;
+import org.jboss.forge.resources.events.ResourceRenamed;
+import org.jboss.forge.resources.events.TempResourceCreated;
 import org.jboss.forge.shell.util.OSUtils;
 
 /**
@@ -157,12 +165,22 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
 
    public boolean mkdir()
    {
-      return file.mkdir();
+      if (file.mkdir())
+      {
+         fireResourceCreated();
+         return true;
+      }
+      return false;
    }
 
    public boolean mkdirs()
    {
-      return file.mkdirs();
+      if (file.mkdirs())
+      {
+         fireResourceCreated();
+         return true;
+      }
+      return false;
    }
 
    /**
@@ -177,7 +195,12 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
    {
       if (recursive)
       {
-         return _deleteRecursive(file, true);
+         if (_deleteRecursive(file, true))
+         {
+            fireResourceDeleted();
+            return true;
+         }
+         return false;
       }
 
       if ((file.listFiles() != null) && (file.listFiles().length != 0))
@@ -189,7 +212,13 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
       {
          System.gc(); // ensure no lingering handles that would prevent deletion
       }
-      return file.delete();
+
+      if (file.delete())
+      {
+         fireResourceDeleted();
+         return true;
+      }
+      return false;
    }
 
    /**
@@ -292,7 +321,7 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
             }
          }
 
-         System.out.println("Wrote " + getFullyQualifiedName());
+         fireResourceModified();
       }
       catch (IOException e)
       {
@@ -319,7 +348,12 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
          {
             file.delete();
          }
-         return file.createNewFile();
+         if (file.createNewFile())
+         {
+            fireResourceCreated();
+            return true;
+         }
+         return false;
       }
       catch (IOException e)
       {
@@ -332,12 +366,19 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
    {
       try
       {
-         return (T) createFrom(File.createTempFile("forgetemp", ""));
+         T result = (T) createFrom(File.createTempFile("forgetemp", ""));
+         fireTempResourceCreated(result);
+         return result;
       }
       catch (IOException e)
       {
          throw new ProjectModelException(e);
       }
+   }
+
+   public void fireTempResourceCreated(final T result)
+   {
+      resourceFactory.getManagerInstance().fireEvent(new TempResourceCreated(result), new Annotation[] {});
    }
 
    @Override
@@ -357,11 +398,64 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
 
    public boolean renameTo(final String pathspec)
    {
-      return file.renameTo(new File(pathspec));
+      return renameTo(new File(pathspec));
    }
 
    public boolean renameTo(final FileResource<?> target)
    {
-      return file.renameTo(target.getUnderlyingResourceObject());
+      return renameTo(target.getUnderlyingResourceObject());
+   }
+
+   private boolean renameTo(final File target)
+   {
+      File original = file.getAbsoluteFile();
+      if (file.renameTo(target))
+      {
+         fireResourceMoved(original);
+         return true;
+      }
+      return false;
+   }
+
+   public void fireResourceMoved(final File original)
+   {
+      if (resourceFactory != null) {
+         BeanManager manager = resourceFactory.getManagerInstance();
+         if (manager != null) {
+            manager.fireEvent(
+                     new ResourceRenamed(this, original.getAbsolutePath(), file.getAbsolutePath()),
+                     new Annotation[] {});
+         }
+      }
+   }
+
+   public void fireResourceModified()
+   {
+      if (resourceFactory != null) {
+         BeanManager manager = resourceFactory.getManagerInstance();
+         if (manager != null) {
+            resourceFactory.getManagerInstance().fireEvent(new ResourceModified(this), new Annotation[] {});
+         }
+      }
+   }
+
+   public void fireResourceCreated()
+   {
+      if (resourceFactory != null) {
+         BeanManager manager = resourceFactory.getManagerInstance();
+         if (manager != null) {
+            resourceFactory.getManagerInstance().fireEvent(new ResourceCreated(this), new Annotation[] {});
+         }
+      }
+   }
+
+   public void fireResourceDeleted()
+   {
+      if (resourceFactory != null) {
+         BeanManager manager = resourceFactory.getManagerInstance();
+         if (manager != null) {
+            resourceFactory.getManagerInstance().fireEvent(new ResourceDeleted(this), new Annotation[] {});
+         }
+      }
    }
 }

@@ -27,8 +27,11 @@ import static org.junit.Assert.assertNotNull;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
+import org.jboss.forge.resources.DirectoryResource;
+import org.jboss.forge.resources.Resource;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.test.AbstractShellTest;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -45,19 +48,22 @@ public class ProjectFactoryTest extends AbstractShellTest
       initializeJavaProject();
 
       Project project = getProject();
-      assertNotNull(project);
+      Assert.assertTrue(project instanceof Project);
+      Resource<?> projectResource = shell.getCurrentResource();
 
       shell.execute("cd /");
 
-      project = getProject();
-
-      // FIXME weld javassist bug prevents this line from executing... weird
-      // assertNull(project);
+      Resource<?> newResource = shell.getCurrentResource();
+      Assert.assertNotSame(projectResource, newResource);
 
       shell.execute("cd -");
+      Resource<?> currentResource = shell.getCurrentResource();
+
+      Assert.assertEquals(projectResource, currentResource);
 
       project = getProject();
-      assertNotNull(project);
+      Assert.assertTrue(project.getProjectRoot() instanceof DirectoryResource);
+
       JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
 
       assertNotNull(javaSourceFacet);

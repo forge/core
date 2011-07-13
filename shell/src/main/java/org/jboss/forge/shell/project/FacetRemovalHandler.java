@@ -27,9 +27,9 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
-import org.jboss.forge.bus.EventBus;
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.FacetActionAborted;
@@ -55,7 +55,7 @@ public class FacetRemovalHandler
    private Project project;
 
    @Inject
-   private EventBus bus;
+   private BeanManager manager;
 
    public void removeRequest(@Observes final RemoveFacets request)
    {
@@ -85,7 +85,7 @@ public class FacetRemovalHandler
 
       for (Facet facet : removed)
       {
-         bus.enqueue(new FacetRemoved(facet));
+         manager.fireEvent(new FacetRemoved(facet));
       }
    }
 
@@ -119,7 +119,7 @@ public class FacetRemovalHandler
          if (!facet.isInstalled())
          {
             ShellMessages.success(shell, "Removed [" + ConstraintInspector.getName(facet.getClass())
-                           + "] successfully.");
+                     + "] successfully.");
             result.add(facet);
          }
       }

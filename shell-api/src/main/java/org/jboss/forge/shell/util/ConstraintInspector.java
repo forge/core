@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.jboss.forge.bus.util.Annotations;
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.packaging.PackagingType;
 import org.jboss.forge.shell.plugins.Alias;

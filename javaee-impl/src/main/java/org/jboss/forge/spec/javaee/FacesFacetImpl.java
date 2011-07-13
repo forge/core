@@ -44,8 +44,6 @@ import org.jboss.forge.shell.ShellMessages;
 import org.jboss.forge.shell.ShellPrintWriter;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
-import org.jboss.forge.spec.javaee.FacesFacet;
-import org.jboss.forge.spec.javaee.ServletFacet;
 import org.jboss.forge.spec.javaee.util.ServletUtil;
 import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.FacesProjectStage;
 import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.ServletDef;

@@ -22,6 +22,12 @@
 
 package org.jboss.forge.maven.facets;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import javax.enterprise.context.Dependent;
+
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Repository;
 import org.jboss.forge.maven.MavenCoreFacet;
@@ -36,15 +42,9 @@ import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.dependencies.DependencyRepository;
 import org.jboss.forge.project.dependencies.DependencyRepositoryImpl;
 import org.jboss.forge.project.facets.BaseFacet;
-import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.facets.FacetNotFoundException;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
-
-import javax.enterprise.context.Dependent;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
@@ -53,109 +53,121 @@ import java.util.List;
 @Dependent
 @Alias("forge.maven.MavenPluginFacet")
 @RequiresFacet(MavenCoreFacet.class)
-public class MavenPluginFacetImpl extends BaseFacet implements MavenPluginFacet, Facet {
-    private static final String DEFAULT_GROUPID = "org.apache.maven.plugins";
+public class MavenPluginFacetImpl extends BaseFacet implements MavenPluginFacet, Facet
+{
+   private static final String DEFAULT_GROUPID = "org.apache.maven.plugins";
 
-    @Override
-    public boolean install() {
-        return true;
-    }
+   @Override
+   public boolean install()
+   {
+      return true;
+   }
 
-    @Override
-    public boolean isInstalled() {
-        try {
-            project.getFacet(MavenCoreFacet.class);
-            return true;
-        } catch (FacetNotFoundException e) {
-            return false;
-        }
-    }
+   @Override
+   public boolean isInstalled()
+   {
+      try {
+         project.getFacet(MavenCoreFacet.class);
+         return true;
+      }
+      catch (FacetNotFoundException e) {
+         return false;
+      }
+   }
 
-    @Override
-    public List<MavenPlugin> listConfiguredPlugins() {
-        MavenCoreFacet mavenCoreFacet = project.getFacet(MavenCoreFacet.class);
-        List<org.apache.maven.model.Plugin> pomPlugins = mavenCoreFacet.getPOM().getBuild().getPlugins();
-        List<MavenPlugin> plugins = new ArrayList<MavenPlugin>();
+   @Override
+   public List<MavenPlugin> listConfiguredPlugins()
+   {
+      MavenCoreFacet mavenCoreFacet = project.getFacet(MavenCoreFacet.class);
+      List<org.apache.maven.model.Plugin> pomPlugins = mavenCoreFacet.getPOM().getBuild().getPlugins();
+      List<MavenPlugin> plugins = new ArrayList<MavenPlugin>();
 
-        for (org.apache.maven.model.Plugin plugin : pomPlugins) {
-            MavenPluginAdapter adapter = new MavenPluginAdapter(plugin);
-            MavenPluginBuilder pluginBuilder = MavenPluginBuilder.create()
-                    .setDependency(
-                            DependencyBuilder.create()
+      for (org.apache.maven.model.Plugin plugin : pomPlugins) {
+         MavenPluginAdapter adapter = new MavenPluginAdapter(plugin);
+         MavenPluginBuilder pluginBuilder = MavenPluginBuilder.create()
+                  .setDependency(
+                           DependencyBuilder.create()
                                     .setGroupId(plugin.getGroupId())
                                     .setArtifactId(plugin.getArtifactId())
                                     .setVersion(plugin.getVersion()))
 
-                    .setConfiguration(adapter.getConfig());
+                  .setConfiguration(adapter.getConfig());
 
-            plugins.add(pluginBuilder);
-        }
+         plugins.add(pluginBuilder);
+      }
 
-        return plugins;
+      return plugins;
 
-    }
+   }
 
-    @Override
-    public void addPlugin(MavenPlugin plugin) {
-        MavenCoreFacet mavenCoreFacet = project.getFacet(MavenCoreFacet.class);
-        Model pom = mavenCoreFacet.getPOM();
-        pom.getBuild().addPlugin(new MavenPluginAdapter(plugin));
-        mavenCoreFacet.setPOM(pom);
-    }
+   @Override
+   public void addPlugin(final MavenPlugin plugin)
+   {
+      MavenCoreFacet mavenCoreFacet = project.getFacet(MavenCoreFacet.class);
+      Model pom = mavenCoreFacet.getPOM();
+      pom.getBuild().addPlugin(new MavenPluginAdapter(plugin));
+      mavenCoreFacet.setPOM(pom);
+   }
 
-    @Override
-    public boolean hasPlugin(Dependency dependency) {
-        try {
-            getPlugin(dependency);
-            return true;
-        } catch (PluginNotFoundException ex) {
-            return false;
-        }
-    }
+   @Override
+   public boolean hasPlugin(final Dependency dependency)
+   {
+      try {
+         getPlugin(dependency);
+         return true;
+      }
+      catch (PluginNotFoundException ex) {
+         return false;
+      }
+   }
 
-    @Override
-    public MavenPlugin getPlugin(Dependency dependency) {
-        String groupId = dependency.getGroupId();
-        String artifactId = dependency.getArtifactId();
+   @Override
+   public MavenPlugin getPlugin(final Dependency dependency)
+   {
+      String groupId = dependency.getGroupId();
+      String artifactId = dependency.getArtifactId();
 
-        if (groupId == null || groupId.equals("")) {
-            groupId = DEFAULT_GROUPID;
-        }
+      if ((groupId == null) || groupId.equals("")) {
+         groupId = DEFAULT_GROUPID;
+      }
 
-        for (MavenPlugin mavenPlugin : listConfiguredPlugins()) {
+      for (MavenPlugin mavenPlugin : listConfiguredPlugins()) {
 
-            if (mavenPlugin.getDependency().getGroupId().equals(groupId)
-                    && mavenPlugin.getDependency().getArtifactId().equals(artifactId)) {
+         if (mavenPlugin.getDependency().getGroupId().equals(groupId)
+                  && mavenPlugin.getDependency().getArtifactId().equals(artifactId)) {
 
-                return mavenPlugin;
-            }
-        }
+            return mavenPlugin;
+         }
+      }
 
-        throw new PluginNotFoundException(groupId, artifactId);
+      throw new PluginNotFoundException(groupId, artifactId);
 
-    }
+   }
 
-    @Override
-    public void removePlugin(Dependency dependency) {
-        MavenCoreFacet mavenCoreFacet = project.getFacet(MavenCoreFacet.class);
-        List<org.apache.maven.model.Plugin> pomPlugins = mavenCoreFacet.getPOM().getBuild().getPlugins();
-        for (org.apache.maven.model.Plugin pomPlugin : pomPlugins) {
-            if (pomPlugin.getGroupId().equals(dependency.getGroupId())
-                    && pomPlugin.getArtifactId().equals(dependency.getArtifactId())) {
-                Model pom = mavenCoreFacet.getPOM();
-                pom.getBuild().removePlugin(pomPlugin);
-                mavenCoreFacet.setPOM(pom);
-            }
-        }
+   @Override
+   public void removePlugin(final Dependency dependency)
+   {
+      MavenCoreFacet mavenCoreFacet = project.getFacet(MavenCoreFacet.class);
+      List<org.apache.maven.model.Plugin> pomPlugins = mavenCoreFacet.getPOM().getBuild().getPlugins();
+      for (org.apache.maven.model.Plugin pomPlugin : pomPlugins) {
+         if (pomPlugin.getGroupId().equals(dependency.getGroupId())
+                  && pomPlugin.getArtifactId().equals(dependency.getArtifactId())) {
+            Model pom = mavenCoreFacet.getPOM();
+            pom.getBuild().removePlugin(pomPlugin);
+            mavenCoreFacet.setPOM(pom);
+         }
+      }
 
-    }
+   }
 
-   @Override public void addPluginRepository(KnownRepository repository)
+   @Override
+   public void addPluginRepository(final KnownRepository repository)
    {
       addPluginRepository(repository.name(), repository.getUrl());
    }
 
-   @Override public void addPluginRepository(String name, String url)
+   @Override
+   public void addPluginRepository(final String name, final String url)
    {
       if (!hasPluginRepository(url))
       {
@@ -169,12 +181,14 @@ public class MavenPluginFacetImpl extends BaseFacet implements MavenPluginFacet,
       }
    }
 
-   @Override public boolean hasPluginRepository(KnownRepository repository)
+   @Override
+   public boolean hasPluginRepository(final KnownRepository repository)
    {
       return hasPluginRepository(repository.getUrl());
    }
 
-   @Override public boolean hasPluginRepository(String url)
+   @Override
+   public boolean hasPluginRepository(final String url)
    {
       if (url != null)
       {
@@ -194,7 +208,8 @@ public class MavenPluginFacetImpl extends BaseFacet implements MavenPluginFacet,
       return false;
    }
 
-   @Override public DependencyRepository removePluginRepository(String url)
+   @Override
+   public DependencyRepository removePluginRepository(final String url)
    {
       if (url != null)
       {

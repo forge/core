@@ -23,18 +23,17 @@ package org.jboss.forge.maven.locators;
 
 import java.io.File;
 
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.maven.ProjectImpl;
-import org.jboss.forge.maven.facets.MavenContainer;
-import org.jboss.forge.maven.facets.MavenCoreFacetImpl;
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.locator.ProjectLocator;
 import org.jboss.forge.project.services.ProjectFactory;
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.Resource;
-import org.jboss.forge.shell.ShellPrintWriter;
 import org.jboss.forge.shell.plugins.Alias;
 
 /**
@@ -47,17 +46,14 @@ import org.jboss.forge.shell.plugins.Alias;
 @Alias("maven-project-locator")
 public class MavenProjectLocator implements ProjectLocator
 {
-   private final MavenContainer container;
    private final ProjectFactory factory;
-   private final ShellPrintWriter writer;
+   private final Instance<MavenCoreFacet> coreFacetInstance;
 
    @Inject
-   public MavenProjectLocator(final MavenContainer container, final ProjectFactory factory,
-            final ShellPrintWriter writer)
+   public MavenProjectLocator(final ProjectFactory factory, final Instance<MavenCoreFacet> coreFacet)
    {
       this.factory = factory;
-      this.container = container;
-      this.writer = writer;
+      this.coreFacetInstance = coreFacet;
    }
 
    @Override
@@ -69,7 +65,7 @@ public class MavenProjectLocator implements ProjectLocator
       if (pom.exists())
       {
          result = new ProjectImpl(factory, dir);
-         Facet facet = new MavenCoreFacetImpl(container, writer);
+         Facet facet = coreFacetInstance.get();
          facet.setProject(result);
          result.registerFacet(facet);
       }

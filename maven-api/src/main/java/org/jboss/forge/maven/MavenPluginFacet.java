@@ -22,12 +22,12 @@
 
 package org.jboss.forge.maven;
 
+import java.util.List;
+
 import org.jboss.forge.maven.plugins.MavenPlugin;
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyRepository;
-
-import java.util.List;
 
 /**
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
@@ -38,12 +38,11 @@ public interface MavenPluginFacet extends Facet
    {
       CENTRAL("http://repo1.maven.org/maven2/"),
       JBOSS_NEXUS("http://repository.jboss.org/nexus/content/groups/public"),
-      JBOSS_LEGACY("http://repository.jboss.org/maven2"),
       JAVA_NET("http://download.java.net/maven/2/");
 
       private final String url;
 
-      private KnownRepository(String url)
+      private KnownRepository(final String url)
       {
          this.url = url;
       }
@@ -58,7 +57,6 @@ public interface MavenPluginFacet extends Facet
          return this.name();
       }
    }
-
 
    List<MavenPlugin> listConfiguredPlugins();
 
@@ -93,13 +91,15 @@ public interface MavenPluginFacet extends Facet
    public boolean hasPluginRepository(String url);
 
    /**
-    * Remove the given {@link org.jboss.forge.project.dependencies.DependencyRepository} from the current project. Return true if the repository was removed;
-    * return false otherwise. Return the removed repository, or null if no repository was removed.
+    * Remove the given {@link org.jboss.forge.project.dependencies.DependencyRepository} from the current project.
+    * Return true if the repository was removed; return false otherwise. Return the removed repository, or null if no
+    * repository was removed.
     */
    public DependencyRepository removePluginRepository(String url);
 
    /**
-    * Get the list of plugin repositories for which this project is currently configured to use in dependency resolution.
+    * Get the list of plugin repositories for which this project is currently configured to use in dependency
+    * resolution.
     */
    public List<DependencyRepository> getPluginRepositories();
 }

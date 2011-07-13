@@ -44,6 +44,7 @@ import org.jboss.forge.project.services.ResourceFactory;
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.shell.Shell;
+import org.jboss.forge.shell.events.PostStartup;
 import org.jboss.forge.shell.events.Startup;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -92,20 +93,19 @@ public abstract class AbstractShellTest
 
    @BeforeClass
    public static void before() throws IOException
-   {
-   }
+   {}
 
    @AfterClass
    public static void after()
-   {
-   }
+   {}
 
    @Before
    public void beforeTest() throws IOException
    {
-      shell.setVerbose(true);
       shell.setCurrentResource(createTempFolder());
       beanManager.fireEvent(new Startup());
+      beanManager.fireEvent(new PostStartup());
+      shell.setVerbose(true);
 
       resetInputQueue();
       shell.setOutputStream(System.out);

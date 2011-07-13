@@ -21,11 +21,19 @@
  */
 package org.jboss.forge.bus.cdi;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.lang.annotation.Annotation;
+import java.util.List;
+
+import javax.enterprise.inject.spi.BeanManager;
+import javax.inject.Inject;
+
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.bus.cdi.BusManaged;
-import org.jboss.forge.bus.cdi.ObserverCaptureExtension;
-import org.jboss.forge.bus.event.BaseEvent;
+import org.jboss.forge.bus.MockEvent;
+import org.jboss.forge.bus.event.BusEvent;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;
@@ -33,14 +41,6 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.enterprise.inject.spi.BeanManager;
-import javax.inject.Inject;
-import java.lang.annotation.Annotation;
-import java.util.List;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -52,16 +52,14 @@ public class ObserverCaptureExtensionTest
    public static JavaArchive createTestArchive()
    {
       return ShrinkWrap.create(JavaArchive.class, "test.jar")
-            .addClass(ObserverCaptureExtension.class)
-            .addClass(MockBaseEventObserver.class)
-            .addClass(BaseEvent.class)
-            .addManifestResource("META-INF/services/javax.enterprise.inject.spi.Extension")
-            .addManifestResource(new ByteArrayAsset("<beans/>".getBytes()), ArchivePaths.create("beans.xml"));
+               .addClass(ObserverCaptureExtension.class)
+               .addClass(MockBaseEventObserver.class)
+               .addClass(BusEvent.class)
+               .addManifestResource("META-INF/services/javax.enterprise.inject.spi.Extension")
+               .addManifestResource(new ByteArrayAsset("<beans/>".getBytes()), ArchivePaths.create("beans.xml"));
    }
 
-   BaseEvent event = new BaseEvent()
-   {
-   };
+   MockEvent event = new MockEvent();
 
    @Inject
    private BeanManager manager;
@@ -84,7 +82,7 @@ public class ObserverCaptureExtensionTest
    public void testRemovedObserversDoNotObserve() throws Exception
    {
       assertFalse(observer.hasObservedRemoved());
-      manager.fireEvent(event, new Annotation[]{});
+      manager.fireEvent(event, new Annotation[] {});
       assertFalse(observer.hasObservedRemoved());
    }
 
@@ -94,7 +92,7 @@ public class ObserverCaptureExtensionTest
       assertFalse(observer.hasObservedRemoved());
       List<BusManaged> qualifiers = oce.getEventQualifiers(event.getClass());
       BusManaged busManaged = qualifiers.get(0);
-      manager.fireEvent(event, new Annotation[]{busManaged});
+      manager.fireEvent(event, new Annotation[] { busManaged });
       assertTrue(observer.hasObservedRemoved());
    }
 
@@ -104,7 +102,7 @@ public class ObserverCaptureExtensionTest
       assertFalse(observer.hasObservedRemoved());
       List<BusManaged> qualifiers = oce.getEventQualifiers(event.getClass());
       BusManaged busManaged = qualifiers.get(0);
-      manager.fireEvent(event, new Annotation[]{busManaged});
+      manager.fireEvent(event, new Annotation[] { busManaged });
       assertTrue(observer.hasObservedRemoved());
 
       assertFalse(observer.hasObservedRemoved2());
@@ -114,7 +112,7 @@ public class ObserverCaptureExtensionTest
    public void testNormalObserversContinueToObserve() throws Exception
    {
       assertFalse(observer.hasObservedNormal());
-      manager.fireEvent(new MockNormalEvent(), new Annotation[]{});
+      manager.fireEvent(new MockNormalEvent(), new Annotation[] {});
       assertTrue(observer.hasObservedNormal());
    }
 }

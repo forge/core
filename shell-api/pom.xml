@@ -1,39 +1,44 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.jboss.forge</groupId>
-		<artifactId>forge-parent</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
-		<relativePath>../pom.xml</relativePath>
-	</parent>
+   <parent>
+      <groupId>org.jboss.forge</groupId>
+      <artifactId>forge-parent</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+      <relativePath>../pom.xml</relativePath>
+   </parent>
 
-	<artifactId>forge-shell-api</artifactId>
-	<name>Forge - Shell API</name>
-	<packaging>jar</packaging>
+   <artifactId>forge-shell-api</artifactId>
+   <name>Forge - Shell API</name>
+   <packaging>jar</packaging>
 
-	<dependencies>
-		<dependency>
-			<artifactId>forge-parser-java-api</artifactId>
-			<groupId>org.jboss.forge</groupId>
-		</dependency>
-		<dependency>
-			<artifactId>forge-parser-xml</artifactId>
-			<groupId>org.jboss.forge</groupId>
-		</dependency>
-		<dependency>
-			<groupId>javax.enterprise</groupId>
-			<artifactId>cdi-api</artifactId>
-		</dependency>
+   <dependencies>
+      <dependency>
+         <artifactId>forge-parser-java-api</artifactId>
+         <groupId>org.jboss.forge</groupId>
+      </dependency>
+      <dependency>
+         <artifactId>forge-parser-xml</artifactId>
+         <groupId>org.jboss.forge</groupId>
+      </dependency>
+      <dependency>
+         <artifactId>forge-event-bus</artifactId>
+         <groupId>org.jboss.forge</groupId>
+      </dependency>
+      <dependency>
+         <groupId>javax.enterprise</groupId>
+         <artifactId>cdi-api</artifactId>
+      </dependency>
       <dependency>
          <groupId>org.jboss.seam.solder</groupId>
          <artifactId>seam-solder</artifactId>
       </dependency>
 
-       <dependency>
-          <groupId>org.apache.maven</groupId>
-           <artifactId>maven-model</artifactId>
-          <version>3.0.3</version>
-       </dependency>
-    </dependencies>
+      <dependency>
+         <groupId>org.apache.maven</groupId>
+         <artifactId>maven-model</artifactId>
+         <version>3.0.3</version>
+      </dependency>
+   </dependencies>
 </project>

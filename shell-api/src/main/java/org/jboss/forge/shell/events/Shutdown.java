@@ -21,7 +21,6 @@
  */
 package org.jboss.forge.shell.events;
 
-import org.jboss.forge.ForgeEvent;
 
 /**
  * Fired as a signal to the shell that it should shut down now.
@@ -38,7 +37,6 @@ import org.jboss.forge.ForgeEvent;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-@ForgeEvent
 public final class Shutdown
 {
    private final Status status;

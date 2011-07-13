@@ -130,11 +130,7 @@ public class ChangeDirectoryPluginTest extends AbstractShellTest
 
       String parentPath = parent.getFullyQualifiedName();
 
-      if (parentPath.indexOf(' ') == -1) {
-         shell.execute("cd " + parentPath);
-      } else {
-         shell.execute("cd '" + parentPath + "'");  // Could this work for all any OS or do we need OSUtils.isWindows()?
-      }
+      shell.execute("cd '" + parentPath + "'");
 
       Resource<?> newDir = shell.getCurrentResource();
       assertEquals(newDir.getFullyQualifiedName(), parent.getFullyQualifiedName());

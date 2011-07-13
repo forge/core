@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
 
    <parent>
@@ -6,7 +7,7 @@
       <artifactId>weld-parent</artifactId>
       <version>17</version>
    </parent>
- 
+
    <groupId>org.jboss.forge</groupId>
    <artifactId>forge-parent</artifactId>
    <version>1.0.0-SNAPSHOT</version>
@@ -58,7 +59,7 @@
 
    <properties>
       <arquillian.version>1.0.0.Alpha4</arquillian.version>
-      <arquillian.container.version>1.1.0.Final</arquillian.container.version>
+      <arquillian.container.version>1.1.1.Final</arquillian.container.version>
       <cal10n.version>0.7.2</cal10n.version>
       <cdi.version>1.0-SP4</cdi.version>
       <groovy.version>1.7.5</groovy.version>
@@ -69,8 +70,8 @@
       <shrinkwrap.version>1.0.0-alpha-11</shrinkwrap.version>
       <shrinkwrap.descriptors.version>1.0.0-beta-1</shrinkwrap.descriptors.version>
       <slf4j.version>1.5.10</slf4j.version>
-      <weld.version>1.1.0.Final</weld.version>
-      <weld.bom.version>1.1.0.Final</weld.bom.version>
+      <weld.version>1.1.1.Final</weld.version>
+      <weld.bom.version>1.1.1.Final</weld.bom.version>
       <seam.render.version>1.0.0.Alpha3</seam.render.version>
       <solder.version>3.0.0.CR4</solder.version>
    </properties>
@@ -144,7 +145,22 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-javaee-integration</artifactId>
+            <artifactId>forge-javaee-impl</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>forge-dev-plugins</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>plugin-repository</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.metawidget</groupId>
+            <artifactId>metawidget-forge</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>
@@ -279,7 +295,6 @@
          <id>dist</id>
          <modules>
             <module>dist</module>
-            <module>docs/reference</module>
          </modules>
       </profile>
    </profiles>

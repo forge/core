@@ -40,6 +40,7 @@ import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.project.facets.events.InstallFacets;
+import org.jboss.forge.project.packaging.PackagingType;
 import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.shell.PromptType;
 import org.jboss.forge.shell.Shell;
@@ -59,7 +60,7 @@ import org.jboss.forge.spec.javaee.CDIFacet;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ * @author Kevin Pollet
  */
 @Alias("beans")
 @RequiresFacet(JavaSourceFacet.class)
@@ -135,6 +136,7 @@ public class BeansPlugin implements Plugin
       if (choice == 0)
       {
          dependency = promtForVersion(JAVAEE6_DEPENDENCY);
+         dependency = DependencyBuilder.create(dependency).setPackagingType(PackagingType.BASIC);
       }
       else if (choice == 1)
       {

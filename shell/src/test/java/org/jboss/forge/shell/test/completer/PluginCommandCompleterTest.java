@@ -30,8 +30,11 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.Root;
 import org.jboss.forge.shell.completer.PluginCommandCompleter;
-import org.jboss.forge.test.AbstractShellTest;
+import org.jboss.shrinkwrap.api.ArchivePaths;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,13 +43,25 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @RunWith(Arquillian.class)
-public class PluginCommandCompleterTest extends AbstractShellTest
+public class PluginCommandCompleterTest
 {
+
    @Deployment
    public static JavaArchive getDeployment()
    {
-      return AbstractShellTest.getDeployment().addClass(MockCompleterPlugin.class);
+
+      JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar")
+               .addPackages(true, Root.class.getPackage())
+               .addManifestResource(new ByteArrayAsset("<beans/>".getBytes()), ArchivePaths.create("beans.xml"));
+
+      return archive;
    }
+
+   // @Deployment
+   // public static JavaArchive getDeployment()
+   // {
+   // return AbstractShellTest.getDeployment().addClass(MockCompleterPlugin.class);
+   // }
 
    @Inject
    private PluginCommandCompleter completer;
@@ -187,10 +202,11 @@ public class PluginCommandCompleterTest extends AbstractShellTest
       ArrayList<CharSequence> candidates = new ArrayList<CharSequence>();
       String input = "mockcompleterplugin command3 -- ";
       int index = completer.complete(input, input.length(), candidates);
-      assertEquals(2, candidates.size());
+
+      // Only suggests one option here because it is required and we do not have a partial token.
+      assertEquals(1, candidates.size());
       assertTrue(candidates.contains("--option "));
-      assertTrue(candidates.contains("--option2 "));
-      assertEquals(input.length() - 3, index);
+      assertEquals(input.length(), index);
    }
 
    @Test

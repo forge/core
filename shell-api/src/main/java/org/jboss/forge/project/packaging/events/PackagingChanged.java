@@ -21,7 +21,7 @@
  */
 package org.jboss.forge.project.packaging.events;
 
-import org.jboss.forge.ForgeEvent;
+import org.jboss.forge.QueuedEvent;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.packaging.PackagingType;
 
@@ -31,7 +31,7 @@ import org.jboss.forge.project.packaging.PackagingType;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-@ForgeEvent
+@QueuedEvent
 public final class PackagingChanged
 {
    private final PackagingType oldPackagingType;

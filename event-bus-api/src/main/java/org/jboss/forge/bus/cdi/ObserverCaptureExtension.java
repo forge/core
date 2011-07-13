@@ -21,22 +21,39 @@
  */
 package org.jboss.forge.bus.cdi;
 
-import org.jboss.forge.bus.event.BaseEvent;
-
-import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.*;
-import javax.inject.Singleton;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+
+import javax.enterprise.event.Observes;
+import javax.enterprise.inject.spi.AnnotatedCallable;
+import javax.enterprise.inject.spi.AnnotatedConstructor;
+import javax.enterprise.inject.spi.AnnotatedField;
+import javax.enterprise.inject.spi.AnnotatedMethod;
+import javax.enterprise.inject.spi.AnnotatedParameter;
+import javax.enterprise.inject.spi.AnnotatedType;
+import javax.enterprise.inject.spi.Extension;
+import javax.enterprise.inject.spi.ProcessAnnotatedType;
+import javax.inject.Singleton;
+
+import org.jboss.forge.bus.event.BusEvent;
+import org.jboss.forge.bus.util.Annotations;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Singleton
-@SuppressWarnings({"rawtypes", "unchecked"})
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class ObserverCaptureExtension implements Extension
 {
    private final Map<Class<?>, List<BusManaged>> eventQualifierMap = new HashMap<Class<?>, List<BusManaged>>();
@@ -55,10 +72,30 @@ public class ObserverCaptureExtension implements Extension
          {
             if (param.isAnnotationPresent(Observes.class))
             {
-               if (param.getTypeClosure().contains(BaseEvent.class))
-               {
-                  replacementMethods.add(qualifyObservedEvent(method, param));
-                  obsoleteMethods.add(method);
+               Set<Type> typeClosure = param.getTypeClosure();
+               for (Type type : typeClosure) {
+                  if (type instanceof Class)
+                  {
+                     if (Annotations.isAnnotationPresent((Class<?>) type, BusEvent.class))
+                     {
+                        replacementMethods.add(qualifyObservedEvent(method, param));
+                        obsoleteMethods.add(method);
+                        break;
+                     }
+                  }
+                  else if (type instanceof ParameterizedType)
+                  {
+                     Type rawType = ((ParameterizedType) type).getRawType();
+                     if (rawType instanceof Class)
+                     {
+                        if (Annotations.isAnnotationPresent((Class<?>) rawType, (BusEvent.class)))
+                        {
+                           replacementMethods.add(qualifyObservedEvent(method, param));
+                           obsoleteMethods.add(method);
+                           break;
+                        }
+                     }
+                  }
                }
             }
          }
@@ -70,7 +107,7 @@ public class ObserverCaptureExtension implements Extension
       event.setAnnotatedType(newType);
    }
 
-   private List<AnnotatedMethod<? super Object>> getOrderedMethods(AnnotatedType<Object> originalType)
+   private List<AnnotatedMethod<? super Object>> getOrderedMethods(final AnnotatedType<Object> originalType)
    {
       Set<AnnotatedMethod<? super Object>> methods = originalType.getMethods();
 
@@ -80,7 +117,7 @@ public class ObserverCaptureExtension implements Extension
       Collections.sort(result, new Comparator<Object>()
       {
          @Override
-         public int compare(Object left, Object right)
+         public int compare(final Object left, final Object right)
          {
             String lid = ((AnnotatedMethod<? super Object>) left).getJavaMember().toGenericString();
             String rid = ((AnnotatedMethod<? super Object>) right).getJavaMember().toGenericString();
@@ -92,7 +129,7 @@ public class ObserverCaptureExtension implements Extension
    }
 
    private AnnotatedType<Object> removeMethodsFromType(final AnnotatedType type,
-                                                       final List<AnnotatedMethod> targetedMethods)
+            final List<AnnotatedMethod> targetedMethods)
    {
 
       final Set<AnnotatedMethod> methods = new HashSet<AnnotatedMethod>();
@@ -158,20 +195,20 @@ public class ObserverCaptureExtension implements Extension
    }
 
    private AnnotatedType<Object> addReplacementMethodsToType(final AnnotatedType newType,
-                                                             final List<AnnotatedMethod> replacementMethods)
+            final List<AnnotatedMethod> replacementMethods)
    {
       newType.getMethods().addAll(replacementMethods);
       return newType;
    }
 
    private AnnotatedMethod<Object> qualifyObservedEvent(
-         final AnnotatedMethod method, final AnnotatedParameter param)
+            final AnnotatedMethod method, final AnnotatedParameter param)
    {
       final List<AnnotatedParameter> parameters = new ArrayList<AnnotatedParameter>();
 
       parameters.addAll(method.getParameters());
+      parameters.set(parameters.indexOf(param), addUniqueQualifier(method, param));
       parameters.remove(param);
-      parameters.add(addUniqueQualifier(method, param));
 
       return new AnnotatedMethod()
       {
@@ -232,7 +269,7 @@ public class ObserverCaptureExtension implements Extension
    }
 
    private AnnotatedParameter addUniqueQualifier(final AnnotatedMethod method,
-                                                 final AnnotatedParameter param)
+            final AnnotatedParameter param)
    {
       final String identifier = String.valueOf(rollingIdentifier++);
       final String methodName = method.getJavaMember().getName();
@@ -318,7 +355,7 @@ public class ObserverCaptureExtension implements Extension
    }
 
    private void addQualifierToMap(final AnnotatedMethod annotatedMethod,
-                                  final AnnotatedParameter param, final BusManaged qualifier)
+            final AnnotatedParameter param, final BusManaged qualifier)
    {
       Method method = annotatedMethod.getJavaMember();
       Class<?> clazz = method.getParameterTypes()[param.getPosition()];
@@ -332,10 +369,9 @@ public class ObserverCaptureExtension implements Extension
    }
 
    /**
-    * Return a list containing instances of {@link BusManaged} annotations
-    * corresponding to the given event type.
+    * Return a list containing instances of {@link BusManaged} annotations corresponding to the given event type.
     */
-   public List<BusManaged> getEventQualifiers(final Class<? extends BaseEvent> clazz)
+   public List<BusManaged> getEventQualifiers(final Class<?> clazz)
    {
       List<BusManaged> result = new ArrayList<BusManaged>();
       for (Entry<Class<?>, List<BusManaged>> entry : eventQualifierMap.entrySet())
@@ -351,9 +387,8 @@ public class ObserverCaptureExtension implements Extension
    }
 
    /**
-    * Return the entire map of Event Types and their corresponding lists of
-    * {@link BusManaged} annotation instances. This map can be used to implement
-    * a strategy for custom firing of events.
+    * Return the entire map of Event Types and their corresponding lists of {@link BusManaged} annotation instances.
+    * This map can be used to implement a strategy for custom firing of events.
     */
    public Map<Class<?>, List<BusManaged>> getEventQualifierMap()
    {

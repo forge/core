@@ -36,6 +36,7 @@ public class EventBusQueuedException extends RuntimeException
 
    EventBusQueuedException(final List<Exception> thrown)
    {
+      super("Aggregated [" + thrown.size() + "] caught exceptions during event bus firing.");
       queuedExceptions = thrown;
    }
 
@@ -43,4 +44,6 @@ public class EventBusQueuedException extends RuntimeException
    {
       return Collections.unmodifiableList(queuedExceptions);
    }
+
+   // TODO override Exception methods to provide aggregate trace reporting
 }

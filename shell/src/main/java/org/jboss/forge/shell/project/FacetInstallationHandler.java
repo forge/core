@@ -26,9 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
-import org.jboss.forge.bus.EventBus;
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.FacetActionAborted;
@@ -57,7 +57,7 @@ public class FacetInstallationHandler
    private Project project;
 
    @Inject
-   private EventBus bus;
+   private BeanManager manager;
 
    public void installRequest(@Observes final InstallFacets request)
    {
@@ -88,7 +88,7 @@ public class FacetInstallationHandler
 
       for (Facet facet : installed)
       {
-         bus.enqueue(new FacetInstalled(facet));
+         manager.fireEvent(new FacetInstalled(facet));
       }
    }
 
@@ -129,7 +129,7 @@ public class FacetInstallationHandler
             if (facet.isInstalled())
             {
                ShellMessages.success(shell, "Installed [" + ConstraintInspector.getName(facet.getClass())
-                           + "] successfully.");
+                        + "] successfully.");
                return true;
             }
          }
@@ -184,14 +184,14 @@ public class FacetInstallationHandler
                      if (!f.uninstall())
                      {
                         ShellMessages.info(shell,
-                                    "Could not uninstall [" + ConstraintInspector.getName(f.getClass())
-                                             + "]. Must be cleaned up manually.");
+                                 "Could not uninstall [" + ConstraintInspector.getName(f.getClass())
+                                          + "]. Must be cleaned up manually.");
                      }
                      else
                      {
                         ShellMessages.info(shell,
-                                    "Uninstalled facet [" + ConstraintInspector.getName(f.getClass())
-                                             + "].");
+                                 "Uninstalled facet [" + ConstraintInspector.getName(f.getClass())
+                                          + "].");
                      }
                   }
                   throw new Abort();
@@ -212,9 +212,9 @@ public class FacetInstallationHandler
          return null;
       }
       else if (shell.promptBoolean("Facet ["
-                     + facetName + "] requires packaging type(s) " + types
-                     + ", but is currently [" + packaging
-                     + "]. Update packaging? (Note: this could deactivate other plugins in your project.)"))
+               + facetName + "] requires packaging type(s) " + types
+               + ", but is currently [" + packaging
+               + "]. Update packaging? (Note: this could deactivate other plugins in your project.)"))
       {
          if (types.size() == 1)
          {

@@ -21,7 +21,6 @@
  */
 package org.jboss.forge.shell.events;
 
-import org.jboss.forge.ForgeEvent;
 
 /**
  * Fired after a plugin/command has been executed and has finished processing.
@@ -29,7 +28,6 @@ import org.jboss.forge.ForgeEvent;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-@ForgeEvent
 public final class CommandExecuted
 {
    public enum Status
@@ -40,8 +38,7 @@ public final class CommandExecuted
    private Status status = Status.SUCCESS;
 
    public CommandExecuted()
-   {
-   }
+   {}
 
    public CommandExecuted(final Status status)
    {

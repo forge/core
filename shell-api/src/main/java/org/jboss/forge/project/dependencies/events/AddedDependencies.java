@@ -24,7 +24,7 @@ package org.jboss.forge.project.dependencies.events;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jboss.forge.ForgeEvent;
+import org.jboss.forge.QueuedEvent;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.Dependency;
 
@@ -34,19 +34,19 @@ import org.jboss.forge.project.dependencies.Dependency;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-@ForgeEvent
+@QueuedEvent
 public final class AddedDependencies
 {
    private final List<Dependency> dependencies;
    private final Project project;
 
-   public AddedDependencies(Project project, Dependency... dependencies)
+   public AddedDependencies(final Project project, final Dependency... dependencies)
    {
       this.dependencies = Arrays.asList(dependencies);
       this.project = project;
    }
 
-   public AddedDependencies(Project project, List<Dependency> dependencies)
+   public AddedDependencies(final Project project, final List<Dependency> dependencies)
    {
       this.dependencies = dependencies;
       this.project = project;

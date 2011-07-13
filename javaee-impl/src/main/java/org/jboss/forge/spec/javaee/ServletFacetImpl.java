@@ -39,7 +39,6 @@ import org.jboss.forge.resources.ResourceFilter;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresPackagingType;
-import org.jboss.forge.spec.javaee.ServletFacet;
 import org.jboss.shrinkwrap.descriptor.api.DescriptorImporter;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
@@ -88,12 +87,12 @@ public class ServletFacetImpl extends BaseFacet implements ServletFacet
       return listChildrenRecursively(webRoot);
    }
 
-   private List<Resource<?>> listChildrenRecursively(DirectoryResource webRoot)
+   private List<Resource<?>> listChildrenRecursively(final DirectoryResource webRoot)
    {
       return listChildrenRecursively(webRoot, new ResourceFilter()
       {
          @Override
-         public boolean accept(Resource<?> resource)
+         public boolean accept(final Resource<?> resource)
          {
             return true;
          }
@@ -107,7 +106,7 @@ public class ServletFacetImpl extends BaseFacet implements ServletFacet
       return listChildrenRecursively(webRoot, filter);
    }
 
-   private List<Resource<?>> listChildrenRecursively(final DirectoryResource current, ResourceFilter filter)
+   private List<Resource<?>> listChildrenRecursively(final DirectoryResource current, final ResourceFilter filter)
    {
       List<Resource<?>> result = new ArrayList<Resource<?>>();
       List<Resource<?>> list = current.listResources();
@@ -162,13 +161,18 @@ public class ServletFacetImpl extends BaseFacet implements ServletFacet
             descriptor.setContents(unit.exportAsString());
          }
 
-         FileResource<?> welcomePage = (FileResource<?>) webRoot.getChild("index.html");
-         welcomePage.setContents("<html><head><title>Welcome to Forge</title></head>" +
-                  "<body>" +
-                  "<h1> [" + projectName + "] is Online</h1>" +
-                  "Powered by <a href=\"http://bit.ly/seamforge\">Forge</a>" +
-                  "</body>" +
-                  "</html>");
+         ((FileResource<?>) webRoot.getChild("index.html")).setContents(getClass().getResourceAsStream(
+                  "/org/jboss/forge/web/index.html"));
+         ((FileResource<?>) webRoot.getChild("forge-logo.png")).setContents(getClass().getResourceAsStream(
+                  "/org/jboss/forge/web/forge-logo.png"));
+         ((FileResource<?>) webRoot.getChild("forge-style.css")).setContents(getClass().getResourceAsStream(
+                  "/org/jboss/forge/web/forge-style.css"));
+         ((FileResource<?>) webRoot.getChild("jboss-community.png")).setContents(getClass().getResourceAsStream(
+                  "/org/jboss/forge/web/jboss-community.png"));
+         ((FileResource<?>) webRoot.getChild("bkg.gif")).setContents(getClass().getResourceAsStream(
+                  "/org/jboss/forge/web/bkg.gif"));
+         ((FileResource<?>) webRoot.getChild("favicon.ico")).setContents(getClass().getResourceAsStream(
+                  "/org/jboss/forge/web/favicon.ico"));
       }
       return true;
    }

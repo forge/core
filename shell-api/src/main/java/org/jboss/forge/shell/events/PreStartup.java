@@ -21,14 +21,12 @@
  */
 package org.jboss.forge.shell.events;
 
-import org.jboss.forge.ForgeEvent;
 
 /**
  * Fired by the {@link Bootstrap} when it has successfully started weld
  * 
  * @author Ronald van Kuijk
  */
-@ForgeEvent
 public final class PreStartup
 {
 

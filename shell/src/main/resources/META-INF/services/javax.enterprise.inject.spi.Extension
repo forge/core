@@ -2,4 +2,3 @@ org.jboss.forge.shell.command.CommandLibraryExtension
 org.jboss.forge.shell.project.ProjectScopedExtension
 org.jboss.forge.shell.project.resources.ResourceProducerExtension
 org.jboss.forge.shell.project.resources.ResourceScopedExtension
-org.jboss.forge.shell.BeanManagerCaptureExtension

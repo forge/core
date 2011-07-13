@@ -31,13 +31,13 @@ import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.TransactionType;
  */
 public class JBossAS7Container extends JavaEEDefaultContainer
 {
-   private static final String DEFAULT_DS = "java:/H2DS";
+   private static final String EXAMPLE_DS = "java:jboss/datasources/ExampleDS";
 
    @Override
    public DatabaseType setup(final PersistenceUnitDef unit)
    {
       unit.transactionType(TransactionType.JTA);
-      unit.jtaDataSource(DEFAULT_DS);
+      unit.jtaDataSource(EXAMPLE_DS);
       unit.nonJtaDataSource(null);
       return DatabaseType.HSQLDB;
    }
