@@ -214,4 +214,10 @@ public interface ShellPrompt
     * @param type The command completer type to instantiate and use during completion
     */
    String promptCompleter(String string, Class<? extends CommandCompleter> type);
+
+   /**
+    * First print the given message, prompt the user for input (masking keystrokes for secrecy,) then return user input.
+    */
+   String promptSecret(String message);
+
 }

@@ -594,7 +594,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       String out = null;
       if (cmd != null)
       {
-         out = cmd.getPluginMetadata().getName();
+         out = cmd.getParent().getName();
          if (!cmd.isDefault())
             out += " " + cmd.getName();
 
@@ -609,7 +609,21 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    @Override
    public String readLine() throws IOException
    {
-      String line = reader.readLine();
+      return readLine(null);
+   }
+
+   @Override
+   public String readLine(final String mask) throws IOException
+   {
+      String line = null;
+      if (mask != null)
+      {
+         line = reader.readLine(mask);
+      }
+      else
+      {
+         line = reader.readLine();
+      }
 
       if (isExecuting() && (line == null))
       {

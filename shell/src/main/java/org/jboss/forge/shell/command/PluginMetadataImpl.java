@@ -40,7 +40,7 @@ import org.jboss.forge.shell.plugins.Plugin;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author Mike Brock
  */
-public class PluginMetadata
+public class PluginMetadataImpl implements PluginMetadata
 {
    private String help = "";
    private String name = "";
@@ -56,11 +56,13 @@ public class PluginMetadata
 
    private boolean scopeOverloaded = false;
 
+   @Override
    public CommandMetadata getCommand(final String name)
    {
       return getCommand(name, (Class<? extends Resource<?>>) null);
    }
 
+   @Override
    public CommandMetadata getCommand(final String name, final Shell shell)
    {
       return getCommand(name, shell.getCurrentResourceScope());
@@ -69,6 +71,7 @@ public class PluginMetadata
    /**
     * Get the command matching the given name, or return null.
     */
+   @Override
    public CommandMetadata getCommand(final String name, final Class<? extends Resource<?>> scope)
    {
       if (scope == null)
@@ -105,21 +108,25 @@ public class PluginMetadata
       return null;
    }
 
+   @Override
    public boolean hasCommand(final String name, final Shell shell)
    {
       return getCommand(name, shell.getCurrentResourceScope()) != null;
    }
 
+   @Override
    public boolean hasCommand(final String name, final Class<? extends Resource<?>> scope)
    {
       return getCommand(name, scope) != null;
    }
 
+   @Override
    public boolean hasDefaultCommand()
    {
       return getDefaultCommand() != null;
    }
 
+   @Override
    public CommandMetadata getDefaultCommand()
    {
       return defaultCommand;
@@ -140,7 +147,7 @@ public class PluginMetadata
          if (defaultCommand != null)
          {
             throw new RuntimeException("default command already defined: " + command.getName() + "; for plugin: "
-                  + name);
+                     + name);
          }
          defaultCommand = command;
       }
@@ -157,17 +164,19 @@ public class PluginMetadata
       commandMap.get(command.getName()).add(command);
    }
 
+   @Override
    public List<CommandMetadata> getCommands()
    {
       return getCommands((Class<? extends Resource<?>>) null);
    }
 
+   @Override
    public List<CommandMetadata> getCommands(final Shell shell)
    {
       return getCommands(shell.getCurrentResourceScope());
    }
 
-   public List<CommandMetadata> getCommands(final Class<? extends Resource<?>> scope)
+   private List<CommandMetadata> getCommands(final Class<? extends Resource<?>> scope)
    {
       if ((scope == null) && scopeOverloaded)
       {
@@ -188,6 +197,7 @@ public class PluginMetadata
       return Collections.unmodifiableList(result);
    }
 
+   @Override
    public List<CommandMetadata> getAllCommands()
    {
       List<CommandMetadata> result = new ArrayList<CommandMetadata>();
@@ -201,6 +211,7 @@ public class PluginMetadata
       return Collections.unmodifiableList(result);
    }
 
+   @Override
    public boolean isCommandOverloaded(final String name)
    {
       return commandMap.containsKey(name) && (commandMap.get(name).size() > 1);
@@ -212,6 +223,7 @@ public class PluginMetadata
       return name;
    }
 
+   @Override
    public String getName()
    {
       return name;
@@ -222,6 +234,7 @@ public class PluginMetadata
       this.name = name;
    }
 
+   @Override
    public Class<? extends Plugin> getType()
    {
       return type;
@@ -232,6 +245,7 @@ public class PluginMetadata
       this.type = type;
    }
 
+   @Override
    public String getHelp()
    {
       return help;
@@ -242,6 +256,7 @@ public class PluginMetadata
       this.help = help;
    }
 
+   @Override
    public String getTopic()
    {
       return topic;
@@ -252,11 +267,13 @@ public class PluginMetadata
       this.topic = topic.toUpperCase();
    }
 
+   @Override
    public boolean hasCommands()
    {
       return !commandMap.isEmpty();
    }
 
+   @Override
    public boolean constrantsSatisfied(final Shell shell)
    {
       try
@@ -271,12 +288,14 @@ public class PluginMetadata
       }
    }
 
+   @Override
    @SuppressWarnings("rawtypes")
    public boolean usableWithScope(final Class<? extends Resource> scope)
    {
       return resourceScopes.isEmpty() || resourceScopes.contains(scope);
    }
 
+   @Override
    public Set<Class<? extends Resource<?>>> getResourceScopes()
    {
       return resourceScopes;

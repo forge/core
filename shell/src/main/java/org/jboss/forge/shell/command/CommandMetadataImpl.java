@@ -35,11 +35,10 @@ import org.jboss.forge.resources.Resource;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class CommandMetadata
+public class CommandMetadataImpl implements CommandMetadata
 {
    private PluginMetadata parent;
    private Method method;
-   private Method pipeInMethod;
 
    private boolean isDefault = false;
 
@@ -47,11 +46,10 @@ public class CommandMetadata
    private String help = "";
    private List<OptionMetadata> options = new ArrayList<OptionMetadata>();
 
-   private int parmLength = 0;
-
    @SuppressWarnings("rawtypes")
    private Set<Class<? extends Resource>> resourceScopes = Collections.emptySet();
 
+   @Override
    public OptionMetadata getNamedOption(final String name) throws IllegalArgumentException
    {
       for (OptionMetadata option : options)
@@ -64,10 +62,7 @@ public class CommandMetadata
       throw new IllegalArgumentException("No such option [" + name + "] for command: " + this);
    }
 
-   /**
-    * Return the option at the given index. This index represents where the option was defined in the plugin method
-    * signature, not the index of the option on the command line.
-    */
+   @Override
    public OptionMetadata getOptionByAbsoluteIndex(final int index)
    {
       for (OptionMetadata option : options)
@@ -81,6 +76,7 @@ public class CommandMetadata
 
    }
 
+   @Override
    public OptionMetadata getOrderedOptionByIndex(final int index) throws IllegalArgumentException
    {
       int currentIndex = 0;
@@ -98,6 +94,7 @@ public class CommandMetadata
       throw new IllegalArgumentException("No option with index [" + index + "] exists for command: " + this);
    }
 
+   @Override
    public int getNumOrderedOptions()
    {
       int count = 0;
@@ -111,6 +108,7 @@ public class CommandMetadata
       return count;
    }
 
+   @Override
    public Method getMethod()
    {
       return method;
@@ -121,16 +119,7 @@ public class CommandMetadata
       this.method = method;
    }
 
-   public Method getPipeInMethod()
-   {
-      return pipeInMethod;
-   }
-
-   public void setPipeInMethod(final Method pipeInMethod)
-   {
-      this.pipeInMethod = pipeInMethod;
-   }
-
+   @Override
    public boolean isDefault()
    {
       return isDefault;
@@ -141,6 +130,7 @@ public class CommandMetadata
       this.isDefault = isDefault;
    }
 
+   @Override
    public String getName()
    {
       return name;
@@ -151,6 +141,7 @@ public class CommandMetadata
       this.name = name;
    }
 
+   @Override
    public List<OptionMetadata> getOptions()
    {
       if (options == null)
@@ -199,6 +190,7 @@ public class CommandMetadata
       this.options.add(option);
    }
 
+   @Override
    public String getHelp()
    {
       return help;
@@ -215,7 +207,8 @@ public class CommandMetadata
       return name;
    }
 
-   public PluginMetadata getPluginMetadata()
+   @Override
+   public PluginMetadata getParent()
    {
       return parent;
    }
@@ -225,11 +218,13 @@ public class CommandMetadata
       this.parent = parent;
    }
 
+   @Override
    public boolean hasOptions()
    {
       return !getOptions().isEmpty();
    }
 
+   @Override
    public boolean hasShortOption(final String name)
    {
       for (OptionMetadata option : options)
@@ -242,6 +237,7 @@ public class CommandMetadata
       return false;
    }
 
+   @Override
    public boolean hasOption(final String name)
    {
       for (OptionMetadata option : options)
@@ -257,6 +253,7 @@ public class CommandMetadata
       return false;
    }
 
+   @Override
    @SuppressWarnings("rawtypes")
    public Set<Class<? extends Resource>> getResourceScopes()
    {
@@ -275,16 +272,7 @@ public class CommandMetadata
       return (this.resourceScopes.size() == 0) || this.resourceScopes.contains(resource);
    }
 
-   public int getParmLength()
-   {
-      return parmLength;
-   }
-
-   public void setParmLength(final int parmLength)
-   {
-      this.parmLength = parmLength;
-   }
-
+   @Override
    public boolean hasOrderedOptions()
    {
       try {

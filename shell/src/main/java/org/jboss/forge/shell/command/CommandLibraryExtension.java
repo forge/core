@@ -84,7 +84,7 @@ public class CommandLibraryExtension implements Extension
    {
       String name = getPluginName(plugin);
 
-      PluginMetadata pluginMeta = new PluginMetadata();
+      PluginMetadataImpl pluginMeta = new PluginMetadataImpl();
       pluginMeta.setName(name);
       pluginMeta.setType(plugin);
 
@@ -116,7 +116,7 @@ public class CommandLibraryExtension implements Extension
    }
 
    @SuppressWarnings("rawtypes")
-   private List<CommandMetadata> processPluginCommands(final PluginMetadata pluginMeta, final Class<?> plugin)
+   private List<CommandMetadata> processPluginCommands(final PluginMetadataImpl pluginMeta, final Class<?> plugin)
    {
       List<CommandMetadata> results = new ArrayList<CommandMetadata>();
 
@@ -125,7 +125,7 @@ public class CommandLibraryExtension implements Extension
          if (Annotations.isAnnotationPresent(method, Command.class))
          {
             Command command = Annotations.getAnnotation(method, Command.class);
-            CommandMetadata commandMeta = new CommandMetadata();
+            CommandMetadataImpl commandMeta = new CommandMetadataImpl();
             commandMeta.setMethod(method);
             commandMeta.setHelp(command.help());
             commandMeta.setParent(pluginMeta);
@@ -184,7 +184,7 @@ public class CommandLibraryExtension implements Extension
             int i = 0;
             for (Class<?> clazz : parameterTypes)
             {
-               OptionMetadata optionMeta = new OptionMetadata();
+               OptionMetadataImpl optionMeta = new OptionMetadataImpl();
 
                optionMeta.setType(clazz);
                optionMeta.setIndex(i);

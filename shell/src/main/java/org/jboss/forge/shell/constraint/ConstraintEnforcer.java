@@ -41,7 +41,7 @@ public class ConstraintEnforcer
             UnsatisfiedPackagingTypeException, UnsatisfiedFacetDependencyException
    {
 
-      Class<? extends Plugin> type = command.getPluginMetadata().getType();
+      Class<? extends Plugin> type = command.getParent().getType();
       if (ConstraintInspector.requiresProject(type) && (currentProject == null))
       {
          throw new NoProjectException(
