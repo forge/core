@@ -613,7 +613,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    }
 
    @Override
-   public String readLine(final String mask) throws IOException
+   public String readLine(final Character mask) throws IOException
    {
       String line = null;
       if (mask != null)
@@ -1129,6 +1129,35 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          {
             reader.removeCompleter(tempCompleter);
          }
+         reader.addCompleter(this.completer);
+         reader.setHistoryEnabled(true);
+         reader.setPrompt("");
+      }
+   }
+
+   @Override
+   public String promptSecret(String message)
+   {
+      if (!message.isEmpty() && message.matches("^.*\\S$"))
+      {
+         message = message + " ";
+      }
+      message = renderColor(ShellColor.CYAN, " ? ") + message;
+
+      try
+      {
+         reader.removeCompleter(this.completer);
+         reader.setHistoryEnabled(false);
+         reader.setPrompt(message);
+         String line = readLine('*');
+         return line;
+      }
+      catch (IOException e)
+      {
+         throw new IllegalStateException("Shell input stream failure", e);
+      }
+      finally
+      {
          reader.addCompleter(this.completer);
          reader.setHistoryEnabled(true);
          reader.setPrompt("");

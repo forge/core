@@ -195,11 +195,11 @@ public interface Shell extends ShellPrintWriter, ShellPrompt, ShellHistory
    /**
     * Ask the current {@link InputStream} for input, masking keystrokes in the console with the given mask.
     * 
-    * @param mask The sequence to use for masking input
+    * @param mask The character to use for masking input
     * @return any read data as a string, or null if none available.
     * @throws IOException on error
     */
-   String readLine(String mask) throws IOException;
+   String readLine(Character mask) throws IOException;
 
    /**
     * Controls the shell's usage of ANSI escape code support. This method does not guarantee ANSI will function

@@ -22,7 +22,6 @@
 package org.jboss.forge.shell;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -69,23 +68,6 @@ public abstract class AbstractShellPrompt implements Shell
    public String prompt()
    {
       return prompt("");
-   }
-
-   @Override
-   public String promptSecret(String message)
-   {
-      if (!message.isEmpty() && message.matches("^.*\\S$"))
-      {
-         message = message + " ";
-      }
-      message = renderColor(ShellColor.CYAN, " ? ") + message;
-
-      try {
-         return readLine("*");
-      }
-      catch (IOException e) {
-         throw new RuntimeException(e);
-      }
    }
 
    @Override
