@@ -40,8 +40,9 @@ public class PluginRef
    private final String homeRepo;
    private final String gitRef;
 
-   public PluginRef(String name, String author, String description, String artifact, String homeRepo, String gitRepo,
-            String gitRef)
+   public PluginRef(final String name, final String author, final String description, final String artifact,
+            final String homeRepo, final String gitRepo,
+            final String gitRef)
    {
       this.name = name;
       this.author = author;
@@ -90,5 +91,19 @@ public class PluginRef
    public boolean isGit()
    {
       return !Strings.isNullOrEmpty(gitRepo);
+   }
+
+   public String getLocation()
+   {
+      String location = getHomeRepo();
+      if (Strings.isNullOrEmpty(location))
+      {
+         location = getGitRepo();
+      }
+      if (Strings.isNullOrEmpty(location))
+      {
+         location = "Unknown";
+      }
+      return location;
    }
 }

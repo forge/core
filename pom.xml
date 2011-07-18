@@ -65,6 +65,7 @@
       <groovy.version>1.7.5</groovy.version>
       <jboss.logging.version>3.0.0.Beta4</jboss.logging.version>
       <jboss.javaee.version>1.0.0.Final</jboss.javaee.version>
+      <jboss.modules.version>1.0.1.GA</jboss.modules.version>
       <junit.version>4.8.1</junit.version>
       <log4j.version>1.2.16</log4j.version>
       <shrinkwrap.version>1.0.0-alpha-11</shrinkwrap.version>
@@ -93,6 +94,11 @@
             <type>pom</type>
          </dependency>
 
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>forge-distribution</artifactId>
+            <version>${project.version}</version>
+         </dependency>
          <dependency>
             <groupId>org.jboss.forge</groupId>
             <artifactId>forge-event-bus</artifactId>
@@ -179,6 +185,11 @@
             <version>${project.version}</version>
          </dependency>
 
+         <dependency>
+            <groupId>org.jboss.modules</groupId>
+            <artifactId>jboss-modules</artifactId>
+            <version>${jboss.modules.version}</version>
+         </dependency>
          <dependency>
             <groupId>org.jboss.weld.se</groupId>
             <artifactId>weld-se-core</artifactId>

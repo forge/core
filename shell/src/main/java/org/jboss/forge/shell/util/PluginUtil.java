@@ -51,7 +51,7 @@ public class PluginUtil
    private static final String PROP_NAME = "name";
    private static final Object PROP_GIT_REF = "gitref";
 
-   private static String getDefaultRepo(ForgeEnvironment environment)
+   private static String getDefaultRepo(final ForgeEnvironment environment)
    {
       String defaultRepo = (String) environment.getProperty("DEFFAULT_PLUGIN_REPO");
       if (defaultRepo == null)
@@ -62,7 +62,8 @@ public class PluginUtil
    }
 
    @SuppressWarnings("unchecked")
-   public static List<PluginRef> findPlugin(ForgeEnvironment environment, String searchString, PipeOut out)
+   public static List<PluginRef> findPlugin(final ForgeEnvironment environment, final String searchString,
+            final PipeOut out)
             throws Exception
    {
       String defaultRepo = getDefaultRepo(environment);
@@ -91,6 +92,7 @@ public class PluginUtil
       List<PluginRef> pluginList = new ArrayList<PluginRef>();
 
       Yaml yaml = new Yaml();
+      // TODO this needs to be cached instead of downloaded each time
       for (Object o : yaml.loadAll(httpResponse.getEntity().getContent()))
       {
          if (o == null)
@@ -99,11 +101,11 @@ public class PluginUtil
          }
 
          Map<String, String> map = (Map<String, String>) o;
-         String name = map.get(PROP_NAME);
 
-         if (pattern.matcher(name).matches())
+         PluginRef ref = bindToPuginRef(map);
+         if (pattern.matcher(ref.getName()).matches() || pattern.matcher(ref.getDescription()).matches())
          {
-            pluginList.add(bindToPuginRef(map));
+            pluginList.add(ref);
          }
       }
 
@@ -137,7 +139,7 @@ public class PluginUtil
       }
    }
 
-   private static PluginRef bindToPuginRef(Map<String, String> map)
+   private static PluginRef bindToPuginRef(final Map<String, String> map)
    {
       return new PluginRef(map.get(PROP_NAME),
                map.get(PROP_AUTHOR),
