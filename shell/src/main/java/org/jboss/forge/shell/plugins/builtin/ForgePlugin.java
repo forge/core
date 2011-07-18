@@ -224,8 +224,9 @@ public class ForgePlugin implements Plugin
       {
          out.println(" - " + out.renderColor(ShellColor.BOLD, ref.getName()) + " (" + ref.getArtifact() + ")");
          out.println("\tAuthor: " + ref.getAuthor());
-         out.println("\tDescription: " + ref.getDescription());
+         out.println("\tWebsite: " + ref.getWebsite());
          out.println("\tLocation: " + ref.getLocation());
+         out.println("\tDescription: " + ref.getDescription());
          out.println();
       }
    }

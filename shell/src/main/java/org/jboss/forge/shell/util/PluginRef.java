@@ -32,19 +32,22 @@ import org.jboss.forge.project.dependencies.DependencyBuilder;
  */
 public class PluginRef
 {
-   private final String name;
-   private final String author;
-   private final String description;
-   private final String artifact;
-   private final String gitRepo;
-   private final String homeRepo;
-   private final String gitRef;
+   private String name = "";
+   private String website = "";
+   private String author = "";
+   private String description = "";
+   private String artifact = "";
+   private String gitRepo = "";
+   private String homeRepo = "";
+   private String gitRef = "";
 
-   public PluginRef(final String name, final String author, final String description, final String artifact,
+   public PluginRef(final String name, final String website, final String author, final String description,
+            final String artifact,
             final String homeRepo, final String gitRepo,
             final String gitRef)
    {
       this.name = name;
+      this.website = website;
       this.author = author;
       this.description = description;
       this.artifact = artifact;
@@ -60,17 +63,17 @@ public class PluginRef
 
    public String getName()
    {
-      return name;
+      return name == null ? "" : name;
    }
 
    public String getAuthor()
    {
-      return author;
+      return author == null ? "" : author;
    }
 
    public String getDescription()
    {
-      return description;
+      return description == null ? "" : description;
    }
 
    public Dependency getArtifact()
@@ -80,17 +83,22 @@ public class PluginRef
 
    public String getHomeRepo()
    {
-      return homeRepo;
+      return homeRepo == null ? "" : homeRepo;
    }
 
    public String getGitRepo()
    {
-      return gitRepo;
+      return gitRepo == null ? "" : website;
    }
 
    public boolean isGit()
    {
       return !Strings.isNullOrEmpty(gitRepo);
+   }
+
+   public String getWebsite()
+   {
+      return website == null ? "" : website;
    }
 
    public String getLocation()

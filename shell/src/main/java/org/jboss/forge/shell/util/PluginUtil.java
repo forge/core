@@ -49,6 +49,7 @@ public class PluginUtil
    private static final String PROP_DESCRIPTION = "description";
    private static final String PROP_AUTHOR = "author";
    private static final String PROP_NAME = "name";
+   private static final String PROP_WEBSITE = "website";
    private static final Object PROP_GIT_REF = "gitref";
 
    private static String getDefaultRepo(final ForgeEnvironment environment)
@@ -142,6 +143,7 @@ public class PluginUtil
    private static PluginRef bindToPuginRef(final Map<String, String> map)
    {
       return new PluginRef(map.get(PROP_NAME),
+               map.get(PROP_WEBSITE),
                map.get(PROP_AUTHOR),
                map.get(PROP_DESCRIPTION),
                map.get(PROP_ARTIFACT),
