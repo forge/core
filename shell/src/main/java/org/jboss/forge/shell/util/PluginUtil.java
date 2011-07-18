@@ -50,7 +50,8 @@ public class PluginUtil
    private static final String PROP_AUTHOR = "author";
    private static final String PROP_NAME = "name";
    private static final String PROP_WEBSITE = "website";
-   private static final Object PROP_GIT_REF = "gitref";
+   private static final String PROP_GIT_REF = "gitref";
+   private static final String PROP_TAGS = "tags";
 
    private static String getDefaultRepo(final ForgeEnvironment environment)
    {
@@ -104,7 +105,8 @@ public class PluginUtil
          Map<String, String> map = (Map<String, String>) o;
 
          PluginRef ref = bindToPuginRef(map);
-         if (pattern.matcher(ref.getName()).matches() || pattern.matcher(ref.getDescription()).matches())
+         if (pattern.matcher(ref.getName()).matches() || pattern.matcher(ref.getDescription()).matches()
+                  || pattern.matcher(ref.getTags()).matches())
          {
             pluginList.add(ref);
          }
@@ -142,13 +144,16 @@ public class PluginUtil
 
    private static PluginRef bindToPuginRef(final Map<String, String> map)
    {
-      return new PluginRef(map.get(PROP_NAME),
-               map.get(PROP_WEBSITE),
-               map.get(PROP_AUTHOR),
-               map.get(PROP_DESCRIPTION),
-               map.get(PROP_ARTIFACT),
-               map.get(PROP_HOME_MAVEN_REPO),
-               map.get(PROP_GIT_REPOSITORY),
-               map.get(PROP_GIT_REF));
+      PluginRef ref = new PluginRef();
+      ref.setName(map.get(PROP_NAME));
+      ref.setWebsite(map.get(PROP_WEBSITE));
+      ref.setArtifact(map.get(PROP_ARTIFACT));
+      ref.setAuthor(map.get(PROP_AUTHOR));
+      ref.setDescription(map.get(PROP_DESCRIPTION));
+      ref.setTags(map.get(PROP_TAGS));
+      ref.setHomeRepo(map.get(PROP_HOME_MAVEN_REPO));
+      ref.setGitRepo(map.get(PROP_GIT_REPOSITORY));
+      ref.setGitRef(map.get(PROP_GIT_REF));
+      return ref;
    }
 }

@@ -36,25 +36,11 @@ public class PluginRef
    private String website = "";
    private String author = "";
    private String description = "";
+   private String tags = "";
    private String artifact = "";
    private String gitRepo = "";
    private String homeRepo = "";
    private String gitRef = "";
-
-   public PluginRef(final String name, final String website, final String author, final String description,
-            final String artifact,
-            final String homeRepo, final String gitRepo,
-            final String gitRef)
-   {
-      this.name = name;
-      this.website = website;
-      this.author = author;
-      this.description = description;
-      this.artifact = artifact;
-      this.homeRepo = homeRepo;
-      this.gitRepo = gitRepo;
-      this.gitRef = gitRef;
-   }
 
    public String getGitRef()
    {
@@ -76,6 +62,11 @@ public class PluginRef
       return description == null ? "" : description;
    }
 
+   public String getTags()
+   {
+      return tags == null ? "" : tags;
+   }
+
    public Dependency getArtifact()
    {
       return DependencyBuilder.create(artifact);
@@ -88,7 +79,7 @@ public class PluginRef
 
    public String getGitRepo()
    {
-      return gitRepo == null ? "" : website;
+      return gitRepo == null ? "" : gitRepo;
    }
 
    public boolean isGit()
@@ -113,5 +104,50 @@ public class PluginRef
          location = "Unknown";
       }
       return location;
+   }
+
+   public void setName(final String name)
+   {
+      this.name = name;
+   }
+
+   public void setWebsite(final String website)
+   {
+      this.website = website;
+   }
+
+   public void setAuthor(final String author)
+   {
+      this.author = author;
+   }
+
+   public void setDescription(final String description)
+   {
+      this.description = description;
+   }
+
+   public void setTags(final String tags)
+   {
+      this.tags = tags;
+   }
+
+   public void setArtifact(final String artifact)
+   {
+      this.artifact = artifact;
+   }
+
+   public void setGitRepo(final String gitRepo)
+   {
+      this.gitRepo = gitRepo;
+   }
+
+   public void setHomeRepo(final String homeRepo)
+   {
+      this.homeRepo = homeRepo;
+   }
+
+   public void setGitRef(final String gitRef)
+   {
+      this.gitRef = gitRef;
    }
 }

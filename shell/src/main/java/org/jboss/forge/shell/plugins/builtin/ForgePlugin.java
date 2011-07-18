@@ -226,6 +226,7 @@ public class ForgePlugin implements Plugin
          out.println("\tAuthor: " + ref.getAuthor());
          out.println("\tWebsite: " + ref.getWebsite());
          out.println("\tLocation: " + ref.getLocation());
+         out.println("\tTags: " + ref.getTags());
          out.println("\tDescription: " + ref.getDescription());
          out.println();
       }
