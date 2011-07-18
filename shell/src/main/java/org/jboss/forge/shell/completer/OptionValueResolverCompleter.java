@@ -1,5 +1,12 @@
 package org.jboss.forge.shell.completer;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Map;
+
+import javax.enterprise.inject.spi.BeanManager;
+import javax.inject.Inject;
+
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.project.services.ResourceFactory;
@@ -12,17 +19,9 @@ import org.jboss.forge.shell.PromptType;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.command.OptionMetadata;
 import org.jboss.forge.shell.command.parser.CommandParserContext;
-import org.jboss.forge.shell.completer.CommandCompleter;
-import org.jboss.forge.shell.completer.CommandCompleterState;
 import org.jboss.forge.shell.util.BeanManagerUtils;
 import org.jboss.forge.shell.util.JavaPathspecParser;
 import org.jboss.forge.shell.util.PathspecParser;
-
-import javax.enterprise.inject.spi.BeanManager;
-import javax.inject.Inject;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Map;
 
 public class OptionValueResolverCompleter implements CommandCompleter
 {
@@ -51,6 +50,12 @@ public class OptionValueResolverCompleter implements CommandCompleter
             if (option.hasCustomCompleter())
             {
                CommandCompleter completer = BeanManagerUtils.getContextualInstance(manager, option.getCompleterType());
+               if (completer == null)
+               {
+                  throw new RuntimeException("Could not instantiate completer of type: "
+                           + option.getCompleterType().getName()
+                           + ", completers must be valid CDI beans (public top-level classes.)");
+               }
                completer.complete(state);
             }
             else if (option.isEnum())
@@ -64,9 +69,9 @@ public class OptionValueResolverCompleter implements CommandCompleter
                completeJavaPaths(state, option, valueMap, new ResourceFilter()
                {
                   @Override
-                  public boolean accept(Resource<?> resource)
+                  public boolean accept(final Resource<?> resource)
                   {
-                     return (resource instanceof DirectoryResource || resource instanceof JavaResource);
+                     return ((resource instanceof DirectoryResource) || (resource instanceof JavaResource));
                   }
                });
             }
@@ -75,7 +80,7 @@ public class OptionValueResolverCompleter implements CommandCompleter
                completeJavaPaths(state, option, valueMap, new ResourceFilter()
                {
                   @Override
-                  public boolean accept(Resource<?> resource)
+                  public boolean accept(final Resource<?> resource)
                   {
                      return (resource instanceof DirectoryResource);
                   }
@@ -89,11 +94,11 @@ public class OptionValueResolverCompleter implements CommandCompleter
       }
    }
 
-   private void completeJavaPaths(PluginCommandCompleterState state, OptionMetadata option,
-            Map<OptionMetadata, Object> valueMap, ResourceFilter filter)
+   private void completeJavaPaths(final PluginCommandCompleterState state, final OptionMetadata option,
+            final Map<OptionMetadata, Object> valueMap, final ResourceFilter filter)
    {
       Project project = shell.getCurrentProject();
-      if (project != null && project.hasFacet(JavaSourceFacet.class))
+      if ((project != null) && project.hasFacet(JavaSourceFacet.class))
       {
          ArrayList<String> results = new ArrayList<String>();
          String[] values;
@@ -130,26 +135,26 @@ public class OptionValueResolverCompleter implements CommandCompleter
          // the separator char
          // set the value ahead by 1.
          int lastNest = val.lastIndexOf(".");
-         state.setIndex(state.getOriginalIndex() - val.length() + (lastNest != -1 ? lastNest + 1 : 0));
+         state.setIndex((state.getOriginalIndex() - val.length()) + (lastNest != -1 ? lastNest + 1 : 0));
 
          state.getCandidates().addAll(results);
       }
    }
 
-   private boolean isJavaPackageAssignable(OptionMetadata option)
+   private boolean isJavaPackageAssignable(final OptionMetadata option)
    {
       return PromptType.JAVA_PACKAGE.equals(option.getPromptType());
    }
 
-   private boolean isJavaResourceAssignable(OptionMetadata option)
+   private boolean isJavaResourceAssignable(final OptionMetadata option)
    {
       return JavaResource[].class.isAssignableFrom(option.getBoxedType())
                || JavaResource.class.isAssignableFrom(option.getBoxedType())
                || PromptType.JAVA_CLASS.equals(option.getPromptType());
    }
 
-   private void completeFilenames(PluginCommandCompleterState state, OptionMetadata option,
-            Map<OptionMetadata, Object> valueMap)
+   private void completeFilenames(final PluginCommandCompleterState state, final OptionMetadata option,
+            final Map<OptionMetadata, Object> valueMap)
    {
       ArrayList<String> results = new ArrayList<String>();
       String[] values;
@@ -188,7 +193,7 @@ public class OptionValueResolverCompleter implements CommandCompleter
       // Record the current index point in the buffer. If we're at
       // the separator char
       // set the value ahead by 1.
-      state.setIndex(state.getOriginalIndex() - val.length() + (lastNest != -1 ? lastNest + 1 : 0));
+      state.setIndex((state.getOriginalIndex() - val.length()) + (lastNest != -1 ? lastNest + 1 : 0));
       state.getCandidates().addAll(results);
    }
 
