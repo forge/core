@@ -214,8 +214,6 @@ public class ForgePlugin implements Plugin
    public void find(@Option(description = "search string") final String searchString, final PipeOut out)
             throws Exception
    {
-      // TODO remove this message once stabilized.
-      ShellMessages.info(out, "This is a prototype feature and has limited functionality.");
       List<PluginRef> pluginList = PluginUtil.findPlugin(environment, searchString, out);
 
       if (!pluginList.isEmpty())
