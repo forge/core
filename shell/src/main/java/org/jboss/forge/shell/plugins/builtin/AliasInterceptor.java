@@ -19,19 +19,24 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.shell.spi;
+package org.jboss.forge.shell.plugins.builtin;
+
+import org.jboss.forge.shell.spi.CommandInterceptor;
 
 /**
- * Allows the shell input stream to be intercepted, modified, or observed by extensions.
+ * Responsible for converting aliases into full commands.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public interface CommandInterceptor
+public class AliasInterceptor implements CommandInterceptor
 {
-   /**
-    * Intercepts a command and returns it along with any modifications. The returned value will be passed to the Shell
-    * for invocation. If the returned value is null, the shell simply ignores this line and waits for the next input.
-    */
-   public String intercept(String line);
+   @Override
+   public String intercept(final String line)
+   {
+      if ("alias".equals(line.trim()))
+         return null;
+
+      return line;
+   }
 }

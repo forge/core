@@ -707,7 +707,9 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          for (CommandInterceptor interceptor : commandInterceptors) {
             line = interceptor.intercept(line);
          }
-         fshRuntime.run(line);
+
+         if (line != null)
+            fshRuntime.run(line);
       }
       catch (Exception e)
       {
