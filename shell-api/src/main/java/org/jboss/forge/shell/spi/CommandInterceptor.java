@@ -27,11 +27,11 @@ package org.jboss.forge.shell.spi;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public interface InputStreamInterceptor
+public interface CommandInterceptor
 {
    /**
-    * Intercepts a line of input and returns it along with any modifications. The returned value will be passed to the
-    * Shell for invocation.
+    * Intercepts a command and returns it along with any modifications. The returned value will be passed to the Shell
+    * for invocation.
     */
    public String intercept(String line);
 }

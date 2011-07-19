@@ -40,6 +40,7 @@ import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
@@ -83,6 +84,7 @@ import org.jboss.forge.shell.exceptions.PluginExecutionException;
 import org.jboss.forge.shell.exceptions.ShellExecutionException;
 import org.jboss.forge.shell.plugins.builtin.Echo;
 import org.jboss.forge.shell.project.CurrentProject;
+import org.jboss.forge.shell.spi.CommandInterceptor;
 import org.jboss.forge.shell.util.Files;
 import org.jboss.forge.shell.util.GeneralUtils;
 import org.jboss.forge.shell.util.JavaPathspecParser;
@@ -227,6 +229,9 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
 
    @Inject
    private ShellConfig shellConfig;
+
+   @Inject
+   private Instance<CommandInterceptor> commandInterceptors;
 
    void init(@Observes final Startup event, final PluginCommandCompleter pluginCompleter) throws Exception
    {
@@ -694,11 +699,14 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    }
 
    @Override
-   public void execute(final String line)
+   public void execute(String line)
    {
       try
       {
          executing = true;
+         for (CommandInterceptor interceptor : commandInterceptors) {
+            line = interceptor.intercept(line);
+         }
          fshRuntime.run(line);
       }
       catch (Exception e)
