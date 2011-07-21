@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+   <parent>
+      <artifactId>forge-parent</artifactId>
+      <groupId>org.jboss.forge</groupId>
+      <version>1.0.0-SNAPSHOT</version>
+      <relativePath>../</relativePath>
+   </parent>
+   <artifactId>forge-modules</artifactId>
+   
+   <packaging>pom</packaging>
+
+   <name>Forge - Plugin Loader</name>
+   <description>Responsible for building classpath isolation for plugins using JBoss Modules</description>
+
+   <dependencies>
+      <dependency>
+         <groupId>org.jboss.modules</groupId>
+         <artifactId>jboss-modules</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-shell</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-scaffold-plugins</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-javaee-impl</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-dev-plugins</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>plugin-repository</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.metawidget</groupId>
+         <artifactId>metawidget-forge</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>org.jboss.weld</groupId>
+         <artifactId>weld-core</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.logging</groupId>
+         <artifactId>jboss-logging</artifactId>
+      </dependency>
+   </dependencies>
+
+   <build>
+      <finalName>forge</finalName>
+      <plugins>
+         <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <executions>
+               <execution>
+                  <phase>package</phase>
+               </execution>
+            </executions>
+         </plugin>
+         <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <executions>
+               <execution>
+                  <goals>
+                     <goal>exec</goal>
+                  </goals>
+               </execution>
+            </executions>
+            <configuration>
+               <executable>java</executable>
+
+               <workingDirectory>${project.build.directory}/forge-${project.version}</workingDirectory>
+
+               <includeProjectDependencies>false</includeProjectDependencies>
+               <includePluginDependencies>false</includePluginDependencies>
+
+               <arguments>
+                  <argument>-jar</argument>
+                  <argument>jboss-modules.jar</argument>
+                  <argument>-modulepath</argument>
+                  <argument>modules/</argument>
+                  <argument>org.jboss.forge</argument>
+               </arguments>
+
+               <systemProperties>
+                  <systemProperty>
+                     <key>forge.shell.colorEnabled</key>
+                     <value>true</value>
+                  </systemProperty>
+               </systemProperties>
+            </configuration>
+         </plugin>
+      </plugins>
+   </build>
+</project>

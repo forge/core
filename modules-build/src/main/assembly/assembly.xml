@@ -1,0 +1,93 @@
+<assembly
+   xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+
+   <formats>
+      <format>dir</format>
+   </formats>
+   
+   <baseDirectory>.</baseDirectory>
+   <!-- ${project.build.finalName}-${project.version} -->
+
+   <!-- Add distribution files -->
+   <fileSets>
+      <fileSet>
+         <directory>src/main/assembly</directory>
+         <outputDirectory>.</outputDirectory>
+         <includes>
+            <include>bin/*</include>
+         </includes>
+      </fileSet>
+      
+      <!-- Copy pre-built modules into place -->
+      <fileSet>
+         <directory>src/main/assembly</directory>
+         <outputDirectory>.</outputDirectory>
+         <includes>
+            <include>modules/**</include>
+         </includes>
+      </fileSet>
+      
+      <fileSet>
+         <directory>src/main/assembly</directory>
+         <outputDirectory>.</outputDirectory>
+         <filtered>true</filtered>
+         <includes>
+            <include>readme.txt</include>
+            <include>licence.txt</include>
+         </includes>
+      </fileSet>
+      
+      <!-- Copy Module Descriptor -->
+      <fileSet>
+         <directory>src/main/assembly</directory>
+         <outputDirectory>modules/org/jboss/forge/main</outputDirectory>
+         <filtered>true</filtered>
+         <includes>
+            <include>module.xml</include>
+         </includes>
+      </fileSet>
+   </fileSets>
+
+   <dependencySets>
+      
+      <!-- Copy JBoss Modules JAR -->
+      <dependencySet>
+         <outputDirectory>.</outputDirectory>
+         <useProjectArtifact>false</useProjectArtifact>
+         <useTransitiveDependencies>true</useTransitiveDependencies>
+         <includes>
+            <include>org.jboss.modules:jboss-modules</include>
+         </includes>
+         <outputFileNameMapping>${artifact.artifactId}${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
+      </dependencySet>
+      
+      <!-- Add necessary binaries -->
+      <dependencySet>
+         <outputDirectory>modules/org/jboss/forge/main</outputDirectory>
+         <useProjectArtifact>false</useProjectArtifact>
+         <includes>
+            <include>org.jboss.forge.*</include>
+         </includes>
+         <excludes>
+            <exclude>org.jboss.forge.*:*:*:javadoc</exclude>
+            <exclude>org.jboss.forge.*:*:*:sources</exclude>
+         </excludes>
+         <outputFileNameMapping>${artifact.artifactId}${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
+      </dependencySet>
+      
+      <!-- Add necessary dependencies -->
+      <dependencySet>
+         <outputDirectory>modules/org/jboss/forge/main</outputDirectory>
+         <useProjectArtifact>false</useProjectArtifact>
+         <useTransitiveDependencies>true</useTransitiveDependencies>
+         <excludes>
+            <exclude>org.jboss.forge:*:*:javadoc</exclude>
+            <exclude>org.jboss.forge:*:*:sources</exclude>
+         </excludes>
+         <outputFileNameMapping>${artifact.artifactId}${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
+      </dependencySet>
+   </dependencySets>
+
+</assembly>
