@@ -35,7 +35,7 @@ import org.mvel2.util.StringAppender;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class OptionMetadata
+public class OptionMetadataImpl implements OptionMetadata
 {
    private CommandMetadata parent;
    private Class<?> type;
@@ -55,13 +55,13 @@ public class OptionMetadata
    private boolean pipeIn;
    private Class<? extends CommandCompleter> completerType;
 
-   public OptionMetadata()
-   {
-   }
+   public OptionMetadataImpl()
+   {}
 
    /**
     * Get an informational string describing this Option
     */
+   @Override
    public String getOptionDescriptor()
    {
       StringAppender appender = new StringAppender("[");
@@ -87,6 +87,7 @@ public class OptionMetadata
    /**
     * Return whether this option is to be mapped via name or via parameter order.
     */
+   @Override
    public boolean isNamed()
    {
       return (name != null) && !"".equals(name);
@@ -96,6 +97,7 @@ public class OptionMetadata
     * Return the Boxed type of this Option, e.g: If the option is actual an <code>int.class</code>, return
     * <code>Integer.class</code> instead.
     */
+   @Override
    public Class<?> getBoxedType()
    {
       return ParseTools.boxPrimitive(getType());
@@ -104,6 +106,7 @@ public class OptionMetadata
    /**
     * Return the literal type represented by this Option, e.g: the actual method parameter type.
     */
+   @Override
    public Class<?> getType()
    {
       return type;
@@ -117,6 +120,7 @@ public class OptionMetadata
    /**
     * Return the name of this Option, if it has one
     */
+   @Override
    public String getName()
    {
       return name;
@@ -130,6 +134,7 @@ public class OptionMetadata
    /**
     * Get the short name of this option, if it has one.
     */
+   @Override
    public String getShortName()
    {
       return shortName;
@@ -143,6 +148,7 @@ public class OptionMetadata
    /**
     * Return whether or not this option is purely a boolean flag.
     */
+   @Override
    public boolean isFlagOnly()
    {
       return flagOnly;
@@ -156,6 +162,7 @@ public class OptionMetadata
    /**
     * Return the description of this Option
     */
+   @Override
    public String getDescription()
    {
       return description;
@@ -166,9 +173,7 @@ public class OptionMetadata
       this.description = description;
    }
 
-   /**
-    * Get the index of this Option in the receiving method parameter list.
-    */
+   @Override
    public int getIndex()
    {
       return index;
@@ -182,6 +187,7 @@ public class OptionMetadata
    /**
     * Get the help text for this Option
     */
+   @Override
    public String getHelp()
    {
       return help;
@@ -195,6 +201,7 @@ public class OptionMetadata
    /**
     * Return whether or not this option requires a value at execution time.
     */
+   @Override
    public boolean isRequired()
    {
       return required;
@@ -214,6 +221,7 @@ public class OptionMetadata
    /**
     * Get the parent Command of this Option
     */
+   @Override
    public CommandMetadata getParent()
    {
       return parent;
@@ -227,6 +235,7 @@ public class OptionMetadata
    /**
     * Return whether or not this option represents a {@link Boolean} type
     */
+   @Override
    public boolean isBoolean()
    {
       return (Boolean.TYPE.equals(getType()) || Boolean.class.equals(getType()));
@@ -235,14 +244,16 @@ public class OptionMetadata
    /**
     * Return whether or not this option represents an {@link Enum} type.
     */
+   @Override
    public boolean isEnum()
    {
-      return getType() != null && getType().isEnum();
+      return (getType() != null) && getType().isEnum();
    }
 
    /**
     * Return whether or not this option represents a Varargs parameter type
     */
+   @Override
    public boolean isVarargs()
    {
       return getType().isArray();
@@ -251,6 +262,7 @@ public class OptionMetadata
    /**
     * Return the default value for this Option, if specified
     */
+   @Override
    public String getDefaultValue()
    {
       return defaultValue;
@@ -264,6 +276,7 @@ public class OptionMetadata
    /**
     * Return whether or not this Option provides a default value
     */
+   @Override
    public boolean hasDefaultValue()
    {
       return (defaultValue != null) && !"".equals(defaultValue);
@@ -272,6 +285,7 @@ public class OptionMetadata
    /**
     * Return the selected {@link PromptType} for this Option.
     */
+   @Override
    public PromptType getPromptType()
    {
       return promptType;
@@ -285,6 +299,7 @@ public class OptionMetadata
    /**
     * Return whether or not this Option is a {@link PipeOut}
     */
+   @Override
    public boolean isPipeOut()
    {
       return pipeOut;
@@ -298,6 +313,7 @@ public class OptionMetadata
    /**
     * Return whether or not this Option is a {@link PipeIn}
     */
+   @Override
    public boolean isPipeIn()
    {
       return pipeIn;
@@ -311,11 +327,13 @@ public class OptionMetadata
    /**
     * Return whether or not this Option is not ordered, e.g: It might have a name, or be an input/output pipe.
     */
+   @Override
    public boolean notOrdered()
    {
       return pipeIn || pipeOut || isNamed();
    }
 
+   @Override
    public boolean isOrdered()
    {
       return !notOrdered();
@@ -324,6 +342,7 @@ public class OptionMetadata
    /**
     * Return whether or not this option has specified a custom {@link CommandCompleter}
     */
+   @Override
    public boolean hasCustomCompleter()
    {
       return (completerType != null) && !completerType.equals(NullCommandCompleter.class);
@@ -337,6 +356,7 @@ public class OptionMetadata
    /**
     * Get the custom {@link CommandCompleter} for this Option, if specified.
     */
+   @Override
    public Class<? extends CommandCompleter> getCompleterType()
    {
       return completerType;

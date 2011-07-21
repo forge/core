@@ -86,8 +86,9 @@ public class ForgePlugin implements Plugin
    private final Shell shell;
 
    @Inject
-   public ForgePlugin(ForgeEnvironment environment, Event<ReinitializeEnvironment> reinitializeEvent,
-            ShellPrintWriter writer, ShellPrompt prompt, DependencyResolver resolver, Shell shell)
+   public ForgePlugin(final ForgeEnvironment environment, final Event<ReinitializeEnvironment> reinitializeEvent,
+            final ShellPrintWriter writer, final ShellPrompt prompt, final DependencyResolver resolver,
+            final Shell shell)
    {
       this.environment = environment;
       this.reinitializeEvent = reinitializeEvent;
@@ -102,7 +103,7 @@ public class ForgePlugin implements Plugin
     */
 
    @DefaultCommand
-   public void about(PipeOut out)
+   public void about(final PipeOut out)
    {
       out.println("   ____                          _____                    ");
       out.println("  / ___|  ___  __ _ _ __ ___    |  ___|__  _ __ __ _  ___ ");
@@ -128,7 +129,7 @@ public class ForgePlugin implements Plugin
             @Option(name = "all",
                      shortName = "a",
                      description = "Show extra information about each installed plugin",
-                     defaultValue = "false") boolean showAll)
+                     defaultValue = "false") final boolean showAll)
    {
       DirectoryResource pluginDir = environment.getPluginDirectory();
       List<Resource<?>> list = pluginDir.listResources();
@@ -210,21 +211,30 @@ public class ForgePlugin implements Plugin
 
    @Command(value = "find-plugin",
             help = "Searches the configured Forge plugin index for a plugin matching the given search text")
-   public void find(@Option(description = "search string") String searchString, final PipeOut out) throws Exception
+   public void find(@Option(description = "search string") final String searchString, final PipeOut out)
+            throws Exception
    {
-      // TODO remove this message once stabilized.
-      ShellMessages.info(out, "This is a prototype feature and has limited functionality.");
       List<PluginRef> pluginList = PluginUtil.findPlugin(environment, searchString, out);
 
+      if (!pluginList.isEmpty())
+      {
+         out.println();
+      }
       for (PluginRef ref : pluginList)
       {
          out.println(" - " + out.renderColor(ShellColor.BOLD, ref.getName()) + " (" + ref.getArtifact() + ")");
+         out.println("\tAuthor: " + ref.getAuthor());
+         out.println("\tWebsite: " + ref.getWebsite());
+         out.println("\tLocation: " + ref.getLocation());
+         out.println("\tTags: " + ref.getTags());
+         out.println("\tDescription: " + ref.getDescription());
+         out.println();
       }
    }
 
    @Command(value = "install-plugin",
             help = "Installs a plugin from the configured Forge plugin index")
-   public void installFromIndex(@Option(description = "plugin-name") String pluginName,
+   public void installFromIndex(@Option(description = "plugin-name") final String pluginName,
             final PipeOut out) throws Exception
    {
       // TODO remove this message once stabilized.
@@ -255,13 +265,13 @@ public class ForgePlugin implements Plugin
       }
    }
 
-   private void installFromMvnRepos(Dependency dep, PipeOut out, final DependencyRepository... repoList)
+   private void installFromMvnRepos(final Dependency dep, final PipeOut out, final DependencyRepository... repoList)
             throws Exception
    {
       installFromMvnRepos(dep, out, Arrays.asList(repoList));
    }
 
-   private void installFromMvnRepos(Dependency dep, PipeOut out, final List<DependencyRepository> repoList)
+   private void installFromMvnRepos(final Dependency dep, final PipeOut out, final List<DependencyRepository> repoList)
             throws Exception
    {
       List<DependencyResource> temp = resolver.resolveArtifacts(dep, repoList);
@@ -297,9 +307,9 @@ public class ForgePlugin implements Plugin
 
    @Command(value = "mvn-plugin",
             help = "Download and install a plugin from a maven repository")
-   public void installFromMvnRepos(@Option(description = "plugin-identifier", required = true) Dependency dep,
-            @Option(name = "knownRepo", description = "target repository") KnownRepository repo,
-            @Option(name = "repoUrl", description = "target repository URL") String repoURL,
+   public void installFromMvnRepos(@Option(description = "plugin-identifier", required = true) final Dependency dep,
+            @Option(name = "knownRepo", description = "target repository") final KnownRepository repo,
+            @Option(name = "repoUrl", description = "target repository URL") final String repoURL,
             final PipeOut out) throws Exception
    {
       if (repoURL != null)
@@ -323,12 +333,12 @@ public class ForgePlugin implements Plugin
    @Command(value = "jar-plugin",
             help = "Install a plugin from a local project folder")
    public void installFromLocalJar(
-            @Option(name = "jar", description = "jar file to install", required = true) Resource<?> resource,
-            @Option(name = "id", description = "plugin identifier, [e.g. \"com.example.group : example-plugin\"]", required = true) Dependency dep,
+            @Option(name = "jar", description = "jar file to install", required = true) final Resource<?> resource,
+            @Option(name = "id", description = "plugin identifier, [e.g. \"com.example.group : example-plugin\"]", required = true) final Dependency dep,
             final PipeOut out) throws Exception
    {
       FileResource<?> source = resource.reify(FileResource.class);
-      if (source == null || !source.exists())
+      if ((source == null) || !source.exists())
       {
          throw new IllegalArgumentException("JAR file must be specified.");
       }
@@ -355,8 +365,8 @@ public class ForgePlugin implements Plugin
    @Command(value = "url-plugin",
             help = "Download and install a plugin from the given URL")
    public void installFromRemoteURL(
-            @Option(description = "URL of jar file", required = true) URL url,
-            @Option(name = "id", description = "plugin identifier, [e.g. \"com.example.group : example-plugin\"]", required = true) Dependency dep,
+            @Option(description = "URL of jar file", required = true) final URL url,
+            @Option(name = "id", description = "plugin identifier, [e.g. \"com.example.group : example-plugin\"]", required = true) final Dependency dep,
             final PipeOut out) throws Exception
    {
       ShellMessages.info(out, "WARNING!");
@@ -375,11 +385,11 @@ public class ForgePlugin implements Plugin
    @Command(value = "source-plugin",
             help = "Install a plugin from a local project folder")
    public void installFromLocalProject(
-            @Option(description = "project directory", required = true) Resource<?> projectFolder,
+            @Option(description = "project directory", required = true) final Resource<?> projectFolder,
             final PipeOut out) throws Exception
    {
       DirectoryResource workspace = projectFolder.reify(DirectoryResource.class);
-      if (workspace == null || !workspace.exists())
+      if ((workspace == null) || !workspace.exists())
       {
          throw new IllegalArgumentException("Project folder must be specified.");
       }
@@ -393,9 +403,9 @@ public class ForgePlugin implements Plugin
    @Command(value = "git-plugin",
             help = "Install a plugin from a public git repository")
    public void installFromGit(
-            @Option(description = "git repo", required = true) String gitRepo,
-            @Option(name = "ref", description = "branch or tag to build") String ref,
-            @Option(name = "checkoutDir", description = "directory in which to clone the repository") Resource<?> checkoutDir,
+            @Option(description = "git repo", required = true) final String gitRepo,
+            @Option(name = "ref", description = "branch or tag to build") final String ref,
+            @Option(name = "checkoutDir", description = "directory in which to clone the repository") final Resource<?> checkoutDir,
             final PipeOut out) throws Exception
    {
 
@@ -407,7 +417,7 @@ public class ForgePlugin implements Plugin
          DirectoryResource buildDir = workspace.getChildDirectory("repo");
          if (checkoutDir != null)
          {
-            if (!checkoutDir.exists() && checkoutDir instanceof FileResource<?>)
+            if (!checkoutDir.exists() && (checkoutDir instanceof FileResource<?>))
             {
                ((FileResource<?>) checkoutDir).mkdirs();
             }
@@ -451,7 +461,7 @@ public class ForgePlugin implements Plugin
    /*
     * Helpers
     */
-   private void buildFromCurrentProject(final PipeOut out, DirectoryResource buildDir) throws Abort
+   private void buildFromCurrentProject(final PipeOut out, final DirectoryResource buildDir) throws Abort
    {
       DirectoryResource savedLocation = shell.getCurrentDirectory();
       try
@@ -465,7 +475,7 @@ public class ForgePlugin implements Plugin
          }
 
          DependencyFacet deps = project.getFacet(DependencyFacet.class);
-         if (!deps.hasDependency(DependencyBuilder.create("org.jboss.forge:forge-shell-api")) 
+         if (!deps.hasDependency(DependencyBuilder.create("org.jboss.forge:forge-shell-api"))
                   && !prompt.promptBoolean("The project does not appear to be a Forge Plugin Project, install anyway?",
                            false))
          {
@@ -474,7 +484,7 @@ public class ForgePlugin implements Plugin
 
          ShellMessages.info(out, "Invoking build with underlying build system.");
          Resource<?> artifact = project.getFacet(PackagingFacet.class).executeBuild();
-         if (artifact != null && artifact.exists())
+         if ((artifact != null) && artifact.exists())
          {
             MetadataFacet meta = project.getFacet(MetadataFacet.class);
             Dependency dep = meta.getOutputDependency();
@@ -487,7 +497,7 @@ public class ForgePlugin implements Plugin
          else
          {
             throw new IllegalStateException("Build artifact [" + artifact.getFullyQualifiedName()
-                        + "] is missing and cannot be installed. Please resolve build errors and try again.");
+                     + "] is missing and cannot be installed. Please resolve build errors and try again.");
          }
       }
       finally
@@ -496,15 +506,15 @@ public class ForgePlugin implements Plugin
       }
    }
 
-   private FileResource<?> createIncrementedPluginJarFile(Dependency dep)
+   private FileResource<?> createIncrementedPluginJarFile(final Dependency dep)
    {
       int version = 0;
       PluginJar pluginJar = new PluginJar(dep);
       DirectoryResource pluginDir = environment.getPluginDirectory();
       List<Resource<?>> list = pluginDir.listResources(new StartsWith(pluginJar.getName()));
 
-      if (list.size() > 0 && !prompt.promptBoolean(
-                        "An existing version of this plugin was found. Replace it?", true))
+      if ((list.size() > 0) && !prompt.promptBoolean(
+               "An existing version of this plugin was found. Replace it?", true))
       {
          throw new RuntimeException("Aborted.");
       }
@@ -530,15 +540,15 @@ public class ForgePlugin implements Plugin
    {
       private final String prefix;
 
-      public StartsWith(String prefix)
+      public StartsWith(final String prefix)
       {
          this.prefix = prefix;
       }
 
       @Override
-      public boolean accept(Resource<?> resource)
+      public boolean accept(final Resource<?> resource)
       {
-         return resource != null && resource.getName() != null && resource.getName().startsWith(prefix);
+         return (resource != null) && (resource.getName() != null) && resource.getName().startsWith(prefix);
       }
 
    }

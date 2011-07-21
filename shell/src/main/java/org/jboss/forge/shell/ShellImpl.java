@@ -40,6 +40,7 @@ import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
@@ -83,6 +84,7 @@ import org.jboss.forge.shell.exceptions.PluginExecutionException;
 import org.jboss.forge.shell.exceptions.ShellExecutionException;
 import org.jboss.forge.shell.plugins.builtin.Echo;
 import org.jboss.forge.shell.project.CurrentProject;
+import org.jboss.forge.shell.spi.CommandInterceptor;
 import org.jboss.forge.shell.util.Files;
 import org.jboss.forge.shell.util.GeneralUtils;
 import org.jboss.forge.shell.util.JavaPathspecParser;
@@ -106,7 +108,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    static final String DEFAULT_PROMPT_NO_PROJ = "[\\c{red}no project\\c] \\c{blue}\\W\\c \\c{red}\\$\\c ";
 
    static final String PROP_DEFAULT_PLUGIN_REPO = "DEFFAULT_PLUGIN_REPO";
-   static final String DEFAULT_PLUGIN_REPO = "http://seamframework.org/service/File/148617";
+   static final String DEFAULT_PLUGIN_REPO = "https://raw.github.com/forge/plugin-repository/master/repository.yaml";
 
    static final String PROP_VERBOSE = "VERBOSE";
 
@@ -224,6 +226,9 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
 
    @Inject
    private ShellConfig shellConfig;
+
+   @Inject
+   private Instance<CommandInterceptor> commandInterceptors;
 
    void init(@Observes final Startup event, final PluginCommandCompleter pluginCompleter) throws Exception
    {
@@ -573,7 +578,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       String out = null;
       if (cmd != null)
       {
-         out = cmd.getPluginMetadata().getName();
+         out = cmd.getParent().getName();
          if (!cmd.isDefault())
             out += " " + cmd.getName();
 
@@ -588,7 +593,21 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    @Override
    public String readLine() throws IOException
    {
-      String line = reader.readLine();
+      return readLine(null);
+   }
+
+   @Override
+   public String readLine(final Character mask) throws IOException
+   {
+      String line = null;
+      if (mask != null)
+      {
+         line = reader.readLine(mask);
+      }
+      else
+      {
+         line = reader.readLine();
+      }
 
       if (isExecuting() && (line == null))
       {
@@ -659,12 +678,17 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    }
 
    @Override
-   public void execute(final String line)
+   public void execute(String line)
    {
       try
       {
          executing = true;
-         fshRuntime.run(line);
+         for (CommandInterceptor interceptor : commandInterceptors) {
+            line = interceptor.intercept(line);
+         }
+
+         if (line != null)
+            fshRuntime.run(line);
       }
       catch (Exception e)
       {
@@ -1094,6 +1118,35 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          {
             reader.removeCompleter(tempCompleter);
          }
+         reader.addCompleter(this.completer);
+         reader.setHistoryEnabled(true);
+         reader.setPrompt("");
+      }
+   }
+
+   @Override
+   public String promptSecret(String message)
+   {
+      if (!message.isEmpty() && message.matches("^.*\\S$"))
+      {
+         message = message + " ";
+      }
+      message = renderColor(ShellColor.CYAN, " ? ") + message;
+
+      try
+      {
+         reader.removeCompleter(this.completer);
+         reader.setHistoryEnabled(false);
+         reader.setPrompt(message);
+         String line = readLine('*');
+         return line;
+      }
+      catch (IOException e)
+      {
+         throw new IllegalStateException("Shell input stream failure", e);
+      }
+      finally
+      {
          reader.addCompleter(this.completer);
          reader.setHistoryEnabled(true);
          reader.setPrompt("");

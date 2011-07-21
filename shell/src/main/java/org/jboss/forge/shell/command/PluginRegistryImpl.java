@@ -49,7 +49,7 @@ import org.jboss.forge.shell.plugins.RequiresResource;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Singleton
-public class PluginRegistry
+public class PluginRegistryImpl implements PluginRegistry
 {
    private Map<String, List<PluginMetadata>> plugins;
    private Map<String, Map<Class<?>, PluginMetadata>> accessCache;
@@ -58,7 +58,7 @@ public class PluginRegistry
    private final BeanManager manager;
 
    @Inject
-   public PluginRegistry(final CommandLibraryExtension library, final BeanManager manager)
+   public PluginRegistryImpl(final CommandLibraryExtension library, final BeanManager manager)
    {
       this.library = library;
       this.manager = manager;
@@ -72,11 +72,13 @@ public class PluginRegistry
       sanityCheck();
    }
 
+   @Override
    public Map<String, List<PluginMetadata>> getPlugins()
    {
       return plugins;
    }
 
+   @Override
    public void addPlugin(final PluginMetadata plugin)
    {
       if (!plugins.containsKey(plugin.getName()))
@@ -93,13 +95,14 @@ public class PluginRegistry
       return "PluginRegistry [plugins=" + plugins + "]";
    }
 
+   @Override
    public Plugin instanceOf(final PluginMetadata meta)
    {
       return getContextualInstance(manager, meta.getType());
    }
 
    @SuppressWarnings("unchecked")
-   public static <T> T getContextualInstance(final BeanManager manager, final Class<T> type)
+   private static <T> T getContextualInstance(final BeanManager manager, final Class<T> type)
    {
       T result = null;
       Bean<T> bean = (Bean<T>) manager.resolve(manager.getBeans(type));
@@ -119,6 +122,7 @@ public class PluginRegistry
     * 
     * @return the metadata, or null if no plugin with given name exists.
     */
+   @Override
    public List<PluginMetadata> getPluginMetadata(final String plugin)
    {
       List<PluginMetadata> list = plugins.get(plugin);
@@ -133,6 +137,7 @@ public class PluginRegistry
     * {@link org.jboss.forge.maven.Project}, {@link PackagingType}, and {@link Facet} constraints. Return null if no
     * match for the given constraints can be found.
     */
+   @Override
    public PluginMetadata getPluginMetadataForScopeAndConstraints(final String name, final Shell shell)
    {
       Class<? extends Resource<?>> scope = shell.getCurrentResourceScope();

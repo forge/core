@@ -70,7 +70,7 @@ public class Execution
       {
          try
          {
-            enforcer.verifyAvailable(shell.getCurrentProject(), command.getPluginMetadata());
+            enforcer.verifyAvailable(shell.getCurrentProject(), command.getParent());
          }
          catch (ConstraintException e)
          {
@@ -84,7 +84,7 @@ public class Execution
    {
       if (command != null)
       {
-         Class<? extends Plugin> pluginType = command.getPluginMetadata().getType();
+         Class<? extends Plugin> pluginType = command.getParent().getType();
 
          Set<Bean<?>> beans = manager.getBeans(pluginType);
          Bean<?> bean = manager.resolve(beans);

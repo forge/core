@@ -32,25 +32,15 @@ import org.jboss.forge.project.dependencies.DependencyBuilder;
  */
 public class PluginRef
 {
-   private final String name;
-   private final String author;
-   private final String description;
-   private final String artifact;
-   private final String gitRepo;
-   private final String homeRepo;
-   private final String gitRef;
-
-   public PluginRef(String name, String author, String description, String artifact, String homeRepo, String gitRepo,
-            String gitRef)
-   {
-      this.name = name;
-      this.author = author;
-      this.description = description;
-      this.artifact = artifact;
-      this.homeRepo = homeRepo;
-      this.gitRepo = gitRepo;
-      this.gitRef = gitRef;
-   }
+   private String name = "";
+   private String website = "";
+   private String author = "";
+   private String description = "";
+   private String tags = "";
+   private String artifact = "";
+   private String gitRepo = "";
+   private String homeRepo = "";
+   private String gitRef = "";
 
    public String getGitRef()
    {
@@ -59,17 +49,22 @@ public class PluginRef
 
    public String getName()
    {
-      return name;
+      return name == null ? "" : name;
    }
 
    public String getAuthor()
    {
-      return author;
+      return author == null ? "" : author;
    }
 
    public String getDescription()
    {
-      return description;
+      return description == null ? "" : description;
+   }
+
+   public String getTags()
+   {
+      return tags == null ? "" : tags;
    }
 
    public Dependency getArtifact()
@@ -79,16 +74,80 @@ public class PluginRef
 
    public String getHomeRepo()
    {
-      return homeRepo;
+      return homeRepo == null ? "" : homeRepo;
    }
 
    public String getGitRepo()
    {
-      return gitRepo;
+      return gitRepo == null ? "" : gitRepo;
    }
 
    public boolean isGit()
    {
       return !Strings.isNullOrEmpty(gitRepo);
+   }
+
+   public String getWebsite()
+   {
+      return website == null ? "" : website;
+   }
+
+   public String getLocation()
+   {
+      String location = getHomeRepo();
+      if (Strings.isNullOrEmpty(location))
+      {
+         location = getGitRepo();
+      }
+      if (Strings.isNullOrEmpty(location))
+      {
+         location = "Unknown";
+      }
+      return location;
+   }
+
+   public void setName(final String name)
+   {
+      this.name = name;
+   }
+
+   public void setWebsite(final String website)
+   {
+      this.website = website;
+   }
+
+   public void setAuthor(final String author)
+   {
+      this.author = author;
+   }
+
+   public void setDescription(final String description)
+   {
+      this.description = description;
+   }
+
+   public void setTags(final String tags)
+   {
+      this.tags = tags;
+   }
+
+   public void setArtifact(final String artifact)
+   {
+      this.artifact = artifact;
+   }
+
+   public void setGitRepo(final String gitRepo)
+   {
+      this.gitRepo = gitRepo;
+   }
+
+   public void setHomeRepo(final String homeRepo)
+   {
+      this.homeRepo = homeRepo;
+   }
+
+   public void setGitRef(final String gitRef)
+   {
+      this.gitRef = gitRef;
    }
 }

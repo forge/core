@@ -49,9 +49,11 @@ public class PluginUtil
    private static final String PROP_DESCRIPTION = "description";
    private static final String PROP_AUTHOR = "author";
    private static final String PROP_NAME = "name";
-   private static final Object PROP_GIT_REF = "gitref";
+   private static final String PROP_WEBSITE = "website";
+   private static final String PROP_GIT_REF = "gitref";
+   private static final String PROP_TAGS = "tags";
 
-   private static String getDefaultRepo(ForgeEnvironment environment)
+   private static String getDefaultRepo(final ForgeEnvironment environment)
    {
       String defaultRepo = (String) environment.getProperty("DEFFAULT_PLUGIN_REPO");
       if (defaultRepo == null)
@@ -62,7 +64,8 @@ public class PluginUtil
    }
 
    @SuppressWarnings("unchecked")
-   public static List<PluginRef> findPlugin(ForgeEnvironment environment, String searchString, PipeOut out)
+   public static List<PluginRef> findPlugin(final ForgeEnvironment environment, final String searchString,
+            final PipeOut out)
             throws Exception
    {
       String defaultRepo = getDefaultRepo(environment);
@@ -91,6 +94,7 @@ public class PluginUtil
       List<PluginRef> pluginList = new ArrayList<PluginRef>();
 
       Yaml yaml = new Yaml();
+      // TODO this needs to be cached instead of downloaded each time
       for (Object o : yaml.loadAll(httpResponse.getEntity().getContent()))
       {
          if (o == null)
@@ -99,11 +103,12 @@ public class PluginUtil
          }
 
          Map<String, String> map = (Map<String, String>) o;
-         String name = map.get(PROP_NAME);
 
-         if (pattern.matcher(name).matches())
+         PluginRef ref = bindToPuginRef(map);
+         if (pattern.matcher(ref.getName()).matches() || pattern.matcher(ref.getDescription()).matches()
+                  || pattern.matcher(ref.getTags()).matches())
          {
-            pluginList.add(bindToPuginRef(map));
+            pluginList.add(ref);
          }
       }
 
@@ -137,14 +142,18 @@ public class PluginUtil
       }
    }
 
-   private static PluginRef bindToPuginRef(Map<String, String> map)
+   private static PluginRef bindToPuginRef(final Map<String, String> map)
    {
-      return new PluginRef(map.get(PROP_NAME),
-               map.get(PROP_AUTHOR),
-               map.get(PROP_DESCRIPTION),
-               map.get(PROP_ARTIFACT),
-               map.get(PROP_HOME_MAVEN_REPO),
-               map.get(PROP_GIT_REPOSITORY),
-               map.get(PROP_GIT_REF));
+      PluginRef ref = new PluginRef();
+      ref.setName(map.get(PROP_NAME));
+      ref.setWebsite(map.get(PROP_WEBSITE));
+      ref.setArtifact(map.get(PROP_ARTIFACT));
+      ref.setAuthor(map.get(PROP_AUTHOR));
+      ref.setDescription(map.get(PROP_DESCRIPTION));
+      ref.setTags(map.get(PROP_TAGS));
+      ref.setHomeRepo(map.get(PROP_HOME_MAVEN_REPO));
+      ref.setGitRepo(map.get(PROP_GIT_REPOSITORY));
+      ref.setGitRef(map.get(PROP_GIT_REF));
+      return ref;
    }
 }
