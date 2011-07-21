@@ -91,9 +91,6 @@ import org.jboss.forge.shell.util.ResourceUtil;
 import org.jboss.weld.environment.se.bindings.Parameters;
 import org.mvel2.ConversionHandler;
 
-import sun.misc.Signal;
-import sun.misc.SignalHandler;
-
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -353,27 +350,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       {
          // check to see if we have something to work with.
          Class.forName("sun.misc.SignalHandler");
-
-         SignalHandler signalHandler = new SignalHandler()
-         {
-            @Override
-            public void handle(final Signal signal)
-            {
-               try
-               {
-                  reader.println("^C");
-                  reader.drawLine();
-                  reader.resetPromptLine(reader.getPrompt(), "", -1);
-               }
-               catch (IOException e)
-               {
-                  if (isVerbose())
-                     e.printStackTrace();
-               }
-            }
-         };
-
-         Signal.handle(new Signal("INT"), signalHandler);
+         SigHandler.init(this);
       }
       catch (ClassNotFoundException e)
       {
@@ -394,7 +371,8 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          historyOutstream.flush();
       }
       catch (IOException e)
-      {}
+      {
+      }
    }
 
    @Override
@@ -412,7 +390,8 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
                historyOutstream.close();
             }
             catch (Exception e)
-            {}
+            {
+            }
          }
       });
    }
@@ -1214,5 +1193,10 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    BeanManager getBeanManager()
    {
       return manager;
+   }
+
+   public ConsoleReader getReader()
+   {
+      return reader;
    }
 }

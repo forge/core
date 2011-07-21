@@ -19,37 +19,42 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.pluginloader;
+package org.jboss.forge.shell;
 
-import org.jboss.modules.DependencySpec;
-import org.jboss.modules.ModuleIdentifier;
-import org.jboss.modules.ModuleLoadException;
-import org.jboss.modules.ModuleLoader;
-import org.jboss.modules.ModuleSpec;
-import org.jboss.modules.ModuleSpec.Builder;
+import java.io.IOException;
+
+import sun.misc.Signal;
+import sun.misc.SignalHandler;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class PluginLoader extends ModuleLoader
+@SuppressWarnings("restriction")
+public class SigHandler
 {
-   // ConcurrentClassLoader - for parallel classloading
-
-   @Override
-   protected ModuleSpec findModule(final ModuleIdentifier module) throws ModuleLoadException
+   public static void init(final ShellImpl shell)
    {
-      String name = module.getName();
-      String slot = module.getSlot();
-      Builder builder = ModuleSpec.build(module);
-      DependencySpec dep = DependencySpec.createModuleDependencySpec(module);
-      builder.addDependency(dep);
-      return builder.create();
+      SignalHandler signalHandler = new SignalHandler()
+      {
+         @Override
+         public void handle(final Signal signal)
+         {
+            try
+            {
+               shell.getReader().println("^C");
+               shell.getReader().drawLine();
+               shell.getReader().resetPromptLine(shell.getReader().getPrompt(), "", -1);
+            }
+            catch (IOException e)
+            {
+               if (shell.isVerbose())
+                  e.printStackTrace();
+            }
+         }
+      };
+
+      Signal.handle(new Signal("INT"), signalHandler);
    }
 
-   @Override
-   public String toString()
-   {
-      return "Forge Plugin Loader";
-   }
 }

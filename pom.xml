@@ -47,7 +47,6 @@
       <module>project-model-maven-tests</module>
       <module>test-harness</module>
       <module>shell</module>
-      <module>plugin-loader</module>
       <module>javaee-api</module>
       <module>javaee-impl</module>
       <module>scaffold-api</module>
@@ -63,8 +62,9 @@
       <cal10n.version>0.7.2</cal10n.version>
       <cdi.version>1.0-SP4</cdi.version>
       <groovy.version>1.7.5</groovy.version>
-      <jboss.logging.version>3.0.0.Beta4</jboss.logging.version>
       <jboss.javaee.version>1.0.0.Final</jboss.javaee.version>
+      <jboss.logging.version>3.0.0.Beta4</jboss.logging.version>
+      <jboss.modules.version>1.0.0.GA</jboss.modules.version>
       <junit.version>4.8.1</junit.version>
       <log4j.version>1.2.16</log4j.version>
       <shrinkwrap.version>1.0.0-alpha-11</shrinkwrap.version>
@@ -84,6 +84,12 @@
             <version>${weld.bom.version}</version>
             <type>pom</type>
             <scope>import</scope>
+         </dependency>
+
+         <dependency>
+            <groupId>org.jboss.modules</groupId>
+            <artifactId>jboss-modules</artifactId>
+            <version>${jboss.modules.version}</version>
          </dependency>
 
          <dependency>
@@ -295,6 +301,7 @@
          <id>dist</id>
          <modules>
             <module>dist</module>
+            <module>modules-build</module>
          </modules>
       </profile>
    </profiles>
