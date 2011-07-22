@@ -1,0 +1,117 @@
+(10:53:41 AM) The topic for #jboss-msc is: JBoss Modular Service Container: http://www.github.com/jbossas/jboss-msc - JBoss Modules: http://www.github.com/jbossas/jboss-modules
+(10:53:48 AM) lincolnthree1: hey dmlloyd, around?
+(10:54:10 AM) dmlloyd: hey waht's up
+(10:54:13 AM) lincolnthree1: hey david
+(10:54:17 AM) lincolnthree1: question about JB Modules
+(10:54:39 AM) lincolnthree1: I've got Seam Forge booting with modules now, my next step is to be able to dynamically load a module via java code
+(10:54:56 AM) lincolnthree1: I need to A: Create the module from my own metadata (not module.xml)
+(10:55:17 AM) lincolnthree1: and B: Load it so that the current classloader can see it, and visa versa.
+(10:55:35 AM) dmlloyd: you can't really do that
+(10:55:45 AM) dmlloyd: you can't normally modify the current class loader
+(10:55:47 AM) lincolnthree1: Uh oh...
+(10:55:59 AM) dmlloyd: under any system, let alone JBMOD
+(10:56:10 AM) lincolnthree1: It's essential that I be able to load classes at runtime.
+(10:56:13 AM) lincolnthree1: How would you do that?
+(10:56:23 AM) dmlloyd: I would just load them via reflection
+(10:56:38 AM) lincolnthree1: But these classes are not on the classpath yet.
+(10:56:48 AM) dmlloyd: something like: Class.forName("org.foo.Clazz", false, moduleLoader.loadModule("org.mymodule").getClassLoader())
+(10:56:54 AM) dmlloyd: you can't change the classpath
+(10:57:14 AM) lincolnthree1: Right.
+(10:57:16 AM) dmlloyd: you can introduce new class loaders, and you can reflectively load classes from those class loaders
+(10:57:21 AM) lincolnthree1: That's what I want to do.
+(10:57:38 AM) lincolnthree1: That's what I do now, just not within JBM.
+(10:57:48 AM) lincolnthree1: I do it by setting a new TCCL
+(10:57:56 AM) lincolnthree1: But I think that's bad, right?
+(10:58:03 AM) dmlloyd: yeah that way will just end in pain
+(10:58:23 AM) lincolnthree1: The issue is, I need to load these classes, then start weld. Weld needs to be able to see those classes.
+(10:58:39 AM) dmlloyd: you need to provide a class loader to weld which can see those classes
+(10:58:56 AM) lincolnthree1: Ahhh Interesting. Didn't know you can do that.
+(10:59:15 AM) dmlloyd: be careful saying things like "weld needs to be able to see those classes" because that implies that the class loader used to load weld itself (the initiating class loader for, say, weld.jar) needs to be able to access those classes at link time
+(10:59:29 AM) dmlloyd: and that may not be true
+(10:59:37 AM) dmlloyd: in fact it usually isn't
+(10:59:48 AM) lincolnthree1: <-- ClassLoader noob
+(11:00:17 AM) lincolnthree1: So I guess the next question is how do I supply a classloader to weld?
+(11:00:22 AM) lincolnthree1: I don't see anything in the API.
+(11:00:29 AM) dmlloyd: class loaders are associated with two different sets of classes/resources: those which it _initiates_ (i.e. defines) and those which it _has access to_ (i.e. "sees")
+(11:01:13 AM) lincolnthree1: Right, so in this case, weld just needs to be able to see these classes as it boots.
+(11:01:16 AM) lincolnthree1: The latter.
+(11:01:24 AM) dmlloyd: for that you should talk to stuartdouglas, but it probably uses TCCL to communicate the class loader to that API (think of TCCL as a parameter you pass to stuff and it will help a lot)
+(11:01:37 AM) dmlloyd: (rather than a silver bullet CL)
+(11:01:47 AM) dmlloyd: well let's back up a little there too
+(11:01:55 AM) dmlloyd: you're again concluding that "weld needs to see it"
+(11:02:04 AM) dmlloyd: but you mean "weld needs access to a CL which can see xyz"
+(11:02:10 AM) lincolnthree1: ah, right, yes
+(11:02:31 AM) lincolnthree1: I believe weld only uses the TCCL
+(11:03:01 AM) lincolnthree1: What I've done so far (before JBM) is to create a new thread containing the weld bootstrap, and set that thread's TCCL
+(11:03:15 AM) lincolnthree1: Then when I need to restart weld, I kill the thread and start over.
+(11:03:28 AM) lincolnthree1: Loading any new classes that I may have provided.
+(11:03:31 AM) dmlloyd: yeah but you shouldn't think of it that way - TCCL isn't something you set for the duration of a thread, it's something you set for the duration of a method call usually
+(11:03:42 AM) lincolnthree1: Wow.
+(11:03:44 AM) dmlloyd: and only when calling methods that look for stuff on the TCCL
+(11:03:48 AM) lincolnthree1: I never thought of that.
+(11:04:06 AM) dmlloyd: that's why I say "think of it as a method parameter"
+(11:04:10 AM) lincolnthree1: hmm
+(11:04:11 AM) dmlloyd: one that's set in a really stupid way
+(11:04:15 AM) lincolnthree1: but let's consider this case
+(11:04:24 AM) lincolnthree1: I set the TCCL while weld does its bootstrap
+(11:04:30 AM) lincolnthree1: all is good
+(11:04:34 AM) lincolnthree1: Weld loads beans, etc.
+(11:04:39 AM) lincolnthree1: I reset the original TCCL
+(11:05:02 AM) lincolnthree1: Now one of the beans that weld loaded tries to load something from its own CL.
+(11:05:07 AM) lincolnthree1: It should still work.
+(11:05:12 AM) lincolnthree1: Because that class has a reference to its own CL
+(11:05:52 AM) lincolnthree1: So when it tries to load something, unless you explicityly load it from a "Bad" class, or the TCCL, it should find what it is looking for.
+(11:06:11 AM) lincolnthree1: Which is why you see classes use their own class to get the classloader to load things?
+(11:06:29 AM) lincolnthree1: *frequently see
+(11:06:35 AM) dmlloyd: yeah normally that's the best way to do it
+(11:06:37 AM) lincolnthree1: Am I on the right track?
+(11:07:34 AM) dmlloyd: to additionally confuse things, for things that are deployment-ish like EE deployments (and weld beans, presumably) there's an assumption within user code that the TCCL is equal to the deployment's CL
+(11:07:50 AM) dmlloyd: so for the duration of calling into user methods, the TCCL should also be set
+(11:07:58 AM) lincolnthree1: Ah. Yuck.
+(11:08:10 AM) lincolnthree1: So in that case I *should* probably keep doing what I am doing with the TCCL
+(11:08:20 AM) lincolnthree1: And leave it set for the duration of weld's execution
+(11:09:17 AM) dmlloyd: I suspect that weld will take care of setting it for you in this case
+(11:09:37 AM) lincolnthree1: So next question.
+(11:09:44 AM) lincolnthree1: Let's say I get weld booting.
+(11:09:48 AM) lincolnthree1: (which it is)
+(11:10:19 AM) lincolnthree1: I want to ensure that each "plugin" that I load, and all of that plugin's sub-classloaded JARs that I pull in from Maven are isolated from each other
+(11:10:29 AM) lincolnthree1: so that different versions of maven artifacts can be used in each plugin
+(11:12:00 AM) lincolnthree1: should I bother trying to create a JB module in memory?
+(11:12:09 AM) lincolnthree1: or should I just make a hacky classloader?
+(11:12:22 AM) lincolnthree1: is that something modules can help me with?
+(11:12:50 AM) dmlloyd: if you go with a module it takes care of some goofy concurrency stuff that can bite you otherwise, and it takes care of linking and stuff for you too
+(11:13:11 AM) lincolnthree1: and I can build up that structure in java at runtime, yes?
+(11:13:15 AM) dmlloyd: yes
+(11:13:22 AM) dmlloyd: either way though you have to think carefully about the dependency graph of the modules/CLs you're creating
+(11:13:41 AM) lincolnthree1: Right, but I'd just as soon not do the CL stuff myself, since JBM is solid already.
+(11:14:03 AM) lincolnthree1: Where do I begin? :)
+(11:14:10 AM) dmlloyd: to implement a custom module loader is pretty simple, just implement ModuleLoader
+(11:14:43 AM) dmlloyd: modules are defined by ModuleSpec
+(11:15:02 AM) lincolnthree1: once I have a moduleLoader, how do I invoke it?
+(11:15:13 AM) dmlloyd: http://docs.jboss.org/jbossmodules/1.0.2.GA/api/index.html?org/jboss/modules/ModuleSpec.html
+(11:15:52 AM) dmlloyd: just call http://docs.jboss.org/jbossmodules/1.0.2.GA/api/org/jboss/modules/ModuleLoader.html#loadModule(org.jboss.modules.ModuleIdentifier)
+(11:16:25 AM) lincolnthree1: and once it's loaded, how do I "attach" that module so that Weld's classloader can see it?
+(11:16:53 AM) dmlloyd: you don't: you can make your new module include dependencies that weld has in common, but you cannot modify any existing class loader in the system
+(11:17:15 AM) dmlloyd: once you load your module via loadModule(), you can get its class loader
+(11:17:31 AM) dmlloyd: pass that to weld via TCCL
+(11:17:48 AM) lincolnthree1: ah ok, so I need to create a module that contains both weld, and forge, and then the plugins, then get that CL and set it as TCCL
+(11:17:55 AM) lincolnthree1: pass it*
+(11:18:15 AM) dmlloyd: you need to create a module which contains your plugin(s), and which *sees* weld/forge and the standard JDK APIs
+(11:18:28 AM) lincolnthree1: ah
+(11:18:41 AM) lincolnthree1: but since weld/forge/JDK are already a module, that should be easy, right?
+(11:18:54 AM) lincolnthree1: I can use the default module loader?
+(11:18:55 AM) dmlloyd: yeah if you're starting up in a modular environment it's pretty easy to do
+(11:19:13 AM) lincolnthree1: Ok, thanks. I'll probably need more help.
+(11:19:18 AM) lincolnthree1: But I think I have something to go on for a while.
+(11:19:30 AM) dmlloyd: when you implement your module loader, the "preloadModule()" method is where you implement the logic for one module loader to see another
+(11:20:10 AM) dmlloyd: the logic would normally be "if (this module ID is one of mine) { loadModuleLocal(identifier); } else { delegate to the boot module loader; }"
+(11:20:24 AM) lincolnthree1: ah! awesome, that's pretty straight forward
+(11:20:42 AM) dmlloyd: this lets your custom modules have dependencies on the system modules
+(11:20:51 AM) lincolnthree1: so I just add "org.jboss.forge:main" as a dependency of my new plugin modules
+(11:20:56 AM) lincolnthree1: and as long as I delegate properly
+(11:20:57 AM) lincolnthree1: it should work
+(11:21:00 AM) dmlloyd: yes
+(11:21:05 AM) lincolnthree1: you are incredible
+(11:21:09 AM) lincolnthree1: anyone ever tell you that? lol
+(11:21:13 AM) dmlloyd: ha
+(11:21:22 AM) lincolnthree1: I'm seriously impressed by JBM
