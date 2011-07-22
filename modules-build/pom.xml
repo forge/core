@@ -89,7 +89,7 @@
                   <argument>-jar</argument>
                   <argument>jboss-modules.jar</argument>
                   <argument>-modulepath</argument>
-                  <argument>modules/</argument>
+                  <argument>modules/:~/.forge/plugins</argument>
                   <argument>org.jboss.forge</argument>
                </arguments>
 

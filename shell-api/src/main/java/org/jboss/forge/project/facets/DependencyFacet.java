@@ -30,6 +30,7 @@ import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.dependencies.DependencyRepository;
 import org.jboss.forge.project.dependencies.DependencyResolver;
+import org.jboss.forge.project.dependencies.ScopeType;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -206,6 +207,13 @@ public interface DependencyFacet extends Facet
     * and will be expanded during building to their property value.)
     */
    public void setProperty(String name, String value);
+
+   /**
+    * Get a list of this {@link Project}'s dependencies of the given {@link ScopeType}.
+    * 
+    * @return
+    */
+   public List<Dependency> getDependenciesInScopes(ScopeType... scopes);
 
    /**
     * Get a build property by name. (Build properties, such as ${my.version}, can be used anywhere in a dependency, and

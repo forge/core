@@ -19,55 +19,25 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.shell;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
+package org.jboss.forge.shell.test.plugins.builtin;
 
-import org.jboss.forge.shell.PluginJar.IllegalNameException;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.test.AbstractShellTest;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class PluginClassLoader extends URLClassLoader
+@RunWith(Arquillian.class)
+public class ForgePluginTest extends AbstractShellTest
 {
-   private final File file;
-   private final PluginJar jar;
-
-   public PluginClassLoader(File file) throws MalformedURLException
+   @Test
+   public void testInstallFromGit() throws Exception
    {
-      this(file, null);
+      queueInputLines("y");
+      getShell().execute("forge source-plugin ~/Projects/plugin-openshift");
    }
 
-   public PluginClassLoader(File file, ClassLoader parent) throws IllegalNameException, MalformedURLException
-   {
-      super(new URL[] { file.toURI().toURL() }, parent);
-
-      this.file = file;
-
-      this.jar = new PluginJar(file.getName());
-   }
-
-   public File getFile()
-   {
-      return file;
-   }
-
-   public String getPluginName()
-   {
-      return jar.getName();
-   }
-
-   public int getPluginVersion()
-   {
-      return jar.getVersion();
-   }
-
-   @Override
-   public String toString()
-   {
-      return jar.getFullName();
-   }
 }

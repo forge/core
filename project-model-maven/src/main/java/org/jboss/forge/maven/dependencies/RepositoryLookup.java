@@ -30,6 +30,8 @@ import org.sonatype.aether.RepositorySystem;
 import org.sonatype.aether.artifact.Artifact;
 import org.sonatype.aether.collection.CollectRequest;
 import org.sonatype.aether.repository.ArtifactRepository;
+import org.sonatype.aether.repository.LocalArtifactRequest;
+import org.sonatype.aether.repository.LocalArtifactResult;
 import org.sonatype.aether.repository.LocalRepository;
 import org.sonatype.aether.repository.RemoteRepository;
 import org.sonatype.aether.repository.RepositoryPolicy;
@@ -56,8 +58,7 @@ public class RepositoryLookup implements DependencyResolverProvider
    private ForgeEnvironment environment;
 
    public RepositoryLookup()
-   {
-   }
+   {}
 
    @Inject
    public RepositoryLookup(final MavenContainer container, final ResourceFactory factory,
@@ -97,15 +98,30 @@ public class RepositoryLookup implements DependencyResolverProvider
 
          VERSION: for (Version version : versions.getVersions())
          {
-            ArtifactRequest request = new ArtifactRequest();
             ArtifactRepository ar = versions.getRepository(version);
+            DependencyBuilder currentVersion = DependencyBuilder.create(dep).setVersion(version.toString());
+            Artifact artifact = dependencyToMavenArtifact(currentVersion);
+
+            if (ar instanceof LocalRepository)
+            {
+               LocalArtifactRequest request = new LocalArtifactRequest(artifact, null, null);
+               LocalArtifactResult a = session.getLocalRepositoryManager().find(session, request);
+
+               File file = a.getFile();
+               DependencyResource resource = new DependencyResource(factory, file, currentVersion);
+               if (!result.contains(resource))
+               {
+                  result.add(resource);
+                  continue VERSION;
+               }
+            }
             if (ar instanceof RemoteRepository)
             {
+               ArtifactRequest request = new ArtifactRequest();
                RemoteRepository remoteRepo = new RemoteRepository(ar.getId(), ar.getContentType(),
                         ((RemoteRepository) ar).getUrl());
                request.addRepository(remoteRepo);
-               DependencyBuilder currentVersion = DependencyBuilder.create(dep).setVersion(version.toString());
-               request.setArtifact(dependencyToMavenArtifact(currentVersion));
+               request.setArtifact(artifact);
 
                try
                {
@@ -259,7 +275,7 @@ public class RepositoryLookup implements DependencyResolverProvider
       session.setOffline(!environment.isOnline());
       Settings settings = container.getSettings();
 
-      LocalRepository localRepo = new LocalRepository(settings.getLocalRepository());
+      LocalRepository localRepo = new LocalRepository(new File(settings.getLocalRepository()), "");
       session.setLocalRepositoryManager(repoSystem.newLocalRepositoryManager(localRepo));
       session.setTransferErrorCachingEnabled(false);
       session.setNotFoundCachingEnabled(false);

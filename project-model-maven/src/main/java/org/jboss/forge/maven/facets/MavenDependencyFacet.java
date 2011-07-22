@@ -44,6 +44,7 @@ import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.dependencies.DependencyRepository;
 import org.jboss.forge.project.dependencies.DependencyRepositoryImpl;
 import org.jboss.forge.project.dependencies.DependencyResolver;
+import org.jboss.forge.project.dependencies.ScopeType;
 import org.jboss.forge.project.dependencies.events.AddedDependencies;
 import org.jboss.forge.project.dependencies.events.RemovedDependencies;
 import org.jboss.forge.project.facets.BaseFacet;
@@ -63,7 +64,6 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
    private final DependencyResolver resolver;
 
    private final EventBus bus;
-
 
    @Inject
    public MavenDependencyFacet(final DependencyResolver resolver, final EventBus bus)
@@ -229,7 +229,6 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
       }
       return null;
    }
-
 
    @Override
    public boolean hasManagedDependency(final Dependency managedDependency)
@@ -463,5 +462,25 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
       }
       return null;
 
+   }
+
+   @Override
+   public List<Dependency> getDependenciesInScopes(final ScopeType... scopes)
+   {
+      MavenCoreFacet maven = project.getFacet(MavenCoreFacet.class);
+
+      List<Dependency> result = new ArrayList<Dependency>();
+      List<Dependency> dependencies = getDependencies();
+      for (Dependency dependency : dependencies) {
+         for (ScopeType scope : scopes) {
+            if ((dependency.getScopeTypeEnum() == null) || dependency.getScopeTypeEnum().equals(scope))
+            {
+               dependency = maven.resolveProperties(dependency);
+               result.add(dependency);
+               break;
+            }
+         }
+      }
+      return result;
    }
 }

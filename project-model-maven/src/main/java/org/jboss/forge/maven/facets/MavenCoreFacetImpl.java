@@ -27,6 +27,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.annotation.Annotation;
+import java.util.Map.Entry;
+import java.util.Properties;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.spi.BeanManager;
@@ -44,6 +46,8 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.ProjectModelException;
+import org.jboss.forge.project.dependencies.Dependency;
+import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.facets.BaseFacet;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.Resource;
@@ -249,5 +253,33 @@ public class MavenCoreFacetImpl extends BaseFacet implements MavenCoreFacet, Fac
    private String getMvnCommand()
    {
       return OSUtils.isWindows() ? "mvn.bat" : "mvn";
+   }
+
+   @Override
+   public Dependency resolveProperties(final Dependency dependency)
+   {
+      Properties properties = getProjectBuildingResult().getProject().getProperties();
+      DependencyBuilder builder = DependencyBuilder.create();
+
+      for (Entry<Object, Object> e : properties.entrySet()) {
+         String key = "\\$\\{" + e.getKey().toString() + "\\}";
+         Object value = e.getValue();
+
+         if (dependency.getGroupId() != null)
+            builder.setGroupId(dependency.getGroupId().replaceAll(key, value.toString()));
+         if (dependency.getArtifactId() != null)
+            builder.setArtifactId(dependency.getArtifactId().replaceAll(key, value.toString()));
+         if (dependency.getVersion() != null)
+            builder.setVersion(dependency.getVersion().replaceAll(key, value.toString()));
+         if (dependency.getClassifier() != null)
+            builder.setClassifier(dependency.getClassifier().replaceAll(key, value.toString()));
+         if (dependency.getPackagingType() != null)
+            builder.setPackagingType(dependency.getPackagingType().replaceAll(key,
+                     value.toString()));
+         if (dependency.getScopeType() != null)
+            builder.setScopeType(dependency.getScopeType().replaceAll(key, value.toString()));
+      }
+
+      return builder;
    }
 }

@@ -24,9 +24,6 @@ package org.jboss.forge.shell;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.net.MalformedURLException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,13 +32,13 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
-import org.jboss.forge.shell.PluginJar.IllegalNameException;
 import org.jboss.forge.shell.events.AcceptUserInput;
 import org.jboss.forge.shell.events.PostStartup;
 import org.jboss.forge.shell.events.PreStartup;
 import org.jboss.forge.shell.events.ReinitializeEnvironment;
 import org.jboss.forge.shell.events.Shutdown;
 import org.jboss.forge.shell.events.Startup;
+import org.jboss.modules.ModuleLoader;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 
@@ -55,7 +52,6 @@ public class Bootstrap
    private static Thread currentShell = null;
    private static boolean restartRequested = false;
    private static File workingDir = new File("").getAbsoluteFile();
-   private static CompositePluginClassLoader pluginLoader;
 
    private static FilenameFilter jarFileFilter = new FilenameFilter()
    {
@@ -136,39 +132,14 @@ public class Bootstrap
 
    synchronized private static void loadPlugins()
    {
+      ModuleLoader moduleLoader = ModuleLoader.forClassLoader(Bootstrap.class.getClassLoader());
+
       ClassLoader cl = Thread.currentThread().getContextClassLoader();
       if (cl == null)
       {
          cl = Bootstrap.class.getClassLoader();
       }
 
-      if (pluginLoader == null)
-      {
-         pluginLoader = new CompositePluginClassLoader(cl);
-         Thread.currentThread().setContextClassLoader(pluginLoader);
-      }
-
-      File pluginsDir = new File(ShellImpl.FORGE_CONFIG_DIR + "/plugins/");
-      if (pluginsDir.exists())
-      {
-         List<File> found = Arrays.asList(pluginsDir.listFiles(jarFileFilter));
-
-         for (File file : found)
-         {
-            try
-            {
-               PluginClassLoader loader = new PluginClassLoader(file, pluginLoader.getParent());
-               pluginLoader.add(loader);
-            }
-            catch (IllegalNameException e)
-            {
-               System.err.println("JAR with invalid plugin name [" + file.getAbsolutePath() + "] will not be loaded.");
-            }
-            catch (MalformedURLException e)
-            {
-               throw new RuntimeException(e);
-            }
-         }
-      }
+      // TODO load plugin modules here
    }
 }

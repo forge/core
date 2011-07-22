@@ -35,18 +35,22 @@ import org.jboss.modules.ModuleSpec;
 public class ModularPluginLoader extends ModuleLoader
 {
    @Override
-   protected Module preloadModule(ModuleIdentifier identifier) throws ModuleLoadException
+   protected Module preloadModule(final ModuleIdentifier identifier) throws ModuleLoadException
    {
       /*
        * dmlloyd: when you implement your module loader, the "preloadModule()" method is where you implement the logic
        * for one module loader to see another
        */
+
       return super.preloadModule(identifier);
    }
 
    @Override
-   protected ModuleSpec findModule(ModuleIdentifier arg0) throws ModuleLoadException
+   protected ModuleSpec findModule(final ModuleIdentifier id) throws ModuleLoadException
    {
+      id.getName();
+      id.getSlot();
+
       return null;
    }
 
