@@ -61,6 +61,7 @@
       <resource-root path="jboss-jms-api_1.1_spec.jar" />
       <resource-root path="jboss-jsp-api_2.2_spec.jar" />
       <resource-root path="jboss-logging.jar" />
+      <resource-root path="jboss-logmanager.jar" />
       <resource-root path="jboss-modules.jar" />
       <resource-root path="jboss-saaj-api_1.3_spec.jar" />
       <resource-root path="jboss-servlet-api_3.0_spec.jar" />

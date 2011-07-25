@@ -132,14 +132,18 @@ public class Bootstrap
 
    synchronized private static void loadPlugins()
    {
-      ModuleLoader moduleLoader = ModuleLoader.forClassLoader(Bootstrap.class.getClassLoader());
+      try {
+         ModuleLoader moduleLoader = ModuleLoader.forClassLoader(Bootstrap.class.getClassLoader());
 
-      ClassLoader cl = Thread.currentThread().getContextClassLoader();
-      if (cl == null)
-      {
-         cl = Bootstrap.class.getClassLoader();
+         ClassLoader cl = Thread.currentThread().getContextClassLoader();
+         if (cl == null)
+         {
+            cl = Bootstrap.class.getClassLoader();
+         }
       }
-
-      // TODO load plugin modules here
+      catch (Exception e) {
+         // TODO Auto-generated catch block
+         e.printStackTrace();
+      }
    }
 }

@@ -24,7 +24,7 @@
          <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss} %c{1} [%p] %m%n" />
       </layout>
       <filter class="org.apache.log4j.varia.LevelRangeFilter">
-         <param name="levelMin" value="FATAL" />
+         <param name="levelMin" value="DEBUG" />
          <param name="levelMax" value="FATAL" />
       </filter>
       <filter class="org.apache.log4j.varia.StringMatchFilter">
@@ -50,7 +50,7 @@
    </category>
 
    <category name="org.jboss.weld">
-      <priority value="FATAL" />
+      <priority value="DEBUG" />
    </category>
 
    <category name="org.apache">

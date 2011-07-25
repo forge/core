@@ -450,11 +450,13 @@ public class ForgePlugin implements Plugin
    private DirectoryResource createModule(final Project project, final Dependency dep, final Resource<?> artifact)
    {
       DirectoryResource moduleDir = getOrCreatePluginModuleDirectory(dep);
+      String pluginName = dep.getGroupId() + "." + dep.getArtifactId();
+      String pluginSlot = dep.getVersion();
 
       FileResource<?> moduleXml = (FileResource<?>) moduleDir.getChild("module.xml");
       if (moduleXml.exists()
                && !prompt.promptBoolean(
-                        "An existing installation for version [" + dep.getVersion()
+                        "An existing installation for version [" + pluginSlot
                                  + "] of this plugin was found. Replace it?", true))
       {
          throw new RuntimeException("Aborted.");
@@ -465,8 +467,8 @@ public class ForgePlugin implements Plugin
 
       // <resource-root path="maven-dependency.jar" />
       Node module = XMLParser.parse(getClass().getResourceAsStream("/org/jboss/forge/modules/module.xml"));
-      module.attribute("name", dep.getGroupId() + "." + dep.getArtifactId());
-      module.attribute("slot", dep.getVersion());
+      module.attribute("name", pluginName);
+      module.attribute("slot", pluginSlot);
       Node resources = module.getSingle("resources");
 
       resources.create("resource-root").attribute("path", dep.getArtifactId() + ".jar");
@@ -509,7 +511,23 @@ public class ForgePlugin implements Plugin
 
       moduleXml.setContents(XMLParser.toXMLString(module));
 
+      // Add to list modules.
+      registerPlugin(pluginName, pluginSlot);
+
       return moduleDir;
+   }
+
+   public void registerPlugin(final String pluginName, final String pluginSlot)
+   {
+      FileResource<?> pluginList = shell.getConfigDir().getChild("plugins.xml").reify(FileResource.class);
+      if (!pluginList.exists() || pluginList.isDirectory())
+      {
+         pluginList.delete(true);
+         pluginList.createNewFile();
+      }
+      Node pluginsXml = XMLParser.parse(pluginList.getResourceInputStream());
+      Node plugins = pluginsXml.getOrCreate("plugins");
+      plugins.getOrCreate("plugin@name=" + pluginName + "&version=" + pluginSlot);
    }
 
    public DirectoryResource getOrCreatePluginModuleDirectory(final Dependency dep)
