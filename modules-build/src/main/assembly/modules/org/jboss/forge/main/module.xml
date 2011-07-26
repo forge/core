@@ -13,7 +13,6 @@
       <resource-root path="aether-util.jar" />
       <resource-root path="args4j.jar" />
       <resource-root path="cal10n-api.jar" />
-      <resource-root path="cdi-api.jar" />
       <resource-root path="common.jar" />
       <resource-root path="commons-cli.jar" />
       <resource-root path="commons-codec.jar" />
@@ -27,13 +26,10 @@
       <resource-root path="forge-javaee-api.jar" />
       <resource-root path="forge-javaee-impl.jar" />
       <resource-root path="forge-maven-api.jar" />
-      <resource-root path="forge-parser-java-api.jar" />
       <resource-root path="forge-parser-java.jar" />
-      <resource-root path="forge-parser-xml.jar" />
       <resource-root path="forge-project-model-maven.jar" />
       <resource-root path="forge-scaffold-api.jar" />
       <resource-root path="forge-scaffold-plugins.jar" />
-      <resource-root path="forge-shell-api.jar" />
       <resource-root path="forge-shell.jar" />
       <resource-root path="fpak.jar" />
       <resource-root path="guava.jar" />
@@ -42,7 +38,6 @@
       <resource-root path="httpcore.jar" />
       <resource-root path="jansi.jar" />
       <resource-root path="javassist.jar" />
-      <resource-root path="javax.inject.jar" />
       <resource-root path="jaxrs-api.jar" />
       <resource-root path="jboss-annotations-api_1.1_spec.jar" />
       <resource-root path="jboss-connector-api_1.5_spec.jar" />
@@ -107,8 +102,6 @@
       <resource-root path="runtime.jar" />
       <resource-root path="seam-render.jar" />
       <resource-root path="seam-solder.jar" />
-      <resource-root path="shrinkwrap-descriptors-api.jar" />
-      <resource-root path="shrinkwrap-descriptors-impl.jar" />
       <resource-root path="sisu-guice-no_aop.jar" />
       <resource-root path="sisu-inject-bean.jar" />
       <resource-root path="sisu-inject-plexus.jar" />
@@ -131,5 +124,18 @@
 
    <dependencies>
       <module name="javax.api" />
+      <module name="org.jboss.forge.plugins" services="import" optional="true">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+      <module name="org.jboss.forge.shell.api" services="import" optional="false">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
    </dependencies>
+   
 </module>

@@ -38,16 +38,6 @@
             <include>licence.txt</include>
          </includes>
       </fileSet>
-      
-      <!-- Copy Module Descriptor -->
-      <fileSet>
-         <directory>src/main/assembly</directory>
-         <outputDirectory>modules/org/jboss/forge/main</outputDirectory>
-         <filtered>true</filtered>
-         <includes>
-            <include>module.xml</include>
-         </includes>
-      </fileSet>
    </fileSets>
 
    <dependencySets>
@@ -68,12 +58,40 @@
          <outputDirectory>modules/org/jboss/forge/main</outputDirectory>
          <useProjectArtifact>false</useProjectArtifact>
          <includes>
-            <include>org.jboss.forge.*</include>
+            <include>org.jboss.forge:*</include>
          </includes>
          <excludes>
-            <exclude>org.jboss.forge.*:*:*:javadoc</exclude>
-            <exclude>org.jboss.forge.*:*:*:sources</exclude>
+            <exclude>org.jboss.forge:forge-event-bus*</exclude>
+            <exclude>org.jboss.forge:forge-shell-api*</exclude>
+            <exclude>javax.enterprise.cdi-api*</exclude>
+            <exclude>javax.inject:javax.inject*</exclude>
          </excludes>
+         <outputFileNameMapping>${artifact.artifactId}${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
+      </dependencySet>
+      
+      <!-- Shell API -->
+      <dependencySet>
+         <outputDirectory>modules/org/jboss/forge/shell/api/main</outputDirectory>
+         <useProjectArtifact>false</useProjectArtifact>
+         <includes>
+            <include>org.jboss.forge:forge-shell-api</include>
+            <include>org.jboss.forge:forge-event-bus</include>
+            <include>org.jboss.forge:forge-parser-java-api</include>
+            <include>org.jboss.forge:forge-parser-xml</include>
+            <include>org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api</include>
+            <include>org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-impl</include>
+         </includes>
+         <outputFileNameMapping>${artifact.artifactId}${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
+      </dependencySet>
+      
+      <!-- CDI API -->
+      <dependencySet>
+         <outputDirectory>modules/javax/enterprise/cdi-api/main</outputDirectory>
+         <useProjectArtifact>false</useProjectArtifact>
+         <includes>
+            <include>javax.enterprise:cdi-api</include>
+            <include>javax.inject:javax.inject</include>
+         </includes>
          <outputFileNameMapping>${artifact.artifactId}${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
       </dependencySet>
       
@@ -83,8 +101,8 @@
          <useProjectArtifact>false</useProjectArtifact>
          <useTransitiveDependencies>true</useTransitiveDependencies>
          <excludes>
-            <exclude>org.jboss.forge:*:*:javadoc</exclude>
-            <exclude>org.jboss.forge:*:*:sources</exclude>
+            <exclude>org.jboss.forge.*:*:*:javadoc</exclude>
+            <exclude>org.jboss.forge.*:*:*:sources</exclude>
          </excludes>
          <outputFileNameMapping>${artifact.artifactId}${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
       </dependencySet>

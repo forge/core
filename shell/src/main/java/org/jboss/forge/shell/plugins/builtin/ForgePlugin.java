@@ -481,7 +481,8 @@ public class ForgePlugin implements Plugin
 
       List<DependencyResource> pluginDependencies = new ArrayList<DependencyResource>();
       for (Dependency d : deps.getDependenciesInScopes(ScopeType.COMPILE, ScopeType.RUNTIME)) {
-         if (d.getPackagingTypeEnum().equals(PackagingType.JAR))
+         if (d.getPackagingTypeEnum().equals(PackagingType.JAR)
+                  && !d.getGroupId().equals("org.jboss.forge"))
          {
             List<DependencyResource> artifacts = resolver.resolveArtifacts(d);
             if (artifacts.size() != 1)
@@ -506,7 +507,7 @@ public class ForgePlugin implements Plugin
 
       // <module name="org.jboss.forge:main" />
       Node dependencies = module.getSingle("dependencies");
-      dependencies.create("module").attribute("name", "org.jboss.forge");
+      dependencies.create("module").attribute("name", "org.jboss.forge.shell.api");
       dependencies.create("module").attribute("name", "javax.api");
 
       moduleXml.setContents(XMLParser.toXMLString(module));
@@ -519,15 +520,40 @@ public class ForgePlugin implements Plugin
 
    public void registerPlugin(final String pluginName, final String pluginSlot)
    {
-      FileResource<?> pluginList = shell.getConfigDir().getChild("plugins.xml").reify(FileResource.class);
-      if (!pluginList.exists() || pluginList.isDirectory())
+
+      DirectoryResource dir = environment.getPluginDirectory();
+      dir = dir.getOrCreateChildDirectory("org");
+      dir = dir.getOrCreateChildDirectory("jboss");
+      dir = dir.getOrCreateChildDirectory("forge");
+      dir = dir.getOrCreateChildDirectory("plugins");
+      dir = dir.getOrCreateChildDirectory("main");
+      FileResource<?> moduleXml = dir.getChild("module.xml").reify(FileResource.class);
+
+      if (!moduleXml.exists() || moduleXml.isDirectory())
       {
-         pluginList.delete(true);
-         pluginList.createNewFile();
+         moduleXml.delete(true);
+         moduleXml.createNewFile();
+         moduleXml.setContents(getClass().getResourceAsStream("/org/jboss/forge/modules/module.xml"));
       }
-      Node pluginsXml = XMLParser.parse(pluginList.getResourceInputStream());
-      Node plugins = pluginsXml.getOrCreate("plugins");
-      plugins.getOrCreate("plugin@name=" + pluginName + "&version=" + pluginSlot);
+
+      Node module = XMLParser.parse(moduleXml.getResourceInputStream());
+
+      Node plugin = module.attribute("name", "org.jboss.forge.plugins")
+               .getSingle("dependencies")
+               .getOrCreate("module@name=" + pluginName);
+
+      plugin.attribute("slot", pluginSlot)
+               .attribute("export", true).attribute("services", "export");
+
+      Node imports = plugin.getOrCreate("imports");
+      imports.getOrCreate("include@path=**");
+      imports.getOrCreate("include@path=META-INF");
+
+      Node exports = plugin.getOrCreate("exports").getOrCreate("include-set");
+      exports.getOrCreate("path@name=**");
+      exports.getOrCreate("path@name=META-INF");
+
+      moduleXml.setContents(XMLParser.toXMLString(module));
    }
 
    public DirectoryResource getOrCreatePluginModuleDirectory(final Dependency dep)
