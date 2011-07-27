@@ -23,7 +23,6 @@
 package org.jboss.forge.shell;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -52,15 +51,6 @@ public class Bootstrap
    private static Thread currentShell = null;
    private static boolean restartRequested = false;
    private static File workingDir = new File("").getAbsoluteFile();
-
-   private static FilenameFilter jarFileFilter = new FilenameFilter()
-   {
-      @Override
-      public boolean accept(final File dir, final String name)
-      {
-         return name.endsWith(".jar");
-      }
-   };
 
    @Inject
    private BeanManager manager;

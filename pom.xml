@@ -53,7 +53,6 @@
       <module>scaffold-plugins</module>
       <module>scaffold-metawidget</module>
       <module>dev-plugins</module>
-      <module>plugin-repository</module>
    </modules>
 
    <properties>
@@ -163,11 +162,6 @@
          <dependency>
             <groupId>org.jboss.forge</groupId>
             <artifactId>forge-dev-plugins</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>plugin-repository</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>

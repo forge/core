@@ -120,8 +120,8 @@ public class MavenPackagingFacet extends BaseFacet implements PackagingFacet, Fa
    public Resource<?> getFinalArtifact()
    {
       MavenCoreFacet mvn = project.getFacet(MavenCoreFacet.class);
-      String directory = mvn.getProjectBuildingResult().getProject().getBuild().getDirectory();
-      String finalName = mvn.getProjectBuildingResult().getProject().getBuild().getFinalName();
+      String directory = mvn.getPartialProjectBuildingResult().getProject().getBuild().getDirectory();
+      String finalName = mvn.getPartialProjectBuildingResult().getProject().getBuild().getFinalName();
 
       if (Strings.isNullOrEmpty(directory))
       {

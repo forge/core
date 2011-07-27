@@ -57,11 +57,19 @@ public interface MavenCoreFacet extends Facet
    public void setPOM(Model pom);
 
    /**
+    * Ask Maven to process this project's POM and return the resulting metadata. Do not build dependency hierarchy past
+    * the immediate POM.
+    * <p>
+    * <b>**Warning!**</b> Calling this method has serious performance implications! Avoid whenever possible!
+    */
+   public ProjectBuildingResult getPartialProjectBuildingResult();
+
+   /**
     * Ask Maven to process this project's POM and return the resulting metadata.
     * <p>
     * <b>**Warning!**</b> Calling this method has serious performance implications! Avoid whenever possible!
     */
-   public ProjectBuildingResult getProjectBuildingResult();
+   public ProjectBuildingResult getFullProjectBuildingResult();
 
    /**
     * Return the fully-resolved POM/{@link MavenProject} for this Maven enabled {@link Project}

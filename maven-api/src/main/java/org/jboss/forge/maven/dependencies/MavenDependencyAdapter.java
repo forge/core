@@ -23,6 +23,7 @@
 package org.jboss.forge.maven.dependencies;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.maven.model.Exclusion;
@@ -77,6 +78,35 @@ public class MavenDependencyAdapter extends org.apache.maven.model.Dependency im
          temp.setGroupId(exclusion.getGroupId());
          this.getExclusions().add(temp);
       }
+   }
+
+   public MavenDependencyAdapter(final org.sonatype.aether.graph.Dependency dep)
+   {
+      if (dep == null)
+      {
+         throw new IllegalArgumentException("Dependency must not be null.");
+      }
+
+      this.setArtifactId(dep.getArtifact().getArtifactId());
+      this.setGroupId(dep.getArtifact().getGroupId());
+      this.setClassifier(dep.getArtifact().getClassifier());
+      this.setExclusions(dep.getExclusions());
+      this.setOptional(dep.isOptional());
+      this.setScope(dep.getScope());
+      this.setType(dep.getArtifact().getExtension());
+      this.setVersion(dep.getArtifact().getVersion());
+   }
+
+   private void setExclusions(final Collection<org.sonatype.aether.graph.Exclusion> exclusions)
+   {
+      List<Exclusion> result = new ArrayList<Exclusion>();
+      for (org.sonatype.aether.graph.Exclusion exclusion : exclusions) {
+         Exclusion temp = new Exclusion();
+         temp.setArtifactId(exclusion.getArtifactId());
+         temp.setGroupId(exclusion.getGroupId());
+         result.add(temp);
+      }
+      super.setExclusions(result);
    }
 
    @Override
@@ -135,30 +165,6 @@ public class MavenDependencyAdapter extends org.apache.maven.model.Dependency im
       return result;
    }
 
-   public static List<org.apache.maven.model.Dependency> fromForgeList(final List<Dependency> dependencies)
-   {
-      List<org.apache.maven.model.Dependency> result = new ArrayList<org.apache.maven.model.Dependency>();
-
-      for (Dependency dep : dependencies)
-      {
-         result.add(new MavenDependencyAdapter(dep));
-      }
-
-      return result;
-   }
-
-   public static List<Dependency> toForgeList(final List<org.apache.maven.model.Dependency> dependencies)
-   {
-      List<Dependency> result = new ArrayList<Dependency>();
-
-      for (org.apache.maven.model.Dependency dep : dependencies)
-      {
-         result.add(new MavenDependencyAdapter(dep));
-      }
-
-      return result;
-   }
-
    @Override
    public String getPackagingType()
    {
@@ -187,5 +193,14 @@ public class MavenDependencyAdapter extends org.apache.maven.model.Dependency im
    public String toCoordinates()
    {
       return DependencyBuilder.toId(this);
+   }
+
+   public static List<Dependency> fromAetherList(final List<org.sonatype.aether.graph.Dependency> dependencies)
+   {
+      List<Dependency> result = new ArrayList<Dependency>();
+      for (org.sonatype.aether.graph.Dependency dependency : dependencies) {
+         result.add(new MavenDependencyAdapter(dependency));
+      }
+      return result;
    }
 }

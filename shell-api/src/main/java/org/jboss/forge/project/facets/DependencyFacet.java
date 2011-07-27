@@ -113,6 +113,13 @@ public interface DependencyFacet extends Facet
    public List<Dependency> getDependencies();
 
    /**
+    * Return an immutable list of all {@link Dependencies} contained anywhere within this project's dependency
+    * hierarchy. (i.e.: all dependencies for which {@link DependencyFacet#hasEffectiveDependency(Dependency)} returns
+    * true;
+    */
+   List<Dependency> getEffectiveDependencies();
+
+   /**
     * Attempt to locate the given {@link Dependency}, if it exists in the {@link Project}, and return it.
     * <p/>
     * See also: {@link DependencyBuilder}. See also: {@link #hasDependency(Dependency)}.
@@ -120,6 +127,28 @@ public interface DependencyFacet extends Facet
     * @return
     */
    public Dependency getDependency(Dependency dependency);
+
+   /**
+    * Attempt to locate the given {@link Dependency}, if it exists anywhere in the {@link Project} dependency hierarchy,
+    * and return it.
+    * <p/>
+    * See also: {@link DependencyBuilder}. See also: {@link #hasEffectiveDependency(Dependency)}.
+    * 
+    * @return
+    */
+   Dependency getEffectiveDependency(Dependency dependency);
+
+   /**
+    * Return true if the given {@link Dependency} exists anywhere in the project dependency hierarchy. See also:
+    * {@link DependencyBuilder}. See also: {@link #getEffectiveDependency(Dependency)}.
+    */
+   boolean hasEffectiveDependency(Dependency dependency);
+
+   /**
+    * Get a list of this {@link Project}'s dependencies of the given {@link ScopeType}, from anywhere in the dependency
+    * hierarchy. See also: {@link DependencyBuilder}. See also: {@link #getEffectiveDependency(Dependency)}.
+    */
+   public List<Dependency> getEffectiveDependenciesInScopes(ScopeType... scopes);
 
    /**
     * Return true if this {@link Project} contains a managed dependency matching the given {@link Dependency} at any
@@ -209,9 +238,8 @@ public interface DependencyFacet extends Facet
    public void setProperty(String name, String value);
 
    /**
-    * Get a list of this {@link Project}'s dependencies of the given {@link ScopeType}.
-    * 
-    * @return
+    * Get a list of this {@link Project}'s dependencies of the given {@link ScopeType}.. See also:
+    * {@link DependencyBuilder}. See also: {@link #getDependency(Dependency)}.
     */
    public List<Dependency> getDependenciesInScopes(ScopeType... scopes);
 

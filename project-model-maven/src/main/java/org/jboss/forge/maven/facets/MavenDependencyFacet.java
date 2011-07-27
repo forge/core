@@ -111,7 +111,7 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
    public boolean hasDependency(final Dependency dep)
    {
       MavenCoreFacet maven = project.getFacet(MavenCoreFacet.class);
-      List<Dependency> dependencies = MavenDependencyAdapter.fromMavenList(maven.getProjectBuildingResult()
+      List<Dependency> dependencies = MavenDependencyAdapter.fromMavenList(maven.getPartialProjectBuildingResult()
                .getProject().getDependencies());
 
       for (Dependency dependency : dependencies)
@@ -175,7 +175,7 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
    public Dependency getDependency(final Dependency dep)
    {
       MavenCoreFacet maven = project.getFacet(MavenCoreFacet.class);
-      List<Dependency> dependencies = MavenDependencyAdapter.fromMavenList(maven.getProjectBuildingResult()
+      List<Dependency> dependencies = MavenDependencyAdapter.fromMavenList(maven.getPartialProjectBuildingResult()
                .getProject().getDependencies());
 
       for (Dependency dependency : dependencies)
@@ -186,6 +186,34 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
          }
       }
       return null;
+   }
+
+   @Override
+   public boolean hasEffectiveDependency(final Dependency dependency)
+   {
+      return getEffectiveDependency(dependency) != null;
+   }
+
+   @Override
+   public Dependency getEffectiveDependency(final Dependency manDep)
+   {
+      for (Dependency d : getEffectiveDependencies())
+      {
+         if (areEquivalent(d, manDep))
+         {
+            return d;
+         }
+      }
+      return null;
+   }
+
+   @Override
+   public List<Dependency> getEffectiveDependencies()
+   {
+      MavenCoreFacet maven = project.getFacet(MavenCoreFacet.class);
+      List<Dependency> deps = MavenDependencyAdapter.fromAetherList(maven.getFullProjectBuildingResult()
+               .getDependencyResolutionResult().getDependencies());
+      return deps;
    }
 
    @Override
@@ -216,7 +244,7 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
    public Dependency getEffectiveManagedDependency(final Dependency manDep)
    {
       MavenCoreFacet maven = project.getFacet(MavenCoreFacet.class);
-      DependencyManagement depMan = maven.getProjectBuildingResult().getProject().getDependencyManagement();
+      DependencyManagement depMan = maven.getFullProjectBuildingResult().getProject().getDependencyManagement();
       List<Dependency> managedDependencies = (depMan != null ? MavenDependencyAdapter.fromMavenList(depMan
                .getDependencies()) : new ArrayList<Dependency>());
 
@@ -471,6 +499,26 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
 
       List<Dependency> result = new ArrayList<Dependency>();
       List<Dependency> dependencies = getDependencies();
+      for (Dependency dependency : dependencies) {
+         for (ScopeType scope : scopes) {
+            if ((dependency.getScopeTypeEnum() == null) || dependency.getScopeTypeEnum().equals(scope))
+            {
+               dependency = maven.resolveProperties(dependency);
+               result.add(dependency);
+               break;
+            }
+         }
+      }
+      return result;
+   }
+
+   @Override
+   public List<Dependency> getEffectiveDependenciesInScopes(final ScopeType... scopes)
+   {
+      MavenCoreFacet maven = project.getFacet(MavenCoreFacet.class);
+
+      List<Dependency> result = new ArrayList<Dependency>();
+      List<Dependency> dependencies = getEffectiveDependencies();
       for (Dependency dependency : dependencies) {
          for (ScopeType scope : scopes) {
             if ((dependency.getScopeTypeEnum() == null) || dependency.getScopeTypeEnum().equals(scope))

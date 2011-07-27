@@ -65,6 +65,7 @@ import org.jboss.forge.shell.util.OSUtils;
 public class MavenCoreFacetImpl extends BaseFacet implements MavenCoreFacet, Facet
 {
    private ProjectBuildingResult buildingResult;
+   private ProjectBuildingResult fullBuildingResult;
 
    @Inject
    private MavenContainer container;
@@ -82,7 +83,7 @@ public class MavenCoreFacetImpl extends BaseFacet implements MavenCoreFacet, Fac
     * POM manipulation methods
     */
    @Override
-   public ProjectBuildingResult getProjectBuildingResult()
+   public ProjectBuildingResult getPartialProjectBuildingResult()
    {
       if (this.buildingResult == null)
       {
@@ -102,6 +103,7 @@ public class MavenCoreFacetImpl extends BaseFacet implements MavenCoreFacet, Fac
                try {
                   request.setResolveDependencies(true);
                   buildingResult = container.getBuilder().build(pomFile, request);
+                  fullBuildingResult = buildingResult;
                }
                catch (Exception full) {
                   throw new ProjectModelException(full);
@@ -114,6 +116,36 @@ public class MavenCoreFacetImpl extends BaseFacet implements MavenCoreFacet, Fac
          }
       }
       return buildingResult;
+   }
+
+   /*
+    * POM manipulation methods
+    */
+   @Override
+   public ProjectBuildingResult getFullProjectBuildingResult()
+   {
+      if (this.fullBuildingResult == null)
+      {
+         ProjectBuildingRequest request = null;
+         request = container.getRequest();
+         File pomFile = getPOMFile().getUnderlyingResourceObject();
+         if (request != null)
+         {
+            try {
+               request.setResolveDependencies(true);
+               buildingResult = container.getBuilder().build(pomFile, request);
+               fullBuildingResult = buildingResult;
+            }
+            catch (Exception full) {
+               throw new ProjectModelException(full);
+            }
+         }
+         else
+         {
+            throw new ProjectModelException("Project building request was null");
+         }
+      }
+      return fullBuildingResult;
    }
 
    private void invalidateBuildingResult()
@@ -209,7 +241,7 @@ public class MavenCoreFacetImpl extends BaseFacet implements MavenCoreFacet, Fac
    @Override
    public MavenProject getMavenProject()
    {
-      return getProjectBuildingResult().getProject();
+      return getPartialProjectBuildingResult().getProject();
    }
 
    @Override
@@ -258,7 +290,7 @@ public class MavenCoreFacetImpl extends BaseFacet implements MavenCoreFacet, Fac
    @Override
    public Dependency resolveProperties(final Dependency dependency)
    {
-      Properties properties = getProjectBuildingResult().getProject().getProperties();
+      Properties properties = getPartialProjectBuildingResult().getProject().getProperties();
       DependencyBuilder builder = DependencyBuilder.create();
 
       for (Entry<Object, Object> e : properties.entrySet()) {

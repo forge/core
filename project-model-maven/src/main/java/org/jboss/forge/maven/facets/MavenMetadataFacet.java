@@ -47,13 +47,13 @@ public class MavenMetadataFacet extends BaseFacet implements MetadataFacet
    @Override
    public String getProjectName()
    {
-      return project.getFacet(MavenCoreFacet.class).getProjectBuildingResult().getProject().getArtifactId();
+      return project.getFacet(MavenCoreFacet.class).getPartialProjectBuildingResult().getProject().getArtifactId();
    }
 
    @Override
    public String getProjectVersion()
    {
-      return project.getFacet(MavenCoreFacet.class).getProjectBuildingResult().getProject().getVersion();
+      return project.getFacet(MavenCoreFacet.class).getPartialProjectBuildingResult().getProject().getVersion();
    }
 
    @Override

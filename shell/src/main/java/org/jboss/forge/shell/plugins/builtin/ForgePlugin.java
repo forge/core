@@ -480,18 +480,24 @@ public class ForgePlugin implements Plugin
       jar.setContents(artifact.getResourceInputStream());
 
       List<DependencyResource> pluginDependencies = new ArrayList<DependencyResource>();
-      for (Dependency d : deps.getDependenciesInScopes(ScopeType.COMPILE, ScopeType.RUNTIME)) {
+      for (Dependency d : deps.getEffectiveDependenciesInScopes(ScopeType.COMPILE, ScopeType.RUNTIME)) {
          if (d.getPackagingTypeEnum().equals(PackagingType.JAR)
                   && !d.getGroupId().equals("org.jboss.forge"))
          {
             List<DependencyResource> artifacts = resolver.resolveArtifacts(d);
             if (artifacts.size() != 1)
             {
-               throw new RuntimeException("Oops! Wrong number of artifacts; we need 1 but found ["
-                        + artifacts.size() + "]");
+               // throw new RuntimeException("Oops! Wrong number of artifacts; we need 1 but found ["
+               // + artifacts.size() + "]");
             }
-
-            pluginDependencies.addAll(artifacts);
+            else
+               pluginDependencies.addAll(artifacts);
+         }
+         // TODO encapsulate this?
+         if (DependencyBuilder.areEquivalent(d, DependencyBuilder.create("org.jboss.forge:forge-javaee-api")))
+         {
+            module.getSingle("dependencies").create("module")
+                     .attribute("name", "org.jboss.forge.javaee-api");
          }
       }
 
@@ -507,7 +513,7 @@ public class ForgePlugin implements Plugin
 
       // <module name="org.jboss.forge:main" />
       Node dependencies = module.getSingle("dependencies");
-      dependencies.create("module").attribute("name", "org.jboss.forge.shell.api");
+      dependencies.create("module").attribute("name", "org.jboss.forge.shell-api");
       dependencies.create("module").attribute("name", "javax.api");
 
       moduleXml.setContents(XMLParser.toXMLString(module));
@@ -543,7 +549,8 @@ public class ForgePlugin implements Plugin
                .getOrCreate("module@name=" + pluginName);
 
       plugin.attribute("slot", pluginSlot)
-               .attribute("export", true).attribute("services", "export");
+               .attribute("export", true).attribute("services", "export")
+               .attribute("optional", "true");
 
       Node imports = plugin.getOrCreate("imports");
       imports.getOrCreate("include@path=**");
@@ -571,6 +578,26 @@ public class ForgePlugin implements Plugin
          dir = dir.getOrCreateChildDirectory(segment);
       }
 
+      dir = dir.getOrCreateChildDirectory(dep.getVersion());
+      return dir;
+   }
+
+   public DirectoryResource getOrCreatePluginDependenciesModuleDirectory(final Dependency dep)
+   {
+      DirectoryResource pluginDir = environment.getPluginDirectory();
+
+      List<String> groupId = Arrays.asList(dep.getGroupId().split("\\."));
+      List<String> artifactId = Arrays.asList(dep.getArtifactId().split("\\."));
+      DirectoryResource dir = pluginDir;
+      for (String segment : groupId) {
+         dir = dir.getOrCreateChildDirectory(segment);
+      }
+
+      for (String segment : artifactId) {
+         dir = dir.getOrCreateChildDirectory(segment);
+      }
+
+      dir = dir.getOrCreateChildDirectory("dependencies");
       dir = dir.getOrCreateChildDirectory(dep.getVersion());
       return dir;
    }
