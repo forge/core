@@ -38,10 +38,6 @@
          <artifactId>forge-dev-plugins</artifactId>
       </dependency>
       <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>plugin-repository</artifactId>
-      </dependency>
-      <dependency>
          <groupId>org.metawidget</groupId>
          <artifactId>metawidget-forge</artifactId>
       </dependency>
