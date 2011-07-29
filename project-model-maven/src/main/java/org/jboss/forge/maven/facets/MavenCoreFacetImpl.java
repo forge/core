@@ -77,7 +77,8 @@ public class MavenCoreFacetImpl extends BaseFacet implements MavenCoreFacet, Fac
    private BeanManager manager;
 
    public MavenCoreFacetImpl()
-   {}
+   {
+   }
 
    /*
     * POM manipulation methods
@@ -100,12 +101,14 @@ public class MavenCoreFacetImpl extends BaseFacet implements MavenCoreFacet, Fac
             // try full build if that fails
             if (request != null)
             {
-               try {
+               try
+               {
                   request.setResolveDependencies(true);
                   buildingResult = container.getBuilder().build(pomFile, request);
                   fullBuildingResult = buildingResult;
                }
-               catch (Exception full) {
+               catch (Exception full)
+               {
                   throw new ProjectModelException(full);
                }
             }
@@ -131,12 +134,14 @@ public class MavenCoreFacetImpl extends BaseFacet implements MavenCoreFacet, Fac
          File pomFile = getPOMFile().getUnderlyingResourceObject();
          if (request != null)
          {
-            try {
+            try
+            {
                request.setResolveDependencies(true);
                buildingResult = container.getBuilder().build(pomFile, request);
                fullBuildingResult = buildingResult;
             }
-            catch (Exception full) {
+            catch (Exception full)
+            {
                throw new ProjectModelException(full);
             }
          }
@@ -148,9 +153,10 @@ public class MavenCoreFacetImpl extends BaseFacet implements MavenCoreFacet, Fac
       return fullBuildingResult;
    }
 
-   private void invalidateBuildingResult()
+   private void invalidateBuildingResults()
    {
       this.buildingResult = null;
+      this.fullBuildingResult = null;
    }
 
    @Override
@@ -198,7 +204,7 @@ public class MavenCoreFacetImpl extends BaseFacet implements MavenCoreFacet, Fac
       {
          throw new ProjectModelException("Could not write POM file: " + getPOMFile(), e);
       }
-      invalidateBuildingResult();
+      invalidateBuildingResults();
    }
 
    private Model createPOM()
@@ -293,7 +299,8 @@ public class MavenCoreFacetImpl extends BaseFacet implements MavenCoreFacet, Fac
       Properties properties = getPartialProjectBuildingResult().getProject().getProperties();
       DependencyBuilder builder = DependencyBuilder.create();
 
-      for (Entry<Object, Object> e : properties.entrySet()) {
+      for (Entry<Object, Object> e : properties.entrySet())
+      {
          String key = "\\$\\{" + e.getKey().toString() + "\\}";
          Object value = e.getValue();
 

@@ -499,8 +499,10 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
 
       List<Dependency> result = new ArrayList<Dependency>();
       List<Dependency> dependencies = getDependencies();
-      for (Dependency dependency : dependencies) {
-         for (ScopeType scope : scopes) {
+      for (Dependency dependency : dependencies)
+      {
+         for (ScopeType scope : scopes)
+         {
             if ((dependency.getScopeTypeEnum() == null) || dependency.getScopeTypeEnum().equals(scope))
             {
                dependency = maven.resolveProperties(dependency);
@@ -519,8 +521,10 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
 
       List<Dependency> result = new ArrayList<Dependency>();
       List<Dependency> dependencies = getEffectiveDependencies();
-      for (Dependency dependency : dependencies) {
-         for (ScopeType scope : scopes) {
+      for (Dependency dependency : dependencies)
+      {
+         for (ScopeType scope : scopes)
+         {
             if ((dependency.getScopeTypeEnum() == null) || dependency.getScopeTypeEnum().equals(scope))
             {
                dependency = maven.resolveProperties(dependency);
