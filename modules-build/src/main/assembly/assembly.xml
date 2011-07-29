@@ -61,6 +61,21 @@
             <include>org.jboss.forge:*</include>
          </includes>
          <excludes>
+         
+            <!-- Maven -->
+            <exclude>org.jboss.forge:forge-maven-api*</exclude>
+            <exclude>org.apache.maven:*</exclude>
+            <exclude>org.apache.maven.wagon:*</exclude>
+            <exclude>org.codehaus.plexus:*</exclude>
+            <exclude>org.sonatype.plexus:*</exclude>
+            <exclude>org.sonatype.aether:*</exclude>
+            <exclude>org.sonatype.sisu:*</exclude>
+            <exclude>commons-cli:commons-cli:*</exclude>
+         
+            <exclude>org.jboss.forge:forge-javaee-api*</exclude>
+            <exclude>org.jboss.forge:forge-scaffold-api*</exclude>
+            
+            <!-- Forge -->
             <exclude>org.jboss.forge:forge-event-bus*</exclude>
             <exclude>org.jboss.forge:forge-shell-api*</exclude>
             <exclude>javax.enterprise.cdi-api*</exclude>
@@ -74,9 +89,25 @@
          <outputDirectory>modules/org/jboss/forge/shell-api/main</outputDirectory>
          <useProjectArtifact>false</useProjectArtifact>
          <includes>
+            <!-- Maven -->
+            <include>org.jboss.forge:forge-maven-api</include>
+            <include>org.apache.maven:*</include>
+            <include>org.apache.maven.wagon:*</include>
+            <include>org.sonatype.plexus:*</include>
+            <include>org.codehaus.plexus:*</include>
+            <include>org.sonatype.aether:*</include>
+            <include>org.sonatype.sisu:*</include>
+            <include>commons-cli:commons-cli:*</include>
+            
+            <include>org.jboss.forge:forge-javaee-api</include>
+            <include>org.jboss.forge:forge-scaffold-api</include>
+            
+            <!-- Forge -->
             <include>org.jboss.forge:forge-shell-api</include>
             <include>org.jboss.forge:forge-event-bus</include>
             <include>org.jboss.forge:forge-parser-java-api</include>
+            
+            <!-- XML Parser -->
             <include>org.jboss.forge:forge-parser-xml</include>
             <include>org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api</include>
             <include>org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-impl</include>

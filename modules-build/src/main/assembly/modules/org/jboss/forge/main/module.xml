@@ -6,11 +6,6 @@
 
    <resources>
       <resource-root path="activation.jar" />
-      <resource-root path="aether-api.jar" />
-      <resource-root path="aether-connector-wagon.jar" />
-      <resource-root path="aether-impl.jar" />
-      <resource-root path="aether-spi.jar" />
-      <resource-root path="aether-util.jar" />
       <resource-root path="args4j.jar" />
       <resource-root path="cal10n-api.jar" />
       <resource-root path="common.jar" />
@@ -23,12 +18,9 @@
       <resource-root path="forge-dev-plugins.jar" />
       <resource-root path="forge-event-bus.jar" />
       <resource-root path="forge-git-tools.jar" />
-      <resource-root path="forge-javaee-api.jar" />
       <resource-root path="forge-javaee-impl.jar" />
-      <resource-root path="forge-maven-api.jar" />
       <resource-root path="forge-parser-java.jar" />
       <resource-root path="forge-project-model-maven.jar" />
-      <resource-root path="forge-scaffold-api.jar" />
       <resource-root path="forge-scaffold-plugins.jar" />
       <resource-root path="forge-shell.jar" />
       <resource-root path="fpak.jar" />
@@ -70,17 +62,6 @@
       <resource-root path="jstl.jar" />
       <resource-root path="log4j.jar" />
       <resource-root path="mail.jar" />
-      <resource-root path="maven-aether-provider.jar" />
-      <resource-root path="maven-artifact.jar" />
-      <resource-root path="maven-compat.jar" />
-      <resource-root path="maven-core.jar" />
-      <resource-root path="maven-embedder.jar" />
-      <resource-root path="maven-model-builder.jar" />
-      <resource-root path="maven-model.jar" />
-      <resource-root path="maven-plugin-api.jar" />
-      <resource-root path="maven-repository-metadata.jar" />
-      <resource-root path="maven-settings-builder.jar" />
-      <resource-root path="maven-settings.jar" />
       <resource-root path="metawidget-forge.jar" />
       <resource-root path="metawidget.jar" />
       <resource-root path="mvel2.jar" />
@@ -90,20 +71,11 @@
       <resource-root path="org.eclipse.jgit.pgm.jar" />
       <resource-root path="org.eclipse.jgit.ui.jar" />
       <resource-root path="osgi.jar" />
-      <resource-root path="plexus-cipher.jar" />
-      <resource-root path="plexus-classworlds.jar" />
-      <resource-root path="plexus-component-annotations.jar" />
-      <resource-root path="plexus-interpolation.jar" />
-      <resource-root path="plexus-sec-dispatcher.jar" />
-      <resource-root path="plexus-utils.jar" />
       <resource-root path="preferences.jar" />
       <resource-root path="resources.jar" />
       <resource-root path="runtime.jar" />
       <resource-root path="seam-render.jar" />
       <resource-root path="seam-solder.jar" />
-      <resource-root path="sisu-guice-no_aop.jar" />
-      <resource-root path="sisu-inject-bean.jar" />
-      <resource-root path="sisu-inject-plexus.jar" />
       <resource-root path="slf4j-api.jar" />
       <resource-root path="slf4j-ext.jar" />
       <resource-root path="slf4j-log4j12.jar" />
@@ -111,10 +83,6 @@
       <resource-root path="stax-api.jar" />
       <resource-root path="text.jar" />
       <resource-root path="validation-api.jar" />
-      <resource-root path="wagon-file.jar" />
-      <resource-root path="wagon-http-lightweight.jar" />
-      <resource-root path="wagon-http-shared.jar" />
-      <resource-root path="wagon-provider-api.jar" />
       <resource-root path="weld-api.jar" />
       <resource-root path="weld-core.jar" />
       <resource-root path="weld-se-core.jar" />
