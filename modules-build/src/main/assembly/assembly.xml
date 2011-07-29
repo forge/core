@@ -71,7 +71,7 @@
       
       <!-- Shell API -->
       <dependencySet>
-         <outputDirectory>modules/org/jboss/forge/shell/api/main</outputDirectory>
+         <outputDirectory>modules/org/jboss/forge/shell-api/main</outputDirectory>
          <useProjectArtifact>false</useProjectArtifact>
          <includes>
             <include>org.jboss.forge:forge-shell-api</include>

@@ -96,7 +96,6 @@
       <resource-root path="plexus-interpolation.jar" />
       <resource-root path="plexus-sec-dispatcher.jar" />
       <resource-root path="plexus-utils.jar" />
-      <resource-root path="plugin-repository.jar" />
       <resource-root path="preferences.jar" />
       <resource-root path="resources.jar" />
       <resource-root path="runtime.jar" />
@@ -130,7 +129,7 @@
             <include path="META-INF" />
          </imports>
       </module>
-      <module name="org.jboss.forge.shell.api" services="import" optional="false">
+      <module name="org.jboss.forge.shell-api" services="import" optional="false">
          <imports>
             <include path="**" />
             <include path="META-INF" />
