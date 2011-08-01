@@ -37,7 +37,8 @@ public class ForgePluginTest extends AbstractShellTest
    public void testInstallFromGit() throws Exception
    {
       queueInputLines("y");
-      getShell().execute("forge source-plugin ~/Projects/plugin-openshift");
+      // getShell().execute("forge source-plugin ~/Projects/plugin-openshift");
+      getShell().execute("forge list-plugins");
    }
 
 }

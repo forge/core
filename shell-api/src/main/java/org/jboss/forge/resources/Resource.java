@@ -26,6 +26,8 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
 
+import org.jboss.forge.project.services.ResourceFactory;
+
 /**
  * A Resource is an abstraction on top of usable items within a Forge project. For instance, files, source code, etc.
  * Like a simplified virtual file system, a Resource is represented hierarchically with a parent and children. This
@@ -99,8 +101,14 @@ public interface Resource<T>
     */
    public List<Resource<?>> listResources(ResourceFilter filter);
 
+   /**
+    * Get the underlying object represented by this {@link Resource}
+    */
    public T getUnderlyingResourceObject();
 
+   /**
+    * Get the {@link InputStream} represented by this {@link Resource}.
+    */
    public InputStream getResourceInputStream();
 
    /**
@@ -108,12 +116,24 @@ public interface Resource<T>
     */
    public Resource<?> getChild(String name);
 
+   /**
+    * Set the given {@link ResourceFlag}.
+    */
    public void setFlag(ResourceFlag flag);
 
+   /**
+    * Unset the given {@link ResourceFlag}.
+    */
    public void unsetFlag(ResourceFlag flag);
 
+   /**
+    * Return true if the given {@link ResourceFlag} is set.
+    */
    public boolean isFlagSet(ResourceFlag flag);
 
+   /**
+    * Return true if this {@link Resource} exists, return false if not.
+    */
    public boolean exists();
 
    public Set<ResourceFlag> getFlags();
@@ -123,4 +143,10 @@ public interface Resource<T>
     * resource as the given type, otherwise return null.
     */
    public <R extends Resource<?>> R reify(final Class<R> type);
+
+   /**
+    * Return the {@link ResourceFactory} with which this {@link Resource} was created. If no factory was used, return
+    * null.
+    */
+   public ResourceFactory getResourceFactory();
 }

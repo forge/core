@@ -21,7 +21,6 @@
  */
 package org.jboss.forge.shell;
 
-
 /**
  * Used to generate properly formatted status messages.
  * 
@@ -45,6 +44,12 @@ public abstract class ShellMessages
    public static void info(final ShellPrintWriter writer, final String message)
    {
       writer.print(ShellColor.YELLOW, "***INFO*** ");
+      writer.println(message);
+   }
+
+   public static void warn(final ShellPrintWriter writer, final String message)
+   {
+      writer.print(ShellColor.MAGENTA, "***WARNING*** ");
       writer.println(message);
    }
 }

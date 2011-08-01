@@ -28,7 +28,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingResult;
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.Project;
-import org.jboss.forge.project.dependencies.Dependency;
+import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.shell.ShellPrintWriter;
 
@@ -103,8 +103,8 @@ public interface MavenCoreFacet extends Facet
    public boolean executeMaven(String[] selected);
 
    /**
-    * Resolve properties in the given dependency, converting them to their actual values.
+    * Get the location of the currently configured local maven repository.
     */
-   public Dependency resolveProperties(Dependency dependency);
+   public DirectoryResource getLocalRepositoryDirectory();
 
 }

@@ -47,6 +47,12 @@ public abstract class AbstractResource<T> implements Resource<T>
    }
 
    @Override
+   public ResourceFactory getResourceFactory()
+   {
+      return resourceFactory;
+   }
+
+   @Override
    public String getFullyQualifiedName()
    {
       return getParent() != null ? getParent().getFullyQualifiedName() + "/" + getName() : getName();
@@ -121,7 +127,7 @@ public abstract class AbstractResource<T> implements Resource<T>
    }
 
    @Override
-   public boolean equals(Object obj)
+   public boolean equals(final Object obj)
    {
       if (obj == this)
       {

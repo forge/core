@@ -158,11 +158,18 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
       return lastModification != getUnderlyingResourceObject().lastModified();
    }
 
+   /**
+    * Re-read the last modified timestamp for this resource.
+    */
    public void markUpToDate()
    {
       lastModification = getUnderlyingResourceObject().lastModified();
    }
 
+   /**
+    * Create a new single directory for this resource. This will not succeed if any parent directories needed for this
+    * resource to exist are missing. You should consider using {@link #mkdirs()}
+    */
    public boolean mkdir()
    {
       if (file.mkdir())
@@ -173,6 +180,9 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
       return false;
    }
 
+   /**
+    * Create all directories required for this resource to exist.
+    */
    public boolean mkdirs()
    {
       if (file.mkdirs())
@@ -191,6 +201,9 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
       return delete(false);
    }
 
+   /**
+    * Delete this {@link Resource}, and all child resources.
+    */
    public boolean delete(final boolean recursive)
    {
       if (recursive)
@@ -266,6 +279,9 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
       return file.delete();
    }
 
+   /**
+    * Set the contents of this {@link FileResource} to the given {@link String}
+    */
    public T setContents(String data)
    {
       if (data == null)
@@ -275,12 +291,18 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
       return setContents(data.toCharArray());
    }
 
+   /**
+    * Set the contents of this {@link FileResource} to the given character array.
+    */
    public T setContents(final char[] data)
    {
       return setContents(new ByteArrayInputStream(new String(data).getBytes()));
    }
 
    @SuppressWarnings("unchecked")
+   /**
+    * Set the contents of this {@link FileResource} to the contents of the given {@link InputStream}.
+    */
    public T setContents(final InputStream data)
    {
       T temp = null;
@@ -362,6 +384,9 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
    }
 
    @SuppressWarnings("unchecked")
+   /**
+    * Create a temporary {@link FileResource}
+    */
    public T createTempResource()
    {
       try
@@ -376,7 +401,7 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
       }
    }
 
-   public void fireTempResourceCreated(final T result)
+   private void fireTempResourceCreated(final T result)
    {
       resourceFactory.getManagerInstance().fireEvent(new TempResourceCreated(result), new Annotation[] {});
    }
@@ -396,16 +421,25 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
       }
    }
 
+   /**
+    * Rename this resource to the given path.
+    */
    public boolean renameTo(final String pathspec)
    {
       return renameTo(new File(pathspec));
    }
 
+   /**
+    * Rename this resource to the given {@link FileResource}
+    */
    public boolean renameTo(final FileResource<?> target)
    {
       return renameTo(target.getUnderlyingResourceObject());
    }
 
+   /**
+    * Rename this resource to the given {@link File} name.
+    */
    private boolean renameTo(final File target)
    {
       File original = file.getAbsoluteFile();
@@ -417,7 +451,7 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
       return false;
    }
 
-   public void fireResourceMoved(final File original)
+   private void fireResourceMoved(final File original)
    {
       if (resourceFactory != null) {
          BeanManager manager = resourceFactory.getManagerInstance();
@@ -429,7 +463,7 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
       }
    }
 
-   public void fireResourceModified()
+   private void fireResourceModified()
    {
       if (resourceFactory != null) {
          BeanManager manager = resourceFactory.getManagerInstance();
@@ -439,7 +473,7 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
       }
    }
 
-   public void fireResourceCreated()
+   private void fireResourceCreated()
    {
       if (resourceFactory != null) {
          BeanManager manager = resourceFactory.getManagerInstance();
@@ -449,7 +483,7 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
       }
    }
 
-   public void fireResourceDeleted()
+   private void fireResourceDeleted()
    {
       if (resourceFactory != null) {
          BeanManager manager = resourceFactory.getManagerInstance();

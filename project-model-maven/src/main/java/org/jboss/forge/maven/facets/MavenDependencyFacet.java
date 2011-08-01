@@ -116,7 +116,7 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
 
       for (Dependency dependency : dependencies)
       {
-         if (areEquivalent(dependency, dep))
+         if (DependencyBuilder.areEquivalent(dependency, dep))
          {
             return true;
          }
@@ -133,7 +133,7 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
 
       for (Dependency dep : dependencies)
       {
-         if (areEquivalent(dependency, dep))
+         if (DependencyBuilder.areEquivalent(dependency, dep))
          {
             return true;
          }
@@ -151,7 +151,7 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
       List<Dependency> toBeRemoved = new ArrayList<Dependency>();
       for (Dependency dependency : dependencies)
       {
-         if (areEquivalent(dependency, dep))
+         if (DependencyBuilder.areEquivalent(dependency, dep))
          {
             toBeRemoved.add(dependency);
          }
@@ -168,7 +168,13 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
       MavenCoreFacet maven = project.getFacet(MavenCoreFacet.class);
       Model pom = maven.getPOM();
       List<Dependency> dependencies = MavenDependencyAdapter.fromMavenList(pom.getDependencies());
-      return Collections.unmodifiableList(dependencies);
+
+      List<Dependency> result = new ArrayList<Dependency>();
+      for (Dependency dependency : dependencies) {
+         result.add(resolveProperties(dependency));
+      }
+
+      return result;
    }
 
    @Override
@@ -180,9 +186,9 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
 
       for (Dependency dependency : dependencies)
       {
-         if (areEquivalent(dependency, dep))
+         if (DependencyBuilder.areEquivalent(dependency, dep))
          {
-            return dependency;
+            return resolveProperties(dependency);
          }
       }
       return null;
@@ -197,11 +203,11 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
    @Override
    public Dependency getEffectiveDependency(final Dependency manDep)
    {
-      for (Dependency d : getEffectiveDependencies())
+      for (Dependency dependency : getEffectiveDependencies())
       {
-         if (areEquivalent(d, manDep))
+         if (DependencyBuilder.areEquivalent(dependency, manDep))
          {
-            return d;
+            return resolveProperties(dependency);
          }
       }
       return null;
@@ -213,7 +219,13 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
       MavenCoreFacet maven = project.getFacet(MavenCoreFacet.class);
       List<Dependency> deps = MavenDependencyAdapter.fromAetherList(maven.getFullProjectBuildingResult()
                .getDependencyResolutionResult().getDependencies());
-      return deps;
+
+      List<Dependency> result = new ArrayList<Dependency>();
+      for (Dependency dependency : deps) {
+         result.add(resolveProperties(dependency));
+      }
+
+      return result;
    }
 
    @Override
@@ -250,9 +262,9 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
 
       for (Dependency managedDependency : managedDependencies)
       {
-         if (areEquivalent(managedDependency, manDep))
+         if (DependencyBuilder.areEquivalent(managedDependency, manDep))
          {
-            return managedDependency;
+            return resolveProperties(managedDependency);
          }
       }
       return null;
@@ -270,7 +282,7 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
 
       for (Dependency manDep : managedDependencies)
       {
-         if (areEquivalent(managedDependency, manDep))
+         if (DependencyBuilder.areEquivalent(managedDependency, manDep))
          {
             return true;
          }
@@ -291,7 +303,7 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
       List<Dependency> toBeRemoved = new ArrayList<Dependency>();
       for (Dependency managedDependency : managedDependencies)
       {
-         if (areEquivalent(managedDependency, manDep))
+         if (DependencyBuilder.areEquivalent(managedDependency, manDep))
          {
             toBeRemoved.add(managedDependency);
          }
@@ -309,10 +321,17 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
       Model pom = maven.getPOM();
       DependencyManagement depMan = pom.getDependencyManagement();
 
-      List<Dependency> managedDependencies = depMan != null ? MavenDependencyAdapter.fromMavenList(depMan
-               .getDependencies()) : new ArrayList<Dependency>();
-      return Collections.unmodifiableList(managedDependencies != null ? managedDependencies
-               : new ArrayList<Dependency>());
+      List<Dependency> managedDependencies = null;
+      if (depMan != null)
+         managedDependencies = MavenDependencyAdapter.fromMavenList(depMan.getDependencies());
+      else
+         managedDependencies = new ArrayList<Dependency>();
+
+      List<Dependency> result = new ArrayList<Dependency>();
+      for (Dependency dependency : managedDependencies) {
+         managedDependencies.add(resolveProperties(dependency));
+      }
+      return result;
    }
 
    @Override
@@ -327,23 +346,12 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
 
       for (Dependency managedDependency : managedDependencies)
       {
-         if (areEquivalent(managedDependency, manDep))
+         if (DependencyBuilder.areEquivalent(managedDependency, manDep))
          {
-            return managedDependency;
+            return resolveProperties(managedDependency);
          }
       }
       return null;
-   }
-
-   private boolean areEquivalent(final Dependency left, final Dependency right)
-   {
-      // FIXME version checking needs to be much more robust
-      boolean result = false;
-      if (left.getGroupId().equals(right.getGroupId()) && left.getArtifactId().equals(right.getArtifactId()))
-      {
-         result = true;
-      }
-      return result;
    }
 
    @Override
@@ -381,6 +389,36 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
       Properties properties = pom.getProperties();
       maven.setPOM(pom);
       return (String) properties.get(name);
+   }
+
+   @Override
+   public Dependency resolveProperties(final Dependency dependency)
+   {
+      MavenCoreFacet mvn = project.getFacet(MavenCoreFacet.class);
+      Properties properties = mvn.getPartialProjectBuildingResult().getProject().getProperties();
+      DependencyBuilder builder = DependencyBuilder.create(dependency);
+
+      for (Entry<Object, Object> e : properties.entrySet())
+      {
+         String key = "\\$\\{" + e.getKey().toString() + "\\}";
+         Object value = e.getValue();
+
+         if (dependency.getGroupId() != null)
+            builder.setGroupId(dependency.getGroupId().replaceAll(key, value.toString()));
+         if (dependency.getArtifactId() != null)
+            builder.setArtifactId(dependency.getArtifactId().replaceAll(key, value.toString()));
+         if (dependency.getVersion() != null)
+            builder.setVersion(dependency.getVersion().replaceAll(key, value.toString()));
+         if (dependency.getClassifier() != null)
+            builder.setClassifier(dependency.getClassifier().replaceAll(key, value.toString()));
+         if (dependency.getPackagingType() != null)
+            builder.setPackagingType(dependency.getPackagingType().replaceAll(key,
+                     value.toString()));
+         if (dependency.getScopeType() != null)
+            builder.setScopeType(dependency.getScopeType().replaceAll(key, value.toString()));
+      }
+
+      return builder;
    }
 
    @Override
@@ -495,8 +533,6 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
    @Override
    public List<Dependency> getDependenciesInScopes(final ScopeType... scopes)
    {
-      MavenCoreFacet maven = project.getFacet(MavenCoreFacet.class);
-
       List<Dependency> result = new ArrayList<Dependency>();
       List<Dependency> dependencies = getDependencies();
       for (Dependency dependency : dependencies)
@@ -505,7 +541,7 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
          {
             if ((dependency.getScopeTypeEnum() == null) || dependency.getScopeTypeEnum().equals(scope))
             {
-               dependency = maven.resolveProperties(dependency);
+               dependency = resolveProperties(dependency);
                result.add(dependency);
                break;
             }
@@ -517,8 +553,6 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
    @Override
    public List<Dependency> getEffectiveDependenciesInScopes(final ScopeType... scopes)
    {
-      MavenCoreFacet maven = project.getFacet(MavenCoreFacet.class);
-
       List<Dependency> result = new ArrayList<Dependency>();
       List<Dependency> dependencies = getEffectiveDependencies();
       for (Dependency dependency : dependencies)
@@ -527,7 +561,7 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
          {
             if ((dependency.getScopeTypeEnum() == null) || dependency.getScopeTypeEnum().equals(scope))
             {
-               dependency = maven.resolveProperties(dependency);
+               dependency = resolveProperties(dependency);
                result.add(dependency);
                break;
             }

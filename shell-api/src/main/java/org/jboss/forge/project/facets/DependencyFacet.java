@@ -238,6 +238,11 @@ public interface DependencyFacet extends Facet
    public void setProperty(String name, String value);
 
    /**
+    * Resolve properties in the given dependency, converting them to their actual values.
+    */
+   public Dependency resolveProperties(Dependency dependency);
+
+   /**
     * Get a list of this {@link Project}'s dependencies of the given {@link ScopeType}.. See also:
     * {@link DependencyBuilder}. See also: {@link #getDependency(Dependency)}.
     */

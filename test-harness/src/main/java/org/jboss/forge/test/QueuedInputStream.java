@@ -32,7 +32,7 @@ public class QueuedInputStream extends InputStream
    }
 
    @Override
-   public synchronized void mark(int readlimit)
+   public synchronized void mark(final int readlimit)
    {
       requireCurrent();
       current.mark(readlimit);
@@ -53,7 +53,7 @@ public class QueuedInputStream extends InputStream
    }
 
    @Override
-   public synchronized int read(byte[] b, int off, int len) throws IOException
+   public synchronized int read(final byte[] b, final int off, final int len) throws IOException
    {
       requireCurrent();
       return current.read(b, off, len);
@@ -66,7 +66,7 @@ public class QueuedInputStream extends InputStream
    }
 
    @Override
-   public synchronized long skip(long n) throws IOException
+   public synchronized long skip(final long n) throws IOException
    {
       requireCurrent();
       return current.skip(n);
@@ -84,6 +84,7 @@ public class QueuedInputStream extends InputStream
             if (!inputQueue.isEmpty())
             {
                String line = inputQueue.remove();
+               System.out.println();
                byte[] bytes = new byte[] {};
 
                if (line != null)
