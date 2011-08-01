@@ -85,6 +85,7 @@ import org.jboss.forge.shell.exceptions.ShellExecutionException;
 import org.jboss.forge.shell.plugins.builtin.Echo;
 import org.jboss.forge.shell.project.CurrentProject;
 import org.jboss.forge.shell.spi.CommandInterceptor;
+import org.jboss.forge.shell.spi.TriggeredAction;
 import org.jboss.forge.shell.util.Files;
 import org.jboss.forge.shell.util.GeneralUtils;
 import org.jboss.forge.shell.util.JavaPathspecParser;
@@ -229,6 +230,9 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
 
    @Inject
    private Instance<CommandInterceptor> commandInterceptors;
+   
+   @Inject
+   private Instance<TriggeredAction> triggeredActions;
 
    void init(@Observes final Startup event, final PluginCommandCompleter pluginCompleter) throws Exception
    {
@@ -446,6 +450,9 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          this.reader = new ConsoleReader(inputStream, new OutputStreamWriter(outputStream));
       this.reader.setHistoryEnabled(true);
       this.reader.setBellEnabled(false);
+      for (TriggeredAction action : triggeredActions) {
+    	  this.reader.addTriggeredAction(action.getTrigger(), action.getListener());
+      }
    }
 
    private void initParameters()
