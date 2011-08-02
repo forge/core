@@ -140,7 +140,7 @@ goto runForge
 @REM Start Forge
 :runForge
 set FORGE_MAIN_CLASS=org.jboss.forge.shell.Bootstrap
-%FORGE_JAVA_EXE% %FORGE_OPTS% "-Dforge.home=%FORGE_HOME%" -Dforge.shell.colorEnabled=true -jar %JBOSS_MODULES% -modulepath "%FORGE_HOME%\modules:%HOME%\.forge\plugins" org.jboss.forge %FORGE_CMD_LINE_ARGS%
+%FORGE_JAVA_EXE% %FORGE_OPTS% "-Dforge.home=%FORGE_HOME%" -Dforge.shell.colorEnabled=true -jar %JBOSS_MODULES% -modulepath "%FORGE_HOME%\modules;%HOME%\.forge\plugins" org.jboss.forge %FORGE_CMD_LINE_ARGS%
 if ERRORLEVEL 1 goto error
 goto end
 
