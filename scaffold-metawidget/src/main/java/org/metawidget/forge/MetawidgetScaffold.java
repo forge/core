@@ -169,7 +169,7 @@ public class MetawidgetScaffold extends BaseFacet implements ScaffoldProvider
       if ((project.getFacet(DependencyFacet.class).hasDependency(richfaces3UI)
                && project.getFacet(DependencyFacet.class).hasDependency(richfaces3Impl))
                || (project.getFacet(DependencyFacet.class).hasDependency(richfaces4UI)
-                        && project.getFacet(DependencyFacet.class).hasDependency(richfaces4Impl)))
+               && project.getFacet(DependencyFacet.class).hasDependency(richfaces4Impl)))
       {
          if (prompt
                   .promptBoolean(writer.renderColor(ShellColor.YELLOW, "Metawidget")
@@ -265,7 +265,7 @@ public class MetawidgetScaffold extends BaseFacet implements ScaffoldProvider
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
 
       try
-      {         
+      {
          JavaResource utilResource = java.getJavaResource(util);
          ScaffoldUtil.createOrOverwrite(prompt, utilResource, util.toString(), overwrite);
       }
@@ -274,7 +274,7 @@ public class MetawidgetScaffold extends BaseFacet implements ScaffoldProvider
          throw new RuntimeException(e);
       }
    }
-   
+
    @Override
    @SuppressWarnings("unchecked")
    public boolean install()
@@ -302,7 +302,9 @@ public class MetawidgetScaffold extends BaseFacet implements ScaffoldProvider
       List<Node> list = webxml.getRootNode().get("context-param/param-name");
 
       // Hack to support JSF2 and metawidget
-      ShellMessages.info(writer, "JSF2 and Metawidget currently require Partial State Saving to be disabled.");
+      ShellMessages
+               .info(writer,
+                        "JSF2 ( Mojarra 2.0.3 - http://java.net/jira/browse/JAVASERVERFACES-1826 ) and Metawidget currently require Partial State Saving to be disabled.");
       boolean pssUpdated = false;
       boolean mweUpdated = false;
       for (Node node : list)

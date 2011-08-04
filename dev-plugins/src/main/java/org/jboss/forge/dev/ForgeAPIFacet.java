@@ -10,6 +10,7 @@ import javax.inject.Inject;
 
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
+import org.jboss.forge.project.dependencies.ScopeType;
 import org.jboss.forge.project.facets.BaseFacet;
 import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.facets.PackagingFacet;
@@ -40,8 +41,14 @@ public class ForgeAPIFacet extends BaseFacet
       List<Dependency> versions = deps.resolveAvailableVersions("org.jboss.forge:forge-shell-api:[,]");
       Dependency version = shell.promptChoiceTyped("Install which version of the Forge API?", versions);
       deps.setProperty("forge.api.version", version.getVersion());
-      DependencyBuilder dep = DependencyBuilder.create("org.jboss.forge:forge-shell-api:${forge.api.version}");
-      deps.addDependency(dep);
+      DependencyBuilder apiDep = DependencyBuilder.create("org.jboss.forge:forge-shell-api:${forge.api.version}");
+      DependencyBuilder testDep = DependencyBuilder.create("org.jboss.forge:forge-test-harness:${forge.api.version}")
+               .setScopeType(ScopeType.TEST);
+      DependencyBuilder testShellDep = DependencyBuilder.create("org.jboss.forge:forge-shell:${forge.api.version}")
+               .setScopeType(ScopeType.TEST);
+      deps.addDependency(apiDep);
+      deps.addDependency(testDep);
+      deps.addDependency(testShellDep);
       return true;
    }
 

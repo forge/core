@@ -305,7 +305,6 @@
       <profile>
          <id>dist</id>
          <modules>
-            <module>dist</module>
             <module>plugin-loader</module>
             <module>modules-build</module>
          </modules>
