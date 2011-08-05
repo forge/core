@@ -45,16 +45,16 @@ import org.jboss.seam.render.TemplateCompiler;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-@Alias("metawidget")
+@Alias("metawidget-as7")
 @RequiresFacet({ WebResourceFacet.class,
          DependencyFacet.class,
          PersistenceFacet.class,
          CDIFacet.class,
          FacesFacet.class })
-public class MetawidgetScaffold extends MetawidgetScaffoldBase
+public class MetawidgetScaffoldAS7 extends MetawidgetScaffoldBase
 {
    @Inject
-   public MetawidgetScaffold(final ShellPrompt prompt, final ShellPrintWriter writer,
+   public MetawidgetScaffoldAS7(final ShellPrompt prompt, final ShellPrintWriter writer,
             final TemplateCompiler compiler,
             final Event<InstallFacets> install)
    {
@@ -64,8 +64,11 @@ public class MetawidgetScaffold extends MetawidgetScaffoldBase
    @Override
    protected List<Dependency> getMetawidgetDependencies()
    {
-      return Arrays.asList((Dependency) DependencyBuilder
-               .create("org.metawidget.modules:metawidget-all"));
+      return Arrays.asList(
+               (Dependency) DependencyBuilder.create("org.metawidget.modules.faces:metawidget-faces"),
+               (Dependency) DependencyBuilder.create("org.metawidget.modules:metawidget-annotation"),
+               (Dependency) DependencyBuilder.create("org.metawidget.modules:metawidget-java5"),
+               (Dependency) DependencyBuilder.create("org.metawidget.modules:metawidget-jpa"),
+               (Dependency) DependencyBuilder.create("org.metawidget.modules:metawidget-beanvalidation"));
    }
-
 }
