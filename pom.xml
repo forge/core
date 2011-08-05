@@ -101,11 +101,6 @@
 
          <dependency>
             <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-distribution</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
             <artifactId>forge-event-bus</artifactId>
             <version>${project.version}</version>
          </dependency>

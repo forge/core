@@ -1,1 +1,5 @@
-java -Dforge.shell.colorEnabled=true -jar target/forge-1.0.0-SNAPSHOT/jboss-modules.jar -modulepath target/forge-1.0.0-SNAPSHOT/modules/:/Users/lbaxter/.forge/plugins org.jboss.forge
+To run Forge with Modular Plugins:
+
+	forge $ mvn clean install -Pdist
+	forge $ cd modules-build/
+	forge $ java -Dforge.shell.colorEnabled=true -jar target/forge-1.0.0-SNAPSHOT/jboss-modules.jar -modulepath target/forge-1.0.0-SNAPSHOT/modules/:{YOUR FULLY QUALIFIED HOME DIR}/.forge/plugins org.jboss.forge
