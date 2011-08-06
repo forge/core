@@ -33,6 +33,7 @@ import javax.persistence.Entity;
 
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaSource;
+import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.project.facets.events.InstallFacets;
@@ -131,7 +132,37 @@ public class ScaffoldPlugin implements Plugin
    private ScaffoldProvider getScaffoldType(String scaffoldType)
    {
       ScaffoldProvider scaffoldImpl = null;
-      if (scaffoldType == null
+
+      List<Facet> facets = project.getFacets();
+      List<ScaffoldProvider> detected = new ArrayList<ScaffoldProvider>();
+      for (Facet facet : facets) {
+         if (facet instanceof ScaffoldProvider)
+         {
+            detected.add((ScaffoldProvider) facet);
+            scaffoldImpl = (ScaffoldProvider) facet;
+         }
+      }
+
+      List<String> typeNames = new ArrayList<String>();
+      for (ScaffoldProvider sp : detected) {
+         typeNames.add(ConstraintInspector.getName(sp.getClass()));
+      }
+      if (detected.size() > 1)
+      {
+         // FIXME This needs to show the facet name!!!
+         String name = prompt.promptChoiceTyped("Use which scaffold provider?", typeNames,
+                  typeNames.get(typeNames.size() - 1));
+
+         for (ScaffoldProvider sp : detected) {
+            if (name.equals(ConstraintInspector.getName(sp.getClass())))
+            {
+               scaffoldImpl = sp;
+               break;
+            }
+         }
+      }
+
+      if ((scaffoldType == null)
                && prompt.promptBoolean("No scaffold type was selected, use default (Metawidget & JSF)?"))
       {
          scaffoldType = "metawidget";
@@ -250,7 +281,7 @@ public class ScaffoldPlugin implements Plugin
 
    }
 
-   private List<Resource<?>> prepareResources(List<Resource<?>> generatedResources)
+   private List<Resource<?>> prepareResources(final List<Resource<?>> generatedResources)
    {
       List<Integer> nullIndexes = new ArrayList<Integer>();
       for (int i = 0; i < generatedResources.size(); i++)
