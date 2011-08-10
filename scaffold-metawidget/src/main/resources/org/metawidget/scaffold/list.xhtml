@@ -38,13 +38,12 @@
 		    
 		    <ul>
 		    <ui:repeat var="entity" value="#{@{beanName}.list}">
-		        <li>#{entity.id} <h:button outcome="view" value="[view]">
+		    
+		        <li><h:link outcome="view">
 		            <f:param name="id" value="#{entity.id}"/>
-		        </h:button> 
+		        	<m:metawidget value="#{entity}" readOnly="#{ 'true' }" />
+		        </h:link></li>
 		        
-		        <m:metawidget value="#{entity}" readOnly="#{ 'true' }" />
-		        
-		         </li>
 		    </ui:repeat>
 		    </ul>
 		

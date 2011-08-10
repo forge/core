@@ -119,6 +119,7 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
       createFacesUtils(false);
       List<Resource<?>> resources = generateIndex(overwrite);
       setupRichFaces(project);
+      setupWebXML(project);
       return resources;
    }
 
@@ -280,7 +281,6 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
 
       DependencyFacet df = project.getFacet(DependencyFacet.class);
       CDIFacet cdi = project.getFacet(CDIFacet.class);
-      ServletFacet servlet = project.getFacet(ServletFacet.class);
 
       String version = null;
       for (Dependency dependency : getMetawidgetDependencies()) {
@@ -299,6 +299,25 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
          }
       }
 
+      setupWebXML(project);
+
+      if (!df.hasDependency(seamPersist))
+      {
+         df.addDependency(prompt.promptChoiceTyped("Install which version of Seam Persistence?",
+                  df.resolveAvailableVersions(seamPersist)));
+
+         BeansDescriptor config = cdi.getConfig();
+         config.interceptor(SEAM_PERSIST_INTERCEPTOR);
+         cdi.saveConfig(config);
+      }
+      createMetawidgetConfig(false);
+
+      return true;
+   }
+
+   private void setupWebXML(Project project)
+   {
+      ServletFacet servlet = project.getFacet(ServletFacet.class);
       // fixme this needs to be fixed in SHRINKDESC
       WebAppDescriptorImpl webxml = (WebAppDescriptorImpl) servlet.getConfig();
 
@@ -344,19 +363,6 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
          webxml.contextParam(PARTIAL_STATE_SAVING, "false");
       }
       servlet.saveConfig(webxml);
-
-      if (!df.hasDependency(seamPersist))
-      {
-         df.addDependency(prompt.promptChoiceTyped("Install which version of Seam Persistence?",
-                  df.resolveAvailableVersions(seamPersist)));
-
-         BeansDescriptor config = cdi.getConfig();
-         config.interceptor(SEAM_PERSIST_INTERCEPTOR);
-         cdi.saveConfig(config);
-      }
-      createMetawidgetConfig(false);
-
-      return true;
    }
 
    @Override
