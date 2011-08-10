@@ -21,6 +21,14 @@
  */
 package org.jboss.forge.shell.completer;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.Set;
+
 import jline.console.ConsoleReader;
 import jline.console.CursorBuffer;
 import jline.console.completer.CandidateListCompletionHandler;
@@ -30,9 +38,6 @@ import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.ShellColor;
 import org.jboss.forge.shell.command.CommandMetadata;
 import org.jboss.forge.shell.command.OptionMetadata;
-
-import java.io.IOException;
-import java.util.*;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -184,23 +189,25 @@ public class OptionAwareCompletionHandler implements CompletionHandler
       for (CharSequence seq : candidates)
       {
          boolean processed = false;
-         CommandMetadata command = commandHolder.getState().getCommand();
-         if ((command != null) && seq.toString().startsWith("--"))
+         if (commandHolder.getState() != null)
          {
-            String str = seq.toString().trim();
-            if (str.startsWith("--"))
+            CommandMetadata command = commandHolder.getState().getCommand();
+            if ((command != null) && seq.toString().startsWith("--"))
             {
-               str = str.substring(2);
-            }
+               String str = seq.toString().trim();
+               if (str.startsWith("--"))
+               {
+                  str = str.substring(2);
+               }
 
-            if (command.hasOption(str) && command.getNamedOption(str).isRequired())
-            {
-               seq = shell.renderColor(ShellColor.BLUE, seq.toString());
-               colorizedCandidates.add(seq);
-               processed = true;
+               if (command.hasOption(str) && command.getNamedOption(str).isRequired())
+               {
+                  seq = shell.renderColor(ShellColor.BLUE, seq.toString());
+                  colorizedCandidates.add(seq);
+                  processed = true;
+               }
             }
          }
-
          if (!processed)
          {
             colorizedCandidates.add(seq);
@@ -261,9 +268,9 @@ public class OptionAwareCompletionHandler implements CompletionHandler
 
    private static enum Messages
    {
-       DISPLAY_CANDIDATES,
-       DISPLAY_CANDIDATES_YES,
-       DISPLAY_CANDIDATES_NO, ;
+      DISPLAY_CANDIDATES,
+      DISPLAY_CANDIDATES_YES,
+      DISPLAY_CANDIDATES_NO, ;
 
       private static final ResourceBundle bundle =
                ResourceBundle.getBundle(CandidateListCompletionHandler.class.getName());

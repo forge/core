@@ -33,9 +33,6 @@
 		
 		    <h:messages />
 		    
-		    <h:button value="Create new" outcome="create" />
-		    <br/>
-		    
 		    <ul>
 		    <ui:repeat var="entity" value="#{@{beanName}.list}">
 		    
@@ -46,15 +43,20 @@
 		        
 		    </ui:repeat>
 		    </ul>
-		
-		    <h:outputText
-				value="#{@{beanName}.pagination.pageFirstItem + 1}..#{@{beanName}.pagination.pageLastItem + 1}/#{@{beanName}.pagination.itemsCount}" />&nbsp;
-                    <h:commandLink action="#{@{beanName}.previous}"
-				value="Previous #{@{beanName}.pagination.pageSize}"
-				rendered="#{@{beanName}.pagination.hasPreviousPage}" />&nbsp;
-                    <h:commandLink action="#{@{beanName}.next}"
+		    <br/>
+		    
+		    <h:link value="Create new" outcome="create" />
+				
+            <h:commandLink action="#{@{beanName}.next}" styleClass="right"
 				value="Next #{@{beanName}.pagination.pageSize}"
-				rendered="#{@{beanName}.pagination.hasNextPage}" />&nbsp;
+				rendered="#{@{beanName}.pagination.hasNextPage}" />
+				
+			<h:outputText styleClass="right" style="margin-left: 10px; margin-right: 10px;"
+				value="#{@{beanName}.pagination.pageFirstItem + 1}..#{@{beanName}.pagination.pageLastItem + 1}/#{@{beanName}.pagination.itemsCount}" />&nbsp;
+				
+            <h:commandLink action="#{@{beanName}.previous}" styleClass="right"
+				value="Previous #{@{beanName}.pagination.pageSize}"
+				rendered="#{@{beanName}.pagination.hasPreviousPage}" />
 		
 		</h:form>
 	</ui:define>

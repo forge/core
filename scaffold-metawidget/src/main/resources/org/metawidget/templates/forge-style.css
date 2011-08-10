@@ -51,6 +51,10 @@ li {
 	list-style: none;
 }
 
+ul {
+	margin-bottom: 5px;
+}
+
 a:hover {
 	text-decoration: underline;
 	color: #8ec6d9;

@@ -158,9 +158,16 @@ public class ServletFacetImpl extends BaseFacet implements ServletFacet
                      .sessionTimeout(30)
                      .welcomeFile("/index.html");
 
+            unit.errorPage(404, "/faces/404.html");
+            unit.errorPage(500, "/faces/500.html");
+
             descriptor.setContents(unit.exportAsString());
          }
 
+         ((FileResource<?>) webRoot.getChild("404.html")).setContents(getClass().getResourceAsStream(
+                  "/org/jboss/forge/web/404.html"));
+         ((FileResource<?>) webRoot.getChild("500.html")).setContents(getClass().getResourceAsStream(
+                  "/org/jboss/forge/web/500.html"));
          ((FileResource<?>) webRoot.getChild("index.html")).setContents(getClass().getResourceAsStream(
                   "/org/jboss/forge/web/index.html"));
          ((FileResource<?>) webRoot.getChild("forge-logo.png")).setContents(getClass().getResourceAsStream(

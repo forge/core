@@ -16,6 +16,12 @@ and open the template in the editor.
 	<meta http-equiv="imagetoolbar" content="no" />
 	<link rel="icon" href="#{resource['favicon.ico']}" />
 	<link rel="stylesheet" href="#{resource['forge-style.css']}" type="text/css" />
+	
+	<style>
+		body {
+			background-image: url(#{request.contextPath}/bkg.gif);
+		}
+	</style>
 </h:head>
 
 <h:body id="top">
@@ -40,7 +46,7 @@ and open the template in the editor.
 		
 			<ui:insert name="footer">{footer}</ui:insert>
 		
-			<p class="right">Powered by <a href="http://bit.ly/seamforge">Forge</a></p>
+			<p class="right">Powered by <a href="http://seamframework.org/Documentation/SeamForge">Forge</a></p>
 			<p>&nbsp;</p>
 			</div>
 		</div>

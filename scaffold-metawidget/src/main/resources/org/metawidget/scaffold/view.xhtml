@@ -36,24 +36,25 @@
 		<h:form id="form">
 		    <h:messages globalOnly="true"/>
 		    <br/>
-		
-		    <h:button value="View all" outcome="list" rendered="#{ _editMode == null or _editMode eq 'false' }" />
-		    <h:button value="Edit" outcome="view" includeViewParams="true" rendered="#{ _editMode == null or _editMode eq 'false' }">
-		        <f:param name="edit" value="true" />
-		    </h:button>
-		    <h:button value="Create new" outcome="create" rendered="#{ _editMode == null or _editMode eq 'false' }" />
-		    <br/>
 		    
 		    <m:metawidget value="#{@{beanName}.@{entity.getName().toLowerCase()}}" readOnly="#{ _editMode == null or _editMode eq 'false' }" />
 		    
 		    <br/>
 			<c:if test="#{ _editMode != null and _editMode ne 'false' }">
-				<h:commandButton value="Save" action="#{@{beanName}.save()}" />
+				<h:commandLink value="Save" action="#{@{beanName}.save()}" />
 			</c:if>
-		    <h:commandButton value="Delete" action="#{@{beanName}.delete()}" />
-		    <h:button value="Cancel" outcome="view" includeViewParams="true" rendered="#{ _editMode != null and _editMode ne 'false' }">
+			
+		    <h:link value="View all" outcome="list" rendered="#{ _editMode == null or _editMode eq 'false' }" /> | 
+		    <h:link value="Edit" outcome="view" includeViewParams="true" rendered="#{ _editMode == null or _editMode eq 'false' }">
+		        <f:param name="edit" value="true" />
+		    </h:link>
+		    <h:link value="Cancel" outcome="view" includeViewParams="true" rendered="#{ _editMode != null and _editMode ne 'false' }">
 				<f:param name="edit" value="false" />
-			</h:button>
+			</h:link>
+			<h:panelGroup rendered="#{ _editMode == null or _editMode eq 'false' }"> | 
+		    	<h:link value="Create new" outcome="create" />
+		    </h:panelGroup>
+		    <h:commandLink value="Delete" action="#{@{beanName}.delete()}" styleClass="right"/>
 		</h:form>
 	</ui:define>
 
