@@ -66,6 +66,7 @@ public class MetawidgetScaffold extends MetawidgetScaffoldBase
    {
       return Arrays.asList(
                (Dependency) DependencyBuilder.create("org.metawidget.modules.faces:metawidget-faces"),
+               (Dependency) DependencyBuilder.create("org.metawidget.modules.faces:metawidget-facesannotation"),
                (Dependency) DependencyBuilder.create("org.metawidget.modules:metawidget-annotation"),
                (Dependency) DependencyBuilder.create("org.metawidget.modules:metawidget-java5"),
                (Dependency) DependencyBuilder.create("org.metawidget.modules:metawidget-jpa"),
