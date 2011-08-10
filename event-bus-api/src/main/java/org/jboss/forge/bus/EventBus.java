@@ -146,8 +146,9 @@ public class EventBus
          events.clear();
       }
 
-      if (!thrown.isEmpty())
-         throw new EventBusQueuedException(thrown);
+      // Squelch these for now
+      // if (!thrown.isEmpty())
+      // throw new EventBusQueuedException(thrown);
    }
 
    public boolean hasQueued(final Object event)

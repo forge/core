@@ -421,8 +421,8 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
       result.add(ScaffoldUtil.createOrOverwrite(prompt, web.getWebResource("/resources/forge-template.xhtml"),
                getClass().getResourceAsStream("/org/metawidget/templates/forge-template.xhtml"), overwrite));
 
-      result.add(ScaffoldUtil.createOrOverwrite(prompt, web.getWebResource("/resources/forge.css"),
-               getClass().getResourceAsStream("/org/metawidget/templates/forge.css"), overwrite));
+      result.add(ScaffoldUtil.createOrOverwrite(prompt, web.getWebResource("/resources/forge-style.css"),
+               getClass().getResourceAsStream("/org/metawidget/templates/forge-style.css"), overwrite));
 
       return result;
    }
