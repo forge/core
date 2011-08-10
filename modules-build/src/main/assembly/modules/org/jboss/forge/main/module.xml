@@ -97,6 +97,12 @@
             <include path="META-INF" />
          </imports>
       </module>
+      <module name="org.jboss.tools.forge.runtime.ext" services="import" optional="true">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
       <module name="org.jboss.forge.shell-api" services="import" optional="false">
          <imports>
             <include path="**" />
