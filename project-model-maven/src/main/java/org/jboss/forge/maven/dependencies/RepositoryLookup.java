@@ -26,6 +26,9 @@ import org.jboss.forge.project.dependencies.DependencyResolverProvider;
 import org.jboss.forge.project.facets.DependencyFacet.KnownRepository;
 import org.jboss.forge.project.services.ResourceFactory;
 import org.jboss.forge.resources.DependencyResource;
+import org.jboss.forge.resources.DirectoryResource;
+import org.jboss.forge.resources.FileResource;
+import org.jboss.forge.resources.Resource;
 import org.sonatype.aether.RepositorySystem;
 import org.sonatype.aether.artifact.Artifact;
 import org.sonatype.aether.collection.CollectRequest;
@@ -89,45 +92,64 @@ public class RepositoryLookup implements DependencyResolverProvider
       try
       {
          RepositorySystem system = container.getContainer().lookup(RepositorySystem.class);
-         MavenRepositorySystemSession session = setupRepoSession(system);
 
-         session.setIgnoreInvalidArtifactDescriptor(true);
-         session.setIgnoreMissingArtifactDescriptor(true);
-
-         VersionRangeResult versions = getVersions(dep, convertToMavenRepos(repositories));
-
-         VERSION: for (Version version : versions.getVersions())
+         /**
+          * First try resolving the artifact directly from the local repository - then fall back to aether. This may be
+          * a bad practice but we can revisit if problems arise.
+          */
+         if (dep.getVersion() != null)
          {
-            ArtifactRepository ar = versions.getRepository(version);
-            DependencyBuilder currentVersion = DependencyBuilder.create(dep).setVersion(version.toString());
-            Artifact artifact = dependencyToMavenArtifact(currentVersion);
-
-            if (ar instanceof LocalRepository)
+            DirectoryResource dir = (DirectoryResource) factory.getResourceFrom(new File(container.getSettings()
+                     .getLocalRepository()));
+            if ((dir != null) && dir.exists())
             {
-               LocalArtifactRequest request = new LocalArtifactRequest(artifact, null, null);
-               LocalArtifactResult a = session.getLocalRepositoryManager().find(session, request);
+               List<String> segments = new ArrayList<String>();
+               segments.addAll(Arrays.asList((dep.getGroupId() + "." + dep.getArtifactId()).split("\\.")));
+               segments.add(dep.getVersion());
 
-               File file = a.getFile();
-               DependencyResource resource = new DependencyResource(factory, file, currentVersion);
-               if (!result.contains(resource))
+               for (String seg : segments) {
+                  dir = dir.getChildDirectory(seg);
+                  if (!dir.isDirectory())
+                  {
+                     break;
+                  }
+               }
+
+               if (dir.isDirectory())
                {
-                  result.add(resource);
-                  continue VERSION;
+                  Resource<?> jar = dir.getChild(dep.getArtifactId() + "-" + dep.getVersion() + "."
+                           + dep.getPackagingType());
+                  if (jar.exists())
+                  {
+                     FileResource<?> jarFile = jar.reify(FileResource.class);
+                     result.add(new DependencyResource(jarFile.getResourceFactory(), jarFile
+                              .getUnderlyingResourceObject(), dep));
+                  }
                }
             }
-            if (ar instanceof RemoteRepository)
+         }
+
+         if (result.isEmpty())
+         {
+            MavenRepositorySystemSession session = setupRepoSession(system);
+
+            session.setIgnoreInvalidArtifactDescriptor(true);
+            session.setIgnoreMissingArtifactDescriptor(true);
+
+            VersionRangeResult versions = getVersions(dep, convertToMavenRepos(repositories));
+
+            VERSION: for (Version version : versions.getVersions())
             {
-               ArtifactRequest request = new ArtifactRequest();
-               RemoteRepository remoteRepo = new RemoteRepository(ar.getId(), ar.getContentType(),
-                        ((RemoteRepository) ar).getUrl());
-               request.addRepository(remoteRepo);
-               request.setArtifact(artifact);
+               ArtifactRepository ar = versions.getRepository(version);
+               DependencyBuilder currentVersion = DependencyBuilder.create(dep).setVersion(version.toString());
+               Artifact artifact = dependencyToMavenArtifact(currentVersion);
 
-               try
+               if (ar instanceof LocalRepository)
                {
-                  ArtifactResult a = system.resolveArtifact(session, request);
+                  LocalArtifactRequest request = new LocalArtifactRequest(artifact, null, null);
+                  LocalArtifactResult a = session.getLocalRepositoryManager().find(session, request);
 
-                  File file = a.getArtifact().getFile();
+                  File file = a.getFile();
                   DependencyResource resource = new DependencyResource(factory, file, currentVersion);
                   if (!result.contains(resource))
                   {
@@ -135,9 +157,30 @@ public class RepositoryLookup implements DependencyResolverProvider
                      continue VERSION;
                   }
                }
-               catch (ArtifactResolutionException e)
+               if (ar instanceof RemoteRepository)
                {
-                  System.out.println(e.getMessage());
+                  ArtifactRequest request = new ArtifactRequest();
+                  RemoteRepository remoteRepo = new RemoteRepository(ar.getId(), ar.getContentType(),
+                           ((RemoteRepository) ar).getUrl());
+                  request.addRepository(remoteRepo);
+                  request.setArtifact(artifact);
+
+                  try
+                  {
+                     ArtifactResult a = system.resolveArtifact(session, request);
+
+                     File file = a.getArtifact().getFile();
+                     DependencyResource resource = new DependencyResource(factory, file, currentVersion);
+                     if (!result.contains(resource))
+                     {
+                        result.add(resource);
+                        continue VERSION;
+                     }
+                  }
+                  catch (ArtifactResolutionException e)
+                  {
+                     System.out.println(e.getMessage());
+                  }
                }
             }
          }

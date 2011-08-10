@@ -34,7 +34,6 @@ import org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode;
 import org.eclipse.jgit.api.Git;
 import org.jboss.forge.ForgeEnvironment;
 import org.jboss.forge.git.GitUtils;
-import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.parser.xml.XMLParser;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.Dependency;
@@ -611,38 +610,6 @@ public class ForgePlugin implements Plugin
          {
             d = d2;
             break;
-         }
-      }
-
-      // FIXME this local resolution needs to be moved to the RepositoryLookup class
-      if (project.hasFacet(MavenCoreFacet.class))
-      {
-         MavenCoreFacet mvn = project.getFacet(MavenCoreFacet.class);
-         DirectoryResource dir = mvn.getLocalRepositoryDirectory();
-         if ((dir != null) && dir.exists())
-         {
-            List<String> segments = new ArrayList<String>();
-            segments.addAll(Arrays.asList((d.getGroupId() + "." + d.getArtifactId()).split("\\.")));
-            segments.add(d.getVersion());
-
-            for (String seg : segments) {
-               dir = dir.getChildDirectory(seg);
-               if (!dir.isDirectory())
-               {
-                  break;
-               }
-            }
-
-            if (dir.isDirectory())
-            {
-               Resource<?> jar = dir.getChild(d.getArtifactId() + "-" + d.getVersion() + "." + d.getPackagingType());
-               if (jar.exists())
-               {
-                  FileResource<?> jarFile = jar.reify(FileResource.class);
-                  artifacts.add(new DependencyResource(jarFile.getResourceFactory(), jarFile
-                           .getUnderlyingResourceObject(), d));
-               }
-            }
          }
       }
 
