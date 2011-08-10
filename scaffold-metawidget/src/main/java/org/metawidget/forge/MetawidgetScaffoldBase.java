@@ -65,6 +65,7 @@ import org.jboss.shrinkwrap.descriptor.spi.Node;
  */
 public abstract class MetawidgetScaffoldBase extends BaseFacet implements ScaffoldProvider
 {
+   private static final String STATE_SAVING_METHOD = "javax.faces.STATE_SAVING_METHOD";
    private static final String PARTIAL_STATE_SAVING = "javax.faces.PARTIAL_STATE_SAVING";
    private static final String SEAM_PERSIST_TRANSACTIONAL_ANNO = "org.jboss.seam.transaction.Transactional";
    private static final String SEAM_PERSIST_INTERCEPTOR = "org.jboss.seam.transaction.TransactionInterceptor";
@@ -309,11 +310,18 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
                         "JSF2 ( Mojarra 2.0.3 - http://java.net/jira/browse/JAVASERVERFACES-1826 ) and Metawidget currently require Partial State Saving to be disabled.");
       boolean pssUpdated = false;
       boolean mweUpdated = false;
+      boolean ssmUpdated = false;
       for (Node node : list)
       {
          if (PARTIAL_STATE_SAVING.equals(node.text()))
          {
             node.parent().getOrCreate("param-value").text("false");
+            pssUpdated = true;
+            continue;
+         }
+         if (STATE_SAVING_METHOD.equals(node.text()))
+         {
+            node.parent().getOrCreate("param-value").text("client");
             pssUpdated = true;
             continue;
          }
@@ -326,6 +334,10 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
       if (!mweUpdated)
       {
          webxml.contextParam(METAWIDGET_DISABLE_EVENT, "true");
+      }
+      if (!ssmUpdated)
+      {
+         webxml.contextParam(STATE_SAVING_METHOD, "client");
       }
       if (!pssUpdated)
       {
