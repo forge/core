@@ -11,7 +11,7 @@
   </parent>
 
   <artifactId>plugin-loader</artifactId>
-  <name>Forge Modular Plugin Loader</name>
+  <name>Forge - Modular Plugin Loader</name>
   
   <dependencies>
       <dependency>

@@ -12,7 +12,7 @@
    
    <packaging>pom</packaging>
 
-   <name>Forge - Plugin Loader</name>
+   <name>Forge - Distribution</name>
    <description>Responsible for building classpath isolation for plugins using JBoss Modules</description>
 
    <dependencies>
