@@ -35,7 +35,6 @@ import org.apache.maven.model.Plugin;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.jboss.forge.maven.MavenCoreFacet;
-import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.Project;
@@ -198,13 +197,13 @@ public class MavenJavaSourceFacet extends BaseFacet implements JavaSourceFacet, 
    }
 
    @Override
-   public JavaResource getJavaResource(final JavaClass javaClass) throws FileNotFoundException
+   public JavaResource getJavaResource(final JavaSource<?> javaClass) throws FileNotFoundException
    {
       return getJavaResource(javaClass.getPackage() + "." + javaClass.getName());
    }
 
    @Override
-   public JavaResource getTestJavaResource(final JavaClass javaClass) throws FileNotFoundException
+   public JavaResource getTestJavaResource(final JavaSource<?> javaClass) throws FileNotFoundException
    {
       return getTestJavaResource(javaClass.getPackage() + "." + javaClass.getName());
    }

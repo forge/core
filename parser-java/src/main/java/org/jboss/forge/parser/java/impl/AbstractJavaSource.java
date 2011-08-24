@@ -479,6 +479,9 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
    /*
     * Non-manipulation methods.
     */
+   /**
+    * Return this {@link JavaSource} file as a String
+    */
    @Override
    public String toString()
    {

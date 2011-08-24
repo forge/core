@@ -21,6 +21,7 @@
  */
 package org.metawidget.forge;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +32,7 @@ import javax.inject.Inject;
 
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
@@ -38,8 +40,11 @@ import org.jboss.forge.project.dependencies.events.AddedDependencies;
 import org.jboss.forge.project.facets.BaseFacet;
 import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.facets.JavaSourceFacet;
+import org.jboss.forge.project.facets.ResourceFacet;
 import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.project.facets.events.InstallFacets;
+import org.jboss.forge.resources.DirectoryResource;
+import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.scaffold.AccessStrategy;
 import org.jboss.forge.scaffold.ScaffoldProvider;
@@ -109,6 +114,7 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
       List<Resource<?>> resources = generateIndex(overwrite);
       setupRichFaces(project);
       setupWebXML(project);
+      setupRewrite(project);
 
       CDIFacet cdi = project.getFacet(CDIFacet.class);
 
@@ -276,7 +282,32 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
       ShellMessages
                .info(writer,
                         "JSF2 ( Mojarra 2.0.3 - http://java.net/jira/browse/JAVASERVERFACES-1826 ) and Metawidget currently require Partial State Saving to be disabled.");
+   }
 
+   private void setupRewrite(Project project)
+   {
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+
+      JavaSource<?> rewriteConfig = JavaParser.parse(getClass().getResourceAsStream(
+               "/org/metawidget/scaffold/URLRewriteConfiguration.jv"));
+      rewriteConfig.setPackage(java.getBasePackage() + ".rewrite");
+
+      try {
+         ScaffoldUtil.createOrOverwrite(prompt, java.getJavaResource(rewriteConfig),
+                  rewriteConfig.toString(), false);
+      }
+      catch (FileNotFoundException e) {
+         throw new RuntimeException("Could not save Rewrite Configuration source file", e);
+      }
+
+      ResourceFacet resources = project.getFacet(ResourceFacet.class);
+      DirectoryResource services = resources.getResourceFolder().getOrCreateChildDirectory("META-INF")
+               .getOrCreateChildDirectory("services");
+
+      // Register the configuration provider
+      ScaffoldUtil.createOrOverwrite(prompt,
+               (FileResource<?>) services.getChild("com.ocpsoft.rewrite.config.ConfigurationProvider"),
+               rewriteConfig.getQualifiedName(), false);
    }
 
    @Override

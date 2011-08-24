@@ -21,16 +21,16 @@
  */
 package org.jboss.forge.project.facets;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.List;
+
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.java.JavaResource;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.List;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -111,7 +111,7 @@ public interface JavaSourceFacet extends Facet
     * @param javaClass The {@link JavaClass} to re-parse.
     * @throws FileNotFoundException if the target {@link JavaResource} does not exist
     */
-   public JavaResource getJavaResource(JavaClass javaClass) throws FileNotFoundException;
+   public JavaResource getJavaResource(JavaSource<?> javaClass) throws FileNotFoundException;
 
    /**
     * Return the {@link JavaClass} at the given path relative to {@link #getTestSourceFolder()}.
@@ -127,6 +127,6 @@ public interface JavaSourceFacet extends Facet
     * @param javaClass The {@link JavaClass} to re-parse.
     * @throws FileNotFoundException if the target {@link JavaResource} does not exist
     */
-   public JavaResource getTestJavaResource(JavaClass javaClass) throws FileNotFoundException;
+   public JavaResource getTestJavaResource(JavaSource<?> javaClass) throws FileNotFoundException;
 
 }
