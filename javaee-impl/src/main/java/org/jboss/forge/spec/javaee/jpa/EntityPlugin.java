@@ -98,8 +98,8 @@ public class EntityPlugin implements Plugin
       else
       {
          entityPackage = shell.promptCommon(
-                   "In which package you'd like to create this @Entity, or enter for default:",
-                   PromptType.JAVA_PACKAGE, jpa.getEntityPackage());
+                  "In which package you'd like to create this @Entity, or enter for default:",
+                  PromptType.JAVA_PACKAGE, jpa.getEntityPackage());
       }
 
       JavaClass javaClass = JavaParser.create(JavaClass.class)
@@ -108,6 +108,8 @@ public class EntityPlugin implements Plugin
                .setPublic()
                .addAnnotation(Entity.class).getOrigin()
                .addInterface(Serializable.class);
+
+      javaClass.addField("private static final long serialVersionUID = 1L;");
 
       Field<JavaClass> id = javaClass.addField("private Long id = null;");
       id.addAnnotation(Id.class);
