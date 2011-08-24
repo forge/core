@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<ui:composition template="/resources/forge-template.xhtml">
+
+	<ui:param name="pageTitle" value="Page not found" />
+
+	<ui:define name="header">
+		Page not found
+	</ui:define>
+
+	<ui:define name="subheader">
+		Now where did I leave that hammer?
+	</ui:define>
+
+	<ui:define name="main">
+		<p><a target="_blank" href="https://docs.jboss.org/author/display/SEAMFORGE">Documentation</a> | 
+      		<a href="javascript: history.go(-1)">Go back</a>
+      	<br/>
+      
+      	<a target="_blank" href="http://seamframework.org/Documentation/SeamForge"><br/>
+      	Seam Forge Project</a> | <a target="_blank" href="https://lists.jboss.org/mailman/listinfo/forge-users">User
+      	List</a> | <a target="_blank" href=
+      	"https://issues.jboss.org/browse/SEAMFORGE">Report an issue</a></p>
+
+      	<p class="logos"><a target="_blank" href="http://jboss.org"><img src="#{resource['jboss-community.png']}" alt="JBoss and JBoss Community" width=
+      	"254" height="31" border="0"/></a></p>
+      	
+      	<p class="note">To replace this page, edit 'src/main/webapp/404.xhtml', or keep Forging!</p>
+	</ui:define>
+
+	<ui:define name="footer">
+	</ui:define>
+
+</ui:composition>
+</html>

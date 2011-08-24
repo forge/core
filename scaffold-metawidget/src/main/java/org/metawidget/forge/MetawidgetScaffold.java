@@ -43,7 +43,6 @@ import org.jboss.seam.render.TemplateCompiler;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
  */
 @Alias("metawidget")
 @RequiresFacet({ WebResourceFacet.class,
@@ -65,11 +64,6 @@ public class MetawidgetScaffold extends MetawidgetScaffoldBase
    protected List<Dependency> getMetawidgetDependencies()
    {
       return Arrays.asList(
-               (Dependency) DependencyBuilder.create("org.metawidget.modules.faces:metawidget-faces"),
-               (Dependency) DependencyBuilder.create("org.metawidget.modules.faces:metawidget-facesannotation"),
-               (Dependency) DependencyBuilder.create("org.metawidget.modules:metawidget-annotation"),
-               (Dependency) DependencyBuilder.create("org.metawidget.modules:metawidget-java5"),
-               (Dependency) DependencyBuilder.create("org.metawidget.modules:metawidget-jpa"),
-               (Dependency) DependencyBuilder.create("org.metawidget.modules:metawidget-beanvalidation"));
+               (Dependency) DependencyBuilder.create("org.metawidget.forge:metawidget-forge-scaffold"));
    }
 }

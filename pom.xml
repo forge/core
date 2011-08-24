@@ -51,6 +51,7 @@
       <module>scaffold-api</module>
       <module>scaffold-plugins</module>
       <module>scaffold-metawidget</module>
+      <module>scaffold-metawidget-lib</module>
       <module>dev-plugins</module>
    </modules>
 
@@ -158,11 +159,19 @@
             <artifactId>forge-dev-plugins</artifactId>
             <version>${project.version}</version>
          </dependency>
+         
+         <!-- TODO this needs to be moved into a separate repository -->
          <dependency>
             <groupId>org.metawidget</groupId>
             <artifactId>metawidget-forge</artifactId>
             <version>${project.version}</version>
          </dependency>
+         <dependency>
+            <groupId>org.metawidget</groupId>
+            <artifactId>metawidget-forge-scaffold</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         
          <dependency>
             <groupId>org.jboss.forge</groupId>
             <artifactId>forge-scaffold-api</artifactId>

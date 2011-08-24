@@ -21,7 +21,6 @@
  */
 package org.metawidget.forge;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,7 +41,6 @@ import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.project.facets.events.InstallFacets;
 import org.jboss.forge.resources.Resource;
-import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.scaffold.AccessStrategy;
 import org.jboss.forge.scaffold.ScaffoldProvider;
 import org.jboss.forge.scaffold.util.ScaffoldUtil;
@@ -58,27 +56,20 @@ import org.jboss.seam.render.TemplateCompiler;
 import org.jboss.seam.render.template.CompiledTemplateResource;
 import org.jboss.shrinkwrap.descriptor.api.spec.cdi.beans.BeansDescriptor;
 import org.jboss.shrinkwrap.descriptor.impl.spec.servlet.web.WebAppDescriptorImpl;
-import org.jboss.shrinkwrap.descriptor.spi.Node;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public abstract class MetawidgetScaffoldBase extends BaseFacet implements ScaffoldProvider
 {
-   private static final String STATE_SAVING_METHOD = "javax.faces.STATE_SAVING_METHOD";
-   private static final String PARTIAL_STATE_SAVING = "javax.faces.PARTIAL_STATE_SAVING";
    private static final String SEAM_PERSIST_TRANSACTIONAL_ANNO = "org.jboss.seam.transaction.Transactional";
    private static final String SEAM_PERSIST_INTERCEPTOR = "org.jboss.seam.transaction.TransactionInterceptor";
-   private static final String METAWIDGET_DISABLE_EVENT = "org.metawidget.faces.component.DONT_USE_PRERENDER_VIEW_EVENT";
 
    private static final String BACKING_BEAN_TEMPLATE = "org/metawidget/scaffold/BackingBean.jv";
    private static final String VIEW_TEMPLATE = "org/metawidget/scaffold/view.xhtml";
    private static final String CREATE_TEMPLATE = "org/metawidget/scaffold/create.xhtml";
    private static final String LIST_TEMPLATE = "org/metawidget/scaffold/list.xhtml";
    private static final String CONFIG_TEMPLATE = "org/metawidget/metawidget.xml";
-
-   private final Dependency seamPersist = DependencyBuilder
-            .create("org.jboss.seam.persistence:seam-persistence:[3.0.0.Final,)");
 
    private final Dependency richfaces3UI = DependencyBuilder.create("org.richfaces.ui:richfaces-ui");
    private final Dependency richfaces3Impl = DependencyBuilder.create("org.richfaces.framework:richfaces-impl");
@@ -115,11 +106,20 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
    @Override
    public List<Resource<?>> setup(final boolean overwrite)
    {
-      createPersistenceUtils(false);
-      createFacesUtils(false);
       List<Resource<?>> resources = generateIndex(overwrite);
       setupRichFaces(project);
       setupWebXML(project);
+
+      CDIFacet cdi = project.getFacet(CDIFacet.class);
+
+      if (!project.getFacet(CDIFacet.class).getConfig().getInterceptors().contains(SEAM_PERSIST_INTERCEPTOR))
+      {
+         BeansDescriptor config = cdi.getConfig();
+         config.interceptor(SEAM_PERSIST_INTERCEPTOR);
+         cdi.saveConfig(config);
+      }
+      createMetawidgetConfig(false);
+
       return resources;
    }
 
@@ -229,45 +229,6 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
                configTemplate.render(new HashMap<Object, Object>()), overwrite);
    }
 
-   public void createPersistenceUtils(final boolean overwrite)
-   {
-      JavaClass util = JavaParser.parse(JavaClass.class,
-               getClass().getResourceAsStream("/org/metawidget/persistence/PersistenceUtil.jv"));
-      JavaClass producer = JavaParser.parse(JavaClass.class,
-               getClass().getResourceAsStream("/org/metawidget/persistence/DatasourceProducer.jv"));
-      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
-
-      try
-      {
-         JavaResource producerResource = java.getJavaResource(producer);
-         JavaResource utilResource = java.getJavaResource(util);
-
-         ScaffoldUtil.createOrOverwrite(prompt, producerResource, producer.toString(), overwrite);
-         ScaffoldUtil.createOrOverwrite(prompt, utilResource, util.toString(), overwrite);
-      }
-      catch (FileNotFoundException e)
-      {
-         throw new RuntimeException(e);
-      }
-   }
-
-   public void createFacesUtils(final boolean overwrite)
-   {
-      JavaClass util = JavaParser.parse(JavaClass.class,
-               getClass().getResourceAsStream("/org/metawidget/persistence/PaginationHelper.jv"));
-      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
-
-      try
-      {
-         JavaResource utilResource = java.getJavaResource(util);
-         ScaffoldUtil.createOrOverwrite(prompt, utilResource, util.toString(), overwrite);
-      }
-      catch (FileNotFoundException e)
-      {
-         throw new RuntimeException(e);
-      }
-   }
-
    @Override
    @SuppressWarnings("unchecked")
    public boolean install()
@@ -280,7 +241,6 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
       }
 
       DependencyFacet df = project.getFacet(DependencyFacet.class);
-      CDIFacet cdi = project.getFacet(CDIFacet.class);
 
       String version = null;
       for (Dependency dependency : getMetawidgetDependencies()) {
@@ -288,7 +248,7 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
          {
             if (version == null)
             {
-               dependency = prompt.promptChoiceTyped("Install which version of Metawidget?",
+               dependency = prompt.promptChoiceTyped("Install which version of Metawidget Scaffold?",
                         df.resolveAvailableVersions(dependency));
                version = dependency.getVersion();
             }
@@ -299,70 +259,24 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
          }
       }
 
-      setupWebXML(project);
-
-      if (!df.hasDependency(seamPersist))
-      {
-         df.addDependency(prompt.promptChoiceTyped("Install which version of Seam Persistence?",
-                  df.resolveAvailableVersions(seamPersist)));
-
-         BeansDescriptor config = cdi.getConfig();
-         config.interceptor(SEAM_PERSIST_INTERCEPTOR);
-         cdi.saveConfig(config);
-      }
-      createMetawidgetConfig(false);
-
       return true;
    }
 
    private void setupWebXML(Project project)
    {
       ServletFacet servlet = project.getFacet(ServletFacet.class);
-      // fixme this needs to be fixed in SHRINKDESC
       WebAppDescriptorImpl webxml = (WebAppDescriptorImpl) servlet.getConfig();
 
-      List<Node> list = webxml.getRootNode().get("context-param/param-name");
+      webxml.errorPage(404, "/faces/404.xhtml");
+      webxml.errorPage(500, "/faces/500.xhtml");
+
+      servlet.saveConfig(webxml);
 
       // Hack to support JSF2 and metawidget
       ShellMessages
                .info(writer,
                         "JSF2 ( Mojarra 2.0.3 - http://java.net/jira/browse/JAVASERVERFACES-1826 ) and Metawidget currently require Partial State Saving to be disabled.");
-      boolean pssUpdated = false;
-      boolean mweUpdated = false;
-      boolean ssmUpdated = false;
-      for (Node node : list)
-      {
-         if (PARTIAL_STATE_SAVING.equals(node.text()))
-         {
-            node.parent().getOrCreate("param-value").text("false");
-            pssUpdated = true;
-            continue;
-         }
-         if (STATE_SAVING_METHOD.equals(node.text()))
-         {
-            node.parent().getOrCreate("param-value").text("client");
-            pssUpdated = true;
-            continue;
-         }
-         if (METAWIDGET_DISABLE_EVENT.equals(node.text()))
-         {
-            node.parent().getOrCreate("param-value").text("true");
-            continue;
-         }
-      }
-      if (!mweUpdated)
-      {
-         webxml.contextParam(METAWIDGET_DISABLE_EVENT, "true");
-      }
-      if (!ssmUpdated)
-      {
-         webxml.contextParam(STATE_SAVING_METHOD, "client");
-      }
-      if (!pssUpdated)
-      {
-         webxml.contextParam(PARTIAL_STATE_SAVING, "false");
-      }
-      servlet.saveConfig(webxml);
+
    }
 
    @Override
@@ -379,10 +293,7 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
          }
       }
 
-      return hasMW
-               && df.hasDependency(seamPersist)
-               && project.getFacet(CDIFacet.class).getConfig().getInterceptors().contains(SEAM_PERSIST_INTERCEPTOR)
-               && project.getFacet(WebResourceFacet.class).getWebResource("/WEB-INF/metawidget.xml").exists();
+      return hasMW;
    }
 
    @Override
@@ -398,6 +309,12 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
 
       result.add(ScaffoldUtil.createOrOverwrite(prompt, web.getWebResource("index.xhtml"),
                getClass().getResourceAsStream("/org/metawidget/templates/index.xhtml"), overwrite));
+
+      result.add(ScaffoldUtil.createOrOverwrite(prompt, web.getWebResource("404.xhtml"),
+               getClass().getResourceAsStream("/org/metawidget/templates/404.xhtml"), overwrite));
+
+      result.add(ScaffoldUtil.createOrOverwrite(prompt, web.getWebResource("500.xhtml"),
+               getClass().getResourceAsStream("/org/metawidget/templates/500.xhtml"), overwrite));
 
       generateTemplates(overwrite);
       return result;
@@ -438,9 +355,6 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
 
       result.add(ScaffoldUtil.createOrOverwrite(prompt, web.getWebResource("/resources/forge-template.xhtml"),
                getClass().getResourceAsStream("/org/metawidget/templates/forge-template.xhtml"), overwrite));
-
-      result.add(ScaffoldUtil.createOrOverwrite(prompt, web.getWebResource("/resources/forge-style.css"),
-               getClass().getResourceAsStream("/org/metawidget/templates/forge-style.css"), overwrite));
 
       return result;
    }

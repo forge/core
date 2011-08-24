@@ -15,11 +15,11 @@ and open the template in the editor.
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 	<meta http-equiv="imagetoolbar" content="no" />
 	<link rel="icon" href="#{resource['favicon.ico']}" />
-	<link rel="stylesheet" href="#{resource['forge-style.css']}" type="text/css" />
+	<h:outputStylesheet name="forge-style.css" />
 	
 	<style>
 		body {
-			background-image: url(#{request.contextPath}/bkg.gif);
+			background-image: url( #{resource['bkg.gif']} );
 		}
 	</style>
 </h:head>
@@ -30,7 +30,7 @@ and open the template in the editor.
 
 	    <div class="forge">
 	    	<h:link outcome="/index.xhtml">
-				<img src="#{request.contextPath}/forge-logo.png" alt="Seam Forge... get hammered." width="195" height="131" border="0"/>
+				<img src="#{resource['forge-logo.png']}" alt="Seam Forge... get hammered." width="195" height="131" border="0"/>
 			</h:link>
 	    </div>
 	

@@ -11,6 +11,7 @@
     <f:viewParam name="id" value="#{@{beanName}.id}">
        <!-- <f:validateLongRange minimum="1" />  --> 
     </f:viewParam>
+    <f:viewParam name="p" value="#{@{beanName}.pagination.page}"/>
 </f:metadata>
 
 <ui:composition template="/resources/forge-template.xhtml">
@@ -33,12 +34,24 @@
 		
 		    <h:messages />
 		    
+				
+            <h:link outcome="list" styleClass="right" value="Next #{@{beanName}.pagination.pageSize}" rendered="#{@{beanName}.pagination.hasNextPage}">
+				<f:param name="p" value="#{@{beanName}.pagination.page + 1}" />
+			</h:link>
+				
+			<h:outputText styleClass="right" style="margin-left: 10px; margin-right: 10px;"
+				value="#{@{beanName}.pagination.pageFirstItem + 1}..#{@{beanName}.pagination.pageLastItem + 1}/#{@{beanName}.pagination.itemsCount}" />&nbsp;
+				
+            <h:link outcome="list" styleClass="right" value="Previous #{@{beanName}.pagination.pageSize}" rendered="#{@{beanName}.pagination.hasPreviousPage}">
+				<f:param name="p" value="#{@{beanName}.pagination.page - 1}" />
+			</h:link>
+			
 		    <ul>
 		    <ui:repeat var="entity" value="#{@{beanName}.list}">
 		    
 		        <li><h:link outcome="view">
 		            <f:param name="id" value="#{entity.id}"/>
-		        	<m:metawidget value="#{entity}" readOnly="#{ 'true' }" />
+		        	<m:metawidget value="#{entity}" readOnly="true" style="z-index: -50;"/>
 		        </h:link></li>
 		        
 		    </ui:repeat>
@@ -47,16 +60,16 @@
 		    
 		    <h:link value="Create new" outcome="create" />
 				
-            <h:commandLink action="#{@{beanName}.next}" styleClass="right"
-				value="Next #{@{beanName}.pagination.pageSize}"
-				rendered="#{@{beanName}.pagination.hasNextPage}" />
+            <h:link outcome="list" styleClass="right" value="Next #{@{beanName}.pagination.pageSize}" rendered="#{@{beanName}.pagination.hasNextPage}">
+				<f:param name="p" value="#{@{beanName}.pagination.page + 1}" />
+			</h:link>
 				
 			<h:outputText styleClass="right" style="margin-left: 10px; margin-right: 10px;"
 				value="#{@{beanName}.pagination.pageFirstItem + 1}..#{@{beanName}.pagination.pageLastItem + 1}/#{@{beanName}.pagination.itemsCount}" />&nbsp;
 				
-            <h:commandLink action="#{@{beanName}.previous}" styleClass="right"
-				value="Previous #{@{beanName}.pagination.pageSize}"
-				rendered="#{@{beanName}.pagination.hasPreviousPage}" />
+            <h:link outcome="list" styleClass="right" value="Previous #{@{beanName}.pagination.pageSize}" rendered="#{@{beanName}.pagination.hasPreviousPage}">
+				<f:param name="p" value="#{@{beanName}.pagination.page - 1}" />
+			</h:link>
 		
 		</h:form>
 	</ui:define>

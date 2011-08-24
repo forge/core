@@ -1,4 +1,4 @@
-package org.jboss.forge.persistence;
+package org.metawidget.forge.persistence;
 
 import java.io.Serializable;
 

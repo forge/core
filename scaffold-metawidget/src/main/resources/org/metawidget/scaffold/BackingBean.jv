@@ -6,14 +6,16 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 
 import @{entity.getQualifiedName()};
-import org.jboss.forge.persistence.PersistenceUtil;
-import org.jboss.forge.persistence.PaginationHelper;
+import org.metawidget.forge.persistence.PaginationHelper;
+import org.metawidget.forge.persistence.PersistenceUtil;
 
 @Named
 @Stateful
 @RequestScoped
 public class @{entity.getName()}Bean extends PersistenceUtil
 {
+   private static final long serialVersionUID = 1L;
+   
    private List<@{entity.getName()}> list = null;
    private @{entity.getName()} @{lc = entity.getName().toLowerCase(); lc} = new @{entity.getName()}();
    private long id = 0;
@@ -69,7 +71,6 @@ public class @{entity.getName()}Bean extends PersistenceUtil
    {
       if(list == null)
       {
-         //list = findAll(@{entity.getName()}.class);
          list = getPagination().createPageDataModel();
       }
       return list;
@@ -86,7 +87,6 @@ public class @{entity.getName()}Bean extends PersistenceUtil
 		{
 			pagination = new PaginationHelper<@{entity.getName()}>(10) 
 			{
-
 				@Override
 				public int getItemsCount() {
 					return count(@{entity.getName()}.class);
@@ -101,20 +101,5 @@ public class @{entity.getName()}Bean extends PersistenceUtil
 			};
 		}
 		return pagination;
-	}
-	private void recreateModel() {
-        list = null;
-    }
-	
-	public String next() {
-		getPagination().nextPage();
-		recreateModel();
-		return "list";
-	}
-
-	public String previous() {
-		getPagination().previousPage();
-		recreateModel();
-		return "list";
 	}
 }
