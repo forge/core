@@ -13,7 +13,7 @@
 
    <properties>
       <metawidget.version>1.25</metawidget.version>
-      <rewrite.version>1.0.0.Alpha2</rewrite.version>
+      <rewrite.version>1.0.0.Alpha3</rewrite.version>
       <seam.persist.version>3.0.0.Final</seam.persist.version>
       <seam.faces.version>3.0.2.Final</seam.faces.version>
    </properties>
