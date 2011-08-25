@@ -25,7 +25,7 @@
          <type>pom</type>
          <version>1.0.0.Final</version>
          <scope>provided</scope>
-      </dependency>
+      </dependency> 
       <dependency>
          <groupId>org.metawidget.modules.faces</groupId>
          <artifactId>metawidget-faces</artifactId>
