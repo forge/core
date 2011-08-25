@@ -91,6 +91,10 @@
          <id>JBOSS_NEXUS</id>
          <url>https://repository.jboss.org/nexus/content/groups/public/</url>
       </repository>
+      <repository>
+        <id>ocpsoft</id>
+        <url>http://ocpsoft.com/repository/</url>
+      </repository>
    </repositories>
 
    <build>
