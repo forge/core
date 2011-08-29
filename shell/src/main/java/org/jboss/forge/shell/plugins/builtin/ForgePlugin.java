@@ -68,7 +68,7 @@ import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.Topic;
 import org.jboss.forge.shell.util.PluginRef;
 import org.jboss.forge.shell.util.PluginUtil;
-import org.jboss.shrinkwrap.descriptor.spi.Node;
+import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -146,8 +146,8 @@ public class ForgePlugin implements Plugin
             Node module = XMLParser.parse(resource.getResourceInputStream());
             if (module != null)
             {
-               String pluginName = module.attribute("name");
-               String pluginSlot = module.attribute("slot");
+               String pluginName = module.getAttribute("name");
+               String pluginSlot = module.getAttribute("slot");
                if (pluginSlot == null)
                {
                   pluginSlot = "";
@@ -521,7 +521,7 @@ public class ForgePlugin implements Plugin
       module.attribute("slot", pluginSlot);
       Node resources = module.getSingle("resources");
 
-      resources.create("resource-root").attribute("path", dep.getArtifactId() + ".jar");
+      resources.createChild("resource-root").attribute("path", dep.getArtifactId() + ".jar");
 
       // Copy the compiled JAR into the module directory
       FileResource<?> jar = moduleDir.getChild(dep.getArtifactId() + ".jar").reify(FileResource.class);
@@ -530,9 +530,9 @@ public class ForgePlugin implements Plugin
 
       // <module name="org.jboss.forge:main" />
       Node dependencies = module.getSingle("dependencies");
-      dependencies.create("module").attribute("name", pluginName + ".dependencies").attribute("slot", pluginSlot);
-      dependencies.create("module").attribute("name", "org.jboss.forge.shell-api");
-      dependencies.create("module").attribute("name", "javax.api");
+      dependencies.createChild("module").attribute("name", pluginName + ".dependencies").attribute("slot", pluginSlot);
+      dependencies.createChild("module").attribute("name", "org.jboss.forge.shell-api");
+      dependencies.createChild("module").attribute("name", "javax.api");
 
       moduleXml.setContents(XMLParser.toXMLString(module));
 
@@ -564,7 +564,7 @@ public class ForgePlugin implements Plugin
 
       // <module name="org.jboss.forge:main" />
       Node dependencies = module.getSingle("dependencies");
-      dependencies.create("module").attribute("name", "javax.api");
+      dependencies.createChild("module").attribute("name", "javax.api");
 
       List<DependencyResource> pluginDependencies = new ArrayList<DependencyResource>();
       List<Dependency> effectiveDependenciesInScopes = deps.getEffectiveDependenciesInScopes(ScopeType.COMPILE,
@@ -579,7 +579,7 @@ public class ForgePlugin implements Plugin
          // TODO encapsulate this?
          if (DependencyBuilder.areEquivalent(d, DependencyBuilder.create("org.jboss.forge:forge-javaee-api")))
          {
-            module.getSingle("dependencies").create("module")
+            module.getSingle("dependencies").createChild("module")
                      .attribute("name", "org.jboss.forge.javaee-api");
          }
       }
@@ -591,7 +591,7 @@ public class ForgePlugin implements Plugin
          child.delete();
          FileResource<?> depJar = child.reify(FileResource.class);
          depJar.setContents(d.getResourceInputStream());
-         resources.create("resource-root").attribute("path", name);
+         resources.createChild("resource-root").attribute("path", name);
       }
 
       // Write out the module XML file.

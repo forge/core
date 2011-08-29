@@ -21,6 +21,9 @@
  */
 package org.jboss.forge.parser.xml;
 
+import static org.jboss.forge.parser.xml.NodeType.CDATA_SECTION;
+import static org.jboss.forge.parser.xml.NodeType.COMMENT;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -36,14 +39,11 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.jboss.shrinkwrap.descriptor.api.DescriptorExportException;
 import org.jboss.shrinkwrap.descriptor.api.DescriptorImportException;
-import org.jboss.shrinkwrap.descriptor.spi.Node;
+import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
-
-import static org.jboss.forge.parser.xml.NodeType.CDATA_SECTION;
-import static org.jboss.forge.parser.xml.NodeType.COMMENT;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -134,7 +134,7 @@ public class XMLParser
             org.w3c.dom.Node child = sourceChildren.item(i);
             if (child.getNodeType() != org.w3c.dom.Node.TEXT_NODE)
             {
-               Node newTarget = target.create(child.getNodeName());
+               Node newTarget = target.createChild(child.getNodeName());
                if (onlyTextChildren(child))
                {
                   newTarget.text(child.getTextContent());
@@ -158,33 +158,33 @@ public class XMLParser
       }
 
       org.w3c.dom.Node targetChild;
-      if (COMMENT.getNodeName().equals(source.name()))
+      if (COMMENT.getNodeName().equals(source.getName()))
       {
-         targetChild = owned.createComment(source.text());
+         targetChild = owned.createComment(source.getText());
       }
-      else if (CDATA_SECTION.getNodeName().equals(source.name()))
+      else if (CDATA_SECTION.getNodeName().equals(source.getName()))
       {
-         targetChild = owned.createCDATASection(source.text());
+         targetChild = owned.createCDATASection(source.getText());
       }
       else
       {
-         targetChild = owned.createElement(source.name());
-         if (source.text() != null)
+         targetChild = owned.createElement(source.getName());
+         if (source.getText() != null)
          {
-            targetChild.appendChild(owned.createTextNode(source.text()));
+            targetChild.appendChild(owned.createTextNode(source.getText()));
          }
       }
 
       target.appendChild(targetChild);
 
-      for (Map.Entry<String, String> attribute : source.attributes().entrySet())
+      for (Map.Entry<String, String> attribute : source.getAttributes().entrySet())
       {
          Attr attr = owned.createAttribute(attribute.getKey());
          attr.setValue(attribute.getValue());
 
          targetChild.getAttributes().setNamedItem(attr);
       }
-      for (Node sourceChild : source.children())
+      for (Node sourceChild : source.getChildren())
       {
          writeRecursive(targetChild, sourceChild);
       }

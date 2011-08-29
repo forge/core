@@ -21,6 +21,8 @@
  */
 package org.jboss.forge.spec.javaee;
 
+import java.io.File;
+
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.facets.BaseFacet;
@@ -33,68 +35,67 @@ import org.jboss.forge.spec.javaee.descriptor.ValidationDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.DescriptorImporter;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 
-import java.io.File;
-
 /**
  * @author Kevin Pollet
  */
 @Alias("forge.spec.validation")
-@RequiresFacet({ResourceFacet.class, DependencyFacet.class})
+@RequiresFacet({ ResourceFacet.class, DependencyFacet.class })
 public class ValidationFacetImpl extends BaseFacet implements ValidationFacet
 {
-    private final Dependency javaee6SpecAPI;
+   private final Dependency javaee6SpecAPI;
 
-    public ValidationFacetImpl()
-    {
-        this.javaee6SpecAPI = DependencyBuilder.create("org.jboss.spec:jboss-javaee-6.0:1.0.0.Final:provided:basic");
-    }
+   public ValidationFacetImpl()
+   {
+      this.javaee6SpecAPI = DependencyBuilder.create("org.jboss.spec:jboss-javaee-6.0:1.0.0.Final:provided:basic");
+   }
 
-    @Override
-    public ValidationDescriptor getConfig()
-    {
-        final FileResource<?> fileResource = getConfigFile();
-        if (fileResource.exists())
-        {
-            final DescriptorImporter<ValidationDescriptor> importer = Descriptors.importAs(ValidationDescriptor.class);
-            return importer.from(fileResource.getResourceInputStream());
-        }
-        return null;
-    }
+   @Override
+   public ValidationDescriptor getConfig()
+   {
+      final FileResource<?> fileResource = getConfigFile();
+      if (fileResource.exists())
+      {
+         final DescriptorImporter<ValidationDescriptor> importer = Descriptors.importAs(ValidationDescriptor.class);
+         return importer.from(fileResource.getResourceInputStream());
+      }
+      return null;
+   }
 
-    @Override
-    public FileResource<?> getConfigFile()
-    {
-        final ResourceFacet facet = project.getFacet(ResourceFacet.class);
-        return facet.getResource("META-INF" + File.separator + "validation.xml");
-    }
+   @Override
+   public FileResource<?> getConfigFile()
+   {
+      final ResourceFacet facet = project.getFacet(ResourceFacet.class);
+      return facet.getResource("META-INF" + File.separator + "validation.xml");
+   }
 
-    @Override
-    public void saveConfig(ValidationDescriptor descriptor)
-    {
-        final FileResource<?> fileResource = getConfigFile();
-        fileResource.createNewFile();
-        fileResource.setContents(descriptor.exportAsString());
-    }
+   @Override
+   public void saveConfig(ValidationDescriptor descriptor)
+   {
+      final FileResource<?> fileResource = getConfigFile();
+      fileResource.createNewFile();
+      fileResource.setContents(descriptor.exportAsString());
+   }
 
-    @Override
-    public boolean install()
-    {
-        if (!isInstalled())
-        {
-            final DependencyFacet facet = project.getFacet(DependencyFacet.class);
-            if (!facet.hasDependency(javaee6SpecAPI))
-            {
-                facet.addDependency(javaee6SpecAPI);
-            }
-            saveConfig(Descriptors.create(ValidationDescriptor.class));
-        }
-        return true;
-    }
+   @Override
+   public boolean install()
+   {
+      if (!isInstalled())
+      {
+         final DependencyFacet facet = project.getFacet(DependencyFacet.class);
+         if (!facet.hasDependency(javaee6SpecAPI))
+         {
+            facet.addDependency(javaee6SpecAPI);
+         }
+         // CL here is the SW CL. Why?
+         saveConfig(Descriptors.create(ValidationDescriptor.class));
+      }
+      return true;
+   }
 
-    @Override
-    public boolean isInstalled()
-    {
-        final DependencyFacet facet = project.getFacet(DependencyFacet.class);
-        return getConfigFile().exists() && facet.hasDependency(javaee6SpecAPI);
-    }
+   @Override
+   public boolean isInstalled()
+   {
+      final DependencyFacet facet = project.getFacet(DependencyFacet.class);
+      return getConfigFile().exists() && facet.hasDependency(javaee6SpecAPI);
+   }
 }

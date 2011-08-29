@@ -60,7 +60,7 @@ import org.jboss.forge.spec.javaee.ServletFacet;
 import org.jboss.seam.render.TemplateCompiler;
 import org.jboss.seam.render.template.CompiledTemplateResource;
 import org.jboss.shrinkwrap.descriptor.api.spec.cdi.beans.BeansDescriptor;
-import org.jboss.shrinkwrap.descriptor.impl.spec.servlet.web.WebAppDescriptorImpl;
+import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -271,7 +271,7 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
    private void setupWebXML(Project project)
    {
       ServletFacet servlet = project.getFacet(ServletFacet.class);
-      WebAppDescriptorImpl webxml = (WebAppDescriptorImpl) servlet.getConfig();
+      WebAppDescriptor webxml = servlet.getConfig();
 
       webxml.errorPage(404, "/faces/404.xhtml");
       webxml.errorPage(500, "/faces/500.xhtml");

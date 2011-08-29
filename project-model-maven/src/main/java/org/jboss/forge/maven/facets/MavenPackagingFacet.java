@@ -34,6 +34,7 @@ import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.jboss.forge.ForgeEnvironment;
 import org.jboss.forge.maven.MavenCoreFacet;
+import org.jboss.forge.parser.java.util.Strings;
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.facets.BaseFacet;
 import org.jboss.forge.project.facets.FacetNotFoundException;
@@ -46,7 +47,6 @@ import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.ShellMessages;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
-import org.jboss.shrinkwrap.descriptor.impl.base.Strings;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

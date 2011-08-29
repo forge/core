@@ -21,14 +21,14 @@
  */
 package org.jboss.forge.spec.javaee.jpa.container;
 
+import javax.inject.Inject;
+
 import org.jboss.forge.shell.ShellMessages;
 import org.jboss.forge.shell.ShellPrintWriter;
 import org.jboss.forge.spec.javaee.jpa.api.JPADataSource;
 import org.jboss.forge.spec.javaee.jpa.api.PersistenceContainer;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceUnitDef;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.TransactionType;
-
-import javax.inject.Inject;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

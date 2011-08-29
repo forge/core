@@ -53,7 +53,7 @@ import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresProject;
 import org.jboss.forge.shell.plugins.Topic;
 import org.jboss.shrinkwrap.descriptor.api.DescriptorExportException;
-import org.jboss.shrinkwrap.descriptor.spi.Node;
+import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -108,13 +108,13 @@ public class MavenShadePlugin implements Plugin
 
             for (Node n : excludes.get("include"))
             {
-               if (DependencyBuilder.areEquivalent(DependencyBuilder.create(n.text()), dep))
+               if (DependencyBuilder.areEquivalent(DependencyBuilder.create(n.getText()), dep))
                {
                   return;
                }
             }
 
-            excludes.create("include").text(dep.getGroupId() + ":" + dep.getArtifactId());
+            excludes.createChild("include").text(dep.getGroupId() + ":" + dep.getArtifactId());
          }
       });
    }
@@ -133,13 +133,13 @@ public class MavenShadePlugin implements Plugin
 
             for (Node n : excludes.get("exclude"))
             {
-               if (DependencyBuilder.areEquivalent(DependencyBuilder.create(n.text()), dep))
+               if (DependencyBuilder.areEquivalent(DependencyBuilder.create(n.getText()), dep))
                {
                   return;
                }
             }
 
-            excludes.create("exclude").text(dep.getGroupId() + ":" + dep.getArtifactId());
+            excludes.createChild("exclude").text(dep.getGroupId() + ":" + dep.getArtifactId());
          }
       });
    }
@@ -191,17 +191,17 @@ public class MavenShadePlugin implements Plugin
          @Override
          public void modify(Node configuration)
          {
-            Node relocationNode = configuration.getOrCreate("relocations").create("relocation");
-            relocationNode.create("pattern").text(pattern);
-            relocationNode.create("shadedPattern").text(shadedPattern);
+            Node relocationNode = configuration.getOrCreate("relocations").createChild("relocation");
+            relocationNode.createChild("pattern").text(pattern);
+            relocationNode.createChild("shadedPattern").text(shadedPattern);
 
             String excludeMsg = "";
             if (excludes != null && excludes.length > 0)
             {
-               Node excludesNode = relocationNode.create("excludes");
+               Node excludesNode = relocationNode.createChild("excludes");
                for (String e : excludes)
                {
-                  excludesNode.create("exclude").text(e);
+                  excludesNode.createChild("exclude").text(e);
                }
                excludeMsg = ", excluding " + Arrays.asList(excludes);
             }

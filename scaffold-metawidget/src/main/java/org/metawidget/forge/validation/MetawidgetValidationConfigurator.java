@@ -33,7 +33,7 @@ import org.jboss.forge.project.facets.events.FacetInstalled;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.shell.ShellPrompt;
 import org.jboss.forge.spec.javaee.ValidationFacet;
-import org.jboss.shrinkwrap.descriptor.spi.Node;
+import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 import org.metawidget.forge.MetawidgetScaffold;
 
 /**
@@ -65,13 +65,13 @@ public class MetawidgetValidationConfigurator
          {
             final Node root = XMLParser.parse(configFile.getResourceInputStream());
             final Node array = root.getOrCreate("htmlMetawidget")
-                        .attribute("xmlns", "java:org.metawidget.faces.component.html")
-                        .getOrCreate("inspector")
-                        .getOrCreate("compositeInspector")
-                        .attribute("xmlns", "java:org.metawidget.inspector.composite")
-                        .attribute("config", "CompositeInspectorConfig")
-                        .getOrCreate("inspectors")
-                        .getOrCreate("array");
+                     .attribute("xmlns", "java:org.metawidget.faces.component.html")
+                     .getOrCreate("inspector")
+                     .getOrCreate("compositeInspector")
+                     .attribute("xmlns", "java:org.metawidget.inspector.composite")
+                     .attribute("config", "CompositeInspectorConfig")
+                     .getOrCreate("inspectors")
+                     .getOrCreate("array");
 
             final Node beanValidationInspector = array.getSingle("beanValidationInspector");
 
@@ -97,14 +97,14 @@ public class MetawidgetValidationConfigurator
    private void addValidationConfigurationTo(final Node node)
    {
       node.getOrCreate("beanValidationInspector")
-                .attribute("xmlns", "java:org.metawidget.inspector.beanvalidation")
-                .attribute("config", "org.metawidget.inspector.impl.BaseObjectInspectorConfig")
-                .getOrCreate("propertyStyle")
-                .getOrCreate("javaBeanPropertyStyle")
-                .attribute("xmlns", "java:org.metawidget.inspector.impl.propertystyle.javabean")
-                .attribute("config", "JavaBeanPropertyStyleConfig")
-                .getOrCreate("privateFieldConvention")
-                .getOrCreate("format")
-                .text("{0}");
+               .attribute("xmlns", "java:org.metawidget.inspector.beanvalidation")
+               .attribute("config", "org.metawidget.inspector.impl.BaseObjectInspectorConfig")
+               .getOrCreate("propertyStyle")
+               .getOrCreate("javaBeanPropertyStyle")
+               .attribute("xmlns", "java:org.metawidget.inspector.impl.propertystyle.javabean")
+               .attribute("config", "JavaBeanPropertyStyleConfig")
+               .getOrCreate("privateFieldConvention")
+               .getOrCreate("format")
+               .text("{0}");
    }
 }

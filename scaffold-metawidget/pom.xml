@@ -49,13 +49,6 @@
 			<artifactId>metawidget</artifactId>
 			<version>${metawidget.version}</version>
 		</dependency>
-		<!--
-		<dependency>
-			<groupId>org.metawidget.modules</groupId>
-			<artifactId>metawidget-all</artifactId>
-			<version>${metawidget.version}</version>
-		</dependency>
-		-->
 
 		<!-- Test Dependencies -->
 		<dependency>
