@@ -55,6 +55,66 @@ public class PersistencePluginTest extends AbstractJPATest
       PersistenceUnitDef unit = units.get(0);
 
       Assert.assertEquals("java:jboss:jta-ds", unit.getJtaDataSource());
+   }
 
+   @Test
+   public void testAS6DataSource() throws Exception
+   {
+      Project project = getProject();
+
+      queueInputLines("");
+      getShell().execute(
+               "persistence setup --provider HIBERNATE --container JBOSS_AS7");
+
+      PersistenceDescriptor config = project.getFacet(PersistenceFacet.class).getConfig();
+      List<PersistenceUnitDef> units = config.listUnits();
+      PersistenceUnitDef unit = units.get(0);
+
+      Assert.assertEquals("java:jboss/datasources/ExampleDS", unit.getJtaDataSource());
+   }
+
+   @Test
+   public void testAS7DataSource() throws Exception
+   {
+      Project project = getProject();
+
+      queueInputLines("");
+      getShell().execute(
+               "persistence setup --provider HIBERNATE --container JBOSS_AS7");
+
+      PersistenceDescriptor config = project.getFacet(PersistenceFacet.class).getConfig();
+      List<PersistenceUnitDef> units = config.listUnits();
+      PersistenceUnitDef unit = units.get(0);
+
+      Assert.assertEquals("java:jboss/datasources/ExampleDS", unit.getJtaDataSource());
+   }
+
+   @Test
+   public void testHibernateProperties() throws Exception
+   {
+      Project project = getProject();
+
+      queueInputLines("");
+      getShell().execute(
+               "persistence setup --provider HIBERNATE --container JBOSS_AS7");
+
+      PersistenceDescriptor config = project.getFacet(PersistenceFacet.class).getConfig();
+      List<PersistenceUnitDef> units = config.listUnits();
+      PersistenceUnitDef unit = units.get(0);
+
+      Assert.assertEquals("hibernate.hbm2ddl.auto", unit.getProperties().get(0).getName());
+      Assert.assertEquals("create-drop", unit.getProperties().get(0).getValue());
+
+      Assert.assertEquals("hibernate.show_sql", unit.getProperties().get(1).getName());
+      Assert.assertEquals("true", unit.getProperties().get(1).getValue());
+
+      Assert.assertEquals("hibernate.format_sql", unit.getProperties().get(2).getName());
+      Assert.assertEquals("true", unit.getProperties().get(2).getValue());
+
+      Assert.assertEquals("hibernate.transaction.flush_before_completion", unit.getProperties().get(3).getName());
+      Assert.assertEquals("true", unit.getProperties().get(3).getValue());
+
+      Assert.assertEquals("hibernate.dialect", unit.getProperties().get(4).getName());
+      Assert.assertEquals("org.hibernate.dialect.HSQLDialect", unit.getProperties().get(4).getValue());
    }
 }

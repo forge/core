@@ -29,15 +29,11 @@ import org.jboss.forge.spec.javaee.jpa.api.PersistenceContainer;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceUnitDef;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.TransactionType;
 
-import javax.inject.Inject;
-
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public abstract class JavaEEDefaultContainer implements PersistenceContainer
 {
-   @Inject
-   private ShellPrintWriter writer;
 
    @Override
    public PersistenceUnitDef setupConnection(PersistenceUnitDef unit, JPADataSource dataSource)
@@ -45,20 +41,22 @@ public abstract class JavaEEDefaultContainer implements PersistenceContainer
       unit.transactionType(TransactionType.JTA);
       if (dataSource.getJndiDataSource() != null)
       {
-         ShellMessages.info(writer, "Ignoring JNDI data-source [" + dataSource.getJndiDataSource() + "]");
+         ShellMessages.info(getWriter(), "Ignoring JNDI data-source [" + dataSource.getJndiDataSource() + "]");
       }
       if (dataSource.hasNonDefaultDatabase())
       {
-         ShellMessages.info(writer, "Ignoring database [" + dataSource.getDatabase() + "]");
+         ShellMessages.info(getWriter(), "Ignoring database [" + dataSource.getDatabase() + "]");
       }
       if (dataSource.hasJdbcConnectionInfo())
       {
-         ShellMessages.info(writer, "Ignoring jdbc connection info [" + dataSource.getJdbcConnectionInfo() + "]");
+         ShellMessages.info(getWriter(), "Ignoring jdbc connection info [" + dataSource.getJdbcConnectionInfo() + "]");
       }
 
       dataSource.setDatabase(setup(unit));
       return unit;
    }
+
+   protected abstract ShellPrintWriter getWriter();
 
    public abstract DatabaseType setup(PersistenceUnitDef unit);
 }

@@ -21,6 +21,9 @@
  */
 package org.jboss.forge.spec.javaee.jpa.container;
 
+import javax.inject.Inject;
+
+import org.jboss.forge.shell.ShellPrintWriter;
 import org.jboss.forge.spec.javaee.jpa.api.DatabaseType;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceUnitDef;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.TransactionType;
@@ -32,6 +35,15 @@ import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.TransactionType;
 public class JBossAS6Container extends JavaEEDefaultContainer
 {
    private static final String DEFAULT_DS = "java:/DefaultDS";
+
+   @Inject
+   private ShellPrintWriter writer;
+
+   @Override
+   public ShellPrintWriter getWriter()
+   {
+      return writer;
+   }
 
    @Override
    public DatabaseType setup(PersistenceUnitDef unit)

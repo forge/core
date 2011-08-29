@@ -36,6 +36,8 @@ public class JPADataSource
    private String password;
    private DatabaseType database;
    private String jndiDataSource;
+   private PersistenceContainer container;
+   private PersistenceProvider provider;
 
    public DatabaseType getDatabase()
    {
@@ -131,4 +133,25 @@ public class JPADataSource
       return result;
    }
 
+   public JPADataSource setContainer(PersistenceContainer container)
+   {
+      this.container = container;
+      return this;
+   }
+
+   public PersistenceContainer getContainer()
+   {
+      return container;
+   }
+
+   public JPADataSource setProvider(PersistenceProvider provider)
+   {
+      this.provider = provider;
+      return this;
+   }
+
+   public PersistenceProvider getProvider()
+   {
+      return provider;
+   }
 }

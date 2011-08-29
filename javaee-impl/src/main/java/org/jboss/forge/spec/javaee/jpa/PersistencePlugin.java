@@ -166,16 +166,18 @@ public class PersistencePlugin implements Plugin
 
       unit.name(unitName).description(DEFAULT_UNIT_DESC);
 
+      PersistenceContainer container = jpac.getContainer(manager);
+      PersistenceProvider provider = jpap.getProvider(manager);
+
       JPADataSource ds = new JPADataSource()
                .setJndiDataSource(jtaDataSource)
                .setDatabaseType(databaseType)
                .setJdbcDriver(jdbcDriver)
                .setDatabaseURL(jdbcURL)
                .setUsername(jdbcUsername)
-               .setPassword(jdbcPassword);
-
-      PersistenceContainer container = jpac.getContainer(manager);
-      PersistenceProvider provider = jpap.getProvider(manager);
+               .setPassword(jdbcPassword)
+               .setContainer(container)
+               .setProvider(provider);
 
       unit.provider(provider.getProvider());
       container.setupConnection(unit, ds);
