@@ -135,4 +135,26 @@ public class PersistencePluginTest extends AbstractJPATest
 
       Assert.assertEquals(5, unit.getProperties().size());
    }
+
+   @Test
+   public void testMySQLDatabaseWithJndiDataSource() throws Exception
+   {
+      Project project = getProject();
+
+      queueInputLines("");
+      getShell()
+               .execute(
+                        "persistence setup --provider HIBERNATE --container JBOSS_AS6 --database MYSQL_INNODB --jndiDataSource java:demo");
+
+      PersistenceDescriptor config = project.getFacet(PersistenceFacet.class).getConfig();
+
+      List<PersistenceUnitDef> units = config.listUnits();
+      PersistenceUnitDef unit = units.get(0);
+
+      Assert.assertEquals("java:demo", unit.getJtaDataSource());
+      Assert.assertEquals("hibernate.dialect", unit.getProperties().get(4).getName());
+      Assert.assertEquals("org.hibernate.dialect.MySQLInnoDBDialect", unit.getProperties().get(4).getValue());
+
+      Assert.assertEquals(5, unit.getProperties().size());
+   }
 }
