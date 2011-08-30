@@ -98,6 +98,7 @@
             <!-- XML Parser -->
             <include>org.jboss.forge:forge-parser-xml</include>
             <include>org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api</include>
+            <include>org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-spi</include>
             <include>org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-impl</include>
          </includes>
          <outputFileNameMapping>${artifact.artifactId}${dashClassifier?}.${artifact.extension}</outputFileNameMapping>

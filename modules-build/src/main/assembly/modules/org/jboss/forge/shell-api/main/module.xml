@@ -12,6 +12,7 @@
       <resource-root path="forge-parser-java-api.jar" />
       <resource-root path="forge-parser-xml.jar" />
       <resource-root path="shrinkwrap-descriptors-api.jar" />
+      <resource-root path="shrinkwrap-descriptors-spi.jar" />
       <resource-root path="shrinkwrap-descriptors-impl.jar" />
       
       <!-- Maven -->
