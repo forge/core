@@ -22,6 +22,7 @@
 package org.jboss.forge.spec.javaee.jpa.api;
 
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceUnitDef;
+import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.TransactionType;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -30,4 +31,6 @@ import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceUnitD
 public interface PersistenceContainer
 {
    PersistenceUnitDef setupConnection(PersistenceUnitDef unit, JPADataSource dataSource);
+
+   TransactionType getTransactionType();
 }

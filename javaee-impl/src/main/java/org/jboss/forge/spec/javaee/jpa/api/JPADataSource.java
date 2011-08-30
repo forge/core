@@ -29,7 +29,6 @@ import org.jboss.forge.parser.java.util.Strings;
  */
 public class JPADataSource
 {
-
    private String jdbcDriver;
    private String databaseURL;
    private String username;
@@ -69,43 +68,43 @@ public class JPADataSource
       return password;
    }
 
-   public JPADataSource setDatabase(DatabaseType database)
+   public JPADataSource setDatabase(final DatabaseType database)
    {
       this.database = database;
       return this;
    }
 
-   public JPADataSource setJndiDataSource(String jtaDataSource)
+   public JPADataSource setJndiDataSource(final String jtaDataSource)
    {
       this.jndiDataSource = jtaDataSource;
       return this;
    }
 
-   public JPADataSource setDatabaseType(DatabaseType databaseType)
+   public JPADataSource setDatabaseType(final DatabaseType databaseType)
    {
       this.database = databaseType;
       return this;
    }
 
-   public JPADataSource setJdbcDriver(String jdbcDriver)
+   public JPADataSource setJdbcDriver(final String jdbcDriver)
    {
       this.jdbcDriver = jdbcDriver;
       return this;
    }
 
-   public JPADataSource setDatabaseURL(String databaseURL)
+   public JPADataSource setDatabaseURL(final String databaseURL)
    {
       this.databaseURL = databaseURL;
       return this;
    }
 
-   public JPADataSource setUsername(String username)
+   public JPADataSource setUsername(final String username)
    {
       this.username = username;
       return this;
    }
 
-   public JPADataSource setPassword(String password)
+   public JPADataSource setPassword(final String password)
    {
       this.password = password;
       return this;
@@ -133,7 +132,7 @@ public class JPADataSource
       return result;
    }
 
-   public JPADataSource setContainer(PersistenceContainer container)
+   public JPADataSource setContainer(final PersistenceContainer container)
    {
       this.container = container;
       return this;
@@ -144,7 +143,7 @@ public class JPADataSource
       return container;
    }
 
-   public JPADataSource setProvider(PersistenceProvider provider)
+   public JPADataSource setProvider(final PersistenceProvider provider)
    {
       this.provider = provider;
       return this;

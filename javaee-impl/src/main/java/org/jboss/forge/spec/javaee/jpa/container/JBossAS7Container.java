@@ -25,8 +25,6 @@ import javax.inject.Inject;
 
 import org.jboss.forge.shell.ShellPrintWriter;
 import org.jboss.forge.spec.javaee.jpa.api.DatabaseType;
-import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceUnitDef;
-import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.TransactionType;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -46,11 +44,14 @@ public class JBossAS7Container extends JavaEEDefaultContainer
    }
 
    @Override
-   public DatabaseType setup(final PersistenceUnitDef unit)
+   protected DatabaseType getDefaultDatabaseType()
    {
-      unit.transactionType(TransactionType.JTA);
-      unit.jtaDataSource(EXAMPLE_DS);
-      unit.nonJtaDataSource(null);
       return DatabaseType.HSQLDB;
+   }
+
+   @Override
+   protected String getDefaultDataSource()
+   {
+      return EXAMPLE_DS;
    }
 }

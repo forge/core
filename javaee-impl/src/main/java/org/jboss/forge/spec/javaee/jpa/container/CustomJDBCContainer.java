@@ -21,6 +21,8 @@
  */
 package org.jboss.forge.spec.javaee.jpa.container;
 
+import javax.inject.Inject;
+
 import org.jboss.forge.parser.java.util.Strings;
 import org.jboss.forge.shell.ShellMessages;
 import org.jboss.forge.shell.ShellPrintWriter;
@@ -28,8 +30,6 @@ import org.jboss.forge.spec.javaee.jpa.api.JPADataSource;
 import org.jboss.forge.spec.javaee.jpa.api.PersistenceContainer;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceUnitDef;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.TransactionType;
-
-import javax.inject.Inject;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -41,7 +41,7 @@ public class CustomJDBCContainer implements PersistenceContainer
    private ShellPrintWriter writer;
 
    @Override
-   public PersistenceUnitDef setupConnection(PersistenceUnitDef unit, JPADataSource dataSource)
+   public PersistenceUnitDef setupConnection(final PersistenceUnitDef unit, final JPADataSource dataSource)
    {
       unit.transactionType(TransactionType.RESOURCE_LOCAL);
       if (dataSource.getJndiDataSource() != null)
@@ -75,6 +75,12 @@ public class CustomJDBCContainer implements PersistenceContainer
       unit.property("javax.persistence.jdbc.password", dataSource.getPassword());
 
       return unit;
+   }
+
+   @Override
+   public TransactionType getTransactionType()
+   {
+      return TransactionType.RESOURCE_LOCAL;
    }
 
 }

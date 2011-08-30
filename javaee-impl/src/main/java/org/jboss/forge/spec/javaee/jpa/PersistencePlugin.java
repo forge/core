@@ -155,6 +155,7 @@ public class PersistencePlugin implements Plugin
             @Option(name = "jdbcURL") final String jdbcURL,
             @Option(name = "jdbcUsername") final String jdbcUsername,
             @Option(name = "jdbcPassword") final String jdbcPassword,
+            @Option(name = "jta", flagOnly = true) final boolean jta,
             @Option(name = "named", defaultValue = DEFAULT_UNIT_NAME) final String unitName,
             final PipeOut out)
    {
@@ -179,6 +180,7 @@ public class PersistencePlugin implements Plugin
                .setContainer(container)
                .setProvider(provider);
 
+      unit.transactionType(container.getTransactionType());
       unit.provider(provider.getProvider());
       container.setupConnection(unit, ds);
       provider.configure(unit, ds);

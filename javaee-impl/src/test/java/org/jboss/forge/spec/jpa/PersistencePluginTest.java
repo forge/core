@@ -114,7 +114,25 @@ public class PersistencePluginTest extends AbstractJPATest
       Assert.assertEquals("hibernate.transaction.flush_before_completion", unit.getProperties().get(3).getName());
       Assert.assertEquals("true", unit.getProperties().get(3).getValue());
 
+      Assert.assertEquals(4, unit.getProperties().size());
+   }
+
+   @Test
+   public void testMySQLDatabase() throws Exception
+   {
+      Project project = getProject();
+
+      queueInputLines("");
+      getShell().execute(
+               "persistence setup --provider HIBERNATE --container JBOSS_AS7 --database MYSQL");
+
+      PersistenceDescriptor config = project.getFacet(PersistenceFacet.class).getConfig();
+      List<PersistenceUnitDef> units = config.listUnits();
+      PersistenceUnitDef unit = units.get(0);
+
       Assert.assertEquals("hibernate.dialect", unit.getProperties().get(4).getName());
-      Assert.assertEquals("org.hibernate.dialect.HSQLDialect", unit.getProperties().get(4).getValue());
+      Assert.assertEquals("org.hibernate.dialect.MySQLDialect", unit.getProperties().get(4).getValue());
+
+      Assert.assertEquals(5, unit.getProperties().size());
    }
 }

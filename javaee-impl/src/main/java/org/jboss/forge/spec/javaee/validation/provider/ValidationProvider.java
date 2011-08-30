@@ -31,9 +31,9 @@ import org.jboss.forge.spec.javaee.descriptor.ValidationDescriptor;
  */
 public interface ValidationProvider
 {
-    ValidationDescriptor getDefaultDescriptor();
+   ValidationDescriptor getDefaultDescriptor();
 
-    Set<Dependency> getDependencies();
+   Set<Dependency> getDependencies();
 
-    Set<Dependency> getAdditionalDependencies();
+   Set<Dependency> getAdditionalDependencies();
 }

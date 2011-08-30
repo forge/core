@@ -36,27 +36,47 @@ public abstract class JavaEEDefaultContainer implements PersistenceContainer
 {
 
    @Override
-   public PersistenceUnitDef setupConnection(PersistenceUnitDef unit, JPADataSource dataSource)
+   public PersistenceUnitDef setupConnection(final PersistenceUnitDef unit, final JPADataSource dataSource)
    {
+      ShellMessages.info(getWriter(), "Setting transaction-type=\"JTA\"");
       unit.transactionType(TransactionType.JTA);
-      if (dataSource.getJndiDataSource() != null)
+
+      if (dataSource.getDatabase() == null)
       {
-         ShellMessages.info(getWriter(), "Ignoring JNDI data-source [" + dataSource.getJndiDataSource() + "]");
-      }
-      if (dataSource.hasNonDefaultDatabase())
-      {
-         ShellMessages.info(getWriter(), "Ignoring database [" + dataSource.getDatabase() + "]");
-      }
-      if (dataSource.hasJdbcConnectionInfo())
-      {
-         ShellMessages.info(getWriter(), "Ignoring jdbc connection info [" + dataSource.getJdbcConnectionInfo() + "]");
+         ShellMessages.info(getWriter(), "Using example database type [" + getDefaultDatabaseType() + "]");
+         dataSource.setDatabase(getDefaultDatabaseType());
       }
 
-      dataSource.setDatabase(setup(unit));
+      if (dataSource.getJndiDataSource() != null)
+      {
+         ShellMessages.info(getWriter(), "Overriding example datasource with [" + dataSource.getJndiDataSource() + "]");
+         unit.jtaDataSource(dataSource.getJndiDataSource());
+      }
+      else
+      {
+         ShellMessages.info(getWriter(), "Using example data source [" + getDefaultDataSource() + "]");
+         unit.jtaDataSource(getDefaultDataSource());
+      }
+
+      if (dataSource.hasJdbcConnectionInfo())
+      {
+         throw new IllegalStateException(
+                  "Cannot specify jdbc connection info when using container managed datasources ["
+                           + dataSource.getJdbcConnectionInfo() + "]");
+      }
+
       return unit;
    }
 
-   protected abstract ShellPrintWriter getWriter();
+   @Override
+   public TransactionType getTransactionType()
+   {
+      return TransactionType.JTA;
+   }
 
-   public abstract DatabaseType setup(PersistenceUnitDef unit);
+   protected abstract String getDefaultDataSource();
+
+   protected abstract DatabaseType getDefaultDatabaseType();
+
+   protected abstract ShellPrintWriter getWriter();
 }

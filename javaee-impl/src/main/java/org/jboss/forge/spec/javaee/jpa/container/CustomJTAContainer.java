@@ -40,10 +40,10 @@ public class CustomJTAContainer implements PersistenceContainer
    private ShellPrintWriter writer;
 
    @Override
-   public PersistenceUnitDef setupConnection(PersistenceUnitDef unit, JPADataSource dataSource)
+   public PersistenceUnitDef setupConnection(final PersistenceUnitDef unit, final JPADataSource dataSource)
    {
       unit.transactionType(TransactionType.JTA);
-      if (dataSource.getJndiDataSource() == null || dataSource.getJndiDataSource().trim().isEmpty())
+      if ((dataSource.getJndiDataSource() == null) || dataSource.getJndiDataSource().trim().isEmpty())
       {
          throw new RuntimeException("Must specify a JTA data-source.");
       }
@@ -57,6 +57,12 @@ public class CustomJTAContainer implements PersistenceContainer
       unit.nonJtaDataSource(null);
 
       return unit;
+   }
+
+   @Override
+   public TransactionType getTransactionType()
+   {
+      return TransactionType.JTA;
    }
 
 }
