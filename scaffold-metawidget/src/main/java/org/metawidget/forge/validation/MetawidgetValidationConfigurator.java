@@ -26,6 +26,7 @@ import java.io.File;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.jboss.forge.parser.xml.Node;
 import org.jboss.forge.parser.xml.XMLParser;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.WebResourceFacet;
@@ -33,7 +34,6 @@ import org.jboss.forge.project.facets.events.FacetInstalled;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.shell.ShellPrompt;
 import org.jboss.forge.spec.javaee.ValidationFacet;
-import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 import org.metawidget.forge.MetawidgetScaffold;
 
 /**

@@ -22,22 +22,31 @@
 package org.jboss.forge.parser.xml;
 
 /**
- * @author Kevin Pollet
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * 
  */
-public enum NodeType
+public class XMLParserException extends RuntimeException
 {
-   COMMENT("#comment"),
-   CDATA_SECTION("#cdata-section");
+   private static final long serialVersionUID = -4512252690684442975L;
 
-   private final String nodeName;
-
-   private NodeType(String nodeName)
+   public XMLParserException()
    {
-      this.nodeName = nodeName;
+      super();
    }
 
-   public String getNodeName()
+   public XMLParserException(final String message, final Throwable e)
    {
-      return nodeName;
+      super(message, e);
    }
+
+   public XMLParserException(final String message)
+   {
+      super(message);
+   }
+
+   public XMLParserException(final Throwable e)
+   {
+      super(e);
+   }
+
 }

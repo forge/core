@@ -35,6 +35,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.jboss.forge.maven.MavenCoreFacet;
+import org.jboss.forge.parser.xml.Node;
 import org.jboss.forge.parser.xml.XMLParser;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.Dependency;
@@ -52,8 +53,6 @@ import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresProject;
 import org.jboss.forge.shell.plugins.Topic;
-import org.jboss.shrinkwrap.descriptor.api.DescriptorExportException;
-import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -100,7 +99,7 @@ public class MavenShadePlugin implements Plugin
       modifyConfiguration(new ModifyNode()
       {
          @Override
-         public void modify(Node configuration)
+         public void modify(final Node configuration)
          {
             Node excludes = configuration
                      .getOrCreate("artifactSet")
@@ -125,7 +124,7 @@ public class MavenShadePlugin implements Plugin
       modifyConfiguration(new ModifyNode()
       {
          @Override
-         public void modify(Node configuration)
+         public void modify(final Node configuration)
          {
             Node excludes = configuration
                      .getOrCreate("artifactSet")
@@ -183,20 +182,20 @@ public class MavenShadePlugin implements Plugin
             @Option(name = "excludes",
                      help = "packages to exclude from shading",
                      type = PromptType.JAVA_PACKAGE) final String... excludes)
-            throws DescriptorExportException, XmlPullParserException, IOException
+            throws XmlPullParserException, IOException
    {
 
       modifyConfiguration(new ModifyNode()
       {
          @Override
-         public void modify(Node configuration)
+         public void modify(final Node configuration)
          {
             Node relocationNode = configuration.getOrCreate("relocations").createChild("relocation");
             relocationNode.createChild("pattern").text(pattern);
             relocationNode.createChild("shadedPattern").text(shadedPattern);
 
             String excludeMsg = "";
-            if (excludes != null && excludes.length > 0)
+            if ((excludes != null) && (excludes.length > 0))
             {
                Node excludesNode = relocationNode.createChild("excludes");
                for (String e : excludes)
@@ -221,7 +220,7 @@ public class MavenShadePlugin implements Plugin
       modifyConfiguration(new ModifyNode()
       {
          @Override
-         public void modify(Node configuration)
+         public void modify(final Node configuration)
          {
             Node relocationNode = configuration
                      .getOrCreate("transformers")
@@ -236,7 +235,7 @@ public class MavenShadePlugin implements Plugin
    /*
     * Helpers
     */
-   private void modifyConfiguration(ModifyNode command)
+   private void modifyConfiguration(final ModifyNode command)
    {
       try
       {
@@ -309,7 +308,7 @@ public class MavenShadePlugin implements Plugin
       return getPlugin(pom) != null;
    }
 
-   private org.apache.maven.model.Plugin getPlugin(Model pom)
+   private org.apache.maven.model.Plugin getPlugin(final Model pom)
    {
       for (org.apache.maven.model.Plugin p : pom.getBuild().getPlugins())
       {

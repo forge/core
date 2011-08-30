@@ -21,9 +21,6 @@
  */
 package org.jboss.forge.parser.xml;
 
-import static org.jboss.forge.parser.xml.NodeType.CDATA_SECTION;
-import static org.jboss.forge.parser.xml.NodeType.COMMENT;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -37,9 +34,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.jboss.shrinkwrap.descriptor.api.DescriptorExportException;
-import org.jboss.shrinkwrap.descriptor.api.DescriptorImportException;
-import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -51,17 +45,17 @@ import org.w3c.dom.NodeList;
  */
 public class XMLParser
 {
-   public static InputStream toXMLInputStream(Node node)
+   public static InputStream toXMLInputStream(final Node node)
    {
       return new ByteArrayInputStream(toXMLByteArray(node));
    }
 
-   public static String toXMLString(Node node)
+   public static String toXMLString(final Node node)
    {
       return new String(toXMLByteArray(node));
    }
 
-   public static byte[] toXMLByteArray(Node node)
+   public static byte[] toXMLByteArray(final Node node)
    {
       try
       {
@@ -84,21 +78,21 @@ public class XMLParser
       }
       catch (Exception e)
       {
-         throw new DescriptorExportException("Could not export Node strcuture to XML", e);
+         throw new XMLParserException("Could not export Node strcuture to XML", e);
       }
    }
 
-   public static Node parse(byte[] xml)
+   public static Node parse(final byte[] xml)
    {
       return parse(new ByteArrayInputStream(xml));
    }
 
-   public static Node parse(String xml)
+   public static Node parse(final String xml)
    {
       return parse(xml.getBytes());
    }
 
-   public static Node parse(InputStream stream) throws DescriptorImportException
+   public static Node parse(final InputStream stream) throws XMLParserException
    {
       try
       {
@@ -119,24 +113,33 @@ public class XMLParser
       }
       catch (Exception e)
       {
-         throw new DescriptorImportException("Could not import XML from stream", e);
+         throw new XMLParserException("Could not import XML from stream", e);
       }
    }
 
-   private static void readRecursive(Node target, org.w3c.dom.Node source)
+   private static void readRecursive(final Node target, final org.w3c.dom.Node source)
    {
       readAttributes(target, source);
-      NodeList sourceChildren = source.getChildNodes();
+      final NodeList sourceChildren = source.getChildNodes();
       if (sourceChildren != null)
       {
          for (int i = 0; i < sourceChildren.getLength(); i++)
          {
-            org.w3c.dom.Node child = sourceChildren.item(i);
+            final org.w3c.dom.Node child = sourceChildren.item(i);
             if (child.getNodeType() != org.w3c.dom.Node.TEXT_NODE)
             {
-               Node newTarget = target.createChild(child.getNodeName());
+               // Create our representation of the Node
+               final Node newTarget = target.createChild(child.getNodeName());
+
                if (onlyTextChildren(child))
                {
+                  // See if we're dealing with a comment and mark specifically
+                  if (child.getNodeType() == org.w3c.dom.Node.COMMENT_NODE)
+                  {
+                     newTarget.setComment(true);
+                  }
+
+                  // Set text
                   newTarget.text(child.getTextContent());
                   readAttributes(newTarget, child);
                }
@@ -149,7 +152,7 @@ public class XMLParser
       }
    }
 
-   private static void writeRecursive(org.w3c.dom.Node target, Node source)
+   private static void writeRecursive(final org.w3c.dom.Node target, final Node source)
    {
       Document owned = target.getOwnerDocument();
       if (owned == null)
@@ -158,11 +161,11 @@ public class XMLParser
       }
 
       org.w3c.dom.Node targetChild;
-      if (COMMENT.getNodeName().equals(source.getName()))
+      if (NodeType.COMMENT.getNodeName().equals(source.getName()))
       {
          targetChild = owned.createComment(source.getText());
       }
-      else if (CDATA_SECTION.getNodeName().equals(source.getName()))
+      else if (NodeType.CDATA_SECTION.getNodeName().equals(source.getName()))
       {
          targetChild = owned.createCDATASection(source.getText());
       }
@@ -190,25 +193,25 @@ public class XMLParser
       }
    }
 
-   private static void readAttributes(Node target, org.w3c.dom.Node source)
+   private static void readAttributes(final Node target, final org.w3c.dom.Node source)
    {
-      NamedNodeMap attributes = source.getAttributes();
+      final NamedNodeMap attributes = source.getAttributes();
       if (attributes != null)
       {
          for (int i = 0; i < attributes.getLength(); i++)
          {
-            org.w3c.dom.Node attribute = attributes.item(i);
+            final org.w3c.dom.Node attribute = attributes.item(i);
             target.attribute(attribute.getNodeName(), attribute.getNodeValue());
          }
       }
    }
 
-   private static boolean onlyTextChildren(org.w3c.dom.Node source)
+   private static boolean onlyTextChildren(final org.w3c.dom.Node source)
    {
-      NodeList children = source.getChildNodes();
+      final NodeList children = source.getChildNodes();
       for (int i = 0; i < children.getLength(); i++)
       {
-         org.w3c.dom.Node child = children.item(i);
+         final org.w3c.dom.Node child = children.item(i);
          if (child.getNodeType() != org.w3c.dom.Node.TEXT_NODE)
          {
             return false;
@@ -216,4 +219,23 @@ public class XMLParser
       }
       return true;
    }
+
+   public enum NodeType
+   {
+      COMMENT("#comment"),
+      CDATA_SECTION("#cdata-section");
+
+      private final String nodeName;
+
+      private NodeType(final String nodeName)
+      {
+         this.nodeName = nodeName;
+      }
+
+      public String getNodeName()
+      {
+         return nodeName;
+      }
+   }
+
 }
