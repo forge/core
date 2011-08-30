@@ -98,7 +98,6 @@ import org.mvel2.ConversionHandler;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @ApplicationScoped
-@SuppressWarnings("restriction")
 public class ShellImpl extends AbstractShellPrompt implements Shell
 {
    static final String PROP_FORGE_CONFIG_DIR = "FORGE_CONFIG_DIR";
@@ -108,7 +107,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    static final String DEFAULT_PROMPT = "[\\c{green}$PROJECT_NAME\\c] \\c{blue}\\W\\c \\c{green}\\$\\c ";
    static final String DEFAULT_PROMPT_NO_PROJ = "[\\c{red}no project\\c] \\c{blue}\\W\\c \\c{red}\\$\\c ";
 
-   static final String PROP_DEFAULT_PLUGIN_REPO = "DEFFAULT_PLUGIN_REPO";
+   static final String PROP_DEFAULT_PLUGIN_REPO = "DEFAULT_PLUGIN_REPO";
    static final String DEFAULT_PLUGIN_REPO = "https://raw.github.com/forge/plugin-repository/master/repository.yaml";
 
    static final String PROP_VERBOSE = "VERBOSE";
@@ -230,7 +229,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
 
    @Inject
    private Instance<CommandInterceptor> commandInterceptors;
-   
+
    @Inject
    private Instance<TriggeredAction> triggeredActions;
 
@@ -380,8 +379,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          historyOutstream.flush();
       }
       catch (IOException e)
-      {
-      }
+      {}
    }
 
    @Override
@@ -399,8 +397,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
                historyOutstream.close();
             }
             catch (Exception e)
-            {
-            }
+            {}
          }
       });
    }
@@ -451,7 +448,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       this.reader.setHistoryEnabled(true);
       this.reader.setBellEnabled(false);
       for (TriggeredAction action : triggeredActions) {
-    	  this.reader.addTriggeredAction(action.getTrigger(), action.getListener());
+         this.reader.addTriggeredAction(action.getTrigger(), action.getListener());
       }
    }
 
