@@ -309,7 +309,7 @@
          <id>dist</id>
          <modules>
             <module>plugin-loader</module>
-            <module>modules-build</module>
+            <module>dist</module>
          </modules>
       </profile>
    </profiles>
