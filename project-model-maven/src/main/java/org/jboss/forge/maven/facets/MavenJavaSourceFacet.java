@@ -67,7 +67,7 @@ public class MavenJavaSourceFacet extends BaseFacet implements JavaSourceFacet, 
    }
 
    @Override
-   public String calculateName(JavaResource resource)
+   public String calculateName(final JavaResource resource)
    {
       String fullPath = Packages.fromFileSyntax(resource.getFullyQualifiedName());
       String pkg = calculatePackage(resource);
@@ -77,18 +77,22 @@ public class MavenJavaSourceFacet extends BaseFacet implements JavaSourceFacet, 
    }
 
    @Override
-   public String calculatePackage(JavaResource resource)
+   public String calculatePackage(final JavaResource resource)
    {
-      String pkg = resource.getParent().getFullyQualifiedName();
+      List<DirectoryResource> folders = getSourceFolders();
+      String pkg = null;
+      for (DirectoryResource folder : folders) {
+         String sourcePrefix = folder.getFullyQualifiedName();
+         pkg = resource.getParent().getFullyQualifiedName();
+         if (pkg.startsWith(sourcePrefix))
+         {
+            pkg = pkg.substring(sourcePrefix.length() + 1);
+            break;
+         }
+      }
       pkg = Packages.fromFileSyntax(pkg);
 
-      String result = pkg;
-      if (result.contains(getBasePackage()))
-      {
-         result = pkg.substring(pkg.lastIndexOf(getBasePackage()));
-      }
-
-      return result;
+      return pkg;
    }
 
    @Override
