@@ -7,7 +7,6 @@
       <relativePath>../pom.xml</relativePath>
    </parent>
 
-   <groupId>org.jboss.forge</groupId>
    <artifactId>forge-javaee-api</artifactId>
    <packaging>jar</packaging>
    <name>Forge - Java EE APIs</name>

@@ -7,7 +7,6 @@
       <relativePath>../pom.xml</relativePath>
    </parent>
 
-   <groupId>org.jboss.forge</groupId>
    <artifactId>forge-scaffold-api</artifactId>
    <packaging>jar</packaging>
    <name>Forge - Scaffolding APIs</name>
