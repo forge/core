@@ -39,7 +39,7 @@ public abstract class BaseFacet implements Facet
    {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((project == null) ? 0 : project.hashCode());
+      result = (prime * result) + ((project == null) ? 0 : project.hashCode());
       return result;
    }
 

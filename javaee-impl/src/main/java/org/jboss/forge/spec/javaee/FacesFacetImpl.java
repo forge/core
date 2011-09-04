@@ -133,16 +133,14 @@ public class FacesFacetImpl extends BaseFacet implements FacesFacet
          }
          else
             ShellMessages.info(out, "FacesServlet not found in web.xml and Servlet " +
-                      "Version not >= 3.0, could not discover FacesServlet mappings");
+                     "Version not >= 3.0, could not discover FacesServlet mappings");
       }
       return results;
    }
 
    @Override
-   public List<String> getWebPaths(Resource<?> r)
+   public List<String> getWebPaths(final Resource<?> r)
    {
-      List<String> results = new ArrayList<String>();
-
       if (r != null)
       {
          WebResourceFacet web = project.getFacet(WebResourceFacet.class);
@@ -152,21 +150,15 @@ public class FacesFacetImpl extends BaseFacet implements FacesFacet
             if (r.getFullyQualifiedName().startsWith(d.getFullyQualifiedName()))
             {
                String path = r.getFullyQualifiedName().substring(d.getFullyQualifiedName().length());
-
-               for (String p : getWebPaths(path))
-               {
-                  if (!results.contains(p))
-                     results.add(p);
-               }
-               break;
+               return getWebPaths(path);
             }
          }
       }
-      return results;
+      return new ArrayList<String>();
    }
 
    @Override
-   public List<String> getWebPaths(String path)
+   public List<String> getWebPaths(final String path)
    {
       List<String> results = new ArrayList<String>();
       if (getResourceForWebPath(path) == null)
@@ -222,7 +214,7 @@ public class FacesFacetImpl extends BaseFacet implements FacesFacet
             while (queue.size() > 1)
             {
                Resource<?> child = temp.getChild(queue.remove());
-               if (child != null && child.exists())
+               if ((child != null) && child.exists())
                {
                   temp = child;
                }
@@ -251,7 +243,7 @@ public class FacesFacetImpl extends BaseFacet implements FacesFacet
                   {
                      child = temp.getChild(name + suffix);
                   }
-                  if (child != null && child.exists())
+                  if ((child != null) && child.exists())
                   {
                      return child;
                   }
@@ -285,7 +277,7 @@ public class FacesFacetImpl extends BaseFacet implements FacesFacet
 
             boolean matched = false;
             Iterator<Pattern> iterator = patterns.keySet().iterator();
-            while (matched == false && iterator.hasNext())
+            while ((matched == false) && iterator.hasNext())
             {
                Pattern p = iterator.next();
                Matcher m = p.matcher(servletMapping);

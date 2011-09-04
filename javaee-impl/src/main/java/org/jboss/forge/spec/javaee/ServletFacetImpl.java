@@ -158,8 +158,8 @@ public class ServletFacetImpl extends BaseFacet implements ServletFacet
                      .sessionTimeout(30)
                      .welcomeFile("/index.html");
 
-            unit.errorPage(404, "/faces/404.html");
-            unit.errorPage(500, "/faces/500.html");
+            unit.errorPage(404, "/404.html");
+            unit.errorPage(500, "/500.html");
 
             descriptor.setContents(unit.exportAsString());
          }

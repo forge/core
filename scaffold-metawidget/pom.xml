@@ -61,6 +61,17 @@
 			<artifactId>forge-shell</artifactId>
 			<scope>test</scope>
 		</dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-scaffold-plugins</artifactId>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-javaee-impl</artifactId>
+         <scope>test</scope>
+      </dependency>
+      
 
 	</dependencies>
 

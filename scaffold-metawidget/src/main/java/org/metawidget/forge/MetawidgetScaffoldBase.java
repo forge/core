@@ -23,6 +23,7 @@ package org.metawidget.forge;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -33,6 +34,8 @@ import javax.inject.Inject;
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaSource;
+import org.jboss.forge.parser.xml.Node;
+import org.jboss.forge.parser.xml.XMLParser;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
@@ -268,23 +271,46 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
       return true;
    }
 
-   private void setupWebXML(Project project)
+   private void setupWebXML(final Project project)
    {
       ServletFacet servlet = project.getFacet(ServletFacet.class);
-      WebAppDescriptor webxml = servlet.getConfig();
 
-      webxml.errorPage(404, "/faces/404.xhtml");
-      webxml.errorPage(500, "/faces/500.xhtml");
+      Node webXML = removeConflictingErrorPages(servlet);
+      WebResourceFacet web = project.getFacet(WebResourceFacet.class);
+      servlet.getConfigFile().setContents(XMLParser.toXMLInputStream(webXML));
 
-      servlet.saveConfig(webxml);
+      WebAppDescriptor config = servlet.getConfig();
+      config.errorPage(404, getAccessStrategy().getWebPaths(web.getWebResource("404.xhtml")).get(0));
+      config.errorPage(500, getAccessStrategy().getWebPaths(web.getWebResource("500.xhtml")).get(0));
 
-      // Hack to support JSF2 and metawidget
+      servlet.saveConfig(config);
+
       ShellMessages
                .info(writer,
                         "JSF2 ( Mojarra 2.0.3 - http://java.net/jira/browse/JAVASERVERFACES-1826 ) and Metawidget currently require Partial State Saving to be disabled.");
    }
 
-   private void setupRewrite(Project project)
+   private Node removeConflictingErrorPages(final ServletFacet servlet)
+   {
+      Node webXML = XMLParser.parse(servlet.getConfigFile().getResourceInputStream());
+      Node root = webXML.getRoot();
+      List<Node> errorPages = root.get("error-page");
+
+      for (String code : Arrays.asList("404", "500")) {
+         for (Node errorPage : errorPages)
+         {
+            if (code.equals(errorPage.getSingle("error-code").getText())
+                     && prompt.promptBoolean("Your web.xml already contains an error page for " + code
+                              + " status codes, replace it?"))
+            {
+               root.removeChild(errorPage);
+            }
+         }
+      }
+      return webXML;
+   }
+
+   private void setupRewrite(final Project project)
    {
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
 
