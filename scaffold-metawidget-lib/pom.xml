@@ -16,7 +16,7 @@
     <seam.faces.version>3.0.2.Final</seam.faces.version>
     <rewrite.version>1.0.0.Alpha3</rewrite.version>
     <seam.persist.version>3.0.0.Final</seam.persist.version>
-    <metawidget.version>1.25</metawidget.version>
+    <metawidget.version>1.30</metawidget.version>
   </properties>
   <dependencies>
     <dependency>
