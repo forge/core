@@ -48,33 +48,22 @@ public class URLRewriteConfiguration extends HttpConfigurationProvider
       return ConfigurationBuilder
                .begin()
 
-               // Rewrite
-               .addRule(TrailingSlash.remove())
-
                // Application mappings
-               .addRule(Join.path("/").to("/faces/index.xhtml"))
+               .addRule(Join.path("/").to("@{indexPage}"))
 
                .addRule(Join.path("/{domain}").where("domain").matches(ENTITY_NAME)
-                        .to("/faces/scaffold/{domain}/list.xhtml").withInboundCorrection())
+                        .to("@{listPage}").withInboundCorrection())
 
                .addRule(Join.path("/{domain}/{id}").where("domain").matches(ENTITY_NAME).where("id").matches("\\d+")
-                        .to("/faces/scaffold/{domain}/view.xhtml").withInboundCorrection())
+                        .to("@{viewPage}").withInboundCorrection())
 
                .addRule(Join.path("/{domain}/create").where("domain").matches(ENTITY_NAME)
-                        .to("/faces/scaffold/{domain}/create.xhtml")
+                        .to("@{createPage}")
                         .withInboundCorrection())
 
                // 404 and Error
-               .addRule(Join.path("/404").to("/faces/404.html"))
-               .addRule(Join.path("/error").to("/faces/500.html"))
-
-               .defineRule().when(
-                        Direction.isInbound()
-                                 .and(DispatchType.isRequest())
-                                 .and(Path.matches(".*\\.xhtml"))
-                                 .andNot(Path.matches(".*javax\\.faces\\.resource.*"))
-                                 .andNot(Path.matches("/rfRes/.*")))
-               .perform(Forward.to("/404"));
+               .addRule(Join.path("/404").to("@{notFoundPage}"))
+               .addRule(Join.path("/error").to("@{errorPage}"));
    }
 
    @Override

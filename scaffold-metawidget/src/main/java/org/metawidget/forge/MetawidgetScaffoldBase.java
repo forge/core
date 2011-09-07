@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -73,6 +74,7 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
    private static final String SEAM_PERSIST_TRANSACTIONAL_ANNO = "org.jboss.seam.transaction.Transactional";
    private static final String SEAM_PERSIST_INTERCEPTOR = "org.jboss.seam.transaction.TransactionInterceptor";
 
+   private static final String REWRITE_CONFIG_TEMPLATE = "org/metawidget/scaffold/URLRewriteConfiguration.jv";
    private static final String BACKING_BEAN_TEMPLATE = "org/metawidget/scaffold/BackingBean.jv";
    private static final String VIEW_TEMPLATE = "org/metawidget/scaffold/view.xhtml";
    private static final String CREATE_TEMPLATE = "org/metawidget/scaffold/create.xhtml";
@@ -313,9 +315,19 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
    private void setupRewrite(final Project project)
    {
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+      FacesFacet faces = project.getFacet(FacesFacet.class);
 
-      JavaSource<?> rewriteConfig = JavaParser.parse(getClass().getResourceAsStream(
-               "/org/metawidget/scaffold/URLRewriteConfiguration.jv"));
+      CompiledTemplateResource configTemplate = compiler.compile(REWRITE_CONFIG_TEMPLATE);
+
+      Map<Object, Object> context = new HashMap<Object, Object>();
+      context.put("indexPage", faces.getWebPaths("/index.xhtml").get(0));
+      context.put("notFoundPage", faces.getWebPaths("/404.xhtml").get(0));
+      context.put("errorPage", faces.getWebPaths("/500.xhtml").get(0));
+      context.put("listPage", faces.getWebPaths("/scaffold/{domain}/list.xhtml").get(0));
+      context.put("createPage", faces.getWebPaths("/scaffold/{domain}/create.xhtml").get(0));
+      context.put("viewPage", faces.getWebPaths("/scaffold/{domain}/view.xhtml").get(0));
+
+      JavaSource<?> rewriteConfig = JavaParser.parse(configTemplate.render(context));
       rewriteConfig.setPackage(java.getBasePackage() + ".rewrite");
 
       try {
