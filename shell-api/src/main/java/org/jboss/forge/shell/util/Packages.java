@@ -22,8 +22,6 @@
 
 package org.jboss.forge.shell.util;
 
-import java.io.File;
-
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
@@ -39,13 +37,12 @@ public class Packages
     */
    public static String toFileSyntax(String pkg)
    {
-      return pkg.replace(".", File.separator);
+      return pkg.replace(".", "/");
    }
 
    public static String fromFileSyntax(String pkg)
    {
-
-      return pkg.replace(File.separator, ".");
+      return pkg.replace("/", ".");
    }
 
 }
