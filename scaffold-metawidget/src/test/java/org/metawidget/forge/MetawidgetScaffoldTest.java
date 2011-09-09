@@ -22,6 +22,8 @@ package org.metawidget.forge;
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
+import static org.junit.Assert.fail;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -144,9 +146,15 @@ public class MetawidgetScaffoldTest extends AbstractShellTest
       web.createWebResource("<ui:insert name=\"other\">", "test-template.xhtml");
 
       queueInputLines("", "");
-      getShell().execute(
-               "scaffold from-entity --usingTemplate "
-                        + web.getWebResource("test-template.xhtml").getFullyQualifiedName());
+
+      try {
+
+         getShell().execute(
+                  "scaffold from-entity --usingTemplate "
+                           + web.getWebResource("test-template.xhtml").getFullyQualifiedName());
+         fail();
+      }
+      catch (IllegalStateException e) {}
 
       FileResource<?> view = web.getWebResource("scaffold/customer/view.xhtml");
       FileResource<?> create = web.getWebResource("scaffold/customer/create.xhtml");
