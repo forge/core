@@ -40,25 +40,48 @@ public class Navigation
    @Inject
    private Instance<MenuItem> items;
 
-   public List<String> getListItems()
+   public List<MenuItem> getListItems()
    {
-      List<String> result = new ArrayList<String>();
+      List<MenuItem> result = new ArrayList<MenuItem>();
       for (MenuItem item : items) {
-         if (item.getLiteralPath() != null)
-         {
-            result.add(item.getLiteralPath());
-         }
-         else
-         {
-            Class<?> type = item.getItemType();
-            result.add(viewify(type));
-         }
+         if (item.getItemType() != null)
+            result.add(item);
       }
       return result;
    }
 
-   private String viewify(final Class<?> type)
+   public void setListItems(final List<String> items)
    {
-      return "/scaffold/" + type.getSimpleName().toLowerCase() + "/list";
+      throw new IllegalStateException("Never call this method.");
+   }
+
+   public String toLiteralPath(final MenuItem item)
+   {
+      String result = "";
+      Class<?> type = item.getItemType();
+      if (item.getLiteralPath() != null)
+      {
+         result = item.getLiteralPath();
+      }
+      else if (type != null)
+      {
+         result = "/scaffold/" + type.getSimpleName().toLowerCase() + "/list";
+      }
+      return result;
+   }
+
+   public String toLabel(final MenuItem item)
+   {
+      String result = "Unlabeled Link";
+      Class<?> type = item.getItemType();
+      if (item.getLabel() != null)
+      {
+         result = item.getLabel();
+      }
+      else if (type != null)
+      {
+         result = type.getSimpleName();
+      }
+      return result;
    }
 }

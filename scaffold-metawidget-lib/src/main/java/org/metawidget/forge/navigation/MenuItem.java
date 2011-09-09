@@ -37,4 +37,9 @@ public interface MenuItem
     * Get the literal view to which this item will navigate. (Overrides {@link #getItemType()})
     */
    public String getLiteralPath();
+
+   /**
+    * Get the text to be displayed when this item is displayed.
+    */
+   public String getLabel();
 }

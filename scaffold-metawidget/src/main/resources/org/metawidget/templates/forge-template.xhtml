@@ -33,10 +33,10 @@ and open the template in the editor.
 				<img src="#{resource['forge-logo.png']}" alt="Seam Forge... get hammered." width="195" height="131" border="0"/>
 			</h:link>
 			
-			<h:panelGroup rendered="#{not empty navigation.listViews}">
+			<h:panelGroup rendered="#{not empty navigation.listItems}">
 				<ul>
-				<ui:repeat var="item" value="#{navigation.listViews}">
-					<li><h:link outcome="#{item}" value="#{item}"/></li>
+				<ui:repeat var="item" value="#{navigation.listItems}">
+					<li><h:link outcome="#{navigation.toLiteralPath(item)}" value="#{navigation.toLabel(item)}"/></li>
 				</ui:repeat>
 				</ul>
 			</h:panelGroup>
@@ -64,9 +64,3 @@ and open the template in the editor.
 	
 </h:body>
 </html>
-
-
-
-
-
-
