@@ -24,9 +24,12 @@ package org.jboss.forge.spec.jpa;
 
 import java.io.FileNotFoundException;
 
+import junit.framework.Assert;
+
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
+import org.jboss.forge.shell.exceptions.PluginExecutionException;
 import org.jboss.forge.shell.util.ConstraintInspector;
 import org.jboss.forge.shell.util.Packages;
 import org.jboss.forge.spec.javaee.PersistenceFacet;
@@ -40,7 +43,6 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class NewFieldPluginNegativeTest extends AbstractJPATest
 {
-
    @Test(expected = FileNotFoundException.class)
    public void testNewFieldWithoutEntityDoesNotCreateFile() throws Exception
    {
@@ -48,7 +50,14 @@ public class NewFieldPluginNegativeTest extends AbstractJPATest
       String entityName = "Goofy";
 
       queueInputLines(entityName);
-      getShell().execute(ConstraintInspector.getName(FieldPlugin.class) + " int --named gamesPlayed");
+
+      try {
+         getShell().execute(ConstraintInspector.getName(FieldPlugin.class) + " int --named gamesPlayed");
+         Assert.fail();
+      }
+      catch (PluginExecutionException e) {
+         Assert.assertTrue(FieldPlugin.class.isAssignableFrom(e.getPlugin().getType()));
+      }
 
       String pkg = project.getFacet(PersistenceFacet.class).getEntityPackage() + "." + entityName;
       String path = Packages.toFileSyntax(pkg) + ".java";
