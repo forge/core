@@ -23,8 +23,6 @@ package org.jboss.forge.scaffold;
 
 import java.util.List;
 
-import javax.persistence.Entity;
-
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.resources.Resource;
@@ -54,7 +52,7 @@ public interface ScaffoldProvider extends Facet
    List<Resource<?>> generateIndex(Resource<?> template, boolean overwrite);
 
    /**
-    * Generate a set of create, read, update, delete pages for a given JPA {@link Entity}.
+    * Generate a set of create, read, update, delete pages for a given JPA entity {@link JavaClass}.
     */
    List<Resource<?>> generateFromEntity(Resource<?> template, JavaClass entity, boolean overwrite);
 
