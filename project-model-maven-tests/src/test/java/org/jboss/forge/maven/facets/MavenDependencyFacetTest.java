@@ -186,4 +186,16 @@ public class MavenDependencyFacetTest extends ProjectModelTest
       manDeps.removeManagedDependency(dependency);
       assertFalse(manDeps.hasManagedDependency(dependency));
    }
+
+   @Test
+   public void testHasDependencyBehavior() throws Exception
+   {
+      DependencyFacet dependencyFacet = getProject().getFacet(DependencyFacet.class);
+      DependencyBuilder forgeShellApiDependency = DependencyBuilder.create().setGroupId("org.jboss.forge")
+               .setArtifactId("forge-shell-api").setVersion("1.0.0-SNAPSHOT");
+      DependencyBuilder cdiDependency = DependencyBuilder.create().setGroupId("javax.enterprise")
+               .setArtifactId("cdi-api");
+      dependencyFacet.addDependency(forgeShellApiDependency);
+      assertTrue(dependencyFacet.hasEffectiveDependency(cdiDependency));
+   }
 }
