@@ -28,9 +28,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeThat;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Scanner;
 
@@ -48,7 +46,7 @@ public class JavaExecutionPluginTest extends AbstractShellTest
 
    @Override
    @Before
-   public void beforeTest() throws IOException
+   public void beforeTest() throws Exception
    {
       super.beforeTest();
       initializeJavaProject();
@@ -72,7 +70,7 @@ public class JavaExecutionPluginTest extends AbstractShellTest
    }
 
    @Test
-   public void testExecuteClass()
+   public void testExecuteClass() throws Exception
    {
       assumeThat(testFile.exists(), is(false));
 
@@ -83,7 +81,7 @@ public class JavaExecutionPluginTest extends AbstractShellTest
    }
 
    @Test
-   public void testExecuteClassWithSingleArgument() throws FileNotFoundException
+   public void testExecuteClassWithSingleArgument() throws Exception
    {
 
       shell.execute("project install-facet forge.maven.JavaExecutionFacet");
@@ -95,7 +93,7 @@ public class JavaExecutionPluginTest extends AbstractShellTest
    }
 
    @Test
-   public void testExecuteClassWithMultipleArguments() throws FileNotFoundException
+   public void testExecuteClassWithMultipleArguments() throws Exception
    {
 
       shell.execute("project install-facet forge.maven.JavaExecutionFacet");

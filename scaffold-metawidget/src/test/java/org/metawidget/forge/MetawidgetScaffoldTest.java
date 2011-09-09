@@ -22,6 +22,7 @@ package org.metawidget.forge;
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
+import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -31,6 +32,9 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.parser.xml.Node;
 import org.jboss.forge.parser.xml.XMLParser;
 import org.jboss.forge.project.Project;
+import org.jboss.forge.project.facets.WebResourceFacet;
+import org.jboss.forge.resources.FileResource;
+import org.jboss.forge.shell.util.Streams;
 import org.jboss.forge.spec.javaee.ServletFacet;
 import org.jboss.forge.test.AbstractShellTest;
 import org.jboss.forge.test.SingletonAbstractShellTest;
@@ -61,14 +65,104 @@ public class MetawidgetScaffoldTest extends AbstractShellTest
    @Test
    public void testScaffoldSetup() throws Exception
    {
-      Project project = initializeJavaProject();
-      queueInputLines("", "", "", "", "", "");
-      getShell().execute("scaffold setup");
+      Project project = setupScaffoldProject();
       ServletFacet servlet = project.getFacet(ServletFacet.class);
+
+      Assert.assertTrue(project.hasFacet(MetawidgetScaffold.class));
 
       Node root = XMLParser.parse(servlet.getConfigFile().getResourceInputStream());
       List<Node> errorPages = root.get("error-page");
       Assert.assertEquals("/404.jsf", errorPages.get(0).getSingle("location").getText());
       Assert.assertEquals("/500.jsf", errorPages.get(1).getSingle("location").getText());
+
+      WebResourceFacet web = project.getFacet(WebResourceFacet.class);
+      FileResource<?> e404 = web.getWebResource("404.xhtml");
+      Assert.assertTrue(Streams.toString(e404.getResourceInputStream()).contains(
+               "/resources/scaffold/forge-template.xhtml"));
+
+      Assert.assertTrue(web.getWebResource("/resources/scaffold/forge-template.xhtml").exists());
+   }
+
+   @Test
+   @SuppressWarnings("unchecked")
+   public void testGenerateFromEntity() throws Exception
+   {
+      Project project = setupScaffoldProject();
+      getShell().execute("entity --named Customer");
+
+      queueInputLines("", "");
+      getShell().execute("scaffold from-entity");
+
+      WebResourceFacet web = project.getFacet(WebResourceFacet.class);
+      FileResource<?> view = web.getWebResource("scaffold/customer/view.xhtml");
+      FileResource<?> create = web.getWebResource("scaffold/customer/create.xhtml");
+      FileResource<?> list = web.getWebResource("scaffold/customer/list.xhtml");
+
+      for (FileResource<?> file : Arrays.asList(view, create, list))
+      {
+         Assert.assertTrue(file.exists());
+         Assert.assertTrue(Streams.toString(file.getResourceInputStream()).contains(
+                  "template=\"/resources/scaffold/forge-template.xhtml"));
+      }
+   }
+
+   @Test
+   @SuppressWarnings("unchecked")
+   public void testGenerateFromEntityWithTemplate() throws Exception
+   {
+      Project project = setupScaffoldProject();
+      getShell().execute("entity --named Customer");
+
+      WebResourceFacet web = project.getFacet(WebResourceFacet.class);
+      web.createWebResource("<ui:insert name=\"main\">", "test-template.xhtml");
+
+      queueInputLines("", "");
+      getShell().execute(
+               "scaffold from-entity --usingTemplate "
+                        + web.getWebResource("test-template.xhtml").getFullyQualifiedName());
+
+      FileResource<?> view = web.getWebResource("scaffold/customer/view.xhtml");
+      FileResource<?> create = web.getWebResource("scaffold/customer/create.xhtml");
+      FileResource<?> list = web.getWebResource("scaffold/customer/list.xhtml");
+
+      for (FileResource<?> file : Arrays.asList(view, create, list))
+      {
+         Assert.assertTrue(file.exists());
+         Assert.assertTrue(Streams.toString(file.getResourceInputStream()).contains(
+                  "template=\"/test-template.xhtml"));
+      }
+   }
+
+   @Test
+   @SuppressWarnings("unchecked")
+   public void testGenerateFromEntityWithUnsupportedTemplate() throws Exception
+   {
+      Project project = setupScaffoldProject();
+      getShell().execute("entity --named Customer");
+
+      WebResourceFacet web = project.getFacet(WebResourceFacet.class);
+      web.createWebResource("<ui:insert name=\"other\">", "test-template.xhtml");
+
+      queueInputLines("", "");
+      getShell().execute(
+               "scaffold from-entity --usingTemplate "
+                        + web.getWebResource("test-template.xhtml").getFullyQualifiedName());
+
+      FileResource<?> view = web.getWebResource("scaffold/customer/view.xhtml");
+      FileResource<?> create = web.getWebResource("scaffold/customer/create.xhtml");
+      FileResource<?> list = web.getWebResource("scaffold/customer/list.xhtml");
+
+      for (FileResource<?> file : Arrays.asList(view, create, list))
+      {
+         Assert.assertFalse(file.exists());
+      }
+   }
+
+   public Project setupScaffoldProject() throws Exception
+   {
+      Project project = initializeJavaProject();
+      queueInputLines("", "", "", "", "", "");
+      getShell().execute("scaffold setup");
+      return project;
    }
 }

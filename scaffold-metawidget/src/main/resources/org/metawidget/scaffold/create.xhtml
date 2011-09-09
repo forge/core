@@ -10,7 +10,7 @@
 <f:metadata>
 </f:metadata>
 
-<ui:composition template="/resources/forge-template.xhtml">
+<ui:composition template="@{templateStrategy.getReferencePath(template != null ? template : templateStrategy.getDefaultTemplate())}">
 
 	<ui:param name="pageTitle" value="Create @{entity.getName()}" />
 

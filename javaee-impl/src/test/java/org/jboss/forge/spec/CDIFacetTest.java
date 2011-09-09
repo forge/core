@@ -22,6 +22,11 @@
 
 package org.jboss.forge.spec;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.Dependency;
@@ -34,10 +39,6 @@ import org.jboss.forge.test.SingletonAbstractShellTest;
 import org.jboss.shrinkwrap.descriptor.api.spec.cdi.beans.BeansDescriptor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.io.IOException;
-
-import static org.junit.Assert.*;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -97,7 +98,8 @@ public class CDIFacetTest extends SingletonAbstractShellTest
    @Test
    public void testCdiDependencyScopeProvidedForWebProject() throws Exception
    {
-      DependencyBuilder dependency = DependencyBuilder.create(JAVAEE6_SPECS_DEPENDENCY).setScopeType(ScopeType.PROVIDED);
+      DependencyBuilder dependency = DependencyBuilder.create(JAVAEE6_SPECS_DEPENDENCY)
+               .setScopeType(ScopeType.PROVIDED);
       Project project = initializeJavaProject();
       queueInputLines("", "1", "6", "");
 
@@ -111,7 +113,7 @@ public class CDIFacetTest extends SingletonAbstractShellTest
       assertEquals(dependency.getScopeType(), dependencyFacet.getDependency(dependency).getScopeType());
    }
 
-   private void testDependencyAddedWhenInstalled(Dependency dependency, String... inputs) throws IOException
+   private void testDependencyAddedWhenInstalled(final Dependency dependency, final String... inputs) throws Exception
    {
       Project project = initializeJavaProject();
       queueInputLines(inputs);
@@ -144,12 +146,11 @@ public class CDIFacetTest extends SingletonAbstractShellTest
       assertTrue(dependencyFacet.hasDependency(DependencyBuilder.create(JAVAEE6_SPECS_DEPENDENCY)));
    }
 
-   private void assertDependenciesNotInstalled(Project project)
+   private void assertDependenciesNotInstalled(final Project project)
    {
       DependencyFacet dependencyFacet = project.getFacet(DependencyFacet.class);
       assertFalse(dependencyFacet.hasDependency(DependencyBuilder.create(JAVAEE6_SPECS_DEPENDENCY)));
       assertFalse(dependencyFacet.hasDependency(DependencyBuilder.create(CDI_DEPENDENCY)));
    }
-
 
 }

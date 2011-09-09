@@ -26,8 +26,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileNotFoundException;
-
 import javax.persistence.Entity;
 
 import org.jboss.arquillian.junit.Arquillian;
@@ -96,7 +94,7 @@ public class NewEntityPluginTest extends AbstractJPATest
    }
 
    @Test
-   public void assertPackageOptionCreatesEntityInTheCorrectPackage() throws FileNotFoundException
+   public void assertPackageOptionCreatesEntityInTheCorrectPackage() throws Exception
    {
       final Project project = getProject(); // setCurrentResource or setResource
       final String pkgName = "com.test.domain";
@@ -109,7 +107,7 @@ public class NewEntityPluginTest extends AbstractJPATest
    }
 
    @Test
-   public void assertEntityCreatedInPackageWhenWithinAPackage() throws FileNotFoundException
+   public void assertEntityCreatedInPackageWhenWithinAPackage() throws Exception
    {
       final Project project = getProject();
       final String pkgName = project.getFacet(JavaSourceFacet.class).getBasePackage();

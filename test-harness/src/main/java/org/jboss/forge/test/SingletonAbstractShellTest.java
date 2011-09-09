@@ -84,7 +84,7 @@ public abstract class SingletonAbstractShellTest
    private Instance<Project> project;
 
    @Before
-   public void beforeTest() throws IOException
+   public void beforeTest() throws Exception
    {
       if (shell == null)
       {
@@ -97,6 +97,7 @@ public abstract class SingletonAbstractShellTest
          beanManager.fireEvent(new Startup());
          beanManager.fireEvent(new PostStartup());
          shell.setVerbose(true);
+         shell.setExceptionHandlingEnabled(false);
 
          resetInputQueue();
          shell.setOutputStream(System.out);
@@ -164,7 +165,7 @@ public abstract class SingletonAbstractShellTest
       return project.get();
    }
 
-   protected Project initializeJavaProject() throws IOException
+   protected Project initializeJavaProject() throws Exception
    {
       getShell().setCurrentResource(createTempFolder());
       queueInputLines("", "");

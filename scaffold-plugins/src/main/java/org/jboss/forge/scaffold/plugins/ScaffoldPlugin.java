@@ -89,10 +89,12 @@ public class ScaffoldPlugin implements Plugin
             final PipeOut out,
             @Option(name = "scaffoldType", required = false,
                      completer = ScaffoldProviderCompleter.class) final String scaffoldType,
-            @Option(flagOnly = true, name = "overwrite") final boolean overwrite)
+            @Option(flagOnly = true, name = "overwrite") final boolean overwrite,
+            @Option(name = "usingTemplate") final Resource<?> template)
    {
       ScaffoldProvider provider = getScaffoldType(scaffoldType);
-      List<Resource<?>> generatedResources = provider.setup(overwrite);
+      verifyTemplate(provider, template);
+      List<Resource<?>> generatedResources = provider.setup(template, overwrite);
 
       // TODO give plugins a chance to react to generated resources, use event bus?
       if (!generatedResources.isEmpty())
@@ -104,10 +106,12 @@ public class ScaffoldPlugin implements Plugin
             final PipeOut out,
             @Option(name = "scaffoldType", required = false,
                      completer = ScaffoldProviderCompleter.class) final String scaffoldType,
-            @Option(flagOnly = true, name = "overwrite") final boolean overwrite)
+            @Option(flagOnly = true, name = "overwrite") final boolean overwrite,
+            @Option(name = "usingTemplate") final Resource<?> template)
    {
       ScaffoldProvider provider = getScaffoldType(scaffoldType);
-      List<Resource<?>> generatedResources = provider.generateIndex(overwrite);
+      verifyTemplate(provider, template);
+      List<Resource<?>> generatedResources = provider.generateIndex(template, overwrite);
 
       // TODO give plugins a chance to react to generated resources, use event bus?
       if (!generatedResources.isEmpty())
@@ -127,6 +131,45 @@ public class ScaffoldPlugin implements Plugin
       // TODO give plugins a chance to react to generated resources, use event bus?
       if (!generatedResources.isEmpty())
          generatedEvent.fire(new ScaffoldGeneratedResources(provider, prepareResources(generatedResources)));
+   }
+
+   @Command("from-entity")
+   public void generateFromEntity(
+            @Option(name = "scaffoldType", required = false,
+                     completer = ScaffoldProviderCompleter.class) final String scaffoldType,
+            @Option(flagOnly = true, name = "overwrite") final boolean overwrite,
+            @Option(name = "usingTemplate") final Resource<?> template,
+            @Option(required = false) JavaResource[] targets,
+            final PipeOut out) throws FileNotFoundException
+   {
+      if (((targets == null) || (targets.length < 1))
+               && (currentResource instanceof JavaResource))
+      {
+         targets = new JavaResource[] { (JavaResource) currentResource };
+      }
+
+      List<JavaResource> javaTargets = selectTargets(out, targets);
+      if (javaTargets.isEmpty())
+      {
+         ShellMessages.error(out, "Must specify a domain entity on which to operate.");
+         return;
+      }
+
+      ScaffoldProvider provider = getScaffoldType(scaffoldType);
+      verifyTemplate(provider, template);
+
+      for (JavaResource jr : javaTargets)
+      {
+         JavaClass entity = (JavaClass) (jr).getJavaSource();
+         List<Resource<?>> generatedResources = provider.generateFromEntity(template, entity, overwrite);
+
+         // TODO give plugins a chance to react to generated resources, use event bus?
+         if (!generatedResources.isEmpty())
+            generatedEvent.fire(new ScaffoldGeneratedResources(provider, prepareResources(generatedResources)));
+
+         ShellMessages.success(out, "Generated UI for [" + entity.getQualifiedName() + "]");
+      }
+
    }
 
    private ScaffoldProvider getScaffoldType(String scaffoldType)
@@ -244,43 +287,6 @@ public class ScaffoldPlugin implements Plugin
       }
    }
 
-   @Command("from-entity")
-   public void generateFromEntity(
-            @Option(name = "scaffoldType", required = false,
-                     completer = ScaffoldProviderCompleter.class) final String scaffoldType,
-            @Option(flagOnly = true, name = "overwrite") final boolean overwrite,
-            @Option(required = false) JavaResource[] targets,
-            final PipeOut out) throws FileNotFoundException
-   {
-      if (((targets == null) || (targets.length < 1))
-               && (currentResource instanceof JavaResource))
-      {
-         targets = new JavaResource[] { (JavaResource) currentResource };
-      }
-
-      List<JavaResource> javaTargets = selectTargets(out, targets);
-      if (javaTargets.isEmpty())
-      {
-         ShellMessages.error(out, "Must specify a domain entity on which to operate.");
-         return;
-      }
-
-      ScaffoldProvider provider = getScaffoldType(scaffoldType);
-
-      for (JavaResource jr : javaTargets)
-      {
-         JavaClass entity = (JavaClass) (jr).getJavaSource();
-         List<Resource<?>> generatedResources = provider.generateFromEntity(entity, overwrite);
-
-         // TODO give plugins a chance to react to generated resources, use event bus?
-         if (!generatedResources.isEmpty())
-            generatedEvent.fire(new ScaffoldGeneratedResources(provider, prepareResources(generatedResources)));
-
-         ShellMessages.success(out, "Generated UI for [" + entity.getQualifiedName() + "]");
-      }
-
-   }
-
    private List<Resource<?>> prepareResources(final List<Resource<?>> generatedResources)
    {
       List<Integer> nullIndexes = new ArrayList<Integer>();
@@ -298,5 +304,25 @@ public class ScaffoldPlugin implements Plugin
          generatedResources.remove(index);
       }
       return generatedResources;
+   }
+
+   private void verifyTemplate(final ScaffoldProvider provider, final Resource<?> template)
+   {
+      if (template != null)
+      {
+         if (!template.exists())
+         {
+            throw new IllegalArgumentException(
+                     "Template [" + template.getName()
+                              + "] does not exist. You must select a template that exists, or use " +
+                              "the default template (do not specify a template.)");
+         }
+
+         if (!provider.getTemplateStrategy().compatibleWith(template))
+         {
+            throw new IllegalStateException("Template [" + template.getName() + "] is not compatible with provider ["
+                     + ConstraintInspector.getName(provider.getClass()) + "]");
+         }
+      }
    }
 }

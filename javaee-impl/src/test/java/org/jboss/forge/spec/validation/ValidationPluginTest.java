@@ -21,7 +21,13 @@
  */
 package org.jboss.forge.spec.validation;
 
-import java.io.IOException;
+import static org.jboss.forge.shell.util.ConstraintInspector.getName;
+import static org.jboss.forge.spec.javaee.validation.provider.BVProvider.APACHE_BEAN_VALIDATION;
+import static org.jboss.forge.spec.javaee.validation.provider.BVProvider.HIBERNATE_VALIDATOR;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Set;
 
 import org.jboss.arquillian.junit.Arquillian;
@@ -37,150 +43,145 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.jboss.forge.shell.util.ConstraintInspector.getName;
-import static org.jboss.forge.spec.javaee.validation.provider.BVProvider.APACHE_BEAN_VALIDATION;
-import static org.jboss.forge.spec.javaee.validation.provider.BVProvider.HIBERNATE_VALIDATOR;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 /**
  * @author Kevin Pollet
  */
 @RunWith(Arquillian.class)
 public class ValidationPluginTest extends SingletonAbstractShellTest
 {
-    private static final String PLUGIN_NAME = getName(ValidationPlugin.class);
+   private static final String PLUGIN_NAME = getName(ValidationPlugin.class);
 
-    @Before
-    @Override
-    public void beforeTest() throws IOException
-    {
-        super.beforeTest();
-        initializeJavaProject();
-    }
+   @Before
+   @Override
+   public void beforeTest() throws Exception
+   {
+      super.beforeTest();
+      initializeJavaProject();
+   }
 
-    @Test
-    public void testFacetInstalledWhenSetUp()
-    {
-        queueInputLines("");
-        getShell().execute(PLUGIN_NAME + " setup --provider " + HIBERNATE_VALIDATOR);
+   @Test
+   public void testFacetInstalledWhenSetUp() throws Exception
+   {
+      queueInputLines("");
+      getShell().execute(PLUGIN_NAME + " setup --provider " + HIBERNATE_VALIDATOR);
 
-        assertTrue(getProject().hasFacet(ValidationFacet.class));
-    }
+      assertTrue(getProject().hasFacet(ValidationFacet.class));
+   }
 
-    @Test
-    public void testValidatorProviderConfigIsGeneratedWhenSetUp()
-    {
-        //Hibernate Validator
-        queueInputLines("");
-        getShell().execute(PLUGIN_NAME + " setup --provider " + HIBERNATE_VALIDATOR);
+   @Test
+   public void testValidatorProviderConfigIsGeneratedWhenSetUp() throws Exception
+   {
+      // Hibernate Validator
+      queueInputLines("");
+      getShell().execute(PLUGIN_NAME + " setup --provider " + HIBERNATE_VALIDATOR);
 
-        assertTrue(getProject().hasFacet(ValidationFacet.class));
+      assertTrue(getProject().hasFacet(ValidationFacet.class));
 
-        ValidationFacet facet = getProject().getFacet(ValidationFacet.class);
-        assertNotNull(facet);
+      ValidationFacet facet = getProject().getFacet(ValidationFacet.class);
+      assertNotNull(facet);
 
-        ValidationDescriptor generatedDescriptor = facet.getConfig();
-        ValidationDescriptor providerDescriptor = HIBERNATE_VALIDATOR.getValidationProvider(getBeanManager()).getDefaultDescriptor();
+      ValidationDescriptor generatedDescriptor = facet.getConfig();
+      ValidationDescriptor providerDescriptor = HIBERNATE_VALIDATOR.getValidationProvider(getBeanManager())
+               .getDefaultDescriptor();
 
-        assertValidationDescriptorValuesAreEquals(providerDescriptor, generatedDescriptor);
+      assertValidationDescriptorValuesAreEquals(providerDescriptor, generatedDescriptor);
 
-        //Apache Bean Validation
-        queueInputLines("");
-        getShell().execute(PLUGIN_NAME + " setup --provider " + APACHE_BEAN_VALIDATION);
+      // Apache Bean Validation
+      queueInputLines("");
+      getShell().execute(PLUGIN_NAME + " setup --provider " + APACHE_BEAN_VALIDATION);
 
-        assertTrue(getProject().hasFacet(ValidationFacet.class));
+      assertTrue(getProject().hasFacet(ValidationFacet.class));
 
-        facet = getProject().getFacet(ValidationFacet.class);
-        assertNotNull(facet);
+      facet = getProject().getFacet(ValidationFacet.class);
+      assertNotNull(facet);
 
-        generatedDescriptor = facet.getConfig();
-        providerDescriptor = APACHE_BEAN_VALIDATION.getValidationProvider(getBeanManager()).getDefaultDescriptor();
+      generatedDescriptor = facet.getConfig();
+      providerDescriptor = APACHE_BEAN_VALIDATION.getValidationProvider(getBeanManager()).getDefaultDescriptor();
 
-        assertValidationDescriptorValuesAreEquals(providerDescriptor, generatedDescriptor);
-    }
+      assertValidationDescriptorValuesAreEquals(providerDescriptor, generatedDescriptor);
+   }
 
-    @Test
-    public void testUserConfigIsAddedToGeneratedValidationDescriptorWhenSetUp()
-    {
-        final String providedMessageInterpolator = "org.jboss.forge.spec.validation.MockMessageInterpolator";
-        final String providedTraversableResolver = "org.jboss.forge.spec.validation.MockuserTraversableResolver";
-        final String providedConstraintValidatorFactory = "org.jboss.forge.spec.validation.MockuserTraversableResolver";
+   @Test
+   public void testUserConfigIsAddedToGeneratedValidationDescriptorWhenSetUp() throws Exception
+   {
+      final String providedMessageInterpolator = "org.jboss.forge.spec.validation.MockMessageInterpolator";
+      final String providedTraversableResolver = "org.jboss.forge.spec.validation.MockuserTraversableResolver";
+      final String providedConstraintValidatorFactory = "org.jboss.forge.spec.validation.MockuserTraversableResolver";
 
-        final StringBuilder shellCommand = new StringBuilder();
-        shellCommand.append(PLUGIN_NAME);
-        shellCommand.append(" setup");
-        shellCommand.append(" --messageInterpolator ").append(providedMessageInterpolator);
-        shellCommand.append(" --traversableResolver ").append(providedTraversableResolver);
-        shellCommand.append(" --constraintValidatorFactory ").append(providedConstraintValidatorFactory);
+      final StringBuilder shellCommand = new StringBuilder();
+      shellCommand.append(PLUGIN_NAME);
+      shellCommand.append(" setup");
+      shellCommand.append(" --messageInterpolator ").append(providedMessageInterpolator);
+      shellCommand.append(" --traversableResolver ").append(providedTraversableResolver);
+      shellCommand.append(" --constraintValidatorFactory ").append(providedConstraintValidatorFactory);
 
-        queueInputLines("");
-        getShell().execute(shellCommand.toString());
+      queueInputLines("");
+      getShell().execute(shellCommand.toString());
 
-        assertTrue(getProject().hasFacet(ValidationFacet.class));
+      assertTrue(getProject().hasFacet(ValidationFacet.class));
 
-        final ValidationFacet facet = getProject().getFacet(ValidationFacet.class);
-        assertNotNull(facet);
+      final ValidationFacet facet = getProject().getFacet(ValidationFacet.class);
+      assertNotNull(facet);
 
-        final ValidationDescriptor projectDescriptor = facet.getConfig();
+      final ValidationDescriptor projectDescriptor = facet.getConfig();
 
-        assertNotNull(projectDescriptor);
-        assertEquals(providedMessageInterpolator, projectDescriptor.getMessageInterpolator());
-        assertEquals(providedTraversableResolver, projectDescriptor.getTraversableResolver());
-        assertEquals(providedConstraintValidatorFactory, projectDescriptor.getConstraintValidatorFactory());
-    }
+      assertNotNull(projectDescriptor);
+      assertEquals(providedMessageInterpolator, projectDescriptor.getMessageInterpolator());
+      assertEquals(providedTraversableResolver, projectDescriptor.getTraversableResolver());
+      assertEquals(providedConstraintValidatorFactory, projectDescriptor.getConstraintValidatorFactory());
+   }
 
-    @Test
-    public void testValidationProviderDependenciesAreInstalledWhenSetUp()
-    {
-        //Hibernate Validator
-        queueInputLines("");
-        getShell().execute(PLUGIN_NAME + " setup --provider " + HIBERNATE_VALIDATOR);
+   @Test
+   public void testValidationProviderDependenciesAreInstalledWhenSetUp() throws Exception
+   {
+      // Hibernate Validator
+      queueInputLines("");
+      getShell().execute(PLUGIN_NAME + " setup --provider " + HIBERNATE_VALIDATOR);
 
-        assertTrue(getProject().hasFacet(ValidationFacet.class));
+      assertTrue(getProject().hasFacet(ValidationFacet.class));
 
-        ValidationFacet facet = getProject().getFacet(ValidationFacet.class);
-        ValidationProvider provider = HIBERNATE_VALIDATOR.getValidationProvider(getBeanManager());
+      ValidationFacet facet = getProject().getFacet(ValidationFacet.class);
+      ValidationProvider provider = HIBERNATE_VALIDATOR.getValidationProvider(getBeanManager());
 
-        assertNotNull(facet);
-        assertProjectHasDependencies(provider.getDependencies(), getProject());
+      assertNotNull(facet);
+      assertProjectHasDependencies(provider.getDependencies(), getProject());
 
-        //Apache Bean Validation
-        queueInputLines("");
-        getShell().execute(PLUGIN_NAME + " setup --provider " + APACHE_BEAN_VALIDATION);
+      // Apache Bean Validation
+      queueInputLines("");
+      getShell().execute(PLUGIN_NAME + " setup --provider " + APACHE_BEAN_VALIDATION);
 
-        assertTrue(getProject().hasFacet(ValidationFacet.class));
+      assertTrue(getProject().hasFacet(ValidationFacet.class));
 
-        facet = getProject().getFacet(ValidationFacet.class);
-        provider = APACHE_BEAN_VALIDATION.getValidationProvider(getBeanManager());
+      facet = getProject().getFacet(ValidationFacet.class);
+      provider = APACHE_BEAN_VALIDATION.getValidationProvider(getBeanManager());
 
-        assertNotNull(facet);
-        assertProjectHasDependencies(provider.getDependencies(), getProject());
-    }
+      assertNotNull(facet);
+      assertProjectHasDependencies(provider.getDependencies(), getProject());
+   }
 
-    private void assertProjectHasDependencies(Set<Dependency> expectedDependencies, Project project)
-    {
-        assertNotNull(expectedDependencies);
-        assertTrue(project.hasFacet(DependencyFacet.class));
+   private void assertProjectHasDependencies(final Set<Dependency> expectedDependencies, final Project project)
+   {
+      assertNotNull(expectedDependencies);
+      assertTrue(project.hasFacet(DependencyFacet.class));
 
-        final DependencyFacet facet = project.getFacet(DependencyFacet.class);
-        assertNotNull(facet);
+      final DependencyFacet facet = project.getFacet(DependencyFacet.class);
+      assertNotNull(facet);
 
-        for (Dependency oneDependency : expectedDependencies)
-        {
-            assertTrue(facet.hasDependency(oneDependency));
-        }
-    }
+      for (Dependency oneDependency : expectedDependencies)
+      {
+         assertTrue(facet.hasDependency(oneDependency));
+      }
+   }
 
-    private void assertValidationDescriptorValuesAreEquals(ValidationDescriptor expected, ValidationDescriptor actual)
-    {
-        assertNotNull(expected);
-        assertNotNull(actual);
-        assertEquals(expected.getDefaultProvider(), actual.getDefaultProvider());
-        assertEquals(expected.getMessageInterpolator(), actual.getMessageInterpolator());
-        assertEquals(expected.getTraversableResolver(), actual.getTraversableResolver());
-        assertEquals(expected.getConstraintValidatorFactory(), actual.getConstraintValidatorFactory());
-        assertEquals(expected.getConstraintMappings(), actual.getConstraintMappings());
-    }
+   private void assertValidationDescriptorValuesAreEquals(final ValidationDescriptor expected,
+            final ValidationDescriptor actual)
+   {
+      assertNotNull(expected);
+      assertNotNull(actual);
+      assertEquals(expected.getDefaultProvider(), actual.getDefaultProvider());
+      assertEquals(expected.getMessageInterpolator(), actual.getMessageInterpolator());
+      assertEquals(expected.getTraversableResolver(), actual.getTraversableResolver());
+      assertEquals(expected.getConstraintValidatorFactory(), actual.getConstraintValidatorFactory());
+      assertEquals(expected.getConstraintMappings(), actual.getConstraintMappings());
+   }
 }

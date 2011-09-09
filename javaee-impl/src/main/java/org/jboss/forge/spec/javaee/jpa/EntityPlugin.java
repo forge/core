@@ -21,7 +21,6 @@
  */
 package org.jboss.forge.spec.javaee.jpa;
 
-import java.io.FileNotFoundException;
 import java.io.Serializable;
 
 import javax.inject.Inject;
@@ -80,7 +79,7 @@ public class EntityPlugin implements Plugin
             @Option(required = false,
                      name = "package",
                      type = PromptType.JAVA_PACKAGE,
-                     description = "The package name") final String packageName) throws FileNotFoundException
+                     description = "The package name") final String packageName) throws Throwable
    {
       final PersistenceFacet jpa = project.getFacet(PersistenceFacet.class);
       final JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);

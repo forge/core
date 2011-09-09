@@ -26,7 +26,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.jboss.arquillian.junit.Arquillian;
@@ -92,7 +91,7 @@ public class FacesFacetTest extends SingletonAbstractShellTest
       assertEquals(view, faces.getResourceForWebPath(webPaths.get(1)));
    }
 
-   private Project setUpJSF() throws IOException
+   private Project setUpJSF() throws Exception
    {
       Project project = initializeJavaProject();
       queueInputLines("", "", "");

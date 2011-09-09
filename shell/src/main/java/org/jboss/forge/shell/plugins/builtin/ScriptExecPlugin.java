@@ -71,7 +71,7 @@ public class ScriptExecPlugin implements Plugin
 
    public class ScriptContext
    {
-      public void cmd(final String cmd)
+      public void cmd(final String cmd) throws Exception
       {
          shell.execute(cmd);
       }

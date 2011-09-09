@@ -52,6 +52,7 @@ public class RunPlugin implements Plugin
 
    @DefaultCommand
    public void run(@Option(description = "file...", required = true) final Resource<?> r, final String... args)
+            throws Exception
    {
 
       if (r instanceof FileResource)

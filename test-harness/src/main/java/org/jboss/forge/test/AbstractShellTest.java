@@ -100,12 +100,13 @@ public abstract class AbstractShellTest
    {}
 
    @Before
-   public void beforeTest() throws IOException
+   public void beforeTest() throws Exception
    {
       shell.setCurrentResource(createTempFolder());
       beanManager.fireEvent(new Startup());
       beanManager.fireEvent(new PostStartup());
       shell.setVerbose(true);
+      shell.setExceptionHandlingEnabled(false);
 
       resetInputQueue();
       shell.setOutputStream(System.out);
@@ -172,7 +173,7 @@ public abstract class AbstractShellTest
       return project.get();
    }
 
-   protected Project initializeProject(final PackagingType type) throws IOException
+   protected Project initializeProject(final PackagingType type) throws Exception
    {
       getShell().setCurrentResource(createTempFolder());
       queueInputLines("", "Y");
@@ -181,7 +182,7 @@ public abstract class AbstractShellTest
 
    }
 
-   protected Project initializeJavaProject() throws IOException
+   protected Project initializeJavaProject() throws Exception
    {
       return initializeProject(PackagingType.JAR);
    }

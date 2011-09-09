@@ -65,7 +65,7 @@ public class SetupPlugin implements Plugin
    public void run(
             @Option(description = "The plugin to set up",
                      required = true, completer = SetupPluginCompleter.class) final String plugin,
-            final PipeOut out)
+            final PipeOut out) throws Exception
    {
       if (completer.getCompletionTokens().contains(plugin))
       {

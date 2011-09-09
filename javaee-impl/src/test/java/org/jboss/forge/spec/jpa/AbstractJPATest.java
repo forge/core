@@ -23,9 +23,6 @@ package org.jboss.forge.spec.jpa;
 
 import static org.junit.Assert.assertFalse;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
@@ -47,7 +44,7 @@ public abstract class AbstractJPATest extends SingletonAbstractShellTest
 
    @Before
    @Override
-   public void beforeTest() throws IOException
+   public void beforeTest() throws Exception
    {
       super.beforeTest();
       initializeJavaProject();
@@ -57,12 +54,12 @@ public abstract class AbstractJPATest extends SingletonAbstractShellTest
       }
    }
 
-   protected JavaClass generateEntity(final Project project) throws FileNotFoundException
+   protected JavaClass generateEntity(final Project project) throws Exception
    {
       return generateEntity(project, null);
    }
 
-   protected JavaClass generateEntity(final Project project, final String pkg) throws FileNotFoundException
+   protected JavaClass generateEntity(final Project project, final String pkg) throws Exception
    {
       final String entityName = "Goofy" + count++;
       queueInputLines("");

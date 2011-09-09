@@ -45,7 +45,7 @@ public class ShellConfig
    @Inject
    private ForgeEnvironment environment;
 
-   public void loadConfig(Shell shell)
+   public void loadConfig(final Shell shell)
    {
       File configDir = new File((String) environment.getProperty(ShellImpl.PROP_FORGE_CONFIG_DIR));
 
@@ -58,7 +58,7 @@ public class ShellConfig
          }
       }
 
-      File historyFile = new File(configDir.getPath(),ShellImpl.FORGE_COMMAND_HISTORY_FILE);
+      File historyFile = new File(configDir.getPath(), ShellImpl.FORGE_COMMAND_HISTORY_FILE);
 
       try
       {
@@ -96,7 +96,7 @@ public class ShellConfig
          throw new RuntimeException("error loading file: " + historyFile.getAbsolutePath());
       }
 
-      File configFile = new File(configDir.getPath(),ShellImpl.FORGE_CONFIG_FILE);
+      File configFile = new File(configDir.getPath(), ShellImpl.FORGE_CONFIG_FILE);
 
       if (!configFile.exists())
       {
@@ -110,7 +110,7 @@ public class ShellConfig
           */
          shell.execute(configFile);
       }
-      catch (IOException e)
+      catch (Exception e)
       {
          e.printStackTrace();
          throw new RuntimeException("error loading file: " + configFile.getAbsolutePath());
@@ -128,7 +128,7 @@ public class ShellConfig
 
    }
 
-   private void createDefaultConfigFile(File configFile)
+   private void createDefaultConfigFile(final File configFile)
    {
       try
       {

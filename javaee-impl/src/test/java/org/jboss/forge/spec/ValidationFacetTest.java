@@ -26,8 +26,6 @@ import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.jboss.forge.project.dependencies.DependencyBuilder.create;
 
-import java.io.IOException;
-
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.facets.DependencyFacet;
@@ -48,7 +46,7 @@ public class ValidationFacetTest extends AbstractJPATest
 
    @Before
    @Override
-   public void beforeTest() throws IOException
+   public void beforeTest() throws Exception
    {
       super.beforeTest();
       initializeJavaProject();

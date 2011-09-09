@@ -78,6 +78,20 @@ public interface Shell extends ShellPrintWriter, ShellPrompt, ShellHistory
    Project getCurrentProject();
 
    /**
+    * Return true if this shell is currently set to handle exceptions. If exception handling is enabled, this shell will
+    * capture all exceptions thrown during command execution; if disabled, exceptions will not be caught, and must be
+    * caught outside of the shell to avoid termination.
+    */
+   boolean isExceptionHandlingEnabled();
+
+   /**
+    * Toggle exception handling.
+    * 
+    * @see {@link #isExceptionHandlingEnabled()}
+    */
+   void setExceptionHandlingEnabled(boolean enabled);
+
+   /**
     * Return true if this shell is currently running in pretend mode.
     * <p/>
     * Modifications to files made while running in pretend mode are made in a temporary directory, and the output is
@@ -112,18 +126,24 @@ public interface Shell extends ShellPrintWriter, ShellPrompt, ShellHistory
 
    /**
     * Execute a shell command.
+    * 
+    * @throws Throwable if an exception is encountered an {@link #isExceptionHandlingEnabled()} is not enabled.
     */
-   void execute(String command);
+   void execute(String command) throws Exception;
 
    /**
     * Execute a shell script from the specified file.
+    * 
+    * @see {@link #execute(String)}
     */
-   void execute(File file) throws IOException;
+   void execute(File file) throws IOException, Exception;
 
    /**
     * Execute a shell script from the specified file, passing the given arguments as input.
+    * 
+    * @see {@link #execute(File)}
     */
-   void execute(File file, String... args) throws IOException;
+   void execute(File file, String... args) throws IOException, Exception;
 
    /**
     * Return true if the {@link Shell} is currently executing a plugin; otherwise, return false.

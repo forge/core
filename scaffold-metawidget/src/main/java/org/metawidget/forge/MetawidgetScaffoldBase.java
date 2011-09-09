@@ -52,6 +52,7 @@ import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.scaffold.AccessStrategy;
 import org.jboss.forge.scaffold.ScaffoldProvider;
+import org.jboss.forge.scaffold.TemplateStrategy;
 import org.jboss.forge.scaffold.util.ScaffoldUtil;
 import org.jboss.forge.shell.ShellColor;
 import org.jboss.forge.shell.ShellMessages;
@@ -79,6 +80,9 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
    private static final String VIEW_TEMPLATE = "org/metawidget/scaffold/view.xhtml";
    private static final String CREATE_TEMPLATE = "org/metawidget/scaffold/create.xhtml";
    private static final String LIST_TEMPLATE = "org/metawidget/scaffold/list.xhtml";
+   private static final String E404_TEMPLATE = "org/metawidget/templates/404.xhtml";
+   private static final String E500_TEMPLATE = "org/metawidget/templates/500.xhtml";
+   private static final String INDEX_TEMPLATE = "org/metawidget/templates/index.xhtml";
    private static final String CONFIG_TEMPLATE = "org/metawidget/metawidget.xml";
 
    private final Dependency richfaces3UI = DependencyBuilder.create("org.richfaces.ui:richfaces-ui");
@@ -90,6 +94,9 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
    private final CompiledTemplateResource createTemplate;
    private final CompiledTemplateResource listTemplate;
    private final CompiledTemplateResource configTemplate;
+   private final CompiledTemplateResource e404Template;
+   private final CompiledTemplateResource e500Template;
+   private final CompiledTemplateResource indexTemplate;
 
    private final ShellPrompt prompt;
    private final ShellPrintWriter writer;
@@ -111,12 +118,15 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
       createTemplate = compiler.compile(CREATE_TEMPLATE);
       listTemplate = compiler.compile(LIST_TEMPLATE);
       configTemplate = compiler.compile(CONFIG_TEMPLATE);
+      e404Template = compiler.compile(E404_TEMPLATE);
+      e500Template = compiler.compile(E500_TEMPLATE);
+      indexTemplate = compiler.compile(INDEX_TEMPLATE);
    }
 
    @Override
-   public List<Resource<?>> setup(final boolean overwrite)
+   public List<Resource<?>> setup(final Resource<?> template, final boolean overwrite)
    {
-      List<Resource<?>> resources = generateIndex(overwrite);
+      List<Resource<?>> resources = generateIndex(template, overwrite);
       setupRichFaces(project);
       setupWebXML(project);
       setupRewrite(project);
@@ -189,7 +199,8 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
    }
 
    @Override
-   public List<Resource<?>> generateFromEntity(final JavaClass entity, final boolean overwrite)
+   public List<Resource<?>> generateFromEntity(final Resource<?> template, final JavaClass entity,
+            final boolean overwrite)
    {
       List<Resource<?>> result = new ArrayList<Resource<?>>();
       try
@@ -208,8 +219,8 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
          result.add(ScaffoldUtil.createOrOverwrite(prompt, java.getJavaResource(viewBean), viewBean.toString(),
                   overwrite));
 
-         // Set context for view generation
-         context = new HashMap<Object, Object>();
+         // Set new context for view generation
+         context = getTemplateContext(template);
          String name = viewBean.getName();
          name = name.substring(0, 1).toLowerCase() + name.substring(1);
          context.put("beanName", name);
@@ -230,6 +241,15 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
          throw new RuntimeException("Error generating default scaffolding.", e);
       }
       return result;
+   }
+
+   private HashMap<Object, Object> getTemplateContext(final Resource<?> template)
+   {
+      HashMap<Object, Object> context;
+      context = new HashMap<Object, Object>();
+      context.put("template", template);
+      context.put("templateStrategy", getTemplateStrategy());
+      return context;
    }
 
    public void createMetawidgetConfig(final boolean overwrite)
@@ -366,26 +386,28 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
    }
 
    @Override
-   public List<Resource<?>> generateIndex(final boolean overwrite)
+   public List<Resource<?>> generateIndex(final Resource<?> template, final boolean overwrite)
    {
       List<Resource<?>> result = new ArrayList<Resource<?>>();
       WebResourceFacet web = project.getFacet(WebResourceFacet.class);
 
       project.getFacet(ServletFacet.class).getConfig().welcomeFile("index.html");
 
+      generateTemplates(overwrite);
+      HashMap<Object, Object> context = getTemplateContext(template);
+
       result.add(ScaffoldUtil.createOrOverwrite(prompt, web.getWebResource("index.html"), getClass()
                .getResourceAsStream("/org/metawidget/templates/index.html"), overwrite));
 
       result.add(ScaffoldUtil.createOrOverwrite(prompt, web.getWebResource("index.xhtml"),
-               getClass().getResourceAsStream("/org/metawidget/templates/index.xhtml"), overwrite));
+               indexTemplate.render(context), overwrite));
 
       result.add(ScaffoldUtil.createOrOverwrite(prompt, web.getWebResource("404.xhtml"),
-               getClass().getResourceAsStream("/org/metawidget/templates/404.xhtml"), overwrite));
+               e404Template.render(context), overwrite));
 
       result.add(ScaffoldUtil.createOrOverwrite(prompt, web.getWebResource("500.xhtml"),
-               getClass().getResourceAsStream("/org/metawidget/templates/500.xhtml"), overwrite));
+               e500Template.render(context), overwrite));
 
-      generateTemplates(overwrite);
       return result;
    }
 
@@ -398,31 +420,21 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
    @Override
    public AccessStrategy getAccessStrategy()
    {
-      final FacesFacet faces = project.getFacet(FacesFacet.class);
+      return new MetawidgetAccessStrategy(project);
+   }
 
-      return new AccessStrategy()
-      {
-         @Override
-         public List<String> getWebPaths(final Resource<?> r)
-         {
-            return faces.getWebPaths(r);
-         }
-
-         @Override
-         public Resource<?> fromWebPath(final String path)
-         {
-            return faces.getResourceForWebPath(path);
-         }
-      };
+   @Override
+   public TemplateStrategy getTemplateStrategy()
+   {
+      return new MetawidgetTemplateStrategy(project);
    }
 
    @Override
    public List<Resource<?>> generateTemplates(final boolean overwrite)
    {
       List<Resource<?>> result = new ArrayList<Resource<?>>();
-      WebResourceFacet web = project.getFacet(WebResourceFacet.class);
 
-      result.add(ScaffoldUtil.createOrOverwrite(prompt, web.getWebResource("/resources/forge-template.xhtml"),
+      result.add(ScaffoldUtil.createOrOverwrite(prompt, (FileResource<?>) getTemplateStrategy().getDefaultTemplate(),
                getClass().getResourceAsStream("/org/metawidget/templates/forge-template.xhtml"), overwrite));
 
       return result;

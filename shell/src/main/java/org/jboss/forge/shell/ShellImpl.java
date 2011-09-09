@@ -111,6 +111,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    static final String DEFAULT_PLUGIN_REPO = "https://raw.github.com/forge/plugin-repository/master/repository.yaml";
 
    static final String PROP_VERBOSE = "VERBOSE";
+   static final String PROP_EXCEPTION_HANDLING = "EXCEPTION_HANDLING";
 
    static final String PROP_IGNORE_EOF = "IGNOREEOF";
    static final int DEFAULT_IGNORE_EOF = 1;
@@ -455,6 +456,8 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    private void initParameters()
    {
       environment.setProperty(PROP_VERBOSE, String.valueOf(parameters.contains("--verbose")));
+      environment.setProperty(PROP_EXCEPTION_HANDLING,
+               String.valueOf(parameters.contains("--disableExceptionHandlers") != true));
 
       if (parameters.contains("--pretend"))
       {
@@ -474,7 +477,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       exitRequested = true;
    }
 
-   void doShell(@Observes final AcceptUserInput event)
+   void doShell(@Observes final AcceptUserInput event) throws Exception
    {
       String line;
       reader.setPrompt(getPrompt());
@@ -501,8 +504,21 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       }
    }
 
-   private void handleException(final Exception original)
+   private void handleException(final Exception original) throws Exception
    {
+      if (!isExceptionHandlingEnabled())
+      {
+         Throwable root = original;
+         while ((root.getCause() != null) && !root.getCause().equals(root))
+         {
+            root = root.getCause();
+         }
+         if (root instanceof Exception)
+            throw (Exception) root;
+         else
+            throw new RuntimeException(root);
+      }
+
       try
       {
          // unwrap any aborted exceptions
@@ -682,7 +698,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    }
 
    @Override
-   public void execute(String line)
+   public void execute(String line) throws Exception
    {
       try
       {
@@ -705,7 +721,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    }
 
    @Override
-   public void execute(final File file) throws IOException
+   public void execute(final File file) throws Exception
    {
       StringBuilder buf = new StringBuilder();
       InputStream instream = new BufferedInputStream(new FileInputStream(file));
@@ -733,7 +749,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    }
 
    @Override
-   public void execute(final File file, final String... args) throws IOException
+   public void execute(final File file, final String... args) throws Exception
    {
       StringBuilder buf = new StringBuilder();
 
@@ -959,6 +975,19 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    public void clear()
    {
       print(new Ansi().cursor(0, 0).eraseScreen().toString());
+   }
+
+   @Override
+   public boolean isExceptionHandlingEnabled()
+   {
+      Object s = environment.getProperty(PROP_EXCEPTION_HANDLING);
+      return (s != null) && "true".equals(s);
+   }
+
+   @Override
+   public void setExceptionHandlingEnabled(final boolean enabled)
+   {
+      environment.setProperty(PROP_EXCEPTION_HANDLING, String.valueOf(enabled));
    }
 
    @Override

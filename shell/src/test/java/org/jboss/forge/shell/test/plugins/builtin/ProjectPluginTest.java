@@ -5,8 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.jboss.arquillian.junit.Arquillian;
@@ -27,7 +25,7 @@ import org.junit.runner.RunWith;
 public class ProjectPluginTest extends AbstractShellTest
 {
    @Test
-   public void testAddDependencyFromManagedParent() throws IOException
+   public void testAddDependencyFromManagedParent() throws Exception
    {
       initializeJavaProject();
 
@@ -63,10 +61,10 @@ public class ProjectPluginTest extends AbstractShellTest
     * Tests that if a dependency is managed by a parent and a different version is managed in the pom itself, then the
     * local version will be used
     * 
-    * @throws IOException
+    * @throws Exception
     */
    @Test
-   public void testAddDependencyFromLocalAndManagedParent() throws IOException
+   public void testAddDependencyFromLocalAndManagedParent() throws Exception
    {
       initializeJavaProject();
       getShell().execute("project add-managed-dependency commons-httpclient:commons-httpclient:3.0");
@@ -102,10 +100,10 @@ public class ProjectPluginTest extends AbstractShellTest
    /**
     * Tests that a dependency managed by an imported pom will be used.
     * 
-    * @throws IOException
+    * @throws Exception
     */
    @Test
-   public void testAddDependencyFromManagedImport() throws IOException
+   public void testAddDependencyFromManagedImport() throws Exception
    {
       initializeJavaProject();
       // commons-httpclient v 3.1 is in the depManagement section of the weld-api-bom
@@ -137,10 +135,10 @@ public class ProjectPluginTest extends AbstractShellTest
    /**
     * Tests that a dependency that is managed in the local pom will be used.
     * 
-    * @throws IOException
+    * @throws Exception
     */
    @Test
-   public void testAddDependencyFromManaged() throws IOException
+   public void testAddDependencyFromManaged() throws Exception
    {
       Project project = initializeJavaProject();
       getShell().execute("project add-managed-dependency com.ocpsoft:prettyfaces-jsf2:3.2.0");
@@ -165,10 +163,10 @@ public class ProjectPluginTest extends AbstractShellTest
    /**
     * Tests overriding managed dependency with a different version.
     * 
-    * @throws IOException
+    * @throws Exception
     */
    @Test
-   public void testAddDependencyOverrideManaged() throws IOException
+   public void testAddDependencyOverrideManaged() throws Exception
    {
       queueInputLines("", "n");
       Project project = initializeJavaProject();
@@ -194,10 +192,10 @@ public class ProjectPluginTest extends AbstractShellTest
    /**
     * Tests overriding managed dependency with a different version.
     * 
-    * @throws IOException
+    * @throws Exception
     */
    @Test
-   public void testAddDependencyOverrideManagedRange() throws IOException
+   public void testAddDependencyOverrideManagedRange() throws Exception
    {
       queueInputLines("", "n", "2");
       Project project = initializeJavaProject();

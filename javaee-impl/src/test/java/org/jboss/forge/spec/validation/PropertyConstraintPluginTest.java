@@ -27,9 +27,6 @@ import static junit.framework.Assert.assertTrue;
 import static org.jboss.forge.shell.util.ConstraintInspector.getName;
 import static org.jboss.forge.spec.javaee.validation.util.ResourceHelper.getJavaClassFromResource;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 import javax.validation.Valid;
 import javax.validation.constraints.AssertFalse;
 import javax.validation.constraints.AssertTrue;
@@ -73,7 +70,7 @@ public class PropertyConstraintPluginTest extends SingletonAbstractShellTest
 
    @Before
    @Override
-   public void beforeTest() throws IOException
+   public void beforeTest() throws Exception
    {
       super.beforeTest();
       initializeJavaProject();
@@ -89,8 +86,8 @@ public class PropertyConstraintPluginTest extends SingletonAbstractShellTest
       assertNotNull(javaSourceFacet);
 
       final JavaClass fooClass = JavaParser.create(JavaClass.class)
-                .setPackage(javaSourceFacet.getBasePackage())
-                .setName(CLASS_NAME);
+               .setPackage(javaSourceFacet.getBasePackage())
+               .setName(CLASS_NAME);
       fooClass.addField("private String " + PROPERTY_NAME + ";");
       fooClass.addMethod("public String " + PROPERTY_ACESSOR_NAME + "(){return foo;}");
 
@@ -102,7 +99,7 @@ public class PropertyConstraintPluginTest extends SingletonAbstractShellTest
    }
 
    @Test
-   public void testAddValidConstraint() throws FileNotFoundException
+   public void testAddValidConstraint() throws Exception
    {
       getShell().execute(CONSTRAINT_PLUGIN_NAME + " Valid --onProperty " + PROPERTY_NAME);
       getShell().execute(CONSTRAINT_PLUGIN_NAME + " Valid --onProperty " + PROPERTY_NAME + " --onAccessor");
@@ -120,7 +117,7 @@ public class PropertyConstraintPluginTest extends SingletonAbstractShellTest
    }
 
    @Test
-   public void testAddNullConstraint() throws FileNotFoundException
+   public void testAddNullConstraint() throws Exception
    {
       final String message = "Message";
       getShell().execute(CONSTRAINT_PLUGIN_NAME + " Null --onProperty " + PROPERTY_NAME + " --message " + message);
@@ -140,7 +137,7 @@ public class PropertyConstraintPluginTest extends SingletonAbstractShellTest
    }
 
    @Test
-   public void testAddNotNullConstraint() throws FileNotFoundException
+   public void testAddNotNullConstraint() throws Exception
    {
       final String message = "Message";
       getShell().execute(CONSTRAINT_PLUGIN_NAME + " NotNull --onProperty " + PROPERTY_NAME + " --message " + message);
@@ -160,7 +157,7 @@ public class PropertyConstraintPluginTest extends SingletonAbstractShellTest
    }
 
    @Test
-   public void testAddAssertTrueConstraint() throws FileNotFoundException
+   public void testAddAssertTrueConstraint() throws Exception
    {
       final String message = "Message";
       getShell()
@@ -181,7 +178,7 @@ public class PropertyConstraintPluginTest extends SingletonAbstractShellTest
    }
 
    @Test
-   public void testAddAssertFalseConstraint() throws FileNotFoundException
+   public void testAddAssertFalseConstraint() throws Exception
    {
       final String message = "Message";
       getShell().execute(
@@ -202,7 +199,7 @@ public class PropertyConstraintPluginTest extends SingletonAbstractShellTest
    }
 
    @Test
-   public void testAddMinConstraint() throws FileNotFoundException
+   public void testAddMinConstraint() throws Exception
    {
       final String message = "Message";
       getShell().execute(
@@ -224,7 +221,7 @@ public class PropertyConstraintPluginTest extends SingletonAbstractShellTest
    }
 
    @Test
-   public void testAddMaxConstraint() throws FileNotFoundException
+   public void testAddMaxConstraint() throws Exception
    {
       final String message = "Message";
       getShell().execute(
@@ -247,7 +244,7 @@ public class PropertyConstraintPluginTest extends SingletonAbstractShellTest
    }
 
    @Test
-   public void testAddDecimalMinConstraint() throws FileNotFoundException
+   public void testAddDecimalMinConstraint() throws Exception
    {
       final String message = "Message";
       getShell().execute(
@@ -271,7 +268,7 @@ public class PropertyConstraintPluginTest extends SingletonAbstractShellTest
    }
 
    @Test
-   public void testAddDecimalMaxConstraint() throws FileNotFoundException
+   public void testAddDecimalMaxConstraint() throws Exception
    {
       final String message = "Message";
       getShell().execute(
@@ -295,7 +292,7 @@ public class PropertyConstraintPluginTest extends SingletonAbstractShellTest
    }
 
    @Test
-   public void testAddSizeConstraint() throws FileNotFoundException
+   public void testAddSizeConstraint() throws Exception
    {
       final String message = "Message";
       getShell().execute(CONSTRAINT_PLUGIN_NAME + " Size --onProperty " + PROPERTY_NAME + " --message " + message);
@@ -315,7 +312,7 @@ public class PropertyConstraintPluginTest extends SingletonAbstractShellTest
    }
 
    @Test
-   public void testAddSizeConstraintWithMinMax() throws FileNotFoundException
+   public void testAddSizeConstraintWithMinMax() throws Exception
    {
       getShell().execute(CONSTRAINT_PLUGIN_NAME + " Size --onProperty " + PROPERTY_NAME + " --min 0 --max 3");
 
@@ -329,7 +326,7 @@ public class PropertyConstraintPluginTest extends SingletonAbstractShellTest
    }
 
    @Test
-   public void testAddDigitsConstraint() throws FileNotFoundException
+   public void testAddDigitsConstraint() throws Exception
    {
       final String message = "Message";
       getShell().execute(
@@ -357,7 +354,7 @@ public class PropertyConstraintPluginTest extends SingletonAbstractShellTest
    }
 
    @Test
-   public void testAddPastConstraint() throws FileNotFoundException
+   public void testAddPastConstraint() throws Exception
    {
       final String message = "Message";
       getShell().execute(CONSTRAINT_PLUGIN_NAME + " Past --onProperty " + PROPERTY_NAME + " --message " + message);
@@ -377,7 +374,7 @@ public class PropertyConstraintPluginTest extends SingletonAbstractShellTest
    }
 
    @Test
-   public void testAddFutureConstraint() throws FileNotFoundException
+   public void testAddFutureConstraint() throws Exception
    {
       final String message = "Message";
       getShell().execute(CONSTRAINT_PLUGIN_NAME + " Future --onProperty " + PROPERTY_NAME + " --message " + message);
@@ -397,7 +394,7 @@ public class PropertyConstraintPluginTest extends SingletonAbstractShellTest
    }
 
    @Test
-   public void testAddPatternConstraint() throws FileNotFoundException
+   public void testAddPatternConstraint() throws Exception
    {
       final String message = "Message";
       getShell().execute(
