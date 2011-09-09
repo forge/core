@@ -21,6 +21,7 @@ import java.io.File;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.test.AbstractShellTest;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
@@ -32,8 +33,7 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class LsMavenPomPluginTestCase extends AbstractShellTest
 {
-   // @Test
-   // TODO re-enable this test, figure out what's wrong. this works in the console
+   @Test
    public void testShouldBeAbleToLsPomFile() throws Exception
    {
       Shell shell = getShell();
@@ -42,6 +42,7 @@ public class LsMavenPomPluginTestCase extends AbstractShellTest
       shell.execute("cd " + moduleDir.getAbsolutePath());
 
       shell.execute("cd pom.xml");
-      shell.execute("ls");
+      // TODO re-enable this test, figure out what's wrong. this works in the console
+      // shell.execute("ls");
    }
 }
