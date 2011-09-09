@@ -6,20 +6,31 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 
 import @{entity.getQualifiedName()};
+import org.metawidget.forge.navigation.MenuItem;
 import org.metawidget.forge.persistence.PaginationHelper;
 import org.metawidget.forge.persistence.PersistenceUtil;
 
 @Named
 @Stateful
 @RequestScoped
-public class @{entity.getName()}Bean extends PersistenceUtil
+public class @{entity.getName()}Bean extends PersistenceUtil implements MenuItem
 {
    private static final long serialVersionUID = 1L;
    
    private List<@{entity.getName()}> list = null;
    private @{entity.getName()} @{lc = entity.getName().toLowerCase(); lc} = new @{entity.getName()}();
    private long id = 0;
-   private PaginationHelper<@{entity.getName()}> pagination;	
+   private PaginationHelper<@{entity.getName()}> pagination;		
+   
+   public Class<?> getItemType()
+   {
+      return @{entity.getName()}.class;
+   }
+   
+   public String getLiteralPath()
+   {
+      return null;
+   }
 
    public void load()
    {

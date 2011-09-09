@@ -135,11 +135,11 @@ public class ScaffoldPlugin implements Plugin
 
    @Command("from-entity")
    public void generateFromEntity(
+            @Option(required = false) JavaResource[] targets,
             @Option(name = "scaffoldType", required = false,
                      completer = ScaffoldProviderCompleter.class) final String scaffoldType,
             @Option(flagOnly = true, name = "overwrite") final boolean overwrite,
             @Option(name = "usingTemplate") final Resource<?> template,
-            @Option(required = false) JavaResource[] targets,
             final PipeOut out) throws FileNotFoundException
    {
       if (((targets == null) || (targets.length < 1))

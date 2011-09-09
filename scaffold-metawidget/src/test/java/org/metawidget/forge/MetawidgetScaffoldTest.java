@@ -31,11 +31,14 @@ import junit.framework.Assert;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.xml.Node;
 import org.jboss.forge.parser.xml.XMLParser;
 import org.jboss.forge.project.Project;
+import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.resources.FileResource;
+import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.shell.util.Streams;
 import org.jboss.forge.spec.javaee.ServletFacet;
 import org.jboss.forge.test.AbstractShellTest;
@@ -114,6 +117,8 @@ public class MetawidgetScaffoldTest extends AbstractShellTest
    {
       Project project = setupScaffoldProject();
       getShell().execute("entity --named Customer");
+      getShell().execute("field string --named firstName");
+      getShell().execute("field string --named lastName");
 
       WebResourceFacet web = project.getFacet(WebResourceFacet.class);
       web.createWebResource("<ui:insert name=\"main\">", "test-template.xhtml");
@@ -133,6 +138,12 @@ public class MetawidgetScaffoldTest extends AbstractShellTest
          Assert.assertTrue(Streams.toString(file.getResourceInputStream()).contains(
                   "template=\"/test-template.xhtml"));
       }
+
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+      JavaResource bean = java.getJavaResource(java.getBasePackage() + ".view.CustomerBean");
+      Assert.assertTrue(((JavaClass) bean.getJavaSource()).hasInterface("org.metawidget.forge.navigation.MenuItem"));
+
+      getShell().execute("build");
    }
 
    @Test

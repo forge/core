@@ -32,6 +32,15 @@ and open the template in the editor.
 	    	<h:link outcome="/index.xhtml">
 				<img src="#{resource['forge-logo.png']}" alt="Seam Forge... get hammered." width="195" height="131" border="0"/>
 			</h:link>
+			
+			<h:panelGroup rendered="#{not empty navigation.listViews}">
+				<ul>
+				<ui:repeat var="item" value="#{navigation.listViews}">
+					<li><h:link outcome="#{item}" value="#{item}"/></li>
+				</ui:repeat>
+				</ul>
+			</h:panelGroup>
+			
 	    </div>
 	
 	    <div class="content">
