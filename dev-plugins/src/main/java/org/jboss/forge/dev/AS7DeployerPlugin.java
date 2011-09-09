@@ -21,7 +21,12 @@
  */
 package org.jboss.forge.dev;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -32,11 +37,14 @@ import org.jboss.forge.project.facets.PackagingFacet;
 import org.jboss.forge.project.services.ResourceFactory;
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.FileResource;
-import org.jboss.forge.resources.Resource;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.ShellMessages;
 import org.jboss.forge.shell.ShellPrompt;
-import org.jboss.forge.shell.plugins.*;
+import org.jboss.forge.shell.plugins.Alias;
+import org.jboss.forge.shell.plugins.Command;
+import org.jboss.forge.shell.plugins.Option;
+import org.jboss.forge.shell.plugins.PipeOut;
+import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.util.OSUtils;
 
 /**
@@ -70,55 +78,57 @@ public class AS7DeployerPlugin implements Plugin
    }
 
    @Command
-   public void deploy(final PipeOut out)
+   public void deploy(final PipeOut out) throws Exception
    {
       FileResource<?> finalArtifact = getFinalArtifact();
       FileResource<?> deployedArtifact = getDeployedArtifact();
 
       if (!deployedArtifact.exists()
-              || prompt.promptBoolean("Overwrite existing deployment? [" + deployedArtifact.getFullyQualifiedName()
-              + "]"))
+               || prompt.promptBoolean("Overwrite existing deployment? [" + deployedArtifact.getFullyQualifiedName()
+                        + "]"))
       {
          deployedArtifact.setContents(finalArtifact.getResourceInputStream());
          shell.execute("rm -rf " + deployedArtifact.getFullyQualifiedName() + ".*");
          ShellMessages.success(out, "Deployed [" + finalArtifact + "] to ["
-                 + getDeploymentDirectory().getFullyQualifiedName() + "]");
+                  + getDeploymentDirectory().getFullyQualifiedName() + "]");
       }
    }
 
    @Command
-   public void deployExploded(@Option(name = "triggerDeploy", flagOnly = true) boolean triggerDeploy,
-                              @Option(name = "build", flagOnly = true) boolean build,
-                              final PipeOut out) throws Exception
+   public void deployExploded(@Option(name = "triggerDeploy", flagOnly = true) final boolean triggerDeploy,
+            @Option(name = "build", flagOnly = true) final boolean build,
+            final PipeOut out) throws Exception
    {
-      if(build) {
-          shell.execute("mvn compile war:exploded");
+      if (build) {
+         shell.execute("mvn compile war:exploded");
       }
-       
+
       FileResource<?> finalArtifact = getExploded();
 
       String artifactName = finalArtifact.getName() + ".war";
       DirectoryResource deployDir = getDeploymentDirectory().getOrCreateChildDirectory(artifactName);
       copyDirectory(finalArtifact.getUnderlyingResourceObject(), deployDir.getUnderlyingResourceObject());
 
-      if(triggerDeploy) {
+      if (triggerDeploy) {
 
-         FileResource<?> deployFile = (FileResource<?>)getDeploymentDirectory().getChild(artifactName + ".dodeploy");
+         FileResource<?> deployFile = (FileResource<?>) getDeploymentDirectory().getChild(artifactName + ".dodeploy");
 
          deployFile.createNewFile();
       }
 
-      if(triggerDeploy) {
+      if (triggerDeploy) {
          String deployMessage = "[" + finalArtifact + "] to ["
-                 + getDeploymentDirectory().getFullyQualifiedName() + "]";
+                  + getDeploymentDirectory().getFullyQualifiedName() + "]";
          ShellMessages.success(out, "Deployed " + deployMessage);
-      } else {
+      }
+      else {
          ShellMessages.success(out, "Copied [" + finalArtifact + "] to ["
-              + getDeploymentDirectory().getFullyQualifiedName() + ".war]. Use --triggerDeploy to redeploy the application");
+                  + getDeploymentDirectory().getFullyQualifiedName()
+                  + ".war]. Use --triggerDeploy to redeploy the application");
       }
    }
 
-   private void copyDirectory(File sourceLocation, File targetLocation) throws IOException
+   private void copyDirectory(final File sourceLocation, final File targetLocation) throws IOException
    {
       if (sourceLocation.isDirectory())
       {
@@ -128,12 +138,12 @@ public class AS7DeployerPlugin implements Plugin
          }
 
          String[] children = sourceLocation.list();
-         for (int i = 0; i < children.length; i++)
-         {
-            copyDirectory(new File(sourceLocation, children[i]),
-                    new File(targetLocation, children[i]));
+         for (String element : children) {
+            copyDirectory(new File(sourceLocation, element),
+                     new File(targetLocation, element));
          }
-      } else
+      }
+      else
       {
 
          InputStream in = new FileInputStream(sourceLocation);
@@ -150,21 +160,20 @@ public class AS7DeployerPlugin implements Plugin
       }
    }
 
-
    @Command
-   public void undeploy(final PipeOut out)
+   public void undeploy(final PipeOut out) throws Exception
    {
       FileResource<?> finalArtifact = getFinalArtifact();
       FileResource<?> deployedArtifact = getDeployedArtifact();
 
       if (deployedArtifact.exists()
-              && prompt.promptBoolean("Really undeploy [" + deployedArtifact.getFullyQualifiedName()
-              + "]?"))
+               && prompt.promptBoolean("Really undeploy [" + deployedArtifact.getFullyQualifiedName()
+                        + "]?"))
       {
          deployedArtifact.setContents(finalArtifact.getResourceInputStream());
          shell.execute("rm -rf " + deployedArtifact.getFullyQualifiedName() + "*");
          ShellMessages.success(out, "Removed deployment [" + finalArtifact + "] from ["
-                 + getDeploymentDirectory().getFullyQualifiedName() + "]");
+                  + getDeploymentDirectory().getFullyQualifiedName() + "]");
       }
    }
 
@@ -222,7 +231,7 @@ public class AS7DeployerPlugin implements Plugin
       if (!deployDir.exists())
       {
          throw new RuntimeException("Directory does not exist [" + deployDir
-                     + "], are you sure JBOSS_HOME points to a JBoss 7 installation?");
+                  + "], are you sure JBOSS_HOME points to a JBoss 7 installation?");
       }
       return deployDir;
    }
@@ -233,7 +242,7 @@ public class AS7DeployerPlugin implements Plugin
       if (!binDir.exists())
       {
          throw new RuntimeException("Directory does not exist [" + binDir
-                     + "], are you sure JBOSS_HOME points to a JBoss 7 installation?");
+                  + "], are you sure JBOSS_HOME points to a JBoss 7 installation?");
       }
 
       return (FileResource<?>) binDir.getChild(getAS7ExecutableName());
