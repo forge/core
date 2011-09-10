@@ -28,6 +28,7 @@ import java.util.List;
 
 import javax.enterprise.context.Dependent;
 
+import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Repository;
 import org.jboss.forge.maven.MavenCoreFacet;
@@ -105,7 +106,13 @@ public class MavenPluginFacetImpl extends BaseFacet implements MavenPluginFacet,
    {
       MavenCoreFacet mavenCoreFacet = project.getFacet(MavenCoreFacet.class);
       Model pom = mavenCoreFacet.getPOM();
-      pom.getBuild().addPlugin(new MavenPluginAdapter(plugin));
+      Build build = pom.getBuild();
+      if(build == null) {
+          build = new Build();
+      }
+
+      build.addPlugin(new MavenPluginAdapter(plugin));
+      pom.setBuild(build);
       mavenCoreFacet.setPOM(pom);
    }
 
