@@ -94,7 +94,7 @@ public class CDIFacetImpl extends BaseFacet implements CDIFacet
       }
       else
       {
-         if (!PackagingType.JAR.equals(type))
+         if (!PackagingType.JAR.equals(type) && !PackagingType.BUNDLE.equals(type))
          {
             printPackTypeWarning(project, type);
          }
@@ -151,7 +151,7 @@ public class CDIFacetImpl extends BaseFacet implements CDIFacet
       if (!isInstalled())
       {
          PackagingType type = project.getFacet(PackagingFacet.class).getPackagingType();
-         if (!PackagingType.JAR.equals(type) && !PackagingType.WAR.equals(type))
+         if (!PackagingType.JAR.equals(type) && !PackagingType.WAR.equals(type) && !PackagingType.BUNDLE.equals(type))
          {
             printPackTypeWarning(project, type);
          }

@@ -48,7 +48,7 @@ import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
  */
 @Alias("forge.spec.servlet")
 @RequiresFacet({ MetadataFacet.class, WebResourceFacet.class, DependencyFacet.class })
-@RequiresPackagingType(PackagingType.WAR)
+@RequiresPackagingType({PackagingType.WAR, PackagingType.BUNDLE})
 public class ServletFacetImpl extends BaseFacet implements ServletFacet
 {
 
