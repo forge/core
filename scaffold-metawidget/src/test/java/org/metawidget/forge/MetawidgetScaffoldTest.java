@@ -93,6 +93,8 @@ public class MetawidgetScaffoldTest extends AbstractShellTest
    public void testGenerateFromEntity() throws Exception
    {
       Project project = setupScaffoldProject();
+
+      queueInputLines("");
       getShell().execute("entity --named Customer");
 
       queueInputLines("", "");
@@ -116,6 +118,7 @@ public class MetawidgetScaffoldTest extends AbstractShellTest
    public void testGenerateFromEntityWithTemplate() throws Exception
    {
       Project project = setupScaffoldProject();
+      queueInputLines("");
       getShell().execute("entity --named Customer");
       getShell().execute("field string --named firstName");
       getShell().execute("field string --named lastName");
@@ -151,6 +154,7 @@ public class MetawidgetScaffoldTest extends AbstractShellTest
    public void testGenerateFromEntityWithUnsupportedTemplate() throws Exception
    {
       Project project = setupScaffoldProject();
+      queueInputLines("");
       getShell().execute("entity --named Customer");
 
       WebResourceFacet web = project.getFacet(WebResourceFacet.class);
@@ -180,7 +184,7 @@ public class MetawidgetScaffoldTest extends AbstractShellTest
    public Project setupScaffoldProject() throws Exception
    {
       Project project = initializeJavaProject();
-      queueInputLines("", "", "", "", "", "");
+      queueInputLines("", "", "2", "", "", "");
       getShell().execute("scaffold setup");
       return project;
    }

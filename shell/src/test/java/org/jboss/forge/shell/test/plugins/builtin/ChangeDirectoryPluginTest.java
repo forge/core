@@ -65,6 +65,26 @@ public class ChangeDirectoryPluginTest extends AbstractShellTest
    }
 
    @Test
+   public void testDoubleTildeAliasesProjectRoot() throws Exception
+   {
+      DirectoryResource home = new DirectoryResource(factory, OSUtils.getUserHomeDir());
+
+      initializeJavaProject();
+      Shell shell = getShell();
+      Resource<?> rootDir = shell.getCurrentResource();
+      shell.execute("cd src/main/java");
+
+      Resource<?> currentDirectory = shell.getCurrentResource();
+      assertNotSame(rootDir.getFullyQualifiedName(), currentDirectory.getFullyQualifiedName());
+
+      shell.execute("cd ~~");
+
+      currentDirectory = shell.getCurrentResource();
+      assertNotSame(home.getFullyQualifiedName(), currentDirectory.getFullyQualifiedName());
+      assertEquals(rootDir.getFullyQualifiedName(), currentDirectory.getFullyQualifiedName());
+   }
+
+   @Test
    public void testDotMeansSameDirectory() throws Exception
    {
       Shell shell = getShell();

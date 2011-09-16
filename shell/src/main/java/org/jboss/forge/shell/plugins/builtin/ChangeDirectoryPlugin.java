@@ -24,6 +24,7 @@ package org.jboss.forge.shell.plugins.builtin;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.project.Project;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.plugins.Alias;
@@ -32,6 +33,7 @@ import org.jboss.forge.shell.plugins.Help;
 import org.jboss.forge.shell.plugins.Option;
 import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.Topic;
+import org.jboss.forge.shell.util.OSUtils;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -51,13 +53,28 @@ public class ChangeDirectoryPlugin implements Plugin
    }
 
    @DefaultCommand
-   public void run(@Option(description = "The new directory", defaultValue = "~") final Resource<?> r)
+   public void run(@Option(description = "The new directory", defaultValue = "~") Resource<?> r)
    {
       if (r != null)
       {
+         Project currentProject = shell.getCurrentProject();
          if (!r.exists())
          {
-            throw new RuntimeException("no such resource: " + r.toString());
+            if ("~".equals(r.getName()) && currentProject.exists())
+            {
+               r = currentProject.getProjectRoot();
+            }
+            else
+               throw new RuntimeException("no such resource: " + r.toString());
+         }
+
+         String fullyQualifiedName = r.getFullyQualifiedName();
+         String userHomePath = OSUtils.getUserHomePath();
+
+         if (fullyQualifiedName.startsWith(userHomePath)
+                  && "~".equals(r.getFullyQualifiedName().substring(userHomePath.length())))
+         {
+            r = currentProject.getProjectRoot();
          }
 
          shell.setCurrentResource(r);
