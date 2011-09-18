@@ -32,6 +32,7 @@ public enum PackagingType
    BASIC("pom", "Basic Project"),
    JAR("jar", "Java Application"),
    WAR("war", "Java Web Application"),
+   BUNDLE("bundle", "OSGI Bundle Project"),
    OTHER("", "Other packaging type");
 
    private String type;

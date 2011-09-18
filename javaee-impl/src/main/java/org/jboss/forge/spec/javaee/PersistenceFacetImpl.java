@@ -53,7 +53,7 @@ import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceDescr
  */
 @Alias("forge.spec.jpa")
 @RequiresFacet({ JavaSourceFacet.class, ResourceFacet.class, DependencyFacet.class })
-@RequiresPackagingType({ PackagingType.JAR, PackagingType.WAR })
+@RequiresPackagingType({ PackagingType.JAR, PackagingType.WAR, PackagingType.BUNDLE })
 public class PersistenceFacetImpl extends BaseFacet implements PersistenceFacet
 {
    private static final Dependency dep =
