@@ -204,7 +204,7 @@ public class NewProjectPlugin implements Plugin
 
       Project project = null;
 
-      if (type.equals(PackagingType.JAR))
+      if (type.equals(PackagingType.JAR) || type.equals(PackagingType.BUNDLE))
       {
          project = projectFactory.createProject(dir,
                   DependencyFacet.class,
@@ -277,6 +277,7 @@ public class NewProjectPlugin implements Plugin
       validTypes.add(PackagingType.BASIC);
       validTypes.add(PackagingType.JAR);
       validTypes.add(PackagingType.WAR);
+      validTypes.add(PackagingType.BUNDLE);
       return validTypes;
    }
 }
