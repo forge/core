@@ -1,5 +1,5 @@
 /*
- * JBoss, by Red Hat.
+ * JBoss, Home of Professional Open Source
  * Copyright 2010, Red Hat, Inc., and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -19,31 +19,16 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.shell.plugins;
+package org.jboss.forge.spec.javaee;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import org.jboss.forge.project.Facet;
+import org.jboss.forge.project.Project;
 
 /**
- * Defines a @{@link Command} as the plugin default. It will be run if no other command matches the input line.
+ * If installed, this {@link Project} supports features from the EJB specification.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Command("default")
-@Target({ TYPE, METHOD, PARAMETER, FIELD })
-@Retention(RUNTIME)
-@Documented
-public @interface DefaultCommand
+public interface EJBFacet extends Facet
 {
-   /**
-    * Help text for the default command.
-    */
-   String help() default "When using this plugin, this command will be executed if no other is specified.";
 }

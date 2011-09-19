@@ -21,10 +21,7 @@
  */
 package org.jboss.forge.shell.plugins;
 
-import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Documented;
@@ -32,18 +29,19 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Defines a @{@link Command} as the plugin default. It will be run if no other command matches the input line.
+ * Defines a @{@link Command} to be used when performing setup for a {@link Plugin}. It will be run when using the
+ * "setup ****" command from the shell. There may be only one {@link SetupCommand} per {@link Plugin}
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Command("default")
-@Target({ TYPE, METHOD, PARAMETER, FIELD })
+@Command("setup")
+@Target({ METHOD })
 @Retention(RUNTIME)
 @Documented
-public @interface DefaultCommand
+public @interface SetupCommand
 {
    /**
-    * Help text for the default command.
+    * Help text for the setup command.
     */
-   String help() default "When using this plugin, this command will be executed if no other is specified.";
+   String help() default "Install and/or set up this plugin";
 }

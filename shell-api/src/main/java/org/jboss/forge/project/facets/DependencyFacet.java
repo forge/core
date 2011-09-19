@@ -65,6 +65,7 @@ public interface DependencyFacet extends Facet
     * Return true if this {@link Project} contains a dependency matching the given {@link Dependency} at any level of
     * the project hierarchy; return false otherwise. This method ignores {@link Dependency#getScopeType()}
     * <p/>
+    * Shorthand for : {@link #hasEffectiveDependency(Dependency)}<br/>
     * See also: {@link DependencyBuilder}.
     * <p/>
     * <b>Notice:</b> This method checks the entire project dependency structure, meaning that if a dependency is

@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.spec.javaee;
+package org.jboss.forge.spec.javaee.jsf;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -35,7 +35,6 @@ import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.project.facets.BaseFacet;
 import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.FileResource;
@@ -44,6 +43,9 @@ import org.jboss.forge.shell.ShellMessages;
 import org.jboss.forge.shell.ShellPrintWriter;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
+import org.jboss.forge.spec.javaee.BaseJavaEEFacet;
+import org.jboss.forge.spec.javaee.FacesFacet;
+import org.jboss.forge.spec.javaee.ServletFacet;
 import org.jboss.forge.spec.javaee.util.ServletUtil;
 import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.FacesProjectStage;
 import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.ServletDef;
@@ -55,7 +57,7 @@ import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
  */
 @Alias("forge.spec.jsf")
 @RequiresFacet(ServletFacet.class)
-public class FacesFacetImpl extends BaseFacet implements FacesFacet
+public class FacesFacetImpl extends BaseJavaEEFacet implements FacesFacet
 {
    @Inject
    private ShellPrintWriter out;
@@ -73,7 +75,7 @@ public class FacesFacetImpl extends BaseFacet implements FacesFacet
    @Override
    public boolean isInstalled()
    {
-      return getConfigFile().exists();
+      return getConfigFile().exists() && super.isInstalled();
    }
 
    @Override
@@ -88,7 +90,7 @@ public class FacesFacetImpl extends BaseFacet implements FacesFacet
          getConfigFile().setContents(getClass()
                   .getResourceAsStream("/org/jboss/forge/web/faces-config.xml"));
       }
-      return true;
+      return super.install();
    }
 
    @Override

@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.spec.javaee.servlet;
+package org.jboss.forge.spec.javaee.soap;
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -28,17 +28,16 @@ import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.events.InstallFacets;
 import org.jboss.forge.shell.ShellMessages;
 import org.jboss.forge.shell.plugins.Alias;
-import org.jboss.forge.shell.plugins.DefaultCommand;
 import org.jboss.forge.shell.plugins.PipeOut;
 import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.SetupCommand;
-import org.jboss.forge.spec.javaee.ServletFacet;
+import org.jboss.forge.spec.javaee.SoapFacet;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Alias("servlet")
-public class ServletPlugin implements Plugin
+@Alias("soap")
+public class SoapPlugin implements Plugin
 {
    @Inject
    private Project project;
@@ -46,27 +45,18 @@ public class ServletPlugin implements Plugin
    @Inject
    private Event<InstallFacets> request;
 
-   @DefaultCommand
-   public void status(final PipeOut out)
-   {
-      if (project.hasFacet(ServletFacet.class))
-      {
-         ShellMessages.success(out, "Servlet is installed.");
-      }
-      else
-      {
-         ShellMessages.warn(out, "Servlet is NOT installed.");
-      }
-   }
-
    @SetupCommand
    public void setup(final PipeOut out)
    {
-      if (!project.hasFacet(ServletFacet.class))
+      if (!project.hasFacet(SoapFacet.class))
       {
-         request.fire(new InstallFacets(ServletFacet.class));
+         request.fire(new InstallFacets(SoapFacet.class));
       }
-      status(out);
+
+      if (project.hasFacet(SoapFacet.class))
+      {
+         ShellMessages.success(out, "Soap Web Services (JAX-WS) is installed.");
+      }
    }
 
 }

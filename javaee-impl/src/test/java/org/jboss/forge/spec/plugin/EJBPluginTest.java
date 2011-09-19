@@ -1,5 +1,5 @@
 /*
- * JBoss, by Red Hat.
+ * JBoss, Home of Professional Open Source
  * Copyright 2010, Red Hat, Inc., and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -19,31 +19,37 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.shell.plugins;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+package org.jboss.forge.spec.plugin;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.project.Project;
+import org.jboss.forge.project.facets.DependencyFacet;
+import org.jboss.forge.spec.javaee.BaseJavaEEFacet;
+import org.jboss.forge.spec.javaee.EJBFacet;
+import org.jboss.forge.test.SingletonAbstractShellTest;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
- * Defines a @{@link Command} as the plugin default. It will be run if no other command matches the input line.
- * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Command("default")
-@Target({ TYPE, METHOD, PARAMETER, FIELD })
-@Retention(RUNTIME)
-@Documented
-public @interface DefaultCommand
+@RunWith(Arquillian.class)
+public class EJBPluginTest extends SingletonAbstractShellTest
 {
-   /**
-    * Help text for the default command.
-    */
-   String help() default "When using this plugin, this command will be executed if no other is specified.";
+   @Test
+   public void testInstall() throws Exception
+   {
+      Project project = initializeJavaProject();
+
+      assertFalse(project.hasFacet(EJBFacet.class));
+      queueInputLines("");
+      getShell().execute("setup ejb");
+      assertTrue(project.hasFacet(EJBFacet.class));
+      assertTrue(project.getFacet(DependencyFacet.class).hasDependency(BaseJavaEEFacet.dep));
+   }
+
 }

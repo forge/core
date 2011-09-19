@@ -110,18 +110,7 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
    @Override
    public boolean hasDependency(final Dependency dep)
    {
-      MavenCoreFacet maven = project.getFacet(MavenCoreFacet.class);
-      List<Dependency> dependencies = MavenDependencyAdapter.fromMavenList(maven.getPartialProjectBuildingResult()
-               .getProject().getDependencies());
-
-      for (Dependency dependency : dependencies)
-      {
-         if (DependencyBuilder.areEquivalent(dependency, dep))
-         {
-            return true;
-         }
-      }
-      return false;
+      return hasEffectiveDependency(dep) || hasDirectDependency(dep);
    }
 
    @Override

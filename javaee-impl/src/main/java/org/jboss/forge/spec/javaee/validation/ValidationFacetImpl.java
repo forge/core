@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.spec.javaee;
+package org.jboss.forge.spec.javaee.validation;
 
 import java.io.File;
 
@@ -31,6 +31,7 @@ import org.jboss.forge.project.facets.ResourceFacet;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
+import org.jboss.forge.spec.javaee.ValidationFacet;
 import org.jboss.forge.spec.javaee.descriptor.ValidationDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.DescriptorImporter;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
