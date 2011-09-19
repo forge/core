@@ -26,7 +26,9 @@ package org.jboss.forge.maven.plugins;
 
 public class ConfigurationElementNotFoundException extends RuntimeException
 {
-   public ConfigurationElementNotFoundException(String elementName)
+   private static final long serialVersionUID = -443270510723493609L;
+
+   public ConfigurationElementNotFoundException(final String elementName)
    {
       super("Configuration element with name '" + elementName + "' doesn't exist");
    }

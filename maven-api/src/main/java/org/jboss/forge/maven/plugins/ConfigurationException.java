@@ -27,7 +27,9 @@ package org.jboss.forge.maven.plugins;
  */
 public class ConfigurationException extends RuntimeException
 {
-   public ConfigurationException(String s, Exception ex)
+   private static final long serialVersionUID = -1348437184032449458L;
+
+   public ConfigurationException(final String s, final Exception ex)
    {
       super(s, ex);
    }

@@ -29,44 +29,57 @@ import java.util.List;
  */
 public class ConfigurationBuilder implements Configuration
 {
-   private ConfigurationImpl mavenPluginConfiguration = new ConfigurationImpl();
+   private final ConfigurationImpl mavenPluginConfiguration = new ConfigurationImpl();
    private MavenPluginBuilder origin;
 
-   @Override public ConfigurationElement getConfigurationElement(String element)
+   @Override
+   public ConfigurationElement getConfigurationElement(final String element)
    {
       return mavenPluginConfiguration.getConfigurationElement(element);
    }
 
-   @Override public boolean hasConfigurationElement(String configElement)
+   @Override
+   public boolean hasConfigurationElement(final String configElement)
    {
       return mavenPluginConfiguration.hasConfigurationElement(configElement);
    }
 
-   @Override public List<ConfigurationElement> listConfigurationElements()
+   @Override
+   public boolean hasConfigurationElements()
+   {
+      return mavenPluginConfiguration.hasConfigurationElements();
+   }
+
+   @Override
+   public List<ConfigurationElement> listConfigurationElements()
    {
       return mavenPluginConfiguration.listConfigurationElements();
    }
 
-   @Override public Configuration addConfigurationElement(ConfigurationElement element)
+   @Override
+   public Configuration addConfigurationElement(final ConfigurationElement element)
    {
       return mavenPluginConfiguration.addConfigurationElement(element);
    }
 
-   @Override public void removeConfigurationElement(String elementName)
+   @Override
+   public void removeConfigurationElement(final String elementName)
    {
       mavenPluginConfiguration.removeConfigurationElement(elementName);
    }
 
-   @Override public String toString()
+   @Override
+   public String toString()
    {
       return mavenPluginConfiguration.toString();
    }
 
-   private ConfigurationBuilder() {
+   private ConfigurationBuilder()
+   {
 
    }
 
-   public ConfigurationElementBuilder createConfigurationElement(String name)
+   public ConfigurationElementBuilder createConfigurationElement(final String name)
    {
       ConfigurationElementBuilder builder = ConfigurationElementBuilder.create(this);
       builder.setName(name);
@@ -74,12 +87,13 @@ public class ConfigurationBuilder implements Configuration
       return builder;
    }
 
-   private ConfigurationBuilder(MavenPluginBuilder pluginBuilder) {
+   private ConfigurationBuilder(final MavenPluginBuilder pluginBuilder)
+   {
       origin = pluginBuilder;
    }
 
-
-   private ConfigurationBuilder(Configuration existingConfig, MavenPluginBuilder pluginBuilder) {
+   private ConfigurationBuilder(final Configuration existingConfig, final MavenPluginBuilder pluginBuilder)
+   {
       origin = pluginBuilder;
       for (ConfigurationElement element : existingConfig.listConfigurationElements())
       {
@@ -87,15 +101,18 @@ public class ConfigurationBuilder implements Configuration
       }
    }
 
-   public static ConfigurationBuilder create() {
+   public static ConfigurationBuilder create()
+   {
       return new ConfigurationBuilder();
    }
 
-   public static ConfigurationBuilder create(MavenPluginBuilder pluginBuilder) {
+   public static ConfigurationBuilder create(final MavenPluginBuilder pluginBuilder)
+   {
       return new ConfigurationBuilder(pluginBuilder);
    }
 
-   public static ConfigurationBuilder create(Configuration existingConfig, MavenPluginBuilder pluginBuilder) {
+   public static ConfigurationBuilder create(final Configuration existingConfig, final MavenPluginBuilder pluginBuilder)
+   {
       return new ConfigurationBuilder(existingConfig, pluginBuilder);
    }
 

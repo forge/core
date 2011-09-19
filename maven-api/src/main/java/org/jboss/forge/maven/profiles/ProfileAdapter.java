@@ -32,8 +32,9 @@ import org.jboss.forge.project.dependencies.DependencyRepository;
 
 public class ProfileAdapter extends org.apache.maven.model.Profile
 {
+   private static final long serialVersionUID = 4863517832291256970L;
 
-   public ProfileAdapter(Profile profile)
+   public ProfileAdapter(final Profile profile)
    {
       setId(profile.getId());
       Activation activation = new Activation();

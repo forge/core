@@ -22,25 +22,25 @@
 
 package org.jboss.forge.maven.plugins;
 
-import org.codehaus.plexus.util.xml.Xpp3Dom;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
  */
 public class ConfigurationImpl implements Configuration
 {
-   private Xpp3Dom configuration;
-   private List<ConfigurationElement> configurationElements = new ArrayList<ConfigurationElement>();
+   private final Xpp3Dom configuration;
+   private final List<ConfigurationElement> configurationElements = new ArrayList<ConfigurationElement>();
 
    public ConfigurationImpl()
    {
       configuration = new Xpp3Dom("configuration");
    }
 
-   public ConfigurationImpl(Xpp3Dom configXml)
+   public ConfigurationImpl(final Xpp3Dom configXml)
    {
       this.configuration = configXml;
       if (configuration != null)
@@ -49,7 +49,7 @@ public class ConfigurationImpl implements Configuration
          for (Xpp3Dom xpp3Dom : configuration.getChildren())
          {
             ConfigurationElementBuilder builder = ConfigurationElementBuilder.create()
-                    .setName(xpp3Dom.getName()).setText(xpp3Dom.getValue());
+                     .setName(xpp3Dom.getName()).setText(xpp3Dom.getValue());
             addChilds(xpp3Dom, builder);
             configurationElements.add(builder);
 
@@ -58,7 +58,8 @@ public class ConfigurationImpl implements Configuration
       }
    }
 
-   @Override public ConfigurationElement getConfigurationElement(String configElement)
+   @Override
+   public ConfigurationElement getConfigurationElement(final String configElement)
    {
       for (ConfigurationElement configurationElement : configurationElements)
       {
@@ -71,7 +72,8 @@ public class ConfigurationImpl implements Configuration
       throw new RuntimeException("Configuration '" + configElement + "' not found");
    }
 
-   @Override public boolean hasConfigurationElement(String configElement)
+   @Override
+   public boolean hasConfigurationElement(final String configElement)
    {
 
       for (ConfigurationElement configurationElement : configurationElements)
@@ -85,12 +87,19 @@ public class ConfigurationImpl implements Configuration
       return false;
    }
 
-   @Override public List<ConfigurationElement> listConfigurationElements()
+   @Override
+   public boolean hasConfigurationElements()
+   {
+      return !listConfigurationElements().isEmpty();
+   }
+
+   @Override
+   public List<ConfigurationElement> listConfigurationElements()
    {
       return configurationElements;
    }
 
-   private void addChilds(Xpp3Dom xpp3Dom, ConfigurationElementBuilder builder)
+   private void addChilds(final Xpp3Dom xpp3Dom, final ConfigurationElementBuilder builder)
    {
       builder.setText(xpp3Dom.getValue());
 
@@ -103,7 +112,8 @@ public class ConfigurationImpl implements Configuration
       }
    }
 
-   @Override public Configuration addConfigurationElement(ConfigurationElement element)
+   @Override
+   public Configuration addConfigurationElement(final ConfigurationElement element)
    {
 
       configurationElements.add(element);
@@ -111,7 +121,8 @@ public class ConfigurationImpl implements Configuration
       return this;
    }
 
-   @Override public void removeConfigurationElement(String elementName)
+   @Override
+   public void removeConfigurationElement(final String elementName)
    {
       for (ConfigurationElement configurationElement : configurationElements)
       {
@@ -123,7 +134,8 @@ public class ConfigurationImpl implements Configuration
       }
    }
 
-   @Override public String toString()
+   @Override
+   public String toString()
    {
       StringBuilder b = new StringBuilder();
       b.append("<configuration>");

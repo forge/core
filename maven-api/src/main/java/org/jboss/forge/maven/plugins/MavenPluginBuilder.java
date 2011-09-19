@@ -22,78 +22,93 @@
 
 package org.jboss.forge.maven.plugins;
 
-import org.jboss.forge.project.dependencies.Dependency;
-
 import java.util.List;
+
+import org.jboss.forge.project.dependencies.Dependency;
 
 /**
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
  */
 public class MavenPluginBuilder implements MavenPlugin, PluginElement
 {
-    private MavenPluginImpl plugin = new MavenPluginImpl();
+   private MavenPluginImpl plugin = new MavenPluginImpl();
 
-    private MavenPluginBuilder() {
-    }
+   private MavenPluginBuilder()
+   {}
 
-    private MavenPluginBuilder(MavenPlugin plugin) {
-        this.plugin = new MavenPluginImpl(plugin);
-    }
+   private MavenPluginBuilder(final MavenPlugin plugin)
+   {
+      this.plugin = new MavenPluginImpl(plugin);
+   }
 
-    public static MavenPluginBuilder create() {
-        return new MavenPluginBuilder();
-    }
+   public static MavenPluginBuilder create()
+   {
+      return new MavenPluginBuilder();
+   }
 
-    public static MavenPluginBuilder create(MavenPlugin plugin) {
-        return new MavenPluginBuilder(plugin);
-    }
+   public static MavenPluginBuilder create(final MavenPlugin plugin)
+   {
+      return new MavenPluginBuilder(plugin);
+   }
 
-    public MavenPluginBuilder setConfiguration(Configuration configuration) {
-        plugin.setConfiguration(configuration);
-        return this;
-    }
+   public MavenPluginBuilder setConfiguration(final Configuration configuration)
+   {
+      plugin.setConfiguration(configuration);
+      return this;
+   }
 
-    @Override
-    public Dependency getDependency() {
-        return plugin.getDependency();
-    }
+   @Override
+   public Dependency getDependency()
+   {
+      return plugin.getDependency();
+   }
 
-    public MavenPluginBuilder setDependency(Dependency dependency) {
-        plugin.setDependency(dependency);
-        return this;
-    }
+   public MavenPluginBuilder setDependency(final Dependency dependency)
+   {
+      plugin.setDependency(dependency);
+      return this;
+   }
 
-    @Override
-    public Configuration getConfig() {
-        return plugin.getConfig();
-    }
+   @Override
+   public Configuration getConfig()
+   {
+      if (plugin.getConfig() == null)
+      {
+         plugin.setConfiguration(ConfigurationBuilder.create());
+      }
+      return plugin.getConfig();
+   }
 
-    @Override public List<Execution> listExecutions() {
-        return plugin.listExecutions();
-    }
+   @Override
+   public List<Execution> listExecutions()
+   {
+      return plugin.listExecutions();
+   }
 
-    public MavenPluginBuilder addExecution(Execution execution) {
-        plugin.addExecution(execution);
-        return this;
-    }
+   public MavenPluginBuilder addExecution(final Execution execution)
+   {
+      plugin.addExecution(execution);
+      return this;
+   }
 
-    @Override
-    public String toString() {
-        return plugin.toString();
-    }
+   @Override
+   public String toString()
+   {
+      return plugin.toString();
+   }
 
+   public ConfigurationBuilder createConfiguration()
+   {
+      ConfigurationBuilder builder;
+      if (plugin.getConfig() != null) {
+         builder = ConfigurationBuilder.create(plugin.getConfig(), this);
+      }
+      else {
+         builder = ConfigurationBuilder.create(this);
+      }
 
-    public ConfigurationBuilder createConfiguration() {
-        ConfigurationBuilder builder;
-        if (plugin.getConfig() != null) {
-            builder = ConfigurationBuilder.create(plugin.getConfig(), this);
-        } else {
-            builder = ConfigurationBuilder.create(this);
-        }
+      plugin.setConfiguration(builder);
 
-        plugin.setConfiguration(builder);
-
-        return builder;
-    }
+      return builder;
+   }
 }
-

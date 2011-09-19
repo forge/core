@@ -28,8 +28,13 @@ import java.util.List;
 import javax.enterprise.context.Dependent;
 
 import org.jboss.forge.maven.MavenCoreFacet;
+import org.jboss.forge.maven.MavenPluginFacet;
+import org.jboss.forge.maven.plugins.ConfigurationElementBuilder;
+import org.jboss.forge.maven.plugins.MavenPlugin;
+import org.jboss.forge.maven.plugins.MavenPluginBuilder;
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.Project;
+import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.facets.BaseFacet;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.project.facets.PackagingFacet;
@@ -47,7 +52,7 @@ import org.jboss.forge.shell.plugins.RequiresPackagingType;
 @Dependent
 @Alias("forge.maven.WebResourceFacet")
 @RequiresPackagingType(PackagingType.WAR)
-@RequiresFacet({ JavaSourceFacet.class, PackagingFacet.class })
+@RequiresFacet({ JavaSourceFacet.class, PackagingFacet.class, MavenPluginFacet.class })
 public class MavenWebResourceFacet extends BaseFacet implements WebResourceFacet, Facet
 {
    private Project project;
@@ -97,6 +102,41 @@ public class MavenWebResourceFacet extends BaseFacet implements WebResourceFacet
          {
             folder.mkdirs();
          }
+
+         MavenPluginFacet plugins = project.getFacet(MavenPluginFacet.class);
+         DependencyBuilder mvnWarPluginDep = DependencyBuilder.create("org.apache.maven.plugins:maven-war-plugin");
+
+         MavenPlugin plugin;
+         if (!plugins.hasPlugin(mvnWarPluginDep))
+         {
+            plugin = MavenPluginBuilder.create().setDependency(mvnWarPluginDep);
+            plugins.addPlugin(plugin);
+         }
+         else
+         {
+            plugin = plugins.getPlugin(mvnWarPluginDep);
+         }
+
+         if (plugin.getConfig() == null)
+         {
+
+         }
+
+         if (!plugin.getConfig().hasConfigurationElement("failOnMissingWebXml"))
+         {
+            plugin.getConfig().addConfigurationElement(
+                     ConfigurationElementBuilder.create().setName("failOnMissingWebXml").setText("true"));
+         }
+         else
+         {
+            ConfigurationElementBuilder configElement = ConfigurationElementBuilder.createFromExisting(plugin
+                     .getConfig().getConfigurationElement("failOnMissingWebXml"));
+            plugin.getConfig().removeConfigurationElement("failOnMissingWebXml");
+            plugin.getConfig().addConfigurationElement(configElement);
+         }
+
+         plugins.removePlugin(mvnWarPluginDep);
+         plugins.addPlugin(plugin);
       }
       return true;
    }

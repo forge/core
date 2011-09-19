@@ -22,15 +22,15 @@
 
 package org.jboss.forge.maven.plugins;
 
+import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.maven.model.PluginExecution;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
-
-import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
@@ -38,85 +38,95 @@ import java.util.List;
 
 public class MavenPluginAdapter extends org.apache.maven.model.Plugin implements MavenPlugin
 {
-    public MavenPluginAdapter(MavenPlugin mavenPlugin) {
-        Dependency dependency = mavenPlugin.getDependency();
+   private static final long serialVersionUID = 2502801162956631981L;
 
-        setGroupId(dependency.getGroupId());
-        setArtifactId(dependency.getArtifactId());
-        setVersion(dependency.getVersion());
-        setConfiguration(parseConfig(mavenPlugin.getConfig()));
-        setExecutions(transformExecutions(mavenPlugin));
-    }
+   public MavenPluginAdapter(final MavenPlugin mavenPlugin)
+   {
+      Dependency dependency = mavenPlugin.getDependency();
 
-    private List<PluginExecution> transformExecutions(MavenPlugin mavenPlugin) {
-        List<PluginExecution> executions = new ArrayList<PluginExecution>();
+      setGroupId(dependency.getGroupId());
+      setArtifactId(dependency.getArtifactId());
+      setVersion(dependency.getVersion());
+      setConfiguration(parseConfig(mavenPlugin.getConfig()));
+      setExecutions(transformExecutions(mavenPlugin));
+   }
 
-        for (Execution execution : mavenPlugin.listExecutions()) {
-            PluginExecution pluginExecution = new PluginExecution();
-            pluginExecution.setId(execution.getId());
-            pluginExecution.setPhase(execution.getPhase());
-            pluginExecution.setGoals(execution.getGoals());
-            pluginExecution.setConfiguration(parseConfig(execution.getConfig()));
+   private List<PluginExecution> transformExecutions(final MavenPlugin mavenPlugin)
+   {
+      List<PluginExecution> executions = new ArrayList<PluginExecution>();
 
-            executions.add(pluginExecution);
-        }
+      for (Execution execution : mavenPlugin.listExecutions()) {
+         PluginExecution pluginExecution = new PluginExecution();
+         pluginExecution.setId(execution.getId());
+         pluginExecution.setPhase(execution.getPhase());
+         pluginExecution.setGoals(execution.getGoals());
+         pluginExecution.setConfiguration(parseConfig(execution.getConfig()));
 
-        return executions;
+         executions.add(pluginExecution);
+      }
 
-    }
+      return executions;
 
-    private Xpp3Dom parseConfig(Configuration configuration) {
-        if (configuration == null) {
-            return null;
-        }
+   }
 
-        try {
-            return Xpp3DomBuilder.build(
-                    new ByteArrayInputStream(
-                            configuration.toString().getBytes()), "UTF-8");
-        } catch (Exception ex) {
-            throw new RuntimeException("Exception while parsing configuration", ex);
-        }
-    }
+   private Xpp3Dom parseConfig(final Configuration configuration)
+   {
+      if ((configuration == null) || (!configuration.hasConfigurationElements())) {
+         return null;
+      }
 
-    public MavenPluginAdapter(org.apache.maven.model.Plugin plugin) {
-        org.apache.maven.model.Plugin clone = plugin.clone();
+      try {
+         return Xpp3DomBuilder.build(
+                  new ByteArrayInputStream(
+                           configuration.toString().getBytes()), "UTF-8");
+      }
+      catch (Exception ex) {
+         throw new RuntimeException("Exception while parsing configuration", ex);
+      }
+   }
 
-        setGroupId(clone.getGroupId());
-        setArtifactId(clone.getArtifactId());
-        setVersion(clone.getVersion());
-        setConfiguration(plugin.getConfiguration());
-        setExecutions(clone.getExecutions());
-    }
+   public MavenPluginAdapter(final org.apache.maven.model.Plugin plugin)
+   {
+      org.apache.maven.model.Plugin clone = plugin.clone();
 
-    @Override public List<Execution> listExecutions() {
-        List<Execution> executions = new ArrayList<Execution>();
+      setGroupId(clone.getGroupId());
+      setArtifactId(clone.getArtifactId());
+      setVersion(clone.getVersion());
+      setConfiguration(plugin.getConfiguration());
+      setExecutions(clone.getExecutions());
+   }
 
-        for (PluginExecution pluginExecution : getExecutions()) {
-            ExecutionBuilder executionBuilder = ExecutionBuilder.create()
-                    .setId(pluginExecution.getId()).setPhase(pluginExecution.getPhase());
-            for (String goal : pluginExecution.getGoals()) {
-                executionBuilder.addGoal(goal);
-            }
-            executions.add(executionBuilder);
-        }
+   @Override
+   public List<Execution> listExecutions()
+   {
+      List<Execution> executions = new ArrayList<Execution>();
 
-        return executions;
-    }
+      for (PluginExecution pluginExecution : getExecutions()) {
+         ExecutionBuilder executionBuilder = ExecutionBuilder.create()
+                  .setId(pluginExecution.getId()).setPhase(pluginExecution.getPhase());
+         for (String goal : pluginExecution.getGoals()) {
+            executionBuilder.addGoal(goal);
+         }
+         executions.add(executionBuilder);
+      }
 
-    @Override
-    public Configuration getConfig() {
-        Xpp3Dom dom = (Xpp3Dom) super.getConfiguration();
+      return executions;
+   }
 
+   @Override
+   public Configuration getConfig()
+   {
+      Xpp3Dom dom = (Xpp3Dom) super.getConfiguration();
 
-        return new ConfigurationImpl(dom);
-    }
+      return new ConfigurationImpl(dom);
+   }
 
-    @Override
-    public Dependency getDependency() {
-        return DependencyBuilder.create()
-                .setGroupId(getGroupId())
-                .setArtifactId(getArtifactId())
-                .setVersion(getVersion());
-    }
+   @Override
+   public Dependency getDependency()
+   {
+      return DependencyBuilder.create()
+               .setGroupId(getGroupId())
+               .setArtifactId(getArtifactId())
+               .setVersion(getVersion());
+   }
 }

@@ -22,83 +22,95 @@
 
 package org.jboss.forge.maven.plugins;
 
-import org.jboss.forge.project.dependencies.Dependency;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.jboss.forge.project.dependencies.Dependency;
 
 /**
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
  */
-public class MavenPluginImpl implements MavenPlugin {
-    private Dependency dependency;
-    private Configuration configuration;
-    private List<Execution> executions = new ArrayList<Execution>();
+public class MavenPluginImpl implements MavenPlugin
+{
+   private Dependency dependency;
+   private Configuration configuration;
+   private final List<Execution> executions = new ArrayList<Execution>();
 
-    public MavenPluginImpl() {
-    }
+   public MavenPluginImpl()
+   {}
 
-    public MavenPluginImpl(MavenPlugin plugin) {
-        this.dependency = plugin.getDependency();
-        this.configuration = plugin.getConfig();
-    }
+   public MavenPluginImpl(final MavenPlugin plugin)
+   {
+      this.dependency = plugin.getDependency();
+      this.configuration = plugin.getConfig();
+   }
 
+   @Override
+   public Dependency getDependency()
+   {
+      return dependency;
+   }
 
-    @Override
-    public Dependency getDependency() {
-        return dependency;
-    }
+   public void setDependency(final Dependency dependency)
+   {
+      this.dependency = dependency;
+   }
 
-    public void setDependency(Dependency dependency) {
-        this.dependency = dependency;
-    }
+   @Override
+   public Configuration getConfig()
+   {
+      if (configuration == null)
+      {
+         configuration = ConfigurationBuilder.create();
+      }
+      return configuration;
+   }
 
-    @Override
-    public Configuration getConfig() {
-        return configuration;
-    }
+   @Override
+   public List<Execution> listExecutions()
+   {
+      return executions;
+   }
 
-    @Override public List<Execution> listExecutions() {
-        return executions;
-    }
+   @Override
+   public String toString()
+   {
+      StringBuilder b = new StringBuilder("<plugin>");
+      if (dependency.getGroupId() != null) {
+         b.append("<groupId>").append(dependency.getGroupId()).append("</groupId>");
+      }
 
-    @Override
-    public String toString() {
-        StringBuilder b = new StringBuilder("<plugin>");
-        if (dependency.getGroupId() != null) {
-            b.append("<groupId>").append(dependency.getGroupId()).append("</groupId>");
-        }
+      if (dependency.getArtifactId() != null) {
+         b.append("<artifactId>").append(dependency.getArtifactId()).append("</artifactId>");
+      }
 
-        if (dependency.getArtifactId() != null) {
-            b.append("<artifactId>").append(dependency.getArtifactId()).append("</artifactId>");
-        }
+      if (dependency.getVersion() != null) {
+         b.append("<version>").append(dependency.getVersion()).append("</version>");
+      }
 
-        if (dependency.getVersion() != null) {
-            b.append("<version>").append(dependency.getVersion()).append("</version>");
-        }
+      if (configuration != null) {
+         b.append(configuration.toString());
+      }
 
-        if (configuration != null) {
-            b.append(configuration.toString());
-        }
+      if (executions.size() > 0) {
+         b.append("<executions>");
+         for (Execution execution : executions) {
+            b.append(execution.toString());
+         }
+         b.append("</executions>");
+      }
 
-        if (executions.size() > 0) {
-            b.append("<executions>");
-            for (Execution execution : executions) {
-                b.append(execution.toString());
-            }
-            b.append("</executions>");
-        }
+      b.append("</plugin>");
+      return b.toString();
+   }
 
+   public void setConfiguration(final Configuration configuration)
+   {
+      this.configuration = configuration;
+   }
 
-        b.append("</plugin>");
-        return b.toString();
-    }
-
-    public void setConfiguration(Configuration configuration) {
-        this.configuration = configuration;
-    }
-
-    public void addExecution(Execution execution) {
-        executions.add(execution);
-    }
+   public void addExecution(final Execution execution)
+   {
+      executions.add(execution);
+   }
 }

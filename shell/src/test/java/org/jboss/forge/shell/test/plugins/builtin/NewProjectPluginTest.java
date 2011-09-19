@@ -21,15 +21,18 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
+import org.jboss.forge.maven.MavenPluginFacet;
 import org.jboss.forge.maven.facets.MavenJavaSourceFacet;
 import org.jboss.forge.maven.facets.MavenPackagingFacet;
 import org.jboss.forge.project.Project;
+import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.project.facets.MetadataFacet;
 import org.jboss.forge.project.packaging.PackagingType;
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.test.AbstractShellTest;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -119,6 +122,12 @@ public class NewProjectPluginTest extends AbstractShellTest
       assertEquals("com.test", project.getFacet(MetadataFacet.class).getTopLevelPackage());
       assertEquals("com.test", project.getFacet(MavenJavaSourceFacet.class).getBasePackage());
       assertEquals(PackagingType.WAR, project.getFacet(MavenPackagingFacet.class).getPackagingType());
+
+      Assert.assertEquals(
+               "true",
+               project.getFacet(MavenPluginFacet.class)
+                        .getPlugin(DependencyBuilder.create("org.apache.maven.plugins:maven-war-plugin")).getConfig()
+                        .getConfigurationElement("failOnMissingWebXml").getText());
    }
 
    @Test
