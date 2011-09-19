@@ -37,7 +37,9 @@ import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jface.text.Document;
+import org.eclipse.text.edits.TextEdit;
 import org.jboss.forge.parser.JavaParser;
+import org.jboss.forge.parser.ParserException;
 import org.jboss.forge.parser.java.Annotation;
 import org.jboss.forge.parser.java.Import;
 import org.jboss.forge.parser.java.InterfaceCapable;
@@ -485,7 +487,16 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
    @Override
    public String toString()
    {
-      return unit.toString();
+      try {
+         TextEdit edit = unit.rewrite(document, null);
+         edit.apply(document);
+      }
+      catch (Exception e) {
+         throw new ParserException("Could not modify source: " + unit.toString(), e);
+      }
+
+      String documentString = document.get();
+      return documentString;
    }
 
    @Override
@@ -519,7 +530,7 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
    {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((toString() == null) ? 0 : unit.toString().hashCode());
+      result = (prime * result) + ((toString() == null) ? 0 : unit.toString().hashCode());
       return result;
    }
 

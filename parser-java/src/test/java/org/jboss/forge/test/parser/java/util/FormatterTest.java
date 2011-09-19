@@ -53,6 +53,7 @@ public class FormatterTest
    {
       // TODO figure out some sort of way to test that this actually works
       String result = Formatter.format(javaClass);
-      assertNotSame(result, javaClass.toString());
+      String original = javaClass.toString();
+      assertNotSame(original, result);
    }
 }

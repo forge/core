@@ -59,8 +59,23 @@ public class JavaClassTest
       assertEquals("MockClass", javaClass.getName());
       javaClass.setName("Telephone");
       assertEquals("Telephone", javaClass.getName());
-      assertTrue(javaClass.toString().contains("Telephone"));
-      assertFalse(javaClass.toString().contains("MockClass"));
+
+      String output = javaClass.toString();
+      assertTrue(output.contains("Telephone"));
+      assertFalse(output.contains("MockClass"));
+   }
+
+   @Test
+   public void testFormattingIsNotChanged() throws Exception
+   {
+      assertEquals("MockClass", javaClass.getName());
+      javaClass.setName("Telephone");
+      assertEquals("Telephone", javaClass.getName());
+
+      String output = javaClass.toString();
+
+      assertTrue(output.contains("Telephone\n{"));
+      assertTrue(output.contains(")\n   {"));
    }
 
    @Test
