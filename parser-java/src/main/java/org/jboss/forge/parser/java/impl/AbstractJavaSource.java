@@ -487,6 +487,8 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
    @Override
    public String toString()
    {
+      Document document = new Document(this.document.get());
+
       try {
          TextEdit edit = unit.rewrite(document, null);
          edit.apply(document);
