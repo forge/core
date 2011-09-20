@@ -141,4 +141,14 @@ public interface PluginMetadata
    @SuppressWarnings("rawtypes")
    boolean usableWithScope(Class<? extends Resource> scope);
 
+   /**
+    * Return true if this plugin has a "setup" command. Setup commands should be exposed even if constraints have not
+    * been satisfied.
+    */
+   boolean hasSetupCommand();
+
+   /**
+    * Get the "setup" command for this plugin. Return false if no "setup" command exists.
+    */
+   CommandMetadata getSetupCommand();
 }

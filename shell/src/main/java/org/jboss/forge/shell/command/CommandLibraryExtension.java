@@ -46,6 +46,7 @@ import org.jboss.forge.shell.plugins.PipeIn;
 import org.jboss.forge.shell.plugins.PipeOut;
 import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.RequiresResource;
+import org.jboss.forge.shell.plugins.SetupCommand;
 import org.jboss.forge.shell.plugins.Topic;
 
 /**
@@ -162,7 +163,31 @@ public class CommandLibraryExtension implements Extension
                }
             }
 
-            if (Annotations.isAnnotationPresent(method, RequiresResource.class))
+            // This works because @SetupCommand is annotated by @Command
+            if (Annotations.isAnnotationPresent(method, SetupCommand.class))
+            {
+               if (pluginMeta.hasSetupCommand())
+               {
+                  throw new IllegalStateException("Plugins may only have one @"
+                           + SetupCommand.class.getSimpleName()
+                           + ", but [" + pluginMeta.getType() + "] has more than one.");
+               }
+
+               commandMeta.setSetup(true);
+               commandMeta.setName("setup");
+
+               // favor help text from this annotation over others
+               SetupCommand def = Annotations.getAnnotation(method, SetupCommand.class);
+               if ((def.help() != null) && !def.help().trim().isEmpty())
+               {
+                  commandMeta.setHelp(def.help());
+               }
+            }
+
+            /*
+             * We don't want to do this if it is a setup command.
+             */
+            else if (Annotations.isAnnotationPresent(method, RequiresResource.class))
             {
                List<Class<? extends Resource>> resourceTypes = new ArrayList<Class<? extends Resource>>(
                         pluginMeta.getResourceScopes());

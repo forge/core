@@ -53,6 +53,7 @@ public class PluginMetadataImpl implements PluginMetadata
    private final Map<String, Map<Class<? extends Resource<?>>, CommandMetadata>> commandAccessCache = new HashMap<String, Map<Class<? extends Resource<?>>, CommandMetadata>>();
 
    private CommandMetadata defaultCommand;
+   private CommandMetadata setupCommand;
 
    private boolean scopeOverloaded = false;
 
@@ -108,6 +109,11 @@ public class PluginMetadataImpl implements PluginMetadata
       return null;
    }
 
+   public Map<String, List<CommandMetadata>> getCommandMap()
+   {
+      return commandMap;
+   }
+
    @Override
    public boolean hasCommand(final String name, final Shell shell)
    {
@@ -124,6 +130,24 @@ public class PluginMetadataImpl implements PluginMetadata
    public boolean hasDefaultCommand()
    {
       return getDefaultCommand() != null;
+   }
+
+   @Override
+   public boolean hasCommands()
+   {
+      return !commandMap.isEmpty();
+   }
+
+   @Override
+   public boolean hasSetupCommand()
+   {
+      return getSetupCommand() != null;
+   }
+
+   @Override
+   public CommandMetadata getSetupCommand()
+   {
+      return setupCommand;
    }
 
    @Override
@@ -150,6 +174,16 @@ public class PluginMetadataImpl implements PluginMetadata
                      + name);
          }
          defaultCommand = command;
+      }
+
+      if (command.isSetup())
+      {
+         if (setupCommand != null)
+         {
+            throw new RuntimeException("setup command already defined: " + command.getName() + "; for plugin: "
+                     + name);
+         }
+         setupCommand = command;
       }
 
       if (!commandMap.containsKey(command.getName()))
@@ -265,12 +299,6 @@ public class PluginMetadataImpl implements PluginMetadata
    public void setTopic(final String topic)
    {
       this.topic = topic.toUpperCase();
-   }
-
-   @Override
-   public boolean hasCommands()
-   {
-      return !commandMap.isEmpty();
    }
 
    @Override

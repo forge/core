@@ -70,7 +70,9 @@ public class Execution
       {
          try
          {
-            enforcer.verifyAvailable(shell.getCurrentProject(), command.getParent());
+            // TODO this is where more complex constraints could be handled on individual commands
+            if (!command.isSetup())
+               enforcer.verifyAvailable(shell.getCurrentProject(), command.getParent());
          }
          catch (ConstraintException e)
          {

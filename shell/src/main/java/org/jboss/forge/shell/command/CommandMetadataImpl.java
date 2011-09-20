@@ -41,6 +41,7 @@ public class CommandMetadataImpl implements CommandMetadata
    private Method method;
 
    private boolean isDefault = false;
+   private boolean isSetup = false;
 
    private String name = "";
    private String help = "";
@@ -128,6 +129,17 @@ public class CommandMetadataImpl implements CommandMetadata
    public void setDefault(final boolean isDefault)
    {
       this.isDefault = isDefault;
+   }
+
+   @Override
+   public boolean isSetup()
+   {
+      return isSetup;
+   }
+
+   public void setSetup(final boolean isSetup)
+   {
+      this.isSetup = isSetup;
    }
 
    @Override

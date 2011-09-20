@@ -36,7 +36,7 @@ import org.jboss.forge.resources.Resource;
 public interface CommandMetadata
 {
    /**
-    * Get the help text for this comand.
+    * Get the help text for this command.
     */
    String getHelp();
 
@@ -120,5 +120,10 @@ public interface CommandMetadata
     */
    @SuppressWarnings("rawtypes")
    boolean usableWithResource(Class<? extends Resource> class1);
+
+   /**
+    * Return true if this command is the "setup" command.
+    */
+   boolean isSetup();
 
 }

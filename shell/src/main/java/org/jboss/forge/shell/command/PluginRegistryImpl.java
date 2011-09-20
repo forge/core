@@ -160,6 +160,27 @@ public class PluginRegistryImpl implements PluginRegistry
             pmd = p;
             break;
          }
+         else if (p.hasSetupCommand())
+         {
+            /*
+             * Return a view of this plugin metadata, containing only the setup command.
+             */
+            PluginMetadataImpl temp = new PluginMetadataImpl();
+            temp.setName(p.getName());
+            temp.setType(p.getType());
+
+            CommandMetadata original = p.getSetupCommand();
+            CommandMetadataImpl command = new CommandMetadataImpl();
+            command.setDefault(original.isDefault());
+            command.setSetup(original.isSetup());
+            command.setHelp(original.getHelp());
+            command.setMethod(original.getMethod());
+            command.setName(original.getName());
+            command.setParent(temp);
+
+            temp.addCommand(command);
+            pmd = temp;
+         }
       }
 
       return pmd;
