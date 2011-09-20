@@ -57,12 +57,6 @@ public class PluginCommandCompleterTest
       return archive;
    }
 
-   // @Deployment
-   // public static JavaArchive getDeployment()
-   // {
-   // return AbstractShellTest.getDeployment().addClass(MockCompleterPlugin.class);
-   // }
-
    @Inject
    private PluginCommandCompleter completer;
 

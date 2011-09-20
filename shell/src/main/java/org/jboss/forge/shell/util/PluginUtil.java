@@ -36,6 +36,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.jboss.forge.ForgeEnvironment;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.shell.plugins.PipeOut;
+import org.jboss.forge.shell.plugins.builtin.ForgePlugin;
 import org.yaml.snakeyaml.Yaml;
 
 /**
@@ -55,10 +56,11 @@ public class PluginUtil
 
    private static String getDefaultRepo(final ForgeEnvironment environment)
    {
-      String defaultRepo = (String) environment.getProperty("DEFFAULT_PLUGIN_REPO");
+      String defaultRepo = (String) environment.getProperty(ForgePlugin.PROP_DEFAULT_PLUGIN_REPO);
       if (defaultRepo == null)
       {
-         throw new RuntimeException("no default repository set: (to set, type: set DEFAULT_PLUGIN_REPO <repository>)");
+         throw new RuntimeException("no default repository set: (to set, type: set "
+                  + ForgePlugin.PROP_DEFAULT_PLUGIN_REPO + " <repository>)");
       }
       return defaultRepo;
    }

@@ -38,6 +38,8 @@ import org.jboss.forge.shell.plugins.DefaultCommand;
 import org.jboss.forge.shell.plugins.Option;
 import org.jboss.forge.shell.plugins.PipeOut;
 import org.jboss.forge.shell.plugins.Plugin;
+import org.jboss.forge.shell.plugins.RequiresFacet;
+import org.jboss.forge.shell.plugins.SetupCommand;
 import org.jboss.forge.spec.javaee.FacesFacet;
 import org.jboss.forge.spec.javaee.ServletFacet;
 import org.jboss.seam.render.TemplateCompiler;
@@ -50,6 +52,7 @@ import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
  * 
  */
 @Alias("faces")
+@RequiresFacet(FacesFacet.class)
 public class FacesPlugin implements Plugin
 {
    @Inject
@@ -64,7 +67,7 @@ public class FacesPlugin implements Plugin
    @Inject
    private ShellPrompt prompt;
 
-   @Command("setup")
+   @SetupCommand
    public void setup(final PipeOut out)
    {
       if (!project.hasFacet(FacesFacet.class))
@@ -81,11 +84,6 @@ public class FacesPlugin implements Plugin
    @Command("project-stage")
    public void setProjectStage(@Option(name = "set") final FacesProjectStage stage, final PipeOut out)
    {
-      if (!project.hasFacet(FacesFacet.class))
-      {
-         throw new RuntimeException("JSF is not installed. Use 'setup faces' to continue.");
-      }
-
       ServletFacet srv = project.getFacet(ServletFacet.class);
       WebAppDescriptor config = srv.getConfig();
       if (stage == null)
@@ -103,23 +101,16 @@ public class FacesPlugin implements Plugin
    @DefaultCommand
    public void show(final PipeOut out)
    {
-      if (project.hasFacet(FacesFacet.class))
-      {
-         FacesFacet facet = project.getFacet(FacesFacet.class);
-         ShellMessages.info(out, "Displaying current JSF configuration:");
+      FacesFacet facet = project.getFacet(FacesFacet.class);
+      ShellMessages.info(out, "Displaying current JSF configuration:");
 
-         out.println();
-         out.println(out.renderColor(ShellColor.BOLD, "Project State: ") + facet.getProjectStage());
-         out.println(out.renderColor(ShellColor.BOLD, "FacesServlet Mappings: ") + facet.getFacesServletMappings());
-         out.println(out.renderColor(ShellColor.BOLD, "Faces Default Suffixes: ") + facet.getFacesDefaultSuffixes());
-         out.println(out.renderColor(ShellColor.BOLD, "Facelets Default Suffixes: ")
-                  + facet.getFaceletsDefaultSuffixes());
-         out.println(out.renderColor(ShellColor.BOLD, "Facelets View Mappings: ") + facet.getFaceletsViewMapping());
-      }
-      else
-      {
-         ShellMessages.info(out, "JSF is not installed. Use 'setup faces' to continue.");
-      }
+      out.println();
+      out.println(out.renderColor(ShellColor.BOLD, "Project State: ") + facet.getProjectStage());
+      out.println(out.renderColor(ShellColor.BOLD, "FacesServlet Mappings: ") + facet.getFacesServletMappings());
+      out.println(out.renderColor(ShellColor.BOLD, "Faces Default Suffixes: ") + facet.getFacesDefaultSuffixes());
+      out.println(out.renderColor(ShellColor.BOLD, "Facelets Default Suffixes: ")
+               + facet.getFaceletsDefaultSuffixes());
+      out.println(out.renderColor(ShellColor.BOLD, "Facelets View Mappings: ") + facet.getFaceletsViewMapping());
    }
 
    private static final String VIEW_TEMPLATE = "org/jboss/forge/web/empty-view.xhtml";
@@ -128,11 +119,6 @@ public class FacesPlugin implements Plugin
    public void newView(final PipeOut out,
             @Option(name = "target") final Resource<?> target)
    {
-      if (!project.hasFacet(FacesFacet.class))
-      {
-         throw new RuntimeException("JSF is not installed. Use 'setup faces' to continue.");
-      }
-
       CompiledTemplateResource viewTemplate = compiler.get().compile(VIEW_TEMPLATE);
       if (!target.exists())
       {

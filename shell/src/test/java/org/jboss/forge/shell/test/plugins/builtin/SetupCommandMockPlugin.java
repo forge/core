@@ -26,6 +26,8 @@ import javax.inject.Inject;
 
 import org.jboss.forge.project.facets.events.InstallFacets;
 import org.jboss.forge.shell.plugins.Alias;
+import org.jboss.forge.shell.plugins.Command;
+import org.jboss.forge.shell.plugins.DefaultCommand;
 import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.SetupCommand;
@@ -36,7 +38,7 @@ import org.jboss.forge.shell.plugins.SetupCommand;
  */
 @Alias("testplugin")
 @RequiresFacet({ MockFacet.class })
-public class SetupCommandMock implements Plugin
+public class SetupCommandMockPlugin implements Plugin
 {
    @Inject
    private Event<InstallFacets> install;
@@ -45,5 +47,17 @@ public class SetupCommandMock implements Plugin
    public void setup()
    {
       install.fire(new InstallFacets(MockFacet.class));
+   }
+
+   @Command
+   public void other()
+   {
+
+   }
+
+   @DefaultCommand
+   public void deflt()
+   {
+
    }
 }

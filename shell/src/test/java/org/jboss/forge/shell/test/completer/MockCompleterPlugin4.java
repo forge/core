@@ -19,25 +19,32 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.jboss.forge.shell.test.completer;
 
-package org.jboss.forge.shell.test.plugins.builtin;
+import javax.inject.Singleton;
 
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.test.AbstractShellTest;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.jboss.forge.shell.plugins.Command;
+import org.jboss.forge.shell.plugins.Plugin;
+import org.jboss.forge.shell.plugins.RequiresFacet;
+import org.jboss.forge.shell.plugins.SetupCommand;
+import org.jboss.forge.shell.test.plugins.builtin.MockFacet;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@RunWith(Arquillian.class)
-public class ForgePluginTest extends AbstractShellTest
+@Singleton
+@RequiresFacet(MockFacet.class)
+public class MockCompleterPlugin4 implements Plugin
 {
-   @Test
-   public void testFindPlugin() throws Exception
+   @SetupCommand
+   public void setup()
    {
-      queueInputLines("y");
-      getShell().execute("forge find-plugin jsf");
+
    }
 
+   @Command
+   public void other()
+   {
+
+   }
 }

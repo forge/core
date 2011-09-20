@@ -35,6 +35,7 @@ import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.constraint.ConstraintEnforcer;
 import org.jboss.forge.shell.constraint.ConstraintException;
 import org.jboss.forge.shell.plugins.Plugin;
+import org.jboss.forge.shell.util.ConstraintInspector;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -332,5 +333,20 @@ public class PluginMetadataImpl implements PluginMetadata
    public void setResourceScopes(final List<Class<? extends Resource<?>>> resourceScopes)
    {
       this.resourceScopes = new HashSet<Class<? extends Resource<?>>>(resourceScopes);
+   }
+
+   @Override
+   public boolean isSetupAvailable(final Shell shell)
+   {
+      if (hasSetupCommand())
+      {
+         if (!ConstraintInspector.requiresProject(getType())
+                  || (ConstraintInspector.requiresProject(getType()) && (shell.getCurrentProject() != null)))
+         {
+            CommandMetadata setupCommand = getSetupCommand();
+            return setupCommand.usableWithResource(shell.getCurrentResourceScope());
+         }
+      }
+      return false;
    }
 }

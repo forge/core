@@ -160,7 +160,7 @@ public class PluginRegistryImpl implements PluginRegistry
             pmd = p;
             break;
          }
-         else if (p.hasSetupCommand())
+         else if (p.isSetupAvailable(shell))
          {
             /*
              * Return a view of this plugin metadata, containing only the setup command.
@@ -180,6 +180,7 @@ public class PluginRegistryImpl implements PluginRegistry
 
             temp.addCommand(command);
             pmd = temp;
+            break;
          }
       }
 

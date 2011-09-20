@@ -78,6 +78,8 @@ import org.jboss.forge.shell.util.PluginUtil;
 @Help("Forge control and writer environment commands. Manage plugins and other forge addons.")
 public class ForgePlugin implements Plugin
 {
+   public static final String PROP_DEFAULT_PLUGIN_REPO = "DEFAULT_PLUGIN_REPO";
+
    private final Event<ReinitializeEnvironment> reinitializeEvent;
    private final ShellPrintWriter writer;
    private final DependencyResolver resolver;

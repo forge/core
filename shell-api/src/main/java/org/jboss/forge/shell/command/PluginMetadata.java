@@ -151,4 +151,9 @@ public interface PluginMetadata
     * Get the "setup" command for this plugin. Return false if no "setup" command exists.
     */
    CommandMetadata getSetupCommand();
+
+   /**
+    * Return true if {@link #hasSetupCommand()} returns true, and it is available in the current scope.
+    */
+   boolean isSetupAvailable(Shell shell);
 }

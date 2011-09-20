@@ -32,8 +32,6 @@ import javax.inject.Inject;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.command.PluginMetadata;
 import org.jboss.forge.shell.command.PluginRegistry;
-import org.jboss.forge.shell.completer.CommandCompleter;
-import org.jboss.forge.shell.completer.CommandCompleterState;
 
 /**
  * @author Lincoln
@@ -118,7 +116,7 @@ public class PluginResolverCompleter implements CommandCompleter
             {
                String pluginName = pluginMeta.getName();
                if (PluginCommandCompleter.isPotentialMatch(pluginName, pluginBase)
-                        && pluginMeta.constrantsSatisfied(shell))
+                        && (pluginMeta.constrantsSatisfied(shell) || pluginMeta.isSetupAvailable(shell)))
                {
                   results.add(pluginName + " ");
                }
