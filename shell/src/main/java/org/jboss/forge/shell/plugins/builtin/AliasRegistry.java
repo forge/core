@@ -21,35 +21,43 @@
  */
 package org.jboss.forge.shell.plugins.builtin;
 
-import java.util.Queue;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
-import javax.inject.Inject;
-
-import org.jboss.forge.shell.command.parser.Tokenizer;
-import org.jboss.forge.shell.spi.CommandInterceptor;
+import javax.inject.Singleton;
 
 /**
- * Responsible for converting aliases into full commands.
- * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
  */
-public class AliasInterceptor implements CommandInterceptor
+@Singleton
+public class AliasRegistry
 {
-   @Inject
-   private AliasRegistry registry;
+   private final Map<String, String> map = new HashMap<String, String>();
 
-   @Override
-   public String intercept(String line)
+   public boolean hasAlias(final String alias)
    {
-      Queue<String> tokens = new Tokenizer().tokenize(line);
-      String first = tokens.peek();
-
-      if (registry.hasAlias(first))
-      {
-         line = line.replaceFirst(first, registry.getAlias(first));
-      }
-
-      return line;
+      return map.containsKey(alias);
    }
+
+   public void createAlias(final String alias, final String command)
+   {
+      map.put(alias, command);
+   }
+
+   public void removeAlias(final String alias)
+   {
+      map.remove(alias);
+   }
+
+   public Map<String, String> getAliases()
+   {
+      return Collections.unmodifiableMap(map);
+   }
+
+   public String getAlias(final String alias)
+   {
+      return map.get(alias);
+   }
+
 }

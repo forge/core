@@ -21,35 +21,34 @@
  */
 package org.jboss.forge.shell.plugins.builtin;
 
-import java.util.Queue;
-
 import javax.inject.Inject;
 
-import org.jboss.forge.shell.command.parser.Tokenizer;
-import org.jboss.forge.shell.spi.CommandInterceptor;
+import org.jboss.forge.shell.plugins.Alias;
+import org.jboss.forge.shell.plugins.DefaultCommand;
+import org.jboss.forge.shell.plugins.Help;
+import org.jboss.forge.shell.plugins.Option;
+import org.jboss.forge.shell.plugins.PipeOut;
+import org.jboss.forge.shell.plugins.Plugin;
 
 /**
- * Responsible for converting aliases into full commands.
- * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class AliasInterceptor implements CommandInterceptor
+@Help("Un-alias an aliased command. See also 'help alias'")
+@Alias("unalias")
+public class UnaliasPlugin implements Plugin
 {
    @Inject
    private AliasRegistry registry;
 
-   @Override
-   public String intercept(String line)
+   @DefaultCommand
+   public void set(final PipeOut out, @Option(help = "The alias name to remove: E.g: 'mycommand'") final String[] aliases)
    {
-      Queue<String> tokens = new Tokenizer().tokenize(line);
-      String first = tokens.peek();
-
-      if (registry.hasAlias(first))
+      if ((aliases != null) && (aliases.length > 0))
       {
-         line = line.replaceFirst(first, registry.getAlias(first));
+         for (String alias : aliases) {
+            registry.removeAlias(alias);
+         }
       }
-
-      return line;
    }
 }
