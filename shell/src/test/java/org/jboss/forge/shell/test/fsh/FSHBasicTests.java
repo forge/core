@@ -29,6 +29,7 @@ import org.jboss.forge.shell.command.fshparser.FSHParser;
 import org.jboss.forge.shell.command.fshparser.FSHRuntime;
 import org.jboss.forge.shell.command.fshparser.Parse;
 import org.jboss.forge.test.AbstractShellTest;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -40,6 +41,20 @@ public class FSHBasicTests extends AbstractShellTest
 {
    @Inject
    public FSHRuntime runtime;
+
+   @Test
+   @Ignore
+   public void testEqualsInString() throws Exception
+   {
+      getShell().execute("echo hello=world");
+   }
+
+   @Test
+   @Ignore
+   public void testAtInString() throws Exception
+   {
+      getShell().execute("echo git@github.com");
+   }
 
    @Test
    public void testSimple()
@@ -77,7 +92,6 @@ public class FSHBasicTests extends AbstractShellTest
       runtime.run("for (dir : ['/', '~', '..']) { ls -l $dir | wc -l }");
    }
 
-
    @Test
    public void testSimple7()
    {
@@ -90,18 +104,17 @@ public class FSHBasicTests extends AbstractShellTest
       runtime.run("ls -l *.txt");
    }
 
-
    @Test
    public void testSimple10()
    {
       runtime.run("@myVar='ls'; echo $myVar.toUpperCase()");
    }
 
-//   @Test
-//   public void testSimple11()
-//   {
-//      runtime.run("for (i=0;i<1000;i++) { ls }");
-//   }
+   // @Test
+   // public void testSimple11()
+   // {
+   // runtime.run("for (i=0;i<1000;i++) { ls }");
+   // }
 
    @Test
    public void testSimple12()
@@ -115,13 +128,11 @@ public class FSHBasicTests extends AbstractShellTest
       runtime.run("if (isdef $FOO) { }");
    }
 
-
    @Test
    public void testSimple14()
    {
       runtime.run("echo \"$PROMPT\"");
    }
-
 
    @Test
    public void testExpressionLoop()
@@ -144,16 +155,22 @@ public class FSHBasicTests extends AbstractShellTest
    }
 
    @Test
-   public void testLargeNest() {
-      runtime.run("@NO_MOTD = false;\n\n" +
-            "if ($NO_MOTD) {    \n" +
-            "   echo \"   ____                          _____                    \";\n" +
-            "   echo \"  / ___|  ___  __ _ _ __ ___    |  ___|__  _ __ __ _  ___ \";\n" +
-            "   echo \"  \\\\___ \\\\ / _ \\\\/ _` | '_ ` _ \\\\   | |_ / _ \\\\| '__/ _` |/ _ \\\\  \\c{yellow}\\\\\\\\\\c\";\n" +
-            "   echo \"   ___) |  __/ (_| | | | | | |  |  _| (_) | | | (_| |  __/  \\c{yellow}//\\c\";\n" +
-            "   echo \"  |____/ \\\\___|\\\\__,_|_| |_| |_|  |_|  \\\\___/|_|  \\\\__, |\\\\___| \";\n" +
-            "   echo \"                                                |___/      \";\n" +
-            "}");
+   public void testLargeNest()
+   {
+      runtime.run("@NO_MOTD = false;\n\n"
+               +
+               "if ($NO_MOTD) {    \n"
+               +
+               "   echo \"   ____                          _____                    \";\n"
+               +
+               "   echo \"  / ___|  ___  __ _ _ __ ___    |  ___|__  _ __ __ _  ___ \";\n"
+               +
+               "   echo \"  \\\\___ \\\\ / _ \\\\/ _` | '_ ` _ \\\\   | |_ / _ \\\\| '__/ _` |/ _ \\\\  \\c{yellow}\\\\\\\\\\c\";\n"
+               +
+               "   echo \"   ___) |  __/ (_| | | | | | |  |  _| (_) | | | (_| |  __/  \\c{yellow}//\\c\";\n" +
+               "   echo \"  |____/ \\\\___|\\\\__,_|_| |_| |_|  |_|  \\\\___/|_|  \\\\__, |\\\\___| \";\n" +
+               "   echo \"                                                |___/      \";\n" +
+               "}");
 
    }
 
