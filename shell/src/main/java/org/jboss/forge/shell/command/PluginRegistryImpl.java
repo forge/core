@@ -92,7 +92,7 @@ public class PluginRegistryImpl implements PluginRegistry
    @Override
    public String toString()
    {
-      return "PluginRegistry [plugins=" + plugins + "]";
+      return "InstalledPluginRegistry [plugins=" + plugins + "]";
    }
 
    @Override

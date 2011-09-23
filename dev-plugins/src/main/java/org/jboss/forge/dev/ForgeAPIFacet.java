@@ -41,11 +41,13 @@ public class ForgeAPIFacet extends BaseFacet
       List<Dependency> versions = deps.resolveAvailableVersions("org.jboss.forge:forge-shell-api:[,]");
       Dependency version = shell.promptChoiceTyped("Install which version of the Forge API?", versions);
       deps.setProperty("forge.api.version", version.getVersion());
-      DependencyBuilder apiDep = DependencyBuilder.create("org.jboss.forge:forge-shell-api:${forge.api.version}");
+      DependencyBuilder apiDep = DependencyBuilder.create("org.jboss.forge:forge-shell-api:${forge.api.version}")
+               .setScopeType(ScopeType.PROVIDED);
       DependencyBuilder testDep = DependencyBuilder.create("org.jboss.forge:forge-test-harness:${forge.api.version}")
                .setScopeType(ScopeType.TEST);
       DependencyBuilder testShellDep = DependencyBuilder.create("org.jboss.forge:forge-shell:${forge.api.version}")
                .setScopeType(ScopeType.TEST);
+
       deps.addDependency(apiDep);
       deps.addDependency(testDep);
       deps.addDependency(testShellDep);

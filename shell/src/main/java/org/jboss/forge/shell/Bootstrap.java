@@ -23,6 +23,7 @@
 package org.jboss.forge.shell;
 
 import java.io.File;
+import java.util.List;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,6 +38,8 @@ import org.jboss.forge.shell.events.PreStartup;
 import org.jboss.forge.shell.events.ReinitializeEnvironment;
 import org.jboss.forge.shell.events.Shutdown;
 import org.jboss.forge.shell.events.Startup;
+import org.jboss.modules.Module;
+import org.jboss.modules.ModuleIdentifier;
 import org.jboss.modules.ModuleLoader;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
@@ -51,6 +54,7 @@ public class Bootstrap
    private static Thread currentShell = null;
    private static boolean restartRequested = false;
    private static File workingDir = new File("").getAbsoluteFile();
+   private static ClassLoader cl;
 
    @Inject
    private BeanManager manager;
@@ -64,7 +68,6 @@ public class Bootstrap
    {
       do
       {
-         loadPlugins();
          currentShell = new Thread(new Runnable()
          {
             @Override
@@ -73,8 +76,10 @@ public class Bootstrap
                boolean restarting = restartRequested;
                restartRequested = false;
 
+               loadPlugins();
                initLogging();
                Weld weld = new Weld();
+               // WeldBootstrap bootstrap = new WeldBootstrap();
                WeldContainer container = weld.initialize();
                BeanManager manager = container.getBeanManager();
                manager.fireEvent(new PreStartup());
@@ -122,18 +127,43 @@ public class Bootstrap
 
    synchronized private static void loadPlugins()
    {
-      try {
-         ModuleLoader moduleLoader = ModuleLoader.forClassLoader(Bootstrap.class.getClassLoader());
+      System.out.println("Loading plugins...");
 
-         ClassLoader cl = Thread.currentThread().getContextClassLoader();
-         if (cl == null)
-         {
-            cl = Bootstrap.class.getClassLoader();
+      try {
+
+         CompositePluginClassLoader composite = new CompositePluginClassLoader(null);
+
+         List<String> installed = InstalledPluginRegistry.getInstalledPlugins();
+         ModuleLoader moduleLoader = ModuleLoader.forClassLoader(Bootstrap.class.getClassLoader());
+         System.out.println(ModuleLoader.forClassLoader(Bootstrap.class.getClassLoader()).toString());
+         moduleLoader = Module.getBootModuleLoader();
+
+         for (String plugin : installed) {
+            try {
+               System.out.println(plugin);
+
+               Module module = moduleLoader.loadModule(ModuleIdentifier.fromString(plugin));
+               // composite.add(module.getClassLoader());
+
+               System.out.println("Loaded: " + module);
+            }
+            catch (Exception e) {
+               System.out.println("Failed loading: " + plugin);
+               e.printStackTrace();
+            }
          }
+
+         if (cl == null)
+            cl = Thread.currentThread().getContextClassLoader();
+
+         // composite.add(cl);
+         composite.add(Bootstrap.class.getClassLoader());
+
+         Thread.currentThread().setContextClassLoader(composite);
       }
       catch (Exception e) {
-         // TODO Auto-generated catch block
          e.printStackTrace();
       }
+      System.out.println("Done loading plugins...");
    }
 }

@@ -19,37 +19,26 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.spec.javaee;
+package org.jboss.forge.shell;
 
-import org.jboss.forge.project.dependencies.Dependency;
-import org.jboss.forge.project.dependencies.DependencyBuilder;
-import org.jboss.forge.project.facets.BaseFacet;
-import org.jboss.forge.project.facets.DependencyFacet;
-import org.jboss.forge.shell.plugins.RequiresFacet;
+import java.util.List;
+
+import org.junit.Test;
 
 /**
- * A base facet implementation for Facets which require Java EE library APIs to be installed.
- * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-@RequiresFacet({ DependencyFacet.class })
-public abstract class BaseJavaEEFacet extends BaseFacet
+public class InstalledPluginRegistryTest
 {
-   public static final Dependency dep =
-            DependencyBuilder.create("org.jboss.spec:jboss-javaee-6.0:1.0.0.Final:provided:basic");
 
-   @Override
-   public boolean install()
+   /**
+    * Test method for {@link org.jboss.forge.shell.InstalledPluginRegistry#getInstalledPlugins()}.
+    */
+   @Test
+   public void testGetInstalledPlugins()
    {
-      project.getFacet(DependencyFacet.class).addDependency(dep);
-      return true;
-   }
-
-   @Override
-   public boolean isInstalled()
-   {
-      return project.getFacet(DependencyFacet.class).hasDependency(dep);
+      List<String> plugins = InstalledPluginRegistry.getInstalledPlugins();
    }
 
 }
