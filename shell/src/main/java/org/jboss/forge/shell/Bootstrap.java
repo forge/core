@@ -159,7 +159,7 @@ public class Bootstrap
          // composite.add(cl);
          composite.add(Bootstrap.class.getClassLoader());
 
-         Thread.currentThread().setContextClassLoader(composite);
+         // Thread.currentThread().setContextClassLoader(composite);
       }
       catch (Exception e) {
          e.printStackTrace();
