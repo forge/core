@@ -38,6 +38,7 @@ import org.jboss.forge.shell.events.PreStartup;
 import org.jboss.forge.shell.events.ReinitializeEnvironment;
 import org.jboss.forge.shell.events.Shutdown;
 import org.jboss.forge.shell.events.Startup;
+import org.jboss.modules.ConcurrentClassLoader;
 import org.jboss.modules.Module;
 import org.jboss.modules.ModuleIdentifier;
 import org.jboss.modules.ModuleLoader;
@@ -54,7 +55,7 @@ public class Bootstrap
    private static Thread currentShell = null;
    private static boolean restartRequested = false;
    private static File workingDir = new File("").getAbsoluteFile();
-   private static ClassLoader cl;
+   private static ConcurrentClassLoader cl;
 
    @Inject
    private BeanManager manager;
@@ -130,20 +131,24 @@ public class Bootstrap
       System.out.println("Loading plugins...");
 
       try {
+         ModuleLoader moduleLoader = ModuleLoader.forClassLoader(Bootstrap.class.getClassLoader());
+         moduleLoader = Module.getBootModuleLoader();
 
-         CompositePluginClassLoader composite = new CompositePluginClassLoader(null);
+         Module forge = moduleLoader.loadModule(ModuleIdentifier.fromString("org.jboss.forge:main"));
+
+         if (cl == null)
+            cl = forge.getClassLoader();
+
+         CompositeClassLoader composite = new CompositeClassLoader();
 
          List<String> installed = InstalledPluginRegistry.getInstalledPlugins();
-         ModuleLoader moduleLoader = ModuleLoader.forClassLoader(Bootstrap.class.getClassLoader());
-         System.out.println(ModuleLoader.forClassLoader(Bootstrap.class.getClassLoader()).toString());
-         moduleLoader = Module.getBootModuleLoader();
 
          for (String plugin : installed) {
             try {
                System.out.println(plugin);
 
                Module module = moduleLoader.loadModule(ModuleIdentifier.fromString(plugin));
-               // composite.add(module.getClassLoader());
+               composite.add(module.getClassLoader());
 
                System.out.println("Loaded: " + module);
             }
@@ -153,13 +158,8 @@ public class Bootstrap
             }
          }
 
-         if (cl == null)
-            cl = Thread.currentThread().getContextClassLoader();
-
-         // composite.add(cl);
-         composite.add(Bootstrap.class.getClassLoader());
-
-         // Thread.currentThread().setContextClassLoader(composite);
+         composite.add(cl);
+         Thread.currentThread().setContextClassLoader(composite);
       }
       catch (Exception e) {
          e.printStackTrace();
