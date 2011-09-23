@@ -131,15 +131,10 @@ public class Bootstrap
       System.out.println("Loading plugins...");
 
       try {
-         ModuleLoader moduleLoader = ModuleLoader.forClassLoader(Bootstrap.class.getClassLoader());
-         moduleLoader = Module.getBootModuleLoader();
-
-         Module forge = moduleLoader.loadModule(ModuleIdentifier.fromString("org.jboss.forge:main"));
-
-         if (cl == null)
-            cl = forge.getClassLoader();
+         ModuleLoader moduleLoader = Module.getBootModuleLoader();
 
          CompositeClassLoader composite = new CompositeClassLoader();
+         composite.add(Module.forClassLoader(Bootstrap.class.getClassLoader(), true).getClassLoader());
 
          List<String> installed = InstalledPluginRegistry.getInstalledPlugins();
 
@@ -157,6 +152,10 @@ public class Bootstrap
                e.printStackTrace();
             }
          }
+
+         Module forge = moduleLoader.loadModule(ModuleIdentifier.fromString("org.jboss.forge:main"));
+         if (cl == null)
+            cl = forge.getClassLoader();
 
          composite.add(cl);
          Thread.currentThread().setContextClassLoader(composite);
