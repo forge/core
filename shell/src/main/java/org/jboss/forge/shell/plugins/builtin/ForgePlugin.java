@@ -397,8 +397,8 @@ public class ForgePlugin implements Plugin
       buildFromCurrentProject(out, workspace);
 
       ShellMessages.success(out, "Installed from [" + workspace + "] successfully.");
-      ShellMessages.info(out, "Please restart Forge to complete plugin installation.");
-      // restart();
+      // ShellMessages.info(out, "Please restart Forge to complete plugin installation.");
+      restart();
    }
 
    @Command(value = "git-plugin",
@@ -455,8 +455,8 @@ public class ForgePlugin implements Plugin
       }
 
       ShellMessages.success(out, "Installed from [" + gitRepo + "] successfully.");
-      ShellMessages.info(out, "Please restart Forge to complete plugin installation.");
-      // restart();
+      // ShellMessages.info(out, "Please restart Forge to complete plugin installation.");
+      restart();
    }
 
    /*
