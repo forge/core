@@ -204,7 +204,7 @@ public class ForgePlugin implements Plugin
 
    @Command(value = "remove-plugin",
             help = "Removes a plugin from the current Forge runtime configuration")
-   public void removeFromIndex(
+   public void removePlugin(
             @Option(description = "plugin-name",
                      help = "The fully qualified plugin name e.g: 'org.jboss.forge.plugin:version'") final String pluginName,
             final PipeOut out) throws Exception
@@ -220,6 +220,7 @@ public class ForgePlugin implements Plugin
       {
          ShellMessages.error(out, "Failed to remove [" + pluginName + "");
       }
+      restart();
    }
 
    @Command(value = "install-plugin",
@@ -273,18 +274,17 @@ public class ForgePlugin implements Plugin
          }
       }
 
-      DependencyResource artifact = null;
       if (artifacts.isEmpty())
       {
          throw new RuntimeException("No artifacts found for [" + dep + "]");
       }
       else if (artifacts.size() > 1)
       {
-         artifact = prompt.promptChoiceTyped("Install which version?", artifacts, artifacts.get(artifacts.size() - 1));
+         prompt.promptChoiceTyped("Install which version?", artifacts, artifacts.get(artifacts.size() - 1));
       }
       else
       {
-         artifact = artifacts.get(0);
+         artifacts.get(0);
       }
 
       // TODO Build module from maven artifact

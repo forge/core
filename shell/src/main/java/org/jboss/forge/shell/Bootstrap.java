@@ -38,7 +38,6 @@ import org.jboss.forge.shell.events.PreStartup;
 import org.jboss.forge.shell.events.ReinitializeEnvironment;
 import org.jboss.forge.shell.events.Shutdown;
 import org.jboss.forge.shell.events.Startup;
-import org.jboss.modules.ConcurrentClassLoader;
 import org.jboss.modules.Module;
 import org.jboss.modules.ModuleIdentifier;
 import org.jboss.modules.ModuleLoader;
@@ -55,7 +54,6 @@ public class Bootstrap
    private static Thread currentShell = null;
    private static boolean restartRequested = false;
    private static File workingDir = new File("").getAbsoluteFile();
-   private static ConcurrentClassLoader cl;
 
    @Inject
    private BeanManager manager;
@@ -138,8 +136,6 @@ public class Bootstrap
 
          for (String plugin : installed) {
             try {
-               System.out.println(plugin);
-
                Module module = moduleLoader.loadModule(ModuleIdentifier.fromString(plugin));
                composite.add(module.getClassLoader());
             }
@@ -150,10 +146,8 @@ public class Bootstrap
          }
 
          Module forge = moduleLoader.loadModule(ModuleIdentifier.fromString("org.jboss.forge:main"));
-         if (cl == null)
-            cl = forge.getClassLoader();
 
-         composite.add(cl);
+         composite.add(forge.getClassLoader());
          Thread.currentThread().setContextClassLoader(composite);
       }
       catch (Exception e) {
