@@ -311,25 +311,25 @@ public class PropertyConstraintPlugin implements Plugin
       setConstraintMessage(constraintAnnotation, message);
       constraintAnnotation.setStringValue("regexp", regexp);
 
-      constraintAnnotation.getOrigin().addImport(Pattern.Flag.class);
-      final StringBuilder flagsLiteral = new StringBuilder();
-      flagsLiteral.append('{');
       if (flags != null)
       {
-         int i = 0;
-         for (Pattern.Flag oneFlag : flags)
+         constraintAnnotation.getOrigin().addImport(Pattern.Flag.class);
+         final String flagPrefix = Pattern.Flag.class.getSimpleName() + ".";
+         final StringBuilder flagsLiteral = new StringBuilder().append('{');
+
+         for (int i = 0; i < flags.length; i++)
          {
-            flagsLiteral.append(oneFlag);
+            flagsLiteral.append(flagPrefix + flags[i]);
+
             if (i < (flags.length - 1))
             {
                flagsLiteral.append(",");
             }
-            i++;
          }
-      }
-      flagsLiteral.append('}');
 
-      constraintAnnotation.setStringValue("flags", flagsLiteral.toString());
+         flagsLiteral.append('}');
+         constraintAnnotation.setStringValue("flags", flagsLiteral.toString());
+      }
 
       javaSourceFacet.saveJavaSource(constraintAnnotation.getOrigin());
       outputConstraintAdded(property, Pattern.class);
