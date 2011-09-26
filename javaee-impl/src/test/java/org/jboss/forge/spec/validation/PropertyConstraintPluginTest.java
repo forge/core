@@ -410,6 +410,7 @@ public class PropertyConstraintPluginTest extends SingletonAbstractShellTest
       assertTrue(property.hasAnnotation(Pattern.class));
       assertEquals("[a-z]*", property.getAnnotation(Pattern.class).getStringValue("regexp"));
       assertEquals(message, property.getAnnotation(Pattern.class).getStringValue("message"));
+      assertEquals(null, property.getAnnotation(Pattern.class).getStringValue("flags"));
 
       final Method<JavaClass> accessor = fooClass.getMethod(PROPERTY_ACESSOR_NAME);
 
