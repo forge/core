@@ -130,19 +130,18 @@
             <exclude>org.sonatype.plexus:*</exclude>
             <exclude>org.sonatype.aether:*</exclude>
             <exclude>org.sonatype.sisu:*</exclude>
-            
-            <!-- 
-            <exclude>commons-cli:commons-cli:*</exclude>
-             -->
          
-            <exclude>org.jboss.forge:forge-javaee-api*</exclude>
-            <exclude>org.jboss.forge:forge-scaffold-api*</exclude>
             
             <!-- Forge -->
+            <exclude>org.jboss.forge:forge-javaee-api*</exclude>
+            <exclude>org.jboss.forge:forge-scaffold-api*</exclude>
             <exclude>org.jboss.forge:forge-event-bus*</exclude>
             <exclude>org.jboss.forge:forge-shell-api*</exclude>
             <exclude>javax.enterprise.cdi-api*</exclude>
             <exclude>javax.inject:javax.inject*</exclude>
+            
+            <!-- JBoss Modules -->
+            <exclude>org.jboss.modules:*</exclude>
          </excludes>
          <outputFileNameMapping>${artifact.artifactId}${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
       </dependencySet>

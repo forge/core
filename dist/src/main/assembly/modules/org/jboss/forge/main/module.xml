@@ -49,7 +49,6 @@
       <resource-root path="jboss-jsp-api_2.2_spec.jar" />
       <resource-root path="jboss-logging.jar" />
       <resource-root path="jboss-logmanager.jar" />
-      <resource-root path="jboss-modules.jar" />
       <resource-root path="jboss-saaj-api_1.3_spec.jar" />
       <resource-root path="jboss-servlet-api_3.0_spec.jar" />
       <resource-root path="jboss-transaction-api_1.1_spec.jar" />
@@ -91,12 +90,8 @@
 
    <dependencies>
       <module name="javax.api" />
-      <module name="org.jboss.forge.plugins" services="import" optional="true">
-         <imports>
-            <include path="**" />
-            <include path="META-INF" />
-         </imports>
-      </module>
+      <module name="org.jboss.modules" />
+      
       <module name="org.jboss.tools.forge.runtime.ext" services="import" optional="true">
          <imports>
             <include path="**" />
