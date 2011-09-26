@@ -26,6 +26,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -504,7 +505,12 @@ public class ForgePlugin implements Plugin
             Dependency dep = meta.getOutputDependency();
 
             ShellMessages.info(out, "Installing plugin artifact.");
-            createModule(project, dep, artifact);
+
+            // TODO Figure out a better plugin versioning strategy than random numbers, also see if unloading is
+            // possible to avoid this entirely.
+            createModule(project,
+                     DependencyBuilder.create(dep).setVersion(dep.getVersion() + "-" + UUID.randomUUID().toString()),
+                     artifact);
          }
          else
          {
