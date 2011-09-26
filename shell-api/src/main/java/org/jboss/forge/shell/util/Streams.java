@@ -24,6 +24,7 @@ package org.jboss.forge.shell.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 
@@ -59,5 +60,23 @@ public abstract class Streams
          throw new RuntimeException(e);
       }
       return out.toString();
+   }
+
+   public static void write(InputStream source, OutputStream destination)
+   {
+      try {
+         final byte[] buffer = new byte[0x10000];
+         int read;
+         do {
+            read = source.read(buffer, 0, buffer.length);
+            if (read > 0) {
+               destination.write(buffer, 0, read);
+            }
+         }
+         while (read >= 0);
+      }
+      catch (IOException e) {
+         throw new RuntimeException(e);
+      }
    }
 }

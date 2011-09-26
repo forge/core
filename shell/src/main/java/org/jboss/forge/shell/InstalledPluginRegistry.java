@@ -24,13 +24,17 @@ package org.jboss.forge.shell;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jboss.forge.parser.java.util.Strings;
 import org.jboss.forge.parser.xml.Node;
 import org.jboss.forge.parser.xml.XMLParser;
 import org.jboss.forge.parser.xml.XMLParserException;
 import org.jboss.forge.shell.util.OSUtils;
+import org.jboss.forge.shell.util.Streams;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -38,16 +42,17 @@ import org.jboss.forge.shell.util.OSUtils;
  */
 public class InstalledPluginRegistry
 {
+   private static final String REGISTRY = "/.forge/plugins/installed.xml";
 
    public static List<String> getInstalledPlugins()
    {
       List<String> result = new ArrayList<String>();
-      File registryFile = new File(OSUtils.getUserHomePath() + "/.forge/plugins/installed.xml");
+      File registryFile = new File(OSUtils.getUserHomePath() + REGISTRY);
       try {
          Node installed = XMLParser.parse(new FileInputStream(registryFile));
          List<Node> list = installed.get("plugin");
          for (Node plugin : list) {
-            result.add(plugin.getText());
+            result.add(plugin.getAttribute("name") + ":" + plugin.getAttribute("slot"));
          }
       }
       catch (XMLParserException e) {
@@ -58,6 +63,107 @@ public class InstalledPluginRegistry
          // this is OK, no plugins installed
       }
       return result;
+   }
+
+   public static void installPlugin(String plugin, String slot)
+   {
+      if (Strings.isNullOrEmpty(plugin))
+      {
+         throw new RuntimeException("Plugin must not be null");
+      }
+      if (Strings.isNullOrEmpty(slot))
+      {
+         slot = "main";
+      }
+
+      Node installed = null;
+      File registryFile = new File(OSUtils.getUserHomePath() + REGISTRY);
+      try {
+
+         if (registryFile.exists())
+         {
+            installed = XMLParser.parse(new FileInputStream(registryFile));
+         }
+         else
+         {
+            registryFile.mkdirs();
+            registryFile.delete();
+            registryFile.createNewFile();
+
+            installed = XMLParser.parse("<installed></installed>");
+         }
+
+         installed.getOrCreate("plugin@name=" + plugin).attribute("slot", slot);
+         Streams.write(XMLParser.toXMLInputStream(installed), new FileOutputStream(registryFile));
+      }
+      catch (FileNotFoundException e) {
+         throw new RuntimeException("Could not read [" + registryFile.getAbsolutePath()
+                  + "] - ", e);
+      }
+      catch (IOException e) {
+         throw new RuntimeException("Error manipulating [" + registryFile.getAbsolutePath()
+                  + "] - ", e);
+      }
+   }
+
+   public static void removePlugin(String plugin)
+   {
+      if (Strings.isNullOrEmpty(plugin))
+      {
+         throw new RuntimeException("Plugin must not be null");
+      }
+
+      if (plugin.contains(":"))
+      {
+         plugin = plugin.split(":")[0];
+      }
+
+      File registryFile = new File(OSUtils.getUserHomePath() + REGISTRY);
+      if (registryFile.exists())
+      {
+         try {
+            Node installed = XMLParser.parse(new FileInputStream(registryFile));
+
+            Node child = installed.getSingle("plugin@name=" + plugin);
+            installed.removeChild(child);
+            Streams.write(XMLParser.toXMLInputStream(installed), new FileOutputStream(registryFile));
+         }
+         catch (FileNotFoundException e) {
+            // already removed
+         }
+      }
+   }
+
+   public static boolean hasPlugin(String plugin)
+   {
+      if (Strings.isNullOrEmpty(plugin))
+      {
+         throw new RuntimeException("Plugin must not be null");
+      }
+
+      if (plugin.contains(":"))
+      {
+         plugin = plugin.split(":")[0];
+      }
+
+      File registryFile = new File(OSUtils.getUserHomePath() + REGISTRY);
+      if (registryFile.exists())
+      {
+         try {
+            Node installed = XMLParser.parse(new FileInputStream(registryFile));
+
+            Node child = installed.getSingle("plugin@name=" + plugin);
+            if (child != null)
+            {
+               return true;
+            }
+         }
+         catch (FileNotFoundException e) {
+            // already removed
+         }
+      }
+
+      return false;
    }
 
 }

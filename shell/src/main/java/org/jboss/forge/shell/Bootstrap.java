@@ -128,8 +128,6 @@ public class Bootstrap
 
    synchronized private static void loadPlugins()
    {
-      System.out.println("Loading plugins...");
-
       try {
          ModuleLoader moduleLoader = Module.getBootModuleLoader();
 
@@ -144,8 +142,6 @@ public class Bootstrap
 
                Module module = moduleLoader.loadModule(ModuleIdentifier.fromString(plugin));
                composite.add(module.getClassLoader());
-
-               System.out.println("Loaded: " + module);
             }
             catch (Exception e) {
                System.out.println("Failed loading: " + plugin);
@@ -163,6 +159,5 @@ public class Bootstrap
       catch (Exception e) {
          e.printStackTrace();
       }
-      System.out.println("Done loading plugins...");
    }
 }

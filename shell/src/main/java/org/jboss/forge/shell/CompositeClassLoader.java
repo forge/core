@@ -70,16 +70,11 @@ public class CompositeClassLoader extends ConcurrentClassLoader
          try
          {
             Class<?> found = loader.loadClass(className, resolve);
-            if ("org.jboss.weld.bootstrap.WeldBootstrap".equals(className)
-                     || "org.jboss.weld.bootstrap.api.Bootstrap".equals(className))
-            {
-               System.out.println(className + " came from " + loader);
-            }
             return found;
          }
          catch (ClassNotFoundException e)
          {
-            // System.err.println(loader + " did not have class " + className);
+            // I don't care yet...
          }
       }
       throw new ClassNotFoundException(className);

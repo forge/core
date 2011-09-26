@@ -52,6 +52,7 @@ import org.jboss.forge.resources.DependencyResource;
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.Resource;
+import org.jboss.forge.shell.InstalledPluginRegistry;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.ShellColor;
 import org.jboss.forge.shell.ShellMessages;
@@ -78,8 +79,6 @@ import org.jboss.forge.shell.util.PluginUtil;
 @Help("Forge control and writer environment commands. Manage plugins and other forge addons.")
 public class ForgePlugin implements Plugin
 {
-   public static final String PROP_DEFAULT_PLUGIN_REPO = "DEFAULT_PLUGIN_REPO";
-
    private final Event<ReinitializeEnvironment> reinitializeEvent;
    private final ShellPrintWriter writer;
    private final DependencyResolver resolver;
@@ -200,6 +199,26 @@ public class ForgePlugin implements Plugin
          out.println("\tTags: " + ref.getTags());
          out.println("\tDescription: " + ref.getDescription());
          out.println();
+      }
+   }
+
+   @Command(value = "remove-plugin",
+            help = "Removes a plugin from the current Forge runtime configuration")
+   public void removeFromIndex(
+            @Option(description = "plugin-name",
+                     help = "The fully qualified plugin name e.g: 'org.jboss.forge.plugin:version'") final String pluginName,
+            final PipeOut out) throws Exception
+   {
+      ShellMessages.info(out, "Preparing to remove plugin: " + pluginName);
+      InstalledPluginRegistry.removePlugin(pluginName);
+
+      if (!InstalledPluginRegistry.hasPlugin(pluginName))
+      {
+         ShellMessages.success(out, "Successfully removed [" + pluginName + "]");
+      }
+      else
+      {
+         ShellMessages.error(out, "Failed to remove [" + pluginName + "");
       }
    }
 
@@ -629,41 +648,7 @@ public class ForgePlugin implements Plugin
 
    public void registerPlugin(final String pluginName, final String pluginSlot)
    {
-
-      DirectoryResource dir = environment.getPluginDirectory();
-      dir = dir.getOrCreateChildDirectory("org");
-      dir = dir.getOrCreateChildDirectory("jboss");
-      dir = dir.getOrCreateChildDirectory("forge");
-      dir = dir.getOrCreateChildDirectory("plugins");
-      dir = dir.getOrCreateChildDirectory("main");
-      FileResource<?> moduleXml = dir.getChild("module.xml").reify(FileResource.class);
-
-      if (!moduleXml.exists() || moduleXml.isDirectory())
-      {
-         moduleXml.delete(true);
-         moduleXml.createNewFile();
-         moduleXml.setContents(getClass().getResourceAsStream("/org/jboss/forge/modules/module.xml"));
-      }
-
-      Node module = XMLParser.parse(moduleXml.getResourceInputStream());
-
-      Node plugin = module.attribute("name", "org.jboss.forge.plugins")
-               .getSingle("dependencies")
-               .getOrCreate("module@name=" + pluginName);
-
-      plugin.attribute("slot", pluginSlot)
-               .attribute("export", true).attribute("services", "export")
-               .attribute("optional", "true");
-
-      Node imports = plugin.getOrCreate("imports");
-      imports.getOrCreate("include@path=**");
-      imports.getOrCreate("include@path=META-INF");
-
-      Node exports = plugin.getOrCreate("exports").getOrCreate("include-set");
-      exports.getOrCreate("path@name=**");
-      exports.getOrCreate("path@name=META-INF");
-
-      moduleXml.setContents(XMLParser.toXMLString(module));
+      InstalledPluginRegistry.installPlugin(pluginName, pluginSlot);
    }
 
    public DirectoryResource getOrCreatePluginModuleDirectory(final Dependency dep)

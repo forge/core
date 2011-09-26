@@ -21,6 +21,10 @@
  */
 package org.jboss.forge.shell;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 
 import org.junit.Test;
@@ -31,14 +35,59 @@ import org.junit.Test;
  */
 public class InstalledPluginRegistryTest
 {
-
    /**
     * Test method for {@link org.jboss.forge.shell.InstalledPluginRegistry#getInstalledPlugins()}.
     */
    @Test
    public void testGetInstalledPlugins()
    {
+      List<String> originals = InstalledPluginRegistry.getInstalledPlugins();
+      InstalledPluginRegistry.installPlugin("test.test", "moo");
       List<String> plugins = InstalledPluginRegistry.getInstalledPlugins();
+
+      boolean found = false;
+      for (String plugin : plugins) {
+         if ("test.test:moo".equals(plugin))
+         {
+            InstalledPluginRegistry.removePlugin(plugin);
+            assertFalse(InstalledPluginRegistry.hasPlugin(plugin));
+            found = true;
+         }
+      }
+      assertTrue(found);
+
+      assertSame(originals.size(), InstalledPluginRegistry.getInstalledPlugins().size());
+      for (String plugin : originals) {
+         assertTrue(InstalledPluginRegistry.hasPlugin(plugin));
+      }
+   }
+
+   /**
+    * Test method for {@link org.jboss.forge.shell.InstalledPluginRegistry#getInstalledPlugins()}.
+    */
+   @Test
+   public void testAddNewVersion()
+   {
+      List<String> originals = InstalledPluginRegistry.getInstalledPlugins();
+      InstalledPluginRegistry.installPlugin("test.test", "moo");
+      InstalledPluginRegistry.installPlugin("test.test", "foo");
+      List<String> plugins = InstalledPluginRegistry.getInstalledPlugins();
+
+      boolean found = false;
+      for (String plugin : plugins) {
+         if (plugin.contains("test.test"))
+         {
+            InstalledPluginRegistry.removePlugin(plugin);
+            assertFalse(InstalledPluginRegistry.hasPlugin(plugin));
+            found = true;
+         }
+      }
+      assertTrue(found);
+
+      assertSame(originals.size(), InstalledPluginRegistry.getInstalledPlugins().size());
+      for (String plugin : originals) {
+         assertTrue(InstalledPluginRegistry.hasPlugin(plugin));
+      }
    }
 
 }
