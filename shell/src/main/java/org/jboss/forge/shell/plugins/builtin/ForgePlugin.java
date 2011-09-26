@@ -107,17 +107,17 @@ public class ForgePlugin implements Plugin
    @DefaultCommand
    public void about(final PipeOut out)
    {
-      out.println("   ____                          _____                    ");
-      out.println("  / ___|  ___  __ _ _ __ ___    |  ___|__  _ __ __ _  ___ ");
-      out.println("  \\___ \\ / _ \\/ _` | '_ ` _ \\   | |_ / _ \\| '__/ _` |/ _ \\  "
+      out.println("    _____                    ");
+      out.println("   |  ___|__  _ __ __ _  ___ ");
+      out.println("   | |_ / _ \\| `__/ _` |/ _ \\  "
                + out.renderColor(ShellColor.YELLOW, "\\\\"));
-      out.println("   ___) |  __/ (_| | | | | | |  |  _| (_) | | | (_| |  __/  "
+      out.println("   |  _| (_) | | | (_| |  __/  "
                + out.renderColor(ShellColor.YELLOW, "//"));
-      out.println("  |____/ \\___|\\__,_|_| |_| |_|  |_|  \\___/|_|  \\__, |\\___| ");
-      out.println("                                                |___/      ");
+      out.println("   |_|  \\___/|_|  \\__, |\\___| ");
+      out.println("                   |___/      ");
       out.println("");
       String version = getClass().getPackage().getImplementationVersion();
-      out.println("Seam Forge, version [ " + version + " ] - JBoss, by Red Hat, Inc. [ http://jboss.org ]");
+      out.println("Forge, version [ " + version + " ] - JBoss, by Red Hat, Inc. [ http://jboss.org ]");
    }
 
    @Command(value = "restart", help = "Reload all plugins and default configurations")

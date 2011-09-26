@@ -40,4 +40,10 @@ public class ForgePluginTest extends AbstractShellTest
       getShell().execute("forge find-plugin jsf");
    }
 
+   @Test
+   public void testLogo() throws Exception
+   {
+      getShell().execute("forge");
+   }
+
 }
