@@ -71,6 +71,14 @@ public abstract class AbstractShellPrompt implements Shell
    }
 
    @Override
+   public String prompt(final String message, final String defaultIfEmpty)
+   {
+      String query = " [" + defaultIfEmpty + "] ";
+
+      return prompt(message + query, String.class, defaultIfEmpty);
+   }
+
+   @Override
    public String promptAndSwallowCR()
    {
       int c;
@@ -536,6 +544,17 @@ public abstract class AbstractShellPrompt implements Shell
       }
       while (!input.matches(pattern));
       return input;
+   }
+
+   @Override
+   public String promptSecret(String message, String defaultIfEmpty)
+   {
+      String secret = promptSecret(message + "[ENTER for default]");
+
+      if (secret == null || secret.trim().isEmpty())
+         secret = defaultIfEmpty;
+
+      return secret;
    }
 
 }

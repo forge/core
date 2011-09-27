@@ -53,6 +53,13 @@ public interface ShellPrompt
    String prompt(String message);
 
    /**
+    * Prompt for user input, first printing the given line, then return user input as a String.
+    * 
+    * @param defaultIfEmpty The value to be returned when an empty or whitespace-only user input is read.
+    */
+   String prompt(String message, String defaultIfEmpty);
+
+   /**
     * Prompt for user input, first printing the given message, then return user input cast to the type provided.
     */
    <T> T prompt(String message, Class<T> clazz);
@@ -219,5 +226,12 @@ public interface ShellPrompt
     * First print the given message, prompt the user for input (masking keystrokes for secrecy,) then return user input.
     */
    String promptSecret(String message);
+
+   /**
+    * First print the given message, prompt the user for input (masking keystrokes for secrecy,) then return user input.
+    * 
+    * @param defaultIfEmpty The value to be returned when an empty or whitespace-only user input is read.
+    */
+   String promptSecret(String string, String defaultIfEmpty);
 
 }

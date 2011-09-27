@@ -262,4 +262,24 @@ public class ShellPromptTest extends AbstractShellTest
       queueInputLines("secret");
       assertEquals("secret", getShell().promptSecret("What's your secret?"));
    }
+
+   @Test
+   public void testPromptSecretDefault() throws Exception
+   {
+      queueInputLines("secret");
+      assertEquals("secret", getShell().promptSecret("What's your secret?", "foo"));
+
+      queueInputLines("");
+      assertEquals("foo", getShell().promptSecret("What's your secret?", "foo"));
+   }
+
+   @Test
+   public void testPromptDefault() throws Exception
+   {
+      queueInputLines("super");
+      assertEquals("super", getShell().prompt("What's your default?", "default"));
+
+      queueInputLines("");
+      assertEquals("default", getShell().prompt("What's your default?", "default"));
+   }
 }
