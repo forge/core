@@ -53,7 +53,7 @@ import org.jboss.forge.shell.plugins.RequiresProject;
 @Alias("plugins")
 @RequiresProject
 @Help("Set up necessary features for Forge plugin development")
-public class NewAddonPlugin implements Plugin
+public class PluginsPlugin implements Plugin
 {
    @Inject
    private Event<InstallFacets> event;

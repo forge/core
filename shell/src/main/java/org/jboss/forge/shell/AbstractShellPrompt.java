@@ -549,7 +549,7 @@ public abstract class AbstractShellPrompt implements Shell
    @Override
    public String promptSecret(String message, String defaultIfEmpty)
    {
-      String secret = promptSecret(message + "[ENTER for default]");
+      String secret = promptSecret(message + " [ENTER for default]");
 
       if (secret == null || secret.trim().isEmpty())
          secret = defaultIfEmpty;

@@ -22,6 +22,7 @@
 
 package org.jboss.forge.spec.plugin;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -29,6 +30,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.spec.javaee.BaseJavaEEFacet;
+import org.jboss.forge.spec.javaee.RestActivatorType;
 import org.jboss.forge.spec.javaee.RestFacet;
 import org.jboss.forge.test.SingletonAbstractShellTest;
 import org.junit.Test;
@@ -46,10 +48,14 @@ public class RestPluginTest extends SingletonAbstractShellTest
       Project project = initializeJavaProject();
 
       assertFalse(project.hasFacet(RestFacet.class));
-      queueInputLines("");
+      queueInputLines("", "");
       getShell().execute("setup rest");
       assertTrue(project.hasFacet(RestFacet.class));
       assertTrue(project.getFacet(DependencyFacet.class).hasDependency(BaseJavaEEFacet.dep));
+
+      RestFacet rest = project.getFacet(RestFacet.class);
+      assertEquals("/*", rest.getApplicationPath());
+      assertEquals(RestActivatorType.WEB_XML, rest.getApplicationActivatorType());
    }
 
 }

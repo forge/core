@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat, Inc., and individual contributors
+ * Copyright 2011, Red Hat, Inc., and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -21,28 +21,10 @@
  */
 package org.jboss.forge.spec.javaee;
 
-import org.jboss.forge.project.Facet;
-import org.jboss.forge.project.Project;
-
 /**
- * If installed, this {@link Project} supports features from the JAX-RS specification.
- * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface RestFacet extends Facet
+public enum RestActivatorType
 {
-   /**
-    * Get the root web-path from which REST requests should be serviced.
-    */
-   public String getApplicationPath();
-
-   /**
-    * Set the root web-path from which REST requests should be serviced.
-    */
-   public void setApplicationPath(String path);
-
-   /**
-    * Get the {@link RestActivatorType} with which this application was configured.
-    */
-   public RestActivatorType getApplicationActivatorType();
+   WEB_XML, APP_CLASS_AND_XML, APP_CLASS_AND_ANNOTATION
 }
