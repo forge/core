@@ -55,7 +55,7 @@ public class RestFacetImpl extends BaseJavaEEFacet implements RestFacet
          WebAppDescriptorImpl web = (WebAppDescriptorImpl) servlet.getConfig();
          Node node = web.getRootNode();
          Node servletClass = node.getOrCreate("servlet-mapping/servlet-name=" + JAXRS_SERVLET);
-         String urlPattern = prompt.prompt("Serve REST resources under which URL path?", "/*");
+         String urlPattern = prompt.prompt("Serve REST resources under which URL path?", "/rest/*");
          servletClass.getParent().getOrCreate("url-pattern").text(urlPattern);
          servlet.saveConfig(web);
       }

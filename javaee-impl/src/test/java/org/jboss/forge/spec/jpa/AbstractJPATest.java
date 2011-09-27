@@ -61,10 +61,14 @@ public abstract class AbstractJPATest extends SingletonAbstractShellTest
 
    protected JavaClass generateEntity(final Project project, final String pkg) throws Exception
    {
-      final String entityName = "Goofy" + count++;
+      return generateEntity(project, pkg, "Goofy" + count++);
+   }
+
+   protected JavaClass generateEntity(final Project project, final String pkg, final String name) throws Exception
+   {
       queueInputLines("");
       final StringBuilder commandBuilder = new StringBuilder(ConstraintInspector.getName(EntityPlugin.class))
-               .append(" --named ").append(entityName);
+               .append(" --named ").append(name);
 
       if (pkg != null)
       {
@@ -80,7 +84,7 @@ public abstract class AbstractJPATest extends SingletonAbstractShellTest
       }
       else
       {
-         final String entityClass = project.getFacet(PersistenceFacet.class).getEntityPackage() + "." + entityName;
+         final String entityClass = project.getFacet(PersistenceFacet.class).getEntityPackage() + "." + name;
          final String path = Packages.toFileSyntax(entityClass) + ".java";
          javaClass = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(path).getJavaSource();
       }

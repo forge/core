@@ -255,6 +255,12 @@ public class MethodImpl<O extends JavaSource<O>> implements Method<O>
    }
 
    @Override
+   public Method<O> setReturnType(JavaSource<?> type)
+   {
+      return setReturnType(type.getName());
+   }
+
+   @Override
    public boolean isReturnTypeVoid()
    {
       return getReturnType() == null;

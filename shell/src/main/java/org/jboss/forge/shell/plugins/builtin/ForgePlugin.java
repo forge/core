@@ -140,39 +140,9 @@ public class ForgePlugin implements Plugin
 
    private void displayModules(final DirectoryResource pluginDir)
    {
-      List<Resource<?>> listResources = pluginDir.listResources();
-
-      for (Resource<?> resource : listResources) {
-         if ("module.xml".equals(resource.getName()))
-         {
-            Node module = XMLParser.parse(resource.getResourceInputStream());
-            if (module != null)
-            {
-               String pluginName = module.getAttribute("name");
-               String pluginSlot = module.getAttribute("slot");
-               if (pluginSlot == null)
-               {
-                  pluginSlot = "";
-               }
-               else
-                  pluginSlot = ":" + pluginSlot;
-
-               if (!"org.jboss.forge.plugins".equals(pluginName))
-                  writer.println(pluginName
-                           + pluginSlot
-                           + writer.renderColor(ShellColor.ITALIC, " [" + pluginDir.getParent().getFullyQualifiedName()
-                                    + "]"));
-            }
-            return;
-         }
-         else if ((resource instanceof DirectoryResource) && "dependencies".equals(resource.getName()))
-         {
-            return;
-         }
-         else if (resource instanceof DirectoryResource)
-         {
-            displayModules((DirectoryResource) resource);
-         }
+      List<String> plugins = InstalledPluginRegistry.getInstalledPlugins();
+      for (String plugin : plugins) {
+         writer.println(plugin);
       }
    }
 

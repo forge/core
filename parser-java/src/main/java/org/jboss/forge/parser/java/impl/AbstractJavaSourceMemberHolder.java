@@ -153,29 +153,7 @@ public abstract class AbstractJavaSourceMemberHolder<O extends JavaSource<O>> ex
    @Override
    public boolean hasMethodSignature(String name, String... paramTypes)
    {
-      for (Method<?> local : getMethods())
-      {
-         if (local.getName().equals(name))
-         {
-            List<Parameter> localParams = local.getParameters();
-            if (paramTypes != null && localParams.size() == 0
-                     || localParams.size() == paramTypes.length)
-            {
-               for (int i = 0; i < localParams.size(); i++)
-               {
-                  Parameter localParam = localParams.get(i);
-                  String type = paramTypes[i];
-                  if (!Strings.areEqual(localParam.getType(), type))
-                  {
-                     return false;
-                  }
-                  // TODO this needs to be able to handle Type to SimpleType comparison
-               }
-               return true;
-            }
-         }
-      }
-      return false;
+      return getMethod(name, paramTypes) != null;
    }
 
    @Override
@@ -209,17 +187,49 @@ public abstract class AbstractJavaSourceMemberHolder<O extends JavaSource<O>> ex
    }
 
    @Override
+   @SuppressWarnings("unchecked")
    public Method<O> getMethod(String name, String... paramTypes)
    {
-      // TODO Auto-generated method stub
-      throw new IllegalStateException("Not yet implemented");
+      for (Method<?> local : getMethods())
+      {
+         if (local.getName().equals(name))
+         {
+            List<Parameter> localParams = local.getParameters();
+            if (paramTypes != null && localParams.size() == 0
+                     || localParams.size() == paramTypes.length)
+            {
+               for (int i = 0; i < localParams.size(); i++)
+               {
+                  Parameter localParam = localParams.get(i);
+                  String type = paramTypes[i];
+                  if (!Strings.areEqual(localParam.getType(), type))
+                  {
+                     return null;
+                  }
+                  // TODO this needs to be able to handle Type to SimpleType comparison
+               }
+               return (Method<O>) local;
+            }
+         }
+      }
+      return null;
    }
 
    @Override
    public Method<O> getMethod(String name, Class<?>... paramTypes)
    {
-      // TODO Auto-generated method stub
-      throw new IllegalStateException("Not yet implemented");
+      if (paramTypes == null)
+      {
+         paramTypes = new Class<?>[] {};
+      }
+
+      String[] types = new String[paramTypes.length];
+      for (int i = 0; i < paramTypes.length; i++)
+      {
+         types[i] = paramTypes[i].getName();
+      }
+
+      return getMethod(name, types);
    }
 
    @Override

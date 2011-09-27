@@ -151,7 +151,7 @@ public class ScaffoldPlugin implements Plugin
       List<JavaResource> javaTargets = selectTargets(out, targets);
       if (javaTargets.isEmpty())
       {
-         ShellMessages.error(out, "Must specify a domain entity on which to operate.");
+         ShellMessages.error(out, "Must specify a domain @Entity on which to operate.");
          return;
       }
 

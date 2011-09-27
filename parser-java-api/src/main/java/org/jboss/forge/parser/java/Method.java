@@ -76,6 +76,11 @@ public interface Method<O> extends Abstractable<Method<O>>, Member<O, Method<O>>
    public Method<O> setReturnType(final String type);
 
    /**
+    * Set this {@link Method} to return the given {@link JavaSource} type.
+    */
+   public Method<O> setReturnType(JavaSource<?> type);
+
+   /**
     * Return true if this {@link Method} has a return type of 'void'
     */
    public boolean isReturnTypeVoid();
