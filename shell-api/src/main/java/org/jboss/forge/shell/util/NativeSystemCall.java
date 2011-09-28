@@ -60,20 +60,14 @@ public class NativeSystemCall
 
          ProcessBuilder builder = new ProcessBuilder(commandTokens);
          builder.directory(path.getUnderlyingResourceObject());
-         builder.redirectErrorStream();
+         builder.redirectErrorStream(true);
          Process p = builder.start();
 
          InputStream stdout = p.getInputStream();
-         InputStream stderr = p.getErrorStream();
 
          Thread outThread = new Thread(new Receiver(stdout, out));
-         Thread errThread = new Thread(new Receiver(stderr, out));
-
          outThread.start();
-         errThread.start();
-
          outThread.join();
-         errThread.join();
 
          return p.waitFor();
 
