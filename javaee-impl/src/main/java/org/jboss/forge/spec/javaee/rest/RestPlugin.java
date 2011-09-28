@@ -30,6 +30,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.Entity;
 import javax.ws.rs.Path;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.Annotation;
@@ -88,7 +89,7 @@ public class RestPlugin implements Plugin
 
    @SuppressWarnings("unchecked")
    @Command(value = "endpoint-from-entity", help = "Creates a REST endpoint from an existing domain @Entity object")
-   public void endpointFromEntity(PipeOut out,
+   public void endpointFromEntity(final PipeOut out,
             @Option(required = false) JavaResource[] targets) throws FileNotFoundException
    {
       /*
@@ -116,6 +117,8 @@ public class RestPlugin implements Plugin
       for (JavaResource jr : javaTargets)
       {
          JavaClass entity = (JavaClass) (jr).getJavaSource();
+         entity.addAnnotation(XmlRootElement.class);
+
          JavaClass endpoint = JavaParser.parse(JavaClass.class,
                   getClass().getResourceAsStream("/org/jboss/forge/rest/Endpoint.jv"));
          endpoint.setPackage(java.getBasePackage() + ".rest");
@@ -142,12 +145,13 @@ public class RestPlugin implements Plugin
          find.setReturnType(entity);
          find.setBody(find.getBody().replaceAll("Object", entity.getName()));
 
+         java.saveJavaSource(entity);
          java.saveJavaSource(endpoint);
          ShellMessages.success(out, "Generated REST endpoint for [" + entity.getQualifiedName() + "]");
       }
    }
 
-   private String getEntityTable(JavaClass entity)
+   private String getEntityTable(final JavaClass entity)
    {
       String table = entity.getName();
       if (entity.hasAnnotation(Entity.class))

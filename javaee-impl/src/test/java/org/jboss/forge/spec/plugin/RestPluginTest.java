@@ -27,6 +27,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import javax.ws.rs.Path;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.parser.java.JavaClass;
@@ -68,6 +69,7 @@ public class RestPluginTest extends AbstractJPATest
    {
       Project project = getProject();
       JavaClass entity = generateEntity(project, null, "User");
+      assertFalse(entity.hasAnnotation(XmlRootElement.class));
 
       setupRest();
 
@@ -80,6 +82,8 @@ public class RestPluginTest extends AbstractJPATest
       assertEquals("/user", endpoint.getAnnotation(Path.class).getStringValue());
       assertEquals("List<User>", endpoint.getMethod("listAll").getReturnType());
       assertEquals("User", endpoint.getMethod("findById", long.class).getReturnType());
+
+      assertTrue(java.getJavaResource(entity).getJavaSource().hasAnnotation(XmlRootElement.class));
    }
 
    private void setupRest() throws Exception
