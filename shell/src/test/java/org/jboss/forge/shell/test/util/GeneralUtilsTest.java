@@ -57,7 +57,7 @@ public class GeneralUtilsTest
       assertEquals("4", result[1]);
    }
 
-   @Test(expected = IllegalArgumentException.class)
+   @Test(expected = IllegalStateException.class)
    public void testAppendToArray3()
    {
       String[] foo = null;
@@ -66,7 +66,7 @@ public class GeneralUtilsTest
       GeneralUtils.join(String.class, foo, bar);
    }
 
-   @Test(expected = IllegalArgumentException.class)
+   @Test(expected = IllegalStateException.class)
    public void testAppendToArray4()
    {
       String[] foo = new String[] { "3", "4" };
@@ -75,7 +75,7 @@ public class GeneralUtilsTest
       GeneralUtils.join(String.class, foo, bar);
    }
 
-   @Test(expected = IllegalArgumentException.class)
+   @Test(expected = IllegalStateException.class)
    public void testAppendToArray5()
    {
       String[] foo = new String[] { "3", "4" };
