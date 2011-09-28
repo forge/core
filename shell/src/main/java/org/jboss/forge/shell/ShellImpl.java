@@ -958,7 +958,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    }
 
    @Override
-   public void write(final byte b)
+   public synchronized void write(final byte b)
    {
       try
       {

@@ -23,6 +23,7 @@
 package org.jboss.forge.shell.util;
 
 import java.io.File;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,13 +32,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.jboss.forge.parser.java.util.Assert;
 import org.jboss.forge.project.services.ResourceFactory;
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.ShellColor;
 import org.jboss.forge.shell.ShellPrintWriter;
-import org.jboss.forge.shell.util.ResourceUtil;
 
 /**
  * @author Mike Brock .
@@ -45,6 +46,33 @@ import org.jboss.forge.shell.util.ResourceUtil;
  */
 public class GeneralUtils
 {
+   @SuppressWarnings("unchecked")
+   public static <T> T[] join(Class<T> type, T[] front, T... back)
+   {
+      Assert.notNull(type, "Type must not be null.");
+      Assert.notNull(front, "Target array must not be null.");
+      Assert.notNull(back, "Source array must not be null.");
+
+      T[] dest = front;
+
+      int size = 0;
+      if (front != null)
+         size = front.length;
+
+      if (back != null)
+         size += back.length;
+
+      dest = (T[]) Array.newInstance(type, size);
+
+      if (dest.length > 1)
+      {
+         System.arraycopy(front, 0, dest, 0, front.length);
+         System.arraycopy(back, 0, dest, front.length, back.length);
+      }
+
+      return dest;
+   }
+
    public static <T> List<T> concatArraysToList(final T[]... arrays)
    {
       List<T> newList = new ArrayList<T>();
@@ -98,7 +126,7 @@ public class GeneralUtils
    }
 
    public static OutputAttributes calculateOutputAttributs(final List<String> rawList, final Shell shell,
-                                                           final OutputAttributes in)
+            final OutputAttributes in)
    {
       if (in == null)
       {
@@ -108,7 +136,7 @@ public class GeneralUtils
       OutputAttributes newAttr = calculateOutputAttributs(rawList, shell);
 
       return new OutputAttributes(in.columnSize > newAttr.columnSize ? in.columnSize : newAttr.columnSize,
-            in.columns < newAttr.columns ? in.columns : newAttr.columns);
+               in.columns < newAttr.columns ? in.columns : newAttr.columns);
    }
 
    public static OutputAttributes calculateOutputAttributs(final List<String> rawList, final Shell shell)
@@ -141,21 +169,21 @@ public class GeneralUtils
    }
 
    public static void printOutColumns(final List<String> rawList, final ShellPrintWriter out, final Shell shell,
-                                      final boolean sort)
+            final boolean sort)
    {
       printOutColumns(rawList, ShellColor.NONE, out, calculateOutputAttributs(rawList, shell), null, sort);
    }
 
    public static void printOutColumns(final List<String> rawList, final ShellPrintWriter out, final Shell shell,
-                                      final FormatCallback callback, final boolean sort)
+            final FormatCallback callback, final boolean sort)
    {
       printOutColumns(rawList, ShellColor.NONE, out, calculateOutputAttributs(rawList, shell), callback, sort);
    }
 
    public static void printOutColumns(final List<String> rawList, final ShellColor color,
-                                      final ShellPrintWriter printWriter,
-                                      final OutputAttributes attributes, final FormatCallback callback,
-                                      final boolean sort)
+            final ShellPrintWriter printWriter,
+            final OutputAttributes attributes, final FormatCallback callback,
+            final boolean sort)
    {
       if (sort)
       {
@@ -206,7 +234,7 @@ public class GeneralUtils
    }
 
    public static void printOutTables(final List<String> list, final boolean[] columns, final ShellPrintWriter shell,
-                                     final FormatCallback callback)
+            final FormatCallback callback)
    {
       int cols = columns.length;
       int[] colSizes = new int[columns.length];
@@ -282,8 +310,8 @@ public class GeneralUtils
    }
 
    public static Resource<?>[] parseSystemPathspec(final ResourceFactory resourceFactory,
-                                                   final Resource<?> lastResource,
-                                                   final Resource<?> currentResource, final String[] paths)
+            final Resource<?> lastResource,
+            final Resource<?> currentResource, final String[] paths)
    {
       List<Resource<?>> result = new LinkedList<Resource<?>>();
 

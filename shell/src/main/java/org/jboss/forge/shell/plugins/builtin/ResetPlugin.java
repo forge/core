@@ -1,6 +1,6 @@
 /*
  * JBoss, by Red Hat.
- * Copyright 2010, Red Hat, Inc., and individual contributors
+ * Copyright 2011, Red Hat, Inc., and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,40 +20,37 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.forge.dev.vcs;
+package org.jboss.forge.shell.plugins.builtin;
 
-import java.io.IOException;
-
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import org.jboss.forge.shell.Shell;
+import org.jboss.forge.shell.events.ReinitializeEnvironment;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.DefaultCommand;
-import org.jboss.forge.shell.plugins.PipeOut;
+import org.jboss.forge.shell.plugins.Help;
 import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.Topic;
-import org.jboss.forge.shell.util.NativeSystemCall;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * @author Mike Brock .
  */
-@Alias("git")
-@Topic("Version Control")
-public class GitShellPlugin implements Plugin
+@Alias("reset")
+@Topic("Shell Environment")
+@Help("Reset the shell and reload default configs.")
+public class ResetPlugin implements Plugin
 {
-   private final Shell shell;
+   private final Event<ReinitializeEnvironment> reinitializeEvent;
 
    @Inject
-   public GitShellPlugin(final Shell shell)
+   public ResetPlugin(final Event<ReinitializeEnvironment> reinitializeEvent)
    {
-      this.shell = shell;
+      this.reinitializeEvent = reinitializeEvent;
    }
 
    @DefaultCommand
-   public void run(final PipeOut out, final String... parms) throws IOException
+   public void reset()
    {
-      NativeSystemCall.execFromPath("git", parms, out, shell.getCurrentDirectory());
+      reinitializeEvent.fire(new ReinitializeEnvironment());
    }
-
 }

@@ -58,29 +58,22 @@ public class NativeSystemCall
             System.arraycopy(parms, 0, commandTokens, 1, parms.length);
          }
 
-         Process p = Runtime.getRuntime().exec(commandTokens, null,
-                  path.getUnderlyingResourceObject());
+         ProcessBuilder builder = new ProcessBuilder(commandTokens);
+         builder.directory(path.getUnderlyingResourceObject());
+         builder.redirectErrorStream();
+         Process p = builder.start();
 
          InputStream stdout = p.getInputStream();
          InputStream stderr = p.getErrorStream();
 
-         byte[] buf = new byte[10];
-         int read;
-         while ((read = stdout.read(buf)) != -1)
-         {
-            for (int i = 0; i < read; i++)
-            {
-               out.write(buf[i]);
-            }
-         }
+         Thread outThread = new Thread(new Receiver(stdout, out));
+         Thread errThread = new Thread(new Receiver(stderr, out));
 
-         while ((read = stderr.read(buf)) != -1)
-         {
-            for (int i = 0; i < read; i++)
-            {
-               out.write(buf[i]);
-            }
-         }
+         outThread.start();
+         errThread.start();
+
+         outThread.join();
+         errThread.join();
 
          return p.waitFor();
 
@@ -109,5 +102,40 @@ public class NativeSystemCall
       }
 
       Runtime.getRuntime().exec(commandTokens, null);
+   }
+
+   /**
+    * Handles streaming output from executed Processes
+    */
+   private static class Receiver implements Runnable
+   {
+      private final InputStream in;
+      private final ShellPrintWriter out;
+
+      public Receiver(InputStream in, ShellPrintWriter out)
+      {
+         this.in = in;
+         this.out = out;
+      }
+
+      @Override
+      public void run()
+      {
+         try {
+            byte[] buf = new byte[10];
+            int read;
+            while ((read = in.read(buf)) != -1)
+            {
+               for (int i = 0; i < read; i++)
+               {
+                  out.write(buf[i]);
+               }
+            }
+         }
+         catch (IOException e) {
+            throw new RuntimeException("Error reading input from child process", e);
+         }
+
+      }
    }
 }
