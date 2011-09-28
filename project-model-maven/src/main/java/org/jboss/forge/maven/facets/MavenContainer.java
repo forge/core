@@ -118,6 +118,7 @@ public class MavenContainer
                            ArtifactRepositoryPolicy.CHECKSUM_POLICY_WARN));
          request.setLocalRepository(localRepository);
          request.setRemoteRepositories(new ArrayList<ArtifactRepository>());
+         request.setSystemProperties(System.getProperties());
 
          MavenRepositorySystemSession repositorySession = new MavenRepositorySystemSession();
          Proxy activeProxy = settings.getActiveProxy();
