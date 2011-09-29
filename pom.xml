@@ -53,6 +53,8 @@
       <module>scaffold-metawidget</module>
       <module>scaffold-metawidget-lib</module>
       <module>dev-plugins</module>
+	  <module>plugin-loader</module>
+	  <module>dist</module>
    </modules>
 
    <properties>
@@ -303,16 +305,6 @@
          <scope>test</scope>
       </dependency>
    </dependencies>
-
-   <profiles>
-      <profile>
-         <id>dist</id>
-         <modules>
-            <module>plugin-loader</module>
-            <module>dist</module>
-         </modules>
-      </profile>
-   </profiles>
 
    <repositories>
       <repository>
