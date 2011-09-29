@@ -16,7 +16,7 @@ public class @{entity.getName()}Bean extends PersistenceUtil implements MenuItem
    private static final long serialVersionUID = 1L;
    
    private List<@{entity.getName()}> list = null;
-   private @{entity.getName()} @{lc = entity.getName().toLowerCase(); lc} = new @{entity.getName()}();
+   private @{entity.getName()} @{ccEntity} = new @{entity.getName()}();
    private long id = 0;
    private PaginationHelper<@{entity.getName()}> pagination;		
    
@@ -37,25 +37,25 @@ public class @{entity.getName()}Bean extends PersistenceUtil implements MenuItem
 
    public void load()
    {
-      @{lc} = findById(@{entity.getName()}.class, id);
+      @{ccEntity} = findById(@{entity.getName()}.class, id);
    }
    
    public String create()
    {
-      create(@{lc});
-      return "view?faces-redirect=true&id=" + @{lc}.getId();
+      create(@{ccEntity});
+      return "view?faces-redirect=true&id=" + @{ccEntity}.getId();
    }
 
    public String delete()
    {
-      delete(@{lc});
+      delete(@{ccEntity});
       return "list?faces-redirect=true";
    }
 
    public String save()
    {
-      save(@{lc});
-      return "view?faces-redirect=true&id=" + @{lc}.getId();
+      save(@{ccEntity});
+      return "view?faces-redirect=true&id=" + @{ccEntity}.getId();
    }
 
    public long getId()
@@ -73,12 +73,12 @@ public class @{entity.getName()}Bean extends PersistenceUtil implements MenuItem
    
    public @{entity.getName()} get@{entity.getName()}()
    {
-      return @{lc};
+      return @{ccEntity};
    }
 
-   public void set@{entity.getName()}(@{entity.getName()} @{lc})
+   public void set@{entity.getName()}(@{entity.getName()} @{ccEntity})
    {
-      this.@{lc} = @{lc};
+      this.@{ccEntity} = @{ccEntity};
    }
 
    public List<@{entity.getName()}> getList()

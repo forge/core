@@ -115,6 +115,33 @@ public class MetawidgetScaffoldTest extends AbstractShellTest
 
    @Test
    @SuppressWarnings("unchecked")
+   public void testGenerateFromEntityCamelCase() throws Exception
+   {
+      Project project = setupScaffoldProject();
+
+      queueInputLines("");
+      getShell().execute("entity --named CustomerPerson");
+
+      queueInputLines("", "");
+      getShell().execute("scaffold from-entity");
+
+      WebResourceFacet web = project.getFacet(WebResourceFacet.class);
+      FileResource<?> view = web.getWebResource("scaffold/customerperson/view.xhtml");
+      FileResource<?> create = web.getWebResource("scaffold/customerperson/create.xhtml");
+      FileResource<?> list = web.getWebResource("scaffold/customerperson/list.xhtml");
+
+      for (FileResource<?> file : Arrays.asList(view, create, list))
+      {
+         Assert.assertTrue(file.exists());
+      }
+      Assert.assertTrue(Streams.toString(view.getResourceInputStream()).contains(
+               "customerPersonBean.customerPerson"));
+      Assert.assertTrue(Streams.toString(create.getResourceInputStream()).contains(
+               "customerPersonBean.customerPerson"));
+   }
+
+   @Test
+   @SuppressWarnings("unchecked")
    public void testGenerateFromEntityWithTemplate() throws Exception
    {
       Project project = setupScaffoldProject();

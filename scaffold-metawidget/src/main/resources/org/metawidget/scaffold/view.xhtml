@@ -37,7 +37,7 @@
 		    <h:messages globalOnly="true"/>
 		    <br/>
 		    
-		    <m:metawidget value="#{@{beanName}.@{entity.getName().toLowerCase()}}" readOnly="#{ _editMode == null or _editMode eq 'false' }" />
+		    <m:metawidget value="#{@{beanName}.@{ccEntity}}" readOnly="#{ _editMode == null or _editMode eq 'false' }" />
 		    
 		    <br/>
 			<c:if test="#{ _editMode != null and _editMode ne 'false' }">

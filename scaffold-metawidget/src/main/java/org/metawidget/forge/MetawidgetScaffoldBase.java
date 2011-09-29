@@ -211,6 +211,7 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
          CompiledTemplateResource backingBeanTemplate = compiler.compile(BACKING_BEAN_TEMPLATE);
          HashMap<Object, Object> context = new HashMap<Object, Object>();
          context.put("entity", entity);
+         context.put("ccEntity", entity.getName().substring(0, 1).toLowerCase() + entity.getName().substring(1));
 
          // Create the Backing Bean for this entity
          JavaClass viewBean = JavaParser.parse(JavaClass.class, backingBeanTemplate.render(context));
@@ -221,9 +222,8 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
 
          // Set new context for view generation
          context = getTemplateContext(template);
-         String name = viewBean.getName();
-         name = name.substring(0, 1).toLowerCase() + name.substring(1);
-         context.put("beanName", name);
+         context.put("beanName", viewBean.getName().substring(0, 1).toLowerCase() + viewBean.getName().substring(1));
+         context.put("ccEntity", entity.getName().substring(0, 1).toLowerCase() + entity.getName().substring(1));
          context.put("entity", entity);
 
          // Generate views
