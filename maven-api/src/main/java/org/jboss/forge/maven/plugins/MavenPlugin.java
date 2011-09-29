@@ -39,4 +39,6 @@ public interface MavenPlugin extends PluginElement
    Configuration getConfig();
 
    List<Execution> listExecutions();
+
+   boolean isExtensionsEnabled();
 }

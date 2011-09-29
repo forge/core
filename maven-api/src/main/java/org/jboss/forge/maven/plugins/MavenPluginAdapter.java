@@ -49,6 +49,7 @@ public class MavenPluginAdapter extends org.apache.maven.model.Plugin implements
       setVersion(dependency.getVersion());
       setConfiguration(parseConfig(mavenPlugin.getConfig()));
       setExecutions(transformExecutions(mavenPlugin));
+      setExtensions(mavenPlugin.isExtensionsEnabled());
    }
 
    private List<PluginExecution> transformExecutions(final MavenPlugin mavenPlugin)
@@ -129,4 +130,9 @@ public class MavenPluginAdapter extends org.apache.maven.model.Plugin implements
                .setArtifactId(getArtifactId())
                .setVersion(getVersion());
    }
+
+    @Override
+    public boolean isExtensionsEnabled() {
+        return Boolean.getBoolean(getExtensions());
+    }
 }
