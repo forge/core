@@ -92,7 +92,7 @@ public class CDIFacetTest extends SingletonAbstractShellTest
    public void testCdiDependencyAddedWhenInstalled() throws Exception
    {
       DependencyBuilder dependency = DependencyBuilder.create(CDI_DEPENDENCY).setScopeType(ScopeType.COMPILE);
-      testDependencyAddedWhenInstalled(dependency, "2", "9", "");
+      testDependencyAddedWhenInstalled(dependency, "2", "1", "");
    }
 
    @Test

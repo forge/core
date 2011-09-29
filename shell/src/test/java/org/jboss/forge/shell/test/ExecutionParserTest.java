@@ -24,6 +24,7 @@ package org.jboss.forge.shell.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import javax.inject.Inject;
 
@@ -73,5 +74,15 @@ public class ExecutionParserTest extends AbstractShellTest
       assertNull(plugin.getBooleanOptionOmitted());
       getShell().execute("motp booleanOptionOmitted");
       assertEquals(false, plugin.getBooleanOptionOmitted());
+   }
+
+   @Test
+   public void testVarargsTakesUnusedParameters() throws Exception
+   {
+      getShell().execute("motp varargsOption -Pfoo --bar -ext");
+      assertEquals(3, plugin.getVarargsOptions().size());
+      assertTrue(plugin.getVarargsOptions().contains("-Pfoo"));
+      assertTrue(plugin.getVarargsOptions().contains("--bar"));
+      assertTrue(plugin.getVarargsOptions().contains("-ext"));
    }
 }

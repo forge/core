@@ -21,6 +21,9 @@
  */
 package org.jboss.forge.shell.test.command;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.inject.Singleton;
 
 import org.jboss.forge.shell.PromptType;
@@ -41,6 +44,7 @@ public class MockOptionTestPlugin implements Plugin
    private String requiredOption = "";
    private Boolean booleanOptionOmitted = null;
    private String defaultCommandArg;
+   private String[] varargsOptions;
 
    @DefaultCommand
    public void defaultCommand(@Option(required = true) final String args)
@@ -63,6 +67,12 @@ public class MockOptionTestPlugin implements Plugin
             type = PromptType.JAVA_PACKAGE) final String option)
    {
       requiredOption = option;
+   }
+
+   @Command("varargsOption")
+   public void requiredOption(@Option final String... options)
+   {
+      varargsOptions = options;
    }
 
    @Command("booleanOptionOmitted")
@@ -110,5 +120,10 @@ public class MockOptionTestPlugin implements Plugin
    public String getDefaultCommandArg()
    {
       return defaultCommandArg;
+   }
+
+   public List<String> getVarargsOptions()
+   {
+      return Arrays.asList(varargsOptions);
    }
 }

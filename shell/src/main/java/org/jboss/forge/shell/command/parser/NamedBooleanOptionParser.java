@@ -22,10 +22,10 @@
 
 package org.jboss.forge.shell.command.parser;
 
+import java.util.Queue;
+
 import org.jboss.forge.shell.command.CommandMetadata;
 import org.jboss.forge.shell.command.OptionMetadata;
-
-import java.util.Queue;
 
 /**
  * Parses named boolean options such as:
@@ -39,7 +39,7 @@ public class NamedBooleanOptionParser implements CommandParser
 {
    @Override
    public CommandParserContext parse(final CommandMetadata command, final Queue<String> tokens,
-                                     final CommandParserContext ctx)
+            final CommandParserContext ctx)
    {
       String currentToken = tokens.peek();
       if (currentToken.matches("--?\\S+"))
@@ -55,6 +55,7 @@ public class NamedBooleanOptionParser implements CommandParser
                   if (command.hasShortOption(shortOption))
                   {
                      processOption(ctx, tokens, command, shortOption, true);
+                     tokens.remove();
                   }
                }
                catch (IllegalArgumentException e)
@@ -62,7 +63,6 @@ public class NamedBooleanOptionParser implements CommandParser
                   ctx.addWarning("No such option [-" + shortOption + "] for command [" + command + "].");
                }
             }
-            tokens.remove();
          }
          else
          {
@@ -85,8 +85,8 @@ public class NamedBooleanOptionParser implements CommandParser
    }
 
    private static void processOption(final CommandParserContext ctx, final Queue<String> tokens,
-                                     final CommandMetadata command, final String currentToken,
-                                     final boolean shortOption)
+            final CommandMetadata command, final String currentToken,
+            final boolean shortOption)
    {
       OptionMetadata option = command.getNamedOption(currentToken);
 
