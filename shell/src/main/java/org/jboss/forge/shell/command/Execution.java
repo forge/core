@@ -46,6 +46,7 @@ import org.mvel2.util.ParseTools;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="mailto:koen.aers@gmail.com">Koen Aers</a>
  */
 public class Execution
 {
@@ -153,9 +154,9 @@ public class Execution
                finally
                {
                   if (success)
-                     manager.fireEvent(new CommandExecuted(Status.SUCCESS), new Annotation[] {});
+                     manager.fireEvent(new CommandExecuted(Status.SUCCESS, command), new Annotation[] {});
                   else
-                     manager.fireEvent(new CommandExecuted(Status.FAILURE), new Annotation[] {});
+                     manager.fireEvent(new CommandExecuted(Status.FAILURE, command), new Annotation[] {});
                }
             }
          }
