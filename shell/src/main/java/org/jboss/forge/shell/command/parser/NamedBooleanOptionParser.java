@@ -46,6 +46,7 @@ public class NamedBooleanOptionParser implements CommandParser
       {
          if ((currentToken.length() > 1) && (currentToken.charAt(1) != '-'))
          {
+            boolean matched = false;
             for (int i = 1; i < currentToken.length(); i++)
             {
                String shortOption = currentToken.substring(i, i + 1);
@@ -55,7 +56,7 @@ public class NamedBooleanOptionParser implements CommandParser
                   if (command.hasShortOption(shortOption))
                   {
                      processOption(ctx, tokens, command, shortOption, true);
-                     tokens.remove();
+                     matched = true;
                   }
                }
                catch (IllegalArgumentException e)
@@ -63,6 +64,8 @@ public class NamedBooleanOptionParser implements CommandParser
                   ctx.addWarning("No such option [-" + shortOption + "] for command [" + command + "].");
                }
             }
+            if (matched)
+               tokens.remove();
          }
          else
          {
