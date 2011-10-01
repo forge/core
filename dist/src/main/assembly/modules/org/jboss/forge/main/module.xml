@@ -23,7 +23,6 @@
       <resource-root path="forge-project-model-maven.jar" />
       <resource-root path="forge-scaffold-plugins.jar" />
       <resource-root path="forge-shell.jar" />
-      <resource-root path="fpak.jar" />
       <resource-root path="guava.jar" />
       <resource-root path="hibernate-jpa-2.0-api.jar" />
       <resource-root path="httpclient.jar" />

@@ -11,17 +11,7 @@
    <packaging>jar</packaging>
    <name>Forge - Scaffolding Plugins</name>
 
-   <repositories>
-      <repository>
-         <id>sun</id>
-         <url>http://download.java.net/maven/2/</url>
-      </repository>
-   </repositories>
-   
    <properties>
-   		<el.version>2.2</el.version>
-   		<fpak.version>1.0.Alpha2</fpak.version>
-   		<metawidget.version>1.10</metawidget.version>
    		<seam.render.version>1.0.0.Alpha1</seam.render.version>
    </properties>
 
@@ -36,21 +26,7 @@
          <artifactId>forge-javaee-api</artifactId>
          <scope>compile</scope>
       </dependency>
-
-       <dependency>
-           <groupId>org.jboss.fpak</groupId>
-           <artifactId>fpak</artifactId>
-           <version>${fpak.version}</version>
-       </dependency>
        
-      <!-- TODO this EL dep should probably be included at a higher level
-      <dependency>
-         <groupId>org.glassfish.web</groupId>
-         <artifactId>el-impl</artifactId>
-         <version>${el.version}</version>
-         <scope>compile</scope>
-      </dependency>
- -->
       <!-- Test Dependencies -->
       <dependency>
          <groupId>org.jboss.forge</groupId>
