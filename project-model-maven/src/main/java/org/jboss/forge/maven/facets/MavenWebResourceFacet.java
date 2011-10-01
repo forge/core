@@ -125,7 +125,7 @@ public class MavenWebResourceFacet extends BaseFacet implements WebResourceFacet
          if (!plugin.getConfig().hasConfigurationElement("failOnMissingWebXml"))
          {
             plugin.getConfig().addConfigurationElement(
-                     ConfigurationElementBuilder.create().setName("failOnMissingWebXml").setText("true"));
+                     ConfigurationElementBuilder.create().setName("failOnMissingWebXml").setText("false"));
          }
          else
          {
