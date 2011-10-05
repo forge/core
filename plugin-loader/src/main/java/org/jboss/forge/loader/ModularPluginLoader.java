@@ -36,6 +36,9 @@ import org.jboss.modules.ResourceLoaderSpec;
 import org.jboss.modules.ResourceLoaders;
 
 /**
+ * To use this loader, just instantiate it and start loading modules. it will handle delegation to the boot module
+ * loader.
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  *         http://docs.jboss.org/jbossmodules/1.0.2.GA/api/index.html?org/jboss/modules/ModuleSpec.html
