@@ -91,7 +91,17 @@ public class MavenPluginBuilder implements MavenPlugin, PluginElement
       return this;
    }
 
-   @Override
+   public MavenPluginBuilder setExtensions(boolean extensions) {
+       plugin.setExtenstions(extensions);
+       return this;
+   }
+
+    @Override
+    public boolean isExtensionsEnabled() {
+        return plugin.isExtensionsEnabled();
+    }
+
+    @Override
    public String toString()
    {
       return plugin.toString();
