@@ -95,6 +95,7 @@ public class MavenPluginAdapter extends org.apache.maven.model.Plugin implements
       setVersion(clone.getVersion());
       setConfiguration(plugin.getConfiguration());
       setExecutions(clone.getExecutions());
+      setExtensions(clone.getExtensions());
    }
 
    @Override
@@ -133,6 +134,6 @@ public class MavenPluginAdapter extends org.apache.maven.model.Plugin implements
 
     @Override
     public boolean isExtensionsEnabled() {
-        return Boolean.getBoolean(getExtensions());
+        return isExtensions();
     }
 }
