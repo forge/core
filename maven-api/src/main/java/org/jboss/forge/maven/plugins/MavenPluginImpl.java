@@ -86,6 +86,10 @@ public class MavenPluginImpl implements MavenPlugin {
             b.append("<version>").append(dependency.getVersion()).append("</version>");
         }
 
+        if(extensions) {
+            b.append("<extensions>true</extensions>");
+        }
+
         if (configuration != null) {
             b.append(configuration.toString());
         }
