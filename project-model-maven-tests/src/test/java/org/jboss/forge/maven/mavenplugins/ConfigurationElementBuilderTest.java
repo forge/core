@@ -29,6 +29,8 @@ import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.containsString;
 
 /**
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
@@ -210,5 +212,16 @@ public class ConfigurationElementBuilderTest
                 .createConfigurationElement("contextRoot").setText("/myapp").getParentElement().getParentElement().getParentPluginConfig().getOrigin();
 
         assertEquals(EAR_PLUGIN, earPlugin.toString());
+    }
+
+    @Test
+    public void testCreatePluginWithExensions() {
+        MavenPluginBuilder plugin = MavenPluginBuilder.create().setDependency(
+                DependencyBuilder.create()
+                        .setGroupId("org.apache.maven.plugins")
+                        .setArtifactId("maven-compiler-plugin")
+        ).setExtensions(true);
+
+        assertThat(plugin.toString(), containsString("<extensions>true</extensions>"));
     }
 }
