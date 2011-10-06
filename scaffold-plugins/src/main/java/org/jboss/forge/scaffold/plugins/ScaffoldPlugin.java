@@ -52,7 +52,9 @@ import org.jboss.forge.shell.plugins.Help;
 import org.jboss.forge.shell.plugins.Option;
 import org.jboss.forge.shell.plugins.PipeOut;
 import org.jboss.forge.shell.plugins.Plugin;
+import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresProject;
+import org.jboss.forge.shell.plugins.SetupCommand;
 import org.jboss.forge.shell.plugins.Topic;
 import org.jboss.forge.shell.util.ConstraintInspector;
 
@@ -64,6 +66,7 @@ import org.jboss.forge.shell.util.ConstraintInspector;
 @Topic("UI Generation & Scaffolding")
 @Help("Metawidget UI scaffolding")
 @RequiresProject
+@RequiresFacet(ScaffoldProvider.class)
 public class ScaffoldPlugin implements Plugin
 {
    @Inject
@@ -84,7 +87,7 @@ public class ScaffoldPlugin implements Plugin
    @Inject
    private Event<InstallFacets> installFacets;
 
-   @Command("setup")
+   @SetupCommand
    public void setup(
             final PipeOut out,
             @Option(name = "scaffoldType", required = false,
