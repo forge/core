@@ -90,10 +90,9 @@ public class MetawidgetScaffoldTest extends AbstractShellTest
    }
 
    @Test(expected = PluginExecutionException.class)
-   @SuppressWarnings("unchecked")
    public void testCannotGenerateFromEntityUntilScaffoldInstalled() throws Exception
    {
-      Project project = initializeJavaProject();
+      initializeJavaProject();
 
       queueInputLines("");
       getShell().execute("persistence setup --provider HIBERNATE  --container JBOSS_AS7");
