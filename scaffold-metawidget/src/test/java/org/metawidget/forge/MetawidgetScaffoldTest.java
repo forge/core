@@ -39,6 +39,7 @@ import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.java.JavaResource;
+import org.jboss.forge.shell.exceptions.PluginExecutionException;
 import org.jboss.forge.shell.util.Streams;
 import org.jboss.forge.spec.javaee.ServletFacet;
 import org.jboss.forge.test.AbstractShellTest;
@@ -86,6 +87,23 @@ public class MetawidgetScaffoldTest extends AbstractShellTest
                "/resources/scaffold/forge-template.xhtml"));
 
       Assert.assertTrue(web.getWebResource("/resources/scaffold/forge-template.xhtml").exists());
+   }
+
+   @Test(expected = PluginExecutionException.class)
+   @SuppressWarnings("unchecked")
+   public void testCannotGenerateFromEntityUntilScaffoldInstalled() throws Exception
+   {
+      Project project = initializeJavaProject();
+
+      queueInputLines("");
+      getShell().execute("persistence setup --provider HIBERNATE  --container JBOSS_AS7");
+
+      queueInputLines("");
+      getShell().execute("entity --named Customer");
+
+      queueInputLines("", "");
+      getShell().execute("scaffold from-entity");
+
    }
 
    @Test
