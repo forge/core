@@ -45,14 +45,17 @@ import org.jboss.forge.shell.plugins.Help;
 import org.jboss.forge.shell.plugins.Option;
 import org.jboss.forge.shell.plugins.PipeOut;
 import org.jboss.forge.shell.plugins.Plugin;
+import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresProject;
+import org.jboss.forge.shell.plugins.SetupCommand;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Alias("plugins")
-@RequiresProject
 @Help("Set up necessary features for Forge plugin development")
+@RequiresProject
+@RequiresFacet(ForgeAPIFacet.class)
 public class PluginsPlugin implements Plugin
 {
    @Inject
@@ -67,7 +70,7 @@ public class PluginsPlugin implements Plugin
    @Inject
    private ShellPrompt prompt;
 
-   @Command("setup")
+   @SetupCommand
    public void setup(final PipeOut out)
    {
       if (!project.hasFacet(ForgeAPIFacet.class))
