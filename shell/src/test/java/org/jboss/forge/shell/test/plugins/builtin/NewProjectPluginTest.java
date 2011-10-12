@@ -124,7 +124,7 @@ public class NewProjectPluginTest extends AbstractShellTest
       assertEquals(PackagingType.WAR, project.getFacet(MavenPackagingFacet.class).getPackagingType());
 
       Assert.assertEquals(
-               "true",
+               "false",
                project.getFacet(MavenPluginFacet.class)
                         .getPlugin(DependencyBuilder.create("org.apache.maven.plugins:maven-war-plugin")).getConfig()
                         .getConfigurationElement("failOnMissingWebXml").getText());

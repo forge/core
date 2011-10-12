@@ -147,7 +147,8 @@ public abstract class AbstractShellPrompt implements Shell
       String input;
       do
       {
-         input = prompt(message);
+         String query = " [" + defaultIfEmpty + "] ";
+         input = prompt(message + query);
          if ((input == null) || "".equals(input.trim()))
          {
             result = defaultIfEmpty;
@@ -413,7 +414,8 @@ public abstract class AbstractShellPrompt implements Shell
       String input;
       do
       {
-         input = prompt(message);
+         String query = " [" + defaultIfEmpty + "] ";
+         input = prompt(message + query);
          if ((input == null) || input.isEmpty())
          {
             input = defaultIfEmpty;
@@ -449,7 +451,8 @@ public abstract class AbstractShellPrompt implements Shell
       T result;
       do
       {
-         String value = promptWithCompleter(message, new CompleterAdaptor(
+         String query = " [" + defaultIfEmpty + "] ";
+         String value = promptWithCompleter(message + query, new CompleterAdaptor(
                   new EnumCompleter(type)));
 
          if ((value == null) || value.trim().isEmpty())
@@ -461,7 +464,7 @@ public abstract class AbstractShellPrompt implements Shell
             result = (T) Enums.valueOf(type, value.trim());
             if (result == null)
             {
-               result = promptChoiceTyped(message, Arrays.asList(type.getEnumConstants()),
+               result = promptChoiceTyped(message + query, Arrays.asList(type.getEnumConstants()),
                         defaultIfEmpty);
             }
          }
@@ -494,7 +497,9 @@ public abstract class AbstractShellPrompt implements Shell
    public FileResource<?> promptFile(final String message, final FileResource<?> defaultIfEmpty)
    {
       FileResource<?> result = defaultIfEmpty;
-      String path = promptWithCompleter(message, new FileNameCompleter());
+
+      String query = " [ .../" + defaultIfEmpty.getName() + "] ";
+      String path = promptWithCompleter(message + query, new FileNameCompleter());
       if ((path != null) && !path.trim().isEmpty())
       {
          path = Files.canonicalize(path);
@@ -536,7 +541,8 @@ public abstract class AbstractShellPrompt implements Shell
       String input;
       do
       {
-         input = prompt(message + " [" + defaultIfEmpty + "]");
+         String query = " [" + defaultIfEmpty + "] ";
+         input = prompt(message + query);
          if ("".equals(input.trim()))
          {
             input = defaultIfEmpty;
@@ -547,11 +553,11 @@ public abstract class AbstractShellPrompt implements Shell
    }
 
    @Override
-   public String promptSecret(String message, String defaultIfEmpty)
+   public String promptSecret(final String message, final String defaultIfEmpty)
    {
       String secret = promptSecret(message + " [ENTER for default]");
 
-      if (secret == null || secret.trim().isEmpty())
+      if ((secret == null) || secret.trim().isEmpty())
          secret = defaultIfEmpty;
 
       return secret;
