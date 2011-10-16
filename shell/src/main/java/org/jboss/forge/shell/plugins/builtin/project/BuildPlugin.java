@@ -24,6 +24,7 @@ package org.jboss.forge.shell.plugins.builtin.project;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.maven.profiles.Profile;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.facets.PackagingFacet;
@@ -64,6 +65,7 @@ public class BuildPlugin implements Plugin {
     @DefaultCommand
     public void build(final PipeOut out,
                       @Option(name = "notest", flagOnly = true) boolean notest,
+                      @Option(name = "profile", completer = ProfileCompleter.class) String profile,
                       @Option(description = "build arguments") String... args) {
         PackagingFacet packaging = project.getFacet(PackagingFacet.class);
 
@@ -77,6 +79,10 @@ public class BuildPlugin implements Plugin {
 
         if (notest) {
            arguments.add("-Dmaven.test.skip=true");
+        }
+
+        if(profile != null) {
+            arguments.add("-P" + profile);
         }
 
         if(args == null) {
