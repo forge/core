@@ -100,11 +100,7 @@ public class FacesFacetImpl extends BaseJavaEEFacet implements FacesFacet
          getConfigFile().setContents(getClass()
                   .getResourceAsStream("/org/jboss/forge/web/faces-config.xml"));
 
-         if(!project.hasFacet(CDIFacet.class)) {
-             if(shell.promptBoolean("Do you also want to install CDI?", true)) {
-                  request.fire(new InstallFacets(CDIFacet.class));
-             }
-         }
+
       }
       return super.install();
    }
