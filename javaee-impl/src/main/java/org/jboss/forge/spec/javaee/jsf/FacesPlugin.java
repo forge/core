@@ -40,6 +40,7 @@ import org.jboss.forge.shell.plugins.PipeOut;
 import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.SetupCommand;
+import org.jboss.forge.spec.javaee.CDIFacet;
 import org.jboss.forge.spec.javaee.FacesFacet;
 import org.jboss.forge.spec.javaee.ServletFacet;
 import org.jboss.seam.render.TemplateCompiler;
@@ -73,6 +74,11 @@ public class FacesPlugin implements Plugin
       if (!project.hasFacet(FacesFacet.class))
       {
          request.fire(new InstallFacets(FacesFacet.class));
+         if(!project.hasFacet(CDIFacet.class)) {
+            if(prompt.promptBoolean("Do you also want to install CDI?", true)) {
+                 request.fire(new InstallFacets(CDIFacet.class));
+            }
+         }
       }
 
       if (project.hasFacet(FacesFacet.class))
