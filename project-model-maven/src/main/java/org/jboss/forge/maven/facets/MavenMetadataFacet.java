@@ -101,7 +101,12 @@ public class MavenMetadataFacet extends BaseFacet implements MetadataFacet
    @Override
    public String getTopLevelPackage()
    {
-      return project.getFacet(MavenCoreFacet.class).getPOM().getGroupId();
+	  String groupId = project.getFacet(MavenCoreFacet.class).getPOM().getGroupId();
+	  
+	  if (groupId == null) {
+		  groupId = project.getFacet(MavenCoreFacet.class).getPOM().getParent().getGroupId();
+	  }
+      return groupId;
    }
 
    @Override
