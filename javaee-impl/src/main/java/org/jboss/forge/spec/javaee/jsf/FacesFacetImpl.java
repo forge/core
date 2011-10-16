@@ -33,21 +33,17 @@ import java.util.Queue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.jboss.forge.project.facets.WebResourceFacet;
-import org.jboss.forge.project.facets.events.InstallFacets;
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.Resource;
-import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.ShellMessages;
 import org.jboss.forge.shell.ShellPrintWriter;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.spec.javaee.BaseJavaEEFacet;
-import org.jboss.forge.spec.javaee.CDIFacet;
 import org.jboss.forge.spec.javaee.FacesFacet;
 import org.jboss.forge.spec.javaee.ServletFacet;
 import org.jboss.forge.spec.javaee.util.ServletUtil;
@@ -65,12 +61,6 @@ public class FacesFacetImpl extends BaseJavaEEFacet implements FacesFacet
 {
    @Inject
    private ShellPrintWriter out;
-
-   @Inject
-   private Shell shell;
-
-   @Inject
-   private Event<InstallFacets> request;
 
    @Override
    public FileResource<?> getConfigFile()
@@ -99,8 +89,6 @@ public class FacesFacetImpl extends BaseJavaEEFacet implements FacesFacet
          }
          getConfigFile().setContents(getClass()
                   .getResourceAsStream("/org/jboss/forge/web/faces-config.xml"));
-
-
       }
       return super.install();
    }
