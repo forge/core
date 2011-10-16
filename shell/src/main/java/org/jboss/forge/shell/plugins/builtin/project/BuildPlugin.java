@@ -24,6 +24,7 @@ package org.jboss.forge.shell.plugins.builtin.project;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.maven.profiles.Profile;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.facets.PackagingFacet;
@@ -37,35 +38,57 @@ import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresProject;
 import org.jboss.forge.shell.plugins.Topic;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Alias("build")
 @Topic("Project")
 @RequiresProject
-@RequiresFacet({ DependencyFacet.class, PackagingFacet.class })
+@RequiresFacet({DependencyFacet.class, PackagingFacet.class})
 @Help("Perform a build using the underlying build system.")
-public class BuildPlugin implements Plugin
-{
+public class BuildPlugin implements Plugin {
 
-   private Project project;
+    private Project project;
 
-   public BuildPlugin()
-   {
-   }
+    public BuildPlugin() {
+    }
 
-   @Inject
-   public BuildPlugin(final Project project)
-   {
-      this.project = project;
-   }
+    @Inject
+    public BuildPlugin(final Project project) {
+        this.project = project;
+    }
 
-   @DefaultCommand
-   public void build(final PipeOut out,
-            @Option(description = "build arguments") final String... args)
-   {
-      PackagingFacet packaging = project.getFacet(PackagingFacet.class);
-      packaging.executeBuild(args);
-   }
+    @DefaultCommand
+    public void build(final PipeOut out,
+                      @Option(name = "notest", flagOnly = true) boolean notest,
+                      @Option(name = "profile", completer = ProfileCompleter.class) String profile,
+                      @Option(description = "build arguments") String... args) {
+        PackagingFacet packaging = project.getFacet(PackagingFacet.class);
+
+        List<String> arguments = null;
+        if(args == null) {
+            arguments = new ArrayList<String>();
+            arguments.add("install");
+        } else {
+            arguments = new ArrayList<String>(Arrays.asList(args));
+        }
+
+        if (notest) {
+           arguments.add("-Dmaven.test.skip=true");
+        }
+
+        if(profile != null) {
+            arguments.add("-P" + profile);
+        }
+
+        if(args == null) {
+            args = new String[arguments.size()];
+        }
+        packaging.executeBuild(arguments.toArray(args));
+    }
 
 }
