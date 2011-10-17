@@ -25,6 +25,7 @@ package org.jboss.forge.maven.facets;
 import javax.enterprise.context.Dependent;
 
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Parent;
 import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.Dependency;
@@ -101,7 +102,16 @@ public class MavenMetadataFacet extends BaseFacet implements MetadataFacet
    @Override
    public String getTopLevelPackage()
    {
-      return project.getFacet(MavenCoreFacet.class).getPOM().getGroupId();
+      String groupId = project.getFacet(MavenCoreFacet.class).getPOM().getGroupId();
+
+      // If groupId is null, try to grab the parent's groupId
+      if (groupId == null) {
+          Parent parent = project.getFacet(MavenCoreFacet.class).getPOM().getParent();
+          if (parent != null) {
+              groupId = parent.getGroupId();
+          }
+      }
+      return groupId;
    }
 
    @Override
