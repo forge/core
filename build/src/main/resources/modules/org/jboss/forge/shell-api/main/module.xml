@@ -9,6 +9,29 @@
    <dependencies>
       <module name="javax.api" />
       <module name="javax.enterprise.api" export="true"/>
+      
+      <module name="org.jboss.forge.parser-xml" services="import" optional="false" export="true">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+      
+      <module name="org.jboss.forge.event-bus" services="import" optional="false" export="true">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+      
+      
+      
+      <module name="org.jboss.solder" services="import" optional="false" export="true">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
    </dependencies>
    
 </module>

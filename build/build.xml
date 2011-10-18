@@ -61,33 +61,120 @@
           ~ +++++++   KEEP THIS LIST ALPHABETICAL BY MODULE NAME!   +++++++
           ~ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
           -->
-		
+		<module-def name="ch.qos.cal10n">
+			<maven-resource group="ch.qos.cal10n" artifact="cal10n-api" />
+		</module-def>
+
+		<module-def name="com.google.guava">
+			<maven-resource group="com.google.guava" artifact="guava" />
+		</module-def>
+
+		<module-def name="javax.annotation.api">
+			<maven-resource group="org.jboss.spec.javax.annotation" artifact="jboss-annotations-api_1.1_spec" />
+		</module-def>
+
 		<module-def name="javax.api" />
 
-        <module-def name="javax.el.api">
-            <maven-resource group="org.jboss.spec.javax.el" artifact="jboss-el-api_2.2_spec"/>
+		<module-def name="javax.el.api">
+			<maven-resource group="org.jboss.spec.javax.el" artifact="jboss-el-api_2.2_spec" />
+		</module-def>
+
+		<module-def name="javax.enterprise.api">
+			<maven-resource group="javax.enterprise" artifact="cdi-api" />
+		</module-def>
+
+		<module-def name="javax.faces.api">
+			<maven-resource group="org.jboss.spec.javax.faces" artifact="jboss-jsf-api_2.1_spec" />
+		</module-def>
+
+		<module-def name="javax.inject.api">
+			<maven-resource group="javax.inject" artifact="javax.inject" />
+		</module-def>
+
+
+
+		<module-def name="javax.persistence.api">
+			<maven-resource group="org.hibernate.javax.persistence" artifact="hibernate-jpa-2.0-api" />
+		</module-def>
+
+
+
+		<module-def name="javax.servlet.api">
+			<maven-resource group="org.jboss.spec.javax.servlet" artifact="jboss-servlet-api_3.0_spec" />
+		</module-def>
+
+		<module-def name="javax.servlet.jsp.api">
+			<maven-resource group="org.jboss.spec.javax.servlet.jsp" artifact="jboss-jsp-api_2.2_spec" />
+		</module-def>
+
+		<module-def name="javax.servlet.jstl.api">
+			<maven-resource group="org.jboss.spec.javax.servlet.jstl" artifact="jboss-jstl-api_1.2_spec" />
+		</module-def>
+
+		<module-def name="javax.transaction.api">
+			<maven-resource group="org.jboss.spec.javax.transaction" artifact="jboss-transaction-api_1.1_spec" />
+		</module-def>
+
+		<module-def name="javax.validation.api">
+			<maven-resource group="javax.validation" artifact="validation-api" />
+		</module-def>
+		
+        <module-def name="jline">
+            <maven-resource group="org.sonatype.jline" artifact="jline"/>
+            <maven-resource group="org.fusesource.jansi" artifact="jansi"/>
         </module-def>
 
-        <module-def name="javax.enterprise.api">
-            <maven-resource group="javax.enterprise" artifact="cdi-api"/>
-        </module-def>
-		
+		<module-def name="org.apache.log4j">
+			<maven-resource group="log4j" artifact="log4j" />
+		</module-def>
+
+		<module-def name="org.javassist">
+			<maven-resource group="javassist" artifact="javassist" />
+		</module-def>
+
 		<!-- BEGIN Forge Modules -->
 		<module-def name="org.jboss.forge">
 			<maven-resource group="org.jboss.forge" artifact="forge-shell" />
 		</module-def>
-		
+
+		<module-def name="org.jboss.forge.event-bus">
+			<maven-resource group="org.jboss.forge" artifact="forge-event-bus" />
+		</module-def>
+
+		<module-def name="org.jboss.forge.parser-xml">
+			<maven-resource group="org.jboss.forge" artifact="forge-parser-xml" />
+		</module-def>
+
 		<module-def name="org.jboss.forge.shell-api">
 			<maven-resource group="org.jboss.forge" artifact="forge-shell-api" />
 		</module-def>
 		<!-- END Forge Modules -->
-		
-		
-		
+
+		<module-def name="org.jboss.interceptor">
+			<maven-resource group="org.jboss.interceptor" artifact="jboss-interceptor-core" />
+		</module-def>
+
+		<module-def name="org.jboss.interceptor.spi">
+			<maven-resource group="org.jboss.interceptor" artifact="jboss-interceptor-spi" />
+		</module-def>
+
+		<module-def name="javax.interceptor.api">
+			<maven-resource group="org.jboss.spec.javax.interceptor" artifact="jboss-interceptors-api_1.1_spec" />
+		</module-def>
+
+		<module-def name="org.jboss.logmanager">
+			<maven-resource group="org.jboss.logmanager" artifact="jboss-logmanager" />
+		</module-def>
+
 		<module-def name="org.jboss.modules" />
+		
+		<module-def name="org.jboss.solder">
+			<maven-resource group="org.jboss.seam.solder" artifact="seam-solder" />
+		</module-def>
 
 		<module-def name="org.jboss.weld.core">
 			<maven-resource group="org.jboss.weld" artifact="weld-core" />
+			<maven-resource group="org.jboss.weld.se" artifact="weld-se-core" />
 		</module-def>
 
 		<module-def name="org.jboss.weld.api">
@@ -97,6 +184,24 @@
 		<module-def name="org.jboss.weld.spi">
 			<maven-resource group="org.jboss.weld" artifact="weld-spi" />
 		</module-def>
+
+		<module-def name="org.mvel">
+			<maven-resource group="org.mvel" artifact="mvel2" />
+		</module-def>
+
+		<module-def name="org.slf4j">
+			<maven-resource group="org.slf4j" artifact="slf4j-api" />
+		</module-def>
+
+		<module-def name="org.slf4j.ext">
+			<maven-resource group="org.slf4j" artifact="slf4j-ext" />
+		</module-def>
+
+		<module-def name="org.slf4j.impl">
+            <maven-resource group="org.jboss.slf4j" artifact="slf4j-jboss-logmanager"/>
+		</module-def>
+
+		<module-def name="sun.misc" />
 
 	</target>
 

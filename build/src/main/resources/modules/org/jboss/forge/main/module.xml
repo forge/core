@@ -5,25 +5,29 @@
    <main-class name="org.jboss.forge.shell.Bootstrap" />
 
    <resources>
-        <!-- Insert resources here -->
+      <!-- Insert resources here -->
    </resources>
 
    <dependencies>
       <module name="javax.api" />
+      <module name="jline" />
       <module name="org.jboss.modules" />
-      
-      <module name="org.jboss.tools.forge.runtime.ext" services="import" optional="true">
+      <module name="org.jboss.forge.shell-api" services="import">
          <imports>
             <include path="**" />
             <include path="META-INF" />
          </imports>
       </module>
-      <module name="org.jboss.forge.shell-api" services="import" optional="false">
+      <module name="org.jboss.tools.forge.runtime.ext" services="import"
+         optional="true">
          <imports>
             <include path="**" />
             <include path="META-INF" />
          </imports>
       </module>
+      <module name="org.jboss.weld.core" />
+      <module name="org.mvel" />
+      <module name="sun.misc" />
    </dependencies>
-   
+
 </module>

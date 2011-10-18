@@ -66,20 +66,7 @@
             </dependencies>
          </plugin>
       </plugins>
-
-
    </build>
-
-   <dependencyManagement>
-      <dependencies>
-         <dependency>
-            <groupId>org.jboss.spec</groupId>
-            <artifactId>jboss-javaee-6.0</artifactId>
-            <scope>import</scope>
-            <type>pom</type>
-         </dependency>
-      </dependencies>
-   </dependencyManagement>
 
    <dependencies>
 
@@ -92,8 +79,13 @@
       <!-- Build deps go here -->
 
       <dependency>
-         <groupId>org.jboss.spec.javax.el</groupId>
-         <artifactId>jboss-el-api_2.2_spec</artifactId>
+         <groupId>ch.qos.cal10n</groupId>
+         <artifactId>cal10n-api</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>com.google.guava</groupId>
+         <artifactId>guava</artifactId>
       </dependency>
 
       <dependency>
@@ -102,8 +94,63 @@
       </dependency>
 
       <dependency>
+         <groupId>javax.inject</groupId>
+         <artifactId>javax.inject</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>javassist</groupId>
+         <artifactId>javassist</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>javax.validation</groupId>
+         <artifactId>validation-api</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>org.hibernate.javax.persistence</groupId>
+         <artifactId>hibernate-jpa-2.0-api</artifactId>
+      </dependency>
+      
+      <dependency>
+         <groupId>org.fusesource.jansi</groupId>
+         <artifactId>jansi</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-event-bus</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-parser-xml</artifactId>
+      </dependency>
+
+      <dependency>
          <groupId>org.jboss.forge</groupId>
          <artifactId>forge-shell</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>org.jboss.interceptor</groupId>
+         <artifactId>jboss-interceptor-core</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>org.jboss.interceptor</groupId>
+         <artifactId>jboss-interceptor-spi</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>org.jboss.logmanager</groupId>
+         <artifactId>jboss-logmanager</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>org.jboss.slf4j</groupId>
+         <artifactId>slf4j-jboss-logmanager</artifactId>
       </dependency>
 
       <dependency>
@@ -112,8 +159,82 @@
       </dependency>
 
       <dependency>
+         <groupId>org.jboss.seam.solder</groupId>
+         <artifactId>seam-solder</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>org.jboss.spec.javax.annotation</groupId>
+         <artifactId>jboss-annotations-api_1.1_spec</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>org.jboss.spec.javax.el</groupId>
+         <artifactId>jboss-el-api_2.2_spec</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>org.jboss.spec.javax.faces</groupId>
+         <artifactId>jboss-jsf-api_2.1_spec</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>org.jboss.spec.javax.interceptor</groupId>
+         <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>org.jboss.spec.javax.servlet</groupId>
+         <artifactId>jboss-servlet-api_3.0_spec</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>org.jboss.spec.javax.servlet.jsp</groupId>
+         <artifactId>jboss-jsp-api_2.2_spec</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>org.jboss.spec.javax.servlet.jstl</groupId>
+         <artifactId>jboss-jstl-api_1.2_spec</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>org.jboss.spec.javax.transaction</groupId>
+         <artifactId>jboss-transaction-api_1.1_spec</artifactId>
+      </dependency>
+
+      <dependency>
          <groupId>org.jboss.weld.se</groupId>
          <artifactId>weld-se-core</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>org.mvel</groupId>
+         <artifactId>mvel2</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>org.slf4j</groupId>
+         <artifactId>slf4j-api</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>org.slf4j</groupId>
+         <artifactId>slf4j-ext</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>org.slf4j</groupId>
+         <artifactId>slf4j-log4j12</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.sonatype.jline</groupId>
+         <artifactId>jline</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>log4j</groupId>
+         <artifactId>log4j</artifactId>
       </dependency>
 
    </dependencies>
