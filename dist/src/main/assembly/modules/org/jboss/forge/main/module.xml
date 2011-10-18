@@ -15,6 +15,7 @@
       <resource-root path="contenttype.jar" />
       <resource-root path="core.jar" />
       <resource-root path="el-api.jar" />
+      
       <resource-root path="forge-dev-plugins.jar" />
       <resource-root path="forge-event-bus.jar" />
       <resource-root path="forge-git-tools.jar" />
@@ -23,6 +24,7 @@
       <resource-root path="forge-project-model-maven.jar" />
       <resource-root path="forge-scaffold-plugins.jar" />
       <resource-root path="forge-shell.jar" />
+      
       <resource-root path="guava.jar" />
       <resource-root path="hibernate-jpa-2.0-api.jar" />
       <resource-root path="httpclient.jar" />
@@ -51,6 +53,7 @@
       <resource-root path="jboss-saaj-api_1.3_spec.jar" />
       <resource-root path="jboss-servlet-api_3.0_spec.jar" />
       <resource-root path="jboss-transaction-api_1.1_spec.jar" />
+      
       <resource-root path="jline.jar" />
       <resource-root path="jobs.jar" />
       <resource-root path="jsch.jar" />

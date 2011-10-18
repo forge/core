@@ -562,6 +562,7 @@ public class ForgePlugin implements Plugin
       // <module name="org.jboss.forge:main" />
       Node dependencies = module.getSingle("dependencies");
       dependencies.createChild("module").attribute("name", "javax.api");
+      dependencies.createChild("module").attribute("name", "org.jboss.forge.shell-api");
 
       List<DependencyResource> pluginDependencies = new ArrayList<DependencyResource>();
       List<Dependency> effectiveDependenciesInScopes = deps.getEffectiveDependenciesInScopes(ScopeType.COMPILE,

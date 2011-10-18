@@ -1,10 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
 
    <parent>
-      <groupId>org.jboss.weld</groupId>
-      <artifactId>weld-parent</artifactId>
-      <version>17</version>
+      <groupId>org.jboss</groupId>
+      <artifactId>jboss-parent</artifactId>
+      <version>6</version>
    </parent>
 
    <groupId>org.jboss.forge</groupId>
@@ -34,30 +35,18 @@
       <maven>3.0</maven>
    </prerequisites>
 
-   <modules>
-      <module>event-bus-api</module>
-      <module>parser-java-api</module>
-      <module>parser-xml</module>
-      <module>maven-api</module>
-      <module>shell-api</module>
-      <module>git-tools</module>
-      <module>parser-java</module>
-      <module>project-model-maven</module>
-      <module>project-model-maven-tests</module>
-      <module>test-harness</module>
-      <module>shell</module>
-      <module>javaee-api</module>
-      <module>javaee-impl</module>
-      <module>scaffold-api</module>
-      <module>scaffold-plugins</module>
-      <module>scaffold-metawidget</module>
-      <module>scaffold-metawidget-lib</module>
-      <module>dev-plugins</module>
-	  <module>plugin-loader</module>
-	  <module>dist</module>
-   </modules>
-
    <properties>
+      <!-- Build Info -->
+      <forge.scm.connection>scm:git:git://github.com/forge/core.git</forge.scm.connection>
+      <forge.developer.connection>scm:git:git@github.com:forge/core.git</forge.developer.connection>
+      <forge.scm.url>http://github.com/forge/core</forge.scm.url>
+      <forge.release.codename>One</forge.release.codename>
+      <forge.release.version>${project.version}</forge.release.version>
+      
+      <!-- Build Plugin Versions -->
+      <version.exec.plugin>1.1.2-Beta1</version.exec.plugin>
+   
+      <!-- Artifact Versions -->
       <arquillian.version>1.0.0.Alpha4</arquillian.version>
       <arquillian.container.version>1.1.1.Final</arquillian.container.version>
       <cal10n.version>0.7.2</cal10n.version>
@@ -78,15 +67,31 @@
       <solder.version>3.0.0.CR4</solder.version>
    </properties>
 
+   <modules>
+      <module>event-bus-api</module>
+      <module>parser-java-api</module>
+      <module>parser-xml</module>
+      <module>maven-api</module>
+      <module>shell-api</module>
+      <module>git-tools</module>
+      <module>parser-java</module>
+      <module>project-model-maven</module>
+      <module>project-model-maven-tests</module>
+      <module>test-harness</module>
+      <module>shell</module>
+      <module>javaee-api</module>
+      <module>javaee-impl</module>
+      <module>scaffold-api</module>
+      <module>scaffold-plugins</module>
+      <module>scaffold-metawidget</module>
+      <module>scaffold-metawidget-lib</module>
+      <module>dev-plugins</module>
+      <module>plugin-loader</module>
+      <module>dist</module>
+   </modules>
+
    <dependencyManagement>
       <dependencies>
-         <dependency>
-            <groupId>org.jboss.weld</groupId>
-            <artifactId>weld-core-bom</artifactId>
-            <version>${weld.bom.version}</version>
-            <type>pom</type>
-            <scope>import</scope>
-         </dependency>
 
          <dependency>
             <groupId>org.jboss.modules</groupId>
@@ -161,7 +166,7 @@
             <artifactId>forge-dev-plugins</artifactId>
             <version>${project.version}</version>
          </dependency>
-         
+
          <!-- TODO this needs to be moved into a separate repository -->
          <dependency>
             <groupId>org.metawidget</groupId>
@@ -173,7 +178,7 @@
             <artifactId>metawidget-forge-scaffold</artifactId>
             <version>${project.version}</version>
          </dependency>
-         
+
          <dependency>
             <groupId>org.jboss.forge</groupId>
             <artifactId>forge-scaffold-api</artifactId>
@@ -190,14 +195,17 @@
             <version>${project.version}</version>
          </dependency>
 
+         <!-- Weld -->
+         <dependency>
+            <groupId>org.jboss.weld</groupId>
+            <artifactId>weld-core-bom</artifactId>
+            <version>${weld.bom.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+         </dependency>
          <dependency>
             <groupId>org.jboss.weld.se</groupId>
             <artifactId>weld-se-core</artifactId>
-            <version>${weld.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.weld.core</groupId>
-            <artifactId>weld-core</artifactId>
             <version>${weld.version}</version>
          </dependency>
 
@@ -370,7 +378,7 @@
          <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>
-            <version>1.1</version>
+            <version>${version.exec.plugin}</version>
          </plugin>
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -386,6 +394,144 @@
             </configuration>
          </plugin>
       </plugins>
+
+
+      <pluginManagement>
+         <plugins>
+            <plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-jar-plugin</artifactId>
+               <version>${version.jar.plugin}</version>
+               <configuration>
+                  <archive>
+                     <manifest>
+                        <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                        <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                     </manifest>
+                     <manifestEntries>
+                        <Implementation-URL>${project.url}</Implementation-URL>
+                        <JBossAS-Release-Version>${forge.release.version}</JBossAS-Release-Version>
+                        <JBossAS-Release-Codename>${forge.release.codename}</JBossAS-Release-Codename>
+                     </manifestEntries>
+                     <manifestSections>
+                        <manifestSection>
+                           <name>Build-Information</name>
+                           <manifestEntries>
+                              <Maven-Version>${maven.version}</Maven-Version>
+                              <Java-Version>${java.version}</Java-Version>
+                              <Java-Vendor>${java.vendor}</Java-Vendor>
+                              <Os-Name>${os.name}</Os-Name>
+                              <Os-Arch>${os.arch}</Os-Arch>
+                              <Os-Version>${os.version}</Os-Version>
+                              <Scm-Url>${forge.scm.url}</Scm-Url>
+                              <Scm-Connection>${forge.scm.connection}</Scm-Connection>
+                              <Build-Time>${build.timestamp}</Build-Time>
+                           </manifestEntries>
+                        </manifestSection>
+                     </manifestSections>
+                  </archive>
+               </configuration>
+            </plugin>
+
+            <plugin>
+               <groupId>org.jboss.maven.surefire.modular</groupId>
+               <artifactId>maven-surefire-plugin</artifactId>
+               <version>1.0.0.Alpha3</version>
+            </plugin>
+            
+            <plugin>
+               <!--TODO TEXT. This plugin's configuration is used in m2e only. -->
+               <groupId>org.eclipse.m2e</groupId>
+               <artifactId>lifecycle-mapping</artifactId>
+               <version>1.0.0</version>
+               <configuration>
+                  <lifecycleMappingMetadata>
+                     <pluginExecutions>
+                        <pluginExecution>
+                           <pluginExecutionFilter>
+                              <groupId>
+                                 org.apache.maven.plugins
+                              </groupId>
+                              <artifactId>
+                                 maven-dependency-plugin
+                              </artifactId>
+                              <versionRange>[2.1,)</versionRange>
+                              <goals>
+                                 <goal>copy</goal>
+                              </goals>
+                           </pluginExecutionFilter>
+                           <action>
+                              <ignore />
+                           </action>
+                        </pluginExecution>
+                        <pluginExecution>
+                           <pluginExecutionFilter>
+                              <groupId>
+                                 org.apache.maven.plugins
+                              </groupId>
+                              <artifactId>
+                                 maven-checkstyle-plugin
+                              </artifactId>
+                              <versionRange>[2.5,)</versionRange>
+                              <goals>
+                                 <goal>checkstyle</goal>
+                              </goals>
+                           </pluginExecutionFilter>
+                           <action>
+                              <ignore />
+                           </action>
+                        </pluginExecution>
+                        <pluginExecution>
+                           <pluginExecutionFilter>
+                              <groupId>
+                                 org.apache.maven.plugins
+                              </groupId>
+                              <artifactId>
+                                 maven-clean-plugin
+                              </artifactId>
+                              <versionRange>[2.4.1,)</versionRange>
+                              <goals>
+                                 <goal>clean</goal>
+                              </goals>
+                           </pluginExecutionFilter>
+                           <action>
+                              <ignore />
+                           </action>
+                        </pluginExecution>
+                        <pluginExecution>
+                           <pluginExecutionFilter>
+                              <groupId>
+                                 org.apache.maven.plugins
+                              </groupId>
+                              <artifactId>
+                                 maven-antrun-plugin
+                              </artifactId>
+                              <versionRange>
+                                 [1.4,)
+                              </versionRange>
+                              <goals>
+                                 <goal>run</goal>
+                              </goals>
+                           </pluginExecutionFilter>
+                           <action>
+                              <ignore />
+                           </action>
+                        </pluginExecution>
+                     </pluginExecutions>
+                  </lifecycleMappingMetadata>
+               </configuration>
+            </plugin>
+         </plugins>
+      </pluginManagement>
+
+      <extensions>
+         <extension>
+            <groupId>org.apache.maven.wagon</groupId>
+            <artifactId>wagon-webdav-jackrabbit</artifactId>
+            <version>1.0-beta-7</version>
+         </extension>
+      </extensions>
+
    </build>
 
    <reporting>
@@ -409,9 +555,9 @@
    </reporting>
 
    <scm>
-      <connection>scm:git:git://github.com/forge/core.git</connection>
-      <developerConnection>scm:git:git@github.com:forge/core.git</developerConnection>
-      <url>http://github.com/forge/core</url>
+      <connection>${forge.scm.connection}</connection>
+      <developerConnection>${forge.developer.connection}</developerConnection>
+      <url>${forge.scm.url}</url>
    </scm>
 
 </project>

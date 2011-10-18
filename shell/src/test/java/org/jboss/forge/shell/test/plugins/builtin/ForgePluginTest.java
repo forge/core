@@ -24,6 +24,7 @@ package org.jboss.forge.shell.test.plugins.builtin;
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.test.AbstractShellTest;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -44,6 +45,13 @@ public class ForgePluginTest extends AbstractShellTest
    public void testLogo() throws Exception
    {
       getShell().execute("forge");
+   }
+
+   @Ignore
+   @Test
+   public void testBuildSwitchyard() throws Exception
+   {
+      getShell().execute("forge source-plugin ~/Projects/forge/plugins/switchyard-core/tools/forge/plugin");
    }
 
 }

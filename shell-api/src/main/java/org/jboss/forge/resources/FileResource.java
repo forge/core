@@ -196,6 +196,7 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
    /**
     * Delete this file, non-recursively.
     */
+   @Override
    public boolean delete()
    {
       return delete(false);
@@ -204,6 +205,7 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
    /**
     * Delete this {@link Resource}, and all child resources.
     */
+   @Override
    public boolean delete(final boolean recursive)
    {
       if (recursive)
@@ -360,7 +362,7 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
    }
 
    /**
-    * Create the file in the underlying resource system.
+    * Create the file in the underlying resource system. Necessary directory paths will be created automatically.
     */
    public boolean createNewFile()
    {

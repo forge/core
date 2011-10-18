@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module xmlns="urn:jboss:module:1.0" name="org.jboss.forge">
+
+   <main-class name="org.jboss.forge.shell.Bootstrap" />
+
+   <resources>
+        <!-- Insert resources here -->
+   </resources>
+
+   <dependencies>
+      <module name="javax.api" />
+      <module name="org.jboss.modules" />
+      
+      <module name="org.jboss.tools.forge.runtime.ext" services="import" optional="true">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+      <module name="org.jboss.forge.shell-api" services="import" optional="false">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+   </dependencies>
+   
+</module>
