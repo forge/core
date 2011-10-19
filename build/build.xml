@@ -206,6 +206,10 @@
 			<maven-resource group="org.fusesource.jansi" artifact="jansi" />
 		</module-def>
 
+		<module-def name="org.apache.commons.logging">
+			<maven-resource group="commons-logging" artifact="commons-logging" />
+		</module-def>
+
 		<module-def name="org.apache.httpcomponents">
 			<maven-resource group="org.apache.httpcomponents" artifact="httpclient" />
 			<maven-resource group="org.apache.httpcomponents" artifact="httpcore" />
@@ -302,6 +306,15 @@
 		<module-def name="org.jboss.forge.parser-xml">
 			<maven-resource group="org.jboss.forge" artifact="forge-parser-xml" />
 		</module-def>
+		
+		<module-def name="org.jboss.forge.scaffold.api">
+			<maven-resource group="org.jboss.forge" artifact="forge-scaffold-api" />
+		</module-def>
+		
+		<module-def name="org.jboss.forge.scaffold.impl">
+			<maven-resource group="org.jboss.forge" artifact="forge-scaffold-plugins" />
+			<maven-resource group="org.metawidget" artifact="metawidget-forge" />
+		</module-def>
 
 		<module-def name="org.jboss.forge.shell-api">
 			<maven-resource group="org.jboss.forge" artifact="forge-shell-api" />
@@ -337,7 +350,9 @@
 		</module-def>
 
 		<module-def name="org.jboss.solder">
-			<maven-resource group="org.jboss.seam.solder" artifact="seam-solder" />
+			<maven-resource group="org.jboss.solder" artifact="solder-api" />
+			<maven-resource group="org.jboss.solder" artifact="solder-impl" />
+			<maven-resource group="org.jboss.solder" artifact="solder-logging" />
 		</module-def>
 
 		<module-def name="org.jboss.weld.core">

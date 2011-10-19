@@ -28,6 +28,5 @@
     </resources>
 
     <dependencies>
-        <module name="org.slf4j.jcl-over-slf4j" export="true"/>
     </dependencies>
 </module>

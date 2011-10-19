@@ -5,7 +5,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Singleton;
 
 import org.jboss.forge.shell.events.PreStartup;
-import org.jboss.seam.solder.beanManager.BeanManagerProvider;
+import org.jboss.solder.beanManager.BeanManagerProvider;
 
 /*
  * JBoss, Home of Professional Open Source

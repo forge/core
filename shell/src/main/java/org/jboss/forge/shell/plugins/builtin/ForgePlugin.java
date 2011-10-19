@@ -578,7 +578,17 @@ public class ForgePlugin implements Plugin
          if (DependencyBuilder.areEquivalent(d, DependencyBuilder.create("org.jboss.forge:forge-javaee-api")))
          {
             module.getSingle("dependencies").createChild("module")
-                     .attribute("name", "org.jboss.forge.javaee-api");
+                     .attribute("name", "org.jboss.forge.javaee.api");
+         }
+         if (DependencyBuilder.areEquivalent(d, DependencyBuilder.create("org.jboss.forge:forge-scaffold-api")))
+         {
+            module.getSingle("dependencies").createChild("module")
+                     .attribute("name", "org.jboss.forge.scaffold.api");
+         }
+         if (DependencyBuilder.areEquivalent(d, DependencyBuilder.create("org.jboss.forge:forge-maven-api")))
+         {
+            module.getSingle("dependencies").createChild("module")
+                     .attribute("name", "org.jboss.forge.maven.api");
          }
       }
 

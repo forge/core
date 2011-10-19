@@ -12,12 +12,6 @@
 	
 	<name>Forge - Parser/XML</name>
 	
-	<dependencies>
-		<dependency>
-			<groupId>org.jboss.shrinkwrap.descriptors</groupId>
-			<artifactId>shrinkwrap-descriptors-impl</artifactId>
-		</dependency>
-	</dependencies>
 	<build>
 		<plugins>
 			<plugin>

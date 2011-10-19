@@ -175,6 +175,16 @@
 
       <dependency>
          <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-scaffold-plugins</artifactId>
+      </dependency>
+      
+      <dependency>
+         <groupId>org.metawidget</groupId>
+         <artifactId>metawidget-forge</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
          <artifactId>forge-shell</artifactId>
       </dependency>
 
@@ -204,8 +214,8 @@
       </dependency>
 
       <dependency>
-         <groupId>org.jboss.seam.solder</groupId>
-         <artifactId>seam-solder</artifactId>
+         <groupId>org.jboss.solder</groupId>
+         <artifactId>solder-impl</artifactId>
       </dependency>
 
       <dependency>

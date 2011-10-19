@@ -71,7 +71,7 @@
       <weld.version>1.1.2.Final</weld.version>
       <weld.bom.version>1.1.2.Final</weld.bom.version>
       <seam.render.version>1.0.0.Alpha3</seam.render.version>
-      <solder.version>3.0.0.CR4</solder.version>
+      <solder.version>3.1.0.Beta3</solder.version>
       <wagon.version>2.0</wagon.version>
       <yaml.version>1.7</yaml.version>
    </properties>
@@ -439,11 +439,13 @@
             <artifactId>forge-scaffold-api</artifactId>
             <version>${project.version}</version>
          </dependency>
+         
          <dependency>
             <groupId>org.jboss.forge</groupId>
             <artifactId>forge-scaffold-plugins</artifactId>
             <version>${project.version}</version>
          </dependency>
+         
          <dependency>
             <groupId>org.jboss.forge</groupId>
             <artifactId>forge-test-harness</artifactId>
@@ -495,8 +497,8 @@
             <version>${seam.render.version}</version>
          </dependency>
          <dependency>
-            <groupId>org.jboss.seam.solder</groupId>
-            <artifactId>seam-solder</artifactId>
+            <groupId>org.jboss.solder</groupId>
+            <artifactId>solder-impl</artifactId>
             <version>${solder.version}</version>
          </dependency>
          <dependency>

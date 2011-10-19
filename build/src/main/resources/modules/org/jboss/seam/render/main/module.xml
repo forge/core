@@ -21,9 +21,8 @@
    </resources>
 
    <dependencies>
-      <module name="javax.annotation.api" />
       <module name="javax.enterprise.api" />
-      <module name="javax.interceptor.api" />
+      <module name="org.jboss.forge" />
       <module name="org.jboss.solder" />
       <module name="org.mvel" />
       <module name="javax.api" />

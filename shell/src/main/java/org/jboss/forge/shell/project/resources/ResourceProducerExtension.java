@@ -35,7 +35,7 @@ import javax.enterprise.inject.spi.ProcessAnnotatedType;
 
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.shell.plugins.Current;
-import org.jboss.seam.solder.reflection.annotated.AnnotatedTypeBuilder;
+import org.jboss.solder.reflection.annotated.AnnotatedTypeBuilder;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -47,8 +47,8 @@ public class ResourceProducerExtension implements Extension
    public <T> void processAnnotatedType(@Observes final ProcessAnnotatedType<T> event)
    {
       /**
-       * Create a class to lazy load the builder, so it is not created unless needed.
-       * (Performance Fix)  -- Mike Brock (h/t to Stuart Douglas)
+       * Create a class to lazy load the builder, so it is not created unless needed. (Performance Fix) -- Mike Brock
+       * (h/t to Stuart Douglas)
        */
       class BuilderHolder
       {
@@ -76,7 +76,8 @@ public class ResourceProducerExtension implements Extension
             {
                if (p.getTypeClosure().contains(Resource.class))
                {
-                  builderHolder.getBuilder().overrideConstructorParameterType(c.getJavaMember(), p.getPosition(), Resource.class);
+                  builderHolder.getBuilder().overrideConstructorParameterType(c.getJavaMember(), p.getPosition(),
+                           Resource.class);
                   modifiedType = true;
                }
             }

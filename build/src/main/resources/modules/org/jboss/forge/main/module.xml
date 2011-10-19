@@ -76,7 +76,35 @@
          </imports>
       </module>
 
+      <module name="org.jboss.forge.scaffold.api" services="import">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+
+      <module name="org.jboss.forge.scaffold.impl" services="import">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+
       <module name="org.jboss.forge.shell-api" services="import">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+      
+      <module name="org.jboss.seam.render" services="import">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+      
+      <module name="org.jboss.solder" services="import">
          <imports>
             <include path="**" />
             <include path="META-INF" />
@@ -94,6 +122,7 @@
       <module name="org.jboss.weld.core" services="import" />
 
       <module name="org.mvel" />
+      <module name="org.yaml" />
       <module name="sun.misc" />
       
       <module name="javax.api" />

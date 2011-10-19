@@ -11,10 +11,6 @@
    <packaging>jar</packaging>
    <name>Forge - Scaffolding Plugins</name>
 
-   <properties>
-   		<seam.render.version>1.0.0.Alpha1</seam.render.version>
-   </properties>
-
    <dependencies>
       <dependency>
          <groupId>org.jboss.forge</groupId>
