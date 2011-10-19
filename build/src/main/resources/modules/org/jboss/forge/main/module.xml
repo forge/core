@@ -9,15 +9,26 @@
    </resources>
 
    <dependencies>
+      <module name="org.javassist" />
       <module name="javax.api" />
       <module name="jline" />
+      <module name="org.jboss.interceptor" />
       <module name="org.jboss.modules" />
+      
       <module name="org.jboss.forge.shell-api" services="import">
          <imports>
             <include path="**" />
             <include path="META-INF" />
          </imports>
       </module>
+      
+      <module name="org.jboss.forge.event-bus" services="import" export="true">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+      
       <module name="org.jboss.tools.forge.runtime.ext" services="import"
          optional="true">
          <imports>
@@ -25,7 +36,14 @@
             <include path="META-INF" />
          </imports>
       </module>
-      <module name="org.jboss.weld.core" />
+      
+      <module name="org.jboss.weld.core" services="import">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+      
       <module name="org.mvel" />
       <module name="sun.misc" />
    </dependencies>
