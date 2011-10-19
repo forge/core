@@ -7,7 +7,7 @@
    </resources>
 
    <dependencies>
-      <module name="org.jboss.forge.shell-api" />
+      <module name="org.jboss.forge.shell.api" />
       <module name="org.jboss.forge.javaee.api" />
       <module name="org.jboss.forge.scaffold.api" />
       <module name="org.jboss.seam.render" />

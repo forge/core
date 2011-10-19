@@ -8,7 +8,7 @@
 
    <dependencies>
       <module name="javax.api" />
-      <module name="org.jboss.forge.shell-api"/>
+      <module name="org.jboss.forge.shell.api"/>
       <module name="org.jboss.forge.maven.api" services="import" />
    </dependencies>
    

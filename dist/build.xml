@@ -328,7 +328,7 @@
 			<maven-resource group="org.metawidget" artifact="metawidget-forge" />
 		</module-def>
 
-		<module-def name="org.jboss.forge.shell-api">
+		<module-def name="org.jboss.forge.shell.api">
 			<maven-resource group="org.jboss.forge" artifact="forge-shell-api" />
 		</module-def>
 		<!-- END Forge Modules -->

@@ -90,7 +90,7 @@
          </imports>
       </module>
 
-      <module name="org.jboss.forge.shell-api" services="import">
+      <module name="org.jboss.forge.shell.api" services="import">
          <imports>
             <include path="**" />
             <include path="META-INF" />

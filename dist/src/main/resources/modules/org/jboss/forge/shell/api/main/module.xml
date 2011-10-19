@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<module xmlns="urn:jboss:module:1.0" name="org.jboss.forge.shell-api">
+<module xmlns="urn:jboss:module:1.0" name="org.jboss.forge.shell.api">
 
    <resources>
         <!-- Insert resources here -->

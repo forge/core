@@ -528,7 +528,12 @@ public class ForgePlugin implements Plugin
       // <module name="org.jboss.forge:main" />
       Node dependencies = module.getSingle("dependencies");
       dependencies.createChild("module").attribute("name", pluginName + ".dependencies").attribute("slot", pluginSlot);
-      dependencies.createChild("module").attribute("name", "org.jboss.forge.shell-api");
+      dependencies.createChild("module").attribute("name", "org.jboss.forge.javaee.api")
+               .attribute("services", "import");
+      dependencies.createChild("module").attribute("name", "org.jboss.forge.maven.api").attribute("services", "import");
+      dependencies.createChild("module").attribute("name", "org.jboss.forge.scaffold.api")
+               .attribute("services", "import");
+      dependencies.createChild("module").attribute("name", "org.jboss.forge.shell.api").attribute("services", "import");
       dependencies.createChild("module").attribute("name", "javax.api");
 
       moduleXml.setContents(XMLParser.toXMLString(module));
@@ -562,7 +567,7 @@ public class ForgePlugin implements Plugin
       // <module name="org.jboss.forge:main" />
       Node dependencies = module.getSingle("dependencies");
       dependencies.createChild("module").attribute("name", "javax.api");
-      dependencies.createChild("module").attribute("name", "org.jboss.forge.shell-api");
+      dependencies.createChild("module").attribute("name", "org.jboss.forge.shell.api");
 
       List<DependencyResource> pluginDependencies = new ArrayList<DependencyResource>();
       List<Dependency> effectiveDependenciesInScopes = deps.getEffectiveDependenciesInScopes(ScopeType.COMPILE,
@@ -578,17 +583,20 @@ public class ForgePlugin implements Plugin
          if (DependencyBuilder.areEquivalent(d, DependencyBuilder.create("org.jboss.forge:forge-javaee-api")))
          {
             module.getSingle("dependencies").createChild("module")
-                     .attribute("name", "org.jboss.forge.javaee.api");
+                     .attribute("name", "org.jboss.forge.javaee.api")
+                     .attribute("services", "import");
          }
          if (DependencyBuilder.areEquivalent(d, DependencyBuilder.create("org.jboss.forge:forge-scaffold-api")))
          {
             module.getSingle("dependencies").createChild("module")
-                     .attribute("name", "org.jboss.forge.scaffold.api");
+                     .attribute("name", "org.jboss.forge.scaffold.api")
+                     .attribute("services", "import");
          }
          if (DependencyBuilder.areEquivalent(d, DependencyBuilder.create("org.jboss.forge:forge-maven-api")))
          {
             module.getSingle("dependencies").createChild("module")
-                     .attribute("name", "org.jboss.forge.maven.api");
+                     .attribute("name", "org.jboss.forge.maven.api")
+                     .attribute("services", "import");
          }
       }
 

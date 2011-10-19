@@ -14,7 +14,7 @@
          </imports>
       </module>
       
-      <module name="org.jboss.forge.shell-api" />
+      <module name="org.jboss.forge.shell.api" />
       <module name="org.jboss.forge.javaee.api" />
       <module name="org.slf4j" />
       <module name="org.slf4j.ext" />
