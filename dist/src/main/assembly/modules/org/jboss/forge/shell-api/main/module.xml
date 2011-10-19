@@ -49,7 +49,7 @@
       
       <resource-root path="wagon-file.jar" />
       <resource-root path="wagon-http-lightweight.jar" />
-      <resource-root path="wagon-http-shared.jar" />
+      <resource-root path="wagon-http-shared4.jar" />
       <resource-root path="wagon-provider-api.jar" />
    </resources>
 

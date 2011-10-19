@@ -76,7 +76,9 @@
       <resource-root path="resources.jar" />
       <resource-root path="runtime.jar" />
       <resource-root path="seam-render.jar" />
-      <resource-root path="seam-solder.jar" />
+      <resource-root path="solder-api.jar" />
+      <resource-root path="solder-logging.jar" />
+      <resource-root path="solder-impl.jar" />
       <resource-root path="slf4j-api.jar" />
       <resource-root path="slf4j-ext.jar" />
       <resource-root path="slf4j-log4j12.jar" />
