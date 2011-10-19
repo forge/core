@@ -63,7 +63,9 @@ import org.jboss.forge.spec.javaee.FacesFacet;
 import org.jboss.forge.spec.javaee.PersistenceFacet;
 import org.jboss.forge.spec.javaee.ServletFacet;
 import org.jboss.seam.render.TemplateCompiler;
+import org.jboss.seam.render.spi.TemplateResolver;
 import org.jboss.seam.render.template.CompiledTemplateResource;
+import org.jboss.seam.render.template.resolver.MetaInfClassLoaderTemplateResolver;
 import org.jboss.shrinkwrap.descriptor.api.spec.cdi.beans.BeansDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
 
@@ -90,13 +92,14 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
    private final Dependency richfaces4UI = DependencyBuilder.create("org.richfaces.ui:richfaces-components-ui");
    private final Dependency richfaces4Impl = DependencyBuilder.create("org.richfaces.core:richfaces-core-impl");
 
-   private final CompiledTemplateResource viewTemplate;
-   private final CompiledTemplateResource createTemplate;
-   private final CompiledTemplateResource listTemplate;
-   private final CompiledTemplateResource configTemplate;
-   private final CompiledTemplateResource e404Template;
-   private final CompiledTemplateResource e500Template;
-   private final CompiledTemplateResource indexTemplate;
+   private CompiledTemplateResource viewTemplate;
+   private CompiledTemplateResource createTemplate;
+   private CompiledTemplateResource listTemplate;
+   private CompiledTemplateResource configTemplate;
+   private CompiledTemplateResource e404Template;
+   private CompiledTemplateResource e500Template;
+   private CompiledTemplateResource indexTemplate;
+   TemplateResolver<ClassLoader> resolver;
 
    private final ShellPrompt prompt;
    private final ShellPrintWriter writer;
@@ -114,13 +117,27 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
       this.writer = writer;
       this.compiler = compiler;
       this.install = install;
-      viewTemplate = compiler.compile(VIEW_TEMPLATE);
-      createTemplate = compiler.compile(CREATE_TEMPLATE);
-      listTemplate = compiler.compile(LIST_TEMPLATE);
-      configTemplate = compiler.compile(CONFIG_TEMPLATE);
-      e404Template = compiler.compile(E404_TEMPLATE);
-      e500Template = compiler.compile(E500_TEMPLATE);
-      indexTemplate = compiler.compile(INDEX_TEMPLATE);
+
+      resolver = new MetaInfClassLoaderTemplateResolver(MetawidgetScaffoldBase.class.getClassLoader());
+      compiler.getTemplateResolverFactory().addResolver(resolver);
+   }
+
+   private void loadTemplates()
+   {
+      if (viewTemplate == null)
+         viewTemplate = compiler.compile(VIEW_TEMPLATE);
+      if (createTemplate == null)
+         createTemplate = compiler.compile(CREATE_TEMPLATE);
+      if (listTemplate == null)
+         listTemplate = compiler.compile(LIST_TEMPLATE);
+      if (configTemplate == null)
+         configTemplate = compiler.compile(CONFIG_TEMPLATE);
+      if (e404Template == null)
+         e404Template = compiler.compile(E404_TEMPLATE);
+      if (e500Template == null)
+         e500Template = compiler.compile(E500_TEMPLATE);
+      if (indexTemplate == null)
+         indexTemplate = compiler.compile(INDEX_TEMPLATE);
    }
 
    @Override
@@ -208,6 +225,7 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
          JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
          WebResourceFacet web = project.getFacet(WebResourceFacet.class);
 
+         loadTemplates();
          CompiledTemplateResource backingBeanTemplate = compiler.compile(BACKING_BEAN_TEMPLATE);
          HashMap<Object, Object> context = new HashMap<Object, Object>();
          context.put("entity", entity);
@@ -256,6 +274,7 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
    {
       WebResourceFacet web = project.getFacet(WebResourceFacet.class);
 
+      loadTemplates();
       ScaffoldUtil.createOrOverwrite(prompt, web.getWebResource("WEB-INF/metawidget.xml"),
                configTemplate.render(new HashMap<Object, Object>()), overwrite);
    }
@@ -337,6 +356,7 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
       FacesFacet faces = project.getFacet(FacesFacet.class);
 
+      loadTemplates();
       CompiledTemplateResource configTemplate = compiler.compile(REWRITE_CONFIG_TEMPLATE);
 
       Map<Object, Object> context = new HashMap<Object, Object>();
@@ -396,6 +416,7 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
       generateTemplates(overwrite);
       HashMap<Object, Object> context = getTemplateContext(template);
 
+      loadTemplates();
       result.add(ScaffoldUtil.createOrOverwrite(prompt, web.getWebResource("index.html"), getClass()
                .getResourceAsStream("/org/metawidget/templates/index.html"), overwrite));
 
