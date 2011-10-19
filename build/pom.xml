@@ -109,6 +109,16 @@
       </dependency>
 
       <dependency>
+         <groupId>org.apache.httpcomponents</groupId>
+         <artifactId>httpclient</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>org.apache.httpcomponents</groupId>
+         <artifactId>httpcore</artifactId>
+      </dependency>
+
+      <dependency>
          <groupId>org.hibernate.javax.persistence</groupId>
          <artifactId>hibernate-jpa-2.0-api</artifactId>
       </dependency>
@@ -237,9 +247,15 @@
          <groupId>org.slf4j</groupId>
          <artifactId>slf4j-log4j12</artifactId>
       </dependency>
+      
       <dependency>
          <groupId>org.sonatype.jline</groupId>
          <artifactId>jline</artifactId>
+      </dependency>
+      
+      <dependency>
+         <groupId>org.yaml</groupId>
+         <artifactId>snakeyaml</artifactId>
       </dependency>
 
       <dependency>

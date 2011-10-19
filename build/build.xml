@@ -123,6 +123,11 @@
             <maven-resource group="org.sonatype.jline" artifact="jline"/>
             <maven-resource group="org.fusesource.jansi" artifact="jansi"/>
         </module-def>
+		
+        <module-def name="org.apache.httpcomponents">
+            <maven-resource group="org.apache.httpcomponents" artifact="httpclient"/>
+            <maven-resource group="org.apache.httpcomponents" artifact="httpcore"/>
+        </module-def>
 
 		<module-def name="org.apache.log4j">
 			<maven-resource group="log4j" artifact="log4j" />
@@ -211,6 +216,10 @@
 	        -->
             <maven-resource group="org.slf4j" artifact="slf4j-log4j12"/>
 		</module-def>
+		
+        <module-def name="org.yaml">
+            <maven-resource group="org.yaml" artifact="snakeyaml"/>
+        </module-def>
 
 		<module-def name="sun.misc" />
 

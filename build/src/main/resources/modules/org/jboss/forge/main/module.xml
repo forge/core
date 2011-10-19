@@ -9,6 +9,7 @@
    </resources>
 
    <dependencies>
+      <module name="org.apache.httpcomponents" />
       <module name="org.javassist" />
       <module name="javax.api" />
       <module name="jline" />

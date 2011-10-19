@@ -52,6 +52,7 @@
       <cal10n.version>0.7.2</cal10n.version>
       <cdi.version>1.0-SP4</cdi.version>
       <groovy.version>1.7.5</groovy.version>
+      <httpclient.version>4.0.1</httpclient.version>
       <jansi.version>1.5</jansi.version>
       <jboss.javaee.version>1.0.0.Final</jboss.javaee.version>
       <jboss.logging.version>3.0.0.Beta4</jboss.logging.version>
@@ -68,6 +69,7 @@
       <weld.bom.version>1.1.2.Final</weld.bom.version>
       <seam.render.version>1.0.0.Alpha3</seam.render.version>
       <solder.version>3.0.0.CR4</solder.version>
+      <yaml.version>1.7</yaml.version>
    </properties>
 
    <modules>
@@ -99,6 +101,18 @@
             <groupId>javassist</groupId>
             <artifactId>javassist</artifactId>
             <version>3.12.1.GA</version>
+         </dependency>
+
+         <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${httpclient.version}</version>
+         </dependency>
+
+         <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>${httpclient.version}</version>
          </dependency>
 
          <dependency>
@@ -352,6 +366,11 @@
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
             <version>${groovy.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>${yaml.version}</version>
          </dependency>
 
          <!-- SLF4J Deps -->
