@@ -9,7 +9,7 @@
    <dependencies>
       <module name="javaee.api" export="true" />
       <module name="org.jboss.forge.shell-api" />
-      <module name="org.jboss.shrinkwrap.descriptors" export="true" />
+      <module name="org.jboss.shrinkwrap.descriptors" services="export" export="true" />
 
       <module name="javax.api" />
    </dependencies>

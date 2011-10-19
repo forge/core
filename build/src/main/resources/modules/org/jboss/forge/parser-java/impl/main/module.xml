@@ -7,6 +7,8 @@
    </resources>
 
    <dependencies>
+      <module name="org.eclipse.javaparser" />
+      <module name="org.jboss.forge.parser-java.api" />
       <module name="javax.api" />
    </dependencies>
    

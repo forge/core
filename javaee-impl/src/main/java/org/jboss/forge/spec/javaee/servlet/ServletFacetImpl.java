@@ -49,7 +49,7 @@ import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
  */
 @Alias("forge.spec.servlet")
 @RequiresFacet({ MetadataFacet.class, WebResourceFacet.class, DependencyFacet.class })
-@RequiresPackagingType({PackagingType.WAR, PackagingType.BUNDLE})
+@RequiresPackagingType({ PackagingType.WAR, PackagingType.BUNDLE })
 public class ServletFacetImpl extends BaseFacet implements ServletFacet
 {
 
@@ -156,11 +156,7 @@ public class ServletFacetImpl extends BaseFacet implements ServletFacet
          {
             WebAppDescriptor unit = Descriptors.create(WebAppDescriptor.class)
                      .displayName(projectName)
-                     .sessionTimeout(30)
-                     .welcomeFile("/index.html");
-
-            unit.errorPage(404, "/404.html");
-            unit.errorPage(500, "/500.html");
+                     .sessionTimeout(30);
 
             descriptor.setContents(unit.exportAsString());
          }
