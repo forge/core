@@ -10,6 +10,7 @@
       <module name="javax.api" />
       <module name="javax.enterprise.api" export="true"/>
       
+      <module name="org.jboss.forge.parser-java.api" />
       <module name="org.jboss.forge.parser-xml" services="import" export="true">
          <imports>
             <include path="**" />

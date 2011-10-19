@@ -141,6 +141,14 @@
 			<maven-resource group="org.jboss.forge" artifact="forge-event-bus" />
 		</module-def>
 
+		<module-def name="org.jboss.forge.parser-java.api">
+			<maven-resource group="org.jboss.forge" artifact="forge-parser-java-api" />
+		</module-def>
+
+		<module-def name="org.jboss.forge.parser-java.impl">
+			<maven-resource group="org.jboss.forge" artifact="forge-parser-java" />
+		</module-def>
+
 		<module-def name="org.jboss.forge.parser-xml">
 			<maven-resource group="org.jboss.forge" artifact="forge-parser-xml" />
 		</module-def>
@@ -198,7 +206,10 @@
 		</module-def>
 
 		<module-def name="org.slf4j.impl">
+	        <!-- 
             <maven-resource group="org.jboss.slf4j" artifact="slf4j-jboss-logmanager"/>
+	        -->
+            <maven-resource group="org.slf4j" artifact="slf4j-log4j12"/>
 		</module-def>
 
 		<module-def name="sun.misc" />

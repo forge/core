@@ -29,6 +29,9 @@
 
     <dependencies>
         <module name="org.slf4j"/>
+        <!-- 
         <module name="org.jboss.logmanager"/>
+         -->
+        <module name="org.apache.log4j"/>
     </dependencies>
 </module>
