@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module xmlns="urn:jboss:module:1.0" name="org.jboss.forge.javaee.impl">
+
+   <resources>
+      <!-- Insert resources here -->
+   </resources>
+
+   <dependencies>
+      <module name="org.jboss.seam.render" services="import">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+      
+      <module name="org.jboss.forge.shell-api" />
+      <module name="org.jboss.forge.javaee.api" />
+      <module name="org.slf4j" />
+      <module name="org.slf4j.ext" />
+      
+      <module name="javax.api" />
+   </dependencies>
+
+</module>

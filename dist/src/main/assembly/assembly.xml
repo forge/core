@@ -7,144 +7,20 @@
       <format>zip</format>
    </formats>
    
-   <baseDirectory>${project.build.finalName}-${project.version}</baseDirectory>
-   <!-- ${project.build.finalName}-${project.version} -->
+   <baseDirectory>${project.build.finalName}</baseDirectory>
 
    <!-- Add distribution files -->
    <fileSets>
       <fileSet>
-         <directory>src/main/assembly</directory>
+         <directory>target/${project.build.finalName}</directory>
          <outputDirectory>.</outputDirectory>
          <includes>
-            <include>bin/*</include>
-         </includes>
-      </fileSet>
-      
-      <fileSet>
-         <directory>src/main/assembly</directory>
-         <outputDirectory>.</outputDirectory>
-         <includes>
-            <include>img/*</include>
-         </includes>
-      </fileSet>
-      
-      <!-- Copy pre-built modules into place -->
-      <fileSet>
-         <directory>src/main/assembly</directory>
-         <outputDirectory>.</outputDirectory>
-         <includes>
-            <include>modules/**</include>
-         </includes>
-      </fileSet>
-      
-      <fileSet>
-         <directory>src/main/assembly</directory>
-         <outputDirectory>.</outputDirectory>
-         <filtered>true</filtered>
-         <includes>
-            <include>readme.txt</include>
-            <include>licence.txt</include>
+            <include>**</include>
          </includes>
       </fileSet>
    </fileSets>
 
    <dependencySets>
-      
-      <!-- Copy JBoss Modules JAR -->
-      <dependencySet>
-         <outputDirectory>.</outputDirectory>
-         <useProjectArtifact>false</useProjectArtifact>
-         <useTransitiveDependencies>true</useTransitiveDependencies>
-         <includes>
-            <include>org.jboss.modules:jboss-modules</include>
-         </includes>
-         <outputFileNameMapping>${artifact.artifactId}${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
-      </dependencySet>
-      
-      <!-- Add necessary binaries -->
-      <dependencySet>
-         <outputDirectory>modules/org/jboss/forge/main</outputDirectory>
-         <useProjectArtifact>false</useProjectArtifact>
-         <useTransitiveDependencies>true</useTransitiveDependencies>
-         <includes>
-            <include>org.jboss.forge:*</include>
-         </includes>
-         <outputFileNameMapping>${artifact.artifactId}${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
-      </dependencySet>
-      
-      <!-- Shell API -->
-      <dependencySet>
-         <outputDirectory>modules/org/jboss/forge/shell-api/main</outputDirectory>
-         <useProjectArtifact>false</useProjectArtifact>
-         <includes>
-            <!-- Maven -->
-            <include>org.jboss.forge:forge-maven-api</include>
-            <include>org.apache.maven:*</include>
-            <include>org.apache.maven.wagon:*</include>
-            <include>org.sonatype.plexus:*</include>
-            <include>org.codehaus.plexus:*</include>
-            <include>org.sonatype.aether:*</include>
-            <include>org.sonatype.sisu:*</include>
-            <include>commons-cli:commons-cli:*</include>
-            
-            <include>org.jboss.forge:forge-javaee-api</include>
-            <include>org.jboss.forge:forge-scaffold-api</include>
-            
-            <!-- Forge -->
-            <include>org.jboss.forge:forge-shell-api</include>
-            <include>org.jboss.forge:forge-event-bus</include>
-            <include>org.jboss.forge:forge-parser-java-api</include>
-            
-            <!-- XML Parser -->
-            <include>org.jboss.forge:forge-parser-xml</include>
-            <include>org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api</include>
-            <include>org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-spi</include>
-            <include>org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-impl</include>
-         </includes>
-         <outputFileNameMapping>${artifact.artifactId}${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
-      </dependencySet>
-      
-      <!-- CDI API -->
-      <dependencySet>
-         <outputDirectory>modules/javax/enterprise/cdi-api/main</outputDirectory>
-         <useProjectArtifact>false</useProjectArtifact>
-         <includes>
-            <include>javax.enterprise:cdi-api</include>
-            <include>javax.inject:javax.inject</include>
-         </includes>
-         <outputFileNameMapping>${artifact.artifactId}${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
-      </dependencySet>
-      
-      <!-- Add necessary dependencies -->
-      <dependencySet>
-         <outputDirectory>modules/org/jboss/forge/main</outputDirectory>
-         <useProjectArtifact>false</useProjectArtifact>
-         <useTransitiveDependencies>true</useTransitiveDependencies>
-         <excludes>
-         
-            <!-- Maven -->
-            <exclude>org.jboss.forge:forge-maven-api*</exclude>
-            <exclude>org.apache.maven:*</exclude>
-            <exclude>org.apache.maven.wagon:*</exclude>
-            <exclude>org.codehaus.plexus:*</exclude>
-            <exclude>org.sonatype.plexus:*</exclude>
-            <exclude>org.sonatype.aether:*</exclude>
-            <exclude>org.sonatype.sisu:*</exclude>
-         
-            
-            <!-- Forge -->
-            <exclude>org.jboss.forge:forge-javaee-api*</exclude>
-            <exclude>org.jboss.forge:forge-scaffold-api*</exclude>
-            <exclude>org.jboss.forge:forge-event-bus*</exclude>
-            <exclude>org.jboss.forge:forge-shell-api*</exclude>
-            <exclude>javax.enterprise.cdi-api*</exclude>
-            <exclude>javax.inject:javax.inject*</exclude>
-            
-            <!-- JBoss Modules -->
-            <exclude>org.jboss.modules:*</exclude>
-         </excludes>
-         <outputFileNameMapping>${artifact.artifactId}${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
-      </dependencySet>
    </dependencySets>
 
 </assembly>

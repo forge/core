@@ -65,6 +65,16 @@
                </dependency>
             </dependencies>
          </plugin>
+         
+         <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <executions>
+               <execution>
+                  <phase>package</phase>
+               </execution>
+            </executions>
+         </plugin>
+         
       </plugins>
    </build>
 
