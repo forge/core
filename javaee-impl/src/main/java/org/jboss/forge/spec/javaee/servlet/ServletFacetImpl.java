@@ -165,22 +165,6 @@ public class ServletFacetImpl extends BaseFacet implements ServletFacet
             descriptor.setContents(unit.exportAsString());
          }
 
-         ((FileResource<?>) webRoot.getChild("404.html")).setContents(getClass().getResourceAsStream(
-                  "/org/jboss/forge/web/404.html"));
-         ((FileResource<?>) webRoot.getChild("500.html")).setContents(getClass().getResourceAsStream(
-                  "/org/jboss/forge/web/500.html"));
-         ((FileResource<?>) webRoot.getChild("index.html")).setContents(getClass().getResourceAsStream(
-                  "/org/jboss/forge/web/index.html"));
-         ((FileResource<?>) webRoot.getChild("forge-logo.png")).setContents(getClass().getResourceAsStream(
-                  "/org/jboss/forge/web/forge-logo.png"));
-         ((FileResource<?>) webRoot.getChild("forge-style.css")).setContents(getClass().getResourceAsStream(
-                  "/org/jboss/forge/web/forge-style.css"));
-         ((FileResource<?>) webRoot.getChild("jboss-community.png")).setContents(getClass().getResourceAsStream(
-                  "/org/jboss/forge/web/jboss-community.png"));
-         ((FileResource<?>) webRoot.getChild("bkg.gif")).setContents(getClass().getResourceAsStream(
-                  "/org/jboss/forge/web/bkg.gif"));
-         ((FileResource<?>) webRoot.getChild("favicon.ico")).setContents(getClass().getResourceAsStream(
-                  "/org/jboss/forge/web/favicon.ico"));
       }
       return true;
    }
