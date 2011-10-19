@@ -25,10 +25,14 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.jboss.forge.project.Project;
+import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.project.facets.events.InstallFacets;
+import org.jboss.forge.resources.DirectoryResource;
+import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.shell.ShellMessages;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.DefaultCommand;
+import org.jboss.forge.shell.plugins.Option;
 import org.jboss.forge.shell.plugins.PipeOut;
 import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.SetupCommand;
@@ -60,13 +64,40 @@ public class ServletPlugin implements Plugin
    }
 
    @SetupCommand
-   public void setup(final PipeOut out)
+   public void setup(final PipeOut out, @Option(name = "quickstart") final boolean quickstart)
    {
       if (!project.hasFacet(ServletFacet.class))
       {
          request.fire(new InstallFacets(ServletFacet.class));
       }
+      if (quickstart)
+      {
+         // webRoot is created by the ServletFacet install
+         DirectoryResource webRoot = project.getFacet(WebResourceFacet.class).getWebRootDirectory();
+         installQuickstart(webRoot);
+      }
       status(out);
    }
+
+    private void installQuickstart(DirectoryResource webRoot)
+    {
+        ((FileResource<?>) webRoot.getChild("404.html")).setContents(getClass().getResourceAsStream(
+                 "/org/jboss/forge/web/404.html"));
+        ((FileResource<?>) webRoot.getChild("500.html")).setContents(getClass().getResourceAsStream(
+                 "/org/jboss/forge/web/500.html"));
+        ((FileResource<?>) webRoot.getChild("index.html")).setContents(getClass().getResourceAsStream(
+                 "/org/jboss/forge/web/index.html"));
+        ((FileResource<?>) webRoot.getChild("forge-logo.png")).setContents(getClass().getResourceAsStream(
+                 "/org/jboss/forge/web/forge-logo.png"));
+        ((FileResource<?>) webRoot.getChild("forge-style.css")).setContents(getClass().getResourceAsStream(
+                 "/org/jboss/forge/web/forge-style.css"));
+        ((FileResource<?>) webRoot.getChild("jboss-community.png")).setContents(getClass().getResourceAsStream(
+                 "/org/jboss/forge/web/jboss-community.png"));
+        ((FileResource<?>) webRoot.getChild("bkg.gif")).setContents(getClass().getResourceAsStream(
+                 "/org/jboss/forge/web/bkg.gif"));
+        ((FileResource<?>) webRoot.getChild("favicon.ico")).setContents(getClass().getResourceAsStream(
+                 "/org/jboss/forge/web/favicon.ico"));
+    }
+
 
 }
