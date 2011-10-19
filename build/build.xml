@@ -91,13 +91,9 @@
 			<maven-resource group="javax.inject" artifact="javax.inject" />
 		</module-def>
 
-
-
 		<module-def name="javax.persistence.api">
 			<maven-resource group="org.hibernate.javax.persistence" artifact="hibernate-jpa-2.0-api" />
 		</module-def>
-
-
 
 		<module-def name="javax.servlet.api">
 			<maven-resource group="org.jboss.spec.javax.servlet" artifact="jboss-servlet-api_3.0_spec" />
