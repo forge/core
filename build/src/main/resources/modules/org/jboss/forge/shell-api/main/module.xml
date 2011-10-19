@@ -19,7 +19,13 @@
       <module name="org.jboss.forge.parser-xml" export="true" />
       
       <module name="org.jboss.forge.event-bus" export="true" />
-      <module name="org.jboss.solder" export="true" />
+
+      <module name="org.jboss.solder" services="import" export="true" >
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
    </dependencies>
    
 </module>

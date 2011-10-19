@@ -316,15 +316,9 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          }
       });
 
-      projectContext.setCurrentResource(resourceFactory.getResourceFrom(event.getWorkingDirectory()));
-      environment.setProperty("CWD", getCurrentDirectory().getFullyQualifiedName());
-      environment.setProperty("SHELL", this);
-
       configureOSTerminal();
       initReaderAndStreams();
-      initCompleters(pluginCompleter);
       initParameters();
-      initSignalHandlers();
 
       if (event.isRestart())
       {
@@ -351,6 +345,17 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       {
          environment.setProperty(OFFLINE_FLAG, false);
       }
+
+      initCompleters(pluginCompleter);
+      initSignalHandlers();
+
+      /*
+       * Do this last so that we don't fire off plugin events before the shell has booted
+       * (Causing all kinds of wonderful issues)
+       */
+      projectContext.setCurrentResource(resourceFactory.getResourceFrom(event.getWorkingDirectory()));
+      environment.setProperty("CWD", getCurrentDirectory().getFullyQualifiedName());
+      environment.setProperty("SHELL", this);
    }
 
    private void initSignalHandlers()

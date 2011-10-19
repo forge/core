@@ -22,11 +22,12 @@
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
 
-<module xmlns="urn:jboss:module:1.0" name="javax.ws.rs.api">
+<module xmlns="urn:jboss:module:1.0" name="org.jboss.shrinkwrap.descriptors">
     <resources>
         <!-- Insert resources here -->
     </resources>
 
     <dependencies>
+      <module name="javax.api" />
     </dependencies>
 </module>

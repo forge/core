@@ -24,7 +24,6 @@ package org.jboss.forge.spec.javaee.cdi;
 import java.io.File;
 
 import javax.enterprise.event.Observes;
-import javax.inject.Inject;
 
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.BaseFacet;
@@ -35,8 +34,6 @@ import org.jboss.forge.project.packaging.PackagingType;
 import org.jboss.forge.project.packaging.events.PackagingChanged;
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.FileResource;
-import org.jboss.forge.shell.Shell;
-import org.jboss.forge.shell.ShellColor;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.spec.javaee.CDIFacet;
@@ -51,20 +48,12 @@ import org.jboss.shrinkwrap.descriptor.api.spec.cdi.beans.BeansDescriptor;
 @RequiresFacet({ ResourceFacet.class, PackagingFacet.class })
 public class CDIFacetImpl extends BaseFacet implements CDIFacet
 {
-   @Inject
-   private Shell shell;
-
    public void updateConfigLocation(@Observes final PackagingChanged event)
    {
       Project project = event.getProject();
       if (project.hasFacet(CDIFacetImpl.class))
       {
          PackagingType oldType = event.getOldPackagingType();
-         PackagingType newType = event.getNewPackagingType();
-         shell.printlnVerbose("Packaging type change detected; moving beans.xml " +
-                  "from [" + oldType + "] to [" + newType + "]");
-
-         // FIXME this is broken...
          FileResource<?> configFile = getConfigFile(project, oldType);
 
          BeansDescriptor config = getConfig(project, configFile);
@@ -95,21 +84,9 @@ public class CDIFacetImpl extends BaseFacet implements CDIFacet
       }
       else
       {
-         if (!PackagingType.JAR.equals(type) && !PackagingType.BUNDLE.equals(type))
-         {
-            printPackTypeWarning(project, type);
-         }
          DirectoryResource root = project.getFacet(ResourceFacet.class).getResourceFolder();
          return (FileResource<?>) root.getChild("META-INF" + File.separator + "beans.xml");
       }
-   }
-
-   private void printPackTypeWarning(final Project project, final PackagingType type)
-   {
-      shell.print(ShellColor.RED, "***WARNING*** ");
-      shell.println("Unsupported packaging type detected [" + type.getType()
-               + "], using default beans.xml location ["
-               + getConfigFile(project, PackagingType.JAR).getFullyQualifiedName() + "]");
    }
 
    @Override
@@ -151,12 +128,6 @@ public class CDIFacetImpl extends BaseFacet implements CDIFacet
    {
       if (!isInstalled())
       {
-         PackagingType type = project.getFacet(PackagingFacet.class).getPackagingType();
-         if (!PackagingType.JAR.equals(type) && !PackagingType.WAR.equals(type) && !PackagingType.BUNDLE.equals(type))
-         {
-            printPackTypeWarning(project, type);
-         }
-
          FileResource<?> descriptor = getConfigFile(project);
          if (!descriptor.createNewFile())
          {
@@ -164,7 +135,7 @@ public class CDIFacetImpl extends BaseFacet implements CDIFacet
          }
 
          descriptor.setContents(getClass()
-                     .getResourceAsStream("/org/jboss/forge/web/beans.xml"));
+                  .getResourceAsStream("/org/jboss/forge/web/beans.xml"));
 
       }
       return true;

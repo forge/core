@@ -69,11 +69,29 @@
 			<maven-resource group="com.google.guava" artifact="guava" />
 		</module-def>
 
+		<module-def name="javaee.api" />
+
+		<module-def name="javax.activation.api">
+			<maven-resource group="javax.activation" artifact="activation" />
+		</module-def>
+
 		<module-def name="javax.annotation.api">
 			<maven-resource group="org.jboss.spec.javax.annotation" artifact="jboss-annotations-api_1.1_spec" />
 		</module-def>
 
 		<module-def name="javax.api" />
+
+		<module-def name="javax.activation.api">
+			<maven-resource group="javax.activation" artifact="activation" />
+		</module-def>
+
+		<module-def name="javax.annotation.api">
+			<maven-resource group="org.jboss.spec.javax.annotation" artifact="jboss-annotations-api_1.1_spec" />
+		</module-def>
+
+		<module-def name="javax.ejb.api">
+			<maven-resource group="org.jboss.spec.javax.ejb" artifact="jboss-ejb-api_3.1_spec" />
+		</module-def>
 
 		<module-def name="javax.el.api">
 			<maven-resource group="org.jboss.spec.javax.el" artifact="jboss-el-api_2.2_spec" />
@@ -81,6 +99,10 @@
 
 		<module-def name="javax.enterprise.api">
 			<maven-resource group="javax.enterprise" artifact="cdi-api" />
+		</module-def>
+
+		<module-def name="javax.enterprise.deploy.api">
+			<maven-resource group="org.jboss.spec.javax.enterprise.deploy" artifact="jboss-jad-api_1.2_spec" />
 		</module-def>
 
 		<module-def name="javax.faces.api">
@@ -91,8 +113,44 @@
 			<maven-resource group="javax.inject" artifact="javax.inject" />
 		</module-def>
 
+		<module-def name="javax.interceptor.api">
+			<maven-resource group="org.jboss.spec.javax.interceptor" artifact="jboss-interceptors-api_1.1_spec" />
+		</module-def>
+
+		<module-def name="javax.jms.api">
+			<maven-resource group="org.jboss.spec.javax.jms" artifact="jboss-jms-api_1.1_spec" />
+		</module-def>
+
+		<module-def name="javax.jws.api">
+			<maven-resource group="javax.jws" artifact="jsr181-api" />
+		</module-def>
+
+		<module-def name="javax.management.j2ee.api">
+			<maven-resource group="org.jboss.spec.javax.management.j2ee" artifact="jboss-j2eemgmt-api_1.1_spec" />
+		</module-def>
+
+		<module-def name="javax.mail.api">
+			<maven-resource group="javax.mail" artifact="mail" />
+		</module-def>
+
 		<module-def name="javax.persistence.api">
 			<maven-resource group="org.hibernate.javax.persistence" artifact="hibernate-jpa-2.0-api" />
+		</module-def>
+
+		<module-def name="javax.resource.api">
+			<maven-resource group="org.jboss.spec.javax.resource" artifact="jboss-connector-api_1.6_spec" />
+		</module-def>
+
+		<module-def name="javax.rmi.api">
+			<maven-resource group="org.jboss.spec.javax.rmi" artifact="jboss-rmi-api_1.0_spec" />
+		</module-def>
+
+		<module-def name="javax.security.auth.message.api">
+			<maven-resource group="org.jboss.spec.javax.security.auth.message" artifact="jboss-jaspi-api_1.0_spec" />
+		</module-def>
+
+		<module-def name="javax.security.jacc.api">
+			<maven-resource group="org.jboss.spec.javax.security.jacc" artifact="jboss-jacc-api_1.4_spec" />
 		</module-def>
 
 		<module-def name="javax.servlet.api">
@@ -114,16 +172,44 @@
 		<module-def name="javax.validation.api">
 			<maven-resource group="javax.validation" artifact="validation-api" />
 		</module-def>
-		
-        <module-def name="jline">
-            <maven-resource group="org.sonatype.jline" artifact="jline"/>
-            <maven-resource group="org.fusesource.jansi" artifact="jansi"/>
-        </module-def>
-		
-        <module-def name="org.apache.httpcomponents">
-            <maven-resource group="org.apache.httpcomponents" artifact="httpclient"/>
-            <maven-resource group="org.apache.httpcomponents" artifact="httpcore"/>
-        </module-def>
+
+		<module-def name="javax.ws.rs.api">
+			<maven-resource group="org.jboss.spec.javax.ws.rs" artifact="jboss-jaxrs-api_1.1_spec" />
+		</module-def>
+
+		<module-def name="javax.xml.bind.api">
+			<maven-resource group="org.jboss.spec.javax.xml.bind" artifact="jboss-jaxb-api_2.2_spec" />
+		</module-def>
+
+		<module-def name="javax.xml.jaxp-provider" />
+
+		<module-def name="javax.xml.registry.api">
+			<maven-resource group="org.jboss.spec.javax.xml.registry" artifact="jboss-jaxr-api_1.0_spec" />
+		</module-def>
+
+		<module-def name="javax.xml.rpc.api">
+			<maven-resource group="org.jboss.spec.javax.xml.rpc" artifact="jboss-jaxrpc-api_1.1_spec" />
+		</module-def>
+
+		<module-def name="javax.xml.soap.api">
+			<maven-resource group="org.jboss.spec.javax.xml.soap" artifact="jboss-saaj-api_1.3_spec" />
+		</module-def>
+
+		<module-def name="javax.xml.stream.api" />
+
+		<module-def name="javax.xml.ws.api">
+			<maven-resource group="org.jboss.spec.javax.xml.ws" artifact="jboss-jaxws-api_2.2_spec" />
+		</module-def>
+
+		<module-def name="jline">
+			<maven-resource group="org.sonatype.jline" artifact="jline" />
+			<maven-resource group="org.fusesource.jansi" artifact="jansi" />
+		</module-def>
+
+		<module-def name="org.apache.httpcomponents">
+			<maven-resource group="org.apache.httpcomponents" artifact="httpclient" />
+			<maven-resource group="org.apache.httpcomponents" artifact="httpcore" />
+		</module-def>
 
 		<module-def name="org.apache.log4j">
 			<maven-resource group="log4j" artifact="log4j" />
@@ -141,7 +227,16 @@
 		<module-def name="org.jboss.forge.event-bus">
 			<maven-resource group="org.jboss.forge" artifact="forge-event-bus" />
 		</module-def>
-		
+
+		<!-- TODO this needs to be an extension, not built in (consider 
+		dynamically providing extensions to the system via custom module loader) -->
+		<module-def name="org.jboss.forge.javaee.api">
+			<maven-resource group="org.jboss.forge" artifact="forge-javaee-api" />
+		</module-def>
+		<module-def name="org.jboss.forge.javaee.impl">
+			<maven-resource group="org.jboss.forge" artifact="forge-javaee-impl" />
+		</module-def>
+
 		<module-def name="org.jboss.forge.git">
 			<maven-resource group="args4j" artifact="args4j" />
 			<maven-resource group="com.jcraft" artifact="jsch" />
@@ -155,7 +250,7 @@
 
 		<module-def name="org.jboss.forge.maven.api">
 			<maven-resource group="org.jboss.forge" artifact="forge-maven-api" />
-			
+
 			<!-- TODO this needs to be pulled into a module -->
 			<maven-resource group="org.apache.maven" artifact="maven-aether-provider" />
 			<maven-resource group="org.apache.maven" artifact="maven-artifact" />
@@ -168,13 +263,13 @@
 			<maven-resource group="org.apache.maven" artifact="maven-repository-metadata" />
 			<maven-resource group="org.apache.maven" artifact="maven-settings" />
 			<maven-resource group="org.apache.maven" artifact="maven-settings-builder" />
-			
+
 			<!-- TODO this needs to be pulled into a module -->
 			<maven-resource group="org.apache.maven.wagon" artifact="wagon-file" />
 			<maven-resource group="org.apache.maven.wagon" artifact="wagon-http-lightweight" />
 			<maven-resource group="org.apache.maven.wagon" artifact="wagon-http-shared4" />
 			<maven-resource group="org.apache.maven.wagon" artifact="wagon-provider-api" />
-			
+
 			<!-- TODO this needs to be pulled into a module -->
 			<maven-resource group="org.codehaus.plexus" artifact="plexus-classworlds" />
 			<maven-resource group="org.codehaus.plexus" artifact="plexus-component-annotations" />
@@ -230,7 +325,17 @@
 		</module-def>
 
 		<module-def name="org.jboss.modules" />
-		
+
+		<module-def name="org.jboss.shrinkwrap.descriptors">
+			<maven-resource group="org.jboss.shrinkwrap.descriptors" artifact="shrinkwrap-descriptors-api" />
+			<maven-resource group="org.jboss.shrinkwrap.descriptors" artifact="shrinkwrap-descriptors-impl" />
+			<maven-resource group="org.jboss.shrinkwrap.descriptors" artifact="shrinkwrap-descriptors-spi" />
+		</module-def>
+
+		<module-def name="org.jboss.seam.render">
+			<maven-resource group="org.jboss.seam.render" artifact="seam-render" />
+		</module-def>
+
 		<module-def name="org.jboss.solder">
 			<maven-resource group="org.jboss.seam.solder" artifact="seam-solder" />
 		</module-def>
@@ -261,15 +366,15 @@
 		</module-def>
 
 		<module-def name="org.slf4j.impl">
-	        <!-- 
+			<!-- 
             <maven-resource group="org.jboss.slf4j" artifact="slf4j-jboss-logmanager"/>
 	        -->
-            <maven-resource group="org.slf4j" artifact="slf4j-log4j12"/>
+			<maven-resource group="org.slf4j" artifact="slf4j-log4j12" />
 		</module-def>
-		
-        <module-def name="org.yaml">
-            <maven-resource group="org.yaml" artifact="snakeyaml"/>
-        </module-def>
+
+		<module-def name="org.yaml">
+			<maven-resource group="org.yaml" artifact="snakeyaml" />
+		</module-def>
 
 		<module-def name="sun.misc" />
 
