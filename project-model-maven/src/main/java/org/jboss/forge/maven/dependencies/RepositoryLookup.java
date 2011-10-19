@@ -11,7 +11,6 @@ import javax.inject.Inject;
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.jboss.forge.ForgeEnvironment;
 import org.jboss.forge.maven.RepositoryUtils;
 import org.jboss.forge.maven.facets.MavenContainer;
@@ -89,67 +88,85 @@ public class RepositoryLookup implements DependencyResolverProvider
    {
       List<DependencyResource> result = new ArrayList<DependencyResource>();
 
-      try
+      RepositorySystem system = container.lookup(RepositorySystem.class);
+
+      /**
+       * First try resolving the artifact directly from the local repository - then fall back to aether. This may be a
+       * bad practice but we can revisit if problems arise.
+       */
+      if (dep.getVersion() != null)
       {
-         RepositorySystem system = container.getContainer().lookup(RepositorySystem.class);
-
-         /**
-          * First try resolving the artifact directly from the local repository - then fall back to aether. This may be
-          * a bad practice but we can revisit if problems arise.
-          */
-         if (dep.getVersion() != null)
+         DirectoryResource dir = (DirectoryResource) factory.getResourceFrom(new File(container.getSettings()
+                  .getLocalRepository()));
+         if ((dir != null) && dir.exists())
          {
-            DirectoryResource dir = (DirectoryResource) factory.getResourceFrom(new File(container.getSettings()
-                     .getLocalRepository()));
-            if ((dir != null) && dir.exists())
-            {
-               List<String> segments = new ArrayList<String>();
-               segments.addAll(Arrays.asList((dep.getGroupId() + "." + dep.getArtifactId()).split("\\.")));
-               segments.add(dep.getVersion());
+            List<String> segments = new ArrayList<String>();
+            segments.addAll(Arrays.asList((dep.getGroupId() + "." + dep.getArtifactId()).split("\\.")));
+            segments.add(dep.getVersion());
 
-               for (String seg : segments) {
-                  dir = dir.getChildDirectory(seg);
-                  if (!dir.isDirectory())
-                  {
-                     break;
-                  }
-               }
-
-               if (dir.isDirectory())
+            for (String seg : segments) {
+               dir = dir.getChildDirectory(seg);
+               if (!dir.isDirectory())
                {
-                  Resource<?> jar = dir.getChild(dep.getArtifactId() + "-" + dep.getVersion() + "."
-                           + dep.getPackagingType());
-                  if (jar.exists())
-                  {
-                     FileResource<?> jarFile = jar.reify(FileResource.class);
-                     result.add(new DependencyResource(jarFile.getResourceFactory(), jarFile
-                              .getUnderlyingResourceObject(), dep));
-                  }
+                  break;
+               }
+            }
+
+            if (dir.isDirectory())
+            {
+               Resource<?> jar = dir.getChild(dep.getArtifactId() + "-" + dep.getVersion() + "."
+                        + dep.getPackagingType());
+               if (jar.exists())
+               {
+                  FileResource<?> jarFile = jar.reify(FileResource.class);
+                  result.add(new DependencyResource(jarFile.getResourceFactory(), jarFile
+                           .getUnderlyingResourceObject(), dep));
                }
             }
          }
+      }
 
-         if (result.isEmpty())
+      if (result.isEmpty())
+      {
+         MavenRepositorySystemSession session = setupRepoSession(system);
+
+         session.setIgnoreInvalidArtifactDescriptor(true);
+         session.setIgnoreMissingArtifactDescriptor(true);
+
+         VersionRangeResult versions = getVersions(dep, convertToMavenRepos(repositories));
+
+         VERSION: for (Version version : versions.getVersions())
          {
-            MavenRepositorySystemSession session = setupRepoSession(system);
+            ArtifactRepository ar = versions.getRepository(version);
+            DependencyBuilder currentVersion = DependencyBuilder.create(dep).setVersion(version.toString());
+            Artifact artifact = dependencyToMavenArtifact(currentVersion);
 
-            session.setIgnoreInvalidArtifactDescriptor(true);
-            session.setIgnoreMissingArtifactDescriptor(true);
-
-            VersionRangeResult versions = getVersions(dep, convertToMavenRepos(repositories));
-
-            VERSION: for (Version version : versions.getVersions())
+            if (ar instanceof LocalRepository)
             {
-               ArtifactRepository ar = versions.getRepository(version);
-               DependencyBuilder currentVersion = DependencyBuilder.create(dep).setVersion(version.toString());
-               Artifact artifact = dependencyToMavenArtifact(currentVersion);
+               LocalArtifactRequest request = new LocalArtifactRequest(artifact, null, null);
+               LocalArtifactResult a = session.getLocalRepositoryManager().find(session, request);
 
-               if (ar instanceof LocalRepository)
+               File file = a.getFile();
+               DependencyResource resource = new DependencyResource(factory, file, currentVersion);
+               if (!result.contains(resource))
                {
-                  LocalArtifactRequest request = new LocalArtifactRequest(artifact, null, null);
-                  LocalArtifactResult a = session.getLocalRepositoryManager().find(session, request);
+                  result.add(resource);
+                  continue VERSION;
+               }
+            }
+            if (ar instanceof RemoteRepository)
+            {
+               ArtifactRequest request = new ArtifactRequest();
+               RemoteRepository remoteRepo = new RemoteRepository(ar.getId(), ar.getContentType(),
+                        ((RemoteRepository) ar).getUrl());
+               request.addRepository(remoteRepo);
+               request.setArtifact(artifact);
 
-                  File file = a.getFile();
+               try
+               {
+                  ArtifactResult a = system.resolveArtifact(session, request);
+
+                  File file = a.getArtifact().getFile();
                   DependencyResource resource = new DependencyResource(factory, file, currentVersion);
                   if (!result.contains(resource))
                   {
@@ -157,37 +174,12 @@ public class RepositoryLookup implements DependencyResolverProvider
                      continue VERSION;
                   }
                }
-               if (ar instanceof RemoteRepository)
+               catch (ArtifactResolutionException e)
                {
-                  ArtifactRequest request = new ArtifactRequest();
-                  RemoteRepository remoteRepo = new RemoteRepository(ar.getId(), ar.getContentType(),
-                           ((RemoteRepository) ar).getUrl());
-                  request.addRepository(remoteRepo);
-                  request.setArtifact(artifact);
-
-                  try
-                  {
-                     ArtifactResult a = system.resolveArtifact(session, request);
-
-                     File file = a.getArtifact().getFile();
-                     DependencyResource resource = new DependencyResource(factory, file, currentVersion);
-                     if (!result.contains(resource))
-                     {
-                        result.add(resource);
-                        continue VERSION;
-                     }
-                  }
-                  catch (ArtifactResolutionException e)
-                  {
-                     System.out.println(e.getMessage());
-                  }
+                  System.out.println(e.getMessage());
                }
             }
          }
-      }
-      catch (ComponentLookupException e)
-      {
-         throw new ProjectModelException("Error in dependency resolution container", e);
       }
       return result;
    }
@@ -216,7 +208,7 @@ public class RepositoryLookup implements DependencyResolverProvider
             dep = DependencyBuilder.create(dep).setVersion("[,)");
          }
 
-         RepositorySystem system = container.getContainer().lookup(RepositorySystem.class);
+         RepositorySystem system = container.lookup(RepositorySystem.class);
          MavenRepositorySystemSession session = setupRepoSession(system);
 
          Artifact artifact = dependencyToMavenArtifact(dep);
@@ -264,7 +256,7 @@ public class RepositoryLookup implements DependencyResolverProvider
             query = DependencyBuilder.create(query).setVersion("[,)");
          }
 
-         RepositorySystem system = container.getContainer().lookup(RepositorySystem.class);
+         RepositorySystem system = container.lookup(RepositorySystem.class);
          MavenRepositorySystemSession session = setupRepoSession(system);
 
          Artifact artifact = dependencyToMavenArtifact(query);
@@ -377,7 +369,7 @@ public class RepositoryLookup implements DependencyResolverProvider
             dep = DependencyBuilder.create(dep).setVersion("[" + version + "]");
          }
 
-         RepositorySystem maven = container.getContainer().lookup(RepositorySystem.class);
+         RepositorySystem maven = container.lookup(RepositorySystem.class);
          MavenRepositorySystemSession session = setupRepoSession(maven);
 
          Artifact artifact = dependencyToMavenArtifact(dep);

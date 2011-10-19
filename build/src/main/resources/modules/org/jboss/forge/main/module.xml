@@ -9,10 +9,12 @@
    </resources>
 
    <dependencies>
-      <module name="org.apache.httpcomponents" />
-      <module name="org.javassist" />
+      <module name="javax.annotation.api" />
       <module name="javax.api" />
       <module name="jline" />
+      
+      <module name="org.apache.httpcomponents" />
+      <module name="org.javassist" />
       <module name="org.jboss.interceptor" />
       <module name="org.jboss.modules" />
 
@@ -31,8 +33,29 @@
          </imports>
       </module>
       
+      <module name="org.jboss.forge.maven.api" services="import">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+      
+      <module name="org.jboss.forge.maven.model" services="import" >
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+      
       <module name="org.jboss.forge.parser-java.api" />
-      <module name="org.jboss.forge.parser-java.impl" services="import" export="true">
+      <module name="org.jboss.forge.parser-java.impl" services="import">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+      
+      <module name="org.jboss.forge.parser-xml" services="import">
          <imports>
             <include path="**" />
             <include path="META-INF" />
@@ -48,8 +71,6 @@
       </module>
 
       <module name="org.jboss.weld.core" services="import" />
-      <module name="javax.annotation.api" />
-      <module name="javax.enterprise.api" />
 
       <module name="org.mvel" />
       <module name="sun.misc" />

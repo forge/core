@@ -26,7 +26,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -47,7 +46,7 @@ import org.apache.maven.settings.building.SettingsBuildingException;
 import org.apache.maven.settings.building.SettingsBuildingRequest;
 import org.apache.maven.settings.building.SettingsBuildingResult;
 import org.codehaus.plexus.DefaultPlexusContainer;
-import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.logging.console.ConsoleLoggerManager;
 import org.jboss.forge.ForgeEnvironment;
 import org.jboss.forge.maven.RepositoryUtils;
@@ -71,25 +70,6 @@ public class MavenContainer
    @Inject
    private ForgeEnvironment environment;
 
-   @PostConstruct
-   public void bootstrapMaven()
-   {
-      try
-      {
-         container = new DefaultPlexusContainer();
-         ConsoleLoggerManager loggerManager = new ConsoleLoggerManager();
-         loggerManager.setThreshold("ERROR");
-         container.setLoggerManager(loggerManager);
-
-         builder = container.lookup(ProjectBuilder.class);
-      }
-      catch (Exception e)
-      {
-         throw new ProjectModelException(
-                  "Could not initialize Maven", e);
-      }
-   }
-
    public ProjectBuildingRequest getRequest()
    {
       return getBuildingRequest(environment.isOnline() == false);
@@ -102,6 +82,7 @@ public class MavenContainer
 
    public ProjectBuildingRequest getBuildingRequest(final boolean offline)
    {
+      ClassLoader cl = Thread.currentThread().getContextClassLoader();
       try
       {
          Settings settings = getSettings();
@@ -111,7 +92,7 @@ public class MavenContainer
          request = new DefaultProjectBuildingRequest();
          ArtifactRepository localRepository = new MavenArtifactRepository(
                   "local", new File(settings.getLocalRepository()).toURI().toURL().toString(),
-                  container.lookup(ArtifactRepositoryLayout.class),
+                  getContainer().lookup(ArtifactRepositoryLayout.class),
                   new ArtifactRepositoryPolicy(true, ArtifactRepositoryPolicy.UPDATE_POLICY_NEVER,
                            ArtifactRepositoryPolicy.CHECKSUM_POLICY_WARN),
                   new ArtifactRepositoryPolicy(true, ArtifactRepositoryPolicy.UPDATE_POLICY_NEVER,
@@ -140,6 +121,14 @@ public class MavenContainer
       {
          throw new ProjectModelException(
                   "Could not create Maven project building request", e);
+      }
+      finally
+      {
+         /*
+          * We reset the classloader to prevent potential modules bugs 
+          * if Classwords container changes classloaders on us
+          */
+         Thread.currentThread().setContextClassLoader(cl);
       }
    }
 
@@ -176,8 +165,53 @@ public class MavenContainer
       return builder;
    }
 
-   public PlexusContainer getContainer()
+   public <T> T lookup(Class<T> type)
    {
+      ClassLoader cl = Thread.currentThread().getContextClassLoader();
+      try {
+         return getContainer().lookup(type);
+      }
+      catch (ComponentLookupException e) {
+         throw new ProjectModelException("Could not look up component of type [" + type.getName() + "]", e);
+      }
+      finally
+      {
+         /*
+          * We reset the classloader to prevent potential modules bugs 
+          * if Classwords container changes classloaders on us
+          */
+         Thread.currentThread().setContextClassLoader(cl);
+      }
+   }
+
+   private DefaultPlexusContainer getContainer()
+   {
+      if (container == null)
+      {
+         ClassLoader cl = Thread.currentThread().getContextClassLoader();
+         try
+         {
+            container = new DefaultPlexusContainer();
+            ConsoleLoggerManager loggerManager = new ConsoleLoggerManager();
+            loggerManager.setThreshold("ERROR");
+            getContainer().setLoggerManager(loggerManager);
+
+            builder = getContainer().lookup(ProjectBuilder.class);
+         }
+         catch (Exception e)
+         {
+            throw new ProjectModelException(
+                     "Could not initialize Maven", e);
+         }
+         finally
+         {
+            /*
+             * We reset the classloader to prevent potential modules bugs 
+             * if Classwords container changes classloaders on us
+             */
+            Thread.currentThread().setContextClassLoader(cl);
+         }
+      }
       return container;
    }
 }

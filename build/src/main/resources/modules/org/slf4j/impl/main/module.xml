@@ -30,6 +30,7 @@
     <dependencies>
         <module name="org.slf4j"/>
         <!-- 
+        TODO return logging to org.jboss.logmanager
         <module name="org.jboss.logmanager"/>
          -->
         <module name="org.apache.log4j"/>

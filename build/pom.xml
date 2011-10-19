@@ -119,6 +119,11 @@
       </dependency>
 
       <dependency>
+         <groupId>org.apache.maven</groupId>
+         <artifactId>maven-core</artifactId>
+      </dependency>
+
+      <dependency>
          <groupId>org.hibernate.javax.persistence</groupId>
          <artifactId>hibernate-jpa-2.0-api</artifactId>
       </dependency>
@@ -135,6 +140,11 @@
 
       <dependency>
          <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-maven-api</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
          <artifactId>forge-parser-java</artifactId>
       </dependency>
 
@@ -146,6 +156,11 @@
       <dependency>
          <groupId>org.jboss.forge</groupId>
          <artifactId>forge-parser-xml</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-project-model-maven</artifactId>
       </dependency>
 
       <dependency>
@@ -247,12 +262,12 @@
          <groupId>org.slf4j</groupId>
          <artifactId>slf4j-log4j12</artifactId>
       </dependency>
-      
+
       <dependency>
          <groupId>org.sonatype.jline</groupId>
          <artifactId>jline</artifactId>
       </dependency>
-      
+
       <dependency>
          <groupId>org.yaml</groupId>
          <artifactId>snakeyaml</artifactId>

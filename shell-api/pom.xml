@@ -1,55 +1,38 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <artifactId>forge-parent</artifactId>
-    <groupId>org.jboss.forge</groupId>
-    <version>1.0.0-SNAPSHOT</version>
-  </parent>
-  <artifactId>forge-shell-api</artifactId>
-  <name>Forge - Shell API</name>
-  <dependencies>
-    <dependency>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+   
+   <parent>
+      <artifactId>forge-parent</artifactId>
       <groupId>org.jboss.forge</groupId>
-      <artifactId>forge-parser-java-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.forge</groupId>
-      <artifactId>forge-parser-xml</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.forge</groupId>
-      <artifactId>forge-event-bus</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>javax.enterprise</groupId>
-      <artifactId>cdi-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.seam.solder</groupId>
-      <artifactId>seam-solder</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-model</artifactId>
-      <version>3.0.3</version>
-    </dependency>
-  </dependencies>
-  <profiles>
-    <profile>
-      <id>openshift</id>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-war-plugin</artifactId>
-            <version>2.1.1</version>
-            <configuration>
-              <outputDirectory>deployments</outputDirectory>
-              <warName>ROOT</warName>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
+      <version>1.0.0-SNAPSHOT</version>
+   </parent>
+   
+   <artifactId>forge-shell-api</artifactId>
+   
+   <name>Forge - Shell API</name>
+   
+   <dependencies>
+      <dependency>
+         <groupId>javax.enterprise</groupId>
+         <artifactId>cdi-api</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-parser-java-api</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-parser-xml</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-event-bus</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.seam.solder</groupId>
+         <artifactId>seam-solder</artifactId>
+      </dependency>
+   </dependencies>
 </project>

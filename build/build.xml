@@ -146,6 +146,49 @@
 			<maven-resource group="org.jboss.forge" artifact="forge-event-bus" />
 		</module-def>
 
+		<module-def name="org.jboss.forge.maven.api">
+			<maven-resource group="org.jboss.forge" artifact="forge-maven-api" />
+			
+			<!-- TODO this needs to be pulled into a module -->
+			<maven-resource group="org.apache.maven" artifact="maven-aether-provider" />
+			<maven-resource group="org.apache.maven" artifact="maven-artifact" />
+			<maven-resource group="org.apache.maven" artifact="maven-compat" />
+			<maven-resource group="org.apache.maven" artifact="maven-core" />
+			<maven-resource group="org.apache.maven" artifact="maven-embedder" />
+			<maven-resource group="org.apache.maven" artifact="maven-model" />
+			<maven-resource group="org.apache.maven" artifact="maven-model-builder" />
+			<maven-resource group="org.apache.maven" artifact="maven-plugin-api" />
+			<maven-resource group="org.apache.maven" artifact="maven-repository-metadata" />
+			<maven-resource group="org.apache.maven" artifact="maven-settings" />
+			<maven-resource group="org.apache.maven" artifact="maven-settings-builder" />
+			
+			<!-- TODO this needs to be pulled into a module -->
+			<maven-resource group="org.apache.maven.wagon" artifact="wagon-file" />
+			<maven-resource group="org.apache.maven.wagon" artifact="wagon-http-lightweight" />
+			<maven-resource group="org.apache.maven.wagon" artifact="wagon-http-shared4" />
+			<maven-resource group="org.apache.maven.wagon" artifact="wagon-provider-api" />
+			
+			<!-- TODO this needs to be pulled into a module -->
+			<maven-resource group="org.codehaus.plexus" artifact="plexus-classworlds" />
+			<maven-resource group="org.codehaus.plexus" artifact="plexus-component-annotations" />
+			<maven-resource group="org.codehaus.plexus" artifact="plexus-interpolation" />
+			<maven-resource group="org.codehaus.plexus" artifact="plexus-utils" />
+			<maven-resource group="org.sonatype.aether" artifact="aether-api" />
+			<maven-resource group="org.sonatype.aether" artifact="aether-connector-wagon" />
+			<maven-resource group="org.sonatype.aether" artifact="aether-impl" />
+			<maven-resource group="org.sonatype.aether" artifact="aether-spi" />
+			<maven-resource group="org.sonatype.aether" artifact="aether-util" />
+			<maven-resource group="org.sonatype.plexus" artifact="plexus-cipher" />
+			<maven-resource group="org.sonatype.plexus" artifact="plexus-sec-dispatcher" />
+			<maven-resource group="org.sonatype.sisu" artifact="sisu-inject-bean" />
+			<maven-resource group="org.sonatype.sisu" artifact="sisu-inject-plexus" />
+			<maven-resource-with-classifier group="org.sonatype.sisu" artifact="sisu-guice" classifier="no_aop" />
+		</module-def>
+
+		<module-def name="org.jboss.forge.maven.model">
+			<maven-resource group="org.jboss.forge" artifact="forge-project-model-maven" />
+		</module-def>
+
 		<module-def name="org.jboss.forge.parser-java.api">
 			<maven-resource group="org.jboss.forge" artifact="forge-parser-java-api" />
 		</module-def>
