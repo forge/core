@@ -65,7 +65,7 @@ import org.jboss.forge.spec.javaee.ServletFacet;
 import org.jboss.seam.render.TemplateCompiler;
 import org.jboss.seam.render.spi.TemplateResolver;
 import org.jboss.seam.render.template.CompiledTemplateResource;
-import org.jboss.seam.render.template.resolver.MetaInfClassLoaderTemplateResolver;
+import org.jboss.seam.render.template.resolver.ClassLoaderTemplateResolver;
 import org.jboss.shrinkwrap.descriptor.api.spec.cdi.beans.BeansDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
 
@@ -118,7 +118,7 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
       this.compiler = compiler;
       this.install = install;
 
-      resolver = new MetaInfClassLoaderTemplateResolver(MetawidgetScaffoldBase.class.getClassLoader());
+      resolver = new ClassLoaderTemplateResolver(MetawidgetScaffoldBase.class.getClassLoader());
       compiler.getTemplateResolverFactory().addResolver(resolver);
    }
 

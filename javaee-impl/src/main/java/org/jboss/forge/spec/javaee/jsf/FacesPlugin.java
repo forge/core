@@ -74,9 +74,9 @@ public class FacesPlugin implements Plugin
       if (!project.hasFacet(FacesFacet.class))
       {
          request.fire(new InstallFacets(FacesFacet.class));
-         if(!project.hasFacet(CDIFacet.class)) {
-            if(prompt.promptBoolean("Do you also want to install CDI?", true)) {
-                 request.fire(new InstallFacets(CDIFacet.class));
+         if (!project.hasFacet(CDIFacet.class)) {
+            if (prompt.promptBoolean("Do you also want to install CDI?", false)) {
+               request.fire(new InstallFacets(CDIFacet.class));
             }
          }
       }
