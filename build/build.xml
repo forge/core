@@ -141,6 +141,17 @@
 		<module-def name="org.jboss.forge.event-bus">
 			<maven-resource group="org.jboss.forge" artifact="forge-event-bus" />
 		</module-def>
+		
+		<module-def name="org.jboss.forge.git">
+			<maven-resource group="args4j" artifact="args4j" />
+			<maven-resource group="com.jcraft" artifact="jsch" />
+			<maven-resource group="org.jboss.forge" artifact="forge-git-tools" />
+			<maven-resource group="org.eclipse.jgit" artifact="org.eclipse.jgit" />
+			<maven-resource group="org.eclipse.jgit" artifact="org.eclipse.jgit.console" />
+			<maven-resource group="org.eclipse.jgit" artifact="org.eclipse.jgit.iplog" />
+			<maven-resource group="org.eclipse.jgit" artifact="org.eclipse.jgit.pgm" />
+			<maven-resource group="org.eclipse.jgit" artifact="org.eclipse.jgit.ui" />
+		</module-def>
 
 		<module-def name="org.jboss.forge.maven.api">
 			<maven-resource group="org.jboss.forge" artifact="forge-maven-api" />

@@ -1,53 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <artifactId>forge-parent</artifactId>
-    <groupId>org.jboss.forge</groupId>
-    <version>1.0.0-SNAPSHOT</version>
-    <relativePath>../</relativePath>
-  </parent>
-  <artifactId>forge-git-tools</artifactId>
-   <name>Forge - Git Integration</name>
-  <description>Isolates Forge build from the addition of another Maven repository for Git</description>
-  <properties>
-    <forge.api.version>1.0.0.Alpha4</forge.api.version>
-  </properties>
-  <dependencies>
-    <dependency>
-      <groupId>org.eclipse.jgit</groupId>
-      <artifactId>org.eclipse.jgit.pgm</artifactId>
-      <version>0.10.1</version>
-    </dependency>
-    <dependency>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+   
+   <parent>
+      <artifactId>forge-parent</artifactId>
       <groupId>org.jboss.forge</groupId>
-      <artifactId>forge-shell-api</artifactId>
-      <version>${forge.api.version}</version>
-    </dependency>
-  </dependencies>
-  <repositories>
-    <repository>
-      <id>jgit-repository</id>
-      <url>http://download.eclipse.org/jgit/maven</url>
-      <snapshots>
-      	<enabled>false</enabled>
-      	<updatePolicy>never</updatePolicy>
-      </snapshots>
-      <releases>
-      	<enabled>true</enabled>
-      	<updatePolicy>never</updatePolicy>
-      </releases>
-    </repository>
-  </repositories>
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+      <version>1.0.0-SNAPSHOT</version>
+      <relativePath>../</relativePath>
+   </parent>
+   
+   <artifactId>forge-git-tools</artifactId>
+   
+   <name>Forge - Git Integration</name>
+   <description>Isolates Forge build from the addition of another Maven repository for Git</description>
+
+   <dependencies>
+      <dependency>
+         <groupId>org.eclipse.jgit</groupId>
+         <artifactId>org.eclipse.jgit.pgm</artifactId>
+      </dependency>
+      
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-shell-api</artifactId>
+         <scope>provided</scope>
+      </dependency>
+   </dependencies>
+   <repositories>
+      <repository>
+         <id>jgit-repository</id>
+         <url>http://download.eclipse.org/jgit/maven</url>
+         <snapshots>
+            <enabled>false</enabled>
+            <updatePolicy>never</updatePolicy>
+         </snapshots>
+         <releases>
+            <enabled>true</enabled>
+            <updatePolicy>never</updatePolicy>
+         </releases>
+      </repository>
+   </repositories>
+   <build>
+      <plugins>
+         <plugin>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+               <source>1.6</source>
+               <target>1.6</target>
+            </configuration>
+         </plugin>
+      </plugins>
+   </build>
 </project>

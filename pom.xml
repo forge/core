@@ -59,6 +59,7 @@
       <jboss.logging.version>3.0.0.Beta4</jboss.logging.version>
       <jboss.logmanager.version>1.2.0.GA</jboss.logmanager.version>
       <jboss.modules.version>1.0.2.GA</jboss.modules.version>
+      <jgit.version>0.10.1</jgit.version>
       <jline.version>2.5</jline.version>
       <junit.version>4.8.1</junit.version>
       <log4j.version>1.2.16</log4j.version>
@@ -123,7 +124,7 @@
             <artifactId>maven-core</artifactId>
             <version>${maven.version}</version>
          </dependency>
-         
+
          <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-model</artifactId>
@@ -135,13 +136,13 @@
             <artifactId>maven-embedder</artifactId>
             <version>${maven.version}</version>
          </dependency>
-         
+
          <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-compat</artifactId>
             <version>${maven.version}</version>
          </dependency>
-         
+
          <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-aether-provider</artifactId>
@@ -344,6 +345,12 @@
             <groupId>org.jboss.forge</groupId>
             <artifactId>forge-test-harness</artifactId>
             <version>${project.version}</version>
+         </dependency>
+
+         <dependency>
+            <groupId>org.eclipse.jgit</groupId>
+            <artifactId>org.eclipse.jgit.pgm</artifactId>
+            <version>${jgit.version}</version>
          </dependency>
 
          <!-- TODO this needs to be moved into a separate repository -->
