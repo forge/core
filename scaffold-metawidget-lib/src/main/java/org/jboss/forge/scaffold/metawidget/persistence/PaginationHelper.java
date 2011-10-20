@@ -1,4 +1,4 @@
-package org.metawidget.forge.persistence;
+package org.jboss.forge.scaffold.metawidget.persistence;
 
 import java.util.List;
 

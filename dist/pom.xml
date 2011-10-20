@@ -189,8 +189,8 @@
       </dependency>
       
       <dependency>
-         <groupId>org.metawidget</groupId>
-         <artifactId>metawidget-forge</artifactId>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-scaffold-metawidget</artifactId>
       </dependency>
 
       <dependency>

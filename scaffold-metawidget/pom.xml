@@ -8,7 +8,7 @@
       <relativePath>../pom.xml</relativePath>
    </parent>
 
-   <artifactId>scaffold-metawidget</artifactId>
+   <artifactId>forge-scaffold-metawidget</artifactId>
    <packaging>jar</packaging>
    <name>Forge - Scaffold Provider for Metawidget</name>
 

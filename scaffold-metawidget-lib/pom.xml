@@ -9,7 +9,7 @@
       <relativePath>../</relativePath>
    </parent>
 
-   <artifactId>scaffold-metawidget-lib</artifactId>
+   <artifactId>forge-scaffold-metawidget-lib</artifactId>
    <name>Forge - Scaffold Libaries for Metawidget</name>
 
    <properties>

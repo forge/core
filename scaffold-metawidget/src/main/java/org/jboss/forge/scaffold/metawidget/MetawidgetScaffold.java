@@ -64,6 +64,6 @@ public class MetawidgetScaffold extends MetawidgetScaffoldBase
    protected List<Dependency> getMetawidgetDependencies()
    {
       return Arrays.asList(
-               (Dependency) DependencyBuilder.create("org.jboss.forge:scaffold-metawidget-lib"));
+               (Dependency) DependencyBuilder.create("org.jboss.forge:forge-scaffold-metawidget-lib"));
    }
 }
