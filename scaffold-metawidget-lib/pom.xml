@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
    <modelVersion>4.0.0</modelVersion>
    <parent>
       <artifactId>forge-parent</artifactId>
@@ -7,15 +8,17 @@
       <version>1.0.0-SNAPSHOT</version>
       <relativePath>../</relativePath>
    </parent>
-   <groupId>org.metawidget.forge</groupId>
-   <artifactId>metawidget-forge-scaffold</artifactId>
+
+   <artifactId>scaffold-metawidget-lib</artifactId>
    <name>Forge - Scaffold Libaries for Metawidget</name>
+
    <properties>
       <seam.faces.version>3.0.2.Final</seam.faces.version>
       <rewrite.version>1.0.0.Alpha4</rewrite.version>
       <seam.persist.version>3.0.0.Final</seam.persist.version>
       <metawidget.version>1.30</metawidget.version>
    </properties>
+
    <dependencies>
       <dependency>
          <groupId>org.jboss.spec</groupId>
@@ -76,25 +79,6 @@
       <dependency>
          <groupId>org.jboss.logging</groupId>
          <artifactId>jboss-logging</artifactId>
-         <version>3.0.0.Beta4</version>
       </dependency>
    </dependencies>
-   <repositories>
-      <repository>
-         <id>JBOSS_NEXUS</id>
-         <url>https://repository.jboss.org/nexus/content/groups/public/</url>
-      </repository>
-   </repositories>
-   <build>
-      <finalName>metawidget-forge-scaffold</finalName>
-      <plugins>
-         <plugin>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <configuration>
-               <source>1.6</source>
-               <target>1.6</target>
-            </configuration>
-         </plugin>
-      </plugins>
-   </build>
 </project>

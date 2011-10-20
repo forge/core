@@ -1,4 +1,4 @@
-package org.metawidget.forge;
+package org.jboss.forge.scaffold.metawidget;
 
 /*
  * JBoss, Home of Professional Open Source
@@ -43,10 +43,9 @@ import org.jboss.forge.shell.exceptions.PluginExecutionException;
 import org.jboss.forge.shell.util.Streams;
 import org.jboss.forge.spec.javaee.ServletFacet;
 import org.jboss.forge.test.AbstractShellTest;
-import org.jboss.forge.test.SingletonAbstractShellTest;
 import org.jboss.seam.render.RenderRoot;
-import org.jboss.seam.solder.SolderRoot;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.solder.SolderRoot;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -56,11 +55,10 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class MetawidgetScaffoldTest extends AbstractShellTest
 {
-
    @Deployment
    public static JavaArchive getDeployment()
    {
-      JavaArchive archive = SingletonAbstractShellTest.getDeployment()
+      JavaArchive archive = AbstractShellTest.getDeployment()
                .addPackages(true, RenderRoot.class.getPackage())
                .addPackages(true, SolderRoot.class.getPackage())
                .addPackages(true, MetawidgetScaffold.class.getPackage());
@@ -188,7 +186,8 @@ public class MetawidgetScaffoldTest extends AbstractShellTest
 
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
       JavaResource bean = java.getJavaResource(java.getBasePackage() + ".view.CustomerBean");
-      Assert.assertTrue(((JavaClass) bean.getJavaSource()).hasInterface("org.metawidget.forge.navigation.MenuItem"));
+      Assert.assertTrue(((JavaClass) bean.getJavaSource())
+               .hasInterface("org.jboss.forge.scaffold.metawidget.navigation.MenuItem"));
 
       getShell().execute("build");
    }

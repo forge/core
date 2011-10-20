@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.metawidget.forge.validation;
+package org.jboss.forge.scaffold.metawidget.validation;
 
 import java.io.File;
 
@@ -32,9 +32,9 @@ import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.project.facets.events.FacetInstalled;
 import org.jboss.forge.resources.FileResource;
+import org.jboss.forge.scaffold.metawidget.MetawidgetScaffold;
 import org.jboss.forge.shell.ShellPrompt;
 import org.jboss.forge.spec.javaee.ValidationFacet;
-import org.metawidget.forge.MetawidgetScaffold;
 
 /**
  * Handles configuration of metawidget for bean validation if both are detected in a project // TODO this should also be
@@ -65,10 +65,10 @@ public class MetawidgetValidationConfigurator
          {
             final Node root = XMLParser.parse(configFile.getResourceInputStream());
             final Node array = root.getOrCreate("htmlMetawidget")
-                     .attribute("xmlns", "java:org.metawidget.faces.component.html")
+                     .attribute("xmlns", "java:org.jboss.faces.component.html")
                      .getOrCreate("inspector")
                      .getOrCreate("compositeInspector")
-                     .attribute("xmlns", "java:org.metawidget.inspector.composite")
+                     .attribute("xmlns", "java:org.jboss.inspector.composite")
                      .attribute("config", "CompositeInspectorConfig")
                      .getOrCreate("inspectors")
                      .getOrCreate("array");
@@ -97,11 +97,11 @@ public class MetawidgetValidationConfigurator
    private void addValidationConfigurationTo(final Node node)
    {
       node.getOrCreate("beanValidationInspector")
-               .attribute("xmlns", "java:org.metawidget.inspector.beanvalidation")
-               .attribute("config", "org.metawidget.inspector.impl.BaseObjectInspectorConfig")
+               .attribute("xmlns", "java:org.jboss.inspector.beanvalidation")
+               .attribute("config", "org.jboss.inspector.impl.BaseObjectInspectorConfig")
                .getOrCreate("propertyStyle")
                .getOrCreate("javaBeanPropertyStyle")
-               .attribute("xmlns", "java:org.metawidget.inspector.impl.propertystyle.javabean")
+               .attribute("xmlns", "java:org.jboss.inspector.impl.propertystyle.javabean")
                .attribute("config", "JavaBeanPropertyStyleConfig")
                .getOrCreate("privateFieldConvention")
                .getOrCreate("format")

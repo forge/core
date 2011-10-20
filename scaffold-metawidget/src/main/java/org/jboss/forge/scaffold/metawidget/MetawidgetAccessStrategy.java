@@ -19,12 +19,39 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.seam.solder;
+package org.jboss.forge.scaffold.metawidget;
+
+import java.util.List;
+
+import org.jboss.forge.project.Project;
+import org.jboss.forge.resources.Resource;
+import org.jboss.forge.scaffold.AccessStrategy;
+import org.jboss.forge.spec.javaee.FacesFacet;
 
 /**
- * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * Metawidget Scaffold Access Strategy
  * 
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface SolderRoot
+public class MetawidgetAccessStrategy implements AccessStrategy
 {
+   final FacesFacet faces;
+
+   public MetawidgetAccessStrategy(final Project project)
+   {
+      faces = project.getFacet(FacesFacet.class);
+   }
+
+   @Override
+   public List<String> getWebPaths(final Resource<?> r)
+   {
+      return faces.getWebPaths(r);
+   }
+
+   @Override
+   public Resource<?> fromWebPath(final String path)
+   {
+      return faces.getResourceForWebPath(path);
+   }
+
 }

@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.metawidget.forge;
+package org.jboss.forge.scaffold.metawidget;
 
 import java.util.Arrays;
 import java.util.List;
@@ -64,6 +64,6 @@ public class MetawidgetScaffold extends MetawidgetScaffoldBase
    protected List<Dependency> getMetawidgetDependencies()
    {
       return Arrays.asList(
-               (Dependency) DependencyBuilder.create("org.metawidget.forge:metawidget-forge-scaffold"));
+               (Dependency) DependencyBuilder.create("org.jboss.forge:scaffold-metawidget-lib"));
    }
 }
