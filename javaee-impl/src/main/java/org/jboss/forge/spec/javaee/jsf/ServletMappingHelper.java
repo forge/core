@@ -34,7 +34,7 @@ import java.util.List;
  * @author <a href="http://community.jboss.org/people/bleathem">Brian Leathem</a>
  */
 class ServletMappingHelper {
-    public static String FACES_SERVLET_CLASS = "javax.faces.webapp.FacesServlet";
+    public static final String FACES_SERVLET_CLASS = "javax.faces.webapp.FacesServlet";
 
     InputStream addFacesServletMapping(InputStream webXmlStream, String mapping)
    {
