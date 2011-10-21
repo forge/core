@@ -80,6 +80,14 @@ public class FacesPlugin implements Plugin
             }
          }
       }
+      FacesFacet facet = project.getFacet(FacesFacet.class);
+      if (facet.getFacesServletMappings().isEmpty())
+      {
+          if (prompt.promptBoolean("Do you also want to install the Faces servlet and mapping?", false)) {
+              facet.setFacesMapping("*.xhtml");
+              facet.setFacesMapping("/faces/*");
+          }
+      }
 
       if (project.hasFacet(FacesFacet.class))
       {
@@ -112,7 +120,7 @@ public class FacesPlugin implements Plugin
 
       out.println();
       out.println(out.renderColor(ShellColor.BOLD, "Project State: ") + facet.getProjectStage());
-      out.println(out.renderColor(ShellColor.BOLD, "FacesServlet Mappings: ") + facet.getFacesServletMappings());
+      out.println(out.renderColor(ShellColor.BOLD, "FacesServlet Mappings: ") + facet.getEffectiveFacesServletMappings());
       out.println(out.renderColor(ShellColor.BOLD, "Faces Default Suffixes: ") + facet.getFacesDefaultSuffixes());
       out.println(out.renderColor(ShellColor.BOLD, "Facelets Default Suffixes: ")
                + facet.getFaceletsDefaultSuffixes());
@@ -122,8 +130,7 @@ public class FacesPlugin implements Plugin
    private static final String VIEW_TEMPLATE = "org/jboss/forge/web/empty-view.xhtml";
 
    @Command("new-view")
-   public void newView(final PipeOut out,
-            @Option(name = "target") final Resource<?> target)
+   public void newView(final PipeOut out, @Option(name = "target") final Resource<?> target)
    {
       CompiledTemplateResource viewTemplate = compiler.get().compile(VIEW_TEMPLATE);
       if (!target.exists())
