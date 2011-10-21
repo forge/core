@@ -120,7 +120,7 @@ public class FacesPlugin implements Plugin
 
       out.println();
       out.println(out.renderColor(ShellColor.BOLD, "Project State: ") + facet.getProjectStage());
-      out.println(out.renderColor(ShellColor.BOLD, "FacesServlet Mappings: ") + facet.getFacesServletMappings());
+      out.println(out.renderColor(ShellColor.BOLD, "FacesServlet Mappings: ") + facet.getEffectiveFacesServletMappings());
       out.println(out.renderColor(ShellColor.BOLD, "Faces Default Suffixes: ") + facet.getFacesDefaultSuffixes());
       out.println(out.renderColor(ShellColor.BOLD, "Facelets Default Suffixes: ")
                + facet.getFaceletsDefaultSuffixes());

@@ -49,14 +49,14 @@ public interface FacesFacet extends Facet
    FacesProjectStage getProjectStage();
 
    /**
-    * Get this application's currently configured FacesServlet mappings.
-    */
-   List<String> getFacesServletMappings();
-
-    /**
     * Get this application's currently configured FacesServlet mappings from the web.xml
     */
-   List<String> getExplicitFacesServletMappings();
+    List<String> getFacesServletMappings();
+
+   /**
+    * Get this application's currently configured FacesServlet mappings.
+    */
+   List<String> getEffectiveFacesServletMappings();
 
    /**
     * Set this application's FacesServlet mapping.

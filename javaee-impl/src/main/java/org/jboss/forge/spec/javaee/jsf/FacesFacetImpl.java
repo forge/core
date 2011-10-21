@@ -108,6 +108,14 @@ public class FacesFacetImpl extends BaseJavaEEFacet implements FacesFacet
    @Override
    public List<String> getFacesServletMappings()
    {
+      ServletFacet facet = project.getFacet(ServletFacet.class);
+      WebAppDescriptor webXml = facet.getConfig();
+      return getExplicitFacesServletMappings(webXml);
+   }
+
+   @Override
+   public List<String> getEffectiveFacesServletMappings()
+   {
       List<String> results = new ArrayList<String>();
       ServletFacet facet = project.getFacet(ServletFacet.class);
       WebAppDescriptor webXml = facet.getConfig();
@@ -131,14 +139,6 @@ public class FacesFacetImpl extends BaseJavaEEFacet implements FacesFacet
                      "Version not >= 3.0, could not discover FacesServlet mappings");
       }
       return results;
-   }
-
-   @Override
-   public List<String> getExplicitFacesServletMappings()
-   {
-      ServletFacet facet = project.getFacet(ServletFacet.class);
-      WebAppDescriptor webXml = facet.getConfig();
-      return getExplicitFacesServletMappings(webXml);
    }
 
    private List<String> getExplicitFacesServletMappings(WebAppDescriptor webXml)
@@ -195,7 +195,7 @@ public class FacesFacetImpl extends BaseJavaEEFacet implements FacesFacet
       List<String> results = new ArrayList<String>();
       if (getResourceForWebPath(path) == null)
       {
-         List<String> mappings = getFacesServletMappings();
+         List<String> mappings = getEffectiveFacesServletMappings();
          for (String mapping : mappings)
          {
             String viewId = buildFacesViewId(mapping, path);
@@ -215,7 +215,7 @@ public class FacesFacetImpl extends BaseJavaEEFacet implements FacesFacet
          List<DirectoryResource> webRootDirectories = web.getWebRootDirectories();
 
          boolean matches = false;
-         for (String mapping : getFacesServletMappings())
+         for (String mapping : getEffectiveFacesServletMappings())
          {
             Matcher matcher = ServletUtil.mappingToRegex(mapping).matcher(path);
             if (matcher.matches())
