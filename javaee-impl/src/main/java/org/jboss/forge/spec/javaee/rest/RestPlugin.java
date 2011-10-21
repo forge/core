@@ -24,7 +24,9 @@ package org.jboss.forge.spec.javaee.rest;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -36,13 +38,13 @@ import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.Annotation;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaSource;
-import org.jboss.forge.parser.java.Method;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.project.facets.events.InstallFacets;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.shell.ShellMessages;
+import org.jboss.forge.shell.ShellPrompt;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.Command;
 import org.jboss.forge.shell.plugins.Current;
@@ -54,6 +56,8 @@ import org.jboss.forge.shell.plugins.SetupCommand;
 import org.jboss.forge.spec.javaee.CDIFacet;
 import org.jboss.forge.spec.javaee.PersistenceFacet;
 import org.jboss.forge.spec.javaee.RestFacet;
+import org.jboss.seam.render.TemplateCompiler;
+import org.jboss.seam.render.template.CompiledTemplateResource;
 import org.jboss.shrinkwrap.descriptor.impl.base.Strings;
 
 /**
@@ -72,6 +76,12 @@ public class RestPlugin implements Plugin
    @Inject
    @Current
    private Resource<?> currentResource;
+
+   @Inject
+   private TemplateCompiler compiler;
+
+   @Inject
+   private ShellPrompt prompt;
 
    @SetupCommand
    public void setup(final PipeOut out)
@@ -117,37 +127,34 @@ public class RestPlugin implements Plugin
       for (JavaResource jr : javaTargets)
       {
          JavaClass entity = (JavaClass) (jr).getJavaSource();
-         entity.addAnnotation(XmlRootElement.class);
+         if (!entity.hasAnnotation(XmlRootElement.class))
+            entity.addAnnotation(XmlRootElement.class);
 
-         JavaClass endpoint = JavaParser.parse(JavaClass.class,
-                  getClass().getResourceAsStream("/org/jboss/forge/rest/Endpoint.jv"));
-         endpoint.setPackage(java.getBasePackage() + ".rest");
+         CompiledTemplateResource template = compiler.compileResource(getClass().getResourceAsStream(
+                  "/org/jboss/forge/rest/Endpoint.jv"));
 
-         /*
-          * Configure endpoint
-          */
+         Map<Object, Object> map = new HashMap<Object, Object>();
+         map.put("entity", entity);
+         map.put("entityTable", getEntityTable(entity));
+
+         JavaClass endpoint = JavaParser.parse(JavaClass.class, template.render(map));
          endpoint.addImport(entity.getQualifiedName());
-         endpoint.setName(getEntityTable(entity) + "Endpoint");
+         endpoint.setPackage(java.getBasePackage() + ".rest");
          endpoint.getAnnotation(Path.class).setStringValue("/" + getEntityTable(entity).toLowerCase());
 
          /*
-          * Configure listAll
+          * Save the sources
           */
-         Method<JavaClass> listAll = endpoint.getMethod("listAll");
-         listAll.setReturnType("List<" + getEntityTable(entity) + ">");
-         listAll.setBody(listAll.getBody().replaceAll("Object", getEntityTable(entity)));
-         listAll.setBody(listAll.getBody().replaceAll("Table", getEntityTable(entity)));
-
-         /*
-          * Configure findById
-          */
-         Method<JavaClass> find = endpoint.getMethod("findById", long.class);
-         find.setReturnType(entity);
-         find.setBody(find.getBody().replaceAll("Object", entity.getName()));
-
          java.saveJavaSource(entity);
-         java.saveJavaSource(endpoint);
-         ShellMessages.success(out, "Generated REST endpoint for [" + entity.getQualifiedName() + "]");
+
+         if (!java.getJavaResource(endpoint).exists()
+                  || prompt.promptBoolean("Endpoint [" + endpoint.getQualifiedName() + "] already, exists. Overwrite?"))
+         {
+            java.saveJavaSource(endpoint);
+            ShellMessages.success(out, "Generated REST endpoint for [" + entity.getQualifiedName() + "]");
+         }
+         else
+            ShellMessages.info(out, "Aborted endpoint generation for [" + entity.getQualifiedName() + "]");
       }
    }
 

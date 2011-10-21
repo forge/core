@@ -39,6 +39,7 @@ import org.jboss.forge.parser.java.MethodHolder;
 import org.jboss.forge.parser.java.Parameter;
 import org.jboss.forge.parser.java.ast.MethodFinderVisitor;
 import org.jboss.forge.parser.java.util.Strings;
+import org.jboss.forge.parser.java.util.Types;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -198,17 +199,18 @@ public abstract class AbstractJavaSourceMemberHolder<O extends JavaSource<O>> ex
             if (paramTypes != null && localParams.size() == 0
                      || localParams.size() == paramTypes.length)
             {
+               boolean matches = true;
                for (int i = 0; i < localParams.size(); i++)
                {
                   Parameter localParam = localParams.get(i);
                   String type = paramTypes[i];
-                  if (!Strings.areEqual(localParam.getType(), type))
+                  if (!Types.areEquivalent(localParam.getType(), type))
                   {
-                     return null;
+                     matches = false;
                   }
-                  // TODO this needs to be able to handle Type to SimpleType comparison
                }
-               return (Method<O>) local;
+               if (matches)
+                  return (Method<O>) local;
             }
          }
       }

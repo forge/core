@@ -23,49 +23,69 @@ package org.jboss.forge.spec.javaee.rest;
 
 import java.util.List;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
+import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.persistence.PersistenceContextType;
+import javax.ws.rs.*;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  *         JAX-RS Example This class produces a RESTful service to read the contents of the table.
  */
+@Stateless
 @Path("/objects")
-@RequestScoped
-public class Endpoint
+public class @{entityTable}Endpoint
 {
-   @PersistenceContext
+   @PersistenceContext(type = PersistenceContextType.EXTENDED)
    private EntityManager em;
 
-   @GET
-   @Produces("text/xml")
-   public List<Object> listAll()
+   @POST
+   @Consumes("text/xml")
+   public @{entity.getName()} create(@{entity.getName()} entity)
    {
-      /*
-       *  Use @SupressWarnings to force IDE to ignore warnings about "genericizing" the results of this query
-       */
-      @SuppressWarnings("unchecked")
-      /*
-       * We recommend centralizing inline queries such as this one into @NamedQuery annotations on
-       * the @Entity class as described in the named query blueprint:
-       * https://blueprints.dev.java.net/bpcatalog/ee5/persistence/namedquery.html
-       */
-      final List<Object> results = em.createQuery("SELECT x FROM Table x").getResultList();
-      return results;
+      em.joinTransaction();
+      em.persist(entity);
+      return entity;
+   }
+
+   @DELETE
+   @Path("/{id:[0-9][0-9]*}")
+   @Produces("text/xml")
+   public @{entity.getName()} deleteById(@PathParam("id") long id)
+   {
+      em.joinTransaction();
+      @{entity.getName()} result = em.find(@{entity.getName()}.class, id);
+      em.remove(result);
+      return result;
    }
 
    @GET
    @Path("/{id:[0-9][0-9]*}")
    @Produces("text/xml")
-   public Object findById(@PathParam("id") long id)
+   public @{entity.getName()} findById(@PathParam("id") long id)
    {
-      return em.find(Object.class, id);
+      return em.find(@{entity.getName()}.class, id);
+   }
+
+   @GET
+   @Produces("text/xml")
+   public List<@{entity.getName()}> listAll()
+   {
+      @SuppressWarnings("unchecked")
+      final List<@{entity.getName()}> results = em.createQuery("SELECT x FROM @{entityTable} x").getResultList();
+      return results;
+   }
+
+   @PUT
+   @Path("/{id:[0-9][0-9]*}")
+   @Consumes("text/xml")
+   public @{entity.getName()} update(@PathParam("id") long id, @{entity.getName()} entity)
+   {
+      entity.setId(id);
+      em.joinTransaction();
+      entity = em.merge(entity);
+      return entity;
    }
 }
