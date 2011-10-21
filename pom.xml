@@ -460,13 +460,13 @@
 
          <!-- TODO this needs to be moved into a separate repository -->
          <dependency>
-            <groupId>org.metawidget</groupId>
-            <artifactId>metawidget-forge</artifactId>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>forge-scaffold-metawidget</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>
-            <groupId>org.metawidget</groupId>
-            <artifactId>metawidget-forge-scaffold</artifactId>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>forge-scaffold-metawidget-lib</artifactId>
             <version>${project.version}</version>
          </dependency>
 
@@ -746,7 +746,7 @@
                         <descriptors>
                            <descriptor>src/main/assembly/assembly.xml</descriptor>
                         </descriptors>
-                        <finalName>${project.build.finalName}-${project.version}</finalName>
+                        <finalName>${project.build.finalName}</finalName>
                      </configuration>
                   </execution>
                </executions>

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module xmlns="urn:jboss:module:1.0" name="org.jboss.forge">
+
+   <main-class name="org.jboss.forge.shell.Bootstrap" />
+
+   <resources>
+      <!-- Insert resources here -->
+   </resources>
+
+   <dependencies>
+      <module name="javax.annotation.api" />
+      <module name="jline" />
+
+      <module name="org.apache.httpcomponents" />
+      <module name="org.javassist" />
+      <module name="org.jboss.interceptor" />
+      <module name="org.jboss.modules" />
+
+
+      <module name="org.jboss.forge.javaee.api" services="import">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+
+      <module name="org.jboss.forge.javaee.impl" services="import">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+
+      <module name="org.jboss.forge.git" services="import">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+
+      <module name="org.jboss.forge.event-bus" services="import"
+         export="true">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+
+      <module name="org.jboss.forge.maven.api" services="import">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+
+      <module name="org.jboss.forge.maven.model" services="import">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+
+      <module name="org.jboss.forge.parser-java.api" />
+      <module name="org.jboss.forge.parser-java.impl" services="import">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+
+      <module name="org.jboss.forge.parser-xml" services="import">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+
+      <module name="org.jboss.forge.scaffold.api" services="import">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+
+      <module name="org.jboss.forge.scaffold.impl" services="import">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+
+      <module name="org.jboss.forge.shell.api" services="import">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+      
+      <module name="org.jboss.seam.render" services="import">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+      
+      <module name="org.jboss.solder" services="import">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+
+      <module name="org.jboss.tools.forge.runtime.ext" services="import"
+         optional="true">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+      
+      <module name="org.jboss.weld.core" services="import" />
+
+      <module name="org.mvel" />
+      <module name="org.yaml" />
+      <module name="sun.misc" />
+      
+      <module name="javax.api" />
+   </dependencies>
+
+</module>

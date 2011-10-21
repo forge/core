@@ -5,9 +5,9 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 
 import @{entity.getQualifiedName()};
-import org.metawidget.forge.navigation.MenuItem;
-import org.metawidget.forge.persistence.PaginationHelper;
-import org.metawidget.forge.persistence.PersistenceUtil;
+import org.jboss.forge.scaffold.metawidget.navigation.MenuItem;
+import org.jboss.forge.scaffold.metawidget.persistence.PaginationHelper;
+import org.jboss.forge.scaffold.metawidget.persistence.PersistenceUtil;
 
 @Named
 @RequestScoped
