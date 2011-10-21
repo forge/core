@@ -238,6 +238,9 @@
 		<!-- BEGIN Forge Modules -->
 		<module-def name="org.jboss.forge">
 			<maven-resource group="org.jboss.forge" artifact="forge-shell" />
+			
+			<!-- TODO make this a separate auto-install plugin -->
+			<maven-resource group="org.jboss.forge" artifact="forge-dev-plugins" />
 		</module-def>
 
 		<module-def name="org.jboss.forge.event-bus">
