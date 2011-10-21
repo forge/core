@@ -49,9 +49,19 @@ public interface FacesFacet extends Facet
    FacesProjectStage getProjectStage();
 
    /**
+    * Get this application's currently configured FacesServlet mappings from the web.xml
+    */
+    List<String> getFacesServletMappings();
+
+   /**
     * Get this application's currently configured FacesServlet mappings.
     */
-   List<String> getFacesServletMappings();
+   List<String> getEffectiveFacesServletMappings();
+
+   /**
+    * Set this application's FacesServlet mapping.
+    */
+   void setFacesMapping(String mapping);
 
    /**
     * For a given {@link Resource}, if the resource is a web-resource, return all known context-relative URLs with which
