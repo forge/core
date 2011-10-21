@@ -81,7 +81,7 @@ public class FacesPlugin implements Plugin
          }
       }
       FacesFacet facet = project.getFacet(FacesFacet.class);
-      if (facet.getExplicitFacesServletMappings().isEmpty())
+      if (facet.getFacesServletMappings().isEmpty())
       {
           if (prompt.promptBoolean("Do you also want to install the Faces servlet and mapping?", false)) {
               facet.setFacesMapping("*.xhtml");
