@@ -22,6 +22,8 @@
 package org.jboss.forge.project;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -79,7 +81,13 @@ public abstract class BaseProject implements Project
    }
 
    @Override
-   public boolean hasAllFacets(final List<Class<? extends Facet>> facetDependencies)
+   public boolean hasAllFacets(Class<? extends Facet>... facetDependencies)
+   {
+      return hasAllFacets(Arrays.asList(facetDependencies));
+   }
+
+   @Override
+   public boolean hasAllFacets(final Collection<Class<? extends Facet>> facetDependencies)
    {
       for (Class<? extends Facet> type : facetDependencies)
       {
@@ -249,7 +257,7 @@ public abstract class BaseProject implements Project
       {
          throw new ProjectModelException("Could not remove " +
                   "facet: [" + ConstraintInspector.getName(facet.getClass()) + "]. " +
-                        "Removal was unsuccessful.");
+                  "Removal was unsuccessful.");
       }
    }
 
@@ -263,7 +271,7 @@ public abstract class BaseProject implements Project
       {
          throw new ProjectModelException("Could not complete installation of " +
                   "facet: [" + ConstraintInspector.getName(facet.getClass()) + "]. " +
-                        "Installation was aborted by the Facet during installation.");
+                  "Installation was aborted by the Facet during installation.");
       }
    }
 

@@ -24,6 +24,7 @@ package org.jboss.forge.scaffold.plugins;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.enterprise.event.Event;
@@ -179,7 +180,7 @@ public class ScaffoldPlugin implements Plugin
    {
       ScaffoldProvider scaffoldImpl = null;
 
-      List<Facet> facets = project.getFacets();
+      Collection<Facet> facets = project.getFacets();
       List<ScaffoldProvider> detected = new ArrayList<ScaffoldProvider>();
       for (Facet facet : facets) {
          if (facet instanceof ScaffoldProvider)

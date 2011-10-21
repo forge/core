@@ -21,6 +21,7 @@
  */
 package org.jboss.forge.shell.constraint;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.jboss.forge.project.Facet;
@@ -60,7 +61,7 @@ public class ConstraintEnforcer
                      + ", but the current packaging type is [" + currentPackagingType + "]");
          }
 
-         List<Facet> currentFacets = currentProject.getFacets();
+         Collection<Facet> currentFacets = currentProject.getFacets();
          List<Class<? extends Facet>> facetDependencies = ConstraintInspector.getFacetDependencies(type);
          if (!currentProject.hasAllFacets(facetDependencies))
          {
@@ -100,7 +101,7 @@ public class ConstraintEnforcer
          }
 
          // check to make sure all required facets are registered in the Project
-         List<Facet> currentFacets = currentProject.getFacets();
+         Collection<Facet> currentFacets = currentProject.getFacets();
          List<Class<? extends Facet>> facetDependencies = ConstraintInspector.getFacetDependencies(type);
          if (!currentProject.hasAllFacets(facetDependencies))
          {

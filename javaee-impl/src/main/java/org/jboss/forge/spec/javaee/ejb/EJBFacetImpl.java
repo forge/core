@@ -22,16 +22,13 @@
 package org.jboss.forge.spec.javaee.ejb;
 
 import org.jboss.forge.shell.plugins.Alias;
-import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.spec.javaee.BaseJavaEEFacet;
 import org.jboss.forge.spec.javaee.EJBFacet;
-import org.jboss.forge.spec.javaee.ServletFacet;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Alias("forge.spec.ejb")
-@RequiresFacet(ServletFacet.class)
 public class EJBFacetImpl extends BaseJavaEEFacet implements EJBFacet
 {
 }

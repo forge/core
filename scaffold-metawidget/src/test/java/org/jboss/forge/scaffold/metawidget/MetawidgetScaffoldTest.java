@@ -29,7 +29,6 @@ import java.util.List;
 
 import junit.framework.Assert;
 
-import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.xml.Node;
@@ -43,9 +42,6 @@ import org.jboss.forge.shell.exceptions.PluginExecutionException;
 import org.jboss.forge.shell.util.Streams;
 import org.jboss.forge.spec.javaee.ServletFacet;
 import org.jboss.forge.test.AbstractShellTest;
-import org.jboss.seam.render.RenderRoot;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.jboss.solder.SolderRoot;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -55,17 +51,6 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class MetawidgetScaffoldTest extends AbstractShellTest
 {
-   @Deployment
-   public static JavaArchive getDeployment()
-   {
-      JavaArchive archive = AbstractShellTest.getDeployment()
-               .addPackages(true, RenderRoot.class.getPackage())
-               .addPackages(true, SolderRoot.class.getPackage())
-               .addPackages(true, MetawidgetScaffold.class.getPackage());
-
-      return archive;
-   }
-
    @Test
    public void testScaffoldSetup() throws Exception
    {

@@ -44,10 +44,12 @@ import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.events.PostStartup;
 import org.jboss.forge.shell.events.Startup;
+import org.jboss.seam.render.RenderRoot;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.solder.SolderRoot;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -63,6 +65,8 @@ public abstract class SingletonAbstractShellTest
 
       JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar")
                .addPackages(true, Root.class.getPackage())
+               .addPackages(true, RenderRoot.class.getPackage())
+               .addPackages(true, SolderRoot.class.getPackage())
                .addManifestResource(new ByteArrayAsset("<beans/>".getBytes()), ArchivePaths.create("beans.xml"));
 
       return archive;

@@ -54,6 +54,7 @@ import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.SetupCommand;
 import org.jboss.forge.spec.javaee.CDIFacet;
+import org.jboss.forge.spec.javaee.EJBFacet;
 import org.jboss.forge.spec.javaee.PersistenceFacet;
 import org.jboss.forge.spec.javaee.RestFacet;
 import org.jboss.seam.render.TemplateCompiler;
@@ -107,7 +108,7 @@ public class RestPlugin implements Plugin
        */
       if (!project.hasAllFacets(Arrays.asList(CDIFacet.class, PersistenceFacet.class)))
       {
-         request.fire(new InstallFacets(true, CDIFacet.class, PersistenceFacet.class));
+         request.fire(new InstallFacets(true, EJBFacet.class, PersistenceFacet.class));
       }
 
       if (((targets == null) || (targets.length < 1))
