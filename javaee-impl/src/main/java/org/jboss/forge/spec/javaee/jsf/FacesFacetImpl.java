@@ -22,6 +22,7 @@
 package org.jboss.forge.spec.javaee.jsf;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -61,6 +62,9 @@ public class FacesFacetImpl extends BaseJavaEEFacet implements FacesFacet
 {
    @Inject
    private ShellPrintWriter out;
+
+   @Inject
+   private ServletMappingHelper servletMappingHelper;
 
    @Override
    public FileResource<?> getConfigFile()
@@ -113,18 +117,7 @@ public class FacesFacetImpl extends BaseJavaEEFacet implements FacesFacet
 
       if (webXml.hasFacesServlet())
       {
-         List<ServletDef> servlets = webXml.getServlets();
-         for (ServletDef servlet : servlets)
-         {
-            if ("javax.faces.webapp.FacesServlet".equals(servlet.getServletClass()))
-            {
-               List<ServletMappingDef> mappings = servlet.getMappings();
-               for (ServletMappingDef mapping : mappings)
-               {
-                  results.addAll(mapping.getUrlPatterns());
-               }
-            }
-         }
+         results.addAll(getExplicitFacesServletMappings(webXml));
       }
       else
       {
@@ -138,6 +131,43 @@ public class FacesFacetImpl extends BaseJavaEEFacet implements FacesFacet
                      "Version not >= 3.0, could not discover FacesServlet mappings");
       }
       return results;
+   }
+
+   @Override
+   public List<String> getExplicitFacesServletMappings()
+   {
+      ServletFacet facet = project.getFacet(ServletFacet.class);
+      WebAppDescriptor webXml = facet.getConfig();
+      return getExplicitFacesServletMappings(webXml);
+   }
+
+   private List<String> getExplicitFacesServletMappings(WebAppDescriptor webXml)
+   {
+      List<ServletDef> servlets = webXml.getServlets();
+      List<String> results = new ArrayList<String>();
+         for (ServletDef servlet : servlets)
+         {
+            if ("javax.faces.webapp.FacesServlet".equals(servlet.getServletClass()))
+            {
+               List<ServletMappingDef> mappings = servlet.getMappings();
+               for (ServletMappingDef mapping : mappings)
+               {
+                  results.addAll(mapping.getUrlPatterns());
+               }
+            }
+         }
+      return results;
+   }
+
+   public void setFacesMapping(String mapping)
+   {
+      ServletFacet facet = project.getFacet(ServletFacet.class);
+      InputStream webXml = facet.getConfigFile().getResourceInputStream();
+      InputStream newWebXml = servletMappingHelper.addFacesServletMapping(webXml, mapping);
+      if (webXml != newWebXml)
+      {
+          facet.getConfigFile().setContents(newWebXml);
+      }
    }
 
    @Override

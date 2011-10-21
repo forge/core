@@ -23,12 +23,10 @@ package org.jboss.forge.spec.javaee.jsf;
 
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Instance;
-import javax.faces.webapp.FacesServlet;
 import javax.inject.Inject;
 
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.events.InstallFacets;
-import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.shell.ShellColor;
@@ -47,7 +45,6 @@ import org.jboss.forge.spec.javaee.FacesFacet;
 import org.jboss.forge.spec.javaee.ServletFacet;
 import org.jboss.seam.render.TemplateCompiler;
 import org.jboss.seam.render.template.CompiledTemplateResource;
-import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.FacesProjectStage;
 import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
 
@@ -81,10 +78,15 @@ public class FacesPlugin implements Plugin
             if (prompt.promptBoolean("Do you also want to install CDI?", false)) {
                request.fire(new InstallFacets(CDIFacet.class));
             }
-            if (prompt.promptBoolean("Do you also want to install the Faces servlet and mapping?", false)) {
-               this.installFacesServletMapping();
-            }
          }
+      }
+      FacesFacet facet = project.getFacet(FacesFacet.class);
+      if (facet.getExplicitFacesServletMappings().isEmpty())
+      {
+          if (prompt.promptBoolean("Do you also want to install the Faces servlet and mapping?", false)) {
+              facet.setFacesMapping("*.xhtml");
+              facet.setFacesMapping("/faces/*");
+          }
       }
 
       if (project.hasFacet(FacesFacet.class))
@@ -144,13 +146,5 @@ public class FacesPlugin implements Plugin
       {
          throw new RuntimeException("Aborted. File exists [" + target.getFullyQualifiedName() + "].");
       }
-   }
-
-   private void installFacesServletMapping() {
-      FileResource<?> descriptor = project.getFacet(ServletFacet.class).getConfigFile();
-      WebAppDescriptor unit = Descriptors.create(WebAppDescriptor.class).facesServlet();
-      unit.facesDefaultSuffixes(".xhtml");
-
-      descriptor.setContents(unit.exportAsString());
    }
 }
