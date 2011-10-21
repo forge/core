@@ -73,9 +73,7 @@ public abstract class AbstractShellPrompt implements Shell
    @Override
    public String prompt(final String message, final String defaultIfEmpty)
    {
-      String query = " [" + defaultIfEmpty + "] ";
-
-      return prompt(message + query, String.class, defaultIfEmpty);
+      return prompt(message, String.class, defaultIfEmpty);
    }
 
    @Override
@@ -148,6 +146,17 @@ public abstract class AbstractShellPrompt implements Shell
       do
       {
          String query = " [" + defaultIfEmpty + "] ";
+
+         if (defaultIfEmpty instanceof Boolean)
+         {
+            if (Boolean.TRUE.equals(defaultIfEmpty))
+               query = " [Y/n] ";
+            else
+            {
+               query = " [y/N] ";
+            }
+         }
+
          input = prompt(message + query);
          if ((input == null) || "".equals(input.trim()))
          {
@@ -180,13 +189,7 @@ public abstract class AbstractShellPrompt implements Shell
    @Override
    public boolean promptBoolean(final String message, final boolean defaultIfEmpty)
    {
-      String query = " [Y/n] ";
-      if (!defaultIfEmpty)
-      {
-         query = " [y/N] ";
-      }
-
-      return prompt(message + query, Boolean.class, defaultIfEmpty);
+      return prompt(message, Boolean.class, defaultIfEmpty);
    }
 
    @Override
@@ -333,7 +336,7 @@ public abstract class AbstractShellPrompt implements Shell
          println();
          int input = prompt(
                   "Choose an option by typing the number of the selection "
-                           + renderColor(ShellColor.BOLD, "[*-default]: "),
+                           + renderColor(ShellColor.BOLD, "[*-default] "),
                   Integer.class, 0) - 1;
          if ((input >= 0) && (input < options.size()))
          {
