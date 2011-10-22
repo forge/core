@@ -35,6 +35,7 @@ import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.FacesProjectStage;
  */
 public interface FacesFacet extends Facet
 {
+   public static final String FACES_SERVLET_CLASS = "javax.faces.webapp.FacesServlet";
    /**
     * Get a reference to this {@link Project}'s configured WEB-INF/faces-config.xml file.
     * <p>

@@ -23,6 +23,7 @@ package org.jboss.forge.spec.javaee.jsf;
 
 import org.jboss.forge.parser.xml.Node;
 import org.jboss.forge.parser.xml.XMLParser;
+import org.jboss.forge.spec.javaee.FacesFacet;
 
 import javax.faces.webapp.FacesServlet;
 import java.io.ByteArrayInputStream;
@@ -34,8 +35,6 @@ import java.util.List;
  * @author <a href="http://community.jboss.org/people/bleathem">Brian Leathem</a>
  */
 class ServletMappingHelper {
-    public static final String FACES_SERVLET_CLASS = "javax.faces.webapp.FacesServlet";
-
     InputStream addFacesServletMapping(InputStream webXmlStream, String mapping)
    {
       Node root = XMLParser.parse(webXmlStream);
@@ -52,12 +51,12 @@ class ServletMappingHelper {
     Node getOrCreateFacesServlet(Node root) {
        List<Node> servlets = root.get("servlet");
         for (Node servlet : servlets) {
-           if (FACES_SERVLET_CLASS.equals(servlet.getSingle("servlet-class").getText())) {
+           if (FacesFacet.FACES_SERVLET_CLASS.equals(servlet.getSingle("servlet-class").getText())) {
                return servlet;
            }
         }
         Node servlet = root.createChild("servlet");
-        servlet.createChild("servlet-class").text(FACES_SERVLET_CLASS);
+        servlet.createChild("servlet-class").text(FacesFacet.FACES_SERVLET_CLASS);
         servlet.createChild("servlet-name").text("Faces Servlet");
         servlet.createChild("load-on-startup").text("1");
         return servlet;
