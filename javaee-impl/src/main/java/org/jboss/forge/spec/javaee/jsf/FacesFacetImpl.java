@@ -173,7 +173,7 @@ public class FacesFacetImpl extends BaseJavaEEFacet implements FacesFacet
       List<String> results = new ArrayList<String>();
          for (ServletDef servlet : servlets)
          {
-            if ("javax.faces.webapp.FacesServlet".equals(servlet.getServletClass()))
+            if (FACES_SERVLET_CLASS.equals(servlet.getServletClass()))
             {
                List<ServletMappingDef> mappings = servlet.getMappings();
                for (ServletMappingDef mapping : mappings)
