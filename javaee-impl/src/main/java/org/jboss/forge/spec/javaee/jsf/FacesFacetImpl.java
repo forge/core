@@ -35,6 +35,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
+import javax.servlet.Servlet;
 
 import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.resources.DirectoryResource;
@@ -93,6 +94,12 @@ public class FacesFacetImpl extends BaseJavaEEFacet implements FacesFacet
          }
          getConfigFile().setContents(getClass()
                   .getResourceAsStream("/org/jboss/forge/web/faces-config.xml"));
+
+         ServletFacet servlet = project.getFacet(ServletFacet.class);
+         if (! servlet.getConfig().getVersion().startsWith("3") && getFacesServletMappings().isEmpty())
+         {
+            setDefaultFacesMapping();
+         }
       }
       return super.install();
    }
@@ -159,6 +166,7 @@ public class FacesFacetImpl extends BaseJavaEEFacet implements FacesFacet
       return results;
    }
 
+   @Override
    public void setFacesMapping(String mapping)
    {
       ServletFacet facet = project.getFacet(ServletFacet.class);
@@ -168,6 +176,13 @@ public class FacesFacetImpl extends BaseJavaEEFacet implements FacesFacet
       {
           facet.getConfigFile().setContents(newWebXml);
       }
+   }
+
+   @Override
+   public void setDefaultFacesMapping()
+   {
+      setFacesMapping("*.jsf");
+      setFacesMapping("/faces/*");
    }
 
    @Override

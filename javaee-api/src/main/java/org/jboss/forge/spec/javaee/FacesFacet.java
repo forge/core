@@ -65,6 +65,11 @@ public interface FacesFacet extends Facet
    void setFacesMapping(String mapping);
 
    /**
+    * Set this application's FacesServlet mapping to the default mappings.
+    */
+   void setDefaultFacesMapping();
+
+   /**
     * For a given {@link Resource}, if the resource is a web-resource, return all known context-relative URLs with which
     * that resource may be accessed.
     * <p>
