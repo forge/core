@@ -37,12 +37,15 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 import javax.servlet.Servlet;
 
+import org.jboss.forge.project.dependencies.Dependency;
+import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.shell.ShellMessages;
 import org.jboss.forge.shell.ShellPrintWriter;
+import org.jboss.forge.shell.ShellPrompt;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.spec.javaee.BaseJavaEEFacet;
@@ -66,6 +69,9 @@ public class FacesFacetImpl extends BaseJavaEEFacet implements FacesFacet
 
    @Inject
    private ServletMappingHelper servletMappingHelper;
+
+   @Inject
+   private ShellPrompt prompt;
 
    @Override
    public FileResource<?> getConfigFile()
@@ -100,6 +106,19 @@ public class FacesFacetImpl extends BaseJavaEEFacet implements FacesFacet
          {
             setDefaultFacesMapping();
          }
+
+         List<FacesVersion> versions = Arrays.asList(FacesVersion.values());
+         FacesVersion version = prompt.promptChoiceTyped("Install which version?", versions, versions.get(0));
+
+         DependencyFacet deps = getProject().getFacet(DependencyFacet.class);
+
+         for (Dependency dep : version.getDependencies())
+         {
+            if (deps.getDependency(dep) == null) {
+               deps.addDependency(dep);
+            }
+         }
+
       }
       return super.install();
    }
