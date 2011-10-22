@@ -38,44 +38,46 @@ class ServletMappingHelper {
     InputStream addFacesServletMapping(InputStream webXmlStream, String mapping)
    {
       Node root = XMLParser.parse(webXmlStream);
-       Node facesServlet = getOrCreateFacesServlet(root);
-       boolean mappingCreated = createMappingIfNotExists(root, facesServlet, mapping);
-       if (mappingCreated) {
-        return XMLParser.toXMLInputStream(root);
-       }
-       else {
-           return webXmlStream;
-       }
+      Node facesServlet = getOrCreateFacesServlet(root);
+      boolean mappingCreated = createMappingIfNotExists(root, facesServlet, mapping);
+      if (mappingCreated) {
+         return XMLParser.toXMLInputStream(root);
+      }
+      else {
+         return webXmlStream;
+      }
    }
 
-    Node getOrCreateFacesServlet(Node root) {
+    Node getOrCreateFacesServlet(Node root)
+    {
        List<Node> servlets = root.get("servlet");
-        for (Node servlet : servlets) {
-           if (FacesFacet.FACES_SERVLET_CLASS.equals(servlet.getSingle("servlet-class").getText())) {
-               return servlet;
-           }
-        }
-        Node servlet = root.createChild("servlet");
-        servlet.createChild("servlet-class").text(FacesFacet.FACES_SERVLET_CLASS);
-        servlet.createChild("servlet-name").text("Faces Servlet");
-        servlet.createChild("load-on-startup").text("1");
-        return servlet;
+       for (Node servlet : servlets) {
+          if (FacesFacet.FACES_SERVLET_CLASS.equals(servlet.getSingle("servlet-class").getText())) {
+             return servlet;
+          }
+       }
+       Node servlet = root.createChild("servlet");
+       servlet.createChild("servlet-class").text(FacesFacet.FACES_SERVLET_CLASS);
+       servlet.createChild("servlet-name").text("Faces Servlet");
+       servlet.createChild("load-on-startup").text("1");
+       return servlet;
     }
 
-    boolean createMappingIfNotExists(Node root, Node servlet, String mapping) {
-        List<Node> servletMappings = root.get("servletMapping");
-        String servletName = servlet.getSingle("servlet-name").getText();
-        for (Node servletMapping : servletMappings) {
-            if (servletName.equals(servletMapping.getSingle("servlet-name").getText())) {
-                if (mapping.equals(servletMapping.getSingle("url-pattern").getText())) {
-                    return false; // mapping already exists; not created
-                }
-            }
-        }
-        Node servletMapping = root.createChild("servletMapping");
-        servletMapping.createChild("servlet-name").text(servletName);
-        servletMapping.createChild("url-pattern").text(mapping);
-        return true;
+    boolean createMappingIfNotExists(Node root, Node servlet, String mapping)
+    {
+       List<Node> servletMappings = root.get("servletMapping");
+       String servletName = servlet.getSingle("servlet-name").getText();
+       for (Node servletMapping : servletMappings) {
+          if (servletName.equals(servletMapping.getSingle("servlet-name").getText())) {
+             if (mapping.equals(servletMapping.getSingle("url-pattern").getText())) {
+                return false; // mapping already exists; not created
+             }
+          }
+       }
+       Node servletMapping = root.createChild("servletMapping");
+       servletMapping.createChild("servlet-name").text(servletName);
+       servletMapping.createChild("url-pattern").text(mapping);
+       return true;
     }
 
 }
