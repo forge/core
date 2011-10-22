@@ -65,7 +65,7 @@ class ServletMappingHelper {
 
     boolean createMappingIfNotExists(Node root, Node servlet, String mapping)
     {
-       List<Node> servletMappings = root.get("servletMapping");
+       List<Node> servletMappings = root.get("servlet-mapping");
        String servletName = servlet.getSingle("servlet-name").getText();
        for (Node servletMapping : servletMappings) {
           if (servletName.equals(servletMapping.getSingle("servlet-name").getText())) {
@@ -74,7 +74,7 @@ class ServletMappingHelper {
              }
           }
        }
-       Node servletMapping = root.createChild("servletMapping");
+       Node servletMapping = root.createChild("servlet-mapping");
        servletMapping.createChild("servlet-name").text(servletName);
        servletMapping.createChild("url-pattern").text(mapping);
        return true;
