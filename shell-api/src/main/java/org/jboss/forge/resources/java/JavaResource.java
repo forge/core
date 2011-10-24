@@ -51,7 +51,6 @@ import org.jboss.forge.resources.ResourceHandles;
 @ResourceHandles("*.java")
 public class JavaResource extends FileResource<JavaResource>
 {
-   private volatile JavaSource<?> source;
 
    @Inject
    public JavaResource(final ResourceFactory factory)
@@ -104,7 +103,24 @@ public class JavaResource extends FileResource<JavaResource>
    {
       try
       {
-         lazyInitialize();
+         List<Resource<?>> list = new LinkedList<Resource<?>>();
+
+         for (Member<?, ?> member : getJavaSource().getMembers())
+         {
+            if (member instanceof Field)
+            {
+               list.add(new JavaFieldResource(this, (Field<JavaSource<?>>) member));
+            }
+            else if (member instanceof Method)
+            {
+               list.add(new JavaMethodResource(this, (Method<JavaSource<?>>) member));
+            }
+            else
+            {
+               throw new UnsupportedOperationException("Unknown member type: " + member);
+            }
+         }
+         return list;
       }
       catch (ParserException e)
       {
@@ -114,26 +130,6 @@ public class JavaResource extends FileResource<JavaResource>
       {
          return Collections.emptyList();
       }
-
-      List<Resource<?>> list = new LinkedList<Resource<?>>();
-
-      for (Member<?, ?> member : source.getMembers())
-      {
-         if (member instanceof Field)
-         {
-            list.add(new JavaFieldResource(this, (Field<JavaSource<?>>) member));
-         }
-         else if (member instanceof Method)
-         {
-            list.add(new JavaMethodResource(this, (Method<JavaSource<?>>) member));
-         }
-         else
-         {
-            throw new UnsupportedOperationException("Unknown member type: " + member);
-         }
-      }
-
-      return list;
    }
 
    public JavaResource setContents(final JavaSource<?> source)
@@ -142,21 +138,12 @@ public class JavaResource extends FileResource<JavaResource>
       return this;
    }
 
-   private void lazyInitialize() throws FileNotFoundException
-   {
-      if (source == null)
-      {
-         source = JavaParser.parse(file);
-      }
-   }
-
    /**
     * Attempts to perform cast automatically. This can lead to problems.
     */
    public JavaSource<?> getJavaSource() throws FileNotFoundException
    {
-      lazyInitialize();
-      return source;
+      return JavaParser.parse(file);
    }
 
    @Override
