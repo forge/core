@@ -2,9 +2,8 @@
 
 : ${FORGE_HOME:?"FORGE_HOME must be set."}
 
-
 TARGET=$1
-DEV=$FORGE_HOME/../
+DEV=`dirname $FORGE_HOME`
 
 if [ -n $TARGET -a -f $TARGET ] 
 then
