@@ -1,0 +1,25 @@
+#!/bin/bash
+
+TARGET=$1
+DEV=~/Development
+
+if [ -n $TARGET -a -f $TARGET ] 
+then
+	echo $TARGET
+	cp $TARGET $DEV/forge.zip
+	cd $DEV
+	
+	if [ -e forge ]
+	then
+		rm -rf forge
+	fi
+
+	unzip forge.zip
+	rm forge.zip
+	#there is only one... versioned "folder" name so rename it to forge
+	mv forge* forge
+	chmod -R 755 forge
+else
+	echo "Must specify Forge distribution ZIP file to install."
+	echo "Ex: 'forge-install forge-distribution-1.0.0-SNAPSHOT.zip'"
+fi
