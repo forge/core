@@ -1,7 +1,10 @@
 #!/bin/bash
 
+: ${FORGE_HOME:?"FORGE_HOME must be set."}
+
+
 TARGET=$1
-DEV=~/Development
+DEV=$FORGE_HOME/../
 
 if [ -n $TARGET -a -f $TARGET ] 
 then
