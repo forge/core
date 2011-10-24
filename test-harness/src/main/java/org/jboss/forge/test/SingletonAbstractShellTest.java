@@ -172,7 +172,7 @@ public abstract class SingletonAbstractShellTest
    protected Project initializeJavaProject() throws Exception
    {
       getShell().setCurrentResource(createTempFolder());
-      queueInputLines("", "");
+      queueInputLines("");
       getShell().execute("new-project --named test --topLevelPackage com.test");
 
       Project project = getProject();

@@ -53,7 +53,7 @@ public class CDIFacetTest extends SingletonAbstractShellTest
    public void testBeansXMLCreatedWhenInstalled() throws Exception
    {
       Project project = initializeJavaProject();
-      queueInputLines("3");
+      queueInputLines("");
       getShell().execute("beans setup");
       assertTrue(project.hasFacet(CDIFacet.class));
       BeansDescriptor config = project.getFacet(CDIFacet.class).getConfig();
@@ -65,7 +65,7 @@ public class CDIFacetTest extends SingletonAbstractShellTest
    public void testBeansXMLMovedWhenPackagingTypeChanged() throws Exception
    {
       Project project = initializeJavaProject();
-      queueInputLines("3");
+      queueInputLines("");
       getShell().execute("beans setup");
       FileResource<?> config = project.getFacet(CDIFacet.class).getConfigFile();
 
@@ -85,14 +85,14 @@ public class CDIFacetTest extends SingletonAbstractShellTest
    public void testSpecDependencyAddedWhenInstalled() throws Exception
    {
       DependencyBuilder dependency = DependencyBuilder.create(JAVAEE6_SPECS_DEPENDENCY).setScopeType(ScopeType.COMPILE);
-      testDependencyAddedWhenInstalled(dependency, "1", "6", "");
+      testDependencyAddedWhenInstalled(dependency, "Y", "1", "6", "N");
    }
 
    @Test
    public void testCdiDependencyAddedWhenInstalled() throws Exception
    {
       DependencyBuilder dependency = DependencyBuilder.create(CDI_DEPENDENCY).setScopeType(ScopeType.COMPILE);
-      testDependencyAddedWhenInstalled(dependency, "2", "1", "");
+      testDependencyAddedWhenInstalled(dependency, "Y", "2", "1", "N");
    }
 
    @Test
@@ -101,10 +101,11 @@ public class CDIFacetTest extends SingletonAbstractShellTest
       DependencyBuilder dependency = DependencyBuilder.create(JAVAEE6_SPECS_DEPENDENCY)
                .setScopeType(ScopeType.PROVIDED);
       Project project = initializeJavaProject();
-      queueInputLines("", "1", "6", "");
 
+      queueInputLines("y");
       getShell().execute("project install-facet forge.maven.WebResourceFacet");
 
+      queueInputLines("y", "1", "6", "");
       getShell().execute("beans setup");
 
       DependencyFacet dependencyFacet = project.getFacet(DependencyFacet.class);
@@ -127,10 +128,10 @@ public class CDIFacetTest extends SingletonAbstractShellTest
    }
 
    @Test
-   public void testDontAddDependencyOption() throws Exception
+   public void testDefaultsDontAddDependency() throws Exception
    {
       Project project = initializeJavaProject();
-      queueInputLines("3");
+      queueInputLines("");
       getShell().execute("beans setup");
       assertDependenciesNotInstalled(project);
    }

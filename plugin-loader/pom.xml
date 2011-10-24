@@ -9,35 +9,14 @@
     <relativePath>../</relativePath>
   </parent>
 
-  <artifactId>plugin-loader</artifactId>
+  <artifactId>forge-plugin-loader</artifactId>
   <name>Forge - Modular Plugin Loader</name>
   
   <dependencies>
-      <dependency>
-         <groupId>org.apache.maven</groupId>
-         <artifactId>maven-model</artifactId>
-         <version>3.0.3</version>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>forge-maven-api</artifactId>
-      </dependency>
       <dependency>
          <groupId>org.jboss.modules</groupId>
          <artifactId>jboss-modules</artifactId>
       </dependency>
   </dependencies>
-
-  <build>
-    <finalName>plugin-loader</finalName>
-    <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+  
 </project>

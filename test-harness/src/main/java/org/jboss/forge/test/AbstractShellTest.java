@@ -180,7 +180,7 @@ public abstract class AbstractShellTest
    protected Project initializeProject(final PackagingType type) throws Exception
    {
       getShell().setCurrentResource(createTempFolder());
-      queueInputLines("", "Y");
+      queueInputLines("");
       getShell().execute("new-project --named test --topLevelPackage com.test --type " + type.toString());
       return getProject();
 

@@ -73,6 +73,7 @@ public class RestPluginTest extends AbstractJPATest
 
       setupRest();
 
+      queueInputLines("");
       getShell().execute("rest endpoint-from-entity");
 
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);

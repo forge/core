@@ -22,6 +22,7 @@
 package org.jboss.forge.spec.javaee.cdi;
 
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.enterprise.context.Conversation;
@@ -40,7 +41,6 @@ import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.project.facets.events.InstallFacets;
-import org.jboss.forge.project.packaging.PackagingType;
 import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.shell.PromptType;
 import org.jboss.forge.shell.Shell;
@@ -56,6 +56,8 @@ import org.jboss.forge.shell.plugins.PipeOut;
 import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresResource;
+import org.jboss.forge.shell.plugins.SetupCommand;
+import org.jboss.forge.shell.util.Lists;
 import org.jboss.forge.spec.javaee.CDIFacet;
 
 /**
@@ -63,11 +65,12 @@ import org.jboss.forge.spec.javaee.CDIFacet;
  * @author Kevin Pollet
  */
 @Alias("beans")
-@RequiresFacet(JavaSourceFacet.class)
+@RequiresFacet(CDIFacet.class)
 public class BeansPlugin implements Plugin
 {
-   private static final String JAVAEE6_DEPENDENCY = "org.jboss.spec:jboss-javaee-6.0";
-   private static final String JAVAEE6_CDI = "javax.enterprise:cdi-api";
+   private static final Dependency JAVAEE6_DEPENDENCY = DependencyBuilder.create("org.jboss.spec:jboss-javaee-6.0");
+   private static final Dependency JAVAEE6_CDI = DependencyBuilder.create("javax.enterprise:cdi-api");
+
    @Inject
    private Event<InstallFacets> install;
 
@@ -89,7 +92,7 @@ public class BeansPlugin implements Plugin
 
    DependencyFacet dependencyFacet;
 
-   @Command("setup")
+   @SetupCommand
    public void setup(final PipeOut out)
    {
       if (!project.hasFacet(CDIFacet.class))
@@ -104,74 +107,23 @@ public class BeansPlugin implements Plugin
 
    private void installDependencies()
    {
-      if (needToInstallDependencies())
+      if (!dependencyFacet.hasDependency(JAVAEE6_CDI)
+               && !dependencyFacet.hasDependency(JAVAEE6_DEPENDENCY)
+               && prompt.promptBoolean("Do you want to add CDI dependencies?", false))
       {
-         Dependency dependency = chooseDependency();
+         Dependency dependency = prompt.promptChoiceTyped("Which dependency do you want to install?",
+                  Arrays.asList(JAVAEE6_DEPENDENCY, JAVAEE6_CDI));
 
-         addDependency(dependency);
-      }
-   }
+         List<Dependency> versions = dependencyFacet.resolveAvailableVersions(dependency);
+         dependency = prompt.promptChoiceTyped("Install which version?", versions, Lists.lastElement(versions));
 
-   private boolean needToInstallDependencies()
-   {
-      return !containsCDIDependency(dependencyFacet) &&
-               !containsJavaEEDependency();
-   }
-
-   private boolean containsJavaEEDependency()
-   {
-      return dependencyFacet.hasDependency(DependencyBuilder.create(JAVAEE6_DEPENDENCY));
-   }
-
-   private boolean containsCDIDependency(DependencyFacet dependencyFacet)
-   {
-      return dependencyFacet.hasDependency(DependencyBuilder.create(JAVAEE6_CDI));
-   }
-
-   private Dependency chooseDependency()
-   {
-      int choice = prompt.promptChoice("Do you want to add CDI dependencies?", JAVAEE6_DEPENDENCY, JAVAEE6_CDI, "no");
-      Dependency dependency = null;
-
-      if (choice == 0)
-      {
-         dependency = promtForVersion(JAVAEE6_DEPENDENCY);
-         dependency = DependencyBuilder.create(dependency).setPackagingType(PackagingType.BASIC);
-      }
-      else if (choice == 1)
-      {
-         dependency = promtForVersion(JAVAEE6_CDI);
-      }
-      return dependency;
-   }
-
-   private void addDependency(Dependency dependency)
-   {
-      if (dependency != null)
-      {
-         dependency = promptForDependencyScope(dependency);
-
+         if (prompt.promptBoolean("Should the scope be 'provided'?", project.hasFacet(WebResourceFacet.class)))
+         {
+            dependency = DependencyBuilder.create(dependency).setScopeType(ScopeType.PROVIDED);
+         }
          dependencyFacet.addDependency(dependency);
-         shell.println("Added " + dependency.toString());
+         ShellMessages.info(shell, "Added " + dependency.toString());
       }
-   }
-
-   private Dependency promptForDependencyScope(Dependency dependency)
-   {
-      boolean defaultScopeProvided = project.hasFacet(WebResourceFacet.class);
-      boolean addAsProvided = prompt.promptBoolean("Should the scope be 'provided'?", defaultScopeProvided);
-      if (addAsProvided)
-      {
-         dependency = DependencyBuilder.create(dependency).setScopeType(ScopeType.PROVIDED);
-      }
-      return dependency;
-   }
-
-   private Dependency promtForVersion(String dependency)
-   {
-      List<Dependency> dependencyList = dependencyFacet.resolveAvailableVersions(dependency);
-      int choice = prompt.promptChoice("Which version of " + dependency + " do you want to install?", dependencyList);
-      return dependencyList.get(choice);
    }
 
    @Command("list-interceptors")
