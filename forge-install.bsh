@@ -1,5 +1,6 @@
 #!/bin/bash
 
+: ${1:?"Must specify distribution zipfile to install, e.g: 'forge-install target/forge-distribution-1.0.0-SNAPSHOT.zip"}
 : ${FORGE_HOME:?"FORGE_HOME must be set."}
 
 TARGET=$1
