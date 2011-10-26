@@ -270,7 +270,9 @@
 		<module-def name="org.jboss.forge.maven.api">
 			<maven-resource group="org.jboss.forge" artifact="forge-maven-api" />
 
+			
 			<!-- TODO this needs to be pulled into a module -->
+			<maven-resource group="commons-cli" artifact="commons-cli" />
 			<maven-resource group="org.apache.maven" artifact="maven-aether-provider" />
 			<maven-resource group="org.apache.maven" artifact="maven-artifact" />
 			<maven-resource group="org.apache.maven" artifact="maven-compat" />
