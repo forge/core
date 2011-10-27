@@ -238,7 +238,7 @@ public class HelpPlugin implements Plugin
 
    private void printGeneralHelp(final PipeOut out)
    {
-      out.println("Welcome to " + out.renderColor(ShellColor.YELLOW, "Seam Forge") + ", a next-generation " +
+      out.println("Welcome to " + out.renderColor(ShellColor.YELLOW, "JBoss Forge") + ", a next-generation " +
                "interactive Shell and project-generation tool. If you find yourself lost, or uncertain how " +
                "to complete an operation, you may press the " +
                out.renderColor(ShellColor.BOLD, "<TAB>") + " key for command-completion, or " +

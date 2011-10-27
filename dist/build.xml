@@ -69,6 +69,11 @@
 			<maven-resource group="com.google.guava" artifact="guava" />
 		</module-def>
 
+        <module-def name="com.sun.xml.bind">
+            <maven-resource group="com.sun.xml.bind" artifact="jaxb-impl"/>
+            <maven-resource group="com.sun.xml.bind" artifact="jaxb-xjc"/>
+        </module-def>
+
 		<module-def name="javaee.api" />
 
 		<module-def name="javax.activation.api">

@@ -68,6 +68,8 @@
       <shrinkwrap.version>1.0.0-alpha-11</shrinkwrap.version>
       <shrinkwrap.descriptors.version>1.1.0-beta-1</shrinkwrap.descriptors.version>
       <slf4j.version>1.5.10</slf4j.version>
+      <version.sun.jaxb>2.2</version.sun.jaxb>
+      <version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.2_spec>1.0.3.Final</version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.2_spec>
       <weld.version>1.1.2.Final</weld.version>
       <weld.bom.version>1.1.2.Final</weld.bom.version>
       <seam.render.version>1.0.0.Alpha4</seam.render.version>
@@ -101,6 +103,25 @@
 
    <dependencyManagement>
       <dependencies>
+
+         <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>${version.sun.jaxb}</version>
+            <exclusions>
+               <exclusion>
+                  <groupId>javax.xml.bind</groupId>
+                  <artifactId>jaxb-api</artifactId>
+               </exclusion>
+            </exclusions>
+         </dependency>
+
+         <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-xjc</artifactId>
+            <version>${version.sun.jaxb}</version>
+         </dependency>
+
          <dependency>
             <groupId>javassist</groupId>
             <artifactId>javassist</artifactId>
@@ -325,6 +346,12 @@
             <groupId>org.jboss.spec.javax.ws.rs</groupId>
             <artifactId>jboss-jaxrs-api_1.1_spec</artifactId>
             <version>${jboss.javaee.version}</version>
+         </dependency>
+
+         <dependency>
+            <groupId>org.jboss.spec.javax.xml.bind</groupId>
+            <artifactId>jboss-jaxb-api_2.2_spec</artifactId>
+            <version>${version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.2_spec}</version>
          </dependency>
 
          <dependency>
