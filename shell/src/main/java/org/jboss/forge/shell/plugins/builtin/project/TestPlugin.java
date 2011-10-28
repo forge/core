@@ -44,54 +44,42 @@ import org.jboss.forge.shell.plugins.Topic;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Alias("build")
+@Alias("test")
 @Topic("Project")
 @RequiresProject
 @RequiresFacet({ DependencyFacet.class, PackagingFacet.class })
-@Help("Perform a build using the underlying build system.")
-public class BuildPlugin implements Plugin
+@Help("Execute this project's test suite using the underlying build system.")
+public class TestPlugin implements Plugin
 {
 
    private Project project;
 
-   public BuildPlugin()
+   public TestPlugin()
    {}
 
    @Inject
-   public BuildPlugin(final Project project)
+   public TestPlugin(final Project project)
    {
       this.project = project;
    }
 
    @DefaultCommand
    public void build(final PipeOut out,
-            @Option(name = "notest", flagOnly = true) boolean notest,
             @Option(name = "profile", completer = ProfileCompleter.class) String profile,
-            @Option(description = "build arguments") String... args)
+            @Option(description = "test arguments") String... args)
    {
       PackagingFacet packaging = project.getFacet(PackagingFacet.class);
 
-      List<String> arguments = null;
-      if (args == null) {
-         arguments = new ArrayList<String>();
-         arguments.add("install");
-      }
-      else {
-         arguments = new ArrayList<String>(Arrays.asList(args));
-      }
-
-      if (notest) {
-         arguments.add("-Dmaven.test.skip=true");
-      }
+      List<String> arguments = new ArrayList<String>();
+      arguments.add("test");
+      if (args != null)
+         arguments.addAll(Arrays.asList(args));
 
       if (profile != null) {
          arguments.add("-P" + profile);
       }
 
-      if (args == null) {
-         args = new String[arguments.size()];
-      }
-      packaging.executeBuild(arguments.toArray(args));
+      packaging.executeBuild(arguments.toArray(new String[] {}));
    }
 
 }
