@@ -41,4 +41,15 @@ public class PluginsPluginTest extends AbstractShellTest
       getShell().execute("build");
    }
 
+   @Test
+   public void testCreatePluginWithDashInName() throws Exception
+   {
+      initializeJavaProject();
+      queueInputLines("1");
+      getShell().execute("plugins setup");
+      queueInputLines("");
+      getShell().execute("plugins new-plugin --named demo-plugin");
+      getShell().execute("build");
+   }
+
 }

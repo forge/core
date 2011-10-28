@@ -98,13 +98,14 @@ public class PluginsPlugin implements Plugin
 
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
 
-      String className = Strings.capitalize(pluginName);
+      String className = canonicalize(pluginName);
       String packg = prompt.promptCommon(
                "In which package you'd like to create [" + className + "], or enter for default",
                PromptType.JAVA_PACKAGE, java.getBasePackage());
 
       Map<Object, Object> context = new HashMap<Object, Object>();
       context.put("name", className);
+      context.put("alias", pluginName.replaceAll("[^A-Za-z-]", ""));
 
       CompiledTemplateResource pluginSource = compiler.compileResource(getClass().getResourceAsStream(
                "/org/jboss/forge/dev/PluginTemplate.jv"));
@@ -116,5 +117,15 @@ public class PluginsPlugin implements Plugin
       java.saveTestJavaSource(JavaParser.parse(JavaClass.class, testSource.render(context)).setPackage(packg));
 
       pickup.fire(new PickupResource(pluginResource));
+   }
+
+   public String canonicalize(final String name)
+   {
+      String result = "";
+      String[] split = name.split("[^A-Za-z]");
+      for (String string : split) {
+         result += Strings.capitalize(string);
+      }
+      return result;
    }
 }

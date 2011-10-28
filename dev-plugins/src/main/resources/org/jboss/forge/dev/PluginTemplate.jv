@@ -37,7 +37,7 @@ import org.jboss.forge.shell.plugins.Plugin;
 /**
  *
  */
-@Alias("@{name.toLowerCase()}")
+@Alias("@{alias}")
 public class @{name} implements Plugin
 {
    @Inject

@@ -207,7 +207,7 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
    public <T extends JavaSource<?>> Import getImport(final T type)
    {
       return getImport(type.getQualifiedName());
-   };
+   }
 
    @Override
    public Import getImport(final Import imprt)
@@ -238,7 +238,7 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
    public <T extends JavaSource<T>> boolean hasImport(final T type)
    {
       return hasImport(type.getQualifiedName());
-   };
+   }
 
    @Override
    public boolean hasImport(final Import imprt)
@@ -299,7 +299,7 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
    public <T extends JavaSource<?>> O removeImport(final T type)
    {
       return removeImport(type.getQualifiedName());
-   };
+   }
 
    @Override
    public O removeImport(final Import imprt)

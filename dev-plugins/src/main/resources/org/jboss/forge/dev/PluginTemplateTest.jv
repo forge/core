@@ -38,19 +38,19 @@ public class @{name}Test extends AbstractShellTest
    @Test
    public void testDefaultCommand() throws Exception
    {
-      getShell().execute("@{name.toLowerCase()}");
+      getShell().execute("@{alias}");
    }
 
    @Test
    public void testCommand() throws Exception
    {
-      getShell().execute("@{name.toLowerCase()} command");
+      getShell().execute("@{alias} command");
    }
 
    @Test
    public void testPrompt() throws Exception
    {
       queueInputLines("y");
-      getShell().execute("@{name.toLowerCase()} prompt foo bar");
+      getShell().execute("@{alias} prompt foo bar");
    }
 }
