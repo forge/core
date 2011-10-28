@@ -1,7 +1,6 @@
-
 /*
- * JBoss, by Red Hat.
- * Copyright 2010, Red Hat, Inc., and individual contributors
+ * JBoss, Home of Professional Open Source
+ * Copyright 2011, Red Hat, Inc., and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,28 +19,38 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.jboss.forge.dev;
 
-package org.jboss.forge.bus.event.changes.java;
+import org.jboss.arquillian.api.Deployment;
+import org.jboss.forge.test.AbstractShellTest;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.junit.Test;
 
-import org.jboss.forge.bus.event.Change;
-import org.jboss.forge.bus.event.Delta;
-import org.jboss.forge.bus.event.Payload;
-
-/*
- *
- * @author Mike Brock <cbrock@redhat.com>
- */
-public abstract class JavaChange extends Change<JavaChangeEvent>
+public class @{name}Test extends AbstractShellTest
 {
-   protected JavaChangeType type;
-
-   public JavaChange(Delta deltaType, JavaChangeEvent changeType, Payload<?> payload)
+   @Deployment
+   public static JavaArchive getDeployment()
    {
-      super(deltaType, changeType, payload);
+      return AbstractShellTest.getDeployment()
+               .addPackages(true, @{name}.class.getPackage());
    }
 
-   public JavaChangeType getType()
+   @Test
+   public void testDefaultCommand() throws Exception
    {
-      return type;
+      getShell().execute("@{name.toLowerCase()}");
+   }
+
+   @Test
+   public void testCommand() throws Exception
+   {
+      getShell().execute("@{name.toLowerCase()} command");
+   }
+
+   @Test
+   public void testPrompt() throws Exception
+   {
+      queueInputLines("y");
+      getShell().execute("@{name.toLowerCase()} prompt foo bar");
    }
 }

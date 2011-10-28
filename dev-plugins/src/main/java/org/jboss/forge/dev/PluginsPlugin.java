@@ -22,13 +22,14 @@
 package org.jboss.forge.dev;
 
 import java.io.FileNotFoundException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.Method;
 import org.jboss.forge.parser.java.util.Strings;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
@@ -40,7 +41,6 @@ import org.jboss.forge.shell.ShellPrompt;
 import org.jboss.forge.shell.events.PickupResource;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.Command;
-import org.jboss.forge.shell.plugins.DefaultCommand;
 import org.jboss.forge.shell.plugins.Help;
 import org.jboss.forge.shell.plugins.Option;
 import org.jboss.forge.shell.plugins.PipeOut;
@@ -48,6 +48,8 @@ import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresProject;
 import org.jboss.forge.shell.plugins.SetupCommand;
+import org.jboss.seam.render.TemplateCompiler;
+import org.jboss.seam.render.template.CompiledTemplateResource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -70,6 +72,9 @@ public class PluginsPlugin implements Plugin
    @Inject
    private ShellPrompt prompt;
 
+   @Inject
+   private TemplateCompiler compiler;
+
    @SetupCommand
    public void setup(final PipeOut out)
    {
@@ -86,39 +91,30 @@ public class PluginsPlugin implements Plugin
    }
 
    @Command("new-plugin")
-   public void newPlugin(final PipeOut out, @Option(required = true,
-            name = "named", description = "The plugin name") final String pluginName,
-            @Option(name = "defaultCommand") final boolean defaultCommand) throws FileNotFoundException
+   public void newPlugin(final PipeOut out,
+            @Option(required = true, name = "named", description = "The plugin name") final String pluginName)
+            throws FileNotFoundException
    {
 
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
 
       String className = Strings.capitalize(pluginName);
       String packg = prompt.promptCommon(
-               "In which package you'd like to create [" + className + "], or enter for default:",
+               "In which package you'd like to create [" + className + "], or enter for default",
                PromptType.JAVA_PACKAGE, java.getBasePackage());
 
-      JavaClass plugin = JavaParser.create(JavaClass.class);
-      plugin.setPackage(packg);
-      plugin.addInterface(Plugin.class);
-      plugin.setName(className);
+      Map<Object, Object> context = new HashMap<Object, Object>();
+      context.put("name", className);
 
-      plugin.addAnnotation(Alias.class).setStringValue(pluginName.toLowerCase());
+      CompiledTemplateResource pluginSource = compiler.compileResource(getClass().getResourceAsStream(
+               "/org/jboss/forge/dev/PluginTemplate.jv"));
+      CompiledTemplateResource testSource = compiler.compileResource(getClass().getResourceAsStream(
+               "/org/jboss/forge/dev/PluginTemplateTest.jv"));
 
-      plugin.addField().setPrivate().setName("prompt").setType(ShellPrompt.class).addAnnotation(Inject.class);
-      plugin.addImport(PipeOut.class);
-      plugin.addImport(Option.class);
+      JavaResource pluginResource = java.saveJavaSource(JavaParser.parse(JavaClass.class, pluginSource.render(context))
+               .setPackage(packg));
+      java.saveTestJavaSource(JavaParser.parse(JavaClass.class, testSource.render(context)).setPackage(packg));
 
-      Method<JavaClass> command = plugin
-               .addMethod("public void run(PipeOut out, @Option(name=\"value\") final String arg) { System.out.println(\"Executed default command with value: \" + arg); }");
-
-      if (defaultCommand)
-         command.addAnnotation(DefaultCommand.class);
-      else
-         command.addAnnotation(Command.class).setStringValue("run");
-
-      JavaResource javaResource = java.saveJavaSource(plugin);
-
-      pickup.fire(new PickupResource(javaResource));
+      pickup.fire(new PickupResource(pluginResource));
    }
 }

@@ -161,8 +161,7 @@ public class MavenPackagingFacet extends BaseFacet implements PackagingFacet, Fa
       }
       else
       {
-         ShellMessages.error(shell, "Build failed.");
-         return null;
+         throw new RuntimeException("Build failed.");
       }
    }
 

@@ -1,6 +1,6 @@
 /*
- * JBoss, by Red Hat.
- * Copyright 2010, Red Hat, Inc., and individual contributors
+ * JBoss, Home of Professional Open Source
+ * Copyright 2011, Red Hat, Inc., and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,14 +19,26 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.jboss.forge.dev;
 
-package org.jboss.forge.bus.event.changes.java;
+import org.jboss.forge.test.AbstractShellTest;
+import org.junit.Test;
 
 /**
- * @author Mike Brock <cbrock@redhat.com>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * 
  */
-public enum JavaChangeType
+public class PluginsPluginTest extends AbstractShellTest
 {
-   Field,
-   Method;
+   @Test
+   public void testCreateAndBuildPlugin() throws Exception
+   {
+      initializeJavaProject();
+      queueInputLines("1");
+      getShell().execute("plugins setup");
+      queueInputLines("");
+      getShell().execute("plugins new-plugin --named demo");
+      getShell().execute("build");
+   }
+
 }
