@@ -35,6 +35,7 @@ import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.FacesProjectStage;
  */
 public interface FacesFacet extends Facet
 {
+   public static final String FACES_SERVLET_CLASS = "javax.faces.webapp.FacesServlet";
    /**
     * Get a reference to this {@link Project}'s configured WEB-INF/faces-config.xml file.
     * <p>
@@ -62,6 +63,11 @@ public interface FacesFacet extends Facet
     * Set this application's FacesServlet mapping.
     */
    void setFacesMapping(String mapping);
+
+   /**
+    * Set this application's FacesServlet mapping to the default mappings.
+    */
+   void setDefaultFacesMapping();
 
    /**
     * For a given {@link Resource}, if the resource is a web-resource, return all known context-relative URLs with which

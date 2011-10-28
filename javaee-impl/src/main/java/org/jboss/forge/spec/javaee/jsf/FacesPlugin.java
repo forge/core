@@ -56,6 +56,7 @@ import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
 @RequiresFacet(FacesFacet.class)
 public class FacesPlugin implements Plugin
 {
+   private static final String FACES_MAPPING_QUESTION = "Do you also want to install the Faces servlet and mapping?";
    @Inject
    private Project project;
 
@@ -80,12 +81,11 @@ public class FacesPlugin implements Plugin
             }
          }
       }
-      FacesFacet facet = project.getFacet(FacesFacet.class);
-      if (facet.getFacesServletMappings().isEmpty())
+      FacesFacet faces = project.getFacet(FacesFacet.class);
+      if (faces.getFacesServletMappings().isEmpty())
       {
           if (prompt.promptBoolean("Do you also want to install the Faces servlet and mapping?", false)) {
-              facet.setFacesMapping("*.xhtml");
-              facet.setFacesMapping("/faces/*");
+             faces.setDefaultFacesMapping();
           }
       }
 
