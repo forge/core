@@ -60,7 +60,7 @@ public abstract class Change<E>
       if (this == o) return true;
       if (!(o instanceof Change)) return false;
 
-      Change change = (Change) o;
+      Change<?> change = (Change<?>) o;
 
       if (changeType != null ? !changeType.equals(change.changeType) : change.changeType != null) return false;
       if (deltaType != change.deltaType) return false;

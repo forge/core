@@ -49,10 +49,10 @@
 		    <ul>
 		    <ui:repeat var="entity" value="#{@{beanName}.list}">
 		    
-		        <li><h:link outcome="view">
-		            <f:param name="id" value="#{entity.id}"/>
-		        	<m:metawidget value="#{entity}" readOnly="true" rendererType="simple" style="margin-right: 0.5em"/>
-		        </h:link></li>
+				<li><h:link outcome="view">
+					<f:param name="id" value="#{entity.id}"/>
+					@{metawidget}
+				</h:link></li>
 		        
 		    </ui:repeat>
 		    </ul>

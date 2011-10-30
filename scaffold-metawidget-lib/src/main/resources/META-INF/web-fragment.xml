@@ -17,17 +17,4 @@
       <welcome-file>/index.html</welcome-file>
    </welcome-file-list>
    
-   <context-param>
-      <param-name>org.metawidget.faces.component.DONT_USE_PRERENDER_VIEW_EVENT</param-name>
-      <param-value>true</param-value>
-   </context-param>
-   <context-param>
-      <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
-      <param-value>client</param-value>
-   </context-param>
-   <context-param>
-      <param-name>javax.faces.PARTIAL_STATE_SAVING</param-name>
-      <param-value>false</param-value>
-   </context-param>
-
 </web-fragment>

@@ -22,6 +22,7 @@
 package org.jboss.forge.scaffold.metawidget;
 
 import java.io.FileNotFoundException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -37,7 +38,6 @@ import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.parser.xml.Node;
 import org.jboss.forge.parser.xml.XMLParser;
-import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.dependencies.events.AddedDependencies;
@@ -53,9 +53,9 @@ import org.jboss.forge.resources.Resource;
 import org.jboss.forge.scaffold.AccessStrategy;
 import org.jboss.forge.scaffold.ScaffoldProvider;
 import org.jboss.forge.scaffold.TemplateStrategy;
+import org.jboss.forge.scaffold.metawidget.inspector.propertystyle.ForgePropertyStyle;
+import org.jboss.forge.scaffold.metawidget.inspector.propertystyle.ForgePropertyStyleConfig;
 import org.jboss.forge.scaffold.util.ScaffoldUtil;
-import org.jboss.forge.shell.ShellColor;
-import org.jboss.forge.shell.ShellMessages;
 import org.jboss.forge.shell.ShellPrintWriter;
 import org.jboss.forge.shell.ShellPrompt;
 import org.jboss.forge.spec.javaee.CDIFacet;
@@ -68,6 +68,21 @@ import org.jboss.seam.render.template.CompiledTemplateResource;
 import org.jboss.seam.render.template.resolver.ClassLoaderTemplateResolver;
 import org.jboss.shrinkwrap.descriptor.api.spec.cdi.beans.BeansDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
+import org.metawidget.inspector.composite.CompositeInspector;
+import org.metawidget.inspector.composite.CompositeInspectorConfig;
+import org.metawidget.inspector.iface.Inspector;
+import org.metawidget.inspector.impl.BaseObjectInspectorConfig;
+import org.metawidget.inspector.jpa.JpaInspector;
+import org.metawidget.inspector.jpa.JpaInspectorConfig;
+import org.metawidget.inspector.propertytype.PropertyTypeInspector;
+import org.metawidget.statically.faces.StaticFacesUtils;
+import org.metawidget.statically.faces.component.html.StaticHtmlMetawidget;
+import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlWidgetBuilder;
+import org.metawidget.statically.faces.component.html.widgetbuilder.ReadOnlyWidgetBuilder;
+import org.metawidget.statically.faces.component.html.widgetbuilder.richfaces.RichFacesWidgetBuilder;
+import org.metawidget.statically.layout.SimpleLayout;
+import org.metawidget.widgetbuilder.composite.CompositeWidgetBuilder;
+import org.metawidget.widgetbuilder.composite.CompositeWidgetBuilderConfig;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -85,7 +100,6 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
    private static final String E404_TEMPLATE = "org/metawidget/templates/404.xhtml";
    private static final String E500_TEMPLATE = "org/metawidget/templates/500.xhtml";
    private static final String INDEX_TEMPLATE = "org/metawidget/templates/index.xhtml";
-   private static final String CONFIG_TEMPLATE = "org/metawidget/metawidget.xml";
 
    private final Dependency richfaces3UI = DependencyBuilder.create("org.richfaces.ui:richfaces-ui");
    private final Dependency richfaces3Impl = DependencyBuilder.create("org.richfaces.framework:richfaces-impl");
@@ -105,6 +119,7 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
    private final ShellPrintWriter writer;
    private final TemplateCompiler compiler;
    private final Event<InstallFacets> install;
+   private final StaticHtmlMetawidget metawidget;
 
    abstract protected List<Dependency> getMetawidgetDependencies();
 
@@ -118,71 +133,84 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
       this.compiler = compiler;
       this.install = install;
 
-      resolver = new ClassLoaderTemplateResolver(MetawidgetScaffoldBase.class.getClassLoader());
-      compiler.getTemplateResolverFactory().addResolver(resolver);
+      this.resolver = new ClassLoaderTemplateResolver(MetawidgetScaffoldBase.class.getClassLoader());
+      compiler.getTemplateResolverFactory().addResolver(this.resolver);
+
+      // Initialise Metawidget
+
+      this.metawidget = new StaticHtmlMetawidget();
    }
 
    private void loadTemplates()
    {
-      if (viewTemplate == null)
-         viewTemplate = compiler.compile(VIEW_TEMPLATE);
-      if (createTemplate == null)
-         createTemplate = compiler.compile(CREATE_TEMPLATE);
-      if (listTemplate == null)
-         listTemplate = compiler.compile(LIST_TEMPLATE);
-      if (configTemplate == null)
-         configTemplate = compiler.compile(CONFIG_TEMPLATE);
-      if (e404Template == null)
-         e404Template = compiler.compile(E404_TEMPLATE);
-      if (e500Template == null)
-         e500Template = compiler.compile(E500_TEMPLATE);
-      if (indexTemplate == null)
-         indexTemplate = compiler.compile(INDEX_TEMPLATE);
+      if (this.viewTemplate == null)
+      {
+         this.viewTemplate = this.compiler.compile(VIEW_TEMPLATE);
+      }
+      if (this.createTemplate == null)
+      {
+         this.createTemplate = this.compiler.compile(CREATE_TEMPLATE);
+      }
+      if (this.listTemplate == null)
+      {
+         this.listTemplate = this.compiler.compile(LIST_TEMPLATE);
+      }
+      if (this.e404Template == null)
+      {
+         this.e404Template = this.compiler.compile(E404_TEMPLATE);
+      }
+      if (this.e500Template == null)
+      {
+         this.e500Template = this.compiler.compile(E500_TEMPLATE);
+      }
+      if (this.indexTemplate == null)
+      {
+         this.indexTemplate = this.compiler.compile(INDEX_TEMPLATE);
+      }
    }
 
    @Override
    public List<Resource<?>> setup(final Resource<?> template, final boolean overwrite)
    {
       List<Resource<?>> resources = generateIndex(template, overwrite);
-      setupRichFaces(project);
-      setupWebXML(project);
-      setupRewrite(project);
+      setupRichFaces();
+      setupWebXML();
+      setupRewrite();
+      setupMetawidget();
 
-      CDIFacet cdi = project.getFacet(CDIFacet.class);
+      CDIFacet cdi = this.project.getFacet(CDIFacet.class);
 
-      if (!project.getFacet(CDIFacet.class).getConfig().getInterceptors().contains(SEAM_PERSIST_INTERCEPTOR))
+      if (!this.project.getFacet(CDIFacet.class).getConfig().getInterceptors().contains(SEAM_PERSIST_INTERCEPTOR))
       {
          BeansDescriptor config = cdi.getConfig();
          config.interceptor(SEAM_PERSIST_INTERCEPTOR);
          cdi.saveConfig(config);
       }
-      createMetawidgetConfig(false);
 
       return resources;
    }
 
    public void handleAddedDependencies(@Observes final AddedDependencies event)
    {
-      Project project = event.getProject();
-      if (project.hasFacet(MetawidgetScaffoldBase.class))
+      if (this.project.hasFacet(MetawidgetScaffoldBase.class))
       {
          boolean richFacesUI = false;
          boolean richFacesImpl = false;
          for (Dependency d : event.getDependencies())
          {
-            if (DependencyBuilder.areEquivalent(richfaces3UI, d))
+            if (DependencyBuilder.areEquivalent(this.richfaces3UI, d))
             {
                richFacesUI = true;
             }
-            if (DependencyBuilder.areEquivalent(richfaces3Impl, d))
+            if (DependencyBuilder.areEquivalent(this.richfaces3Impl, d))
             {
                richFacesImpl = true;
             }
-            if (DependencyBuilder.areEquivalent(richfaces4UI, d))
+            if (DependencyBuilder.areEquivalent(this.richfaces4UI, d))
             {
                richFacesUI = true;
             }
-            if (DependencyBuilder.areEquivalent(richfaces4Impl, d))
+            if (DependencyBuilder.areEquivalent(this.richfaces4Impl, d))
             {
                richFacesImpl = true;
             }
@@ -190,28 +218,38 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
 
          if (richFacesImpl || richFacesUI)
          {
-            setupRichFaces(project);
+            setupRichFaces();
          }
       }
    }
 
-   private void setupRichFaces(final Project project)
+   private void setupMetawidget()
    {
-      if ((project.getFacet(DependencyFacet.class).hasDependency(richfaces3UI)
-               && project.getFacet(DependencyFacet.class).hasDependency(richfaces3Impl))
-               || (project.getFacet(DependencyFacet.class).hasDependency(richfaces4UI)
-               && project.getFacet(DependencyFacet.class).hasDependency(richfaces4Impl)))
+      ForgePropertyStyle forgePropertyStyle = new ForgePropertyStyle(
+               new ForgePropertyStyleConfig().setProject(this.project));
+
+      Inspector inspector = new CompositeInspector(new CompositeInspectorConfig()
+               .setInspectors(
+                        new PropertyTypeInspector(new BaseObjectInspectorConfig()
+                                 .setPropertyStyle(forgePropertyStyle)),
+                        new JpaInspector(new JpaInspectorConfig()
+                                 .setPropertyStyle(forgePropertyStyle))));
+
+      this.metawidget.setInspector(inspector);
+   }
+
+   private void setupRichFaces()
+   {
+      if ((this.project.getFacet(DependencyFacet.class).hasDependency(this.richfaces3UI)
+               && this.project.getFacet(DependencyFacet.class).hasDependency(this.richfaces3Impl))
+               || (this.project.getFacet(DependencyFacet.class).hasDependency(this.richfaces4UI)
+               && this.project.getFacet(DependencyFacet.class).hasDependency(this.richfaces4Impl)))
       {
-         if (prompt
-                  .promptBoolean(writer.renderColor(ShellColor.YELLOW, "Metawidget")
-                           + " has detected RichFaces installed in this project. Would you like to configure Metawidget to use RichFaces?"))
-         {
-
-            WebResourceFacet web = project.getFacet(WebResourceFacet.class);
-
-            ScaffoldUtil.createOrOverwrite(prompt, web.getWebResource("WEB-INF/metawidget.xml"),
-                     getClass().getResourceAsStream("/org/metawidget/metawidget-richfaces.xml"), true);
-         }
+         @SuppressWarnings("unchecked")
+         CompositeWidgetBuilder compositeWidgetBuider = new CompositeWidgetBuilder(
+                  new CompositeWidgetBuilderConfig().setWidgetBuilders(new ReadOnlyWidgetBuilder(),
+                           new RichFacesWidgetBuilder(), new HtmlWidgetBuilder()));
+         this.metawidget.setWidgetBuilder(compositeWidgetBuider);
       }
    }
 
@@ -222,11 +260,11 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
       List<Resource<?>> result = new ArrayList<Resource<?>>();
       try
       {
-         JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
-         WebResourceFacet web = project.getFacet(WebResourceFacet.class);
+         JavaSourceFacet java = this.project.getFacet(JavaSourceFacet.class);
+         WebResourceFacet web = this.project.getFacet(WebResourceFacet.class);
 
          loadTemplates();
-         CompiledTemplateResource backingBeanTemplate = compiler.compile(BACKING_BEAN_TEMPLATE);
+         CompiledTemplateResource backingBeanTemplate = this.compiler.compile(BACKING_BEAN_TEMPLATE);
          HashMap<Object, Object> context = new HashMap<Object, Object>();
          context.put("entity", entity);
          context.put("ccEntity", entity.getName().substring(0, 1).toLowerCase() + entity.getName().substring(1));
@@ -235,24 +273,49 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
          JavaClass viewBean = JavaParser.parse(JavaClass.class, backingBeanTemplate.render(context));
          viewBean.setPackage(java.getBasePackage() + ".view");
          viewBean.addAnnotation(SEAM_PERSIST_TRANSACTIONAL_ANNO);
-         result.add(ScaffoldUtil.createOrOverwrite(prompt, java.getJavaResource(viewBean), viewBean.toString(),
+         result.add(ScaffoldUtil.createOrOverwrite(this.prompt, java.getJavaResource(viewBean), viewBean.toString(),
                   overwrite));
 
          // Set new context for view generation
          context = getTemplateContext(template);
-         context.put("beanName", viewBean.getName().substring(0, 1).toLowerCase() + viewBean.getName().substring(1));
-         context.put("ccEntity", entity.getName().substring(0, 1).toLowerCase() + entity.getName().substring(1));
+         String beanName = viewBean.getName().substring(0, 1).toLowerCase() + viewBean.getName().substring(1);
+         context.put("beanName", beanName);
+         String ccEntity = entity.getName().substring(0, 1).toLowerCase() + entity.getName().substring(1);
+         context.put("ccEntity", ccEntity);
          context.put("entity", entity);
 
-         // Generate views
+         // Prepare Metawidget
+         this.metawidget.setValueExpression("value", StaticFacesUtils.wrapExpression(beanName + "." + ccEntity));
+         this.metawidget.setPath(entity.getQualifiedName());
+
+         // Generate form markup
+         StringWriter stringWriter = new StringWriter();
+         this.metawidget.write(stringWriter, 3);
+         context.put("metawidget", stringWriter.toString().trim());
+
+         // Generate create view
          String type = entity.getName().toLowerCase();
-         result.add(ScaffoldUtil.createOrOverwrite(prompt, web.getWebResource("scaffold/" + type + "/view.xhtml"),
-                  viewTemplate.render(context), overwrite));
-         result.add(ScaffoldUtil.createOrOverwrite(prompt, web.getWebResource("scaffold/" + type + "/create.xhtml"),
-                  createTemplate.render(context),
+         result.add(ScaffoldUtil.createOrOverwrite(this.prompt,
+                  web.getWebResource("scaffold/" + type + "/create.xhtml"),
+                  this.createTemplate.render(context),
                   overwrite));
-         result.add(ScaffoldUtil.createOrOverwrite(prompt, web.getWebResource("scaffold/" + type + "/list.xhtml"),
-                  listTemplate.render(context), overwrite));
+
+         // Generate read-only view
+         this.metawidget.setReadOnly(true);
+         stringWriter = new StringWriter();
+         this.metawidget.write(stringWriter, 3);
+         context.put("metawidget", stringWriter.toString().trim());
+         result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("scaffold/" + type + "/view.xhtml"),
+                  this.viewTemplate.render(context), overwrite));
+
+         // Generate list view
+         this.metawidget.setLayout(new SimpleLayout());
+         this.metawidget.setStyle("margin-right: 0.5em");
+         stringWriter = new StringWriter();
+         this.metawidget.write(stringWriter, 5);
+         context.put("metawidget", stringWriter.toString().trim());
+         result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("scaffold/" + type + "/list.xhtml"),
+                  this.listTemplate.render(context), overwrite));
       }
       catch (Exception e)
       {
@@ -270,40 +333,34 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
       return context;
    }
 
-   public void createMetawidgetConfig(final boolean overwrite)
-   {
-      WebResourceFacet web = project.getFacet(WebResourceFacet.class);
-
-      loadTemplates();
-      ScaffoldUtil.createOrOverwrite(prompt, web.getWebResource("WEB-INF/metawidget.xml"),
-               configTemplate.render(new HashMap<Object, Object>()), overwrite);
-   }
-
    @Override
    @SuppressWarnings("unchecked")
    public boolean install()
    {
-      if (!(project.hasFacet(WebResourceFacet.class) && project.hasFacet(PersistenceFacet.class)
-               && project.hasFacet(CDIFacet.class) && project.hasFacet(FacesFacet.class)))
+      if (!(this.project.hasFacet(WebResourceFacet.class) && this.project.hasFacet(PersistenceFacet.class)
+               && this.project.hasFacet(CDIFacet.class) && this.project.hasFacet(FacesFacet.class)))
       {
-         install.fire(new InstallFacets(WebResourceFacet.class, PersistenceFacet.class, CDIFacet.class,
+         this.install.fire(new InstallFacets(WebResourceFacet.class, PersistenceFacet.class, CDIFacet.class,
                   FacesFacet.class));
       }
 
-      DependencyFacet df = project.getFacet(DependencyFacet.class);
+      DependencyFacet df = this.project.getFacet(DependencyFacet.class);
 
       String version = null;
-      for (Dependency dependency : getMetawidgetDependencies()) {
+      for (Dependency dependency : getMetawidgetDependencies())
+      {
          if (!df.hasDependency(dependency))
          {
             if (version == null)
             {
-               dependency = prompt.promptChoiceTyped("Install which version of Metawidget Scaffold?",
+               dependency = this.prompt.promptChoiceTyped("Install which version of Metawidget Scaffold?",
                         df.resolveAvailableVersions(dependency));
                version = dependency.getVersion();
             }
             else
+            {
                dependency = DependencyBuilder.create(dependency).setVersion(version);
+            }
 
             df.addDependency(dependency);
          }
@@ -312,12 +369,12 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
       return true;
    }
 
-   private void setupWebXML(final Project project)
+   private void setupWebXML()
    {
-      ServletFacet servlet = project.getFacet(ServletFacet.class);
+      ServletFacet servlet = this.project.getFacet(ServletFacet.class);
 
       Node webXML = removeConflictingErrorPages(servlet);
-      WebResourceFacet web = project.getFacet(WebResourceFacet.class);
+      WebResourceFacet web = this.project.getFacet(WebResourceFacet.class);
       servlet.getConfigFile().setContents(XMLParser.toXMLInputStream(webXML));
 
       WebAppDescriptor config = servlet.getConfig();
@@ -325,10 +382,6 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
       config.errorPage(500, getAccessStrategy().getWebPaths(web.getWebResource("500.xhtml")).get(0));
 
       servlet.saveConfig(config);
-
-      ShellMessages
-               .info(writer,
-                        "JSF2 ( Mojarra 2.0.3 - http://java.net/jira/browse/JAVASERVERFACES-1826 ) and Metawidget currently require Partial State Saving to be disabled.");
    }
 
    private Node removeConflictingErrorPages(final ServletFacet servlet)
@@ -337,11 +390,12 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
       Node root = webXML.getRoot();
       List<Node> errorPages = root.get("error-page");
 
-      for (String code : Arrays.asList("404", "500")) {
+      for (String code : Arrays.asList("404", "500"))
+      {
          for (Node errorPage : errorPages)
          {
             if (code.equals(errorPage.getSingle("error-code").getText())
-                     && prompt.promptBoolean("Your web.xml already contains an error page for " + code
+                     && this.prompt.promptBoolean("Your web.xml already contains an error page for " + code
                               + " status codes, replace it?"))
             {
                root.removeChild(errorPage);
@@ -351,13 +405,13 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
       return webXML;
    }
 
-   private void setupRewrite(final Project project)
+   private void setupRewrite()
    {
-      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
-      FacesFacet faces = project.getFacet(FacesFacet.class);
+      JavaSourceFacet java = this.project.getFacet(JavaSourceFacet.class);
+      FacesFacet faces = this.project.getFacet(FacesFacet.class);
 
       loadTemplates();
-      CompiledTemplateResource configTemplate = compiler.compile(REWRITE_CONFIG_TEMPLATE);
+      CompiledTemplateResource rewriteConfigTemplate = this.compiler.compile(REWRITE_CONFIG_TEMPLATE);
 
       Map<Object, Object> context = new HashMap<Object, Object>();
       context.put("indexPage", faces.getWebPaths("/index.xhtml").get(0));
@@ -367,23 +421,25 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
       context.put("createPage", faces.getWebPaths("/scaffold/{domain}/create.xhtml").get(0));
       context.put("viewPage", faces.getWebPaths("/scaffold/{domain}/view.xhtml").get(0));
 
-      JavaSource<?> rewriteConfig = JavaParser.parse(configTemplate.render(context));
+      JavaSource<?> rewriteConfig = JavaParser.parse(rewriteConfigTemplate.render(context));
       rewriteConfig.setPackage(java.getBasePackage() + ".rewrite");
 
-      try {
-         ScaffoldUtil.createOrOverwrite(prompt, java.getJavaResource(rewriteConfig),
+      try
+      {
+         ScaffoldUtil.createOrOverwrite(this.prompt, java.getJavaResource(rewriteConfig),
                   rewriteConfig.toString(), false);
       }
-      catch (FileNotFoundException e) {
+      catch (FileNotFoundException e)
+      {
          throw new RuntimeException("Could not save Rewrite Configuration source file", e);
       }
 
-      ResourceFacet resources = project.getFacet(ResourceFacet.class);
+      ResourceFacet resources = this.project.getFacet(ResourceFacet.class);
       DirectoryResource services = resources.getResourceFolder().getOrCreateChildDirectory("META-INF")
                .getOrCreateChildDirectory("services");
 
       // Register the configuration provider
-      ScaffoldUtil.createOrOverwrite(prompt,
+      ScaffoldUtil.createOrOverwrite(this.prompt,
                (FileResource<?>) services.getChild("com.ocpsoft.rewrite.config.ConfigurationProvider"),
                rewriteConfig.getQualifiedName(), false);
    }
@@ -391,7 +447,7 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
    @Override
    public boolean isInstalled()
    {
-      final DependencyFacet df = project.getFacet(DependencyFacet.class);
+      final DependencyFacet df = this.project.getFacet(DependencyFacet.class);
       boolean hasMW = true;
       for (Dependency dependency : getMetawidgetDependencies())
       {
@@ -409,25 +465,25 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
    public List<Resource<?>> generateIndex(final Resource<?> template, final boolean overwrite)
    {
       List<Resource<?>> result = new ArrayList<Resource<?>>();
-      WebResourceFacet web = project.getFacet(WebResourceFacet.class);
+      WebResourceFacet web = this.project.getFacet(WebResourceFacet.class);
 
-      project.getFacet(ServletFacet.class).getConfig().welcomeFile("index.html");
+      this.project.getFacet(ServletFacet.class).getConfig().welcomeFile("index.html");
 
       generateTemplates(overwrite);
       HashMap<Object, Object> context = getTemplateContext(template);
 
       loadTemplates();
-      result.add(ScaffoldUtil.createOrOverwrite(prompt, web.getWebResource("index.html"), getClass()
+      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("index.html"), getClass()
                .getResourceAsStream("/org/metawidget/templates/index.html"), overwrite));
 
-      result.add(ScaffoldUtil.createOrOverwrite(prompt, web.getWebResource("index.xhtml"),
-               indexTemplate.render(context), overwrite));
+      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("index.xhtml"),
+               this.indexTemplate.render(context), overwrite));
 
-      result.add(ScaffoldUtil.createOrOverwrite(prompt, web.getWebResource("404.xhtml"),
-               e404Template.render(context), overwrite));
+      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("404.xhtml"),
+               this.e404Template.render(context), overwrite));
 
-      result.add(ScaffoldUtil.createOrOverwrite(prompt, web.getWebResource("500.xhtml"),
-               e500Template.render(context), overwrite));
+      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("500.xhtml"),
+               this.e500Template.render(context), overwrite));
 
       return result;
    }
@@ -441,13 +497,13 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
    @Override
    public AccessStrategy getAccessStrategy()
    {
-      return new MetawidgetAccessStrategy(project);
+      return new MetawidgetAccessStrategy(this.project);
    }
 
    @Override
    public TemplateStrategy getTemplateStrategy()
    {
-      return new MetawidgetTemplateStrategy(project);
+      return new MetawidgetTemplateStrategy(this.project);
    }
 
    @Override
@@ -455,7 +511,8 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
    {
       List<Resource<?>> result = new ArrayList<Resource<?>>();
 
-      result.add(ScaffoldUtil.createOrOverwrite(prompt, (FileResource<?>) getTemplateStrategy().getDefaultTemplate(),
+      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, (FileResource<?>) getTemplateStrategy()
+               .getDefaultTemplate(),
                getClass().getResourceAsStream("/org/metawidget/templates/forge-template.xhtml"), overwrite));
 
       return result;

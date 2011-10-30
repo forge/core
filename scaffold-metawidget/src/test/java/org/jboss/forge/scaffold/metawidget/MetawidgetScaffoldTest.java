@@ -22,7 +22,7 @@ package org.jboss.forge.scaffold.metawidget;
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -96,6 +96,8 @@ public class MetawidgetScaffoldTest extends AbstractShellTest
 
       queueInputLines("");
       getShell().execute("entity --named Customer");
+      getShell().execute("field string --named firstName");
+      getShell().execute("field string --named lastName");
 
       queueInputLines("", "");
       getShell().execute("scaffold from-entity");
@@ -108,7 +110,8 @@ public class MetawidgetScaffoldTest extends AbstractShellTest
       for (FileResource<?> file : Arrays.asList(view, create, list))
       {
          Assert.assertTrue(file.exists());
-         Assert.assertTrue(Streams.toString(file.getResourceInputStream()).contains(
+         String contents = Streams.toString(file.getResourceInputStream());
+         Assert.assertTrue(contents.contains(
                   "template=\"/resources/scaffold/forge-template.xhtml"));
       }
    }
@@ -121,6 +124,7 @@ public class MetawidgetScaffoldTest extends AbstractShellTest
 
       queueInputLines("");
       getShell().execute("entity --named CustomerPerson");
+      getShell().execute("field string --named name");
 
       queueInputLines("", "");
       getShell().execute("scaffold from-entity");
@@ -190,14 +194,17 @@ public class MetawidgetScaffoldTest extends AbstractShellTest
 
       queueInputLines("", "");
 
-      try {
+      try
+      {
 
          getShell().execute(
                   "scaffold from-entity --usingTemplate "
                            + web.getWebResource("test-template.xhtml").getFullyQualifiedName());
          fail();
       }
-      catch (IllegalStateException e) {}
+      catch (IllegalStateException e)
+      {
+      }
 
       FileResource<?> view = web.getWebResource("scaffold/customer/view.xhtml");
       FileResource<?> create = web.getWebResource("scaffold/customer/create.xhtml");
@@ -206,6 +213,72 @@ public class MetawidgetScaffoldTest extends AbstractShellTest
       for (FileResource<?> file : Arrays.asList(view, create, list))
       {
          Assert.assertFalse(file.exists());
+      }
+   }
+
+   @Test
+   @SuppressWarnings("unchecked")
+   public void testGenerateFromNestedEntity() throws Exception
+   {
+      Project project = setupScaffoldProject();
+
+      queueInputLines("");
+      getShell().execute("entity --named Address");
+      getShell().execute("field string --named street");
+      getShell().execute("field string --named city");
+      getShell().execute("field string --named state");
+      getShell().execute("field string --named zip");
+      getShell().execute("entity --named Customer");
+      getShell().execute("field string --named firstName");
+      getShell().execute("field string --named lastName");
+      queueInputLines("com.test.domain.Address");
+      getShell().execute("field custom --named address");
+
+      queueInputLines("", "");
+      getShell().execute("scaffold from-entity");
+
+      WebResourceFacet web = project.getFacet(WebResourceFacet.class);
+      FileResource<?> view = web.getWebResource("scaffold/customer/view.xhtml");
+      FileResource<?> create = web.getWebResource("scaffold/customer/create.xhtml");
+      FileResource<?> list = web.getWebResource("scaffold/customer/list.xhtml");
+
+      for (FileResource<?> file : Arrays.asList(view, create, list))
+      {
+         Assert.assertTrue(file.exists());
+         String contents = Streams.toString(file.getResourceInputStream());
+         Assert.assertTrue(contents.contains(
+                  "template=\"/resources/scaffold/forge-template.xhtml"));
+      }
+   }
+
+   @Test
+   @SuppressWarnings("unchecked")
+   public void testGenerateFromEntityWithRichFaces() throws Exception
+   {
+      Project project = setupScaffoldProject();
+      // getShell().execute("richfaces setup");
+
+      queueInputLines("");
+      getShell().execute("entity --named Customer");
+      queueInputLines("java.util.Date");
+      getShell().execute("field custom --named dateJoined");
+      queueInputLines("java.awt.Color");
+      getShell().execute("field custom --named favoriteColor");
+
+      queueInputLines("", "");
+      getShell().execute("scaffold from-entity");
+
+      WebResourceFacet web = project.getFacet(WebResourceFacet.class);
+      FileResource<?> view = web.getWebResource("scaffold/customer/view.xhtml");
+      FileResource<?> create = web.getWebResource("scaffold/customer/create.xhtml");
+      FileResource<?> list = web.getWebResource("scaffold/customer/list.xhtml");
+
+      for (FileResource<?> file : Arrays.asList(view, create, list))
+      {
+         Assert.assertTrue(file.exists());
+         String contents = Streams.toString(file.getResourceInputStream());
+         Assert.assertTrue(contents.contains(
+                  "template=\"/resources/scaffold/forge-template.xhtml"));
       }
    }
 
