@@ -195,7 +195,7 @@
       
       <dependency>
          <groupId>org.jboss.forge</groupId>
-         <artifactId>forge-scaffold-metawidget</artifactId>
+         <artifactId>forge-scaffold-jsf</artifactId>
       </dependency>
 
       <dependency>

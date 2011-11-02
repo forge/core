@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core@{metawidgetNamespaces}">
+
+	<f:metadata>
+	    <f:viewParam name="id" value="#{@{beanName}.id}">
+	        <f:validateLongRange minimum="1" />
+	    </f:viewParam>
+	    <f:viewParam name="edit" value="#{_editMode}">
+	        <f:validateRegex pattern="(|true|false)" />
+	    </f:viewParam>
+	</f:metadata>
+	
+	<ui:composition template="@{templateStrategy.getReferencePath(template != null ? template : templateStrategy.getDefaultTemplate())}">
+	
+		<ui:param name="pageTitle" value="View @{entity.getName()}" />
+	
+		<ui:define name="header">
+			@{entity.getName()}
+		</ui:define>
+	
+		<ui:define name="subheader">
+			Viewing your object
+		</ui:define>
+	
+		<ui:define name="footer">
+		</ui:define>
+	
+		<ui:define name="main">
+			<h:form id="form">
+				<h:messages globalOnly="true"/>
+				   
+				@{metawidget}
+	
+				<br/>
+				<c:if test="#{ _editMode != null and _editMode ne 'false' }">
+					<h:commandLink value="Save" action="#{@{beanName}.save()}" />
+				</c:if>
+				
+				<h:link value="View all" outcome="list" rendered="#{ _editMode == null or _editMode eq 'false' }" /> | 
+				<h:link value="Edit" outcome="view" includeViewParams="true" rendered="#{ _editMode == null or _editMode eq 'false' }">
+					<f:param name="edit" value="true" />
+				</h:link>
+				<h:link value="Cancel" outcome="view" includeViewParams="true" rendered="#{ _editMode != null and _editMode ne 'false' }">
+					<f:param name="edit" value="false" />
+				</h:link>
+				<h:panelGroup rendered="#{ _editMode == null or _editMode eq 'false' }"> | 
+					<h:link value="Create new" outcome="create" />
+				</h:panelGroup>
+				<h:commandLink value="Delete" action="#{@{beanName}.delete()}" styleClass="right"/>
+			</h:form>
+		</ui:define>
+	
+	</ui:composition>
+</html>

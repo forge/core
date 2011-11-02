@@ -8,9 +8,9 @@
       <relativePath>../pom.xml</relativePath>
    </parent>
 
-   <artifactId>forge-scaffold-metawidget</artifactId>
+   <artifactId>forge-scaffold-faces</artifactId>
    <packaging>jar</packaging>
-   <name>Forge - Scaffold Provider for Metawidget</name>
+   <name>Forge - Scaffold Provider for Java Server Faces</name>
 
    <dependencies>
       <dependency>

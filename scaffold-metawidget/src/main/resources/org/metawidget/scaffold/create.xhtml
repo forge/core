@@ -27,13 +27,15 @@
 
 	<ui:define name="main">
 		<h:form id="form">
-			<h:messages globalOnly="true" />
+		
+		    <h:messages globalOnly="true" />
 		    
-			@{metawidget}
+		    <m:metawidget value="#{@{beanName}.@{ccEntity}}"/>
 		    
-			<br/>
-			<h:commandLink value="Create" action="#{@{beanName}.create()}" />
-			<h:link value="Cancel" outcome="list" styleClass="right"/>
+		    <br/>
+		    <h:commandLink value="Create" action="#{@{beanName}.create()}" />
+		    <h:link value="Cancel" outcome="list" styleClass="right"/>
+
 		</h:form>
 	</ui:define>
 

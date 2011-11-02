@@ -328,7 +328,7 @@
 		
 		<module-def name="org.jboss.forge.scaffold.impl">
 			<maven-resource group="org.jboss.forge" artifact="forge-scaffold-plugins" />
-			<maven-resource group="org.jboss.forge" artifact="forge-scaffold-metawidget" />
+			<maven-resource group="org.jboss.forge" artifact="forge-scaffold-jsf" />
 		</module-def>
 
 		<module-def name="org.jboss.forge.shell.api">

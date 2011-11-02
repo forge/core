@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.scaffold.metawidget;
+package org.jboss.forge.scaffold.faces;
 
 import java.util.List;
 
@@ -29,23 +29,23 @@ import org.jboss.forge.scaffold.AccessStrategy;
 import org.jboss.forge.spec.javaee.FacesFacet;
 
 /**
- * Metawidget Scaffold Access Strategy
- * 
+ * Faces Scaffold Access Strategy
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class MetawidgetAccessStrategy implements AccessStrategy
+public class FacesAccessStrategy implements AccessStrategy
 {
    final FacesFacet faces;
 
-   public MetawidgetAccessStrategy(final Project project)
+   public FacesAccessStrategy(final Project project)
    {
       this.faces = project.getFacet(FacesFacet.class);
    }
 
    @Override
-   public List<String> getWebPaths(final Resource<?> r)
+   public List<String> getWebPaths(final Resource<?> resource)
    {
-      return this.faces.getWebPaths(r);
+      return this.faces.getWebPaths(resource);
    }
 
    @Override

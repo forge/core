@@ -65,7 +65,7 @@ import org.jboss.forge.shell.util.ConstraintInspector;
  */
 @Alias("scaffold")
 @Topic("UI Generation & Scaffolding")
-@Help("Metawidget UI scaffolding")
+@Help("Faces UI scaffolding")
 @RequiresProject
 @RequiresFacet(ScaffoldProvider.class)
 public class ScaffoldPlugin implements Plugin
@@ -210,9 +210,9 @@ public class ScaffoldPlugin implements Plugin
       }
 
       if ((scaffoldType == null)
-               && prompt.promptBoolean("No scaffold type was selected, use default (Metawidget & JSF)?"))
+               && prompt.promptBoolean("No scaffold type was selected, use default (JSF)?"))
       {
-         scaffoldType = "metawidget";
+         scaffoldType = "faces";
       }
       else if (scaffoldType == null)
       {

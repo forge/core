@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.scaffold.metawidget;
+package org.jboss.forge.scaffold.faces;
 
 import java.util.Arrays;
 
@@ -34,15 +34,15 @@ import org.jboss.forge.shell.util.Streams;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
-public class MetawidgetTemplateStrategy implements TemplateStrategy
+public class FacesTemplateStrategy implements TemplateStrategy
 {
    private static final String SCAFFOLD_FORGE_TEMPLATE = "/resources/scaffold/forge-template.xhtml";
 
    private final Project project;
 
-   public MetawidgetTemplateStrategy(final Project project)
+   public FacesTemplateStrategy(final Project project)
    {
       this.project = project;
    }
