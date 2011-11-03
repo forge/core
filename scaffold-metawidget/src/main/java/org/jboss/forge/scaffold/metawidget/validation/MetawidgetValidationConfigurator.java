@@ -65,10 +65,10 @@ public class MetawidgetValidationConfigurator
          {
             final Node root = XMLParser.parse(configFile.getResourceInputStream());
             final Node array = root.getOrCreate("htmlMetawidget")
-                     .attribute("xmlns", "java:org.jboss.faces.component.html")
+                     .attribute("xmlns", "java:org.metawidget.faces.component.html")
                      .getOrCreate("inspector")
                      .getOrCreate("compositeInspector")
-                     .attribute("xmlns", "java:org.jboss.inspector.composite")
+                     .attribute("xmlns", "java:org.metawidget.inspector.composite")
                      .attribute("config", "CompositeInspectorConfig")
                      .getOrCreate("inspectors")
                      .getOrCreate("array");
@@ -97,11 +97,11 @@ public class MetawidgetValidationConfigurator
    private void addValidationConfigurationTo(final Node node)
    {
       node.getOrCreate("beanValidationInspector")
-               .attribute("xmlns", "java:org.jboss.inspector.beanvalidation")
-               .attribute("config", "org.jboss.inspector.impl.BaseObjectInspectorConfig")
+               .attribute("xmlns", "java:org.metawidget.inspector.beanvalidation")
+               .attribute("config", "org.metawidget.inspector.impl.BaseObjectInspectorConfig")
                .getOrCreate("propertyStyle")
                .getOrCreate("javaBeanPropertyStyle")
-               .attribute("xmlns", "java:org.jboss.inspector.impl.propertystyle.javabean")
+               .attribute("xmlns", "java:org.metawidget.inspector.impl.propertystyle.javabean")
                .attribute("config", "JavaBeanPropertyStyleConfig")
                .getOrCreate("privateFieldConvention")
                .getOrCreate("format")
