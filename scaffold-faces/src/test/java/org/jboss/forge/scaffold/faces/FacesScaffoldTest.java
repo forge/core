@@ -176,7 +176,7 @@ public class FacesScaffoldTest extends AbstractShellTest
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
       JavaResource bean = java.getJavaResource(java.getBasePackage() + ".view.CustomerBean");
       Assert.assertTrue(((JavaClass) bean.getJavaSource())
-               .hasInterface("org.jboss.forge.scaffold.metawidget.navigation.MenuItem"));
+               .hasInterface("org.jboss.forge.scaffold.faces.navigation.MenuItem"));
 
       getShell().execute("build");
    }
@@ -217,7 +217,6 @@ public class FacesScaffoldTest extends AbstractShellTest
    }
 
    @Test
-   @SuppressWarnings("unchecked")
    public void testGenerateFromNestedEntity() throws Exception
    {
       Project project = setupScaffoldProject();
@@ -238,17 +237,79 @@ public class FacesScaffoldTest extends AbstractShellTest
       getShell().execute("scaffold from-entity");
 
       WebResourceFacet web = project.getFacet(WebResourceFacet.class);
-      FileResource<?> view = web.getWebResource("scaffold/customer/view.xhtml");
-      FileResource<?> create = web.getWebResource("scaffold/customer/create.xhtml");
-      FileResource<?> list = web.getWebResource("scaffold/customer/list.xhtml");
 
-      for (FileResource<?> file : Arrays.asList(view, create, list))
-      {
-         Assert.assertTrue(file.exists());
-         String contents = Streams.toString(file.getResourceInputStream());
-         Assert.assertTrue(contents.contains(
-                  "template=\"/resources/scaffold/forge-template.xhtml"));
-      }
+      FileResource<?> view = web.getWebResource("scaffold/customer/view.xhtml");
+      Assert.assertTrue(view.exists());
+      String contents = Streams.toString(view.getResourceInputStream());
+      Assert.assertTrue(contents.contains(
+               "template=\"/resources/scaffold/forge-template.xhtml"));
+
+      FileResource<?> create = web.getWebResource("scaffold/customer/create.xhtml");
+      Assert.assertTrue(create.exists());
+      contents = Streams.toString(create.getResourceInputStream());
+      Assert.assertTrue(contents.contains(
+               "template=\"/resources/scaffold/forge-template.xhtml"));
+      StringBuilder metawidget = new StringBuilder("\t\t\t<h:form id=\"form\">\n");
+      metawidget.append("\t\t\t\t<h:messages globalOnly=\"true\" />\n\n");
+      metawidget.append("\t\t\t\t<h:panelGrid columns=\"3\">\r\n");
+      metawidget.append("\t\t\t\t\t<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First name:\"/>\r\n");
+      metawidget.append("\t\t\t\t\t<h:panelGroup>\r\n");
+      metawidget
+               .append("\t\t\t\t\t\t<h:inputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanCustomerFirstName\"/>\r\n");
+      metawidget.append("\t\t\t\t\t</h:panelGroup>\r\n");
+      metawidget.append("\t\t\t\t\t<h:outputText/>\r\n");
+      metawidget.append("\t\t\t\t\t<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last name:\"/>\r\n");
+      metawidget.append("\t\t\t\t\t<h:panelGroup>\r\n");
+      metawidget
+               .append("\t\t\t\t\t\t<h:inputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanCustomerLastName\"/>\r\n");
+      metawidget.append("\t\t\t\t\t</h:panelGroup>\r\n");
+      metawidget.append("\t\t\t\t\t<h:outputText/>\r\n");
+      metawidget.append("\t\t\t\t\t<h:outputLabel for=\"customerBeanCustomerAddress\" value=\"Address:\"/>\r\n");
+      metawidget.append("\t\t\t\t\t<h:panelGroup>\r\n");
+      metawidget.append("\t\t\t\t\t\t<h:panelGrid columns=\"3\" id=\"customerBeanCustomerAddress\">\r\n");
+      metawidget
+               .append("\t\t\t\t\t\t\t<h:outputLabel for=\"customerBeanCustomerAddressStreet\" value=\"Street:\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t\t<h:panelGroup>\r\n");
+      metawidget
+               .append("\t\t\t\t\t\t\t\t<h:inputText id=\"customerBeanCustomerAddressStreet\" value=\"#{customerBean.customer.address.street}\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t\t\t<h:message for=\"customerBeanCustomerAddressStreet\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t\t</h:panelGroup>\r\n");
+      metawidget.append("\t\t\t\t\t\t\t<h:outputText/>\r\n");
+      metawidget.append("\t\t\t\t\t\t\t<h:outputLabel for=\"customerBeanCustomerAddressCity\" value=\"City:\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t\t<h:panelGroup>\r\n");
+      metawidget
+               .append("\t\t\t\t\t\t\t\t<h:inputText id=\"customerBeanCustomerAddressCity\" value=\"#{customerBean.customer.address.city}\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t\t\t<h:message for=\"customerBeanCustomerAddressCity\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t\t</h:panelGroup>\r\n");
+      metawidget.append("\t\t\t\t\t\t\t<h:outputText/>\r\n");
+      metawidget.append("\t\t\t\t\t\t\t<h:outputLabel for=\"customerBeanCustomerAddressState\" value=\"State:\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t\t<h:panelGroup>\r\n");
+      metawidget
+               .append("\t\t\t\t\t\t\t\t<h:inputText id=\"customerBeanCustomerAddressState\" value=\"#{customerBean.customer.address.state}\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t\t\t<h:message for=\"customerBeanCustomerAddressState\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t\t</h:panelGroup>\r\n");
+      metawidget.append("\t\t\t\t\t\t\t<h:outputText/>\r\n");
+      metawidget.append("\t\t\t\t\t\t\t<h:outputLabel for=\"customerBeanCustomerAddressZip\" value=\"Zip:\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t\t<h:panelGroup>\r\n");
+      metawidget
+               .append("\t\t\t\t\t\t\t\t<h:inputText id=\"customerBeanCustomerAddressZip\" value=\"#{customerBean.customer.address.zip}\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t\t\t<h:message for=\"customerBeanCustomerAddressZip\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t\t</h:panelGroup>\r\n");
+      metawidget.append("\t\t\t\t\t\t\t<h:outputText/>\r\n");
+      metawidget.append("\t\t\t\t\t\t</h:panelGrid>\r\n");
+      metawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanCustomerAddress\"/>\r\n");
+      metawidget.append("\t\t\t\t\t</h:panelGroup>\r\n");
+      metawidget.append("\t\t\t\t\t<h:outputText/>\r\n");
+      metawidget.append("\t\t\t\t</h:panelGrid>\n");
+      Assert.assertTrue(contents.contains(metawidget));
+
+      FileResource<?> list = web.getWebResource("scaffold/customer/list.xhtml");
+      Assert.assertTrue(list.exists());
+      contents = Streams.toString(list.getResourceInputStream());
+      Assert.assertTrue(contents.contains(
+               "template=\"/resources/scaffold/forge-template.xhtml"));
    }
 
    @Test
