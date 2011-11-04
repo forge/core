@@ -19,39 +19,27 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.scaffold.metawidget;
-
-import java.util.List;
-
-import org.jboss.forge.project.Project;
-import org.jboss.forge.resources.Resource;
-import org.jboss.forge.scaffold.AccessStrategy;
-import org.jboss.forge.spec.javaee.FacesFacet;
+package org.jboss.forge.scaffold.faces.navigation;
 
 /**
- * Metawidget Scaffold Access Strategy
- * 
+ * Represents an item that should be displayed in scaffolded menus.
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class MetawidgetAccessStrategy implements AccessStrategy
+public interface MenuItem
 {
-   final FacesFacet faces;
+   /**
+    * Get the scaffolded entity type to which this item will navigate. (Can be overridden by {@link #getLiteralPath()}
+    */
+   public Class<?> getItemType();
 
-   public MetawidgetAccessStrategy(final Project project)
-   {
-      this.faces = project.getFacet(FacesFacet.class);
-   }
+   /**
+    * Get the literal view to which this item will navigate. (Overrides {@link #getItemType()})
+    */
+   public String getLiteralPath();
 
-   @Override
-   public List<String> getWebPaths(final Resource<?> r)
-   {
-      return this.faces.getWebPaths(r);
-   }
-
-   @Override
-   public Resource<?> fromWebPath(final String path)
-   {
-      return this.faces.getResourceForWebPath(path);
-   }
-
+   /**
+    * Get the text to be displayed when this item is displayed.
+    */
+   public String getLabel();
 }

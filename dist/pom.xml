@@ -210,7 +210,7 @@
 
       <dependency>
          <groupId>org.jboss.forge</groupId>
-         <artifactId>forge-scaffold-metawidget</artifactId>
+         <artifactId>forge-scaffold-faces</artifactId>
       </dependency>
 
       <dependency>

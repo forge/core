@@ -6,22 +6,22 @@
 	<!-- This file configures the Java Server Faces Metawidget. For full -->
 	<!-- documentation on Metawidget, visit http://metawidget.org        -->
 	
-	<htmlMetawidget xmlns="java:org.jboss.faces.component.html">
+	<htmlMetawidget xmlns="java:org.metawidget.faces.component.html">
 	
 		<!-- Inspectors inspect back-end metadata -->
 		
 		<inspector>
 			<!-- compositeInspector collates the results from multiple inspectors -->
-			<compositeInspector xmlns="java:org.jboss.inspector.composite" config="CompositeInspectorConfig">
+			<compositeInspector xmlns="java:org.metawidget.inspector.composite" config="CompositeInspectorConfig">
 				<inspectors>
 					<array>
 						<!-- propertyTypeInspector inspects types -->
-						<propertyTypeInspector xmlns="java:org.jboss.inspector.propertytype" />
+						<propertyTypeInspector xmlns="java:org.metawidget.inspector.propertytype" />
 						<!-- metawidgetAnnotationInspector inspects annotations such as @UiComesAfter -->
-						<metawidgetAnnotationInspector xmlns="java:org.jboss.inspector.annotation" config="org.jboss.inspector.impl.BaseObjectInspectorConfig">
+						<metawidgetAnnotationInspector xmlns="java:org.metawidget.inspector.annotation" config="org.metawidget.inspector.impl.BaseObjectInspectorConfig">
 							<propertyStyle>
 								<!-- Seam Forge puts its annotations on private fields -->
-								<javaBeanPropertyStyle xmlns="java:org.jboss.inspector.impl.propertystyle.javabean" id="forgeStyle" config="JavaBeanPropertyStyleConfig">
+								<javaBeanPropertyStyle xmlns="java:org.metawidget.inspector.impl.propertystyle.javabean" id="forgeStyle" config="JavaBeanPropertyStyleConfig">
 									<privateFieldConvention>
 										<format>{0}</format>
 									</privateFieldConvention>								
@@ -29,9 +29,9 @@
 							</propertyStyle>						
 						</metawidgetAnnotationInspector>
 						<!-- java5Inspector inspects enums and generics -->
-						<java5Inspector xmlns="java:org.jboss.inspector.java5"/>
+						<java5Inspector xmlns="java:org.metawidget.inspector.java5"/>
 						<!-- jpaInspector inspects JPA annotations -->
-						<jpaInspector xmlns="java:org.jboss.inspector.jpa" config="JpaInspectorConfig">
+						<jpaInspector xmlns="java:org.metawidget.inspector.jpa" config="JpaInspectorConfig">
 							<propertyStyle>
 								<javaBeanPropertyStyle refId="forgeStyle"/>
 							</propertyStyle>
@@ -46,15 +46,15 @@
 		
 		<widgetBuilder>
 			<!-- compositeWidgetBuilder chains multiple WidgetBuilders together -->
-			<compositeWidgetBuilder xmlns="java:org.jboss.widgetbuilder.composite" config="CompositeWidgetBuilderConfig">
+			<compositeWidgetBuilder xmlns="java:org.metawidget.widgetbuilder.composite" config="CompositeWidgetBuilderConfig">
 				<widgetBuilders>
 					<array>
-						<overriddenWidgetBuilder xmlns="java:org.jboss.faces.component.widgetbuilder"/>
-						<readOnlyWidgetBuilder xmlns="java:org.jboss.faces.component.html.widgetbuilder"/>
+						<overriddenWidgetBuilder xmlns="java:org.metawidget.faces.component.widgetbuilder"/>
+						<readOnlyWidgetBuilder xmlns="java:org.metawidget.faces.component.html.widgetbuilder"/>
 						<!-- richFacesWidgetBuilder chooses RichFaces components, such as HtmlCalendar -->
-						<richFacesWidgetBuilder xmlns="java:org.jboss.faces.component.html.widgetbuilder.richfaces"/>
+						<richFacesWidgetBuilder xmlns="java:org.metawidget.faces.component.html.widgetbuilder.richfaces"/>
 						<!-- htmlWidgetBuilder chooses standard JSF components, such as HtmlInputText -->
-						<htmlWidgetBuilder xmlns="java:org.jboss.faces.component.html.widgetbuilder"/>
+						<htmlWidgetBuilder xmlns="java:org.metawidget.faces.component.html.widgetbuilder"/>
 					</array>
 				</widgetBuilders>
 			</compositeWidgetBuilder>
@@ -64,9 +64,9 @@
 		
 		<layout>
 			<!-- tabPanelLayoutDecorator arranges @UiSections inside a RichFaces TabPanel -->
-			<tabPanelLayoutDecorator xmlns="java:org.jboss.faces.component.html.layout.richfaces" config="TabPanelLayoutDecoratorConfig">
+			<tabPanelLayoutDecorator xmlns="java:org.metawidget.faces.component.html.layout.richfaces" config="TabPanelLayoutDecoratorConfig">
 				<layout>		
-					<simpleLayout xmlns="java:org.jboss.faces.component.layout"/>
+					<simpleLayout xmlns="java:org.metawidget.faces.component.layout"/>
 				</layout>
 			</tabPanelLayoutDecorator>
 		</layout>

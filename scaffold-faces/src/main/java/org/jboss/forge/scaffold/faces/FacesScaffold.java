@@ -19,9 +19,12 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.scaffold.metawidget;
+package org.jboss.forge.scaffold.faces;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -52,11 +55,12 @@ import org.jboss.forge.resources.Resource;
 import org.jboss.forge.scaffold.AccessStrategy;
 import org.jboss.forge.scaffold.ScaffoldProvider;
 import org.jboss.forge.scaffold.TemplateStrategy;
+import org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle.ForgePropertyStyle;
+import org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle.ForgePropertyStyleConfig;
 import org.jboss.forge.scaffold.util.ScaffoldUtil;
-import org.jboss.forge.shell.ShellColor;
-import org.jboss.forge.shell.ShellMessages;
-import org.jboss.forge.shell.ShellPrintWriter;
 import org.jboss.forge.shell.ShellPrompt;
+import org.jboss.forge.shell.plugins.Alias;
+import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.spec.javaee.CDIFacet;
 import org.jboss.forge.spec.javaee.FacesFacet;
 import org.jboss.forge.spec.javaee.PersistenceFacet;
@@ -67,77 +71,137 @@ import org.jboss.seam.render.template.CompiledTemplateResource;
 import org.jboss.seam.render.template.resolver.ClassLoaderTemplateResolver;
 import org.jboss.shrinkwrap.descriptor.api.spec.cdi.beans.BeansDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
+import org.metawidget.inspector.composite.CompositeInspector;
+import org.metawidget.inspector.composite.CompositeInspectorConfig;
+import org.metawidget.inspector.iface.Inspector;
+import org.metawidget.inspector.impl.BaseObjectInspectorConfig;
+import org.metawidget.inspector.jpa.JpaInspector;
+import org.metawidget.inspector.jpa.JpaInspectorConfig;
+import org.metawidget.inspector.propertytype.PropertyTypeInspector;
+import org.metawidget.statically.StaticMetawidget;
+import org.metawidget.statically.StaticWidget;
+import org.metawidget.statically.faces.StaticFacesUtils;
+import org.metawidget.statically.faces.component.html.StaticHtmlMetawidget;
+import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlWidgetBuilder;
+import org.metawidget.statically.faces.component.html.widgetbuilder.ReadOnlyWidgetBuilder;
+import org.metawidget.statically.faces.component.html.widgetbuilder.richfaces.RichFacesWidgetBuilder;
+import org.metawidget.statically.layout.SimpleLayout;
+import org.metawidget.util.CollectionUtils;
+import org.metawidget.util.IOUtils;
+import org.metawidget.util.XmlUtils;
+import org.metawidget.widgetbuilder.composite.CompositeWidgetBuilder;
+import org.metawidget.widgetbuilder.composite.CompositeWidgetBuilderConfig;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public abstract class MetawidgetScaffoldBase extends BaseFacet implements ScaffoldProvider
+@Alias("faces")
+@RequiresFacet({ WebResourceFacet.class,
+         DependencyFacet.class,
+         PersistenceFacet.class,
+         CDIFacet.class,
+         FacesFacet.class })
+public class FacesScaffold extends BaseFacet implements ScaffoldProvider
 {
+   private static final String XMLNS_PREFIX = "xmlns:";
+
    private static final String SEAM_PERSIST_TRANSACTIONAL_ANNO = "org.jboss.seam.transaction.Transactional";
    private static final String SEAM_PERSIST_INTERCEPTOR = "org.jboss.seam.transaction.TransactionInterceptor";
 
-   private static final String REWRITE_CONFIG_TEMPLATE = "org/metawidget/scaffold/URLRewriteConfiguration.jv";
-   private static final String BACKING_BEAN_TEMPLATE = "org/metawidget/scaffold/BackingBean.jv";
-   private static final String VIEW_TEMPLATE = "org/metawidget/scaffold/view.xhtml";
-   private static final String CREATE_TEMPLATE = "org/metawidget/scaffold/create.xhtml";
-   private static final String LIST_TEMPLATE = "org/metawidget/scaffold/list.xhtml";
-   private static final String E404_TEMPLATE = "org/metawidget/templates/404.xhtml";
-   private static final String E500_TEMPLATE = "org/metawidget/templates/500.xhtml";
-   private static final String INDEX_TEMPLATE = "org/metawidget/templates/index.xhtml";
-   private static final String CONFIG_TEMPLATE = "org/metawidget/metawidget.xml";
+   private static final String REWRITE_CONFIG_TEMPLATE = "org/jboss/forge/scaffold/faces/scaffold/URLRewriteConfiguration.jv";
+   private static final String BACKING_BEAN_TEMPLATE = "org/jboss/forge/scaffold/faces/scaffold/BackingBean.jv";
+   private static final String VIEW_TEMPLATE = "org/jboss/forge/scaffold/faces/scaffold/view.xhtml";
+   private static final String CREATE_TEMPLATE = "org/jboss/forge/scaffold/faces/scaffold/create.xhtml";
+   private static final String LIST_TEMPLATE = "org/jboss/forge/scaffold/faces/scaffold/list.xhtml";
+   private static final String E404_TEMPLATE = "org/jboss/forge/scaffold/faces/templates/404.xhtml";
+   private static final String E500_TEMPLATE = "org/jboss/forge/scaffold/faces/templates/500.xhtml";
+   private static final String INDEX_TEMPLATE = "org/jboss/forge/scaffold/faces/templates/index.xhtml";
 
    private final Dependency richfaces3UI = DependencyBuilder.create("org.richfaces.ui:richfaces-ui");
    private final Dependency richfaces3Impl = DependencyBuilder.create("org.richfaces.framework:richfaces-impl");
    private final Dependency richfaces4UI = DependencyBuilder.create("org.richfaces.ui:richfaces-components-ui");
    private final Dependency richfaces4Impl = DependencyBuilder.create("org.richfaces.core:richfaces-core-impl");
 
+   private CompiledTemplateResource backingBeanTemplate;
+   private CompiledTemplateResource rewriteConfigTemplate;
    private CompiledTemplateResource viewTemplate;
+   private Map<String, String> viewTemplateNamespaces;
+   private int viewTemplateMetawidgetIndent;
+
    private CompiledTemplateResource createTemplate;
+   private Map<String, String> createTemplateNamespaces;
+   private int createTemplateMetawidgetIndent;
+
    private CompiledTemplateResource listTemplate;
-   private CompiledTemplateResource configTemplate;
+   private Map<String, String> listTemplateNamespaces;
+   private int listTemplateMetawidgetIndent;
+
    private CompiledTemplateResource e404Template;
    private CompiledTemplateResource e500Template;
    private CompiledTemplateResource indexTemplate;
    TemplateResolver<ClassLoader> resolver;
 
    private final ShellPrompt prompt;
-   private final ShellPrintWriter writer;
    private final TemplateCompiler compiler;
    private final Event<InstallFacets> install;
-
-   abstract protected List<Dependency> getMetawidgetDependencies();
+   private final StaticHtmlMetawidget metawidget;
 
    @Inject
-   public MetawidgetScaffoldBase(final ShellPrompt prompt, final ShellPrintWriter writer,
+   public FacesScaffold(final ShellPrompt prompt,
             final TemplateCompiler compiler,
             final Event<InstallFacets> install)
    {
       this.prompt = prompt;
-      this.writer = writer;
       this.compiler = compiler;
       this.install = install;
 
-      this.resolver = new ClassLoaderTemplateResolver(MetawidgetScaffoldBase.class.getClassLoader());
+      this.resolver = new ClassLoaderTemplateResolver(FacesScaffold.class.getClassLoader());
       compiler.getTemplateResolverFactory().addResolver(this.resolver);
+
+      // Initialise Metawidget
+
+      this.metawidget = new StaticHtmlMetawidget();
    }
 
    private void loadTemplates()
    {
+      if (this.backingBeanTemplate == null)
+      {
+         this.backingBeanTemplate = this.compiler.compile(BACKING_BEAN_TEMPLATE);
+      }
+      if (this.rewriteConfigTemplate == null)
+      {
+         this.rewriteConfigTemplate = this.compiler.compile(REWRITE_CONFIG_TEMPLATE);
+      }
       if (this.viewTemplate == null)
       {
          this.viewTemplate = this.compiler.compile(VIEW_TEMPLATE);
+         NamespacesAndIndent namespacesAndIndent = parseNamespacesAndIndent(this.compiler
+                  .getTemplateResolverFactory()
+                  .resolve(VIEW_TEMPLATE).getInputStream());
+         this.viewTemplateNamespaces = namespacesAndIndent.getNamespaces();
+         this.viewTemplateMetawidgetIndent = namespacesAndIndent.getIndent();
       }
       if (this.createTemplate == null)
       {
          this.createTemplate = this.compiler.compile(CREATE_TEMPLATE);
+         NamespacesAndIndent namespacesAndIndent = parseNamespacesAndIndent(this.compiler
+                  .getTemplateResolverFactory()
+                  .resolve(CREATE_TEMPLATE).getInputStream());
+         this.createTemplateNamespaces = namespacesAndIndent.getNamespaces();
+         this.createTemplateMetawidgetIndent = namespacesAndIndent.getIndent();
       }
       if (this.listTemplate == null)
       {
          this.listTemplate = this.compiler.compile(LIST_TEMPLATE);
-      }
-      if (this.configTemplate == null)
-      {
-         this.configTemplate = this.compiler.compile(CONFIG_TEMPLATE);
+         NamespacesAndIndent namespacesAndIndent = parseNamespacesAndIndent(this.compiler
+                  .getTemplateResolverFactory()
+                  .resolve(LIST_TEMPLATE).getInputStream());
+         this.listTemplateNamespaces = namespacesAndIndent.getNamespaces();
+         this.listTemplateMetawidgetIndent = namespacesAndIndent.getIndent();
       }
       if (this.e404Template == null)
       {
@@ -160,6 +224,7 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
       setupRichFaces();
       setupWebXML();
       setupRewrite();
+      setupMetawidget();
 
       CDIFacet cdi = this.project.getFacet(CDIFacet.class);
 
@@ -169,14 +234,13 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
          config.interceptor(SEAM_PERSIST_INTERCEPTOR);
          cdi.saveConfig(config);
       }
-      createMetawidgetConfig(false);
 
       return resources;
    }
 
    public void handleAddedDependencies(@Observes final AddedDependencies event)
    {
-      if (this.project.hasFacet(MetawidgetScaffoldBase.class))
+      if (this.project.hasFacet(FacesScaffold.class))
       {
          boolean richFacesUI = false;
          boolean richFacesImpl = false;
@@ -207,6 +271,21 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
       }
    }
 
+   private void setupMetawidget()
+   {
+      ForgePropertyStyle forgePropertyStyle = new ForgePropertyStyle(
+               new ForgePropertyStyleConfig().setProject(this.project));
+
+      Inspector inspector = new CompositeInspector(new CompositeInspectorConfig()
+               .setInspectors(
+                        new PropertyTypeInspector(new BaseObjectInspectorConfig()
+                                 .setPropertyStyle(forgePropertyStyle)),
+                        new JpaInspector(new JpaInspectorConfig()
+                                 .setPropertyStyle(forgePropertyStyle))));
+
+      this.metawidget.setInspector(inspector);
+   }
+
    private void setupRichFaces()
    {
       if ((this.project.getFacet(DependencyFacet.class).hasDependency(this.richfaces3UI)
@@ -214,16 +293,12 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
                || (this.project.getFacet(DependencyFacet.class).hasDependency(this.richfaces4UI)
                && this.project.getFacet(DependencyFacet.class).hasDependency(this.richfaces4Impl)))
       {
-         if (this.prompt
-                  .promptBoolean(this.writer.renderColor(ShellColor.YELLOW, "Metawidget")
-                           + " has detected RichFaces installed in this project. Would you like to configure Metawidget to use RichFaces?"))
-         {
-
-            WebResourceFacet web = this.project.getFacet(WebResourceFacet.class);
-
-            ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("WEB-INF/metawidget.xml"),
-                     getClass().getResourceAsStream("/org/metawidget/metawidget-richfaces.xml"), true);
-         }
+         @SuppressWarnings("unchecked")
+         CompositeWidgetBuilder<StaticWidget, StaticMetawidget> compositeWidgetBuider = new CompositeWidgetBuilder<StaticWidget, StaticMetawidget>(
+                  new CompositeWidgetBuilderConfig<StaticWidget, StaticMetawidget>().setWidgetBuilders(
+                           new ReadOnlyWidgetBuilder(),
+                           new RichFacesWidgetBuilder(), new HtmlWidgetBuilder()));
+         this.metawidget.setWidgetBuilder(compositeWidgetBuider);
       }
    }
 
@@ -238,32 +313,51 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
          WebResourceFacet web = this.project.getFacet(WebResourceFacet.class);
 
          loadTemplates();
-         CompiledTemplateResource backingBeanTemplate = this.compiler.compile(BACKING_BEAN_TEMPLATE);
-         HashMap<Object, Object> context = new HashMap<Object, Object>();
+         Map<Object, Object> context = CollectionUtils.newHashMap();
          context.put("entity", entity);
          context.put("ccEntity", entity.getName().substring(0, 1).toLowerCase() + entity.getName().substring(1));
 
          // Create the Backing Bean for this entity
-         JavaClass viewBean = JavaParser.parse(JavaClass.class, backingBeanTemplate.render(context));
+         JavaClass viewBean = JavaParser.parse(JavaClass.class, this.backingBeanTemplate.render(context));
          viewBean.setPackage(java.getBasePackage() + ".view");
-         viewBean.addAnnotation(SEAM_PERSIST_TRANSACTIONAL_ANNO);
+         // viewBean.addAnnotation(SEAM_PERSIST_TRANSACTIONAL_ANNO);
          result.add(ScaffoldUtil.createOrOverwrite(this.prompt, java.getJavaResource(viewBean), viewBean.toString(),
                   overwrite));
 
          // Set new context for view generation
          context = getTemplateContext(template);
-         context.put("beanName", viewBean.getName().substring(0, 1).toLowerCase() + viewBean.getName().substring(1));
-         context.put("ccEntity", entity.getName().substring(0, 1).toLowerCase() + entity.getName().substring(1));
+         String beanName = viewBean.getName().substring(0, 1).toLowerCase() + viewBean.getName().substring(1);
+         context.put("beanName", beanName);
+         String ccEntity = entity.getName().substring(0, 1).toLowerCase() + entity.getName().substring(1);
+         context.put("ccEntity", ccEntity);
          context.put("entity", entity);
 
-         // Generate views
+         // Prepare Metawidget
+         this.metawidget.setValueExpression("value", StaticFacesUtils.wrapExpression(beanName + "." + ccEntity));
+         this.metawidget.setPath(entity.getQualifiedName());
+
          String type = entity.getName().toLowerCase();
-         result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("scaffold/" + type + "/view.xhtml"),
-                  this.viewTemplate.render(context), overwrite));
+
+         // Generate create view
+         writeMetawidget(context, this.createTemplateMetawidgetIndent, this.createTemplateNamespaces);
+
          result.add(ScaffoldUtil.createOrOverwrite(this.prompt,
                   web.getWebResource("scaffold/" + type + "/create.xhtml"),
                   this.createTemplate.render(context),
                   overwrite));
+
+         // Generate read-only view
+         this.metawidget.setReadOnly(true);
+         writeMetawidget(context, this.viewTemplateMetawidgetIndent, this.viewTemplateNamespaces);
+
+         result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("scaffold/" + type + "/view.xhtml"),
+                  this.viewTemplate.render(context), overwrite));
+
+         // Generate list view
+         this.metawidget.setLayout(new SimpleLayout());
+         this.metawidget.setStyle("margin-right: 0.5em");
+         writeMetawidget(context, this.listTemplateMetawidgetIndent, this.listTemplateNamespaces);
+
          result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("scaffold/" + type + "/list.xhtml"),
                   this.listTemplate.render(context), overwrite));
       }
@@ -283,15 +377,6 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
       return context;
    }
 
-   public void createMetawidgetConfig(final boolean overwrite)
-   {
-      WebResourceFacet web = this.project.getFacet(WebResourceFacet.class);
-
-      loadTemplates();
-      ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("WEB-INF/metawidget.xml"),
-               this.configTemplate.render(new HashMap<Object, Object>()), overwrite);
-   }
-
    @Override
    @SuppressWarnings("unchecked")
    public boolean install()
@@ -306,13 +391,13 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
       DependencyFacet df = this.project.getFacet(DependencyFacet.class);
 
       String version = null;
-      for (Dependency dependency : getMetawidgetDependencies())
+      for (Dependency dependency : getFacesDependencies())
       {
          if (!df.hasDependency(dependency))
          {
             if (version == null)
             {
-               dependency = this.prompt.promptChoiceTyped("Install which version of Metawidget Scaffold?",
+               dependency = this.prompt.promptChoiceTyped("Install which version of Faces Scaffold?",
                         df.resolveAvailableVersions(dependency));
                version = dependency.getVersion();
             }
@@ -341,13 +426,6 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
       config.errorPage(500, getAccessStrategy().getWebPaths(web.getWebResource("500.xhtml")).get(0));
 
       servlet.saveConfig(config);
-
-      // TODO: previously this picked up a web-fragment.xml from forge-scaffold-faces-lib. But we need it to be
-      // Metawidget-specific
-
-      ShellMessages
-               .info(this.writer,
-                        "JSF2 ( Mojarra 2.0.3 - http://java.net/jira/browse/JAVASERVERFACES-1826 ) and Metawidget currently require PARTIAL_STATE_SAVING to be disabled.");
    }
 
    private Node removeConflictingErrorPages(final ServletFacet servlet)
@@ -377,7 +455,6 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
       FacesFacet faces = this.project.getFacet(FacesFacet.class);
 
       loadTemplates();
-      CompiledTemplateResource rewriteConfigTemplate = this.compiler.compile(REWRITE_CONFIG_TEMPLATE);
 
       Map<Object, Object> context = new HashMap<Object, Object>();
       context.put("indexPage", faces.getWebPaths("/index.xhtml").get(0));
@@ -387,7 +464,7 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
       context.put("createPage", faces.getWebPaths("/scaffold/{domain}/create.xhtml").get(0));
       context.put("viewPage", faces.getWebPaths("/scaffold/{domain}/view.xhtml").get(0));
 
-      JavaSource<?> rewriteConfig = JavaParser.parse(rewriteConfigTemplate.render(context));
+      JavaSource<?> rewriteConfig = JavaParser.parse(this.rewriteConfigTemplate.render(context));
       rewriteConfig.setPackage(java.getBasePackage() + ".rewrite");
 
       try
@@ -414,17 +491,17 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
    public boolean isInstalled()
    {
       final DependencyFacet df = this.project.getFacet(DependencyFacet.class);
-      boolean hasMW = true;
-      for (Dependency dependency : getMetawidgetDependencies())
+      boolean hasDependencies = true;
+      for (Dependency dependency : getFacesDependencies())
       {
          if (!df.hasDependency(dependency))
          {
-            hasMW = false;
+            hasDependencies = false;
             break;
          }
       }
 
-      return hasMW;
+      return hasDependencies;
    }
 
    @Override
@@ -440,7 +517,7 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
 
       loadTemplates();
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("index.html"), getClass()
-               .getResourceAsStream("/org/metawidget/templates/index.html"), overwrite));
+               .getResourceAsStream("/org/jboss/forge/scaffold/faces/templates/index.html"), overwrite));
 
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("index.xhtml"),
                this.indexTemplate.render(context), overwrite));
@@ -463,13 +540,13 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
    @Override
    public AccessStrategy getAccessStrategy()
    {
-      return new MetawidgetAccessStrategy(this.project);
+      return new FacesAccessStrategy(this.project);
    }
 
    @Override
    public TemplateStrategy getTemplateStrategy()
    {
-      return new MetawidgetTemplateStrategy(this.project);
+      return new FacesTemplateStrategy(this.project);
    }
 
    @Override
@@ -479,9 +556,141 @@ public abstract class MetawidgetScaffoldBase extends BaseFacet implements Scaffo
 
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, (FileResource<?>) getTemplateStrategy()
                .getDefaultTemplate(),
-               getClass().getResourceAsStream("/org/metawidget/templates/forge-template.xhtml"), overwrite));
+               getClass().getResourceAsStream("/org/jboss/forge/scaffold/faces/templates/forge-template.xhtml"),
+               overwrite));
 
       return result;
+   }
+
+   private List<Dependency> getFacesDependencies()
+   {
+      return Arrays.asList(
+               (Dependency) DependencyBuilder.create("org.jboss.forge:forge-scaffold-faces-lib"));
+   }
+
+   /**
+    * Parses XML from the given input stream and determines what namespaces it declares.
+    */
+
+   private NamespacesAndIndent parseNamespacesAndIndent(final InputStream streamIn)
+   {
+      Map<String, String> namespaces = CollectionUtils.newHashMap();
+
+      ByteArrayOutputStream streamOut = new ByteArrayOutputStream();
+      IOUtils.streamBetween(streamIn, streamOut);
+      String template = streamOut.toString();
+
+      // Determine namespaces
+
+      Document document = XmlUtils.documentFromString(template);
+      Element element = document.getDocumentElement();
+      NamedNodeMap attributes = element.getAttributes();
+
+      for (int loop = 0, length = attributes.getLength(); loop < length; loop++)
+      {
+         org.w3c.dom.Node node = attributes.item(loop);
+         String nodeName = node.getNodeName();
+         int indexOf = nodeName.indexOf(XMLNS_PREFIX);
+
+         if (indexOf == -1)
+         {
+            continue;
+         }
+
+         namespaces.put(nodeName.substring(indexOf + XMLNS_PREFIX.length()), node.getNodeValue());
+      }
+
+      // Determine indent
+
+      int indent = 0;
+      int indexOf = template.indexOf("@{metawidget}");
+
+      while ((indexOf >= 0) && (template.charAt(indexOf) != '\n'))
+      {
+         if (template.charAt(indexOf) == '\t')
+         {
+            indent++;
+         }
+
+         indexOf--;
+      }
+
+      return new NamespacesAndIndent(namespaces, indent);
+   }
+
+   /**
+    * Writes the Metawidget into the given context.
+    */
+
+   private void writeMetawidget(final Map<Object, Object> context, final int indent,
+            final Map<String, String> existingNamespaces)
+   {
+      StringWriter stringWriter = new StringWriter();
+      this.metawidget.write(stringWriter, indent);
+      context.put("metawidget", stringWriter.toString().trim());
+
+      Map<String, String> namespaces = this.metawidget.getNamespaces();
+      namespaces.keySet().removeAll(existingNamespaces.keySet());
+
+      StringBuilder builder = new StringBuilder();
+
+      for (Map.Entry<String, String> entry : namespaces.entrySet())
+      {
+         // At the start, break out of the current quote. Field must be in quotes so that we're valid XML
+
+         builder.append("\"\r\n\txmlns:");
+         builder.append(entry.getKey());
+         builder.append("=\"");
+         builder.append(entry.getValue());
+      }
+
+      context.put("metawidgetNamespaces", builder.toString());
+   }
+
+   //
+   // Inner class
+   //
+
+   /**
+    * Simple immutable structure to store some namespaces and an indent.
+    * 
+    * @author Richard Kennard
+    */
+
+   private static class NamespacesAndIndent
+   {
+
+      //
+      // Private members
+      //
+
+      private final Map<String, String> namespaces;
+
+      private final int indent;
+
+      //
+      // Constructor
+      //
+
+      public NamespacesAndIndent(final Map<String, String> namespaces, final int indent)
+      {
+         this.namespaces = namespaces;
+         this.indent = indent;
+      }
+
+      //
+      // Public methods
+      //
+
+      public Map<String, String> getNamespaces()
+      {
+         return this.namespaces;
+      }
+
+      public int getIndent()
+      {
+         return this.indent;
+      }
    }
 
 }

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xml:lang="EN" lang="EN"
+	dir="ltr">
+
+<h:head>
+	<title>#{empty pageTitle ? '{#pageTitle}' : pageTitle}</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<meta http-equiv="imagetoolbar" content="no" />
+	<link rel="icon" href="#{resource['favicon.ico']}" />
+	<h:outputStylesheet name="forge-style.css" />
+	
+	<style>
+		body {
+			background-image: url( #{resource['bkg.gif']} );
+		}
+	</style>
+</h:head>
+
+<h:body id="top">
+
+	<div class="wrapper">
+
+	    <div class="forge">
+	    	<h:link outcome="/index.xhtml">
+				<img src="#{resource['forge-logo.png']}" alt="Seam Forge... get hammered." width="195" height="131" border="0"/>
+			</h:link>
+			
+			<h:panelGroup rendered="#{not empty navigation.listItems}">
+				<ul>
+				<ui:repeat var="item" value="#{navigation.listItems}">
+					<li><h:link outcome="#{navigation.toLiteralPath(item)}" value="#{navigation.toLabel(item)}"/></li>
+				</ui:repeat>
+				</ul>
+			</h:panelGroup>
+			
+	    </div>
+	
+	    <div class="content">
+	     	<h1><ui:insert name="header">{header}</ui:insert></h1>
+	
+	     	<h3><ui:insert name="subheader">{subheader}</ui:insert></h3>
+	
+	    	<ui:insert name="main">{main}</ui:insert>
+	     
+			<div id="footer">
+			<hr />
+		
+			<ui:insert name="footer">{footer}</ui:insert>
+		
+			<p class="right">Powered by <a href="http://jboss.org/forge">Forge</a></p>
+			<p>&nbsp;</p>
+			</div>
+		</div>
+	
+	</div>
+	
+</h:body>
+</html>

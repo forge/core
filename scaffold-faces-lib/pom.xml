@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+   <parent>
+      <artifactId>forge-parent</artifactId>
+      <groupId>org.jboss.forge</groupId>
+      <version>1.0.0-SNAPSHOT</version>
+      <relativePath>../</relativePath>
+   </parent>
+
+   <artifactId>forge-scaffold-faces-lib</artifactId>
+   <name>Forge - Scaffold Libaries for Java Server Faces</name>
+
+   <properties>
+      <seam.faces.version>3.0.2.Final</seam.faces.version>
+      <rewrite.version>1.0.0.Alpha10</rewrite.version>
+      <seam.version>3.1.0.Beta4</seam.version>
+   </properties>
+
+   <dependencies>
+      <dependency>
+         <groupId>org.jboss.spec</groupId>
+         <artifactId>jboss-javaee-6.0</artifactId>
+         <type>pom</type>
+         <scope>provided</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.seam.persistence</groupId>
+         <artifactId>seam-persistence</artifactId>
+         <version>${seam.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.seam.transaction</groupId>
+         <artifactId>seam-transaction</artifactId>
+         <version>${seam.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>com.ocpsoft.rewrite</groupId>
+         <artifactId>rewrite-impl-servlet</artifactId>
+         <version>${rewrite.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>com.ocpsoft.rewrite</groupId>
+         <artifactId>rewrite-integration-cdi</artifactId>
+         <version>${rewrite.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>com.ocpsoft.rewrite</groupId>
+         <artifactId>rewrite-integration-faces</artifactId>
+         <version>${rewrite.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.logging</groupId>
+         <artifactId>jboss-logging</artifactId>
+      </dependency>
+   </dependencies>
+</project>
