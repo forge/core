@@ -125,4 +125,10 @@ public interface Importer<O extends JavaSource<?>>
     * Get an immutable list of all {@link Import}s currently imported by this {@link O}
     */
    public List<Import> getImports();
+
+   /**
+    * Given a simple or qualified type, resolve that type against the available imports and return the referenced type.
+    * If the type cannot be resolved, return the given type unchanged.
+    */
+   public String resolveType(String type);
 }

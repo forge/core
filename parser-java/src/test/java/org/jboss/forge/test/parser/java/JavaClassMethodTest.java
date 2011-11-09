@@ -21,6 +21,13 @@
  */
 package org.jboss.forge.test.parser.java;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.io.InputStream;
+import java.util.List;
+
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.Member;
@@ -28,11 +35,6 @@ import org.jboss.forge.parser.java.Method;
 import org.jboss.forge.parser.java.Parameter;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.InputStream;
-import java.util.List;
-
-import static org.junit.Assert.*;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -64,7 +66,7 @@ public class JavaClassMethodTest
    @Test
    public void testSetReturnType() throws Exception
    {
-      assertEquals("URL", method.getReturnType());
+      assertEquals("java.net.URL", method.getReturnType());
       method.setReturnType(Class.class);
       assertEquals("Class", method.getReturnType());
       assertFalse(method.isReturnTypeVoid());
@@ -73,7 +75,7 @@ public class JavaClassMethodTest
    @Test
    public void testSetReturnTypeVoid() throws Exception
    {
-      assertEquals("URL", method.getReturnType());
+      assertEquals("java.net.URL", method.getReturnType());
       method.setReturnTypeVoid();
       assertEquals(null, method.getReturnType());
       assertTrue(method.isReturnTypeVoid());

@@ -101,7 +101,7 @@ public class MethodImpl<O extends JavaSource<O>> implements Method<O>
       for (Parameter p : parameters)
       {
          signature += p.getType();
-         if (parameters.indexOf(p) < parameters.size() - 1)
+         if (parameters.indexOf(p) < (parameters.size() - 1))
          {
             signature += ", ";
          }
@@ -231,6 +231,9 @@ public class MethodImpl<O extends JavaSource<O>> implements Method<O>
       {
          result = method.getReturnType2().toString();
       }
+
+      result = parent.resolveType(result);
+
       return result;
    }
 
@@ -255,7 +258,7 @@ public class MethodImpl<O extends JavaSource<O>> implements Method<O>
    }
 
    @Override
-   public Method<O> setReturnType(JavaSource<?> type)
+   public Method<O> setReturnType(final JavaSource<?> type)
    {
       return setReturnType(type.getName());
    }
@@ -304,7 +307,7 @@ public class MethodImpl<O extends JavaSource<O>> implements Method<O>
    }
 
    @Override
-   public Method<O> setFinal(boolean finl)
+   public Method<O> setFinal(final boolean finl)
    {
       if (finl)
          modifiers.addModifier(method, ModifierKeyword.FINAL_KEYWORD);
@@ -320,7 +323,7 @@ public class MethodImpl<O extends JavaSource<O>> implements Method<O>
    }
 
    @Override
-   public Method<O> setStatic(boolean statc)
+   public Method<O> setStatic(final boolean statc)
    {
       if (statc)
          modifiers.addModifier(method, ModifierKeyword.STATIC_KEYWORD);
@@ -476,7 +479,7 @@ public class MethodImpl<O extends JavaSource<O>> implements Method<O>
    {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((method == null) ? 0 : method.hashCode());
+      result = (prime * result) + ((method == null) ? 0 : method.hashCode());
       return result;
    }
 
@@ -511,14 +514,14 @@ public class MethodImpl<O extends JavaSource<O>> implements Method<O>
    }
 
    @Override
-   public Method<O> addThrows(Class<? extends Exception> type)
+   public Method<O> addThrows(final Class<? extends Exception> type)
    {
       return addThrows(type.getName());
    }
 
    @Override
    @SuppressWarnings({ "unchecked", "rawtypes" })
-   public Method<O> addThrows(String type)
+   public Method<O> addThrows(final String type)
    {
       String packg = Types.getPackage(type);
       String name = Types.toSimpleName(type);
@@ -551,13 +554,13 @@ public class MethodImpl<O extends JavaSource<O>> implements Method<O>
    }
 
    @Override
-   public Method<O> removeThrows(Class<? extends Exception> type)
+   public Method<O> removeThrows(final Class<? extends Exception> type)
    {
       return removeThrows(type.getName());
    }
 
    @Override
-   public Method<O> removeThrows(String type)
+   public Method<O> removeThrows(final String type)
    {
       List<?> list = (List<?>) method.getStructuralProperty(MethodDeclaration.THROWN_EXCEPTIONS_PROPERTY);
 
