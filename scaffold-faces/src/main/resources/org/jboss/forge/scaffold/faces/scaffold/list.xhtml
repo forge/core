@@ -7,7 +7,7 @@
 
 	<f:metadata>
 	    <f:viewParam name="id" value="#{@{beanName}.id}">
-	       <!-- <f:validateLongRange minimum="1" />  --> 
+	       <f:validateLongRange minimum="1" /> 
 	    </f:viewParam>
 	    <f:viewParam name="p" value="#{@{beanName}.pagination.page}"/>
 	</f:metadata>
@@ -21,18 +21,16 @@
 		</ui:define>
 	
 		<ui:define name="subheader">
-			Listing your objects
+			Listing all @{entity.getName()} objects
 		</ui:define>
 	
-		<ui:define name="footer">
-		</ui:define>
+		<ui:define name="footer"/>
 	
 		<ui:define name="main">
 			<h:form id="form">
 			
 			    <h:messages />
 			    
-					
 	            <h:link outcome="list" styleClass="right" value="Next #{@{beanName}.pagination.pageSize}" rendered="#{@{beanName}.pagination.hasNextPage}">
 					<f:param name="p" value="#{@{beanName}.pagination.page + 1}" />
 				</h:link>
@@ -45,14 +43,12 @@
 				</h:link>
 				
 			    <ul>
-			    <ui:repeat var="entity" value="#{@{beanName}.list}">
-			    
-					<li><h:link outcome="view">
-						<f:param name="id" value="#{entity.id}"/>
-						@{metawidget}
-					</h:link></li>
-			        
-			    </ui:repeat>
+			    	<ui:repeat var="entity" value="#{@{beanName}.list}">			    
+						<li><h:link outcome="view">
+							<f:param name="id" value="#{entity.id}"/>
+							@{metawidget}
+						</h:link></li>			        
+			    	</ui:repeat>
 			    </ul>
 			    <br/>
 			    

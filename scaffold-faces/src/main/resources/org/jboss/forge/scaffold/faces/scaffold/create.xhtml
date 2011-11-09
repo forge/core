@@ -3,7 +3,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets@{metawidgetNamespaces}">
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core@{metawidgetNamespaces}">	
+
+	<f:metadata>
+	    <f:viewParam name="id" value="#{@{beanName}.id}"/>
+	</f:metadata>
 
 	<ui:composition template="@{templateStrategy.getReferencePath(template != null ? template : templateStrategy.getDefaultTemplate())}">
 	
@@ -13,12 +18,18 @@
 			@{entity.getName()}
 		</ui:define>
 	
-		<ui:define name="subheader">
-			Create a new object
+		<ui:define name="subheader">			
+			<c:choose>
+				<c:when test="#{@{beanName}.id != 0}">
+					Editing existing @{entity.getName()}
+				</c:when>
+				<c:otherwise>
+					Creating a new @{entity.getName()}
+				</c:otherwise>
+			</c:choose>
 		</ui:define>
 	
-		<ui:define name="footer">
-		</ui:define>
+		<ui:define name="footer"/>
 	
 		<ui:define name="main">
 			<h:form id="form">
@@ -27,8 +38,16 @@
 				@{metawidget}
 
 				<br/>
-				<h:commandLink value="Create" action="#{@{beanName}.create()}" />
-				<h:link value="Cancel" outcome="list" styleClass="right"/>
+				
+				<c:if test="#{@{beanName}.id != 0 || facesContext.currentPhaseId.ordinal lt 6}">
+					<h:commandLink value="Save" action="#{@{beanName}.save()}" /> |
+					<h:link value="Cancel" outcome="view"/>
+					<h:commandLink value="Delete" action="#{@{beanName}.delete()}" styleClass="right"/>
+				</c:if>
+				<c:if test="#{@{beanName}.id == 0 || facesContext.currentPhaseId.ordinal lt 6}">
+					<h:commandLink value="Create" action="#{@{beanName}.create()}" />
+					<h:link value="Cancel" outcome="list" styleClass="right"/>
+				</c:if>
 			</h:form>
 		</ui:define>
 	
