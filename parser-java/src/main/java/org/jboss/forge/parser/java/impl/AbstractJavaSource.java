@@ -270,6 +270,20 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
       return true;
    }
 
+   @Override
+   public String resolveType(final String type)
+   {
+      String result = type;
+      for (Import imprt : getImports()) {
+         if (Types.areEquivalent(type, imprt.getQualifiedName()))
+         {
+            result = imprt.getQualifiedName();
+            break;
+         }
+      }
+      return result;
+   }
+
    private boolean validImport(final String type)
    {
       return (type != null) && !type.matches("byte|short|int|long|float|double|char|boolean");

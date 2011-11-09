@@ -258,7 +258,7 @@ public class JavaClassTest
                .setPackagePrivate();
       List<Method<JavaClass>> methods = javaClass.getMethods();
       assertEquals(size + 1, methods.size());
-      assertEquals("URL", method.getReturnType());
+      assertEquals("java.net.URL", method.getReturnType());
       assertEquals("rewriteURL", method.getName());
 
       String body = method.getBody();
