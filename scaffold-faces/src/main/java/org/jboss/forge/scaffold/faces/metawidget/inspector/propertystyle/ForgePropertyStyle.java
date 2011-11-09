@@ -37,6 +37,7 @@ import org.jboss.forge.parser.java.MethodHolder;
 import org.jboss.forge.parser.java.Parameter;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
+import org.jboss.forge.spec.javaee.PersistenceFacet;
 import org.metawidget.inspector.iface.InspectorException;
 import org.metawidget.inspector.impl.propertystyle.BaseProperty;
 import org.metawidget.inspector.impl.propertystyle.BasePropertyStyle;
@@ -409,8 +410,17 @@ public class ForgePropertyStyle
       }
    }
 
+   /**
+    * Hack until https://issues.jboss.org/browse/FORGE-371.
+    */
+
    private String getQualifiedType(String type)
    {
+      if ("int".equals(type))
+      {
+         return "int";
+      }
+
       if ("Long".equals(type))
       {
          return Long.class.getName();
@@ -431,7 +441,7 @@ public class ForgePropertyStyle
          return Color.class.getName();
       }
 
-      return "com.test.domain." + type;
+      return this.project.getFacet( PersistenceFacet.class ).getEntityPackage() + "." + type;
    }
 
    //
@@ -454,9 +464,9 @@ public class ForgePropertyStyle
       // Private methods
       //
 
-      private Method<?> mReadMethod;
+      private Method<?> readMethod;
 
-      private Method<?> mWriteMethod;
+      private Method<?> writeMethod;
 
       private Field<?> privateField;
 
@@ -470,12 +480,12 @@ public class ForgePropertyStyle
 
          super(name, type);
 
-         mReadMethod = readMethod;
-         mWriteMethod = writeMethod;
+         this.readMethod = readMethod;
+         this.writeMethod = writeMethod;
 
          // Must have a getter or a setter (or both)
 
-         if (mReadMethod == null && mWriteMethod == null)
+         if (this.readMethod == null && this.writeMethod == null)
          {
             throw InspectorException.newException("JavaBeanProperty '" + name + "' has no getter and no setter");
          }
@@ -491,7 +501,7 @@ public class ForgePropertyStyle
       public boolean isReadable()
       {
 
-         return (mReadMethod != null);
+         return (this.readMethod != null);
       }
 
       @Override
@@ -504,7 +514,7 @@ public class ForgePropertyStyle
       public boolean isWritable()
       {
 
-         return (mWriteMethod != null);
+         return (this.writeMethod != null);
       }
 
       @Override
@@ -528,7 +538,7 @@ public class ForgePropertyStyle
       {
          String type;
 
-         if (mReadMethod != null)
+         if (this.readMethod != null)
          {
             type = null; // TODO:Java5ClassUtils.getOriginalGenericReturnType(mReadMethod);
          }
@@ -537,19 +547,19 @@ public class ForgePropertyStyle
             type = null; // TODO:Java5ClassUtils.getOriginalGenericParameterTypes(mWriteMethod)[0];
          }
 
-         return null; // TODO: Java5ClassUtils.getGenericTypeAsString(type);
+         return type; // TODO: Java5ClassUtils.getGenericTypeAsString(type);
       }
 
       public Method<?> getReadMethod()
       {
 
-         return mReadMethod;
+         return this.readMethod;
       }
 
       public Method<?> getWriteMethod()
       {
 
-         return mWriteMethod;
+         return this.writeMethod;
       }
    }
 
@@ -577,6 +587,8 @@ public class ForgePropertyStyle
       {
          try
          {
+            // Hack until https://issues.jboss.org/browse/FORGE-370
+
             Class<T> annotationClass = (Class<T>) Class.forName("javax.persistence." + annotationSource.getName());
 
             return (T) java.lang.reflect.Proxy.newProxyInstance(
