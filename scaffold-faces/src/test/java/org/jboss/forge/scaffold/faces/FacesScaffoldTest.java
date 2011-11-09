@@ -267,40 +267,37 @@ public class FacesScaffoldTest extends AbstractShellTest
       metawidget.append("\t\t\t\t\t</h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t\t\t<h:outputLabel for=\"customerBeanCustomerAddress\" value=\"Address:\"/>\r\n");
-      metawidget.append("\t\t\t\t\t<h:panelGroup>\r\n");
-      metawidget.append("\t\t\t\t\t\t<h:panelGrid columns=\"3\" id=\"customerBeanCustomerAddress\">\r\n");
+      metawidget.append("\t\t\t\t\t<h:panelGrid columns=\"3\" id=\"customerBeanCustomerAddress\">\r\n");
       metawidget
-               .append("\t\t\t\t\t\t\t<h:outputLabel for=\"customerBeanCustomerAddressStreet\" value=\"Street:\"/>\r\n");
-      metawidget.append("\t\t\t\t\t\t\t<h:panelGroup>\r\n");
+               .append("\t\t\t\t\t\t<h:outputLabel for=\"customerBeanCustomerAddressStreet\" value=\"Street:\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t<h:panelGroup>\r\n");
       metawidget
-               .append("\t\t\t\t\t\t\t\t<h:inputText id=\"customerBeanCustomerAddressStreet\" value=\"#{customerBean.customer.address.street}\"/>\r\n");
-      metawidget.append("\t\t\t\t\t\t\t\t<h:message for=\"customerBeanCustomerAddressStreet\"/>\r\n");
-      metawidget.append("\t\t\t\t\t\t\t</h:panelGroup>\r\n");
-      metawidget.append("\t\t\t\t\t\t\t<h:outputText/>\r\n");
-      metawidget.append("\t\t\t\t\t\t\t<h:outputLabel for=\"customerBeanCustomerAddressCity\" value=\"City:\"/>\r\n");
-      metawidget.append("\t\t\t\t\t\t\t<h:panelGroup>\r\n");
+               .append("\t\t\t\t\t\t\t<h:inputText id=\"customerBeanCustomerAddressStreet\" value=\"#{customerBean.customer.address.street}\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t\t<h:message for=\"customerBeanCustomerAddressStreet\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t</h:panelGroup>\r\n");
+      metawidget.append("\t\t\t\t\t\t<h:outputText/>\r\n");
+      metawidget.append("\t\t\t\t\t\t<h:outputLabel for=\"customerBeanCustomerAddressCity\" value=\"City:\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t<h:panelGroup>\r\n");
       metawidget
-               .append("\t\t\t\t\t\t\t\t<h:inputText id=\"customerBeanCustomerAddressCity\" value=\"#{customerBean.customer.address.city}\"/>\r\n");
-      metawidget.append("\t\t\t\t\t\t\t\t<h:message for=\"customerBeanCustomerAddressCity\"/>\r\n");
-      metawidget.append("\t\t\t\t\t\t\t</h:panelGroup>\r\n");
-      metawidget.append("\t\t\t\t\t\t\t<h:outputText/>\r\n");
-      metawidget.append("\t\t\t\t\t\t\t<h:outputLabel for=\"customerBeanCustomerAddressState\" value=\"State:\"/>\r\n");
-      metawidget.append("\t\t\t\t\t\t\t<h:panelGroup>\r\n");
+               .append("\t\t\t\t\t\t\t<h:inputText id=\"customerBeanCustomerAddressCity\" value=\"#{customerBean.customer.address.city}\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t\t<h:message for=\"customerBeanCustomerAddressCity\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t</h:panelGroup>\r\n");
+      metawidget.append("\t\t\t\t\t\t<h:outputText/>\r\n");
+      metawidget.append("\t\t\t\t\t\t<h:outputLabel for=\"customerBeanCustomerAddressState\" value=\"State:\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t<h:panelGroup>\r\n");
       metawidget
-               .append("\t\t\t\t\t\t\t\t<h:inputText id=\"customerBeanCustomerAddressState\" value=\"#{customerBean.customer.address.state}\"/>\r\n");
-      metawidget.append("\t\t\t\t\t\t\t\t<h:message for=\"customerBeanCustomerAddressState\"/>\r\n");
-      metawidget.append("\t\t\t\t\t\t\t</h:panelGroup>\r\n");
-      metawidget.append("\t\t\t\t\t\t\t<h:outputText/>\r\n");
-      metawidget.append("\t\t\t\t\t\t\t<h:outputLabel for=\"customerBeanCustomerAddressZip\" value=\"Zip:\"/>\r\n");
-      metawidget.append("\t\t\t\t\t\t\t<h:panelGroup>\r\n");
+               .append("\t\t\t\t\t\t\t<h:inputText id=\"customerBeanCustomerAddressState\" value=\"#{customerBean.customer.address.state}\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t\t<h:message for=\"customerBeanCustomerAddressState\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t</h:panelGroup>\r\n");
+      metawidget.append("\t\t\t\t\t\t<h:outputText/>\r\n");
+      metawidget.append("\t\t\t\t\t\t<h:outputLabel for=\"customerBeanCustomerAddressZip\" value=\"Zip:\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t<h:panelGroup>\r\n");
       metawidget
-               .append("\t\t\t\t\t\t\t\t<h:inputText id=\"customerBeanCustomerAddressZip\" value=\"#{customerBean.customer.address.zip}\"/>\r\n");
-      metawidget.append("\t\t\t\t\t\t\t\t<h:message for=\"customerBeanCustomerAddressZip\"/>\r\n");
-      metawidget.append("\t\t\t\t\t\t\t</h:panelGroup>\r\n");
-      metawidget.append("\t\t\t\t\t\t\t<h:outputText/>\r\n");
-      metawidget.append("\t\t\t\t\t\t</h:panelGrid>\r\n");
-      metawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanCustomerAddress\"/>\r\n");
-      metawidget.append("\t\t\t\t\t</h:panelGroup>\r\n");
+               .append("\t\t\t\t\t\t\t<h:inputText id=\"customerBeanCustomerAddressZip\" value=\"#{customerBean.customer.address.zip}\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t\t<h:message for=\"customerBeanCustomerAddressZip\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t</h:panelGroup>\r\n");
+      metawidget.append("\t\t\t\t\t\t<h:outputText/>\r\n");
+      metawidget.append("\t\t\t\t\t</h:panelGrid>\r\n");
       metawidget.append("\t\t\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t\t</h:panelGrid>\n");
       Assert.assertTrue(contents.contains(metawidget));
@@ -310,6 +307,14 @@ public class FacesScaffoldTest extends AbstractShellTest
       contents = Streams.toString(list.getResourceInputStream());
       Assert.assertTrue(contents.contains(
                "template=\"/resources/scaffold/forge-template.xhtml"));
+
+      // Test regeneration
+
+      queueInputLines("", "", "", "", "");
+      getShell().execute("scaffold from-entity");
+
+      contents = Streams.toString(create.getResourceInputStream());
+      Assert.assertTrue(contents.contains(metawidget));
    }
 
    @Test
