@@ -108,7 +108,6 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
 {
    private static final String XMLNS_PREFIX = "xmlns:";
 
-   private static final String SEAM_PERSIST_TRANSACTIONAL_ANNO = "org.jboss.seam.transaction.Transactional";
    private static final String SEAM_PERSIST_INTERCEPTOR = "org.jboss.seam.transaction.TransactionInterceptor";
 
    private static final String REWRITE_CONFIG_TEMPLATE = "org/jboss/forge/scaffold/faces/scaffold/URLRewriteConfiguration.jv";
@@ -653,7 +652,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
 
    /**
     * Simple immutable structure to store some namespaces and an indent.
-    * 
+    *
     * @author Richard Kennard
     */
 
