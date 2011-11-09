@@ -1,6 +1,7 @@
 import java.util.List;
 import java.util.ArrayList;
    
+import javax.ejb.TransactionAttribute;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 
@@ -11,13 +12,13 @@ import org.jboss.forge.scaffold.faces.persistence.PersistenceUtil;
 
 @Named
 @RequestScoped
+@TransactionAttribute
 public class @{entity.getName()}Bean extends PersistenceUtil implements MenuItem
 {
    private static final long serialVersionUID = 1L;
    
    private List<@{entity.getName()}> list = null;
    private @{entity.getName()} @{ccEntity} = new @{entity.getName()}();
-   private long id = 0;
    private PaginationHelper<@{entity.getName()}> pagination;		
    
    public Class<?> getItemType()
@@ -35,11 +36,6 @@ public class @{entity.getName()}Bean extends PersistenceUtil implements MenuItem
       return null;
    }
 
-   public void load()
-   {
-      @{ccEntity} = findById(@{entity.getName()}.class, id);
-   }
-   
    public String create()
    {
       create(@{ccEntity});
@@ -48,7 +44,7 @@ public class @{entity.getName()}Bean extends PersistenceUtil implements MenuItem
 
    public String delete()
    {
-      delete(@{ccEntity});
+      deleteById(@{entity.getName()}.class,@{ccEntity}.getId());
       return "list?faces-redirect=true";
    }
 
@@ -60,25 +56,23 @@ public class @{entity.getName()}Bean extends PersistenceUtil implements MenuItem
 
    public long getId()
    {
-      return id;
+      if ( @{ccEntity}.getId() == null ) {
+         return 0;
+      }
+      
+      return @{ccEntity}.getId();
    }
 
    public void setId(long id)
    {
-      this.id = id;
-      if(id>0){
-			load();
-	  }	
+      if ( id != 0 ) {
+         @{ccEntity} = findById(@{entity.getName()}.class, id);
+      }
    }
    
    public @{entity.getName()} get@{entity.getName()}()
    {
       return @{ccEntity};
-   }
-
-   public void set@{entity.getName()}(@{entity.getName()} @{ccEntity})
-   {
-      this.@{ccEntity} = @{ccEntity};
    }
 
    public List<@{entity.getName()}> getList()

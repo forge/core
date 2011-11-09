@@ -441,7 +441,7 @@ public class ForgePropertyStyle
          return Color.class.getName();
       }
 
-      return this.project.getFacet( PersistenceFacet.class ).getEntityPackage() + "." + type;
+      return this.project.getFacet(PersistenceFacet.class).getEntityPackage() + "." + type;
    }
 
    //
@@ -591,8 +591,10 @@ public class ForgePropertyStyle
 
             Class<T> annotationClass = (Class<T>) Class.forName("javax.persistence." + annotationSource.getName());
 
+            // TODO: test this not using annotationSource.getClass().getClassLoader() (will require integration test)
+
             return (T) java.lang.reflect.Proxy.newProxyInstance(
-                     annotationSource.getClass().getClassLoader(),
+                     annotationClass.getClassLoader(),
                      new Class[] { annotationClass },
                      new AnnotationProxy<T>(annotationClass, annotationSource));
          }
@@ -632,7 +634,8 @@ public class ForgePropertyStyle
 
             java.lang.reflect.Method annotationMethod = this.annotationClass.getMethod(methodName);
 
-            if ( value == null ) {
+            if (value == null)
+            {
                return annotationMethod.getDefaultValue();
             }
 

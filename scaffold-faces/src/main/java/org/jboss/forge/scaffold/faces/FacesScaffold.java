@@ -40,6 +40,7 @@ import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.parser.xml.Node;
 import org.jboss.forge.parser.xml.XMLParser;
+import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.dependencies.events.AddedDependencies;
@@ -78,10 +79,12 @@ import org.metawidget.inspector.impl.BaseObjectInspectorConfig;
 import org.metawidget.inspector.jpa.JpaInspector;
 import org.metawidget.inspector.jpa.JpaInspectorConfig;
 import org.metawidget.inspector.propertytype.PropertyTypeInspector;
+import org.metawidget.layout.iface.Layout;
 import org.metawidget.statically.StaticMetawidget;
 import org.metawidget.statically.StaticWidget;
 import org.metawidget.statically.faces.StaticFacesUtils;
 import org.metawidget.statically.faces.component.html.StaticHtmlMetawidget;
+import org.metawidget.statically.faces.component.html.layout.HtmlTableLayout;
 import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlWidgetBuilder;
 import org.metawidget.statically.faces.component.html.widgetbuilder.ReadOnlyWidgetBuilder;
 import org.metawidget.statically.faces.component.html.widgetbuilder.richfaces.RichFacesWidgetBuilder;
@@ -96,8 +99,17 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 
 /**
+ * Facet to generate a Java Server Faces UI.
+ * <p>
+ * This facet utilizes <a href="http://metawidget.org">Metawidget</a> internally. This enables the use of the Metawidget
+ * SPI (pluggable WidgetBuilders, Layouts etc) for customizing the generated User Interface. For more information on
+ * writing Metawidget plugins, see <a href="http://metawidget.org/documentation.php">the Metawidget documentation</a>.
+ * <p>
+ * This Facet does <em>not</em> require Metawidget to be in the final project.
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
+
 @Alias("faces")
 @RequiresFacet({ WebResourceFacet.class,
          DependencyFacet.class,
@@ -160,9 +172,29 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       this.resolver = new ClassLoaderTemplateResolver(FacesScaffold.class.getClassLoader());
       compiler.getTemplateResolverFactory().addResolver(this.resolver);
 
-      // Initialise Metawidget
-
       this.metawidget = new StaticHtmlMetawidget();
+   }
+
+   /**
+    * Overridden to configure the Metawidget to inspect classes from the given Project.
+    */
+
+   @Override
+   public void setProject(Project project)
+   {
+      super.setProject(project);
+
+      ForgePropertyStyle forgePropertyStyle = new ForgePropertyStyle(
+               new ForgePropertyStyleConfig().setProject(this.project));
+
+      Inspector inspector = new CompositeInspector(new CompositeInspectorConfig()
+               .setInspectors(
+                        new PropertyTypeInspector(new BaseObjectInspectorConfig()
+                                 .setPropertyStyle(forgePropertyStyle)),
+                        new JpaInspector(new JpaInspectorConfig()
+                                 .setPropertyStyle(forgePropertyStyle))));
+
+      this.metawidget.setInspector(inspector);
    }
 
    private void loadTemplates()
@@ -223,7 +255,6 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       setupRichFaces();
       setupWebXML();
       setupRewrite();
-      setupMetawidget();
 
       CDIFacet cdi = this.project.getFacet(CDIFacet.class);
 
@@ -268,21 +299,6 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
             setupRichFaces();
          }
       }
-   }
-
-   private void setupMetawidget()
-   {
-      ForgePropertyStyle forgePropertyStyle = new ForgePropertyStyle(
-               new ForgePropertyStyleConfig().setProject(this.project));
-
-      Inspector inspector = new CompositeInspector(new CompositeInspectorConfig()
-               .setInspectors(
-                        new PropertyTypeInspector(new BaseObjectInspectorConfig()
-                                 .setPropertyStyle(forgePropertyStyle)),
-                        new JpaInspector(new JpaInspectorConfig()
-                                 .setPropertyStyle(forgePropertyStyle))));
-
-      this.metawidget.setInspector(inspector);
    }
 
    private void setupRichFaces()
@@ -334,6 +350,9 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
          // Prepare Metawidget
          this.metawidget.setValueExpression("value", StaticFacesUtils.wrapExpression(beanName + "." + ccEntity));
          this.metawidget.setPath(entity.getQualifiedName());
+         this.metawidget.setReadOnly(false);
+         this.metawidget.setLayout((Layout) new HtmlTableLayout());
+         this.metawidget.setStyle(null);
 
          String type = entity.getName().toLowerCase();
 
@@ -353,6 +372,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
                   this.viewTemplate.render(context), overwrite));
 
          // Generate list view
+         this.metawidget.setValueExpression("value", "#{entity}");
          this.metawidget.setLayout(new SimpleLayout());
          this.metawidget.setStyle("margin-right: 0.5em");
          writeMetawidget(context, this.listTemplateMetawidgetIndent, this.listTemplateNamespaces);

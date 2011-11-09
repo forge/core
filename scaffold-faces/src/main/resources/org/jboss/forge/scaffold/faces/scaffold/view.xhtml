@@ -10,9 +10,6 @@
 	    <f:viewParam name="id" value="#{@{beanName}.id}">
 	        <f:validateLongRange minimum="1" />
 	    </f:viewParam>
-	    <f:viewParam name="edit" value="#{_editMode}">
-	        <f:validateRegex pattern="(|true|false)" />
-	    </f:viewParam>
 	</f:metadata>
 	
 	<ui:composition template="@{templateStrategy.getReferencePath(template != null ? template : templateStrategy.getDefaultTemplate())}">
@@ -24,11 +21,10 @@
 		</ui:define>
 	
 		<ui:define name="subheader">
-			Viewing your object
+			Viewing the @{entity.getName()}
 		</ui:define>
 	
-		<ui:define name="footer">
-		</ui:define>
+		<ui:define name="footer"/>
 	
 		<ui:define name="main">
 			<h:form id="form">
@@ -37,21 +33,10 @@
 				@{metawidget}
 	
 				<br/>
-				<c:if test="#{ _editMode != null and _editMode ne 'false' }">
-					<h:commandLink value="Save" action="#{@{beanName}.save()}" />
-				</c:if>
 				
-				<h:link value="View all" outcome="list" rendered="#{ _editMode == null or _editMode eq 'false' }" /> | 
-				<h:link value="Edit" outcome="view" includeViewParams="true" rendered="#{ _editMode == null or _editMode eq 'false' }">
-					<f:param name="edit" value="true" />
-				</h:link>
-				<h:link value="Cancel" outcome="view" includeViewParams="true" rendered="#{ _editMode != null and _editMode ne 'false' }">
-					<f:param name="edit" value="false" />
-				</h:link>
-				<h:panelGroup rendered="#{ _editMode == null or _editMode eq 'false' }"> | 
-					<h:link value="Create new" outcome="create" />
-				</h:panelGroup>
-				<h:commandLink value="Delete" action="#{@{beanName}.delete()}" styleClass="right"/>
+				<h:link value="View all" outcome="list" /> | 
+				<h:link value="Edit" outcome="create" includeViewParams="true"/> |
+				<h:link value="Create new" outcome="create" />
 			</h:form>
 		</ui:define>
 	
