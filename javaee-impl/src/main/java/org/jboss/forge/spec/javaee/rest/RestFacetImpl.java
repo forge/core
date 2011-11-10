@@ -36,7 +36,7 @@ import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Alias("forge.spec.jaxws")
+@Alias("forge.spec.jaxrs")
 @RequiresFacet(ServletFacet.class)
 public class RestFacetImpl extends BaseJavaEEFacet implements RestFacet
 {
