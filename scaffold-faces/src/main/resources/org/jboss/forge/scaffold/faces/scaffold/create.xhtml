@@ -8,10 +8,10 @@
 
 	<f:metadata>
 	    <f:viewParam name="id" value="#{@{beanName}.id}"/>
+	    <f:event type="preRenderView" listener="#{@{beanName}.retrieve}" />
 	</f:metadata>
 
-	<ui:composition template="@{templateStrategy.getReferencePath(template != null ? template : templateStrategy.getDefaultTemplate())}">
-	
+	<ui:composition template="@{templateStrategy.getReferencePath(template != null ? template : templateStrategy.getDefaultTemplate())}">	
 		<ui:param name="pageTitle" value="Create @{entity.getName()}" />
 	
 		<ui:define name="header">
@@ -20,7 +20,7 @@
 	
 		<ui:define name="subheader">			
 			<c:choose>
-				<c:when test="#{@{beanName}.id != 0}">
+				<c:when test="#{!empty @{beanName}.id}">
 					Editing existing @{entity.getName()}
 				</c:when>
 				<c:otherwise>
@@ -39,15 +39,17 @@
 
 				<br/>
 				
-				<c:if test="#{@{beanName}.id != 0 || facesContext.currentPhaseId.ordinal lt 6}">
-					<h:commandLink value="Save" action="#{@{beanName}.save()}" /> |
-					<h:link value="Cancel" outcome="view"/>
-					<h:commandLink value="Delete" action="#{@{beanName}.delete()}" styleClass="right"/>
-				</c:if>
-				<c:if test="#{@{beanName}.id == 0 || facesContext.currentPhaseId.ordinal lt 6}">
-					<h:commandLink value="Create" action="#{@{beanName}.create()}" />
-					<h:link value="Cancel" outcome="list" styleClass="right"/>
-				</c:if>
+				<c:choose>
+					<c:when test="#{!empty @{beanName}.id}">
+						<h:commandLink value="Save" action="#{@{beanName}.update}" /> |
+						<h:link value="Cancel" outcome="view"/>
+						<h:commandLink value="Delete" action="#{@{beanName}.delete}" styleClass="right"/>
+					</c:when>
+					<c:otherwise>
+						<h:commandLink value="Create" action="#{@{beanName}.create}" />
+						<h:link value="Cancel" outcome="list" styleClass="right"/>
+					</c:otherwise>
+				</c:choose>
 			</h:form>
 		</ui:define>
 	

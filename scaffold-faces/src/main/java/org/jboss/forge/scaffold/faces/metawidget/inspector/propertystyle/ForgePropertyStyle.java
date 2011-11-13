@@ -21,11 +21,9 @@
  */
 package org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle;
 
-import java.awt.Color;
 import java.io.FileNotFoundException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +35,6 @@ import org.jboss.forge.parser.java.MethodHolder;
 import org.jboss.forge.parser.java.Parameter;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
-import org.jboss.forge.spec.javaee.PersistenceFacet;
 import org.metawidget.inspector.iface.InspectorException;
 import org.metawidget.inspector.impl.propertystyle.BaseProperty;
 import org.metawidget.inspector.impl.propertystyle.BasePropertyStyle;
@@ -416,11 +413,6 @@ public class ForgePropertyStyle
 
    private String getQualifiedType(String type)
    {
-      if ("int".equals(type))
-      {
-         return "int";
-      }
-
       if ("Long".equals(type))
       {
          return Long.class.getName();
@@ -431,17 +423,7 @@ public class ForgePropertyStyle
          return String.class.getName();
       }
 
-      if ("Date".equals(type))
-      {
-         return Date.class.getName();
-      }
-
-      if ("Color".equals(type))
-      {
-         return Color.class.getName();
-      }
-
-      return this.project.getFacet(PersistenceFacet.class).getEntityPackage() + "." + type;
+      return type;
    }
 
    //

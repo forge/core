@@ -70,7 +70,6 @@ import org.jboss.seam.render.TemplateCompiler;
 import org.jboss.seam.render.spi.TemplateResolver;
 import org.jboss.seam.render.template.CompiledTemplateResource;
 import org.jboss.seam.render.template.resolver.ClassLoaderTemplateResolver;
-import org.jboss.shrinkwrap.descriptor.api.spec.cdi.beans.BeansDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
 import org.metawidget.inspector.composite.CompositeInspector;
 import org.metawidget.inspector.composite.CompositeInspectorConfig;
@@ -119,8 +118,6 @@ import org.w3c.dom.NamedNodeMap;
 public class FacesScaffold extends BaseFacet implements ScaffoldProvider
 {
    private static final String XMLNS_PREFIX = "xmlns:";
-
-   private static final String SEAM_PERSIST_INTERCEPTOR = "org.jboss.seam.transaction.TransactionInterceptor";
 
    private static final String REWRITE_CONFIG_TEMPLATE = "org/jboss/forge/scaffold/faces/scaffold/URLRewriteConfiguration.jv";
    private static final String BACKING_BEAN_TEMPLATE = "org/jboss/forge/scaffold/faces/scaffold/BackingBean.jv";
@@ -255,15 +252,6 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       setupRichFaces();
       setupWebXML();
       setupRewrite();
-
-      CDIFacet cdi = this.project.getFacet(CDIFacet.class);
-
-      if (!this.project.getFacet(CDIFacet.class).getConfig().getInterceptors().contains(SEAM_PERSIST_INTERCEPTOR))
-      {
-         BeansDescriptor config = cdi.getConfig();
-         config.interceptor(SEAM_PERSIST_INTERCEPTOR);
-         cdi.saveConfig(config);
-      }
 
       return resources;
    }
@@ -407,28 +395,6 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
                   FacesFacet.class));
       }
 
-      DependencyFacet df = this.project.getFacet(DependencyFacet.class);
-
-      String version = null;
-      for (Dependency dependency : getFacesDependencies())
-      {
-         if (!df.hasDependency(dependency))
-         {
-            if (version == null)
-            {
-               dependency = this.prompt.promptChoiceTyped("Install which version of Faces Scaffold?",
-                        df.resolveAvailableVersions(dependency));
-               version = dependency.getVersion();
-            }
-            else
-            {
-               dependency = DependencyBuilder.create(dependency).setVersion(version);
-            }
-
-            df.addDependency(dependency);
-         }
-      }
-
       return true;
    }
 
@@ -509,18 +475,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    @Override
    public boolean isInstalled()
    {
-      final DependencyFacet df = this.project.getFacet(DependencyFacet.class);
-      boolean hasDependencies = true;
-      for (Dependency dependency : getFacesDependencies())
-      {
-         if (!df.hasDependency(dependency))
-         {
-            hasDependencies = false;
-            break;
-         }
-      }
-
-      return hasDependencies;
+      return true;
    }
 
    @Override
@@ -579,12 +534,6 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
                overwrite));
 
       return result;
-   }
-
-   private List<Dependency> getFacesDependencies()
-   {
-      return Arrays.asList(
-               (Dependency) DependencyBuilder.create("org.jboss.forge:forge-scaffold-faces-lib"));
    }
 
    /**

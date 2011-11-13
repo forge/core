@@ -7,13 +7,11 @@
 	xmlns:c="http://java.sun.com/jsp/jstl/core@{metawidgetNamespaces}">
 
 	<f:metadata>
-	    <f:viewParam name="id" value="#{@{beanName}.id}">
-	        <f:validateLongRange minimum="1" />
-	    </f:viewParam>
+	    <f:viewParam name="id" value="#{@{beanName}.id}"/>
+	    <f:event type="preRenderView" listener="#{@{beanName}.retrieve}" />
 	</f:metadata>
 	
-	<ui:composition template="@{templateStrategy.getReferencePath(template != null ? template : templateStrategy.getDefaultTemplate())}">
-	
+	<ui:composition template="@{templateStrategy.getReferencePath(template != null ? template : templateStrategy.getDefaultTemplate())}">	
 		<ui:param name="pageTitle" value="View @{entity.getName()}" />
 	
 		<ui:define name="header">

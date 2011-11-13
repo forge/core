@@ -3,17 +3,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
 	xmlns:ui="http://java.sun.com/jsf/facelets@{metawidgetNamespaces}">
 
 	<f:metadata>
-	    <f:viewParam name="id" value="#{@{beanName}.id}">
-	       <f:validateLongRange minimum="1" /> 
-	    </f:viewParam>
-	    <f:viewParam name="p" value="#{@{beanName}.pagination.page}"/>
+		<f:viewParam name="page" value="#{@{beanName}.page}" />
+		<f:event type="preRenderView" listener="#{@{beanName}.paginate}" />
 	</f:metadata>
 	
 	<ui:composition template="@{templateStrategy.getReferencePath(template != null ? template : templateStrategy.getDefaultTemplate())}">
-	
 		<ui:param name="pageTitle" value="List @{entity.getName()}" />
 	
 		<ui:define name="header">
@@ -27,45 +25,27 @@
 		<ui:define name="footer"/>
 	
 		<ui:define name="main">
-			<h:form id="form">
-			
-			    <h:messages />
-			    
-	            <h:link outcome="list" styleClass="right" value="Next #{@{beanName}.pagination.pageSize}" rendered="#{@{beanName}.pagination.hasNextPage}">
-					<f:param name="p" value="#{@{beanName}.pagination.page + 1}" />
-				</h:link>
-					
-				<h:outputText styleClass="right" style="margin-left: 10px; margin-right: 10px;"
-					value="#{@{beanName}.pagination.pageFirstItem + 1}..#{@{beanName}.pagination.pageLastItem + 1}/#{@{beanName}.pagination.itemsCount}" />&nbsp;
-					
-	            <h:link outcome="list" styleClass="right" value="Previous #{@{beanName}.pagination.pageSize}" rendered="#{@{beanName}.pagination.hasPreviousPage}">
-					<f:param name="p" value="#{@{beanName}.pagination.page - 1}" />
-				</h:link>
-				
-			    <ul>
-			    	<ui:repeat var="entity" value="#{@{beanName}.list}">			    
-						<li><h:link outcome="view">
-							<f:param name="id" value="#{entity.id}"/>
-							@{metawidget}
-						</h:link></li>			        
-			    	</ui:repeat>
-			    </ul>
-			    <br/>
-			    
-			    <h:link value="Create new" outcome="create" />
-					
-	            <h:link outcome="list" styleClass="right" value="Next #{@{beanName}.pagination.pageSize}" rendered="#{@{beanName}.pagination.hasNextPage}">
-					<f:param name="p" value="#{@{beanName}.pagination.page + 1}" />
-				</h:link>
-					
-				<h:outputText styleClass="right" style="margin-left: 10px; margin-right: 10px;"
-					value="#{@{beanName}.pagination.pageFirstItem + 1}..#{@{beanName}.pagination.pageLastItem + 1}/#{@{beanName}.pagination.itemsCount}" />&nbsp;
-					
-	            <h:link outcome="list" styleClass="right" value="Previous #{@{beanName}.pagination.pageSize}" rendered="#{@{beanName}.pagination.hasPreviousPage}">
-					<f:param name="p" value="#{@{beanName}.pagination.page - 1}" />
-				</h:link>
-			
-			</h:form>
+			<h:dataTable value="#{@{beanName}.pageItems}" var="entity">
+				<h:column>
+					<f:facet name="header">Entity</f:facet>
+					<h:link outcome="view">
+						<f:param name="id" value="#{entity.id}"/>
+						@{metawidget}
+					</h:link>
+				</h:column>
+			</h:dataTable>
+			<h:panelGroup rendered="#{@{beanName}.count gt @{beanName}.pageSize}">
+				<h:outputLink rendered="#{@{beanName}.page gt 0}">
+					<f:param name="page" value="#{@{beanName}.page - 1}"/>
+					Previous 
+				</h:outputLink>
+				<h:outputText value="#{@{beanName}.page * @{beanName}.pageSize + 1} to #{@{beanName}.page * @{beanName}.pageSize + fn:length(@{beanName}.pageItems)} (of #{@{beanName}.count})"/>
+				<h:outputLink rendered="#{(@{beanName}.page + 1) * @{beanName}.pageSize lt @{beanName}.count}">
+					<f:param name="page" value="#{@{beanName}.page + 1}"/>
+					Next 
+				</h:outputLink>
+			</h:panelGroup>
+			<h:link value="Create new" outcome="create" />
 		</ui:define>
 	
 	</ui:composition>
