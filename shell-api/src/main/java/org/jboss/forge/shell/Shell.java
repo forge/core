@@ -234,6 +234,18 @@ public interface Shell extends ShellPrintWriter, ShellPrompt, ShellHistory
    boolean isAnsiSupported();
 
    /**
+    * Register the buffer manager for the shell system
+    * @param manager
+    */
+   void registerBufferManager(BufferManager manager);
+
+   /**
+    * Get buffer manager based on typed
+    * @return
+    */
+   BufferManager getBufferManager();
+
+   /**
     * Place the shell output into buffering mode. Do not automatically render changes to the screen unless changed
     * back to {@link #directWriteMode()} or by calling {@link #flushBuffer()}
     */

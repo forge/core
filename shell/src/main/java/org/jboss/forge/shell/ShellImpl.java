@@ -62,6 +62,7 @@ import org.jboss.forge.project.services.ResourceFactory;
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.resources.java.JavaResource;
+import org.jboss.forge.shell.buffers.JLineScreenBuffer;
 import org.jboss.forge.shell.command.CommandMetadata;
 import org.jboss.forge.shell.command.PluginMetadata;
 import org.jboss.forge.shell.command.PromptTypeConverter;
@@ -161,12 +162,13 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    private OutputStream outputStream;
    private OutputStream historyOutstream;
 
+   private BufferManager screenBuffer;
+
    private enum BufferingMode
    {
       Direct, Buffering
    }
 
-   char[][] screenBuffer = new char[80][25];
 
    private BufferingMode bufferingMode = BufferingMode.Direct;
 
@@ -324,6 +326,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          }
       });
 
+
       configureOSTerminal();
       initReaderAndStreams();
       initParameters();
@@ -467,6 +470,8 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       {
          this.reader.addTriggeredAction(action.getTrigger(), action.getListener());
       }
+
+      initBuffer();
    }
 
    private void initParameters()
@@ -611,7 +616,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
 
    private String formatSourcedError(final CommandMetadata cmd)
    {
-      String out = null;
+      String out;
       if (cmd != null)
       {
          out = cmd.getParent().getName();
@@ -635,7 +640,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    @Override
    public String readLine(final Character mask) throws IOException
    {
-      String line = null;
+      String line;
       if (mask != null)
       {
          line = reader.readLine(mask);
@@ -845,15 +850,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    {
       if ((line != null) && isVerbose())
       {
-         try
-         {
-            reader.println(line);
-            _flushBuffer();
-         }
-         catch (IOException e)
-         {
-            throw new RuntimeException(e);
-         }
+         screenBuffer.write((byte) '\n');
       }
    }
 
@@ -862,15 +859,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    {
       if (output != null)
       {
-         try
-         {
-            reader.print(output);
-            _flushBuffer();
-         }
-         catch (IOException e)
-         {
-            throw new RuntimeException(e);
-         }
+         screenBuffer.write(output);
       }
    }
 
@@ -879,15 +868,8 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    {
       if (line != null)
       {
-         try
-         {
-            reader.println(line);
-            _flushBuffer();
-         }
-         catch (IOException e)
-         {
-            throw new RuntimeException(e);
-         }
+         screenBuffer.write(line);
+         screenBuffer.write((byte) '\n');
       }
    }
 
@@ -977,35 +959,19 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    @Override
    public synchronized void write(final byte b)
    {
-      write(new byte[]{b});
+      screenBuffer.write(b);
    }
 
    @Override
    public void write(byte[] b)
    {
-      try
-      {
-         reader.print(new String(b));
-         _flushBuffer();
-      }
-      catch (IOException e)
-      {
-         throw new RuntimeException(e);
-      }
+      screenBuffer.write(b);
    }
 
    @Override
    public void write(byte[] b, int offset, int length)
    {
-      try
-      {
-         reader.print(new String(b, offset, length));
-         _flushBuffer();
-      }
-      catch (IOException e)
-      {
-         throw new RuntimeException(e);
-      }
+      screenBuffer.write(b, offset, length);
    }
 
 
@@ -1184,8 +1150,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          }
          reader.setHistoryEnabled(false);
          reader.setPrompt(message);
-         String line = readLine();
-         return line;
+         return readLine();
       }
       catch (IOException e)
       {
@@ -1272,33 +1237,35 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    @Override
    public void bufferingMode()
    {
-      bufferingMode = BufferingMode.Buffering;
+      screenBuffer.bufferOnlyMode();
    }
 
    @Override
    public void directWriteMode()
    {
-      bufferingMode = BufferingMode.Direct;
-      flushBuffer();
+      screenBuffer.directWriteMode();
    }
 
    @Override
    public void flushBuffer()
    {
-      try
-      {
-         reader.flush();
-      }
-      catch (IOException e)
-      {
-         throw new RuntimeException("failed to flush screen buffer", e);
-      }
+      screenBuffer.flushBuffer();
    }
 
+   @Override
+   public void registerBufferManager(BufferManager manager)
+   {
+      screenBuffer = manager;
+   }
+
+   public BufferManager getBufferManager()
+   {
+      return screenBuffer;
+   }
 
    private void initBuffer()
    {
-      screenBuffer = new char[getHeight()][getWidth()];
+      screenBuffer = new JLineScreenBuffer(reader);
    }
 
    private void configureOSTerminal() throws IOException

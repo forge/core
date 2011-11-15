@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
+import org.fusesource.jansi.Ansi;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.ShellColor;
@@ -109,6 +110,10 @@ public class MorePlugin implements Plugin
          int lCounter = width;
          int y = 0;
 
+         if (noAutoExit) {
+            shell.clear();
+         }
+
          shell.bufferingMode();
 
          LineBuffer lineBuffer = new LineBuffer(stream, width);
@@ -136,14 +141,16 @@ public class MorePlugin implements Plugin
                      case '\n':
                         lineBuffer.seenLine();
                         lCounter = width;
+
                         ++y;
 
                      default:
                         if (y >= height)
                         {
                            y = height;
-                           out.println();
                            height = shell.getHeight() - 1;
+
+                           out.println();
 
                            switch (prompt(lineBuffer, out, lastPattern))
                            {
@@ -164,9 +171,8 @@ public class MorePlugin implements Plugin
                         }
                   }
 
-                  outBuffer[i] = c;
+                  shell.write(c);
                }
-               shell.write(outBuffer, 0, read);
             }
 
             if (noAutoExit)
@@ -221,13 +227,19 @@ public class MorePlugin implements Plugin
          String prompt = MOREPROMPT + "[line:" + lineBuffer.getCurrentLine()
                   + topBottomIndicator + "]--";
 
+         String bottomLineReset = new Ansi().cursor(shell.getHeight(), 0).toString();
+         
+         out.print(bottomLineReset);
          out.print(ShellColor.BOLD, prompt);
+         out.print(bottomLineReset);
 
          shell.flushBuffer();
 
-         int scanCode;
-
-         switch (scanCode = shell.scan())
+         int scanCode = shell.scan();
+         
+         shell.clearLine();
+                  
+         switch (scanCode)
          {
             case 'e':
             case 'E':
@@ -256,16 +268,16 @@ public class MorePlugin implements Plugin
             case '\n':
                lineBuffer.setLineWidth(shell.getWidth());
 
-               shell.cursorLeft(prompt.length());
-               shell.clearLine();
-               shell.flushBuffer();
+//               shell.cursorLeft(prompt.length());
+//               shell.clearLine();
+//               shell.flushBuffer();
                return -2;
             case ' ':
                lineBuffer.setLineWidth(shell.getWidth());
 
-               shell.clearLine();
-               shell.cursorLeft(prompt.length());
-               shell.flushBuffer();
+//               shell.clearLine();
+//               shell.cursorLeft(prompt.length());
+//               shell.flushBuffer();
                return -3;
             case 'q':
             case 'Q':
@@ -325,6 +337,7 @@ public class MorePlugin implements Plugin
                   shell.clearLine();
                   shell.cursorLeft(prompt.length());
                   shell.print(ShellColor.RED, PATTERN_NOT_FOUND + searched);
+                  shell.flushBuffer();
 
                   shell.scan();
                   shell.clearLine();
