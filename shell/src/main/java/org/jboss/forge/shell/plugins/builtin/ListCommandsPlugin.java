@@ -184,7 +184,7 @@ public class ListCommandsPlugin implements Plugin
          }
          else
          {
-            return (cmdMeta.getParent().getName() + ":" + cmdMeta.getName() + (contextual ? "*" : ""));
+            return (cmdMeta.getParent().getName() + " " + cmdMeta.getName() + (contextual ? "*" : ""));
          }
       }
       else if (contextual)
@@ -195,7 +195,7 @@ public class ListCommandsPlugin implements Plugin
          }
          else
          {
-            return (cmdMeta.getParent().getName() + ":" + cmdMeta.getName() + "*");
+            return (cmdMeta.getParent().getName() + " " + cmdMeta.getName() + "*");
          }
       }
 
