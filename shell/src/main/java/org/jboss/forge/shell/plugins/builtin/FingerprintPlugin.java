@@ -20,7 +20,7 @@ public class FingerprintPlugin implements Plugin
    @DefaultCommand
    public void run(
             @PipeIn final InputStream pipeIn,
-            @Option(name = "cipher", shortName = "c", help = "hash cipher to use (default: 'SHA-256')",
+            @Option(name = "cipher", help = "hash cipher to use (default: 'SHA-256')",
                      defaultValue = "SHA-256")
             String cipher,
             @Option(description = "FILE ...", defaultValue = "*") Resource<?>[] resources,
@@ -30,8 +30,6 @@ public class FingerprintPlugin implements Plugin
 
       cipher = cipher.toUpperCase().trim();
       String name = null;
-
-
 
       try
       {

@@ -878,7 +878,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    {
       try
       {
-         reader.println();
+         screenBuffer.write((byte) '\n');
          _flushBuffer();
       }
       catch (IOException e)
