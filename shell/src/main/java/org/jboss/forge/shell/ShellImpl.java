@@ -507,6 +507,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          try
          {
             line = readLine();
+            screenBuffer.flushBuffer();
 
             if (line != null)
             {

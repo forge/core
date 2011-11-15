@@ -150,7 +150,8 @@ public class MorePlugin implements Plugin
                            y = height;
                            height = shell.getHeight() - 1;
 
-                           out.println();
+                           shell.println();
+                           shell.flushBuffer();
 
                            switch (prompt(lineBuffer, out, lastPattern))
                            {
