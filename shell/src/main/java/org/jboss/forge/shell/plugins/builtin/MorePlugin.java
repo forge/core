@@ -42,7 +42,7 @@ import org.jboss.forge.shell.plugins.Topic;
 
 /**
  * Implementation of more & less, but called more. "More is less".
- * 
+ *
  * @author Mike Brock
  */
 @Alias("more")
@@ -65,9 +65,9 @@ public class MorePlugin implements Plugin
 
    @DefaultCommand
    public void run(@PipeIn final InputStream pipeIn,
-                   final Resource<?> file,
-                   @Option(name = "noautoexit", shortName = "x", flagOnly = true) final boolean noAutoExit,
-                   final PipeOut pipeOut)
+            final Resource<?> file,
+            @Option(name = "noautoexit", shortName = "x", flagOnly = true) final boolean noAutoExit,
+            final PipeOut pipeOut)
             throws IOException
    {
       if (file != null)
@@ -94,93 +94,107 @@ public class MorePlugin implements Plugin
 
    void more(final InputStream stream, final PipeOut out, boolean noAutoExit) throws IOException
    {
-      byte[] buffer = new byte[128];
-      int read;
-
-      byte c;
-
-      int height = shell.getHeight() - 1;
-      int width = shell.getWidth();
-
-      int lCounter = width;
-      int y = 0;
-
-      LineBuffer lineBuffer = new LineBuffer(stream, width);
-
-      StringBuilder lastPattern = new StringBuilder();
-
-      do
+      try
       {
-         Mainloop: while ((read = lineBuffer.read(buffer)) != -1)
+         byte[] buffer = new byte[128];
+         int read;
+
+         byte c;
+
+         byte[] outBuffer = new byte[128];
+
+         int height = shell.getHeight() - 1;
+         int width = shell.getWidth();
+
+         int lCounter = width;
+         int y = 0;
+
+         shell.bufferingMode();
+
+         LineBuffer lineBuffer = new LineBuffer(stream, width);
+         StringBuilder lastPattern = new StringBuilder();
+
+         do
          {
-            Bufferloop: for (int i = 0; i < read; i++)
+            Mainloop:
+            while ((read = lineBuffer.read(buffer)) != -1)
             {
-               if (--lCounter <= -1)
+               Bufferloop:
+               for (int i = 0; i < read; i++)
                {
-                  lineBuffer.seenLine();
-                  lCounter = width;
-                  ++y;
-               }
-
-               switch (c = buffer[i])
-               {
-               case '\r':
-                  continue Bufferloop;
-               case '\n':
-                  lineBuffer.seenLine();
-                  lCounter = width;
-                  ++y;
-
-               default:
-                  if (y >= height)
+                  if (--lCounter <= -1)
                   {
-                     y = height;
-                     out.println();
-                     height = shell.getHeight() - 1;
-                     switch (prompt(lineBuffer, out, lastPattern))
-                     {
-                     case -1:
-                        y = 0;
-                        continue Mainloop;
-                     case -2:
-                        y--;
-                        continue Bufferloop;
-                     case -3:
-                        y = 0;
-                        continue Bufferloop;
-                     case 0:
-                        noAutoExit = false;
-                        break Mainloop;
-                     }
-
+                     lineBuffer.seenLine();
+                     lCounter = width;
+                     ++y;
                   }
+
+                  switch (c = buffer[i])
+                  {
+                     case '\r':
+                        continue Bufferloop;
+                     case '\n':
+                        lineBuffer.seenLine();
+                        lCounter = width;
+                        ++y;
+
+                     default:
+                        if (y >= height)
+                        {
+                           y = height;
+                           out.println();
+                           height = shell.getHeight() - 1;
+
+                           switch (prompt(lineBuffer, out, lastPattern))
+                           {
+                              case -1:
+                                 y = 0;
+                                 continue Mainloop;
+                              case -2:
+                                 y--;
+                                 continue Bufferloop;
+                              case -3:
+                                 y = 0;
+                                 continue Bufferloop;
+                              case 0:
+                                 noAutoExit = false;
+                                 break Mainloop;
+                           }
+
+                        }
+                  }
+
+                  outBuffer[i] = c;
                }
-
-               out.write(c);
+               shell.write(outBuffer, 0, read);
             }
-         }
 
-         if (noAutoExit)
-         {
-            switch (prompt(lineBuffer, out, lastPattern))
+            if (noAutoExit)
             {
-            case -1:
-               y = 0;
-               break;
-            case -2:
-               y--;
-               break;
-            case -3:
-               y = 0;
-               break;
-            case 0:
-               noAutoExit = false;
-               break;
+               switch (prompt(lineBuffer, out, lastPattern))
+               {
+                  case -1:
+                     y = 0;
+                     break;
+                  case -2:
+                     y--;
+                     break;
+                  case -3:
+                     y = 0;
+                     break;
+                  case 0:
+                     noAutoExit = false;
+                     break;
+               }
             }
-         }
 
+         }
+         while (noAutoExit);
       }
-      while (noAutoExit);
+      finally
+      {
+         shell.directWriteMode();
+      }
    }
 
    private int prompt(final LineBuffer lineBuffer, final PipeOut out, final StringBuilder lastPattern)
@@ -208,129 +222,133 @@ public class MorePlugin implements Plugin
                   + topBottomIndicator + "]--";
 
          out.print(ShellColor.BOLD, prompt);
+
+         shell.flushBuffer();
+
          int scanCode;
 
          switch (scanCode = shell.scan())
          {
-         case 'e':
-         case 'E':
-         case 'j':
-         case 'J':
-         case 16:
-            lineBuffer.rewindBuffer(shell.getHeight() - 1, lineBuffer.getCurrentLine() - 1);
-            lineBuffer.setLineWidth(shell.getWidth());
-            // y = 0;
-            shell.clear();
-            return -1;
-
-            // continue Mainloop;
-         case 'u':
-         case 'U':
-            lineBuffer.rewindBuffer(shell.getHeight() - 1, lineBuffer.getCurrentLine() - shell.getHeight());
-            lineBuffer.setLineWidth(shell.getWidth());
-            // y = 0;
-            shell.clear();
-            return -1;
-            // continue Mainloop;
-
-         case 'y':
-         case 'Y':
-         case 'k':
-         case 'K':
-         case 14:
-         case '\n':
-            // y--;
-            lineBuffer.setLineWidth(shell.getWidth());
-
-            shell.cursorLeft(prompt.length());
-            shell.clearLine();
-            return -2;
-            // continue Bufferloop;
-         case ' ':
-            // y = 0;
-            // height = forge.getHeight() - 1;
-            lineBuffer.setLineWidth(shell.getWidth());
-
-            shell.clearLine();
-            shell.cursorLeft(prompt.length());
-            return -3;
-            // continue Bufferloop;
-         case 'q':
-         case 'Q':
-            shell.clearLine();
-            shell.cursorLeft(prompt.length());
-            return 0;
-            // break Mainloop;
-
-         case '?':
-            backwards = true;
-         case '/':
-            shell.clearLine();
-            shell.cursorLeft(prompt.length());
-
-            prompt = backwards ? SEARCH_BACKWARDS_PROMPT : SEARCH_FORWARD_PROMPT;
-            String pattern;
-
-            if (lastPattern != null)
-            {
-               prompt += "[ENT to repeat search '" + lastPattern + "']: ";
-            }
-
-            out.print(ShellColor.BOLD, prompt);
-            pattern = shell.promptAndSwallowCR().trim();
-
-            String searched;
-
-            shell.clearLine();
-            shell.cursorLeft(prompt.length() + pattern.length());
-
-            prompt += "Scanning buffer...";
-            out.print(ShellColor.BOLD, prompt);
-
-            String p;
-            if (pattern.equals("") && (lastPattern.length() != 0))
-            {
-               p = searched = lineBuffer.toString();
-            }
-            else
-            {
-               if (lastPattern.length() != 0)
-               {
-                  lastPattern.delete(0, lastPattern.length() - 1);
-               }
-               lastPattern.append(pattern);
-               p = searched = pattern;
-            }
-
-            int result = lineBuffer.findPattern(p, backwards);
-
-            if (result == -1)
-            {
-               shell.clearLine();
-               shell.cursorLeft(prompt.length());
-               shell.print(ShellColor.RED, PATTERN_NOT_FOUND + searched);
-
-               shell.scan();
-               shell.clearLine();
-               shell.cursorLeft(PATTERN_NOT_FOUND.length() + searched.length());
-            }
-            else
-            {
-               lineBuffer.rewindBuffer(shell.getHeight() - 1, result);
+            case 'e':
+            case 'E':
+            case 'j':
+            case 'J':
+            case 16:
+               lineBuffer.rewindBuffer(shell.getHeight() - 1, lineBuffer.getCurrentLine() - 1);
+               lineBuffer.setLineWidth(shell.getWidth());
                // y = 0;
                shell.clear();
                return -1;
-            }
-            break;
 
-         default:
-            shell.clearLine();
-            shell.cursorLeft(prompt.length());
-            out.print(ShellColor.RED, INVALID_COMMAND + ((char) scanCode));
-            shell.scan();
+            case 'u':
+            case 'U':
+               lineBuffer.rewindBuffer(shell.getHeight() - 1, lineBuffer.getCurrentLine() - shell.getHeight());
+               lineBuffer.setLineWidth(shell.getWidth());
+               // y = 0;
+               shell.clear();
+               return -1;
 
-            shell.clearLine();
-            shell.cursorLeft(INVALID_COMMAND.length() + 1);
+            case 'y':
+            case 'Y':
+            case 'k':
+            case 'K':
+            case 14:
+            case '\n':
+               lineBuffer.setLineWidth(shell.getWidth());
+
+               shell.cursorLeft(prompt.length());
+               shell.clearLine();
+               shell.flushBuffer();
+               return -2;
+            case ' ':
+               lineBuffer.setLineWidth(shell.getWidth());
+
+               shell.clearLine();
+               shell.cursorLeft(prompt.length());
+               shell.flushBuffer();
+               return -3;
+            case 'q':
+            case 'Q':
+               shell.clearLine();
+               shell.cursorLeft(prompt.length());
+               shell.flushBuffer();
+               return 0;
+
+            case '?':
+               backwards = true;
+            case '/':
+               shell.clearLine();
+               shell.cursorLeft(prompt.length());
+
+               prompt = backwards ? SEARCH_BACKWARDS_PROMPT : SEARCH_FORWARD_PROMPT;
+               String pattern;
+
+               if (lastPattern != null)
+               {
+                  prompt += "[ENT to repeat search '" + lastPattern + "']: ";
+               }
+
+               out.print(ShellColor.BOLD, prompt);
+               shell.flushBuffer();
+
+               pattern = shell.promptAndSwallowCR().trim();
+
+               String searched;
+
+               shell.clearLine();
+               shell.cursorLeft(prompt.length() + pattern.length());
+
+               prompt += "Scanning buffer...";
+               out.print(ShellColor.BOLD, prompt);
+
+               shell.flushBuffer();
+
+               String p;
+               if (pattern.equals("") && (lastPattern.length() != 0))
+               {
+                  p = searched = lineBuffer.toString();
+               }
+               else
+               {
+                  if (lastPattern.length() != 0)
+                  {
+                     lastPattern.delete(0, lastPattern.length() - 1);
+                  }
+                  lastPattern.append(pattern);
+                  p = searched = pattern;
+               }
+
+               int result = lineBuffer.findPattern(p, backwards);
+
+               if (result == -1)
+               {
+                  shell.clearLine();
+                  shell.cursorLeft(prompt.length());
+                  shell.print(ShellColor.RED, PATTERN_NOT_FOUND + searched);
+
+                  shell.scan();
+                  shell.clearLine();
+                  shell.cursorLeft(PATTERN_NOT_FOUND.length() + searched.length());
+                  shell.flushBuffer();
+               }
+               else
+               {
+                  lineBuffer.rewindBuffer(shell.getHeight() - 1, result);
+                  // y = 0;
+                  shell.clear();
+                  shell.flushBuffer();
+                  return -1;
+               }
+               break;
+
+            default:
+               shell.clearLine();
+               shell.cursorLeft(prompt.length());
+               out.print(ShellColor.RED, INVALID_COMMAND + ((char) scanCode));
+               shell.scan();
+
+               shell.clearLine();
+               shell.cursorLeft(INVALID_COMMAND.length() + 1);
 
          }
       }
@@ -463,13 +481,13 @@ public class MorePlugin implements Plugin
             {
                switch (curr.charAt(cursor++))
                {
-               case '\r':
-                  cursor++;
-                  continue;
-               case '\n':
-                  lCount = lineWidth;
-                  currLine++;
-                  continue;
+                  case '\r':
+                     cursor++;
+                     continue;
+                  case '\n':
+                     lCount = lineWidth;
+                     currLine++;
+                     continue;
                }
 
                if (--lCount <= -1)
@@ -516,17 +534,17 @@ public class MorePlugin implements Plugin
 
                switch (buffer[i])
                {
-               case '\r':
-                  i++;
-               case '\n':
-                  line++;
-                  lCount = lineWidth;
-                  if (p.matcher(curr.subSequence(startLine, cursor - 1)).matches())
-                  {
-                     return line;
-                  }
+                  case '\r':
+                     i++;
+                  case '\n':
+                     line++;
+                     lCount = lineWidth;
+                     if (p.matcher(curr.subSequence(startLine, cursor - 1)).matches())
+                     {
+                        return line;
+                     }
 
-                  startLine = cursor;
+                     startLine = cursor;
                }
 
                if (--lCount <= 0)

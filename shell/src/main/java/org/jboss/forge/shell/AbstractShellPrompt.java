@@ -97,6 +97,7 @@ public abstract class AbstractShellPrompt implements Shell
 
          write((byte) c);
          buf.append((char) c);
+         flushBuffer();
       }
       return buf.toString();
    }

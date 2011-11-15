@@ -44,7 +44,7 @@ import org.jboss.forge.bus.event.BusEvent;
 @Target({ TYPE, METHOD, PARAMETER, FIELD })
 @Retention(RUNTIME)
 @Documented
-@BusEvent
+//@BusEvent
 public @interface QueuedEvent
 {
 

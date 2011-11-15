@@ -159,8 +159,16 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
 
    private InputStream inputStream;
    private OutputStream outputStream;
-
    private OutputStream historyOutstream;
+
+   private enum BufferingMode
+   {
+      Direct, Buffering
+   }
+
+   char[][] screenBuffer = new char[80][25];
+
+   private BufferingMode bufferingMode = BufferingMode.Direct;
 
    private final boolean colorEnabled = Boolean.getBoolean("forge.shell.colorEnabled");
 
@@ -171,7 +179,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       public Resource[] convertFrom(final Object obl)
       {
          return GeneralUtils.parseSystemPathspec(resourceFactory, lastResource, getCurrentResource(),
-                  obl instanceof String[] ? (String[]) obl : new String[] { obl.toString() });
+                  obl instanceof String[] ? (String[]) obl : new String[]{obl.toString()});
       }
 
       @SuppressWarnings("rawtypes")
@@ -189,7 +197,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       {
          if (getCurrentProject().hasFacet(JavaSourceFacet.class))
          {
-            String[] strings = obj instanceof String[] ? (String[]) obj : new String[] { obj.toString() };
+            String[] strings = obj instanceof String[] ? (String[]) obj : new String[]{obj.toString()};
             List<Resource<?>> resources = new ArrayList<Resource<?>>();
             for (String string : strings)
             {
@@ -385,7 +393,8 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          historyOutstream.flush();
       }
       catch (IOException e)
-      {}
+      {
+      }
    }
 
    @Override
@@ -403,7 +412,8 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
                historyOutstream.close();
             }
             catch (Exception e)
-            {}
+            {
+            }
          }
       });
    }
@@ -453,7 +463,8 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          this.reader = new ConsoleReader(inputStream, new OutputStreamWriter(outputStream));
       this.reader.setHistoryEnabled(true);
       this.reader.setBellEnabled(false);
-      for (TriggeredAction action : triggeredActions) {
+      for (TriggeredAction action : triggeredActions)
+      {
          this.reader.addTriggeredAction(action.getTrigger(), action.getListener());
       }
    }
@@ -708,7 +719,8 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       try
       {
          executing = true;
-         for (CommandInterceptor interceptor : commandInterceptors) {
+         for (CommandInterceptor interceptor : commandInterceptors)
+         {
             line = interceptor.intercept(line);
          }
 
@@ -836,7 +848,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          try
          {
             reader.println(line);
-            reader.flush();
+            _flushBuffer();
          }
          catch (IOException e)
          {
@@ -853,7 +865,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          try
          {
             reader.print(output);
-            reader.flush();
+            _flushBuffer();
          }
          catch (IOException e)
          {
@@ -870,7 +882,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          try
          {
             reader.println(line);
-            reader.flush();
+            _flushBuffer();
          }
          catch (IOException e)
          {
@@ -885,7 +897,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       try
       {
          reader.println();
-         reader.flush();
+         _flushBuffer();
       }
       catch (IOException e)
       {
@@ -923,40 +935,40 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
 
       switch (color)
       {
-      case BLACK:
-         ansi.fg(Ansi.Color.BLACK);
-         break;
-      case BLUE:
-         ansi.fg(Ansi.Color.BLUE);
-         break;
-      case CYAN:
-         ansi.fg(Ansi.Color.CYAN);
-         break;
-      case GREEN:
-         ansi.fg(Ansi.Color.GREEN);
-         break;
-      case MAGENTA:
-         ansi.fg(Ansi.Color.MAGENTA);
-         break;
-      case RED:
-         ansi.fg(Ansi.Color.RED);
-         break;
-      case WHITE:
-         ansi.fg(Ansi.Color.WHITE);
-         break;
-      case YELLOW:
-         ansi.fg(Ansi.Color.YELLOW);
-         break;
-      case BOLD:
-         ansi.a(Ansi.Attribute.INTENSITY_BOLD);
-         break;
-      case ITALIC:
-         ansi.a(Ansi.Attribute.ITALIC);
-         ansi.a(Ansi.Attribute.INTENSITY_FAINT);
-         break;
+         case BLACK:
+            ansi.fg(Ansi.Color.BLACK);
+            break;
+         case BLUE:
+            ansi.fg(Ansi.Color.BLUE);
+            break;
+         case CYAN:
+            ansi.fg(Ansi.Color.CYAN);
+            break;
+         case GREEN:
+            ansi.fg(Ansi.Color.GREEN);
+            break;
+         case MAGENTA:
+            ansi.fg(Ansi.Color.MAGENTA);
+            break;
+         case RED:
+            ansi.fg(Ansi.Color.RED);
+            break;
+         case WHITE:
+            ansi.fg(Ansi.Color.WHITE);
+            break;
+         case YELLOW:
+            ansi.fg(Ansi.Color.YELLOW);
+            break;
+         case BOLD:
+            ansi.a(Ansi.Attribute.INTENSITY_BOLD);
+            break;
+         case ITALIC:
+            ansi.a(Ansi.Attribute.ITALIC);
+            ansi.a(Ansi.Attribute.INTENSITY_FAINT);
+            break;
 
-      default:
-         return output;
+         default:
+            return output;
       }
 
       return ansi.render(output).reset().toString();
@@ -965,14 +977,43 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    @Override
    public synchronized void write(final byte b)
    {
+      write(new byte[]{b});
+   }
+
+   @Override
+   public void write(byte[] b)
+   {
       try
       {
-         reader.print(new String(new byte[] { b }));
-         reader.flush();
+         reader.print(new String(b));
+         _flushBuffer();
       }
       catch (IOException e)
       {
          throw new RuntimeException(e);
+      }
+   }
+
+   @Override
+   public void write(byte[] b, int offset, int length)
+   {
+      try
+      {
+         reader.print(new String(b, offset, length));
+         _flushBuffer();
+      }
+      catch (IOException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
+
+   private void _flushBuffer() throws IOException
+   {
+      if (bufferingMode == BufferingMode.Direct)
+      {
+         reader.flush();
       }
    }
 
@@ -1226,6 +1267,38 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
             throw new RuntimeException("Failed to reset Terminal instance for ANSI configuration", e);
          }
       }
+   }
+
+   @Override
+   public void bufferingMode()
+   {
+      bufferingMode = BufferingMode.Buffering;
+   }
+
+   @Override
+   public void directWriteMode()
+   {
+      bufferingMode = BufferingMode.Direct;
+      flushBuffer();
+   }
+
+   @Override
+   public void flushBuffer()
+   {
+      try
+      {
+         reader.flush();
+      }
+      catch (IOException e)
+      {
+         throw new RuntimeException("failed to flush screen buffer", e);
+      }
+   }
+
+
+   private void initBuffer()
+   {
+      screenBuffer = new char[getHeight()][getWidth()];
    }
 
    private void configureOSTerminal() throws IOException

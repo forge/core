@@ -34,6 +34,10 @@ public interface ShellPrintWriter
     */
    public void write(byte b);
 
+   public void write(byte[] b);
+
+   public void write(byte[] b, int offset, int length);
+
    /**
     * Print output to the console.
     */
