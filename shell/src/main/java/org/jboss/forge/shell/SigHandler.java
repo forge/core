@@ -22,7 +22,6 @@
 package org.jboss.forge.shell;
 
 import java.io.IOException;
-
 import sun.misc.Signal;
 import sun.misc.SignalHandler;
 
@@ -35,26 +34,28 @@ public class SigHandler
 {
    public static void init(final ShellImpl shell)
    {
-      SignalHandler signalHandler = new SignalHandler()
+      SignalHandler interruptHandler = new SignalHandler()
       {
          @Override
          public void handle(final Signal signal)
          {
-            try
-            {
-               shell.getReader().println("^C");
-               shell.getReader().drawLine();
-               shell.getReader().resetPromptLine(shell.getReader().getPrompt(), "", -1);
-            }
-            catch (IOException e)
-            {
-               if (shell.isVerbose())
-                  e.printStackTrace();
-            }
+//            try
+//            {
+               shell.interrupt();
+//               shell.getReader().println("^C");
+//               shell.getReader().drawLine();
+//               shell.getReader().resetPromptLine(shell.getReader().getPrompt(), "", -1);
+//            }
+//            catch (IOException e)
+//            {
+//               if (shell.isVerbose())
+//                  e.printStackTrace();
+//            }
          }
       };
 
-      Signal.handle(new Signal("INT"), signalHandler);
+      Signal.handle(new Signal("INT"), interruptHandler);
+
    }
 
 }

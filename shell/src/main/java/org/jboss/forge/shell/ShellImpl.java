@@ -735,28 +735,65 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       print(new Ansi().cursorLeft(x).toString());
    }
 
+   private final Object executorLock = new Object();
+
+   private class ExecutorThread extends Thread
+   {
+      private String run;
+
+      private ExecutorThread(String run)
+      {
+         this.run = run;
+      }
+
+      @Override
+      public void run()
+      {
+         fshRuntime.run(run);
+      }
+   }
+
+   private volatile Thread executorThread;
+
+
    @Override
    public void execute(String line) throws Exception
    {
-      try
+
+      synchronized (executorLock)
       {
-         executing = true;
-         for (CommandInterceptor interceptor : commandInterceptors)
+
+
+         try
          {
-            line = interceptor.intercept(line);
+            executing = true;
+            for (CommandInterceptor interceptor : commandInterceptors)
+            {
+               line = interceptor.intercept(line);
+            }
+
+            executorThread  = new ExecutorThread(line);
+            executorThread.run();
+            executorThread.join();
+         }
+         catch (Exception e)
+         {
+            handleException(e);
+         }
+         finally
+         {
+            executing = false;
          }
 
-         if (line != null)
-            fshRuntime.run(line);
       }
-      catch (Exception e)
-      {
-         handleException(e);
-      }
-      finally
-      {
-         executing = false;
-      }
+   }
+
+   public void interrupt()
+   {
+     if (executorThread != null) {
+        executorThread.interrupt();
+        println("[killed]");
+     }
    }
 
    @Override
