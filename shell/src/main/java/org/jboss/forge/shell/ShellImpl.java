@@ -1131,6 +1131,12 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    }
 
    @Override
+   public int getAbsoluteHeight()
+   {
+      return reader.getTerminal().getHeight();
+   }
+
+   @Override
    public int getWidth()
    {
       return screenBuffer.getWidth();

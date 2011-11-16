@@ -237,7 +237,7 @@ public class MorePlugin implements Plugin
                   + topBottomIndicator + "]  ";
 
 
-         String bottomLineReset = new Ansi().cursor(shell.getHeight(), 0).toString();
+         String bottomLineReset = new Ansi().cursor(shell.getAbsoluteHeight(), 0).toString();
 
          shell.print(bottomLineReset);
          shell.print(attr(47, 30));

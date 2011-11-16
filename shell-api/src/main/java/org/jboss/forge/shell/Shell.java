@@ -198,6 +198,14 @@ public interface Shell extends ShellPrintWriter, ShellPrompt, ShellHistory
     */
    int getHeight();
 
+
+   /**
+    * Return the absolute height of the console. This may be different than getHeight() depending on how many lines are
+    * available in a display buffer.
+    * @return
+    */
+   int getAbsoluteHeight();
+
    /**
     * Return the current width, in characters, of the current shell console. (<strong>Warning:</strong> This may change
     * in the time between when the method is called and when the result is used. Be sure to call the method as close to
