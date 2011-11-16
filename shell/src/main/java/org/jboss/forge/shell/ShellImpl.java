@@ -507,16 +507,23 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          try
          {
             line = readLine();
-            screenBuffer.flushBuffer();
-
-            if (line != null)
+            try
             {
-               if (!"".equals(line.trim()))
+               bufferingMode();
+
+               if (line != null)
                {
-                  writeToHistory(line);
-                  execute(line);
+                  if (!"".equals(line.trim()))
+                  {
+                     writeToHistory(line);
+                     execute(line);
+                  }
+                  reader.setPrompt(getPrompt());
                }
-               reader.setPrompt(getPrompt());
+            }
+            finally
+            {
+               directWriteMode();
             }
          }
          catch (Exception e)

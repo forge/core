@@ -6,6 +6,7 @@ import org.fusesource.jansi.Ansi;
 import org.jboss.forge.shell.BufferManager;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 /**
  * @author Mike Brock
@@ -16,10 +17,16 @@ public class JLineScreenBuffer implements BufferManager
    private Terminal terminal;
    private boolean directWrite = true;
 
+   private int maxBufferSize = 1024 * 10;
+   private ByteBuffer buffer;
+   private int bufferSize = 0;
+
+
    public JLineScreenBuffer(ConsoleReader reader)
    {
       this.reader = reader;
       this.terminal = reader.getTerminal();
+      this.buffer = ByteBuffer.allocateDirect(maxBufferSize);
    }
 
    @Override
@@ -36,10 +43,27 @@ public class JLineScreenBuffer implements BufferManager
    }
 
    @Override
-   public void flushBuffer()
+   public synchronized void flushBuffer()
    {
       try
       {
+         byte[] buf = new byte[2048];
+         buffer.rewind();
+
+         do
+         {
+            int i = 0;
+            for (; i < buf.length && bufferSize > 0; i++)
+            {
+               bufferSize--;
+               buf[i] = buffer.get();
+            }
+            reader.print(new String(buf, 0, i));
+         }
+         while (bufferSize > 0);
+
+         bufferSize = 0;
+         buffer.clear();
          reader.flush();
       }
       catch (IOException e)
@@ -49,30 +73,42 @@ public class JLineScreenBuffer implements BufferManager
    }
 
    @Override
-   public void write(byte b)
+   public synchronized void write(byte b)
    {
+      if (bufferSize + 1 >= maxBufferSize) flushBuffer();
+
       write(new byte[]{b});
+      bufferSize++;
    }
 
    @Override
-   public void write(byte[] b)
+   public synchronized void write(byte[] b)
    {
+      if (bufferSize + b.length >= maxBufferSize) flushBuffer();
+
       write(b, 0, b.length);
+      bufferSize += b.length;
    }
 
    @Override
-   public void write(byte[] b, int offset, int length)
+   public synchronized void write(byte[] b, int offset, int length)
    {
+      if (bufferSize + length >= maxBufferSize) flushBuffer();
+
       write(new String(b, offset, length));
+      bufferSize += length;
    }
 
    @Override
-   public void write(String s)
+   public synchronized void write(String s)
    {
       try
       {
          reader.print(s);
-         if (directWrite) reader.flush();
+         if (directWrite)
+         {
+            reader.flush();
+         }
       }
       catch (IOException e)
       {
