@@ -509,6 +509,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
             line = readLine();
             try
             {
+               flushBuffer();
                bufferingMode();
 
                if (line != null)
