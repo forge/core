@@ -230,12 +230,15 @@ public class MorePlugin implements Plugin
          }
 
          String prompt = MOREPROMPT + "[line:" + lineBuffer.getCurrentLine()
-                  + topBottomIndicator + "]--";
+                  + topBottomIndicator + "]  ";
 
          String bottomLineReset = new Ansi().cursor(shell.getHeight(), 0).toString();
          
          out.print(bottomLineReset);
-         out.print(ShellColor.BOLD, prompt);
+      //   out.print(ShellColor.BOLD, prompt);
+         out.print(attr(47, 40, 1));
+         out.print(prompt);
+         out.print(attr(0));
          out.print(bottomLineReset);
 
          shell.flushBuffer();
@@ -588,5 +591,22 @@ public class MorePlugin implements Plugin
       {
          return bufferLine >= totalLines;
       }
+   }
+
+   private static String attr(int... code) {
+     return new String(new char[]{27, '['}) + _attr(code) + "m";
+   }
+
+   private static String _attr(int... code) {
+     StringBuilder b = new StringBuilder();
+     boolean first = true;
+     for (int c : code) {
+       if (!first) {
+         b.append(';');
+       }
+       first = false;
+       b.append(c);
+     }
+     return b.toString();
    }
 }
