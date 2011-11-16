@@ -56,6 +56,11 @@ public class MorePlugin implements Plugin
    private static final String PATTERN_NOT_FOUND = "-- Pattern not found: ";
    private static final String INVALID_COMMAND = "-- Invalid command: ";
 
+   private static final String SAVE_POS = new String(new char[]{27, '7'});
+   private static final String RES_POS = new String(new char[]{27, '8'});
+   private static final String HOME = new String(new char[]{27, '[', 'H'});
+   private static final String ERASE_TO_END = new String(new char[]{27, '[', 'K'});
+
    private final Shell shell;
 
    @Inject
@@ -141,7 +146,6 @@ public class MorePlugin implements Plugin
                      case '\n':
                         lineBuffer.seenLine();
                         lCounter = width;
-
                         ++y;
 
                      default:
@@ -151,6 +155,8 @@ public class MorePlugin implements Plugin
                            height = shell.getHeight() - 1;
 
                            shell.println();
+                           shell.print(ERASE_TO_END);
+
                            shell.flushBuffer();
 
                            switch (prompt(lineBuffer, out, lastPattern))
@@ -249,16 +255,14 @@ public class MorePlugin implements Plugin
             case 16:
                lineBuffer.rewindBuffer(shell.getHeight() - 1, lineBuffer.getCurrentLine() - 1);
                lineBuffer.setLineWidth(shell.getWidth());
-               // y = 0;
-               shell.clear();
+          //     shell.clear();
                return -1;
 
             case 'u':
             case 'U':
                lineBuffer.rewindBuffer(shell.getHeight() - 1, lineBuffer.getCurrentLine() - shell.getHeight());
                lineBuffer.setLineWidth(shell.getWidth());
-               // y = 0;
-               shell.clear();
+         //      shell.clear();
                return -1;
 
             case 'y':
@@ -269,16 +273,9 @@ public class MorePlugin implements Plugin
             case '\n':
                lineBuffer.setLineWidth(shell.getWidth());
 
-//               shell.cursorLeft(prompt.length());
-//               shell.clearLine();
-//               shell.flushBuffer();
                return -2;
             case ' ':
                lineBuffer.setLineWidth(shell.getWidth());
-
-//               shell.clearLine();
-//               shell.cursorLeft(prompt.length());
-//               shell.flushBuffer();
                return -3;
             case 'q':
             case 'Q':
