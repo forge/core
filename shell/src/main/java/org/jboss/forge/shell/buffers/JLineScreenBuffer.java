@@ -1,9 +1,9 @@
 package org.jboss.forge.shell.buffers;
 
-import jline.Terminal;
-import jline.console.ConsoleReader;
 import org.fusesource.jansi.Ansi;
 import org.jboss.forge.shell.BufferManager;
+import org.jboss.forge.shell.console.jline.Terminal;
+import org.jboss.forge.shell.console.jline.console.ConsoleReader;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

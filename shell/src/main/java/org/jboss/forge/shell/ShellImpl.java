@@ -44,14 +44,6 @@ import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
-import jline.Terminal;
-import jline.TerminalFactory;
-import jline.TerminalFactory.Type;
-import jline.console.ConsoleReader;
-import jline.console.completer.AggregateCompleter;
-import jline.console.completer.Completer;
-import jline.console.history.MemoryHistory;
-
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 import org.jboss.forge.ForgeEnvironment;
@@ -74,6 +66,12 @@ import org.jboss.forge.shell.command.fshparser.FSHRuntime;
 import org.jboss.forge.shell.completer.CompletedCommandHolder;
 import org.jboss.forge.shell.completer.OptionAwareCompletionHandler;
 import org.jboss.forge.shell.completer.PluginCommandCompleter;
+import org.jboss.forge.shell.console.jline.Terminal;
+import org.jboss.forge.shell.console.jline.TerminalFactory;
+import org.jboss.forge.shell.console.jline.console.ConsoleReader;
+import org.jboss.forge.shell.console.jline.console.completer.AggregateCompleter;
+import org.jboss.forge.shell.console.jline.console.completer.Completer;
+import org.jboss.forge.shell.console.jline.console.history.MemoryHistory;
 import org.jboss.forge.shell.events.AcceptUserInput;
 import org.jboss.forge.shell.events.PreShutdown;
 import org.jboss.forge.shell.events.Shutdown;
@@ -1237,7 +1235,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
             }
             else
             {
-               TerminalFactory.configure(Type.NONE);
+               TerminalFactory.configure(TerminalFactory.Type.NONE);
                TerminalFactory.reset();
             }
             initReaderAndStreams();
@@ -1287,17 +1285,17 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    {
       if (OSUtils.isLinux() || OSUtils.isOSX())
       {
-         TerminalFactory.configure(Type.UNIX);
+         TerminalFactory.configure(TerminalFactory.Type.UNIX);
          TerminalFactory.reset();
       }
       else if (OSUtils.isWindows())
       {
-         TerminalFactory.configure(Type.WINDOWS);
+         TerminalFactory.configure(TerminalFactory.Type.WINDOWS);
          TerminalFactory.reset();
       }
       else
       {
-         TerminalFactory.configure(Type.NONE);
+         TerminalFactory.configure(TerminalFactory.Type.NONE);
          TerminalFactory.reset();
       }
       initReaderAndStreams();
@@ -1309,11 +1307,11 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       {
          final OutputStream ansiOut = AnsiConsole.wrapOutputStream(outputStream);
 
-         TerminalFactory.configure(Type.WINDOWS);
+         TerminalFactory.configure(TerminalFactory.Type.WINDOWS);
          Terminal terminal = TerminalFactory.get();
          ConsoleReader consoleReader = new ConsoleReader(inputStream, new PrintWriter(
                   new OutputStreamWriter(ansiOut, System.getProperty(
-                           "jline.WindowsTerminal.output.encoding", System.getProperty("file.encoding")))),
+                           "WindowsTerminal.output.encoding", System.getProperty("file.encoding")))),
                   null, terminal);
          return consoleReader;
       }

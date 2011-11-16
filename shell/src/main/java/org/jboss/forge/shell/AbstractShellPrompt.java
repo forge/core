@@ -30,9 +30,6 @@ import java.util.Map.Entry;
 
 import javax.enterprise.inject.spi.BeanManager;
 
-import jline.console.completer.Completer;
-import jline.console.completer.FileNameCompleter;
-
 import org.jboss.forge.project.services.ResourceFactory;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.Resource;
@@ -40,6 +37,8 @@ import org.jboss.forge.shell.command.PromptTypeConverter;
 import org.jboss.forge.shell.completer.CommandCompleter;
 import org.jboss.forge.shell.completer.CompleterAdaptor;
 import org.jboss.forge.shell.completer.EnumCompleter;
+import org.jboss.forge.shell.console.jline.console.completer.Completer;
+import org.jboss.forge.shell.console.jline.console.completer.FileNameCompleter;
 import org.jboss.forge.shell.util.BeanManagerUtils;
 import org.jboss.forge.shell.util.Enums;
 import org.jboss.forge.shell.util.Files;
