@@ -3,7 +3,6 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.ejb.Stateful;
-import javax.ejb.TransactionAttribute;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
@@ -17,13 +16,13 @@ import javax.persistence.criteria.Root;
 import @{entity.getQualifiedName()};
 
 /**
- * Backing Bean for @{entity.getName()} entities.
+ * Backing bean for @{entity.getName()} entities.
  * <p>
  * This class provides CRUD functionality for all @{entity.getName()} entities.
- * It relies purely on Java EE standards (i.e. <tt>&#64;ConversationScoped</tt>
+ * It focuses purely on Java EE standards (e.g. <tt>&#64;ConversationScoped</tt>
  * for state management, <tt>PersistenceContext</tt> for persistence,
  * <tt>CriteriaBuilder</tt> for queries) rather than depending on a CRUD
- * framework.
+ * framework or a custom base class.
  */
  
 @Named
@@ -33,9 +32,9 @@ public class @{entity.getName()}Bean implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	//
-	// Support retrieving individual @{entity.getName()}s
-	//
+	/*
+	 * Support retrieving individual @{entity.getName()} entities
+	 */
 
 	private Long id;
 
@@ -52,7 +51,6 @@ public class @{entity.getName()}Bean implements Serializable {
 	@Inject
 	private Conversation conversation;
 
-	@ConversationScoped
 	@PersistenceContext
 	private EntityManager entityManager;
 
@@ -73,57 +71,54 @@ public class @{entity.getName()}Bean implements Serializable {
 		return @{ccEntity};
 	}
 
-	public String cancel() {
-		conversation.end();
-		return "list?faces-redirect=true";
-	}
+	/*
+	 * Support creating, saving and deleting @{entity.getName()} entities
+	 */
 
-	//
-	// Support creating, saving and deleting @{entity.getName()}s
-	//
-
-	@TransactionAttribute
 	public String create() {
 		entityManager.persist(@{ccEntity});
 		conversation.end();
 		return "view?faces-redirect=true&id=" + @{ccEntity}.getId();
 	}
 
-	@TransactionAttribute
 	public String update() {
 		entityManager.merge(@{ccEntity});
 		conversation.end();
 		return "view?faces-redirect=true&id=" + @{ccEntity}.getId();
 	}
 
-	@TransactionAttribute
 	public String delete() {
 		entityManager.remove(entityManager.find(@{entity.getName()}.class, getId()));
 		conversation.end();
 		return "list?faces-redirect=true";
 	}
 
-	//
-	// Support listing all @{entity.getName()}s
-	//
-
-	public List<@{entity.getName()}> get@{entity.getName()}s() {
-		return entityManager.createQuery(create@{entity.getName()}sQuery()).getResultList();
+	public String cancel() {
+		conversation.end();
+		return "list?faces-redirect=true";
 	}
 
-	private CriteriaQuery<@{entity.getName()}> create@{entity.getName()}sQuery() {
+	/*
+	 * Support listing all @{entity.getName()} entities
+	 */
+
+	public List<@{entity.getName()}> getAll() {
+		return entityManager.createQuery(createAll@{entity.getName()}Query()).getResultList();
+	}
+
+	private CriteriaQuery<@{entity.getName()}> createAll@{entity.getName()}Query() {
 		
 		CriteriaQuery<@{entity.getName()}> criteria = entityManager.getCriteriaBuilder()
 				.createQuery(@{entity.getName()}.class);
 		return criteria.select(criteria.from(@{entity.getName()}.class));
 	}
 	
-	//
-	// Support listing @{entity.getName()}s with pagination
-	//
+	/*
+	 * Support listing @{entity.getName()} entities with pagination
+	 */
 
 	private int page;
-	private int count;
+	private long count;
 	private List<@{entity.getName()}> pageItems;
 
 	public int getPage() {
@@ -142,13 +137,12 @@ public class @{entity.getName()}Bean implements Serializable {
 
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
-		CriteriaQuery<Number> countCriteria = builder.createQuery(Number.class);
+		CriteriaQuery<Long> countCriteria = builder.createQuery(Long.class);
 		Root<@{entity.getName()}> root = countCriteria.from(@{entity.getName()}.class);
 		countCriteria = countCriteria.select(builder.count(root));
-		count = entityManager.createQuery(countCriteria).getSingleResult()
-				.intValue();
+		count = entityManager.createQuery(countCriteria).getSingleResult();
 
-		pageItems = entityManager.createQuery(create@{entity.getName()}sQuery())
+		pageItems = entityManager.createQuery(createAll@{entity.getName()}Query())
 				.setFirstResult(page * getPageSize())
 				.setMaxResults(getPageSize()).getResultList();
 	}
@@ -157,7 +151,35 @@ public class @{entity.getName()}Bean implements Serializable {
 		return pageItems;
 	}
 
-	public int getCount() {
+	public long getCount() {
 		return count;
 	}
+	
+	/**
+	 * Support POSTing back @{entity.getName()} entities from the UI
+	 */
+
+	public Converter getConverter() {
+		
+		return new Converter() {
+			
+			@Override
+			public Object getAsObject(FacesContext context, UIComponent component,
+					String value) {
+		
+				return entityManager.find(@{entity.getName()}.class, Long.valueOf(value));
+			}
+		
+			@Override
+			public String getAsString(FacesContext context, UIComponent component,
+					Object value) {
+		
+				if (value == null) {
+					return "";
+				}
+		
+				return String.valueOf(((Employer) value).getId());
+			}
+		};
+	}	
 }

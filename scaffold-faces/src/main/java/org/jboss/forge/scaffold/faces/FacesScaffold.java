@@ -56,8 +56,10 @@ import org.jboss.forge.resources.Resource;
 import org.jboss.forge.scaffold.AccessStrategy;
 import org.jboss.forge.scaffold.ScaffoldProvider;
 import org.jboss.forge.scaffold.TemplateStrategy;
+import org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspector;
 import org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle.ForgePropertyStyle;
 import org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle.ForgePropertyStyleConfig;
+import org.jboss.forge.scaffold.faces.metawidget.widgetbuilder.ForgeWidgetBuilder;
 import org.jboss.forge.scaffold.util.ScaffoldUtil;
 import org.jboss.forge.shell.ShellPrompt;
 import org.jboss.forge.shell.plugins.Alias;
@@ -75,6 +77,7 @@ import org.metawidget.inspector.composite.CompositeInspector;
 import org.metawidget.inspector.composite.CompositeInspectorConfig;
 import org.metawidget.inspector.iface.Inspector;
 import org.metawidget.inspector.impl.BaseObjectInspectorConfig;
+import org.metawidget.inspector.java5.Java5Inspector;
 import org.metawidget.inspector.jpa.JpaInspector;
 import org.metawidget.inspector.jpa.JpaInspectorConfig;
 import org.metawidget.inspector.propertytype.PropertyTypeInspector;
@@ -84,7 +87,6 @@ import org.metawidget.statically.StaticWidget;
 import org.metawidget.statically.faces.StaticFacesUtils;
 import org.metawidget.statically.faces.component.html.StaticHtmlMetawidget;
 import org.metawidget.statically.faces.component.html.layout.HtmlTableLayout;
-import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlWidgetBuilder;
 import org.metawidget.statically.faces.component.html.widgetbuilder.ReadOnlyWidgetBuilder;
 import org.metawidget.statically.faces.component.html.widgetbuilder.richfaces.RichFacesWidgetBuilder;
 import org.metawidget.statically.layout.SimpleLayout;
@@ -170,6 +172,13 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       compiler.getTemplateResolverFactory().addResolver(this.resolver);
 
       this.metawidget = new StaticHtmlMetawidget();
+
+      @SuppressWarnings("unchecked")
+      CompositeWidgetBuilder<StaticWidget, StaticMetawidget> compositeWidgetBuider = new CompositeWidgetBuilder<StaticWidget, StaticMetawidget>(
+               new CompositeWidgetBuilderConfig<StaticWidget, StaticMetawidget>().setWidgetBuilders(
+                        new ReadOnlyWidgetBuilder(), new ForgeWidgetBuilder()));
+
+      this.metawidget.setWidgetBuilder(compositeWidgetBuider);
    }
 
    /**
@@ -187,6 +196,10 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       Inspector inspector = new CompositeInspector(new CompositeInspectorConfig()
                .setInspectors(
                         new PropertyTypeInspector(new BaseObjectInspectorConfig()
+                                 .setPropertyStyle(forgePropertyStyle)),
+                        new Java5Inspector(new BaseObjectInspectorConfig()
+                                 .setPropertyStyle(forgePropertyStyle)),
+                        new ForgeInspector(new BaseObjectInspectorConfig()
                                  .setPropertyStyle(forgePropertyStyle)),
                         new JpaInspector(new JpaInspectorConfig()
                                  .setPropertyStyle(forgePropertyStyle))));
@@ -300,7 +313,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
          CompositeWidgetBuilder<StaticWidget, StaticMetawidget> compositeWidgetBuider = new CompositeWidgetBuilder<StaticWidget, StaticMetawidget>(
                   new CompositeWidgetBuilderConfig<StaticWidget, StaticMetawidget>().setWidgetBuilders(
                            new ReadOnlyWidgetBuilder(),
-                           new RichFacesWidgetBuilder(), new HtmlWidgetBuilder()));
+                           new RichFacesWidgetBuilder(), new ForgeWidgetBuilder()));
          this.metawidget.setWidgetBuilder(compositeWidgetBuider);
       }
    }
@@ -360,9 +373,9 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
                   this.viewTemplate.render(context), overwrite));
 
          // Generate list view
-         this.metawidget.setValueExpression("value", "#{entity}");
+         this.metawidget.setValueExpression("value", StaticFacesUtils.wrapExpression(beanName + ".pageItems"));
+         this.metawidget.setPath(viewBean.getQualifiedName() + "/pageItems");
          this.metawidget.setLayout(new SimpleLayout());
-         this.metawidget.setStyle("margin-right: 0.5em");
          writeMetawidget(context, this.listTemplateMetawidgetIndent, this.listTemplateNamespaces);
 
          result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("scaffold/" + type + "/list.xhtml"),
