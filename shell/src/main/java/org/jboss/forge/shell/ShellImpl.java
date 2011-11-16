@@ -507,25 +507,25 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          try
          {
             line = readLine();
-            try
-            {
-               flushBuffer();
-               bufferingMode();
+//            try
+//            {
+            flushBuffer();
+            //      bufferingMode();
 
-               if (line != null)
-               {
-                  if (!"".equals(line.trim()))
-                  {
-                     writeToHistory(line);
-                     execute(line);
-                  }
-                  reader.setPrompt(getPrompt());
-               }
-            }
-            finally
+            if (line != null)
             {
-               directWriteMode();
+               if (!"".equals(line.trim()))
+               {
+                  writeToHistory(line);
+                  execute(line);
+               }
+               reader.setPrompt(getPrompt());
             }
+//            }
+//            finally
+//            {
+//               directWriteMode();
+//            }
          }
          catch (Exception e)
          {
@@ -1159,7 +1159,10 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          }
          reader.setHistoryEnabled(false);
          reader.setPrompt(message);
-         return readLine();
+         flushBuffer();
+         String read = readLine();
+         flushBuffer();
+         return read;
       }
       catch (IOException e)
       {
@@ -1191,7 +1194,9 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          reader.removeCompleter(this.completer);
          reader.setHistoryEnabled(false);
          reader.setPrompt(message);
+         flushBuffer();
          String line = readLine('*');
+         flushBuffer();
          return line;
       }
       catch (IOException e)

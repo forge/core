@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
+ * A buffer to wrap JLine.
+ *
  * @author Mike Brock
  */
 public class JLineScreenBuffer implements BufferManager
@@ -36,7 +38,7 @@ public class JLineScreenBuffer implements BufferManager
    }
 
    @Override
-   public void directWriteMode()
+   public synchronized void directWriteMode()
    {
       directWrite = true;
       flushBuffer();
@@ -55,8 +57,8 @@ public class JLineScreenBuffer implements BufferManager
             int i = 0;
             for (; i < buf.length && bufferSize > 0; i++)
             {
-               bufferSize--;
                buf[i] = buffer.get();
+               bufferSize--;
             }
             reader.print(new String(buf, 0, i));
          }
@@ -75,40 +77,103 @@ public class JLineScreenBuffer implements BufferManager
    @Override
    public synchronized void write(byte b)
    {
-      if (bufferSize + 1 >= maxBufferSize) flushBuffer();
 
-      write(new byte[]{b});
+      if (bufferSize + 1 >= maxBufferSize)
+      {
+         flushBuffer();
+      }
+
+      buffer.put(new byte[]{b});
       bufferSize++;
+      _flush();
    }
 
    @Override
    public synchronized void write(byte[] b)
    {
-      if (bufferSize + b.length >= maxBufferSize) flushBuffer();
+      if (bufferSize + b.length >= maxBufferSize)
+      {
+         flushBuffer();
+         write(b);
+      }
 
-      write(b, 0, b.length);
+      buffer.put(b, 0, b.length);
       bufferSize += b.length;
+      _flush();
    }
 
    @Override
    public synchronized void write(byte[] b, int offset, int length)
    {
-      if (bufferSize + length >= maxBufferSize) flushBuffer();
+      if (bufferSize + length >= maxBufferSize)
+      {
+         flushBuffer();
+         write(b, offset, length);
+      }
 
-      write(new String(b, offset, length));
+      buffer.put(b, offset, length);
       bufferSize += length;
+      _flush();
    }
 
    @Override
    public synchronized void write(String s)
    {
+      if (bufferSize + s.length() >= maxBufferSize)
+      {
+         flushBuffer();
+         write(s);
+      }
+
+      buffer.put(s.getBytes());
+      bufferSize += s.length();
+      _flush();
+   }
+
+   /**
+    * For data that exceeds the maximum size of the buffer, write out the data in segments.
+    *
+    * @param b
+    * @param offset
+    * @param length
+    */
+   private void segmentedWrite(byte[] b, int offset, int length)
+   {
+      if (b.length > maxBufferSize)
+      {
+
+         int segs = b.length / maxBufferSize;
+         int tail = b.length % maxBufferSize;
+         for (int i = 0; i < segs; i++)
+         {
+            write(b, (i + offset) * maxBufferSize, maxBufferSize);
+         }
+         write(b, (segs + 1) * maxBufferSize, tail);
+      }
+      else
+      {
+         write(b, offset, length);
+      }
+   }
+
+   public static void main(String[] args)
+   {
+      System.out.println(400 / 300);
+      System.out.println(400 % 300);
+   }
+
+   private void _flush()
+   {
+      if (directWrite) flushBuffer();
+   }
+
+   @Override
+   public void directWrite(String s)
+   {
       try
       {
          reader.print(s);
-         if (directWrite)
-         {
-            reader.flush();
-         }
+         reader.flush();
       }
       catch (IOException e)
       {

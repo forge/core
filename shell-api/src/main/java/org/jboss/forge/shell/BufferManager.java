@@ -43,6 +43,8 @@ public interface BufferManager
    public void write(byte[] b, int offset, int length);
    
    public void write(String s);
+   
+   public void directWrite(String s);
 
    /**
     * Set buffer position.
