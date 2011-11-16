@@ -40,6 +40,9 @@ import org.jboss.forge.shell.plugins.PipeIn;
 import org.jboss.forge.shell.plugins.PipeOut;
 import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.Topic;
+import org.jboss.forge.shell.util.GeneralUtils;
+
+import static org.jboss.forge.shell.util.GeneralUtils.pad;
 
 /**
  * Implementation of more & less, but called more. "More is less".
@@ -50,7 +53,7 @@ import org.jboss.forge.shell.plugins.Topic;
 @Topic("Shell Environment")
 public class MorePlugin implements Plugin
 {
-   private static final String MOREPROMPT = "--[SPACE:PageDn U:PageUp ENT:LineDn J:LineUp Q:Quit]--";
+   private static final String MOREPROMPT = "[SPACE:PageDn U:PageUp ENT:LineDn J:LineUp Q:Quit]  ";
    private static final String SEARCH_FORWARD_PROMPT = "Search-Foward: ";
    private static final String SEARCH_BACKWARDS_PROMPT = "Search-Backwards: ";
    private static final String PATTERN_NOT_FOUND = "-- Pattern not found: ";
@@ -208,6 +211,7 @@ public class MorePlugin implements Plugin
       }
    }
 
+
    private int prompt(final LineBuffer lineBuffer, final PipeOut out, final StringBuilder lastPattern)
             throws IOException
    {
@@ -232,14 +236,16 @@ public class MorePlugin implements Plugin
          String prompt = MOREPROMPT + "[line:" + lineBuffer.getCurrentLine()
                   + topBottomIndicator + "]  ";
 
+
          String bottomLineReset = new Ansi().cursor(shell.getHeight(), 0).toString();
-         
-         out.print(bottomLineReset);
-      //   out.print(ShellColor.BOLD, prompt);
-         out.print(attr(47, 40, 1));
-         out.print(prompt);
-         out.print(attr(0));
-         out.print(bottomLineReset);
+
+         shell.print(bottomLineReset);
+         shell.print(attr(47, 30));
+         shell.print(prompt);
+         shell.print(pad(shell.getWidth() - prompt.length()));
+         shell.print(attr(0));
+         shell.print(bottomLineReset);
+         shell.print(attr(0));
 
          shell.flushBuffer();
 
@@ -256,14 +262,12 @@ public class MorePlugin implements Plugin
             case 16:
                lineBuffer.rewindBuffer(shell.getHeight() - 1, lineBuffer.getCurrentLine() - 1);
                lineBuffer.setLineWidth(shell.getWidth());
-          //     shell.clear();
                return -1;
 
             case 'u':
             case 'U':
                lineBuffer.rewindBuffer(shell.getHeight() - 1, lineBuffer.getCurrentLine() - shell.getHeight());
                lineBuffer.setLineWidth(shell.getWidth());
-         //      shell.clear();
                return -1;
 
             case 'y':
