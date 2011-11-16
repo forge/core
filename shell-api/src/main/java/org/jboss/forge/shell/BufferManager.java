@@ -22,6 +22,8 @@ public interface BufferManager
     */
    public void flushBuffer();
 
+   public void write(int b);
+
    /**
     * Write a single byte to the buffer.
     * @param b

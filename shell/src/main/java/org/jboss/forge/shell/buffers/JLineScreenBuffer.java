@@ -6,6 +6,8 @@ import org.jboss.forge.shell.console.jline.Terminal;
 import org.jboss.forge.shell.console.jline.console.ConsoleReader;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
 import java.nio.ByteBuffer;
 
 /**
@@ -15,7 +17,8 @@ import java.nio.ByteBuffer;
  */
 public class JLineScreenBuffer implements BufferManager
 {
-   private ConsoleReader reader;
+ //
+   private OutputStream outputStream;
    private Terminal terminal;
    private boolean directWrite = true;
 
@@ -24,10 +27,10 @@ public class JLineScreenBuffer implements BufferManager
    private int bufferSize = 0;
 
 
-   public JLineScreenBuffer(ConsoleReader reader)
+   public JLineScreenBuffer(Terminal terminal, OutputStream outputStream)
    {
-      this.reader = reader;
-      this.terminal = reader.getTerminal();
+      this.terminal = terminal;
+      this.outputStream = outputStream;
       this.buffer = ByteBuffer.allocateDirect(maxBufferSize);
    }
 
@@ -60,18 +63,33 @@ public class JLineScreenBuffer implements BufferManager
                buf[i] = buffer.get();
                bufferSize--;
             }
-            reader.print(new String(buf, 0, i));
+
+            outputStream.write(buf, 0, i);
          }
          while (bufferSize > 0);
 
          bufferSize = 0;
          buffer.clear();
-         reader.flush();
+         outputStream.flush();
       }
       catch (IOException e)
       {
          throw new RuntimeException("could not flush", e);
       }
+   }
+
+   @Override
+   public synchronized void write(int b)
+   {
+
+      if (bufferSize + 1 >= maxBufferSize)
+      {
+         flushBuffer();
+      }
+
+      buffer.put((byte) b);
+      bufferSize++;
+      _flush();
    }
 
    @Override
@@ -83,7 +101,7 @@ public class JLineScreenBuffer implements BufferManager
          flushBuffer();
       }
 
-      buffer.put(new byte[]{b});
+      buffer.put(b);
       bufferSize++;
       _flush();
    }
@@ -172,8 +190,8 @@ public class JLineScreenBuffer implements BufferManager
    {
       try
       {
-         reader.print(s);
-         reader.flush();
+         outputStream.write(s.getBytes());
+         outputStream.flush();
       }
       catch (IOException e)
       {
@@ -183,14 +201,14 @@ public class JLineScreenBuffer implements BufferManager
 
    public void setBufferPosition(int row, int col)
    {
-      try
-      {
-         reader.print(new Ansi().cursor(row, col).toString());
-      }
-      catch (IOException e)
-      {
-         throw new RuntimeException("could not set buffer position", e);
-      }
+//      try
+//      {
+//         reader.print(new Ansi().cursor(row, col).toString());
+//      }
+//      catch (IOException e)
+//      {
+//         throw new RuntimeException("could not set buffer position", e);
+//      }
    }
 
    @Override

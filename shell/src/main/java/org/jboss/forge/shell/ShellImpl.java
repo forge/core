@@ -24,15 +24,7 @@ package org.jboss.forge.shell;
 
 import static org.mvel2.DataConversion.addConversionHandler;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -444,6 +436,8 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
 
    private void initReaderAndStreams() throws IOException
    {
+
+
       if (inputStream == null)
       {
          inputStream = System.in;
@@ -452,24 +446,44 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       {
          outputStream = System.out;
       }
+
+      Terminal terminal;
       if (Boolean.getBoolean("forge.compatibility.IDE"))
       {
-         this.reader = new ConsoleReader(inputStream, new OutputStreamWriter(outputStream), null, new IdeTerminal());
+         terminal = new IdeTerminal();
       }
       else if (OSUtils.isWindows())
       {
-         this.reader = setupReaderForWindows(inputStream, outputStream);
+         final OutputStream ansiOut = AnsiConsole.wrapOutputStream(outputStream);
+         final OutputStreamWriter writer = new OutputStreamWriter(ansiOut, System.getProperty(
+                  "WindowsTerminal.output.encoding", System.getProperty("file.encoding")));
+
+         outputStream = new OutputStream()
+         {
+            @Override
+            public void write(int b) throws IOException
+            {
+               writer.write(b);
+            }
+         };
+
+         TerminalFactory.configure(TerminalFactory.Type.WINDOWS);
+         terminal = TerminalFactory.get();
       }
       else
-         this.reader = new ConsoleReader(inputStream, new OutputStreamWriter(outputStream));
+      {
+         terminal = TerminalFactory.get();
+      }
+
+      this.screenBuffer = new JLineScreenBuffer(terminal, outputStream);
+      this.reader = new ConsoleReader(inputStream, screenBuffer, null, terminal);
       this.reader.setHistoryEnabled(true);
       this.reader.setBellEnabled(false);
+
       for (TriggeredAction action : triggeredActions)
       {
          this.reader.addTriggeredAction(action.getTrigger(), action.getListener());
       }
-
-      initBuffer();
    }
 
    private void initParameters()
@@ -650,6 +664,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          line = reader.readLine();
       }
 
+      write((byte) '\n');
       flushBuffer();
 
       if (isExecuting() && (line == null))
@@ -1276,10 +1291,10 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       return screenBuffer;
    }
 
-   private void initBuffer()
-   {
-      screenBuffer = new JLineScreenBuffer(reader);
-   }
+//   private void initBuffer()
+//   {
+//      screenBuffer = new JLineScreenBuffer(reader.getTerminal(), );
+//   }
 
    private void configureOSTerminal() throws IOException
    {
@@ -1299,26 +1314,6 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          TerminalFactory.reset();
       }
       initReaderAndStreams();
-   }
-
-   private ConsoleReader setupReaderForWindows(final InputStream inputStream, final OutputStream outputStream)
-   {
-      try
-      {
-         final OutputStream ansiOut = AnsiConsole.wrapOutputStream(outputStream);
-
-         TerminalFactory.configure(TerminalFactory.Type.WINDOWS);
-         Terminal terminal = TerminalFactory.get();
-         ConsoleReader consoleReader = new ConsoleReader(inputStream, new PrintWriter(
-                  new OutputStreamWriter(ansiOut, System.getProperty(
-                           "WindowsTerminal.output.encoding", System.getProperty("file.encoding")))),
-                  null, terminal);
-         return consoleReader;
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException(e);
-      }
    }
 
    @Override
