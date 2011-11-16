@@ -507,10 +507,6 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          try
          {
             line = readLine();
-//            try
-//            {
-            flushBuffer();
-            //      bufferingMode();
 
             if (line != null)
             {
@@ -518,14 +514,11 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
                {
                   writeToHistory(line);
                   execute(line);
+                  flushBuffer();
                }
                reader.setPrompt(getPrompt());
             }
-//            }
-//            finally
-//            {
-//               directWriteMode();
-//            }
+
          }
          catch (Exception e)
          {
@@ -658,6 +651,8 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       {
          line = reader.readLine();
       }
+
+      flushBuffer();
 
       if (isExecuting() && (line == null))
       {

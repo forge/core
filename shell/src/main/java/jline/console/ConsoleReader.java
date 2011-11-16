@@ -1305,7 +1305,6 @@ public class ConsoleReader
             }
 
             int c = next[0];
-            // int code = next[1];
             Operation code = Operation.valueOf(next[1]);
 
             if (c == -1)
@@ -1435,8 +1434,8 @@ public class ConsoleReader
 
                case NEWLINE: // enter
                   moveToEnd();
-                  println(); // output newline
-                  flush();
+               //   println(); // output newline
+                //  flush();
                   return finishBuffer();
 
                case DELETE_PREV_CHAR: // backspace
