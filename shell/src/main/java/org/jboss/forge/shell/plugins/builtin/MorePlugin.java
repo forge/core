@@ -157,8 +157,6 @@ public class MorePlugin implements Plugin
                            shell.println();
                            shell.print(ERASE_TO_END);
 
-                           shell.flushBuffer();
-
                            switch (prompt(lineBuffer, out, lastPattern))
                            {
                               case -1:
