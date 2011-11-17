@@ -22,25 +22,17 @@
 
 package org.jboss.forge.shell.plugins.builtin;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.regex.Pattern;
-
-import javax.inject.Inject;
-
 import org.fusesource.jansi.Ansi;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.ShellColor;
-import org.jboss.forge.shell.plugins.Alias;
-import org.jboss.forge.shell.plugins.DefaultCommand;
-import org.jboss.forge.shell.plugins.Option;
-import org.jboss.forge.shell.plugins.PipeIn;
-import org.jboss.forge.shell.plugins.PipeOut;
-import org.jboss.forge.shell.plugins.Plugin;
-import org.jboss.forge.shell.plugins.Topic;
-import org.jboss.forge.shell.util.GeneralUtils;
+import org.jboss.forge.shell.plugins.*;
+
+import javax.inject.Inject;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import static org.jboss.forge.shell.util.GeneralUtils.pad;
 
@@ -356,7 +348,15 @@ public class MorePlugin implements Plugin
                   return -1;
                }
                break;
-
+            
+            case 'a':
+            case 'A':
+               shell.print(bottomLineReset);
+               shell.print(ShellColor.BOLD, "Less&More for JBoss Forge by Mike Brock. Copyright (c) 2011 Red Hat [Press a Key]");
+               shell.flushBuffer();
+               shell.scan();
+               break;
+               
             default:
                shell.clearLine();
                shell.cursorLeft(prompt.length());
@@ -432,7 +432,6 @@ public class MorePlugin implements Plugin
             int totalBytes = 0;
             while ((read = stream.read(buffer)) != -1)
             {
-
                for (int i = 0; i < read; i++)
                {
                   if ((c = buffer[i]) != -1)

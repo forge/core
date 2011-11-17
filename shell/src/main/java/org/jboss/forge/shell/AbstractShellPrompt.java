@@ -82,7 +82,7 @@ public abstract class AbstractShellPrompt implements Shell
       StringBuilder buf = new StringBuilder();
       while (((c = scan()) != '\n') && (c != '\r'))
       {
-         if (c == 127)
+         if (c == 127 || c == 8)
          {
             if (buf.length() > 0)
             {
@@ -90,6 +90,7 @@ public abstract class AbstractShellPrompt implements Shell
                cursorLeft(1);
                print(" ");
                cursorLeft(1);
+               flushBuffer();
             }
             continue;
          }
