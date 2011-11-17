@@ -17,6 +17,7 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionListener;
 import java.io.*;
+import java.nio.channels.SelectableChannel;
 import java.util.*;
 
 /**

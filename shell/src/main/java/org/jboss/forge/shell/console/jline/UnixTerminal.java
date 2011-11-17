@@ -7,6 +7,8 @@
 
 package org.jboss.forge.shell.console.jline;
 
+import org.jboss.forge.shell.console.jline.console.Key;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -117,7 +119,7 @@ public class UnixTerminal
     public int readVirtualKey(final InputStream in) throws IOException {
         int c = readCharacter(in);
 
-        if (org.jboss.forge.shell.console.jline.console.Key.valueOf(c) == org.jboss.forge.shell.console.jline.console.Key.DELETE && settings.getProperty("erase") == org.jboss.forge.shell.console.jline.console.Key.DELETE.code) {
+        if (Key.valueOf(c) == Key.DELETE && settings.getProperty("erase") == Key.DELETE.code) {
             c = org.jboss.forge.shell.console.jline.console.Key.BACKSPACE.code;
         }
 
