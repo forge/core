@@ -75,6 +75,8 @@ import org.jboss.forge.shell.exceptions.CommandExecutionException;
 import org.jboss.forge.shell.exceptions.CommandParserException;
 import org.jboss.forge.shell.exceptions.PluginExecutionException;
 import org.jboss.forge.shell.exceptions.ShellExecutionException;
+import org.jboss.forge.shell.integration.BufferManager;
+import org.jboss.forge.shell.integration.KeyListener;
 import org.jboss.forge.shell.plugins.builtin.Echo;
 import org.jboss.forge.shell.project.CurrentProject;
 import org.jboss.forge.shell.spi.CommandInterceptor;
@@ -1422,7 +1424,13 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       return screenBuffer;
    }
 
-//   private void initBuffer()
+   @Override
+   public void registerKeyListener(KeyListener keyListener)
+   {
+      reader.registerKeyListener(keyListener);
+   }
+
+   //   private void initBuffer()
 //   {
 //      screenBuffer = new JLineScreenBuffer(reader.getTerminal(), );
 //   }

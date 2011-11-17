@@ -1,13 +1,10 @@
 package org.jboss.forge.shell.buffers;
 
-import org.fusesource.jansi.Ansi;
-import org.jboss.forge.shell.BufferManager;
+import org.jboss.forge.shell.integration.BufferManager;
 import org.jboss.forge.shell.console.jline.Terminal;
-import org.jboss.forge.shell.console.jline.console.ConsoleReader;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.Writer;
 import java.nio.ByteBuffer;
 
 /**

@@ -8,8 +8,9 @@
 package org.jboss.forge.shell.console.jline.console;
 
 import org.fusesource.jansi.AnsiOutputStream;
-import org.jboss.forge.shell.BufferManager;
+import org.jboss.forge.shell.integration.BufferManager;
 import org.jboss.forge.shell.Shell;
+import org.jboss.forge.shell.integration.KeyListener;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -18,7 +19,6 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionListener;
 import java.io.*;
-import java.nio.channels.SelectableChannel;
 import java.util.*;
 
 /**
@@ -72,6 +72,8 @@ public class ConsoleReader
 
    private int searchIndex = -1;
 
+   private List<KeyListener> keyListeners = new ArrayList<KeyListener>();
+
    public ConsoleReader(final InputStream in, final Shell shell, final InputStream bindings, final org.jboss.forge.shell.console.jline.Terminal term) throws
             IOException
    {
@@ -97,6 +99,12 @@ public class ConsoleReader
    void setInput(final InputStream in)
    {
       this.in = in;
+   }
+
+
+   public void registerKeyListener(KeyListener keyListener)
+   {
+      keyListeners.add(keyListener);
    }
 
    public InputStream getInput()
@@ -882,7 +890,8 @@ public class ConsoleReader
          }
 
          char chars[] = new char[len];
-         Arrays.fill(chars, (char) BACKSPACE);;
+         Arrays.fill(chars, (char) BACKSPACE);
+         ;
          shell.print(new String(chars));
 
          return;
@@ -1168,6 +1177,14 @@ public class ConsoleReader
    {
       int c = readVirtualKey();
 
+      for (KeyListener listener : keyListeners)
+      {
+         if (listener.keyPress(c))
+         {
+            return null;
+         }
+      }
+
       if (c == -1)
       {
          return null;
@@ -1268,6 +1285,8 @@ public class ConsoleReader
             }
 
             int c = next[0];
+
+
             // int code = next[1];
             org.jboss.forge.shell.console.jline.console.Operation code = org.jboss.forge.shell.console.jline.console.Operation.valueOf(next[1]);
 
@@ -1363,6 +1382,8 @@ public class ConsoleReader
 
             if (state == NORMAL)
             {
+
+
                switch (code)
                {
                   case EXIT: // ctrl-d
@@ -1398,8 +1419,8 @@ public class ConsoleReader
 
                   case NEWLINE: // enter
                      moveToEnd();
-                   //  println(); // output newline
-                    // flush();
+                     //  println(); // output newline
+                     // flush();
                      return finishBuffer();
 
                   case DELETE_PREV_CHAR: // backspace
@@ -2309,8 +2330,8 @@ public class ConsoleReader
       return !Character.isLetterOrDigit(c);
    }
 
-   private static final String ESCAPE_STR = new String(new char[] { 27, '['});
-   
+   private static final String ESCAPE_STR = new String(new char[]{27, '['});
+
    private void printAnsiSequence(String sequence) throws IOException
    {
       print(ESCAPE_STR + sequence);

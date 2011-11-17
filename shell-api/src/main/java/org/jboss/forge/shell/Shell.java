@@ -31,6 +31,8 @@ import org.jboss.forge.ForgeEnvironment;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.Resource;
+import org.jboss.forge.shell.integration.BufferManager;
+import org.jboss.forge.shell.integration.KeyListener;
 import org.jboss.forge.shell.plugins.RequiresResource;
 
 /**
@@ -252,6 +254,8 @@ public interface Shell extends ShellPrintWriter, ShellPrompt, ShellHistory
     * @return
     */
    BufferManager getBufferManager();
+   
+   void registerKeyListener(KeyListener keyListener);
 
    /**
     * Place the shell output into buffering mode. Do not automatically render changes to the screen unless changed

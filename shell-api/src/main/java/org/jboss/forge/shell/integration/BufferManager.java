@@ -1,4 +1,4 @@
-package org.jboss.forge.shell;
+package org.jboss.forge.shell.integration;
 
 /**
  * A BufferManager is responsible for managing a shell buffer in Forge.
