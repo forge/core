@@ -67,4 +67,9 @@ public interface ShellPrintWriter
     * Render a color for the current terminal emulation by encapsulating the string is the appropriate escape codes
     */
    public String renderColor(ShellColor color, String output);
+
+   /**
+    * Flush output.
+    */
+   public void flush();
 }

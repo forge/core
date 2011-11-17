@@ -239,7 +239,7 @@ public class MorePlugin implements Plugin
          shell.print(bottomLineReset);
          shell.print(attr(0));
 
-         shell.flushBuffer();
+         shell.flush();
 
          int scanCode = shell.scan();
          
@@ -278,7 +278,7 @@ public class MorePlugin implements Plugin
             case 'Q':
                shell.clearLine();
                shell.cursorLeft(prompt.length());
-               shell.flushBuffer();
+               shell.flush();
                return 0;
 
             case '?':
@@ -296,7 +296,7 @@ public class MorePlugin implements Plugin
                }
 
                out.print(ShellColor.BOLD, prompt);
-               shell.flushBuffer();
+               shell.flush();
 
                pattern = shell.promptAndSwallowCR().trim();
 
@@ -308,7 +308,7 @@ public class MorePlugin implements Plugin
                prompt += "Scanning buffer...";
                out.print(ShellColor.BOLD, prompt);
 
-               shell.flushBuffer();
+               shell.flush();
 
                String p;
                if (pattern.equals("") && (lastPattern.length() != 0))
@@ -332,19 +332,19 @@ public class MorePlugin implements Plugin
                   shell.clearLine();
                   shell.cursorLeft(prompt.length());
                   shell.print(ShellColor.RED, PATTERN_NOT_FOUND + searched);
-                  shell.flushBuffer();
+                  shell.flush();
 
                   shell.scan();
                   shell.clearLine();
                   shell.cursorLeft(PATTERN_NOT_FOUND.length() + searched.length());
-                  shell.flushBuffer();
+                  shell.flush();
                }
                else
                {
                   lineBuffer.rewindBuffer(shell.getHeight() - 1, result);
                   // y = 0;
                   shell.clear();
-                  shell.flushBuffer();
+                  shell.flush();
                   return -1;
                }
                break;
@@ -353,7 +353,7 @@ public class MorePlugin implements Plugin
             case 'A':
                shell.print(bottomLineReset);
                shell.print(ShellColor.BOLD, "Less&More for JBoss Forge by Mike Brock. Copyright (c) 2011 Red Hat [Press a Key]");
-               shell.flushBuffer();
+               shell.flush();
                shell.scan();
                break;
                

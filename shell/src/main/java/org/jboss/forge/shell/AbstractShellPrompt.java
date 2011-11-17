@@ -90,14 +90,14 @@ public abstract class AbstractShellPrompt implements Shell
                cursorLeft(1);
                print(" ");
                cursorLeft(1);
-               flushBuffer();
+               flush();
             }
             continue;
          }
 
          write((byte) c);
          buf.append((char) c);
-         flushBuffer();
+         flush();
       }
       return buf.toString();
    }

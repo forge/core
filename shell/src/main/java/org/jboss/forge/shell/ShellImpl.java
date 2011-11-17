@@ -26,7 +26,6 @@ import static org.mvel2.DataConversion.addConversionHandler;
 
 import java.io.*;
 import java.net.URL;
-import java.nio.channels.Channels;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -536,7 +535,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
                {
                   writeToHistory(line);
                   execute(line);
-                  flushBuffer();
+                  flush();
                }
                reader.setPrompt(getPrompt());
             }
@@ -678,7 +677,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       {
          write((byte) '\n');
       }
-      flushBuffer();
+      flush();
 
 
       return line;
@@ -1277,7 +1276,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
             }
             reader.setHistoryEnabled(false);
             reader.setPrompt(message);
-            flushBuffer();
+            flush();
 
             Callable<String> call = new Callable<String>()
             {
@@ -1298,7 +1297,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
                throw new AbortedException();
             }
 
-            flushBuffer();
+            flush();
             return thread.getValue();
          }
          catch (InterruptedException e)
@@ -1334,9 +1333,9 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          reader.removeCompleter(this.completer);
          reader.setHistoryEnabled(false);
          reader.setPrompt(message);
-         flushBuffer();
+         flush();
          String line = readLine('*');
-         flushBuffer();
+         flush();
          return line;
       }
       catch (IOException e)
@@ -1401,7 +1400,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    }
 
    @Override
-   public void flushBuffer()
+   public void flush()
    {
       screenBuffer.flushBuffer();
    }

@@ -153,4 +153,10 @@ public class PipeOutImpl implements PipeOut
    {
       return buffer.toString();
    }
+
+   @Override
+   public void flush()
+   {
+      shell.flush();
+   }
 }

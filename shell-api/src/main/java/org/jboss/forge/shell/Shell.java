@@ -255,7 +255,7 @@ public interface Shell extends ShellPrintWriter, ShellPrompt, ShellHistory
 
    /**
     * Place the shell output into buffering mode. Do not automatically render changes to the screen unless changed
-    * back to {@link #directWriteMode()} or by calling {@link #flushBuffer()}
+    * back to {@link #directWriteMode()} or by calling {@link #flush()}
     */
    void bufferingMode();
 
@@ -263,12 +263,6 @@ public interface Shell extends ShellPrintWriter, ShellPrompt, ShellHistory
     * Place the shell output in direct-write mode. All data printed to buffer will be immediately rendered.
     */
    void directWriteMode();
-
-   /**
-    * Flush any changes from the buffer to the screen.
-    */
-   void flushBuffer();
-
    /**
     * Get the current Forge environment.
     */

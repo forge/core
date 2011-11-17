@@ -116,20 +116,17 @@ public class NativeSystemCall
       public void run()
       {
          try {
-            byte[] buf = new byte[10];
+            byte[] buf = new byte[1024];
             int read;
             while ((read = in.read(buf)) != -1)
             {
-               for (int i = 0; i < read; i++)
-               {
-                  out.write(buf[i]);
-               }
+               out.write(buf, 0, read);
             }
+
          }
          catch (IOException e) {
             throw new RuntimeException("Error reading input from child process", e);
          }
-
       }
    }
 }
