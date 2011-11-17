@@ -46,7 +46,7 @@ public class ConsoleReader
    public static final int TAB_WIDTH = 4;
 
    private static final ResourceBundle
-            resources = ResourceBundle.getBundle(org.jboss.forge.shell.console.jline.console.completer.CandidateListCompletionHandler.class.getName());
+            resources = ResourceBundle.getBundle(org.jboss.forge.shell.console.jline.console.completer.CandidateListCompletionHandler.class.getName() + "Bundle");
 
    private final org.jboss.forge.shell.console.jline.Terminal terminal;
 
