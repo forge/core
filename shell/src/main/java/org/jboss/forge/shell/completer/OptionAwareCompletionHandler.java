@@ -106,6 +106,7 @@ public class OptionAwareCompletionHandler implements CompletionHandler
 
       // redraw the current console buffer
       reader.drawLine();
+      reader.flush();
 
       return true;
    }
@@ -152,6 +153,7 @@ public class OptionAwareCompletionHandler implements CompletionHandler
             if (noOpt.startsWith(tmp))
             {
                reader.println();
+               reader.flush();
                return;
             }
             else if (yesOpt.startsWith(tmp))
@@ -161,6 +163,7 @@ public class OptionAwareCompletionHandler implements CompletionHandler
             else
             {
                reader.beep();
+               reader.flush();
             }
          }
       }
@@ -183,6 +186,7 @@ public class OptionAwareCompletionHandler implements CompletionHandler
       }
 
       reader.println();
+      reader.flush();
 
       Collection<CharSequence> colorizedCandidates = new ArrayList<CharSequence>();
       for (CharSequence seq : candidates)
@@ -214,6 +218,7 @@ public class OptionAwareCompletionHandler implements CompletionHandler
       }
 
       reader.printColumns(colorizedCandidates);
+      reader.flush();
    }
 
    /**

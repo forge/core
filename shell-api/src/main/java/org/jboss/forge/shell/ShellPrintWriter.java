@@ -32,6 +32,8 @@ public interface ShellPrintWriter
    /**
     * Write the given bytes to the console.
     */
+   public void write(int b);
+
    public void write(byte b);
 
    public void write(byte[] b);

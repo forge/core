@@ -41,6 +41,19 @@ public class PipeOutImpl implements PipeOut
    }
 
    @Override
+   public void write(int b)
+   {
+      if (piped)
+      {
+         buffer.append(b);
+      }
+      else
+      {
+         shell.write(b);
+      }
+   }
+
+   @Override
    public void write(final byte b)
    {
       if (piped)

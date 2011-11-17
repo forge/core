@@ -27,163 +27,185 @@ import java.util.Set;
  * @since 2.3
  */
 public class CandidateListCompletionHandler
-    implements CompletionHandler
+         implements CompletionHandler
 {
-    // TODO: handle quotes and escaped quotes && enable automatic escaping of whitespace
+   // TODO: handle quotes and escaped quotes && enable automatic escaping of whitespace
 
-    public boolean complete(final org.jboss.forge.shell.console.jline.console.ConsoleReader reader, final List<CharSequence> candidates, final int pos) throws
-        IOException
-    {
-        org.jboss.forge.shell.console.jline.console.CursorBuffer buf = reader.getCursorBuffer();
+   public boolean complete(final org.jboss.forge.shell.console.jline.console.ConsoleReader reader, final List<CharSequence> candidates, final int pos) throws
+            IOException
+   {
+      org.jboss.forge.shell.console.jline.console.CursorBuffer buf = reader.getCursorBuffer();
 
-        // if there is only one completion, then fill in the buffer
-        if (candidates.size() == 1) {
-            CharSequence value = candidates.get(0);
+      // if there is only one completion, then fill in the buffer
+      if (candidates.size() == 1)
+      {
+         CharSequence value = candidates.get(0);
 
-            // fail if the only candidate is the same as the current buffer
-            if (value.equals(buf.toString())) {
-                return false;
+         // fail if the only candidate is the same as the current buffer
+         if (value.equals(buf.toString()))
+         {
+            return false;
+         }
+
+         setBuffer(reader, value, pos);
+
+         return true;
+      }
+      else if (candidates.size() > 1)
+      {
+         String value = getUnambiguousCompletions(candidates);
+         setBuffer(reader, value, pos);
+      }
+
+      printCandidates(reader, candidates);
+
+      // redraw the current console buffer
+      reader.drawLine();
+
+      return true;
+   }
+
+   public static void setBuffer(final org.jboss.forge.shell.console.jline.console.ConsoleReader reader, final CharSequence value, final int offset) throws
+            IOException
+   {
+      while ((reader.getCursorBuffer().cursor > offset) && reader.backspace())
+      {
+         // empty
+      }
+
+      reader.putString(value);
+      reader.setCursorPosition(offset + value.length());
+   }
+
+   /**
+    * Print out the candidates. If the size of the candidates is greater than the
+    * {@link org.jboss.forge.shell.console.jline.console.ConsoleReader#getAutoprintThreshold}, they prompt with a warning.
+    *
+    * @param candidates the list of candidates to print
+    */
+   public static void printCandidates(final org.jboss.forge.shell.console.jline.console.ConsoleReader reader, Collection<CharSequence> candidates) throws
+            IOException
+   {
+      Set<CharSequence> distinct = new HashSet<CharSequence>(candidates);
+
+      if (distinct.size() > reader.getAutoprintThreshold())
+      {
+         //noinspection StringConcatenation
+         reader.print(Messages.DISPLAY_CANDIDATES.format(candidates.size()));
+         reader.flush();
+
+         int c;
+
+         String noOpt = Messages.DISPLAY_CANDIDATES_NO.format();
+         String yesOpt = Messages.DISPLAY_CANDIDATES_YES.format();
+         char[] allowed = {yesOpt.charAt(0), noOpt.charAt(0)};
+
+         while ((c = reader.readCharacter(allowed)) != -1)
+         {
+            String tmp = new String(new char[]{(char) c});
+
+            if (noOpt.startsWith(tmp))
+            {
+               reader.println();
+               return;
             }
-
-            setBuffer(reader, value, pos);
-
-            return true;
-        }
-        else if (candidates.size() > 1) {
-            String value = getUnambiguousCompletions(candidates);
-            setBuffer(reader, value, pos);
-        }
-
-        printCandidates(reader, candidates);
-
-        // redraw the current console buffer
-        reader.drawLine();
-
-        return true;
-    }
-
-    public static void setBuffer(final org.jboss.forge.shell.console.jline.console.ConsoleReader reader, final CharSequence value, final int offset) throws
-        IOException
-    {
-        while ((reader.getCursorBuffer().cursor > offset) && reader.backspace()) {
-            // empty
-        }
-
-        reader.putString(value);
-        reader.setCursorPosition(offset + value.length());
-    }
-
-    /**
-     * Print out the candidates. If the size of the candidates is greater than the
-     * {@link org.jboss.forge.shell.console.jline.console.ConsoleReader#getAutoprintThreshold}, they prompt with a warning.
-     *
-     * @param candidates the list of candidates to print
-     */
-    public static void printCandidates(final org.jboss.forge.shell.console.jline.console.ConsoleReader reader, Collection<CharSequence> candidates) throws
-        IOException
-    {
-        Set<CharSequence> distinct = new HashSet<CharSequence>(candidates);
-
-        if (distinct.size() > reader.getAutoprintThreshold()) {
-            //noinspection StringConcatenation
-            reader.print(Messages.DISPLAY_CANDIDATES.format(candidates.size()));
-            reader.flush();
-
-            int c;
-
-            String noOpt = Messages.DISPLAY_CANDIDATES_NO.format();
-            String yesOpt = Messages.DISPLAY_CANDIDATES_YES.format();
-            char[] allowed = {yesOpt.charAt(0), noOpt.charAt(0)};
-
-            while ((c = reader.readCharacter(allowed)) != -1) {
-                String tmp = new String(new char[]{(char) c});
-
-                if (noOpt.startsWith(tmp)) {
-                    reader.println();
-                    return;
-                }
-                else if (yesOpt.startsWith(tmp)) {
-                    break;
-                }
-                else {
-                    reader.beep();
-                }
+            else if (yesOpt.startsWith(tmp))
+            {
+               break;
             }
-        }
-
-        // copy the values and make them distinct, without otherwise affecting the ordering. Only do it if the sizes differ.
-        if (distinct.size() != candidates.size()) {
-            Collection<CharSequence> copy = new ArrayList<CharSequence>();
-
-            for (CharSequence next : candidates) {
-                if (!copy.contains(next)) {
-                    copy.add(next);
-                }
+            else
+            {
+               reader.beep();
             }
+         }
+      }
 
-            candidates = copy;
-        }
+      // copy the values and make them distinct, without otherwise affecting the ordering. Only do it if the sizes differ.
+      if (distinct.size() != candidates.size())
+      {
+         Collection<CharSequence> copy = new ArrayList<CharSequence>();
 
-        reader.println();
-        reader.printColumns(candidates);
-    }
-
-    /**
-     * Returns a root that matches all the {@link String} elements of the specified {@link List},
-     * or null if there are no commonalities. For example, if the list contains
-     * <i>foobar</i>, <i>foobaz</i>, <i>foobuz</i>, the method will return <i>foob</i>.
-     */
-    private String getUnambiguousCompletions(final List<CharSequence> candidates) {
-        if (candidates == null || candidates.isEmpty()) {
-            return null;
-        }
-
-        // convert to an array for speed
-        String[] strings = candidates.toArray(new String[candidates.size()]);
-
-        String first = strings[0];
-        StringBuilder candidate = new StringBuilder();
-
-        for (int i = 0; i < first.length(); i++) {
-            if (startsWith(first.substring(0, i + 1), strings)) {
-                candidate.append(first.charAt(i));
+         for (CharSequence next : candidates)
+         {
+            if (!copy.contains(next))
+            {
+               copy.add(next);
             }
-            else {
-                break;
-            }
-        }
+         }
 
-        return candidate.toString();
-    }
+         candidates = copy;
+      }
 
-    /**
-     * @return true is all the elements of <i>candidates</i> start with <i>starts</i>
-     */
-    private boolean startsWith(final String starts, final String[] candidates) {
-        for (String candidate : candidates) {
-            if (!candidate.startsWith(starts)) {
-                return false;
-            }
-        }
+      reader.println();
+      reader.printColumns(candidates);
+      reader.flush();
+   }
 
-        return true;
-    }
+   /**
+    * Returns a root that matches all the {@link String} elements of the specified {@link List},
+    * or null if there are no commonalities. For example, if the list contains
+    * <i>foobar</i>, <i>foobaz</i>, <i>foobuz</i>, the method will return <i>foob</i>.
+    */
+   private String getUnambiguousCompletions(final List<CharSequence> candidates)
+   {
+      if (candidates == null || candidates.isEmpty())
+      {
+         return null;
+      }
 
-    private static enum Messages
-    {
-        DISPLAY_CANDIDATES,
-        DISPLAY_CANDIDATES_YES,
-        DISPLAY_CANDIDATES_NO,;
+      // convert to an array for speed
+      String[] strings = candidates.toArray(new String[candidates.size()]);
 
-        private static final
-        ResourceBundle
-            bundle =
-            ResourceBundle.getBundle(CandidateListCompletionHandler.class.getName(),
-                                     Locale.getDefault(),
-                                     CandidateListCompletionHandler.class.getClassLoader());
+      String first = strings[0];
+      StringBuilder candidate = new StringBuilder();
 
-        public String format(final Object... args) {
-            return String.format(bundle.getString(name()), args);
-        }
-    }
+      for (int i = 0; i < first.length(); i++)
+      {
+         if (startsWith(first.substring(0, i + 1), strings))
+         {
+            candidate.append(first.charAt(i));
+         }
+         else
+         {
+            break;
+         }
+      }
+
+      return candidate.toString();
+   }
+
+   /**
+    * @return true is all the elements of <i>candidates</i> start with <i>starts</i>
+    */
+   private boolean startsWith(final String starts, final String[] candidates)
+   {
+      for (String candidate : candidates)
+      {
+         if (!candidate.startsWith(starts))
+         {
+            return false;
+         }
+      }
+
+      return true;
+   }
+
+   private static enum Messages
+   {
+      DISPLAY_CANDIDATES,
+      DISPLAY_CANDIDATES_YES,
+      DISPLAY_CANDIDATES_NO,;
+
+      private static final
+      ResourceBundle
+               bundle =
+               ResourceBundle.getBundle(CandidateListCompletionHandler.class.getName(),
+                        Locale.getDefault(),
+                        CandidateListCompletionHandler.class.getClassLoader());
+
+      public String format(final Object... args)
+      {
+         return String.format(bundle.getString(name()), args);
+      }
+   }
 }

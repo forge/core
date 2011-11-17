@@ -479,7 +479,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
 
 
       this.screenBuffer = new JLineScreenBuffer(terminal, outputStream);
-      this.reader = new ConsoleReader(inputPipe.getExternalInputStream(), screenBuffer, null, terminal);
+      this.reader = new ConsoleReader(inputPipe.getExternalInputStream(), this, null, terminal);
       this.reader.setHistoryEnabled(true);
       this.reader.setBellEnabled(false);
 
@@ -1034,6 +1034,12 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       }
 
       return ansi.render(output).reset().toString();
+   }
+
+   @Override
+   public void write(int b)
+   {
+      screenBuffer.write(b);
    }
 
    @Override

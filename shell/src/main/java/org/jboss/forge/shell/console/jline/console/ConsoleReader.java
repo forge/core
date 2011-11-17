@@ -9,6 +9,7 @@ package org.jboss.forge.shell.console.jline.console;
 
 import org.fusesource.jansi.AnsiOutputStream;
 import org.jboss.forge.shell.BufferManager;
+import org.jboss.forge.shell.Shell;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -51,7 +52,7 @@ public class ConsoleReader
 
    private InputStream in;
 
-   private BufferManager outBuffer;
+   private Shell shell;
 
    //  private final Writer out;
 
@@ -71,20 +72,20 @@ public class ConsoleReader
 
    private int searchIndex = -1;
 
-   public ConsoleReader(final InputStream in, final BufferManager outBuffer, final InputStream bindings, final org.jboss.forge.shell.console.jline.Terminal term) throws
+   public ConsoleReader(final InputStream in, final Shell shell, final InputStream bindings, final org.jboss.forge.shell.console.jline.Terminal term) throws
             IOException
    {
       this.in = in;
-      this.outBuffer = outBuffer;
+      this.shell = shell;
       this.terminal = term;
       this.keyBindings = loadKeyBindings(bindings);
 
       setBellEnabled(!org.jboss.forge.shell.console.jline.internal.Configuration.getBoolean(JLINE_NOBELL, false));
    }
 
-   public ConsoleReader(final InputStream in, final BufferManager out, final org.jboss.forge.shell.console.jline.Terminal term) throws IOException
+   public ConsoleReader(final InputStream in, final Shell shell, final org.jboss.forge.shell.console.jline.Terminal term) throws IOException
    {
-      this(in, out, null, term);
+      this(in, shell, null, term);
    }
 
 //    public ConsoleReader(final InputStream in, final BufferManager out) throws IOException {
@@ -103,9 +104,9 @@ public class ConsoleReader
       return in;
    }
 
-   public BufferManager getOutput()
+   public Shell getShell()
    {
-      return outBuffer;
+      return shell;
    }
 
    public org.jboss.forge.shell.console.jline.Terminal getTerminal()
@@ -682,7 +683,7 @@ public class ConsoleReader
     */
    public void flush() throws IOException
    {
-      outBuffer.flushBuffer();
+      shell.flush();
    }
 
    private int backspaceAll() throws IOException
@@ -881,8 +882,8 @@ public class ConsoleReader
          }
 
          char chars[] = new char[len];
-         Arrays.fill(chars, (char) BACKSPACE);
-         outBuffer.write(new String(chars));
+         Arrays.fill(chars, (char) BACKSPACE);;
+         shell.print(new String(chars));
 
          return;
       }
@@ -1239,8 +1240,8 @@ public class ConsoleReader
 
          if (prompt != null && prompt.length() > 0)
          {
-            outBuffer.write(prompt);
-            outBuffer.flushBuffer();
+            shell.print(prompt);
+            shell.flush();
          }
 
          // if the terminal is unsupported, just use plain-java reading
@@ -1745,21 +1746,21 @@ public class ConsoleReader
       {
          byte[] chars = new byte[TAB_WIDTH];
          Arrays.fill(chars, (byte) ' ');
-         outBuffer.write(chars);
+         shell.write(chars);
          return;
       }
 
-      outBuffer.write(c);
+      shell.write(c);
    }
 
    private void print(final char c) throws IOException
    {
-      print((byte) c);
+      print((int) c);
    }
 
    private void print(final char c, int i) throws IOException
    {
-      print((byte) c, i);
+      print(c, i);
    }
 
    /**
@@ -1804,7 +1805,7 @@ public class ConsoleReader
          }
       }
 
-      outBuffer.write(chars);
+      shell.write(chars);
    }
 
    private void print(final byte c, final int num) throws IOException
@@ -2163,7 +2164,7 @@ public class ConsoleReader
                {
                   try
                   {
-                     BufferManager out = getOutput();
+                     BufferManager out = getShell().getBufferManager();
                      out.write(fullPrompt);
                      out.flushBuffer();
                      sleep(3);
@@ -2308,12 +2309,11 @@ public class ConsoleReader
       return !Character.isLetterOrDigit(c);
    }
 
+   private static final String ESCAPE_STR = new String(new char[] { 27, '['});
+   
    private void printAnsiSequence(String sequence) throws IOException
    {
-      print(27);
-      print('[');
-      print(sequence);
-//        flush();
+      print(ESCAPE_STR + sequence);
    }
 
    // return column position, reported by the terminal
