@@ -158,6 +158,12 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
 
    private BufferManager screenBuffer;
 
+   // overrides
+   private InputStream _redirectedStream;
+   private List<String> _historyOverride;
+   private List<Completer> _deferredCompleters;
+
+
    private enum BufferingMode
    {
       Direct, Buffering
@@ -418,6 +424,17 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    @Override
    public void setHistory(final List<String> lines)
    {
+      if (isNoInitMode())
+      {
+         _historyOverride = lines;
+         return;
+      }
+
+      _setHistory(lines);
+   }
+
+   private void _setHistory(final List<String> lines)
+   {
       MemoryHistory history = new MemoryHistory();
 
       for (String line : lines)
@@ -432,17 +449,42 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    {
       List<Completer> completers = new ArrayList<Completer>();
       completers.add(pluginCompleter);
-
       completer = new AggregateCompleter(completers);
-      this.reader.addCompleter(completer);
+
+
+      if (isNoInitMode())
+      {
+         if (_deferredCompleters == null)
+         {
+            _deferredCompleters = new ArrayList<Completer>();
+         }
+         _deferredCompleters.add(pluginCompleter);
+      }
+      else
+      {
+         _initCompleters(pluginCompleter);
+      }
+   }
+
+   private void _initCompleters(final Completer completer)
+   {
+      this.reader.addCompleter(this.completer);
       this.reader.setCompletionHandler(new OptionAwareCompletionHandler(commandHolder, this));
+   }
+
+   private static boolean isNoInitMode()
+   {
+      return Boolean.getBoolean(ShellConfig.NO_INIT_PROPERTY);
    }
 
    private void initReaderAndStreams() throws IOException
    {
+      boolean noInitMode = isNoInitMode();
+      if (_redirectedStream == null && noInitMode) {
+         return;
+      }
 
-
-      if (inputPipe == null)
+      if (inputPipe == null && _redirectedStream == null)
       {
          inputPipe = new ConsoleInputSession(System.in);
       }
@@ -481,7 +523,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
 
 
       this.screenBuffer = new JLineScreenBuffer(terminal, outputStream);
-      this.reader = new ConsoleReader(inputPipe.getExternalInputStream(), this, null, terminal);
+      this.reader = new ConsoleReader(_redirectedStream == null ? inputPipe.getExternalInputStream() : _redirectedStream, this, null, terminal);
       this.reader.setHistoryEnabled(true);
       this.reader.setBellEnabled(false);
 
@@ -489,6 +531,24 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       {
          this.reader.addTriggeredAction(action.getTrigger(), action.getListener());
       }
+
+      if (noInitMode)
+      {
+         if (_historyOverride != null)
+         {
+
+            _setHistory(_historyOverride);
+         }
+
+         if (_deferredCompleters != null)
+         {
+            for (Completer completer : _deferredCompleters)
+            {
+               _initCompleters(completer);
+            }
+         }
+      }
+
 
    }
 
@@ -1118,9 +1178,10 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    @Override
    public void setInputStream(final InputStream is) throws IOException
    {
-      throw new UnsupportedOperationException("not allowed");
-//      this.inputStream = is;
-//      initReaderAndStreams();
+      //     throw new UnsupportedOperationException("not allowed");
+      this.inputPipe = null;
+      this._redirectedStream = is;
+      initReaderAndStreams();
    }
 
    @Override
@@ -1458,7 +1519,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    @Override
    public boolean isAnsiSupported()
    {
-      return reader.getTerminal().isAnsiSupported();
+      return reader != null && reader.getTerminal().isAnsiSupported();
    }
 
    @Override

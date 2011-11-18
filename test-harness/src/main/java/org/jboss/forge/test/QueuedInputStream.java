@@ -94,7 +94,7 @@ public class QueuedInputStream extends InputStream
             }
             else
             {
-               throw new IllegalStateException("End of stream: No more queued input.");
+              throw new IllegalStateException("End of stream: No more queued input.");
             }
          }
       }
