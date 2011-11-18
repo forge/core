@@ -45,37 +45,33 @@ import org.jboss.forge.shell.plugins.Topic;
 @RequiresProject
 @Help("Setup a plugin.")
 @Singleton
-public class SetupPlugin implements Plugin
-{
+public class SetupPlugin implements Plugin {
 
-   @Inject
-   private Shell shell;
+	@Inject
+	private Shell shell;
 
-   @Inject
-   private SetupPluginCompleter completer;
+	@Inject
+	private SetupPluginCompleter completer;
 
-   @Inject
-   private PluginRegistry registry;
+	@Inject
+	private PluginRegistry registry;
 
-   @Inject
-   @Current
-   private Resource<?> resource;
+	@Inject
+	@Current
+	private Resource<?> resource;
 
-   @DefaultCommand
-   public void run(
-            @Option(description = "The plugin to set up",
-                     required = true, completer = SetupPluginCompleter.class) final String plugin,
-            final PipeOut out) throws Exception
-   {
-      if (completer.getCompletionTokens().contains(plugin))
-      {
-         shell.execute(plugin + " setup");
-      }
-      else if (registry.getPluginMetadataForScopeAndConstraints(plugin, shell) != null)
-         throw new RuntimeException("Plugin does not have a [setup] method.");
-      else
-         throw new RuntimeException("No such plugin [" + plugin + "], or plugin not available for current Resource ["
-                  + resource.getClass().getName() + "]");
-   }
-
+	@DefaultCommand
+	public void run(@Option(description = "The plugins to set up", required = true, completer = SetupPluginCompleter.class) final String[] plugins, final PipeOut out) throws Exception {
+		for(String plugin : plugins) {
+			if (completer.getCompletionTokens().contains(plugin)) {
+				shell.execute(plugin + " setup");
+			} else if (registry.getPluginMetadataForScopeAndConstraints(plugin, shell) != null) {
+				throw new RuntimeException("Plugin does not have a [setup] method.");
+			} else {
+				throw new RuntimeException("No such plugin [" + plugin
+						+ "], or plugin not available for current Resource ["
+						+ resource.getClass().getName() + "]");
+			}
+		}
+	}
 }
