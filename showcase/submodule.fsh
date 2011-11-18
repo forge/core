@@ -13,7 +13,6 @@ def step( cmd ) {
                         $cmd;
                         @SHELL.println();
                         wait;
-                        clear;
                 }
         }
         currentStep ++;
@@ -23,6 +22,9 @@ def step( cmd ) {
 clear;
 
 @step("new-project --named mm --type pom --topLevelPackage de");
-@step("new-project --named mm-jar2 --topLevelPackage de");
+@step("new-project --named mm-jar --topLevelPackage de");
+@step("cd ..");
+@step("new-project --named mm-web --topLevelPackage de");
+@step("project install-facet forge.spec.servlet");
 @step("cd ..");
 @step("mvn clean install");
