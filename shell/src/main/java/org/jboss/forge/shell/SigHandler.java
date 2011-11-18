@@ -21,7 +21,6 @@
  */
 package org.jboss.forge.shell;
 
-import java.io.IOException;
 import sun.misc.Signal;
 import sun.misc.SignalHandler;
 

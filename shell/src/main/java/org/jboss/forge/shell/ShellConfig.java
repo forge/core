@@ -38,10 +38,11 @@ import org.jboss.forge.ForgeEnvironment;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
  */
 public class ShellConfig
 {
+   public static final String NO_INIT_PROPERTY = "forge.debug.no_auto_init_streams";
+
    @Inject
    private ForgeEnvironment environment;
 
@@ -58,72 +59,76 @@ public class ShellConfig
          }
       }
 
-      File historyFile = new File(configDir.getPath(), ShellImpl.FORGE_COMMAND_HISTORY_FILE);
-
-      try
+      if (!Boolean.getBoolean(NO_INIT_PROPERTY))
       {
-         if (!historyFile.exists())
+
+         File historyFile = new File(configDir.getPath(), ShellImpl.FORGE_COMMAND_HISTORY_FILE);
+
+         try
          {
-            if (!historyFile.createNewFile())
+            if (!historyFile.exists())
             {
-               System.err.println("could not create config file: " + historyFile.getAbsolutePath());
+               if (!historyFile.createNewFile())
+               {
+                  System.err.println("could not create config file: " + historyFile.getAbsolutePath());
+               }
+
+            }
+         }
+         catch (IOException e)
+         {
+            throw new RuntimeException("could not create config file: " + historyFile.getAbsolutePath());
+         }
+
+         List<String> history = new ArrayList<String>();
+         try
+         {
+            BufferedReader reader = new BufferedReader(new FileReader(historyFile));
+
+            String line;
+            while ((line = reader.readLine()) != null)
+            {
+               history.add(line);
             }
 
+            reader.close();
+
+            shell.setHistory(history);
          }
-      }
-      catch (IOException e)
-      {
-         throw new RuntimeException("could not create config file: " + historyFile.getAbsolutePath());
-      }
-
-      List<String> history = new ArrayList<String>();
-      try
-      {
-         BufferedReader reader = new BufferedReader(new FileReader(historyFile));
-
-         String line;
-         while ((line = reader.readLine()) != null)
+         catch (IOException e)
          {
-            history.add(line);
+            throw new RuntimeException("error loading file: " + historyFile.getAbsolutePath());
          }
 
-         reader.close();
+         File configFile = new File(configDir.getPath(), ShellImpl.FORGE_CONFIG_FILE);
 
-         shell.setHistory(history);
-      }
-      catch (IOException e)
-      {
-         throw new RuntimeException("error loading file: " + historyFile.getAbsolutePath());
-      }
+         if (!configFile.exists())
+         {
+            createDefaultConfigFile(configFile);
+         }
 
-      File configFile = new File(configDir.getPath(), ShellImpl.FORGE_CONFIG_FILE);
+         try
+         {
+            /**
+             * Load the config file script.
+             */
+            shell.execute(configFile);
+         }
+         catch (Exception e)
+         {
+            e.printStackTrace();
+            throw new RuntimeException("error loading file: " + configFile.getAbsolutePath());
+         }
 
-      if (!configFile.exists())
-      {
-         createDefaultConfigFile(configFile);
-      }
-
-      try
-      {
-         /**
-          * Load the config file script.
-          */
-         shell.execute(configFile);
-      }
-      catch (Exception e)
-      {
-         e.printStackTrace();
-         throw new RuntimeException("error loading file: " + configFile.getAbsolutePath());
-      }
-
-      try
-      {
-         shell.setHistoryOutputStream(new BufferedOutputStream(new FileOutputStream(historyFile, true)));
-      }
-      catch (FileNotFoundException e)
-      {
-         throw new RuntimeException("error setting forge history output stream to file: "
-                  + historyFile.getAbsolutePath());
+         try
+         {
+            shell.setHistoryOutputStream(new BufferedOutputStream(new FileOutputStream(historyFile, true)));
+         }
+         catch (FileNotFoundException e)
+         {
+            throw new RuntimeException("error setting forge history output stream to file: "
+                     + historyFile.getAbsolutePath());
+         }
       }
 
    }
