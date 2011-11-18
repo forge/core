@@ -98,7 +98,7 @@ public class MorePlugin implements Plugin
    void more(final InputStream stream, final PipeOut out, boolean noAutoExit) throws IOException
    {
 
-      byte[] buffer = new byte[128];
+      byte[] buffer = new byte[2048];
       int read;
 
       byte c;
@@ -141,9 +141,9 @@ public class MorePlugin implements Plugin
                   case '\n':
                      lineBuffer.seenLine();
                      lCounter = width;
-                     if (++y == 1) {
-                        shell.print(ERASE_TO_END);
-                     }
+                          if (++y == 1) {
+                     shell.print(ERASE_TO_END);
+                           }
 
                   default:
                      if (y >= height)
@@ -151,11 +151,13 @@ public class MorePlugin implements Plugin
                         y = height;
                         height = shell.getHeight() - 1;
 
-                        if (statusBarCache != null) {
+                        if (statusBarCache != null)
+                        {
                            shell.print(ERASE_TO_END_AND_CR + statusBarCache);
                            shell.flush();
                         }
-                        else {
+                        else
+                        {
                            shell.print(ERASE_TO_END_AND_CR);
                         }
 
@@ -245,7 +247,7 @@ public class MorePlugin implements Plugin
 
          shell.flush();
          int scanCode = shell.scan();
-   //      shell.clearLine();
+         //      shell.clearLine();
 
          switch (scanCode)
          {

@@ -78,7 +78,6 @@ public class JLineScreenBuffer implements BufferManager
    @Override
    public synchronized void write(int b)
    {
-
       if (bufferSize + 1 >= maxBufferSize)
       {
          flushBuffer();
