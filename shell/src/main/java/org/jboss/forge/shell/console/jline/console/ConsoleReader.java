@@ -1103,6 +1103,10 @@ public class ConsoleReader
          }
       }
 
+      short[] keyBindings = new short[Character.MAX_VALUE * 2];
+
+      Arrays.fill(keyBindings, org.jboss.forge.shell.console.jline.console.Operation.UNKNOWN.code);
+
       if (input == null)
       {
          org.jboss.forge.shell.console.jline.internal.Log.debug("Using default bindings");
@@ -1115,10 +1119,6 @@ public class ConsoleReader
          loadMappingsFromBundle(keyBindings, bundle);
          return keyBindings;
       }
-
-      short[] keyBindings = new short[Character.MAX_VALUE * 2];
-
-      Arrays.fill(keyBindings, org.jboss.forge.shell.console.jline.console.Operation.UNKNOWN.code);
 
       // Loads the key bindings. Bindings file is in the format:
       //
@@ -1170,7 +1170,8 @@ public class ConsoleReader
          {
             short code = Short.parseShort(val);
             String name = bundle.getString(val);
-            org.jboss.forge.shell.console.jline.console.Operation op = org.jboss.forge.shell.console.jline.console.Operation.valueOf(name);
+            org.jboss.forge.shell.console.jline.console.Operation op
+                     = org.jboss.forge.shell.console.jline.console.Operation.valueOf(name);
             keyBindings[code] = op.code;
          }
          catch (NumberFormatException e)
