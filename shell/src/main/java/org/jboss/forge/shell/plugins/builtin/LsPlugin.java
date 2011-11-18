@@ -58,7 +58,7 @@ import org.jboss.forge.shell.util.GeneralUtils;
 /**
  * Lists directory contents for filesystem based directories. This is a simplified version of the UNIX 'ls' command and
  * currently supports the - and -a flags, as in unix.
- * 
+ *
  * @author Mike Brock
  */
 @Alias("ls")
@@ -120,7 +120,7 @@ public class LsPlugin implements Plugin
          {
             if (resource.exists())
             {
-               childResources = Collections.<Resource<?>> singletonList(resource);
+               childResources = Collections.<Resource<?>>singletonList(resource);
             }
             else
             {
@@ -219,11 +219,19 @@ public class LsPlugin implements Plugin
             }
          };
 
-         printOutTables(
-                  listBuild,
-                  new boolean[] { false, false, false, true, false, false, true, false },
-                  out,
-                  formatCallback);
+         try
+         {
+            shell.bufferingMode();
+            printOutTables(
+                     listBuild,
+                     new boolean[]{false, false, false, true, false, false, true, false},
+                     out,
+                     formatCallback);
+         }
+         finally
+         {
+            shell.directWriteMode();
+         }
       }
       else
       {
@@ -242,15 +250,22 @@ public class LsPlugin implements Plugin
                }
             }
          };
-
-         if (out.isPiped())
+         try
          {
-            GeneralUtils.OutputAttributes attr = new GeneralUtils.OutputAttributes(120, 1);
-            printOutColumns(listBuild, ShellColor.NONE, out, attr, null, false);
+            shell.bufferingMode();
+            if (out.isPiped())
+            {
+               GeneralUtils.OutputAttributes attr = new GeneralUtils.OutputAttributes(120, 1);
+               printOutColumns(listBuild, ShellColor.NONE, out, attr, null, false);
+            }
+            else
+            {
+               printOutColumns(listBuild, out, shell, formatCallback, false);
+            }
          }
-         else
+         finally
          {
-            printOutColumns(listBuild, out, shell, formatCallback, false);
+            shell.directWriteMode();
          }
       }
    }

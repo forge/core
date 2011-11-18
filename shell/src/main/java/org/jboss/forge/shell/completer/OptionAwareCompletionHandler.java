@@ -29,15 +29,14 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import jline.console.ConsoleReader;
-import jline.console.CursorBuffer;
-import jline.console.completer.CandidateListCompletionHandler;
-import jline.console.completer.CompletionHandler;
-
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.ShellColor;
 import org.jboss.forge.shell.command.CommandMetadata;
 import org.jboss.forge.shell.command.OptionMetadata;
+import org.jboss.forge.shell.console.jline.console.ConsoleReader;
+import org.jboss.forge.shell.console.jline.console.CursorBuffer;
+import org.jboss.forge.shell.console.jline.console.completer.CandidateListCompletionHandler;
+import org.jboss.forge.shell.console.jline.console.completer.CompletionHandler;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -107,6 +106,7 @@ public class OptionAwareCompletionHandler implements CompletionHandler
 
       // redraw the current console buffer
       reader.drawLine();
+      reader.flush();
 
       return true;
    }
@@ -125,7 +125,7 @@ public class OptionAwareCompletionHandler implements CompletionHandler
 
    /**
     * Print out the candidates. If the size of the candidates is greater than the
-    * {@link ConsoleReader#getAutoprintThreshold}, they prompt with a warning.
+    * {@link org.jboss.forge.shell.console.ConsoleReader#getAutoprintThreshold}, they prompt with a warning.
     * 
     * @param candidates the list of candidates to print
     */
@@ -153,6 +153,7 @@ public class OptionAwareCompletionHandler implements CompletionHandler
             if (noOpt.startsWith(tmp))
             {
                reader.println();
+               reader.flush();
                return;
             }
             else if (yesOpt.startsWith(tmp))
@@ -162,6 +163,7 @@ public class OptionAwareCompletionHandler implements CompletionHandler
             else
             {
                reader.beep();
+               reader.flush();
             }
          }
       }
@@ -184,6 +186,7 @@ public class OptionAwareCompletionHandler implements CompletionHandler
       }
 
       reader.println();
+      reader.flush();
 
       Collection<CharSequence> colorizedCandidates = new ArrayList<CharSequence>();
       for (CharSequence seq : candidates)
@@ -215,6 +218,7 @@ public class OptionAwareCompletionHandler implements CompletionHandler
       }
 
       reader.printColumns(colorizedCandidates);
+      reader.flush();
    }
 
    /**

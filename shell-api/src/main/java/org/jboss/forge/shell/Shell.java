@@ -31,10 +31,13 @@ import org.jboss.forge.ForgeEnvironment;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.Resource;
+import org.jboss.forge.shell.integration.BufferManager;
+import org.jboss.forge.shell.integration.KeyListener;
 import org.jboss.forge.shell.plugins.RequiresResource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author Mike Brock
  */
 public interface Shell extends ShellPrintWriter, ShellPrompt, ShellHistory
 {
@@ -197,6 +200,14 @@ public interface Shell extends ShellPrintWriter, ShellPrompt, ShellHistory
     */
    int getHeight();
 
+
+   /**
+    * Return the absolute height of the console. This may be different than getHeight() depending on how many lines are
+    * available in a display buffer.
+    * @return
+    */
+   int getAbsoluteHeight();
+
    /**
     * Return the current width, in characters, of the current shell console. (<strong>Warning:</strong> This may change
     * in the time between when the method is called and when the result is used. Be sure to call the method as close to
@@ -232,6 +243,30 @@ public interface Shell extends ShellPrintWriter, ShellPrompt, ShellHistory
     */
    boolean isAnsiSupported();
 
+   /**
+    * Register the buffer manager for the shell system
+    * @param manager
+    */
+   void registerBufferManager(BufferManager manager);
+
+   /**
+    * Get buffer manager based on typed
+    * @return
+    */
+   BufferManager getBufferManager();
+   
+   void registerKeyListener(KeyListener keyListener);
+
+   /**
+    * Place the shell output into buffering mode. Do not automatically render changes to the screen unless changed
+    * back to {@link #directWriteMode()} or by calling {@link #flush()}
+    */
+   void bufferingMode();
+
+   /**
+    * Place the shell output in direct-write mode. All data printed to buffer will be immediately rendered.
+    */
+   void directWriteMode();
    /**
     * Get the current Forge environment.
     */

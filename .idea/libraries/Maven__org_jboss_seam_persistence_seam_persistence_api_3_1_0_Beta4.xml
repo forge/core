@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.jboss.seam.persistence:seam-persistence-api:3.1.0.Beta4">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jboss/seam/persistence/seam-persistence-api/3.1.0.Beta4/seam-persistence-api-3.1.0.Beta4.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jboss/seam/persistence/seam-persistence-api/3.1.0.Beta4/seam-persistence-api-3.1.0.Beta4-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jboss/seam/persistence/seam-persistence-api/3.1.0.Beta4/seam-persistence-api-3.1.0.Beta4-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

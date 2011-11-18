@@ -32,7 +32,13 @@ public interface ShellPrintWriter
    /**
     * Write the given bytes to the console.
     */
+   public void write(int b);
+
    public void write(byte b);
+
+   public void write(byte[] b);
+
+   public void write(byte[] b, int offset, int length);
 
    /**
     * Print output to the console.
@@ -63,4 +69,9 @@ public interface ShellPrintWriter
     * Render a color for the current terminal emulation by encapsulating the string is the appropriate escape codes
     */
    public String renderColor(ShellColor color, String output);
+
+   /**
+    * Flush output.
+    */
+   public void flush();
 }
