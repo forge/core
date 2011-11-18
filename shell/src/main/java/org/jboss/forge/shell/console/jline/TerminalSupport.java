@@ -9,6 +9,7 @@ package org.jboss.forge.shell.console.jline;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ResourceBundle;
 
 /**
  * Provides support for {@link Terminal} instances.
@@ -17,129 +18,155 @@ import java.io.InputStream;
  * @since 2.0
  */
 public abstract class TerminalSupport
-    implements Terminal
+         implements Terminal
 {
-    public static String DEFAULT_KEYBINDINGS_PROPERTIES = "keybindings.properties";
+   public static String DEFAULT_KEYBINDINGS_PROPERTIES = "keybindings.properties";
 
-    public static final int DEFAULT_WIDTH = 80;
+   public static final int DEFAULT_WIDTH = 80;
 
-    public static final int DEFAULT_HEIGHT = 24;
+   public static final int DEFAULT_HEIGHT = 24;
 
-    private Thread shutdownHook;
+   private Thread shutdownHook;
 
-    private boolean supported;
+   private boolean supported;
 
-    private boolean echoEnabled;
+   private boolean echoEnabled;
 
-    private boolean ansiSupported;
+   private boolean ansiSupported;
 
-    protected TerminalSupport(final boolean supported) {
-        this.supported = supported;
-    }
+   protected TerminalSupport(final boolean supported)
+   {
+      this.supported = supported;
+   }
 
-    public void init() throws Exception {
-        installShutdownHook(new RestoreHook());
-    }
+   public void init() throws Exception
+   {
+      installShutdownHook(new RestoreHook());
+   }
 
-    public void restore() throws Exception {
-        TerminalFactory.resetIf(this);
-        removeShutdownHook();
-    }
+   public void restore() throws Exception
+   {
+      TerminalFactory.resetIf(this);
+      removeShutdownHook();
+   }
 
-    public void reset() throws Exception {
-        restore();
-        init();
-    }
+   public void reset() throws Exception
+   {
+      restore();
+      init();
+   }
 
-    protected void installShutdownHook(final Thread hook) {
-        assert hook != null;
+   protected void installShutdownHook(final Thread hook)
+   {
+      assert hook != null;
 
-        if (shutdownHook != null) {
-            throw new IllegalStateException("Shutdown hook already installed");
-        }
+      if (shutdownHook != null)
+      {
+         throw new IllegalStateException("Shutdown hook already installed");
+      }
 
-        try {
-            Runtime.getRuntime().addShutdownHook(hook);
-            shutdownHook = hook;
-        }
-        catch (AbstractMethodError e) {
+      try
+      {
+         Runtime.getRuntime().addShutdownHook(hook);
+         shutdownHook = hook;
+      }
+      catch (AbstractMethodError e)
+      {
+         // JDK 1.3+ only method. Bummer.
+         org.jboss.forge.shell.console.jline.internal.Log.trace("Failed to register shutdown hook: ", e);
+      }
+   }
+
+   protected void removeShutdownHook()
+   {
+      if (shutdownHook != null)
+      {
+         try
+         {
+            Runtime.getRuntime().removeShutdownHook(shutdownHook);
+         }
+         catch (AbstractMethodError e)
+         {
             // JDK 1.3+ only method. Bummer.
-            org.jboss.forge.shell.console.jline.internal.Log.trace("Failed to register shutdown hook: ", e);
-        }
-    }
+            org.jboss.forge.shell.console.jline.internal.Log.trace("Failed to remove shutdown hook: ", e);
+         }
+         catch (IllegalStateException e)
+         {
+            // The VM is shutting down, not a big deal; ignore
+         }
+         shutdownHook = null;
+      }
+   }
 
-    protected void removeShutdownHook() {
-        if (shutdownHook != null) {
-            try {
-                Runtime.getRuntime().removeShutdownHook(shutdownHook);
-            }
-            catch (AbstractMethodError e) {
-                // JDK 1.3+ only method. Bummer.
-                org.jboss.forge.shell.console.jline.internal.Log.trace("Failed to remove shutdown hook: ", e);
-            }
-            catch (IllegalStateException e) {
-                // The VM is shutting down, not a big deal; ignore
-            }
-            shutdownHook = null;
-        }
-    }
+   public final boolean isSupported()
+   {
+      return supported;
+   }
 
-    public final boolean isSupported() {
-        return supported;
-    }
+   public synchronized boolean isAnsiSupported()
+   {
+      return ansiSupported;
+   }
 
-    public synchronized boolean isAnsiSupported() {
-        return ansiSupported;
-    }
+   protected synchronized void setAnsiSupported(final boolean supported)
+   {
+      this.ansiSupported = supported;
+      org.jboss.forge.shell.console.jline.internal.Log.debug("Ansi supported: ", supported);
+   }
 
-    protected synchronized void setAnsiSupported(final boolean supported) {
-        this.ansiSupported = supported;
-        org.jboss.forge.shell.console.jline.internal.Log.debug("Ansi supported: ", supported);
-    }
+   public int getWidth()
+   {
+      return DEFAULT_WIDTH;
+   }
 
-    public int getWidth() {
-        return DEFAULT_WIDTH;
-    }
+   public int getHeight()
+   {
+      return DEFAULT_HEIGHT;
+   }
 
-    public int getHeight() {
-        return DEFAULT_HEIGHT;
-    }
+   public synchronized boolean isEchoEnabled()
+   {
+      return echoEnabled;
+   }
 
-    public synchronized boolean isEchoEnabled() {
-        return echoEnabled;
-    }
+   public synchronized void setEchoEnabled(final boolean enabled)
+   {
+      this.echoEnabled = enabled;
+      org.jboss.forge.shell.console.jline.internal.Log.debug("Echo enabled: ", enabled);
+   }
 
-    public synchronized void setEchoEnabled(final boolean enabled) {
-        this.echoEnabled = enabled;
-        org.jboss.forge.shell.console.jline.internal.Log.debug("Echo enabled: ", enabled);
-    }
+   public int readCharacter(final InputStream in) throws IOException
+   {
+      return in.read();
+   }
 
-    public int readCharacter(final InputStream in) throws IOException {
-        return in.read();
-    }
+   public int readVirtualKey(final InputStream in) throws IOException
+   {
+      return readCharacter(in);
+   }
 
-    public int readVirtualKey(final InputStream in) throws IOException {
-        return readCharacter(in);
-    }
+   public ResourceBundle getDefaultBindings()
+   {
+      return ResourceBundle.getBundle("org.jboss.forge.keybindings");
+   }
 
-    public InputStream getDefaultBindings() {
-        return TerminalSupport.class.getResourceAsStream(DEFAULT_KEYBINDINGS_PROPERTIES);
-    }
+   //
+   // RestoreHook
+   //
 
-    //
-    // RestoreHook
-    //
-
-    protected class RestoreHook
-        extends Thread
-    {
-        public void start() {
-            try {
-                restore();
-            }
-            catch (Exception e) {
-                org.jboss.forge.shell.console.jline.internal.Log.trace("Failed to restore: ", e);
-            }
-        }
-    }
+   protected class RestoreHook
+            extends Thread
+   {
+      public void start()
+      {
+         try
+         {
+            restore();
+         }
+         catch (Exception e)
+         {
+            org.jboss.forge.shell.console.jline.internal.Log.trace("Failed to restore: ", e);
+         }
+      }
+   }
 }

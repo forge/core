@@ -9,6 +9,7 @@ package org.jboss.forge.shell.console.jline;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ResourceBundle;
 
 /**
  * Representation of the input terminal for a platform.
@@ -41,5 +42,5 @@ public interface Terminal
 
     int readVirtualKey(InputStream in) throws IOException;
 
-    InputStream getDefaultBindings();
+    ResourceBundle getDefaultBindings();
 }

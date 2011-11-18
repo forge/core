@@ -1106,7 +1106,14 @@ public class ConsoleReader
       if (input == null)
       {
          org.jboss.forge.shell.console.jline.internal.Log.debug("Using default bindings");
-         input = getTerminal().getDefaultBindings();
+         ResourceBundle bundle = getTerminal().getDefaultBindings();
+
+         if (bundle == null)
+         {
+            throw new RuntimeException("failed to load default keybidings");
+         }
+         loadMappingsFromBundle(keyBindings, bundle);
+         return keyBindings;
       }
 
       short[] keyBindings = new short[Character.MAX_VALUE * 2];
@@ -1150,6 +1157,32 @@ public class ConsoleReader
 
       return keyBindings;
    }
+
+   private void loadMappingsFromBundle(short[] keyBindings, ResourceBundle bundle)
+   {
+      Enumeration<String> keys = bundle.getKeys();
+      String val;
+      while (keys.hasMoreElements())
+      {
+         val = keys.nextElement();
+
+         try
+         {
+            short code = Short.parseShort(val);
+            String name = bundle.getString(val);
+            org.jboss.forge.shell.console.jline.console.Operation op = org.jboss.forge.shell.console.jline.console.Operation.valueOf(name);
+            keyBindings[code] = op.code;
+         }
+         catch (NumberFormatException e)
+         {
+            org.jboss.forge.shell.console.jline.internal.Log.error("Failed to convert binding code: ", val, e);
+         }
+
+      }
+
+
+   }
+
 
    int getKeyForAction(final short logicalAction)
    {
