@@ -25,12 +25,10 @@ package org.jboss.forge.shell.plugins.builtin;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ServiceLoader;
 
 import javax.inject.Inject;
 
-import org.apache.maven.model.Model;
-import org.apache.maven.model.Parent;
-import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.project.Project;
@@ -42,6 +40,7 @@ import org.jboss.forge.project.facets.PackagingFacet;
 import org.jboss.forge.project.facets.ResourceFacet;
 import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.project.packaging.PackagingType;
+import org.jboss.forge.project.services.ProjectAssociationProvider;
 import org.jboss.forge.project.services.ProjectFactory;
 import org.jboss.forge.project.services.ResourceFactory;
 import org.jboss.forge.resources.DirectoryResource;
@@ -231,33 +230,15 @@ public class NewProjectPlugin implements Plugin
                   MetadataFacet.class);
       }
 
-       MavenCoreFacet mavenCoreFacet = project.getFacet(MavenCoreFacet.class);
        // create sub-module
        DirectoryResource parentDir = project.getProjectRoot().getParent().reify(DirectoryResource.class);
        if (parentDir != null && parentDir.getChild("pom.xml").exists()) {
-           ShellMessages.info(out, "Creating a sub-module");
-
-           Project parentProject = projectFactory.findProject(parentDir);
-           MavenCoreFacet parentMavenCoreFacet = parentProject.getFacet(MavenCoreFacet.class);
-           Model parentPom = parentMavenCoreFacet.getPOM();
-           parentPom.setPackaging("pom");
-           parentPom.addModule(project.getProjectRoot().toString());
-           parentMavenCoreFacet.setPOM(parentPom);
-
-           // add parent to current project
-           projectFactory.findProject(project.getProjectRoot());
-           Model pom = mavenCoreFacet.getPOM();
-
-           Parent parent = new Parent();
-           parent.setGroupId(parentPom.getGroupId());
-           parent.setArtifactId(parentPom.getArtifactId());
-           parent.setVersion(parentPom.getVersion());
-
-           pom.setParent(parent);
-           mavenCoreFacet.setPOM(pom);
+          ServiceLoader<ProjectAssociationProvider> providers = ServiceLoader.load(ProjectAssociationProvider.class);
+          for (ProjectAssociationProvider provider : providers) {
+             provider.setProjectFactory(projectFactory);
+             provider.associate(project, parentDir);
+          }
        }
-
-
 
        MetadataFacet meta = project.getFacet(MetadataFacet.class);
       meta.setProjectName(name);
