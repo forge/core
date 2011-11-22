@@ -109,8 +109,6 @@ public class EntityPlugin implements Plugin
                .addAnnotation(Entity.class).getOrigin()
                .addInterface(Serializable.class);
 
-      javaClass.addField("private static final long serialVersionUID = 1L;");
-
       Field<JavaClass> id = javaClass.addField("private Long id = null;");
       id.addAnnotation(Id.class);
       id.addAnnotation(GeneratedValue.class)

@@ -92,4 +92,17 @@ public class SetupCommandTest extends AbstractShellTest
 
       getShell().execute("testplugin setup");
    }
+   
+   @Test
+   public void testSetupCommandWithMultiplePlugins() throws Exception {
+	   initializeJavaProject();
+
+	   Assert.assertFalse(getProject().hasFacet(MockFacet.class));
+	   Assert.assertFalse(getProject().hasFacet(MockFacet2.class));
+	   
+	   getShell().execute("setup testplugin testplugin2");
+	   
+	   Assert.assertTrue(getProject().hasFacet(MockFacet.class));
+	   Assert.assertTrue(getProject().hasFacet(MockFacet2.class));
+   }
 }
