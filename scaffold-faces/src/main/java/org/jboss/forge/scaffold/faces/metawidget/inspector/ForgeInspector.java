@@ -75,9 +75,9 @@ public class ForgeInspector
       if (property.isAnnotationPresent(ManyToOne.class))
       {
          attributes.put(FACES_LOOKUP,
-                  StaticFacesUtils.wrapExpression(StringUtils.lowercaseFirstLetter(ClassUtils.getSimpleName(property.getType())) + "Bean.all"));
+                  StaticFacesUtils.wrapExpression(StringUtils.decapitalize(ClassUtils.getSimpleName(property.getType())) + "Bean.all"));
          attributes.put(FACES_CONVERTER_ID,
-                  StaticFacesUtils.wrapExpression(StringUtils.lowercaseFirstLetter(ClassUtils.getSimpleName(property.getType())) + "Bean.converter"));
+                  StaticFacesUtils.wrapExpression(StringUtils.decapitalize(ClassUtils.getSimpleName(property.getType())) + "Bean.converter"));
       }
 
       return attributes;

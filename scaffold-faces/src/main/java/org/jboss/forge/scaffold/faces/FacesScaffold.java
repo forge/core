@@ -21,9 +21,7 @@
  */
 package org.jboss.forge.scaffold.faces;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,17 +79,16 @@ import org.metawidget.inspector.java5.Java5Inspector;
 import org.metawidget.inspector.jpa.JpaInspector;
 import org.metawidget.inspector.jpa.JpaInspectorConfig;
 import org.metawidget.inspector.propertytype.PropertyTypeInspector;
-import org.metawidget.layout.iface.Layout;
-import org.metawidget.statically.StaticMetawidget;
-import org.metawidget.statically.StaticWidget;
+import org.metawidget.statically.StaticXmlMetawidget;
+import org.metawidget.statically.StaticXmlWidget;
 import org.metawidget.statically.faces.StaticFacesUtils;
 import org.metawidget.statically.faces.component.html.StaticHtmlMetawidget;
 import org.metawidget.statically.faces.component.html.layout.HtmlTableLayout;
+import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlWidgetBuilder;
 import org.metawidget.statically.faces.component.html.widgetbuilder.ReadOnlyWidgetBuilder;
 import org.metawidget.statically.faces.component.html.widgetbuilder.richfaces.RichFacesWidgetBuilder;
 import org.metawidget.statically.layout.SimpleLayout;
 import org.metawidget.util.CollectionUtils;
-import org.metawidget.util.IOUtils;
 import org.metawidget.util.XmlUtils;
 import org.metawidget.widgetbuilder.composite.CompositeWidgetBuilder;
 import org.metawidget.widgetbuilder.composite.CompositeWidgetBuilderConfig;
@@ -174,9 +171,9 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       this.metawidget = new StaticHtmlMetawidget();
 
       @SuppressWarnings("unchecked")
-      CompositeWidgetBuilder<StaticWidget, StaticMetawidget> compositeWidgetBuider = new CompositeWidgetBuilder<StaticWidget, StaticMetawidget>(
-               new CompositeWidgetBuilderConfig<StaticWidget, StaticMetawidget>().setWidgetBuilders(
-                        new ReadOnlyWidgetBuilder(), new ForgeWidgetBuilder()));
+      CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget> compositeWidgetBuider = new CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget>(
+               new CompositeWidgetBuilderConfig<StaticXmlWidget, StaticXmlMetawidget>().setWidgetBuilders(
+                        new ForgeWidgetBuilder(), new ReadOnlyWidgetBuilder(), new HtmlWidgetBuilder()));
 
       this.metawidget.setWidgetBuilder(compositeWidgetBuider);
    }
@@ -220,27 +217,24 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       if (this.viewTemplate == null)
       {
          this.viewTemplate = this.compiler.compile(VIEW_TEMPLATE);
-         NamespacesAndIndent namespacesAndIndent = parseNamespacesAndIndent(this.compiler
-                  .getTemplateResolverFactory()
-                  .resolve(VIEW_TEMPLATE).getInputStream());
+         NamespacesAndIndent namespacesAndIndent = parseNamespacesAndIndent(String.valueOf(this.viewTemplate
+                  .getCompiledTemplate().getTemplate()));
          this.viewTemplateNamespaces = namespacesAndIndent.getNamespaces();
          this.viewTemplateMetawidgetIndent = namespacesAndIndent.getIndent();
       }
       if (this.createTemplate == null)
       {
          this.createTemplate = this.compiler.compile(CREATE_TEMPLATE);
-         NamespacesAndIndent namespacesAndIndent = parseNamespacesAndIndent(this.compiler
-                  .getTemplateResolverFactory()
-                  .resolve(CREATE_TEMPLATE).getInputStream());
+         NamespacesAndIndent namespacesAndIndent = parseNamespacesAndIndent(String.valueOf(this.createTemplate
+                  .getCompiledTemplate().getTemplate()));
          this.createTemplateNamespaces = namespacesAndIndent.getNamespaces();
          this.createTemplateMetawidgetIndent = namespacesAndIndent.getIndent();
       }
       if (this.listTemplate == null)
       {
          this.listTemplate = this.compiler.compile(LIST_TEMPLATE);
-         NamespacesAndIndent namespacesAndIndent = parseNamespacesAndIndent(this.compiler
-                  .getTemplateResolverFactory()
-                  .resolve(LIST_TEMPLATE).getInputStream());
+         NamespacesAndIndent namespacesAndIndent = parseNamespacesAndIndent(String.valueOf(this.listTemplate
+                  .getCompiledTemplate().getTemplate()));
          this.listTemplateNamespaces = namespacesAndIndent.getNamespaces();
          this.listTemplateMetawidgetIndent = namespacesAndIndent.getIndent();
       }
@@ -310,8 +304,8 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
                && this.project.getFacet(DependencyFacet.class).hasDependency(this.richfaces4Impl)))
       {
          @SuppressWarnings("unchecked")
-         CompositeWidgetBuilder<StaticWidget, StaticMetawidget> compositeWidgetBuider = new CompositeWidgetBuilder<StaticWidget, StaticMetawidget>(
-                  new CompositeWidgetBuilderConfig<StaticWidget, StaticMetawidget>().setWidgetBuilders(
+         CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget> compositeWidgetBuider = new CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget>(
+                  new CompositeWidgetBuilderConfig<StaticXmlWidget, StaticXmlMetawidget>().setWidgetBuilders(
                            new ReadOnlyWidgetBuilder(),
                            new RichFacesWidgetBuilder(), new ForgeWidgetBuilder()));
          this.metawidget.setWidgetBuilder(compositeWidgetBuider);
@@ -349,10 +343,10 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
          context.put("entity", entity);
 
          // Prepare Metawidget
-         this.metawidget.setValueExpression("value", StaticFacesUtils.wrapExpression(beanName + "." + ccEntity));
+         this.metawidget.setValue(StaticFacesUtils.wrapExpression(beanName + "." + ccEntity));
          this.metawidget.setPath(entity.getQualifiedName());
          this.metawidget.setReadOnly(false);
-         this.metawidget.setLayout((Layout) new HtmlTableLayout());
+         this.metawidget.setLayout(new HtmlTableLayout());
          this.metawidget.setStyle(null);
 
          String type = entity.getName().toLowerCase();
@@ -373,7 +367,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
                   this.viewTemplate.render(context), overwrite));
 
          // Generate list view
-         this.metawidget.setValueExpression("value", StaticFacesUtils.wrapExpression(beanName + ".pageItems"));
+         this.metawidget.setValue(StaticFacesUtils.wrapExpression(beanName + ".pageItems"));
          this.metawidget.setPath(viewBean.getQualifiedName() + "/pageItems");
          this.metawidget.setLayout(new SimpleLayout());
          writeMetawidget(context, this.listTemplateMetawidgetIndent, this.listTemplateNamespaces);
@@ -503,6 +497,9 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       HashMap<Object, Object> context = getTemplateContext(template);
 
       loadTemplates();
+
+      // Basic pages
+
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("index.html"), getClass()
                .getResourceAsStream("/org/jboss/forge/scaffold/faces/templates/index.html"), overwrite));
 
@@ -514,6 +511,23 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
 
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("500.xhtml"),
                this.e500Template.render(context), overwrite));
+
+      // Static resources
+
+      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/background.gif"),
+               getClass().getResourceAsStream("/org/jboss/forge/scaffold/faces/static/background.gif"), overwrite));
+
+      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/favicon.ico"),
+               getClass().getResourceAsStream("/org/jboss/forge/scaffold/faces/static/favicon.ico"), overwrite));
+
+      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/forge-logo.png"),
+               getClass().getResourceAsStream("/org/jboss/forge/scaffold/faces/static/forge-logo.png"), overwrite));
+
+      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/forge-style.css"),
+               getClass().getResourceAsStream("/org/jboss/forge/scaffold/faces/static/forge-style.css"), overwrite));
+
+      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/jboss-community.png"),
+               getClass().getResourceAsStream("/org/jboss/forge/scaffold/faces/static/jboss-community.png"), overwrite));
 
       return result;
    }
@@ -539,12 +553,16 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    @Override
    public List<Resource<?>> generateTemplates(final boolean overwrite)
    {
+      WebResourceFacet web = this.project.getFacet(WebResourceFacet.class);
       List<Resource<?>> result = new ArrayList<Resource<?>>();
 
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, (FileResource<?>) getTemplateStrategy()
                .getDefaultTemplate(),
                getClass().getResourceAsStream("/org/jboss/forge/scaffold/faces/templates/forge-template.xhtml"),
                overwrite));
+
+      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/scaffold/paginator.xhtml"),
+               getClass().getResourceAsStream("/org/jboss/forge/scaffold/faces/templates/paginator.xhtml"), overwrite));
 
       return result;
    }
@@ -553,13 +571,9 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
     * Parses XML from the given input stream and determines what namespaces it declares.
     */
 
-   private NamespacesAndIndent parseNamespacesAndIndent(final InputStream streamIn)
+   private NamespacesAndIndent parseNamespacesAndIndent(String template)
    {
       Map<String, String> namespaces = CollectionUtils.newHashMap();
-
-      ByteArrayOutputStream streamOut = new ByteArrayOutputStream();
-      IOUtils.streamBetween(streamIn, streamOut);
-      String template = streamOut.toString();
 
       // Determine namespaces
 

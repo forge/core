@@ -71,7 +71,7 @@ public class FacesTemplateStrategy implements TemplateStrategy
             return relativePath;
          }
       }
-      throw new IllegalArgumentException("Not a valid template resource for this Metawidget Scaffold.");
+      throw new IllegalArgumentException("Not a valid template resource for this scaffold.");
    }
 
    @Override

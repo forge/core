@@ -11,10 +11,6 @@
 	<packaging>jar</packaging>
 	<name>Forge - Scaffold Provider for Java Server Faces</name>
 
-   <properties>
-      <rewrite.version>1.0.0.Alpha10</rewrite.version>
-   </properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.jboss.forge</groupId>
@@ -26,26 +22,10 @@
 			<artifactId>forge-javaee-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>org.jboss.seam.render</groupId>
 			<artifactId>seam-render</artifactId>
 			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.ocpsoft.rewrite</groupId>
-			<artifactId>rewrite-impl-servlet</artifactId>
-			<version>${rewrite.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.ocpsoft.rewrite</groupId>
-			<artifactId>rewrite-integration-cdi</artifactId>
-			<version>${rewrite.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.ocpsoft.rewrite</groupId>
-			<artifactId>rewrite-integration-faces</artifactId>
-			<version>${rewrite.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.metawidget.modules</groupId>
@@ -75,8 +55,6 @@
 			<scope>test</scope>
 		</dependency>
 
-
 	</dependencies>
-
 
 </project>

@@ -5,10 +5,14 @@ import java.util.List;
 import javax.ejb.Stateful;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.convert.Converter;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceContextType;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -19,7 +23,7 @@ import @{entity.getQualifiedName()};
  * Backing bean for @{entity.getName()} entities.
  * <p>
  * This class provides CRUD functionality for all @{entity.getName()} entities.
- * It focuses purely on Java EE standards (e.g. <tt>&#64;ConversationScoped</tt>
+ * It focuses purely on Java EE 6 standards (e.g. <tt>&#64;ConversationScoped</tt>
  * for state management, <tt>PersistenceContext</tt> for persistence,
  * <tt>CriteriaBuilder</tt> for queries) rather than depending on a CRUD
  * framework or a custom base class.
@@ -51,7 +55,7 @@ public class @{entity.getName()}Bean implements Serializable {
 	@Inject
 	private Conversation conversation;
 
-	@PersistenceContext
+	@PersistenceContext(type = PersistenceContextType.EXTENDED)
 	private EntityManager entityManager;
 
 	public void retrieve() {
@@ -157,6 +161,7 @@ public class @{entity.getName()}Bean implements Serializable {
 	
 	/**
 	 * Support POSTing back @{entity.getName()} entities from the UI
+	 * (eg. from inside an HtmlSelectOneMenu)
 	 */
 
 	public Converter getConverter() {
@@ -178,7 +183,7 @@ public class @{entity.getName()}Bean implements Serializable {
 					return "";
 				}
 		
-				return String.valueOf(((Employer) value).getId());
+				return String.valueOf(((@{entity.getName()}) value).getId());
 			}
 		};
 	}	

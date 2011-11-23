@@ -3,18 +3,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:ui="http://java.sun.com/jsf/facelets" xml:lang="EN" lang="EN"
-	dir="ltr">
+	xmlns:ui="http://java.sun.com/jsf/facelets">
 
 	<h:head>
 		<title>#{empty pageTitle ? '{#pageTitle}' : pageTitle}</title>
-		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-		<meta http-equiv="imagetoolbar" content="no" />
 		<link rel="icon" href="#{resource['favicon.ico']}" />
 		<h:outputStylesheet name="forge-style.css" />
 	</h:head>
 	
-	<h:body id="top" style="background-image: url( '#{resource['bkg.gif']}' )">
+	<h:body style="background-image: url('#{resource['background.gif']}')">
 	
 		<div class="wrapper">
 	
@@ -34,19 +31,15 @@
 		    </div>
 		
 		    <div class="content">
-		     	<h1><ui:insert name="header">{header}</ui:insert></h1>
+		     	<h1><ui:insert name="header"/></h1>		
+		     	<h2><ui:insert name="subheader"/></h2>
 		
-		     	<h3><ui:insert name="subheader">{subheader}</ui:insert></h3>
-		
-		    	<ui:insert name="main">{main}</ui:insert>
+		    	<ui:insert name="main"/>
 		     
 				<div id="footer">
-				<hr />
-			
-				<ui:insert name="footer">{footer}</ui:insert>
-			
-				<p class="right">Powered by <a href="http://jboss.org/forge">Forge</a></p>
-				<p>&nbsp;</p>
+					<hr />				
+					<ui:insert name="footer"/>			
+					<p class="right">Powered by <a href="http://jboss.org/forge">Forge</a></p>
 				</div>
 			</div>
 		

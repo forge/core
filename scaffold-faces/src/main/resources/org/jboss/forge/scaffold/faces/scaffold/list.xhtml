@@ -1,46 +1,34 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
-	xmlns:ui="http://java.sun.com/jsf/facelets@{metawidgetNamespaces}">
+	xmlns:ui="http://java.sun.com/jsf/facelets@{metawidgetNamespaces}"
+	template="@{templateStrategy.getReferencePath(template != null ? template : templateStrategy.getDefaultTemplate())}">
 
 	<f:metadata>
 		<f:viewParam name="page" value="#{@{beanName}.page}" />
 		<f:event type="preRenderView" listener="#{@{beanName}.paginate}" />
 	</f:metadata>
-	
-	<ui:composition template="@{templateStrategy.getReferencePath(template != null ? template : templateStrategy.getDefaultTemplate())}">
-		<ui:param name="pageTitle" value="List @{entity.getName()}" />
-	
-		<ui:define name="header">
-			@{entity.getName()}
-		</ui:define>
-	
-		<ui:define name="subheader">
-			Listing all @{entity.getName()} objects
-		</ui:define>
-	
-		<ui:define name="footer"/>
-	
-		<ui:define name="main">
-			@{metawidget}
-			<h:panelGroup rendered="#{@{beanName}.count gt @{beanName}.pageSize}">
-				<h:outputLink rendered="#{@{beanName}.page gt 0}">
-					<f:param name="page" value="#{@{beanName}.page - 1}"/>
-					Previous 
-				</h:outputLink>
-				<h:outputText value="#{@{beanName}.page * @{beanName}.pageSize + 1} to #{@{beanName}.page * @{beanName}.pageSize + fn:length(@{beanName}.pageItems)} (of #{@{beanName}.count})"/>
-				<h:outputLink rendered="#{(@{beanName}.page + 1) * @{beanName}.pageSize lt @{beanName}.count}">
-					<f:param name="page" value="#{@{beanName}.page + 1}"/>
-					Next 
-				</h:outputLink>
-			</h:panelGroup>
-			<h:link value="Create new" outcome="create" />
-		</ui:define>
-	
-	</ui:composition>
-</html>
 
+	<ui:param name="pageTitle" value="List @{entity.getName()}" />
 
+	<ui:define name="header">
+		@{entity.getName()}
+	</ui:define>
+
+	<ui:define name="subheader">
+		Listing all @{entity.getName()} objects
+	</ui:define>
+
+	<ui:define name="footer" />
+
+	<ui:define name="main">
+		@{metawidget}
+		<ui:include src="/resources/scaffold/paginator.xhtml">
+			<ui:param name="paginatorBean" value="#{@{beanName}}" />
+		</ui:include>
+		<h:link value="Create new" outcome="create" />
+	</ui:define>
+
+</ui:composition>

@@ -1,58 +1,57 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:c="http://java.sun.com/jsp/jstl/core@{metawidgetNamespaces}">	
+	xmlns:c="http://java.sun.com/jsp/jstl/core@{metawidgetNamespaces}"
+	template="@{templateStrategy.getReferencePath(template != null ? template : templateStrategy.getDefaultTemplate())}">
 
 	<f:metadata>
-	    <f:viewParam name="id" value="#{@{beanName}.id}"/>
-	    <f:event type="preRenderView" listener="#{@{beanName}.retrieve}" />
+		<f:viewParam name="id" value="#{@{beanName}.id}" />
+		<f:event type="preRenderView" listener="#{@{beanName}.retrieve}" />
 	</f:metadata>
 
-	<ui:composition template="@{templateStrategy.getReferencePath(template != null ? template : templateStrategy.getDefaultTemplate())}">	
-		<ui:param name="pageTitle" value="Create @{entity.getName()}" />
-	
-		<ui:define name="header">
-			@{entity.getName()}
-		</ui:define>
-	
-		<ui:define name="subheader">			
+	<ui:param name="pageTitle" value="Create @{entity.getName()}" />
+
+	<ui:define name="header">
+		@{entity.getName()}
+	</ui:define>
+
+	<ui:define name="subheader">
+		<c:choose>
+			<c:when test="#{!empty @{beanName}.id}">
+				Editing existing @{entity.getName()}
+			</c:when>
+			<c:otherwise>
+				Creating a new @{entity.getName()}
+			</c:otherwise>
+		</c:choose>
+	</ui:define>
+
+	<ui:define name="footer" />
+
+	<ui:define name="main">
+		<h:form id="form">
+			<h:messages globalOnly="true" />
+
+			@{metawidget}
+
+			<br />
+
 			<c:choose>
 				<c:when test="#{!empty @{beanName}.id}">
-					Editing existing @{entity.getName()}
+					<h:commandLink value="Save" action="#{@{beanName}.update}" /> |
+					<h:link value="Cancel" outcome="view" />
+					<h:commandLink value="Delete" action="#{@{beanName}.delete}"
+						styleClass="right" />
 				</c:when>
 				<c:otherwise>
-					Creating a new @{entity.getName()}
+					<h:commandLink value="Create" action="#{@{beanName}.create}" />
+					<h:link value="Cancel" outcome="list" styleClass="right" />
 				</c:otherwise>
 			</c:choose>
-		</ui:define>
-	
-		<ui:define name="footer"/>
-	
-		<ui:define name="main">
-			<h:form id="form">
-				<h:messages globalOnly="true" />
+		</h:form>
+	</ui:define>
 
-				@{metawidget}
-
-				<br/>
-				
-				<c:choose>
-					<c:when test="#{!empty @{beanName}.id}">
-						<h:commandLink value="Save" action="#{@{beanName}.update}" /> |
-						<h:link value="Cancel" outcome="view"/>
-						<h:commandLink value="Delete" action="#{@{beanName}.delete}" styleClass="right"/>
-					</c:when>
-					<c:otherwise>
-						<h:commandLink value="Create" action="#{@{beanName}.create}" />
-						<h:link value="Cancel" outcome="list" styleClass="right"/>
-					</c:otherwise>
-				</c:choose>
-			</h:form>
-		</ui:define>
-	
-	</ui:composition>
-</html>
-
+</ui:composition>

@@ -241,12 +241,12 @@ public class ForgePropertyStyle
          return null;
       }
 
-      if (!StringUtils.isFirstLetterUppercase(propertyName))
+      if (!StringUtils.isCapitalized(propertyName))
       {
          return null;
       }
 
-      return StringUtils.lowercaseFirstLetter(propertyName);
+      return StringUtils.decapitalize(propertyName);
    }
 
    /**
@@ -350,12 +350,12 @@ public class ForgePropertyStyle
 
       String propertyName = methodName.substring(ClassUtils.JAVABEAN_SET_PREFIX.length());
 
-      if (!StringUtils.isFirstLetterUppercase(propertyName))
+      if (!StringUtils.isCapitalized(propertyName))
       {
          return null;
       }
 
-      return StringUtils.lowercaseFirstLetter(propertyName);
+      return StringUtils.decapitalize(propertyName);
    }
 
    /**

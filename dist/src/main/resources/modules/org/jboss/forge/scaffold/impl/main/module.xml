@@ -12,6 +12,7 @@
       <module name="org.jboss.forge.javaee.impl" />
       <module name="org.jboss.forge.scaffold.api" />
       <module name="org.jboss.seam.render" />
+      <module name="org.mvel" />
       <module name="javax.api" />
    </dependencies>
 

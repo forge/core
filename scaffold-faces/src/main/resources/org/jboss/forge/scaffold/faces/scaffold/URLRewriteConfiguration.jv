@@ -25,13 +25,8 @@ import javax.servlet.ServletContext;
 
 import com.ocpsoft.rewrite.config.Configuration;
 import com.ocpsoft.rewrite.config.ConfigurationBuilder;
-import com.ocpsoft.rewrite.config.Direction;
-import com.ocpsoft.rewrite.servlet.config.DispatchType;
-import com.ocpsoft.rewrite.servlet.config.Forward;
 import com.ocpsoft.rewrite.servlet.config.HttpConfigurationProvider;
-import com.ocpsoft.rewrite.servlet.config.Path;
 import com.ocpsoft.rewrite.servlet.config.rule.Join;
-import com.ocpsoft.rewrite.servlet.config.rule.TrailingSlash;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -57,6 +52,9 @@ public class URLRewriteConfiguration extends HttpConfigurationProvider
                .addRule(Join.path("/{domain}/{id}").where("domain").matches(ENTITY_NAME).where("id").matches("\\d+")
                         .to("@{viewPage}").withInboundCorrection())
 
+               .addRule(Join.path("/{domain}/{id}").where("domain").matches(ENTITY_NAME).where("id").matches("\\d+")
+                        .to("/scaffold/{domain}/view.jsf").withInboundCorrection())
+
                .addRule(Join.path("/{domain}/create").where("domain").matches(ENTITY_NAME)
                         .to("@{createPage}")
                         .withInboundCorrection())
@@ -71,5 +69,4 @@ public class URLRewriteConfiguration extends HttpConfigurationProvider
    {
       return 1;
    }
-
 }
