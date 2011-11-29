@@ -41,29 +41,43 @@ import org.jboss.forge.ForgeEnvironment;
  */
 public class ShellConfig
 {
-   public static final String NO_INIT_PROPERTY = "forge.debug.no_auto_init_streams";
 
    @Inject
    private ForgeEnvironment environment;
 
-   public void loadConfig(final Shell shell)
+   public void loadConfig(final ShellImpl shell)
    {
-      File configDir = new File((String) environment.getProperty(ShellImpl.PROP_FORGE_CONFIG_DIR));
-
-      if (!configDir.exists())
+      File configDir = environment.getConfigDirectory().getUnderlyingResourceObject();
+      if ((configDir != null) && configDir.exists() && !shell.isNoInitMode())
       {
-         if (!configDir.mkdirs())
+         boolean historyEnabled = shell.isHistoryEnabled();
+         shell.setHistoryEnabled(false);
+         File configFile = new File(configDir.getPath(), ShellImpl.FORGE_CONFIG_FILE);
+
+         if (!configFile.exists())
          {
-            System.err.println("could not create config directory: " + configDir.getAbsolutePath());
-            return;
+            createDefaultConfigFile(configFile);
          }
+
+         try
+         {
+            shell.execute(configFile);
+         }
+         catch (Exception e)
+         {
+            e.printStackTrace();
+            throw new RuntimeException("error loading file: " + configFile.getAbsolutePath());
+         }
+         shell.setHistoryEnabled(historyEnabled);
       }
+   }
 
-      if (!Boolean.getBoolean(NO_INIT_PROPERTY))
+   public void loadHistory(final ShellImpl shell)
+   {
+      File configDir = environment.getConfigDirectory().getUnderlyingResourceObject();
+      if ((configDir != null) && configDir.exists() && !shell.isNoInitMode())
       {
-
          File historyFile = new File(configDir.getPath(), ShellImpl.FORGE_COMMAND_HISTORY_FILE);
-
          try
          {
             if (!historyFile.exists())
@@ -100,26 +114,6 @@ public class ShellConfig
             throw new RuntimeException("error loading file: " + historyFile.getAbsolutePath());
          }
 
-         File configFile = new File(configDir.getPath(), ShellImpl.FORGE_CONFIG_FILE);
-
-         if (!configFile.exists())
-         {
-            createDefaultConfigFile(configFile);
-         }
-
-         try
-         {
-            /**
-             * Load the config file script.
-             */
-            shell.execute(configFile);
-         }
-         catch (Exception e)
-         {
-            e.printStackTrace();
-            throw new RuntimeException("error loading file: " + configFile.getAbsolutePath());
-         }
-
          try
          {
             shell.setHistoryOutputStream(new BufferedOutputStream(new FileOutputStream(historyFile, true)));
@@ -130,7 +124,6 @@ public class ShellConfig
                      + historyFile.getAbsolutePath());
          }
       }
-
    }
 
    private void createDefaultConfigFile(final File configFile)

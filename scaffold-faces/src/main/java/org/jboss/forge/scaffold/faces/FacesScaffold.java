@@ -106,7 +106,7 @@ import org.w3c.dom.NamedNodeMap;
  * writing Metawidget plugins, see <a href="http://metawidget.org/documentation.php">the Metawidget documentation</a>.
  * <p>
  * This Facet does <em>not</em> require Metawidget to be in the final project.
- *
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 
@@ -180,7 +180,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
     */
 
    @Override
-   public void setProject(Project project)
+   public void setProject(final Project project)
    {
       super.setProject(project);
 
@@ -310,7 +310,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       {
          @SuppressWarnings("unchecked")
          CompositeWidgetBuilder<StaticWidget, StaticMetawidget> compositeWidgetBuider = new CompositeWidgetBuilder<StaticWidget, StaticMetawidget>(
-                  new CompositeWidgetBuilderConfig<StaticWidget, StaticMetawidget>().setWidgetBuilders(
+                  new CompositeWidgetBuilderConfig().setWidgetBuilders(
                            new ReadOnlyWidgetBuilder(),
                            new RichFacesWidgetBuilder(), new HtmlWidgetBuilder()));
          this.metawidget.setWidgetBuilder(compositeWidgetBuider);
@@ -348,7 +348,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
          context.put("entity", entity);
 
          // Prepare Metawidget
-         this.metawidget.setValueExpression("value", StaticFacesUtils.wrapExpression(beanName + "." + ccEntity));
+         this.metawidget.setValue(StaticFacesUtils.wrapExpression(beanName + "." + ccEntity));
          this.metawidget.setPath(entity.getQualifiedName());
          this.metawidget.setReadOnly(false);
          this.metawidget.setLayout((Layout) new HtmlTableLayout());
@@ -372,7 +372,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
                   this.viewTemplate.render(context), overwrite));
 
          // Generate list view
-         this.metawidget.setValueExpression("value", "#{entity}");
+         this.metawidget.setValue("#{entity}");
          this.metawidget.setLayout(new SimpleLayout());
          this.metawidget.setStyle("margin-right: 0.5em");
          writeMetawidget(context, this.listTemplateMetawidgetIndent, this.listTemplateNamespaces);
@@ -672,7 +672,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
 
    /**
     * Simple immutable structure to store some namespaces and an indent.
-    *
+    * 
     * @author Richard Kennard
     */
 

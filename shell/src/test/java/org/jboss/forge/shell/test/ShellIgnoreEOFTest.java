@@ -34,23 +34,25 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.shell.events.PostStartup;
 import org.jboss.forge.shell.events.PreShutdown;
 import org.jboss.forge.test.AbstractShellTest;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
+@Ignore
 @RunWith(Arquillian.class)
 public class ShellIgnoreEOFTest extends AbstractShellTest
 {
    private static boolean shutdown = false;
 
-   public void observeShutdown(@Observes PreShutdown event)
+   public void observeShutdown(@Observes final PreShutdown event)
    {
       ShellIgnoreEOFTest.shutdown = true;
    }
 
-   public void observeShutdown(@Observes PostStartup event)
+   public void observeShutdown(@Observes final PostStartup event)
    {
       ShellIgnoreEOFTest.shutdown = false;
    }

@@ -82,7 +82,7 @@ public abstract class AbstractShellPrompt implements Shell
       StringBuilder buf = new StringBuilder();
       while (((c = scan()) != '\n') && (c != '\r'))
       {
-         if (c == 127 || c == 8)
+         if ((c == 127) || (c == 8))
          {
             if (buf.length() > 0)
             {
@@ -101,40 +101,6 @@ public abstract class AbstractShellPrompt implements Shell
       }
       return buf.toString();
    }
-
- //  @Override
-//   public String promptAndSwallowCRWithCompletion(List)
-//   {
-//      CompleterAdaptor adaptor = new CompleterAdaptor(completer);
-//
-//      int c;
-//      StringBuilder buf = new StringBuilder();
-//      while (((c = scan()) != '\n') && (c != '\r'))
-//      {
-//         if (c == 127)
-//         {
-//            if (buf.length() > 0)
-//            {
-//               buf.deleteCharAt(buf.length() - 1);
-//               cursorLeft(1);
-//               print(" ");
-//               cursorLeft(1);
-//
-//            }
-//            continue;
-//         }
-//
-//         write((byte) c);
-//         buf.append((char) c);
-//
-//
-//
-//         flushBuffer();
-//      }
-//      return buf.toString();
-//   }
-
-
 
    @Override
    public String prompt(final String message)

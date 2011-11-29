@@ -19,51 +19,41 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge;
+package org.jboss.forge.shell.exceptions;
 
-import java.util.Map;
+import java.io.InputStream;
 
-import org.jboss.forge.resources.DirectoryResource;
+import org.jboss.forge.shell.plugins.Plugin;
 
 /**
+ * Used to signal when the end of an {@link InputStream} has been reached. This exception should *NEVER* be caught by a
+ * {@link Plugin} or other extension.
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public interface ForgeEnvironment
+public class EndOfStreamException extends RuntimeException
 {
+   private static final long serialVersionUID = 1814562507419409858L;
 
-   /**
-    * Return the directory Forge is using to store and load third-party plugins.
-    */
-   DirectoryResource getPluginDirectory();
+   public EndOfStreamException()
+   {
+      super();
+   }
 
-   /**
-    * Return true if Forge is currently operating with the assumption that an Internet connection is available.
-    */
-   boolean isOnline();
+   public EndOfStreamException(final String message, final Throwable e)
+   {
+      super(message, e);
+   }
 
-   /**
-    * Set a configuration property for the current Forge execution.
-    */
-   void setProperty(String name, Object value);
+   public EndOfStreamException(final String message)
+   {
+      super(message);
+   }
 
-   /**
-    * Get a map of all configuration properties for the current Forge execution.
-    */
-   Map<String, Object> getProperties();
+   public EndOfStreamException(final Throwable e)
+   {
+      super(e);
+   }
 
-   /**
-    * Get a named property for the current Forge execution
-    */
-   Object getProperty(String name);
-
-   /**
-    * Get a named property for the current Forge execution
-    */
-   void removeProperty(String funcName);
-
-   /**
-    * Get the configuration directory.
-    */
-   DirectoryResource getConfigDirectory();
 }

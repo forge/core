@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Queue;
 
+import org.jboss.forge.shell.exceptions.EndOfStreamException;
+
 public class QueuedInputStream extends InputStream
 {
    BufferedInputStream current;
@@ -94,7 +96,7 @@ public class QueuedInputStream extends InputStream
             }
             else
             {
-              throw new IllegalStateException("End of stream: No more queued input.");
+               throw new EndOfStreamException("End of stream: No more queued input.");
             }
          }
       }

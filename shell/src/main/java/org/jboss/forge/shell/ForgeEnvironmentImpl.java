@@ -83,8 +83,23 @@ public class ForgeEnvironmentImpl implements ForgeEnvironment
    }
 
    @Override
-   public void removeProperty(String name)
+   public void removeProperty(final String name)
    {
       properties.remove(name);
+   }
+
+   @Override
+   public DirectoryResource getConfigDirectory()
+   {
+      FileResource<?> resource = (FileResource<?>) resourceFactory.getResourceFrom(new File(
+               (String) getProperty(ShellImpl.PROP_FORGE_CONFIG_DIR)));
+      if (!resource.exists())
+      {
+         if (!resource.mkdirs())
+         {
+            System.err.println("could not create config directory: " + resource.getFullyQualifiedName());
+         }
+      }
+      return resource.reify(DirectoryResource.class);
    }
 }

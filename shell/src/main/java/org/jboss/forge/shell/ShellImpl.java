@@ -24,7 +24,14 @@ package org.jboss.forge.shell;
 
 import static org.mvel2.DataConversion.addConversionHandler;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -73,6 +80,7 @@ import org.jboss.forge.shell.events.Startup;
 import org.jboss.forge.shell.exceptions.AbortedException;
 import org.jboss.forge.shell.exceptions.CommandExecutionException;
 import org.jboss.forge.shell.exceptions.CommandParserException;
+import org.jboss.forge.shell.exceptions.EndOfStreamException;
 import org.jboss.forge.shell.exceptions.PluginExecutionException;
 import org.jboss.forge.shell.exceptions.ShellExecutionException;
 import org.jboss.forge.shell.integration.BufferManager;
@@ -103,10 +111,12 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    static final String DEFAULT_PROMPT_NO_PROJ = "[\\c{red}no project\\c] \\c{blue}\\W\\c \\c{red}\\$\\c ";
 
    public static final String PROP_DEFAULT_PLUGIN_REPO = "DEFAULT_PLUGIN_REPO";
-   static final String DEFAULT_PLUGIN_REPO = "https://raw.github.com/forge/plugin-repository/master/repository.yaml";
+   public static final String DEFAULT_PLUGIN_REPO = "https://raw.github.com/forge/plugin-repository/master/repository.yaml";
 
    static final String PROP_VERBOSE = "VERBOSE";
+   static final String PROP_HISTORY = "HISTORY";
    static final String PROP_EXCEPTION_HANDLING = "EXCEPTION_HANDLING";
+   static final String NO_INIT_PROPERTY = "forge.debug.no_auto_init_streams";
 
    static final String PROP_IGNORE_EOF = "IGNOREEOF";
    static final int DEFAULT_IGNORE_EOF = 1;
@@ -122,9 +132,6 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
 
    @Inject
    private BeanManager manager;
-
-   @Inject
-   private Event<Shutdown> shutdown;
 
    @Inject
    private CurrentProject projectContext;
@@ -163,14 +170,12 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    private List<String> _historyOverride;
    private List<Completer> _deferredCompleters;
 
-
    private enum BufferingMode
    {
       Direct, Buffering
    }
 
-
-   private BufferingMode bufferingMode = BufferingMode.Direct;
+   private final BufferingMode bufferingMode = BufferingMode.Direct;
 
    private final boolean colorEnabled = Boolean.getBoolean("forge.shell.colorEnabled");
 
@@ -181,7 +186,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       public Resource[] convertFrom(final Object obl)
       {
          return GeneralUtils.parseSystemPathspec(resourceFactory, lastResource, getCurrentResource(),
-                  obl instanceof String[] ? (String[]) obl : new String[]{obl.toString()});
+                  obl instanceof String[] ? (String[]) obl : new String[] { obl.toString() });
       }
 
       @SuppressWarnings("rawtypes")
@@ -199,7 +204,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       {
          if (getCurrentProject().hasFacet(JavaSourceFacet.class))
          {
-            String[] strings = obj instanceof String[] ? (String[]) obj : new String[]{obj.toString()};
+            String[] strings = obj instanceof String[] ? (String[]) obj : new String[] { obj.toString() };
             List<Resource<?>> resources = new ArrayList<Resource<?>>();
             for (String string : strings)
             {
@@ -232,7 +237,6 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       }
    };
 
-   private int numEOF = 0;
    private boolean executing;
 
    @Inject
@@ -243,6 +247,9 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
 
    @Inject
    private Instance<TriggeredAction> triggeredActions;
+
+   @Inject
+   private IgnoreEofKeyListener ignoreEOF;
 
    void init(@Observes final Startup event, final PluginCommandCompleter pluginCompleter) throws Exception
    {
@@ -326,7 +333,6 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          }
       });
 
-
       configureOSTerminal();
       initReaderAndStreams();
       initParameters();
@@ -346,8 +352,6 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       environment.setProperty(PROP_PROMPT, "> ");
       environment.setProperty(PROP_PROMPT_NO_PROJ, "> ");
 
-      shellConfig.loadConfig(this);
-
       if (Boolean.getBoolean("forge.offline") == true)
       {
          environment.setProperty(OFFLINE_FLAG, true);
@@ -358,7 +362,14 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       }
 
       initCompleters(pluginCompleter);
+
+      shellConfig.loadHistory(this);
+      shellConfig.loadConfig(this);
+
       initSignalHandlers();
+
+      if (!isNoInitMode())
+         this.registerKeyListener(ignoreEOF);
 
       /*
        * Do this last so that we don't fire off plugin events before the shell has booted
@@ -386,18 +397,33 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    @Override
    public void writeToHistory(final String command)
    {
-      try
+      if (isHistoryEnabled())
       {
-         for (int i = 0; i < command.length(); i++)
+         try
          {
-            historyOutstream.write(command.charAt(i));
+            for (int i = 0; i < command.length(); i++)
+            {
+               historyOutstream.write(command.charAt(i));
+            }
+            historyOutstream.write('\n');
+            historyOutstream.flush();
          }
-         historyOutstream.write('\n');
-         historyOutstream.flush();
+         catch (IOException e)
+         {}
       }
-      catch (IOException e)
-      {
-      }
+   }
+
+   @Override
+   public boolean isHistoryEnabled()
+   {
+      Object s = environment.getProperty(PROP_HISTORY);
+      return (s != null) && "true".equals(s);
+   }
+
+   @Override
+   public void setHistoryEnabled(final boolean verbose)
+   {
+      environment.setProperty(PROP_VERBOSE, String.valueOf(verbose));
    }
 
    @Override
@@ -415,8 +441,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
                historyOutstream.close();
             }
             catch (Exception e)
-            {
-            }
+            {}
          }
       });
    }
@@ -451,7 +476,6 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       completers.add(pluginCompleter);
       completer = new AggregateCompleter(completers);
 
-
       if (isNoInitMode())
       {
          if (_deferredCompleters == null)
@@ -472,19 +496,19 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       this.reader.setCompletionHandler(new OptionAwareCompletionHandler(commandHolder, this));
    }
 
-   private static boolean isNoInitMode()
+   boolean isNoInitMode()
    {
-      return Boolean.getBoolean(ShellConfig.NO_INIT_PROPERTY);
+      return Boolean.getBoolean(NO_INIT_PROPERTY);
    }
 
    private void initReaderAndStreams() throws IOException
    {
       boolean noInitMode = isNoInitMode();
-      if (_redirectedStream == null && noInitMode) {
+      if ((_redirectedStream == null) && noInitMode) {
          return;
       }
 
-      if (inputPipe == null && _redirectedStream == null)
+      if ((inputPipe == null) && (_redirectedStream == null))
       {
          inputPipe = new ConsoleInputSession(System.in);
       }
@@ -507,7 +531,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          outputStream = new OutputStream()
          {
             @Override
-            public void write(int b) throws IOException
+            public void write(final int b) throws IOException
             {
                writer.write(b);
             }
@@ -521,9 +545,9 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          terminal = TerminalFactory.get();
       }
 
-
       this.screenBuffer = new JLineScreenBuffer(terminal, outputStream);
-      this.reader = new ConsoleReader(_redirectedStream == null ? inputPipe.getExternalInputStream() : _redirectedStream, this, null, terminal);
+      this.reader = new ConsoleReader(_redirectedStream == null ? inputPipe.getExternalInputStream()
+               : _redirectedStream, this, null, terminal);
       this.reader.setHistoryEnabled(true);
       this.reader.setBellEnabled(false);
 
@@ -548,7 +572,6 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
             }
          }
       }
-
 
    }
 
@@ -735,56 +758,13 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          line = reader.readLine();
       }
 
-      if (line != null && !"\n".equals(line))
+      if ((line != null) && !"\n".equals(line))
       {
          write((byte) '\n');
       }
       flush();
 
-
       return line;
-
-//      if (interruptedState)
-//      {
-//         reader.println();
-//         reader.flush();
-//         throw new AbortedException();
-//      }
-//      else if (line == null)
-//      {
-//         String eofs = (String) environment.getProperty(PROP_IGNORE_EOF);
-//
-//         int propEOFs;
-//         try
-//         {
-//            propEOFs = Integer.parseInt(eofs);
-//         }
-//         catch (NumberFormatException e)
-//         {
-//            if (isVerbose())
-//               ShellMessages.info(this, "Unable to parse Shell property [" + PROP_IGNORE_EOF + "]");
-//
-//            propEOFs = DEFAULT_IGNORE_EOF;
-//         }
-//
-//         if (this.numEOF < propEOFs)
-//         {
-//            println();
-//            println("(Press CTRL-D again or type 'exit' to quit.)");
-//            this.numEOF++;
-//         }
-//         else
-//         {
-//            print("exit");
-//            shutdown.fire(new Shutdown());
-//         }
-//         reader.flush();
-//      }
-//      else
-//      {
-//         numEOF = 0;
-//      }
-      //    return line;
    }
 
    @Override
@@ -816,9 +796,9 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
 
    private class ExecutorThread extends Thread
    {
-      private String run;
+      private final String run;
 
-      private ExecutorThread(String run)
+      private ExecutorThread(final String run)
       {
          this.run = run;
       }
@@ -831,7 +811,6 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    }
 
    private volatile Thread executorThread;
-
 
    @Override
    public void execute(String line) throws Exception
@@ -908,6 +887,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       }
       finally
       {
+         ignoreEOF.reset();
          instream.close();
       }
    }
@@ -1059,47 +1039,47 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
 
       switch (color)
       {
-         case BLACK:
-            ansi.fg(Ansi.Color.BLACK);
-            break;
-         case BLUE:
-            ansi.fg(Ansi.Color.BLUE);
-            break;
-         case CYAN:
-            ansi.fg(Ansi.Color.CYAN);
-            break;
-         case GREEN:
-            ansi.fg(Ansi.Color.GREEN);
-            break;
-         case MAGENTA:
-            ansi.fg(Ansi.Color.MAGENTA);
-            break;
-         case RED:
-            ansi.fg(Ansi.Color.RED);
-            break;
-         case WHITE:
-            ansi.fg(Ansi.Color.WHITE);
-            break;
-         case YELLOW:
-            ansi.fg(Ansi.Color.YELLOW);
-            break;
-         case BOLD:
-            ansi.a(Ansi.Attribute.INTENSITY_BOLD);
-            break;
-         case ITALIC:
-            ansi.a(Ansi.Attribute.ITALIC);
-            ansi.a(Ansi.Attribute.INTENSITY_FAINT);
-            break;
+      case BLACK:
+         ansi.fg(Ansi.Color.BLACK);
+         break;
+      case BLUE:
+         ansi.fg(Ansi.Color.BLUE);
+         break;
+      case CYAN:
+         ansi.fg(Ansi.Color.CYAN);
+         break;
+      case GREEN:
+         ansi.fg(Ansi.Color.GREEN);
+         break;
+      case MAGENTA:
+         ansi.fg(Ansi.Color.MAGENTA);
+         break;
+      case RED:
+         ansi.fg(Ansi.Color.RED);
+         break;
+      case WHITE:
+         ansi.fg(Ansi.Color.WHITE);
+         break;
+      case YELLOW:
+         ansi.fg(Ansi.Color.YELLOW);
+         break;
+      case BOLD:
+         ansi.a(Ansi.Attribute.INTENSITY_BOLD);
+         break;
+      case ITALIC:
+         ansi.a(Ansi.Attribute.ITALIC);
+         ansi.a(Ansi.Attribute.INTENSITY_FAINT);
+         break;
 
-         default:
-            return output;
+      default:
+         return output;
       }
 
       return ansi.render(output).reset().toString();
    }
 
    @Override
-   public void write(int b)
+   public void write(final int b)
    {
       screenBuffer.write(b);
    }
@@ -1111,17 +1091,16 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    }
 
    @Override
-   public void write(byte[] b)
+   public void write(final byte[] b)
    {
       screenBuffer.write(b);
    }
 
    @Override
-   public void write(byte[] b, int offset, int length)
+   public void write(final byte[] b, final int offset, final int length)
    {
       screenBuffer.write(b, offset, length);
    }
-
 
    private void _flushBuffer() throws IOException
    {
@@ -1178,7 +1157,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    @Override
    public void setInputStream(final InputStream is) throws IOException
    {
-      //     throw new UnsupportedOperationException("not allowed");
+      // throw new UnsupportedOperationException("not allowed");
       this.inputPipe = null;
       this._redirectedStream = is;
       initReaderAndStreams();
@@ -1291,9 +1270,10 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    private class ReturnValueThread<V> extends Thread
    {
       private V value;
-      private Callable<V> caller;
+      private final Callable<V> caller;
+      private Throwable exception;
 
-      private ReturnValueThread(Callable<V> caller)
+      private ReturnValueThread(final Callable<V> caller)
       {
          this.caller = caller;
       }
@@ -1309,6 +1289,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          {
             try
             {
+               exception = e;
                handleException(e);
             }
             catch (Exception e2)
@@ -1322,8 +1303,12 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       {
          return value;
       }
-   }
 
+      public Throwable getException()
+      {
+         return exception;
+      }
+   }
 
    @Override
    public String promptWithCompleter(String message, final Completer tempCompleter)
@@ -1367,11 +1352,15 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
             }
 
             flush();
+            if (thread.getException() instanceof EndOfStreamException)
+            {
+               throw (EndOfStreamException) thread.getException();
+            }
+
             return thread.getValue();
          }
          catch (InterruptedException e)
          {
-            //
             throw new RuntimeException("[killed]");
          }
          finally
@@ -1475,7 +1464,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    }
 
    @Override
-   public void registerBufferManager(BufferManager manager)
+   public void registerBufferManager(final BufferManager manager)
    {
       screenBuffer = manager;
    }
@@ -1486,15 +1475,10 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    }
 
    @Override
-   public void registerKeyListener(KeyListener keyListener)
+   public void registerKeyListener(final KeyListener keyListener)
    {
       reader.registerKeyListener(keyListener);
    }
-
-   //   private void initBuffer()
-//   {
-//      screenBuffer = new JLineScreenBuffer(reader.getTerminal(), );
-//   }
 
    private void configureOSTerminal() throws IOException
    {
@@ -1519,7 +1503,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    @Override
    public boolean isAnsiSupported()
    {
-      return reader != null && reader.getTerminal().isAnsiSupported();
+      return (reader != null) && reader.getTerminal().isAnsiSupported();
    }
 
    @Override

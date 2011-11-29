@@ -27,7 +27,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.project.Project;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.test.AbstractShellTest;
 import org.junit.Assert;
@@ -46,7 +45,7 @@ public class ResourceEventsTest extends AbstractShellTest
    @Test
    public void testEventsPropagateToObservers() throws Exception
    {
-      Project javaProject = initializeJavaProject();
+      initializeJavaProject();
       List<Resource<?>> created = observer.getCreated();
       Assert.assertFalse(created.isEmpty());
 

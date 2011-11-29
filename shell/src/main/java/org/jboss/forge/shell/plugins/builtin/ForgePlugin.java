@@ -117,7 +117,7 @@ public class ForgePlugin implements Plugin
       out.println("                   |___/      ");
       out.println("");
       String version = getClass().getPackage().getImplementationVersion();
-      out.println("Forge, version [ " + version + " ] - JBoss, by Red Hat, Inc. [ http://jboss.org ]");
+      out.println("JBoss Forge, version [ " + version + " ] - JBoss, by Red Hat, Inc. [ http://jboss.org ]");
    }
 
    @Command(value = "restart", help = "Reload all plugins and default configurations")

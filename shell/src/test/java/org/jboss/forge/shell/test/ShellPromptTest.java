@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.shell.exceptions.EndOfStreamException;
 import org.jboss.forge.shell.test.completer.MockEnum;
 import org.jboss.forge.test.AbstractShellTest;
 import org.junit.Test;
@@ -208,14 +209,14 @@ public class ShellPromptTest extends AbstractShellTest
    public void testPromptEnum() throws Exception
    {
       queueInputLines("BAR");
-      assertEquals(MockEnum.BAR, getShell().promptEnum("Enummy?", MockEnum.class));
+      assertEquals(MockEnum.BAR, getShell().promptEnum("Enummy one?", MockEnum.class));
    }
 
-   @Test(expected = IllegalStateException.class)
+   @Test(expected = EndOfStreamException.class)
    public void testPromptEnumFallbackToListAsksForChoice() throws Exception
    {
       queueInputLines("");
-      getShell().promptEnum("Enummy?", MockEnum.class);
+      getShell().promptEnum("Enummy two?", MockEnum.class);
       fail();
    }
 
@@ -223,37 +224,37 @@ public class ShellPromptTest extends AbstractShellTest
    public void testPromptEnumFallbackToList() throws Exception
    {
       queueInputLines("not-a-value", "2");
-      assertEquals(MockEnum.BAR, getShell().promptEnum("Enummy?", MockEnum.class));
+      assertEquals(MockEnum.BAR, getShell().promptEnum("Enummy three?", MockEnum.class));
 
       queueInputLines("not-a-value", "", "", "", "3");
-      assertEquals(MockEnum.BAZ, getShell().promptEnum("Enummy?", MockEnum.class));
+      assertEquals(MockEnum.BAZ, getShell().promptEnum("Enummy four?", MockEnum.class));
 
       queueInputLines("not-a-value", "4");
-      assertEquals(MockEnum.CAT, getShell().promptEnum("Enummy?", MockEnum.class));
+      assertEquals(MockEnum.CAT, getShell().promptEnum("Enummy five?", MockEnum.class));
    }
 
    @Test
    public void testPromptEnumDefault() throws Exception
    {
       queueInputLines("");
-      assertEquals(MockEnum.CAT, getShell().promptEnum("Enummy?", MockEnum.class, MockEnum.CAT));
+      assertEquals(MockEnum.CAT, getShell().promptEnum("Enummy six?", MockEnum.class, MockEnum.CAT));
 
       queueInputLines("");
-      assertEquals(MockEnum.CAT, getShell().promptEnum("Enummy?", MockEnum.class, MockEnum.CAT));
+      assertEquals(MockEnum.CAT, getShell().promptEnum("Enummy seven?", MockEnum.class, MockEnum.CAT));
    }
 
    @Test
    public void testPromptEnumDefaultFallbackToList() throws Exception
    {
       queueInputLines("not-a-value", "");
-      assertEquals(MockEnum.BAR, getShell().promptEnum("Enummy?", MockEnum.class, MockEnum.BAR));
+      assertEquals(MockEnum.BAR, getShell().promptEnum("Enummy eight?", MockEnum.class, MockEnum.BAR));
    }
 
    @Test
    public void testPromptEnumDefaultFallbackToListWithDefault() throws Exception
    {
       queueInputLines("not-a-value", "eeee", "aaa", "");
-      assertEquals(MockEnum.BAR, getShell().promptEnum("Enummy?", MockEnum.class, MockEnum.BAR));
+      assertEquals(MockEnum.BAR, getShell().promptEnum("Enummy nine?", MockEnum.class, MockEnum.BAR));
    }
 
    @Test

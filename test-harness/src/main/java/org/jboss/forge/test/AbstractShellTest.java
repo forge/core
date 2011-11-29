@@ -117,7 +117,6 @@ public abstract class AbstractShellTest
       shell.setVerbose(true);
       shell.setExceptionHandlingEnabled(false);
 
-      System.out.println("reset queue");
       resetInputQueue();
       shell.setOutputStream(System.out);
       shell.setAnsiSupported(false);
@@ -151,48 +150,39 @@ public abstract class AbstractShellTest
 
          @Override
          public void directWriteMode()
-         {
-         }
+         {}
 
          @Override
          public void flushBuffer()
-         {
-         }
+         {}
 
          @Override
-         public void write(int b)
-         {
-         }
+         public void write(final int b)
+         {}
 
          @Override
-         public void write(byte b)
-         {
-         }
+         public void write(final byte b)
+         {}
 
          @Override
-         public void write(byte[] b)
-         {
-         }
+         public void write(final byte[] b)
+         {}
 
          @Override
-         public void write(byte[] b, int offset, int length)
-         {
-         }
+         public void write(final byte[] b, final int offset, final int length)
+         {}
 
          @Override
-         public void write(String s)
-         {
-         }
+         public void write(final String s)
+         {}
 
          @Override
-         public void directWrite(String s)
-         {
-         }
+         public void directWrite(final String s)
+         {}
 
          @Override
-         public void setBufferPosition(int row, int col)
-         {
-         }
+         public void setBufferPosition(final int row, final int col)
+         {}
 
          @Override
          public int getHeight()

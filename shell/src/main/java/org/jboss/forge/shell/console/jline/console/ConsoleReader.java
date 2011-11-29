@@ -7,27 +7,45 @@
 
 package org.jboss.forge.shell.console.jline.console;
 
-import org.fusesource.jansi.AnsiOutputStream;
-import org.jboss.forge.shell.integration.BufferManager;
-import org.jboss.forge.shell.Shell;
-import org.jboss.forge.shell.integration.KeyListener;
-
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionListener;
-import java.io.*;
-import java.util.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Properties;
+import java.util.ResourceBundle;
+
+import org.fusesource.jansi.AnsiOutputStream;
+import org.jboss.forge.shell.Shell;
+import org.jboss.forge.shell.integration.BufferManager;
+import org.jboss.forge.shell.integration.KeyListener;
 
 /**
- * A reader for console applications. It supports custom tab-completion,
- * saveable command history, and command line editing. On some platforms,
- * platform-specific commands will need to be issued before the reader will
- * function properly. See {@link org.jboss.forge.shell.console.jline.Terminal#init} for convenience
- * methods for issuing platform-specific setup commands.
- *
+ * A reader for console applications. It supports custom tab-completion, saveable command history, and command line
+ * editing. On some platforms, platform-specific commands will need to be issued before the reader will function
+ * properly. See {@link org.jboss.forge.shell.console.jline.Terminal#init} for convenience methods for issuing
+ * platform-specific setup commands.
+ * 
  * @author <a href="mailto:mwp1@cornell.edu">Marc Prud'hommeaux</a>
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
  */
@@ -45,16 +63,17 @@ public class ConsoleReader
 
    public static final int TAB_WIDTH = 4;
 
-   private static final ResourceBundle
-            resources = ResourceBundle.getBundle(org.jboss.forge.shell.console.jline.console.completer.CandidateListCompletionHandler.class.getName() + "Bundle");
+   private static final ResourceBundle resources = ResourceBundle
+            .getBundle(org.jboss.forge.shell.console.jline.console.completer.CandidateListCompletionHandler.class
+                     .getName() + "Bundle");
 
    private final org.jboss.forge.shell.console.jline.Terminal terminal;
 
    private InputStream in;
 
-   private Shell shell;
+   private final Shell shell;
 
-   //  private final Writer out;
+   // private final Writer out;
 
    private final CursorBuffer buf = new CursorBuffer();
 
@@ -72,9 +91,10 @@ public class ConsoleReader
 
    private int searchIndex = -1;
 
-   private List<KeyListener> keyListeners = new ArrayList<KeyListener>();
+   private final List<KeyListener> keyListeners = new ArrayList<KeyListener>();
 
-   public ConsoleReader(final InputStream in, final Shell shell, final InputStream bindings, final org.jboss.forge.shell.console.jline.Terminal term) throws
+   public ConsoleReader(final InputStream in, final Shell shell, final InputStream bindings,
+            final org.jboss.forge.shell.console.jline.Terminal term) throws
             IOException
    {
       this.in = in;
@@ -85,24 +105,19 @@ public class ConsoleReader
       setBellEnabled(!org.jboss.forge.shell.console.jline.internal.Configuration.getBoolean(JLINE_NOBELL, false));
    }
 
-   public ConsoleReader(final InputStream in, final Shell shell, final org.jboss.forge.shell.console.jline.Terminal term) throws IOException
+   public ConsoleReader(final InputStream in, final Shell shell, final org.jboss.forge.shell.console.jline.Terminal term)
+            throws IOException
    {
       this(in, shell, null, term);
    }
 
-//    public ConsoleReader(final InputStream in, final BufferManager out) throws IOException {
-//        this(in, out, null, null);
-//    }
-
    // FIXME: Only used for tests
-
    void setInput(final InputStream in)
    {
       this.in = in;
    }
 
-
-   public void registerKeyListener(KeyListener keyListener)
+   public void registerKeyListener(final KeyListener keyListener)
    {
       keyListeners.add(keyListener);
    }
@@ -150,24 +165,27 @@ public class ConsoleReader
    /**
     * Set the echo character. For example, to have "*" entered when a password is typed:
     * <p/>
+    * 
     * <pre>
     * myConsoleReader.setEchoCharacter(new Character('*'));
     * </pre>
     * <p/>
     * Setting the character to
     * <p/>
+    * 
     * <pre>
     * null
     * </pre>
     * <p/>
     * will restore normal character echoing. Setting the character to
     * <p/>
+    * 
     * <pre>
     * new Character(0)
     * </pre>
     * <p/>
     * will cause nothing to be echoed.
-    *
+    * 
     * @param c the character to echo to the console in place of the typed character.
     */
    public void setEchoCharacter(final Character c)
@@ -185,7 +203,7 @@ public class ConsoleReader
 
    /**
     * Erase the current line.
-    *
+    * 
     * @return false if we failed (e.g., the buffer was empty)
     */
    final boolean resetLine() throws IOException
@@ -208,13 +226,13 @@ public class ConsoleReader
    }
 
    /**
-    * Returns the text after the last '\n'.
-    * prompt is returned if no '\n' characters are present.
-    * null is returned if prompt is null.
+    * Returns the text after the last '\n'. prompt is returned if no '\n' characters are present. null is returned if
+    * prompt is null.
     */
-   private String lastLine(String str)
+   private String lastLine(final String str)
    {
-      if (str == null) return "";
+      if (str == null)
+         return "";
       int last = str.lastIndexOf("\n");
 
       if (last >= 0)
@@ -225,9 +243,10 @@ public class ConsoleReader
       return str;
    }
 
-   private String stripAnsi(String str)
+   private String stripAnsi(final String str)
    {
-      if (str == null) return "";
+      if (str == null)
+         return "";
       try
       {
          ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -251,9 +270,9 @@ public class ConsoleReader
    }
 
    /**
-    * Set the current buffer's content to the specified {@link String}. The
-    * visual console will be modified to show the current buffer.
-    *
+    * Set the current buffer's content to the specified {@link String}. The visual console will be modified to show the
+    * current buffer.
+    * 
     * @param buffer the new contents of the buffer.
     */
    private void setBuffer(final String buffer) throws IOException
@@ -323,13 +342,13 @@ public class ConsoleReader
    public final void redrawLine() throws IOException
    {
       print(RESET_LINE);
-//        flush();
+      // flush();
       drawLine();
    }
 
    /**
     * Clear the buffer and add its contents to the history.
-    *
+    * 
     * @return the former contents of the buffer.
     */
    final String finishBuffer() throws IOException
@@ -343,7 +362,7 @@ public class ConsoleReader
       // the string was a password. We clear the mask after this call
       if (str.length() > 0)
       {
-         if (mask == null && isHistoryEnabled())
+         if ((mask == null) && isHistoryEnabled())
          {
             history.add(str);
          }
@@ -362,13 +381,13 @@ public class ConsoleReader
    }
 
    /**
-    * Expand event designator such as !!, !#, !3, etc...
-    * See http://www.gnu.org/software/bash/manual/html_node/Event-Designators.html
-    *
+    * Expand event designator such as !!, !#, !3, etc... See
+    * http://www.gnu.org/software/bash/manual/html_node/Event-Designators.html
+    * 
     * @param str
     * @return
     */
-   final String expandEvents(String str) throws IOException
+   final String expandEvents(final String str) throws IOException
    {
       StringBuilder sb = new StringBuilder();
       for (int i = 0; i < str.length(); i++)
@@ -376,151 +395,153 @@ public class ConsoleReader
          char c = str.charAt(i);
          switch (c)
          {
-            case '!':
-               if (i + 1 < str.length())
+         case '!':
+            if ((i + 1) < str.length())
+            {
+               c = str.charAt(++i);
+               boolean neg = false;
+               String rep = null;
+               int i1, idx;
+               switch (c)
                {
-                  c = str.charAt(++i);
-                  boolean neg = false;
-                  String rep = null;
-                  int i1, idx;
-                  switch (c)
+               case '!':
+                  if (history.size() == 0)
                   {
-                     case '!':
-                        if (history.size() == 0)
-                        {
-                           throw new IllegalArgumentException("!!: event not found");
-                        }
-                        rep = history.get(history.index() - 1).toString();
-                        break;
-                     case '#':
-                        sb.append(sb.toString());
-                        break;
-                     case '?':
-                        i1 = str.indexOf('?', i + 1);
-                        if (i1 < 0)
-                        {
-                           i1 = str.length();
-                        }
-                        String sc = str.substring(i + 1, i1);
-                        i = i1;
-                        idx = searchBackwards(sc);
-                        if (idx < 0)
-                        {
-                           throw new IllegalArgumentException("!?" + sc + ": event not found");
-                        }
-                        else
-                        {
-                           rep = history.get(idx).toString();
-                        }
-                        break;
-                     case ' ':
-                     case '\t':
-                        sb.append('!');
-                        sb.append(c);
-                        break;
-                     case '-':
-                        neg = true;
-                        i++;
-                        // fall through
-                     case '0':
-                     case '1':
-                     case '2':
-                     case '3':
-                     case '4':
-                     case '5':
-                     case '6':
-                     case '7':
-                     case '8':
-                     case '9':
-                        i1 = i;
-                        for (; i < str.length(); i++)
-                        {
-                           c = str.charAt(i);
-                           if (c < '0' || c > '9')
-                           {
-                              break;
-                           }
-                        }
-                        idx = 0;
-                        try
-                        {
-                           idx = Integer.parseInt(str.substring(i1, i));
-                        }
-                        catch (NumberFormatException e)
-                        {
-                           throw new IllegalArgumentException((neg ? "!-" : "!") + str.substring(i1, i) + ": event not found");
-                        }
-                        if (neg)
-                        {
-                           if (idx < history.size())
-                           {
-                              rep = (history.get(history.index() - idx)).toString();
-                           }
-                           else
-                           {
-                              throw new IllegalArgumentException((neg ? "!-" : "!") + str.substring(i1, i) + ": event not found");
-                           }
-                        }
-                        else
-                        {
-                           if (idx >= history.index() - history.size() && idx < history.index())
-                           {
-                              rep = (history.get(idx)).toString();
-                           }
-                           else
-                           {
-                              throw new IllegalArgumentException((neg ? "!-" : "!") + str.substring(i1, i) + ": event not found");
-                           }
-                        }
-                        break;
-                     default:
-                        String ss = str.substring(i);
-                        i = str.length();
-                        idx = searchBackwards(ss, history.index(), true);
-                        if (idx < 0)
-                        {
-                           throw new IllegalArgumentException("!" + ss + ": event not found");
-                        }
-                        else
-                        {
-                           rep = history.get(idx).toString();
-                        }
-                        break;
+                     throw new IllegalArgumentException("!!: event not found");
                   }
-                  if (rep != null)
+                  rep = history.get(history.index() - 1).toString();
+                  break;
+               case '#':
+                  sb.append(sb.toString());
+                  break;
+               case '?':
+                  i1 = str.indexOf('?', i + 1);
+                  if (i1 < 0)
                   {
-                     sb.append(rep);
+                     i1 = str.length();
                   }
-               }
-               else
-               {
+                  String sc = str.substring(i + 1, i1);
+                  i = i1;
+                  idx = searchBackwards(sc);
+                  if (idx < 0)
+                  {
+                     throw new IllegalArgumentException("!?" + sc + ": event not found");
+                  }
+                  else
+                  {
+                     rep = history.get(idx).toString();
+                  }
+                  break;
+               case ' ':
+               case '\t':
+                  sb.append('!');
                   sb.append(c);
+                  break;
+               case '-':
+                  neg = true;
+                  i++;
+                  // fall through
+               case '0':
+               case '1':
+               case '2':
+               case '3':
+               case '4':
+               case '5':
+               case '6':
+               case '7':
+               case '8':
+               case '9':
+                  i1 = i;
+                  for (; i < str.length(); i++)
+                  {
+                     c = str.charAt(i);
+                     if ((c < '0') || (c > '9'))
+                     {
+                        break;
+                     }
+                  }
+                  idx = 0;
+                  try
+                  {
+                     idx = Integer.parseInt(str.substring(i1, i));
+                  }
+                  catch (NumberFormatException e)
+                  {
+                     throw new IllegalArgumentException((neg ? "!-" : "!") + str.substring(i1, i) + ": event not found");
+                  }
+                  if (neg)
+                  {
+                     if (idx < history.size())
+                     {
+                        rep = (history.get(history.index() - idx)).toString();
+                     }
+                     else
+                     {
+                        throw new IllegalArgumentException((neg ? "!-" : "!") + str.substring(i1, i)
+                                 + ": event not found");
+                     }
+                  }
+                  else
+                  {
+                     if ((idx >= (history.index() - history.size())) && (idx < history.index()))
+                     {
+                        rep = (history.get(idx)).toString();
+                     }
+                     else
+                     {
+                        throw new IllegalArgumentException((neg ? "!-" : "!") + str.substring(i1, i)
+                                 + ": event not found");
+                     }
+                  }
+                  break;
+               default:
+                  String ss = str.substring(i);
+                  i = str.length();
+                  idx = searchBackwards(ss, history.index(), true);
+                  if (idx < 0)
+                  {
+                     throw new IllegalArgumentException("!" + ss + ": event not found");
+                  }
+                  else
+                  {
+                     rep = history.get(idx).toString();
+                  }
+                  break;
                }
-               break;
-            case '^':
-               if (i == 0)
+               if (rep != null)
                {
-                  int i1 = str.indexOf('^', i + 1);
-                  int i2 = str.indexOf('^', i1 + 1);
-                  if (i2 < 0)
-                  {
-                     i2 = str.length();
-                  }
-                  if (i1 > 0 && i2 > 0)
-                  {
-                     String s1 = str.substring(i + 1, i1);
-                     String s2 = str.substring(i1 + 1, i2);
-                     String s = history.get(history.index() - 1).toString().replace(s1, s2);
-                     sb.append(s);
-                     i = i2 + 1;
-                     break;
-                  }
+                  sb.append(rep);
                }
+            }
+            else
+            {
                sb.append(c);
-               break;
-            default:
-               sb.append(c);
-               break;
+            }
+            break;
+         case '^':
+            if (i == 0)
+            {
+               int i1 = str.indexOf('^', i + 1);
+               int i2 = str.indexOf('^', i1 + 1);
+               if (i2 < 0)
+               {
+                  i2 = str.length();
+               }
+               if ((i1 > 0) && (i2 > 0))
+               {
+                  String s1 = str.substring(i + 1, i1);
+                  String s2 = str.substring(i1 + 1, i2);
+                  String s = history.get(history.index() - 1).toString().replace(s1, s2);
+                  sb.append(s);
+                  i = i2 + 1;
+                  break;
+               }
+            }
+            sb.append(c);
+            break;
+         default:
+            sb.append(c);
+            break;
          }
       }
       String result = sb.toString();
@@ -542,7 +563,7 @@ public class ConsoleReader
    {
       int width = getTerminal().getWidth();
 
-      if ((getCursorPosition() % width == 0) && getCurrentPosition() >= width)
+      if (((getCursorPosition() % width) == 0) && (getCurrentPosition() >= width))
          println();
    }
 
@@ -586,15 +607,14 @@ public class ConsoleReader
    }
 
    /**
-    * Redraw the rest of the buffer from the cursor onwards. This is necessary
-    * for inserting text into the buffer.
-    *
+    * Redraw the rest of the buffer from the cursor onwards. This is necessary for inserting text into the buffer.
+    * 
     * @param clear the number of characters to clear after the end of the buffer
     */
    private void drawBuffer(final int clear) throws IOException
    {
       // debug ("drawBuffer: " + clear);
-      if (buf.cursor == buf.length() && clear == 0)
+      if ((buf.cursor == buf.length()) && (clear == 0))
       {
          return;
       }
@@ -618,12 +638,11 @@ public class ConsoleReader
       {
          back(chars.length);
       }
-//        flush();
+      // flush();
    }
 
    /**
-    * Redraw the rest of the buffer from the cursor onwards. This is necessary
-    * for inserting text into the buffer.
+    * Redraw the rest of the buffer from the cursor onwards. This is necessary for inserting text into the buffer.
     */
    private void drawBuffer() throws IOException
    {
@@ -651,12 +670,12 @@ public class ConsoleReader
 
       // we need to flush here so a "clever" console doesn't just ignore the redundancy
       // of a space followed by a backspace.
-//        flush();
+      // flush();
 
       // reset the visual cursor
       back(num);
 
-//        flush();
+      // flush();
    }
 
    /**
@@ -664,7 +683,8 @@ public class ConsoleReader
     */
    private void back(final int num) throws IOException
    {
-      if (num == 0) return;
+      if (num == 0)
+         return;
       if (terminal.isAnsiSupported())
       {
          int width = getTerminal().getWidth();
@@ -672,7 +692,7 @@ public class ConsoleReader
          // debug("back: " + cursor + " + " + num + " on " + width);
          int currRow = (cursor + num) / width;
          int newRow = cursor / width;
-         int newCol = cursor % width + 1;
+         int newCol = (cursor % width) + 1;
          // debug("    old row: " + currRow + " new row: " + newRow);
          if (newRow < currRow)
          {
@@ -682,7 +702,7 @@ public class ConsoleReader
          return;
       }
       print(BACKSPACE, num);
-//        flush();
+      // flush();
    }
 
    /**
@@ -701,7 +721,7 @@ public class ConsoleReader
 
    /**
     * Issue <em>num</em> backspaces.
-    *
+    * 
     * @return the number of characters backed up
     */
    private int backspace(final int num) throws IOException
@@ -717,7 +737,7 @@ public class ConsoleReader
       int lines = getCursorPosition() / termwidth;
       count = moveCursor(-1 * num) * -1;
       buf.buffer.delete(buf.cursor, buf.cursor + count);
-      if (getCursorPosition() / termwidth != lines)
+      if ((getCursorPosition() / termwidth) != lines)
       {
          if (terminal.isAnsiSupported())
          {
@@ -732,7 +752,7 @@ public class ConsoleReader
 
    /**
     * Issue a backspace.
-    *
+    * 
     * @return true if successful
     */
    public boolean backspace() throws IOException
@@ -750,7 +770,7 @@ public class ConsoleReader
     */
    private boolean deleteCurrentCharacter() throws IOException
    {
-      if (buf.length() == 0 || buf.cursor == buf.length())
+      if ((buf.length() == 0) || (buf.cursor == buf.length()))
       {
          return false;
       }
@@ -807,7 +827,7 @@ public class ConsoleReader
 
    /**
     * Move the cursor <i>where</i> characters.
-    *
+    * 
     * @param num If less than 0, move abs(<i>where</i>) to the left, otherwise move <i>where</i> to the right.
     * @return The number of spaces we moved
     */
@@ -841,7 +861,7 @@ public class ConsoleReader
 
    /**
     * Move the cursor <i>where</i> characters, without checking the current buffer.
-    *
+    * 
     * @param where the number of characters to move to the right or left.
     */
    private void moveInternal(final int where) throws IOException
@@ -868,7 +888,7 @@ public class ConsoleReader
             }
             printAnsiSequence(1 + (cursor % width) + "G");
          }
-//            flush();
+         // flush();
          return;
       }
 
@@ -877,7 +897,7 @@ public class ConsoleReader
       if (where < 0)
       {
          int len = 0;
-         for (int i = buf.cursor; i < buf.cursor - where; i++)
+         for (int i = buf.cursor; i < (buf.cursor - where); i++)
          {
             if (buf.buffer.charAt(i) == '\t')
             {
@@ -890,8 +910,7 @@ public class ConsoleReader
          }
 
          char chars[] = new char[len];
-         Arrays.fill(chars, (char) BACKSPACE);
-         ;
+         Arrays.fill(chars, BACKSPACE);;
          shell.print(new String(chars));
 
          return;
@@ -944,7 +963,7 @@ public class ConsoleReader
 
    /**
     * Read a character from the console.
-    *
+    * 
     * @return the character, or -1 if an EOF is received.
     */
    public final int readVirtualKey() throws IOException
@@ -994,8 +1013,7 @@ public class ConsoleReader
    }
 
    /**
-    * Return the number of characters that will be printed when the specified
-    * character is echoed to the screen
+    * Return the number of characters that will be printed when the specified character is echoed to the screen
     * <p/>
     * Adapted from cat by Torbjorn Granlund, as repeated in stty by David MacKenzie.
     */
@@ -1034,7 +1052,7 @@ public class ConsoleReader
             else
             {
                sbuff.append('^');
-               sbuff.append((char) (ch - 128 + 64));
+               sbuff.append((char) ((ch - 128) + 64));
             }
          }
       }
@@ -1083,7 +1101,8 @@ public class ConsoleReader
       {
          try
          {
-            File file = new File(org.jboss.forge.shell.console.jline.internal.Configuration.getUserHome(), JLINEBINDINGS_PROPERTIES);
+            File file = new File(org.jboss.forge.shell.console.jline.internal.Configuration.getUserHome(),
+                     JLINEBINDINGS_PROPERTIES);
 
             String path = org.jboss.forge.shell.console.jline.internal.Configuration.getString(JLINE_KEYBINDINGS);
             if (path != null)
@@ -1139,7 +1158,8 @@ public class ConsoleReader
             {
                short code = Short.parseShort(val);
                String name = p.getProperty(val);
-               org.jboss.forge.shell.console.jline.console.Operation op = org.jboss.forge.shell.console.jline.console.Operation.valueOf(name);
+               org.jboss.forge.shell.console.jline.console.Operation op = org.jboss.forge.shell.console.jline.console.Operation
+                        .valueOf(name);
                keyBindings[code] = op.code;
             }
             catch (NumberFormatException e)
@@ -1158,7 +1178,7 @@ public class ConsoleReader
       return keyBindings;
    }
 
-   private void loadMappingsFromBundle(short[] keyBindings, ResourceBundle bundle)
+   private void loadMappingsFromBundle(final short[] keyBindings, final ResourceBundle bundle)
    {
       Enumeration<String> keys = bundle.getKeys();
       String val;
@@ -1170,8 +1190,8 @@ public class ConsoleReader
          {
             short code = Short.parseShort(val);
             String name = bundle.getString(val);
-            org.jboss.forge.shell.console.jline.console.Operation op
-                     = org.jboss.forge.shell.console.jline.console.Operation.valueOf(name);
+            org.jboss.forge.shell.console.jline.console.Operation op = org.jboss.forge.shell.console.jline.console.Operation
+                     .valueOf(name);
             keyBindings[code] = op.code;
          }
          catch (NumberFormatException e)
@@ -1181,9 +1201,7 @@ public class ConsoleReader
 
       }
 
-
    }
-
 
    int getKeyForAction(final short logicalAction)
    {
@@ -1229,7 +1247,7 @@ public class ConsoleReader
 
       org.jboss.forge.shell.console.jline.internal.Log.trace("Translated: ", c, " -> ", code);
 
-      return new int[]{c, code};
+      return new int[] { c, code };
    }
 
    //
@@ -1245,8 +1263,8 @@ public class ConsoleReader
    }
 
    /**
-    * Read the next line with the specified character mask. If null, then
-    * characters will be echoed. If 0, then no characters will be echoed.
+    * Read the next line with the specified character mask. If null, then characters will be echoed. If 0, then no
+    * characters will be echoed.
     */
    public String readLine(final Character mask) throws IOException
    {
@@ -1259,12 +1277,10 @@ public class ConsoleReader
    }
 
    /**
-    * Read a line from the <i>in</i> {@link InputStream}, and return the line
-    * (without any trailing newlines).
-    *
+    * Read a line from the <i>in</i> {@link InputStream}, and return the line (without any trailing newlines).
+    * 
     * @param prompt The prompt to issue to the console, may be null.
-    * @return A line that is read from the terminal, or null if there was null input (e.g., <i>CTRL-D</i>
-    *         was pressed).
+    * @return A line that is read from the terminal, or null if there was null input (e.g., <i>CTRL-D</i> was pressed).
     */
    public String readLine(String prompt, final Character mask) throws IOException
    {
@@ -1289,7 +1305,7 @@ public class ConsoleReader
             beforeReadLine(prompt, mask);
          }
 
-         if (prompt != null && prompt.length() > 0)
+         if ((prompt != null) && (prompt.length() > 0))
          {
             shell.print(prompt);
             shell.flush();
@@ -1320,9 +1336,9 @@ public class ConsoleReader
 
             int c = next[0];
 
-
             // int code = next[1];
-            org.jboss.forge.shell.console.jline.console.Operation code = org.jboss.forge.shell.console.jline.console.Operation.valueOf(next[1]);
+            org.jboss.forge.shell.console.jline.console.Operation code = org.jboss.forge.shell.console.jline.console.Operation
+                     .valueOf(next[1]);
 
             if (c == -1)
             {
@@ -1340,51 +1356,51 @@ public class ConsoleReader
 
                switch (code)
                {
-                  // This doesn't work right now, it seems CTRL-G is not passed
-                  // down correctly. :(
-                  case ABORT:
-                     state = NORMAL;
-                     break;
+               // This doesn't work right now, it seems CTRL-G is not passed
+               // down correctly. :(
+               case ABORT:
+                  state = NORMAL;
+                  break;
 
-                  case SEARCH_PREV:
-                     if (searchTerm.length() == 0)
-                     {
-                        searchTerm.append(previousSearchTerm);
-                     }
+               case SEARCH_PREV:
+                  if (searchTerm.length() == 0)
+                  {
+                     searchTerm.append(previousSearchTerm);
+                  }
 
-                     if (searchIndex == -1)
-                     {
-                        searchIndex = searchBackwards(searchTerm.toString());
-                     }
-                     else
-                     {
-                        searchIndex = searchBackwards(searchTerm.toString(), searchIndex);
-                     }
-                     break;
-
-                  case DELETE_PREV_CHAR:
-                     if (searchTerm.length() > 0)
-                     {
-                        searchTerm.deleteCharAt(searchTerm.length() - 1);
-                        searchIndex = searchBackwards(searchTerm.toString());
-                     }
-                     break;
-
-                  case UNKNOWN:
-                     searchTerm.appendCodePoint(c);
+                  if (searchIndex == -1)
+                  {
                      searchIndex = searchBackwards(searchTerm.toString());
-                     break;
+                  }
+                  else
+                  {
+                     searchIndex = searchBackwards(searchTerm.toString(), searchIndex);
+                  }
+                  break;
 
-                  default:
-                     // Set buffer and cursor position to the found string.
-                     if (searchIndex != -1)
-                     {
-                        history.moveTo(searchIndex);
-                        // set cursor position to the found string
-                        cursorDest = history.current().toString().indexOf(searchTerm.toString());
-                     }
-                     state = NORMAL;
-                     break;
+               case DELETE_PREV_CHAR:
+                  if (searchTerm.length() > 0)
+                  {
+                     searchTerm.deleteCharAt(searchTerm.length() - 1);
+                     searchIndex = searchBackwards(searchTerm.toString());
+                  }
+                  break;
+
+               case UNKNOWN:
+                  searchTerm.appendCodePoint(c);
+                  searchIndex = searchBackwards(searchTerm.toString());
+                  break;
+
+               default:
+                  // Set buffer and cursor position to the found string.
+                  if (searchIndex != -1)
+                  {
+                     history.moveTo(searchIndex);
+                     // set cursor position to the found string
+                     cursorDest = history.current().toString().indexOf(searchTerm.toString());
+                  }
+                  state = NORMAL;
+                  break;
                }
 
                // if we're still in search mode, print the search status
@@ -1417,161 +1433,160 @@ public class ConsoleReader
             if (state == NORMAL)
             {
 
-
                switch (code)
                {
-                  case EXIT: // ctrl-d
-                     if (buf.buffer.length() == 0)
+               case EXIT: // ctrl-d
+                  if (buf.buffer.length() == 0)
+                  {
+                     return null;
+                  }
+                  else
+                  {
+                     deleteCurrentCharacter();
+                  }
+                  break;
+
+               case COMPLETE: // tab
+                  success = complete();
+                  break;
+
+               case MOVE_TO_BEG:
+                  success = setCursorPosition(0);
+                  break;
+
+               case KILL_LINE: // CTRL-K
+                  success = killLine();
+                  break;
+
+               case CLEAR_SCREEN: // CTRL-L
+                  success = clearScreen();
+                  break;
+
+               case KILL_LINE_PREV: // CTRL-U
+                  success = resetLine();
+                  break;
+
+               case NEWLINE: // enter
+                  moveToEnd();
+                  // println(); // output newline
+                  // flush();
+                  return finishBuffer();
+
+               case DELETE_PREV_CHAR: // backspace
+                  success = backspace();
+                  break;
+
+               case DELETE_NEXT_CHAR: // delete
+                  success = deleteCurrentCharacter();
+                  break;
+
+               case MOVE_TO_END:
+                  success = moveToEnd();
+                  break;
+
+               case PREV_CHAR:
+                  success = moveCursor(-1) != 0;
+                  break;
+
+               case NEXT_CHAR:
+                  success = moveCursor(1) != 0;
+                  break;
+
+               case NEXT_HISTORY:
+                  success = moveHistory(true);
+                  break;
+
+               case PREV_HISTORY:
+                  success = moveHistory(false);
+                  break;
+
+               case ABORT:
+               case REDISPLAY:
+                  break;
+
+               case PASTE:
+                  success = paste();
+                  break;
+
+               case DELETE_PREV_WORD:
+                  success = deletePreviousWord();
+                  break;
+
+               case PREV_WORD:
+                  success = previousWord();
+                  break;
+
+               case NEXT_WORD:
+                  success = nextWord();
+                  break;
+
+               case START_OF_HISTORY:
+                  success = history.moveToFirst();
+                  if (success)
+                  {
+                     setBuffer(history.current());
+                  }
+                  break;
+
+               case END_OF_HISTORY:
+                  success = history.moveToLast();
+                  if (success)
+                  {
+                     setBuffer(history.current());
+                  }
+                  break;
+
+               case CLEAR_LINE:
+                  moveInternal(-(buf.buffer.length()));
+                  killLine();
+                  break;
+
+               case INSERT:
+                  buf.setOverTyping(!buf.isOverTyping());
+                  break;
+
+               case SEARCH_PREV: // CTRL-R
+                  if (searchTerm != null)
+                  {
+                     previousSearchTerm = searchTerm.toString();
+                  }
+                  searchTerm = new StringBuffer(buf.buffer);
+                  state = SEARCH;
+                  if (searchTerm.length() > 0)
+                  {
+                     searchIndex = searchBackwards(searchTerm.toString());
+                     if (searchIndex == -1)
                      {
-                        return null;
+                        beep();
+                     }
+                     printSearchStatus(searchTerm.toString(),
+                              searchIndex > -1 ? history.get(searchIndex).toString() : "");
+                  }
+                  else
+                  {
+                     searchIndex = -1;
+                     printSearchStatus("", "");
+                  }
+                  break;
+
+               case UNKNOWN:
+               default:
+                  if (c != 0)
+                  { // ignore null chars
+                     ActionListener action = triggeredActions.get((char) c);
+                     if (action != null)
+                     {
+                        action.actionPerformed(null);
                      }
                      else
                      {
-                        deleteCurrentCharacter();
+                        putChar(c, true);
                      }
-                     break;
-
-                  case COMPLETE: // tab
-                     success = complete();
-                     break;
-
-                  case MOVE_TO_BEG:
-                     success = setCursorPosition(0);
-                     break;
-
-                  case KILL_LINE: // CTRL-K
-                     success = killLine();
-                     break;
-
-                  case CLEAR_SCREEN: // CTRL-L
-                     success = clearScreen();
-                     break;
-
-                  case KILL_LINE_PREV: // CTRL-U
-                     success = resetLine();
-                     break;
-
-                  case NEWLINE: // enter
-                     moveToEnd();
-                     //  println(); // output newline
-                     // flush();
-                     return finishBuffer();
-
-                  case DELETE_PREV_CHAR: // backspace
-                     success = backspace();
-                     break;
-
-                  case DELETE_NEXT_CHAR: // delete
-                     success = deleteCurrentCharacter();
-                     break;
-
-                  case MOVE_TO_END:
-                     success = moveToEnd();
-                     break;
-
-                  case PREV_CHAR:
-                     success = moveCursor(-1) != 0;
-                     break;
-
-                  case NEXT_CHAR:
-                     success = moveCursor(1) != 0;
-                     break;
-
-                  case NEXT_HISTORY:
-                     success = moveHistory(true);
-                     break;
-
-                  case PREV_HISTORY:
-                     success = moveHistory(false);
-                     break;
-
-                  case ABORT:
-                  case REDISPLAY:
-                     break;
-
-                  case PASTE:
-                     success = paste();
-                     break;
-
-                  case DELETE_PREV_WORD:
-                     success = deletePreviousWord();
-                     break;
-
-                  case PREV_WORD:
-                     success = previousWord();
-                     break;
-
-                  case NEXT_WORD:
-                     success = nextWord();
-                     break;
-
-                  case START_OF_HISTORY:
-                     success = history.moveToFirst();
-                     if (success)
-                     {
-                        setBuffer(history.current());
-                     }
-                     break;
-
-                  case END_OF_HISTORY:
-                     success = history.moveToLast();
-                     if (success)
-                     {
-                        setBuffer(history.current());
-                     }
-                     break;
-
-                  case CLEAR_LINE:
-                     moveInternal(-(buf.buffer.length()));
-                     killLine();
-                     break;
-
-                  case INSERT:
-                     buf.setOverTyping(!buf.isOverTyping());
-                     break;
-
-                  case SEARCH_PREV: // CTRL-R
-                     if (searchTerm != null)
-                     {
-                        previousSearchTerm = searchTerm.toString();
-                     }
-                     searchTerm = new StringBuffer(buf.buffer);
-                     state = SEARCH;
-                     if (searchTerm.length() > 0)
-                     {
-                        searchIndex = searchBackwards(searchTerm.toString());
-                        if (searchIndex == -1)
-                        {
-                           beep();
-                        }
-                        printSearchStatus(searchTerm.toString(),
-                                 searchIndex > -1 ? history.get(searchIndex).toString() : "");
-                     }
-                     else
-                     {
-                        searchIndex = -1;
-                        printSearchStatus("", "");
-                     }
-                     break;
-
-                  case UNKNOWN:
-                  default:
-                     if (c != 0)
-                     { // ignore null chars
-                        ActionListener action = triggeredActions.get((char) c);
-                        if (action != null)
-                        {
-                           action.actionPerformed(null);
-                        }
-                        else
-                        {
-                           putChar(c, true);
-                        }
-                     }
-                     else
-                     {
-                        success = false;
-                     }
+                  }
+                  else
+                  {
+                     success = false;
+                  }
                }
 
                if (!success)
@@ -1603,7 +1618,7 @@ public class ConsoleReader
       {
          int i = in.read();
 
-         if (i == -1 || i == '\n' || i == '\r')
+         if ((i == -1) || (i == '\n') || (i == '\r'))
          {
             return buff.toString();
          }
@@ -1623,8 +1638,9 @@ public class ConsoleReader
    private org.jboss.forge.shell.console.jline.console.completer.CompletionHandler completionHandler = new org.jboss.forge.shell.console.jline.console.completer.CandidateListCompletionHandler();
 
    /**
-    * Add the specified {@link org.jboss.forge.shell.console.jline.console.completer.Completer} to the list of handlers for tab-completion.
-    *
+    * Add the specified {@link org.jboss.forge.shell.console.jline.console.completer.Completer} to the list of handlers
+    * for tab-completion.
+    * 
     * @param completer the {@link org.jboss.forge.shell.console.jline.console.completer.Completer} to add
     * @return true if it was successfully added
     */
@@ -1634,8 +1650,9 @@ public class ConsoleReader
    }
 
    /**
-    * Remove the specified {@link org.jboss.forge.shell.console.jline.console.completer.Completer} from the list of handlers for tab-completion.
-    *
+    * Remove the specified {@link org.jboss.forge.shell.console.jline.console.completer.Completer} from the list of
+    * handlers for tab-completion.
+    * 
     * @param completer The {@link org.jboss.forge.shell.console.jline.console.completer.Completer} to remove
     * @return True if it was successfully removed
     */
@@ -1652,7 +1669,8 @@ public class ConsoleReader
       return Collections.unmodifiableList(completers);
    }
 
-   public void setCompletionHandler(final org.jboss.forge.shell.console.jline.console.completer.CompletionHandler handler)
+   public void setCompletionHandler(
+            final org.jboss.forge.shell.console.jline.console.completer.CompletionHandler handler)
    {
       assert handler != null;
       this.completionHandler = handler;
@@ -1665,7 +1683,7 @@ public class ConsoleReader
 
    /**
     * Use the completers to modify the buffer with the appropriate completions.
-    *
+    * 
     * @return true if successful
     */
    private boolean complete() throws IOException
@@ -1690,12 +1708,11 @@ public class ConsoleReader
          }
       }
 
-      return candidates.size() != 0 && getCompletionHandler().complete(this, candidates, position);
+      return (candidates.size() != 0) && getCompletionHandler().complete(this, candidates, position);
    }
 
    /**
-    * The number of tab-completion candidates above which a warning will be
-    * prompted before showing all the candidates.
+    * The number of tab-completion candidates above which a warning will be prompted before showing all the candidates.
     */
    private int autoprintThreshold = Integer.getInteger(JLINE_COMPLETION_THRESHOLD, 100); // same default as bash
 
@@ -1813,7 +1830,7 @@ public class ConsoleReader
       print((int) c);
    }
 
-   private void print(final char c, int i) throws IOException
+   private void print(final char c, final int i) throws IOException
    {
       print(c, i);
    }
@@ -1899,7 +1916,7 @@ public class ConsoleReader
    public final void println() throws IOException
    {
       print(CR);
-//        flush();
+      // flush();
    }
 
    //
@@ -1908,7 +1925,7 @@ public class ConsoleReader
 
    /**
     * Issue a delete.
-    *
+    * 
     * @return true if successful
     */
    public final boolean delete() throws IOException
@@ -1920,7 +1937,7 @@ public class ConsoleReader
 
    /**
     * Issue <em>num</em> deletes.
-    *
+    * 
     * @return the number of characters backed up
     */
    private int delete(final int num) throws IOException
@@ -1941,7 +1958,7 @@ public class ConsoleReader
 
    /**
     * Kill the buffer ahead of the current cursor position.
-    *
+    * 
     * @return true if successful
     */
    public boolean killLine() throws IOException
@@ -2001,7 +2018,7 @@ public class ConsoleReader
 
    /**
     * Paste the contents of the clipboard into the console buffer
-    *
+    * 
     * @return true if clipboard contents pasted
     */
    public boolean paste() throws IOException
@@ -2105,8 +2122,8 @@ public class ConsoleReader
    /**
     * Adding a triggered Action allows to give another curse of action if a character passed the pre-processing.
     * <p/>
-    * Say you want to close the application if the user enter q.
-    * addTriggerAction('q', new ActionListener(){ System.exit(0); }); would do the trick.
+    * Say you want to close the application if the user enter q. addTriggerAction('q', new ActionListener(){
+    * System.exit(0); }); would do the trick.
     */
    public void addTriggeredAction(final char c, final ActionListener listener)
    {
@@ -2122,7 +2139,7 @@ public class ConsoleReader
     */
    public void printColumns(final Collection<? extends CharSequence> items) throws IOException
    {
-      if (items == null || items.isEmpty())
+      if ((items == null) || items.isEmpty())
       {
          return;
       }
@@ -2161,7 +2178,7 @@ public class ConsoleReader
                print(resources.getString("display-more"));
                flush();
                int c = readVirtualKey();
-               if (c == '\r' || c == '\n')
+               if ((c == '\r') || (c == '\n'))
                {
                   // one step forward
                   showLines = 1;
@@ -2183,7 +2200,7 @@ public class ConsoleReader
 
          // NOTE: toString() is important here due to AnsiString being retarded
          buff.append(item.toString());
-         for (int i = 0; i < (maxWidth + 3 - item.length()); i++)
+         for (int i = 0; i < ((maxWidth + 3) - item.length()); i++)
          {
             buff.append(' ');
          }
@@ -2203,7 +2220,7 @@ public class ConsoleReader
 
    private void beforeReadLine(final String prompt, final Character mask)
    {
-      if (mask != null && maskThread == null)
+      if ((mask != null) && (maskThread == null))
       {
          final String fullPrompt = "\r" + prompt
                   + "                 "
@@ -2213,6 +2230,7 @@ public class ConsoleReader
 
          maskThread = new Thread()
          {
+            @Override
             public void run()
             {
                while (!interrupted())
@@ -2241,7 +2259,7 @@ public class ConsoleReader
 
    private void afterReadLine()
    {
-      if (maskThread != null && maskThread.isAlive())
+      if ((maskThread != null) && maskThread.isAlive())
       {
          maskThread.interrupt();
       }
@@ -2250,15 +2268,13 @@ public class ConsoleReader
    }
 
    /**
-    * Erases the current line with the existing prompt, then redraws the line
-    * with the provided prompt and buffer
-    *
-    * @param prompt     the new prompt
-    * @param buffer     the buffer to be drawn
-    * @param cursorDest where you want the cursor set when the line has been drawn.
-    *                   -1 for end of line.
+    * Erases the current line with the existing prompt, then redraws the line with the provided prompt and buffer
+    * 
+    * @param prompt the new prompt
+    * @param buffer the buffer to be drawn
+    * @param cursorDest where you want the cursor set when the line has been drawn. -1 for end of line.
     */
-   public void resetPromptLine(String prompt, String buffer, int cursorDest) throws IOException
+   public void resetPromptLine(final String prompt, final String buffer, int cursorDest) throws IOException
    {
       // move cursor to end of line
       moveToEnd();
@@ -2274,13 +2290,14 @@ public class ConsoleReader
       setBuffer(buffer);
 
       // move cursor to destination (-1 will move to end of line)
-      if (cursorDest < 0) cursorDest = buffer.length();
+      if (cursorDest < 0)
+         cursorDest = buffer.length();
       setCursorPosition(cursorDest);
 
       flush();
    }
 
-   public void printSearchStatus(String searchTerm, String match) throws IOException
+   public void printSearchStatus(final String searchTerm, final String match) throws IOException
    {
       String prompt = "(reverse-i-search)`" + searchTerm + "': ";
       String buffer = match;
@@ -2288,7 +2305,7 @@ public class ConsoleReader
       resetPromptLine(prompt, buffer, cursorDest);
    }
 
-   public void restoreLine(String originalPrompt, int cursorDest) throws IOException
+   public void restoreLine(final String originalPrompt, final int cursorDest) throws IOException
    {
       // TODO move cursor to matched string
       String prompt = lastLine(originalPrompt);
@@ -2302,29 +2319,28 @@ public class ConsoleReader
 
    /**
     * Search backward in history from a given position.
-    *
+    * 
     * @param searchTerm substring to search for.
     * @param startIndex the index from which on to search
     * @return index where this substring has been found, or -1 else.
     */
-   public int searchBackwards(String searchTerm, int startIndex)
+   public int searchBackwards(final String searchTerm, final int startIndex)
    {
       return searchBackwards(searchTerm, startIndex, false);
    }
 
    /**
     * Search backwards in history from the current position.
-    *
+    * 
     * @param searchTerm substring to search for.
     * @return index where the substring has been found, or -1 else.
     */
-   public int searchBackwards(String searchTerm)
+   public int searchBackwards(final String searchTerm)
    {
       return searchBackwards(searchTerm, history.index());
    }
 
-
-   public int searchBackwards(String searchTerm, int startIndex, boolean startsWith)
+   public int searchBackwards(final String searchTerm, final int startIndex, final boolean startsWith)
    {
       ListIterator<org.jboss.forge.shell.console.jline.console.history.History.Entry> it = history.entries(startIndex);
       while (it.hasPrevious())
@@ -2353,9 +2369,9 @@ public class ConsoleReader
    //
 
    /**
-    * Checks to see if the specified character is a delimiter. We consider a
-    * character a delimiter if it is anything but a letter or digit.
-    *
+    * Checks to see if the specified character is a delimiter. We consider a character a delimiter if it is anything but
+    * a letter or digit.
+    * 
     * @param c The character to test
     * @return True if it is a delimiter
     */
@@ -2364,9 +2380,9 @@ public class ConsoleReader
       return !Character.isLetterOrDigit(c);
    }
 
-   private static final String ESCAPE_STR = new String(new char[]{27, '['});
+   private static final String ESCAPE_STR = new String(new char[] { 27, '[' });
 
-   private void printAnsiSequence(String sequence) throws IOException
+   private void printAnsiSequence(final String sequence) throws IOException
    {
       print(ESCAPE_STR + sequence);
    }
@@ -2384,9 +2400,9 @@ public class ConsoleReader
             StringBuffer b = new StringBuffer(8);
             // position is sent as <ESC>[{ROW};{COLUMN}R
             int r;
-            while ((r = in.read()) > -1 && r != 'R')
+            while (((r = in.read()) > -1) && (r != 'R'))
             {
-               if (r != 27 && r != '[')
+               if ((r != 27) && (r != '['))
                {
                   b.append((char) r);
                }

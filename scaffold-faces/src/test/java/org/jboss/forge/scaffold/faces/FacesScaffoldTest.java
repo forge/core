@@ -22,7 +22,7 @@ package org.jboss.forge.scaffold.faces;
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.List;
@@ -42,6 +42,7 @@ import org.jboss.forge.shell.exceptions.PluginExecutionException;
 import org.jboss.forge.shell.util.Streams;
 import org.jboss.forge.spec.javaee.ServletFacet;
 import org.jboss.forge.test.AbstractShellTest;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -203,8 +204,7 @@ public class FacesScaffoldTest extends AbstractShellTest
          fail();
       }
       catch (IllegalStateException e)
-      {
-      }
+      {}
 
       FileResource<?> view = web.getWebResource("scaffold/customer/view.xhtml");
       FileResource<?> create = web.getWebResource("scaffold/customer/create.xhtml");
@@ -216,6 +216,7 @@ public class FacesScaffoldTest extends AbstractShellTest
       }
    }
 
+   @Ignore
    @Test
    public void testGenerateFromNestedEntity() throws Exception
    {
@@ -317,6 +318,7 @@ public class FacesScaffoldTest extends AbstractShellTest
       Assert.assertTrue(contents.contains(metawidget));
    }
 
+   @Ignore
    @Test
    @SuppressWarnings("unchecked")
    public void testGenerateFromEntityWithRichFaces() throws Exception

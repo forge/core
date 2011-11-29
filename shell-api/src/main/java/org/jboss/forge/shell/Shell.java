@@ -113,6 +113,16 @@ public interface Shell extends ShellPrintWriter, ShellPrompt, ShellHistory
    void setVerbose(boolean verbose);
 
    /**
+    * Return true if this shell is currently keeping a record of command history.
+    */
+   boolean isHistoryEnabled();
+
+   /**
+    * Toggle whether or not this shell should keep a record of command history.
+    */
+   void setHistoryEnabled(boolean history);
+
+   /**
     * Write output to the console, only if {@link Shell#isVerbose()} <code> == true</code>.
     */
    void printlnVerbose(String output);
@@ -200,10 +210,10 @@ public interface Shell extends ShellPrintWriter, ShellPrompt, ShellHistory
     */
    int getHeight();
 
-
    /**
     * Return the absolute height of the console. This may be different than getHeight() depending on how many lines are
     * available in a display buffer.
+    * 
     * @return
     */
    int getAbsoluteHeight();
@@ -245,21 +255,27 @@ public interface Shell extends ShellPrintWriter, ShellPrompt, ShellHistory
 
    /**
     * Register the buffer manager for the shell system
+    * 
     * @param manager
     */
    void registerBufferManager(BufferManager manager);
 
    /**
     * Get buffer manager based on typed
+    * 
     * @return
     */
    BufferManager getBufferManager();
-   
+
+   /**
+    * Register a {@link KeyListener} object that will defined behavior when a given key is received from the
+    * {@link Shell}
+    */
    void registerKeyListener(KeyListener keyListener);
 
    /**
-    * Place the shell output into buffering mode. Do not automatically render changes to the screen unless changed
-    * back to {@link #directWriteMode()} or by calling {@link #flush()}
+    * Place the shell output into buffering mode. Do not automatically render changes to the screen unless changed back
+    * to {@link #directWriteMode()} or by calling {@link #flush()}
     */
    void bufferingMode();
 
@@ -267,6 +283,7 @@ public interface Shell extends ShellPrintWriter, ShellPrompt, ShellHistory
     * Place the shell output in direct-write mode. All data printed to buffer will be immediately rendered.
     */
    void directWriteMode();
+
    /**
     * Get the current Forge environment.
     */

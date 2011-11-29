@@ -747,11 +747,14 @@
                </configuration>
             </plugin>
 
-            <plugin>
-               <groupId>org.jboss.maven.surefire.modular</groupId>
-               <artifactId>maven-surefire-plugin</artifactId>
-               <version>1.0.0.Alpha3</version>
-            </plugin>
+			<plugin>
+			   <groupId>org.apache.maven.plugins</groupId>
+			   <artifactId>maven-surefire-plugin</artifactId>
+			   <version>2.5</version>
+			   <configuration>
+			      <argLine>-Xms512m -Xmx1024m</argLine>
+			   </configuration>
+			</plugin>
 
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
