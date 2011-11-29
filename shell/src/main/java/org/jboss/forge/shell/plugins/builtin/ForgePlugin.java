@@ -176,7 +176,7 @@ public class ForgePlugin implements Plugin
    @Command(value = "remove-plugin",
             help = "Removes a plugin from the current Forge runtime configuration")
    public void removePlugin(
-            @Option(description = "plugin-name",
+            @Option(completer = InstalledPluginCompleter.class, description = "plugin-name",
                      help = "The fully qualified plugin name e.g: 'org.jboss.forge.plugin:version'") final String pluginName,
             final PipeOut out) throws Exception
    {

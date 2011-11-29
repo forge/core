@@ -821,14 +821,17 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          try
          {
             executing = true;
-            for (CommandInterceptor interceptor : commandInterceptors)
+            if (!interruptedState)
             {
-               line = interceptor.intercept(line);
-            }
+               for (CommandInterceptor interceptor : commandInterceptors)
+               {
+                  line = interceptor.intercept(line);
+               }
 
-            executorThread = new ExecutorThread(line);
-            executorThread.run();
-            executorThread.join();
+               executorThread = new ExecutorThread(line);
+               executorThread.run();
+               executorThread.join();
+            }
          }
          catch (Exception e)
          {
