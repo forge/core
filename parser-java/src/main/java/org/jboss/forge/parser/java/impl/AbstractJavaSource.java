@@ -274,12 +274,10 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
    public String resolveType(final String type)
    {
       String original = type;
-      String generic = null;
       String result = type;
       if (Types.isGeneric(result))
       {
          original = Types.stripGenerics(result);
-         generic = Types.getGenerics(result);
          result = Types.stripGenerics(result);
       }
 
@@ -300,11 +298,6 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
                }
             }
          }
-      }
-
-      if ((generic != null) && (result != null))
-      {
-         result += generic;
       }
 
       return result;

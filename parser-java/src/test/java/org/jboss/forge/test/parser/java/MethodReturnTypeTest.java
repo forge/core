@@ -48,7 +48,7 @@ public class MethodReturnTypeTest
       Method<JavaClass> method = JavaParser.create(JavaClass.class)
                .addMethod("public List<Long> getLong(return null;)");
       method.getOrigin().addImport(List.class);
-      Assert.assertEquals("java.util.List<Long>", method.getReturnType());
+      Assert.assertEquals("java.util.List", method.getReturnType());
    }
 
 }
