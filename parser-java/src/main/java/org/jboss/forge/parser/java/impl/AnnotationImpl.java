@@ -43,7 +43,7 @@ import org.jboss.forge.parser.java.util.Strings;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class AnnotationImpl<O extends JavaSource<?>, T> implements Annotation<O>
+public class AnnotationImpl<O extends JavaSource<O>, T> implements Annotation<O>
 {
    private static final String DEFAULT_VALUE = "value";
 

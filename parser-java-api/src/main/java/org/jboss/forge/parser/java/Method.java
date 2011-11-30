@@ -32,7 +32,7 @@ import org.jboss.forge.parser.Origin;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public interface Method<O extends JavaSource<?>> extends Abstractable<Method<O>>, Member<O, Method<O>>, Origin<O>
+public interface Method<O extends JavaSource<O>> extends Abstractable<Method<O>>, Member<O, Method<O>>, Origin<O>
 {
    /**
     * Get the inner body of this {@link Method}
@@ -64,6 +64,8 @@ public interface Method<O extends JavaSource<?>> extends Abstractable<Method<O>>
     * Get the return type of this {@link Method} or return null if the return type is void.
     */
    public String getReturnType();
+
+   public Type<O> getReturnTypeObject();
 
    /**
     * Set this {@link Method} to return the given type.

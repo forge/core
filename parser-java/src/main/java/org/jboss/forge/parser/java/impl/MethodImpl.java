@@ -32,7 +32,6 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Modifier.ModifierKeyword;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.Statement;
-import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.VariableDeclaration;
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.Annotation;
@@ -40,6 +39,7 @@ import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.parser.java.Method;
 import org.jboss.forge.parser.java.Parameter;
+import org.jboss.forge.parser.java.Type;
 import org.jboss.forge.parser.java.Visibility;
 import org.jboss.forge.parser.java.ast.AnnotationAccessor;
 import org.jboss.forge.parser.java.ast.ModifierAccessor;
@@ -227,7 +227,7 @@ public class MethodImpl<O extends JavaSource<O>> implements Method<O>
    public String getReturnType()
    {
       String result = null;
-      Type returnType = method.getReturnType2();
+      org.eclipse.jdt.core.dom.Type returnType = method.getReturnType2();
       if (!isConstructor() && (returnType != null))
       {
          result = returnType.toString();
@@ -250,9 +250,9 @@ public class MethodImpl<O extends JavaSource<O>> implements Method<O>
       String stub = "public class Stub { public " + typeName + " method() {} }";
       JavaClass temp = (JavaClass) JavaParser.parse(stub);
       List<Method<JavaClass>> methods = temp.getMethods();
-      Type returnType = ((MethodDeclaration) methods.get(0).getInternal()).getReturnType2();
+      org.eclipse.jdt.core.dom.Type returnType = ((MethodDeclaration) methods.get(0).getInternal()).getReturnType2();
 
-      returnType = (Type) ASTNode.copySubtree(method.getAST(), returnType);
+      returnType = (org.eclipse.jdt.core.dom.Type) ASTNode.copySubtree(method.getAST(), returnType);
       method.setReturnType2(returnType);
 
       return this;
@@ -594,5 +594,11 @@ public class MethodImpl<O extends JavaSource<O>> implements Method<O>
       }
 
       return this;
+   }
+
+   @Override
+   public Type<O> getReturnTypeObject()
+   {
+      return new TypeImpl<O>(parent, method.getReturnType2());
    }
 }

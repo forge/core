@@ -40,8 +40,8 @@ public class Types
       if (left.equals(right))
          return true;
 
-      left = left.replaceAll("^(.*)<.*>$", "$1");
-      right = right.replaceAll("^(.*)<.*>$", "$1");
+      left = stripGenerics(left);
+      right = stripGenerics(right);
 
       String l = toSimpleName(left);
       String r = toSimpleName(right);
@@ -239,6 +239,20 @@ public class Types
          return type.replaceFirst("^[^<]*(<.*>)$", "$1");
       }
       return "";
+   }
+
+   public static boolean isArray(final String type)
+   {
+      return (type != null) && type.matches(".*\\[.*\\]$");
+   }
+
+   public static String stripArray(final String type)
+   {
+      if (isArray(type))
+      {
+         return type.replaceFirst("^([^\\[]*)\\[.*\\]$", "$1");
+      }
+      return type;
    }
 
 }

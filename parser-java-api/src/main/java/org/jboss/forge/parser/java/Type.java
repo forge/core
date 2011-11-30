@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat, Inc., and individual contributors
+ * Copyright 2011, Red Hat, Inc., and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,19 +19,34 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.jboss.forge.parser.java;
 
 import java.util.List;
+
+import org.jboss.forge.parser.Origin;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public interface MemberHolder<O extends JavaSource<O>, T>
+public interface Type<O extends JavaSource<O>> extends Origin<O>
 {
-   /**
-    * Return a list of all class members (fields, methods, etc.)
-    */
-   public List<Member<O, ?>> getMembers();
+   public abstract List<Type<O>> getTypeArguments();
+
+   public abstract String getName();
+
+   public abstract String getQualifiedName();
+
+   public abstract Type<O> getParentType();
+
+   public abstract boolean isArray();
+
+   public abstract boolean isParameterized();
+
+   public abstract boolean isPrimitive();
+
+   public abstract boolean isQualified();
+
+   public abstract boolean isWildcard();
+
 }
