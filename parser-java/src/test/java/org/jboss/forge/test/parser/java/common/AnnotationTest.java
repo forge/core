@@ -175,7 +175,7 @@ public abstract class AnnotationTest<O extends JavaSource<?>, T>
       int size = target.getAnnotations().size();
 
       target.addAnnotation(Test.class).setLiteralValue("expected", "RuntimeException.class")
-            .setLiteralValue("foo", "bar");
+               .setLiteralValue("foo", "bar");
 
       List<Annotation<O>> annotations = target.getAnnotations();
       assertEquals(size + 1, annotations.size());
@@ -288,5 +288,15 @@ public abstract class AnnotationTest<O extends JavaSource<?>, T>
       annotation.removeAllValues();
 
       assertEquals(0, annotation.getValues().size());
+   }
+
+   @Test
+   public void testGetNames() throws Exception
+   {
+      target.addAnnotation(Test.class).setLiteralValue("expected", "RuntimeException.class");
+
+      Annotation<O> annotation = target.getAnnotation(Test.class);
+      assertEquals(Test.class.getSimpleName(), annotation.getName());
+      assertEquals(Test.class.getName(), annotation.getQualifiedName());
    }
 }

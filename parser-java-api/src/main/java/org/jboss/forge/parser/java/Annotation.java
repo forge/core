@@ -39,6 +39,8 @@ public interface Annotation<O> extends Internal, Origin<O>
 
    String getName();
 
+   String getQualifiedName();
+
    <T extends Enum<T>> T getEnumValue(Class<T> type);
 
    <T extends Enum<T>> T getEnumValue(Class<T> type, String name);

@@ -32,7 +32,7 @@ import org.jboss.forge.parser.Origin;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public interface Method<O> extends Abstractable<Method<O>>, Member<O, Method<O>>, Origin<O>
+public interface Method<O extends JavaSource<?>> extends Abstractable<Method<O>>, Member<O, Method<O>>, Origin<O>
 {
    /**
     * Get the inner body of this {@link Method}

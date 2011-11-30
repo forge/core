@@ -28,7 +28,7 @@ import java.util.List;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public interface MemberHolder<O, T>
+public interface MemberHolder<O extends JavaSource<?>, T>
 {
    /**
     * Return a list of all class members (fields, methods, etc.)
