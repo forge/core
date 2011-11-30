@@ -34,6 +34,7 @@ import org.metawidget.statically.StaticXmlWidget;
 import org.metawidget.statically.faces.StaticFacesUtils;
 import org.metawidget.statically.faces.component.StaticUIMetawidget;
 import org.metawidget.statically.faces.component.html.layout.HtmlPanelGroup;
+import org.metawidget.statically.faces.component.html.widgetbuilder.FaceletsParam;
 import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlColumn;
 import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlCommandLink;
 import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlDataTable;
@@ -160,12 +161,18 @@ public class ForgeWidgetBuilder
       addSelectItems(select, StaticFacesUtils.wrapExpression(controllerName + "Bean.all"), emptyAttributes);
       panelGroup.getChildren().add(select);
 
+      // Hack until https://issues.apache.org/jira/browse/MYFACES-3410 is resolved
+
+      FaceletsParam param = new FaceletsParam();
+      param.putAttribute("name", "_entity");
+      param.putAttribute("value", ((StaticUIMetawidget) metawidget).getValue());
+      panelGroup.getChildren().add(param);
+
       // Add link
 
       HtmlCommandLink addLink = new HtmlCommandLink();
       addLink.setValue("Add");
-      String addExpression = StaticFacesUtils.unwrapExpression(((StaticUIMetawidget) metawidget).getValue());
-      addExpression += ".add" + simpleComponentType + "(" + requestScopedValue + ")";
+      String addExpression = "_entity.add" + simpleComponentType + "(" + requestScopedValue + ")";
       addLink.putAttribute("action", StaticFacesUtils.wrapExpression(addExpression));
       panelGroup.getChildren().add(addLink);
 
@@ -177,7 +184,8 @@ public class ForgeWidgetBuilder
     */
 
    @Override
-   protected void addColumnComponent(HtmlDataTable dataTable, Map<String, String> tableAttributes, String elementName, Map<String, String> columnAttributes,
+   protected void addColumnComponent(HtmlDataTable dataTable, Map<String, String> tableAttributes, String elementName,
+            Map<String, String> columnAttributes,
             StaticXmlMetawidget metawidget)
    {
       super.addColumnComponent(dataTable, tableAttributes, elementName, columnAttributes, metawidget);

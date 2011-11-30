@@ -21,8 +21,8 @@
  */
 package org.jboss.forge.scaffold.faces;
 
-import java.io.FileNotFoundException;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -35,7 +35,6 @@ import javax.inject.Inject;
 
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.parser.xml.Node;
 import org.jboss.forge.parser.xml.XMLParser;
 import org.jboss.forge.project.Project;
@@ -45,10 +44,8 @@ import org.jboss.forge.project.dependencies.events.AddedDependencies;
 import org.jboss.forge.project.facets.BaseFacet;
 import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.facets.JavaSourceFacet;
-import org.jboss.forge.project.facets.ResourceFacet;
 import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.project.facets.events.InstallFacets;
-import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.scaffold.AccessStrategy;
@@ -57,7 +54,10 @@ import org.jboss.forge.scaffold.TemplateStrategy;
 import org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspector;
 import org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle.ForgePropertyStyle;
 import org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle.ForgePropertyStyleConfig;
+import org.jboss.forge.scaffold.faces.metawidget.widgetbuilder.Anchor;
 import org.jboss.forge.scaffold.faces.metawidget.widgetbuilder.ForgeWidgetBuilder;
+import org.jboss.forge.scaffold.faces.metawidget.widgetbuilder.ListItem;
+import org.jboss.forge.scaffold.faces.metawidget.widgetbuilder.UnorderedList;
 import org.jboss.forge.scaffold.util.ScaffoldUtil;
 import org.jboss.forge.shell.ShellPrompt;
 import org.jboss.forge.shell.plugins.Alias;
@@ -79,6 +79,7 @@ import org.metawidget.inspector.java5.Java5Inspector;
 import org.metawidget.inspector.jpa.JpaInspector;
 import org.metawidget.inspector.jpa.JpaInspectorConfig;
 import org.metawidget.inspector.propertytype.PropertyTypeInspector;
+import org.metawidget.statically.StaticUtils.IndentedWriter;
 import org.metawidget.statically.StaticXmlMetawidget;
 import org.metawidget.statically.StaticXmlWidget;
 import org.metawidget.statically.faces.StaticFacesUtils;
@@ -90,6 +91,7 @@ import org.metawidget.statically.faces.component.html.widgetbuilder.richfaces.Ri
 import org.metawidget.statically.layout.SimpleLayout;
 import org.metawidget.util.CollectionUtils;
 import org.metawidget.util.XmlUtils;
+import org.metawidget.util.simple.StringUtils;
 import org.metawidget.widgetbuilder.composite.CompositeWidgetBuilder;
 import org.metawidget.widgetbuilder.composite.CompositeWidgetBuilderConfig;
 import org.w3c.dom.Document;
@@ -123,6 +125,8 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    private static final String VIEW_TEMPLATE = "org/jboss/forge/scaffold/faces/scaffold/view.xhtml";
    private static final String CREATE_TEMPLATE = "org/jboss/forge/scaffold/faces/scaffold/create.xhtml";
    private static final String LIST_TEMPLATE = "org/jboss/forge/scaffold/faces/scaffold/list.xhtml";
+   private static final String NAVIGATION_TEMPLATE = "org/jboss/forge/scaffold/faces/templates/page.xhtml";
+
    private static final String E404_TEMPLATE = "org/jboss/forge/scaffold/faces/templates/404.xhtml";
    private static final String E500_TEMPLATE = "org/jboss/forge/scaffold/faces/templates/500.xhtml";
    private static final String INDEX_TEMPLATE = "org/jboss/forge/scaffold/faces/templates/index.xhtml";
@@ -145,6 +149,9 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    private CompiledTemplateResource listTemplate;
    private Map<String, String> listTemplateNamespaces;
    private int listTemplateMetawidgetIndent;
+
+   private CompiledTemplateResource navigationTemplate;
+   private int navigationTemplateIndent;
 
    private CompiledTemplateResource e404Template;
    private CompiledTemplateResource e500Template;
@@ -217,26 +224,33 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       if (this.viewTemplate == null)
       {
          this.viewTemplate = this.compiler.compile(VIEW_TEMPLATE);
-         NamespacesAndIndent namespacesAndIndent = parseNamespacesAndIndent(String.valueOf(this.viewTemplate
-                  .getCompiledTemplate().getTemplate()));
-         this.viewTemplateNamespaces = namespacesAndIndent.getNamespaces();
-         this.viewTemplateMetawidgetIndent = namespacesAndIndent.getIndent();
+         String template = String.valueOf(this.viewTemplate
+                  .getCompiledTemplate().getTemplate());
+         this.viewTemplateNamespaces = parseNamespaces(template);
+         this.viewTemplateMetawidgetIndent = parseIndent(template, "@{metawidget}");
       }
       if (this.createTemplate == null)
       {
          this.createTemplate = this.compiler.compile(CREATE_TEMPLATE);
-         NamespacesAndIndent namespacesAndIndent = parseNamespacesAndIndent(String.valueOf(this.createTemplate
-                  .getCompiledTemplate().getTemplate()));
-         this.createTemplateNamespaces = namespacesAndIndent.getNamespaces();
-         this.createTemplateMetawidgetIndent = namespacesAndIndent.getIndent();
+         String template = String.valueOf(this.createTemplate
+                  .getCompiledTemplate().getTemplate());
+         this.createTemplateNamespaces = parseNamespaces(template);
+         this.createTemplateMetawidgetIndent = parseIndent(template, "@{metawidget}");
       }
       if (this.listTemplate == null)
       {
          this.listTemplate = this.compiler.compile(LIST_TEMPLATE);
-         NamespacesAndIndent namespacesAndIndent = parseNamespacesAndIndent(String.valueOf(this.listTemplate
-                  .getCompiledTemplate().getTemplate()));
-         this.listTemplateNamespaces = namespacesAndIndent.getNamespaces();
-         this.listTemplateMetawidgetIndent = namespacesAndIndent.getIndent();
+         String template = String.valueOf(this.listTemplate
+                  .getCompiledTemplate().getTemplate());
+         this.listTemplateNamespaces = parseNamespaces(template);
+         this.listTemplateMetawidgetIndent = parseIndent(template, "@{metawidget}");
+      }
+      if (this.navigationTemplate == null)
+      {
+         this.navigationTemplate = this.compiler.compile(NAVIGATION_TEMPLATE);
+         String template = String.valueOf(this.navigationTemplate
+                  .getCompiledTemplate().getTemplate());
+         this.navigationTemplateIndent = parseIndent(template, "@{navigation}");
       }
       if (this.e404Template == null)
       {
@@ -258,7 +272,6 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       List<Resource<?>> resources = generateIndex(template, overwrite);
       setupRichFaces();
       setupWebXML();
-      setupRewrite();
 
       return resources;
    }
@@ -330,7 +343,6 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
          // Create the Backing Bean for this entity
          JavaClass viewBean = JavaParser.parse(JavaClass.class, this.backingBeanTemplate.render(context));
          viewBean.setPackage(java.getBasePackage() + ".view");
-         // viewBean.addAnnotation(SEAM_PERSIST_TRANSACTIONAL_ANNO);
          result.add(ScaffoldUtil.createOrOverwrite(this.prompt, java.getJavaResource(viewBean), viewBean.toString(),
                   overwrite));
 
@@ -374,6 +386,28 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
 
          result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("scaffold/" + type + "/list.xhtml"),
                   this.listTemplate.render(context), overwrite));
+
+         // Generate navigation
+         UnorderedList unorderedList = new UnorderedList();
+
+         for (Resource<?> resource : web.getWebResource("scaffold").listResources())
+         {
+            Anchor anchor = new Anchor();
+            anchor.putAttribute("href", "/faces/scaffold/" + resource.getName() + "/list.xhtml");
+            anchor.setTextContent(StringUtils.uncamelCase(resource.getName()));
+
+            ListItem listItem = new ListItem();
+            listItem.getChildren().add(anchor);
+            unorderedList.getChildren().add(listItem);
+         }
+
+         Writer writer = new IndentedWriter(new StringWriter(), this.navigationTemplateIndent);
+         unorderedList.write(writer);
+         context.put("navigation", writer.toString().trim());
+         result.add(ScaffoldUtil.createOrOverwrite(this.prompt, (FileResource<?>) getTemplateStrategy()
+                  .getDefaultTemplate(),
+                  this.navigationTemplate.render(context),
+                  overwrite));
       }
       catch (Exception e)
       {
@@ -441,43 +475,34 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       return webXML;
    }
 
-   private void setupRewrite()
-   {
-      JavaSourceFacet java = this.project.getFacet(JavaSourceFacet.class);
-      FacesFacet faces = this.project.getFacet(FacesFacet.class);
-
-      loadTemplates();
-
-      Map<Object, Object> context = new HashMap<Object, Object>();
-      context.put("indexPage", faces.getWebPaths("/index.xhtml").get(0));
-      context.put("notFoundPage", faces.getWebPaths("/404.xhtml").get(0));
-      context.put("errorPage", faces.getWebPaths("/500.xhtml").get(0));
-      context.put("listPage", faces.getWebPaths("/scaffold/{domain}/list.xhtml").get(0));
-      context.put("createPage", faces.getWebPaths("/scaffold/{domain}/create.xhtml").get(0));
-      context.put("viewPage", faces.getWebPaths("/scaffold/{domain}/view.xhtml").get(0));
-
-      JavaSource<?> rewriteConfig = JavaParser.parse(this.rewriteConfigTemplate.render(context));
-      rewriteConfig.setPackage(java.getBasePackage() + ".rewrite");
-
-      try
-      {
-         ScaffoldUtil.createOrOverwrite(this.prompt, java.getJavaResource(rewriteConfig),
-                  rewriteConfig.toString(), false);
-      }
-      catch (FileNotFoundException e)
-      {
-         throw new RuntimeException("Could not save Rewrite Configuration source file", e);
-      }
-
-      ResourceFacet resources = this.project.getFacet(ResourceFacet.class);
-      DirectoryResource services = resources.getResourceFolder().getOrCreateChildDirectory("META-INF")
-               .getOrCreateChildDirectory("services");
-
-      // Register the configuration provider
-      ScaffoldUtil.createOrOverwrite(this.prompt,
-               (FileResource<?>) services.getChild("com.ocpsoft.rewrite.config.ConfigurationProvider"),
-               rewriteConfig.getQualifiedName(), false);
-   }
+   /*
+    * LINCOLN TO RE-ENABLE?
+    *
+    * private void setupRewrite() { JavaSourceFacet java = this.project.getFacet(JavaSourceFacet.class); FacesFacet
+    * faces = this.project.getFacet(FacesFacet.class);
+    *
+    * loadTemplates();
+    *
+    * Map<Object, Object> context = new HashMap<Object, Object>(); context.put("indexPage",
+    * faces.getWebPaths("/index.xhtml").get(0)); context.put("notFoundPage", faces.getWebPaths("/404.xhtml").get(0));
+    * context.put("errorPage", faces.getWebPaths("/500.xhtml").get(0)); context.put("listPage",
+    * faces.getWebPaths("/scaffold/{domain}/list.xhtml").get(0)); context.put("createPage",
+    * faces.getWebPaths("/scaffold/{domain}/create.xhtml").get(0)); context.put("viewPage",
+    * faces.getWebPaths("/scaffold/{domain}/view.xhtml").get(0));
+    *
+    * JavaSource<?> rewriteConfig = JavaParser.parse(this.rewriteConfigTemplate.render(context));
+    * rewriteConfig.setPackage(java.getBasePackage() + ".rewrite");
+    *
+    * try { ScaffoldUtil.createOrOverwrite(this.prompt, java.getJavaResource(rewriteConfig), rewriteConfig.toString(),
+    * false); } catch (FileNotFoundException e) { throw new
+    * RuntimeException("Could not save Rewrite Configuration source file", e); }
+    *
+    * ResourceFacet resources = this.project.getFacet(ResourceFacet.class); DirectoryResource services =
+    * resources.getResourceFolder().getOrCreateChildDirectory("META-INF") .getOrCreateChildDirectory("services");
+    *
+    * // Register the configuration provider ScaffoldUtil.createOrOverwrite(this.prompt, (FileResource<?>)
+    * services.getChild("com.ocpsoft.rewrite.config.ConfigurationProvider"), rewriteConfig.getQualifiedName(), false); }
+    */
 
    @Override
    public boolean isInstalled()
@@ -492,11 +517,10 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       WebResourceFacet web = this.project.getFacet(WebResourceFacet.class);
 
       this.project.getFacet(ServletFacet.class).getConfig().welcomeFile("index.html");
+      loadTemplates();
 
       generateTemplates(overwrite);
       HashMap<Object, Object> context = getTemplateContext(template);
-
-      loadTemplates();
 
       // Basic pages
 
@@ -553,30 +577,33 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    @Override
    public List<Resource<?>> generateTemplates(final boolean overwrite)
    {
-      WebResourceFacet web = this.project.getFacet(WebResourceFacet.class);
       List<Resource<?>> result = new ArrayList<Resource<?>>();
 
-      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, (FileResource<?>) getTemplateStrategy()
-               .getDefaultTemplate(),
-               getClass().getResourceAsStream("/org/jboss/forge/scaffold/faces/templates/forge-template.xhtml"),
-               overwrite));
+      try
+      {
+         WebResourceFacet web = this.project.getFacet(WebResourceFacet.class);
 
-      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/scaffold/paginator.xhtml"),
-               getClass().getResourceAsStream("/org/jboss/forge/scaffold/faces/templates/paginator.xhtml"), overwrite));
+         result.add(ScaffoldUtil.createOrOverwrite(this.prompt,
+                  web.getWebResource("/resources/scaffold/paginator.xhtml"),
+                  getClass().getResourceAsStream("/org/jboss/forge/scaffold/faces/templates/paginator.xhtml"),
+                  overwrite));
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException("Error generating default templates", e);
+      }
 
       return result;
    }
 
    /**
-    * Parses XML from the given input stream and determines what namespaces it declares.
+    * Parses the given XML and determines what namespaces it already declares. These are later removed from the list of
+    * namespaces that Metawidget introduces.
     */
 
-   private NamespacesAndIndent parseNamespacesAndIndent(String template)
+   private Map<String, String> parseNamespaces(String template)
    {
       Map<String, String> namespaces = CollectionUtils.newHashMap();
-
-      // Determine namespaces
-
       Document document = XmlUtils.documentFromString(template);
       Element element = document.getDocumentElement();
       NamedNodeMap attributes = element.getAttributes();
@@ -595,10 +622,17 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
          namespaces.put(nodeName.substring(indexOf + XMLNS_PREFIX.length()), node.getNodeValue());
       }
 
-      // Determine indent
+      return namespaces;
+   }
 
+   /**
+    * Parses the given XML and determines the indent of the given String namespaces that Metawidget introduces.
+    */
+
+   private int parseIndent(String template, String indentOf)
+   {
       int indent = 0;
-      int indexOf = template.indexOf("@{metawidget}");
+      int indexOf = template.indexOf(indentOf);
 
       while ((indexOf >= 0) && (template.charAt(indexOf) != '\n'))
       {
@@ -610,7 +644,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
          indexOf--;
       }
 
-      return new NamespacesAndIndent(namespaces, indent);
+      return indent;
    }
 
    /**
@@ -641,51 +675,4 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
 
       context.put("metawidgetNamespaces", builder.toString());
    }
-
-   //
-   // Inner class
-   //
-
-   /**
-    * Simple immutable structure to store some namespaces and an indent.
-    *
-    * @author Richard Kennard
-    */
-
-   private static class NamespacesAndIndent
-   {
-
-      //
-      // Private members
-      //
-
-      private final Map<String, String> namespaces;
-
-      private final int indent;
-
-      //
-      // Constructor
-      //
-
-      public NamespacesAndIndent(final Map<String, String> namespaces, final int indent)
-      {
-         this.namespaces = namespaces;
-         this.indent = indent;
-      }
-
-      //
-      // Public methods
-      //
-
-      public Map<String, String> getNamespaces()
-      {
-         return this.namespaces;
-      }
-
-      public int getIndent()
-      {
-         return this.indent;
-      }
-   }
-
 }

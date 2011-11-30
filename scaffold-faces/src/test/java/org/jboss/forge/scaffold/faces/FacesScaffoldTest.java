@@ -66,9 +66,9 @@ public class FacesScaffoldTest extends AbstractShellTest
       WebResourceFacet web = project.getFacet(WebResourceFacet.class);
       FileResource<?> e404 = web.getWebResource("404.xhtml");
       Assert.assertTrue(Streams.toString(e404.getResourceInputStream()).contains(
-               "/resources/scaffold/forge-template.xhtml"));
+               "/resources/scaffold/page.xhtml"));
 
-      Assert.assertTrue(web.getWebResource("/resources/scaffold/forge-template.xhtml").exists());
+      Assert.assertTrue(web.getWebResource("/resources/scaffold/page.xhtml").exists());
    }
 
    @Test(expected = PluginExecutionException.class)
@@ -106,20 +106,20 @@ public class FacesScaffoldTest extends AbstractShellTest
       Assert.assertTrue(view.exists());
       String contents = Streams.toString(view.getResourceInputStream());
       Assert.assertTrue(contents.contains(
-               "template=\"/resources/scaffold/forge-template.xhtml"));
+               "template=\"/resources/scaffold/page.xhtml"));
 
       FileResource<?> create = web.getWebResource("scaffold/customer/create.xhtml");
       Assert.assertTrue(create.exists());
       contents = Streams.toString(create.getResourceInputStream());
       Assert.assertTrue(contents.contains(
-               "template=\"/resources/scaffold/forge-template.xhtml"));
+               "template=\"/resources/scaffold/page.xhtml"));
 
       FileResource<?> list = web.getWebResource("scaffold/customer/list.xhtml");
       Assert.assertTrue(list.exists());
       contents = Streams.toString(list.getResourceInputStream());
       Assert.assertTrue(contents.contains(
-               "template=\"/resources/scaffold/forge-template.xhtml"));
-      System.out.println(contents);
+               "template=\"/resources/scaffold/page.xhtml"));
+
       StringBuilder metawidget = new StringBuilder("\t\t\t<h:form id=\"form\">\n");
       metawidget.append("\t\t\t\t<h:messages globalOnly=\"true\" />\n\n");
       metawidget.append("\t\t\t\t<h:panelGrid columns=\"3\">\r\n");
@@ -173,6 +173,11 @@ public class FacesScaffoldTest extends AbstractShellTest
       metawidget.append("\t\t\t\t</h:panelGrid>\n");
 
       //Assert.assertTrue(contents.contains(metawidget));
+
+      FileResource<?> navigation = web.getWebResource("resources/scaffold/page.xhtml");
+      Assert.assertTrue(navigation.exists());
+      contents = Streams.toString(navigation.getResourceInputStream());
+      System.out.println(contents);
    }
 
    @Test
@@ -234,10 +239,14 @@ public class FacesScaffoldTest extends AbstractShellTest
 
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
       JavaResource bean = java.getJavaResource(java.getBasePackage() + ".view.CustomerBean");
+      Assert.assertTrue(bean.exists());
       // TODO:Assert.assertTrue(((JavaClass)
       // bean.getJavaSource()).hasInterface("org.jboss.forge.scaffold.faces.navigation.MenuItem"));
 
-      // TODO:getShell().execute("build");
+      bean = java.getJavaResource(java.getBasePackage() + ".view.Navigation");
+      Assert.assertTrue(bean.exists());
+
+      getShell().execute("build");
    }
 
    @Test
@@ -301,13 +310,13 @@ public class FacesScaffoldTest extends AbstractShellTest
       Assert.assertTrue(view.exists());
       String contents = Streams.toString(view.getResourceInputStream());
       Assert.assertTrue(contents.contains(
-               "template=\"/resources/scaffold/forge-template.xhtml"));
+               "template=\"/resources/scaffold/page.xhtml"));
 
       FileResource<?> create = web.getWebResource("scaffold/customer/create.xhtml");
       Assert.assertTrue(create.exists());
       contents = Streams.toString(create.getResourceInputStream());
       Assert.assertTrue(contents.contains(
-               "template=\"/resources/scaffold/forge-template.xhtml"));
+               "template=\"/resources/scaffold/page.xhtml"));
       StringBuilder metawidget = new StringBuilder("\t\t<h:form id=\"form\">\n");
       metawidget.append("\t\t\t<h:messages globalOnly=\"true\" />\n\n");
       metawidget.append("\t\t\t<h:panelGrid columns=\"3\">\r\n");
@@ -365,7 +374,7 @@ public class FacesScaffoldTest extends AbstractShellTest
       Assert.assertTrue(list.exists());
       contents = Streams.toString(list.getResourceInputStream());
       Assert.assertTrue(contents.contains(
-               "template=\"/resources/scaffold/forge-template.xhtml"));
+               "template=\"/resources/scaffold/page.xhtml"));
 
       // Test regeneration
 
@@ -400,7 +409,7 @@ public class FacesScaffoldTest extends AbstractShellTest
       Assert.assertTrue(view.exists());
       String contents = Streams.toString(view.getResourceInputStream());
       Assert.assertTrue(contents.contains(
-               "template=\"/resources/scaffold/forge-template.xhtml"));
+               "template=\"/resources/scaffold/page.xhtml"));
 
       StringBuilder metawidget = new StringBuilder("\t\t\t<h:panelGrid columns=\"3\">\r\n");
       metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First name:\"/>\r\n");
@@ -425,7 +434,7 @@ public class FacesScaffoldTest extends AbstractShellTest
       Assert.assertTrue(create.exists());
       contents = Streams.toString(create.getResourceInputStream());
       Assert.assertTrue(contents.contains(
-               "template=\"/resources/scaffold/forge-template.xhtml"));
+               "template=\"/resources/scaffold/page.xhtml"));
 
       metawidget = new StringBuilder("\t\t\t<h:panelGrid columns=\"3\">\r\n");
       metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First name:\"/>\r\n");
@@ -460,7 +469,7 @@ public class FacesScaffoldTest extends AbstractShellTest
       Assert.assertTrue(list.exists());
       contents = Streams.toString(list.getResourceInputStream());
       Assert.assertTrue(contents.contains(
-               "template=\"/resources/scaffold/forge-template.xhtml"));
+               "template=\"/resources/scaffold/page.xhtml"));
    }
 
    @Test
@@ -490,7 +499,7 @@ public class FacesScaffoldTest extends AbstractShellTest
          Assert.assertTrue(file.exists());
          String contents = Streams.toString(file.getResourceInputStream());
          Assert.assertTrue(contents.contains(
-                  "template=\"/resources/scaffold/forge-template.xhtml"));
+                  "template=\"/resources/scaffold/page.xhtml"));
       }
    }
 

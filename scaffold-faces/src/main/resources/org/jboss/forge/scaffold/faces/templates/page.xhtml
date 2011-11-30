@@ -15,35 +15,25 @@
 	
 		<div class="wrapper">
 	
-		    <div class="forge">
-		    	<h:link outcome="/index.xhtml">
+			<div class="forge">
+				<h:link outcome="/index.xhtml">
 					<img src="#{resource['forge-logo.png']}" alt="Seam Forge... get hammered." width="195" height="131" border="0"/>
 				</h:link>
-				
-				<h:panelGroup rendered="#{not empty navigation.listItems}">
-					<ul>
-					<ui:repeat var="item" value="#{navigation.listItems}">
-						<li><h:link outcome="#{navigation.toLiteralPath(item)}" value="#{navigation.toLabel(item)}"/></li>
-					</ui:repeat>
-					</ul>
-				</h:panelGroup>
-				
-		    </div>
+				@{navigation}				
+			</div>
 		
-		    <div class="content">
-		     	<h1><ui:insert name="header"/></h1>		
-		     	<h2><ui:insert name="subheader"/></h2>
+			<div class="content">
+				<h1><ui:insert name="header"/></h1>		
+				<h2><ui:insert name="subheader"/></h2>
 		
-		    	<ui:insert name="main"/>
-		     
+				<ui:insert name="main"/>
+
 				<div id="footer">
 					<hr />				
 					<ui:insert name="footer"/>			
-					<p class="right">Powered by <a href="http://jboss.org/forge">Forge</a></p>
+					<div class="right">Powered by <a href="http://jboss.org/forge">Forge</a></div>
 				</div>
-			</div>
-		
-		</div>
-		
+			</div>		
+		</div>		
 	</h:body>
 </html>
