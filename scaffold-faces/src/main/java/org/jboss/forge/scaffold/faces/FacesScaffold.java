@@ -595,7 +595,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       {
          HtmlOutcomeTargetLink outcomeTargetLink = new HtmlOutcomeTargetLink();
          outcomeTargetLink.putAttribute("outcome", "/scaffold/" + resource.getName() + "/list");
-         outcomeTargetLink.setTextContent(StringUtils.uncamelCase(resource.getName()));
+         outcomeTargetLink.putAttribute("value", StringUtils.uncamelCase(resource.getName()));
 
          ListItem listItem = new ListItem();
          listItem.getChildren().add(outcomeTargetLink);

@@ -514,18 +514,7 @@ public class ForgePropertyStyle
       {
          // Note: this needs https://issues.jboss.org/browse/FORGE-387
 
-         String type;
-
-         if (this.readMethod != null)
-         {
-            type = null; // TODO:Java5ClassUtils.getOriginalGenericReturnType(mReadMethod);
-         }
-         else
-         {
-            type = null; // TODO:Java5ClassUtils.getOriginalGenericParameterTypes(mWriteMethod)[0];
-         }
-
-         return type; // TODO: Java5ClassUtils.getGenericTypeAsString(type);
+         return null;
       }
 
       public Method<?> getReadMethod()

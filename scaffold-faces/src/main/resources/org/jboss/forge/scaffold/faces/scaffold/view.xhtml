@@ -7,11 +7,11 @@
 	template="@{templateStrategy.getReferencePath(template != null ? template : templateStrategy.getDefaultTemplate())}">
 
 	<f:metadata>
-		<f:viewParam name="id" value="#{@{beanName}.id}" />
-		<f:event type="preRenderView" listener="#{@{beanName}.retrieve}" />
+		<f:viewParam name="id" value="#{@{beanName}.id}"/>
+		<f:event type="preRenderView" listener="#{@{beanName}.retrieve}"/>
 	</f:metadata>
 
-	<ui:param name="pageTitle" value="View @{entity.getName()}" />
+	<ui:param name="pageTitle" value="View @{entity.getName()}"/>
 
 	<ui:define name="header">
 		@{entity.getName()}
@@ -21,19 +21,19 @@
 		Viewing the @{entity.getName()}
 	</ui:define>
 
-	<ui:define name="footer" />
+	<ui:define name="footer"/>
 
 	<ui:define name="main">
 		<h:form id="form">
-			<h:messages globalOnly="true" />
-			   
+			<h:messages globalOnly="true"/>
+
 			@{metawidget}
 
-			<br />
+			<br/>
 
-			<h:link value="View all" outcome="list" /> | 
-			<h:link value="Edit" outcome="create" includeViewParams="true" /> |
-			<h:link value="Create new" outcome="create" />
+			<h:link value="View all" outcome="list"/> | 
+			<h:link value="Edit" outcome="create" includeViewParams="true"/> |
+			<h:link value="Create new" outcome="create"/>
 		</h:form>
 	</ui:define>
 

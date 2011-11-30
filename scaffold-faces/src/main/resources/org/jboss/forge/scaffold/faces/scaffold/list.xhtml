@@ -7,11 +7,11 @@
 	template="@{templateStrategy.getReferencePath(template != null ? template : templateStrategy.getDefaultTemplate())}">
 
 	<f:metadata>
-		<f:viewParam name="page" value="#{@{beanName}.page}" />
-		<f:event type="preRenderView" listener="#{@{beanName}.paginate}" />
+		<f:viewParam name="page" value="#{@{beanName}.page}"/>
+		<f:event type="preRenderView" listener="#{@{beanName}.paginate}"/>
 	</f:metadata>
 
-	<ui:param name="pageTitle" value="List @{entity.getName()}" />
+	<ui:param name="pageTitle" value="List @{entity.getName()}"/>
 
 	<ui:define name="header">
 		@{entity.getName()}
@@ -21,14 +21,14 @@
 		Listing all @{entity.getName()} objects
 	</ui:define>
 
-	<ui:define name="footer" />
+	<ui:define name="footer"/>
 
 	<ui:define name="main">
 		@{metawidget}
 		<ui:include src="/resources/scaffold/paginator.xhtml">
-			<ui:param name="paginatorBean" value="#{@{beanName}}" />
+			<ui:param name="paginatorBean" value="#{@{beanName}}"/>
 		</ui:include>
-		<h:link value="Create new" outcome="create" />
+		<h:link value="Create new" outcome="create"/>
 	</ui:define>
 
 </ui:composition>

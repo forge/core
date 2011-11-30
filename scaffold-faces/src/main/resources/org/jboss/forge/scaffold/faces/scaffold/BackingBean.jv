@@ -60,6 +60,10 @@ public class @{entity.getName()}Bean implements Serializable {
 
 	public void retrieve() {
 
+		if ( FacesContext.getCurrentInstance().isPostback() ) {
+			return;
+		}
+
 		if (conversation.isTransient()) {
 			conversation.begin();
 		}

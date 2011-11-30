@@ -33,13 +33,13 @@ import org.metawidget.statically.StaticXmlMetawidget;
 import org.metawidget.statically.StaticXmlWidget;
 import org.metawidget.statically.faces.StaticFacesUtils;
 import org.metawidget.statically.faces.component.StaticUIMetawidget;
+import org.metawidget.statically.faces.component.ValueHolder;
 import org.metawidget.statically.faces.component.html.layout.HtmlPanelGroup;
 import org.metawidget.statically.faces.component.html.widgetbuilder.FaceletsParam;
 import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlColumn;
 import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlCommandLink;
 import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlDataTable;
 import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlOutcomeTargetLink;
-import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlOutputText;
 import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlSelectOneMenu;
 import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlWidgetBuilder;
 import org.metawidget.statically.faces.component.html.widgetbuilder.Param;
@@ -49,6 +49,7 @@ import org.metawidget.util.ClassUtils;
 import org.metawidget.util.CollectionUtils;
 import org.metawidget.util.WidgetBuilderUtils;
 import org.metawidget.util.simple.StringUtils;
+import org.w3c.dom.NodeList;
 
 /**
  * Builds widgets with Forge-specific behaviours (such as links to other scaffolding pages).
@@ -63,6 +64,12 @@ import org.metawidget.util.simple.StringUtils;
 public class ForgeWidgetBuilder
          extends HtmlWidgetBuilder
 {
+   //
+   // Private statics
+   //
+
+   private static final String COLLECTION_VAR = "_collection";
+
    //
    // Public methods
    //
@@ -83,18 +90,14 @@ public class ForgeWidgetBuilder
 
             HtmlOutcomeTargetLink link = new HtmlOutcomeTargetLink();
             link.putAttribute("outcome", "/scaffold/" + controllerName + "/view");
-
-            HtmlOutputText outputText = new HtmlOutputText();
-            new StandardBindingProcessor().processWidget(outputText, elementName, attributes,
+            new StandardBindingProcessor().processWidget(link, elementName, attributes,
                      (StaticUIMetawidget) metawidget);
 
             Param param = new Param();
             param.putAttribute("name", "id");
             param.putAttribute("value",
-                     StaticFacesUtils.wrapExpression(StaticFacesUtils.unwrapExpression(outputText.getValue()) + ".id"));
+                     StaticFacesUtils.wrapExpression(StaticFacesUtils.unwrapExpression(link.getValue()) + ".id"));
             link.getChildren().add(param);
-
-            link.getChildren().add(outputText);
 
             return link;
          }
@@ -147,13 +150,25 @@ public class ForgeWidgetBuilder
       // ...then add row creation
 
       HtmlPanelGroup panelGroup = new HtmlPanelGroup();
+
+      // Process the binding and id early, so we can use them below
+
+      new StandardBindingProcessor().processWidget(dataTable, PROPERTY, attributes, (StaticUIMetawidget) metawidget);
+      new ReadableIdProcessor().processWidget(dataTable, PROPERTY, attributes, metawidget);
+
+      // Hack until https://issues.apache.org/jira/browse/MYFACES-3410 is resolved
+
+      FaceletsParam param = new FaceletsParam();
+      param.putAttribute("name", COLLECTION_VAR);
+      param.putAttribute("value", ((ValueHolder) dataTable).getValue());
+      panelGroup.getChildren().add(param);
+
+      ((ValueHolder) dataTable).setValue(StaticFacesUtils.wrapExpression(COLLECTION_VAR));
       panelGroup.getChildren().add(dataTable);
 
       // Select menu at bottom
 
       HtmlSelectOneMenu select = new HtmlSelectOneMenu();
-      new StandardBindingProcessor().processWidget(dataTable, PROPERTY, attributes, (StaticUIMetawidget) metawidget);
-      new ReadableIdProcessor().processWidget(dataTable, PROPERTY, attributes, metawidget);
       String requestScopedValue = "requestScope['" + dataTable.getAttribute("id") + "Add']";
       select.setValue(StaticFacesUtils.wrapExpression(requestScopedValue));
       String simpleComponentType = ClassUtils.getSimpleName(componentType);
@@ -163,18 +178,11 @@ public class ForgeWidgetBuilder
       addSelectItems(select, StaticFacesUtils.wrapExpression(controllerName + "Bean.all"), emptyAttributes);
       panelGroup.getChildren().add(select);
 
-      // Hack until https://issues.apache.org/jira/browse/MYFACES-3410 is resolved
-
-      FaceletsParam param = new FaceletsParam();
-      param.putAttribute("name", "_entity");
-      param.putAttribute("value", ((StaticUIMetawidget) metawidget).getValue());
-      panelGroup.getChildren().add(param);
-
       // Add link
 
       HtmlCommandLink addLink = new HtmlCommandLink();
       addLink.setValue("Add");
-      String addExpression = "_entity.add" + simpleComponentType + "(" + requestScopedValue + ")";
+      String addExpression = COLLECTION_VAR + ".add(" + requestScopedValue + ")";
       addLink.putAttribute("action", StaticFacesUtils.wrapExpression(addExpression));
       panelGroup.getChildren().add(addLink);
 
@@ -182,7 +190,40 @@ public class ForgeWidgetBuilder
    }
 
    /**
-    * Overridden to wrap column text with an <tt>h:link</tt>, in those cases we can determine the dataType.
+    * Overridden to add a 'delete' column.
+    */
+
+   @Override
+   protected void addColumnComponents(HtmlDataTable dataTable, Map<String, String> attributes, NodeList elements,
+            StaticXmlMetawidget metawidget)
+   {
+      super.addColumnComponents(dataTable, attributes, elements, metawidget);
+
+      if (dataTable.getChildren().isEmpty())
+      {
+         return;
+      }
+
+      String componentType = WidgetBuilderUtils.getComponentType(attributes);
+
+      if (componentType == null)
+      {
+         return;
+      }
+
+      HtmlCommandLink commandLink = new HtmlCommandLink();
+      commandLink.setValue("Remove");
+      String removeExpression = COLLECTION_VAR + ".remove(" + COLLECTION_VAR + ".indexOf(" + dataTable.getAttribute( "var" ) + "))";
+      commandLink.putAttribute("action", StaticFacesUtils.wrapExpression(removeExpression));
+
+      HtmlColumn column = new HtmlColumn();
+      column.getChildren().add( commandLink );
+
+      dataTable.getChildren().add( column );
+   }
+
+   /**
+    * Overridden to replace original column text with an <tt>h:link</tt>, in those cases we can determine the dataType.
     */
 
    @Override
@@ -198,17 +239,25 @@ public class ForgeWidgetBuilder
       {
          String controllerName = StringUtils.decapitalize(ClassUtils.getSimpleName(componentType));
 
+         // Get the original column text...
+
+         List<StaticWidget> columns = dataTable.getChildren();
+         HtmlColumn column = (HtmlColumn) columns.get(columns.size() - 1);
+         ValueHolder originalComponent = (ValueHolder) column.getChildren().remove(1);
+
+         // ...and create a link with the same value...
+
          HtmlOutcomeTargetLink link = new HtmlOutcomeTargetLink();
          link.putAttribute("outcome", "/scaffold/" + controllerName + "/view");
+         link.setValue(originalComponent.getValue());
+
+         // ...pointing to the id
 
          Param param = new Param();
          param.putAttribute("name", "id");
          param.putAttribute("value", StaticFacesUtils.wrapExpression(dataTable.getAttribute("var") + ".id"));
          link.getChildren().add(param);
 
-         List<StaticWidget> columns = dataTable.getChildren();
-         HtmlColumn column = (HtmlColumn) columns.get(columns.size() - 1);
-         link.getChildren().add(column.getChildren().remove(1));
          column.getChildren().add(link);
       }
    }
