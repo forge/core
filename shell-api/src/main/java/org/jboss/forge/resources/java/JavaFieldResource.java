@@ -34,11 +34,11 @@ import org.jboss.forge.resources.ResourceFlag;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class JavaFieldResource extends JavaMemberResource<Field<JavaSource<?>>>
+public class JavaFieldResource extends JavaMemberResource<Field<? extends JavaSource<?>>>
 {
-   private final Field<JavaSource<?>> field;
+   private final Field<? extends JavaSource<?>> field;
 
-   public JavaFieldResource(final JavaResource parent, final Field<JavaSource<?>> field)
+   public JavaFieldResource(final JavaResource parent, final Field<? extends JavaSource<?>> field)
    {
       super(parent, field);
       this.field = field;
@@ -47,7 +47,7 @@ public class JavaFieldResource extends JavaMemberResource<Field<JavaSource<?>>>
    }
 
    @Override
-   public Resource<Field<JavaSource<?>>> createFrom(final Field<JavaSource<?>> file)
+   public Resource<Field<? extends JavaSource<?>>> createFrom(final Field<? extends JavaSource<?>> file)
    {
       throw new RuntimeException("not implemented");
    }
@@ -59,7 +59,7 @@ public class JavaFieldResource extends JavaMemberResource<Field<JavaSource<?>>>
    }
 
    @Override
-   public Field<JavaSource<?>> getUnderlyingResourceObject()
+   public Field<? extends JavaSource<?>> getUnderlyingResourceObject()
    {
       return field;
    }
@@ -94,7 +94,7 @@ public class JavaFieldResource extends JavaMemberResource<Field<JavaSource<?>>>
    }
 
    @Override
-   public boolean delete(boolean recursive) throws UnsupportedOperationException
+   public boolean delete(final boolean recursive) throws UnsupportedOperationException
    {
       return delete();
    }

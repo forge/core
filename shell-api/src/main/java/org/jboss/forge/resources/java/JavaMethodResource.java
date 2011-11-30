@@ -35,18 +35,18 @@ import org.jboss.forge.resources.Resource;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class JavaMethodResource extends JavaMemberResource<Method<JavaSource<?>>>
+public class JavaMethodResource extends JavaMemberResource<Method>
 {
-   private final Method<JavaSource<?>> method;
+   private final Method<? extends JavaSource<?>> method;
 
-   public JavaMethodResource(final Resource<?> parent, final Method<JavaSource<?>> method)
+   public JavaMethodResource(final Resource<?> parent, final Method<? extends JavaSource<?>> method)
    {
       super(parent, method);
       this.method = method;
    }
 
    @Override
-   public Resource<Method<JavaSource<?>>> createFrom(final Method<JavaSource<?>> file)
+   public Resource<Method> createFrom(final Method file)
    {
       throw new RuntimeException("not implemented");
    }
@@ -58,7 +58,7 @@ public class JavaMethodResource extends JavaMemberResource<Method<JavaSource<?>>
    }
 
    @Override
-   public Method<JavaSource<?>> getUnderlyingResourceObject()
+   public Method<? extends JavaSource<?>> getUnderlyingResourceObject()
    {
       return method;
    }
@@ -111,7 +111,7 @@ public class JavaMethodResource extends JavaMemberResource<Method<JavaSource<?>>
    }
 
    @Override
-   public boolean delete(boolean recursive) throws UnsupportedOperationException
+   public boolean delete(final boolean recursive) throws UnsupportedOperationException
    {
       return delete();
    }

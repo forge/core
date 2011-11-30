@@ -30,7 +30,15 @@ public interface Field<O extends JavaSource<O>> extends Member<O, Field<O>>
 {
    Field<O> setName(String name);
 
+   /**
+    * Get this field's fully qualified type.
+    */
    String getType();
+
+   /**
+    * Get this field's {@link Type}
+    */
+   Type<O> getTypeInspector();
 
    /**
     * Attempt to determine if this field is of the same type as the given type.
