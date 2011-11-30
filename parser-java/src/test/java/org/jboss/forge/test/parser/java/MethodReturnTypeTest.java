@@ -19,57 +19,36 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.parser.java;
+package org.jboss.forge.test.parser.java;
 
 import java.util.List;
 
-import org.jboss.forge.parser.Internal;
-import org.jboss.forge.parser.Origin;
+import junit.framework.Assert;
+
+import org.jboss.forge.parser.JavaParser;
+import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.parser.java.Method;
+import org.junit.Test;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface Annotation<O> extends Internal, Origin<O>
+public class MethodReturnTypeTest
 {
-   boolean isSingleValue();
+   @Test
+   public void testGetReturnTypeReturnsFullTypeForJavaLang() throws Exception
+   {
+      Method<JavaClass> method = JavaParser.create(JavaClass.class).addMethod("public Long getLong()");
+      Assert.assertEquals("java.lang.Long", method.getReturnType());
+   }
 
-   boolean isMarker();
+   @Test
+   public void testGetReturnTypeReturnsFullTypeForJavaLangGeneric() throws Exception
+   {
+      Method<JavaClass> method = JavaParser.create(JavaClass.class)
+               .addMethod("public List<Long> getLong(return null;)");
+      method.getOrigin().addImport(List.class);
+      Assert.assertEquals("java.util.List", method.getReturnType());
+   }
 
-   boolean isNormal();
-
-   String getName();
-
-   String getQualifiedName();
-
-   <T extends Enum<T>> T getEnumValue(Class<T> type);
-
-   <T extends Enum<T>> T getEnumValue(Class<T> type, String name);
-
-   String getLiteralValue();
-
-   String getLiteralValue(String name);
-
-   List<ValuePair> getValues();
-
-   String getStringValue();
-
-   String getStringValue(String name);
-
-   Annotation<O> removeValue(String name);
-
-   Annotation<O> removeAllValues();
-
-   Annotation<O> setName(String className);
-
-   Annotation<O> setEnumValue(String name, Enum<?> value);
-
-   Annotation<O> setEnumValue(Enum<?> value);
-
-   Annotation<O> setLiteralValue(String value);
-
-   Annotation<O> setLiteralValue(String name, String value);
-
-   Annotation<O> setStringValue(String value);
-
-   Annotation<O> setStringValue(String name, String value);
 }

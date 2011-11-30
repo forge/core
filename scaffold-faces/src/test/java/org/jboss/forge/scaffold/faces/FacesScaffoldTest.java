@@ -178,6 +178,7 @@ public class FacesScaffoldTest extends AbstractShellTest
       Assert.assertTrue(contents.contains(metawidget));
    }
 
+   @Ignore
    @Test
    @SuppressWarnings("unchecked")
    public void testGenerateFromEntityCamelCase() throws Exception

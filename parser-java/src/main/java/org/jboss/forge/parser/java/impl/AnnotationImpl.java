@@ -43,7 +43,7 @@ import org.jboss.forge.parser.java.util.Strings;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class AnnotationImpl<O, T> implements Annotation<O>
+public class AnnotationImpl<O extends JavaSource<?>, T> implements Annotation<O>
 {
    private static final String DEFAULT_VALUE = "value";
 
@@ -96,6 +96,12 @@ public class AnnotationImpl<O, T> implements Annotation<O>
    public String getName()
    {
       return annotation.getTypeName().getFullyQualifiedName();
+   }
+
+   @Override
+   public String getQualifiedName()
+   {
+      return parent.getOrigin().resolveType(getName());
    }
 
    @Override
@@ -367,7 +373,7 @@ public class AnnotationImpl<O, T> implements Annotation<O>
 
       if (origin instanceof JavaSource)
       {
-         JavaSource<?> source = (JavaSource<?>) origin;
+         JavaSource<?> source = origin;
          if (!source.hasImport(value.getDeclaringClass()))
          {
             source.addImport(value.getDeclaringClass());
@@ -383,7 +389,7 @@ public class AnnotationImpl<O, T> implements Annotation<O>
 
       if (origin instanceof JavaSource)
       {
-         JavaSource<?> source = (JavaSource<?>) origin;
+         JavaSource<?> source = origin;
          if (!source.hasImport(value.getDeclaringClass()))
          {
             source.addImport(value.getDeclaringClass());
@@ -443,7 +449,7 @@ public class AnnotationImpl<O, T> implements Annotation<O>
    {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((annotation == null) ? 0 : annotation.hashCode());
+      result = (prime * result) + ((annotation == null) ? 0 : annotation.hashCode());
       return result;
    }
 

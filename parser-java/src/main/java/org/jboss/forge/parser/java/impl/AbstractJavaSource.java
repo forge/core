@@ -273,14 +273,33 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
    @Override
    public String resolveType(final String type)
    {
+      String original = type;
       String result = type;
-      for (Import imprt : getImports()) {
-         if (Types.areEquivalent(type, imprt.getQualifiedName()))
+      if (Types.isGeneric(result))
+      {
+         original = Types.stripGenerics(result);
+         result = Types.stripGenerics(result);
+      }
+
+      if (Types.isSimpleName(result))
+      {
+         if (!hasImport(type) && Types.isJavaLang(type))
          {
-            result = imprt.getQualifiedName();
-            break;
+            result = "java.lang." + result;
+         }
+
+         if (result.equals(original))
+         {
+            for (Import imprt : getImports()) {
+               if (Types.areEquivalent(type, imprt.getQualifiedName()))
+               {
+                  result = imprt.getQualifiedName();
+                  break;
+               }
+            }
          }
       }
+
       return result;
    }
 

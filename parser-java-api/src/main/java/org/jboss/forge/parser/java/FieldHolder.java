@@ -29,44 +29,44 @@ import java.util.List;
  * 
  */
 @SuppressWarnings("rawtypes")
-public interface FieldHolder<T> extends MemberHolder<T, Member>
+public interface FieldHolder<O extends JavaSource<?>> extends MemberHolder<O, Member>
 {
    /**
-    * Add a new Java {@link Field} to this {@link T} instance. This field will be a stub until further modified.
+    * Add a new Java {@link Field} to this {@link O} instance. This field will be a stub until further modified.
     */
-   public Field<T> addField();
+   public Field<O> addField();
 
    /**
-    * Add a new {@link Field} declaration to this {@link T} instance, using the given {@link String} as the declaration.
+    * Add a new {@link Field} declaration to this {@link O} instance, using the given {@link String} as the declaration.
     * <p/>
     * <strong>For example:</strong><br>
     * <code>Field f = javaClass.addField("private String newField;");</code>
     */
-   public Field<T> addField(final String declaration);
+   public Field<O> addField(final String declaration);
 
    /**
-    * Return whether or not this {@link T} declares a {@link Field} with the given name.
+    * Return whether or not this {@link O} declares a {@link Field} with the given name.
     */
    public boolean hasField(String name);
 
    /**
-    * Return whether or not this {@link T} declares the given {@link Field} instance.
+    * Return whether or not this {@link O} declares the given {@link Field} instance.
     */
-   public boolean hasField(Field<T> field);
+   public boolean hasField(Field<O> field);
 
    /**
     * Get the {@link Field} with the given name and return it, otherwise, return null.
     */
-   public Field<T> getField(String name);
+   public Field<O> getField(String name);
 
    /**
-    * Get a list of all {@link Field}s declared by this {@link T}, or return an empty list if no {@link Field}s are
+    * Get a list of all {@link Field}s declared by this {@link O}, or return an empty list if no {@link Field}s are
     * declared.
     */
-   public List<Field<T>> getFields();
+   public List<Field<O>> getFields();
 
    /**
-    * Remove the given {@link Field} from this {@link T} instance, if it exists; otherwise, do nothing.
+    * Remove the given {@link Field} from this {@link O} instance, if it exists; otherwise, do nothing.
     */
-   public T removeField(final Field<T> field);
+   public O removeField(final Field<O> field);
 }

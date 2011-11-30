@@ -29,72 +29,72 @@ import java.util.List;
  * 
  */
 @SuppressWarnings("rawtypes")
-public interface MethodHolder<T> extends MemberHolder<T, Member>
+public interface MethodHolder<O extends JavaSource<?>> extends MemberHolder<O, Member>
 {
    /**
-    * Add an uninitialized {@link Method} declaration to this {@link T} instance. This {@link Method} will be a stub
+    * Add an uninitialized {@link Method} declaration to this {@link O} instance. This {@link Method} will be a stub
     * until further modified.
     */
-   public Method<T> addMethod();
+   public Method<O> addMethod();
 
    /**
-    * Add a new {@link Method} declaration to this {@link T} instance, using the given {@link String} as the method
+    * Add a new {@link Method} declaration to this {@link O} instance, using the given {@link String} as the method
     * declaration.
     * <p/>
     * <strong>For example:</strong><br>
     * <code>Method m = javaClass.addMethod("public String method() {return \"hello!\";}")</code>
     */
-   public Method<T> addMethod(final String method);
+   public Method<O> addMethod(final String method);
 
    /**
-    * Return true if this {@link T} has a method with the given name and zero parameters; otherwise return false.
+    * Return true if this {@link O} has a method with the given name and zero parameters; otherwise return false.
     */
-   public boolean hasMethod(final Method<T> name);
+   public boolean hasMethod(final Method<O> name);
 
    /**
-    * Return true if this {@link T} has a method with signature matching the given method's signature.
+    * Return true if this {@link O} has a method with signature matching the given method's signature.
     */
    public boolean hasMethodSignature(final Method<?> method);
 
    /**
-    * Return true if this {@link T} has a method with the given name and zero parameters; otherwise return false.
+    * Return true if this {@link O} has a method with the given name and zero parameters; otherwise return false.
     */
    public boolean hasMethodSignature(final String name);
 
    /**
-    * Return true if this {@link T} has a method with the given name and signature types; otherwise return false.
+    * Return true if this {@link O} has a method with the given name and signature types; otherwise return false.
     */
    public boolean hasMethodSignature(final String name, String... paramTypes);
 
    /**
-    * Return true if this {@link T} has a method with the given name and signature types; otherwise return false.
+    * Return true if this {@link O} has a method with the given name and signature types; otherwise return false.
     */
    public boolean hasMethodSignature(final String name, Class<?>... paramTypes);
 
    /**
     * Return the {@link Method} with the given name and zero parameters; otherwise return null.
     */
-   public Method<T> getMethod(final String name);
+   public Method<O> getMethod(final String name);
 
    /**
     * Return the {@link Method} with the given name and signature types; otherwise return null.
     */
-   public Method<T> getMethod(final String name, String... paramTypes);
+   public Method<O> getMethod(final String name, String... paramTypes);
 
    /**
     * Return the {@link Method} with the given name and signature types; otherwise return null.
     */
-   public Method<T> getMethod(final String name, Class<?>... paramTypes);
+   public Method<O> getMethod(final String name, Class<?>... paramTypes);
 
    /**
-    * Get a {@link List} of all {@link Method}s declared by this {@link T} instance, if any; otherwise, return an empty
+    * Get a {@link List} of all {@link Method}s declared by this {@link O} instance, if any; otherwise, return an empty
     * {@link List}
     */
-   public List<Method<T>> getMethods();
+   public List<Method<O>> getMethods();
 
    /**
-    * Remove the given {@link Method} declaration from this {@link T} instance, if it exists; otherwise, do nothing.
+    * Remove the given {@link Method} declaration from this {@link O} instance, if it exists; otherwise, do nothing.
     */
-   public T removeMethod(final Method<T> method);
+   public O removeMethod(final Method<O> method);
 
 }

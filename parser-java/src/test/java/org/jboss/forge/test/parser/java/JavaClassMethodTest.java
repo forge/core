@@ -68,7 +68,7 @@ public class JavaClassMethodTest
    {
       assertEquals("java.net.URL", method.getReturnType());
       method.setReturnType(Class.class);
-      assertEquals("Class", method.getReturnType());
+      assertEquals("java.lang.Class", method.getReturnType());
       assertFalse(method.isReturnTypeVoid());
    }
 

@@ -227,9 +227,10 @@ public class MethodImpl<O extends JavaSource<O>> implements Method<O>
    public String getReturnType()
    {
       String result = null;
-      if (!isConstructor() && (method.getReturnType2() != null))
+      Type returnType = method.getReturnType2();
+      if (!isConstructor() && (returnType != null))
       {
-         result = method.getReturnType2().toString();
+         result = returnType.toString();
       }
 
       result = parent.resolveType(result);
