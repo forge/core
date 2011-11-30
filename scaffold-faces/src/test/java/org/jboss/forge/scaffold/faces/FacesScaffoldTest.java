@@ -118,7 +118,6 @@ public class FacesScaffoldTest extends AbstractShellTest
                "template=\"/resources/scaffold/page.xhtml"));
 
       StringBuilder metawidget = new StringBuilder("\t\t<h:form id=\"form\">\n");
-      metawidget.append("\t\t\t<h:messages globalOnly=\"true\"/>\n\n");
       metawidget.append("\t\t\t<h:panelGrid columns=\"3\">\r\n");
       metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First name:\"/>\r\n");
       metawidget

@@ -595,7 +595,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       {
          HtmlOutcomeTargetLink outcomeTargetLink = new HtmlOutcomeTargetLink();
          outcomeTargetLink.putAttribute("outcome", "/scaffold/" + resource.getName() + "/list");
-         outcomeTargetLink.putAttribute("value", StringUtils.uncamelCase(resource.getName()));
+         outcomeTargetLink.setValue(StringUtils.uncamelCase(resource.getName()));
 
          ListItem listItem = new ListItem();
          listItem.getChildren().add(outcomeTargetLink);
@@ -665,7 +665,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    }
 
    /**
-    * Writes the Metawidget into the given context.
+    * Writes the Metawidget and its namespaces into the given context.
     */
 
    private void writeMetawidget(final Map<Object, Object> context, final int indent,

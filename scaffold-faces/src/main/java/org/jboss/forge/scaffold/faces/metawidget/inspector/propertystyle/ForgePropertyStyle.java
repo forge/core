@@ -513,7 +513,7 @@ public class ForgePropertyStyle
       public String getGenericType()
       {
          // Note: this needs https://issues.jboss.org/browse/FORGE-387
-
+         
          return null;
       }
 
