@@ -23,6 +23,8 @@
 package org.jboss.forge.shell.test.plugins.builtin;
 
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.shell.Shell;
+import org.jboss.forge.shell.ShellImpl;
 import org.jboss.forge.test.AbstractShellTest;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -38,7 +40,9 @@ public class ForgePluginTest extends AbstractShellTest
    public void testFindPlugin() throws Exception
    {
       queueInputLines("y");
-      getShell().execute("forge find-plugin jsf");
+      Shell shell = getShell();
+      shell.getEnvironment().setProperty(ShellImpl.PROP_DEFAULT_PLUGIN_REPO, ShellImpl.DEFAULT_PLUGIN_REPO);
+      shell.execute("forge find-plugin jsf");
    }
 
    @Test

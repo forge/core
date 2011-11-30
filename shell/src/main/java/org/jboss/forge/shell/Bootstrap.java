@@ -51,6 +51,7 @@ import org.jboss.weld.environment.se.WeldContainer;
  */
 public class Bootstrap
 {
+   private static boolean pluginSystemEnabled = !Boolean.getBoolean("forge.plugins.disable");
    private static Thread currentShell = null;
    private static boolean restartRequested = false;
    private static File workingDir = new File("").getAbsoluteFile();
@@ -111,7 +112,7 @@ public class Bootstrap
 
    private static void initLogging()
    {
-      String[] loggerNames = new String[] { "", "main", Logger.GLOBAL_LOGGER_NAME };
+      String[] loggerNames = new String[]{"", "main", Logger.GLOBAL_LOGGER_NAME};
       for (String loggerName : loggerNames)
       {
          Logger globalLogger = Logger.getLogger(loggerName);
@@ -126,7 +127,10 @@ public class Bootstrap
 
    synchronized private static void loadPlugins()
    {
-      try {
+      if (!pluginSystemEnabled) return;
+
+      try
+      {
          ModuleLoader moduleLoader = Module.getBootModuleLoader();
 
          CompositeClassLoader composite = new CompositeClassLoader();
@@ -134,12 +138,15 @@ public class Bootstrap
 
          List<String> installed = InstalledPluginRegistry.getInstalledPlugins();
 
-         for (String plugin : installed) {
-            try {
+         for (String plugin : installed)
+         {
+            try
+            {
                Module module = moduleLoader.loadModule(ModuleIdentifier.fromString(plugin));
                composite.add(module.getClassLoader());
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                System.out.println("Failed loading: " + plugin);
                e.printStackTrace();
             }
@@ -150,7 +157,8 @@ public class Bootstrap
          composite.add(forge.getClassLoader());
          Thread.currentThread().setContextClassLoader(composite);
       }
-      catch (Exception e) {
+      catch (Exception e)
+      {
          e.printStackTrace();
       }
    }

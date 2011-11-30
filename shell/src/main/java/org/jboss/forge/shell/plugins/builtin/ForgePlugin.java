@@ -117,7 +117,7 @@ public class ForgePlugin implements Plugin
       out.println("                   |___/      ");
       out.println("");
       String version = getClass().getPackage().getImplementationVersion();
-      out.println("Forge, version [ " + version + " ] - JBoss, by Red Hat, Inc. [ http://jboss.org ]");
+      out.println("JBoss Forge, version [ " + version + " ] - JBoss, by Red Hat, Inc. [ http://jboss.org ]");
    }
 
    @Command(value = "restart", help = "Reload all plugins and default configurations")
@@ -176,7 +176,7 @@ public class ForgePlugin implements Plugin
    @Command(value = "remove-plugin",
             help = "Removes a plugin from the current Forge runtime configuration")
    public void removePlugin(
-            @Option(description = "plugin-name",
+            @Option(completer = InstalledPluginCompleter.class, description = "plugin-name",
                      help = "The fully qualified plugin name e.g: 'org.jboss.forge.plugin:version'") final String pluginName,
             final PipeOut out) throws Exception
    {

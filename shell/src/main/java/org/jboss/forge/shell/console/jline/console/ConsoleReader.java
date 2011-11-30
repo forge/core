@@ -5,7 +5,7 @@
  * BSD license in the documentation provided with this software.
  */
 
-package jline.console;
+package org.jboss.forge.shell.console.jline.console;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -18,17 +18,15 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.io.Reader;
-import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,22 +35,16 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import jline.Terminal;
-import jline.TerminalFactory;
-import jline.console.completer.CandidateListCompletionHandler;
-import jline.console.completer.Completer;
-import jline.console.completer.CompletionHandler;
-import jline.console.history.History;
-import jline.console.history.MemoryHistory;
-import jline.internal.Configuration;
-import jline.internal.Log;
-
 import org.fusesource.jansi.AnsiOutputStream;
+import org.jboss.forge.shell.Shell;
+import org.jboss.forge.shell.integration.BufferManager;
+import org.jboss.forge.shell.integration.KeyListener;
 
 /**
  * A reader for console applications. It supports custom tab-completion, saveable command history, and command line
  * editing. On some platforms, platform-specific commands will need to be issued before the reader will function
- * properly. See {@link jline.Terminal#init} for convenience methods for issuing platform-specific setup commands.
+ * properly. See {@link org.jboss.forge.shell.console.jline.Terminal#init} for convenience methods for issuing
+ * platform-specific setup commands.
  * 
  * @author <a href="mailto:mwp1@cornell.edu">Marc Prud'hommeaux</a>
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
@@ -71,14 +63,17 @@ public class ConsoleReader
 
    public static final int TAB_WIDTH = 4;
 
-   private static final ResourceBundle resources = ResourceBundle.getBundle(CandidateListCompletionHandler.class
-            .getName());
+   private static final ResourceBundle resources = ResourceBundle
+            .getBundle(org.jboss.forge.shell.console.jline.console.completer.CandidateListCompletionHandler.class
+                     .getName() + "Bundle");
 
-   private final Terminal terminal;
+   private final org.jboss.forge.shell.console.jline.Terminal terminal;
 
    private InputStream in;
 
-   private final Writer out;
+   private final Shell shell;
+
+   // private final Writer out;
 
    private final CursorBuffer buf = new CursorBuffer();
 
@@ -88,7 +83,7 @@ public class ConsoleReader
 
    private Character mask;
 
-   private Character echoCharacter;
+   private char echoCharacter;
 
    private StringBuffer searchTerm = null;
 
@@ -96,42 +91,35 @@ public class ConsoleReader
 
    private int searchIndex = -1;
 
-   public ConsoleReader(final InputStream in, final Writer out, final InputStream bindings, final Terminal term) throws
+   private final List<KeyListener> keyListeners = new ArrayList<KeyListener>();
+
+   public ConsoleReader(final InputStream in, final Shell shell, final InputStream bindings,
+            final org.jboss.forge.shell.console.jline.Terminal term) throws
             IOException
    {
       this.in = in;
-      this.out = out;
-      this.terminal = term != null ? term : TerminalFactory.get();
+      this.shell = shell;
+      this.terminal = term;
       this.keyBindings = loadKeyBindings(bindings);
 
-      setBellEnabled(!Configuration.getBoolean(JLINE_NOBELL, false));
+      setBellEnabled(!org.jboss.forge.shell.console.jline.internal.Configuration.getBoolean(JLINE_NOBELL, false));
    }
 
-   public ConsoleReader(final InputStream in, final Writer out, final Terminal term) throws IOException
+   public ConsoleReader(final InputStream in, final Shell shell, final org.jboss.forge.shell.console.jline.Terminal term)
+            throws IOException
    {
-      this(in, out, null, term);
-   }
-
-   public ConsoleReader(final InputStream in, final Writer out) throws IOException
-   {
-      this(in, out, null, null);
-   }
-
-   /**
-    * Create a new reader using {@link FileDescriptor#in} for input and {@link System#out} for output.
-    * <p/>
-    * {@link FileDescriptor#in} is used because it has a better chance of not being buffered.
-    */
-   public ConsoleReader() throws IOException
-   {
-      this(new FileInputStream(FileDescriptor.in), new PrintWriter(new OutputStreamWriter(System.out)), null, null);
+      this(in, shell, null, term);
    }
 
    // FIXME: Only used for tests
-
    void setInput(final InputStream in)
    {
       this.in = in;
+   }
+
+   public void registerKeyListener(final KeyListener keyListener)
+   {
+      keyListeners.add(keyListener);
    }
 
    public InputStream getInput()
@@ -139,12 +127,12 @@ public class ConsoleReader
       return in;
    }
 
-   public Writer getOutput()
+   public Shell getShell()
    {
-      return out;
+      return shell;
    }
 
-   public Terminal getTerminal()
+   public org.jboss.forge.shell.console.jline.Terminal getTerminal()
    {
       return terminal;
    }
@@ -241,7 +229,7 @@ public class ConsoleReader
     * Returns the text after the last '\n'. prompt is returned if no '\n' characters are present. null is returned if
     * prompt is null.
     */
-   private String lastLine(String str)
+   private String lastLine(final String str)
    {
       if (str == null)
          return "";
@@ -255,7 +243,7 @@ public class ConsoleReader
       return str;
    }
 
-   private String stripAnsi(String str)
+   private String stripAnsi(final String str)
    {
       if (str == null)
          return "";
@@ -374,7 +362,7 @@ public class ConsoleReader
       // the string was a password. We clear the mask after this call
       if (str.length() > 0)
       {
-         if (mask == null && isHistoryEnabled())
+         if ((mask == null) && isHistoryEnabled())
          {
             history.add(str);
          }
@@ -399,7 +387,7 @@ public class ConsoleReader
     * @param str
     * @return
     */
-   final String expandEvents(String str) throws IOException
+   final String expandEvents(final String str) throws IOException
    {
       StringBuilder sb = new StringBuilder();
       for (int i = 0; i < str.length(); i++)
@@ -408,7 +396,7 @@ public class ConsoleReader
          switch (c)
          {
          case '!':
-            if (i + 1 < str.length())
+            if ((i + 1) < str.length())
             {
                c = str.charAt(++i);
                boolean neg = false;
@@ -467,7 +455,7 @@ public class ConsoleReader
                   for (; i < str.length(); i++)
                   {
                      c = str.charAt(i);
-                     if (c < '0' || c > '9')
+                     if ((c < '0') || (c > '9'))
                      {
                         break;
                      }
@@ -495,7 +483,7 @@ public class ConsoleReader
                   }
                   else
                   {
-                     if (idx >= history.index() - history.size() && idx < history.index())
+                     if ((idx >= (history.index() - history.size())) && (idx < history.index()))
                      {
                         rep = (history.get(idx)).toString();
                      }
@@ -539,7 +527,7 @@ public class ConsoleReader
                {
                   i2 = str.length();
                }
-               if (i1 > 0 && i2 > 0)
+               if ((i1 > 0) && (i2 > 0))
                {
                   String s1 = str.substring(i + 1, i1);
                   String s2 = str.substring(i1 + 1, i2);
@@ -567,15 +555,15 @@ public class ConsoleReader
 
    }
 
-   /*
-    * Handle case where terminal does not move cursor to the next line when a character is inserted at the width of the
-    * terminal. This also fixes backspace issue, where it assumes that the terminal is doing this.
-    */
+   /* Handle case where terminal does not move cursor to the next line
+   * when a character is inserted at the width of the terminal.  This also
+   * fixes backspace issue, where it assumes that the terminal is doing this.
+   */
    private final void newlineAtWrap() throws IOException
    {
       int width = getTerminal().getWidth();
 
-      if ((getCursorPosition() % width == 0) && getCurrentPosition() >= width)
+      if (((getCursorPosition() % width) == 0) && (getCurrentPosition() >= width))
          println();
    }
 
@@ -626,14 +614,14 @@ public class ConsoleReader
    private void drawBuffer(final int clear) throws IOException
    {
       // debug ("drawBuffer: " + clear);
-      if (buf.cursor == buf.length() && clear == 0)
+      if ((buf.cursor == buf.length()) && (clear == 0))
       {
          return;
       }
-      char[] chars = buf.buffer.substring(buf.cursor).toCharArray();
+      byte[] chars = buf.buffer.substring(buf.cursor).getBytes();
       if (mask != null)
       {
-         Arrays.fill(chars, mask);
+         Arrays.fill(chars, (byte) mask.charValue());
       }
 
       print(chars);
@@ -678,7 +666,7 @@ public class ConsoleReader
       }
 
       // print blank extra characters
-      print(' ', num);
+      print((byte) ' ', num);
 
       // we need to flush here so a "clever" console doesn't just ignore the redundancy
       // of a space followed by a backspace.
@@ -704,7 +692,7 @@ public class ConsoleReader
          // debug("back: " + cursor + " + " + num + " on " + width);
          int currRow = (cursor + num) / width;
          int newRow = cursor / width;
-         int newCol = cursor % width + 1;
+         int newCol = (cursor % width) + 1;
          // debug("    old row: " + currRow + " new row: " + newRow);
          if (newRow < currRow)
          {
@@ -723,7 +711,7 @@ public class ConsoleReader
     */
    public void flush() throws IOException
    {
-      out.flush();
+      shell.flush();
    }
 
    private int backspaceAll() throws IOException
@@ -749,7 +737,7 @@ public class ConsoleReader
       int lines = getCursorPosition() / termwidth;
       count = moveCursor(-1 * num) * -1;
       buf.buffer.delete(buf.cursor, buf.cursor + count);
-      if (getCursorPosition() / termwidth != lines)
+      if ((getCursorPosition() / termwidth) != lines)
       {
          if (terminal.isAnsiSupported())
          {
@@ -782,7 +770,7 @@ public class ConsoleReader
     */
    private boolean deleteCurrentCharacter() throws IOException
    {
-      if (buf.length() == 0 || buf.cursor == buf.length())
+      if ((buf.length() == 0) || (buf.cursor == buf.length()))
       {
          return false;
       }
@@ -909,7 +897,7 @@ public class ConsoleReader
       if (where < 0)
       {
          int len = 0;
-         for (int i = buf.cursor; i < buf.cursor - where; i++)
+         for (int i = buf.cursor; i < (buf.cursor - where); i++)
          {
             if (buf.buffer.charAt(i) == '\t')
             {
@@ -922,8 +910,8 @@ public class ConsoleReader
          }
 
          char chars[] = new char[len];
-         Arrays.fill(chars, BACKSPACE);
-         out.write(chars);
+         Arrays.fill(chars, BACKSPACE);;
+         shell.print(new String(chars));
 
          return;
       }
@@ -937,7 +925,7 @@ public class ConsoleReader
       }
       else
       {
-         print(buf.buffer.substring(buf.cursor - where, buf.cursor).toCharArray());
+         print(buf.buffer.substring(buf.cursor - where, buf.cursor).getBytes());
          return;
       }
 
@@ -982,7 +970,7 @@ public class ConsoleReader
    {
       int c = terminal.readVirtualKey(in);
 
-      Log.trace("Keystroke: ", c);
+      org.jboss.forge.shell.console.jline.internal.Log.trace("Keystroke: ", c);
 
       // clear any echo characters
       clearEcho(c);
@@ -1026,7 +1014,7 @@ public class ConsoleReader
 
    /**
     * Return the number of characters that will be printed when the specified character is echoed to the screen
-    * 
+    * <p/>
     * Adapted from cat by Torbjorn Granlund, as repeated in stty by David MacKenzie.
     */
    private StringBuilder getPrintableCharacters(final char ch)
@@ -1064,7 +1052,7 @@ public class ConsoleReader
             else
             {
                sbuff.append('^');
-               sbuff.append((char) (ch - 128 + 64));
+               sbuff.append((char) ((ch - 128) + 64));
             }
          }
       }
@@ -1113,9 +1101,10 @@ public class ConsoleReader
       {
          try
          {
-            File file = new File(Configuration.getUserHome(), JLINEBINDINGS_PROPERTIES);
+            File file = new File(org.jboss.forge.shell.console.jline.internal.Configuration.getUserHome(),
+                     JLINEBINDINGS_PROPERTIES);
 
-            String path = Configuration.getString(JLINE_KEYBINDINGS);
+            String path = org.jboss.forge.shell.console.jline.internal.Configuration.getString(JLINE_KEYBINDINGS);
             if (path != null)
             {
                file = new File(path);
@@ -1123,25 +1112,32 @@ public class ConsoleReader
 
             if (file.isFile())
             {
-               Log.debug("Loading user bindings from: ", file);
+               org.jboss.forge.shell.console.jline.internal.Log.debug("Loading user bindings from: ", file);
                input = new FileInputStream(file);
             }
          }
          catch (Exception e)
          {
-            Log.error("Failed to load user bindings", e);
+            org.jboss.forge.shell.console.jline.internal.Log.error("Failed to load user bindings", e);
          }
-      }
-
-      if (input == null)
-      {
-         Log.debug("Using default bindings");
-         input = getTerminal().getDefaultBindings();
       }
 
       short[] keyBindings = new short[Character.MAX_VALUE * 2];
 
-      Arrays.fill(keyBindings, Operation.UNKNOWN.code);
+      Arrays.fill(keyBindings, org.jboss.forge.shell.console.jline.console.Operation.UNKNOWN.code);
+
+      if (input == null)
+      {
+         org.jboss.forge.shell.console.jline.internal.Log.debug("Using default bindings");
+         ResourceBundle bundle = getTerminal().getDefaultBindings();
+
+         if (bundle == null)
+         {
+            throw new RuntimeException("failed to load default keybidings");
+         }
+         loadMappingsFromBundle(keyBindings, bundle);
+         return keyBindings;
+      }
 
       // Loads the key bindings. Bindings file is in the format:
       //
@@ -1162,12 +1158,13 @@ public class ConsoleReader
             {
                short code = Short.parseShort(val);
                String name = p.getProperty(val);
-               Operation op = Operation.valueOf(name);
+               org.jboss.forge.shell.console.jline.console.Operation op = org.jboss.forge.shell.console.jline.console.Operation
+                        .valueOf(name);
                keyBindings[code] = op.code;
             }
             catch (NumberFormatException e)
             {
-               Log.error("Failed to convert binding code: ", val, e);
+               org.jboss.forge.shell.console.jline.internal.Log.error("Failed to convert binding code: ", val, e);
             }
          }
 
@@ -1179,6 +1176,31 @@ public class ConsoleReader
       }
 
       return keyBindings;
+   }
+
+   private void loadMappingsFromBundle(final short[] keyBindings, final ResourceBundle bundle)
+   {
+      Enumeration<String> keys = bundle.getKeys();
+      String val;
+      while (keys.hasMoreElements())
+      {
+         val = keys.nextElement();
+
+         try
+         {
+            short code = Short.parseShort(val);
+            String name = bundle.getString(val);
+            org.jboss.forge.shell.console.jline.console.Operation op = org.jboss.forge.shell.console.jline.console.Operation
+                     .valueOf(name);
+            keyBindings[code] = op.code;
+         }
+         catch (NumberFormatException e)
+         {
+            org.jboss.forge.shell.console.jline.internal.Log.error("Failed to convert binding code: ", val, e);
+         }
+
+      }
+
    }
 
    int getKeyForAction(final short logicalAction)
@@ -1194,7 +1216,7 @@ public class ConsoleReader
       return -1;
    }
 
-   int getKeyForAction(final Operation op)
+   int getKeyForAction(final org.jboss.forge.shell.console.jline.console.Operation op)
    {
       assert op != null;
       return getKeyForAction(op.code);
@@ -1207,6 +1229,14 @@ public class ConsoleReader
    {
       int c = readVirtualKey();
 
+      for (KeyListener listener : keyListeners)
+      {
+         if (listener.keyPress(c))
+         {
+            return null;
+         }
+      }
+
       if (c == -1)
       {
          return null;
@@ -1215,7 +1245,7 @@ public class ConsoleReader
       // extract the appropriate key binding
       short code = keyBindings[c];
 
-      Log.trace("Translated: ", c, " -> ", code);
+      org.jboss.forge.shell.console.jline.internal.Log.trace("Translated: ", c, " -> ", code);
 
       return new int[] { c, code };
    }
@@ -1275,10 +1305,10 @@ public class ConsoleReader
             beforeReadLine(prompt, mask);
          }
 
-         if (prompt != null && prompt.length() > 0)
+         if ((prompt != null) && (prompt.length() > 0))
          {
-            out.write(prompt);
-            out.flush();
+            shell.print(prompt);
+            shell.flush();
          }
 
          // if the terminal is unsupported, just use plain-java reading
@@ -1305,8 +1335,10 @@ public class ConsoleReader
             }
 
             int c = next[0];
+
             // int code = next[1];
-            Operation code = Operation.valueOf(next[1]);
+            org.jboss.forge.shell.console.jline.console.Operation code = org.jboss.forge.shell.console.jline.console.Operation
+                     .valueOf(next[1]);
 
             if (c == -1)
             {
@@ -1400,6 +1432,7 @@ public class ConsoleReader
 
             if (state == NORMAL)
             {
+
                switch (code)
                {
                case EXIT: // ctrl-d
@@ -1435,8 +1468,8 @@ public class ConsoleReader
 
                case NEWLINE: // enter
                   moveToEnd();
-                  println(); // output newline
-                  flush();
+                  // println(); // output newline
+                  // flush();
                   return finishBuffer();
 
                case DELETE_PREV_CHAR: // backspace
@@ -1527,7 +1560,7 @@ public class ConsoleReader
                         beep();
                      }
                      printSearchStatus(searchTerm.toString(),
-                                        searchIndex > -1 ? history.get(searchIndex).toString() : "");
+                              searchIndex > -1 ? history.get(searchIndex).toString() : "");
                   }
                   else
                   {
@@ -1585,12 +1618,7 @@ public class ConsoleReader
       {
          int i = in.read();
 
-         // LB3 TODO this needs to be fixed in JLINE, null must be returned for EOF
-         if (i == -1)
-         {
-            return null;
-         }
-         else if (i == '\n' || i == '\r')
+         if ((i == -1) || (i == '\n') || (i == '\r'))
          {
             return buff.toString();
          }
@@ -1605,28 +1633,30 @@ public class ConsoleReader
    // Completion
    //
 
-   private final List<Completer> completers = new LinkedList<Completer>();
+   private final List<org.jboss.forge.shell.console.jline.console.completer.Completer> completers = new LinkedList<org.jboss.forge.shell.console.jline.console.completer.Completer>();
 
-   private CompletionHandler completionHandler = new CandidateListCompletionHandler();
+   private org.jboss.forge.shell.console.jline.console.completer.CompletionHandler completionHandler = new org.jboss.forge.shell.console.jline.console.completer.CandidateListCompletionHandler();
 
    /**
-    * Add the specified {@link jline.console.completer.Completer} to the list of handlers for tab-completion.
+    * Add the specified {@link org.jboss.forge.shell.console.jline.console.completer.Completer} to the list of handlers
+    * for tab-completion.
     * 
-    * @param completer the {@link jline.console.completer.Completer} to add
+    * @param completer the {@link org.jboss.forge.shell.console.jline.console.completer.Completer} to add
     * @return true if it was successfully added
     */
-   public boolean addCompleter(final Completer completer)
+   public boolean addCompleter(final org.jboss.forge.shell.console.jline.console.completer.Completer completer)
    {
       return completers.add(completer);
    }
 
    /**
-    * Remove the specified {@link jline.console.completer.Completer} from the list of handlers for tab-completion.
+    * Remove the specified {@link org.jboss.forge.shell.console.jline.console.completer.Completer} from the list of
+    * handlers for tab-completion.
     * 
-    * @param completer The {@link Completer} to remove
+    * @param completer The {@link org.jboss.forge.shell.console.jline.console.completer.Completer} to remove
     * @return True if it was successfully removed
     */
-   public boolean removeCompleter(final Completer completer)
+   public boolean removeCompleter(final org.jboss.forge.shell.console.jline.console.completer.Completer completer)
    {
       return completers.remove(completer);
    }
@@ -1634,18 +1664,19 @@ public class ConsoleReader
    /**
     * Returns an unmodifiable list of all the completers.
     */
-   public Collection<Completer> getCompleters()
+   public Collection<org.jboss.forge.shell.console.jline.console.completer.Completer> getCompleters()
    {
       return Collections.unmodifiableList(completers);
    }
 
-   public void setCompletionHandler(final CompletionHandler handler)
+   public void setCompletionHandler(
+            final org.jboss.forge.shell.console.jline.console.completer.CompletionHandler handler)
    {
       assert handler != null;
       this.completionHandler = handler;
    }
 
-   public CompletionHandler getCompletionHandler()
+   public org.jboss.forge.shell.console.jline.console.completer.CompletionHandler getCompletionHandler()
    {
       return this.completionHandler;
    }
@@ -1669,7 +1700,7 @@ public class ConsoleReader
 
       int position = -1;
 
-      for (Completer comp : completers)
+      for (org.jboss.forge.shell.console.jline.console.completer.Completer comp : completers)
       {
          if ((position = comp.complete(bufstr, cursor, candidates)) != -1)
          {
@@ -1677,7 +1708,7 @@ public class ConsoleReader
          }
       }
 
-      return candidates.size() != 0 && getCompletionHandler().complete(this, candidates, position);
+      return (candidates.size() != 0) && getCompletionHandler().complete(this, candidates, position);
    }
 
    /**
@@ -1723,14 +1754,14 @@ public class ConsoleReader
    // History
    //
 
-   private History history = new MemoryHistory();
+   private org.jboss.forge.shell.console.jline.console.history.History history = new org.jboss.forge.shell.console.jline.console.history.MemoryHistory();
 
-   public void setHistory(final History history)
+   public void setHistory(final org.jboss.forge.shell.console.jline.console.history.History history)
    {
       this.history = history;
    }
 
-   public History getHistory()
+   public org.jboss.forge.shell.console.jline.console.history.History getHistory()
    {
       return history;
    }
@@ -1785,22 +1816,32 @@ public class ConsoleReader
    {
       if (c == '\t')
       {
-         char chars[] = new char[TAB_WIDTH];
-         Arrays.fill(chars, ' ');
-         out.write(chars);
+         byte[] chars = new byte[TAB_WIDTH];
+         Arrays.fill(chars, (byte) ' ');
+         shell.write(chars);
          return;
       }
 
-      out.write(c);
+      shell.write(c);
+   }
+
+   private void print(final char c) throws IOException
+   {
+      print((int) c);
+   }
+
+   private void print(final char c, final int i) throws IOException
+   {
+      print(c, i);
    }
 
    /**
     * Output the specified characters to the output stream without manipulating the current buffer.
     */
-   private void print(final char... buff) throws IOException
+   private void print(final byte... buff) throws IOException
    {
       int len = 0;
-      for (char c : buff)
+      for (byte c : buff)
       {
          if (c == '\t')
          {
@@ -1812,20 +1853,20 @@ public class ConsoleReader
          }
       }
 
-      char chars[];
+      byte[] chars;
       if (len == buff.length)
       {
          chars = buff;
       }
       else
       {
-         chars = new char[len];
+         chars = new byte[len];
          int pos = 0;
-         for (char c : buff)
+         for (byte c : buff)
          {
             if (c == '\t')
             {
-               Arrays.fill(chars, pos, pos + TAB_WIDTH, ' ');
+               Arrays.fill(chars, pos, pos + TAB_WIDTH, (byte) ' ');
                pos += TAB_WIDTH;
             }
             else
@@ -1836,10 +1877,10 @@ public class ConsoleReader
          }
       }
 
-      out.write(chars);
+      shell.write(chars);
    }
 
-   private void print(final char c, final int num) throws IOException
+   private void print(final byte c, final int num) throws IOException
    {
       if (num == 1)
       {
@@ -1847,7 +1888,7 @@ public class ConsoleReader
       }
       else
       {
-         char[] chars = new char[num];
+         byte[] chars = new byte[num];
          Arrays.fill(chars, c);
          print(chars);
       }
@@ -1859,13 +1900,13 @@ public class ConsoleReader
    public final void print(final CharSequence s) throws IOException
    {
       assert s != null;
-      print(s.toString().toCharArray());
+      print(s.toString().getBytes());
    }
 
    public final void println(final CharSequence s) throws IOException
    {
       assert s != null;
-      print(s.toString().toCharArray());
+      print(s.toString().getBytes());
       println();
    }
 
@@ -1903,9 +1944,11 @@ public class ConsoleReader
    {
       // TODO: Try to use jansi for this
 
-      /*
-       * Commented out because of DWA-2949: if (buf.cursor == 0) { return 0; }
-       */
+      /* Commented out because of DWA-2949:
+      if (buf.cursor == 0) {
+          return 0;
+      }
+      */
 
       buf.buffer.delete(buf.cursor, buf.cursor + 1);
       drawBuffer(1);
@@ -2064,7 +2107,7 @@ public class ConsoleReader
       }
       catch (UnsupportedFlavorException e)
       {
-         Log.error("Paste failed: ", e);
+         org.jboss.forge.shell.console.jline.internal.Log.error("Paste failed: ", e);
 
          return false;
       }
@@ -2096,7 +2139,7 @@ public class ConsoleReader
     */
    public void printColumns(final Collection<? extends CharSequence> items) throws IOException
    {
-      if (items == null || items.isEmpty())
+      if ((items == null) || items.isEmpty())
       {
          return;
       }
@@ -2109,7 +2152,7 @@ public class ConsoleReader
       {
          maxWidth = Math.max(maxWidth, item.length());
       }
-      Log.debug("Max width: ", maxWidth);
+      org.jboss.forge.shell.console.jline.internal.Log.debug("Max width: ", maxWidth);
 
       int showLines;
       if (isPaginationEnabled())
@@ -2135,7 +2178,7 @@ public class ConsoleReader
                print(resources.getString("display-more"));
                flush();
                int c = readVirtualKey();
-               if (c == '\r' || c == '\n')
+               if ((c == '\r') || (c == '\n'))
                {
                   // one step forward
                   showLines = 1;
@@ -2157,7 +2200,7 @@ public class ConsoleReader
 
          // NOTE: toString() is important here due to AnsiString being retarded
          buff.append(item.toString());
-         for (int i = 0; i < (maxWidth + 3 - item.length()); i++)
+         for (int i = 0; i < ((maxWidth + 3) - item.length()); i++)
          {
             buff.append(' ');
          }
@@ -2177,7 +2220,7 @@ public class ConsoleReader
 
    private void beforeReadLine(final String prompt, final Character mask)
    {
-      if (mask != null && maskThread == null)
+      if ((mask != null) && (maskThread == null))
       {
          final String fullPrompt = "\r" + prompt
                   + "                 "
@@ -2186,30 +2229,27 @@ public class ConsoleReader
                   + "\r" + prompt;
 
          maskThread = new Thread()
+         {
+            @Override
+            public void run()
             {
-               @Override
-               public void run()
+               while (!interrupted())
                {
-                  while (!interrupted())
+                  try
                   {
-                     try
-                     {
-                        Writer out = getOutput();
-                        out.write(fullPrompt);
-                        out.flush();
-                        sleep(3);
-                     }
-                     catch (IOException e)
-                     {
-                        return;
-                     }
-                     catch (InterruptedException e)
-                     {
-                        return;
-                     }
+                     BufferManager out = getShell().getBufferManager();
+                     out.write(fullPrompt);
+                     out.flushBuffer();
+                     sleep(3);
+                  }
+
+                  catch (InterruptedException e)
+                  {
+                     return;
                   }
                }
-            };
+            }
+         };
 
          maskThread.setPriority(Thread.MAX_PRIORITY);
          maskThread.setDaemon(true);
@@ -2219,7 +2259,7 @@ public class ConsoleReader
 
    private void afterReadLine()
    {
-      if (maskThread != null && maskThread.isAlive())
+      if ((maskThread != null) && maskThread.isAlive())
       {
          maskThread.interrupt();
       }
@@ -2233,8 +2273,8 @@ public class ConsoleReader
     * @param prompt the new prompt
     * @param buffer the buffer to be drawn
     * @param cursorDest where you want the cursor set when the line has been drawn. -1 for end of line.
-    * */
-   public void resetPromptLine(String prompt, String buffer, int cursorDest) throws IOException
+    */
+   public void resetPromptLine(final String prompt, final String buffer, int cursorDest) throws IOException
    {
       // move cursor to end of line
       moveToEnd();
@@ -2257,7 +2297,7 @@ public class ConsoleReader
       flush();
    }
 
-   public void printSearchStatus(String searchTerm, String match) throws IOException
+   public void printSearchStatus(final String searchTerm, final String match) throws IOException
    {
       String prompt = "(reverse-i-search)`" + searchTerm + "': ";
       String buffer = match;
@@ -2265,7 +2305,7 @@ public class ConsoleReader
       resetPromptLine(prompt, buffer, cursorDest);
    }
 
-   public void restoreLine(String originalPrompt, int cursorDest) throws IOException
+   public void restoreLine(final String originalPrompt, final int cursorDest) throws IOException
    {
       // TODO move cursor to matched string
       String prompt = lastLine(originalPrompt);
@@ -2276,6 +2316,7 @@ public class ConsoleReader
    //
    // History search
    //
+
    /**
     * Search backward in history from a given position.
     * 
@@ -2283,7 +2324,7 @@ public class ConsoleReader
     * @param startIndex the index from which on to search
     * @return index where this substring has been found, or -1 else.
     */
-   public int searchBackwards(String searchTerm, int startIndex)
+   public int searchBackwards(final String searchTerm, final int startIndex)
    {
       return searchBackwards(searchTerm, startIndex, false);
    }
@@ -2294,17 +2335,17 @@ public class ConsoleReader
     * @param searchTerm substring to search for.
     * @return index where the substring has been found, or -1 else.
     */
-   public int searchBackwards(String searchTerm)
+   public int searchBackwards(final String searchTerm)
    {
       return searchBackwards(searchTerm, history.index());
    }
 
-   public int searchBackwards(String searchTerm, int startIndex, boolean startsWith)
+   public int searchBackwards(final String searchTerm, final int startIndex, final boolean startsWith)
    {
-      ListIterator<History.Entry> it = history.entries(startIndex);
+      ListIterator<org.jboss.forge.shell.console.jline.console.history.History.Entry> it = history.entries(startIndex);
       while (it.hasPrevious())
       {
-         History.Entry e = it.previous();
+         org.jboss.forge.shell.console.jline.console.history.History.Entry e = it.previous();
          if (startsWith)
          {
             if (e.value().toString().startsWith(searchTerm))
@@ -2339,12 +2380,11 @@ public class ConsoleReader
       return !Character.isLetterOrDigit(c);
    }
 
-   private void printAnsiSequence(String sequence) throws IOException
+   private static final String ESCAPE_STR = new String(new char[] { 27, '[' });
+
+   private void printAnsiSequence(final String sequence) throws IOException
    {
-      print(27);
-      print('[');
-      print(sequence);
-      // flush();
+      print(ESCAPE_STR + sequence);
    }
 
    // return column position, reported by the terminal
@@ -2360,9 +2400,9 @@ public class ConsoleReader
             StringBuffer b = new StringBuffer(8);
             // position is sent as <ESC>[{ROW};{COLUMN}R
             int r;
-            while ((r = in.read()) > -1 && r != 'R')
+            while (((r = in.read()) > -1) && (r != 'R'))
             {
-               if (r != 27 && r != '[')
+               if ((r != 27) && (r != '['))
                {
                   b.append((char) r);
                }

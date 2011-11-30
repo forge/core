@@ -57,13 +57,13 @@ public class ForgePropertyStyle
    // Private members
    //
 
-   private Project project;
+   private final Project project;
 
    //
    // Constructor
    //
 
-   public ForgePropertyStyle(ForgePropertyStyleConfig config)
+   public ForgePropertyStyle(final ForgePropertyStyleConfig config)
    {
       super(config);
 
@@ -76,16 +76,17 @@ public class ForgePropertyStyle
 
    /**
     * Traverses the given Class heirarchy using properties of the given names.
-    *
+    * 
     * @return the declared type (not actual type). May be null
     */
 
    @Override
-   public ValueAndDeclaredType traverse(Object toTraverse, String type, boolean onlyToParent, String... names)
+   public ValueAndDeclaredType traverse(final Object toTraverse, final String type, final boolean onlyToParent,
+            final String... names)
    {
       // Traverse through names (if any)
 
-      if (names == null || names.length == 0)
+      if ((names == null) || (names.length == 0))
       {
          // If no names, no parent
 
@@ -101,7 +102,7 @@ public class ForgePropertyStyle
 
       for (int loop = 0, length = names.length; loop < length; loop++)
       {
-         if (onlyToParent && loop >= length - 1)
+         if (onlyToParent && (loop >= (length - 1)))
          {
             return new ValueAndDeclaredType(null, traverseDeclaredType);
          }
@@ -109,7 +110,7 @@ public class ForgePropertyStyle
          String name = names[loop];
          Property property = getProperties(traverseDeclaredType).get(name);
 
-         if (property == null || !property.isReadable())
+         if ((property == null) || !property.isReadable())
          {
             return new ValueAndDeclaredType(null, null);
          }
@@ -125,7 +126,7 @@ public class ForgePropertyStyle
    //
 
    @Override
-   protected Map<String, Property> inspectProperties(String type)
+   protected Map<String, Property> inspectProperties(final String type)
    {
       try
       {
@@ -159,7 +160,7 @@ public class ForgePropertyStyle
     * This method will be called after <code>lookupFields</code> but before <code>lookupSetters</code>.
     */
 
-   protected void lookupGetters(Map<String, Property> properties, MethodHolder<?> clazz)
+   protected void lookupGetters(final Map<String, Property> properties, final MethodHolder<?> clazz)
    {
 
       for (Method<?> method : clazz.getMethods())
@@ -214,12 +215,12 @@ public class ForgePropertyStyle
 
    /**
     * Returns whether the given method is a 'getter' method.
-    *
+    * 
     * @param method a parameterless method that returns a non-void
     * @return the property name
     */
 
-   protected String isGetter(Method<?> method)
+   protected String isGetter(final Method<?> method)
    {
 
       String methodName = method.getName();
@@ -257,7 +258,7 @@ public class ForgePropertyStyle
     * This method will be called after <code>lookupFields</code> and <code>lookupGetters</code>.
     */
 
-   protected void lookupSetters(Map<String, Property> properties, MethodHolder<?> clazz)
+   protected void lookupSetters(final Map<String, Property> properties, final MethodHolder<?> clazz)
    {
 
       for (Method<?> method : clazz.getMethods())
@@ -320,7 +321,7 @@ public class ForgePropertyStyle
 
          // Explicitly excluded based on getter already?
 
-         if (existingProperty == null && properties.containsKey(propertyName))
+         if ((existingProperty == null) && properties.containsKey(propertyName))
          {
             continue;
          }
@@ -335,12 +336,12 @@ public class ForgePropertyStyle
 
    /**
     * Returns whether the given method is a 'setter' method.
-    *
+    * 
     * @param method a single-parametered method. May return non-void (ie. for Fluent interfaces)
     * @return the property name
     */
 
-   protected String isSetter(Method<?> method)
+   protected String isSetter(final Method<?> method)
    {
 
       String methodName = method.getName();
@@ -369,11 +370,11 @@ public class ForgePropertyStyle
     * field, with no corresponding <code>mAge</code> field per se.
     * <p>
     * Clients may override this method to change how the public-method-to-private-field mapping operates.
-    *
+    * 
     * @return the private Field for this propertyName, or null if no such field (should not throw NoSuchFieldException)
     */
 
-   protected Field<?> getPrivateField(FieldHolder<?> fieldHolder, String propertyName)
+   protected Field<?> getPrivateField(final FieldHolder<?> fieldHolder, final String propertyName)
    {
 
       // Go looking for such a field, traversing the superclass heirarchy as necessary
@@ -394,7 +395,7 @@ public class ForgePropertyStyle
    // Private methods
    //
 
-   private JavaSource<?> sourceForName(String type)
+   private JavaSource<?> sourceForName(final String type)
    {
       try
       {
@@ -413,7 +414,7 @@ public class ForgePropertyStyle
     * Hack until https://issues.jboss.org/browse/FORGE-371.
     */
 
-   private String getQualifiedType(String type)
+   private String getQualifiedType(final String type)
    {
       if ("Long".equals(type))
       {
@@ -448,18 +449,19 @@ public class ForgePropertyStyle
       // Private methods
       //
 
-      private Method<?> readMethod;
+      private final Method<?> readMethod;
 
-      private Method<?> writeMethod;
+      private final Method<?> writeMethod;
 
-      private Field<?> privateField;
+      private final Field<?> privateField;
 
       //
       // Constructor
       //
 
-      public JavaBeanProperty(String name, String type, Method<?> readMethod, Method<?> writeMethod,
-               Field<?> privateField)
+      public JavaBeanProperty(final String name, final String type, final Method<?> readMethod,
+               final Method<?> writeMethod,
+               final Field<?> privateField)
       {
 
          super(name, type);
@@ -469,7 +471,7 @@ public class ForgePropertyStyle
 
          // Must have a getter or a setter (or both)
 
-         if (this.readMethod == null && this.writeMethod == null)
+         if ((this.readMethod == null) && (this.writeMethod == null))
          {
             throw InspectorException.newException("JavaBeanProperty '" + name + "' has no getter and no setter");
          }
@@ -489,7 +491,7 @@ public class ForgePropertyStyle
       }
 
       @Override
-      public Object read(Object obj)
+      public Object read(final Object obj)
       {
          throw new UnsupportedOperationException();
       }
@@ -502,7 +504,7 @@ public class ForgePropertyStyle
       }
 
       @Override
-      public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
+      public <T extends Annotation> T getAnnotation(final Class<T> annotationClass)
       {
          org.jboss.forge.parser.java.Annotation<?> annotation = this.privateField.getAnnotation(annotationClass
                   .getName());
@@ -567,7 +569,8 @@ public class ForgePropertyStyle
       //
 
       @SuppressWarnings("unchecked")
-      public static <T extends Annotation> T newInstance(org.jboss.forge.parser.java.Annotation<?> annotationSource)
+      public static <T extends Annotation> T newInstance(
+               final org.jboss.forge.parser.java.Annotation<?> annotationSource)
       {
          try
          {
@@ -592,7 +595,8 @@ public class ForgePropertyStyle
       // Constructor
       //
 
-      private AnnotationProxy(Class<T> annotationClass, org.jboss.forge.parser.java.Annotation<?> annotationSource)
+      private AnnotationProxy(final Class<T> annotationClass,
+               final org.jboss.forge.parser.java.Annotation<?> annotationSource)
       {
          this.annotationSource = annotationSource;
          this.annotationClass = annotationClass;
@@ -603,7 +607,7 @@ public class ForgePropertyStyle
       //
 
       @Override
-      public Object invoke(Object proxy, java.lang.reflect.Method method, Object[] args)
+      public Object invoke(final Object proxy, final java.lang.reflect.Method method, final Object[] args)
                throws Throwable
       {
          try

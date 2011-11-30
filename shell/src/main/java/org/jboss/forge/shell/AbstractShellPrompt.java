@@ -30,9 +30,6 @@ import java.util.Map.Entry;
 
 import javax.enterprise.inject.spi.BeanManager;
 
-import jline.console.completer.Completer;
-import jline.console.completer.FileNameCompleter;
-
 import org.jboss.forge.project.services.ResourceFactory;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.Resource;
@@ -40,6 +37,8 @@ import org.jboss.forge.shell.command.PromptTypeConverter;
 import org.jboss.forge.shell.completer.CommandCompleter;
 import org.jboss.forge.shell.completer.CompleterAdaptor;
 import org.jboss.forge.shell.completer.EnumCompleter;
+import org.jboss.forge.shell.console.jline.console.completer.Completer;
+import org.jboss.forge.shell.console.jline.console.completer.FileNameCompleter;
 import org.jboss.forge.shell.util.BeanManagerUtils;
 import org.jboss.forge.shell.util.Enums;
 import org.jboss.forge.shell.util.Files;
@@ -83,7 +82,7 @@ public abstract class AbstractShellPrompt implements Shell
       StringBuilder buf = new StringBuilder();
       while (((c = scan()) != '\n') && (c != '\r'))
       {
-         if (c == 127)
+         if ((c == 127) || (c == 8))
          {
             if (buf.length() > 0)
             {
@@ -91,12 +90,14 @@ public abstract class AbstractShellPrompt implements Shell
                cursorLeft(1);
                print(" ");
                cursorLeft(1);
+               flush();
             }
             continue;
          }
 
          write((byte) c);
          buf.append((char) c);
+         flush();
       }
       return buf.toString();
    }

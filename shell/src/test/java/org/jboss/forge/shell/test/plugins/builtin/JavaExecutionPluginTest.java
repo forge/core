@@ -36,8 +36,10 @@ import org.jboss.forge.shell.Shell;
 import org.jboss.forge.test.AbstractShellTest;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class JavaExecutionPluginTest extends AbstractShellTest
 {
    private Shell shell;

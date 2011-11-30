@@ -22,12 +22,10 @@
 
 package org.jboss.forge.shell.completer;
 
-import jline.console.completer.Completer;
+import org.jboss.forge.shell.console.jline.console.completer.Completer;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
-import org.jboss.forge.shell.completer.CommandCompleter;
 
 import java.util.ArrayList;
 import java.util.List;

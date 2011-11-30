@@ -61,4 +61,9 @@ public interface ForgeEnvironment
     * Get a named property for the current Forge execution
     */
    void removeProperty(String funcName);
+
+   /**
+    * Get the configuration directory.
+    */
+   DirectoryResource getConfigDirectory();
 }

@@ -41,6 +41,19 @@ public class PipeOutImpl implements PipeOut
    }
 
    @Override
+   public void write(int b)
+   {
+      if (piped)
+      {
+         buffer.append(b);
+      }
+      else
+      {
+         shell.write(b);
+      }
+   }
+
+   @Override
    public void write(final byte b)
    {
       if (piped)
@@ -50,6 +63,32 @@ public class PipeOutImpl implements PipeOut
       else
       {
          shell.print(String.valueOf((char) b));
+      }
+   }
+
+   @Override
+   public void write(byte[] b)
+   {
+      if (piped)
+      {
+         buffer.append(new String(b));
+      }
+      else
+      {
+         shell.write(b);
+      }
+   }
+
+   @Override
+   public void write(byte[] b, int offset, int length)
+   {
+      if (piped)
+      {
+         buffer.append(new String(b, offset, length));
+      }
+      else
+      {
+         shell.write(b, offset, length);
       }
    }
 
@@ -126,5 +165,11 @@ public class PipeOutImpl implements PipeOut
    public String getBuffer()
    {
       return buffer.toString();
+   }
+
+   @Override
+   public void flush()
+   {
+      shell.flush();
    }
 }

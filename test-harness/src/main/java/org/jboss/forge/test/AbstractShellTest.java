@@ -46,6 +46,7 @@ import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.events.PostStartup;
 import org.jboss.forge.shell.events.Startup;
+import org.jboss.forge.shell.integration.BufferManager;
 import org.jboss.seam.render.RenderRoot;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -64,6 +65,10 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public abstract class AbstractShellTest
 {
+   static {
+      System.setProperty("forge.debug.no_auto_init_streams", "true");
+   }
+
    @Deployment
    public static JavaArchive getDeployment()
    {
@@ -134,6 +139,64 @@ public abstract class AbstractShellTest
    {
       inputQueue = new LinkedList<String>();
       QueuedInputStream is = new QueuedInputStream(inputQueue);
+
+      shell.registerBufferManager(new BufferManager()
+      {
+         @Override
+         public void bufferOnlyMode()
+         {
+
+         }
+
+         @Override
+         public void directWriteMode()
+         {}
+
+         @Override
+         public void flushBuffer()
+         {}
+
+         @Override
+         public void write(final int b)
+         {}
+
+         @Override
+         public void write(final byte b)
+         {}
+
+         @Override
+         public void write(final byte[] b)
+         {}
+
+         @Override
+         public void write(final byte[] b, final int offset, final int length)
+         {}
+
+         @Override
+         public void write(final String s)
+         {}
+
+         @Override
+         public void directWrite(final String s)
+         {}
+
+         @Override
+         public void setBufferPosition(final int row, final int col)
+         {}
+
+         @Override
+         public int getHeight()
+         {
+            return 0;
+         }
+
+         @Override
+         public int getWidth()
+         {
+            return 0;
+         }
+      });
+
       shell.setInputStream(is);
    }
 

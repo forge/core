@@ -38,94 +38,92 @@ import org.jboss.forge.ForgeEnvironment;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
  */
 public class ShellConfig
 {
+
    @Inject
    private ForgeEnvironment environment;
 
-   public void loadConfig(final Shell shell)
+   public void loadConfig(final ShellImpl shell)
    {
-      File configDir = new File((String) environment.getProperty(ShellImpl.PROP_FORGE_CONFIG_DIR));
-
-      if (!configDir.exists())
+      File configDir = environment.getConfigDirectory().getUnderlyingResourceObject();
+      if ((configDir != null) && configDir.exists() && !shell.isNoInitMode())
       {
-         if (!configDir.mkdirs())
+         boolean historyEnabled = shell.isHistoryEnabled();
+         shell.setHistoryEnabled(false);
+         File configFile = new File(configDir.getPath(), ShellImpl.FORGE_CONFIG_FILE);
+
+         if (!configFile.exists())
          {
-            System.err.println("could not create config directory: " + configDir.getAbsolutePath());
-            return;
+            createDefaultConfigFile(configFile);
          }
-      }
 
-      File historyFile = new File(configDir.getPath(), ShellImpl.FORGE_COMMAND_HISTORY_FILE);
-
-      try
-      {
-         if (!historyFile.exists())
+         try
          {
-            if (!historyFile.createNewFile())
+            shell.execute(configFile);
+         }
+         catch (Exception e)
+         {
+            e.printStackTrace();
+            throw new RuntimeException("error loading file: " + configFile.getAbsolutePath());
+         }
+         shell.setHistoryEnabled(historyEnabled);
+      }
+   }
+
+   public void loadHistory(final ShellImpl shell)
+   {
+      File configDir = environment.getConfigDirectory().getUnderlyingResourceObject();
+      if ((configDir != null) && configDir.exists() && !shell.isNoInitMode())
+      {
+         File historyFile = new File(configDir.getPath(), ShellImpl.FORGE_COMMAND_HISTORY_FILE);
+         try
+         {
+            if (!historyFile.exists())
             {
-               System.err.println("could not create config file: " + historyFile.getAbsolutePath());
+               if (!historyFile.createNewFile())
+               {
+                  System.err.println("could not create config file: " + historyFile.getAbsolutePath());
+               }
+
+            }
+         }
+         catch (IOException e)
+         {
+            throw new RuntimeException("could not create config file: " + historyFile.getAbsolutePath());
+         }
+
+         List<String> history = new ArrayList<String>();
+         try
+         {
+            BufferedReader reader = new BufferedReader(new FileReader(historyFile));
+
+            String line;
+            while ((line = reader.readLine()) != null)
+            {
+               history.add(line);
             }
 
+            reader.close();
+
+            shell.setHistory(history);
          }
-      }
-      catch (IOException e)
-      {
-         throw new RuntimeException("could not create config file: " + historyFile.getAbsolutePath());
-      }
-
-      List<String> history = new ArrayList<String>();
-      try
-      {
-         BufferedReader reader = new BufferedReader(new FileReader(historyFile));
-
-         String line;
-         while ((line = reader.readLine()) != null)
+         catch (IOException e)
          {
-            history.add(line);
+            throw new RuntimeException("error loading file: " + historyFile.getAbsolutePath());
          }
 
-         reader.close();
-
-         shell.setHistory(history);
+         try
+         {
+            shell.setHistoryOutputStream(new BufferedOutputStream(new FileOutputStream(historyFile, true)));
+         }
+         catch (FileNotFoundException e)
+         {
+            throw new RuntimeException("error setting forge history output stream to file: "
+                     + historyFile.getAbsolutePath());
+         }
       }
-      catch (IOException e)
-      {
-         throw new RuntimeException("error loading file: " + historyFile.getAbsolutePath());
-      }
-
-      File configFile = new File(configDir.getPath(), ShellImpl.FORGE_CONFIG_FILE);
-
-      if (!configFile.exists())
-      {
-         createDefaultConfigFile(configFile);
-      }
-
-      try
-      {
-         /**
-          * Load the config file script.
-          */
-         shell.execute(configFile);
-      }
-      catch (Exception e)
-      {
-         e.printStackTrace();
-         throw new RuntimeException("error loading file: " + configFile.getAbsolutePath());
-      }
-
-      try
-      {
-         shell.setHistoryOutputStream(new BufferedOutputStream(new FileOutputStream(historyFile, true)));
-      }
-      catch (FileNotFoundException e)
-      {
-         throw new RuntimeException("error setting forge history output stream to file: "
-                  + historyFile.getAbsolutePath());
-      }
-
    }
 
    private void createDefaultConfigFile(final File configFile)
