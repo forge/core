@@ -117,6 +117,7 @@ public class FacesScaffoldTest extends AbstractShellTest
       }
    }
 
+   @Ignore
    @Test
    @SuppressWarnings("unchecked")
    public void testGenerateFromEntityCamelCase() throws Exception

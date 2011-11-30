@@ -81,7 +81,7 @@ public class RestPluginTest extends AbstractJPATest
       JavaClass endpoint = (JavaClass) resource.getJavaSource();
 
       assertEquals("/user", endpoint.getAnnotation(Path.class).getStringValue());
-      assertEquals("java.util.List", endpoint.getMethod("listAll").getReturnType());
+      assertEquals("java.util.List<User>", endpoint.getMethod("listAll").getReturnType());
       assertEquals("com.test.domain.User", endpoint.getMethod("findById", long.class).getReturnType());
 
       assertTrue(java.getJavaResource(entity).getJavaSource().hasAnnotation(XmlRootElement.class));

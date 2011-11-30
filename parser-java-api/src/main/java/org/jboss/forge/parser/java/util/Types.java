@@ -22,6 +22,9 @@
 
 package org.jboss.forge.parser.java.util;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
@@ -101,4 +104,141 @@ public class Types
    {
       return (name != null) && name.matches("(?i)(?![0-9])[a-z0-9$_]+");
    }
+
+   public static boolean isJavaLang(final String type)
+   {
+      for (String t : langTypes)
+      {
+         if (type.endsWith(t))
+            return true;
+      }
+      return false;
+   }
+
+   static List<String> langTypes = Arrays.asList(
+            // Interfaces
+            "Appendable",
+            "AutoCloseable",
+            "CharSequence",
+            "Cloneable",
+            "Comparable",
+            "Iterable",
+            "Readable",
+            "Runnable",
+            // Classes
+            "Boolean",
+            "Byte",
+            "Character",
+            "Character.Subset",
+            "Character.UnicodeBlock",
+            "Class",
+            "ClassLoader",
+            "ClassValue",
+            "Compiler",
+            "Double",
+            "Enum",
+            "Float",
+            "InheritableThreadLocal",
+            "Integer",
+            "Long",
+            "Math",
+            "Number",
+            "Object",
+            "Package",
+            "Process",
+            "ProcessBuilder",
+            "ProcessBuilder.Redirect",
+            "Runtime",
+            "RuntimePermission",
+            "SecurityManager",
+            "Short",
+            "StackTraceElement",
+            "StrictMath",
+            "String",
+            "StringBuffer",
+            "StringBuilder",
+            "System",
+            "Thread",
+            "ThreadGroup",
+            "ThreadLocal",
+            "Throwable",
+            "Void",
+            // Exception Types
+            "AbstractMethodError",
+            "AssertionError",
+            "BootstrapMethodError",
+            "ClassCircularityError",
+            "ClassFormatError",
+            "Error",
+            "ExceptionInInitializerError",
+            "IllegalAccessError",
+            "IncompatibleClassChangeError",
+            "InstantiationError",
+            "InternalError",
+            "LinkageError",
+            "NoClassDefFoundError",
+            "NoSuchFieldError",
+            "NoSuchMethodError",
+            "OutOfMemoryError",
+            "StackOverflowError",
+            "ThreadDeath",
+            "UnknownError",
+            "UnsatisfiedLinkError",
+            "UnsupportedClassVersionError",
+            "VerifyError",
+            "VirtualMachineError",
+            // Errors
+            "AbstractMethodError",
+            "AssertionError",
+            "BootstrapMethodError",
+            "ClassCircularityError",
+            "ClassFormatError",
+            "Error",
+            "ExceptionInInitializerError",
+            "IllegalAccessError",
+            "IncompatibleClassChangeError",
+            "InstantiationError",
+            "InternalError",
+            "LinkageError",
+            "NoClassDefFoundError",
+            "NoSuchFieldError",
+            "NoSuchMethodError",
+            "OutOfMemoryError",
+            "StackOverflowError",
+            "ThreadDeath",
+            "UnknownError",
+            "UnsatisfiedLinkError",
+            "UnsupportedClassVersionError",
+            "VerifyError",
+            "VirtualMachineError",
+            // Annotation Types
+            "Deprecated",
+            "Override",
+            "SafeVarargs",
+            "SuppressWarnings"
+            );
+
+   public static boolean isGeneric(final String type)
+   {
+      return (type != null) && type.matches(".*<.*>$");
+   }
+
+   public static String stripGenerics(final String type)
+   {
+      if (isGeneric(type))
+      {
+         return type.replaceFirst("^([^<]*)<.*>$", "$1");
+      }
+      return type;
+   }
+
+   public static String getGenerics(final String type)
+   {
+      if (isGeneric(type))
+      {
+         return type.replaceFirst("^[^<]*(<.*>)$", "$1");
+      }
+      return "";
+   }
+
 }
