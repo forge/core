@@ -36,6 +36,8 @@ import org.metawidget.util.CollectionUtils;
 import org.metawidget.util.simple.StringUtils;
 
 /**
+ * Inspects Forge-specific metadata.
+ *
  * @author Richard Kennard
  */
 
@@ -49,13 +51,11 @@ public class ForgeInspector
 
    public ForgeInspector()
    {
-
       this(new BaseObjectInspectorConfig());
    }
 
    public ForgeInspector(BaseObjectInspectorConfig config)
    {
-
       super(config);
    }
 

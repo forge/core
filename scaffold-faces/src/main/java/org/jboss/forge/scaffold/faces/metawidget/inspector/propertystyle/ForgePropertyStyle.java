@@ -45,6 +45,8 @@ import org.metawidget.util.CollectionUtils;
 import org.metawidget.util.simple.StringUtils;
 
 /**
+ * Inspects Forge-specific <tt>JavaSource</tt> objects for properties.
+ *
  * @author Richard Kennard
  */
 

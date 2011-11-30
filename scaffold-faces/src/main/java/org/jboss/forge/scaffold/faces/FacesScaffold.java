@@ -108,6 +108,7 @@ import org.w3c.dom.NamedNodeMap;
  * This Facet does <em>not</em> require Metawidget to be in the final project.
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author Richard Kennard
  */
 
 @Alias("faces")

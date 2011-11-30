@@ -172,12 +172,18 @@ public class FacesScaffoldTest extends AbstractShellTest
       metawidget.append("\t\t\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t\t</h:panelGrid>\n");
 
-      //Assert.assertTrue(contents.contains(metawidget));
+      Assert.assertTrue(contents.contains(metawidget));
 
       FileResource<?> navigation = web.getWebResource("resources/scaffold/page.xhtml");
       Assert.assertTrue(navigation.exists());
       contents = Streams.toString(navigation.getResourceInputStream());
-      System.out.println(contents);
+
+      StringBuilder navigationText = new StringBuilder( "\n\t\t\t\t<ul>\r\n" );
+      navigationText.append( "\t\t\t\t\t<li>\r\n" );
+      navigationText.append( "\t\t\t\t\t\t<a href=\"/faces/scaffold/customer/list.xhtml\">Customer</a>\r\n" );
+      navigationText.append( "\t\t\t\t\t</li>\r\n" );
+
+      Assert.assertTrue(contents.contains(navigationText));
    }
 
    @Test
