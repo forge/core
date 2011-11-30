@@ -21,6 +21,7 @@
  */
 package org.jboss.forge.scaffold.faces;
 
+import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -54,7 +55,6 @@ import org.jboss.forge.scaffold.TemplateStrategy;
 import org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspector;
 import org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle.ForgePropertyStyle;
 import org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle.ForgePropertyStyleConfig;
-import org.jboss.forge.scaffold.faces.metawidget.widgetbuilder.Anchor;
 import org.jboss.forge.scaffold.faces.metawidget.widgetbuilder.ForgeWidgetBuilder;
 import org.jboss.forge.scaffold.faces.metawidget.widgetbuilder.ListItem;
 import org.jboss.forge.scaffold.faces.metawidget.widgetbuilder.UnorderedList;
@@ -85,6 +85,7 @@ import org.metawidget.statically.StaticXmlWidget;
 import org.metawidget.statically.faces.StaticFacesUtils;
 import org.metawidget.statically.faces.component.html.StaticHtmlMetawidget;
 import org.metawidget.statically.faces.component.html.layout.HtmlTableLayout;
+import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlOutcomeTargetLink;
 import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlWidgetBuilder;
 import org.metawidget.statically.faces.component.html.widgetbuilder.ReadOnlyWidgetBuilder;
 import org.metawidget.statically.faces.component.html.widgetbuilder.richfaces.RichFacesWidgetBuilder;
@@ -389,26 +390,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
                   this.listTemplate.render(context), overwrite));
 
          // Generate navigation
-         UnorderedList unorderedList = new UnorderedList();
-
-         for (Resource<?> resource : web.getWebResource("scaffold").listResources())
-         {
-            Anchor anchor = new Anchor();
-            anchor.putAttribute("href", "/faces/scaffold/" + resource.getName() + "/list.xhtml");
-            anchor.setTextContent(StringUtils.uncamelCase(resource.getName()));
-
-            ListItem listItem = new ListItem();
-            listItem.getChildren().add(anchor);
-            unorderedList.getChildren().add(listItem);
-         }
-
-         Writer writer = new IndentedWriter(new StringWriter(), this.navigationTemplateIndent);
-         unorderedList.write(writer);
-         context.put("navigation", writer.toString().trim());
-         result.add(ScaffoldUtil.createOrOverwrite(this.prompt, (FileResource<?>) getTemplateStrategy()
-                  .getDefaultTemplate(),
-                  this.navigationTemplate.render(context),
-                  overwrite));
+         result.add(generateNavigation(overwrite));
       }
       catch (Exception e)
       {
@@ -588,6 +570,8 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
                   web.getWebResource("/resources/scaffold/paginator.xhtml"),
                   getClass().getResourceAsStream("/org/jboss/forge/scaffold/faces/templates/paginator.xhtml"),
                   overwrite));
+
+         result.add(generateNavigation(overwrite));
       }
       catch (Exception e)
       {
@@ -595,6 +579,38 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       }
 
       return result;
+   }
+
+   /**
+    * Generates the navigation menu based on scaffolded entities.
+    */
+
+   private Resource<?> generateNavigation(final boolean overwrite)
+            throws IOException
+   {
+      WebResourceFacet web = this.project.getFacet(WebResourceFacet.class);
+      UnorderedList unorderedList = new UnorderedList();
+
+      for (Resource<?> resource : web.getWebResource("scaffold").listResources())
+      {
+         HtmlOutcomeTargetLink outcomeTargetLink = new HtmlOutcomeTargetLink();
+         outcomeTargetLink.putAttribute("outcome", "/scaffold/" + resource.getName() + "/list");
+         outcomeTargetLink.setTextContent(StringUtils.uncamelCase(resource.getName()));
+
+         ListItem listItem = new ListItem();
+         listItem.getChildren().add(outcomeTargetLink);
+         unorderedList.getChildren().add(listItem);
+      }
+
+      Writer writer = new IndentedWriter(new StringWriter(), this.navigationTemplateIndent);
+      unorderedList.write(writer);
+      Map<Object, Object> context = CollectionUtils.newHashMap();
+      context.put("navigation", writer.toString().trim());
+
+      return ScaffoldUtil.createOrOverwrite(this.prompt, (FileResource<?>) getTemplateStrategy()
+               .getDefaultTemplate(),
+               this.navigationTemplate.render(context),
+               overwrite);
    }
 
    /**

@@ -67,15 +67,19 @@ public class ForgeInspector
    protected Map<String, String> inspectProperty(Property property)
             throws Exception
    {
-
       Map<String, String> attributes = CollectionUtils.newHashMap();
 
       // ManyToOne
 
       if (property.isAnnotationPresent(ManyToOne.class))
       {
+         // Note: this will look awful until https://issues.jboss.org/browse/FORGE-389
+
          attributes.put(FACES_LOOKUP,
                   StaticFacesUtils.wrapExpression(StringUtils.decapitalize(ClassUtils.getSimpleName(property.getType())) + "Bean.all"));
+
+         // Note: this will fail on POSTback until https://issues.jboss.org/browse/FORGE-386
+
          attributes.put(FACES_CONVERTER_ID,
                   StaticFacesUtils.wrapExpression(StringUtils.decapitalize(ClassUtils.getSimpleName(property.getType())) + "Bean.converter"));
       }

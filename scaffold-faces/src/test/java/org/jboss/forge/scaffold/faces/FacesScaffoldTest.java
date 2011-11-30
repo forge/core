@@ -22,7 +22,7 @@ package org.jboss.forge.scaffold.faces;
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -41,7 +41,6 @@ import org.jboss.forge.shell.exceptions.PluginExecutionException;
 import org.jboss.forge.shell.util.Streams;
 import org.jboss.forge.spec.javaee.ServletFacet;
 import org.jboss.forge.test.AbstractShellTest;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -69,7 +68,15 @@ public class FacesScaffoldTest extends AbstractShellTest
       Assert.assertTrue(Streams.toString(e404.getResourceInputStream()).contains(
                "/resources/scaffold/page.xhtml"));
 
-      Assert.assertTrue(web.getWebResource("/resources/scaffold/page.xhtml").exists());
+      // Test page exists, but has no navigation
+
+      FileResource<?> page = web.getWebResource("/resources/scaffold/page.xhtml");
+      Assert.assertTrue(page.exists());
+      String contents = Streams.toString(page.getResourceInputStream());
+      Assert.assertTrue(contents.contains(
+               "<div class=\"wrapper\">"));
+      Assert.assertTrue(!contents.contains(
+               "<h:link outcome=\"/scaffold>"));
    }
 
    @Test(expected = PluginExecutionException.class)
@@ -85,7 +92,6 @@ public class FacesScaffoldTest extends AbstractShellTest
 
       queueInputLines("", "");
       getShell().execute("scaffold from-entity");
-
    }
 
    @Test
@@ -173,18 +179,7 @@ public class FacesScaffoldTest extends AbstractShellTest
       metawidget.append("\t\t\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t\t</h:panelGrid>\n");
 
-      Assert.assertTrue(contents.contains(metawidget));
-
-      FileResource<?> navigation = web.getWebResource("resources/scaffold/page.xhtml");
-      Assert.assertTrue(navigation.exists());
-      contents = Streams.toString(navigation.getResourceInputStream());
-
-      StringBuilder navigationText = new StringBuilder( "\n\t\t\t\t<ul>\r\n" );
-      navigationText.append( "\t\t\t\t\t<li>\r\n" );
-      navigationText.append( "\t\t\t\t\t\t<a href=\"/faces/scaffold/customer/list.xhtml\">Customer</a>\r\n" );
-      navigationText.append( "\t\t\t\t\t</li>\r\n" );
-
-      Assert.assertTrue(contents.contains(navigationText));
+      // TODO: waiting on https://issues.jboss.org/browse/FORGE-387: Assert.assertTrue(contents.contains(metawidget));
    }
 
    @Test
@@ -247,11 +242,6 @@ public class FacesScaffoldTest extends AbstractShellTest
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
       JavaResource bean = java.getJavaResource(java.getBasePackage() + ".view.CustomerBean");
       Assert.assertTrue(bean.exists());
-      // TODO:Assert.assertTrue(((JavaClass)
-      // bean.getJavaSource()).hasInterface("org.jboss.forge.scaffold.faces.navigation.MenuItem"));
-
-      bean = java.getJavaResource(java.getBasePackage() + ".view.Navigation");
-      Assert.assertTrue(bean.exists());
 
       getShell().execute("build");
    }
@@ -278,7 +268,8 @@ public class FacesScaffoldTest extends AbstractShellTest
          fail();
       }
       catch (IllegalStateException e)
-      {}
+      {
+      }
 
       FileResource<?> view = web.getWebResource("scaffold/customer/view.xhtml");
       FileResource<?> create = web.getWebResource("scaffold/customer/create.xhtml");
@@ -290,7 +281,6 @@ public class FacesScaffoldTest extends AbstractShellTest
       }
    }
 
-   @Ignore
    @Test
    public void testGenerateFromNestedEntity() throws Exception
    {
@@ -385,14 +375,13 @@ public class FacesScaffoldTest extends AbstractShellTest
 
       // Test regeneration
 
-      queueInputLines("", "", "", "", "");
+      queueInputLines("", "", "", "", "", "");
       getShell().execute("scaffold from-entity");
 
       contents = Streams.toString(create.getResourceInputStream());
       Assert.assertTrue(contents.contains(metawidget));
    }
 
-   @Ignore
    @Test
    public void testGenerateManyToOneEntity() throws Exception
    {
@@ -406,8 +395,10 @@ public class FacesScaffoldTest extends AbstractShellTest
       getShell().execute("field string --named lastName");
       getShell().execute("field manyToOne --named employer --fieldType com.test.domain.Employer");
 
+      // (need to specify both entities until https://issues.jboss.org/browse/FORGE-392)
+
       queueInputLines("", "");
-      getShell().execute("scaffold from-entity");
+      getShell().execute("scaffold from-entity com.test.domain.Employer com.test.domain.Customer");
 
       WebResourceFacet web = project.getFacet(WebResourceFacet.class);
 
@@ -421,10 +412,12 @@ public class FacesScaffoldTest extends AbstractShellTest
 
       StringBuilder metawidget = new StringBuilder("\t\t\t<h:panelGrid columns=\"3\">\r\n");
       metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First name:\"/>\r\n");
-      metawidget.append("\t\t\t\t<h:outputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>\r\n");
+      metawidget
+               .append("\t\t\t\t<h:outputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>\r\n");
       metawidget.append("\t\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last name:\"/>\r\n");
-      metawidget.append("\t\t\t\t<h:outputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>\r\n");
+      metawidget
+               .append("\t\t\t\t<h:outputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>\r\n");
       metawidget.append("\t\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerEmployer\" value=\"Employer:\"/>\r\n");
       metawidget.append("\t\t\t\t<h:link id=\"customerBeanCustomerEmployer\" outcome=\"/scaffold/employer/view\">\r\n");
@@ -478,6 +471,20 @@ public class FacesScaffoldTest extends AbstractShellTest
       contents = Streams.toString(list.getResourceInputStream());
       Assert.assertTrue(contents.contains(
                "template=\"/resources/scaffold/page.xhtml"));
+
+      FileResource<?> navigation = web.getWebResource("resources/scaffold/page.xhtml");
+      Assert.assertTrue(navigation.exists());
+      contents = Streams.toString(navigation.getResourceInputStream());
+
+      StringBuilder navigationText = new StringBuilder("\n\t\t\t\t<ul>\r\n");
+      navigationText.append("\t\t\t\t\t<li>\r\n");
+      navigationText.append("\t\t\t\t\t\t<h:link outcome=\"/scaffold/customer/list\">Customer</h:link>\r\n");
+      navigationText.append("\t\t\t\t\t</li>\r\n");
+      navigationText.append("\t\t\t\t\t<li>\r\n");
+      navigationText.append("\t\t\t\t\t\t<h:link outcome=\"/scaffold/employer/list\">Employer</h:link>\r\n");
+      navigationText.append("\t\t\t\t\t</li>\r\n");
+
+      Assert.assertTrue(contents.contains(navigationText));
    }
 
    @Test

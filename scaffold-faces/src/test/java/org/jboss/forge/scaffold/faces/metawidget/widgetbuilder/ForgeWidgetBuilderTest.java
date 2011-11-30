@@ -42,7 +42,8 @@ public class ForgeWidgetBuilderTest
       result += "</h:column>";
       result += "</h:dataTable>";
       result += "<h:selectOneMenu converter=\"#{forgeWidgetBuilderTest$BarBean.converter}\" value=\"#{requestScope['fooBarAdd']}\"><f:selectItem/><f:selectItems value=\"#{forgeWidgetBuilderTest$BarBean.all}\"/></h:selectOneMenu>";
-      result += "<h:commandLink action=\"#{foo.addForgeWidgetBuilderTest$Bar(requestScope['fooBarAdd'])}\" value=\"Add\"/>";
+      result += "<ui:param name=\"_entity\" value=\"#{foo}\"/>";
+      result += "<h:commandLink action=\"#{_entity.addForgeWidgetBuilderTest$Bar(requestScope['fooBarAdd'])}\" value=\"Add\"/>";
       result += "</h:panelGroup>";
 
       assertEquals(result, widget.toString());

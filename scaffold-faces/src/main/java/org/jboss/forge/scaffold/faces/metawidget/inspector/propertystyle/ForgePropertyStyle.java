@@ -76,7 +76,7 @@ public class ForgePropertyStyle
 
    /**
     * Traverses the given Class heirarchy using properties of the given names.
-    * 
+    *
     * @return the declared type (not actual type). May be null
     */
 
@@ -162,6 +162,7 @@ public class ForgePropertyStyle
 
    protected void lookupGetters(final Map<String, Property> properties, final MethodHolder<?> clazz)
    {
+      // Hack until https://issues.jboss.org/browse/FORGE-368
 
       for (Method<?> method : clazz.getMethods())
       {
@@ -207,7 +208,7 @@ public class ForgePropertyStyle
 
          properties
                   .put(propertyName,
-                           new JavaBeanProperty(propertyName, type, method, null, getPrivateField(
+                           new ForgeProperty(propertyName, type, method, null, getPrivateField(
                                     (FieldHolder<?>) clazz,
                                     propertyName)));
       }
@@ -215,7 +216,7 @@ public class ForgePropertyStyle
 
    /**
     * Returns whether the given method is a 'getter' method.
-    * 
+    *
     * @param method a parameterless method that returns a non-void
     * @return the property name
     */
@@ -305,16 +306,16 @@ public class ForgePropertyStyle
 
          Property existingProperty = properties.get(propertyName);
 
-         if (existingProperty instanceof JavaBeanProperty)
+         if (existingProperty instanceof ForgeProperty)
          {
-            JavaBeanProperty existingJavaBeanProperty = (JavaBeanProperty) existingProperty;
+            ForgeProperty existingForgeProperty = (ForgeProperty) existingProperty;
 
             // Beware covariant return types: always prefer the getter's type
 
             properties.put(
                      propertyName,
-                     new JavaBeanProperty(propertyName, existingJavaBeanProperty.getType(),
-                              existingJavaBeanProperty.getReadMethod(), method, getPrivateField((FieldHolder<?>) clazz,
+                     new ForgeProperty(propertyName, existingForgeProperty.getType(),
+                              existingForgeProperty.getReadMethod(), method, getPrivateField((FieldHolder<?>) clazz,
                                        propertyName)));
             continue;
          }
@@ -328,7 +329,7 @@ public class ForgePropertyStyle
 
          properties
                   .put(propertyName,
-                           new JavaBeanProperty(propertyName, type, null, method, getPrivateField(
+                           new ForgeProperty(propertyName, type, null, method, getPrivateField(
                                     (FieldHolder<?>) clazz,
                                     propertyName)));
       }
@@ -336,7 +337,7 @@ public class ForgePropertyStyle
 
    /**
     * Returns whether the given method is a 'setter' method.
-    * 
+    *
     * @param method a single-parametered method. May return non-void (ie. for Fluent interfaces)
     * @return the property name
     */
@@ -370,7 +371,7 @@ public class ForgePropertyStyle
     * field, with no corresponding <code>mAge</code> field per se.
     * <p>
     * Clients may override this method to change how the public-method-to-private-field mapping operates.
-    * 
+    *
     * @return the private Field for this propertyName, or null if no such field (should not throw NoSuchFieldException)
     */
 
@@ -433,15 +434,7 @@ public class ForgePropertyStyle
    // Inner classes
    //
 
-   /**
-    * JavaBean-convention-based property.
-    * <p>
-    * We found <code>JavaBeanPropertyStyle</code> to be generally useful outside of any <code>Inspector</code>. When
-    * using it that way, it is also generally useful to have access to <code>JavaBeanProperty</code>. So this class is
-    * public.
-    */
-
-   public static class JavaBeanProperty
+   public static class ForgeProperty
             extends BaseProperty
    {
 
@@ -459,7 +452,7 @@ public class ForgePropertyStyle
       // Constructor
       //
 
-      public JavaBeanProperty(final String name, final String type, final Method<?> readMethod,
+      public ForgeProperty(final String name, final String type, final Method<?> readMethod,
                final Method<?> writeMethod,
                final Field<?> privateField)
       {
@@ -473,7 +466,7 @@ public class ForgePropertyStyle
 
          if ((this.readMethod == null) && (this.writeMethod == null))
          {
-            throw InspectorException.newException("JavaBeanProperty '" + name + "' has no getter and no setter");
+            throw InspectorException.newException("Property '" + name + "' has no getter and no setter");
          }
 
          this.privateField = privateField;
@@ -486,7 +479,6 @@ public class ForgePropertyStyle
       @Override
       public boolean isReadable()
       {
-
          return (this.readMethod != null);
       }
 
@@ -499,7 +491,6 @@ public class ForgePropertyStyle
       @Override
       public boolean isWritable()
       {
-
          return (this.writeMethod != null);
       }
 
@@ -511,7 +502,6 @@ public class ForgePropertyStyle
 
          if (annotation != null)
          {
-
             T annotationProxy = AnnotationProxy.newInstance(annotation);
             return annotationProxy;
          }
@@ -522,6 +512,8 @@ public class ForgePropertyStyle
       @Override
       public String getGenericType()
       {
+         // Note: this needs https://issues.jboss.org/browse/FORGE-387
+
          String type;
 
          if (this.readMethod != null)
