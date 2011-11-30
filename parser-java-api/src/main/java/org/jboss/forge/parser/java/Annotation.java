@@ -29,7 +29,7 @@ import org.jboss.forge.parser.Origin;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface Annotation<O> extends Internal, Origin<O>
+public interface Annotation<O extends JavaSource<O>> extends Internal, Origin<O>
 {
    boolean isSingleValue();
 

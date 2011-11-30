@@ -27,39 +27,39 @@ import java.util.Map;
 import junit.framework.Assert;
 
 import org.jboss.forge.parser.JavaParser;
+import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.Method;
 import org.jboss.forge.parser.java.Type;
 import org.junit.Test;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class MethodReturnTypeTest
+public class FieldTypeTest
 {
    @Test
    public void testGetReturnTypeReturnsFullTypeForJavaLang() throws Exception
    {
-      Method<JavaClass> method = JavaParser.create(JavaClass.class).addMethod("public Long getLong()");
-      Assert.assertEquals("java.lang.Long", method.getReturnType());
+      Field<JavaClass> field = JavaParser.create(JavaClass.class).addField("public Long l;");
+      Assert.assertEquals("java.lang.Long", field.getType());
    }
 
    @Test
    public void testGetReturnTypeReturnsFullTypeForJavaLangGeneric() throws Exception
    {
-      Method<JavaClass> method = JavaParser.create(JavaClass.class)
-               .addMethod("public List<Long> getLong(return null;)");
-      method.getOrigin().addImport(List.class);
-      Assert.assertEquals("java.util.List", method.getReturnType());
+      Field<JavaClass> field = JavaParser.create(JavaClass.class)
+               .addField("public List<Long> list;");
+      field.getOrigin().addImport(List.class);
+      Assert.assertEquals("java.util.List", field.getType());
    }
 
    @Test
    public void testGetReturnTypeObjectArray() throws Exception
    {
-      Method<JavaClass> method = JavaParser.create(JavaClass.class)
-               .addMethod("public List[] getList(return null;)");
-      method.getOrigin().addImport(List.class);
-      Type<JavaClass> type = method.getReturnTypeObject();
+      Field<JavaClass> field = JavaParser.create(JavaClass.class)
+               .addField("public List[] field;");
+      field.getOrigin().addImport(List.class);
+      Type<JavaClass> type = field.getTypeInspector();
       Assert.assertEquals("java.util.List", type.getQualifiedName());
       Assert.assertFalse(type.isParameterized());
       Assert.assertFalse(type.isWildcard());
@@ -75,10 +75,10 @@ public class MethodReturnTypeTest
    @Test
    public void testGetReturnTypeObjectArrayParameterized() throws Exception
    {
-      Method<JavaClass> method = JavaParser.create(JavaClass.class)
-               .addMethod("public List<Long>[] getList(return null;)");
-      method.getOrigin().addImport(List.class);
-      Type<JavaClass> type = method.getReturnTypeObject();
+      Field<JavaClass> field = JavaParser.create(JavaClass.class)
+               .addField("public List<Long>[] list;");
+      field.getOrigin().addImport(List.class);
+      Type<JavaClass> type = field.getTypeInspector();
       Assert.assertEquals("java.util.List", type.getQualifiedName());
       Assert.assertTrue(type.isParameterized());
       Assert.assertFalse(type.isWildcard());
@@ -94,20 +94,20 @@ public class MethodReturnTypeTest
    @Test
    public void testGetReturnTypeObjectUnparameterized() throws Exception
    {
-      Method<JavaClass> method = JavaParser.create(JavaClass.class)
-               .addMethod("public List getLong(return null;)");
-      method.getOrigin().addImport(List.class);
-      Assert.assertEquals("java.util.List", method.getReturnTypeObject().getQualifiedName());
-      Assert.assertFalse(method.getReturnTypeObject().isParameterized());
+      Field<JavaClass> field = JavaParser.create(JavaClass.class)
+               .addField("public List list;");
+      field.getOrigin().addImport(List.class);
+      Assert.assertEquals("java.util.List", field.getTypeInspector().getQualifiedName());
+      Assert.assertFalse(field.getTypeInspector().isParameterized());
    }
 
    @Test
    public void testGetReturnTypeObjectParameterized() throws Exception
    {
-      Method<JavaClass> method = JavaParser.create(JavaClass.class)
-               .addMethod("public List<Long> getList(return null;)");
-      method.getOrigin().addImport(List.class);
-      Type<JavaClass> type = method.getReturnTypeObject();
+      Field<JavaClass> field = JavaParser.create(JavaClass.class)
+               .addField("public List<Long> list;");
+      field.getOrigin().addImport(List.class);
+      Type<JavaClass> type = field.getTypeInspector();
       Assert.assertEquals("java.util.List", type.getQualifiedName());
       Assert.assertTrue(type.isParameterized());
 
@@ -121,10 +121,10 @@ public class MethodReturnTypeTest
    @Test
    public void testGetReturnTypeObjectWildcard() throws Exception
    {
-      Method<JavaClass> method = JavaParser.create(JavaClass.class)
-               .addMethod("public List<?> getList(return null;)");
-      method.getOrigin().addImport(List.class);
-      Type<JavaClass> type = method.getReturnTypeObject();
+      Field<JavaClass> field = JavaParser.create(JavaClass.class)
+               .addField("public List<?> list;");
+      field.getOrigin().addImport(List.class);
+      Type<JavaClass> type = field.getTypeInspector();
       Assert.assertEquals("java.util.List", type.getQualifiedName());
       Assert.assertTrue(type.isParameterized());
 
@@ -138,10 +138,10 @@ public class MethodReturnTypeTest
    @Test
    public void testGetReturnTypeObjectParameterizedMultiple() throws Exception
    {
-      Method<JavaClass> method = JavaParser.create(JavaClass.class)
-               .addMethod("public Map<String, Long> getMap(return null;)");
-      method.getOrigin().addImport(Map.class);
-      Type<JavaClass> type = method.getReturnTypeObject();
+      Field<JavaClass> field = JavaParser.create(JavaClass.class)
+               .addField("public Map<String, Long> map;");
+      field.getOrigin().addImport(Map.class);
+      Type<JavaClass> type = field.getTypeInspector();
       Assert.assertEquals("java.util.Map", type.getQualifiedName());
       Assert.assertTrue(type.isParameterized());
 
@@ -158,10 +158,10 @@ public class MethodReturnTypeTest
    @Test
    public void testGetReturnTypeObjectParameterizedNested() throws Exception
    {
-      Method<JavaClass> method = JavaParser.create(JavaClass.class)
-               .addMethod("public List<List<Long>> getLists(return null;)");
-      method.getOrigin().addImport(List.class);
-      Type<JavaClass> type = method.getReturnTypeObject();
+      Field<JavaClass> field = JavaParser.create(JavaClass.class)
+               .addField("public List<List<Long>> map;");
+      field.getOrigin().addImport(List.class);
+      Type<JavaClass> type = field.getTypeInspector();
       Assert.assertEquals("java.util.List", type.getQualifiedName());
       Assert.assertTrue(type.isParameterized());
 
@@ -179,11 +179,11 @@ public class MethodReturnTypeTest
    @Test
    public void testGetReturnTypeObjectParameterizedMultipleNested() throws Exception
    {
-      Method<JavaClass> method = JavaParser.create(JavaClass.class)
-               .addMethod("public Map<String, List<Long>> getMap(return null;)");
-      method.getOrigin().addImport(List.class);
-      method.getOrigin().addImport(Map.class);
-      Type<JavaClass> type = method.getReturnTypeObject();
+      Field<JavaClass> field = JavaParser.create(JavaClass.class)
+               .addField("public Map<String, List<Long>> map;");
+      field.getOrigin().addImport(List.class);
+      field.getOrigin().addImport(Map.class);
+      Type<JavaClass> type = field.getTypeInspector();
       Assert.assertEquals("java.util.Map", type.getQualifiedName());
       Assert.assertTrue(type.isParameterized());
 
@@ -200,11 +200,11 @@ public class MethodReturnTypeTest
    @Test
    public void testGetReturnTypeObjectParameterizedArrayMultipleNested() throws Exception
    {
-      Method<JavaClass> method = JavaParser.create(JavaClass.class)
-               .addMethod("public Map<String, List<Long>>[] getMaps(return null;)");
-      method.getOrigin().addImport(List.class);
-      method.getOrigin().addImport(Map.class);
-      Type<JavaClass> type = method.getReturnTypeObject();
+      Field<JavaClass> field = JavaParser.create(JavaClass.class)
+               .addField("public Map<String, List<Long>>[] maps;");
+      field.getOrigin().addImport(List.class);
+      field.getOrigin().addImport(Map.class);
+      Type<JavaClass> type = field.getTypeInspector();
       Assert.assertEquals("java.util.Map", type.getQualifiedName());
       Assert.assertTrue(type.isParameterized());
 

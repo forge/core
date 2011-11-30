@@ -29,7 +29,7 @@ import java.util.List;
  * 
  */
 @SuppressWarnings("rawtypes")
-public interface MethodHolder<O extends JavaSource<?>> extends MemberHolder<O, Member>
+public interface MethodHolder<O extends JavaSource<O>> extends MemberHolder<O, Member>
 {
    /**
     * Add an uninitialized {@link Method} declaration to this {@link O} instance. This {@link Method} will be a stub

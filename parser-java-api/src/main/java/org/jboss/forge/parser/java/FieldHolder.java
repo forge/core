@@ -29,7 +29,7 @@ import java.util.List;
  * 
  */
 @SuppressWarnings("rawtypes")
-public interface FieldHolder<O extends JavaSource<?>> extends MemberHolder<O, Member>
+public interface FieldHolder<O extends JavaSource<O>> extends MemberHolder<O, Member>
 {
    /**
     * Add a new Java {@link Field} to this {@link O} instance. This field will be a stub until further modified.
