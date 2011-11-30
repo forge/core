@@ -198,7 +198,7 @@ public class ForgePropertyStyle
          //
          // (explicitly set to null in case we encounted/encounter an imbalanced field/setter)
 
-         String type = getQualifiedType(method.getReturnType());
+         String type = method.getReturnType();
 
          // TODO:if (isExcluded(ClassUtils.getOriginalDeclaringClass(method), propertyName, type))
          {
@@ -411,25 +411,6 @@ public class ForgePropertyStyle
       }
    }
 
-   /**
-    * Hack until https://issues.jboss.org/browse/FORGE-371.
-    */
-
-   private String getQualifiedType(final String type)
-   {
-      if ("Long".equals(type))
-      {
-         return Long.class.getName();
-      }
-
-      if ("String".equals(type))
-      {
-         return String.class.getName();
-      }
-
-      return type;
-   }
-
    //
    // Inner classes
    //
@@ -513,7 +494,7 @@ public class ForgePropertyStyle
       public String getGenericType()
       {
          // Note: this needs https://issues.jboss.org/browse/FORGE-387
-         
+
          return null;
       }
 
@@ -555,9 +536,7 @@ public class ForgePropertyStyle
       {
          try
          {
-            // Hack until https://issues.jboss.org/browse/FORGE-370
-
-            Class<T> annotationClass = (Class<T>) Class.forName("javax.persistence." + annotationSource.getName());
+            Class<T> annotationClass = (Class<T>) Class.forName(annotationSource.getQualifiedName());
 
             // TODO: test this not using annotationSource.getClass().getClassLoader() (will require integration test)
 
