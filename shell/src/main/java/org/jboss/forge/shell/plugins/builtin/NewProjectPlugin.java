@@ -25,6 +25,7 @@ package org.jboss.forge.shell.plugins.builtin;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ServiceLoader;
 
 import javax.inject.Inject;
 
@@ -39,6 +40,7 @@ import org.jboss.forge.project.facets.PackagingFacet;
 import org.jboss.forge.project.facets.ResourceFacet;
 import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.project.packaging.PackagingType;
+import org.jboss.forge.project.services.ProjectAssociationProvider;
 import org.jboss.forge.project.services.ProjectFactory;
 import org.jboss.forge.project.services.ResourceFactory;
 import org.jboss.forge.resources.DirectoryResource;
@@ -228,7 +230,17 @@ public class NewProjectPlugin implements Plugin
                   MetadataFacet.class);
       }
 
-      MetadataFacet meta = project.getFacet(MetadataFacet.class);
+       // create sub-module
+       DirectoryResource parentDir = project.getProjectRoot().getParent().reify(DirectoryResource.class);
+       if (parentDir != null && parentDir.getChild("pom.xml").exists()) {
+          ServiceLoader<ProjectAssociationProvider> providers = ServiceLoader.load(ProjectAssociationProvider.class);
+          for (ProjectAssociationProvider provider : providers) {
+             provider.setProjectFactory(projectFactory);
+             provider.associate(project, parentDir);
+          }
+       }
+
+       MetadataFacet meta = project.getFacet(MetadataFacet.class);
       meta.setProjectName(name);
       meta.setTopLevelPackage(javaPackage);
 
