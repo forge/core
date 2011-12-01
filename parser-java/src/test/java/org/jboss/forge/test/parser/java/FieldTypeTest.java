@@ -41,7 +41,8 @@ public class FieldTypeTest
    public void testGetReturnTypeReturnsFullTypeForJavaLang() throws Exception
    {
       Field<JavaClass> field = JavaParser.create(JavaClass.class).addField("public Long l;");
-      Assert.assertEquals("java.lang.Long", field.getType());
+      Assert.assertEquals("java.lang.Long", field.getQualifiedType());
+      Assert.assertEquals("Long", field.getType());
    }
 
    @Test
@@ -50,7 +51,8 @@ public class FieldTypeTest
       Field<JavaClass> field = JavaParser.create(JavaClass.class)
                .addField("public List<Long> list;");
       field.getOrigin().addImport(List.class);
-      Assert.assertEquals("java.util.List", field.getType());
+      Assert.assertEquals("java.util.List", field.getQualifiedType());
+      Assert.assertEquals("List", field.getType());
    }
 
    @Test
