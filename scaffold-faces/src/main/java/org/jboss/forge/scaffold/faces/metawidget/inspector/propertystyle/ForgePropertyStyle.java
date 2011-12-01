@@ -33,6 +33,7 @@ import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.parser.java.Method;
 import org.jboss.forge.parser.java.MethodHolder;
 import org.jboss.forge.parser.java.Parameter;
+import org.jboss.forge.parser.java.Type;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.metawidget.inspector.iface.InspectorException;
@@ -180,7 +181,9 @@ public class ForgePropertyStyle
             continue;
          }
 
-         if (method.getReturnType() == null)
+         String returnType = method.getQualifiedReturnType();
+
+         if (returnType == null)
          {
             continue;
          }
@@ -198,8 +201,6 @@ public class ForgePropertyStyle
          //
          // (explicitly set to null in case we encounted/encounter an imbalanced field/setter)
 
-         String type = method.getReturnType();
-
          // TODO:if (isExcluded(ClassUtils.getOriginalDeclaringClass(method), propertyName, type))
          {
             // properties.put(propertyName, null);
@@ -208,7 +209,7 @@ public class ForgePropertyStyle
 
          properties
                   .put(propertyName,
-                           new ForgeProperty(propertyName, type, method, null, getPrivateField(
+                           new ForgeProperty(propertyName, returnType, method, null, getPrivateField(
                                     (FieldHolder<?>) clazz,
                                     propertyName)));
       }
@@ -232,7 +233,8 @@ public class ForgePropertyStyle
          propertyName = methodName.substring(ClassUtils.JAVABEAN_GET_PREFIX.length());
 
       }
-      else if (methodName.startsWith(ClassUtils.JAVABEAN_IS_PREFIX) && boolean.class.equals(method.getReturnType()))
+      else if (methodName.startsWith(ClassUtils.JAVABEAN_IS_PREFIX)
+               && boolean.class.equals(method.getQualifiedReturnType()))
       {
 
          // As per section 8.3.2 (Boolean properties) of The JavaBeans API specification, 'is'
@@ -418,7 +420,6 @@ public class ForgePropertyStyle
    public static class ForgeProperty
             extends BaseProperty
    {
-
       //
       // Private methods
       //
@@ -493,7 +494,32 @@ public class ForgePropertyStyle
       @Override
       public String getGenericType()
       {
+         if (this.readMethod != null)
+         {
+            // TODO: Lincoln to unravel generics?
+            // TODO: why are there no generics on the generated Set?
+
+            @SuppressWarnings({ "unchecked", "rawtypes" })
+            List<Type<?>> typeArguments = (List) this.readMethod.getReturnTypeInspector().getTypeArguments();
+
+            if (!typeArguments.isEmpty())
+            {
+               return typeArguments.get(0).getQualifiedName();
+            }
+         }
+
          // Note: this needs https://issues.jboss.org/browse/FORGE-387
+
+         if (this.privateField != null)
+         {
+            @SuppressWarnings({ "unchecked", "rawtypes" })
+            List<Type<?>> typeArguments = (List) this.privateField.getTypeInspector().getTypeArguments();
+
+            if (!typeArguments.isEmpty())
+            {
+               return typeArguments.get(0).getQualifiedName();
+            }
+         }
 
          return null;
       }

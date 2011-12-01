@@ -21,11 +21,14 @@
  */
 package org.jboss.forge.scaffold.faces.metawidget.inspector;
 
-import static org.metawidget.inspector.faces.FacesInspectionResultConstants.*;
+import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.*;
+import static org.metawidget.inspector.InspectionResultConstants.*;
+import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.*;
 
 import java.util.Map;
 
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import org.metawidget.inspector.impl.BaseObjectInspector;
 import org.metawidget.inspector.impl.BaseObjectInspectorConfig;
@@ -44,7 +47,6 @@ import org.metawidget.util.simple.StringUtils;
 public class ForgeInspector
          extends BaseObjectInspector
 {
-
    //
    // Constructor
    //
@@ -75,13 +77,22 @@ public class ForgeInspector
       {
          // Note: this will look awful until https://issues.jboss.org/browse/FORGE-389
 
-         attributes.put(FACES_LOOKUP,
-                  StaticFacesUtils.wrapExpression(StringUtils.decapitalize(ClassUtils.getSimpleName(property.getType())) + "Bean.all"));
+         attributes
+                  .put(FACES_LOOKUP,
+                           StaticFacesUtils.wrapExpression(StringUtils.decapitalize(ClassUtils.getSimpleName(property
+                                    .getType())) + "Bean.all"));
 
          // Note: this will fail on POSTback until https://issues.jboss.org/browse/FORGE-386
 
-         attributes.put(FACES_CONVERTER_ID,
-                  StaticFacesUtils.wrapExpression(StringUtils.decapitalize(ClassUtils.getSimpleName(property.getType())) + "Bean.converter"));
+         attributes
+                  .put(FACES_CONVERTER_ID,
+                           StaticFacesUtils.wrapExpression(StringUtils.decapitalize(ClassUtils.getSimpleName(property
+                                    .getType())) + "Bean.converter"));
+      }
+
+      if (property.isAnnotationPresent(OneToMany.class))
+      {
+         attributes.put(ONE_TO_MANY, TRUE);
       }
 
       return attributes;

@@ -1,5 +1,3 @@
-package org.jboss.forge.scaffold.faces;
-
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2010, Red Hat, Inc., and individual contributors
@@ -21,6 +19,7 @@ package org.jboss.forge.scaffold.faces;
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.jboss.forge.scaffold.faces;
 
 import static org.junit.Assert.*;
 
@@ -107,6 +106,7 @@ public class FacesScaffoldTest extends AbstractShellTest
       queueInputLines("", "");
       getShell().execute("scaffold from-entity");
 
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
       WebResourceFacet web = project.getFacet(WebResourceFacet.class);
 
       // View
@@ -168,14 +168,44 @@ public class FacesScaffoldTest extends AbstractShellTest
       Assert.assertTrue(contents.contains(
                "template=\"/resources/scaffold/page.xhtml"));
 
-      metawidget = new StringBuilder(
-               "\t\t<h:dataTable id=\"customerBeanPageItems\" value=\"#{customerBean.pageItems}\" var=\"_item\">\r\n");
+      metawidget = new StringBuilder("<ui:define name=\"main\">\r\n");
+      metawidget
+               .append("\t\t<h:dataTable id=\"customerBeanPageItems\" value=\"#{customerBean.pageItems}\" var=\"_item\">\r\n");
       metawidget.append("\t\t\t<h:column>\r\n");
       metawidget.append("\t\t\t\t<f:facet name=\"header\">\r\n");
-      // TODO: waiting on https://issues.jboss.org/browse/FORGE-387:
-      // metawidget.append("\t\t\t\t\t\t<h:outputText value=\"First name\">\r\n" );
+      metawidget.append("\t\t\t\t\t<h:outputText value=\"First name\"/>\r\n");
+      metawidget.append("\t\t\t\t</f:facet>\r\n");
+      metawidget.append("\t\t\t\t<h:link outcome=\"/scaffold/customer/view\" value=\"#{_item.firstName}\">\r\n");
+      metawidget.append("\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
+      metawidget.append("\t\t\t\t</h:link>\r\n");
+      metawidget.append("\t\t\t</h:column>\r\n");
+      metawidget.append("\t\t\t<h:column>\r\n");
+      metawidget.append("\t\t\t\t<f:facet name=\"header\">\r\n");
+      metawidget.append("\t\t\t\t\t<h:outputText value=\"Last name\"/>\r\n");
+      metawidget.append("\t\t\t\t</f:facet>\r\n");
+      metawidget.append("\t\t\t\t<h:link outcome=\"/scaffold/customer/view\" value=\"#{_item.lastName}\">\r\n");
+      metawidget.append("\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
+      metawidget.append("\t\t\t\t</h:link>\r\n");
+      metawidget.append("\t\t\t</h:column>\r\n");
+      metawidget.append("\t\t</h:dataTable>");
 
       Assert.assertTrue(contents.contains(metawidget));
+
+      // Additional files
+
+      FileResource<?> navigation = web.getWebResource("resources/scaffold/page.xhtml");
+      Assert.assertTrue(navigation.exists());
+
+      FileResource<?> paginator = web.getWebResource("resources/scaffold/paginator.xhtml");
+      Assert.assertTrue(paginator.exists());
+
+      FileResource<?> viewUtils = java.getJavaResource("/com/test/view/ViewUtils.java");
+      Assert.assertTrue(viewUtils.exists());
+
+      FileResource<?> taglib = web.getWebResource("WEB-INF/classes/META-INF/forge.taglib.xml");
+      Assert.assertTrue(taglib.exists());
+      contents = Streams.toString(taglib.getResourceInputStream());
+      Assert.assertTrue(contents.contains("<function-class>com.test.view.ViewUtils</function-class>"));
    }
 
    @Test
@@ -486,6 +516,138 @@ public class FacesScaffoldTest extends AbstractShellTest
       navigationText.append("\t\t\t\t\t<li>\r\n");
       navigationText
                .append("\t\t\t\t\t\t<h:link outcome=\"/scaffold/employer/list\" value=\"Employer\"/>\r\n");
+      navigationText.append("\t\t\t\t\t</li>\r\n");
+
+      Assert.assertTrue(contents.contains(navigationText));
+   }
+
+   @Test
+   public void testGenerateOneToManyEntity() throws Exception
+   {
+      Project project = setupScaffoldProject();
+
+      queueInputLines("");
+      getShell().execute("entity --named Grocery");
+      getShell().execute("field string --named name");
+      getShell().execute("entity --named Customer");
+      getShell().execute("field string --named firstName");
+      getShell().execute("field string --named lastName");
+      getShell().execute("field oneToMany --named groceries --fieldType com.test.domain.Grocery");
+
+      // (need to specify both entities until https://issues.jboss.org/browse/FORGE-392)
+
+      queueInputLines("", "");
+      getShell().execute("scaffold from-entity com.test.domain.Grocery com.test.domain.Customer");
+
+      WebResourceFacet web = project.getFacet(WebResourceFacet.class);
+
+      // View
+
+      FileResource<?> view = web.getWebResource("scaffold/customer/view.xhtml");
+      Assert.assertTrue(view.exists());
+      String contents = Streams.toString(view.getResourceInputStream());
+      Assert.assertTrue(contents.contains(
+               "template=\"/resources/scaffold/page.xhtml"));
+
+      StringBuilder metawidget = new StringBuilder("\t\t\t<h:panelGrid columns=\"3\">\r\n");
+      metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First name:\"/>\r\n");
+      metawidget
+               .append("\t\t\t\t<h:outputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>\r\n");
+      metawidget.append("\t\t\t\t<h:outputText/>\r\n");
+      metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last name:\"/>\r\n");
+      metawidget
+               .append("\t\t\t\t<h:outputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>\r\n");
+      metawidget.append("\t\t\t\t<h:outputText/>\r\n");
+      metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerGroceries\" value=\"Groceries:\"/>\r\n");
+      metawidget
+               .append("\t\t\t\t<h:dataTable id=\"customerBeanCustomerGroceries\" value=\"#{forgeview:asList(customerBean.customer.groceries)}\" var=\"_item\">\r\n");
+      metawidget.append("\t\t\t\t\t<h:column>\r\n");
+      metawidget.append("\t\t\t\t\t\t<f:facet name=\"header\">\r\n");
+      metawidget.append("\t\t\t\t\t\t\t<h:outputText value=\"Name\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t</f:facet>\r\n");
+      metawidget.append("\t\t\t\t\t\t<h:link outcome=\"/scaffold/grocery/view\" value=\"#{_item.name}\">\r\n");
+      metawidget.append("\t\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t</h:link>\r\n");
+      metawidget.append("\t\t\t\t\t</h:column>\r\n");
+      metawidget.append("\t\t\t\t</h:dataTable>\r\n");
+      metawidget.append("\t\t\t\t<h:outputText/>\r\n");
+      metawidget.append("\t\t\t</h:panelGrid>");
+
+      Assert.assertTrue(contents.contains(metawidget));
+
+      // Create
+
+      FileResource<?> create = web.getWebResource("scaffold/customer/create.xhtml");
+      Assert.assertTrue(create.exists());
+      contents = Streams.toString(create.getResourceInputStream());
+      Assert.assertTrue(contents.contains(
+               "template=\"/resources/scaffold/page.xhtml"));
+
+      metawidget = new StringBuilder("\t\t\t<h:panelGrid columns=\"3\">\r\n");
+      metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First name:\"/>\r\n");
+      metawidget.append("\t\t\t\t<h:panelGroup>\r\n");
+      metawidget
+               .append("\t\t\t\t\t<h:inputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>\r\n");
+      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerFirstName\"/>\r\n");
+      metawidget.append("\t\t\t\t</h:panelGroup>\r\n");
+      metawidget.append("\t\t\t\t<h:outputText/>\r\n");
+      metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last name:\"/>\r\n");
+      metawidget.append("\t\t\t\t<h:panelGroup>\r\n");
+      metawidget
+               .append("\t\t\t\t\t<h:inputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>\r\n");
+      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerLastName\"/>\r\n");
+      metawidget.append("\t\t\t\t</h:panelGroup>\r\n");
+      metawidget.append("\t\t\t\t<h:outputText/>\r\n");
+      metawidget.append("\t\t\t\t<h:outputLabel value=\"Groceries:\"/>\r\n");
+      metawidget.append("\t\t\t\t<h:panelGroup>\r\n");
+      metawidget.append("\t\t\t\t\t<ui:param name=\"_collection\" value=\"#{customerBean.customer.groceries}\"/>\r\n");
+      metawidget
+               .append("\t\t\t\t\t<h:dataTable id=\"customerBeanCustomerGroceries\" value=\"#{forgeview:asList(_collection)}\" var=\"_item\">\r\n");
+      metawidget.append("\t\t\t\t\t\t<h:column>\r\n");
+      metawidget.append("\t\t\t\t\t\t\t<f:facet name=\"header\">\r\n");
+      metawidget.append("\t\t\t\t\t\t\t\t<h:outputText value=\"Name\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t\t</f:facet>\r\n");
+      metawidget.append("\t\t\t\t\t\t\t<h:link outcome=\"/scaffold/grocery/view\" value=\"#{_item.name}\">\r\n");
+      metawidget.append("\t\t\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t\t</h:link>\r\n");
+      metawidget.append("\t\t\t\t\t\t</h:column>\r\n");
+      metawidget.append("\t\t\t\t\t\t<h:column>\r\n");
+      metawidget.append("\t\t\t\t\t\t\t<h:commandLink action=\"#{_collection.remove(_item)}\" value=\"Remove\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t</h:column>\r\n");
+      metawidget.append("\t\t\t\t\t</h:dataTable>\r\n");
+      metawidget
+               .append("\t\t\t\t\t<h:selectOneMenu converter=\"#{groceryBean.converter}\" value=\"#{requestScope['customerBeanCustomerGroceriesAdd']}\">\r\n");
+      metawidget.append("\t\t\t\t\t\t<f:selectItem/>\r\n");
+      metawidget.append("\t\t\t\t\t\t<f:selectItems value=\"#{groceryBean.all}\"/>\r\n");
+      metawidget.append("\t\t\t\t\t</h:selectOneMenu>\r\n");
+      metawidget
+               .append("\t\t\t\t\t<h:commandLink action=\"#{_collection.add(requestScope['customerBeanCustomerGroceriesAdd'])}\" value=\"Add\"/>\r\n");
+      metawidget.append("\t\t\t\t</h:panelGroup>\r\n");
+      metawidget.append("\t\t\t\t<h:outputText/>\r\n");
+      metawidget.append("\t\t\t</h:panelGrid>");
+
+      Assert.assertTrue(contents.contains(metawidget));
+
+      // List
+
+      FileResource<?> list = web.getWebResource("scaffold/customer/list.xhtml");
+      Assert.assertTrue(list.exists());
+      contents = Streams.toString(list.getResourceInputStream());
+      Assert.assertTrue(contents.contains(
+               "template=\"/resources/scaffold/page.xhtml"));
+
+      FileResource<?> navigation = web.getWebResource("resources/scaffold/page.xhtml");
+      Assert.assertTrue(navigation.exists());
+      contents = Streams.toString(navigation.getResourceInputStream());
+
+      StringBuilder navigationText = new StringBuilder("\n\t\t\t\t<ul>\r\n");
+      navigationText.append("\t\t\t\t\t<li>\r\n");
+      navigationText
+               .append("\t\t\t\t\t\t<h:link outcome=\"/scaffold/customer/list\" value=\"Customer\"/>\r\n");
+      navigationText.append("\t\t\t\t\t</li>\r\n");
+      navigationText.append("\t\t\t\t\t<li>\r\n");
+      navigationText
+               .append("\t\t\t\t\t\t<h:link outcome=\"/scaffold/grocery/list\" value=\"Grocery\"/>\r\n");
       navigationText.append("\t\t\t\t\t</li>\r\n");
 
       Assert.assertTrue(contents.contains(navigationText));

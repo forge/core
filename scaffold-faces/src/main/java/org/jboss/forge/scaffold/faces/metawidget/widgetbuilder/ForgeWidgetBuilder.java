@@ -21,9 +21,11 @@
  */
 package org.jboss.forge.scaffold.faces.metawidget.widgetbuilder;
 
+import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.*;
 import static org.metawidget.inspector.InspectionResultConstants.*;
 import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.*;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -113,9 +115,9 @@ public class ForgeWidgetBuilder
 
          if (clazz != null)
          {
-            if (List.class.isAssignableFrom(clazz) /* || DataModel.class.isAssignableFrom( clazz ) */|| clazz.isArray())
+            if (Collection.class.isAssignableFrom(clazz))
             {
-               return createDataTableComponent(attributes, metawidget);
+               return createDataTableComponent(elementName, attributes, metawidget);
             }
          }
       }
@@ -134,11 +136,37 @@ public class ForgeWidgetBuilder
     */
 
    @Override
-   protected StaticXmlWidget createDataTableComponent(Map<String, String> attributes, StaticXmlMetawidget metawidget)
+   protected StaticXmlWidget createDataTableComponent(String elementName, Map<String, String> attributes,
+            StaticXmlMetawidget metawidget)
    {
-      // Create the normal table...
+      // Create the normal table
 
-      StaticXmlWidget dataTable = super.createDataTableComponent(attributes, metawidget);
+      StaticXmlWidget dataTable = super.createDataTableComponent(elementName, attributes, metawidget);
+
+      // Process the binding and id early, so we can use them below
+
+      new StandardBindingProcessor().processWidget(dataTable, elementName, attributes, (StaticUIMetawidget) metawidget);
+      new ReadableIdProcessor().processWidget(dataTable, elementName, attributes, metawidget);
+
+      ValueHolder valueHolderTable = (ValueHolder) dataTable;
+      String tableValueExpression = valueHolderTable.getValue();
+
+      // Special support for non-Lists
+
+      Class<?> clazz = ClassUtils.niceForName(WidgetBuilderUtils.getActualClassOrType(attributes));
+
+      if (!List.class.isAssignableFrom(clazz))
+      {
+         String asListValueExpression = "forgeview:asList(" + StaticFacesUtils.unwrapExpression(tableValueExpression) + ")";
+         valueHolderTable.setValue(StaticFacesUtils.wrapExpression(asListValueExpression));
+      }
+
+      // Add row creation/deletion for One-To-Many
+
+      if (!TRUE.equals(attributes.get(ONE_TO_MANY)) || metawidget.isReadOnly())
+      {
+         return dataTable;
+      }
 
       String componentType = WidgetBuilderUtils.getComponentType(attributes);
 
@@ -147,23 +175,26 @@ public class ForgeWidgetBuilder
          return dataTable;
       }
 
-      // ...then add row creation
-
       HtmlPanelGroup panelGroup = new HtmlPanelGroup();
-
-      // Process the binding and id early, so we can use them below
-
-      new StandardBindingProcessor().processWidget(dataTable, PROPERTY, attributes, (StaticUIMetawidget) metawidget);
-      new ReadableIdProcessor().processWidget(dataTable, PROPERTY, attributes, metawidget);
 
       // Hack until https://issues.apache.org/jira/browse/MYFACES-3410 is resolved
 
       FaceletsParam param = new FaceletsParam();
       param.putAttribute("name", COLLECTION_VAR);
-      param.putAttribute("value", ((ValueHolder) dataTable).getValue());
+      param.putAttribute("value", tableValueExpression);
       panelGroup.getChildren().add(param);
 
-      ((ValueHolder) dataTable).setValue(StaticFacesUtils.wrapExpression(COLLECTION_VAR));
+      // Special support for non-Lists
+
+      if (!List.class.isAssignableFrom(clazz))
+      {
+         valueHolderTable.setValue(StaticFacesUtils.wrapExpression("forgeview:asList(" + COLLECTION_VAR + ")"));
+      }
+      else
+      {
+         valueHolderTable.setValue(StaticFacesUtils.wrapExpression(COLLECTION_VAR));
+      }
+
       panelGroup.getChildren().add(dataTable);
 
       // Select menu at bottom
@@ -204,22 +235,20 @@ public class ForgeWidgetBuilder
          return;
       }
 
-      String componentType = WidgetBuilderUtils.getComponentType(attributes);
-
-      if (componentType == null)
+      if (!attributes.containsKey(ONE_TO_MANY) || metawidget.isReadOnly())
       {
          return;
       }
 
       HtmlCommandLink commandLink = new HtmlCommandLink();
       commandLink.setValue("Remove");
-      String removeExpression = COLLECTION_VAR + ".remove(" + COLLECTION_VAR + ".indexOf(" + dataTable.getAttribute( "var" ) + "))";
+      String removeExpression = COLLECTION_VAR + ".remove(" + dataTable.getAttribute("var") + ")";
       commandLink.putAttribute("action", StaticFacesUtils.wrapExpression(removeExpression));
 
       HtmlColumn column = new HtmlColumn();
-      column.getChildren().add( commandLink );
+      column.getChildren().add(commandLink);
 
-      dataTable.getChildren().add( column );
+      dataTable.getChildren().add(column);
    }
 
    /**
