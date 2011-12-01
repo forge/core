@@ -74,8 +74,13 @@ public class JavaClassTest
 
       String output = javaClass.toString();
 
-      assertTrue(output.contains("Telephone\n{"));
-      assertTrue(output.contains(")\n   {"));
+      assertTrue(output.contains(
+    		  "Telephone" + System.getProperty("line.separator") +
+    		  "{"
+    		  ));
+      assertTrue(output.contains(
+    		  ")" + System.getProperty("line.separator") +
+    		  "   {"));
    }
 
    @Test

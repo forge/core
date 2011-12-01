@@ -51,6 +51,10 @@ public class CommandExecutedTest extends AbstractShellTest {
 	    CommandMetadata command = event.getCommand();
 	    assertNotNull(command);
 	    assertEquals("motp", command.getName());
+	    Object[] parameters = event.getParameters();
+	    assertNotNull(parameters);
+	    assertEquals(1, parameters.length);
+	    assertEquals("motp", parameters[0]);
 	}
 
 }

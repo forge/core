@@ -40,14 +40,16 @@ public final class CommandExecuted
 
    private Status status = Status.SUCCESS;
    private CommandMetadata command;
-
+   private Object[] parameters;
+   
    public CommandExecuted()
    {}
 
-   public CommandExecuted(final Status status, final CommandMetadata command)
+   public CommandExecuted(final Status status, final CommandMetadata command, Object[] parameters)
    {
       this.status = status;
       this.command = command;
+      this.parameters = parameters;
    }
 
    public Status getStatus()
@@ -57,5 +59,9 @@ public final class CommandExecuted
    
    public CommandMetadata getCommand() {
 	   return command;
+   }
+   
+   public Object[] getParameters() {
+	   return parameters;
    }
 }
