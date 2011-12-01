@@ -79,7 +79,7 @@ public class Bootstrap
                boolean restarting = restartRequested;
                restartRequested = false;
 
-               Weld weld = new Weld();
+               Weld weld = new ModularWeld();
                BeanManager manager = null;
                try {
                   loadPlugins();

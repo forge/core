@@ -14,8 +14,26 @@
       <module name="org.jboss.interceptor" export="true" />
       <module name="org.jboss.weld.core" export="true" />
       
-      <module name="org.jboss.forge.parser.java.api" export="true" />
-      <module name="org.jboss.forge.parser.xml" export="true" />
+      <module name="org.jboss.forge.parser.java.api" export="true" services="export">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+      
+      <module name="org.jboss.forge.parser.java.impl" export="true" services="export">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+      
+      <module name="org.jboss.forge.parser.xml" export="true" services="export">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
       
       <module name="org.jboss.forge.event-bus" export="true" />
 
