@@ -14,8 +14,8 @@
       <module name="org.jboss.interceptor" export="true" />
       <module name="org.jboss.weld.core" export="true" />
       
-      <module name="org.jboss.forge.parser-java.api" export="true" />
-      <module name="org.jboss.forge.parser-xml" export="true" />
+      <module name="org.jboss.forge.parser.java.api" export="true" />
+      <module name="org.jboss.forge.parser.xml" export="true" />
       
       <module name="org.jboss.forge.event-bus" export="true" />
 

@@ -142,8 +142,10 @@ public class Execution
                plugin = (Plugin) manager.getReference(bean, pluginType, context);
 
                Status status = Status.FAILURE;
+               ClassLoader current = Thread.currentThread().getContextClassLoader();
                try
                {
+                  Thread.currentThread().setContextClassLoader(plugin.getClass().getClassLoader());
                   command.getMethod().invoke(plugin, paramStaging);
                }
                catch (Exception e)
@@ -152,6 +154,7 @@ public class Execution
                }
                finally
                {
+                  Thread.currentThread().setContextClassLoader(current);
                   manager.fireEvent(new CommandExecuted(status, command, parameterArray), new Annotation[] {});
                }
             }
@@ -164,7 +167,7 @@ public class Execution
       }
 
    }
-   
+
    private static boolean isBooleanOption(final Class<?> type)
    {
       return ParseTools.unboxPrimitive(type) == boolean.class;

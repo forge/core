@@ -44,6 +44,11 @@ public class InstalledPluginRegistry
 {
    private static final String REGISTRY = "/.forge/plugins/installed.xml";
 
+   public static File getRegistryFile()
+   {
+      return new File(REGISTRY);
+   }
+
    public static List<String> getInstalledPlugins()
    {
       List<String> result = new ArrayList<String>();
@@ -65,7 +70,7 @@ public class InstalledPluginRegistry
       return result;
    }
 
-   public static void installPlugin(String plugin, String slot)
+   public static void installPlugin(final String plugin, String slot)
    {
       if (Strings.isNullOrEmpty(plugin))
       {

@@ -7,11 +7,41 @@
    </resources>
 
    <dependencies>
-      <module name="org.jboss.forge.shell.api" />
-      <module name="org.jboss.forge.javaee.api" />
-      <module name="org.jboss.forge.javaee.impl" />
-      <module name="org.jboss.forge.scaffold.api" />
-      <module name="org.jboss.seam.render" />
+      <module name="org.jboss.forge.shell.api" services="import">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+      
+      <module name="org.jboss.forge.javaee.api" services="import">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+      
+      <module name="org.jboss.forge.javaee.impl" services="import">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+      
+      <module name="org.jboss.forge.scaffold.api" services="import">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+      
+      <module name="org.jboss.seam.render" services="import">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+      
       <module name="org.mvel" />
       <module name="javax.api" />
    </dependencies>

@@ -180,18 +180,21 @@ public class ForgePlugin implements Plugin
                      help = "The fully qualified plugin name e.g: 'org.jboss.forge.plugin:version'") final String pluginName,
             final PipeOut out) throws Exception
    {
-      ShellMessages.info(out, "Preparing to remove plugin: " + pluginName);
+      if (!InstalledPluginRegistry.hasPlugin(pluginName))
+      {
+         throw new RuntimeException("No such installed plugin [" + pluginName + "]");
+      }
       InstalledPluginRegistry.removePlugin(pluginName);
 
       if (!InstalledPluginRegistry.hasPlugin(pluginName))
       {
          ShellMessages.success(out, "Successfully removed [" + pluginName + "]");
+         restart();
       }
       else
       {
          ShellMessages.error(out, "Failed to remove [" + pluginName + "");
       }
-      restart();
    }
 
    @Command(value = "install-plugin",
