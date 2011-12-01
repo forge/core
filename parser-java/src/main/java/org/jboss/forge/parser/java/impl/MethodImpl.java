@@ -226,6 +226,12 @@ public class MethodImpl<O extends JavaSource<O>> implements Method<O>
    @Override
    public String getReturnType()
    {
+      return Types.toSimpleName(getQualifiedReturnType());
+   }
+
+   @Override
+   public String getQualifiedReturnType()
+   {
       String result = null;
       org.eclipse.jdt.core.dom.Type returnType = method.getReturnType2();
       if (!isConstructor() && (returnType != null))
@@ -236,6 +242,12 @@ public class MethodImpl<O extends JavaSource<O>> implements Method<O>
       result = parent.resolveType(result);
 
       return result;
+   }
+
+   @Override
+   public Type<O> getReturnTypeInspector()
+   {
+      return new TypeImpl<O>(parent, method.getReturnType2());
    }
 
    @Override
@@ -594,11 +606,5 @@ public class MethodImpl<O extends JavaSource<O>> implements Method<O>
       }
 
       return this;
-   }
-
-   @Override
-   public Type<O> getReturnTypeObject()
-   {
-      return new TypeImpl<O>(parent, method.getReturnType2());
    }
 }

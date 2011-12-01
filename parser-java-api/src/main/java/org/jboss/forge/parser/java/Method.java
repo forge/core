@@ -65,7 +65,15 @@ public interface Method<O extends JavaSource<O>> extends Abstractable<Method<O>>
     */
    public String getReturnType();
 
-   public Type<O> getReturnTypeObject();
+   /**
+    * Get the fully qualified return type of this {@link Method} or return null if the return type is void.
+    */
+   public String getQualifiedReturnType();
+
+   /**
+    * Get the return {@link Type} of this {@link Method} or return null if the return type is void.
+    */
+   public Type<O> getReturnTypeInspector();
 
    /**
     * Set this {@link Method} to return the given type.

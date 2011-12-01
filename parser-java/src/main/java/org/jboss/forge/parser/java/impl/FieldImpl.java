@@ -307,6 +307,12 @@ public class FieldImpl<O extends JavaSource<O>> implements Field<O>
    @Override
    public String getType()
    {
+      return Types.toSimpleName(getQualifiedType());
+   }
+
+   @Override
+   public String getQualifiedType()
+   {
       Object type = field.getStructuralProperty(FieldDeclaration.TYPE_PROPERTY);
       return parent.resolveType(type.toString());
    }
@@ -320,13 +326,14 @@ public class FieldImpl<O extends JavaSource<O>> implements Field<O>
    @Override
    public boolean isType(final Class<?> type)
    {
-      if (Strings.areEqual(type.getName(), getType()))
+      if (Strings.areEqual(type.getName(), getQualifiedType()))
       {
          return true;
       }
 
       String simpleName = type.getSimpleName();
-      if (Strings.areEqual(simpleName, getType()) && (getOrigin().hasImport(type) || !getOrigin().requiresImport(type)))
+      if (Strings.areEqual(simpleName, getQualifiedType())
+               && (getOrigin().hasImport(type) || !getOrigin().requiresImport(type)))
       {
          return true;
       }
@@ -336,13 +343,13 @@ public class FieldImpl<O extends JavaSource<O>> implements Field<O>
    @Override
    public boolean isType(final String name)
    {
-      if (Strings.areEqual(name, getType()))
+      if (Strings.areEqual(name, getQualifiedType()))
       {
          return true;
       }
 
       if ((!Types.isQualified(name) || getOrigin().hasImport(name) || !getOrigin().requiresImport(name))
-               && Types.areEquivalent(name, getType()))
+               && Types.areEquivalent(name, getQualifiedType()))
       {
          return true;
       }

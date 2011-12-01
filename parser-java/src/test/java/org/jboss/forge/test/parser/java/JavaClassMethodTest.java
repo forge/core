@@ -66,16 +66,16 @@ public class JavaClassMethodTest
    @Test
    public void testSetReturnType() throws Exception
    {
-      assertEquals("java.net.URL", method.getReturnType());
+      assertEquals("java.net.URL", method.getQualifiedReturnType());
       method.setReturnType(Class.class);
-      assertEquals("java.lang.Class", method.getReturnType());
+      assertEquals("Class", method.getReturnType());
       assertFalse(method.isReturnTypeVoid());
    }
 
    @Test
    public void testSetReturnTypeVoid() throws Exception
    {
-      assertEquals("java.net.URL", method.getReturnType());
+      assertEquals("java.net.URL", method.getQualifiedReturnType());
       method.setReturnTypeVoid();
       assertEquals(null, method.getReturnType());
       assertTrue(method.isReturnTypeVoid());
