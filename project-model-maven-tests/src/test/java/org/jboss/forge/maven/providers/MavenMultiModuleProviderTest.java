@@ -1,5 +1,15 @@
 package org.jboss.forge.maven.providers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
 import org.apache.maven.model.Model;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.maven.MavenCoreFacet;
@@ -11,27 +21,20 @@ import org.jboss.forge.test.AbstractShellTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 /**
  * @author <a href="mailto:torben@jit-central.com">Torben Jaeger</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @RunWith(Arquillian.class)
-public class MavenMultiModuleProviderTest extends AbstractShellTest {
+public class MavenMultiModuleProviderTest extends AbstractShellTest
+{
 
    @Inject
    ProjectFactory factory;
 
-
    @Test
-   public void testSubmoduleProject() throws Exception {
+   public void testSubmoduleProject() throws Exception
+   {
       Map<String, Object> children = new HashMap<String, Object>(2);
       children.put("child1", null);
       children.put("child2", null);
@@ -42,7 +45,7 @@ public class MavenMultiModuleProviderTest extends AbstractShellTest {
 
       // Child project, type JAR
       getShell().setCurrentResource(pomPrj.getProjectRoot());
-      queueInputLines("");
+      queueInputLines("", "");
       getShell().execute("new-project --named child1 --topLevelPackage com.test --type JAR");
 
       Model pom = pomPrj.getFacet(MavenCoreFacet.class).getPOM();
@@ -64,7 +67,7 @@ public class MavenMultiModuleProviderTest extends AbstractShellTest {
 
       // Child project, type WAR
       getShell().setCurrentResource(rootDir);
-      queueInputLines("");
+      queueInputLines("", "");
       getShell().execute("new-project --named child2 --topLevelPackage com.test --type WAR");
       pom = pomPrj.getFacet(MavenCoreFacet.class).getPOM();
       assertEquals("wrong pom", "child2", pom.getArtifactId());
@@ -78,7 +81,6 @@ public class MavenMultiModuleProviderTest extends AbstractShellTest {
          children.remove(module);
       }
       assertTrue("modules remaining ...", 0 == children.size());
-
 
    }
 }

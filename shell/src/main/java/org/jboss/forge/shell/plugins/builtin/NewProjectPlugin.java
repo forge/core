@@ -25,8 +25,8 @@ package org.jboss.forge.shell.plugins.builtin;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ServiceLoader;
 
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.jboss.forge.parser.JavaParser;
@@ -73,6 +73,9 @@ public class NewProjectPlugin implements Plugin
 
    @Inject
    private ProjectFactory projectFactory;
+
+   @Inject
+   Instance<ProjectAssociationProvider> providers;
 
    @Inject
    private ResourceFactory factory;
@@ -230,17 +233,19 @@ public class NewProjectPlugin implements Plugin
                   MetadataFacet.class);
       }
 
-       // create sub-module
-       DirectoryResource parentDir = project.getProjectRoot().getParent().reify(DirectoryResource.class);
-       if (parentDir != null && parentDir.getChild("pom.xml").exists()) {
-          ServiceLoader<ProjectAssociationProvider> providers = ServiceLoader.load(ProjectAssociationProvider.class);
-          for (ProjectAssociationProvider provider : providers) {
-             provider.setProjectFactory(projectFactory);
-             provider.associate(project, parentDir);
-          }
-       }
+      DirectoryResource parentDir = project.getProjectRoot().getParent().reify(DirectoryResource.class);
+      if (parentDir != null) {
+         for (ProjectAssociationProvider provider : providers) {
+            if (provider.canAssociate(project, parentDir)
+                     && shell.promptBoolean("Add new project as a sub-project of [" + parentDir.getFullyQualifiedName()
+                              + "]?"))
+            {
+               provider.associate(project, parentDir);
+            }
+         }
+      }
 
-       MetadataFacet meta = project.getFacet(MetadataFacet.class);
+      MetadataFacet meta = project.getFacet(MetadataFacet.class);
       meta.setProjectName(name);
       meta.setTopLevelPackage(javaPackage);
 
