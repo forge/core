@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.jboss.forge.parser.JavaParser;
@@ -39,6 +40,7 @@ import org.jboss.forge.project.facets.PackagingFacet;
 import org.jboss.forge.project.facets.ResourceFacet;
 import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.project.packaging.PackagingType;
+import org.jboss.forge.project.services.ProjectAssociationProvider;
 import org.jboss.forge.project.services.ProjectFactory;
 import org.jboss.forge.project.services.ResourceFactory;
 import org.jboss.forge.resources.DirectoryResource;
@@ -71,6 +73,9 @@ public class NewProjectPlugin implements Plugin
 
    @Inject
    private ProjectFactory projectFactory;
+
+   @Inject
+   Instance<ProjectAssociationProvider> providers;
 
    @Inject
    private ResourceFactory factory;
@@ -226,6 +231,18 @@ public class NewProjectPlugin implements Plugin
          project = projectFactory.createProject(dir,
                   DependencyFacet.class,
                   MetadataFacet.class);
+      }
+
+      DirectoryResource parentDir = project.getProjectRoot().getParent().reify(DirectoryResource.class);
+      if (parentDir != null) {
+         for (ProjectAssociationProvider provider : providers) {
+            if (provider.canAssociate(project, parentDir)
+                     && shell.promptBoolean("Add new project as a sub-project of [" + parentDir.getFullyQualifiedName()
+                              + "]?"))
+            {
+               provider.associate(project, parentDir);
+            }
+         }
       }
 
       MetadataFacet meta = project.getFacet(MetadataFacet.class);
