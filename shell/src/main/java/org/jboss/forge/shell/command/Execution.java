@@ -141,11 +141,10 @@ public class Execution
             {
                plugin = (Plugin) manager.getReference(bean, pluginType, context);
 
-               boolean success = false;
+               Status status = Status.FAILURE;
                try
                {
                   command.getMethod().invoke(plugin, paramStaging);
-                  success = true;
                }
                catch (Exception e)
                {
@@ -153,10 +152,7 @@ public class Execution
                }
                finally
                {
-                  if (success)
-                     manager.fireEvent(new CommandExecuted(Status.SUCCESS, command), new Annotation[] {});
-                  else
-                     manager.fireEvent(new CommandExecuted(Status.FAILURE, command), new Annotation[] {});
+                  manager.fireEvent(new CommandExecuted(status, command, parameterArray), new Annotation[] {});
                }
             }
          }
@@ -168,7 +164,7 @@ public class Execution
       }
 
    }
-
+   
    private static boolean isBooleanOption(final Class<?> type)
    {
       return ParseTools.unboxPrimitive(type) == boolean.class;
