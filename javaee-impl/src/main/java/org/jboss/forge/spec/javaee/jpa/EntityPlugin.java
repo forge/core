@@ -71,6 +71,7 @@ public class EntityPlugin implements Plugin
       this.shell = shell;
    }
 
+   @SuppressWarnings("unchecked")
    @DefaultCommand(help = "Create a JPA @Entity")
    public void newEntity(
             @Option(required = true,
@@ -124,6 +125,8 @@ public class EntityPlugin implements Plugin
 
       Refactory.createGetterAndSetter(javaClass, id);
       Refactory.createGetterAndSetter(javaClass, version);
+      Refactory.createToStringFromFields(javaClass, id);
+      createHashCodeAndEquals(javaClass);
 
       JavaResource javaFileLocation = java.saveJavaSource(javaClass);
 
@@ -133,6 +136,19 @@ public class EntityPlugin implements Plugin
        * Pick up the generated resource.
        */
       shell.execute("pick-up " + javaFileLocation.getFullyQualifiedName());
+   }
+
+   private void createHashCodeAndEquals(final JavaClass javaClass)
+   {
+      javaClass.addMethod(
+               "public int hashCode() { final int prime = 31; int result = 1; result = prime * result + (int) (id ^ (id >>> 32)); return result; }")
+               .addAnnotation(Override.class);
+
+      javaClass.addMethod(
+               "public boolean equals(Object obj) { if (this == obj) return true; if (obj == null) return false; if (getClass() != obj.getClass()) return false;"
+                        + javaClass.getName() + " other = (" + javaClass.getName()
+                        + ") obj; if (id != other.id) return false; return true;")
+               .addAnnotation(Override.class);
    }
 
    /**

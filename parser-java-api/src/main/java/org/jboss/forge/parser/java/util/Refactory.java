@@ -22,6 +22,7 @@
 package org.jboss.forge.parser.java.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.jboss.forge.parser.java.Field;
@@ -59,6 +60,11 @@ public class Refactory
       createToStringFromFields(entity, fields);
    }
 
+   public static void createToStringFromFields(final JavaClass javaClass, final Field<JavaClass>... fields)
+   {
+      createToStringFromFields(javaClass, Arrays.asList(fields));
+   }
+
    public static void createToStringFromFields(final JavaClass entity, final List<Field<JavaClass>> fields)
    {
       Method<JavaClass> method = entity.addMethod().setName("toString").setReturnType(String.class).setPublic();
@@ -75,4 +81,5 @@ public class Refactory
       String body = "return this.getClass().getSimpleName() + \"[\" + " + Strings.join(list, delimeter) + " + \"]\";";
       method.setBody(body);
    }
+
 }

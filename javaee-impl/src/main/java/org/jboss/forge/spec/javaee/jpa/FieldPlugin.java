@@ -232,7 +232,7 @@ public class FieldPlugin implements Plugin
    @Command(value = "temporal", help = "Add a temporal field (java.util.Date) to an existing @Entity class")
    public void newTemporalField(
             @Option(name = "type",
-                     required = true) TemporalType temporalType,
+                     required = true) final TemporalType temporalType,
             @Option(name = "named",
                      required = true,
                      description = "The field name",
@@ -456,7 +456,7 @@ public class FieldPlugin implements Plugin
     * Helpers
     */
    private void addFieldTo(final JavaClass targetEntity, final JavaClass fieldEntity, final String fieldName,
-                           final Class<? extends java.lang.annotation.Annotation> annotation)
+            final Class<? extends java.lang.annotation.Annotation> annotation)
             throws FileNotFoundException
    {
       if (targetEntity.hasField(fieldName))
@@ -470,12 +470,14 @@ public class FieldPlugin implements Plugin
       field.setName(fieldName).setPrivate().setType(fieldEntity.getName()).addAnnotation(annotation);
       targetEntity.addImport(fieldEntity.getQualifiedName());
       Refactory.createGetterAndSetter(targetEntity, field);
+      updateToString(targetEntity);
+
       java.saveJavaSource(targetEntity);
       shell.println("Added field to " + targetEntity.getQualifiedName() + ": " + field);
    }
 
    private void addFieldTo(final JavaClass targetEntity, final String fieldType, final String fieldName,
-                           final Class<Column> annotation) throws FileNotFoundException
+            final Class<Column> annotation) throws FileNotFoundException
    {
       if (targetEntity.hasField(fieldName))
       {
@@ -488,12 +490,14 @@ public class FieldPlugin implements Plugin
       field.setName(fieldName).setPrivate().setType(Types.toSimpleName(fieldType)).addAnnotation(annotation);
       targetEntity.addImport(fieldType);
       Refactory.createGetterAndSetter(targetEntity, field);
+
+      updateToString(targetEntity);
       java.saveJavaSource(targetEntity);
       shell.println("Added field to " + targetEntity.getQualifiedName() + ": " + field);
    }
 
    private void addTemporalFieldTo(final JavaClass targetEntity, final Class<?> fieldType, final String fieldName,
-                           TemporalType temporalType)
+            final TemporalType temporalType)
             throws FileNotFoundException
    {
       if (targetEntity.hasField(fieldName))
@@ -509,12 +513,13 @@ public class FieldPlugin implements Plugin
          targetEntity.addImport(fieldType);
       }
       Refactory.createGetterAndSetter(targetEntity, field);
+      updateToString(targetEntity);
       java.saveJavaSource(targetEntity);
       shell.println("Added field to " + targetEntity.getQualifiedName() + ": " + field);
    }
 
    private void addFieldTo(final JavaClass targetEntity, final Class<?> fieldType, final String fieldName,
-                           final Class<? extends java.lang.annotation.Annotation> annotation)
+            final Class<? extends java.lang.annotation.Annotation> annotation)
             throws FileNotFoundException
    {
       if (targetEntity.hasField(fieldName))
@@ -530,9 +535,28 @@ public class FieldPlugin implements Plugin
          targetEntity.addImport(fieldType);
       }
       Refactory.createGetterAndSetter(targetEntity, field);
+      updateToString(targetEntity);
       java.saveJavaSource(targetEntity);
       shell.println("Added field to " + targetEntity.getQualifiedName() + ": " + field);
+   }
 
+   public void updateToString(final JavaClass targetEntity)
+   {
+      if (targetEntity.hasMethodSignature("toString"))
+      {
+         targetEntity.removeMethod(targetEntity.getMethod("toString"));
+      }
+      List<Field<JavaClass>> fields = new ArrayList<Field<JavaClass>>();
+      for (Field<JavaClass> f : targetEntity.getFields())
+      {
+         if (!"id".equals(f.getName()) && !"version".equals(f.getName())
+                  && (f.getTypeInspector().isPrimitive() || Types.isJavaLang(f.getType())))
+         {
+            fields.add(f);
+         }
+      }
+      if (!fields.isEmpty())
+         Refactory.createToStringFromFields(targetEntity, fields);
    }
 
    private JavaClass getJavaClass() throws FileNotFoundException
