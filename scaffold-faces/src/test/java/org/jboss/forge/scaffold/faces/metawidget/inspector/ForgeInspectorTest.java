@@ -27,8 +27,10 @@ import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstant
 
 import java.util.Set;
 
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import junit.framework.TestCase;
 
@@ -43,7 +45,7 @@ public class ForgeInspectorTest
    // Public methods
    //
 
-   public void testImaginaryEntity()
+   public void testRelationships()
    {
       String xml = new ForgeInspector().inspect(new Foo(), Foo.class.getName());
       Document document = XmlUtils.documentFromString(xml);
@@ -54,6 +56,12 @@ public class ForgeInspectorTest
 
       Element property = (Element) entity.getFirstChild();
       assertEquals(PROPERTY, property.getNodeName());
+      assertEquals("manyToMany", property.getAttribute(NAME));
+      assertEquals(TRUE, property.getAttribute(N_TO_MANY));
+      assertEquals(2, property.getAttributes().getLength());
+
+      property = XmlUtils.getNextSiblingElement(property);
+      assertEquals(PROPERTY, property.getNodeName());
       assertEquals("manyToOne", property.getAttribute(NAME));
       assertEquals("#{forgeInspectorTest$BarBean.all}", property.getAttribute(FACES_LOOKUP));
       assertEquals("#{forgeInspectorTest$BarBean.converter}", property.getAttribute(FACES_CONVERTER_ID));
@@ -62,10 +70,16 @@ public class ForgeInspectorTest
       property = XmlUtils.getNextSiblingElement(property);
       assertEquals(PROPERTY, property.getNodeName());
       assertEquals("oneToMany", property.getAttribute(NAME));
-      assertEquals(TRUE, property.getAttribute(ONE_TO_MANY));
+      assertEquals(TRUE, property.getAttribute(N_TO_MANY));
       assertEquals(2, property.getAttributes().getLength());
 
-      assertEquals(2, entity.getChildNodes().getLength());
+      property = XmlUtils.getNextSiblingElement(property);
+      assertEquals(PROPERTY, property.getNodeName());
+      assertEquals("oneToOne", property.getAttribute(NAME));
+      assertEquals(TRUE, property.getAttribute(HIDDEN));
+      assertEquals(2, property.getAttributes().getLength());
+
+      assertEquals(4, entity.getChildNodes().getLength());
    }
 
    //
@@ -74,11 +88,17 @@ public class ForgeInspectorTest
 
    static class Foo
    {
+      @OneToOne(mappedBy = "foo")
+      public Set<Bar> oneToOne;
+
       @OneToMany
       public Set<Bar> oneToMany;
 
       @ManyToOne
       public Bar manyToOne;
+
+      @ManyToMany
+      public Bar manyToMany;
    }
 
    static class Bar

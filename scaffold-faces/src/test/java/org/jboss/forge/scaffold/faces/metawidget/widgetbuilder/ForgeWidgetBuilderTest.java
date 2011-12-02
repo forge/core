@@ -29,9 +29,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.OneToMany;
+
 import junit.framework.TestCase;
 
 import org.metawidget.inspector.annotation.UiComesAfter;
+import org.metawidget.inspector.composite.CompositeInspector;
+import org.metawidget.inspector.composite.CompositeInspectorConfig;
+import org.metawidget.inspector.iface.Inspector;
+import org.metawidget.inspector.impl.BaseObjectInspector;
+import org.metawidget.inspector.impl.propertystyle.Property;
+import org.metawidget.inspector.propertytype.PropertyTypeInspector;
 import org.metawidget.statically.StaticWidget;
 import org.metawidget.statically.faces.component.html.StaticHtmlMetawidget;
 import org.metawidget.util.CollectionUtils;
@@ -77,7 +85,7 @@ public class ForgeWidgetBuilderTest
 
       // (this looks a little weird because 'Bar' is an inner class)
 
-      String result = "<h:dataTable id=\"fooBar\" value=\"#{foo.bar}\" var=\"_item\">";
+      String result = "<h:dataTable id=\"fooBar\" styleClass=\"datatable\" value=\"#{foo.bar}\" var=\"_item\">";
       result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Name\"/></f:facet>";
       result += "<h:link outcome=\"/scaffold/forgeWidgetBuilderTest$Bar/view\" value=\"#{_item.name}\"><f:param name=\"id\" value=\"#{_item.id}\"/></h:link>";
       result += "</h:column>";
@@ -99,24 +107,80 @@ public class ForgeWidgetBuilderTest
       attributes.put(NAME, "bar");
       attributes.put(TYPE, Set.class.getName());
       attributes.put(PARAMETERIZED_TYPE, Bar.class.getName());
-      attributes.put(ONE_TO_MANY, TRUE);
+      attributes.put(N_TO_MANY, TRUE);
       StaticWidget widget = widgetBuilder.buildWidget(PROPERTY, attributes, metawidget);
 
       // (this looks a little weird because 'Bar' is an inner class)
 
       String result = "<h:panelGroup>";
       result += "<ui:param name=\"_collection\" value=\"#{foo.bar}\"/>";
-      result += "<h:dataTable id=\"fooBar\" value=\"#{forgeview:asList(_collection)}\" var=\"_item\">";
+      result += "<h:dataTable id=\"fooBar\" styleClass=\"datatable\" value=\"#{forgeview:asList(_collection)}\" var=\"_item\">";
       result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Name\"/></f:facet>";
       result += "<h:link outcome=\"/scaffold/forgeWidgetBuilderTest$Bar/view\" value=\"#{_item.name}\"><f:param name=\"id\" value=\"#{_item.id}\"/></h:link>";
       result += "</h:column>";
       result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Description\"/></f:facet>";
       result += "<h:link outcome=\"/scaffold/forgeWidgetBuilderTest$Bar/view\" value=\"#{_item.description}\"><f:param name=\"id\" value=\"#{_item.id}\"/></h:link>";
       result += "</h:column>";
-      result += "<h:column><h:commandLink action=\"#{_collection.remove(_item)}\" value=\"Remove\"/></h:column>";
+      result += "<h:column><h:commandLink action=\"#{_collection.remove(_item)}\" styleClass=\"button\" value=\"Remove\"/></h:column>";
       result += "</h:dataTable>";
       result += "<h:selectOneMenu converter=\"#{forgeWidgetBuilderTest$BarBean.converter}\" value=\"#{requestScope['fooBarAdd']}\"><f:selectItem/><f:selectItems value=\"#{forgeWidgetBuilderTest$BarBean.all}\"/></h:selectOneMenu>";
-      result += "<h:commandLink action=\"#{_collection.add(requestScope['fooBarAdd'])}\" value=\"Add\"/>";
+      result += "<h:commandLink action=\"#{_collection.add(requestScope['fooBarAdd'])}\" styleClass=\"button\" value=\"Add\"/>";
+      result += "</h:panelGroup>";
+
+      assertEquals(result, widget.toString());
+   }
+
+   public void testSuppressOneToMany()
+            throws Exception
+   {
+      StaticHtmlMetawidget metawidget = new StaticHtmlMetawidget();
+      Inspector testInspector = new BaseObjectInspector()
+      {
+         @Override
+         protected Map<String, String> inspectProperty(Property property)
+         {
+            Map<String, String> attributes = CollectionUtils.newHashMap();
+
+            // OneToMany
+
+            if (property.isAnnotationPresent(OneToMany.class))
+            {
+               attributes.put(N_TO_MANY, TRUE);
+            }
+
+            return attributes;
+         }
+      };
+      Inspector inspector = new CompositeInspector(new CompositeInspectorConfig()
+               .setInspectors(
+                        new PropertyTypeInspector(),
+                        testInspector));
+
+      metawidget.setInspector(inspector);
+      metawidget.setValue("#{foo}");
+      ForgeWidgetBuilder widgetBuilder = new ForgeWidgetBuilder();
+      Map<String, String> attributes = CollectionUtils.newHashMap();
+      attributes.put(NAME, "bar");
+      attributes.put(TYPE, Set.class.getName());
+      attributes.put(PARAMETERIZED_TYPE, FooOneToMany.class.getName());
+      attributes.put(N_TO_MANY, TRUE);
+      StaticWidget widget = widgetBuilder.buildWidget(PROPERTY, attributes, metawidget);
+
+      // (this looks a little weird because 'FooOneToMany' is an inner class)
+
+      String result = "<h:panelGroup>";
+      result += "<ui:param name=\"_collection\" value=\"#{foo.bar}\"/>";
+      result += "<h:dataTable id=\"fooBar\" styleClass=\"datatable\" value=\"#{forgeview:asList(_collection)}\" var=\"_item\">";
+      result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Field 1\"/></f:facet>";
+      result += "<h:link outcome=\"/scaffold/forgeWidgetBuilderTest$FooOneToMany/view\" value=\"#{_item.field1}\"><f:param name=\"id\" value=\"#{_item.id}\"/></h:link>";
+      result += "</h:column>";
+      result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Field 3\"/></f:facet>";
+      result += "<h:link outcome=\"/scaffold/forgeWidgetBuilderTest$FooOneToMany/view\" value=\"#{_item.field3}\"><f:param name=\"id\" value=\"#{_item.id}\"/></h:link>";
+      result += "</h:column>";
+      result += "<h:column><h:commandLink action=\"#{_collection.remove(_item)}\" styleClass=\"button\" value=\"Remove\"/></h:column>";
+      result += "</h:dataTable>";
+      result += "<h:selectOneMenu converter=\"#{forgeWidgetBuilderTest$FooOneToManyBean.converter}\" value=\"#{requestScope['fooBarAdd']}\"><f:selectItem/><f:selectItems value=\"#{forgeWidgetBuilderTest$FooOneToManyBean.all}\"/></h:selectOneMenu>";
+      result += "<h:commandLink action=\"#{_collection.add(requestScope['fooBarAdd'])}\" styleClass=\"button\" value=\"Add\"/>";
       result += "</h:panelGroup>";
 
       assertEquals(result, widget.toString());
@@ -132,5 +196,15 @@ public class ForgeWidgetBuilderTest
 
       @UiComesAfter("name")
       public String description;
+   }
+
+   static class FooOneToMany
+   {
+      public String field1;
+
+      @OneToMany
+      public Set<String> field2;
+
+      public String field3;
    }
 }
