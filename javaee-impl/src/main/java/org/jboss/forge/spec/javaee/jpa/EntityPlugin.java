@@ -98,8 +98,7 @@ public class EntityPlugin implements Plugin
       else
       {
          entityPackage = shell.promptCommon(
-                  "In which package you'd like to create this @Entity, or enter for default [" + jpa.getEntityPackage()
-                           + "]:",
+                  "In which package you'd like to create this @Entity, or enter for default",
                   PromptType.JAVA_PACKAGE, jpa.getEntityPackage());
       }
 
