@@ -34,7 +34,7 @@ public final class ForgeInspectionResultConstants
    // Public statics
    //
 
-   public static final String ONE_TO_MANY = "one-to-many";
+   public static final String N_TO_MANY = "n-to-many";
 
    //
    // Private constructor

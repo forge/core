@@ -84,6 +84,7 @@ import org.metawidget.statically.StaticXmlWidget;
 import org.metawidget.statically.faces.StaticFacesUtils;
 import org.metawidget.statically.faces.component.html.StaticHtmlMetawidget;
 import org.metawidget.statically.faces.component.html.layout.HtmlPanelGridLayout;
+import org.metawidget.statically.faces.component.html.layout.HtmlPanelGridLayoutConfig;
 import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlOutcomeTargetLink;
 import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlWidgetBuilder;
 import org.metawidget.statically.faces.component.html.widgetbuilder.ReadOnlyWidgetBuilder;
@@ -345,7 +346,8 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
          loadTemplates();
          Map<Object, Object> context = CollectionUtils.newHashMap();
          context.put("entity", entity);
-         context.put("ccEntity", entity.getName().substring(0, 1).toLowerCase() + entity.getName().substring(1));
+         String ccEntity = StringUtils.decapitalize(entity.getName());
+         context.put("ccEntity", ccEntity);
 
          // Create the Backing Bean for this entity
          JavaClass viewBean = JavaParser.parse(JavaClass.class, this.backingBeanTemplate.render(context));
@@ -355,26 +357,23 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
 
          // Set new context for view generation
          context = getTemplateContext(template);
-         String beanName = viewBean.getName().substring(0, 1).toLowerCase() + viewBean.getName().substring(1);
+         String beanName = StringUtils.decapitalize(viewBean.getName());
          context.put("beanName", beanName);
-         String ccEntity = entity.getName().substring(0, 1).toLowerCase() + entity.getName().substring(1);
          context.put("ccEntity", ccEntity);
-         context.put("entity", entity);
+         context.put("entityName", StringUtils.uncamelCase(entity.getName()));
 
          // Prepare Metawidget
          this.metawidget.setValue(StaticFacesUtils.wrapExpression(beanName + "." + ccEntity));
          this.metawidget.setPath(entity.getQualifiedName());
          this.metawidget.setReadOnly(false);
-         this.metawidget.setLayout(new HtmlPanelGridLayout());
+         this.metawidget.setLayout(new HtmlPanelGridLayout(new HtmlPanelGridLayoutConfig().setColumnStyleClasses("label","component","required")));
          this.metawidget.setStyle(null);
-
-         String type = entity.getName().toLowerCase();
 
          // Generate create
          writeMetawidget(context, this.createTemplateMetawidgetIndent, this.createTemplateNamespaces);
 
          result.add(ScaffoldUtil.createOrOverwrite(this.prompt,
-                  web.getWebResource("scaffold/" + type + "/create.xhtml"),
+                  web.getWebResource("scaffold/" + ccEntity + "/create.xhtml"),
                   this.createTemplate.render(context),
                   overwrite));
 
@@ -382,7 +381,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
          this.metawidget.setReadOnly(true);
          writeMetawidget(context, this.viewTemplateMetawidgetIndent, this.viewTemplateNamespaces);
 
-         result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("scaffold/" + type + "/view.xhtml"),
+         result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("scaffold/" + ccEntity + "/view.xhtml"),
                   this.viewTemplate.render(context), overwrite));
 
          // Generate list
@@ -391,7 +390,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
          this.metawidget.setLayout(new SimpleLayout());
          writeMetawidget(context, this.listTemplateMetawidgetIndent, this.listTemplateNamespaces);
 
-         result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("scaffold/" + type + "/list.xhtml"),
+         result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("scaffold/" + ccEntity + "/list.xhtml"),
                   this.listTemplate.render(context), overwrite));
 
          // Generate navigation

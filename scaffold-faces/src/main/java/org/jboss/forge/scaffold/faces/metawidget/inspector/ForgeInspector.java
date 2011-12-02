@@ -27,8 +27,10 @@ import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstant
 
 import java.util.Map;
 
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import org.metawidget.inspector.impl.BaseObjectInspector;
 import org.metawidget.inspector.impl.BaseObjectInspectorConfig;
@@ -71,6 +73,17 @@ public class ForgeInspector
    {
       Map<String, String> attributes = CollectionUtils.newHashMap();
 
+      // OneToOne
+
+      OneToOne oneToOne = property.getAnnotation(OneToOne.class);
+
+      if (oneToOne != null && oneToOne.mappedBy() != null)
+      {
+         // Hide inverse relationships to stop the UI recursing
+
+         attributes.put(HIDDEN, TRUE);
+      }
+
       // ManyToOne
 
       if (property.isAnnotationPresent(ManyToOne.class))
@@ -90,9 +103,18 @@ public class ForgeInspector
                                     .getType())) + "Bean.converter"));
       }
 
+      // OneToMany
+
       if (property.isAnnotationPresent(OneToMany.class))
       {
-         attributes.put(ONE_TO_MANY, TRUE);
+         attributes.put(N_TO_MANY, TRUE);
+      }
+
+      // ManyToMany
+
+      if (property.isAnnotationPresent(ManyToMany.class))
+      {
+         attributes.put(N_TO_MANY, TRUE);
       }
 
       return attributes;

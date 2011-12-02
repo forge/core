@@ -7,7 +7,7 @@
 		<function-name>asList</function-name>
 		<function-class>@{viewPackage}.ViewUtils</function-class>
 		<function-signature>
-			java.util.List asList( java.util.Set )
+			java.util.List asList(java.util.Collection)
 		</function-signature>
 	</function>
 	
