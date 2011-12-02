@@ -38,21 +38,21 @@
 
 			@{metawidget}
 
-			<br/>
-
-			<c:choose>
-				<c:when test="#{!empty @{beanName}.id}">
-					<h:commandLink styleClass="button" value="Save" action="#{@{beanName}.update}"/>
-					<h:link styleClass="button" value="Cancel" outcome="view">
-						<f:param name="id" value="#{@{beanName}.id}"/>
-					</h:link>
-					<h:commandLink styleClass="button right" value="Delete" action="#{@{beanName}.delete}"/>
-				</c:when>
-				<c:otherwise>
-					<h:commandLink styleClass="button" value="Create" action="#{@{beanName}.create}"/>
-					<h:link styleClass="button right" value="Cancel" outcome="list"/>
-				</c:otherwise>
-			</c:choose>
+			<div class="buttons">
+				<c:choose>
+					<c:when test="#{!empty @{beanName}.id}">
+						<h:commandLink styleClass="button" value="Save" action="#{@{beanName}.update}"/>
+						<h:link styleClass="button" value="Cancel" outcome="view">
+							<f:param name="id" value="#{@{beanName}.id}"/>
+						</h:link>
+						<h:commandLink styleClass="button" value="Delete" action="#{@{beanName}.delete}"/>
+					</c:when>
+					<c:otherwise>
+						<h:commandLink styleClass="button" value="Create" action="#{@{beanName}.create}"/>
+						<h:link styleClass="button" value="Cancel" outcome="list"/>
+					</c:otherwise>
+				</c:choose>
+			</div>
 		</h:form>
 	</ui:define>
 
