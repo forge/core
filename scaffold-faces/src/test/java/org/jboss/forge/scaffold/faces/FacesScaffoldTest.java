@@ -59,8 +59,8 @@ public class FacesScaffoldTest extends AbstractShellTest
 
       Node root = XMLParser.parse(servlet.getConfigFile().getResourceInputStream());
       List<Node> errorPages = root.get("error-page");
-      Assert.assertEquals("/404.jsf", errorPages.get(0).getSingle("location").getText());
-      Assert.assertEquals("/500.jsf", errorPages.get(1).getSingle("location").getText());
+      Assert.assertEquals("/404.xhtml", errorPages.get(0).getSingle("location").getText());
+      Assert.assertEquals("/500.xhtml", errorPages.get(1).getSingle("location").getText());
 
       WebResourceFacet web = project.getFacet(WebResourceFacet.class);
       FileResource<?> e404 = web.getWebResource("404.xhtml");
@@ -73,7 +73,13 @@ public class FacesScaffoldTest extends AbstractShellTest
       Assert.assertTrue(page.exists());
       String contents = Streams.toString(page.getResourceInputStream());
       Assert.assertTrue(contents.contains(
-               "<div class=\"wrapper\">"));
+               "<div id=\"wrapper\">"));
+      Assert.assertTrue(contents.contains(
+               "<div id=\"navigation\">"));
+      Assert.assertTrue(contents.contains(
+               "<div id=\"content\">"));
+      Assert.assertTrue(contents.contains(
+               "<div id=\"footer\">"));
       Assert.assertTrue(!contents.contains(
                "<h:link outcome=\"/scaffold>"));
    }
@@ -170,7 +176,7 @@ public class FacesScaffoldTest extends AbstractShellTest
 
       metawidget = new StringBuilder("<ui:define name=\"main\">\r\n");
       metawidget
-               .append("\t\t<h:dataTable id=\"customerBeanPageItems\" value=\"#{customerBean.pageItems}\" var=\"_item\">\r\n");
+               .append("\t\t<h:dataTable id=\"customerBeanPageItems\" styleClass=\"data-table\" value=\"#{customerBean.pageItems}\" var=\"_item\">\r\n");
       metawidget.append("\t\t\t<h:column>\r\n");
       metawidget.append("\t\t\t\t<f:facet name=\"header\">\r\n");
       metawidget.append("\t\t\t\t\t<h:outputText value=\"First Name\"/>\r\n");
@@ -231,7 +237,7 @@ public class FacesScaffoldTest extends AbstractShellTest
       Assert.assertTrue(contents.contains("<ui:param name=\"pageTitle\" value=\"View Customer Person\"/>"));
       Assert.assertTrue(contents.contains("\t<ui:define name=\"header\">\n\t\tCustomer Person\n\t</ui:define>"));
       Assert.assertTrue(contents
-               .contains("\t<ui:define name=\"subheader\">\n\t\tViewing the Customer Person\n\t</ui:define>"));
+               .contains("\t<ui:define name=\"subheader\">\n\t\tViewing existing Customer Person\n\t</ui:define>"));
       Assert.assertTrue(contents.contains(
                "customerPersonBean.customerPerson"));
 
@@ -599,7 +605,7 @@ public class FacesScaffoldTest extends AbstractShellTest
       metawidget.append("\t\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerGroceries\" value=\"Groceries:\"/>\r\n");
       metawidget
-               .append("\t\t\t\t<h:dataTable id=\"customerBeanCustomerGroceries\" value=\"#{forgeview:asList(customerBean.customer.groceries)}\" var=\"_item\">\r\n");
+               .append("\t\t\t\t<h:dataTable id=\"customerBeanCustomerGroceries\" styleClass=\"data-table\" value=\"#{forgeview:asList(customerBean.customer.groceries)}\" var=\"_item\">\r\n");
       metawidget.append("\t\t\t\t\t<h:column>\r\n");
       metawidget.append("\t\t\t\t\t\t<f:facet name=\"header\">\r\n");
       metawidget.append("\t\t\t\t\t\t\t<h:outputText value=\"Name\"/>\r\n");
@@ -641,7 +647,7 @@ public class FacesScaffoldTest extends AbstractShellTest
       metawidget.append("\t\t\t\t<h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t\t<ui:param name=\"_collection\" value=\"#{customerBean.customer.groceries}\"/>\r\n");
       metawidget
-               .append("\t\t\t\t\t<h:dataTable id=\"customerBeanCustomerGroceries\" styleClass=\"datatable\" value=\"#{forgeview:asList(_collection)}\" var=\"_item\">\r\n");
+               .append("\t\t\t\t\t<h:dataTable columnClasses=\",remove-column\" id=\"customerBeanCustomerGroceries\" styleClass=\"data-table\" value=\"#{forgeview:asList(_collection)}\" var=\"_item\">\r\n");
       metawidget.append("\t\t\t\t\t\t<h:column>\r\n");
       metawidget.append("\t\t\t\t\t\t\t<f:facet name=\"header\">\r\n");
       metawidget.append("\t\t\t\t\t\t\t\t<h:outputText value=\"Name\"/>\r\n");
@@ -651,7 +657,8 @@ public class FacesScaffoldTest extends AbstractShellTest
       metawidget.append("\t\t\t\t\t\t\t</h:link>\r\n");
       metawidget.append("\t\t\t\t\t\t</h:column>\r\n");
       metawidget.append("\t\t\t\t\t\t<h:column>\r\n");
-      metawidget.append("\t\t\t\t\t\t\t<h:commandLink action=\"#{_collection.remove(_item)}\" styleClass=\"button\" value=\"Remove\"/>\r\n");
+      metawidget
+               .append("\t\t\t\t\t\t\t<h:commandLink action=\"#{_collection.remove(_item)}\" styleClass=\"button\" value=\"Remove\"/>\r\n");
       metawidget.append("\t\t\t\t\t\t</h:column>\r\n");
       metawidget.append("\t\t\t\t\t</h:dataTable>\r\n");
       metawidget
@@ -726,6 +733,8 @@ public class FacesScaffoldTest extends AbstractShellTest
    public Project setupScaffoldProject() throws Exception
    {
       Project project = initializeJavaProject();
+      queueInputLines("HIBERNATE", "JBOSS_AS7", "");
+      getShell().execute("persistence setup");
       queueInputLines("", "", "2", "", "", "");
       getShell().execute("scaffold setup");
       return project;

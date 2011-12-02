@@ -6,12 +6,12 @@
 	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
 	xmlns:ui="http://java.sun.com/jsf/facelets">
 	
-	<h:panelGroup styleClass="right" rendered="#{paginatorBean.count gt paginatorBean.pageSize}">
+	<h:panelGroup styleClass="paginator" rendered="#{paginatorBean.count gt paginatorBean.pageSize}">
 		<h:outputLink styleClass="button" rendered="#{paginatorBean.page gt 0}">
 			<f:param name="page" value="#{paginatorBean.page - 1}"/>
 			&lt; Previous 
 		</h:outputLink>
-		<h:outputText styleClass="paginator" value="#{paginatorBean.page * paginatorBean.pageSize + 1} to #{paginatorBean.page * paginatorBean.pageSize + fn:length(paginatorBean.pageItems)} (of #{paginatorBean.count})"/>
+		<h:outputText styleClass="paginator-content" value="#{paginatorBean.page * paginatorBean.pageSize + 1} to #{paginatorBean.page * paginatorBean.pageSize + fn:length(paginatorBean.pageItems)} (of #{paginatorBean.count})"/>
 		<h:outputLink styleClass="button" rendered="#{(paginatorBean.page + 1) * paginatorBean.pageSize lt paginatorBean.count}">
 			<f:param name="page" value="#{paginatorBean.page + 1}"/>
 			Next &gt;

@@ -28,7 +28,10 @@
 		<ui:include src="/resources/scaffold/paginator.xhtml">
 			<ui:param name="paginatorBean" value="#{@{beanName}}"/>
 		</ui:include>
-		<h:link styleClass="button" value="Create new" outcome="create"/>
+		
+		<div class="buttons">
+			<h:link styleClass="button" value="Create new" outcome="create"/>
+		</div>
 	</ui:define>
 
 </ui:composition>
