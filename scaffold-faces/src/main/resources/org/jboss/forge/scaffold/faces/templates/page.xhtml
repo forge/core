@@ -13,25 +13,23 @@
 	
 	<h:body style="background-image: url('#{resource['background.gif']}')">
 	
-		<div class="wrapper">
+		<div id="wrapper">
 	
-			<div class="forge">
+			<div id="navigation">
 				<h:link outcome="/index.xhtml">
 					<img src="#{resource['forge-logo.png']}" alt="Seam Forge... get hammered." width="195" height="131" border="0"/>
 				</h:link>
 				@{navigation}				
 			</div>
 		
-			<div class="content">
+			<div id="content">
 				<h1><ui:insert name="header"/></h1>		
 				<h2><ui:insert name="subheader"/></h2>
 		
 				<ui:insert name="main"/>
 
 				<div id="footer">
-					<hr />				
-					<ui:insert name="footer"/>			
-					<div class="right">Powered by <a href="http://jboss.org/forge">Forge</a></div>
+					Powered by <a href="http://jboss.org/forge">Forge</a>
 				</div>
 			</div>		
 		</div>		

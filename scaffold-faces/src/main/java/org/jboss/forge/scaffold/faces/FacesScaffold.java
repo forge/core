@@ -442,12 +442,12 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       ServletFacet servlet = this.project.getFacet(ServletFacet.class);
 
       Node webXML = removeConflictingErrorPages(servlet);
-      WebResourceFacet web = this.project.getFacet(WebResourceFacet.class);
       servlet.getConfigFile().setContents(XMLParser.toXMLInputStream(webXML));
 
       WebAppDescriptor config = servlet.getConfig();
-      config.errorPage(404, getAccessStrategy().getWebPaths(web.getWebResource("404.xhtml")).get(0));
-      config.errorPage(500, getAccessStrategy().getWebPaths(web.getWebResource("500.xhtml")).get(0));
+      config.errorPage(404, "/404.xhtml");
+      config.errorPage(500, "/500.xhtml");
+      // TODO: use getAccessStrategy().getWebPaths(web.getWebResource("500.xhtml")).get(0));
 
       servlet.saveConfig(config);
    }

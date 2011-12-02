@@ -25,6 +25,7 @@ import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectio
 import static org.metawidget.inspector.InspectionResultConstants.*;
 import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.*;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -142,7 +143,7 @@ public class ForgeWidgetBuilder
       // Create the normal table
 
       StaticXmlWidget dataTable = super.createDataTableComponent(elementName, attributes, metawidget);
-      dataTable.putAttribute("styleClass", "datatable");
+      dataTable.putAttribute("styleClass", "data-table");
 
       // Process the binding and id early, so we can use them below
 
@@ -252,6 +253,11 @@ public class ForgeWidgetBuilder
       HtmlColumn column = new HtmlColumn();
       column.getChildren().add(removeLink);
 
+      // CSS
+
+      char[] commas = new char[dataTable.getChildren().size()];
+      Arrays.fill(commas, ',');
+      dataTable.putAttribute("columnClasses", String.valueOf(commas) + "remove-column");
       dataTable.getChildren().add(column);
    }
 

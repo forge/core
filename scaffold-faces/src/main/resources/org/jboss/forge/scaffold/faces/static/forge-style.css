@@ -23,7 +23,7 @@
 body {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	background-repeat: repeat-x;
-	color: #5B5B5B;
+	color: #5b5b5b;
 	font-family: "Lucida Sans Unicode", "Lucida Grande", Geneva, Verdana,
 		Arial, sans-serif;
 	margin-top: 100px;
@@ -33,14 +33,14 @@ body {
  * Header/footer
  */
  
-.wrapper {
+#wrapper {
 	margin-left: auto;
 	margin-right: auto;
 	width: 900px;
 }
 
 h1 {
-	padding-top: 20px;
+	padding-top: 55px;
 	color: #7b1e1e;
 }
 
@@ -67,7 +67,7 @@ h1 {
 
 #navigation a {
 	display: block;
-	color: black;
+	color: #5b5b5b;
 	padding: 3px;
 	text-decoration: none;
 	border: 1px solid transparent;
@@ -77,7 +77,7 @@ h1 {
 	border: 1px solid #dddddd;
 	border-radius: 5px;
 	background-color: #eeeeee;
-	color: black;
+	color: #5b5b5b;
 	text-decoration: none;
 }
 
@@ -117,6 +117,10 @@ h1 {
 	vertical-align: top;
 }
 
+#content table .component input {
+	width: 100%;	
+}
+
 #content table .required {
 	width: 1%;
 	color: red;	
@@ -127,47 +131,60 @@ h1 {
 	font-weight: bold;
 }
 
-#content input {
-	width: 100%;	
-}
-
-#content .datatable {
+#content .data-table {
 	width: 100%;
 	border: 1px solid #cccccc;
 	margin-bottom: 7px;
 }
 
-#content .datatable thead th {
+#content .data-table thead th {
 	background-color: #dddddd;
 	border-bottom: 1px solid #cccccc;
 }
 
-#content .datatable thead th, #content .datatable tbody td {
+#content .data-table thead th, #content .data-table tbody td {
 	text-align: left;
 	padding-left: 4px;
 	padding-top: 2px;
 	padding-bottom: 2px;
 }
 
-#content .datatable tbody tr:nth-child(2n) {
+#content .data-table tbody tr:nth-child(2n) {
 	background-color: #eeeeee;
 }
 
-#content .datatable tbody tr:hover {
+#content .data-table tbody tr:hover {
 	background-color: #d2e8f2;
 }
 
-#content .datatable tbody tr a {
+#content .data-table tbody tr a {
 	display: block;
-	color: black;
+	color: #5b5b5b;
 	text-decoration: none;
+}
+
+#content .data-table .remove-column {
+	width: 1%;
+}
+
+#content .data-table .remove-column a:hover {
+	background-color: #eeeeee;
+}
+
+#content a {
+	color: #5b5b5b;
+}
+
+#content .buttons {
+	text-align: center;
+	margin-top: 10px;
 }
 
 #content .button {
 	margin-top: 5px;
 	margin-left: 1px;
 	margin-right: 1px;
-	color: black;
+	color: #5b5b5b;
 	padding-top: 3px;
 	padding-bottom: 3px;
 	padding-left: 10px;
@@ -183,10 +200,12 @@ h1 {
 }
 
 #content .paginator {
-	margin-left: 5px;
-	margin-right: 5px;
+	display: block;
+	text-align: right;
+	padding-bottom: 5px;
 }
 
-.right {
-	float: right;
+#content .paginator-content {
+	margin-left: 5px;
+	margin-right: 5px;
 }
