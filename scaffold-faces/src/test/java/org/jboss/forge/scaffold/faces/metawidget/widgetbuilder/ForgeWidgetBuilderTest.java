@@ -85,7 +85,7 @@ public class ForgeWidgetBuilderTest
 
       // (this looks a little weird because 'Bar' is an inner class)
 
-      String result = "<h:dataTable id=\"fooBar\" styleClass=\"datatable\" value=\"#{foo.bar}\" var=\"_item\">";
+      String result = "<h:dataTable id=\"fooBar\" styleClass=\"data-table\" value=\"#{foo.bar}\" var=\"_item\">";
       result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Name\"/></f:facet>";
       result += "<h:link outcome=\"/scaffold/forgeWidgetBuilderTest$Bar/view\" value=\"#{_item.name}\"><f:param name=\"id\" value=\"#{_item.id}\"/></h:link>";
       result += "</h:column>";
@@ -114,7 +114,7 @@ public class ForgeWidgetBuilderTest
 
       String result = "<h:panelGroup>";
       result += "<ui:param name=\"_collection\" value=\"#{foo.bar}\"/>";
-      result += "<h:dataTable id=\"fooBar\" styleClass=\"datatable\" value=\"#{forgeview:asList(_collection)}\" var=\"_item\">";
+      result += "<h:dataTable columnClasses=\",,remove-column\" id=\"fooBar\" styleClass=\"data-table\" value=\"#{forgeview:asList(_collection)}\" var=\"_item\">";
       result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Name\"/></f:facet>";
       result += "<h:link outcome=\"/scaffold/forgeWidgetBuilderTest$Bar/view\" value=\"#{_item.name}\"><f:param name=\"id\" value=\"#{_item.id}\"/></h:link>";
       result += "</h:column>";
@@ -170,7 +170,7 @@ public class ForgeWidgetBuilderTest
 
       String result = "<h:panelGroup>";
       result += "<ui:param name=\"_collection\" value=\"#{foo.bar}\"/>";
-      result += "<h:dataTable id=\"fooBar\" styleClass=\"datatable\" value=\"#{forgeview:asList(_collection)}\" var=\"_item\">";
+      result += "<h:dataTable columnClasses=\",,remove-column\" id=\"fooBar\" styleClass=\"data-table\" value=\"#{forgeview:asList(_collection)}\" var=\"_item\">";
       result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Field 1\"/></f:facet>";
       result += "<h:link outcome=\"/scaffold/forgeWidgetBuilderTest$FooOneToMany/view\" value=\"#{_item.field1}\"><f:param name=\"id\" value=\"#{_item.id}\"/></h:link>";
       result += "</h:column>";

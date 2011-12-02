@@ -19,7 +19,7 @@
 	</ui:define>
 
 	<ui:define name="subheader">
-		Viewing the @{entityName}
+		Viewing existing @{entityName}
 	</ui:define>
 
 	<ui:define name="footer"/>
@@ -28,11 +28,11 @@
 		<h:form id="form">
 			@{metawidget}
 
-			<br/>
-
-			<h:link styleClass="button" value="View all" outcome="list"/> 
-			<h:link styleClass="button" value="Edit" outcome="create" includeViewParams="true"/>
-			<h:link styleClass="button" value="Create new" outcome="create"/>
+			<div class="buttons">
+				<h:link styleClass="button" value="View all" outcome="list"/> 
+				<h:link styleClass="button" value="Edit" outcome="create" includeViewParams="true"/>
+				<h:link styleClass="button" value="Create new" outcome="create"/>
+			</div>
 		</h:form>
 	</ui:define>
 
