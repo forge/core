@@ -13,19 +13,19 @@
 		<f:event type="preRenderView" listener="#{@{beanName}.retrieve}"/>
 	</f:metadata>
 
-	<ui:param name="pageTitle" value="Create @{entity.getName()}"/>
+	<ui:param name="pageTitle" value="Create @{entityName}"/>
 
 	<ui:define name="header">
-		@{entity.getName()}
+		@{entityName}
 	</ui:define>
 
 	<ui:define name="subheader">
 		<c:choose>
 			<c:when test="#{!empty @{beanName}.id}">
-				Editing existing @{entity.getName()}
+				Editing existing @{entityName}
 			</c:when>
 			<c:otherwise>
-				Creating a new @{entity.getName()}
+				Creating a new @{entityName}
 			</c:otherwise>
 		</c:choose>
 	</ui:define>
@@ -42,16 +42,15 @@
 
 			<c:choose>
 				<c:when test="#{!empty @{beanName}.id}">
-					<h:commandLink value="Save" action="#{@{beanName}.update}"/> |
-					<h:link value="Cancel" outcome="view">
+					<h:commandLink styleClass="button" value="Save" action="#{@{beanName}.update}"/>
+					<h:link styleClass="button" value="Cancel" outcome="view">
 						<f:param name="id" value="#{@{beanName}.id}"/>
 					</h:link>
-					<h:commandLink value="Delete" action="#{@{beanName}.delete}"
-						styleClass="right"/>
+					<h:commandLink styleClass="button right" value="Delete" action="#{@{beanName}.delete}"/>
 				</c:when>
 				<c:otherwise>
-					<h:commandLink value="Create" action="#{@{beanName}.create}"/>
-					<h:link value="Cancel" outcome="list" styleClass="right"/>
+					<h:commandLink styleClass="button" value="Create" action="#{@{beanName}.create}"/>
+					<h:link styleClass="button right" value="Cancel" outcome="list"/>
 				</c:otherwise>
 			</c:choose>
 		</h:form>
