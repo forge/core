@@ -19,6 +19,7 @@
   ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
+
 body {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	background-repeat: repeat-x;
@@ -26,19 +27,16 @@ body {
 	font-family: "Lucida Sans Unicode", "Lucida Grande", Geneva, Verdana,
 		Arial, sans-serif;
 	margin-top: 100px;
-	text-align: center;
 }
 
+/*
+ * Header/footer
+ */
+ 
 .wrapper {
 	margin-left: auto;
 	margin-right: auto;
-	width: 50em;
-	text-align: left;
-}
-
-a {
-	text-decoration: none;
-	color: #5e8a9a;
+	width: 900px;
 }
 
 h1 {
@@ -46,42 +44,149 @@ h1 {
 	color: #7b1e1e;
 }
 
-li {
-	list-style: none;
-}
-
-ul {
-	margin-bottom: 5px;
-}
-
-a:hover {
-	text-decoration: underline;
-	color: #8ec6d9;
-}
-
-.content {
-	margin-left: 230px;
-}
-
-.dualbrand {
-	padding-top: 20px;
-}
-
-.forge {
+/*
+ * Navigation
+ */
+ 
+#navigation {
 	float: left;
 	margin-left: 10px;
 	margin-top: 30px;
 }
 
-.note {
-	font-size: 8pt;
-	color: #aaaaaa;
+#navigation ul {
+	border: 1px solid #cccccc;
+	padding: 1px;
+	border-radius: 5px;
+	text-align: center;
+}
+
+#navigation ul li {
+	list-style: none;
+}
+
+#navigation a {
+	display: block;
+	color: black;
+	padding: 3px;
+	text-decoration: none;
+	border: 1px solid transparent;
+}
+
+#navigation a:hover {
+	border: 1px solid #dddddd;
+	border-radius: 5px;
+	background-color: #eeeeee;
+	color: black;
+	text-decoration: none;
+}
+
+
+#footer {
+	width: 100%;
+	border-top: 1px solid #cccccc;
+	margin-top: 10px;
+	padding-top: 5px;
+	float: right;
+	text-align: right;
+	font-style: italic;
+}
+
+#footer a {
+	color: #5b5b5b;
+}
+
+/*
+ * Content
+ */
+ 
+#content {
+	margin-left: 230px;
+}
+
+#content table .label {
+	width: 25%;
+	text-align: left;
+	vertical-align: top;
+	white-space: nowrap;
+}
+
+#content table .component {
+	width: 75%;
+	text-align: left;
+	vertical-align: top;
+}
+
+#content table .required {
+	width: 1%;
+	color: red;	
+	padding-top: 7pt;
+	padding-left: 4pt;
+	font-size: 20pt;
+	line-height: 8pt;
+	font-weight: bold;
+}
+
+#content input {
+	width: 100%;	
+}
+
+#content .datatable {
+	width: 100%;
+	border: 1px solid #cccccc;
+	margin-bottom: 7px;
+}
+
+#content .datatable thead th {
+	background-color: #dddddd;
+	border-bottom: 1px solid #cccccc;
+}
+
+#content .datatable thead th, #content .datatable tbody td {
+	text-align: left;
+	padding-left: 4px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+
+#content .datatable tbody tr:nth-child(2n) {
+	background-color: #eeeeee;
+}
+
+#content .datatable tbody tr:hover {
+	background-color: #d2e8f2;
+}
+
+#content .datatable tbody tr a {
+	display: block;
+	color: black;
+	text-decoration: none;
+}
+
+#content .button {
+	margin-top: 5px;
+	margin-left: 1px;
+	margin-right: 1px;
+	color: black;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	padding-left: 10px;
+	padding-right: 10px;
+	text-decoration: none;
+	border: 1px solid #dddddd;
+	border-radius: 5px;
+	background-color: #eeeeee;
+}
+
+#content .button:hover {
+	background-color: #d2e8f2;
+}
+
+#content .paginator {
+	margin-left: 5px;
+	margin-right: 5px;
 }
 
 .right {
 	float: right;
-}
-
-.left {
-	float: left;
 }

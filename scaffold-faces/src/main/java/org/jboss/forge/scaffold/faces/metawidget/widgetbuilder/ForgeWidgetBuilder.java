@@ -142,6 +142,7 @@ public class ForgeWidgetBuilder
       // Create the normal table
 
       StaticXmlWidget dataTable = super.createDataTableComponent(elementName, attributes, metawidget);
+      dataTable.putAttribute("styleClass", "datatable");
 
       // Process the binding and id early, so we can use them below
 
@@ -157,13 +158,14 @@ public class ForgeWidgetBuilder
 
       if (!List.class.isAssignableFrom(clazz))
       {
-         String asListValueExpression = "forgeview:asList(" + StaticFacesUtils.unwrapExpression(tableValueExpression) + ")";
+         String asListValueExpression = "forgeview:asList(" + StaticFacesUtils.unwrapExpression(tableValueExpression)
+                  + ")";
          valueHolderTable.setValue(StaticFacesUtils.wrapExpression(asListValueExpression));
       }
 
-      // Add row creation/deletion for One-To-Many
+      // Add row creation/deletion for OneToMany and ManyToMany
 
-      if (!TRUE.equals(attributes.get(ONE_TO_MANY)) || metawidget.isReadOnly())
+      if (!TRUE.equals(attributes.get(N_TO_MANY)) || metawidget.isReadOnly())
       {
          return dataTable;
       }
@@ -213,6 +215,7 @@ public class ForgeWidgetBuilder
 
       HtmlCommandLink addLink = new HtmlCommandLink();
       addLink.setValue("Add");
+      addLink.putAttribute("styleClass", "button");
       String addExpression = COLLECTION_VAR + ".add(" + requestScopedValue + ")";
       addLink.putAttribute("action", StaticFacesUtils.wrapExpression(addExpression));
       panelGroup.getChildren().add(addLink);
@@ -235,18 +238,19 @@ public class ForgeWidgetBuilder
          return;
       }
 
-      if (!attributes.containsKey(ONE_TO_MANY) || metawidget.isReadOnly())
+      if (!attributes.containsKey(N_TO_MANY) || metawidget.isReadOnly())
       {
          return;
       }
 
-      HtmlCommandLink commandLink = new HtmlCommandLink();
-      commandLink.setValue("Remove");
+      HtmlCommandLink removeLink = new HtmlCommandLink();
+      removeLink.setValue("Remove");
+      removeLink.putAttribute("styleClass", "button");
       String removeExpression = COLLECTION_VAR + ".remove(" + dataTable.getAttribute("var") + ")";
-      commandLink.putAttribute("action", StaticFacesUtils.wrapExpression(removeExpression));
+      removeLink.putAttribute("action", StaticFacesUtils.wrapExpression(removeExpression));
 
       HtmlColumn column = new HtmlColumn();
-      column.getChildren().add(commandLink);
+      column.getChildren().add(removeLink);
 
       dataTable.getChildren().add(column);
    }
@@ -260,6 +264,13 @@ public class ForgeWidgetBuilder
             Map<String, String> columnAttributes,
             StaticXmlMetawidget metawidget)
    {
+      // Suppress columns that show Collection values (their toString is never very nice)
+
+      if (TRUE.equals(columnAttributes.get(N_TO_MANY)))
+      {
+         return;
+      }
+
       super.addColumnComponent(dataTable, tableAttributes, elementName, columnAttributes, metawidget);
 
       String componentType = WidgetBuilderUtils.getComponentType(tableAttributes);

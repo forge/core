@@ -11,6 +11,10 @@ public final class ViewUtils {
 
 	public static <T> List<T> asList(Collection<T> collection) {
 
+		if ( collection == null ) {
+			return null;
+		}
+
 		return new ArrayList<T>(collection);
 	}
 
