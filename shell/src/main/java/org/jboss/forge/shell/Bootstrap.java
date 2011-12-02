@@ -55,12 +55,14 @@ public class Bootstrap
    private static Thread currentShell = null;
    private static boolean restartRequested = false;
    private static File workingDir = new File("").getAbsoluteFile();
+   private static ClassLoader mainClassLoader;
 
    @Inject
    private BeanManager manager;
 
    public static void main(final String[] args)
    {
+      mainClassLoader = Thread.currentThread().getContextClassLoader();
       init();
    }
 
@@ -73,15 +75,31 @@ public class Bootstrap
             @Override
             public void run()
             {
+
                boolean restarting = restartRequested;
                restartRequested = false;
 
-               loadPlugins();
-               initLogging();
-               Weld weld = new Weld();
-               // WeldBootstrap bootstrap = new WeldBootstrap();
-               WeldContainer container = weld.initialize();
-               BeanManager manager = container.getBeanManager();
+               Weld weld = new ModularWeld();
+               BeanManager manager = null;
+               try {
+                  loadPlugins();
+                  initLogging();
+                  WeldContainer container = weld.initialize();
+                  manager = container.getBeanManager();
+               }
+               catch (Throwable e) {
+                  // Boot up with external plugins disabled.
+                  System.out
+                           .println("Plugin system disabled due to failure while loading one or more plugins; try removing offending plugins with \"forge remove-plugin <TAB>\".");
+                  e.printStackTrace();
+
+                  Thread.currentThread().setContextClassLoader(mainClassLoader);
+
+                  initLogging();
+                  WeldContainer container = weld.initialize();
+                  manager = container.getBeanManager();
+               }
+
                manager.fireEvent(new PreStartup());
                manager.fireEvent(new Startup(workingDir, restarting));
                manager.fireEvent(new PostStartup());
@@ -112,7 +130,7 @@ public class Bootstrap
 
    private static void initLogging()
    {
-      String[] loggerNames = new String[]{"", "main", Logger.GLOBAL_LOGGER_NAME};
+      String[] loggerNames = new String[] { "", "main", Logger.GLOBAL_LOGGER_NAME };
       for (String loggerName : loggerNames)
       {
          Logger globalLogger = Logger.getLogger(loggerName);
@@ -127,7 +145,8 @@ public class Bootstrap
 
    synchronized private static void loadPlugins()
    {
-      if (!pluginSystemEnabled) return;
+      if (!pluginSystemEnabled)
+         return;
 
       try
       {

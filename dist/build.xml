@@ -317,15 +317,15 @@
 			<maven-resource group="org.jboss.forge" artifact="forge-project-model-maven" />
 		</module-def>
 
-		<module-def name="org.jboss.forge.parser-java.api">
+		<module-def name="org.jboss.forge.parser.java.api">
 			<maven-resource group="org.jboss.forge" artifact="forge-parser-java-api" />
 		</module-def>
 
-		<module-def name="org.jboss.forge.parser-java.impl">
+		<module-def name="org.jboss.forge.parser.java.impl">
 			<maven-resource group="org.jboss.forge" artifact="forge-parser-java" />
 		</module-def>
 
-		<module-def name="org.jboss.forge.parser-xml">
+		<module-def name="org.jboss.forge.parser.xml">
 			<maven-resource group="org.jboss.forge" artifact="forge-parser-xml" />
 		</module-def>
 		
