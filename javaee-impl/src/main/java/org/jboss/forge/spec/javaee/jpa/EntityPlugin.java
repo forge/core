@@ -140,13 +140,20 @@ public class EntityPlugin implements Plugin
    private void createHashCodeAndEquals(final JavaClass javaClass)
    {
       javaClass.addMethod(
-               "public int hashCode() { final int prime = 31; int result = 1; result = prime * result + (int) (id ^ (id >>> 32)); return result; }")
+               "public boolean equals(Object that) { " +
+                        "if (this == that) { return true; } " +
+                        "if (that == null) { return false; } " +
+                        "if (getClass() != that.getClass()) { return false; } " +
+                        "if (id != null) { return id.equals((("
+                        + javaClass.getName() + ") that).id); } " +
+                        "return super.equals(that); " +
+                        "}")
                .addAnnotation(Override.class);
 
       javaClass.addMethod(
-               "public boolean equals(Object obj) { if (this == obj) return true; if (obj == null) return false; if (getClass() != obj.getClass()) return false;"
-                        + javaClass.getName() + " other = (" + javaClass.getName()
-                        + ") obj; if (id != other.id) return false; return true;")
+               "public int hashCode() { " +
+                        "if (id != null) { return id.hashCode(); } " +
+                        "return super.hashCode(); }")
                .addAnnotation(Override.class);
    }
 

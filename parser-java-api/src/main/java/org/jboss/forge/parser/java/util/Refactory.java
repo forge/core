@@ -68,6 +68,7 @@ public class Refactory
    public static void createToStringFromFields(final JavaClass entity, final List<Field<JavaClass>> fields)
    {
       Method<JavaClass> method = entity.addMethod().setName("toString").setReturnType(String.class).setPublic();
+
       List<String> list = new ArrayList<String>();
 
       String delimeter = "+ \", \" + ";
@@ -78,7 +79,8 @@ public class Refactory
             list.add(field.getName());
          }
       }
-      String body = "return this.getClass().getSimpleName() + \"[\" + " + Strings.join(list, delimeter) + " + \"]\";";
+
+      String body = "return \"\" + " + Strings.join(list, delimeter) + ";";
       method.setBody(body);
    }
 
