@@ -30,7 +30,7 @@ import org.jboss.forge.parser.Origin;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface AnnotationTarget<O extends JavaSource<?>, T> extends Internal, Origin<O>
+public interface AnnotationTarget<O extends JavaSource<O>, T> extends Internal, Origin<O>
 {
    /**
     * Add a new annotation instance to this {@link T}. (Note that an import statement must be added manually if

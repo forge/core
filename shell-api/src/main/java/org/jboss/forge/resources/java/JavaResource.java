@@ -109,11 +109,11 @@ public class JavaResource extends FileResource<JavaResource>
          {
             if (member instanceof Field)
             {
-               list.add(new JavaFieldResource(this, (Field<JavaSource<?>>) member));
+               list.add(new JavaFieldResource(this, (Field<? extends JavaSource<?>>) member));
             }
             else if (member instanceof Method)
             {
-               list.add(new JavaMethodResource(this, (Method<JavaSource<?>>) member));
+               list.add(new JavaMethodResource(this, (Method<? extends JavaSource<?>>) member));
             }
             else
             {

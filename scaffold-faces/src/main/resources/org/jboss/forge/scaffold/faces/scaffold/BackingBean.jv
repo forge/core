@@ -1,118 +1,194 @@
+
+import java.io.Serializable;
 import java.util.List;
-import java.util.ArrayList;
-   
-import javax.ejb.TransactionAttribute;
-import javax.enterprise.context.RequestScoped;
+
+import javax.ejb.Stateful;
+import javax.enterprise.context.Conversation;
+import javax.enterprise.context.ConversationScoped;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.convert.Converter;
+import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceContextType;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import @{entity.getQualifiedName()};
-import org.jboss.forge.scaffold.faces.navigation.MenuItem;
-import org.jboss.forge.scaffold.faces.persistence.PaginationHelper;
-import org.jboss.forge.scaffold.faces.persistence.PersistenceUtil;
 
+/**
+ * Backing bean for @{entity.getName()} entities.
+ * <p>
+ * This class provides CRUD functionality for all @{entity.getName()} entities.
+ * It focuses purely on Java EE 6 standards (e.g. <tt>&#64;ConversationScoped</tt>
+ * for state management, <tt>PersistenceContext</tt> for persistence,
+ * <tt>CriteriaBuilder</tt> for queries) rather than depending on a CRUD
+ * framework or a custom base class.
+ */
+ 
 @Named
-@RequestScoped
-@TransactionAttribute
-public class @{entity.getName()}Bean extends PersistenceUtil implements MenuItem
-{
-   private static final long serialVersionUID = 1L;
-   
-   private List<@{entity.getName()}> list = null;
-   private @{entity.getName()} @{ccEntity} = new @{entity.getName()}();
-   private PaginationHelper<@{entity.getName()}> pagination;		
-   
-   public Class<?> getItemType()
-   {
-      return @{entity.getName()}.class;
-   }
-   
-   public String getLiteralPath()
-   {
-      return null;
-   }
+@Stateful
+@ConversationScoped
+public class @{entity.getName()}Bean implements Serializable {
 
-   public String getLabel()
-   {
-      return null;
-   }
+	private static final long serialVersionUID = 1L;
 
-   public String create()
-   {
-      create(@{ccEntity});
-      return "view?faces-redirect=true&id=" + @{ccEntity}.getId();
-   }
+	/*
+	 * Support retrieving individual @{entity.getName()} entities
+	 */
 
-   public String delete()
-   {
-      deleteById(@{entity.getName()}.class,@{ccEntity}.getId());
-      return "list?faces-redirect=true";
-   }
+	private Long id;
 
-   public String save()
-   {
-      save(@{ccEntity});
-      return "view?faces-redirect=true&id=" + @{ccEntity}.getId();
-   }
-
-   public long getId()
-   {
-      if ( @{ccEntity}.getId() == null ) {
-         return 0;
-      }
-      
-      return @{ccEntity}.getId();
-   }
-
-   public void setId(long id)
-   {
-      if ( id != 0 ) {
-         @{ccEntity} = findById(@{entity.getName()}.class, id);
-      }
-   }
-   
-   public @{entity.getName()} get@{entity.getName()}()
-   {
-      return @{ccEntity};
-   }
-
-   public List<@{entity.getName()}> getList()
-   {
-      if(list == null)
-      {
-         list = getPagination().createPageDataModel();
-      }
-      return list;
-   }
-
-   public void setList(List<@{entity.getName()}> list)
-   {
-      this.list = list;
-   }
-  
-   public PaginationHelper<@{entity.getName()}> getPagination() 
-   {
-		if (pagination == null) 
-		{
-			pagination = new PaginationHelper<@{entity.getName()}>(10) 
-			{
-				@Override
-				public int getItemsCount() {
-					return count(@{entity.getName()}.class);
-				}
-
-				@Override
-				public List<@{entity.getName()}> createPageDataModel() 
-				{
-					return new ArrayList<@{entity.getName()}>(findAll(@{entity.getName()}.class,
-							 getPageFirstItem(), getPageSize() ));
-				}
-			};
-		}
-		return pagination;
+	public Long getId() {
+		return id;
 	}
 
-   public void setPagination(final PaginationHelper<@{entity.getName()}> helper)
-   {
-      pagination = helper;
-   }
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	private @{entity.getName()} @{ccEntity};
+
+	@Inject
+	private Conversation conversation;
+
+	@PersistenceContext(type = PersistenceContextType.EXTENDED)
+	private EntityManager entityManager;
+
+	public void retrieve() {
+
+		if ( FacesContext.getCurrentInstance().isPostback() ) {
+			return;
+		}
+
+		if (conversation.isTransient()) {
+			conversation.begin();
+		}
+
+		if (id == null) {
+			@{ccEntity} = new @{entity.getName()}();
+		} else {
+			@{ccEntity} = entityManager.find(@{entity.getName()}.class, getId());
+		}
+	}
+	
+	public @{entity.getName()} get@{entity.getName()}() {
+		return @{ccEntity};
+	}
+
+	/*
+	 * Support creating, saving and deleting @{entity.getName()} entities
+	 */
+
+	public String create() {
+		entityManager.persist(@{ccEntity});
+		conversation.end();
+		return "view?faces-redirect=true&id=" + @{ccEntity}.getId();
+	}
+
+	public String update() {
+		entityManager.merge(@{ccEntity});
+		conversation.end();
+		return "view?faces-redirect=true&id=" + @{ccEntity}.getId();
+	}
+
+	public String delete() {
+		entityManager.remove(entityManager.find(@{entity.getName()}.class, getId()));
+		conversation.end();
+		return "list?faces-redirect=true";
+	}
+
+	public String cancel() {
+		conversation.end();
+		return "list?faces-redirect=true";
+	}
+
+	/*
+	 * Support listing all @{entity.getName()} entities
+	 */
+
+	public List<@{entity.getName()}> getAll() {
+		return entityManager.createQuery(createAll@{entity.getName()}Query()).getResultList();
+	}
+
+	private CriteriaQuery<@{entity.getName()}> createAll@{entity.getName()}Query() {
+		
+		CriteriaQuery<@{entity.getName()}> criteria = entityManager.getCriteriaBuilder()
+				.createQuery(@{entity.getName()}.class);
+		return criteria.select(criteria.from(@{entity.getName()}.class));
+	}
+	
+	/*
+	 * Support listing @{entity.getName()} entities with pagination
+	 */
+
+	private int page;
+	private long count;
+	private List<@{entity.getName()}> pageItems;
+
+	public int getPage() {
+		return page;
+	}
+
+	public void setPage(int page) {
+		this.page = page;
+	}
+	
+	public int getPageSize() {
+		return 10;
+	}
+
+	public void paginate() {
+
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+
+		CriteriaQuery<Long> countCriteria = builder.createQuery(Long.class);
+		Root<@{entity.getName()}> root = countCriteria.from(@{entity.getName()}.class);
+		countCriteria = countCriteria.select(builder.count(root));
+		count = entityManager.createQuery(countCriteria).getSingleResult();
+
+		pageItems = entityManager.createQuery(createAll@{entity.getName()}Query())
+				.setFirstResult(page * getPageSize())
+				.setMaxResults(getPageSize()).getResultList();
+	}
+
+	public List<@{entity.getName()}> getPageItems() {
+		return pageItems;
+	}
+
+	public long getCount() {
+		return count;
+	}
+	
+	/**
+	 * Support POSTing back @{entity.getName()} entities from the UI
+	 * (eg. from inside an HtmlSelectOneMenu)
+	 */
+
+	public Converter getConverter() {
+		
+		return new Converter() {
+			
+			@Override
+			public Object getAsObject(FacesContext context, UIComponent component,
+					String value) {
+		
+				return entityManager.find(@{entity.getName()}.class, Long.valueOf(value));
+			}
+		
+			@Override
+			public String getAsString(FacesContext context, UIComponent component,
+					Object value) {
+		
+				if (value == null) {
+					return "";
+				}
+		
+				return String.valueOf(((@{entity.getName()}) value).getId());
+			}
+		};
+	}	
 }

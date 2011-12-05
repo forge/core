@@ -63,15 +63,15 @@
          </imports>
       </module>
 
-      <module name="org.jboss.forge.parser-java.api" />
-      <module name="org.jboss.forge.parser-java.impl" services="import">
+      <module name="org.jboss.forge.parser.java.api" />
+      <module name="org.jboss.forge.parser.java.impl" services="import">
          <imports>
             <include path="**" />
             <include path="META-INF" />
          </imports>
       </module>
 
-      <module name="org.jboss.forge.parser-xml" services="import">
+      <module name="org.jboss.forge.parser.xml" services="import">
          <imports>
             <include path="**" />
             <include path="META-INF" />
@@ -122,6 +122,8 @@
       </module>
       
       <module name="org.jboss.weld.core" services="import" />
+      <module name="org.jboss.weld.spi" services="import" />
+      <module name="org.jboss.weld.api" services="import" />
 
       <module name="org.mvel" />
       <module name="org.yaml" />

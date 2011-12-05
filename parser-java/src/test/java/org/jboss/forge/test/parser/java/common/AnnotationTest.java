@@ -37,7 +37,7 @@ import org.junit.Test;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public abstract class AnnotationTest<O extends JavaSource<?>, T>
+public abstract class AnnotationTest<O extends JavaSource<O>, T>
 {
    private AnnotationTarget<O, T> target;
 

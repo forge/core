@@ -7,7 +7,13 @@
    </resources>
 
    <dependencies>
-      <module name="org.jboss.forge.shell.api" />
+      <module name="org.jboss.forge.shell.api" services="import">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+      
       <module name="javax.api" />
    </dependencies>
    

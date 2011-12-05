@@ -26,6 +26,8 @@ import org.metawidget.inspector.impl.propertystyle.javabean.JavaBeanPropertyStyl
 import org.metawidget.util.simple.ObjectUtils;
 
 /**
+ * Configures a <tt>ForgePropertyStyle</tt>.
+ *
  * @author Richard Kennard
  */
 

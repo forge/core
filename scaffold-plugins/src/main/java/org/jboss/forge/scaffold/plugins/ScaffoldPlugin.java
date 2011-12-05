@@ -61,7 +61,7 @@ import org.jboss.forge.shell.util.ConstraintInspector;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 @Alias("scaffold")
 @Topic("UI Generation & Scaffolding")
@@ -102,7 +102,9 @@ public class ScaffoldPlugin implements Plugin
 
       // TODO give plugins a chance to react to generated resources, use event bus?
       if (!generatedResources.isEmpty())
+      {
          generatedEvent.fire(new ScaffoldGeneratedResources(provider, prepareResources(generatedResources)));
+      }
    }
 
    @Command("indexes")
@@ -119,7 +121,9 @@ public class ScaffoldPlugin implements Plugin
 
       // TODO give plugins a chance to react to generated resources, use event bus?
       if (!generatedResources.isEmpty())
+      {
          generatedEvent.fire(new ScaffoldGeneratedResources(provider, prepareResources(generatedResources)));
+      }
    }
 
    @Command("templates")
@@ -134,7 +138,9 @@ public class ScaffoldPlugin implements Plugin
 
       // TODO give plugins a chance to react to generated resources, use event bus?
       if (!generatedResources.isEmpty())
+      {
          generatedEvent.fire(new ScaffoldGeneratedResources(provider, prepareResources(generatedResources)));
+      }
    }
 
    @Command("from-entity")
@@ -169,7 +175,9 @@ public class ScaffoldPlugin implements Plugin
 
          // TODO give plugins a chance to react to generated resources, use event bus?
          if (!generatedResources.isEmpty())
+         {
             generatedEvent.fire(new ScaffoldGeneratedResources(provider, prepareResources(generatedResources)));
+         }
 
          ShellMessages.success(out, "Generated UI for [" + entity.getQualifiedName() + "]");
       }
@@ -262,6 +270,7 @@ public class ScaffoldPlugin implements Plugin
          if (r instanceof JavaResource)
          {
             JavaSource<?> entity = ((JavaResource) r).getJavaSource();
+
             if (entity instanceof JavaClass)
             {
                if (entity.hasAnnotation(Entity.class))

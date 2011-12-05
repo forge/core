@@ -36,7 +36,7 @@ import org.jboss.forge.parser.java.util.Types;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class AnnotationAccessor<O extends JavaSource<?>, T>
+public class AnnotationAccessor<O extends JavaSource<O>, T>
 {
 
    @SuppressWarnings("unchecked")
@@ -47,12 +47,14 @@ public class AnnotationAccessor<O extends JavaSource<?>, T>
       return annotation;
    }
 
-   public Annotation<O> addAnnotation(final AnnotationTarget<O, T> target, final BodyDeclaration body, final Class<?> clazz)
+   public Annotation<O> addAnnotation(final AnnotationTarget<O, T> target, final BodyDeclaration body,
+            final Class<?> clazz)
    {
       return addAnnotation(target, body, clazz.getName());
    }
 
-   public Annotation<O> addAnnotation(final AnnotationTarget<O, T> target, final BodyDeclaration body, final String className)
+   public Annotation<O> addAnnotation(final AnnotationTarget<O, T> target, final BodyDeclaration body,
+            final String className)
    {
       if (!target.getOrigin().hasImport(className) && Types.isQualified(className))
       {
@@ -79,7 +81,7 @@ public class AnnotationAccessor<O extends JavaSource<?>, T>
    }
 
    public <E extends AnnotationTarget<O, T>> E removeAnnotation(final E target, final BodyDeclaration body,
-                                                             final Annotation<O> annotation)
+            final Annotation<O> annotation)
    {
       List<?> modifiers = body.modifiers();
       for (Object object : modifiers)
@@ -94,7 +96,7 @@ public class AnnotationAccessor<O extends JavaSource<?>, T>
    }
 
    public <E extends AnnotationTarget<O, T>> boolean hasAnnotation(final E target, final BodyDeclaration body,
-                                                                final String type)
+            final String type)
    {
       List<?> modifiers = body.modifiers();
       for (Object object : modifiers)
@@ -113,7 +115,7 @@ public class AnnotationAccessor<O extends JavaSource<?>, T>
    }
 
    public Annotation<O> getAnnotation(final AnnotationTarget<O, T> target, final BodyDeclaration body,
-                                   final Class<? extends java.lang.annotation.Annotation> type)
+            final Class<? extends java.lang.annotation.Annotation> type)
    {
       Annotation<O> result = null;
       if (type != null)

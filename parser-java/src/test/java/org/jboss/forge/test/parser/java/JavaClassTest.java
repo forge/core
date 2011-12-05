@@ -74,8 +74,13 @@ public class JavaClassTest
 
       String output = javaClass.toString();
 
-      assertTrue(output.contains("Telephone\n{"));
-      assertTrue(output.contains(")\n   {"));
+      assertTrue(output.contains(
+    		  "Telephone" + System.getProperty("line.separator") +
+    		  "{"
+    		  ));
+      assertTrue(output.contains(
+    		  ")" + System.getProperty("line.separator") +
+    		  "   {"));
    }
 
    @Test
@@ -258,7 +263,7 @@ public class JavaClassTest
                .setPackagePrivate();
       List<Method<JavaClass>> methods = javaClass.getMethods();
       assertEquals(size + 1, methods.size());
-      assertEquals("java.net.URL", method.getReturnType());
+      assertEquals("URL", method.getReturnType());
       assertEquals("rewriteURL", method.getName());
 
       String body = method.getBody();

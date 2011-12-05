@@ -141,11 +141,12 @@ public class Execution
             {
                plugin = (Plugin) manager.getReference(bean, pluginType, context);
 
-               boolean success = false;
+               Status status = Status.FAILURE;
+               ClassLoader current = Thread.currentThread().getContextClassLoader();
                try
                {
+                  Thread.currentThread().setContextClassLoader(plugin.getClass().getClassLoader());
                   command.getMethod().invoke(plugin, paramStaging);
-                  success = true;
                }
                catch (Exception e)
                {
@@ -153,10 +154,8 @@ public class Execution
                }
                finally
                {
-                  if (success)
-                     manager.fireEvent(new CommandExecuted(Status.SUCCESS, command), new Annotation[] {});
-                  else
-                     manager.fireEvent(new CommandExecuted(Status.FAILURE, command), new Annotation[] {});
+                  Thread.currentThread().setContextClassLoader(current);
+                  manager.fireEvent(new CommandExecuted(status, command, parameterArray), new Annotation[] {});
                }
             }
          }

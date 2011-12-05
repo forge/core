@@ -275,6 +275,13 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
    {
       String original = type;
       String result = type;
+
+      if (Types.isArray(result))
+      {
+         original = Types.stripArray(result);
+         result = Types.stripArray(result);
+      }
+
       if (Types.isGeneric(result))
       {
          original = Types.stripGenerics(result);
@@ -291,7 +298,7 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
          if (result.equals(original))
          {
             for (Import imprt : getImports()) {
-               if (Types.areEquivalent(type, imprt.getQualifiedName()))
+               if (Types.areEquivalent(result, imprt.getQualifiedName()))
                {
                   result = imprt.getQualifiedName();
                   break;

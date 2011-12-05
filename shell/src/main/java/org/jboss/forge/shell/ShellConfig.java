@@ -172,6 +172,7 @@ public class ShellConfig
                "    echo \"  Windows? Really? Okay...\\n\"\n" +
                "}\n" +
                "\n" +
+               "set " + ShellImpl.PROP_HISTORY + " " + true + ";\n" +
                "set " + ShellImpl.PROP_PROMPT + " \"" + ShellImpl.DEFAULT_PROMPT + "\";\n" +
                "set " + ShellImpl.PROP_PROMPT_NO_PROJ + " \"" + ShellImpl.DEFAULT_PROMPT_NO_PROJ + "\";\n" +
                "set " + ShellImpl.PROP_DEFAULT_PLUGIN_REPO + " \"" + ShellImpl.DEFAULT_PLUGIN_REPO + "\";\n" +

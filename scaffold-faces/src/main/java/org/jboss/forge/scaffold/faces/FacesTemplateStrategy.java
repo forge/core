@@ -38,7 +38,7 @@ import org.jboss.forge.shell.util.Streams;
  */
 public class FacesTemplateStrategy implements TemplateStrategy
 {
-   private static final String SCAFFOLD_FORGE_TEMPLATE = "/resources/scaffold/forge-template.xhtml";
+   private static final String SCAFFOLD_FORGE_TEMPLATE = "/resources/scaffold/page.xhtml";
 
    private final Project project;
 
@@ -71,7 +71,7 @@ public class FacesTemplateStrategy implements TemplateStrategy
             return relativePath;
          }
       }
-      throw new IllegalArgumentException("Not a valid template resource for this Metawidget Scaffold.");
+      throw new IllegalArgumentException("Not a valid template resource for this scaffold.");
    }
 
    @Override

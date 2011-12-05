@@ -40,7 +40,6 @@ import org.jboss.forge.parser.spi.JavaParserProvider;
  */
 public final class JavaParser
 {
-
    public static ServiceLoader<JavaParserProvider> loader = ServiceLoader.load(JavaParserProvider.class);
    private static List<JavaParserProvider> parsers;
 

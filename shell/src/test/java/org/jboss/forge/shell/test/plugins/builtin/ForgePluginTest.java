@@ -37,6 +37,7 @@ import org.junit.runner.RunWith;
 public class ForgePluginTest extends AbstractShellTest
 {
    @Test
+   @Ignore
    public void testFindPlugin() throws Exception
    {
       queueInputLines("y");

@@ -21,11 +21,9 @@
  */
 package org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle;
 
-import java.awt.Color;
 import java.io.FileNotFoundException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -35,9 +33,9 @@ import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.parser.java.Method;
 import org.jboss.forge.parser.java.MethodHolder;
 import org.jboss.forge.parser.java.Parameter;
+import org.jboss.forge.parser.java.Type;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
-import org.jboss.forge.spec.javaee.PersistenceFacet;
 import org.metawidget.inspector.iface.InspectorException;
 import org.metawidget.inspector.impl.propertystyle.BaseProperty;
 import org.metawidget.inspector.impl.propertystyle.BasePropertyStyle;
@@ -48,6 +46,8 @@ import org.metawidget.util.CollectionUtils;
 import org.metawidget.util.simple.StringUtils;
 
 /**
+ * Inspects Forge-specific <tt>JavaSource</tt> objects for properties.
+ *
  * @author Richard Kennard
  */
 
@@ -77,7 +77,7 @@ public class ForgePropertyStyle
 
    /**
     * Traverses the given Class heirarchy using properties of the given names.
-    * 
+    *
     * @return the declared type (not actual type). May be null
     */
 
@@ -163,6 +163,7 @@ public class ForgePropertyStyle
 
    protected void lookupGetters(final Map<String, Property> properties, final MethodHolder<?> clazz)
    {
+      // Hack until https://issues.jboss.org/browse/FORGE-368
 
       for (Method<?> method : clazz.getMethods())
       {
@@ -180,7 +181,9 @@ public class ForgePropertyStyle
             continue;
          }
 
-         if (method.getReturnType() == null)
+         String returnType = method.getQualifiedReturnType();
+
+         if (returnType == null)
          {
             continue;
          }
@@ -198,8 +201,6 @@ public class ForgePropertyStyle
          //
          // (explicitly set to null in case we encounted/encounter an imbalanced field/setter)
 
-         String type = getQualifiedType(method.getReturnType());
-
          // TODO:if (isExcluded(ClassUtils.getOriginalDeclaringClass(method), propertyName, type))
          {
             // properties.put(propertyName, null);
@@ -208,7 +209,7 @@ public class ForgePropertyStyle
 
          properties
                   .put(propertyName,
-                           new JavaBeanProperty(propertyName, type, method, null, getPrivateField(
+                           new ForgeProperty(propertyName, returnType, method, null, getPrivateField(
                                     (FieldHolder<?>) clazz,
                                     propertyName)));
       }
@@ -216,7 +217,7 @@ public class ForgePropertyStyle
 
    /**
     * Returns whether the given method is a 'getter' method.
-    * 
+    *
     * @param method a parameterless method that returns a non-void
     * @return the property name
     */
@@ -232,7 +233,8 @@ public class ForgePropertyStyle
          propertyName = methodName.substring(ClassUtils.JAVABEAN_GET_PREFIX.length());
 
       }
-      else if (methodName.startsWith(ClassUtils.JAVABEAN_IS_PREFIX) && boolean.class.equals(method.getReturnType()))
+      else if (methodName.startsWith(ClassUtils.JAVABEAN_IS_PREFIX)
+               && boolean.class.equals(method.getQualifiedReturnType()))
       {
 
          // As per section 8.3.2 (Boolean properties) of The JavaBeans API specification, 'is'
@@ -306,16 +308,16 @@ public class ForgePropertyStyle
 
          Property existingProperty = properties.get(propertyName);
 
-         if (existingProperty instanceof JavaBeanProperty)
+         if (existingProperty instanceof ForgeProperty)
          {
-            JavaBeanProperty existingJavaBeanProperty = (JavaBeanProperty) existingProperty;
+            ForgeProperty existingForgeProperty = (ForgeProperty) existingProperty;
 
             // Beware covariant return types: always prefer the getter's type
 
             properties.put(
                      propertyName,
-                     new JavaBeanProperty(propertyName, existingJavaBeanProperty.getType(),
-                              existingJavaBeanProperty.getReadMethod(), method, getPrivateField((FieldHolder<?>) clazz,
+                     new ForgeProperty(propertyName, existingForgeProperty.getType(),
+                              existingForgeProperty.getReadMethod(), method, getPrivateField((FieldHolder<?>) clazz,
                                        propertyName)));
             continue;
          }
@@ -329,7 +331,7 @@ public class ForgePropertyStyle
 
          properties
                   .put(propertyName,
-                           new JavaBeanProperty(propertyName, type, null, method, getPrivateField(
+                           new ForgeProperty(propertyName, type, null, method, getPrivateField(
                                     (FieldHolder<?>) clazz,
                                     propertyName)));
       }
@@ -337,7 +339,7 @@ public class ForgePropertyStyle
 
    /**
     * Returns whether the given method is a 'setter' method.
-    * 
+    *
     * @param method a single-parametered method. May return non-void (ie. for Fluent interfaces)
     * @return the property name
     */
@@ -371,7 +373,7 @@ public class ForgePropertyStyle
     * field, with no corresponding <code>mAge</code> field per se.
     * <p>
     * Clients may override this method to change how the public-method-to-private-field mapping operates.
-    * 
+    *
     * @return the private Field for this propertyName, or null if no such field (should not throw NoSuchFieldException)
     */
 
@@ -411,56 +413,13 @@ public class ForgePropertyStyle
       }
    }
 
-   /**
-    * Hack until https://issues.jboss.org/browse/FORGE-371.
-    */
-
-   private String getQualifiedType(final String type)
-   {
-      if ("int".equals(type))
-      {
-         return "int";
-      }
-
-      if ("Long".equals(type))
-      {
-         return Long.class.getName();
-      }
-
-      if ("String".equals(type))
-      {
-         return String.class.getName();
-      }
-
-      if ("Date".equals(type))
-      {
-         return Date.class.getName();
-      }
-
-      if ("Color".equals(type))
-      {
-         return Color.class.getName();
-      }
-
-      return this.project.getFacet(PersistenceFacet.class).getEntityPackage() + "." + type;
-   }
-
    //
    // Inner classes
    //
 
-   /**
-    * JavaBean-convention-based property.
-    * <p>
-    * We found <code>JavaBeanPropertyStyle</code> to be generally useful outside of any <code>Inspector</code>. When
-    * using it that way, it is also generally useful to have access to <code>JavaBeanProperty</code>. So this class is
-    * public.
-    */
-
-   public static class JavaBeanProperty
+   public static class ForgeProperty
             extends BaseProperty
    {
-
       //
       // Private methods
       //
@@ -475,7 +434,7 @@ public class ForgePropertyStyle
       // Constructor
       //
 
-      public JavaBeanProperty(final String name, final String type, final Method<?> readMethod,
+      public ForgeProperty(final String name, final String type, final Method<?> readMethod,
                final Method<?> writeMethod,
                final Field<?> privateField)
       {
@@ -489,7 +448,7 @@ public class ForgePropertyStyle
 
          if ((this.readMethod == null) && (this.writeMethod == null))
          {
-            throw InspectorException.newException("JavaBeanProperty '" + name + "' has no getter and no setter");
+            throw InspectorException.newException("Property '" + name + "' has no getter and no setter");
          }
 
          this.privateField = privateField;
@@ -502,7 +461,6 @@ public class ForgePropertyStyle
       @Override
       public boolean isReadable()
       {
-
          return (this.readMethod != null);
       }
 
@@ -515,7 +473,6 @@ public class ForgePropertyStyle
       @Override
       public boolean isWritable()
       {
-
          return (this.writeMethod != null);
       }
 
@@ -527,7 +484,6 @@ public class ForgePropertyStyle
 
          if (annotation != null)
          {
-
             T annotationProxy = AnnotationProxy.newInstance(annotation);
             return annotationProxy;
          }
@@ -538,18 +494,34 @@ public class ForgePropertyStyle
       @Override
       public String getGenericType()
       {
-         String type;
-
          if (this.readMethod != null)
          {
-            type = null; // TODO:Java5ClassUtils.getOriginalGenericReturnType(mReadMethod);
-         }
-         else
-         {
-            type = null; // TODO:Java5ClassUtils.getOriginalGenericParameterTypes(mWriteMethod)[0];
+            // TODO: Lincoln to unravel generics?
+            // TODO: why are there no generics on the generated Set?
+
+            @SuppressWarnings({ "unchecked", "rawtypes" })
+            List<Type<?>> typeArguments = (List) this.readMethod.getReturnTypeInspector().getTypeArguments();
+
+            if (!typeArguments.isEmpty())
+            {
+               return typeArguments.get(0).getQualifiedName();
+            }
          }
 
-         return type; // TODO: Java5ClassUtils.getGenericTypeAsString(type);
+         // Note: this needs https://issues.jboss.org/browse/FORGE-387
+
+         if (this.privateField != null)
+         {
+            @SuppressWarnings({ "unchecked", "rawtypes" })
+            List<Type<?>> typeArguments = (List) this.privateField.getTypeInspector().getTypeArguments();
+
+            if (!typeArguments.isEmpty())
+            {
+               return typeArguments.get(0).getQualifiedName();
+            }
+         }
+
+         return null;
       }
 
       public Method<?> getReadMethod()
@@ -590,9 +562,7 @@ public class ForgePropertyStyle
       {
          try
          {
-            // Hack until https://issues.jboss.org/browse/FORGE-370
-
-            Class<T> annotationClass = (Class<T>) Class.forName("javax.persistence." + annotationSource.getName());
+            Class<T> annotationClass = (Class<T>) Class.forName(annotationSource.getQualifiedName());
 
             // TODO: test this not using annotationSource.getClass().getClassLoader() (will require integration test)
 

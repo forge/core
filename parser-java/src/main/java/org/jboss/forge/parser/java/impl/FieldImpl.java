@@ -177,7 +177,7 @@ public class FieldImpl<O extends JavaSource<O>> implements Field<O>
    }
 
    @Override
-   public Field<O> setFinal(boolean finl)
+   public Field<O> setFinal(final boolean finl)
    {
       if (finl)
          modifiers.addModifier(field, ModifierKeyword.FINAL_KEYWORD);
@@ -193,7 +193,7 @@ public class FieldImpl<O extends JavaSource<O>> implements Field<O>
    }
 
    @Override
-   public Field<O> setStatic(boolean statc)
+   public Field<O> setStatic(final boolean statc)
    {
       if (statc)
          modifiers.addModifier(field, ModifierKeyword.STATIC_KEYWORD);
@@ -307,20 +307,33 @@ public class FieldImpl<O extends JavaSource<O>> implements Field<O>
    @Override
    public String getType()
    {
-      Object type = field.getStructuralProperty(FieldDeclaration.TYPE_PROPERTY);
-      return type.toString();
+      return Types.toSimpleName(getQualifiedType());
    }
 
    @Override
-   public boolean isType(Class<?> type)
+   public String getQualifiedType()
    {
-      if (Strings.areEqual(type.getName(), getType()))
+      Object type = field.getStructuralProperty(FieldDeclaration.TYPE_PROPERTY);
+      return parent.resolveType(type.toString());
+   }
+
+   @Override
+   public org.jboss.forge.parser.java.Type<O> getTypeInspector()
+   {
+      return new TypeImpl<O>(parent, field.getStructuralProperty(FieldDeclaration.TYPE_PROPERTY));
+   }
+
+   @Override
+   public boolean isType(final Class<?> type)
+   {
+      if (Strings.areEqual(type.getName(), getQualifiedType()))
       {
          return true;
       }
 
       String simpleName = type.getSimpleName();
-      if (Strings.areEqual(simpleName, getType()) && (getOrigin().hasImport(type) || !getOrigin().requiresImport(type)))
+      if (Strings.areEqual(simpleName, getQualifiedType())
+               && (getOrigin().hasImport(type) || !getOrigin().requiresImport(type)))
       {
          return true;
       }
@@ -328,15 +341,15 @@ public class FieldImpl<O extends JavaSource<O>> implements Field<O>
    }
 
    @Override
-   public boolean isType(String name)
+   public boolean isType(final String name)
    {
-      if (Strings.areEqual(name, getType()))
+      if (Strings.areEqual(name, getQualifiedType()))
       {
          return true;
       }
 
       if ((!Types.isQualified(name) || getOrigin().hasImport(name) || !getOrigin().requiresImport(name))
-               && Types.areEquivalent(name, getType()))
+               && Types.areEquivalent(name, getQualifiedType()))
       {
          return true;
       }
@@ -473,7 +486,7 @@ public class FieldImpl<O extends JavaSource<O>> implements Field<O>
    {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((field == null) ? 0 : field.hashCode());
+      result = (prime * result) + ((field == null) ? 0 : field.hashCode());
       return result;
    }
 
