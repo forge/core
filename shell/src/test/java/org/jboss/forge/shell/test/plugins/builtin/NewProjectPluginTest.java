@@ -30,6 +30,7 @@ import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.project.facets.MetadataFacet;
 import org.jboss.forge.project.packaging.PackagingType;
 import org.jboss.forge.resources.DirectoryResource;
+import org.jboss.forge.resources.Resource;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.test.AbstractShellTest;
 import org.junit.Assert;
@@ -170,6 +171,20 @@ public class NewProjectPluginTest extends AbstractShellTest
    }
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+   
+   @Test
+   public void testCreateTopLevelPackage() throws Exception 
+   {
+	   initializeJavaProject();
+	   DirectoryResource root = getProject().getProjectRoot();
+	   Resource<?> srcMainJavaDirectory = root.getChild("/src/main/java");
+	   assertNotNull(srcMainJavaDirectory.reify(DirectoryResource.class));
+	   Resource<?> testDirectory = srcMainJavaDirectory.getChild("com/test"); 
+	   assertNotNull(testDirectory.reify(DirectoryResource.class));
+   }
+>>>>>>> a5c912a... Create directories for the base package structure
 
 =======
 >>>>>>> 5a80ce9df7a7d619556a24179ee943bc97d2ecdd
