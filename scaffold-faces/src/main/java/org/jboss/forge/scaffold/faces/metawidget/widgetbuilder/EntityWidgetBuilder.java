@@ -64,7 +64,7 @@ import org.w3c.dom.NodeList;
  */
 
 @Veto
-public class ForgeWidgetBuilder
+public class EntityWidgetBuilder
          extends HtmlWidgetBuilder
 {
    //

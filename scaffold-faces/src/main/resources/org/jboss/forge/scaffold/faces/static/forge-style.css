@@ -22,6 +22,7 @@
 
 body {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
+	background-image: url( 'background.gif' );
 	background-repeat: repeat-x;
 	color: #5b5b5b;
 	font-family: "Lucida Sans Unicode", "Lucida Grande", Geneva, Verdana,
@@ -90,6 +91,7 @@ h1 {
 	float: right;
 	text-align: right;
 	font-style: italic;
+	font-size: 10pt;
 }
 
 #footer a {
@@ -102,6 +104,20 @@ h1 {
  
 #content {
 	margin-left: 230px;
+}
+
+#content #search {
+	
+	background-image: url('search.png');
+    background-repeat: no-repeat;
+    padding-bottom: 20px;
+    padding-left: 70px;
+}
+
+#content #search .buttons {
+	
+	text-align: left;
+	padding-left: 25%;
 }
 
 #content table .label {
