@@ -77,9 +77,10 @@ public class ForgeInspector
 
       OneToOne oneToOne = property.getAnnotation(OneToOne.class);
 
-      if (oneToOne != null && oneToOne.mappedBy() != null)
+      if (oneToOne != null && !"".equals( oneToOne.mappedBy() ))
       {
          // Hide inverse relationships to stop the UI recursing
+         // TODO: only do this for nested relationships?
 
          attributes.put(HIDDEN, TRUE);
       }

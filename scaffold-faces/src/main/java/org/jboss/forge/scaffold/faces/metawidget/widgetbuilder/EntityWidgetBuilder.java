@@ -64,7 +64,7 @@ import org.w3c.dom.NodeList;
  */
 
 @Veto
-public class ForgeWidgetBuilder
+public class EntityWidgetBuilder
          extends HtmlWidgetBuilder
 {
    //
@@ -203,6 +203,7 @@ public class ForgeWidgetBuilder
       // Select menu at bottom
 
       HtmlSelectOneMenu select = new HtmlSelectOneMenu();
+      select.putAttribute("styleClass", "select-add");
       String requestScopedValue = "requestScope['" + dataTable.getAttribute("id") + "Add']";
       select.setValue(StaticFacesUtils.wrapExpression(requestScopedValue));
       String simpleComponentType = ClassUtils.getSimpleName(componentType);

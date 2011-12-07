@@ -11,27 +11,33 @@
 		<f:event type="preRenderView" listener="#{@{beanName}.paginate}"/>
 	</f:metadata>
 
-	<ui:param name="pageTitle" value="List all @{entityName} entities"/>
+	<ui:param name="pageTitle" value="Search @{entityName} entities"/>
 
 	<ui:define name="header">
 		@{entityName}
 	</ui:define>
 
 	<ui:define name="subheader">
-		Listing all @{entityName} entities
+		Search @{entityName} entities
 	</ui:define>
 
 	<ui:define name="footer"/>
 
 	<ui:define name="main">
-		@{metawidget}
+		<h:form id="search">
+			<h:messages globalOnly="true"/>
+
+			@{searchMetawidget}
+			
+			<div class="buttons">
+				<h:commandLink styleClass="button" value="Search" action="#{@{beanName}.search}"/>
+				<h:link styleClass="button" value="Create new" outcome="create"/>
+			</div>
+		</h:form>
+		@{beanMetawidget}
 		<ui:include src="/resources/scaffold/paginator.xhtml">
 			<ui:param name="paginatorBean" value="#{@{beanName}}"/>
 		</ui:include>
-		
-		<div class="buttons">
-			<h:link styleClass="button" value="Create new" outcome="create"/>
-		</div>
 	</ui:define>
 
 </ui:composition>
