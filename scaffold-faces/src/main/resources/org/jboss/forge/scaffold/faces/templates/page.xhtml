@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:ui="http://java.sun.com/jsf/facelets">
 
@@ -11,13 +10,12 @@
 		<h:outputStylesheet name="forge-style.css" />
 	</h:head>
 	
-	<h:body style="background-image: url('#{resource['background.gif']}')">
-	
+	<h:body>	
 		<div id="wrapper">
 	
 			<div id="navigation">
 				<h:link outcome="/index.xhtml">
-					<img src="#{resource['forge-logo.png']}" alt="Forge... get hammered." width="195" height="131" border="0"/>
+					<img src="#{resource['forge-logo.png']}" alt="Forge... get hammered" border="0"/>
 				</h:link>
 				@{navigation}				
 			</div>

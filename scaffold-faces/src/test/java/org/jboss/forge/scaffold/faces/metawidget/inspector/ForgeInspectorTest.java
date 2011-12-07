@@ -73,9 +73,11 @@ public class ForgeInspectorTest
       assertEquals(TRUE, property.getAttribute(N_TO_MANY));
       assertEquals(2, property.getAttributes().getLength());
 
+      // oneToOne should not appear
+
       property = XmlUtils.getNextSiblingElement(property);
       assertEquals(PROPERTY, property.getNodeName());
-      assertEquals("oneToOne", property.getAttribute(NAME));
+      assertEquals("oneToOneMappedBy", property.getAttribute(NAME));
       assertEquals(TRUE, property.getAttribute(HIDDEN));
       assertEquals(2, property.getAttributes().getLength());
 
@@ -89,7 +91,10 @@ public class ForgeInspectorTest
    static class Foo
    {
       @OneToOne(mappedBy = "foo")
-      public Set<Bar> oneToOne;
+      public Bar oneToOneMappedBy;
+
+      @OneToOne
+      public Bar oneToOne;
 
       @OneToMany
       public Set<Bar> oneToMany;
