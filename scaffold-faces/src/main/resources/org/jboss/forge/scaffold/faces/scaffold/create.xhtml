@@ -22,10 +22,10 @@
 	<ui:define name="subheader">
 		<c:choose>
 			<c:when test="#{!empty @{beanName}.id}">
-				Editing existing @{entityName}
+				Edit existing @{entityName}
 			</c:when>
 			<c:otherwise>
-				Creating a new @{entityName}
+				Create a new @{entityName}
 			</c:otherwise>
 		</c:choose>
 	</ui:define>
@@ -33,7 +33,7 @@
 	<ui:define name="footer"/>
 
 	<ui:define name="main">
-		<h:form id="form">
+		<h:form id="create">
 			<h:messages globalOnly="true"/>
 
 			@{metawidget}
@@ -49,7 +49,7 @@
 					</c:when>
 					<c:otherwise>
 						<h:commandLink styleClass="button" value="Create" action="#{@{beanName}.create}"/>
-						<h:link styleClass="button" value="Cancel" outcome="list"/>
+						<h:link styleClass="button" value="Cancel" outcome="search"/>
 					</c:otherwise>
 				</c:choose>
 			</div>

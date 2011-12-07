@@ -22,6 +22,7 @@
 
 body {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
+	background-image: url( 'background.gif' );
 	background-repeat: repeat-x;
 	color: #5b5b5b;
 	font-family: "Lucida Sans Unicode", "Lucida Grande", Geneva, Verdana,
@@ -90,6 +91,7 @@ h1 {
 	float: right;
 	text-align: right;
 	font-style: italic;
+	font-size: 10pt;
 }
 
 #footer a {
@@ -102,6 +104,20 @@ h1 {
  
 #content {
 	margin-left: 230px;
+}
+
+#content #search {
+	
+	background-image: url('search.png');
+    background-repeat: no-repeat;
+    padding-bottom: 20px;
+    padding-left: 70px;
+}
+
+#content #search .buttons {
+	
+	text-align: left;
+	padding-left: 25%;
 }
 
 #content table .label {
@@ -117,8 +133,12 @@ h1 {
 	vertical-align: top;
 }
 
-#content table .component input {
+#content table .component input, #content table .component select {
 	width: 100%;	
+}
+
+#content table .component .select-add {
+	width: auto;
 }
 
 #content table .required {
@@ -184,13 +204,17 @@ h1 {
 	margin-top: 5px;
 	margin-left: 1px;
 	margin-right: 1px;
+	margin-bottom: 5px;
 	color: #5b5b5b;
 	padding-top: 3px;
 	padding-bottom: 3px;
 	padding-left: 10px;
 	padding-right: 10px;
 	text-decoration: none;
-	border: 1px solid #dddddd;
+	border-top: 1px solid #dddddd;
+	border-left: 1px solid #dddddd;
+	border-right: 1px solid #bbbbbb;
+	border-bottom: 1px solid #bbbbbb;
 	border-radius: 5px;
 	background-color: #eeeeee;
 }
