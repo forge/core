@@ -495,9 +495,8 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       servlet.getConfigFile().setContents(XMLParser.toXMLInputStream(webXML));
 
       WebAppDescriptor config = servlet.getConfig();
-      // TODO: needs to be JSF after all?
-      config.errorPage(404, "/error.xhtml");
-      config.errorPage(500, "/error.xhtml");
+      config.errorPage(404, "/faces/error.xhtml");
+      config.errorPage(500, "/faces/error.xhtml");
       // TODO: use getAccessStrategy().getWebPaths(web.getWebResource("500.xhtml")).get(0));
 
       servlet.saveConfig(config);

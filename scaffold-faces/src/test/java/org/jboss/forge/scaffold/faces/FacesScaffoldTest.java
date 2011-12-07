@@ -60,7 +60,7 @@ public class FacesScaffoldTest extends AbstractShellTest
 
       Node root = XMLParser.parse(servlet.getConfigFile().getResourceInputStream());
       List<Node> errorPages = root.get("error-page");
-      Assert.assertEquals("/error.xhtml", errorPages.get(0).getSingle("location").getText());
+      Assert.assertEquals("/faces/error.xhtml", errorPages.get(0).getSingle("location").getText());
 
       WebResourceFacet web = project.getFacet(WebResourceFacet.class);
       FileResource<?> error = web.getWebResource("error.xhtml");
@@ -710,7 +710,7 @@ public class FacesScaffoldTest extends AbstractShellTest
       metawidget.append("\t\t\t\t\t\t</h:column>\r\n");
       metawidget.append("\t\t\t\t\t</h:dataTable>\r\n");
       metawidget
-               .append("\t\t\t\t\t<h:selectOneMenu converter=\"#{groceryBean.converter}\" value=\"#{requestScope['customerBeanCustomerGroceriesAdd']}\">\r\n");
+               .append("\t\t\t\t\t<h:selectOneMenu converter=\"#{groceryBean.converter}\" styleClass=\"select-add\" value=\"#{requestScope['customerBeanCustomerGroceriesAdd']}\">\r\n");
       metawidget.append("\t\t\t\t\t\t<f:selectItem/>\r\n");
       metawidget.append("\t\t\t\t\t\t<f:selectItems value=\"#{groceryBean.all}\"/>\r\n");
       metawidget.append("\t\t\t\t\t</h:selectOneMenu>\r\n");
@@ -822,7 +822,7 @@ public class FacesScaffoldTest extends AbstractShellTest
       }
    }
 
-   public Project setupScaffoldProject() throws Exception
+   private Project setupScaffoldProject() throws Exception
    {
       Project project = initializeJavaProject();
       queueInputLines("HIBERNATE", "JBOSS_AS7", "");

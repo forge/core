@@ -102,6 +102,7 @@ public class QueryByExampleWidgetBuilder
 
          StaticWidget toReturn = new StaticStub();
          // TODO: just use simpleName, and add to imports
+         // Need to use .getId() != null until https://issues.jboss.org/browse/FORGE-401
          toReturn.getChildren().add(
                   new JavaStatement(type + " " + name + " = this.search.get" + StringUtils.capitalize(name) + "()"));
          JavaStatement ifNotEmpty = new JavaStatement("if (" + name + " != null && " + name + ".getId() != null)");

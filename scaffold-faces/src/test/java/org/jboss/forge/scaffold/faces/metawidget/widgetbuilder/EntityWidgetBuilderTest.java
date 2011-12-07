@@ -123,7 +123,7 @@ public class EntityWidgetBuilderTest
       result += "</h:column>";
       result += "<h:column><h:commandLink action=\"#{_collection.remove(_item)}\" styleClass=\"button\" value=\"Remove\"/></h:column>";
       result += "</h:dataTable>";
-      result += "<h:selectOneMenu converter=\"#{entityWidgetBuilderTest$BarBean.converter}\" value=\"#{requestScope['fooBarAdd']}\"><f:selectItem/><f:selectItems value=\"#{entityWidgetBuilderTest$BarBean.all}\"/></h:selectOneMenu>";
+      result += "<h:selectOneMenu converter=\"#{entityWidgetBuilderTest$BarBean.converter}\" styleClass=\"select-add\" value=\"#{requestScope['fooBarAdd']}\"><f:selectItem/><f:selectItems value=\"#{entityWidgetBuilderTest$BarBean.all}\"/></h:selectOneMenu>";
       result += "<h:commandLink action=\"#{_collection.add(requestScope['fooBarAdd'])}\" styleClass=\"button\" value=\"Add\"/>";
       result += "</h:panelGroup>";
 
@@ -179,7 +179,7 @@ public class EntityWidgetBuilderTest
       result += "</h:column>";
       result += "<h:column><h:commandLink action=\"#{_collection.remove(_item)}\" styleClass=\"button\" value=\"Remove\"/></h:column>";
       result += "</h:dataTable>";
-      result += "<h:selectOneMenu converter=\"#{entityWidgetBuilderTest$FooOneToManyBean.converter}\" value=\"#{requestScope['fooBarAdd']}\"><f:selectItem/><f:selectItems value=\"#{entityWidgetBuilderTest$FooOneToManyBean.all}\"/></h:selectOneMenu>";
+      result += "<h:selectOneMenu converter=\"#{entityWidgetBuilderTest$FooOneToManyBean.converter}\" styleClass=\"select-add\" value=\"#{requestScope['fooBarAdd']}\"><f:selectItem/><f:selectItems value=\"#{entityWidgetBuilderTest$FooOneToManyBean.all}\"/></h:selectOneMenu>";
       result += "<h:commandLink action=\"#{_collection.add(requestScope['fooBarAdd'])}\" styleClass=\"button\" value=\"Add\"/>";
       result += "</h:panelGroup>";
 

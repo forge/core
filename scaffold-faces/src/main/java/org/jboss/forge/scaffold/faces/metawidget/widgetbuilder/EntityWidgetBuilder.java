@@ -203,6 +203,7 @@ public class EntityWidgetBuilder
       // Select menu at bottom
 
       HtmlSelectOneMenu select = new HtmlSelectOneMenu();
+      select.putAttribute("styleClass", "select-add");
       String requestScopedValue = "requestScope['" + dataTable.getAttribute("id") + "Add']";
       select.setValue(StaticFacesUtils.wrapExpression(requestScopedValue));
       String simpleComponentType = ClassUtils.getSimpleName(componentType);
