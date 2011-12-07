@@ -496,8 +496,7 @@ public class ForgePropertyStyle
       {
          if (this.readMethod != null)
          {
-            // TODO: Lincoln to unravel generics?
-            // TODO: why are there no generics on the generated Set?
+            // Note: this needs https://issues.jboss.org/browse/FORGE-387
 
             @SuppressWarnings({ "unchecked", "rawtypes" })
             List<Type<?>> typeArguments = (List) this.readMethod.getReturnTypeInspector().getTypeArguments();
@@ -507,8 +506,6 @@ public class ForgePropertyStyle
                return typeArguments.get(0).getQualifiedName();
             }
          }
-
-         // Note: this needs https://issues.jboss.org/browse/FORGE-387
 
          if (this.privateField != null)
          {
