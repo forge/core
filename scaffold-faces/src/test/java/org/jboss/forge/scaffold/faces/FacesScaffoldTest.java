@@ -260,6 +260,8 @@ public class FacesScaffoldTest extends AbstractShellTest
       Assert.assertTrue(web.getWebResource("resources/search.png").exists());
       Assert.assertTrue(web.getWebResource("resources/scaffold/page.xhtml").exists());
       Assert.assertTrue(web.getWebResource("resources/scaffold/paginator.xhtml").exists());
+
+      // TODO: paginator should use commandLink, not outputLink
    }
 
    @Test
@@ -691,7 +693,7 @@ public class FacesScaffoldTest extends AbstractShellTest
       metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerLastName\"/>\r\n");
       metawidget.append("\t\t\t\t</h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t<h:outputText/>\r\n");
-      metawidget.append("\t\t\t\t<h:outputLabel value=\"Groceries:\"/>\r\n");
+      metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerGroceries\" value=\"Groceries:\"/>\r\n");
       metawidget.append("\t\t\t\t<h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t\t<ui:param name=\"_collection\" value=\"#{customerBean.customer.groceries}\"/>\r\n");
       metawidget

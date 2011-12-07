@@ -102,12 +102,12 @@ public class @{entity.getName()}Bean implements Serializable {
 		this.entityManager.remove(this.entityManager.find(@{entity.getName()}.class,
 				getId()));
 		this.conversation.end();
-		return "list?faces-redirect=true";
+		return "search?faces-redirect=true";
 	}
 
 	public String cancel() {
 		this.conversation.end();
-		return "list?faces-redirect=true";
+		return "search?faces-redirect=true";
 	}
 
 	/*
