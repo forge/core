@@ -500,21 +500,23 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       }
       else if (OSUtils.isWindows())
       {
-         final OutputStream ansiOut = AnsiConsole.wrapOutputStream(outputStream);
-         final OutputStreamWriter writer = new OutputStreamWriter(ansiOut, System.getProperty(
-                  "WindowsTerminal.output.encoding", System.getProperty("file.encoding")));
+         final OutputStream ansiOut = AnsiConsole.wrapOutputStream(System.out);
 
-         outputStream = new OutputStream()
-         {
-            @Override
-            public void write(int b) throws IOException
-            {
-               writer.write(b);
-            }
-         };
+          TerminalFactory.configure(TerminalFactory.Type.WINDOWS);
+          terminal = TerminalFactory.get();
 
-         TerminalFactory.configure(TerminalFactory.Type.WINDOWS);
-         terminal = TerminalFactory.get();
+          final OutputStreamWriter writer = new OutputStreamWriter(ansiOut, System.getProperty(
+                   "jline.WindowsTerminal.output.encoding", System.getProperty("file.encoding")));
+
+          outputStream = new OutputStream()
+          {
+             @Override
+             public void write(final int b) throws IOException
+             {
+                writer.write(b);
+                writer.flush();
+             }
+          };
       }
       else
       {
