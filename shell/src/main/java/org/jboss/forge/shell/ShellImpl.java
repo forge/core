@@ -524,9 +524,13 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       }
       else if (OSUtils.isWindows())
       {
-         final OutputStream ansiOut = AnsiConsole.wrapOutputStream(outputStream);
+         final OutputStream ansiOut = AnsiConsole.wrapOutputStream(System.out);
+
+         TerminalFactory.configure(TerminalFactory.Type.WINDOWS);
+         terminal = TerminalFactory.get();
+
          final OutputStreamWriter writer = new OutputStreamWriter(ansiOut, System.getProperty(
-                  "WindowsTerminal.output.encoding", System.getProperty("file.encoding")));
+                  "jline.WindowsTerminal.output.encoding", System.getProperty("file.encoding")));
 
          outputStream = new OutputStream()
          {
@@ -534,11 +538,9 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
             public void write(final int b) throws IOException
             {
                writer.write(b);
+               writer.flush();
             }
          };
-
-         TerminalFactory.configure(TerminalFactory.Type.WINDOWS);
-         terminal = TerminalFactory.get();
       }
       else
       {
