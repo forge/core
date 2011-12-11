@@ -41,6 +41,7 @@ import org.metawidget.inspector.impl.BaseObjectInspector;
 import org.metawidget.inspector.impl.propertystyle.Property;
 import org.metawidget.inspector.propertytype.PropertyTypeInspector;
 import org.metawidget.statically.StaticWidget;
+import org.metawidget.statically.StaticXmlWidget;
 import org.metawidget.statically.faces.component.html.StaticHtmlMetawidget;
 import org.metawidget.util.CollectionUtils;
 
@@ -128,6 +129,8 @@ public class EntityWidgetBuilderTest
       result += "</h:panelGroup>";
 
       assertEquals(result, widget.toString());
+      assertEquals(((StaticXmlWidget) widget.getChildren().get(1)).getAdditionalNamespaceURIs().get("forgeview"),
+               "http://jboss.org/forge/view");
    }
 
    public void testSuppressOneToMany()
@@ -184,6 +187,8 @@ public class EntityWidgetBuilderTest
       result += "</h:panelGroup>";
 
       assertEquals(result, widget.toString());
+      assertEquals(((StaticXmlWidget) widget.getChildren().get(1)).getAdditionalNamespaceURIs().get("forgeview"),
+               "http://jboss.org/forge/view");
    }
 
    //

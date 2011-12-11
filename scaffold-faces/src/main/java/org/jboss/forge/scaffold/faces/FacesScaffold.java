@@ -394,6 +394,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
          StringWriter stringWriter = new StringWriter();
          this.qbeMetawidget.write(stringWriter, this.backingBeanTemplateQbeMetawidgetIndent);
          context.put("qbeMetawidget", stringWriter.toString().trim());
+         context.put("qbeMetawidgetImports", CollectionUtils.toString( this.qbeMetawidget.getImports(), ";\r\nimport ", true, false));
 
          // Create the Backing Bean for this entity
          JavaClass viewBean = JavaParser.parse(JavaClass.class, this.backingBeanTemplate.render(context));
@@ -740,7 +741,6 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
 
    private String namespacesToString(Map<String, String> namespaces)
    {
-
       StringBuilder builder = new StringBuilder();
 
       for (Map.Entry<String, String> entry : namespaces.entrySet())

@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jboss.solder.core.Veto;
+import org.metawidget.statically.BaseStaticXmlWidget;
 import org.metawidget.statically.StaticWidget;
 import org.metawidget.statically.StaticXmlMetawidget;
 import org.metawidget.statically.StaticXmlWidget;
@@ -162,6 +163,7 @@ public class EntityWidgetBuilder
          String asListValueExpression = "forgeview:asList(" + StaticFacesUtils.unwrapExpression(tableValueExpression)
                   + ")";
          valueHolderTable.setValue(StaticFacesUtils.wrapExpression(asListValueExpression));
+         ((BaseStaticXmlWidget) dataTable).putAdditionalNamespaceURI("forgeview", "http://jboss.org/forge/view");
       }
 
       // Add row creation/deletion for OneToMany and ManyToMany
