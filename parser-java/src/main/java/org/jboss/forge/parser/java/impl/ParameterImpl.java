@@ -25,7 +25,9 @@ import java.lang.reflect.Field;
 
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.VariableDeclaration;
+import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.parser.java.Parameter;
+import org.jboss.forge.parser.java.Type;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -33,10 +35,12 @@ import org.jboss.forge.parser.java.Parameter;
  */
 public class ParameterImpl implements Parameter
 {
+   private final JavaSource<?> parent;
    private final VariableDeclaration param;
 
-   public ParameterImpl(final Object internal)
+   public ParameterImpl(final JavaSource<?> parent, final Object internal)
    {
+      this.parent = parent;
       this.param = (VariableDeclaration) internal;
    }
 
@@ -60,6 +64,19 @@ public class ParameterImpl implements Parameter
    @Override
    public String getType()
    {
+
+      return getTypeObject().toString();
+   }
+
+   @Override
+   @SuppressWarnings({ "rawtypes", "unchecked" })
+   public Type<?> getTypeInspector()
+   {
+      return new TypeImpl(parent, getTypeObject());
+   }
+
+   private Object getTypeObject()
+   {
       Object type;
 
       try
@@ -75,8 +92,7 @@ public class ParameterImpl implements Parameter
       {
          throw new RuntimeException(e);
       }
-
-      return type.toString();
+      return type;
    }
 
 }

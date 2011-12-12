@@ -47,10 +47,11 @@ public class Refactory
 
       String fieldName = field.getName();
       String methodNameSuffix = Strings.capitalize(fieldName);
-      entity.addMethod().setReturnType(field.getType()).setName("get" + methodNameSuffix).setPublic()
+      entity.addMethod().setReturnType(field.getTypeInspector().toString()).setName("get" + methodNameSuffix)
+               .setPublic()
                .setBody("return this." + fieldName + ";");
       entity.addMethod().setReturnTypeVoid().setName("set" + methodNameSuffix).setPublic()
-               .setParameters("final " + field.getType() + " " + fieldName)
+               .setParameters("final " + field.getTypeInspector().toString() + " " + fieldName)
                .setBody("this." + fieldName + " = " + fieldName + ";");
    }
 
