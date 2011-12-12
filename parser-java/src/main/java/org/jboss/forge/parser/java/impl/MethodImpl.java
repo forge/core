@@ -389,7 +389,7 @@ public class MethodImpl<O extends JavaSource<O>> implements Method<O>
       List<VariableDeclaration> parameters = method.parameters();
       for (VariableDeclaration param : parameters)
       {
-         results.add(new ParameterImpl(param));
+         results.add(new ParameterImpl(parent, param));
       }
       return results;
    }
