@@ -31,8 +31,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.jboss.solder.core.Veto;
+import org.metawidget.statically.BaseStaticXmlWidget;
 import org.metawidget.statically.StaticWidget;
 import org.metawidget.statically.StaticXmlMetawidget;
+import org.metawidget.statically.StaticXmlStub;
 import org.metawidget.statically.StaticXmlWidget;
 import org.metawidget.statically.faces.StaticFacesUtils;
 import org.metawidget.statically.faces.component.StaticUIMetawidget;
@@ -80,13 +82,18 @@ public class EntityWidgetBuilder
    @Override
    public StaticXmlWidget buildWidget(String elementName, Map<String, String> attributes, StaticXmlMetawidget metawidget)
    {
-      // Render read-only <tt>FACES_LOOKUP</tt> as a link.
+      // Suppress nested INVERSE_ONE_TO_ONE, to avoid recursion
 
-      String facesLookup = attributes.get(FACES_LOOKUP);
-
-      if (facesLookup != null && WidgetBuilderUtils.isReadOnly(attributes))
+      if (attributes.containsKey(INVERSE_ONE_TO_ONE) && metawidget.getParent() != null)
       {
-         if (StaticFacesUtils.isExpression(facesLookup))
+         return new StaticXmlStub();
+      }
+
+      // Render read-only FACES_LOOKUP and INVERSE_ONE_TO_ONE as a link.
+
+      if (WidgetBuilderUtils.isReadOnly(attributes))
+      {
+         if (attributes.containsKey(FACES_LOOKUP) || attributes.containsKey(INVERSE_ONE_TO_ONE))
          {
             String controllerName = ClassUtils.getSimpleName(WidgetBuilderUtils.getActualClassOrType(attributes));
             controllerName = StringUtils.decapitalize(controllerName);
@@ -162,6 +169,7 @@ public class EntityWidgetBuilder
          String asListValueExpression = "forgeview:asList(" + StaticFacesUtils.unwrapExpression(tableValueExpression)
                   + ")";
          valueHolderTable.setValue(StaticFacesUtils.wrapExpression(asListValueExpression));
+         ((BaseStaticXmlWidget) dataTable).putAdditionalNamespaceURI("forgeview", "http://jboss.org/forge/view");
       }
 
       // Add row creation/deletion for OneToMany and ManyToMany

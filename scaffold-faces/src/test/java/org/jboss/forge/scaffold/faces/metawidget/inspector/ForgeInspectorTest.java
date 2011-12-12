@@ -78,7 +78,7 @@ public class ForgeInspectorTest
       property = XmlUtils.getNextSiblingElement(property);
       assertEquals(PROPERTY, property.getNodeName());
       assertEquals("oneToOneMappedBy", property.getAttribute(NAME));
-      assertEquals(TRUE, property.getAttribute(HIDDEN));
+      assertEquals(TRUE, property.getAttribute(INVERSE_ONE_TO_ONE));
       assertEquals(2, property.getAttributes().getLength());
 
       assertEquals(4, entity.getChildNodes().getLength());

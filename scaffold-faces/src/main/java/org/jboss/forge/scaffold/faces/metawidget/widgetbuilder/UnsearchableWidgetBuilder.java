@@ -22,9 +22,11 @@ import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstant
 import java.util.Map;
 
 import org.jboss.solder.core.Veto;
-import org.metawidget.statically.StaticXmlMetawidget;
+import org.metawidget.statically.StaticMetawidget;
+import org.metawidget.statically.StaticWidget;
 import org.metawidget.statically.StaticXmlStub;
-import org.metawidget.statically.StaticXmlWidget;
+import org.metawidget.statically.javacode.StaticJavaStub;
+import org.metawidget.statically.javacode.StaticJavaWidget;
 import org.metawidget.util.ClassUtils;
 import org.metawidget.util.WidgetBuilderUtils;
 import org.metawidget.widgetbuilder.iface.WidgetBuilder;
@@ -36,21 +38,39 @@ import org.metawidget.widgetbuilder.iface.WidgetBuilder;
  */
 
 @Veto
-public class SearchWidgetBuilder
-         implements WidgetBuilder<StaticXmlWidget, StaticXmlMetawidget>
+public class UnsearchableWidgetBuilder
+         implements WidgetBuilder<StaticWidget, StaticMetawidget>
 {
+   //
+   // Private statics
+   //
+
+   private final static int MAXIMUM_SEARCH_FIELDS = 5;
+
    //
    // Public methods
    //
 
    @Override
-   public StaticXmlWidget buildWidget(String elementName, Map<String, String> attributes, StaticXmlMetawidget metawidget)
+   public StaticWidget buildWidget(String elementName, Map<String, String> attributes, StaticMetawidget metawidget)
    {
       // Drill down
 
       if (ENTITY.equals(elementName))
       {
          return null;
+      }
+
+      // Suppress
+
+      if (TRUE.equals(attributes.get(HIDDEN)))
+      {
+         return newStaticStub(metawidget);
+      }
+
+      if (metawidget.getChildren().size() >= MAXIMUM_SEARCH_FIELDS)
+      {
+         return newStaticStub(metawidget);
       }
 
       // Pass through
@@ -75,7 +95,25 @@ public class SearchWidgetBuilder
          }
       }
 
-      // Suppress
+      // Suppress anything else
+
+      return newStaticStub(metawidget);
+   }
+
+   //
+   // Private methods
+   //
+
+   /**
+    * @return the correct Stub type for the given Meawidget
+    */
+
+   private StaticWidget newStaticStub(StaticMetawidget metawidget)
+   {
+      if (metawidget instanceof StaticJavaWidget)
+      {
+         return new StaticJavaStub();
+      }
 
       return new StaticXmlStub();
    }
