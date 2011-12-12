@@ -20,7 +20,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import @{entity.getQualifiedName()};
+import @{entity.getQualifiedName()}@{qbeMetawidgetImports};
 
 /**
  * Backing bean for @{entity.getName()} entities.
@@ -102,12 +102,12 @@ public class @{entity.getName()}Bean implements Serializable {
 		this.entityManager.remove(this.entityManager.find(@{entity.getName()}.class,
 				getId()));
 		this.conversation.end();
-		return "list?faces-redirect=true";
+		return "search?faces-redirect=true";
 	}
 
 	public String cancel() {
 		this.conversation.end();
-		return "list?faces-redirect=true";
+		return "search?faces-redirect=true";
 	}
 
 	/*

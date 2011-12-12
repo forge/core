@@ -22,10 +22,10 @@ import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstant
 import java.util.Map;
 
 import org.jboss.solder.core.Veto;
-import org.metawidget.statically.StaticStub;
-import org.metawidget.statically.StaticWidget;
 import org.metawidget.statically.javacode.JavaStatement;
 import org.metawidget.statically.javacode.StaticJavaMetawidget;
+import org.metawidget.statically.javacode.StaticJavaStub;
+import org.metawidget.statically.javacode.StaticJavaWidget;
 import org.metawidget.util.ClassUtils;
 import org.metawidget.util.WidgetBuilderUtils;
 import org.metawidget.util.simple.StringUtils;
@@ -33,47 +33,40 @@ import org.metawidget.widgetbuilder.iface.WidgetBuilder;
 
 @Veto
 public class QueryByExampleWidgetBuilder
-         implements WidgetBuilder<StaticWidget, StaticJavaMetawidget>
+         implements WidgetBuilder<StaticJavaWidget, StaticJavaMetawidget>
 {
    //
    // Public methods
    //
 
    @Override
-   public StaticWidget buildWidget(String elementName, Map<String, String> attributes, StaticJavaMetawidget metawidget)
+   public StaticJavaWidget buildWidget(String elementName, Map<String, String> attributes,
+            StaticJavaMetawidget metawidget)
    {
-      // Hidden
+      // Drill down
 
-      if (TRUE.equals(attributes.get(HIDDEN)))
+      if (ENTITY.equals(elementName))
       {
-         return new StaticStub();
+         return null;
       }
+
+      // Rely on UnsearchableWidgetBuilder to have suppressed unsuitable fields
 
       String type = WidgetBuilderUtils.getActualClassOrType(attributes);
-
-      // If no type, fail gracefully
-
-      if (type == null)
-      {
-         return new StaticStub();
-      }
-
-      // Lookup the Class
-
       Class<?> clazz = ClassUtils.niceForName(type);
+      String name = attributes.get(NAME);
 
       // String
 
       if (String.class.equals(clazz))
       {
-         String name = attributes.get(NAME);
-
-         StaticWidget toReturn = new StaticStub();
+         StaticJavaStub toReturn = new StaticJavaStub();
          toReturn.getChildren().add(
                   new JavaStatement("String " + name + " = this.search.get" + StringUtils.capitalize(name) + "()"));
          JavaStatement ifNotEmpty = new JavaStatement("if (" + name + " != null && !\"\".equals(" + name + "))");
          ifNotEmpty.getChildren().add(
-                  new JavaStatement("predicatesList.add(builder.like(root.<String>get(\"" + name + "\"), '%' + " + name + " + '%'))"));
+                  new JavaStatement("predicatesList.add(builder.like(root.<String>get(\"" + name + "\"), '%' + " + name
+                           + " + '%'))"));
          toReturn.getChildren().add(ifNotEmpty);
          return toReturn;
       }
@@ -82,9 +75,7 @@ public class QueryByExampleWidgetBuilder
 
       if (int.class.equals(clazz))
       {
-         String name = attributes.get(NAME);
-
-         StaticWidget toReturn = new StaticStub();
+         StaticJavaStub toReturn = new StaticJavaStub();
          toReturn.getChildren().add(
                   new JavaStatement("int " + name + " = this.search.get" + StringUtils.capitalize(name) + "()"));
          JavaStatement ifNotEmpty = new JavaStatement("if (" + name + " != 0)");
@@ -98,13 +89,12 @@ public class QueryByExampleWidgetBuilder
 
       if (attributes.containsKey(FACES_LOOKUP))
       {
-         String name = attributes.get(NAME);
-
-         StaticWidget toReturn = new StaticStub();
-         // TODO: just use simpleName, and add to imports
+         StaticJavaStub toReturn = new StaticJavaStub();
+         JavaStatement getValue = new JavaStatement(ClassUtils.getSimpleName(type) + " " + name + " = this.search.get"
+                  + StringUtils.capitalize(name) + "()");
+         getValue.putImport(type);
+         toReturn.getChildren().add(getValue);
          // Need to use .getId() != null until https://issues.jboss.org/browse/FORGE-401
-         toReturn.getChildren().add(
-                  new JavaStatement(type + " " + name + " = this.search.get" + StringUtils.capitalize(name) + "()"));
          JavaStatement ifNotEmpty = new JavaStatement("if (" + name + " != null && " + name + ".getId() != null)");
          ifNotEmpty.getChildren().add(
                   new JavaStatement("predicatesList.add(builder.equal(root.get(\"" + name + "\")," + name + "))"));
@@ -112,13 +102,16 @@ public class QueryByExampleWidgetBuilder
          return toReturn;
       }
 
-      // Do not recurse sub-entities for now
+      // We tried searching against N_TO_MANY relationships, but had the following problems:
+      //
+      // 1. Difficult to make JPA Criteria Builder search for 'a Set having all of the following items'. For 'a Set
+      // having the following item' can do: predicatesList.add(root.join("customers").in(this.search.getCustomer()));
+      // 2. Cumbersome to have a new class for this.search that only has a single Customer, as opposed to a Set
+      // 3. Difficult to make JSF's h:selectOne* bind to a Set
+      // 4. Difficult to make JSF's h:selectMany* appear as a single item dropdown
+      //
+      // So we've left it out for now
 
-      if (!ENTITY.equals(elementName))
-      {
-         return new StaticStub();
-      }
-
-      return null;
+      return new StaticJavaStub();
    }
 }

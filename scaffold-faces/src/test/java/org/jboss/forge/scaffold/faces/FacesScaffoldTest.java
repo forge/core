@@ -224,14 +224,17 @@ public class FacesScaffoldTest extends AbstractShellTest
       Assert.assertTrue(customerBean.exists());
       contents = Streams.toString(customerBean.getResourceInputStream());
 
-      StringBuilder qbeMetawidget = new StringBuilder("List<Predicate> predicatesList = new ArrayList<Predicate>();\r\n\r\n");
+      StringBuilder qbeMetawidget = new StringBuilder(
+               "List<Predicate> predicatesList = new ArrayList<Predicate>();\r\n\r\n");
       qbeMetawidget.append("\t\tString firstName = this.search.getFirstName();\r\n");
       qbeMetawidget.append("\t\tif (firstName != null && !\"\".equals(firstName)) {\r\n");
-      qbeMetawidget.append("\t\t\tpredicatesList.add(builder.like(root.<String>get(\"firstName\"), '%' + firstName + '%'));\r\n");
+      qbeMetawidget
+               .append("\t\t\tpredicatesList.add(builder.like(root.<String>get(\"firstName\"), '%' + firstName + '%'));\r\n");
       qbeMetawidget.append("\t\t}\r\n");
       qbeMetawidget.append("\t\tString lastName = this.search.getLastName();\r\n");
       qbeMetawidget.append("\t\tif (lastName != null && !\"\".equals(lastName)) {\r\n");
-      qbeMetawidget.append("\t\t\tpredicatesList.add(builder.like(root.<String>get(\"lastName\"), '%' + lastName + '%'));\r\n");
+      qbeMetawidget
+               .append("\t\t\tpredicatesList.add(builder.like(root.<String>get(\"lastName\"), '%' + lastName + '%'));\r\n");
       qbeMetawidget.append("\t\t}\r\n\r\n");
       qbeMetawidget.append("\t\treturn ");
 
@@ -260,6 +263,8 @@ public class FacesScaffoldTest extends AbstractShellTest
       Assert.assertTrue(web.getWebResource("resources/search.png").exists());
       Assert.assertTrue(web.getWebResource("resources/scaffold/page.xhtml").exists());
       Assert.assertTrue(web.getWebResource("resources/scaffold/paginator.xhtml").exists());
+
+      // TODO: paginator should use commandLink, not outputLink
    }
 
    @Test
@@ -519,6 +524,7 @@ public class FacesScaffoldTest extends AbstractShellTest
       queueInputLines("", "");
       getShell().execute("scaffold from-entity com.test.domain.Employer com.test.domain.Customer");
 
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
       WebResourceFacet web = project.getFacet(WebResourceFacet.class);
 
       // View
@@ -611,6 +617,21 @@ public class FacesScaffoldTest extends AbstractShellTest
       navigationText.append("\t\t\t\t\t</li>\r\n");
 
       Assert.assertTrue(contents.contains(navigationText));
+
+      // Backing Bean
+
+      FileResource<?> customerBean = java.getJavaResource("/com/test/view/CustomerBean.java");
+      Assert.assertTrue(customerBean.exists());
+      contents = Streams.toString(customerBean.getResourceInputStream());
+
+      StringBuilder qbeMetawidget = new StringBuilder("\t\tEmployer employer = this.search.getEmployer();\r\n");
+      qbeMetawidget.append("\t\tif (employer != null && employer.getId() != null) {\r\n");
+      qbeMetawidget
+               .append("\t\t\tpredicatesList.add(builder.equal(root.get(\"employer\"),employer));\r\n");
+      qbeMetawidget.append("\t\t}\r\n");
+
+      Assert.assertTrue(contents.contains(qbeMetawidget));
+      Assert.assertTrue(contents.contains("import com.test.domain.Customer;\r\nimport com.test.domain.Employer;\r\n"));
    }
 
    @Test
@@ -667,6 +688,7 @@ public class FacesScaffoldTest extends AbstractShellTest
       metawidget.append("\t\t</h:panelGrid>");
 
       Assert.assertTrue(contents.contains(metawidget));
+      Assert.assertTrue(contents.contains("xmlns:forgeview=\"http://jboss.org/forge/view\""));
 
       // Create
 
@@ -691,7 +713,7 @@ public class FacesScaffoldTest extends AbstractShellTest
       metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerLastName\"/>\r\n");
       metawidget.append("\t\t\t\t</h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t<h:outputText/>\r\n");
-      metawidget.append("\t\t\t\t<h:outputLabel value=\"Groceries:\"/>\r\n");
+      metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerGroceries\" value=\"Groceries:\"/>\r\n");
       metawidget.append("\t\t\t\t<h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t\t<ui:param name=\"_collection\" value=\"#{customerBean.customer.groceries}\"/>\r\n");
       metawidget
@@ -721,6 +743,7 @@ public class FacesScaffoldTest extends AbstractShellTest
       metawidget.append("\t\t\t</h:panelGrid>");
 
       Assert.assertTrue(contents.contains(metawidget));
+      Assert.assertTrue(contents.contains("xmlns:forgeview=\"http://jboss.org/forge/view\""));
 
       // Search
 

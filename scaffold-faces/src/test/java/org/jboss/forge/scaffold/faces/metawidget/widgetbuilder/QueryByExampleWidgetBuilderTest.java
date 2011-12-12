@@ -75,7 +75,7 @@ public class QueryByExampleWidgetBuilderTest
       StaticWidget widget = widgetBuilder.buildWidget(PROPERTY, attributes, new StaticJavaMetawidget());
 
       assertEquals(
-               "com.test.domain.Foo abc = this.search.getAbc();if (abc != null && abc.getId() != null) { predicatesList.add(builder.equal(root.get(\"abc\"),abc)); }",
+               "Foo abc = this.search.getAbc();if (abc != null && abc.getId() != null) { predicatesList.add(builder.equal(root.get(\"abc\"),abc)); }",
                widget.toString());
    }
 }
