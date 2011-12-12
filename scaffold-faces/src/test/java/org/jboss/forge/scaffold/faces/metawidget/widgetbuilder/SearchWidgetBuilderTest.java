@@ -28,9 +28,11 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.metawidget.statically.StaticMetawidget;
 import org.metawidget.statically.StaticXmlMetawidget;
 import org.metawidget.statically.StaticXmlStub;
 import org.metawidget.statically.faces.component.html.StaticHtmlMetawidget;
+import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlInputText;
 import org.metawidget.util.CollectionUtils;
 
 public class SearchWidgetBuilderTest
@@ -42,7 +44,7 @@ public class SearchWidgetBuilderTest
 
    public void testPassthrough()
    {
-      SearchWidgetBuilder widgetBuilder = new SearchWidgetBuilder();
+      UnsearchableWidgetBuilder widgetBuilder = new UnsearchableWidgetBuilder();
       assertEquals(null, widgetBuilder.buildWidget(ENTITY, null, null));
 
       StaticXmlMetawidget metawidget = new StaticHtmlMetawidget();
@@ -60,11 +62,21 @@ public class SearchWidgetBuilderTest
 
    public void testSuppress()
    {
-      SearchWidgetBuilder widgetBuilder = new SearchWidgetBuilder();
-      StaticXmlMetawidget metawidget = new StaticHtmlMetawidget();
+      UnsearchableWidgetBuilder widgetBuilder = new UnsearchableWidgetBuilder();
+      StaticMetawidget metawidget = new StaticHtmlMetawidget();
       Map<String, String> attributes = CollectionUtils.newHashMap();
 
       attributes.put(TYPE, "com.test.domain.Foo");
+      assertTrue(widgetBuilder.buildWidget(PROPERTY, attributes, metawidget) instanceof StaticXmlStub);
+
+      attributes.put(TYPE, String.class.getName());
+      metawidget.getChildren().add(new HtmlInputText());
+      metawidget.getChildren().add(new HtmlInputText());
+      metawidget.getChildren().add(new HtmlInputText());
+      metawidget.getChildren().add(new HtmlInputText());
+      assertEquals(null, widgetBuilder.buildWidget(PROPERTY, attributes, metawidget));
+
+      metawidget.getChildren().add(new HtmlInputText());
       assertTrue(widgetBuilder.buildWidget(PROPERTY, attributes, metawidget) instanceof StaticXmlStub);
    }
 }
