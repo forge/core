@@ -25,6 +25,7 @@ import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectio
 import static org.metawidget.inspector.InspectionResultConstants.*;
 import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.*;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,7 +41,10 @@ import org.metawidget.inspector.iface.Inspector;
 import org.metawidget.inspector.impl.BaseObjectInspector;
 import org.metawidget.inspector.impl.propertystyle.Property;
 import org.metawidget.inspector.propertytype.PropertyTypeInspector;
+import org.metawidget.statically.StaticMetawidget;
 import org.metawidget.statically.StaticWidget;
+import org.metawidget.statically.StaticXmlStub;
+import org.metawidget.statically.StaticXmlWidget;
 import org.metawidget.statically.faces.component.html.StaticHtmlMetawidget;
 import org.metawidget.util.CollectionUtils;
 
@@ -54,6 +58,8 @@ public class EntityWidgetBuilderTest
    public void testManyToOne()
             throws Exception
    {
+      // Many to One
+
       StaticHtmlMetawidget metawidget = new StaticHtmlMetawidget();
       metawidget.setValue("#{foo}");
       EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder();
@@ -69,6 +75,31 @@ public class EntityWidgetBuilderTest
       result += "</h:link>";
 
       assertEquals(result, widget.toString());
+
+      // One to One
+
+      attributes = CollectionUtils.newHashMap();
+      attributes.put(NAME, "baz");
+      attributes.put(READ_ONLY, TRUE);
+      attributes.put(TYPE, "com.test.domain.Baz");
+      attributes.put(INVERSE_ONE_TO_ONE,TRUE);
+
+      widget = widgetBuilder.buildWidget(PROPERTY, attributes, metawidget);
+
+      result = "<h:link outcome=\"/scaffold/baz/view\" value=\"#{foo.baz}\">";
+      result += "<f:param name=\"id\" value=\"#{foo.baz.id}\"/>";
+      result += "</h:link>";
+
+      assertEquals(result, widget.toString());
+
+      // Should not show nested
+
+      StaticHtmlMetawidget metawidget2 = new StaticHtmlMetawidget();
+      Field parent = StaticMetawidget.class.getDeclaredField("mParent");
+      parent.setAccessible(true);
+      parent.set(metawidget2, metawidget);
+
+      assertTrue( widgetBuilder.buildWidget(PROPERTY, attributes, metawidget2) instanceof StaticXmlStub );
    }
 
    public void testTopLevelList()
@@ -128,6 +159,8 @@ public class EntityWidgetBuilderTest
       result += "</h:panelGroup>";
 
       assertEquals(result, widget.toString());
+      assertEquals(((StaticXmlWidget) widget.getChildren().get(1)).getAdditionalNamespaceURIs().get("forgeview"),
+               "http://jboss.org/forge/view");
    }
 
    public void testSuppressOneToMany()
@@ -184,6 +217,8 @@ public class EntityWidgetBuilderTest
       result += "</h:panelGroup>";
 
       assertEquals(result, widget.toString());
+      assertEquals(((StaticXmlWidget) widget.getChildren().get(1)).getAdditionalNamespaceURIs().get("forgeview"),
+               "http://jboss.org/forge/view");
    }
 
    //
