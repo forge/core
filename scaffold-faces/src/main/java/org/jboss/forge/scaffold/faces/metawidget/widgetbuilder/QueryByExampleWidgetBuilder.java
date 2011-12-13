@@ -50,7 +50,12 @@ public class QueryByExampleWidgetBuilder
          return null;
       }
 
-      // Rely on UnsearchableWidgetBuilder to have suppressed unsuitable fields
+      // Suppress
+
+      if (TRUE.equals(attributes.get(HIDDEN)))
+      {
+         return new StaticJavaStub();
+      }
 
       String type = WidgetBuilderUtils.getActualClassOrType(attributes);
       Class<?> clazz = ClassUtils.niceForName(type);
