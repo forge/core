@@ -845,6 +845,79 @@ public class FacesScaffoldTest extends AbstractShellTest
       }
    }
 
+   @Test
+   public void testGenerateEntityWithManyFields() throws Exception
+   {
+      Project project = setupScaffoldProject();
+
+      queueInputLines("");
+      getShell().execute("entity --named Item");
+      getShell().execute("field string --named name");
+      getShell().execute("entity --named Customer");
+      getShell().execute("field string --named field1");
+      getShell().execute("field string --named field2");
+      getShell().execute("field oneToMany --named field3 --fieldType com.test.domain.Item");
+      getShell().execute("field string --named field4");
+      getShell().execute("field string --named field5");
+      getShell().execute("field string --named field6");
+      getShell().execute("field string --named field7");
+      getShell().execute("field string --named field8");
+      queueInputLines("", "");
+      getShell().execute("scaffold from-entity com.test.domain.Customer");
+
+      WebResourceFacet web = project.getFacet(WebResourceFacet.class);
+
+      // Search
+
+      FileResource<?> search = web.getWebResource("scaffold/customer/search.xhtml");
+      Assert.assertTrue(search.exists());
+      String contents = Streams.toString(search.getResourceInputStream());
+      Assert.assertTrue(contents.contains(
+               "template=\"/resources/scaffold/page.xhtml"));
+
+      StringBuilder searchMetawidget = new StringBuilder("<h:form id=\"search\">\r\n");
+      searchMetawidget.append("\t\t\t<h:messages globalOnly=\"true\"/>\r\n\r\n");
+      searchMetawidget.append("\t\t\t<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">\r\n");
+      searchMetawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanSearchField1\" value=\"Field 1:\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t<h:panelGroup>\r\n");
+      searchMetawidget
+               .append("\t\t\t\t\t<h:inputText id=\"customerBeanSearchField1\" value=\"#{customerBean.search.field1}\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:message for=\"customerBeanSearchField1\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t</h:panelGroup>\r\n");
+      searchMetawidget.append("\t\t\t\t<h:outputText/>\r\n");
+      searchMetawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanSearchField2\" value=\"Field 2:\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t<h:panelGroup>\r\n");
+      searchMetawidget
+               .append("\t\t\t\t\t<h:inputText id=\"customerBeanSearchField2\" value=\"#{customerBean.search.field2}\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:message for=\"customerBeanSearchField2\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t</h:panelGroup>\r\n");
+      searchMetawidget.append("\t\t\t\t<h:outputText/>\r\n");
+      searchMetawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanSearchField4\" value=\"Field 4:\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t<h:panelGroup>\r\n");
+      searchMetawidget
+               .append("\t\t\t\t\t<h:inputText id=\"customerBeanSearchField4\" value=\"#{customerBean.search.field4}\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:message for=\"customerBeanSearchField4\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t</h:panelGroup>\r\n");
+      searchMetawidget.append("\t\t\t\t<h:outputText/>\r\n");
+      searchMetawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanSearchField5\" value=\"Field 5:\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t<h:panelGroup>\r\n");
+      searchMetawidget
+               .append("\t\t\t\t\t<h:inputText id=\"customerBeanSearchField5\" value=\"#{customerBean.search.field5}\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:message for=\"customerBeanSearchField5\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t</h:panelGroup>\r\n");
+      searchMetawidget.append("\t\t\t\t<h:outputText/>\r\n");
+      searchMetawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanSearchField6\" value=\"Field 6:\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t<h:panelGroup>\r\n");
+      searchMetawidget
+               .append("\t\t\t\t\t<h:inputText id=\"customerBeanSearchField6\" value=\"#{customerBean.search.field6}\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:message for=\"customerBeanSearchField6\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t</h:panelGroup>\r\n");
+      searchMetawidget.append("\t\t\t\t<h:outputText/>\r\n");
+      searchMetawidget.append("\t\t\t</h:panelGrid>\r\n");
+
+      Assert.assertTrue(contents.contains(searchMetawidget));
+   }
+
    private Project setupScaffoldProject() throws Exception
    {
       Project project = initializeJavaProject();
