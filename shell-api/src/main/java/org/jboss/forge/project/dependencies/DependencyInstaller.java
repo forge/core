@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat, Inc., and individual contributors
+ * Copyright 2011, Red Hat, Inc., and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,17 +19,30 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.parser.java;
+package org.jboss.forge.project.dependencies;
+
+import org.jboss.forge.project.Project;
 
 /**
+ * Responsible for installing a given {@link Dependency} into the current project. Resolves available dependencies.
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public interface Parameter
+public interface DependencyInstaller
 {
-   String getName();
+   /**
+    * Install given {@link Dependency} with the default {@link ScopeType}. This method overwrites existing dependencies.
+    */
+   Dependency install(Project project, Dependency dependency);
 
-   String getType();
+   /**
+    * Install given {@link Dependency} with the given {@link ScopeType}. This method overwrites existing dependencies.
+    */
+   Dependency install(Project project, Dependency dependency, ScopeType type);
 
-   Type<?> getTypeInspector();
+   /**
+    * Returns whether or not the given {@link Dependency} is installed.
+    */
+   boolean isInstalled(Project project, Dependency dependency);
 }

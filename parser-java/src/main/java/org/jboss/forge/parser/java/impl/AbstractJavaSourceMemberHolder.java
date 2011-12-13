@@ -48,7 +48,7 @@ import org.jboss.forge.parser.java.util.Types;
 public abstract class AbstractJavaSourceMemberHolder<O extends JavaSource<O>> extends AbstractJavaSource<O> implements
          MethodHolder<O>, FieldHolder<O>
 {
-   public AbstractJavaSourceMemberHolder(Document document, CompilationUnit unit)
+   public AbstractJavaSourceMemberHolder(final Document document, final CompilationUnit unit)
    {
       super(document, unit);
    }
@@ -146,19 +146,19 @@ public abstract class AbstractJavaSourceMemberHolder<O extends JavaSource<O>> ex
    }
 
    @Override
-   public boolean hasMethodSignature(String name)
+   public boolean hasMethodSignature(final String name)
    {
       return hasMethodSignature(name, new String[] {});
    }
 
    @Override
-   public boolean hasMethodSignature(String name, String... paramTypes)
+   public boolean hasMethodSignature(final String name, final String... paramTypes)
    {
       return getMethod(name, paramTypes) != null;
    }
 
    @Override
-   public boolean hasMethodSignature(String name, Class<?>... paramTypes)
+   public boolean hasMethodSignature(final String name, Class<?>... paramTypes)
    {
       if (paramTypes == null)
       {
@@ -179,7 +179,7 @@ public abstract class AbstractJavaSourceMemberHolder<O extends JavaSource<O>> ex
    {
       for (Method<O> method : getMethods())
       {
-         if (method.getName().equals(name) && method.getParameters().size() == 0)
+         if (method.getName().equals(name) && (method.getParameters().size() == 0))
          {
             return method;
          }
@@ -188,16 +188,15 @@ public abstract class AbstractJavaSourceMemberHolder<O extends JavaSource<O>> ex
    }
 
    @Override
-   @SuppressWarnings("unchecked")
-   public Method<O> getMethod(String name, String... paramTypes)
+   public Method<O> getMethod(final String name, final String... paramTypes)
    {
-      for (Method<?> local : getMethods())
+      for (Method<O> local : getMethods())
       {
          if (local.getName().equals(name))
          {
             List<Parameter> localParams = local.getParameters();
-            if (paramTypes != null && localParams.size() == 0
-                     || localParams.size() == paramTypes.length)
+            if (((paramTypes != null) && (localParams.size() == 0))
+                     || (localParams.size() == paramTypes.length))
             {
                boolean matches = true;
                for (int i = 0; i < localParams.size(); i++)
@@ -210,7 +209,7 @@ public abstract class AbstractJavaSourceMemberHolder<O extends JavaSource<O>> ex
                   }
                }
                if (matches)
-                  return (Method<O>) local;
+                  return local;
             }
          }
       }
@@ -218,7 +217,7 @@ public abstract class AbstractJavaSourceMemberHolder<O extends JavaSource<O>> ex
    }
 
    @Override
-   public Method<O> getMethod(String name, Class<?>... paramTypes)
+   public Method<O> getMethod(final String name, Class<?>... paramTypes)
    {
       if (paramTypes == null)
       {
@@ -235,9 +234,9 @@ public abstract class AbstractJavaSourceMemberHolder<O extends JavaSource<O>> ex
    }
 
    @Override
-   public boolean hasMethodSignature(Method<?> method)
+   public boolean hasMethodSignature(final Method<?> method)
    {
-      for (Method<?> local : getMethods())
+      for (Method<O> local : getMethods())
       {
          if (local.getName().equals(method.getName()))
          {

@@ -51,18 +51,20 @@ public class FacesScaffoldScenarioTest extends AbstractShellTest
       getShell().execute("entity --named Customer");
       getShell().execute("entity --named Address");
       getShell().execute("field string --named street");
-      getShell().execute("field string --named city");
+      // Testing FORGE-402 (Uppercase fields)
+      getShell().execute("field string --named City");
       getShell().execute("field string --named state");
-      getShell().execute("field string --named zipCode");
+      getShell().execute("field int --named zipCode");
       getShell().execute("field manyToMany --named customers --fieldType com.test.domain.Customer");
       getShell().execute("entity --named Item");
       getShell().execute("field string --named name");
+      getShell().execute("field number --named price --type java.lang.Double");
       getShell().execute("field string --named description");
       getShell().execute("entity --named Profile");
       getShell().execute("field string --named bio");
-      //TODO:getShell().execute("field oneToOne --named customer --fieldType com.test.domain.Customer --inverseFieldName profile");
+      // TODO:getShell().execute("field oneToOne --named customer --fieldType com.test.domain.Customer --inverseFieldName profile");
       getShell().execute("entity --named SubmittedOrder");
-      getShell().execute("field manyToOne --named customer --fieldType com.test.domain.Customer");
+      getShell().execute("field manyToOne --named Customer --fieldType com.test.domain.Customer");
       getShell().execute("field manyToOne --named address --fieldType com.test.domain.Address");
       getShell().execute("entity --named Customer");
       getShell().execute("field string --named firstName");

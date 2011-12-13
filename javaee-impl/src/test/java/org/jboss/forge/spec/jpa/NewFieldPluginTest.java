@@ -255,6 +255,8 @@ public class NewFieldPluginTest extends AbstractJPATest
       assertTrue(leftEntity.hasAnnotation(Entity.class));
       assertTrue(leftEntity.hasField("right"));
       assertTrue(leftEntity.getField("right").getType().equals("Set"));
+      assertTrue(leftEntity.getMethod("getRight").getReturnTypeInspector().toString()
+               .equals("Set<" + rightEntity.getName() + ">"));
       assertTrue(leftEntity.getField("right").getTypeInspector().getTypeArguments().get(0).getQualifiedName()
                .equals(rightEntity.getQualifiedName()));
       assertTrue(leftEntity.getField("right").hasAnnotation(ManyToMany.class));
