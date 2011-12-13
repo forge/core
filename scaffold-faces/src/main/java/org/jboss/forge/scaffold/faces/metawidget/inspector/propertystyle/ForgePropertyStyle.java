@@ -47,7 +47,7 @@ import org.metawidget.util.simple.StringUtils;
 
 /**
  * Inspects Forge-specific <tt>JavaSource</tt> objects for properties.
- *
+ * 
  * @author Richard Kennard
  */
 
@@ -77,7 +77,7 @@ public class ForgePropertyStyle
 
    /**
     * Traverses the given Class heirarchy using properties of the given names.
-    *
+    * 
     * @return the declared type (not actual type). May be null
     */
 
@@ -217,7 +217,7 @@ public class ForgePropertyStyle
 
    /**
     * Returns whether the given method is a 'getter' method.
-    *
+    * 
     * @param method a parameterless method that returns a non-void
     * @return the property name
     */
@@ -339,7 +339,7 @@ public class ForgePropertyStyle
 
    /**
     * Returns whether the given method is a 'setter' method.
-    *
+    * 
     * @param method a single-parametered method. May return non-void (ie. for Fluent interfaces)
     * @return the property name
     */
@@ -373,7 +373,7 @@ public class ForgePropertyStyle
     * field, with no corresponding <code>mAge</code> field per se.
     * <p>
     * Clients may override this method to change how the public-method-to-private-field mapping operates.
-    *
+    * 
     * @return the private Field for this propertyName, or null if no such field (should not throw NoSuchFieldException)
     */
 
@@ -387,7 +387,13 @@ public class ForgePropertyStyle
       while (fieldHolder != null)
       { // TODO:&& !isExcludedBaseType( currentClass ) ) {
 
-         return fieldHolder.getField(propertyName);
+         Field<?> field = fieldHolder.getField(propertyName);
+         // FORGE-402 (Support fields starting with capital letter.)
+         if ((field == null) && !StringUtils.isCapitalized(propertyName))
+         {
+            field = fieldHolder.getField(StringUtils.capitalize(propertyName));
+         }
+         return field;
          // TODO: need to traverse? currentClass = currentClass.getSuperType();
       }
 
