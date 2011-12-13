@@ -39,6 +39,16 @@ public class QueryByExampleWidgetBuilderTest
    // Public methods
    //
 
+   public void testSuppress()
+   {
+      QueryByExampleWidgetBuilder widgetBuilder = new QueryByExampleWidgetBuilder();
+      Map<String, String> attributes = CollectionUtils.newHashMap();
+      attributes.put(NAME, "abc");
+      attributes.put(TYPE, String.class.getName());
+      attributes.put(HIDDEN, TRUE);
+      assertEquals("", widgetBuilder.buildWidget(PROPERTY, attributes, new StaticJavaMetawidget()).toString());
+   }
+
    public void testString()
    {
       QueryByExampleWidgetBuilder widgetBuilder = new QueryByExampleWidgetBuilder();

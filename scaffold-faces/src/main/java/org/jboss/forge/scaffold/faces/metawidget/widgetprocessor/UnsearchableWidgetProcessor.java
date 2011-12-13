@@ -14,9 +14,8 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package org.jboss.forge.scaffold.faces.metawidget.widgetbuilder;
+package org.jboss.forge.scaffold.faces.metawidget.widgetprocessor;
 
-import static org.metawidget.inspector.InspectionResultConstants.*;
 import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.*;
 
 import java.util.Map;
@@ -26,20 +25,19 @@ import org.metawidget.statically.StaticMetawidget;
 import org.metawidget.statically.StaticWidget;
 import org.metawidget.statically.StaticXmlStub;
 import org.metawidget.statically.javacode.StaticJavaStub;
-import org.metawidget.statically.javacode.StaticJavaWidget;
 import org.metawidget.util.ClassUtils;
 import org.metawidget.util.WidgetBuilderUtils;
-import org.metawidget.widgetbuilder.iface.WidgetBuilder;
+import org.metawidget.widgetprocessor.iface.AdvancedWidgetProcessor;
 
 /**
- * WidgetBuilder to suppress fields that are not suitable as search fields.
+ * WidgetProcessor to suppress having too many search fields.
  *
  * @author Richard Kennard
  */
 
 @Veto
-public class UnsearchableWidgetBuilder
-         implements WidgetBuilder<StaticWidget, StaticMetawidget>
+public class UnsearchableWidgetProcessor
+         implements AdvancedWidgetProcessor<StaticWidget, StaticMetawidget>
 {
    //
    // Private statics
@@ -52,29 +50,56 @@ public class UnsearchableWidgetBuilder
    //
 
    @Override
-   public StaticWidget buildWidget(String elementName, Map<String, String> attributes, StaticMetawidget metawidget)
+   public void onStartBuild(StaticMetawidget metawidget)
    {
-      // Drill down
+      metawidget.putClientProperty(UnsearchableWidgetProcessor.class, 0);
+   }
 
-      if (ENTITY.equals(elementName))
+   @Override
+   public StaticWidget processWidget(StaticWidget widget, String elementName, Map<String, String> attributes,
+            StaticMetawidget metawidget)
+   {
+      int widgetsProcessed = metawidget.getClientProperty(UnsearchableWidgetProcessor.class);
+
+      // Ignore stubs
+
+      if (widget instanceof StaticXmlStub || widget instanceof StaticJavaStub)
+      {
+         return widget;
+      }
+
+      // Too many?
+
+      if (widgetsProcessed == MAXIMUM_SEARCH_FIELDS)
       {
          return null;
       }
 
-      // Suppress
+      // Wrong type?
 
-      if (TRUE.equals(attributes.get(HIDDEN)))
+      if (!isSearchable(attributes))
       {
-         return newStaticStub(metawidget);
-      }
-
-      if (metawidget.getChildren().size() >= MAXIMUM_SEARCH_FIELDS)
-      {
-         return newStaticStub(metawidget);
+         return null;
       }
 
       // Pass through
 
+      metawidget.putClientProperty(UnsearchableWidgetProcessor.class, widgetsProcessed + 1);
+      return widget;
+   }
+
+   @Override
+   public void onEndBuild(StaticMetawidget metawidget)
+   {
+      // Do nothing
+   }
+
+   //
+   // Private methods
+   //
+
+   private boolean isSearchable(Map<String, String> attributes)
+   {
       if (!WidgetBuilderUtils.isReadOnly(attributes))
       {
          String type = WidgetBuilderUtils.getActualClassOrType(attributes);
@@ -85,36 +110,16 @@ public class UnsearchableWidgetBuilder
 
             if (String.class.equals(clazz) || int.class.equals(clazz))
             {
-               return null;
+               return true;
             }
          }
 
          if (attributes.containsKey(FACES_LOOKUP))
          {
-            return null;
+            return true;
          }
       }
 
-      // Suppress anything else
-
-      return newStaticStub(metawidget);
-   }
-
-   //
-   // Private methods
-   //
-
-   /**
-    * @return the correct Stub type for the given Meawidget
-    */
-
-   private StaticWidget newStaticStub(StaticMetawidget metawidget)
-   {
-      if (metawidget instanceof StaticJavaWidget)
-      {
-         return new StaticJavaStub();
-      }
-
-      return new StaticXmlStub();
+      return false;
    }
 }
