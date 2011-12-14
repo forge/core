@@ -71,23 +71,23 @@ public class MavenPluginFacetTest extends ProjectModelTest
    public static JavaArchive getTestArchive()
    {
       return createTestArchive()
-                .addManifestResource(
-                         "META-INF/services/org.jboss.forge.project.dependencies.DependencyResolverProvider");
+               .addManifestResource(
+                        "META-INF/services/org.jboss.forge.project.dependencies.DependencyResolverProvider");
    }
 
    @Before
    @Override
-   public void postConstruct() throws IOException
+   public void before() throws IOException
    {
 
       project = null;
-      super.postConstruct();
+      super.before();
 
       if (testProject == null)
       {
          testProject = projectFactory.findProjectRecursively(
-                    ResourceUtil.getContextDirectory(resourceFactory.getResourceFrom(new File(
-                             "src/test/resources/test-pom"))));
+                  ResourceUtil.getContextDirectory(resourceFactory.getResourceFrom(new File(
+                           "src/test/resources/test-pom"))));
       }
    }
 
@@ -114,12 +114,12 @@ public class MavenPluginFacetTest extends ProjectModelTest
 
       int nrOfPlugins = getNumberOfPlugins();
       MavenPluginBuilder plugin = MavenPluginBuilder.create()
-                .setDependency(
-                         DependencyBuilder.create()
-                                  .setGroupId("org.apache.maven.plugins")
-                                  .setArtifactId("maven-site-plugin")
-                                  .setVersion("3.0")
-                );
+               .setDependency(
+                        DependencyBuilder.create()
+                                 .setGroupId("org.apache.maven.plugins")
+                                 .setArtifactId("maven-site-plugin")
+                                 .setVersion("3.0")
+               );
 
       mavenPluginFacet.addPlugin(plugin);
 
@@ -164,8 +164,8 @@ public class MavenPluginFacetTest extends ProjectModelTest
    {
       MavenPluginFacet mavenPluginFacet = testProject.getFacet(MavenPluginFacet.class);
       DependencyBuilder pluginDependency = DependencyBuilder.create()
-                .setGroupId("")
-                .setArtifactId("maven-compiler-plugin");
+               .setGroupId("")
+               .setArtifactId("maven-compiler-plugin");
       boolean hasPlugin = mavenPluginFacet.hasPlugin(pluginDependency);
       assertTrue(hasPlugin);
    }
@@ -214,7 +214,7 @@ public class MavenPluginFacetTest extends ProjectModelTest
       MavenPluginBuilder pluginBuilder = MavenPluginBuilder.create(plugin);
 
       pluginBuilder.createConfiguration()
-                .createConfigurationElement("xmlOutput").setText("true");
+               .createConfigurationElement("xmlOutput").setText("true");
 
       assertEquals(
                "<plugin><groupId>org.codehaus.mojo</groupId><artifactId>findbugs-maven-plugin</artifactId><version>2.3.2</version><configuration><xmlOutput>true</xmlOutput></configuration></plugin>",
@@ -230,7 +230,7 @@ public class MavenPluginFacetTest extends ProjectModelTest
       MavenPluginBuilder pluginBuilder = MavenPluginBuilder.create(plugin);
 
       pluginBuilder.createConfiguration()
-                .createConfigurationElement("testelement").setText("test");
+               .createConfigurationElement("testelement").setText("test");
 
       assertEquals(
                "<plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId><version>2.0.2</version><configuration><source>1.6</source><target>1.6</target><testelement>test</testelement></configuration></plugin>",

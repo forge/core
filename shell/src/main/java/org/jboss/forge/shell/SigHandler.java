@@ -38,18 +38,7 @@ public class SigHandler
          @Override
          public void handle(final Signal signal)
          {
-//            try
-//            {
-               shell.interrupt();
-//               shell.getReader().println("^C");
-//               shell.getReader().drawLine();
-//               shell.getReader().resetPromptLine(shell.getReader().getPrompt(), "", -1);
-//            }
-//            catch (IOException e)
-//            {
-//               if (shell.isVerbose())
-//                  e.printStackTrace();
-//            }
+            shell.interrupt();
          }
       };
 

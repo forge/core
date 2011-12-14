@@ -62,12 +62,12 @@ public interface DependencyFacet extends Facet
    }
 
    /**
-    * Add the given {@link Dependency} to this {@link Project}'s immediate list of dependencies. This method first calls
-    * {@link #hasDependency(Dependency)} before making changes to the dependency list.
+    * Add the given {@link Dependency} to this {@link Project}'s immediate list of dependencies. This method does not
+    * check for existence of dependencies in the hierarchy, instead, directly adds or replaces a direct dependency.
     * <p/>
     * See also: {@link DependencyBuilder}.
     */
-   public void addDependency(Dependency dependency);
+   public void addDirectDependency(Dependency dep);
 
    /**
     * Add the given managed {@link Dependency} to this {@link Project}'s immediate list of managed dependencies. This
@@ -77,6 +77,15 @@ public interface DependencyFacet extends Facet
     * See also: {@link DependencyBuilder}.
     */
    public void addManagedDependency(Dependency managedDependency);
+
+   /**
+    * Add the given managed {@link Dependency} to this {@link Project}'s immediate list of managed dependencies. This
+    * method does not check for existence of managed dependencies in the hierarchy, instead, directly adds or replaces a
+    * direct managed dependency.
+    * <p/>
+    * See also: {@link DependencyBuilder}.
+    */
+   public void addDirectManagedDependency(Dependency dep);
 
    /**
     * Add a {@link KnownRepository} to the project build system. This is where dependencies can be found, downloaded,
@@ -101,15 +110,6 @@ public interface DependencyFacet extends Facet
     * {@link DependencyBuilder}. See also: {@link #getDependency(Dependency)}.
     */
    public List<Dependency> getDependenciesInScopes(ScopeType... scopes);
-
-   /**
-    * Attempt to locate the given {@link Dependency}, if it exists in the {@link Project}, and return it.
-    * <p/>
-    * See also: {@link DependencyBuilder}. See also: {@link #hasDependency(Dependency)}.
-    * 
-    * @return
-    */
-   public Dependency getDependency(Dependency dependency);
 
    /**
     * Attempt to locate the given {@link Dependency}, if it exists in the {@link Project} direct dependency list, and
@@ -194,19 +194,6 @@ public interface DependencyFacet extends Facet
    public List<DependencyRepository> getRepositories();
 
    /**
-    * Return true if this {@link Project} contains a dependency matching the given {@link Dependency} at any level of
-    * the project hierarchy; return false otherwise. This method ignores {@link Dependency#getScopeType()}
-    * <p/>
-    * Shorthand for : {@link #hasEffectiveDependency(Dependency)}<br/>
-    * See also: {@link DependencyBuilder}.
-    * <p/>
-    * <b>Notice:</b> This method checks the entire project dependency structure, meaning that if a dependency is
-    * declared somewhere else in the hierarchy, it will not be detected by {@link #hasDirectDependency(Dependency)} and
-    * will not be removable via {@link #removeDependency(Dependency)}.
-    */
-   public boolean hasDependency(Dependency dependency);
-
-   /**
     * Return true if this {@link Project} contains a dependency matching the given {@link Dependency}; return false
     * otherwise. This method ignores {@link Dependency#getScopeType()}
     * <p/>
@@ -247,7 +234,7 @@ public interface DependencyFacet extends Facet
     * dependency is declared somewhere else in the hierarchy, it will not be detected by this method, even though
     * {@link #hasEffectiveManagedDependency(Dependency)} may return true.
     */
-   public boolean hasManagedDependency(Dependency managedDependency);
+   public boolean hasDirectManagedDependency(Dependency managedDependency);
 
    /**
     * Return true if the given {@link KnownRepository} is already registered in this project's build system.

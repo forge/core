@@ -8,6 +8,12 @@ import org.jboss.forge.spec.javaee.jpa.provider.HibernateProvider;
 import org.jboss.forge.spec.javaee.jpa.provider.InfinispanProvider;
 import org.jboss.forge.spec.javaee.jpa.provider.OpenJPAProvider;
 
+/**
+ * Represents the list of known/supported JPA implementation providers
+ * 
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * 
+ */
 public enum JPAProvider
 {
    HIBERNATE(HibernateProvider.class),

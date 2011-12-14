@@ -863,7 +863,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          {
             //
          }
-         println("[killed]");
+         print("[killed]");
          interruptedState = true;
       }
    }

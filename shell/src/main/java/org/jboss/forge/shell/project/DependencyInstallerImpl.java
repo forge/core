@@ -56,57 +56,112 @@ public class DependencyInstallerImpl implements DependencyInstaller
    @Override
    public Dependency install(final Project project, final Dependency dependency, final ScopeType type)
    {
-      Dependency result = dependency;
-
       DependencyFacet deps = project.getFacet(DependencyFacet.class);
-      if (deps.hasDirectDependency(dependency))
+
+      // Exists in deps, no version change requested
+      Dependency existing = deps.getEffectiveDependency(dependency);
+      Dependency existingManaged = deps.getEffectiveManagedDependency(dependency);
+      DependencyBuilder unversioned = DependencyBuilder.create(dependency).setVersion(null)
+               .setScopeType(type == null ? dependency.getScopeType() : type.toString())
+               .setPackagingType(dependency.getPackagingType());
+
+      if (existing != null) // we already have the dep
       {
-         deps.removeDependency(deps.getDependency(dependency));
-      }
-
-      Dependency managedDependency = deps.getEffectiveManagedDependency(dependency);
-
-      if (Strings.isNullOrEmpty(dependency.getVersion())
-               && deps.hasEffectiveManagedDependency(dependency))
-      {
-
-         if (!Strings.isNullOrEmpty(managedDependency.getVersion()))
+         if (!Strings.isNullOrEmpty(existing.getVersion())
+                  && (existing.getVersion().equals(dependency.getVersion()) // the version is the same as requested
+                  || Strings.isNullOrEmpty(dependency.getVersion()))) // or no specific version was requested
          {
-            result = DependencyBuilder.create(managedDependency).setVersion(null)
-                     .setScopeType(type);
-            deps.addDependency(result);
+            // take no action
+            return existing;
+         }
+         else if (Strings.isNullOrEmpty(existing.getVersion()) // we have no existing version
+                  && !Strings.isNullOrEmpty(dependency.getVersion())) // but we did request one
+         {
+            return update(dependency, deps, unversioned);
+         }
+         else // version is different
+         {
+            return promptAndUpdate(dependency, deps, unversioned);
          }
       }
-      else
+      else if (existingManaged != null) // we don't have a dependency, or the existing dependency did not have a
+                                        // version, but we do have a managed dependency
       {
-         final List<Dependency> versions = deps.resolveAvailableVersions(dependency);
-         Dependency deflt = versions.get(versions.size() - 1);
-
-         if (managedDependency != null)
+         if (!Strings.isNullOrEmpty(existingManaged.getVersion()) // we have a version already
+                  && (!existingManaged.getVersion().equals(dependency.getVersion()) // the version is the same as
+                                                                                    // requested
+                  || Strings.isNullOrEmpty(dependency.getVersion()))) // or no specific version was requested
          {
-            for (Dependency d : versions) {
-               if (!Strings.isNullOrEmpty(managedDependency.getVersion())
-                        && managedDependency.getVersion().equals(d.getVersion()))
-               {
-                  deflt = d;
-                  break;
-               }
-            }
+            // don't need to touch dep management because we already have the right version
+            deps.removeDependency(dependency);
+            deps.addDirectDependency(unversioned);
+            return existingManaged;
          }
-
-         result = prompt.promptChoiceTyped("Which version of '" + dependency.getArtifactId()
-                  + "' would you like to use?", versions, deflt);
-         result = DependencyBuilder.create(result).setScopeType(type);
-         deps.addDependency(result);
+         else if (Strings.isNullOrEmpty(existingManaged.getVersion()) // we have no existing version
+                  && !Strings.isNullOrEmpty(dependency.getVersion())) // but we did request one
+         {
+            return update(dependency, deps, unversioned);
+         }
+         else // version is different or unspecified, and we had no existing version.
+         {
+            return promptAndUpdate(dependency, deps, unversioned);
+         }
       }
-
-      return result;
+      else // we have neither dep or managed dep
+      {
+         if (Strings.isNullOrEmpty(dependency.getVersion()))
+            // we didn't request a specific version
+            return promptAndUpdate(dependency, deps, unversioned);
+         else
+            // we requested a specific version
+            return update(dependency, deps, unversioned);
+      }
    }
 
    @Override
    public boolean isInstalled(final Project project, final Dependency dependency)
    {
       DependencyFacet deps = project.getFacet(DependencyFacet.class);
-      return deps.hasDependency(dependency);
+      return deps.hasEffectiveDependency(dependency);
+   }
+
+   /*
+    * Helpers
+    */
+
+   private Dependency update(final Dependency dependency, final DependencyFacet deps,
+            final DependencyBuilder unversioned)
+   {
+      deps.addDirectDependency(unversioned);
+      deps.addDirectManagedDependency(dependency);
+      return dependency;
+   }
+
+   private Dependency promptAndUpdate(final Dependency dependency, final DependencyFacet deps,
+            final DependencyBuilder unversioned)
+   {
+      DependencyBuilder toAdd = DependencyBuilder.create(promptVersion(deps, dependency));
+
+      // ensure that the added managed dependency has the same traits as the dependency provided
+      toAdd.setScopeType(dependency.getScopeType())
+               .setClassifier(dependency.getClassifier())
+               .setPackagingType(dependency.getPackagingType());
+
+      deps.addDirectDependency(unversioned);
+      deps.addDirectManagedDependency(toAdd);
+      return toAdd;
+   }
+
+   private Dependency promptVersion(final DependencyFacet deps, final Dependency dependency)
+   {
+      Dependency result = dependency;
+      final List<Dependency> versions = deps.resolveAvailableVersions(dependency);
+      if (versions.size() > 0)
+      {
+         Dependency deflt = versions.get(versions.size() - 1);
+         result = prompt.promptChoiceTyped("Use which version of '" + dependency.getArtifactId()
+                  + "' ?", versions, deflt);
+      }
+      return result;
    }
 }

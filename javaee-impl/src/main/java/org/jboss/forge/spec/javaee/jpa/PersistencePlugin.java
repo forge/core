@@ -188,6 +188,11 @@ public class PersistencePlugin implements Plugin
       jpa.saveConfig(config);
 
       installAdditionalDependencies(out, container, jpap, provider, providerVersion);
+
+      if (project.hasFacet(PersistenceFacet.class))
+      {
+         ShellMessages.success(out, "Persistence (JPA) is installed.");
+      }
    }
 
    private void installAdditionalDependencies(final PipeOut out, final PersistenceContainer container,
@@ -238,7 +243,7 @@ public class PersistencePlugin implements Plugin
 
          for (Dependency dependency : dependencies)
          {
-            dependencyFacet.addDependency(dependency);
+            dependencyFacet.addDirectDependency(dependency);
          }
       }
    }

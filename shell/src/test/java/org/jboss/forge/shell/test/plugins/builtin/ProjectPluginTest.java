@@ -9,11 +9,11 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.maven.MavenCoreFacet;
-import org.jboss.forge.maven.facets.MavenDependencyFacet;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.dependencies.ScopeType;
+import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.test.AbstractShellTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,13 +46,13 @@ public class ProjectPluginTest extends AbstractShellTest
       dep.setScopeType(ScopeType.COMPILE);
       dep.setPackagingType("jar");
 
-      MavenDependencyFacet facet = getProject().getFacet(MavenDependencyFacet.class);
-      assertNull(facet.getDependency(dep));
+      DependencyFacet facet = getProject().getFacet(DependencyFacet.class);
+      assertNull(facet.getEffectiveDependency(dep));
 
       queueInputLines("Y");
       getShell().execute("project add-dependency commons-httpclient:commons-httpclient");
 
-      Dependency newDep = facet.getDependency(dep);
+      Dependency newDep = facet.getEffectiveDependency(dep);
 
       assertEquals(newDep.toCoordinates(), dep.toCoordinates());
    }
@@ -86,13 +86,13 @@ public class ProjectPluginTest extends AbstractShellTest
       dep.setScopeType(ScopeType.COMPILE);
       dep.setPackagingType("jar");
 
-      MavenDependencyFacet facet = getProject().getFacet(MavenDependencyFacet.class);
-      assertNull(facet.getDependency(dep));
+      DependencyFacet facet = getProject().getFacet(DependencyFacet.class);
+      assertNull(facet.getEffectiveDependency(dep));
 
       queueInputLines("Y");
       getShell().execute("project add-dependency commons-httpclient:commons-httpclient");
 
-      Dependency newDep = facet.getDependency(dep);
+      Dependency newDep = facet.getEffectiveDependency(dep);
 
       assertEquals(newDep.toCoordinates(), dep.toCoordinates());
    }
@@ -121,13 +121,13 @@ public class ProjectPluginTest extends AbstractShellTest
       dep.setScopeType(ScopeType.COMPILE);
       dep.setPackagingType("jar");
 
-      MavenDependencyFacet facet = getProject().getFacet(MavenDependencyFacet.class);
-      assertNull(facet.getDependency(dep));
+      DependencyFacet facet = getProject().getFacet(DependencyFacet.class);
+      assertNull(facet.getEffectiveDependency(dep));
 
       queueInputLines("Y");
       getShell().execute("project add-dependency commons-httpclient:commons-httpclient");
 
-      Dependency newDep = facet.getDependency(dep);
+      Dependency newDep = facet.getEffectiveDependency(dep);
 
       assertEquals(newDep.toCoordinates(), dep.toCoordinates());
    }
@@ -142,7 +142,7 @@ public class ProjectPluginTest extends AbstractShellTest
    {
       Project project = initializeJavaProject();
       getShell().execute("project add-managed-dependency com.ocpsoft:prettyfaces-jsf2:3.2.0");
-      MavenDependencyFacet facet = project.getFacet(MavenDependencyFacet.class);
+      DependencyFacet facet = project.getFacet(DependencyFacet.class);
 
       DependencyBuilder dep = DependencyBuilder.create();
       dep.setArtifactId("prettyfaces-jsf2");
@@ -151,11 +151,11 @@ public class ProjectPluginTest extends AbstractShellTest
       dep.setScopeType("compile");
       dep.setPackagingType("jar");
 
-      assertNull(facet.getDependency(dep));
+      assertNull(facet.getEffectiveDependency(dep));
       queueInputLines("Y");
       getShell().execute("project add-dependency com.ocpsoft:prettyfaces-jsf2");
 
-      Dependency newDep = facet.getDependency(dep);
+      Dependency newDep = facet.getEffectiveDependency(dep);
 
       assertEquals(newDep.toCoordinates(), dep.toCoordinates());
    }
@@ -171,7 +171,7 @@ public class ProjectPluginTest extends AbstractShellTest
       queueInputLines("", "n");
       Project project = initializeJavaProject();
       getShell().execute("project add-managed-dependency com.ocpsoft:prettyfaces-jsf2:3.2.0");
-      MavenDependencyFacet facet = project.getFacet(MavenDependencyFacet.class);
+      DependencyFacet facet = project.getFacet(DependencyFacet.class);
 
       DependencyBuilder dep = DependencyBuilder.create();
       dep.setArtifactId("prettyfaces-jsf2");
@@ -180,10 +180,10 @@ public class ProjectPluginTest extends AbstractShellTest
       dep.setScopeType("compile");
       dep.setPackagingType("jar");
 
-      assertNull(facet.getDependency(dep));
+      assertNull(facet.getEffectiveDependency(dep));
       getShell().execute("project add-dependency com.ocpsoft:prettyfaces-jsf2:3.0.1");
 
-      Dependency newDep = facet.getDependency(dep);
+      Dependency newDep = facet.getEffectiveDependency(dep);
       dep.setVersion("3.0.1");
 
       assertEquals(newDep.toCoordinates(), dep.toCoordinates());
@@ -200,7 +200,7 @@ public class ProjectPluginTest extends AbstractShellTest
       queueInputLines("", "n", "2");
       Project project = initializeJavaProject();
       getShell().execute("project add-managed-dependency com.ocpsoft:prettyfaces-jsf2:3.2.0");
-      MavenDependencyFacet facet = project.getFacet(MavenDependencyFacet.class);
+      DependencyFacet facet = project.getFacet(DependencyFacet.class);
 
       DependencyBuilder dep = DependencyBuilder.create();
       dep.setArtifactId("prettyfaces-jsf2");
@@ -209,10 +209,10 @@ public class ProjectPluginTest extends AbstractShellTest
       dep.setScopeType("compile");
       dep.setPackagingType("jar");
 
-      assertNull(facet.getDependency(dep));
+      assertNull(facet.getEffectiveDependency(dep));
       getShell().execute("project add-dependency com.ocpsoft:prettyfaces-jsf2");
 
-      Dependency newDep = facet.getDependency(dep);
+      Dependency newDep = facet.getEffectiveDependency(dep);
       dep.setVersion("3.0.1");
 
       assertEquals(newDep.toCoordinates(), dep.toCoordinates());

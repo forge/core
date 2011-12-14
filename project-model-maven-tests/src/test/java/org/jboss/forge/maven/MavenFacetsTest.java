@@ -37,7 +37,6 @@ import javax.inject.Singleton;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.maven.util.ProjectModelTest;
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.JavaClass;
@@ -73,9 +72,9 @@ public class MavenFacetsTest extends ProjectModelTest
 
    @Before
    @Override
-   public void postConstruct() throws IOException
+   public void before() throws IOException
    {
-      super.postConstruct();
+      super.before();
 
       if (thisProject == null)
       {

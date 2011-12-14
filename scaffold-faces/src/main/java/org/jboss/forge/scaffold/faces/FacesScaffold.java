@@ -63,6 +63,7 @@ import org.jboss.forge.shell.ShellPrompt;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.spec.javaee.CDIFacet;
+import org.jboss.forge.spec.javaee.EJBFacet;
 import org.jboss.forge.spec.javaee.FacesFacet;
 import org.jboss.forge.spec.javaee.PersistenceFacet;
 import org.jboss.forge.spec.javaee.ServletFacet;
@@ -110,15 +111,16 @@ import org.w3c.dom.NamedNodeMap;
  * writing Metawidget plugins, see <a href="http://metawidget.org/documentation.php">the Metawidget documentation</a>.
  * <p>
  * This Facet does <em>not</em> require Metawidget to be in the final project.
- *
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author Richard Kennard
  */
 
-@Alias("faces")
+@Alias("forge.scaffold.faces")
 @RequiresFacet({ WebResourceFacet.class,
          DependencyFacet.class,
          PersistenceFacet.class,
+         EJBFacet.class,
          CDIFacet.class,
          FacesFacet.class })
 public class FacesScaffold extends BaseFacet implements ScaffoldProvider
@@ -233,7 +235,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
     */
 
    @Override
-   public void setProject(Project project)
+   public void setProject(final Project project)
    {
       super.setProject(project);
 
@@ -361,10 +363,10 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
 
    private void setupRichFaces()
    {
-      if ((this.project.getFacet(DependencyFacet.class).hasDependency(this.richfaces3UI)
-               && this.project.getFacet(DependencyFacet.class).hasDependency(this.richfaces3Impl))
-               || (this.project.getFacet(DependencyFacet.class).hasDependency(this.richfaces4UI)
-               && this.project.getFacet(DependencyFacet.class).hasDependency(this.richfaces4Impl)))
+      if ((this.project.getFacet(DependencyFacet.class).hasEffectiveDependency(this.richfaces3UI)
+               && this.project.getFacet(DependencyFacet.class).hasEffectiveDependency(this.richfaces3Impl))
+               || (this.project.getFacet(DependencyFacet.class).hasEffectiveDependency(this.richfaces4UI)
+               && this.project.getFacet(DependencyFacet.class).hasEffectiveDependency(this.richfaces4Impl)))
       {
          @SuppressWarnings("unchecked")
          CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget> entityWidgetBuider = new CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget>(
@@ -658,7 +660,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
     * namespaces that Metawidget introduces.
     */
 
-   private Map<String, String> parseNamespaces(String template)
+   private Map<String, String> parseNamespaces(final String template)
    {
       Map<String, String> namespaces = CollectionUtils.newHashMap();
       Document document = XmlUtils.documentFromString(template);
@@ -686,7 +688,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
     * Parses the given XML and determines the indent of the given String namespaces that Metawidget introduces.
     */
 
-   private int parseIndent(String template, String indentOf)
+   private int parseIndent(final String template, final String indentOf)
    {
       int indent = 0;
       int indexOf = template.indexOf(indentOf);
@@ -742,7 +744,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       context.put("metawidgetNamespaces", namespacesToString(namespaces));
    }
 
-   private String namespacesToString(Map<String, String> namespaces)
+   private String namespacesToString(final Map<String, String> namespaces)
    {
       StringBuilder builder = new StringBuilder();
 

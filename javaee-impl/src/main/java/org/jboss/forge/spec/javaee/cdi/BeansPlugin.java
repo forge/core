@@ -22,7 +22,6 @@
 package org.jboss.forge.spec.javaee.cdi;
 
 import java.io.FileNotFoundException;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.enterprise.context.Conversation;
@@ -34,12 +33,7 @@ import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.Method;
 import org.jboss.forge.parser.java.SyntaxError;
 import org.jboss.forge.project.Project;
-import org.jboss.forge.project.dependencies.Dependency;
-import org.jboss.forge.project.dependencies.DependencyBuilder;
-import org.jboss.forge.project.dependencies.ScopeType;
-import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.facets.JavaSourceFacet;
-import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.project.facets.events.InstallFacets;
 import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.shell.PromptType;
@@ -57,7 +51,6 @@ import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresResource;
 import org.jboss.forge.shell.plugins.SetupCommand;
-import org.jboss.forge.shell.util.Lists;
 import org.jboss.forge.spec.javaee.CDIFacet;
 
 /**
@@ -68,9 +61,6 @@ import org.jboss.forge.spec.javaee.CDIFacet;
 @RequiresFacet(CDIFacet.class)
 public class BeansPlugin implements Plugin
 {
-   private static final Dependency JAVAEE6_DEPENDENCY = DependencyBuilder.create("org.jboss.spec:jboss-javaee-6.0");
-   private static final Dependency JAVAEE6_CDI = DependencyBuilder.create("javax.enterprise:cdi-api");
-
    @Inject
    private Event<InstallFacets> install;
 
@@ -90,39 +80,19 @@ public class BeansPlugin implements Plugin
    @Current
    private JavaResource resource;
 
-   DependencyFacet dependencyFacet;
-
    @SetupCommand
    public void setup(final PipeOut out)
    {
       if (!project.hasFacet(CDIFacet.class))
       {
-         dependencyFacet = project.getFacet(DependencyFacet.class);
-
          install.fire(new InstallFacets(CDIFacet.class));
-         installDependencies();
       }
 
-   }
+      // TODO enable java SE support
 
-   private void installDependencies()
-   {
-      if (!dependencyFacet.hasDependency(JAVAEE6_CDI)
-               && !dependencyFacet.hasDependency(JAVAEE6_DEPENDENCY)
-               && prompt.promptBoolean("Do you want to add CDI dependencies?", false))
+      if (project.hasFacet(CDIFacet.class))
       {
-         Dependency dependency = prompt.promptChoiceTyped("Which dependency do you want to install?",
-                  Arrays.asList(JAVAEE6_DEPENDENCY, JAVAEE6_CDI));
-
-         List<Dependency> versions = dependencyFacet.resolveAvailableVersions(dependency);
-         dependency = prompt.promptChoiceTyped("Install which version?", versions, Lists.lastElement(versions));
-
-         if (prompt.promptBoolean("Should the scope be 'provided'?", project.hasFacet(WebResourceFacet.class)))
-         {
-            dependency = DependencyBuilder.create(dependency).setScopeType(ScopeType.PROVIDED);
-         }
-         dependencyFacet.addDependency(dependency);
-         ShellMessages.info(shell, "Added " + dependency.toString());
+         ShellMessages.success(out, "Beans (CDI) is installed.");
       }
    }
 
@@ -180,7 +150,7 @@ public class BeansPlugin implements Plugin
             @Option(name = "beginMethodName", defaultValue = "beginConversation") final String beginName,
             @Option(name = "endMethodName", defaultValue = "endConversation") final String endName,
             @Option(name = "conversationFieldName", defaultValue = "conversation") final String fieldName,
-            @Option(name = "overwrite") boolean overwrite,
+            @Option(name = "overwrite") final boolean overwrite,
             final PipeOut out) throws FileNotFoundException
    {
       if (resource.exists())
@@ -200,7 +170,7 @@ public class BeansPlugin implements Plugin
                   throw new RuntimeException("Field [" + fieldName + "] exists. Re-run with '--overwrite' to continue.");
                }
             }
-            if (javaClass.hasMethodSignature(beginName) && javaClass.getMethod(beginName).getParameters().size() == 0)
+            if (javaClass.hasMethodSignature(beginName) && (javaClass.getMethod(beginName).getParameters().size() == 0))
             {
                if (overwrite)
                {
@@ -212,7 +182,7 @@ public class BeansPlugin implements Plugin
                            + "] exists. Re-run with '--overwrite' to continue.");
                }
             }
-            if (javaClass.hasMethodSignature(endName) && javaClass.getMethod(endName).getParameters().size() == 0)
+            if (javaClass.hasMethodSignature(endName) && (javaClass.getMethod(endName).getParameters().size() == 0))
             {
                if (overwrite)
                {

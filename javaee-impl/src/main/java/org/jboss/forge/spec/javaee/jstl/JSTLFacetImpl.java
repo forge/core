@@ -21,13 +21,17 @@
  */
 package org.jboss.forge.spec.javaee.jstl;
 
+import java.util.Arrays;
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
-import org.jboss.forge.project.dependencies.ScopeType;
-import org.jboss.forge.project.facets.BaseFacet;
-import org.jboss.forge.project.facets.DependencyFacet;
+import org.jboss.forge.project.dependencies.DependencyInstaller;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
+import org.jboss.forge.spec.javaee.BaseJavaEEFacet;
 import org.jboss.forge.spec.javaee.JSTLFacet;
 import org.jboss.forge.spec.javaee.ServletFacet;
 
@@ -36,20 +40,20 @@ import org.jboss.forge.spec.javaee.ServletFacet;
  */
 @Alias("forge.spec.jstl")
 @RequiresFacet(ServletFacet.class)
-public class JSTLFacetImpl extends BaseFacet implements JSTLFacet
+public class JSTLFacetImpl extends BaseJavaEEFacet implements JSTLFacet
 {
-   Dependency jstl = DependencyBuilder.create("javax.servlet:jstl").setScopeType(ScopeType.PROVIDED);
-
-   @Override
-   public boolean isInstalled()
+   @Inject
+   public JSTLFacetImpl(final DependencyInstaller installer)
    {
-      return project.hasFacet(ServletFacet.class) && project.getFacet(DependencyFacet.class).hasDependency(jstl);
+      super(installer);
    }
 
    @Override
-   public boolean install()
+   protected List<Dependency> getRequiredDependencies()
    {
-      return project.getFacet(DependencyFacet.class).hasEffectiveDependency(jstl);
+      return Arrays
+               .asList((Dependency) DependencyBuilder
+                        .create("org.jboss.spec.javax.servlet.jstl:jboss-jstl-api_1.2_spec"));
    }
 
 }

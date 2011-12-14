@@ -10,6 +10,12 @@ import org.jboss.forge.spec.javaee.jpa.container.JBossAS6Container;
 import org.jboss.forge.spec.javaee.jpa.container.JBossAS7Container;
 import org.jboss.forge.spec.javaee.jpa.container.NonJTAContainer;
 
+/**
+ * Represents the list of known/supported JPA container types.
+ * 
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * 
+ */
 public enum JPAContainer
 {
    JBOSS_AS6(JBossAS6Container.class),
