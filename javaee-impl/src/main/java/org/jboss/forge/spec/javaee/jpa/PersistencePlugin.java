@@ -31,6 +31,7 @@ import javax.inject.Inject;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
+import org.jboss.forge.project.dependencies.DependencyInstaller;
 import org.jboss.forge.project.dependencies.ScopeType;
 import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.facets.JavaSourceFacet;
@@ -80,6 +81,9 @@ public class PersistencePlugin implements Plugin
 
    @Inject
    private BeanManager manager;
+
+   @Inject
+   private DependencyInstaller installer;
 
    @DefaultCommand
    public void show(final PipeOut out, @Option(name = "all", shortName = "a") final boolean showAll)
@@ -243,7 +247,7 @@ public class PersistencePlugin implements Plugin
 
          for (Dependency dependency : dependencies)
          {
-            dependencyFacet.addDirectDependency(dependency);
+            installer.install(project, dependency);
          }
       }
    }

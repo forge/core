@@ -56,10 +56,13 @@ public abstract class BaseJavaEEFacet extends BaseFacet
    @Override
    public boolean install()
    {
-      project.getFacet(DependencyFacet.class).addDirectManagedDependency(JAVAEE6);
       for (Dependency requirement : getRequiredDependencies()) {
          if (!installer.isInstalled(project, requirement))
          {
+            if (!project.getFacet(DependencyFacet.class).hasDirectManagedDependency(JAVAEE6))
+            {
+               project.getFacet(DependencyFacet.class).addDirectManagedDependency(JAVAEE6);
+            }
             installer.install(project, requirement, ScopeType.PROVIDED);
          }
       }
@@ -76,7 +79,7 @@ public abstract class BaseJavaEEFacet extends BaseFacet
             return false;
          }
       }
-      return deps.hasDirectManagedDependency(JAVAEE6);
+      return true;
    }
 
    abstract protected List<Dependency> getRequiredDependencies();
