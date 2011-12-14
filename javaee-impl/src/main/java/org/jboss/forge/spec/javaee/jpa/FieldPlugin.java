@@ -393,8 +393,7 @@ public class FieldPlugin implements Plugin
             annotation.setStringValue("mappedBy", inverseFieldName);
 
             many.addImport(one);
-            Field<JavaClass> manyField = many.addField("private " + one.getName() + " " + inverseFieldName + "= new "
-                     + one.getName() + "();");
+            Field<JavaClass> manyField = many.addField("private " + one.getName() + " " + inverseFieldName + ";");
             manyField.addAnnotation(ManyToOne.class);
             Refactory.createGetterAndSetter(many, manyField);
             java.saveJavaSource(many);
