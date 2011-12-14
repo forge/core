@@ -23,11 +23,15 @@ package org.jboss.forge.spec.javaee.servlet;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
-import org.jboss.forge.project.facets.BaseFacet;
+import org.jboss.forge.project.dependencies.DependencyInstaller;
+import org.jboss.forge.project.dependencies.ScopeType;
 import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.facets.MetadataFacet;
 import org.jboss.forge.project.facets.WebResourceFacet;
@@ -39,6 +43,7 @@ import org.jboss.forge.resources.ResourceFilter;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresPackagingType;
+import org.jboss.forge.spec.javaee.BaseJavaEEFacet;
 import org.jboss.forge.spec.javaee.ServletFacet;
 import org.jboss.shrinkwrap.descriptor.api.DescriptorImporter;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
@@ -50,12 +55,59 @@ import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
 @Alias("forge.spec.servlet")
 @RequiresFacet({ MetadataFacet.class, WebResourceFacet.class, DependencyFacet.class })
 @RequiresPackagingType({ PackagingType.WAR, PackagingType.BUNDLE })
-public class ServletFacetImpl extends BaseFacet implements ServletFacet
+public class ServletFacetImpl extends BaseJavaEEFacet implements ServletFacet
 {
+   @Inject
+   public ServletFacetImpl(final DependencyInstaller installer)
+   {
+      super(installer);
+   }
 
-   private static final Dependency dep =
-            DependencyBuilder.create("org.jboss.spec:jboss-javaee-6.0:1.0.0.Final:provided:basic");
+   @Override
+   protected List<Dependency> getRequiredDependencies()
+   {
+      return Arrays
+               .asList((Dependency) DependencyBuilder.create("org.jboss.spec.javax.servlet:jboss-servlet-api_3.0_spec")
+                        .setScopeType(ScopeType.PROVIDED));
+   }
 
+   @Override
+   public boolean isInstalled()
+   {
+      DirectoryResource webRoot = project.getFacet(WebResourceFacet.class).getWebRootDirectory();
+      return webRoot.exists() && getConfigFile().exists() && super.isInstalled();
+   }
+
+   @Override
+   public boolean install()
+   {
+      if (!isInstalled())
+      {
+         String projectName = project.getFacet(MetadataFacet.class).getProjectName();
+
+         DirectoryResource webRoot = project.getFacet(WebResourceFacet.class).getWebRootDirectory();
+         if (!webRoot.exists())
+         {
+            webRoot.mkdirs();
+         }
+
+         FileResource<?> descriptor = getConfigFile();
+         if (!descriptor.exists())
+         {
+            WebAppDescriptor unit = Descriptors.create(WebAppDescriptor.class)
+                     .displayName(projectName)
+                     .sessionTimeout(30);
+
+            descriptor.setContents(unit.exportAsString());
+         }
+
+      }
+      return super.install();
+   }
+
+   /*
+    * Facet Methods
+    */
    @Override
    public WebAppDescriptor getConfig()
    {
@@ -124,44 +176,5 @@ public class ServletFacetImpl extends BaseFacet implements ServletFacet
          }
       }
       return result;
-   }
-
-   /*
-    * Facet Methods
-    */
-   @Override
-   public boolean isInstalled()
-   {
-      DirectoryResource webRoot = project.getFacet(WebResourceFacet.class).getWebRootDirectory();
-      return webRoot.exists() && getConfigFile().exists() && project.getFacet(DependencyFacet.class).hasDependency(dep);
-   }
-
-   @Override
-   public boolean install()
-   {
-      if (!isInstalled())
-      {
-         String projectName = project.getFacet(MetadataFacet.class).getProjectName();
-
-         project.getFacet(DependencyFacet.class).addDependency(dep);
-
-         DirectoryResource webRoot = project.getFacet(WebResourceFacet.class).getWebRootDirectory();
-         if (!webRoot.exists())
-         {
-            webRoot.mkdirs();
-         }
-
-         FileResource<?> descriptor = getConfigFile();
-         if (!descriptor.exists())
-         {
-            WebAppDescriptor unit = Descriptors.create(WebAppDescriptor.class)
-                     .displayName(projectName)
-                     .sessionTimeout(30);
-
-            descriptor.setContents(unit.exportAsString());
-         }
-
-      }
-      return true;
    }
 }

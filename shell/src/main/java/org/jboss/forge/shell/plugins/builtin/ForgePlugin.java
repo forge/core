@@ -450,7 +450,7 @@ public class ForgePlugin implements Plugin
          }
 
          DependencyFacet deps = project.getFacet(DependencyFacet.class);
-         if (!deps.hasDependency(DependencyBuilder.create("org.jboss.forge:forge-shell-api"))
+         if (!deps.hasEffectiveDependency(DependencyBuilder.create("org.jboss.forge:forge-shell-api"))
                   && !prompt.promptBoolean("The project does not appear to be a Forge Plugin Project, install anyway?",
                            false))
          {
@@ -465,8 +465,7 @@ public class ForgePlugin implements Plugin
             {
                ShellMessages.warn(out, "Dependency [" + dependency.toCoordinates()
                         + "] was not correctly marked as PROVIDED scope; this has been corrected.");
-               deps.removeDependency(dependency);
-               deps.addDependency(DependencyBuilder.create(dependency).setScopeType(ScopeType.PROVIDED));
+               deps.addDirectDependency(DependencyBuilder.create(dependency).setScopeType(ScopeType.PROVIDED));
             }
          }
 

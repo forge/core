@@ -22,11 +22,16 @@
 package org.jboss.forge.spec.javaee.cdi;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.enterprise.event.Observes;
+import javax.inject.Inject;
 
 import org.jboss.forge.project.Project;
-import org.jboss.forge.project.facets.BaseFacet;
+import org.jboss.forge.project.dependencies.Dependency;
+import org.jboss.forge.project.dependencies.DependencyBuilder;
+import org.jboss.forge.project.dependencies.DependencyInstaller;
 import org.jboss.forge.project.facets.PackagingFacet;
 import org.jboss.forge.project.facets.ResourceFacet;
 import org.jboss.forge.project.facets.WebResourceFacet;
@@ -36,6 +41,7 @@ import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
+import org.jboss.forge.spec.javaee.BaseJavaEEFacet;
 import org.jboss.forge.spec.javaee.CDIFacet;
 import org.jboss.shrinkwrap.descriptor.api.DescriptorImporter;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
@@ -46,8 +52,54 @@ import org.jboss.shrinkwrap.descriptor.api.spec.cdi.beans.BeansDescriptor;
  */
 @Alias("forge.spec.cdi")
 @RequiresFacet({ ResourceFacet.class, PackagingFacet.class })
-public class CDIFacetImpl extends BaseFacet implements CDIFacet
+public class CDIFacetImpl extends BaseJavaEEFacet implements CDIFacet
 {
+   @Inject
+   public CDIFacetImpl(final DependencyInstaller installer)
+   {
+      super(installer);
+   }
+
+   @Override
+   public boolean isInstalled()
+   {
+      return getConfigFile(project).exists()
+               && super.isInstalled();
+   }
+
+   @Override
+   public boolean install()
+   {
+      if (!isInstalled())
+      {
+         FileResource<?> descriptor = getConfigFile(project);
+         if (!descriptor.createNewFile())
+         {
+            throw new RuntimeException("Failed to create required [" + descriptor.getFullyQualifiedName() + "]");
+         }
+
+         descriptor.setContents(getClass()
+                  .getResourceAsStream("/org/jboss/forge/web/beans.xml"));
+      }
+
+      return super.install();
+   }
+
+   @Override
+   protected List<Dependency> getRequiredDependencies()
+   {
+      return Arrays.asList(
+               (Dependency) DependencyBuilder.create("javax.enterprise:cdi-api"),
+               DependencyBuilder.create("javax.inject:javax.inject"),
+               DependencyBuilder.create("org.jboss.spec.javax.interceptor:jboss-interceptors-api_1.1_spec"),
+               DependencyBuilder.create("org.jboss.spec.javax.annotation:jboss-annotations-api_1.1_spec")
+               );
+   }
+
+   /*
+    * Facet methods
+    */
+
    public void updateConfigLocation(@Observes final PackagingChanged event)
    {
       Project project = event.getProject();
@@ -112,32 +164,5 @@ public class CDIFacetImpl extends BaseFacet implements CDIFacet
    {
       String output = descriptor.exportAsString();
       getConfigFile(project).setContents(output);
-   }
-
-   /*
-    * Facet Methods
-    */
-   @Override
-   public boolean isInstalled()
-   {
-      return getConfigFile(project).exists();
-   }
-
-   @Override
-   public boolean install()
-   {
-      if (!isInstalled())
-      {
-         FileResource<?> descriptor = getConfigFile(project);
-         if (!descriptor.createNewFile())
-         {
-            throw new RuntimeException("Failed to create required [" + descriptor.getFullyQualifiedName() + "]");
-         }
-
-         descriptor.setContents(getClass()
-                  .getResourceAsStream("/org/jboss/forge/web/beans.xml"));
-
-      }
-      return true;
    }
 }

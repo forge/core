@@ -27,13 +27,24 @@ import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceUnitDef;
 
 /**
+ * Performs configuration of a {@link JPADataSource} to ensure it is properly set up for this implementation.
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public interface PersistenceProvider
 {
+   /**
+    * Get the name of this provider.
+    */
    String getProvider();
 
+   /**
+    * Configure the {@link PersistenceUnitDef} and {@link JPADataSource}.
+    */
    PersistenceUnitDef configure(PersistenceUnitDef unit, JPADataSource ds);
 
+   /**
+    * List any dependencies required by this provider.
+    */
    List<Dependency> listDependencies();
 }

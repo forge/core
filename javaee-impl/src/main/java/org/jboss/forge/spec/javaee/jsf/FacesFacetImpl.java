@@ -36,6 +36,9 @@ import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.project.dependencies.Dependency;
+import org.jboss.forge.project.dependencies.DependencyBuilder;
+import org.jboss.forge.project.dependencies.DependencyInstaller;
 import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.FileResource;
@@ -60,6 +63,15 @@ import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
 @RequiresFacet(ServletFacet.class)
 public class FacesFacetImpl extends BaseJavaEEFacet implements FacesFacet
 {
+   public static final Dependency JAVAEE6_FACES = DependencyBuilder
+            .create("org.jboss.spec.javax.faces:jboss-jsf-api_2.0_spec");
+
+   @Inject
+   public FacesFacetImpl(final DependencyInstaller installer)
+   {
+      super(installer);
+   }
+
    @Inject
    private ShellPrintWriter out;
 
@@ -67,19 +79,10 @@ public class FacesFacetImpl extends BaseJavaEEFacet implements FacesFacet
    private ServletMappingHelper servletMappingHelper;
 
    @Override
-   public FileResource<?> getConfigFile()
-   {
-      DirectoryResource webRoot = project.getFacet(WebResourceFacet.class).getWebRootDirectory();
-      return (FileResource<?>) webRoot.getChild("WEB-INF" + File.separator + "faces-config.xml");
-   }
-
-   /*
-    * Facet Methods
-    */
-   @Override
    public boolean isInstalled()
    {
-      return getConfigFile().exists() && super.isInstalled();
+      return getConfigFile().exists()
+               && super.isInstalled();
    }
 
    @Override
@@ -94,7 +97,25 @@ public class FacesFacetImpl extends BaseJavaEEFacet implements FacesFacet
          getConfigFile().setContents(getClass()
                   .getResourceAsStream("/org/jboss/forge/web/faces-config.xml"));
       }
+
       return super.install();
+   }
+
+   @Override
+   protected List<Dependency> getRequiredDependencies()
+   {
+      return Arrays.asList(JAVAEE6_FACES);
+   }
+
+   /*
+    * Facet Methods
+    */
+
+   @Override
+   public FileResource<?> getConfigFile()
+   {
+      DirectoryResource webRoot = project.getFacet(WebResourceFacet.class).getWebRootDirectory();
+      return (FileResource<?>) webRoot.getChild("WEB-INF" + File.separator + "faces-config.xml");
    }
 
    @Override
@@ -141,32 +162,32 @@ public class FacesFacetImpl extends BaseJavaEEFacet implements FacesFacet
       return results;
    }
 
-   private List<String> getExplicitFacesServletMappings(WebAppDescriptor webXml)
+   private List<String> getExplicitFacesServletMappings(final WebAppDescriptor webXml)
    {
       List<ServletDef> servlets = webXml.getServlets();
       List<String> results = new ArrayList<String>();
-         for (ServletDef servlet : servlets)
+      for (ServletDef servlet : servlets)
+      {
+         if ("javax.faces.webapp.FacesServlet".equals(servlet.getServletClass()))
          {
-            if ("javax.faces.webapp.FacesServlet".equals(servlet.getServletClass()))
+            List<ServletMappingDef> mappings = servlet.getMappings();
+            for (ServletMappingDef mapping : mappings)
             {
-               List<ServletMappingDef> mappings = servlet.getMappings();
-               for (ServletMappingDef mapping : mappings)
-               {
-                  results.addAll(mapping.getUrlPatterns());
-               }
+               results.addAll(mapping.getUrlPatterns());
             }
          }
+      }
       return results;
    }
 
-   public void setFacesMapping(String mapping)
+   public void setFacesMapping(final String mapping)
    {
       ServletFacet facet = project.getFacet(ServletFacet.class);
       InputStream webXml = facet.getConfigFile().getResourceInputStream();
       InputStream newWebXml = servletMappingHelper.addFacesServletMapping(webXml, mapping);
       if (webXml != newWebXml)
       {
-          facet.getConfigFile().setContents(newWebXml);
+         facet.getConfigFile().setContents(newWebXml);
       }
    }
 
