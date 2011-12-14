@@ -430,8 +430,7 @@ public class FieldPlugin implements Plugin
          JavaClass one = findEntity(fieldType);
 
          many.addImport(one);
-         Field<JavaClass> manyField = many.addField("private " + one.getName() + " " + fieldName + "= new "
-                  + one.getName() + "();");
+         Field<JavaClass> manyField = many.addField("private " + one.getName() + " " + fieldName + ";");
          manyField.addAnnotation(ManyToOne.class);
          Refactory.createGetterAndSetter(many, manyField);
 
