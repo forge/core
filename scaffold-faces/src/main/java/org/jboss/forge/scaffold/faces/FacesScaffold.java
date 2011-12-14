@@ -116,7 +116,7 @@ import org.w3c.dom.NamedNodeMap;
  * @author Richard Kennard
  */
 
-@Alias("forge.scaffold.faces")
+@Alias("faces")
 @RequiresFacet({ WebResourceFacet.class,
          DependencyFacet.class,
          PersistenceFacet.class,
