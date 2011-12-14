@@ -59,7 +59,7 @@ public class UnsearchableWidgetProcessor
    public StaticWidget processWidget(StaticWidget widget, String elementName, Map<String, String> attributes,
             StaticMetawidget metawidget)
    {
-      int widgetsProcessed = metawidget.getClientProperty(UnsearchableWidgetProcessor.class);
+      Integer widgetsProcessed = metawidget.getClientProperty(UnsearchableWidgetProcessor.class);
 
       // Ignore stubs
 
