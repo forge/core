@@ -19,7 +19,7 @@ public class RunUrlPluginTest extends AbstractShellTest
    {
       Shell shell = getShell();
 
-      shell.execute("run-url http://dl.dropbox.com/u/19065548/forge_script.sh");
+      shell.execute("run-url https://raw.github.com/forge/core/master/shell/src/test/resources/org/jboss/forge/shell/test/plugins/builtin/RunUrlPluginTest.fsh");
    }
 
    @Test(expected = RuntimeException.class)
