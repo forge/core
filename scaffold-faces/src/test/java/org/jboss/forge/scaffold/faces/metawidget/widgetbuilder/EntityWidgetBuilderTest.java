@@ -81,6 +81,7 @@ public class EntityWidgetBuilderTest
    {
       StaticHtmlMetawidget metawidget = new StaticHtmlMetawidget();
       metawidget.setValue("#{foo}");
+      metawidget.setPath(FooOneToOne.class.getName());
       EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder();
       Map<String, String> attributes = CollectionUtils.newHashMap();
       attributes.put(NAME, "bar");
@@ -91,9 +92,15 @@ public class EntityWidgetBuilderTest
 
       StaticWidget widget = widgetBuilder.buildWidget(PROPERTY, attributes, metawidget);
 
-      String result = "<h:link outcome=\"/scaffold/entityWidgetBuilderTest$Bar/view\" value=\"#{foo.bar}\">";
-      result += "<f:param name=\"id\" value=\"#{foo.bar.id}\"/>";
-      result += "</h:link>";
+      // Same as non-inverse, for now
+
+      String result = "<h:panelGrid columns=\"3\" rendered=\"#{!empty foo.bar}\">";
+      result += "<h:outputLabel for=\"fooBarName\" value=\"Name:\"/>";
+      result += "<h:outputText id=\"fooBarName\" value=\"#{foo.bar.name}\"/>";
+      result += "<h:outputText/><h:outputLabel for=\"fooBarDescription\" value=\"Description:\"/>";
+      result += "<h:outputText id=\"fooBarDescription\" value=\"#{foo.bar.description}\"/>";
+      result += "<h:outputText/>";
+      result += "</h:panelGrid>";
 
       assertEquals(result, widget.toString());
 
