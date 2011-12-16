@@ -33,9 +33,14 @@ import java.util.Map;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.persistence.CascadeType;
+import javax.persistence.OneToOne;
 
 import org.jboss.forge.parser.JavaParser;
+import org.jboss.forge.parser.java.Annotation;
+import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.parser.java.Method;
 import org.jboss.forge.parser.xml.Node;
 import org.jboss.forge.parser.xml.XMLParser;
 import org.jboss.forge.project.Project;
@@ -462,12 +467,52 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
                   web.getWebResource("WEB-INF/classes/META-INF/forge.taglib.xml"),
                   this.taglibTemplate.render(context), true));
 
+         createInitializers(entity);
+         project.getFacet(JavaSourceFacet.class).saveJavaSource(entity);
+
       }
       catch (Exception e)
       {
          throw new RuntimeException("Error generating default scaffolding.", e);
       }
       return result;
+   }
+
+   private void createInitializers(final JavaClass entity)
+   {
+      for (Field<JavaClass> field : entity.getFields()) {
+         if (field.hasAnnotation(OneToOne.class))
+         {
+            Annotation<JavaClass> oneToOne = field.getAnnotation(OneToOne.class);
+            if (oneToOne.getStringValue("mappedBy") == null)
+            {
+               oneToOne.setEnumValue("cascade", CascadeType.ALL);
+            }
+            String methodName = "new" + field.getTypeInspector().getName();
+            if (!entity.hasMethodSignature(methodName))
+            {
+               entity.addMethod().setName(methodName).setReturnTypeVoid().setPublic()
+                        .setBody("this." + field.getName() + " = new " + field.getType() + "();");
+            }
+         }
+      }
+      for (Method<JavaClass> method : entity.getMethods()) {
+         if (method.hasAnnotation(OneToOne.class))
+         {
+            Annotation<JavaClass> oneToOne = method.getAnnotation(OneToOne.class);
+            if (oneToOne.getStringValue("mappedBy") == null)
+            {
+               oneToOne.setEnumValue("cascade", CascadeType.ALL);
+            }
+            String methodName = "new" + method.getReturnTypeInspector().getName();
+            if (!entity.hasMethodSignature(methodName))
+            {
+               entity.addMethod().setName(methodName).setReturnTypeVoid().setPublic()
+                        .setBody("this." + method.getName() + " = new " + method.getReturnType() + "();");
+            }
+         }
+      }
+
    }
 
    private HashMap<Object, Object> getTemplateContext(final Resource<?> template)
