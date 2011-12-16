@@ -1,3 +1,4 @@
+package com.test.view;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class @{entity.getName()}Bean implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/*
-	 * Support retrieving individual @{entity.getName()} entities
+	 * Support creating and retrieving @{entity.getName()} entities
 	 */
 
 	private Long id;
@@ -53,7 +54,11 @@ public class @{entity.getName()}Bean implements Serializable {
 		this.id = id;
 	}
 
-	private @{entity.getName()} @{entity.getName()};
+	private @{entity.getName()} @{ccEntity};
+
+	public @{entity.getName()} get@{entity.getName()}() {
+		return this.@{ccEntity};
+	}
 
 	@Inject
 	private Conversation conversation;
@@ -61,6 +66,12 @@ public class @{entity.getName()}Bean implements Serializable {
 	@PersistenceContext(type = PersistenceContextType.EXTENDED)
 	private EntityManager entityManager;
 
+	public String create() {
+
+		this.conversation.begin();
+		return "create?faces-redirect=true";
+	}
+	
 	public void retrieve() {
 
 		if (FacesContext.getCurrentInstance().isPostback()) {
@@ -72,36 +83,32 @@ public class @{entity.getName()}Bean implements Serializable {
 		}
 
 		if (this.id == null) {
-			this.@{entity.getName()} = new @{entity.getName()}();
+			this.@{ccEntity} = this.search;
 		} else {
-			this.@{entity.getName()} = this.entityManager.find(@{entity.getName()}.class, getId());
+			this.@{ccEntity} = this.entityManager.find(@{entity.getName()}.class, getId());
 		}
 	}
 
-	public @{entity.getName()} get@{entity.getName()}() {
-		return this.@{entity.getName()};
-	}
-
 	/*
-	 * Support creating, updating and deleting @{entity.getName()} entities
+	 * Support updating and deleting @{entity.getName()} entities
 	 */
 
-	public String create() {
-		this.entityManager.persist(this.@{entity.getName()});
-		this.conversation.end();
-		return "search?faces-redirect=true";
-	}
-
 	public String update() {
-		this.entityManager.merge(this.@{entity.getName()});
 		this.conversation.end();
-		return "view?faces-redirect=true&id=" + this.@{entity.getName()}.getId();
+		
+		if (this.id == null) {
+			this.entityManager.persist(this.@{ccEntity});
+			return "search?faces-redirect=true";			
+		} else {
+			this.entityManager.merge(this.@{ccEntity});
+			return "view?faces-redirect=true&id=" + this.@{ccEntity}.getId();
+		}
 	}
 
 	public String delete() {
+		this.conversation.end();
 		this.entityManager.remove(this.entityManager.find(@{entity.getName()}.class,
 				getId()));
-		this.conversation.end();
 		return "search?faces-redirect=true";
 	}
 
@@ -117,6 +124,7 @@ public class @{entity.getName()}Bean implements Serializable {
 	private int page;
 	private long count;
 	private List<@{entity.getName()}> pageItems;
+	
 	private @{entity.getName()} search = new @{entity.getName()}();
 
 	public int getPage() {

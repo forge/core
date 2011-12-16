@@ -25,19 +25,22 @@
 
 	<ui:define name="main">
 		<h:form id="search">
-			<h:messages globalOnly="true"/>
+			<h:panelGroup styleClass="search">
+				<h:messages globalOnly="true"/>
 
-			@{searchMetawidget}
+				@{searchMetawidget}
+				<h:panelGroup styleClass="buttons">
+					<h:commandLink value="Search" action="#{@{beanName}.search}"/>
+					<h:commandLink value="Create New" action="#{@{beanName}.create}"/>
+				</h:panelGroup>
+			</h:panelGroup>
 			
-			<div class="buttons">
-				<h:commandLink styleClass="button" value="Search" action="#{@{beanName}.search}"/>
-				<h:link styleClass="button" value="Create new" outcome="create"/>
-			</div>
+			@{beanMetawidget}
+			<ui:include src="/resources/scaffold/paginator.xhtml">
+				<ui:param name="paginatorBean" value="#{@{beanName}}"/>
+			</ui:include>
 		</h:form>
-		@{beanMetawidget}
-		<ui:include src="/resources/scaffold/paginator.xhtml">
-			<ui:param name="paginatorBean" value="#{@{beanName}}"/>
-		</ui:include>
+			
 	</ui:define>
 
 </ui:composition>

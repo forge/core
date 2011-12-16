@@ -77,9 +77,14 @@ public class ForgeInspector
 
       OneToOne oneToOne = property.getAnnotation(OneToOne.class);
 
-      if (oneToOne != null && !"".equals(oneToOne.mappedBy()))
-      {
-         attributes.put(INVERSE_ONE_TO_ONE, TRUE);
+      if (oneToOne != null ) {
+
+         attributes.put(ONE_TO_ONE, TRUE);
+
+         if (!"".equals(oneToOne.mappedBy()))
+         {
+            attributes.put(INVERSE_RELATIONSHIP, TRUE);
+         }
       }
 
       // ManyToOne
