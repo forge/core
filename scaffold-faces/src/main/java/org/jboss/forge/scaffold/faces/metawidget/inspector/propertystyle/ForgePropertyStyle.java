@@ -47,7 +47,7 @@ import org.metawidget.util.simple.StringUtils;
 
 /**
  * Inspects Forge-specific <tt>JavaSource</tt> objects for properties.
- * 
+ *
  * @author Richard Kennard
  */
 
@@ -77,7 +77,7 @@ public class ForgePropertyStyle
 
    /**
     * Traverses the given Class heirarchy using properties of the given names.
-    * 
+    *
     * @return the declared type (not actual type). May be null
     */
 
@@ -217,7 +217,7 @@ public class ForgePropertyStyle
 
    /**
     * Returns whether the given method is a 'getter' method.
-    * 
+    *
     * @param method a parameterless method that returns a non-void
     * @return the property name
     */
@@ -339,7 +339,7 @@ public class ForgePropertyStyle
 
    /**
     * Returns whether the given method is a 'setter' method.
-    * 
+    *
     * @param method a single-parametered method. May return non-void (ie. for Fluent interfaces)
     * @return the property name
     */
@@ -373,7 +373,7 @@ public class ForgePropertyStyle
     * field, with no corresponding <code>mAge</code> field per se.
     * <p>
     * Clients may override this method to change how the public-method-to-private-field mapping operates.
-    * 
+    *
     * @return the private Field for this propertyName, or null if no such field (should not throw NoSuchFieldException)
     */
 
@@ -595,21 +595,29 @@ public class ForgePropertyStyle
       // Public methods
       //
 
+      @SuppressWarnings({ "unchecked", "rawtypes" })
       @Override
       public Object invoke(final Object proxy, final java.lang.reflect.Method method, final Object[] args)
                throws Throwable
       {
          try
          {
-            String methodName = method.getName();
+            // Determine the returnType...
 
-            // Get the value from the Forge Annotation class...
+            String methodName = method.getName();
+            java.lang.reflect.Method annotationMethod = this.annotationClass.getMethod(methodName);
+            Class<?> returnType = annotationMethod.getReturnType();
+
+            // ...source the appropriate value...
+
+            if (returnType.isEnum())
+            {
+               return this.annotationSource.getEnumValue((Class<Enum>) returnType, methodName);
+            }
 
             String value = this.annotationSource.getStringValue(methodName);
 
             // ...if no value, return the default...
-
-            java.lang.reflect.Method annotationMethod = this.annotationClass.getMethod(methodName);
 
             if (value == null)
             {
@@ -617,8 +625,6 @@ public class ForgePropertyStyle
             }
 
             // ...otherwise cast it to the correct class
-
-            Class<?> returnType = annotationMethod.getReturnType();
 
             if (boolean.class.equals(returnType))
             {
