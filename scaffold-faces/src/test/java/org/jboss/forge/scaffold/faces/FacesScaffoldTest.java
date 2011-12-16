@@ -152,14 +152,14 @@ public class FacesScaffoldTest extends AbstractShellTest
       metawidget.append("\t\t\t\t<h:panelGroup>\r\n");
       metawidget
                .append("\t\t\t\t\t<h:inputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>\r\n");
-      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerFirstName\"/>\r\n");
+      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerFirstName\" styleClass=\"error\"/>\r\n");
       metawidget.append("\t\t\t\t</h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last Name:\"/>\r\n");
       metawidget.append("\t\t\t\t<h:panelGroup>\r\n");
       metawidget
                .append("\t\t\t\t\t<h:inputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>\r\n");
-      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerLastName\"/>\r\n");
+      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerLastName\" styleClass=\"error\"/>\r\n");
       metawidget.append("\t\t\t\t</h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t</h:panelGrid>\n");
@@ -175,46 +175,45 @@ public class FacesScaffoldTest extends AbstractShellTest
                "template=\"/resources/scaffold/page.xhtml"));
 
       StringBuilder searchMetawidget = new StringBuilder("<h:form id=\"search\">\r\n");
-      searchMetawidget.append("\t\t\t<h:messages globalOnly=\"true\"/>\r\n\r\n");
-      searchMetawidget.append("\t\t\t<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">\r\n");
-      searchMetawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanSearchFirstName\" value=\"First Name:\"/>\r\n");
-      searchMetawidget.append("\t\t\t\t<h:panelGroup>\r\n");
+      searchMetawidget.append("\t\t\t<h:panelGroup styleClass=\"search\">\r\n");
+      searchMetawidget.append("\t\t\t\t<h:messages globalOnly=\"true\"/>\r\n\r\n");
+      searchMetawidget.append("\t\t\t\t<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:outputLabel for=\"customerBeanSearchFirstName\" value=\"First Name:\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:panelGroup>\r\n");
       searchMetawidget
-               .append("\t\t\t\t\t<h:inputText id=\"customerBeanSearchFirstName\" value=\"#{customerBean.search.firstName}\"/>\r\n");
-      searchMetawidget.append("\t\t\t\t\t<h:message for=\"customerBeanSearchFirstName\"/>\r\n");
-      searchMetawidget.append("\t\t\t\t</h:panelGroup>\r\n");
-      searchMetawidget.append("\t\t\t\t<h:outputText/>\r\n");
-      searchMetawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanSearchLastName\" value=\"Last Name:\"/>\r\n");
-      searchMetawidget.append("\t\t\t\t<h:panelGroup>\r\n");
+               .append("\t\t\t\t\t\t<h:inputText id=\"customerBeanSearchFirstName\" value=\"#{customerBean.search.firstName}\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanSearchFirstName\" styleClass=\"error\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t</h:panelGroup>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:outputText/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:outputLabel for=\"customerBeanSearchLastName\" value=\"Last Name:\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:panelGroup>\r\n");
       searchMetawidget
-               .append("\t\t\t\t\t<h:inputText id=\"customerBeanSearchLastName\" value=\"#{customerBean.search.lastName}\"/>\r\n");
-      searchMetawidget.append("\t\t\t\t\t<h:message for=\"customerBeanSearchLastName\"/>\r\n");
-      searchMetawidget.append("\t\t\t\t</h:panelGroup>\r\n");
-      searchMetawidget.append("\t\t\t\t<h:outputText/>\r\n");
-      searchMetawidget.append("\t\t\t</h:panelGrid>\r\n");
+               .append("\t\t\t\t\t\t<h:inputText id=\"customerBeanSearchLastName\" value=\"#{customerBean.search.lastName}\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanSearchLastName\" styleClass=\"error\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t</h:panelGroup>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:outputText/>\r\n");
+      searchMetawidget.append("\t\t\t\t</h:panelGrid>\r\n");
 
       Assert.assertTrue(contents.contains(searchMetawidget));
 
-      StringBuilder beanMetawidget = new StringBuilder("</h:form>\r\n");
-      beanMetawidget
-               .append("\t\t<h:dataTable id=\"customerBeanPageItems\" styleClass=\"data-table\" value=\"#{customerBean.pageItems}\" var=\"_item\">\r\n");
-      beanMetawidget.append("\t\t\t<h:column>\r\n");
-      beanMetawidget.append("\t\t\t\t<f:facet name=\"header\">\r\n");
-      beanMetawidget.append("\t\t\t\t\t<h:outputText value=\"First Name\"/>\r\n");
-      beanMetawidget.append("\t\t\t\t</f:facet>\r\n");
-      beanMetawidget.append("\t\t\t\t<h:link outcome=\"/scaffold/customer/view\" value=\"#{_item.firstName}\">\r\n");
-      beanMetawidget.append("\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
-      beanMetawidget.append("\t\t\t\t</h:link>\r\n");
-      beanMetawidget.append("\t\t\t</h:column>\r\n");
-      beanMetawidget.append("\t\t\t<h:column>\r\n");
-      beanMetawidget.append("\t\t\t\t<f:facet name=\"header\">\r\n");
-      beanMetawidget.append("\t\t\t\t\t<h:outputText value=\"Last Name\"/>\r\n");
-      beanMetawidget.append("\t\t\t\t</f:facet>\r\n");
-      beanMetawidget.append("\t\t\t\t<h:link outcome=\"/scaffold/customer/view\" value=\"#{_item.lastName}\">\r\n");
-      beanMetawidget.append("\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
-      beanMetawidget.append("\t\t\t\t</h:link>\r\n");
-      beanMetawidget.append("\t\t\t</h:column>\r\n");
-      beanMetawidget.append("\t\t</h:dataTable>");
+      StringBuilder beanMetawidget = new StringBuilder("\n\t\t\t<h:dataTable id=\"customerBeanPageItems\" styleClass=\"data-table\" value=\"#{customerBean.pageItems}\" var=\"_item\">\r\n");
+      beanMetawidget.append("\t\t\t\t<h:column>\r\n");
+      beanMetawidget.append("\t\t\t\t\t<f:facet name=\"header\">\r\n");
+      beanMetawidget.append("\t\t\t\t\t\t<h:outputText value=\"First Name\"/>\r\n");
+      beanMetawidget.append("\t\t\t\t\t</f:facet>\r\n");
+      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/customer/view\" value=\"#{_item.firstName}\">\r\n");
+      beanMetawidget.append("\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
+      beanMetawidget.append("\t\t\t\t\t</h:link>\r\n");
+      beanMetawidget.append("\t\t\t\t</h:column>\r\n");
+      beanMetawidget.append("\t\t\t\t<h:column>\r\n");
+      beanMetawidget.append("\t\t\t\t\t<f:facet name=\"header\">\r\n");
+      beanMetawidget.append("\t\t\t\t\t\t<h:outputText value=\"Last Name\"/>\r\n");
+      beanMetawidget.append("\t\t\t\t\t</f:facet>\r\n");
+      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/customer/view\" value=\"#{_item.lastName}\">\r\n");
+      beanMetawidget.append("\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
+      beanMetawidget.append("\t\t\t\t\t</h:link>\r\n");
+      beanMetawidget.append("\t\t\t\t</h:column>\r\n");
+      beanMetawidget.append("\t\t\t</h:dataTable>");
 
       Assert.assertTrue(contents.contains(beanMetawidget));
 
@@ -223,6 +222,8 @@ public class FacesScaffoldTest extends AbstractShellTest
       FileResource<?> customerBean = java.getJavaResource("/com/test/view/CustomerBean.java");
       Assert.assertTrue(customerBean.exists());
       contents = Streams.toString(customerBean.getResourceInputStream());
+
+      Assert.assertTrue(contents.contains("\n\tprivate Customer customer;"));
 
       StringBuilder qbeMetawidget = new StringBuilder(
                "List<Predicate> predicatesList = new ArrayList<Predicate>();\r\n\r\n");
@@ -258,13 +259,24 @@ public class FacesScaffoldTest extends AbstractShellTest
       Assert.assertTrue(web.getWebResource("resources/background.gif").exists());
       Assert.assertTrue(web.getWebResource("resources/favicon.ico").exists());
       Assert.assertTrue(web.getWebResource("resources/forge-logo.png").exists());
-      Assert.assertTrue(web.getWebResource("resources/forge-style.css").exists());
+
+      FileResource<?> css = web.getWebResource("resources/forge-style.css");
+      Assert.assertTrue(css.exists());
+      contents = Streams.toString(css.getResourceInputStream());
+      Assert.assertTrue(contents.contains("#content table .component .error {"));
+
       Assert.assertTrue(web.getWebResource("resources/jboss-community.png").exists());
       Assert.assertTrue(web.getWebResource("resources/search.png").exists());
       Assert.assertTrue(web.getWebResource("resources/scaffold/page.xhtml").exists());
-      Assert.assertTrue(web.getWebResource("resources/scaffold/paginator.xhtml").exists());
 
-      // TODO: paginator should use commandLink, not outputLink
+      FileResource<?> paginator = web.getWebResource("resources/scaffold/paginator.xhtml");
+      Assert.assertTrue(paginator.exists());
+      contents = Streams.toString(paginator.getResourceInputStream());
+
+      // Paginator should use commandLink, not outputLink, else search criteria gets lost on page change
+
+      Assert.assertTrue(contents.contains("<h:commandLink "));
+      Assert.assertTrue(!contents.contains("<h:outputLink "));
    }
 
    @Test
@@ -442,14 +454,14 @@ public class FacesScaffoldTest extends AbstractShellTest
       metawidget.append("\t\t\t\t<h:panelGroup>\r\n");
       metawidget
                .append("\t\t\t\t\t<h:inputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>\r\n");
-      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerFirstName\"/>\r\n");
+      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerFirstName\" styleClass=\"error\"/>\r\n");
       metawidget.append("\t\t\t\t</h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last Name:\"/>\r\n");
       metawidget.append("\t\t\t\t<h:panelGroup>\r\n");
       metawidget
                .append("\t\t\t\t\t<h:inputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>\r\n");
-      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerLastName\"/>\r\n");
+      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerLastName\" styleClass=\"error\"/>\r\n");
       metawidget.append("\t\t\t\t</h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerAddress\" value=\"Address:\"/>\r\n");
@@ -460,28 +472,28 @@ public class FacesScaffoldTest extends AbstractShellTest
       metawidget.append("\t\t\t\t\t<h:panelGroup>\r\n");
       metawidget
                .append("\t\t\t\t\t\t<h:inputText id=\"customerBeanCustomerAddressStreet\" value=\"#{customerBean.customer.address.street}\"/>\r\n");
-      metawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanCustomerAddressStreet\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanCustomerAddressStreet\" styleClass=\"error\"/>\r\n");
       metawidget.append("\t\t\t\t\t</h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t\t\t<h:outputLabel for=\"customerBeanCustomerAddressCity\" value=\"City:\"/>\r\n");
       metawidget.append("\t\t\t\t\t<h:panelGroup>\r\n");
       metawidget
                .append("\t\t\t\t\t\t<h:inputText id=\"customerBeanCustomerAddressCity\" value=\"#{customerBean.customer.address.city}\"/>\r\n");
-      metawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanCustomerAddressCity\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanCustomerAddressCity\" styleClass=\"error\"/>\r\n");
       metawidget.append("\t\t\t\t\t</h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t\t\t<h:outputLabel for=\"customerBeanCustomerAddressState\" value=\"State:\"/>\r\n");
       metawidget.append("\t\t\t\t\t<h:panelGroup>\r\n");
       metawidget
                .append("\t\t\t\t\t\t<h:inputText id=\"customerBeanCustomerAddressState\" value=\"#{customerBean.customer.address.state}\"/>\r\n");
-      metawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanCustomerAddressState\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanCustomerAddressState\" styleClass=\"error\"/>\r\n");
       metawidget.append("\t\t\t\t\t</h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t\t\t<h:outputLabel for=\"customerBeanCustomerAddressZip\" value=\"Zip:\"/>\r\n");
       metawidget.append("\t\t\t\t\t<h:panelGroup>\r\n");
       metawidget
                .append("\t\t\t\t\t\t<h:inputText id=\"customerBeanCustomerAddressZip\" value=\"#{customerBean.customer.address.zip}\"/>\r\n");
-      metawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanCustomerAddressZip\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanCustomerAddressZip\" styleClass=\"error\"/>\r\n");
       metawidget.append("\t\t\t\t\t</h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t\t</h:panelGrid>\r\n");
@@ -568,14 +580,14 @@ public class FacesScaffoldTest extends AbstractShellTest
       metawidget.append("\t\t\t\t<h:panelGroup>\r\n");
       metawidget
                .append("\t\t\t\t\t<h:inputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>\r\n");
-      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerFirstName\"/>\r\n");
+      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerFirstName\" styleClass=\"error\"/>\r\n");
       metawidget.append("\t\t\t\t</h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last Name:\"/>\r\n");
       metawidget.append("\t\t\t\t<h:panelGroup>\r\n");
       metawidget
                .append("\t\t\t\t\t<h:inputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>\r\n");
-      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerLastName\"/>\r\n");
+      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerLastName\" styleClass=\"error\"/>\r\n");
       metawidget.append("\t\t\t\t</h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerEmployer\" value=\"Employer:\"/>\r\n");
@@ -585,7 +597,7 @@ public class FacesScaffoldTest extends AbstractShellTest
       metawidget.append("\t\t\t\t\t\t<f:selectItem/>\r\n");
       metawidget.append("\t\t\t\t\t\t<f:selectItems value=\"#{employerBean.all}\"/>\r\n");
       metawidget.append("\t\t\t\t\t</h:selectOneMenu>\r\n");
-      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerEmployer\"/>\r\n");
+      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerEmployer\" styleClass=\"error\"/>\r\n");
       metawidget.append("\t\t\t\t</h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t</h:panelGrid>");
@@ -703,14 +715,14 @@ public class FacesScaffoldTest extends AbstractShellTest
       metawidget.append("\t\t\t\t<h:panelGroup>\r\n");
       metawidget
                .append("\t\t\t\t\t<h:inputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>\r\n");
-      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerFirstName\"/>\r\n");
+      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerFirstName\" styleClass=\"error\"/>\r\n");
       metawidget.append("\t\t\t\t</h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last Name:\"/>\r\n");
       metawidget.append("\t\t\t\t<h:panelGroup>\r\n");
       metawidget
                .append("\t\t\t\t\t<h:inputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>\r\n");
-      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerLastName\"/>\r\n");
+      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerLastName\" styleClass=\"error\"/>\r\n");
       metawidget.append("\t\t\t\t</h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerGroceries\" value=\"Groceries:\"/>\r\n");
@@ -731,13 +743,15 @@ public class FacesScaffoldTest extends AbstractShellTest
                .append("\t\t\t\t\t\t\t<h:commandLink action=\"#{_collection.remove(_item)}\" styleClass=\"button\" value=\"Remove\"/>\r\n");
       metawidget.append("\t\t\t\t\t\t</h:column>\r\n");
       metawidget.append("\t\t\t\t\t</h:dataTable>\r\n");
+      metawidget.append("\t\t\t\t\t<h:panelGroup styleClass=\"buttons\">\r\n");
       metawidget
-               .append("\t\t\t\t\t<h:selectOneMenu converter=\"#{groceryBean.converter}\" styleClass=\"select-add\" value=\"#{requestScope['customerBeanCustomerGroceriesAdd']}\">\r\n");
-      metawidget.append("\t\t\t\t\t\t<f:selectItem/>\r\n");
-      metawidget.append("\t\t\t\t\t\t<f:selectItems value=\"#{groceryBean.all}\"/>\r\n");
-      metawidget.append("\t\t\t\t\t</h:selectOneMenu>\r\n");
+               .append("\t\t\t\t\t\t<h:selectOneMenu converter=\"#{groceryBean.converter}\" id=\"customerBeanCustomerGroceriesAdd\" value=\"#{requestScope['customerBeanCustomerGroceriesAdd']}\">\r\n");
+      metawidget.append("\t\t\t\t\t\t\t<f:selectItem/>\r\n");
+      metawidget.append("\t\t\t\t\t\t\t<f:selectItems value=\"#{groceryBean.all}\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t</h:selectOneMenu>\r\n");
       metawidget
-               .append("\t\t\t\t\t<h:commandLink action=\"#{_collection.add(requestScope['customerBeanCustomerGroceriesAdd'])}\" styleClass=\"button\" value=\"Add\"/>\r\n");
+               .append("\t\t\t\t\t\t<h:commandLink action=\"#{_collection.add(requestScope['customerBeanCustomerGroceriesAdd'])}\" onclick=\"if (document.getElementById(document.forms[0].id+':customerBeanCustomerGroceriesAdd').selectedIndex &lt; 1) { alert('Must select a Grocery'); return false; }\" value=\"Add\"/>\r\n");
+      metawidget.append("\t\t\t\t\t</h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t</h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t</h:panelGrid>");
@@ -754,46 +768,45 @@ public class FacesScaffoldTest extends AbstractShellTest
                "template=\"/resources/scaffold/page.xhtml"));
 
       StringBuilder searchMetawidget = new StringBuilder("<h:form id=\"search\">\r\n");
-      searchMetawidget.append("\t\t\t<h:messages globalOnly=\"true\"/>\r\n\r\n");
-      searchMetawidget.append("\t\t\t<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">\r\n");
-      searchMetawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanSearchFirstName\" value=\"First Name:\"/>\r\n");
-      searchMetawidget.append("\t\t\t\t<h:panelGroup>\r\n");
+      searchMetawidget.append("\t\t\t<h:panelGroup styleClass=\"search\">\r\n");
+      searchMetawidget.append("\t\t\t\t<h:messages globalOnly=\"true\"/>\r\n\r\n");
+      searchMetawidget.append("\t\t\t\t<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:outputLabel for=\"customerBeanSearchFirstName\" value=\"First Name:\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:panelGroup>\r\n");
       searchMetawidget
-               .append("\t\t\t\t\t<h:inputText id=\"customerBeanSearchFirstName\" value=\"#{customerBean.search.firstName}\"/>\r\n");
-      searchMetawidget.append("\t\t\t\t\t<h:message for=\"customerBeanSearchFirstName\"/>\r\n");
-      searchMetawidget.append("\t\t\t\t</h:panelGroup>\r\n");
-      searchMetawidget.append("\t\t\t\t<h:outputText/>\r\n");
-      searchMetawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanSearchLastName\" value=\"Last Name:\"/>\r\n");
-      searchMetawidget.append("\t\t\t\t<h:panelGroup>\r\n");
+               .append("\t\t\t\t\t\t<h:inputText id=\"customerBeanSearchFirstName\" value=\"#{customerBean.search.firstName}\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanSearchFirstName\" styleClass=\"error\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t</h:panelGroup>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:outputText/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:outputLabel for=\"customerBeanSearchLastName\" value=\"Last Name:\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:panelGroup>\r\n");
       searchMetawidget
-               .append("\t\t\t\t\t<h:inputText id=\"customerBeanSearchLastName\" value=\"#{customerBean.search.lastName}\"/>\r\n");
-      searchMetawidget.append("\t\t\t\t\t<h:message for=\"customerBeanSearchLastName\"/>\r\n");
-      searchMetawidget.append("\t\t\t\t</h:panelGroup>\r\n");
-      searchMetawidget.append("\t\t\t\t<h:outputText/>\r\n");
-      searchMetawidget.append("\t\t\t</h:panelGrid>\r\n");
+               .append("\t\t\t\t\t\t<h:inputText id=\"customerBeanSearchLastName\" value=\"#{customerBean.search.lastName}\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanSearchLastName\" styleClass=\"error\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t</h:panelGroup>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:outputText/>\r\n");
+      searchMetawidget.append("\t\t\t\t</h:panelGrid>\r\n");
 
       Assert.assertTrue(contents.contains(searchMetawidget));
 
-      StringBuilder beanMetawidget = new StringBuilder("</h:form>\r\n");
-      beanMetawidget
-               .append("\t\t<h:dataTable id=\"customerBeanPageItems\" styleClass=\"data-table\" value=\"#{customerBean.pageItems}\" var=\"_item\">\r\n");
-      beanMetawidget.append("\t\t\t<h:column>\r\n");
-      beanMetawidget.append("\t\t\t\t<f:facet name=\"header\">\r\n");
-      beanMetawidget.append("\t\t\t\t\t<h:outputText value=\"First Name\"/>\r\n");
-      beanMetawidget.append("\t\t\t\t</f:facet>\r\n");
-      beanMetawidget.append("\t\t\t\t<h:link outcome=\"/scaffold/customer/view\" value=\"#{_item.firstName}\">\r\n");
-      beanMetawidget.append("\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
-      beanMetawidget.append("\t\t\t\t</h:link>\r\n");
-      beanMetawidget.append("\t\t\t</h:column>\r\n");
-      beanMetawidget.append("\t\t\t<h:column>\r\n");
-      beanMetawidget.append("\t\t\t\t<f:facet name=\"header\">\r\n");
-      beanMetawidget.append("\t\t\t\t\t<h:outputText value=\"Last Name\"/>\r\n");
-      beanMetawidget.append("\t\t\t\t</f:facet>\r\n");
-      beanMetawidget.append("\t\t\t\t<h:link outcome=\"/scaffold/customer/view\" value=\"#{_item.lastName}\">\r\n");
-      beanMetawidget.append("\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
-      beanMetawidget.append("\t\t\t\t</h:link>\r\n");
-      beanMetawidget.append("\t\t\t</h:column>\r\n");
-      beanMetawidget.append("\t\t</h:dataTable>");
+      StringBuilder beanMetawidget = new StringBuilder("\n\t\t\t<h:dataTable id=\"customerBeanPageItems\" styleClass=\"data-table\" value=\"#{customerBean.pageItems}\" var=\"_item\">\r\n");
+      beanMetawidget.append("\t\t\t\t<h:column>\r\n");
+      beanMetawidget.append("\t\t\t\t\t<f:facet name=\"header\">\r\n");
+      beanMetawidget.append("\t\t\t\t\t\t<h:outputText value=\"First Name\"/>\r\n");
+      beanMetawidget.append("\t\t\t\t\t</f:facet>\r\n");
+      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/customer/view\" value=\"#{_item.firstName}\">\r\n");
+      beanMetawidget.append("\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
+      beanMetawidget.append("\t\t\t\t\t</h:link>\r\n");
+      beanMetawidget.append("\t\t\t\t</h:column>\r\n");
+      beanMetawidget.append("\t\t\t\t<h:column>\r\n");
+      beanMetawidget.append("\t\t\t\t\t<f:facet name=\"header\">\r\n");
+      beanMetawidget.append("\t\t\t\t\t\t<h:outputText value=\"Last Name\"/>\r\n");
+      beanMetawidget.append("\t\t\t\t\t</f:facet>\r\n");
+      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/customer/view\" value=\"#{_item.lastName}\">\r\n");
+      beanMetawidget.append("\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
+      beanMetawidget.append("\t\t\t\t\t</h:link>\r\n");
+      beanMetawidget.append("\t\t\t\t</h:column>\r\n");
+      beanMetawidget.append("\t\t\t</h:dataTable>");
 
       Assert.assertTrue(contents.contains(beanMetawidget));
 
@@ -876,44 +889,45 @@ public class FacesScaffoldTest extends AbstractShellTest
                "template=\"/resources/scaffold/page.xhtml"));
 
       StringBuilder searchMetawidget = new StringBuilder("<h:form id=\"search\">\r\n");
-      searchMetawidget.append("\t\t\t<h:messages globalOnly=\"true\"/>\r\n\r\n");
-      searchMetawidget.append("\t\t\t<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">\r\n");
-      searchMetawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanSearchField1\" value=\"Field 1:\"/>\r\n");
-      searchMetawidget.append("\t\t\t\t<h:panelGroup>\r\n");
+      searchMetawidget.append("\t\t\t<h:panelGroup styleClass=\"search\">\r\n" );
+      searchMetawidget.append("\t\t\t\t<h:messages globalOnly=\"true\"/>\r\n\r\n");
+      searchMetawidget.append("\t\t\t\t<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:outputLabel for=\"customerBeanSearchField1\" value=\"Field 1:\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:panelGroup>\r\n");
       searchMetawidget
-               .append("\t\t\t\t\t<h:inputText id=\"customerBeanSearchField1\" value=\"#{customerBean.search.field1}\"/>\r\n");
-      searchMetawidget.append("\t\t\t\t\t<h:message for=\"customerBeanSearchField1\"/>\r\n");
-      searchMetawidget.append("\t\t\t\t</h:panelGroup>\r\n");
-      searchMetawidget.append("\t\t\t\t<h:outputText/>\r\n");
-      searchMetawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanSearchField2\" value=\"Field 2:\"/>\r\n");
-      searchMetawidget.append("\t\t\t\t<h:panelGroup>\r\n");
+               .append("\t\t\t\t\t\t<h:inputText id=\"customerBeanSearchField1\" value=\"#{customerBean.search.field1}\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanSearchField1\" styleClass=\"error\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t</h:panelGroup>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:outputText/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:outputLabel for=\"customerBeanSearchField2\" value=\"Field 2:\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:panelGroup>\r\n");
       searchMetawidget
-               .append("\t\t\t\t\t<h:inputText id=\"customerBeanSearchField2\" value=\"#{customerBean.search.field2}\"/>\r\n");
-      searchMetawidget.append("\t\t\t\t\t<h:message for=\"customerBeanSearchField2\"/>\r\n");
-      searchMetawidget.append("\t\t\t\t</h:panelGroup>\r\n");
-      searchMetawidget.append("\t\t\t\t<h:outputText/>\r\n");
-      searchMetawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanSearchField4\" value=\"Field 4:\"/>\r\n");
-      searchMetawidget.append("\t\t\t\t<h:panelGroup>\r\n");
+               .append("\t\t\t\t\t\t<h:inputText id=\"customerBeanSearchField2\" value=\"#{customerBean.search.field2}\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanSearchField2\" styleClass=\"error\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t</h:panelGroup>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:outputText/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:outputLabel for=\"customerBeanSearchField4\" value=\"Field 4:\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:panelGroup>\r\n");
       searchMetawidget
-               .append("\t\t\t\t\t<h:inputText id=\"customerBeanSearchField4\" value=\"#{customerBean.search.field4}\"/>\r\n");
-      searchMetawidget.append("\t\t\t\t\t<h:message for=\"customerBeanSearchField4\"/>\r\n");
-      searchMetawidget.append("\t\t\t\t</h:panelGroup>\r\n");
-      searchMetawidget.append("\t\t\t\t<h:outputText/>\r\n");
-      searchMetawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanSearchField5\" value=\"Field 5:\"/>\r\n");
-      searchMetawidget.append("\t\t\t\t<h:panelGroup>\r\n");
+               .append("\t\t\t\t\t\t<h:inputText id=\"customerBeanSearchField4\" value=\"#{customerBean.search.field4}\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanSearchField4\" styleClass=\"error\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t</h:panelGroup>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:outputText/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:outputLabel for=\"customerBeanSearchField5\" value=\"Field 5:\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:panelGroup>\r\n");
       searchMetawidget
-               .append("\t\t\t\t\t<h:inputText id=\"customerBeanSearchField5\" value=\"#{customerBean.search.field5}\"/>\r\n");
-      searchMetawidget.append("\t\t\t\t\t<h:message for=\"customerBeanSearchField5\"/>\r\n");
-      searchMetawidget.append("\t\t\t\t</h:panelGroup>\r\n");
-      searchMetawidget.append("\t\t\t\t<h:outputText/>\r\n");
-      searchMetawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanSearchField6\" value=\"Field 6:\"/>\r\n");
-      searchMetawidget.append("\t\t\t\t<h:panelGroup>\r\n");
+               .append("\t\t\t\t\t\t<h:inputText id=\"customerBeanSearchField5\" value=\"#{customerBean.search.field5}\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanSearchField5\" styleClass=\"error\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t</h:panelGroup>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:outputText/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:outputLabel for=\"customerBeanSearchField6\" value=\"Field 6:\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:panelGroup>\r\n");
       searchMetawidget
-               .append("\t\t\t\t\t<h:inputText id=\"customerBeanSearchField6\" value=\"#{customerBean.search.field6}\"/>\r\n");
-      searchMetawidget.append("\t\t\t\t\t<h:message for=\"customerBeanSearchField6\"/>\r\n");
-      searchMetawidget.append("\t\t\t\t</h:panelGroup>\r\n");
-      searchMetawidget.append("\t\t\t\t<h:outputText/>\r\n");
-      searchMetawidget.append("\t\t\t</h:panelGrid>\r\n");
+               .append("\t\t\t\t\t\t<h:inputText id=\"customerBeanSearchField6\" value=\"#{customerBean.search.field6}\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanSearchField6\" styleClass=\"error\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t</h:panelGroup>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:outputText/>\r\n");
+      searchMetawidget.append("\t\t\t\t</h:panelGrid>\r\n");
 
       Assert.assertTrue(contents.contains(searchMetawidget));
    }

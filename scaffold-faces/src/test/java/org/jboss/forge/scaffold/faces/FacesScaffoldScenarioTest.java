@@ -27,6 +27,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.resources.FileResource;
+import org.jboss.forge.shell.util.Streams;
 import org.jboss.forge.test.AbstractShellTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,7 +44,7 @@ public class FacesScaffoldScenarioTest extends AbstractShellTest
     */
 
    @Test
-   public void testGenerateOneToManyEntity() throws Exception
+   public void testGenerateScenario1() throws Exception
    {
       Project project = setupScaffoldProject();
 
@@ -62,29 +63,63 @@ public class FacesScaffoldScenarioTest extends AbstractShellTest
       getShell().execute("field string --named description");
       getShell().execute("entity --named Profile");
       getShell().execute("field string --named bio");
-      // TODO:getShell().execute("field oneToOne --named customer --fieldType com.test.domain.Customer --inverseFieldName profile");
+      // Needs https://issues.jboss.org/browse/FORGE-397: getShell().execute("field oneToOne --named customer --fieldType com.test.domain.Customer --inverseFieldName profile");
       getShell().execute("entity --named SubmittedOrder");
       getShell().execute("field manyToOne --named Customer --fieldType com.test.domain.Customer");
       getShell().execute("field manyToOne --named address --fieldType com.test.domain.Address");
       getShell().execute("entity --named Customer");
       getShell().execute("field string --named firstName");
       getShell().execute("field string --named lastName");
+      getShell().execute("field temporal --type DATE --named birthdate");
       getShell().execute("field manyToMany --named addresses --fieldType com.test.domain.Address");
       getShell().execute("field oneToMany --named orders --fieldType com.test.domain.SubmittedOrder");
       getShell().execute("field oneToOne --named profile --fieldType com.test.domain.Profile");
 
-      // (need to specify all entities until https://issues.jboss.org/browse/FORGE-392)
+      queueInputLines("", "", "", "", "");
+      getShell()
+               .execute("scaffold from-entity com.test.domain.*");
+
+      WebResourceFacet web = project.getFacet(WebResourceFacet.class);
+
+      // Check create screen has 'Create New Profile'
+
+      FileResource<?> create = web.getWebResource("scaffold/customer/create.xhtml");
+      Assert.assertTrue(create.exists());
+      String contents = Streams.toString(create.getResourceInputStream());
+
+      Assert.assertTrue(contents.contains("<h:commandLink action=\"#{customerBean.customer.newProfile}\" rendered=\"#{empty customerBean.customer.profile}\" value=\"Create New Profile\"/>"));
+      Assert.assertTrue(contents.contains("<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\" rendered=\"#{!empty customerBean.customer.profile}\">"));
+
+      getShell().execute("build");
+   }
+
+   @Test
+   public void testGenerateScenario2() throws Exception
+   {
+      Project project = setupScaffoldProject();
+
+      queueInputLines("");
+      getShell().execute("entity --named Hurricane");
+      getShell().execute("field string --named name");
+      getShell().execute("entity --named Continent");
+      getShell().execute("field string --named name");
+      getShell().execute("field manyToMany --named hurricanes --fieldType com.test.domain.Hurricane --inverseFieldName continents");
 
       queueInputLines("", "", "", "", "");
       getShell()
-               .execute("scaffold from-entity com.test.domain.Address com.test.domain.Item com.test.domain.Profile com.test.domain.SubmittedOrder com.test.domain.Customer");
+               .execute("scaffold from-entity com.test.domain.*");
 
       WebResourceFacet web = project.getFacet(WebResourceFacet.class);
 
       // View
 
-      FileResource<?> view = web.getWebResource("scaffold/customer/view.xhtml");
+      FileResource<?> view = web.getWebResource("scaffold/continent/view.xhtml");
       Assert.assertTrue(view.exists());
+      String contents = Streams.toString(view.getResourceInputStream());
+
+      Assert.assertTrue(contents.contains("<h:dataTable id=\"continentBeanContinentHurricanes\" styleClass=\"data-table\" value=\"#{forgeview:asList(continentBean.continent.hurricanes)}\" var=\"_item\">"));
+
+      getShell().execute("build");
    }
 
    private Project setupScaffoldProject() throws Exception

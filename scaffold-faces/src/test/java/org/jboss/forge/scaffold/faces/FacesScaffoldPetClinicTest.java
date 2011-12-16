@@ -27,6 +27,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.resources.FileResource;
+import org.jboss.forge.shell.util.Streams;
 import org.jboss.forge.test.AbstractShellTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -80,18 +81,44 @@ public class FacesScaffoldPetClinicTest extends AbstractShellTest
       getShell().execute("field manyToOne --named pet --fieldType com.test.domain.Pet");
       getShell().execute("field manyToOne --named vet --fieldType com.test.domain.Vet");
 
-      // (need to specify all entities until https://issues.jboss.org/browse/FORGE-392)
-
       queueInputLines("", "", "", "", "");
       getShell()
-               .execute("scaffold from-entity com.test.domain.Owner com.test.domain.Item com.test.domain.Vet com.test.domain.Pet com.test.domain.Visit");
+               .execute("scaffold from-entity com.test.domain.*");
 
       WebResourceFacet web = project.getFacet(WebResourceFacet.class);
 
-      // View
+      // Check search screen has h:message
 
-      FileResource<?> view = web.getWebResource("scaffold/owner/view.xhtml");
-      Assert.assertTrue(view.exists());
+      FileResource<?> search = web.getWebResource("scaffold/pet/search.xhtml");
+      Assert.assertTrue(search.exists());
+      String contents = Streams.toString(search.getResourceInputStream());
+
+      String metawidget = "\t\t\t\t\t<h:outputLabel for=\"petBeanSearchType\" value=\"Type:\"/>\r\n" +
+               "\t\t\t\t\t<h:panelGroup>\r\n" +
+               "\t\t\t\t\t\t<h:inputText id=\"petBeanSearchType\" value=\"#{petBean.search.type}\"/>\r\n" +
+               "\t\t\t\t\t\t<h:message for=\"petBeanSearchType\" styleClass=\"error\"/>\r\n" +
+               "\t\t\t\t\t</h:panelGroup>";
+
+      Assert.assertTrue(contents.contains(metawidget));
+
+      // Check create screen has h:selectBooleanCheckbox
+
+      FileResource<?> create = web.getWebResource("scaffold/pet/create.xhtml");
+      Assert.assertTrue(create.exists());
+      contents = Streams.toString(create.getResourceInputStream());
+
+      metawidget = "\t\t\t\t<h:outputLabel for=\"petBeanPetSendReminders\" value=\"Send Reminders:\"/>\r\n"
+               +
+               "\t\t\t\t<h:panelGroup>\r\n"
+               +
+               "\t\t\t\t\t<h:selectBooleanCheckbox id=\"petBeanPetSendReminders\" value=\"#{petBean.pet.sendReminders}\"/>\r\n"
+               +
+               "\t\t\t\t\t<h:message for=\"petBeanPetSendReminders\" styleClass=\"error\"/>\r\n" +
+               "\t\t\t\t</h:panelGroup>";
+
+      Assert.assertTrue(contents.contains(metawidget));
+
+      getShell().execute("build");
    }
 
    private Project setupScaffoldProject() throws Exception

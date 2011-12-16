@@ -197,7 +197,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
 
       this.entityMetawidget.setWidgetBuilder(entityWidgetBuider);
       HtmlPanelGridLayout layout = new HtmlPanelGridLayout(new HtmlPanelGridLayoutConfig().setColumnStyleClasses(
-               "label", "component", "required"));
+               "label", "component", "required").setMessageStyleClass("error"));
       this.entityMetawidget.setLayout(layout);
 
       // searchMetawidget
