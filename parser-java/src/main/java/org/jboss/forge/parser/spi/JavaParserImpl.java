@@ -51,7 +51,6 @@ import org.jboss.forge.parser.java.impl.JavaAnnotationImpl;
 import org.jboss.forge.parser.java.impl.JavaClassImpl;
 import org.jboss.forge.parser.java.impl.JavaEnumImpl;
 import org.jboss.forge.parser.java.impl.JavaInterfaceImpl;
-import org.jboss.forge.parser.spi.JavaParserProvider;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -157,7 +156,7 @@ public class JavaParserImpl implements JavaParserProvider
          return (T) parse("public enum JavaEnum { }");
 
       if (JavaAnnotation.class.isAssignableFrom(type))
-         return (T) parse("public @annotation JavaAnnotation { }");
+         return (T) parse("public @interface JavaAnnotation { }");
 
       if (JavaInterface.class.isAssignableFrom(type))
          return (T) parse("public interface JavaInterface { }");
@@ -207,7 +206,7 @@ public class JavaParserImpl implements JavaParserProvider
 
    @Override
    @SuppressWarnings("unchecked")
-   public <T extends JavaSource<?>> T parse(Class<T> type, File file) throws FileNotFoundException
+   public <T extends JavaSource<?>> T parse(final Class<T> type, final File file) throws FileNotFoundException
    {
       JavaSource<?> source = parse(file);
       if (type.isAssignableFrom(source.getClass()))
