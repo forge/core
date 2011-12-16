@@ -73,15 +73,20 @@ public class ForgeInspectorTest
       assertEquals(TRUE, property.getAttribute(N_TO_MANY));
       assertEquals(2, property.getAttributes().getLength());
 
-      // oneToOne should not appear
+      property = XmlUtils.getNextSiblingElement(property);
+      assertEquals(PROPERTY, property.getNodeName());
+      assertEquals("oneToOne", property.getAttribute(NAME));
+      assertEquals(TRUE, property.getAttribute(ONE_TO_ONE));
+      assertEquals(2, property.getAttributes().getLength());
 
       property = XmlUtils.getNextSiblingElement(property);
       assertEquals(PROPERTY, property.getNodeName());
       assertEquals("oneToOneMappedBy", property.getAttribute(NAME));
-      assertEquals(TRUE, property.getAttribute(INVERSE_ONE_TO_ONE));
-      assertEquals(2, property.getAttributes().getLength());
+      assertEquals(TRUE, property.getAttribute(ONE_TO_ONE));
+      assertEquals(TRUE, property.getAttribute(INVERSE_RELATIONSHIP));
+      assertEquals(3, property.getAttributes().getLength());
 
-      assertEquals(4, entity.getChildNodes().getLength());
+      assertEquals(5, entity.getChildNodes().getLength());
    }
 
    //

@@ -99,7 +99,6 @@ public class QueryByExampleWidgetBuilder
                   + StringUtils.capitalize(name) + "()");
          getValue.putImport(type);
          toReturn.getChildren().add(getValue);
-         // Need to use .getId() != null until https://issues.jboss.org/browse/FORGE-401
          JavaStatement ifNotEmpty = new JavaStatement("if (" + name + " != null && " + name + ".getId() != null)");
          ifNotEmpty.getChildren().add(
                   new JavaStatement("predicatesList.add(builder.equal(root.get(\"" + name + "\")," + name + "))"));
