@@ -19,27 +19,34 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.scaffold.faces.navigation;
+package org.jboss.forge.project.dependencies;
+
+import org.jboss.forge.project.Project;
 
 /**
- * Represents an item that should be displayed in scaffolded menus.
- *
+ * Responsible for installing a given {@link Dependency} into the current project. Resolves available dependencies.
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * 
  */
-public interface MenuItem
+public interface DependencyInstaller
 {
    /**
-    * Get the scaffolded entity type to which this item will navigate. (Can be overridden by {@link #getLiteralPath()}
+    * Install given {@link Dependency} with the default {@link ScopeType}. This method overwrites existing dependencies.
+    * Any {@link Dependency#getPackagingType()}, {@link Dependency#getClassifier()}, and
+    * {@link Dependency#getScopeType()} will be preserved in the added managed dependency.
     */
-   public Class<?> getItemType();
+   Dependency install(Project project, Dependency dependency);
 
    /**
-    * Get the literal view to which this item will navigate. (Overrides {@link #getItemType()})
+    * Install given {@link Dependency} with the given {@link ScopeType}. This method overwrites existing dependencies.
+    * Any {@link Dependency#getPackagingType()}, {@link Dependency#getClassifier()}, and
+    * {@link Dependency#getScopeType()} will be preserved in the added managed dependency.
     */
-   public String getLiteralPath();
+   Dependency install(Project project, Dependency dependency, ScopeType type);
 
    /**
-    * Get the text to be displayed when this item is displayed.
+    * Returns whether or not the given {@link Dependency} is installed.
     */
-   public String getLabel();
+   boolean isInstalled(Project project, Dependency dependency);
 }

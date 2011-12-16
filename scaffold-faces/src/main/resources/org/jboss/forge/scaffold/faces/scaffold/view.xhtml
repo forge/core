@@ -3,7 +3,6 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:forgeview="http://jboss.org/forge/view"
 	xmlns:ui="http://java.sun.com/jsf/facelets@{metawidgetNamespaces}"
 	template="@{templateStrategy.getReferencePath(template != null ? template : templateStrategy.getDefaultTemplate())}">
 
@@ -19,21 +18,19 @@
 	</ui:define>
 
 	<ui:define name="subheader">
-		Viewing existing @{entityName}
+		View existing @{entityName}
 	</ui:define>
 
 	<ui:define name="footer"/>
 
 	<ui:define name="main">
-		<h:form id="form">
-			@{metawidget}
+		@{metawidget}
 
-			<div class="buttons">
-				<h:link styleClass="button" value="View all" outcome="list"/> 
-				<h:link styleClass="button" value="Edit" outcome="create" includeViewParams="true"/>
-				<h:link styleClass="button" value="Create new" outcome="create"/>
-			</div>
-		</h:form>
+		<div class="buttons">
+			<h:link value="View All" outcome="search"/> 
+			<h:link value="Edit" outcome="create" includeViewParams="true"/>
+			<h:link value="Create New" outcome="create"/>
+		</div>
 	</ui:define>
 
 </ui:composition>

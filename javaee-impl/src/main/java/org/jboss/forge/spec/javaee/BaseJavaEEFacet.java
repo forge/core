@@ -21,8 +21,14 @@
  */
 package org.jboss.forge.spec.javaee;
 
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
+import org.jboss.forge.project.dependencies.DependencyInstaller;
+import org.jboss.forge.project.dependencies.ScopeType;
 import org.jboss.forge.project.facets.BaseFacet;
 import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.shell.plugins.RequiresFacet;
@@ -36,20 +42,45 @@ import org.jboss.forge.shell.plugins.RequiresFacet;
 @RequiresFacet({ DependencyFacet.class })
 public abstract class BaseJavaEEFacet extends BaseFacet
 {
-   public static final Dependency dep =
-            DependencyBuilder.create("org.jboss.spec:jboss-javaee-6.0:1.0.0.Final:provided:basic");
+   public static final Dependency JAVAEE6 =
+            DependencyBuilder.create("org.jboss.spec:jboss-javaee-6.0:2.0.0.Final:import:basic");
+
+   private final DependencyInstaller installer;
+
+   @Inject
+   public BaseJavaEEFacet(final DependencyInstaller installer)
+   {
+      this.installer = installer;
+   }
 
    @Override
    public boolean install()
    {
-      project.getFacet(DependencyFacet.class).addDependency(dep);
+      for (Dependency requirement : getRequiredDependencies()) {
+         if (!installer.isInstalled(project, requirement))
+         {
+            if (!project.getFacet(DependencyFacet.class).hasDirectManagedDependency(JAVAEE6))
+            {
+               project.getFacet(DependencyFacet.class).addDirectManagedDependency(JAVAEE6);
+            }
+            installer.install(project, requirement, ScopeType.PROVIDED);
+         }
+      }
       return true;
    }
 
    @Override
    public boolean isInstalled()
    {
-      return project.getFacet(DependencyFacet.class).hasDependency(dep);
+      DependencyFacet deps = project.getFacet(DependencyFacet.class);
+      for (Dependency requirement : getRequiredDependencies()) {
+         if (!deps.hasEffectiveDependency(requirement))
+         {
+            return false;
+         }
+      }
+      return true;
    }
 
+   abstract protected List<Dependency> getRequiredDependencies();
 }

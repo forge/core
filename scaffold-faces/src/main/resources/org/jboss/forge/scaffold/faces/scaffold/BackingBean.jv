@@ -1,5 +1,7 @@
+package com.test.view;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateful;
@@ -13,22 +15,24 @@ import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContextType;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import @{entity.getQualifiedName()};
+import @{entity.getQualifiedName()}@{qbeMetawidgetImports};
 
 /**
  * Backing bean for @{entity.getName()} entities.
  * <p>
- * This class provides CRUD functionality for all @{entity.getName()} entities.
- * It focuses purely on Java EE 6 standards (e.g. <tt>&#64;ConversationScoped</tt>
- * for state management, <tt>PersistenceContext</tt> for persistence,
- * <tt>CriteriaBuilder</tt> for queries) rather than depending on a CRUD
- * framework or a custom base class.
+ * This class provides CRUD functionality for all @{entity.getName()} entities. It focuses
+ * purely on Java EE 6 standards (e.g. <tt>&#64;ConversationScoped</tt> for
+ * state management, <tt>PersistenceContext</tt> for persistence,
+ * <tt>CriteriaBuilder</tt> for searches) rather than introducing a CRUD framework or
+ * custom base class.
  */
- 
+
 @Named
 @Stateful
 @ConversationScoped
@@ -37,13 +41,13 @@ public class @{entity.getName()}Bean implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/*
-	 * Support retrieving individual @{entity.getName()} entities
+	 * Support creating and retrieving @{entity.getName()} entities
 	 */
 
 	private Long id;
 
 	public Long getId() {
-		return id;
+		return this.id;
 	}
 
 	public void setId(Long id) {
@@ -52,143 +56,178 @@ public class @{entity.getName()}Bean implements Serializable {
 
 	private @{entity.getName()} @{ccEntity};
 
+	public @{entity.getName()} get@{entity.getName()}() {
+		return this.@{ccEntity};
+	}
+
 	@Inject
 	private Conversation conversation;
 
 	@PersistenceContext(type = PersistenceContextType.EXTENDED)
 	private EntityManager entityManager;
 
+	public String create() {
+
+		this.conversation.begin();
+		return "create?faces-redirect=true";
+	}
+	
 	public void retrieve() {
 
-		if ( FacesContext.getCurrentInstance().isPostback() ) {
+		if (FacesContext.getCurrentInstance().isPostback()) {
 			return;
 		}
 
-		if (conversation.isTransient()) {
-			conversation.begin();
+		if (this.conversation.isTransient()) {
+			this.conversation.begin();
 		}
 
-		if (id == null) {
-			@{ccEntity} = new @{entity.getName()}();
+		if (this.id == null) {
+			this.@{ccEntity} = this.search;
 		} else {
-			@{ccEntity} = entityManager.find(@{entity.getName()}.class, getId());
+			this.@{ccEntity} = this.entityManager.find(@{entity.getName()}.class, getId());
 		}
-	}
-	
-	public @{entity.getName()} get@{entity.getName()}() {
-		return @{ccEntity};
 	}
 
 	/*
-	 * Support creating, saving and deleting @{entity.getName()} entities
+	 * Support updating and deleting @{entity.getName()} entities
 	 */
 
-	public String create() {
-		entityManager.persist(@{ccEntity});
-		conversation.end();
-		return "view?faces-redirect=true&id=" + @{ccEntity}.getId();
-	}
-
 	public String update() {
-		entityManager.merge(@{ccEntity});
-		conversation.end();
-		return "view?faces-redirect=true&id=" + @{ccEntity}.getId();
+		this.conversation.end();
+		
+		if (this.id == null) {
+			this.entityManager.persist(this.@{ccEntity});
+			return "search?faces-redirect=true";			
+		} else {
+			this.entityManager.merge(this.@{ccEntity});
+			return "view?faces-redirect=true&id=" + this.@{ccEntity}.getId();
+		}
 	}
 
 	public String delete() {
-		entityManager.remove(entityManager.find(@{entity.getName()}.class, getId()));
-		conversation.end();
-		return "list?faces-redirect=true";
+		this.conversation.end();
+		this.entityManager.remove(this.entityManager.find(@{entity.getName()}.class,
+				getId()));
+		return "search?faces-redirect=true";
 	}
 
 	public String cancel() {
-		conversation.end();
-		return "list?faces-redirect=true";
+		this.conversation.end();
+		return "search?faces-redirect=true";
 	}
 
 	/*
-	 * Support listing all @{entity.getName()} entities
-	 */
-
-	public List<@{entity.getName()}> getAll() {
-		return entityManager.createQuery(createAll@{entity.getName()}Query()).getResultList();
-	}
-
-	private CriteriaQuery<@{entity.getName()}> createAll@{entity.getName()}Query() {
-		
-		CriteriaQuery<@{entity.getName()}> criteria = entityManager.getCriteriaBuilder()
-				.createQuery(@{entity.getName()}.class);
-		return criteria.select(criteria.from(@{entity.getName()}.class));
-	}
-	
-	/*
-	 * Support listing @{entity.getName()} entities with pagination
+	 * Support searching @{entity.getName()} entities with pagination
 	 */
 
 	private int page;
 	private long count;
 	private List<@{entity.getName()}> pageItems;
+	
+	private @{entity.getName()} search = new @{entity.getName()}();
 
 	public int getPage() {
-		return page;
+		return this.page;
 	}
 
 	public void setPage(int page) {
 		this.page = page;
 	}
-	
+
 	public int getPageSize() {
 		return 10;
 	}
 
+	public @{entity.getName()} getSearch() {
+		return this.search;
+	}
+
+	public void setSearch(@{entity.getName()} search) {
+		this.search = search;
+	}
+
+	public void search() {
+		this.page = 0;
+	}
+
 	public void paginate() {
 
-		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
+
+		// Populate this.count
 
 		CriteriaQuery<Long> countCriteria = builder.createQuery(Long.class);
 		Root<@{entity.getName()}> root = countCriteria.from(@{entity.getName()}.class);
-		countCriteria = countCriteria.select(builder.count(root));
-		count = entityManager.createQuery(countCriteria).getSingleResult();
+		countCriteria = countCriteria.select(builder.count(root)).where(
+				getSearchPredicates(root));
+		this.count = this.entityManager.createQuery(countCriteria)
+				.getSingleResult();
 
-		pageItems = entityManager.createQuery(createAll@{entity.getName()}Query())
-				.setFirstResult(page * getPageSize())
-				.setMaxResults(getPageSize()).getResultList();
+		// Populate this.pageItems
+
+		CriteriaQuery<@{entity.getName()}> criteria = builder.createQuery(@{entity.getName()}.class);
+		root = criteria.from(@{entity.getName()}.class);
+		TypedQuery<@{entity.getName()}> query = this.entityManager.createQuery(criteria
+				.select(root).where(getSearchPredicates(root)));
+		query.setFirstResult(this.page * getPageSize()).setMaxResults(
+				getPageSize());
+		this.pageItems = query.getResultList();
+	}
+
+	private Predicate[] getSearchPredicates(Root<@{entity.getName()}> root) {
+
+		CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
+		List<Predicate> predicatesList = new ArrayList<Predicate>();
+
+		@{qbeMetawidget}
+
+		return predicatesList.toArray(new Predicate[predicatesList.size()]);
 	}
 
 	public List<@{entity.getName()}> getPageItems() {
-		return pageItems;
+		return this.pageItems;
 	}
 
 	public long getCount() {
-		return count;
+		return this.count;
 	}
-	
-	/**
-	 * Support POSTing back @{entity.getName()} entities from the UI
-	 * (eg. from inside an HtmlSelectOneMenu)
+
+	/*
+	 * Support listing and POSTing back @{entity.getName()} entities (e.g. from inside an
+	 * HtmlSelectOneMenu)
 	 */
 
+	public List<@{entity.getName()}> getAll() {
+
+		CriteriaQuery<@{entity.getName()}> criteria = this.entityManager
+				.getCriteriaBuilder().createQuery(@{entity.getName()}.class);
+		return this.entityManager.createQuery(
+				criteria.select(criteria.from(@{entity.getName()}.class))).getResultList();
+	}
+
 	public Converter getConverter() {
-		
+
 		return new Converter() {
-			
+
 			@Override
-			public Object getAsObject(FacesContext context, UIComponent component,
-					String value) {
-		
-				return entityManager.find(@{entity.getName()}.class, Long.valueOf(value));
+			public Object getAsObject(FacesContext context,
+					UIComponent component, String value) {
+
+				return @{entity.getName()}Bean.this.entityManager.find(@{entity.getName()}.class,
+						Long.valueOf(value));
 			}
-		
+
 			@Override
-			public String getAsString(FacesContext context, UIComponent component,
-					Object value) {
-		
+			public String getAsString(FacesContext context,
+					UIComponent component, Object value) {
+
 				if (value == null) {
 					return "";
 				}
-		
+
 				return String.valueOf(((@{entity.getName()}) value).getId());
 			}
 		};
-	}	
+	}
 }

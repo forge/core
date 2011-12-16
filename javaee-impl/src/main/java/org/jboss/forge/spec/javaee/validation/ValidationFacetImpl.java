@@ -22,15 +22,21 @@
 package org.jboss.forge.spec.javaee.validation;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.inject.Inject;
 
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
-import org.jboss.forge.project.facets.BaseFacet;
+import org.jboss.forge.project.dependencies.DependencyInstaller;
+import org.jboss.forge.project.dependencies.ScopeType;
 import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.facets.ResourceFacet;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
+import org.jboss.forge.spec.javaee.BaseJavaEEFacet;
 import org.jboss.forge.spec.javaee.ValidationFacet;
 import org.jboss.forge.spec.javaee.descriptor.ValidationDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.DescriptorImporter;
@@ -41,14 +47,42 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptors;
  */
 @Alias("forge.spec.validation")
 @RequiresFacet({ ResourceFacet.class, DependencyFacet.class })
-public class ValidationFacetImpl extends BaseFacet implements ValidationFacet
+public class ValidationFacetImpl extends BaseJavaEEFacet implements ValidationFacet
 {
-   private final Dependency javaee6SpecAPI;
-
-   public ValidationFacetImpl()
+   @Inject
+   public ValidationFacetImpl(final DependencyInstaller installer)
    {
-      this.javaee6SpecAPI = DependencyBuilder.create("org.jboss.spec:jboss-javaee-6.0:1.0.0.Final:provided:basic");
+      super(installer);
    }
+
+   @Override
+   public boolean install()
+   {
+      if (!isInstalled())
+      {
+         // ClassLoader here is the ShrinkWrap ClassLoader. Why?
+         saveConfig(Descriptors.create(ValidationDescriptor.class));
+      }
+      return super.install();
+   }
+
+   @Override
+   public boolean isInstalled()
+   {
+      return getConfigFile().exists() && super.isInstalled();
+   }
+
+   @Override
+   protected List<Dependency> getRequiredDependencies()
+   {
+      return Arrays
+               .asList((Dependency) DependencyBuilder.create("javax.validation:validation-api").setScopeType(
+                        ScopeType.PROVIDED));
+   }
+
+   /*
+    * Facet methods
+    */
 
    @Override
    public ValidationDescriptor getConfig()
@@ -70,33 +104,10 @@ public class ValidationFacetImpl extends BaseFacet implements ValidationFacet
    }
 
    @Override
-   public void saveConfig(ValidationDescriptor descriptor)
+   public void saveConfig(final ValidationDescriptor descriptor)
    {
       final FileResource<?> fileResource = getConfigFile();
       fileResource.createNewFile();
       fileResource.setContents(descriptor.exportAsString());
-   }
-
-   @Override
-   public boolean install()
-   {
-      if (!isInstalled())
-      {
-         final DependencyFacet facet = project.getFacet(DependencyFacet.class);
-         if (!facet.hasDependency(javaee6SpecAPI))
-         {
-            facet.addDependency(javaee6SpecAPI);
-         }
-         // CL here is the SW CL. Why?
-         saveConfig(Descriptors.create(ValidationDescriptor.class));
-      }
-      return true;
-   }
-
-   @Override
-   public boolean isInstalled()
-   {
-      final DependencyFacet facet = project.getFacet(DependencyFacet.class);
-      return getConfigFile().exists() && facet.hasDependency(javaee6SpecAPI);
    }
 }

@@ -22,14 +22,12 @@
 
 package org.jboss.forge.spec;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.project.Project;
-import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.dependencies.ScopeType;
 import org.jboss.forge.project.facets.DependencyFacet;
@@ -47,7 +45,6 @@ import org.junit.runner.RunWith;
 public class CDIFacetTest extends SingletonAbstractShellTest
 {
    private static final String JAVAEE6_SPECS_DEPENDENCY = "org.jboss.spec:jboss-javaee-6.0";
-   private static final String CDI_DEPENDENCY = "javax.enterprise:cdi-api";
 
    @Test
    public void testBeansXMLCreatedWhenInstalled() throws Exception
@@ -69,7 +66,7 @@ public class CDIFacetTest extends SingletonAbstractShellTest
       getShell().execute("beans setup");
       FileResource<?> config = project.getFacet(CDIFacet.class).getConfigFile();
 
-      queueInputLines("y", "");
+      queueInputLines("");
       // FIXME replace with ServletPlugin "servlet setup"
       getShell().execute("project install-facet forge.spec.servlet");
       FileResource<?> newConfig = project.getFacet(CDIFacet.class).getConfigFile();
@@ -82,58 +79,23 @@ public class CDIFacetTest extends SingletonAbstractShellTest
    }
 
    @Test
-   public void testSpecDependencyAddedWhenInstalled() throws Exception
-   {
-      DependencyBuilder dependency = DependencyBuilder.create(JAVAEE6_SPECS_DEPENDENCY).setScopeType(ScopeType.COMPILE);
-      testDependencyAddedWhenInstalled(dependency, "Y", "1", "6", "N");
-   }
-
-   @Test
-   public void testCdiDependencyAddedWhenInstalled() throws Exception
-   {
-      DependencyBuilder dependency = DependencyBuilder.create(CDI_DEPENDENCY).setScopeType(ScopeType.COMPILE);
-      testDependencyAddedWhenInstalled(dependency, "Y", "2", "1", "N");
-   }
-
-   @Test
    public void testCdiDependencyScopeProvidedForWebProject() throws Exception
    {
       DependencyBuilder dependency = DependencyBuilder.create(JAVAEE6_SPECS_DEPENDENCY)
                .setScopeType(ScopeType.PROVIDED);
       Project project = initializeJavaProject();
 
-      queueInputLines("y");
+      queueInputLines("");
       getShell().execute("project install-facet forge.maven.WebResourceFacet");
 
-      queueInputLines("y", "1", "6", "");
-      getShell().execute("beans setup");
-
-      DependencyFacet dependencyFacet = project.getFacet(DependencyFacet.class);
-
-      assertTrue(dependencyFacet.hasDependency(dependency));
-      assertEquals(dependency.getScopeType(), dependencyFacet.getDependency(dependency).getScopeType());
-   }
-
-   private void testDependencyAddedWhenInstalled(final Dependency dependency, final String... inputs) throws Exception
-   {
-      Project project = initializeJavaProject();
-      queueInputLines(inputs);
-
-      getShell().execute("beans setup");
-
-      DependencyFacet dependencyFacet = project.getFacet(DependencyFacet.class);
-
-      assertTrue(dependencyFacet.hasDependency(dependency));
-      assertEquals(dependency.getScopeType(), dependencyFacet.getDependency(dependency).getScopeType());
-   }
-
-   @Test
-   public void testDefaultsDontAddDependency() throws Exception
-   {
-      Project project = initializeJavaProject();
       queueInputLines("");
       getShell().execute("beans setup");
-      assertDependenciesNotInstalled(project);
+
+      DependencyFacet dependencyFacet = project.getFacet(DependencyFacet.class);
+
+      assertTrue(dependencyFacet.hasDirectManagedDependency(dependency));
+      assertTrue(dependencyFacet.hasEffectiveDependency(DependencyBuilder.create("javax.enterprise:cdi-api")));
+      assertTrue(dependencyFacet.hasEffectiveDependency(DependencyBuilder.create("javax.inject:javax.inject")));
    }
 
    @Test
@@ -141,17 +103,12 @@ public class CDIFacetTest extends SingletonAbstractShellTest
    {
       Project project = initializeJavaProject();
       DependencyFacet dependencyFacet = project.getFacet(DependencyFacet.class);
-      dependencyFacet.addDependency(DependencyBuilder.create(JAVAEE6_SPECS_DEPENDENCY).setVersion("1.0"));
+      dependencyFacet.addDirectDependency(DependencyBuilder.create("javax.enterprise:cdi-api").setVersion("1.0-SP4"));
 
+      queueInputLines("");
       getShell().execute("beans setup");
-      assertTrue(dependencyFacet.hasDependency(DependencyBuilder.create(JAVAEE6_SPECS_DEPENDENCY)));
-   }
-
-   private void assertDependenciesNotInstalled(final Project project)
-   {
-      DependencyFacet dependencyFacet = project.getFacet(DependencyFacet.class);
-      assertFalse(dependencyFacet.hasDependency(DependencyBuilder.create(JAVAEE6_SPECS_DEPENDENCY)));
-      assertFalse(dependencyFacet.hasDependency(DependencyBuilder.create(CDI_DEPENDENCY)));
+      assertTrue(dependencyFacet.hasEffectiveDependency(DependencyBuilder.create("javax.enterprise:cdi-api")));
+      assertTrue(dependencyFacet.hasDirectManagedDependency(DependencyBuilder.create(JAVAEE6_SPECS_DEPENDENCY)));
    }
 
 }

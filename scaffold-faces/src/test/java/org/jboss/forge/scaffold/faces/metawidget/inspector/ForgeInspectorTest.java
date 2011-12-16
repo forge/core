@@ -76,10 +76,17 @@ public class ForgeInspectorTest
       property = XmlUtils.getNextSiblingElement(property);
       assertEquals(PROPERTY, property.getNodeName());
       assertEquals("oneToOne", property.getAttribute(NAME));
-      assertEquals(TRUE, property.getAttribute(HIDDEN));
+      assertEquals(TRUE, property.getAttribute(ONE_TO_ONE));
       assertEquals(2, property.getAttributes().getLength());
 
-      assertEquals(4, entity.getChildNodes().getLength());
+      property = XmlUtils.getNextSiblingElement(property);
+      assertEquals(PROPERTY, property.getNodeName());
+      assertEquals("oneToOneMappedBy", property.getAttribute(NAME));
+      assertEquals(TRUE, property.getAttribute(ONE_TO_ONE));
+      assertEquals(TRUE, property.getAttribute(INVERSE_RELATIONSHIP));
+      assertEquals(3, property.getAttributes().getLength());
+
+      assertEquals(5, entity.getChildNodes().getLength());
    }
 
    //
@@ -89,7 +96,10 @@ public class ForgeInspectorTest
    static class Foo
    {
       @OneToOne(mappedBy = "foo")
-      public Set<Bar> oneToOne;
+      public Bar oneToOneMappedBy;
+
+      @OneToOne
+      public Bar oneToOne;
 
       @OneToMany
       public Set<Bar> oneToMany;

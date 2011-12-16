@@ -52,6 +52,7 @@ public class ValidationFacetTest extends AbstractJPATest
       initializeJavaProject();
       if ((getProject() != null) && !getProject().hasFacet(ValidationFacet.class))
       {
+         queueInputLines("");
          getShell().execute("project install-facet forge.spec.validation");
       }
    }
@@ -71,7 +72,7 @@ public class ValidationFacetTest extends AbstractJPATest
       final DependencyFacet facet = getProject().getFacet(DependencyFacet.class);
 
       assertNotNull(facet);
-      assertTrue(facet.hasDependency(JAVAEE_6_SPEC));
+      assertTrue(facet.hasDirectManagedDependency(JAVAEE_6_SPEC));
    }
 
    @Test

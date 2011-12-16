@@ -21,7 +21,7 @@
  */
 package org.jboss.forge.scaffold.faces;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -40,14 +40,13 @@ import org.jboss.forge.shell.exceptions.PluginExecutionException;
 import org.jboss.forge.shell.util.Streams;
 import org.jboss.forge.spec.javaee.ServletFacet;
 import org.jboss.forge.test.AbstractShellTest;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Ignore
+
 @RunWith(Arquillian.class)
 public class FacesScaffoldTest extends AbstractShellTest
 {
@@ -61,12 +60,11 @@ public class FacesScaffoldTest extends AbstractShellTest
 
       Node root = XMLParser.parse(servlet.getConfigFile().getResourceInputStream());
       List<Node> errorPages = root.get("error-page");
-      Assert.assertEquals("/404.xhtml", errorPages.get(0).getSingle("location").getText());
-      Assert.assertEquals("/500.xhtml", errorPages.get(1).getSingle("location").getText());
+      Assert.assertEquals("/faces/error.xhtml", errorPages.get(0).getSingle("location").getText());
 
       WebResourceFacet web = project.getFacet(WebResourceFacet.class);
-      FileResource<?> e404 = web.getWebResource("404.xhtml");
-      Assert.assertTrue(Streams.toString(e404.getResourceInputStream()).contains(
+      FileResource<?> error = web.getWebResource("error.xhtml");
+      Assert.assertTrue(Streams.toString(error.getResourceInputStream()).contains(
                "/resources/scaffold/page.xhtml"));
 
       // Test page exists, but has no navigation
@@ -125,17 +123,17 @@ public class FacesScaffoldTest extends AbstractShellTest
       Assert.assertTrue(contents.contains(
                "template=\"/resources/scaffold/page.xhtml"));
 
-      StringBuilder metawidget = new StringBuilder("\t\t<h:form id=\"form\">\n");
-      metawidget.append("\t\t\t<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">\r\n");
-      metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First Name:\"/>\r\n");
+      StringBuilder metawidget = new StringBuilder("<ui:define name=\"main\">\n");
+      metawidget.append("\t\t<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">\r\n");
+      metawidget.append("\t\t\t<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First Name:\"/>\r\n");
       metawidget
-               .append("\t\t\t\t<h:outputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>\r\n");
-      metawidget.append("\t\t\t\t<h:outputText/>\r\n");
-      metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last Name:\"/>\r\n");
+               .append("\t\t\t<h:outputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>\r\n");
+      metawidget.append("\t\t\t<h:outputText/>\r\n");
+      metawidget.append("\t\t\t<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last Name:\"/>\r\n");
       metawidget
-               .append("\t\t\t\t<h:outputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>\r\n");
-      metawidget.append("\t\t\t\t<h:outputText/>\r\n");
-      metawidget.append("\t\t\t</h:panelGrid>\n");
+               .append("\t\t\t<h:outputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>\r\n");
+      metawidget.append("\t\t\t<h:outputText/>\r\n");
+      metawidget.append("\t\t</h:panelGrid>\n");
 
       Assert.assertTrue(contents.contains(metawidget));
 
@@ -147,73 +145,138 @@ public class FacesScaffoldTest extends AbstractShellTest
       Assert.assertTrue(contents.contains(
                "template=\"/resources/scaffold/page.xhtml"));
 
-      metawidget = new StringBuilder("\t\t<h:form id=\"form\">\n");
+      metawidget = new StringBuilder("<h:form id=\"create\">\n");
       metawidget.append("\t\t\t<h:messages globalOnly=\"true\"/>\n\n");
       metawidget.append("\t\t\t<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">\r\n");
       metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First Name:\"/>\r\n");
       metawidget.append("\t\t\t\t<h:panelGroup>\r\n");
       metawidget
                .append("\t\t\t\t\t<h:inputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>\r\n");
-      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerFirstName\"/>\r\n");
+      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerFirstName\" styleClass=\"error\"/>\r\n");
       metawidget.append("\t\t\t\t</h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last Name:\"/>\r\n");
       metawidget.append("\t\t\t\t<h:panelGroup>\r\n");
       metawidget
                .append("\t\t\t\t\t<h:inputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>\r\n");
-      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerLastName\"/>\r\n");
+      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerLastName\" styleClass=\"error\"/>\r\n");
       metawidget.append("\t\t\t\t</h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t</h:panelGrid>\n");
 
       Assert.assertTrue(contents.contains(metawidget));
 
-      // List
+      // Search
 
-      FileResource<?> list = web.getWebResource("scaffold/customer/list.xhtml");
-      Assert.assertTrue(list.exists());
-      contents = Streams.toString(list.getResourceInputStream());
+      FileResource<?> search = web.getWebResource("scaffold/customer/search.xhtml");
+      Assert.assertTrue(search.exists());
+      contents = Streams.toString(search.getResourceInputStream());
       Assert.assertTrue(contents.contains(
                "template=\"/resources/scaffold/page.xhtml"));
 
-      metawidget = new StringBuilder("<ui:define name=\"main\">\r\n");
-      metawidget
-               .append("\t\t<h:dataTable id=\"customerBeanPageItems\" styleClass=\"data-table\" value=\"#{customerBean.pageItems}\" var=\"_item\">\r\n");
-      metawidget.append("\t\t\t<h:column>\r\n");
-      metawidget.append("\t\t\t\t<f:facet name=\"header\">\r\n");
-      metawidget.append("\t\t\t\t\t<h:outputText value=\"First Name\"/>\r\n");
-      metawidget.append("\t\t\t\t</f:facet>\r\n");
-      metawidget.append("\t\t\t\t<h:link outcome=\"/scaffold/customer/view\" value=\"#{_item.firstName}\">\r\n");
-      metawidget.append("\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
-      metawidget.append("\t\t\t\t</h:link>\r\n");
-      metawidget.append("\t\t\t</h:column>\r\n");
-      metawidget.append("\t\t\t<h:column>\r\n");
-      metawidget.append("\t\t\t\t<f:facet name=\"header\">\r\n");
-      metawidget.append("\t\t\t\t\t<h:outputText value=\"Last Name\"/>\r\n");
-      metawidget.append("\t\t\t\t</f:facet>\r\n");
-      metawidget.append("\t\t\t\t<h:link outcome=\"/scaffold/customer/view\" value=\"#{_item.lastName}\">\r\n");
-      metawidget.append("\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
-      metawidget.append("\t\t\t\t</h:link>\r\n");
-      metawidget.append("\t\t\t</h:column>\r\n");
-      metawidget.append("\t\t</h:dataTable>");
+      StringBuilder searchMetawidget = new StringBuilder("<h:form id=\"search\">\r\n");
+      searchMetawidget.append("\t\t\t<h:panelGroup styleClass=\"search\">\r\n");
+      searchMetawidget.append("\t\t\t\t<h:messages globalOnly=\"true\"/>\r\n\r\n");
+      searchMetawidget.append("\t\t\t\t<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:outputLabel for=\"customerBeanSearchFirstName\" value=\"First Name:\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:panelGroup>\r\n");
+      searchMetawidget
+               .append("\t\t\t\t\t\t<h:inputText id=\"customerBeanSearchFirstName\" value=\"#{customerBean.search.firstName}\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanSearchFirstName\" styleClass=\"error\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t</h:panelGroup>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:outputText/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:outputLabel for=\"customerBeanSearchLastName\" value=\"Last Name:\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:panelGroup>\r\n");
+      searchMetawidget
+               .append("\t\t\t\t\t\t<h:inputText id=\"customerBeanSearchLastName\" value=\"#{customerBean.search.lastName}\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanSearchLastName\" styleClass=\"error\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t</h:panelGroup>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:outputText/>\r\n");
+      searchMetawidget.append("\t\t\t\t</h:panelGrid>\r\n");
 
-      Assert.assertTrue(contents.contains(metawidget));
+      Assert.assertTrue(contents.contains(searchMetawidget));
 
-      // Additional files
+      StringBuilder beanMetawidget = new StringBuilder("\n\t\t\t<h:dataTable id=\"customerBeanPageItems\" styleClass=\"data-table\" value=\"#{customerBean.pageItems}\" var=\"_item\">\r\n");
+      beanMetawidget.append("\t\t\t\t<h:column>\r\n");
+      beanMetawidget.append("\t\t\t\t\t<f:facet name=\"header\">\r\n");
+      beanMetawidget.append("\t\t\t\t\t\t<h:outputText value=\"First Name\"/>\r\n");
+      beanMetawidget.append("\t\t\t\t\t</f:facet>\r\n");
+      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/customer/view\" value=\"#{_item.firstName}\">\r\n");
+      beanMetawidget.append("\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
+      beanMetawidget.append("\t\t\t\t\t</h:link>\r\n");
+      beanMetawidget.append("\t\t\t\t</h:column>\r\n");
+      beanMetawidget.append("\t\t\t\t<h:column>\r\n");
+      beanMetawidget.append("\t\t\t\t\t<f:facet name=\"header\">\r\n");
+      beanMetawidget.append("\t\t\t\t\t\t<h:outputText value=\"Last Name\"/>\r\n");
+      beanMetawidget.append("\t\t\t\t\t</f:facet>\r\n");
+      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/customer/view\" value=\"#{_item.lastName}\">\r\n");
+      beanMetawidget.append("\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
+      beanMetawidget.append("\t\t\t\t\t</h:link>\r\n");
+      beanMetawidget.append("\t\t\t\t</h:column>\r\n");
+      beanMetawidget.append("\t\t\t</h:dataTable>");
 
-      FileResource<?> navigation = web.getWebResource("resources/scaffold/page.xhtml");
-      Assert.assertTrue(navigation.exists());
+      Assert.assertTrue(contents.contains(beanMetawidget));
 
-      FileResource<?> paginator = web.getWebResource("resources/scaffold/paginator.xhtml");
-      Assert.assertTrue(paginator.exists());
+      // Backing Bean
+
+      FileResource<?> customerBean = java.getJavaResource("/com/test/view/CustomerBean.java");
+      Assert.assertTrue(customerBean.exists());
+      contents = Streams.toString(customerBean.getResourceInputStream());
+
+      Assert.assertTrue(contents.contains("\n\tprivate Customer customer;"));
+
+      StringBuilder qbeMetawidget = new StringBuilder(
+               "List<Predicate> predicatesList = new ArrayList<Predicate>();\r\n\r\n");
+      qbeMetawidget.append("\t\tString firstName = this.search.getFirstName();\r\n");
+      qbeMetawidget.append("\t\tif (firstName != null && !\"\".equals(firstName)) {\r\n");
+      qbeMetawidget
+               .append("\t\t\tpredicatesList.add(builder.like(root.<String>get(\"firstName\"), '%' + firstName + '%'));\r\n");
+      qbeMetawidget.append("\t\t}\r\n");
+      qbeMetawidget.append("\t\tString lastName = this.search.getLastName();\r\n");
+      qbeMetawidget.append("\t\tif (lastName != null && !\"\".equals(lastName)) {\r\n");
+      qbeMetawidget
+               .append("\t\t\tpredicatesList.add(builder.like(root.<String>get(\"lastName\"), '%' + lastName + '%'));\r\n");
+      qbeMetawidget.append("\t\t}\r\n\r\n");
+      qbeMetawidget.append("\t\treturn ");
+
+      Assert.assertTrue(contents.contains(qbeMetawidget));
+
+      // ViewUtils
 
       FileResource<?> viewUtils = java.getJavaResource("/com/test/view/ViewUtils.java");
       Assert.assertTrue(viewUtils.exists());
+      contents = Streams.toString(create.getResourceInputStream());
+      Assert.assertTrue(contents.contains(
+               "template=\"/resources/scaffold/page.xhtml"));
 
       FileResource<?> taglib = web.getWebResource("WEB-INF/classes/META-INF/forge.taglib.xml");
       Assert.assertTrue(taglib.exists());
       contents = Streams.toString(taglib.getResourceInputStream());
       Assert.assertTrue(contents.contains("<function-class>com.test.view.ViewUtils</function-class>"));
+
+      // Additional files
+
+      Assert.assertTrue(web.getWebResource("resources/background.gif").exists());
+      Assert.assertTrue(web.getWebResource("resources/favicon.ico").exists());
+      Assert.assertTrue(web.getWebResource("resources/forge-logo.png").exists());
+
+      FileResource<?> css = web.getWebResource("resources/forge-style.css");
+      Assert.assertTrue(css.exists());
+      contents = Streams.toString(css.getResourceInputStream());
+      Assert.assertTrue(contents.contains("#content table .component .error {"));
+
+      Assert.assertTrue(web.getWebResource("resources/jboss-community.png").exists());
+      Assert.assertTrue(web.getWebResource("resources/search.png").exists());
+      Assert.assertTrue(web.getWebResource("resources/scaffold/page.xhtml").exists());
+
+      FileResource<?> paginator = web.getWebResource("resources/scaffold/paginator.xhtml");
+      Assert.assertTrue(paginator.exists());
+      contents = Streams.toString(paginator.getResourceInputStream());
+
+      // Paginator should use commandLink, not outputLink, else search criteria gets lost on page change
+
+      Assert.assertTrue(contents.contains("<h:commandLink "));
+      Assert.assertTrue(!contents.contains("<h:outputLink "));
    }
 
    @Test
@@ -239,7 +302,7 @@ public class FacesScaffoldTest extends AbstractShellTest
       Assert.assertTrue(contents.contains("<ui:param name=\"pageTitle\" value=\"View Customer Person\"/>"));
       Assert.assertTrue(contents.contains("\t<ui:define name=\"header\">\n\t\tCustomer Person\n\t</ui:define>"));
       Assert.assertTrue(contents
-               .contains("\t<ui:define name=\"subheader\">\n\t\tViewing existing Customer Person\n\t</ui:define>"));
+               .contains("\t<ui:define name=\"subheader\">\n\t\tView existing Customer Person\n\t</ui:define>"));
       Assert.assertTrue(contents.contains(
                "customerPersonBean.customerPerson"));
 
@@ -251,21 +314,21 @@ public class FacesScaffoldTest extends AbstractShellTest
 
       Assert.assertTrue(contents.contains("<ui:param name=\"pageTitle\" value=\"Create Customer Person\"/>"));
       Assert.assertTrue(contents.contains("\t<ui:define name=\"header\">\n\t\tCustomer Person\n\t</ui:define>"));
-      Assert.assertTrue(contents.contains("Editing existing Customer Person"));
-      Assert.assertTrue(contents.contains("Creating a new Customer Person"));
+      Assert.assertTrue(contents.contains("Edit existing Customer Person"));
+      Assert.assertTrue(contents.contains("Create a new Customer Person"));
       Assert.assertTrue(contents.contains(
                "customerPersonBean.customerPerson"));
 
-      // List
+      // Search
 
-      FileResource<?> list = web.getWebResource("scaffold/customerPerson/list.xhtml");
-      Assert.assertTrue(list.exists());
-      contents = Streams.toString(list.getResourceInputStream()).replaceAll("\\r\\n", "\n");
+      FileResource<?> search = web.getWebResource("scaffold/customerPerson/search.xhtml");
+      Assert.assertTrue(search.exists());
+      contents = Streams.toString(search.getResourceInputStream()).replaceAll("\\r\\n", "\n");
 
-      Assert.assertTrue(contents.contains("<ui:param name=\"pageTitle\" value=\"List all Customer Person entities\"/>"));
+      Assert.assertTrue(contents.contains("<ui:param name=\"pageTitle\" value=\"Search Customer Person entities\"/>"));
       Assert.assertTrue(contents.contains("\t<ui:define name=\"header\">\n\t\tCustomer Person\n\t</ui:define>"));
       Assert.assertTrue(contents
-               .contains("\t<ui:define name=\"subheader\">\n\t\tListing all Customer Person entities\n\t</ui:define>"));
+               .contains("\t<ui:define name=\"subheader\">\n\t\tSearch Customer Person entities\n\t</ui:define>"));
       Assert.assertTrue(contents.contains(
                "customerPersonBean.pageItems"));
 
@@ -275,7 +338,7 @@ public class FacesScaffoldTest extends AbstractShellTest
       Assert.assertTrue(navigation.exists());
       contents = Streams.toString(navigation.getResourceInputStream());
       Assert.assertTrue(contents
-               .contains("<h:link outcome=\"/scaffold/customerPerson/list\" value=\"Customer Person\"/>"));
+               .contains("<h:link outcome=\"/scaffold/customerPerson/search\" value=\"Customer Person\"/>"));
    }
 
    @Test
@@ -298,9 +361,9 @@ public class FacesScaffoldTest extends AbstractShellTest
 
       FileResource<?> view = web.getWebResource("scaffold/customer/view.xhtml");
       FileResource<?> create = web.getWebResource("scaffold/customer/create.xhtml");
-      FileResource<?> list = web.getWebResource("scaffold/customer/list.xhtml");
+      FileResource<?> search = web.getWebResource("scaffold/customer/search.xhtml");
 
-      for (FileResource<?> file : Arrays.asList(view, create, list))
+      for (FileResource<?> file : Arrays.asList(view, create, search))
       {
          Assert.assertTrue(file.exists());
          Assert.assertTrue(Streams.toString(file.getResourceInputStream()).contains(
@@ -338,9 +401,9 @@ public class FacesScaffoldTest extends AbstractShellTest
       {
          FileResource<?> view = web.getWebResource("scaffold/customer/view.xhtml");
          FileResource<?> create = web.getWebResource("scaffold/customer/create.xhtml");
-         FileResource<?> list = web.getWebResource("scaffold/customer/list.xhtml");
+         FileResource<?> search = web.getWebResource("scaffold/customer/search.xhtml");
 
-         for (FileResource<?> file : Arrays.asList(view, create, list))
+         for (FileResource<?> file : Arrays.asList(view, create, search))
          {
             Assert.assertFalse(file.exists());
          }
@@ -384,21 +447,21 @@ public class FacesScaffoldTest extends AbstractShellTest
       contents = Streams.toString(create.getResourceInputStream());
       Assert.assertTrue(contents.contains(
                "template=\"/resources/scaffold/page.xhtml"));
-      StringBuilder metawidget = new StringBuilder("\t\t<h:form id=\"form\">\n");
+      StringBuilder metawidget = new StringBuilder("\t\t<h:form id=\"create\">\n");
       metawidget.append("\t\t\t<h:messages globalOnly=\"true\"/>\n\n");
       metawidget.append("\t\t\t<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">\r\n");
       metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First Name:\"/>\r\n");
       metawidget.append("\t\t\t\t<h:panelGroup>\r\n");
       metawidget
                .append("\t\t\t\t\t<h:inputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>\r\n");
-      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerFirstName\"/>\r\n");
+      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerFirstName\" styleClass=\"error\"/>\r\n");
       metawidget.append("\t\t\t\t</h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last Name:\"/>\r\n");
       metawidget.append("\t\t\t\t<h:panelGroup>\r\n");
       metawidget
                .append("\t\t\t\t\t<h:inputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>\r\n");
-      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerLastName\"/>\r\n");
+      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerLastName\" styleClass=\"error\"/>\r\n");
       metawidget.append("\t\t\t\t</h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerAddress\" value=\"Address:\"/>\r\n");
@@ -409,28 +472,28 @@ public class FacesScaffoldTest extends AbstractShellTest
       metawidget.append("\t\t\t\t\t<h:panelGroup>\r\n");
       metawidget
                .append("\t\t\t\t\t\t<h:inputText id=\"customerBeanCustomerAddressStreet\" value=\"#{customerBean.customer.address.street}\"/>\r\n");
-      metawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanCustomerAddressStreet\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanCustomerAddressStreet\" styleClass=\"error\"/>\r\n");
       metawidget.append("\t\t\t\t\t</h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t\t\t<h:outputLabel for=\"customerBeanCustomerAddressCity\" value=\"City:\"/>\r\n");
       metawidget.append("\t\t\t\t\t<h:panelGroup>\r\n");
       metawidget
                .append("\t\t\t\t\t\t<h:inputText id=\"customerBeanCustomerAddressCity\" value=\"#{customerBean.customer.address.city}\"/>\r\n");
-      metawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanCustomerAddressCity\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanCustomerAddressCity\" styleClass=\"error\"/>\r\n");
       metawidget.append("\t\t\t\t\t</h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t\t\t<h:outputLabel for=\"customerBeanCustomerAddressState\" value=\"State:\"/>\r\n");
       metawidget.append("\t\t\t\t\t<h:panelGroup>\r\n");
       metawidget
                .append("\t\t\t\t\t\t<h:inputText id=\"customerBeanCustomerAddressState\" value=\"#{customerBean.customer.address.state}\"/>\r\n");
-      metawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanCustomerAddressState\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanCustomerAddressState\" styleClass=\"error\"/>\r\n");
       metawidget.append("\t\t\t\t\t</h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t\t\t<h:outputLabel for=\"customerBeanCustomerAddressZip\" value=\"Zip:\"/>\r\n");
       metawidget.append("\t\t\t\t\t<h:panelGroup>\r\n");
       metawidget
                .append("\t\t\t\t\t\t<h:inputText id=\"customerBeanCustomerAddressZip\" value=\"#{customerBean.customer.address.zip}\"/>\r\n");
-      metawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanCustomerAddressZip\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanCustomerAddressZip\" styleClass=\"error\"/>\r\n");
       metawidget.append("\t\t\t\t\t</h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t\t</h:panelGrid>\r\n");
@@ -438,11 +501,11 @@ public class FacesScaffoldTest extends AbstractShellTest
       metawidget.append("\t\t\t</h:panelGrid>\n");
       Assert.assertTrue(contents.contains(metawidget));
 
-      // List
+      // Search
 
-      FileResource<?> list = web.getWebResource("scaffold/customer/list.xhtml");
-      Assert.assertTrue(list.exists());
-      contents = Streams.toString(list.getResourceInputStream());
+      FileResource<?> search = web.getWebResource("scaffold/customer/search.xhtml");
+      Assert.assertTrue(search.exists());
+      contents = Streams.toString(search.getResourceInputStream());
       Assert.assertTrue(contents.contains(
                "template=\"/resources/scaffold/page.xhtml"));
 
@@ -473,6 +536,7 @@ public class FacesScaffoldTest extends AbstractShellTest
       queueInputLines("", "");
       getShell().execute("scaffold from-entity com.test.domain.Employer com.test.domain.Customer");
 
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
       WebResourceFacet web = project.getFacet(WebResourceFacet.class);
 
       // View
@@ -484,22 +548,22 @@ public class FacesScaffoldTest extends AbstractShellTest
                "template=\"/resources/scaffold/page.xhtml"));
 
       StringBuilder metawidget = new StringBuilder(
-               "\t\t\t<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">\r\n");
-      metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First Name:\"/>\r\n");
+               "\t\t<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">\r\n");
+      metawidget.append("\t\t\t<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First Name:\"/>\r\n");
       metawidget
-               .append("\t\t\t\t<h:outputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>\r\n");
-      metawidget.append("\t\t\t\t<h:outputText/>\r\n");
-      metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last Name:\"/>\r\n");
+               .append("\t\t\t<h:outputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>\r\n");
+      metawidget.append("\t\t\t<h:outputText/>\r\n");
+      metawidget.append("\t\t\t<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last Name:\"/>\r\n");
       metawidget
-               .append("\t\t\t\t<h:outputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>\r\n");
-      metawidget.append("\t\t\t\t<h:outputText/>\r\n");
-      metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerEmployer\" value=\"Employer:\"/>\r\n");
+               .append("\t\t\t<h:outputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>\r\n");
+      metawidget.append("\t\t\t<h:outputText/>\r\n");
+      metawidget.append("\t\t\t<h:outputLabel for=\"customerBeanCustomerEmployer\" value=\"Employer:\"/>\r\n");
       metawidget
-               .append("\t\t\t\t<h:link converter=\"#{employerBean.converter}\" id=\"customerBeanCustomerEmployer\" outcome=\"/scaffold/employer/view\" value=\"#{customerBean.customer.employer}\">\r\n");
-      metawidget.append("\t\t\t\t\t<f:param name=\"id\" value=\"#{customerBean.customer.employer.id}\"/>\r\n");
-      metawidget.append("\t\t\t\t</h:link>\r\n");
-      metawidget.append("\t\t\t\t<h:outputText/>\r\n");
-      metawidget.append("\t\t\t</h:panelGrid>");
+               .append("\t\t\t<h:link converter=\"#{employerBean.converter}\" id=\"customerBeanCustomerEmployer\" outcome=\"/scaffold/employer/view\" value=\"#{customerBean.customer.employer}\">\r\n");
+      metawidget.append("\t\t\t\t<f:param name=\"id\" value=\"#{customerBean.customer.employer.id}\"/>\r\n");
+      metawidget.append("\t\t\t</h:link>\r\n");
+      metawidget.append("\t\t\t<h:outputText/>\r\n");
+      metawidget.append("\t\t</h:panelGrid>");
 
       Assert.assertTrue(contents.contains(metawidget));
 
@@ -516,14 +580,14 @@ public class FacesScaffoldTest extends AbstractShellTest
       metawidget.append("\t\t\t\t<h:panelGroup>\r\n");
       metawidget
                .append("\t\t\t\t\t<h:inputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>\r\n");
-      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerFirstName\"/>\r\n");
+      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerFirstName\" styleClass=\"error\"/>\r\n");
       metawidget.append("\t\t\t\t</h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last Name:\"/>\r\n");
       metawidget.append("\t\t\t\t<h:panelGroup>\r\n");
       metawidget
                .append("\t\t\t\t\t<h:inputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>\r\n");
-      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerLastName\"/>\r\n");
+      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerLastName\" styleClass=\"error\"/>\r\n");
       metawidget.append("\t\t\t\t</h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerEmployer\" value=\"Employer:\"/>\r\n");
@@ -533,18 +597,18 @@ public class FacesScaffoldTest extends AbstractShellTest
       metawidget.append("\t\t\t\t\t\t<f:selectItem/>\r\n");
       metawidget.append("\t\t\t\t\t\t<f:selectItems value=\"#{employerBean.all}\"/>\r\n");
       metawidget.append("\t\t\t\t\t</h:selectOneMenu>\r\n");
-      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerEmployer\"/>\r\n");
+      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerEmployer\" styleClass=\"error\"/>\r\n");
       metawidget.append("\t\t\t\t</h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t</h:panelGrid>");
 
       Assert.assertTrue(contents.contains(metawidget));
 
-      // List
+      // Search
 
-      FileResource<?> list = web.getWebResource("scaffold/customer/list.xhtml");
-      Assert.assertTrue(list.exists());
-      contents = Streams.toString(list.getResourceInputStream());
+      FileResource<?> search = web.getWebResource("scaffold/customer/search.xhtml");
+      Assert.assertTrue(search.exists());
+      contents = Streams.toString(search.getResourceInputStream());
       Assert.assertTrue(contents.contains(
                "template=\"/resources/scaffold/page.xhtml"));
 
@@ -557,14 +621,29 @@ public class FacesScaffoldTest extends AbstractShellTest
       StringBuilder navigationText = new StringBuilder("\n\t\t\t\t<ul>\r\n");
       navigationText.append("\t\t\t\t\t<li>\r\n");
       navigationText
-               .append("\t\t\t\t\t\t<h:link outcome=\"/scaffold/customer/list\" value=\"Customer\"/>\r\n");
+               .append("\t\t\t\t\t\t<h:link outcome=\"/scaffold/customer/search\" value=\"Customer\"/>\r\n");
       navigationText.append("\t\t\t\t\t</li>\r\n");
       navigationText.append("\t\t\t\t\t<li>\r\n");
       navigationText
-               .append("\t\t\t\t\t\t<h:link outcome=\"/scaffold/employer/list\" value=\"Employer\"/>\r\n");
+               .append("\t\t\t\t\t\t<h:link outcome=\"/scaffold/employer/search\" value=\"Employer\"/>\r\n");
       navigationText.append("\t\t\t\t\t</li>\r\n");
 
       Assert.assertTrue(contents.contains(navigationText));
+
+      // Backing Bean
+
+      FileResource<?> customerBean = java.getJavaResource("/com/test/view/CustomerBean.java");
+      Assert.assertTrue(customerBean.exists());
+      contents = Streams.toString(customerBean.getResourceInputStream());
+
+      StringBuilder qbeMetawidget = new StringBuilder("\t\tEmployer employer = this.search.getEmployer();\r\n");
+      qbeMetawidget.append("\t\tif (employer != null && employer.getId() != null) {\r\n");
+      qbeMetawidget
+               .append("\t\t\tpredicatesList.add(builder.equal(root.get(\"employer\"),employer));\r\n");
+      qbeMetawidget.append("\t\t}\r\n");
+
+      Assert.assertTrue(contents.contains(qbeMetawidget));
+      Assert.assertTrue(contents.contains("import com.test.domain.Customer;\r\nimport com.test.domain.Employer;\r\n"));
    }
 
    @Test
@@ -596,31 +675,32 @@ public class FacesScaffoldTest extends AbstractShellTest
                "template=\"/resources/scaffold/page.xhtml"));
 
       StringBuilder metawidget = new StringBuilder(
-               "\t\t\t<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">\r\n");
-      metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First Name:\"/>\r\n");
+               "\t\t<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">\r\n");
+      metawidget.append("\t\t\t<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First Name:\"/>\r\n");
       metawidget
-               .append("\t\t\t\t<h:outputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>\r\n");
-      metawidget.append("\t\t\t\t<h:outputText/>\r\n");
-      metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last Name:\"/>\r\n");
+               .append("\t\t\t<h:outputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>\r\n");
+      metawidget.append("\t\t\t<h:outputText/>\r\n");
+      metawidget.append("\t\t\t<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last Name:\"/>\r\n");
       metawidget
-               .append("\t\t\t\t<h:outputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>\r\n");
-      metawidget.append("\t\t\t\t<h:outputText/>\r\n");
-      metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerGroceries\" value=\"Groceries:\"/>\r\n");
+               .append("\t\t\t<h:outputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>\r\n");
+      metawidget.append("\t\t\t<h:outputText/>\r\n");
+      metawidget.append("\t\t\t<h:outputLabel for=\"customerBeanCustomerGroceries\" value=\"Groceries:\"/>\r\n");
       metawidget
-               .append("\t\t\t\t<h:dataTable id=\"customerBeanCustomerGroceries\" styleClass=\"data-table\" value=\"#{forgeview:asList(customerBean.customer.groceries)}\" var=\"_item\">\r\n");
-      metawidget.append("\t\t\t\t\t<h:column>\r\n");
-      metawidget.append("\t\t\t\t\t\t<f:facet name=\"header\">\r\n");
-      metawidget.append("\t\t\t\t\t\t\t<h:outputText value=\"Name\"/>\r\n");
-      metawidget.append("\t\t\t\t\t\t</f:facet>\r\n");
-      metawidget.append("\t\t\t\t\t\t<h:link outcome=\"/scaffold/grocery/view\" value=\"#{_item.name}\">\r\n");
-      metawidget.append("\t\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
-      metawidget.append("\t\t\t\t\t\t</h:link>\r\n");
-      metawidget.append("\t\t\t\t\t</h:column>\r\n");
-      metawidget.append("\t\t\t\t</h:dataTable>\r\n");
-      metawidget.append("\t\t\t\t<h:outputText/>\r\n");
-      metawidget.append("\t\t\t</h:panelGrid>");
+               .append("\t\t\t<h:dataTable id=\"customerBeanCustomerGroceries\" styleClass=\"data-table\" value=\"#{forgeview:asList(customerBean.customer.groceries)}\" var=\"_item\">\r\n");
+      metawidget.append("\t\t\t\t<h:column>\r\n");
+      metawidget.append("\t\t\t\t\t<f:facet name=\"header\">\r\n");
+      metawidget.append("\t\t\t\t\t\t<h:outputText value=\"Name\"/>\r\n");
+      metawidget.append("\t\t\t\t\t</f:facet>\r\n");
+      metawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/grocery/view\" value=\"#{_item.name}\">\r\n");
+      metawidget.append("\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
+      metawidget.append("\t\t\t\t\t</h:link>\r\n");
+      metawidget.append("\t\t\t\t</h:column>\r\n");
+      metawidget.append("\t\t\t</h:dataTable>\r\n");
+      metawidget.append("\t\t\t<h:outputText/>\r\n");
+      metawidget.append("\t\t</h:panelGrid>");
 
       Assert.assertTrue(contents.contains(metawidget));
+      Assert.assertTrue(contents.contains("xmlns:forgeview=\"http://jboss.org/forge/view\""));
 
       // Create
 
@@ -635,17 +715,17 @@ public class FacesScaffoldTest extends AbstractShellTest
       metawidget.append("\t\t\t\t<h:panelGroup>\r\n");
       metawidget
                .append("\t\t\t\t\t<h:inputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>\r\n");
-      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerFirstName\"/>\r\n");
+      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerFirstName\" styleClass=\"error\"/>\r\n");
       metawidget.append("\t\t\t\t</h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last Name:\"/>\r\n");
       metawidget.append("\t\t\t\t<h:panelGroup>\r\n");
       metawidget
                .append("\t\t\t\t\t<h:inputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>\r\n");
-      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerLastName\"/>\r\n");
+      metawidget.append("\t\t\t\t\t<h:message for=\"customerBeanCustomerLastName\" styleClass=\"error\"/>\r\n");
       metawidget.append("\t\t\t\t</h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t<h:outputText/>\r\n");
-      metawidget.append("\t\t\t\t<h:outputLabel value=\"Groceries:\"/>\r\n");
+      metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerGroceries\" value=\"Groceries:\"/>\r\n");
       metawidget.append("\t\t\t\t<h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t\t<ui:param name=\"_collection\" value=\"#{customerBean.customer.groceries}\"/>\r\n");
       metawidget
@@ -663,26 +743,72 @@ public class FacesScaffoldTest extends AbstractShellTest
                .append("\t\t\t\t\t\t\t<h:commandLink action=\"#{_collection.remove(_item)}\" styleClass=\"button\" value=\"Remove\"/>\r\n");
       metawidget.append("\t\t\t\t\t\t</h:column>\r\n");
       metawidget.append("\t\t\t\t\t</h:dataTable>\r\n");
+      metawidget.append("\t\t\t\t\t<h:panelGroup styleClass=\"buttons\">\r\n");
       metawidget
-               .append("\t\t\t\t\t<h:selectOneMenu converter=\"#{groceryBean.converter}\" value=\"#{requestScope['customerBeanCustomerGroceriesAdd']}\">\r\n");
-      metawidget.append("\t\t\t\t\t\t<f:selectItem/>\r\n");
-      metawidget.append("\t\t\t\t\t\t<f:selectItems value=\"#{groceryBean.all}\"/>\r\n");
-      metawidget.append("\t\t\t\t\t</h:selectOneMenu>\r\n");
+               .append("\t\t\t\t\t\t<h:selectOneMenu converter=\"#{groceryBean.converter}\" id=\"customerBeanCustomerGroceriesAdd\" value=\"#{requestScope['customerBeanCustomerGroceriesAdd']}\">\r\n");
+      metawidget.append("\t\t\t\t\t\t\t<f:selectItem/>\r\n");
+      metawidget.append("\t\t\t\t\t\t\t<f:selectItems value=\"#{groceryBean.all}\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t</h:selectOneMenu>\r\n");
       metawidget
-               .append("\t\t\t\t\t<h:commandLink action=\"#{_collection.add(requestScope['customerBeanCustomerGroceriesAdd'])}\" styleClass=\"button\" value=\"Add\"/>\r\n");
+               .append("\t\t\t\t\t\t<h:commandLink action=\"#{_collection.add(requestScope['customerBeanCustomerGroceriesAdd'])}\" onclick=\"if (document.getElementById(document.forms[0].id+':customerBeanCustomerGroceriesAdd').selectedIndex &lt; 1) { alert('Must select a Grocery'); return false; }\" value=\"Add\"/>\r\n");
+      metawidget.append("\t\t\t\t\t</h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t</h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t</h:panelGrid>");
 
       Assert.assertTrue(contents.contains(metawidget));
+      Assert.assertTrue(contents.contains("xmlns:forgeview=\"http://jboss.org/forge/view\""));
 
-      // List
+      // Search
 
-      FileResource<?> list = web.getWebResource("scaffold/customer/list.xhtml");
-      Assert.assertTrue(list.exists());
-      contents = Streams.toString(list.getResourceInputStream());
+      FileResource<?> search = web.getWebResource("scaffold/customer/search.xhtml");
+      Assert.assertTrue(search.exists());
+      contents = Streams.toString(search.getResourceInputStream());
       Assert.assertTrue(contents.contains(
                "template=\"/resources/scaffold/page.xhtml"));
+
+      StringBuilder searchMetawidget = new StringBuilder("<h:form id=\"search\">\r\n");
+      searchMetawidget.append("\t\t\t<h:panelGroup styleClass=\"search\">\r\n");
+      searchMetawidget.append("\t\t\t\t<h:messages globalOnly=\"true\"/>\r\n\r\n");
+      searchMetawidget.append("\t\t\t\t<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:outputLabel for=\"customerBeanSearchFirstName\" value=\"First Name:\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:panelGroup>\r\n");
+      searchMetawidget
+               .append("\t\t\t\t\t\t<h:inputText id=\"customerBeanSearchFirstName\" value=\"#{customerBean.search.firstName}\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanSearchFirstName\" styleClass=\"error\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t</h:panelGroup>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:outputText/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:outputLabel for=\"customerBeanSearchLastName\" value=\"Last Name:\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:panelGroup>\r\n");
+      searchMetawidget
+               .append("\t\t\t\t\t\t<h:inputText id=\"customerBeanSearchLastName\" value=\"#{customerBean.search.lastName}\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanSearchLastName\" styleClass=\"error\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t</h:panelGroup>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:outputText/>\r\n");
+      searchMetawidget.append("\t\t\t\t</h:panelGrid>\r\n");
+
+      Assert.assertTrue(contents.contains(searchMetawidget));
+
+      StringBuilder beanMetawidget = new StringBuilder("\n\t\t\t<h:dataTable id=\"customerBeanPageItems\" styleClass=\"data-table\" value=\"#{customerBean.pageItems}\" var=\"_item\">\r\n");
+      beanMetawidget.append("\t\t\t\t<h:column>\r\n");
+      beanMetawidget.append("\t\t\t\t\t<f:facet name=\"header\">\r\n");
+      beanMetawidget.append("\t\t\t\t\t\t<h:outputText value=\"First Name\"/>\r\n");
+      beanMetawidget.append("\t\t\t\t\t</f:facet>\r\n");
+      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/customer/view\" value=\"#{_item.firstName}\">\r\n");
+      beanMetawidget.append("\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
+      beanMetawidget.append("\t\t\t\t\t</h:link>\r\n");
+      beanMetawidget.append("\t\t\t\t</h:column>\r\n");
+      beanMetawidget.append("\t\t\t\t<h:column>\r\n");
+      beanMetawidget.append("\t\t\t\t\t<f:facet name=\"header\">\r\n");
+      beanMetawidget.append("\t\t\t\t\t\t<h:outputText value=\"Last Name\"/>\r\n");
+      beanMetawidget.append("\t\t\t\t\t</f:facet>\r\n");
+      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/customer/view\" value=\"#{_item.lastName}\">\r\n");
+      beanMetawidget.append("\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
+      beanMetawidget.append("\t\t\t\t\t</h:link>\r\n");
+      beanMetawidget.append("\t\t\t\t</h:column>\r\n");
+      beanMetawidget.append("\t\t\t</h:dataTable>");
+
+      Assert.assertTrue(contents.contains(beanMetawidget));
 
       FileResource<?> navigation = web.getWebResource("resources/scaffold/page.xhtml");
       Assert.assertTrue(navigation.exists());
@@ -691,11 +817,11 @@ public class FacesScaffoldTest extends AbstractShellTest
       StringBuilder navigationText = new StringBuilder("\n\t\t\t\t<ul>\r\n");
       navigationText.append("\t\t\t\t\t<li>\r\n");
       navigationText
-               .append("\t\t\t\t\t\t<h:link outcome=\"/scaffold/customer/list\" value=\"Customer\"/>\r\n");
+               .append("\t\t\t\t\t\t<h:link outcome=\"/scaffold/customer/search\" value=\"Customer\"/>\r\n");
       navigationText.append("\t\t\t\t\t</li>\r\n");
       navigationText.append("\t\t\t\t\t<li>\r\n");
       navigationText
-               .append("\t\t\t\t\t\t<h:link outcome=\"/scaffold/grocery/list\" value=\"Grocery\"/>\r\n");
+               .append("\t\t\t\t\t\t<h:link outcome=\"/scaffold/grocery/search\" value=\"Grocery\"/>\r\n");
       navigationText.append("\t\t\t\t\t</li>\r\n");
 
       Assert.assertTrue(contents.contains(navigationText));
@@ -721,9 +847,9 @@ public class FacesScaffoldTest extends AbstractShellTest
       WebResourceFacet web = project.getFacet(WebResourceFacet.class);
       FileResource<?> view = web.getWebResource("scaffold/customer/view.xhtml");
       FileResource<?> create = web.getWebResource("scaffold/customer/create.xhtml");
-      FileResource<?> list = web.getWebResource("scaffold/customer/list.xhtml");
+      FileResource<?> search = web.getWebResource("scaffold/customer/search.xhtml");
 
-      for (FileResource<?> file : Arrays.asList(view, create, list))
+      for (FileResource<?> file : Arrays.asList(view, create, search))
       {
          Assert.assertTrue(file.exists());
          String contents = Streams.toString(file.getResourceInputStream());
@@ -732,7 +858,81 @@ public class FacesScaffoldTest extends AbstractShellTest
       }
    }
 
-   public Project setupScaffoldProject() throws Exception
+   @Test
+   public void testGenerateEntityWithManyFields() throws Exception
+   {
+      Project project = setupScaffoldProject();
+
+      queueInputLines("");
+      getShell().execute("entity --named Item");
+      getShell().execute("field string --named name");
+      getShell().execute("entity --named Customer");
+      getShell().execute("field string --named field1");
+      getShell().execute("field string --named field2");
+      getShell().execute("field oneToMany --named field3 --fieldType com.test.domain.Item");
+      getShell().execute("field string --named field4");
+      getShell().execute("field string --named field5");
+      getShell().execute("field string --named field6");
+      getShell().execute("field string --named field7");
+      getShell().execute("field string --named field8");
+      queueInputLines("", "");
+      getShell().execute("scaffold from-entity com.test.domain.Customer");
+
+      WebResourceFacet web = project.getFacet(WebResourceFacet.class);
+
+      // Search
+
+      FileResource<?> search = web.getWebResource("scaffold/customer/search.xhtml");
+      Assert.assertTrue(search.exists());
+      String contents = Streams.toString(search.getResourceInputStream());
+      Assert.assertTrue(contents.contains(
+               "template=\"/resources/scaffold/page.xhtml"));
+
+      StringBuilder searchMetawidget = new StringBuilder("<h:form id=\"search\">\r\n");
+      searchMetawidget.append("\t\t\t<h:panelGroup styleClass=\"search\">\r\n" );
+      searchMetawidget.append("\t\t\t\t<h:messages globalOnly=\"true\"/>\r\n\r\n");
+      searchMetawidget.append("\t\t\t\t<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:outputLabel for=\"customerBeanSearchField1\" value=\"Field 1:\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:panelGroup>\r\n");
+      searchMetawidget
+               .append("\t\t\t\t\t\t<h:inputText id=\"customerBeanSearchField1\" value=\"#{customerBean.search.field1}\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanSearchField1\" styleClass=\"error\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t</h:panelGroup>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:outputText/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:outputLabel for=\"customerBeanSearchField2\" value=\"Field 2:\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:panelGroup>\r\n");
+      searchMetawidget
+               .append("\t\t\t\t\t\t<h:inputText id=\"customerBeanSearchField2\" value=\"#{customerBean.search.field2}\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanSearchField2\" styleClass=\"error\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t</h:panelGroup>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:outputText/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:outputLabel for=\"customerBeanSearchField4\" value=\"Field 4:\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:panelGroup>\r\n");
+      searchMetawidget
+               .append("\t\t\t\t\t\t<h:inputText id=\"customerBeanSearchField4\" value=\"#{customerBean.search.field4}\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanSearchField4\" styleClass=\"error\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t</h:panelGroup>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:outputText/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:outputLabel for=\"customerBeanSearchField5\" value=\"Field 5:\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:panelGroup>\r\n");
+      searchMetawidget
+               .append("\t\t\t\t\t\t<h:inputText id=\"customerBeanSearchField5\" value=\"#{customerBean.search.field5}\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanSearchField5\" styleClass=\"error\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t</h:panelGroup>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:outputText/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:outputLabel for=\"customerBeanSearchField6\" value=\"Field 6:\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:panelGroup>\r\n");
+      searchMetawidget
+               .append("\t\t\t\t\t\t<h:inputText id=\"customerBeanSearchField6\" value=\"#{customerBean.search.field6}\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t\t<h:message for=\"customerBeanSearchField6\" styleClass=\"error\"/>\r\n");
+      searchMetawidget.append("\t\t\t\t\t</h:panelGroup>\r\n");
+      searchMetawidget.append("\t\t\t\t\t<h:outputText/>\r\n");
+      searchMetawidget.append("\t\t\t\t</h:panelGrid>\r\n");
+
+      Assert.assertTrue(contents.contains(searchMetawidget));
+   }
+
+   private Project setupScaffoldProject() throws Exception
    {
       Project project = initializeJavaProject();
       queueInputLines("HIBERNATE", "JBOSS_AS7", "");

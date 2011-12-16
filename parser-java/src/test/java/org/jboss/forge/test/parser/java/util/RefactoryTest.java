@@ -45,7 +45,9 @@ public class RefactoryTest
    @Before
    public void before()
    {
-      javaClass = JavaParser.parse(JavaClass.class, "public class Foo { private int foo; private String firstName; }");
+      javaClass = JavaParser
+               .parse(JavaClass.class,
+                        "import java.util.Set; public class Foo { private int foo; private String firstName; private Set<String> names; }");
    }
 
    @Test
@@ -76,6 +78,25 @@ public class RefactoryTest
       assertEquals("getFirstName", getter.getName());
       assertTrue(getter.getParameters().isEmpty());
       assertEquals("setFirstName", setter.getName());
+   }
+
+   @Test
+   public void testAddGettersAndSettersGeneric() throws Exception
+   {
+      Field<JavaClass> field = javaClass.getField("names");
+      Refactory.createGetterAndSetter(javaClass, field);
+
+      List<Method<JavaClass>> methods = javaClass.getMethods();
+      Method<JavaClass> getter = methods.get(0);
+      Method<JavaClass> setter = methods.get(1);
+
+      assertEquals("getNames", getter.getName());
+      assertTrue(getter.getParameters().isEmpty());
+      assertEquals("Set", getter.getReturnType());
+      assertEquals("Set<String>", getter.getReturnTypeInspector().toString());
+      assertEquals("setNames", setter.getName());
+      assertFalse(setter.getParameters().isEmpty());
+      assertEquals("Set<String>", setter.getParameters().get(0).getType());
    }
 
    @Test

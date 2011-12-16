@@ -44,6 +44,7 @@ import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.junit.After;
 import org.junit.Before;
 
 /**
@@ -75,7 +76,7 @@ public abstract class ProjectModelTest
 
    @Before
    @SuppressWarnings("unchecked")
-   public void postConstruct() throws IOException
+   public void before() throws IOException
    {
       if (project == null)
       {
@@ -88,6 +89,13 @@ public abstract class ProjectModelTest
                   MavenCoreFacet.class, JavaSourceFacet.class, ResourceFacet.class, WebResourceFacet.class,
                   DependencyFacet.class, PackagingFacet.class);
       }
+   }
+
+   @After
+   public void after()
+   {
+      project.getProjectRoot().delete(true);
+      project = null;
    }
 
    protected Project getProject()

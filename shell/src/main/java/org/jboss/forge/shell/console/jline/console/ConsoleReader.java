@@ -1832,7 +1832,14 @@ public class ConsoleReader
 
    private void print(final char c, final int i) throws IOException
    {
-      print(c, i);
+      if (i == 1) {
+          print(c);
+      }
+      else {
+          byte[] chars = new byte[i];
+          Arrays.fill(chars, (byte) c);
+          print(chars);
+      }
    }
 
    /**

@@ -31,12 +31,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.jboss.solder.core.Veto;
+import org.metawidget.statically.BaseStaticXmlWidget;
 import org.metawidget.statically.StaticWidget;
 import org.metawidget.statically.StaticXmlMetawidget;
+import org.metawidget.statically.StaticXmlStub;
 import org.metawidget.statically.StaticXmlWidget;
 import org.metawidget.statically.faces.StaticFacesUtils;
 import org.metawidget.statically.faces.component.StaticUIMetawidget;
 import org.metawidget.statically.faces.component.ValueHolder;
+import org.metawidget.statically.faces.component.html.StaticHtmlMetawidget;
 import org.metawidget.statically.faces.component.html.layout.HtmlPanelGroup;
 import org.metawidget.statically.faces.component.html.widgetbuilder.FaceletsParam;
 import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlColumn;
@@ -64,7 +67,7 @@ import org.w3c.dom.NodeList;
  */
 
 @Veto
-public class ForgeWidgetBuilder
+public class EntityWidgetBuilder
          extends HtmlWidgetBuilder
 {
    //
@@ -74,35 +77,51 @@ public class ForgeWidgetBuilder
    private static final String COLLECTION_VAR = "_collection";
 
    //
+   // Private members
+   //
+
+   private StandardBindingProcessor bindingProcessor = new StandardBindingProcessor();
+
+   private ReadableIdProcessor readableIdProcessor = new ReadableIdProcessor();
+
+   //
    // Public methods
    //
 
    @Override
    public StaticXmlWidget buildWidget(String elementName, Map<String, String> attributes, StaticXmlMetawidget metawidget)
    {
-      // Render read-only <tt>FACES_LOOKUP</tt> as a link.
+      // Suppress nested INVERSE ONE_TO_ONE, to avoid recursion
 
-      String facesLookup = attributes.get(FACES_LOOKUP);
-
-      if (facesLookup != null && WidgetBuilderUtils.isReadOnly(attributes))
+      if (TRUE.equals(attributes.get(ONE_TO_ONE)) && TRUE.equals(attributes.get(INVERSE_RELATIONSHIP))
+               && metawidget.getParent() != null)
       {
-         if (StaticFacesUtils.isExpression(facesLookup))
+         return new StaticXmlStub();
+      }
+
+      // Render read-only FACES_LOOKUP as a link.
+
+      if (WidgetBuilderUtils.isReadOnly(attributes))
+      {
+         if (attributes.containsKey(FACES_LOOKUP))
          {
-            String controllerName = ClassUtils.getSimpleName(WidgetBuilderUtils.getActualClassOrType(attributes));
-            controllerName = StringUtils.decapitalize(controllerName);
+            {
+               String controllerName = ClassUtils.getSimpleName(WidgetBuilderUtils.getActualClassOrType(attributes));
+               controllerName = StringUtils.decapitalize(controllerName);
 
-            HtmlOutcomeTargetLink link = new HtmlOutcomeTargetLink();
-            link.putAttribute("outcome", "/scaffold/" + controllerName + "/view");
-            new StandardBindingProcessor().processWidget(link, elementName, attributes,
-                     (StaticUIMetawidget) metawidget);
+               HtmlOutcomeTargetLink link = new HtmlOutcomeTargetLink();
+               link.putAttribute("outcome", "/scaffold/" + controllerName + "/view");
+               new StandardBindingProcessor().processWidget(link, elementName, attributes,
+                        (StaticUIMetawidget) metawidget);
 
-            Param param = new Param();
-            param.putAttribute("name", "id");
-            param.putAttribute("value",
-                     StaticFacesUtils.wrapExpression(StaticFacesUtils.unwrapExpression(link.getValue()) + ".id"));
-            link.getChildren().add(param);
+               Param param = new Param();
+               param.putAttribute("name", "id");
+               param.putAttribute("value",
+                        StaticFacesUtils.wrapExpression(StaticFacesUtils.unwrapExpression(link.getValue()) + ".id"));
+               link.getChildren().add(param);
 
-            return link;
+               return link;
+            }
          }
       }
 
@@ -112,6 +131,52 @@ public class ForgeWidgetBuilder
 
       if (type != null)
       {
+         // Render non-optional ONE_TO_ONE with a button
+
+         if (TRUE.equals(attributes.get(ONE_TO_ONE)) && !TRUE.equals(attributes.get(REQUIRED)))
+         {
+            // (we are about to create a nestedMetawidget, so we must prevent recursion)
+
+            if (ENTITY.equals(elementName))
+            {
+               return null;
+            }
+
+            // Create nestedMetawidget with conditional 'rendered' attribute
+
+            StaticHtmlMetawidget nestedMetawidget = new StaticHtmlMetawidget();
+            metawidget.initNestedMetawidget(nestedMetawidget, attributes);
+            String unwrappedExpression = StaticFacesUtils.unwrapExpression(nestedMetawidget.getValue());
+            nestedMetawidget.putAttribute("rendered",
+                        StaticFacesUtils.wrapExpression("!empty " + unwrappedExpression));
+
+            // If read-only we're done
+
+            if (WidgetBuilderUtils.isReadOnly(attributes))
+            {
+               return nestedMetawidget;
+            }
+
+            // Otherwise, further wrap it with a button
+
+            int lastIndexOf = unwrappedExpression.lastIndexOf('.');
+            String parentExpression = unwrappedExpression.substring(0, lastIndexOf);
+            String childExpression = unwrappedExpression.substring(lastIndexOf + 1);
+
+            HtmlCommandLink commandLink = new HtmlCommandLink();
+            commandLink.setValue("Create New " + StringUtils.uncamelCase(childExpression));
+            commandLink.putAttribute(
+                        "action",
+                        StaticFacesUtils.wrapExpression(parentExpression + ".new"
+                                 + StringUtils.capitalize(childExpression)));
+            commandLink.putAttribute("rendered", StaticFacesUtils.wrapExpression("empty " + unwrappedExpression));
+
+            HtmlPanelGroup panelGroup = new HtmlPanelGroup();
+            panelGroup.getChildren().add(commandLink);
+            panelGroup.getChildren().add(nestedMetawidget);
+            return panelGroup;
+         }
+
          Class<?> clazz = ClassUtils.niceForName(type);
 
          if (clazz != null)
@@ -122,7 +187,6 @@ public class ForgeWidgetBuilder
             }
          }
       }
-
       // Delegate to next WidgetBuilder in the chain
 
       return null;
@@ -147,8 +211,8 @@ public class ForgeWidgetBuilder
 
       // Process the binding and id early, so we can use them below
 
-      new StandardBindingProcessor().processWidget(dataTable, elementName, attributes, (StaticUIMetawidget) metawidget);
-      new ReadableIdProcessor().processWidget(dataTable, elementName, attributes, metawidget);
+      this.bindingProcessor.processWidget(dataTable, elementName, attributes, (StaticUIMetawidget) metawidget);
+      this.readableIdProcessor.processWidget(dataTable, elementName, attributes, metawidget);
 
       ValueHolder valueHolderTable = (ValueHolder) dataTable;
       String tableValueExpression = valueHolderTable.getValue();
@@ -162,6 +226,7 @@ public class ForgeWidgetBuilder
          String asListValueExpression = "forgeview:asList(" + StaticFacesUtils.unwrapExpression(tableValueExpression)
                   + ")";
          valueHolderTable.setValue(StaticFacesUtils.wrapExpression(asListValueExpression));
+         ((BaseStaticXmlWidget) dataTable).putAdditionalNamespaceURI("forgeview", "http://jboss.org/forge/view");
       }
 
       // Add row creation/deletion for OneToMany and ManyToMany
@@ -200,27 +265,35 @@ public class ForgeWidgetBuilder
 
       panelGroup.getChildren().add(dataTable);
 
+      HtmlPanelGroup buttons = new HtmlPanelGroup();
+      buttons.putAttribute("styleClass", "buttons");
+
       // Select menu at bottom
 
       HtmlSelectOneMenu select = new HtmlSelectOneMenu();
-      String requestScopedValue = "requestScope['" + dataTable.getAttribute("id") + "Add']";
+      String selectId = dataTable.getAttribute("id") + "Add";
+      select.putAttribute("id", selectId);
+      String requestScopedValue = "requestScope['" + selectId + "']";
       select.setValue(StaticFacesUtils.wrapExpression(requestScopedValue));
       String simpleComponentType = ClassUtils.getSimpleName(componentType);
       String controllerName = StringUtils.decapitalize(simpleComponentType);
       select.setConverter(StaticFacesUtils.wrapExpression(controllerName + "Bean.converter"));
       Map<String, String> emptyAttributes = CollectionUtils.newHashMap();
       addSelectItems(select, StaticFacesUtils.wrapExpression(controllerName + "Bean.all"), emptyAttributes);
-      panelGroup.getChildren().add(select);
+      buttons.getChildren().add(select);
 
       // Add link
 
       HtmlCommandLink addLink = new HtmlCommandLink();
       addLink.setValue("Add");
-      addLink.putAttribute("styleClass", "button");
       String addExpression = COLLECTION_VAR + ".add(" + requestScopedValue + ")";
       addLink.putAttribute("action", StaticFacesUtils.wrapExpression(addExpression));
-      panelGroup.getChildren().add(addLink);
+      addLink.putAttribute("onclick", "if (document.getElementById(document.forms[0].id+':" + selectId
+               + "').selectedIndex &lt; 1) { alert('Must select a " + StringUtils.uncamelCase(simpleComponentType)
+               + "'); return false; }");
+      buttons.getChildren().add(addLink);
 
+      panelGroup.getChildren().add(buttons);
       return panelGroup;
    }
 

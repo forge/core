@@ -93,24 +93,17 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
    }
 
    @Override
-   public void addDependency(final Dependency dep)
+   public void addDirectDependency(final Dependency dep)
    {
-      MavenCoreFacet maven = project.getFacet(MavenCoreFacet.class);
-      if (!hasDependency(dep))
-      {
-         Model pom = maven.getPOM();
-         List<Dependency> dependencies = MavenDependencyAdapter.fromMavenList(pom.getDependencies());
-         dependencies.add(dep);
-         pom.setDependencies(MavenDependencyAdapter.toMavenList(dependencies));
-         maven.setPOM(pom);
-         bus.enqueue(new AddedDependencies(project, dep));
-      }
-   }
+      removeDependency(dep);
 
-   @Override
-   public boolean hasDependency(final Dependency dep)
-   {
-      return hasEffectiveDependency(dep) || hasDirectDependency(dep);
+      MavenCoreFacet maven = project.getFacet(MavenCoreFacet.class);
+      Model pom = maven.getPOM();
+      List<Dependency> dependencies = MavenDependencyAdapter.fromMavenList(pom.getDependencies());
+      dependencies.add(dep);
+      pom.setDependencies(MavenDependencyAdapter.toMavenList(dependencies));
+      maven.setPOM(pom);
+      bus.enqueue(new AddedDependencies(project, dep));
    }
 
    @Override
@@ -167,17 +160,17 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
    }
 
    @Override
-   public Dependency getDependency(final Dependency dep)
+   public Dependency getDirectDependency(final Dependency dependency)
    {
       MavenCoreFacet maven = project.getFacet(MavenCoreFacet.class);
-      List<Dependency> dependencies = MavenDependencyAdapter.fromMavenList(maven.getPartialProjectBuildingResult()
-               .getProject().getDependencies());
+      Model pom = maven.getPOM();
+      List<Dependency> dependencies = MavenDependencyAdapter.fromMavenList(pom.getDependencies());
 
-      for (Dependency dependency : dependencies)
+      for (Dependency dep : dependencies)
       {
          if (DependencyBuilder.areEquivalent(dependency, dep))
          {
-            return resolveProperties(dependency);
+            return resolveProperties(dep);
          }
       }
       return null;
@@ -206,8 +199,11 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
    public List<Dependency> getEffectiveDependencies()
    {
       MavenCoreFacet maven = project.getFacet(MavenCoreFacet.class);
-      List<Dependency> deps = MavenDependencyAdapter.fromAetherList(maven.getFullProjectBuildingResult()
-               .getDependencyResolutionResult().getDependencies());
+      List<Dependency> deps = MavenDependencyAdapter.fromAetherList(
+               maven.getFullProjectBuildingResult()
+                        .getDependencyResolutionResult()
+                        .getDependencies()
+               );
 
       List<Dependency> result = new ArrayList<Dependency>();
       for (Dependency dependency : deps) {
@@ -236,6 +232,23 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
    }
 
    @Override
+   public void addDirectManagedDependency(final Dependency dep)
+   {
+      removeManagedDependency(dep);
+
+      MavenCoreFacet maven = project.getFacet(MavenCoreFacet.class);
+      Model pom = maven.getPOM();
+      DependencyManagement depMan = pom.getDependencyManagement();
+      depMan = depMan != null ? depMan : new DependencyManagement();
+
+      List<Dependency> managedDependencies = MavenDependencyAdapter.fromMavenList(depMan.getDependencies());
+      managedDependencies.add(dep);
+      depMan.setDependencies(MavenDependencyAdapter.toMavenList(managedDependencies));
+      pom.setDependencyManagement(depMan);
+      maven.setPOM(pom);
+   }
+
+   @Override
    public boolean hasEffectiveManagedDependency(final Dependency manDep)
    {
       return (getEffectiveManagedDependency(manDep) != null);
@@ -260,7 +273,7 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
    }
 
    @Override
-   public boolean hasManagedDependency(final Dependency managedDependency)
+   public boolean hasDirectManagedDependency(final Dependency managedDependency)
    {
       MavenCoreFacet maven = project.getFacet(MavenCoreFacet.class);
       Model pom = maven.getPOM();

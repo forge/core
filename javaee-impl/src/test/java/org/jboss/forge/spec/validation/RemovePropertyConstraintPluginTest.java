@@ -59,7 +59,7 @@ public class RemovePropertyConstraintPluginTest extends SingletonAbstractShellTe
       project = initializeJavaProject();
 
       // install validation facet
-      queueInputLines("");
+      queueInputLines("", "");
       getShell().execute("validation setup");
    }
 

@@ -21,8 +21,14 @@
  */
 package org.jboss.forge.spec.javaee.rest;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.inject.Inject;
 
+import org.jboss.forge.project.dependencies.Dependency;
+import org.jboss.forge.project.dependencies.DependencyBuilder;
+import org.jboss.forge.project.dependencies.DependencyInstaller;
 import org.jboss.forge.shell.ShellPrompt;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
@@ -41,6 +47,12 @@ import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 public class RestFacetImpl extends BaseJavaEEFacet implements RestFacet
 {
    public static final String JAXRS_SERVLET = "javax.ws.rs.core.Application";
+
+   @Inject
+   public RestFacetImpl(final DependencyInstaller installer)
+   {
+      super(installer);
+   }
 
    @Inject
    private ShellPrompt prompt;
@@ -69,6 +81,15 @@ public class RestFacetImpl extends BaseJavaEEFacet implements RestFacet
       return installedInWebXML() && super.isInstalled();
    }
 
+   @Override
+   protected List<Dependency> getRequiredDependencies()
+   {
+      return Arrays.asList(
+               (Dependency) DependencyBuilder.create("org.jboss.spec.javax.ws.rs:jboss-jaxrs-api_1.1_spec"),
+               DependencyBuilder.create("org.jboss.spec.javax.xml.bind:jboss-jaxb-api_2.2_spec")
+               );
+   }
+
    private boolean installedInWebXML()
    {
       return getApplicationPath() != null;
@@ -94,7 +115,7 @@ public class RestFacetImpl extends BaseJavaEEFacet implements RestFacet
    }
 
    @Override
-   public void setApplicationPath(String path)
+   public void setApplicationPath(final String path)
    {
       ServletFacet servlet = project.getFacet(ServletFacet.class);
       WebAppDescriptorImpl web = (WebAppDescriptorImpl) servlet.getConfig();

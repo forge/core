@@ -1,7 +1,6 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	template="@{templateStrategy.getReferencePath(template != null ? template : templateStrategy.getDefaultTemplate())}">
 
@@ -16,22 +15,11 @@
 	</ui:define>
 
 	<ui:define name="main">
-		<p>
-			<a target="_blank"
-				href="https://docs.jboss.org/author/display/FORGE">Documentation</a>
-			| <a target="_blank"
-				href="http://twitter.com/intent/tweet?text=I+just+built+and+deployed+a+webapp+using+%23Forge,+from+%23JBoss+-+Super+easy!+(+http://jboss.org/forge+)">Get
-				Excited!</a><br /> <a target="_blank" href="http://jboss.org/forge"><br />
-				Forge Project</a> | <a target="_blank"
-				href="https://lists.jboss.org/mailman/listinfo/forge-users">User
-				List</a> | <a target="_blank"
-				href="https://issues.jboss.org/browse/FORGE">Report an issue</a>
-		</p>
-		<p style="text-align: right; padding-top: 50px">
+		<p style="text-align: right; padding-top: 150px">
 			<a target="_blank" href="http://jboss.org"><img
 				src="#{resource['jboss-community.png']}"
 				alt="JBoss and JBoss Community" width="254" height="31" border="0" />
-			</a> <br /> To replace this page edit 'src/main/webapp/index.xhtml', or
+			</a> <br /> To replace this page edit 'src/main/webapp/error.xhtml', or
 			keep Forging!
 		</p>
 	</ui:define>

@@ -22,11 +22,13 @@
 
 body {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
+	background-image: url( 'background.gif' );
 	background-repeat: repeat-x;
 	color: #5b5b5b;
 	font-family: "Lucida Sans Unicode", "Lucida Grande", Geneva, Verdana,
 		Arial, sans-serif;
 	margin-top: 100px;
+	font-size: 12pt;
 }
 
 /*
@@ -42,6 +44,21 @@ body {
 h1 {
 	padding-top: 55px;
 	color: #7b1e1e;
+}
+
+#footer {
+	width: 100%;
+	border-top: 1px solid #cccccc;
+	margin-top: 10px;
+	padding-top: 5px;
+	float: right;
+	text-align: right;
+	font-style: italic;
+	font-size: 10pt;
+}
+
+#footer a {
+	color: #5b5b5b;
 }
 
 /*
@@ -81,27 +98,25 @@ h1 {
 	text-decoration: none;
 }
 
-
-#footer {
-	width: 100%;
-	border-top: 1px solid #cccccc;
-	margin-top: 10px;
-	padding-top: 5px;
-	float: right;
-	text-align: right;
-	font-style: italic;
-}
-
-#footer a {
-	color: #5b5b5b;
-}
-
 /*
  * Content
  */
  
 #content {
 	margin-left: 230px;
+}
+
+#content .search {
+	display: block;
+	background-image: url('search.png');
+    background-repeat: no-repeat;
+    padding-bottom: 20px;
+    padding-left: 70px;
+}
+
+#content .search .buttons {
+	text-align: left;
+	padding-left: 25%;
 }
 
 #content table .label {
@@ -117,8 +132,28 @@ h1 {
 	vertical-align: top;
 }
 
-#content table .component input {
+#content table .component input, #content table .component select {
 	width: 100%;	
+}
+
+#content table .component input[type="checkbox"] {
+	width: auto;
+}
+
+#content table .buttons {
+	text-align: right;
+}
+
+#content table .buttons select {
+	width: 50%;
+	height: 30px;
+	vertical-align: middle;
+	margin-right: 5px;
+}
+
+#content table .component .error {
+	color: red;
+	font-size: 10pt;
 }
 
 #content table .required {
@@ -176,26 +211,33 @@ h1 {
 }
 
 #content .buttons {
+	display: block;
 	text-align: center;
-	margin-top: 10px;
+	margin-top: 5px;
+	margin-bottom: 10px;
 }
 
-#content .button {
+#content .button, #content .buttons a {
 	margin-top: 5px;
 	margin-left: 1px;
 	margin-right: 1px;
+	margin-bottom: 5px;
 	color: #5b5b5b;
 	padding-top: 3px;
 	padding-bottom: 3px;
 	padding-left: 10px;
 	padding-right: 10px;
 	text-decoration: none;
-	border: 1px solid #dddddd;
+	border-top: 1px solid #dddddd;
+	border-left: 1px solid #dddddd;
+	border-right: 1px solid #bbbbbb;
+	border-bottom: 1px solid #bbbbbb;
 	border-radius: 5px;
 	background-color: #eeeeee;
+	vertical-align: middle;
 }
 
-#content .button:hover {
+#content .button:hover, #content .buttons a:hover {
 	background-color: #d2e8f2;
 }
 

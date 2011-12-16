@@ -80,8 +80,7 @@ public class ProjectPlugin implements Plugin
    private Event<RemoveFacets> removeFacets;
 
    public ProjectPlugin()
-   {
-   }
+   {}
 
    @Inject
    public ProjectPlugin(final Project project, final Shell shell, final FacetFactory factory,
@@ -161,7 +160,7 @@ public class ProjectPlugin implements Plugin
    {
       DependencyFacet deps = project.getFacet(DependencyFacet.class);
 
-      if (!deps.hasDependency(gav)
+      if (!deps.hasEffectiveDependency(gav)
                || shell.promptBoolean("Dependency already exists [" + gav.getGroupId() + ":" + gav.getArtifactId()
                         + "], continue?", true))
       {
@@ -177,7 +176,7 @@ public class ProjectPlugin implements Plugin
                DependencyBuilder depToAdd = DependencyBuilder.create();
                depToAdd.setGroupId(gav.getGroupId());
                depToAdd.setArtifactId(gav.getArtifactId());
-               deps.addDependency(depToAdd);
+               deps.addDirectDependency(depToAdd);
                out.println("Added dependency [" + depToAdd + "]");
                requestProcessed = true;
             }
@@ -212,16 +211,16 @@ public class ProjectPlugin implements Plugin
                }
             }
 
-            if (deps.hasDependency(gav))
+            if (deps.hasEffectiveDependency(gav))
             {
-               Dependency dependency = deps.getDependency(gav);
+               Dependency dependency = deps.getEffectiveDependency(gav);
                deps.removeDependency(dependency);
             }
             if (exclusion != null)
             {
                gav.getExcludedDependencies().add(exclusion);
             }
-            deps.addDependency(gav);
+            deps.addDirectDependency(gav);
             out.println("Added dependency [" + gav + "]" + (exclusion != null ? " excluding [" + exclusion + "]" : ""));
          }
       }
@@ -237,7 +236,7 @@ public class ProjectPlugin implements Plugin
                      help = "dependency identifier, ex: \"org.jboss.forge:forge-api:1.0.0\"",
                      description = "[ groupId:artifactId {:version:scope:packaging} ]",
                      type = PromptType.DEPENDENCY_ID
-                     ) Dependency gav,
+            ) Dependency gav,
             final PipeOut out
             )
    {
@@ -269,7 +268,7 @@ public class ProjectPlugin implements Plugin
             )
    {
       DependencyFacet deps = project.getFacet(DependencyFacet.class);
-      if (deps.hasDependency(gav))
+      if (deps.hasEffectiveDependency(gav))
       {
          deps.removeDependency(gav);
          out.println("Removed dependency [" + gav + "]");
@@ -335,7 +334,7 @@ public class ProjectPlugin implements Plugin
             }
          }
 
-         if (manDeps.hasManagedDependency(gav))
+         if (manDeps.hasEffectiveManagedDependency(gav))
          {
             Dependency managedDependency = manDeps.getManagedDependency(gav);
             manDeps.removeManagedDependency(managedDependency);
@@ -355,12 +354,12 @@ public class ProjectPlugin implements Plugin
                      help = "managed dependency identifier, ex: \"org.jboss.forge:forge-api:1.0.0\"",
                      description = "[ groupId:artifactId {:version:scope:packaging} ]",
                      type = PromptType.DEPENDENCY_ID
-                     ) Dependency gav,
+            ) Dependency gav,
             @Option(required = false,
                      flagOnly = true,
                      help = "Perform a search only within the locally configured repository",
                      name = "offlineSearch"
-                        ) final boolean offline,
+            ) final boolean offline,
             final PipeOut out
             )
    {

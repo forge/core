@@ -234,6 +234,8 @@ public class NewFieldPluginTest extends AbstractJPATest
       assertTrue(rightEntity.hasField("left"));
       assertTrue(rightEntity.getField("left").getType().equals(leftEntity.getName()));
       assertTrue(rightEntity.getField("left").hasAnnotation(OneToOne.class));
+      assertEquals("right",
+               rightEntity.getField("left").getAnnotation(OneToOne.class).getStringValue("mappedBy"));
       assertTrue(rightEntity.hasImport(leftEntity.getQualifiedName()));
       assertTrue(rightEntity.hasImport(OneToOne.class));
       assertFalse(rightEntity.hasSyntaxErrors());
@@ -255,6 +257,8 @@ public class NewFieldPluginTest extends AbstractJPATest
       assertTrue(leftEntity.hasAnnotation(Entity.class));
       assertTrue(leftEntity.hasField("right"));
       assertTrue(leftEntity.getField("right").getType().equals("Set"));
+      assertTrue(leftEntity.getMethod("getRight").getReturnTypeInspector().toString()
+               .equals("Set<" + rightEntity.getName() + ">"));
       assertTrue(leftEntity.getField("right").getTypeInspector().getTypeArguments().get(0).getQualifiedName()
                .equals(rightEntity.getQualifiedName()));
       assertTrue(leftEntity.getField("right").hasAnnotation(ManyToMany.class));

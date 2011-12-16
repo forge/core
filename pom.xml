@@ -69,9 +69,9 @@
       <shrinkwrap.descriptors.version>1.1.0-beta-1</shrinkwrap.descriptors.version>
       <slf4j.version>1.5.10</slf4j.version>
       <version.sun.jaxb>2.2</version.sun.jaxb>
-      <version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.2_spec>1.0.3.Final</version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.2_spec>
+      <version.jboss-jaxb-api_2.2_spec>1.0.3.Final</version.jboss-jaxb-api_2.2_spec>
       <weld.version>1.1.2.Final</weld.version>
-      <seam.render.version>1.0.0-SNAPSHOT</seam.render.version>
+      <seam.render.version>1.0.0.Alpha6</seam.render.version>
       <solder.version>3.1.0.Beta3</solder.version>
       <wagon.version>2.0</wagon.version>
       <yaml.version>1.7</yaml.version>
@@ -94,7 +94,6 @@
       <module>scaffold-api</module>
       <module>scaffold-plugins</module>
       <module>scaffold-faces</module>
-      <module>scaffold-faces-lib</module>
       <module>dev-plugins</module>
       <module>plugin-loader</module>
       <module>dist</module>
@@ -230,25 +229,25 @@
             <version>${jboss.modules.version}</version>
          </dependency>
 
-         <!-- JavaEE APIs -->
-
-         <dependency>
-            <groupId>org.hibernate.javax.persistence</groupId>
-            <artifactId>hibernate-jpa-2.0-api</artifactId>
-            <version>1.0.1.Final</version>
-         </dependency>
-
          <dependency>
             <groupId>org.jboss.slf4j</groupId>
             <artifactId>slf4j-jboss-logmanager</artifactId>
             <version>1.0.0.CR4</version>
          </dependency>
 
+         <!-- JavaEE APIs -->
+
          <dependency>
             <groupId>org.jboss.spec</groupId>
             <artifactId>jboss-javaee-6.0</artifactId>
             <version>${jboss.javaee.version}</version>
             <type>pom</type>
+         </dependency>
+         
+         <dependency>
+            <groupId>org.hibernate.javax.persistence</groupId>
+            <artifactId>hibernate-jpa-2.0-api</artifactId>
+            <version>1.0.1.Final</version>
          </dependency>
 
          <dependency>
@@ -350,15 +349,8 @@
          <dependency>
             <groupId>org.jboss.spec.javax.xml.bind</groupId>
             <artifactId>jboss-jaxb-api_2.2_spec</artifactId>
-            <version>${version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.2_spec}</version>
+            <version>${version.jboss-jaxb-api_2.2_spec}</version>
          </dependency>
-
-         <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>jaxrs-api</artifactId>
-            <version>2.1.0.GA</version>
-         </dependency>
-
 
          <dependency>
             <groupId>org.jboss.spec.javax.xml.bind</groupId>

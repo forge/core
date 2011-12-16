@@ -282,15 +282,18 @@ public class FieldPlugin implements Plugin
                      description = "Create a bi-directional relationship, using this value as the name of the inverse field.",
                      type = PromptType.JAVA_VARIABLE_NAME) final String inverseFieldName)
    {
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
 
       try
       {
-         JavaClass field = findEntity(fieldType);
-         JavaClass entity = getJavaClass();
-         addFieldTo(entity, field, fieldName, OneToOne.class);
+         JavaClass fieldEntityClass = findEntity(fieldType);
+         JavaClass entityClass = getJavaClass();
+         Field<JavaClass> localField = addFieldTo(entityClass, fieldEntityClass, fieldName, OneToOne.class);
          if ((inverseFieldName != null) && !inverseFieldName.isEmpty())
          {
-            addFieldTo(field, entity, inverseFieldName, OneToOne.class);
+            Field<JavaClass> inverseField = addFieldTo(fieldEntityClass, entityClass, inverseFieldName, OneToOne.class);
+            inverseField.getAnnotation(OneToOne.class).setStringValue("mappedBy", localField.getName());
+            java.saveJavaSource(fieldEntityClass);
          }
       }
       catch (FileNotFoundException e)
@@ -390,8 +393,7 @@ public class FieldPlugin implements Plugin
             annotation.setStringValue("mappedBy", inverseFieldName);
 
             many.addImport(one);
-            Field<JavaClass> manyField = many.addField("private " + one.getName() + " " + inverseFieldName + "= new "
-                     + one.getName() + "();");
+            Field<JavaClass> manyField = many.addField("private " + one.getName() + " " + inverseFieldName + ";");
             manyField.addAnnotation(ManyToOne.class);
             Refactory.createGetterAndSetter(many, manyField);
             java.saveJavaSource(many);
@@ -427,8 +429,7 @@ public class FieldPlugin implements Plugin
          JavaClass one = findEntity(fieldType);
 
          many.addImport(one);
-         Field<JavaClass> manyField = many.addField("private " + one.getName() + " " + fieldName + "= new "
-                  + one.getName() + "();");
+         Field<JavaClass> manyField = many.addField("private " + one.getName() + " " + fieldName + ";");
          manyField.addAnnotation(ManyToOne.class);
          Refactory.createGetterAndSetter(many, manyField);
 
@@ -455,7 +456,8 @@ public class FieldPlugin implements Plugin
    /*
     * Helpers
     */
-   private void addFieldTo(final JavaClass targetEntity, final JavaClass fieldEntity, final String fieldName,
+   private Field<JavaClass> addFieldTo(final JavaClass targetEntity, final JavaClass fieldEntity,
+            final String fieldName,
             final Class<? extends java.lang.annotation.Annotation> annotation)
             throws FileNotFoundException
    {
@@ -474,9 +476,11 @@ public class FieldPlugin implements Plugin
 
       java.saveJavaSource(targetEntity);
       shell.println("Added field to " + targetEntity.getQualifiedName() + ": " + field);
+
+      return field;
    }
 
-   private void addFieldTo(final JavaClass targetEntity, final String fieldType, final String fieldName,
+   private Field<JavaClass> addFieldTo(final JavaClass targetEntity, final String fieldType, final String fieldName,
             final Class<Column> annotation) throws FileNotFoundException
    {
       if (targetEntity.hasField(fieldName))
@@ -494,9 +498,12 @@ public class FieldPlugin implements Plugin
       updateToString(targetEntity);
       java.saveJavaSource(targetEntity);
       shell.println("Added field to " + targetEntity.getQualifiedName() + ": " + field);
+
+      return field;
    }
 
-   private void addTemporalFieldTo(final JavaClass targetEntity, final Class<?> fieldType, final String fieldName,
+   private Field<JavaClass> addTemporalFieldTo(final JavaClass targetEntity, final Class<?> fieldType,
+            final String fieldName,
             final TemporalType temporalType)
             throws FileNotFoundException
    {
@@ -516,9 +523,11 @@ public class FieldPlugin implements Plugin
       updateToString(targetEntity);
       java.saveJavaSource(targetEntity);
       shell.println("Added field to " + targetEntity.getQualifiedName() + ": " + field);
+
+      return field;
    }
 
-   private void addFieldTo(final JavaClass targetEntity, final Class<?> fieldType, final String fieldName,
+   private Field<JavaClass> addFieldTo(final JavaClass targetEntity, final Class<?> fieldType, final String fieldName,
             final Class<? extends java.lang.annotation.Annotation> annotation)
             throws FileNotFoundException
    {
@@ -538,6 +547,8 @@ public class FieldPlugin implements Plugin
       updateToString(targetEntity);
       java.saveJavaSource(targetEntity);
       shell.println("Added field to " + targetEntity.getQualifiedName() + ": " + field);
+
+      return field;
    }
 
    public void updateToString(final JavaClass targetEntity)

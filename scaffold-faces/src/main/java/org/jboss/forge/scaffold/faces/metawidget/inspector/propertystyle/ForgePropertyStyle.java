@@ -387,7 +387,13 @@ public class ForgePropertyStyle
       while (fieldHolder != null)
       { // TODO:&& !isExcludedBaseType( currentClass ) ) {
 
-         return fieldHolder.getField(propertyName);
+         Field<?> field = fieldHolder.getField(propertyName);
+         // FORGE-402 (Support fields starting with capital letter.)
+         if ((field == null) && !StringUtils.isCapitalized(propertyName))
+         {
+            field = fieldHolder.getField(StringUtils.capitalize(propertyName));
+         }
+         return field;
          // TODO: need to traverse? currentClass = currentClass.getSuperType();
       }
 
@@ -496,8 +502,7 @@ public class ForgePropertyStyle
       {
          if (this.readMethod != null)
          {
-            // TODO: Lincoln to unravel generics?
-            // TODO: why are there no generics on the generated Set?
+            // Note: this needs https://issues.jboss.org/browse/FORGE-387
 
             @SuppressWarnings({ "unchecked", "rawtypes" })
             List<Type<?>> typeArguments = (List) this.readMethod.getReturnTypeInspector().getTypeArguments();
@@ -507,8 +512,6 @@ public class ForgePropertyStyle
                return typeArguments.get(0).getQualifiedName();
             }
          }
-
-         // Note: this needs https://issues.jboss.org/browse/FORGE-387
 
          if (this.privateField != null)
          {
@@ -592,21 +595,29 @@ public class ForgePropertyStyle
       // Public methods
       //
 
+      @SuppressWarnings({ "unchecked", "rawtypes" })
       @Override
       public Object invoke(final Object proxy, final java.lang.reflect.Method method, final Object[] args)
                throws Throwable
       {
          try
          {
-            String methodName = method.getName();
+            // Determine the returnType...
 
-            // Get the value from the Forge Annotation class...
+            String methodName = method.getName();
+            java.lang.reflect.Method annotationMethod = this.annotationClass.getMethod(methodName);
+            Class<?> returnType = annotationMethod.getReturnType();
+
+            // ...source the appropriate value...
+
+            if (returnType.isEnum())
+            {
+               return this.annotationSource.getEnumValue((Class<Enum>) returnType, methodName);
+            }
 
             String value = this.annotationSource.getStringValue(methodName);
 
             // ...if no value, return the default...
-
-            java.lang.reflect.Method annotationMethod = this.annotationClass.getMethod(methodName);
 
             if (value == null)
             {
@@ -614,8 +625,6 @@ public class ForgePropertyStyle
             }
 
             // ...otherwise cast it to the correct class
-
-            Class<?> returnType = annotationMethod.getReturnType();
 
             if (boolean.class.equals(returnType))
             {
