@@ -82,6 +82,7 @@ public class Bootstrap
                Weld weld = new ModularWeld();
                BeanManager manager = null;
                try {
+                  // TODO verify plugin API versions. only activate compatible plugins.
                   loadPlugins();
                   initLogging();
                   WeldContainer container = weld.initialize();
