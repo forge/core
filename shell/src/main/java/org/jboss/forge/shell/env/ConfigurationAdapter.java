@@ -19,17 +19,16 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.env;
+package org.jboss.forge.shell.env;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 
+import org.jboss.forge.env.Configuration;
+import org.jboss.forge.env.ConfigurationScope;
 import org.jboss.solder.core.Veto;
 
 /**
@@ -37,287 +36,273 @@ import org.jboss.solder.core.Veto;
  * 
  */
 @Veto
-public class ScopedConfigurationAdapter implements Configuration
+public class ConfigurationAdapter implements Configuration
 {
-   private final Map<ConfigurationScope, Configuration> delegates = new LinkedHashMap<ConfigurationScope, Configuration>();
+   private final ScopedConfigurationAdapter parent;
+   private final org.apache.commons.configuration.Configuration delegate;
 
-   public ScopedConfigurationAdapter(final ConfigurationScope scope, final Configuration delegate)
+   public ConfigurationAdapter(final ScopedConfigurationAdapter parent,
+            final org.apache.commons.configuration.Configuration delegate)
    {
-      delegates.put(scope, delegate);
+      this.parent = parent;
+      this.delegate = delegate;
    }
 
-   public ScopedConfigurationAdapter()
-   {}
-
-   public Configuration getDelegate()
+   public org.apache.commons.configuration.Configuration getDelegate()
    {
-      return this;
+      return delegate;
    }
 
    @Override
    public Configuration getScopedConfiguration(final ConfigurationScope scope)
    {
-      Configuration configuration = delegates.get(scope);
-      if (configuration == null)
-      {
-         throw new IllegalStateException();
-      }
-      return configuration;
-   }
-
-   public void setScopedConfiguration(final ConfigurationScope user, final Configuration config)
-   {
-      delegates.put(user, config);
+      return parent.getScopedConfiguration(scope);
    }
 
    @Override
    public Configuration subset(final String prefix)
    {
-      ScopedConfigurationAdapter result = new ScopedConfigurationAdapter();
-      for (Entry<ConfigurationScope, Configuration> entry : delegates.entrySet()) {
-         result.setScopedConfiguration(entry.getKey(), entry.getValue().subset(prefix));
-      }
-      return result;
+      return new ConfigurationAdapter(parent, delegate.subset(prefix));
    }
 
    @Override
    public boolean isEmpty()
    {
-      return getDelegate().isEmpty();
+      return delegate.isEmpty();
    }
 
    @Override
    public boolean containsKey(final String key)
    {
-      return getDelegate().containsKey(key);
+      return delegate.containsKey(key);
    }
 
    @Override
    public void addProperty(final String key, final Object value)
    {
-      getDelegate().addProperty(key, value);
+      delegate.addProperty(key, value);
    }
 
    @Override
    public void setProperty(final String key, final Object value)
    {
-      getDelegate().setProperty(key, value);
+      delegate.setProperty(key, value);
    }
 
    @Override
    public void clearProperty(final String key)
    {
-      getDelegate().clearProperty(key);
+      delegate.clearProperty(key);
    }
 
    @Override
    public void clear()
    {
-      getDelegate().clear();
+      delegate.clear();
    }
 
    @Override
    public Object getProperty(final String key)
    {
-      return getDelegate().getProperty(key);
+      return delegate.getProperty(key);
    }
 
    @Override
    public Iterator<?> getKeys(final String prefix)
    {
-      return getDelegate().getKeys(prefix);
+      return delegate.getKeys(prefix);
    }
 
    @Override
    public Iterator<?> getKeys()
    {
-      return getDelegate().getKeys();
+      return delegate.getKeys();
    }
 
    @Override
    public Properties getProperties(final String key)
    {
-      return getDelegate().getProperties(key);
+      return delegate.getProperties(key);
    }
 
    @Override
    public boolean getBoolean(final String key)
    {
-      return getDelegate().getBoolean(key);
+      return delegate.getBoolean(key);
    }
 
    @Override
    public boolean getBoolean(final String key, final boolean defaultValue)
    {
-      return getDelegate().getBoolean(key, defaultValue);
+      return delegate.getBoolean(key, defaultValue);
    }
 
    @Override
    public Boolean getBoolean(final String key, final Boolean defaultValue)
    {
-      return getDelegate().getBoolean(key, defaultValue);
+      return delegate.getBoolean(key, defaultValue);
    }
 
    @Override
    public byte getByte(final String key)
    {
-      return getDelegate().getByte(key);
+      return delegate.getByte(key);
    }
 
    @Override
    public byte getByte(final String key, final byte defaultValue)
    {
-      return getDelegate().getByte(key, defaultValue);
+      return delegate.getByte(key, defaultValue);
    }
 
    @Override
    public Byte getByte(final String key, final Byte defaultValue)
    {
-      return getDelegate().getByte(key, defaultValue);
+      return delegate.getByte(key, defaultValue);
    }
 
    @Override
    public double getDouble(final String key)
    {
-      return getDelegate().getDouble(key);
+      return delegate.getDouble(key);
    }
 
    @Override
    public double getDouble(final String key, final double defaultValue)
    {
-      return getDelegate().getDouble(key, defaultValue);
+      return delegate.getDouble(key, defaultValue);
    }
 
    @Override
    public Double getDouble(final String key, final Double defaultValue)
    {
-      return getDelegate().getDouble(key, defaultValue);
+      return delegate.getDouble(key, defaultValue);
    }
 
    @Override
    public float getFloat(final String key)
    {
-      return getDelegate().getFloat(key);
+      return delegate.getFloat(key);
    }
 
    @Override
    public float getFloat(final String key, final float defaultValue)
    {
-      return getDelegate().getFloat(key, defaultValue);
+      return delegate.getFloat(key, defaultValue);
    }
 
    @Override
    public Float getFloat(final String key, final Float defaultValue)
    {
-      return getDelegate().getFloat(key, defaultValue);
+      return delegate.getFloat(key, defaultValue);
    }
 
    @Override
    public int getInt(final String key)
    {
-      return getDelegate().getInt(key);
+      return delegate.getInt(key);
    }
 
    @Override
    public int getInt(final String key, final int defaultValue)
    {
-      return getDelegate().getInt(key, defaultValue);
+      return delegate.getInt(key, defaultValue);
    }
 
    @Override
    public Integer getInteger(final String key, final Integer defaultValue)
    {
-      return getDelegate().getInteger(key, defaultValue);
+      return delegate.getInteger(key, defaultValue);
    }
 
    @Override
    public long getLong(final String key)
    {
-      return getDelegate().getLong(key);
+      return delegate.getLong(key);
    }
 
    @Override
    public long getLong(final String key, final long defaultValue)
    {
-      return getDelegate().getLong(key, defaultValue);
+      return delegate.getLong(key, defaultValue);
    }
 
    @Override
    public Long getLong(final String key, final Long defaultValue)
    {
-      return getDelegate().getLong(key, defaultValue);
+      return delegate.getLong(key, defaultValue);
    }
 
    @Override
    public short getShort(final String key)
    {
-      return getDelegate().getShort(key);
+      return delegate.getShort(key);
    }
 
    @Override
    public short getShort(final String key, final short defaultValue)
    {
-      return getDelegate().getShort(key, defaultValue);
+      return delegate.getShort(key, defaultValue);
    }
 
    @Override
    public Short getShort(final String key, final Short defaultValue)
    {
-      return getDelegate().getShort(key, defaultValue);
+      return delegate.getShort(key, defaultValue);
    }
 
    @Override
    public BigDecimal getBigDecimal(final String key)
    {
-      return getDelegate().getBigDecimal(key);
+      return delegate.getBigDecimal(key);
    }
 
    @Override
    public BigDecimal getBigDecimal(final String key, final BigDecimal defaultValue)
    {
-      return getDelegate().getBigDecimal(key, defaultValue);
+      return delegate.getBigDecimal(key, defaultValue);
    }
 
    @Override
    public BigInteger getBigInteger(final String key)
    {
-      return getDelegate().getBigInteger(key);
+      return delegate.getBigInteger(key);
    }
 
    @Override
    public BigInteger getBigInteger(final String key, final BigInteger defaultValue)
    {
-      return getDelegate().getBigInteger(key, defaultValue);
+      return delegate.getBigInteger(key, defaultValue);
    }
 
    @Override
    public String getString(final String key)
    {
-      return getDelegate().getString(key);
+      return delegate.getString(key);
    }
 
    @Override
    public String getString(final String key, final String defaultValue)
    {
-      return getDelegate().getString(key, defaultValue);
+      return delegate.getString(key, defaultValue);
    }
 
    @Override
    public String[] getStringArray(final String key)
    {
-      return getDelegate().getStringArray(key);
+      return delegate.getStringArray(key);
    }
 
    @Override
    public List<?> getList(final String key)
    {
-      return getDelegate().getList(key);
+      return delegate.getList(key);
    }
 
    @Override
    public List<?> getList(final String key, final List<?> defaultValue)
    {
-      return getDelegate().getList(key, defaultValue);
+      return delegate.getList(key, defaultValue);
    }
 
 }

@@ -88,6 +88,11 @@
 
       <!-- Build deps go here -->
       <dependency>
+         <groupId>commons-configuration</groupId>
+         <artifactId>commons-configuration</artifactId>
+      </dependency>
+      
+      <dependency>
          <groupId>com.sun.xml.bind</groupId>
          <artifactId>jaxb-impl</artifactId>
          <exclusions>

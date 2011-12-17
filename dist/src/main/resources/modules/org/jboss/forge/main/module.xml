@@ -14,6 +14,8 @@
       <module name="javax.annotation.api" />
       <module name="jline" />
 
+      <module name="org.apache.commons.logging"/>
+      <module name="org.apache.commons.config"/>
       <module name="org.apache.httpcomponents" />
       <module name="org.javassist" />
       <module name="org.jboss.interceptor" />

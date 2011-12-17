@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * @author Commons Configuration team
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author Commons Configuration team
  */
 public interface Configuration
 {
@@ -41,20 +41,20 @@ public interface Configuration
     * 
     * <pre>
     *    prefix.number = 1
-    *    prefix.string = Apache
+    *    prefix.string = JBoss
     *    prefixed.foo = bar
-    *    prefix = Jakarta
+    *    prefix = Forge
     * </pre>
     * 
     * the Configuration returned by <code>subset("prefix")</code> will contain the properties:
     * 
     * <pre>
     *    number = 1
-    *    string = Apache
-    *    = Jakarta
+    *    string = JBoss
+    *    = Forge
     * </pre>
     * 
-    * (The key for the value "Jakarta" is an empty string)
+    * (The key for the value "Forge" is an empty string)
     * <p>
     * Since the subset is a decorator and not a modified copy of the initial Configuration, any change made to the
     * subset is available to the Configuration, and reciprocally.
@@ -171,10 +171,10 @@ public interface Configuration
    Iterator<?> getKeys();
 
    /**
-    * Get a list of properties associated with the given configuration key. This method expects the given key to have an
-    * arbitrary number of String values, each of which is of the form <code>key=value</code>. These strings are splitted
-    * at the equals sign, and the key parts will become keys of the returned <code>Properties</code> object, the value
-    * parts become values.
+    * Get a list of {@link Properties} associated with the given configuration key. This method expects the given key to
+    * have an arbitrary number of String values, each of which is of the form <code>key=value</code>. These strings are
+    * splitted at the equals sign, and the key parts will become keys of the returned <code>Properties</code> object,
+    * the value parts become values.
     * 
     * @param key The configuration key.
     * @return The associated properties if key is found.
