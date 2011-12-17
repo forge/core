@@ -24,6 +24,7 @@ package org.jboss.forge;
 import java.util.Map;
 
 import org.jboss.forge.resources.DirectoryResource;
+import org.jboss.forge.resources.FileResource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -66,4 +67,9 @@ public interface ForgeEnvironment
     * Get the configuration directory.
     */
    DirectoryResource getConfigDirectory();
+
+   /**
+    * Get the current User's configuration file.
+    */
+   FileResource<?> getUserConfiguration();
 }

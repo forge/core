@@ -102,4 +102,10 @@ public class ForgeEnvironmentImpl implements ForgeEnvironment
       }
       return resource.reify(DirectoryResource.class);
    }
+
+   @Override
+   public FileResource<?> getUserConfiguration()
+   {
+      return getConfigDirectory().getChild("config.xml").reify(FileResource.class);
+   }
 }

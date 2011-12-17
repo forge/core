@@ -27,6 +27,11 @@
          <param name="levelMin" value="DEBUG" />
          <param name="levelMax" value="FATAL" />
       </filter>
+      <!-- LOGGING
+         Comment out the following blocks to enable logging. 
+         Also need to switch the slf4j-impl module to use log4j instead of jboss logmanager.
+         Also need to modify the slf4j entry in build.xml
+       -->
       <filter class="org.apache.log4j.varia.StringMatchFilter">
          <param name="AcceptOnMatch" value="true" />
          <param name="StringToMatch" value="WELD-000119" />
@@ -39,8 +44,6 @@
          <param name="AcceptOnMatch" value="false" />
          <param name="StringToMatch" value="" />
       </filter>
-      <!-- 
-       -->
    </appender>
 
    <!-- ############### Weld logging ################### -->
@@ -50,7 +53,7 @@
    </category>
 
    <category name="org.jboss.weld">
-      <priority value="DEBUG" />
+      <priority value="ERROR" />
    </category>
 
    <category name="org.apache">
