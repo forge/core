@@ -10,7 +10,7 @@
       <module name="javax.annotation.api" export="true" />
       <module name="javax.enterprise.api" export="true" />
       
-      <module name="org.apache.commons.config" export="true" services="export">
+      <module name="org.apache.commons.config" services="export">
          <imports>
             <include path="**" />
             <include path="META-INF" />

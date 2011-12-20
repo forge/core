@@ -385,7 +385,7 @@ public class ForgePlugin implements Plugin
             help = "Install a plugin from a public git repository")
    public void installFromGit(
             @Option(description = "git repo", required = true) final String gitRepo,
-            @Option(name = "ref", description = "branch or tag to build") String refName,
+            @Option(name = "ref", description = "branch or tag to build") final String refName,
             @Option(name = "checkoutDir", description = "directory in which to clone the repository") final Resource<?> checkoutDir,
             final PipeOut out) throws Exception
    {
@@ -416,22 +416,23 @@ public class ForgePlugin implements Plugin
          Git repo = GitUtils.clone(buildDir, gitRepo);
 
          Ref ref = null;
-         if (refName == null)
+         String targetRef = refName;
+         if (targetRef == null)
          {
             // Default to Forge runtime version if no Ref name is supplied.
-            refName = environment.getRuntimeVersion();
+            targetRef = environment.getRuntimeVersion();
          }
 
          // Try to find a Tag matching the given Ref name or runtime version
          Map<String, Ref> tags = repo.getRepository().getTags();
-         ref = tags.get(refName);
+         ref = tags.get(targetRef);
 
          // Now try to find a matching Branch
          if (ref == null)
          {
             List<Ref> refs = GitUtils.getBranches(repo);
             for (Ref branchRef : refs) {
-               if (branchRef.getName().equals(refName))
+               if (branchRef.getName().equals(targetRef))
                {
                   ref = branchRef;
                }
@@ -440,12 +441,12 @@ public class ForgePlugin implements Plugin
 
          if (ref != null)
          {
-            ShellMessages.info(out, "Switching to branch/tag [" + refName + "]");
+            ShellMessages.info(out, "Switching to branch/tag [" + targetRef + "]");
             GitUtils.checkout(repo, ref, false, SetupUpstreamMode.SET_UPSTREAM, false);
          }
          else if (refName != null)
          {
-            throw new RuntimeException("Could not locate ref [" + refName + "] in repository ["
+            throw new RuntimeException("Could not locate ref [" + targetRef + "] in repository ["
                      + repo.getRepository().getDirectory().getAbsolutePath() + "]");
          }
          else
