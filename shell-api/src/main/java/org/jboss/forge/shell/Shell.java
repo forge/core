@@ -95,6 +95,16 @@ public interface Shell extends ShellPrintWriter, ShellPrompt, ShellHistory
    void setExceptionHandlingEnabled(boolean enabled);
 
    /**
+    * Return true if this {@link Shell} is currently set to accept prompt defaults automatically.
+    */
+   boolean isAcceptDefaults();
+
+   /**
+    * Set this {@link Shell} to accept prompt defaults automatically.
+    */
+   void setAcceptDefaults(boolean accept);
+
+   /**
     * Return true if this shell is currently running in pretend mode.
     * <p/>
     * Modifications to files made while running in pretend mode are made in a temporary directory, and the output is
