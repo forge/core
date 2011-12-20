@@ -26,6 +26,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.ShellImpl;
 import org.jboss.forge.test.AbstractShellTest;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,13 +37,17 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class ForgePluginTest extends AbstractShellTest
 {
+   @Before
+   public void beforePluginTest()
+   {
+      getShell().getEnvironment().setProperty(ShellImpl.PROP_DEFAULT_PLUGIN_REPO, ShellImpl.DEFAULT_PLUGIN_REPO);
+   }
+
    @Test
    @Ignore
    public void testFindPlugin() throws Exception
    {
-      queueInputLines("y");
       Shell shell = getShell();
-      shell.getEnvironment().setProperty(ShellImpl.PROP_DEFAULT_PLUGIN_REPO, ShellImpl.DEFAULT_PLUGIN_REPO);
       shell.execute("forge find-plugin jsf");
    }
 
@@ -57,6 +62,14 @@ public class ForgePluginTest extends AbstractShellTest
    public void testBuildSwitchyard() throws Exception
    {
       getShell().execute("forge source-plugin ~/Projects/forge/plugins/switchyard-core/tools/forge/plugin");
+   }
+
+   @Ignore
+   @Test
+   public void testBuildPrettyfaces() throws Exception
+   {
+      getShell().getEnvironment().setProperty(ShellImpl.PROP_FORGE_VERSION, "1.0.0.Beta6");
+      getShell().execute("forge install-plugin ocpsoft-prettyfaces");
    }
 
 }

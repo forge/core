@@ -26,6 +26,7 @@ import java.util.List;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.MetadataFacet;
 import org.jboss.forge.shell.InstalledPluginRegistry;
+import org.jboss.forge.shell.InstalledPluginRegistry.PluginEntry;
 import org.jboss.forge.test.AbstractShellTest;
 import org.junit.Assert;
 import org.junit.Test;
@@ -69,10 +70,10 @@ public class PluginsPluginTest extends AbstractShellTest
       getShell().execute("cd ~~");
       getShell().execute("forge source-plugin .");
 
-      String installed = null;
-      List<String> installedPlugins = InstalledPluginRegistry.getInstalledPlugins();
-      for (String plugin : installedPlugins) {
-         if (plugin.contains(javaProject.getFacet(MetadataFacet.class).getProjectName()))
+      PluginEntry installed = null;
+      List<PluginEntry> installedPlugins = InstalledPluginRegistry.list();
+      for (PluginEntry plugin : installedPlugins) {
+         if (plugin.getName().contains(javaProject.getFacet(MetadataFacet.class).getProjectName()))
          {
             installed = plugin;
             getShell().execute("forge remove-plugin " + plugin);
@@ -80,7 +81,7 @@ public class PluginsPluginTest extends AbstractShellTest
       }
 
       Assert.assertNotNull(installed);
-      Assert.assertFalse(InstalledPluginRegistry.hasPlugin(installed));
+      Assert.assertFalse(InstalledPluginRegistry.has(installed));
 
    }
 
