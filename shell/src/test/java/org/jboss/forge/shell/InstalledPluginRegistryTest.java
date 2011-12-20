@@ -97,4 +97,13 @@ public class InstalledPluginRegistryTest
       }
    }
 
+   @Test
+   public void testMultipleVersions() throws Exception
+   {
+      InstalledPluginRegistry.install("foo", "1", "s1");
+      InstalledPluginRegistry.install("foo", "2", "s2");
+
+      InstalledPluginRegistry.has(PluginEntry.fromCoordinates("foo:1"));
+   }
+
 }

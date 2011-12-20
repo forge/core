@@ -183,17 +183,19 @@ public class InstalledPluginRegistry
          try {
             Node installed = XMLParser.parse(new FileInputStream(registryFile));
 
-            Node child = installed.getSingle("plugin@" + ATTR_NAME + "=" + plugin.getName());
-            if (child != null)
-            {
-               if ((plugin.getApiVersion() == null)
-                        || plugin.getApiVersion().equals(child.getAttribute(ATTR_API_VERSION)))
+            List<Node> children = installed.get("plugin@" + ATTR_NAME + "=" + plugin.getName());
+            for (Node child : children) {
+               if (child != null)
                {
-                  if ((plugin.getSlot() == null)
-                           || plugin.getSlot().equals(child.getAttribute(ATTR_SLOT)))
+                  if ((plugin.getApiVersion() == null)
+                           || plugin.getApiVersion().equals(child.getAttribute(ATTR_API_VERSION)))
                   {
-                     return new PluginEntry(child.getAttribute(ATTR_NAME), child.getAttribute(ATTR_API_VERSION),
-                              child.getAttribute(ATTR_SLOT));
+                     if ((plugin.getSlot() == null)
+                              || plugin.getSlot().equals(child.getAttribute(ATTR_SLOT)))
+                     {
+                        return new PluginEntry(child.getAttribute(ATTR_NAME), child.getAttribute(ATTR_API_VERSION),
+                                 child.getAttribute(ATTR_SLOT));
+                     }
                   }
                }
             }
