@@ -103,20 +103,21 @@ import org.mvel2.ConversionHandler;
 @ApplicationScoped
 public class ShellImpl extends AbstractShellPrompt implements Shell
 {
-   static final String PROP_FORGE_CONFIG_DIR = "FORGE_CONFIG_DIR";
-   static final String PROP_PROMPT = "PROMPT";
-   static final String PROP_PROMPT_NO_PROJ = "PROMPT_NOPROJ";
 
    static final String DEFAULT_PROMPT = "[\\c{green}$PROJECT_NAME\\c] \\c{blue}\\W\\c \\c{green}\\$\\c ";
    static final String DEFAULT_PROMPT_NO_PROJ = "[\\c{red}no project\\c] \\c{blue}\\W\\c \\c{red}\\$\\c ";
 
+   public static final String PROP_FORGE_CONFIG_DIR = "FORGE_CONFIG_DIR";
+   public static final String PROP_PROMPT = "PROMPT";
+   public static final String PROP_PROMPT_NO_PROJ = "PROMPT_NOPROJ";
    public static final String PROP_DEFAULT_PLUGIN_REPO = "DEFAULT_PLUGIN_REPO";
    public static final String DEFAULT_PLUGIN_REPO = "https://raw.github.com/forge/plugin-repository/master/repository.yaml";
-
-   static final String PROP_VERBOSE = "VERBOSE";
-   static final String PROP_HISTORY = "HISTORY";
-   static final String PROP_EXCEPTION_HANDLING = "EXCEPTION_HANDLING";
-   static final String NO_INIT_PROPERTY = "forge.debug.no_auto_init_streams";
+   private static final String PROP_ACCEPT_DEFAULTS = "ACCEPT_DEFAULTS";
+   public static final String PROP_VERBOSE = "VERBOSE";
+   public static final String PROP_HISTORY = "HISTORY";
+   public static final String PROP_EXCEPTION_HANDLING = "EXCEPTION_HANDLING";
+   public static final String PROP_FORGE_VERSION = "FORGE_VERSION";
+   static final String NO_INIT_SYSTEM_PROPERTY = "forge.debug.no_auto_init_streams";
 
    static final String PROP_IGNORE_EOF = "IGNOREEOF";
    static final int DEFAULT_IGNORE_EOF = 1;
@@ -417,13 +418,26 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    public boolean isHistoryEnabled()
    {
       Object s = environment.getProperty(PROP_HISTORY);
-      return (s != null) && "true".equals(s);
+      return (s != null) && Boolean.TRUE.equals(s);
    }
 
    @Override
    public void setHistoryEnabled(final boolean verbose)
    {
       environment.setProperty(PROP_VERBOSE, String.valueOf(verbose));
+   }
+
+   @Override
+   public boolean isAcceptDefaults()
+   {
+      Object s = environment.getProperty(PROP_ACCEPT_DEFAULTS);
+      return (s != null) && Boolean.TRUE.equals(s);
+   }
+
+   @Override
+   public void setAcceptDefaults(final boolean accept)
+   {
+      environment.setProperty(PROP_ACCEPT_DEFAULTS, accept);
    }
 
    @Override
@@ -498,7 +512,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
 
    boolean isNoInitMode()
    {
-      return Boolean.getBoolean(NO_INIT_PROPERTY);
+      return Boolean.getBoolean(NO_INIT_SYSTEM_PROPERTY);
    }
 
    private void initReaderAndStreams() throws IOException

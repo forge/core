@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.shell.PromptType;
 import org.jboss.forge.shell.exceptions.EndOfStreamException;
 import org.jboss.forge.shell.test.completer.MockEnum;
 import org.jboss.forge.test.AbstractShellTest;
@@ -45,6 +46,45 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class ShellPromptTest extends AbstractShellTest
 {
+   @Test
+   public void testAutoDefault() throws Exception
+   {
+      getShell().setAcceptDefaults(true);
+
+      // String
+      assertEquals("foo", getShell().prompt("Default?", "foo"));
+
+      // Object
+      assertEquals(new Integer(10), getShell().prompt("Default?", Integer.class, 10));
+
+      // Boolean
+      assertTrue(getShell().promptBoolean("Would you like cake?"));
+      assertFalse(getShell().promptBoolean("Would you like cake?", false));
+
+      // List
+      List<String> choices = Arrays.asList("blue", "green", "red", "yellow");
+      String choice = getShell().promptChoiceTyped("What is your favorite color?", choices, "yellow");
+      assertEquals(choices.get(3), choice);
+
+      // Enum
+      assertEquals(MockEnum.BAR, getShell().promptEnum("Enummy nine?", MockEnum.class, MockEnum.BAR));
+
+      // Regex
+      assertEquals("foo", getShell().promptRegex("Default regex?", ".*", "foo"));
+
+      // Common
+      assertEquals("foo", getShell().promptCommon("Default regex?", PromptType.ANY, "foo"));
+
+      // Secret
+      assertEquals("foo", getShell().promptSecret("Default regex?", "foo"));
+
+      // File
+      assertEquals(getShell().getCurrentDirectory(),
+               getShell().promptFile("Default file?", getShell().getCurrentDirectory()));
+
+      getShell().setAcceptDefaults(false);
+   }
+
    @Test
    public void testPromptBoolean() throws Exception
    {
