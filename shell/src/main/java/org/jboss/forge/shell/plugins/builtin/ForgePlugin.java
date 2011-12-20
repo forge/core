@@ -80,6 +80,7 @@ import org.jboss.forge.shell.util.PluginUtil;
 @Help("Forge control and writer environment commands. Manage plugins and other forge addons.")
 public class ForgePlugin implements Plugin
 {
+   private static final String MODULE_TEMPLATE_XML = "/org/jboss/forge/modules/module-template.xml";
    private final Event<ReinitializeEnvironment> reinitializeEvent;
    private final ShellPrintWriter writer;
    private final DependencyResolver resolver;
@@ -515,7 +516,7 @@ public class ForgePlugin implements Plugin
       moduleXml.createNewFile();
 
       // <resource-root path="maven-dependency.jar" />
-      Node module = XMLParser.parse(getClass().getResourceAsStream("/org/jboss/forge/modules/module.xml"));
+      Node module = XMLParser.parse(getClass().getResourceAsStream(MODULE_TEMPLATE_XML));
       module.attribute("name", pluginName);
       module.attribute("slot", pluginSlot);
       Node resources = module.getSingle("resources");
@@ -561,7 +562,7 @@ public class ForgePlugin implements Plugin
       moduleXml.createNewFile();
 
       // <resource-root path="maven-dependency.jar" />
-      Node module = XMLParser.parse(getClass().getResourceAsStream("/org/jboss/forge/modules/module.xml"));
+      Node module = XMLParser.parse(getClass().getResourceAsStream(MODULE_TEMPLATE_XML));
       module.attribute("name", pluginName + ".dependencies");
       module.attribute("slot", pluginSlot);
       Node resources = module.getSingle("resources");

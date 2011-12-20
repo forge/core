@@ -21,7 +21,13 @@
  */
 package org.jboss.forge.dev;
 
+import java.util.List;
+
+import org.jboss.forge.project.Project;
+import org.jboss.forge.project.facets.MetadataFacet;
+import org.jboss.forge.shell.InstalledPluginRegistry;
 import org.jboss.forge.test.AbstractShellTest;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -50,6 +56,32 @@ public class PluginsPluginTest extends AbstractShellTest
       queueInputLines("");
       getShell().execute("plugins new-plugin --named demo-plugin");
       getShell().execute("build");
+   }
+
+   @Test
+   public void testInstallPlugin() throws Exception
+   {
+      Project javaProject = initializeJavaProject();
+      queueInputLines("1");
+      getShell().execute("plugins setup");
+      queueInputLines("");
+      getShell().execute("plugins new-plugin --named plugins-plugin-test-install");
+      getShell().execute("cd ~~");
+      getShell().execute("forge source-plugin .");
+
+      String installed = null;
+      List<String> installedPlugins = InstalledPluginRegistry.getInstalledPlugins();
+      for (String plugin : installedPlugins) {
+         if (plugin.contains(javaProject.getFacet(MetadataFacet.class).getProjectName()))
+         {
+            installed = plugin;
+            getShell().execute("forge remove-plugin " + plugin);
+         }
+      }
+
+      Assert.assertNotNull(installed);
+      Assert.assertFalse(InstalledPluginRegistry.hasPlugin(installed));
+
    }
 
 }
