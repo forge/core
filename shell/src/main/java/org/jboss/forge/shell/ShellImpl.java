@@ -603,7 +603,10 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    {
       preShutdown.fire(new PreShutdown(shutdown.getStatus()));
       exitRequested = true;
-      inputPipe.stop();
+      if (inputPipe != null)
+      {
+         inputPipe.stop();
+      }
    }
 
    void doShell(@Observes final AcceptUserInput event) throws Exception
