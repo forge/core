@@ -217,7 +217,6 @@
 			<maven-resource group="commons-configuration" artifact="commons-configuration" />
 			<maven-resource group="commons-digester" artifact="commons-digester" />
 			<maven-resource group="commons-lang" artifact="commons-lang" />
-			<maven-resource group="commons-logging" artifact="commons-logging" />
 		</module-def>
 
 		<module-def name="org.apache.commons.logging">

@@ -1155,7 +1155,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    public boolean isVerbose()
    {
       Object s = environment.getProperty(PROP_VERBOSE);
-      return (s != null) && "true".equals(s);
+      return (s != null) && Boolean.TRUE.equals(s);
    }
 
    @Override
