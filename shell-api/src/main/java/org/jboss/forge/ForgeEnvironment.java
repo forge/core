@@ -32,6 +32,10 @@ import org.jboss.forge.resources.FileResource;
  */
 public interface ForgeEnvironment
 {
+   /**
+    * Return the current Forge version as a String. E.g.: "1.0.0.Final"
+    */
+   String getRuntimeVersion();
 
    /**
     * Return the directory Forge is using to store and load third-party plugins.

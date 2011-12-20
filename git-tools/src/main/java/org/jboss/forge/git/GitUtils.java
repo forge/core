@@ -22,28 +22,36 @@
 package org.jboss.forge.git;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.eclipse.jgit.api.CheckoutCommand;
 import org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode;
 import org.eclipse.jgit.api.FetchCommand;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.ListBranchCommand;
 import org.eclipse.jgit.api.PullCommand;
 import org.eclipse.jgit.api.PullResult;
+import org.eclipse.jgit.api.TagCommand;
 import org.eclipse.jgit.api.errors.CanceledException;
+import org.eclipse.jgit.api.errors.ConcurrentRefUpdateException;
 import org.eclipse.jgit.api.errors.DetachedHeadException;
 import org.eclipse.jgit.api.errors.InvalidConfigurationException;
 import org.eclipse.jgit.api.errors.InvalidRefNameException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
+import org.eclipse.jgit.api.errors.InvalidTagNameException;
 import org.eclipse.jgit.api.errors.JGitInternalException;
+import org.eclipse.jgit.api.errors.NoHeadException;
 import org.eclipse.jgit.api.errors.RefAlreadyExistsException;
 import org.eclipse.jgit.api.errors.RefNotFoundException;
 import org.eclipse.jgit.api.errors.WrongRepositoryStateException;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.RepositoryBuilder;
 import org.eclipse.jgit.lib.TextProgressMonitor;
+import org.eclipse.jgit.revwalk.RevTag;
 import org.eclipse.jgit.transport.FetchResult;
 import org.eclipse.jgit.transport.RefSpec;
 import org.jboss.forge.resources.DirectoryResource;
+import org.jboss.forge.resources.FileResource;
 
 /**
  * Convenience tools for interacting with the Git version control system.
@@ -52,19 +60,20 @@ import org.jboss.forge.resources.DirectoryResource;
  */
 public abstract class GitUtils
 {
-   public static Git clone(DirectoryResource dir, String repoUri) throws IOException
+   public static Git clone(final DirectoryResource dir, final String repoUri) throws IOException
    {
       new Clone().run(dir.getUnderlyingResourceObject(), repoUri);
       return git(dir);
    }
 
-   public static Git git(DirectoryResource dir) throws IOException
+   public static Git git(final DirectoryResource dir) throws IOException
    {
       RepositoryBuilder db = new RepositoryBuilder().findGitDir(dir.getUnderlyingResourceObject());
       return new Git(db.build());
    }
 
-   public static Ref checkout(Git git, String remote, boolean createBranch, SetupUpstreamMode mode, boolean force)
+   public static Ref checkout(final Git git, final String remote, final boolean createBranch,
+            final SetupUpstreamMode mode, final boolean force)
             throws JGitInternalException,
             RefAlreadyExistsException, RefNotFoundException, InvalidRefNameException
    {
@@ -76,9 +85,22 @@ public abstract class GitUtils
       return checkout.call();
    }
 
-   public static FetchResult fetch(Git git, String remote, String refSpec, int timeout, boolean fsck, boolean dryRun,
-            boolean thin,
-            boolean prune) throws JGitInternalException, InvalidRemoteException
+   public static Ref checkout(final Git git, final Ref remote, final boolean createBranch,
+            final SetupUpstreamMode mode, final boolean force)
+            throws JGitInternalException,
+            RefAlreadyExistsException, RefNotFoundException, InvalidRefNameException
+   {
+      CheckoutCommand checkout = git.checkout();
+      checkout.setName(remote.getName());
+      checkout.setForce(force);
+      checkout.setUpstreamMode(mode);
+      return checkout.call();
+   }
+
+   public static FetchResult fetch(final Git git, final String remote, final String refSpec, final int timeout,
+            final boolean fsck, final boolean dryRun,
+            final boolean thin,
+            final boolean prune) throws JGitInternalException, InvalidRemoteException
    {
       FetchCommand fetch = git.fetch();
       fetch.setCheckFetchedObjects(fsck);
@@ -96,7 +118,23 @@ public abstract class GitUtils
       return result;
    }
 
-   public static PullResult pull(Git git, int timeout) throws WrongRepositoryStateException,
+   /**
+    * Initialize a new git repository.
+    * 
+    * @param dir The directory in which to create a new .git/ folder and repository.
+    */
+   public static Git init(final DirectoryResource dir) throws IllegalArgumentException, IOException
+   {
+      FileResource<?> gitDir = dir.getChildDirectory(".git").reify(FileResource.class);
+      gitDir.mkdirs();
+
+      RepositoryBuilder db = new RepositoryBuilder().setGitDir(gitDir.getUnderlyingResourceObject()).setup();
+      Git git = new Git(db.build());
+      git.getRepository().create();
+      return git;
+   }
+
+   public static PullResult pull(final Git git, final int timeout) throws WrongRepositoryStateException,
             InvalidConfigurationException, DetachedHeadException, InvalidRemoteException, CanceledException
    {
       PullCommand pull = git.pull();
@@ -106,5 +144,24 @@ public abstract class GitUtils
 
       PullResult result = pull.call();
       return result;
+   }
+
+   public static List<Ref> getBranches(final Git repo) throws JGitInternalException, ConcurrentRefUpdateException,
+            InvalidTagNameException, NoHeadException
+   {
+      ListBranchCommand branchListCommand = repo.branchList();
+      List<Ref> branchList = branchListCommand.call();
+
+      return branchList;
+   }
+
+   public static List<Ref> getTags(final Git repo) throws JGitInternalException, ConcurrentRefUpdateException,
+            InvalidTagNameException, NoHeadException
+   {
+      TagCommand tagCommand = repo.tag();
+      RevTag revTag = tagCommand.call();
+      String tagName = revTag.getTagName();
+
+      return null;
    }
 }
