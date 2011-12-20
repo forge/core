@@ -383,19 +383,37 @@ public class AnnotationImpl<O extends JavaSource<O>, T> implements Annotation<O>
    }
 
    @Override
-   public Annotation<O> setEnumValue(final Enum<?> value)
+   public Annotation<O> setEnumValue(final Enum<?>... values)
    {
       O origin = getOrigin();
+      
+      String result = new String();// = "{";
+      
+      if(values.length > 1) {
+	  result = "{";
+      }
 
       if (origin instanceof JavaSource)
       {
          JavaSource<?> source = origin;
-         if (!source.hasImport(value.getDeclaringClass()))
-         {
-            source.addImport(value.getDeclaringClass());
+         
+         for(Enum<?> value : values) {
+             if (!source.hasImport(value.getDeclaringClass()))
+             {
+                source.addImport(value.getDeclaringClass());
+             }
+             
+             result = result.concat(value.getDeclaringClass().getSimpleName() + "." + value.name() + ",");
+         }
+         
+         result = result.substring(0, result.length()-1);
+         
+         if(values.length > 1) {
+             result = result.concat("}");
          }
       }
-      return setLiteralValue(value.getDeclaringClass().getSimpleName() + "." + value.name());
+      
+      return setLiteralValue(result);
    }
 
    /*
