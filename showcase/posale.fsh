@@ -1,5 +1,6 @@
 clear;
 new-project;
+set ACCEPT_DEFAULTS true;
 scaffold setup --scaffoldType faces;
 persistence setup --provider HIBERNATE --container JBOSS_AS7 ;
 entity --named Customer --package ~.domain;
@@ -41,4 +42,5 @@ field manyToOne --named shippingAddress --fieldType ~.domain.Address.java;
 cd ..;
 scaffold from-entity ~.domain.* --scaffoldType faces --overwrite;
 build;
+set ACCEPT_DEFAULTS true;
 cd ~~;
