@@ -89,6 +89,7 @@ import org.jboss.forge.shell.plugins.builtin.Echo;
 import org.jboss.forge.shell.project.CurrentProject;
 import org.jboss.forge.shell.spi.CommandInterceptor;
 import org.jboss.forge.shell.spi.TriggeredAction;
+import org.jboss.forge.shell.util.Booleans;
 import org.jboss.forge.shell.util.Files;
 import org.jboss.forge.shell.util.GeneralUtils;
 import org.jboss.forge.shell.util.JavaPathspecParser;
@@ -418,7 +419,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    public boolean isHistoryEnabled()
    {
       Object s = environment.getProperty(PROP_HISTORY);
-      return (s != null) && Boolean.TRUE.equals(s);
+      return Booleans.toBooleanValue(s);
    }
 
    @Override
@@ -431,7 +432,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    public boolean isAcceptDefaults()
    {
       Object s = environment.getProperty(PROP_ACCEPT_DEFAULTS);
-      return (s != null) && Boolean.TRUE.equals(s);
+      return Booleans.toBooleanValue(s);
    }
 
    @Override
@@ -1142,7 +1143,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    public boolean isExceptionHandlingEnabled()
    {
       Object s = environment.getProperty(PROP_EXCEPTION_HANDLING);
-      return (s != null) && "true".equals(s);
+      return Booleans.toBooleanValue(s);
    }
 
    @Override
@@ -1155,7 +1156,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    public boolean isVerbose()
    {
       Object s = environment.getProperty(PROP_VERBOSE);
-      return (s != null) && Boolean.TRUE.equals(s);
+      return Booleans.toBooleanValue(s);
    }
 
    @Override
