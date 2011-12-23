@@ -28,10 +28,10 @@ import org.jboss.forge.test.AbstractShellTest;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 
-public class AbstractFacesScaffoldTest extends AbstractShellTest
+public abstract class AbstractFacesScaffoldTest extends AbstractShellTest
 {
    //
-   // Public methods
+   // Protected methods
    //
 
    protected Project setupScaffoldProject() throws Exception
