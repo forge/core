@@ -77,14 +77,6 @@ public class EntityWidgetBuilder
    private static final String COLLECTION_VAR = "_collection";
 
    //
-   // Private members
-   //
-
-   private StandardBindingProcessor bindingProcessor = new StandardBindingProcessor();
-
-   private ReadableIdProcessor readableIdProcessor = new ReadableIdProcessor();
-
-   //
    // Public methods
    //
 
@@ -211,8 +203,19 @@ public class EntityWidgetBuilder
 
       // Process the binding and id early, so we can use them below
 
-      this.bindingProcessor.processWidget(dataTable, elementName, attributes, (StaticUIMetawidget) metawidget);
-      this.readableIdProcessor.processWidget(dataTable, elementName, attributes, metawidget);
+      StandardBindingProcessor bindingProcessor = metawidget.getWidgetProcessor(StandardBindingProcessor.class);
+
+      if (bindingProcessor != null)
+      {
+         bindingProcessor.processWidget(dataTable, elementName, attributes, (StaticUIMetawidget) metawidget);
+      }
+
+      ReadableIdProcessor readableIdProcessor = metawidget.getWidgetProcessor(ReadableIdProcessor.class);
+
+      if (readableIdProcessor != null)
+      {
+         readableIdProcessor.processWidget(dataTable, elementName, attributes, metawidget);
+      }
 
       ValueHolder valueHolderTable = (ValueHolder) dataTable;
       String tableValueExpression = valueHolderTable.getValue();

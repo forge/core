@@ -116,7 +116,7 @@ import org.w3c.dom.NamedNodeMap;
  * writing Metawidget plugins, see <a href="http://metawidget.org/documentation.php">the Metawidget documentation</a>.
  * <p>
  * This Facet does <em>not</em> require Metawidget to be in the final project.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author Richard Kennard
  */
@@ -468,7 +468,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
                   this.taglibTemplate.render(context), true));
 
          createInitializers(entity);
-         project.getFacet(JavaSourceFacet.class).saveJavaSource(entity);
+         this.project.getFacet(JavaSourceFacet.class).saveJavaSource(entity);
 
       }
       catch (Exception e)
@@ -480,7 +480,8 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
 
    private void createInitializers(final JavaClass entity)
    {
-      for (Field<JavaClass> field : entity.getFields()) {
+      for (Field<JavaClass> field : entity.getFields())
+      {
          if (field.hasAnnotation(OneToOne.class))
          {
             Annotation<JavaClass> oneToOne = field.getAnnotation(OneToOne.class);
@@ -496,7 +497,8 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
             }
          }
       }
-      for (Method<JavaClass> method : entity.getMethods()) {
+      for (Method<JavaClass> method : entity.getMethods())
+      {
          if (method.hasAnnotation(OneToOne.class))
          {
             Annotation<JavaClass> oneToOne = method.getAnnotation(OneToOne.class);
@@ -546,9 +548,13 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       servlet.getConfigFile().setContents(XMLParser.toXMLInputStream(webXML));
 
       WebAppDescriptor config = servlet.getConfig();
-      config.errorPage(404, "/faces/error.xhtml");
-      config.errorPage(500, "/faces/error.xhtml");
-      // TODO: use getAccessStrategy().getWebPaths(web.getWebResource("500.xhtml")).get(0));
+      WebResourceFacet web = this.project.getFacet(WebResourceFacet.class);
+
+      // (prefer /faces/error.xhtml)
+
+      String errorLocation = getAccessStrategy().getWebPaths(web.getWebResource("error.xhtml")).get(1);
+      config.errorPage(404, errorLocation);
+      config.errorPage(500, errorLocation);
 
       servlet.saveConfig(config);
    }
