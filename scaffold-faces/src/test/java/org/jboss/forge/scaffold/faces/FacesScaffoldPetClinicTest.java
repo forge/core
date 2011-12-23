@@ -28,7 +28,6 @@ import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.shell.util.Streams;
-import org.jboss.forge.test.AbstractShellTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -37,7 +36,7 @@ import org.junit.runner.RunWith;
  */
 
 @RunWith(Arquillian.class)
-public class FacesScaffoldPetClinicTest extends AbstractShellTest
+public class FacesScaffoldPetClinicTest extends AbstractFacesScaffoldTest
 {
    /**
     * Burr's example domain model from 7th Dec 2011.
@@ -119,15 +118,5 @@ public class FacesScaffoldPetClinicTest extends AbstractShellTest
       Assert.assertTrue(contents.contains(metawidget));
 
       getShell().execute("build");
-   }
-
-   private Project setupScaffoldProject() throws Exception
-   {
-      Project project = initializeJavaProject();
-      queueInputLines("HIBERNATE", "JBOSS_AS7", "");
-      getShell().execute("persistence setup");
-      queueInputLines("", "", "2", "", "", "");
-      getShell().execute("scaffold setup");
-      return project;
    }
 }

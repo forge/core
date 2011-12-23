@@ -39,7 +39,6 @@ import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.shell.exceptions.PluginExecutionException;
 import org.jboss.forge.shell.util.Streams;
 import org.jboss.forge.spec.javaee.ServletFacet;
-import org.jboss.forge.test.AbstractShellTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -48,7 +47,7 @@ import org.junit.runner.RunWith;
  */
 
 @RunWith(Arquillian.class)
-public class FacesScaffoldTest extends AbstractShellTest
+public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 {
    @Test
    public void testScaffoldSetup() throws Exception
@@ -178,7 +177,8 @@ public class FacesScaffoldTest extends AbstractShellTest
       searchMetawidget.append("\t\t\t<h:panelGroup styleClass=\"search\">\r\n");
       searchMetawidget.append("\t\t\t\t<h:messages globalOnly=\"true\"/>\r\n\r\n");
       searchMetawidget.append("\t\t\t\t<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">\r\n");
-      searchMetawidget.append("\t\t\t\t\t<h:outputLabel for=\"customerBeanSearchFirstName\" value=\"First Name:\"/>\r\n");
+      searchMetawidget
+               .append("\t\t\t\t\t<h:outputLabel for=\"customerBeanSearchFirstName\" value=\"First Name:\"/>\r\n");
       searchMetawidget.append("\t\t\t\t\t<h:panelGroup>\r\n");
       searchMetawidget
                .append("\t\t\t\t\t\t<h:inputText id=\"customerBeanSearchFirstName\" value=\"#{customerBean.search.firstName}\"/>\r\n");
@@ -196,7 +196,8 @@ public class FacesScaffoldTest extends AbstractShellTest
 
       Assert.assertTrue(contents.contains(searchMetawidget));
 
-      StringBuilder beanMetawidget = new StringBuilder("\n\t\t\t<h:dataTable id=\"customerBeanPageItems\" styleClass=\"data-table\" value=\"#{customerBean.pageItems}\" var=\"_item\">\r\n");
+      StringBuilder beanMetawidget = new StringBuilder(
+               "\n\t\t\t<h:dataTable id=\"customerBeanPageItems\" styleClass=\"data-table\" value=\"#{customerBean.pageItems}\" var=\"_item\">\r\n");
       beanMetawidget.append("\t\t\t\t<h:column>\r\n");
       beanMetawidget.append("\t\t\t\t\t<f:facet name=\"header\">\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<h:outputText value=\"First Name\"/>\r\n");
@@ -771,7 +772,8 @@ public class FacesScaffoldTest extends AbstractShellTest
       searchMetawidget.append("\t\t\t<h:panelGroup styleClass=\"search\">\r\n");
       searchMetawidget.append("\t\t\t\t<h:messages globalOnly=\"true\"/>\r\n\r\n");
       searchMetawidget.append("\t\t\t\t<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">\r\n");
-      searchMetawidget.append("\t\t\t\t\t<h:outputLabel for=\"customerBeanSearchFirstName\" value=\"First Name:\"/>\r\n");
+      searchMetawidget
+               .append("\t\t\t\t\t<h:outputLabel for=\"customerBeanSearchFirstName\" value=\"First Name:\"/>\r\n");
       searchMetawidget.append("\t\t\t\t\t<h:panelGroup>\r\n");
       searchMetawidget
                .append("\t\t\t\t\t\t<h:inputText id=\"customerBeanSearchFirstName\" value=\"#{customerBean.search.firstName}\"/>\r\n");
@@ -789,7 +791,8 @@ public class FacesScaffoldTest extends AbstractShellTest
 
       Assert.assertTrue(contents.contains(searchMetawidget));
 
-      StringBuilder beanMetawidget = new StringBuilder("\n\t\t\t<h:dataTable id=\"customerBeanPageItems\" styleClass=\"data-table\" value=\"#{customerBean.pageItems}\" var=\"_item\">\r\n");
+      StringBuilder beanMetawidget = new StringBuilder(
+               "\n\t\t\t<h:dataTable id=\"customerBeanPageItems\" styleClass=\"data-table\" value=\"#{customerBean.pageItems}\" var=\"_item\">\r\n");
       beanMetawidget.append("\t\t\t\t<h:column>\r\n");
       beanMetawidget.append("\t\t\t\t\t<f:facet name=\"header\">\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<h:outputText value=\"First Name\"/>\r\n");
@@ -889,7 +892,7 @@ public class FacesScaffoldTest extends AbstractShellTest
                "template=\"/resources/scaffold/page.xhtml"));
 
       StringBuilder searchMetawidget = new StringBuilder("<h:form id=\"search\">\r\n");
-      searchMetawidget.append("\t\t\t<h:panelGroup styleClass=\"search\">\r\n" );
+      searchMetawidget.append("\t\t\t<h:panelGroup styleClass=\"search\">\r\n");
       searchMetawidget.append("\t\t\t\t<h:messages globalOnly=\"true\"/>\r\n\r\n");
       searchMetawidget.append("\t\t\t\t<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">\r\n");
       searchMetawidget.append("\t\t\t\t\t<h:outputLabel for=\"customerBeanSearchField1\" value=\"Field 1:\"/>\r\n");
@@ -932,13 +935,32 @@ public class FacesScaffoldTest extends AbstractShellTest
       Assert.assertTrue(contents.contains(searchMetawidget));
    }
 
-   private Project setupScaffoldProject() throws Exception
+   @Test
+   public void testGenerateFromNestedOneToOne() throws Exception
    {
-      Project project = initializeJavaProject();
-      queueInputLines("HIBERNATE", "JBOSS_AS7", "");
-      getShell().execute("persistence setup");
-      queueInputLines("", "", "2", "", "", "");
-      getShell().execute("scaffold setup");
-      return project;
+      Project project = setupScaffoldProject();
+
+      queueInputLines("");
+      getShell().execute("entity --named Baz");
+      getShell().execute("field string --named name");
+      getShell().execute("entity --named Bar");
+      getShell().execute("field string --named name");
+      getShell().execute("field oneToOne --named baz --fieldType com.test.domain.Baz");
+      getShell().execute("entity --named Foo");
+      getShell().execute("field string --named name");
+      getShell().execute("field oneToOne --named bar --fieldType com.test.domain.Bar");
+
+      queueInputLines("", "", "", "", "");
+      getShell()
+               .execute("scaffold from-entity com.test.domain.*");
+
+      WebResourceFacet web = project.getFacet(WebResourceFacet.class);
+
+      // Check create screen has 'Create New Profile'
+
+      FileResource<?> create = web.getWebResource("scaffold/foo/create.xhtml");
+      Assert.assertTrue(create.exists());
+
+      getShell().execute("build");
    }
 }
