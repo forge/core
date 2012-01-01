@@ -694,6 +694,10 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       Map<Object, Object> context = CollectionUtils.newHashMap();
       context.put("navigation", writer.toString().trim());
 
+      if(this.navigationTemplate == null) {
+          loadTemplates();
+      }
+
       return ScaffoldUtil.createOrOverwrite(this.prompt, (FileResource<?>) getTemplateStrategy()
                .getDefaultTemplate(),
                this.navigationTemplate.render(context),
