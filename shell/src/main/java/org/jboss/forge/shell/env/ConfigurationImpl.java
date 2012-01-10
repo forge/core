@@ -90,6 +90,7 @@ public class ConfigurationImpl
 
    public Configuration getUserConfig(final ScopedConfigurationAdapter config) throws ConfigurationException
    {
+      // FIXME NPE caused when no project exists because config param is null
       if (userConfig == null)
       {
          XMLConfiguration globalXml;
@@ -102,7 +103,10 @@ public class ConfigurationImpl
          }
          globalXml.setReloadingStrategy(new FileChangedReloadingStrategy());
          globalXml.setAutoSave(true);
-         userConfig = new ConfigurationAdapter(config, globalXml);
+         if (config != null)
+            userConfig = new ConfigurationAdapter(config, globalXml);
+         else
+            userConfig = new ConfigurationAdapter(new ScopedConfigurationAdapter(), globalXml);
       }
       return userConfig;
    }

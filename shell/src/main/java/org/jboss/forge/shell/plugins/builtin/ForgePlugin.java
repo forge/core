@@ -75,6 +75,8 @@ import org.jboss.forge.shell.plugins.Topic;
 import org.jboss.forge.shell.util.PluginRef;
 import org.jboss.forge.shell.util.PluginUtil;
 
+import com.google.common.base.Strings;
+
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -489,9 +491,10 @@ public class ForgePlugin implements Plugin
                      + buildDir.getFullyQualifiedName() + "]");
          }
 
-         String apiVersion = null;
          DependencyFacet deps = project.getFacet(DependencyFacet.class);
          DependencyBuilder shellApi = DependencyBuilder.create("org.jboss.forge:forge-shell-api");
+
+         String apiVersion = null;
          if (!deps.hasEffectiveDependency(shellApi)
                   && !prompt.promptBoolean("The project does not appear to be a Forge Plugin Project, install anyway?",
                            false))
@@ -500,11 +503,30 @@ public class ForgePlugin implements Plugin
          }
          else
          {
-            Dependency effectiveDependency = deps.getEffectiveDependency(shellApi);
-            if (effectiveDependency != null)
-               apiVersion = effectiveDependency.getVersion();
-            else
-               apiVersion = environment.getRuntimeVersion();
+            if (apiVersion == null)
+            {
+               Dependency directDependency = deps.getDirectDependency(shellApi);
+               if ((directDependency != null) && !Strings.isNullOrEmpty(directDependency.getVersion()))
+                  apiVersion = directDependency.getVersion();
+            }
+
+            if (apiVersion == null)
+            {
+               // Fall back to checking managed dependencies for a version
+               Dependency managedDependency = deps.getManagedDependency(shellApi);
+               if ((managedDependency != null) && !Strings.isNullOrEmpty(managedDependency.getVersion()))
+                  apiVersion = managedDependency.getVersion();
+            }
+
+            if (apiVersion == null)
+            {
+               // Now completely give up and just use the result from the build
+               Dependency effectiveDependency = deps.getEffectiveDependency(shellApi);
+               if (effectiveDependency != null)
+                  apiVersion = effectiveDependency.getVersion();
+               else
+                  apiVersion = environment.getRuntimeVersion();
+            }
          }
 
          List<Dependency> dependencies = deps.getDependencies();
