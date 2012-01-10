@@ -25,10 +25,10 @@ import junit.framework.Assert;
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.project.Project;
+import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.shell.util.Streams;
-import org.jboss.forge.test.AbstractShellTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -37,7 +37,7 @@ import org.junit.runner.RunWith;
  */
 
 @RunWith(Arquillian.class)
-public class FacesScaffoldScenarioTest extends AbstractShellTest
+public class FacesScaffoldScenarioTest extends AbstractFacesScaffoldTest
 {
    /**
     * Lincoln's example domain model from 2nd Dec 2011.
@@ -79,6 +79,7 @@ public class FacesScaffoldScenarioTest extends AbstractShellTest
       getShell()
                .execute("scaffold from-entity com.test.domain.*");
 
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
       WebResourceFacet web = project.getFacet(WebResourceFacet.class);
 
       // Check create screen has 'Create New Profile'
@@ -89,6 +90,23 @@ public class FacesScaffoldScenarioTest extends AbstractShellTest
 
       Assert.assertTrue(contents.contains("<h:commandLink action=\"#{customerBean.customer.newProfile}\" rendered=\"#{empty customerBean.customer.profile}\" value=\"Create New Profile\"/>"));
       Assert.assertTrue(contents.contains("<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\" rendered=\"#{!empty customerBean.customer.profile}\">"));
+      Assert.assertTrue(contents.contains("<h:outputLabel for=\"customerBeanCustomerProfileBio\" value=\"Bio:\"/>"));
+      Assert.assertTrue(contents.contains("<h:inputText id=\"customerBeanCustomerProfileBio\" value=\"#{customerBean.customer.profile.bio}\"/>"));
+
+      // Backing Bean
+
+      FileResource<?> customerBean = java.getJavaResource("/com/test/view/AddressBean.java");
+      Assert.assertTrue(customerBean.exists());
+      contents = Streams.toString(customerBean.getResourceInputStream());
+
+      StringBuilder qbeMetawidget = new StringBuilder(
+               "\t\tString City = this.search.getCity();\r\n");
+      qbeMetawidget.append("\t\tif (City != null && !\"\".equals(City)) {\r\n");
+      qbeMetawidget
+               .append("\t\t\tpredicatesList.add(builder.like(root.<String>get(\"City\"), '%' + City + '%'));\r\n");
+      qbeMetawidget.append("\t\t}\r\n");
+
+      Assert.assertTrue(contents.contains(qbeMetawidget));
 
       getShell().execute("build");
    }
@@ -120,15 +138,5 @@ public class FacesScaffoldScenarioTest extends AbstractShellTest
       Assert.assertTrue(contents.contains("<h:dataTable id=\"continentBeanContinentHurricanes\" styleClass=\"data-table\" value=\"#{forgeview:asList(continentBean.continent.hurricanes)}\" var=\"_item\">"));
 
       getShell().execute("build");
-   }
-
-   private Project setupScaffoldProject() throws Exception
-   {
-      Project project = initializeJavaProject();
-      queueInputLines("HIBERNATE", "JBOSS_AS7", "");
-      getShell().execute("persistence setup");
-      queueInputLines("", "", "2", "", "", "");
-      getShell().execute("scaffold setup");
-      return project;
    }
 }
