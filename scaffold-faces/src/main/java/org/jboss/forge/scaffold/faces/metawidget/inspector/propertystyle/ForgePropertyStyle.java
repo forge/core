@@ -197,16 +197,6 @@ public class ForgePropertyStyle
             continue;
          }
 
-         // Exclude based on other criteria
-         //
-         // (explicitly set to null in case we encounted/encounter an imbalanced field/setter)
-
-         // TODO:if (isExcluded(ClassUtils.getOriginalDeclaringClass(method), propertyName, type))
-         {
-            // properties.put(propertyName, null);
-            // continue;
-         }
-
          properties
                   .put(propertyName,
                            new ForgeProperty(propertyName, returnType, method, null, getPrivateField(
@@ -298,12 +288,6 @@ public class ForgePropertyStyle
 
          String type = parameters.get(0).getType();
 
-         // TODO:if (isExcluded(ClassUtils.getOriginalDeclaringClass(method), propertyName, type))
-         {
-            // properties.put(propertyName, null);
-            // continue;
-         }
-
          // Already found via its getter?
 
          Property existingProperty = properties.get(propertyName);
@@ -367,37 +351,21 @@ public class ForgePropertyStyle
    /**
     * Gets the private field representing the given <code>propertyName</code> within the given class. Uses the
     * configured <code>privateFieldConvention</code> (if any). Traverses up the superclass heirarchy as necessary.
-    * <p>
-    * Note it is <em>not</em> considered an error if a property has no corresponding private field: not all properties
-    * do. For example a property <code>getAge</code> may be calculated internally based off a <code>mDateOfBirth</code>
-    * field, with no corresponding <code>mAge</code> field per se.
-    * <p>
-    * Clients may override this method to change how the public-method-to-private-field mapping operates.
     *
     * @return the private Field for this propertyName, or null if no such field (should not throw NoSuchFieldException)
     */
 
    protected Field<?> getPrivateField(final FieldHolder<?> fieldHolder, final String propertyName)
    {
+      Field<?> field = fieldHolder.getField(propertyName);
 
-      // Go looking for such a field, traversing the superclass heirarchy as necessary
-      //
-      // Note: the use of clazz.getDeclaredFields() may lead to Applet SecurityExceptions
-
-      while (fieldHolder != null)
-      { // TODO:&& !isExcludedBaseType( currentClass ) ) {
-
-         Field<?> field = fieldHolder.getField(propertyName);
-         // FORGE-402 (Support fields starting with capital letter.)
-         if ((field == null) && !StringUtils.isCapitalized(propertyName))
-         {
-            field = fieldHolder.getField(StringUtils.capitalize(propertyName));
-         }
-         return field;
-         // TODO: need to traverse? currentClass = currentClass.getSuperType();
+      // FORGE-402: support fields starting with capital letter
+      if (field == null && !StringUtils.isCapitalized(propertyName))
+      {
+         field = fieldHolder.getField(StringUtils.capitalize(propertyName));
       }
 
-      return null;
+      return field;
    }
 
    //
@@ -444,7 +412,6 @@ public class ForgePropertyStyle
                final Method<?> writeMethod,
                final Field<?> privateField)
       {
-
          super(name, type);
 
          this.readMethod = readMethod;
@@ -452,7 +419,7 @@ public class ForgePropertyStyle
 
          // Must have a getter or a setter (or both)
 
-         if ((this.readMethod == null) && (this.writeMethod == null))
+         if (this.readMethod == null && this.writeMethod == null)
          {
             throw InspectorException.newException("Property '" + name + "' has no getter and no setter");
          }
@@ -463,6 +430,19 @@ public class ForgePropertyStyle
       //
       // Public methods
       //
+
+      @Override
+      public String getName()
+      {
+         // FORGE-402: support fields starting with capital letter
+
+         if (this.privateField != null)
+         {
+            return this.privateField.getName();
+         }
+
+         return super.getName();
+      }
 
       @Override
       public boolean isReadable()
@@ -546,7 +526,6 @@ public class ForgePropertyStyle
 
    public static class AnnotationProxy<T extends Annotation> implements InvocationHandler
    {
-
       //
       // Private statics
       //
@@ -624,7 +603,7 @@ public class ForgePropertyStyle
                return annotationMethod.getDefaultValue();
             }
 
-            // ...otherwise cast it to the correct class
+            // ...otherwise cast it to the correct class...
 
             if (boolean.class.equals(returnType))
             {
@@ -634,6 +613,8 @@ public class ForgePropertyStyle
             {
                return Integer.valueOf(value);
             }
+
+            // ...or assume String
 
             return value;
          }
