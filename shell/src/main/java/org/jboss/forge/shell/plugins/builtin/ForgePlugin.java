@@ -37,6 +37,7 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Ref;
 import org.jboss.forge.ForgeEnvironment;
 import org.jboss.forge.git.GitUtils;
+import org.jboss.forge.parser.java.util.Strings;
 import org.jboss.forge.parser.xml.Node;
 import org.jboss.forge.parser.xml.XMLParser;
 import org.jboss.forge.project.Project;
@@ -74,8 +75,6 @@ import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.Topic;
 import org.jboss.forge.shell.util.PluginRef;
 import org.jboss.forge.shell.util.PluginUtil;
-
-import com.google.common.base.Strings;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
