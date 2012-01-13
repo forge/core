@@ -63,7 +63,9 @@ public class FacesScaffoldScenarioTest extends AbstractFacesScaffoldTest
       getShell().execute("field string --named description");
       getShell().execute("entity --named Profile");
       getShell().execute("field string --named bio");
-      // Needs https://issues.jboss.org/browse/FORGE-397: getShell().execute("field oneToOne --named customer --fieldType com.test.domain.Customer --inverseFieldName profile");
+      getShell().execute("field string --named URL");
+      // Needs https://issues.jboss.org/browse/FORGE-397:
+      // getShell().execute("field oneToOne --named customer --fieldType com.test.domain.Customer --inverseFieldName profile");
       getShell().execute("entity --named SubmittedOrder");
       getShell().execute("field manyToOne --named Customer --fieldType com.test.domain.Customer");
       getShell().execute("field manyToOne --named address --fieldType com.test.domain.Address");
@@ -88,10 +90,41 @@ public class FacesScaffoldScenarioTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(create.exists());
       String contents = Streams.toString(create.getResourceInputStream());
 
-      Assert.assertTrue(contents.contains("<h:commandLink action=\"#{customerBean.customer.newProfile}\" rendered=\"#{empty customerBean.customer.profile}\" value=\"Create New Profile\"/>"));
-      Assert.assertTrue(contents.contains("<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\" rendered=\"#{!empty customerBean.customer.profile}\">"));
+      Assert.assertTrue(contents
+               .contains("<h:commandLink action=\"#{customerBean.customer.newProfile}\" rendered=\"#{empty customerBean.customer.profile}\" value=\"Create New Profile\"/>"));
+      Assert.assertTrue(contents
+               .contains("<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\" rendered=\"#{!empty customerBean.customer.profile}\">"));
       Assert.assertTrue(contents.contains("<h:outputLabel for=\"customerBeanCustomerProfileBio\" value=\"Bio:\"/>"));
-      Assert.assertTrue(contents.contains("<h:inputText id=\"customerBeanCustomerProfileBio\" value=\"#{customerBean.customer.profile.bio}\"/>"));
+      Assert.assertTrue(contents
+               .contains("<h:inputText id=\"customerBeanCustomerProfileBio\" value=\"#{customerBean.customer.profile.bio}\"/>"));
+
+      // Check 'City' is dealt with correctly (lowercase in JSF, uppercase in Java code)
+
+      create = web.getWebResource("scaffold/address/create.xhtml");
+      Assert.assertTrue(create.exists());
+      contents = Streams.toString(create.getResourceInputStream());
+
+      Assert.assertTrue(contents.contains("\"#{addressBean.address.city}\""));
+      Assert.assertTrue(!contents.contains(".City"));
+
+      // View
+
+      FileResource<?> view = web.getWebResource("scaffold/address/view.xhtml");
+      Assert.assertTrue(view.exists());
+      contents = Streams.toString(view.getResourceInputStream());
+
+      Assert.assertTrue(contents.contains("\"#{addressBean.address.city}\""));
+      Assert.assertTrue(!contents.contains(".City"));
+
+      // Search
+
+      FileResource<?> search = web.getWebResource("scaffold/address/search.xhtml");
+      Assert.assertTrue(search.exists());
+      contents = Streams.toString(search.getResourceInputStream());
+
+      Assert.assertTrue(contents.contains("\"#{addressBean.search.city}\""));
+      Assert.assertTrue(contents.contains("\"#{_item.city}\""));
+      Assert.assertTrue(!contents.contains(".City"));
 
       // Backing Bean
 
@@ -121,7 +154,8 @@ public class FacesScaffoldScenarioTest extends AbstractFacesScaffoldTest
       getShell().execute("field string --named name");
       getShell().execute("entity --named Continent");
       getShell().execute("field string --named name");
-      getShell().execute("field manyToMany --named hurricanes --fieldType com.test.domain.Hurricane --inverseFieldName continents");
+      getShell()
+               .execute("field manyToMany --named hurricanes --fieldType com.test.domain.Hurricane --inverseFieldName continents");
 
       queueInputLines("", "", "", "", "");
       getShell()
@@ -135,7 +169,8 @@ public class FacesScaffoldScenarioTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(view.exists());
       String contents = Streams.toString(view.getResourceInputStream());
 
-      Assert.assertTrue(contents.contains("<h:dataTable id=\"continentBeanContinentHurricanes\" styleClass=\"data-table\" value=\"#{forgeview:asList(continentBean.continent.hurricanes)}\" var=\"_item\">"));
+      Assert.assertTrue(contents
+               .contains("<h:dataTable id=\"continentBeanContinentHurricanes\" styleClass=\"data-table\" value=\"#{forgeview:asList(continentBean.continent.hurricanes)}\" var=\"_item\">"));
 
       getShell().execute("build");
    }
