@@ -27,6 +27,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import org.jboss.forge.shell.InstalledPluginRegistry.PluginEntry;
 import org.junit.Test;
 
 /**
@@ -36,58 +37,73 @@ import org.junit.Test;
 public class InstalledPluginRegistryTest
 {
    /**
-    * Test method for {@link org.jboss.forge.shell.InstalledPluginRegistry#getInstalledPlugins()}.
+    * Test method for {@link org.jboss.forge.shell.InstalledPluginRegistry#list()}.
     */
    @Test
    public void testGetInstalledPlugins()
    {
-      List<String> originals = InstalledPluginRegistry.getInstalledPlugins();
-      InstalledPluginRegistry.installPlugin("test.test", "moo");
-      List<String> plugins = InstalledPluginRegistry.getInstalledPlugins();
+      List<PluginEntry> originals = InstalledPluginRegistry.list();
+      assertFalse(InstalledPluginRegistry.has(new PluginEntry("test.test", "1.0.0-SNAPSHOT", "moo")));
+      PluginEntry installed = InstalledPluginRegistry.install("test.test", "1.0.0-SNAPSHOT", "moo");
+      assertTrue(InstalledPluginRegistry.has(installed));
+      List<PluginEntry> plugins = InstalledPluginRegistry.list();
 
       boolean found = false;
-      for (String plugin : plugins) {
-         if ("test.test:moo".equals(plugin))
+      for (PluginEntry plugin : plugins) {
+         if ("test.test:1.0.0-SNAPSHOT:moo".equals(plugin.toCoordinates()))
          {
-            InstalledPluginRegistry.removePlugin(plugin);
-            assertFalse(InstalledPluginRegistry.hasPlugin(plugin));
+            InstalledPluginRegistry.remove(plugin);
+            assertFalse(InstalledPluginRegistry.has(plugin));
             found = true;
          }
       }
       assertTrue(found);
 
-      assertSame(originals.size(), InstalledPluginRegistry.getInstalledPlugins().size());
-      for (String plugin : originals) {
-         assertTrue(InstalledPluginRegistry.hasPlugin(plugin));
+      assertSame(originals.size(), InstalledPluginRegistry.list().size());
+      for (PluginEntry plugin : originals) {
+         assertTrue(InstalledPluginRegistry.has(plugin));
+         InstalledPluginRegistry.remove(plugin);
+         assertFalse(InstalledPluginRegistry.has(plugin));
       }
    }
 
    /**
-    * Test method for {@link org.jboss.forge.shell.InstalledPluginRegistry#getInstalledPlugins()}.
+    * Test method for {@link org.jboss.forge.shell.InstalledPluginRegistry#list()}.
     */
    @Test
    public void testAddNewVersion()
    {
-      List<String> originals = InstalledPluginRegistry.getInstalledPlugins();
-      InstalledPluginRegistry.installPlugin("test.test", "moo");
-      InstalledPluginRegistry.installPlugin("test.test", "foo");
-      List<String> plugins = InstalledPluginRegistry.getInstalledPlugins();
+      List<PluginEntry> originals = InstalledPluginRegistry.list();
+      InstalledPluginRegistry.install("test.test", "1.0.0-SNAPSHOT", "moo");
+      InstalledPluginRegistry.install("test.test", "1.0.0-SNAPSHOT", "foo");
+      List<PluginEntry> plugins = InstalledPluginRegistry.list();
 
       boolean found = false;
-      for (String plugin : plugins) {
-         if (plugin.contains("test.test"))
+      for (PluginEntry plugin : plugins) {
+         if (plugin.getName().equals("test.test"))
          {
-            InstalledPluginRegistry.removePlugin(plugin);
-            assertFalse(InstalledPluginRegistry.hasPlugin(plugin));
+            InstalledPluginRegistry.remove(plugin);
+            assertFalse(InstalledPluginRegistry.has(plugin));
             found = true;
          }
       }
       assertTrue(found);
 
-      assertSame(originals.size(), InstalledPluginRegistry.getInstalledPlugins().size());
-      for (String plugin : originals) {
-         assertTrue(InstalledPluginRegistry.hasPlugin(plugin));
+      assertSame(originals.size(), InstalledPluginRegistry.list().size());
+      for (PluginEntry plugin : originals) {
+         assertTrue(InstalledPluginRegistry.has(plugin));
+         InstalledPluginRegistry.remove(plugin);
+         assertFalse(InstalledPluginRegistry.has(plugin));
       }
+   }
+
+   @Test
+   public void testMultipleVersions() throws Exception
+   {
+      InstalledPluginRegistry.install("foo", "1", "s1");
+      InstalledPluginRegistry.install("foo", "2", "s2");
+
+      InstalledPluginRegistry.has(PluginEntry.fromCoordinates("foo:1"));
    }
 
 }

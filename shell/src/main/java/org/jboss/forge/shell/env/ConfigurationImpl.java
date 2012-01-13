@@ -65,7 +65,7 @@ public class ConfigurationImpl
       if ((project != null) && !project.equals(this.currentProject))
       {
          currentProject = project;
-         projectConfig = new ScopedConfigurationAdapter();
+         ScopedConfigurationAdapter projectConfig = new ScopedConfigurationAdapter();
          XMLConfiguration forgeXml;
          try {
             forgeXml = new XMLConfiguration(getProjectSettings(project).getUnderlyingResourceObject());
@@ -78,9 +78,10 @@ public class ConfigurationImpl
          projectConfig.setScopedConfiguration(ConfigurationScope.PROJECT,
                   new ConfigurationAdapter(projectConfig, forgeXml));
          projectConfig.setScopedConfiguration(ConfigurationScope.USER, getUserConfig(projectConfig));
+         this.projectConfig = projectConfig;
          return projectConfig;
       }
-      else if (projectConfig != null)
+      else if ((project != null) && project.equals(this.currentProject))
       {
          return projectConfig;
       }
@@ -89,6 +90,7 @@ public class ConfigurationImpl
 
    public Configuration getUserConfig(final ScopedConfigurationAdapter config) throws ConfigurationException
    {
+      // FIXME NPE caused when no project exists because config param is null
       if (userConfig == null)
       {
          XMLConfiguration globalXml;
@@ -101,7 +103,10 @@ public class ConfigurationImpl
          }
          globalXml.setReloadingStrategy(new FileChangedReloadingStrategy());
          globalXml.setAutoSave(true);
-         userConfig = new ConfigurationAdapter(config, globalXml);
+         if (config != null)
+            userConfig = new ConfigurationAdapter(config, globalXml);
+         else
+            userConfig = new ConfigurationAdapter(new ScopedConfigurationAdapter(), globalXml);
       }
       return userConfig;
    }

@@ -57,7 +57,7 @@
       <jboss.javaee.version>1.0.0.Final</jboss.javaee.version>
       <jboss.logging.version>3.0.0.Beta4</jboss.logging.version>
       <jboss.logmanager.version>1.2.0.GA</jboss.logmanager.version>
-      <jboss.modules.version>1.0.2.GA</jboss.modules.version>
+      <jboss.modules.version>1.0.4.GA</jboss.modules.version>
       <jgit.version>0.10.1</jgit.version>
       <jline.version>2.5</jline.version>
       <junit.version>4.8.1</junit.version>
@@ -83,6 +83,7 @@
       <module>maven-api</module>
       <module>shell-api</module>
       <module>git-tools</module>
+      <module>git-tools-tests</module>
       <module>parser-java</module>
       <module>project-model-maven</module>
       <module>project-model-maven-tests</module>

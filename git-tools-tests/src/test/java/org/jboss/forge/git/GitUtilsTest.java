@@ -19,22 +19,40 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.shell.plugins.builtin;
+package org.jboss.forge.git;
 
-import org.jboss.forge.shell.InstalledPluginRegistry;
-import org.jboss.forge.shell.completer.SimpleTokenCompleter;
+import java.util.Map;
+
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.lib.Ref;
+import org.jboss.forge.project.Project;
+import org.jboss.forge.test.AbstractShellTest;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class InstalledPluginCompleter extends SimpleTokenCompleter
+public class GitUtilsTest extends AbstractShellTest
 {
-
-   @Override
-   public Iterable<?> getCompletionTokens()
+   @Test
+   public void testCreateRepo() throws Exception
    {
-      return InstalledPluginRegistry.list();
+      Project project = initializeJavaProject();
+
+      Git repo = GitUtils.init(project.getProjectRoot());
+      Assert.assertTrue(repo.getRepository().getDirectory().exists());
    }
 
+   @Test
+   public void testGetTags() throws Exception
+   {
+
+      Project project = initializeJavaProject();
+
+      Git repo = GitUtils.init(project.getProjectRoot());
+      Map<String, Ref> tags = repo.getRepository().getTags();
+      Assert.assertTrue(tags.isEmpty());
+   }
 }

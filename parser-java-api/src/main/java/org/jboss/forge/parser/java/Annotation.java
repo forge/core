@@ -63,7 +63,7 @@ public interface Annotation<O extends JavaSource<O>> extends Internal, Origin<O>
 
    Annotation<O> setEnumValue(String name, Enum<?> value);
 
-   Annotation<O> setEnumValue(Enum<?> value);
+   Annotation<O> setEnumValue(Enum<?>... value);
 
    Annotation<O> setLiteralValue(String value);
 

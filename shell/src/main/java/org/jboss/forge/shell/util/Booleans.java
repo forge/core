@@ -19,22 +19,17 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.shell.plugins.builtin;
-
-import org.jboss.forge.shell.InstalledPluginRegistry;
-import org.jboss.forge.shell.completer.SimpleTokenCompleter;
+package org.jboss.forge.shell.util;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class InstalledPluginCompleter extends SimpleTokenCompleter
+public class Booleans
 {
-
-   @Override
-   public Iterable<?> getCompletionTokens()
+   public static boolean toBooleanValue(final Object s)
    {
-      return InstalledPluginRegistry.list();
+      return (s != null) && (Boolean.TRUE.equals(s) || "true".equals(s));
    }
 
 }
