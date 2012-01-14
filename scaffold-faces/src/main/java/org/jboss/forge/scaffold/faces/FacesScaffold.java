@@ -132,16 +132,16 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
 {
    private static final String XMLNS_PREFIX = "xmlns:";
 
-   private static final String BACKING_BEAN_TEMPLATE = "org/jboss/forge/scaffold/faces/scaffold/BackingBean.jv";
-   private static final String VIEW_UTILS_TEMPLATE = "org/jboss/forge/scaffold/faces/scaffold/ViewUtils.jv";
-   private static final String TAGLIB_TEMPLATE = "org/jboss/forge/scaffold/faces/scaffold/forge.taglib.xml";
-   private static final String VIEW_TEMPLATE = "org/jboss/forge/scaffold/faces/scaffold/view.xhtml";
-   private static final String CREATE_TEMPLATE = "org/jboss/forge/scaffold/faces/scaffold/create.xhtml";
-   private static final String SEARCH_TEMPLATE = "org/jboss/forge/scaffold/faces/scaffold/search.xhtml";
-   private static final String NAVIGATION_TEMPLATE = "org/jboss/forge/scaffold/faces/templates/page.xhtml";
+   private static final String BACKING_BEAN_TEMPLATE = "scaffold/faces/BackingBean.jv";
+   private static final String VIEW_UTILS_TEMPLATE = "scaffold/faces/ViewUtils.jv";
+   private static final String TAGLIB_TEMPLATE = "scaffold/faces/forge.taglib.xml";
+   private static final String VIEW_TEMPLATE = "scaffold/faces/view.xhtml";
+   private static final String CREATE_TEMPLATE = "scaffold/faces/create.xhtml";
+   private static final String SEARCH_TEMPLATE = "scaffold/faces/search.xhtml";
+   private static final String NAVIGATION_TEMPLATE = "scaffold/faces/page.xhtml";
 
-   private static final String ERROR_TEMPLATE = "org/jboss/forge/scaffold/faces/templates/error.xhtml";
-   private static final String INDEX_TEMPLATE = "org/jboss/forge/scaffold/faces/templates/index.xhtml";
+   private static final String ERROR_TEMPLATE = "scaffold/faces/error.xhtml";
+   private static final String INDEX_TEMPLATE = "scaffold/faces/index.xhtml";
 
    private final Dependency richfaces3UI = DependencyBuilder.create("org.richfaces.ui:richfaces-ui");
    private final Dependency richfaces3Impl = DependencyBuilder.create("org.richfaces.framework:richfaces-impl");
@@ -601,7 +601,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       // Basic pages
 
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("index.html"), getClass()
-               .getResourceAsStream("/org/jboss/forge/scaffold/faces/templates/index.html"), overwrite));
+               .getResourceAsStream("/scaffold/faces/index.html"), overwrite));
 
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("index.xhtml"),
                this.indexTemplate.render(context), overwrite));
@@ -612,22 +612,22 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       // Static resources
 
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/background.gif"),
-               getClass().getResourceAsStream("/org/jboss/forge/scaffold/faces/static/background.gif"), overwrite));
+               getClass().getResourceAsStream("/scaffold/faces/background.gif"), overwrite));
 
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/favicon.ico"),
-               getClass().getResourceAsStream("/org/jboss/forge/scaffold/faces/static/favicon.ico"), overwrite));
+               getClass().getResourceAsStream("/scaffold/faces/favicon.ico"), overwrite));
 
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/forge-logo.png"),
-               getClass().getResourceAsStream("/org/jboss/forge/scaffold/faces/static/forge-logo.png"), overwrite));
+               getClass().getResourceAsStream("/scaffold/faces/forge-logo.png"), overwrite));
 
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/forge-style.css"),
-               getClass().getResourceAsStream("/org/jboss/forge/scaffold/faces/static/forge-style.css"), overwrite));
+               getClass().getResourceAsStream("/scaffold/faces/forge-style.css"), overwrite));
 
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/jboss-community.png"),
-               getClass().getResourceAsStream("/org/jboss/forge/scaffold/faces/static/jboss-community.png"), overwrite));
+               getClass().getResourceAsStream("/scaffold/faces/jboss-community.png"), overwrite));
 
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/search.png"),
-               getClass().getResourceAsStream("/org/jboss/forge/scaffold/faces/static/search.png"), overwrite));
+               getClass().getResourceAsStream("/scaffold/faces/search.png"), overwrite));
 
       return result;
    }
@@ -661,7 +661,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
 
          result.add(ScaffoldUtil.createOrOverwrite(this.prompt,
                   web.getWebResource("/resources/scaffold/paginator.xhtml"),
-                  getClass().getResourceAsStream("/org/jboss/forge/scaffold/faces/templates/paginator.xhtml"),
+                  getClass().getResourceAsStream("/scaffold/faces/paginator.xhtml"),
                   overwrite));
 
          result.add(generateNavigation(overwrite));

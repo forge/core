@@ -23,6 +23,7 @@ package org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle;
 
 import java.io.FileNotFoundException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationHandler;
 import java.util.List;
 import java.util.Map;
@@ -574,54 +575,163 @@ public class ForgePropertyStyle
       // Public methods
       //
 
-      @SuppressWarnings({ "unchecked", "rawtypes" })
       @Override
       public Object invoke(final Object proxy, final java.lang.reflect.Method method, final Object[] args)
                throws Throwable
       {
          try
          {
-            // Determine the returnType...
-
             String methodName = method.getName();
-            java.lang.reflect.Method annotationMethod = this.annotationClass.getMethod(methodName);
-            Class<?> returnType = annotationMethod.getReturnType();
 
-            // ...source the appropriate value...
+            // Reserved name
 
-            if (returnType.isEnum())
+            if ("annotationType".equals(methodName))
             {
-               return this.annotationSource.getEnumValue((Class<Enum>) returnType, methodName);
+               return this.annotationClass;
             }
 
-            String value = this.annotationSource.getStringValue(methodName);
+            // If no value, return the default...
 
-            // ...if no value, return the default...
+            java.lang.reflect.Method annotationMethod = this.annotationClass.getMethod(methodName);
+            String literalValue = this.annotationSource.getLiteralValue(methodName);
 
-            if (value == null)
+            if (literalValue == null)
             {
                return annotationMethod.getDefaultValue();
             }
 
-            // ...otherwise cast it to the correct class...
+            // ...otherwise parse it
 
-            if (boolean.class.equals(returnType))
-            {
-               return Boolean.valueOf(value);
-            }
-            else if (int.class.equals(returnType))
-            {
-               return Integer.valueOf(value);
-            }
-
-            // ...or assume String
-
-            return value;
+            return parse(literalValue, annotationMethod.getReturnType());
          }
          catch (Exception e)
          {
             throw InspectorException.newException(e);
          }
+      }
+
+      //
+      // Private methods
+      //
+
+      /**
+       * Parses the given literal value into the given returnType. Supports all standard annotation types (JLS 9.7).
+       */
+
+      private Object parse(String literalValue, Class<?> returnType) throws ClassNotFoundException
+      {
+         // Primitives
+
+         if (byte.class.equals(returnType))
+         {
+            return Byte.valueOf(literalValue);
+         }
+         if (short.class.equals(returnType))
+         {
+            return Short.valueOf(literalValue);
+         }
+         if (int.class.equals(returnType))
+         {
+            return Integer.valueOf(literalValue);
+         }
+         if (long.class.equals(returnType))
+         {
+            String valueToUse = literalValue;
+            if (valueToUse.endsWith("l") || valueToUse.endsWith("L"))
+            {
+               valueToUse = valueToUse.substring(0, valueToUse.length() - 1);
+            }
+            return Long.valueOf(valueToUse);
+         }
+         if (float.class.equals(returnType))
+         {
+            String valueToUse = literalValue;
+            if (valueToUse.endsWith("f") || valueToUse.endsWith("F"))
+            {
+               valueToUse = valueToUse.substring(0, valueToUse.length() - 1);
+            }
+            return Float.valueOf(valueToUse);
+         }
+         if (double.class.equals(returnType))
+         {
+            String valueToUse = literalValue;
+            if (valueToUse.endsWith("d") || valueToUse.endsWith("D"))
+            {
+               valueToUse = literalValue.substring(0, valueToUse.length() - 1);
+            }
+            return Double.valueOf(valueToUse);
+         }
+         if (boolean.class.equals(returnType))
+         {
+            return Boolean.valueOf(literalValue);
+         }
+         if (char.class.equals(returnType))
+         {
+            return Character.valueOf(literalValue.charAt(1));
+         }
+
+         // Arrays
+
+         if (returnType.isArray())
+         {
+            String[] values = literalValue.substring(1, literalValue.length() - 1).split(",");
+            int length = values.length;
+            Class<?> componentType = returnType.getComponentType();
+            Object array = Array.newInstance(componentType, length);
+
+            for (int loop = 0; loop < length; loop++)
+            {
+               Array.set(array, loop, parse(values[loop], componentType));
+            }
+
+            return array;
+         }
+
+         // Enums
+
+         if (returnType.isEnum())
+         {
+            Enum<?>[] constants = (Enum<?>[]) returnType.getEnumConstants();
+
+            String valueToUse = StringUtils.substringAfterLast(literalValue, '.');
+
+            for (Enum<?> inst : constants)
+            {
+               if (inst.name().equals(valueToUse))
+               {
+                  return inst;
+               }
+            }
+
+            return null;
+         }
+
+         // Strings
+
+         if (String.class.equals(returnType))
+         {
+            return literalValue.substring(1, literalValue.length() - 1);
+         }
+
+         // Classes
+
+         if (Class.class.equals(returnType))
+         {
+            // TODO: How to get fully qualified name?
+            throw new UnsupportedOperationException(literalValue + " is not fully qualified!");
+         }
+
+         // Annotations
+
+         if (Annotation.class.isAssignableFrom(returnType))
+         {
+            // TODO: How to get fully qualified name?
+            throw new UnsupportedOperationException(literalValue + " is not fully qualified!");
+         }
+
+         // Unknown
+
+         throw new UnsupportedOperationException(returnType.getSimpleName());
       }
    }
 }
