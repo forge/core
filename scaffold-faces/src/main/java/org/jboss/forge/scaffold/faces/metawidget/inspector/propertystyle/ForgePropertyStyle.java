@@ -669,10 +669,6 @@ public class ForgePropertyStyle
          {
             return Character.valueOf(literalValue.charAt(1));
          }
-         if (Class.class.equals(returnType))
-         {
-            return Class.forName(literalValue);
-         }
 
          // Arrays
 
@@ -721,6 +717,7 @@ public class ForgePropertyStyle
 
          if (Class.class.equals(returnType))
          {
+            // TODO: How to get fully qualified name?
             throw new UnsupportedOperationException(literalValue + " is not fully qualified!");
          }
 
@@ -728,6 +725,7 @@ public class ForgePropertyStyle
 
          if (Annotation.class.isAssignableFrom(returnType))
          {
+            // TODO: How to get fully qualified name?
             throw new UnsupportedOperationException(literalValue + " is not fully qualified!");
          }
 

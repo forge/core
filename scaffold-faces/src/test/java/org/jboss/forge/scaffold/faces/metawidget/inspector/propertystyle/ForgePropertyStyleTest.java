@@ -60,8 +60,8 @@ public class ForgePropertyStyleTest
       assertEquals('a', mockAnnotation.aChar());
       assertEquals(true, mockAnnotation.aBoolean());
       assertEquals("Foo", mockAnnotation.aString());
-      // assertEquals( Date.class, mockAnnotation.aClass() );
-      // assertEquals( 42, mockAnnotation.anAnnotation().value() );
+      // TODO: assertEquals( Date.class, mockAnnotation.aClass() );
+      // TODO: assertEquals( 42, mockAnnotation.anAnnotation().value() );
       assertEquals(anEnum.ONE, mockAnnotation.anEnum());
       assertTrue(Arrays.equals(new byte[] { 7, 8 }, mockAnnotation.aByteArray()));
       assertTrue(Arrays.equals(new short[] { 9, 10 }, mockAnnotation.aShortArray()));
@@ -72,8 +72,8 @@ public class ForgePropertyStyleTest
       assertTrue(Arrays.equals(new char[] { 'b', 'c' }, mockAnnotation.aCharArray()));
       assertTrue(Arrays.equals(new boolean[] { false, true }, mockAnnotation.aBooleanArray()));
       assertTrue(Arrays.equals(new String[] { "Bar", "Baz" }, mockAnnotation.aStringArray()));
-      // assertTrue(Arrays.equals(new Class[] { Calendar.class, Color.class }, mockAnnotation.aClassArray()));
-      // assertTrue( Arrays.equals(new Class[]{Calendar.class,Color.class}, mockAnnotation.anAnnotationArray() ));
+      // TODO: assertTrue(Arrays.equals(new Class[] { Calendar.class, Color.class }, mockAnnotation.aClassArray()));
+      // TODO: assertTrue( Arrays.equals( ..., mockAnnotation.anAnnotationArray() ));
       assertTrue(Arrays.equals(new anEnum[] { anEnum.TWO, anEnum.THREE }, mockAnnotation.anEnumArray()));
    }
 }
