@@ -107,4 +107,9 @@ public interface MavenCoreFacet extends Facet
     */
    public DirectoryResource getLocalRepositoryDirectory();
 
+   /**
+    * Resolve Maven ${properties} in the given value, and replace them with their computed values.
+    */
+   public String resolveProperties(String value);
+
 }

@@ -27,6 +27,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.annotation.Annotation;
+import java.util.Map.Entry;
+import java.util.Properties;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.spi.BeanManager;
@@ -54,6 +56,8 @@ import org.jboss.forge.shell.ShellPrintWriter;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.util.NativeSystemCall;
 import org.jboss.forge.shell.util.OSUtils;
+
+import com.google.common.base.Strings;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -298,5 +302,24 @@ public class MavenCoreFacetImpl extends BaseFacet implements MavenCoreFacet, Fac
    {
       return factory.getResourceFrom(new File(container.getSettings().getLocalRepository())).reify(
                DirectoryResource.class);
+   }
+
+   @Override
+   public String resolveProperties(final String input)
+   {
+      String result = input;
+      if (!Strings.isNullOrEmpty(input))
+      {
+         Properties properties = getPartialProjectBuildingResult().getProject().getProperties();
+
+         for (Entry<Object, Object> e : properties.entrySet())
+         {
+            String key = "\\$\\{" + e.getKey().toString() + "\\}";
+            Object value = e.getValue();
+            result = result.replaceAll(key, value.toString());
+         }
+      }
+
+      return result;
    }
 }
