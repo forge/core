@@ -47,7 +47,7 @@ public class RefactoryTest
    {
       javaClass = JavaParser
                .parse(JavaClass.class,
-                        "import java.util.Set; public class Foo { private int foo; private String firstName; private Set<String> names; }");
+                        "import java.util.Set; public class Foo { private int foo; private String firstName; private Set<String> names; private final int bar; }");
    }
 
    @Test
@@ -81,6 +81,19 @@ public class RefactoryTest
    }
 
    @Test
+   public void testAddGetterNotSetterForFinalField() throws Exception
+   {
+      Field<JavaClass> field = javaClass.getField("bar");
+      Refactory.createGetterAndSetter(javaClass, field);
+
+      List<Method<JavaClass>> methods = javaClass.getMethods();
+      Method<JavaClass> getter = methods.get(0);
+
+      assertEquals("getBar", getter.getName());
+      assertEquals(1, methods.size());
+   }
+
+   @Test
    public void testAddGettersAndSettersGeneric() throws Exception
    {
       Field<JavaClass> field = javaClass.getField("names");
@@ -100,7 +113,7 @@ public class RefactoryTest
    }
 
    @Test
-   public void testCreateToSrtingFromFields() throws Exception
+   public void testCreateToStringFromFields() throws Exception
    {
       assertFalse(javaClass.hasMethodSignature("toString"));
       Refactory.createToStringFromFields(javaClass);

@@ -50,9 +50,12 @@ public class Refactory
       entity.addMethod().setReturnType(field.getTypeInspector().toString()).setName("get" + methodNameSuffix)
                .setPublic()
                .setBody("return this." + fieldName + ";");
-      entity.addMethod().setReturnTypeVoid().setName("set" + methodNameSuffix).setPublic()
-               .setParameters("final " + field.getTypeInspector().toString() + " " + fieldName)
-               .setBody("this." + fieldName + " = " + fieldName + ";");
+
+      if (!field.isFinal()) {
+         entity.addMethod().setReturnTypeVoid().setName("set" + methodNameSuffix).setPublic()
+                  .setParameters("final " + field.getTypeInspector().toString() + " " + fieldName)
+                  .setBody("this." + fieldName + " = " + fieldName + ";");
+      }
    }
 
    public static void createToStringFromFields(final JavaClass entity)
