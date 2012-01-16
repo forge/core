@@ -158,6 +158,13 @@ public class MavenFacetsTest extends ProjectModelTest
    }
 
    @Test
+   public void testResolveProperties() throws Exception
+   {
+      MavenCoreFacet maven = testProject.getFacet(MavenCoreFacet.class);
+      assertEquals("4.8.1", maven.resolveProperties("${junit.version}"));
+   }
+
+   @Test
    public void testAbsoluteUnknownProjectCannotInstantiate() throws Exception
    {
       DirectoryResource temp = new DirectoryResource(resourceFactory, File.createTempFile(PKG, null));

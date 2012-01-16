@@ -397,28 +397,14 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
    public Dependency resolveProperties(final Dependency dependency)
    {
       MavenCoreFacet mvn = project.getFacet(MavenCoreFacet.class);
-      Properties properties = mvn.getPartialProjectBuildingResult().getProject().getProperties();
       DependencyBuilder builder = DependencyBuilder.create(dependency);
 
-      for (Entry<Object, Object> e : properties.entrySet())
-      {
-         String key = "\\$\\{" + e.getKey().toString() + "\\}";
-         Object value = e.getValue();
-
-         if (dependency.getGroupId() != null)
-            builder.setGroupId(dependency.getGroupId().replaceAll(key, value.toString()));
-         if (dependency.getArtifactId() != null)
-            builder.setArtifactId(dependency.getArtifactId().replaceAll(key, value.toString()));
-         if (dependency.getVersion() != null)
-            builder.setVersion(dependency.getVersion().replaceAll(key, value.toString()));
-         if (dependency.getClassifier() != null)
-            builder.setClassifier(dependency.getClassifier().replaceAll(key, value.toString()));
-         if (dependency.getPackagingType() != null)
-            builder.setPackagingType(dependency.getPackagingType().replaceAll(key,
-                     value.toString()));
-         if (dependency.getScopeType() != null)
-            builder.setScopeType(dependency.getScopeType().replaceAll(key, value.toString()));
-      }
+      builder.setGroupId(mvn.resolveProperties(dependency.getGroupId()));
+      builder.setArtifactId(mvn.resolveProperties(dependency.getArtifactId()));
+      builder.setVersion(mvn.resolveProperties(dependency.getVersion()));
+      builder.setClassifier(mvn.resolveProperties(dependency.getClassifier()));
+      builder.setPackagingType(mvn.resolveProperties(dependency.getPackagingType()));
+      builder.setScopeType(mvn.resolveProperties(dependency.getScopeType()));
 
       return builder;
    }
