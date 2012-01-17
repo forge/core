@@ -528,9 +528,14 @@ public class ForgePlugin implements Plugin
             }
          }
 
+         /**
+          * Make sure that our PROVIDED modules are not included in the module dependencies
+          */
+         // TODO Weld bug requires us to correct /add module for Seam Render dependency
+         List<String> groupIds = Arrays.asList("org.jboss.seam.render", "org.jboss.forge");
          List<Dependency> dependencies = deps.getDependencies();
          for (Dependency dependency : dependencies) {
-            if ("org.jboss.forge".equals(dependency.getGroupId())
+            if (groupIds.contains(dependency.getGroupId())
                      && !(ScopeType.PROVIDED.equals(dependency.getScopeTypeEnum())
                      || ScopeType.TEST.equals(dependency.getScopeTypeEnum())))
             {
@@ -608,6 +613,7 @@ public class ForgePlugin implements Plugin
       dependencies.createChild("module").attribute("name", "org.jboss.forge.scaffold.api")
                .attribute("services", "import");
       dependencies.createChild("module").attribute("name", "org.jboss.forge.shell.api").attribute("services", "import");
+      dependencies.createChild("module").attribute("name", "org.jboss.seam.render").attribute("services", "import");
       dependencies.createChild("module").attribute("name", "javax.api");
 
       moduleXml.setContents(XMLParser.toXMLString(module));

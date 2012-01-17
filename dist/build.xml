@@ -230,6 +230,7 @@
 
 		<module-def name="org.apache.log4j">
 			<maven-resource group="log4j" artifact="log4j" />
+			<maven-resource group="log4j" artifact="apache-log4j-extras" />
 		</module-def>
 
 		<module-def name="org.eclipse.javaparser">
@@ -412,14 +413,7 @@
 		</module-def>
 
 		<module-def name="org.slf4j.impl">
-			<!-- LOGGING
-			 
-			To enable logging. Replace slf4j-jboss-logmanager with this:
-			
-				<maven-resource group="org.slf4j" artifact="slf4j-log4j12" />
-	        
-	        -->
-            <maven-resource group="org.jboss.slf4j" artifact="slf4j-jboss-logmanager"/>
+			<maven-resource group="org.slf4j" artifact="slf4j-log4j12" />
 		</module-def>
 
 		<module-def name="org.yaml">

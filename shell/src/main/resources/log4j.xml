@@ -18,6 +18,20 @@
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/"
    debug="false">
 
+   <appender name="FILE" class="org.apache.log4j.rolling.RollingFileAppender">
+      <param name="File" value="${user.home}/.forge/runtime.log" />
+      <param name="Append" value="true" />
+      <param name="encoding" value="UTF-8" />
+
+      <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy"> 
+         <param name="FileNamePattern" value="/applogs/myportal/portal.%d.log.gz" /> 
+      </rollingPolicy> 
+
+      <layout class="org.apache.log4j.PatternLayout">
+         <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss} %c{1} [%p] %m%n" />
+      </layout>
+   </appender>
+
    <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
       <param name="Target" value="System.out" />
       <layout class="org.apache.log4j.PatternLayout">
@@ -27,33 +41,16 @@
          <param name="levelMin" value="DEBUG" />
          <param name="levelMax" value="FATAL" />
       </filter>
-      <!-- LOGGING
-         Comment out the following blocks to enable logging. 
-         Also need to switch the slf4j-impl module to use log4j instead of jboss logmanager.
-         Also need to modify the slf4j entry in build.xml
-       -->
-      <filter class="org.apache.log4j.varia.StringMatchFilter">
-         <param name="AcceptOnMatch" value="true" />
-         <param name="StringToMatch" value="WELD-000119" />
-      </filter>
-      <filter class="org.apache.log4j.varia.StringMatchFilter">
-         <param name="AcceptOnMatch" value="true" />
-         <param name="StringToMatch" value="catching" />
-      </filter>
-      <filter class="org.apache.log4j.varia.StringMatchFilter">
-         <param name="AcceptOnMatch" value="false" />
-         <param name="StringToMatch" value="" />
-      </filter>
    </appender>
 
    <!-- ############### Weld logging ################### -->
 
    <category name="org.jboss">
-      <priority value="FATAL" />
+      <priority value="DEBUG" />
    </category>
 
    <category name="org.jboss.weld">
-      <priority value="ERROR" />
+      <priority value="DEBUG" />
    </category>
 
    <category name="org.apache">
@@ -62,7 +59,7 @@
 
    <root>
       <priority value="INFO" />
-      <appender-ref ref="CONSOLE" />
+      <appender-ref ref="FILE" />
    </root>
 
 </log4j:configuration>
