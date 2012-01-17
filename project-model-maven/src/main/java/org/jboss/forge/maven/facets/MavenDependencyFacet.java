@@ -481,8 +481,6 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
          {
             if (repo.getUrl().trim().equals(url.trim()))
             {
-               repositories.remove(repo);
-               maven.setPOM(pom);
                return true;
             }
          }
