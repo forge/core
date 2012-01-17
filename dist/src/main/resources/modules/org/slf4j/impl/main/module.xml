@@ -29,12 +29,6 @@
 
     <dependencies>
         <module name="org.slf4j"/>
-        <module name="org.jboss.logmanager"/>
-        <!-- LOGGING
-        To enable logging, replace org.jboss.logmanager with this: 
-   
-           <module name="org.apache.log4j"/>
-   
-        -->
+        <module name="org.apache.log4j"/>
     </dependencies>
 </module>
