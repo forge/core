@@ -181,7 +181,11 @@ public class MavenJavaSourceFacet extends BaseFacet implements JavaSourceFacet, 
             {
                Xpp3Dom dom = Xpp3DomBuilder.build(
                         new ByteArrayInputStream(
-                                 "<configuration><source>1.6</source><target>1.6</target></configuration>".getBytes()),
+                                 ("<configuration>" +
+                                          "<source>1.6</source>" +
+                                          "<target>1.6</target>" +
+                                          "<encoding>UTF-8</encoding>" +
+                                          "</configuration>").getBytes()),
                         "UTF-8");
 
                javaSourcePlugin.setConfiguration(dom);
