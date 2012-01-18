@@ -77,16 +77,27 @@ public class Bootstrap
             @Override
             public void run()
             {
+               initLogging();
 
                boolean restarting = restartRequested;
                restartRequested = false;
 
                Weld weld = new ModularWeld();
                BeanManager manager = null;
+
+               // FIXME this plugin loading scheme causes classloading issues w/weld because weld cannot load classes
+               // from its own classloaders before plugins are loaded and pollute the classpath.
+               // We can work around it by loading weld before we load plugins, then restarting weld, but this is SLOW.
+               try {
+                  WeldContainer container = weld.initialize();
+                  manager = container.getBeanManager();
+                  weld.shutdown();
+               }
+               catch (Exception e) {}
+
                try {
                   // TODO verify plugin API versions. only activate compatible plugins.
                   loadPlugins();
-                  initLogging();
                   WeldContainer container = weld.initialize();
                   manager = container.getBeanManager();
                }
