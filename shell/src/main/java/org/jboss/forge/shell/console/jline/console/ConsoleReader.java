@@ -910,7 +910,7 @@ public class ConsoleReader
          }
 
          char chars[] = new char[len];
-         Arrays.fill(chars, BACKSPACE);;
+         Arrays.fill(chars, BACKSPACE);
          shell.print(new String(chars));
 
          return;
@@ -1833,12 +1833,12 @@ public class ConsoleReader
    private void print(final char c, final int i) throws IOException
    {
       if (i == 1) {
-          print(c);
+         print(c);
       }
       else {
-          byte[] chars = new byte[i];
-          Arrays.fill(chars, (byte) c);
-          print(chars);
+         byte[] chars = new byte[i];
+         Arrays.fill(chars, (byte) c);
+         print(chars);
       }
    }
 
