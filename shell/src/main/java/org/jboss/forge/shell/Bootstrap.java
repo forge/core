@@ -192,8 +192,10 @@ public class Bootstrap
 
          for (PluginEntry pluginEntry : incompatible) {
             System.out.println("Not loading plugin [" + pluginEntry.getName()
-                     + "] due to incompatible Forge API version [" + pluginEntry.getApiVersion()
-                     + "]. To remove this plugin, type 'forge remove-plugin " + pluginEntry + "' inside Forge.");
+                     + "] because it references Forge API version [" + pluginEntry.getApiVersion()
+                     + "] which may not be compatible with my current version [" + Bootstrap.class.getPackage()
+                              .getImplementationVersion() + "]. To remove this plugin, type 'forge remove-plugin "
+                     + pluginEntry + ".");
          }
 
          for (PluginEntry plugin : toLoad)
