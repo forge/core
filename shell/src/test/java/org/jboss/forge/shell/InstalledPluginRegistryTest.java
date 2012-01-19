@@ -100,10 +100,17 @@ public class InstalledPluginRegistryTest
    @Test
    public void testMultipleVersions() throws Exception
    {
-      InstalledPluginRegistry.install("foo", "1", "s1");
-      InstalledPluginRegistry.install("foo", "2", "s2");
+      PluginEntry one = InstalledPluginRegistry.install("foo", "1", "s1");
+      PluginEntry two = InstalledPluginRegistry.install("foo", "2", "s2");
 
-      InstalledPluginRegistry.has(PluginEntry.fromCoordinates("foo:1"));
+      assertTrue(InstalledPluginRegistry.has(one));
+      assertTrue(InstalledPluginRegistry.has(two));
+
+      InstalledPluginRegistry.remove(one);
+      InstalledPluginRegistry.remove(two);
+
+      assertFalse(InstalledPluginRegistry.has(one));
+      assertFalse(InstalledPluginRegistry.has(two));
    }
 
 }
