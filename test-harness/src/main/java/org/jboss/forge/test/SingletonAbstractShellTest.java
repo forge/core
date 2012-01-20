@@ -35,7 +35,7 @@ import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
-import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.Root;
 import org.jboss.forge.project.Project;
@@ -70,7 +70,7 @@ public abstract class SingletonAbstractShellTest
                .addPackages(true, Root.class.getPackage())
                .addPackages(true, RenderRoot.class.getPackage())
                .addPackages(true, SolderRoot.class.getPackage())
-               .addManifestResource(new ByteArrayAsset("<beans/>".getBytes()), ArchivePaths.create("beans.xml"));
+               .addAsManifestResource(new ByteArrayAsset("<beans/>".getBytes()), ArchivePaths.create("beans.xml"));
 
       return archive;
    }

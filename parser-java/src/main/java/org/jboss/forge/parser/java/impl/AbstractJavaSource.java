@@ -24,6 +24,7 @@ package org.jboss.forge.parser.java.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.ServiceLoader;
 
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -53,6 +54,7 @@ import org.jboss.forge.parser.java.ast.ModifierAccessor;
 import org.jboss.forge.parser.java.ast.TypeDeclarationFinderVisitor;
 import org.jboss.forge.parser.java.util.Strings;
 import org.jboss.forge.parser.java.util.Types;
+import org.jboss.forge.parser.spi.WildcardImportResolver;
 
 /**
  * Represents a Java Source File
@@ -68,6 +70,9 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
 
    private final Document document;
    protected CompilationUnit unit;
+
+   public static ServiceLoader<WildcardImportResolver> loader = ServiceLoader.load(WildcardImportResolver.class);
+   private static List<WildcardImportResolver> resolvers;
 
    public AbstractJavaSource(final Document document, final CompilationUnit unit)
    {
@@ -276,6 +281,7 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
       String original = type;
       String result = type;
 
+      // Strip away any characters that might hinder the type matching process
       if (Types.isArray(result))
       {
          original = Types.stripArray(result);
@@ -288,6 +294,7 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
          result = Types.stripGenerics(result);
       }
 
+      // Check for direct import matches first since they are the fastest and least work-intensive
       if (Types.isSimpleName(result))
       {
          if (!hasImport(type) && Types.isJavaLang(type))
@@ -307,7 +314,50 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
          }
       }
 
+      // If we didn't match any imports directly, we might have a wild-card/on-demand import.
+      if (Types.isSimpleName(result))
+      {
+         for (Import imprt : getImports())
+         {
+            if (imprt.isWildcard())
+            {
+               // TODO warn if no wild-card resolvers are configured
+               // TODO Test wild-card/on-demand import resolving
+               for (WildcardImportResolver r : getImportResolvers())
+               {
+                  result = r.resolve(this, result);
+                  if (Types.isQualified(result))
+                     break;
+               }
+            }
+         }
+      }
+
+      // No import matches and no wild-card/on-demand import matches means this class is in the same package.
+      if (Types.isSimpleName(result))
+      {
+         result = getPackage() + "." + result;
+      }
+
       return result;
+   }
+
+   private List<WildcardImportResolver> getImportResolvers()
+   {
+      if (resolvers == null)
+      {
+         resolvers = new ArrayList<WildcardImportResolver>();
+         for (WildcardImportResolver r : resolvers)
+         {
+            resolvers.add(r);
+         }
+      }
+      if (resolvers.size() == 0)
+      {
+         throw new IllegalStateException("No instances of [" + WildcardImportResolver.class.getName()
+                  + "] were found on the classpath.");
+      }
+      return resolvers;
    }
 
    private boolean validImport(final String type)

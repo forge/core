@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat, Inc., and individual contributors
+ * Copyright 2012, Red Hat, Inc., and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,29 +19,27 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.jboss.forge.test.web;
 
-package org.jboss.forge.parser.java;
+import java.util.Collection;
 
-import org.jboss.forge.parser.Internal;
+import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.parser.java.Method;
+import org.jboss.forge.project.Project;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public interface Import extends Internal
+public interface WebTest
 {
-   public String getPackage();
 
-   public String getSimpleName();
+   void setup(Project project);
 
-   public String getQualifiedName();
+   JavaClass from(Project project, Class<?> clazz);
 
-   public Import setName(final String name);
+   void addAsTestClass(Project project, JavaClass clazz);
 
-   public boolean isStatic();
-
-   public Import setStatic(final boolean value);
-
-   public boolean isWildcard();
+   Method<JavaClass> buildDefaultDeploymentMethod(Project project, JavaClass clazz, Collection<String> deploymentItems);
 
 }

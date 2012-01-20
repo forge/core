@@ -28,7 +28,7 @@ import java.lang.annotation.Annotation;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 
-import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.bus.cdi.ObserverCaptureExtension;
 import org.jboss.forge.bus.event.BusEvent;
@@ -54,8 +54,8 @@ public class EventBusTest
                .addClass(MockEventObserver.class)
                .addClass(EventBus.class)
                .addClass(BusEvent.class)
-               .addManifestResource("META-INF/services/javax.enterprise.inject.spi.Extension")
-               .addManifestResource(new ByteArrayAsset("<beans/>".getBytes()), ArchivePaths.create("beans.xml"));
+               .addAsManifestResource("META-INF/services/javax.enterprise.inject.spi.Extension")
+               .addAsManifestResource(new ByteArrayAsset("<beans/>".getBytes()), ArchivePaths.create("beans.xml"));
    }
 
    @Inject

@@ -22,8 +22,6 @@
 
 package org.jboss.forge.test;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,7 +33,7 @@ import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
-import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.Root;
 import org.jboss.forge.project.Project;
@@ -55,6 +53,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.solder.SolderRoot;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -77,7 +76,7 @@ public abstract class AbstractShellTest
                .addPackages(true, Root.class.getPackage())
                .addPackages(true, RenderRoot.class.getPackage())
                .addPackages(true, SolderRoot.class.getPackage())
-               .addManifestResource(new ByteArrayAsset("<beans/>".getBytes()), ArchivePaths.create("beans.xml"));
+               .addAsManifestResource(new ByteArrayAsset("<beans/>".getBytes()), ArchivePaths.create("beans.xml"));
 
       return archive;
    }
@@ -207,7 +206,7 @@ public abstract class AbstractShellTest
       {
          if (file.exists())
          {
-            assertTrue(file.delete(true));
+            Assert.assertTrue(file.delete(true));
          }
       }
    }

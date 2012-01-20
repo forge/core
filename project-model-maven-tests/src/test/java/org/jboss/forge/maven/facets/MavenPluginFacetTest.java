@@ -35,7 +35,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.maven.MavenPluginFacet;
@@ -68,10 +68,10 @@ public class MavenPluginFacetTest extends ProjectModelTest
    private static Project testProject;
 
    @Deployment
-   public static JavaArchive getTestArchive()
+   public static JavaArchive createTestArchive()
    {
-      return createTestArchive()
-               .addManifestResource(
+      return ProjectModelTest.createTestArchive()
+               .addAsManifestResource(
                         "META-INF/services/org.jboss.forge.project.dependencies.DependencyResolverProvider");
    }
 

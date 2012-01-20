@@ -48,8 +48,8 @@
 
       <!-- Artifact Versions -->
       <aether.version>1.11</aether.version>
-      <arquillian.version>1.0.0.Alpha4</arquillian.version>
-      <arquillian.container.version>1.1.2.Final</arquillian.container.version>
+      <arquillian.version>1.0.0.CR7</arquillian.version>
+      <arquillian.container.version>1.0.0.CR3</arquillian.container.version>
       <cal10n.version>0.7.2</cal10n.version>
       <cdi.version>1.0-SP4</cdi.version>
       <groovy.version>1.7.5</groovy.version>
@@ -548,25 +548,42 @@
             <version>${junit.version}</version>
             <scope>test</scope>
          </dependency>
+         
+         <!-- Arquillian -->
+         
          <dependency>
-            <groupId>org.jboss.arquillian</groupId>
-            <artifactId>arquillian-junit</artifactId>
+             <groupId>org.jboss.arquillian</groupId>
+             <artifactId>arquillian-bom</artifactId>
+             <version>${arquillian.version}</version>
+         </dependency>
+         <dependency>
+             <groupId>org.jboss.arquillian</groupId>
+             <artifactId>arquillian-bom</artifactId>
+             <version>${arquillian.version}</version>
+             <scope>import</scope>
+             <type>pom</type>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.arquillian.junit</groupId>
+            <artifactId>arquillian-junit-container</artifactId>
             <version>${arquillian.version}</version>
             <scope>test</scope>
          </dependency>
          <dependency>
-            <groupId>org.jboss.weld.arquillian.container</groupId>
+            <groupId>org.jboss.arquillian.container</groupId>
             <artifactId>arquillian-weld-ee-embedded-1.1</artifactId>
             <version>${arquillian.container.version}</version>
             <scope>test</scope>
          </dependency>
 
+<!-- 
          <dependency>
             <groupId>org.jboss.shrinkwrap</groupId>
             <artifactId>shrinkwrap-api</artifactId>
             <version>${shrinkwrap.version}</version>
             <scope>test</scope>
          </dependency>
+         -->
          <dependency>
             <groupId>org.jboss.shrinkwrap.descriptors</groupId>
             <artifactId>shrinkwrap-descriptors-api</artifactId>
@@ -577,6 +594,8 @@
             <artifactId>shrinkwrap-descriptors-impl</artifactId>
             <version>${shrinkwrap.descriptors.version}</version>
          </dependency>
+          
+          
          <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>

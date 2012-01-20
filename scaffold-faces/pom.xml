@@ -39,6 +39,11 @@
 			<artifactId>forge-test-harness</artifactId>
 			<scope>test</scope>
 		</dependency>
+        <dependency>
+           <groupId>org.jboss.forge</groupId>
+           <artifactId>forge-test-harness-web</artifactId>
+           <scope>test</scope>
+        </dependency>
 		<dependency>
 			<groupId>org.jboss.forge</groupId>
 			<artifactId>forge-shell</artifactId>

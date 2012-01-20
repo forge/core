@@ -28,7 +28,7 @@ import static org.junit.Assert.assertNull;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.Resource;
@@ -50,14 +50,13 @@ public class ResourceProducerExtensionTest
 
    @Test
    public void testNothing()
-   {
-   }
+   {}
 
    @Deployment
    public static JavaArchive getDeployment()
    {
       return AbstractShellTest.getDeployment()
-               .addManifestResource("META-INF/services/javax.enterprise.inject.spi.Extension")
+               .addAsManifestResource("META-INF/services/javax.enterprise.inject.spi.Extension")
                .addClass(ResourceProducerExtension.class)
                .addClass(ResourceProducer.class)
                .addClass(MockResourceInjectionPlugin.class);
