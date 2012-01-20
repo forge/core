@@ -254,7 +254,6 @@ public class ForgePropertyStyle
 
    protected void lookupSetters(final Map<String, Property> properties, final MethodHolder<?> clazz)
    {
-
       for (Method<?> method : clazz.getMethods())
       {
 
@@ -464,10 +463,27 @@ public class ForgePropertyStyle
       }
 
       @Override
+      public void write(Object obj, Object value)
+      {
+         throw new UnsupportedOperationException();
+      }
+
+      @Override
       public <T extends Annotation> T getAnnotation(final Class<T> annotationClass)
       {
-         org.jboss.forge.parser.java.Annotation<?> annotation = this.privateField.getAnnotation(annotationClass
-                  .getName());
+         org.jboss.forge.parser.java.Annotation<?> annotation = null;
+
+         // https://issues.jboss.org/browse/FORGE-439: support annotations on readMethod
+
+         if (this.readMethod != null)
+         {
+            annotation = this.readMethod.getAnnotation(annotationClass.getName());
+         }
+
+         if (annotation == null)
+         {
+            annotation = this.privateField.getAnnotation(annotationClass.getName());
+         }
 
          if (annotation != null)
          {
@@ -717,16 +733,19 @@ public class ForgePropertyStyle
 
          if (Class.class.equals(returnType))
          {
-            // TODO: How to get fully qualified name?
-            throw new UnsupportedOperationException(literalValue + " is not fully qualified!");
+            String resolvedType = StringUtils.substringBefore(literalValue, ".class");
+            resolvedType = ((JavaSource<?>) this.annotationSource.getOrigin()).resolveType(resolvedType);
+            return Class.forName(resolvedType);
          }
 
          // Annotations
 
          if (Annotation.class.isAssignableFrom(returnType))
          {
-            // TODO: How to get fully qualified name?
-            throw new UnsupportedOperationException(literalValue + " is not fully qualified!");
+            String resolvedType = StringUtils.substringAfter(literalValue, "@");
+            resolvedType = ((JavaSource<?>) this.annotationSource.getOrigin()).resolveType(resolvedType);
+
+            return AnnotationProxy.newInstance(this.annotationSource);
          }
 
          // Unknown

@@ -31,7 +31,6 @@ import org.metawidget.util.WidgetBuilderUtils;
 import org.metawidget.util.simple.StringUtils;
 import org.metawidget.widgetbuilder.iface.WidgetBuilder;
 
-@Veto
 public class QueryByExampleWidgetBuilder
          implements WidgetBuilder<StaticJavaWidget, StaticJavaMetawidget>
 {

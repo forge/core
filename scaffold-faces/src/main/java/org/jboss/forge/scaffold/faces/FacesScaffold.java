@@ -81,7 +81,6 @@ import org.metawidget.inspector.composite.CompositeInspector;
 import org.metawidget.inspector.composite.CompositeInspectorConfig;
 import org.metawidget.inspector.iface.Inspector;
 import org.metawidget.inspector.impl.BaseObjectInspectorConfig;
-import org.metawidget.inspector.java5.Java5Inspector;
 import org.metawidget.inspector.jpa.JpaInspector;
 import org.metawidget.inspector.jpa.JpaInspectorConfig;
 import org.metawidget.inspector.propertytype.PropertyTypeInspector;
@@ -250,8 +249,6 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       Inspector inspector = new CompositeInspector(new CompositeInspectorConfig()
                .setInspectors(
                         new PropertyTypeInspector(new BaseObjectInspectorConfig()
-                                 .setPropertyStyle(forgePropertyStyle)),
-                        new Java5Inspector(new BaseObjectInspectorConfig()
                                  .setPropertyStyle(forgePropertyStyle)),
                         new ForgeInspector(new BaseObjectInspectorConfig()
                                  .setPropertyStyle(forgePropertyStyle)),

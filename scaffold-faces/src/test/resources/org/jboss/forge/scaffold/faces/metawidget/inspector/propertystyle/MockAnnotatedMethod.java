@@ -21,7 +21,7 @@ public class MockAnnotatedMethod
             aBoolean = true,
             aString = "Foo",
             aClass = Date.class,
-            anAnnotation = @AnotherMockAnnotation,
+            anAnnotation = @AnotherMockAnnotation( 43 ),
             anEnum = anEnum.ONE,
             aByteArray = { 7, 8 },
             aShortArray = { 9, 10 },

@@ -59,14 +59,10 @@ import org.w3c.dom.NodeList;
 
 /**
  * Builds widgets with Forge-specific behaviours (such as links to other scaffolding pages).
- * <p>
- * This class is marked <tt>&#64;Veto</tt> so that CDI doesn't get confused by Metawidget's jsr14 compilation and throw
- * a <tt>MalformedParameterizedTypeException</tt>.
- *
+ * 
  * @author Richard Kennard
  */
 
-@Veto
 public class EntityWidgetBuilder
          extends HtmlWidgetBuilder
 {
