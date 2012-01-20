@@ -57,12 +57,8 @@ import org.jboss.forge.resources.Resource;
 import org.jboss.forge.scaffold.AccessStrategy;
 import org.jboss.forge.scaffold.ScaffoldProvider;
 import org.jboss.forge.scaffold.TemplateStrategy;
-import org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspector;
-import org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle.ForgePropertyStyle;
-import org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle.ForgePropertyStyleConfig;
-import org.jboss.forge.scaffold.faces.metawidget.widgetbuilder.EntityWidgetBuilder;
-import org.jboss.forge.scaffold.faces.metawidget.widgetbuilder.QueryByExampleWidgetBuilder;
-import org.jboss.forge.scaffold.faces.metawidget.widgetprocessor.UnsearchableWidgetProcessor;
+import org.jboss.forge.scaffold.faces.metawidget.ForgeHtmlMetawidget;
+import org.jboss.forge.scaffold.faces.metawidget.ForgeJavaMetawidget;
 import org.jboss.forge.scaffold.util.ScaffoldUtil;
 import org.jboss.forge.shell.ShellPrompt;
 import org.jboss.forge.shell.plugins.Alias;
@@ -77,33 +73,13 @@ import org.jboss.seam.render.spi.TemplateResolver;
 import org.jboss.seam.render.template.CompiledTemplateResource;
 import org.jboss.seam.render.template.resolver.ClassLoaderTemplateResolver;
 import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
-import org.metawidget.inspector.composite.CompositeInspector;
-import org.metawidget.inspector.composite.CompositeInspectorConfig;
-import org.metawidget.inspector.iface.Inspector;
-import org.metawidget.inspector.impl.BaseObjectInspectorConfig;
-import org.metawidget.inspector.java5.Java5Inspector;
-import org.metawidget.inspector.jpa.JpaInspector;
-import org.metawidget.inspector.jpa.JpaInspectorConfig;
-import org.metawidget.inspector.propertytype.PropertyTypeInspector;
 import org.metawidget.statically.StaticUtils.IndentedWriter;
-import org.metawidget.statically.StaticXmlMetawidget;
-import org.metawidget.statically.StaticXmlWidget;
 import org.metawidget.statically.faces.StaticFacesUtils;
-import org.metawidget.statically.faces.component.html.StaticHtmlMetawidget;
-import org.metawidget.statically.faces.component.html.layout.HtmlPanelGridLayout;
-import org.metawidget.statically.faces.component.html.layout.HtmlPanelGridLayoutConfig;
 import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlOutcomeTargetLink;
-import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlWidgetBuilder;
-import org.metawidget.statically.faces.component.html.widgetbuilder.ReadOnlyWidgetBuilder;
-import org.metawidget.statically.faces.component.html.widgetbuilder.richfaces.RichFacesWidgetBuilder;
-import org.metawidget.statically.javacode.StaticJavaMetawidget;
 import org.metawidget.statically.jsp.html.widgetbuilder.HtmlTag;
-import org.metawidget.statically.layout.SimpleLayout;
 import org.metawidget.util.CollectionUtils;
 import org.metawidget.util.XmlUtils;
 import org.metawidget.util.simple.StringUtils;
-import org.metawidget.widgetbuilder.composite.CompositeWidgetBuilder;
-import org.metawidget.widgetbuilder.composite.CompositeWidgetBuilderConfig;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -176,10 +152,10 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    private final ShellPrompt prompt;
    private final TemplateCompiler compiler;
    private final Event<InstallFacets> install;
-   private final StaticHtmlMetawidget entityMetawidget;
-   private final StaticHtmlMetawidget searchMetawidget;
-   private final StaticHtmlMetawidget beanMetawidget;
-   private final StaticJavaMetawidget qbeMetawidget;
+   private ForgeHtmlMetawidget entityMetawidget;
+   private ForgeHtmlMetawidget searchMetawidget;
+   private ForgeHtmlMetawidget beanMetawidget;
+   private ForgeJavaMetawidget qbeMetawidget;
 
    @Inject
    public FacesScaffold(final ShellPrompt prompt,
@@ -192,47 +168,6 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
 
       this.resolver = new ClassLoaderTemplateResolver(FacesScaffold.class.getClassLoader());
       compiler.getTemplateResolverFactory().addResolver(this.resolver);
-
-      // entityMetawidget
-
-      this.entityMetawidget = new StaticHtmlMetawidget();
-
-      @SuppressWarnings("unchecked")
-      CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget> entityWidgetBuider = new CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget>(
-               new CompositeWidgetBuilderConfig<StaticXmlWidget, StaticXmlMetawidget>().setWidgetBuilders(
-                        new EntityWidgetBuilder(), new ReadOnlyWidgetBuilder(), new HtmlWidgetBuilder()));
-
-      this.entityMetawidget.setWidgetBuilder(entityWidgetBuider);
-      HtmlPanelGridLayout layout = new HtmlPanelGridLayout(new HtmlPanelGridLayoutConfig().setColumnStyleClasses(
-               "label", "component", "required").setMessageStyleClass("error"));
-      this.entityMetawidget.setLayout(layout);
-
-      // searchMetawidget
-
-      this.searchMetawidget = new StaticHtmlMetawidget();
-
-      @SuppressWarnings("unchecked")
-      CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget> searchWidgetBuider = new CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget>(
-               new CompositeWidgetBuilderConfig<StaticXmlWidget, StaticXmlMetawidget>().setWidgetBuilders(
-                        new EntityWidgetBuilder(), new HtmlWidgetBuilder()));
-
-      this.searchMetawidget.setWidgetBuilder(searchWidgetBuider);
-      this.searchMetawidget.addWidgetProcessor(new UnsearchableWidgetProcessor());
-      this.searchMetawidget.setLayout(layout);
-
-      // beanMetawidget
-
-      this.beanMetawidget = new StaticHtmlMetawidget();
-      this.beanMetawidget.setWidgetBuilder(entityWidgetBuider);
-      this.beanMetawidget.setLayout(new HtmlPanelGridLayout(new HtmlPanelGridLayoutConfig().setColumnStyleClasses(
-               "label", "component", "required")));
-      this.beanMetawidget.setLayout(new SimpleLayout());
-
-      // qbeMetawidget
-
-      this.qbeMetawidget = new StaticJavaMetawidget();
-      this.qbeMetawidget.setWidgetBuilder(new QueryByExampleWidgetBuilder());
-      this.qbeMetawidget.addWidgetProcessor(new UnsearchableWidgetProcessor());
    }
 
    /**
@@ -244,24 +179,19 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    {
       super.setProject(project);
 
-      ForgePropertyStyle forgePropertyStyle = new ForgePropertyStyle(
-               new ForgePropertyStyleConfig().setProject(this.project));
+      // Initialize Metawidgets
 
-      Inspector inspector = new CompositeInspector(new CompositeInspectorConfig()
-               .setInspectors(
-                        new PropertyTypeInspector(new BaseObjectInspectorConfig()
-                                 .setPropertyStyle(forgePropertyStyle)),
-                        new Java5Inspector(new BaseObjectInspectorConfig()
-                                 .setPropertyStyle(forgePropertyStyle)),
-                        new ForgeInspector(new BaseObjectInspectorConfig()
-                                 .setPropertyStyle(forgePropertyStyle)),
-                        new JpaInspector(new JpaInspectorConfig()
-                                 .setPropertyStyle(forgePropertyStyle))));
+      this.entityMetawidget = new ForgeHtmlMetawidget(project);
+      this.entityMetawidget.setConfig("scaffold/faces/metawidget-entity.xml");
 
-      this.entityMetawidget.setInspector(inspector);
-      this.searchMetawidget.setInspector(inspector);
-      this.beanMetawidget.setInspector(inspector);
-      this.qbeMetawidget.setInspector(inspector);
+      this.searchMetawidget = new ForgeHtmlMetawidget(project);
+      this.searchMetawidget.setConfig("scaffold/faces/metawidget-search.xml");
+
+      this.beanMetawidget = new ForgeHtmlMetawidget(project);
+      this.beanMetawidget.setConfig("scaffold/faces/metawidget-bean.xml");
+
+      this.qbeMetawidget = new ForgeJavaMetawidget(project);
+      this.qbeMetawidget.setConfig("scaffold/faces/metawidget-qbe.xml");
    }
 
    private void loadTemplates()
@@ -368,18 +298,21 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
 
    private void setupRichFaces()
    {
-      if ((this.project.getFacet(DependencyFacet.class).hasEffectiveDependency(this.richfaces3UI)
-               && this.project.getFacet(DependencyFacet.class).hasEffectiveDependency(this.richfaces3Impl))
-               || (this.project.getFacet(DependencyFacet.class).hasEffectiveDependency(this.richfaces4UI)
-               && this.project.getFacet(DependencyFacet.class).hasEffectiveDependency(this.richfaces4Impl)))
-      {
-         @SuppressWarnings("unchecked")
-         CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget> entityWidgetBuider = new CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget>(
-                  new CompositeWidgetBuilderConfig<StaticXmlWidget, StaticXmlMetawidget>().setWidgetBuilders(
-                           new ReadOnlyWidgetBuilder(),
-                           new RichFacesWidgetBuilder(), new EntityWidgetBuilder()));
-         this.entityMetawidget.setWidgetBuilder(entityWidgetBuider);
-      }
+      // TODO: need to get a test case for this
+
+      // if ((this.project.getFacet(DependencyFacet.class).hasEffectiveDependency(this.richfaces3UI)
+      // && this.project.getFacet(DependencyFacet.class).hasEffectiveDependency(this.richfaces3Impl))
+      // || (this.project.getFacet(DependencyFacet.class).hasEffectiveDependency(this.richfaces4UI)
+      // && this.project.getFacet(DependencyFacet.class).hasEffectiveDependency(this.richfaces4Impl)))
+      // {
+      // @SuppressWarnings("unchecked")
+      // CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget> entityWidgetBuider = new
+      // CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget>(
+      // new CompositeWidgetBuilderConfig<StaticXmlWidget, StaticXmlMetawidget>().setWidgetBuilders(
+      // new ReadOnlyWidgetBuilder(),
+      // new RichFacesWidgetBuilder(), new EntityWidgetBuilder()));
+      // this.entityMetawidget.setWidgetBuilder(entityWidgetBuider);
+      // }
    }
 
    @Override
@@ -700,8 +633,9 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       Map<Object, Object> context = CollectionUtils.newHashMap();
       context.put("navigation", writer.toString().trim());
 
-      if(this.navigationTemplate == null) {
-          loadTemplates();
+      if (this.navigationTemplate == null)
+      {
+         loadTemplates();
       }
 
       return ScaffoldUtil.createOrOverwrite(this.prompt, (FileResource<?>) getTemplateStrategy()

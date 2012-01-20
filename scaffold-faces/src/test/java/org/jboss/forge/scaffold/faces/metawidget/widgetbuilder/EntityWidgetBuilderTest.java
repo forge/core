@@ -321,25 +321,53 @@ public class EntityWidgetBuilderTest
 
    static class Bar
    {
-      public String name;
+      public String getName()
+      {
+         return null;
+      }
+
+      public void setName( @SuppressWarnings("unused") String name ) {
+
+         // Do nothing
+      }
 
       @UiComesAfter("name")
-      public String description;
+      public String getDescription()
+      {
+         return null;
+      }
+
+      public void setDescription( @SuppressWarnings("unused") String description ) {
+
+         // Do nothing
+      }
    }
 
    static class FooOneToMany
    {
-      public String field1;
+      public String getField1()
+      {
+         return null;
+      }
 
       @OneToMany
-      public Set<String> field2;
+      public Set<String> getField2()
+      {
+         return null;
+      }
 
-      public String field3;
+      public String getField3()
+      {
+         return null;
+      }
    }
 
    static class FooOneToOne
    {
       @OneToOne
-      public Bar bar;
+      public Bar getBar()
+      {
+         return null;
+      }
    }
 }

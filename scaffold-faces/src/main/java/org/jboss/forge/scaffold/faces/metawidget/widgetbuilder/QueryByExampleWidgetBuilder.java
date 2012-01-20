@@ -21,7 +21,6 @@ import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstant
 
 import java.util.Map;
 
-import org.jboss.solder.core.Veto;
 import org.metawidget.statically.javacode.JavaStatement;
 import org.metawidget.statically.javacode.StaticJavaMetawidget;
 import org.metawidget.statically.javacode.StaticJavaStub;
@@ -31,7 +30,6 @@ import org.metawidget.util.WidgetBuilderUtils;
 import org.metawidget.util.simple.StringUtils;
 import org.metawidget.widgetbuilder.iface.WidgetBuilder;
 
-@Veto
 public class QueryByExampleWidgetBuilder
          implements WidgetBuilder<StaticJavaWidget, StaticJavaMetawidget>
 {
