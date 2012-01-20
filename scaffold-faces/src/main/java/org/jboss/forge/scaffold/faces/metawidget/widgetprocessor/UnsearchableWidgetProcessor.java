@@ -20,7 +20,6 @@ import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstant
 
 import java.util.Map;
 
-import org.jboss.solder.core.Veto;
 import org.metawidget.statically.StaticMetawidget;
 import org.metawidget.statically.StaticWidget;
 import org.metawidget.statically.StaticXmlStub;

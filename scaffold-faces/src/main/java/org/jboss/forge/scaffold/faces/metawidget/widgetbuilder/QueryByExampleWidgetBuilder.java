@@ -21,7 +21,6 @@ import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstant
 
 import java.util.Map;
 
-import org.jboss.solder.core.Veto;
 import org.metawidget.statically.javacode.JavaStatement;
 import org.metawidget.statically.javacode.StaticJavaMetawidget;
 import org.metawidget.statically.javacode.StaticJavaStub;

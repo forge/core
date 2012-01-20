@@ -30,7 +30,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.jboss.solder.core.Veto;
 import org.metawidget.statically.BaseStaticXmlWidget;
 import org.metawidget.statically.StaticWidget;
 import org.metawidget.statically.StaticXmlMetawidget;
@@ -59,7 +58,7 @@ import org.w3c.dom.NodeList;
 
 /**
  * Builds widgets with Forge-specific behaviours (such as links to other scaffolding pages).
- * 
+ *
  * @author Richard Kennard
  */
 
