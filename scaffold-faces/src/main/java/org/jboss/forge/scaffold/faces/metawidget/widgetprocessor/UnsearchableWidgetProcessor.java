@@ -35,7 +35,6 @@ import org.metawidget.widgetprocessor.iface.AdvancedWidgetProcessor;
  * @author Richard Kennard
  */
 
-@Veto
 public class UnsearchableWidgetProcessor
          implements AdvancedWidgetProcessor<StaticWidget, StaticMetawidget>
 {

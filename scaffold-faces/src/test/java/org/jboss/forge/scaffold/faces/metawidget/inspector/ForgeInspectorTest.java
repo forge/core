@@ -96,23 +96,41 @@ public class ForgeInspectorTest
    static class Foo
    {
       @OneToOne(mappedBy = "foo")
-      public Bar oneToOneMappedBy;
+      public Bar getOneToOneMappedBy()
+      {
+         return null;
+      }
 
       @OneToOne
-      public Bar oneToOne;
+      public Bar getOneToOne()
+      {
+         return null;
+      }
 
       @OneToMany
-      public Set<Bar> oneToMany;
+      public Set<Bar> getOneToMany() {
+
+         return null;
+      }
 
       @ManyToOne
-      public Bar manyToOne;
+      public Bar getManyToOne() {
+
+         return null;
+      }
 
       @ManyToMany
-      public Bar manyToMany;
+      public Bar getManyToMany() {
+
+         return null;
+      }
    }
 
    static class Bar
    {
-      public String name;
+      public String getName() {
+
+         return null;
+      }
    }
 }
