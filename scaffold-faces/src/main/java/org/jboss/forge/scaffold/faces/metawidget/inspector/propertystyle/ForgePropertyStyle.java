@@ -59,7 +59,7 @@ public class ForgePropertyStyle
    // Private members
    //
 
-   private final Project project;
+   private Project project;
 
    //
    // Constructor
