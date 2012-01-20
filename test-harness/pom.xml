@@ -25,10 +25,15 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.jboss.arquillian</groupId>
-			<artifactId>arquillian-junit</artifactId>
+			<groupId>org.jboss.arquillian.junit</groupId>
+			<artifactId>arquillian-junit-container</artifactId>
 			<scope>compile</scope>
 		</dependency>
+        <dependency>
+           <groupId>org.jboss.arquillian.container</groupId>
+           <artifactId>arquillian-weld-ee-embedded-1.1</artifactId>
+           <scope>compile</scope>
+        </dependency>
 		<dependency>
 			<groupId>org.jboss.spec</groupId>
 			<artifactId>jboss-javaee-6.0</artifactId>
@@ -36,18 +41,8 @@
 			<type>pom</type>
 		</dependency>
 		<dependency>
-			<groupId>org.jboss.shrinkwrap</groupId>
-			<artifactId>shrinkwrap-api</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
 			<groupId>javax.el</groupId>
 			<artifactId>el-api</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.weld.arquillian.container</groupId>
-			<artifactId>arquillian-weld-ee-embedded-1.1</artifactId>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

@@ -37,7 +37,6 @@ import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.project.Facet;
-import org.jboss.forge.project.Project;
 import org.jboss.forge.project.ProjectModelException;
 import org.jboss.forge.project.facets.BaseFacet;
 import org.jboss.forge.project.facets.JavaSourceFacet;
@@ -55,8 +54,6 @@ import org.jboss.forge.shell.util.Packages;
 @RequiresFacet(MavenCoreFacet.class)
 public class MavenJavaSourceFacet extends BaseFacet implements JavaSourceFacet, Facet
 {
-   private Project project;
-
    @Override
    public List<DirectoryResource> getSourceFolders()
    {
@@ -119,18 +116,6 @@ public class MavenJavaSourceFacet extends BaseFacet implements JavaSourceFacet, 
    {
       DirectoryResource projectRoot = project.getProjectRoot();
       return projectRoot.getChildDirectory("src" + File.separator + "test" + File.separator + "java");
-   }
-
-   @Override
-   public Project getProject()
-   {
-      return project;
-   }
-
-   @Override
-   public void setProject(final Project project)
-   {
-      this.project = project;
    }
 
    @Override

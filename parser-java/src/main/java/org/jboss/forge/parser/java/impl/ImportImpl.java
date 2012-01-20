@@ -89,6 +89,12 @@ public class ImportImpl implements Import
    }
 
    @Override
+   public boolean isWildcard()
+   {
+      return imprt.isOnDemand();
+   }
+
+   @Override
    public Object getInternal()
    {
       return imprt;
@@ -99,7 +105,7 @@ public class ImportImpl implements Import
    {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((imprt == null) ? 0 : imprt.hashCode());
+      result = (prime * result) + ((imprt == null) ? 0 : imprt.hashCode());
       return result;
    }
 
