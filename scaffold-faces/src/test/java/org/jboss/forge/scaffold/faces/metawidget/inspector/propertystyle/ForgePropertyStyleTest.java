@@ -21,62 +21,73 @@
  */
 package org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle;
 
+import static org.junit.Assert.*;
+
 import java.awt.Color;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 
-import junit.framework.TestCase;
-
-import org.jboss.forge.parser.JavaParser;
-import org.jboss.forge.parser.java.Annotation;
-import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.Method;
-import org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle.ForgePropertyStyle.AnnotationProxy;
-import org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle.MockAnnotation.anEnum;
+import org.jboss.forge.project.Project;
+import org.jboss.forge.project.facets.JavaSourceFacet;
+import org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle.MockAnnotationComplex.anEnum;
+import org.jboss.forge.scaffold.util.ScaffoldUtil;
+import org.jboss.forge.test.AbstractShellTest;
+import org.junit.Test;
+import org.metawidget.inspector.impl.propertystyle.Property;
 
 public class ForgePropertyStyleTest
-         extends TestCase
+         extends AbstractShellTest
 {
    //
    // Public methods
    //
 
+   @Test
    public void testAnnotationProxy()
+            throws Exception
    {
-      InputStream stream = ForgePropertyStyleTest.class
-               .getResourceAsStream("/org/jboss/forge/scaffold/faces/metawidget/inspector/propertystyle/MockAnnotatedMethod.java");
-      Method<JavaClass> method = JavaParser.parse(JavaClass.class, stream).getMethods().get(0);
+      Project project = initializeJavaProject();
 
-      @SuppressWarnings("rawtypes")
-      MockAnnotation mockAnnotation = AnnotationProxy.newInstance((Annotation) method
-               .getAnnotation(MockAnnotation.class));
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+      ScaffoldUtil.createOrOverwrite(null, java.getJavaResource("org/jboss/forge/scaffold/faces/metawidget/inspector/propertystyle/MockAnnotatedClass.java"),
+               getClass().getResourceAsStream("/org/jboss/forge/scaffold/faces/metawidget/inspector/propertystyle/MockAnnotatedClass.java"), true);
 
-      assertEquals(MockAnnotation.class, mockAnnotation.annotationType());
-      assertEquals((byte) 1, mockAnnotation.aByte());
-      assertEquals((short) 2, mockAnnotation.aShort());
-      assertEquals(3, mockAnnotation.anInt());
-      assertEquals(4l, mockAnnotation.aLong());
-      assertEquals(5f, mockAnnotation.aFloat());
-      assertEquals(6d, mockAnnotation.aDouble());
-      assertEquals('a', mockAnnotation.aChar());
-      assertEquals(true, mockAnnotation.aBoolean());
-      assertEquals("Foo", mockAnnotation.aString());
-      assertEquals( Date.class, mockAnnotation.aClass() );
-      // TODO: assertEquals( 42, mockAnnotation.anAnnotation().value() );
-      assertEquals(anEnum.ONE, mockAnnotation.anEnum());
-      assertTrue(Arrays.equals(new byte[] { 7, 8 }, mockAnnotation.aByteArray()));
-      assertTrue(Arrays.equals(new short[] { 9, 10 }, mockAnnotation.aShortArray()));
-      assertTrue(Arrays.equals(new int[] { 11, 12 }, mockAnnotation.anIntArray()));
-      assertTrue(Arrays.equals(new long[] { 13l, 14l }, mockAnnotation.aLongArray()));
-      assertTrue(Arrays.equals(new float[] { 15f, 16f }, mockAnnotation.aFloatArray()));
-      assertTrue(Arrays.equals(new double[] { 17d, 18d }, mockAnnotation.aDoubleArray()));
-      assertTrue(Arrays.equals(new char[] { 'b', 'c' }, mockAnnotation.aCharArray()));
-      assertTrue(Arrays.equals(new boolean[] { false, true }, mockAnnotation.aBooleanArray()));
-      assertTrue(Arrays.equals(new String[] { "Bar", "Baz" }, mockAnnotation.aStringArray()));
-      assertTrue(Arrays.equals(new Class[] { Calendar.class, Color.class }, mockAnnotation.aClassArray()));
-      // TODO: assertTrue( Arrays.equals( ..., mockAnnotation.anAnnotationArray() ));
-      assertTrue(Arrays.equals(new anEnum[] { anEnum.TWO, anEnum.THREE }, mockAnnotation.anEnumArray()));
+      ForgePropertyStyle propertyStyle = new ForgePropertyStyle(new ForgePropertyStyleConfig().setProject(project));
+      Map<String, Property> properties = propertyStyle
+               .getProperties("org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle.MockAnnotatedClass");
+
+      Property property = properties.get("mockAnnotatedProperty");
+
+      MockAnnotationSimple mockAnnotationSimple = property.getAnnotation(MockAnnotationSimple.class);
+      assertEquals(MockAnnotationSimple.class, mockAnnotationSimple.annotationType());
+      assertEquals((byte) 1, mockAnnotationSimple.aByte());
+      assertEquals((short) 2, mockAnnotationSimple.aShort());
+      assertEquals(3, mockAnnotationSimple.anInt());
+      assertEquals(4l, mockAnnotationSimple.aLong());
+      assertEquals(5f, mockAnnotationSimple.aFloat(), 0.01);
+      assertEquals(6d, mockAnnotationSimple.aDouble(), 0.01);
+      assertEquals('a', mockAnnotationSimple.aChar());
+      assertEquals(true, mockAnnotationSimple.aBoolean());
+      assertEquals("Foo", mockAnnotationSimple.aString());
+
+      MockAnnotationComplex mockAnnotationComplex = property.getAnnotation(MockAnnotationComplex.class);
+      assertEquals(MockAnnotationComplex.class, mockAnnotationComplex.annotationType());
+      assertEquals(Date.class, mockAnnotationComplex.aClass());
+      // TODO: assertEquals( 42, mockAnnotationComplex.anAnnotation().value() );
+      assertEquals(anEnum.ONE, mockAnnotationComplex.anEnum());
+      assertTrue(Arrays.equals(new byte[] { 7, 8 }, mockAnnotationComplex.aByteArray()));
+      assertTrue(Arrays.equals(new short[] { 9, 10 }, mockAnnotationComplex.aShortArray()));
+      assertTrue(Arrays.equals(new int[] { 11, 12 }, mockAnnotationComplex.anIntArray()));
+      assertTrue(Arrays.equals(new long[] { 13l, 14l }, mockAnnotationComplex.aLongArray()));
+      assertTrue(Arrays.equals(new float[] { 15f, 16f }, mockAnnotationComplex.aFloatArray()));
+      assertTrue(Arrays.equals(new double[] { 17d, 18d }, mockAnnotationComplex.aDoubleArray()));
+      assertTrue(Arrays.equals(new char[] { 'b', 'c' }, mockAnnotationComplex.aCharArray()));
+      assertTrue(Arrays.equals(new boolean[] { false, true }, mockAnnotationComplex.aBooleanArray()));
+      assertTrue(Arrays.equals(new String[] { "Bar", "Baz" }, mockAnnotationComplex.aStringArray()));
+      assertTrue(Arrays.equals(new Class[] { Calendar.class, Color.class }, mockAnnotationComplex.aClassArray()));
+      // TODO: assertTrue( Arrays.equals( ...,mockAnnotationComplex.anAnnotationArray() ));
+      assertTrue(Arrays.equals(new anEnum[] { anEnum.TWO, anEnum.THREE }, mockAnnotationComplex.anEnumArray()));
    }
 }
