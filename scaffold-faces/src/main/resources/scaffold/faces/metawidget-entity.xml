@@ -10,7 +10,7 @@
 	<!-- metawidget-entity.xml is used to generate both the read-only -->
 	<!-- and the editable version of the domain entity		          -->
 	
-	<forgeHtmlMetawidget xmlns="java:org.jboss.forge.scaffold.faces.metawidget">
+	<staticHtmlMetawidget xmlns="java:org.metawidget.statically.faces.component.html">
 	
 		<inspector>
 			<compositeInspector xmlns="java:org.metawidget.inspector.composite" config="CompositeInspectorConfig">
@@ -67,6 +67,6 @@
 			</htmlPanelGridLayout>
 		</layout>
 		
-	</forgeHtmlMetawidget>			
+	</staticHtmlMetawidget>			
 
 </metawidget>

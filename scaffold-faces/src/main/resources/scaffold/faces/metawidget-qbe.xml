@@ -9,7 +9,7 @@
 
 	<!-- metawidget-qbe.xml is used to generate the Query By Example (QBE) Java code -->
 	
-	<forgeJavaMetawidget xmlns="java:org.jboss.forge.scaffold.faces.metawidget">
+	<staticJavaMetawidget xmlns="java:org.metawidget.statically.javacode">
 	
 		<inspector>
 			<compositeInspector xmlns="java:org.metawidget.inspector.composite" config="CompositeInspectorConfig">
@@ -49,6 +49,6 @@
 			</array>
 		</widgetProcessors>
 		
-	</forgeJavaMetawidget>			
+	</staticJavaMetawidget>			
 
 </metawidget>

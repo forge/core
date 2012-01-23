@@ -57,8 +57,7 @@ import org.jboss.forge.resources.Resource;
 import org.jboss.forge.scaffold.AccessStrategy;
 import org.jboss.forge.scaffold.ScaffoldProvider;
 import org.jboss.forge.scaffold.TemplateStrategy;
-import org.jboss.forge.scaffold.faces.metawidget.ForgeHtmlMetawidget;
-import org.jboss.forge.scaffold.faces.metawidget.ForgeJavaMetawidget;
+import org.jboss.forge.scaffold.faces.metawidget.config.ForgeConfigReader;
 import org.jboss.forge.scaffold.util.ScaffoldUtil;
 import org.jboss.forge.shell.ShellPrompt;
 import org.jboss.forge.shell.plugins.Alias;
@@ -75,7 +74,9 @@ import org.jboss.seam.render.template.resolver.ClassLoaderTemplateResolver;
 import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
 import org.metawidget.statically.StaticUtils.IndentedWriter;
 import org.metawidget.statically.faces.StaticFacesUtils;
+import org.metawidget.statically.faces.component.html.StaticHtmlMetawidget;
 import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlOutcomeTargetLink;
+import org.metawidget.statically.javacode.StaticJavaMetawidget;
 import org.metawidget.statically.jsp.html.widgetbuilder.HtmlTag;
 import org.metawidget.util.CollectionUtils;
 import org.metawidget.util.XmlUtils;
@@ -152,10 +153,10 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    private final ShellPrompt prompt;
    private final TemplateCompiler compiler;
    private final Event<InstallFacets> install;
-   private ForgeHtmlMetawidget entityMetawidget;
-   private ForgeHtmlMetawidget searchMetawidget;
-   private ForgeHtmlMetawidget beanMetawidget;
-   private ForgeJavaMetawidget qbeMetawidget;
+   private StaticHtmlMetawidget entityMetawidget;
+   private StaticHtmlMetawidget searchMetawidget;
+   private StaticHtmlMetawidget beanMetawidget;
+   private StaticJavaMetawidget qbeMetawidget;
 
    @Inject
    public FacesScaffold(final ShellPrompt prompt,
@@ -181,16 +182,22 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
 
       // Initialize Metawidgets
 
-      this.entityMetawidget = new ForgeHtmlMetawidget(project);
+      ForgeConfigReader configReader = new ForgeConfigReader( project );
+
+      this.entityMetawidget = new StaticHtmlMetawidget();
+      this.entityMetawidget.setConfigReader( configReader );
       this.entityMetawidget.setConfig("scaffold/faces/metawidget-entity.xml");
 
-      this.searchMetawidget = new ForgeHtmlMetawidget(project);
+      this.searchMetawidget = new StaticHtmlMetawidget();
+      this.searchMetawidget.setConfigReader( configReader );
       this.searchMetawidget.setConfig("scaffold/faces/metawidget-search.xml");
 
-      this.beanMetawidget = new ForgeHtmlMetawidget(project);
+      this.beanMetawidget = new StaticHtmlMetawidget();
+      this.beanMetawidget.setConfigReader( configReader );
       this.beanMetawidget.setConfig("scaffold/faces/metawidget-bean.xml");
 
-      this.qbeMetawidget = new ForgeJavaMetawidget(project);
+      this.qbeMetawidget = new StaticJavaMetawidget();
+      this.qbeMetawidget.setConfigReader( configReader );
       this.qbeMetawidget.setConfig("scaffold/faces/metawidget-qbe.xml");
    }
 

@@ -22,7 +22,7 @@
 package org.jboss.forge.scaffold.faces.metawidget.config;
 
 import org.jboss.forge.project.Project;
-import org.metawidget.config.ConfigReader;
+import org.metawidget.config.impl.BaseConfigReader;
 
 /**
  * ConfigReader with Forge-specific features.
@@ -31,7 +31,7 @@ import org.metawidget.config.ConfigReader;
  */
 
 public class ForgeConfigReader
-         extends ConfigReader
+         extends BaseConfigReader
 {
    //
    // Private statics

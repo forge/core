@@ -22,11 +22,44 @@
 
 package org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle;
 
+
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  *
  */
-public @interface AnotherMockAnnotation
+public @interface MockAnnotationSimple
 {
-   int value() default 42;
+   byte aByte();
+
+   short aShort();
+
+   int anInt();
+
+   long aLong();
+
+   float aFloat();
+
+   double aDouble();
+
+   char aChar();
+
+   boolean aBoolean();
+
+   byte[] aByteArray();
+
+   short[] aShortArray();
+
+   int[] anIntArray();
+
+   long[] aLongArray();
+
+   float[] aFloatArray();
+
+   double[] aDoubleArray();
+
+   char[] aCharArray();
+
+   boolean[] aBooleanArray();
+
+   String aString();
 }

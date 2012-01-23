@@ -499,8 +499,6 @@ public class ForgePropertyStyle
       {
          if (this.readMethod != null)
          {
-            // Note: this needs https://issues.jboss.org/browse/FORGE-387
-
             @SuppressWarnings({ "unchecked", "rawtypes" })
             List<Type<?>> typeArguments = (List) this.readMethod.getReturnTypeInspector().getTypeArguments();
 
