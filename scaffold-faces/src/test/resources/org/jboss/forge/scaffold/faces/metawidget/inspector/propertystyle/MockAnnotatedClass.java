@@ -4,13 +4,18 @@ import java.awt.Color;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle.AnotherMockAnnotation;
-import org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle.MockAnnotation;
-import org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle.MockAnnotation.anEnum;
+import org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle.NestedMockAnnotation;
+import org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle.MockAnnotationSimple;
+import org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle.MockAnnotationComplex;
+import org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle.MockAnnotationComplex.anEnum;
 
-public class MockAnnotatedMethod
+/**
+ * Tests all annotation types, defined on both fields and getters
+ */
+
+public class MockAnnotatedClass
 {
-   @MockAnnotation(
+   @MockAnnotationSimple(
             aByte = 1,
             aShort = 2,
             anInt = 3,
@@ -19,9 +24,12 @@ public class MockAnnotatedMethod
             aDouble = 6d,
             aChar = 'a',
             aBoolean = true,
-            aString = "Foo",
+            aString = "Foo")
+   public String mockAnnotatedProperty;
+
+   @MockAnnotationComplex(
             aClass = Date.class,
-            anAnnotation = @AnotherMockAnnotation( 43 ),
+            anAnnotation = @NestedMockAnnotation( 43 ),
             anEnum = anEnum.ONE,
             aByteArray = { 7, 8 },
             aShortArray = { 9, 10 },
@@ -33,9 +41,9 @@ public class MockAnnotatedMethod
             aBooleanArray = { false, true },
             aStringArray = { "Bar", "Baz" },
             aClassArray = { Calendar.class, Color.class },
-            anAnnotationArray = { @AnotherMockAnnotation },
+            anAnnotationArray = { @NestedMockAnnotation },
             anEnumArray = { anEnum.TWO, anEnum.THREE })
-   public MockAnnotatedMethod()
+   public String getMockAnnotatedProperty()
    {
    }
 }

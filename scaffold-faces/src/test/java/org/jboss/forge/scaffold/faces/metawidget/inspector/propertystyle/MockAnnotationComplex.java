@@ -27,29 +27,11 @@ package org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  *
  */
-public @interface MockAnnotation
+public @interface MockAnnotationComplex
 {
-   byte aByte();
-
-   short aShort();
-
-   int anInt();
-
-   long aLong();
-
-   float aFloat();
-
-   double aDouble();
-
-   char aChar();
-
-   boolean aBoolean();
-
-   String aString();
-
    Class<?> aClass();
 
-   AnotherMockAnnotation anAnnotation();
+   NestedMockAnnotation anAnnotation();
 
    anEnum anEnum();
 
@@ -73,7 +55,7 @@ public @interface MockAnnotation
 
    Class<?>[] aClassArray();
 
-   AnotherMockAnnotation[] anAnnotationArray();
+   NestedMockAnnotation[] anAnnotationArray();
 
    anEnum[] anEnumArray();
 
