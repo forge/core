@@ -10,7 +10,7 @@
 	<!-- metawidget-bean.xml is used to generate the view Bean's -->
 	<!-- getPageItems() method and render a Collection			 -->
 	
-	<forgeHtmlMetawidget xmlns="java:org.jboss.forge.scaffold.faces.metawidget">
+	<staticHtmlMetawidget xmlns="java:org.metawidget.statically.faces.component.html">
 	
 		<inspector>
 			<compositeInspector xmlns="java:org.metawidget.inspector.composite" config="CompositeInspectorConfig">
@@ -56,6 +56,6 @@
 			<simpleLayout xmlns="java:org.metawidget.statically.layout"/>
 		</layout>
 		
-	</forgeHtmlMetawidget>			
+	</staticHtmlMetawidget>			
 
 </metawidget>
