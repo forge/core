@@ -9,7 +9,7 @@
 
 	<!-- metawidget-search.xml is used to generate the search fields -->
 	
-	<forgeHtmlMetawidget xmlns="java:org.jboss.forge.scaffold.faces.metawidget">
+	<staticHtmlMetawidget xmlns="java:org.metawidget.statically.faces.component.html">
 	
 		<inspector>
 			<compositeInspector xmlns="java:org.metawidget.inspector.composite" config="CompositeInspectorConfig">
@@ -76,6 +76,6 @@
 			</htmlPanelGridLayout>
 		</layout>
 		
-	</forgeHtmlMetawidget>			
+	</staticHtmlMetawidget>			
 
 </metawidget>
