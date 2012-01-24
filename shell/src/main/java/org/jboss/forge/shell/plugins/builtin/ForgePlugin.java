@@ -546,7 +546,7 @@ public class ForgePlugin implements Plugin
          }
 
          ShellMessages.info(out, "Invoking build with underlying build system.");
-         Resource<?> artifact = project.getFacet(PackagingFacet.class).executeBuild();
+         Resource<?> artifact = project.getFacet(PackagingFacet.class).createBuilder().runTests(false).build();
          if ((artifact != null) && artifact.exists())
          {
             MetadataFacet meta = project.getFacet(MetadataFacet.class);
