@@ -22,9 +22,6 @@
 package org.jboss.forge.maven.facets;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
@@ -36,6 +33,7 @@ import org.jboss.forge.ForgeEnvironment;
 import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.parser.java.util.Strings;
 import org.jboss.forge.project.Facet;
+import org.jboss.forge.project.build.ProjectBuilder;
 import org.jboss.forge.project.facets.BaseFacet;
 import org.jboss.forge.project.facets.FacetNotFoundException;
 import org.jboss.forge.project.facets.PackagingFacet;
@@ -44,7 +42,6 @@ import org.jboss.forge.project.packaging.events.PackagingChanged;
 import org.jboss.forge.project.services.ResourceFactory;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.shell.Shell;
-import org.jboss.forge.shell.ShellMessages;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 
@@ -138,31 +135,13 @@ public class MavenPackagingFacet extends BaseFacet implements PackagingFacet, Fa
    @Override
    public Resource<?> executeBuild(final String... args)
    {
-      String[] defaults = new String[] { "clean", "package" };
-      String[] selected = defaults;
-      if ((args != null) && (args.length > 0))
-      {
-         selected = args;
-      }
+      return createBuilder().addArguments(args).build();
+   }
 
-      if (!environment.isOnline())
-      {
-         List<String> list = new ArrayList<String>(Arrays.asList(selected));
-         list.add("--offline");
-         selected = list.toArray(new String[list.size()]);
-      }
-
-      boolean success = project.getFacet(MavenCoreFacet.class).executeMaven(selected);
-
-      if (success)
-      {
-         ShellMessages.success(shell, "Build successful.");
-         return getFinalArtifact();
-      }
-      else
-      {
-         throw new RuntimeException("Build failed.");
-      }
+   @Override
+   public ProjectBuilder createBuilder()
+   {
+      return new MavenProjectBuilder(environment, project);
    }
 
    @Override

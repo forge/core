@@ -22,6 +22,7 @@
 package org.jboss.forge.maven;
 
 import java.io.PrintStream;
+import java.util.List;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
@@ -97,10 +98,16 @@ public interface MavenCoreFacet extends Facet
    public boolean executeMaven(ShellPrintWriter out, String[] parameters);
 
    /**
-    * Execute a command using the native Maven installation. If native Maven is not available, fall back to the embedded
-    * Maven provider built in to Forge.
+    * Execute a command using the native Maven installation and given parameters. If native Maven is not available, fall
+    * back to the embedded Maven provider built in to Forge.
     */
-   public boolean executeMaven(String[] selected);
+   public boolean executeMaven(String[] parameters);
+
+   /**
+    * Execute a command using the native Maven installation and given parameters. If native Maven is not available, fall
+    * back to the embedded Maven provider built in to Forge.
+    */
+   public boolean executeMaven(List<String> parameters);
 
    /**
     * Get the location of the currently configured local maven repository.

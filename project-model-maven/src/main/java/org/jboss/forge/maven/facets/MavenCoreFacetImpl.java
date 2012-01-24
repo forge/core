@@ -27,6 +27,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.annotation.Annotation;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 
@@ -270,6 +271,12 @@ public class MavenCoreFacetImpl extends BaseFacet implements MavenCoreFacet, Fac
       int i = cli.doMain(parms, project.getProjectRoot().getFullyQualifiedName(),
                out, err);
       return i == 0;
+   }
+
+   @Override
+   public boolean executeMaven(final List<String> parameters)
+   {
+      return executeMaven(parameters.toArray(new String[] {}));
    }
 
    @Override

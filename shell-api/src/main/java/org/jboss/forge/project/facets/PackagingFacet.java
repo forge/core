@@ -22,6 +22,7 @@
 package org.jboss.forge.project.facets;
 
 import org.jboss.forge.project.Facet;
+import org.jboss.forge.project.build.ProjectBuilder;
 import org.jboss.forge.project.packaging.PackagingType;
 import org.jboss.forge.resources.Resource;
 
@@ -50,6 +51,12 @@ public interface PackagingFacet extends Facet
    Resource<?> getFinalArtifact();
 
    /**
+    * Return a new {@link ProjectBuilder} instance. This object is responsible for executing a build with custom
+    * options.
+    */
+   ProjectBuilder createBuilder();
+
+   /**
     * Trigger the underlying build system to perform a build with the given arguments or flags.
     * 
     * @return The final build artifact if building succeeded, otherwise return null
@@ -66,4 +73,5 @@ public interface PackagingFacet extends Facet
     * Set the final name of this project's build output artifact. This represents the name without file extension.
     */
    void setFinalName(String finalName);
+
 }
