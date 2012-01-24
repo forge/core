@@ -32,15 +32,15 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
  */
 public interface ValidationDescriptor extends Descriptor
 {
-   ValidationDescriptor defaultProvider(String defaultProvider);
+   ValidationDescriptor setDefaultProvider(String defaultProvider);
 
-   ValidationDescriptor messageInterpolator(String messageInterpolator);
+   ValidationDescriptor setMessageInterpolator(String messageInterpolator);
 
-   ValidationDescriptor traversableResolver(String traversableResolver);
+   ValidationDescriptor setTraversableResolver(String traversableResolver);
 
-   ValidationDescriptor constraintValidatorFactory(String constraintValidatorFactory);
+   ValidationDescriptor setConstraintValidatorFactory(String constraintValidatorFactory);
 
-   ValidationDescriptor constraintMapping(String constraintMapping);
+   ValidationDescriptor setConstraintMapping(String constraintMapping);
 
    String getDefaultProvider();
 
