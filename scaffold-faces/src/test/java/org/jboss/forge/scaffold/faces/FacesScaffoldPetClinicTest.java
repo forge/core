@@ -28,7 +28,6 @@ import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.shell.util.Streams;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -36,7 +35,6 @@ import org.junit.runner.RunWith;
  * @author Richard Kennard
  */
 
-@Ignore
 @RunWith(Arquillian.class)
 public class FacesScaffoldPetClinicTest extends AbstractFacesScaffoldTest
 {
