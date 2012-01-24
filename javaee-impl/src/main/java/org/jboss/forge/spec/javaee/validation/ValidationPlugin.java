@@ -21,9 +21,6 @@
  */
 package org.jboss.forge.spec.javaee.validation;
 
-import static org.jboss.forge.shell.PromptType.JAVA_CLASS;
-import static org.jboss.shrinkwrap.descriptor.api.Descriptors.create;
-
 import java.util.Set;
 
 import javax.enterprise.event.Event;
@@ -35,6 +32,7 @@ import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyInstaller;
 import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.facets.events.InstallFacets;
+import org.jboss.forge.shell.PromptType;
 import org.jboss.forge.shell.ShellPrompt;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.Command;
@@ -46,6 +44,7 @@ import org.jboss.forge.spec.javaee.ValidationFacet;
 import org.jboss.forge.spec.javaee.descriptor.ValidationDescriptor;
 import org.jboss.forge.spec.javaee.validation.provider.BVProvider;
 import org.jboss.forge.spec.javaee.validation.provider.ValidationProvider;
+import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 
 /**
  * @author Kevin Pollet
@@ -74,54 +73,49 @@ public class ValidationPlugin implements Plugin
 
    @Command(value = "setup", help = "Setup validation for this project")
    public void setup(
-            @Option(name = "provider", defaultValue = "HIBERNATE_VALIDATOR", required = true) final BVProvider provider,
-            @Option(name = "messageInterpolator", type = JAVA_CLASS) final String messageInterpolator,
-            @Option(name = "traversableResolver", type = JAVA_CLASS) final String traversableResolver,
-            @Option(name = "constraintValidatorFactory", type = JAVA_CLASS) final String constraintValidatorFactory)
+            @Option(name = "provider", defaultValue = "HIBERNATE_VALIDATOR", required = true) final BVProvider providerType,
+            @Option(name = "messageInterpolator", type = PromptType.JAVA_CLASS) final String messageInterpolator,
+            @Option(name = "traversableResolver", type = PromptType.JAVA_CLASS) final String traversableResolver,
+            @Option(name = "constraintValidatorFactory", type = PromptType.JAVA_CLASS) final String constraintValidatorFactory)
    {
       // instantiates the validation provider specified by the user
-      final ValidationProvider validationProvider = provider.getValidationProvider(beanManager);
+      final ValidationProvider provider = providerType.getValidationProvider(beanManager);
 
-      installValidationFacet();
-      installDependencies(validationProvider.getDependencies());
-
-      if (!validationProvider.getAdditionalDependencies().isEmpty())
-      {
-         if (prompt.promptBoolean("Would you install " + provider.getName() + " additional dependencies?", false)) {
-            installDependencies(validationProvider.getAdditionalDependencies());
-         }
-      }
-
-      // generates the default provider validation configuration file
-      final ValidationDescriptor providerDescriptor = validationProvider.getDefaultDescriptor();
-      final ValidationDescriptor descriptor = create(ValidationDescriptor.class)
-               .defaultProvider(providerDescriptor.getDefaultProvider())
-               .messageInterpolator(
-                        messageInterpolator == null ? providerDescriptor.getMessageInterpolator() : messageInterpolator)
-               .traversableResolver(
-                        traversableResolver == null ? providerDescriptor.getTraversableResolver() : traversableResolver)
-               .constraintValidatorFactory(
-                        constraintValidatorFactory == null ? providerDescriptor.getConstraintValidatorFactory()
-                                 : constraintValidatorFactory);
-
-      project.getFacet(ValidationFacet.class).saveConfig(descriptor);
-   }
-
-   private void installValidationFacet()
-   {
       if (!project.hasFacet(ValidationFacet.class))
       {
          request.fire(new InstallFacets(ValidationFacet.class));
       }
+
+      installDependencies(provider.getDependencies());
+
+      if (!provider.getAdditionalDependencies().isEmpty())
+      {
+         if (prompt.promptBoolean("Would you install " + providerType.getName() + " additional dependencies?", false)) {
+            installDependencies(provider.getAdditionalDependencies());
+         }
+      }
+
+      if (provider.getDefaultDescriptor() != null)
+      {
+         final ValidationDescriptor providerDescriptor = provider.getDefaultDescriptor();
+         final ValidationDescriptor descriptor = Descriptors.create(ValidationDescriptor.class)
+                  .setDefaultProvider(providerDescriptor.getDefaultProvider())
+                  .setMessageInterpolator( messageInterpolator == null ? providerDescriptor.getMessageInterpolator() : messageInterpolator)
+                  .setTraversableResolver( traversableResolver == null ? providerDescriptor.getTraversableResolver() : traversableResolver)
+                  .setConstraintValidatorFactory( constraintValidatorFactory == null ? providerDescriptor.getConstraintValidatorFactory() : constraintValidatorFactory);
+         
+         project.getFacet(ValidationFacet.class).saveConfig(descriptor);
+      }
+
    }
 
    private void installDependencies(final Set<Dependency> dependencies)
    {
-      for (Dependency oneDependency : dependencies)
+      for (Dependency dep : dependencies)
       {
-         if (!installer.isInstalled(project, oneDependency))
+         if (!installer.isInstalled(project, dep))
          {
-            installer.install(project, oneDependency);
+            installer.install(project, dep);
          }
       }
    }
