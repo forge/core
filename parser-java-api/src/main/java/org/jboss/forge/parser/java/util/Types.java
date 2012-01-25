@@ -255,4 +255,9 @@ public class Types
       return type;
    }
 
+   public static boolean isPrimitive(String result)
+   {
+      return Arrays.asList("byte", "short", "int", "long", "float", "double", "boolean", "char").contains(result);
+   }
+
 }

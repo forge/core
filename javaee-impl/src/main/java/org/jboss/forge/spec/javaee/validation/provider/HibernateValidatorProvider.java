@@ -45,10 +45,10 @@ public class HibernateValidatorProvider implements ValidationProvider
    {
       // define hibernate validator default descriptor file
       this.defaultDescriptor = Descriptors.create(ValidationDescriptor.class)
-               .defaultProvider("org.hibernate.validator.HibernateValidator")
-               .messageInterpolator("org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator")
-               .traversableResolver("org.hibernate.validator.engine.resolver.DefaultTraversableResolver")
-               .constraintValidatorFactory("org.hibernate.validator.engine.ConstraintValidatorFactoryImpl");
+               .setDefaultProvider("org.hibernate.validator.HibernateValidator")
+               .setMessageInterpolator("org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator")
+               .setTraversableResolver("org.hibernate.validator.engine.resolver.DefaultTraversableResolver")
+               .setConstraintValidatorFactory("org.hibernate.validator.engine.ConstraintValidatorFactoryImpl");
 
       // add hibernate validator dependencies
       final DependencyBuilder hibernateValidator = DependencyBuilder.create()

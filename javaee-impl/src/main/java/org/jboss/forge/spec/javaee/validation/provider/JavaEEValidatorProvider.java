@@ -21,40 +21,36 @@
  */
 package org.jboss.forge.spec.javaee.validation.provider;
 
-import static org.jboss.forge.shell.util.BeanManagerUtils.getContextualInstance;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
-import javax.enterprise.inject.spi.BeanManager;
+import org.jboss.forge.project.dependencies.Dependency;
+import org.jboss.forge.spec.javaee.descriptor.ValidationDescriptor;
 
 /**
- * @author Kevin Pollet
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public enum BVProvider
+public class JavaEEValidatorProvider implements ValidationProvider
 {
-   JAVA_EE("Generic Java EE", JavaEEValidatorProvider.class),
-   HIBERNATE_VALIDATOR("Hibernate Validator", HibernateValidatorProvider.class),
-   APACHE_BEAN_VALIDATION("Apache Bean Validation", ApacheBeanValidationProvider.class);
+   public JavaEEValidatorProvider()
+   {}
 
-   private final String name;
-   private final Class<? extends ValidationProvider> validationProviderClass;
-
-   BVProvider(String name, Class<? extends ValidationProvider> validationProviderClass)
+   @Override
+   public ValidationDescriptor getDefaultDescriptor()
    {
-      this.name = name;
-      this.validationProviderClass = validationProviderClass;
+      return null;
    }
 
-   public String getName()
+   @Override
+   public Set<Dependency> getDependencies()
    {
-      return name;
+      return new HashSet<Dependency>();
    }
 
-   public ValidationProvider getValidationProvider(BeanManager manager)
+   @Override
+   public Set<Dependency> getAdditionalDependencies()
    {
-      return getContextualInstance(manager, validationProviderClass);
-   }
-
-   public Class<? extends ValidationProvider> getValidationProviderClass()
-   {
-      return validationProviderClass;
+      return Collections.emptySet();
    }
 }
