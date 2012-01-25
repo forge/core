@@ -20,12 +20,15 @@ public class MockAnnotatedClass
             aShort = 2,
             anInt = 3,
             aLong = 4l,
-            aFloat = 5f,
+            aFloat = 5f)
+   private String mockAnnotatedProperty;
+
+   @MockAnnotationSimple(
             aDouble = 6d,
             aChar = 'a',
             aBoolean = true,
             aString = "Foo")
-   public String mockAnnotatedProperty;
+   private String mMockAnnotatedProperty;
 
    @MockAnnotationComplex(
             aClass = Date.class,
