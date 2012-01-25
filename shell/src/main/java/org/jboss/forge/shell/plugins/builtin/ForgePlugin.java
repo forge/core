@@ -431,19 +431,20 @@ public class ForgePlugin implements Plugin
          // Now try to find a matching Branch
          if (ref == null)
          {
-            List<Ref> refs = GitUtils.getBranches(repo);
+            List<Ref> refs = GitUtils.getRemoteBranches(repo);
             for (Ref branchRef : refs) {
-               if (branchRef.getName().equals(targetRef))
+               if (branchRef.getName().endsWith(targetRef))
                {
-                  ref = branchRef;
+                  ref = repo.branchCreate().setName(targetRef).setUpstreamMode(SetupUpstreamMode.TRACK)
+                           .setStartPoint("origin/" + targetRef).call();
                }
             }
          }
 
          if (ref != null)
          {
-            ShellMessages.info(out, "Switching to branch/tag [" + targetRef + "]");
-            GitUtils.checkout(repo, ref, false, SetupUpstreamMode.SET_UPSTREAM, false);
+            ShellMessages.info(out, "Switching to branch/tag [" + ref.getName() + "]");
+            GitUtils.checkout(repo, ref, false, SetupUpstreamMode.TRACK, false);
          }
          else if (refName != null)
          {

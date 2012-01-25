@@ -22,16 +22,17 @@
 package org.jboss.forge.git;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.jgit.api.CheckoutCommand;
+import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode;
 import org.eclipse.jgit.api.FetchCommand;
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.ListBranchCommand;
 import org.eclipse.jgit.api.PullCommand;
 import org.eclipse.jgit.api.PullResult;
-import org.eclipse.jgit.api.TagCommand;
 import org.eclipse.jgit.api.errors.CanceledException;
 import org.eclipse.jgit.api.errors.ConcurrentRefUpdateException;
 import org.eclipse.jgit.api.errors.DetachedHeadException;
@@ -45,9 +46,9 @@ import org.eclipse.jgit.api.errors.RefAlreadyExistsException;
 import org.eclipse.jgit.api.errors.RefNotFoundException;
 import org.eclipse.jgit.api.errors.WrongRepositoryStateException;
 import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.lib.RepositoryBuilder;
 import org.eclipse.jgit.lib.TextProgressMonitor;
-import org.eclipse.jgit.revwalk.RevTag;
 import org.eclipse.jgit.transport.FetchResult;
 import org.eclipse.jgit.transport.RefSpec;
 import org.jboss.forge.resources.DirectoryResource;
@@ -62,8 +63,10 @@ public abstract class GitUtils
 {
    public static Git clone(final DirectoryResource dir, final String repoUri) throws IOException
    {
-      new Clone().run(dir.getUnderlyingResourceObject(), repoUri);
-      return git(dir);
+      CloneCommand clone = Git.cloneRepository().setURI(repoUri)
+               .setDirectory(dir.getUnderlyingResourceObject());
+      Git git = clone.call();
+      return git;
    }
 
    public static Git git(final DirectoryResource dir) throws IOException
@@ -85,13 +88,13 @@ public abstract class GitUtils
       return checkout.call();
    }
 
-   public static Ref checkout(final Git git, final Ref remote, final boolean createBranch,
+   public static Ref checkout(final Git git, final Ref localRef, final boolean createBranch,
             final SetupUpstreamMode mode, final boolean force)
             throws JGitInternalException,
             RefAlreadyExistsException, RefNotFoundException, InvalidRefNameException
    {
       CheckoutCommand checkout = git.checkout();
-      checkout.setName(remote.getName());
+      checkout.setName(Repository.shortenRefName(localRef.getName()));
       checkout.setForce(force);
       checkout.setUpstreamMode(mode);
       return checkout.call();
@@ -135,7 +138,8 @@ public abstract class GitUtils
    }
 
    public static PullResult pull(final Git git, final int timeout) throws WrongRepositoryStateException,
-            InvalidConfigurationException, DetachedHeadException, InvalidRemoteException, CanceledException
+            InvalidConfigurationException, DetachedHeadException, InvalidRemoteException, CanceledException,
+            RefNotFoundException, NoHeadException
    {
       PullCommand pull = git.pull();
       if (timeout >= 0)
@@ -146,22 +150,25 @@ public abstract class GitUtils
       return result;
    }
 
-   public static List<Ref> getBranches(final Git repo) throws JGitInternalException, ConcurrentRefUpdateException,
+   public static List<Ref> getRemoteBranches(final Git repo) throws JGitInternalException,
+            ConcurrentRefUpdateException,
             InvalidTagNameException, NoHeadException
    {
-      ListBranchCommand branchListCommand = repo.branchList();
-      List<Ref> branchList = branchListCommand.call();
+      List<Ref> results = new ArrayList<Ref>();
+      try {
+         FetchResult fetch = repo.fetch().setRemote("origin").call();
+         Collection<Ref> refs = fetch.getAdvertisedRefs();
+         for (Ref ref : refs) {
+            if (ref.getName().startsWith("refs/heads"))
+            {
+               results.add(ref);
+            }
+         }
+      }
+      catch (InvalidRemoteException e) {
+         e.printStackTrace();
+      }
 
-      return branchList;
-   }
-
-   public static List<Ref> getTags(final Git repo) throws JGitInternalException, ConcurrentRefUpdateException,
-            InvalidTagNameException, NoHeadException
-   {
-      TagCommand tagCommand = repo.tag();
-      RevTag revTag = tagCommand.call();
-      String tagName = revTag.getTagName();
-
-      return null;
+      return results;
    }
 }

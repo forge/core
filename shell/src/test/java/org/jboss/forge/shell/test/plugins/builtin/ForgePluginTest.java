@@ -64,11 +64,11 @@ public class ForgePluginTest extends AbstractShellTest
       getShell().execute("forge source-plugin ~/Projects/forge/plugins/switchyard-core/tools/forge/plugin");
    }
 
-   @Ignore
    @Test
+   @Ignore
    public void testBuildPrettyfaces() throws Exception
    {
-      getShell().getEnvironment().setProperty(ShellImpl.PROP_FORGE_VERSION, "1.0.0.Beta6");
+      getShell().getEnvironment().setProperty(ShellImpl.PROP_FORGE_VERSION, "1.0.0.Beta5");
       getShell().execute("forge install-plugin ocpsoft-prettyfaces");
    }
 
