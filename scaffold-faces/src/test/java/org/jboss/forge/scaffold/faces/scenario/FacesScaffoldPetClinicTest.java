@@ -19,15 +19,22 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.scaffold.faces;
+package org.jboss.forge.scaffold.faces.scenario;
+
+import java.util.Arrays;
+
+import javax.inject.Inject;
 
 import junit.framework.Assert;
 
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.resources.FileResource;
+import org.jboss.forge.scaffold.faces.AbstractFacesScaffoldTest;
 import org.jboss.forge.shell.util.Streams;
+import org.jboss.forge.test.web.WebTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -38,6 +45,9 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class FacesScaffoldPetClinicTest extends AbstractFacesScaffoldTest
 {
+   @Inject
+   private WebTest webTest;
+
    /**
     * Burr's example domain model from 7th Dec 2011.
     */
@@ -45,6 +55,7 @@ public class FacesScaffoldPetClinicTest extends AbstractFacesScaffoldTest
    @Test
    public void testGeneratePetClinic() throws Exception
    {
+      Project current = getShell().getCurrentProject();
       Project project = setupScaffoldProject();
 
       queueInputLines("");
@@ -116,6 +127,16 @@ public class FacesScaffoldPetClinicTest extends AbstractFacesScaffoldTest
                "\t\t\t\t</h:panelGroup>";
 
       Assert.assertTrue(contents.contains(metawidget));
+
+      // Deploy to a real container and test
+
+      this.webTest.setup(project);
+      JavaClass clazz = this.webTest.from(current, FacesScaffoldPetClinicClientTest.class);
+
+      this.webTest.buildDefaultDeploymentMethod(project, clazz, Arrays.asList(
+               ".addAsResource(\"META-INF/persistence.xml\", \"META-INF/persistence.xml\")"
+               ));
+      this.webTest.addAsTestClass(project, clazz);
 
       getShell().execute("build");
    }
