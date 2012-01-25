@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.scaffold.faces;
+package org.jboss.forge.scaffold.faces.scenario;
 
 import junit.framework.Assert;
 
@@ -28,6 +28,7 @@ import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.resources.FileResource;
+import org.jboss.forge.scaffold.faces.AbstractFacesScaffoldTest;
 import org.jboss.forge.shell.util.Streams;
 import org.junit.Test;
 import org.junit.runner.RunWith;
