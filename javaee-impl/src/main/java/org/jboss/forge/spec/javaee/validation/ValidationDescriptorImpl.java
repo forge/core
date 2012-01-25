@@ -49,35 +49,35 @@ public class ValidationDescriptorImpl extends NodeDescriptorImplBase implements 
    }
 
    @Override
-   public ValidationDescriptor defaultProvider(String defaultProvider)
+   public ValidationDescriptor setDefaultProvider(String defaultProvider)
    {
       model.getOrCreate("default-provider").text(defaultProvider);
       return this;
    }
 
    @Override
-   public ValidationDescriptor messageInterpolator(String messageInterpolator)
+   public ValidationDescriptor setMessageInterpolator(String messageInterpolator)
    {
       model.getOrCreate("message-interpolator").text(messageInterpolator);
       return this;
    }
 
    @Override
-   public ValidationDescriptor traversableResolver(String traversableResolver)
+   public ValidationDescriptor setTraversableResolver(String traversableResolver)
    {
       model.getOrCreate("traversable-resolver").text(traversableResolver);
       return this;
    }
 
    @Override
-   public ValidationDescriptor constraintValidatorFactory(String constraintValidatorFactory)
+   public ValidationDescriptor setConstraintValidatorFactory(String constraintValidatorFactory)
    {
       model.getOrCreate("constraint-validator-factory").text(constraintValidatorFactory);
       return this;
    }
 
    @Override
-   public ValidationDescriptor constraintMapping(String constraintMapping)
+   public ValidationDescriptor setConstraintMapping(String constraintMapping)
    {
       model.createChild("constraint-mapping").text(constraintMapping);
       return this;

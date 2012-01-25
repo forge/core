@@ -281,6 +281,11 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
       String original = type;
       String result = type;
 
+      if (Types.isPrimitive(result))
+      {
+         return result;
+      }
+
       // Strip away any characters that might hinder the type matching process
       if (Types.isArray(result))
       {

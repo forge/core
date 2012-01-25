@@ -44,10 +44,10 @@ public class ApacheBeanValidationProvider implements ValidationProvider
     {
         // define apache bean validation default descriptor file
         this.defaultDescriptor = Descriptors.create(ValidationDescriptor.class)
-                .defaultProvider("org.apache.bval.jsr303.ApacheValidationProvider")
-                .messageInterpolator("org.apache.bval.jsr303.DefaultMessageInterpolator")
-                .traversableResolver("org.apache.bval.jsr303.resolver.DefaultTraversableResolver")
-                .constraintValidatorFactory("org.apache.bval.jsr303.DefaultConstraintValidatorFactory");
+                .setDefaultProvider("org.apache.bval.jsr303.ApacheValidationProvider")
+                .setMessageInterpolator("org.apache.bval.jsr303.DefaultMessageInterpolator")
+                .setTraversableResolver("org.apache.bval.jsr303.resolver.DefaultTraversableResolver")
+                .setConstraintValidatorFactory("org.apache.bval.jsr303.DefaultConstraintValidatorFactory");
 
         // add apache bean validation dependencies
         final DependencyBuilder apacheBeanValidation = DependencyBuilder.create()
