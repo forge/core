@@ -24,6 +24,7 @@ package org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle;
 import static org.junit.Assert.*;
 
 import java.awt.Color;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -51,8 +52,16 @@ public class ForgePropertyStyleTest
       Project project = initializeJavaProject();
 
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
-      ScaffoldUtil.createOrOverwrite(null, java.getJavaResource("org/jboss/forge/scaffold/faces/metawidget/inspector/propertystyle/MockAnnotatedClass.java"),
-               getClass().getResourceAsStream("/org/jboss/forge/scaffold/faces/metawidget/inspector/propertystyle/MockAnnotatedClass.java"), true);
+      ScaffoldUtil
+               .createOrOverwrite(
+                        null,
+                        java.getJavaResource("org/jboss/forge/scaffold/faces/metawidget/inspector/propertystyle/MockAnnotatedClass.java"),
+                        getClass()
+                                 .getResourceAsStream(
+                                          "/org/jboss/forge/scaffold/faces/metawidget/inspector/propertystyle/MockAnnotatedClass.java"),
+                        true);
+
+      // Test default private field convention
 
       ForgePropertyStyle propertyStyle = new ForgePropertyStyle(new ForgePropertyStyleConfig().setProject(project));
       Map<String, Property> properties = propertyStyle
@@ -67,11 +76,43 @@ public class ForgePropertyStyleTest
       assertEquals(3, mockAnnotationSimple.anInt());
       assertEquals(4l, mockAnnotationSimple.aLong());
       assertEquals(5f, mockAnnotationSimple.aFloat(), 0.01);
+      assertEquals(0d, mockAnnotationSimple.aDouble(), 0.01);
+      assertEquals('a', mockAnnotationSimple.aChar());
+      assertEquals(false, mockAnnotationSimple.aBoolean());
+      assertEquals("", mockAnnotationSimple.aString());
+
+      testMockAnnotationComplex(property);
+
+      // Test custom private field convention
+
+      propertyStyle = new ForgePropertyStyle(new ForgePropertyStyleConfig().setProject(project)
+               .setPrivateFieldConvention(new MessageFormat("m{1}")));
+      properties = propertyStyle
+               .getProperties("org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle.MockAnnotatedClass");
+
+      property = properties.get("mockAnnotatedProperty");
+
+      mockAnnotationSimple = property.getAnnotation(MockAnnotationSimple.class);
+      assertEquals(MockAnnotationSimple.class, mockAnnotationSimple.annotationType());
+      assertEquals((byte) 0, mockAnnotationSimple.aByte());
+      assertEquals((short) 0, mockAnnotationSimple.aShort());
+      assertEquals(0, mockAnnotationSimple.anInt());
+      assertEquals(0l, mockAnnotationSimple.aLong());
+      assertEquals(0f, mockAnnotationSimple.aFloat(), 0.01);
       assertEquals(6d, mockAnnotationSimple.aDouble(), 0.01);
       assertEquals('a', mockAnnotationSimple.aChar());
       assertEquals(true, mockAnnotationSimple.aBoolean());
       assertEquals("Foo", mockAnnotationSimple.aString());
 
+      testMockAnnotationComplex(property);
+   }
+
+   //
+   // Private methods
+   //
+
+   private void testMockAnnotationComplex(Property property)
+   {
       MockAnnotationComplex mockAnnotationComplex = property.getAnnotation(MockAnnotationComplex.class);
       assertEquals(MockAnnotationComplex.class, mockAnnotationComplex.annotationType());
       assertEquals(Date.class, mockAnnotationComplex.aClass());

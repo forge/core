@@ -29,37 +29,37 @@ package org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle;
  */
 public @interface MockAnnotationSimple
 {
-   byte aByte();
+   byte aByte() default 0;
 
-   short aShort();
+   short aShort() default 0;
 
-   int anInt();
+   int anInt() default 0;
 
-   long aLong();
+   long aLong() default 0;
 
-   float aFloat();
+   float aFloat() default 0;
 
-   double aDouble();
+   double aDouble() default 0;
 
-   char aChar();
+   char aChar() default 'a';
 
-   boolean aBoolean();
+   boolean aBoolean() default false;
 
-   byte[] aByteArray();
+   byte[] aByteArray() default {};
 
-   short[] aShortArray();
+   short[] aShortArray() default {};
 
-   int[] anIntArray();
+   int[] anIntArray() default {};
 
-   long[] aLongArray();
+   long[] aLongArray() default {};
 
-   float[] aFloatArray();
+   float[] aFloatArray() default {};
 
-   double[] aDoubleArray();
+   double[] aDoubleArray() default {};
 
-   char[] aCharArray();
+   char[] aCharArray() default {};
 
-   boolean[] aBooleanArray();
+   boolean[] aBooleanArray() default {};
 
-   String aString();
+   String aString() default "";
 }
