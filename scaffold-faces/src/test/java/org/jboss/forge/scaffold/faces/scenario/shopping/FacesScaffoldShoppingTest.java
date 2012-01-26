@@ -152,7 +152,7 @@ public class FacesScaffoldShoppingTest extends AbstractFacesScaffoldTest
       // Deploy to a real container and test
 
       this.webTest.setup(project);
-      JavaClass clazz = this.webTest.from(current, FacesScaffoldShoppingTestClient.class);
+      JavaClass clazz = this.webTest.from(current, FacesScaffoldShoppingClient.class);
 
       this.webTest.buildDefaultDeploymentMethod(project, clazz, Arrays.asList(
                ".addAsResource(\"META-INF/persistence.xml\", \"META-INF/persistence.xml\")"
