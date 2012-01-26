@@ -80,11 +80,6 @@ public class ForgeInspector
       if (oneToOne != null ) {
 
          attributes.put(ONE_TO_ONE, TRUE);
-
-         if (!"".equals(oneToOne.mappedBy()))
-         {
-            attributes.put(INVERSE_RELATIONSHIP, TRUE);
-         }
       }
 
       // ManyToOne

@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.scaffold.faces.scenario;
+package org.jboss.forge.scaffold.faces.scenario.petclinic;
 
 import java.util.Arrays;
 
@@ -39,6 +39,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
+ * Burr's example domain model from 7th Dec 2011.
+ *
  * @author Richard Kennard
  */
 
@@ -48,12 +50,8 @@ public class FacesScaffoldPetClinicTest extends AbstractFacesScaffoldTest
    @Inject
    private WebTest webTest;
 
-   /**
-    * Burr's example domain model from 7th Dec 2011.
-    */
-
    @Test
-   public void testGeneratePetClinic() throws Exception
+   public void testGenerate() throws Exception
    {
       Project current = getShell().getCurrentProject();
       Project project = setupScaffoldProject();
@@ -131,7 +129,7 @@ public class FacesScaffoldPetClinicTest extends AbstractFacesScaffoldTest
       // Deploy to a real container and test
 
       this.webTest.setup(project);
-      JavaClass clazz = this.webTest.from(current, FacesScaffoldPetClinicClientTest.class);
+      JavaClass clazz = this.webTest.from(current, FacesScaffoldPetClinicTestClient.class);
 
       this.webTest.buildDefaultDeploymentMethod(project, clazz, Arrays.asList(
                ".addAsResource(\"META-INF/persistence.xml\", \"META-INF/persistence.xml\")"

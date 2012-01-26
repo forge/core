@@ -25,7 +25,6 @@ import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectio
 import static org.metawidget.inspector.InspectionResultConstants.*;
 import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.*;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +40,7 @@ import org.metawidget.statically.faces.component.ValueHolder;
 import org.metawidget.statically.faces.component.html.StaticHtmlMetawidget;
 import org.metawidget.statically.faces.component.html.layout.HtmlPanelGroup;
 import org.metawidget.statically.faces.component.html.widgetbuilder.FaceletsParam;
+import org.metawidget.statically.faces.component.html.widgetbuilder.Facet;
 import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlColumn;
 import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlCommandLink;
 import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlDataTable;
@@ -50,6 +50,7 @@ import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlWidgetBu
 import org.metawidget.statically.faces.component.html.widgetbuilder.Param;
 import org.metawidget.statically.faces.component.widgetprocessor.ReadableIdProcessor;
 import org.metawidget.statically.faces.component.widgetprocessor.StandardBindingProcessor;
+import org.metawidget.statically.layout.SimpleLayout;
 import org.metawidget.util.ClassUtils;
 import org.metawidget.util.CollectionUtils;
 import org.metawidget.util.WidgetBuilderUtils;
@@ -80,7 +81,7 @@ public class EntityWidgetBuilder
    {
       // Suppress nested INVERSE ONE_TO_ONE, to avoid recursion
 
-      if (TRUE.equals(attributes.get(ONE_TO_ONE)) && TRUE.equals(attributes.get(INVERSE_RELATIONSHIP))
+      if (TRUE.equals(attributes.get(ONE_TO_ONE)) && attributes.containsKey(INVERSE_RELATIONSHIP)
                && metawidget.getParent() != null)
       {
          return new StaticXmlStub();
@@ -241,9 +242,10 @@ public class EntityWidgetBuilder
          return dataTable;
       }
 
-      HtmlPanelGroup panelGroup = new HtmlPanelGroup();
+      // Hack until https://issues.apache.org/jira/browse/MYFACES-3410 is resolved: move the Collection into a temporary
+      // variable
 
-      // Hack until https://issues.apache.org/jira/browse/MYFACES-3410 is resolved
+      HtmlPanelGroup panelGroup = new HtmlPanelGroup();
 
       FaceletsParam param = new FaceletsParam();
       param.putAttribute("name", COLLECTION_VAR);
@@ -263,40 +265,46 @@ public class EntityWidgetBuilder
 
       panelGroup.getChildren().add(dataTable);
 
-      HtmlPanelGroup buttons = new HtmlPanelGroup();
-      buttons.putAttribute("styleClass", "buttons");
+      // If not bidirectional, create an 'Add' section (bidirectional does it 'in place')
 
-      // Select menu at bottom
+      if (!attributes.containsKey(INVERSE_RELATIONSHIP))
+      {
+         HtmlPanelGroup buttons = new HtmlPanelGroup();
+         buttons.putAttribute("styleClass", "buttons");
 
-      HtmlSelectOneMenu select = new HtmlSelectOneMenu();
-      String selectId = dataTable.getAttribute("id") + "Add";
-      select.putAttribute("id", selectId);
-      String requestScopedValue = "requestScope['" + selectId + "']";
-      select.setValue(StaticFacesUtils.wrapExpression(requestScopedValue));
-      String simpleComponentType = ClassUtils.getSimpleName(componentType);
-      String controllerName = StringUtils.decapitalize(simpleComponentType);
-      select.setConverter(StaticFacesUtils.wrapExpression(controllerName + "Bean.converter"));
-      Map<String, String> emptyAttributes = CollectionUtils.newHashMap();
-      addSelectItems(select, StaticFacesUtils.wrapExpression(controllerName + "Bean.all"), emptyAttributes);
-      buttons.getChildren().add(select);
+         // Select menu at bottom
 
-      // Add link
+         HtmlSelectOneMenu select = new HtmlSelectOneMenu();
+         String selectId = dataTable.getAttribute("id") + "Add";
+         select.putAttribute("id", selectId);
+         String requestScopedValue = "requestScope['" + selectId + "']";
+         select.setValue(StaticFacesUtils.wrapExpression(requestScopedValue));
+         String simpleComponentType = ClassUtils.getSimpleName(componentType);
+         String controllerName = StringUtils.decapitalize(simpleComponentType);
+         select.setConverter(StaticFacesUtils.wrapExpression(controllerName + "Bean.converter"));
+         Map<String, String> emptyAttributes = CollectionUtils.newHashMap();
+         addSelectItems(select, StaticFacesUtils.wrapExpression(controllerName + "Bean.all"), emptyAttributes);
+         buttons.getChildren().add(select);
 
-      HtmlCommandLink addLink = new HtmlCommandLink();
-      addLink.setValue("Add");
-      String addExpression = COLLECTION_VAR + ".add(" + requestScopedValue + ")";
-      addLink.putAttribute("action", StaticFacesUtils.wrapExpression(addExpression));
-      addLink.putAttribute("onclick", "if (document.getElementById(document.forms[0].id+':" + selectId
-               + "').selectedIndex &lt; 1) { alert('Must select a " + StringUtils.uncamelCase(simpleComponentType)
-               + "'); return false; }");
-      buttons.getChildren().add(addLink);
+         // Create 'Add' button
 
-      panelGroup.getChildren().add(buttons);
+         HtmlCommandLink addLink = new HtmlCommandLink();
+         addLink.setValue("Add");
+         String addExpression = COLLECTION_VAR + ".add(" + requestScopedValue + ")";
+         addLink.putAttribute("action", StaticFacesUtils.wrapExpression(addExpression));
+         addLink.putAttribute("onclick", "if (document.getElementById(document.forms[0].id+':" + selectId
+                  + "').selectedIndex &lt; 1) { alert('Must select a " + StringUtils.uncamelCase(simpleComponentType)
+                  + "'); return false; }");
+         buttons.getChildren().add(addLink);
+
+         panelGroup.getChildren().add(buttons);
+      }
+
       return panelGroup;
    }
 
    /**
-    * Overridden to add a 'delete' column.
+    * Overridden to add a 'remove' column.
     */
 
    @Override
@@ -322,14 +330,51 @@ public class EntityWidgetBuilder
       removeLink.putAttribute("action", StaticFacesUtils.wrapExpression(removeExpression));
 
       HtmlColumn column = new HtmlColumn();
+      column.putAttribute("headerClass", "remove-column");
+      column.putAttribute("footerClass", "remove-column");
       column.getChildren().add(removeLink);
-
-      // CSS
-
-      char[] commas = new char[dataTable.getChildren().size()];
-      Arrays.fill(commas, ',');
-      dataTable.putAttribute("columnClasses", String.valueOf(commas) + "remove-column");
       dataTable.getChildren().add(column);
+
+      // If bidirectional, an 'Add' button too
+
+      String inverseRelationship = attributes.get(INVERSE_RELATIONSHIP);
+
+      if (inverseRelationship != null)
+      {
+         String componentType = WidgetBuilderUtils.getComponentType(attributes);
+
+         if (componentType != null)
+         {
+            String controllerName = StringUtils.decapitalize(ClassUtils.getSimpleName(componentType));
+
+            HtmlCommandLink addLink = new HtmlCommandLink();
+            addLink.setValue("Add");
+            addLink.putAttribute("styleClass", "button");
+            String addExpression = COLLECTION_VAR + ".add(" + controllerName + "Bean." + controllerName + ")";
+            addLink.putAttribute("action", StaticFacesUtils.wrapExpression(addExpression));
+
+            // Use a f:setPropertyActionListener to initialize the bidirectional relationship
+
+            SetPropertyActionListener setPropertyActionListener = new SetPropertyActionListener();
+            setPropertyActionListener.putAttribute(
+                     "target",
+                     StaticFacesUtils.wrapExpression(controllerName + "Bean." + controllerName + "."
+                              + inverseRelationship));
+            StandardBindingProcessor bindingProcessor = metawidget.getWidgetProcessor(StandardBindingProcessor.class);
+
+            if (bindingProcessor != null)
+            {
+               bindingProcessor.processWidget(setPropertyActionListener, ENTITY, attributes,
+                        (StaticUIMetawidget) metawidget);
+            }
+            addLink.getChildren().add(setPropertyActionListener);
+
+            Facet footerFacet = new Facet();
+            footerFacet.putAttribute("name", "footer");
+            footerFacet.getChildren().add(addLink);
+            column.getChildren().add(footerFacet);
+         }
+      }
    }
 
    /**
@@ -348,7 +393,22 @@ public class EntityWidgetBuilder
          return;
       }
 
+      // FORGE-448: Don't display "owner" when showing relationships
+
+      String columnName = columnAttributes.get(NAME);
+
+      if (columnName.equals(tableAttributes.get(INVERSE_RELATIONSHIP)))
+      {
+         return;
+      }
+
+      // Create the column
+
       super.addColumnComponent(dataTable, tableAttributes, elementName, columnAttributes, metawidget);
+      List<StaticWidget> columns = dataTable.getChildren();
+      HtmlColumn column = (HtmlColumn) columns.get(columns.size() - 1);
+
+      // If we can determine the componentType, wrap it with a link
 
       String componentType = WidgetBuilderUtils.getComponentType(tableAttributes);
 
@@ -358,8 +418,6 @@ public class EntityWidgetBuilder
 
          // Get the original column text...
 
-         List<StaticWidget> columns = dataTable.getChildren();
-         HtmlColumn column = (HtmlColumn) columns.get(columns.size() - 1);
          ValueHolder originalComponent = (ValueHolder) column.getChildren().remove(1);
 
          // ...and create a link with the same value...
@@ -376,6 +434,24 @@ public class EntityWidgetBuilder
          link.getChildren().add(param);
 
          column.getChildren().add(link);
+
+         // If bidirectional, add a footer facet
+
+         if (tableAttributes.containsKey(INVERSE_RELATIONSHIP) && !metawidget.isReadOnly())
+         {
+            StaticHtmlMetawidget footerMetawidget = new StaticHtmlMetawidget();
+            Map<String, String> footerAttributes = CollectionUtils.newHashMap();
+            metawidget.initNestedMetawidget(footerMetawidget, footerAttributes);
+            footerMetawidget.setValue(StaticFacesUtils.wrapExpression(controllerName + "Bean." + controllerName + "."
+                     + columnName));
+            footerMetawidget.setPath(componentType + StringUtils.SEPARATOR_FORWARD_SLASH_CHAR + columnName);
+            footerMetawidget.setLayout(new SimpleLayout());
+
+            Facet footerFacet = new Facet();
+            footerFacet.putAttribute("name", "footer");
+            footerFacet.getChildren().add(footerMetawidget);
+            column.getChildren().add(footerFacet);
+         }
       }
    }
 }
