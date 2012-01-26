@@ -47,21 +47,33 @@ public class BeansPluginTest extends AbstractShellTest
    public void testBeansSetup() throws Exception
    {
       Project project = initializeJavaProject();
-      queueInputLines("y", "1", "6", "y");
+      queueInputLines("n");
       getShell().execute("beans setup");
 
       project.getFacet(CDIFacet.class).getConfig();
-      Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDependency(
+      Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(
                DependencyBuilder.create("org.jboss.spec:jboss-javaee-6.0")));
       Assert.assertTrue(project.getFacet(ResourceFacet.class).getResource("META-INF/beans.xml").exists());
+   }
 
+   @Test
+   public void testBeansSetupProvidedScope() throws Exception
+   {
+      Project project = initializeJavaProject();
+      queueInputLines("y");
+      getShell().execute("beans setup");
+
+      project.getFacet(CDIFacet.class).getConfig();
+      Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(
+               DependencyBuilder.create("org.jboss.spec:jboss-javaee-6.0")));
+      Assert.assertTrue(project.getFacet(ResourceFacet.class).getResource("META-INF/beans.xml").exists());
    }
 
    @Test
    public void testNewBean() throws Exception
    {
       Project project = initializeJavaProject();
-      queueInputLines("");
+      queueInputLines("y", "");
       getShell().execute("beans setup");
       getShell().execute("beans new-bean --type foo.beans.ExampleBean --scoped REQUEST");
 

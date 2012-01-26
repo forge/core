@@ -37,7 +37,6 @@ import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.project.Facet;
-import org.jboss.forge.project.Project;
 import org.jboss.forge.project.ProjectModelException;
 import org.jboss.forge.project.facets.BaseFacet;
 import org.jboss.forge.project.facets.JavaSourceFacet;
@@ -55,8 +54,6 @@ import org.jboss.forge.shell.util.Packages;
 @RequiresFacet(MavenCoreFacet.class)
 public class MavenJavaSourceFacet extends BaseFacet implements JavaSourceFacet, Facet
 {
-   private Project project;
-
    @Override
    public List<DirectoryResource> getSourceFolders()
    {
@@ -122,18 +119,6 @@ public class MavenJavaSourceFacet extends BaseFacet implements JavaSourceFacet, 
    }
 
    @Override
-   public Project getProject()
-   {
-      return project;
-   }
-
-   @Override
-   public void setProject(final Project project)
-   {
-      this.project = project;
-   }
-
-   @Override
    public boolean isInstalled()
    {
       MavenCoreFacet mavenFacet = project.getFacet(MavenCoreFacet.class);
@@ -181,7 +166,11 @@ public class MavenJavaSourceFacet extends BaseFacet implements JavaSourceFacet, 
             {
                Xpp3Dom dom = Xpp3DomBuilder.build(
                         new ByteArrayInputStream(
-                                 "<configuration><source>1.6</source><target>1.6</target></configuration>".getBytes()),
+                                 ("<configuration>" +
+                                          "<source>1.6</source>" +
+                                          "<target>1.6</target>" +
+                                          "<encoding>UTF-8</encoding>" +
+                                          "</configuration>").getBytes()),
                         "UTF-8");
 
                javaSourcePlugin.setConfiguration(dom);

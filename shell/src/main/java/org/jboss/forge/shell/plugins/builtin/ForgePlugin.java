@@ -26,6 +26,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.enterprise.event.Event;
@@ -33,8 +34,10 @@ import javax.inject.Inject;
 
 import org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.lib.Ref;
 import org.jboss.forge.ForgeEnvironment;
 import org.jboss.forge.git.GitUtils;
+import org.jboss.forge.parser.java.util.Strings;
 import org.jboss.forge.parser.xml.Node;
 import org.jboss.forge.parser.xml.XMLParser;
 import org.jboss.forge.project.Project;
@@ -54,6 +57,7 @@ import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.shell.InstalledPluginRegistry;
+import org.jboss.forge.shell.InstalledPluginRegistry.PluginEntry;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.ShellColor;
 import org.jboss.forge.shell.ShellMessages;
@@ -80,6 +84,7 @@ import org.jboss.forge.shell.util.PluginUtil;
 @Help("Forge control and writer environment commands. Manage plugins and other forge addons.")
 public class ForgePlugin implements Plugin
 {
+   private static final String MODULE_TEMPLATE_XML = "/org/jboss/forge/modules/module-template.xml";
    private final Event<ReinitializeEnvironment> reinitializeEvent;
    private final ShellPrintWriter writer;
    private final DependencyResolver resolver;
@@ -116,8 +121,8 @@ public class ForgePlugin implements Plugin
       out.println("   |_|  \\___/|_|  \\__, |\\___| ");
       out.println("                   |___/      ");
       out.println("");
-      String version = getClass().getPackage().getImplementationVersion();
-      out.println("JBoss Forge, version [ " + version + " ] - JBoss, by Red Hat, Inc. [ http://jboss.org ]");
+      out.println("JBoss Forge, version [ " + environment.getRuntimeVersion()
+               + " ] - JBoss, by Red Hat, Inc. [ http://jboss.org/forge ]");
    }
 
    @Command(value = "restart", help = "Reload all plugins and default configurations")
@@ -140,9 +145,9 @@ public class ForgePlugin implements Plugin
 
    private void displayModules(final DirectoryResource pluginDir)
    {
-      List<String> plugins = InstalledPluginRegistry.getInstalledPlugins();
-      for (String plugin : plugins) {
-         writer.println(plugin);
+      List<PluginEntry> plugins = InstalledPluginRegistry.list();
+      for (PluginEntry plugin : plugins) {
+         writer.println(plugin.toString());
       }
    }
 
@@ -176,17 +181,19 @@ public class ForgePlugin implements Plugin
    @Command(value = "remove-plugin",
             help = "Removes a plugin from the current Forge runtime configuration")
    public void removePlugin(
-            @Option(completer = InstalledPluginCompleter.class, description = "plugin-name",
+            @Option(completer = InstalledPluginCompleter.class, description = "plugin-name", required = true,
                      help = "The fully qualified plugin name e.g: 'org.jboss.forge.plugin:version'") final String pluginName,
             final PipeOut out) throws Exception
    {
-      if (!InstalledPluginRegistry.hasPlugin(pluginName))
+
+      PluginEntry plugin = PluginEntry.fromCoordinates(pluginName);
+      if (!InstalledPluginRegistry.has(plugin))
       {
          throw new RuntimeException("No such installed plugin [" + pluginName + "]");
       }
-      InstalledPluginRegistry.removePlugin(pluginName);
+      InstalledPluginRegistry.remove(InstalledPluginRegistry.get(plugin));
 
-      if (!InstalledPluginRegistry.hasPlugin(pluginName))
+      if (!InstalledPluginRegistry.has(plugin))
       {
          ShellMessages.success(out, "Successfully removed [" + pluginName + "]");
          restart();
@@ -379,7 +386,7 @@ public class ForgePlugin implements Plugin
             help = "Install a plugin from a public git repository")
    public void installFromGit(
             @Option(description = "git repo", required = true) final String gitRepo,
-            @Option(name = "ref", description = "branch or tag to build") final String ref,
+            @Option(name = "ref", description = "branch or tag to build") final String refName,
             @Option(name = "checkoutDir", description = "directory in which to clone the repository") final Resource<?> checkoutDir,
             final PipeOut out) throws Exception
    {
@@ -409,10 +416,46 @@ public class ForgePlugin implements Plugin
                   + "] via 'git'");
          Git repo = GitUtils.clone(buildDir, gitRepo);
 
+         Ref ref = null;
+         String targetRef = refName;
+         if (targetRef == null)
+         {
+            // Default to Forge runtime version if no Ref name is supplied.
+            targetRef = environment.getRuntimeVersion();
+         }
+
+         // Try to find a Tag matching the given Ref name or runtime version
+         Map<String, Ref> tags = repo.getRepository().getTags();
+         ref = tags.get(targetRef);
+
+         // Now try to find a matching Branch
+         if (ref == null)
+         {
+            List<Ref> refs = GitUtils.getRemoteBranches(repo);
+            for (Ref branchRef : refs) {
+               if (branchRef.getName().endsWith(targetRef))
+               {
+                  ref = repo.branchCreate().setName(targetRef).setUpstreamMode(SetupUpstreamMode.TRACK)
+                           .setStartPoint("origin/" + targetRef).call();
+               }
+            }
+         }
+
          if (ref != null)
          {
-            ShellMessages.info(out, "Switching to branch/tag [" + ref + "]");
-            GitUtils.checkout(repo, ref, false, SetupUpstreamMode.SET_UPSTREAM, false);
+            ShellMessages.info(out, "Switching to branch/tag [" + ref.getName() + "]");
+            GitUtils.checkout(repo, ref, false, SetupUpstreamMode.TRACK, false);
+         }
+         else if (refName != null)
+         {
+            throw new RuntimeException("Could not locate ref [" + targetRef + "] in repository ["
+                     + repo.getRepository().getDirectory().getAbsolutePath() + "]");
+         }
+         else
+         {
+            ShellMessages.warn(out,
+                     "Could not find a Ref matching the current Forge version [" + environment.getRuntimeVersion()
+                              + "], building Plugin from HEAD.");
          }
 
          buildFromCurrentProject(out, buildDir);
@@ -429,7 +472,6 @@ public class ForgePlugin implements Plugin
       }
 
       ShellMessages.success(out, "Installed from [" + gitRepo + "] successfully.");
-      // ShellMessages.info(out, "Please restart Forge to complete plugin installation.");
       restart();
    }
 
@@ -450,28 +492,62 @@ public class ForgePlugin implements Plugin
          }
 
          DependencyFacet deps = project.getFacet(DependencyFacet.class);
-         if (!deps.hasDependency(DependencyBuilder.create("org.jboss.forge:forge-shell-api"))
+         DependencyBuilder shellApi = DependencyBuilder.create("org.jboss.forge:forge-shell-api");
+
+         String apiVersion = null;
+         if (!deps.hasEffectiveDependency(shellApi)
                   && !prompt.promptBoolean("The project does not appear to be a Forge Plugin Project, install anyway?",
                            false))
          {
             throw new Abort("Installation aborted");
          }
+         else
+         {
+            if (apiVersion == null)
+            {
+               Dependency directDependency = deps.getDirectDependency(shellApi);
+               if ((directDependency != null) && !Strings.isNullOrEmpty(directDependency.getVersion()))
+                  apiVersion = directDependency.getVersion();
+            }
 
+            if (apiVersion == null)
+            {
+               // Fall back to checking managed dependencies for a version
+               Dependency managedDependency = deps.getManagedDependency(shellApi);
+               if ((managedDependency != null) && !Strings.isNullOrEmpty(managedDependency.getVersion()))
+                  apiVersion = managedDependency.getVersion();
+            }
+
+            if (apiVersion == null)
+            {
+               // Now completely give up and just use the result from the build
+               Dependency effectiveDependency = deps.getEffectiveDependency(shellApi);
+               if (effectiveDependency != null)
+                  apiVersion = effectiveDependency.getVersion();
+               else
+                  apiVersion = environment.getRuntimeVersion();
+            }
+         }
+
+         /**
+          * Make sure that our PROVIDED modules are not included in the module dependencies
+          */
+         // TODO Weld bug requires us to correct /add module for Seam Render dependency
+         List<String> groupIds = Arrays.asList("org.jboss.seam.render", "org.jboss.forge");
          List<Dependency> dependencies = deps.getDependencies();
          for (Dependency dependency : dependencies) {
-            if ("org.jboss.forge".equals(dependency.getGroupId())
+            if (groupIds.contains(dependency.getGroupId())
                      && !(ScopeType.PROVIDED.equals(dependency.getScopeTypeEnum())
                      || ScopeType.TEST.equals(dependency.getScopeTypeEnum())))
             {
                ShellMessages.warn(out, "Dependency [" + dependency.toCoordinates()
                         + "] was not correctly marked as PROVIDED scope; this has been corrected.");
-               deps.removeDependency(dependency);
-               deps.addDependency(DependencyBuilder.create(dependency).setScopeType(ScopeType.PROVIDED));
+               deps.addDirectDependency(DependencyBuilder.create(dependency).setScopeType(ScopeType.PROVIDED));
             }
          }
 
          ShellMessages.info(out, "Invoking build with underlying build system.");
-         Resource<?> artifact = project.getFacet(PackagingFacet.class).executeBuild();
+         Resource<?> artifact = project.getFacet(PackagingFacet.class).createBuilder().runTests(false).build();
          if ((artifact != null) && artifact.exists())
          {
             MetadataFacet meta = project.getFacet(MetadataFacet.class);
@@ -483,7 +559,7 @@ public class ForgePlugin implements Plugin
             // possible to avoid this entirely.
             createModule(project,
                      DependencyBuilder.create(dep).setVersion(dep.getVersion() + "-" + UUID.randomUUID().toString()),
-                     artifact);
+                     artifact, apiVersion);
          }
          else
          {
@@ -497,7 +573,8 @@ public class ForgePlugin implements Plugin
       }
    }
 
-   private DirectoryResource createModule(final Project project, final Dependency dep, final Resource<?> artifact)
+   private DirectoryResource createModule(final Project project, final Dependency dep, final Resource<?> artifact,
+            final String apiVersion)
    {
       DirectoryResource moduleDir = getOrCreatePluginModuleDirectory(dep);
       String pluginName = dep.getGroupId() + "." + dep.getArtifactId();
@@ -516,7 +593,7 @@ public class ForgePlugin implements Plugin
       moduleXml.createNewFile();
 
       // <resource-root path="maven-dependency.jar" />
-      Node module = XMLParser.parse(getClass().getResourceAsStream("/org/jboss/forge/modules/module.xml"));
+      Node module = XMLParser.parse(getClass().getResourceAsStream(MODULE_TEMPLATE_XML));
       module.attribute("name", pluginName);
       module.attribute("slot", pluginSlot);
       Node resources = module.getSingle("resources");
@@ -537,6 +614,7 @@ public class ForgePlugin implements Plugin
       dependencies.createChild("module").attribute("name", "org.jboss.forge.scaffold.api")
                .attribute("services", "import");
       dependencies.createChild("module").attribute("name", "org.jboss.forge.shell.api").attribute("services", "import");
+      dependencies.createChild("module").attribute("name", "org.jboss.seam.render").attribute("services", "import");
       dependencies.createChild("module").attribute("name", "javax.api");
 
       moduleXml.setContents(XMLParser.toXMLString(module));
@@ -544,7 +622,7 @@ public class ForgePlugin implements Plugin
       createDependenciesModule(project, dep);
 
       // Add to list modules.
-      registerPlugin(pluginName, pluginSlot);
+      registerPlugin(pluginName, pluginSlot, apiVersion);
 
       return moduleDir;
    }
@@ -562,7 +640,7 @@ public class ForgePlugin implements Plugin
       moduleXml.createNewFile();
 
       // <resource-root path="maven-dependency.jar" />
-      Node module = XMLParser.parse(getClass().getResourceAsStream("/org/jboss/forge/modules/module.xml"));
+      Node module = XMLParser.parse(getClass().getResourceAsStream(MODULE_TEMPLATE_XML));
       module.attribute("name", pluginName + ".dependencies");
       module.attribute("slot", pluginSlot);
       Node resources = module.getSingle("resources");
@@ -644,9 +722,9 @@ public class ForgePlugin implements Plugin
       return artifacts;
    }
 
-   public void registerPlugin(final String pluginName, final String pluginSlot)
+   public void registerPlugin(final String pluginName, final String pluginSlot, final String apiVersion)
    {
-      InstalledPluginRegistry.installPlugin(pluginName, pluginSlot);
+      InstalledPluginRegistry.install(pluginName, apiVersion, pluginSlot);
    }
 
    public DirectoryResource getOrCreatePluginModuleDirectory(final Dependency dep)

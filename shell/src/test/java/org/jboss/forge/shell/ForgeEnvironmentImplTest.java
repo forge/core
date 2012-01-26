@@ -21,6 +21,8 @@ import static org.junit.Assert.assertTrue;
 
 import javax.inject.Inject;
 
+import junit.framework.Assert;
+
 import org.jboss.forge.ForgeEnvironment;
 import org.jboss.forge.test.AbstractShellTest;
 import org.junit.Test;
@@ -41,5 +43,12 @@ public class ForgeEnvironmentImplTest extends AbstractShellTest
       assertTrue(environment.isOnline());
       shell.execute("set OFFLINE true");
       assertFalse(environment.isOnline());
+   }
+
+   @Test
+   public void testGetRuntimeVersion() throws Exception
+   {
+      String version = getClass().getPackage().getImplementationVersion();
+      Assert.assertEquals(version, environment.getRuntimeVersion());
    }
 }

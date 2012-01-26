@@ -211,6 +211,14 @@
 			<maven-resource group="org.fusesource.jansi" artifact="jansi" />
 		</module-def>
 
+		<module-def name="org.apache.commons.config">
+			<maven-resource group="commons-beanutils" artifact="commons-beanutils" />
+			<maven-resource group="commons-collections" artifact="commons-collections" />
+			<maven-resource group="commons-configuration" artifact="commons-configuration" />
+			<maven-resource group="commons-digester" artifact="commons-digester" />
+			<maven-resource group="commons-lang" artifact="commons-lang" />
+		</module-def>
+
 		<module-def name="org.apache.commons.logging">
 			<maven-resource group="commons-logging" artifact="commons-logging" />
 		</module-def>
@@ -222,6 +230,7 @@
 
 		<module-def name="org.apache.log4j">
 			<maven-resource group="log4j" artifact="log4j" />
+			<maven-resource group="log4j" artifact="apache-log4j-extras" />
 		</module-def>
 
 		<module-def name="org.eclipse.javaparser">
@@ -262,14 +271,9 @@
 		</module-def>
 
 		<module-def name="org.jboss.forge.git">
-			<maven-resource group="args4j" artifact="args4j" />
 			<maven-resource group="com.jcraft" artifact="jsch" />
 			<maven-resource group="org.jboss.forge" artifact="forge-git-tools" />
 			<maven-resource group="org.eclipse.jgit" artifact="org.eclipse.jgit" />
-			<maven-resource group="org.eclipse.jgit" artifact="org.eclipse.jgit.console" />
-			<maven-resource group="org.eclipse.jgit" artifact="org.eclipse.jgit.iplog" />
-			<maven-resource group="org.eclipse.jgit" artifact="org.eclipse.jgit.pgm" />
-			<maven-resource group="org.eclipse.jgit" artifact="org.eclipse.jgit.ui" />
 		</module-def>
 
 		<module-def name="org.jboss.forge.maven.api">
@@ -404,10 +408,7 @@
 		</module-def>
 
 		<module-def name="org.slf4j.impl">
-			<!-- 
 			<maven-resource group="org.slf4j" artifact="slf4j-log4j12" />
-	        -->
-            <maven-resource group="org.jboss.slf4j" artifact="slf4j-jboss-logmanager"/>
 		</module-def>
 
 		<module-def name="org.yaml">

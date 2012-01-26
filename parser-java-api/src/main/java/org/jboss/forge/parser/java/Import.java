@@ -42,4 +42,6 @@ public interface Import extends Internal
 
    public Import setStatic(final boolean value);
 
+   public boolean isWildcard();
+
 }

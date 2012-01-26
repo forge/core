@@ -142,6 +142,11 @@ public abstract class AbstractShellPrompt implements Shell
    @SuppressWarnings("unchecked")
    public <T> T prompt(final String message, final Class<T> clazz, final T defaultIfEmpty)
    {
+      if (this.isAcceptDefaults())
+      {
+         return defaultIfEmpty;
+      }
+
       Object result;
       String input;
       do
@@ -294,6 +299,11 @@ public abstract class AbstractShellPrompt implements Shell
    @SuppressWarnings("unchecked")
    public <T> T promptChoiceTyped(final String message, final List<T> options, final T defaultIfEmpty)
    {
+      if (this.isAcceptDefaults())
+      {
+         return defaultIfEmpty;
+      }
+
       if ((options == null) || options.isEmpty())
       {
          throw new IllegalArgumentException(
@@ -408,6 +418,11 @@ public abstract class AbstractShellPrompt implements Shell
    @Override
    public String promptCommon(final String message, final PromptType type, final String defaultIfEmpty)
    {
+      if (this.isAcceptDefaults())
+      {
+         return defaultIfEmpty;
+      }
+
       if (!type.matches(defaultIfEmpty))
       {
          throw new IllegalArgumentException("Default value [" + defaultIfEmpty
@@ -452,6 +467,11 @@ public abstract class AbstractShellPrompt implements Shell
    @SuppressWarnings("unchecked")
    public <T extends Enum<T>> T promptEnum(final String message, final Class<T> type, final T defaultIfEmpty)
    {
+      if (this.isAcceptDefaults())
+      {
+         return defaultIfEmpty;
+      }
+
       T result;
       do
       {
@@ -500,6 +520,11 @@ public abstract class AbstractShellPrompt implements Shell
    @Override
    public FileResource<?> promptFile(final String message, final FileResource<?> defaultIfEmpty)
    {
+      if (this.isAcceptDefaults())
+      {
+         return defaultIfEmpty;
+      }
+
       FileResource<?> result = defaultIfEmpty;
 
       String query = " [ .../" + defaultIfEmpty.getName() + "] ";
@@ -536,6 +561,11 @@ public abstract class AbstractShellPrompt implements Shell
    @Override
    public String promptRegex(final String message, final String pattern, final String defaultIfEmpty)
    {
+      if (this.isAcceptDefaults())
+      {
+         return defaultIfEmpty;
+      }
+
       if (!defaultIfEmpty.matches(pattern))
       {
          throw new IllegalArgumentException("Default value [" + defaultIfEmpty + "] does not match required pattern ["
@@ -559,6 +589,11 @@ public abstract class AbstractShellPrompt implements Shell
    @Override
    public String promptSecret(final String message, final String defaultIfEmpty)
    {
+      if (this.isAcceptDefaults())
+      {
+         return defaultIfEmpty;
+      }
+
       String secret = promptSecret(message + " [ENTER for default]");
 
       if ((secret == null) || secret.trim().isEmpty())

@@ -169,7 +169,7 @@ public class ValidationPluginTest extends SingletonAbstractShellTest
 
       for (Dependency oneDependency : expectedDependencies)
       {
-         assertTrue(facet.hasDependency(oneDependency));
+         assertTrue(facet.hasEffectiveDependency(oneDependency));
       }
    }
 

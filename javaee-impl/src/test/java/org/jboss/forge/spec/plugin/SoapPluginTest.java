@@ -27,8 +27,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.project.Project;
+import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.facets.DependencyFacet;
-import org.jboss.forge.spec.javaee.BaseJavaEEFacet;
 import org.jboss.forge.spec.javaee.SoapFacet;
 import org.jboss.forge.test.SingletonAbstractShellTest;
 import org.junit.Test;
@@ -49,7 +49,8 @@ public class SoapPluginTest extends SingletonAbstractShellTest
       queueInputLines("");
       getShell().execute("setup soap");
       assertTrue(project.hasFacet(SoapFacet.class));
-      assertTrue(project.getFacet(DependencyFacet.class).hasDependency(BaseJavaEEFacet.dep));
+      assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveDependency(
+               DependencyBuilder.create("org.jboss.spec.javax.xml.soap:jboss-saaj-api_1.3_spec")));
    }
 
 }

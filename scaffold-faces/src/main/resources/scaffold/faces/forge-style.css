@@ -1,0 +1,254 @@
+/*
+  ~ JBoss, Home of Professional Open Source.
+  ~ Copyright (c) 2011, Red Hat, Inc., and individual contributors
+  ~ as indicated by the @author tags. See the copyright.txt file in the
+  ~ distribution for a full listing of individual contributors.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+*/
+
+body {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	background-image: url( 'background.gif' );
+	background-repeat: repeat-x;
+	color: #5b5b5b;
+	font-family: "Lucida Sans Unicode", "Lucida Grande", Geneva, Verdana,
+		Arial, sans-serif;
+	margin-top: 100px;
+	font-size: 12pt;
+}
+
+/*
+ * Header/footer
+ */
+ 
+#wrapper {
+	margin-left: auto;
+	margin-right: auto;
+	width: 900px;
+}
+
+h1 {
+	padding-top: 55px;
+	color: #7b1e1e;
+}
+
+#footer {
+	width: 100%;
+	border-top: 1px solid #cccccc;
+	margin-top: 10px;
+	padding-top: 5px;
+	float: right;
+	text-align: right;
+	font-style: italic;
+	font-size: 10pt;
+}
+
+#footer a {
+	color: #5b5b5b;
+}
+
+/*
+ * Navigation
+ */
+ 
+#navigation {
+	float: left;
+	margin-left: 10px;
+	margin-top: 30px;
+}
+
+#navigation ul {
+	border: 1px solid #cccccc;
+	padding: 1px;
+	border-radius: 5px;
+	text-align: center;
+}
+
+#navigation ul li {
+	list-style: none;
+}
+
+#navigation a {
+	display: block;
+	color: #5b5b5b;
+	padding: 3px;
+	text-decoration: none;
+	border: 1px solid transparent;
+}
+
+#navigation a:hover {
+	border: 1px solid #dddddd;
+	border-radius: 5px;
+	background-color: #eeeeee;
+	color: #5b5b5b;
+	text-decoration: none;
+}
+
+/*
+ * Content
+ */
+ 
+#content {
+	margin-left: 230px;
+}
+
+#content .search {
+	display: block;
+	background-image: url('search.png');
+    background-repeat: no-repeat;
+    padding-bottom: 20px;
+    padding-left: 70px;
+}
+
+#content .search .buttons {
+	text-align: left;
+	padding-left: 25%;
+}
+
+#content table .label {
+	width: 25%;
+	text-align: left;
+	vertical-align: top;
+	white-space: nowrap;
+}
+
+#content table .component {
+	width: 75%;
+	text-align: left;
+	vertical-align: top;
+}
+
+#content table .component input, #content table .component select {
+	width: 100%;	
+}
+
+#content table .component input[type="checkbox"] {
+	width: auto;
+}
+
+#content table .buttons {
+	text-align: right;
+}
+
+#content table .buttons select {
+	width: 50%;
+	height: 30px;
+	vertical-align: middle;
+	margin-right: 5px;
+}
+
+#content table .component .error {
+	color: red;
+	font-size: 10pt;
+}
+
+#content table .required {
+	width: 1%;
+	color: red;	
+	padding-top: 7pt;
+	padding-left: 4pt;
+	font-size: 20pt;
+	line-height: 8pt;
+	font-weight: bold;
+}
+
+#content .data-table {
+	width: 100%;
+	border: 1px solid #cccccc;
+	margin-bottom: 7px;
+}
+
+#content .data-table thead th {
+	background-color: #dddddd;
+	border-bottom: 1px solid #cccccc;
+}
+
+#content .data-table thead th, #content .data-table tbody td, #content .data-table tfoot td {
+	text-align: left;
+	padding-left: 4px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+
+#content .data-table tbody tr:nth-child(2n) {
+	background-color: #eeeeee;
+}
+
+#content .data-table tbody tr:hover, #content .data-table tfoot tr:hover {
+	background-color: #d2e8f2;
+}
+
+#content .data-table tbody tr a {
+	display: block;
+	color: #5b5b5b;
+	text-decoration: none;
+}
+
+#content .data-table .remove-column {
+	width: 1%;
+	text-align: center;
+}
+
+#content .data-table .remove-column a:hover {
+	background-color: #eeeeee;
+}
+
+#content a {
+	color: #5b5b5b;
+}
+
+#content .buttons {
+	display: block;
+	text-align: center;
+	margin-top: 5px;
+	margin-bottom: 10px;
+}
+
+#content .button, #content .buttons a {
+	margin-top: 5px;
+	margin-left: 1px;
+	margin-right: 1px;
+	margin-bottom: 5px;
+	color: #5b5b5b;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	padding-left: 10px;
+	padding-right: 10px;
+	text-decoration: none;
+	border-top: 1px solid #dddddd;
+	border-left: 1px solid #dddddd;
+	border-right: 1px solid #bbbbbb;
+	border-bottom: 1px solid #bbbbbb;
+	border-radius: 5px;
+	background-color: #eeeeee;
+	vertical-align: middle;
+}
+
+#content .button:hover, #content .buttons a:hover {
+	background-color: #d2e8f2;
+}
+
+#content .paginator {
+	display: block;
+	text-align: right;
+	padding-bottom: 5px;
+}
+
+#content .paginator-content {
+	margin-left: 5px;
+	margin-right: 5px;
+}

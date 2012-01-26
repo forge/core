@@ -23,9 +23,14 @@ package org.jboss.forge.test.parser.java;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.List;
+
+import junit.framework.Assert;
+
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.Method;
+import org.jboss.forge.parser.java.Parameter;
 import org.junit.Test;
 
 /**
@@ -47,5 +52,15 @@ public class MethodSignatureTest
       Method<JavaClass> method = JavaParser.create(JavaClass.class).addMethod("public void hello(String foo, int bar)");
       String signature = method.toSignature();
       assertEquals("public hello(String, int) : void", signature);
+   }
+
+   @Test
+   public void testMethodParams() throws Exception
+   {
+      Method<JavaClass> method = JavaParser.create(JavaClass.class).addMethod("public void hello(String foo, int bar)");
+      List<Parameter> parameters = method.getParameters();
+
+      Assert.assertEquals("String", parameters.get(0).getTypeInspector().toString());
+      Assert.assertEquals("int", parameters.get(1).getTypeInspector().toString());
    }
 }

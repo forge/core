@@ -23,7 +23,9 @@ package org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle;
 
 import java.io.FileNotFoundException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationHandler;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -58,7 +60,9 @@ public class ForgePropertyStyle
    // Private members
    //
 
-   private final Project project;
+   private Project project;
+
+   private MessageFormat privateFieldConvention;
 
    //
    // Constructor
@@ -69,6 +73,7 @@ public class ForgePropertyStyle
       super(config);
 
       this.project = config.getProject();
+      this.privateFieldConvention = config.getPrivateFieldConvention();
    }
 
    //
@@ -197,16 +202,6 @@ public class ForgePropertyStyle
             continue;
          }
 
-         // Exclude based on other criteria
-         //
-         // (explicitly set to null in case we encounted/encounter an imbalanced field/setter)
-
-         // TODO:if (isExcluded(ClassUtils.getOriginalDeclaringClass(method), propertyName, type))
-         {
-            // properties.put(propertyName, null);
-            // continue;
-         }
-
          properties
                   .put(propertyName,
                            new ForgeProperty(propertyName, returnType, method, null, getPrivateField(
@@ -263,7 +258,6 @@ public class ForgePropertyStyle
 
    protected void lookupSetters(final Map<String, Property> properties, final MethodHolder<?> clazz)
    {
-
       for (Method<?> method : clazz.getMethods())
       {
 
@@ -297,12 +291,6 @@ public class ForgePropertyStyle
          // (explicitly set to null in case we encountered an imbalanced field/getter)
 
          String type = parameters.get(0).getType();
-
-         // TODO:if (isExcluded(ClassUtils.getOriginalDeclaringClass(method), propertyName, type))
-         {
-            // properties.put(propertyName, null);
-            // continue;
-         }
 
          // Already found via its getter?
 
@@ -365,33 +353,41 @@ public class ForgePropertyStyle
    }
 
    /**
-    * Gets the private field representing the given <code>propertyName</code> within the given class. Uses the
-    * configured <code>privateFieldConvention</code> (if any). Traverses up the superclass heirarchy as necessary.
-    * <p>
-    * Note it is <em>not</em> considered an error if a property has no corresponding private field: not all properties
-    * do. For example a property <code>getAge</code> may be calculated internally based off a <code>mDateOfBirth</code>
-    * field, with no corresponding <code>mAge</code> field per se.
-    * <p>
-    * Clients may override this method to change how the public-method-to-private-field mapping operates.
+    * Gets the private field representing the given <code>propertyName</code> within the given class.
     *
     * @return the private Field for this propertyName, or null if no such field (should not throw NoSuchFieldException)
     */
 
    protected Field<?> getPrivateField(final FieldHolder<?> fieldHolder, final String propertyName)
    {
+      if (this.privateFieldConvention != null)
+      {
+         // Determine field name based on convention. MessageFormat arguments are:
+         //
+         // {0} = dateOfBirth, surname
+         // {1} = DateOfBirth, Surname
 
-      // Go looking for such a field, traversing the superclass heirarchy as necessary
-      //
-      // Note: the use of clazz.getDeclaredFields() may lead to Applet SecurityExceptions
+         String[] arguments = new String[] { propertyName, StringUtils.capitalize(propertyName) };
+         String fieldName;
 
-      while (fieldHolder != null)
-      { // TODO:&& !isExcludedBaseType( currentClass ) ) {
+         synchronized (this.privateFieldConvention)
+         {
+            fieldName = this.privateFieldConvention.format(arguments, new StringBuffer(), null).toString();
+         }
 
-         return fieldHolder.getField(propertyName);
-         // TODO: need to traverse? currentClass = currentClass.getSuperType();
+         return fieldHolder.getField(fieldName);
       }
 
-      return null;
+      Field<?> field = fieldHolder.getField(propertyName);
+
+      // FORGE-402: support fields starting with capital letter
+
+      if (field == null && !StringUtils.isCapitalized(propertyName))
+      {
+         field = fieldHolder.getField(StringUtils.capitalize(propertyName));
+      }
+
+      return field;
    }
 
    //
@@ -438,7 +434,6 @@ public class ForgePropertyStyle
                final Method<?> writeMethod,
                final Field<?> privateField)
       {
-
          super(name, type);
 
          this.readMethod = readMethod;
@@ -446,7 +441,7 @@ public class ForgePropertyStyle
 
          // Must have a getter or a setter (or both)
 
-         if ((this.readMethod == null) && (this.writeMethod == null))
+         if (this.readMethod == null && this.writeMethod == null)
          {
             throw InspectorException.newException("Property '" + name + "' has no getter and no setter");
          }
@@ -457,6 +452,19 @@ public class ForgePropertyStyle
       //
       // Public methods
       //
+
+      @Override
+      public String getName()
+      {
+         // FORGE-402: support fields starting with capital letter
+
+         if (this.privateField != null)
+         {
+            return this.privateField.getName();
+         }
+
+         return super.getName();
+      }
 
       @Override
       public boolean isReadable()
@@ -477,10 +485,27 @@ public class ForgePropertyStyle
       }
 
       @Override
+      public void write(Object obj, Object value)
+      {
+         throw new UnsupportedOperationException();
+      }
+
+      @Override
       public <T extends Annotation> T getAnnotation(final Class<T> annotationClass)
       {
-         org.jboss.forge.parser.java.Annotation<?> annotation = this.privateField.getAnnotation(annotationClass
-                  .getName());
+         org.jboss.forge.parser.java.Annotation<?> annotation = null;
+
+         // https://issues.jboss.org/browse/FORGE-439: support annotations on readMethod
+
+         if (this.readMethod != null)
+         {
+            annotation = this.readMethod.getAnnotation(annotationClass.getName());
+         }
+
+         if (annotation == null)
+         {
+            annotation = this.privateField.getAnnotation(annotationClass.getName());
+         }
 
          if (annotation != null)
          {
@@ -496,8 +521,6 @@ public class ForgePropertyStyle
       {
          if (this.readMethod != null)
          {
-            // Note: this needs https://issues.jboss.org/browse/FORGE-387
-
             @SuppressWarnings({ "unchecked", "rawtypes" })
             List<Type<?>> typeArguments = (List) this.readMethod.getReturnTypeInspector().getTypeArguments();
 
@@ -540,7 +563,6 @@ public class ForgePropertyStyle
 
    public static class AnnotationProxy<T extends Annotation> implements InvocationHandler
    {
-
       //
       // Private statics
       //
@@ -597,38 +619,164 @@ public class ForgePropertyStyle
          {
             String methodName = method.getName();
 
-            // Get the value from the Forge Annotation class...
+            // Reserved name
 
-            String value = this.annotationSource.getStringValue(methodName);
+            if ("annotationType".equals(methodName))
+            {
+               return this.annotationClass;
+            }
 
-            // ...if no value, return the default...
+            // If no value, return the default...
 
             java.lang.reflect.Method annotationMethod = this.annotationClass.getMethod(methodName);
+            String literalValue = this.annotationSource.getLiteralValue(methodName);
 
-            if (value == null)
+            if (literalValue == null)
             {
-               return annotationMethod.getDefaultValue();
+               Object defaultValue = annotationMethod.getDefaultValue();
+
+               if ( defaultValue == null ) {
+                  throw new UnsupportedOperationException( methodName + " does not have a default value" );
+               }
+
+               return defaultValue;
             }
 
-            // ...otherwise cast it to the correct class
+            // ...otherwise parse it
 
-            Class<?> returnType = annotationMethod.getReturnType();
-
-            if (boolean.class.equals(returnType))
-            {
-               return Boolean.valueOf(value);
-            }
-            else if (int.class.equals(returnType))
-            {
-               return Integer.valueOf(value);
-            }
-
-            return value;
+            return parse(literalValue, annotationMethod.getReturnType());
          }
          catch (Exception e)
          {
             throw InspectorException.newException(e);
          }
+      }
+
+      //
+      // Private methods
+      //
+
+      /**
+       * Parses the given literal value into the given returnType. Supports all standard annotation types (JLS 9.7).
+       */
+
+      private Object parse(String literalValue, Class<?> returnType) throws ClassNotFoundException
+      {
+         // Primitives
+
+         if (byte.class.equals(returnType))
+         {
+            return Byte.valueOf(literalValue);
+         }
+         if (short.class.equals(returnType))
+         {
+            return Short.valueOf(literalValue);
+         }
+         if (int.class.equals(returnType))
+         {
+            return Integer.valueOf(literalValue);
+         }
+         if (long.class.equals(returnType))
+         {
+            String valueToUse = literalValue;
+            if (valueToUse.endsWith("l") || valueToUse.endsWith("L"))
+            {
+               valueToUse = valueToUse.substring(0, valueToUse.length() - 1);
+            }
+            return Long.valueOf(valueToUse);
+         }
+         if (float.class.equals(returnType))
+         {
+            String valueToUse = literalValue;
+            if (valueToUse.endsWith("f") || valueToUse.endsWith("F"))
+            {
+               valueToUse = valueToUse.substring(0, valueToUse.length() - 1);
+            }
+            return Float.valueOf(valueToUse);
+         }
+         if (double.class.equals(returnType))
+         {
+            String valueToUse = literalValue;
+            if (valueToUse.endsWith("d") || valueToUse.endsWith("D"))
+            {
+               valueToUse = literalValue.substring(0, valueToUse.length() - 1);
+            }
+            return Double.valueOf(valueToUse);
+         }
+         if (boolean.class.equals(returnType))
+         {
+            return Boolean.valueOf(literalValue);
+         }
+         if (char.class.equals(returnType))
+         {
+            return Character.valueOf(literalValue.charAt(1));
+         }
+
+         // Arrays
+
+         if (returnType.isArray())
+         {
+            String[] values = literalValue.substring(1, literalValue.length() - 1).split(",");
+            int length = values.length;
+            Class<?> componentType = returnType.getComponentType();
+            Object array = Array.newInstance(componentType, length);
+
+            for (int loop = 0; loop < length; loop++)
+            {
+               Array.set(array, loop, parse(values[loop], componentType));
+            }
+
+            return array;
+         }
+
+         // Enums
+
+         if (returnType.isEnum())
+         {
+            Enum<?>[] constants = (Enum<?>[]) returnType.getEnumConstants();
+
+            String valueToUse = StringUtils.substringAfterLast(literalValue, '.');
+
+            for (Enum<?> inst : constants)
+            {
+               if (inst.name().equals(valueToUse))
+               {
+                  return inst;
+               }
+            }
+
+            return null;
+         }
+
+         // Strings
+
+         if (String.class.equals(returnType))
+         {
+            return literalValue.substring(1, literalValue.length() - 1);
+         }
+
+         // Classes
+
+         if (Class.class.equals(returnType))
+         {
+            String resolvedType = StringUtils.substringBefore(literalValue, ".class");
+            resolvedType = ((JavaSource<?>) this.annotationSource.getOrigin()).resolveType(resolvedType);
+            return Class.forName(resolvedType);
+         }
+
+         // Annotations
+
+         if (Annotation.class.isAssignableFrom(returnType))
+         {
+            String resolvedType = StringUtils.substringAfter(literalValue, "@");
+            resolvedType = ((JavaSource<?>) this.annotationSource.getOrigin()).resolveType(resolvedType);
+
+            return AnnotationProxy.newInstance(this.annotationSource);
+         }
+
+         // Unknown
+
+         throw new UnsupportedOperationException(returnType.getSimpleName());
       }
    }
 }

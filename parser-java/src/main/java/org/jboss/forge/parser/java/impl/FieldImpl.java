@@ -331,6 +331,11 @@ public class FieldImpl<O extends JavaSource<O>> implements Field<O>
          return true;
       }
 
+      if (isPrimitive() && type.getSimpleName().equals(getType()))
+      {
+         return true;
+      }
+
       String simpleName = type.getSimpleName();
       if (Strings.areEqual(simpleName, getQualifiedType())
                && (getOrigin().hasImport(type) || !getOrigin().requiresImport(type)))

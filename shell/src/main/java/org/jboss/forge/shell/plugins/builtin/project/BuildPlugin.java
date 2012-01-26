@@ -22,13 +22,11 @@
 
 package org.jboss.forge.shell.plugins.builtin.project;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import javax.inject.Inject;
 
 import org.jboss.forge.project.Project;
+import org.jboss.forge.project.build.BuildException;
+import org.jboss.forge.project.build.ProjectBuilder;
 import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.facets.PackagingFacet;
 import org.jboss.forge.shell.plugins.Alias;
@@ -65,33 +63,37 @@ public class BuildPlugin implements Plugin
 
    @DefaultCommand
    public void build(final PipeOut out,
-            @Option(name = "notest", flagOnly = true) boolean notest,
-            @Option(name = "profile", completer = ProfileCompleter.class) String profile,
-            @Option(description = "build arguments") String... args)
+            @Option(name = "notest", flagOnly = true) final boolean notest,
+            @Option(name = "profile", completer = ProfileCompleter.class) final String profile,
+            @Option(description = "build arguments") final String... args)
    {
       PackagingFacet packaging = project.getFacet(PackagingFacet.class);
 
-      List<String> arguments = null;
+      ProjectBuilder builder = packaging.createBuilder();
+
       if (args == null) {
-         arguments = new ArrayList<String>();
-         arguments.add("install");
+         builder.addArguments("install");
       }
       else {
-         arguments = new ArrayList<String>(Arrays.asList(args));
+         builder.addArguments(args);
       }
 
       if (notest) {
-         arguments.add("-Dmaven.test.skip=true");
+         builder.runTests(false);
       }
 
       if (profile != null) {
-         arguments.add("-P" + profile);
+         builder.addArguments("-P" + profile);
       }
 
-      if (args == null) {
-         args = new String[arguments.size()];
+      try
+      {
+         builder.build();
       }
-      packaging.executeBuild(arguments.toArray(args));
+      catch (BuildException e)
+      {
+         throw new RuntimeException("Build failed.", e);
+      }
    }
 
 }

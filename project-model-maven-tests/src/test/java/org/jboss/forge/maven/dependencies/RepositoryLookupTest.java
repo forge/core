@@ -29,7 +29,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.maven.util.ProjectModelTest;
 import org.jboss.forge.project.dependencies.Dependency;
@@ -52,10 +52,10 @@ import org.junit.runner.RunWith;
 public class RepositoryLookupTest extends ProjectModelTest
 {
    @Deployment
-   public static JavaArchive getTestArchive()
+   public static JavaArchive createTestArchive()
    {
-      return createTestArchive()
-               .addManifestResource(
+      return ProjectModelTest.createTestArchive()
+               .addAsManifestResource(
                         "META-INF/services/org.jboss.forge.project.dependencies.DependencyResolverProvider");
    }
 

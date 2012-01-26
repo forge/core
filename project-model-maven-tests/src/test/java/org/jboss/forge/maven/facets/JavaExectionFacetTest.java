@@ -34,7 +34,7 @@ import java.util.Scanner;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
-import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.Root;
 import org.jboss.forge.maven.MavenCoreFacet;
@@ -81,8 +81,8 @@ public class JavaExectionFacetTest
       return ShrinkWrap.create(JavaArchive.class, "test.jar")
                .addPackages(true, Root.class.getPackage())
                .addClass(ResourceFactory.class)
-               .addManifestResource(new ByteArrayAsset("<beans/>".getBytes()), ArchivePaths.create("beans.xml"))
-               .addManifestResource("META-INF/services/javax.enterprise.inject.spi.Extension");
+               .addAsManifestResource(new ByteArrayAsset("<beans/>".getBytes()), ArchivePaths.create("beans.xml"))
+               .addAsManifestResource("META-INF/services/javax.enterprise.inject.spi.Extension");
    }
 
    @Inject

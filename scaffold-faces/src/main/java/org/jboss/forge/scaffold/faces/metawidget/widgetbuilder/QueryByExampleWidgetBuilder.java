@@ -21,7 +21,6 @@ import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstant
 
 import java.util.Map;
 
-import org.jboss.solder.core.Veto;
 import org.metawidget.statically.javacode.JavaStatement;
 import org.metawidget.statically.javacode.StaticJavaMetawidget;
 import org.metawidget.statically.javacode.StaticJavaStub;
@@ -31,7 +30,6 @@ import org.metawidget.util.WidgetBuilderUtils;
 import org.metawidget.util.simple.StringUtils;
 import org.metawidget.widgetbuilder.iface.WidgetBuilder;
 
-@Veto
 public class QueryByExampleWidgetBuilder
          implements WidgetBuilder<StaticJavaWidget, StaticJavaMetawidget>
 {
@@ -50,7 +48,12 @@ public class QueryByExampleWidgetBuilder
          return null;
       }
 
-      // Rely on UnsearchableWidgetBuilder to have suppressed unsuitable fields
+      // Suppress
+
+      if (TRUE.equals(attributes.get(HIDDEN)))
+      {
+         return new StaticJavaStub();
+      }
 
       String type = WidgetBuilderUtils.getActualClassOrType(attributes);
       Class<?> clazz = ClassUtils.niceForName(type);
@@ -94,7 +97,6 @@ public class QueryByExampleWidgetBuilder
                   + StringUtils.capitalize(name) + "()");
          getValue.putImport(type);
          toReturn.getChildren().add(getValue);
-         // Need to use .getId() != null until https://issues.jboss.org/browse/FORGE-401
          JavaStatement ifNotEmpty = new JavaStatement("if (" + name + " != null && " + name + ".getId() != null)");
          ifNotEmpty.getChildren().add(
                   new JavaStatement("predicatesList.add(builder.equal(root.get(\"" + name + "\")," + name + "))"));

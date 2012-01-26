@@ -48,8 +48,8 @@
 
       <!-- Artifact Versions -->
       <aether.version>1.11</aether.version>
-      <arquillian.version>1.0.0.Alpha4</arquillian.version>
-      <arquillian.container.version>1.1.2.Final</arquillian.container.version>
+      <arquillian.version>1.0.0.CR7</arquillian.version>
+      <arquillian.container.version>1.0.0.CR3</arquillian.container.version>
       <cal10n.version>0.7.2</cal10n.version>
       <cdi.version>1.0-SP4</cdi.version>
       <groovy.version>1.7.5</groovy.version>
@@ -58,21 +58,22 @@
       <jboss.javaee.version>1.0.0.Final</jboss.javaee.version>
       <jboss.logging.version>3.0.0.Beta4</jboss.logging.version>
       <jboss.logmanager.version>1.2.0.GA</jboss.logmanager.version>
-      <jboss.modules.version>1.0.2.GA</jboss.modules.version>
+      <jboss.modules.version>1.0.4.GA</jboss.modules.version>
       <jgit.version>0.10.1</jgit.version>
       <jline.version>2.5</jline.version>
       <junit.version>4.8.1</junit.version>
       <log4j.version>1.2.16</log4j.version>
+      <log4j.extras.version>1.1</log4j.extras.version>
       <maven.version>3.0.3</maven.version>
       <mvel.version>2.1.Beta7</mvel.version>
       <shrinkwrap.version>1.0.0-alpha-11</shrinkwrap.version>
       <shrinkwrap.descriptors.version>1.1.0-beta-1</shrinkwrap.descriptors.version>
       <slf4j.version>1.5.10</slf4j.version>
       <version.sun.jaxb>2.2</version.sun.jaxb>
-      <version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.2_spec>1.0.3.Final</version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.2_spec>
+      <version.jboss-jaxb-api_2.2_spec>1.0.3.Final</version.jboss-jaxb-api_2.2_spec>
       <weld.version>1.1.2.Final</weld.version>
-      <seam.render.version>1.0.0-SNAPSHOT</seam.render.version>
-      <solder.version>3.1.0.Beta3</solder.version>
+      <seam.render.version>1.0.0.Alpha6</seam.render.version>
+      <solder.version>3.1.0.Beta5</solder.version>
       <wagon.version>2.0</wagon.version>
       <yaml.version>1.7</yaml.version>
    </properties>
@@ -84,17 +85,18 @@
       <module>maven-api</module>
       <module>shell-api</module>
       <module>git-tools</module>
+      <module>git-tools-tests</module>
       <module>parser-java</module>
       <module>project-model-maven</module>
       <module>project-model-maven-tests</module>
       <module>test-harness</module>
+      <module>test-harness-web</module>
       <module>shell</module>
       <module>javaee-api</module>
       <module>javaee-impl</module>
       <module>scaffold-api</module>
       <module>scaffold-plugins</module>
       <module>scaffold-faces</module>
-      <module>scaffold-faces-lib</module>
       <module>dev-plugins</module>
       <module>plugin-loader</module>
       <module>dist</module>
@@ -102,6 +104,11 @@
 
    <dependencyManagement>
       <dependencies>
+         <dependency>
+            <groupId>commons-configuration</groupId>
+            <artifactId>commons-configuration</artifactId>
+            <version>1.7</version>
+         </dependency>
 
          <dependency>
             <groupId>com.sun.xml.bind</groupId>
@@ -230,25 +237,25 @@
             <version>${jboss.modules.version}</version>
          </dependency>
 
-         <!-- JavaEE APIs -->
-
-         <dependency>
-            <groupId>org.hibernate.javax.persistence</groupId>
-            <artifactId>hibernate-jpa-2.0-api</artifactId>
-            <version>1.0.1.Final</version>
-         </dependency>
-
          <dependency>
             <groupId>org.jboss.slf4j</groupId>
             <artifactId>slf4j-jboss-logmanager</artifactId>
             <version>1.0.0.CR4</version>
          </dependency>
 
+         <!-- JavaEE APIs -->
+
          <dependency>
             <groupId>org.jboss.spec</groupId>
             <artifactId>jboss-javaee-6.0</artifactId>
             <version>${jboss.javaee.version}</version>
             <type>pom</type>
+         </dependency>
+
+         <dependency>
+            <groupId>org.hibernate.javax.persistence</groupId>
+            <artifactId>hibernate-jpa-2.0-api</artifactId>
+            <version>1.0.1.Final</version>
          </dependency>
 
          <dependency>
@@ -350,20 +357,7 @@
          <dependency>
             <groupId>org.jboss.spec.javax.xml.bind</groupId>
             <artifactId>jboss-jaxb-api_2.2_spec</artifactId>
-            <version>${version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.2_spec}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>jaxrs-api</artifactId>
-            <version>2.1.0.GA</version>
-         </dependency>
-
-
-         <dependency>
-            <groupId>org.jboss.spec.javax.xml.bind</groupId>
-            <artifactId>jboss-jaxb-api_2.2_spec</artifactId>
-            <version>${jboss.javaee.version}</version>
+            <version>${version.jboss-jaxb-api_2.2_spec}</version>
          </dependency>
 
          <dependency>
@@ -479,6 +473,12 @@
          </dependency>
 
          <dependency>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>forge-test-harness-web</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+
+         <dependency>
             <groupId>org.eclipse.jgit</groupId>
             <artifactId>org.eclipse.jgit.pgm</artifactId>
             <version>${jgit.version}</version>
@@ -548,25 +548,42 @@
             <version>${junit.version}</version>
             <scope>test</scope>
          </dependency>
+         
+         <!-- Arquillian -->
+         
          <dependency>
-            <groupId>org.jboss.arquillian</groupId>
-            <artifactId>arquillian-junit</artifactId>
+             <groupId>org.jboss.arquillian</groupId>
+             <artifactId>arquillian-bom</artifactId>
+             <version>${arquillian.version}</version>
+         </dependency>
+         <dependency>
+             <groupId>org.jboss.arquillian</groupId>
+             <artifactId>arquillian-bom</artifactId>
+             <version>${arquillian.version}</version>
+             <scope>import</scope>
+             <type>pom</type>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.arquillian.junit</groupId>
+            <artifactId>arquillian-junit-container</artifactId>
             <version>${arquillian.version}</version>
             <scope>test</scope>
          </dependency>
          <dependency>
-            <groupId>org.jboss.weld.arquillian.container</groupId>
+            <groupId>org.jboss.arquillian.container</groupId>
             <artifactId>arquillian-weld-ee-embedded-1.1</artifactId>
             <version>${arquillian.container.version}</version>
             <scope>test</scope>
          </dependency>
 
+<!-- 
          <dependency>
             <groupId>org.jboss.shrinkwrap</groupId>
             <artifactId>shrinkwrap-api</artifactId>
             <version>${shrinkwrap.version}</version>
             <scope>test</scope>
          </dependency>
+         -->
          <dependency>
             <groupId>org.jboss.shrinkwrap.descriptors</groupId>
             <artifactId>shrinkwrap-descriptors-api</artifactId>
@@ -577,6 +594,8 @@
             <artifactId>shrinkwrap-descriptors-impl</artifactId>
             <version>${shrinkwrap.descriptors.version}</version>
          </dependency>
+          
+          
          <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
@@ -613,6 +632,11 @@
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>${log4j.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>apache-log4j-extras</artifactId>
+            <version>${log4j.extras.version}</version>
          </dependency>
          <!-- END SLF4J Deps -->
 
@@ -746,14 +770,14 @@
                </configuration>
             </plugin>
 
-			<plugin>
-			   <groupId>org.apache.maven.plugins</groupId>
-			   <artifactId>maven-surefire-plugin</artifactId>
-			   <version>2.5</version>
-			   <configuration>
-			      <argLine>-Xms512m -Xmx1024m</argLine>
-			   </configuration>
-			</plugin>
+            <plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-surefire-plugin</artifactId>
+               <version>2.5</version>
+               <configuration>
+                  <argLine>-Xms512m -Xmx1024m</argLine>
+               </configuration>
+            </plugin>
 
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>

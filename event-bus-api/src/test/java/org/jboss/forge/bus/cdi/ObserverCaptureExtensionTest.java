@@ -30,7 +30,7 @@ import java.util.List;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
-import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.bus.MockEvent;
 import org.jboss.forge.bus.event.BusEvent;
@@ -55,8 +55,8 @@ public class ObserverCaptureExtensionTest
                .addClass(ObserverCaptureExtension.class)
                .addClass(MockBaseEventObserver.class)
                .addClass(BusEvent.class)
-               .addManifestResource("META-INF/services/javax.enterprise.inject.spi.Extension")
-               .addManifestResource(new ByteArrayAsset("<beans/>".getBytes()), ArchivePaths.create("beans.xml"));
+               .addAsManifestResource("META-INF/services/javax.enterprise.inject.spi.Extension")
+               .addAsManifestResource(new ByteArrayAsset("<beans/>".getBytes()), ArchivePaths.create("beans.xml"));
    }
 
    MockEvent event = new MockEvent();

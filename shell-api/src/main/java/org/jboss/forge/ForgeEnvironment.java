@@ -24,6 +24,7 @@ package org.jboss.forge;
 import java.util.Map;
 
 import org.jboss.forge.resources.DirectoryResource;
+import org.jboss.forge.resources.FileResource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -31,6 +32,10 @@ import org.jboss.forge.resources.DirectoryResource;
  */
 public interface ForgeEnvironment
 {
+   /**
+    * Return the current Forge version as a String. E.g.: "1.0.0.Final"
+    */
+   String getRuntimeVersion();
 
    /**
     * Return the directory Forge is using to store and load third-party plugins.
@@ -66,4 +71,9 @@ public interface ForgeEnvironment
     * Get the configuration directory.
     */
    DirectoryResource getConfigDirectory();
+
+   /**
+    * Get the current User's configuration file.
+    */
+   FileResource<?> getUserConfiguration();
 }

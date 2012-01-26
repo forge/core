@@ -48,8 +48,8 @@ public class ServletPluginTest extends AbstractShellTest
       getShell().execute("servlet setup");
 
       project.getFacet(ServletFacet.class).getConfig();
-      Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDependency(
-               DependencyBuilder.create("org.jboss.spec:jboss-javaee-6.0")));
+      Assert.assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveDependency(
+               DependencyBuilder.create("org.jboss.spec.javax.servlet:jboss-servlet-api_3.0_spec")));
       Assert.assertTrue(project.getFacet(WebResourceFacet.class).getWebResource("WEB-INF/web.xml").exists());
    }
 
@@ -61,8 +61,8 @@ public class ServletPluginTest extends AbstractShellTest
       getShell().execute("setup servlet");
 
       project.getFacet(ServletFacet.class).getConfig();
-      Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDependency(
-               DependencyBuilder.create("org.jboss.spec:jboss-javaee-6.0")));
+      Assert.assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveDependency(
+               DependencyBuilder.create("org.jboss.spec.javax.servlet:jboss-servlet-api_3.0_spec")));
       Assert.assertTrue(project.getFacet(WebResourceFacet.class).getWebResource("WEB-INF/web.xml").exists());
    }
 }

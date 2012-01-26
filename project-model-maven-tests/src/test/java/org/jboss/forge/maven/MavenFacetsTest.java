@@ -37,7 +37,6 @@ import javax.inject.Singleton;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.maven.util.ProjectModelTest;
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.JavaClass;
@@ -73,9 +72,9 @@ public class MavenFacetsTest extends ProjectModelTest
 
    @Before
    @Override
-   public void postConstruct() throws IOException
+   public void before() throws IOException
    {
-      super.postConstruct();
+      super.before();
 
       if (thisProject == null)
       {
@@ -156,6 +155,13 @@ public class MavenFacetsTest extends ProjectModelTest
       MavenCoreFacet maven = testProject.getFacet(MavenCoreFacet.class);
       Model pom = maven.getPOM();
       assertEquals("socialpm", pom.getArtifactId());
+   }
+
+   @Test
+   public void testResolveProperties() throws Exception
+   {
+      MavenCoreFacet maven = testProject.getFacet(MavenCoreFacet.class);
+      assertEquals("4.8.1", maven.resolveProperties("${junit.version}"));
    }
 
    @Test

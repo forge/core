@@ -26,24 +26,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
-import javax.inject.Inject;
-
-import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.maven.util.ProjectModelTest;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.facets.DependencyFacet;
-import org.jboss.forge.project.services.ProjectFactory;
-import org.jboss.forge.project.services.ResourceFactory;
-import org.jboss.forge.shell.util.ResourceUtil;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -55,48 +47,36 @@ import org.junit.runner.RunWith;
 public class MavenDependencyFacetTest extends ProjectModelTest
 {
    @Deployment
-   public static JavaArchive getTestArchive()
+   public static JavaArchive createTestArchive()
    {
-      return createTestArchive()
-               .addManifestResource(
+      return ProjectModelTest.createTestArchive()
+               .addAsManifestResource(
                         "META-INF/services/org.jboss.forge.project.dependencies.DependencyResolverProvider");
-   }
-
-   @Inject
-   private ProjectFactory projectFactory;
-
-   @Inject
-   private ResourceFactory resourceFactory;
-
-   private static Project testProject;
-
-   @Before
-   @Override
-   public void postConstruct() throws IOException
-   {
-      super.postConstruct();
-
-      if (testProject == null)
-      {
-         testProject = projectFactory.findProjectRecursively(
-                  ResourceUtil.getContextDirectory(resourceFactory.getResourceFrom(new File(
-                           "src/test/resources/test-pom"))));
-      }
    }
 
    @Test
    public void testHasDependency() throws Exception
    {
-      DependencyFacet deps = testProject.getFacet(DependencyFacet.class);
+      DependencyFacet deps = getProject().getFacet(DependencyFacet.class);
 
-      DependencyBuilder prettyfaces = DependencyBuilder.create("com.ocpsoft:prettyfaces-jsf2:3.0.2-SNAPSHOT");
-      assertTrue(deps.hasDependency(prettyfaces));
+      DependencyBuilder prettyfaces = DependencyBuilder.create("com.ocpsoft:prettyfaces-jsf2:${pf.version}");
+      deps.setProperty("pf.version", "3.3.2");
+      deps.addDirectDependency(prettyfaces);
+
+      assertTrue(deps.hasDirectDependency(prettyfaces));
+      assertTrue(deps.hasEffectiveDependency(prettyfaces));
+      assertEquals("3.3.2", deps.getEffectiveDependency(prettyfaces).getVersion());
+      assertEquals("3.3.2", deps.getDirectDependency(prettyfaces).getVersion());
    }
 
    @Test
    public void testHasImportedManagedDependency() throws Exception
    {
-      DependencyFacet deps = testProject.getFacet(DependencyFacet.class);
+      DependencyFacet deps = getProject().getFacet(DependencyFacet.class);
+      DependencyBuilder javaeeSpec = DependencyBuilder.create("org.jboss.spec:jboss-javaee-6.0:1.0.0.Final:import:pom");
+      assertFalse(deps.hasDirectManagedDependency(javaeeSpec));
+      deps.addDirectManagedDependency(javaeeSpec);
+      assertTrue(deps.hasDirectManagedDependency(javaeeSpec));
 
       DependencyBuilder ejb = DependencyBuilder.create("org.jboss.spec.javax.ejb:jboss-ejb-api_3.1_spec:1.0.0.Final");
       assertTrue(deps.hasEffectiveManagedDependency(ejb));
@@ -110,9 +90,10 @@ public class MavenDependencyFacetTest extends ProjectModelTest
 
       Project project = getProject();
       DependencyFacet deps = project.getFacet(DependencyFacet.class);
-      assertFalse(deps.hasDependency(dependency));
-      deps.addDependency(dependency);
-      assertTrue(deps.hasDependency(dependency));
+      assertFalse(deps.hasEffectiveDependency(dependency));
+      deps.addDirectDependency(dependency);
+      assertTrue(deps.hasEffectiveDependency(dependency));
+      assertTrue(deps.hasDirectDependency(dependency));
    }
 
    @Test
@@ -124,11 +105,13 @@ public class MavenDependencyFacetTest extends ProjectModelTest
       Project project = getProject();
       DependencyFacet deps = project.getFacet(DependencyFacet.class);
 
-      assertFalse(deps.hasDependency(dependency));
-      deps.addDependency(dependency);
-      assertTrue(deps.hasDependency(dependency));
+      assertFalse(deps.hasEffectiveDependency(dependency));
+      deps.addDirectDependency(dependency);
+      assertTrue(deps.hasDirectDependency(dependency));
+      assertTrue(deps.hasEffectiveDependency(dependency));
       deps.removeDependency(dependency);
-      assertFalse(deps.hasDependency(dependency));
+      assertFalse(deps.hasDirectDependency(dependency));
+      assertFalse(deps.hasEffectiveDependency(dependency));
    }
 
    @Test
@@ -154,10 +137,13 @@ public class MavenDependencyFacetTest extends ProjectModelTest
    @Test
    public void testHasManagedDependencyImport() throws Exception
    {
-      DependencyFacet manDeps = testProject.getFacet(DependencyFacet.class);
+      DependencyFacet deps = getProject().getFacet(DependencyFacet.class);
 
       DependencyBuilder javaeeSpec = DependencyBuilder.create("org.jboss.spec:jboss-javaee-6.0:1.0.0.Final:import:pom");
-      assertTrue(manDeps.hasManagedDependency(javaeeSpec));
+
+      assertFalse(deps.hasDirectManagedDependency(javaeeSpec));
+      deps.addDirectManagedDependency(javaeeSpec);
+      assertTrue(deps.hasDirectManagedDependency(javaeeSpec));
    }
 
    @Test
@@ -168,9 +154,9 @@ public class MavenDependencyFacetTest extends ProjectModelTest
 
       Project project = getProject();
       DependencyFacet manDeps = project.getFacet(DependencyFacet.class);
-      assertFalse(manDeps.hasManagedDependency(dependency));
+      assertFalse(manDeps.hasDirectManagedDependency(dependency));
       manDeps.addManagedDependency(dependency);
-      assertTrue(manDeps.hasManagedDependency(dependency));
+      assertTrue(manDeps.hasDirectManagedDependency(dependency));
    }
 
    @Test
@@ -180,11 +166,13 @@ public class MavenDependencyFacetTest extends ProjectModelTest
                DependencyBuilder.create("org.jboss.seam:seam-bom:3.0.0.Final:import:pom");
 
       Project project = getProject();
-      DependencyFacet manDeps = project.getFacet(DependencyFacet.class);
+      DependencyFacet deps = project.getFacet(DependencyFacet.class);
 
-      assertTrue(manDeps.hasManagedDependency(dependency));
-      manDeps.removeManagedDependency(dependency);
-      assertFalse(manDeps.hasManagedDependency(dependency));
+      assertFalse(deps.hasDirectManagedDependency(dependency));
+      deps.addDirectManagedDependency(dependency);
+      assertTrue(deps.hasDirectManagedDependency(dependency));
+      deps.removeManagedDependency(dependency);
+      assertFalse(deps.hasDirectManagedDependency(dependency));
    }
 
    @Test
@@ -195,7 +183,10 @@ public class MavenDependencyFacetTest extends ProjectModelTest
                .setArtifactId("forge-shell-api").setVersion("1.0.0-SNAPSHOT");
       DependencyBuilder cdiDependency = DependencyBuilder.create().setGroupId("javax.enterprise")
                .setArtifactId("cdi-api");
-      dependencyFacet.addDependency(forgeShellApiDependency);
+      assertFalse(dependencyFacet.hasEffectiveDependency(cdiDependency));
+      assertFalse(dependencyFacet.hasDirectDependency(cdiDependency));
+      dependencyFacet.addDirectDependency(forgeShellApiDependency);
       assertTrue(dependencyFacet.hasEffectiveDependency(cdiDependency));
+      assertFalse(dependencyFacet.hasDirectDependency(cdiDependency));
    }
 }

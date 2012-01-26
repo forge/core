@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import junit.framework.TestCase;
 
@@ -58,37 +59,48 @@ public class EntityWidgetBuilderTest
    public void testManyToOne()
             throws Exception
    {
-      // Many to One
-
       StaticHtmlMetawidget metawidget = new StaticHtmlMetawidget();
       metawidget.setValue("#{foo}");
       EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder();
       Map<String, String> attributes = CollectionUtils.newHashMap();
       attributes.put(NAME, "bar");
+      attributes.put(TYPE, Bar.class.getName());
       attributes.put(READ_ONLY, TRUE);
-      attributes.put(TYPE, "com.test.domain.Bar");
       attributes.put(FACES_LOOKUP, "#{barBean.all}");
       StaticWidget widget = widgetBuilder.buildWidget(PROPERTY, attributes, metawidget);
 
-      String result = "<h:link outcome=\"/scaffold/bar/view\" value=\"#{foo.bar}\">";
+      String result = "<h:link outcome=\"/scaffold/entityWidgetBuilderTest$Bar/view\" value=\"#{foo.bar}\">";
       result += "<f:param name=\"id\" value=\"#{foo.bar.id}\"/>";
       result += "</h:link>";
 
       assertEquals(result, widget.toString());
+   }
 
-      // One to One
-
-      attributes = CollectionUtils.newHashMap();
-      attributes.put(NAME, "baz");
+   public void testReadOnlyInverseOneToOne()
+            throws Exception
+   {
+      StaticHtmlMetawidget metawidget = new StaticHtmlMetawidget();
+      metawidget.setValue("#{foo}");
+      metawidget.setPath(FooOneToOne.class.getName());
+      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder();
+      Map<String, String> attributes = CollectionUtils.newHashMap();
+      attributes.put(NAME, "bar");
+      attributes.put(TYPE, Bar.class.getName());
       attributes.put(READ_ONLY, TRUE);
-      attributes.put(TYPE, "com.test.domain.Baz");
-      attributes.put(INVERSE_ONE_TO_ONE,TRUE);
+      attributes.put(INVERSE_RELATIONSHIP, TRUE);
+      attributes.put(ONE_TO_ONE, TRUE);
 
-      widget = widgetBuilder.buildWidget(PROPERTY, attributes, metawidget);
+      StaticWidget widget = widgetBuilder.buildWidget(PROPERTY, attributes, metawidget);
 
-      result = "<h:link outcome=\"/scaffold/baz/view\" value=\"#{foo.baz}\">";
-      result += "<f:param name=\"id\" value=\"#{foo.baz.id}\"/>";
-      result += "</h:link>";
+      // Same as non-inverse, for now
+
+      String result = "<h:panelGrid columns=\"3\" rendered=\"#{!empty foo.bar}\">";
+      result += "<h:outputLabel for=\"fooBarName\" value=\"Name:\"/>";
+      result += "<h:outputText id=\"fooBarName\" value=\"#{foo.bar.name}\"/>";
+      result += "<h:outputText/><h:outputLabel for=\"fooBarDescription\" value=\"Description:\"/>";
+      result += "<h:outputText id=\"fooBarDescription\" value=\"#{foo.bar.description}\"/>";
+      result += "<h:outputText/>";
+      result += "</h:panelGrid>";
 
       assertEquals(result, widget.toString());
 
@@ -99,7 +111,85 @@ public class EntityWidgetBuilderTest
       parent.setAccessible(true);
       parent.set(metawidget2, metawidget);
 
-      assertTrue( widgetBuilder.buildWidget(PROPERTY, attributes, metawidget2) instanceof StaticXmlStub );
+      assertTrue(widgetBuilder.buildWidget(PROPERTY, attributes, metawidget2) instanceof StaticXmlStub);
+   }
+
+   public void testOptionalReadOnlyOneToOne()
+            throws Exception
+   {
+      StaticHtmlMetawidget metawidget = new StaticHtmlMetawidget();
+      metawidget.setValue("#{foo}");
+      metawidget.setPath(FooOneToOne.class.getName());
+      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder();
+      Map<String, String> attributes = CollectionUtils.newHashMap();
+      attributes.put(NAME, "bar");
+      attributes.put(TYPE, Bar.class.getName());
+      attributes.put(READ_ONLY, TRUE);
+      attributes.put(ONE_TO_ONE, TRUE);
+
+      StaticWidget widget = widgetBuilder.buildWidget(PROPERTY, attributes, metawidget);
+
+      String result = "<h:panelGrid columns=\"3\" rendered=\"#{!empty foo.bar}\">";
+      result += "<h:outputLabel for=\"fooBarName\" value=\"Name:\"/>";
+      result += "<h:outputText id=\"fooBarName\" value=\"#{foo.bar.name}\"/>";
+      result += "<h:outputText/>";
+      result += "<h:outputLabel for=\"fooBarDescription\" value=\"Description:\"/>";
+      result += "<h:outputText id=\"fooBarDescription\" value=\"#{foo.bar.description}\"/>";
+      result += "<h:outputText/>";
+      result += "</h:panelGrid>";
+
+      assertEquals(result, widget.toString());
+   }
+
+   public void testOneToOne()
+            throws Exception
+   {
+      StaticHtmlMetawidget metawidget = new StaticHtmlMetawidget();
+      metawidget.setValue("#{foo}");
+      metawidget.setPath(FooOneToOne.class.getName());
+      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder();
+      Map<String, String> attributes = CollectionUtils.newHashMap();
+      attributes.put(NAME, "bar");
+      attributes.put(TYPE, Bar.class.getName());
+      attributes.put(ONE_TO_ONE, TRUE);
+      attributes.put(REQUIRED, TRUE);
+
+      assertEquals(null, widgetBuilder.buildWidget(PROPERTY, attributes, metawidget));
+   }
+
+   public void testOptionalOneToOne()
+            throws Exception
+   {
+      StaticHtmlMetawidget metawidget = new StaticHtmlMetawidget();
+      metawidget.setValue("#{foo}");
+      metawidget.setPath(FooOneToOne.class.getName());
+      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder();
+      Map<String, String> attributes = CollectionUtils.newHashMap();
+      attributes.put(NAME, "bar");
+      attributes.put(TYPE, Bar.class.getName());
+      attributes.put(ONE_TO_ONE, TRUE);
+
+      StaticWidget widget = widgetBuilder.buildWidget(PROPERTY, attributes, metawidget);
+
+      String result = "<h:panelGroup>";
+      result += "<h:commandLink action=\"#{foo.newBar}\" rendered=\"#{empty foo.bar}\" value=\"Create New Bar\"/>";
+      result += "<h:panelGrid columns=\"3\" rendered=\"#{!empty foo.bar}\">";
+      result += "<h:outputLabel for=\"fooBarName\" value=\"Name:\"/>";
+      result += "<h:panelGroup>";
+      result += "<h:inputText id=\"fooBarName\" value=\"#{foo.bar.name}\"/>";
+      result += "<h:message for=\"fooBarName\"/>";
+      result += "</h:panelGroup>";
+      result += "<h:outputText/>";
+      result += "<h:outputLabel for=\"fooBarDescription\" value=\"Description:\"/>";
+      result += "<h:panelGroup>";
+      result += "<h:inputText id=\"fooBarDescription\" value=\"#{foo.bar.description}\"/>";
+      result += "<h:message for=\"fooBarDescription\"/>";
+      result += "</h:panelGroup>";
+      result += "<h:outputText/>";
+      result += "</h:panelGrid>";
+      result += "</h:panelGroup>";
+
+      assertEquals(result, widget.toString());
    }
 
    public void testTopLevelList()
@@ -109,14 +199,14 @@ public class EntityWidgetBuilderTest
       metawidget.setValue("#{foo}");
       EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder();
       Map<String, String> attributes = CollectionUtils.newHashMap();
-      attributes.put(NAME, "bar");
+      attributes.put(NAME, "bars");
       attributes.put(TYPE, List.class.getName());
       attributes.put(PARAMETERIZED_TYPE, Bar.class.getName());
       StaticWidget widget = widgetBuilder.buildWidget(PROPERTY, attributes, metawidget);
 
       // (this looks a little weird because 'Bar' is an inner class)
 
-      String result = "<h:dataTable id=\"fooBar\" styleClass=\"data-table\" value=\"#{foo.bar}\" var=\"_item\">";
+      String result = "<h:dataTable id=\"fooBars\" styleClass=\"data-table\" value=\"#{foo.bars}\" var=\"_item\">";
       result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Name\"/></f:facet>";
       result += "<h:link outcome=\"/scaffold/entityWidgetBuilderTest$Bar/view\" value=\"#{_item.name}\"><f:param name=\"id\" value=\"#{_item.id}\"/></h:link>";
       result += "</h:column>";
@@ -135,7 +225,7 @@ public class EntityWidgetBuilderTest
       metawidget.setValue("#{foo}");
       EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder();
       Map<String, String> attributes = CollectionUtils.newHashMap();
-      attributes.put(NAME, "bar");
+      attributes.put(NAME, "bars");
       attributes.put(TYPE, Set.class.getName());
       attributes.put(PARAMETERIZED_TYPE, Bar.class.getName());
       attributes.put(N_TO_MANY, TRUE);
@@ -144,23 +234,62 @@ public class EntityWidgetBuilderTest
       // (this looks a little weird because 'Bar' is an inner class)
 
       String result = "<h:panelGroup>";
-      result += "<ui:param name=\"_collection\" value=\"#{foo.bar}\"/>";
-      result += "<h:dataTable columnClasses=\",,remove-column\" id=\"fooBar\" styleClass=\"data-table\" value=\"#{forgeview:asList(_collection)}\" var=\"_item\">";
+      result += "<ui:param name=\"_collection\" value=\"#{foo.bars}\"/>";
+      result += "<h:dataTable id=\"fooBars\" styleClass=\"data-table\" value=\"#{forgeview:asList(_collection)}\" var=\"_item\">";
       result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Name\"/></f:facet>";
       result += "<h:link outcome=\"/scaffold/entityWidgetBuilderTest$Bar/view\" value=\"#{_item.name}\"><f:param name=\"id\" value=\"#{_item.id}\"/></h:link>";
       result += "</h:column>";
       result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Description\"/></f:facet>";
       result += "<h:link outcome=\"/scaffold/entityWidgetBuilderTest$Bar/view\" value=\"#{_item.description}\"><f:param name=\"id\" value=\"#{_item.id}\"/></h:link>";
       result += "</h:column>";
-      result += "<h:column><h:commandLink action=\"#{_collection.remove(_item)}\" styleClass=\"button\" value=\"Remove\"/></h:column>";
+      result += "<h:column footerClass=\"remove-column\" headerClass=\"remove-column\"><h:commandLink action=\"#{_collection.remove(_item)}\" styleClass=\"button\" value=\"Remove\"/></h:column>";
       result += "</h:dataTable>";
-      result += "<h:selectOneMenu converter=\"#{entityWidgetBuilderTest$BarBean.converter}\" styleClass=\"select-add\" value=\"#{requestScope['fooBarAdd']}\"><f:selectItem/><f:selectItems value=\"#{entityWidgetBuilderTest$BarBean.all}\"/></h:selectOneMenu>";
-      result += "<h:commandLink action=\"#{_collection.add(requestScope['fooBarAdd'])}\" styleClass=\"button\" value=\"Add\"/>";
+      result += "<h:panelGroup styleClass=\"buttons\">";
+      result += "<h:selectOneMenu converter=\"#{entityWidgetBuilderTest$BarBean.converter}\" id=\"fooBarsAdd\" value=\"#{requestScope['fooBarsAdd']}\"><f:selectItem/><f:selectItems value=\"#{entityWidgetBuilderTest$BarBean.all}\"/></h:selectOneMenu>";
+      result += "<h:commandLink action=\"#{_collection.add(requestScope['fooBarsAdd'])}\" onclick=\"if (document.getElementById(document.forms[0].id+':fooBarsAdd').selectedIndex &lt; 1) { alert('Must select a Entity Widget Builder Test$Bar'); return false; }\" value=\"Add\"/>";
+      result += "</h:panelGroup>";
       result += "</h:panelGroup>";
 
       assertEquals(result, widget.toString());
       assertEquals(((StaticXmlWidget) widget.getChildren().get(1)).getAdditionalNamespaceURIs().get("forgeview"),
                "http://jboss.org/forge/view");
+
+      // With suppressed column
+
+      attributes.put(INVERSE_RELATIONSHIP, "name");
+      widget = widgetBuilder.buildWidget(PROPERTY, attributes, metawidget);
+
+      result = "<h:panelGroup>";
+      result += "<ui:param name=\"_collection\" value=\"#{foo.bars}\"/>";
+      result += "<h:dataTable id=\"fooBars\" styleClass=\"data-table\" value=\"#{forgeview:asList(_collection)}\" var=\"_item\">";
+      result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Description\"/></f:facet>";
+      result += "<h:link outcome=\"/scaffold/entityWidgetBuilderTest$Bar/view\" value=\"#{_item.description}\"><f:param name=\"id\" value=\"#{_item.id}\"/></h:link>";
+      result += "<f:facet name=\"footer\"><h:inputText id=\"entityWidgetBuilderTestBarBeanEntityWidgetBuilderTestBarDescription\" value=\"#{entityWidgetBuilderTest$BarBean.entityWidgetBuilderTest$Bar.description}\"/></f:facet>";
+      result += "</h:column>";
+      result += "<h:column footerClass=\"remove-column\" headerClass=\"remove-column\"><h:commandLink action=\"#{_collection.remove(_item)}\" styleClass=\"button\" value=\"Remove\"/>";
+      result += "<f:facet name=\"footer\">";
+      result += "<h:commandLink action=\"#{_collection.add(entityWidgetBuilderTest$BarBean.entityWidgetBuilderTest$Bar)}\" styleClass=\"button\" value=\"Add\">";
+      result += "<f:setPropertyActionListener target=\"#{entityWidgetBuilderTest$BarBean.entityWidgetBuilderTest$Bar.name}\" value=\"#{foo}\"/>";
+      result += "</h:commandLink>";
+      result += "</f:facet>";
+      result += "</h:column>";
+      result += "</h:dataTable>";
+      result += "</h:panelGroup>";
+
+      assertEquals(result, widget.toString());
+
+      // Read-only
+
+      metawidget.setReadOnly(true);
+      widget = widgetBuilder.buildWidget(PROPERTY, attributes, metawidget);
+
+      result = "<h:dataTable id=\"fooBars\" styleClass=\"data-table\" value=\"#{forgeview:asList(foo.bars)}\" var=\"_item\">";
+      result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Description\"/></f:facet>";
+      result += "<h:link outcome=\"/scaffold/entityWidgetBuilderTest$Bar/view\" value=\"#{_item.description}\"><f:param name=\"id\" value=\"#{_item.id}\"/></h:link>";
+      result += "</h:column>";
+      result += "</h:dataTable>";
+
+      assertEquals(result, widget.toString());
    }
 
    public void testSuppressOneToMany()
@@ -193,7 +322,7 @@ public class EntityWidgetBuilderTest
       metawidget.setValue("#{foo}");
       EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder();
       Map<String, String> attributes = CollectionUtils.newHashMap();
-      attributes.put(NAME, "bar");
+      attributes.put(NAME, "bars");
       attributes.put(TYPE, Set.class.getName());
       attributes.put(PARAMETERIZED_TYPE, FooOneToMany.class.getName());
       attributes.put(N_TO_MANY, TRUE);
@@ -202,18 +331,20 @@ public class EntityWidgetBuilderTest
       // (this looks a little weird because 'FooOneToMany' is an inner class)
 
       String result = "<h:panelGroup>";
-      result += "<ui:param name=\"_collection\" value=\"#{foo.bar}\"/>";
-      result += "<h:dataTable columnClasses=\",,remove-column\" id=\"fooBar\" styleClass=\"data-table\" value=\"#{forgeview:asList(_collection)}\" var=\"_item\">";
+      result += "<ui:param name=\"_collection\" value=\"#{foo.bars}\"/>";
+      result += "<h:dataTable id=\"fooBars\" styleClass=\"data-table\" value=\"#{forgeview:asList(_collection)}\" var=\"_item\">";
       result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Field 1\"/></f:facet>";
       result += "<h:link outcome=\"/scaffold/entityWidgetBuilderTest$FooOneToMany/view\" value=\"#{_item.field1}\"><f:param name=\"id\" value=\"#{_item.id}\"/></h:link>";
       result += "</h:column>";
       result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Field 3\"/></f:facet>";
       result += "<h:link outcome=\"/scaffold/entityWidgetBuilderTest$FooOneToMany/view\" value=\"#{_item.field3}\"><f:param name=\"id\" value=\"#{_item.id}\"/></h:link>";
       result += "</h:column>";
-      result += "<h:column><h:commandLink action=\"#{_collection.remove(_item)}\" styleClass=\"button\" value=\"Remove\"/></h:column>";
+      result += "<h:column footerClass=\"remove-column\" headerClass=\"remove-column\"><h:commandLink action=\"#{_collection.remove(_item)}\" styleClass=\"button\" value=\"Remove\"/></h:column>";
       result += "</h:dataTable>";
-      result += "<h:selectOneMenu converter=\"#{entityWidgetBuilderTest$FooOneToManyBean.converter}\" styleClass=\"select-add\" value=\"#{requestScope['fooBarAdd']}\"><f:selectItem/><f:selectItems value=\"#{entityWidgetBuilderTest$FooOneToManyBean.all}\"/></h:selectOneMenu>";
-      result += "<h:commandLink action=\"#{_collection.add(requestScope['fooBarAdd'])}\" styleClass=\"button\" value=\"Add\"/>";
+      result += "<h:panelGroup styleClass=\"buttons\">";
+      result += "<h:selectOneMenu converter=\"#{entityWidgetBuilderTest$FooOneToManyBean.converter}\" id=\"fooBarsAdd\" value=\"#{requestScope['fooBarsAdd']}\"><f:selectItem/><f:selectItems value=\"#{entityWidgetBuilderTest$FooOneToManyBean.all}\"/></h:selectOneMenu>";
+      result += "<h:commandLink action=\"#{_collection.add(requestScope['fooBarsAdd'])}\" onclick=\"if (document.getElementById(document.forms[0].id+':fooBarsAdd').selectedIndex &lt; 1) { alert('Must select a Entity Widget Builder Test$Foo One To Many'); return false; }\" value=\"Add\"/>";
+      result += "</h:panelGroup>";
       result += "</h:panelGroup>";
 
       assertEquals(result, widget.toString());
@@ -227,19 +358,55 @@ public class EntityWidgetBuilderTest
 
    static class Bar
    {
-      public String name;
+      public String getName()
+      {
+         return null;
+      }
+
+      public void setName(@SuppressWarnings("unused") String name)
+      {
+
+         // Do nothing
+      }
 
       @UiComesAfter("name")
-      public String description;
+      public String getDescription()
+      {
+         return null;
+      }
+
+      public void setDescription(@SuppressWarnings("unused") String description)
+      {
+
+         // Do nothing
+      }
    }
 
    static class FooOneToMany
    {
-      public String field1;
+      public String getField1()
+      {
+         return null;
+      }
 
       @OneToMany
-      public Set<String> field2;
+      public Set<String> getField2()
+      {
+         return null;
+      }
 
-      public String field3;
+      public String getField3()
+      {
+         return null;
+      }
+   }
+
+   static class FooOneToOne
+   {
+      @OneToOne
+      public Bar getBar()
+      {
+         return null;
+      }
    }
 }

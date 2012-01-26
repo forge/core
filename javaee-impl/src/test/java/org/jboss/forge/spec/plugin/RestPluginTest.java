@@ -32,10 +32,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.project.Project;
+import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.resources.java.JavaResource;
-import org.jboss.forge.spec.javaee.BaseJavaEEFacet;
 import org.jboss.forge.spec.javaee.RestActivatorType;
 import org.jboss.forge.spec.javaee.RestFacet;
 import org.jboss.forge.spec.jpa.AbstractJPATest;
@@ -57,7 +57,8 @@ public class RestPluginTest extends AbstractJPATest
       setupRest();
 
       assertTrue(project.hasFacet(RestFacet.class));
-      assertTrue(project.getFacet(DependencyFacet.class).hasDependency(BaseJavaEEFacet.dep));
+      assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveDependency(
+               DependencyBuilder.create("org.jboss.spec.javax.ws.rs:jboss-jaxrs-api_1.1_spec")));
 
       RestFacet rest = project.getFacet(RestFacet.class);
       assertEquals("/rest/*", rest.getApplicationPath());

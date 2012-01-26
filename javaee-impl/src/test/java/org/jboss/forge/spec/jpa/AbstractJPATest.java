@@ -50,6 +50,7 @@ public abstract class AbstractJPATest extends SingletonAbstractShellTest
       initializeJavaProject();
       if ((getProject() != null) && !getProject().hasFacet(PersistenceFacet.class))
       {
+         queueInputLines("");
          getShell().execute("project install-facet forge.spec.jpa");
       }
    }

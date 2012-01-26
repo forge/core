@@ -27,7 +27,7 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 
-import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.forge.Root;
 import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.maven.MavenFacetsTest;
@@ -44,6 +44,7 @@ import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.junit.After;
 import org.junit.Before;
 
 /**
@@ -58,8 +59,8 @@ public abstract class ProjectModelTest
       return ShrinkWrap.create(JavaArchive.class, "test.jar")
                .addPackages(true, Root.class.getPackage())
                .addClass(ResourceFactory.class)
-               .addManifestResource(new ByteArrayAsset("<beans/>".getBytes()), ArchivePaths.create("beans.xml"))
-               .addManifestResource("META-INF/services/javax.enterprise.inject.spi.Extension");
+               .addAsManifestResource(new ByteArrayAsset("<beans/>".getBytes()), ArchivePaths.create("beans.xml"))
+               .addAsManifestResource("META-INF/services/javax.enterprise.inject.spi.Extension");
    }
 
    private static final String PKG = MavenFacetsTest.class.getSimpleName().toLowerCase();
@@ -75,7 +76,7 @@ public abstract class ProjectModelTest
 
    @Before
    @SuppressWarnings("unchecked")
-   public void postConstruct() throws IOException
+   public void before() throws IOException
    {
       if (project == null)
       {
@@ -88,6 +89,13 @@ public abstract class ProjectModelTest
                   MavenCoreFacet.class, JavaSourceFacet.class, ResourceFacet.class, WebResourceFacet.class,
                   DependencyFacet.class, PackagingFacet.class);
       }
+   }
+
+   @After
+   public void after()
+   {
+      project.getProjectRoot().delete(true);
+      project = null;
    }
 
    protected Project getProject()

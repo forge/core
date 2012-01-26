@@ -23,6 +23,7 @@
 package org.jboss.forge.shell;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -32,6 +33,7 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
+import org.jboss.forge.shell.InstalledPluginRegistry.PluginEntry;
 import org.jboss.forge.shell.events.AcceptUserInput;
 import org.jboss.forge.shell.events.PostStartup;
 import org.jboss.forge.shell.events.PreStartup;
@@ -75,15 +77,27 @@ public class Bootstrap
             @Override
             public void run()
             {
+               initLogging();
 
                boolean restarting = restartRequested;
                restartRequested = false;
 
                Weld weld = new ModularWeld();
                BeanManager manager = null;
+
+               // FIXME this plugin loading scheme causes classloading issues w/weld because weld cannot load classes
+               // from its own classloaders before plugins are loaded and pollute the classpath.
+               // We can work around it by loading weld before we load plugins, then restarting weld, but this is SLOW.
                try {
+                  WeldContainer container = weld.initialize();
+                  manager = container.getBeanManager();
+                  weld.shutdown();
+               }
+               catch (Exception e) {}
+
+               try {
+                  // TODO verify plugin API versions. only activate compatible plugins.
                   loadPlugins();
-                  initLogging();
                   WeldContainer container = weld.initialize();
                   manager = container.getBeanManager();
                }
@@ -155,13 +169,40 @@ public class Bootstrap
          CompositeClassLoader composite = new CompositeClassLoader();
          composite.add(Module.forClassLoader(Bootstrap.class.getClassLoader(), true).getClassLoader());
 
-         List<String> installed = InstalledPluginRegistry.getInstalledPlugins();
+         List<PluginEntry> toLoad = new ArrayList<InstalledPluginRegistry.PluginEntry>();
 
-         for (String plugin : installed)
+         List<PluginEntry> installed = InstalledPluginRegistry.listByVersion(Bootstrap.class.getPackage()
+                  .getImplementationVersion());
+
+         toLoad.addAll(installed);
+
+         // Add in the SNAPSHOT versions, we can't ignore them.
+         List<PluginEntry> incompatible = InstalledPluginRegistry.list();
+         incompatible.removeAll(installed);
+         if (!incompatible.isEmpty())
+         {
+            for (PluginEntry pluginEntry : incompatible) {
+               if (pluginEntry.getApiVersion().contains("SNAPSHOT"))
+               {
+                  toLoad.add(pluginEntry);
+                  incompatible.remove(pluginEntry);
+               }
+            }
+         }
+
+         for (PluginEntry pluginEntry : incompatible) {
+            System.out.println("Not loading plugin [" + pluginEntry.getName()
+                     + "] because it references Forge API version [" + pluginEntry.getApiVersion()
+                     + "] which may not be compatible with my current version [" + Bootstrap.class.getPackage()
+                              .getImplementationVersion() + "]. To remove this plugin, type 'forge remove-plugin "
+                     + pluginEntry + ".");
+         }
+
+         for (PluginEntry plugin : toLoad)
          {
             try
             {
-               Module module = moduleLoader.loadModule(ModuleIdentifier.fromString(plugin));
+               Module module = moduleLoader.loadModule(ModuleIdentifier.fromString(plugin.toModuleId()));
                composite.add(module.getClassLoader());
             }
             catch (Exception e)

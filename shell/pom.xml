@@ -95,6 +95,11 @@
          <artifactId>log4j</artifactId>
       </dependency>
       <dependency>
+         <groupId>log4j</groupId>
+         <artifactId>apache-log4j-extras</artifactId>
+      </dependency>
+      
+      <dependency>
          <groupId>org.jboss.logmanager</groupId>
          <artifactId>jboss-logmanager</artifactId>
       </dependency>
@@ -103,12 +108,16 @@
          <artifactId>jline</artifactId>
       </dependency>
       <dependency>
-         <groupId>org.fusesource.jansi</groupId>
+         <groupId>org.fusesource.jansi</groupId> 
          <artifactId>jansi</artifactId>
       </dependency>
       <dependency>
          <groupId>org.mvel</groupId>
          <artifactId>mvel2</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>commons-configuration</groupId>
+         <artifactId>commons-configuration</artifactId>
       </dependency>
 
 
@@ -124,20 +133,19 @@
        
 
       <!-- Test Deps -->
-
       <dependency>
-         <groupId>org.jboss.arquillian</groupId>
-         <artifactId>arquillian-junit</artifactId>
+         <groupId>org.jboss.arquillian.junit</groupId>
+         <artifactId>arquillian-junit-container</artifactId>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.arquillian.container</groupId>
+         <artifactId>arquillian-weld-ee-embedded-1.1</artifactId>
          <scope>test</scope>
       </dependency>
       <dependency>
          <groupId>javax.el</groupId>
          <artifactId>el-api</artifactId>
-         <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.weld.arquillian.container</groupId>
-         <artifactId>arquillian-weld-ee-embedded-1.1</artifactId>
          <scope>test</scope>
       </dependency>
       <dependency>

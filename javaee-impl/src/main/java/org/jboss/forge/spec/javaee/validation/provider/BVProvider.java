@@ -21,39 +21,40 @@
  */
 package org.jboss.forge.spec.javaee.validation.provider;
 
-import javax.enterprise.inject.spi.BeanManager;
-
 import static org.jboss.forge.shell.util.BeanManagerUtils.getContextualInstance;
+
+import javax.enterprise.inject.spi.BeanManager;
 
 /**
  * @author Kevin Pollet
  */
 public enum BVProvider
 {
-    HIBERNATE_VALIDATOR("Hibernate Validator", HibernateValidatorProvider.class),
-    APACHE_BEAN_VALIDATION("Apache Bean Validation", ApacheBeanValidationProvider.class);
+   JAVA_EE("Generic Java EE", JavaEEValidatorProvider.class),
+   HIBERNATE_VALIDATOR("Hibernate Validator", HibernateValidatorProvider.class),
+   APACHE_BEAN_VALIDATION("Apache Bean Validation", ApacheBeanValidationProvider.class);
 
-    private final String name;
-    private final Class<? extends ValidationProvider> validationProviderClass;
+   private final String name;
+   private final Class<? extends ValidationProvider> validationProviderClass;
 
-    BVProvider(String name, Class<? extends ValidationProvider> validationProviderClass)
-    {
-        this.name = name;
-        this.validationProviderClass = validationProviderClass;
-    }
+   BVProvider(String name, Class<? extends ValidationProvider> validationProviderClass)
+   {
+      this.name = name;
+      this.validationProviderClass = validationProviderClass;
+   }
 
-    public String getName()
-    {
-        return name;
-    }
+   public String getName()
+   {
+      return name;
+   }
 
-    public ValidationProvider getValidationProvider(BeanManager manager)
-    {
-        return getContextualInstance(manager, validationProviderClass);
-    }
+   public ValidationProvider getValidationProvider(BeanManager manager)
+   {
+      return getContextualInstance(manager, validationProviderClass);
+   }
 
-    public Class<? extends ValidationProvider> getValidationProviderClass()
-    {
-        return validationProviderClass;
-    }
+   public Class<? extends ValidationProvider> getValidationProviderClass()
+   {
+      return validationProviderClass;
+   }
 }

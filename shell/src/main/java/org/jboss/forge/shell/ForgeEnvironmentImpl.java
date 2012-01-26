@@ -40,15 +40,27 @@ import org.jboss.forge.resources.FileResource;
 @ApplicationScoped
 public class ForgeEnvironmentImpl implements ForgeEnvironment
 {
+
    private final Map<String, Object> properties = new HashMap<String, Object>();
 
    @Inject
    private ResourceFactory resourceFactory;
 
    @Override
+   public String getRuntimeVersion()
+   {
+      String version = (String) getProperty(ShellImpl.PROP_FORGE_VERSION);
+      if (version == null)
+      {
+         version = getClass().getPackage().getImplementationVersion();
+      }
+      return version;
+   }
+
+   @Override
    public DirectoryResource getPluginDirectory()
    {
-      String pluginPath = getProperty("FORGE_CONFIG_DIR") + "plugins/";
+      String pluginPath = getProperty(ShellImpl.PROP_FORGE_CONFIG_DIR) + "plugins/";
       FileResource<?> resource = (FileResource<?>) resourceFactory.getResourceFrom(new File(pluginPath));
       if (!resource.exists())
       {
@@ -101,5 +113,11 @@ public class ForgeEnvironmentImpl implements ForgeEnvironment
          }
       }
       return resource.reify(DirectoryResource.class);
+   }
+
+   @Override
+   public FileResource<?> getUserConfiguration()
+   {
+      return getConfigDirectory().getChild("config.xml").reify(FileResource.class);
    }
 }

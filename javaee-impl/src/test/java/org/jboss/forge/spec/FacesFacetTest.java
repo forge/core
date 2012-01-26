@@ -28,12 +28,17 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import junit.framework.Assert;
+
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.project.Project;
+import org.jboss.forge.project.dependencies.ScopeType;
+import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.spec.javaee.FacesFacet;
+import org.jboss.forge.spec.javaee.jsf.FacesFacetImpl;
 import org.jboss.forge.test.SingletonAbstractShellTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -97,6 +102,11 @@ public class FacesFacetTest extends SingletonAbstractShellTest
       queueInputLines("", "", "");
       getShell().execute("project install-facet forge.spec.jsf");
       assertTrue(project.hasFacet(FacesFacet.class));
+
+      Assert.assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveDependency(
+               FacesFacetImpl.JAVAEE6_FACES));
+      Assert.assertEquals(ScopeType.PROVIDED, project.getFacet(DependencyFacet.class).getEffectiveDependency(
+               FacesFacetImpl.JAVAEE6_FACES).getScopeTypeEnum());
       return project;
    }
 }

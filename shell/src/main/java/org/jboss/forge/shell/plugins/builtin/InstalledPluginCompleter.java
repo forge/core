@@ -34,7 +34,7 @@ public class InstalledPluginCompleter extends SimpleTokenCompleter
    @Override
    public Iterable<?> getCompletionTokens()
    {
-      return InstalledPluginRegistry.getInstalledPlugins();
+      return InstalledPluginRegistry.list();
    }
 
 }

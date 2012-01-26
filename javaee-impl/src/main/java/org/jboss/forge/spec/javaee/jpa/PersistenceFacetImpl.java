@@ -24,15 +24,17 @@ package org.jboss.forge.spec.javaee.jpa;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.persistence.Entity;
 
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
-import org.jboss.forge.project.facets.BaseFacet;
+import org.jboss.forge.project.dependencies.DependencyInstaller;
 import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.project.facets.ResourceFacet;
@@ -44,6 +46,7 @@ import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresPackagingType;
+import org.jboss.forge.spec.javaee.BaseJavaEEFacet;
 import org.jboss.forge.spec.javaee.PersistenceFacet;
 import org.jboss.shrinkwrap.descriptor.api.DescriptorImporter;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
@@ -55,10 +58,48 @@ import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceDescr
 @Alias("forge.spec.jpa")
 @RequiresFacet({ JavaSourceFacet.class, ResourceFacet.class, DependencyFacet.class })
 @RequiresPackagingType({ PackagingType.JAR, PackagingType.WAR, PackagingType.BUNDLE })
-public class PersistenceFacetImpl extends BaseFacet implements PersistenceFacet
+public class PersistenceFacetImpl extends BaseJavaEEFacet implements PersistenceFacet
 {
-   private static final Dependency dep =
-            DependencyBuilder.create("org.jboss.spec:jboss-javaee-6.0:1.0.0.Final:provided:basic");
+
+   @Inject
+   public PersistenceFacetImpl(final DependencyInstaller installer)
+   {
+      super(installer);
+   }
+
+   @Override
+   protected List<Dependency> getRequiredDependencies()
+   {
+      return Arrays.asList((Dependency) DependencyBuilder
+               .create("org.hibernate.javax.persistence:hibernate-jpa-2.0-api"));
+   }
+
+   @Override
+   public boolean install()
+   {
+      if (!isInstalled())
+      {
+         FileResource<?> descriptor = getConfigFile();
+         if (!descriptor.exists())
+         {
+
+            PersistenceDescriptor descriptorContents = Descriptors.create(PersistenceDescriptor.class)
+                     .version("2.0");
+            descriptor.setContents(descriptorContents.exportAsString());
+         }
+      }
+      return super.install();
+   }
+
+   @Override
+   public boolean isInstalled()
+   {
+      return super.isInstalled() && getConfigFile().exists();
+   }
+
+   /*
+    * Facet methods
+    */
 
    @Override
    public String getEntityPackage()
@@ -144,37 +185,5 @@ public class PersistenceFacetImpl extends BaseFacet implements PersistenceFacet
          }
       }
       return result;
-   }
-
-   @Override
-   public boolean install()
-   {
-      if (!isInstalled())
-      {
-         DependencyFacet deps = project.getFacet(DependencyFacet.class);
-         if (!deps.hasDependency(dep))
-         {
-            deps.addDependency(dep);
-         }
-
-         FileResource<?> descriptor = getConfigFile();
-         if (!descriptor.exists())
-         {
-
-            PersistenceDescriptor descriptorContents = Descriptors.create(PersistenceDescriptor.class)
-                     .version("2.0");
-            descriptor.setContents(descriptorContents.exportAsString());
-
-         }
-      }
-      return true;
-   }
-
-   @Override
-   public boolean isInstalled()
-   {
-      DependencyFacet deps = project.getFacet(DependencyFacet.class);
-      boolean hasDependency = deps.hasDependency(dep);
-      return hasDependency && getConfigFile().exists();
    }
 }

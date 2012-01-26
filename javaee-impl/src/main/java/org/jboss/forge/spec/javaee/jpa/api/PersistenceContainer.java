@@ -25,12 +25,20 @@ import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceUnitD
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.TransactionType;
 
 /**
+ * Performs configuration on a {@link JPADataSource} to ensure it is properly set up for the this implementation.
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
 public interface PersistenceContainer
 {
+   /**
+    * Set up the connection info.
+    */
    PersistenceUnitDef setupConnection(PersistenceUnitDef unit, JPADataSource dataSource);
 
+   /**
+    * Get this the supported {@link TransactionType} of this {@link PersistenceContainer}
+    */
    TransactionType getTransactionType();
 }

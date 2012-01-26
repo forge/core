@@ -10,6 +10,7 @@ import javax.inject.Inject;
 
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
+import org.jboss.forge.project.dependencies.DependencyInstaller;
 import org.jboss.forge.project.dependencies.ScopeType;
 import org.jboss.forge.project.facets.BaseFacet;
 import org.jboss.forge.project.facets.DependencyFacet;
@@ -33,6 +34,9 @@ public class ForgeAPIFacet extends BaseFacet
    @Inject
    private Shell shell;
 
+   @Inject
+   private DependencyInstaller installer;
+
    @Override
    public boolean install()
    {
@@ -48,9 +52,9 @@ public class ForgeAPIFacet extends BaseFacet
       DependencyBuilder testShellDep = DependencyBuilder.create("org.jboss.forge:forge-shell:${forge.api.version}")
                .setScopeType(ScopeType.TEST);
 
-      deps.addDependency(apiDep);
-      deps.addDependency(testDep);
-      deps.addDependency(testShellDep);
+      installer.install(project, apiDep);
+      installer.install(project, testDep);
+      installer.install(project, testShellDep);
       return true;
    }
 
@@ -59,7 +63,7 @@ public class ForgeAPIFacet extends BaseFacet
    {
       Dependency dep = DependencyBuilder.create("org.jboss.forge:forge-shell-api");
       PackagingType packagingType = project.getFacet(PackagingFacet.class).getPackagingType();
-      return project.getFacet(DependencyFacet.class).hasDependency(dep)
+      return project.getFacet(DependencyFacet.class).hasEffectiveDependency(dep)
                && PackagingType.JAR.equals(packagingType);
    }
 }
