@@ -224,7 +224,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(customerBean.exists());
       contents = Streams.toString(customerBean.getResourceInputStream());
 
-      Assert.assertTrue(contents.contains("\n\tprivate Customer customer;"));
+      Assert.assertTrue(contents.contains("\n\tprivate Customer customer = new Customer();"));
 
       StringBuilder qbeMetawidget = new StringBuilder(
                "List<Predicate> predicatesList = new ArrayList<Predicate>();\r\n\r\n");
@@ -730,7 +730,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       metawidget.append("\t\t\t\t<h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t\t<ui:param name=\"_collection\" value=\"#{customerBean.customer.groceries}\"/>\r\n");
       metawidget
-               .append("\t\t\t\t\t<h:dataTable columnClasses=\",remove-column\" id=\"customerBeanCustomerGroceries\" styleClass=\"data-table\" value=\"#{forgeview:asList(_collection)}\" var=\"_item\">\r\n");
+               .append("\t\t\t\t\t<h:dataTable id=\"customerBeanCustomerGroceries\" styleClass=\"data-table\" value=\"#{forgeview:asList(_collection)}\" var=\"_item\">\r\n");
       metawidget.append("\t\t\t\t\t\t<h:column>\r\n");
       metawidget.append("\t\t\t\t\t\t\t<f:facet name=\"header\">\r\n");
       metawidget.append("\t\t\t\t\t\t\t\t<h:outputText value=\"Name\"/>\r\n");
@@ -739,7 +739,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       metawidget.append("\t\t\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
       metawidget.append("\t\t\t\t\t\t\t</h:link>\r\n");
       metawidget.append("\t\t\t\t\t\t</h:column>\r\n");
-      metawidget.append("\t\t\t\t\t\t<h:column>\r\n");
+      metawidget.append("\t\t\t\t\t\t<h:column footerClass=\"remove-column\" headerClass=\"remove-column\">\r\n");
       metawidget
                .append("\t\t\t\t\t\t\t<h:commandLink action=\"#{_collection.remove(_item)}\" styleClass=\"button\" value=\"Remove\"/>\r\n");
       metawidget.append("\t\t\t\t\t\t</h:column>\r\n");

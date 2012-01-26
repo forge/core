@@ -19,56 +19,53 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.scaffold.faces;
+package org.jboss.forge.scaffold.faces.scenario.weather;
 
-import java.util.Arrays;
-
-import javax.inject.Inject;
+import junit.framework.Assert;
 
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.project.Project;
-import org.jboss.forge.test.web.WebTest;
-import org.jboss.scenario.FacesScaffoldLiveTestScenario01;
+import org.jboss.forge.project.facets.WebResourceFacet;
+import org.jboss.forge.resources.FileResource;
+import org.jboss.forge.scaffold.faces.AbstractFacesScaffoldTest;
+import org.jboss.forge.shell.util.Streams;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author Richard Kennard
  */
 
 @RunWith(Arquillian.class)
-public class FacesScaffoldLiveTest extends AbstractFacesScaffoldTest
+public class FacesScaffoldWeatherTest extends AbstractFacesScaffoldTest
 {
-   @Inject
-   private WebTest webTest;
-
    @Test
-   public void testGenerateFromNestedOneToOne() throws Exception
+   public void testGenerate() throws Exception
    {
-      Project me = getShell().getCurrentProject();
-      Project test = setupScaffoldProject();
+      Project project = setupScaffoldProject();
 
       queueInputLines("");
-      getShell().execute("entity --named Baz");
+      getShell().execute("entity --named Hurricane");
       getShell().execute("field string --named name");
-      getShell().execute("entity --named Bar");
+      getShell().execute("entity --named Continent");
       getShell().execute("field string --named name");
-      getShell().execute("field oneToOne --named baz --fieldType com.test.domain.Baz");
-      getShell().execute("entity --named Foo");
-      getShell().execute("field string --named name");
-      getShell().execute("field oneToOne --named bar --fieldType com.test.domain.Bar");
+      getShell()
+               .execute("field manyToMany --named hurricanes --fieldType com.test.domain.Hurricane --inverseFieldName continents");
 
       queueInputLines("", "", "", "", "");
-      getShell().execute("scaffold from-entity com.test.domain.*");
+      getShell()
+               .execute("scaffold from-entity com.test.domain.*");
 
-      webTest.setup(test);
-      JavaClass clazz = webTest.from(me, FacesScaffoldLiveTestScenario01.class);
+      WebResourceFacet web = project.getFacet(WebResourceFacet.class);
 
-      webTest.buildDefaultDeploymentMethod(test, clazz, Arrays.asList(
-               ".addAsResource(\"META-INF/persistence.xml\", \"META-INF/persistence.xml\")"
-               ));
-      webTest.addAsTestClass(test, clazz);
+      // View
+
+      FileResource<?> view = web.getWebResource("scaffold/continent/view.xhtml");
+      Assert.assertTrue(view.exists());
+      String contents = Streams.toString(view.getResourceInputStream());
+
+      Assert.assertTrue(contents
+               .contains("<h:dataTable id=\"continentBeanContinentHurricanes\" styleClass=\"data-table\" value=\"#{forgeview:asList(continentBean.continent.hurricanes)}\" var=\"_item\">"));
 
       getShell().execute("build");
    }

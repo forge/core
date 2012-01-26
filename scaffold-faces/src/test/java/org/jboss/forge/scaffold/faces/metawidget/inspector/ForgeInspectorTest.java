@@ -83,8 +83,7 @@ public class ForgeInspectorTest
       assertEquals(PROPERTY, property.getNodeName());
       assertEquals("oneToOneMappedBy", property.getAttribute(NAME));
       assertEquals(TRUE, property.getAttribute(ONE_TO_ONE));
-      assertEquals(TRUE, property.getAttribute(INVERSE_RELATIONSHIP));
-      assertEquals(3, property.getAttributes().getLength());
+      assertEquals(2, property.getAttributes().getLength());
 
       assertEquals(5, entity.getChildNodes().getLength());
    }
@@ -107,7 +106,7 @@ public class ForgeInspectorTest
          return null;
       }
 
-      @OneToMany
+      @OneToMany(mappedBy="bar")
       public Set<Bar> getOneToMany() {
 
          return null;

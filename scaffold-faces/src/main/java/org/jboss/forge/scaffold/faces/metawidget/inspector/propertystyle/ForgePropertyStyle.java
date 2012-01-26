@@ -25,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationHandler;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -61,6 +62,8 @@ public class ForgePropertyStyle
 
    private Project project;
 
+   private MessageFormat privateFieldConvention;
+
    //
    // Constructor
    //
@@ -70,6 +73,7 @@ public class ForgePropertyStyle
       super(config);
 
       this.project = config.getProject();
+      this.privateFieldConvention = config.getPrivateFieldConvention();
    }
 
    //
@@ -349,17 +353,35 @@ public class ForgePropertyStyle
    }
 
    /**
-    * Gets the private field representing the given <code>propertyName</code> within the given class. Uses the
-    * configured <code>privateFieldConvention</code> (if any). Traverses up the superclass heirarchy as necessary.
+    * Gets the private field representing the given <code>propertyName</code> within the given class.
     *
     * @return the private Field for this propertyName, or null if no such field (should not throw NoSuchFieldException)
     */
 
    protected Field<?> getPrivateField(final FieldHolder<?> fieldHolder, final String propertyName)
    {
+      if (this.privateFieldConvention != null)
+      {
+         // Determine field name based on convention. MessageFormat arguments are:
+         //
+         // {0} = dateOfBirth, surname
+         // {1} = DateOfBirth, Surname
+
+         String[] arguments = new String[] { propertyName, StringUtils.capitalize(propertyName) };
+         String fieldName;
+
+         synchronized (this.privateFieldConvention)
+         {
+            fieldName = this.privateFieldConvention.format(arguments, new StringBuffer(), null).toString();
+         }
+
+         return fieldHolder.getField(fieldName);
+      }
+
       Field<?> field = fieldHolder.getField(propertyName);
 
       // FORGE-402: support fields starting with capital letter
+
       if (field == null && !StringUtils.isCapitalized(propertyName))
       {
          field = fieldHolder.getField(StringUtils.capitalize(propertyName));
@@ -611,7 +633,13 @@ public class ForgePropertyStyle
 
             if (literalValue == null)
             {
-               return annotationMethod.getDefaultValue();
+               Object defaultValue = annotationMethod.getDefaultValue();
+
+               if ( defaultValue == null ) {
+                  throw new UnsupportedOperationException( methodName + " does not have a default value" );
+               }
+
+               return defaultValue;
             }
 
             // ...otherwise parse it
