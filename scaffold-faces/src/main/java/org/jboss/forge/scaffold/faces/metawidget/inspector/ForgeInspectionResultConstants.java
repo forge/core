@@ -37,8 +37,6 @@ public final class ForgeInspectionResultConstants
 
    public static final String ONE_TO_ONE = "one-to-one";
 
-   public static final String INVERSE_RELATIONSHIP = "inverse-relationship";
-
    //
    // Private constructor
    //

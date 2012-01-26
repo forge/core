@@ -54,7 +54,9 @@ public class @{entity.getName()}Bean implements Serializable {
 		this.id = id;
 	}
 
-	private @{entity.getName()} @{ccEntity};
+	// Create an empty default (needed for bidirectional, one-to-many tables)
+	
+	private @{entity.getName()} @{ccEntity} = new @{entity.getName()}();
 
 	public @{entity.getName()} get@{entity.getName()}() {
 		return this.@{ccEntity};

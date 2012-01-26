@@ -19,33 +19,42 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.scaffold.faces;
+package org.jboss.forge.scaffold.faces.scenario.shopping;
+
+import java.util.Arrays;
+
+import javax.inject.Inject;
 
 import junit.framework.Assert;
 
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.resources.FileResource;
+import org.jboss.forge.scaffold.faces.AbstractFacesScaffoldTest;
 import org.jboss.forge.shell.util.Streams;
+import org.jboss.forge.test.web.WebTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
+ * Lincoln's example domain model from 2nd Dec 2011.
+ *
  * @author Richard Kennard
  */
 
 @RunWith(Arquillian.class)
-public class FacesScaffoldScenarioTest extends AbstractFacesScaffoldTest
+public class FacesScaffoldShoppingTest extends AbstractFacesScaffoldTest
 {
-   /**
-    * Lincoln's example domain model from 2nd Dec 2011.
-    */
+   @Inject
+   private WebTest webTest;
 
    @Test
-   public void testGenerateScenario1() throws Exception
+   public void testGenerate() throws Exception
    {
+      Project current = getShell().getCurrentProject();
       Project project = setupScaffoldProject();
 
       queueInputLines("");
@@ -67,14 +76,13 @@ public class FacesScaffoldScenarioTest extends AbstractFacesScaffoldTest
       // Needs https://issues.jboss.org/browse/FORGE-397:
       // getShell().execute("field oneToOne --named customer --fieldType com.test.domain.Customer --inverseFieldName profile");
       getShell().execute("entity --named SubmittedOrder");
-      getShell().execute("field manyToOne --named Customer --fieldType com.test.domain.Customer");
       getShell().execute("field manyToOne --named address --fieldType com.test.domain.Address");
       getShell().execute("entity --named Customer");
       getShell().execute("field string --named firstName");
       getShell().execute("field string --named lastName");
       getShell().execute("field temporal --type DATE --named birthdate");
       getShell().execute("field manyToMany --named addresses --fieldType com.test.domain.Address");
-      getShell().execute("field oneToMany --named orders --fieldType com.test.domain.SubmittedOrder");
+      getShell().execute("field oneToMany --named orders --fieldType com.test.domain.SubmittedOrder --inverseFieldName customer");
       getShell().execute("field oneToOne --named profile --fieldType com.test.domain.Profile");
 
       queueInputLines("", "", "", "", "");
@@ -141,36 +149,15 @@ public class FacesScaffoldScenarioTest extends AbstractFacesScaffoldTest
 
       Assert.assertTrue(contents.contains(qbeMetawidget));
 
-      getShell().execute("build");
-   }
+      // Deploy to a real container and test
 
-   @Test
-   public void testGenerateScenario2() throws Exception
-   {
-      Project project = setupScaffoldProject();
+      this.webTest.setup(project);
+      JavaClass clazz = this.webTest.from(current, FacesScaffoldShoppingTestClient.class);
 
-      queueInputLines("");
-      getShell().execute("entity --named Hurricane");
-      getShell().execute("field string --named name");
-      getShell().execute("entity --named Continent");
-      getShell().execute("field string --named name");
-      getShell()
-               .execute("field manyToMany --named hurricanes --fieldType com.test.domain.Hurricane --inverseFieldName continents");
-
-      queueInputLines("", "", "", "", "");
-      getShell()
-               .execute("scaffold from-entity com.test.domain.*");
-
-      WebResourceFacet web = project.getFacet(WebResourceFacet.class);
-
-      // View
-
-      FileResource<?> view = web.getWebResource("scaffold/continent/view.xhtml");
-      Assert.assertTrue(view.exists());
-      String contents = Streams.toString(view.getResourceInputStream());
-
-      Assert.assertTrue(contents
-               .contains("<h:dataTable id=\"continentBeanContinentHurricanes\" styleClass=\"data-table\" value=\"#{forgeview:asList(continentBean.continent.hurricanes)}\" var=\"_item\">"));
+      this.webTest.buildDefaultDeploymentMethod(project, clazz, Arrays.asList(
+               ".addAsResource(\"META-INF/persistence.xml\", \"META-INF/persistence.xml\")"
+               ));
+      this.webTest.addAsTestClass(project, clazz);
 
       getShell().execute("build");
    }

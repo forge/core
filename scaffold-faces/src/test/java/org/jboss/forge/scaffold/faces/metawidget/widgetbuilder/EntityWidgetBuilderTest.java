@@ -235,14 +235,14 @@ public class EntityWidgetBuilderTest
 
       String result = "<h:panelGroup>";
       result += "<ui:param name=\"_collection\" value=\"#{foo.bars}\"/>";
-      result += "<h:dataTable columnClasses=\",,remove-column\" id=\"fooBars\" styleClass=\"data-table\" value=\"#{forgeview:asList(_collection)}\" var=\"_item\">";
+      result += "<h:dataTable id=\"fooBars\" styleClass=\"data-table\" value=\"#{forgeview:asList(_collection)}\" var=\"_item\">";
       result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Name\"/></f:facet>";
       result += "<h:link outcome=\"/scaffold/entityWidgetBuilderTest$Bar/view\" value=\"#{_item.name}\"><f:param name=\"id\" value=\"#{_item.id}\"/></h:link>";
       result += "</h:column>";
       result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Description\"/></f:facet>";
       result += "<h:link outcome=\"/scaffold/entityWidgetBuilderTest$Bar/view\" value=\"#{_item.description}\"><f:param name=\"id\" value=\"#{_item.id}\"/></h:link>";
       result += "</h:column>";
-      result += "<h:column><h:commandLink action=\"#{_collection.remove(_item)}\" styleClass=\"button\" value=\"Remove\"/></h:column>";
+      result += "<h:column footerClass=\"remove-column\" headerClass=\"remove-column\"><h:commandLink action=\"#{_collection.remove(_item)}\" styleClass=\"button\" value=\"Remove\"/></h:column>";
       result += "</h:dataTable>";
       result += "<h:panelGroup styleClass=\"buttons\">";
       result += "<h:selectOneMenu converter=\"#{entityWidgetBuilderTest$BarBean.converter}\" id=\"fooBarsAdd\" value=\"#{requestScope['fooBarsAdd']}\"><f:selectItem/><f:selectItems value=\"#{entityWidgetBuilderTest$BarBean.all}\"/></h:selectOneMenu>";
@@ -253,6 +253,43 @@ public class EntityWidgetBuilderTest
       assertEquals(result, widget.toString());
       assertEquals(((StaticXmlWidget) widget.getChildren().get(1)).getAdditionalNamespaceURIs().get("forgeview"),
                "http://jboss.org/forge/view");
+
+      // With suppressed column
+
+      attributes.put(INVERSE_RELATIONSHIP, "name");
+      widget = widgetBuilder.buildWidget(PROPERTY, attributes, metawidget);
+
+      result = "<h:panelGroup>";
+      result += "<ui:param name=\"_collection\" value=\"#{foo.bars}\"/>";
+      result += "<h:dataTable id=\"fooBars\" styleClass=\"data-table\" value=\"#{forgeview:asList(_collection)}\" var=\"_item\">";
+      result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Description\"/></f:facet>";
+      result += "<h:link outcome=\"/scaffold/entityWidgetBuilderTest$Bar/view\" value=\"#{_item.description}\"><f:param name=\"id\" value=\"#{_item.id}\"/></h:link>";
+      result += "<f:facet name=\"footer\"><h:inputText id=\"entityWidgetBuilderTestBarBeanEntityWidgetBuilderTestBarDescription\" value=\"#{entityWidgetBuilderTest$BarBean.entityWidgetBuilderTest$Bar.description}\"/></f:facet>";
+      result += "</h:column>";
+      result += "<h:column footerClass=\"remove-column\" headerClass=\"remove-column\"><h:commandLink action=\"#{_collection.remove(_item)}\" styleClass=\"button\" value=\"Remove\"/>";
+      result += "<f:facet name=\"footer\">";
+      result += "<h:commandLink action=\"#{_collection.add(entityWidgetBuilderTest$BarBean.entityWidgetBuilderTest$Bar)}\" styleClass=\"button\" value=\"Add\">";
+      result += "<f:setPropertyActionListener target=\"#{entityWidgetBuilderTest$BarBean.entityWidgetBuilderTest$Bar.name}\" value=\"#{foo}\"/>";
+      result += "</h:commandLink>";
+      result += "</f:facet>";
+      result += "</h:column>";
+      result += "</h:dataTable>";
+      result += "</h:panelGroup>";
+
+      assertEquals(result, widget.toString());
+
+      // Read-only
+
+      metawidget.setReadOnly(true);
+      widget = widgetBuilder.buildWidget(PROPERTY, attributes, metawidget);
+
+      result = "<h:dataTable id=\"fooBars\" styleClass=\"data-table\" value=\"#{forgeview:asList(foo.bars)}\" var=\"_item\">";
+      result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Description\"/></f:facet>";
+      result += "<h:link outcome=\"/scaffold/entityWidgetBuilderTest$Bar/view\" value=\"#{_item.description}\"><f:param name=\"id\" value=\"#{_item.id}\"/></h:link>";
+      result += "</h:column>";
+      result += "</h:dataTable>";
+
+      assertEquals(result, widget.toString());
    }
 
    public void testSuppressOneToMany()
@@ -295,14 +332,14 @@ public class EntityWidgetBuilderTest
 
       String result = "<h:panelGroup>";
       result += "<ui:param name=\"_collection\" value=\"#{foo.bars}\"/>";
-      result += "<h:dataTable columnClasses=\",,remove-column\" id=\"fooBars\" styleClass=\"data-table\" value=\"#{forgeview:asList(_collection)}\" var=\"_item\">";
+      result += "<h:dataTable id=\"fooBars\" styleClass=\"data-table\" value=\"#{forgeview:asList(_collection)}\" var=\"_item\">";
       result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Field 1\"/></f:facet>";
       result += "<h:link outcome=\"/scaffold/entityWidgetBuilderTest$FooOneToMany/view\" value=\"#{_item.field1}\"><f:param name=\"id\" value=\"#{_item.id}\"/></h:link>";
       result += "</h:column>";
       result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Field 3\"/></f:facet>";
       result += "<h:link outcome=\"/scaffold/entityWidgetBuilderTest$FooOneToMany/view\" value=\"#{_item.field3}\"><f:param name=\"id\" value=\"#{_item.id}\"/></h:link>";
       result += "</h:column>";
-      result += "<h:column><h:commandLink action=\"#{_collection.remove(_item)}\" styleClass=\"button\" value=\"Remove\"/></h:column>";
+      result += "<h:column footerClass=\"remove-column\" headerClass=\"remove-column\"><h:commandLink action=\"#{_collection.remove(_item)}\" styleClass=\"button\" value=\"Remove\"/></h:column>";
       result += "</h:dataTable>";
       result += "<h:panelGroup styleClass=\"buttons\">";
       result += "<h:selectOneMenu converter=\"#{entityWidgetBuilderTest$FooOneToManyBean.converter}\" id=\"fooBarsAdd\" value=\"#{requestScope['fooBarsAdd']}\"><f:selectItem/><f:selectItems value=\"#{entityWidgetBuilderTest$FooOneToManyBean.all}\"/></h:selectOneMenu>";
@@ -326,7 +363,8 @@ public class EntityWidgetBuilderTest
          return null;
       }
 
-      public void setName( @SuppressWarnings("unused") String name ) {
+      public void setName(@SuppressWarnings("unused") String name)
+      {
 
          // Do nothing
       }
@@ -337,7 +375,8 @@ public class EntityWidgetBuilderTest
          return null;
       }
 
-      public void setDescription( @SuppressWarnings("unused") String description ) {
+      public void setDescription(@SuppressWarnings("unused") String description)
+      {
 
          // Do nothing
       }

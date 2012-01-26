@@ -177,7 +177,7 @@ h1 {
 	border-bottom: 1px solid #cccccc;
 }
 
-#content .data-table thead th, #content .data-table tbody td {
+#content .data-table thead th, #content .data-table tbody td, #content .data-table tfoot td {
 	text-align: left;
 	padding-left: 4px;
 	padding-top: 2px;
@@ -188,7 +188,7 @@ h1 {
 	background-color: #eeeeee;
 }
 
-#content .data-table tbody tr:hover {
+#content .data-table tbody tr:hover, #content .data-table tfoot tr:hover {
 	background-color: #d2e8f2;
 }
 
@@ -200,6 +200,7 @@ h1 {
 
 #content .data-table .remove-column {
 	width: 1%;
+	text-align: center;
 }
 
 #content .data-table .remove-column a:hover {
