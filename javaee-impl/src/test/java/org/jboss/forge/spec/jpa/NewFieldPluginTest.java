@@ -369,6 +369,8 @@ public class NewFieldPluginTest extends AbstractJPATest
 
       assertTrue(leftEntity.getField("right").hasAnnotation(OneToMany.class));
       assertEquals("left", leftEntity.getField("right").getAnnotation(OneToMany.class).getStringValue("mappedBy"));
+      assertEquals("CascadeType.ALL",
+               leftEntity.getField("right").getAnnotation(OneToMany.class).getLiteralValue("cascade"));
       assertTrue(leftEntity.hasImport(rightEntity.getQualifiedName()));
       assertTrue(leftEntity.hasImport(OneToMany.class));
       assertFalse(leftEntity.hasSyntaxErrors());
@@ -417,6 +419,8 @@ public class NewFieldPluginTest extends AbstractJPATest
 
       assertTrue(rightEntity.getField("left").hasAnnotation(OneToMany.class));
       assertEquals("right", rightEntity.getField("left").getAnnotation(OneToMany.class).getStringValue("mappedBy"));
+      assertEquals("CascadeType.ALL",
+               rightEntity.getField("left").getAnnotation(OneToMany.class).getLiteralValue("cascade"));
       assertTrue(rightEntity.hasImport(leftEntity.getQualifiedName()));
       assertTrue(rightEntity.hasImport(OneToMany.class));
       assertFalse(rightEntity.hasSyntaxErrors());
