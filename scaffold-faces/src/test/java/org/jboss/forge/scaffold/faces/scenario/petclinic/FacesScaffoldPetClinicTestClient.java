@@ -21,11 +21,13 @@
  */
 package org.jboss.forge.scaffold.faces.scenario.petclinic;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.jboss.jsfunit.api.InitialPage;
 import org.jboss.jsfunit.api.JSFUnitResource;
 import org.jboss.jsfunit.jsfsession.JSFClientSession;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
@@ -35,6 +37,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlTable;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
+@Ignore
 @InitialPage("/faces/index.xhtml")
 public class FacesScaffoldPetClinicTestClient
 {
