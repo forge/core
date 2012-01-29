@@ -551,8 +551,14 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
 
       // Static resources
 
+      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/add.png"),
+               getClass().getResourceAsStream("/scaffold/faces/add.png"), overwrite));
+
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/background.gif"),
                getClass().getResourceAsStream("/scaffold/faces/background.gif"), overwrite));
+
+      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/false.png"),
+               getClass().getResourceAsStream("/scaffold/faces/false.png"), overwrite));
 
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/favicon.ico"),
                getClass().getResourceAsStream("/scaffold/faces/favicon.ico"), overwrite));
@@ -566,8 +572,14 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/jboss-community.png"),
                getClass().getResourceAsStream("/scaffold/faces/jboss-community.png"), overwrite));
 
+      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/remove.png"),
+               getClass().getResourceAsStream("/scaffold/faces/remove.png"), overwrite));
+
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/search.png"),
                getClass().getResourceAsStream("/scaffold/faces/search.png"), overwrite));
+
+      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/true.png"),
+               getClass().getResourceAsStream("/scaffold/faces/true.png"), overwrite));
 
       return result;
    }

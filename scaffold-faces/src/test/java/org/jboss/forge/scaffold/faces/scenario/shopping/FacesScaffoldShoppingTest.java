@@ -41,7 +41,7 @@ import org.junit.runner.RunWith;
 
 /**
  * Lincoln's example domain model from 2nd Dec 2011.
- * 
+ *
  * @author Richard Kennard
  */
 
@@ -115,6 +115,7 @@ public class FacesScaffoldShoppingTest extends AbstractFacesScaffoldTest
 
       Assert.assertTrue(contents.contains("\"#{addressBean.address.city}\""));
       Assert.assertTrue(!contents.contains(".City"));
+      Assert.assertTrue(!contents.contains("stub"));
 
       // View
 
@@ -124,6 +125,7 @@ public class FacesScaffoldShoppingTest extends AbstractFacesScaffoldTest
 
       Assert.assertTrue(contents.contains("\"#{addressBean.address.city}\""));
       Assert.assertTrue(!contents.contains(".City"));
+      Assert.assertTrue(!contents.contains("stub"));
 
       // Search
 
@@ -134,6 +136,7 @@ public class FacesScaffoldShoppingTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(contents.contains("\"#{addressBean.search.city}\""));
       Assert.assertTrue(contents.contains("\"#{_item.city}\""));
       Assert.assertTrue(!contents.contains(".City"));
+      Assert.assertTrue(!contents.contains("stub"));
 
       // Backing Bean
 

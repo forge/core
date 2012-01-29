@@ -202,16 +202,18 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       beanMetawidget.append("\t\t\t\t\t<f:facet name=\"header\">\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<h:outputText value=\"First Name\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t</f:facet>\r\n");
-      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/customer/view\" value=\"#{_item.firstName}\">\r\n");
+      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/customer/view\">\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
+      beanMetawidget.append("\t\t\t\t\t\t<h:outputText id=\"itemFirstName\" value=\"#{_item.firstName}\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t</h:link>\r\n");
       beanMetawidget.append("\t\t\t\t</h:column>\r\n");
       beanMetawidget.append("\t\t\t\t<h:column>\r\n");
       beanMetawidget.append("\t\t\t\t\t<f:facet name=\"header\">\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<h:outputText value=\"Last Name\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t</f:facet>\r\n");
-      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/customer/view\" value=\"#{_item.lastName}\">\r\n");
+      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/customer/view\">\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
+      beanMetawidget.append("\t\t\t\t\t\t<h:outputText id=\"itemLastName\" value=\"#{_item.lastName}\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t</h:link>\r\n");
       beanMetawidget.append("\t\t\t\t</h:column>\r\n");
       beanMetawidget.append("\t\t\t</h:dataTable>");
@@ -257,7 +259,9 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
       // Additional files
 
+      Assert.assertTrue(web.getWebResource("resources/add.png").exists());
       Assert.assertTrue(web.getWebResource("resources/background.gif").exists());
+      Assert.assertTrue(web.getWebResource("resources/false.png").exists());
       Assert.assertTrue(web.getWebResource("resources/favicon.ico").exists());
       Assert.assertTrue(web.getWebResource("resources/forge-logo.png").exists());
 
@@ -267,7 +271,9 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(contents.contains("#content table .component .error {"));
 
       Assert.assertTrue(web.getWebResource("resources/jboss-community.png").exists());
+      Assert.assertTrue(web.getWebResource("resources/remove.png").exists());
       Assert.assertTrue(web.getWebResource("resources/search.png").exists());
+      Assert.assertTrue(web.getWebResource("resources/true.png").exists());
       Assert.assertTrue(web.getWebResource("resources/scaffold/page.xhtml").exists());
 
       FileResource<?> paginator = web.getWebResource("resources/scaffold/paginator.xhtml");
@@ -560,7 +566,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       metawidget.append("\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t<h:outputLabel for=\"customerBeanCustomerEmployer\" value=\"Employer:\"/>\r\n");
       metawidget
-               .append("\t\t\t<h:link converter=\"#{employerBean.converter}\" id=\"customerBeanCustomerEmployer\" outcome=\"/scaffold/employer/view\" value=\"#{customerBean.customer.employer}\">\r\n");
+               .append("\t\t\t<h:link id=\"customerBeanCustomerEmployer\" outcome=\"/scaffold/employer/view\" value=\"#{customerBean.customer.employer}\">\r\n");
       metawidget.append("\t\t\t\t<f:param name=\"id\" value=\"#{customerBean.customer.employer.id}\"/>\r\n");
       metawidget.append("\t\t\t</h:link>\r\n");
       metawidget.append("\t\t\t<h:outputText/>\r\n");
@@ -692,8 +698,9 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       metawidget.append("\t\t\t\t\t<f:facet name=\"header\">\r\n");
       metawidget.append("\t\t\t\t\t\t<h:outputText value=\"Name\"/>\r\n");
       metawidget.append("\t\t\t\t\t</f:facet>\r\n");
-      metawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/grocery/view\" value=\"#{_item.name}\">\r\n");
+      metawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/grocery/view\">\r\n");
       metawidget.append("\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t<h:outputText id=\"itemName\" value=\"#{_item.name}\"/>\r\n");
       metawidget.append("\t\t\t\t\t</h:link>\r\n");
       metawidget.append("\t\t\t\t</h:column>\r\n");
       metawidget.append("\t\t\t</h:dataTable>\r\n");
@@ -735,24 +742,25 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       metawidget.append("\t\t\t\t\t\t\t<f:facet name=\"header\">\r\n");
       metawidget.append("\t\t\t\t\t\t\t\t<h:outputText value=\"Name\"/>\r\n");
       metawidget.append("\t\t\t\t\t\t\t</f:facet>\r\n");
-      metawidget.append("\t\t\t\t\t\t\t<h:link outcome=\"/scaffold/grocery/view\" value=\"#{_item.name}\">\r\n");
+      metawidget.append("\t\t\t\t\t\t\t<h:link outcome=\"/scaffold/grocery/view\">\r\n");
       metawidget.append("\t\t\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t\t\t<h:outputText id=\"itemName\" value=\"#{_item.name}\"/>\r\n");
       metawidget.append("\t\t\t\t\t\t\t</h:link>\r\n");
       metawidget.append("\t\t\t\t\t\t</h:column>\r\n");
       metawidget.append("\t\t\t\t\t\t<h:column footerClass=\"remove-column\" headerClass=\"remove-column\">\r\n");
       metawidget
-               .append("\t\t\t\t\t\t\t<h:commandLink action=\"#{_collection.remove(_item)}\" styleClass=\"button\" value=\"Remove\"/>\r\n");
+               .append("\t\t\t\t\t\t\t<h:commandLink action=\"#{_collection.remove(_item)}\" styleClass=\"remove-button\"/>\r\n");
       metawidget.append("\t\t\t\t\t\t</h:column>\r\n");
       metawidget.append("\t\t\t\t\t</h:dataTable>\r\n");
-      metawidget.append("\t\t\t\t\t<h:panelGroup styleClass=\"buttons\">\r\n");
+      metawidget.append("\t\t\t\t\t<h:panelGrid columnClasses=\",remove-column\" columns=\"2\" styleClass=\"data-table-footer\">\r\n");
       metawidget
-               .append("\t\t\t\t\t\t<h:selectOneMenu converter=\"#{groceryBean.converter}\" id=\"customerBeanCustomerGroceriesAdd\" value=\"#{requestScope['customerBeanCustomerGroceriesAdd']}\">\r\n");
+               .append("\t\t\t\t\t\t<h:selectOneMenu converter=\"#{groceryBean.converter}\" id=\"customerBeanCustomerGroceriesSelect\" value=\"#{requestScope['customerBeanCustomerGroceriesSelect']}\">\r\n");
       metawidget.append("\t\t\t\t\t\t\t<f:selectItem/>\r\n");
       metawidget.append("\t\t\t\t\t\t\t<f:selectItems value=\"#{groceryBean.all}\"/>\r\n");
       metawidget.append("\t\t\t\t\t\t</h:selectOneMenu>\r\n");
       metawidget
-               .append("\t\t\t\t\t\t<h:commandLink action=\"#{_collection.add(requestScope['customerBeanCustomerGroceriesAdd'])}\" onclick=\"if (document.getElementById(document.forms[0].id+':customerBeanCustomerGroceriesAdd').selectedIndex &lt; 1) { alert('Must select a Grocery'); return false; }\" value=\"Add\"/>\r\n");
-      metawidget.append("\t\t\t\t\t</h:panelGroup>\r\n");
+               .append("\t\t\t\t\t\t<h:commandLink action=\"#{_collection.add(requestScope['customerBeanCustomerGroceriesSelect'])}\" id=\"customerBeanCustomerGroceriesAdd\" onclick=\"if (document.getElementById(document.forms[0].id+':customerBeanCustomerGroceriesSelect').selectedIndex &lt; 1) { alert('Must select a Grocery'); return false; }\" styleClass=\"add-button\"/>\r\n");
+      metawidget.append("\t\t\t\t\t</h:panelGrid>\r\n");
       metawidget.append("\t\t\t\t</h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t</h:panelGrid>");
@@ -797,16 +805,18 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       beanMetawidget.append("\t\t\t\t\t<f:facet name=\"header\">\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<h:outputText value=\"First Name\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t</f:facet>\r\n");
-      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/customer/view\" value=\"#{_item.firstName}\">\r\n");
+      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/customer/view\">\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
+      beanMetawidget.append("\t\t\t\t\t\t<h:outputText id=\"itemFirstName\" value=\"#{_item.firstName}\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t</h:link>\r\n");
       beanMetawidget.append("\t\t\t\t</h:column>\r\n");
       beanMetawidget.append("\t\t\t\t<h:column>\r\n");
       beanMetawidget.append("\t\t\t\t\t<f:facet name=\"header\">\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<h:outputText value=\"Last Name\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t</f:facet>\r\n");
-      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/customer/view\" value=\"#{_item.lastName}\">\r\n");
+      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/customer/view\">\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
+      beanMetawidget.append("\t\t\t\t\t\t<h:outputText id=\"itemLastName\" value=\"#{_item.lastName}\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t</h:link>\r\n");
       beanMetawidget.append("\t\t\t\t</h:column>\r\n");
       beanMetawidget.append("\t\t\t</h:dataTable>");
@@ -835,7 +845,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
    public void testGenerateFromEntityWithRichFaces() throws Exception
    {
       Project project = setupScaffoldProject();
-      // getShell().execute("richfaces setup");
+      // TODO: getShell().execute("richfaces setup");
 
       queueInputLines("");
       getShell().execute("entity --named Customer");
