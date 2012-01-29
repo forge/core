@@ -73,7 +73,6 @@ public class ForgePropertyStyleConfig
    @Override
    public boolean equals(Object that)
    {
-
       if (this == that)
       {
          return true;
@@ -108,7 +107,6 @@ public class ForgePropertyStyleConfig
 
    protected Project getProject()
    {
-
       return this.project;
    }
 
@@ -119,7 +117,6 @@ public class ForgePropertyStyleConfig
    @Override
    protected MessageFormat getPrivateFieldConvention()
    {
-
       return super.getPrivateFieldConvention();
    }
 }

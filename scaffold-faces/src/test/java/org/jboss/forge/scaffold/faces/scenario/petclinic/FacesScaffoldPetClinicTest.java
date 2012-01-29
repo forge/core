@@ -109,20 +109,44 @@ public class FacesScaffoldPetClinicTest extends AbstractFacesScaffoldTest
 
       Assert.assertTrue(contents.contains(metawidget));
 
+      // Check search screen has boolean graphic
+
+      metawidget = "\t\t\t\t\t<h:link outcome=\"/scaffold/pet/view\">\r\n";
+      metawidget += "\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n";
+      metawidget += "\t\t\t\t\t\t<h:outputText styleClass=\"#{_item.sendReminders ? 'boolean-true' : 'boolean-false'}\"/>\r\n";
+      metawidget += "\t\t\t\t\t</h:link>\r\n";
+
+      Assert.assertTrue(contents.contains(metawidget));
+
+      metawidget = "\t\t\t\t\t<h:link outcome=\"/scaffold/pet/view\">\r\n";
+      metawidget += "\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n";
+      metawidget += "\t\t\t\t\t\t<h:outputText id=\"itemOwner\" value=\"#{_item.owner}\"/>\r\n";
+      metawidget += "\t\t\t\t\t</h:link>\r\n";
+
+      Assert.assertTrue(contents.contains(metawidget));
+
       // Check create screen has h:selectBooleanCheckbox
 
       FileResource<?> create = web.getWebResource("scaffold/pet/create.xhtml");
       Assert.assertTrue(create.exists());
       contents = Streams.toString(create.getResourceInputStream());
 
-      metawidget = "\t\t\t\t<h:outputLabel for=\"petBeanPetSendReminders\" value=\"Send Reminders:\"/>\r\n"
-               +
-               "\t\t\t\t<h:panelGroup>\r\n"
-               +
-               "\t\t\t\t\t<h:selectBooleanCheckbox id=\"petBeanPetSendReminders\" value=\"#{petBean.pet.sendReminders}\"/>\r\n"
-               +
-               "\t\t\t\t\t<h:message for=\"petBeanPetSendReminders\" styleClass=\"error\"/>\r\n" +
-               "\t\t\t\t</h:panelGroup>";
+      metawidget = "\t\t\t\t<h:outputLabel for=\"petBeanPetSendReminders\" value=\"Send Reminders:\"/>\r\n";
+      metawidget += "\t\t\t\t<h:panelGroup>\r\n";
+      metawidget += "\t\t\t\t\t<h:selectBooleanCheckbox id=\"petBeanPetSendReminders\" value=\"#{petBean.pet.sendReminders}\"/>\r\n";
+      metawidget += "\t\t\t\t\t<h:message for=\"petBeanPetSendReminders\" styleClass=\"error\"/>\r\n";
+      metawidget += "\t\t\t\t</h:panelGroup>";
+
+      Assert.assertTrue(contents.contains(metawidget));
+
+      // Check view screen has boolean graphic
+
+      FileResource<?> view = web.getWebResource("scaffold/pet/view.xhtml");
+      Assert.assertTrue(view.exists());
+      contents = Streams.toString(view.getResourceInputStream());
+
+      metawidget = "\t\t\t<h:outputLabel value=\"Send Reminders:\"/>\r\n";
+      metawidget += "\t\t\t<h:outputText styleClass=\"#{petBean.pet.sendReminders ? 'boolean-true' : 'boolean-false'}\"/>";
 
       Assert.assertTrue(contents.contains(metawidget));
 

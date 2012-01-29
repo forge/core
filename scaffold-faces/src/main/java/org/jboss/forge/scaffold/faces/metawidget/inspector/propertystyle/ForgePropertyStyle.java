@@ -202,11 +202,16 @@ public class ForgePropertyStyle
             continue;
          }
 
+         Field<?> privateField = getPrivateField((FieldHolder<?>) clazz, propertyName);
+
+         if (privateField != null && this.privateFieldConvention == null)
+         {
+            propertyName = privateField.getName();
+         }
+
          properties
                   .put(propertyName,
-                           new ForgeProperty(propertyName, returnType, method, null, getPrivateField(
-                                    (FieldHolder<?>) clazz,
-                                    propertyName)));
+                           new ForgeProperty(propertyName, returnType, method, null, privateField));
       }
    }
 
@@ -260,7 +265,6 @@ public class ForgePropertyStyle
    {
       for (Method<?> method : clazz.getMethods())
       {
-
          // Exclude static methods
 
          if (method.isStatic())
@@ -292,6 +296,13 @@ public class ForgePropertyStyle
 
          String type = parameters.get(0).getType();
 
+         Field<?> privateField = getPrivateField((FieldHolder<?>) clazz, propertyName);
+
+         if (privateField != null && this.privateFieldConvention == null)
+         {
+            propertyName = privateField.getName();
+         }
+
          // Already found via its getter?
 
          Property existingProperty = properties.get(propertyName);
@@ -319,9 +330,7 @@ public class ForgePropertyStyle
 
          properties
                   .put(propertyName,
-                           new ForgeProperty(propertyName, type, null, method, getPrivateField(
-                                    (FieldHolder<?>) clazz,
-                                    propertyName)));
+                           new ForgeProperty(propertyName, type, null, method, privateField));
       }
    }
 
@@ -334,7 +343,6 @@ public class ForgePropertyStyle
 
    protected String isSetter(final Method<?> method)
    {
-
       String methodName = method.getName();
 
       if (!methodName.startsWith(ClassUtils.JAVABEAN_SET_PREFIX))
@@ -452,19 +460,6 @@ public class ForgePropertyStyle
       //
       // Public methods
       //
-
-      @Override
-      public String getName()
-      {
-         // FORGE-402: support fields starting with capital letter
-
-         if (this.privateField != null)
-         {
-            return this.privateField.getName();
-         }
-
-         return super.getName();
-      }
 
       @Override
       public boolean isReadable()
@@ -635,8 +630,9 @@ public class ForgePropertyStyle
             {
                Object defaultValue = annotationMethod.getDefaultValue();
 
-               if ( defaultValue == null ) {
-                  throw new UnsupportedOperationException( methodName + " does not have a default value" );
+               if (defaultValue == null)
+               {
+                  throw new UnsupportedOperationException(methodName + " does not have a default value");
                }
 
                return defaultValue;
