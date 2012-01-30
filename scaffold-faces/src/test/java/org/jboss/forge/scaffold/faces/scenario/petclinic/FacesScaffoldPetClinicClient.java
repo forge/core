@@ -21,8 +21,7 @@
  */
 package org.jboss.forge.scaffold.faces.scenario.petclinic;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.jboss.jsfunit.api.InitialPage;
 import org.jboss.jsfunit.api.JSFUnitResource;
@@ -30,6 +29,7 @@ import org.jboss.jsfunit.jsfsession.JSFClientSession;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
@@ -108,7 +108,10 @@ public class FacesScaffoldPetClinicClient
          table = (HtmlTable) page.getHtmlElementById("search:petBeanPageItems");
          assertEquals("Pet #1", table.getCellAt(1, 0).getTextContent());
          assertEquals("2", table.getCellAt(1, 1).getTextContent());
-         assertEquals("true", table.getCellAt(1, 2).getTextContent());
+         DomNode booleanNode = table.getCellAt(1, 2).getChildNodes().get(0).getChildNodes().get(0);
+         assertEquals("span", booleanNode.getNodeName() );
+         assertEquals("", booleanNode.getTextContent() );
+         assertEquals("boolean-true", booleanNode.getAttributes().getNamedItem("class").getNodeValue() );
          assertEquals("Owner Firstname #1, Owner Lastname #1, Owner Address #1, , , , ", table.getCellAt(1, 3)
                   .getTextContent());
 

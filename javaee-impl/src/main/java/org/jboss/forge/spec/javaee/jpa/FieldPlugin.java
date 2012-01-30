@@ -394,6 +394,7 @@ public class FieldPlugin implements Plugin
             annotation.setStringValue("mappedBy", inverseFieldName);
             annotation.setLiteralValue("cascade", "CascadeType.ALL");
             annotation.getOrigin().addImport(CascadeType.class);
+            annotation.setLiteralValue("orphanRemoval", "true");
 
             many.addImport(one);
             Field<JavaClass> manyField = many.addField("private " + one.getName() + " " + inverseFieldName + ";");
@@ -574,7 +575,9 @@ public class FieldPlugin implements Plugin
          }
       }
       if (!fields.isEmpty())
+      {
          Refactory.createToStringFromFields(targetEntity, fields);
+      }
    }
 
    private JavaClass getJavaClass() throws FileNotFoundException

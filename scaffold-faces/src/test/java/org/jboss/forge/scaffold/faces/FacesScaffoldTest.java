@@ -36,11 +36,19 @@ import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.java.JavaResource;
+import org.jboss.forge.scaffold.faces.metawidget.widgetbuilder.EntityWidgetBuilder;
 import org.jboss.forge.shell.exceptions.PluginExecutionException;
 import org.jboss.forge.shell.util.Streams;
 import org.jboss.forge.spec.javaee.ServletFacet;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.metawidget.statically.StaticXmlMetawidget;
+import org.metawidget.statically.StaticXmlWidget;
+import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlWidgetBuilder;
+import org.metawidget.statically.faces.component.html.widgetbuilder.ReadOnlyWidgetBuilder;
+import org.metawidget.statically.faces.component.html.widgetbuilder.richfaces.RichFacesWidgetBuilder;
+import org.metawidget.widgetbuilder.composite.CompositeWidgetBuilder;
+import org.metawidget.widgetbuilder.composite.CompositeWidgetBuilderConfig;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -202,16 +210,18 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       beanMetawidget.append("\t\t\t\t\t<f:facet name=\"header\">\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<h:outputText value=\"First Name\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t</f:facet>\r\n");
-      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/customer/view\" value=\"#{_item.firstName}\">\r\n");
+      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/customer/view\">\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
+      beanMetawidget.append("\t\t\t\t\t\t<h:outputText id=\"itemFirstName\" value=\"#{_item.firstName}\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t</h:link>\r\n");
       beanMetawidget.append("\t\t\t\t</h:column>\r\n");
       beanMetawidget.append("\t\t\t\t<h:column>\r\n");
       beanMetawidget.append("\t\t\t\t\t<f:facet name=\"header\">\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<h:outputText value=\"Last Name\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t</f:facet>\r\n");
-      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/customer/view\" value=\"#{_item.lastName}\">\r\n");
+      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/customer/view\">\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
+      beanMetawidget.append("\t\t\t\t\t\t<h:outputText id=\"itemLastName\" value=\"#{_item.lastName}\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t</h:link>\r\n");
       beanMetawidget.append("\t\t\t\t</h:column>\r\n");
       beanMetawidget.append("\t\t\t</h:dataTable>");
@@ -257,7 +267,9 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
       // Additional files
 
+      Assert.assertTrue(web.getWebResource("resources/add.png").exists());
       Assert.assertTrue(web.getWebResource("resources/background.gif").exists());
+      Assert.assertTrue(web.getWebResource("resources/false.png").exists());
       Assert.assertTrue(web.getWebResource("resources/favicon.ico").exists());
       Assert.assertTrue(web.getWebResource("resources/forge-logo.png").exists());
 
@@ -267,7 +279,9 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(contents.contains("#content table .component .error {"));
 
       Assert.assertTrue(web.getWebResource("resources/jboss-community.png").exists());
+      Assert.assertTrue(web.getWebResource("resources/remove.png").exists());
       Assert.assertTrue(web.getWebResource("resources/search.png").exists());
+      Assert.assertTrue(web.getWebResource("resources/true.png").exists());
       Assert.assertTrue(web.getWebResource("resources/scaffold/page.xhtml").exists());
 
       FileResource<?> paginator = web.getWebResource("resources/scaffold/paginator.xhtml");
@@ -560,7 +574,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       metawidget.append("\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t<h:outputLabel for=\"customerBeanCustomerEmployer\" value=\"Employer:\"/>\r\n");
       metawidget
-               .append("\t\t\t<h:link converter=\"#{employerBean.converter}\" id=\"customerBeanCustomerEmployer\" outcome=\"/scaffold/employer/view\" value=\"#{customerBean.customer.employer}\">\r\n");
+               .append("\t\t\t<h:link id=\"customerBeanCustomerEmployer\" outcome=\"/scaffold/employer/view\" value=\"#{customerBean.customer.employer}\">\r\n");
       metawidget.append("\t\t\t\t<f:param name=\"id\" value=\"#{customerBean.customer.employer.id}\"/>\r\n");
       metawidget.append("\t\t\t</h:link>\r\n");
       metawidget.append("\t\t\t<h:outputText/>\r\n");
@@ -692,8 +706,9 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       metawidget.append("\t\t\t\t\t<f:facet name=\"header\">\r\n");
       metawidget.append("\t\t\t\t\t\t<h:outputText value=\"Name\"/>\r\n");
       metawidget.append("\t\t\t\t\t</f:facet>\r\n");
-      metawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/grocery/view\" value=\"#{_item.name}\">\r\n");
+      metawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/grocery/view\">\r\n");
       metawidget.append("\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t<h:outputText id=\"itemName\" value=\"#{_item.name}\"/>\r\n");
       metawidget.append("\t\t\t\t\t</h:link>\r\n");
       metawidget.append("\t\t\t\t</h:column>\r\n");
       metawidget.append("\t\t\t</h:dataTable>\r\n");
@@ -735,24 +750,26 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       metawidget.append("\t\t\t\t\t\t\t<f:facet name=\"header\">\r\n");
       metawidget.append("\t\t\t\t\t\t\t\t<h:outputText value=\"Name\"/>\r\n");
       metawidget.append("\t\t\t\t\t\t\t</f:facet>\r\n");
-      metawidget.append("\t\t\t\t\t\t\t<h:link outcome=\"/scaffold/grocery/view\" value=\"#{_item.name}\">\r\n");
+      metawidget.append("\t\t\t\t\t\t\t<h:link outcome=\"/scaffold/grocery/view\">\r\n");
       metawidget.append("\t\t\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
+      metawidget.append("\t\t\t\t\t\t\t\t<h:outputText id=\"itemName\" value=\"#{_item.name}\"/>\r\n");
       metawidget.append("\t\t\t\t\t\t\t</h:link>\r\n");
       metawidget.append("\t\t\t\t\t\t</h:column>\r\n");
       metawidget.append("\t\t\t\t\t\t<h:column footerClass=\"remove-column\" headerClass=\"remove-column\">\r\n");
       metawidget
-               .append("\t\t\t\t\t\t\t<h:commandLink action=\"#{_collection.remove(_item)}\" styleClass=\"button\" value=\"Remove\"/>\r\n");
+               .append("\t\t\t\t\t\t\t<h:commandLink action=\"#{_collection.remove(_item)}\" styleClass=\"remove-button\"/>\r\n");
       metawidget.append("\t\t\t\t\t\t</h:column>\r\n");
       metawidget.append("\t\t\t\t\t</h:dataTable>\r\n");
-      metawidget.append("\t\t\t\t\t<h:panelGroup styleClass=\"buttons\">\r\n");
       metawidget
-               .append("\t\t\t\t\t\t<h:selectOneMenu converter=\"#{groceryBean.converter}\" id=\"customerBeanCustomerGroceriesAdd\" value=\"#{requestScope['customerBeanCustomerGroceriesAdd']}\">\r\n");
+               .append("\t\t\t\t\t<h:panelGrid columnClasses=\",remove-column\" columns=\"2\" styleClass=\"data-table-footer\">\r\n");
+      metawidget
+               .append("\t\t\t\t\t\t<h:selectOneMenu converter=\"#{groceryBean.converter}\" id=\"customerBeanCustomerGroceriesSelect\" value=\"#{requestScope['customerBeanCustomerGroceriesSelect']}\">\r\n");
       metawidget.append("\t\t\t\t\t\t\t<f:selectItem/>\r\n");
       metawidget.append("\t\t\t\t\t\t\t<f:selectItems value=\"#{groceryBean.all}\"/>\r\n");
       metawidget.append("\t\t\t\t\t\t</h:selectOneMenu>\r\n");
       metawidget
-               .append("\t\t\t\t\t\t<h:commandLink action=\"#{_collection.add(requestScope['customerBeanCustomerGroceriesAdd'])}\" onclick=\"if (document.getElementById(document.forms[0].id+':customerBeanCustomerGroceriesAdd').selectedIndex &lt; 1) { alert('Must select a Grocery'); return false; }\" value=\"Add\"/>\r\n");
-      metawidget.append("\t\t\t\t\t</h:panelGroup>\r\n");
+               .append("\t\t\t\t\t\t<h:commandLink action=\"#{_collection.add(requestScope['customerBeanCustomerGroceriesSelect'])}\" id=\"customerBeanCustomerGroceriesAdd\" onclick=\"if (document.getElementById(document.forms[0].id+':customerBeanCustomerGroceriesSelect').selectedIndex &lt; 1) { alert('Must select a Grocery'); return false; }\" styleClass=\"add-button\"/>\r\n");
+      metawidget.append("\t\t\t\t\t</h:panelGrid>\r\n");
       metawidget.append("\t\t\t\t</h:panelGroup>\r\n");
       metawidget.append("\t\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t</h:panelGrid>");
@@ -797,16 +814,18 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       beanMetawidget.append("\t\t\t\t\t<f:facet name=\"header\">\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<h:outputText value=\"First Name\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t</f:facet>\r\n");
-      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/customer/view\" value=\"#{_item.firstName}\">\r\n");
+      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/customer/view\">\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
+      beanMetawidget.append("\t\t\t\t\t\t<h:outputText id=\"itemFirstName\" value=\"#{_item.firstName}\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t</h:link>\r\n");
       beanMetawidget.append("\t\t\t\t</h:column>\r\n");
       beanMetawidget.append("\t\t\t\t<h:column>\r\n");
       beanMetawidget.append("\t\t\t\t\t<f:facet name=\"header\">\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<h:outputText value=\"Last Name\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t</f:facet>\r\n");
-      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/customer/view\" value=\"#{_item.lastName}\">\r\n");
+      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/customer/view\">\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
+      beanMetawidget.append("\t\t\t\t\t\t<h:outputText id=\"itemLastName\" value=\"#{_item.lastName}\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t</h:link>\r\n");
       beanMetawidget.append("\t\t\t\t</h:column>\r\n");
       beanMetawidget.append("\t\t\t</h:dataTable>");
@@ -832,33 +851,70 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
    @Test
    @SuppressWarnings("unchecked")
-   public void testGenerateFromEntityWithRichFaces() throws Exception
+   public void testInsertRichFacesWidgetBuilder() throws Exception
    {
-      Project project = setupScaffoldProject();
-      // getShell().execute("richfaces setup");
+      // Note: this is not a very thorough test. Really we need a full integration test, so that we can run
+      // 'richfaces setup'
 
-      queueInputLines("");
-      getShell().execute("entity --named Customer");
-      queueInputLines("java.util.Date");
-      getShell().execute("field custom --named dateJoined");
-      queueInputLines("java.awt.Color");
-      getShell().execute("field custom --named favoriteColor");
+      // In the middle
 
-      queueInputLines("", "");
-      getShell().execute("scaffold from-entity");
+      CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget> existingWidgetBuilder = new CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget>(
+               new CompositeWidgetBuilderConfig<StaticXmlWidget, StaticXmlMetawidget>().setWidgetBuilders(
+                        new EntityWidgetBuilder(), new ReadOnlyWidgetBuilder(), new HtmlWidgetBuilder()));
 
-      WebResourceFacet web = project.getFacet(WebResourceFacet.class);
-      FileResource<?> view = web.getWebResource("scaffold/customer/view.xhtml");
-      FileResource<?> create = web.getWebResource("scaffold/customer/create.xhtml");
-      FileResource<?> search = web.getWebResource("scaffold/customer/search.xhtml");
+      CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget> newWidgetBuilder = new FacesScaffold(null, null,
+               null).insertRichFacesWidgetBuilder(existingWidgetBuilder);
 
-      for (FileResource<?> file : Arrays.asList(view, create, search))
-      {
-         Assert.assertTrue(file.exists());
-         String contents = Streams.toString(file.getResourceInputStream());
-         Assert.assertTrue(contents.contains(
-                  "template=\"/resources/scaffold/page.xhtml"));
-      }
+      assertTrue(newWidgetBuilder.getWidgetBuilders()[0] instanceof EntityWidgetBuilder);
+      assertTrue(newWidgetBuilder.getWidgetBuilders()[1] instanceof ReadOnlyWidgetBuilder);
+      assertTrue(newWidgetBuilder.getWidgetBuilders()[2] instanceof RichFacesWidgetBuilder);
+      assertTrue(newWidgetBuilder.getWidgetBuilders()[3] instanceof HtmlWidgetBuilder);
+
+      existingWidgetBuilder = new CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget>(
+               new CompositeWidgetBuilderConfig<StaticXmlWidget, StaticXmlMetawidget>().setWidgetBuilders(
+                        new ReadOnlyWidgetBuilder(), new HtmlWidgetBuilder()));
+
+      newWidgetBuilder = new FacesScaffold(null, null, null).insertRichFacesWidgetBuilder(existingWidgetBuilder);
+
+      assertTrue(newWidgetBuilder.getWidgetBuilders()[0] instanceof ReadOnlyWidgetBuilder);
+      assertTrue(newWidgetBuilder.getWidgetBuilders()[1] instanceof RichFacesWidgetBuilder);
+      assertTrue(newWidgetBuilder.getWidgetBuilders()[2] instanceof HtmlWidgetBuilder);
+
+      // At the end
+
+      existingWidgetBuilder = new CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget>(
+               new CompositeWidgetBuilderConfig<StaticXmlWidget, StaticXmlMetawidget>().setWidgetBuilders(
+                        new EntityWidgetBuilder(), new ReadOnlyWidgetBuilder()));
+
+      newWidgetBuilder = new FacesScaffold(null, null, null).insertRichFacesWidgetBuilder(existingWidgetBuilder);
+
+      assertTrue(newWidgetBuilder.getWidgetBuilders()[0] instanceof EntityWidgetBuilder);
+      assertTrue(newWidgetBuilder.getWidgetBuilders()[1] instanceof ReadOnlyWidgetBuilder);
+      assertTrue(newWidgetBuilder.getWidgetBuilders()[2] instanceof RichFacesWidgetBuilder);
+
+      // At the start
+
+      existingWidgetBuilder = new CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget>(
+               new CompositeWidgetBuilderConfig<StaticXmlWidget, StaticXmlMetawidget>().setWidgetBuilders(
+                        new EntityWidgetBuilder(), new HtmlWidgetBuilder()));
+
+      newWidgetBuilder = new FacesScaffold(null, null, null).insertRichFacesWidgetBuilder(existingWidgetBuilder);
+
+      assertTrue(newWidgetBuilder.getWidgetBuilders()[0] instanceof RichFacesWidgetBuilder);
+      assertTrue(newWidgetBuilder.getWidgetBuilders()[1] instanceof EntityWidgetBuilder);
+      assertTrue(newWidgetBuilder.getWidgetBuilders()[2] instanceof HtmlWidgetBuilder);
+
+      // Already exists
+
+      existingWidgetBuilder = new CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget>(
+               new CompositeWidgetBuilderConfig<StaticXmlWidget, StaticXmlMetawidget>().setWidgetBuilders(
+                        new EntityWidgetBuilder(), new RichFacesWidgetBuilder(), new HtmlWidgetBuilder()));
+
+      newWidgetBuilder = new FacesScaffold(null, null, null).insertRichFacesWidgetBuilder(existingWidgetBuilder);
+
+      assertTrue(newWidgetBuilder.getWidgetBuilders()[0] instanceof EntityWidgetBuilder);
+      assertTrue(newWidgetBuilder.getWidgetBuilders()[1] instanceof RichFacesWidgetBuilder);
+      assertTrue(newWidgetBuilder.getWidgetBuilders()[2] instanceof HtmlWidgetBuilder);
    }
 
    @Test
