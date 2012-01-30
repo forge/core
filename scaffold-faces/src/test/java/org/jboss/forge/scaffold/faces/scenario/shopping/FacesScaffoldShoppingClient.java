@@ -21,7 +21,8 @@
  */
 package org.jboss.forge.scaffold.faces.scenario.shopping;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.jboss.jsfunit.api.InitialPage;
 import org.jboss.jsfunit.api.JSFUnitResource;
@@ -76,8 +77,8 @@ public class FacesScaffoldShoppingClient
 
          form = page.getFormByName("create");
          assertTrue(page.asText().contains("Create a new Address"));
-         assertEquals("Address Street #2",form.getInputByName("create:addressBeanAddressStreet").getValueAttribute());
-         assertEquals("Address City #2",form.getInputByName("create:addressBeanAddressCity").getValueAttribute());
+         assertEquals("Address Street #2", form.getInputByName("create:addressBeanAddressStreet").getValueAttribute());
+         assertEquals("Address City #2", form.getInputByName("create:addressBeanAddressCity").getValueAttribute());
          page = page.getAnchorByText("Save").click();
 
          // Create a Customer
@@ -118,18 +119,18 @@ public class FacesScaffoldShoppingClient
          table = (HtmlTable) page.getHtmlElementById("customerBeanCustomerAddresses");
          assertEquals("Address Street #1", table.getCellAt(1, 0).getTextContent());
          table = (HtmlTable) page.getHtmlElementById("customerBeanCustomerOrders");
-         assertEquals("Address Street #2, Address City #2, , 0", table.getCellAt(1, 0).getTextContent());
+         assertEquals("Address Street #2 Address City #2 0", table.getCellAt(1, 0).getTextContent());
 
          // Test deleting the relationships
 
          page = page.getAnchorByText("Edit").click();
          assertTrue(page.asText().contains("Edit existing Customer"));
          table = (HtmlTable) page.getHtmlElementById("create:customerBeanCustomerAddresses");
-         page = table.getCellAt( 1, 4 ).getHtmlElementsByTagName("a").get(0).click();
+         page = table.getCellAt(1, 4).getHtmlElementsByTagName("a").get(0).click();
          table = (HtmlTable) page.getHtmlElementById("create:customerBeanCustomerAddresses");
          assertEquals("", table.getCellAt(1, 0).getTextContent());
          table = (HtmlTable) page.getHtmlElementById("create:customerBeanCustomerOrders");
-         page = table.getCellAt( 2, 1 ).getHtmlElementsByTagName("a").get(0).click();
+         page = table.getCellAt(2, 1).getHtmlElementsByTagName("a").get(0).click();
          table = (HtmlTable) page.getHtmlElementById("create:customerBeanCustomerOrders");
          assertEquals("", table.getCellAt(2, 0).getTextContent());
          page = page.getAnchorByText("Save").click();

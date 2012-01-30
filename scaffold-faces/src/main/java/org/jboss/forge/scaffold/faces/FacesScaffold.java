@@ -98,7 +98,7 @@ import org.w3c.dom.NamedNodeMap;
  * writing Metawidget plugins, see <a href="http://metawidget.org/documentation.php">the Metawidget documentation</a>.
  * <p>
  * This Facet does <em>not</em> require Metawidget to be in the final project.
- *
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author Richard Kennard
  */
@@ -535,7 +535,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
     */
 
    protected <W extends StaticWidget, M extends W> CompositeWidgetBuilder<W, M> insertRichFacesWidgetBuilder(
-            CompositeWidgetBuilder<W, M> compositeWidgetBuilder)
+            final CompositeWidgetBuilder<W, M> compositeWidgetBuilder)
    {
       // Get the current WidgetBuilders...
 
@@ -549,12 +549,14 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       {
          // ...(abort if there's already a RichFacesWidgetBuilder)...
 
-         if (existingWidgetBuilders[loop] instanceof RichFacesWidgetBuilder)
+         // Use an Object loop variable here to avoid a nasty Java/Generics compiler bug
+         Object widgetBuilder = existingWidgetBuilders[loop];
+         if (widgetBuilder instanceof RichFacesWidgetBuilder)
          {
             return compositeWidgetBuilder;
          }
 
-         if (existingWidgetBuilders[loop] instanceof ReadOnlyWidgetBuilder)
+         if (widgetBuilder instanceof ReadOnlyWidgetBuilder)
          {
             addAt = loop + 1;
          }

@@ -101,10 +101,15 @@ public class Refactory
          if (clazz.hasField(field))
          {
             String line = "";
-            if (!field.isPrimitive())
-               line += "if(" + field.getName() + " != null)\n";
 
-            line += " result += \" \" + " + field.getName() + ";";
+            if (!field.isPrimitive())
+               if (field.isType(String.class))
+                  line += "if(" + field.getName() + " != null && !" + field.getName() + ".trim().isEmpty())\n";
+               else
+                  line += "if(" + field.getName() + " != null)\n";
+
+            line += " result += " + (list.isEmpty() ? "" : "\" \" + ") + field.getName() + ";";
+
             list.add(line);
          }
       }
