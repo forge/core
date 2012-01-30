@@ -27,6 +27,7 @@ import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstant
 
 import java.util.Map;
 
+import javax.persistence.Embedded;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -75,9 +76,7 @@ public class ForgeInspector
 
       // OneToOne
 
-      OneToOne oneToOne = property.getAnnotation(OneToOne.class);
-
-      if (oneToOne != null ) {
+      if ( property.isAnnotationPresent(OneToOne.class) || property.isAnnotationPresent(Embedded.class)) {
 
          attributes.put(ONE_TO_ONE, TRUE);
       }

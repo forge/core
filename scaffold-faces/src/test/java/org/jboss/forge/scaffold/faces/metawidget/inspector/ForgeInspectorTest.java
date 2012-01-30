@@ -27,6 +27,7 @@ import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstant
 
 import java.util.Set;
 
+import javax.persistence.Embedded;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -55,6 +56,12 @@ public class ForgeInspectorTest
       assertEquals(Foo.class.getName(), entity.getAttribute(TYPE));
 
       Element property = (Element) entity.getFirstChild();
+      assertEquals(PROPERTY, property.getNodeName());
+      assertEquals("embedded", property.getAttribute(NAME));
+      assertEquals(TRUE, property.getAttribute(ONE_TO_ONE));
+      assertEquals(2, property.getAttributes().getLength());
+
+      property = XmlUtils.getNextSiblingElement(property);
       assertEquals(PROPERTY, property.getNodeName());
       assertEquals("manyToMany", property.getAttribute(NAME));
       assertEquals(TRUE, property.getAttribute(N_TO_MANY));
@@ -85,7 +92,7 @@ public class ForgeInspectorTest
       assertEquals(TRUE, property.getAttribute(ONE_TO_ONE));
       assertEquals(2, property.getAttributes().getLength());
 
-      assertEquals(5, entity.getChildNodes().getLength());
+      assertEquals(6, entity.getChildNodes().getLength());
    }
 
    //
@@ -102,6 +109,12 @@ public class ForgeInspectorTest
 
       @OneToOne
       public Bar getOneToOne()
+      {
+         return null;
+      }
+
+      @Embedded
+      public Bar getEmbedded()
       {
          return null;
       }

@@ -35,6 +35,11 @@
 								<forgePropertyStyle refId="forgePropertyStyle"/>
 							</propertyStyle>
 						</jpaInspector>
+						<beanValidationInspector xmlns="java:org.metawidget.inspector.beanvalidation" config="org.metawidget.inspector.impl.BaseObjectInspectorConfig">
+							<propertyStyle>
+								<forgePropertyStyle refId="forgePropertyStyle"/>
+							</propertyStyle>
+						</beanValidationInspector>
 					</array>
 				</inspectors>
 			</compositeInspector>
