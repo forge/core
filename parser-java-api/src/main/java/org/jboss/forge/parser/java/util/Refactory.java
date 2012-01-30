@@ -58,7 +58,7 @@ public class Refactory
       }
    }
 
-   public void createHashCodeAndEquals(final JavaClass clazz)
+   public static void createHashCodeAndEquals(final JavaClass clazz)
    {
       clazz.addMethod(
                "public boolean equals(Object that) { " +
