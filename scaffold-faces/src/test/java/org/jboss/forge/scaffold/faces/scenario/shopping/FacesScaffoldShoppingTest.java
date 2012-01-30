@@ -41,7 +41,7 @@ import org.junit.runner.RunWith;
 
 /**
  * Lincoln's example domain model from 2nd Dec 2011.
- *
+ * 
  * @author Richard Kennard
  */
 
@@ -82,7 +82,8 @@ public class FacesScaffoldShoppingTest extends AbstractFacesScaffoldTest
       getShell().execute("field string --named lastName");
       getShell().execute("field temporal --type DATE --named birthdate");
       getShell().execute("field manyToMany --named addresses --fieldType com.test.domain.Address");
-      getShell().execute("field oneToMany --named orders --fieldType com.test.domain.SubmittedOrder --inverseFieldName customer");
+      getShell().execute(
+               "field oneToMany --named orders --fieldType com.test.domain.SubmittedOrder --inverseFieldName customer");
       getShell().execute("field oneToOne --named profile --fieldType com.test.domain.Profile");
 
       queueInputLines("", "", "", "", "");
@@ -160,5 +161,6 @@ public class FacesScaffoldShoppingTest extends AbstractFacesScaffoldTest
       this.webTest.addAsTestClass(project, clazz);
 
       getShell().execute("build");
+      System.out.println("fun...");
    }
 }

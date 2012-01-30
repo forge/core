@@ -407,7 +407,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
             {
                historyOutstream.write(command.charAt(i));
             }
-            historyOutstream.write('\n');
+            historyOutstream.write(OSUtils.getLineSeparator().getBytes());
             historyOutstream.flush();
          }
          catch (IOException e)
@@ -778,9 +778,9 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          line = reader.readLine();
       }
 
-      if ((line != null) && !"\n".equals(line))
+      if ((line != null) && !OSUtils.getLineSeparator().equals(line))
       {
-         write((byte) '\n');
+         write(OSUtils.getLineSeparator().getBytes());
       }
       flush();
 
@@ -995,7 +995,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    {
       if ((line != null) && isVerbose())
       {
-         screenBuffer.write((byte) '\n');
+         screenBuffer.write(OSUtils.getLineSeparator().getBytes());
       }
    }
 
@@ -1014,7 +1014,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       if (line != null)
       {
          screenBuffer.write(line);
-         screenBuffer.write((byte) '\n');
+         screenBuffer.write(OSUtils.getLineSeparator().getBytes());
       }
    }
 
@@ -1023,7 +1023,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    {
       try
       {
-         screenBuffer.write((byte) '\n');
+         screenBuffer.write(OSUtils.getLineSeparator().getBytes());
          _flushBuffer();
       }
       catch (IOException e)
@@ -1492,6 +1492,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       screenBuffer = manager;
    }
 
+   @Override
    public BufferManager getBufferManager()
    {
       return screenBuffer;

@@ -70,4 +70,9 @@ public final class OSUtils
    {
       PRETEND_WINDOWS = value;
    }
+
+   public static String getLineSeparator()
+   {
+      return System.getProperty("line.separator");
+   }
 }
