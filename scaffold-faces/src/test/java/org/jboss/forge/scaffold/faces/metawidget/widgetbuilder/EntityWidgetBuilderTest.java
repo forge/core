@@ -35,12 +35,15 @@ import javax.persistence.OneToOne;
 
 import junit.framework.TestCase;
 
+import org.metawidget.inspector.annotation.MetawidgetAnnotationInspector;
 import org.metawidget.inspector.annotation.UiComesAfter;
 import org.metawidget.inspector.composite.CompositeInspector;
 import org.metawidget.inspector.composite.CompositeInspectorConfig;
 import org.metawidget.inspector.iface.Inspector;
 import org.metawidget.inspector.impl.BaseObjectInspector;
+import org.metawidget.inspector.impl.BaseObjectInspectorConfig;
 import org.metawidget.inspector.impl.propertystyle.Property;
+import org.metawidget.inspector.impl.propertystyle.statically.StaticPropertyStyle;
 import org.metawidget.inspector.propertytype.PropertyTypeInspector;
 import org.metawidget.statically.BaseStaticWidget;
 import org.metawidget.statically.StaticWidget;
@@ -358,6 +361,67 @@ public class EntityWidgetBuilderTest
                "http://jboss.org/forge/view");
    }
 
+   public void testExpandOneToOne()
+            throws Exception
+   {
+      StaticHtmlMetawidget metawidget = new StaticHtmlMetawidget();
+      Inspector testInspector = new BaseObjectInspector()
+      {
+         @Override
+         protected Map<String, String> inspectProperty(Property property)
+         {
+            Map<String, String> attributes = CollectionUtils.newHashMap();
+
+            // OneToOne
+
+            if (property.isAnnotationPresent(OneToOne.class))
+            {
+               attributes.put(ONE_TO_ONE, TRUE);
+            }
+
+            return attributes;
+         }
+      };
+      Inspector inspector = new CompositeInspector(new CompositeInspectorConfig()
+               .setInspectors(
+                        new PropertyTypeInspector(new BaseObjectInspectorConfig()
+                                 .setPropertyStyle(new StaticPropertyStyle())),
+                        new MetawidgetAnnotationInspector(new BaseObjectInspectorConfig()
+                                 .setPropertyStyle(new StaticPropertyStyle())),
+                        testInspector));
+
+      metawidget.setInspector(inspector);
+      metawidget.setValue("#{foo}");
+      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder();
+      Map<String, String> attributes = CollectionUtils.newHashMap();
+      attributes.put(NAME, "bars");
+      attributes.put(TYPE, Set.class.getName());
+      attributes.put(PARAMETERIZED_TYPE, FooOneToOne.class.getName());
+      attributes.put(N_TO_MANY, TRUE);
+      StaticWidget widget = widgetBuilder.buildWidget(PROPERTY, attributes, metawidget);
+
+      // (this looks a little weird because 'FooOneToOne' is an inner class)
+
+      String result = "<h:panelGroup>";
+      result += "<ui:param name=\"_collection\" value=\"#{foo.bars}\"/>";
+      result += "<h:dataTable id=\"fooBars\" styleClass=\"data-table\" value=\"#{forgeview:asList(_collection)}\" var=\"_item\">";
+      result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Name\"/></f:facet>";
+      result += "<h:link outcome=\"/scaffold/entityWidgetBuilderTest$FooOneToOne/view\"><f:param name=\"id\" value=\"#{_item.id}\"/><h:outputText id=\"itemName\" value=\"#{_item.name}\"/></h:link>";
+      result += "</h:column>";
+      result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Description\"/></f:facet>";
+      result += "<h:link outcome=\"/scaffold/entityWidgetBuilderTest$FooOneToOne/view\"><f:param name=\"id\" value=\"#{_item.id}\"/><h:outputText id=\"itemDescription\" value=\"#{_item.description}\"/></h:link>";
+      result += "</h:column>";
+      result += "<h:column footerClass=\"remove-column\" headerClass=\"remove-column\"><h:commandLink action=\"#{_collection.remove(_item)}\" styleClass=\"remove-button\"/></h:column>";
+      result += "</h:dataTable>";
+      result += "<h:panelGrid columnClasses=\",remove-column\" columns=\"2\" styleClass=\"data-table-footer\">";
+      result += "<h:selectOneMenu converter=\"#{entityWidgetBuilderTest$FooOneToOneBean.converter}\" id=\"fooBarsSelect\" value=\"#{requestScope['fooBarsSelect']}\"><f:selectItem/><f:selectItems value=\"#{entityWidgetBuilderTest$FooOneToOneBean.all}\"/></h:selectOneMenu>";
+      result += "<h:commandLink action=\"#{_collection.add(requestScope['fooBarsSelect'])}\" id=\"fooBarsAdd\" onclick=\"if (document.getElementById(document.forms[0].id+':fooBarsSelect').selectedIndex &lt; 1) { alert('Must select a Entity Widget Builder Test$Foo One To One'); return false; }\" styleClass=\"add-button\"/>";
+      result += "</h:panelGrid>";
+      result += "</h:panelGroup>";
+
+      assertEquals(result, widget.toString());
+   }
+
    public void testReadOnlyBoolean()
             throws Exception
    {
@@ -393,7 +457,6 @@ public class EntityWidgetBuilderTest
 
       public void setName(@SuppressWarnings("unused") String name)
       {
-
          // Do nothing
       }
 
@@ -405,7 +468,6 @@ public class EntityWidgetBuilderTest
 
       public void setDescription(@SuppressWarnings("unused") String description)
       {
-
          // Do nothing
       }
    }
