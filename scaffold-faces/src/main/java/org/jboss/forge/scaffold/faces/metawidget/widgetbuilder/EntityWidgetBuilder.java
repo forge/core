@@ -56,7 +56,9 @@ import org.metawidget.statically.layout.SimpleLayout;
 import org.metawidget.util.ClassUtils;
 import org.metawidget.util.CollectionUtils;
 import org.metawidget.util.WidgetBuilderUtils;
+import org.metawidget.util.XmlUtils;
 import org.metawidget.util.simple.StringUtils;
+import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
@@ -73,6 +75,13 @@ public class EntityWidgetBuilder
    //
 
    private static final String COLLECTION_VAR = "_collection";
+
+   /**
+    * When expanding OneToOne or Embedded types in data table rows, we must point the row link to the original type, not
+    * the type being expanded
+    */
+
+   private static final String TOP_LEVEL_PARAMETERIZED_TYPE = "top-level-parameterized-type";
 
    //
    // Public methods
@@ -448,6 +457,27 @@ public class EntityWidgetBuilder
          return;
       }
 
+      // FORGE-446: Expand columns that show one-to-one values
+
+      String componentType = WidgetBuilderUtils.getComponentType(tableAttributes);
+
+      if (TRUE.equals(columnAttributes.get(ONE_TO_ONE)))
+      {
+         String columnType = columnAttributes.get(TYPE);
+         String inspectedType = metawidget.inspect(null, columnType);
+
+         if (inspectedType != null)
+         {
+            Element root = XmlUtils.documentFromString(inspectedType).getDocumentElement();
+            NodeList elements = root.getFirstChild().getChildNodes();
+            Map<String, String> embeddedAttributes = CollectionUtils.newHashMap();
+            embeddedAttributes.put(TOP_LEVEL_PARAMETERIZED_TYPE, componentType);
+            embeddedAttributes.put(PARAMETERIZED_TYPE, columnType);
+            addColumnComponents(dataTable, embeddedAttributes, elements, metawidget);
+            return;
+         }
+      }
+
       // FORGE-448: Don't display "owner" when showing relationships
 
       String columnName = columnAttributes.get(NAME);
@@ -457,8 +487,6 @@ public class EntityWidgetBuilder
          return;
       }
 
-      // TODO: expand one-to-one/embeddable
-
       // Create the column
 
       super.addColumnComponent(dataTable, tableAttributes, elementName, columnAttributes, metawidget);
@@ -467,7 +495,10 @@ public class EntityWidgetBuilder
 
       // If we can determine the componentType, wrap it with a link
 
-      String componentType = WidgetBuilderUtils.getComponentType(tableAttributes);
+      if (tableAttributes.get(TOP_LEVEL_PARAMETERIZED_TYPE) != null)
+      {
+         componentType = tableAttributes.get(TOP_LEVEL_PARAMETERIZED_TYPE);
+      }
 
       if (componentType != null)
       {
