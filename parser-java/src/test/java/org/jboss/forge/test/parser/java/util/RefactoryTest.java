@@ -119,5 +119,6 @@ public class RefactoryTest
       Refactory.createToStringFromFields(javaClass);
       assertTrue(javaClass.hasMethodSignature("toString"));
       assertTrue(javaClass.getMethod("toString").getBody().contains("return"));
+      assertTrue(javaClass.getMethod("toString").getBody().contains("firstName != null"));
    }
 }

@@ -75,17 +75,23 @@ public class Refactory
 
       List<String> list = new ArrayList<String>();
 
-      String delimeter = "+ \", \" + ";
+      String delimeter = "\n";
       for (Field<JavaClass> field : fields)
       {
          if (entity.hasField(field))
          {
-            list.add(field.getName());
+            String line = "";
+            if (!field.isPrimitive())
+               line += "if(" + field.getName() + " != null)\n";
+
+            line += " result += \" \" + " + field.getName() + ";";
+            list.add(line);
          }
       }
 
-      String body = "return \"\" + " + Strings.join(list, delimeter) + ";";
+      String body = "String result = \"\";\n" +
+               Strings.join(list, delimeter) + "\n" +
+               "return result;";
       method.setBody(body);
    }
-
 }
