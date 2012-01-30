@@ -36,49 +36,69 @@ import org.jboss.forge.parser.java.Method;
  */
 public class Refactory
 {
-   public static void createGetterAndSetter(final JavaClass entity, final Field<JavaClass> field)
+   public static void createGetterAndSetter(final JavaClass clazz, final Field<JavaClass> field)
    {
-      if (!entity.hasField(field))
+      if (!clazz.hasField(field))
       {
          throw new IllegalArgumentException("Entity did not contain the given field [" + field + "]");
       }
 
-      entity.getMethods();
+      clazz.getMethods();
 
       String fieldName = field.getName();
       String methodNameSuffix = Strings.capitalize(fieldName);
-      entity.addMethod().setReturnType(field.getTypeInspector().toString()).setName("get" + methodNameSuffix)
+      clazz.addMethod().setReturnType(field.getTypeInspector().toString()).setName("get" + methodNameSuffix)
                .setPublic()
                .setBody("return this." + fieldName + ";");
 
       if (!field.isFinal()) {
-         entity.addMethod().setReturnTypeVoid().setName("set" + methodNameSuffix).setPublic()
+         clazz.addMethod().setReturnTypeVoid().setName("set" + methodNameSuffix).setPublic()
                   .setParameters("final " + field.getTypeInspector().toString() + " " + fieldName)
                   .setBody("this." + fieldName + " = " + fieldName + ";");
       }
    }
 
-   public static void createToStringFromFields(final JavaClass entity)
+   public void createHashCodeAndEquals(final JavaClass clazz)
    {
-      List<Field<JavaClass>> fields = entity.getFields();
-      createToStringFromFields(entity, fields);
+      clazz.addMethod(
+               "public boolean equals(Object that) { " +
+                        "if (this == that) { return true; } " +
+                        "if (that == null) { return false; } " +
+                        "if (getClass() != that.getClass()) { return false; } " +
+                        "if (id != null) { return id.equals((("
+                        + clazz.getName() + ") that).id); } " +
+                        "return super.equals(that); " +
+                        "}")
+               .addAnnotation(Override.class);
+
+      clazz.addMethod(
+               "public int hashCode() { " +
+                        "if (id != null) { return id.hashCode(); } " +
+                        "return super.hashCode(); }")
+               .addAnnotation(Override.class);
    }
 
-   public static void createToStringFromFields(final JavaClass javaClass, final Field<JavaClass>... fields)
+   public static void createToStringFromFields(final JavaClass clazz)
    {
-      createToStringFromFields(javaClass, Arrays.asList(fields));
+      List<Field<JavaClass>> fields = clazz.getFields();
+      createToStringFromFields(clazz, fields);
    }
 
-   public static void createToStringFromFields(final JavaClass entity, final List<Field<JavaClass>> fields)
+   public static void createToStringFromFields(final JavaClass clazz, final Field<JavaClass>... fields)
    {
-      Method<JavaClass> method = entity.addMethod().setName("toString").setReturnType(String.class).setPublic();
+      createToStringFromFields(clazz, Arrays.asList(fields));
+   }
+
+   public static void createToStringFromFields(final JavaClass clazz, final List<Field<JavaClass>> fields)
+   {
+      Method<JavaClass> method = clazz.addMethod().setName("toString").setReturnType(String.class).setPublic();
 
       List<String> list = new ArrayList<String>();
 
       String delimeter = "\n";
       for (Field<JavaClass> field : fields)
       {
-         if (entity.hasField(field))
+         if (clazz.hasField(field))
          {
             String line = "";
             if (!field.isPrimitive())
