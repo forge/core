@@ -522,18 +522,25 @@ public class EntityWidgetBuilder
 
          if (tableAttributes.containsKey(INVERSE_RELATIONSHIP) && !metawidget.isReadOnly())
          {
-            StaticHtmlMetawidget footerMetawidget = new StaticHtmlMetawidget();
-            Map<String, String> footerAttributes = CollectionUtils.newHashMap();
-            metawidget.initNestedMetawidget(footerMetawidget, footerAttributes);
-            footerMetawidget.setValue(StaticFacesUtils.wrapExpression(controllerName + "Bean." + controllerName + "."
-                     + columnName));
-            footerMetawidget.setPath(componentType + StringUtils.SEPARATOR_FORWARD_SLASH_CHAR + columnName);
-            footerMetawidget.setLayout(new SimpleLayout());
+            // If it's an inverse relationship, we really should have been able to determine sub-properties, so we
+            // should never be at 'entity' level *unless* componentType couldn't resolve to an actual type
 
-            Facet footerFacet = new Facet();
-            footerFacet.putAttribute("name", "footer");
-            footerFacet.getChildren().add(footerMetawidget);
-            column.getChildren().add(footerFacet);
+            if (!ENTITY.equals(elementName))
+            {
+               StaticHtmlMetawidget footerMetawidget = new StaticHtmlMetawidget();
+               Map<String, String> footerAttributes = CollectionUtils.newHashMap();
+               metawidget.initNestedMetawidget(footerMetawidget, footerAttributes);
+               footerMetawidget.setValue(StaticFacesUtils.wrapExpression(controllerName + "Bean." + controllerName
+                        + "."
+                        + columnName));
+               footerMetawidget.setPath(componentType + StringUtils.SEPARATOR_FORWARD_SLASH_CHAR + columnName);
+               footerMetawidget.setLayout(new SimpleLayout());
+
+               Facet footerFacet = new Facet();
+               footerFacet.putAttribute("name", "footer");
+               footerFacet.getChildren().add(footerMetawidget);
+               column.getChildren().add(footerFacet);
+            }
          }
       }
    }

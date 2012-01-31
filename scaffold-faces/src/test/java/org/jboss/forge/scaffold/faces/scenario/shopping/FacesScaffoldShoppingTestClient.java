@@ -118,7 +118,7 @@ public class FacesScaffoldShoppingTestClient
          table = (HtmlTable) page.getHtmlElementById("customerBeanCustomerAddresses");
          assertEquals("Address Street #1", table.getCellAt(1, 0).getTextContent());
          table = (HtmlTable) page.getHtmlElementById("customerBeanCustomerOrders");
-         assertEquals("Address Street #2, Address City #2, , 0", table.getCellAt(1, 0).getTextContent());
+         assertEquals("Address Street #2 Address City #2 0", table.getCellAt(1, 0).getTextContent());
 
          // Test deleting the relationships
 
