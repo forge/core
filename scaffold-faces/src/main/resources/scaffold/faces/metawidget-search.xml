@@ -57,7 +57,7 @@
 
 		<widgetProcessors>
 			<array>
-				<requiredAttributeProcessor xmlns="java:org.metawidget.statically.faces.component.widgetprocessor"/>
+				<!-- FORGE-468: <requiredAttributeProcessor xmlns="java:org.metawidget.statically.faces.component.widgetprocessor"/> -->
 				<standardBindingProcessor xmlns="java:org.metawidget.statically.faces.component.widgetprocessor"/>
 				<readableIdProcessor xmlns="java:org.metawidget.statically.faces.component.widgetprocessor"/>
 				<standardConverterProcessor xmlns="java:org.metawidget.statically.faces.component.widgetprocessor"/>
