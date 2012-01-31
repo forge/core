@@ -110,9 +110,11 @@ public class FacesScaffoldPetClinicClient
          assertEquals("Pet #1", table.getCellAt(1, 0).getTextContent());
          assertEquals("2", table.getCellAt(1, 1).getTextContent());
          DomNode booleanNode = table.getCellAt(1, 2).getChildNodes().get(0).getChildNodes().get(0);
+
          assertEquals("span", booleanNode.getNodeName());
          assertEquals("", booleanNode.getTextContent());
          assertEquals("boolean-true", booleanNode.getAttributes().getNamedItem("class").getNodeValue());
+
          assertEquals("Owner Firstname #1 Owner Lastname #1 Owner Address #1", table.getCellAt(1, 3)
                   .getTextContent());
 

@@ -42,6 +42,7 @@ import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.Method;
 import org.jboss.forge.parser.xml.Node;
 import org.jboss.forge.parser.xml.XMLParser;
+import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.facets.BaseFacet;
@@ -200,17 +201,54 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    public List<Resource<?>> setup(final Resource<?> template, final boolean overwrite)
    {
       List<Resource<?>> resources = generateIndex(template, overwrite);
-      setupMetawidget();
-      setupRichFaces();
       setupWebXML();
 
       return resources;
+   }
+
+   /**
+    * Overridden to setup the Metawidgets.
+    * <p>
+    * Metawidgets must be configured per project <em>and per Forge invocation</em>. It is not sufficient to simply
+    * configure them in <code>setup</code> because the user may restart Forge and not run <code>scaffold setup</code> a
+    * second time.
+    */
+
+   @Override
+   public void setProject(Project project)
+   {
+      super.setProject(project);
+
+      ForgeConfigReader configReader = new ForgeConfigReader(this.project);
+
+      this.entityMetawidget = new StaticHtmlMetawidget();
+      this.entityMetawidget.setConfigReader(configReader);
+      this.entityMetawidget.setConfig("scaffold/faces/metawidget-entity.xml");
+
+      this.searchMetawidget = new StaticHtmlMetawidget();
+      this.searchMetawidget.setConfigReader(configReader);
+      this.searchMetawidget.setConfig("scaffold/faces/metawidget-search.xml");
+
+      this.beanMetawidget = new StaticHtmlMetawidget();
+      this.beanMetawidget.setConfigReader(configReader);
+      this.beanMetawidget.setConfig("scaffold/faces/metawidget-bean.xml");
+
+      this.qbeMetawidget = new StaticJavaMetawidget();
+      this.qbeMetawidget.setConfigReader(configReader);
+      this.qbeMetawidget.setConfig("scaffold/faces/metawidget-qbe.xml");
    }
 
    @Override
    public List<Resource<?>> generateFromEntity(final Resource<?> template, final JavaClass entity,
             final boolean overwrite)
    {
+      // FORGE-460: setupRichFaces during generateFromEntity, not during setup, as generally 'richfaces setup' is called
+      // *after* 'scaffold setup'
+
+      setupRichFaces();
+
+      // Track the list of resources generated
+
       List<Resource<?>> result = new ArrayList<Resource<?>>();
       try
       {
@@ -298,7 +336,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       }
       catch (Exception e)
       {
-         throw new RuntimeException("Error generating default scaffolding.", e);
+         throw new RuntimeException("Error generating default scaffolding: " + e.getMessage(), e);
       }
       return result;
    }
@@ -484,27 +522,6 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       {
          this.indexTemplate = this.compiler.compile(INDEX_TEMPLATE);
       }
-   }
-
-   protected void setupMetawidget()
-   {
-      ForgeConfigReader configReader = new ForgeConfigReader(this.project);
-
-      this.entityMetawidget = new StaticHtmlMetawidget();
-      this.entityMetawidget.setConfigReader(configReader);
-      this.entityMetawidget.setConfig("scaffold/faces/metawidget-entity.xml");
-
-      this.searchMetawidget = new StaticHtmlMetawidget();
-      this.searchMetawidget.setConfigReader(configReader);
-      this.searchMetawidget.setConfig("scaffold/faces/metawidget-search.xml");
-
-      this.beanMetawidget = new StaticHtmlMetawidget();
-      this.beanMetawidget.setConfigReader(configReader);
-      this.beanMetawidget.setConfig("scaffold/faces/metawidget-bean.xml");
-
-      this.qbeMetawidget = new StaticJavaMetawidget();
-      this.qbeMetawidget.setConfigReader(configReader);
-      this.qbeMetawidget.setConfig("scaffold/faces/metawidget-qbe.xml");
    }
 
    protected void setupRichFaces()
