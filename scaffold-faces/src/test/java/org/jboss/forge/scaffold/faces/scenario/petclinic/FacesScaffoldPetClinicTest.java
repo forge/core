@@ -40,7 +40,7 @@ import org.junit.runner.RunWith;
 
 /**
  * Burr's example domain model from 7th Dec 2011.
- *
+ * 
  * @author Richard Kennard
  */
 
@@ -82,16 +82,16 @@ public class FacesScaffoldPetClinicTest extends AbstractFacesScaffoldTest
       getShell().execute("field float --named weight");
       getShell().execute("field int --named type");
       getShell().execute("field boolean --named sendReminders");
-      getShell().execute("field manyToOne --named owner --fieldType com.test.domain.Owner");
+      getShell().execute("field manyToOne --named owner --fieldType com.test.model.Owner");
       getShell().execute("entity --named Visit");
       getShell().execute("field string --named description");
       getShell().execute("field data --named visitDate");
-      getShell().execute("field manyToOne --named pet --fieldType com.test.domain.Pet");
-      getShell().execute("field manyToOne --named vet --fieldType com.test.domain.Vet");
+      getShell().execute("field manyToOne --named pet --fieldType com.test.model.Pet");
+      getShell().execute("field manyToOne --named vet --fieldType com.test.model.Vet");
 
       queueInputLines("", "", "", "", "");
       getShell()
-               .execute("scaffold from-entity com.test.domain.*");
+               .execute("scaffold from-entity com.test.model.*");
 
       WebResourceFacet web = project.getFacet(WebResourceFacet.class);
 

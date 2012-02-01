@@ -44,6 +44,7 @@ import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.shell.util.ConstraintInspector;
 import org.jboss.forge.spec.javaee.jpa.FieldPlugin;
+import org.jboss.forge.spec.javaee.jpa.PersistenceFacetImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -186,7 +187,8 @@ public class NewFieldPluginTest extends AbstractJPATest
       JavaClass leftEntity = generateEntity(project);
 
       getShell().execute(
-               ConstraintInspector.getName(FieldPlugin.class) + " oneToOne --named right --fieldType ~.domain."
+               ConstraintInspector.getName(FieldPlugin.class) + " oneToOne --named right --fieldType ~."
+                        + PersistenceFacetImpl.DEFAULT_ENTITY_PACKAGE + "."
                         + rightEntity.getName());
 
       leftEntity = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(leftEntity).getJavaSource();
@@ -215,7 +217,8 @@ public class NewFieldPluginTest extends AbstractJPATest
       JavaClass leftEntity = generateEntity(project);
 
       getShell().execute(
-               ConstraintInspector.getName(FieldPlugin.class) + " oneToOne --named right --fieldType ~.domain."
+               ConstraintInspector.getName(FieldPlugin.class) + " oneToOne --named right --fieldType ~."
+                        + PersistenceFacetImpl.DEFAULT_ENTITY_PACKAGE + "."
                         + rightEntity.getName()
                         + " --inverseFieldName left");
 
@@ -249,7 +252,8 @@ public class NewFieldPluginTest extends AbstractJPATest
       JavaClass leftEntity = generateEntity(project);
 
       getShell().execute(
-               ConstraintInspector.getName(FieldPlugin.class) + " manyToMany --named right --fieldType ~.domain."
+               ConstraintInspector.getName(FieldPlugin.class) + " manyToMany --named right --fieldType ~."
+                        + PersistenceFacetImpl.DEFAULT_ENTITY_PACKAGE + "."
                         + rightEntity.getName());
 
       leftEntity = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(leftEntity).getJavaSource();
@@ -283,7 +287,8 @@ public class NewFieldPluginTest extends AbstractJPATest
       JavaClass leftEntity = generateEntity(project);
 
       getShell().execute(
-               ConstraintInspector.getName(FieldPlugin.class) + " oneToMany --named right --fieldType ~.domain."
+               ConstraintInspector.getName(FieldPlugin.class) + " oneToMany --named right --fieldType ~."
+                        + PersistenceFacetImpl.DEFAULT_ENTITY_PACKAGE + "."
                         + rightEntity.getName());
 
       leftEntity = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(leftEntity).getJavaSource();
@@ -317,7 +322,8 @@ public class NewFieldPluginTest extends AbstractJPATest
       JavaClass leftEntity = generateEntity(project);
 
       getShell().execute(
-               ConstraintInspector.getName(FieldPlugin.class) + " manyToMany --named right --fieldType ~.domain."
+               ConstraintInspector.getName(FieldPlugin.class) + " manyToMany --named right --fieldType ~."
+                        + PersistenceFacetImpl.DEFAULT_ENTITY_PACKAGE + "."
                         + rightEntity.getName()
                         + " --inverseFieldName left");
 
@@ -354,7 +360,8 @@ public class NewFieldPluginTest extends AbstractJPATest
       JavaClass leftEntity = generateEntity(project);
 
       getShell().execute(
-               ConstraintInspector.getName(FieldPlugin.class) + " oneToMany --named right --fieldType ~.domain."
+               ConstraintInspector.getName(FieldPlugin.class) + " oneToMany --named right --fieldType ~."
+                        + PersistenceFacetImpl.DEFAULT_ENTITY_PACKAGE + "."
                         + rightEntity.getName()
                         + " --inverseFieldName left");
 
@@ -394,7 +401,8 @@ public class NewFieldPluginTest extends AbstractJPATest
       JavaClass leftEntity = generateEntity(project);
 
       getShell().execute(
-               ConstraintInspector.getName(FieldPlugin.class) + " manyToOne --named right --fieldType ~.domain."
+               ConstraintInspector.getName(FieldPlugin.class) + " manyToOne --named right --fieldType ~."
+                        + PersistenceFacetImpl.DEFAULT_ENTITY_PACKAGE + "."
                         + rightEntity.getName()
                         + " --inverseFieldName left");
 
