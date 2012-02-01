@@ -21,8 +21,7 @@
  */
 package org.jboss.forge.scaffold.faces.scenario.shopping;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.jboss.jsfunit.api.InitialPage;
 import org.jboss.jsfunit.api.JSFUnitResource;
@@ -101,7 +100,7 @@ public class FacesScaffoldShoppingClient
          // Test OneToMany (mappedBy)
 
          form = page.getFormByName("create");
-         form.getSelectByName("create:customerBeanCustomerOrders:submittedOrderBeanSubmittedOrderAddress")
+         form.getSelectByName("create:customerBeanCustomerOrders:submittedOrderBeanAddAddress")
                   .setSelectedAttribute("2", true);
          page = page.getHtmlElementById("create:customerBeanCustomerOrders:customerBeanCustomerOrdersAdd").click();
          page = page.getAnchorByText("Save").click();
