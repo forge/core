@@ -407,7 +407,7 @@ public class EntityWidgetBuilder
 
             HtmlCommandLink addLink = new HtmlCommandLink();
             addLink.putAttribute("styleClass", "add-button");
-            String addExpression = COLLECTION_VAR + ".add(" + controllerName + "Bean." + controllerName + ")";
+            String addExpression = COLLECTION_VAR + ".add(" + controllerName + "Bean.added)";
             addLink.putAttribute("action", StaticFacesUtils.wrapExpression(addExpression));
 
             // Use a f:setPropertyActionListener to initialize the bidirectional relationship
@@ -415,8 +415,7 @@ public class EntityWidgetBuilder
             SetPropertyActionListener setPropertyActionListener = new SetPropertyActionListener();
             setPropertyActionListener.putAttribute(
                      "target",
-                     StaticFacesUtils.wrapExpression(controllerName + "Bean." + controllerName + "."
-                              + inverseRelationship));
+                     StaticFacesUtils.wrapExpression(controllerName + "Bean.add." + inverseRelationship));
             StandardBindingProcessor bindingProcessor = metawidget.getWidgetProcessor(StandardBindingProcessor.class);
 
             if (bindingProcessor != null)
@@ -450,11 +449,20 @@ public class EntityWidgetBuilder
             Map<String, String> columnAttributes,
             StaticXmlMetawidget metawidget)
    {
-      // Suppress columns that show Collection values (their toString is never very nice)
+      // Suppress columns that show Collection values. Their toString is never very nice, and nested tables look awful!
+      //
+      // Note: we don't just do N_TO_MANY values, as sometimes Collections are not annotated
 
-      if (TRUE.equals(columnAttributes.get(N_TO_MANY)))
+      String type = WidgetBuilderUtils.getActualClassOrType(columnAttributes);
+
+      if (type != null)
       {
-         return;
+         Class<?> clazz = ClassUtils.niceForName(type);
+
+         if (clazz != null && (Collection.class.isAssignableFrom(clazz)))
+         {
+            return;
+         }
       }
 
       // FORGE-446: Expand columns that show one-to-one values
@@ -530,9 +538,7 @@ public class EntityWidgetBuilder
                StaticHtmlMetawidget footerMetawidget = new StaticHtmlMetawidget();
                Map<String, String> footerAttributes = CollectionUtils.newHashMap();
                metawidget.initNestedMetawidget(footerMetawidget, footerAttributes);
-               footerMetawidget.setValue(StaticFacesUtils.wrapExpression(controllerName + "Bean." + controllerName
-                        + "."
-                        + columnName));
+               footerMetawidget.setValue(StaticFacesUtils.wrapExpression(controllerName + "Bean.add." + columnName));
                footerMetawidget.setPath(componentType + StringUtils.SEPARATOR_FORWARD_SLASH_CHAR + columnName);
                footerMetawidget.setLayout(new SimpleLayout());
 
