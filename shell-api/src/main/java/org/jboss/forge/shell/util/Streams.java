@@ -21,6 +21,7 @@
  */
 package org.jboss.forge.shell.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -62,7 +63,7 @@ public abstract class Streams
       return out.toString();
    }
 
-   public static void write(InputStream source, OutputStream destination)
+   public static void write(final InputStream source, final OutputStream destination)
    {
       try {
          final byte[] buffer = new byte[0x10000];
@@ -78,5 +79,10 @@ public abstract class Streams
       catch (IOException e) {
          throw new RuntimeException(e);
       }
+   }
+
+   public static InputStream fromString(final String data)
+   {
+      return new ByteArrayInputStream(data.getBytes());
    }
 }
