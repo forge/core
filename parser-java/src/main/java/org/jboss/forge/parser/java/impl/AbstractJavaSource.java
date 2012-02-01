@@ -341,7 +341,8 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
       // No import matches and no wild-card/on-demand import matches means this class is in the same package.
       if (Types.isSimpleName(result))
       {
-         result = getPackage() + "." + result;
+         if (getPackage() != null)
+            result = getPackage() + "." + result;
       }
 
       return result;
