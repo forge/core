@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import junit.framework.TestCase;
@@ -272,12 +271,12 @@ public class EntityWidgetBuilderTest
       result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Description\"/></f:facet>";
       result += "<h:link outcome=\"/scaffold/entityWidgetBuilderTest$Bar/view\"><f:param name=\"id\" value=\"#{_item.id}\"/>";
       result += "<h:outputText id=\"itemDescription\" value=\"#{_item.description}\"/></h:link>";
-      result += "<f:facet name=\"footer\"><h:inputText id=\"entityWidgetBuilderTestBarBeanEntityWidgetBuilderTestBarDescription\" value=\"#{entityWidgetBuilderTest$BarBean.entityWidgetBuilderTest$Bar.description}\"/></f:facet>";
+      result += "<f:facet name=\"footer\"><h:inputText id=\"entityWidgetBuilderTestBarBeanAddDescription\" value=\"#{entityWidgetBuilderTest$BarBean.add.description}\"/></f:facet>";
       result += "</h:column>";
       result += "<h:column footerClass=\"remove-column\" headerClass=\"remove-column\"><h:commandLink action=\"#{_collection.remove(_item)}\" styleClass=\"remove-button\"/>";
       result += "<f:facet name=\"footer\">";
-      result += "<h:commandLink action=\"#{_collection.add(entityWidgetBuilderTest$BarBean.entityWidgetBuilderTest$Bar)}\" id=\"fooBarsAdd\" styleClass=\"add-button\">";
-      result += "<f:setPropertyActionListener target=\"#{entityWidgetBuilderTest$BarBean.entityWidgetBuilderTest$Bar.name}\" value=\"#{foo}\"/>";
+      result += "<h:commandLink action=\"#{_collection.add(entityWidgetBuilderTest$BarBean.added)}\" id=\"fooBarsAdd\" styleClass=\"add-button\">";
+      result += "<f:setPropertyActionListener target=\"#{entityWidgetBuilderTest$BarBean.add.name}\" value=\"#{foo}\"/>";
       result += "</h:commandLink>";
       result += "</f:facet>";
       result += "</h:column>";
@@ -305,29 +304,6 @@ public class EntityWidgetBuilderTest
             throws Exception
    {
       StaticHtmlMetawidget metawidget = new StaticHtmlMetawidget();
-      Inspector testInspector = new BaseObjectInspector()
-      {
-         @Override
-         protected Map<String, String> inspectProperty(Property property)
-         {
-            Map<String, String> attributes = CollectionUtils.newHashMap();
-
-            // OneToMany
-
-            if (property.isAnnotationPresent(OneToMany.class))
-            {
-               attributes.put(N_TO_MANY, TRUE);
-            }
-
-            return attributes;
-         }
-      };
-      Inspector inspector = new CompositeInspector(new CompositeInspectorConfig()
-               .setInspectors(
-                        new PropertyTypeInspector(),
-                        testInspector));
-
-      metawidget.setInspector(inspector);
       metawidget.setValue("#{foo}");
       EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder();
       Map<String, String> attributes = CollectionUtils.newHashMap();
@@ -343,10 +319,10 @@ public class EntityWidgetBuilderTest
       result += "<ui:param name=\"_collection\" value=\"#{foo.bars}\"/>";
       result += "<h:dataTable id=\"fooBars\" styleClass=\"data-table\" value=\"#{forgeview:asList(_collection)}\" var=\"_item\">";
       result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Field 1\"/></f:facet>";
-      result += "<h:link outcome=\"/scaffold/entityWidgetBuilderTest$FooOneToMany/view\"><f:param name=\"id\" value=\"#{_item.id}\"/></h:link>";
+      result += "<h:link outcome=\"/scaffold/entityWidgetBuilderTest$FooOneToMany/view\"><f:param name=\"id\" value=\"#{_item.id}\"/><h:outputText id=\"itemField1\" value=\"#{_item.field1}\"/></h:link>";
       result += "</h:column>";
       result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Field 3\"/></f:facet>";
-      result += "<h:link outcome=\"/scaffold/entityWidgetBuilderTest$FooOneToMany/view\"><f:param name=\"id\" value=\"#{_item.id}\"/></h:link>";
+      result += "<h:link outcome=\"/scaffold/entityWidgetBuilderTest$FooOneToMany/view\"><f:param name=\"id\" value=\"#{_item.id}\"/><h:outputText id=\"itemField3\" value=\"#{_item.field3}\"/></h:link>";
       result += "</h:column>";
       result += "<h:column footerClass=\"remove-column\" headerClass=\"remove-column\"><h:commandLink action=\"#{_collection.remove(_item)}\" styleClass=\"remove-button\"/></h:column>";
       result += "</h:dataTable>";
@@ -479,7 +455,7 @@ public class EntityWidgetBuilderTest
          return null;
       }
 
-      @OneToMany
+      // Not @OneToMany: sometimes annotations are forgotten
       public Set<String> getField2()
       {
          return null;

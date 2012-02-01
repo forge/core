@@ -234,7 +234,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(customerBean.exists());
       contents = Streams.toString(customerBean.getResourceInputStream());
 
-      Assert.assertTrue(contents.contains("\n\tprivate Customer customer = new Customer();"));
+      Assert.assertTrue(contents.contains("\n\tprivate Customer customer;"));
 
       StringBuilder qbeMetawidget = new StringBuilder(
                "List<Predicate> predicatesList = new ArrayList<Predicate>();\r\n\r\n");
@@ -251,6 +251,9 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       qbeMetawidget.append("\t\treturn ");
 
       Assert.assertTrue(contents.contains(qbeMetawidget));
+
+      Assert.assertTrue(contents.contains("\n\tprivate Customer add = new Customer();"));
+      Assert.assertTrue(contents.contains("\n\t\tthis.add = new Customer();"));
 
       // ViewUtils
 
