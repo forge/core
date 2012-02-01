@@ -75,12 +75,12 @@ public class JavaClassTest
       String output = javaClass.toString();
 
       assertTrue(output.contains(
-    		  "Telephone" + System.getProperty("line.separator") +
-    		  "{"
-    		  ));
+               "Telephone" + System.getProperty("line.separator") +
+                        "{"
+               ));
       assertTrue(output.contains(
-    		  ")" + System.getProperty("line.separator") +
-    		  "   {"));
+               ")" + System.getProperty("line.separator") +
+                        "   {"));
    }
 
    @Test
@@ -320,6 +320,15 @@ public class JavaClassTest
 
       source.setSuperType(getClass());
       assertEquals(getClass().getSimpleName(), source.getSuperType());
-      // TODO this should add import for when class instance is passed
+   }
+
+   @Test
+   public void testSuperTypeJavaLang() throws Exception
+   {
+      JavaClass source = JavaParser.parse(JavaClass.class, "public class Base extends Integer {}");
+      assertEquals("java.lang.Integer", source.getSuperType());
+
+      source.setSuperType(getClass());
+      assertEquals(getClass().getSimpleName(), source.getSuperType());
    }
 }
