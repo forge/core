@@ -38,6 +38,7 @@ import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.spec.javaee.RestActivatorType;
 import org.jboss.forge.spec.javaee.RestFacet;
+import org.jboss.forge.spec.javaee.jpa.PersistenceFacetImpl;
 import org.jboss.forge.spec.jpa.AbstractJPATest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -83,8 +84,9 @@ public class RestPluginTest extends AbstractJPATest
 
       assertEquals("/user", endpoint.getAnnotation(Path.class).getStringValue());
       assertEquals("java.util.List", endpoint.getMethod("listAll").getQualifiedReturnType());
-      assertEquals("com.test.domain.User", endpoint.getMethod("findById", long.class).getReturnTypeInspector()
-               .getQualifiedName());
+      assertEquals("com.test." + PersistenceFacetImpl.DEFAULT_ENTITY_PACKAGE + ".User",
+               endpoint.getMethod("findById", long.class).getReturnTypeInspector()
+                        .getQualifiedName());
 
       assertTrue(java.getJavaResource(entity).getJavaSource().hasAnnotation(XmlRootElement.class));
    }

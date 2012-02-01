@@ -60,8 +60,7 @@ import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceDescr
 @RequiresPackagingType({ PackagingType.JAR, PackagingType.WAR, PackagingType.BUNDLE })
 public class PersistenceFacetImpl extends BaseJavaEEFacet implements PersistenceFacet
 {
-
-   private static final String DEFAULT_ENTITY_PACKAGE = "model";
+   public static final String DEFAULT_ENTITY_PACKAGE = "model";
 
    @Inject
    public PersistenceFacetImpl(final DependencyInstaller installer)
