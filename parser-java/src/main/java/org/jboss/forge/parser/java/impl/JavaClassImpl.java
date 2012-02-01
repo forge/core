@@ -103,7 +103,7 @@ public class JavaClassImpl extends AbstractJavaSourceMemberHolder<JavaClass> imp
    public String getSuperType()
    {
       Object superType = getBodyDeclaration().getStructuralProperty(TypeDeclaration.SUPERCLASS_TYPE_PROPERTY);
-      return superType.toString();
+      return superType == null ? Object.class.getSimpleName() : superType.toString();
    }
 
    @Override
