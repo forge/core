@@ -136,7 +136,7 @@ h1 {
 	width: 100%;	
 }
 
-#content table .component input[type="checkbox"] {
+#content table .component input[type="checkbox"], #content table .component .rf-cal-inp, #content table .component .rf-insl-inp, #content table .component .rf-insp-inp  {
 	width: auto;
 }
 
@@ -196,7 +196,6 @@ h1 {
 }
 
 #content .data-table tfoot td {
-	height: 42px;
 	padding-right: 4px;
 }
 
