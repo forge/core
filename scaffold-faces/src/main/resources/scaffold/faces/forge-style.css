@@ -162,7 +162,7 @@ h1 {
 	margin: auto;
 }
 
-#content table .component .error {
+#content .error {
 	color: red;
 	font-size: 10pt;
 }
