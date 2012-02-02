@@ -38,6 +38,7 @@ import org.metawidget.statically.faces.StaticFacesUtils;
 import org.metawidget.statically.faces.component.StaticUIMetawidget;
 import org.metawidget.statically.faces.component.ValueHolder;
 import org.metawidget.statically.faces.component.html.StaticHtmlMetawidget;
+import org.metawidget.statically.faces.component.html.layout.HtmlMessage;
 import org.metawidget.statically.faces.component.html.layout.HtmlPanelGrid;
 import org.metawidget.statically.faces.component.html.layout.HtmlPanelGroup;
 import org.metawidget.statically.faces.component.html.widgetbuilder.FaceletsParam;
@@ -545,6 +546,18 @@ public class EntityWidgetBuilder
                Facet footerFacet = new Facet();
                footerFacet.putAttribute("name", "footer");
                footerFacet.getChildren().add(footerMetawidget);
+
+               ReadableIdProcessor readableIdProcessor = metawidget.getWidgetProcessor(ReadableIdProcessor.class);
+
+               if (readableIdProcessor != null)
+               {
+                  readableIdProcessor.processWidget(footerMetawidget, elementName, columnAttributes, metawidget);
+               }
+
+               HtmlMessage message = new HtmlMessage();
+               message.putAttribute("for", footerMetawidget.getAttribute("id"));
+               message.putAttribute("styleClass", "error");
+               footerFacet.getChildren().add(message);
                column.getChildren().add(footerFacet);
             }
          }

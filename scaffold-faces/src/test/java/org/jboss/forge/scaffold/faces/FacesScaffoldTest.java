@@ -153,7 +153,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
                "template=\"/resources/scaffold/page.xhtml"));
 
       metawidget = new StringBuilder("<h:form id=\"create\">\n");
-      metawidget.append("\t\t\t<h:messages globalOnly=\"true\"/>\n\n");
+      metawidget.append("\t\t\t<h:messages globalOnly=\"true\" styleClass=\"error\"/>\n\n");
       metawidget.append("\t\t\t<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">\r\n");
       metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First Name:\"/>\r\n");
       metawidget.append("\t\t\t\t<h:panelGroup>\r\n");
@@ -182,8 +182,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
                "template=\"/resources/scaffold/page.xhtml"));
 
       StringBuilder searchMetawidget = new StringBuilder("<h:form id=\"search\">\r\n");
-      searchMetawidget.append("\t\t\t<h:panelGroup styleClass=\"search\">\r\n");
-      searchMetawidget.append("\t\t\t\t<h:messages globalOnly=\"true\"/>\r\n\r\n");
+      searchMetawidget.append("\t\t\t<h:panelGroup styleClass=\"search\">\r\n\r\n");
       searchMetawidget.append("\t\t\t\t<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">\r\n");
       searchMetawidget
                .append("\t\t\t\t\t<h:outputLabel for=\"customerBeanSearchFirstName\" value=\"First Name:\"/>\r\n");
@@ -279,7 +278,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       FileResource<?> css = web.getWebResource("resources/forge-style.css");
       Assert.assertTrue(css.exists());
       contents = Streams.toString(css.getResourceInputStream());
-      Assert.assertTrue(contents.contains("#content table .component .error {"));
+      Assert.assertTrue(contents.contains("#content .error {"));
 
       Assert.assertTrue(web.getWebResource("resources/jboss-community.png").exists());
       Assert.assertTrue(web.getWebResource("resources/remove.png").exists());
@@ -466,7 +465,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(contents.contains(
                "template=\"/resources/scaffold/page.xhtml"));
       StringBuilder metawidget = new StringBuilder("\t\t<h:form id=\"create\">\n");
-      metawidget.append("\t\t\t<h:messages globalOnly=\"true\"/>\n\n");
+      metawidget.append("\t\t\t<h:messages globalOnly=\"true\" styleClass=\"error\"/>\n\n");
       metawidget.append("\t\t\t<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">\r\n");
       metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First Name:\"/>\r\n");
       metawidget.append("\t\t\t\t<h:panelGroup>\r\n");
@@ -789,8 +788,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
                "template=\"/resources/scaffold/page.xhtml"));
 
       StringBuilder searchMetawidget = new StringBuilder("<h:form id=\"search\">\r\n");
-      searchMetawidget.append("\t\t\t<h:panelGroup styleClass=\"search\">\r\n");
-      searchMetawidget.append("\t\t\t\t<h:messages globalOnly=\"true\"/>\r\n\r\n");
+      searchMetawidget.append("\t\t\t<h:panelGroup styleClass=\"search\">\r\n\r\n");
       searchMetawidget.append("\t\t\t\t<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">\r\n");
       searchMetawidget
                .append("\t\t\t\t\t<h:outputLabel for=\"customerBeanSearchFirstName\" value=\"First Name:\"/>\r\n");
@@ -951,8 +949,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
                "template=\"/resources/scaffold/page.xhtml"));
 
       StringBuilder searchMetawidget = new StringBuilder("<h:form id=\"search\">\r\n");
-      searchMetawidget.append("\t\t\t<h:panelGroup styleClass=\"search\">\r\n");
-      searchMetawidget.append("\t\t\t\t<h:messages globalOnly=\"true\"/>\r\n\r\n");
+      searchMetawidget.append("\t\t\t<h:panelGroup styleClass=\"search\">\r\n\r\n");
       searchMetawidget.append("\t\t\t\t<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">\r\n");
       searchMetawidget.append("\t\t\t\t\t<h:outputLabel for=\"customerBeanSearchField1\" value=\"Field 1:\"/>\r\n");
       searchMetawidget.append("\t\t\t\t\t<h:panelGroup>\r\n");
