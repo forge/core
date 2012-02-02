@@ -88,7 +88,7 @@ public class JavaClassImpl extends AbstractJavaSourceMemberHolder<JavaClass> imp
    {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((toString() == null) ? 0 : unit.toString().hashCode());
+      result = (prime * result) + ((toString() == null) ? 0 : unit.toString().hashCode());
       return result;
    }
 
@@ -103,7 +103,9 @@ public class JavaClassImpl extends AbstractJavaSourceMemberHolder<JavaClass> imp
    public String getSuperType()
    {
       Object superType = getBodyDeclaration().getStructuralProperty(TypeDeclaration.SUPERCLASS_TYPE_PROPERTY);
-      return superType.toString();
+      if (superType == null)
+         superType = Object.class.getName();
+      return resolveType(superType.toString());
    }
 
    @Override

@@ -41,7 +41,7 @@ import org.junit.runner.RunWith;
 
 /**
  * Lincoln's example domain model from 2nd Dec 2011.
- *
+ * 
  * @author Richard Kennard
  */
 
@@ -65,7 +65,7 @@ public class FacesScaffoldShoppingTest extends AbstractFacesScaffoldTest
       getShell().execute("field string --named City");
       getShell().execute("field string --named state");
       getShell().execute("field int --named zipCode");
-      getShell().execute("field manyToMany --named customers --fieldType com.test.domain.Customer");
+      getShell().execute("field manyToMany --named customers --fieldType com.test.model.Customer");
       getShell().execute("entity --named Item");
       getShell().execute("field string --named name");
       getShell().execute("field number --named price --type java.lang.Double");
@@ -74,21 +74,21 @@ public class FacesScaffoldShoppingTest extends AbstractFacesScaffoldTest
       getShell().execute("field string --named bio");
       getShell().execute("field string --named URL");
       // Needs https://issues.jboss.org/browse/FORGE-397:
-      // getShell().execute("field oneToOne --named customer --fieldType com.test.domain.Customer --inverseFieldName profile");
+      // getShell().execute("field oneToOne --named customer --fieldType com.test.model.Customer --inverseFieldName profile");
       getShell().execute("entity --named SubmittedOrder");
-      getShell().execute("field manyToOne --named address --fieldType com.test.domain.Address");
+      getShell().execute("field manyToOne --named address --fieldType com.test.model.Address");
       getShell().execute("entity --named Customer");
       getShell().execute("field string --named firstName");
       getShell().execute("field string --named lastName");
       getShell().execute("field temporal --type DATE --named birthdate");
-      getShell().execute("field manyToMany --named addresses --fieldType com.test.domain.Address");
+      getShell().execute("field manyToMany --named addresses --fieldType com.test.model.Address");
       getShell().execute(
-               "field oneToMany --named orders --fieldType com.test.domain.SubmittedOrder --inverseFieldName customer");
-      getShell().execute("field oneToOne --named profile --fieldType com.test.domain.Profile");
+               "field oneToMany --named orders --fieldType com.test.model.SubmittedOrder --inverseFieldName customer");
+      getShell().execute("field oneToOne --named profile --fieldType com.test.model.Profile");
 
       queueInputLines("", "", "", "", "");
       getShell()
-               .execute("scaffold from-entity com.test.domain.*");
+               .execute("scaffold from-entity com.test.model.*");
 
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
       WebResourceFacet web = project.getFacet(WebResourceFacet.class);
