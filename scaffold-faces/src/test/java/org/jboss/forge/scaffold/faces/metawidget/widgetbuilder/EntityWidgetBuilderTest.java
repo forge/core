@@ -271,7 +271,10 @@ public class EntityWidgetBuilderTest
       result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Description\"/></f:facet>";
       result += "<h:link outcome=\"/scaffold/entityWidgetBuilderTest$Bar/view\"><f:param name=\"id\" value=\"#{_item.id}\"/>";
       result += "<h:outputText id=\"itemDescription\" value=\"#{_item.description}\"/></h:link>";
-      result += "<f:facet name=\"footer\"><h:inputText id=\"entityWidgetBuilderTestBarBeanAddDescription\" value=\"#{entityWidgetBuilderTest$BarBean.add.description}\"/></f:facet>";
+      result += "<f:facet name=\"footer\">";
+      result += "<h:inputText id=\"entityWidgetBuilderTestBarBeanAddDescription\" value=\"#{entityWidgetBuilderTest$BarBean.add.description}\"/>";
+      result += "<h:message for=\"entityWidgetBuilderTestBarBeanAddDescription\" styleClass=\"error\"/>";
+      result += "</f:facet>";
       result += "</h:column>";
       result += "<h:column footerClass=\"remove-column\" headerClass=\"remove-column\"><h:commandLink action=\"#{_collection.remove(_item)}\" styleClass=\"remove-button\"/>";
       result += "<f:facet name=\"footer\">";
