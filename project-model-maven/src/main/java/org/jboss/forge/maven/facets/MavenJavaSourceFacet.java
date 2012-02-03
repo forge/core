@@ -21,14 +21,6 @@
  */
 package org.jboss.forge.maven.facets;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.enterprise.context.Dependent;
-
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
@@ -41,10 +33,20 @@ import org.jboss.forge.project.ProjectModelException;
 import org.jboss.forge.project.facets.BaseFacet;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.resources.DirectoryResource;
+import org.jboss.forge.resources.Resource;
+import org.jboss.forge.resources.ResourceFilter;
 import org.jboss.forge.resources.java.JavaResource;
+import org.jboss.forge.resources.java.JavaResourceVisitor;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.util.Packages;
+
+import javax.enterprise.context.Dependent;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -233,5 +235,37 @@ public class MavenJavaSourceFacet extends BaseFacet implements JavaSourceFacet, 
    public JavaResource saveTestJavaSource(final JavaSource<?> source) throws FileNotFoundException
    {
       return getTestJavaResource(source.getQualifiedName()).setContents(source);
+   }
+
+   @Override
+   public void visitJavaSources(final JavaResourceVisitor visitor)
+   {
+      visitSources(getSourceFolder(), visitor);
+   }
+
+   @Override
+   public void visitJavaTestSources(final JavaResourceVisitor visitor)
+   {
+       visitSources(getTestSourceFolder(), visitor);
+   }
+
+   private  void visitSources(final Resource<?> searchFolder, final JavaResourceVisitor visitor )
+   {
+       if (searchFolder instanceof DirectoryResource) {
+
+             searchFolder.listResources(new ResourceFilter() {
+               @Override
+               public boolean accept(Resource<?> resource) {
+                   if (resource instanceof DirectoryResource) {
+                       visitSources(resource, visitor);
+                   }
+                   if (resource instanceof JavaResource) {
+                       visitor.visit((JavaResource) resource);
+                   }
+
+                   return false;
+               }
+           });
+       }
    }
 }
