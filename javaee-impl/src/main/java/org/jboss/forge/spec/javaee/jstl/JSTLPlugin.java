@@ -31,12 +31,14 @@ import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.Command;
 import org.jboss.forge.shell.plugins.PipeOut;
 import org.jboss.forge.shell.plugins.Plugin;
+import org.jboss.forge.shell.plugins.RequiresProject;
 import org.jboss.forge.spec.javaee.JSTLFacet;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Alias("jstl")
+@RequiresProject
 public class JSTLPlugin implements Plugin
 {
    @Inject
