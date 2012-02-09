@@ -46,6 +46,7 @@ import org.jboss.forge.shell.plugins.Option;
 import org.jboss.forge.shell.plugins.PipeOut;
 import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.RequiresFacet;
+import org.jboss.forge.shell.plugins.RequiresProject;
 import org.jboss.forge.spec.javaee.PersistenceFacet;
 import org.jboss.forge.spec.javaee.jpa.api.DatabaseType;
 import org.jboss.forge.spec.javaee.jpa.api.JPAContainer;
@@ -60,10 +61,11 @@ import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.Property;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 @Alias("persistence")
 @RequiresFacet(JavaSourceFacet.class)
+@RequiresProject
 public class PersistencePlugin implements Plugin
 {
    public static final String DEFAULT_UNIT_NAME = "forge-default";
