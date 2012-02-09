@@ -30,6 +30,7 @@ import org.jboss.forge.shell.ShellMessages;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.PipeOut;
 import org.jboss.forge.shell.plugins.Plugin;
+import org.jboss.forge.shell.plugins.RequiresProject;
 import org.jboss.forge.shell.plugins.SetupCommand;
 import org.jboss.forge.spec.javaee.SoapFacet;
 
@@ -37,6 +38,7 @@ import org.jboss.forge.spec.javaee.SoapFacet;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Alias("soap")
+@RequiresProject
 public class SoapPlugin implements Plugin
 {
    @Inject

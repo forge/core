@@ -52,6 +52,7 @@ import org.jboss.forge.shell.plugins.Option;
 import org.jboss.forge.shell.plugins.PipeOut;
 import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.RequiresFacet;
+import org.jboss.forge.shell.plugins.RequiresProject;
 import org.jboss.forge.shell.plugins.SetupCommand;
 import org.jboss.forge.spec.javaee.EJBFacet;
 import org.jboss.forge.spec.javaee.PersistenceFacet;
@@ -65,6 +66,7 @@ import org.jboss.shrinkwrap.descriptor.impl.base.Strings;
  */
 @Alias("rest")
 @RequiresFacet(RestFacet.class)
+@RequiresProject
 public class RestPlugin implements Plugin
 {
    @Inject
