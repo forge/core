@@ -21,30 +21,26 @@
  */
 package org.jboss.forge.spec.javaee.validation;
 
-import java.util.Set;
-
-import javax.enterprise.event.Event;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.inject.Inject;
-
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.Dependency;
+import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.dependencies.DependencyInstaller;
+import org.jboss.forge.project.dependencies.ScopeType;
 import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.facets.events.InstallFacets;
 import org.jboss.forge.shell.PromptType;
 import org.jboss.forge.shell.ShellPrompt;
-import org.jboss.forge.shell.plugins.Alias;
-import org.jboss.forge.shell.plugins.Command;
-import org.jboss.forge.shell.plugins.Option;
-import org.jboss.forge.shell.plugins.Plugin;
-import org.jboss.forge.shell.plugins.RequiresFacet;
-import org.jboss.forge.shell.plugins.RequiresProject;
+import org.jboss.forge.shell.plugins.*;
 import org.jboss.forge.spec.javaee.ValidationFacet;
 import org.jboss.forge.spec.javaee.descriptor.ValidationDescriptor;
 import org.jboss.forge.spec.javaee.validation.provider.BVProvider;
 import org.jboss.forge.spec.javaee.validation.provider.ValidationProvider;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
+
+import javax.enterprise.event.Event;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.inject.Inject;
+import java.util.Set;
 
 /**
  * @author Kevin Pollet
@@ -115,8 +111,14 @@ public class ValidationPlugin implements Plugin
       {
          if (!installer.isInstalled(project, dep))
          {
-            installer.install(project, dep);
+             dep = DependencyBuilder.create(dep).setScopeType(promptForScope(dep));
+             installer.install(project, dep);
          }
       }
    }
+
+    private ScopeType promptForScope(Dependency dep) {
+        boolean answer = prompt.promptBoolean("Should the dependency be packaged with your application (not provided by the server)?", false);
+        return answer ? ScopeType.COMPILE : ScopeType.PROVIDED;
+    }
 }
