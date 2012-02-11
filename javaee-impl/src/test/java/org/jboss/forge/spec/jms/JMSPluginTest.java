@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @Author Paul Bakker - paul.bakker@luminis.eu
@@ -23,6 +24,6 @@ public class JMSPluginTest extends AbstractShellTest
 
         getShell().execute("setup jms");
 
-        assertFalse(project.hasFacet(JMSFacet.class));
+        assertTrue(project.hasFacet(JMSFacet.class));
     }
 }
