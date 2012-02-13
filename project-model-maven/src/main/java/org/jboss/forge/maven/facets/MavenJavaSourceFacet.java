@@ -35,12 +35,14 @@ import org.apache.maven.model.Plugin;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.jboss.forge.maven.MavenCoreFacet;
+import org.jboss.forge.parser.java.JavaEnum;
 import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.ProjectModelException;
 import org.jboss.forge.project.facets.BaseFacet;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.resources.DirectoryResource;
+import org.jboss.forge.resources.enumtype.EnumTypeResource;
 import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
@@ -78,7 +80,8 @@ public class MavenJavaSourceFacet extends BaseFacet implements JavaSourceFacet, 
    {
       List<DirectoryResource> folders = getSourceFolders();
       String pkg = null;
-      for (DirectoryResource folder : folders) {
+      for (DirectoryResource folder : folders)
+      {
          String sourcePrefix = folder.getFullyQualifiedName();
          pkg = resource.getParent().getFullyQualifiedName();
          if (pkg.startsWith(sourcePrefix))
@@ -196,6 +199,12 @@ public class MavenJavaSourceFacet extends BaseFacet implements JavaSourceFacet, 
    }
 
    @Override
+   public EnumTypeResource getEnumTypeResource(final JavaEnum javaEnum) throws FileNotFoundException
+   {
+      return getEnumTypeResource(javaEnum.getPackage() + "." + javaEnum.getName());
+   }
+
+   @Override
    public JavaResource getTestJavaResource(final JavaSource<?> javaClass) throws FileNotFoundException
    {
       return getTestJavaResource(javaClass.getPackage() + "." + javaClass.getName());
@@ -205,6 +214,12 @@ public class MavenJavaSourceFacet extends BaseFacet implements JavaSourceFacet, 
    public JavaResource getJavaResource(final String relativePath) throws FileNotFoundException
    {
       return getJavaResource(getSourceFolder(), relativePath);
+   }
+
+   @Override
+   public EnumTypeResource getEnumTypeResource(final String relativePath) throws FileNotFoundException
+   {
+      return getEnumTypeResource(getSourceFolder(), relativePath);
    }
 
    @Override
@@ -223,10 +238,26 @@ public class MavenJavaSourceFacet extends BaseFacet implements JavaSourceFacet, 
       return target;
    }
 
+   private EnumTypeResource getEnumTypeResource(final DirectoryResource sourceDir, final String relativePath)
+   {
+      String path = relativePath.trim().endsWith(".java")
+               ? relativePath.substring(0, relativePath.lastIndexOf(".java")) : relativePath;
+
+      path = Packages.toFileSyntax(path) + ".java";
+      EnumTypeResource target = sourceDir.getChildOfType(EnumTypeResource.class, path);
+      return target;
+   }
+
    @Override
    public JavaResource saveJavaSource(final JavaSource<?> source) throws FileNotFoundException
    {
       return getJavaResource(source.getQualifiedName()).setContents(source);
+   }
+
+   @Override
+   public EnumTypeResource saveEnumTypeSource(final JavaEnum source) throws FileNotFoundException
+   {
+      return getEnumTypeResource(source.getQualifiedName()).setContents(source);
    }
 
    @Override
