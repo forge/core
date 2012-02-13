@@ -1,5 +1,5 @@
 /*
- * JBoss, Home of Professional Open Source
+ * JBoss, by Red Hat.
  * Copyright 2010, Red Hat, Inc., and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -19,22 +19,20 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.jboss.forge.resources.enumtype;
 
-package org.jboss.forge.parser.java;
-
-import org.jboss.forge.parser.JavaParser;
+import org.jboss.forge.parser.java.JavaEnum;
+import org.jboss.forge.parser.java.Method;
+import org.jboss.forge.resources.Resource;
+import org.jboss.forge.resources.java.JavaMethodResource;
 
 /**
- * Represents a Java {@link Enum} source file as an in-memory modifiable element. See {@link JavaParser} for various
- * options in generating {@link JavaEnum} instances.
- * 
- * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author Ricardo Martinelli
  */
-public interface JavaEnum extends JavaSource<JavaEnum>
-{
-   
-   public void addEnumConstant();
-   
-   public void addEnumConstant(String declaration);
+public class EnumMethodResource extends JavaMethodResource {
 
+   public EnumMethodResource(Resource<?> parent, Method<? extends JavaEnum> method)
+	{
+		super(parent, method);
+	}
 }
