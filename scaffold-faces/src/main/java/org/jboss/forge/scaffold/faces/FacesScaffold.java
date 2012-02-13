@@ -52,6 +52,7 @@ import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.project.facets.events.InstallFacets;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.Resource;
+import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.scaffold.AccessStrategy;
 import org.jboss.forge.scaffold.ScaffoldProvider;
 import org.jboss.forge.scaffold.TemplateStrategy;
@@ -240,7 +241,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
 
    @Override
    public List<Resource<?>> generateFromEntity(final Resource<?> template, final JavaClass entity,
-            final boolean overwrite)
+            final boolean overwrite, List<JavaResource> otherTargets)
    {
       // FORGE-460: setupRichFaces during generateFromEntity, not during setup, as generally 'richfaces setup' is called
       // *after* 'scaffold setup'

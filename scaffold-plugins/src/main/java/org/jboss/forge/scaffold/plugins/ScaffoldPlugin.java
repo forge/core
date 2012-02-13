@@ -171,7 +171,7 @@ public class ScaffoldPlugin implements Plugin
       for (JavaResource jr : javaTargets)
       {
          JavaClass entity = (JavaClass) (jr).getJavaSource();
-         List<Resource<?>> generatedResources = provider.generateFromEntity(template, entity, overwrite);
+         List<Resource<?>> generatedResources = provider.generateFromEntity(template, entity, overwrite, javaTargets);
 
          // TODO give plugins a chance to react to generated resources, use event bus?
          if (!generatedResources.isEmpty())
