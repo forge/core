@@ -31,7 +31,6 @@ import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.resources.DirectoryResource;
-import org.jboss.forge.resources.enumtype.EnumTypeResource;
 import org.jboss.forge.resources.java.JavaResource;
 
 /**
@@ -96,7 +95,7 @@ public interface JavaSourceFacet extends Facet
     * @return The created or updated {@link EnumTypeResource}
     * @throws FileNotFoundException
     */
-   public EnumTypeResource saveEnumTypeSource(final JavaEnum source) throws FileNotFoundException;
+   public JavaResource saveEnumTypeSource(final JavaEnum source) throws FileNotFoundException;
 
    /**
     * Create or update a Java file in the primary test source directory: {@link #getTestSourceFolder()} - use
@@ -131,7 +130,7 @@ public interface JavaSourceFacet extends Facet
     * @param relativePath The file or package path of the target Java source file.
     * @throws FileNotFoundException if the target {@link JavaResource} does not exist
     */
-   public EnumTypeResource getEnumTypeResource(String relativePath) throws FileNotFoundException;
+   public JavaResource getEnumTypeResource(String relativePath) throws FileNotFoundException;
    
    /**
     * Attempt to locate and re-parse the given {@link JavaEnum} from its location on disk, relative to
@@ -140,7 +139,7 @@ public interface JavaSourceFacet extends Facet
     * @param javaClass The {@link JavaClass} to re-parse.
     * @throws FileNotFoundException if the target {@link JavaResource} does not exist
     */
-   public EnumTypeResource getEnumTypeResource(JavaEnum javaEnum) throws FileNotFoundException;
+   public JavaResource getEnumTypeResource(JavaEnum javaEnum) throws FileNotFoundException;
 
    /**
     * Return the {@link JavaClass} at the given path relative to {@link #getTestSourceFolder()}.

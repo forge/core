@@ -26,13 +26,18 @@ import java.util.List;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.EnumConstantDeclaration;
+import org.eclipse.jdt.core.dom.FieldDeclaration;
+import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.Annotation;
+import org.jboss.forge.parser.java.EnumConstant;
 import org.jboss.forge.parser.java.Field;
+import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.parser.java.JavaEnum;
 import org.jboss.forge.parser.java.JavaSource;
-import org.jboss.forge.parser.java.Type;
+import org.jboss.forge.parser.java.Member;
 import org.jboss.forge.parser.java.Visibility;
 
-public class EnumConstantImpl<O extends JavaSource<O>> implements Field<O>
+public class EnumConstantImpl<O extends JavaSource<O>> implements EnumConstant<O>
 {
    private O parent;
    private AST ast;
@@ -49,6 +54,18 @@ public class EnumConstantImpl<O extends JavaSource<O>> implements Field<O>
       this.enumConstant = ast.newEnumConstantDeclaration();
    }
    
+   public EnumConstantImpl(final O parent, final String declaration)
+   {
+      init(parent);
+
+      String stub = "public enum Stub { " + declaration + " }";
+      JavaEnum temp = (JavaEnum) JavaParser.parse(stub);
+      List<Member<JavaEnum, ?>> fields = temp.getMembers();
+      EnumConstantDeclaration newField = (EnumConstantDeclaration) fields.get(0).getInternal();
+      EnumConstantDeclaration subtree = (EnumConstantDeclaration) ASTNode.copySubtree(ast, newField);
+      this.enumConstant = subtree;
+   }
+   
    public EnumConstantImpl(final O parent, final Object internal)
    {
       init(parent);
@@ -58,7 +75,97 @@ public class EnumConstantImpl<O extends JavaSource<O>> implements Field<O>
    @Override
    public String getName()
    {
-      return enumConstant.getName().getFullyQualifiedName();
+      return this.enumConstant.getName().getFullyQualifiedName();
+   }
+
+   @Override
+   public EnumConstant<O> setName(String name)
+   {
+      this.enumConstant.setName(ast.newSimpleName(name));
+      return this;
+   }
+
+   @Override
+   public String getType()
+   {
+      // TODO Auto-generated method stub
+      return null;
+   }
+
+   @Override
+   public String getQualifiedType()
+   {
+      // TODO Auto-generated method stub
+      return null;
+   }
+
+   @Override
+   public boolean isType(Class<?> type)
+   {
+      // TODO Auto-generated method stub
+      return false;
+   }
+
+   @Override
+   public boolean isType(String type)
+   {
+      // TODO Auto-generated method stub
+      return false;
+   }
+
+   @Override
+   public EnumConstant<O> setType(Class<?> clazz)
+   {
+      // TODO Auto-generated method stub
+      return null;
+   }
+
+   @Override
+   public EnumConstant<O> setType(String type)
+   {
+      // TODO Auto-generated method stub
+      return null;
+   }
+
+   @Override
+   public EnumConstant<O> setType(JavaSource<?> entity)
+   {
+      // TODO Auto-generated method stub
+      return null;
+   }
+
+   @Override
+   public String getStringInitializer()
+   {
+      // TODO Auto-generated method stub
+      return null;
+   }
+
+   @Override
+   public String getLiteralInitializer()
+   {
+      // TODO Auto-generated method stub
+      return null;
+   }
+
+   @Override
+   public EnumConstant<O> setLiteralInitializer(String value)
+   {
+      // TODO Auto-generated method stub
+      return null;
+   }
+
+   @Override
+   public EnumConstant<O> setStringInitializer(String value)
+   {
+      // TODO Auto-generated method stub
+      return null;
+   }
+
+   @Override
+   public Object getInternal()
+   {
+      return enumConstant;
    }
 
    @Override
@@ -69,7 +176,7 @@ public class EnumConstantImpl<O extends JavaSource<O>> implements Field<O>
    }
 
    @Override
-   public Field<O> setFinal(boolean finl)
+   public EnumConstant<O> setFinal(boolean finl)
    {
       // TODO Auto-generated method stub
       return null;
@@ -83,7 +190,7 @@ public class EnumConstantImpl<O extends JavaSource<O>> implements Field<O>
    }
 
    @Override
-   public Field<O> setStatic(boolean statc)
+   public EnumConstant<O> setStatic(boolean statc)
    {
       // TODO Auto-generated method stub
       return null;
@@ -97,7 +204,7 @@ public class EnumConstantImpl<O extends JavaSource<O>> implements Field<O>
    }
 
    @Override
-   public Field<O> setPackagePrivate()
+   public EnumConstant<O> setPackagePrivate()
    {
       // TODO Auto-generated method stub
       return null;
@@ -111,7 +218,7 @@ public class EnumConstantImpl<O extends JavaSource<O>> implements Field<O>
    }
 
    @Override
-   public Field<O> setPublic()
+   public EnumConstant<O> setPublic()
    {
       // TODO Auto-generated method stub
       return null;
@@ -125,7 +232,7 @@ public class EnumConstantImpl<O extends JavaSource<O>> implements Field<O>
    }
 
    @Override
-   public Field<O> setPrivate()
+   public EnumConstant<O> setPrivate()
    {
       // TODO Auto-generated method stub
       return null;
@@ -139,7 +246,7 @@ public class EnumConstantImpl<O extends JavaSource<O>> implements Field<O>
    }
 
    @Override
-   public Field<O> setProtected()
+   public EnumConstant<O> setProtected()
    {
       // TODO Auto-generated method stub
       return null;
@@ -153,7 +260,7 @@ public class EnumConstantImpl<O extends JavaSource<O>> implements Field<O>
    }
 
    @Override
-   public Field<O> setVisibility(Visibility scope)
+   public EnumConstant<O> setVisibility(Visibility scope)
    {
       // TODO Auto-generated method stub
       return null;
@@ -216,14 +323,7 @@ public class EnumConstantImpl<O extends JavaSource<O>> implements Field<O>
    }
 
    @Override
-   public Field<O> removeAnnotation(Annotation<O> annotation)
-   {
-      // TODO Auto-generated method stub
-      return null;
-   }
-
-   @Override
-   public Object getInternal()
+   public EnumConstant<O> removeAnnotation(Annotation<O> annotation)
    {
       // TODO Auto-generated method stub
       return null;
@@ -234,103 +334,5 @@ public class EnumConstantImpl<O extends JavaSource<O>> implements Field<O>
    {
       // TODO Auto-generated method stub
       return null;
-   }
-
-   @Override
-   public Field<O> setName(String name)
-   {
-      // TODO Auto-generated method stub
-      return null;
-   }
-
-   @Override
-   public String getType()
-   {
-      // TODO Auto-generated method stub
-      return null;
-   }
-
-   @Override
-   public String getQualifiedType()
-   {
-      // TODO Auto-generated method stub
-      return null;
-   }
-
-   @Override
-   public Type<O> getTypeInspector()
-   {
-      // TODO Auto-generated method stub
-      return null;
-   }
-
-   @Override
-   public boolean isType(Class<?> type)
-   {
-      // TODO Auto-generated method stub
-      return false;
-   }
-
-   @Override
-   public boolean isType(String type)
-   {
-      // TODO Auto-generated method stub
-      return false;
-   }
-
-   @Override
-   public Field<O> setType(Class<?> clazz)
-   {
-      // TODO Auto-generated method stub
-      return null;
-   }
-
-   @Override
-   public Field<O> setType(String type)
-   {
-      // TODO Auto-generated method stub
-      return null;
-   }
-
-   @Override
-   public Field<O> setType(JavaSource<?> entity)
-   {
-      // TODO Auto-generated method stub
-      return null;
-   }
-
-   @Override
-   public String getStringInitializer()
-   {
-      // TODO Auto-generated method stub
-      return null;
-   }
-
-   @Override
-   public String getLiteralInitializer()
-   {
-      // TODO Auto-generated method stub
-      return null;
-   }
-
-   @Override
-   public Field<O> setLiteralInitializer(String value)
-   {
-      // TODO Auto-generated method stub
-      return null;
-   }
-
-   @Override
-   public Field<O> setStringInitializer(String value)
-   {
-      // TODO Auto-generated method stub
-      return null;
-   }
-
-   @Override
-   public boolean isPrimitive()
-   {
-      // TODO Auto-generated method stub
-      return false;
    }
 }
