@@ -24,6 +24,7 @@ package org.jboss.forge.resources;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
@@ -123,6 +124,15 @@ public abstract class AbstractResource<T> implements Resource<T>
             result.add(resource);
          }
       }
+      
+      Collections.sort(result, new Comparator<Resource<?>>() {
+
+        @Override
+        public int compare(Resource<?> left, Resource<?> right) {
+            return left.getFullyQualifiedName().compareTo(right.getFullyQualifiedName());
+        }
+    });
+      
       return result;
    }
 
