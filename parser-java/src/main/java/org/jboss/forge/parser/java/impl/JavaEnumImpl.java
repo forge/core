@@ -29,7 +29,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.EnumConstantDeclaration;
 import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jface.text.Document;
-import org.jboss.forge.parser.java.Field;
+import org.jboss.forge.parser.java.EnumConstant;
 import org.jboss.forge.parser.java.JavaEnum;
 import org.jboss.forge.parser.java.Member;
 import org.jboss.forge.parser.java.SourceType;
@@ -54,12 +54,12 @@ public class JavaEnumImpl extends AbstractJavaSource<JavaEnum> implements JavaEn
 
       return result;
    }
-   
-   public List<Field<JavaEnum>> getFields()
-   {
-      List<Field<JavaEnum>> result = new ArrayList<Field<JavaEnum>>();
 
-      for (Object o : (((EnumDeclaration)getBodyDeclaration()).enumConstants()))
+   public List<EnumConstant<JavaEnum>> getFields()
+   {
+      List<EnumConstant<JavaEnum>> result = new ArrayList<EnumConstant<JavaEnum>>();
+
+      for (Object o : (((EnumDeclaration) getBodyDeclaration()).enumConstants()))
       {
          EnumConstantDeclaration field = (EnumConstantDeclaration) o;
          result.add(new EnumConstantImpl<JavaEnum>((JavaEnum) this, field));
@@ -67,19 +67,42 @@ public class JavaEnumImpl extends AbstractJavaSource<JavaEnum> implements JavaEn
 
       return Collections.unmodifiableList(result);
    }
-   
-   @SuppressWarnings("unchecked")
+
    @Override
-   public void addEnumConstant() {
+   @SuppressWarnings("unchecked")
+   public EnumConstant<JavaEnum> addEnumConstant()
+   {
       EnumConstantImpl<JavaEnum> enumConst = new EnumConstantImpl<JavaEnum>(this);
       getBodyDeclaration().bodyDeclarations().add(enumConst.getInternal());
+
+      return enumConst;
    }
-   
-   public void addEnumConstant(final String declaration)
+
+   @Override
+   @SuppressWarnings("unchecked")
+   public EnumConstant<JavaEnum> addEnumConstant(final String declaration)
    {
       EnumConstantImpl<JavaEnum> enumConst = new EnumConstantImpl<JavaEnum>(this, declaration);
+
+      EnumDeclaration enumDeclaration = (EnumDeclaration) getBodyDeclaration();
+      List<EnumConstantDeclaration> constants = enumDeclaration.enumConstants();
+      constants.add((EnumConstantDeclaration) enumConst.getInternal());
+
+      return enumConst;
    }
-   
+
+   @Override
+   public EnumConstant<JavaEnum> getEnumConstant(String declaration)
+   {
+      for (EnumConstant<JavaEnum> enumConst : getFields())
+      {
+         if (enumConst.getName().equals(declaration))
+         {
+            return enumConst;
+         }
+      }
+      return null;
+   }
 
    protected JavaEnum updateTypeNames(final String newName)
    {
@@ -91,5 +114,4 @@ public class JavaEnumImpl extends AbstractJavaSource<JavaEnum> implements JavaEn
    {
       return SourceType.ENUM;
    }
-
 }

@@ -42,7 +42,6 @@ import org.jboss.forge.parser.java.SyntaxError;
 import org.jboss.forge.parser.java.util.Strings;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
-import org.jboss.forge.resources.enumtype.EnumTypeResource;
 import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.shell.PromptType;
 import org.jboss.forge.shell.ShellColor;
@@ -212,8 +211,8 @@ public class JavaPlugin implements Plugin
    }
 
    @Command("new-enum-const")
-   @RequiresResource(EnumTypeResource.class)
-   public void newEnumField(
+   @RequiresResource(JavaResource.class)
+   public void newEnumConst(
             @PipeIn final String in,
             final PipeOut out,
             @Option(required = false,

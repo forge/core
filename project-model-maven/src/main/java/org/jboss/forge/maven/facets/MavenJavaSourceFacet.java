@@ -42,7 +42,6 @@ import org.jboss.forge.project.ProjectModelException;
 import org.jboss.forge.project.facets.BaseFacet;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.resources.DirectoryResource;
-import org.jboss.forge.resources.enumtype.EnumTypeResource;
 import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
@@ -199,7 +198,7 @@ public class MavenJavaSourceFacet extends BaseFacet implements JavaSourceFacet, 
    }
 
    @Override
-   public EnumTypeResource getEnumTypeResource(final JavaEnum javaEnum) throws FileNotFoundException
+   public JavaResource getEnumTypeResource(final JavaEnum javaEnum) throws FileNotFoundException
    {
       return getEnumTypeResource(javaEnum.getPackage() + "." + javaEnum.getName());
    }
@@ -217,7 +216,7 @@ public class MavenJavaSourceFacet extends BaseFacet implements JavaSourceFacet, 
    }
 
    @Override
-   public EnumTypeResource getEnumTypeResource(final String relativePath) throws FileNotFoundException
+   public JavaResource getEnumTypeResource(final String relativePath) throws FileNotFoundException
    {
       return getEnumTypeResource(getSourceFolder(), relativePath);
    }
@@ -238,13 +237,13 @@ public class MavenJavaSourceFacet extends BaseFacet implements JavaSourceFacet, 
       return target;
    }
 
-   private EnumTypeResource getEnumTypeResource(final DirectoryResource sourceDir, final String relativePath)
+   private JavaResource getEnumTypeResource(final DirectoryResource sourceDir, final String relativePath)
    {
       String path = relativePath.trim().endsWith(".java")
                ? relativePath.substring(0, relativePath.lastIndexOf(".java")) : relativePath;
 
       path = Packages.toFileSyntax(path) + ".java";
-      EnumTypeResource target = sourceDir.getChildOfType(EnumTypeResource.class, path);
+      JavaResource target = sourceDir.getChildOfType(JavaResource.class, path);
       return target;
    }
 
@@ -255,7 +254,7 @@ public class MavenJavaSourceFacet extends BaseFacet implements JavaSourceFacet, 
    }
 
    @Override
-   public EnumTypeResource saveEnumTypeSource(final JavaEnum source) throws FileNotFoundException
+   public JavaResource saveEnumTypeSource(final JavaEnum source) throws FileNotFoundException
    {
       return getEnumTypeResource(source.getQualifiedName()).setContents(source);
    }
