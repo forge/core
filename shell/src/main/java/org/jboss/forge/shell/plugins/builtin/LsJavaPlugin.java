@@ -32,6 +32,7 @@ import javax.inject.Inject;
 
 import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.parser.java.JavaEnum;
 import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.parser.java.Method;
 import org.jboss.forge.parser.java.Parameter;
@@ -144,6 +145,28 @@ public class LsJavaPlugin implements Plugin
 
                      String returnType = method.getReturnType() == null ? "void" : method.getReturnType();
                      entry += out.renderColor(ShellColor.GREEN, DELIM + returnType + "");
+                     output.add(entry);
+                  }
+
+                  if (out.isPiped())
+                  {
+                     GeneralUtils.OutputAttributes attr = new GeneralUtils.OutputAttributes(120, 1);
+                     printOutColumns(output, ShellColor.NONE, out, attr, null, false);
+                  }
+                  else
+                  {
+                     GeneralUtils.printOutColumns(output, out, shell, true);
+                     out.println();
+                  }
+               }
+               else if (javaSource instanceof JavaEnum)
+               {
+                  JavaResource enumTypeResource = (JavaResource) resource;
+
+                  List<Resource<?>> members = enumTypeResource.listResources();
+                  for (Resource<?> member : members)
+                  {
+                     String entry = member.getName();
                      output.add(entry);
                   }
 

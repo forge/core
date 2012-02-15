@@ -34,6 +34,7 @@ import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.FieldHolder;
 import org.jboss.forge.parser.java.Import;
 import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.parser.java.JavaEnum;
 import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.parser.java.Method;
 import org.jboss.forge.parser.java.MethodHolder;
@@ -149,8 +150,95 @@ public class JavaPlugin implements Plugin
             java.saveJavaSource(jc);
          }
       }
-
       pickUp.fire(new PickupResource(java.getJavaResource(jc)));
+   }
+
+   @Command("new-enum-type")
+   public void newEnumType(
+            @PipeIn final InputStream in,
+            @Option(required = false,
+                     help = "the package in which to build this Class",
+                     description = "source package",
+                     type = PromptType.JAVA_PACKAGE,
+                     name = "package") final String pckg,
+            @Option(required = false,
+                     help = "the class definition: surround with quotes",
+                     description = "class definition") final String... def) throws FileNotFoundException
+   {
+
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+
+      JavaEnum je = null;
+      if (def != null)
+      {
+         String classDef = Strings.join(Arrays.asList(def), " ");
+         je = JavaParser.parse(JavaEnum.class, classDef);
+      }
+      else if (in != null)
+      {
+         je = JavaParser.parse(JavaEnum.class, in);
+      }
+      else
+      {
+         throw new RuntimeException("arguments required");
+      }
+
+      if (pckg != null)
+      {
+         je.setPackage(pckg);
+      }
+
+      if (!je.hasSyntaxErrors())
+      {
+         java.saveEnumTypeSource(je);
+      }
+      else
+      {
+         writer.println(ShellColor.RED, "Syntax Errors:");
+         for (SyntaxError error : je.getSyntaxErrors())
+         {
+            writer.println(error.toString());
+         }
+         writer.println();
+
+         if (prompt.promptBoolean("Your class has syntax errors, create anyway?", true))
+         {
+            java.saveEnumTypeSource(je);
+         }
+      }
+
+      pickUp.fire(new PickupResource(java.getEnumTypeResource(je)));
+   }
+
+   @Command("new-enum-const")
+   @RequiresResource(JavaResource.class)
+   public void newEnumConst(
+            @PipeIn final String in,
+            final PipeOut out,
+            @Option(required = false,
+                     help = "the enum field definition",
+                     description = "enum field definition") final String... def) throws FileNotFoundException
+   {
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+
+      String enumConstDef = null;
+      if (def != null)
+      {
+         enumConstDef = Strings.join(Arrays.asList(def), " ");
+      }
+      else if (in != null)
+      {
+         enumConstDef = in;
+      }
+      else
+      {
+         throw new RuntimeException("arguments required");
+      }
+      
+      JavaEnum source = (JavaEnum) resource.getJavaSource();
+      source.addEnumConstant(enumConstDef);
+      java.saveEnumTypeSource(source);
+      
    }
 
    @Command("list-imports")
