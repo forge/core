@@ -56,7 +56,7 @@ public class MavenDependencyResource extends VirtualResource<Dependency>
    }
 
    @Override
-   public List<Resource<?>> listResources()
+   protected List<Resource<?>> doListResources()
    {
       return Collections.emptyList();
    }

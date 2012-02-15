@@ -54,7 +54,7 @@ public class UnknownFileResource extends FileResource<UnknownFileResource>
    }
 
    @Override
-   public List<Resource<?>> listResources()
+   protected List<Resource<?>> doListResources()
    {
       return Collections.emptyList();
    }
