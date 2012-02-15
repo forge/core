@@ -47,7 +47,7 @@ public class MavenProfileResource extends VirtualResource<Profile>
    }
 
    @Override
-   public List<Resource<?>> listResources()
+   protected List<Resource<?>> doListResources()
    {
       List<Resource<?>> children = new ArrayList<Resource<?>>();
       for (Dependency dep : profile.getDependencies())

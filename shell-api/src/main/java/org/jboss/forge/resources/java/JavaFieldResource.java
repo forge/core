@@ -53,7 +53,7 @@ public class JavaFieldResource extends JavaMemberResource<Field<? extends JavaSo
    }
 
    @Override
-   public List<Resource<?>> listResources()
+   protected List<Resource<?>> doListResources()
    {
       return Collections.emptyList();
    }

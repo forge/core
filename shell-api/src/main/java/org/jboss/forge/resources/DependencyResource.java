@@ -18,7 +18,7 @@ public class DependencyResource extends FileResource<DependencyResource>
    }
 
    @Override
-   public List<Resource<?>> listResources()
+   protected List<Resource<?>> doListResources()
    {
       return new ArrayList<Resource<?>>();
    }
