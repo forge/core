@@ -113,11 +113,26 @@ public abstract class AbstractResource<T> implements Resource<T>
       }
    }
 
+   /**
+    * Strategy method for returning child resources.
+    * Subclasses should implement or override this method.
+    * @return
+    */
+   protected abstract List<Resource<?>> doListResources();
+
    @Override
-   public synchronized List<Resource<?>> listResources(final ResourceFilter filter)
+   public final synchronized List<Resource<?>> listResources() {
+       List<Resource<?>> resources = doListResources();
+
+       Collections.sort(resources, new FQNResourceComparator());
+       return resources;
+   }
+
+   @Override
+   public final synchronized List<Resource<?>> listResources(final ResourceFilter filter)
    {
       List<Resource<?>> result = new ArrayList<Resource<?>>();
-      for (Resource<?> resource : listResources())
+      for (Resource<?> resource : doListResources())
       {
          if (filter.accept(resource))
          {
@@ -125,13 +140,7 @@ public abstract class AbstractResource<T> implements Resource<T>
          }
       }
       
-      Collections.sort(result, new Comparator<Resource<?>>() {
-
-        @Override
-        public int compare(Resource<?> left, Resource<?> right) {
-            return left.getFullyQualifiedName().compareTo(right.getFullyQualifiedName());
-        }
-    });
+      Collections.sort(result, new FQNResourceComparator());
       
       return result;
    }
@@ -155,5 +164,12 @@ public abstract class AbstractResource<T> implements Resource<T>
    public int hashCode()
    {
       return getFullyQualifiedName().hashCode();
+   }
+
+   private static class FQNResourceComparator implements Comparator<Resource<?>> {
+       @Override
+       public int compare(Resource<?> left, Resource<?> right) {
+           return left.getFullyQualifiedName().compareTo(right.getFullyQualifiedName());
+       }
    }
 }

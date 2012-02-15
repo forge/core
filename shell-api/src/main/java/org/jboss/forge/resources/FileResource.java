@@ -115,7 +115,7 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
    @Override
    public Resource<?> getParent()
    {
-      return new DirectoryResource(resourceFactory, file.getParentFile());
+      return file.getParentFile() != null? new DirectoryResource(resourceFactory, file.getParentFile()) : null;
    }
 
    @Override

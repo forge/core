@@ -70,7 +70,7 @@ public class JavaResource extends FileResource<JavaResource>
    @Override
    public Resource<?> getChild(final String name)
    {
-      List<Resource<?>> children = listResources();
+      List<Resource<?>> children = doListResources();
       List<Resource<?>> subset = new ArrayList<Resource<?>>();
 
       for (Resource<?> child : children)
@@ -102,7 +102,7 @@ public class JavaResource extends FileResource<JavaResource>
 
    @Override
    @SuppressWarnings("unchecked")
-   public synchronized List<Resource<?>> listResources()
+   protected synchronized List<Resource<?>> doListResources()
    {
       try
       {

@@ -72,7 +72,7 @@ public class MavenPomResource extends FileResource<MavenPomResource>
    }
 
    @Override
-   public List<Resource<?>> listResources()
+   protected List<Resource<?>> doListResources()
    {
       List<Resource<?>> children = new ArrayList<Resource<?>>();
       listDependencies(children);
