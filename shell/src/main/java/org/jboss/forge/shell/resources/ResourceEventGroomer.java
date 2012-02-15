@@ -90,7 +90,7 @@ public class ResourceEventGroomer implements EventBusGroomer
       }
 
       @Override
-      public List<Resource<?>> listResources()
+      protected List<Resource<?>> doListResources()
       {
          return new ArrayList<Resource<?>>();
       }

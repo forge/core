@@ -48,7 +48,7 @@ public class DirectoryResource extends FileResource<DirectoryResource>
    }
 
    @Override
-   public synchronized List<Resource<?>> listResources()
+   protected List<Resource<?>> doListResources()
    {
       if (isStale())
       {
