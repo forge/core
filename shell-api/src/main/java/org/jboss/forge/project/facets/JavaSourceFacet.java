@@ -22,6 +22,7 @@
 package org.jboss.forge.project.facets;
 
 import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.parser.java.JavaEnum;
 import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.Project;
@@ -86,6 +87,16 @@ public interface JavaSourceFacet extends Facet
     * @throws FileNotFoundException
     */
    public JavaResource saveJavaSource(JavaSource<?> source) throws FileNotFoundException;
+   
+   /**
+    * Create or update a Java file in the primary source directory: {@link #getSourceFolder()} - use information in the
+    * given {@link JavaEnum} to determine the appropriate package; packages will be created if necessary.
+    * 
+    * @param source The java enum type to create
+    * @return The created or updated {@link EnumTypeResource}
+    * @throws FileNotFoundException
+    */
+   public JavaResource saveEnumTypeSource(final JavaEnum source) throws FileNotFoundException;
 
    /**
     * Create or update a Java file in the primary test source directory: {@link #getTestSourceFolder()} - use
@@ -104,7 +115,7 @@ public interface JavaSourceFacet extends Facet
     * @throws FileNotFoundException if the target {@link JavaResource} does not exist
     */
    public JavaResource getJavaResource(String relativePath) throws FileNotFoundException;
-
+   
    /**
     * Attempt to locate and re-parse the given {@link JavaClass} from its location on disk, relative to
     * {@link #getSourceFolder()}. The given instance will not be modified, and a new instance will be returned.
@@ -113,6 +124,23 @@ public interface JavaSourceFacet extends Facet
     * @throws FileNotFoundException if the target {@link JavaResource} does not exist
     */
    public JavaResource getJavaResource(JavaSource<?> javaClass) throws FileNotFoundException;
+   
+   /**
+    * Return the {@link JavaEnum} at the given path relative to {@link #getSourceFolder()}.
+    * 
+    * @param relativePath The file or package path of the target Java source file.
+    * @throws FileNotFoundException if the target {@link JavaResource} does not exist
+    */
+   public JavaResource getEnumTypeResource(String relativePath) throws FileNotFoundException;
+   
+   /**
+    * Attempt to locate and re-parse the given {@link JavaEnum} from its location on disk, relative to
+    * {@link #getSourceFolder()}. The given instance will not be modified, and a new instance will be returned.
+    * 
+    * @param javaClass The {@link JavaClass} to re-parse.
+    * @throws FileNotFoundException if the target {@link JavaResource} does not exist
+    */
+   public JavaResource getEnumTypeResource(JavaEnum javaEnum) throws FileNotFoundException;
 
    /**
     * Return the {@link JavaClass} at the given path relative to {@link #getTestSourceFolder()}.

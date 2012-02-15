@@ -33,7 +33,9 @@ import javax.inject.Inject;
 
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.ParserException;
+import org.jboss.forge.parser.java.EnumConstant;
 import org.jboss.forge.parser.java.Field;
+import org.jboss.forge.parser.java.JavaEnum;
 import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.parser.java.Member;
 import org.jboss.forge.parser.java.Method;
@@ -43,6 +45,7 @@ import org.jboss.forge.resources.Resource;
 import org.jboss.forge.resources.ResourceException;
 import org.jboss.forge.resources.ResourceFlag;
 import org.jboss.forge.resources.ResourceHandles;
+import org.jboss.forge.resources.enumtype.EnumConstantResource;
 
 /**
  * @author Mike Brock
@@ -114,6 +117,10 @@ public class JavaResource extends FileResource<JavaResource>
             else if (member instanceof Method)
             {
                list.add(new JavaMethodResource(this, (Method<? extends JavaSource<?>>) member));
+            }
+            else if(member instanceof EnumConstant)
+            {
+               list.add(new EnumConstantResource(this,(EnumConstant<JavaEnum>) member));
             }
             else
             {
