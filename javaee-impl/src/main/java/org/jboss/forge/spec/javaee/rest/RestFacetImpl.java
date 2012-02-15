@@ -21,23 +21,19 @@
  */
 package org.jboss.forge.spec.javaee.rest;
 
-import java.util.Arrays;
-import java.util.List;
-
-import javax.inject.Inject;
-
+import org.jboss.forge.env.Configuration;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.dependencies.DependencyInstaller;
-import org.jboss.forge.shell.ShellPrompt;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.spec.javaee.BaseJavaEEFacet;
-import org.jboss.forge.spec.javaee.RestActivatorType;
 import org.jboss.forge.spec.javaee.RestFacet;
 import org.jboss.forge.spec.javaee.ServletFacet;
-import org.jboss.shrinkwrap.descriptor.impl.spec.servlet.web.WebAppDescriptorImpl;
-import org.jboss.shrinkwrap.descriptor.spi.node.Node;
+
+import javax.inject.Inject;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -46,7 +42,9 @@ import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 @RequiresFacet(ServletFacet.class)
 public class RestFacetImpl extends BaseJavaEEFacet implements RestFacet
 {
-   public static final String JAXRS_SERVLET = "javax.ws.rs.core.Application";
+
+   @Inject
+   private Configuration configuration;
 
    @Inject
    public RestFacetImpl(final DependencyInstaller installer)
@@ -54,87 +52,30 @@ public class RestFacetImpl extends BaseJavaEEFacet implements RestFacet
       super(installer);
    }
 
-   @Inject
-   private ShellPrompt prompt;
-
    @Override
    public boolean install()
    {
-      if (!installedInWebXML())
-      {
-         // TODO this needs to be fixed in desciptors (allow creation of servlet mapping)
-         ServletFacet servlet = project.getFacet(ServletFacet.class);
-         WebAppDescriptorImpl web = (WebAppDescriptorImpl) servlet.getConfig();
-         Node node = web.getRootNode();
-         Node servletClass = node.getOrCreate("servlet-mapping/servlet-name=" + JAXRS_SERVLET);
-         String urlPattern = prompt.prompt("Serve REST resources under which URL path?", "/rest/*");
-         servletClass.getParent().getOrCreate("url-pattern").text(urlPattern);
-         servlet.saveConfig(web);
-      }
       return super.install();
    }
 
    @Override
    public boolean isInstalled()
    {
-      // TODO support additional configuration types (RestActivationProvider)
-      return installedInWebXML() && super.isInstalled();
+      return super.isInstalled();
    }
 
    @Override
    protected List<Dependency> getRequiredDependencies()
    {
       return Arrays.asList(
-               (Dependency) DependencyBuilder.create("org.jboss.spec.javax.ws.rs:jboss-jaxrs-api_1.1_spec"),
-               DependencyBuilder.create("org.jboss.spec.javax.xml.bind:jboss-jaxb-api_2.2_spec")
-               );
-   }
-
-   private boolean installedInWebXML()
-   {
-      return getApplicationPath() != null;
+              (Dependency) DependencyBuilder.create("org.jboss.spec.javax.ws.rs:jboss-jaxrs-api_1.1_spec"),
+              DependencyBuilder.create("org.jboss.spec.javax.xml.bind:jboss-jaxb-api_2.2_spec")
+      );
    }
 
    @Override
    public String getApplicationPath()
    {
-      ServletFacet servlet = project.getFacet(ServletFacet.class);
-      WebAppDescriptorImpl web = (WebAppDescriptorImpl) servlet.getConfig();
-
-      Node node = web.getRootNode();
-      Node servletClass = node.getSingle("servlet-mapping/servlet-name=" + JAXRS_SERVLET);
-      if (servletClass != null)
-      {
-         Node url = servletClass.getParent().getSingle("url-pattern");
-         if (url != null)
-         {
-            return url.getText();
-         }
-      }
-      return null;
+      return configuration.getString(RestFacet.ROOTPATH);
    }
-
-   @Override
-   public void setApplicationPath(final String path)
-   {
-      ServletFacet servlet = project.getFacet(ServletFacet.class);
-      WebAppDescriptorImpl web = (WebAppDescriptorImpl) servlet.getConfig();
-
-      Node node = web.getRootNode();
-      Node servletClass = node.getSingle("servlet-mapping/servlet-name=" + JAXRS_SERVLET);
-
-      if (servletClass != null)
-      {
-         servletClass.getParent().getOrCreate("url-pattern").text(path);
-      }
-
-      servlet.saveConfig(web);
-   }
-
-   @Override
-   public RestActivatorType getApplicationActivatorType()
-   {
-      return RestActivatorType.WEB_XML;
-   }
-
 }

@@ -21,19 +21,7 @@
  */
 package org.jboss.forge.spec.javaee.rest;
 
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.persistence.Entity;
-import javax.ws.rs.Path;
-import javax.xml.bind.annotation.XmlRootElement;
-
+import org.jboss.forge.env.Configuration;
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.Annotation;
 import org.jboss.forge.parser.java.JavaClass;
@@ -43,23 +31,23 @@ import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.project.facets.events.InstallFacets;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.resources.java.JavaResource;
+import org.jboss.forge.shell.PromptType;
 import org.jboss.forge.shell.ShellMessages;
 import org.jboss.forge.shell.ShellPrompt;
-import org.jboss.forge.shell.plugins.Alias;
-import org.jboss.forge.shell.plugins.Command;
-import org.jboss.forge.shell.plugins.Current;
-import org.jboss.forge.shell.plugins.Option;
-import org.jboss.forge.shell.plugins.PipeOut;
-import org.jboss.forge.shell.plugins.Plugin;
-import org.jboss.forge.shell.plugins.RequiresFacet;
-import org.jboss.forge.shell.plugins.RequiresProject;
-import org.jboss.forge.shell.plugins.SetupCommand;
-import org.jboss.forge.spec.javaee.EJBFacet;
-import org.jboss.forge.spec.javaee.PersistenceFacet;
-import org.jboss.forge.spec.javaee.RestFacet;
+import org.jboss.forge.shell.plugins.*;
+import org.jboss.forge.shell.project.ProjectScoped;
+import org.jboss.forge.spec.javaee.*;
 import org.jboss.seam.render.TemplateCompiler;
 import org.jboss.seam.render.template.CompiledTemplateResource;
 import org.jboss.shrinkwrap.descriptor.impl.base.Strings;
+
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.persistence.Entity;
+import javax.ws.rs.Path;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.FileNotFoundException;
+import java.util.*;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -85,12 +73,32 @@ public class RestPlugin implements Plugin
    @Inject
    private ShellPrompt prompt;
 
+    @Inject @ProjectScoped
+    Configuration configuration;
+
    @SetupCommand
-   public void setup(final PipeOut out)
+   public void setup(@Option(name = "activatorType") RestActivatorType activatorType, final PipeOut out)
    {
       if (!project.hasFacet(RestFacet.class))
       {
          request.fire(new InstallFacets(RestFacet.class));
+      }
+
+       String rootpath = prompt.prompt("What root path do you want to use for your resources?", "/rest");
+       configuration.addProperty(RestFacet.ROOTPATH, rootpath);
+
+      if(activatorType == null || activatorType == RestActivatorType.WEB_XML && !project.hasFacet(RestWebXmlFacetImpl.class))
+      {
+         request.fire(new InstallFacets(RestWebXmlFacetImpl.class));
+      }
+
+      else if(activatorType == RestActivatorType.APP_CLASS && !project.hasFacet(RestApplicationFacet.class))
+      {
+          String pkg = prompt.promptCommon("In what package do you want to store the Application class?", PromptType.JAVA_PACKAGE);
+          String restApplication = prompt.prompt("How do you want to name the Application class?", "RestApplication");
+          configuration.addProperty(RestApplicationFacet.REST_APPLICATIONCLASS_PACKAGE, pkg);
+          configuration.addProperty(RestApplicationFacet.REST_APPLICATIONCLASS_NAME, restApplication);
+          request.fire(new InstallFacets(RestApplicationFacet.class));
       }
 
       if (project.hasFacet(RestFacet.class))

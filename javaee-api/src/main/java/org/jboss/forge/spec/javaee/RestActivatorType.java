@@ -21,12 +21,11 @@
  */
 package org.jboss.forge.spec.javaee;
 
-import javax.servlet.annotation.WebServlet;
 import javax.ws.rs.core.Application;
 
 /**
  * Configuration types of JAX-RS
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public enum RestActivatorType
@@ -37,12 +36,7 @@ public enum RestActivatorType
    WEB_XML,
 
    /**
-    * Configured via an {@link Application} class and web.xml
+    * Configured via an {@link Application}
     */
-   APP_CLASS_AND_XML,
-
-   /**
-    * Configured via an {@link Application} class and a {@link WebServlet} annotation.
-    */
-   APP_CLASS_AND_ANNOTATION
+    APP_CLASS
 }
