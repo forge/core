@@ -27,7 +27,7 @@ public class EnumConstantResource extends VirtualResource<EnumConstant<JavaEnum>
    }
 
    @Override
-   public List<Resource<?>> listResources()
+   protected List<Resource<?>> doListResources()
    {
       return Collections.emptyList();
    }
