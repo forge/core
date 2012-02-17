@@ -121,7 +121,7 @@ public abstract class AbstractResource<T> implements Resource<T>
    protected abstract List<Resource<?>> doListResources();
 
    @Override
-   public final synchronized List<Resource<?>> listResources() {
+   public synchronized List<Resource<?>> listResources() {
        List<Resource<?>> resources = doListResources();
 
        Collections.sort(resources, new FQNResourceComparator());
@@ -129,7 +129,7 @@ public abstract class AbstractResource<T> implements Resource<T>
    }
 
    @Override
-   public final synchronized List<Resource<?>> listResources(final ResourceFilter filter)
+   public synchronized List<Resource<?>> listResources(final ResourceFilter filter)
    {
       List<Resource<?>> result = new ArrayList<Resource<?>>();
       for (Resource<?> resource : doListResources())
