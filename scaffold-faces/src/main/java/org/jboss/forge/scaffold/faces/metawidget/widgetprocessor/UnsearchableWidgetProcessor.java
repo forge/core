@@ -63,11 +63,14 @@ public class UnsearchableWidgetProcessor
       int widgetsProcessed = metawidget.getClientProperty(UnsearchableWidgetProcessor.class);
 >>>>>>> a59830d... UI code cleanup:scaffold-faces/src/main/java/org/jboss/forge/scaffold/faces/metawidget/widgetprocessor/UnsearchableWidgetProcessor.java
 
-      // Ignore stubs
+      // Ignore empty stubs
 
       if (widget instanceof StaticXmlStub || widget instanceof StaticJavaStub)
       {
-         return widget;
+         if (widget.getChildren().isEmpty())
+         {
+            return widget;
+         }
       }
 
       // Too many?

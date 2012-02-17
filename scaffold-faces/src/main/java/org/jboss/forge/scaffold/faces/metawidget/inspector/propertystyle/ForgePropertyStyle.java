@@ -497,7 +497,7 @@ public class ForgePropertyStyle
             annotation = this.readMethod.getAnnotation(annotationClass.getName());
          }
 
-         if (annotation == null)
+         if (annotation == null && this.privateField != null)
          {
             annotation = this.privateField.getAnnotation(annotationClass.getName());
          }
