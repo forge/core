@@ -1,7 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
-
+ 
    <parent>
       <groupId>org.jboss</groupId>
       <artifactId>jboss-parent</artifactId>
@@ -78,29 +77,7 @@
       <yaml.version>1.7</yaml.version>
    </properties>
 
-   <modules>
-      <module>event-bus-api</module>
-      <module>parser-java-api</module>
-      <module>parser-xml</module>
-      <module>maven-api</module>
-      <module>shell-api</module>
-      <module>git-tools</module>
-      <module>git-tools-tests</module>
-      <module>parser-java</module>
-      <module>project-model-maven</module>
-      <module>project-model-maven-tests</module>
-      <module>test-harness</module>
-      <module>test-harness-web</module>
-      <module>shell</module>
-      <module>javaee-api</module>
-      <module>javaee-impl</module>
-      <module>scaffold-api</module>
-      <module>scaffold-plugins</module>
-      <module>scaffold-faces</module>
-      <module>dev-plugins</module>
-      <module>plugin-loader</module>
-      <module>dist</module>
-   </modules>
+
 
    <dependencyManagement>
       <dependencies>
@@ -773,7 +750,7 @@
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-surefire-plugin</artifactId>
-               <version>2.5</version>
+               <version>2.12</version>
                <configuration>
                   <argLine>-Xms512m -Xmx1024m</argLine>
                </configuration>
@@ -916,6 +893,58 @@
          </plugin>
       </plugins>
    </reporting>
+
+    <profiles>
+        <profile>
+            <id>all</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+               <module>event-bus-api</module>
+               <module>parser-java-api</module>
+               <module>parser-xml</module>
+               <module>maven-api</module>
+               <module>shell-api</module>
+               <module>git-tools</module>
+               <module>git-tools-tests</module>
+               <module>parser-java</module>
+               <module>project-model-maven</module>
+               <module>project-model-maven-tests</module>
+               <module>test-harness</module>
+               <module>test-harness-web</module>
+               <module>shell</module>
+               <module>javaee-api</module>
+               <module>javaee-impl</module>
+               <module>scaffold-api</module>
+               <module>scaffold-plugins</module>
+               <module>scaffold-faces</module>
+               <module>dev-plugins</module>
+               <module>plugin-loader</module>
+               <module>dist</module>
+            </modules>
+        </profile>
+
+        <profile>
+            <id>javadoc</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <modules>
+              <module>event-bus-api</module>
+              <module>parser-java-api</module>
+              <module>parser-xml</module>
+              <module>maven-api</module>
+              <module>shell-api</module>
+              <module>parser-java</module>
+              <module>project-model-maven</module>
+              <module>test-harness</module>
+              <module>test-harness-web</module>
+              <module>javaee-api</module>
+              <module>scaffold-api</module>
+           </modules>
+        </profile>
+    </profiles>
 
    <scm>
       <connection>${forge.scm.connection}</connection>

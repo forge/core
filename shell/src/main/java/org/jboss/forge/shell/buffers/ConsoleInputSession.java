@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import org.jboss.forge.shell.util.OSUtils;
+
 /**
  * @author Mike Brock
  */
@@ -13,7 +15,7 @@ public class ConsoleInputSession
    private InputStream consoleStream;
    private InputStream externalInputStream;
 
-   private ArrayBlockingQueue<String> blockingQueue = new ArrayBlockingQueue<String>(1000);
+   private final ArrayBlockingQueue<String> blockingQueue = new ArrayBlockingQueue<String>(1000);
 
    private volatile boolean connected;
 
@@ -96,7 +98,7 @@ public class ConsoleInputSession
 
    public void interruptPipe()
    {
-      blockingQueue.offer("\n");
+      blockingQueue.offer(OSUtils.getLineSeparator());
    }
 
    public void stop()
@@ -109,6 +111,5 @@ public class ConsoleInputSession
    {
       return externalInputStream;
    }
-
 
 }

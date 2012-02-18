@@ -125,7 +125,7 @@ public class EntityPlugin implements Plugin
       Refactory.createGetterAndSetter(javaClass, id);
       Refactory.createGetterAndSetter(javaClass, version);
       Refactory.createToStringFromFields(javaClass, id);
-      createHashCodeAndEquals(javaClass);
+      Refactory.createHashCodeAndEquals(javaClass);
 
       JavaResource javaFileLocation = java.saveJavaSource(javaClass);
 
@@ -135,26 +135,6 @@ public class EntityPlugin implements Plugin
        * Pick up the generated resource.
        */
       shell.execute("pick-up " + javaFileLocation.getFullyQualifiedName());
-   }
-
-   private void createHashCodeAndEquals(final JavaClass javaClass)
-   {
-      javaClass.addMethod(
-               "public boolean equals(Object that) { " +
-                        "if (this == that) { return true; } " +
-                        "if (that == null) { return false; } " +
-                        "if (getClass() != that.getClass()) { return false; } " +
-                        "if (id != null) { return id.equals((("
-                        + javaClass.getName() + ") that).id); } " +
-                        "return super.equals(that); " +
-                        "}")
-               .addAnnotation(Override.class);
-
-      javaClass.addMethod(
-               "public int hashCode() { " +
-                        "if (id != null) { return id.hashCode(); } " +
-                        "return super.hashCode(); }")
-               .addAnnotation(Override.class);
    }
 
    /**

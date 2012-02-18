@@ -50,11 +50,11 @@ public class FacesScaffoldWeatherTest extends AbstractFacesScaffoldTest
       getShell().execute("entity --named Continent");
       getShell().execute("field string --named name");
       getShell()
-               .execute("field manyToMany --named hurricanes --fieldType com.test.domain.Hurricane --inverseFieldName continents");
+               .execute("field manyToMany --named hurricanes --fieldType com.test.model.Hurricane --inverseFieldName continents");
 
       queueInputLines("", "", "", "", "");
       getShell()
-               .execute("scaffold from-entity com.test.domain.*");
+               .execute("scaffold from-entity com.test.model.*");
 
       WebResourceFacet web = project.getFacet(WebResourceFacet.class);
 

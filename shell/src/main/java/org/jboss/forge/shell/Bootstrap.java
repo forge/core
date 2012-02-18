@@ -181,13 +181,15 @@ public class Bootstrap
          incompatible.removeAll(installed);
          if (!incompatible.isEmpty())
          {
+            List<PluginEntry> toRemove = new ArrayList<InstalledPluginRegistry.PluginEntry>();
             for (PluginEntry pluginEntry : incompatible) {
                if (pluginEntry.getApiVersion().contains("SNAPSHOT"))
                {
                   toLoad.add(pluginEntry);
-                  incompatible.remove(pluginEntry);
+                  toRemove.add(pluginEntry);
                }
             }
+            incompatible.removeAll(toRemove);
          }
 
          for (PluginEntry pluginEntry : incompatible) {

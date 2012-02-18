@@ -52,7 +52,7 @@ public class JavaMethodResource extends JavaMemberResource<Method>
    }
 
    @Override
-   public List<Resource<?>> listResources()
+   protected List<Resource<?>> doListResources()
    {
       return Collections.emptyList();
    }

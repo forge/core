@@ -34,6 +34,11 @@
 								<forgePropertyStyle refId="forgePropertyStyle"/>
 							</propertyStyle>
 						</jpaInspector>
+						<beanValidationInspector xmlns="java:org.metawidget.inspector.beanvalidation" config="org.metawidget.inspector.impl.BaseObjectInspectorConfig">
+							<propertyStyle>
+								<forgePropertyStyle refId="forgePropertyStyle"/>
+							</propertyStyle>
+						</beanValidationInspector>
 					</array>
 				</inspectors>
 			</compositeInspector>
@@ -52,7 +57,7 @@
 
 		<widgetProcessors>
 			<array>
-				<requiredAttributeProcessor xmlns="java:org.metawidget.statically.faces.component.widgetprocessor"/>
+				<!-- FORGE-468: <requiredAttributeProcessor xmlns="java:org.metawidget.statically.faces.component.widgetprocessor"/> -->
 				<standardBindingProcessor xmlns="java:org.metawidget.statically.faces.component.widgetprocessor"/>
 				<readableIdProcessor xmlns="java:org.metawidget.statically.faces.component.widgetprocessor"/>
 				<standardConverterProcessor xmlns="java:org.metawidget.statically.faces.component.widgetprocessor"/>

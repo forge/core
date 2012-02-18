@@ -7,6 +7,7 @@ import java.util.List;
 import javax.ejb.Stateful;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -54,9 +55,7 @@ public class @{entity.getName()}Bean implements Serializable {
 		this.id = id;
 	}
 
-	// Create an empty default (needed for bidirectional, one-to-many tables)
-	
-	private @{entity.getName()} @{ccEntity} = new @{entity.getName()}();
+	private @{entity.getName()} @{ccEntity};
 
 	public @{entity.getName()} get@{entity.getName()}() {
 		return this.@{ccEntity};
@@ -98,25 +97,32 @@ public class @{entity.getName()}Bean implements Serializable {
 	public String update() {
 		this.conversation.end();
 		
-		if (this.id == null) {
-			this.entityManager.persist(this.@{ccEntity});
-			return "search?faces-redirect=true";			
-		} else {
-			this.entityManager.merge(this.@{ccEntity});
-			return "view?faces-redirect=true&id=" + this.@{ccEntity}.getId();
+		try {
+			if (this.id == null) {
+				this.entityManager.persist(this.@{ccEntity});
+				return "search?faces-redirect=true";			
+			} else {
+				this.entityManager.merge(this.@{ccEntity});
+				return "view?faces-redirect=true&id=" + this.@{ccEntity}.getId();
+			}
+		} catch( Exception e ) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage( e.getMessage() ));
+			return null;
 		}
 	}
 
 	public String delete() {
 		this.conversation.end();
-		this.entityManager.remove(this.entityManager.find(@{entity.getName()}.class,
-				getId()));
-		return "search?faces-redirect=true";
-	}
 
-	public String cancel() {
-		this.conversation.end();
-		return "search?faces-redirect=true";
+		try {
+			this.entityManager.remove(this.entityManager.find(@{entity.getName()}.class,
+					getId()));
+			this.entityManager.flush();
+			return "search?faces-redirect=true";
+		} catch( Exception e ) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage( e.getMessage() ));
+			return null;
+		}
 	}
 
 	/*
@@ -231,5 +237,21 @@ public class @{entity.getName()}Bean implements Serializable {
 				return String.valueOf(((@{entity.getName()}) value).getId());
 			}
 		};
+	}
+	
+	/*
+	 * Support adding children to bidirectional, one-to-many tables
+	 */
+	 
+	private @{entity.getName()} add = new @{entity.getName()}();
+
+	public @{entity.getName()} getAdd() {
+		return this.add;
+	}
+
+	public @{entity.getName()} getAdded() {
+		@{entity.getName()} added = this.add;
+		this.add = new @{entity.getName()}();
+		return added;
 	}
 }

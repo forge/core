@@ -60,6 +60,7 @@ import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceDescr
 @RequiresPackagingType({ PackagingType.JAR, PackagingType.WAR, PackagingType.BUNDLE })
 public class PersistenceFacetImpl extends BaseJavaEEFacet implements PersistenceFacet
 {
+   public static final String DEFAULT_ENTITY_PACKAGE = "model";
 
    @Inject
    public PersistenceFacetImpl(final DependencyInstaller installer)
@@ -105,7 +106,7 @@ public class PersistenceFacetImpl extends BaseJavaEEFacet implements Persistence
    public String getEntityPackage()
    {
       JavaSourceFacet sourceFacet = project.getFacet(JavaSourceFacet.class);
-      return sourceFacet.getBasePackage() + ".domain";
+      return sourceFacet.getBasePackage() + "." + DEFAULT_ENTITY_PACKAGE;
    }
 
    @Override
@@ -113,7 +114,7 @@ public class PersistenceFacetImpl extends BaseJavaEEFacet implements Persistence
    {
       JavaSourceFacet sourceFacet = project.getFacet(JavaSourceFacet.class);
 
-      DirectoryResource entityRoot = sourceFacet.getBasePackageResource().getChildDirectory("domain");
+      DirectoryResource entityRoot = sourceFacet.getBasePackageResource().getChildDirectory(DEFAULT_ENTITY_PACKAGE);
       if (!entityRoot.exists())
       {
          entityRoot.mkdirs();

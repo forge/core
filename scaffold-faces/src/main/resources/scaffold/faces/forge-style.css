@@ -136,22 +136,33 @@ h1 {
 	width: 100%;	
 }
 
-#content table .component input[type="checkbox"] {
+#content table .component input[type="checkbox"], #content table .component .rf-cal-inp, #content table .component .rf-insl-inp, #content table .component .rf-insp-inp  {
 	width: auto;
 }
 
-#content table .buttons {
-	text-align: right;
+#content .boolean-false {
+	display: block;
+	width: 22px;
+	height: 22px;
+	background-image: url( 'false.png' );
 }
 
-#content table .buttons select {
-	width: 50%;
-	height: 30px;
-	vertical-align: middle;
-	margin-right: 5px;
+#content .boolean-true {
+	display: block;
+	width: 22px;
+	height: 22px;
+	background-image: url( 'true.png' );
 }
 
-#content table .component .error {
+#content .data-table .boolean-true {
+	margin: auto;
+}
+
+#content .data-table .boolean-false {
+	margin: auto;
+}
+
+#content .error {
 	color: red;
 	font-size: 10pt;
 }
@@ -184,6 +195,10 @@ h1 {
 	padding-bottom: 2px;
 }
 
+#content .data-table tfoot td {
+	padding-right: 4px;
+}
+
 #content .data-table tbody tr:nth-child(2n) {
 	background-color: #eeeeee;
 }
@@ -198,13 +213,41 @@ h1 {
 	text-decoration: none;
 }
 
-#content .data-table .remove-column {
+#content .remove-column {
 	width: 1%;
 	text-align: center;
 }
 
-#content .data-table .remove-column a:hover {
-	background-color: #eeeeee;
+#content .data-table .remove-button {
+	display: block;
+	width: 22px;
+	height: 22px;
+	background-image: url( 'remove.png' );
+}
+
+#content .data-table-footer {
+	width: 50%;
+	margin-left: 50%;
+	margin-top: 5px;
+}
+
+#content .data-table-footer select {
+	width: 50%;
+	height: 30px;
+	vertical-align: middle;
+	margin-right: 5px;
+}
+
+#content .data-table tfoot select {
+	line-height: 30px;
+	vertical-align: middle;
+}
+
+#content .add-button {
+	display: block;
+	width: 22px;
+	height: 22px;
+	background-image: url( 'add.png' );
 }
 
 #content a {
@@ -214,7 +257,7 @@ h1 {
 #content .buttons {
 	display: block;
 	text-align: center;
-	margin-top: 5px;
+	margin-top: 25px;
 	margin-bottom: 10px;
 }
 

@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -391,6 +392,9 @@ public class FieldPlugin implements Plugin
          if ((inverseFieldName != null) && !inverseFieldName.isEmpty())
          {
             annotation.setStringValue("mappedBy", inverseFieldName);
+            annotation.setLiteralValue("cascade", "CascadeType.ALL");
+            annotation.getOrigin().addImport(CascadeType.class);
+            annotation.setLiteralValue("orphanRemoval", "true");
 
             many.addImport(one);
             Field<JavaClass> manyField = many.addField("private " + one.getName() + " " + inverseFieldName + ";");
@@ -441,7 +445,11 @@ public class FieldPlugin implements Plugin
             Field<JavaClass> oneField = one.addField("private Set<" + many.getName() + "> " + inverseFieldName
                      + "= new HashSet<"
                      + many.getName() + ">();");
-            oneField.addAnnotation(OneToMany.class).setStringValue("mappedBy", fieldName);
+            Annotation<JavaClass> oneAnnotation = oneField.addAnnotation(OneToMany.class).setStringValue("mappedBy",
+                     fieldName);
+            oneAnnotation.setLiteralValue("cascade", "CascadeType.ALL");
+            oneAnnotation.getOrigin().addImport(CascadeType.class);
+
             Refactory.createGetterAndSetter(one, oneField);
             java.saveJavaSource(one);
          }
@@ -567,7 +575,9 @@ public class FieldPlugin implements Plugin
          }
       }
       if (!fields.isEmpty())
+      {
          Refactory.createToStringFromFields(targetEntity, fields);
+      }
    }
 
    private JavaClass getJavaClass() throws FileNotFoundException

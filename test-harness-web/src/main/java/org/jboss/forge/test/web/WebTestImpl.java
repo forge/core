@@ -58,6 +58,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.importer.ExplodedImporter;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 
 /**
@@ -117,8 +118,9 @@ public class WebTestImpl implements WebTest
       artifactItem.addChild("type").setText("zip");
       artifactItem.addChild("outputDirectory").setText("target/");
       try {
+         new Xpp3DomBuilder();
          execution.setConfiguration(
-                  new Xpp3DomBuilder().build(new ByteArrayInputStream(configBuilder.toString().getBytes()), "UTF-8"));
+                  Xpp3DomBuilder.build(new ByteArrayInputStream(configBuilder.toString().getBytes()), "UTF-8"));
       }
       catch (XmlPullParserException e) {
          throw new RuntimeException(e);
@@ -159,6 +161,11 @@ public class WebTestImpl implements WebTest
          {
             Annotation<JavaClass> runWith = clazz.addAnnotation(RunWith.class);
             runWith.setLiteralValue("Arquillian.class");
+         }
+
+         if (clazz.hasAnnotation(Ignore.class))
+         {
+            clazz.removeAnnotation(clazz.getAnnotation(Ignore.class));
          }
 
          clazz.addImport(Arquillian.class);
