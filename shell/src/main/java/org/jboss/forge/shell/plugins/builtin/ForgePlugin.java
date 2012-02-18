@@ -22,6 +22,7 @@
 
 package org.jboss.forge.shell.plugins.builtin;
 
+import java.net.ProxySelector;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +37,8 @@ import org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Ref;
 import org.jboss.forge.ForgeEnvironment;
+import org.jboss.forge.env.Configuration;
+import org.jboss.forge.env.ConfigurationScope;
 import org.jboss.forge.git.GitUtils;
 import org.jboss.forge.parser.java.util.Strings;
 import org.jboss.forge.parser.xml.Node;
@@ -73,8 +76,10 @@ import org.jboss.forge.shell.plugins.Option;
 import org.jboss.forge.shell.plugins.PipeOut;
 import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.Topic;
+import org.jboss.forge.shell.util.ForgeProxySelector;
 import org.jboss.forge.shell.util.PluginRef;
 import org.jboss.forge.shell.util.PluginUtil;
+import org.jboss.forge.shell.util.ProxySettings;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -91,11 +96,12 @@ public class ForgePlugin implements Plugin
    private final ForgeEnvironment environment;
    private final ShellPrompt prompt;
    private final Shell shell;
+   private final Configuration configuration;
 
    @Inject
    public ForgePlugin(final ForgeEnvironment environment, final Event<ReinitializeEnvironment> reinitializeEvent,
             final ShellPrintWriter writer, final ShellPrompt prompt, final DependencyResolver resolver,
-            final Shell shell)
+            final Shell shell, final Configuration configuration)
    {
       this.environment = environment;
       this.reinitializeEvent = reinitializeEvent;
@@ -103,6 +109,7 @@ public class ForgePlugin implements Plugin
       this.prompt = prompt;
       this.shell = shell;
       this.resolver = resolver;
+      this.configuration = configuration;
    }
 
    /*
@@ -160,23 +167,32 @@ public class ForgePlugin implements Plugin
    public void find(@Option(description = "search string") final String searchString, final PipeOut out)
             throws Exception
    {
-      List<PluginRef> pluginList = PluginUtil.findPlugin(environment, searchString, out);
+        List<PluginRef> pluginList = PluginUtil.findPlugin(environment, getProxySettings(), 
+                searchString, out);
 
-      if (!pluginList.isEmpty())
-      {
-         out.println();
-      }
-      for (PluginRef ref : pluginList)
-      {
-         out.println(" - " + out.renderColor(ShellColor.BOLD, ref.getName()) + " (" + ref.getArtifact() + ")");
-         out.println("\tAuthor: " + ref.getAuthor());
-         out.println("\tWebsite: " + ref.getWebsite());
-         out.println("\tLocation: " + ref.getLocation());
-         out.println("\tTags: " + ref.getTags());
-         out.println("\tDescription: " + ref.getDescription());
-         out.println();
-      }
-   }
+        if (!pluginList.isEmpty()) {
+            out.println();
+        }
+        for (PluginRef ref : pluginList) {
+            out.println(" - " + out.renderColor(ShellColor.BOLD, ref.getName()) + " (" + ref.getArtifact() + ")");
+            out.println("\tAuthor: " + ref.getAuthor());
+            out.println("\tWebsite: " + ref.getWebsite());
+            out.println("\tLocation: " + ref.getLocation());
+            out.println("\tTags: " + ref.getTags());
+            out.println("\tDescription: " + ref.getDescription());
+            out.println();
+        }
+    }
+
+    private ProxySettings getProxySettings() {
+        Configuration proxyConfig = configuration.getScopedConfiguration(
+                ConfigurationScope.USER).subset("proxy");
+        if (proxyConfig != null && !proxyConfig.isEmpty()) {
+            return ProxySettings.fromForgeConfiguration(proxyConfig);
+        } else {
+            return null;
+        }
+    }
 
    @Command(value = "remove-plugin",
             help = "Removes a plugin from the current Forge runtime configuration")
@@ -209,7 +225,7 @@ public class ForgePlugin implements Plugin
    public void installFromIndex(@Option(description = "plugin-name") final String pluginName,
             final PipeOut out) throws Exception
    {
-      List<PluginRef> plugins = PluginUtil.findPlugin(environment, pluginName, out);
+      List<PluginRef> plugins = PluginUtil.findPlugin(environment, getProxySettings(), pluginName, out);
 
       if (plugins.isEmpty())
       {
@@ -412,6 +428,8 @@ public class ForgePlugin implements Plugin
             buildDir.mkdir();
          }
 
+         prepareProxyForJGit();
+         
          ShellMessages.info(out, "Checking out plugin source files to [" + buildDir.getFullyQualifiedName()
                   + "] via 'git'");
          Git repo = GitUtils.clone(buildDir, gitRepo);
@@ -475,7 +493,20 @@ public class ForgePlugin implements Plugin
       restart();
    }
 
-   /*
+   private void prepareProxyForJGit() {
+       ProxySettings proxySettings = getProxySettings();
+       if (proxySettings == null) {
+           // There is no proxy configured
+           return;
+       }
+      if (!(ProxySelector.getDefault() instanceof ForgeProxySelector)) {
+          ForgeProxySelector selector = new ForgeProxySelector(ProxySelector.getDefault(), 
+                  proxySettings);
+          ProxySelector.setDefault(selector);
+      }
+   }
+
+/*
     * Helpers
     */
    private void buildFromCurrentProject(final PipeOut out, final DirectoryResource buildDir) throws Abort
