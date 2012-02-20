@@ -267,12 +267,6 @@ public class NewProjectPlugin implements Plugin
                            + ".\");")
                   .getOrigin());
       }
-      
-      if (project.hasFacet(JavaSourceFacet.class))
-      {
-    	  DirectoryResource sourceFolder = project.getFacet(JavaSourceFacet.class).getSourceFolder();
-    	  createTopLevelPackage(sourceFolder, javaPackage);
-      }
 
       if (finalName != null)
       {
@@ -303,13 +297,6 @@ public class NewProjectPlugin implements Plugin
       validTypes.add(PackagingType.WAR);
       validTypes.add(PackagingType.BUNDLE);
       return validTypes;
-   }
-   
-   private DirectoryResource createTopLevelPackage(DirectoryResource sourceFolder, String javaPackage) 
-   {
-      DirectoryResource directory = sourceFolder.getChildDirectory(Packages.toFileSyntax(javaPackage));
-      directory.mkdirs();
-      return directory;
    }
 
 }

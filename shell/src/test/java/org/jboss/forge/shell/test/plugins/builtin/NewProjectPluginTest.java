@@ -169,16 +169,4 @@ public class NewProjectPluginTest extends AbstractShellTest
       assertEquals("com.test", project.getFacet(MavenJavaSourceFacet.class).getBasePackage());
       assertEquals(PackagingType.JAR, project.getFacet(MavenPackagingFacet.class).getPackagingType());
    }
-   
-   @Test
-   public void testCreateTopLevelPackage() throws Exception 
-   {
-	   initializeJavaProject();
-	   DirectoryResource root = getProject().getProjectRoot();
-	   Resource<?> srcMainJavaDirectory = root.getChild("/src/main/java");
-	   assertNotNull(srcMainJavaDirectory.reify(DirectoryResource.class));
-	   Resource<?> testDirectory = srcMainJavaDirectory.getChild("com/test"); 
-	   assertNotNull(testDirectory.reify(DirectoryResource.class));
-   }
-
 }
