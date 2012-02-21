@@ -168,5 +168,8 @@ public class NewProjectPluginTest extends AbstractShellTest
       assertEquals("com.test", project.getFacet(MavenJavaSourceFacet.class).getBasePackage());
       assertEquals(PackagingType.JAR, project.getFacet(MavenPackagingFacet.class).getPackagingType());
    }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 5a80ce9df7a7d619556a24179ee943bc97d2ecdd
 }
