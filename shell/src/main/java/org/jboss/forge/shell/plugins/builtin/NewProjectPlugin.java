@@ -297,8 +297,4 @@ public class NewProjectPlugin implements Plugin
       validTypes.add(PackagingType.BUNDLE);
       return validTypes;
    }
-<<<<<<< HEAD
-=======
-
->>>>>>> 5a80ce9df7a7d619556a24179ee943bc97d2ecdd
 }
