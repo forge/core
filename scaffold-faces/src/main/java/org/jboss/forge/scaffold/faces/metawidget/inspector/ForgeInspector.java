@@ -85,14 +85,10 @@ public class ForgeInspector
 
       if (property.isAnnotationPresent(ManyToOne.class))
       {
-         // Note: this will look awful until https://issues.jboss.org/browse/FORGE-389
-
          attributes
                   .put(FACES_LOOKUP,
                            StaticFacesUtils.wrapExpression(StringUtils.decapitalize(ClassUtils.getSimpleName(property
                                     .getType())) + "Bean.all"));
-
-         // Note: this will fail on POSTback until https://issues.jboss.org/browse/FORGE-386
 
          attributes
                   .put(FACES_CONVERTER_ID,
@@ -100,20 +96,19 @@ public class ForgeInspector
                                     .getType())) + "Bean.converter"));
       }
 
-      // OneToMany
+      // OneToMany and ManyToMany
 
-      if (property.isAnnotationPresent(OneToMany.class))
-      {
-         attributes.put(N_TO_MANY, TRUE);
-      }
-
-      // ManyToMany
-
-      if (property.isAnnotationPresent(ManyToMany.class))
+      if (property.isAnnotationPresent(OneToMany.class) || property.isAnnotationPresent(ManyToMany.class))
       {
          attributes.put(N_TO_MANY, TRUE);
       }
 
       return attributes;
+   }
+
+   @Override
+   protected Map<String, String> inspectEntity(String declaredClass, String actualClass) throws Exception
+   {
+      return super.inspectEntity(declaredClass, actualClass);
    }
 }
