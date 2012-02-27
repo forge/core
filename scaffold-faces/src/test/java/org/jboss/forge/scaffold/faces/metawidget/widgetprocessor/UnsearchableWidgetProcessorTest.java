@@ -104,5 +104,18 @@ public class UnsearchableWidgetProcessorTest
       assertTrue(widgetProcessor.processWidget(new StaticJavaStub(), PROPERTY, attributes, metawidget) != null);
       assertTrue(widgetProcessor.processWidget(new JavaStatement("foo"), PROPERTY, attributes, metawidget) != null);
       assertTrue(widgetProcessor.processWidget(new JavaStatement("foo"), PROPERTY, attributes, metawidget) == null);
+
+      metawidget = new StaticJavaMetawidget();
+      widgetProcessor.onStartBuild(metawidget);
+
+      StaticJavaStub nonEmptyStub = new StaticJavaStub();
+      nonEmptyStub.getChildren().add(new JavaStatement("foo"));
+      assertTrue(widgetProcessor.processWidget(nonEmptyStub, PROPERTY, attributes, metawidget) != null);
+      assertTrue(widgetProcessor.processWidget(nonEmptyStub, PROPERTY, attributes, metawidget) != null);
+      assertTrue(widgetProcessor.processWidget(nonEmptyStub, PROPERTY, attributes, metawidget) != null);
+      assertTrue(widgetProcessor.processWidget(nonEmptyStub, PROPERTY, attributes, metawidget) != null);
+      assertTrue(widgetProcessor.processWidget(new StaticJavaStub(), PROPERTY, attributes, metawidget) != null);
+      assertTrue(widgetProcessor.processWidget(nonEmptyStub, PROPERTY, attributes, metawidget) != null);
+      assertTrue(widgetProcessor.processWidget(nonEmptyStub, PROPERTY, attributes, metawidget) == null);
    }
 }
