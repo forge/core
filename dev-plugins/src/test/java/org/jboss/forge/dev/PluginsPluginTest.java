@@ -60,6 +60,17 @@ public class PluginsPluginTest extends AbstractShellTest
    }
 
    @Test
+   public void testCreatePluginWithUppercaseName() throws Exception
+   {
+      initializeJavaProject();
+      queueInputLines("1");
+      getShell().execute("plugins setup");
+      queueInputLines("");
+      getShell().execute("plugins new-plugin --named DemoPlugin");
+      getShell().execute("build");
+   }
+
+   @Test
    public void testInstallPlugin() throws Exception
    {
       Project javaProject = initializeJavaProject();

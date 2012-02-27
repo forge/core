@@ -59,11 +59,14 @@ public class UnsearchableWidgetProcessor
    {
       Integer widgetsProcessed = metawidget.getClientProperty(UnsearchableWidgetProcessor.class);
 
-      // Ignore stubs
+      // Ignore empty stubs
 
       if (widget instanceof StaticXmlStub || widget instanceof StaticJavaStub)
       {
-         return widget;
+         if (widget.getChildren().isEmpty())
+         {
+            return widget;
+         }
       }
 
       // Too many?
