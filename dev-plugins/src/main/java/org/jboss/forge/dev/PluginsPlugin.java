@@ -105,7 +105,7 @@ public class PluginsPlugin implements Plugin
 
       Map<Object, Object> context = new HashMap<Object, Object>();
       context.put("name", className);
-      context.put("alias", pluginName.replaceAll("[^A-Za-z-]", ""));
+      context.put("alias", pluginName.replaceAll("[^A-Za-z-]", "").toLowerCase());
 
       CompiledTemplateResource pluginSource = compiler.compileResource(getClass().getResourceAsStream(
                "/org/jboss/forge/dev/PluginTemplate.jv"));
