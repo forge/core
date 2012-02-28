@@ -1,7 +1,9 @@
 package org.jboss.forge.shell.util;
 
 import java.io.IOException;
+import java.net.Authenticator;
 import java.net.InetSocketAddress;
+import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.Proxy.Type;
 import java.net.ProxySelector;
@@ -33,7 +35,15 @@ public class ForgeProxySelector extends ProxySelector {
         if ("http".equalsIgnoreCase(protocol) || "https".equalsIgnoreCase(protocol)) {
             ArrayList<Proxy> result = new ArrayList<Proxy>();
             result.add(new Proxy(Type.HTTP, new InetSocketAddress(proxySettings.getProxyHost(), 
-                    proxySettings.getProxyPort()))); 
+                    proxySettings.getProxyPort())));
+            if (proxySettings.isAuthenticationSupported()) {
+                Authenticator.setDefault(new Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(proxySettings.getProxyUserName(), 
+                                proxySettings.getProxyPassword().toCharArray());
+                    }
+                });
+            }
             return result;
         }
         if (defaultProxySelector != null) {
