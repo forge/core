@@ -10,6 +10,10 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * Implemented following the guide at:
+ * http://docs.oracle.com/javase/6/docs/technotes/guides/net/proxies.html
+ */
 public class ForgeProxySelector extends ProxySelector {
 
     private ProxySelector defaultProxySelector;
@@ -43,7 +47,7 @@ public class ForgeProxySelector extends ProxySelector {
 
     @Override
     public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
-        // TODO
+        defaultProxySelector.connectFailed(uri, sa, ioe);
     }
 
 }
