@@ -169,6 +169,10 @@ public class NewProjectPluginTest extends AbstractShellTest
       assertEquals("com.test", project.getFacet(MavenJavaSourceFacet.class).getBasePackage());
       assertEquals(PackagingType.JAR, project.getFacet(MavenPackagingFacet.class).getPackagingType());
    }
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
    
    @Test
    public void testCreateTopLevelPackage() throws Exception 
@@ -180,5 +184,10 @@ public class NewProjectPluginTest extends AbstractShellTest
 	   Resource<?> testDirectory = srcMainJavaDirectory.getChild("com/test"); 
 	   assertNotNull(testDirectory.reify(DirectoryResource.class));
    }
+>>>>>>> a5c912a... Create directories for the base package structure
 
+=======
+>>>>>>> 5a80ce9df7a7d619556a24179ee943bc97d2ecdd
+=======
+>>>>>>> 5a80ce9... Remove some experiments from the github repository
 }

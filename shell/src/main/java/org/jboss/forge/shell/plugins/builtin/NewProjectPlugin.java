@@ -304,6 +304,15 @@ public class NewProjectPlugin implements Plugin
       validTypes.add(PackagingType.BUNDLE);
       return validTypes;
    }
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> 5a80ce9... Remove some experiments from the github repository
+
+>>>>>>> 5a80ce9df7a7d619556a24179ee943bc97d2ecdd
+=======
    
    private DirectoryResource createTopLevelPackage(DirectoryResource sourceFolder, String javaPackage) 
    {
@@ -312,4 +321,5 @@ public class NewProjectPlugin implements Plugin
       return directory;
    }
 
+>>>>>>> a5c912a... Create directories for the base package structure
 }
