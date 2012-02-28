@@ -32,7 +32,8 @@ import java.util.regex.Pattern;
 
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -82,7 +83,7 @@ public class PluginUtil
       HttpGet httpGet = new HttpGet(defaultRepo);
 
       out.print("Connecting to remote repository [" + defaultRepo + "]... ");
-      HttpClient client = new DefaultHttpClient();
+      DefaultHttpClient client = new DefaultHttpClient();
       configureProxy(proxySettings, client);
       HttpResponse httpResponse = client.execute(httpGet);
 
@@ -127,10 +128,17 @@ public class PluginUtil
       return pluginList;
    }
 
-    private static void configureProxy(final ProxySettings proxySettings, final HttpClient client) {
+    private static void configureProxy(final ProxySettings proxySettings, final DefaultHttpClient client) {
         if (proxySettings != null) {
             HttpHost proxy = new HttpHost(proxySettings.getProxyHost(), proxySettings.getProxyPort());
             client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+            
+            if (proxySettings.isAuthenticationSupported()) {
+                AuthScope authScope = new AuthScope(proxySettings.getProxyHost(), proxySettings.getProxyPort());
+                UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(proxySettings.getProxyUserName(), 
+                        proxySettings.getProxyPassword());
+                client.getCredentialsProvider().setCredentials(authScope, credentials);
+            }
         }
     }
 
