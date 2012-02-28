@@ -6,7 +6,7 @@ public class ProxySettings {
 
     private static final String PROXY_CONFIG_HOST_KEY = "host";
     private static final String PROXY_CONFIG_PORT_KEY = "port";
-    private static final String PROXY_CONFIG_USERNAME_KEY = "userName";
+    private static final String PROXY_CONFIG_USERNAME_KEY = "username";
     private static final String PROXY_CONFIG_PASSWORD_KEY = "password";
     
     private final String proxyHost;
