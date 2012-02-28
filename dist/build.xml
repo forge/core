@@ -359,6 +359,10 @@
 		<module-def name="javax.interceptor.api">
 			<maven-resource group="org.jboss.spec.javax.interceptor" artifact="jboss-interceptors-api_1.1_spec" />
 		</module-def>
+        
+        <module-def name="org.jboss.logging">
+            <maven-resource group="org.jboss.logging" artifact="jboss-logging"/>
+        </module-def>
 
 		<module-def name="org.jboss.logmanager">
 			<maven-resource group="org.jboss.logmanager" artifact="jboss-logmanager" />

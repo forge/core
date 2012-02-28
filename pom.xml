@@ -28,6 +28,11 @@
          <name>Mike Brock</name>
          <email>brockm@gmail.com</email>
       </developer>
+      <developer>
+         <id>koen</id>
+         <name>Koen Aers</name>
+         <email>koen.aers@gmail.com</email>
+      </developer>
    </developers>
 
    <prerequisites>
@@ -55,8 +60,8 @@
       <httpclient.version>4.0.1</httpclient.version>
       <jansi.version>1.5</jansi.version>
       <jboss.javaee.version>1.0.0.Final</jboss.javaee.version>
-      <jboss.logging.version>3.0.0.Beta4</jboss.logging.version>
-      <jboss.logmanager.version>1.2.0.GA</jboss.logmanager.version>
+      <jboss.logging.version>3.1.0.GA</jboss.logging.version>
+      <jboss.logmanager.version>1.2.2.GA</jboss.logmanager.version>
       <jboss.modules.version>1.0.4.GA</jboss.modules.version>
       <jgit.version>0.10.1</jgit.version>
       <jline.version>2.5</jline.version>
