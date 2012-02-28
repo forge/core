@@ -110,6 +110,7 @@ public class FacesScaffoldPetClinicClient
          assertEquals("Pet #1", table.getCellAt(1, 0).getTextContent());
          assertEquals("2", table.getCellAt(1, 1).getTextContent());
          DomNode booleanNode = table.getCellAt(1, 2).getChildNodes().get(0).getChildNodes().get(0);
+<<<<<<< HEAD
 <<<<<<< HEAD:scaffold-faces/src/test/java/org/jboss/forge/scaffold/faces/scenario/petclinic/FacesScaffoldPetClinicClient.java
          assertEquals("span", booleanNode.getNodeName());
          assertEquals("", booleanNode.getTextContent());
@@ -119,6 +120,13 @@ public class FacesScaffoldPetClinicClient
          assertEquals("", booleanNode.getTextContent() );
          assertEquals("boolean-true", booleanNode.getAttributes().getNamedItem("class").getNodeValue() );
 >>>>>>> ad36783... FORGE-460:scaffold-faces/src/test/java/org/jboss/forge/scaffold/faces/scenario/petclinic/FacesScaffoldPetClinicTestClient.java
+=======
+
+         assertEquals("span", booleanNode.getNodeName());
+         assertEquals("", booleanNode.getTextContent());
+         assertEquals("boolean-true", booleanNode.getAttributes().getNamedItem("class").getNodeValue());
+
+>>>>>>> c993c7f02cac5c7f4844f28bcf7cdd7ab4ee53bd
          assertEquals("Owner Firstname #1 Owner Lastname #1 Owner Address #1", table.getCellAt(1, 3)
                   .getTextContent());
 

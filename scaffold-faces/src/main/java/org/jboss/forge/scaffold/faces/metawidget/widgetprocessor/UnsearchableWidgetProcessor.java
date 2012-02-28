@@ -57,11 +57,7 @@ public class UnsearchableWidgetProcessor
    public StaticWidget processWidget(StaticWidget widget, String elementName, Map<String, String> attributes,
             StaticMetawidget metawidget)
    {
-<<<<<<< HEAD:scaffold-faces/src/main/java/org/jboss/forge/scaffold/faces/metawidget/widgetprocessor/UnsearchableWidgetProcessor.java
       Integer widgetsProcessed = metawidget.getClientProperty(UnsearchableWidgetProcessor.class);
-=======
-      int widgetsProcessed = metawidget.getClientProperty(UnsearchableWidgetProcessor.class);
->>>>>>> a59830d... UI code cleanup:scaffold-faces/src/main/java/org/jboss/forge/scaffold/faces/metawidget/widgetprocessor/UnsearchableWidgetProcessor.java
 
       // Ignore empty stubs
 
