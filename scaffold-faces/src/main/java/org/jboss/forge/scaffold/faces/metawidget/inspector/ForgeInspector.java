@@ -105,10 +105,4 @@ public class ForgeInspector
 
       return attributes;
    }
-
-   @Override
-   protected Map<String, String> inspectEntity(String declaredClass, String actualClass) throws Exception
-   {
-      return super.inspectEntity(declaredClass, actualClass);
-   }
 }
