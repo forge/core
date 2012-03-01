@@ -28,11 +28,11 @@
 
 @echo off
 
-@REM set %HOME% to equivalent of $HOME
-if "%HOME%" == "" (set "HOME=%HOMEDRIVE%%HOMEPATH%")
+@REM set %USERHOME% to equivalent of $HOME
+if "%USERHOME%" == "" (set "USERHOME=%HOMEDRIVE%%HOMEPATH%")
 
 @REM Execute a user defined script before this one
-if exist "%HOME%\forgerc_pre.bat" call "%HOME%\forgerc_pre.bat"
+if exist "%USERHOME%\forgerc_pre.bat" call "%USERHOME%\forgerc_pre.bat"
 
 set ERROR_CODE=0
 
@@ -140,7 +140,7 @@ goto runForge
 @REM Start Forge
 :runForge
 set FORGE_MAIN_CLASS=org.jboss.forge.shell.Bootstrap
-%FORGE_JAVA_EXE% %FORGE_OPTS% "-Dforge.home=%FORGE_HOME%" -Dforge.shell.colorEnabled=true -jar %JBOSS_MODULES% -modulepath "%FORGE_HOME%\modules;%HOME%\.forge\plugins" org.jboss.forge %FORGE_CMD_LINE_ARGS%
+%FORGE_JAVA_EXE% %FORGE_OPTS% "-Dforge.home=%FORGE_HOME%" -Dforge.shell.colorEnabled=true -jar %JBOSS_MODULES% -modulepath "%FORGE_HOME%\modules;%USERHOME%\.forge\plugins" org.jboss.forge %FORGE_CMD_LINE_ARGS%
 if ERRORLEVEL 1 goto error
 goto end
 
@@ -164,7 +164,7 @@ goto postExec
 @endlocal & set ERROR_CODE=%ERROR_CODE%
 
 :postExec
-if exist "%HOME%\forgerc_post.bat" call "%HOME%\forgerc_post.bat"
+if exist "%USERHOME%\forgerc_post.bat" call "%USERHOME%\forgerc_post.bat"
 
 if "%FORGE_TERMINATE_CMD%" == "on" exit %ERROR_CODE%
 
