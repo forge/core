@@ -51,7 +51,7 @@ public abstract class JavaMemberResource<T extends Member> extends VirtualResour
    }
 
    @Override
-   public List<Resource<?>> listResources()
+   protected List<Resource<?>> doListResources()
    {
       return Collections.emptyList();
    }

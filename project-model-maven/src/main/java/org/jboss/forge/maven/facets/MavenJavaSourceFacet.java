@@ -21,30 +21,33 @@
  */
 package org.jboss.forge.maven.facets;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.enterprise.context.Dependent;
-
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.jboss.forge.maven.MavenCoreFacet;
+import org.jboss.forge.parser.java.JavaEnum;
 import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.ProjectModelException;
 import org.jboss.forge.project.facets.BaseFacet;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.resources.DirectoryResource;
+import org.jboss.forge.resources.Resource;
+import org.jboss.forge.resources.ResourceFilter;
 import org.jboss.forge.resources.java.JavaResource;
+import org.jboss.forge.resources.java.JavaResourceVisitor;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.util.Packages;
+
+import javax.enterprise.context.Dependent;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -78,7 +81,8 @@ public class MavenJavaSourceFacet extends BaseFacet implements JavaSourceFacet, 
    {
       List<DirectoryResource> folders = getSourceFolders();
       String pkg = null;
-      for (DirectoryResource folder : folders) {
+      for (DirectoryResource folder : folders)
+      {
          String sourcePrefix = folder.getFullyQualifiedName();
          pkg = resource.getParent().getFullyQualifiedName();
          if (pkg.startsWith(sourcePrefix))
@@ -196,6 +200,12 @@ public class MavenJavaSourceFacet extends BaseFacet implements JavaSourceFacet, 
    }
 
    @Override
+   public JavaResource getEnumTypeResource(final JavaEnum javaEnum) throws FileNotFoundException
+   {
+      return getEnumTypeResource(javaEnum.getPackage() + "." + javaEnum.getName());
+   }
+
+   @Override
    public JavaResource getTestJavaResource(final JavaSource<?> javaClass) throws FileNotFoundException
    {
       return getTestJavaResource(javaClass.getPackage() + "." + javaClass.getName());
@@ -205,6 +215,12 @@ public class MavenJavaSourceFacet extends BaseFacet implements JavaSourceFacet, 
    public JavaResource getJavaResource(final String relativePath) throws FileNotFoundException
    {
       return getJavaResource(getSourceFolder(), relativePath);
+   }
+
+   @Override
+   public JavaResource getEnumTypeResource(final String relativePath) throws FileNotFoundException
+   {
+      return getEnumTypeResource(getSourceFolder(), relativePath);
    }
 
    @Override
@@ -223,6 +239,16 @@ public class MavenJavaSourceFacet extends BaseFacet implements JavaSourceFacet, 
       return target;
    }
 
+   private JavaResource getEnumTypeResource(final DirectoryResource sourceDir, final String relativePath)
+   {
+      String path = relativePath.trim().endsWith(".java")
+               ? relativePath.substring(0, relativePath.lastIndexOf(".java")) : relativePath;
+
+      path = Packages.toFileSyntax(path) + ".java";
+      JavaResource target = sourceDir.getChildOfType(JavaResource.class, path);
+      return target;
+   }
+
    @Override
    public JavaResource saveJavaSource(final JavaSource<?> source) throws FileNotFoundException
    {
@@ -230,8 +256,46 @@ public class MavenJavaSourceFacet extends BaseFacet implements JavaSourceFacet, 
    }
 
    @Override
+   public JavaResource saveEnumTypeSource(final JavaEnum source) throws FileNotFoundException
+   {
+      return getEnumTypeResource(source.getQualifiedName()).setContents(source);
+   }
+
+   @Override
    public JavaResource saveTestJavaSource(final JavaSource<?> source) throws FileNotFoundException
    {
       return getTestJavaResource(source.getQualifiedName()).setContents(source);
+   }
+
+   @Override
+   public void visitJavaSources(final JavaResourceVisitor visitor)
+   {
+      visitSources(getSourceFolder(), visitor);
+   }
+
+   @Override
+   public void visitJavaTestSources(final JavaResourceVisitor visitor)
+   {
+       visitSources(getTestSourceFolder(), visitor);
+   }
+
+   private  void visitSources(final Resource<?> searchFolder, final JavaResourceVisitor visitor )
+   {
+       if (searchFolder instanceof DirectoryResource) {
+
+             searchFolder.listResources(new ResourceFilter() {
+               @Override
+               public boolean accept(Resource<?> resource) {
+                   if (resource instanceof DirectoryResource) {
+                       visitSources(resource, visitor);
+                   }
+                   if (resource instanceof JavaResource) {
+                       visitor.visit((JavaResource) resource);
+                   }
+
+                   return false;
+               }
+           });
+       }
    }
 }

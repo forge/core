@@ -50,7 +50,7 @@ public class MavenRepositoryResource extends VirtualResource<Repository>
    }
 
    @Override
-   public List<Resource<?>> listResources()
+   protected List<Resource<?>> doListResources()
    {
       List<Resource<?>> children = new ArrayList<Resource<?>>();
       return children;

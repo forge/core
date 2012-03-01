@@ -23,7 +23,8 @@ package org.jboss.forge.spec.javaee.rest;
 
 import java.util.List;
 
-import javax.ejb.Stateless;
+import javax.ejb.Stateful;
+import javax.ejb.TransactionAttribute;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContextType;
@@ -34,8 +35,9 @@ import javax.ws.rs.*;
  * 
  *         JAX-RS Example This class produces a RESTful service to read the contents of the table.
  */
-@Stateless
+@Stateful
 @Path("/objects")
+@TransactionAttribute
 public class @{entityTable}Endpoint
 {
    @PersistenceContext(type = PersistenceContextType.EXTENDED)

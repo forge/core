@@ -24,6 +24,7 @@ package org.jboss.forge.resources;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
@@ -112,17 +113,35 @@ public abstract class AbstractResource<T> implements Resource<T>
       }
    }
 
+   /**
+    * Strategy method for returning child resources.
+    * Subclasses should implement or override this method.
+    * @return
+    */
+   protected abstract List<Resource<?>> doListResources();
+
+   @Override
+   public synchronized List<Resource<?>> listResources() {
+       List<Resource<?>> resources = doListResources();
+
+       Collections.sort(resources, new FQNResourceComparator());
+       return resources;
+   }
+
    @Override
    public synchronized List<Resource<?>> listResources(final ResourceFilter filter)
    {
       List<Resource<?>> result = new ArrayList<Resource<?>>();
-      for (Resource<?> resource : listResources())
+      for (Resource<?> resource : doListResources())
       {
          if (filter.accept(resource))
          {
             result.add(resource);
          }
       }
+      
+      Collections.sort(result, new FQNResourceComparator());
+      
       return result;
    }
 
@@ -145,5 +164,12 @@ public abstract class AbstractResource<T> implements Resource<T>
    public int hashCode()
    {
       return getFullyQualifiedName().hashCode();
+   }
+
+   private static class FQNResourceComparator implements Comparator<Resource<?>> {
+       @Override
+       public int compare(Resource<?> left, Resource<?> right) {
+           return left.getFullyQualifiedName().compareTo(right.getFullyQualifiedName());
+       }
    }
 }

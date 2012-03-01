@@ -30,6 +30,7 @@ import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.project.facets.MetadataFacet;
 import org.jboss.forge.project.packaging.PackagingType;
 import org.jboss.forge.resources.DirectoryResource;
+import org.jboss.forge.resources.Resource;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.test.AbstractShellTest;
 import org.junit.Assert;
@@ -167,6 +168,17 @@ public class NewProjectPluginTest extends AbstractShellTest
       assertEquals("com.test", project.getFacet(MetadataFacet.class).getTopLevelPackage());
       assertEquals("com.test", project.getFacet(MavenJavaSourceFacet.class).getBasePackage());
       assertEquals(PackagingType.JAR, project.getFacet(MavenPackagingFacet.class).getPackagingType());
+   }
+   
+   @Test
+   public void testCreateTopLevelPackage() throws Exception 
+   {
+	   initializeJavaProject();
+	   DirectoryResource root = getProject().getProjectRoot();
+	   Resource<?> srcMainJavaDirectory = root.getChild("/src/main/java");
+	   assertNotNull(srcMainJavaDirectory.reify(DirectoryResource.class));
+	   Resource<?> testDirectory = srcMainJavaDirectory.getChild("com/test"); 
+	   assertNotNull(testDirectory.reify(DirectoryResource.class));
    }
 
 }

@@ -32,5 +32,11 @@ import org.jboss.forge.parser.JavaParser;
  */
 public interface JavaEnum extends JavaSource<JavaEnum>
 {
+   
+   EnumConstant<JavaEnum> addEnumConstant();
+   
+   EnumConstant<JavaEnum> addEnumConstant(String declaration);
+   
+   EnumConstant<JavaEnum> getEnumConstant(String declaration);
 
 }
