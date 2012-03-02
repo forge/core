@@ -60,6 +60,7 @@ import org.jboss.forge.scaffold.util.ScaffoldUtil;
 import org.jboss.forge.shell.ShellPrompt;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
+import org.jboss.forge.shell.util.Streams;
 import org.jboss.forge.spec.javaee.CDIFacet;
 import org.jboss.forge.spec.javaee.EJBFacet;
 import org.jboss.forge.spec.javaee.FacesFacet;
@@ -99,7 +100,7 @@ import org.w3c.dom.NamedNodeMap;
  * writing Metawidget plugins, see <a href="http://metawidget.org/documentation.php">the Metawidget documentation</a>.
  * <p>
  * This Facet does <em>not</em> require Metawidget to be in the final project.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author Richard Kennard
  */
@@ -470,8 +471,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       if (this.backingBeanTemplate == null)
       {
          this.backingBeanTemplate = this.compiler.compile(BACKING_BEAN_TEMPLATE);
-         String template = String.valueOf(this.backingBeanTemplate
-                  .getCompiledTemplate().getTemplate());
+         String template = Streams.toString(this.backingBeanTemplate.getSourceTemplateResource().getInputStream());
          this.backingBeanTemplateQbeMetawidgetIndent = parseIndent(template, "@{qbeMetawidget}");
       }
       if (this.viewUtilsTemplate == null)
@@ -485,24 +485,21 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       if (this.viewTemplate == null)
       {
          this.viewTemplate = this.compiler.compile(VIEW_TEMPLATE);
-         String template = String.valueOf(this.viewTemplate
-                  .getCompiledTemplate().getTemplate());
+         String template = Streams.toString(this.viewTemplate.getSourceTemplateResource().getInputStream());
          this.viewTemplateNamespaces = parseNamespaces(template);
          this.viewTemplateEntityMetawidgetIndent = parseIndent(template, "@{metawidget}");
       }
       if (this.createTemplate == null)
       {
          this.createTemplate = this.compiler.compile(CREATE_TEMPLATE);
-         String template = String.valueOf(this.createTemplate
-                  .getCompiledTemplate().getTemplate());
+         String template = Streams.toString(this.createTemplate.getSourceTemplateResource().getInputStream());
          this.createTemplateNamespaces = parseNamespaces(template);
          this.createTemplateEntityMetawidgetIndent = parseIndent(template, "@{metawidget}");
       }
       if (this.searchTemplate == null)
       {
          this.searchTemplate = this.compiler.compile(SEARCH_TEMPLATE);
-         String template = String.valueOf(this.searchTemplate
-                  .getCompiledTemplate().getTemplate());
+         String template = Streams.toString(this.searchTemplate.getSourceTemplateResource().getInputStream());
          this.searchTemplateNamespaces = parseNamespaces(template);
          this.searchTemplateSearchMetawidgetIndent = parseIndent(template, "@{searchMetawidget}");
          this.searchTemplateBeanMetawidgetIndent = parseIndent(template, "@{beanMetawidget}");
@@ -510,8 +507,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       if (this.navigationTemplate == null)
       {
          this.navigationTemplate = this.compiler.compile(NAVIGATION_TEMPLATE);
-         String template = String.valueOf(this.navigationTemplate
-                  .getCompiledTemplate().getTemplate());
+         String template = Streams.toString(this.navigationTemplate.getSourceTemplateResource().getInputStream());
          this.navigationTemplateIndent = parseIndent(template, "@{navigation}");
       }
       if (this.errorTemplate == null)
