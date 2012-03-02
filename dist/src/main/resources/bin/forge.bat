@@ -51,13 +51,30 @@ echo.
 goto error
 
 :OkJHome
-if exist "%JAVA_HOME%\bin\java.exe" goto chkFHome
+if exist "%JAVA_HOME%\bin\java.exe" goto chkJVersion
 
 echo.
 echo ERROR: JAVA_HOME is set to an invalid directory.
 echo JAVA_HOME = "%JAVA_HOME%"
 echo Please set the JAVA_HOME variable in your environment to match the
 echo location of your Java installation
+echo.
+goto error
+
+:chkJVersion
+set PATH="%JAVA_HOME%\bin";%PATH%
+
+for /f "tokens=3" %%g in ('java -version 2^>^&1 ^| findstr /i "version"') do (
+   set JAVAVER=%%g
+)
+for /f "delims=. tokens=1-3" %%v in ("%JAVAVER%") do (
+   set JAVAVER_MINOR=%%w
+)
+
+if %JAVAVER_MINOR% geq 6 goto chkFHome
+
+echo.
+echo A Java 1.6 or higher JRE is required to run Forge. "%JAVA_HOME%\bin\java.exe" is version %JAVAVER%
 echo.
 goto error
 
