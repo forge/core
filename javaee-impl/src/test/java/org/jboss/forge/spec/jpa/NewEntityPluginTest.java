@@ -68,8 +68,10 @@ public class NewEntityPluginTest extends AbstractJPATest
       assertTrue(javaClass.hasImport(Entity.class));
       assertTrue(javaClass.hasField("id"));
       assertTrue(javaClass.hasField("version"));
+      assertTrue(javaClass.hasField("serialVersionUID"));
       assertEquals("0", javaClass.getField("version").getLiteralInitializer());
       assertEquals("null", javaClass.getField("id").getLiteralInitializer());
+      assertEquals("1L", javaClass.getField("serialVersionUID").getLiteralInitializer());
    }
 
    @Test

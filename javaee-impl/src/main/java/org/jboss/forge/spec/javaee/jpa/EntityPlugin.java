@@ -109,6 +109,8 @@ public class EntityPlugin implements Plugin
                .addAnnotation(Entity.class).getOrigin()
                .addInterface(Serializable.class);
 
+      javaClass.addField("private static final long serialVersionUID = 1L;");
+
       Field<JavaClass> id = javaClass.addField("private Long id = null;");
       id.addAnnotation(Id.class);
       id.addAnnotation(GeneratedValue.class)
@@ -139,7 +141,7 @@ public class EntityPlugin implements Plugin
 
    /**
     * Retrieves the package portion of the current directory if it is a package, null otherwise.
-    * 
+    *
     * @return String representation of the current package, or null
     */
    private String getPackagePortionOfCurrentDirectory()
