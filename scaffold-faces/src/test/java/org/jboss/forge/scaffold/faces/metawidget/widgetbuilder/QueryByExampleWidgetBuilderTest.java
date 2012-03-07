@@ -71,7 +71,7 @@ public class QueryByExampleWidgetBuilderTest
       StaticWidget widget = widgetBuilder.buildWidget(PROPERTY, attributes, new StaticJavaMetawidget());
 
       assertEquals(
-               "int abc = this.search.getAbc();if (abc != 0) { predicatesList.add(builder.equal(root.get(\"abc\"),abc)); }",
+               "int abc = this.search.getAbc();if (abc != 0) { predicatesList.add(builder.equal(root.get(\"abc\"), abc)); }",
                widget.toString());
    }
 
@@ -81,11 +81,25 @@ public class QueryByExampleWidgetBuilderTest
       Map<String, String> attributes = CollectionUtils.newHashMap();
       attributes.put(NAME, "abc");
       attributes.put(TYPE, "com.test.domain.Foo");
+      attributes.put(LOOKUP, "ONE,TWO,THREE");
+      StaticWidget widget = widgetBuilder.buildWidget(PROPERTY, attributes, new StaticJavaMetawidget());
+
+      assertEquals(
+               "Foo abc = this.search.getAbc();if (abc != null) { predicatesList.add(builder.equal(root.get(\"abc\"), abc)); }",
+               widget.toString());
+   }
+
+   public void testFacesLookup()
+   {
+      QueryByExampleWidgetBuilder widgetBuilder = new QueryByExampleWidgetBuilder();
+      Map<String, String> attributes = CollectionUtils.newHashMap();
+      attributes.put(NAME, "abc");
+      attributes.put(TYPE, "com.test.domain.Foo");
       attributes.put(FACES_LOOKUP, "#{foo.bar}");
       StaticWidget widget = widgetBuilder.buildWidget(PROPERTY, attributes, new StaticJavaMetawidget());
 
       assertEquals(
-               "Foo abc = this.search.getAbc();if (abc != null && abc.getId() != null) { predicatesList.add(builder.equal(root.get(\"abc\"),abc)); }",
+               "Foo abc = this.search.getAbc();if (abc != null && abc.getId() != null) { predicatesList.add(builder.equal(root.get(\"abc\"), abc)); }",
                widget.toString());
    }
 }

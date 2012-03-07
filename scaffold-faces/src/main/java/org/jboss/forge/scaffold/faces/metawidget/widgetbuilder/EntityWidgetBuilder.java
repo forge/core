@@ -229,6 +229,7 @@ public class EntityWidgetBuilder
             }
          }
       }
+
       // Delegate to next WidgetBuilder in the chain
 
       return null;

@@ -59,6 +59,11 @@
 			<artifactId>forge-javaee-impl</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.jboss.forge</groupId>
+			<artifactId>forge-dev-plugins</artifactId>
+			<scope>test</scope>
+		</dependency>
 
 	</dependencies>
 

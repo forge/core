@@ -16,6 +16,7 @@
 
 package org.jboss.forge.scaffold.faces.metawidget.widgetprocessor;
 
+import static org.metawidget.inspector.InspectionResultConstants.*;
 import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.*;
 
 import java.util.Map;
@@ -115,7 +116,7 @@ public class UnsearchableWidgetProcessor
             }
          }
 
-         if (attributes.containsKey(FACES_LOOKUP))
+         if (attributes.containsKey(LOOKUP) || attributes.containsKey(FACES_LOOKUP))
          {
             return true;
          }
