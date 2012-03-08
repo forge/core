@@ -83,12 +83,28 @@ public class QueryByExampleWidgetBuilder
                   new JavaStatement("int " + name + " = this.search.get" + StringUtils.capitalize(name) + "()"));
          JavaStatement ifNotEmpty = new JavaStatement("if (" + name + " != 0)");
          ifNotEmpty.getChildren().add(
-                  new JavaStatement("predicatesList.add(builder.equal(root.get(\"" + name + "\")," + name + "))"));
+                  new JavaStatement("predicatesList.add(builder.equal(root.get(\"" + name + "\"), " + name + "))"));
          toReturn.getChildren().add(ifNotEmpty);
          return toReturn;
       }
 
-      // Lookup
+      // LOOKUP
+
+      if (attributes.containsKey(LOOKUP))
+      {
+         StaticJavaStub toReturn = new StaticJavaStub();
+         JavaStatement getValue = new JavaStatement(ClassUtils.getSimpleName(type) + " " + name + " = this.search.get"
+                  + StringUtils.capitalize(name) + "()");
+         getValue.putImport(type);
+         toReturn.getChildren().add(getValue);
+         JavaStatement ifNotEmpty = new JavaStatement("if (" + name + " != null)");
+         ifNotEmpty.getChildren().add(
+                  new JavaStatement("predicatesList.add(builder.equal(root.get(\"" + name + "\"), " + name + "))"));
+         toReturn.getChildren().add(ifNotEmpty);
+         return toReturn;
+      }
+
+      // FACES_LOOKUP
 
       if (attributes.containsKey(FACES_LOOKUP))
       {
@@ -99,7 +115,7 @@ public class QueryByExampleWidgetBuilder
          toReturn.getChildren().add(getValue);
          JavaStatement ifNotEmpty = new JavaStatement("if (" + name + " != null && " + name + ".getId() != null)");
          ifNotEmpty.getChildren().add(
-                  new JavaStatement("predicatesList.add(builder.equal(root.get(\"" + name + "\")," + name + "))"));
+                  new JavaStatement("predicatesList.add(builder.equal(root.get(\"" + name + "\"), " + name + "))"));
          toReturn.getChildren().add(ifNotEmpty);
          return toReturn;
       }
