@@ -24,6 +24,8 @@ package org.jboss.forge.maven.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -31,6 +33,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.forge.Root;
 import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.maven.MavenFacetsTest;
+import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.facets.JavaSourceFacet;
@@ -50,57 +53,57 @@ import org.junit.Before;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public abstract class ProjectModelTest
-{
+public abstract class ProjectModelTest {
 
-   @Deployment
-   public static JavaArchive createTestArchive()
-   {
-      return ShrinkWrap.create(JavaArchive.class, "test.jar")
-               .addPackages(true, Root.class.getPackage())
-               .addClass(ResourceFactory.class)
-               .addAsManifestResource(new ByteArrayAsset("<beans/>".getBytes()), ArchivePaths.create("beans.xml"))
-               .addAsManifestResource("META-INF/services/javax.enterprise.inject.spi.Extension");
-   }
+    @Deployment
+    public static JavaArchive createTestArchive() {
+        return ShrinkWrap.create(JavaArchive.class, "test.jar").addPackages(true, Root.class.getPackage())
+                .addClass(ResourceFactory.class)
+                .addAsManifestResource(new ByteArrayAsset("<beans/>".getBytes()), ArchivePaths.create("beans.xml"))
+                .addAsManifestResource("META-INF/services/javax.enterprise.inject.spi.Extension");
+    }
 
-   private static final String PKG = MavenFacetsTest.class.getSimpleName().toLowerCase();
-   private static File tempFolder;
+    private static final String PKG = MavenFacetsTest.class.getSimpleName().toLowerCase();
+    private static List<File> tempFolders = new ArrayList<File>();
 
-   @Inject
-   private ProjectFactory projectFactory;
+    @Inject
+    private ProjectFactory projectFactory;
 
-   @Inject
-   private ResourceFactory resourceFactory;
+    @Inject
+    private ResourceFactory resourceFactory;
 
-   protected static Project project;
+    protected static Project project;
 
-   @Before
-   @SuppressWarnings("unchecked")
-   public void before() throws IOException
-   {
-      if (project == null)
-      {
-         tempFolder = File.createTempFile(PKG, null);
-         tempFolder.delete();
-         tempFolder.mkdirs();
+    @Before
+    @SuppressWarnings("unchecked")
+    public void before() throws IOException {
+        if (project == null) {
+            project = createProject(MavenCoreFacet.class, JavaSourceFacet.class, ResourceFacet.class, WebResourceFacet.class,
+                    DependencyFacet.class, PackagingFacet.class);
+        }
+    }
 
-         project = projectFactory.createProject(
-                  ResourceUtil.getContextDirectory(resourceFactory.getResourceFrom(tempFolder)),
-                  MavenCoreFacet.class, JavaSourceFacet.class, ResourceFacet.class, WebResourceFacet.class,
-                  DependencyFacet.class, PackagingFacet.class);
-      }
-   }
+    protected Project createProject(Class<? extends Facet>... facets) throws IOException {
+        File tempFolder = File.createTempFile(PKG, null);
+        tempFolder.delete();
+        tempFolder.mkdirs();
+        tempFolders.add(tempFolder);
 
-   @After
-   public void after()
-   {
-      project.getProjectRoot().delete(true);
-      project = null;
-   }
+        return projectFactory.createProject(ResourceUtil.getContextDirectory(resourceFactory.getResourceFrom(tempFolder)),
+                facets);
+    }
 
-   protected Project getProject()
-   {
-      return project;
-   }
+    @After
+    public void after() {
+        for (File tempFolder : tempFolders) {
+            tempFolder.delete();
+            System.gc();
+        }
+        project = null;
+    }
+
+    protected Project getProject() {
+        return project;
+    }
 
 }
