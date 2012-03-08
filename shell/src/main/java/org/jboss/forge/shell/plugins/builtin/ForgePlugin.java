@@ -169,32 +169,38 @@ public class ForgePlugin implements Plugin
    public void find(@Option(description = "search string") final String searchString, final PipeOut out)
             throws Exception
    {
-        List<PluginRef> pluginList = PluginUtil.findPlugin(environment, getProxySettings(), 
-                searchString, out);
+      List<PluginRef> pluginList = PluginUtil.findPlugin(environment, getProxySettings(),
+               searchString, out);
 
-        if (!pluginList.isEmpty()) {
-            out.println();
-        }
-        for (PluginRef ref : pluginList) {
-            out.println(" - " + out.renderColor(ShellColor.BOLD, ref.getName()) + " (" + ref.getArtifact() + ")");
-            out.println("\tAuthor: " + ref.getAuthor());
-            out.println("\tWebsite: " + ref.getWebsite());
-            out.println("\tLocation: " + ref.getLocation());
-            out.println("\tTags: " + ref.getTags());
-            out.println("\tDescription: " + ref.getDescription());
-            out.println();
-        }
-    }
+      if (!pluginList.isEmpty())
+      {
+         out.println();
+      }
+      for (PluginRef ref : pluginList)
+      {
+         out.println(" - " + out.renderColor(ShellColor.BOLD, ref.getName()) + " (" + ref.getArtifact() + ")");
+         out.println("\tAuthor: " + ref.getAuthor());
+         out.println("\tWebsite: " + ref.getWebsite());
+         out.println("\tLocation: " + ref.getLocation());
+         out.println("\tTags: " + ref.getTags());
+         out.println("\tDescription: " + ref.getDescription());
+         out.println();
+      }
+   }
 
-    private ProxySettings getProxySettings() {
-        Configuration proxyConfig = configuration.getScopedConfiguration(
-                ConfigurationScope.USER).subset("proxy");
-        if (proxyConfig != null && !proxyConfig.isEmpty()) {
-            return ProxySettings.fromForgeConfiguration(proxyConfig);
-        } else {
-            return null;
-        }
-    }
+   private ProxySettings getProxySettings()
+   {
+      Configuration proxyConfig = configuration.getScopedConfiguration(
+               ConfigurationScope.USER).subset("proxy");
+      if (proxyConfig != null && !proxyConfig.isEmpty())
+      {
+         return ProxySettings.fromForgeConfiguration(proxyConfig);
+      }
+      else
+      {
+         return null;
+      }
+   }
 
    @Command(value = "remove-plugin",
             help = "Removes a plugin from the current Forge runtime configuration")
@@ -403,7 +409,7 @@ public class ForgePlugin implements Plugin
          }
 
          prepareProxyForJGit();
-         
+
          ShellMessages.info(out, "Checking out plugin source files to [" + buildDir.getFullyQualifiedName()
                   + "] via 'git'");
          Git repo = GitUtils.clone(buildDir, gitRepo);
@@ -416,22 +422,30 @@ public class ForgePlugin implements Plugin
             targetRef = environment.getRuntimeVersion();
          }
 
-         // Try to find a Tag matching the given Ref name or runtime version
-         Map<String, Ref> tags = repo.getRepository().getTags();
-         ref = tags.get(targetRef);
-
-         // Now try to find a matching Branch
-         if (ref == null)
+         if (targetRef != null)
          {
-            List<Ref> refs = GitUtils.getRemoteBranches(repo);
-            for (Ref branchRef : refs)
+            // Try to find a Tag matching the given Ref name or runtime version
+            Map<String, Ref> tags = repo.getRepository().getTags();
+            ref = tags.get(targetRef);
+
+            // Now try to find a matching Branch
+            if (ref == null)
             {
-               if (branchRef.getName().endsWith(targetRef))
+               List<Ref> refs = GitUtils.getRemoteBranches(repo);
+               for (Ref branchRef : refs)
                {
-                  ref = repo.branchCreate().setName(targetRef).setUpstreamMode(SetupUpstreamMode.TRACK)
-                           .setStartPoint("origin/" + targetRef).call();
+                  String branchName = branchRef.getName();
+                  if (branchName != null && branchName.endsWith(targetRef))
+                  {
+                     ref = repo.branchCreate().setName(targetRef).setUpstreamMode(SetupUpstreamMode.TRACK)
+                              .setStartPoint("origin/" + targetRef).call();
+                  }
                }
             }
+         }
+         else
+         {
+            ref = repo.getRepository().getRef("master");
          }
 
          if (ref != null)
@@ -468,20 +482,23 @@ public class ForgePlugin implements Plugin
       restart();
    }
 
-   private void prepareProxyForJGit() {
-       ProxySettings proxySettings = getProxySettings();
-       if (proxySettings == null) {
-           // There is no proxy configured
-           return;
-       }
-      if (!(ProxySelector.getDefault() instanceof ForgeProxySelector)) {
-          ForgeProxySelector selector = new ForgeProxySelector(ProxySelector.getDefault(), 
+   private void prepareProxyForJGit()
+   {
+      ProxySettings proxySettings = getProxySettings();
+      if (proxySettings == null)
+      {
+         // There is no proxy configured
+         return;
+      }
+      if (!(ProxySelector.getDefault() instanceof ForgeProxySelector))
+      {
+         ForgeProxySelector selector = new ForgeProxySelector(ProxySelector.getDefault(),
                   proxySettings);
-          ProxySelector.setDefault(selector);
+         ProxySelector.setDefault(selector);
       }
    }
 
-/*
+   /*
     * Helpers
     */
    private void buildFromCurrentProject(final PipeOut out, final DirectoryResource buildDir) throws Abort
@@ -708,10 +725,11 @@ public class ForgePlugin implements Plugin
    }
 
    private void writeResourceRoots(
-            final Project project, 
-            final Node module, 
-            final DirectoryResource directory, 
-            final Node resources) {
+            final Project project,
+            final Node module,
+            final DirectoryResource directory,
+            final Node resources)
+   {
       List<DependencyResource> pluginDependencies = getPluginDependencies(project, module);
       for (DependencyResource d : pluginDependencies)
       {
