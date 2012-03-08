@@ -54,6 +54,7 @@ public class ForgePluginTest extends AbstractShellTest {
     }
 
     @Test
+    @Ignore
     public void testGitPluginNoProject() throws Exception {
         getShell().setCurrentResource(createTempFolder());
         getShell().execute("forge git-plugin git://github.com/forge/scaffold-aerogear.git");
