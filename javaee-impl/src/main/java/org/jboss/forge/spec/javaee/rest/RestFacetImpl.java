@@ -21,14 +21,19 @@
  */
 package org.jboss.forge.spec.javaee.rest;
 
+import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.env.Configuration;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.dependencies.DependencyInstaller;
+import org.jboss.forge.project.facets.JavaSourceFacet;
+import org.jboss.forge.resources.java.JavaResource;
+import org.jboss.forge.resources.java.JavaResourceVisitor;
 import org.jboss.forge.shell.ShellPrompt;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
@@ -46,16 +51,21 @@ import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 @RequiresFacet(ServletFacet.class)
 public class RestFacetImpl extends BaseJavaEEFacet implements RestFacet
 {
+   private static final String REST_ACTIVATOR_CONFIG_KEY = "org.jboss.forge.spec.javaee.rest.activatorClass";
+
    public static final String JAXRS_SERVLET = "javax.ws.rs.core.Application";
 
-   @Inject
-   public RestFacetImpl(final DependencyInstaller installer)
-   {
-      super(installer);
-   }
+   private Configuration config;
+   private ShellPrompt prompt;
 
    @Inject
-   private ShellPrompt prompt;
+   public RestFacetImpl(final DependencyInstaller installer, Configuration config,
+            ShellPrompt prompt)
+   {
+      super(installer);
+      this.config = config;
+      this.prompt = prompt;
+   }
 
    @Override
    public boolean install()
@@ -66,9 +76,15 @@ public class RestFacetImpl extends BaseJavaEEFacet implements RestFacet
          ServletFacet servlet = project.getFacet(ServletFacet.class);
          WebAppDescriptorImpl web = (WebAppDescriptorImpl) servlet.getConfig();
          Node node = web.getRootNode();
-         Node servletClass = node.getOrCreate("servlet-mapping/servlet-name=" + JAXRS_SERVLET);
-         String urlPattern = prompt.prompt("Serve REST resources under which URL path?", "/rest/*");
-         servletClass.getParent().getOrCreate("url-pattern").text(urlPattern);
+         Node servletClass = node.getSingle("servlet-mapping/servlet-name=" + JAXRS_SERVLET);
+         if (servletClass == null)
+         {
+            String urlPattern = prompt.prompt("Serve REST resources under which URL path?", "/rest/*");
+            Node mapping = node.createChild("servlet-mapping");
+            mapping.createChild("servlet-name").text(JAXRS_SERVLET);
+            mapping.createChild("url-pattern").text(urlPattern);
+         }
+
          servlet.saveConfig(web);
       }
       return super.install();
@@ -78,16 +94,42 @@ public class RestFacetImpl extends BaseJavaEEFacet implements RestFacet
    public boolean isInstalled()
    {
       // TODO support additional configuration types (RestActivationProvider)
-      return installedInWebXML() && super.isInstalled();
+      return (installedInWebXML() || installedInAnnotatedClass()) && super.isInstalled();
+   }
+
+   private boolean installedInAnnotatedClass()
+   {
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+
+      JaxRsAnnotationVisitor visitor = new JaxRsAnnotationVisitor();
+      String className = config.getString(REST_ACTIVATOR_CONFIG_KEY);
+      if (className != null)
+      {
+         try
+         {
+            visitor.visit(java.getJavaResource(className));
+            if(visitor.isFound())
+            {
+               config.setProperty(REST_ACTIVATOR_CONFIG_KEY, visitor.getSource().getQualifiedName());
+            }
+         }
+         catch (FileNotFoundException e)
+         {
+            config.clearProperty(REST_ACTIVATOR_CONFIG_KEY);
+         }
+      }
+
+      if (!visitor.isFound())
+         java.visitJavaSources(visitor);
+      
+      return visitor.isFound();
    }
 
    @Override
    protected List<Dependency> getRequiredDependencies()
    {
       return Arrays.asList(
-               (Dependency) DependencyBuilder.create("org.jboss.spec.javax.ws.rs:jboss-jaxrs-api_1.1_spec"),
-               DependencyBuilder.create("org.jboss.spec.javax.xml.bind:jboss-jaxb-api_2.2_spec")
-               );
+               (Dependency) DependencyBuilder.create("org.jboss.spec.javax.ws.rs:jboss-jaxrs-api_1.1_spec"));
    }
 
    private boolean installedInWebXML()
@@ -134,7 +176,13 @@ public class RestFacetImpl extends BaseJavaEEFacet implements RestFacet
    @Override
    public RestActivatorType getApplicationActivatorType()
    {
-      return RestActivatorType.WEB_XML;
+      if(installedInWebXML())
+      {
+         return RestActivatorType.WEB_XML;
+      }
+      else
+      {
+         return RestActivatorType.APP_CLASS_AND_ANNOTATION;
+      }
    }
-
 }

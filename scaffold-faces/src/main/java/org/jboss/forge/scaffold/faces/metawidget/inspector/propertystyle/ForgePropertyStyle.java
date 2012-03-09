@@ -38,7 +38,6 @@ import org.jboss.forge.parser.java.Method;
 import org.jboss.forge.parser.java.MethodHolder;
 import org.jboss.forge.parser.java.Parameter;
 import org.jboss.forge.parser.java.Type;
-import org.jboss.forge.parser.java.impl.JavaEnumImpl;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.metawidget.inspector.iface.InspectorException;
@@ -520,8 +519,8 @@ public class ForgePropertyStyle
       {
          JavaSource<?> source = sourceForName( this.project, getType() );
 
-         if ( source instanceof JavaEnumImpl ) {
-            return ((JavaEnumImpl) source).getFields();
+         if ( source instanceof JavaEnum ) {
+            return ((JavaEnum) source).getEnumConstants();
          }
 
          return null;

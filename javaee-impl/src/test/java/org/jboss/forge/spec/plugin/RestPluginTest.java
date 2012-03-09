@@ -24,22 +24,35 @@ package org.jboss.forge.spec.plugin;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.Path;
+import javax.ws.rs.core.Application;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.parser.java.Method;
+import org.jboss.forge.parser.java.Type;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.facets.JavaSourceFacet;
+import org.jboss.forge.resources.DirectoryResource;
+import org.jboss.forge.resources.Resource;
 import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.spec.javaee.RestActivatorType;
 import org.jboss.forge.spec.javaee.RestFacet;
+import org.jboss.forge.spec.javaee.ServletFacet;
 import org.jboss.forge.spec.javaee.jpa.PersistenceFacetImpl;
+import org.jboss.forge.spec.javaee.rest.RestFacetImpl;
 import org.jboss.forge.spec.jpa.AbstractJPATest;
+import org.jboss.shrinkwrap.descriptor.impl.spec.servlet.web.WebAppDescriptorImpl;
+import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -49,6 +62,8 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class RestPluginTest extends AbstractJPATest
 {
+   private static final DependencyBuilder JAX_RS_DEPENDENCY = DependencyBuilder.create("org.jboss.spec.javax.ws.rs:jboss-jaxrs-api_1.1_spec");
+
    @Test
    public void testInstall() throws Exception
    {
@@ -59,11 +74,65 @@ public class RestPluginTest extends AbstractJPATest
 
       assertTrue(project.hasFacet(RestFacet.class));
       assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveDependency(
-               DependencyBuilder.create("org.jboss.spec.javax.ws.rs:jboss-jaxrs-api_1.1_spec")));
+               JAX_RS_DEPENDENCY));
 
       RestFacet rest = project.getFacet(RestFacet.class);
       assertEquals("/rest/*", rest.getApplicationPath());
       assertEquals(RestActivatorType.WEB_XML, rest.getApplicationActivatorType());
+   }
+   
+   @Test
+   public void testActivatedByAnnotation() throws Exception
+   {
+      Project project = getProject();
+      DependencyFacet deps = project.getFacet(DependencyFacet.class);
+
+      queueInputLines("");
+      getShell().execute("setup servlet");
+      ServletFacet web = project.getFacet(ServletFacet.class);
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+      
+      JavaClass activator = JavaParser.create(JavaClass.class);
+      activator.setName("Activator").setPackage("org.rest");
+      activator.setSuperType(Application.class);
+      activator.addAnnotation(ApplicationPath.class).setStringValue("/rest/*");
+      java.saveJavaSource(activator);
+      
+      assertFalse(project.hasFacet(RestFacet.class));
+      deps.addDirectDependency(JAX_RS_DEPENDENCY);
+      assertTrue(deps.hasEffectiveDependency(JAX_RS_DEPENDENCY));
+      
+      DirectoryResource projectRoot = project.getProjectRoot();
+      Resource<?> parent = projectRoot.getParent();
+      getShell().setCurrentResource(parent);
+      getShell().setCurrentResource(projectRoot);
+      
+      project=getShell().getCurrentProject();
+      
+      assertTrue(project.hasFacet(RestFacet.class));
+      assertNull(((WebAppDescriptorImpl) web.getConfig()).getRootNode().getSingle("servlet-mapping/servlet-name=" + RestFacetImpl.JAXRS_SERVLET));
+      
+      RestFacet rest = project.getFacet(RestFacet.class);
+      RestActivatorType type = rest.getApplicationActivatorType();
+      assertEquals(RestActivatorType.APP_CLASS_AND_ANNOTATION, type);
+   }
+   
+   @Test
+   public void testInstallWebIntoXML() throws Exception
+   {
+      Project project = getProject();
+
+      assertFalse(project.hasFacet(RestFacet.class));
+      setupRest();
+
+      assertTrue(project.hasFacet(RestFacet.class));
+      assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveDependency(
+               JAX_RS_DEPENDENCY));
+
+      ServletFacet web = project.getFacet(ServletFacet.class);
+      Node servletName = ((WebAppDescriptorImpl) web.getConfig()).getRootNode().getSingle("servlet-mapping/servlet-name=" + RestFacetImpl.JAXRS_SERVLET);
+      assertNotNull(servletName);
+      assertEquals("/rest/*", servletName.getParent().getSingle("url-pattern").getText());
    }
 
    @Test
@@ -84,8 +153,11 @@ public class RestPluginTest extends AbstractJPATest
 
       assertEquals("/user", endpoint.getAnnotation(Path.class).getStringValue());
       assertEquals("java.util.List", endpoint.getMethod("listAll").getQualifiedReturnType());
+      
+      Method<JavaClass> method = endpoint.getMethod("findById", Long.class);
+      Type<JavaClass> returnTypeInspector = method.getReturnTypeInspector();
       assertEquals("com.test." + PersistenceFacetImpl.DEFAULT_ENTITY_PACKAGE + ".User",
-               endpoint.getMethod("findById", long.class).getReturnTypeInspector()
+               returnTypeInspector
                         .getQualifiedName());
 
       assertTrue(java.getJavaResource(entity).getJavaSource().hasAnnotation(XmlRootElement.class));

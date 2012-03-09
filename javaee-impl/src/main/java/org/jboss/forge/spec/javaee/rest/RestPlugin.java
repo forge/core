@@ -31,14 +31,24 @@ import java.util.Map;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.ws.rs.Path;
+import javax.ws.rs.core.MediaType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.Annotation;
+import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaSource;
+import org.jboss.forge.parser.java.Member;
+import org.jboss.forge.parser.java.Method;
+import org.jboss.forge.parser.java.Parameter;
+import org.jboss.forge.parser.java.Type;
+import org.jboss.forge.parser.java.util.Types;
 import org.jboss.forge.project.Project;
+import org.jboss.forge.project.dependencies.DependencyBuilder;
+import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.project.facets.events.InstallFacets;
 import org.jboss.forge.resources.Resource;
@@ -101,8 +111,11 @@ public class RestPlugin implements Plugin
 
    @SuppressWarnings("unchecked")
    @Command(value = "endpoint-from-entity", help = "Creates a REST endpoint from an existing domain @Entity object")
-   public void endpointFromEntity(final PipeOut out,
-            @Option(required = false) JavaResource[] targets) throws FileNotFoundException
+   public void endpointFromEntity(
+            final PipeOut out,
+            @Option(name = "contentType", defaultValue = MediaType.APPLICATION_XML, completer = ContentTypeCompleter.class) String contentType,
+            @Option(required = false) JavaResource[] targets)
+            throws FileNotFoundException
    {
       /*
        * Make sure we have all the features we need for this to work.
@@ -132,11 +145,22 @@ public class RestPlugin implements Plugin
          if (!entity.hasAnnotation(XmlRootElement.class))
             entity.addAnnotation(XmlRootElement.class);
 
+         String idType = resolveIdType(entity);
+         if(!Types.isBasicType(idType))
+         {
+            ShellMessages.error(out, "Skipping class because @Id type ["+idType+"] is not supported by endpoint generation.");
+            continue;
+         }
+         String idSetterName = resolveIdSetterName(entity);
+
          CompiledTemplateResource template = compiler.compileResource(getClass().getResourceAsStream(
                   "/org/jboss/forge/rest/Endpoint.jv"));
 
          Map<Object, Object> map = new HashMap<Object, Object>();
          map.put("entity", entity);
+         map.put("idType", idType);
+         map.put("setIdStatement", idSetterName);
+         map.put("contentType", contentType);
          map.put("entityTable", getEntityTable(entity));
 
          JavaClass endpoint = JavaParser.parse(JavaClass.class, template.render(map));
@@ -158,6 +182,90 @@ public class RestPlugin implements Plugin
          else
             ShellMessages.info(out, "Aborted endpoint generation for [" + entity.getQualifiedName() + "]");
       }
+   }
+
+   private String resolveIdType(JavaClass entity)
+   {
+      for (Member<JavaClass, ?> member : entity.getMembers())
+      {
+         if (member.hasAnnotation(Id.class))
+         {
+            if (member instanceof Method)
+            {
+               return ((Method) member).getReturnType();
+            }
+            if (member instanceof Field)
+            {
+               return ((Field) member).getType();
+            }
+         }
+      }
+      return "Object";
+   }
+
+   private String resolveIdSetterName(JavaClass entity)
+   {
+      String result = null;
+
+      for (Member<JavaClass, ?> member : entity.getMembers())
+      {
+         if (member.hasAnnotation(Id.class))
+         {
+            String name = member.getName();
+            String type = null;
+            if (member instanceof Method)
+            {
+               type = ((Method) member).getReturnType();
+               if (name.startsWith("get"))
+               {
+                  name = name.substring(2);
+               }
+            }
+            else if (member instanceof Field)
+            {
+               type = ((Field) member).getType();
+            }
+
+            if (type != null)
+            {
+               for (Method<JavaClass> method : entity.getMethods())
+               {
+                  // It's a setter
+                  if (method.getParameters().size() == 1 && method.getReturnType() == null)
+                  {
+                     Parameter param = method.getParameters().get(0);
+
+                     // The type matches ID field's type
+                     if (type.equals(param.getType()))
+                     {
+                        if (method.getName().toLowerCase().contains(name))
+                        {
+                           result = method.getName() + "(id)";
+                           break;
+                        }
+                     }
+                  }
+               }
+            }
+
+            if(result != null)
+            {
+               break;
+            }
+            else if (type != null && result == null && member.isPublic())
+            {
+               // Cheat a little if the member is public
+               result = member.getName() + "= id";
+            }
+         }
+      }
+      
+      if(result == null)
+      {
+         result = "setId(id)";
+      }
+      
+      return result;
    }
 
    private String getEntityTable(final JavaClass entity)

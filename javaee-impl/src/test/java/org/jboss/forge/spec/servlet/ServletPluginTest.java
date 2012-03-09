@@ -31,6 +31,7 @@ import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.spec.javaee.ServletFacet;
 import org.jboss.forge.test.AbstractShellTest;
+import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -41,28 +42,32 @@ import org.junit.runner.RunWith;
 public class ServletPluginTest extends AbstractShellTest
 {
    @Test
-   public void testServletSetup() throws Exception
+   public void testServletSetupDoesNotInitiallyCreateWebXML() throws Exception
    {
       Project project = initializeJavaProject();
       queueInputLines("y");
       getShell().execute("servlet setup");
-
-      project.getFacet(ServletFacet.class).getConfig();
+      
+      Assert.assertTrue(project.hasFacet(ServletFacet.class));
       Assert.assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveDependency(
                DependencyBuilder.create("org.jboss.spec.javax.servlet:jboss-servlet-api_3.0_spec")));
-      Assert.assertTrue(project.getFacet(WebResourceFacet.class).getWebResource("WEB-INF/web.xml").exists());
+      Assert.assertFalse(project.getFacet(WebResourceFacet.class).getWebResource("WEB-INF/web.xml").exists());
    }
 
    @Test
-   public void testSetupServlet() throws Exception
+   public void testServletLazilyCreatesWebXMLOnSave() throws Exception
    {
       Project project = initializeJavaProject();
       queueInputLines("y");
       getShell().execute("setup servlet");
 
-      project.getFacet(ServletFacet.class).getConfig();
       Assert.assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveDependency(
                DependencyBuilder.create("org.jboss.spec.javax.servlet:jboss-servlet-api_3.0_spec")));
+      Assert.assertTrue(project.hasFacet(ServletFacet.class));
+      
+      WebAppDescriptor config = project.getFacet(ServletFacet.class).getConfig();
+      Assert.assertFalse(project.getFacet(WebResourceFacet.class).getWebResource("WEB-INF/web.xml").exists());
+      project.getFacet(ServletFacet.class).saveConfig(config);
       Assert.assertTrue(project.getFacet(WebResourceFacet.class).getWebResource("WEB-INF/web.xml").exists());
    }
 }

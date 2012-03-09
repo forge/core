@@ -31,7 +31,6 @@ import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jface.text.Document;
 import org.jboss.forge.parser.java.EnumConstant;
 import org.jboss.forge.parser.java.JavaEnum;
-import org.jboss.forge.parser.java.Member;
 import org.jboss.forge.parser.java.SourceType;
 
 /**
@@ -47,15 +46,7 @@ public class JavaEnumImpl extends AbstractJavaSource<JavaEnum> implements JavaEn
    }
 
    @Override
-   public List<Member<JavaEnum, ?>> getMembers()
-   {
-      List<Member<JavaEnum, ?>> result = new ArrayList<Member<JavaEnum, ?>>();
-      result.addAll(getFields());
-
-      return result;
-   }
-
-   public List<EnumConstant<JavaEnum>> getFields()
+   public List<EnumConstant<JavaEnum>> getEnumConstants()
    {
       List<EnumConstant<JavaEnum>> result = new ArrayList<EnumConstant<JavaEnum>>();
 
@@ -92,11 +83,11 @@ public class JavaEnumImpl extends AbstractJavaSource<JavaEnum> implements JavaEn
    }
 
    @Override
-   public EnumConstant<JavaEnum> getEnumConstant(String declaration)
+   public EnumConstant<JavaEnum> getEnumConstant(String name)
    {
-      for (EnumConstant<JavaEnum> enumConst : getFields())
+      for (EnumConstant<JavaEnum> enumConst : getEnumConstants())
       {
-         if (enumConst.getName().equals(declaration))
+         if (enumConst.getName().equals(name))
          {
             return enumConst;
          }

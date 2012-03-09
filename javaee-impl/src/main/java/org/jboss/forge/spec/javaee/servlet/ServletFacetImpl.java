@@ -22,6 +22,7 @@
 package org.jboss.forge.spec.javaee.servlet;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,9 +41,11 @@ import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.resources.ResourceFilter;
+import org.jboss.forge.resources.UnknownFileResource;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresPackagingType;
+import org.jboss.forge.shell.util.Streams;
 import org.jboss.forge.spec.javaee.BaseJavaEEFacet;
 import org.jboss.forge.spec.javaee.ServletFacet;
 import org.jboss.shrinkwrap.descriptor.api.DescriptorImporter;
@@ -75,7 +78,7 @@ public class ServletFacetImpl extends BaseJavaEEFacet implements ServletFacet
    public boolean isInstalled()
    {
       DirectoryResource webRoot = project.getFacet(WebResourceFacet.class).getWebRootDirectory();
-      return webRoot.exists() && getConfigFile().exists() && super.isInstalled();
+      return webRoot.exists() && super.isInstalled();
    }
 
    @Override
@@ -83,24 +86,11 @@ public class ServletFacetImpl extends BaseJavaEEFacet implements ServletFacet
    {
       if (!isInstalled())
       {
-         String projectName = project.getFacet(MetadataFacet.class).getProjectName();
-
          DirectoryResource webRoot = project.getFacet(WebResourceFacet.class).getWebRootDirectory();
          if (!webRoot.exists())
          {
             webRoot.mkdirs();
          }
-
-         FileResource<?> descriptor = getConfigFile();
-         if (!descriptor.exists())
-         {
-            WebAppDescriptor unit = Descriptors.create(WebAppDescriptor.class)
-                     .displayName(projectName)
-                     .sessionTimeout(30);
-
-            descriptor.setContents(unit.exportAsString());
-         }
-
       }
       return super.install();
    }
@@ -112,7 +102,9 @@ public class ServletFacetImpl extends BaseJavaEEFacet implements ServletFacet
    public WebAppDescriptor getConfig()
    {
       DescriptorImporter<WebAppDescriptor> importer = Descriptors.importAs(WebAppDescriptor.class);
-      WebAppDescriptor descriptor = importer.from(getConfigFile().getResourceInputStream());
+      FileResource<?> configFile = getConfigFile();
+      InputStream inputStream = configFile.getResourceInputStream();
+      WebAppDescriptor descriptor = importer.from(inputStream);
       return descriptor;
    }
 
@@ -120,14 +112,71 @@ public class ServletFacetImpl extends BaseJavaEEFacet implements ServletFacet
    public void saveConfig(final WebAppDescriptor descriptor)
    {
       String output = descriptor.exportAsString();
-      getConfigFile().setContents(output);
+
+      FileResource<?> configFile = getConfigFile();
+      configFile.setContents(output);
    }
 
    @Override
    public FileResource<?> getConfigFile()
    {
       DirectoryResource webRoot = project.getFacet(WebResourceFacet.class).getWebRootDirectory();
-      return (FileResource<?>) webRoot.getChild("WEB-INF" + File.separator + "web.xml");
+      final FileResource<?> child = (FileResource<?>) webRoot.getChild("WEB-INF" + File.separator + "web.xml");
+
+      if (!child.exists())
+      {
+         return new UnknownFileResource(child.getResourceFactory(), child.getUnderlyingResourceObject())
+         {
+            @Override
+            public InputStream getResourceInputStream()
+            {
+               if (!exists())
+               {
+                  String projectName = project.getFacet(MetadataFacet.class).getProjectName();
+                  WebAppDescriptor unit = Descriptors.create(WebAppDescriptor.class)
+                           .displayName(projectName)
+                           .sessionTimeout(30);
+                  return Streams.fromString(unit.exportAsString());
+               }
+               else
+               {
+                  return super.getResourceInputStream();
+               }
+            }
+            
+            @Override
+            public UnknownFileResource setContents(InputStream data)
+            {
+               if(!exists())
+               {
+                  createNewFile();
+               }
+               return super.setContents(data);
+            }
+            
+            @Override
+            public UnknownFileResource setContents(char[] data)
+            {
+               if(!exists())
+               {
+                  createNewFile();
+               }
+               return super.setContents(data);
+            }
+            
+            @Override
+            public UnknownFileResource setContents(String data)
+            {
+               if(!exists())
+               {
+                  createNewFile();
+               }
+               return super.setContents(data);
+            }
+         };
+      }
+
+      return child;
    }
 
    /**

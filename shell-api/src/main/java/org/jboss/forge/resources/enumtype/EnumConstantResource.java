@@ -11,12 +11,12 @@ import org.jboss.forge.resources.VirtualResource;
 
 public class EnumConstantResource extends VirtualResource<EnumConstant<JavaEnum>>
 {
-   private final EnumConstant<JavaEnum> member;
+   private final EnumConstant<JavaEnum> enumConstant;
 
-   public EnumConstantResource(final Resource<?> parent, final EnumConstant<JavaEnum> member)
+   public EnumConstantResource(final Resource<?> parent, final EnumConstant<JavaEnum> enumConstant)
    {
       super(parent);
-      this.member = member;
+      this.enumConstant = enumConstant;
       setFlag(ResourceFlag.Leaf);
    }
 
@@ -35,33 +35,31 @@ public class EnumConstantResource extends VirtualResource<EnumConstant<JavaEnum>
    @Override
    public EnumConstant<JavaEnum> getUnderlyingResourceObject()
    {
-      return member;
+      return enumConstant;
    }
 
    @Override
    public String getName()
    {
-      return member.getName();
+      return enumConstant.getName();
    }
 
    @Override
    public String toString()
    {
-      return member.toString();
+      return enumConstant.toString();
    }
 
    @Override
    public boolean delete() throws UnsupportedOperationException
    {
-      // TODO Auto-generated method stub
-      return false;
+      throw new UnsupportedOperationException("Deleting Enum constants is not implemented.");
    }
 
    @Override
    public boolean delete(boolean recursive) throws UnsupportedOperationException
    {
-      // TODO Auto-generated method stub
-      return false;
+      throw new UnsupportedOperationException("Deleting Enum constants is not implemented.");
    }
 
 }

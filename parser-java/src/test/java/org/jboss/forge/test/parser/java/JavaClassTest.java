@@ -319,7 +319,7 @@ public class JavaClassTest
       assertEquals("Super", source.getSuperType());
 
       source.setSuperType(getClass());
-      assertEquals(getClass().getSimpleName(), source.getSuperType());
+      assertEquals(getClass().getName(), source.getSuperType());
    }
 
    @Test
@@ -329,6 +329,6 @@ public class JavaClassTest
       assertEquals("java.lang.Integer", source.getSuperType());
 
       source.setSuperType(getClass());
-      assertEquals(getClass().getSimpleName(), source.getSuperType());
+      assertEquals(getClass().getName(), source.getSuperType());
    }
 }
