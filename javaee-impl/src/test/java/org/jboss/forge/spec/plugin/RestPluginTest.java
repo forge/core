@@ -71,7 +71,7 @@ public class RestPluginTest extends AbstractJPATest {
         Project project = getProject();
 
         assertFalse(project.hasFacet(RestFacet.class));
-        queueInputLines("", "", "demo", "RestApplication");
+        queueInputLines("","","demo","demo", "RestApplication");
         getShell().execute("rest setup --activatorType APP_CLASS");
 
         assertTrue(project.hasFacet(RestFacet.class));

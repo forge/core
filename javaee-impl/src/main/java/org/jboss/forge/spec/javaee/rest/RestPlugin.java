@@ -145,7 +145,10 @@ public class RestPlugin implements Plugin
 
          Map<Object, Object> map = new HashMap<Object, Object>();
          map.put("entity", entity);
+         map.put("contentType", "application/json");
+         map.put("idType", "long");
          map.put("entityTable", getEntityTable(entity));
+         map.put("setIdStatement", "setId(id)");
 
          JavaClass endpoint = JavaParser.parse(JavaClass.class, template.render(map));
          endpoint.addImport(entity.getQualifiedName());

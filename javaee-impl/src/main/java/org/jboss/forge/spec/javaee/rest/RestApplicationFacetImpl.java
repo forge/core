@@ -99,12 +99,9 @@ public class RestApplicationFacetImpl extends BaseFacet implements RestApplicati
       try
       {
          JavaResource javaResource = javaSourceFacet.getJavaResource(pkg + "." + classname);
-         if (javaResource.exists())
+         if (javaResource.exists() || findApplicationClass())
          {
             return true;
-         } else
-         {
-
          }
 
       } catch (FileNotFoundException e)
