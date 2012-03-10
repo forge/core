@@ -30,8 +30,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.jboss.forge.ForgeEnvironment;
 import org.jboss.forge.resources.FileResource;
@@ -64,17 +68,24 @@ public class PluginUtil
       }
       return defaultRepo;
    }
+   
+   public static List<PluginRef> findPlugin(final ForgeEnvironment environment, final String searchString,
+           final PipeOut out) throws Exception {
+       return findPlugin(environment, null, searchString, out);
+   }
 
    @SuppressWarnings("unchecked")
-   public static List<PluginRef> findPlugin(final ForgeEnvironment environment, final String searchString,
-            final PipeOut out)
+   public static List<PluginRef> findPlugin(final ForgeEnvironment environment, final ProxySettings proxySettings, 
+           final String searchString, final PipeOut out)
             throws Exception
    {
       String defaultRepo = getDefaultRepo(environment);
       HttpGet httpGet = new HttpGet(defaultRepo);
 
       out.print("Connecting to remote repository [" + defaultRepo + "]... ");
-      HttpResponse httpResponse = new DefaultHttpClient().execute(httpGet);
+      DefaultHttpClient client = new DefaultHttpClient();
+      configureProxy(proxySettings, client);
+      HttpResponse httpResponse = client.execute(httpGet);
 
       switch (httpResponse.getStatusLine().getStatusCode())
       {
@@ -116,6 +127,20 @@ public class PluginUtil
 
       return pluginList;
    }
+
+    private static void configureProxy(final ProxySettings proxySettings, final DefaultHttpClient client) {
+        if (proxySettings != null) {
+            HttpHost proxy = new HttpHost(proxySettings.getProxyHost(), proxySettings.getProxyPort());
+            client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+            
+            if (proxySettings.isAuthenticationSupported()) {
+                AuthScope authScope = new AuthScope(proxySettings.getProxyHost(), proxySettings.getProxyPort());
+                UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(proxySettings.getProxyUserName(), 
+                        proxySettings.getProxyPassword());
+                client.getCredentialsProvider().setCredentials(authScope, credentials);
+            }
+        }
+    }
 
    public static void downloadFromURL(final PipeOut out, final URL url, final FileResource<?> resource)
             throws IOException

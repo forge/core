@@ -36,6 +36,19 @@ import org.junit.Test;
 public class TypesTest
 {
    @Test
+   public void testIsBasicType()
+   {
+      assertTrue(Types.isBasicType("String"));
+      assertTrue(Types.isBasicType("Short"));
+      assertTrue(Types.isBasicType("int"));
+      assertTrue(Types.isBasicType("boolean"));
+      assertTrue(Types.isBasicType("Boolean"));
+      assertTrue(Types.isBasicType("long"));
+      assertTrue(Types.isBasicType("Float"));
+      assertTrue(Types.isBasicType("Double"));
+   }
+
+   @Test
    public void testAreEquivalent() throws Exception
    {
       assertTrue(Types.areEquivalent("com.example.Domain", "com.example.Domain"));

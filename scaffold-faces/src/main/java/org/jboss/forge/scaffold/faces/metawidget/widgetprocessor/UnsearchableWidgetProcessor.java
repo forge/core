@@ -16,6 +16,7 @@
 
 package org.jboss.forge.scaffold.faces.metawidget.widgetprocessor;
 
+import static org.metawidget.inspector.InspectionResultConstants.*;
 import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.*;
 
 import java.util.Map;
@@ -59,11 +60,14 @@ public class UnsearchableWidgetProcessor
    {
       Integer widgetsProcessed = metawidget.getClientProperty(UnsearchableWidgetProcessor.class);
 
-      // Ignore stubs
+      // Ignore empty stubs
 
       if (widget instanceof StaticXmlStub || widget instanceof StaticJavaStub)
       {
-         return widget;
+         if (widget.getChildren().isEmpty())
+         {
+            return widget;
+         }
       }
 
       // Too many?
@@ -112,7 +116,7 @@ public class UnsearchableWidgetProcessor
             }
          }
 
-         if (attributes.containsKey(FACES_LOOKUP))
+         if (attributes.containsKey(LOOKUP) || attributes.containsKey(FACES_LOOKUP))
          {
             return true;
          }

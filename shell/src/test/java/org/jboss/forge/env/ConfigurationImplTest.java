@@ -41,6 +41,36 @@ public class ConfigurationImplTest extends AbstractShellTest
    private Configuration config;
 
    @Test
+   public void testAccessUserConfigurationOutsideOfProject() throws Exception
+   {
+      getShell().setCurrentResource(createTempFolder());
+      String string = config.getString(key);
+      Assert.assertNull(string);
+
+      config.setProperty(key, "bar");
+      config.getScopedConfiguration(ConfigurationScope.USER);
+      Assert.assertNotNull(config);
+   }
+
+   @Test
+   public void testAccessProjectConfigurationOutsideOfProject() throws Exception
+   {
+      getShell().setCurrentResource(createTempFolder());
+      String string = config.getString(key);
+      Assert.assertNull(string);
+
+      config.setProperty(key, "bar");
+      try
+      {
+         config.getScopedConfiguration(ConfigurationScope.PROJECT);
+         Assert.fail();
+      }
+      catch (Exception e)
+      {
+      }
+   }
+
+   @Test
    public void testSettingDefaultConfigChoosesProjectOverUser() throws Exception
    {
       initializeProject(PackagingType.WAR);
@@ -50,8 +80,8 @@ public class ConfigurationImplTest extends AbstractShellTest
       config.setProperty(key, "bar");
 
       /*
-       * By default, the write operations will persist to the first delegate (PROJECT), 
-       * if no project is available they will persist to the next delegate (user settings)
+       * By default, the write operations will persist to the first delegate (PROJECT), if no project is available they
+       * will persist to the next delegate (user settings)
        */
       Configuration userConfig = config.getScopedConfiguration(ConfigurationScope.USER);
       Configuration projectConfig = config.getScopedConfiguration(ConfigurationScope.PROJECT);

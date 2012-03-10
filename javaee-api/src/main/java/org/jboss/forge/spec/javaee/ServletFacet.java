@@ -37,12 +37,16 @@ import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
 public interface ServletFacet extends Facet
 {
    /**
-    * Parse and return this {@link Project}'s web.xml file as a {@link WebAppDescriptor}
+    * Parse and return this {@link Project}'s web.xml file as a {@link WebAppDescriptor}. If no web.xml exists
+    * (particularly in the case of Servlet 3.0 projects), return a virtual web-descriptor instance. This virtual
+    * instance may then be modified in memory, then saved using {@link #saveConfig(WebAppDescriptor)}, at which point a
+    * physical web.xml file will be created on disk.
     */
    WebAppDescriptor getConfig();
 
    /**
-    * Save the given {@link WebAppDescriptor} as this {@link Project}'s web.xml file
+    * Save the given {@link WebAppDescriptor} as this {@link Project}'s web.xml file. If no web.xml file exists, a new
+    * web.xml file will be created.
     */
    void saveConfig(final WebAppDescriptor descriptor);
 

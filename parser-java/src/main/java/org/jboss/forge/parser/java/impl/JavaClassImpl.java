@@ -129,6 +129,12 @@ public class JavaClassImpl extends AbstractJavaSourceMemberHolder<JavaClass> imp
    {
       SimpleType simpleType = unit.getAST().newSimpleType(unit.getAST().newSimpleName(Types.toSimpleName(type)));
       getBodyDeclaration().setStructuralProperty(TypeDeclaration.SUPERCLASS_TYPE_PROPERTY, simpleType);
+
+      if (!hasImport(type) && Types.isQualified(type))
+      {
+         addImport(type);
+      }
+      
       return this;
    }
 

@@ -52,11 +52,13 @@ public class ScopedConfigurationAdapter implements Configuration
    }
 
    public ScopedConfigurationAdapter()
-   {}
+   {
+   }
 
    public Configuration getDelegate()
    {
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          if (config != null)
          {
             return config;
@@ -85,7 +87,8 @@ public class ScopedConfigurationAdapter implements Configuration
    public Configuration subset(final String prefix)
    {
       ScopedConfigurationAdapter result = new ScopedConfigurationAdapter();
-      for (Entry<ConfigurationScope, Configuration> entry : delegates.entrySet()) {
+      for (Entry<ConfigurationScope, Configuration> entry : delegates.entrySet())
+      {
          result.setScopedConfiguration(entry.getKey(), entry.getValue().subset(prefix));
       }
       return result;
@@ -94,7 +97,8 @@ public class ScopedConfigurationAdapter implements Configuration
    @Override
    public boolean isEmpty()
    {
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          if (!config.isEmpty())
          {
             return false;
@@ -106,7 +110,8 @@ public class ScopedConfigurationAdapter implements Configuration
    @Override
    public boolean containsKey(final String key)
    {
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          if (config.containsKey(key))
          {
             return true;
@@ -130,7 +135,8 @@ public class ScopedConfigurationAdapter implements Configuration
    @Override
    public void clearProperty(final String key)
    {
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          config.clearProperty(key);
       }
    }
@@ -138,7 +144,8 @@ public class ScopedConfigurationAdapter implements Configuration
    @Override
    public void clear()
    {
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          config.clear();
       }
    }
@@ -146,7 +153,8 @@ public class ScopedConfigurationAdapter implements Configuration
    @Override
    public Object getProperty(final String key)
    {
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          Object property = config.getProperty(key);
          if (property != null)
          {
@@ -160,7 +168,8 @@ public class ScopedConfigurationAdapter implements Configuration
    public Iterator<?> getKeys(final String prefix)
    {
       Set<Object> keys = new HashSet<Object>();
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          Iterator<?> iterator = config.getKeys(prefix);
          while (iterator.hasNext())
          {
@@ -174,7 +183,8 @@ public class ScopedConfigurationAdapter implements Configuration
    public Iterator<?> getKeys()
    {
       Set<Object> keys = new HashSet<Object>();
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          Iterator<?> iterator = config.getKeys();
          while (iterator.hasNext())
          {
@@ -188,7 +198,8 @@ public class ScopedConfigurationAdapter implements Configuration
    public Properties getProperties(final String key)
    {
       Properties result = new Properties();
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          result.putAll(config.getProperties(key));
       }
       return result;
@@ -197,7 +208,8 @@ public class ScopedConfigurationAdapter implements Configuration
    @Override
    public boolean getBoolean(final String key)
    {
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          Object property = config.getProperty(key);
          if (property != null)
          {
@@ -210,7 +222,8 @@ public class ScopedConfigurationAdapter implements Configuration
    @Override
    public boolean getBoolean(final String key, final boolean defaultValue)
    {
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          Object property = config.getProperty(key);
          if (property != null)
          {
@@ -223,7 +236,8 @@ public class ScopedConfigurationAdapter implements Configuration
    @Override
    public Boolean getBoolean(final String key, final Boolean defaultValue)
    {
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          Object property = config.getProperty(key);
          if (property != null)
          {
@@ -236,7 +250,8 @@ public class ScopedConfigurationAdapter implements Configuration
    @Override
    public byte getByte(final String key)
    {
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          Object property = config.getProperty(key);
          if (property != null)
          {
@@ -249,7 +264,8 @@ public class ScopedConfigurationAdapter implements Configuration
    @Override
    public byte getByte(final String key, final byte defaultValue)
    {
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          Object property = config.getProperty(key);
          if (property != null)
          {
@@ -262,7 +278,8 @@ public class ScopedConfigurationAdapter implements Configuration
    @Override
    public Byte getByte(final String key, final Byte defaultValue)
    {
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          Object property = config.getProperty(key);
          if (property != null)
          {
@@ -275,7 +292,8 @@ public class ScopedConfigurationAdapter implements Configuration
    @Override
    public double getDouble(final String key)
    {
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          Object property = config.getProperty(key);
          if (property != null)
          {
@@ -288,7 +306,8 @@ public class ScopedConfigurationAdapter implements Configuration
    @Override
    public double getDouble(final String key, final double defaultValue)
    {
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          Object property = config.getProperty(key);
          if (property != null)
          {
@@ -301,7 +320,8 @@ public class ScopedConfigurationAdapter implements Configuration
    @Override
    public Double getDouble(final String key, final Double defaultValue)
    {
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          Object property = config.getProperty(key);
          if (property != null)
          {
@@ -314,7 +334,8 @@ public class ScopedConfigurationAdapter implements Configuration
    @Override
    public float getFloat(final String key)
    {
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          Object property = config.getProperty(key);
          if (property != null)
          {
@@ -327,7 +348,8 @@ public class ScopedConfigurationAdapter implements Configuration
    @Override
    public float getFloat(final String key, final float defaultValue)
    {
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          Object property = config.getProperty(key);
          if (property != null)
          {
@@ -340,7 +362,8 @@ public class ScopedConfigurationAdapter implements Configuration
    @Override
    public Float getFloat(final String key, final Float defaultValue)
    {
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          Object property = config.getProperty(key);
          if (property != null)
          {
@@ -353,7 +376,8 @@ public class ScopedConfigurationAdapter implements Configuration
    @Override
    public int getInt(final String key)
    {
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          Object property = config.getProperty(key);
          if (property != null)
          {
@@ -366,7 +390,8 @@ public class ScopedConfigurationAdapter implements Configuration
    @Override
    public int getInt(final String key, final int defaultValue)
    {
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          Object property = config.getProperty(key);
          if (property != null)
          {
@@ -379,7 +404,8 @@ public class ScopedConfigurationAdapter implements Configuration
    @Override
    public Integer getInteger(final String key, final Integer defaultValue)
    {
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          Object property = config.getProperty(key);
          if (property != null)
          {
@@ -392,7 +418,8 @@ public class ScopedConfigurationAdapter implements Configuration
    @Override
    public long getLong(final String key)
    {
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          Object property = config.getProperty(key);
          if (property != null)
          {
@@ -405,7 +432,8 @@ public class ScopedConfigurationAdapter implements Configuration
    @Override
    public long getLong(final String key, final long defaultValue)
    {
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          Object property = config.getProperty(key);
          if (property != null)
          {
@@ -418,7 +446,8 @@ public class ScopedConfigurationAdapter implements Configuration
    @Override
    public Long getLong(final String key, final Long defaultValue)
    {
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          Object property = config.getProperty(key);
          if (property != null)
          {
@@ -431,7 +460,8 @@ public class ScopedConfigurationAdapter implements Configuration
    @Override
    public short getShort(final String key)
    {
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          Object property = config.getProperty(key);
          if (property != null)
          {
@@ -444,7 +474,8 @@ public class ScopedConfigurationAdapter implements Configuration
    @Override
    public short getShort(final String key, final short defaultValue)
    {
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          Object property = config.getProperty(key);
          if (property != null)
          {
@@ -457,7 +488,8 @@ public class ScopedConfigurationAdapter implements Configuration
    @Override
    public Short getShort(final String key, final Short defaultValue)
    {
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          Object property = config.getProperty(key);
          if (property != null)
          {
@@ -470,7 +502,8 @@ public class ScopedConfigurationAdapter implements Configuration
    @Override
    public BigDecimal getBigDecimal(final String key)
    {
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          Object property = config.getProperty(key);
          if (property != null)
          {
@@ -483,7 +516,8 @@ public class ScopedConfigurationAdapter implements Configuration
    @Override
    public BigDecimal getBigDecimal(final String key, final BigDecimal defaultValue)
    {
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          Object property = config.getProperty(key);
          if (property != null)
          {
@@ -496,7 +530,8 @@ public class ScopedConfigurationAdapter implements Configuration
    @Override
    public BigInteger getBigInteger(final String key)
    {
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          Object property = config.getProperty(key);
          if (property != null)
          {
@@ -509,7 +544,8 @@ public class ScopedConfigurationAdapter implements Configuration
    @Override
    public BigInteger getBigInteger(final String key, final BigInteger defaultValue)
    {
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          Object property = config.getProperty(key);
          if (property != null)
          {
@@ -522,7 +558,8 @@ public class ScopedConfigurationAdapter implements Configuration
    @Override
    public String getString(final String key)
    {
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          Object property = config.getProperty(key);
          if (property != null)
          {
@@ -535,7 +572,8 @@ public class ScopedConfigurationAdapter implements Configuration
    @Override
    public String getString(final String key, final String defaultValue)
    {
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          Object property = config.getProperty(key);
          if (property != null)
          {
@@ -548,7 +586,8 @@ public class ScopedConfigurationAdapter implements Configuration
    @Override
    public String[] getStringArray(final String key)
    {
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          Object property = config.getProperty(key);
          if (property != null)
          {
@@ -561,7 +600,8 @@ public class ScopedConfigurationAdapter implements Configuration
    @Override
    public List<?> getList(final String key)
    {
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          Object property = config.getProperty(key);
          if (property != null)
          {
@@ -574,7 +614,8 @@ public class ScopedConfigurationAdapter implements Configuration
    @Override
    public List<?> getList(final String key, final List<?> defaultValue)
    {
-      for (Configuration config : delegates.values()) {
+      for (Configuration config : delegates.values())
+      {
          Object property = config.getProperty(key);
          if (property != null)
          {

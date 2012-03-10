@@ -22,6 +22,8 @@
 
 package org.jboss.forge.parser.java;
 
+import java.util.List;
+
 import org.jboss.forge.parser.JavaParser;
 
 /**
@@ -32,11 +34,25 @@ import org.jboss.forge.parser.JavaParser;
  */
 public interface JavaEnum extends JavaSource<JavaEnum>
 {
-   
+   /**
+    * Add a new {@link EnumConstant}
+    */
    EnumConstant<JavaEnum> addEnumConstant();
    
+   /**
+    * Add a new {@link EnumConstant} using the given declaration.
+    */
    EnumConstant<JavaEnum> addEnumConstant(String declaration);
    
-   EnumConstant<JavaEnum> getEnumConstant(String declaration);
+   /**
+    * Return the {@link EnumConstant} with the given name, or return null if no such constant exists.
+    * @param name
+    * @return
+    */
+   EnumConstant<JavaEnum> getEnumConstant(String name);
 
+   /**
+    * Return all declared {@link EnumConstant} types for this {@link JavaEnum}
+    */
+   List<EnumConstant<JavaEnum>> getEnumConstants();
 }

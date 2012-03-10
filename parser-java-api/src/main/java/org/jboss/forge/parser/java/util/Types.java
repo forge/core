@@ -115,6 +115,13 @@ public class Types
       return false;
    }
 
+   public static boolean isBasicType(String idType)
+   {
+      return isPrimitive(idType)
+               || Arrays.asList("Boolean", "Byte", "Double", "Float", "Integer", "Long", "Short", "String").contains(
+                        idType);
+   }
+
    static List<String> langTypes = Arrays.asList(
             // Interfaces
             "Appendable",

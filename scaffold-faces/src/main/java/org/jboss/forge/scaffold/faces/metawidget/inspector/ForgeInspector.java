@@ -25,6 +25,7 @@ import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectio
 import static org.metawidget.inspector.InspectionResultConstants.*;
 import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.*;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.Embedded;
@@ -33,6 +34,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import org.jboss.forge.parser.java.EnumConstant;
+import org.jboss.forge.parser.java.JavaEnum;
+import org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle.ForgePropertyStyle.ForgeProperty;
 import org.metawidget.inspector.impl.BaseObjectInspector;
 import org.metawidget.inspector.impl.BaseObjectInspectorConfig;
 import org.metawidget.inspector.impl.propertystyle.Property;
@@ -76,7 +80,8 @@ public class ForgeInspector
 
       // OneToOne
 
-      if ( property.isAnnotationPresent(OneToOne.class) || property.isAnnotationPresent(Embedded.class)) {
+      if (property.isAnnotationPresent(OneToOne.class) || property.isAnnotationPresent(Embedded.class))
+      {
 
          attributes.put(ONE_TO_ONE, TRUE);
       }
@@ -85,14 +90,10 @@ public class ForgeInspector
 
       if (property.isAnnotationPresent(ManyToOne.class))
       {
-         // Note: this will look awful until https://issues.jboss.org/browse/FORGE-389
-
          attributes
                   .put(FACES_LOOKUP,
                            StaticFacesUtils.wrapExpression(StringUtils.decapitalize(ClassUtils.getSimpleName(property
                                     .getType())) + "Bean.all"));
-
-         // Note: this will fail on POSTback until https://issues.jboss.org/browse/FORGE-386
 
          attributes
                   .put(FACES_CONVERTER_ID,
@@ -100,18 +101,30 @@ public class ForgeInspector
                                     .getType())) + "Bean.converter"));
       }
 
-      // OneToMany
+      // OneToMany and ManyToMany
 
-      if (property.isAnnotationPresent(OneToMany.class))
+      if (property.isAnnotationPresent(OneToMany.class) || property.isAnnotationPresent(ManyToMany.class))
       {
          attributes.put(N_TO_MANY, TRUE);
       }
 
-      // ManyToMany
+      // Enums
 
-      if (property.isAnnotationPresent(ManyToMany.class))
-      {
-         attributes.put(N_TO_MANY, TRUE);
+      if ( property instanceof ForgeProperty ) {
+
+         List<EnumConstant<JavaEnum>> enumConstants = ((ForgeProperty) property).getEnumConstants();
+
+         if (enumConstants != null)
+         {
+            List<String> lookup = CollectionUtils.newArrayList();
+
+            for (EnumConstant<JavaEnum> anEnum : enumConstants)
+            {
+               lookup.add(anEnum.getName());
+            }
+
+            attributes.put(LOOKUP, CollectionUtils.toString(lookup));
+         }
       }
 
       return attributes;

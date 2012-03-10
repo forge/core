@@ -23,7 +23,8 @@ package org.jboss.forge.spec.javaee.rest;
 
 import java.util.List;
 
-import javax.ejb.Stateless;
+import javax.ejb.Stateful;
+import javax.ejb.TransactionAttribute;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContextType;
@@ -34,15 +35,16 @@ import javax.ws.rs.*;
  * 
  *         JAX-RS Example This class produces a RESTful service to read the contents of the table.
  */
-@Stateless
+@Stateful
 @Path("/objects")
+@TransactionAttribute
 public class @{entityTable}Endpoint
 {
    @PersistenceContext(type = PersistenceContextType.EXTENDED)
    private EntityManager em;
 
    @POST
-   @Consumes("text/xml")
+   @Consumes("@{contentType}")
    public @{entity.getName()} create(@{entity.getName()} entity)
    {
       em.joinTransaction();
@@ -52,8 +54,8 @@ public class @{entityTable}Endpoint
 
    @DELETE
    @Path("/{id:[0-9][0-9]*}")
-   @Produces("text/xml")
-   public @{entity.getName()} deleteById(@PathParam("id") long id)
+   @Produces("@{contentType}")
+   public @{entity.getName()} deleteById(@PathParam("id") @{idType} id)
    {
       em.joinTransaction();
       @{entity.getName()} result = em.find(@{entity.getName()}.class, id);
@@ -63,14 +65,14 @@ public class @{entityTable}Endpoint
 
    @GET
    @Path("/{id:[0-9][0-9]*}")
-   @Produces("text/xml")
-   public @{entity.getName()} findById(@PathParam("id") long id)
+   @Produces("@{contentType}")
+   public @{entity.getName()} findById(@PathParam("id") @{idType} id)
    {
       return em.find(@{entity.getName()}.class, id);
    }
 
    @GET
-   @Produces("text/xml")
+   @Produces("@{contentType}")
    public List<@{entity.getName()}> listAll()
    {
       @SuppressWarnings("unchecked")
@@ -80,10 +82,10 @@ public class @{entityTable}Endpoint
 
    @PUT
    @Path("/{id:[0-9][0-9]*}")
-   @Consumes("text/xml")
-   public @{entity.getName()} update(@PathParam("id") long id, @{entity.getName()} entity)
+   @Consumes("@{contentType}")
+   public @{entity.getName()} update(@PathParam("id") @{idType} id, @{entity.getName()} entity)
    {
-      entity.setId(id);
+      entity.@{setIdStatement};
       em.joinTransaction();
       entity = em.merge(entity);
       return entity;

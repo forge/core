@@ -29,8 +29,10 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 
+import org.jboss.forge.parser.java.EnumConstant;
 import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.FieldHolder;
+import org.jboss.forge.parser.java.JavaEnum;
 import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.parser.java.Method;
 import org.jboss.forge.parser.java.MethodHolder;
@@ -142,15 +144,13 @@ public class ForgePropertyStyle
 
          // Lookup properties
 
-         JavaSource<?> clazz = sourceForName(type);
+         JavaSource<?> clazz = sourceForName(this.project,type);
 
-         if (clazz == null)
+         if (clazz instanceof MethodHolder<?>)
          {
-            return properties;
+            lookupGetters(properties, (MethodHolder<?>) clazz);
+            lookupSetters(properties, (MethodHolder<?>) clazz);
          }
-
-         lookupGetters(properties, (MethodHolder<?>) clazz);
-         lookupSetters(properties, (MethodHolder<?>) clazz);
 
          return properties;
       }
@@ -211,7 +211,7 @@ public class ForgePropertyStyle
 
          properties
                   .put(propertyName,
-                           new ForgeProperty(propertyName, returnType, method, null, privateField));
+                           new ForgeProperty(propertyName, returnType, method, null, privateField, this.project));
       }
    }
 
@@ -317,7 +317,7 @@ public class ForgePropertyStyle
                      propertyName,
                      new ForgeProperty(propertyName, existingForgeProperty.getType(),
                               existingForgeProperty.getReadMethod(), method, getPrivateField((FieldHolder<?>) clazz,
-                                       propertyName)));
+                                       propertyName), this.project));
             continue;
          }
 
@@ -330,7 +330,7 @@ public class ForgePropertyStyle
 
          properties
                   .put(propertyName,
-                           new ForgeProperty(propertyName, type, null, method, privateField));
+                           new ForgeProperty(propertyName, type, null, method, privateField, this.project));
       }
    }
 
@@ -402,11 +402,11 @@ public class ForgePropertyStyle
    // Private methods
    //
 
-   private JavaSource<?> sourceForName(final String type)
+   /*package private*/ static JavaSource<?> sourceForName(final Project project, final String type)
    {
       try
       {
-         JavaSourceFacet javaSourceFact = this.project.getFacet(JavaSourceFacet.class);
+         JavaSourceFacet javaSourceFact = project.getFacet(JavaSourceFacet.class);
          return javaSourceFact.getJavaResource(type).getJavaSource();
       }
       catch (FileNotFoundException e)
@@ -434,13 +434,16 @@ public class ForgePropertyStyle
 
       private final Field<?> privateField;
 
+      private final Project project;
+
       //
       // Constructor
       //
 
       public ForgeProperty(final String name, final String type, final Method<?> readMethod,
                final Method<?> writeMethod,
-               final Field<?> privateField)
+               final Field<?> privateField,
+               final Project project)
       {
          super(name, type);
 
@@ -455,6 +458,7 @@ public class ForgePropertyStyle
          }
 
          this.privateField = privateField;
+         this.project = project;
       }
 
       //
@@ -497,7 +501,7 @@ public class ForgePropertyStyle
             annotation = this.readMethod.getAnnotation(annotationClass.getName());
          }
 
-         if (annotation == null)
+         if (annotation == null && this.privateField != null)
          {
             annotation = this.privateField.getAnnotation(annotationClass.getName());
          }
@@ -506,6 +510,17 @@ public class ForgePropertyStyle
          {
             T annotationProxy = AnnotationProxy.newInstance(annotation);
             return annotationProxy;
+         }
+
+         return null;
+      }
+
+      public List<EnumConstant<JavaEnum>> getEnumConstants()
+      {
+         JavaSource<?> source = sourceForName( this.project, getType() );
+
+         if ( source instanceof JavaEnum ) {
+            return ((JavaEnum) source).getEnumConstants();
          }
 
          return null;
@@ -541,13 +556,11 @@ public class ForgePropertyStyle
 
       public Method<?> getReadMethod()
       {
-
          return this.readMethod;
       }
 
       public Method<?> getWriteMethod()
       {
-
          return this.writeMethod;
       }
    }

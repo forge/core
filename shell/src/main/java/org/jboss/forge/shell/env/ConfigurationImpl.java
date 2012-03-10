@@ -44,12 +44,13 @@ public class ConfigurationImpl
 {
    private Shell shell;
    private ForgeEnvironment environment;
-   private Configuration userConfig;
+   private ScopedConfigurationAdapter userConfig;
    private ScopedConfigurationAdapter projectConfig;
    private Project currentProject;
 
    public ConfigurationImpl()
-   {}
+   {
+   }
 
    @Inject
    public ConfigurationImpl(final Shell shell)
@@ -66,18 +67,22 @@ public class ConfigurationImpl
       {
          currentProject = project;
          ScopedConfigurationAdapter projectConfig = new ScopedConfigurationAdapter();
-         XMLConfiguration forgeXml;
-         try {
-            forgeXml = new XMLConfiguration(getProjectSettings(project).getUnderlyingResourceObject());
+         XMLConfiguration projectLocalConfig;
+         try
+         {
+            projectLocalConfig = new XMLConfiguration(getProjectSettings(project).getUnderlyingResourceObject());
          }
-         catch (org.apache.commons.configuration.ConfigurationException e) {
+         catch (org.apache.commons.configuration.ConfigurationException e)
+         {
             throw new ConfigurationException(e);
          }
-         forgeXml.setReloadingStrategy(new FileChangedReloadingStrategy());
-         forgeXml.setAutoSave(true);
-         projectConfig.setScopedConfiguration(ConfigurationScope.PROJECT,
-                  new ConfigurationAdapter(projectConfig, forgeXml));
-         projectConfig.setScopedConfiguration(ConfigurationScope.USER, getUserConfig(projectConfig));
+         projectLocalConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
+         projectLocalConfig.setAutoSave(true);
+
+         projectConfig.setScopedConfiguration(ConfigurationScope.PROJECT, new ConfigurationAdapter(projectConfig,
+                  projectLocalConfig));
+         projectConfig.setScopedConfiguration(ConfigurationScope.USER, getUserConfig());
+
          this.projectConfig = projectConfig;
          return projectConfig;
       }
@@ -85,28 +90,26 @@ public class ConfigurationImpl
       {
          return projectConfig;
       }
-      return getUserConfig(projectConfig);
+      return getUserConfig();
    }
 
-   public Configuration getUserConfig(final ScopedConfigurationAdapter config) throws ConfigurationException
+   public Configuration getUserConfig() throws ConfigurationException
    {
       // FIXME NPE caused when no project exists because config param is null
       if (userConfig == null)
       {
          XMLConfiguration globalXml;
-         try {
-            globalXml = new XMLConfiguration(environment.getUserConfiguration()
-                     .getUnderlyingResourceObject());
+         try
+         {
+            globalXml = new XMLConfiguration(environment.getUserConfiguration().getUnderlyingResourceObject());
          }
-         catch (org.apache.commons.configuration.ConfigurationException e) {
+         catch (org.apache.commons.configuration.ConfigurationException e)
+         {
             throw new ConfigurationException(e);
          }
          globalXml.setReloadingStrategy(new FileChangedReloadingStrategy());
          globalXml.setAutoSave(true);
-         if (config != null)
-            userConfig = new ConfigurationAdapter(config, globalXml);
-         else
-            userConfig = new ConfigurationAdapter(new ScopedConfigurationAdapter(), globalXml);
+         userConfig = new ScopedConfigurationAdapter(ConfigurationScope.USER, new ConfigurationAdapter(globalXml));
       }
       return userConfig;
    }

@@ -107,7 +107,7 @@ public class MethodImpl<O extends JavaSource<O>> implements Method<O>
          }
       }
 
-      signature += ") : " + (this.getReturnType() == null ? "null" : this.getReturnType());
+      signature += ") : " + (this.getReturnType() == null ? "void" : this.getReturnType());
       return signature;
    }
 
@@ -234,9 +234,17 @@ public class MethodImpl<O extends JavaSource<O>> implements Method<O>
    {
       String result = null;
       org.eclipse.jdt.core.dom.Type returnType = method.getReturnType2();
-      if (!isConstructor() && (returnType != null))
+
+      if (returnType != null)
       {
-         result = returnType.toString();
+         if ("void".equals(returnType.toString()))
+         {
+            return null;
+         }
+         else if (!isConstructor())
+         {
+            result = returnType.toString();
+         }
       }
 
       result = parent.resolveType(result);

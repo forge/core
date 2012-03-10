@@ -118,15 +118,20 @@ public class JavaResource extends FileResource<JavaResource>
             {
                list.add(new JavaMethodResource(this, (Method<? extends JavaSource<?>>) member));
             }
-            else if(member instanceof EnumConstant)
-            {
-               list.add(new EnumConstantResource(this,(EnumConstant<JavaEnum>) member));
-            }
             else
             {
                throw new UnsupportedOperationException("Unknown member type: " + member);
             }
          }
+
+         if (getJavaSource() instanceof JavaEnum)
+         {
+            for (EnumConstant<JavaEnum> e : ((JavaEnum) getJavaSource()).getEnumConstants())
+            {
+               list.add(new EnumConstantResource(this, (EnumConstant<JavaEnum>) e));
+            }
+         }
+
          return list;
       }
       catch (ParserException e)
