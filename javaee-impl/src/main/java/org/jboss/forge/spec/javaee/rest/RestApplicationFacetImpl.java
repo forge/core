@@ -27,6 +27,7 @@ import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.project.facets.BaseFacet;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.resources.java.JavaResource;
+import org.jboss.forge.resources.java.JavaResourceVisitor;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.spec.javaee.RestApplicationFacet;
@@ -40,92 +41,143 @@ import java.io.FileNotFoundException;
  */
 @Alias("forge.spec.jaxrs.applicationclass")
 @RequiresFacet({RestFacet.class, JavaSourceFacet.class})
-public class RestApplicationFacetImpl extends BaseFacet implements RestApplicationFacet {
-    private String pkg;
-    private String classname;
-    private String rootpath;
+public class RestApplicationFacetImpl extends BaseFacet implements RestApplicationFacet
+{
+   private String pkg;
+   private String classname;
+   private String rootpath;
 
-    @Inject
-    private Configuration configuration;
+   @Inject
+   private Configuration configuration;
 
-    @Inject
-    public RestApplicationFacetImpl(Configuration configuration) {
-        pkg = configuration.getString(REST_APPLICATIONCLASS_PACKAGE);
-        classname = configuration.getString(REST_APPLICATIONCLASS_NAME);
-        rootpath = configuration.getString(RestFacet.ROOTPATH);
-    }
+   @Inject
+   public RestApplicationFacetImpl(Configuration configuration)
+   {
+      pkg = configuration.getString(REST_APPLICATIONCLASS_PACKAGE);
+      classname = configuration.getString(REST_APPLICATIONCLASS_NAME);
+      rootpath = configuration.getString(RestFacet.ROOTPATH);
+   }
 
-    @Override
-    public boolean install() {
-        if (!isInstalled()) {
-            JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
+   @Override
+   public boolean install()
+   {
+      if (!isInstalled())
+      {
+         JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
 
-            JavaClass applicationClass = JavaParser.create(JavaClass.class)
-                    .setPackage(pkg)
-                    .setName(classname)
-                    .setSuperType("javax.ws.rs.core.Application")
-                    .addAnnotation("javax.ws.rs.ApplicationPath").setStringValue(rootpath).getOrigin();
+         JavaClass applicationClass = JavaParser.create(JavaClass.class)
+                 .setPackage(pkg)
+                 .setName(classname)
+                 .setSuperType("javax.ws.rs.core.Application")
+                 .addAnnotation("javax.ws.rs.ApplicationPath").setStringValue(rootpath).getOrigin();
 
-            applicationClass.addImport("javax.ws.rs.core.Application");
-            applicationClass.addImport("javax.ws.rs.ApplicationPath");
+         applicationClass.addImport("javax.ws.rs.core.Application");
+         applicationClass.addImport("javax.ws.rs.ApplicationPath");
 
-            try {
-                javaSourceFacet.saveJavaSource(applicationClass);
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
+         try
+         {
+            javaSourceFacet.saveJavaSource(applicationClass);
+         } catch (FileNotFoundException e)
+         {
+            throw new RuntimeException(e);
+         }
+      }
+
+      return true;
+   }
+
+   @Override
+   public boolean isInstalled()
+   {
+      JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
+
+      if ((pkg == null || classname == null) && !findApplicationClass())
+      {
+         return false;
+      }
+
+      try
+      {
+         JavaResource javaResource = javaSourceFacet.getJavaResource(pkg + "." + classname);
+         if (javaResource.exists())
+         {
+            return true;
+         } else
+         {
+
+         }
+
+      } catch (FileNotFoundException e)
+      {
+         return false;
+      }
+
+      return false;
+   }
+
+   private boolean findApplicationClass()
+   {
+      JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
+
+      configuration.clearProperty(REST_APPLICATIONCLASS_NAME);
+      configuration.clearProperty(REST_APPLICATIONCLASS_PACKAGE);
+
+
+      javaSourceFacet.visitJavaSources(new JavaResourceVisitor()
+      {
+         @Override
+         public void visit(JavaResource javaResource)
+         {
+            try
+            {
+               if (javaResource.getJavaSource().getAnnotation("javax.ws.rs.ApplicationPath") != null)
+               {
+                  configuration.setProperty(REST_APPLICATIONCLASS_PACKAGE, javaResource.getJavaSource().getPackage());
+                  configuration.setProperty(REST_APPLICATIONCLASS_NAME, javaResource.getFullyQualifiedName());
+                  configuration.setProperty(RestFacet.ROOTPATH, javaResource.getJavaSource().getAnnotation("javax.ws.rs.ApplicationPath").getLiteralValue());
+               }
+            } catch (FileNotFoundException e)
+            {
+               throw new RuntimeException(e);
             }
-        }
+         }
+      });
 
-        return true;
-    }
+      return configuration.getString(REST_APPLICATIONCLASS_NAME) != null;
+   }
 
-    @Override
-    public boolean isInstalled() {
-        JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
+   @Override
+   public void setApplicationPath(String path)
+   {
+      configuration.setProperty(RestFacet.ROOTPATH, path);
 
-        if (pkg == null || classname == null) {
-            return false;
-        }
+      if (pkg == null || classname == null)
+      {
+         reportConfigurationError(classname);
+      }
 
-        try {
-            JavaResource javaResource = javaSourceFacet.getJavaResource(pkg + "." + classname);
-            if (javaResource.exists()) {
-                return true;
-            }
+      JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
 
-        } catch (FileNotFoundException e) {
-            return false;
-        }
-
-        return false;
-    }
-
-    @Override
-    public void setApplicationPath(String path) {
-        configuration.setProperty(RestFacet.ROOTPATH, path);
-
-        if (pkg == null || classname == null) {
+      try
+      {
+         String classname = pkg + "." + this.classname;
+         JavaResource javaResource = javaSourceFacet.getJavaResource(classname);
+         if (!javaResource.exists())
+         {
             reportConfigurationError(classname);
-        }
+         }
 
-        JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
+         javaResource.getJavaSource().getAnnotation("javax.ws.rs.ApplicationPath").setStringValue(path);
 
-        try {
-            String classname = pkg + "." + this.classname;
-            JavaResource javaResource = javaSourceFacet.getJavaResource(classname);
-            if (!javaResource.exists()) {
-                reportConfigurationError(classname);
-            }
+      } catch (FileNotFoundException e)
+      {
+         reportConfigurationError(classname);
+      }
 
-            javaResource.getJavaSource().getAnnotation("javax.ws.rs.ApplicationPath").setStringValue(path);
+   }
 
-        } catch (FileNotFoundException e) {
-            reportConfigurationError(classname);
-        }
-
-    }
-
-    private void reportConfigurationError(String classname) {
-        throw new RuntimeException("Error setting application path. The class '" + classname + "' in your configuration file does not exist. Run rest setup again.");
-    }
+   private void reportConfigurationError(String classname)
+   {
+      throw new RuntimeException("Error setting application path. The class '" + classname + "' in your configuration file does not exist. Run rest setup again.");
+   }
 }
