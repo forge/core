@@ -68,8 +68,7 @@ public class RestFacetImpl extends BaseJavaEEFacet implements RestFacet
    protected List<Dependency> getRequiredDependencies()
    {
       return Arrays.asList(
-              (Dependency) DependencyBuilder.create("org.jboss.spec.javax.ws.rs:jboss-jaxrs-api_1.1_spec"),
-              DependencyBuilder.create("org.jboss.spec.javax.xml.bind:jboss-jaxb-api_2.2_spec")
+              (Dependency) DependencyBuilder.create("org.jboss.spec.javax.ws.rs:jboss-jaxrs-api_1.1_spec")
       );
    }
 
