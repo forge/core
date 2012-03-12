@@ -90,7 +90,7 @@ public class FacesFacetImpl extends BaseJavaEEFacet implements FacesFacet
    {
       if (!isInstalled())
       {
-         if (!getConfigFile().createNewFile())
+         if (!getConfigFile().exists() && !getConfigFile().createNewFile())
          {
             throw new RuntimeException("Failed to create required [" + getConfigFile().getFullyQualifiedName() + "]");
          }
