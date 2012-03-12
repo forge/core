@@ -61,7 +61,7 @@ import org.jboss.forge.shell.util.ConstraintInspector;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- *
+ * 
  */
 @Alias("scaffold")
 @Topic("UI Generation & Scaffolding")
@@ -189,52 +189,69 @@ public class ScaffoldPlugin implements Plugin
       ScaffoldProvider scaffoldImpl = null;
 
       Collection<Facet> facets = project.getFacets();
-      List<ScaffoldProvider> detected = new ArrayList<ScaffoldProvider>();
-      for (Facet facet : facets) {
+      List<ScaffoldProvider> detectedScaffolds = new ArrayList<ScaffoldProvider>();
+      for (Facet facet : facets)
+      {
          if (facet instanceof ScaffoldProvider)
          {
-            detected.add((ScaffoldProvider) facet);
-            scaffoldImpl = (ScaffoldProvider) facet;
-         }
-      }
-
-      List<String> typeNames = new ArrayList<String>();
-      for (ScaffoldProvider sp : detected) {
-         typeNames.add(ConstraintInspector.getName(sp.getClass()));
-      }
-      if (detected.size() > 1)
-      {
-         // FIXME This needs to show the facet name!!!
-         String name = prompt.promptChoiceTyped("Use which scaffold provider?", typeNames,
-                  typeNames.get(typeNames.size() - 1));
-
-         for (ScaffoldProvider sp : detected) {
-            if (name.equals(ConstraintInspector.getName(sp.getClass())))
+            detectedScaffolds.add((ScaffoldProvider) facet);
+            if (ConstraintInspector.getName(facet.getClass()).equals(scaffoldType))
             {
-               scaffoldImpl = sp;
-               break;
+               scaffoldImpl = (ScaffoldProvider) facet;
             }
          }
       }
 
-      if ((scaffoldType == null)
-               && prompt.promptBoolean("No scaffold type was selected, use default (JSF)?"))
+      if (scaffoldImpl == null)
       {
-         scaffoldType = "faces";
-      }
-      else if (scaffoldType == null)
-      {
-         throw new RuntimeException("Re-run with --scaffoldType {...}");
-      }
-
-      for (ScaffoldProvider type : impls)
-      {
-         if (ConstraintInspector.getName(type.getClass()).equals(scaffoldType))
+         List<String> detectedScaffoldNames = new ArrayList<String>();
+         for (ScaffoldProvider sp : detectedScaffolds)
          {
-            scaffoldImpl = type;
+            detectedScaffoldNames.add(ConstraintInspector.getName(sp.getClass()));
+         }
+         
+         if (detectedScaffolds.size() > 1)
+         {
+            String name = prompt.promptChoiceTyped("Use which previously installed scaffold provider?",
+                     detectedScaffoldNames,
+                     detectedScaffoldNames.get(detectedScaffoldNames.size() - 1));
+
+            for (ScaffoldProvider sp : detectedScaffolds)
+            {
+               if (name.equals(ConstraintInspector.getName(sp.getClass())))
+               {
+                  scaffoldImpl = sp;
+                  break;
+               }
+            }
          }
       }
 
+      /*
+       * Resolve scaffoldType
+       */
+      if ((scaffoldImpl == null && scaffoldType == null)
+               && prompt.promptBoolean("No scaffold type was selected, use default [JavaServer Faces]?"))
+      {
+         scaffoldType = "faces";
+         for (ScaffoldProvider type : impls)
+         {
+            if (ConstraintInspector.getName(type.getClass()).equals(scaffoldType))
+            {
+               scaffoldImpl = type;
+            }
+         }
+      }
+
+      if (scaffoldImpl == null)
+      {
+         throw new RuntimeException(
+                  "No scaffold installed was detected, and no scaffold type was selected; re-run with '--scaffoldType ...' ");
+      }
+
+      /*
+       * Perform installation
+       */
       if (!project.hasFacet(scaffoldImpl.getClass())
                && prompt.promptBoolean("Scaffold provider [" + scaffoldType + "] is not installed. Install it?"))
       {
