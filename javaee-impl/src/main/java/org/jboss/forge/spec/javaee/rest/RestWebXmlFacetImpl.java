@@ -40,77 +40,83 @@ import javax.inject.Inject;
 @RequiresFacet(RestFacet.class)
 public class RestWebXmlFacetImpl extends BaseFacet implements RestWebXmlFacet
 {
-    public static final String JAXRS_SERVLET = "javax.ws.rs.core.Application";
+   public static final String JAXRS_SERVLET = "javax.ws.rs.core.Application";
 
-    @Inject
-    private Configuration config;
+   @Inject
+   private Configuration config;
 
-    @Override
-    public boolean install()
-    {
-        if (!installedInWebXML())
-        {
-            // TODO this needs to be fixed in desciptors (allow creation of servlet mapping)
-            ServletFacet servlet = project.getFacet(ServletFacet.class);
-            WebAppDescriptorImpl web = (WebAppDescriptorImpl) servlet.getConfig();
-            Node node = web.getRootNode();
-            Node servletClass = node.getOrCreate("servlet-mapping/servlet-name=" + JAXRS_SERVLET);
+   @Override
+   public boolean install()
+   {
+      if (!installedInWebXML())
+      {
+         // TODO this needs to be fixed in desciptors (allow creation of servlet mapping)
+         ServletFacet servlet = project.getFacet(ServletFacet.class);
+         WebAppDescriptorImpl web = (WebAppDescriptorImpl) servlet.getConfig();
+         Node node = web.getRootNode();
+         Node servletClass = node.getSingle("servlet-mapping/servlet-name=" + JAXRS_SERVLET);
+         if (servletClass == null)
+         {
+            Node mapping = node.createChild("servlet-mapping");
+            mapping.createChild("servlet-name").text(JAXRS_SERVLET);
             String urlPattern = config.getString(RestFacet.ROOTPATH);
-            if(urlPattern.endsWith("/"))
+            if (urlPattern.endsWith("/"))
             {
-               urlPattern = urlPattern.substring(0, urlPattern.length()-1);
+               urlPattern = urlPattern.substring(0, urlPattern.length() - 1);
             }
-            servletClass.getParent().getOrCreate("url-pattern").text(urlPattern + "/*");
-            servlet.saveConfig(web);
-        }
+            mapping.createChild("url-pattern").text(urlPattern + "/*");
+         }
 
-        return true;
-    }
+         servlet.saveConfig(web);
+      }
 
-    @Override
-    public boolean isInstalled()
-    {
-        return installedInWebXML();
-    }
+      return true;
+   }
 
-    private boolean installedInWebXML()
-    {
-        return getServletPath() != null;
-    }
+   @Override
+   public boolean isInstalled()
+   {
+      return installedInWebXML();
+   }
 
-    public String getServletPath()
-    {
-        ServletFacet servlet = project.getFacet(ServletFacet.class);
-        WebAppDescriptorImpl web = (WebAppDescriptorImpl) servlet.getConfig();
+   private boolean installedInWebXML()
+   {
+      return getServletPath() != null;
+   }
 
-        Node node = web.getRootNode();
-        Node servletClass = node.getSingle("servlet-mapping/servlet-name=" + JAXRS_SERVLET);
-        if (servletClass != null)
-        {
-            Node url = servletClass.getParent().getSingle("url-pattern");
-            if (url != null)
-            {
-                return url.getText();
-            }
-        }
-        return null;
-    }
+   public String getServletPath()
+   {
+      ServletFacet servlet = project.getFacet(ServletFacet.class);
+      WebAppDescriptorImpl web = (WebAppDescriptorImpl) servlet.getConfig();
 
-    @Override
-    public void setApplicationPath(final String path)
-    {
-        config.setProperty(RestFacet.ROOTPATH, path);
-        ServletFacet servlet = project.getFacet(ServletFacet.class);
-        WebAppDescriptorImpl web = (WebAppDescriptorImpl) servlet.getConfig();
+      Node node = web.getRootNode();
+      Node servletClass = node.getSingle("servlet-mapping/servlet-name=" + JAXRS_SERVLET);
+      if (servletClass != null)
+      {
+         Node url = servletClass.getParent().getSingle("url-pattern");
+         if (url != null)
+         {
+            return url.getText();
+         }
+      }
+      return null;
+   }
 
-        Node node = web.getRootNode();
-        Node servletClass = node.getSingle("servlet-mapping/servlet-name=" + JAXRS_SERVLET);
+   @Override
+   public void setApplicationPath(final String path)
+   {
+      config.setProperty(RestFacet.ROOTPATH, path);
+      ServletFacet servlet = project.getFacet(ServletFacet.class);
+      WebAppDescriptorImpl web = (WebAppDescriptorImpl) servlet.getConfig();
 
-        if (servletClass != null)
-        {
-            servletClass.getParent().getOrCreate("url-pattern").text(path);
-        }
+      Node node = web.getRootNode();
+      Node servletClass = node.getSingle("servlet-mapping/servlet-name=" + JAXRS_SERVLET);
 
-        servlet.saveConfig(web);
-    }
+      if (servletClass != null)
+      {
+         servletClass.getParent().getOrCreate("url-pattern").text(path);
+      }
+
+      servlet.saveConfig(web);
+   }
 }
