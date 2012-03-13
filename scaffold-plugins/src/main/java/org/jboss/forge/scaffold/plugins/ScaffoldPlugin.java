@@ -91,6 +91,7 @@ public class ScaffoldPlugin implements Plugin
    @SetupCommand
    public void setup(
             final PipeOut out,
+            @Option(name="targetDir", defaultValue="scaffold") String targetDir,
             @Option(name = "scaffoldType", required = false,
                      completer = ScaffoldProviderCompleter.class) final String scaffoldType,
             @Option(flagOnly = true, name = "overwrite") final boolean overwrite,
@@ -98,7 +99,7 @@ public class ScaffoldPlugin implements Plugin
    {
       ScaffoldProvider provider = getScaffoldType(scaffoldType);
       verifyTemplate(provider, template);
-      List<Resource<?>> generatedResources = provider.setup(template, overwrite);
+      List<Resource<?>> generatedResources = provider.setup(targetDir, template, overwrite);
 
       // TODO give plugins a chance to react to generated resources, use event bus?
       if (!generatedResources.isEmpty())
@@ -110,6 +111,7 @@ public class ScaffoldPlugin implements Plugin
    @Command("indexes")
    public void generateIndex(
             final PipeOut out,
+            @Option(name="targetDir", defaultValue="scaffold") String targetDir,
             @Option(name = "scaffoldType", required = false,
                      completer = ScaffoldProviderCompleter.class) final String scaffoldType,
             @Option(flagOnly = true, name = "overwrite") final boolean overwrite,
@@ -117,7 +119,7 @@ public class ScaffoldPlugin implements Plugin
    {
       ScaffoldProvider provider = getScaffoldType(scaffoldType);
       verifyTemplate(provider, template);
-      List<Resource<?>> generatedResources = provider.generateIndex(template, overwrite);
+      List<Resource<?>> generatedResources = provider.generateIndex(targetDir, template, overwrite);
 
       // TODO give plugins a chance to react to generated resources, use event bus?
       if (!generatedResources.isEmpty())
@@ -128,13 +130,14 @@ public class ScaffoldPlugin implements Plugin
 
    @Command("templates")
    public void generateTemplates(
+            @Option(name="targetDir", defaultValue="scaffold") String targetDir,
             @Option(name = "scaffoldType", required = false,
                      completer = ScaffoldProviderCompleter.class) final String scaffoldType,
             final PipeOut out,
             @Option(flagOnly = true, name = "overwrite") final boolean overwrite)
    {
       ScaffoldProvider provider = getScaffoldType(scaffoldType);
-      List<Resource<?>> generatedResources = provider.generateTemplates(overwrite);
+      List<Resource<?>> generatedResources = provider.generateTemplates(targetDir, overwrite);
 
       // TODO give plugins a chance to react to generated resources, use event bus?
       if (!generatedResources.isEmpty())
@@ -145,11 +148,12 @@ public class ScaffoldPlugin implements Plugin
 
    @Command("from-entity")
    public void generateFromEntity(
-            @Option(required = false) JavaResource[] targets,
+            @Option(name="targetDir", defaultValue="scaffold") String targetDir,
             @Option(name = "scaffoldType", required = false,
                      completer = ScaffoldProviderCompleter.class) final String scaffoldType,
             @Option(flagOnly = true, name = "overwrite") final boolean overwrite,
             @Option(name = "usingTemplate") final Resource<?> template,
+            @Option(required = false) JavaResource[] targets,
             final PipeOut out) throws FileNotFoundException
    {
       if (((targets == null) || (targets.length < 1))
@@ -171,7 +175,7 @@ public class ScaffoldPlugin implements Plugin
       for (JavaResource jr : javaTargets)
       {
          JavaClass entity = (JavaClass) (jr).getJavaSource();
-         List<Resource<?>> generatedResources = provider.generateFromEntity(template, entity, overwrite);
+         List<Resource<?>> generatedResources = provider.generateFromEntity(targetDir, template, entity, overwrite);
 
          // TODO give plugins a chance to react to generated resources, use event bus?
          if (!generatedResources.isEmpty())
