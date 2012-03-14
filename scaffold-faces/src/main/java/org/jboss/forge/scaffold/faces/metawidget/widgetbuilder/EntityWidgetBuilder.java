@@ -123,7 +123,7 @@ public class EntityWidgetBuilder
             controllerName = StringUtils.decapitalize(controllerName);
 
             HtmlOutcomeTargetLink link = new HtmlOutcomeTargetLink();
-            link.putAttribute("outcome", "/scaffold/" + controllerName + "/view");
+            link.putAttribute("outcome", "/"+targetDir+"/" + controllerName + "/view");
 
             StandardBindingProcessor bindingProcessor = metawidget.getWidgetProcessor(StandardBindingProcessor.class);
 
@@ -517,7 +517,7 @@ public class EntityWidgetBuilder
          // Create a link...
 
          HtmlOutcomeTargetLink link = new HtmlOutcomeTargetLink();
-         link.putAttribute("outcome", "/scaffold/" + controllerName + "/view");
+         link.putAttribute("outcome", "/"+targetDir+"/" + controllerName + "/view");
 
          // ...pointing to the id
 
