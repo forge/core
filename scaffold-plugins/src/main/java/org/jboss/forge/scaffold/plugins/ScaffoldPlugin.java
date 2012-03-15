@@ -56,14 +56,12 @@ import org.jboss.forge.shell.plugins.Command;
 import org.jboss.forge.shell.plugins.Current;
 import org.jboss.forge.shell.plugins.Help;
 import org.jboss.forge.shell.plugins.Option;
-import org.jboss.forge.shell.plugins.PipeOut;
 import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresProject;
 import org.jboss.forge.shell.plugins.SetupCommand;
 import org.jboss.forge.shell.plugins.Topic;
 import org.jboss.forge.shell.util.ConstraintInspector;
-import org.jboss.forge.spec.javaee.ServletFacet;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -208,16 +206,23 @@ public class ScaffoldPlugin implements Plugin
       {
          String targetDirKey = provider.getClass().getName() + "_targetDir";
          target = config.getString(targetDirKey);
-         if(Strings.isNullOrEmpty(target))
+         if (Strings.isNullOrEmpty(target))
          {
             String finalName = project.getFacet(PackagingFacet.class).getFinalName();
-            target = prompt.promptCommon("Create scaffold in which sub-directory of web-root? (e.g. http://localhost:8080/"+finalName+"/DIR)", PromptType.FILE_PATH, "scaffold");
-            if(target.startsWith("/"))
-               target=target.substring(1);
-            if(target.endsWith("/"))
-               target=target.substring(0, target.length()-1);
+            target = prompt.promptCommon(
+                     "Create scaffold in which sub-directory of web-root? (e.g. http://localhost:8080/" + finalName
+                              + "/DIR)", PromptType.FILE_PATH, "scaffold");
+            if (target.startsWith("/"))
+               target = target.substring(1);
+            if (target.endsWith("/"))
+               target = target.substring(0, target.length() - 1);
             config.setProperty(targetDirKey, target);
          }
+      }
+      else
+      {
+         String targetDirKey = provider.getClass().getName() + "_targetDir";
+         config.setProperty(targetDirKey, target);
       }
       return target;
    }
@@ -261,6 +266,13 @@ public class ScaffoldPlugin implements Plugin
                   break;
                }
             }
+         }
+         else if (!detectedScaffolds.isEmpty())
+         {
+            scaffoldImpl = detectedScaffolds.get(0);
+            ShellMessages.info(writer,
+                     "Using currently installed scaffold [" + ConstraintInspector.getName(scaffoldImpl.getClass())
+                              + "]");
          }
       }
 

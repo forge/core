@@ -50,9 +50,6 @@ public class ForgePropertyStyleConfig
    public ForgePropertyStyleConfig setProject(Project project)
    {
       this.project = project;
-
-      // Fluent interface
-
       return this;
    }
 

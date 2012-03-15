@@ -35,6 +35,7 @@ import javax.inject.Inject;
 import javax.persistence.CascadeType;
 import javax.persistence.OneToOne;
 
+import org.jboss.forge.env.Configuration;
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.Annotation;
 import org.jboss.forge.parser.java.Field;
@@ -79,8 +80,8 @@ import org.metawidget.statically.faces.component.html.StaticHtmlMetawidget;
 import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlOutcomeTargetLink;
 import org.metawidget.statically.faces.component.html.widgetbuilder.ReadOnlyWidgetBuilder;
 import org.metawidget.statically.faces.component.html.widgetbuilder.richfaces.RichFacesWidgetBuilder;
+import org.metawidget.statically.html.widgetbuilder.HtmlTag;
 import org.metawidget.statically.javacode.StaticJavaMetawidget;
-import org.metawidget.statically.jsp.html.widgetbuilder.HtmlTag;
 import org.metawidget.util.ArrayUtils;
 import org.metawidget.util.CollectionUtils;
 import org.metawidget.util.XmlUtils;
@@ -173,15 +174,19 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    protected StaticHtmlMetawidget beanMetawidget;
    protected StaticJavaMetawidget qbeMetawidget;
 
+   private Configuration config;
+
    //
    // Constructor
    //
 
    @Inject
-   public FacesScaffold(final ShellPrompt prompt,
+   public FacesScaffold(final Configuration config,
+            final ShellPrompt prompt,
             final TemplateCompiler compiler,
             final Event<InstallFacets> install)
    {
+      this.config = config;
       this.prompt = prompt;
       this.compiler = compiler;
       this.install = install;
@@ -199,9 +204,9 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    //
 
    @Override
-   public List<Resource<?>> setup(final Resource<?> template, final boolean overwrite)
+   public List<Resource<?>> setup(String targetDir, final Resource<?> template, final boolean overwrite)
    {
-      List<Resource<?>> resources = generateIndex(template, overwrite);
+      List<Resource<?>> resources = generateIndex(targetDir, template, overwrite);
       setupWebXML();
 
       return resources;
@@ -220,7 +225,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    {
       super.setProject(project);
 
-      ForgeConfigReader configReader = new ForgeConfigReader(this.project);
+      ForgeConfigReader configReader = new ForgeConfigReader(this.config, this.project);
 
       this.entityMetawidget = new StaticHtmlMetawidget();
       this.entityMetawidget.setConfigReader(configReader);
@@ -240,7 +245,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    }
 
    @Override
-   public List<Resource<?>> generateFromEntity(final Resource<?> template, final JavaClass entity,
+   public List<Resource<?>> generateFromEntity(String targetDir, final Resource<?> template, final JavaClass entity,
             final boolean overwrite)
    {
       // FORGE-460: setupRichFaces during generateFromEntity, not during setup, as generally 'richfaces setup' is called
@@ -293,7 +298,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
          writeEntityMetawidget(context, this.createTemplateEntityMetawidgetIndent, this.createTemplateNamespaces);
 
          result.add(ScaffoldUtil.createOrOverwrite(this.prompt,
-                  web.getWebResource("scaffold/" + ccEntity + "/create.xhtml"),
+                  web.getWebResource(targetDir + "/" + ccEntity + "/create.xhtml"),
                   this.createTemplate.render(context),
                   overwrite));
 
@@ -302,7 +307,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
          writeEntityMetawidget(context, this.viewTemplateEntityMetawidgetIndent, this.viewTemplateNamespaces);
 
          result.add(ScaffoldUtil.createOrOverwrite(this.prompt,
-                  web.getWebResource("scaffold/" + ccEntity + "/view.xhtml"),
+                  web.getWebResource(targetDir + "/" + ccEntity + "/view.xhtml"),
                   this.viewTemplate.render(context), overwrite));
 
          // Generate search
@@ -314,11 +319,11 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
                   this.searchTemplateBeanMetawidgetIndent, this.searchTemplateNamespaces);
 
          result.add(ScaffoldUtil.createOrOverwrite(this.prompt,
-                  web.getWebResource("scaffold/" + ccEntity + "/search.xhtml"),
+                  web.getWebResource(targetDir + "/" + ccEntity + "/search.xhtml"),
                   this.searchTemplate.render(context), overwrite));
 
          // Generate navigation
-         result.add(generateNavigation(overwrite));
+         result.add(generateNavigation(targetDir, overwrite));
 
          // Need ViewUtils and forge.taglib.xml for forgeview:asList
          JavaClass viewUtils = JavaParser.parse(JavaClass.class, this.viewUtilsTemplate.render(context));
@@ -363,23 +368,23 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    }
 
    @Override
-   public List<Resource<?>> generateIndex(final Resource<?> template, final boolean overwrite)
+   public List<Resource<?>> generateIndex(String targetDir, final Resource<?> template, final boolean overwrite)
    {
       List<Resource<?>> result = new ArrayList<Resource<?>>();
       WebResourceFacet web = this.project.getFacet(WebResourceFacet.class);
 
-      this.project.getFacet(ServletFacet.class).getConfig().welcomeFile("index.html");
+      this.project.getFacet(ServletFacet.class).getConfig().welcomeFile("/index.html");
       loadTemplates();
 
-      generateTemplates(overwrite);
+      generateTemplates(targetDir, overwrite);
       HashMap<Object, Object> context = getTemplateContext(template);
 
       // Basic pages
 
-      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("index.html"), getClass()
+      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/index.html"), getClass()
                .getResourceAsStream("/scaffold/faces/index.html"), overwrite));
 
-      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("index.xhtml"),
+      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/index.xhtml"),
                this.indexTemplate.render(context), overwrite));
 
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("error.xhtml"),
@@ -421,7 +426,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    }
 
    @Override
-   public List<Resource<?>> getGeneratedResources()
+   public List<Resource<?>> getGeneratedResources(String targetDir)
    {
       throw new RuntimeException("Not yet implemented!");
    }
@@ -439,7 +444,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    }
 
    @Override
-   public List<Resource<?>> generateTemplates(final boolean overwrite)
+   public List<Resource<?>> generateTemplates(String targetDir, final boolean overwrite)
    {
       List<Resource<?>> result = new ArrayList<Resource<?>>();
 
@@ -452,7 +457,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
                   getClass().getResourceAsStream("/scaffold/faces/paginator.xhtml"),
                   overwrite));
 
-         result.add(generateNavigation(overwrite));
+         result.add(generateNavigation(targetDir, overwrite));
       }
       catch (Exception e)
       {
@@ -641,16 +646,16 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       Node webXML = removeConflictingErrorPages(servlet);
       servlet.getConfigFile().setContents(XMLParser.toXMLInputStream(webXML));
 
-      WebAppDescriptor config = servlet.getConfig();
+      WebAppDescriptor servletConfig = servlet.getConfig();
       WebResourceFacet web = this.project.getFacet(WebResourceFacet.class);
 
       // (prefer /faces/error.xhtml)
 
       String errorLocation = getAccessStrategy().getWebPaths(web.getWebResource("error.xhtml")).get(1);
-      config.errorPage(404, errorLocation);
-      config.errorPage(500, errorLocation);
+      servletConfig.errorPage(404, errorLocation);
+      servletConfig.errorPage(500, errorLocation);
 
-      servlet.saveConfig(config);
+      servlet.saveConfig(servletConfig);
    }
 
    protected Node removeConflictingErrorPages(final ServletFacet servlet)
@@ -678,16 +683,16 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
     * Generates the navigation menu based on scaffolded entities.
     */
 
-   protected Resource<?> generateNavigation(final boolean overwrite)
+   protected Resource<?> generateNavigation(final String targetDir, final boolean overwrite)
             throws IOException
    {
       WebResourceFacet web = this.project.getFacet(WebResourceFacet.class);
       HtmlTag unorderedList = new HtmlTag("ul");
 
-      for (Resource<?> resource : web.getWebResource("scaffold").listResources())
+      for (Resource<?> resource : web.getWebResource(targetDir).listResources())
       {
          HtmlOutcomeTargetLink outcomeTargetLink = new HtmlOutcomeTargetLink();
-         outcomeTargetLink.putAttribute("outcome", "/scaffold/" + resource.getName() + "/search");
+         outcomeTargetLink.putAttribute("outcome", "/" + targetDir + "/" + resource.getName() + "/search");
          outcomeTargetLink.setValue(StringUtils.uncamelCase(resource.getName()));
 
          HtmlTag listItem = new HtmlTag("li");

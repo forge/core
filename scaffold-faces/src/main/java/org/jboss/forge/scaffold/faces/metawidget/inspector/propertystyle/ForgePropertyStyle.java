@@ -62,9 +62,9 @@ public class ForgePropertyStyle
    // Private members
    //
 
-   private Project project;
+   private final Project project;
 
-   private MessageFormat privateFieldConvention;
+   private final MessageFormat privateFieldConvention;
 
    //
    // Constructor

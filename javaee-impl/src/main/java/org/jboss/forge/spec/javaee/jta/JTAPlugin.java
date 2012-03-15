@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat, Inc., and individual contributors
+ * Copyright 2011, Red Hat, Inc., and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,37 +19,46 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.spec.javaee.ejb;
+package org.jboss.forge.spec.javaee.jta;
 
-import java.util.Arrays;
-import java.util.List;
-
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import org.jboss.forge.project.dependencies.Dependency;
-import org.jboss.forge.project.dependencies.DependencyBuilder;
-import org.jboss.forge.project.dependencies.DependencyInstaller;
+import org.jboss.forge.project.Project;
+import org.jboss.forge.project.facets.events.InstallFacets;
+import org.jboss.forge.shell.ShellMessages;
 import org.jboss.forge.shell.plugins.Alias;
-import org.jboss.forge.spec.javaee.BaseJavaEEFacet;
-import org.jboss.forge.spec.javaee.EJBFacet;
+import org.jboss.forge.shell.plugins.PipeOut;
+import org.jboss.forge.shell.plugins.Plugin;
+import org.jboss.forge.shell.plugins.RequiresProject;
+import org.jboss.forge.shell.plugins.SetupCommand;
+import org.jboss.forge.spec.javaee.JTAFacet;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Alias("forge.spec.ejb")
-public class EJBFacetImpl extends BaseJavaEEFacet implements EJBFacet
+@Alias("jta")
+@RequiresProject
+public class JTAPlugin implements Plugin
 {
    @Inject
-   public EJBFacetImpl(final DependencyInstaller installer)
+   private Project project;
+
+   @Inject
+   private Event<InstallFacets> request;
+
+   @SetupCommand
+   public void setup(final PipeOut out)
    {
-      super(installer);
+      if (!project.hasFacet(JTAFacet.class))
+      {
+         request.fire(new InstallFacets(JTAFacet.class));
+      }
+
+      if (project.hasFacet(JTAFacet.class))
+      {
+         ShellMessages.success(out, "Java Transaction API (JTA) is installed.");
+      }
    }
 
-   @Override
-   protected List<Dependency> getRequiredDependencies()
-   {
-      return Arrays.asList(
-               (Dependency) DependencyBuilder.create("org.jboss.spec.javax.ejb:jboss-ejb-api_3.1_spec")
-               );
-   }
 }

@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.spec.javaee.ejb;
+package org.jboss.forge.spec.javaee.jta;
 
 import java.util.Arrays;
 import java.util.List;
@@ -31,16 +31,16 @@ import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.dependencies.DependencyInstaller;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.spec.javaee.BaseJavaEEFacet;
-import org.jboss.forge.spec.javaee.EJBFacet;
+import org.jboss.forge.spec.javaee.JTAFacet;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Alias("forge.spec.ejb")
-public class EJBFacetImpl extends BaseJavaEEFacet implements EJBFacet
+@Alias("forge.spec.jta")
+public class JTAFacetImpl extends BaseJavaEEFacet implements JTAFacet
 {
    @Inject
-   public EJBFacetImpl(final DependencyInstaller installer)
+   public JTAFacetImpl(final DependencyInstaller installer)
    {
       super(installer);
    }
@@ -49,7 +49,7 @@ public class EJBFacetImpl extends BaseJavaEEFacet implements EJBFacet
    protected List<Dependency> getRequiredDependencies()
    {
       return Arrays.asList(
-               (Dependency) DependencyBuilder.create("org.jboss.spec.javax.ejb:jboss-ejb-api_3.1_spec")
+               (Dependency)DependencyBuilder.create("org.jboss.spec.javax.transaction:jboss-transaction-api_1.1_spec")
                );
    }
 }

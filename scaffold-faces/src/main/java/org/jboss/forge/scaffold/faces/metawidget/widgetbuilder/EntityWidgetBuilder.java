@@ -29,7 +29,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.jboss.forge.project.Project;
+import org.jboss.forge.env.Configuration;
+import org.jboss.forge.parser.java.util.Strings;
+import org.jboss.forge.scaffold.faces.FacesScaffold;
 import org.metawidget.statically.BaseStaticXmlWidget;
 import org.metawidget.statically.StaticWidget;
 import org.metawidget.statically.StaticXmlMetawidget;
@@ -85,23 +87,19 @@ public class EntityWidgetBuilder
 
    private static final String TOP_LEVEL_PARAMETERIZED_TYPE = "top-level-parameterized-type";
 
-   //
-   // Private members
-   //
-
    /**
-    * Current Forge project. Useful to retrieve <code>targetDir</code>.
+    * Current Forge Configuration. Useful to retrieve <code>targetDir</code>.
     */
 
-   private Project project;
+   private final Configuration config;
 
    //
    // Constructor
    //
 
-   public EntityWidgetBuilder( EntityWidgetBuilderConfig config ) {
-
-      this.project = config.getProject();
+   public EntityWidgetBuilder(EntityWidgetBuilderConfig config)
+   {
+      this.config = config.getConfig();
    }
 
    //
@@ -143,7 +141,7 @@ public class EntityWidgetBuilder
             controllerName = StringUtils.decapitalize(controllerName);
 
             HtmlOutcomeTargetLink link = new HtmlOutcomeTargetLink();
-            link.putAttribute("outcome", "/scaffold/" + controllerName + "/view");
+            link.putAttribute("outcome", "/" + getTargetDir() + "/" + controllerName + "/view");
 
             StandardBindingProcessor bindingProcessor = metawidget.getWidgetProcessor(StandardBindingProcessor.class);
 
@@ -210,7 +208,7 @@ public class EntityWidgetBuilder
             metawidget.initNestedMetawidget(nestedMetawidget, attributes);
             String unwrappedExpression = StaticFacesUtils.unwrapExpression(nestedMetawidget.getValue());
             nestedMetawidget.putAttribute("rendered",
-                        StaticFacesUtils.wrapExpression("!empty " + unwrappedExpression));
+                     StaticFacesUtils.wrapExpression("!empty " + unwrappedExpression));
 
             // If read-only we're done
 
@@ -228,9 +226,9 @@ public class EntityWidgetBuilder
             HtmlCommandLink commandLink = new HtmlCommandLink();
             commandLink.setValue("Create New " + StringUtils.uncamelCase(childExpression));
             commandLink.putAttribute(
-                        "action",
-                        StaticFacesUtils.wrapExpression(parentExpression + ".new"
-                                 + StringUtils.capitalize(childExpression)));
+                     "action",
+                     StaticFacesUtils.wrapExpression(parentExpression + ".new"
+                              + StringUtils.capitalize(childExpression)));
             commandLink.putAttribute("rendered", StaticFacesUtils.wrapExpression("empty " + unwrappedExpression));
 
             HtmlPanelGroup panelGroup = new HtmlPanelGroup();
@@ -537,7 +535,7 @@ public class EntityWidgetBuilder
          // Create a link...
 
          HtmlOutcomeTargetLink link = new HtmlOutcomeTargetLink();
-         link.putAttribute("outcome", "/scaffold/" + controllerName + "/view");
+         link.putAttribute("outcome", "/" + getTargetDir() + "/" + controllerName + "/view");
 
          // ...pointing to the id
 
@@ -583,5 +581,15 @@ public class EntityWidgetBuilder
             }
          }
       }
+   }
+
+   //
+   // Private methods
+   //
+
+   private String getTargetDir()
+   {
+      String targetDir = this.config.getString(FacesScaffold.class.getName() + "_targetDir");
+      return Strings.isNullOrEmpty(targetDir) ? "scaffold" : targetDir;
    }
 }

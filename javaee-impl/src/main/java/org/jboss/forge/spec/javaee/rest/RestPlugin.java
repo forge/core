@@ -21,9 +21,30 @@
  */
 package org.jboss.forge.spec.javaee.rest;
 
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.MediaType;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.jboss.forge.env.Configuration;
 import org.jboss.forge.parser.JavaParser;
-import org.jboss.forge.parser.java.*;
+import org.jboss.forge.parser.java.Annotation;
+import org.jboss.forge.parser.java.Field;
+import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.parser.java.JavaSource;
+import org.jboss.forge.parser.java.Member;
+import org.jboss.forge.parser.java.Method;
+import org.jboss.forge.parser.java.Parameter;
 import org.jboss.forge.parser.java.util.Strings;
 import org.jboss.forge.parser.java.util.Types;
 import org.jboss.forge.project.Project;
@@ -34,21 +55,24 @@ import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.shell.PromptType;
 import org.jboss.forge.shell.ShellMessages;
 import org.jboss.forge.shell.ShellPrompt;
-import org.jboss.forge.shell.plugins.*;
+import org.jboss.forge.shell.plugins.Alias;
+import org.jboss.forge.shell.plugins.Command;
+import org.jboss.forge.shell.plugins.Current;
+import org.jboss.forge.shell.plugins.Option;
+import org.jboss.forge.shell.plugins.PipeOut;
+import org.jboss.forge.shell.plugins.Plugin;
+import org.jboss.forge.shell.plugins.RequiresFacet;
+import org.jboss.forge.shell.plugins.RequiresProject;
+import org.jboss.forge.shell.plugins.SetupCommand;
 import org.jboss.forge.shell.project.ProjectScoped;
-import org.jboss.forge.spec.javaee.*;
+import org.jboss.forge.spec.javaee.EJBFacet;
+import org.jboss.forge.spec.javaee.JTAFacet;
+import org.jboss.forge.spec.javaee.PersistenceFacet;
+import org.jboss.forge.spec.javaee.RestActivatorType;
+import org.jboss.forge.spec.javaee.RestApplicationFacet;
+import org.jboss.forge.spec.javaee.RestFacet;
 import org.jboss.seam.render.TemplateCompiler;
 import org.jboss.seam.render.template.CompiledTemplateResource;
-
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.MediaType;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.io.FileNotFoundException;
-import java.util.*;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -120,7 +144,7 @@ public class RestPlugin implements Plugin
       */
       if (!project.hasAllFacets(Arrays.asList(EJBFacet.class, PersistenceFacet.class)))
       {
-         request.fire(new InstallFacets(true, EJBFacet.class, PersistenceFacet.class));
+         request.fire(new InstallFacets(true, JTAFacet.class, EJBFacet.class, PersistenceFacet.class));
       }
 
       if (((targets == null) || (targets.length < 1))

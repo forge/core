@@ -30,12 +30,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.persistence.OneToOne;
 
 import junit.framework.TestCase;
 
-import org.jboss.forge.maven.ProjectImpl;
-import org.jboss.forge.project.Project;
+import org.jboss.forge.env.Configuration;
 import org.metawidget.inspector.annotation.MetawidgetAnnotationInspector;
 import org.metawidget.inspector.annotation.UiComesAfter;
 import org.metawidget.inspector.composite.CompositeInspector;
@@ -56,16 +56,21 @@ import org.metawidget.util.CollectionUtils;
 public class EntityWidgetBuilderTest
          extends TestCase
 {
+   @Inject
+   private Configuration forgeConfig;
+
    //
    // Public methods
    //
+
+   EntityWidgetBuilderConfig config = new EntityWidgetBuilderConfig().setConfig(new MockForgeConfiguration());
 
    public void testManyToOne()
             throws Exception
    {
       StaticHtmlMetawidget metawidget = new StaticHtmlMetawidget();
       metawidget.setValue("#{foo}");
-      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder(new EntityWidgetBuilderConfig());
+      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder(this.config);
       Map<String, String> attributes = CollectionUtils.newHashMap();
       attributes.put(NAME, "bar");
       attributes.put(TYPE, Bar.class.getName());
@@ -201,7 +206,7 @@ public class EntityWidgetBuilderTest
    {
       StaticHtmlMetawidget metawidget = new StaticHtmlMetawidget();
       metawidget.setValue("#{foo}");
-      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder(new EntityWidgetBuilderConfig());
+      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder(this.config);
       Map<String, String> attributes = CollectionUtils.newHashMap();
       attributes.put(NAME, "bars");
       attributes.put(TYPE, List.class.getName());
@@ -229,7 +234,7 @@ public class EntityWidgetBuilderTest
    {
       StaticHtmlMetawidget metawidget = new StaticHtmlMetawidget();
       metawidget.setValue("#{foo}");
-      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder(new EntityWidgetBuilderConfig());
+      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder(this.config);
       Map<String, String> attributes = CollectionUtils.newHashMap();
       attributes.put(NAME, "bars");
       attributes.put(TYPE, Set.class.getName());
@@ -310,7 +315,7 @@ public class EntityWidgetBuilderTest
    {
       StaticHtmlMetawidget metawidget = new StaticHtmlMetawidget();
       metawidget.setValue("#{foo}");
-      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder(new EntityWidgetBuilderConfig());
+      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder(this.config);
       Map<String, String> attributes = CollectionUtils.newHashMap();
       attributes.put(NAME, "bars");
       attributes.put(TYPE, Set.class.getName());
@@ -373,7 +378,7 @@ public class EntityWidgetBuilderTest
 
       metawidget.setInspector(inspector);
       metawidget.setValue("#{foo}");
-      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder(new EntityWidgetBuilderConfig());
+      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder(this.config);
       Map<String, String> attributes = CollectionUtils.newHashMap();
       attributes.put(NAME, "bars");
       attributes.put(TYPE, Set.class.getName());
@@ -433,10 +438,10 @@ public class EntityWidgetBuilderTest
       assertTrue(config1.equals(config2));
       assertEquals(config1.hashCode(), config2.hashCode());
       assertTrue(!config1.equals("Foo"));
-      Project project = new ProjectImpl(null, null);
-      config1.setProject(project);
+      assertTrue(this.forgeConfig != null);
+      config1.setConfig(this.forgeConfig);
       assertTrue(!config1.equals(config2));
-      config2.setProject(project);
+      config2.setConfig(this.forgeConfig);
       assertTrue(config1.equals(config2));
       assertEquals(config1.hashCode(), config2.hashCode());
    }
