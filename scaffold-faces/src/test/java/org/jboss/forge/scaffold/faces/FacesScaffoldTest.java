@@ -37,6 +37,7 @@ import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.scaffold.faces.metawidget.widgetbuilder.EntityWidgetBuilder;
+import org.jboss.forge.scaffold.faces.metawidget.widgetbuilder.EntityWidgetBuilderConfig;
 import org.jboss.forge.shell.exceptions.PluginExecutionException;
 import org.jboss.forge.shell.util.Streams;
 import org.jboss.forge.spec.javaee.ServletFacet;
@@ -57,60 +58,38 @@ import org.metawidget.widgetbuilder.composite.CompositeWidgetBuilderConfig;
 @RunWith(Arquillian.class)
 public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 {
-    @Test
-    public void testScaffoldSetup() throws Exception
-    {
-       Project project = setupScaffoldProject();
-       ServletFacet servlet = project.getFacet(ServletFacet.class);
-
-       Assert.assertTrue(project.hasFacet(FacesScaffold.class));
-
-       Node root = XMLParser.parse(servlet.getConfigFile().getResourceInputStream());
-       List<Node> errorPages = root.get("error-page");
-       Assert.assertEquals("/faces/error.xhtml", errorPages.get(0).getSingle("location").getText());
-
-       WebResourceFacet web = project.getFacet(WebResourceFacet.class);
-       FileResource<?> error = web.getWebResource("error.xhtml");
-       Assert.assertTrue(Streams.toString(error.getResourceInputStream()).contains(
-                "/resources/scaffold/page.xhtml"));
-
-       // Test page exists, but has no navigation
-
-       FileResource<?> page = web.getWebResource("/resources/scaffold/page.xhtml");
-       Assert.assertTrue(page.exists());
-       String contents = Streams.toString(page.getResourceInputStream());
-       Assert.assertTrue(contents.contains(
-                "<div id=\"wrapper\">"));
-       Assert.assertTrue(contents.contains(
-                "<div id=\"navigation\">"));
-       Assert.assertTrue(contents.contains(
-                "<div id=\"content\">"));
-       Assert.assertTrue(contents.contains(
-                "<div id=\"footer\">"));
-       Assert.assertTrue(!contents.contains(
-                "<h:link outcome=\"/scaffold>"));
-    }
-    
    @Test
-   public void testScaffoldSetupWithScaffoldTypeWithoutTargetDir() throws Exception
+   public void testScaffoldSetup() throws Exception
    {
-       Project project = initializeJavaProject();
-       queueInputLines("HIBERNATE", "JBOSS_AS7", "");
-       getShell().execute("persistence setup");
-       queueInputLines("", "", "2", "", "", "");
-       getShell().execute("scaffold setup --scaffoldType faces");
-       Assert.assertTrue(project.hasFacet(FacesScaffold.class));
-   }
-    
-   @Test
-   public void testScaffoldSetupWithScaffoldTypeAndTargetDir() throws Exception
-   {
-       Project project = initializeJavaProject();
-       queueInputLines("HIBERNATE", "JBOSS_AS7", "");
-       getShell().execute("persistence setup");
-       queueInputLines("", "", "2", "", "", "");
-       getShell().execute("scaffold setup --scaffoldType faces --targetDir store");
-       Assert.assertTrue(project.hasFacet(FacesScaffold.class));
+      Project project = setupScaffoldProject();
+      ServletFacet servlet = project.getFacet(ServletFacet.class);
+
+      Assert.assertTrue(project.hasFacet(FacesScaffold.class));
+
+      Node root = XMLParser.parse(servlet.getConfigFile().getResourceInputStream());
+      List<Node> errorPages = root.get("error-page");
+      Assert.assertEquals("/faces/error.xhtml", errorPages.get(0).getSingle("location").getText());
+
+      WebResourceFacet web = project.getFacet(WebResourceFacet.class);
+      FileResource<?> error = web.getWebResource("error.xhtml");
+      Assert.assertTrue(Streams.toString(error.getResourceInputStream()).contains(
+               "/resources/scaffold/page.xhtml"));
+
+      // Test page exists, but has no navigation
+
+      FileResource<?> page = web.getWebResource("/resources/scaffold/page.xhtml");
+      Assert.assertTrue(page.exists());
+      String contents = Streams.toString(page.getResourceInputStream());
+      Assert.assertTrue(contents.contains(
+               "<div id=\"wrapper\">"));
+      Assert.assertTrue(contents.contains(
+               "<div id=\"navigation\">"));
+      Assert.assertTrue(contents.contains(
+               "<div id=\"content\">"));
+      Assert.assertTrue(contents.contains(
+               "<div id=\"footer\">"));
+      Assert.assertTrue(!contents.contains(
+               "<h:link outcome=\"/scaffold>"));
    }
 
    @Test(expected = PluginExecutionException.class)
@@ -883,7 +862,8 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
       CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget> existingWidgetBuilder = new CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget>(
                new CompositeWidgetBuilderConfig<StaticXmlWidget, StaticXmlMetawidget>().setWidgetBuilders(
-                        new EntityWidgetBuilder(), new ReadOnlyWidgetBuilder(), new HtmlWidgetBuilder()));
+                        new EntityWidgetBuilder(new EntityWidgetBuilderConfig()), new ReadOnlyWidgetBuilder(),
+                        new HtmlWidgetBuilder()));
 
       CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget> newWidgetBuilder = new FacesScaffold(null, null,
                null).insertRichFacesWidgetBuilder(existingWidgetBuilder);
@@ -907,7 +887,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
       existingWidgetBuilder = new CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget>(
                new CompositeWidgetBuilderConfig<StaticXmlWidget, StaticXmlMetawidget>().setWidgetBuilders(
-                        new EntityWidgetBuilder(), new ReadOnlyWidgetBuilder()));
+                        new EntityWidgetBuilder(new EntityWidgetBuilderConfig()), new ReadOnlyWidgetBuilder()));
 
       newWidgetBuilder = new FacesScaffold(null, null, null).insertRichFacesWidgetBuilder(existingWidgetBuilder);
 
@@ -919,7 +899,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
       existingWidgetBuilder = new CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget>(
                new CompositeWidgetBuilderConfig<StaticXmlWidget, StaticXmlMetawidget>().setWidgetBuilders(
-                        new EntityWidgetBuilder(), new HtmlWidgetBuilder()));
+                        new EntityWidgetBuilder(new EntityWidgetBuilderConfig()), new HtmlWidgetBuilder()));
 
       newWidgetBuilder = new FacesScaffold(null, null, null).insertRichFacesWidgetBuilder(existingWidgetBuilder);
 
@@ -931,7 +911,8 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
       existingWidgetBuilder = new CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget>(
                new CompositeWidgetBuilderConfig<StaticXmlWidget, StaticXmlMetawidget>().setWidgetBuilders(
-                        new EntityWidgetBuilder(), new RichFacesWidgetBuilder(), new HtmlWidgetBuilder()));
+                        new EntityWidgetBuilder(new EntityWidgetBuilderConfig()), new RichFacesWidgetBuilder(),
+                        new HtmlWidgetBuilder()));
 
       newWidgetBuilder = new FacesScaffold(null, null, null).insertRichFacesWidgetBuilder(existingWidgetBuilder);
 

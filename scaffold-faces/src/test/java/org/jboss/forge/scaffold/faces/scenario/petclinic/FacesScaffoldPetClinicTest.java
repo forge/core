@@ -54,7 +54,7 @@ public class FacesScaffoldPetClinicTest extends AbstractFacesScaffoldTest
    public void testGenerate() throws Exception
    {
       Project current = getShell().getCurrentProject();
-      Project project = setupScaffoldProject("petClinic");
+      Project project = setupScaffoldProject();
 
       queueInputLines("");
       getShell().execute("entity --named Owner");

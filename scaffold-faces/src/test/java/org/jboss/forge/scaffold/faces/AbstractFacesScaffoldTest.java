@@ -43,14 +43,4 @@ public abstract class AbstractFacesScaffoldTest extends AbstractShellTest
       getShell().execute("scaffold setup");
       return project;
    }
-
-   protected Project setupScaffoldProject(String targetDir) throws Exception
-   {
-      Project project = initializeJavaProject();
-      queueInputLines("HIBERNATE", "JBOSS_AS7", "");
-      getShell().execute("persistence setup");
-      queueInputLines("", "", "2", "", "", "");
-      getShell().execute("scaffold setup --targetDir " + targetDir);
-      return project;
-   }
 }

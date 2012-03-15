@@ -79,7 +79,8 @@ public class FacesScaffoldScenarioTest extends AbstractFacesScaffoldTest
       getShell().execute("field oneToOne --named profile --fieldType com.test.model.Profile");
 
       queueInputLines("", "", "", "", "");
-      getShell().execute("scaffold from-entity com.test.model.*");
+      getShell()
+               .execute("scaffold from-entity com.test.model.*");
 
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
       WebResourceFacet web = project.getFacet(WebResourceFacet.class);
