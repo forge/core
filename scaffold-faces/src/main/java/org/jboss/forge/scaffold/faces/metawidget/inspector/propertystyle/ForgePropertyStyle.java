@@ -38,6 +38,7 @@ import org.jboss.forge.parser.java.Method;
 import org.jboss.forge.parser.java.MethodHolder;
 import org.jboss.forge.parser.java.Parameter;
 import org.jboss.forge.parser.java.Type;
+import org.jboss.forge.parser.java.impl.JavaEnumImpl;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.metawidget.inspector.iface.InspectorException;
