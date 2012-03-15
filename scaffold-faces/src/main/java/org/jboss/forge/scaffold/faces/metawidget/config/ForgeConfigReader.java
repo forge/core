@@ -68,6 +68,11 @@ public class ForgeConfigReader
       {
          return true;
       }
+      
+      if (CONFIG_ELEMENT_NAME.equals(name))
+      {
+         return true;
+      }
 
       return super.isNative(name);
    }
