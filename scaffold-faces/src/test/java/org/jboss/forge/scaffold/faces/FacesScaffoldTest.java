@@ -37,6 +37,7 @@ import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.scaffold.faces.metawidget.widgetbuilder.EntityWidgetBuilder;
+import org.jboss.forge.scaffold.faces.metawidget.widgetbuilder.EntityWidgetBuilderConfig;
 import org.jboss.forge.shell.exceptions.PluginExecutionException;
 import org.jboss.forge.shell.util.Streams;
 import org.jboss.forge.spec.javaee.ServletFacet;
@@ -861,7 +862,8 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
       CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget> existingWidgetBuilder = new CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget>(
                new CompositeWidgetBuilderConfig<StaticXmlWidget, StaticXmlMetawidget>().setWidgetBuilders(
-                        new EntityWidgetBuilder(), new ReadOnlyWidgetBuilder(), new HtmlWidgetBuilder()));
+                        new EntityWidgetBuilder(new EntityWidgetBuilderConfig()), new ReadOnlyWidgetBuilder(),
+                        new HtmlWidgetBuilder()));
 
       CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget> newWidgetBuilder = new FacesScaffold(null, null,
                null).insertRichFacesWidgetBuilder(existingWidgetBuilder);
@@ -885,7 +887,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
       existingWidgetBuilder = new CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget>(
                new CompositeWidgetBuilderConfig<StaticXmlWidget, StaticXmlMetawidget>().setWidgetBuilders(
-                        new EntityWidgetBuilder(), new ReadOnlyWidgetBuilder()));
+                        new EntityWidgetBuilder(new EntityWidgetBuilderConfig()), new ReadOnlyWidgetBuilder()));
 
       newWidgetBuilder = new FacesScaffold(null, null, null).insertRichFacesWidgetBuilder(existingWidgetBuilder);
 
@@ -897,7 +899,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
       existingWidgetBuilder = new CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget>(
                new CompositeWidgetBuilderConfig<StaticXmlWidget, StaticXmlMetawidget>().setWidgetBuilders(
-                        new EntityWidgetBuilder(), new HtmlWidgetBuilder()));
+                        new EntityWidgetBuilder(new EntityWidgetBuilderConfig()), new HtmlWidgetBuilder()));
 
       newWidgetBuilder = new FacesScaffold(null, null, null).insertRichFacesWidgetBuilder(existingWidgetBuilder);
 
@@ -909,7 +911,8 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
       existingWidgetBuilder = new CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget>(
                new CompositeWidgetBuilderConfig<StaticXmlWidget, StaticXmlMetawidget>().setWidgetBuilders(
-                        new EntityWidgetBuilder(), new RichFacesWidgetBuilder(), new HtmlWidgetBuilder()));
+                        new EntityWidgetBuilder(new EntityWidgetBuilderConfig()), new RichFacesWidgetBuilder(),
+                        new HtmlWidgetBuilder()));
 
       newWidgetBuilder = new FacesScaffold(null, null, null).insertRichFacesWidgetBuilder(existingWidgetBuilder);
 

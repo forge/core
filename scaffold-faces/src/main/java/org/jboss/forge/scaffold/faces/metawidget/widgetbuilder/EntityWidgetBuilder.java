@@ -29,6 +29,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.jboss.forge.project.Project;
 import org.metawidget.statically.BaseStaticXmlWidget;
 import org.metawidget.statically.StaticWidget;
 import org.metawidget.statically.StaticXmlMetawidget;
@@ -83,6 +84,25 @@ public class EntityWidgetBuilder
     */
 
    private static final String TOP_LEVEL_PARAMETERIZED_TYPE = "top-level-parameterized-type";
+
+   //
+   // Private members
+   //
+
+   /**
+    * Current Forge project. Useful to retrieve <code>targetDir</code>.
+    */
+
+   private Project project;
+
+   //
+   // Constructor
+   //
+
+   public EntityWidgetBuilder( EntityWidgetBuilderConfig config ) {
+
+      this.project = config.getProject();
+   }
 
    //
    // Public methods

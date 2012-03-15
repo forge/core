@@ -30,6 +30,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
+import org.jboss.forge.maven.ProjectImpl;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle.MockAnnotationComplex.anEnum;
@@ -105,6 +106,22 @@ public class ForgePropertyStyleTest
       assertEquals("Foo", mockAnnotationSimple.aString());
 
       testMockAnnotationComplex(property);
+   }
+
+   public void testConfig()
+   {
+      ForgePropertyStyleConfig config1 = new ForgePropertyStyleConfig();
+      ForgePropertyStyleConfig config2 = new ForgePropertyStyleConfig();
+
+      assertTrue(config1.equals(config2));
+      assertEquals(config1.hashCode(), config2.hashCode());
+      assertTrue(!config1.equals("Foo"));
+      Project project = new ProjectImpl(null, null);
+      config1.setProject(project);
+      assertTrue(!config1.equals(config2));
+      config2.setProject(project);
+      assertTrue(config1.equals(config2));
+      assertEquals(config1.hashCode(), config2.hashCode());
    }
 
    //

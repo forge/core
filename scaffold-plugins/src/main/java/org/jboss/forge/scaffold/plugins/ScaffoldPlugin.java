@@ -32,10 +32,13 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.persistence.Entity;
 
+import org.jboss.forge.env.Configuration;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaSource;
+import org.jboss.forge.parser.java.util.Strings;
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.Project;
+import org.jboss.forge.project.facets.PackagingFacet;
 import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.project.facets.events.InstallFacets;
 import org.jboss.forge.resources.FileResource;
@@ -44,7 +47,9 @@ import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.scaffold.ScaffoldProvider;
 import org.jboss.forge.scaffold.events.ScaffoldGeneratedResources;
 import org.jboss.forge.scaffold.plugins.shell.ScaffoldProviderCompleter;
+import org.jboss.forge.shell.PromptType;
 import org.jboss.forge.shell.ShellMessages;
+import org.jboss.forge.shell.ShellPrintWriter;
 import org.jboss.forge.shell.ShellPrompt;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.Command;
@@ -58,6 +63,7 @@ import org.jboss.forge.shell.plugins.RequiresProject;
 import org.jboss.forge.shell.plugins.SetupCommand;
 import org.jboss.forge.shell.plugins.Topic;
 import org.jboss.forge.shell.util.ConstraintInspector;
+import org.jboss.forge.spec.javaee.ServletFacet;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -75,9 +81,16 @@ public class ScaffoldPlugin implements Plugin
    private Resource<?> currentResource;
 
    @Inject
+   private Configuration config;
+
+   @Inject
    private Project project;
+
    @Inject
    private ShellPrompt prompt;
+
+   @Inject
+   private ShellPrintWriter writer;
 
    @Inject
    private Instance<ScaffoldProvider> impls;
@@ -90,15 +103,15 @@ public class ScaffoldPlugin implements Plugin
 
    @SetupCommand
    public void setup(
-            final PipeOut out,
-            @Option(name = "scaffoldType", required = false,
-                     completer = ScaffoldProviderCompleter.class) final String scaffoldType,
+            @Option(name = "targetDir") String targetDir,
+            @Option(name = "scaffoldType", required = false, completer = ScaffoldProviderCompleter.class) final String scaffoldType,
             @Option(flagOnly = true, name = "overwrite") final boolean overwrite,
             @Option(name = "usingTemplate") final Resource<?> template)
    {
       ScaffoldProvider provider = getScaffoldType(scaffoldType);
+      targetDir = selectTargetDir(provider, targetDir);
       verifyTemplate(provider, template);
-      List<Resource<?>> generatedResources = provider.setup(template, overwrite);
+      List<Resource<?>> generatedResources = provider.setup(targetDir, template, overwrite);
 
       // TODO give plugins a chance to react to generated resources, use event bus?
       if (!generatedResources.isEmpty())
@@ -109,15 +122,15 @@ public class ScaffoldPlugin implements Plugin
 
    @Command("indexes")
    public void generateIndex(
-            final PipeOut out,
-            @Option(name = "scaffoldType", required = false,
-                     completer = ScaffoldProviderCompleter.class) final String scaffoldType,
+            @Option(name = "targetDir") String targetDir,
+            @Option(name = "scaffoldType", required = false, completer = ScaffoldProviderCompleter.class) final String scaffoldType,
             @Option(flagOnly = true, name = "overwrite") final boolean overwrite,
             @Option(name = "usingTemplate") final Resource<?> template)
    {
       ScaffoldProvider provider = getScaffoldType(scaffoldType);
+      targetDir = selectTargetDir(provider, targetDir);
       verifyTemplate(provider, template);
-      List<Resource<?>> generatedResources = provider.generateIndex(template, overwrite);
+      List<Resource<?>> generatedResources = provider.generateIndex(targetDir, template, overwrite);
 
       // TODO give plugins a chance to react to generated resources, use event bus?
       if (!generatedResources.isEmpty())
@@ -128,13 +141,14 @@ public class ScaffoldPlugin implements Plugin
 
    @Command("templates")
    public void generateTemplates(
-            @Option(name = "scaffoldType", required = false,
-                     completer = ScaffoldProviderCompleter.class) final String scaffoldType,
-            final PipeOut out,
+            @Option(name = "targetDir") String targetDir,
+            @Option(name = "scaffoldType", required = false, completer = ScaffoldProviderCompleter.class) final String scaffoldType,
+
             @Option(flagOnly = true, name = "overwrite") final boolean overwrite)
    {
       ScaffoldProvider provider = getScaffoldType(scaffoldType);
-      List<Resource<?>> generatedResources = provider.generateTemplates(overwrite);
+      targetDir = selectTargetDir(provider, targetDir);
+      List<Resource<?>> generatedResources = provider.generateTemplates(targetDir, overwrite);
 
       // TODO give plugins a chance to react to generated resources, use event bus?
       if (!generatedResources.isEmpty())
@@ -146,32 +160,31 @@ public class ScaffoldPlugin implements Plugin
    @Command("from-entity")
    public void generateFromEntity(
             @Option(required = false) JavaResource[] targets,
-            @Option(name = "scaffoldType", required = false,
-                     completer = ScaffoldProviderCompleter.class) final String scaffoldType,
+            @Option(name = "targetDir") String targetDir,
+            @Option(name = "scaffoldType", required = false, completer = ScaffoldProviderCompleter.class) final String scaffoldType,
             @Option(flagOnly = true, name = "overwrite") final boolean overwrite,
-            @Option(name = "usingTemplate") final Resource<?> template,
-            final PipeOut out) throws FileNotFoundException
+            @Option(name = "usingTemplate") final Resource<?> template) throws FileNotFoundException
    {
-      if (((targets == null) || (targets.length < 1))
-               && (currentResource instanceof JavaResource))
+      if (((targets == null) || (targets.length < 1)) && (currentResource instanceof JavaResource))
       {
          targets = new JavaResource[] { (JavaResource) currentResource };
       }
 
-      List<JavaResource> javaTargets = selectTargets(out, targets);
+      List<JavaResource> javaTargets = selectTargets(targets);
       if (javaTargets.isEmpty())
       {
-         ShellMessages.error(out, "Must specify a domain @Entity on which to operate.");
+         ShellMessages.error(writer, "Must specify a domain @Entity on which to operate.");
          return;
       }
 
       ScaffoldProvider provider = getScaffoldType(scaffoldType);
+      targetDir = selectTargetDir(provider, targetDir);
       verifyTemplate(provider, template);
 
       for (JavaResource jr : javaTargets)
       {
          JavaClass entity = (JavaClass) (jr).getJavaSource();
-         List<Resource<?>> generatedResources = provider.generateFromEntity(template, entity, overwrite);
+         List<Resource<?>> generatedResources = provider.generateFromEntity(targetDir, template, entity, overwrite);
 
          // TODO give plugins a chance to react to generated resources, use event bus?
          if (!generatedResources.isEmpty())
@@ -179,9 +192,34 @@ public class ScaffoldPlugin implements Plugin
             generatedEvent.fire(new ScaffoldGeneratedResources(provider, prepareResources(generatedResources)));
          }
 
-         ShellMessages.success(out, "Generated UI for [" + entity.getQualifiedName() + "]");
+         ShellMessages.success(writer, "Generated UI for [" + entity.getQualifiedName() + "]");
       }
 
+   }
+
+   private String selectTargetDir(ScaffoldProvider provider, String target)
+   {
+      if (provider == null)
+      {
+         throw new RuntimeException("Selected scaffold provider was null. Re-run with '--scaffoldType ...'");
+      }
+
+      if (Strings.isNullOrEmpty(target))
+      {
+         String targetDirKey = provider.getClass().getName() + "_targetDir";
+         target = config.getString(targetDirKey);
+         if(Strings.isNullOrEmpty(target))
+         {
+            String finalName = project.getFacet(PackagingFacet.class).getFinalName();
+            target = prompt.promptCommon("Create scaffold in which sub-directory of web-root? (e.g. http://localhost:8080/"+finalName+"/DIR)", PromptType.FILE_PATH, "scaffold");
+            if(target.startsWith("/"))
+               target=target.substring(1);
+            if(target.endsWith("/"))
+               target=target.substring(0, target.length()-1);
+            config.setProperty(targetDirKey, target);
+         }
+      }
+      return target;
    }
 
    private ScaffoldProvider getScaffoldType(String scaffoldType)
@@ -209,12 +247,11 @@ public class ScaffoldPlugin implements Plugin
          {
             detectedScaffoldNames.add(ConstraintInspector.getName(sp.getClass()));
          }
-         
+
          if (detectedScaffolds.size() > 1)
          {
             String name = prompt.promptChoiceTyped("Use which previously installed scaffold provider?",
-                     detectedScaffoldNames,
-                     detectedScaffoldNames.get(detectedScaffoldNames.size() - 1));
+                     detectedScaffoldNames, detectedScaffoldNames.get(detectedScaffoldNames.size() - 1));
 
             for (ScaffoldProvider sp : detectedScaffolds)
             {
@@ -234,6 +271,16 @@ public class ScaffoldPlugin implements Plugin
                && prompt.promptBoolean("No scaffold type was selected, use default [JavaServer Faces]?"))
       {
          scaffoldType = "faces";
+         for (ScaffoldProvider type : impls)
+         {
+            if (ConstraintInspector.getName(type.getClass()).equals(scaffoldType))
+            {
+               scaffoldImpl = type;
+            }
+         }
+      }
+      else if (scaffoldImpl == null && scaffoldType != null)
+      {
          for (ScaffoldProvider type : impls)
          {
             if (ConstraintInspector.getName(type.getClass()).equals(scaffoldType))
@@ -274,8 +321,7 @@ public class ScaffoldPlugin implements Plugin
       return project.getFacet(scaffoldImpl.getClass());
    }
 
-   private List<JavaResource> selectTargets(final PipeOut out, Resource<?>[] targets)
-            throws FileNotFoundException
+   private List<JavaResource> selectTargets(Resource<?>[] targets) throws FileNotFoundException
    {
       List<JavaResource> results = new ArrayList<JavaResource>();
       if (targets == null)
@@ -296,25 +342,21 @@ public class ScaffoldPlugin implements Plugin
                }
                else
                {
-                  displaySkippingResourceMsg(out, entity);
+                  displaySkippingResourceMsg(entity);
                }
             }
             else
             {
-               displaySkippingResourceMsg(out, entity);
+               displaySkippingResourceMsg(entity);
             }
          }
       }
       return results;
    }
 
-   private void displaySkippingResourceMsg(final PipeOut out, final JavaSource<?> entity)
+   private void displaySkippingResourceMsg(final JavaSource<?> entity)
    {
-      if (!out.isPiped())
-      {
-         ShellMessages.info(out, "Skipped non-@Entity Java resource ["
-                  + entity.getQualifiedName() + "]");
-      }
+      ShellMessages.info(writer, "Skipped non-@Entity Java resource [" + entity.getQualifiedName() + "]");
    }
 
    private List<Resource<?>> prepareResources(final List<Resource<?>> generatedResources)
@@ -342,10 +384,9 @@ public class ScaffoldPlugin implements Plugin
       {
          if (!template.exists())
          {
-            throw new IllegalArgumentException(
-                     "Template [" + template.getName()
-                              + "] does not exist. You must select a template that exists, or use " +
-                              "the default template (do not specify a template.)");
+            throw new IllegalArgumentException("Template [" + template.getName()
+                     + "] does not exist. You must select a template that exists, or use "
+                     + "the default template (do not specify a template.)");
          }
 
          if (!provider.getTemplateStrategy().compatibleWith(template))
