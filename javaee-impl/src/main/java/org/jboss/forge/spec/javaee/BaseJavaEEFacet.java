@@ -59,9 +59,10 @@ public abstract class BaseJavaEEFacet extends BaseFacet
       for (Dependency requirement : getRequiredDependencies()) {
          if (!installer.isInstalled(project, requirement))
          {
-            if (!project.getFacet(DependencyFacet.class).hasDirectManagedDependency(JAVAEE6))
+            DependencyFacet deps = project.getFacet(DependencyFacet.class);
+            if (!deps.hasEffectiveManagedDependency(requirement) && !deps.hasDirectManagedDependency(JAVAEE6))
             {
-               project.getFacet(DependencyFacet.class).addDirectManagedDependency(JAVAEE6);
+               deps.addDirectManagedDependency(JAVAEE6);
             }
             installer.install(project, requirement, ScopeType.PROVIDED);
          }

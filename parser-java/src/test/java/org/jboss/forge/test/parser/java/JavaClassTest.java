@@ -35,6 +35,7 @@ import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.Import;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.Method;
+import org.jboss.forge.test.parser.java.util.OSUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -75,7 +76,7 @@ public class JavaClassTest
       String output = javaClass.toString();
 
       assertTrue(output.contains(
-               "Telephone" + System.getProperty("line.separator") +
+               "Telephone" + (OSUtils.isWindows() ? "\n\r" : "\n") +
                         "{"
                ));
       assertTrue(output.contains(
