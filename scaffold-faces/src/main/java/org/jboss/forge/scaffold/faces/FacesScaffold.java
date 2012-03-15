@@ -35,6 +35,7 @@ import javax.inject.Inject;
 import javax.persistence.CascadeType;
 import javax.persistence.OneToOne;
 
+import org.jboss.forge.env.Configuration;
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.Annotation;
 import org.jboss.forge.parser.java.Field;
@@ -79,8 +80,8 @@ import org.metawidget.statically.faces.component.html.StaticHtmlMetawidget;
 import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlOutcomeTargetLink;
 import org.metawidget.statically.faces.component.html.widgetbuilder.ReadOnlyWidgetBuilder;
 import org.metawidget.statically.faces.component.html.widgetbuilder.richfaces.RichFacesWidgetBuilder;
+import org.metawidget.statically.html.widgetbuilder.HtmlTag;
 import org.metawidget.statically.javacode.StaticJavaMetawidget;
-import org.metawidget.statically.jsp.html.widgetbuilder.HtmlTag;
 import org.metawidget.util.ArrayUtils;
 import org.metawidget.util.CollectionUtils;
 import org.metawidget.util.XmlUtils;
@@ -173,15 +174,19 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    protected StaticHtmlMetawidget beanMetawidget;
    protected StaticJavaMetawidget qbeMetawidget;
 
+   private Configuration config;
+
    //
    // Constructor
    //
 
    @Inject
-   public FacesScaffold(final ShellPrompt prompt,
+   public FacesScaffold(final Configuration config, 
+            final ShellPrompt prompt,
             final TemplateCompiler compiler,
             final Event<InstallFacets> install)
    {
+      this.config = config;
       this.prompt = prompt;
       this.compiler = compiler;
       this.install = install;
@@ -220,7 +225,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    {
       super.setProject(project);
 
-      ForgeConfigReader configReader = new ForgeConfigReader(this.project);
+      ForgeConfigReader configReader = new ForgeConfigReader(this.config, this.project);
 
       this.entityMetawidget = new StaticHtmlMetawidget();
       this.entityMetawidget.setConfigReader(configReader);

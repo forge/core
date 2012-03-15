@@ -21,6 +21,9 @@
 									<project>
 										<forgeProject/>
 									</project>
+									<config>
+										<forgeConfig/>
+									</config>
 								</forgePropertyStyle>
 							</propertyStyle>
 						</propertyTypeInspector>
@@ -48,7 +51,14 @@
 			<compositeWidgetBuilder xmlns="java:org.metawidget.widgetbuilder.composite" config="CompositeWidgetBuilderConfig">
 				<widgetBuilders>
 					<array>
-						<entityWidgetBuilder xmlns="java:org.jboss.forge.scaffold.faces.metawidget.widgetbuilder"/>
+						<entityWidgetBuilder xmlns="java:org.jboss.forge.scaffold.faces.metawidget.widgetbuilder" config="EntityWidgetBuilderConfig">
+							<project>
+								<forgeProject/>
+							</project>
+							<config>
+								<forgeConfig/>
+							</config>
+						</entityWidgetBuilder>
 						<htmlWidgetBuilder xmlns="java:org.metawidget.statically.faces.component.html.widgetbuilder"/>
 					</array>
 				</widgetBuilders>

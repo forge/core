@@ -30,6 +30,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
+import javax.inject.Inject;
+
+import org.jboss.forge.env.Configuration;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle.MockAnnotationComplex.anEnum;
@@ -41,6 +44,8 @@ import org.metawidget.inspector.impl.propertystyle.Property;
 public class ForgePropertyStyleTest
          extends AbstractShellTest
 {
+   
+   @Inject private Configuration config;
    //
    // Public methods
    //
@@ -63,7 +68,7 @@ public class ForgePropertyStyleTest
 
       // Test default private field convention
 
-      ForgePropertyStyle propertyStyle = new ForgePropertyStyle(new ForgePropertyStyleConfig().setProject(project));
+      ForgePropertyStyle propertyStyle = new ForgePropertyStyle(new ForgePropertyStyleConfig().setProject(project).setConfig(config));
       Map<String, Property> properties = propertyStyle
                .getProperties("org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle.MockAnnotatedClass");
 
@@ -85,7 +90,7 @@ public class ForgePropertyStyleTest
 
       // Test custom private field convention
 
-      propertyStyle = new ForgePropertyStyle(new ForgePropertyStyleConfig().setProject(project)
+      propertyStyle = new ForgePropertyStyle(new ForgePropertyStyleConfig().setProject(project).setConfig(config)
                .setPrivateFieldConvention(new MessageFormat("m{1}")));
       properties = propertyStyle
                .getProperties("org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle.MockAnnotatedClass");

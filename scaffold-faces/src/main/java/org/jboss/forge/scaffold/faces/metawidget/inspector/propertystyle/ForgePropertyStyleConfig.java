@@ -23,6 +23,7 @@ package org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle;
 
 import java.text.MessageFormat;
 
+import org.jboss.forge.env.Configuration;
 import org.jboss.forge.project.Project;
 import org.metawidget.inspector.impl.propertystyle.javabean.JavaBeanPropertyStyleConfig;
 import org.metawidget.util.simple.ObjectUtils;
@@ -42,6 +43,7 @@ public class ForgePropertyStyleConfig
    //
 
    private Project project;
+   private Configuration config;
 
    //
    // Public methods
@@ -50,9 +52,12 @@ public class ForgePropertyStyleConfig
    public ForgePropertyStyleConfig setProject(Project project)
    {
       this.project = project;
+      return this;
+   }
 
-      // Fluent interface
-
+   public ForgePropertyStyleConfig setConfig(Configuration config)
+   {
+      this.config = config;
       return this;
    }
 
@@ -104,6 +109,11 @@ public class ForgePropertyStyleConfig
    //
    // Protected methods
    //
+
+   protected Configuration getConfig()
+   {
+      return this.config;
+   }
 
    protected Project getProject()
    {

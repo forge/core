@@ -19,72 +19,90 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.scaffold.faces.metawidget.config;
+package org.jboss.forge.scaffold.faces.metawidget.widgetbuilder;
+
+import java.text.MessageFormat;
 
 import org.jboss.forge.env.Configuration;
 import org.jboss.forge.project.Project;
-import org.metawidget.config.impl.BaseConfigReader;
+import org.metawidget.inspector.impl.propertystyle.javabean.JavaBeanPropertyStyleConfig;
+import org.metawidget.util.simple.ObjectUtils;
 
 /**
- * ConfigReader with Forge-specific features.
- *
+ * Configures a <tt>ForgePropertyStyle</tt>.
+ * 
  * @author Richard Kennard
  */
 
-public class ForgeConfigReader
-         extends BaseConfigReader
+public class EntityWidgetBuilderConfig
 {
-   //
-   // Private statics
-   //
 
-   private static final String CONFIG_ELEMENT_NAME = "forgeConfig";
-   private static final String PROJECT_ELEMENT_NAME = "forgeProject";
    //
    // Private members
    //
 
-   private Configuration config;
    private Project project;
+   private Configuration config;
 
    //
-   // Constructor
+   // Public methods
    //
 
-   public ForgeConfigReader(Configuration config, Project project)
+   public EntityWidgetBuilderConfig setProject(Project project)
+   {
+      this.project = project;
+      return this;
+   }
+
+   public EntityWidgetBuilderConfig setConfig(Configuration config)
    {
       this.config = config;
-      this.project = project;
+      return this;
+   }
+
+   @Override
+   public boolean equals(Object that)
+   {
+      if (this == that)
+      {
+         return true;
+      }
+
+      if (!ObjectUtils.nullSafeClassEquals(this, that))
+      {
+         return false;
+      }
+
+      if (this.project != ((EntityWidgetBuilderConfig) that).project)
+      {
+         return false;
+      }
+
+      return super.equals(that);
+   }
+
+   @Override
+   public int hashCode()
+   {
+
+      int hashCode = super.hashCode();
+      hashCode = 31 * hashCode + ObjectUtils.nullSafeHashCode(this.project);
+
+      return hashCode;
    }
 
    //
    // Protected methods
    //
 
-   @Override
-   protected boolean isNative(String name)
+   protected Configuration getConfig()
    {
-      if (PROJECT_ELEMENT_NAME.equals(name))
-      {
-         return true;
-      }
-
-      return super.isNative(name);
+      return this.config;
    }
 
-   @Override
-   protected Object createNative(String name, Class<?> namespace, String recordedText) throws Exception
+   protected Project getProject()
    {
-      if (PROJECT_ELEMENT_NAME.equals(name))
-      {
-         return this.project;
-      }
-      
-      if(CONFIG_ELEMENT_NAME.equals(name))
-      {
-         return this.config;
-      }
-
-      return super.createNative(name, namespace, recordedText);
+      return this.project;
    }
+
 }

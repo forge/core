@@ -63,7 +63,7 @@ public class EntityWidgetBuilderTest
    {
       StaticHtmlMetawidget metawidget = new StaticHtmlMetawidget();
       metawidget.setValue("#{foo}");
-      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder();
+      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder(new EntityWidgetBuilderConfig());
       Map<String, String> attributes = CollectionUtils.newHashMap();
       attributes.put(NAME, "bar");
       attributes.put(TYPE, Bar.class.getName());
@@ -84,7 +84,7 @@ public class EntityWidgetBuilderTest
       StaticHtmlMetawidget metawidget = new StaticHtmlMetawidget();
       metawidget.setValue("#{foo}");
       metawidget.setPath(FooOneToOne.class.getName());
-      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder();
+      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder(new EntityWidgetBuilderConfig());
       Map<String, String> attributes = CollectionUtils.newHashMap();
       attributes.put(NAME, "bar");
       attributes.put(TYPE, Bar.class.getName());
@@ -122,7 +122,7 @@ public class EntityWidgetBuilderTest
       StaticHtmlMetawidget metawidget = new StaticHtmlMetawidget();
       metawidget.setValue("#{foo}");
       metawidget.setPath(FooOneToOne.class.getName());
-      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder();
+      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder(new EntityWidgetBuilderConfig());
       Map<String, String> attributes = CollectionUtils.newHashMap();
       attributes.put(NAME, "bar");
       attributes.put(TYPE, Bar.class.getName());
@@ -149,7 +149,7 @@ public class EntityWidgetBuilderTest
       StaticHtmlMetawidget metawidget = new StaticHtmlMetawidget();
       metawidget.setValue("#{foo}");
       metawidget.setPath(FooOneToOne.class.getName());
-      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder();
+      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder(new EntityWidgetBuilderConfig());
       Map<String, String> attributes = CollectionUtils.newHashMap();
       attributes.put(NAME, "bar");
       attributes.put(TYPE, Bar.class.getName());
@@ -165,7 +165,7 @@ public class EntityWidgetBuilderTest
       StaticHtmlMetawidget metawidget = new StaticHtmlMetawidget();
       metawidget.setValue("#{foo}");
       metawidget.setPath(FooOneToOne.class.getName());
-      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder();
+      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder(new EntityWidgetBuilderConfig());
       Map<String, String> attributes = CollectionUtils.newHashMap();
       attributes.put(NAME, "bar");
       attributes.put(TYPE, Bar.class.getName());
@@ -199,7 +199,7 @@ public class EntityWidgetBuilderTest
    {
       StaticHtmlMetawidget metawidget = new StaticHtmlMetawidget();
       metawidget.setValue("#{foo}");
-      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder();
+      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder(new EntityWidgetBuilderConfig());
       Map<String, String> attributes = CollectionUtils.newHashMap();
       attributes.put(NAME, "bars");
       attributes.put(TYPE, List.class.getName());
@@ -227,7 +227,7 @@ public class EntityWidgetBuilderTest
    {
       StaticHtmlMetawidget metawidget = new StaticHtmlMetawidget();
       metawidget.setValue("#{foo}");
-      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder();
+      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder(new EntityWidgetBuilderConfig());
       Map<String, String> attributes = CollectionUtils.newHashMap();
       attributes.put(NAME, "bars");
       attributes.put(TYPE, Set.class.getName());
@@ -308,7 +308,7 @@ public class EntityWidgetBuilderTest
    {
       StaticHtmlMetawidget metawidget = new StaticHtmlMetawidget();
       metawidget.setValue("#{foo}");
-      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder();
+      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder(new EntityWidgetBuilderConfig());
       Map<String, String> attributes = CollectionUtils.newHashMap();
       attributes.put(NAME, "bars");
       attributes.put(TYPE, Set.class.getName());
@@ -371,7 +371,7 @@ public class EntityWidgetBuilderTest
 
       metawidget.setInspector(inspector);
       metawidget.setValue("#{foo}");
-      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder();
+      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder(new EntityWidgetBuilderConfig());
       Map<String, String> attributes = CollectionUtils.newHashMap();
       attributes.put(NAME, "bars");
       attributes.put(TYPE, Set.class.getName());
@@ -408,7 +408,7 @@ public class EntityWidgetBuilderTest
 
       StaticHtmlMetawidget metawidget = new StaticHtmlMetawidget();
       metawidget.setValue("#{foo}");
-      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder();
+      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder(new EntityWidgetBuilderConfig());
       Map<String, String> attributes = CollectionUtils.newHashMap();
       attributes.put(NAME, "bar");
       attributes.put(TYPE, boolean.class.getName());
