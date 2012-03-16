@@ -30,12 +30,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.inject.Inject;
 import javax.persistence.OneToOne;
 
 import junit.framework.TestCase;
 
 import org.jboss.forge.env.Configuration;
+import org.jboss.forge.shell.env.ConfigurationAdapter;
 import org.metawidget.inspector.annotation.MetawidgetAnnotationInspector;
 import org.metawidget.inspector.annotation.UiComesAfter;
 import org.metawidget.inspector.composite.CompositeInspector;
@@ -56,9 +56,6 @@ import org.metawidget.util.CollectionUtils;
 public class EntityWidgetBuilderTest
          extends TestCase
 {
-   @Inject
-   private Configuration forgeConfig;
-
    //
    // Public methods
    //
@@ -438,10 +435,10 @@ public class EntityWidgetBuilderTest
       assertTrue(config1.equals(config2));
       assertEquals(config1.hashCode(), config2.hashCode());
       assertTrue(!config1.equals("Foo"));
-      assertTrue(this.forgeConfig != null);
-      config1.setConfig(this.forgeConfig);
+      Configuration forgeConfig = new ConfigurationAdapter(null);
+      config1.setConfig(forgeConfig);
       assertTrue(!config1.equals(config2));
-      config2.setConfig(this.forgeConfig);
+      config2.setConfig(forgeConfig);
       assertTrue(config1.equals(config2));
       assertEquals(config1.hashCode(), config2.hashCode());
    }

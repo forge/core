@@ -67,17 +67,13 @@ public class EntityWidgetBuilderConfig
          return false;
       }
 
-      return super.equals(that);
+      return true;
    }
 
    @Override
    public int hashCode()
    {
-
-      int hashCode = super.hashCode();
-      hashCode = 31 * hashCode + ObjectUtils.nullSafeHashCode(this.config);
-
-      return hashCode;
+      return ObjectUtils.nullSafeHashCode(this.config);
    }
 
    //
