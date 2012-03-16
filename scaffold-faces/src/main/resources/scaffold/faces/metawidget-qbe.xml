@@ -21,9 +21,6 @@
 									<project>
 										<forgeProject/>
 									</project>
-									<config>
-										<forgeConfig/>
-									</config>
 								</forgePropertyStyle>
 							</propertyStyle>
 						</propertyTypeInspector>

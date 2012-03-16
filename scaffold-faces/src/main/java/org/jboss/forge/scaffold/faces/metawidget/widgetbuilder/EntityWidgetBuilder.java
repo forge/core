@@ -21,17 +21,9 @@
  */
 package org.jboss.forge.scaffold.faces.metawidget.widgetbuilder;
 
-import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.N_TO_MANY;
-import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.ONE_TO_ONE;
-import static org.metawidget.inspector.InspectionResultConstants.ENTITY;
-import static org.metawidget.inspector.InspectionResultConstants.INVERSE_RELATIONSHIP;
-import static org.metawidget.inspector.InspectionResultConstants.NAME;
-import static org.metawidget.inspector.InspectionResultConstants.PARAMETERIZED_TYPE;
-import static org.metawidget.inspector.InspectionResultConstants.REQUIRED;
-import static org.metawidget.inspector.InspectionResultConstants.TRUE;
-import static org.metawidget.inspector.InspectionResultConstants.TYPE;
-import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.FACES_CONVERTER_ID;
-import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.FACES_LOOKUP;
+import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.*;
+import static org.metawidget.inspector.InspectionResultConstants.*;
+import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.*;
 
 import java.util.Collection;
 import java.util.List;
@@ -39,7 +31,6 @@ import java.util.Map;
 
 import org.jboss.forge.env.Configuration;
 import org.jboss.forge.parser.java.util.Strings;
-import org.jboss.forge.project.Project;
 import org.jboss.forge.scaffold.faces.FacesScaffold;
 import org.metawidget.statically.BaseStaticXmlWidget;
 import org.metawidget.statically.StaticWidget;
@@ -76,7 +67,7 @@ import org.w3c.dom.NodeList;
 
 /**
  * Builds widgets with Forge-specific behaviours (such as links to other scaffolding pages).
- * 
+ *
  * @author Richard Kennard
  */
 
@@ -97,11 +88,10 @@ public class EntityWidgetBuilder
    private static final String TOP_LEVEL_PARAMETERIZED_TYPE = "top-level-parameterized-type";
 
    /**
-    * Current Forge project. Useful to retrieve <code>targetDir</code>.
+    * Current Forge Configuration. Useful to retrieve <code>targetDir</code>.
     */
 
-   private Project project;
-   private Configuration config;
+   private final Configuration config;
 
    //
    // Constructor
@@ -109,7 +99,6 @@ public class EntityWidgetBuilder
 
    public EntityWidgetBuilder(EntityWidgetBuilderConfig config)
    {
-      this.project = config.getProject();
       this.config = config.getConfig();
    }
 
@@ -594,9 +583,13 @@ public class EntityWidgetBuilder
       }
    }
 
+   //
+   // Private methods
+   //
+
    private String getTargetDir()
    {
-      String targetDir = config.getString(FacesScaffold.class.getName()+"_targetDir");
+      String targetDir = this.config.getString(FacesScaffold.class.getName() + "_targetDir");
       return Strings.isNullOrEmpty(targetDir) ? "scaffold" : targetDir;
    }
 }

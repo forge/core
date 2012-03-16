@@ -22,9 +22,6 @@
 									<project>
 										<forgeProject/>
 									</project>
-									<config>
-										<forgeConfig/>
-									</config>
 								</forgePropertyStyle>
 							</propertyStyle>
 						</propertyTypeInspector>
@@ -53,9 +50,6 @@
 				<widgetBuilders>
 					<array>
 						<entityWidgetBuilder xmlns="java:org.jboss.forge.scaffold.faces.metawidget.widgetbuilder" config="EntityWidgetBuilderConfig">
-							<project>
-								<forgeProject/>
-							</project>
 							<config>
 								<forgeConfig/>
 							</config>
