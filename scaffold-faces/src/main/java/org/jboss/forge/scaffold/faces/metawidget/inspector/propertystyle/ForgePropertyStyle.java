@@ -29,7 +29,6 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 
-import org.jboss.forge.env.Configuration;
 import org.jboss.forge.parser.java.EnumConstant;
 import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.FieldHolder;
@@ -63,11 +62,9 @@ public class ForgePropertyStyle
    // Private members
    //
 
-   private Project project;
-   private Configuration config;
+   private final Project project;
 
-   private MessageFormat privateFieldConvention;
-
+   private final MessageFormat privateFieldConvention;
 
    //
    // Constructor
@@ -78,7 +75,6 @@ public class ForgePropertyStyle
       super(config);
 
       this.project = config.getProject();
-      this.config = config.getConfig();
       this.privateFieldConvention = config.getPrivateFieldConvention();
    }
 

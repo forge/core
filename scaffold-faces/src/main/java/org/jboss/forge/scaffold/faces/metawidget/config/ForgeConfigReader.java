@@ -39,7 +39,9 @@ public class ForgeConfigReader
    //
 
    private static final String CONFIG_ELEMENT_NAME = "forgeConfig";
+
    private static final String PROJECT_ELEMENT_NAME = "forgeProject";
+
    //
    // Private members
    //
@@ -68,7 +70,7 @@ public class ForgeConfigReader
       {
          return true;
       }
-      
+
       if (CONFIG_ELEMENT_NAME.equals(name))
       {
          return true;
@@ -84,7 +86,7 @@ public class ForgeConfigReader
       {
          return this.project;
       }
-      
+
       if(CONFIG_ELEMENT_NAME.equals(name))
       {
          return this.config;

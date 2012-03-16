@@ -21,17 +21,9 @@
  */
 package org.jboss.forge.scaffold.faces.metawidget.widgetbuilder;
 
-import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.N_TO_MANY;
-import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.ONE_TO_ONE;
-import static org.metawidget.inspector.InspectionResultConstants.INVERSE_RELATIONSHIP;
-import static org.metawidget.inspector.InspectionResultConstants.NAME;
-import static org.metawidget.inspector.InspectionResultConstants.PARAMETERIZED_TYPE;
-import static org.metawidget.inspector.InspectionResultConstants.PROPERTY;
-import static org.metawidget.inspector.InspectionResultConstants.READ_ONLY;
-import static org.metawidget.inspector.InspectionResultConstants.REQUIRED;
-import static org.metawidget.inspector.InspectionResultConstants.TRUE;
-import static org.metawidget.inspector.InspectionResultConstants.TYPE;
-import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.FACES_LOOKUP;
+import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.*;
+import static org.metawidget.inspector.InspectionResultConstants.*;
+import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.*;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -42,6 +34,8 @@ import javax.persistence.OneToOne;
 
 import junit.framework.TestCase;
 
+import org.jboss.forge.env.Configuration;
+import org.jboss.forge.shell.env.ConfigurationAdapter;
 import org.metawidget.inspector.annotation.MetawidgetAnnotationInspector;
 import org.metawidget.inspector.annotation.UiComesAfter;
 import org.metawidget.inspector.composite.CompositeInspector;
@@ -65,6 +59,7 @@ public class EntityWidgetBuilderTest
    //
    // Public methods
    //
+
    EntityWidgetBuilderConfig config = new EntityWidgetBuilderConfig().setConfig(new MockForgeConfiguration());
 
    public void testManyToOne()
@@ -72,7 +67,7 @@ public class EntityWidgetBuilderTest
    {
       StaticHtmlMetawidget metawidget = new StaticHtmlMetawidget();
       metawidget.setValue("#{foo}");
-      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder(config);
+      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder(this.config);
       Map<String, String> attributes = CollectionUtils.newHashMap();
       attributes.put(NAME, "bar");
       attributes.put(TYPE, Bar.class.getName());
@@ -208,7 +203,7 @@ public class EntityWidgetBuilderTest
    {
       StaticHtmlMetawidget metawidget = new StaticHtmlMetawidget();
       metawidget.setValue("#{foo}");
-      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder(config);
+      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder(this.config);
       Map<String, String> attributes = CollectionUtils.newHashMap();
       attributes.put(NAME, "bars");
       attributes.put(TYPE, List.class.getName());
@@ -236,7 +231,7 @@ public class EntityWidgetBuilderTest
    {
       StaticHtmlMetawidget metawidget = new StaticHtmlMetawidget();
       metawidget.setValue("#{foo}");
-      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder(config);
+      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder(this.config);
       Map<String, String> attributes = CollectionUtils.newHashMap();
       attributes.put(NAME, "bars");
       attributes.put(TYPE, Set.class.getName());
@@ -317,7 +312,7 @@ public class EntityWidgetBuilderTest
    {
       StaticHtmlMetawidget metawidget = new StaticHtmlMetawidget();
       metawidget.setValue("#{foo}");
-      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder(config);
+      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder(this.config);
       Map<String, String> attributes = CollectionUtils.newHashMap();
       attributes.put(NAME, "bars");
       attributes.put(TYPE, Set.class.getName());
@@ -380,7 +375,7 @@ public class EntityWidgetBuilderTest
 
       metawidget.setInspector(inspector);
       metawidget.setValue("#{foo}");
-      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder(config);
+      EntityWidgetBuilder widgetBuilder = new EntityWidgetBuilder(this.config);
       Map<String, String> attributes = CollectionUtils.newHashMap();
       attributes.put(NAME, "bars");
       attributes.put(TYPE, Set.class.getName());
@@ -430,6 +425,22 @@ public class EntityWidgetBuilderTest
 
       String result = "<h:outputText styleClass=\"#{foo.bar ? 'boolean-true' : 'boolean-false'}\"/>";
       assertEquals(result, widget.toString());
+   }
+
+   public void testConfig()
+   {
+      EntityWidgetBuilderConfig config1 = new EntityWidgetBuilderConfig();
+      EntityWidgetBuilderConfig config2 = new EntityWidgetBuilderConfig();
+
+      assertTrue(config1.equals(config2));
+      assertEquals(config1.hashCode(), config2.hashCode());
+      assertTrue(!config1.equals("Foo"));
+      Configuration forgeConfig = new ConfigurationAdapter(null);
+      config1.setConfig(forgeConfig);
+      assertTrue(!config1.equals(config2));
+      config2.setConfig(forgeConfig);
+      assertTrue(config1.equals(config2));
+      assertEquals(config1.hashCode(), config2.hashCode());
    }
 
    //
