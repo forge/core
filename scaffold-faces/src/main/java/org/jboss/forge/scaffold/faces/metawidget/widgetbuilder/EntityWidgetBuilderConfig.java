@@ -21,16 +21,12 @@
  */
 package org.jboss.forge.scaffold.faces.metawidget.widgetbuilder;
 
-import java.text.MessageFormat;
-
 import org.jboss.forge.env.Configuration;
-import org.jboss.forge.project.Project;
-import org.metawidget.inspector.impl.propertystyle.javabean.JavaBeanPropertyStyleConfig;
 import org.metawidget.util.simple.ObjectUtils;
 
 /**
  * Configures a <tt>ForgePropertyStyle</tt>.
- * 
+ *
  * @author Richard Kennard
  */
 
@@ -41,18 +37,11 @@ public class EntityWidgetBuilderConfig
    // Private members
    //
 
-   private Project project;
    private Configuration config;
 
    //
    // Public methods
    //
-
-   public EntityWidgetBuilderConfig setProject(Project project)
-   {
-      this.project = project;
-      return this;
-   }
 
    public EntityWidgetBuilderConfig setConfig(Configuration config)
    {
@@ -73,22 +62,18 @@ public class EntityWidgetBuilderConfig
          return false;
       }
 
-      if (this.project != ((EntityWidgetBuilderConfig) that).project)
+      if (this.config != ((EntityWidgetBuilderConfig) that).config)
       {
          return false;
       }
 
-      return super.equals(that);
+      return true;
    }
 
    @Override
    public int hashCode()
    {
-
-      int hashCode = super.hashCode();
-      hashCode = 31 * hashCode + ObjectUtils.nullSafeHashCode(this.project);
-
-      return hashCode;
+      return ObjectUtils.nullSafeHashCode(this.config);
    }
 
    //
@@ -99,10 +84,4 @@ public class EntityWidgetBuilderConfig
    {
       return this.config;
    }
-
-   protected Project getProject()
-   {
-      return this.project;
-   }
-
 }

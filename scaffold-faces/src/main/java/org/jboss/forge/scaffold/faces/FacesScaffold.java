@@ -101,7 +101,7 @@ import org.w3c.dom.NamedNodeMap;
  * writing Metawidget plugins, see <a href="http://metawidget.org/documentation.php">the Metawidget documentation</a>.
  * <p>
  * This Facet does <em>not</em> require Metawidget to be in the final project.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author Richard Kennard
  */
@@ -181,7 +181,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    //
 
    @Inject
-   public FacesScaffold(final Configuration config, 
+   public FacesScaffold(final Configuration config,
             final ShellPrompt prompt,
             final TemplateCompiler compiler,
             final Event<InstallFacets> install)
@@ -646,16 +646,16 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       Node webXML = removeConflictingErrorPages(servlet);
       servlet.getConfigFile().setContents(XMLParser.toXMLInputStream(webXML));
 
-      WebAppDescriptor config = servlet.getConfig();
+      WebAppDescriptor servletConfig = servlet.getConfig();
       WebResourceFacet web = this.project.getFacet(WebResourceFacet.class);
 
       // (prefer /faces/error.xhtml)
 
       String errorLocation = getAccessStrategy().getWebPaths(web.getWebResource("error.xhtml")).get(1);
-      config.errorPage(404, errorLocation);
-      config.errorPage(500, errorLocation);
+      servletConfig.errorPage(404, errorLocation);
+      servletConfig.errorPage(500, errorLocation);
 
-      servlet.saveConfig(config);
+      servlet.saveConfig(servletConfig);
    }
 
    protected Node removeConflictingErrorPages(final ServletFacet servlet)
