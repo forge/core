@@ -70,6 +70,11 @@ public class CurrentProject
          {
             changeProject(currentProject, project);
          }
+         else
+         {
+            // Do not notify when updating the current project instance.
+            this.currentProject = project;
+         }
       }
       else if (((project != null) && (currentProject == null))
                || ((project == null) && (currentProject != null)))

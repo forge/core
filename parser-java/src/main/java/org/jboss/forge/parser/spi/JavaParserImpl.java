@@ -109,6 +109,7 @@ public class JavaParserImpl implements JavaParserProvider
       parser.setSource(document.get().toCharArray());
       Map options = JavaCore.getOptions();
       options.put(CompilerOptions.OPTION_Source, CompilerOptions.VERSION_1_5);
+      options.put(CompilerOptions.OPTION_Encoding, "UTF-8");
       parser.setCompilerOptions(options);
 
       parser.setResolveBindings(true);
