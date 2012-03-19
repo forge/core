@@ -50,9 +50,14 @@ import org.jboss.weld.environment.se.WeldContainer;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author Mike Brock
  * @author Ronald van Kuijk
+ * @author <a href="mailto:koen.aers@gmail.com">Koen Aers</a>
  */
 public class Bootstrap
 {
+   
+   public static final String PROP_PLUGIN_DIR = "org.jboss.forge.pluginDir";
+   private static final String ARG_PLUGIN_DIR = "-pluginDir";
+   
    private static boolean pluginSystemEnabled = !Boolean.getBoolean("forge.plugins.disable");
    private static Thread currentShell = null;
    private static boolean restartRequested = false;
@@ -65,7 +70,21 @@ public class Bootstrap
    public static void main(final String[] args)
    {
       mainClassLoader = Thread.currentThread().getContextClassLoader();
+      readArguments(args);
       init();
+   }
+   
+   private static void readArguments(String[] args) {
+      readPluginDirArgument(args);
+   }
+   
+   private static void readPluginDirArgument(String[] args) {
+      for (int i = 0; i < args.length; i++) {
+         if (ARG_PLUGIN_DIR.equals(args[i]) && i + 1 < args.length) {
+            System.setProperty(PROP_PLUGIN_DIR, args[i + 1]);
+            return;
+         }
+      }
    }
 
    private static void init()
@@ -159,6 +178,7 @@ public class Bootstrap
 
    synchronized private static void loadPlugins()
    {
+      
       if (!pluginSystemEnabled)
          return;
 
