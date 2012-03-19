@@ -115,10 +115,6 @@ public class ProjectInitializer
                      newProject.getFacet(MetadataFacet.class).getProjectName());
          }
       }
-      catch (RuntimeException e)
-      {
-         throw e;
-      }
       finally
       {
          cp.setCurrentProject(newProject);
