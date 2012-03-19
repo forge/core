@@ -39,18 +39,22 @@ import javax.inject.Inject;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.dependencies.DependencyInstaller;
+import org.jboss.forge.project.facets.MetadataFacet;
 import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.Resource;
+import org.jboss.forge.resources.UnknownFileResource;
 import org.jboss.forge.shell.ShellMessages;
 import org.jboss.forge.shell.ShellPrintWriter;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
+import org.jboss.forge.shell.util.Streams;
 import org.jboss.forge.spec.javaee.BaseJavaEEFacet;
 import org.jboss.forge.spec.javaee.FacesFacet;
 import org.jboss.forge.spec.javaee.ServletFacet;
 import org.jboss.forge.spec.javaee.util.ServletUtil;
+import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.FacesProjectStage;
 import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.ServletDef;
 import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.ServletMappingDef;
@@ -81,19 +85,19 @@ public class FacesFacetImpl extends BaseJavaEEFacet implements FacesFacet
    @Override
    public boolean isInstalled()
    {
-      return getConfigFile().exists()
-               && super.isInstalled();
+      String version = project.getFacet(ServletFacet.class).getConfig().getVersion();
+      return version == null || version.trim().startsWith("3");
    }
 
    @Override
    public boolean install()
    {
-      if (!isInstalled())
+      if (!getConfigFile().exists() && !getConfigFile().createNewFile())
       {
-         if (!getConfigFile().exists() && !getConfigFile().createNewFile())
-         {
-            throw new RuntimeException("Failed to create required [" + getConfigFile().getFullyQualifiedName() + "]");
-         }
+         throw new RuntimeException("Failed to create required [" + getConfigFile().getFullyQualifiedName() + "]");
+      }
+      else
+      {
          getConfigFile().setContents(getClass()
                   .getResourceAsStream("/org/jboss/forge/web/faces-config.xml"));
       }
@@ -115,7 +119,62 @@ public class FacesFacetImpl extends BaseJavaEEFacet implements FacesFacet
    public FileResource<?> getConfigFile()
    {
       DirectoryResource webRoot = project.getFacet(WebResourceFacet.class).getWebRootDirectory();
-      return (FileResource<?>) webRoot.getChild("WEB-INF" + File.separator + "faces-config.xml");
+      FileResource<?> child = (FileResource<?>) webRoot.getChild("WEB-INF" + File.separator + "faces-config.xml");
+
+      if (!child.exists())
+      {
+         return new UnknownFileResource(child.getResourceFactory(), child.getUnderlyingResourceObject())
+         {
+            @Override
+            public InputStream getResourceInputStream()
+            {
+               if (!exists())
+               {
+                  String projectName = project.getFacet(MetadataFacet.class).getProjectName();
+                  WebAppDescriptor unit = Descriptors.create(WebAppDescriptor.class)
+                           .displayName(projectName)
+                           .sessionTimeout(30);
+                  return Streams.fromString(unit.exportAsString());
+               }
+               else
+               {
+                  return super.getResourceInputStream();
+               }
+            }
+
+            @Override
+            public UnknownFileResource setContents(InputStream data)
+            {
+               if (!exists())
+               {
+                  createNewFile();
+               }
+               return super.setContents(data);
+            }
+
+            @Override
+            public UnknownFileResource setContents(char[] data)
+            {
+               if (!exists())
+               {
+                  createNewFile();
+               }
+               return super.setContents(data);
+            }
+
+            @Override
+            public UnknownFileResource setContents(String data)
+            {
+               if (!exists())
+               {
+                  createNewFile();
+               }
+               return super.setContents(data);
+            }
+         };
+      }
+
+      return (FileResource<?>) child;
    }
 
    @Override

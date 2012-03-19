@@ -168,6 +168,6 @@ if $cygwin; then
     HOME=`cygpath --path --windows "$HOME"`
 fi
 
-forge_exec_cmd="\"$JAVACMD\" $FORGE_OPTS \"-Dforge.home=${FORGE_HOME}\"  \"-Dforge.shell.colorEnabled=true\" -jar \"${FORGE_HOME}/jboss-modules.jar\" -modulepath \"${FORGE_HOME}/modules:${HOME}/.forge/plugins\:$PLUGIN_DIR" org.jboss.forge"
+forge_exec_cmd="\"$JAVACMD\" $FORGE_OPTS \"-Dforge.home=${FORGE_HOME}\"  \"-Dforge.shell.colorEnabled=true\" -jar \"${FORGE_HOME}/jboss-modules.jar\" -modulepath \"${FORGE_HOME}/modules:${HOME}/.forge/plugins\:$PLUGIN_DIR\" org.jboss.forge"
 
 eval $forge_exec_cmd "$QUOTED_ARGS"
