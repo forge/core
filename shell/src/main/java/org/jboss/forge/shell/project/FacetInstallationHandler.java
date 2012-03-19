@@ -116,7 +116,7 @@ public class FacetInstallationHandler
             installDependencies(facet, prompt);
             PackagingType type = updatePackaging(facet);
 
-            if (!facet.isInstalled() || !project.hasFacet(facet.getClass()))
+            if (!project.hasFacet(facet.getClass()))
             {
                project.installFacet(facet);
             }

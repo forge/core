@@ -89,7 +89,7 @@ public class MavenWebResourceFacet extends BaseFacet implements WebResourceFacet
       MavenCoreFacet mavenFacet = project.getFacet(MavenCoreFacet.class);
       PackagingType packagingType = project.getFacet(PackagingFacet.class).getPackagingType();
 
-      return getWebRootDirectory().exists() && mavenFacet.isInstalled()
+      return mavenFacet.isInstalled()
                && packagingType.equals(PackagingType.WAR);
    }
 
