@@ -27,17 +27,17 @@ import org.jboss.forge.project.facets.BaseFacet;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class MockIsInstalledTrueFacet extends BaseFacet
+public class MockFacet extends BaseFacet
 {
    static final String INSTALLED = "installed";
    private boolean succeed;
 
-   public MockIsInstalledTrueFacet()
+   public MockFacet()
    {
       this.succeed = true;
    }
 
-   public MockIsInstalledTrueFacet(boolean succeed)
+   public MockFacet(boolean succeed)
    {
       this.succeed = succeed;
    }

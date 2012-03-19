@@ -51,26 +51,36 @@ public class BaseProjectTest
    @Test
    public void testFacetInstallationReturningFalseCancelsInstallation()
    {
-      Assert.assertFalse(project.hasFacet(MockIsInstalledTrueFacet.class));
-      Assert.assertNull(project.getAttribute(MockIsInstalledTrueFacet.INSTALLED));
+      Assert.assertFalse(project.hasFacet(MockFacet.class));
+      Assert.assertNull(project.getAttribute(MockFacet.INSTALLED));
       try
       {
-         project.installFacet(new MockIsInstalledTrueFacet(false));
+         project.installFacet(new MockFacet(false));
          fail();
       }
       catch (Exception e)
       {}
-      Assert.assertFalse(project.hasFacet(MockIsInstalledTrueFacet.class));
+      Assert.assertFalse(project.hasFacet(MockFacet.class));
    }
 
    @Test
    public void testCanInstallFacetWhichIsInstalledButNotRegistered()
    {
-      Assert.assertFalse(project.hasFacet(MockIsInstalledTrueFacet.class));
-      Assert.assertNull(project.getAttribute(MockIsInstalledTrueFacet.INSTALLED));
-      project.installFacet(new MockIsInstalledTrueFacet());
-      Assert.assertTrue(project.hasFacet(MockIsInstalledTrueFacet.class));
-      Assert.assertNotNull(project.getAttribute(MockIsInstalledTrueFacet.INSTALLED));
+      Assert.assertFalse(project.hasFacet(MockFacet.class));
+      Assert.assertNull(project.getAttribute(MockFacet.INSTALLED));
+      project.installFacet(new MockFacet());
+      Assert.assertTrue(project.hasFacet(MockFacet.class));
+      Assert.assertNotNull(project.getAttribute(MockFacet.INSTALLED));
+   }
+
+   @Test
+   public void testCanRegisterFacetWhichIsNotInstalledAndRequiresNoInstallation()
+   {
+      Assert.assertFalse(project.hasFacet(MockFacet.class));
+      Assert.assertNull(project.getAttribute(MockFacet.INSTALLED));
+      project.registerFacet(new MockFacet());
+      Assert.assertTrue(project.hasFacet(MockFacet.class));
+      Assert.assertTrue(project.getFacet(MockFacet.class).isInstalled());
    }
 
 }
