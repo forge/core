@@ -229,7 +229,7 @@ public class AnnotationImpl<O extends JavaSource<O>, T> implements Annotation<O>
             if (v instanceof MemberValuePair)
             {
                MemberValuePair pair = (MemberValuePair) v;
-               if (pair.getValue().toString().equals(name))
+               if (pair.getName().toString().equals(name))
                {
                   toBeRemoved.add(pair);
                }
