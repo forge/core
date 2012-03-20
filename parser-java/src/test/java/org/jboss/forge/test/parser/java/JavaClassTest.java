@@ -76,7 +76,7 @@ public class JavaClassTest
       String output = javaClass.toString();
 
       assertTrue(output.contains(
-               "Telephone" + (OSUtils.isWindows() ? "\n\r" : "\n") +
+               "Telephone" + "\n" +
                         "{"
                ));
       assertTrue(output.contains(
