@@ -110,7 +110,7 @@ import org.w3c.dom.NamedNodeMap;
    PersistenceFacet.class,
    EJBFacet.class,
    CDIFacet.class,
-   FacesFacet.class})
+   FacesAPIFacet.class})
 public class FacesScaffold extends BaseFacet implements ScaffoldProvider {
    //
    // Private statics
