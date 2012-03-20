@@ -64,6 +64,7 @@ import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.util.Streams;
 import org.jboss.forge.spec.javaee.CDIFacet;
 import org.jboss.forge.spec.javaee.EJBFacet;
+import org.jboss.forge.spec.javaee.FacesAPIFacet;
 import org.jboss.forge.spec.javaee.FacesFacet;
 import org.jboss.forge.spec.javaee.PersistenceFacet;
 import org.jboss.forge.spec.javaee.ServletFacet;
@@ -112,7 +113,7 @@ import org.w3c.dom.NamedNodeMap;
          PersistenceFacet.class,
          EJBFacet.class,
          CDIFacet.class,
-         FacesFacet.class })
+         FacesAPIFacet.class })
 public class FacesScaffold extends BaseFacet implements ScaffoldProvider
 {
    //

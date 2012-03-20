@@ -37,7 +37,6 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 
 import org.jboss.forge.project.dependencies.Dependency;
-import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.dependencies.DependencyInstaller;
 import org.jboss.forge.project.facets.MetadataFacet;
 import org.jboss.forge.project.facets.WebResourceFacet;
@@ -67,8 +66,6 @@ import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
 @RequiresFacet(ServletFacet.class)
 public class FacesFacetImpl extends BaseJavaEEFacet implements FacesFacet
 {
-   public static final Dependency JAVAEE6_FACES = DependencyBuilder
-            .create("org.jboss.spec.javax.faces:jboss-jsf-api_2.0_spec");
 
    @Inject
    public FacesFacetImpl(final DependencyInstaller installer)
@@ -108,7 +105,7 @@ public class FacesFacetImpl extends BaseJavaEEFacet implements FacesFacet
    @Override
    protected List<Dependency> getRequiredDependencies()
    {
-      return Arrays.asList(JAVAEE6_FACES);
+      return Arrays.asList();
    }
 
    /*
