@@ -54,7 +54,8 @@ public class FacesScaffoldPetClinicTest extends AbstractFacesScaffoldTest
    public void testGenerate() throws Exception
    {
       Project current = getShell().getCurrentProject();
-      Project project = setupScaffoldProject("petClinic");
+      final String targetDir = "petClinic";
+      Project project = setupScaffoldProject(targetDir);
 
       queueInputLines("");
       getShell().execute("entity --named Owner");
@@ -97,7 +98,7 @@ public class FacesScaffoldPetClinicTest extends AbstractFacesScaffoldTest
 
       // Check search screen has h:message
 
-      FileResource<?> search = web.getWebResource("petClinic/pet/search.xhtml");
+      FileResource<?> search = web.getWebResource(targetDir+"/pet/search.xhtml");
       Assert.assertTrue(search.exists());
       String contents = Streams.toString(search.getResourceInputStream());
 
@@ -111,14 +112,14 @@ public class FacesScaffoldPetClinicTest extends AbstractFacesScaffoldTest
 
       // Check search screen has boolean graphic
 
-      metawidget = "\t\t\t\t\t<h:link outcome=\"/petClinic/pet/view\">\r\n";
+      metawidget = "\t\t\t\t\t<h:link outcome=\"/" + targetDir + "/pet/view\">\r\n";
       metawidget += "\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n";
       metawidget += "\t\t\t\t\t\t<h:outputText styleClass=\"#{_item.sendReminders ? 'boolean-true' : 'boolean-false'}\"/>\r\n";
       metawidget += "\t\t\t\t\t</h:link>\r\n";
 
       Assert.assertTrue(contents.contains(metawidget));
 
-      metawidget = "\t\t\t\t\t<h:link outcome=\"/petClinic/pet/view\">\r\n";
+      metawidget = "\t\t\t\t\t<h:link outcome=\"/" + targetDir + "/pet/view\">\r\n";
       metawidget += "\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n";
       metawidget += "\t\t\t\t\t\t<h:outputText id=\"itemOwner\" value=\"#{_item.owner}\"/>\r\n";
       metawidget += "\t\t\t\t\t</h:link>\r\n";
@@ -127,7 +128,7 @@ public class FacesScaffoldPetClinicTest extends AbstractFacesScaffoldTest
 
       // Check create screen has h:selectBooleanCheckbox
 
-      FileResource<?> create = web.getWebResource("petClinic/pet/create.xhtml");
+      FileResource<?> create = web.getWebResource(targetDir+"/pet/create.xhtml");
       Assert.assertTrue(create.exists());
       contents = Streams.toString(create.getResourceInputStream());
 
@@ -141,7 +142,7 @@ public class FacesScaffoldPetClinicTest extends AbstractFacesScaffoldTest
 
       // Check view screen has boolean graphic
 
-      FileResource<?> view = web.getWebResource("petClinic/pet/view.xhtml");
+      FileResource<?> view = web.getWebResource(targetDir+"/pet/view.xhtml");
       Assert.assertTrue(view.exists());
       contents = Streams.toString(view.getResourceInputStream());
 
