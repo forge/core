@@ -33,14 +33,12 @@ import java.util.Map;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.CascadeType;
+import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
 import org.jboss.forge.env.Configuration;
 import org.jboss.forge.parser.JavaParser;
-import org.jboss.forge.parser.java.Annotation;
-import org.jboss.forge.parser.java.Field;
-import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.Method;
+import org.jboss.forge.parser.java.*;
 import org.jboss.forge.parser.xml.Node;
 import org.jboss.forge.parser.xml.XMLParser;
 import org.jboss.forge.project.Project;
@@ -94,33 +92,30 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 
 /**
- * Facet to generate a Java Server Faces UI.
- * <p>
- * This facet utilizes <a href="http://metawidget.org">Metawidget</a> internally. This enables the use of the Metawidget
- * SPI (pluggable WidgetBuilders, Layouts etc) for customizing the generated User Interface. For more information on
- * writing Metawidget plugins, see <a href="http://metawidget.org/documentation.php">the Metawidget documentation</a>.
- * <p>
- * This Facet does <em>not</em> require Metawidget to be in the final project.
+ * Facet to generate a Java Server Faces UI. <p> This facet utilizes <a
+ * href="http://metawidget.org">Metawidget</a> internally. This enables the use
+ * of the Metawidget SPI (pluggable WidgetBuilders, Layouts etc) for customizing
+ * the generated User Interface. For more information on writing Metawidget
+ * plugins, see <a href="http://metawidget.org/documentation.php">the Metawidget
+ * documentation</a>. <p> This Facet does <em>not</em> require Metawidget to be
+ * in the final project.
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author Richard Kennard
  */
-
 @Alias("faces")
-@RequiresFacet({ WebResourceFacet.class,
-         DependencyFacet.class,
-         PersistenceFacet.class,
-         EJBFacet.class,
-         CDIFacet.class,
-         FacesFacet.class })
-public class FacesScaffold extends BaseFacet implements ScaffoldProvider
-{
+@RequiresFacet({WebResourceFacet.class,
+   DependencyFacet.class,
+   PersistenceFacet.class,
+   EJBFacet.class,
+   CDIFacet.class,
+   FacesFacet.class})
+public class FacesScaffold extends BaseFacet implements ScaffoldProvider {
    //
    // Private statics
    //
 
    private static final String XMLNS_PREFIX = "xmlns:";
-
    private static final String BACKING_BEAN_TEMPLATE = "scaffold/faces/BackingBean.jv";
    private static final String VIEW_UTILS_TEMPLATE = "scaffold/faces/ViewUtils.jv";
    private static final String TAGLIB_TEMPLATE = "scaffold/faces/forge.taglib.xml";
@@ -128,44 +123,34 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    private static final String CREATE_TEMPLATE = "scaffold/faces/create.xhtml";
    private static final String SEARCH_TEMPLATE = "scaffold/faces/search.xhtml";
    private static final String NAVIGATION_TEMPLATE = "scaffold/faces/page.xhtml";
-
    private static final String ERROR_TEMPLATE = "scaffold/faces/error.xhtml";
    private static final String INDEX_TEMPLATE = "scaffold/faces/index.xhtml";
-
    private final Dependency richfaces3UI = DependencyBuilder.create("org.richfaces.ui:richfaces-ui");
    private final Dependency richfaces3Impl = DependencyBuilder.create("org.richfaces.framework:richfaces-impl");
    private final Dependency richfaces4UI = DependencyBuilder.create("org.richfaces.ui:richfaces-components-ui");
    private final Dependency richfaces4Impl = DependencyBuilder.create("org.richfaces.core:richfaces-core-impl");
-
    //
    // Protected members (nothing is private, to help subclassing)
    //
-
    protected CompiledTemplateResource backingBeanTemplate;
    protected int backingBeanTemplateQbeMetawidgetIndent;
-
    protected CompiledTemplateResource viewUtilsTemplate;
    protected CompiledTemplateResource taglibTemplate;
    protected CompiledTemplateResource viewTemplate;
    protected Map<String, String> viewTemplateNamespaces;
    protected int viewTemplateEntityMetawidgetIndent;
-
    protected CompiledTemplateResource createTemplate;
    protected Map<String, String> createTemplateNamespaces;
    protected int createTemplateEntityMetawidgetIndent;
-
    protected CompiledTemplateResource searchTemplate;
    protected Map<String, String> searchTemplateNamespaces;
    protected int searchTemplateSearchMetawidgetIndent;
    protected int searchTemplateBeanMetawidgetIndent;
-
    protected CompiledTemplateResource navigationTemplate;
    protected int navigationTemplateIndent;
-
    protected CompiledTemplateResource errorTemplate;
    protected CompiledTemplateResource indexTemplate;
    protected TemplateResolver<ClassLoader> resolver;
-
    protected final ShellPrompt prompt;
    protected final TemplateCompiler compiler;
    protected final Event<InstallFacets> install;
@@ -173,13 +158,15 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    protected StaticHtmlMetawidget searchMetawidget;
    protected StaticHtmlMetawidget beanMetawidget;
    protected StaticJavaMetawidget qbeMetawidget;
+//   @Inject AnnotationLookup annotationLookup;
+//   @Inject RelationResolverWidgetProcessor relationResolver;
+//   @Inject RelationResolverWidgetProcessorConfig relationResolverConfig;
 
    private Configuration config;
 
    //
    // Constructor
    //
-
    @Inject
    public FacesScaffold(final Configuration config,
             final ShellPrompt prompt,
@@ -193,8 +180,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
 
       this.resolver = new ClassLoaderTemplateResolver(FacesScaffold.class.getClassLoader());
 
-      if (this.compiler != null)
-      {
+      if (this.compiler != null) {
          this.compiler.getTemplateResolverFactory().addResolver(this.resolver);
       }
    }
@@ -202,7 +188,6 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    //
    // Public methods
    //
-
    @Override
    public List<Resource<?>> setup(String targetDir, final Resource<?> template, final boolean overwrite)
    {
@@ -213,16 +198,14 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    }
 
    /**
-    * Overridden to setup the Metawidgets.
-    * <p>
-    * Metawidgets must be configured per project <em>and per Forge invocation</em>. It is not sufficient to simply
-    * configure them in <code>setup</code> because the user may restart Forge and not run <code>scaffold setup</code> a
-    * second time.
+    * Overridden to setup the Metawidgets. <p> Metawidgets must be configured
+    * per project <em>and per Forge invocation</em>. It is not sufficient to
+    * simply configure them in
+    * <code>setup</code> because the user may restart Forge and not run
+    * <code>scaffold setup</code> a second time.
     */
-
    @Override
-   public void setProject(Project project)
-   {
+   public void setProject(Project project) {
       super.setProject(project);
 
       ForgeConfigReader configReader = new ForgeConfigReader(this.config, this.project);
@@ -242,6 +225,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       this.qbeMetawidget = new StaticJavaMetawidget();
       this.qbeMetawidget.setConfigReader(configReader);
       this.qbeMetawidget.setConfig("scaffold/faces/metawidget-qbe.xml");
+
    }
 
    @Override
@@ -256,8 +240,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       // Track the list of resources generated
 
       List<Resource<?>> result = new ArrayList<Resource<?>>();
-      try
-      {
+      try {
          JavaSourceFacet java = this.project.getFacet(JavaSourceFacet.class);
          WebResourceFacet web = this.project.getFacet(WebResourceFacet.class);
 
@@ -266,20 +249,22 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
          context.put("entity", entity);
          String ccEntity = StringUtils.decapitalize(entity.getName());
          context.put("ccEntity", ccEntity);
+         setPrimaryKeyMetaData(context, entity);
 
          // Prepare qbeMetawidget
          this.qbeMetawidget.setPath(entity.getQualifiedName());
          StringWriter stringWriter = new StringWriter();
          this.qbeMetawidget.write(stringWriter, this.backingBeanTemplateQbeMetawidgetIndent);
+         
          context.put("qbeMetawidget", stringWriter.toString().trim());
          context.put("qbeMetawidgetImports",
-                  CollectionUtils.toString(this.qbeMetawidget.getImports(), ";\r\nimport ", true, false));
+                 CollectionUtils.toString(this.qbeMetawidget.getImports(), ";\r\nimport ", true, false));
 
          // Create the Backing Bean for this entity
          JavaClass viewBean = JavaParser.parse(JavaClass.class, this.backingBeanTemplate.render(context));
          viewBean.setPackage(java.getBasePackage() + ".view");
          result.add(ScaffoldUtil.createOrOverwrite(this.prompt, java.getJavaResource(viewBean), viewBean.toString(),
-                  overwrite));
+                 overwrite));
 
          // Set new context for view generation
          context = getTemplateContext(template);
@@ -287,6 +272,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
          context.put("beanName", beanName);
          context.put("ccEntity", ccEntity);
          context.put("entityName", StringUtils.uncamelCase(entity.getName()));
+         setPrimaryKeyMetaData(context, entity);
 
          // Prepare entityMetawidget
          this.entityMetawidget.setValue(StaticFacesUtils.wrapExpression(beanName + "." + ccEntity));
@@ -316,7 +302,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
          this.beanMetawidget.setValue(StaticFacesUtils.wrapExpression(beanName + ".pageItems"));
          this.beanMetawidget.setPath(viewBean.getQualifiedName() + "/pageItems");
          writeSearchAndBeanMetawidget(context, this.searchTemplateSearchMetawidgetIndent,
-                  this.searchTemplateBeanMetawidgetIndent, this.searchTemplateNamespaces);
+                 this.searchTemplateBeanMetawidgetIndent, this.searchTemplateNamespaces);
 
          result.add(ScaffoldUtil.createOrOverwrite(this.prompt,
                   web.getWebResource(targetDir + "/" + ccEntity + "/search.xhtml"),
@@ -329,19 +315,17 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
          JavaClass viewUtils = JavaParser.parse(JavaClass.class, this.viewUtilsTemplate.render(context));
          viewUtils.setPackage(viewBean.getPackage());
          result.add(ScaffoldUtil.createOrOverwrite(this.prompt, java.getJavaResource(viewUtils), viewUtils.toString(),
-                  true));
+                 true));
 
          context.put("viewPackage", viewBean.getPackage());
          result.add(ScaffoldUtil.createOrOverwrite(this.prompt,
-                  web.getWebResource("WEB-INF/classes/META-INF/forge.taglib.xml"),
-                  this.taglibTemplate.render(context), true));
+                 web.getWebResource("WEB-INF/classes/META-INF/forge.taglib.xml"),
+                 this.taglibTemplate.render(context), true));
 
          createInitializers(entity);
          this.project.getFacet(JavaSourceFacet.class).saveJavaSource(entity);
 
-      }
-      catch (Exception e)
-      {
+      } catch (Exception e) {
          throw new RuntimeException("Error generating default scaffolding: " + e.getMessage(), e);
       }
       return result;
@@ -349,21 +333,18 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
 
    @Override
    @SuppressWarnings("unchecked")
-   public boolean install()
-   {
+   public boolean install() {
       if (!(this.project.hasFacet(WebResourceFacet.class) && this.project.hasFacet(PersistenceFacet.class)
-               && this.project.hasFacet(CDIFacet.class) && this.project.hasFacet(FacesFacet.class)))
-      {
+              && this.project.hasFacet(CDIFacet.class) && this.project.hasFacet(FacesFacet.class))) {
          this.install.fire(new InstallFacets(WebResourceFacet.class, PersistenceFacet.class, CDIFacet.class,
-                  FacesFacet.class));
+                 FacesFacet.class));
       }
 
       return true;
    }
 
    @Override
-   public boolean isInstalled()
-   {
+   public boolean isInstalled() {
       return true;
    }
 
@@ -388,39 +369,39 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
                this.indexTemplate.render(context), overwrite));
 
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("error.xhtml"),
-               this.errorTemplate.render(context), overwrite));
+              this.errorTemplate.render(context), overwrite));
 
       // Static resources
 
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/add.png"),
-               getClass().getResourceAsStream("/scaffold/faces/add.png"), overwrite));
+              getClass().getResourceAsStream("/scaffold/faces/add.png"), overwrite));
 
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/background.gif"),
-               getClass().getResourceAsStream("/scaffold/faces/background.gif"), overwrite));
+              getClass().getResourceAsStream("/scaffold/faces/background.gif"), overwrite));
 
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/false.png"),
-               getClass().getResourceAsStream("/scaffold/faces/false.png"), overwrite));
+              getClass().getResourceAsStream("/scaffold/faces/false.png"), overwrite));
 
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/favicon.ico"),
-               getClass().getResourceAsStream("/scaffold/faces/favicon.ico"), overwrite));
+              getClass().getResourceAsStream("/scaffold/faces/favicon.ico"), overwrite));
 
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/forge-logo.png"),
-               getClass().getResourceAsStream("/scaffold/faces/forge-logo.png"), overwrite));
+              getClass().getResourceAsStream("/scaffold/faces/forge-logo.png"), overwrite));
 
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/forge-style.css"),
-               getClass().getResourceAsStream("/scaffold/faces/forge-style.css"), overwrite));
+              getClass().getResourceAsStream("/scaffold/faces/forge-style.css"), overwrite));
 
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/jboss-community.png"),
-               getClass().getResourceAsStream("/scaffold/faces/jboss-community.png"), overwrite));
+              getClass().getResourceAsStream("/scaffold/faces/jboss-community.png"), overwrite));
 
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/remove.png"),
-               getClass().getResourceAsStream("/scaffold/faces/remove.png"), overwrite));
+              getClass().getResourceAsStream("/scaffold/faces/remove.png"), overwrite));
 
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/search.png"),
-               getClass().getResourceAsStream("/scaffold/faces/search.png"), overwrite));
+              getClass().getResourceAsStream("/scaffold/faces/search.png"), overwrite));
 
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/true.png"),
-               getClass().getResourceAsStream("/scaffold/faces/true.png"), overwrite));
+              getClass().getResourceAsStream("/scaffold/faces/true.png"), overwrite));
 
       return result;
    }
@@ -432,14 +413,12 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    }
 
    @Override
-   public AccessStrategy getAccessStrategy()
-   {
+   public AccessStrategy getAccessStrategy() {
       return new FacesAccessStrategy(this.project);
    }
 
    @Override
-   public TemplateStrategy getTemplateStrategy()
-   {
+   public TemplateStrategy getTemplateStrategy() {
       return new FacesTemplateStrategy(this.project);
    }
 
@@ -448,14 +427,13 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    {
       List<Resource<?>> result = new ArrayList<Resource<?>>();
 
-      try
-      {
+      try {
          WebResourceFacet web = this.project.getFacet(WebResourceFacet.class);
 
          result.add(ScaffoldUtil.createOrOverwrite(this.prompt,
-                  web.getWebResource("/resources/scaffold/paginator.xhtml"),
-                  getClass().getResourceAsStream("/scaffold/faces/paginator.xhtml"),
-                  overwrite));
+                 web.getWebResource("/resources/scaffold/paginator.xhtml"),
+                 getClass().getResourceAsStream("/scaffold/faces/paginator.xhtml"),
+                 overwrite));
 
          result.add(generateNavigation(targetDir, overwrite));
       }
@@ -470,91 +448,72 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    //
    // Protected methods (nothing is private, to help subclassing)
    //
-
-   protected void loadTemplates()
-   {
-      if (this.backingBeanTemplate == null)
-      {
+   protected void loadTemplates() {
+      if (this.backingBeanTemplate == null) {
          this.backingBeanTemplate = this.compiler.compile(BACKING_BEAN_TEMPLATE);
          String template = Streams.toString(this.backingBeanTemplate.getSourceTemplateResource().getInputStream());
          this.backingBeanTemplateQbeMetawidgetIndent = parseIndent(template, "@{qbeMetawidget}");
       }
-      if (this.viewUtilsTemplate == null)
-      {
+      if (this.viewUtilsTemplate == null) {
          this.viewUtilsTemplate = this.compiler.compile(VIEW_UTILS_TEMPLATE);
       }
-      if (this.taglibTemplate == null)
-      {
+      if (this.taglibTemplate == null) {
          this.taglibTemplate = this.compiler.compile(TAGLIB_TEMPLATE);
       }
-      if (this.viewTemplate == null)
-      {
+      if (this.viewTemplate == null) {
          this.viewTemplate = this.compiler.compile(VIEW_TEMPLATE);
          String template = Streams.toString(this.viewTemplate.getSourceTemplateResource().getInputStream());
          this.viewTemplateNamespaces = parseNamespaces(template);
          this.viewTemplateEntityMetawidgetIndent = parseIndent(template, "@{metawidget}");
       }
-      if (this.createTemplate == null)
-      {
+      if (this.createTemplate == null) {
          this.createTemplate = this.compiler.compile(CREATE_TEMPLATE);
          String template = Streams.toString(this.createTemplate.getSourceTemplateResource().getInputStream());
          this.createTemplateNamespaces = parseNamespaces(template);
          this.createTemplateEntityMetawidgetIndent = parseIndent(template, "@{metawidget}");
       }
-      if (this.searchTemplate == null)
-      {
+      if (this.searchTemplate == null) {
          this.searchTemplate = this.compiler.compile(SEARCH_TEMPLATE);
          String template = Streams.toString(this.searchTemplate.getSourceTemplateResource().getInputStream());
          this.searchTemplateNamespaces = parseNamespaces(template);
          this.searchTemplateSearchMetawidgetIndent = parseIndent(template, "@{searchMetawidget}");
          this.searchTemplateBeanMetawidgetIndent = parseIndent(template, "@{beanMetawidget}");
       }
-      if (this.navigationTemplate == null)
-      {
+      if (this.navigationTemplate == null) {
          this.navigationTemplate = this.compiler.compile(NAVIGATION_TEMPLATE);
          String template = Streams.toString(this.navigationTemplate.getSourceTemplateResource().getInputStream());
          this.navigationTemplateIndent = parseIndent(template, "@{navigation}");
       }
-      if (this.errorTemplate == null)
-      {
+      if (this.errorTemplate == null) {
          this.errorTemplate = this.compiler.compile(ERROR_TEMPLATE);
       }
-      if (this.indexTemplate == null)
-      {
+      if (this.indexTemplate == null) {
          this.indexTemplate = this.compiler.compile(INDEX_TEMPLATE);
       }
    }
 
-   protected void setupRichFaces()
-   {
+   protected void setupRichFaces() {
       if ((this.project.getFacet(DependencyFacet.class).hasEffectiveDependency(this.richfaces3UI)
-               && this.project.getFacet(DependencyFacet.class).hasEffectiveDependency(this.richfaces3Impl))
-               || (this.project.getFacet(DependencyFacet.class).hasEffectiveDependency(this.richfaces4UI)
-               && this.project.getFacet(DependencyFacet.class).hasEffectiveDependency(this.richfaces4Impl)))
-      {
-         this.entityMetawidget
-                  .setWidgetBuilder(insertRichFacesWidgetBuilder((CompositeWidgetBuilder<StaticWidget, StaticMetawidget>) this.entityMetawidget
-                           .getWidgetBuilder()));
+              && this.project.getFacet(DependencyFacet.class).hasEffectiveDependency(this.richfaces3Impl))
+              || (this.project.getFacet(DependencyFacet.class).hasEffectiveDependency(this.richfaces4UI)
+              && this.project.getFacet(DependencyFacet.class).hasEffectiveDependency(this.richfaces4Impl))) {
+         this.entityMetawidget.setWidgetBuilder(insertRichFacesWidgetBuilder((CompositeWidgetBuilder<StaticWidget, StaticMetawidget>) this.entityMetawidget.getWidgetBuilder()));
 
-         this.searchMetawidget
-                  .setWidgetBuilder(insertRichFacesWidgetBuilder((CompositeWidgetBuilder<StaticWidget, StaticMetawidget>) this.searchMetawidget
-                           .getWidgetBuilder()));
+         this.searchMetawidget.setWidgetBuilder(insertRichFacesWidgetBuilder((CompositeWidgetBuilder<StaticWidget, StaticMetawidget>) this.searchMetawidget.getWidgetBuilder()));
 
-         this.beanMetawidget
-                  .setWidgetBuilder(insertRichFacesWidgetBuilder((CompositeWidgetBuilder<StaticWidget, StaticMetawidget>) this.beanMetawidget
-                           .getWidgetBuilder()));
+         this.beanMetawidget.setWidgetBuilder(insertRichFacesWidgetBuilder((CompositeWidgetBuilder<StaticWidget, StaticMetawidget>) this.beanMetawidget.getWidgetBuilder()));
       }
    }
 
    /**
-    * Locates a <code>ReadOnlyWidgetBuilder</code> in the list of WidgetBuilders, and inserts a
-    * <code>RichFacesWidgetBuilder</code> after it (unless there's a <code>RichFacesWidgetBuilder</code> in there
-    * already).
+    * Locates a
+    * <code>ReadOnlyWidgetBuilder</code> in the list of WidgetBuilders, and
+    * inserts a
+    * <code>RichFacesWidgetBuilder</code> after it (unless there's a
+    * <code>RichFacesWidgetBuilder</code> in there already).
     */
-
    protected <W extends StaticWidget, M extends W> CompositeWidgetBuilder<W, M> insertRichFacesWidgetBuilder(
-            final CompositeWidgetBuilder<W, M> compositeWidgetBuilder)
-   {
+           final CompositeWidgetBuilder<W, M> compositeWidgetBuilder) {
       // Get the current WidgetBuilders...
 
       WidgetBuilder<W, M>[] existingWidgetBuilders = compositeWidgetBuilder.getWidgetBuilders();
@@ -563,19 +522,16 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
 
       int addAt = 0;
 
-      for (int loop = 0; loop < existingWidgetBuilders.length; loop++)
-      {
+      for (int loop = 0; loop < existingWidgetBuilders.length; loop++) {
          // ...(abort if there's already a RichFacesWidgetBuilder)...
 
          // Use an Object loop variable here to avoid a nasty Java/Generics compiler bug
          Object widgetBuilder = existingWidgetBuilders[loop];
-         if (widgetBuilder instanceof RichFacesWidgetBuilder)
-         {
+         if (widgetBuilder instanceof RichFacesWidgetBuilder) {
             return compositeWidgetBuilder;
          }
 
-         if (widgetBuilder instanceof ReadOnlyWidgetBuilder)
-         {
+         if (widgetBuilder instanceof ReadOnlyWidgetBuilder) {
             addAt = loop + 1;
          }
       }
@@ -583,55 +539,41 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       // ...and insert our RichFacesWidgetBuilder just after it
 
       @SuppressWarnings("unchecked")
-      WidgetBuilder<W, M>[] newWidgetBuilders = (WidgetBuilder<W, M>[]) ArrayUtils
-               .addAt(existingWidgetBuilders, addAt,
-                        new RichFacesWidgetBuilder());
+      WidgetBuilder<W, M>[] newWidgetBuilders = (WidgetBuilder<W, M>[]) ArrayUtils.addAt(existingWidgetBuilders, addAt,
+              new RichFacesWidgetBuilder());
 
       return new CompositeWidgetBuilder<W, M>(
-               new CompositeWidgetBuilderConfig<W, M>()
-                        .setWidgetBuilders(newWidgetBuilders));
+              new CompositeWidgetBuilderConfig<W, M>().setWidgetBuilders(newWidgetBuilders));
    }
 
-   protected void createInitializers(final JavaClass entity)
-   {
-      for (Field<JavaClass> field : entity.getFields())
-      {
-         if (field.hasAnnotation(OneToOne.class))
-         {
+   protected void createInitializers(final JavaClass entity) {
+      for (Field<JavaClass> field : entity.getFields()) {
+         if (field.hasAnnotation(OneToOne.class)) {
             Annotation<JavaClass> oneToOne = field.getAnnotation(OneToOne.class);
-            if (oneToOne.getStringValue("mappedBy") == null)
-            {
+            if (oneToOne.getStringValue("mappedBy") == null) {
                oneToOne.setEnumValue("cascade", CascadeType.ALL);
             }
             String methodName = "new" + field.getTypeInspector().getName();
-            if (!entity.hasMethodSignature(methodName))
-            {
-               entity.addMethod().setName(methodName).setReturnTypeVoid().setPublic()
-                        .setBody("this." + field.getName() + " = new " + field.getType() + "();");
+            if (!entity.hasMethodSignature(methodName)) {
+               entity.addMethod().setName(methodName).setReturnTypeVoid().setPublic().setBody("this." + field.getName() + " = new " + field.getType() + "();");
             }
          }
       }
-      for (Method<JavaClass> method : entity.getMethods())
-      {
-         if (method.hasAnnotation(OneToOne.class))
-         {
+      for (Method<JavaClass> method : entity.getMethods()) {
+         if (method.hasAnnotation(OneToOne.class)) {
             Annotation<JavaClass> oneToOne = method.getAnnotation(OneToOne.class);
-            if (oneToOne.getStringValue("mappedBy") == null)
-            {
+            if (oneToOne.getStringValue("mappedBy") == null) {
                oneToOne.setEnumValue("cascade", CascadeType.ALL);
             }
             String methodName = "new" + method.getReturnTypeInspector().getName();
-            if (!entity.hasMethodSignature(methodName))
-            {
-               entity.addMethod().setName(methodName).setReturnTypeVoid().setPublic()
-                        .setBody("this." + method.getName() + " = new " + method.getReturnType() + "();");
+            if (!entity.hasMethodSignature(methodName)) {
+               entity.addMethod().setName(methodName).setReturnTypeVoid().setPublic().setBody("this." + method.getName() + " = new " + method.getReturnType() + "();");
             }
          }
       }
    }
 
-   protected HashMap<Object, Object> getTemplateContext(final Resource<?> template)
-   {
+   protected HashMap<Object, Object> getTemplateContext(final Resource<?> template) {
       HashMap<Object, Object> context;
       context = new HashMap<Object, Object>();
       context.put("template", template);
@@ -639,8 +581,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       return context;
    }
 
-   protected void setupWebXML()
-   {
+   protected void setupWebXML() {
       ServletFacet servlet = this.project.getFacet(ServletFacet.class);
 
       Node webXML = removeConflictingErrorPages(servlet);
@@ -658,20 +599,16 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       servlet.saveConfig(servletConfig);
    }
 
-   protected Node removeConflictingErrorPages(final ServletFacet servlet)
-   {
+   protected Node removeConflictingErrorPages(final ServletFacet servlet) {
       Node webXML = XMLParser.parse(servlet.getConfigFile().getResourceInputStream());
       Node root = webXML.getRoot();
       List<Node> errorPages = root.get("error-page");
 
-      for (String code : Arrays.asList("404", "500"))
-      {
-         for (Node errorPage : errorPages)
-         {
+      for (String code : Arrays.asList("404", "500")) {
+         for (Node errorPage : errorPages) {
             if (code.equals(errorPage.getSingle("error-code").getText())
-                     && this.prompt.promptBoolean("Your web.xml already contains an error page for " + code
-                              + " status codes, replace it?"))
-            {
+                    && this.prompt.promptBoolean("Your web.xml already contains an error page for " + code
+                    + " status codes, replace it?")) {
                root.removeChild(errorPage);
             }
          }
@@ -705,37 +642,32 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       Map<Object, Object> context = CollectionUtils.newHashMap();
       context.put("navigation", writer.toString().trim());
 
-      if (this.navigationTemplate == null)
-      {
+      if (this.navigationTemplate == null) {
          loadTemplates();
       }
 
-      return ScaffoldUtil.createOrOverwrite(this.prompt, (FileResource<?>) getTemplateStrategy()
-               .getDefaultTemplate(),
-               this.navigationTemplate.render(context),
-               overwrite);
+      return ScaffoldUtil.createOrOverwrite(this.prompt, (FileResource<?>) getTemplateStrategy().getDefaultTemplate(),
+              this.navigationTemplate.render(context),
+              overwrite);
    }
 
    /**
-    * Parses the given XML and determines what namespaces it already declares. These are later removed from the list of
-    * namespaces that Metawidget introduces.
+    * Parses the given XML and determines what namespaces it already declares.
+    * These are later removed from the list of namespaces that Metawidget
+    * introduces.
     */
-
-   protected Map<String, String> parseNamespaces(final String template)
-   {
+   protected Map<String, String> parseNamespaces(final String template) {
       Map<String, String> namespaces = CollectionUtils.newHashMap();
       Document document = XmlUtils.documentFromString(template);
       Element element = document.getDocumentElement();
       NamedNodeMap attributes = element.getAttributes();
 
-      for (int loop = 0, length = attributes.getLength(); loop < length; loop++)
-      {
+      for (int loop = 0, length = attributes.getLength(); loop < length; loop++) {
          org.w3c.dom.Node node = attributes.item(loop);
          String nodeName = node.getNodeName();
          int indexOf = nodeName.indexOf(XMLNS_PREFIX);
 
-         if (indexOf == -1)
-         {
+         if (indexOf == -1) {
             continue;
          }
 
@@ -746,18 +678,15 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    }
 
    /**
-    * Parses the given XML and determines the indent of the given String namespaces that Metawidget introduces.
+    * Parses the given XML and determines the indent of the given String
+    * namespaces that Metawidget introduces.
     */
-
-   protected int parseIndent(final String template, final String indentOf)
-   {
+   protected int parseIndent(final String template, final String indentOf) {
       int indent = 0;
       int indexOf = template.indexOf(indentOf);
 
-      while ((indexOf >= 0) && (template.charAt(indexOf) != '\n'))
-      {
-         if (template.charAt(indexOf) == '\t')
-         {
+      while ((indexOf >= 0) && (template.charAt(indexOf) != '\n')) {
+         if (template.charAt(indexOf) == '\t') {
             indent++;
          }
 
@@ -770,10 +699,8 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    /**
     * Writes the entity Metawidget and its namespaces into the given context.
     */
-
    protected void writeEntityMetawidget(final Map<Object, Object> context, final int entityMetawidgetIndent,
-            final Map<String, String> existingNamespaces)
-   {
+           final Map<String, String> existingNamespaces) {
       StringWriter stringWriter = new StringWriter();
       this.entityMetawidget.write(stringWriter, entityMetawidgetIndent);
       context.put("metawidget", stringWriter.toString().trim());
@@ -784,13 +711,12 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    }
 
    /**
-    * Writes the search Metawidget, the bean Metawidget and their namespaces into the given context.
+    * Writes the search Metawidget, the bean Metawidget and their namespaces
+    * into the given context.
     */
-
    protected void writeSearchAndBeanMetawidget(final Map<Object, Object> context, final int searchMetawidgetIndent,
-            final int beanMetawidgetIndent,
-            final Map<String, String> existingNamespaces)
-   {
+           final int beanMetawidgetIndent,
+           final Map<String, String> existingNamespaces) {
       StringWriter stringWriter = new StringWriter();
       this.searchMetawidget.write(stringWriter, searchMetawidgetIndent);
       context.put("searchMetawidget", stringWriter.toString().trim());
@@ -805,12 +731,10 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       context.put("metawidgetNamespaces", namespacesToString(namespaces));
    }
 
-   protected String namespacesToString(final Map<String, String> namespaces)
-   {
+   protected String namespacesToString(final Map<String, String> namespaces) {
       StringBuilder builder = new StringBuilder();
 
-      for (Map.Entry<String, String> entry : namespaces.entrySet())
-      {
+      for (Map.Entry<String, String> entry : namespaces.entrySet()) {
          // At the start, break out of the current quote. Field must be in quotes so that we're valid XML
 
          builder.append("\"\r\n\txmlns:");
@@ -820,5 +744,43 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       }
 
       return builder.toString();
+   }
+
+   private void setPrimaryKeyMetaData(Map<Object, Object> context, final JavaClass entity) {
+      String pkName = "id";
+      String pkType = "Long";
+      String nullablePkType = "Long";
+      for (Member<JavaClass, ?> m : entity.getMembers()) {
+         if (m.hasAnnotation(Id.class)) {
+            if (m instanceof Field) {
+               Field field = (Field) m;
+               pkName = field.getName();
+               pkType = field.getType();
+               break;
+            } else if (m instanceof Member) {
+               Method method = (Method) m;
+               pkName = method.getName().substring(3);
+               if (method.getName().startsWith("get")) {
+                  pkType = method.getReturnType();
+               } else {
+                  pkType = ((Parameter) method.getParameters().get(0)).getType();
+               }
+               break;
+            }
+         }
+      }
+      
+      if ("int".equals(pkType)) {
+            nullablePkType = Integer.class.getSimpleName();
+      } else if ("short".equals(pkType)) {
+            nullablePkType = Short.class.getSimpleName();
+      } else if ("byte".equals(pkType)) {
+            nullablePkType = Byte.class.getSimpleName();
+      }
+      
+      context.put("primaryKey", pkName);
+      context.put("primaryKeyCC", StringUtils.capitalize(pkName));
+      context.put("primaryKeyType", pkType);
+      context.put("nullablePrimaryKeyType", nullablePkType);
    }
 }
