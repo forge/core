@@ -16,6 +16,7 @@
 
 package org.jboss.forge.scaffold.faces.metawidget.widgetbuilder;
 
+import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.*;
 import static org.metawidget.inspector.InspectionResultConstants.*;
 import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.*;
 
@@ -108,12 +109,16 @@ public class QueryByExampleWidgetBuilder
 
       if (attributes.containsKey(FACES_LOOKUP))
       {
-         StaticJavaStub toReturn = new StaticJavaStub();
+          String reverseKey = "Id";
+          if (attributes.containsKey(REVERSE_PRIMARY_KEY)) 
+              reverseKey = StringUtils.capitalize(attributes.get(REVERSE_PRIMARY_KEY));
+
+          StaticJavaStub toReturn = new StaticJavaStub();
          JavaStatement getValue = new JavaStatement(ClassUtils.getSimpleName(type) + " " + name + " = this.search.get"
                   + StringUtils.capitalize(name) + "()");
          getValue.putImport(type);
          toReturn.getChildren().add(getValue);
-         JavaStatement ifNotEmpty = new JavaStatement("if (" + name + " != null && " + name + ".getId() != null)");
+         JavaStatement ifNotEmpty = new JavaStatement("if (" + name + " != null && " + name + ".get" + reverseKey + "() != null)");
          ifNotEmpty.getChildren().add(
                   new JavaStatement("predicatesList.add(builder.equal(root.get(\"" + name + "\"), " + name + "))"));
          toReturn.getChildren().add(ifNotEmpty);

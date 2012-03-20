@@ -151,10 +151,12 @@ public class EntityWidgetBuilder
                         (StaticUIMetawidget) metawidget);
             }
 
+            String reverseKey = getReversePrimaryKey(attributes);
+            
             Param param = new Param();
             param.putAttribute("name", "id");
             param.putAttribute("value",
-                     StaticFacesUtils.wrapExpression(StaticFacesUtils.unwrapExpression(link.getValue()) + ".id"));
+                     StaticFacesUtils.wrapExpression(StaticFacesUtils.unwrapExpression(link.getValue()) + "." + reverseKey));
             link.getChildren().add(param);
 
             return link;
@@ -256,6 +258,27 @@ public class EntityWidgetBuilder
    //
    // Protected methods
    //
+
+   protected String getReversePrimaryKey(Map<String, String> attributes) {
+      String reverseKey = "id";
+      if (attributes.containsKey(REVERSE_PRIMARY_KEY)) 
+         reverseKey = attributes.get(REVERSE_PRIMARY_KEY);
+      return reverseKey;
+   }
+
+   protected String getPrimaryKey(Map<String, String> attributes) {
+      String reverseKey = "id";
+      if (attributes.containsKey(PRIMARY_KEY)) 
+         reverseKey = attributes.get(PRIMARY_KEY);
+      return reverseKey;
+   }
+
+   protected String getEntityPrimaryKey(Map<String, String> attributes) {
+      String reverseKey = "id";
+      if (attributes.containsKey(ENTITY_PRIMARY_KEY)) 
+         reverseKey = attributes.get(ENTITY_PRIMARY_KEY);
+      return reverseKey;
+   }
 
    /**
     * Overridden to add row creation/deletion.
@@ -541,7 +564,7 @@ public class EntityWidgetBuilder
 
          Param param = new Param();
          param.putAttribute("name", "id");
-         param.putAttribute("value", StaticFacesUtils.wrapExpression(dataTable.getAttribute("var") + ".id"));
+         param.putAttribute("value", StaticFacesUtils.wrapExpression(dataTable.getAttribute("var") + "." + getEntityPrimaryKey(columnAttributes)));
          link.getChildren().add(param);
          link.getChildren().add(column.getChildren().remove(1));
          column.getChildren().add(link);

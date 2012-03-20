@@ -45,13 +45,13 @@ public class @{entity.getName()}Bean implements Serializable {
 	 * Support creating and retrieving @{entity.getName()} entities
 	 */
 
-	private Long id;
+	private @{primaryKeyType} id;
 
-	public Long getId() {
+	public @{primaryKeyType} getId() {
 		return this.id;
 	}
 
-	public void setId(Long id) {
+	public void setId(@{primaryKeyType} id) {
 		this.id = id;
 	}
 
@@ -103,7 +103,7 @@ public class @{entity.getName()}Bean implements Serializable {
 				return "search?faces-redirect=true";			
 			} else {
 				this.entityManager.merge(this.@{ccEntity});
-				return "view?faces-redirect=true&id=" + this.@{ccEntity}.getId();
+				return "view?faces-redirect=true&id=" + this.@{ccEntity}.get@{primaryKeyCC}();
 			}
 		} catch( Exception e ) {
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage( e.getMessage() ));
@@ -234,7 +234,7 @@ public class @{entity.getName()}Bean implements Serializable {
 					return "";
 				}
 
-				return String.valueOf(((@{entity.getName()}) value).getId());
+				return String.valueOf(((@{entity.getName()}) value).get@{primaryKeyCC}());
 			}
 		};
 	}

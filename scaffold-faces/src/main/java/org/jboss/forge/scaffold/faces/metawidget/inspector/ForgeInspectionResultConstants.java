@@ -37,6 +37,16 @@ public final class ForgeInspectionResultConstants
 
    public static final String ONE_TO_ONE = "one-to-one";
 
+   public static final String PRIMARY_KEY = "primary-key";
+   
+   public static final String PRIMARY_KEY_GENERATED = "primary-key-generated";
+   
+   public static final String ENTITY_PRIMARY_KEY = "entity-primary-key";
+
+   public static final String REVERSE_PRIMARY_KEY = "reverse-primary-key";
+   
+   public static final String REVERSE_PRIMARY_KEY_TYPE = "reverse-primary-key-type";
+   
    //
    // Private constructor
    //
