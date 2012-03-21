@@ -78,6 +78,13 @@ public class FacetFactory
          if (type.isAssignableFrom(facet.getClass()))
          {
             result = (T) facet;
+         }
+         if (type.equals(facet.getClass()))
+         {
+            /**
+             * Ensure that if there is an exact match, we prefer it over other facet types.
+             */
+            result = (T) facet;
             break;
          }
       }

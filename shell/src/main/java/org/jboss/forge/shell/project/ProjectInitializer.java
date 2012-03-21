@@ -26,7 +26,9 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.jboss.forge.project.BaseProject;
 import org.jboss.forge.project.Project;
+import org.jboss.forge.project.facets.FacetNotFoundException;
 import org.jboss.forge.project.facets.MetadataFacet;
 import org.jboss.forge.project.services.ProjectFactory;
 import org.jboss.forge.resources.DirectoryResource;
@@ -47,7 +49,7 @@ public class ProjectInitializer
 
    @Inject
    public ProjectInitializer(final Shell shell, final CurrentProject currentProjectHolder,
-                             final Event<InitProject> init, final ProjectFactory projectFactory)
+            final Event<InitProject> init, final ProjectFactory projectFactory)
    {
       this.shell = shell;
       this.cp = currentProjectHolder;
@@ -66,33 +68,56 @@ public class ProjectInitializer
 
       Project newProject = null;
 
-      DirectoryResource newRoot = projectFactory.findProjectRootRecusively(currentDirectory);
-      if (newRoot != null)
+      try
       {
-         Project oldProject = cp.getCurrent();
-         if (oldProject != null)
+         final DirectoryResource newRoot = projectFactory.findProjectRootRecusively(currentDirectory);
+         if (newRoot != null)
          {
-            DirectoryResource oldProjectRoot = oldProject.getProjectRoot();
-            if (!newRoot.equals(oldProjectRoot))
+            Project oldProject = cp.getCurrent();
+
+            Project temp = new BaseProject()
             {
-               newProject = projectFactory.findProjectRecursively(currentDirectory);
+               public DirectoryResource getProjectRoot()
+               {
+                  return newRoot;
+               }
+
+               @Override
+               public boolean exists()
+               {
+                  return false;
+               }
+            };
+
+            cp.setCurrentProject(temp);
+
+            if (oldProject != null)
+            {
+               DirectoryResource oldProjectRoot = oldProject.getProjectRoot();
+               if (!newRoot.equals(oldProjectRoot))
+               {
+                  newProject = projectFactory.findProjectRecursively(currentDirectory);
+               }
+               else
+               {
+                  newProject = oldProject;
+               }
             }
             else
             {
-               newProject = oldProject;
+               newProject = projectFactory.findProjectRecursively(currentDirectory);
             }
          }
-         else
+
+         if (newProject != null)
          {
-            newProject = projectFactory.findProjectRecursively(currentDirectory);
+            shell.getEnvironment().setProperty("PROJECT_NAME",
+                     newProject.getFacet(MetadataFacet.class).getProjectName());
          }
       }
-
-      if (newProject != null)
+      finally
       {
-         shell.getEnvironment().setProperty("PROJECT_NAME", newProject.getFacet(MetadataFacet.class).getProjectName());
+         cp.setCurrentProject(newProject);
       }
-
-      cp.setCurrentProject(newProject);
    }
 }

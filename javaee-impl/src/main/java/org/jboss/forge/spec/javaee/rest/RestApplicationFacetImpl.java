@@ -40,12 +40,12 @@ import java.io.FileNotFoundException;
  * @Author Paul Bakker - paul.bakker@luminis.eu
  */
 @Alias("forge.spec.jaxrs.applicationclass")
-@RequiresFacet({RestFacet.class, JavaSourceFacet.class})
+@RequiresFacet({ RestFacet.class, JavaSourceFacet.class })
 public class RestApplicationFacetImpl extends BaseFacet implements RestApplicationFacet
 {
-   private String pkg;
-   private String classname;
-   private String rootpath;
+   private String classPackage;
+   private String className;
+   private String rootPath;
 
    @Inject
    private Configuration configuration;
@@ -53,9 +53,9 @@ public class RestApplicationFacetImpl extends BaseFacet implements RestApplicati
    @Inject
    public RestApplicationFacetImpl(Configuration configuration)
    {
-      pkg = configuration.getString(REST_APPLICATIONCLASS_PACKAGE);
-      classname = configuration.getString(REST_APPLICATIONCLASS_NAME);
-      rootpath = configuration.getString(RestFacet.ROOTPATH);
+      classPackage = configuration.getString(REST_APPLICATIONCLASS_PACKAGE);
+      className = configuration.getString(REST_APPLICATIONCLASS_NAME);
+      rootPath = configuration.getString(RestFacet.ROOTPATH);
    }
 
    @Override
@@ -66,10 +66,10 @@ public class RestApplicationFacetImpl extends BaseFacet implements RestApplicati
          JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
 
          JavaClass applicationClass = JavaParser.create(JavaClass.class)
-                 .setPackage(pkg)
-                 .setName(classname)
-                 .setSuperType("javax.ws.rs.core.Application")
-                 .addAnnotation("javax.ws.rs.ApplicationPath").setStringValue(rootpath).getOrigin();
+                  .setPackage(classPackage)
+                  .setName(className)
+                  .setSuperType("javax.ws.rs.core.Application")
+                  .addAnnotation("javax.ws.rs.ApplicationPath").setStringValue(rootPath).getOrigin();
 
          applicationClass.addImport("javax.ws.rs.core.Application");
          applicationClass.addImport("javax.ws.rs.ApplicationPath");
@@ -77,7 +77,8 @@ public class RestApplicationFacetImpl extends BaseFacet implements RestApplicati
          try
          {
             javaSourceFacet.saveJavaSource(applicationClass);
-         } catch (FileNotFoundException e)
+         }
+         catch (FileNotFoundException e)
          {
             throw new RuntimeException(e);
          }
@@ -91,20 +92,21 @@ public class RestApplicationFacetImpl extends BaseFacet implements RestApplicati
    {
       JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
 
-      if ((pkg == null || classname == null) && !findApplicationClass())
+      if ((classPackage == null || className == null) && !findApplicationClass())
       {
          return false;
       }
 
       try
       {
-         JavaResource javaResource = javaSourceFacet.getJavaResource(pkg + "." + classname);
+         JavaResource javaResource = javaSourceFacet.getJavaResource(classPackage + "." + className);
          if (javaResource.exists() || findApplicationClass())
          {
             return true;
          }
 
-      } catch (FileNotFoundException e)
+      }
+      catch (FileNotFoundException e)
       {
          return false;
       }
@@ -119,23 +121,32 @@ public class RestApplicationFacetImpl extends BaseFacet implements RestApplicati
       configuration.clearProperty(REST_APPLICATIONCLASS_NAME);
       configuration.clearProperty(REST_APPLICATIONCLASS_PACKAGE);
 
-
       javaSourceFacet.visitJavaSources(new JavaResourceVisitor()
       {
+         boolean found = false;
+
          @Override
          public void visit(JavaResource javaResource)
          {
-            try
+            if (!found)
             {
-               if (javaResource.getJavaSource().getAnnotation("javax.ws.rs.ApplicationPath") != null)
+               try
                {
-                  configuration.setProperty(REST_APPLICATIONCLASS_PACKAGE, javaResource.getJavaSource().getPackage());
-                  configuration.setProperty(REST_APPLICATIONCLASS_NAME, javaResource.getFullyQualifiedName());
-                  configuration.setProperty(RestFacet.ROOTPATH, javaResource.getJavaSource().getAnnotation("javax.ws.rs.ApplicationPath").getLiteralValue());
+                  if (javaResource.getJavaSource().getAnnotation("javax.ws.rs.ApplicationPath") != null)
+                  {
+                     configuration
+                              .setProperty(REST_APPLICATIONCLASS_PACKAGE, javaResource.getJavaSource().getPackage());
+                     configuration.setProperty(REST_APPLICATIONCLASS_NAME, javaResource.getFullyQualifiedName());
+                     configuration.setProperty(RestFacet.ROOTPATH,
+                              javaResource.getJavaSource().getAnnotation("javax.ws.rs.ApplicationPath")
+                                       .getLiteralValue());
+                     found = true;
+                  }
                }
-            } catch (FileNotFoundException e)
-            {
-               throw new RuntimeException(e);
+               catch (FileNotFoundException e)
+               {
+                  throw new RuntimeException(e);
+               }
             }
          }
       });
@@ -148,16 +159,16 @@ public class RestApplicationFacetImpl extends BaseFacet implements RestApplicati
    {
       configuration.setProperty(RestFacet.ROOTPATH, path);
 
-      if (pkg == null || classname == null)
+      if (classPackage == null || className == null)
       {
-         reportConfigurationError(classname);
+         reportConfigurationError(className);
       }
 
       JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
 
       try
       {
-         String classname = pkg + "." + this.classname;
+         String classname = classPackage + "." + this.className;
          JavaResource javaResource = javaSourceFacet.getJavaResource(classname);
          if (!javaResource.exists())
          {
@@ -166,15 +177,17 @@ public class RestApplicationFacetImpl extends BaseFacet implements RestApplicati
 
          javaResource.getJavaSource().getAnnotation("javax.ws.rs.ApplicationPath").setStringValue(path);
 
-      } catch (FileNotFoundException e)
+      }
+      catch (FileNotFoundException e)
       {
-         reportConfigurationError(classname);
+         reportConfigurationError(className);
       }
 
    }
 
    private void reportConfigurationError(String classname)
    {
-      throw new RuntimeException("Error setting application path. The class '" + classname + "' in your configuration file does not exist. Run rest setup again.");
+      throw new RuntimeException("Error setting application path. The class '" + classname
+               + "' in your configuration file does not exist. Run rest setup again.");
    }
 }

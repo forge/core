@@ -29,9 +29,19 @@
 #   FORGE_OPTS - parameters passed to the Java VM when running Forge
 # -----------------------------------------------------------------------
 
+PLUGIN_DIR=""
+
 QUOTED_ARGS=""
 while [ "$1" != "" ] ; do
 
+  if [ "$PLUGIN_DIR" == "-pluginDir" ] ; then
+    PLUGIN_DIR="$1"
+  fi
+
+  if [ "$1" == "-pluginDir" ] ; then
+    PLUGIN_DIR="-pluginDir"
+  fi
+  
   QUOTED_ARGS="$QUOTED_ARGS \"$1\""
   shift
 
@@ -158,6 +168,6 @@ if $cygwin; then
     HOME=`cygpath --path --windows "$HOME"`
 fi
 
-forge_exec_cmd="\"$JAVACMD\" $FORGE_OPTS \"-Dforge.home=${FORGE_HOME}\"  \"-Dforge.shell.colorEnabled=true\" -jar \"${FORGE_HOME}/jboss-modules.jar\" -modulepath \"${FORGE_HOME}/modules:${HOME}/.forge/plugins\" org.jboss.forge"
+forge_exec_cmd="\"$JAVACMD\" $FORGE_OPTS \"-Dforge.home=${FORGE_HOME}\"  \"-Dforge.shell.colorEnabled=true\" -jar \"${FORGE_HOME}/jboss-modules.jar\" -modulepath \"${FORGE_HOME}/modules:${HOME}/.forge/plugins\:$PLUGIN_DIR\" org.jboss.forge"
 
 eval $forge_exec_cmd "$QUOTED_ARGS"

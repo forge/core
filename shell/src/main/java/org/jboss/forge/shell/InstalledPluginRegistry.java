@@ -42,6 +42,7 @@ import org.jboss.forge.shell.util.Streams;
  * Used to perform {@link Plugin} installation/registration operations.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="mailto:koen.aers@gmail.com">Koen Aers</a>
  */
 public class InstalledPluginRegistry
 {
@@ -49,11 +50,32 @@ public class InstalledPluginRegistry
    private static final String ATTR_SLOT = "slot";
    private static final String ATTR_API_VERSION = "api-version";
    private static final String ATTR_NAME = "name";
-   private static final String REGISTRY = "/.forge/plugins/installed.xml";
+   private static final String PLUGIN_DIR_DEFAULT = "/.forge/plugins";
+   private static final String REGISTRY_FILE = "/installed.xml";
+
+   private static String PLUGIN_DIR = null;
+   private static String REGISTRY = null;
+      
+   private static String getPluginDir() {
+      if (PLUGIN_DIR == null) {
+         PLUGIN_DIR = System.getProperty(Bootstrap.PROP_PLUGIN_DIR);
+         if (PLUGIN_DIR == null) {
+            PLUGIN_DIR = OSUtils.getUserHomePath() + PLUGIN_DIR_DEFAULT;
+         }
+      }
+      return PLUGIN_DIR;
+   }
+   
+   private static String getRegistry() {
+      if (REGISTRY == null) {
+         REGISTRY = getPluginDir() + REGISTRY_FILE;
+      }
+      return REGISTRY;
+   }
 
    public static File getRegistryFile()
    {
-      return new File(REGISTRY);
+      return new File(getRegistry());
    }
 
    public static List<PluginEntry> listByVersion(final String version)
@@ -78,7 +100,8 @@ public class InstalledPluginRegistry
    public static List<PluginEntry> list()
    {
       List<PluginEntry> result = new ArrayList<PluginEntry>();
-      File registryFile = new File(OSUtils.getUserHomePath() + REGISTRY);
+//      File registryFile = new File(OSUtils.getUserHomePath() + getRegistry());
+      File registryFile = getRegistryFile();
       try {
          Node installed = XMLParser.parse(new FileInputStream(registryFile));
          List<Node> list = installed.get("plugin");
@@ -114,7 +137,8 @@ public class InstalledPluginRegistry
       }
 
       Node installed = null;
-      File registryFile = new File(OSUtils.getUserHomePath() + REGISTRY);
+//      File registryFile = new File(OSUtils.getUserHomePath() + getRegistry());
+      File registryFile = getRegistryFile();
       try {
 
          if (registryFile.exists())
@@ -153,7 +177,8 @@ public class InstalledPluginRegistry
          throw new RuntimeException("Plugin must not be null");
       }
 
-      File registryFile = new File(OSUtils.getUserHomePath() + REGISTRY);
+//      File registryFile = new File(OSUtils.getUserHomePath() + getRegistry());
+      File registryFile = getRegistryFile();
       if (registryFile.exists())
       {
          try {
@@ -177,7 +202,8 @@ public class InstalledPluginRegistry
          throw new RuntimeException("Plugin must not be null");
       }
 
-      File registryFile = new File(OSUtils.getUserHomePath() + REGISTRY);
+//      File registryFile = new File(OSUtils.getUserHomePath() + getRegistry());
+      File registryFile = getRegistryFile();
       if (registryFile.exists())
       {
          try {

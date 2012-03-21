@@ -175,15 +175,7 @@ public abstract class BaseProject implements Project
    public Project installFacet(final Facet facet)
    {
       facet.setProject(this);
-      if (!facet.isInstalled() && !hasFacet(facet.getClass()))
-      {
-         performInstallation(facet);
-      }
-      else if (!hasFacet(facet.getClass()))
-      {
-         registerFacet(facet);
-      }
-      else if (!facet.isInstalled())
+      if (!hasFacet(facet.getClass()))
       {
          performInstallation(facet);
       }
@@ -193,11 +185,7 @@ public abstract class BaseProject implements Project
    @Override
    public Project removeFacet(final Facet facet)
    {
-      if (facet.isInstalled() && hasFacet(facet.getClass()))
-      {
-         performRemoval(facet);
-      }
-      else if (facet.isInstalled())
+      if (facet.isInstalled())
       {
          performRemoval(facet);
       }

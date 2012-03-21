@@ -71,6 +71,7 @@ public class ConfigurationImpl
          try
          {
             projectLocalConfig = new XMLConfiguration(getProjectSettings(project).getUnderlyingResourceObject());
+            projectLocalConfig.setEncoding("UTF-8");
          }
          catch (org.apache.commons.configuration.ConfigurationException e)
          {
@@ -102,6 +103,7 @@ public class ConfigurationImpl
          try
          {
             globalXml = new XMLConfiguration(environment.getUserConfiguration().getUnderlyingResourceObject());
+            globalXml.setEncoding("UTF-8");
          }
          catch (org.apache.commons.configuration.ConfigurationException e)
          {

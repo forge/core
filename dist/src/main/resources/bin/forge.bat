@@ -111,41 +111,20 @@ echo.
 goto error
 @REM ==== END VALIDATION ====
 
+@REM Initializing the argument line and the plugin directory if any
 :init
-@REM Decide how to startup depending on the version of windows
-
-@REM -- Windows NT with Novell Login
-if "%OS%"=="WINNT" goto WinNTNovell
-
-@REM -- Win98ME
-if NOT "%OS%"=="Windows_NT" goto Win9xArg
-
-:WinNTNovell
-
-@REM -- 4NT shell
-if "%@eval[2+2]" == "4" goto 4NTArgs
-
-@REM -- Regular WinNT shell
-set FORGE_CMD_LINE_ARGS=%*
-goto endInit
-
-@REM The 4NT Shell from jp software
-:4NTArgs
-set FORGE_CMD_LINE_ARGS=%$
-goto endInit
-
-:Win9xArg
-@REM Slurp the command line arguments.  This loop allows for an unlimited number
-@REM of agruments (up to the command line limit, anyway).
 set FORGE_CMD_LINE_ARGS=
-:Win9xApp
+set FORGE_PLUGIN_DIR=
+:initArgs
 if %1a==a goto endInit
 set FORGE_CMD_LINE_ARGS=%FORGE_CMD_LINE_ARGS% %1
+if "%FORGE_PLUGIN_DIR%"=="-pluginDir" set FORGE_PLUGIN_DIR=%1
+if "%1"=="-pluginDir" set FORGE_PLUGIN_DIR=%1
 shift
-goto Win9xApp
-
+goto initArgs
 @REM Reaching here means variables are defined and arguments have been captured
 :endInit
+
 SET FORGE_JAVA_EXE="%JAVA_HOME%\bin\java.exe"
 
 @REM -- 4NT shell
@@ -157,7 +136,7 @@ goto runForge
 @REM Start Forge
 :runForge
 set FORGE_MAIN_CLASS=org.jboss.forge.shell.Bootstrap
-%FORGE_JAVA_EXE% %FORGE_OPTS% "-Dforge.home=%FORGE_HOME%" -Dforge.shell.colorEnabled=true -jar %JBOSS_MODULES% -modulepath "%FORGE_HOME%\modules;%USERHOME%\.forge\plugins" org.jboss.forge %FORGE_CMD_LINE_ARGS%
+%FORGE_JAVA_EXE% %FORGE_OPTS% "-Dforge.home=%FORGE_HOME%" -Dforge.shell.colorEnabled=true -jar %JBOSS_MODULES% -modulepath "%FORGE_HOME%\modules;%USERHOME%\.forge\plugins;%FORGE_PLUGIN_DIR%" org.jboss.forge %FORGE_CMD_LINE_ARGS%
 if ERRORLEVEL 1 goto error
 goto end
 

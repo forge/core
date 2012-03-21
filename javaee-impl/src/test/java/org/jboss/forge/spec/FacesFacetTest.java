@@ -22,8 +22,6 @@
 
 package org.jboss.forge.spec;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -37,7 +35,9 @@ import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.FileResource;
+import org.jboss.forge.spec.javaee.FacesAPIFacet;
 import org.jboss.forge.spec.javaee.FacesFacet;
+import org.jboss.forge.spec.javaee.jsf.FacesAPIFacetImpl;
 import org.jboss.forge.spec.javaee.jsf.FacesFacetImpl;
 import org.jboss.forge.test.SingletonAbstractShellTest;
 import org.junit.Test;
@@ -55,8 +55,8 @@ public class FacesFacetTest extends SingletonAbstractShellTest
       Project project = setUpJSF();
       FileResource<?> config = project.getFacet(FacesFacet.class).getConfigFile();
 
-      assertNotNull(config);
-      assertTrue(config.exists());
+      Assert.assertNotNull(config);
+      Assert.assertTrue(config.exists());
 
       WebResourceFacet web = project.getFacet(WebResourceFacet.class);
       DirectoryResource child = web.getWebRootDirectory().getOrCreateChildDirectory("views")
@@ -68,9 +68,9 @@ public class FacesFacetTest extends SingletonAbstractShellTest
       FacesFacet faces = project.getFacet(FacesFacet.class);
       List<String> webPaths = faces.getWebPaths(view);
 
-      assertEquals(2, webPaths.size());
-      assertEquals("/views/test/view.jsf", webPaths.get(0));
-      assertEquals("/faces/views/test/view.xhtml", webPaths.get(1));
+      Assert.assertEquals(2, webPaths.size());
+      Assert.assertEquals("/views/test/view.jsf", webPaths.get(0));
+      Assert.assertEquals("/faces/views/test/view.xhtml", webPaths.get(1));
    }
 
    @Test
@@ -88,25 +88,49 @@ public class FacesFacetTest extends SingletonAbstractShellTest
       FacesFacet faces = project.getFacet(FacesFacet.class);
       List<String> webPaths = faces.getWebPaths(view);
 
-      assertEquals(2, webPaths.size());
-      assertEquals("/views/test/view.jsf", webPaths.get(0));
-      assertEquals("/faces/views/test/view.xhtml", webPaths.get(1));
+      Assert.assertEquals(2, webPaths.size());
+      Assert.assertEquals("/views/test/view.jsf", webPaths.get(0));
+      Assert.assertEquals("/faces/views/test/view.xhtml", webPaths.get(1));
 
-      assertEquals(view, faces.getResourceForWebPath(webPaths.get(0)));
-      assertEquals(view, faces.getResourceForWebPath(webPaths.get(1)));
+      Assert.assertEquals(view, faces.getResourceForWebPath(webPaths.get(0)));
+      Assert.assertEquals(view, faces.getResourceForWebPath(webPaths.get(1)));
+   }
+
+   @Test
+   public void testSetupJSFAddsJSFApi() throws Exception
+   {
+      Project project = initializeJavaProject();
+      queueInputLines("", "", "");
+      getShell().execute("project install-facet forge.spec.servlet");
+
+      getShell().execute("project install-facet forge.spec.jsf");
+      Assert.assertTrue(project.hasFacet(FacesFacet.class));
+      Assert.assertFalse(project.hasFacet(FacesAPIFacet.class));
+
+      Assert.assertFalse(project.getFacet(DependencyFacet.class).hasEffectiveDependency(
+               FacesAPIFacetImpl.JAVAEE6_FACES));
+
+      queueInputLines("", "", "");
+      getShell().execute("project install-facet forge.spec.jsf.api");
+      assertTrue(project.hasFacet(FacesAPIFacet.class));
+
+      Assert.assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveDependency(
+               FacesAPIFacetImpl.JAVAEE6_FACES));
+      Assert.assertEquals(ScopeType.PROVIDED, project.getFacet(DependencyFacet.class).getEffectiveDependency(
+               FacesAPIFacetImpl.JAVAEE6_FACES).getScopeTypeEnum());
    }
 
    private Project setUpJSF() throws Exception
    {
       Project project = initializeJavaProject();
       queueInputLines("", "", "");
-      getShell().execute("project install-facet forge.spec.jsf");
-      assertTrue(project.hasFacet(FacesFacet.class));
+      getShell().execute("project install-facet forge.spec.jsf.api");
+      Assert.assertTrue(project.hasFacet(FacesFacet.class));
 
       Assert.assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveDependency(
-               FacesFacetImpl.JAVAEE6_FACES));
+               FacesAPIFacetImpl.JAVAEE6_FACES));
       Assert.assertEquals(ScopeType.PROVIDED, project.getFacet(DependencyFacet.class).getEffectiveDependency(
-               FacesFacetImpl.JAVAEE6_FACES).getScopeTypeEnum());
+               FacesAPIFacetImpl.JAVAEE6_FACES).getScopeTypeEnum());
       return project;
    }
 }

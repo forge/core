@@ -72,7 +72,7 @@ public class ForgeInspectorTest
       assertEquals("manyToOne", property.getAttribute(NAME));
       assertEquals("#{forgeInspectorTest$BarBean.all}", property.getAttribute(FACES_LOOKUP));
       assertEquals("#{forgeInspectorTest$BarBean.converter}", property.getAttribute(FACES_CONVERTER_ID));
-      assertEquals(3, property.getAttributes().getLength());
+      assertEquals(4, property.getAttributes().getLength());
 
       property = XmlUtils.getNextSiblingElement(property);
       assertEquals(PROPERTY, property.getNodeName());

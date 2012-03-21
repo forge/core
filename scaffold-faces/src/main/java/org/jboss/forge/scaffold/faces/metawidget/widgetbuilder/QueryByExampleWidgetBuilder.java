@@ -16,6 +16,7 @@
 
 package org.jboss.forge.scaffold.faces.metawidget.widgetbuilder;
 
+import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.*;
 import static org.metawidget.inspector.InspectionResultConstants.*;
 import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.*;
 
@@ -50,7 +51,7 @@ public class QueryByExampleWidgetBuilder
 
       // Suppress
 
-      if (TRUE.equals(attributes.get(HIDDEN)))
+      if (TRUE.equals(attributes.get(HIDDEN)) && !Boolean.valueOf(attributes.get(PRIMARY_KEY_NOT_GENERATED)))
       {
          return new StaticJavaStub();
       }
@@ -74,13 +75,13 @@ public class QueryByExampleWidgetBuilder
          return toReturn;
       }
 
-      // int
+      // int or short
 
-      if (int.class.equals(clazz))
+      if (int.class.equals(clazz) || short.class.equals(clazz) || byte.class.equals(clazz))
       {
          StaticJavaStub toReturn = new StaticJavaStub();
          toReturn.getChildren().add(
-                  new JavaStatement("int " + name + " = this.search.get" + StringUtils.capitalize(name) + "()"));
+                  new JavaStatement(clazz.getSimpleName() + " " + name + " = this.search.get" + StringUtils.capitalize(name) + "()"));
          JavaStatement ifNotEmpty = new JavaStatement("if (" + name + " != 0)");
          ifNotEmpty.getChildren().add(
                   new JavaStatement("predicatesList.add(builder.equal(root.get(\"" + name + "\"), " + name + "))"));
@@ -108,7 +109,11 @@ public class QueryByExampleWidgetBuilder
 
       if (attributes.containsKey(FACES_LOOKUP))
       {
-         StaticJavaStub toReturn = new StaticJavaStub();
+          String reverseKey = "Id";
+          if (attributes.containsKey(REVERSE_PRIMARY_KEY)) 
+              reverseKey = StringUtils.capitalize(attributes.get(REVERSE_PRIMARY_KEY));
+
+          StaticJavaStub toReturn = new StaticJavaStub();
          JavaStatement getValue = new JavaStatement(ClassUtils.getSimpleName(type) + " " + name + " = this.search.get"
                   + StringUtils.capitalize(name) + "()");
          getValue.putImport(type);
