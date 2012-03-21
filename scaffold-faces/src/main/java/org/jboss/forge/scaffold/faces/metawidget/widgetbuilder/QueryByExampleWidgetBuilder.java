@@ -118,7 +118,7 @@ public class QueryByExampleWidgetBuilder
                   + StringUtils.capitalize(name) + "()");
          getValue.putImport(type);
          toReturn.getChildren().add(getValue);
-         JavaStatement ifNotEmpty = new JavaStatement("if (" + name + " != null && " + name + ".get" + reverseKey + "() != null)");
+         JavaStatement ifNotEmpty = new JavaStatement("if (" + name + " != null)");
          ifNotEmpty.getChildren().add(
                   new JavaStatement("predicatesList.add(builder.equal(root.get(\"" + name + "\"), " + name + "))"));
          toReturn.getChildren().add(ifNotEmpty);

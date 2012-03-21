@@ -40,7 +40,7 @@ import org.junit.runner.RunWith;
 
 /**
  * Burr's example domain model from 7th Dec 2011.
- * 
+ *
  * @author Richard Kennard
  */
 
