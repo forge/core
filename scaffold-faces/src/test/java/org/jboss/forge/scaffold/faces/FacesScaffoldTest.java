@@ -91,7 +91,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
        Assert.assertTrue(!contents.contains(
                 "<h:link outcome=\"/scaffold>"));
     }
-    
+
    @Test
    public void testScaffoldSetupWithScaffoldTypeWithoutTargetDir() throws Exception
    {
@@ -102,7 +102,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
        getShell().execute("scaffold setup --scaffoldType faces");
        Assert.assertTrue(project.hasFacet(FacesScaffold.class));
    }
-    
+
    @Test
    public void testScaffoldSetupWithScaffoldTypeAndTargetDir() throws Exception
    {
@@ -677,7 +677,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       contents = Streams.toString(customerBean.getResourceInputStream());
 
       StringBuilder qbeMetawidget = new StringBuilder("\t\tEmployer employer = this.search.getEmployer();\r\n");
-      qbeMetawidget.append("\t\tif (employer != null && employer.getId() != null) {\r\n");
+      qbeMetawidget.append("\t\tif (employer != null) {\r\n");
       qbeMetawidget
                .append("\t\t\tpredicatesList.add(builder.equal(root.get(\"employer\"), employer));\r\n");
       qbeMetawidget.append("\t\t}\r\n");
