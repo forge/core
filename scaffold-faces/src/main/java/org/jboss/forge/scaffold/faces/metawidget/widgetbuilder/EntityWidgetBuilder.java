@@ -55,6 +55,7 @@ import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlSelectOn
 import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlWidgetBuilder;
 import org.metawidget.statically.faces.component.html.widgetbuilder.Param;
 import org.metawidget.statically.faces.component.widgetprocessor.ReadableIdProcessor;
+import org.metawidget.statically.faces.component.widgetprocessor.RequiredAttributeProcessor;
 import org.metawidget.statically.faces.component.widgetprocessor.StandardBindingProcessor;
 import org.metawidget.statically.layout.SimpleLayout;
 import org.metawidget.util.ClassUtils;
@@ -558,6 +559,10 @@ public class EntityWidgetBuilder
                StaticHtmlMetawidget footerMetawidget = new StaticHtmlMetawidget();
                Map<String, String> footerAttributes = CollectionUtils.newHashMap();
                metawidget.initNestedMetawidget(footerMetawidget, footerAttributes);
+
+               // (footer facets should never have a 'required' attribute)
+
+               footerMetawidget.removeWidgetProcessor(footerMetawidget.getWidgetProcessor(RequiredAttributeProcessor.class));
                footerMetawidget.setValue(StaticFacesUtils.wrapExpression(controllerName + "Bean.add." + columnName));
                footerMetawidget.setPath(componentType + StringUtils.SEPARATOR_FORWARD_SLASH_CHAR + columnName);
                footerMetawidget.setLayout(new SimpleLayout());

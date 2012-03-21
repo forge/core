@@ -38,6 +38,7 @@ import org.jboss.forge.env.Configuration;
 import org.jboss.forge.shell.env.ConfigurationAdapter;
 import org.metawidget.inspector.annotation.MetawidgetAnnotationInspector;
 import org.metawidget.inspector.annotation.UiComesAfter;
+import org.metawidget.inspector.annotation.UiRequired;
 import org.metawidget.inspector.composite.CompositeInspector;
 import org.metawidget.inspector.composite.CompositeInspectorConfig;
 import org.metawidget.inspector.iface.Inspector;
@@ -51,6 +52,7 @@ import org.metawidget.statically.StaticWidget;
 import org.metawidget.statically.StaticXmlStub;
 import org.metawidget.statically.StaticXmlWidget;
 import org.metawidget.statically.faces.component.html.StaticHtmlMetawidget;
+import org.metawidget.statically.faces.component.widgetprocessor.RequiredAttributeProcessor;
 import org.metawidget.util.CollectionUtils;
 
 public class EntityWidgetBuilderTest
@@ -305,6 +307,37 @@ public class EntityWidgetBuilderTest
       result += "</h:dataTable>";
 
       assertEquals(result, widget.toString());
+      metawidget.setReadOnly(false);
+
+      // With 'required' column (should suppress required=\"true\")
+
+      attributes = CollectionUtils.newHashMap();
+      attributes.put(NAME, "bars");
+      attributes.put(TYPE, Set.class.getName());
+      attributes.put(PARAMETERIZED_TYPE, RequiredBar.class.getName());
+      attributes.put(N_TO_MANY, TRUE);
+      attributes.put(INVERSE_RELATIONSHIP, "foo");
+      widget = widgetBuilder.buildWidget(PROPERTY, attributes, metawidget);
+
+      result = "<h:panelGroup>";
+      result += "<ui:param name=\"_collection\" value=\"#{foo.bars}\"/>";
+      result += "<h:dataTable id=\"fooBars\" styleClass=\"data-table\" value=\"#{forgeview:asList(_collection)}\" var=\"_item\">";
+      result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Name\"/></f:facet>";
+      result += "<h:link outcome=\"/scaffold/entityWidgetBuilderTest$RequiredBar/view\"><f:param name=\"id\" value=\"#{_item.id}\"/>";
+      result += "<h:outputText id=\"itemName\" value=\"#{_item.name}\"/></h:link>";
+      result += "<f:facet name=\"footer\">";
+      result += "<h:inputText id=\"entityWidgetBuilderTestRequiredBarBeanAddName\" value=\"#{entityWidgetBuilderTest$RequiredBarBean.add.name}\"/>";
+      result += "<h:message for=\"entityWidgetBuilderTestRequiredBarBeanAddName\" styleClass=\"error\"/>";
+      result += "</f:facet>";
+      result += "</h:column>";
+      result += "<h:column footerClass=\"remove-column\" headerClass=\"remove-column\"><h:commandLink action=\"#{_collection.remove(_item)}\" styleClass=\"remove-button\"/><f:facet name=\"footer\"><h:commandLink action=\"#{_collection.add(entityWidgetBuilderTest$RequiredBarBean.added)}\" id=\"fooBarsAdd\" styleClass=\"add-button\"><f:setPropertyActionListener target=\"#{entityWidgetBuilderTest$RequiredBarBean.add.foo}\" value=\"#{foo}\"/></h:commandLink></f:facet></h:column>";
+      result += "</h:dataTable>";
+      result += "</h:panelGroup>";
+
+      assertEquals(result, widget.toString());
+      assertEquals(((StaticXmlWidget) widget.getChildren().get(1)).getAdditionalNamespaceURIs().get("forgeview"),
+               "http://jboss.org/forge/view");
+      assertTrue(metawidget.getWidgetProcessor(RequiredAttributeProcessor.class) != null);
    }
 
    public void testSuppressOneToMany()
@@ -496,6 +529,20 @@ public class EntityWidgetBuilderTest
       public Bar getBar()
       {
          return null;
+      }
+   }
+
+   static class RequiredBar
+   {
+      @UiRequired
+      public String getName()
+      {
+         return null;
+      }
+
+      public void setName(@SuppressWarnings("unused") String name)
+      {
+         // Do nothing
       }
    }
 }
