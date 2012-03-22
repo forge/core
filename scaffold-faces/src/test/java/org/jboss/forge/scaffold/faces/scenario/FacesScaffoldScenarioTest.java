@@ -140,6 +140,11 @@ public class FacesScaffoldScenarioTest extends AbstractFacesScaffoldTest
       qbeMetawidget.append("\t\t}\r\n");
 
       Assert.assertTrue(contents.contains(qbeMetawidget));
+      
+      FileResource<?> welcomeFile = web.getWebResource("/index.html");
+      Assert.assertTrue(welcomeFile.exists());
+      contents = Streams.toString(welcomeFile.getResourceInputStream());
+      Assert.assertTrue(contents.contains("/faces/index.xhtml"));
 
       getShell().execute("build");
    }
@@ -189,6 +194,13 @@ public class FacesScaffoldScenarioTest extends AbstractFacesScaffoldTest
       navigationText.append("\t\t\t\t\t</li>\r\n");
 
       Assert.assertTrue(contents.contains(navigationText));
+
+      FileResource<?> index = web.getWebResource("weather/index.xhtml");
+      Assert.assertTrue(index.exists());
+      FileResource<?> welcomeFile = web.getWebResource("weather/index.html");
+      Assert.assertTrue(welcomeFile.exists());
+      contents = Streams.toString(welcomeFile.getResourceInputStream());
+      Assert.assertTrue(contents.contains("/faces/weather/index.xhtml"));
       
       getShell().execute("build");
    }

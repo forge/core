@@ -128,6 +128,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    private static final String NAVIGATION_TEMPLATE = "scaffold/faces/pageTemplate.xhtml";
    private static final String ERROR_TEMPLATE = "scaffold/faces/error.xhtml";
    private static final String INDEX_TEMPLATE = "scaffold/faces/index.xhtml";
+   private static final String INDEX_WELCOME_TEMPLATE = "scaffold/faces/index.html";
    private final Dependency richfaces3UI = DependencyBuilder.create("org.richfaces.ui:richfaces-ui");
    private final Dependency richfaces3Impl = DependencyBuilder.create("org.richfaces.framework:richfaces-impl");
    private final Dependency richfaces4UI = DependencyBuilder.create("org.richfaces.ui:richfaces-components-ui");
@@ -152,6 +153,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    protected CompiledTemplateResource navigationTemplate;
    protected int navigationTemplateIndent;
    protected CompiledTemplateResource errorTemplate;
+   protected CompiledTemplateResource indexWelcomeTemplate;
    protected CompiledTemplateResource indexTemplate;
    protected TemplateResolver<ClassLoader> resolver;
    protected final ShellPrompt prompt;
@@ -373,8 +375,8 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
 
       // Basic pages
 
-      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource(targetDir + "/index.html"), getClass()
-               .getResourceAsStream("/scaffold/faces/index.html"), overwrite));
+      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource(targetDir + "/index.html"),
+               this.indexWelcomeTemplate.render(context), overwrite));
 
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource(targetDir + "/index.xhtml"),
                this.indexTemplate.render(context), overwrite));
@@ -513,6 +515,10 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       if (this.indexTemplate == null)
       {
          this.indexTemplate = this.compiler.compile(INDEX_TEMPLATE);
+      }
+      if (this.indexWelcomeTemplate == null)
+      {
+         this.indexWelcomeTemplate = this.compiler.compile(INDEX_WELCOME_TEMPLATE);
       }
    }
 
