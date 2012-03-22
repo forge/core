@@ -202,29 +202,34 @@ public class ScaffoldPlugin implements Plugin
          throw new RuntimeException("Selected scaffold provider was null. Re-run with '--scaffoldType ...'");
       }
 
+      String targetDirKey = getTargetDirConfigKey(provider);
+
       if (Strings.isNullOrEmpty(target))
       {
-         String targetDirKey = provider.getClass().getName() + "_targetDir";
          target = config.getString(targetDirKey);
          if (Strings.isNullOrEmpty(target))
          {
             String finalName = project.getFacet(PackagingFacet.class).getFinalName();
             target = prompt.promptCommon(
                      "Create scaffold in which sub-directory of web-root? (e.g. http://localhost:8080/" + finalName
-                              + "/DIR)", PromptType.FILE_PATH, "scaffold");
-            if (target.startsWith("/"))
-               target = target.substring(1);
-            if (target.endsWith("/"))
-               target = target.substring(0, target.length() - 1);
-            config.setProperty(targetDirKey, target);
+                              + "/DIR)", PromptType.FILE_PATH, "/");
          }
       }
-      else
+      
+      if(!Strings.isNullOrEmpty(target))
       {
-         String targetDirKey = provider.getClass().getName() + "_targetDir";
+         if (!target.startsWith("/"))
+            target = "/" + target;
+         if (target.endsWith("/"))
+            target = target.substring(0, target.length() - 1);
          config.setProperty(targetDirKey, target);
       }
       return target;
+   }
+
+   private String getTargetDirConfigKey(ScaffoldProvider provider)
+   {
+      return provider.getClass().getName() + "_targetDir";
    }
 
    private ScaffoldProvider getScaffoldType(String scaffoldType)

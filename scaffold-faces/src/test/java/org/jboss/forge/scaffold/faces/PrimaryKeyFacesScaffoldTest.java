@@ -79,18 +79,18 @@ public class PrimaryKeyFacesScaffoldTest extends AbstractFacesScaffoldTest {
       assertTrue(childContent.contains("this.child.getId()"));
 
       // View
-      FileResource<?> view = web.getWebResource("scaffold/parent/view.xhtml");
+      FileResource<?> view = web.getWebResource("/parent/view.xhtml");
       assertTrue(view.exists());
       String contents = Streams.toString(view.getResourceInputStream());
       assertTrue(contents.contains(
-              "template=\"/resources/scaffold/page.xhtml"));
+              "template=\"/resources/scaffold/pageTemplate.xhtml"));
 
-      view = web.getWebResource("scaffold/parent/search.xhtml");
+      view = web.getWebResource("/parent/search.xhtml");
       contents = Streams.toString(view.getResourceInputStream());
       assertTrue(view.exists());
       assertTrue(contents.contains("<f:param name=\"id\" value=\"#{_item." + parentPrimaryKey + "}\"/>"));
 
-      view = web.getWebResource("scaffold/child/view.xhtml");
+      view = web.getWebResource("/child/view.xhtml");
       contents = Streams.toString(view.getResourceInputStream());
       assertTrue(view.exists());
       assertTrue(contents.contains("childBean.child.parent." + parentPrimaryKey));

@@ -86,7 +86,7 @@ public class FacesScaffoldScenarioTest extends AbstractFacesScaffoldTest
 
       // Check create screen has 'Create New Profile'
 
-      FileResource<?> create = web.getWebResource("scaffold/customer/create.xhtml");
+      FileResource<?> create = web.getWebResource("/customer/create.xhtml");
       Assert.assertTrue(create.exists());
       String contents = Streams.toString(create.getResourceInputStream());
 
@@ -100,7 +100,7 @@ public class FacesScaffoldScenarioTest extends AbstractFacesScaffoldTest
 
       // Check 'City' is dealt with correctly (lowercase in JSF, uppercase in Java code)
 
-      create = web.getWebResource("scaffold/address/create.xhtml");
+      create = web.getWebResource("/address/create.xhtml");
       Assert.assertTrue(create.exists());
       contents = Streams.toString(create.getResourceInputStream());
 
@@ -109,7 +109,7 @@ public class FacesScaffoldScenarioTest extends AbstractFacesScaffoldTest
 
       // View
 
-      FileResource<?> view = web.getWebResource("scaffold/address/view.xhtml");
+      FileResource<?> view = web.getWebResource("/address/view.xhtml");
       Assert.assertTrue(view.exists());
       contents = Streams.toString(view.getResourceInputStream());
 
@@ -118,7 +118,7 @@ public class FacesScaffoldScenarioTest extends AbstractFacesScaffoldTest
 
       // Search
 
-      FileResource<?> search = web.getWebResource("scaffold/address/search.xhtml");
+      FileResource<?> search = web.getWebResource("/address/search.xhtml");
       Assert.assertTrue(search.exists());
       contents = Streams.toString(search.getResourceInputStream());
 
@@ -147,7 +147,7 @@ public class FacesScaffoldScenarioTest extends AbstractFacesScaffoldTest
    @Test
    public void testGenerateScenario2() throws Exception
    {
-      Project project = setupScaffoldProject();
+      Project project = setupScaffoldProject("weather");
 
       queueInputLines("");
       getShell().execute("entity --named Hurricane");
@@ -165,13 +165,31 @@ public class FacesScaffoldScenarioTest extends AbstractFacesScaffoldTest
 
       // View
 
-      FileResource<?> view = web.getWebResource("scaffold/continent/view.xhtml");
+      FileResource<?> view = web.getWebResource("weather/continent/view.xhtml");
       Assert.assertTrue(view.exists());
       String contents = Streams.toString(view.getResourceInputStream());
 
       Assert.assertTrue(contents
                .contains("<h:dataTable id=\"continentBeanContinentHurricanes\" styleClass=\"data-table\" value=\"#{forgeview:asList(continentBean.continent.hurricanes)}\" var=\"_item\">"));
 
+
+
+      FileResource<?> navigation = web.getWebResource("resources/scaffold/pageTemplate.xhtml");
+      Assert.assertTrue(navigation.exists());
+      contents = Streams.toString(navigation.getResourceInputStream());
+
+      StringBuilder navigationText = new StringBuilder("\n\t\t\t\t<ul>\r\n");
+      navigationText.append("\t\t\t\t\t<li>\r\n");
+      navigationText
+               .append("\t\t\t\t\t\t<h:link outcome=\"/weather/continent/search\" value=\"Continent\"/>\r\n");
+      navigationText.append("\t\t\t\t\t</li>\r\n");
+      navigationText.append("\t\t\t\t\t<li>\r\n");
+      navigationText
+               .append("\t\t\t\t\t\t<h:link outcome=\"/weather/hurricane/search\" value=\"Hurricane\"/>\r\n");
+      navigationText.append("\t\t\t\t\t</li>\r\n");
+
+      Assert.assertTrue(contents.contains(navigationText));
+      
       getShell().execute("build");
    }
 }

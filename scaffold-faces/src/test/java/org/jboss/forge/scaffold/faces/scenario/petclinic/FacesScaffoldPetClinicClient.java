@@ -39,7 +39,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlTable;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Ignore
-@InitialPage("/faces/index.xhtml")
+@InitialPage("/faces/petClinic/index.xhtml")
 public class FacesScaffoldPetClinicClient
 {
    @JSFUnitResource

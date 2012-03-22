@@ -60,7 +60,7 @@ public class FacesScaffoldWeatherTest extends AbstractFacesScaffoldTest
 
       // View
 
-      FileResource<?> view = web.getWebResource("scaffold/continent/view.xhtml");
+      FileResource<?> view = web.getWebResource("/continent/view.xhtml");
       Assert.assertTrue(view.exists());
       String contents = Streams.toString(view.getResourceInputStream());
 

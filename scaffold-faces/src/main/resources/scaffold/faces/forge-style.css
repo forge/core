@@ -98,6 +98,11 @@ h1 {
 	text-decoration: none;
 }
 
+#homeLink a:hover {
+	border: none;
+	text-decoration: none;
+}
+
 /*
  * Content
  */
