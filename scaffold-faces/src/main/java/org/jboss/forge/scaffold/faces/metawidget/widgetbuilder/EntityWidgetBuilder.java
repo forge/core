@@ -617,7 +617,13 @@ public class EntityWidgetBuilder
 
    private String getTargetDir()
    {
-      String targetDir = this.config.getString(FacesScaffold.class.getName() + "_targetDir");
-      return Strings.isNullOrEmpty(targetDir) ? "" : targetDir;
+      String target = this.config.getString(FacesScaffold.class.getName() + "_targetDir");
+
+      if (!target.startsWith("/"))
+         target = "/" + target;
+      if (target.endsWith("/"))
+         target = target.substring(0, target.length() - 1);
+      
+      return Strings.isNullOrEmpty(target) ? "" : target;
    }
 }
