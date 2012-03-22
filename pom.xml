@@ -76,7 +76,7 @@
       <version.sun.jaxb>2.2</version.sun.jaxb>
       <version.jboss-jaxb-api_2.2_spec>1.0.3.Final</version.jboss-jaxb-api_2.2_spec>
       <weld.version>1.1.2.Final</weld.version>
-      <seam.render.version>1.0.0.Alpha6</seam.render.version>
+      <seam.render.version>1.0.0.Final</seam.render.version>
       <solder.version>3.1.0.Beta5</solder.version>
       <wagon.version>2.0</wagon.version>
       <yaml.version>1.7</yaml.version>

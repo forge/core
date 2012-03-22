@@ -73,11 +73,11 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
        WebResourceFacet web = project.getFacet(WebResourceFacet.class);
        FileResource<?> error = web.getWebResource("error.xhtml");
        Assert.assertTrue(Streams.toString(error.getResourceInputStream()).contains(
-                "/resources/scaffold/page.xhtml"));
+                "/resources/scaffold/pageTemplate.xhtml"));
 
        // Test page exists, but has no navigation
 
-       FileResource<?> page = web.getWebResource("/resources/scaffold/page.xhtml");
+       FileResource<?> page = web.getWebResource("/resources/scaffold/pageTemplate.xhtml");
        Assert.assertTrue(page.exists());
        String contents = Streams.toString(page.getResourceInputStream());
        Assert.assertTrue(contents.contains(
@@ -89,7 +89,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
        Assert.assertTrue(contents.contains(
                 "<div id=\"footer\">"));
        Assert.assertTrue(!contents.contains(
-                "<h:link outcome=\"/scaffold>"));
+                "<h:link outcome=\"/>"));
     }
 
    @Test
@@ -147,11 +147,11 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
       // View
 
-      FileResource<?> view = web.getWebResource("scaffold/customer/view.xhtml");
+      FileResource<?> view = web.getWebResource("/customer/view.xhtml");
       Assert.assertTrue(view.exists());
       String contents = Streams.toString(view.getResourceInputStream());
       Assert.assertTrue(contents.contains(
-               "template=\"/resources/scaffold/page.xhtml"));
+               "template=\"/resources/scaffold/pageTemplate.xhtml"));
 
       StringBuilder metawidget = new StringBuilder("<ui:define name=\"main\">\n");
       metawidget.append("\t\t<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">\r\n");
@@ -169,11 +169,11 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
       // Create
 
-      FileResource<?> create = web.getWebResource("scaffold/customer/create.xhtml");
+      FileResource<?> create = web.getWebResource("/customer/create.xhtml");
       Assert.assertTrue(create.exists());
       contents = Streams.toString(create.getResourceInputStream());
       Assert.assertTrue(contents.contains(
-               "template=\"/resources/scaffold/page.xhtml"));
+               "template=\"/resources/scaffold/pageTemplate.xhtml"));
 
       metawidget = new StringBuilder("<h:form id=\"create\">\n");
       metawidget.append("\t\t\t<h:messages globalOnly=\"true\" styleClass=\"error\"/>\n\n");
@@ -198,11 +198,11 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
       // Search
 
-      FileResource<?> search = web.getWebResource("scaffold/customer/search.xhtml");
+      FileResource<?> search = web.getWebResource("/customer/search.xhtml");
       Assert.assertTrue(search.exists());
       contents = Streams.toString(search.getResourceInputStream());
       Assert.assertTrue(contents.contains(
-               "template=\"/resources/scaffold/page.xhtml"));
+               "template=\"/resources/scaffold/pageTemplate.xhtml"));
 
       StringBuilder searchMetawidget = new StringBuilder("<h:form id=\"search\">\r\n");
       searchMetawidget.append("\t\t\t<h:panelGroup styleClass=\"search\">\r\n\r\n");
@@ -232,7 +232,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       beanMetawidget.append("\t\t\t\t\t<f:facet name=\"header\">\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<h:outputText value=\"First Name\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t</f:facet>\r\n");
-      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/customer/view\">\r\n");
+      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/customer/view\">\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<h:outputText id=\"itemFirstName\" value=\"#{_item.firstName}\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t</h:link>\r\n");
@@ -241,7 +241,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       beanMetawidget.append("\t\t\t\t\t<f:facet name=\"header\">\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<h:outputText value=\"Last Name\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t</f:facet>\r\n");
-      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/customer/view\">\r\n");
+      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/customer/view\">\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<h:outputText id=\"itemLastName\" value=\"#{_item.lastName}\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t</h:link>\r\n");
@@ -283,7 +283,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(viewUtils.exists());
       contents = Streams.toString(create.getResourceInputStream());
       Assert.assertTrue(contents.contains(
-               "template=\"/resources/scaffold/page.xhtml"));
+               "template=\"/resources/scaffold/pageTemplate.xhtml"));
 
       FileResource<?> taglib = web.getWebResource("WEB-INF/classes/META-INF/forge.taglib.xml");
       Assert.assertTrue(taglib.exists());
@@ -307,7 +307,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(web.getWebResource("resources/remove.png").exists());
       Assert.assertTrue(web.getWebResource("resources/search.png").exists());
       Assert.assertTrue(web.getWebResource("resources/true.png").exists());
-      Assert.assertTrue(web.getWebResource("resources/scaffold/page.xhtml").exists());
+      Assert.assertTrue(web.getWebResource("resources/scaffold/pageTemplate.xhtml").exists());
 
       FileResource<?> paginator = web.getWebResource("resources/scaffold/paginator.xhtml");
       Assert.assertTrue(paginator.exists());
@@ -335,7 +335,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
       // View
 
-      FileResource<?> view = web.getWebResource("scaffold/customerPerson/view.xhtml");
+      FileResource<?> view = web.getWebResource("/customerPerson/view.xhtml");
       Assert.assertTrue(view.exists());
       String contents = Streams.toString(view.getResourceInputStream());
 
@@ -348,7 +348,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
       // Create
 
-      FileResource<?> create = web.getWebResource("scaffold/customerPerson/create.xhtml");
+      FileResource<?> create = web.getWebResource("/customerPerson/create.xhtml");
       Assert.assertTrue(create.exists());
       contents = Streams.toString(create.getResourceInputStream());
 
@@ -361,7 +361,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
       // Search
 
-      FileResource<?> search = web.getWebResource("scaffold/customerPerson/search.xhtml");
+      FileResource<?> search = web.getWebResource("/customerPerson/search.xhtml");
       Assert.assertTrue(search.exists());
       contents = Streams.toString(search.getResourceInputStream()).replaceAll("\\r\\n", "\n");
 
@@ -374,11 +374,11 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
       // Navigation
 
-      FileResource<?> navigation = web.getWebResource("resources/scaffold/page.xhtml");
+      FileResource<?> navigation = web.getWebResource("resources/scaffold/pageTemplate.xhtml");
       Assert.assertTrue(navigation.exists());
       contents = Streams.toString(navigation.getResourceInputStream());
       Assert.assertTrue(contents
-               .contains("<h:link outcome=\"/scaffold/customerPerson/search\" value=\"Customer Person\"/>"));
+               .contains("<h:link outcome=\"/customerPerson/search\" value=\"Customer Person\"/>"));
    }
 
    @Test
@@ -399,9 +399,9 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
                "scaffold from-entity --usingTemplate "
                         + web.getWebResource("test-template.xhtml").getFullyQualifiedName());
 
-      FileResource<?> view = web.getWebResource("scaffold/customer/view.xhtml");
-      FileResource<?> create = web.getWebResource("scaffold/customer/create.xhtml");
-      FileResource<?> search = web.getWebResource("scaffold/customer/search.xhtml");
+      FileResource<?> view = web.getWebResource("/customer/view.xhtml");
+      FileResource<?> create = web.getWebResource("/customer/create.xhtml");
+      FileResource<?> search = web.getWebResource("/customer/search.xhtml");
 
       for (FileResource<?> file : Arrays.asList(view, create, search))
       {
@@ -474,19 +474,19 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
       // View
 
-      FileResource<?> view = web.getWebResource("scaffold/customer/view.xhtml");
+      FileResource<?> view = web.getWebResource("/customer/view.xhtml");
       Assert.assertTrue(view.exists());
       String contents = Streams.toString(view.getResourceInputStream());
       Assert.assertTrue(contents.contains(
-               "template=\"/resources/scaffold/page.xhtml"));
+               "template=\"/resources/scaffold/pageTemplate.xhtml"));
 
       // Create
 
-      FileResource<?> create = web.getWebResource("scaffold/customer/create.xhtml");
+      FileResource<?> create = web.getWebResource("/customer/create.xhtml");
       Assert.assertTrue(create.exists());
       contents = Streams.toString(create.getResourceInputStream());
       Assert.assertTrue(contents.contains(
-               "template=\"/resources/scaffold/page.xhtml"));
+               "template=\"/resources/scaffold/pageTemplate.xhtml"));
       StringBuilder metawidget = new StringBuilder("\t\t<h:form id=\"create\">\n");
       metawidget.append("\t\t\t<h:messages globalOnly=\"true\" styleClass=\"error\"/>\n\n");
       metawidget.append("\t\t\t<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">\r\n");
@@ -543,11 +543,11 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
       // Search
 
-      FileResource<?> search = web.getWebResource("scaffold/customer/search.xhtml");
+      FileResource<?> search = web.getWebResource("/customer/search.xhtml");
       Assert.assertTrue(search.exists());
       contents = Streams.toString(search.getResourceInputStream());
       Assert.assertTrue(contents.contains(
-               "template=\"/resources/scaffold/page.xhtml"));
+               "template=\"/resources/scaffold/pageTemplate.xhtml"));
 
       // Test regeneration
 
@@ -581,11 +581,11 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
       // View
 
-      FileResource<?> view = web.getWebResource("scaffold/customer/view.xhtml");
+      FileResource<?> view = web.getWebResource("/customer/view.xhtml");
       Assert.assertTrue(view.exists());
       String contents = Streams.toString(view.getResourceInputStream());
       Assert.assertTrue(contents.contains(
-               "template=\"/resources/scaffold/page.xhtml"));
+               "template=\"/resources/scaffold/pageTemplate.xhtml"));
 
       StringBuilder metawidget = new StringBuilder(
                "\t\t<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">\r\n");
@@ -599,7 +599,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       metawidget.append("\t\t\t<h:outputText/>\r\n");
       metawidget.append("\t\t\t<h:outputLabel for=\"customerBeanCustomerEmployer\" value=\"Employer:\"/>\r\n");
       metawidget
-               .append("\t\t\t<h:link id=\"customerBeanCustomerEmployer\" outcome=\"/scaffold/employer/view\" value=\"#{customerBean.customer.employer}\">\r\n");
+               .append("\t\t\t<h:link id=\"customerBeanCustomerEmployer\" outcome=\"/employer/view\" value=\"#{customerBean.customer.employer}\">\r\n");
       metawidget.append("\t\t\t\t<f:param name=\"id\" value=\"#{customerBean.customer.employer.id}\"/>\r\n");
       metawidget.append("\t\t\t</h:link>\r\n");
       metawidget.append("\t\t\t<h:outputText/>\r\n");
@@ -609,11 +609,11 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
       // Create
 
-      FileResource<?> create = web.getWebResource("scaffold/customer/create.xhtml");
+      FileResource<?> create = web.getWebResource("/customer/create.xhtml");
       Assert.assertTrue(create.exists());
       contents = Streams.toString(create.getResourceInputStream());
       Assert.assertTrue(contents.contains(
-               "template=\"/resources/scaffold/page.xhtml"));
+               "template=\"/resources/scaffold/pageTemplate.xhtml"));
 
       metawidget = new StringBuilder("\t\t\t<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">\r\n");
       metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First Name:\"/>\r\n");
@@ -646,26 +646,26 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
       // Search
 
-      FileResource<?> search = web.getWebResource("scaffold/customer/search.xhtml");
+      FileResource<?> search = web.getWebResource("/customer/search.xhtml");
       Assert.assertTrue(search.exists());
       contents = Streams.toString(search.getResourceInputStream());
       Assert.assertTrue(contents.contains(
-               "template=\"/resources/scaffold/page.xhtml"));
+               "template=\"/resources/scaffold/pageTemplate.xhtml"));
 
       // Navigation
 
-      FileResource<?> navigation = web.getWebResource("resources/scaffold/page.xhtml");
+      FileResource<?> navigation = web.getWebResource("resources/scaffold/pageTemplate.xhtml");
       Assert.assertTrue(navigation.exists());
       contents = Streams.toString(navigation.getResourceInputStream());
 
       StringBuilder navigationText = new StringBuilder("\n\t\t\t\t<ul>\r\n");
       navigationText.append("\t\t\t\t\t<li>\r\n");
       navigationText
-               .append("\t\t\t\t\t\t<h:link outcome=\"/scaffold/customer/search\" value=\"Customer\"/>\r\n");
+               .append("\t\t\t\t\t\t<h:link outcome=\"/customer/search\" value=\"Customer\"/>\r\n");
       navigationText.append("\t\t\t\t\t</li>\r\n");
       navigationText.append("\t\t\t\t\t<li>\r\n");
       navigationText
-               .append("\t\t\t\t\t\t<h:link outcome=\"/scaffold/employer/search\" value=\"Employer\"/>\r\n");
+               .append("\t\t\t\t\t\t<h:link outcome=\"/employer/search\" value=\"Employer\"/>\r\n");
       navigationText.append("\t\t\t\t\t</li>\r\n");
 
       Assert.assertTrue(contents.contains(navigationText));
@@ -708,11 +708,11 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
       // View
 
-      FileResource<?> view = web.getWebResource("scaffold/customer/view.xhtml");
+      FileResource<?> view = web.getWebResource("/customer/view.xhtml");
       Assert.assertTrue(view.exists());
       String contents = Streams.toString(view.getResourceInputStream());
       Assert.assertTrue(contents.contains(
-               "template=\"/resources/scaffold/page.xhtml"));
+               "template=\"/resources/scaffold/pageTemplate.xhtml"));
 
       StringBuilder metawidget = new StringBuilder(
                "\t\t<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">\r\n");
@@ -731,7 +731,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       metawidget.append("\t\t\t\t\t<f:facet name=\"header\">\r\n");
       metawidget.append("\t\t\t\t\t\t<h:outputText value=\"Name\"/>\r\n");
       metawidget.append("\t\t\t\t\t</f:facet>\r\n");
-      metawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/grocery/view\">\r\n");
+      metawidget.append("\t\t\t\t\t<h:link outcome=\"/grocery/view\">\r\n");
       metawidget.append("\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
       metawidget.append("\t\t\t\t\t\t<h:outputText id=\"itemName\" value=\"#{_item.name}\"/>\r\n");
       metawidget.append("\t\t\t\t\t</h:link>\r\n");
@@ -745,11 +745,11 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
       // Create
 
-      FileResource<?> create = web.getWebResource("scaffold/customer/create.xhtml");
+      FileResource<?> create = web.getWebResource("/customer/create.xhtml");
       Assert.assertTrue(create.exists());
       contents = Streams.toString(create.getResourceInputStream());
       Assert.assertTrue(contents.contains(
-               "template=\"/resources/scaffold/page.xhtml"));
+               "template=\"/resources/scaffold/pageTemplate.xhtml"));
 
       metawidget = new StringBuilder("\t\t\t<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">\r\n");
       metawidget.append("\t\t\t\t<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First Name:\"/>\r\n");
@@ -775,7 +775,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       metawidget.append("\t\t\t\t\t\t\t<f:facet name=\"header\">\r\n");
       metawidget.append("\t\t\t\t\t\t\t\t<h:outputText value=\"Name\"/>\r\n");
       metawidget.append("\t\t\t\t\t\t\t</f:facet>\r\n");
-      metawidget.append("\t\t\t\t\t\t\t<h:link outcome=\"/scaffold/grocery/view\">\r\n");
+      metawidget.append("\t\t\t\t\t\t\t<h:link outcome=\"/grocery/view\">\r\n");
       metawidget.append("\t\t\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
       metawidget.append("\t\t\t\t\t\t\t\t<h:outputText id=\"itemName\" value=\"#{_item.name}\"/>\r\n");
       metawidget.append("\t\t\t\t\t\t\t</h:link>\r\n");
@@ -804,11 +804,11 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
       // Search
 
-      FileResource<?> search = web.getWebResource("scaffold/customer/search.xhtml");
+      FileResource<?> search = web.getWebResource("/customer/search.xhtml");
       Assert.assertTrue(search.exists());
       contents = Streams.toString(search.getResourceInputStream());
       Assert.assertTrue(contents.contains(
-               "template=\"/resources/scaffold/page.xhtml"));
+               "template=\"/resources/scaffold/pageTemplate.xhtml"));
 
       StringBuilder searchMetawidget = new StringBuilder("<h:form id=\"search\">\r\n");
       searchMetawidget.append("\t\t\t<h:panelGroup styleClass=\"search\">\r\n\r\n");
@@ -838,7 +838,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       beanMetawidget.append("\t\t\t\t\t<f:facet name=\"header\">\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<h:outputText value=\"First Name\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t</f:facet>\r\n");
-      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/customer/view\">\r\n");
+      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/customer/view\">\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<h:outputText id=\"itemFirstName\" value=\"#{_item.firstName}\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t</h:link>\r\n");
@@ -847,7 +847,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       beanMetawidget.append("\t\t\t\t\t<f:facet name=\"header\">\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<h:outputText value=\"Last Name\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t</f:facet>\r\n");
-      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/customer/view\">\r\n");
+      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/customer/view\">\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<h:outputText id=\"itemLastName\" value=\"#{_item.lastName}\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t</h:link>\r\n");
@@ -856,18 +856,18 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
       Assert.assertTrue(contents.contains(beanMetawidget));
 
-      FileResource<?> navigation = web.getWebResource("resources/scaffold/page.xhtml");
+      FileResource<?> navigation = web.getWebResource("resources/scaffold/pageTemplate.xhtml");
       Assert.assertTrue(navigation.exists());
       contents = Streams.toString(navigation.getResourceInputStream());
 
       StringBuilder navigationText = new StringBuilder("\n\t\t\t\t<ul>\r\n");
       navigationText.append("\t\t\t\t\t<li>\r\n");
       navigationText
-               .append("\t\t\t\t\t\t<h:link outcome=\"/scaffold/customer/search\" value=\"Customer\"/>\r\n");
+               .append("\t\t\t\t\t\t<h:link outcome=\"/customer/search\" value=\"Customer\"/>\r\n");
       navigationText.append("\t\t\t\t\t</li>\r\n");
       navigationText.append("\t\t\t\t\t<li>\r\n");
       navigationText
-               .append("\t\t\t\t\t\t<h:link outcome=\"/scaffold/grocery/search\" value=\"Grocery\"/>\r\n");
+               .append("\t\t\t\t\t\t<h:link outcome=\"/grocery/search\" value=\"Grocery\"/>\r\n");
       navigationText.append("\t\t\t\t\t</li>\r\n");
 
       Assert.assertTrue(contents.contains(navigationText));
@@ -965,11 +965,11 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
       // Search
 
-      FileResource<?> search = web.getWebResource("scaffold/customer/search.xhtml");
+      FileResource<?> search = web.getWebResource("/customer/search.xhtml");
       Assert.assertTrue(search.exists());
       String contents = Streams.toString(search.getResourceInputStream());
       Assert.assertTrue(contents.contains(
-               "template=\"/resources/scaffold/page.xhtml"));
+               "template=\"/resources/scaffold/pageTemplate.xhtml"));
 
       StringBuilder searchMetawidget = new StringBuilder("<h:form id=\"search\">\r\n");
       searchMetawidget.append("\t\t\t<h:panelGroup styleClass=\"search\">\r\n\r\n");
@@ -1037,7 +1037,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
       // Check create screen has 'Create New Profile'
 
-      FileResource<?> create = web.getWebResource("scaffold/foo/create.xhtml");
+      FileResource<?> create = web.getWebResource("/foo/create.xhtml");
       Assert.assertTrue(create.exists());
 
       getShell().execute("build");
@@ -1066,11 +1066,11 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
       // View
 
-      FileResource<?> view = web.getWebResource("scaffold/customer/view.xhtml");
+      FileResource<?> view = web.getWebResource("/customer/view.xhtml");
       Assert.assertTrue(view.exists());
       String contents = Streams.toString(view.getResourceInputStream());
       Assert.assertTrue(contents.contains(
-               "template=\"/resources/scaffold/page.xhtml"));
+               "template=\"/resources/scaffold/pageTemplate.xhtml"));
 
       StringBuilder metawidget = new StringBuilder("<ui:define name=\"main\">\n");
       metawidget.append("\t\t<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">\r\n");
@@ -1092,11 +1092,11 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
       // Create
 
-      FileResource<?> create = web.getWebResource("scaffold/customer/create.xhtml");
+      FileResource<?> create = web.getWebResource("/customer/create.xhtml");
       Assert.assertTrue(create.exists());
       contents = Streams.toString(create.getResourceInputStream());
       Assert.assertTrue(contents.contains(
-               "template=\"/resources/scaffold/page.xhtml"));
+               "template=\"/resources/scaffold/pageTemplate.xhtml"));
 
       metawidget = new StringBuilder("<h:form id=\"create\">\n");
       metawidget.append("\t\t\t<h:messages globalOnly=\"true\" styleClass=\"error\"/>\n\n");
@@ -1133,11 +1133,11 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
       // Search
 
-      FileResource<?> search = web.getWebResource("scaffold/customer/search.xhtml");
+      FileResource<?> search = web.getWebResource("/customer/search.xhtml");
       Assert.assertTrue(search.exists());
       contents = Streams.toString(search.getResourceInputStream());
       Assert.assertTrue(contents.contains(
-               "template=\"/resources/scaffold/page.xhtml"));
+               "template=\"/resources/scaffold/pageTemplate.xhtml"));
 
       StringBuilder searchMetawidget = new StringBuilder("<h:form id=\"search\">\r\n");
       searchMetawidget.append("\t\t\t<h:panelGroup styleClass=\"search\">\r\n\r\n");
@@ -1179,7 +1179,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       beanMetawidget.append("\t\t\t\t\t<f:facet name=\"header\">\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<h:outputText value=\"First Name\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t</f:facet>\r\n");
-      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/customer/view\">\r\n");
+      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/customer/view\">\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<h:outputText id=\"itemFirstName\" value=\"#{_item.firstName}\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t</h:link>\r\n");
@@ -1188,7 +1188,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       beanMetawidget.append("\t\t\t\t\t<f:facet name=\"header\">\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<h:outputText value=\"Last Name\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t</f:facet>\r\n");
-      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/customer/view\">\r\n");
+      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/customer/view\">\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<h:outputText id=\"itemLastName\" value=\"#{_item.lastName}\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t</h:link>\r\n");
@@ -1197,7 +1197,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       beanMetawidget.append("\t\t\t\t\t<f:facet name=\"header\">\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<h:outputText value=\"Rating\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t</f:facet>\r\n");
-      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/scaffold/customer/view\">\r\n");
+      beanMetawidget.append("\t\t\t\t\t<h:link outcome=\"/customer/view\">\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t\t<h:outputText id=\"itemRating\" value=\"#{_item.rating}\"/>\r\n");
       beanMetawidget.append("\t\t\t\t\t</h:link>\r\n");
@@ -1244,7 +1244,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(viewUtils.exists());
       contents = Streams.toString(create.getResourceInputStream());
       Assert.assertTrue(contents.contains(
-               "template=\"/resources/scaffold/page.xhtml"));
+               "template=\"/resources/scaffold/pageTemplate.xhtml"));
 
       FileResource<?> taglib = web.getWebResource("WEB-INF/classes/META-INF/forge.taglib.xml");
       Assert.assertTrue(taglib.exists());
@@ -1268,7 +1268,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(web.getWebResource("resources/remove.png").exists());
       Assert.assertTrue(web.getWebResource("resources/search.png").exists());
       Assert.assertTrue(web.getWebResource("resources/true.png").exists());
-      Assert.assertTrue(web.getWebResource("resources/scaffold/page.xhtml").exists());
+      Assert.assertTrue(web.getWebResource("resources/scaffold/pageTemplate.xhtml").exists());
 
       FileResource<?> paginator = web.getWebResource("resources/scaffold/paginator.xhtml");
       Assert.assertTrue(paginator.exists());

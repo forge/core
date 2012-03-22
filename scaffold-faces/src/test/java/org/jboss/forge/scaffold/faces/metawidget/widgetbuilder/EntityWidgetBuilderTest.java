@@ -77,7 +77,7 @@ public class EntityWidgetBuilderTest
       attributes.put(FACES_LOOKUP, "#{barBean.all}");
       StaticWidget widget = widgetBuilder.buildWidget(PROPERTY, attributes, metawidget);
 
-      String result = "<h:link outcome=\"/scaffold/entityWidgetBuilderTest$Bar/view\" value=\"#{foo.bar}\">";
+      String result = "<h:link outcome=\"/entityWidgetBuilderTest$Bar/view\" value=\"#{foo.bar}\">";
       result += "<f:param name=\"id\" value=\"#{foo.bar.id}\"/>";
       result += "</h:link>";
 
@@ -216,11 +216,11 @@ public class EntityWidgetBuilderTest
 
       String result = "<h:dataTable id=\"fooBars\" styleClass=\"data-table\" value=\"#{foo.bars}\" var=\"_item\">";
       result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Name\"/></f:facet>";
-      result += "<h:link outcome=\"/scaffold/entityWidgetBuilderTest$Bar/view\"><f:param name=\"id\" value=\"#{_item.id}\"/>";
+      result += "<h:link outcome=\"/entityWidgetBuilderTest$Bar/view\"><f:param name=\"id\" value=\"#{_item.id}\"/>";
       result += "<h:outputText id=\"itemName\" value=\"#{_item.name}\"/></h:link>";
       result += "</h:column>";
       result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Description\"/></f:facet>";
-      result += "<h:link outcome=\"/scaffold/entityWidgetBuilderTest$Bar/view\"><f:param name=\"id\" value=\"#{_item.id}\"/>";
+      result += "<h:link outcome=\"/entityWidgetBuilderTest$Bar/view\"><f:param name=\"id\" value=\"#{_item.id}\"/>";
       result += "<h:outputText id=\"itemDescription\" value=\"#{_item.description}\"/></h:link>";
       result += "</h:column>";
       result += "</h:dataTable>";
@@ -247,11 +247,11 @@ public class EntityWidgetBuilderTest
       result += "<ui:param name=\"_collection\" value=\"#{foo.bars}\"/>";
       result += "<h:dataTable id=\"fooBars\" styleClass=\"data-table\" value=\"#{forgeview:asList(_collection)}\" var=\"_item\">";
       result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Name\"/></f:facet>";
-      result += "<h:link outcome=\"/scaffold/entityWidgetBuilderTest$Bar/view\"><f:param name=\"id\" value=\"#{_item.id}\"/>";
+      result += "<h:link outcome=\"/entityWidgetBuilderTest$Bar/view\"><f:param name=\"id\" value=\"#{_item.id}\"/>";
       result += "<h:outputText id=\"itemName\" value=\"#{_item.name}\"/></h:link>";
       result += "</h:column>";
       result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Description\"/></f:facet>";
-      result += "<h:link outcome=\"/scaffold/entityWidgetBuilderTest$Bar/view\"><f:param name=\"id\" value=\"#{_item.id}\"/>";
+      result += "<h:link outcome=\"/entityWidgetBuilderTest$Bar/view\"><f:param name=\"id\" value=\"#{_item.id}\"/>";
       result += "<h:outputText id=\"itemDescription\" value=\"#{_item.description}\"/></h:link>";
       result += "</h:column>";
       result += "<h:column footerClass=\"remove-column\" headerClass=\"remove-column\"><h:commandLink action=\"#{_collection.remove(_item)}\" styleClass=\"remove-button\"/></h:column>";
@@ -275,7 +275,7 @@ public class EntityWidgetBuilderTest
       result += "<ui:param name=\"_collection\" value=\"#{foo.bars}\"/>";
       result += "<h:dataTable id=\"fooBars\" styleClass=\"data-table\" value=\"#{forgeview:asList(_collection)}\" var=\"_item\">";
       result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Description\"/></f:facet>";
-      result += "<h:link outcome=\"/scaffold/entityWidgetBuilderTest$Bar/view\"><f:param name=\"id\" value=\"#{_item.id}\"/>";
+      result += "<h:link outcome=\"/entityWidgetBuilderTest$Bar/view\"><f:param name=\"id\" value=\"#{_item.id}\"/>";
       result += "<h:outputText id=\"itemDescription\" value=\"#{_item.description}\"/></h:link>";
       result += "<f:facet name=\"footer\">";
       result += "<h:inputText id=\"entityWidgetBuilderTestBarBeanAddDescription\" value=\"#{entityWidgetBuilderTest$BarBean.add.description}\"/>";
@@ -301,7 +301,7 @@ public class EntityWidgetBuilderTest
 
       result = "<h:dataTable id=\"fooBars\" styleClass=\"data-table\" value=\"#{forgeview:asList(foo.bars)}\" var=\"_item\">";
       result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Description\"/></f:facet>";
-      result += "<h:link outcome=\"/scaffold/entityWidgetBuilderTest$Bar/view\"><f:param name=\"id\" value=\"#{_item.id}\"/>";
+      result += "<h:link outcome=\"/entityWidgetBuilderTest$Bar/view\"><f:param name=\"id\" value=\"#{_item.id}\"/>";
       result += "<h:outputText id=\"itemDescription\" value=\"#{_item.description}\"/></h:link>";
       result += "</h:column>";
       result += "</h:dataTable>";
@@ -323,7 +323,7 @@ public class EntityWidgetBuilderTest
       result += "<ui:param name=\"_collection\" value=\"#{foo.bars}\"/>";
       result += "<h:dataTable id=\"fooBars\" styleClass=\"data-table\" value=\"#{forgeview:asList(_collection)}\" var=\"_item\">";
       result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Name\"/></f:facet>";
-      result += "<h:link outcome=\"/scaffold/entityWidgetBuilderTest$RequiredBar/view\"><f:param name=\"id\" value=\"#{_item.id}\"/>";
+      result += "<h:link outcome=\"/entityWidgetBuilderTest$RequiredBar/view\"><f:param name=\"id\" value=\"#{_item.id}\"/>";
       result += "<h:outputText id=\"itemName\" value=\"#{_item.name}\"/></h:link>";
       result += "<f:facet name=\"footer\">";
       result += "<h:inputText id=\"entityWidgetBuilderTestRequiredBarBeanAddName\" value=\"#{entityWidgetBuilderTest$RequiredBarBean.add.name}\"/>";
@@ -359,10 +359,10 @@ public class EntityWidgetBuilderTest
       result += "<ui:param name=\"_collection\" value=\"#{foo.bars}\"/>";
       result += "<h:dataTable id=\"fooBars\" styleClass=\"data-table\" value=\"#{forgeview:asList(_collection)}\" var=\"_item\">";
       result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Field 1\"/></f:facet>";
-      result += "<h:link outcome=\"/scaffold/entityWidgetBuilderTest$FooOneToMany/view\"><f:param name=\"id\" value=\"#{_item.id}\"/><h:outputText id=\"itemField1\" value=\"#{_item.field1}\"/></h:link>";
+      result += "<h:link outcome=\"/entityWidgetBuilderTest$FooOneToMany/view\"><f:param name=\"id\" value=\"#{_item.id}\"/><h:outputText id=\"itemField1\" value=\"#{_item.field1}\"/></h:link>";
       result += "</h:column>";
       result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Field 3\"/></f:facet>";
-      result += "<h:link outcome=\"/scaffold/entityWidgetBuilderTest$FooOneToMany/view\"><f:param name=\"id\" value=\"#{_item.id}\"/><h:outputText id=\"itemField3\" value=\"#{_item.field3}\"/></h:link>";
+      result += "<h:link outcome=\"/entityWidgetBuilderTest$FooOneToMany/view\"><f:param name=\"id\" value=\"#{_item.id}\"/><h:outputText id=\"itemField3\" value=\"#{_item.field3}\"/></h:link>";
       result += "</h:column>";
       result += "<h:column footerClass=\"remove-column\" headerClass=\"remove-column\"><h:commandLink action=\"#{_collection.remove(_item)}\" styleClass=\"remove-button\"/></h:column>";
       result += "</h:dataTable>";
@@ -422,10 +422,10 @@ public class EntityWidgetBuilderTest
       result += "<ui:param name=\"_collection\" value=\"#{foo.bars}\"/>";
       result += "<h:dataTable id=\"fooBars\" styleClass=\"data-table\" value=\"#{forgeview:asList(_collection)}\" var=\"_item\">";
       result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Name\"/></f:facet>";
-      result += "<h:link outcome=\"/scaffold/entityWidgetBuilderTest$FooOneToOne/view\"><f:param name=\"id\" value=\"#{_item.id}\"/><h:outputText id=\"itemName\" value=\"#{_item.name}\"/></h:link>";
+      result += "<h:link outcome=\"/entityWidgetBuilderTest$FooOneToOne/view\"><f:param name=\"id\" value=\"#{_item.id}\"/><h:outputText id=\"itemName\" value=\"#{_item.name}\"/></h:link>";
       result += "</h:column>";
       result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Description\"/></f:facet>";
-      result += "<h:link outcome=\"/scaffold/entityWidgetBuilderTest$FooOneToOne/view\"><f:param name=\"id\" value=\"#{_item.id}\"/><h:outputText id=\"itemDescription\" value=\"#{_item.description}\"/></h:link>";
+      result += "<h:link outcome=\"/entityWidgetBuilderTest$FooOneToOne/view\"><f:param name=\"id\" value=\"#{_item.id}\"/><h:outputText id=\"itemDescription\" value=\"#{_item.description}\"/></h:link>";
       result += "</h:column>";
       result += "<h:column footerClass=\"remove-column\" headerClass=\"remove-column\"><h:commandLink action=\"#{_collection.remove(_item)}\" styleClass=\"remove-button\"/></h:column>";
       result += "</h:dataTable>";

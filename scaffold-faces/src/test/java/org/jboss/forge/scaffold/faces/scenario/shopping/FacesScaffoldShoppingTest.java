@@ -95,7 +95,7 @@ public class FacesScaffoldShoppingTest extends AbstractFacesScaffoldTest
 
       // Check create screen has 'Create New Profile'
 
-      FileResource<?> create = web.getWebResource("scaffold/customer/create.xhtml");
+      FileResource<?> create = web.getWebResource("/customer/create.xhtml");
       Assert.assertTrue(create.exists());
       String contents = Streams.toString(create.getResourceInputStream());
 
@@ -109,7 +109,7 @@ public class FacesScaffoldShoppingTest extends AbstractFacesScaffoldTest
 
       // Check 'City' is dealt with correctly (lowercase in JSF, uppercase in Java code)
 
-      create = web.getWebResource("scaffold/address/create.xhtml");
+      create = web.getWebResource("/address/create.xhtml");
       Assert.assertTrue(create.exists());
       contents = Streams.toString(create.getResourceInputStream());
 
@@ -119,7 +119,7 @@ public class FacesScaffoldShoppingTest extends AbstractFacesScaffoldTest
 
       // View
 
-      FileResource<?> view = web.getWebResource("scaffold/address/view.xhtml");
+      FileResource<?> view = web.getWebResource("/address/view.xhtml");
       Assert.assertTrue(view.exists());
       contents = Streams.toString(view.getResourceInputStream());
 
@@ -129,7 +129,7 @@ public class FacesScaffoldShoppingTest extends AbstractFacesScaffoldTest
 
       // Search
 
-      FileResource<?> search = web.getWebResource("scaffold/address/search.xhtml");
+      FileResource<?> search = web.getWebResource("/address/search.xhtml");
       Assert.assertTrue(search.exists());
       contents = Streams.toString(search.getResourceInputStream());
 

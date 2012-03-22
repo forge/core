@@ -38,7 +38,7 @@ import org.jboss.forge.shell.util.Streams;
  */
 public class FacesTemplateStrategy implements TemplateStrategy
 {
-   private static final String SCAFFOLD_FORGE_TEMPLATE = "/resources/scaffold/page.xhtml";
+   private static final String SCAFFOLD_FORGE_TEMPLATE = "/resources/scaffold/pageTemplate.xhtml";
 
    private final Project project;
 

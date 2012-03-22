@@ -142,7 +142,7 @@ public class EntityWidgetBuilder
             controllerName = StringUtils.decapitalize(controllerName);
 
             HtmlOutcomeTargetLink link = new HtmlOutcomeTargetLink();
-            link.putAttribute("outcome", "/" + getTargetDir() + "/" + controllerName + "/view");
+            link.putAttribute("outcome", getTargetDir() + "/" + controllerName + "/view");
 
             StandardBindingProcessor bindingProcessor = metawidget.getWidgetProcessor(StandardBindingProcessor.class);
 
@@ -559,7 +559,7 @@ public class EntityWidgetBuilder
          // Create a link...
 
          HtmlOutcomeTargetLink link = new HtmlOutcomeTargetLink();
-         link.putAttribute("outcome", "/" + getTargetDir() + "/" + controllerName + "/view");
+         link.putAttribute("outcome", getTargetDir() + "/" + controllerName + "/view");
 
          // ...pointing to the id
 
@@ -617,7 +617,13 @@ public class EntityWidgetBuilder
 
    private String getTargetDir()
    {
-      String targetDir = this.config.getString(FacesScaffold.class.getName() + "_targetDir");
-      return Strings.isNullOrEmpty(targetDir) ? "scaffold" : targetDir;
+      String target = this.config.getString(FacesScaffold.class.getName() + "_targetDir");
+
+      if (!target.startsWith("/"))
+         target = "/" + target;
+      if (target.endsWith("/"))
+         target = target.substring(0, target.length() - 1);
+      
+      return Strings.isNullOrEmpty(target) ? "" : target;
    }
 }
