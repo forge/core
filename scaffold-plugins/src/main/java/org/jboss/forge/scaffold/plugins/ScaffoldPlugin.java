@@ -218,11 +218,11 @@ public class ScaffoldPlugin implements Plugin
       
       if(!Strings.isNullOrEmpty(target))
       {
+         config.setProperty(targetDirKey, target);
          if (!target.startsWith("/"))
             target = "/" + target;
          if (target.endsWith("/"))
             target = target.substring(0, target.length() - 1);
-         config.setProperty(targetDirKey, target);
       }
       return target;
    }
