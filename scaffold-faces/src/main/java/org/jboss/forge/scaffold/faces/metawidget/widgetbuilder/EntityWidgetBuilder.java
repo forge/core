@@ -619,11 +619,13 @@ public class EntityWidgetBuilder
    {
       String target = this.config.getString(FacesScaffold.class.getName() + "_targetDir");
 
+      target = Strings.isNullOrEmpty(target) ? "" : target;
+      
       if (!target.startsWith("/"))
          target = "/" + target;
       if (target.endsWith("/"))
          target = target.substring(0, target.length() - 1);
       
-      return Strings.isNullOrEmpty(target) ? "" : target;
+      return target;
    }
 }
