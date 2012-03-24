@@ -37,21 +37,30 @@ public class TypeDeclarationFinderVisitor extends ASTVisitor
    @Override
    public boolean visit(final TypeDeclaration node)
    {
-      declaration = node;
+	   if (declaration == null)
+	   {
+		   declaration = node;
+	   }
       return true;
    }
 
    @Override
    public boolean visit(final AnnotationTypeDeclaration node)
    {
-      declaration = node;
+	   if (declaration == null)
+	   {
+		   declaration = node;
+	   }
       return super.visit(node);
    }
 
    @Override
    public boolean visit(final EnumDeclaration node)
    {
-      declaration = node;
+	   if (declaration == null)
+	   {
+		   declaration = node;
+	   }
       return super.visit(node);
    }
 
