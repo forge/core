@@ -174,7 +174,7 @@ public class RestPlugin implements Plugin
          String idType = resolveIdType(entity);
          if (!Types.isBasicType(idType))
          {
-            ShellMessages.error(out, "Skipping class because @Id type [" + idType
+            ShellMessages.error(out, "Skipped class [" + entity.getQualifiedName() + "] because @Id type [" + idType
                      + "] is not supported by endpoint generation.");
             continue;
          }
@@ -295,7 +295,8 @@ public class RestPlugin implements Plugin
 
       if (result == null)
       {
-         throw new RuntimeException("Could not determine @Id field and setter method for @Entity [" + entity.getQualifiedName()
+         throw new RuntimeException("Could not determine @Id field and setter method for @Entity ["
+                  + entity.getQualifiedName()
                   + "]. Aborting.");
       }
 
