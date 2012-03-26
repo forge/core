@@ -22,7 +22,9 @@
 
 package org.jboss.forge.spec.plugin;
 
+import org.apache.log4j.pattern.RelativeTimePatternConverter;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.Method;
 import org.jboss.forge.parser.java.Type;
@@ -95,7 +97,7 @@ public class RestPluginTest extends AbstractJPATest
 
       org.jboss.forge.parser.xml.Node webXml = XMLParser.parse(web.getConfig().exportAsString());
       assertEquals(1, webXml.get("servlet-mapping").size());
-      
+
       assertTrue(config.exportAsString().contains("servlet-mapping"));
 
       setupRest();
@@ -110,7 +112,7 @@ public class RestPluginTest extends AbstractJPATest
       assertTrue(project.hasFacet(RestWebXmlFacet.class));
       RestWebXmlFacet restWebXmlFacet = project.getFacet(RestWebXmlFacet.class);
       assertEquals("/rest/*", restWebXmlFacet.getServletPath());
-      
+
       webXml = XMLParser.parse(web.getConfig().exportAsString());
       assertEquals(2, webXml.get("servlet-mapping").size());
    }
@@ -158,6 +160,82 @@ public class RestPluginTest extends AbstractJPATest
                         .getQualifiedName());
 
       assertTrue(java.getJavaResource(entity).getJavaSource().hasAnnotation(XmlRootElement.class));
+      getShell().execute("build");
+   }
+
+   @Test
+   public void testCreateEndpointNonStandardId() throws Exception
+   {
+      Project project = getProject();
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+      JavaClass entity = JavaParser.parse(JavaClass.class,
+               RestPluginTest.class.getResourceAsStream("User.java"));
+      entity.setPackage(java.getBasePackage() + ".model");
+      java.saveJavaSource(entity);
+
+      getShell().setCurrentResource(java.getJavaResource(entity));
+
+      setupRest();
+
+      queueInputLines("");
+      getShell().execute("rest endpoint-from-entity");
+
+      JavaResource resource = java.getJavaResource(java.getBasePackage() + ".rest.UserEndpoint");
+      JavaClass endpoint = (JavaClass) resource.getJavaSource();
+
+      assertEquals("/user", endpoint.getAnnotation(Path.class).getStringValue());
+      assertTrue(endpoint.toString().contains("entity.setObjectId(id);"));
+      getShell().execute("build");
+   }
+
+   @Test
+   public void testCreateEndpointPrimitiveNonStandardId() throws Exception
+   {
+      Project project = getProject();
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+      JavaClass entity = JavaParser.parse(JavaClass.class,
+               RestPluginTest.class.getResourceAsStream("User2.java"));
+      entity.setPackage(java.getBasePackage() + ".model");
+      java.saveJavaSource(entity);
+
+      getShell().setCurrentResource(java.getJavaResource(entity));
+
+      setupRest();
+
+      queueInputLines("");
+      getShell().execute("rest endpoint-from-entity");
+
+      JavaResource resource = java.getJavaResource(java.getBasePackage() + ".rest.User2Endpoint");
+      JavaClass endpoint = (JavaClass) resource.getJavaSource();
+
+      assertEquals("/user2", endpoint.getAnnotation(Path.class).getStringValue());
+      assertTrue(endpoint.toString().contains("entity.setObjectId(id);"));
+      getShell().execute("build");
+   }
+
+   @Test
+   public void testCreateEndpointPrimitiveNonStandardGetterId() throws Exception
+   {
+      Project project = getProject();
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+      JavaClass entity = JavaParser.parse(JavaClass.class,
+               RestPluginTest.class.getResourceAsStream("User3.java"));
+      entity.setPackage(java.getBasePackage() + ".model");
+      java.saveJavaSource(entity);
+
+      getShell().setCurrentResource(java.getJavaResource(entity));
+
+      setupRest();
+
+      queueInputLines("");
+      getShell().execute("rest endpoint-from-entity");
+
+      JavaResource resource = java.getJavaResource(java.getBasePackage() + ".rest.User3Endpoint");
+      JavaClass endpoint = (JavaClass) resource.getJavaSource();
+
+      assertEquals("/user3", endpoint.getAnnotation(Path.class).getStringValue());
+      assertTrue(endpoint.toString().contains("entity.setObjectId(id);"));
+      getShell().execute("build");
    }
 
    @Test
