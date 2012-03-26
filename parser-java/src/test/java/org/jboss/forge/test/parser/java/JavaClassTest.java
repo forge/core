@@ -74,9 +74,8 @@ public class JavaClassTest
       assertEquals("Telephone", javaClass.getName());
 
       String output = javaClass.toString();
-
       assertTrue(output.contains(
-               "Telephone" + "\n" +
+               "Telephone" + System.getProperty("line.separator") +
                         "{"
                ));
       assertTrue(output.contains(
