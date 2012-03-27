@@ -122,4 +122,13 @@ public class Strings
       }
       return value;
    }
+
+   public static String uncapitalize(final String input)
+   {
+      if ((input == null) || (input.length() == 0))
+      {
+         return input;
+      }
+      return input.substring(0, 1).toLowerCase() + input.substring(1);
+   }
 }
