@@ -401,14 +401,14 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(contents.contains(expectedContent));
       
       expectedContent = new StringBuilder();      
-      expectedContent.append("\t"  ).append("<ui:define name=\"header\">").append(lineSeparator);
-      expectedContent.append("\t\t").append(  "Customer Person"          ).append(lineSeparator);
+      expectedContent.append("\t"  ).append("<ui:define name=\"header\">").append(crlf);
+      expectedContent.append("\t\t").append(  "Customer Person"          ).append(crlf);
       expectedContent.append("\t"  ).append("</ui:define>"               );
       Assert.assertTrue(contents.contains(expectedContent));
 
       expectedContent = new StringBuilder();      
-      expectedContent.append("\t"  ).append("<ui:define name=\"subheader\">" ).append(lineSeparator);
-      expectedContent.append("\t\t").append(  "Search Customer Person entities").append(lineSeparator);
+      expectedContent.append("\t"  ).append("<ui:define name=\"subheader\">" ).append(crlf);
+      expectedContent.append("\t\t").append(  "Search Customer Person entities").append(crlf);
       expectedContent.append("\t"  ).append("</ui:define>"                   );
       Assert.assertTrue(contents.contains(expectedContent));
 
