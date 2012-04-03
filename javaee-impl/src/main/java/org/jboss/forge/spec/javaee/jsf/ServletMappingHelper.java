@@ -39,10 +39,12 @@ class ServletMappingHelper
       Node root = XMLParser.parse(webXmlStream);
       Node facesServlet = getOrCreateFacesServlet(root);
       boolean mappingCreated = createMappingIfNotExists(root, facesServlet, mapping);
-      if (mappingCreated) {
+      if (mappingCreated)
+      {
          return XMLParser.toXMLInputStream(root);
       }
-      else {
+      else
+      {
          return XMLParser.toXMLInputStream(root);
       }
    }
@@ -50,8 +52,10 @@ class ServletMappingHelper
    Node getOrCreateFacesServlet(final Node root)
    {
       List<Node> servlets = root.get("servlet");
-      for (Node servlet : servlets) {
-         if (FACES_SERVLET_CLASS.equals(servlet.getSingle("servlet-class").getText())) {
+      for (Node servlet : servlets)
+      {
+         if (FACES_SERVLET_CLASS.equals(servlet.getSingle("servlet-class").getText()))
+         {
             return servlet;
          }
       }
@@ -65,17 +69,31 @@ class ServletMappingHelper
    boolean createMappingIfNotExists(final Node root, final Node servlet, final String mapping)
    {
       List<Node> servletMappings = root.get("servlet-mapping");
+      Node servletMappingNode = null;
       String servletName = servlet.getSingle("servlet-name").getText();
-      for (Node servletMapping : servletMappings) {
-         if (servletName.equals(servletMapping.getSingle("servlet-name").getText())) {
-            if (mapping.equals(servletMapping.getSingle("url-pattern").getText())) {
-               return false; // mapping already exists; not created
+      for (Node servletMapping : servletMappings)
+      {
+         if (servletName.equals(servletMapping.getSingle("servlet-name").getText()))
+         {
+            servletMappingNode = servletMapping;
+            List<Node> urlPatterns = servletMapping.get("url-pattern");
+            for (Node urlPattern : urlPatterns)
+            {
+               if (mapping.equals(urlPattern.getText()))
+               {
+                  return false; // mapping already exists; not created
+               }
+
             }
          }
       }
-      Node servletMapping = root.createChild("servlet-mapping");
-      servletMapping.createChild("servlet-name").text(servletName);
-      servletMapping.createChild("url-pattern").text(mapping);
+      // Mapping does not exist, create it and add the url-pattern
+      if (servletMappingNode == null)
+      {
+         servletMappingNode = root.createChild("servlet-mapping");
+         servletMappingNode.createChild("servlet-name").text(servletName);
+      }
+      servletMappingNode.createChild("url-pattern").text(mapping);
       return true;
    }
 
