@@ -69,440 +69,450 @@ import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
 public class FacesFacetImpl extends BaseJavaEEFacet implements FacesFacet
 {
 
-    @Inject
-    public FacesFacetImpl(final DependencyInstaller installer, final ShellPrintWriter out)
-    {
-        super(installer);
-        this.out = out;
-    }
+   @Inject
+   public FacesFacetImpl(final DependencyInstaller installer, final ShellPrintWriter out)
+   {
+      super(installer);
+      this.out = out;
+   }
 
-    private ShellPrintWriter out;
+   private ShellPrintWriter out;
 
-    private ServletMappingHelper servletMappingHelper = new ServletMappingHelper();
+   private ServletMappingHelper servletMappingHelper = new ServletMappingHelper();
 
-    @Override
-    public boolean isInstalled()
-    {
-        String version = project.getFacet(ServletFacet.class).getConfig().getVersion();
-        return version == null || version.trim().startsWith("3");
-    }
+   @Override
+   public boolean isInstalled()
+   {
+      String version = project.getFacet(ServletFacet.class).getConfig().getVersion();
+      return version == null || version.trim().startsWith("3");
+   }
 
-    @Override
-    public boolean install()
-    {
-        out.println("1");
-        if (!getConfigFile().exists() && !getConfigFile().createNewFile())
-        {
-            throw new RuntimeException("Failed to create required [" + getConfigFile().getFullyQualifiedName() + "]");
-        }
-        else
-        {
-            getConfigFile().setContents(getClass()
-                        .getResourceAsStream("/org/jboss/forge/web/faces-config.xml"));
-        }
+   @Override
+   public boolean install()
+   {
+      out.println("1");
+      if (!getConfigFile().exists() && !getConfigFile().createNewFile())
+      {
+         throw new RuntimeException("Failed to create required [" + getConfigFile().getFullyQualifiedName() + "]");
+      }
+      else
+      {
+         getConfigFile().setContents(getClass()
+                  .getResourceAsStream("/org/jboss/forge/web/faces-config.xml"));
+      }
 
-        return super.install();
-    }
+      return super.install();
+   }
 
-    @Override
-    protected List<Dependency> getRequiredDependencies()
-    {
-        return Arrays.asList();
-    }
+   @Override
+   protected List<Dependency> getRequiredDependencies()
+   {
+      return Arrays.asList();
+   }
 
-    /*
-     * Facet Methods
-     */
+   /*
+    * Facet Methods
+    */
 
-    @Override
-    public FileResource<?> getConfigFile()
-    {
-        DirectoryResource webRoot = project.getFacet(WebResourceFacet.class).getWebRootDirectory();
-        FileResource<?> child = (FileResource<?>) webRoot.getChild("WEB-INF" + File.separator + "faces-config.xml");
+   @Override
+   public FileResource<?> getConfigFile()
+   {
+      DirectoryResource webRoot = project.getFacet(WebResourceFacet.class).getWebRootDirectory();
+      FileResource<?> child = (FileResource<?>) webRoot.getChild("WEB-INF" + File.separator + "faces-config.xml");
 
-        if (!child.exists())
-        {
-            return new UnknownFileResource(child.getResourceFactory(), child.getUnderlyingResourceObject())
+      if (!child.exists())
+      {
+         return new UnknownFileResource(child.getResourceFactory(), child.getUnderlyingResourceObject())
+         {
+            @Override
+            public InputStream getResourceInputStream()
             {
-                @Override
-                public InputStream getResourceInputStream()
-                {
-                    if (!exists())
-                    {
-                        String projectName = project.getFacet(MetadataFacet.class).getProjectName();
-                        WebAppDescriptor unit = Descriptors.create(WebAppDescriptor.class)
-                                    .displayName(projectName)
-                                    .sessionTimeout(30);
-                        return Streams.fromString(unit.exportAsString());
-                    }
-                    else
-                    {
-                        return super.getResourceInputStream();
-                    }
-                }
-
-                @Override
-                public UnknownFileResource setContents(InputStream data)
-                {
-                    if (!exists())
-                    {
-                        createNewFile();
-                    }
-                    return super.setContents(data);
-                }
-
-                @Override
-                public UnknownFileResource setContents(char[] data)
-                {
-                    if (!exists())
-                    {
-                        createNewFile();
-                    }
-                    return super.setContents(data);
-                }
-
-                @Override
-                public UnknownFileResource setContents(String data)
-                {
-                    if (!exists())
-                    {
-                        createNewFile();
-                    }
-                    return super.setContents(data);
-                }
-            };
-        }
-
-        return (FileResource<?>) child;
-    }
-
-    @Override
-    public FacesProjectStage getProjectStage()
-    {
-        ServletFacet facet = project.getFacet(ServletFacet.class);
-        WebAppDescriptor config = facet.getConfig();
-        return config.getFacesProjectStage();
-    }
-
-    @Override
-    public List<String> getFacesServletMappings()
-    {
-        ServletFacet facet = project.getFacet(ServletFacet.class);
-        WebAppDescriptor webXml = facet.getConfig();
-        return getExplicitFacesServletMappings(webXml);
-    }
-
-    @Override
-    public List<String> getEffectiveFacesServletMappings()
-    {
-        List<String> results = new ArrayList<String>();
-        ServletFacet facet = project.getFacet(ServletFacet.class);
-        WebAppDescriptor webXml = facet.getConfig();
-
-        // TODO should probably take into account facelets view mappings
-        // facelets.VIEW_MAPPINGS
-
-        if (webXml.hasFacesServlet())
-        {
-            results.addAll(getExplicitFacesServletMappings(webXml));
-        }
-        else
-        {
-            if (webXml.getVersion().startsWith("3"))
-            {
-                results.add("*.jsf");
-                results.add("/faces/*");
-            }
-            else
-                ShellMessages.info(out, "FacesServlet not found in web.xml and Servlet " +
-                            "Version not >= 3.0, could not discover FacesServlet mappings");
-        }
-        return results;
-    }
-
-    private List<String> getExplicitFacesServletMappings(final WebAppDescriptor webXml)
-    {
-        List<ServletDef> servlets = webXml.getServlets();
-        List<String> results = new ArrayList<String>();
-        for (ServletDef servlet : servlets)
-        {
-            if ("javax.faces.webapp.FacesServlet".equals(servlet.getServletClass()))
-            {
-                List<ServletMappingDef> mappings = servlet.getMappings();
-                for (ServletMappingDef mapping : mappings)
-                {
-                    results.addAll(mapping.getUrlPatterns());
-                }
-            }
-        }
-        return results;
-    }
-
-    public void setFacesMapping(final String mapping)
-    {
-        ServletFacet facet = project.getFacet(ServletFacet.class);
-        InputStream webXml = facet.getConfigFile().getResourceInputStream();
-        InputStream newWebXml = servletMappingHelper.addFacesServletMapping(webXml, mapping);
-        if (webXml != newWebXml)
-        {
-            facet.getConfigFile().setContents(newWebXml);
-        }
-    }
-
-    @Override
-    public List<String> getWebPaths(final Resource<?> r)
-    {
-        if (r != null)
-        {
-            WebResourceFacet web = project.getFacet(WebResourceFacet.class);
-            List<DirectoryResource> webRootDirectories = web.getWebRootDirectories();
-            for (DirectoryResource d : webRootDirectories)
-            {
-                if (r.getFullyQualifiedName().startsWith(d.getFullyQualifiedName()))
-                {
-                    String path = r.getFullyQualifiedName().substring(d.getFullyQualifiedName().length());
-                    return getWebPaths(path);
-                }
-            }
-        }
-        return new ArrayList<String>();
-    }
-
-    @Override
-    public List<String> getWebPaths(final String path)
-    {
-        List<String> results = new ArrayList<String>();
-        if (getResourceForWebPath(path) == null)
-        {
-            List<String> mappings = getEffectiveFacesServletMappings();
-            for (String mapping : mappings)
-            {
-                String viewId = buildFacesViewId(mapping, path);
-                if (!results.contains(viewId))
-                    results.add(viewId);
-            }
-        }
-        return results;
-    }
-
-    @Override
-    public Resource<?> getResourceForWebPath(String path)
-    {
-        if (path != null)
-        {
-            WebResourceFacet web = project.getFacet(WebResourceFacet.class);
-            List<DirectoryResource> webRootDirectories = web.getWebRootDirectories();
-
-            boolean matches = false;
-            for (String mapping : getEffectiveFacesServletMappings())
-            {
-                Matcher matcher = ServletUtil.mappingToRegex(mapping).matcher(path);
-                if (matcher.matches())
-                {
-                    path = matcher.group(1);
-                    matches = true;
-                    break;
-                }
+               if (!exists())
+               {
+                  String projectName = project.getFacet(MetadataFacet.class).getProjectName();
+                  WebAppDescriptor unit = Descriptors.create(WebAppDescriptor.class)
+                           .displayName(projectName)
+                           .sessionTimeout(30);
+                  return Streams.fromString(unit.exportAsString());
+               }
+               else
+               {
+                  return super.getResourceInputStream();
+               }
             }
 
-            while (path.startsWith("/"))
+            @Override
+            public UnknownFileResource setContents(InputStream data)
             {
-                path = path.substring(1);
+               if (!exists())
+               {
+                  createNewFile();
+               }
+               return super.setContents(data);
             }
 
-            if (!matches)
+            @Override
+            public UnknownFileResource setContents(char[] data)
             {
-                return null;
+               if (!exists())
+               {
+                  createNewFile();
+               }
+               return super.setContents(data);
             }
 
-            List<String> strings = Arrays.asList(path.split("/"));
-            for (DirectoryResource d : webRootDirectories)
+            @Override
+            public UnknownFileResource setContents(String data)
             {
-                Queue<String> queue = new LinkedList<String>();
-                queue.addAll(strings);
-
-                Resource<?> temp = d;
-                while (queue.size() > 1)
-                {
-                    Resource<?> child = temp.getChild(queue.remove());
-                    if ((child != null) && child.exists())
-                    {
-                        temp = child;
-                    }
-                    else
-                    {
-                        break;
-                    }
-
-                    if (queue.isEmpty())
-                    {
-                        return child;
-                    }
-                }
-
-                if (temp != null)
-                {
-                    String name = queue.remove();
-                    for (String suffix : getFacesSuffixes())
-                    {
-                        Resource<?> child = null;
-                        if (name.endsWith(suffix))
-                        {
-                            child = temp.getChild(name);
-                        }
-                        else
-                        {
-                            child = temp.getChild(name + suffix);
-                        }
-                        if ((child != null) && child.exists())
-                        {
-                            return child;
-                        }
-                    }
-                }
+               if (!exists())
+               {
+                  createNewFile();
+               }
+               return super.setContents(data);
             }
-        }
-        return null;
-    }
+         };
+      }
 
-    /**
-     * Build a Faces view ID for the given resource path, return null if not mapped by Faces Servlet
-     */
-    private String buildFacesViewId(final String servletMapping, final String resourcePath)
-    {
-        for (String suffix : getFacesSuffixes())
-        {
-            if (resourcePath.endsWith(suffix))
+      return (FileResource<?>) child;
+   }
+
+   @Override
+   public FacesProjectStage getProjectStage()
+   {
+      ServletFacet facet = project.getFacet(ServletFacet.class);
+      WebAppDescriptor config = facet.getConfig();
+      return config.getFacesProjectStage();
+   }
+
+   @Override
+   public List<String> getFacesServletMappings()
+   {
+      ServletFacet facet = project.getFacet(ServletFacet.class);
+      WebAppDescriptor webXml = facet.getConfig();
+      return getExplicitFacesServletMappings(webXml);
+   }
+
+   @Override
+   public List<String> getEffectiveFacesServletMappings()
+   {
+      List<String> results = new ArrayList<String>();
+      ServletFacet facet = project.getFacet(ServletFacet.class);
+      WebAppDescriptor webXml = facet.getConfig();
+
+      // TODO should probably take into account facelets view mappings
+      // facelets.VIEW_MAPPINGS
+
+      if (webXml.hasFacesServlet())
+      {
+         results.addAll(getExplicitFacesServletMappings(webXml));
+      }
+      else
+      {
+         if (webXml.getVersion().startsWith("3"))
+         {
+            results.add("*.jsf");
+            results.add("/faces/*");
+         }
+         else
+            ShellMessages.info(out, "FacesServlet not found in web.xml and Servlet " +
+                     "Version not >= 3.0, could not discover FacesServlet mappings");
+      }
+      return results;
+   }
+
+   private List<String> getExplicitFacesServletMappings(final WebAppDescriptor webXml)
+   {
+      List<ServletDef> servlets = webXml.getServlets();
+      List<String> results = new ArrayList<String>();
+      for (ServletDef servlet : servlets)
+      {
+         if ("javax.faces.webapp.FacesServlet".equals(servlet.getServletClass()))
+         {
+            List<ServletMappingDef> mappings = servlet.getMappings();
+            for (ServletMappingDef mapping : mappings)
             {
-                StringBuffer result = new StringBuffer();
-
-                Map<Pattern, String> patterns = new HashMap<Pattern, String>();
-
-                Pattern pathMapping = Pattern.compile("^(/.*)/\\*$");
-                Pattern extensionMapping = Pattern.compile("^\\*(\\..*)$");
-                Pattern defaultMapping = Pattern.compile("^/\\*$");
-
-                patterns.put(pathMapping, "$1" + resourcePath);
-                patterns.put(extensionMapping, resourcePath.replaceAll("^(.*)(\\.\\w+)$", "$1") + "$1");
-                patterns.put(defaultMapping, resourcePath);
-
-                boolean matched = false;
-                Iterator<Pattern> iterator = patterns.keySet().iterator();
-                while ((matched == false) && iterator.hasNext())
-                {
-                    Pattern p = iterator.next();
-                    Matcher m = p.matcher(servletMapping);
-                    if (m.matches())
-                    {
-                        String replacement = patterns.get(p);
-                        m.appendReplacement(result, replacement);
-                        matched = true;
-                    }
-                }
-
-                if (matched == false)
-                {
-                    return null;
-                }
-
-                return result.toString();
+               results.addAll(mapping.getUrlPatterns());
             }
-        }
-        return resourcePath;
-    }
+         }
+      }
+      return results;
+   }
 
-    @Override
-    public List<String> getFacesSuffixes()
-    {
-        List<String> suffixes = getFacesDefaultSuffixes();
-        for (String s : getFaceletsDefaultSuffixes())
-        {
-            if (!suffixes.contains(s))
-                suffixes.add(s);
-        }
-        return suffixes;
-    }
+   public void setFacesMapping(final String mapping)
+   {
+      ServletFacet facet = project.getFacet(ServletFacet.class);
+      InputStream webXml = facet.getConfigFile().getResourceInputStream();
+      InputStream newWebXml = servletMappingHelper.addFacesServletMapping(webXml, mapping);
+      if (webXml != newWebXml)
+      {
+         facet.getConfigFile().setContents(newWebXml);
+      }
+   }
 
-    @Override
-    public List<String> getFacesDefaultSuffixes()
-    {
-        ServletFacet facet = project.getFacet(ServletFacet.class);
-        WebAppDescriptor webXml = facet.getConfig();
-        return webXml.getFacesDefaultSuffixes();
-    }
-
-    @Override
-    public List<String> getFaceletsDefaultSuffixes()
-    {
-        ServletFacet facet = project.getFacet(ServletFacet.class);
-        WebAppDescriptor webXml = facet.getConfig();
-        return webXml.getFaceletsDefaultSuffixes();
-    }
-
-    @Override
-    public List<String> getFaceletsViewMapping()
-    {
-        ServletFacet facet = project.getFacet(ServletFacet.class);
-        WebAppDescriptor webXml = facet.getConfig();
-        return webXml.getFaceletsViewMappings();
-    }
-
-    public static class ServletMappingHelper
-    {
-        public static final String FACES_SERVLET_CLASS = "javax.faces.webapp.FacesServlet";
-
-        public InputStream addFacesServletMapping(final InputStream webXmlStream, final String mapping)
-        {
-            Node root = XMLParser.parse(webXmlStream);
-            Node facesServlet = getOrCreateFacesServlet(root);
-            boolean mappingCreated = createMappingIfNotExists(root, facesServlet, mapping);
-            if (mappingCreated)
+   @Override
+   public List<String> getWebPaths(final Resource<?> r)
+   {
+      if (r != null)
+      {
+         WebResourceFacet web = project.getFacet(WebResourceFacet.class);
+         List<DirectoryResource> webRootDirectories = web.getWebRootDirectories();
+         for (DirectoryResource d : webRootDirectories)
+         {
+            if (r.getFullyQualifiedName().startsWith(d.getFullyQualifiedName()))
             {
-                return XMLParser.toXMLInputStream(root);
+               String path = r.getFullyQualifiedName().substring(d.getFullyQualifiedName().length());
+               return getWebPaths(path);
             }
-            else
-            {
-                return XMLParser.toXMLInputStream(root);
-            }
-        }
+         }
+      }
+      return new ArrayList<String>();
+   }
 
-        public Node getOrCreateFacesServlet(final Node root)
-        {
-            List<Node> servlets = root.get("servlet");
-            for (Node servlet : servlets)
-            {
-                if (FACES_SERVLET_CLASS.equals(servlet.getSingle("servlet-class").getText()))
-                {
-                    return servlet;
-                }
-            }
-            Node servlet = root.createChild("servlet");
-            servlet.createChild("servlet-name").text("Faces Servlet");
-            servlet.createChild("servlet-class").text(FACES_SERVLET_CLASS);
-            servlet.createChild("load-on-startup").text("1");
-            return servlet;
-        }
+   @Override
+   public List<String> getWebPaths(final String path)
+   {
+      List<String> results = new ArrayList<String>();
+      if (getResourceForWebPath(path) == null)
+      {
+         List<String> mappings = getEffectiveFacesServletMappings();
+         for (String mapping : mappings)
+         {
+            String viewId = buildFacesViewId(mapping, path);
+            if (!results.contains(viewId))
+               results.add(viewId);
+         }
+      }
+      return results;
+   }
 
-        public boolean createMappingIfNotExists(final Node root, final Node servlet, final String mapping)
-        {
-            List<Node> servletMappings = root.get("servlet-mapping");
-            String servletName = servlet.getSingle("servlet-name").getText();
-            for (Node servletMapping : servletMappings)
-            {
-                if (servletName.equals(servletMapping.getSingle("servlet-name").getText()))
-                {
-                    if (mapping.equals(servletMapping.getSingle("url-pattern").getText()))
-                    {
-                        return false; // mapping already exists; not created
-                    }
-                }
-            }
-            Node servletMapping = root.createChild("servlet-mapping");
-            servletMapping.createChild("servlet-name").text(servletName);
-            servletMapping.createChild("url-pattern").text(mapping);
-            return true;
-        }
+   @Override
+   public Resource<?> getResourceForWebPath(String path)
+   {
+      if (path != null)
+      {
+         WebResourceFacet web = project.getFacet(WebResourceFacet.class);
+         List<DirectoryResource> webRootDirectories = web.getWebRootDirectories();
 
-    }
+         boolean matches = false;
+         for (String mapping : getEffectiveFacesServletMappings())
+         {
+            Matcher matcher = ServletUtil.mappingToRegex(mapping).matcher(path);
+            if (matcher.matches())
+            {
+               path = matcher.group(1);
+               matches = true;
+               break;
+            }
+         }
+
+         while (path.startsWith("/"))
+         {
+            path = path.substring(1);
+         }
+
+         if (!matches)
+         {
+            return null;
+         }
+
+         List<String> strings = Arrays.asList(path.split("/"));
+         for (DirectoryResource d : webRootDirectories)
+         {
+            Queue<String> queue = new LinkedList<String>();
+            queue.addAll(strings);
+
+            Resource<?> temp = d;
+            while (queue.size() > 1)
+            {
+               Resource<?> child = temp.getChild(queue.remove());
+               if ((child != null) && child.exists())
+               {
+                  temp = child;
+               }
+               else
+               {
+                  break;
+               }
+
+               if (queue.isEmpty())
+               {
+                  return child;
+               }
+            }
+
+            if (temp != null)
+            {
+               String name = queue.remove();
+               for (String suffix : getFacesSuffixes())
+               {
+                  Resource<?> child = null;
+                  if (name.endsWith(suffix))
+                  {
+                     child = temp.getChild(name);
+                  }
+                  else
+                  {
+                     child = temp.getChild(name + suffix);
+                  }
+                  if ((child != null) && child.exists())
+                  {
+                     return child;
+                  }
+               }
+            }
+         }
+      }
+      return null;
+   }
+
+   /**
+    * Build a Faces view ID for the given resource path, return null if not mapped by Faces Servlet
+    */
+   private String buildFacesViewId(final String servletMapping, final String resourcePath)
+   {
+      for (String suffix : getFacesSuffixes())
+      {
+         if (resourcePath.endsWith(suffix))
+         {
+            StringBuffer result = new StringBuffer();
+
+            Map<Pattern, String> patterns = new HashMap<Pattern, String>();
+
+            Pattern pathMapping = Pattern.compile("^(/.*)/\\*$");
+            Pattern extensionMapping = Pattern.compile("^\\*(\\..*)$");
+            Pattern defaultMapping = Pattern.compile("^/\\*$");
+
+            patterns.put(pathMapping, "$1" + resourcePath);
+            patterns.put(extensionMapping, resourcePath.replaceAll("^(.*)(\\.\\w+)$", "$1") + "$1");
+            patterns.put(defaultMapping, resourcePath);
+
+            boolean matched = false;
+            Iterator<Pattern> iterator = patterns.keySet().iterator();
+            while ((matched == false) && iterator.hasNext())
+            {
+               Pattern p = iterator.next();
+               Matcher m = p.matcher(servletMapping);
+               if (m.matches())
+               {
+                  String replacement = patterns.get(p);
+                  m.appendReplacement(result, replacement);
+                  matched = true;
+               }
+            }
+
+            if (matched == false)
+            {
+               return null;
+            }
+
+            return result.toString();
+         }
+      }
+      return resourcePath;
+   }
+
+   @Override
+   public List<String> getFacesSuffixes()
+   {
+      List<String> suffixes = getFacesDefaultSuffixes();
+      for (String s : getFaceletsDefaultSuffixes())
+      {
+         if (!suffixes.contains(s))
+            suffixes.add(s);
+      }
+      return suffixes;
+   }
+
+   @Override
+   public List<String> getFacesDefaultSuffixes()
+   {
+      ServletFacet facet = project.getFacet(ServletFacet.class);
+      WebAppDescriptor webXml = facet.getConfig();
+      return webXml.getFacesDefaultSuffixes();
+   }
+
+   @Override
+   public List<String> getFaceletsDefaultSuffixes()
+   {
+      ServletFacet facet = project.getFacet(ServletFacet.class);
+      WebAppDescriptor webXml = facet.getConfig();
+      return webXml.getFaceletsDefaultSuffixes();
+   }
+
+   @Override
+   public List<String> getFaceletsViewMapping()
+   {
+      ServletFacet facet = project.getFacet(ServletFacet.class);
+      WebAppDescriptor webXml = facet.getConfig();
+      return webXml.getFaceletsViewMappings();
+   }
+
+   public static class ServletMappingHelper
+   {
+      public static final String FACES_SERVLET_CLASS = "javax.faces.webapp.FacesServlet";
+
+      public InputStream addFacesServletMapping(final InputStream webXmlStream, final String mapping)
+      {
+         Node root = XMLParser.parse(webXmlStream);
+         Node facesServlet = getOrCreateFacesServlet(root);
+         boolean mappingCreated = createMappingIfNotExists(root, facesServlet, mapping);
+         if (mappingCreated)
+         {
+            return XMLParser.toXMLInputStream(root);
+         }
+         else
+         {
+            return XMLParser.toXMLInputStream(root);
+         }
+      }
+
+      public Node getOrCreateFacesServlet(final Node root)
+      {
+         List<Node> servlets = root.get("servlet");
+         for (Node servlet : servlets)
+         {
+            if (FACES_SERVLET_CLASS.equals(servlet.getSingle("servlet-class").getText()))
+            {
+               return servlet;
+            }
+         }
+         Node servlet = root.createChild("servlet");
+         servlet.createChild("servlet-name").text("Faces Servlet");
+         servlet.createChild("servlet-class").text(FACES_SERVLET_CLASS);
+         servlet.createChild("load-on-startup").text("1");
+         return servlet;
+      }
+
+      boolean createMappingIfNotExists(final Node root, final Node servlet, final String mapping)
+      {
+         List<Node> servletMappings = root.get("servlet-mapping");
+         Node servletMappingNode = null;
+         String servletName = servlet.getSingle("servlet-name").getText();
+         for (Node servletMapping : servletMappings)
+         {
+            if (servletName.equals(servletMapping.getSingle("servlet-name").getText()))
+            {
+               servletMappingNode = servletMapping;
+               List<Node> urlPatterns = servletMapping.get("url-pattern");
+               for (Node urlPattern : urlPatterns)
+               {
+                  if (mapping.equals(urlPattern.getText()))
+                  {
+                     return false; // mapping already exists; not created
+                  }
+
+               }
+            }
+         }
+         // Mapping does not exist, create it and add the url-pattern
+         if (servletMappingNode == null)
+         {
+            servletMappingNode = root.createChild("servlet-mapping");
+            servletMappingNode.createChild("servlet-name").text(servletName);
+         }
+         servletMappingNode.createChild("url-pattern").text(mapping);
+         return true;
+      }
+   }
 
 }
