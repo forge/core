@@ -104,7 +104,9 @@ public class FieldPlugin implements Plugin
       try
       {
          JavaClass entity = getJavaClass();
-         addFieldTo(entity, type, fieldName, Column.class);
+         String javaType = (type.toLowerCase().endsWith(".java")) ? type.substring(0, type.length() - 5) : type;
+
+         addFieldTo(entity, javaType, fieldName, Column.class);
       }
       catch (FileNotFoundException e)
       {
