@@ -19,11 +19,12 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  **/
-package org.jboss.forge.spec.javaee.jsf;
+package org.jboss.forge.spec.jsf;
 
 import java.io.InputStream;
 
 import org.jboss.forge.shell.util.Streams;
+import org.jboss.forge.spec.javaee.jsf.FacesFacetImpl.ServletMappingHelper;
 import org.junit.Assert;
 import org.junit.Test;
 

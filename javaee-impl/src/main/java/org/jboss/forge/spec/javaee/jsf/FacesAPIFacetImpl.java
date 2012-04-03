@@ -30,6 +30,7 @@ import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.dependencies.DependencyInstaller;
 import org.jboss.forge.project.facets.DependencyFacet;
+import org.jboss.forge.shell.ShellPrintWriter;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.spec.javaee.FacesAPIFacet;
@@ -44,11 +45,11 @@ public class FacesAPIFacetImpl extends FacesFacetImpl implements FacesAPIFacet
 {
    public static final Dependency JAVAEE6_FACES = DependencyBuilder
             .create("org.jboss.spec.javax.faces:jboss-jsf-api_2.0_spec");
-   
+
    @Inject
-   public FacesAPIFacetImpl(final DependencyInstaller installer)
+   public FacesAPIFacetImpl(final DependencyInstaller installer, final ShellPrintWriter out)
    {
-      super(installer);
+       super(installer, out);
    }
 
    @Override
