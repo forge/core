@@ -91,6 +91,24 @@ public class NewFieldPluginTest extends AbstractJPATest
    }
 
    @Test
+   public void testNewCustomFieldJavaExtension() throws Exception
+   {
+      Project project = getProject();
+      JavaClass javaClass = generateEntity(project);
+
+      getShell().execute(
+               ConstraintInspector.getName(FieldPlugin.class)
+                        + " custom --named gamesPlayed --type org.jboss.CustomType.java");
+
+      javaClass = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(javaClass).getJavaSource();
+      assertTrue(javaClass.hasField("gamesPlayed"));
+      assertEquals("CustomType", javaClass.getField("gamesPlayed").getType());
+      assertTrue(javaClass.hasImport("org.jboss.CustomType"));
+      assertFalse(javaClass.hasSyntaxErrors());
+   }
+
+   
+   @Test
    public void testNewTemporalField() throws Exception
    {
       Project project = getProject();
