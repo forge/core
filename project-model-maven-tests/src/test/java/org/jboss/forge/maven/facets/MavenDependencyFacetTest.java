@@ -124,6 +124,22 @@ public class MavenDependencyFacetTest extends ProjectModelTest
       assertEquals(version, deps.getProperty("version"));
    }
 
+    @Test
+    public void testAddDependencyUsingProperty() throws Exception {
+        DependencyFacet deps = getProject().getFacet(DependencyFacet.class);
+
+        deps.setProperty("jboss.spec.version", "3.0.0.Final");
+
+        DependencyBuilder newDep = DependencyBuilder.create();
+        newDep.setGroupId("org.jboss.spec");
+        newDep.setArtifactId("jboss-javaee-6.0");
+        newDep.setVersion("${jboss.spec.version}");
+
+        deps.addDirectDependency(newDep);
+
+        assertTrue(deps.hasDirectDependency(newDep));
+    }
+
    @Test
    @Ignore
    public void testDoResolveVersions() throws Exception
