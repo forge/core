@@ -115,7 +115,7 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
 
       for (Dependency dep : dependencies)
       {
-         if (DependencyBuilder.areEquivalent(dependency, dep))
+         if (DependencyBuilder.areEquivalent(resolveProperties(dependency), dep))
          {
             return true;
          }
@@ -133,7 +133,7 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
       List<Dependency> toBeRemoved = new ArrayList<Dependency>();
       for (Dependency dependency : dependencies)
       {
-         if (DependencyBuilder.areEquivalent(dependency, dep))
+         if (DependencyBuilder.areEquivalent(dependency, resolveProperties(dep)))
          {
             toBeRemoved.add(dependency);
          }
@@ -168,7 +168,7 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
 
       for (Dependency dep : dependencies)
       {
-         if (DependencyBuilder.areEquivalent(dependency, dep))
+         if (DependencyBuilder.areEquivalent(resolveProperties(dependency), dep))
          {
             return resolveProperties(dep);
          }
@@ -179,7 +179,7 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
    @Override
    public boolean hasEffectiveDependency(final Dependency dependency)
    {
-      return getEffectiveDependency(dependency) != null;
+      return getEffectiveDependency(resolveProperties(dependency)) != null;
    }
 
    @Override
@@ -187,7 +187,7 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
    {
       for (Dependency dependency : getEffectiveDependencies())
       {
-         if (DependencyBuilder.areEquivalent(dependency, manDep))
+         if (DependencyBuilder.areEquivalent(dependency, resolveProperties(manDep)))
          {
             return resolveProperties(dependency);
          }
@@ -216,7 +216,7 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
    @Override
    public void addManagedDependency(final Dependency manDep)
    {
-      if (!hasEffectiveManagedDependency(manDep))
+      if (!hasEffectiveManagedDependency(resolveProperties(manDep)))
       {
          MavenCoreFacet maven = project.getFacet(MavenCoreFacet.class);
          Model pom = maven.getPOM();
@@ -251,7 +251,7 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
    @Override
    public boolean hasEffectiveManagedDependency(final Dependency manDep)
    {
-      return (getEffectiveManagedDependency(manDep) != null);
+      return (getEffectiveManagedDependency(resolveProperties(manDep)) != null);
    }
 
    @Override
@@ -264,7 +264,7 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
 
       for (Dependency managedDependency : managedDependencies)
       {
-         if (DependencyBuilder.areEquivalent(managedDependency, manDep))
+         if (DependencyBuilder.areEquivalent(managedDependency, resolveProperties(manDep)))
          {
             return resolveProperties(managedDependency);
          }
@@ -284,7 +284,7 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
 
       for (Dependency manDep : managedDependencies)
       {
-         if (DependencyBuilder.areEquivalent(managedDependency, manDep))
+         if (DependencyBuilder.areEquivalent(resolveProperties(managedDependency), manDep))
          {
             return true;
          }
@@ -348,7 +348,7 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
 
       for (Dependency managedDependency : managedDependencies)
       {
-         if (DependencyBuilder.areEquivalent(managedDependency, manDep))
+         if (DependencyBuilder.areEquivalent(managedDependency, resolveProperties(manDep)))
          {
             return resolveProperties(managedDependency);
          }
