@@ -30,10 +30,12 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.jboss.forge.maven.MavenPluginFacet;
+import org.jboss.forge.parser.java.util.Strings;
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
+import org.jboss.forge.project.dependencies.DependencyInstaller;
 import org.jboss.forge.project.dependencies.DependencyRepository;
 import org.jboss.forge.project.dependencies.ScopeType;
 import org.jboss.forge.project.facets.DependencyFacet;
@@ -60,8 +62,6 @@ import org.jboss.forge.shell.plugins.RequiresProject;
 import org.jboss.forge.shell.plugins.Topic;
 import org.jboss.forge.shell.util.ConstraintInspector;
 
-import com.google.common.base.Strings;
-
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -78,19 +78,21 @@ public class ProjectPlugin implements Plugin
    private FacetFactory factory;
    private Event<InstallFacets> installFacets;
    private Event<RemoveFacets> removeFacets;
+    private DependencyInstaller dependencyInstaller;
 
    public ProjectPlugin()
    {}
 
    @Inject
    public ProjectPlugin(final Project project, final Shell shell, final FacetFactory factory,
-            final Event<InstallFacets> installFacets, final Event<RemoveFacets> removeFacets)
+            final Event<InstallFacets> installFacets, final Event<RemoveFacets> removeFacets, final DependencyInstaller installer)
    {
       this.project = project;
       this.shell = shell;
       this.factory = factory;
       this.installFacets = installFacets;
       this.removeFacets = removeFacets;
+      this.dependencyInstaller = installer;
    }
 
    @DefaultCommand
@@ -158,7 +160,26 @@ public class ProjectPlugin implements Plugin
             final PipeOut out
             )
    {
-      DependencyFacet deps = project.getFacet(DependencyFacet.class);
+       final DependencyFacet deps = project.getFacet(DependencyFacet.class);
+       final boolean depIsInstalled = this.dependencyInstaller.isInstalled(project, gav);
+       final boolean hasEffectiveManagedDependency = deps.hasEffectiveManagedDependency(gav);
+       Dependency gavCopy = DependencyBuilder.create(gav);
+
+       if (hasEffectiveManagedDependency)
+       {
+            Dependency existingDep = deps.getEffectiveManagedDependency(gav);
+           if (!shell.promptBoolean(String.format("Dependency is managed [%s:%s:%s], reference the managed dependency?",
+                   existingDep.getGroupId(), existingDep.getArtifactId(), existingDep.getVersion()), true))
+           {
+               if (Strings.isNullOrEmpty(gavCopy.getVersion())) {
+                   gavCopy = shell.promptChoiceTyped("Add which version?", deps.resolveAvailableVersions(gavCopy));
+               }
+           }
+       }
+       this.dependencyInstaller.install(project, gavCopy);
+   }
+      /*
+       DependencyFacet deps = project.getFacet(DependencyFacet.class);
 
       if (!deps.hasEffectiveDependency(gav)
                || shell.promptBoolean("Dependency already exists [" + gav.getGroupId() + ":" + gav.getArtifactId()
@@ -229,6 +250,7 @@ public class ProjectPlugin implements Plugin
          ShellMessages.info(out, "Aborted.");
       }
    }
+   */
 
    @Command(value = "find-dependency", help = "Search for dependencies in all configured project repositories.")
    public void searchDep(

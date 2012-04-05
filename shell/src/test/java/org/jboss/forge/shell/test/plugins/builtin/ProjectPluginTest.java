@@ -9,6 +9,7 @@ import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.dependencies.ScopeType;
 import org.jboss.forge.project.facets.DependencyFacet;
+import org.jboss.forge.project.packaging.PackagingType;
 import org.jboss.forge.test.AbstractShellTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,7 +46,8 @@ public class ProjectPluginTest extends AbstractShellTest
         getShell().execute("project add-dependency \"org.jboss.arquillian:arquillian-bom:${arquillian.bom.version}\"");
 
         DependencyFacet deps = getProject().getFacet(DependencyFacet.class);
-        Dependency arquillianBomDep = DependencyBuilder.create("org.jboss.arquillian:arquillian-bom:1.0.0.CR7");
+        Dependency arquillianBomDep = DependencyBuilder.create("org.jboss.arquillian:arquillian-bom:1.0.0.CR7")
+                .setPackagingType(PackagingType.JAR).setScopeType(ScopeType.COMPILE);
 
         assertThat(deps.getEffectiveDependencies(), hasItem(arquillianBomDep));
     }
