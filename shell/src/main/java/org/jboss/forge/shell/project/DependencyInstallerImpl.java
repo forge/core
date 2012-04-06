@@ -58,6 +58,7 @@ public class DependencyInstallerImpl implements DependencyInstaller
    {
       DependencyFacet deps = project.getFacet(DependencyFacet.class);
 
+
       // Exists in deps, no version change requested
       Dependency existing = deps.getEffectiveDependency(dependency);
       Dependency existingManaged = deps.getEffectiveManagedDependency(dependency);
@@ -88,7 +89,7 @@ public class DependencyInstallerImpl implements DependencyInstaller
                                         // version, but we do have a managed dependency
       {
          if (!Strings.isNullOrEmpty(existingManaged.getVersion()) // we have a version already
-                  && (!existingManaged.getVersion().equals(dependency.getVersion()) // the version is the same as
+                  && (existingManaged.getVersion().equals(dependency.getVersion()) // the version is the same as
                                                                                     // requested
                   || Strings.isNullOrEmpty(dependency.getVersion()))) // or no specific version was requested
          {
