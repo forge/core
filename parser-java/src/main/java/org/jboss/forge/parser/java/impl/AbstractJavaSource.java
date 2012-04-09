@@ -594,7 +594,16 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
       }
 
       String documentString = document.get();
-      return documentString;
+      return ensureCorrectNewLines(documentString);
+   }
+
+   private String ensureCorrectNewLines(String documentString) {
+       String newLine = System.getProperty("line.separator");
+       
+       if (documentString.indexOf("\n") != -1 && documentString.indexOf(newLine) == -1)       
+           return documentString.replaceAll("\n", newLine);
+       
+       return documentString;
    }
 
    @Override
