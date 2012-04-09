@@ -59,7 +59,6 @@ import org.metawidget.widgetbuilder.composite.CompositeWidgetBuilderConfig;
 public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 {
 	
-	private final String lineSeparator = System.getProperty("line.separator");
 	private final String crlf = "\r\n";
 	
     @Test
@@ -157,7 +156,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(contents.contains("template=\"/resources/scaffold/pageTemplate.xhtml"));
 
       StringBuilder metawidget = new StringBuilder();
-      metawidget.append("\t")    .append("<ui:define name=\"main\">"                                                                            ).append(lineSeparator);
+      metawidget.append("\t")    .append("<ui:define name=\"main\">"                                                                            ).append(crlf);
       metawidget.append("\t\t")  .append(  "<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">"                             ).append(crlf);
       metawidget.append("\t\t\t").append(    "<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First Name:\"/>"                     ).append(crlf);
       metawidget.append("\t\t\t").append(    "<h:outputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>").append(crlf);
@@ -165,7 +164,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       metawidget.append("\t\t\t").append(    "<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last Name:\"/>"                       ).append(crlf);
       metawidget.append("\t\t\t").append(    "<h:outputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>"  ).append(crlf);
       metawidget.append("\t\t\t").append(    "<h:outputText/>"                                                                                  ).append(crlf);
-      metawidget.append("\t\t")  .append(  "</h:panelGrid>"                                                                                     ).append(lineSeparator);
+      metawidget.append("\t\t")  .append(  "</h:panelGrid>"                                                                                     ).append(crlf);
       
       Assert.assertTrue(contents.contains(metawidget));
 
@@ -178,9 +177,9 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
       metawidget = new StringBuilder();
       
-      metawidget.append("\t\t"       ).append("<h:form id=\"create\">"                                                                                ).append(lineSeparator);
-      metawidget.append("\t\t\t"     ).append(  "<h:messages globalOnly=\"true\" styleClass=\"error\"/>"                                              ).append(lineSeparator);
-      metawidget.append(""           ).append(  ""                                                                                                    ).append(lineSeparator);
+      metawidget.append("\t\t"       ).append("<h:form id=\"create\">"                                                                                ).append(crlf);
+      metawidget.append("\t\t\t"     ).append(  "<h:messages globalOnly=\"true\" styleClass=\"error\"/>"                                              ).append(crlf);
+      metawidget.append(""           ).append(  ""                                                                                                    ).append(crlf);
       metawidget.append("\t\t\t"     ).append(  "<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">"                              ).append(crlf);
       metawidget.append("\t\t\t\t"   ).append(    "<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First Name:\"/>"                      ).append(crlf);
       metawidget.append("\t\t\t\t"   ).append(    "<h:panelGroup>"                                                                                    ).append(crlf);
@@ -194,7 +193,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       metawidget.append("\t\t\t\t\t" ).append(      "<h:message for=\"customerBeanCustomerLastName\" styleClass=\"error\"/>"                          ).append(crlf);
       metawidget.append("\t\t\t\t"   ).append(    "</h:panelGroup>"                                                                                   ).append(crlf);
       metawidget.append("\t\t\t\t"   ).append(    "<h:outputText/>"                                                                                   ).append(crlf);
-      metawidget.append("\t\t\t"     ).append(  "</h:panelGrid>"                                                                                      ).append(lineSeparator);
+      metawidget.append("\t\t\t"     ).append(  "</h:panelGrid>"                                                                                      ).append(crlf);
 
       Assert.assertTrue(contents.contains(metawidget));
 
@@ -347,14 +346,14 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(contents.contains(expectedContent));
       
       expectedContent = new StringBuilder();
-      expectedContent.append("\t"  ).append("<ui:define name=\"header\">").append(lineSeparator);
-      expectedContent.append("\t\t").append(  "Customer Person"          ).append(lineSeparator);
+      expectedContent.append("\t"  ).append("<ui:define name=\"header\">").append(crlf);
+      expectedContent.append("\t\t").append(  "Customer Person"          ).append(crlf);
       expectedContent.append("\t"  ).append("</ui:define>"               );
       Assert.assertTrue(contents.contains(expectedContent));
       
       expectedContent = new StringBuilder();
-      expectedContent.append("\t"  ).append("<ui:define name=\"subheader\">" ).append(lineSeparator);
-      expectedContent.append("\t\t").append(  "View existing Customer Person").append(lineSeparator);
+      expectedContent.append("\t"  ).append("<ui:define name=\"subheader\">" ).append(crlf);
+      expectedContent.append("\t\t").append(  "View existing Customer Person").append(crlf);
       expectedContent.append("\t"  ).append("</ui:define>"                   );
       Assert.assertTrue(contents.contains(expectedContent));
       
@@ -373,8 +372,8 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(contents.contains(expectedContent));
 
       expectedContent = new StringBuilder();
-      expectedContent.append("\t"  ).append("<ui:define name=\"header\">").append(lineSeparator);
-      expectedContent.append("\t\t").append(  "Customer Person"          ).append(lineSeparator);
+      expectedContent.append("\t"  ).append("<ui:define name=\"header\">").append(crlf);
+      expectedContent.append("\t\t").append(  "Customer Person"          ).append(crlf);
       expectedContent.append("\t"  ).append("</ui:define>"               );
       Assert.assertTrue(contents.contains(expectedContent));
 
@@ -532,9 +531,9 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(contents.contains("template=\"/resources/scaffold/pageTemplate.xhtml"));
       
       StringBuilder metawidget = new StringBuilder();
-      metawidget.append("\t\t"        ).append("<h:form id=\"create\">"                                                                                           ).append(lineSeparator);
-      metawidget.append("\t\t\t"      ).append(  "<h:messages globalOnly=\"true\" styleClass=\"error\"/>"                                                         ).append(lineSeparator);
-      metawidget.append(""            ).append(""                                                                                                                 ).append(lineSeparator);
+      metawidget.append("\t\t"        ).append("<h:form id=\"create\">"                                                                                           ).append(crlf);
+      metawidget.append("\t\t\t"      ).append(  "<h:messages globalOnly=\"true\" styleClass=\"error\"/>"                                                         ).append(crlf);
+      metawidget.append(""            ).append(""                                                                                                                 ).append(crlf);
       metawidget.append("\t\t\t"      ).append(  "<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">"                                         ).append(crlf);
       metawidget.append("\t\t\t\t"    ).append(    "<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First Name:\"/>"                                 ).append(crlf);
       metawidget.append("\t\t\t\t"    ).append(    "<h:panelGroup>"                                                                                               ).append(crlf);
@@ -576,7 +575,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       metawidget.append("\t\t\t\t\t"  ).append(      "<h:outputText/>"                                                                                            ).append(crlf);
       metawidget.append("\t\t\t\t"    ).append(    "</h:panelGrid>"                                                                                               ).append(crlf);
       metawidget.append("\t\t\t\t"    ).append(    "<h:outputText/>"                                                                                              ).append(crlf);
-      metawidget.append("\t\t\t"      ).append(  "</h:panelGrid>"                                                                                                 ).append(lineSeparator);
+      metawidget.append("\t\t\t"      ).append(  "</h:panelGrid>"                                                                                                 ).append(crlf);
       Assert.assertTrue(contents.contains(metawidget));
 
       // Search
@@ -1098,7 +1097,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(contents.contains("template=\"/resources/scaffold/pageTemplate.xhtml"));
 
       StringBuilder metawidget = new StringBuilder();
-      metawidget.append("\t"    ).append("<ui:define name=\"main\">"                                                                            ).append(lineSeparator);
+      metawidget.append("\t"    ).append("<ui:define name=\"main\">"                                                                            ).append(crlf);
       metawidget.append("\t\t"  ).append(  "<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">"                             ).append(crlf);
       metawidget.append("\t\t\t").append(    "<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First Name:\"/>"                     ).append(crlf);
       metawidget.append("\t\t\t").append(    "<h:outputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>").append(crlf);
@@ -1109,7 +1108,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       metawidget.append("\t\t\t").append(    "<h:outputLabel for=\"customerBeanCustomerRating\" value=\"Rating:\"/>"                            ).append(crlf);
       metawidget.append("\t\t\t").append(    "<h:outputText id=\"customerBeanCustomerRating\" value=\"#{customerBean.customer.rating}\"/>"      ).append(crlf);
       metawidget.append("\t\t\t").append(    "<h:outputText/>"                                                                                  ).append(crlf);
-      metawidget.append("\t\t"  ).append(  "</h:panelGrid>"                                                                                     ).append(lineSeparator);
+      metawidget.append("\t\t"  ).append(  "</h:panelGrid>"                                                                                     ).append(crlf);
 
       Assert.assertTrue(contents.contains(metawidget));
 
@@ -1121,9 +1120,9 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(contents.contains("template=\"/resources/scaffold/pageTemplate.xhtml"));
 
       metawidget = new StringBuilder();
-      metawidget.append("\t\t"        ).append("<h:form id=\"create\">"                                                                                ).append(lineSeparator);
-      metawidget.append("\t\t\t"      ).append(  "<h:messages globalOnly=\"true\" styleClass=\"error\"/>"                                              ).append(lineSeparator);
-      metawidget.append(""            ).append(""                                                                                                      ).append(lineSeparator);
+      metawidget.append("\t\t"        ).append("<h:form id=\"create\">"                                                                                ).append(crlf);
+      metawidget.append("\t\t\t"      ).append(  "<h:messages globalOnly=\"true\" styleClass=\"error\"/>"                                              ).append(crlf);
+      metawidget.append(""            ).append(""                                                                                                      ).append(crlf);
       metawidget.append("\t\t\t"      ).append(  "<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">"                              ).append(crlf);
       metawidget.append("\t\t\t\t"    ).append(    "<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First Name:\"/>"                      ).append(crlf);
       metawidget.append("\t\t\t\t"    ).append(    "<h:panelGroup>"                                                                                    ).append(crlf);
@@ -1148,7 +1147,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       metawidget.append("\t\t\t\t\t"  ).append(      "<h:message for=\"customerBeanCustomerRating\" styleClass=\"error\"/>"                            ).append(crlf);
       metawidget.append("\t\t\t\t"    ).append(    "</h:panelGroup>"                                                                                   ).append(crlf);
       metawidget.append("\t\t\t\t"    ).append(    "<h:outputText/>"                                                                                   ).append(crlf);
-      metawidget.append("\t\t\t"      ).append(  "</h:panelGrid>"                                                                                      ).append(lineSeparator);
+      metawidget.append("\t\t\t"      ).append(  "</h:panelGrid>"                                                                                      ).append(crlf);
 
       Assert.assertTrue(contents.contains(metawidget));
 
