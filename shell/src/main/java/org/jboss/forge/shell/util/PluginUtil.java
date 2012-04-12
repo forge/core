@@ -23,6 +23,7 @@
 package org.jboss.forge.shell.util;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,6 +45,8 @@ import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.ShellImpl;
 import org.jboss.forge.shell.plugins.PipeOut;
 import org.yaml.snakeyaml.Yaml;
+
+import com.google.common.base.Strings;
 
 /**
  * @author Mike Brock .
@@ -70,54 +73,103 @@ public class PluginUtil
         }
         return defaultRepo;
     }
-    
-    public static List<PluginRef> findPlugin(final Shell shell, Configuration config, final String searchString) throws Exception
+
+    public static List<PluginRef> findPlugin(final Shell shell, Configuration config, final String searchString)
+                throws Exception
     {
         return findPlugin(shell, config, searchString, true);
     }
 
-    public static List<PluginRef> findPluginSilent(final Shell shell, Configuration config, final String searchString) throws Exception
+    public static List<PluginRef> findPluginSilent(final Shell shell, Configuration config, final String searchString)
+                throws Exception
     {
         return findPlugin(shell, config, searchString, false);
     }
 
     @SuppressWarnings("unchecked")
-    public static List<PluginRef> findPlugin(final Shell shell, Configuration config, final String searchString, boolean speak) throws Exception
+    public static List<PluginRef> findPlugin(final Shell shell, Configuration config, final String searchString,
+                boolean speak) throws Exception
     {
         String defaultRepo = getDefaultRepo(shell.getEnvironment());
-        HttpGet httpGet = new HttpGet(defaultRepo);
 
-        if(speak)
-            shell.print("Connecting to remote repository [" + defaultRepo + "]... ");
-        DefaultHttpClient client = new DefaultHttpClient();
-        configureProxy(ProxySettings.fromForgeConfiguration(config), client);
-        HttpResponse httpResponse = client.execute(httpGet);
-
-        switch (httpResponse.getStatusLine().getStatusCode())
+        InputStream repoStream = getCachedRepoStream(getDefaultRepo(shell.getEnvironment()), shell.getEnvironment());
+        if (repoStream == null)
         {
-        case 200:
-            if(speak)
-                shell.println("connected!");
-            break;
+            HttpGet httpGet = new HttpGet(defaultRepo);
 
-        case 404:
-            if(speak)
-                shell.println("failed! (plugin index not found: " + defaultRepo + ")");
-            return Collections.emptyList();
+            if (speak)
+                shell.print("Connecting to remote repository [" + defaultRepo + "]... ");
+            DefaultHttpClient client = new DefaultHttpClient();
+            configureProxy(ProxySettings.fromForgeConfiguration(config), client);
+            HttpResponse httpResponse = client.execute(httpGet);
 
-        default:
-            if(speak)
-                shell.println("failed! (server returned status code: " + httpResponse.getStatusLine().getStatusCode());
-            return Collections.emptyList();
+            switch (httpResponse.getStatusLine().getStatusCode())
+            {
+            case 200:
+                if (speak)
+                    shell.println("connected!");
+                break;
+
+            case 404:
+                if (speak)
+                    shell.println("failed! (plugin index not found: " + defaultRepo + ")");
+                return Collections.emptyList();
+
+            default:
+                if (speak)
+                    shell.println("failed! (server returned status code: "
+                                + httpResponse.getStatusLine().getStatusCode());
+                return Collections.emptyList();
+            }
+
+            repoStream = httpResponse.getEntity().getContent();
+            setCachedRepoStream(defaultRepo, shell.getEnvironment(), repoStream);
+            repoStream = getCachedRepoStream(getDefaultRepo(shell.getEnvironment()), shell.getEnvironment());
         }
 
-        Pattern pattern = Pattern.compile(GeneralUtils.pathspecToRegEx("*" + searchString + "*"));
+        return getPluginsFromRepoStream(searchString, repoStream);
+    }
 
+    @SuppressWarnings("unchecked")
+    private static void setCachedRepoStream(String repo, ForgeEnvironment environment, InputStream stream)
+    {
+        FileResource<?> cachedRepo = environment.getConfigDirectory().getChildOfType(FileResource.class,
+                    repo.replaceAll("[^a-zA-Z0-9]+", "") + ".yaml");
+        if (!cachedRepo.exists())
+        {
+            cachedRepo.createNewFile();
+        }
+
+        cachedRepo.setContents(stream);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static InputStream getCachedRepoStream(String repo, ForgeEnvironment forgeEnvironment)
+    {
+        FileResource<?> cachedRepo = forgeEnvironment.getConfigDirectory().getChildOfType(FileResource.class,
+                    repo.replaceAll("[^a-zA-Z0-9]+", "") + ".yaml");
+        if (cachedRepo.exists())
+        {
+            long lastModified = cachedRepo.getUnderlyingResourceObject().lastModified();
+            if (System.currentTimeMillis() - lastModified <= 60000)
+            {
+                return cachedRepo.getResourceInputStream();
+            }
+            else
+            {
+                cachedRepo.delete();
+            }
+        }
+        return null;
+    }
+
+    private static List<PluginRef> getPluginsFromRepoStream(final String searchString, InputStream stream)
+    {
         List<PluginRef> pluginList = new ArrayList<PluginRef>();
 
         Yaml yaml = new Yaml();
-        // TODO this needs to be cached instead of downloaded each time
-        for (Object o : yaml.loadAll(httpResponse.getEntity().getContent()))
+        Pattern pattern = Pattern.compile(GeneralUtils.pathspecToRegEx("*" + searchString + "*"));
+        for (Object o : yaml.loadAll(stream))
         {
             if (o == null)
             {
