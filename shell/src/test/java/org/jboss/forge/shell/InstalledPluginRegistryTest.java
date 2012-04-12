@@ -137,7 +137,7 @@ public class InstalledPluginRegistryTest
         PluginEntry one = InstalledPluginRegistry.install("foo", "1", "s1");
         PluginEntry two = InstalledPluginRegistry.install("foo", "2", "s2");
 
-        assertTrue(InstalledPluginRegistry.has(one));
+        assertFalse(InstalledPluginRegistry.has(one));
         assertTrue(InstalledPluginRegistry.has(two));
 
         InstalledPluginRegistry.remove(one);
