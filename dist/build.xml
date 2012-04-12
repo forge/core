@@ -218,10 +218,8 @@
 			<maven-resource group="commons-digester" artifact="commons-digester" />
 			<maven-resource group="commons-lang" artifact="commons-lang" />
 		</module-def>
-
-		<module-def name="org.apache.commons.logging">
-			<maven-resource group="commons-logging" artifact="commons-logging" />
-		</module-def>
+		
+		<module-def name="org.apache.commons.logging" />
 
 		<module-def name="org.apache.httpcomponents">
 			<maven-resource group="org.apache.httpcomponents" artifact="httpclient" />
@@ -414,6 +412,10 @@
 		<module-def name="org.slf4j.impl">
 			<maven-resource group="org.slf4j" artifact="slf4j-log4j12" />
 		</module-def>
+
+        <module-def name="org.slf4j.jcl-over-slf4j">
+            <maven-resource group="org.slf4j" artifact="jcl-over-slf4j"/>
+        </module-def>
 
 		<module-def name="org.yaml">
 			<maven-resource group="org.yaml" artifact="snakeyaml" />

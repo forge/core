@@ -62,7 +62,7 @@
       <jboss.javaee.version>1.0.0.Final</jboss.javaee.version>
       <jboss.logging.version>3.1.0.GA</jboss.logging.version>
       <jboss.logmanager.version>1.2.2.GA</jboss.logmanager.version>
-      <jboss.modules.version>1.0.4.GA</jboss.modules.version>
+      <jboss.modules.version>1.1.1.GA</jboss.modules.version>
       <jgit.version>0.10.1</jgit.version>
       <jline.version>2.5</jline.version>
       <junit.version>4.8.1</junit.version>
@@ -593,8 +593,13 @@
          <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
+	        <version>${slf4j.version}</version>
          </dependency>
+	     <dependency>
+	        <groupId>org.slf4j</groupId>
+	        <artifactId>jcl-over-slf4j</artifactId>
+	        <version>${slf4j.version}</version>
+	     </dependency>
          <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
