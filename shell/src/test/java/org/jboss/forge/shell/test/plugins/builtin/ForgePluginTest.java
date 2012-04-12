@@ -63,7 +63,7 @@ public class ForgePluginTest extends AbstractShellTest {
     @Test
     @Ignore
     public void testBuildPrettyfaces() throws Exception {
-        getShell().getEnvironment().setProperty(ShellImpl.PROP_FORGE_VERSION, "1.0.0.Beta5");
+        getShell().getEnvironment().setProperty(ShellImpl.PROP_FORGE_VERSION, "1.0.3.Final");
         getShell().execute("forge install-plugin ocpsoft-prettyfaces");
     }
 

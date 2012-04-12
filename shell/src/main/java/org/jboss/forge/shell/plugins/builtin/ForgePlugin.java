@@ -26,8 +26,10 @@ import java.net.ProxySelector;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.enterprise.event.Event;
@@ -231,6 +233,7 @@ public class ForgePlugin implements Plugin
    @Command(value = "install-plugin",
             help = "Installs a plugin from the configured Forge plugin index")
    public void installFromIndex(@Option(description = "plugin-name") final String pluginName,
+               @Option(name = "version", description = "branch, tag, or version to build") final String version,
             final PipeOut out) throws Exception
    {
       List<PluginRef> plugins = PluginUtil.findPlugin(environment, getProxySettings(), pluginName, out);
@@ -254,7 +257,7 @@ public class ForgePlugin implements Plugin
          }
          else if (ref.isGit())
          {
-            installFromGit(ref.getGitRepo(), ref.getGitRef(), null, out);
+            installFromGit(ref.getGitRepo(), Strings.isNullOrEmpty(version) ? ref.getGitRef() : version, null, out);
          }
       }
    }
@@ -442,8 +445,46 @@ public class ForgePlugin implements Plugin
                   }
                }
             }
+            
+            // Now try to find a tag with same Major.Minor.(x) version.
+            if( ref == null )
+            {
+                List<String> sortedTags = new ArrayList<String>(tags.keySet());
+                Collections.sort(sortedTags);
+                for (String tag : sortedTags)
+                {
+                    if(InstalledPluginRegistry.isApiCompatible(targetRef, tag))
+                    {
+                        ref = tags.get(tag);
+                    }
+                }
+            }
+            
+            // Now try to find a branch with same Major.Minor.(x) version.
+            if( ref == null )
+            {
+                List<String> sortedBranches = new ArrayList<String>();
+                List<Ref> refs = GitUtils.getRemoteBranches(repo);
+                for (Ref branchRef : refs)
+                {
+                   String branchName = branchRef.getName();
+                   sortedBranches.add(branchName);
+                }
+                
+                Collections.sort(sortedBranches);
+                for (String branch : sortedBranches)
+                {
+                    if(InstalledPluginRegistry.isApiCompatible(targetRef, branch))
+                    {
+                           ref = repo.branchCreate().setName(branch).setUpstreamMode(SetupUpstreamMode.TRACK)
+                                    .setStartPoint("origin/" + branch).call();
+                        ref = tags.get(branch);
+                    }
+                }
+            }
          }
-         else
+         
+         if(ref == null)
          {
             ref = repo.getRepository().getRef("master");
          }

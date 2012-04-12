@@ -191,33 +191,19 @@ public class Bootstrap
 
          List<PluginEntry> toLoad = new ArrayList<InstalledPluginRegistry.PluginEntry>();
 
-         List<PluginEntry> installed = InstalledPluginRegistry.listByVersion(Bootstrap.class.getPackage()
-                  .getImplementationVersion());
+         List<PluginEntry> installed = InstalledPluginRegistry.listByAPICompatibleVersion(InstalledPluginRegistry.getRuntimeAPIVersion());
 
          toLoad.addAll(installed);
 
-         // Add in the SNAPSHOT versions, we can't ignore them.
          List<PluginEntry> incompatible = InstalledPluginRegistry.list();
          incompatible.removeAll(installed);
-         if (!incompatible.isEmpty())
-         {
-            List<PluginEntry> toRemove = new ArrayList<InstalledPluginRegistry.PluginEntry>();
-            for (PluginEntry pluginEntry : incompatible) {
-               if (pluginEntry.getApiVersion().contains("SNAPSHOT"))
-               {
-                  toLoad.add(pluginEntry);
-                  toRemove.add(pluginEntry);
-               }
-            }
-            incompatible.removeAll(toRemove);
-         }
 
          for (PluginEntry pluginEntry : incompatible) {
             System.out.println("Not loading plugin [" + pluginEntry.getName()
                      + "] because it references Forge API version [" + pluginEntry.getApiVersion()
                      + "] which may not be compatible with my current version [" + Bootstrap.class.getPackage()
                               .getImplementationVersion() + "]. To remove this plugin, type 'forge remove-plugin "
-                     + pluginEntry + ".");
+                     + pluginEntry + ". Otherwise, try installing a new version of the plugin.");
          }
 
          for (PluginEntry plugin : toLoad)
