@@ -171,8 +171,7 @@ public class ForgePlugin implements Plugin
    public void find(@Option(description = "search string") final String searchString, final PipeOut out)
             throws Exception
    {
-      List<PluginRef> pluginList = PluginUtil.findPlugin(environment, getProxySettings(),
-               searchString, out);
+      List<PluginRef> pluginList = PluginUtil.findPlugin(shell, configuration, searchString);
 
       if (!pluginList.isEmpty())
       {
@@ -187,20 +186,6 @@ public class ForgePlugin implements Plugin
          out.println("\tTags: " + ref.getTags());
          out.println("\tDescription: " + ref.getDescription());
          out.println();
-      }
-   }
-
-   private ProxySettings getProxySettings()
-   {
-      Configuration proxyConfig = configuration.getScopedConfiguration(
-               ConfigurationScope.USER).subset("proxy");
-      if (proxyConfig != null && !proxyConfig.isEmpty())
-      {
-         return ProxySettings.fromForgeConfiguration(proxyConfig);
-      }
-      else
-      {
-         return null;
       }
    }
 
@@ -232,11 +217,11 @@ public class ForgePlugin implements Plugin
 
    @Command(value = "install-plugin",
             help = "Installs a plugin from the configured Forge plugin index")
-   public void installFromIndex(@Option(description = "plugin-name") final String pluginName,
+   public void installFromIndex(@Option(description = "plugin-name", completer=IndexPluginNameCompleter.class) final String pluginName,
                @Option(name = "version", description = "branch, tag, or version to build") final String version,
             final PipeOut out) throws Exception
    {
-      List<PluginRef> plugins = PluginUtil.findPlugin(environment, getProxySettings(), pluginName, out);
+      List<PluginRef> plugins = PluginUtil.findPlugin(shell, configuration, pluginName);
 
       if (plugins.isEmpty())
       {
@@ -525,7 +510,7 @@ public class ForgePlugin implements Plugin
 
    private void prepareProxyForJGit()
    {
-      ProxySettings proxySettings = getProxySettings();
+      ProxySettings proxySettings = ProxySettings.fromForgeConfiguration(configuration);
       if (proxySettings == null)
       {
          // There is no proxy configured

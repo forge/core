@@ -1,6 +1,7 @@
 package org.jboss.forge.shell.util;
 
 import org.jboss.forge.env.Configuration;
+import org.jboss.forge.env.ConfigurationScope;
 
 public class ProxySettings {
 
@@ -31,13 +32,20 @@ public class ProxySettings {
         return new ProxySettings(proxyHost, proxyPort, proxyUserName, proxyPassword);
     }
     
-    public static ProxySettings fromForgeConfiguration(Configuration proxyConfig) {
-        if (proxyConfig == null || !proxyConfig.containsKey(PROXY_CONFIG_HOST_KEY) || 
-                !proxyConfig.containsKey(PROXY_CONFIG_PORT_KEY))
-            throw new IllegalArgumentException("The proxy configuraiton should be set. See https://docs.jboss.org/author/display/FORGE/Configure+HTTP+Proxy"); 
-        return new ProxySettings(proxyConfig.getString(PROXY_CONFIG_HOST_KEY), 
-                proxyConfig.getInt(PROXY_CONFIG_PORT_KEY), proxyConfig.getString(PROXY_CONFIG_USERNAME_KEY),
-                proxyConfig.getString(PROXY_CONFIG_PASSWORD_KEY));
+    public static ProxySettings fromForgeConfiguration(Configuration configuration) {
+
+        Configuration proxyConfig = configuration.getScopedConfiguration(
+                 ConfigurationScope.USER).subset("proxy");
+        if (proxyConfig != null && !proxyConfig.isEmpty())
+        {
+            return new ProxySettings(proxyConfig.getString(PROXY_CONFIG_HOST_KEY), 
+                        proxyConfig.getInt(PROXY_CONFIG_PORT_KEY), proxyConfig.getString(PROXY_CONFIG_USERNAME_KEY),
+                        proxyConfig.getString(PROXY_CONFIG_PASSWORD_KEY));
+        }
+        else
+        {
+           return null;
+        }
     }
     
     public String getProxyHost() {
