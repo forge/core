@@ -21,6 +21,8 @@
  */
 package org.jboss.forge.shell.util;
 
+import java.lang.annotation.Annotation;
+
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
@@ -38,6 +40,22 @@ public abstract class BeanManagerUtils
    {
       T result = null;
       Bean<T> bean = (Bean<T>) manager.resolve(manager.getBeans(type));
+      if (bean != null)
+      {
+         CreationalContext<T> context = manager.createCreationalContext(bean);
+         if (context != null)
+         {
+            result = (T) manager.getReference(bean, type, context);
+         }
+      }
+      return result;
+   }
+
+   @SuppressWarnings("unchecked")
+   public static <T> T getContextualInstance(final BeanManager manager, final Class<T> type, Annotation... qualifiers)
+   {
+      T result = null;
+      Bean<T> bean = (Bean<T>) manager.resolve(manager.getBeans(type, qualifiers));
       if (bean != null)
       {
          CreationalContext<T> context = manager.createCreationalContext(bean);

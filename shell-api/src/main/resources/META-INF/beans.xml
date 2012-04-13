@@ -22,4 +22,8 @@
   -->
 
 <beans>
+      
+      <interceptors>
+      		<class>org.jboss.forge.shell.squelch.SquelchingInterceptor</class>
+      </interceptors>
 </beans>

@@ -421,6 +421,8 @@
 			<maven-resource group="org.yaml" artifact="snakeyaml" />
 		</module-def>
 
+		<module-def name="sun.jdk" />
+
 		<module-def name="sun.misc" />
 
 	</target>

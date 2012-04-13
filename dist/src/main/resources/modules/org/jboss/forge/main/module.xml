@@ -12,13 +12,14 @@
       <module name="com.sun.xml.bind" />
    
       <module name="javax.annotation.api" />
+      <module name="javax.interceptor.api" />
       <module name="jline" />
 
       <module name="org.apache.commons.logging"/>
       <module name="org.apache.commons.config"/>
       <module name="org.apache.httpcomponents" />
       <module name="org.javassist" />
-      <module name="org.jboss.interceptor" />
+      <module name="org.jboss.interceptor" export="true" />
       <module name="org.jboss.modules" />
 
 
@@ -129,6 +130,7 @@
 
       <module name="org.mvel" />
       <module name="org.yaml" />
+      <module name="sun.jdk" />
       <module name="sun.misc" />
       
       <module name="javax.api" />
