@@ -23,10 +23,6 @@
 	<dependencies>
 		<module name="javax.api" />
 		<module name="org.apache.commons.logging" />
-		<system export="false">
-			<paths>
-				<path name="com/sun/org/apache/xerces/internal" />
-			</paths>
-		</system>
+		<module name="sun.jdk" />
 	</dependencies>
 </module>

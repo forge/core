@@ -9,6 +9,7 @@
    <dependencies>
       <module name="javax.annotation.api" export="true" />
       <module name="javax.enterprise.api" export="true" />
+      <module name="javax.interceptor.api" />
       
       <module name="org.javassist" export="true" />
       <module name="org.jboss.interceptor" export="true" />
@@ -40,6 +41,7 @@
       <module name="org.jboss.solder" export="true" />
 
       <module name="javax.api" />
+		<module name="sun.jdk" />
    </dependencies>
    
 </module>

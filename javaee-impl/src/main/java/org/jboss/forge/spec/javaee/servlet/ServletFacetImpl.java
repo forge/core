@@ -45,6 +45,7 @@ import org.jboss.forge.resources.UnknownFileResource;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresPackagingType;
+import org.jboss.forge.shell.squelch.Squelched;
 import org.jboss.forge.shell.util.Streams;
 import org.jboss.forge.spec.javaee.BaseJavaEEFacet;
 import org.jboss.forge.spec.javaee.ServletFacet;
@@ -56,6 +57,7 @@ import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Alias("forge.spec.servlet")
+//@Squelched
 @RequiresFacet({ MetadataFacet.class, WebResourceFacet.class, DependencyFacet.class })
 @RequiresPackagingType({ PackagingType.WAR, PackagingType.BUNDLE })
 public class ServletFacetImpl extends BaseJavaEEFacet implements ServletFacet

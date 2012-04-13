@@ -76,7 +76,7 @@ public abstract class AbstractShellTest
                .addPackages(true, Root.class.getPackage())
                .addPackages(true, RenderRoot.class.getPackage())
                .addPackages(true, SolderRoot.class.getPackage())
-               .addAsManifestResource(new ByteArrayAsset("<beans/>".getBytes()), ArchivePaths.create("beans.xml"));
+               .addAsManifestResource("META-INF/beans.xml", ArchivePaths.create("beans.xml"));
 
       return archive;
    }

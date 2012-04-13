@@ -27,19 +27,30 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.commons.configuration.XMLConfiguration;
+import javax.enterprise.context.Dependent;
+import javax.enterprise.inject.spi.BeanManager;
+
 import org.jboss.forge.env.Configuration;
 import org.jboss.forge.env.ConfigurationScope;
-import org.jboss.solder.core.Veto;
+import org.jboss.forge.shell.squelch.Squelched;
+import org.jboss.forge.shell.squelch.ConfigAdapterQualifierLiteral;
+import org.jboss.forge.shell.util.BeanManagerUtils;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-@Veto
+@Dependent
+@Squelched
+@ConfigAdapterQualifier
 public class ConfigurationAdapter implements Configuration {
-    private final ScopedConfigurationAdapter parent;
-    private final org.apache.commons.configuration.Configuration delegate;
+    private ScopedConfigurationAdapter parent;
+    private org.apache.commons.configuration.Configuration delegate;
+    private BeanManager bm;
+    
+    public ConfigurationAdapter()
+    {
+    }
 
     public ConfigurationAdapter(final ScopedConfigurationAdapter parent,
             final org.apache.commons.configuration.Configuration delegate) {
@@ -55,6 +66,21 @@ public class ConfigurationAdapter implements Configuration {
     public org.apache.commons.configuration.Configuration getDelegate() {
         return delegate;
     }
+    
+    public void setParent(ScopedConfigurationAdapter parent)
+    {
+        this.parent = parent;
+    }
+    
+    public void setDelegate(org.apache.commons.configuration.Configuration delegate)
+    {
+        this.delegate = delegate;
+    }
+    
+    public void setBeanManager(BeanManager bm)
+    {
+        this.bm = bm;
+    }
 
     @Override
     public Configuration getScopedConfiguration(final ConfigurationScope scope) {
@@ -67,7 +93,12 @@ public class ConfigurationAdapter implements Configuration {
 
     @Override
     public Configuration subset(final String prefix) {
-        return new ConfigurationAdapter(parent, delegate.subset(prefix));
+
+        ConfigurationAdapter adapter = BeanManagerUtils.getContextualInstance(bm, ConfigurationAdapter.class, new ConfigAdapterQualifierLiteral());
+        adapter.setParent(parent);
+        adapter.setDelegate(delegate.subset(prefix));
+        adapter.setBeanManager(bm);
+        return adapter;
     }
 
     @Override
