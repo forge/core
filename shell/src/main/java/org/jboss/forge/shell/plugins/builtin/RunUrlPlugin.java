@@ -23,32 +23,22 @@
 package org.jboss.forge.shell.plugins.builtin;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Collections;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.maven.wagon.CommandExecutionException;
 import org.jboss.forge.project.services.ResourceFactory;
-import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.UnknownFileResource;
 import org.jboss.forge.shell.Shell;
-import org.jboss.forge.shell.ShellImpl;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.DefaultCommand;
 import org.jboss.forge.shell.plugins.Option;
-import org.jboss.forge.shell.plugins.PipeIn;
 import org.jboss.forge.shell.plugins.PipeOut;
 import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.Topic;
-import org.jboss.forge.shell.util.Files;
 import org.jboss.forge.shell.util.PluginUtil;
 
 /**
@@ -58,45 +48,44 @@ import org.jboss.forge.shell.util.PluginUtil;
 @Topic("Shell Environment")
 public class RunUrlPlugin implements Plugin
 {
-   private final Shell shell;
+    private final Shell shell;
 
-   @Inject
-   private ResourceFactory factory;
+    @Inject
+    private ResourceFactory factory;
 
-   @Inject
-   public RunUrlPlugin(final Shell shell)
-   {
-      this.shell = shell;
-   }
+    @Inject
+    public RunUrlPlugin(final Shell shell)
+    {
+        this.shell = shell;
+    }
 
-   @DefaultCommand
-   public void run(@Option(description = "url...", required = true) final String url, final PipeOut pipeOut,
-            final String... args)
-            throws Exception
-   {
-      String urlPattern = "^(https?)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
-      if (Pattern.matches(urlPattern, url))
-      {
-         URL remote = new URL(url);
-         String temporalDir = System.getProperty("java.io.tmpdir");
-         File tempFile = new File(temporalDir, "temp" + UUID.randomUUID().toString().replace("-", ""));
-         tempFile.createNewFile();
-         UnknownFileResource tempResource = new UnknownFileResource(factory, tempFile);
+    @DefaultCommand
+    public void run(@Option(description = "url...", required = true) final String url, final PipeOut pipeOut,
+                final String... args)
+                throws Exception
+    {
+        String urlPattern = "^(https?)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
+        if (Pattern.matches(urlPattern, url))
+        {
+            try
+            {
+                URL remote = new URL(url);
+                String temporalDir = System.getProperty("java.io.tmpdir");
+                File tempFile = new File(temporalDir, "temp" + UUID.randomUUID().toString().replace("-", ""));
+                tempFile.createNewFile();
+                UnknownFileResource tempResource = new UnknownFileResource(factory, tempFile);
 
-         PluginUtil.downloadFromURL(pipeOut, remote, tempResource);
-
-         try
-         {
-            shell.execute(tempFile, args);
-         }
-         catch (IOException e)
-         {
-            throw new RuntimeException("error executing script from url " + url);
-         }
-      }
-      else
-      {
-         throw new RuntimeException("resource must be a url: " + url);
-      }
-   }
+                PluginUtil.downloadFromURL(pipeOut, remote, tempResource);
+                shell.execute(tempFile, args);
+            }
+            catch (IOException e)
+            {
+                throw new RuntimeException("error executing script from url " + url);
+            }
+        }
+        else
+        {
+            throw new RuntimeException("resource must be a url: " + url);
+        }
+    }
 }

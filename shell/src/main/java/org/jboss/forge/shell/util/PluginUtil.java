@@ -46,8 +46,6 @@ import org.jboss.forge.shell.ShellImpl;
 import org.jboss.forge.shell.plugins.PipeOut;
 import org.yaml.snakeyaml.Yaml;
 
-import com.google.common.base.Strings;
-
 /**
  * @author Mike Brock .
  */
@@ -86,7 +84,6 @@ public class PluginUtil
         return findPlugin(shell, config, searchString, false);
     }
 
-    @SuppressWarnings("unchecked")
     public static List<PluginRef> findPlugin(final Shell shell, Configuration config, final String searchString,
                 boolean speak) throws Exception
     {
@@ -176,6 +173,7 @@ public class PluginUtil
                 continue;
             }
 
+            @SuppressWarnings("unchecked")
             Map<String, String> map = (Map<String, String>) o;
 
             PluginRef ref = bindToPuginRef(map);
@@ -210,27 +208,38 @@ public class PluginUtil
     public static void downloadFromURL(final PipeOut out, final URL url, final FileResource<?> resource)
                 throws IOException
     {
+        downloadFromURL(out, url, resource, true);
+    }
+
+    public static void downloadFromURL(final PipeOut out, final URL url, final FileResource<?> resource, boolean speak)
+                throws IOException
+    {
 
         HttpGet httpGetManifest = new HttpGet(url.toExternalForm());
-        out.print("Retrieving artifact ... ");
+        if (speak)
+            out.print("Retrieving artifact ... ");
 
         HttpResponse response = new DefaultHttpClient().execute(httpGetManifest);
         switch (response.getStatusLine().getStatusCode())
         {
         case 200:
-            out.println("done.");
+            if (speak)
+                out.println("done.");
             try
             {
                 resource.setContents(response.getEntity().getContent());
-                out.println("done.");
+                if (speak)
+                    out.println("done.");
             }
             catch (IOException e)
             {
-                out.println("failed to download: " + e.getMessage());
+                if (speak)
+                    out.println("failed to download: " + e.getMessage());
             }
 
         default:
-            out.println("failed! (server returned status code: " + response.getStatusLine().getStatusCode());
+            if (speak)
+                out.println("failed! (server returned status code: " + response.getStatusLine().getStatusCode());
         }
     }
 
