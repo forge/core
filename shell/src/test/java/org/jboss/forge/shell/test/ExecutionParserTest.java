@@ -29,6 +29,7 @@ import static org.junit.Assert.assertTrue;
 import javax.inject.Inject;
 
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.test.command.MockOptionTestPlugin;
 import org.jboss.forge.test.AbstractShellTest;
 import org.junit.Test;
@@ -41,6 +42,7 @@ import org.junit.runner.RunWith;
 public class ExecutionParserTest extends AbstractShellTest
 {
    @Inject
+   @Alias("motp")
    private MockOptionTestPlugin plugin;
 
    @Test

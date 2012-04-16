@@ -57,7 +57,7 @@ import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Alias("forge.spec.servlet")
-//@Squelched
+@Squelched
 @RequiresFacet({ MetadataFacet.class, WebResourceFacet.class, DependencyFacet.class })
 @RequiresPackagingType({ PackagingType.WAR, PackagingType.BUNDLE })
 public class ServletFacetImpl extends BaseJavaEEFacet implements ServletFacet

@@ -1,6 +1,6 @@
 /*
- * JBoss, by Red Hat.
- * Copyright 2010, Red Hat, Inc., and individual contributors
+ * JBoss, Home of Professional Open Source
+ * Copyright 2012, Red Hat, Inc., and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,39 +19,19 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.maven.locators;
+package org.jboss.forge.shell.project;
 
-import org.jboss.forge.maven.ProjectImpl;
-import org.jboss.forge.project.Project;
-import org.jboss.forge.project.locator.ProjectLocator;
-import org.jboss.forge.project.services.ProjectFactory;
-import org.jboss.forge.resources.DirectoryResource;
-import org.jboss.forge.shell.plugins.Alias;
+import java.util.Set;
 
-import com.google.inject.Inject;
+import org.jboss.forge.project.Facet;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class DefaultProjectLocator implements ProjectLocator
+public interface FacetRegistry
 {
-   @Inject
-   private ProjectFactory factory;
-
-   @Override
-   public Project createProject(final DirectoryResource dir)
-   {
-      Project result = null;
-      if ((dir != null) && dir.exists())
-      {
-         result = new ProjectImpl(factory, dir);
-      }
-      return result;
-   }
-
-   @Override
-   public boolean containsProject(final DirectoryResource dir)
-   {
-      return false;
-   }
+    /**
+     * Return all known {@link Facet} types.
+     */
+    Set<Class<? extends Facet>> getFacetTypes();
 }

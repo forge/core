@@ -73,7 +73,7 @@ public class ScopedConfigurationAdapter implements Configuration
       Configuration configuration = delegates.get(scope);
       if (configuration == null)
       {
-         throw new IllegalStateException();
+         throw new IllegalStateException("No delegates were found in configuration - cannot retrieve scope");
       }
       return configuration;
    }

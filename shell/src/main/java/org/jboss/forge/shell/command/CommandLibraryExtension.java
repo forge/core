@@ -26,9 +26,12 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.Bean;
@@ -36,6 +39,7 @@ import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessBean;
 
 import org.jboss.forge.bus.util.Annotations;
+import org.jboss.forge.project.Facet;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.Command;
@@ -55,6 +59,7 @@ import org.jboss.forge.shell.plugins.Topic;
 public class CommandLibraryExtension implements Extension
 {
    private final Map<String, List<PluginMetadata>> plugins = new HashMap<String, List<PluginMetadata>>();
+   private Set<Class<? extends Facet>> facetTypes = new HashSet<Class<? extends Facet>>();
 
    public Map<String, List<PluginMetadata>> getPlugins()
    {
@@ -79,6 +84,16 @@ public class CommandLibraryExtension implements Extension
 
          plugins.get(pluginMeta.getName()).add(pluginMeta);
       }
+      
+      if(Facet.class.isAssignableFrom(clazz) && !clazz.isInterface() && !clazz.isAnnotation())
+      {
+          facetTypes.add((Class<Facet>) clazz);
+      }
+   }
+
+   public Set<Class<? extends Facet>> getFacetTypes()
+   {
+       return Collections.unmodifiableSet(facetTypes);
    }
 
    public PluginMetadata getMetadataFor(final Class<? extends Plugin> plugin)

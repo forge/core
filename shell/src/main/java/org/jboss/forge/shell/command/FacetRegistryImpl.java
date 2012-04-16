@@ -19,39 +19,52 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.maven.locators;
 
-import org.jboss.forge.maven.ProjectImpl;
-import org.jboss.forge.project.Project;
-import org.jboss.forge.project.locator.ProjectLocator;
-import org.jboss.forge.project.services.ProjectFactory;
-import org.jboss.forge.resources.DirectoryResource;
-import org.jboss.forge.shell.plugins.Alias;
+package org.jboss.forge.shell.command;
 
-import com.google.inject.Inject;
+import java.util.Set;
+
+import javax.annotation.PostConstruct;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import org.jboss.forge.project.Facet;
+import org.jboss.forge.shell.project.FacetRegistry;
 
 /**
+ * Stores the current registry of all installed & loaded facets.
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class DefaultProjectLocator implements ProjectLocator
+@Singleton
+public class FacetRegistryImpl implements FacetRegistry
 {
+   private Set<Class<? extends Facet>> facetTypes;
+
+   private final CommandLibraryExtension library;
+   private final BeanManager manager;
+
    @Inject
-   private ProjectFactory factory;
-
-   @Override
-   public Project createProject(final DirectoryResource dir)
+   public FacetRegistryImpl(final CommandLibraryExtension library, final BeanManager manager)
    {
-      Project result = null;
-      if ((dir != null) && dir.exists())
-      {
-         result = new ProjectImpl(factory, dir);
-      }
-      return result;
+      this.library = library;
+      this.manager = manager;
    }
 
-   @Override
-   public boolean containsProject(final DirectoryResource dir)
+   @PostConstruct
+   public void init()
    {
-      return false;
+       facetTypes = library.getFacetTypes();
    }
+   
+   /**
+    * @return the facetTypes
+    */
+   @Override
+   public Set<Class<? extends Facet>> getFacetTypes()
+   {
+       return facetTypes;
+   }
+
 }

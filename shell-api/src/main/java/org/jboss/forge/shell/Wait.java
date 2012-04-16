@@ -21,9 +21,9 @@
  */
 package org.jboss.forge.shell;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.jboss.forge.shell.events.CommandExecuted;
 
@@ -31,10 +31,9 @@ import org.jboss.forge.shell.events.CommandExecuted;
  * Display a "Please wait" spinner for the user, until cancelled. It is a good idea to wrap usage of {@link Wait} in a
  * try-finally block to ensure that the wait is always completed.
  * 
- * TODO Create a cleanup mechanism for these on command execution.
- * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
+@Singleton
 public class Wait
 {
     private static String[] spinnerChars = new String[] { "/", "-", "\\", "|" };
@@ -82,7 +81,7 @@ public class Wait
                     shell.print(spinnerChars[i++]);
                     try
                     {
-                        Thread.sleep(50);
+                        Thread.sleep(250);
                         shell.write('\b');
                     }
                     catch (InterruptedException e)
@@ -116,9 +115,9 @@ public class Wait
     {
         if (isWaiting())
         {
-            complete = true;
             shell.println();
         }
+        complete = true;
     }
 
     /**

@@ -47,7 +47,7 @@ public class LessPlugin implements Plugin
    private final MorePlugin morePlugin;
 
    @Inject
-   public LessPlugin(MorePlugin morePlugin)
+   public LessPlugin(@Alias("more") MorePlugin morePlugin)
    {
       this.morePlugin = morePlugin;
    }

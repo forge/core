@@ -2,6 +2,7 @@ package org.jboss.forge.shell.plugins.builtin.project;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -26,12 +27,11 @@ public class AvailableFacetsCompleter extends SimpleTokenCompleter
       List<Object> result = new ArrayList<Object>();
 
       Project project = shell.getCurrentProject();
-      List<Facet> allFacets = factory.getFacets();
-      for (Facet facet : allFacets)
+      for (Class<? extends Facet> type : factory.getFacetTypes())
       {
-         if (!project.hasFacet(facet.getClass()))
+         if (!project.hasFacet(type))
          {
-            result.add(ConstraintInspector.getName(facet.getClass()));
+            result.add(ConstraintInspector.getName(type));
          }
       }
 

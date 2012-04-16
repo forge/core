@@ -36,7 +36,7 @@ import org.jboss.forge.shell.plugins.Topic;
 @Help("Display information about this forge.")
 public class AboutPlugin implements Plugin
 {
-   @Inject
+   @Inject @Alias("forge")
    private ForgePlugin forge;
 
    @DefaultCommand

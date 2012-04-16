@@ -38,6 +38,7 @@ import org.jboss.forge.shell.events.CommandExecuted;
 import org.jboss.forge.shell.events.CommandExecuted.Status;
 import org.jboss.forge.shell.exceptions.CommandExecutionException;
 import org.jboss.forge.shell.exceptions.NoSuchCommandException;
+import org.jboss.forge.shell.plugins.AliasLiteral;
 import org.jboss.forge.shell.plugins.PipeOut;
 import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.util.Enums;
@@ -89,7 +90,7 @@ public class Execution
       {
          Class<? extends Plugin> pluginType = command.getParent().getType();
 
-         Set<Bean<?>> beans = manager.getBeans(pluginType);
+         Set<Bean<?>> beans = manager.getBeans(pluginType, new AliasLiteral(command.getParent().getName()));
          Bean<?> bean = manager.resolve(beans);
 
          Method method = command.getMethod();

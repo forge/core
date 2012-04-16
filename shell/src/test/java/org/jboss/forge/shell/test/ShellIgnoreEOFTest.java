@@ -33,6 +33,7 @@ import javax.inject.Inject;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.shell.events.PostStartup;
 import org.jboss.forge.shell.events.PreShutdown;
+import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.test.AbstractShellTest;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -58,6 +59,7 @@ public class ShellIgnoreEOFTest extends AbstractShellTest
    }
 
    @Inject
+   @Alias("test-map")
    private MockAbortingPlugin plugin;
 
    @Test

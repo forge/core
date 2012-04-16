@@ -25,6 +25,7 @@ package org.jboss.forge.shell.plugins.builtin.project;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -424,15 +425,15 @@ public class ProjectPlugin implements Plugin
    @Command("list-facets")
    public void list()
    {
-      List<Facet> facets = factory.getFacets();
-      for (Facet facet : facets)
+      Set<Class<? extends Facet>> facets = factory.getFacetTypes();
+      for (Class<? extends Facet> type : facets)
       {
-         String name = ConstraintInspector.getName(facet.getClass());
-         if (project.hasFacet(facet.getClass()) && !project.getFacet(facet.getClass()).isInstalled())
+         String name = ConstraintInspector.getName(type.getClass());
+         if (project.hasFacet(type) && !project.getFacet(type).isInstalled())
          {
             shell.println(ShellColor.RED, name + " [ERROR: facet is no longer available]");
          }
-         else if (project.hasFacet(facet.getClass()))
+         else if (project.hasFacet(type))
          {
             shell.println(ShellColor.GREEN, name);
          }

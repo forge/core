@@ -21,9 +21,12 @@
  */
 package org.jboss.forge.project.services;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Instance;
@@ -46,213 +49,211 @@ import org.jboss.forge.shell.util.ResourceUtil;
 @Dependent
 public class ProjectFactory
 {
-   private final FacetFactory facetFactory;
-   private List<ProjectLocator> locators;
-   private final BeanManager manager;
-   private final Instance<ProjectLocator> locatorInstance;
+    private final FacetFactory facetFactory;
+    private List<ProjectLocator> locators;
+    private final BeanManager manager;
+    private final Instance<ProjectLocator> locatorInstance;
 
-   @Inject
-   public ProjectFactory(final FacetFactory facetFactory, final BeanManager manager,
-            final Instance<ProjectLocator> locatorInstance)
-   {
-      this.facetFactory = facetFactory;
-      this.locatorInstance = locatorInstance;
-      this.manager = manager;
-   }
+    @Inject
+    public ProjectFactory(final FacetFactory facetFactory, final BeanManager manager,
+                final Instance<ProjectLocator> locatorInstance)
+    {
+        this.facetFactory = facetFactory;
+        this.locatorInstance = locatorInstance;
+        this.manager = manager;
+    }
 
-   public void init()
-   {
-      Iterator<ProjectLocator> iterator = locatorInstance.iterator();
-      List<ProjectLocator> result = new ArrayList<ProjectLocator>();
-      while (iterator.hasNext())
-      {
-         ProjectLocator element = BeanManagerUtils.getContextualInstance(manager, iterator.next().getClass());
-         result.add(element);
-      }
-      this.locators = result;
-   }
+    public void init()
+    {
+        Iterator<ProjectLocator> iterator = locatorInstance.iterator();
+        List<ProjectLocator> result = new ArrayList<ProjectLocator>();
+        while (iterator.hasNext())
+        {
+            ProjectLocator element = BeanManagerUtils.getContextualInstance(manager, iterator.next().getClass());
+            result.add(element);
+        }
+        this.locators = result;
+    }
 
-   public DirectoryResource findProjectRootRecusively(final DirectoryResource currentDirectory)
-   {
-      DirectoryResource root = null;
-      List<ProjectLocator> locators = getLocators();
-      for (ProjectLocator locator : locators)
-      {
-         root = locateRecursively(currentDirectory, locator);
-         if (root != null)
-         {
-            break;
-         }
-      }
-      return root;
-   }
-
-   public DirectoryResource locateRecursively(final DirectoryResource startingDirectory, final ProjectLocator locator)
-   {
-      DirectoryResource root = startingDirectory;
-
-      Project project = locator.createProject(root);
-      while ((project == null) && (root.getParent() instanceof DirectoryResource))
-      {
-         root = (DirectoryResource) root.getParent();
-         project = locator.createProject(root);
-      }
-
-      if (project == null)
-      {
-         root = null;
-      }
-
-      return root;
-   }
-
-   public Project findProjectRecursively(final DirectoryResource startingPath)
-   {
-      Project project = null;
-      List<ProjectLocator> locators = getLocators();
-      for (ProjectLocator locator : locators)
-      {
-         DirectoryResource root = locateRecursively(startingPath, locator);
-
-         if ((root != null) && locator.containsProject(root))
-         {
-            project = locator.createProject(root);
-            if (project != null)
+    public DirectoryResource findProjectRootRecusively(final DirectoryResource currentDirectory)
+    {
+        DirectoryResource root = null;
+        List<ProjectLocator> locators = getLocators();
+        for (ProjectLocator locator : locators)
+        {
+            root = locateRecursively(currentDirectory, locator);
+            if (root != null)
             {
-               break;
+                break;
             }
-         }
-      }
+        }
+        return root;
+    }
 
-      if (project != null)
-      {
-         registerFacets(project);
-      }
+    public DirectoryResource locateRecursively(final DirectoryResource startingDirectory, final ProjectLocator locator)
+    {
+        DirectoryResource root = startingDirectory;
 
-      return project;
-   }
+        while (!locator.containsProject(root) && (root.getParent() instanceof DirectoryResource))
+        {
+            root = (DirectoryResource) root.getParent();
+        }
 
-   public Project createProject(final DirectoryResource root, final Class<? extends Facet>... facetTypes)
-   {
-      Project project = null;
-      List<ProjectLocator> locators = getLocators();
-      for (ProjectLocator locator : locators)
-      {
-         if (root != null)
-         {
-            project = locator.createProject(root);
-            if (project != null)
+        if(!locator.containsProject(root))
+        {
+            root = null;
+        }
+
+        return root;
+    }
+
+    public Project findProjectRecursively(final DirectoryResource startingPath)
+    {
+        Project project = null;
+        List<ProjectLocator> locators = getLocators();
+        for (ProjectLocator locator : locators)
+        {
+            DirectoryResource root = locateRecursively(startingPath, locator);
+
+            if ((root != null) && locator.containsProject(root))
             {
-               break;
+                project = locator.createProject(root);
+                if (project != null)
+                {
+                    break;
+                }
             }
-         }
-      }
+        }
 
-      for (Class<? extends Facet> type : facetTypes)
-      {
-         installSingleFacet(project, type);
-      }
-
-      registerFacets(project);
-
-      return project;
-   }
-
-   public void installSingleFacet(final Project project, final Class<? extends Facet> type)
-   {
-      Facet facet = facetFactory.getFacet(type);
-
-      List<Class<? extends Facet>> dependencies = ConstraintInspector.getFacetDependencies(facet.getClass());
-      if (dependencies != null)
-      {
-         for (Class<? extends Facet> dep : dependencies)
-         {
-            if (!project.hasFacet(dep))
-            {
-               installSingleFacet(project, dep);
-            }
-         }
-      }
-
-      project.installFacet(facet);
-   }
-
-   private void registerFacets(final Project project)
-   {
-      if (project != null)
-      {
-         List<Facet> facets = facetFactory.getFacets();
-
-         for (Facet facet : facets)
-         {
-            registerSingleFacet(project, facet);
-         }
-      }
-   }
-
-   public void registerSingleFacet(final Project project, final Class<? extends Facet> type)
-   {
-      Facet facet = facetFactory.getFacet(type);
-      registerSingleFacet(project, facet);
-   }
-
-   private void registerSingleFacet(final Project project, final Facet facet)
-   {
-      List<Class<? extends Facet>> dependencies = ConstraintInspector.getFacetDependencies(facet.getClass());
-      if (dependencies != null)
-      {
-         for (Class<? extends Facet> dep : dependencies)
-         {
-            if (!project.hasFacet(dep))
-            {
-               Facet depFacet = facetFactory.getFacet(dep);
-               registerSingleFacet(project, depFacet);
-               if (!project.hasFacet(dep))
-               {
-                  return;
-               }
-            }
-         }
-      }
-
-      project.registerFacet(facet);
-   }
-
-   /**
-    * An exception-safe method of determining whether a directory contains a project.
-    */
-   public boolean containsProject(final DirectoryResource dir)
-   {
-      Project project = findProject(dir);
-      return project != null;
-   }
-
-   public Project findProject(final DirectoryResource dir)
-   {
-      Project project = null;
-      if (dir != null)
-      {
-         List<ProjectLocator> locators = getLocators();
-         for (ProjectLocator locator : locators)
-         {
-            if (locator.containsProject(ResourceUtil.getContextDirectory(dir)))
-            {
-               project = locator.createProject(dir);
-               break;
-            }
-         }
-
-         if (project != null)
-         {
+        if (project != null)
+        {
             registerFacets(project);
-         }
-      }
-      return project;
-   }
+        }
 
-   private List<ProjectLocator> getLocators()
-   {
-      init();
-      return locators;
-   }
+        return project;
+    }
+
+    public Project createProject(final DirectoryResource root, final Class<? extends Facet>... facetTypes)
+    {
+        Project project = null;
+        List<ProjectLocator> locators = getLocators();
+        for (ProjectLocator locator : locators)
+        {
+            if (root != null)
+            {
+                project = locator.createProject(root);
+                if (project != null)
+                {
+                    break;
+                }
+            }
+        }
+
+        for (Class<? extends Facet> type : facetTypes)
+        {
+            installSingleFacet(project, type);
+        }
+
+        registerFacets(project);
+
+        return project;
+    }
+
+    public void installSingleFacet(final Project project, final Class<? extends Facet> type)
+    {
+        Facet facet = facetFactory.getFacet(type);
+
+        List<Class<? extends Facet>> dependencies = ConstraintInspector.getFacetDependencies(type);
+        if (dependencies != null)
+        {
+            for (Class<? extends Facet> dep : dependencies)
+            {
+                if (!project.hasFacet(dep))
+                {
+                    installSingleFacet(project, dep);
+                }
+            }
+        }
+
+        project.installFacet(facet);
+    }
+
+    private void registerFacets(final Project project)
+    {
+        if (project != null)
+        {
+            Set<Class<? extends Facet>> facets = facetFactory.getFacetTypes();
+
+            for (Class<? extends Facet> facet : facets)
+            {
+                registerSingleFacet(project, facet);
+            }
+        }
+    }
+
+    public void registerSingleFacet(final Project project, final Class<? extends Facet> type)
+    {
+        Facet facet = facetFactory.getFacet(type);
+        registerSingleFacet(project, facet);
+    }
+
+    private void registerSingleFacet(final Project project, final Facet facet)
+    {
+        List<Class<? extends Facet>> dependencies = ConstraintInspector.getFacetDependencies(facet.getClass());
+        if (dependencies != null)
+        {
+            for (Class<? extends Facet> dep : dependencies)
+            {
+                if (!project.hasFacet(dep))
+                {
+                    Facet depFacet = facetFactory.getFacet(dep);
+                    registerSingleFacet(project, depFacet);
+                    if (!project.hasFacet(dep))
+                    {
+                        return;
+                    }
+                }
+            }
+        }
+
+        project.registerFacet(facet);
+    }
+
+    /**
+     * An exception-safe method of determining whether a directory contains a project.
+     */
+    public boolean containsProject(final DirectoryResource dir)
+    {
+        Project project = findProject(dir);
+        return project != null;
+    }
+
+    public Project findProject(final DirectoryResource dir)
+    {
+        Project project = null;
+        if (dir != null)
+        {
+            List<ProjectLocator> locators = getLocators();
+            for (ProjectLocator locator : locators)
+            {
+                if (locator.containsProject(ResourceUtil.getContextDirectory(dir)))
+                {
+                    project = locator.createProject(dir);
+                    break;
+                }
+            }
+
+            if (project != null)
+            {
+                registerFacets(project);
+            }
+        }
+        return project;
+    }
+
+    private List<ProjectLocator> getLocators()
+    {
+        init();
+        return locators;
+    }
 }

@@ -33,6 +33,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.resources.java.JavaResource;
+import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.project.resources.ResourceProducer;
 import org.jboss.forge.shell.project.resources.ResourceProducerExtension;
 import org.jboss.forge.test.AbstractShellTest;
@@ -66,6 +67,7 @@ public class ResourceProducerExtensionTest
    private Event<MockEvent> event;
 
    @Inject
+   @Alias("inject")
    private MockResourceInjectionPlugin plugin;
 
    @Test

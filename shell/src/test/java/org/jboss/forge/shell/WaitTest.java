@@ -35,6 +35,16 @@ public class WaitTest extends AbstractShellTest
    private Shell shell;
 
    @Test
+   public void testWaitCompletesAfterCommand() throws Exception
+   {
+       Assert.assertFalse(wait.isWaiting());
+       wait.start();
+       Assert.assertTrue(wait.isWaiting());
+       shell.execute("echo foo");
+       Assert.assertFalse(wait.isWaiting());
+   }
+
+   @Test
    public void testWait() throws Exception
    {
        Assert.assertFalse(wait.isWaiting());
@@ -42,16 +52,6 @@ public class WaitTest extends AbstractShellTest
        Assert.assertTrue(wait.isWaiting());
        Thread.sleep(1000);
        wait.stop();
-       Assert.assertFalse(wait.isWaiting());
-   }
-
-   @Test
-   public void testWaitCompletesAfterCommand() throws Exception
-   {
-       Assert.assertFalse(wait.isWaiting());
-       wait.start();
-       Assert.assertTrue(wait.isWaiting());
-       shell.execute("echo foo");
        Assert.assertFalse(wait.isWaiting());
    }
 }

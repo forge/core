@@ -67,15 +67,15 @@ public class RunUrlPlugin implements Plugin
         String urlPattern = "^(https?)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
         if (Pattern.matches(urlPattern, url))
         {
+            URL remote = new URL(url);
+            String temporalDir = System.getProperty("java.io.tmpdir");
+            File tempFile = new File(temporalDir, "temp" + UUID.randomUUID().toString().replace("-", ""));
+            tempFile.createNewFile();
+            UnknownFileResource tempResource = new UnknownFileResource(factory, tempFile);
+            PluginUtil.downloadFromURL(pipeOut, remote, tempResource);
+
             try
             {
-                URL remote = new URL(url);
-                String temporalDir = System.getProperty("java.io.tmpdir");
-                File tempFile = new File(temporalDir, "temp" + UUID.randomUUID().toString().replace("-", ""));
-                tempFile.createNewFile();
-                UnknownFileResource tempResource = new UnknownFileResource(factory, tempFile);
-
-                PluginUtil.downloadFromURL(pipeOut, remote, tempResource);
                 shell.execute(tempFile, args);
             }
             catch (IOException e)
