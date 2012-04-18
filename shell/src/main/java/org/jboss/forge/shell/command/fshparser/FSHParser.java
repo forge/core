@@ -32,6 +32,7 @@ import org.mvel2.util.StringAppender;
 
 /**
  * @author Mike Brock .
+ * @author <a href="mailto:koen.aers@gmail.com">Koen Aers</a>
  */
 public class FSHParser
 {
@@ -483,7 +484,7 @@ public class FSHParser
    {
       int start = cursor;
       cursor = captureToken(cursor, length, expr);
-      return new String(expr, start, cursor - start);
+      return new String(expr, start, cursor - start).replace("\\ ", " ");
    }
 
    private static int captureToken(int cursor, final int length, final char[] expr)
@@ -501,8 +502,12 @@ public class FSHParser
 
          do
          {
-            while ((cursor != length) && isTokenPart(expr[cursor]))
+            while ((cursor != length) && isTokenPart(expr[cursor])) {              
+               if (expr[cursor] == '\\' && cursor + 1 < length && expr[cursor + 1] == ' ') {
+                  cursor++; // make sure '\ ' are included in the token            
+               }
                cursor++;
+            }
 
             if (cursor == length)
             {
