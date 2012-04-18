@@ -60,18 +60,20 @@ public class MavenProjectLocator implements ProjectLocator
     @Override
     public Project createProject(final DirectoryResource dir)
     {
-        FileResource<?> pom = dir.getChild("pom.xml").reify(FileResource.class);
-
         Project result = new ProjectImpl(factory, dir);
         MavenCoreFacet maven = coreFacetInstance.get();
         maven.setProject(result);
-        if (!pom.exists())
+        if (!maven.isInstalled())
         {
-            pom.createNewFile();
             result.installFacet(maven);
         }
         else
             result.registerFacet(maven);
+        
+        if(!result.hasFacet(MavenCoreFacet.class))
+        {
+            throw new IllegalStateException("Could not create Maven project [MavenCoreFacet could not be installed.]");
+        }
 
         return result;
     }

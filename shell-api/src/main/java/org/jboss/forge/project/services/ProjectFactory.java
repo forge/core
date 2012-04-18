@@ -99,7 +99,7 @@ public class ProjectFactory
             root = (DirectoryResource) root.getParent();
         }
 
-        if(!locator.containsProject(root))
+        if (!locator.containsProject(root))
         {
             root = null;
         }
@@ -149,13 +149,15 @@ public class ProjectFactory
             }
         }
 
-        for (Class<? extends Facet> type : facetTypes)
+        if (project != null)
         {
-            installSingleFacet(project, type);
+            for (Class<? extends Facet> type : facetTypes)
+            {
+                installSingleFacet(project, type);
+            }
+
+            registerFacets(project);
         }
-
-        registerFacets(project);
-
         return project;
     }
 
