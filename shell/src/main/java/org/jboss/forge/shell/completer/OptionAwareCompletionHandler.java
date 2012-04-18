@@ -40,6 +40,7 @@ import org.jboss.forge.shell.console.jline.console.completer.CompletionHandler;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="mailto:koen.aers@gmail.com">Koen Aers</a>
  * 
  */
 public class OptionAwareCompletionHandler implements CompletionHandler
@@ -84,21 +85,21 @@ public class OptionAwareCompletionHandler implements CompletionHandler
       // if there is only one completion, then fill in the buffer
       if (candidates.size() == 1)
       {
-         CharSequence value = candidates.get(0);
+         CharSequence value = escapeSpaces(candidates.get(0));
 
          // fail if the only candidate is the same as the current buffer
          if (value.equals(buf.toString()))
          {
             return false;
          }
-
+         
          setBuffer(reader, value, pos);
 
          return true;
       }
       else if (candidates.size() > 1)
       {
-         String value = getUnambiguousCompletions(candidates);
+         CharSequence value = escapeSpaces(getUnambiguousCompletions(candidates));
          setBuffer(reader, value, pos);
       }
 
@@ -268,6 +269,20 @@ public class OptionAwareCompletionHandler implements CompletionHandler
       }
 
       return true;
+   }
+   
+   private CharSequence escapeSpaces(CharSequence cs) {
+      StringBuffer b = new StringBuffer();
+      for (int i = 0; i < cs.length(); i++)
+      {
+         char c = cs.charAt(i);
+         if (c == ' ')
+         {
+            b.append('\\');
+         }
+         b.append(c);
+      }
+      return b.toString();
    }
 
    private static enum Messages
