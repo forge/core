@@ -21,9 +21,9 @@
  */
 package org.jboss.forge.shell;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.jboss.forge.shell.events.CommandExecuted;
 
@@ -34,12 +34,14 @@ import org.jboss.forge.shell.events.CommandExecuted;
  * TODO Create a cleanup mechanism for these on command execution.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="mailto:koen.aers@gmail.com">Koen Aers</a>
  */
+@Singleton
 public class Wait
 {
     private static String[] spinnerChars = new String[] { "/", "-", "\\", "|" };
     private boolean complete = true;
-    private Runnable runnable;
+    private Runnable runnable;    
     private Thread thread;
 
     private Shell shell;
@@ -82,8 +84,8 @@ public class Wait
                     shell.print(spinnerChars[i++]);
                     try
                     {
-                        Thread.sleep(50);
                         shell.write('\b');
+                        Thread.sleep(50);
                     }
                     catch (InterruptedException e)
                     {
