@@ -22,6 +22,7 @@
 
 package org.jboss.forge.test;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,7 +49,6 @@ import org.jboss.forge.shell.integration.BufferManager;
 import org.jboss.seam.render.RenderRoot;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.solder.SolderRoot;
 import org.junit.After;
@@ -64,7 +64,8 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public abstract class AbstractShellTest
 {
-   static {
+   static
+   {
       System.setProperty("forge.debug.no_auto_init_streams", "true");
    }
 
@@ -72,10 +73,8 @@ public abstract class AbstractShellTest
    public static JavaArchive getDeployment()
    {
 
-      JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar")
-               .addPackages(true, Root.class.getPackage())
-               .addPackages(true, RenderRoot.class.getPackage())
-               .addPackages(true, SolderRoot.class.getPackage())
+      JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar").addPackages(true, Root.class.getPackage())
+               .addPackages(true, RenderRoot.class.getPackage()).addPackages(true, SolderRoot.class.getPackage())
                .addAsManifestResource("META-INF/beans.xml", ArchivePaths.create("beans.xml"));
 
       return archive;
@@ -89,6 +88,8 @@ public abstract class AbstractShellTest
 
    private Queue<String> inputQueue = new LinkedList<String>();
 
+   private ByteArrayOutputStream output = new ByteArrayOutputStream();
+
    private final List<FileResource<?>> tempFolders = new ArrayList<FileResource<?>>();
 
    private static final String PKG = AbstractShellTest.class.getSimpleName().toLowerCase();
@@ -101,11 +102,13 @@ public abstract class AbstractShellTest
 
    @BeforeClass
    public static void before() throws IOException
-   {}
+   {
+   }
 
    @AfterClass
    public static void after()
-   {}
+   {
+   }
 
    @Before
    public void beforeTest() throws Exception
@@ -117,7 +120,7 @@ public abstract class AbstractShellTest
       shell.setExceptionHandlingEnabled(false);
 
       resetInputQueue();
-      shell.setOutputStream(System.out);
+      shell.setOutputStream(output);
       shell.setAnsiSupported(false);
    }
 
@@ -149,39 +152,48 @@ public abstract class AbstractShellTest
 
          @Override
          public void directWriteMode()
-         {}
+         {
+         }
 
          @Override
          public void flushBuffer()
-         {}
+         {
+         }
 
          @Override
          public void write(final int b)
-         {}
+         {
+         }
 
          @Override
          public void write(final byte b)
-         {}
+         {
+         }
 
          @Override
          public void write(final byte[] b)
-         {}
+         {
+         }
 
          @Override
          public void write(final byte[] b, final int offset, final int length)
-         {}
+         {
+         }
 
          @Override
          public void write(final String s)
-         {}
+         {
+         }
 
          @Override
          public void directWrite(final String s)
-         {}
+         {
+         }
 
          @Override
          public void setBufferPosition(final int row, final int col)
-         {}
+         {
+         }
 
          @Override
          public int getHeight()
@@ -202,6 +214,7 @@ public abstract class AbstractShellTest
    @After
    public void afterTest() throws IOException
    {
+      output.reset();
       for (FileResource<?> file : tempFolders)
       {
          if (file.exists())
@@ -239,13 +252,17 @@ public abstract class AbstractShellTest
       return project.get();
    }
 
+   public String getOutput()
+   {
+      return output.toString();
+   }
+
    protected Project initializeProject(final PackagingType type) throws Exception
    {
       getShell().setCurrentResource(createTempFolder());
       queueInputLines("");
       getShell().execute("new-project --named test --topLevelPackage com.test --type " + type.toString());
       return getProject();
-
    }
 
    protected Project initializeJavaProject() throws Exception

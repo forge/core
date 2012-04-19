@@ -57,7 +57,9 @@ public class LsBundlePlugin implements Plugin
    {
       try
       {
-         wait.start();
+         wait.start("Listing Resource Bundle Content ...");
+         out.println();
+         out.println();
          for (Resource<?> path : paths)
          {
             if (path instanceof PropertiesFileResource)
