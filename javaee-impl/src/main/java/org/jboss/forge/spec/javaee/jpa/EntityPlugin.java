@@ -53,6 +53,7 @@ import org.jboss.forge.spec.javaee.PersistenceFacet;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="mailto:koen.aers@gmail.com">Koen Aers</a>
  */
 @Alias("entity")
 @RequiresProject
@@ -134,7 +135,7 @@ public class EntityPlugin implements Plugin
       /**
        * Pick up the generated resource.
        */
-      shell.execute("pick-up " + javaFileLocation.getFullyQualifiedName());
+      shell.execute("pick-up " + javaFileLocation.getFullyQualifiedName().replace(" ", "\\ "));
    }
 
    /**
