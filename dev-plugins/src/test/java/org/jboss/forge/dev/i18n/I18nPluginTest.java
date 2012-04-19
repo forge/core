@@ -54,7 +54,7 @@ public class I18nPluginTest extends AbstractShellTest
       shell.execute("i18n put --key mykey --value myvalue");
       assertEquals("myvalue", resource.getProperty("mykey"));
       shell.execute("i18n get --key mykey");
-      // TODO: Test output
+      assertTrue(getOutput().contains("myvalue"));
    }
 
    @Test
