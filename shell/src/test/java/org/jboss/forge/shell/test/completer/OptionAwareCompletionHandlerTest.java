@@ -63,12 +63,12 @@ public class OptionAwareCompletionHandlerTest extends AbstractShellTest
       Assert.assertEquals("fo", consoleReader.getCursorBuffer().toString());
       
       candidates.clear();
-      candidates.add("f o o");
+      candidates.add("f o o ");
       Assert.assertTrue(completionHandler.complete(consoleReader, candidates, 0));
-      Assert.assertEquals("f\\ o\\ o", consoleReader.getCursorBuffer().toString());
+      Assert.assertEquals("f\\ o\\ o ", consoleReader.getCursorBuffer().toString());
       
       consoleReader.getCursorBuffer().clear();
-      consoleReader.getCursorBuffer().write("f\\ o\\ o");
+      consoleReader.getCursorBuffer().write("f\\ o\\ o ");
       Assert.assertFalse(completionHandler.complete(consoleReader, candidates, 0));      
 
       candidates.add("f o z");
