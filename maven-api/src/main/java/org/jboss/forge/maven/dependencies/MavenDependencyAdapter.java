@@ -50,7 +50,7 @@ public class MavenDependencyAdapter extends org.apache.maven.model.Dependency im
 
       this.setArtifactId(clone.getArtifactId());
       this.setGroupId(clone.getGroupId());
-      this.setClassifier(clone.getClassifier());
+      this.setClassifier("".equals(clone.getClassifier()) ? null : clone.getClassifier());
       this.setExclusions(clone.getExclusions());
       this.setOptional(clone.isOptional());
       this.setScope(clone.getScope());
@@ -70,6 +70,7 @@ public class MavenDependencyAdapter extends org.apache.maven.model.Dependency im
       this.setVersion(dep.getVersion());
       this.setScope(dep.getScopeType());
       this.setType(dep.getPackagingType());
+      this.setClassifier(dep.getClassifier());
 
       for (Dependency exclusion : dep.getExcludedDependencies())
       {
@@ -89,7 +90,7 @@ public class MavenDependencyAdapter extends org.apache.maven.model.Dependency im
 
       this.setArtifactId(dep.getArtifact().getArtifactId());
       this.setGroupId(dep.getArtifact().getGroupId());
-      this.setClassifier(dep.getArtifact().getClassifier());
+      this.setClassifier("".equals(dep.getArtifact().getClassifier()) ? null : dep.getArtifact().getClassifier());
       this.setExclusions(dep.getExclusions());
       this.setOptional(dep.isOptional());
       this.setScope(dep.getScope());
