@@ -22,6 +22,7 @@
 package org.jboss.forge.shell.util;
 
 import java.io.ByteArrayInputStream;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -42,22 +43,27 @@ public abstract class Streams
    public static String toString(final InputStream stream)
    {
       StringBuilder out = new StringBuilder();
-      try {
+      try
+      {
          final char[] buffer = new char[0x10000];
          Reader in = new InputStreamReader(stream, "UTF-8");
          int read;
-         do {
+         do
+         {
             read = in.read(buffer, 0, buffer.length);
-            if (read > 0) {
+            if (read > 0)
+            {
                out.append(buffer, 0, read);
             }
          }
          while (read >= 0);
       }
-      catch (UnsupportedEncodingException e) {
+      catch (UnsupportedEncodingException e)
+      {
          throw new RuntimeException(e);
       }
-      catch (IOException e) {
+      catch (IOException e)
+      {
          throw new RuntimeException(e);
       }
       return out.toString();
@@ -65,18 +71,22 @@ public abstract class Streams
 
    public static void write(final InputStream source, final OutputStream destination)
    {
-      try {
+      try
+      {
          final byte[] buffer = new byte[0x10000];
          int read;
-         do {
+         do
+         {
             read = source.read(buffer, 0, buffer.length);
-            if (read > 0) {
+            if (read > 0)
+            {
                destination.write(buffer, 0, read);
             }
          }
          while (read >= 0);
       }
-      catch (IOException e) {
+      catch (IOException e)
+      {
          throw new RuntimeException(e);
       }
    }
@@ -84,5 +94,20 @@ public abstract class Streams
    public static InputStream fromString(final String data)
    {
       return new ByteArrayInputStream(data.getBytes());
+   }
+
+   public static void closeQuietly(final Closeable source)
+   {
+      if (source != null)
+      {
+         try
+         {
+            source.close();
+         }
+         catch (IOException ignore)
+         {
+
+         }
+      }
    }
 }

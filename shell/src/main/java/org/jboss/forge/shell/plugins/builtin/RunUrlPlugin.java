@@ -25,6 +25,7 @@ package org.jboss.forge.shell.plugins.builtin;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -43,6 +44,7 @@ import org.jboss.forge.shell.util.PluginUtil;
 
 /**
  * @author Pablo Palazón
+ * @author <a href="mailto:koen.aers@gmail.com">Koen Aers</a>
  */
 @Alias("run-url")
 @Topic("Shell Environment")
@@ -77,6 +79,9 @@ public class RunUrlPlugin implements Plugin
             try
             {
                 shell.execute(tempFile, args);
+            }
+            catch (UnknownHostException e) {
+               throw e;
             }
             catch (IOException e)
             {

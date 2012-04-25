@@ -539,7 +539,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       }
       else if (OSUtils.isWindows())
       {
-         final OutputStream ansiOut = AnsiConsole.wrapOutputStream(System.out);
+         final OutputStream ansiOut = AnsiConsole.wrapOutputStream(outputStream);
 
          TerminalFactory.configure(TerminalFactory.Type.WINDOWS);
          terminal = TerminalFactory.get();
