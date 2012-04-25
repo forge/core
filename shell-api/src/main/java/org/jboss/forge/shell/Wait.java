@@ -82,8 +82,8 @@ public class Wait
                     shell.print(spinnerChars[i++]);
                     try
                     {
-                        Thread.sleep(250);
                         shell.write('\b');
+                        Thread.sleep(50);
                     }
                     catch (InterruptedException e)
                     {
