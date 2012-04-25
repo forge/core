@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -40,7 +41,8 @@ import org.jboss.forge.shell.console.jline.console.completer.CompletionHandler;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ * @author <a href="mailto:koen.aers@gmail.com">Koen Aers</a>
+ *
  */
 public class OptionAwareCompletionHandler implements CompletionHandler
 {
@@ -84,7 +86,9 @@ public class OptionAwareCompletionHandler implements CompletionHandler
       // if there is only one completion, then fill in the buffer
       if (candidates.size() == 1)
       {
-         CharSequence value = candidates.get(0);
+         String value = candidates.get(0).toString();
+         // escape the spaces, except if it's the last character
+         value = value.substring(0, value.length() - 1).replace(" ", "\\ ") + value.substring(value.length() - 1); 
 
          // fail if the only candidate is the same as the current buffer
          if (value.equals(buf.toString()))
@@ -98,7 +102,8 @@ public class OptionAwareCompletionHandler implements CompletionHandler
       }
       else if (candidates.size() > 1)
       {
-         String value = getUnambiguousCompletions(candidates);
+         // escape all the spaces, even the last character
+         CharSequence value = getUnambiguousCompletions(candidates).replace(" ", "\\ ");
          setBuffer(reader, value, pos);
       }
 
@@ -126,7 +131,7 @@ public class OptionAwareCompletionHandler implements CompletionHandler
    /**
     * Print out the candidates. If the size of the candidates is greater than the
     * {@link org.jboss.forge.shell.console.ConsoleReader#getAutoprintThreshold}, they prompt with a warning.
-    * 
+    *
     * @param candidates the list of candidates to print
     */
    public void printCandidates(final ConsoleReader reader, Collection<CharSequence> candidates) throws
@@ -269,18 +274,16 @@ public class OptionAwareCompletionHandler implements CompletionHandler
 
       return true;
    }
-
+   
    private static enum Messages
    {
       DISPLAY_CANDIDATES,
       DISPLAY_CANDIDATES_YES,
-      DISPLAY_CANDIDATES_NO, ;
-
-      private static final ResourceBundle bundle =
-               ResourceBundle.getBundle(CandidateListCompletionHandler.class.getName());
+      DISPLAY_CANDIDATES_NO;
 
       public String format(final Object... args)
       {
+         ResourceBundle bundle = ResourceBundle.getBundle(CandidateListCompletionHandler.class.getName());
          return String.format(bundle.getString(name()), args);
       }
    }

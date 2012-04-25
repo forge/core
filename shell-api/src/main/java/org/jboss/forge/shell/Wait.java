@@ -32,13 +32,14 @@ import org.jboss.forge.shell.events.CommandExecuted;
  * try-finally block to ensure that the wait is always completed.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="mailto:koen.aers@gmail.com">Koen Aers</a>
  */
 @Singleton
 public class Wait
 {
     private static String[] spinnerChars = new String[] { "/", "-", "\\", "|" };
     private boolean complete = true;
-    private Runnable runnable;
+    private Runnable runnable;    
     private Thread thread;
 
     private Shell shell;
@@ -81,8 +82,8 @@ public class Wait
                     shell.print(spinnerChars[i++]);
                     try
                     {
-                        Thread.sleep(250);
                         shell.write('\b');
+                        Thread.sleep(50);
                     }
                     catch (InterruptedException e)
                     {

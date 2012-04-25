@@ -51,6 +51,12 @@ public class RmPluginTest extends AbstractShellTest
 
       shell.execute("rm -rf foo");
       assertFalse(project.getProjectRoot().getChild("foo").exists());
+      
+      shell.execute("mkdir f\\ o\\ o");
+      assertTrue(project.getProjectRoot().getChild("f o o").exists());
+      
+      shell.execute("rm -rf f\\ o\\ o");
+      assertFalse(project.getProjectRoot().getChild("f o o").exists());
    }
 
 }
