@@ -115,11 +115,13 @@ goto error
 :init
 set FORGE_CMD_LINE_ARGS=
 set FORGE_PLUGIN_DIR=
+set FORGE_DEBUG_ARGS=
 :initArgs
 if %1a==a goto endInit
 set FORGE_CMD_LINE_ARGS=%FORGE_CMD_LINE_ARGS% %1
 if "%FORGE_PLUGIN_DIR%"=="-pluginDir" set FORGE_PLUGIN_DIR=%1
-if "%1"=="-pluginDir" set FORGE_PLUGIN_DIR=%1
+if %1=="-pluginDir" set FORGE_PLUGIN_DIR=%1
+if %1=="--debug" set FORGE_DEBUG_ARGS=-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000
 shift
 goto initArgs
 @REM Reaching here means variables are defined and arguments have been captured
@@ -136,7 +138,7 @@ goto runForge
 @REM Start Forge
 :runForge
 set FORGE_MAIN_CLASS=org.jboss.forge.shell.Bootstrap
-%FORGE_JAVA_EXE% %FORGE_OPTS% "-Dforge.home=%FORGE_HOME%" -Dforge.shell.colorEnabled=true -jar %JBOSS_MODULES% -modulepath "%FORGE_HOME%\modules;%USERHOME%\.forge\plugins;%FORGE_PLUGIN_DIR%" org.jboss.forge %FORGE_CMD_LINE_ARGS%
+%FORGE_JAVA_EXE% %FORGE_DEBUG_ARGS% %FORGE_OPTS% "-Dforge.home=%FORGE_HOME%" -Dforge.shell.colorEnabled=true -jar %JBOSS_MODULES% -modulepath "%FORGE_HOME%\modules;%USERHOME%\.forge\plugins;%FORGE_PLUGIN_DIR%" org.jboss.forge %FORGE_CMD_LINE_ARGS%
 if ERRORLEVEL 1 goto error
 goto end
 
