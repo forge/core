@@ -21,17 +21,15 @@
  */
 package org.jboss.forge.project.services;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.Project;
@@ -46,7 +44,7 @@ import org.jboss.forge.shell.util.ResourceUtil;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Dependent
+@Singleton
 public class ProjectFactory
 {
     private final FacetFactory facetFactory;
@@ -65,14 +63,17 @@ public class ProjectFactory
 
     public void init()
     {
-        Iterator<ProjectLocator> iterator = locatorInstance.iterator();
-        List<ProjectLocator> result = new ArrayList<ProjectLocator>();
-        while (iterator.hasNext())
+        if (locators == null || locators.isEmpty())
         {
-            ProjectLocator element = BeanManagerUtils.getContextualInstance(manager, iterator.next().getClass());
-            result.add(element);
+            Iterator<ProjectLocator> iterator = locatorInstance.iterator();
+            List<ProjectLocator> result = new ArrayList<ProjectLocator>();
+            while (iterator.hasNext())
+            {
+                ProjectLocator element = BeanManagerUtils.getContextualInstance(manager, iterator.next().getClass());
+                result.add(element);
+            }
+            this.locators = result;
         }
-        this.locators = result;
     }
 
     public DirectoryResource findProjectRootRecusively(final DirectoryResource currentDirectory)
