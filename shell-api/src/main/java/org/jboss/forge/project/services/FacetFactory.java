@@ -28,7 +28,6 @@ import java.util.Set;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 
 import org.jboss.forge.bus.util.Annotations;
