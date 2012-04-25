@@ -30,7 +30,7 @@
 # -----------------------------------------------------------------------
 
 PLUGIN_DIR=""
-
+FORGE_DEBUG_ARGS=""
 QUOTED_ARGS=""
 while [ "$1" != "" ] ; do
 
@@ -41,7 +41,11 @@ while [ "$1" != "" ] ; do
   if [ "$1" == "-pluginDir" ] ; then
     PLUGIN_DIR="-pluginDir"
   fi
-  
+
+  if [ "$1" == "--debug" ] ; then
+    FORGE_DEBUG_ARGS="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000"
+  fi
+
   QUOTED_ARGS="$QUOTED_ARGS \"$1\""
   shift
 
@@ -168,6 +172,6 @@ if $cygwin; then
     HOME=`cygpath --path --windows "$HOME"`
 fi
 
-forge_exec_cmd="\"$JAVACMD\" $FORGE_OPTS \"-Dforge.home=${FORGE_HOME}\"  \"-Dforge.shell.colorEnabled=true\" -jar \"${FORGE_HOME}/jboss-modules.jar\" -modulepath \"${FORGE_HOME}/modules:${HOME}/.forge/plugins:$PLUGIN_DIR\" org.jboss.forge"
+forge_exec_cmd="\"$JAVACMD\" $FORGE_DEBUG_ARGS $FORGE_OPTS \"-Dforge.home=${FORGE_HOME}\"  \"-Dforge.shell.colorEnabled=true\" -jar \"${FORGE_HOME}/jboss-modules.jar\" -modulepath \"${FORGE_HOME}/modules:${HOME}/.forge/plugins:$PLUGIN_DIR\" org.jboss.forge"
 
 eval $forge_exec_cmd "$QUOTED_ARGS"
