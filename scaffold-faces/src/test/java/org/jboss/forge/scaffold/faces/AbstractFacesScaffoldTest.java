@@ -39,7 +39,7 @@ public abstract class AbstractFacesScaffoldTest extends AbstractShellTest
       Project project = initializeJavaProject();
       queueInputLines("HIBERNATE", "JBOSS_AS7", "");
       getShell().execute("persistence setup");
-      queueInputLines("", "", "2", "", "", "");
+      queueInputLines("", "", "", "");
       getShell().execute("scaffold setup");
       return project;
    }
@@ -49,7 +49,7 @@ public abstract class AbstractFacesScaffoldTest extends AbstractShellTest
       Project project = initializeJavaProject();
       queueInputLines("HIBERNATE", "JBOSS_AS7", "");
       getShell().execute("persistence setup");
-      queueInputLines("", "", "2", "", "", "");
+      queueInputLines("", "", "");
       getShell().execute("scaffold setup --targetDir " + targetDir);
       return project;
    }

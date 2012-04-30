@@ -29,9 +29,6 @@
 							<propertyStyle>
 								<forgePropertyStyle refId="forgePropertyStyle"/>
 							</propertyStyle>
-                                                         <project>
-                                                                  <forgeProject/>
-                                                         </project>
                                                          <annotationLookup>
                                                             <annotationLookup/>
                                                          </annotationLookup>
@@ -54,9 +51,6 @@
                 <inspectionResultProcessors>
                    <array>
                      <forgeInspectionResultProcessor xmlns="java:org.jboss.forge.scaffold.faces.metawidget.processor">
-                        <project>
-                           <forgeProject/>
-                        </project>
                      </forgeInspectionResultProcessor>
                    </array>
                 </inspectionResultProcessors>

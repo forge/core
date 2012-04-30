@@ -24,10 +24,8 @@ package org.jboss.forge.scaffold.faces.metawidget.processor;
 import java.util.Map;
 import static org.metawidget.inspector.InspectionResultConstants.*;
 import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.*;
-import org.jboss.forge.project.Project;
 import org.metawidget.inspectionresultprocessor.iface.InspectionResultProcessor;
 import org.metawidget.statically.StaticMetawidget;
-import org.metawidget.statically.javacode.StaticJavaMetawidget;
 import org.metawidget.util.XmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -40,15 +38,6 @@ import org.w3c.dom.NodeList;
  */
 public class ForgeInspectionResultProcessor implements InspectionResultProcessor<StaticMetawidget> {
    
-   private Project project;
-   
-   public ForgeInspectionResultProcessor() {
-   }
-
-   public void setProject(Project project) {
-      this.project = project;
-   }
-
    @Override
    public String processInspectionResult(String inspectionResult, StaticMetawidget metawidget, Object toInspect, String type, String... names) {
 

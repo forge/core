@@ -453,5 +453,29 @@
             </plugins>
          </build>
       </profile>
+      <profile>
+         <id>runForge</id>
+         <build>
+            <plugins>
+               <plugin>
+                  <groupId>org.codehaus.mojo</groupId>
+                  <artifactId>exec-maven-plugin</artifactId>
+                  <version>1.2.1</version>
+                  <configuration>
+                     <executable>java</executable>
+                     <arguments>
+                        <argument>${debug.props}</argument>
+                        <argument>-cp</argument>
+                        <classpath/>
+                        <argument>org.jboss.modules.Main</argument>
+                        <argument>-modulepath</argument>
+                        <argument>${project.build.directory}/${project.artifactId}-${forge.release.version}/modules:${user.home}/.forge/plugins</argument>
+                        <argument>org.jboss.forge</argument>
+                     </arguments>
+                  </configuration>
+               </plugin>
+            </plugins>
+         </build>
+      </profile>
    </profiles>
 </project>
