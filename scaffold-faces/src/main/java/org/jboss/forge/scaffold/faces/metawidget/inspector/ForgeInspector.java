@@ -36,7 +36,6 @@ import org.jboss.forge.parser.java.JavaEnum;
 import org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle.ForgePropertyStyle.ForgeProperty;
 import org.jboss.solder.logging.Logger;
 import org.metawidget.inspector.impl.BaseObjectInspector;
-import org.metawidget.inspector.impl.BaseObjectInspectorConfig;
 import org.metawidget.inspector.impl.propertystyle.Property;
 import org.metawidget.statically.faces.StaticFacesUtils;
 import org.metawidget.util.ClassUtils;
@@ -51,19 +50,16 @@ import org.metawidget.util.simple.StringUtils;
 public class ForgeInspector
         extends BaseObjectInspector {
 
-   ForgeInspectorConfig config;
    Logger log = Logger.getLogger(getClass());
+   private AnnotationLookup annotationLookup;
 
    //
    // Constructor
    //
-   public ForgeInspector() {
-      super(new BaseObjectInspectorConfig());
-   }
 
    public ForgeInspector(ForgeInspectorConfig config) {
       super(config);
-      this.config = config;
+      annotationLookup = config.getAnnotationLookup();
    }
 
    //
@@ -135,9 +131,7 @@ public class ForgeInspector
          attributes.put(REQUIRED, TRUE);
       }
 
-      if (config != null && config.getAnnotationLookup() != null) {
-         final AnnotationLookup annotationLookup = config.getAnnotationLookup();
-
+      if (null != annotationLookup) {
          if (attributes.containsKey(REVERSE_PRIMARY_KEY_TYPE) && null != annotationLookup) {
             try {
                final String reverseKey = annotationLookup.getFieldName(Id.class, attributes.get(REVERSE_PRIMARY_KEY_TYPE));
@@ -147,7 +141,6 @@ public class ForgeInspector
             }
          }
       }
-      
       return attributes;
    }
 
@@ -158,9 +151,7 @@ public class ForgeInspector
       if (superMap != null)
          attributes.putAll(superMap);
       
-      if (config != null && config.getAnnotationLookup() != null) {
-         final AnnotationLookup annotationLookup = config.getAnnotationLookup();
-
+      if (null != annotationLookup) {
          try {
             final String primaryKey = annotationLookup.getFieldName(Id.class, declaredClass);
             attributes.put(PRIMARY_KEY, primaryKey);
@@ -170,6 +161,5 @@ public class ForgeInspector
       }
       return attributes;
    }
-   
    
 }

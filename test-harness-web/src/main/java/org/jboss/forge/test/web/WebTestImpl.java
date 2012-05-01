@@ -82,7 +82,7 @@ public class WebTestImpl implements WebTest
 
       DependencyFacet deps = project.getFacet(DependencyFacet.class);
       deps.addDirectManagedDependency(
-               DependencyBuilder.create("org.jboss.arquillian:arquillian-bom:1.0.0.CR7")
+               DependencyBuilder.create("org.jboss.arquillian:arquillian-bom:1.0.0.Final")
                         .setPackagingType(PackagingType.BASIC).setScopeType(ScopeType.IMPORT));
 
       ProfileBuilder profileBuilder = ProfileBuilder
@@ -94,7 +94,9 @@ public class WebTestImpl implements WebTest
                .addDependency(
                         DependencyBuilder.create("org.jboss.arquillian.protocol:arquillian-protocol-servlet"))
                .addDependency(DependencyBuilder.create("org.jboss.jsfunit:jsfunit-arquillian:2.0.0.Beta2"))
-               .addDependency(DependencyBuilder.create("org.jboss.as:jboss-as-arquillian-container-managed:7.1.0.CR1b"));
+               .addDependency(DependencyBuilder.create("junit:junit:4.10"))
+               .addDependency(DependencyBuilder.create("org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-impl:1.1.0-beta-1"))
+               .addDependency(DependencyBuilder.create("org.jboss.as:jboss-as-arquillian-container-managed:7.1.1.Final"));
 
       Profile profile = profileBuilder.getAsMavenProfile();
 
@@ -114,7 +116,7 @@ public class WebTestImpl implements WebTest
                .createConfigurationElement("artifactItems").addChild("artifactItem");
       artifactItem.addChild("groupId").setText("org.jboss.as");
       artifactItem.addChild("artifactId").setText("jboss-as-dist");
-      artifactItem.addChild("version").setText("7.1.0.CR1b");
+      artifactItem.addChild("version").setText("7.1.1.Final");
       artifactItem.addChild("type").setText("zip");
       artifactItem.addChild("outputDirectory").setText("target/");
       try {

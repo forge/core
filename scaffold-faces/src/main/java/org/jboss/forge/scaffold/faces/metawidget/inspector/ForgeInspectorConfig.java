@@ -34,7 +34,6 @@ import org.metawidget.inspector.impl.BaseObjectInspectorConfig;
 public class ForgeInspectorConfig extends BaseObjectInspectorConfig implements NeedsResourceResolver {
 
    ResourceResolver resolver;
-   Project project;
    AnnotationLookup annotationLookup;
    
    @Override
@@ -44,14 +43,6 @@ public class ForgeInspectorConfig extends BaseObjectInspectorConfig implements N
 
    public ResourceResolver getResolver() {
       return resolver;
-   }
-
-   public void setProject(Project project) {
-      this.project = project;
-   }
-
-   public Project getProject() {
-      return project;
    }
 
    public void setAnnotationLookup(AnnotationLookup annotationLookup) {
