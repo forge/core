@@ -86,9 +86,9 @@ public class FacesScaffoldShoppingTest extends AbstractFacesScaffoldTest
                "field oneToMany --named orders --fieldType com.test.model.SubmittedOrder --inverseFieldName customer");
       getShell().execute("field oneToOne --named profile --fieldType com.test.model.Profile");
 
-      queueInputLines("", "", "", "", "");
+      //queueInputLines("", "", "", "", "");
       getShell()
-               .execute("scaffold from-entity com.test.model.*");
+               .execute("scaffold from-entity com.test.model.* --overwrite");
 
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
       WebResourceFacet web = project.getFacet(WebResourceFacet.class);
