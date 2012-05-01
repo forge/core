@@ -402,7 +402,9 @@ public class ForgePropertyStyle
    // Private methods
    //
 
-   /*package private*/ static JavaSource<?> sourceForName(final Project project, final String type)
+   /*package private*/ 
+   
+   static JavaSource<?> sourceForName(final Project project, final String type)
    {
       try
       {
