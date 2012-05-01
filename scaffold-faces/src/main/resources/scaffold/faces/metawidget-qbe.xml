@@ -1,69 +1,69 @@
 <?xml version="1.0"?>
 <metawidget xmlns="http://metawidget.org"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:processor="java:org.metawidget.statically.faces.component.widgetprocessor"
-	xsi:schemaLocation="http://metawidget.org http://metawidget.org/xsd/metawidget-1.0.xsd
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xmlns:processor="java:org.metawidget.statically.faces.component.widgetprocessor"
+            xsi:schemaLocation="http://metawidget.org http://metawidget.org/xsd/metawidget-1.0.xsd
 						java:org.metawidget.statically.faces.component.html http://metawidget.org/xsd/org.metawidget.statically.faces.component.html-1.0.xsd
 						java:org.metawidget.inspector.composite http://metawidget.org/xsd/org.metawidget.inspector.composite-1.0.xsd"
-	version="1.0">
+            version="1.0">
 
 	<!-- metawidget-qbe.xml is used to generate the Query By Example (QBE) Java code -->
 	
-	<staticJavaMetawidget xmlns="java:org.metawidget.statically.javacode">
+        <staticJavaMetawidget xmlns="java:org.metawidget.statically.javacode">
 	
-		<inspector>
-			<compositeInspector xmlns="java:org.metawidget.inspector.composite" config="CompositeInspectorConfig">
-				<inspectors>
-					<array>
-						<propertyTypeInspector xmlns="java:org.metawidget.inspector.propertytype" config="org.metawidget.inspector.impl.BaseObjectInspectorConfig">
-							<propertyStyle>
-								<forgePropertyStyle id="forgePropertyStyle" xmlns="java:org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle" config="ForgePropertyStyleConfig">
-									<project>
-										<forgeProject/>
-									</project>
-								</forgePropertyStyle>
-							</propertyStyle>
-						</propertyTypeInspector>
-						<forgeInspector xmlns="java:org.jboss.forge.scaffold.faces.metawidget.inspector" config="org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectorConfig">
-							<propertyStyle>
-								<forgePropertyStyle refId="forgePropertyStyle"/>
-							</propertyStyle>
-                                                         <annotationLookup>
-                                                            <annotationLookup/>
-                                                         </annotationLookup>
-						</forgeInspector>
-						<jpaInspector xmlns="java:org.metawidget.inspector.jpa" config="JpaInspectorConfig">
-							<propertyStyle>
-								<forgePropertyStyle refId="forgePropertyStyle"/>
-							</propertyStyle>
-						</jpaInspector>
-						<beanValidationInspector xmlns="java:org.metawidget.inspector.beanvalidation" config="org.metawidget.inspector.impl.BaseObjectInspectorConfig">
-							<propertyStyle>
-								<forgePropertyStyle refId="forgePropertyStyle"/>
-							</propertyStyle>
-						</beanValidationInspector>
-					</array>
-				</inspectors>
-			</compositeInspector>
-		</inspector>
+                <inspector>
+                        <compositeInspector xmlns="java:org.metawidget.inspector.composite" config="CompositeInspectorConfig">
+                                <inspectors>
+                                        <array>
+                                                <propertyTypeInspector xmlns="java:org.metawidget.inspector.propertytype" config="org.metawidget.inspector.impl.BaseObjectInspectorConfig">
+                                                        <propertyStyle>
+                                                                <forgePropertyStyle id="forgePropertyStyle" xmlns="java:org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle" config="ForgePropertyStyleConfig">
+                                                                        <project>
+                                                                                <forgeProject/>
+                                                                        </project>
+                                                                </forgePropertyStyle>
+                                                        </propertyStyle>
+                                                </propertyTypeInspector>
+                                                <forgeInspector xmlns="java:org.jboss.forge.scaffold.faces.metawidget.inspector" config="org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectorConfig">
+                                                        <propertyStyle>
+                                                                <forgePropertyStyle refId="forgePropertyStyle"/>
+                                                        </propertyStyle>
+                                                        <annotationLookup>
+                                                                <annotationLookup/>
+                                                        </annotationLookup>
+                                                </forgeInspector>
+                                                <jpaInspector xmlns="java:org.metawidget.inspector.jpa" config="JpaInspectorConfig">
+                                                        <propertyStyle>
+                                                                <forgePropertyStyle refId="forgePropertyStyle"/>
+                                                        </propertyStyle>
+                                                </jpaInspector>
+                                                <beanValidationInspector xmlns="java:org.metawidget.inspector.beanvalidation" config="org.metawidget.inspector.impl.BaseObjectInspectorConfig">
+                                                        <propertyStyle>
+                                                                <forgePropertyStyle refId="forgePropertyStyle"/>
+                                                        </propertyStyle>
+                                                </beanValidationInspector>
+                                        </array>
+                                </inspectors>
+                        </compositeInspector>
+                </inspector>
 		
                 <inspectionResultProcessors>
-                   <array>
-                     <forgeInspectionResultProcessor xmlns="java:org.jboss.forge.scaffold.faces.metawidget.processor">
-                     </forgeInspectionResultProcessor>
-                   </array>
+                        <array>
+                                <forgeInspectionResultProcessor xmlns="java:org.jboss.forge.scaffold.faces.metawidget.processor">
+                                </forgeInspectionResultProcessor>
+                        </array>
                 </inspectionResultProcessors>
 
                 <widgetBuilder>
-			<queryByExampleWidgetBuilder xmlns="java:org.jboss.forge.scaffold.faces.metawidget.widgetbuilder"/>
-		</widgetBuilder>
+                        <queryByExampleWidgetBuilder xmlns="java:org.jboss.forge.scaffold.faces.metawidget.widgetbuilder"/>
+                </widgetBuilder>
 
-		<widgetProcessors>
-			<array>
-				<unsearchableWidgetProcessor xmlns="java:org.jboss.forge.scaffold.faces.metawidget.widgetprocessor"/>
-			</array>
-		</widgetProcessors>
+                <widgetProcessors>
+                        <array>
+                                <unsearchableWidgetProcessor xmlns="java:org.jboss.forge.scaffold.faces.metawidget.widgetprocessor"/>
+                        </array>
+                </widgetProcessors>
 		
-	</staticJavaMetawidget>			
+        </staticJavaMetawidget>			
 
 </metawidget>

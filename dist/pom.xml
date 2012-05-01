@@ -28,7 +28,6 @@
    <artifactId>forge-distribution</artifactId>
 
    <name>JBoss Forge - Distribution Build</name>
-   <packaging>pom</packaging>
 
    <properties>
       <version.org.jboss.jandex>1.0.3.Final</version.org.jboss.jandex>
@@ -479,9 +478,6 @@
       </profile>
       <profile>
          <id>debugForge</id>
-         <activation>
-            <property><name>debug.props</name></property>
-         </activation>
          <build>
             <plugins>
                <plugin>
@@ -492,6 +488,7 @@
                      <executable>java</executable>
                      <workingDirectory>${java.io.tmpdir}</workingDirectory>
                      <arguments>
+			<argument>-Xdebug</argument>
                         <argument>${debug.props}</argument>
                         <argument>-cp</argument>
                         <classpath/>
@@ -506,4 +503,5 @@
          </build>
       </profile>
    </profiles>
+    <packaging>pom</packaging>
 </project>

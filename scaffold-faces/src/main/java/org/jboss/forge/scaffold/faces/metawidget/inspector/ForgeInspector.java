@@ -56,15 +56,10 @@ public class ForgeInspector
    //
    // Constructor
    //
-   public ForgeInspector() {
-      this(new ForgeInspectorConfig());
-   }
 
    public ForgeInspector(ForgeInspectorConfig config) {
       super(config);
-      if (null != config) {
-         annotationLookup = config.getAnnotationLookup();
-      }
+      annotationLookup = config.getAnnotationLookup();
    }
 
    //
