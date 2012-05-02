@@ -48,7 +48,7 @@ public class ForgeInspectorTest
 
    public void testRelationships()
    {
-      String xml = new ForgeInspector().inspect(new Foo(), Foo.class.getName());
+      String xml = new ForgeInspector(new ForgeInspectorConfig()).inspect(new Foo(), Foo.class.getName());
       Document document = XmlUtils.documentFromString(xml);
       assertEquals("inspection-result", document.getFirstChild().getNodeName());
       Element entity = (Element) document.getFirstChild().getFirstChild();
