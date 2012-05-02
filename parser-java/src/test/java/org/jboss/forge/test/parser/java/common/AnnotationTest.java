@@ -27,6 +27,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jboss.forge.parser.java.Annotation;
 import org.jboss.forge.parser.java.AnnotationTarget;
@@ -119,8 +121,9 @@ public abstract class AnnotationTest<O extends JavaSource<O>, T>
       assertEquals(size + 2, annotations.size());
       assertEquals(Test.class.getSimpleName(), anno1.getName());
       assertEquals(Test.class.getSimpleName(), anno2.getName());
-      String pattern = "@" + Test.class.getSimpleName() + " " + "@" + Test.class.getSimpleName();
-      assertTrue(target.toString().contains(pattern));
+      Pattern pattern = Pattern.compile("@" + Test.class.getSimpleName() + "\\s*" + "@" + Test.class.getSimpleName());
+      Matcher matcher = pattern.matcher(target.toString());
+      assertTrue(matcher.find());
       assertTrue(target.getOrigin().hasImport(Test.class));
    }
 
