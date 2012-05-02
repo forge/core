@@ -52,6 +52,7 @@ import org.jboss.forge.parser.java.Visibility;
 import org.jboss.forge.parser.java.ast.AnnotationAccessor;
 import org.jboss.forge.parser.java.ast.ModifierAccessor;
 import org.jboss.forge.parser.java.ast.TypeDeclarationFinderVisitor;
+import org.jboss.forge.parser.java.util.Formatter;
 import org.jboss.forge.parser.java.util.Strings;
 import org.jboss.forge.parser.java.util.Types;
 import org.jboss.forge.parser.spi.WildcardImportResolver;
@@ -592,18 +593,8 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
       catch (Exception e) {
          throw new ParserException("Could not modify source: " + unit.toString(), e);
       }
-
-      String documentString = document.get();
-      return ensureCorrectNewLines(documentString);
-   }
-
-   private String ensureCorrectNewLines(String documentString) {
-       String newLine = System.getProperty("line.separator");
-       
-       if (documentString.indexOf("\n") != -1 && documentString.indexOf(newLine) == -1)       
-           return documentString.replaceAll("\n", newLine);
-       
-       return documentString;
+      
+      return Formatter.format(document.get());
    }
 
    @Override
