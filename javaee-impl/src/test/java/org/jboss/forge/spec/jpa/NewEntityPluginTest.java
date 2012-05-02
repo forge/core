@@ -119,4 +119,16 @@ public class NewEntityPluginTest extends AbstractJPATest
 
       assertEquals(entitySource.getPackage(), pkgName);
    }
+   
+   @Test
+   public void assertEntityClassDeclarationOnNewLine() throws Exception
+   {
+       Project project = getProject();
+       JavaClass javaClass = generateEntity(project);
+       
+       String content = javaClass.toString();
+       
+       assertTrue(content.contains("@Entity" + System.getProperty("line.separator") + 
+               "public class"));
+   }
 }

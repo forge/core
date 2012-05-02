@@ -41,19 +41,20 @@ public abstract class Formatter
 {
    public static String format(JavaClass javaClass)
    {
-      // TODO locate user's eclipse project settings, use those if we can.
-      Properties options = readConfig("org.eclipse.jdt.core.prefs");
+      return format(javaClass.toString());
+   }
+   
+   public static String format(String source)
+   {
+       // TODO locate user's eclipse project settings, use those if we can.
+       Properties options = readConfig("org.eclipse.jdt.core.prefs");
 
-      final CodeFormatter codeFormatter = ToolFactory.createCodeFormatter(options);
-      String result = formatFile(javaClass, codeFormatter);
-
-      return result;
+       final CodeFormatter codeFormatter = ToolFactory.createCodeFormatter(options);
+       return ensureCorrectNewLines(formatFile(source, codeFormatter));
    }
 
-   private static String formatFile(JavaClass javaClass, CodeFormatter codeFormatter)
+   private static String formatFile(String contents, CodeFormatter codeFormatter)
    {
-      String contents = javaClass.toString();
-
       IDocument doc = new Document(contents);
       try
       {
@@ -104,4 +105,16 @@ public abstract class Formatter
          }
       }
    }
+   
+   
+   private static String ensureCorrectNewLines(String documentString) 
+   {
+       String newLine = System.getProperty("line.separator");
+       
+       if (documentString.indexOf("\n") != -1 && documentString.indexOf(newLine) == -1)       
+           return documentString.replaceAll("\n", newLine);
+       
+       return documentString;
+   }
+
 }
