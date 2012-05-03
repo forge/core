@@ -26,8 +26,10 @@ import java.io.FileNotFoundException;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.resources.EntryResource;
 import org.jboss.forge.resources.PropertiesFileResource;
 import org.jboss.forge.resources.Resource;
+import org.jboss.forge.shell.ShellColor;
 import org.jboss.forge.shell.Wait;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.DefaultCommand;
@@ -50,6 +52,7 @@ public class LsBundlePlugin implements Plugin
    @Inject
    private Wait wait;
 
+   @SuppressWarnings("unchecked")
    @DefaultCommand
    public void run(
             @Option(description = "path", defaultValue = ".") final Resource<?>[] paths,
@@ -67,7 +70,9 @@ public class LsBundlePlugin implements Plugin
                PropertiesFileResource propResource = (PropertiesFileResource) path;
                for (Resource<?> resource : propResource.listResources())
                {
-                  out.println(resource.getName());
+                  EntryResource<String, String> entryResource = (EntryResource<String, String>) resource;
+                  out.print(ShellColor.BOLD, entryResource.getKey() + ": ");
+                  out.println(entryResource.getValue());
                }
                out.println();
             }
