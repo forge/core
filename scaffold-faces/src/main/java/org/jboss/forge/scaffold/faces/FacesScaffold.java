@@ -59,6 +59,7 @@ import org.jboss.forge.scaffold.faces.metawidget.config.ForgeConfigReader;
 import org.jboss.forge.scaffold.util.ScaffoldUtil;
 import org.jboss.forge.shell.ShellPrompt;
 import org.jboss.forge.shell.plugins.Alias;
+import org.jboss.forge.shell.plugins.Help;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.util.Streams;
 import org.jboss.forge.spec.javaee.CDIFacet;
@@ -101,11 +102,12 @@ import org.w3c.dom.NamedNodeMap;
  * writing Metawidget plugins, see <a href="http://metawidget.org/documentation.php">the Metawidget documentation</a>.
  * <p>
  * This Facet does <em>not</em> require Metawidget to be in the final project.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author Richard Kennard
  */
 @Alias("faces")
+@Help("JavaServer Faces scaffolding")
 @RequiresFacet({ WebResourceFacet.class,
          DependencyFacet.class,
          PersistenceFacet.class,
@@ -690,8 +692,8 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
          public boolean accept(Resource<?> resource)
          {
             FileResource<?> file = (FileResource<?>) resource;
-            
-            if (!file.isDirectory() 
+
+            if (!file.isDirectory()
                      || file.getName().equals("resources")
                      || file.getName().equals("WEB-INF")
                      || file.getName().equals("META-INF"))
