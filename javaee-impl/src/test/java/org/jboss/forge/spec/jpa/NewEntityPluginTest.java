@@ -27,8 +27,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.parser.java.Annotation;
+import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
@@ -119,16 +123,42 @@ public class NewEntityPluginTest extends AbstractJPATest
 
       assertEquals(entitySource.getPackage(), pkgName);
    }
-   
+
    @Test
    public void assertEntityClassDeclarationOnNewLine() throws Exception
    {
        Project project = getProject();
        JavaClass javaClass = generateEntity(project);
-       
+
        String content = javaClass.toString();
-       
-       assertTrue(content.contains("@Entity" + System.getProperty("line.separator") + 
+
+       assertTrue(content.contains("@Entity" + System.getProperty("line.separator") +
                "public class"));
    }
+
+   @Test
+   public void testNewEntityIdStrategy() throws Exception
+   {
+      Project project = getProject();
+
+      String entityName = "Goofy";
+      queueInputLines("");
+      getShell().execute(ConstraintInspector.getName(EntityPlugin.class) + " --named " + entityName + " --idStrategy TABLE");
+
+      String pkg = project.getFacet(PersistenceFacet.class).getEntityPackage() + "." + entityName;
+      String path = Packages.toFileSyntax(pkg) + ".java";
+      JavaClass javaClass = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(path).getJavaSource();
+
+      assertFalse(javaClass.hasSyntaxErrors());
+      javaClass = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(javaClass).getJavaSource();
+      assertFalse(javaClass.hasSyntaxErrors());
+
+      assertTrue(javaClass.hasImport(Entity.class));
+      assertTrue(javaClass.hasField("id"));
+      Field<JavaClass> idField = javaClass.getField("id");
+      assertTrue(idField.hasAnnotation(GeneratedValue.class));
+      Annotation<JavaClass> genValueAnn = idField.getAnnotation(GeneratedValue.class);
+      assertEquals(GenerationType.TABLE, genValueAnn.getEnumValue(GenerationType.class, "strategy"));
+   }
+
 }
