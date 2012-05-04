@@ -81,7 +81,11 @@ public class EntityPlugin implements Plugin
             @Option(required = false,
                      name = "package",
                      type = PromptType.JAVA_PACKAGE,
-                     description = "The package name") final String packageName) throws Throwable
+                     description = "The package name") final String packageName,
+            @Option(name = "idStrategy",
+                     defaultValue = "AUTO",
+                     description = "The GenerationType name for the ID") final GenerationType idStrategy)
+            throws Throwable
    {
       final PersistenceFacet jpa = project.getFacet(PersistenceFacet.class);
       final JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
@@ -113,7 +117,7 @@ public class EntityPlugin implements Plugin
       Field<JavaClass> id = javaClass.addField("private Long id = null;");
       id.addAnnotation(Id.class);
       id.addAnnotation(GeneratedValue.class)
-               .setEnumValue("strategy", GenerationType.AUTO);
+               .setEnumValue("strategy", idStrategy);
       id.addAnnotation(Column.class)
                .setStringValue("name", "id")
                .setLiteralValue("updatable", "false")
@@ -140,7 +144,7 @@ public class EntityPlugin implements Plugin
 
    /**
     * Retrieves the package portion of the current directory if it is a package, null otherwise.
-    * 
+    *
     * @return String representation of the current package, or null
     */
    private String getPackagePortionOfCurrentDirectory()
