@@ -21,22 +21,24 @@
  */
 package org.jboss.forge.scaffold.plugins.shell;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
 import org.jboss.forge.scaffold.ScaffoldProvider;
 import org.jboss.forge.shell.completer.SimpleTokenCompleter;
 import org.jboss.forge.shell.util.ConstraintInspector;
 
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 public class ScaffoldProviderCompleter extends SimpleTokenCompleter
 {
-   @Inject
+   @Inject @Any
    private Instance<ScaffoldProvider> impls;
 
    @Override
