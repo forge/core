@@ -89,8 +89,8 @@ public class NewProjectPlugin implements Plugin
                      required = true) final String name,
             @Option(name = "topLevelPackage",
                      description = "The top-level java package for the project [e.g: \"com.example.project\"] ",
-                     required = true,
-                     type = PromptType.JAVA_PACKAGE) final String javaPackage,
+                     required = false,
+                     type = PromptType.JAVA_PACKAGE) final String suggestedJavaPackage,
             @Option(name = "type",
                      description = "The project type, defaults to .jar",
                      required = false,
@@ -110,12 +110,17 @@ public class NewProjectPlugin implements Plugin
             ) throws IOException
    {
       DirectoryResource dir = null;
-
+      String javaPackage = suggestedJavaPackage;
       if (!getValidPackagingTypes().contains(type))
       {
          throw new RuntimeException("Unsupported packaging type: " + type);
       }
 
+      // FORGE-571
+      if (javaPackage == null)
+      {
+         javaPackage = "com.example." + name;
+      }
       boolean skipFolderPrompt = false;
       try
       {
@@ -145,7 +150,8 @@ public class NewProjectPlugin implements Plugin
          }
       }
       catch (ResourceException e)
-      {}
+      {
+      }
 
       if (!skipFolderPrompt && (projectFactory.containsProject(dir)
                || !shell.promptBoolean("Use [" + dir.getFullyQualifiedName() + "] as project directory?")))
@@ -235,8 +241,10 @@ public class NewProjectPlugin implements Plugin
       }
 
       DirectoryResource parentDir = project.getProjectRoot().getParent().reify(DirectoryResource.class);
-      if (parentDir != null) {
-         for (ProjectAssociationProvider provider : providers) {
+      if (parentDir != null)
+      {
+         for (ProjectAssociationProvider provider : providers)
+         {
             if (provider.canAssociate(project, parentDir)
                      && shell.promptBoolean("Add new project as a sub-project of [" + parentDir.getFullyQualifiedName()
                               + "]?"))
@@ -267,11 +275,11 @@ public class NewProjectPlugin implements Plugin
                            + ".\");")
                   .getOrigin());
       }
-      
+
       if (project.hasFacet(JavaSourceFacet.class))
       {
-    	  DirectoryResource sourceFolder = project.getFacet(JavaSourceFacet.class).getSourceFolder();
-    	  createTopLevelPackage(sourceFolder, javaPackage);
+         DirectoryResource sourceFolder = project.getFacet(JavaSourceFacet.class).getSourceFolder();
+         createTopLevelPackage(sourceFolder, javaPackage);
       }
 
       if (finalName != null)
@@ -304,8 +312,8 @@ public class NewProjectPlugin implements Plugin
       validTypes.add(PackagingType.BUNDLE);
       return validTypes;
    }
-   
-   private DirectoryResource createTopLevelPackage(DirectoryResource sourceFolder, String javaPackage) 
+
+   private DirectoryResource createTopLevelPackage(DirectoryResource sourceFolder, String javaPackage)
    {
       DirectoryResource directory = sourceFolder.getChildDirectory(Packages.toFileSyntax(javaPackage));
       directory.mkdirs();

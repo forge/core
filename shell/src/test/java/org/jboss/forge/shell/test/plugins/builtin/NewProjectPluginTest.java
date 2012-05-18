@@ -38,7 +38,7 @@ import org.junit.Test;
 
 /**
  * LsMavenPomPluginTestCase
- * 
+ *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
@@ -84,6 +84,19 @@ public class NewProjectPluginTest extends AbstractShellTest
    }
 
    @Test
+   public void testCreateProjectWithDefaultPackage() throws Exception
+   {
+      getShell().setCurrentResource(createTempFolder());
+      queueInputLines("");
+      getShell().execute("new-project --named test");
+      Project project = getProject();
+      assertEquals("com.example.test", project.getFacet(MetadataFacet.class).getTopLevelPackage());
+      assertEquals("com.example.test", project.getFacet(MavenJavaSourceFacet.class).getBasePackage());
+      assertEquals(PackagingType.JAR, project.getFacet(MavenPackagingFacet.class).getPackagingType());
+   }
+
+
+   @Test
    public void testCreatePomProject() throws Exception
    {
       getShell().setCurrentResource(createTempFolder());
@@ -96,9 +109,9 @@ public class NewProjectPluginTest extends AbstractShellTest
    }
 
    /**
-    * 
+    *
     * Tests trying to create a zip (invalid) project, then changing to jar
-    * 
+    *
     * @throws Exception
     */
    @Test
@@ -169,15 +182,15 @@ public class NewProjectPluginTest extends AbstractShellTest
       assertEquals("com.test", project.getFacet(MavenJavaSourceFacet.class).getBasePackage());
       assertEquals(PackagingType.JAR, project.getFacet(MavenPackagingFacet.class).getPackagingType());
    }
-   
+
    @Test
-   public void testCreateTopLevelPackage() throws Exception 
+   public void testCreateTopLevelPackage() throws Exception
    {
 	   initializeJavaProject();
 	   DirectoryResource root = getProject().getProjectRoot();
 	   Resource<?> srcMainJavaDirectory = root.getChild("/src/main/java");
 	   assertNotNull(srcMainJavaDirectory.reify(DirectoryResource.class));
-	   Resource<?> testDirectory = srcMainJavaDirectory.getChild("com/test"); 
+	   Resource<?> testDirectory = srcMainJavaDirectory.getChild("com/test");
 	   assertNotNull(testDirectory.reify(DirectoryResource.class));
    }
 
