@@ -45,7 +45,7 @@ public class ServletPluginTest extends AbstractShellTest
    public void testServletSetupDoesNotInitiallyCreateWebXML() throws Exception
    {
       Project project = initializeJavaProject();
-      queueInputLines("y");
+      queueInputLines("y", "");
       getShell().execute("servlet setup");
       
       Assert.assertTrue(project.hasFacet(ServletFacet.class));
@@ -58,7 +58,7 @@ public class ServletPluginTest extends AbstractShellTest
    public void testServletLazilyCreatesWebXMLOnSave() throws Exception
    {
       Project project = initializeJavaProject();
-      queueInputLines("y");
+      queueInputLines("y", "");
       getShell().execute("setup servlet");
 
       Assert.assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveDependency(

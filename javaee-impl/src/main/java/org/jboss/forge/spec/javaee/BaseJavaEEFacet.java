@@ -31,6 +31,7 @@ import org.jboss.forge.project.dependencies.DependencyInstaller;
 import org.jboss.forge.project.dependencies.ScopeType;
 import org.jboss.forge.project.facets.BaseFacet;
 import org.jboss.forge.project.facets.DependencyFacet;
+import org.jboss.forge.project.packaging.PackagingType;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 
 /**
@@ -43,7 +44,7 @@ import org.jboss.forge.shell.plugins.RequiresFacet;
 public abstract class BaseJavaEEFacet extends BaseFacet
 {
    public static final Dependency JAVAEE6 =
-            DependencyBuilder.create("org.jboss.spec:jboss-javaee-6.0:2.0.0.Final:import:basic");
+            DependencyBuilder.create("org.jboss.spec:jboss-javaee-6.0").setScopeType(ScopeType.IMPORT).setPackagingType(PackagingType.BASIC);
 
    private final DependencyInstaller installer;
 
@@ -57,14 +58,14 @@ public abstract class BaseJavaEEFacet extends BaseFacet
    public boolean install()
    {
       for (Dependency requirement : getRequiredDependencies()) {
-         if (!installer.isInstalled(project, requirement))
+         if (!getInstaller().isInstalled(project, requirement))
          {
             DependencyFacet deps = project.getFacet(DependencyFacet.class);
             if (!deps.hasEffectiveManagedDependency(requirement) && !deps.hasDirectManagedDependency(JAVAEE6))
             {
-               deps.addDirectManagedDependency(JAVAEE6);
+               getInstaller().installManaged(project, JAVAEE6);
             }
-            installer.install(project, requirement, ScopeType.PROVIDED);
+            getInstaller().install(project, requirement, ScopeType.PROVIDED);
          }
       }
       return true;
@@ -84,4 +85,9 @@ public abstract class BaseJavaEEFacet extends BaseFacet
    }
 
    abstract protected List<Dependency> getRequiredDependencies();
+
+   public DependencyInstaller getInstaller()
+   {
+      return installer;
+   }
 }

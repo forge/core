@@ -44,6 +44,20 @@ public interface DependencyInstaller
     * {@link Dependency#getScopeType()} will be preserved in the added managed dependency.
     */
    Dependency install(Project project, Dependency dependency, ScopeType type);
+   
+   /**
+    * Install given managed {@link Dependency} with the default {@link ScopeType}. This method overwrites existing managed dependencies.
+    * Any {@link Dependency#getPackagingType()}, {@link Dependency#getClassifier()}, and
+    * {@link Dependency#getScopeType()} will be preserved.
+    */
+   Dependency installManaged(Project project, Dependency dependency);
+
+   /**
+    * Install given managed {@link Dependency} with the given {@link ScopeType}. This method overwrites existing dependencies.
+    * Any {@link Dependency#getPackagingType()}, {@link Dependency#getClassifier()}, and
+    * {@link Dependency#getScopeType()} will be preserved.
+    */
+   Dependency installManaged(Project project, Dependency dependency, ScopeType type);
 
    /**
     * Returns whether or not the given {@link Dependency} is installed.

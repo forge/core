@@ -22,6 +22,7 @@ public class JMSPluginTest extends AbstractShellTest
         Project project = initializeJavaProject();
         assertFalse(project.hasFacet(JMSFacet.class));
 
+        queueInputLines("");
         getShell().execute("setup jms");
 
         assertTrue(project.hasFacet(JMSFacet.class));

@@ -46,7 +46,7 @@ public class SoapPluginTest extends SingletonAbstractShellTest
       Project project = initializeJavaProject();
 
       assertFalse(project.hasFacet(SoapFacet.class));
-      queueInputLines("");
+      queueInputLines("", "");
       getShell().execute("setup soap");
       assertTrue(project.hasFacet(SoapFacet.class));
       assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveDependency(

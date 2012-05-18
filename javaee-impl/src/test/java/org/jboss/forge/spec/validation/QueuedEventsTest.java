@@ -46,6 +46,7 @@ public class QueuedEventsTest extends AbstractShellTest
    public void testPromptBoolean() throws Exception
    {
       Project project = initializeJavaProject();
+      queueInputLines("");
       getShell().execute("project install-facet forge.spec.validation");
 
       assertTrue(project.hasFacet(ValidationFacet.class));

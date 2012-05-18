@@ -23,16 +23,18 @@ public class EEPluginTest extends AbstractShellTest
       Project project = initializeJavaProject();
 
       assertFalse(project.hasFacet(EJBFacet.class));
+      queueInputLines("");
       getShell().execute("setup ejb");
       assertTrue(project.hasFacet(EJBFacet.class));
    }
 
    @Test
-   public void testSetupJRA() throws Exception
+   public void testSetupJTA() throws Exception
    {
       Project project = initializeJavaProject();
 
       assertFalse(project.hasFacet(JTAFacet.class));
+      queueInputLines("");
       getShell().execute("setup jta");
       assertTrue(project.hasFacet(JTAFacet.class));
    }

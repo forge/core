@@ -21,9 +21,6 @@
  */
 package org.jboss.forge.spec.javaee.jsf;
 
-import java.util.Arrays;
-import java.util.List;
-
 import javax.inject.Inject;
 
 import org.jboss.forge.project.dependencies.Dependency;
@@ -45,6 +42,8 @@ public class FacesAPIFacetImpl extends FacesFacetImpl implements FacesAPIFacet
 {
    public static final Dependency JAVAEE6_FACES = DependencyBuilder
             .create("org.jboss.spec.javax.faces:jboss-jsf-api_2.0_spec");
+   public static final Dependency JAVAEE6_FACES_21 = DependencyBuilder
+            .create("org.jboss.spec.javax.faces:jboss-jsf-api_2.1_spec");
 
    @Inject
    public FacesAPIFacetImpl(final DependencyInstaller installer, final ShellPrintWriter out)
@@ -56,18 +55,25 @@ public class FacesAPIFacetImpl extends FacesFacetImpl implements FacesAPIFacet
    public boolean isInstalled()
    {
       DependencyFacet deps = project.getFacet(DependencyFacet.class);
-      return deps.hasEffectiveDependency(JAVAEE6_FACES);
+      return deps.hasEffectiveDependency(JAVAEE6_FACES) || deps.hasEffectiveDependency(JAVAEE6_FACES_21);
    }
 
    @Override
    public boolean install()
    {
-      return super.install();
+      super.install();
+
+      DependencyFacet deps = project.getFacet(DependencyFacet.class);
+      if(deps.hasEffectiveManagedDependency(JAVAEE6_FACES) && !deps.hasEffectiveDependency(JAVAEE6_FACES))
+      {
+         getInstaller().install(project, JAVAEE6_FACES);
+      }
+      else if(deps.hasEffectiveManagedDependency(JAVAEE6_FACES_21) && !deps.hasEffectiveDependency(JAVAEE6_FACES_21))
+      {
+         getInstaller().install(project, JAVAEE6_FACES_21);
+      }
+      
+      return isInstalled(); 
    }
 
-   @Override
-   protected List<Dependency> getRequiredDependencies()
-   {
-      return Arrays.asList(JAVAEE6_FACES);
-   }
 }

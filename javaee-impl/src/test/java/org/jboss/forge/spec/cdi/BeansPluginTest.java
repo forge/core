@@ -47,7 +47,7 @@ public class BeansPluginTest extends AbstractShellTest
    public void testBeansSetup() throws Exception
    {
       Project project = initializeJavaProject();
-      queueInputLines("n");
+      queueInputLines("n", "");
       getShell().execute("beans setup");
 
       project.getFacet(CDIFacet.class).getConfig();
@@ -60,7 +60,7 @@ public class BeansPluginTest extends AbstractShellTest
    public void testBeansSetupProvidedScope() throws Exception
    {
       Project project = initializeJavaProject();
-      queueInputLines("y");
+      queueInputLines("y", "");
       getShell().execute("beans setup");
 
       project.getFacet(CDIFacet.class).getConfig();
