@@ -33,6 +33,9 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
 import org.apache.maven.artifact.repository.MavenArtifactRepository;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
+import org.apache.maven.execution.DefaultMavenExecutionRequest;
+import org.apache.maven.execution.MavenExecutionRequest;
+import org.apache.maven.execution.MavenExecutionRequestPopulator;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingRequest;
@@ -89,7 +92,9 @@ public class MavenContainer
          // TODO this needs to be configurable via .forge
          // TODO this reference to the M2_REPO should probably be centralized
 
-         request = new DefaultProjectBuildingRequest();
+         MavenExecutionRequest executionRequest = new DefaultMavenExecutionRequest();
+         lookup(MavenExecutionRequestPopulator.class).populateFromSettings(executionRequest, getSettings());
+         request = executionRequest.getProjectBuildingRequest();
          ArtifactRepository localRepository = new MavenArtifactRepository(
                   "local", new File(settings.getLocalRepository()).toURI().toURL().toString(),
                   getContainer().lookup(ArtifactRepositoryLayout.class),
@@ -98,7 +103,7 @@ public class MavenContainer
                   new ArtifactRepositoryPolicy(true, ArtifactRepositoryPolicy.UPDATE_POLICY_NEVER,
                            ArtifactRepositoryPolicy.CHECKSUM_POLICY_WARN));
          request.setLocalRepository(localRepository);
-         request.setRemoteRepositories(new ArrayList<ArtifactRepository>());
+         //request.setRemoteRepositories(new ArrayList<ArtifactRepository>());
          request.setSystemProperties(System.getProperties());
 
          MavenRepositorySystemSession repositorySession = new MavenRepositorySystemSession();
@@ -113,7 +118,7 @@ public class MavenContainer
 
          request.setRepositorySession(repositorySession);
          request.setProcessPlugins(false);
-         request.setPluginArtifactRepositories(Arrays.asList(localRepository));
+         //request.setPluginArtifactRepositories(Arrays.asList(localRepository));
          request.setResolveDependencies(false);
          return request;
       }
