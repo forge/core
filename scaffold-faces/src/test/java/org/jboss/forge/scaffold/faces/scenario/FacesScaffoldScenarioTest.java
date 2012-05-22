@@ -133,11 +133,11 @@ public class FacesScaffoldScenarioTest extends AbstractFacesScaffoldTest
       contents = Streams.toString(customerBean.getResourceInputStream());
 
       StringBuilder qbeMetawidget = new StringBuilder(
-               "\t\tString City = this.search.getCity();\r\n");
-      qbeMetawidget.append("\t\tif (City != null && !\"\".equals(City)) {\r\n");
+               "      String City = this.search.getCity();\r\n");
+      qbeMetawidget.append("      if (City != null && !\"\".equals(City)) {\r\n");
       qbeMetawidget
-               .append("\t\t\tpredicatesList.add(builder.like(root.<String>get(\"City\"), '%' + City + '%'));\r\n");
-      qbeMetawidget.append("\t\t}\r\n");
+               .append("         predicatesList.add(builder.like(root.<String>get(\"City\"), '%' + City + '%'));\r\n");
+      qbeMetawidget.append("      }\r\n");
 
       Assert.assertTrue(contents.contains(qbeMetawidget));
       

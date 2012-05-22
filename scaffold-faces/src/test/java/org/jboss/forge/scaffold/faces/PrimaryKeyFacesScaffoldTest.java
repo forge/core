@@ -124,7 +124,7 @@ public class PrimaryKeyFacesScaffoldTest extends AbstractFacesScaffoldTest {
    @Test
    public void testPrimaryKeys() throws Exception {
       Project project = initializeJavaProject();
-      queueInputLines("HIBERNATE", "JBOSS_AS7", "");
+      queueInputLines("HIBERNATE", "JBOSS_AS7", "", "");
       getShell().execute("persistence setup");
 
       for (PrimaryKeyTestBase testClass : new PrimaryKeyTestBase[]{
