@@ -45,8 +45,7 @@ import org.jboss.forge.shell.plugins.SetupCommand;
  * @author <a href="mailto:jevgeni.zelenkov@gmail.com">Jevgeni Zelenkov</a>
  *
  */
-@Alias("jgit")
-@RequiresFacet(GitFacet.class)
+@Alias("git")
 public class Git implements Plugin
 {
    @Inject
