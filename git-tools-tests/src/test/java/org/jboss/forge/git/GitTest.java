@@ -56,7 +56,7 @@ public class GitTest extends AbstractShellTest
       Project p = initializeJavaProject();
 
       // Execute a command. If any input is required, it will be read from queued input.
-      getShell().execute("jgit setup");
+      getShell().execute("git setup");
 
       Assert.assertNotNull(resolver);
       Assert.assertTrue(p.getProjectRoot().getChildDirectory(".git").exists());
