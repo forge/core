@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.dependencies.DependencyInstaller;
+import org.jboss.forge.project.dependencies.ScopeType;
 import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.shell.ShellPrintWriter;
 import org.jboss.forge.shell.plugins.Alias;
@@ -41,9 +42,9 @@ import org.jboss.forge.spec.javaee.ServletFacet;
 public class FacesAPIFacetImpl extends FacesFacetImpl implements FacesAPIFacet
 {
    public static final Dependency JAVAEE6_FACES = DependencyBuilder
-            .create("org.jboss.spec.javax.faces:jboss-jsf-api_2.0_spec");
+            .create("org.jboss.spec.javax.faces:jboss-jsf-api_2.0_spec").setScopeType(ScopeType.PROVIDED);
    public static final Dependency JAVAEE6_FACES_21 = DependencyBuilder
-            .create("org.jboss.spec.javax.faces:jboss-jsf-api_2.1_spec");
+            .create("org.jboss.spec.javax.faces:jboss-jsf-api_2.1_spec").setScopeType(ScopeType.PROVIDED);
 
    @Inject
    public FacesAPIFacetImpl(final DependencyInstaller installer, final ShellPrintWriter out)

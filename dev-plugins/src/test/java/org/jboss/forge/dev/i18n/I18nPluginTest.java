@@ -99,7 +99,7 @@ public class I18nPluginTest extends AbstractShellTest
    public void testFacesConfig() throws Exception
    {
       Project project = initializeJavaProject();
-      queueInputLines("Y", "Y", "Y");
+      queueInputLines("", "", "Y", "Y", "Y");
       getShell().execute("faces setup");
       getShell().execute("i18n setup");
       FileResource<?> configFile = project.getFacet(FacesFacet.class).getConfigFile();

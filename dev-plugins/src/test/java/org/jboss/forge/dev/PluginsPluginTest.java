@@ -41,7 +41,7 @@ public class PluginsPluginTest extends AbstractShellTest
    public void testCreateAndBuildPlugin() throws Exception
    {
       initializeJavaProject();
-      queueInputLines("1");
+      queueInputLines("","1");
       getShell().execute("plugins setup");
       queueInputLines("");
       getShell().execute("plugins new-plugin --named demo");
@@ -52,7 +52,7 @@ public class PluginsPluginTest extends AbstractShellTest
    public void testCreatePluginWithDashInName() throws Exception
    {
       initializeJavaProject();
-      queueInputLines("1");
+      queueInputLines("","1");
       getShell().execute("plugins setup");
       queueInputLines("");
       getShell().execute("plugins new-plugin --named demo-plugin");
@@ -63,7 +63,7 @@ public class PluginsPluginTest extends AbstractShellTest
    public void testCreatePluginWithUppercaseName() throws Exception
    {
       initializeJavaProject();
-      queueInputLines("1");
+      queueInputLines("","1");
       getShell().execute("plugins setup");
       queueInputLines("");
       getShell().execute("plugins new-plugin --named DemoPlugin");
@@ -74,7 +74,7 @@ public class PluginsPluginTest extends AbstractShellTest
    public void testInstallPlugin() throws Exception
    {
       Project javaProject = initializeJavaProject();
-      queueInputLines("1");
+      queueInputLines("","1");
       getShell().execute("plugins setup");
       queueInputLines("");
       getShell().execute("plugins new-plugin --named plugins-plugin-test-install");
