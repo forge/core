@@ -19,9 +19,8 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.maven.locators;
+package org.jboss.forge.shell.project;
 
-import org.jboss.forge.maven.ProjectImpl;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.locator.ProjectLocator;
 import org.jboss.forge.project.services.ProjectFactory;
@@ -45,12 +44,7 @@ public class DefaultProjectLocator implements ProjectLocator
     @Override
     public Project createProject(final DirectoryResource dir)
     {
-        Project result = null;
-        if ((dir != null) && dir.exists())
-        {
-            result = new ProjectImpl(factory, dir);
-        }
-        return result;
+        return null;
     }
 
     @Override
