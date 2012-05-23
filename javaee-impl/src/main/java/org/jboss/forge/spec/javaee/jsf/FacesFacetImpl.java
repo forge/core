@@ -90,7 +90,6 @@ public class FacesFacetImpl extends BaseJavaEEFacet implements FacesFacet
    @Override
    public boolean install()
    {
-      out.println("1");
       if (!getConfigFile().exists() && !getConfigFile().createNewFile())
       {
          throw new RuntimeException("Failed to create required [" + getConfigFile().getFullyQualifiedName() + "]");
