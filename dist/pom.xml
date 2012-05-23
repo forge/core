@@ -21,7 +21,7 @@
    <parent>
       <groupId>org.jboss.forge</groupId>
       <artifactId>forge-parent</artifactId>
-      <version>1.0.5-SNAPSHOT</version>
+      <version>1.0.5.Final</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
 
@@ -466,7 +466,7 @@
                      <workingDirectory>${java.io.tmpdir}</workingDirectory>
                      <arguments>
                         <argument>-cp</argument>
-                        <classpath/>
+                        <classpath />
                         <argument>org.jboss.modules.Main</argument>
                         <argument>-modulepath</argument>
                         <argument>${project.build.directory}/${project.artifactId}-${forge.release.version}/modules:${user.home}/.forge/plugins</argument>
@@ -492,7 +492,7 @@
                         <argument>-Xdebug</argument>
                         <argument>${debug.props}</argument>
                         <argument>-cp</argument>
-                        <classpath/>
+                        <classpath />
                         <argument>org.jboss.modules.Main</argument>
                         <argument>-modulepath</argument>
                         <argument>${project.build.directory}/${project.artifactId}-${forge.release.version}/modules:${user.home}/.forge/plugins</argument>
