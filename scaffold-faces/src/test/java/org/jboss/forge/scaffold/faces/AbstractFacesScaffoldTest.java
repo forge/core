@@ -53,4 +53,12 @@ public abstract class AbstractFacesScaffoldTest extends AbstractShellTest
       getShell().execute("scaffold setup --targetDir " + targetDir);
       return project;
    }
+   
+   protected String normalized(StringBuilder sb) {
+      return normalized(sb.toString());
+   }
+   
+   protected String normalized(String input) {
+      return input.replaceAll("(\r|\n|\\s)+"," ");
+   }
 }
