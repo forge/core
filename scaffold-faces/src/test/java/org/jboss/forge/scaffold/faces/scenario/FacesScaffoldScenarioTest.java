@@ -133,13 +133,13 @@ public class FacesScaffoldScenarioTest extends AbstractFacesScaffoldTest
       contents = Streams.toString(customerBean.getResourceInputStream());
 
       StringBuilder qbeMetawidget = new StringBuilder(
-               "      String City = this.search.getCity();\r\n");
-      qbeMetawidget.append("      if (City != null && !\"\".equals(City)) {\r\n");
+               "      String City = this.search.getCity();\n");
+      qbeMetawidget.append("      if (City != null && !\"\".equals(City)) {\n");
       qbeMetawidget
-               .append("         predicatesList.add(builder.like(root.<String>get(\"City\"), '%' + City + '%'));\r\n");
-      qbeMetawidget.append("      }\r\n");
+               .append("         predicatesList.add(builder.like(root.<String> get(\"City\"), '%' + City + '%'));\n");
+      qbeMetawidget.append("      }\n");
 
-      Assert.assertTrue(contents.contains(qbeMetawidget));
+      Assert.assertTrue(normalized(contents).contains(normalized(qbeMetawidget)));
       
       FileResource<?> welcomeFile = web.getWebResource("/index.html");
       Assert.assertTrue(welcomeFile.exists());
