@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 import static org.jboss.forge.shell.util.GeneralUtils.pad;
-import static org.jboss.forge.shell.util.GeneralUtils.printOutColumns;
 
 /**
  * Implementation of more & less, but called more. "More is less".

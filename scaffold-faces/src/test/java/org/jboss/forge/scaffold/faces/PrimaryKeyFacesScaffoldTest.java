@@ -9,8 +9,6 @@ import java.io.Serializable;
 import java.util.Map;
 import javax.inject.Inject;
 import javax.persistence.*;
-import junit.framework.Assert;
-import org.jboss.arquillian.protocol.servlet.arq514hack.descriptors.impl.web.Strings;
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;

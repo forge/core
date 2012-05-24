@@ -22,7 +22,6 @@
 
 package org.jboss.forge.spec.plugin;
 
-import org.apache.log4j.pattern.RelativeTimePatternConverter;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.JavaClass;

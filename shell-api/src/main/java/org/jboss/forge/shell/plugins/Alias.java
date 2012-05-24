@@ -29,7 +29,6 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import javax.enterprise.inject.Any;
 import javax.inject.Qualifier;
 
 import org.jboss.forge.project.Facet;

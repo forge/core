@@ -6,7 +6,6 @@ import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.dependencies.DependencyInstaller;
 import org.jboss.forge.project.facets.BaseFacet;
-import org.jboss.forge.project.services.ResourceFactory;
 import org.jboss.forge.resources.FileResource;
 
 import javax.inject.Inject;

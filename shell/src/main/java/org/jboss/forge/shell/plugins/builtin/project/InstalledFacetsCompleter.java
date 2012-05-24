@@ -2,8 +2,6 @@ package org.jboss.forge.shell.plugins.builtin.project;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-
 import javax.inject.Inject;
 
 import org.jboss.forge.project.Facet;

@@ -21,7 +21,6 @@
  */
 package org.jboss.forge.scaffold.faces.metawidget.inspector;
 
-import org.jboss.forge.project.Project;
 import org.jboss.forge.scaffold.faces.util.AnnotationLookup;
 import org.metawidget.config.iface.NeedsResourceResolver;
 import org.metawidget.config.iface.ResourceResolver;

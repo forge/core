@@ -29,12 +29,10 @@ import javax.inject.Inject;
 
 import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.maven.ProjectImpl;
-import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.locator.ProjectLocator;
 import org.jboss.forge.project.services.ProjectFactory;
 import org.jboss.forge.resources.DirectoryResource;
-import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.Resource;
 
 /**

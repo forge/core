@@ -28,7 +28,6 @@ import javax.inject.Inject;
 
 import org.jboss.forge.project.BaseProject;
 import org.jboss.forge.project.Project;
-import org.jboss.forge.project.facets.FacetNotFoundException;
 import org.jboss.forge.project.facets.MetadataFacet;
 import org.jboss.forge.project.services.ProjectFactory;
 import org.jboss.forge.resources.DirectoryResource;

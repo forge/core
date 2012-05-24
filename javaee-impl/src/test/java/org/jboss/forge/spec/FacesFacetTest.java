@@ -38,7 +38,6 @@ import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.spec.javaee.FacesAPIFacet;
 import org.jboss.forge.spec.javaee.FacesFacet;
 import org.jboss.forge.spec.javaee.jsf.FacesAPIFacetImpl;
-import org.jboss.forge.spec.javaee.jsf.FacesFacetImpl;
 import org.jboss.forge.test.SingletonAbstractShellTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;

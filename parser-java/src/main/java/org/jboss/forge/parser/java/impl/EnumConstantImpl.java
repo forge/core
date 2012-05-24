@@ -30,7 +30,6 @@ import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.EnumConstant;
 import org.jboss.forge.parser.java.JavaEnum;
 import org.jboss.forge.parser.java.JavaSource;
-import org.jboss.forge.parser.java.Member;
 
 public class EnumConstantImpl<O extends JavaSource<O>> implements EnumConstant<O>
 {

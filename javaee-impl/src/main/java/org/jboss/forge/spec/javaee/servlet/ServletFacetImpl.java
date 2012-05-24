@@ -45,7 +45,6 @@ import org.jboss.forge.resources.UnknownFileResource;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresPackagingType;
-import org.jboss.forge.shell.squelch.Squelched;
 import org.jboss.forge.shell.util.Streams;
 import org.jboss.forge.spec.javaee.BaseJavaEEFacet;
 import org.jboss.forge.spec.javaee.ServletFacet;
@@ -144,7 +143,7 @@ public class ServletFacetImpl extends BaseJavaEEFacet implements ServletFacet
                   return super.getResourceInputStream();
                }
             }
-            
+
             @Override
             public UnknownFileResource setContents(InputStream data)
             {
@@ -154,7 +153,7 @@ public class ServletFacetImpl extends BaseJavaEEFacet implements ServletFacet
                }
                return super.setContents(data);
             }
-            
+
             @Override
             public UnknownFileResource setContents(char[] data)
             {
@@ -164,7 +163,7 @@ public class ServletFacetImpl extends BaseJavaEEFacet implements ServletFacet
                }
                return super.setContents(data);
             }
-            
+
             @Override
             public UnknownFileResource setContents(String data)
             {

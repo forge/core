@@ -1,7 +1,5 @@
 package org.jboss.forge.shell.test.plugins.builtin;
 
-import static org.junit.Assert.assertEquals;
-
 import java.net.UnknownHostException;
 
 import org.jboss.arquillian.junit.Arquillian;
