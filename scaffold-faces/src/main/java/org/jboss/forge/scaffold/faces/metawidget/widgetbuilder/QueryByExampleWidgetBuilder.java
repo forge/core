@@ -56,8 +56,7 @@ public class QueryByExampleWidgetBuilder
          return new StaticJavaStub();
       }
 
-      String type = WidgetBuilderUtils.getActualClassOrType(attributes);
-      Class<?> clazz = ClassUtils.niceForName(type);
+      Class<?> clazz = WidgetBuilderUtils.getActualClassOrType(attributes, null);
       String name = attributes.get(NAME);
 
       // String
@@ -81,7 +80,8 @@ public class QueryByExampleWidgetBuilder
       {
          StaticJavaStub toReturn = new StaticJavaStub();
          toReturn.getChildren().add(
-                  new JavaStatement(clazz.getSimpleName() + " " + name + " = this.search.get" + StringUtils.capitalize(name) + "()"));
+                  new JavaStatement(clazz.getSimpleName() + " " + name + " = this.search.get"
+                           + StringUtils.capitalize(name) + "()"));
          JavaStatement ifNotEmpty = new JavaStatement("if (" + name + " != 0)");
          ifNotEmpty.getChildren().add(
                   new JavaStatement("predicatesList.add(builder.equal(root.get(\"" + name + "\"), " + name + "))"));
@@ -90,6 +90,8 @@ public class QueryByExampleWidgetBuilder
       }
 
       // LOOKUP
+
+      String type = attributes.get(TYPE);
 
       if (attributes.containsKey(LOOKUP))
       {
@@ -109,11 +111,7 @@ public class QueryByExampleWidgetBuilder
 
       if (attributes.containsKey(FACES_LOOKUP))
       {
-          String reverseKey = "Id";
-          if (attributes.containsKey(REVERSE_PRIMARY_KEY)) 
-              reverseKey = StringUtils.capitalize(attributes.get(REVERSE_PRIMARY_KEY));
-
-          StaticJavaStub toReturn = new StaticJavaStub();
+         StaticJavaStub toReturn = new StaticJavaStub();
          JavaStatement getValue = new JavaStatement(ClassUtils.getSimpleName(type) + " " + name + " = this.search.get"
                   + StringUtils.capitalize(name) + "()");
          getValue.putImport(type);

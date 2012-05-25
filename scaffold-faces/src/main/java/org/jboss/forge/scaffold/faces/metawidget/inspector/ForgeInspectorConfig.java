@@ -34,14 +34,14 @@ public class ForgeInspectorConfig extends BaseObjectInspectorConfig implements N
 
    ResourceResolver resolver;
    AnnotationLookup annotationLookup;
-   
+
    @Override
    public void setResourceResolver(ResourceResolver resourceResolver) {
       this.resolver = resourceResolver;
    }
 
    public ResourceResolver getResolver() {
-      return resolver;
+      return this.resolver;
    }
 
    public void setAnnotationLookup(AnnotationLookup annotationLookup) {
@@ -49,7 +49,7 @@ public class ForgeInspectorConfig extends BaseObjectInspectorConfig implements N
    }
 
    public AnnotationLookup getAnnotationLookup() {
-      return annotationLookup;
+      return this.annotationLookup;
    }
-   
+
 }
