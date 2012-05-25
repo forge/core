@@ -74,6 +74,7 @@ public class NewEntityPluginTest extends AbstractJPATest
       assertTrue(javaClass.hasField("version"));
       assertEquals("0", javaClass.getField("version").getLiteralInitializer());
       assertEquals("null", javaClass.getField("id").getLiteralInitializer());
+      assertTrue(javaClass.toString().contains("implements Serializable"));
    }
 
    @Test

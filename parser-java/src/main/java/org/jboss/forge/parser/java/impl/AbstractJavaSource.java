@@ -721,9 +721,22 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
    @Override
    public O addInterface(final String type)
    {
-      List<Type> interfaces = JDTHelper.getInterfaces(
-               JavaParser.parse(JavaInterfaceImpl.class, "public interface Mock extends " + type
-                        + " {}").getBodyDeclaration());
+      List<Type> interfaces = new ArrayList<Type>();
+
+      if (this.hasImport(Types.toSimpleName(type)))
+      {
+          if (this.hasInterface(type))
+          {
+              interfaces = JDTHelper.getInterfaces(JavaParser.parse(JavaInterfaceImpl.class, 
+                      "public interface Mock extends " + type + " {}").getBodyDeclaration());
+          }
+      }
+      else
+      {
+          interfaces = JDTHelper.getInterfaces(
+                  JavaParser.parse(JavaInterfaceImpl.class, "public interface Mock extends " + Types.toSimpleName(type)
+                           + " {}").getBodyDeclaration());
+      }
 
       if (!interfaces.isEmpty())
       {
