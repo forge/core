@@ -65,6 +65,10 @@ public class FacesAPIFacetImpl extends FacesFacetImpl implements FacesAPIFacet
       super.install();
 
       DependencyFacet deps = project.getFacet(DependencyFacet.class);
+      if (!deps.hasDirectManagedDependency(JAVAEE6))
+      {
+         getInstaller().installManaged(project, JAVAEE6);
+      }
       if(deps.hasEffectiveManagedDependency(JAVAEE6_FACES) && !deps.hasEffectiveDependency(JAVAEE6_FACES))
       {
          getInstaller().install(project, JAVAEE6_FACES);
@@ -73,8 +77,8 @@ public class FacesAPIFacetImpl extends FacesFacetImpl implements FacesAPIFacet
       {
          getInstaller().install(project, JAVAEE6_FACES_21);
       }
-      
-      return isInstalled(); 
+
+      return isInstalled();
    }
 
 }
