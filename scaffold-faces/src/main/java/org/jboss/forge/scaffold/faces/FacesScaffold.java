@@ -38,7 +38,11 @@ import javax.persistence.OneToOne;
 
 import org.jboss.forge.env.Configuration;
 import org.jboss.forge.parser.JavaParser;
-import org.jboss.forge.parser.java.*;
+import org.jboss.forge.parser.java.Annotation;
+import org.jboss.forge.parser.java.Field;
+import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.parser.java.Member;
+import org.jboss.forge.parser.java.Method;
 import org.jboss.forge.parser.xml.Node;
 import org.jboss.forge.parser.xml.XMLParser;
 import org.jboss.forge.project.Project;
@@ -846,25 +850,23 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
          {
             if (m instanceof Field)
             {
-               Field field = (Field) m;
+               Field<?> field = (Field<?>) m;
                pkName = field.getName();
                pkType = field.getType();
                break;
             }
-            else if (m instanceof Member)
+
+            Method<?> method = (Method<?>) m;
+            pkName = method.getName().substring(3);
+            if (method.getName().startsWith("get"))
             {
-               Method method = (Method) m;
-               pkName = method.getName().substring(3);
-               if (method.getName().startsWith("get"))
-               {
-                  pkType = method.getReturnType();
-               }
-               else
-               {
-                  pkType = ((Parameter) method.getParameters().get(0)).getType();
-               }
-               break;
+               pkType = method.getReturnType();
             }
+            else
+            {
+               pkType = method.getParameters().get(0).getType();
+            }
+            break;
          }
       }
 

@@ -21,7 +21,6 @@
  */
 package org.jboss.forge.scaffold.faces.metawidget.inspector;
 
-import org.jboss.forge.scaffold.faces.util.AnnotationLookup;
 import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.*;
 import static org.metawidget.inspector.InspectionResultConstants.*;
 import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.*;
@@ -29,11 +28,18 @@ import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstant
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.*;
+import javax.persistence.Embedded;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import org.jboss.forge.parser.java.EnumConstant;
 import org.jboss.forge.parser.java.JavaEnum;
 import org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle.ForgePropertyStyle.ForgeProperty;
+import org.jboss.forge.scaffold.faces.util.AnnotationLookup;
 import org.jboss.solder.logging.Logger;
 import org.metawidget.inspector.impl.BaseObjectInspector;
 import org.metawidget.inspector.impl.propertystyle.Property;
@@ -59,7 +65,7 @@ public class ForgeInspector
 
    public ForgeInspector(ForgeInspectorConfig config) {
       super(config);
-      annotationLookup = config.getAnnotationLookup();
+      this.annotationLookup = config.getAnnotationLookup();
    }
 
    //
@@ -131,10 +137,10 @@ public class ForgeInspector
          attributes.put(REQUIRED, TRUE);
       }
 
-      if (null != annotationLookup) {
-         if (attributes.containsKey(REVERSE_PRIMARY_KEY_TYPE) && null != annotationLookup) {
+      if (null != this.annotationLookup) {
+         if (attributes.containsKey(REVERSE_PRIMARY_KEY_TYPE) && null != this.annotationLookup) {
             try {
-               final String reverseKey = annotationLookup.getFieldName(Id.class, attributes.get(REVERSE_PRIMARY_KEY_TYPE));
+               final String reverseKey = this.annotationLookup.getFieldName(Id.class, attributes.get(REVERSE_PRIMARY_KEY_TYPE));
                attributes.put(REVERSE_PRIMARY_KEY, reverseKey);
             } catch (Exception e) {
                throw new RuntimeException("cannot resolve reverse primary key", e);
@@ -149,17 +155,19 @@ public class ForgeInspector
       Map<String,String> attributes = CollectionUtils.newHashMap();
       Map<String,String> superMap = super.inspectEntity(declaredClass, actualClass);
       if (superMap != null)
+      {
          attributes.putAll(superMap);
-      
-      if (null != annotationLookup) {
+      }
+
+      if (null != this.annotationLookup) {
          try {
-            final String primaryKey = annotationLookup.getFieldName(Id.class, declaredClass);
+            final String primaryKey = this.annotationLookup.getFieldName(Id.class, declaredClass);
             attributes.put(PRIMARY_KEY, primaryKey);
          } catch (Exception e) {
-            log.debug("cannot resolve primary key for class "+declaredClass, e);
+            this.log.debug("cannot resolve primary key for class "+declaredClass, e);
          }
       }
       return attributes;
    }
-   
+
 }

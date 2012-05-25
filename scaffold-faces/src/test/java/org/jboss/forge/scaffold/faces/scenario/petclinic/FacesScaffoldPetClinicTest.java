@@ -114,7 +114,7 @@ public class FacesScaffoldPetClinicTest extends AbstractFacesScaffoldTest
 
       metawidget = "\t\t\t\t\t<h:link outcome=\"/" + targetDir + "/pet/view\">\r\n";
       metawidget += "\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n";
-      metawidget += "\t\t\t\t\t\t<h:outputText styleClass=\"#{_item.sendReminders ? 'boolean-true' : 'boolean-false'}\"/>\r\n";
+      metawidget += "\t\t\t\t\t\t<h:outputText styleClass=\"#{_item.sendReminders ? 'boolean-true' : 'boolean-false'}\" value=\"\"/>\r\n";
       metawidget += "\t\t\t\t\t</h:link>\r\n";
 
       Assert.assertTrue(contents.contains(metawidget));
@@ -147,7 +147,7 @@ public class FacesScaffoldPetClinicTest extends AbstractFacesScaffoldTest
       contents = Streams.toString(view.getResourceInputStream());
 
       metawidget = "\t\t\t<h:outputLabel value=\"Send Reminders:\"/>\r\n";
-      metawidget += "\t\t\t<h:outputText styleClass=\"#{petBean.pet.sendReminders ? 'boolean-true' : 'boolean-false'}\"/>";
+      metawidget += "\t\t\t<h:outputText styleClass=\"#{petBean.pet.sendReminders ? 'boolean-true' : 'boolean-false'}\" value=\"\"/>";
 
       Assert.assertTrue(contents.contains(metawidget));
 

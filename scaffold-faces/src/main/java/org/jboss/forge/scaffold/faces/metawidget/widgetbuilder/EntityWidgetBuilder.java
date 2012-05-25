@@ -118,7 +118,7 @@ public class EntityWidgetBuilder
          return new StaticXmlStub();
       }
 
-      String type = WidgetBuilderUtils.getActualClassOrType(attributes);
+      String type = attributes.get(TYPE);
 
       if (WidgetBuilderUtils.isReadOnly(attributes))
       {
@@ -138,7 +138,7 @@ public class EntityWidgetBuilder
                return null;
             }
 
-            String controllerName = ClassUtils.getSimpleName(WidgetBuilderUtils.getActualClassOrType(attributes));
+            String controllerName = ClassUtils.getSimpleName(attributes.get(TYPE));
             controllerName = StringUtils.decapitalize(controllerName);
 
             HtmlOutcomeTargetLink link = new HtmlOutcomeTargetLink();
@@ -153,11 +153,13 @@ public class EntityWidgetBuilder
             }
 
             String reverseKey = getReversePrimaryKey(attributes);
-            
+
             Param param = new Param();
             param.putAttribute("name", "id");
-            param.putAttribute("value",
-                     StaticFacesUtils.wrapExpression(StaticFacesUtils.unwrapExpression(link.getValue()) + "." + reverseKey));
+            param.putAttribute(
+                     "value",
+                     StaticFacesUtils.wrapExpression(StaticFacesUtils.unwrapExpression(link.getValue()) + "."
+                              + reverseKey));
             link.getChildren().add(param);
 
             return link;
@@ -260,24 +262,33 @@ public class EntityWidgetBuilder
    // Protected methods
    //
 
-   protected String getReversePrimaryKey(Map<String, String> attributes) {
+   protected String getReversePrimaryKey(Map<String, String> attributes)
+   {
       String reverseKey = "id";
-      if (attributes.containsKey(REVERSE_PRIMARY_KEY)) 
+      if (attributes.containsKey(REVERSE_PRIMARY_KEY))
+      {
          reverseKey = attributes.get(REVERSE_PRIMARY_KEY);
+      }
       return reverseKey;
    }
 
-   protected String getPrimaryKey(Map<String, String> attributes) {
+   protected String getPrimaryKey(Map<String, String> attributes)
+   {
       String reverseKey = "id";
-      if (attributes.containsKey(PRIMARY_KEY)) 
+      if (attributes.containsKey(PRIMARY_KEY))
+      {
          reverseKey = attributes.get(PRIMARY_KEY);
+      }
       return reverseKey;
    }
 
-   protected String getEntityPrimaryKey(Map<String, String> attributes) {
+   protected String getEntityPrimaryKey(Map<String, String> attributes)
+   {
       String reverseKey = "id";
-      if (attributes.containsKey(ENTITY_PRIMARY_KEY)) 
+      if (attributes.containsKey(ENTITY_PRIMARY_KEY))
+      {
          reverseKey = attributes.get(ENTITY_PRIMARY_KEY);
+      }
       return reverseKey;
    }
 
@@ -315,7 +326,7 @@ public class EntityWidgetBuilder
 
       // Special support for non-Lists
 
-      Class<?> clazz = ClassUtils.niceForName(WidgetBuilderUtils.getActualClassOrType(attributes));
+      Class<?> clazz = WidgetBuilderUtils.getActualClassOrType(attributes, null);
 
       if (!List.class.isAssignableFrom(clazz))
       {
@@ -497,16 +508,11 @@ public class EntityWidgetBuilder
       //
       // Note: we don't just do N_TO_MANY values, as sometimes Collections are not annotated
 
-      String type = WidgetBuilderUtils.getActualClassOrType(columnAttributes);
+      Class<?> clazz = WidgetBuilderUtils.getActualClassOrType(columnAttributes, null);
 
-      if (type != null)
+      if (clazz != null && (Collection.class.isAssignableFrom(clazz)))
       {
-         Class<?> clazz = ClassUtils.niceForName(type);
-
-         if (clazz != null && (Collection.class.isAssignableFrom(clazz)))
-         {
-            return;
-         }
+         return;
       }
 
       // FORGE-446: Expand columns that show one-to-one values
@@ -565,7 +571,10 @@ public class EntityWidgetBuilder
 
          Param param = new Param();
          param.putAttribute("name", "id");
-         param.putAttribute("value", StaticFacesUtils.wrapExpression(dataTable.getAttribute("var") + "." + getEntityPrimaryKey(columnAttributes)));
+         param.putAttribute(
+                  "value",
+                  StaticFacesUtils.wrapExpression(dataTable.getAttribute("var") + "."
+                           + getEntityPrimaryKey(columnAttributes)));
          link.getChildren().add(param);
          link.getChildren().add(column.getChildren().remove(1));
          column.getChildren().add(link);
@@ -585,7 +594,8 @@ public class EntityWidgetBuilder
 
                // (footer facets should never have a 'required' attribute)
 
-               footerMetawidget.removeWidgetProcessor(footerMetawidget.getWidgetProcessor(RequiredAttributeProcessor.class));
+               footerMetawidget.removeWidgetProcessor(footerMetawidget
+                        .getWidgetProcessor(RequiredAttributeProcessor.class));
                footerMetawidget.setValue(StaticFacesUtils.wrapExpression(controllerName + "Bean.add." + columnName));
                footerMetawidget.setPath(componentType + StringUtils.SEPARATOR_FORWARD_SLASH_CHAR + columnName);
                footerMetawidget.setLayout(new SimpleLayout());
@@ -620,12 +630,16 @@ public class EntityWidgetBuilder
       String target = this.config.getString(FacesScaffold.class.getName() + "_targetDir");
 
       target = Strings.isNullOrEmpty(target) ? "" : target;
-      
+
       if (!target.startsWith("/"))
+      {
          target = "/" + target;
+      }
       if (target.endsWith("/"))
+      {
          target = target.substring(0, target.length() - 1);
-      
+      }
+
       return target;
    }
 }
