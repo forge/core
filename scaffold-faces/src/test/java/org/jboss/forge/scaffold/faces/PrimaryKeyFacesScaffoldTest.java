@@ -4,11 +4,20 @@
  */
 package org.jboss.forge.scaffold.faces;
 
+import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.*;
+import static org.junit.Assert.*;
+import static org.metawidget.inspector.InspectionResultConstants.*;
+
 import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.util.Map;
-import javax.inject.Inject;
-import javax.persistence.*;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
@@ -17,11 +26,13 @@ import org.jboss.forge.parser.java.util.Refactory;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.project.facets.WebResourceFacet;
-import org.jboss.forge.project.services.ResourceFactory;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspector;
 import org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectorConfig;
+import org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle.ForgePropertyStyle;
+import org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle.ForgePropertyStyleConfig;
+import org.jboss.forge.scaffold.faces.metawidget.processor.ForgeInspectionResultProcessor;
 import org.jboss.forge.scaffold.faces.util.AnnotationLookup;
 import org.jboss.forge.shell.util.Streams;
 import org.junit.Test;
@@ -30,24 +41,16 @@ import org.metawidget.util.simple.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import static org.junit.Assert.*;
-import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.*;
-import org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle.ForgePropertyStyle;
-import org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle.ForgePropertyStyleConfig;
-import org.jboss.forge.scaffold.faces.metawidget.processor.ForgeInspectionResultProcessor;
-import static org.metawidget.inspector.InspectionResultConstants.*;
 
 /**
  *
  * @author Thomas Frühbeck
  */
-public class PrimaryKeyFacesScaffoldTest extends AbstractFacesScaffoldTest {
-
-   @Inject
-   private ResourceFactory factory;
-
+public class PrimaryKeyFacesScaffoldTest extends AbstractFacesScaffoldTest
+{
    @Test
-   public void testGenerateFromLegacyPrimaryKey() throws Exception {
+   public void testGenerateFromLegacyPrimaryKey() throws Exception
+   {
       final String parentPrimaryKey = "parentPrimaryKey";
       final String parentPrimaryKeyCC = StringUtils.capitalize(parentPrimaryKey);
 
@@ -58,7 +61,8 @@ public class PrimaryKeyFacesScaffoldTest extends AbstractFacesScaffoldTest {
 
       getShell().execute("entity --named Child");
       getShell().execute("field string --named name");
-      getShell().execute("field manyToOne --named parent --fieldType com.test.model.Parent.java --inverseFieldName children");
+      getShell().execute(
+               "field manyToOne --named parent --fieldType com.test.model.Parent.java --inverseFieldName children");
 
       queueInputLines("", "", "");
       getShell().execute("scaffold from-entity com.test.model.* --scaffoldType faces");
@@ -81,7 +85,7 @@ public class PrimaryKeyFacesScaffoldTest extends AbstractFacesScaffoldTest {
       assertTrue(view.exists());
       String contents = Streams.toString(view.getResourceInputStream());
       assertTrue(contents.contains(
-              "template=\"/resources/scaffold/pageTemplate.xhtml"));
+               "template=\"/resources/scaffold/pageTemplate.xhtml"));
 
       view = web.getWebResource("/parent/search.xhtml");
       contents = Streams.toString(view.getResourceInputStream());
@@ -92,27 +96,33 @@ public class PrimaryKeyFacesScaffoldTest extends AbstractFacesScaffoldTest {
       contents = Streams.toString(view.getResourceInputStream());
       assertTrue(view.exists());
       assertTrue(contents.contains("childBean.child.parent." + parentPrimaryKey));
-}
+   }
 
-   private JavaResource generateAlternateEntity(Project project, String pkg, String entityName, String primaryKey) throws FileNotFoundException {
+   @SuppressWarnings("unchecked")
+   private JavaResource generateAlternateEntity(Project project, String pkg, String entityName, String primaryKey)
+            throws FileNotFoundException
+   {
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
-      JavaClass javaClass = JavaParser.create(JavaClass.class).setPackage(pkg).setName(entityName).setPublic().addAnnotation(Entity.class).getOrigin().addInterface(Serializable.class);
+      JavaClass javaClass = JavaParser.create(JavaClass.class).setPackage(pkg).setName(entityName).setPublic()
+               .addAnnotation(Entity.class).getOrigin().addInterface(Serializable.class);
 
       String idName = primaryKey;
-      if (idName == null) {
+      if (idName == null)
+      {
          StringUtils.decapitalize(entityName + "Id");
       }
 
       Field<JavaClass> id = javaClass.addField("private String " + idName + " = null;");
       id.addAnnotation(Id.class);
       id.addAnnotation(GeneratedValue.class).setEnumValue("strategy", GenerationType.AUTO);
-      id.addAnnotation(Column.class).setStringValue("name", idName).setLiteralValue("updatable", "false").setLiteralValue("nullable", "false");
+      id.addAnnotation(Column.class).setStringValue("name", idName).setLiteralValue("updatable", "false")
+               .setLiteralValue("nullable", "false");
 
       Refactory.createGetterAndSetter(javaClass, id);
 
       Field<JavaClass> name = javaClass.addField("private String name = null;");
       Refactory.createGetterAndSetter(javaClass, name);
-      
+
       Refactory.createToStringFromFields(javaClass, id);
       Refactory.createHashCodeAndEquals(javaClass);
 
@@ -120,21 +130,22 @@ public class PrimaryKeyFacesScaffoldTest extends AbstractFacesScaffoldTest {
    }
 
    @Test
-   public void testPrimaryKeys() throws Exception {
+   public void testPrimaryKeys() throws Exception
+   {
       Project project = initializeJavaProject();
       queueInputLines("HIBERNATE", "JBOSS_AS7", "", "");
       getShell().execute("persistence setup");
 
-      for (PrimaryKeyTestBase testClass : new PrimaryKeyTestBase[]{
-                 new PrimaryKeyFieldTest(), new PrimaryKeyPropertyTest(), new PrimaryKeyPropertyAssignedTest()}) {
+      for (PrimaryKeyTestBase testClass : new PrimaryKeyTestBase[] {
+                 new PrimaryKeyFieldTest(), new PrimaryKeyPropertyTest(), new PrimaryKeyPropertyAssignedTest() })
+      {
          testPrimaryKey(project, testClass);
       }
    }
 
-   public void testPrimaryKey(Project project, PrimaryKeyTestBase testClass) throws Exception {
-
+   public void testPrimaryKey(Project project, PrimaryKeyTestBase testClass) throws Exception
+   {
       final String parentPrimaryKey = "primaryKey";
-      final String parentPrimaryKeyCC = StringUtils.capitalize(parentPrimaryKey);
 
       ForgeInspectorConfig config = new ForgeInspectorConfig();
       config.setAnnotationLookup(new AnnotationLookup(project));
@@ -142,10 +153,10 @@ public class PrimaryKeyFacesScaffoldTest extends AbstractFacesScaffoldTest {
       ForgeInspectionResultProcessor processor = new ForgeInspectionResultProcessor();
 
       generatePkEntity(project, "org.test", "Parent", parentPrimaryKey, testClass);
-      
+
       String xml = new ForgeInspector(config).inspect(null, "org.test.Parent");
-      xml = processor.processInspectionResult(xml, null, project, xml, new String[]{});
-      
+      xml = processor.processInspectionResult(xml, null, project, xml, new String[] {});
+
       Document document = XmlUtils.documentFromString(xml);
       assertEquals("inspection-result", document.getFirstChild().getNodeName());
       Element entity = (Element) document.getFirstChild().getFirstChild();
@@ -155,11 +166,13 @@ public class PrimaryKeyFacesScaffoldTest extends AbstractFacesScaffoldTest {
       assertEquals(parentPrimaryKey, attributes.get(PRIMARY_KEY));
 
       NodeList properties = entity.getElementsByTagName(PROPERTY);
-      for (int i = 0; i < properties.getLength(); i++) {
+      for (int i = 0; i < properties.getLength(); i++)
+      {
          Element prop = (Element) properties.item(i);
          attributes = XmlUtils.getAttributesAsMap(prop);
 
-         if (!(testClass instanceof PrimaryKeyPropertyAssignedTest)) {
+         if (!(testClass instanceof PrimaryKeyPropertyAssignedTest))
+         {
             assertTrue(attributes.containsKey(PRIMARY_KEY_NOT_GENERATED));
          }
       }
@@ -167,36 +180,44 @@ public class PrimaryKeyFacesScaffoldTest extends AbstractFacesScaffoldTest {
       attributes = XmlUtils.getAttributesAsMap(property);
       assertEquals(parentPrimaryKey, attributes.get(PRIMARY_KEY));
       assertEquals(parentPrimaryKey, attributes.get(ENTITY_PRIMARY_KEY));
-      
+
    }
 
-   private JavaResource generatePkEntity(Project project, String pkg, String entityName, String primaryKey, PrimaryKeyTestBase pkTest) throws FileNotFoundException {
+   private JavaResource generatePkEntity(Project project, String pkg, String entityName, String primaryKey,
+            PrimaryKeyTestBase pkTest) throws FileNotFoundException
+   {
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
-      JavaClass javaClass = JavaParser.create(JavaClass.class).setPackage(pkg).setName(entityName).setPublic().addAnnotation(Entity.class).getOrigin().addInterface(Serializable.class);
+      JavaClass javaClass = JavaParser.create(JavaClass.class).setPackage(pkg).setName(entityName).setPublic()
+               .addAnnotation(Entity.class).getOrigin().addInterface(Serializable.class);
 
       String idName = primaryKey;
-      if (idName == null) {
+      if (idName == null)
+      {
          StringUtils.decapitalize(entityName + "Id");
       }
 
       Field<JavaClass> id = javaClass.addField("private String " + idName + " = null;");
-      if (pkTest.field) {
+      if (pkTest.field)
+      {
          id.addAnnotation(Id.class);
-         if (pkTest.generated) {
+         if (pkTest.generated)
+         {
             id.addAnnotation(GeneratedValue.class).setEnumValue("strategy", GenerationType.AUTO);
-            id.addAnnotation(Column.class).setStringValue("name", idName).setLiteralValue("updatable", "false").setLiteralValue("nullable", "false");
+            id.addAnnotation(Column.class).setStringValue("name", idName).setLiteralValue("updatable", "false")
+                     .setLiteralValue("nullable", "false");
          }
       }
 
-
-
       Refactory.createGetterAndSetter(javaClass, id);
-      if (!pkTest.field) {
-         Method getPk = javaClass.getMethod("get" + StringUtils.capitalize(idName));
+      if (!pkTest.field)
+      {
+         Method<?> getPk = javaClass.getMethod("get" + StringUtils.capitalize(idName));
          getPk.addAnnotation(Id.class);
-         if (pkTest.generated) {
+         if (pkTest.generated)
+         {
             getPk.addAnnotation(GeneratedValue.class).setEnumValue("strategy", GenerationType.AUTO);
-            getPk.addAnnotation(Column.class).setStringValue("name", idName).setLiteralValue("updatable", "false").setLiteralValue("nullable", "false");
+            getPk.addAnnotation(Column.class).setStringValue("name", idName).setLiteralValue("updatable", "false")
+                     .setLiteralValue("nullable", "false");
          }
       }
 
@@ -208,33 +229,32 @@ public class PrimaryKeyFacesScaffoldTest extends AbstractFacesScaffoldTest {
       return java.saveJavaSource(javaClass);
    }
 
-   
-   class PrimaryKeyTestBase {
-
+   class PrimaryKeyTestBase
+   {
       public boolean generated, field;
    }
 
-   class PrimaryKeyFieldTest extends PrimaryKeyTestBase {
-
+   class PrimaryKeyFieldTest extends PrimaryKeyTestBase
+   {
       {
-         generated = true;
-         field = true;
+         this.generated = true;
+         this.field = true;
       }
    }
 
-   class PrimaryKeyPropertyTest extends PrimaryKeyTestBase {
-
+   class PrimaryKeyPropertyTest extends PrimaryKeyTestBase
+   {
       {
-         generated = true;
-         field = false;
+         this.generated = true;
+         this.field = false;
       }
    }
 
-   class PrimaryKeyPropertyAssignedTest extends PrimaryKeyTestBase {
-
+   class PrimaryKeyPropertyAssignedTest extends PrimaryKeyTestBase
+   {
       {
-         generated = false;
-         field = true;
+         this.generated = false;
+         this.field = true;
       }
    }
 }

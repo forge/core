@@ -58,63 +58,63 @@ import org.metawidget.widgetbuilder.composite.CompositeWidgetBuilderConfig;
 @RunWith(Arquillian.class)
 public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 {
-	
-	private final String crlf = "\r\n";
-	
-    @Test
-    public void testScaffoldSetup() throws Exception
-    {
-       Project project = setupScaffoldProject();
-       ServletFacet servlet = project.getFacet(ServletFacet.class);
 
-       Assert.assertTrue(project.hasFacet(FacesScaffold.class));
+   private static final String CRLF = "\r\n";
 
-       Node root = XMLParser.parse(servlet.getConfigFile().getResourceInputStream());
-       List<Node> errorPages = root.get("error-page");
-       Assert.assertEquals("/faces/error.xhtml", errorPages.get(0).getSingle("location").getText());
+   @Test
+   public void testScaffoldSetup() throws Exception
+   {
+      Project project = setupScaffoldProject();
+      ServletFacet servlet = project.getFacet(ServletFacet.class);
 
-       WebResourceFacet web = project.getFacet(WebResourceFacet.class);
-       FileResource<?> error = web.getWebResource("error.xhtml");
-       Assert.assertTrue(Streams.toString(error.getResourceInputStream()).contains(
+      Assert.assertTrue(project.hasFacet(FacesScaffold.class));
+
+      Node root = XMLParser.parse(servlet.getConfigFile().getResourceInputStream());
+      List<Node> errorPages = root.get("error-page");
+      Assert.assertEquals("/faces/error.xhtml", errorPages.get(0).getSingle("location").getText());
+
+      WebResourceFacet web = project.getFacet(WebResourceFacet.class);
+      FileResource<?> error = web.getWebResource("error.xhtml");
+      Assert.assertTrue(Streams.toString(error.getResourceInputStream()).contains(
                 "/resources/scaffold/pageTemplate.xhtml"));
 
-       // Test page exists, but has no navigation
+      // Test page exists, but has no navigation
 
-       FileResource<?> page = web.getWebResource("/resources/scaffold/pageTemplate.xhtml");
-       Assert.assertTrue(page.exists());
-       String contents = Streams.toString(page.getResourceInputStream());
-       Assert.assertTrue(contents.contains(
+      FileResource<?> page = web.getWebResource("/resources/scaffold/pageTemplate.xhtml");
+      Assert.assertTrue(page.exists());
+      String contents = Streams.toString(page.getResourceInputStream());
+      Assert.assertTrue(contents.contains(
                 "<div id=\"wrapper\">"));
-       Assert.assertTrue(contents.contains(
+      Assert.assertTrue(contents.contains(
                 "<div id=\"navigation\">"));
-       Assert.assertTrue(contents.contains(
+      Assert.assertTrue(contents.contains(
                 "<div id=\"content\">"));
-       Assert.assertTrue(contents.contains(
+      Assert.assertTrue(contents.contains(
                 "<div id=\"footer\">"));
-       Assert.assertTrue(!contents.contains(
+      Assert.assertTrue(!contents.contains(
                 "<h:link outcome=\"/>"));
-    }
+   }
 
    @Test
    public void testScaffoldSetupWithScaffoldTypeWithoutTargetDir() throws Exception
    {
-       Project project = initializeJavaProject();
-       queueInputLines("HIBERNATE", "JBOSS_AS7", "", "");
-       getShell().execute("persistence setup");
-       queueInputLines("", "", "2", "", "", "");
-       getShell().execute("scaffold setup --scaffoldType faces");
-       Assert.assertTrue(project.hasFacet(FacesScaffold.class));
+      Project project = initializeJavaProject();
+      queueInputLines("HIBERNATE", "JBOSS_AS7", "", "");
+      getShell().execute("persistence setup");
+      queueInputLines("", "", "2", "", "", "");
+      getShell().execute("scaffold setup --scaffoldType faces");
+      Assert.assertTrue(project.hasFacet(FacesScaffold.class));
    }
 
    @Test
    public void testScaffoldSetupWithScaffoldTypeAndTargetDir() throws Exception
    {
-       Project project = initializeJavaProject();
-       queueInputLines("HIBERNATE", "JBOSS_AS7", "", "");
-       getShell().execute("persistence setup");
-       queueInputLines("", "", "2", "", "", "");
-       getShell().execute("scaffold setup --scaffoldType faces --targetDir store");
-       Assert.assertTrue(project.hasFacet(FacesScaffold.class));
+      Project project = initializeJavaProject();
+      queueInputLines("HIBERNATE", "JBOSS_AS7", "", "");
+      getShell().execute("persistence setup");
+      queueInputLines("", "", "2", "", "", "");
+      getShell().execute("scaffold setup --scaffoldType faces --targetDir store");
+      Assert.assertTrue(project.hasFacet(FacesScaffold.class));
    }
 
    @Test(expected = PluginExecutionException.class)
@@ -156,16 +156,25 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(contents.contains("template=\"/resources/scaffold/pageTemplate.xhtml"));
 
       StringBuilder metawidget = new StringBuilder();
-      metawidget.append("\t")    .append("<ui:define name=\"main\">"                                                                            ).append(crlf);
-      metawidget.append("\t\t")  .append(  "<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">"                             ).append(crlf);
-      metawidget.append("\t\t\t").append(    "<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First Name:\"/>"                     ).append(crlf);
-      metawidget.append("\t\t\t").append(    "<h:outputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>").append(crlf);
-      metawidget.append("\t\t\t").append(    "<h:outputText/>"                                                                                  ).append(crlf);
-      metawidget.append("\t\t\t").append(    "<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last Name:\"/>"                       ).append(crlf);
-      metawidget.append("\t\t\t").append(    "<h:outputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>"  ).append(crlf);
-      metawidget.append("\t\t\t").append(    "<h:outputText/>"                                                                                  ).append(crlf);
-      metawidget.append("\t\t")  .append(  "</h:panelGrid>"                                                                                     ).append(crlf);
-      
+      metawidget.append("\t").append("<ui:define name=\"main\">").append(CRLF);
+      metawidget.append("\t\t").append("<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">")
+               .append(CRLF);
+      metawidget.append("\t\t\t")
+               .append("<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First Name:\"/>").append(CRLF);
+      metawidget
+               .append("\t\t\t")
+               .append("<h:outputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t").append("<h:outputText/>").append(CRLF);
+      metawidget.append("\t\t\t").append("<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last Name:\"/>")
+               .append(CRLF);
+      metawidget
+               .append("\t\t\t")
+               .append("<h:outputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t").append("<h:outputText/>").append(CRLF);
+      metawidget.append("\t\t").append("</h:panelGrid>").append(CRLF);
+
       Assert.assertTrue(contents.contains(metawidget));
 
       // Create
@@ -176,24 +185,35 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(contents.contains("template=\"/resources/scaffold/pageTemplate.xhtml"));
 
       metawidget = new StringBuilder();
-      
-      metawidget.append("\t\t"       ).append("<h:form id=\"create\">"                                                                                ).append(crlf);
-      metawidget.append("\t\t\t"     ).append(  "<h:messages globalOnly=\"true\" styleClass=\"error\"/>"                                              ).append(crlf);
-      metawidget.append(""           ).append(  ""                                                                                                    ).append(crlf);
-      metawidget.append("\t\t\t"     ).append(  "<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">"                              ).append(crlf);
-      metawidget.append("\t\t\t\t"   ).append(    "<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First Name:\"/>"                      ).append(crlf);
-      metawidget.append("\t\t\t\t"   ).append(    "<h:panelGroup>"                                                                                    ).append(crlf);
-      metawidget.append("\t\t\t\t\t" ).append(      "<h:inputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>").append(crlf);
-      metawidget.append("\t\t\t\t\t" ).append(      "<h:message for=\"customerBeanCustomerFirstName\" styleClass=\"error\"/>"                         ).append(crlf);
-      metawidget.append("\t\t\t\t"   ).append(    "</h:panelGroup>"                                                                                   ).append(crlf);
-      metawidget.append("\t\t\t\t"   ).append(    "<h:outputText/>"                                                                                   ).append(crlf);
-      metawidget.append("\t\t\t\t"   ).append(    "<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last Name:\"/>"                        ).append(crlf);
-      metawidget.append("\t\t\t\t"   ).append(    "<h:panelGroup>"                                                                                    ).append(crlf);
-      metawidget.append("\t\t\t\t\t" ).append(      "<h:inputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>"  ).append(crlf);
-      metawidget.append("\t\t\t\t\t" ).append(      "<h:message for=\"customerBeanCustomerLastName\" styleClass=\"error\"/>"                          ).append(crlf);
-      metawidget.append("\t\t\t\t"   ).append(    "</h:panelGroup>"                                                                                   ).append(crlf);
-      metawidget.append("\t\t\t\t"   ).append(    "<h:outputText/>"                                                                                   ).append(crlf);
-      metawidget.append("\t\t\t"     ).append(  "</h:panelGrid>"                                                                                      ).append(crlf);
+
+      metawidget.append("\t\t").append("<h:form id=\"create\">").append(CRLF);
+      metawidget.append("\t\t\t").append("<h:messages globalOnly=\"true\" styleClass=\"error\"/>").append(CRLF);
+      metawidget.append("").append("").append(CRLF);
+      metawidget.append("\t\t\t").append("<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t")
+               .append("<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First Name:\"/>").append(CRLF);
+      metawidget.append("\t\t\t\t").append("<h:panelGroup>").append(CRLF);
+      metawidget
+               .append("\t\t\t\t\t")
+               .append("<h:inputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t\t").append("<h:message for=\"customerBeanCustomerFirstName\" styleClass=\"error\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t").append("</h:panelGroup>").append(CRLF);
+      metawidget.append("\t\t\t\t").append("<h:outputText/>").append(CRLF);
+      metawidget.append("\t\t\t\t")
+               .append("<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last Name:\"/>").append(CRLF);
+      metawidget.append("\t\t\t\t").append("<h:panelGroup>").append(CRLF);
+      metawidget
+               .append("\t\t\t\t\t")
+               .append("<h:inputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t\t").append("<h:message for=\"customerBeanCustomerLastName\" styleClass=\"error\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t").append("</h:panelGroup>").append(CRLF);
+      metawidget.append("\t\t\t\t").append("<h:outputText/>").append(CRLF);
+      metawidget.append("\t\t\t").append("</h:panelGrid>").append(CRLF);
 
       Assert.assertTrue(contents.contains(metawidget));
 
@@ -205,47 +225,61 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(contents.contains("template=\"/resources/scaffold/pageTemplate.xhtml"));
 
       StringBuilder searchMetawidget = new StringBuilder();
-      searchMetawidget.append("\t\t"        ).append("<h:form id=\"search\">"                                                                              ).append(crlf);
-      searchMetawidget.append("\t\t\t"      ).append(  "<h:panelGroup styleClass=\"search\">"                                                              ).append(crlf);
-      searchMetawidget.append(""            ).append(  ""                                                                                                  ).append(crlf);
-      searchMetawidget.append("\t\t\t\t"    ).append(    "<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">"                          ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"  ).append(      "<h:outputLabel for=\"customerBeanSearchFirstName\" value=\"First Name:\"/>"                    ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"  ).append(      "<h:panelGroup>"                                                                                ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t\t").append(        "<h:inputText id=\"customerBeanSearchFirstName\" value=\"#{customerBean.search.firstName}\"/>").append(crlf);
-      searchMetawidget.append("\t\t\t\t\t\t").append(        "<h:message for=\"customerBeanSearchFirstName\" styleClass=\"error\"/>"                       ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"  ).append(      "</h:panelGroup>"                                                                               ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"  ).append(      "<h:outputText/>"                                                                               ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"  ).append(      "<h:outputLabel for=\"customerBeanSearchLastName\" value=\"Last Name:\"/>"                      ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"  ).append(      "<h:panelGroup>"                                                                                ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t\t").append(        "<h:inputText id=\"customerBeanSearchLastName\" value=\"#{customerBean.search.lastName}\"/>"  ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t\t").append(        "<h:message for=\"customerBeanSearchLastName\" styleClass=\"error\"/>"                        ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"  ).append(      "</h:panelGroup>"                                                                               ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"  ).append(      "<h:outputText/>"                                                                               ).append(crlf);
-      searchMetawidget.append("\t\t\t\t"    ).append(    "</h:panelGrid>"                                                                                  ).append(crlf);
+      searchMetawidget.append("\t\t").append("<h:form id=\"search\">").append(CRLF);
+      searchMetawidget.append("\t\t\t").append("<h:panelGroup styleClass=\"search\">").append(CRLF);
+      searchMetawidget.append("").append("").append(CRLF);
+      searchMetawidget.append("\t\t\t\t")
+               .append("<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t")
+               .append("<h:outputLabel for=\"customerBeanSearchFirstName\" value=\"First Name:\"/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t").append("<h:panelGroup>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t\t")
+               .append("<h:inputText id=\"customerBeanSearchFirstName\" value=\"#{customerBean.search.firstName}\"/>")
+               .append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t\t")
+               .append("<h:message for=\"customerBeanSearchFirstName\" styleClass=\"error\"/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t").append("</h:panelGroup>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t").append("<h:outputText/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t")
+               .append("<h:outputLabel for=\"customerBeanSearchLastName\" value=\"Last Name:\"/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t").append("<h:panelGroup>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t\t")
+               .append("<h:inputText id=\"customerBeanSearchLastName\" value=\"#{customerBean.search.lastName}\"/>")
+               .append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t\t")
+               .append("<h:message for=\"customerBeanSearchLastName\" styleClass=\"error\"/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t").append("</h:panelGroup>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t").append("<h:outputText/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t").append("</h:panelGrid>").append(CRLF);
 
       Assert.assertTrue(contents.contains(searchMetawidget));
 
       StringBuilder beanMetawidget = new StringBuilder();
-      beanMetawidget.append("\t\t\t"      ).append("<h:dataTable id=\"customerBeanPageItems\" styleClass=\"data-table\" value=\"#{customerBean.pageItems}\" var=\"_item\">").append(crlf);
-      beanMetawidget.append("\t\t\t\t"    ).append(  "<h:column>"                                                                                                          ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t"  ).append(    "<f:facet name=\"header\">"                                                                                         ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t\t").append(      "<h:outputText value=\"First Name\"/>"                                                                            ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t"  ).append(    "</f:facet>"                                                                                                        ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t"  ).append(    "<h:link outcome=\"/customer/view\">"                                                                               ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t\t").append(      "<f:param name=\"id\" value=\"#{_item.id}\"/>"                                                                    ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t\t").append(      "<h:outputText id=\"itemFirstName\" value=\"#{_item.firstName}\"/>"                                               ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t"  ).append(    "</h:link>"                                                                                                         ).append(crlf);
-      beanMetawidget.append("\t\t\t\t"    ).append(  "</h:column>"                                                                                                         ).append(crlf);
-      beanMetawidget.append("\t\t\t\t"    ).append(  "<h:column>"                                                                                                          ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t"  ).append(    "<f:facet name=\"header\">"                                                                                         ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t\t").append(      "<h:outputText value=\"Last Name\"/>"                                                                             ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t"  ).append(    "</f:facet>"                                                                                                        ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t"  ).append(    "<h:link outcome=\"/customer/view\">"                                                                               ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t\t").append(      "<f:param name=\"id\" value=\"#{_item.id}\"/>"                                                                    ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t\t").append(      "<h:outputText id=\"itemLastName\" value=\"#{_item.lastName}\"/>"                                                 ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t"  ).append(    "</h:link>"                                                                                                         ).append(crlf);
-      beanMetawidget.append("\t\t\t\t"    ).append(  "</h:column>"                                                                                                         ).append(crlf);
-      beanMetawidget.append("\t\t\t"      ).append("</h:dataTable>"                                                                                                        ).append(crlf);
+      beanMetawidget
+               .append("\t\t\t")
+               .append("<h:dataTable id=\"customerBeanPageItems\" styleClass=\"data-table\" value=\"#{customerBean.pageItems}\" var=\"_item\">")
+               .append(CRLF);
+      beanMetawidget.append("\t\t\t\t").append("<h:column>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t").append("<f:facet name=\"header\">").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t\t").append("<h:outputText value=\"First Name\"/>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t").append("</f:facet>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t").append("<h:link outcome=\"/customer/view\">").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t\t").append("<f:param name=\"id\" value=\"#{_item.id}\"/>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t\t").append("<h:outputText id=\"itemFirstName\" value=\"#{_item.firstName}\"/>")
+               .append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t").append("</h:link>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t").append("</h:column>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t").append("<h:column>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t").append("<f:facet name=\"header\">").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t\t").append("<h:outputText value=\"Last Name\"/>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t").append("</f:facet>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t").append("<h:link outcome=\"/customer/view\">").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t\t").append("<f:param name=\"id\" value=\"#{_item.id}\"/>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t\t").append("<h:outputText id=\"itemLastName\" value=\"#{_item.lastName}\"/>")
+               .append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t").append("</h:link>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t").append("</h:column>").append(CRLF);
+      beanMetawidget.append("\t\t\t").append("</h:dataTable>").append(CRLF);
 
       Assert.assertTrue(contents.contains(beanMetawidget));
 
@@ -258,18 +292,23 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(contents.contains("  private Customer customer;"));
 
       StringBuilder qbeMetawidget = new StringBuilder();
-      qbeMetawidget.append("      "   ).append("List<Predicate> predicatesList = new ArrayList<Predicate>();"                               ).append(crlf);
-      qbeMetawidget.append(""         ).append(""                                                                                           ).append(crlf);
-      qbeMetawidget.append("      "   ).append("String firstName = this.search.getFirstName();"                                             ).append(crlf);
-      qbeMetawidget.append("      "   ).append("if (firstName != null && !\"\".equals(firstName)) {"                                        ).append(crlf);
-      qbeMetawidget.append("         ").append(  "predicatesList.add(builder.like(root.<String> get(\"firstName\"), '%' + firstName + '%'));").append(crlf);
-      qbeMetawidget.append("      "   ).append("}"                                                                                          ).append(crlf);
-      qbeMetawidget.append("      "   ).append("String lastName = this.search.getLastName();"                                               ).append(crlf);
-      qbeMetawidget.append("      "   ).append("if (lastName != null && !\"\".equals(lastName)) {"                                          ).append(crlf);
-      qbeMetawidget.append("         ").append(  "predicatesList.add(builder.like(root.<String> get(\"lastName\"), '%' + lastName + '%'));"  ).append(crlf);
-      qbeMetawidget.append("      "   ).append("}"                                                                                          ).append(crlf);
-      qbeMetawidget.append(""         ).append(""                                                                                           ).append(crlf);
-      qbeMetawidget.append("      "   ).append("return "                                                                                    );
+      qbeMetawidget.append("      ").append("List<Predicate> predicatesList = new ArrayList<Predicate>();")
+               .append(CRLF);
+      qbeMetawidget.append("").append("").append(CRLF);
+      qbeMetawidget.append("      ").append("String firstName = this.search.getFirstName();").append(CRLF);
+      qbeMetawidget.append("      ").append("if (firstName != null && !\"\".equals(firstName)) {").append(CRLF);
+      qbeMetawidget.append("         ")
+               .append("predicatesList.add(builder.like(root.<String> get(\"firstName\"), '%' + firstName + '%'));")
+               .append(CRLF);
+      qbeMetawidget.append("      ").append("}").append(CRLF);
+      qbeMetawidget.append("      ").append("String lastName = this.search.getLastName();").append(CRLF);
+      qbeMetawidget.append("      ").append("if (lastName != null && !\"\".equals(lastName)) {").append(CRLF);
+      qbeMetawidget.append("         ")
+               .append("predicatesList.add(builder.like(root.<String> get(\"lastName\"), '%' + lastName + '%'));")
+               .append(CRLF);
+      qbeMetawidget.append("      ").append("}").append(CRLF);
+      qbeMetawidget.append("").append("").append(CRLF);
+      qbeMetawidget.append("      ").append("return ");
 
       Assert.assertTrue(normalized(contents).contains(normalized(qbeMetawidget)));
 
@@ -321,10 +360,10 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
    @Test
    public void testGenerateFromEntityCamelCase() throws Exception
    {
-	   
-	  StringBuilder expectedContent;
-      
-	  Project project = setupScaffoldProject();
+
+      StringBuilder expectedContent;
+
+      Project project = setupScaffoldProject();
 
       queueInputLines("");
       getShell().execute("entity --named CustomerPerson");
@@ -341,24 +380,24 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(view.exists());
       String contents = Streams.toString(view.getResourceInputStream());
 
-      expectedContent = new StringBuilder();      
+      expectedContent = new StringBuilder();
       expectedContent.append("<ui:param name=\"pageTitle\" value=\"View Customer Person\"/>");
       Assert.assertTrue(contents.contains(expectedContent));
-      
+
       expectedContent = new StringBuilder();
-      expectedContent.append("\t"  ).append("<ui:define name=\"header\">").append(crlf);
-      expectedContent.append("\t\t").append(  "Customer Person"          ).append(crlf);
-      expectedContent.append("\t"  ).append("</ui:define>"               );
+      expectedContent.append("\t").append("<ui:define name=\"header\">").append(CRLF);
+      expectedContent.append("\t\t").append("Customer Person").append(CRLF);
+      expectedContent.append("\t").append("</ui:define>");
       Assert.assertTrue(contents.contains(expectedContent));
-      
+
       expectedContent = new StringBuilder();
-      expectedContent.append("\t"  ).append("<ui:define name=\"subheader\">" ).append(crlf);
-      expectedContent.append("\t\t").append(  "View existing Customer Person").append(crlf);
-      expectedContent.append("\t"  ).append("</ui:define>"                   );
+      expectedContent.append("\t").append("<ui:define name=\"subheader\">").append(CRLF);
+      expectedContent.append("\t\t").append("View existing Customer Person").append(CRLF);
+      expectedContent.append("\t").append("</ui:define>");
       Assert.assertTrue(contents.contains(expectedContent));
-      
-      expectedContent = new StringBuilder();      
-      expectedContent.append("customerPersonBean.customerPerson");      
+
+      expectedContent = new StringBuilder();
+      expectedContent.append("customerPersonBean.customerPerson");
       Assert.assertTrue(contents.contains(expectedContent));
 
       // Create
@@ -367,25 +406,25 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(create.exists());
       contents = Streams.toString(create.getResourceInputStream());
 
-      expectedContent = new StringBuilder();      
-      expectedContent.append("<ui:param name=\"pageTitle\" value=\"Create Customer Person\"/>");      
+      expectedContent = new StringBuilder();
+      expectedContent.append("<ui:param name=\"pageTitle\" value=\"Create Customer Person\"/>");
       Assert.assertTrue(contents.contains(expectedContent));
 
       expectedContent = new StringBuilder();
-      expectedContent.append("\t"  ).append("<ui:define name=\"header\">").append(crlf);
-      expectedContent.append("\t\t").append(  "Customer Person"          ).append(crlf);
-      expectedContent.append("\t"  ).append("</ui:define>"               );
+      expectedContent.append("\t").append("<ui:define name=\"header\">").append(CRLF);
+      expectedContent.append("\t\t").append("Customer Person").append(CRLF);
+      expectedContent.append("\t").append("</ui:define>");
       Assert.assertTrue(contents.contains(expectedContent));
 
       expectedContent = new StringBuilder();
       expectedContent.append("Edit existing Customer Person");
       Assert.assertTrue(contents.contains(expectedContent));
 
-      expectedContent = new StringBuilder();      
+      expectedContent = new StringBuilder();
       expectedContent.append("Create a new Customer Person");
       Assert.assertTrue(contents.contains(expectedContent));
 
-      expectedContent = new StringBuilder();      
+      expectedContent = new StringBuilder();
       expectedContent.append("customerPersonBean.customerPerson");
       Assert.assertTrue(contents.contains(expectedContent));
 
@@ -395,23 +434,23 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(search.exists());
       contents = Streams.toString(search.getResourceInputStream());
 
-      expectedContent = new StringBuilder();      
+      expectedContent = new StringBuilder();
       expectedContent.append("<ui:param name=\"pageTitle\" value=\"Search Customer Person entities\"/>");
       Assert.assertTrue(contents.contains(expectedContent));
-      
-      expectedContent = new StringBuilder();      
-      expectedContent.append("\t"  ).append("<ui:define name=\"header\">").append(crlf);
-      expectedContent.append("\t\t").append(  "Customer Person"          ).append(crlf);
-      expectedContent.append("\t"  ).append("</ui:define>"               );
+
+      expectedContent = new StringBuilder();
+      expectedContent.append("\t").append("<ui:define name=\"header\">").append(CRLF);
+      expectedContent.append("\t\t").append("Customer Person").append(CRLF);
+      expectedContent.append("\t").append("</ui:define>");
       Assert.assertTrue(contents.contains(expectedContent));
 
-      expectedContent = new StringBuilder();      
-      expectedContent.append("\t"  ).append("<ui:define name=\"subheader\">" ).append(crlf);
-      expectedContent.append("\t\t").append(  "Search Customer Person entities").append(crlf);
-      expectedContent.append("\t"  ).append("</ui:define>"                   );
+      expectedContent = new StringBuilder();
+      expectedContent.append("\t").append("<ui:define name=\"subheader\">").append(CRLF);
+      expectedContent.append("\t\t").append("Search Customer Person entities").append(CRLF);
+      expectedContent.append("\t").append("</ui:define>");
       Assert.assertTrue(contents.contains(expectedContent));
 
-      expectedContent = new StringBuilder();      
+      expectedContent = new StringBuilder();
       expectedContent.append("customerPersonBean.pageItems");
       Assert.assertTrue(contents.contains(expectedContent));
 
@@ -420,7 +459,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       FileResource<?> navigation = web.getWebResource("resources/scaffold/pageTemplate.xhtml");
       Assert.assertTrue(navigation.exists());
       contents = Streams.toString(navigation.getResourceInputStream());
-      expectedContent = new StringBuilder();      
+      expectedContent = new StringBuilder();
       expectedContent.append("<h:link outcome=\"/customerPerson/search\" value=\"Customer Person\"/>");
       Assert.assertTrue(contents.contains(expectedContent));
    }
@@ -529,53 +568,88 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(create.exists());
       contents = Streams.toString(create.getResourceInputStream());
       Assert.assertTrue(contents.contains("template=\"/resources/scaffold/pageTemplate.xhtml"));
-      
+
       StringBuilder metawidget = new StringBuilder();
-      metawidget.append("\t\t"        ).append("<h:form id=\"create\">"                                                                                           ).append(crlf);
-      metawidget.append("\t\t\t"      ).append(  "<h:messages globalOnly=\"true\" styleClass=\"error\"/>"                                                         ).append(crlf);
-      metawidget.append(""            ).append(""                                                                                                                 ).append(crlf);
-      metawidget.append("\t\t\t"      ).append(  "<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">"                                         ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(    "<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First Name:\"/>"                                 ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(    "<h:panelGroup>"                                                                                               ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(      "<h:inputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>"           ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(      "<h:message for=\"customerBeanCustomerFirstName\" styleClass=\"error\"/>"                                    ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(    "</h:panelGroup>"                                                                                              ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(    "<h:outputText/>"                                                                                              ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(    "<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last Name:\"/>"                                   ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(    "<h:panelGroup>"                                                                                               ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(      "<h:inputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>"             ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(      "<h:message for=\"customerBeanCustomerLastName\" styleClass=\"error\"/>"                                     ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(    "</h:panelGroup>"                                                                                              ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(    "<h:outputText/>"                                                                                              ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(    "<h:outputLabel for=\"customerBeanCustomerAddress\" value=\"Address:\"/>"                                      ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(    "<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\" id=\"customerBeanCustomerAddress\">"    ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(      "<h:outputLabel for=\"customerBeanCustomerAddressStreet\" value=\"Street:\"/>"                               ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(      "<h:panelGroup>"                                                                                             ).append(crlf);
-      metawidget.append("\t\t\t\t\t\t").append(        "<h:inputText id=\"customerBeanCustomerAddressStreet\" value=\"#{customerBean.customer.address.street}\"/>").append(crlf);
-      metawidget.append("\t\t\t\t\t\t").append(        "<h:message for=\"customerBeanCustomerAddressStreet\" styleClass=\"error\"/>"                              ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(      "</h:panelGroup>"                                                                                            ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(      "<h:outputText/>"                                                                                            ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(      "<h:outputLabel for=\"customerBeanCustomerAddressCity\" value=\"City:\"/>"                                   ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(      "<h:panelGroup>"                                                                                             ).append(crlf);
-      metawidget.append("\t\t\t\t\t\t").append(        "<h:inputText id=\"customerBeanCustomerAddressCity\" value=\"#{customerBean.customer.address.city}\"/>"    ).append(crlf);
-      metawidget.append("\t\t\t\t\t\t").append(        "<h:message for=\"customerBeanCustomerAddressCity\" styleClass=\"error\"/>"                                ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(      "</h:panelGroup>"                                                                                            ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(      "<h:outputText/>"                                                                                            ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(      "<h:outputLabel for=\"customerBeanCustomerAddressState\" value=\"State:\"/>"                                 ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(      "<h:panelGroup>"                                                                                             ).append(crlf);
-      metawidget.append("\t\t\t\t\t\t").append(        "<h:inputText id=\"customerBeanCustomerAddressState\" value=\"#{customerBean.customer.address.state}\"/>"  ).append(crlf);
-      metawidget.append("\t\t\t\t\t\t").append(        "<h:message for=\"customerBeanCustomerAddressState\" styleClass=\"error\"/>"                               ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(      "</h:panelGroup>"                                                                                            ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(      "<h:outputText/>"                                                                                            ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(      "<h:outputLabel for=\"customerBeanCustomerAddressZip\" value=\"Zip:\"/>"                                     ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(      "<h:panelGroup>"                                                                                             ).append(crlf);
-      metawidget.append("\t\t\t\t\t\t").append(        "<h:inputText id=\"customerBeanCustomerAddressZip\" value=\"#{customerBean.customer.address.zip}\"/>"      ).append(crlf);
-      metawidget.append("\t\t\t\t\t\t").append(        "<h:message for=\"customerBeanCustomerAddressZip\" styleClass=\"error\"/>"                                 ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(      "</h:panelGroup>"                                                                                            ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(      "<h:outputText/>"                                                                                            ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(    "</h:panelGrid>"                                                                                               ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(    "<h:outputText/>"                                                                                              ).append(crlf);
-      metawidget.append("\t\t\t"      ).append(  "</h:panelGrid>"                                                                                                 ).append(crlf);
+      metawidget.append("\t\t").append("<h:form id=\"create\">").append(CRLF);
+      metawidget.append("\t\t\t").append("<h:messages globalOnly=\"true\" styleClass=\"error\"/>").append(CRLF);
+      metawidget.append("").append("").append(CRLF);
+      metawidget.append("\t\t\t").append("<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t")
+               .append("<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First Name:\"/>").append(CRLF);
+      metawidget.append("\t\t\t\t").append("<h:panelGroup>").append(CRLF);
+      metawidget
+               .append("\t\t\t\t\t")
+               .append("<h:inputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t\t").append("<h:message for=\"customerBeanCustomerFirstName\" styleClass=\"error\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t").append("</h:panelGroup>").append(CRLF);
+      metawidget.append("\t\t\t\t").append("<h:outputText/>").append(CRLF);
+      metawidget.append("\t\t\t\t")
+               .append("<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last Name:\"/>").append(CRLF);
+      metawidget.append("\t\t\t\t").append("<h:panelGroup>").append(CRLF);
+      metawidget
+               .append("\t\t\t\t\t")
+               .append("<h:inputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t\t").append("<h:message for=\"customerBeanCustomerLastName\" styleClass=\"error\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t").append("</h:panelGroup>").append(CRLF);
+      metawidget.append("\t\t\t\t").append("<h:outputText/>").append(CRLF);
+      metawidget.append("\t\t\t\t").append("<h:outputLabel for=\"customerBeanCustomerAddress\" value=\"Address:\"/>")
+               .append(CRLF);
+      metawidget
+               .append("\t\t\t\t")
+               .append("<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\" id=\"customerBeanCustomerAddress\">")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t\t")
+               .append("<h:outputLabel for=\"customerBeanCustomerAddressStreet\" value=\"Street:\"/>").append(CRLF);
+      metawidget.append("\t\t\t\t\t").append("<h:panelGroup>").append(CRLF);
+      metawidget
+               .append("\t\t\t\t\t\t")
+               .append("<h:inputText id=\"customerBeanCustomerAddressStreet\" value=\"#{customerBean.customer.address.street}\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t\t\t")
+               .append("<h:message for=\"customerBeanCustomerAddressStreet\" styleClass=\"error\"/>").append(CRLF);
+      metawidget.append("\t\t\t\t\t").append("</h:panelGroup>").append(CRLF);
+      metawidget.append("\t\t\t\t\t").append("<h:outputText/>").append(CRLF);
+      metawidget.append("\t\t\t\t\t")
+               .append("<h:outputLabel for=\"customerBeanCustomerAddressCity\" value=\"City:\"/>").append(CRLF);
+      metawidget.append("\t\t\t\t\t").append("<h:panelGroup>").append(CRLF);
+      metawidget
+               .append("\t\t\t\t\t\t")
+               .append("<h:inputText id=\"customerBeanCustomerAddressCity\" value=\"#{customerBean.customer.address.city}\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t\t\t")
+               .append("<h:message for=\"customerBeanCustomerAddressCity\" styleClass=\"error\"/>").append(CRLF);
+      metawidget.append("\t\t\t\t\t").append("</h:panelGroup>").append(CRLF);
+      metawidget.append("\t\t\t\t\t").append("<h:outputText/>").append(CRLF);
+      metawidget.append("\t\t\t\t\t")
+               .append("<h:outputLabel for=\"customerBeanCustomerAddressState\" value=\"State:\"/>").append(CRLF);
+      metawidget.append("\t\t\t\t\t").append("<h:panelGroup>").append(CRLF);
+      metawidget
+               .append("\t\t\t\t\t\t")
+               .append("<h:inputText id=\"customerBeanCustomerAddressState\" value=\"#{customerBean.customer.address.state}\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t\t\t")
+               .append("<h:message for=\"customerBeanCustomerAddressState\" styleClass=\"error\"/>").append(CRLF);
+      metawidget.append("\t\t\t\t\t").append("</h:panelGroup>").append(CRLF);
+      metawidget.append("\t\t\t\t\t").append("<h:outputText/>").append(CRLF);
+      metawidget.append("\t\t\t\t\t").append("<h:outputLabel for=\"customerBeanCustomerAddressZip\" value=\"Zip:\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t\t").append("<h:panelGroup>").append(CRLF);
+      metawidget
+               .append("\t\t\t\t\t\t")
+               .append("<h:inputText id=\"customerBeanCustomerAddressZip\" value=\"#{customerBean.customer.address.zip}\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t\t\t")
+               .append("<h:message for=\"customerBeanCustomerAddressZip\" styleClass=\"error\"/>").append(CRLF);
+      metawidget.append("\t\t\t\t\t").append("</h:panelGroup>").append(CRLF);
+      metawidget.append("\t\t\t\t\t").append("<h:outputText/>").append(CRLF);
+      metawidget.append("\t\t\t\t").append("</h:panelGrid>").append(CRLF);
+      metawidget.append("\t\t\t\t").append("<h:outputText/>").append(CRLF);
+      metawidget.append("\t\t\t").append("</h:panelGrid>").append(CRLF);
       Assert.assertTrue(contents.contains(metawidget));
 
       // Search
@@ -622,21 +696,34 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       String contents = Streams.toString(view.getResourceInputStream());
       Assert.assertTrue(contents.contains("template=\"/resources/scaffold/pageTemplate.xhtml"));
 
-
       StringBuilder metawidget = new StringBuilder();
-      metawidget.append("\t\t"    ).append("<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">"                                               ).append(crlf);
-      metawidget.append("\t\t\t"  ).append(  "<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First Name:\"/>"                                       ).append(crlf);
-      metawidget.append("\t\t\t"  ).append(  "<h:outputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>"                  ).append(crlf);
-      metawidget.append("\t\t\t"  ).append(  "<h:outputText/>"                                                                                                    ).append(crlf);
-      metawidget.append("\t\t\t"  ).append(  "<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last Name:\"/>"                                         ).append(crlf);
-      metawidget.append("\t\t\t"  ).append(  "<h:outputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>"                    ).append(crlf);
-      metawidget.append("\t\t\t"  ).append(  "<h:outputText/>"                                                                                                    ).append(crlf);
-      metawidget.append("\t\t\t"  ).append(  "<h:outputLabel for=\"customerBeanCustomerEmployer\" value=\"Employer:\"/>"                                          ).append(crlf);
-      metawidget.append("\t\t\t"  ).append(  "<h:link id=\"customerBeanCustomerEmployer\" outcome=\"/employer/view\" value=\"#{customerBean.customer.employer}\">").append(crlf);
-      metawidget.append("\t\t\t\t").append(    "<f:param name=\"id\" value=\"#{customerBean.customer.employer.id}\"/>"                                            ).append(crlf);
-      metawidget.append("\t\t\t"  ).append(  "</h:link>"                                                                                                          ).append(crlf);
-      metawidget.append("\t\t\t"  ).append(  "<h:outputText/>"                                                                                                    ).append(crlf);
-      metawidget.append("\t\t"    ).append("</h:panelGrid>");
+      metawidget.append("\t\t").append("<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">")
+               .append(CRLF);
+      metawidget.append("\t\t\t")
+               .append("<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First Name:\"/>").append(CRLF);
+      metawidget
+               .append("\t\t\t")
+               .append("<h:outputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t").append("<h:outputText/>").append(CRLF);
+      metawidget.append("\t\t\t").append("<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last Name:\"/>")
+               .append(CRLF);
+      metawidget
+               .append("\t\t\t")
+               .append("<h:outputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t").append("<h:outputText/>").append(CRLF);
+      metawidget.append("\t\t\t").append("<h:outputLabel for=\"customerBeanCustomerEmployer\" value=\"Employer:\"/>")
+               .append(CRLF);
+      metawidget
+               .append("\t\t\t")
+               .append("<h:link id=\"customerBeanCustomerEmployer\" outcome=\"/employer/view\" value=\"#{customerBean.customer.employer}\">")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t").append("<f:param name=\"id\" value=\"#{customerBean.customer.employer.id}\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t").append("</h:link>").append(CRLF);
+      metawidget.append("\t\t\t").append("<h:outputText/>").append(CRLF);
+      metawidget.append("\t\t").append("</h:panelGrid>");
 
       Assert.assertTrue(contents.contains(metawidget));
 
@@ -648,29 +735,45 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(contents.contains("template=\"/resources/scaffold/pageTemplate.xhtml"));
 
       metawidget = new StringBuilder();
-      metawidget.append("\t\t\t"      ).append("<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">"                                                                       ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(  "<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First Name:\"/>"                                                               ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(  "<h:panelGroup>"                                                                                                                             ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(    "<h:inputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>"                                         ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(    "<h:message for=\"customerBeanCustomerFirstName\" styleClass=\"error\"/>"                                                                  ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(  "</h:panelGroup>"                                                                                                                            ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(  "<h:outputText/>"                                                                                                                            ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(  "<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last Name:\"/>"                                                                 ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(  "<h:panelGroup>"                                                                                                                             ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(    "<h:inputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>"                                           ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(    "<h:message for=\"customerBeanCustomerLastName\" styleClass=\"error\"/>"                                                                   ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(  "</h:panelGroup>"                                                                                                                            ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(  "<h:outputText/>"                                                                                                                            ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(  "<h:outputLabel for=\"customerBeanCustomerEmployer\" value=\"Employer:\"/>"                                                                  ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(  "<h:panelGroup>"                                                                                                                             ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(    "<h:selectOneMenu converter=\"#{employerBean.converter}\" id=\"customerBeanCustomerEmployer\" value=\"#{customerBean.customer.employer}\">").append(crlf);
-      metawidget.append("\t\t\t\t\t\t").append(      "<f:selectItem/>"                                                                                                                        ).append(crlf);
-      metawidget.append("\t\t\t\t\t\t").append(      "<f:selectItems value=\"#{employerBean.all}\"/>"                                                                                         ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(    "</h:selectOneMenu>"                                                                                                                       ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(    "<h:message for=\"customerBeanCustomerEmployer\" styleClass=\"error\"/>"                                                                   ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(  "</h:panelGroup>"                                                                                                                            ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(  "<h:outputText/>"                                                                                                                            ).append(crlf);
-      metawidget.append("\t\t\t"      ).append("</h:panelGrid>");
+      metawidget.append("\t\t\t").append("<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t")
+               .append("<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First Name:\"/>").append(CRLF);
+      metawidget.append("\t\t\t\t").append("<h:panelGroup>").append(CRLF);
+      metawidget
+               .append("\t\t\t\t\t")
+               .append("<h:inputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t\t").append("<h:message for=\"customerBeanCustomerFirstName\" styleClass=\"error\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t").append("</h:panelGroup>").append(CRLF);
+      metawidget.append("\t\t\t\t").append("<h:outputText/>").append(CRLF);
+      metawidget.append("\t\t\t\t")
+               .append("<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last Name:\"/>").append(CRLF);
+      metawidget.append("\t\t\t\t").append("<h:panelGroup>").append(CRLF);
+      metawidget
+               .append("\t\t\t\t\t")
+               .append("<h:inputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t\t").append("<h:message for=\"customerBeanCustomerLastName\" styleClass=\"error\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t").append("</h:panelGroup>").append(CRLF);
+      metawidget.append("\t\t\t\t").append("<h:outputText/>").append(CRLF);
+      metawidget.append("\t\t\t\t").append("<h:outputLabel for=\"customerBeanCustomerEmployer\" value=\"Employer:\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t").append("<h:panelGroup>").append(CRLF);
+      metawidget
+               .append("\t\t\t\t\t")
+               .append("<h:selectOneMenu converter=\"#{employerBean.converter}\" id=\"customerBeanCustomerEmployer\" value=\"#{customerBean.customer.employer}\">")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t\t\t").append("<f:selectItem/>").append(CRLF);
+      metawidget.append("\t\t\t\t\t\t").append("<f:selectItems value=\"#{employerBean.all}\"/>").append(CRLF);
+      metawidget.append("\t\t\t\t\t").append("</h:selectOneMenu>").append(CRLF);
+      metawidget.append("\t\t\t\t\t").append("<h:message for=\"customerBeanCustomerEmployer\" styleClass=\"error\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t").append("</h:panelGroup>").append(CRLF);
+      metawidget.append("\t\t\t\t").append("<h:outputText/>").append(CRLF);
+      metawidget.append("\t\t\t").append("</h:panelGrid>");
 
       Assert.assertTrue(contents.contains(metawidget));
 
@@ -688,13 +791,15 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       contents = Streams.toString(navigation.getResourceInputStream());
 
       StringBuilder navigationText = new StringBuilder();
-      navigationText.append("\t\t\t\t"    ).append("<ul>"                                                         ).append(crlf);
-      navigationText.append("\t\t\t\t\t"  ).append(  "<li>"                                                       ).append(crlf);
-      navigationText.append("\t\t\t\t\t\t").append(    "<h:link outcome=\"/customer/search\" value=\"Customer\"/>").append(crlf);
-      navigationText.append("\t\t\t\t\t"  ).append(  "</li>"                                                      ).append(crlf);
-      navigationText.append("\t\t\t\t\t"  ).append(  "<li>"                                                       ).append(crlf);
-      navigationText.append("\t\t\t\t\t\t").append(    "<h:link outcome=\"/employer/search\" value=\"Employer\"/>").append(crlf);
-      navigationText.append("\t\t\t\t\t"  ).append(  "</li>"                                                      ).append(crlf);
+      navigationText.append("\t\t\t\t").append("<ul>").append(CRLF);
+      navigationText.append("\t\t\t\t\t").append("<li>").append(CRLF);
+      navigationText.append("\t\t\t\t\t\t").append("<h:link outcome=\"/customer/search\" value=\"Customer\"/>")
+               .append(CRLF);
+      navigationText.append("\t\t\t\t\t").append("</li>").append(CRLF);
+      navigationText.append("\t\t\t\t\t").append("<li>").append(CRLF);
+      navigationText.append("\t\t\t\t\t\t").append("<h:link outcome=\"/employer/search\" value=\"Employer\"/>")
+               .append(CRLF);
+      navigationText.append("\t\t\t\t\t").append("</li>").append(CRLF);
 
       Assert.assertTrue(contents.contains(navigationText));
 
@@ -705,16 +810,17 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       contents = Streams.toString(customerBean.getResourceInputStream());
 
       StringBuilder qbeMetawidget = new StringBuilder();
-      qbeMetawidget.append("  "     ).append("Employer employer = this.search.getEmployer();"                      ).append(crlf);
-      qbeMetawidget.append("    "   ).append("if (employer != null) {"                                             ).append(crlf);
-      qbeMetawidget.append("       ").append("predicatesList.add(builder.equal(root.get(\"employer\"), employer));").append(crlf);
-      qbeMetawidget.append("    "   ).append("}"                                                                   ).append(crlf);
+      qbeMetawidget.append("  ").append("Employer employer = this.search.getEmployer();").append(CRLF);
+      qbeMetawidget.append("    ").append("if (employer != null) {").append(CRLF);
+      qbeMetawidget.append("       ").append("predicatesList.add(builder.equal(root.get(\"employer\"), employer));")
+               .append(CRLF);
+      qbeMetawidget.append("    ").append("}").append(CRLF);
 
       Assert.assertTrue(normalized(contents).contains(normalized(qbeMetawidget)));
-      
+
       StringBuilder expectedContent = new StringBuilder();
-      expectedContent.append("import com.test.model.Customer;").append(crlf);
-      expectedContent.append("import com.test.model.Employer;").append(crlf);
+      expectedContent.append("import com.test.model.Customer;").append(CRLF);
+      expectedContent.append("import com.test.model.Employer;").append(CRLF);
       Assert.assertTrue(normalized(contents).contains(normalized(expectedContent)));
    }
 
@@ -746,31 +852,41 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(contents.contains("template=\"/resources/scaffold/pageTemplate.xhtml"));
 
       StringBuilder metawidget = new StringBuilder();
-      metawidget.append("\t\t"        ).append("<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">"                             ).append(crlf);
-      metawidget.append("\t\t\t"      ).append(  "<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First Name:\"/>"                     ).append(crlf);
-      metawidget.append("\t\t\t"      ).append(  "<h:outputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>").append(crlf);
-      metawidget.append("\t\t\t"      ).append(  "<h:outputText/>"                                                                                  ).append(crlf);
-      metawidget.append("\t\t\t"      ).append(  "<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last Name:\"/>"                       ).append(crlf);
-      metawidget.append("\t\t\t"      ).append(  "<h:outputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>"  ).append(crlf);
-      metawidget.append("\t\t\t"      ).append(  "<h:outputText/>"                                                                                  ).append(crlf);
-      metawidget.append("\t\t\t"      ).append(  "<h:outputLabel for=\"customerBeanCustomerGroceries\" value=\"Groceries:\"/>"                      ).append(crlf);
-      metawidget.append("\t\t\t"      ).append(  "<h:dataTable " +
-      													"id=\"customerBeanCustomerGroceries\" " +
-      													"styleClass=\"data-table\" " +
-      													"value=\"#{forgeview:asList(customerBean.customer.groceries)}\" " +
-      													"var=\"_item\">"                                                                            ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(    "<h:column>"                                                                                     ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(      "<f:facet name=\"header\">"                                                                    ).append(crlf);
-      metawidget.append("\t\t\t\t\t\t").append(        "<h:outputText value=\"Name\"/>"                                                             ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(      "</f:facet>"                                                                                   ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(      "<h:link outcome=\"/grocery/view\">"                                                           ).append(crlf);
-      metawidget.append("\t\t\t\t\t\t").append(        "<f:param name=\"id\" value=\"#{_item.id}\"/>"                                               ).append(crlf);
-      metawidget.append("\t\t\t\t\t\t").append(        "<h:outputText id=\"itemName\" value=\"#{_item.name}\"/>"                                    ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(      "</h:link>"                                                                                    ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(    "</h:column>"                                                                                    ).append(crlf);
-      metawidget.append("\t\t\t"      ).append(  "</h:dataTable>"                                                                                   ).append(crlf);
-      metawidget.append("\t\t\t"      ).append(  "<h:outputText/>"                                                                                  ).append(crlf);
-      metawidget.append("\t\t"        ).append("</h:panelGrid>");
+      metawidget.append("\t\t").append("<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">")
+               .append(CRLF);
+      metawidget.append("\t\t\t")
+               .append("<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First Name:\"/>").append(CRLF);
+      metawidget
+               .append("\t\t\t")
+               .append("<h:outputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t").append("<h:outputText/>").append(CRLF);
+      metawidget.append("\t\t\t").append("<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last Name:\"/>")
+               .append(CRLF);
+      metawidget
+               .append("\t\t\t")
+               .append("<h:outputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t").append("<h:outputText/>").append(CRLF);
+      metawidget.append("\t\t\t").append("<h:outputLabel for=\"customerBeanCustomerGroceries\" value=\"Groceries:\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t").append("<h:dataTable " +
+                                             "id=\"customerBeanCustomerGroceries\" " +
+                                             "styleClass=\"data-table\" " +
+                                             "value=\"#{forgeview:asList(customerBean.customer.groceries)}\" " +
+                                             "var=\"_item\">").append(CRLF);
+      metawidget.append("\t\t\t\t").append("<h:column>").append(CRLF);
+      metawidget.append("\t\t\t\t\t").append("<f:facet name=\"header\">").append(CRLF);
+      metawidget.append("\t\t\t\t\t\t").append("<h:outputText value=\"Name\"/>").append(CRLF);
+      metawidget.append("\t\t\t\t\t").append("</f:facet>").append(CRLF);
+      metawidget.append("\t\t\t\t\t").append("<h:link outcome=\"/grocery/view\">").append(CRLF);
+      metawidget.append("\t\t\t\t\t\t").append("<f:param name=\"id\" value=\"#{_item.id}\"/>").append(CRLF);
+      metawidget.append("\t\t\t\t\t\t").append("<h:outputText id=\"itemName\" value=\"#{_item.name}\"/>").append(CRLF);
+      metawidget.append("\t\t\t\t\t").append("</h:link>").append(CRLF);
+      metawidget.append("\t\t\t\t").append("</h:column>").append(CRLF);
+      metawidget.append("\t\t\t").append("</h:dataTable>").append(CRLF);
+      metawidget.append("\t\t\t").append("<h:outputText/>").append(CRLF);
+      metawidget.append("\t\t").append("</h:panelGrid>");
 
       Assert.assertTrue(contents.contains(metawidget));
       Assert.assertTrue(contents.contains("xmlns:forgeview=\"http://jboss.org/forge/view\""));
@@ -783,53 +899,82 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(contents.contains("template=\"/resources/scaffold/pageTemplate.xhtml"));
 
       metawidget = new StringBuilder();
-      metawidget.append("\t\t\t"          ).append("<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">"                                                                   ).append(crlf);
-      metawidget.append("\t\t\t\t"        ).append(  "<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First Name:\"/>"                                                           ).append(crlf);
-      metawidget.append("\t\t\t\t"        ).append(  "<h:panelGroup>"                                                                                                                         ).append(crlf);
-      metawidget.append("\t\t\t\t\t"      ).append(    "<h:inputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>"                                     ).append(crlf);
-      metawidget.append("\t\t\t\t\t"      ).append(    "<h:message for=\"customerBeanCustomerFirstName\" styleClass=\"error\"/>"                                                              ).append(crlf);
-      metawidget.append("\t\t\t\t"        ).append(  "</h:panelGroup>"                                                                                                                        ).append(crlf);
-      metawidget.append("\t\t\t\t"        ).append(  "<h:outputText/>"                                                                                                                        ).append(crlf);
-      metawidget.append("\t\t\t\t"        ).append(  "<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last Name:\"/>"                                                             ).append(crlf);
-      metawidget.append("\t\t\t\t"        ).append(  "<h:panelGroup>"                                                                                                                         ).append(crlf);
-      metawidget.append("\t\t\t\t\t"      ).append(    "<h:inputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>"                                       ).append(crlf);
-      metawidget.append("\t\t\t\t\t"      ).append(    "<h:message for=\"customerBeanCustomerLastName\" styleClass=\"error\"/>"                                                               ).append(crlf);
-      metawidget.append("\t\t\t\t"        ).append(  "</h:panelGroup>"                                                                                                                        ).append(crlf);
-      metawidget.append("\t\t\t\t"        ).append(  "<h:outputText/>"                                                                                                                        ).append(crlf);
-      metawidget.append("\t\t\t\t"        ).append(  "<h:outputLabel for=\"customerBeanCustomerGroceries\" value=\"Groceries:\"/>"                                                            ).append(crlf);
-      metawidget.append("\t\t\t\t"        ).append(  "<h:panelGroup>"                                                                                                                         ).append(crlf);
-      metawidget.append("\t\t\t\t\t"      ).append(    "<ui:param name=\"_collection\" value=\"#{customerBean.customer.groceries}\"/>"                                                        ).append(crlf);
-      metawidget.append("\t\t\t\t\t"      ).append(    "<h:dataTable id=\"customerBeanCustomerGroceries\" styleClass=\"data-table\" value=\"#{forgeview:asList(_collection)}\" var=\"_item\">").append(crlf);
-      metawidget.append("\t\t\t\t\t\t"    ).append(      "<h:column>"                                                                                                                         ).append(crlf);
-      metawidget.append("\t\t\t\t\t\t\t"  ).append(        "<f:facet name=\"header\">"                                                                                                        ).append(crlf);
-      metawidget.append("\t\t\t\t\t\t\t\t").append(          "<h:outputText value=\"Name\"/>"                                                                                                 ).append(crlf);
-      metawidget.append("\t\t\t\t\t\t\t"  ).append(        "</f:facet>"                                                                                                                       ).append(crlf);
-      metawidget.append("\t\t\t\t\t\t\t"  ).append(        "<h:link outcome=\"/grocery/view\">"                                                                                               ).append(crlf);
-      metawidget.append("\t\t\t\t\t\t\t\t").append(          "<f:param name=\"id\" value=\"#{_item.id}\"/>"                                                                                   ).append(crlf);
-      metawidget.append("\t\t\t\t\t\t\t\t").append(          "<h:outputText id=\"itemName\" value=\"#{_item.name}\"/>"                                                                        ).append(crlf);
-      metawidget.append("\t\t\t\t\t\t\t"  ).append(        "</h:link>"                                                                                                                        ).append(crlf);
-      metawidget.append("\t\t\t\t\t\t"    ).append(      "</h:column>"                                                                                                                        ).append(crlf);
-      metawidget.append("\t\t\t\t\t\t"    ).append(      "<h:column footerClass=\"remove-column\" headerClass=\"remove-column\">"                                                             ).append(crlf);
-      metawidget.append("\t\t\t\t\t\t\t"  ).append(        "<h:commandLink action=\"#{_collection.remove(_item)}\" styleClass=\"remove-button\"/>"                                            ).append(crlf);
-      metawidget.append("\t\t\t\t\t\t"    ).append(      "</h:column>"                                                                                                                        ).append(crlf);
-      metawidget.append("\t\t\t\t\t"      ).append(    "</h:dataTable>"                                                                                                                       ).append(crlf);
-      metawidget.append("\t\t\t\t\t"      ).append(    "<h:panelGrid columnClasses=\",remove-column\" columns=\"2\" styleClass=\"data-table-footer\">"                                        ).append(crlf);
-      metawidget.append("\t\t\t\t\t\t"    ).append(      "<h:selectOneMenu " +
-      															"converter=\"#{groceryBean.converter}\" " +
-      															"id=\"customerBeanCustomerGroceriesSelect\" " +
-      															"value=\"#{requestScope['customerBeanCustomerGroceriesSelect']}\">"                                                           ).append(crlf);
-      metawidget.append("\t\t\t\t\t\t\t"  ).append(        "<f:selectItem/>"                                                                                                                  ).append(crlf);
-      metawidget.append("\t\t\t\t\t\t\t"  ).append(        "<f:selectItems value=\"#{groceryBean.all}\"/>"                                                                                    ).append(crlf);
-      metawidget.append("\t\t\t\t\t\t"    ).append(      "</h:selectOneMenu>"                                                                                                                 ).append(crlf);
-      metawidget.append("\t\t\t\t\t\t"    ).append(      "<h:commandLink " +
-      															"action=\"#{_collection.add(requestScope['customerBeanCustomerGroceriesSelect'])}\" " +
-      															"id=\"customerBeanCustomerGroceriesAdd\" " +
-      															"onclick=\"if (document.getElementById(document.forms[0].id+':customerBeanCustomerGroceriesSelect').selectedIndex &lt; 1) { alert('Must select a Grocery'); return false; }\" " +
-    		  													"styleClass=\"add-button\"/>"                                                                                                 ).append(crlf);
-      metawidget.append("\t\t\t\t\t"      ).append(    "</h:panelGrid>"                                                                                                                       ).append(crlf);
-      metawidget.append("\t\t\t\t"        ).append(  "</h:panelGroup>"                                                                                                                        ).append(crlf);
-      metawidget.append("\t\t\t\t"        ).append(  "<h:outputText/>"                                                                                                                        ).append(crlf);
-      metawidget.append("\t\t\t"          ).append("</h:panelGrid>");
+      metawidget.append("\t\t\t").append("<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t")
+               .append("<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First Name:\"/>").append(CRLF);
+      metawidget.append("\t\t\t\t").append("<h:panelGroup>").append(CRLF);
+      metawidget
+               .append("\t\t\t\t\t")
+               .append("<h:inputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t\t").append("<h:message for=\"customerBeanCustomerFirstName\" styleClass=\"error\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t").append("</h:panelGroup>").append(CRLF);
+      metawidget.append("\t\t\t\t").append("<h:outputText/>").append(CRLF);
+      metawidget.append("\t\t\t\t")
+               .append("<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last Name:\"/>").append(CRLF);
+      metawidget.append("\t\t\t\t").append("<h:panelGroup>").append(CRLF);
+      metawidget
+               .append("\t\t\t\t\t")
+               .append("<h:inputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t\t").append("<h:message for=\"customerBeanCustomerLastName\" styleClass=\"error\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t").append("</h:panelGroup>").append(CRLF);
+      metawidget.append("\t\t\t\t").append("<h:outputText/>").append(CRLF);
+      metawidget.append("\t\t\t\t")
+               .append("<h:outputLabel for=\"customerBeanCustomerGroceries\" value=\"Groceries:\"/>").append(CRLF);
+      metawidget.append("\t\t\t\t").append("<h:panelGroup>").append(CRLF);
+      metawidget.append("\t\t\t\t\t")
+               .append("<ui:param name=\"_collection\" value=\"#{customerBean.customer.groceries}\"/>").append(CRLF);
+      metawidget
+               .append("\t\t\t\t\t")
+               .append("<h:dataTable id=\"customerBeanCustomerGroceries\" styleClass=\"data-table\" value=\"#{forgeview:asList(_collection)}\" var=\"_item\">")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t\t\t").append("<h:column>").append(CRLF);
+      metawidget.append("\t\t\t\t\t\t\t").append("<f:facet name=\"header\">").append(CRLF);
+      metawidget.append("\t\t\t\t\t\t\t\t").append("<h:outputText value=\"Name\"/>").append(CRLF);
+      metawidget.append("\t\t\t\t\t\t\t").append("</f:facet>").append(CRLF);
+      metawidget.append("\t\t\t\t\t\t\t").append("<h:link outcome=\"/grocery/view\">").append(CRLF);
+      metawidget.append("\t\t\t\t\t\t\t\t").append("<f:param name=\"id\" value=\"#{_item.id}\"/>").append(CRLF);
+      metawidget.append("\t\t\t\t\t\t\t\t").append("<h:outputText id=\"itemName\" value=\"#{_item.name}\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t\t\t\t").append("</h:link>").append(CRLF);
+      metawidget.append("\t\t\t\t\t\t").append("</h:column>").append(CRLF);
+      metawidget.append("\t\t\t\t\t\t")
+               .append("<h:column footerClass=\"remove-column\" headerClass=\"remove-column\">").append(CRLF);
+      metawidget.append("\t\t\t\t\t\t\t")
+               .append("<h:commandLink action=\"#{_collection.remove(_item)}\" styleClass=\"remove-button\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t\t\t").append("</h:column>").append(CRLF);
+      metawidget.append("\t\t\t\t\t").append("</h:dataTable>").append(CRLF);
+      metawidget.append("\t\t\t\t\t")
+               .append("<h:panelGrid columnClasses=\",remove-column\" columns=\"2\" styleClass=\"data-table-footer\">")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t\t\t").append("<h:selectOneMenu " +
+                                                   "converter=\"#{groceryBean.converter}\" " +
+                                                   "id=\"customerBeanCustomerGroceriesSelect\" " +
+                                                   "value=\"#{requestScope['customerBeanCustomerGroceriesSelect']}\">")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t\t\t\t").append("<f:selectItem/>").append(CRLF);
+      metawidget.append("\t\t\t\t\t\t\t").append("<f:selectItems value=\"#{groceryBean.all}\"/>").append(CRLF);
+      metawidget.append("\t\t\t\t\t\t").append("</h:selectOneMenu>").append(CRLF);
+      metawidget
+               .append("\t\t\t\t\t\t")
+               .append("<h:commandLink "
+                        +
+                                                   "action=\"#{_collection.add(requestScope['customerBeanCustomerGroceriesSelect'])}\" "
+                        +
+                                                   "id=\"customerBeanCustomerGroceriesAdd\" "
+                        +
+                                                   "onclick=\"if (document.getElementById(document.forms[0].id+':customerBeanCustomerGroceriesSelect').selectedIndex &lt; 1) { alert('Must select a Grocery'); return false; }\" "
+                        +
+                                                "styleClass=\"add-button\"/>").append(CRLF);
+      metawidget.append("\t\t\t\t\t").append("</h:panelGrid>").append(CRLF);
+      metawidget.append("\t\t\t\t").append("</h:panelGroup>").append(CRLF);
+      metawidget.append("\t\t\t\t").append("<h:outputText/>").append(CRLF);
+      metawidget.append("\t\t\t").append("</h:panelGrid>");
 
       Assert.assertTrue(contents.contains(metawidget));
       Assert.assertTrue(contents.contains("xmlns:forgeview=\"http://jboss.org/forge/view\""));
@@ -842,47 +987,61 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(contents.contains("template=\"/resources/scaffold/pageTemplate.xhtml"));
 
       StringBuilder searchMetawidget = new StringBuilder();
-      searchMetawidget.append("\t\t"        ).append("<h:form id=\"search\">"                                                                              ).append(crlf);
-      searchMetawidget.append("\t\t\t"      ).append(  "<h:panelGroup styleClass=\"search\">"                                                              ).append(crlf);
-      searchMetawidget.append(""            ).append(""                                                                                                    ).append(crlf);
-      searchMetawidget.append("\t\t\t\t"    ).append(    "<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">"                          ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"  ).append(      "<h:outputLabel for=\"customerBeanSearchFirstName\" value=\"First Name:\"/>"                    ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"  ).append(      "<h:panelGroup>"                                                                                ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t\t").append(        "<h:inputText id=\"customerBeanSearchFirstName\" value=\"#{customerBean.search.firstName}\"/>").append(crlf);
-      searchMetawidget.append("\t\t\t\t\t\t").append(        "<h:message for=\"customerBeanSearchFirstName\" styleClass=\"error\"/>"                       ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"  ).append(      "</h:panelGroup>"                                                                               ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"  ).append(      "<h:outputText/>"                                                                               ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"  ).append(      "<h:outputLabel for=\"customerBeanSearchLastName\" value=\"Last Name:\"/>"                      ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"  ).append(      "<h:panelGroup>"                                                                                ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t\t").append(        "<h:inputText id=\"customerBeanSearchLastName\" value=\"#{customerBean.search.lastName}\"/>"  ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t\t").append(        "<h:message for=\"customerBeanSearchLastName\" styleClass=\"error\"/>"                        ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"  ).append(      "</h:panelGroup>"                                                                               ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"  ).append(      "<h:outputText/>"                                                                               ).append(crlf);
-      searchMetawidget.append("\t\t\t\t"    ).append(    "</h:panelGrid>"                                                                                  ).append(crlf);
+      searchMetawidget.append("\t\t").append("<h:form id=\"search\">").append(CRLF);
+      searchMetawidget.append("\t\t\t").append("<h:panelGroup styleClass=\"search\">").append(CRLF);
+      searchMetawidget.append("").append("").append(CRLF);
+      searchMetawidget.append("\t\t\t\t")
+               .append("<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t")
+               .append("<h:outputLabel for=\"customerBeanSearchFirstName\" value=\"First Name:\"/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t").append("<h:panelGroup>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t\t")
+               .append("<h:inputText id=\"customerBeanSearchFirstName\" value=\"#{customerBean.search.firstName}\"/>")
+               .append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t\t")
+               .append("<h:message for=\"customerBeanSearchFirstName\" styleClass=\"error\"/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t").append("</h:panelGroup>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t").append("<h:outputText/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t")
+               .append("<h:outputLabel for=\"customerBeanSearchLastName\" value=\"Last Name:\"/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t").append("<h:panelGroup>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t\t")
+               .append("<h:inputText id=\"customerBeanSearchLastName\" value=\"#{customerBean.search.lastName}\"/>")
+               .append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t\t")
+               .append("<h:message for=\"customerBeanSearchLastName\" styleClass=\"error\"/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t").append("</h:panelGroup>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t").append("<h:outputText/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t").append("</h:panelGrid>").append(CRLF);
 
       Assert.assertTrue(contents.contains(searchMetawidget));
 
       StringBuilder beanMetawidget = new StringBuilder();
-      beanMetawidget.append("\t\t\t"      ).append("<h:dataTable id=\"customerBeanPageItems\" styleClass=\"data-table\" value=\"#{customerBean.pageItems}\" var=\"_item\">").append(crlf);
-      beanMetawidget.append("\t\t\t\t"    ).append(  "<h:column>"                                                                                                          ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t"  ).append(    "<f:facet name=\"header\">"                                                                                         ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t\t").append(      "<h:outputText value=\"First Name\"/>"                                                                            ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t"  ).append(    "</f:facet>"                                                                                                        ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t"  ).append(    "<h:link outcome=\"/customer/view\">"                                                                               ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t\t").append(      "<f:param name=\"id\" value=\"#{_item.id}\"/>"                                                                    ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t\t").append(      "<h:outputText id=\"itemFirstName\" value=\"#{_item.firstName}\"/>"                                               ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t"  ).append(    "</h:link>"                                                                                                         ).append(crlf);
-      beanMetawidget.append("\t\t\t\t"    ).append(  "</h:column>"                                                                                                         ).append(crlf);
-      beanMetawidget.append("\t\t\t\t"    ).append(  "<h:column>"                                                                                                          ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t"  ).append(    "<f:facet name=\"header\">"                                                                                         ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t\t").append(      "<h:outputText value=\"Last Name\"/>"                                                                             ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t"  ).append(    "</f:facet>"                                                                                                        ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t"  ).append(    "<h:link outcome=\"/customer/view\">"                                                                               ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t\t").append(      "<f:param name=\"id\" value=\"#{_item.id}\"/>"                                                                    ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t\t").append(      "<h:outputText id=\"itemLastName\" value=\"#{_item.lastName}\"/>"                                                 ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t"  ).append(    "</h:link>"                                                                                                         ).append(crlf);
-      beanMetawidget.append("\t\t\t\t"    ).append(  "</h:column>"                                                                                                         ).append(crlf);
-      beanMetawidget.append("\t\t\t"      ).append("</h:dataTable>");
+      beanMetawidget
+               .append("\t\t\t")
+               .append("<h:dataTable id=\"customerBeanPageItems\" styleClass=\"data-table\" value=\"#{customerBean.pageItems}\" var=\"_item\">")
+               .append(CRLF);
+      beanMetawidget.append("\t\t\t\t").append("<h:column>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t").append("<f:facet name=\"header\">").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t\t").append("<h:outputText value=\"First Name\"/>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t").append("</f:facet>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t").append("<h:link outcome=\"/customer/view\">").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t\t").append("<f:param name=\"id\" value=\"#{_item.id}\"/>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t\t").append("<h:outputText id=\"itemFirstName\" value=\"#{_item.firstName}\"/>")
+               .append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t").append("</h:link>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t").append("</h:column>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t").append("<h:column>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t").append("<f:facet name=\"header\">").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t\t").append("<h:outputText value=\"Last Name\"/>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t").append("</f:facet>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t").append("<h:link outcome=\"/customer/view\">").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t\t").append("<f:param name=\"id\" value=\"#{_item.id}\"/>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t\t").append("<h:outputText id=\"itemLastName\" value=\"#{_item.lastName}\"/>")
+               .append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t").append("</h:link>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t").append("</h:column>").append(CRLF);
+      beanMetawidget.append("\t\t\t").append("</h:dataTable>");
 
       Assert.assertTrue(contents.contains(beanMetawidget));
 
@@ -891,13 +1050,15 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       contents = Streams.toString(navigation.getResourceInputStream());
 
       StringBuilder navigationText = new StringBuilder();
-      navigationText.append("\t\t\t\t"    ).append("<ul>"                                                         ).append(crlf);
-      navigationText.append("\t\t\t\t\t"  ).append(  "<li>"                                                       ).append(crlf);
-      navigationText.append("\t\t\t\t\t\t").append(    "<h:link outcome=\"/customer/search\" value=\"Customer\"/>").append(crlf);
-      navigationText.append("\t\t\t\t\t"  ).append(  "</li>"                                                      ).append(crlf);
-      navigationText.append("\t\t\t\t\t"  ).append(  "<li>"                                                       ).append(crlf);
-      navigationText.append("\t\t\t\t\t\t").append(    "<h:link outcome=\"/grocery/search\" value=\"Grocery\"/>"  ).append(crlf);
-      navigationText.append("\t\t\t\t\t"  ).append(  "</li>"                                                      ).append(crlf);
+      navigationText.append("\t\t\t\t").append("<ul>").append(CRLF);
+      navigationText.append("\t\t\t\t\t").append("<li>").append(CRLF);
+      navigationText.append("\t\t\t\t\t\t").append("<h:link outcome=\"/customer/search\" value=\"Customer\"/>")
+               .append(CRLF);
+      navigationText.append("\t\t\t\t\t").append("</li>").append(CRLF);
+      navigationText.append("\t\t\t\t\t").append("<li>").append(CRLF);
+      navigationText.append("\t\t\t\t\t\t").append("<h:link outcome=\"/grocery/search\" value=\"Grocery\"/>")
+               .append(CRLF);
+      navigationText.append("\t\t\t\t\t").append("</li>").append(CRLF);
 
       Assert.assertTrue(contents.contains(navigationText));
    }
@@ -913,9 +1074,11 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
       CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget> existingWidgetBuilder = new CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget>(
                new CompositeWidgetBuilderConfig<StaticXmlWidget, StaticXmlMetawidget>().setWidgetBuilders(
-                        new EntityWidgetBuilder(new EntityWidgetBuilderConfig()), new ReadOnlyWidgetBuilder(), new HtmlWidgetBuilder()));
+                        new EntityWidgetBuilder(new EntityWidgetBuilderConfig()), new ReadOnlyWidgetBuilder(),
+                        new HtmlWidgetBuilder()));
 
-      CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget> newWidgetBuilder = new FacesScaffold(null, null, null,
+      CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget> newWidgetBuilder = new FacesScaffold(null, null,
+               null,
                null).insertRichFacesWidgetBuilder(existingWidgetBuilder);
 
       assertTrue(newWidgetBuilder.getWidgetBuilders()[0] instanceof EntityWidgetBuilder);
@@ -961,7 +1124,8 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
       existingWidgetBuilder = new CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget>(
                new CompositeWidgetBuilderConfig<StaticXmlWidget, StaticXmlMetawidget>().setWidgetBuilders(
-                        new EntityWidgetBuilder(new EntityWidgetBuilderConfig()), new RichFacesWidgetBuilder(), new HtmlWidgetBuilder()));
+                        new EntityWidgetBuilder(new EntityWidgetBuilderConfig()), new RichFacesWidgetBuilder(),
+                        new HtmlWidgetBuilder()));
 
       newWidgetBuilder = new FacesScaffold(null, null, null, null).insertRichFacesWidgetBuilder(existingWidgetBuilder);
 
@@ -1000,41 +1164,62 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(contents.contains("template=\"/resources/scaffold/pageTemplate.xhtml"));
 
       StringBuilder searchMetawidget = new StringBuilder();
-      searchMetawidget.append("\t\t"        ).append("<h:form id=\"search\">"                                                                        ).append(crlf);
-      searchMetawidget.append("\t\t\t"      ).append(  "<h:panelGroup styleClass=\"search\">"                                                        ).append(crlf);
-      searchMetawidget.append(""            ).append(""                                                                                              ).append(crlf);
-      searchMetawidget.append("\t\t\t\t"    ).append(    "<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">"                    ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"  ).append(      "<h:outputLabel for=\"customerBeanSearchField1\" value=\"Field 1:\"/>"                    ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"  ).append(      "<h:panelGroup>"                                                                          ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t\t").append(        "<h:inputText id=\"customerBeanSearchField1\" value=\"#{customerBean.search.field1}\"/>").append(crlf);
-      searchMetawidget.append("\t\t\t\t\t\t").append(        "<h:message for=\"customerBeanSearchField1\" styleClass=\"error\"/>"                    ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"  ).append(      "</h:panelGroup>"                                                                         ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"  ).append(      "<h:outputText/>"                                                                         ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"  ).append(      "<h:outputLabel for=\"customerBeanSearchField2\" value=\"Field 2:\"/>"                    ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"  ).append(      "<h:panelGroup>"                                                                          ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t\t").append(        "<h:inputText id=\"customerBeanSearchField2\" value=\"#{customerBean.search.field2}\"/>").append(crlf);
-      searchMetawidget.append("\t\t\t\t\t\t").append(        "<h:message for=\"customerBeanSearchField2\" styleClass=\"error\"/>"                    ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"  ).append(      "</h:panelGroup>"                                                                         ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"  ).append(      "<h:outputText/>"                                                                         ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"  ).append(      "<h:outputLabel for=\"customerBeanSearchField4\" value=\"Field 4:\"/>"                    ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"  ).append(      "<h:panelGroup>"                                                                          ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t\t").append(        "<h:inputText id=\"customerBeanSearchField4\" value=\"#{customerBean.search.field4}\"/>").append(crlf);
-      searchMetawidget.append("\t\t\t\t\t\t").append(        "<h:message for=\"customerBeanSearchField4\" styleClass=\"error\"/>"                    ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"  ).append(      "</h:panelGroup>"                                                                         ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"  ).append(      "<h:outputText/>"                                                                         ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"  ).append(      "<h:outputLabel for=\"customerBeanSearchField5\" value=\"Field 5:\"/>"                    ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"  ).append(      "<h:panelGroup>"                                                                          ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t\t").append(        "<h:inputText id=\"customerBeanSearchField5\" value=\"#{customerBean.search.field5}\"/>").append(crlf);
-      searchMetawidget.append("\t\t\t\t\t\t").append(        "<h:message for=\"customerBeanSearchField5\" styleClass=\"error\"/>"                    ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"  ).append(      "</h:panelGroup>"                                                                         ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"  ).append(      "<h:outputText/>"                                                                         ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"  ).append(      "<h:outputLabel for=\"customerBeanSearchField6\" value=\"Field 6:\"/>"                    ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"  ).append(      "<h:panelGroup>"                                                                          ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t\t").append(        "<h:inputText id=\"customerBeanSearchField6\" value=\"#{customerBean.search.field6}\"/>").append(crlf);
-      searchMetawidget.append("\t\t\t\t\t\t").append(        "<h:message for=\"customerBeanSearchField6\" styleClass=\"error\"/>"                    ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"  ).append(      "</h:panelGroup>"                                                                         ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"  ).append(      "<h:outputText/>"                                                                         ).append(crlf);
-      searchMetawidget.append("\t\t\t\t"    ).append(    "</h:panelGrid>"                                                                            ).append(crlf);
+      searchMetawidget.append("\t\t").append("<h:form id=\"search\">").append(CRLF);
+      searchMetawidget.append("\t\t\t").append("<h:panelGroup styleClass=\"search\">").append(CRLF);
+      searchMetawidget.append("").append("").append(CRLF);
+      searchMetawidget.append("\t\t\t\t")
+               .append("<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t")
+               .append("<h:outputLabel for=\"customerBeanSearchField1\" value=\"Field 1:\"/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t").append("<h:panelGroup>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t\t")
+               .append("<h:inputText id=\"customerBeanSearchField1\" value=\"#{customerBean.search.field1}\"/>")
+               .append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t\t")
+               .append("<h:message for=\"customerBeanSearchField1\" styleClass=\"error\"/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t").append("</h:panelGroup>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t").append("<h:outputText/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t")
+               .append("<h:outputLabel for=\"customerBeanSearchField2\" value=\"Field 2:\"/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t").append("<h:panelGroup>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t\t")
+               .append("<h:inputText id=\"customerBeanSearchField2\" value=\"#{customerBean.search.field2}\"/>")
+               .append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t\t")
+               .append("<h:message for=\"customerBeanSearchField2\" styleClass=\"error\"/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t").append("</h:panelGroup>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t").append("<h:outputText/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t")
+               .append("<h:outputLabel for=\"customerBeanSearchField4\" value=\"Field 4:\"/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t").append("<h:panelGroup>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t\t")
+               .append("<h:inputText id=\"customerBeanSearchField4\" value=\"#{customerBean.search.field4}\"/>")
+               .append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t\t")
+               .append("<h:message for=\"customerBeanSearchField4\" styleClass=\"error\"/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t").append("</h:panelGroup>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t").append("<h:outputText/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t")
+               .append("<h:outputLabel for=\"customerBeanSearchField5\" value=\"Field 5:\"/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t").append("<h:panelGroup>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t\t")
+               .append("<h:inputText id=\"customerBeanSearchField5\" value=\"#{customerBean.search.field5}\"/>")
+               .append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t\t")
+               .append("<h:message for=\"customerBeanSearchField5\" styleClass=\"error\"/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t").append("</h:panelGroup>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t").append("<h:outputText/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t")
+               .append("<h:outputLabel for=\"customerBeanSearchField6\" value=\"Field 6:\"/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t").append("<h:panelGroup>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t\t")
+               .append("<h:inputText id=\"customerBeanSearchField6\" value=\"#{customerBean.search.field6}\"/>")
+               .append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t\t")
+               .append("<h:message for=\"customerBeanSearchField6\" styleClass=\"error\"/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t").append("</h:panelGroup>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t").append("<h:outputText/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t").append("</h:panelGrid>").append(CRLF);
 
       Assert.assertTrue(contents.contains(searchMetawidget));
    }
@@ -1097,18 +1282,30 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(contents.contains("template=\"/resources/scaffold/pageTemplate.xhtml"));
 
       StringBuilder metawidget = new StringBuilder();
-      metawidget.append("\t"    ).append("<ui:define name=\"main\">"                                                                            ).append(crlf);
-      metawidget.append("\t\t"  ).append(  "<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">"                             ).append(crlf);
-      metawidget.append("\t\t\t").append(    "<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First Name:\"/>"                     ).append(crlf);
-      metawidget.append("\t\t\t").append(    "<h:outputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>").append(crlf);
-      metawidget.append("\t\t\t").append(    "<h:outputText/>"                                                                                  ).append(crlf);
-      metawidget.append("\t\t\t").append(    "<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last Name:\"/>"                       ).append(crlf);
-      metawidget.append("\t\t\t").append(    "<h:outputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>"  ).append(crlf);
-      metawidget.append("\t\t\t").append(    "<h:outputText/>"                                                                                  ).append(crlf);
-      metawidget.append("\t\t\t").append(    "<h:outputLabel for=\"customerBeanCustomerRating\" value=\"Rating:\"/>"                            ).append(crlf);
-      metawidget.append("\t\t\t").append(    "<h:outputText id=\"customerBeanCustomerRating\" value=\"#{customerBean.customer.rating}\"/>"      ).append(crlf);
-      metawidget.append("\t\t\t").append(    "<h:outputText/>"                                                                                  ).append(crlf);
-      metawidget.append("\t\t"  ).append(  "</h:panelGrid>"                                                                                     ).append(crlf);
+      metawidget.append("\t").append("<ui:define name=\"main\">").append(CRLF);
+      metawidget.append("\t\t").append("<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">")
+               .append(CRLF);
+      metawidget.append("\t\t\t")
+               .append("<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First Name:\"/>").append(CRLF);
+      metawidget
+               .append("\t\t\t")
+               .append("<h:outputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t").append("<h:outputText/>").append(CRLF);
+      metawidget.append("\t\t\t").append("<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last Name:\"/>")
+               .append(CRLF);
+      metawidget
+               .append("\t\t\t")
+               .append("<h:outputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t").append("<h:outputText/>").append(CRLF);
+      metawidget.append("\t\t\t").append("<h:outputLabel for=\"customerBeanCustomerRating\" value=\"Rating:\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t")
+               .append("<h:outputText id=\"customerBeanCustomerRating\" value=\"#{customerBean.customer.rating}\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t").append("<h:outputText/>").append(CRLF);
+      metawidget.append("\t\t").append("</h:panelGrid>").append(CRLF);
 
       Assert.assertTrue(contents.contains(metawidget));
 
@@ -1120,34 +1317,49 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(contents.contains("template=\"/resources/scaffold/pageTemplate.xhtml"));
 
       metawidget = new StringBuilder();
-      metawidget.append("\t\t"        ).append("<h:form id=\"create\">"                                                                                ).append(crlf);
-      metawidget.append("\t\t\t"      ).append(  "<h:messages globalOnly=\"true\" styleClass=\"error\"/>"                                              ).append(crlf);
-      metawidget.append(""            ).append(""                                                                                                      ).append(crlf);
-      metawidget.append("\t\t\t"      ).append(  "<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">"                              ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(    "<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First Name:\"/>"                      ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(    "<h:panelGroup>"                                                                                    ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(      "<h:inputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>").append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(      "<h:message for=\"customerBeanCustomerFirstName\" styleClass=\"error\"/>"                         ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(    "</h:panelGroup>"                                                                                   ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(    "<h:outputText/>"                                                                                   ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(    "<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last Name:\"/>"                        ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(    "<h:panelGroup>"                                                                                    ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(      "<h:inputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>"  ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(      "<h:message for=\"customerBeanCustomerLastName\" styleClass=\"error\"/>"                          ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(    "</h:panelGroup>"                                                                                   ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(    "<h:outputText/>"                                                                                   ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(    "<h:outputLabel for=\"customerBeanCustomerRating\" value=\"Rating:\"/>"                             ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(    "<h:panelGroup>"                                                                                    ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(      "<h:selectOneMenu id=\"customerBeanCustomerRating\" value=\"#{customerBean.customer.rating}\">"   ).append(crlf);
-      metawidget.append("\t\t\t\t\t\t").append(        "<f:selectItem/>"                                                                               ).append(crlf);
-      metawidget.append("\t\t\t\t\t\t").append(        "<f:selectItem itemValue=\"ONE_STAR\"/>"                                                        ).append(crlf);
-      metawidget.append("\t\t\t\t\t\t").append(        "<f:selectItem itemValue=\"TWO_STAR\"/>"                                                        ).append(crlf);
-      metawidget.append("\t\t\t\t\t\t").append(        "<f:selectItem itemValue=\"THREE_STAR\"/>"                                                      ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(      "</h:selectOneMenu>"                                                                              ).append(crlf);
-      metawidget.append("\t\t\t\t\t"  ).append(      "<h:message for=\"customerBeanCustomerRating\" styleClass=\"error\"/>"                            ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(    "</h:panelGroup>"                                                                                   ).append(crlf);
-      metawidget.append("\t\t\t\t"    ).append(    "<h:outputText/>"                                                                                   ).append(crlf);
-      metawidget.append("\t\t\t"      ).append(  "</h:panelGrid>"                                                                                      ).append(crlf);
+      metawidget.append("\t\t").append("<h:form id=\"create\">").append(CRLF);
+      metawidget.append("\t\t\t").append("<h:messages globalOnly=\"true\" styleClass=\"error\"/>").append(CRLF);
+      metawidget.append("").append("").append(CRLF);
+      metawidget.append("\t\t\t").append("<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t")
+               .append("<h:outputLabel for=\"customerBeanCustomerFirstName\" value=\"First Name:\"/>").append(CRLF);
+      metawidget.append("\t\t\t\t").append("<h:panelGroup>").append(CRLF);
+      metawidget
+               .append("\t\t\t\t\t")
+               .append("<h:inputText id=\"customerBeanCustomerFirstName\" value=\"#{customerBean.customer.firstName}\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t\t").append("<h:message for=\"customerBeanCustomerFirstName\" styleClass=\"error\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t").append("</h:panelGroup>").append(CRLF);
+      metawidget.append("\t\t\t\t").append("<h:outputText/>").append(CRLF);
+      metawidget.append("\t\t\t\t")
+               .append("<h:outputLabel for=\"customerBeanCustomerLastName\" value=\"Last Name:\"/>").append(CRLF);
+      metawidget.append("\t\t\t\t").append("<h:panelGroup>").append(CRLF);
+      metawidget
+               .append("\t\t\t\t\t")
+               .append("<h:inputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t\t").append("<h:message for=\"customerBeanCustomerLastName\" styleClass=\"error\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t").append("</h:panelGroup>").append(CRLF);
+      metawidget.append("\t\t\t\t").append("<h:outputText/>").append(CRLF);
+      metawidget.append("\t\t\t\t").append("<h:outputLabel for=\"customerBeanCustomerRating\" value=\"Rating:\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t").append("<h:panelGroup>").append(CRLF);
+      metawidget.append("\t\t\t\t\t")
+               .append("<h:selectOneMenu id=\"customerBeanCustomerRating\" value=\"#{customerBean.customer.rating}\">")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t\t\t").append("<f:selectItem/>").append(CRLF);
+      metawidget.append("\t\t\t\t\t\t").append("<f:selectItem itemValue=\"ONE_STAR\"/>").append(CRLF);
+      metawidget.append("\t\t\t\t\t\t").append("<f:selectItem itemValue=\"TWO_STAR\"/>").append(CRLF);
+      metawidget.append("\t\t\t\t\t\t").append("<f:selectItem itemValue=\"THREE_STAR\"/>").append(CRLF);
+      metawidget.append("\t\t\t\t\t").append("</h:selectOneMenu>").append(CRLF);
+      metawidget.append("\t\t\t\t\t").append("<h:message for=\"customerBeanCustomerRating\" styleClass=\"error\"/>")
+               .append(CRLF);
+      metawidget.append("\t\t\t\t").append("</h:panelGroup>").append(CRLF);
+      metawidget.append("\t\t\t\t").append("<h:outputText/>").append(CRLF);
+      metawidget.append("\t\t\t").append("</h:panelGrid>").append(CRLF);
 
       Assert.assertTrue(contents.contains(metawidget));
 
@@ -1159,67 +1371,86 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(contents.contains("template=\"/resources/scaffold/pageTemplate.xhtml"));
 
       StringBuilder searchMetawidget = new StringBuilder();
-      searchMetawidget.append("\t\t"          ).append("<h:form id=\"search\">"                                                                              ).append(crlf);
-      searchMetawidget.append("\t\t\t"        ).append(  "<h:panelGroup styleClass=\"search\">"                                                              ).append(crlf);
-      searchMetawidget.append(""              ).append(""                                                                                                    ).append(crlf);
-      searchMetawidget.append("\t\t\t\t"      ).append(    "<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">"                          ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"    ).append(      "<h:outputLabel for=\"customerBeanSearchFirstName\" value=\"First Name:\"/>"                    ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"    ).append(      "<h:panelGroup>"                                                                                ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t\t"  ).append(        "<h:inputText id=\"customerBeanSearchFirstName\" value=\"#{customerBean.search.firstName}\"/>").append(crlf);
-      searchMetawidget.append("\t\t\t\t\t\t"  ).append(        "<h:message for=\"customerBeanSearchFirstName\" styleClass=\"error\"/>"                       ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"    ).append(      "</h:panelGroup>"                                                                               ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"    ).append(      "<h:outputText/>"                                                                               ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"    ).append(      "<h:outputLabel for=\"customerBeanSearchLastName\" value=\"Last Name:\"/>"                      ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"    ).append(      "<h:panelGroup>"                                                                                ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t\t"  ).append(        "<h:inputText id=\"customerBeanSearchLastName\" value=\"#{customerBean.search.lastName}\"/>"  ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t\t"  ).append(        "<h:message for=\"customerBeanSearchLastName\" styleClass=\"error\"/>"                        ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"    ).append(      "</h:panelGroup>"                                                                               ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"    ).append(      "<h:outputText/>"                                                                               ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"    ).append(      "<h:outputLabel for=\"customerBeanSearchRating\" value=\"Rating:\"/>"                           ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"    ).append(      "<h:panelGroup>"                                                                                ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t\t"  ).append(        "<h:selectOneMenu id=\"customerBeanSearchRating\" value=\"#{customerBean.search.rating}\">"   ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t\t\t").append(          "<f:selectItem/>"                                                                           ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t\t\t").append(          "<f:selectItem itemValue=\"ONE_STAR\"/>"                                                    ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t\t\t").append(          "<f:selectItem itemValue=\"TWO_STAR\"/>"                                                    ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t\t\t").append(          "<f:selectItem itemValue=\"THREE_STAR\"/>"                                                  ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t\t"  ).append(        "</h:selectOneMenu>"                                                                          ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t\t"  ).append(        "<h:message for=\"customerBeanSearchRating\" styleClass=\"error\"/>"                          ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"    ).append(      "</h:panelGroup>"                                                                               ).append(crlf);
-      searchMetawidget.append("\t\t\t\t\t"    ).append(      "<h:outputText/>"                                                                               ).append(crlf);
-      searchMetawidget.append("\t\t\t\t"      ).append(    "</h:panelGrid>"                                                                                  ).append(crlf);
+      searchMetawidget.append("\t\t").append("<h:form id=\"search\">").append(CRLF);
+      searchMetawidget.append("\t\t\t").append("<h:panelGroup styleClass=\"search\">").append(CRLF);
+      searchMetawidget.append("").append("").append(CRLF);
+      searchMetawidget.append("\t\t\t\t")
+               .append("<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t")
+               .append("<h:outputLabel for=\"customerBeanSearchFirstName\" value=\"First Name:\"/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t").append("<h:panelGroup>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t\t")
+               .append("<h:inputText id=\"customerBeanSearchFirstName\" value=\"#{customerBean.search.firstName}\"/>")
+               .append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t\t")
+               .append("<h:message for=\"customerBeanSearchFirstName\" styleClass=\"error\"/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t").append("</h:panelGroup>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t").append("<h:outputText/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t")
+               .append("<h:outputLabel for=\"customerBeanSearchLastName\" value=\"Last Name:\"/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t").append("<h:panelGroup>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t\t")
+               .append("<h:inputText id=\"customerBeanSearchLastName\" value=\"#{customerBean.search.lastName}\"/>")
+               .append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t\t")
+               .append("<h:message for=\"customerBeanSearchLastName\" styleClass=\"error\"/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t").append("</h:panelGroup>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t").append("<h:outputText/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t")
+               .append("<h:outputLabel for=\"customerBeanSearchRating\" value=\"Rating:\"/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t").append("<h:panelGroup>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t\t")
+               .append("<h:selectOneMenu id=\"customerBeanSearchRating\" value=\"#{customerBean.search.rating}\">")
+               .append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t\t\t").append("<f:selectItem/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t\t\t").append("<f:selectItem itemValue=\"ONE_STAR\"/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t\t\t").append("<f:selectItem itemValue=\"TWO_STAR\"/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t\t\t").append("<f:selectItem itemValue=\"THREE_STAR\"/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t\t").append("</h:selectOneMenu>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t\t")
+               .append("<h:message for=\"customerBeanSearchRating\" styleClass=\"error\"/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t").append("</h:panelGroup>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t\t").append("<h:outputText/>").append(CRLF);
+      searchMetawidget.append("\t\t\t\t").append("</h:panelGrid>").append(CRLF);
 
       Assert.assertTrue(contents.contains(searchMetawidget));
 
       StringBuilder beanMetawidget = new StringBuilder();
-      beanMetawidget.append("\t\t\t"      ).append("<h:dataTable id=\"customerBeanPageItems\" styleClass=\"data-table\" value=\"#{customerBean.pageItems}\" var=\"_item\">").append(crlf);
-      beanMetawidget.append("\t\t\t\t"    ).append(  "<h:column>"                                                                                                          ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t"  ).append(    "<f:facet name=\"header\">"                                                                                         ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t\t").append(      "<h:outputText value=\"First Name\"/>"                                                                            ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t"  ).append(    "</f:facet>"                                                                                                        ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t"  ).append(    "<h:link outcome=\"/customer/view\">"                                                                               ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t\t").append(      "<f:param name=\"id\" value=\"#{_item.id}\"/>"                                                                    ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t\t").append(      "<h:outputText id=\"itemFirstName\" value=\"#{_item.firstName}\"/>"                                               ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t"  ).append(    "</h:link>"                                                                                                         ).append(crlf);
-      beanMetawidget.append("\t\t\t\t"    ).append(  "</h:column>"                                                                                                         ).append(crlf);
-      beanMetawidget.append("\t\t\t\t"    ).append(  "<h:column>"                                                                                                          ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t"  ).append(    "<f:facet name=\"header\">"                                                                                         ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t\t").append(      "<h:outputText value=\"Last Name\"/>"                                                                             ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t"  ).append(    "</f:facet>"                                                                                                        ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t"  ).append(    "<h:link outcome=\"/customer/view\">"                                                                               ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t\t").append(      "<f:param name=\"id\" value=\"#{_item.id}\"/>"                                                                    ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t\t").append(      "<h:outputText id=\"itemLastName\" value=\"#{_item.lastName}\"/>"                                                 ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t"  ).append(    "</h:link>"                                                                                                         ).append(crlf);
-      beanMetawidget.append("\t\t\t\t"    ).append(  "</h:column>"                                                                                                         ).append(crlf);
-      beanMetawidget.append("\t\t\t\t"    ).append(  "<h:column>"                                                                                                          ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t"  ).append(    "<f:facet name=\"header\">"                                                                                         ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t\t").append(      "<h:outputText value=\"Rating\"/>"                                                                                ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t"  ).append(    "</f:facet>"                                                                                                        ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t"  ).append(    "<h:link outcome=\"/customer/view\">"                                                                               ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t\t").append(      "<f:param name=\"id\" value=\"#{_item.id}\"/>"                                                                    ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t\t").append(      "<h:outputText id=\"itemRating\" value=\"#{_item.rating}\"/>"                                                     ).append(crlf);
-      beanMetawidget.append("\t\t\t\t\t"  ).append(    "</h:link>"                                                                                                         ).append(crlf);
-      beanMetawidget.append("\t\t\t\t"    ).append(  "</h:column>"                                                                                                         ).append(crlf);
-      beanMetawidget.append("\t\t\t"      ).append("</h:dataTable>");
+      beanMetawidget
+               .append("\t\t\t")
+               .append("<h:dataTable id=\"customerBeanPageItems\" styleClass=\"data-table\" value=\"#{customerBean.pageItems}\" var=\"_item\">")
+               .append(CRLF);
+      beanMetawidget.append("\t\t\t\t").append("<h:column>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t").append("<f:facet name=\"header\">").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t\t").append("<h:outputText value=\"First Name\"/>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t").append("</f:facet>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t").append("<h:link outcome=\"/customer/view\">").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t\t").append("<f:param name=\"id\" value=\"#{_item.id}\"/>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t\t").append("<h:outputText id=\"itemFirstName\" value=\"#{_item.firstName}\"/>")
+               .append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t").append("</h:link>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t").append("</h:column>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t").append("<h:column>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t").append("<f:facet name=\"header\">").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t\t").append("<h:outputText value=\"Last Name\"/>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t").append("</f:facet>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t").append("<h:link outcome=\"/customer/view\">").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t\t").append("<f:param name=\"id\" value=\"#{_item.id}\"/>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t\t").append("<h:outputText id=\"itemLastName\" value=\"#{_item.lastName}\"/>")
+               .append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t").append("</h:link>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t").append("</h:column>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t").append("<h:column>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t").append("<f:facet name=\"header\">").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t\t").append("<h:outputText value=\"Rating\"/>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t").append("</f:facet>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t").append("<h:link outcome=\"/customer/view\">").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t\t").append("<f:param name=\"id\" value=\"#{_item.id}\"/>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t\t").append("<h:outputText id=\"itemRating\" value=\"#{_item.rating}\"/>")
+               .append(CRLF);
+      beanMetawidget.append("\t\t\t\t\t").append("</h:link>").append(CRLF);
+      beanMetawidget.append("\t\t\t\t").append("</h:column>").append(CRLF);
+      beanMetawidget.append("\t\t\t").append("</h:dataTable>");
 
       Assert.assertTrue(contents.contains(beanMetawidget));
 
@@ -1232,22 +1463,28 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(contents.contains("private Customer customer;"));
 
       StringBuilder qbeMetawidget = new StringBuilder();
-      qbeMetawidget.append("      "   ).append("List<Predicate> predicatesList = new ArrayList<Predicate>();"                                ).append(crlf);
-      qbeMetawidget.append(""         ).append(""                                                                                            ).append(crlf);
-      qbeMetawidget.append("      "   ).append("String firstName = this.search.getFirstName();"                                              ).append(crlf);
-      qbeMetawidget.append("      "   ).append("if (firstName != null && !\"\".equals(firstName)) {"                                         ).append(crlf);
-      qbeMetawidget.append("         ").append(  "predicatesList.add(builder.like(root.<String> get(\"firstName\"), '%' + firstName + '%'));").append(crlf);
-      qbeMetawidget.append("      "   ).append("}"                                                                                           ).append(crlf);
-      qbeMetawidget.append("      "   ).append("String lastName = this.search.getLastName();"                                                ).append(crlf);
-      qbeMetawidget.append("      "   ).append("if (lastName != null && !\"\".equals(lastName)) {"                                           ).append(crlf);
-      qbeMetawidget.append("         ").append(  "predicatesList.add(builder.like(root.<String> get(\"lastName\"), '%' + lastName + '%'));"  ).append(crlf);
-      qbeMetawidget.append("      "   ).append("}"                                                                                           ).append(crlf);
-      qbeMetawidget.append("      "   ).append("RatingEnum rating = this.search.getRating();"                                                ).append(crlf);
-      qbeMetawidget.append("      "   ).append("if (rating != null) {"                                                                       ).append(crlf);
-      qbeMetawidget.append("         ").append(  "predicatesList.add(builder.equal(root.get(\"rating\"), rating));"                          ).append(crlf);
-      qbeMetawidget.append("      "   ).append("}"                                                                                           ).append(crlf);
-      qbeMetawidget.append(""         ).append(""                                                                                            ).append(crlf);
-      qbeMetawidget.append("      "   ).append("return ");
+      qbeMetawidget.append("      ").append("List<Predicate> predicatesList = new ArrayList<Predicate>();")
+               .append(CRLF);
+      qbeMetawidget.append("").append("").append(CRLF);
+      qbeMetawidget.append("      ").append("String firstName = this.search.getFirstName();").append(CRLF);
+      qbeMetawidget.append("      ").append("if (firstName != null && !\"\".equals(firstName)) {").append(CRLF);
+      qbeMetawidget.append("         ")
+               .append("predicatesList.add(builder.like(root.<String> get(\"firstName\"), '%' + firstName + '%'));")
+               .append(CRLF);
+      qbeMetawidget.append("      ").append("}").append(CRLF);
+      qbeMetawidget.append("      ").append("String lastName = this.search.getLastName();").append(CRLF);
+      qbeMetawidget.append("      ").append("if (lastName != null && !\"\".equals(lastName)) {").append(CRLF);
+      qbeMetawidget.append("         ")
+               .append("predicatesList.add(builder.like(root.<String> get(\"lastName\"), '%' + lastName + '%'));")
+               .append(CRLF);
+      qbeMetawidget.append("      ").append("}").append(CRLF);
+      qbeMetawidget.append("      ").append("RatingEnum rating = this.search.getRating();").append(CRLF);
+      qbeMetawidget.append("      ").append("if (rating != null) {").append(CRLF);
+      qbeMetawidget.append("         ").append("predicatesList.add(builder.equal(root.get(\"rating\"), rating));")
+               .append(CRLF);
+      qbeMetawidget.append("      ").append("}").append(CRLF);
+      qbeMetawidget.append("").append("").append(CRLF);
+      qbeMetawidget.append("      ").append("return ");
 
       Assert.assertTrue(normalized(contents).contains(normalized(qbeMetawidget)));
 

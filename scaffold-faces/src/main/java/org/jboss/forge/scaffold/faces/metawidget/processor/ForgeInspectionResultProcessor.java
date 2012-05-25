@@ -21,9 +21,11 @@
  */
 package org.jboss.forge.scaffold.faces.metawidget.processor;
 
-import java.util.Map;
-import static org.metawidget.inspector.InspectionResultConstants.*;
 import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.*;
+import static org.metawidget.inspector.InspectionResultConstants.*;
+
+import java.util.Map;
+
 import org.metawidget.inspectionresultprocessor.iface.InspectionResultProcessor;
 import org.metawidget.statically.StaticMetawidget;
 import org.metawidget.util.XmlUtils;
@@ -36,31 +38,35 @@ import org.w3c.dom.NodeList;
  *
  * @author Thomas Frühbeck
  */
-public class ForgeInspectionResultProcessor implements InspectionResultProcessor<StaticMetawidget> {
-   
+public class ForgeInspectionResultProcessor implements InspectionResultProcessor<StaticMetawidget>
+{
    @Override
-   public String processInspectionResult(String inspectionResult, StaticMetawidget metawidget, Object toInspect, String type, String... names) {
-
+   public String processInspectionResult(String inspectionResult, StaticMetawidget metawidget, Object toInspect,
+            String type, String... names)
+   {
       Document document = XmlUtils.documentFromString(inspectionResult);
       NodeList entities = document.getElementsByTagName(ENTITY);
-      
-      if (entities.getLength() > 0) {
-         for (int i=0; i<entities.getLength(); i++) {
-            
+
+      if (entities.getLength() > 0)
+      {
+         for (int i = 0; i < entities.getLength(); i++)
+         {
             Node entity = entities.item(i);
-            Map<String,String> attributes = XmlUtils.getAttributesAsMap(entity);
+            Map<String, String> attributes = XmlUtils.getAttributesAsMap(entity);
 
             String primaryKey = attributes.get(PRIMARY_KEY);
-            if (null != primaryKey) {
-      
+            if (null != primaryKey)
+            {
+
                NodeList properties = document.getElementsByTagName(PROPERTY);
-               if (properties.getLength() > 0) {
-                  for (int j=0; j<properties.getLength(); j++) {
-                     
-                     Element property = (Element)properties.item(j);
-                     Map<String,String> propAttribs = XmlUtils.getAttributesAsMap(property);
+               if (properties.getLength() > 0)
+               {
+                  for (int j = 0; j < properties.getLength(); j++)
+                  {
+                     Element property = (Element) properties.item(j);
+                     Map<String, String> propAttribs = XmlUtils.getAttributesAsMap(property);
                      propAttribs.put(ENTITY_PRIMARY_KEY, primaryKey);
-                     
+
                      XmlUtils.setMapAsAttributes(property, propAttribs);
                   }
                }
@@ -68,9 +74,6 @@ public class ForgeInspectionResultProcessor implements InspectionResultProcessor
          }
       }
 
-      inspectionResult = XmlUtils.documentToString(document, false);
-      
-      return inspectionResult;
+      return XmlUtils.documentToString(document, false);
    }
-   
 }

@@ -456,7 +456,7 @@ public class EntityWidgetBuilderTest
       attributes.put(READ_ONLY, TRUE);
       StaticWidget widget = widgetBuilder.buildWidget(PROPERTY, attributes, metawidget);
 
-      String result = "<h:outputText styleClass=\"#{foo.bar ? 'boolean-true' : 'boolean-false'}\"/>";
+      String result = "<h:outputText styleClass=\"#{foo.bar ? 'boolean-true' : 'boolean-false'}\" value=\"\"/>";
       assertEquals(result, widget.toString());
    }
 

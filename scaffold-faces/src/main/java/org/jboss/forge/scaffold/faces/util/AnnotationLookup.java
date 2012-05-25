@@ -22,6 +22,7 @@
 package org.jboss.forge.scaffold.faces.util;
 
 import java.io.FileNotFoundException;
+
 import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.parser.java.Member;
@@ -35,24 +36,24 @@ import org.metawidget.util.simple.StringUtils;
  * @author Thomas Frühbeck
  */
 public class AnnotationLookup {
-   
+
     public static final String JAVA_EXTENSION = ".java";
-    
+
     private Project project;
 
     public AnnotationLookup(Project project) {
        this.project = project;
     }
-    
+
     /**
-     * lookup the annotated member of the class 
-     * @param annotation 
+     * lookup the annotated member of the class
+     * @param annotation
      * @param qualifiedType
      * @return
-     * @throws FileNotFoundException 
+     * @throws FileNotFoundException
      */
-    public  Member lookup (Class annotation, String qualifiedType) throws FileNotFoundException {
-        JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+    public  Member<?,?> lookup (Class<?> annotation, String qualifiedType) throws FileNotFoundException {
+        JavaSourceFacet java = this.project.getFacet(JavaSourceFacet.class);
         JavaSource javaSource = java.getJavaResource(qualifiedType).getJavaSource();
 
         Member member = lookup(javaSource, annotation);
@@ -62,11 +63,13 @@ public class AnnotationLookup {
     /**
      * convert the member to a field name, assumes JavaBeans notation
      * @param member
-     * @return 
+     * @return
      */
     public String getFieldName(Member member) {
         if (null == member)
-            return null;
+      {
+         return null;
+      }
         if (member instanceof Method) {
             String methodName = member.getName();
             return StringUtils.decapitalize(methodName.substring(3));
@@ -81,18 +84,18 @@ public class AnnotationLookup {
      * @param annotation
      * @param qualifiedType
      * @return
-     * @throws FileNotFoundException 
+     * @throws FileNotFoundException
      */
-    public String getFieldName (Class annotation, String qualifiedType) throws FileNotFoundException {
+    public String getFieldName (Class<?> annotation, String qualifiedType) throws FileNotFoundException {
        Member member = lookup(annotation, qualifiedType);
        return getFieldName(member);
     }
 
     /**
-     * find a member annotated with this annotation. 
+     * find a member annotated with this annotation.
      * @param javaSource
      * @param ann
-     * @return 
+     * @return
      */
     public Member lookup(JavaSource<? extends JavaSource> javaSource, Class ann) {
         //@TODO Is not prepared for multiple PrimKeys
@@ -103,5 +106,5 @@ public class AnnotationLookup {
         }
         return null;
     }
-   
+
 }
