@@ -105,7 +105,7 @@ public class PluginsPlugin implements Plugin
 
       Map<Object, Object> context = new HashMap<Object, Object>();
       context.put("name", className);
-      context.put("alias", pluginName.replaceAll("[^A-Za-z-]", "").toLowerCase());
+      context.put("alias", pluginName.replaceAll("[^A-Za-z0-9-]", "").toLowerCase());
 
       CompiledTemplateResource pluginSource = compiler.compileResource(getClass().getResourceAsStream(
                "/org/jboss/forge/dev/PluginTemplate.jv"));
@@ -121,11 +121,11 @@ public class PluginsPlugin implements Plugin
 
    public String canonicalize(final String name)
    {
-      String result = "";
-      String[] split = name.split("[^A-Za-z]");
+      StringBuilder result = new StringBuilder();
+      String[] split = name.split("[^A-Za-z0-9]");
       for (String string : split) {
-         result += Strings.capitalize(string);
+         result.append(Strings.capitalize(string));
       }
-      return result;
+      return result.toString();
    }
 }
