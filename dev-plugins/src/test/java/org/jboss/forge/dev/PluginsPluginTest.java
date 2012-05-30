@@ -21,10 +21,16 @@
  */
 package org.jboss.forge.dev;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 
 import org.jboss.forge.project.Project;
+import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.project.facets.MetadataFacet;
+import org.jboss.forge.project.facets.ResourceFacet;
+import org.jboss.forge.resources.FileResource;
+import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.shell.InstalledPluginRegistry;
 import org.jboss.forge.shell.InstalledPluginRegistry.PluginEntry;
 import org.jboss.forge.test.AbstractShellTest;
@@ -33,7 +39,7 @@ import org.junit.Test;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 public class PluginsPluginTest extends AbstractShellTest
 {
@@ -41,7 +47,7 @@ public class PluginsPluginTest extends AbstractShellTest
    public void testCreateAndBuildPlugin() throws Exception
    {
       initializeJavaProject();
-      queueInputLines("","1");
+      queueInputLines("", "1");
       getShell().execute("plugins setup");
       queueInputLines("");
       getShell().execute("plugins new-plugin --named demo");
@@ -52,7 +58,7 @@ public class PluginsPluginTest extends AbstractShellTest
    public void testCreatePluginWithDashInName() throws Exception
    {
       initializeJavaProject();
-      queueInputLines("","1");
+      queueInputLines("", "1");
       getShell().execute("plugins setup");
       queueInputLines("");
       getShell().execute("plugins new-plugin --named demo-plugin");
@@ -60,10 +66,23 @@ public class PluginsPluginTest extends AbstractShellTest
    }
 
    @Test
+   public void testCreatePluginWithNumberInName() throws Exception
+   {
+      initializeJavaProject();
+      queueInputLines("", "1");
+      getShell().execute("plugins setup");
+      queueInputLines("");
+      getShell().execute("plugins new-plugin --named Wro4jPlugin");
+      JavaResource resource = getProject().getFacet(JavaSourceFacet.class).getSourceFolder().getChildOfType(
+               JavaResource.class, "com/test/Wro4jPlugin.java");
+      assertTrue(resource.exists());
+   }
+
+   @Test
    public void testCreatePluginWithUppercaseName() throws Exception
    {
       initializeJavaProject();
-      queueInputLines("","1");
+      queueInputLines("", "1");
       getShell().execute("plugins setup");
       queueInputLines("");
       getShell().execute("plugins new-plugin --named DemoPlugin");
@@ -74,7 +93,7 @@ public class PluginsPluginTest extends AbstractShellTest
    public void testInstallPlugin() throws Exception
    {
       Project javaProject = initializeJavaProject();
-      queueInputLines("","1");
+      queueInputLines("", "1");
       getShell().execute("plugins setup");
       queueInputLines("");
       getShell().execute("plugins new-plugin --named plugins-plugin-test-install");
@@ -83,7 +102,8 @@ public class PluginsPluginTest extends AbstractShellTest
 
       PluginEntry installed = null;
       List<PluginEntry> installedPlugins = InstalledPluginRegistry.list();
-      for (PluginEntry plugin : installedPlugins) {
+      for (PluginEntry plugin : installedPlugins)
+      {
          if (plugin.getName().contains(javaProject.getFacet(MetadataFacet.class).getProjectName()))
          {
             installed = plugin;
