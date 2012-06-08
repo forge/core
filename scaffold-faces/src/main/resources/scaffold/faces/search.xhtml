@@ -25,14 +25,16 @@
 
 	<ui:define name="main">
 		<h:form id="search">
-			<h:panelGroup styleClass="search">
+			<f:validateBean disabled="true">
+				<h:panelGroup styleClass="search">
 
-				@{searchMetawidget}
-				<h:panelGroup styleClass="buttons">
-					<h:commandLink value="Search" action="#{@{beanName}.search}"/>
-					<h:commandLink value="Create New" action="#{@{beanName}.create}"/>
+					@{searchMetawidget}
+					<h:panelGroup styleClass="buttons">
+						<h:commandLink value="Search" action="#{@{beanName}.search}"/>
+						<h:commandLink value="Create New" action="#{@{beanName}.create}"/>
+					</h:panelGroup>
 				</h:panelGroup>
-			</h:panelGroup>
+			</f:validateBean>
 			
 			@{beanMetawidget}
 			<ui:include src="/resources/scaffold/paginator.xhtml">
