@@ -63,7 +63,7 @@
                                                                 <forgeConfig/>
                                                         </config>
                                                 </entityWidgetBuilder>
-                                                <htmlWidgetBuilder xmlns="java:org.metawidget.statically.faces.component.html.widgetbuilder"/>
+                                                <htmlSearchWidgetBuilder xmlns="java:org.jboss.forge.scaffold.faces.metawidget.widgetbuilder"/>
                                         </array>
                                 </widgetBuilders>
                         </compositeWidgetBuilder>
