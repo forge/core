@@ -33,6 +33,11 @@
          <name>Koen Aers</name>
          <email>koen.aers@gmail.com</email>
       </developer>
+      <developer>
+         <id>gastaldi</id>
+         <name>George Gastaldi</name>
+         <email>gegastaldi@gmail.com</email>
+      </developer>
    </developers>
 
    <prerequisites>
