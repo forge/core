@@ -148,6 +148,7 @@ public class Execution
                {
                   Thread.currentThread().setContextClassLoader(plugin.getClass().getClassLoader());
                   command.getMethod().invoke(plugin, paramStaging);
+                  status = Status.SUCCESS;
                }
                catch (Exception e)
                {
