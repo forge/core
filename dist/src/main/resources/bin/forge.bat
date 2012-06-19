@@ -29,7 +29,13 @@
 @echo off
 
 @REM set %USERHOME% to equivalent of $HOME
-if "%USERHOME%" == "" (set "USERHOME=%HOMEDRIVE%%HOMEPATH%")
+if not "%USERHOME%" == "" goto OkUserhome
+set "USERHOME=%USERPROFILE%"
+
+if not "%USERHOME%" == "" goto OkUserhome
+set "USERHOME=%HOMEDRIVE%%HOMEPATH%"
+
+:OkUserhome
 
 @REM Execute a user defined script before this one
 if exist "%USERHOME%\forgerc_pre.bat" call "%USERHOME%\forgerc_pre.bat"
