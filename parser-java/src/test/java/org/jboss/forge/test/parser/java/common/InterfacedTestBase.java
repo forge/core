@@ -96,7 +96,7 @@ public abstract class InterfacedTestBase<T extends JavaType<T>>
       assertTrue(this.source.hasInterface("com.other.Custom"));
       assertTrue(this.source.hasImport(Serializable.class));
       assertTrue(this.source.hasImport("com.example.Custom"));
-      assertFalse(this.source.hasImport("com.other.Custom"));
+      assertTrue(this.source.hasImport("com.other.Custom"));
    }
 
    @Test

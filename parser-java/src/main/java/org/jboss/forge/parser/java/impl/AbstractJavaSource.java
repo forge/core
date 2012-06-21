@@ -164,8 +164,12 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
    public Import addImport(final String className)
    {
       Import imprt;
-      String simpleName = Types.toSimpleName(className);
-      if (!hasImport(simpleName) && validImport(className))
+      if (Types.isSimpleName(className) && !hasImport(className))
+      {
+         throw new IllegalArgumentException("Cannot import class without a package [" + className + "]");
+      }
+
+      if (!hasImport(className) && validImport(className))
       {
          imprt = new ImportImpl(this).setName(className);
          unit.imports().add(imprt.getInternal());
@@ -176,15 +180,7 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
       }
       else
       {
-         if (hasImport(simpleName))
-         {
-            throw new IllegalStateException("Cannot import [" + className
-                     + "] because of existing conflicting import [" + getImport(simpleName) + "].");
-         }
-         else
-         {
-            throw new IllegalArgumentException("Attempted to import the illegal type [" + className + "]");
-         }
+         throw new IllegalArgumentException("Attempted to import the illegal type [" + className + "]");
       }
       return imprt;
    }
@@ -310,7 +306,8 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
 
          if (result.equals(original))
          {
-            for (Import imprt : getImports()) {
+            for (Import imprt : getImports())
+            {
                if (Types.areEquivalent(result, imprt.getQualifiedName()))
                {
                   result = imprt.getQualifiedName();
@@ -586,14 +583,16 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
    {
       Document document = new Document(this.document.get());
 
-      try {
+      try
+      {
          TextEdit edit = unit.rewrite(document, null);
          edit.apply(document);
       }
-      catch (Exception e) {
+      catch (Exception e)
+      {
          throw new ParserException("Could not modify source: " + unit.toString(), e);
       }
-      
+
       return Formatter.format(document.get());
    }
 
@@ -721,37 +720,23 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
    @Override
    public O addInterface(final String type)
    {
-      List<Type> interfaces = new ArrayList<Type>();
+      if (!this.hasInterface(type))
+      {
+         Type interfaceType = JDTHelper.getInterfaces(
+                  JavaParser.parse(JavaInterfaceImpl.class,
+                           "public interface Mock extends " + Types.toSimpleName(type)
+                                    + " {}").getBodyDeclaration()).get(0);
 
-      if (this.hasImport(Types.toSimpleName(type)))
-      {
-          if (this.hasInterface(type))
-          {
-              interfaces = JDTHelper.getInterfaces(JavaParser.parse(JavaInterfaceImpl.class, 
-                      "public interface Mock extends " + type + " {}").getBodyDeclaration());
-          }
-      }
-      else
-      {
-          interfaces = JDTHelper.getInterfaces(
-                  JavaParser.parse(JavaInterfaceImpl.class, "public interface Mock extends " + Types.toSimpleName(type)
-                           + " {}").getBodyDeclaration());
-      }
-
-      if (!interfaces.isEmpty())
-      {
-         if (!this.hasImport(Types.toSimpleName(type)))
+         if (this.hasInterface(Types.toSimpleName(type)) || this.hasImport(Types.toSimpleName(type)))
          {
-            this.addImport(type);
+            interfaceType = JDTHelper.getInterfaces(JavaParser.parse(JavaInterfaceImpl.class,
+                     "public interface Mock extends " + type + " {}").getBodyDeclaration()).get(0);
          }
 
-         Type t = interfaces.get(0);
-         ASTNode node = ASTNode.copySubtree(unit.getAST(), t);
+         this.addImport(type);
+
+         ASTNode node = ASTNode.copySubtree(unit.getAST(), interfaceType);
          JDTHelper.getInterfaces(getBodyDeclaration()).add((Type) node);
-      }
-      else
-      {
-         throw new IllegalArgumentException("Could not parse interface declaration [" + type + "]");
       }
       return (O) this;
    }

@@ -149,6 +149,12 @@ public class JavaClassTest
       assertEquals(List.class.getName(), javaClass.getImports().get(1).getQualifiedName());
    }
 
+   @Test(expected = IllegalArgumentException.class)
+   public void testCannotAddSimpleClassImport() throws Exception
+   {
+      javaClass.addImport("List");
+   }
+
    @Test
    public void testAddImportClasses() throws Exception
    {
