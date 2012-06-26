@@ -19,42 +19,31 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.scaffold.faces.metawidget.inspector;
+package org.jboss.forge.scaffold.faces.metawidget.inspectionresultprocessor;
+
+import static org.metawidget.inspector.InspectionResultConstants.*;
+
+import java.util.Map;
+
+import org.metawidget.inspectionresultprocessor.impl.BaseInspectionResultProcessor;
+import org.metawidget.statically.StaticXmlWidget;
 
 /**
- * Forge-specific element and attribute names appearing in DOMs conforming to inspection-result-1.0.xsd.
+ * Stops fields from being marked 'required' fields. See FORGE-468.
  *
  * @author Richard Kennard
  */
 
-public final class ForgeInspectionResultConstants
+public class NotRequiredInspectionResultProcessor
+         extends BaseInspectionResultProcessor<StaticXmlWidget>
 {
    //
-   // Public statics
+   // Protected methods
    //
 
-   public static final String N_TO_MANY = "n-to-many";
-
-   public static final String ONE_TO_ONE = "one-to-one";
-
-   /**
-    * Whether the field is an Id.
-    */
-
-   public static final String PRIMARY_KEY = "primary-key";
-
-   /**
-    * The reverse primary key of a ManyToOne relationship.
-    */
-
-   public static final String REVERSE_PRIMARY_KEY = "reverse-primary-key";
-
-   //
-   // Private constructor
-   //
-
-   private ForgeInspectionResultConstants()
+   @Override
+   protected void processAttributes(Map<String, String> attributes, StaticXmlWidget metawidget)
    {
-      // Can never be called
+      attributes.put(REQUIRED, null);
    }
 }

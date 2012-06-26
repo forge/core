@@ -24,13 +24,10 @@
                                                                 </forgePropertyStyle>
                                                         </propertyStyle>
                                                 </propertyTypeInspector>
-                                                <forgeInspector xmlns="java:org.jboss.forge.scaffold.faces.metawidget.inspector" config="org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectorConfig">
+                                                <forgeInspector xmlns="java:org.jboss.forge.scaffold.faces.metawidget.inspector" config="org.metawidget.inspector.impl.BaseObjectInspectorConfig">
                                                         <propertyStyle>
                                                                 <forgePropertyStyle refId="forgePropertyStyle"/>
                                                         </propertyStyle>
-                                                        <annotationLookup>
-                                                                <annotationLookup/>
-                                                        </annotationLookup>
                                                 </forgeInspector>
                                                 <jpaInspector xmlns="java:org.metawidget.inspector.jpa" config="JpaInspectorConfig">
                                                         <propertyStyle>
@@ -47,13 +44,6 @@
                         </compositeInspector>
                 </inspector>
 		
-                <inspectionResultProcessors>
-                        <array>
-                                <forgeInspectionResultProcessor xmlns="java:org.jboss.forge.scaffold.faces.metawidget.processor">
-                                </forgeInspectionResultProcessor>
-                        </array>
-                </inspectionResultProcessors>
-
                 <widgetBuilder>
                         <queryByExampleWidgetBuilder xmlns="java:org.jboss.forge.scaffold.faces.metawidget.widgetbuilder"/>
                 </widgetBuilder>

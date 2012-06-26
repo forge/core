@@ -152,13 +152,17 @@ public class EntityWidgetBuilder
                         (StaticUIMetawidget) metawidget);
             }
 
-            String reverseKey = getReversePrimaryKey(attributes);
+            String reverseKey = "id";
+            if (attributes.containsKey(REVERSE_PRIMARY_KEY))
+            {
+               reverseKey = attributes.get(REVERSE_PRIMARY_KEY);
+            }
 
             Param param = new Param();
             param.putAttribute("name", "id");
             param.putAttribute(
                      "value",
-                     StaticFacesUtils.wrapExpression(StaticFacesUtils.unwrapExpression(link.getValue()) + "."
+                     StaticFacesUtils.wrapExpression(StaticFacesUtils.unwrapExpression(link.getValue()) + StringUtils.SEPARATOR_DOT_CHAR
                               + reverseKey));
             link.getChildren().add(param);
 
@@ -261,36 +265,6 @@ public class EntityWidgetBuilder
    //
    // Protected methods
    //
-
-   protected String getReversePrimaryKey(Map<String, String> attributes)
-   {
-      String reverseKey = "id";
-      if (attributes.containsKey(REVERSE_PRIMARY_KEY))
-      {
-         reverseKey = attributes.get(REVERSE_PRIMARY_KEY);
-      }
-      return reverseKey;
-   }
-
-   protected String getPrimaryKey(Map<String, String> attributes)
-   {
-      String reverseKey = "id";
-      if (attributes.containsKey(PRIMARY_KEY))
-      {
-         reverseKey = attributes.get(PRIMARY_KEY);
-      }
-      return reverseKey;
-   }
-
-   protected String getEntityPrimaryKey(Map<String, String> attributes)
-   {
-      String reverseKey = "id";
-      if (attributes.containsKey(ENTITY_PRIMARY_KEY))
-      {
-         reverseKey = attributes.get(ENTITY_PRIMARY_KEY);
-      }
-      return reverseKey;
-   }
 
    /**
     * Overridden to add row creation/deletion.
@@ -569,12 +543,32 @@ public class EntityWidgetBuilder
 
          // ...pointing to the id
 
+         String primaryKeyName = "id";
+         String inspectedType = metawidget.inspect(null, componentType);
+
+         if (inspectedType != null)
+         {
+            Element root = XmlUtils.documentFromString(inspectedType).getDocumentElement();
+            NodeList elements = root.getFirstChild().getChildNodes();
+
+            for (int loop = 0, length = elements.getLength(); loop < length; loop++)
+            {
+               Element element = (Element) elements.item(loop);
+
+               if (element.hasAttribute(PRIMARY_KEY))
+               {
+                  primaryKeyName = element.getAttribute(NAME);
+                  break;
+               }
+            }
+         }
+
          Param param = new Param();
          param.putAttribute("name", "id");
          param.putAttribute(
                   "value",
-                  StaticFacesUtils.wrapExpression(dataTable.getAttribute("var") + "."
-                           + getEntityPrimaryKey(columnAttributes)));
+                  StaticFacesUtils.wrapExpression(dataTable.getAttribute("var") + StringUtils.SEPARATOR_DOT_CHAR
+                           + primaryKeyName));
          link.getChildren().add(param);
          link.getChildren().add(column.getChildren().remove(1));
          column.getChildren().add(link);

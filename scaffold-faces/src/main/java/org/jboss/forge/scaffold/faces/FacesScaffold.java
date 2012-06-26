@@ -169,15 +169,13 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    protected StaticHtmlMetawidget searchMetawidget;
    protected StaticHtmlMetawidget beanMetawidget;
    protected StaticJavaMetawidget qbeMetawidget;
-   // @Inject AnnotationLookup annotationLookup;
-   // @Inject RelationResolverWidgetProcessor relationResolver;
-   // @Inject RelationResolverWidgetProcessorConfig relationResolverConfig;
 
    private Configuration config;
 
    //
    // Constructor
    //
+
    @Inject
    public FacesScaffold(final Configuration config,
             final ShellPrompt prompt,

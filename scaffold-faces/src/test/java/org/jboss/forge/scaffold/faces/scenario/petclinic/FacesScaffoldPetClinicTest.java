@@ -102,11 +102,11 @@ public class FacesScaffoldPetClinicTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(search.exists());
       String contents = Streams.toString(search.getResourceInputStream());
 
-      String metawidget = "\t\t\t\t\t<h:outputLabel for=\"petBeanSearchType\" value=\"Type:\"/>\r\n" +
-               "\t\t\t\t\t<h:panelGroup>\r\n" +
-               "\t\t\t\t\t\t<h:inputText id=\"petBeanSearchType\" value=\"#{petBean.search.type}\"/>\r\n" +
-               "\t\t\t\t\t\t<h:message for=\"petBeanSearchType\" styleClass=\"error\"/>\r\n" +
-               "\t\t\t\t\t</h:panelGroup>";
+      String metawidget = "\t\t\t\t\t\t<h:outputLabel for=\"petBeanSearchType\" value=\"Type:\"/>\r\n" +
+               "\t\t\t\t\t\t<h:panelGroup>\r\n" +
+               "\t\t\t\t\t\t\t<h:inputText id=\"petBeanSearchType\" value=\"#{petBean.search.type}\"/>\r\n" +
+               "\t\t\t\t\t\t\t<h:message for=\"petBeanSearchType\" styleClass=\"error\"/>\r\n" +
+               "\t\t\t\t\t\t</h:panelGroup>";
 
       Assert.assertTrue(contents.contains(metawidget));
 
