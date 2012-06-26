@@ -24,13 +24,10 @@
                                                                 </forgePropertyStyle>
                                                         </propertyStyle>
                                                 </propertyTypeInspector>
-                                                <forgeInspector xmlns="java:org.jboss.forge.scaffold.faces.metawidget.inspector" config="org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectorConfig">
+                                                <forgeInspector xmlns="java:org.jboss.forge.scaffold.faces.metawidget.inspector" config="org.metawidget.inspector.impl.BaseObjectInspectorConfig">
                                                         <propertyStyle>
                                                                 <forgePropertyStyle refId="forgePropertyStyle"/>
                                                         </propertyStyle>
-                                                        <annotationLookup>
-                                                                <annotationLookup/>
-                                                        </annotationLookup>
                                                 </forgeInspector>
                                                 <jpaInspector xmlns="java:org.metawidget.inspector.jpa" config="JpaInspectorConfig">
                                                         <propertyStyle>
@@ -47,13 +44,12 @@
                         </compositeInspector>
                 </inspector>
 		
-                <inspectionResultProcessors>
-                        <array>
-                                <forgeInspectionResultProcessor xmlns="java:org.jboss.forge.scaffold.faces.metawidget.processor">
-                                </forgeInspectionResultProcessor>
-                        </array>
-                </inspectionResultProcessors>
-
+				<inspectionResultProcessors>
+					<array>
+						<notRequiredInspectionResultProcessor xmlns="java:org.jboss.forge.scaffold.faces.metawidget.inspectionresultprocessor"/>
+					</array>
+				</inspectionResultProcessors>
+				
                 <widgetBuilder>
                         <compositeWidgetBuilder xmlns="java:org.metawidget.widgetbuilder.composite" config="CompositeWidgetBuilderConfig">
                                 <widgetBuilders>
@@ -63,7 +59,7 @@
                                                                 <forgeConfig/>
                                                         </config>
                                                 </entityWidgetBuilder>
-                                                <htmlSearchWidgetBuilder xmlns="java:org.jboss.forge.scaffold.faces.metawidget.widgetbuilder"/>
+                                                <htmlWidgetBuilder xmlns="java:org.metawidget.statically.faces.component.html.widgetbuilder"/>
                                         </array>
                                 </widgetBuilders>
                         </compositeWidgetBuilder>
@@ -71,7 +67,6 @@
 
                 <widgetProcessors>
                         <array>
-				<!-- FORGE-468: <requiredAttributeProcessor xmlns="java:org.metawidget.statically.faces.component.widgetprocessor"/> -->
                                 <standardBindingProcessor xmlns="java:org.metawidget.statically.faces.component.widgetprocessor"/>
                                 <readableIdProcessor xmlns="java:org.metawidget.statically.faces.component.widgetprocessor"/>
                                 <standardConverterProcessor xmlns="java:org.metawidget.statically.faces.component.widgetprocessor"/>
