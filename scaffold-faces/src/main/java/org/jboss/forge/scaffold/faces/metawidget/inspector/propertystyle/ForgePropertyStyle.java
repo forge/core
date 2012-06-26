@@ -402,8 +402,8 @@ public class ForgePropertyStyle
    // Private methods
    //
 
-   /*package private*/ 
-   
+   /*package private*/
+
    static JavaSource<?> sourceForName(final Project project, final String type)
    {
       try
@@ -510,8 +510,8 @@ public class ForgePropertyStyle
 
          if (annotation != null)
          {
-            T annotationProxy = AnnotationProxy.newInstance(annotation);
-            return annotationProxy;
+            Object annotationProxy = AnnotationProxy.newInstance(annotation);
+            return (T)annotationProxy;
          }
 
          return null;
@@ -586,7 +586,7 @@ public class ForgePropertyStyle
       //
 
       @SuppressWarnings("unchecked")
-      public static <T extends Annotation> T newInstance(
+      public static <T extends Annotation> Object newInstance(
                final org.jboss.forge.parser.java.Annotation<?> annotationSource)
       {
          try
@@ -595,7 +595,7 @@ public class ForgePropertyStyle
 
             // TODO: test this not using annotationSource.getClass().getClassLoader() (will require integration test)
 
-            return (T) java.lang.reflect.Proxy.newProxyInstance(
+            return java.lang.reflect.Proxy.newProxyInstance(
                      annotationClass.getClassLoader(),
                      new Class[] { annotationClass },
                      new AnnotationProxy<T>(annotationClass, annotationSource));
