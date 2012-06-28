@@ -129,8 +129,11 @@
        <dependency>
            <groupId>org.yaml</groupId>
            <artifactId>snakeyaml</artifactId>
-       </dependency>    
-       
+       </dependency>           
+      <dependency>
+        <groupId>commons-codec</groupId>
+        <artifactId>commons-codec</artifactId>
+      </dependency>
 
       <!-- Test Deps -->
       <dependency>
