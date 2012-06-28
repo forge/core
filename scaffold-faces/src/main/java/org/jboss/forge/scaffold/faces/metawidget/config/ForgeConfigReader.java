@@ -23,7 +23,6 @@ package org.jboss.forge.scaffold.faces.metawidget.config;
 
 import org.jboss.forge.env.Configuration;
 import org.jboss.forge.project.Project;
-import org.jboss.forge.scaffold.faces.util.AnnotationLookup;
 import org.metawidget.config.impl.BaseConfigReader;
 
 /**
@@ -43,15 +42,13 @@ public class ForgeConfigReader
 
    private static final String PROJECT_ELEMENT_NAME = "forgeProject";
 
-   private static final String ANNOTATION_LOOKUP = "annotationLookup";
-
    //
    // Private members
    //
 
    private Configuration config;
+
    private Project project;
-   private AnnotationLookup annotationLookup;
 
    //
    // Constructor
@@ -61,7 +58,6 @@ public class ForgeConfigReader
    {
       this.config = config;
       this.project = project;
-      this.annotationLookup = new AnnotationLookup(project);
    }
 
    //
@@ -71,7 +67,7 @@ public class ForgeConfigReader
    @Override
    protected boolean isNative(String name)
    {
-      if (PROJECT_ELEMENT_NAME.equals(name) || ANNOTATION_LOOKUP.equals(name))
+      if (PROJECT_ELEMENT_NAME.equals(name))
       {
          return true;
       }
@@ -91,16 +87,12 @@ public class ForgeConfigReader
       {
          return this.project;
       }
-      if (ANNOTATION_LOOKUP.equals(name)) {
-         return this.annotationLookup;
-      }
 
-      if(CONFIG_ELEMENT_NAME.equals(name))
+      if (CONFIG_ELEMENT_NAME.equals(name))
       {
          return this.config;
       }
 
       return super.createNative(name, namespace, recordedText);
    }
-
 }

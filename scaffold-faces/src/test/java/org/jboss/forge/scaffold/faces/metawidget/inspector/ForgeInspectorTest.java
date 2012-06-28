@@ -35,6 +35,7 @@ import javax.persistence.OneToOne;
 
 import junit.framework.TestCase;
 
+import org.metawidget.inspector.impl.BaseObjectInspectorConfig;
 import org.metawidget.util.XmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -48,7 +49,7 @@ public class ForgeInspectorTest
 
    public void testRelationships()
    {
-      String xml = new ForgeInspector(new ForgeInspectorConfig()).inspect(new Foo(), Foo.class.getName());
+      String xml = new ForgeInspector(new BaseObjectInspectorConfig()).inspect(new Foo(), Foo.class.getName());
       Document document = XmlUtils.documentFromString(xml);
       assertEquals("inspection-result", document.getFirstChild().getNodeName());
       Element entity = (Element) document.getFirstChild().getFirstChild();
@@ -72,7 +73,7 @@ public class ForgeInspectorTest
       assertEquals("manyToOne", property.getAttribute(NAME));
       assertEquals("#{forgeInspectorTest$BarBean.all}", property.getAttribute(FACES_LOOKUP));
       assertEquals("#{forgeInspectorTest$BarBean.converter}", property.getAttribute(FACES_CONVERTER_ID));
-      assertEquals(4, property.getAttributes().getLength());
+      assertEquals(3, property.getAttributes().getLength());
 
       property = XmlUtils.getNextSiblingElement(property);
       assertEquals(PROPERTY, property.getNodeName());

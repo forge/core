@@ -16,7 +16,6 @@
 
 package org.jboss.forge.scaffold.faces.metawidget.widgetbuilder;
 
-import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.*;
 import static org.metawidget.inspector.InspectionResultConstants.*;
 import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.*;
 
@@ -51,7 +50,7 @@ public class QueryByExampleWidgetBuilder
 
       // Suppress
 
-      if (TRUE.equals(attributes.get(HIDDEN)) && !Boolean.valueOf(attributes.get(PRIMARY_KEY_NOT_GENERATED)))
+      if (TRUE.equals(attributes.get(HIDDEN)))
       {
          return new StaticJavaStub();
       }

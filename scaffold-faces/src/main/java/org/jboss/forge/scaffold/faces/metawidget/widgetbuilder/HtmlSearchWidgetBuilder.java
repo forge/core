@@ -42,80 +42,81 @@ import org.metawidget.util.CollectionUtils;
 
 public class HtmlSearchWidgetBuilder extends HtmlWidgetBuilder
 {
-    @Override
-    public StaticXmlWidget buildWidget(String elementName, Map<String, String> attributes, StaticXmlMetawidget metawidget)
-    {
-        // Faces lookups
+   @Override
+   public StaticXmlWidget buildWidget(String elementName, Map<String, String> attributes, StaticXmlMetawidget metawidget)
+   {
+      // Faces lookups
 
-        String facesLookup = attributes.get(FACES_LOOKUP);
+      String facesLookup = attributes.get(FACES_LOOKUP);
 
-        if (facesLookup != null && !"".equals(facesLookup))
-        {
-            HtmlSelectOneMenu select = new HtmlSelectOneMenu();
-            addSelectItems(select, facesLookup, attributes);
-            return select;
-        }
+      if (facesLookup != null && !"".equals(facesLookup))
+      {
+         HtmlSelectOneMenu select = new HtmlSelectOneMenu();
+         addSelectItems(select, facesLookup, attributes);
+         return select;
+      }
 
-        // Lookups
+      // Lookups
 
-        String lookup = attributes.get(LOOKUP);
+      String lookup = attributes.get(LOOKUP);
 
-        if (lookup != null && !"".equals(lookup))
-        {
-            HtmlSelectOneMenu select = new HtmlSelectOneMenu();
-            addSelectItems(select, CollectionUtils.fromString(lookup), CollectionUtils.fromString(attributes.get(LOOKUP_LABELS)), attributes);
-            return select;
-        }
+      if (lookup != null && !"".equals(lookup))
+      {
+         HtmlSelectOneMenu select = new HtmlSelectOneMenu();
+         addSelectItems(select, CollectionUtils.fromString(lookup),
+                  CollectionUtils.fromString(attributes.get(LOOKUP_LABELS)));
+         return select;
+      }
 
-        return super.buildWidget(elementName, attributes, metawidget);
-    }
+      return super.buildWidget(elementName, attributes, metawidget);
+   }
 
-    @Override
-    protected void addSelectItems(HtmlSelectOneMenu select, String valueExpression, Map<String, String> attributes)
-    {
-        // Add an empty option to select menus on search pages
+   @Override
+   protected void addSelectItems(HtmlSelectOneMenu select, String valueExpression, Map<String, String> attributes)
+   {
+      // Add an empty option to select menus on search pages
 
-        addSelectItem(select, null, null);
+      addSelectItem(select, null, null);
 
-        SelectItems items = new SelectItems();
-        items.putAttribute("value", valueExpression);
+      SelectItems items = new SelectItems();
+      items.putAttribute("value", valueExpression);
 
-        select.getChildren().add(items);
-    }
+      select.getChildren().add(items);
+   }
 
-    private void addSelectItems(HtmlSelectOneMenu select, List<String> values, List<String> labels, Map<String, String> attributes)
-    {
-        if (values == null)
-        {
-            return;
-        }
+   private void addSelectItems(HtmlSelectOneMenu select, List<String> values, List<String> labels)
+   {
+      if (values == null)
+      {
+         return;
+      }
 
-        // Add an empty option, regardless of whether it is REQUIRED
+      // Add an empty option, regardless of whether it is REQUIRED
 
-        addSelectItem(select, null, null);
+      addSelectItem(select, null, null);
 
-        // Add the select items
+      // Add the select items
 
-        for (int loop = 0; loop < values.size(); loop++)
-        {
-            String value = values.get(loop);
-            String label = null;
- 
-            if (labels != null && !labels.isEmpty())
-            {
-                label = labels.get(loop);
-            }
+      for (int loop = 0; loop < values.size(); loop++)
+      {
+         String value = values.get(loop);
+         String label = null;
 
-            addSelectItem(select, value, label);
-        }
-    }
+         if (labels != null && !labels.isEmpty())
+         {
+            label = labels.get(loop);
+         }
 
-    private void addSelectItem(HtmlSelectOneMenu select, String value, String label)
-    {
-        SelectItem item = new SelectItem();
-        item.putAttribute("itemValue", value);
-        item.putAttribute("itemLabel", label);
+         addSelectItem(select, value, label);
+      }
+   }
 
-        select.getChildren().add(item);
-    }
+   private void addSelectItem(HtmlSelectOneMenu select, String value, String label)
+   {
+      SelectItem item = new SelectItem();
+      item.putAttribute("itemValue", value);
+      item.putAttribute("itemLabel", label);
+
+      select.getChildren().add(item);
+   }
 }
