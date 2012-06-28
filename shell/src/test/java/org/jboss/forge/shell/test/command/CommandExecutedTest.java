@@ -48,6 +48,7 @@ public class CommandExecutedTest extends AbstractShellTest {
 	    getShell().execute("motp motp");
 	    CommandExecuted event = observer.getEvent();
 	    assertNotNull(event);
+	    assertEquals(CommandExecuted.Status.SUCCESS, event.getStatus());
 	    CommandMetadata command = event.getCommand();
 	    assertNotNull(command);
 	    assertEquals("motp", command.getName());
