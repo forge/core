@@ -2,6 +2,7 @@ package org.jboss.forge.git;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.InitCommand;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.dependencies.DependencyInstaller;
@@ -34,7 +35,10 @@ public class GitFacet extends BaseFacet
       {
          InitCommand init = Git.init();
          init.setDirectory(project.getProjectRoot().getUnderlyingResourceObject());
-         init.call();
+
+         try {
+            init.call();
+         } catch (GitAPIException e) { }
       }
 
       return true;
