@@ -38,16 +38,16 @@
 			@{metawidget}
 
 			<div class="buttons">
-				<h:commandLink value="Save" action="#{@{beanName}.update}"/>
+				<h:commandLink value="Save" action="#{@{beanName}.update}" styleClass="btn btn-primary"/>
 				<c:choose>
 					<c:when test="#{!empty @{beanName}.id}">
-						<h:link value="Cancel" outcome="view">
+						<h:link value="Cancel" outcome="view" styleClass="btn btn-primary">
 							<f:param name="id" value="#{@{beanName}.id}"/>
 						</h:link>
-						<h:commandLink value="Delete" action="#{@{beanName}.delete}"/>
+						<h:commandLink value="Delete" action="#{@{beanName}.delete}" styleClass="btn btn-primary"/>
 					</c:when>
 					<c:otherwise>
-						<h:link value="Cancel" outcome="search"/>
+						<h:link value="Cancel" outcome="search" styleClass="btn btn-primary"/>
 					</c:otherwise>
 				</c:choose>
 			</div>
