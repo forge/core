@@ -84,13 +84,13 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(page.exists());
       String contents = Streams.toString(page.getResourceInputStream());
       Assert.assertTrue(contents.contains(
-                "<div id=\"wrapper\">"));
+                "<div class=\"container forgecontainer\">"));
       Assert.assertTrue(contents.contains(
                 "<div id=\"navigation\">"));
       Assert.assertTrue(contents.contains(
                 "<div id=\"content\">"));
       Assert.assertTrue(contents.contains(
-                "<div id=\"footer\">"));
+                "<div id=\"footer-wrapper\">"));
       Assert.assertTrue(!contents.contains(
                 "<h:link outcome=\"/>"));
    }
@@ -332,7 +332,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       // Additional files
 
       Assert.assertTrue(web.getWebResource("resources/add.png").exists());
-      Assert.assertTrue(web.getWebResource("resources/background.gif").exists());
+      Assert.assertTrue(web.getWebResource("resources/bootstrap.css").exists());
       Assert.assertTrue(web.getWebResource("resources/false.png").exists());
       Assert.assertTrue(web.getWebResource("resources/favicon.ico").exists());
       Assert.assertTrue(web.getWebResource("resources/forge-logo.png").exists());
@@ -342,7 +342,6 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       contents = Streams.toString(css.getResourceInputStream());
       Assert.assertTrue(contents.contains("#content .error {"));
 
-      Assert.assertTrue(web.getWebResource("resources/jboss-community.png").exists());
       Assert.assertTrue(web.getWebResource("resources/remove.png").exists());
       Assert.assertTrue(web.getWebResource("resources/search.png").exists());
       Assert.assertTrue(web.getWebResource("resources/true.png").exists());
@@ -792,15 +791,15 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       contents = Streams.toString(navigation.getResourceInputStream());
 
       StringBuilder navigationText = new StringBuilder();
-      navigationText.append("\t\t\t\t").append("<ul>").append(CRLF);
-      navigationText.append("\t\t\t\t\t").append("<li>").append(CRLF);
-      navigationText.append("\t\t\t\t\t\t").append("<h:link outcome=\"/customer/search\" value=\"Customer\"/>")
+      navigationText.append("\t\t\t").append("<ul>").append(CRLF);
+      navigationText.append("\t\t\t\t").append("<li>").append(CRLF);
+      navigationText.append("\t\t\t\t\t").append("<h:link outcome=\"/customer/search\" value=\"Customer\"/>")
                .append(CRLF);
-      navigationText.append("\t\t\t\t\t").append("</li>").append(CRLF);
-      navigationText.append("\t\t\t\t\t").append("<li>").append(CRLF);
-      navigationText.append("\t\t\t\t\t\t").append("<h:link outcome=\"/employer/search\" value=\"Employer\"/>")
+      navigationText.append("\t\t\t\t").append("</li>").append(CRLF);
+      navigationText.append("\t\t\t\t").append("<li>").append(CRLF);
+      navigationText.append("\t\t\t\t\t").append("<h:link outcome=\"/employer/search\" value=\"Employer\"/>")
                .append(CRLF);
-      navigationText.append("\t\t\t\t\t").append("</li>").append(CRLF);
+      navigationText.append("\t\t\t\t").append("</li>").append(CRLF);
 
       Assert.assertTrue(contents.contains(navigationText));
 
@@ -1052,15 +1051,15 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       contents = Streams.toString(navigation.getResourceInputStream());
 
       StringBuilder navigationText = new StringBuilder();
-      navigationText.append("\t\t\t\t").append("<ul>").append(CRLF);
-      navigationText.append("\t\t\t\t\t").append("<li>").append(CRLF);
-      navigationText.append("\t\t\t\t\t\t").append("<h:link outcome=\"/customer/search\" value=\"Customer\"/>")
+      navigationText.append("\t\t\t").append("<ul>").append(CRLF);
+      navigationText.append("\t\t\t\t").append("<li>").append(CRLF);
+      navigationText.append("\t\t\t\t\t").append("<h:link outcome=\"/customer/search\" value=\"Customer\"/>")
                .append(CRLF);
-      navigationText.append("\t\t\t\t\t").append("</li>").append(CRLF);
-      navigationText.append("\t\t\t\t\t").append("<li>").append(CRLF);
-      navigationText.append("\t\t\t\t\t\t").append("<h:link outcome=\"/grocery/search\" value=\"Grocery\"/>")
+      navigationText.append("\t\t\t\t").append("</li>").append(CRLF);
+      navigationText.append("\t\t\t\t").append("<li>").append(CRLF);
+      navigationText.append("\t\t\t\t\t").append("<h:link outcome=\"/grocery/search\" value=\"Grocery\"/>")
                .append(CRLF);
-      navigationText.append("\t\t\t\t\t").append("</li>").append(CRLF);
+      navigationText.append("\t\t\t\t").append("</li>").append(CRLF);
 
       Assert.assertTrue(contents.contains(navigationText));
    }
@@ -1510,7 +1509,6 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       // Additional files
 
       Assert.assertTrue(web.getWebResource("resources/add.png").exists());
-      Assert.assertTrue(web.getWebResource("resources/background.gif").exists());
       Assert.assertTrue(web.getWebResource("resources/false.png").exists());
       Assert.assertTrue(web.getWebResource("resources/favicon.ico").exists());
       Assert.assertTrue(web.getWebResource("resources/forge-logo.png").exists());
@@ -1520,7 +1518,6 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       contents = Streams.toString(css.getResourceInputStream());
       Assert.assertTrue(contents.contains("#content .error {"));
 
-      Assert.assertTrue(web.getWebResource("resources/jboss-community.png").exists());
       Assert.assertTrue(web.getWebResource("resources/remove.png").exists());
       Assert.assertTrue(web.getWebResource("resources/search.png").exists());
       Assert.assertTrue(web.getWebResource("resources/true.png").exists());
