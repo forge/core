@@ -218,6 +218,10 @@
 			<maven-resource group="commons-digester" artifact="commons-digester" />
 			<maven-resource group="commons-lang" artifact="commons-lang" />
 		</module-def>
+
+		<module-def name="org.apache.commons.codec">
+			<maven-resource group="commons-codec" artifact="commons-codec" />
+		</module-def>
 		
 		<module-def name="org.apache.commons.logging" />
 

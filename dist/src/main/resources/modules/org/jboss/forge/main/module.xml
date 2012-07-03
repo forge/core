@@ -17,6 +17,7 @@
 
       <module name="org.apache.commons.logging"/>
       <module name="org.apache.commons.config"/>
+      <module name="org.apache.commons.codec"/>
       <module name="org.apache.httpcomponents" />
       <module name="org.javassist" />
       <module name="org.jboss.interceptor" export="true" />
