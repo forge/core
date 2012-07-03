@@ -393,8 +393,8 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/add.png"),
                getClass().getResourceAsStream("/scaffold/faces/add.png"), overwrite));
 
-      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/background.gif"),
-               getClass().getResourceAsStream("/scaffold/faces/background.gif"), overwrite));
+      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/bootstrap.css"),
+               getClass().getResourceAsStream("/scaffold/faces/bootstrap.css"), overwrite));
 
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/false.png"),
                getClass().getResourceAsStream("/scaffold/faces/false.png"), overwrite));
@@ -407,9 +407,6 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
 
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/forge-style.css"),
                getClass().getResourceAsStream("/scaffold/faces/forge-style.css"), overwrite));
-
-      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/jboss-community.png"),
-               getClass().getResourceAsStream("/scaffold/faces/jboss-community.png"), overwrite));
 
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/remove.png"),
                getClass().getResourceAsStream("/scaffold/faces/remove.png"), overwrite));
@@ -722,6 +719,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       unorderedList.write(writer);
 
       Map<Object, Object> context = CollectionUtils.newHashMap();
+      context.put("appName", StringUtils.uncamelCase(this.project.getProjectRoot().getName()));
       context.put("navigation", writer.toString().trim());
       context.put("targetDir", targetDir);
 

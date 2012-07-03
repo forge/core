@@ -140,7 +140,7 @@ public class FacesScaffoldScenarioTest extends AbstractFacesScaffoldTest
       qbeMetawidget.append("      }\n");
 
       Assert.assertTrue(normalized(contents).contains(normalized(qbeMetawidget)));
-      
+
       FileResource<?> welcomeFile = web.getWebResource("/index.html");
       Assert.assertTrue(welcomeFile.exists());
       contents = Streams.toString(welcomeFile.getResourceInputStream());
@@ -182,16 +182,18 @@ public class FacesScaffoldScenarioTest extends AbstractFacesScaffoldTest
       FileResource<?> navigation = web.getWebResource("resources/scaffold/pageTemplate.xhtml");
       Assert.assertTrue(navigation.exists());
       contents = Streams.toString(navigation.getResourceInputStream());
+      Assert.assertTrue(contents.contains(" class=\"brand\">Test</a>"));
+      Assert.assertTrue(!contents.contains("@{appName}"));
 
-      StringBuilder navigationText = new StringBuilder("\n\t\t\t\t<ul>\r\n");
-      navigationText.append("\t\t\t\t\t<li>\r\n");
+      StringBuilder navigationText = new StringBuilder("\n\t\t\t<ul>\r\n");
+      navigationText.append("\t\t\t\t<li>\r\n");
       navigationText
-               .append("\t\t\t\t\t\t<h:link outcome=\"/weather/continent/search\" value=\"Continent\"/>\r\n");
-      navigationText.append("\t\t\t\t\t</li>\r\n");
-      navigationText.append("\t\t\t\t\t<li>\r\n");
+               .append("\t\t\t\t\t<h:link outcome=\"/weather/continent/search\" value=\"Continent\"/>\r\n");
+      navigationText.append("\t\t\t\t</li>\r\n");
+      navigationText.append("\t\t\t\t<li>\r\n");
       navigationText
-               .append("\t\t\t\t\t\t<h:link outcome=\"/weather/hurricane/search\" value=\"Hurricane\"/>\r\n");
-      navigationText.append("\t\t\t\t\t</li>\r\n");
+               .append("\t\t\t\t\t<h:link outcome=\"/weather/hurricane/search\" value=\"Hurricane\"/>\r\n");
+      navigationText.append("\t\t\t\t</li>\r\n");
 
       Assert.assertTrue(contents.contains(navigationText));
 
@@ -201,7 +203,7 @@ public class FacesScaffoldScenarioTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(welcomeFile.exists());
       contents = Streams.toString(welcomeFile.getResourceInputStream());
       Assert.assertTrue(contents.contains("/faces/weather/index.xhtml"));
-      
+
       getShell().execute("build");
    }
 }
