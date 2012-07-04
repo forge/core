@@ -47,7 +47,7 @@ public class PluginsPluginTest extends AbstractShellTest
       initializeJavaProject();
       getShell().execute("project list-facets");
       String output = getOutput();
-      assertTrue(output.contains(JavaSourceFacet.class.getName()));
+      assertTrue(output.contains("JavaSourceFacet"));
    }
    
    @Test
