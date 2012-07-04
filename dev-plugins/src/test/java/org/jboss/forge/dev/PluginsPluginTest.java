@@ -28,8 +28,6 @@ import java.util.List;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.project.facets.MetadataFacet;
-import org.jboss.forge.project.facets.ResourceFacet;
-import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.shell.InstalledPluginRegistry;
 import org.jboss.forge.shell.InstalledPluginRegistry.PluginEntry;
@@ -43,6 +41,15 @@ import org.junit.Test;
  */
 public class PluginsPluginTest extends AbstractShellTest
 {
+   @Test
+   public void testListFacets() throws Exception
+   {
+      initializeJavaProject();
+      getShell().execute("project list-facets");
+      String output = getOutput();
+      assertTrue(output.contains(JavaSourceFacet.class.getName()));
+   }
+   
    @Test
    public void testCreateAndBuildPlugin() throws Exception
    {

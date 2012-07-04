@@ -79,14 +79,16 @@ public class ProjectPlugin implements Plugin
    private FacetFactory factory;
    private Event<InstallFacets> installFacets;
    private Event<RemoveFacets> removeFacets;
-    private DependencyInstaller dependencyInstaller;
+   private DependencyInstaller dependencyInstaller;
 
    public ProjectPlugin()
-   {}
+   {
+   }
 
    @Inject
    public ProjectPlugin(final Project project, final Shell shell, final FacetFactory factory,
-            final Event<InstallFacets> installFacets, final Event<RemoveFacets> removeFacets, final DependencyInstaller installer)
+            final Event<InstallFacets> installFacets, final Event<RemoveFacets> removeFacets,
+            final DependencyInstaller installer)
    {
       this.project = project;
       this.shell = shell;
@@ -161,23 +163,23 @@ public class ProjectPlugin implements Plugin
             final PipeOut out
             )
    {
-       final DependencyFacet deps = project.getFacet(DependencyFacet.class);
-       final boolean depIsInstalled = this.dependencyInstaller.isInstalled(project, gav);
-       final boolean hasEffectiveManagedDependency = deps.hasEffectiveManagedDependency(gav);
-       Dependency gavCopy = DependencyBuilder.create(gav);
+      final DependencyFacet deps = project.getFacet(DependencyFacet.class);
+      final boolean hasEffectiveManagedDependency = deps.hasEffectiveManagedDependency(gav);
+      Dependency gavCopy = DependencyBuilder.create(gav);
 
-       if (hasEffectiveManagedDependency)
-       {
-            Dependency existingDep = deps.getEffectiveManagedDependency(gav);
-           if (!shell.promptBoolean(String.format("Dependency is managed [%s:%s:%s], reference the managed dependency?",
-                   existingDep.getGroupId(), existingDep.getArtifactId(), existingDep.getVersion()), true))
-           {
-               if (Strings.isNullOrEmpty(gavCopy.getVersion())) {
-                   gavCopy = shell.promptChoiceTyped("Add which version?", deps.resolveAvailableVersions(gavCopy));
-               }
-           }
-       }
-       this.dependencyInstaller.install(project, gavCopy);
+      if (hasEffectiveManagedDependency)
+      {
+         Dependency existingDep = deps.getEffectiveManagedDependency(gav);
+         if (!shell.promptBoolean(String.format("Dependency is managed [%s:%s:%s], reference the managed dependency?",
+                  existingDep.getGroupId(), existingDep.getArtifactId(), existingDep.getVersion()), true))
+         {
+            if (Strings.isNullOrEmpty(gavCopy.getVersion()))
+            {
+               gavCopy = shell.promptChoiceTyped("Add which version?", deps.resolveAvailableVersions(gavCopy));
+            }
+         }
+      }
+      this.dependencyInstaller.install(project, gavCopy);
    }
 
    @Command(value = "find-dependency", help = "Search for dependencies in all configured project repositories.")
@@ -423,23 +425,34 @@ public class ProjectPlugin implements Plugin
    }
 
    @Command("list-facets")
-   public void list()
+   public void listFacets(PipeOut out)
    {
       Set<Class<? extends Facet>> facets = factory.getFacetTypes();
+      
+      out.println(ShellColor.BOLD, "NOT INSTALLED");
       for (Class<? extends Facet> type : facets)
       {
-         String name = ConstraintInspector.getName(type.getClass());
+         String name = ConstraintInspector.getName(type);
+         if (!project.hasFacet(type))
+         {
+            out.println("- " + name + "\t[" + type.getName() + "]");
+         }
+      }
+
+      out.println();
+      
+      out.println(ShellColor.BOLD, "INSTALLED");
+      for (Class<? extends Facet> type : facets)
+      {
+         String name = ConstraintInspector.getName(type);
          if (project.hasFacet(type) && !project.getFacet(type).isInstalled())
          {
-            shell.println(ShellColor.RED, name + " [ERROR: facet is no longer available]");
+            out.println(ShellColor.RED, "? " + name + "\t[" + type.getName()
+                     + " - WARN: facet is no longer available]");
          }
          else if (project.hasFacet(type))
          {
-            shell.println(ShellColor.GREEN, name);
-         }
-         else
-         {
-            shell.println(name);
+            out.println(ShellColor.GREEN, "+ " + name + "\t[" + type.getName() + "]");
          }
       }
    }
