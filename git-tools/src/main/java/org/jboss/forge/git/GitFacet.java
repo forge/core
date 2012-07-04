@@ -7,6 +7,7 @@ import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.dependencies.DependencyInstaller;
 import org.jboss.forge.project.facets.BaseFacet;
 import org.jboss.forge.resources.FileResource;
+import org.jboss.forge.shell.plugins.Alias;
 
 import javax.inject.Inject;
 
@@ -14,6 +15,7 @@ import javax.inject.Inject;
  * @author <a href="mailto:jevgeni.zelenkov@gmail.com">Jevgeni Zelenkov</a>
  *
  */
+@Alias("forge.vcs.git")
 public class GitFacet extends BaseFacet
 {
    private static final Dependency GIT_DEPENDENCY = DependencyBuilder.create()
