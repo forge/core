@@ -45,7 +45,7 @@ public class GitTest extends AbstractShellTest
    public static JavaArchive getDeployment()
    {
       // The deployment method is where you must add references to your classes, packages, and
-      // configuration files, via  Arquillian.
+      // configuration files, via Arquillian.
       return AbstractShellTest.getDeployment().addPackages(true, Git.class.getPackage());
    }
 
