@@ -718,6 +718,8 @@ public class ForgePlugin implements Plugin
                .attribute("services", "import");
       dependencies.createChild("module").attribute("name", "org.jboss.forge.shell.api")
                .attribute("services", "import");
+      dependencies.createChild("module").attribute("name", "org.jboss.forge.git")
+               .attribute("services", "import");
       dependencies.createChild("module").attribute("name", "org.jboss.seam.render").attribute("services", "import");
       dependencies.createChild("module").attribute("name", "javax.api");
 
