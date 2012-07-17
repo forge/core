@@ -209,14 +209,14 @@ public class DependencyImpl implements Dependency
       }
 
       boolean artifactIdEquals = artifactId != null ? artifactId.equals(that.getArtifactId())
-               : that.getArtifactId() != null;
-      boolean groupIdEquals = groupId != null ? groupId.equals(that.getGroupId()) : that.getGroupId() != null;
-      boolean packagingTypeEquals = packagingType != null ? !packagingType.equals(that.getPackagingType()) : that
-               .getPackagingType() != null;
-      boolean scopeTypeEquals = scopeType != null ? scopeType.equals(that.getScopeType()) : that.getScopeType() != null;
-      boolean versionEquals = version != null ? version.equals(that.getVersion()) : that.getVersion() != null;
+               : that.getArtifactId() == null;
+      boolean groupIdEquals = groupId != null ? groupId.equals(that.getGroupId()) : that.getGroupId() == null;
+      boolean packagingTypeEquals = packagingType != null ? packagingType.equals(that.getPackagingType()) : that
+               .getPackagingType() == null;
+      boolean scopeTypeEquals = scopeType != null ? scopeType.equals(that.getScopeType()) : that.getScopeType() == null;
+      boolean versionEquals = version != null ? version.equals(that.getVersion()) : that.getVersion() == null;
       boolean classifierEquals = classifier != null ? classifier.equals(that.getClassifier())
-               : that.getClassifier() != null;
+               : that.getClassifier() == null;
 
       return artifactIdEquals && exclusionsEqual && groupIdEquals && packagingTypeEquals && scopeTypeEquals
                && versionEquals && classifierEquals;

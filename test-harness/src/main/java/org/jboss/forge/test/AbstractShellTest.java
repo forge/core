@@ -113,13 +113,13 @@ public abstract class AbstractShellTest
    @Before
    public void beforeTest() throws Exception
    {
+      shell.setOutputStream(output);
+      shell.setAnsiSupported(false);
       shell.setCurrentResource(createTempFolder());
       beanManager.fireEvent(new Startup());
       beanManager.fireEvent(new PostStartup());
       shell.setVerbose(true);
       shell.setExceptionHandlingEnabled(false);
-      shell.setOutputStream(output);
-      shell.setAnsiSupported(false);
 
       resetInputQueue();
    }

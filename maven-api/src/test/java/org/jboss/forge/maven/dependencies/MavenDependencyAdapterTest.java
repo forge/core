@@ -37,12 +37,12 @@ import static org.junit.Assert.assertEquals;
  */
 public class MavenDependencyAdapterTest
 {
-   org.apache.maven.model.Dependency mvn;
-   Dependency dep;
+   org.apache.maven.model.Dependency mvnDep;
+   Dependency forgeDep;
 
    public MavenDependencyAdapterTest()
    {
-      dep = DependencyBuilder.create()
+      forgeDep = DependencyBuilder.create()
             .setArtifactId("seam-forge")
             .setGroupId("org.jboss.forge")
             .addExclusion()
@@ -55,28 +55,28 @@ public class MavenDependencyAdapterTest
             .setVersion("9")
             .setPackagingType(PackagingType.WAR);
 
-      mvn = new org.apache.maven.model.Dependency();
-      mvn.setArtifactId("seam-forge");
-      mvn.setGroupId("org.jboss.forge");
-      mvn.setVersion("9");
-      mvn.setScope("ComPiLe");
+      mvnDep = new org.apache.maven.model.Dependency();
+      mvnDep.setArtifactId("seam-forge");
+      mvnDep.setGroupId("org.jboss.forge");
+      mvnDep.setVersion("9");
+      mvnDep.setScope("ComPiLe");
 
       Exclusion ex1 = new Exclusion();
       ex1.setArtifactId("sub-module");
       ex1.setGroupId("org.jboss.forge");
-      mvn.addExclusion(ex1);
+      mvnDep.addExclusion(ex1);
 
       Exclusion ex2 = new Exclusion();
       ex2.setArtifactId("sub-module-2");
       ex2.setGroupId("org.jboss.forge");
-      mvn.addExclusion(ex2);
+      mvnDep.addExclusion(ex2);
    }
 
    @Test
    public void testConvertFromMVNToForge() throws Exception
    {
-      MavenDependencyAdapter toForge = new MavenDependencyAdapter(mvn);
-      MavenDependencyAdapter toMvn = new MavenDependencyAdapter(dep);
+      MavenDependencyAdapter toForge = new MavenDependencyAdapter(mvnDep);
+      MavenDependencyAdapter toMvn = new MavenDependencyAdapter(forgeDep);
 
       assertEquals(toForge.getArtifactId(), toMvn.getArtifactId());
       assertEquals(toForge.getGroupId(), toMvn.getGroupId());
@@ -88,8 +88,8 @@ public class MavenDependencyAdapterTest
    @Test
    public void testExclusionsConvertProperly() throws Exception
    {
-      MavenDependencyAdapter toForge = new MavenDependencyAdapter(mvn);
-      MavenDependencyAdapter toMvn = new MavenDependencyAdapter(dep);
+      MavenDependencyAdapter toForge = new MavenDependencyAdapter(mvnDep);
+      MavenDependencyAdapter toMvn = new MavenDependencyAdapter(forgeDep);
 
       assertEquals(toForge.getExcludedDependencies(), toMvn.getExcludedDependencies());
       assertEquals(toForge.getExclusions().get(0).getArtifactId(), toMvn.getExclusions().get(0).getArtifactId());

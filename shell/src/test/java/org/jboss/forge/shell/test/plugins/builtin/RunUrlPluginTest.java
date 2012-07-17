@@ -5,6 +5,7 @@ import java.net.UnknownHostException;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.test.AbstractShellTest;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -28,6 +29,7 @@ public class RunUrlPluginTest extends AbstractShellTest
       shell.execute("run-url new_file_invented.script");
    }
 
+   @Ignore
    @Test(expected = UnknownHostException.class)
    public void testRunScriptNotHostHttpUrl() throws Exception
    {
