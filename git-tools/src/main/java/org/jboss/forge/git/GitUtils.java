@@ -181,9 +181,12 @@ public abstract class GitUtils
       try
       {
          switchedBranch = repo.checkout().setName(branchName).call();
+         if (switchedBranch == null)
+            throw new RuntimeException("Couldn't switch to branch " + branchName);
       }
-      catch (Exception e)
+      catch (GitAPIException e)
       {
+         e.printStackTrace();
       }
 
       return switchedBranch;
@@ -347,5 +350,16 @@ public abstract class GitUtils
    public static void resetHard(final Git repo, String newBase) throws GitAPIException
    {
       repo.reset().setMode(ResetCommand.ResetType.HARD).setRef(newBase).call();
+   }
+
+   public static Ref createBranch(Git git, String branchName) throws RefAlreadyExistsException, RefNotFoundException,
+            InvalidRefNameException, GitAPIException
+   {
+      Ref newBranch = git.branchCreate().setName(branchName).call();
+
+      if (newBranch == null)
+         throw new RuntimeException("Couldn't create new branch " + branchName);
+
+      return newBranch;
    }
 }
