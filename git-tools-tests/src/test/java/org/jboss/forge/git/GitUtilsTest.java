@@ -334,4 +334,25 @@ public class GitUtilsTest extends AbstractShellTest
       Assert.assertFalse("file should not exist", project.getProjectRoot().getChild(files[1]).exists());
    }
 
+   @Test
+   public void shouldCreateNewBranch() throws Exception
+   {
+      // git init
+      // create new branch
+      // verify branch exists
+
+      String testBranchName = "testBranch";
+      Project project = initializeJavaProject();
+      Git repo = GitUtils.init(project.getProjectRoot());
+
+      GitUtils.addAll(repo);
+      GitUtils.commitAll(repo, "initial commit");
+
+      Ref testBranch = GitUtils.createBranch(repo, testBranchName);
+      Assert.assertNotNull(testBranch);
+
+      List<Ref> branches = GitUtils.getLocalBranches(repo);
+      Assert.assertTrue("Branch is not created", branches.contains(testBranch));
+   }
+
 }
