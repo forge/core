@@ -24,6 +24,7 @@ package org.jboss.forge.test;
 
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -62,6 +63,11 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public abstract class SingletonAbstractShellTest
 {
+   static
+   {
+      System.setProperty("forge.debug.no_auto_init_streams", "true");
+   }
+   
    @Deployment
    public static JavaArchive getDeployment()
    {
@@ -87,6 +93,8 @@ public abstract class SingletonAbstractShellTest
    private static final String PKG = SingletonAbstractShellTest.class.getSimpleName().toLowerCase();
    private static Queue<String> inputQueue = new LinkedList<String>();
 
+   private ByteArrayOutputStream output = new ByteArrayOutputStream();
+
    @Inject
    private Instance<Project> project;
 
@@ -100,14 +108,15 @@ public abstract class SingletonAbstractShellTest
 
       if (tempFolder == null)
       {
+         shell.setOutputStream(output);
          shell.setCurrentResource(createTempFolder());
          beanManager.fireEvent(new Startup());
          beanManager.fireEvent(new PostStartup());
          shell.setVerbose(true);
          shell.setExceptionHandlingEnabled(false);
+         shell.setAnsiSupported(false);
 
          resetInputQueue();
-         shell.setOutputStream(System.out);
       }
    }
 
@@ -160,6 +169,11 @@ public abstract class SingletonAbstractShellTest
    protected BeanManager getBeanManager()
    {
       return beanManager;
+   }
+
+   protected String getOutput()
+   {
+      return output.toString();
    }
 
    protected Shell getShell()

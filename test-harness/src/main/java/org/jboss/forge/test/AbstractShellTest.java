@@ -118,10 +118,10 @@ public abstract class AbstractShellTest
       beanManager.fireEvent(new PostStartup());
       shell.setVerbose(true);
       shell.setExceptionHandlingEnabled(false);
-
-      resetInputQueue();
       shell.setOutputStream(output);
       shell.setAnsiSupported(false);
+
+      resetInputQueue();
    }
 
    protected DirectoryResource createTempFolder() throws IOException
@@ -252,7 +252,7 @@ public abstract class AbstractShellTest
       return project.get();
    }
 
-   public String getOutput()
+   protected String getOutput()
    {
       return output.toString();
    }

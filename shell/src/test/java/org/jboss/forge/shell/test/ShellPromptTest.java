@@ -130,6 +130,32 @@ public class ShellPromptTest extends AbstractShellTest
       assertEquals(1, choice);
    }
 
+   @Test
+   public void testPromptChoiceListDuplicatesRemoved() throws Exception
+   {
+      String blue = "blue";
+      List<String> choices = Arrays.asList(blue, blue, blue, "green", "red", "yellow", blue);
+
+      queueInputLines("1");
+      String choice = getShell().promptChoiceTyped("What is your favorite color?", choices);
+      String output = getOutput();
+      assertEquals(output.indexOf(blue), output.lastIndexOf(blue));
+      assertEquals(blue, choice);
+   }
+
+   @Test
+   public void testPromptChoiceListDefaultDuplicatesRemoved() throws Exception
+   {
+      String blue = "blue";
+      List<String> choices = Arrays.asList(blue, blue, blue, "green", "red", "yellow", blue);
+
+      queueInputLines("");
+      String choice = getShell().promptChoiceTyped("What is your favorite color?", choices, "red");
+      String output = getOutput();
+      assertEquals(output.indexOf(blue), output.lastIndexOf(blue));
+      assertEquals("red", choice);
+   }
+
    @Test(expected = IllegalArgumentException.class)
    public void testPromptChoiceListEmpty() throws Exception
    {

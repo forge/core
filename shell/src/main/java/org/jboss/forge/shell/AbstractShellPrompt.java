@@ -24,6 +24,7 @@ package org.jboss.forge.shell;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -249,13 +250,19 @@ public abstract class AbstractShellPrompt implements Shell
 
    @Override
    @SuppressWarnings("unchecked")
-   public <T> T promptChoiceTyped(final String message, final List<T> options)
+   public <T> T promptChoiceTyped(final String message, List<T> options)
    {
       if ((options == null) || options.isEmpty())
       {
          throw new IllegalArgumentException(
                   "promptChoice() Cannot ask user to select from a list of nothing. Ensure you have values in your options list.");
       }
+
+      /*
+       * Remove duplicates from the list.
+       */
+      options = new ArrayList<T>(new LinkedHashSet<T>(options));
+
       if (options.size() == 1)
       {
          return options.get(0);
@@ -297,7 +304,7 @@ public abstract class AbstractShellPrompt implements Shell
 
    @Override
    @SuppressWarnings("unchecked")
-   public <T> T promptChoiceTyped(final String message, final List<T> options, final T defaultIfEmpty)
+   public <T> T promptChoiceTyped(final String message, List<T> options, final T defaultIfEmpty)
    {
       if (this.isAcceptDefaults())
       {
@@ -309,6 +316,12 @@ public abstract class AbstractShellPrompt implements Shell
          throw new IllegalArgumentException(
                   "promptChoice() Cannot ask user to select from a list of nothing. Ensure you have values in your options list.");
       }
+
+      /*
+       * Remove duplicates from the list.
+       */
+      options = new ArrayList<T>(new LinkedHashSet<T>(options));
+
       if (options.size() == 1)
       {
          return options.get(0);
@@ -337,7 +350,9 @@ public abstract class AbstractShellPrompt implements Shell
                print(ShellColor.BOLD, "  " + count + " - (none)");
             }
 
-            if ((entry == defaultIfEmpty) || ((entry != null) && entry.equals(defaultIfEmpty)))
+            boolean objectEquals = (entry != null) && entry.equals(defaultIfEmpty);
+            boolean instanceEquals = entry == defaultIfEmpty;
+            if (instanceEquals || objectEquals)
             {
                print("*");
             }

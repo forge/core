@@ -158,11 +158,6 @@ public class DependencyInstallerImpl implements DependencyInstaller
    /*
     * Helpers
     */
-   private DependencyBuilder getUnversioned(final Dependency dependency)
-   {
-      return getUnversioned(dependency, null);
-   }
-
    private DependencyBuilder getUnversioned(final Dependency dependency, final ScopeType type)
    {
       return getWithScopeType(dependency, type).setVersion(null);

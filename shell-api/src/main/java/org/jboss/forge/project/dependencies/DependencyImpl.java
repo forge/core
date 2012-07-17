@@ -29,7 +29,7 @@ import org.jboss.forge.project.packaging.PackagingType;
 
 /**
  * This class is internal; instead use {@link DependencyBuilder} for {@link Dependency} creation & instantiation.
- *
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class DependencyImpl implements Dependency
@@ -208,13 +208,18 @@ public class DependencyImpl implements Dependency
          exclusionsEqual = that.getExcludedDependencies() == null;
       }
 
-      return artifactId != null ? artifactId.equals(that.getArtifactId()) : that.getArtifactId() != null
-               && exclusionsEqual
-               && groupId != null ? groupId.equals(that.getGroupId()) : that.getGroupId() != null
-               && packagingType != null ? !packagingType.equals(that.getPackagingType()) : that.getPackagingType() != null
-               && scopeType != null ? scopeType.equals(that.getScopeType()) : that.getScopeType() != null
-               && version != null ? version.equals(that.getVersion()) : that.getVersion() != null
-               && classifier != null ? classifier.equals(that.getClassifier()) : that.getClassifier() != null;
+      boolean artifactIdEquals = artifactId != null ? artifactId.equals(that.getArtifactId())
+               : that.getArtifactId() != null;
+      boolean groupIdEquals = groupId != null ? groupId.equals(that.getGroupId()) : that.getGroupId() != null;
+      boolean packagingTypeEquals = packagingType != null ? !packagingType.equals(that.getPackagingType()) : that
+               .getPackagingType() != null;
+      boolean scopeTypeEquals = scopeType != null ? scopeType.equals(that.getScopeType()) : that.getScopeType() != null;
+      boolean versionEquals = version != null ? version.equals(that.getVersion()) : that.getVersion() != null;
+      boolean classifierEquals = classifier != null ? classifier.equals(that.getClassifier())
+               : that.getClassifier() != null;
+
+      return artifactIdEquals && exclusionsEqual && groupIdEquals && packagingTypeEquals && scopeTypeEquals
+               && versionEquals && classifierEquals;
 
    }
 
