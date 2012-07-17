@@ -45,6 +45,8 @@
    </prerequisites>
 
    <properties>
+       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+   
       <!-- Build Info -->
       <forge.scm.connection>scm:git:git://github.com/forge/core.git</forge.scm.connection>
       <forge.developer.connection>scm:git:git@github.com:forge/core.git</forge.developer.connection>
