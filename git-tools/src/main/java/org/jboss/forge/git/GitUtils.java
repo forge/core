@@ -292,7 +292,10 @@ public abstract class GitUtils
          RevCommit srcCommit = revWalk.parseCommit(srcObjectId);
 
          // get the parent of the commit to cherry-pick
-         if (srcCommit.getParentCount() != 1)
+         if (srcCommit.getParentCount() == 0)
+            return null;
+
+         if (srcCommit.getParentCount() > 1)
             throw new MultipleParentsNotAllowedException(
                      MessageFormat.format(
                               JGitText.get().canOnlyCherryPickCommitsWithOneParent,
