@@ -29,6 +29,7 @@ import org.eclipse.jgit.api.CherryPickResult;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.NoHeadException;
 import org.eclipse.jgit.lib.Ref;
+import org.jboss.forge.git.errors.CantMergeCommitWithZeroParentsException;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.test.AbstractShellTest;
@@ -356,7 +357,7 @@ public class GitUtilsTest extends AbstractShellTest
       Assert.assertTrue("Branch is not created", branches.contains(testBranch));
    }
 
-   @Test
+   @Test(expected = CantMergeCommitWithZeroParentsException.class)
    public void shouldNotCrashWhenCherryPickNoMergeIsCalledOnLastCommit() throws Exception
    {
       String[] branchNames = { "master" };
@@ -383,7 +384,6 @@ public class GitUtilsTest extends AbstractShellTest
 
       commits = GitUtils.getLogForCurrentBranch(repo);
       Assert.assertEquals("Wrong number of commits in log", 1, commits.size());
-      cherryPickResult = GitUtils.cherryPickNoMerge(repo, repo.getRepository().getRef(branchNames[0]));
-      Assert.assertNull("Should be last commit with 0 parents", cherryPickResult);
+      GitUtils.cherryPickNoMerge(repo, repo.getRepository().getRef(branchNames[0]));
    }
 }

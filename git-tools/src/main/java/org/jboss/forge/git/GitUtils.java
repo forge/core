@@ -43,6 +43,7 @@ import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.transport.FetchResult;
 import org.eclipse.jgit.transport.RefSpec;
 import org.eclipse.jgit.treewalk.FileTreeIterator;
+import org.jboss.forge.git.errors.CantMergeCommitWithZeroParentsException;
 import org.jboss.forge.parser.java.util.Strings;
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.FileResource;
@@ -263,7 +264,8 @@ public abstract class GitUtils
       repo.cherryPick().include(commit).call();
    }
 
-   public static CherryPickResult cherryPickNoMerge(final Git git, Ref src) throws GitAPIException
+   public static CherryPickResult cherryPickNoMerge(final Git git, Ref src) throws GitAPIException,
+            CantMergeCommitWithZeroParentsException
    {
       // Does the same as the original git-cherryPick
       // except commiting after running merger
@@ -293,7 +295,7 @@ public abstract class GitUtils
 
          // get the parent of the commit to cherry-pick
          if (srcCommit.getParentCount() == 0)
-            return null;
+            throw new CantMergeCommitWithZeroParentsException("Commit with zero parents cannot be merged");
 
          if (srcCommit.getParentCount() > 1)
             throw new MultipleParentsNotAllowedException(
