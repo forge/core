@@ -84,11 +84,11 @@ public enum Visibility
 
       if (PRIVATE.equals(scope))
          target.setPrivate();
-      if (PACKAGE_PRIVATE.equals(scope))
+      else if (PACKAGE_PRIVATE.equals(scope))
          target.setPackagePrivate();
-      if (PROTECTED.equals(scope))
+      else if (PROTECTED.equals(scope))
          target.setProtected();
-      if (PUBLIC.equals(scope))
+      else if (PUBLIC.equals(scope))
          target.setPublic();
 
       else
