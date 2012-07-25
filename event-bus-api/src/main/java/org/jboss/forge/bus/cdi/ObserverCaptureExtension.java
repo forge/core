@@ -59,9 +59,9 @@ public class ObserverCaptureExtension implements Extension
    private final Map<Class<?>, List<BusManaged>> eventQualifierMap = new HashMap<Class<?>, List<BusManaged>>();
    private int rollingIdentifier = 0;
 
-   public void scan(@Observes final ProcessAnnotatedType<Object> event)
+   public <T> void scan(@Observes final ProcessAnnotatedType<T> event)
    {
-      AnnotatedType<Object> originalType = event.getAnnotatedType();
+      AnnotatedType<Object> originalType = (AnnotatedType<Object>) event.getAnnotatedType();
       AnnotatedType<Object> newType;
       List<AnnotatedMethod> obsoleteMethods = new ArrayList<AnnotatedMethod>();
       List<AnnotatedMethod> replacementMethods = new ArrayList<AnnotatedMethod>();
@@ -104,7 +104,7 @@ public class ObserverCaptureExtension implements Extension
       newType = removeMethodsFromType(originalType, obsoleteMethods);
       newType = addReplacementMethodsToType(newType, replacementMethods);
 
-      event.setAnnotatedType(newType);
+      event.setAnnotatedType((AnnotatedType<T>) newType);
    }
 
    private List<AnnotatedMethod<? super Object>> getOrderedMethods(final AnnotatedType<Object> originalType)
