@@ -61,6 +61,7 @@
       <aether.version>1.11</aether.version>
       <arquillian.version>1.0.0.CR7</arquillian.version>
       <arquillian.container.version>1.0.0.CR3</arquillian.container.version>
+      <cal10n.version>0.7.4</cal10n.version>
       <cdi.version>1.0-SP4</cdi.version>
       <groovy.version>1.7.5</groovy.version>
       <httpclient.version>4.0.1</httpclient.version>
@@ -627,6 +628,11 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-ext</artifactId>
            <version>${slf4j.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>ch.qos.cal10n</groupId>
+            <artifactId>cal10n-api</artifactId>
+            <version>${cal10n.version}</version>
          </dependency>
          <dependency>
             <groupId>log4j</groupId>
