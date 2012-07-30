@@ -28,7 +28,7 @@ import org.jboss.forge.project.packaging.PackagingType;
 
 /**
  * Represents a project library dependency.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public interface Dependency
@@ -86,5 +86,10 @@ public interface Dependency
     * "groupId : artifactId : version"
     */
    String toCoordinates();
+
+   /**
+    * Returns true if this dependency version is a SNAPSHOT
+    */
+   boolean isSnapshot();
 
 }

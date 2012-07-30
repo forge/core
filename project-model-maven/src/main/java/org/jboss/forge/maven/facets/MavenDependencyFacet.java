@@ -41,9 +41,12 @@ import org.jboss.forge.maven.dependencies.MavenDependencyAdapter;
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
+import org.jboss.forge.project.dependencies.DependencyQuery;
+import org.jboss.forge.project.dependencies.DependencyQueryBuilder;
 import org.jboss.forge.project.dependencies.DependencyRepository;
 import org.jboss.forge.project.dependencies.DependencyRepositoryImpl;
 import org.jboss.forge.project.dependencies.DependencyResolver;
+import org.jboss.forge.project.dependencies.NonSnapshotDependencyFilter;
 import org.jboss.forge.project.dependencies.ScopeType;
 import org.jboss.forge.project.dependencies.events.AddedDependencies;
 import org.jboss.forge.project.dependencies.events.RemovedDependencies;
@@ -430,7 +433,9 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
    @Override
    public List<Dependency> resolveAvailableVersions(final Dependency dep)
    {
-      List<Dependency> versions = resolver.resolveVersions(dep, getRepositories());
+      // Resolve dependencies without any snapshots
+      DependencyQuery query = new DependencyQueryBuilder(dep).setRepositories(getRepositories()).setFilter(new NonSnapshotDependencyFilter());
+      List<Dependency> versions = resolver.resolveVersions(query);
       return versions;
    }
 

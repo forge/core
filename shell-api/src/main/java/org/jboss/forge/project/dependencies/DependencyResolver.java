@@ -32,7 +32,7 @@ import org.jboss.forge.resources.DependencyResource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 @Singleton
 public class DependencyResolver
@@ -166,6 +166,9 @@ public class DependencyResolver
       return null;
    }
 
+   /**
+    * @deprecated Use {@link DependencyResolver#resolveVersions(DependencyQuery)}
+    */
    public List<Dependency> resolveVersions(final Dependency query)
    {
       for (DependencyResolverProvider p : providers)
@@ -179,6 +182,9 @@ public class DependencyResolver
       return new ArrayList<Dependency>();
    }
 
+   /**
+    * @deprecated Use {@link DependencyResolver#resolveVersions(DependencyQuery)}
+    */
    public List<Dependency> resolveVersions(final Dependency query, final DependencyRepository repository)
    {
       for (DependencyResolverProvider p : providers)
@@ -192,6 +198,9 @@ public class DependencyResolver
       return new ArrayList<Dependency>();
    }
 
+   /**
+    * @deprecated Use {@link DependencyResolver#resolveVersions(DependencyQuery)}
+    */
    public List<Dependency> resolveVersions(final Dependency query, final List<DependencyRepository> repositories)
    {
       for (DependencyResolverProvider p : providers)
@@ -204,4 +213,31 @@ public class DependencyResolver
       }
       return new ArrayList<Dependency>();
    }
+
+   /**
+    * Resolve a set of {@link Dependency} versions matching the given query.
+    */
+   public List<Dependency> resolveVersions(final DependencyQuery query)
+   {
+      List<Dependency> deps = new ArrayList<Dependency>();
+      DependencyFilter dependencyFilter = query.getDependencyFilter();
+      Dependency dependency = query.getDependency();
+      List<DependencyRepository> dependencyRepositories = query.getDependencyRepositories();
+      for (DependencyResolverProvider p : providers)
+      {
+         List<Dependency> artifacts = p.resolveVersions(dependency, dependencyRepositories);
+         if (artifacts != null)
+         {
+            for (Dependency artifact : artifacts)
+            {
+               if (dependencyFilter == null || dependencyFilter.accept(artifact))
+               {
+                  deps.add(artifact);
+               }
+            }
+         }
+      }
+      return deps;
+   }
+
 }
