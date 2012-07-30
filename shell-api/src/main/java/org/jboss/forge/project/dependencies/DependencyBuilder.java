@@ -28,7 +28,7 @@ import org.jboss.forge.project.packaging.PackagingType;
 /**
  * Builder to create {@link Dependency} objects. This class implements {@link Dependency} for easy consumption. (I.e.:
  * Use this class wherever you need to create and use a new {@link Dependency})
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class DependencyBuilder implements Dependency
@@ -78,7 +78,7 @@ public class DependencyBuilder implements Dependency
       }
 
       return !(l.getArtifactId() != null ? !l.getArtifactId().equals(r.getArtifactId()) : r.getArtifactId() != null) &&
-               !(l.getGroupId() != null ? !l.getGroupId().equals(r.getGroupId()) : r.getGroupId() != null) && 
+               !(l.getGroupId() != null ? !l.getGroupId().equals(r.getGroupId()) : r.getGroupId() != null) &&
                !(l.getClassifier() != null ? !l.getClassifier().equals(r.getClassifier()) : r.getClassifier() != null);
 
    }
@@ -87,7 +87,7 @@ public class DependencyBuilder implements Dependency
     * @param identifier of the form "groupId:artifactId", "groupId:artifactId:version",
     *           "groupId:artifactId:scope, "groupId
     *           :artifactId:version:scope", "groupId:artifactId:version:scope:packaging"
-    * 
+    *
     *           For classifier specification, see {@link #setClassifier(String)}
     */
    public static DependencyBuilder create(final String identifier)
@@ -213,6 +213,12 @@ public class DependencyBuilder implements Dependency
    }
 
    @Override
+   public boolean isSnapshot()
+   {
+      return dep.isSnapshot();
+   }
+
+   @Override
    public List<Dependency> getExcludedDependencies()
    {
       return dep.getExcludedDependencies();
@@ -258,7 +264,7 @@ public class DependencyBuilder implements Dependency
     * Convenience method which should be used to convert a {@link Dependency} object into its id representation, for
     * example: "groupId:artifactId:::version", "groupId:artifactId:packaging::version" or
     * "groupId:artifactId:packaging:classifier:version"
-    * 
+    *
     * @see {@link Dependency#toCoordinates()}
     */
    public static String toId(final Dependency dep)

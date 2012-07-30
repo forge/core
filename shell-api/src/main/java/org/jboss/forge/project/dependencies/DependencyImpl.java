@@ -29,7 +29,7 @@ import org.jboss.forge.project.packaging.PackagingType;
 
 /**
  * This class is internal; instead use {@link DependencyBuilder} for {@link Dependency} creation & instantiation.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class DependencyImpl implements Dependency
@@ -149,6 +149,12 @@ public class DependencyImpl implements Dependency
    public String toCoordinates()
    {
       return DependencyBuilder.toId(this);
+   }
+
+   @Override
+   public boolean isSnapshot()
+   {
+      return getVersion().endsWith("-SNAPSHOT");
    }
 
    @Override

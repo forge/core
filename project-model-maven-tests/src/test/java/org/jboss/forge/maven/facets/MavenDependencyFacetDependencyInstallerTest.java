@@ -53,10 +53,10 @@ public class MavenDependencyFacetDependencyInstallerTest extends AbstractShellTe
 
       DependencyFacet deps = project.getFacet(DependencyFacet.class);
       DependencyBuilder dependency = DependencyBuilder.create("org.jboss.forge:forge-shell-api");
-      
-      queueInputLines("18");
+
+      queueInputLines("13");
       installer.install(project, dependency);
-      
+
       Assert.assertTrue(deps.hasDirectDependency(dependency));
       Assert.assertTrue(deps.hasDirectManagedDependency(dependency));
       Assert.assertEquals("1.0.4.Final", deps.getManagedDependency(dependency).getVersion());
@@ -70,9 +70,9 @@ public class MavenDependencyFacetDependencyInstallerTest extends AbstractShellTe
 
       DependencyFacet deps = project.getFacet(DependencyFacet.class);
       DependencyBuilder dependency = DependencyBuilder.create("org.jboss.forge:forge-shell-api:1.0.4.Final");
-      
+
       installer.install(project, dependency);
-      
+
       Assert.assertTrue(deps.hasDirectDependency(dependency));
       Assert.assertTrue(deps.hasDirectManagedDependency(dependency));
       Assert.assertEquals("1.0.4.Final", deps.getManagedDependency(dependency).getVersion());
@@ -87,9 +87,9 @@ public class MavenDependencyFacetDependencyInstallerTest extends AbstractShellTe
       DependencyFacet deps = project.getFacet(DependencyFacet.class);
       DependencyBuilder dependency = DependencyBuilder.create("org.jboss.forge:forge-shell-api");
 
-      queueInputLines("18");
+      queueInputLines("13");
       installer.installManaged(project, dependency);
-      
+
       Assert.assertFalse(deps.hasEffectiveDependency(dependency));
       Assert.assertTrue(deps.hasDirectManagedDependency(dependency));
       Assert.assertEquals("1.0.4.Final", deps.getManagedDependency(dependency).getVersion());
@@ -104,12 +104,12 @@ public class MavenDependencyFacetDependencyInstallerTest extends AbstractShellTe
       DependencyBuilder dependency = DependencyBuilder.create("org.jboss.forge:forge-shell-api:1.0.4.Final");
 
       installer.installManaged(project, dependency);
-      
+
       Assert.assertFalse(deps.hasEffectiveDependency(dependency));
       Assert.assertTrue(deps.hasDirectManagedDependency(dependency));
       Assert.assertEquals("1.0.4.Final", deps.getManagedDependency(dependency).getVersion());
    }
-   
+
 
 
    @Test
@@ -119,10 +119,10 @@ public class MavenDependencyFacetDependencyInstallerTest extends AbstractShellTe
 
       DependencyFacet deps = project.getFacet(DependencyFacet.class);
       DependencyBuilder dependency = DependencyBuilder.create("org.jboss.forge:forge-shell-api").setScopeType(ScopeType.TEST);
-      
-      queueInputLines("18");
+
+      queueInputLines("13");
       installer.install(project, dependency);
-      
+
       Assert.assertTrue(deps.hasDirectDependency(dependency));
       Assert.assertTrue(deps.hasDirectManagedDependency(dependency));
       Assert.assertEquals("1.0.4.Final", deps.getManagedDependency(dependency).getVersion());
@@ -138,9 +138,9 @@ public class MavenDependencyFacetDependencyInstallerTest extends AbstractShellTe
 
       DependencyFacet deps = project.getFacet(DependencyFacet.class);
       DependencyBuilder dependency = DependencyBuilder.create("org.jboss.forge:forge-shell-api:1.0.4.Final").setScopeType(ScopeType.TEST);
-      
+
       installer.install(project, dependency);
-      
+
       Assert.assertTrue(deps.hasDirectDependency(dependency));
       Assert.assertTrue(deps.hasDirectManagedDependency(dependency));
       Assert.assertEquals("1.0.4.Final", deps.getManagedDependency(dependency).getVersion());
@@ -157,9 +157,9 @@ public class MavenDependencyFacetDependencyInstallerTest extends AbstractShellTe
       DependencyFacet deps = project.getFacet(DependencyFacet.class);
       DependencyBuilder dependency = DependencyBuilder.create("org.jboss.forge:forge-shell-api").setScopeType(ScopeType.TEST);
 
-      queueInputLines("18");
+      queueInputLines("13");
       installer.installManaged(project, dependency);
-      
+
       Assert.assertFalse(deps.hasEffectiveDependency(dependency));
       Assert.assertTrue(deps.hasDirectManagedDependency(dependency));
       Assert.assertEquals("1.0.4.Final", deps.getManagedDependency(dependency).getVersion());
@@ -175,7 +175,7 @@ public class MavenDependencyFacetDependencyInstallerTest extends AbstractShellTe
       DependencyBuilder dependency = DependencyBuilder.create("org.jboss.forge:forge-shell-api:1.0.4.Final").setScopeType(ScopeType.TEST);
 
       installer.installManaged(project, dependency);
-      
+
       Assert.assertFalse(deps.hasEffectiveDependency(dependency));
       Assert.assertTrue(deps.hasDirectManagedDependency(dependency));
       Assert.assertEquals("1.0.4.Final", deps.getManagedDependency(dependency).getVersion());
