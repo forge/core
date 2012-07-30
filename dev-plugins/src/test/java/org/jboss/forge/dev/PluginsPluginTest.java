@@ -49,12 +49,12 @@ public class PluginsPluginTest extends AbstractShellTest
       String output = getOutput();
       assertTrue(output.contains("JavaSourceFacet"));
    }
-   
+
    @Test
    public void testCreateAndBuildPlugin() throws Exception
    {
       initializeJavaProject();
-      queueInputLines("", "1");
+      queueInputLines("", "14");
       getShell().execute("plugins setup");
       queueInputLines("");
       getShell().execute("plugins new-plugin --named demo");
@@ -65,7 +65,7 @@ public class PluginsPluginTest extends AbstractShellTest
    public void testCreatePluginWithDashInName() throws Exception
    {
       initializeJavaProject();
-      queueInputLines("", "1");
+      queueInputLines("", "14");
       getShell().execute("plugins setup");
       queueInputLines("");
       getShell().execute("plugins new-plugin --named demo-plugin");
@@ -89,7 +89,7 @@ public class PluginsPluginTest extends AbstractShellTest
    public void testCreatePluginWithUppercaseName() throws Exception
    {
       initializeJavaProject();
-      queueInputLines("", "1");
+      queueInputLines("", "14");
       getShell().execute("plugins setup");
       queueInputLines("");
       getShell().execute("plugins new-plugin --named DemoPlugin");
