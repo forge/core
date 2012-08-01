@@ -23,32 +23,35 @@ package org.jboss.forge.shell.events;
 
 import org.jboss.forge.shell.command.CommandMetadata;
 
-
 /**
  * Fired after a plugin/command has been executed and has finished processing.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:koen.aers@gmail.com">Koen Aers</a>
- * 
+ *
  */
 public final class CommandExecuted
 {
    public enum Status
    {
-      SUCCESS, FAILURE
+      SUCCESS, FAILURE, MISSING
    }
 
    private Status status = Status.SUCCESS;
    private CommandMetadata command;
    private Object[] parameters;
-   
-   public CommandExecuted()
-   {}
+   private String originalStatement;
 
-   public CommandExecuted(final Status status, final CommandMetadata command, Object[] parameters)
+   public CommandExecuted()
+   {
+   }
+
+   public CommandExecuted(final Status status, final CommandMetadata command, final String originalStatement,
+            Object[] parameters)
    {
       this.status = status;
       this.command = command;
+      this.originalStatement = originalStatement;
       this.parameters = parameters;
    }
 
@@ -56,12 +59,19 @@ public final class CommandExecuted
    {
       return status;
    }
-   
-   public CommandMetadata getCommand() {
-	   return command;
+
+   public CommandMetadata getCommand()
+   {
+      return command;
    }
-   
-   public Object[] getParameters() {
-	   return parameters;
+
+   public Object[] getParameters()
+   {
+      return parameters;
+   }
+
+   public String getOriginalStatement()
+   {
+      return originalStatement;
    }
 }
