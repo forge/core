@@ -37,7 +37,6 @@ import org.jboss.forge.shell.constraint.ConstraintException;
 import org.jboss.forge.shell.events.CommandExecuted;
 import org.jboss.forge.shell.events.CommandExecuted.Status;
 import org.jboss.forge.shell.exceptions.CommandExecutionException;
-import org.jboss.forge.shell.exceptions.NoSuchCommandException;
 import org.jboss.forge.shell.plugins.AliasLiteral;
 import org.jboss.forge.shell.plugins.PipeOut;
 import org.jboss.forge.shell.plugins.Plugin;
@@ -157,15 +156,14 @@ public class Execution
                finally
                {
                   Thread.currentThread().setContextClassLoader(current);
-                  manager.fireEvent(new CommandExecuted(status, command, parameterArray), new Annotation[] {});
+                  manager.fireEvent(new CommandExecuted(status, command, originalStatement, parameterArray), new Annotation[] {});
                }
             }
          }
       }
       else
       {
-         // TODO it would be nice if this delegated to the system forge
-         throw new NoSuchCommandException(command, "No such command: " + originalStatement);
+         manager.fireEvent(new CommandExecuted(Status.MISSING, command, originalStatement, parameterArray), new Annotation[] {});
       }
 
    }
