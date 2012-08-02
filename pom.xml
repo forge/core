@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
- 
+
    <parent>
       <groupId>org.jboss</groupId>
       <artifactId>jboss-parent</artifactId>
@@ -46,7 +46,7 @@
 
    <properties>
        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-   
+
       <!-- Build Info -->
       <forge.scm.connection>scm:git:git://github.com/forge/core.git</forge.scm.connection>
       <forge.developer.connection>scm:git:git@github.com:forge/core.git</forge.developer.connection>
@@ -61,7 +61,7 @@
       <aether.version>1.11</aether.version>
       <arquillian.version>1.0.0.CR7</arquillian.version>
       <arquillian.container.version>1.0.0.CR3</arquillian.container.version>
-      <cal10n.version>0.7.4</cal10n.version>
+      <cal10n.version>0.7.2</cal10n.version>
       <cdi.version>1.0-SP4</cdi.version>
       <groovy.version>1.7.5</groovy.version>
       <httpclient.version>4.0.1</httpclient.version>
@@ -80,7 +80,7 @@
       <mvel.version>2.1.Beta7</mvel.version>
       <shrinkwrap.version>1.0.0-alpha-11</shrinkwrap.version>
       <shrinkwrap.descriptors.version>1.1.0-beta-1</shrinkwrap.descriptors.version>
-      <slf4j.version>1.6.6</slf4j.version>
+      <slf4j.version>1.5.10</slf4j.version>
       <version.sun.jaxb>2.2</version.sun.jaxb>
       <version.jboss-jaxb-api_2.2_spec>1.0.3.Final</version.jboss-jaxb-api_2.2_spec>
       <weld.version>1.1.2.Final</weld.version>
@@ -544,9 +544,9 @@
             <version>${junit.version}</version>
             <scope>test</scope>
          </dependency>
-         
+
          <!-- Arquillian -->
-         
+
          <dependency>
              <groupId>org.jboss.arquillian</groupId>
              <artifactId>arquillian-bom</artifactId>
@@ -572,7 +572,7 @@
             <scope>test</scope>
          </dependency>
 
-<!-- 
+<!--
          <dependency>
             <groupId>org.jboss.shrinkwrap</groupId>
             <artifactId>shrinkwrap-api</artifactId>
@@ -590,8 +590,8 @@
             <artifactId>shrinkwrap-descriptors-impl</artifactId>
             <version>${shrinkwrap.descriptors.version}</version>
          </dependency>
-          
-          
+
+
          <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
@@ -832,7 +832,7 @@
 
 
             <plugin>
-               <!--TODO TEXT. This plugin's configuration is used in m2e 
+               <!--TODO TEXT. This plugin's configuration is used in m2e
                   only. -->
                <groupId>org.eclipse.m2e</groupId>
                <artifactId>lifecycle-mapping</artifactId>
