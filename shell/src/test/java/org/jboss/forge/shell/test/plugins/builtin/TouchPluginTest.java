@@ -1,16 +1,15 @@
 package org.jboss.forge.shell.test.plugins.builtin;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.test.AbstractShellTest;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import static org.junit.Assert.*;
 
 /**
  * @author Jose Donizetti.
@@ -19,19 +18,10 @@ import static org.junit.Assert.*;
 public class TouchPluginTest extends AbstractShellTest
 { 
 	
-	private Shell shell;
-	
-	@Before
-	public void setup() throws Exception  
-	{
-		this.shell = getShell();
-		File moduleDir = new File("");
-		shell.execute("cd " + moduleDir.getAbsolutePath());
-	}
-
 	@Test
 	public void testAnExistingFile() throws Exception
 	{
+		Shell shell = getShell();
 		File pom = new File(shell.getCurrentResource().getFullyQualifiedName(), "pom.xml");
 		long oldLastModified = pom.lastModified();
 		
@@ -45,6 +35,7 @@ public class TouchPluginTest extends AbstractShellTest
 	@Test
 	public void testANonExistingFile() throws Exception
 	{
+		Shell shell = getShell();
 		shell.execute("touch newFile.txt");
 		Resource<?> newFile = shell.getCurrentDirectory().getChild("newFile.txt");
 		  
