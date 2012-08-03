@@ -21,10 +21,7 @@
  */
 package org.jboss.forge.shell;
 
-import java.util.Collection;
-
 import org.jboss.weld.bootstrap.api.Bootstrap;
-import org.jboss.weld.bootstrap.spi.BeanDeploymentArchive;
 import org.jboss.weld.bootstrap.spi.Deployment;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.resources.spi.ResourceLoader;
@@ -39,7 +36,7 @@ public class ModularWeld extends Weld
    {
       Deployment deployment = super.createDeployment(resourceLoader, bootstrap);
 
-      Collection<BeanDeploymentArchive> archives = deployment.getBeanDeploymentArchives();
+//      Collection<BeanDeploymentArchive> archives = deployment.getBeanDeploymentArchives();
 
       return deployment;
    }

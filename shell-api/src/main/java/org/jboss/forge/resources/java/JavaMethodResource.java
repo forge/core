@@ -35,6 +35,7 @@ import org.jboss.forge.resources.Resource;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
+@SuppressWarnings("rawtypes")
 public class JavaMethodResource extends JavaMemberResource<Method>
 {
    private final Method<? extends JavaSource<?>> method;
@@ -94,7 +95,7 @@ public class JavaMethodResource extends JavaMemberResource<Method>
    }
 
    @Override
-   @SuppressWarnings({ "unchecked", "rawtypes" })
+   @SuppressWarnings({ "unchecked" })
    public boolean delete() throws UnsupportedOperationException
    {
       JavaSource<?> origin = method.getOrigin();

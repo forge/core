@@ -147,6 +147,7 @@ public class JavaExectionFacetTest
       Scanner scanner = new Scanner(f);
       String s = scanner.nextLine();
       assertThat(s, is("a b c"));
+      scanner.close();
    }
 
    @After

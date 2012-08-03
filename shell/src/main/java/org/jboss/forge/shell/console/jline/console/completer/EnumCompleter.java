@@ -25,7 +25,7 @@ package org.jboss.forge.shell.console.jline.console.completer;
 public class EnumCompleter
     extends StringsCompleter
 {
-    public EnumCompleter(Class<? extends Enum> source) {
+    public EnumCompleter(Class<? extends Enum<?>> source) {
         assert source != null;
 
         for (Enum<?> n : source.getEnumConstants()) {

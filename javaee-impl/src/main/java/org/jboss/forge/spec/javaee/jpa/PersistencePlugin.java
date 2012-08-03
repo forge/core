@@ -205,8 +205,6 @@ public class PersistencePlugin implements Plugin
             final JPAProvider jpap, final PersistenceProvider provider,
             final String providerVersion)
    {
-      DependencyFacet dependencyFacet = project.getFacet(DependencyFacet.class);
-
       List<Dependency> dependencies = new ArrayList<Dependency>();
       if (!provider.listDependencies().isEmpty()
                && prompt.promptBoolean("The JPA provider [" + jpap

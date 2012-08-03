@@ -23,7 +23,6 @@ package org.jboss.forge.shell.project;
 
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.locator.ProjectLocator;
-import org.jboss.forge.project.services.ProjectFactory;
 import org.jboss.forge.resources.DirectoryResource;
 
 import com.google.inject.Inject;
@@ -33,12 +32,9 @@ import com.google.inject.Inject;
  */
 public class DefaultProjectLocator implements ProjectLocator
 {
-    private ProjectFactory factory;
-
     @Inject
-    public DefaultProjectLocator(final ProjectFactory factory)
+    public DefaultProjectLocator()
     {
-        this.factory = factory;
     }
 
     @Override

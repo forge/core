@@ -218,11 +218,11 @@ public class RestPlugin implements Plugin
          {
             if (member instanceof Method)
             {
-               return ((Method) member).getReturnType();
+               return ((Method<?>) member).getReturnType();
             }
             if (member instanceof Field)
             {
-               return ((Field) member).getType();
+               return ((Field<?>) member).getType();
             }
          }
       }
@@ -241,7 +241,7 @@ public class RestPlugin implements Plugin
             String type = null;
             if (member instanceof Method)
             {
-               type = ((Method) member).getReturnType();
+               type = ((Method<?>) member).getReturnType();
                if (name.startsWith("get"))
                {
                   name = name.substring(2);
@@ -249,7 +249,7 @@ public class RestPlugin implements Plugin
             }
             else if (member instanceof Field)
             {
-               type = ((Field) member).getType();
+               type = ((Field<?>) member).getType();
             }
 
             if (type != null)

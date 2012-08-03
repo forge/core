@@ -253,6 +253,7 @@ public class ConsoleReader
          AnsiOutputStream aos = new AnsiOutputStream(baos);
          aos.write(str.getBytes());
          aos.flush();
+         aos.close();
          return baos.toString();
       }
       catch (IOException e)

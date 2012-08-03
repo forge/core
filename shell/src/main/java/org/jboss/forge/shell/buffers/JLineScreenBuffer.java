@@ -14,7 +14,7 @@ import java.nio.ByteBuffer;
  */
 public class JLineScreenBuffer implements BufferManager
 {
- //
+   //
    private OutputStream outputStream;
    private Terminal terminal;
    private boolean directWrite = true;
@@ -22,7 +22,6 @@ public class JLineScreenBuffer implements BufferManager
    private int maxBufferSize = 1024 * 10;
    private ByteBuffer buffer;
    private int bufferSize = 0;
-
 
    public JLineScreenBuffer(Terminal terminal, OutputStream outputStream)
    {
@@ -150,6 +149,7 @@ public class JLineScreenBuffer implements BufferManager
     * @param offset
     * @param length
     */
+   @SuppressWarnings("unused")
    private void segmentedWrite(byte[] b, int offset, int length)
    {
       if (b.length > maxBufferSize)
@@ -169,15 +169,10 @@ public class JLineScreenBuffer implements BufferManager
       }
    }
 
-   public static void main(String[] args)
-   {
-      System.out.println(400 / 300);
-      System.out.println(400 % 300);
-   }
-
    private void _flush()
    {
-      if (directWrite) flushBuffer();
+      if (directWrite)
+         flushBuffer();
    }
 
    @Override
@@ -196,14 +191,14 @@ public class JLineScreenBuffer implements BufferManager
 
    public void setBufferPosition(int row, int col)
    {
-//      try
-//      {
-//         reader.print(new Ansi().cursor(row, col).toString());
-//      }
-//      catch (IOException e)
-//      {
-//         throw new RuntimeException("could not set buffer position", e);
-//      }
+      // try
+      // {
+      // reader.print(new Ansi().cursor(row, col).toString());
+      // }
+      // catch (IOException e)
+      // {
+      // throw new RuntimeException("could not set buffer position", e);
+      // }
    }
 
    @Override

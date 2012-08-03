@@ -25,7 +25,6 @@ package org.jboss.forge.shell.command;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -34,7 +33,7 @@ import org.jboss.forge.shell.project.FacetRegistry;
 
 /**
  * Stores the current registry of all installed & loaded facets.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Singleton
@@ -43,28 +42,26 @@ public class FacetRegistryImpl implements FacetRegistry
    private Set<Class<? extends Facet>> facetTypes;
 
    private final CommandLibraryExtension library;
-   private final BeanManager manager;
 
    @Inject
-   public FacetRegistryImpl(final CommandLibraryExtension library, final BeanManager manager)
+   public FacetRegistryImpl(final CommandLibraryExtension library)
    {
       this.library = library;
-      this.manager = manager;
    }
 
    @PostConstruct
    public void init()
    {
-       facetTypes = library.getFacetTypes();
+      facetTypes = library.getFacetTypes();
    }
-   
+
    /**
     * @return the facetTypes
     */
    @Override
    public Set<Class<? extends Facet>> getFacetTypes()
    {
-       return facetTypes;
+      return facetTypes;
    }
 
 }

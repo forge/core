@@ -33,6 +33,7 @@ import org.jboss.forge.resources.VirtualResource;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
+@SuppressWarnings("rawtypes")
 public abstract class JavaMemberResource<T extends Member> extends VirtualResource<T>
 {
    private final T member;

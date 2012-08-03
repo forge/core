@@ -40,7 +40,8 @@ public final class ResourceHelper
 
     }
 
-    public static boolean hasAnnotation(Resource<?> resource, Class<? extends java.lang.annotation.Annotation> annotationClass) throws FileNotFoundException
+    @SuppressWarnings("unchecked")
+   public static boolean hasAnnotation(Resource<?> resource, Class<? extends java.lang.annotation.Annotation> annotationClass) throws FileNotFoundException
     {
         if (resource == null)
         {
@@ -58,7 +59,7 @@ public final class ResourceHelper
         }
         else if (resource instanceof JavaMemberResource)
         {
-            final JavaMemberResource javaMemberResource = (JavaMemberResource) resource;
+            final JavaMemberResource<?> javaMemberResource = (JavaMemberResource<?>) resource;
             return javaMemberResource.getUnderlyingResourceObject().hasAnnotation(annotationClass);
         }
         throw new IllegalArgumentException("The given resource '" + resource.getName() + "' is not a Java resource");

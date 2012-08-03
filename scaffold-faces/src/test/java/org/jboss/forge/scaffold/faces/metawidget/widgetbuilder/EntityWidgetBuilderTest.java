@@ -487,7 +487,7 @@ public class EntityWidgetBuilderTest
          return null;
       }
 
-      public void setName(@SuppressWarnings("unused") String name)
+      public void setName(String name)
       {
          // Do nothing
       }
@@ -498,7 +498,7 @@ public class EntityWidgetBuilderTest
          return null;
       }
 
-      public void setDescription(@SuppressWarnings("unused") String description)
+      public void setDescription(String description)
       {
          // Do nothing
       }
@@ -540,7 +540,7 @@ public class EntityWidgetBuilderTest
          return null;
       }
 
-      public void setName(@SuppressWarnings("unused") String name)
+      public void setName(String name)
       {
          // Do nothing
       }

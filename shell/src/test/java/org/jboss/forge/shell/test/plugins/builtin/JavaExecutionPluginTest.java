@@ -91,6 +91,7 @@ public class JavaExecutionPluginTest extends AbstractShellTest
 
       Scanner scanner = new Scanner(testFile);
       String s = scanner.nextLine();
+      scanner.close();
       assertEquals("a", s);
    }
 
@@ -103,6 +104,7 @@ public class JavaExecutionPluginTest extends AbstractShellTest
 
       Scanner scanner = new Scanner(testFile);
       String s = scanner.nextLine();
+      scanner.close();
       assertEquals("a b c", s);
    }
 

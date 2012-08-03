@@ -201,6 +201,8 @@ public class PropertiesFileResource extends FileResource<PropertiesFileResource>
     */
    private class SortedProperties extends Properties
    {
+      private static final long serialVersionUID = 1L;
+
       @SuppressWarnings({ "rawtypes", "unchecked" })
       @Override
       public synchronized Enumeration<Object> keys()

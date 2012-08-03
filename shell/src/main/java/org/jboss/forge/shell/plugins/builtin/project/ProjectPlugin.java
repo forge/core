@@ -428,7 +428,7 @@ public class ProjectPlugin implements Plugin
    public void listFacets(PipeOut out)
    {
       Set<Class<? extends Facet>> facets = factory.getFacetTypes();
-      
+
       out.println(ShellColor.BOLD, "NOT INSTALLED");
       for (Class<? extends Facet> type : facets)
       {
@@ -440,7 +440,7 @@ public class ProjectPlugin implements Plugin
       }
 
       out.println();
-      
+
       out.println(ShellColor.BOLD, "INSTALLED");
       for (Class<? extends Facet> type : facets)
       {
@@ -646,6 +646,8 @@ public class ProjectPlugin implements Plugin
          return ShellColor.BLACK;
       case TEST:
          return ShellColor.BLUE;
+      default:
+         break;
       }
       return ShellColor.NONE;
    }
