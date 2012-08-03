@@ -43,7 +43,7 @@ import org.jboss.forge.shell.util.PathspecParser;
 
 /**
  * Implementation of UNIX-style "mv" (move) command for use within the Forge Shell.
- * 
+ *
  * @author Mike Brock
  */
 @Alias("mv")
@@ -63,67 +63,66 @@ public class MovePlugin implements Plugin
    @DefaultCommand
    public void rename(
             @Option(description = "source", required = true) final Resource<?> source,
-                      @Option(description = "target", required = true) final String target,
-                      @Option(name = "force", shortName = "f", description = "force operation", flagOnly = true) final boolean force,
-                      final PipeOut out)
+            @Option(description = "target", required = true) final String target,
+            @Option(name = "force", shortName = "f", description = "force operation", flagOnly = true) final boolean force,
+            final PipeOut out)
    {
-	  if (isDirectory(source)) 
+      if (isDirectory(source))
       {
-		  Resource<?> directory = source.getParent();
-	      rename(source, directory, target, force, out);
+         Resource<?> directory = source.getParent();
+         rename(source, directory, target, force, out);
       }
-	  else if (isFile(source))
+      else if (isFile(source))
       {
          Resource<?> directory = source.isFlagSet(ResourceFlag.Leaf) ? source.getParent() : source;
          rename(source, directory, target, force, out);
       }
       else
       {
-         out.println("cannot rename resource type: " + source.getClass().getSimpleName());
+         throw new RuntimeException("cannot rename resource type: " + source.getClass().getSimpleName());
       }
    }
 
-	private void rename(final Resource<?> source, Resource<?> directory, final String target, final boolean force, final PipeOut out) 
-	{
-		
-		List<Resource<?>> results = new PathspecParser(resourceFactory, directory, target).resolve();
-		
-		if (results.size() != 1)
-		{
-		    out.println("ambiguous target file name: " + target);
-		}
-		else
-		{
-		    Resource<?> targetResource = results.get(0);
-	
-		    if (targetResource.exists())
-		    {
-		       if (isDirectory(targetResource))
-		       {
-		          targetResource = targetResource.getChild(source.getName());
-		       }
-		       else if (force && (isFile(targetResource)))
-		       {
-		          ((FileResource<?>) targetResource).delete(false);
-		       }
-		       else
-		       {
-		          out.println("destination file exists: " + targetResource.getFullyQualifiedName());
-		          return;
-		       }
-		    }
-	
-		    ((FileResource<?>) source).renameTo(targetResource.getFullyQualifiedName());
-		}
-	}
-	
-   	private boolean isFile(Resource<?> source) 
-   	{
-   		return source instanceof FileResource;
-   	}
+   private void rename(final Resource<?> source, Resource<?> directory, final String target, final boolean force,
+            final PipeOut out)
+   {
+      List<Resource<?>> results = new PathspecParser(resourceFactory, directory, target).resolve();
 
-	private boolean isDirectory(Resource<?> source) 
-   	{
-   		return source instanceof DirectoryResource;
-   	}
+      if (results.size() > 1)
+      {
+         throw new RuntimeException("ambiguous target file name: " + target);
+      }
+      else
+      {
+         Resource<?> targetResource = results.get(0);
+
+         if (targetResource.exists())
+         {
+            if (isDirectory(targetResource))
+            {
+               targetResource = targetResource.getChild(source.getName());
+            }
+            else if (force && (isFile(targetResource)))
+            {
+               ((FileResource<?>) targetResource).delete(false);
+            }
+            else
+            {
+               throw new RuntimeException("destination file exists: " + targetResource.getFullyQualifiedName());
+            }
+         }
+
+         ((FileResource<?>) source).renameTo(targetResource.getFullyQualifiedName());
+      }
+   }
+
+   private boolean isFile(Resource<?> source)
+   {
+      return source instanceof FileResource;
+   }
+
+   private boolean isDirectory(Resource<?> source)
+   {
+      return source instanceof DirectoryResource;
+   }
 }

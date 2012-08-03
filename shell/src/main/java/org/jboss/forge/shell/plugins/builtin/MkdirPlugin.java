@@ -26,8 +26,8 @@ import javax.inject.Inject;
 
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.FileResource;
-import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.plugins.Alias;
+import org.jboss.forge.shell.plugins.Current;
 import org.jboss.forge.shell.plugins.DefaultCommand;
 import org.jboss.forge.shell.plugins.Help;
 import org.jboss.forge.shell.plugins.Option;
@@ -36,7 +36,10 @@ import org.jboss.forge.shell.plugins.RequiresResource;
 import org.jboss.forge.shell.plugins.Topic;
 
 /**
+ * Create the DIRECTORY(ies), if they do not already exist.
+ *
  * @author Mike Brock
+ * @author George Gastaldi
  */
 @Alias("mkdir")
 @Topic("File & Resources")
@@ -44,21 +47,20 @@ import org.jboss.forge.shell.plugins.Topic;
 @Help("Create a new directory")
 public class MkdirPlugin implements Plugin
 {
-   private final Shell shell;
-
    @Inject
-   public MkdirPlugin(final Shell shell)
-   {
-      this.shell = shell;
-   }
+   @Current
+   private DirectoryResource currentDir;
 
    @DefaultCommand
-   public void mkdir(@Option(help = "name of directory to be created", required = true) final String name)
+   public void mkdir(
+            @Option(help = "name of directory to be created", required = true) final String name)
    {
-      DirectoryResource dr = (DirectoryResource) shell.getCurrentResource();
-
-      FileResource<?> newResource = (FileResource<?>) dr.getChild(name);
-      if (!newResource.mkdir())
+      FileResource<?> newResource = (FileResource<?>) currentDir.getChild(name);
+      if (newResource.exists())
+      {
+         throw new RuntimeException(String.format("cannot create directory '%s': File exists", name));
+      }
+      else if (!newResource.mkdirs())
       {
          throw new RuntimeException("failed to create directory: " + name);
       }
