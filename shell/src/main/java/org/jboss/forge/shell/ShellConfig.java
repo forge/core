@@ -62,6 +62,7 @@ public class ShellConfig
          try
          {
             shell.execute(configFile);
+            shell.execute("about");
          }
          catch (Exception e)
          {
@@ -165,7 +166,8 @@ public class ShellConfig
                "   echo \"   |_|  \\\\___/|_|  \\\\__, |\\\\___| \";" + "\n" +
                "   echo \"                   |___/      \";" + "\n" +
                "   echo \" \";" + "\n" +
-
+               "JBoss Forge, version [ " + environment.getRuntimeVersion() +
+               " ] - JBoss, by Red Hat, Inc. [ http://jboss.org/forge ]" +
                "}\n" +
                "\n" +
                "if ($OS_NAME.startsWith(\"Windows\")) {\n" +
