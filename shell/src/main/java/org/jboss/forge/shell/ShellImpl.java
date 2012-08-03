@@ -95,6 +95,7 @@ import org.jboss.forge.shell.util.GeneralUtils;
 import org.jboss.forge.shell.util.JavaPathspecParser;
 import org.jboss.forge.shell.util.OSUtils;
 import org.jboss.forge.shell.util.ResourceUtil;
+import org.jboss.forge.shell.util.Streams;
 import org.jboss.weld.environment.se.bindings.Parameters;
 import org.mvel2.ConversionHandler;
 
@@ -920,14 +921,14 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    {
       StringBuilder buf = new StringBuilder();
 
-      String funcName = file.getName().replaceAll("\\.", "_") + "_" + String.valueOf(hashCode()).replaceAll("\\-", "M");
+      String funcName = (file.getName().replaceAll("\\.", "_") + "_" + hashCode()).replaceAll("\\-", "M");
 
       buf.append("def ").append(funcName).append('(');
       if (args != null)
       {
          for (int i = 0; i < args.length; i++)
          {
-            buf.append("_").append(String.valueOf(i));
+            buf.append("_").append(i);
             if ((i + 1) < args.length)
             {
                buf.append(", ");
@@ -943,25 +944,15 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
 
          for (int i = 0; i < args.length; i++)
          {
-            buf.append("@_vararg[").append(String.valueOf(i)).append("] = ")
-                     .append("_").append(String.valueOf(i)).append(";\n");
+            buf.append("@_vararg[").append(i).append("] = ")
+                     .append("_").append(i).append(";\n");
          }
       }
 
       InputStream instream = new BufferedInputStream(new FileInputStream(file));
       try
       {
-         byte[] b = new byte[25];
-         int read;
-
-         while ((read = instream.read(b)) != -1)
-         {
-            for (int i = 0; i < read; i++)
-            {
-               buf.append((char) b[i]);
-            }
-         }
-
+         buf.append(Streams.toString(instream));
          buf.append("\n}; \n@").append(funcName).append('(');
 
          if (args != null)
