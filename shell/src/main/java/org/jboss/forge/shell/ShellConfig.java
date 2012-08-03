@@ -154,20 +154,8 @@ public class ShellConfig
 
    private String getDefaultConfig()
    {
-      return "@/* Automatically generated config file */;\n"
-               +
-               "if (!$NO_MOTD) { \n" +
-
-               "   echo \"    _____                    \";" + "\n" +
-               "   echo \"   |  ___|__  _ __ __ _  ___ \";" + "\n" +
-               "   echo \"   | |_ / _ \\\\| `__/ _` |/ _ \\\\  \\c{yellow}\\\\\\\\c\";" + "\n" +
-               "   echo \"   |  _| (_) | | | (_| |  __/  \\c{yellow}//\\c\";" + "\n" +
-               "   echo \"   |_|  \\\\___/|_|  \\\\__, |\\\\___| \";" + "\n" +
-               "   echo \"                   |___/      \";" + "\n" +
-               "   echo \" \";" + "\n" +
-
-               "}\n" +
-               "\n" +
+      return "@/* Automatically generated config file */;\n" +
+               "about;\n" +
                "if ($OS_NAME.startsWith(\"Windows\")) {\n" +
                "    echo \"  Windows? Really? Okay...\\n\"\n" +
                "}\n" +
