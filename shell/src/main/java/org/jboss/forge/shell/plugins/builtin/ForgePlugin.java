@@ -188,14 +188,19 @@ public class ForgePlugin implements Plugin
       }
       for (PluginRef ref : pluginList)
       {
-         out.println(" - " + out.renderColor(ShellColor.BOLD, ref.getName()) + " (" + ref.getArtifact() + ")");
-         out.println("\tAuthor: " + ref.getAuthor());
-         out.println("\tWebsite: " + ref.getWebsite());
-         out.println("\tLocation: " + ref.getLocation());
-         out.println("\tTags: " + ref.getTags());
-         out.println("\tDescription: " + ref.getDescription());
-         out.println();
+         displayPluginDetails(out, ref);
       }
+   }
+
+   private void displayPluginDetails(final ShellPrintWriter out, PluginRef ref)
+   {
+      out.println(" - " + out.renderColor(ShellColor.BOLD, ref.getName()) + " (" + ref.getArtifact() + ")");
+      out.println("\tAuthor: " + ref.getAuthor());
+      out.println("\tWebsite: " + ref.getWebsite());
+      out.println("\tLocation: " + ref.getLocation());
+      out.println("\tTags: " + ref.getTags());
+      out.println("\tDescription: " + ref.getDescription());
+      out.println();
    }
 
    @Command(value = "remove-plugin",
@@ -255,8 +260,12 @@ public class ForgePlugin implements Plugin
             throw new RuntimeException("ambiguous plugin query: multiple matches for [" + pluginName + "]");
       }
 
-      ShellMessages.info(out, "Preparing to install plugin: " + ref.getName());
+      installPlugin(version, out, ref);
+   }
 
+   private void installPlugin(final String version, final ShellPrintWriter out, PluginRef ref) throws Exception
+   {
+      ShellMessages.info(out, "Preparing to install plugin: " + ref.getName());
       if (!ref.isGit())
       {
          installFromMvnRepos(ref.getArtifact(), out, new DependencyRepositoryImpl("custom", ref.getHomeRepo()));
@@ -926,12 +935,27 @@ public class ForgePlugin implements Plugin
          Set<String> plugins = pluginRegistry.getPlugins().keySet();
          ShellMessages.warn(shell, String.format(
                   "The plugin '%s' was not found locally. Searching on the central plugin index ...", pluginName));
+         boolean showDidYouMean = true;
          try
          {
-            installFromIndex(pluginName, null, writer);
-            ShellMessages.success(writer, "Please execute the command again.");
+            List<PluginRef> pluginRefs = getPluginRefs(pluginName);
+            if (pluginRefs.size() == 1)
+            {
+               PluginRef ref = pluginRefs.get(0);
+               displayPluginDetails(shell, ref);
+               boolean confirm = shell.promptBoolean("This plugin will be installed. Is that ok ?");
+               if (confirm)
+               {
+                  installPlugin(null, shell, ref);
+                  ShellMessages.success(writer, "Please execute the command again.");
+                  showDidYouMean = false;
+               }
+            }
          }
          catch (Exception ignored)
+         {
+         }
+         if (showDidYouMean)
          {
             // Find similar plugins
             Set<String> similarPlugins = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
