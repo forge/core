@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -269,8 +270,10 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
          this.qbeMetawidget.write(stringWriter, this.backingBeanTemplateQbeMetawidgetIndent);
 
          context.put("qbeMetawidget", stringWriter.toString().trim());
+         Set<String> qbeMetawidgetImports = this.qbeMetawidget.getImports();
+         qbeMetawidgetImports.remove(entity.getQualifiedName());
          context.put("qbeMetawidgetImports",
-                  CollectionUtils.toString(this.qbeMetawidget.getImports(), ";\r\nimport ", true, false));
+                  CollectionUtils.toString(qbeMetawidgetImports, ";\r\nimport ", true, false));
 
          // Create the Backing Bean for this entity
          JavaClass viewBean = JavaParser.parse(JavaClass.class, this.backingBeanTemplate.render(context));

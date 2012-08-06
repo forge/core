@@ -825,6 +825,45 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
    }
 
    @Test
+   public void testGenerateRecursiveManyToOneEntity() throws Exception
+   {
+      Project project = setupScaffoldProject();
+
+      queueInputLines("");
+      getShell().execute("entity --named Customer");
+      getShell().execute("field string --named firstName");
+      getShell().execute("field string --named lastName");
+      getShell().execute("field manyToOne --named customer --fieldType com.test.model.Customer");
+      queueInputLines("", "");
+      getShell().execute("scaffold from-entity com.test.model.Customer");
+
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+
+      // Backing Bean
+
+      FileResource<?> customerBean = java.getJavaResource("/com/test/view/CustomerBean.java");
+      Assert.assertTrue(customerBean.exists());
+      String contents = Streams.toString(customerBean.getResourceInputStream());
+
+      StringBuilder qbeMetawidget = new StringBuilder();
+      qbeMetawidget.append("  ").append("Customer customer = this.search.getCustomer();").append(CRLF);
+      qbeMetawidget.append("    ").append("if (customer != null) {").append(CRLF);
+      qbeMetawidget.append("       ").append("predicatesList.add(builder.equal(root.get(\"customer\"), customer));")
+               .append(CRLF);
+      qbeMetawidget.append("    ").append("}").append(CRLF);
+
+      Assert.assertTrue(normalized(contents).contains(normalized(qbeMetawidget)));
+
+      // Import should not appear twice: https://community.jboss.org/message/752107
+
+      String expectedContent = "import com.test.model.Customer;";
+      int indexOf = normalized(contents).indexOf(expectedContent);
+      Assert.assertTrue(indexOf != -1);
+      indexOf = normalized(contents).indexOf(expectedContent, indexOf + 1);
+      Assert.assertTrue(indexOf == -1);
+   }
+
+   @Test
    public void testGenerateOneToManyEntity() throws Exception
    {
       Project project = setupScaffoldProject();
