@@ -247,11 +247,6 @@ public class ForgePropertyStyle
          return null;
       }
 
-      if (!StringUtils.isCapitalized(propertyName))
-      {
-         return null;
-      }
-
       return StringUtils.decapitalize(propertyName);
    }
 
@@ -352,11 +347,6 @@ public class ForgePropertyStyle
 
       String propertyName = methodName.substring(ClassUtils.JAVABEAN_SET_PREFIX.length());
 
-      if (!StringUtils.isCapitalized(propertyName))
-      {
-         return null;
-      }
-
       return StringUtils.decapitalize(propertyName);
    }
 
@@ -390,7 +380,7 @@ public class ForgePropertyStyle
 
       // FORGE-402: support fields starting with capital letter
 
-      if (field == null && !StringUtils.isCapitalized(propertyName))
+      if (field == null && !Character.isUpperCase(propertyName.charAt( 0 )))
       {
          field = fieldHolder.getField(StringUtils.capitalize(propertyName));
       }
@@ -402,8 +392,8 @@ public class ForgePropertyStyle
    // Private methods
    //
 
-   /*package private*/ 
-   
+   /*package private*/
+
    static JavaSource<?> sourceForName(final Project project, final String type)
    {
       try
