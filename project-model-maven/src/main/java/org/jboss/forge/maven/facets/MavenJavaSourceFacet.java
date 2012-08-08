@@ -111,22 +111,37 @@ public class MavenJavaSourceFacet extends BaseFacet implements JavaSourceFacet, 
    @Override
    public DirectoryResource getSourceFolder()
    {
+      MavenCoreFacet mavenFacet = project.getFacet(MavenCoreFacet.class);
+      Build build = mavenFacet.getPOM().getBuild();
+      String srcFolderName;
+      if (build != null && build.getSourceDirectory() != null) {
+         srcFolderName = build.getSourceDirectory();
+      } else {
+         srcFolderName = "src" + File.separator + "main" + File.separator + "java";
+      }
       DirectoryResource projectRoot = project.getProjectRoot();
-      return projectRoot.getChildDirectory("src" + File.separator + "main" + File.separator + "java");
+      return projectRoot.getChildDirectory(srcFolderName);
    }
 
    @Override
    public DirectoryResource getTestSourceFolder()
    {
+      MavenCoreFacet mavenFacet = project.getFacet(MavenCoreFacet.class);
+      Build build = mavenFacet.getPOM().getBuild();
+      String srcFolderName;
+      if (build != null && build.getTestSourceDirectory() != null) {
+         srcFolderName = build.getTestSourceDirectory();
+      } else {
+         srcFolderName = "src" + File.separator + "test" + File.separator + "java";
+      }
       DirectoryResource projectRoot = project.getProjectRoot();
-      return projectRoot.getChildDirectory("src" + File.separator + "test" + File.separator + "java");
+      return projectRoot.getChildDirectory(srcFolderName);
    }
 
    @Override
    public boolean isInstalled()
    {
-      MavenCoreFacet mavenFacet = project.getFacet(MavenCoreFacet.class);
-      return getSourceFolder().exists() && (mavenFacet != null) && mavenFacet.isInstalled();
+      return getSourceFolder().exists();
    }
 
    @Override
