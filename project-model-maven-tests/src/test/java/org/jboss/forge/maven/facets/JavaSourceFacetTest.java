@@ -22,6 +22,11 @@
 
 package org.jboss.forge.maven.facets;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import javax.inject.Singleton;
+
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.JavaClass;
@@ -33,17 +38,12 @@ import org.jboss.forge.test.AbstractShellTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Singleton;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Singleton
 @RunWith(Arquillian.class)
-public class MavenJavaSourceFacetImplTest extends AbstractShellTest
+public class JavaSourceFacetTest extends AbstractShellTest
 {
    private static final String PKG = "com.test";
 
