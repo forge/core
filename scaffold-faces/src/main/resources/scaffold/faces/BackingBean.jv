@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
+import javax.ejb.SessionContext;
 import javax.ejb.Stateful;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
@@ -86,10 +88,15 @@ public class @{entity.getName()}Bean implements Serializable {
 		if (this.id == null) {
 			this.@{ccEntity} = this.search;
 		} else {
-			this.@{ccEntity} = this.entityManager.find(@{entity.getName()}.class, getId());
+			this.@{ccEntity} = findById(getId());
 		}
 	}
 
+	public @{entity.getName()} findById(Long id) {
+
+		return this.entityManager.find(@{entity.getName()}.class, id);
+	}
+	
 	/*
 	 * Support updating and deleting @{entity.getName()} entities
 	 */
@@ -115,8 +122,7 @@ public class @{entity.getName()}Bean implements Serializable {
 		this.conversation.end();
 
 		try {
-			this.entityManager.remove(this.entityManager.find(@{entity.getName()}.class,
-					getId()));
+			this.entityManager.remove(findById(getId()));
 			this.entityManager.flush();
 			return "search?faces-redirect=true";
 		} catch( Exception e ) {
@@ -214,16 +220,20 @@ public class @{entity.getName()}Bean implements Serializable {
 				criteria.select(criteria.from(@{entity.getName()}.class))).getResultList();
 	}
 
+	@Resource
+	private SessionContext sessionContext;
+
 	public Converter getConverter() {
 
+		final @{entity.getName()}Bean ejbProxy = this.sessionContext.getBusinessObject(@{entity.getName()}Bean.class);
+		
 		return new Converter() {
 
 			@Override
 			public Object getAsObject(FacesContext context,
 					UIComponent component, String value) {
 
-				return @{entity.getName()}Bean.this.entityManager.find(@{entity.getName()}.class,
-						Long.valueOf(value));
+				return ejbProxy.findById(Long.valueOf(value));
 			}
 
 			@Override
