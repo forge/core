@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import org.jboss.forge.shell.console.jline.internal.Configuration;
+
 import org.jboss.forge.shell.util.OSUtils;
 
 /**
@@ -72,7 +74,7 @@ public class ConsoleInputSession
 
                   if (read > 0)
                   {
-                     blockingQueue.put(new String(bBuf, 0, read));
+                     blockingQueue.put(new String(bBuf, 0, read, Configuration.getInputEncoding()));
                   }
 
                   Thread.sleep(10);
