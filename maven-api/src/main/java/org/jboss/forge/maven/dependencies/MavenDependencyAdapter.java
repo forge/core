@@ -204,4 +204,10 @@ public class MavenDependencyAdapter extends org.apache.maven.model.Dependency im
       }
       return result;
    }
+
+   @Override
+   public boolean isSnapshot()
+   {
+      return getVersion().endsWith("-SNAPSHOT");
+   }
 }

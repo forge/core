@@ -138,6 +138,12 @@ public class ExcludedDependencyBuilder implements Dependency
    }
 
    @Override
+   public boolean isSnapshot()
+   {
+      throw new IllegalStateException("Not implemented for Exclusions");
+   }
+
+   @Override
    public String toCoordinates()
    {
       return DependencyBuilder.toId(this);
