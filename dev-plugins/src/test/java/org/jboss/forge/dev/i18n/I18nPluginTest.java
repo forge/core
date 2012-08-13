@@ -1,3 +1,10 @@
+/*
+ * Copyright 2012 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Eclipse Public License version 1.0, available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
+
 package org.jboss.forge.dev.i18n;
 
 import static org.junit.Assert.assertEquals;
@@ -94,7 +101,6 @@ public class I18nPluginTest extends AbstractShellTest
       assertNull(resource_ptBR.getProperty("mykey"));
    }
 
-
    @Test
    public void testFacesConfig() throws Exception
    {
@@ -105,10 +111,9 @@ public class I18nPluginTest extends AbstractShellTest
       FileResource<?> configFile = project.getFacet(FacesFacet.class).getConfigFile();
       assertTrue(configFile.exists());
       Node facesConfig = XMLParser.parse(configFile.getResourceInputStream());
-      assertEquals("messages",facesConfig.getTextValueForPatternName("application/resource-bundle/base-name"));
-      assertEquals("msg",facesConfig.getTextValueForPatternName("application/resource-bundle/var"));
+      assertEquals("messages", facesConfig.getTextValueForPatternName("application/resource-bundle/base-name"));
+      assertEquals("msg", facesConfig.getTextValueForPatternName("application/resource-bundle/var"));
    }
-
 
    @Test
    public void testGetBaseBundleName() throws Exception

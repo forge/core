@@ -1,24 +1,10 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2012, Red Hat, Inc., and individual contributors
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * Copyright 2012 Red Hat, Inc. and/or its affiliates.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
- *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Licensed under the Eclipse Public License version 1.0, available at
+ * http://www.eclipse.org/legal/epl-v10.html
  */
+
 package org.jboss.forge.dev.i18n;
 
 import javax.inject.Inject;
@@ -47,7 +33,7 @@ import org.jboss.forge.spec.javaee.FacesFacet;
 
 /**
  * @author <a href="mailto:gegastaldi@gmail.com">George Gastaldi</a>
- *
+ * 
  */
 
 @Alias("i18n")
@@ -93,9 +79,9 @@ public class I18nPlugin implements Plugin
 
    /**
     * Adds an entry to the current bundle.
-    *
+    * 
     * TODO: Add a completer for current bundle keys
-    *
+    * 
     * @param key
     * @param value
     */
@@ -120,7 +106,7 @@ public class I18nPlugin implements Plugin
 
    /**
     * Removes an entry to the current bundle.
-    *
+    * 
     * @param key
     * @param value
     */
@@ -210,7 +196,7 @@ public class I18nPlugin implements Plugin
 
    /**
     * Gets another file resource. Creates a file in case it does not exist
-    *
+    * 
     * @param bundleName
     * @return
     */
@@ -242,9 +228,9 @@ public class I18nPlugin implements Plugin
 
    /**
     * Returns the base name of the bundle.
-    *
+    * 
     * Eg: messages_pt_BR.properties returns just messages
-    *
+    * 
     * @return
     */
    static String getBaseBundleName(final String fileName)
