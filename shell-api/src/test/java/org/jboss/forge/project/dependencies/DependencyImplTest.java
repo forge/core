@@ -1,3 +1,10 @@
+/*
+ * Copyright 2012 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Eclipse Public License version 1.0, available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
+
 package org.jboss.forge.project.dependencies;
 
 import junit.framework.Assert;
@@ -13,7 +20,7 @@ public class DependencyImplTest
    {
       DependencyImpl left = new DependencyImpl();
       DependencyImpl right = new DependencyImpl();
-      
+
       Assert.assertEquals(left, right);
    }
 
@@ -23,11 +30,11 @@ public class DependencyImplTest
       DependencyImpl left = new DependencyImpl();
       left.setArtifactId("org.test.dep");
       left.setGroupId("org.test");
-      
+
       DependencyImpl right = new DependencyImpl();
       right.setArtifactId("org.test.dep");
       right.setGroupId("org.test");
-      
+
       Assert.assertEquals(left, right);
    }
 
@@ -47,7 +54,7 @@ public class DependencyImplTest
       right.setPackagingType(PackagingType.BASIC);
       right.setScopeType(ScopeType.IMPORT);
       right.setVersion("1.1.Final");
-      
+
       Assert.assertEquals(left, right);
    }
 

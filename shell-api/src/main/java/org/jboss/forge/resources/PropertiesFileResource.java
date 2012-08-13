@@ -1,3 +1,10 @@
+/*
+ * Copyright 2012 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Eclipse Public License version 1.0, available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
+
 package org.jboss.forge.resources;
 
 import java.io.File;
@@ -20,9 +27,9 @@ import org.jboss.forge.shell.util.Streams;
 
 /**
  * A property based resource
- *
- * @author george
- *
+ * 
+ * @author George Gastaldi <ggastald@redhat.com>
+ * 
  */
 @ResourceHandles("*.properties")
 public class PropertiesFileResource extends FileResource<PropertiesFileResource>
@@ -64,7 +71,7 @@ public class PropertiesFileResource extends FileResource<PropertiesFileResource>
 
    /**
     * Adds a property to this resource
-    *
+    * 
     * @param key
     * @param value
     * @return old value or null if none
@@ -79,7 +86,7 @@ public class PropertiesFileResource extends FileResource<PropertiesFileResource>
 
    /**
     * Adds all the properties and updates the file
-    *
+    * 
     * @param newProperties
     */
    public void putAllProperties(Map<String, String> newProperties)
@@ -91,7 +98,7 @@ public class PropertiesFileResource extends FileResource<PropertiesFileResource>
 
    /**
     * Replaces all the occurrences
-    *
+    * 
     * @param newProperties
     */
    public void replaceProperties(Map<String, String> newProperties)
@@ -103,7 +110,7 @@ public class PropertiesFileResource extends FileResource<PropertiesFileResource>
 
    /**
     * Removes an entry on this file based on the properties file
-    *
+    * 
     * @param key
     * @return
     */
@@ -117,7 +124,7 @@ public class PropertiesFileResource extends FileResource<PropertiesFileResource>
 
    /**
     * Returns the value related to the key in this properties file
-    *
+    * 
     * @param key
     * @return
     */
@@ -129,7 +136,7 @@ public class PropertiesFileResource extends FileResource<PropertiesFileResource>
 
    /**
     * Returns the keys in this properties file
-    *
+    * 
     * @return
     */
    public Set<String> getKeys()
@@ -140,7 +147,7 @@ public class PropertiesFileResource extends FileResource<PropertiesFileResource>
 
    /**
     * This method should group and order the entries before persisting
-    *
+    * 
     * @param props
     */
    private void storeProperties(Properties props)
@@ -164,7 +171,7 @@ public class PropertiesFileResource extends FileResource<PropertiesFileResource>
 
    /**
     * Reads the content of the file as a {@link Properties} object
-    *
+    * 
     * @return
     */
    private Properties getFileContentAsProperties()
@@ -195,9 +202,9 @@ public class PropertiesFileResource extends FileResource<PropertiesFileResource>
 
    /**
     * Returns the keys of this {@link Properties} object in order
-    *
+    * 
     * @author george
-    *
+    * 
     */
    private class SortedProperties extends Properties
    {

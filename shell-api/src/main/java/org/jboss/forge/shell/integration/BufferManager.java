@@ -1,8 +1,15 @@
+/*
+ * Copyright 2012 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Eclipse Public License version 1.0, available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
+
 package org.jboss.forge.shell.integration;
 
 /**
  * A BufferManager is responsible for managing a shell buffer in Forge.
- *
+ * 
  * @author Mike Brock
  */
 public interface BufferManager
@@ -26,26 +33,29 @@ public interface BufferManager
 
    /**
     * Write a single byte to the buffer.
+    * 
     * @param b
     */
    public void write(byte b);
 
    /**
     * Write a byte array to the buffer.
+    * 
     * @param b
     */
    public void write(byte[] b);
 
    /**
     * Write a byte array to the buffer with offset
+    * 
     * @param b
     * @param offset
     * @param length
     */
    public void write(byte[] b, int offset, int length);
-   
+
    public void write(String s);
-   
+
    public void directWrite(String s);
 
    /**
@@ -55,12 +65,14 @@ public interface BufferManager
 
    /**
     * Get height in lines
+    * 
     * @return
     */
    public int getHeight();
 
    /**
     * Get width in lines
+    * 
     * @return
     */
    public int getWidth();

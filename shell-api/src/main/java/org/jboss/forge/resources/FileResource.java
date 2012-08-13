@@ -1,23 +1,8 @@
 /*
- * JBoss, by Red Hat.
- * Copyright 2010, Red Hat, Inc., and individual contributors
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * Copyright 2012 Red Hat, Inc. and/or its affiliates.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
- *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Licensed under the Eclipse Public License version 1.0, available at
+ * http://www.eclipse.org/legal/epl-v10.html
  */
 
 package org.jboss.forge.resources;
@@ -115,7 +100,7 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
    @Override
    public Resource<?> getParent()
    {
-      return file.getParentFile() != null? new DirectoryResource(resourceFactory, file.getParentFile()) : null;
+      return file.getParentFile() != null ? new DirectoryResource(resourceFactory, file.getParentFile()) : null;
    }
 
    @Override
@@ -455,9 +440,11 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
 
    private void fireResourceMoved(final File original)
    {
-      if (resourceFactory != null) {
+      if (resourceFactory != null)
+      {
          BeanManager manager = resourceFactory.getManagerInstance();
-         if (manager != null) {
+         if (manager != null)
+         {
             manager.fireEvent(
                      new ResourceRenamed(this, original.getAbsolutePath(), file.getAbsolutePath()),
                      new Annotation[] {});
@@ -467,9 +454,11 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
 
    private void fireResourceModified()
    {
-      if (resourceFactory != null) {
+      if (resourceFactory != null)
+      {
          BeanManager manager = resourceFactory.getManagerInstance();
-         if (manager != null) {
+         if (manager != null)
+         {
             resourceFactory.getManagerInstance().fireEvent(new ResourceModified(this), new Annotation[] {});
          }
       }
@@ -477,9 +466,11 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
 
    private void fireResourceCreated()
    {
-      if (resourceFactory != null) {
+      if (resourceFactory != null)
+      {
          BeanManager manager = resourceFactory.getManagerInstance();
-         if (manager != null) {
+         if (manager != null)
+         {
             resourceFactory.getManagerInstance().fireEvent(new ResourceCreated(this), new Annotation[] {});
          }
       }
@@ -487,9 +478,11 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
 
    private void fireResourceDeleted()
    {
-      if (resourceFactory != null) {
+      if (resourceFactory != null)
+      {
          BeanManager manager = resourceFactory.getManagerInstance();
-         if (manager != null) {
+         if (manager != null)
+         {
             resourceFactory.getManagerInstance().fireEvent(new ResourceDeleted(this), new Annotation[] {});
          }
       }
