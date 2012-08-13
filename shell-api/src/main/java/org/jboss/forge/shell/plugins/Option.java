@@ -1,24 +1,10 @@
 /*
- * JBoss, by Red Hat.
- * Copyright 2010, Red Hat, Inc., and individual contributors
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * Copyright 2012 Red Hat, Inc. and/or its affiliates.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
- *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Licensed under the Eclipse Public License version 1.0, available at
+ * http://www.eclipse.org/legal/epl-v10.html
  */
+
 package org.jboss.forge.shell.plugins;
 
 import static java.lang.annotation.ElementType.PARAMETER;
@@ -57,8 +43,7 @@ public @interface Option
    String description() default "";
 
    /**
-    * Sets whether or not the option is just a flag. Option must be a boolean in
-    * this case.
+    * Sets whether or not the option is just a flag. Option must be a boolean in this case.
     */
    boolean flagOnly() default false;
 
@@ -78,19 +63,15 @@ public @interface Option
    String help() default "";
 
    /**
-    * The prompt type to use when validating user input. This should be used
-    * carefully!
+    * The prompt type to use when validating user input. This should be used carefully!
     * <p/>
-    * <b>**WARNING**</b> Since specifying a {@link PromptType} restricts user
-    * input, you need to make sure that the option type is compatible with this
-    * input, or exceptions may occur. (String or Object are your safest
-    * choices.)
+    * <b>**WARNING**</b> Since specifying a {@link PromptType} restricts user input, you need to make sure that the
+    * option type is compatible with this input, or exceptions may occur. (String or Object are your safest choices.)
     */
    PromptType type() default PromptType.ANY;
 
    /**
-    * Specify the command completer type that should be used for this option.
-    * This may only be used with named options.
+    * Specify the command completer type that should be used for this option. This may only be used with named options.
     */
    Class<? extends CommandCompleter> completer() default NullCommandCompleter.class;
 }

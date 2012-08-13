@@ -1,24 +1,10 @@
 /*
- * JBoss, by Red Hat.
- * Copyright 2010, Red Hat, Inc., and individual contributors
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * Copyright 2012 Red Hat, Inc. and/or its affiliates.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
- *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Licensed under the Eclipse Public License version 1.0, available at
+ * http://www.eclipse.org/legal/epl-v10.html
  */
+
 package org.jboss.forge.project.facets;
 
 import org.jboss.forge.parser.java.JavaClass;
@@ -87,7 +73,7 @@ public interface JavaSourceFacet extends Facet
     * @throws FileNotFoundException
     */
    public JavaResource saveJavaSource(JavaSource<?> source) throws FileNotFoundException;
-   
+
    /**
     * Create or update a Java file in the primary source directory: {@link #getSourceFolder()} - use information in the
     * given {@link JavaEnum} to determine the appropriate package; packages will be created if necessary.
@@ -115,7 +101,7 @@ public interface JavaSourceFacet extends Facet
     * @throws FileNotFoundException if the target {@link JavaResource} does not exist
     */
    public JavaResource getJavaResource(String relativePath) throws FileNotFoundException;
-   
+
    /**
     * Attempt to locate and re-parse the given {@link JavaClass} from its location on disk, relative to
     * {@link #getSourceFolder()}. The given instance will not be modified, and a new instance will be returned.
@@ -124,7 +110,7 @@ public interface JavaSourceFacet extends Facet
     * @throws FileNotFoundException if the target {@link JavaResource} does not exist
     */
    public JavaResource getJavaResource(JavaSource<?> javaClass) throws FileNotFoundException;
-   
+
    /**
     * Return the {@link JavaEnum} at the given path relative to {@link #getSourceFolder()}.
     * 
@@ -132,7 +118,7 @@ public interface JavaSourceFacet extends Facet
     * @throws FileNotFoundException if the target {@link JavaResource} does not exist
     */
    public JavaResource getEnumTypeResource(String relativePath) throws FileNotFoundException;
-   
+
    /**
     * Attempt to locate and re-parse the given {@link JavaEnum} from its location on disk, relative to
     * {@link #getSourceFolder()}. The given instance will not be modified, and a new instance will be returned.
@@ -160,12 +146,14 @@ public interface JavaSourceFacet extends Facet
 
    /**
     * Recursively loops over all the source directories and for each java file it finds, calls the visitor.
+    * 
     * @param visitor The {@link JavaResourceVisitor} that processes all the found java files. Cannot be null.
     */
    public void visitJavaSources(JavaResourceVisitor visitor);
 
    /**
     * Recursively loops over all the test source directories and for each java file it finds, calls the visitor.
+    * 
     * @param visitor The {@link JavaResourceVisitor} that processes all the found java files. Cannot be null.
     */
    public void visitJavaTestSources(JavaResourceVisitor visitor);
