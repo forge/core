@@ -49,7 +49,8 @@ public class AliasPlugin implements Plugin
       }
       else
       {
-         for (Entry<String, String> alias : registry.getAliases().entrySet()) {
+         for (Entry<String, String> alias : registry.getAliases().entrySet())
+         {
             out.println(alias.getKey() + " = " + alias.getValue());
          }
       }

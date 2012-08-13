@@ -17,7 +17,7 @@ import org.jboss.forge.shell.project.FacetRegistry;
 
 /**
  * Stores the current registry of all installed & loaded facets.
- *
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Singleton

@@ -13,158 +13,187 @@ import java.util.Map;
 
 /**
  * Creates terminal instances.
- *
+ * 
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
  * @since 2.0
  */
 public class TerminalFactory
 {
-    public static final String JLINE_TERMINAL = "jline.terminal";
+   public static final String JLINE_TERMINAL = "jline.terminal";
 
-    public static final String AUTO = "auto";
+   public static final String AUTO = "auto";
 
-    public static final String UNIX = "unix";
+   public static final String UNIX = "unix";
 
-    public static final String WIN = "win";
+   public static final String WIN = "win";
 
-    public static final String WINDOWS = "windows";
+   public static final String WINDOWS = "windows";
 
-    public static final String NONE = "none";
+   public static final String NONE = "none";
 
-    public static final String OFF = "off";
+   public static final String OFF = "off";
 
-    public static final String FALSE = "false";
+   public static final String FALSE = "false";
 
-    private static final InheritableThreadLocal<Terminal> holder = new InheritableThreadLocal<Terminal>();
+   private static final InheritableThreadLocal<Terminal> holder = new InheritableThreadLocal<Terminal>();
 
-    public static synchronized Terminal create() {
-        if (org.jboss.forge.shell.console.jline.internal.Log.TRACE) {
-            //noinspection ThrowableInstanceNeverThrown
-            org.jboss.forge.shell.console.jline.internal.Log.trace(new Throwable("CREATE MARKER"));
-        }
+   public static synchronized Terminal create()
+   {
+      if (org.jboss.forge.shell.console.jline.internal.Log.TRACE)
+      {
+         // noinspection ThrowableInstanceNeverThrown
+         org.jboss.forge.shell.console.jline.internal.Log.trace(new Throwable("CREATE MARKER"));
+      }
 
-        String type = org.jboss.forge.shell.console.jline.internal.Configuration.getString(JLINE_TERMINAL);
-        if (type == null) {
-            type = AUTO;
-        }
+      String type = org.jboss.forge.shell.console.jline.internal.Configuration.getString(JLINE_TERMINAL);
+      if (type == null)
+      {
+         type = AUTO;
+      }
 
-        org.jboss.forge.shell.console.jline.internal.Log.debug("Creating terminal; type=", type);
+      org.jboss.forge.shell.console.jline.internal.Log.debug("Creating terminal; type=", type);
 
-        Terminal t;
-        try {
-            String tmp = type.toLowerCase();
+      Terminal t;
+      try
+      {
+         String tmp = type.toLowerCase();
 
-            if (tmp.equals(UNIX)) {
-                t = getFlavor(Flavor.UNIX);
-            }
-            else if (tmp.equals(WIN) | tmp.equals(WINDOWS)) {
-                t = getFlavor(Flavor.WINDOWS);
-            }
-            else if (tmp.equals(NONE) || tmp.equals(OFF) || tmp.equals(FALSE)) {
-                t = new UnsupportedTerminal();
-            }
-            else {
-                if (tmp.equals(AUTO)) {
-                    String os = org.jboss.forge.shell.console.jline.internal.Configuration.getOsName();
-                    Flavor flavor = Flavor.UNIX;
-                    if (os.contains(WINDOWS)) {
-                        flavor = Flavor.WINDOWS;
-                    }
-                    t = getFlavor(flavor);
-                }
-                else {
-                    try {
-                        t = (Terminal) Thread.currentThread().getContextClassLoader().loadClass(type).newInstance();
-                    }
-                    catch (Exception e) {
-                        throw new IllegalArgumentException(MessageFormat.format("Invalid terminal type: {0}", type), e);
-                    }
-                }
-            }
-        }
-        catch (Exception e) {
-            org.jboss.forge.shell.console.jline.internal.Log.error("Failed to construct terminal; falling back to unsupported", e);
+         if (tmp.equals(UNIX))
+         {
+            t = getFlavor(Flavor.UNIX);
+         }
+         else if (tmp.equals(WIN) | tmp.equals(WINDOWS))
+         {
+            t = getFlavor(Flavor.WINDOWS);
+         }
+         else if (tmp.equals(NONE) || tmp.equals(OFF) || tmp.equals(FALSE))
+         {
             t = new UnsupportedTerminal();
-        }
+         }
+         else
+         {
+            if (tmp.equals(AUTO))
+            {
+               String os = org.jboss.forge.shell.console.jline.internal.Configuration.getOsName();
+               Flavor flavor = Flavor.UNIX;
+               if (os.contains(WINDOWS))
+               {
+                  flavor = Flavor.WINDOWS;
+               }
+               t = getFlavor(flavor);
+            }
+            else
+            {
+               try
+               {
+                  t = (Terminal) Thread.currentThread().getContextClassLoader().loadClass(type).newInstance();
+               }
+               catch (Exception e)
+               {
+                  throw new IllegalArgumentException(MessageFormat.format("Invalid terminal type: {0}", type), e);
+               }
+            }
+         }
+      }
+      catch (Exception e)
+      {
+         org.jboss.forge.shell.console.jline.internal.Log.error(
+                  "Failed to construct terminal; falling back to unsupported", e);
+         t = new UnsupportedTerminal();
+      }
 
-        org.jboss.forge.shell.console.jline.internal.Log.debug("Created Terminal: ", t);
+      org.jboss.forge.shell.console.jline.internal.Log.debug("Created Terminal: ", t);
 
-        try {
-            t.init();
-        }
-        catch (Exception e) {
-            org.jboss.forge.shell.console.jline.internal.Log.error("Terminal initialization failed; falling back to unsupported", e);
-            return new UnsupportedTerminal();
-        }
+      try
+      {
+         t.init();
+      }
+      catch (Exception e)
+      {
+         org.jboss.forge.shell.console.jline.internal.Log.error(
+                  "Terminal initialization failed; falling back to unsupported", e);
+         return new UnsupportedTerminal();
+      }
 
-        return t;
-    }
+      return t;
+   }
 
-    public static synchronized void reset() {
-        holder.remove();
-    }
+   public static synchronized void reset()
+   {
+      holder.remove();
+   }
 
-    public static synchronized void resetIf(final Terminal t) {
-        if (holder.get() == t) {
-            reset();
-        }
-    }
+   public static synchronized void resetIf(final Terminal t)
+   {
+      if (holder.get() == t)
+      {
+         reset();
+      }
+   }
 
-    public static enum Type
-    {
-        AUTO,
-        WINDOWS,
-        UNIX,
-        NONE
-    }
+   public static enum Type
+   {
+      AUTO,
+      WINDOWS,
+      UNIX,
+      NONE
+   }
 
-    public static synchronized void configure(final String type) {
-        assert type != null;
-        System.setProperty(JLINE_TERMINAL, type);
-    }
+   public static synchronized void configure(final String type)
+   {
+      assert type != null;
+      System.setProperty(JLINE_TERMINAL, type);
+   }
 
-    public static synchronized void configure(final Type type) {
-        assert type != null;
-        configure(type.name().toLowerCase());
-    }
+   public static synchronized void configure(final Type type)
+   {
+      assert type != null;
+      configure(type.name().toLowerCase());
+   }
 
-    //
-    // Flavor Support
-    //
+   //
+   // Flavor Support
+   //
 
-    public static enum Flavor
-    {
-        WINDOWS,
-        UNIX
-    }
+   public static enum Flavor
+   {
+      WINDOWS,
+      UNIX
+   }
 
-    private static final Map<Flavor, Class<? extends Terminal>> FLAVORS = new HashMap<Flavor, Class<? extends Terminal>>();
+   private static final Map<Flavor, Class<? extends Terminal>> FLAVORS = new HashMap<Flavor, Class<? extends Terminal>>();
 
-    static {
-        registerFlavor(Flavor.WINDOWS, WindowsTerminal.class);
-        registerFlavor(Flavor.UNIX, UnixTerminal.class);
-    }
+   static
+   {
+      registerFlavor(Flavor.WINDOWS, WindowsTerminal.class);
+      registerFlavor(Flavor.UNIX, UnixTerminal.class);
+   }
 
-    public static synchronized Terminal get() {
-        Terminal t = holder.get();
-        if (t == null) {
-            t = create();
-            holder.set(t);
-        }
-        return t;
-    }
+   public static synchronized Terminal get()
+   {
+      Terminal t = holder.get();
+      if (t == null)
+      {
+         t = create();
+         holder.set(t);
+      }
+      return t;
+   }
 
-    public static Terminal getFlavor(final Flavor flavor) throws Exception {
-        Class<? extends Terminal> type = FLAVORS.get(flavor);
-        if (type != null) {
-            return type.newInstance();
-        }
+   public static Terminal getFlavor(final Flavor flavor) throws Exception
+   {
+      Class<? extends Terminal> type = FLAVORS.get(flavor);
+      if (type != null)
+      {
+         return type.newInstance();
+      }
 
-        throw new InternalError();
-    }
+      throw new InternalError();
+   }
 
-    public static void registerFlavor(final Flavor flavor, final Class<? extends Terminal> type) {
-        FLAVORS.put(flavor, type);
-    }
+   public static void registerFlavor(final Flavor flavor, final Class<? extends Terminal> type)
+   {
+      FLAVORS.put(flavor, type);
+   }
 
 }

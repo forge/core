@@ -39,7 +39,8 @@ public class TestPlugin implements Plugin
    private Project project;
 
    public TestPlugin()
-   {}
+   {
+   }
 
    @Inject
    public TestPlugin(final Project project)
@@ -59,7 +60,8 @@ public class TestPlugin implements Plugin
       if (args != null)
          arguments.addAll(Arrays.asList(args));
 
-      if (profile != null) {
+      if (profile != null)
+      {
          arguments.add("-P" + profile);
       }
 

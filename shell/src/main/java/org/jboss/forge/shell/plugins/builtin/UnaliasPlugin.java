@@ -27,11 +27,13 @@ public class UnaliasPlugin implements Plugin
    private AliasRegistry registry;
 
    @DefaultCommand
-   public void set(final PipeOut out, @Option(help = "The alias name to remove: E.g: 'mycommand'") final String[] aliases)
+   public void set(final PipeOut out,
+            @Option(help = "The alias name to remove: E.g: 'mycommand'") final String[] aliases)
    {
       if ((aliases != null) && (aliases.length > 0))
       {
-         for (String alias : aliases) {
+         for (String alias : aliases)
+         {
             registry.removeAlias(alias);
          }
       }

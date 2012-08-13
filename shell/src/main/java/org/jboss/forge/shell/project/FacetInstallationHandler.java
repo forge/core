@@ -61,7 +61,7 @@ public class FacetInstallationHandler
             }
             else
             {
-               shell.printlnVerbose("Facet type already installed [" + type +"]");
+               shell.printlnVerbose("Facet type already installed [" + type + "]");
             }
          }
       }

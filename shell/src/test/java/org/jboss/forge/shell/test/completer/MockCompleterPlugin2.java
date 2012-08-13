@@ -22,7 +22,7 @@ public class MockCompleterPlugin2 implements Plugin
 
    @DefaultCommand
    public void command1(@Option(description = "Option One", required = true) final int number,
-                        @Option(required = false) final String optional)
+            @Option(required = false) final String optional)
    {
       command1Invoked = true;
    }

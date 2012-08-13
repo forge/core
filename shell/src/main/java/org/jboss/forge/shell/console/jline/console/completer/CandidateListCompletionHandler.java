@@ -17,11 +17,10 @@ import java.util.ResourceBundle;
 import java.util.Set;
 
 /**
- * A {@link CompletionHandler} that deals with multiple distinct completions
- * by outputting the complete list of possibilities to the console. This
- * mimics the behavior of the
- * <a href="http://www.gnu.org/directory/readline.html">readline</a> library.
- *
+ * A {@link CompletionHandler} that deals with multiple distinct completions by outputting the complete list of
+ * possibilities to the console. This mimics the behavior of the <a
+ * href="http://www.gnu.org/directory/readline.html">readline</a> library.
+ * 
  * @author <a href="mailto:mwp1@cornell.edu">Marc Prud'hommeaux</a>
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
  * @since 2.3
@@ -31,7 +30,8 @@ public class CandidateListCompletionHandler
 {
    // TODO: handle quotes and escaped quotes && enable automatic escaping of whitespace
 
-   public boolean complete(final org.jboss.forge.shell.console.jline.console.ConsoleReader reader, final List<CharSequence> candidates, final int pos) throws
+   public boolean complete(final org.jboss.forge.shell.console.jline.console.ConsoleReader reader,
+            final List<CharSequence> candidates, final int pos) throws
             IOException
    {
       org.jboss.forge.shell.console.jline.console.CursorBuffer buf = reader.getCursorBuffer();
@@ -65,7 +65,8 @@ public class CandidateListCompletionHandler
       return true;
    }
 
-   public static void setBuffer(final org.jboss.forge.shell.console.jline.console.ConsoleReader reader, final CharSequence value, final int offset) throws
+   public static void setBuffer(final org.jboss.forge.shell.console.jline.console.ConsoleReader reader,
+            final CharSequence value, final int offset) throws
             IOException
    {
       while ((reader.getCursorBuffer().cursor > offset) && reader.backspace())
@@ -79,18 +80,20 @@ public class CandidateListCompletionHandler
 
    /**
     * Print out the candidates. If the size of the candidates is greater than the
-    * {@link org.jboss.forge.shell.console.jline.console.ConsoleReader#getAutoprintThreshold}, they prompt with a warning.
-    *
+    * {@link org.jboss.forge.shell.console.jline.console.ConsoleReader#getAutoprintThreshold}, they prompt with a
+    * warning.
+    * 
     * @param candidates the list of candidates to print
     */
-   public static void printCandidates(final org.jboss.forge.shell.console.jline.console.ConsoleReader reader, Collection<CharSequence> candidates) throws
+   public static void printCandidates(final org.jboss.forge.shell.console.jline.console.ConsoleReader reader,
+            Collection<CharSequence> candidates) throws
             IOException
    {
       Set<CharSequence> distinct = new HashSet<CharSequence>(candidates);
 
       if (distinct.size() > reader.getAutoprintThreshold())
       {
-         //noinspection StringConcatenation
+         // noinspection StringConcatenation
          reader.print(Messages.DISPLAY_CANDIDATES.format(candidates.size()));
          reader.flush();
 
@@ -98,11 +101,11 @@ public class CandidateListCompletionHandler
 
          String noOpt = Messages.DISPLAY_CANDIDATES_NO.format();
          String yesOpt = Messages.DISPLAY_CANDIDATES_YES.format();
-         char[] allowed = {yesOpt.charAt(0), noOpt.charAt(0)};
+         char[] allowed = { yesOpt.charAt(0), noOpt.charAt(0) };
 
          while ((c = reader.readCharacter(allowed)) != -1)
          {
-            String tmp = new String(new char[]{(char) c});
+            String tmp = new String(new char[] { (char) c });
 
             if (noOpt.startsWith(tmp))
             {
@@ -120,7 +123,8 @@ public class CandidateListCompletionHandler
          }
       }
 
-      // copy the values and make them distinct, without otherwise affecting the ordering. Only do it if the sizes differ.
+      // copy the values and make them distinct, without otherwise affecting the ordering. Only do it if the sizes
+      // differ.
       if (distinct.size() != candidates.size())
       {
          Collection<CharSequence> copy = new ArrayList<CharSequence>();
@@ -142,9 +146,9 @@ public class CandidateListCompletionHandler
    }
 
    /**
-    * Returns a root that matches all the {@link String} elements of the specified {@link List},
-    * or null if there are no commonalities. For example, if the list contains
-    * <i>foobar</i>, <i>foobaz</i>, <i>foobuz</i>, the method will return <i>foob</i>.
+    * Returns a root that matches all the {@link String} elements of the specified {@link List}, or null if there are no
+    * commonalities. For example, if the list contains <i>foobar</i>, <i>foobaz</i>, <i>foobuz</i>, the method will
+    * return <i>foob</i>.
     */
    private String getUnambiguousCompletions(final List<CharSequence> candidates)
    {
@@ -194,11 +198,9 @@ public class CandidateListCompletionHandler
    {
       DISPLAY_CANDIDATES,
       DISPLAY_CANDIDATES_YES,
-      DISPLAY_CANDIDATES_NO,;
+      DISPLAY_CANDIDATES_NO, ;
 
-      private static final
-      ResourceBundle
-               bundle =
+      private static final ResourceBundle bundle =
                ResourceBundle.getBundle(CandidateListCompletionHandler.class.getName(),
                         Locale.getDefault(),
                         CandidateListCompletionHandler.class.getClassLoader());

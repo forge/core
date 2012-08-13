@@ -26,126 +26,140 @@ import org.jboss.forge.shell.util.PathspecParser;
 
 /**
  * 
- * Builtin copy plugin 
+ * Builtin copy plugin
  * 
  * @author tremes@redhat.com
- *
+ * 
  */
 @Alias("cp")
 @Topic("File & Resources")
 @RequiresResource(DirectoryResource.class)
 @Help("Copy a file or directory")
-public class CopyPlugin implements Plugin {
-	
-	 private final ResourceFactory resourceFactory;
+public class CopyPlugin implements Plugin
+{
 
-	   @Inject
-	   public CopyPlugin(final ResourceFactory resourceFactory)
-	   {
-	      this.resourceFactory = resourceFactory;
-	   }
+   private final ResourceFactory resourceFactory;
 
-	   @DefaultCommand
-	   public void rename(
-	            @Option(description = "source", required = true) final Resource<?> source,
-	            @Option(description = "target", required = true) final String target )
-	   {
-	      if (isDirectory(source))
-	      {
-	    	  Resource<?> directory = source.getParent();
-	    	  copyRecursively( source, directory, target );
-	      }
-	      else if (isFile(source))
-	      {
-	         Resource<?> directory = source.isFlagSet(ResourceFlag.Leaf) ? source.getParent() : source;
-	         copy(source, directory, target);
-	      }
-	      else
-	      {
-	         throw new RuntimeException("cannot copy resource type: " + source.getClass().getSimpleName());
-	      }
-	   }
+   @Inject
+   public CopyPlugin(final ResourceFactory resourceFactory)
+   {
+      this.resourceFactory = resourceFactory;
+   }
 
-	   private void copy(final Resource<?> source, Resource<?> directory, final String target )
-	   {
-	      List<Resource<?>> results = new PathspecParser(resourceFactory, directory, target).resolve();
+   @DefaultCommand
+   public void rename(
+            @Option(description = "source", required = true) final Resource<?> source,
+            @Option(description = "target", required = true) final String target)
+   {
+      if (isDirectory(source))
+      {
+         Resource<?> directory = source.getParent();
+         copyRecursively(source, directory, target);
+      }
+      else if (isFile(source))
+      {
+         Resource<?> directory = source.isFlagSet(ResourceFlag.Leaf) ? source.getParent() : source;
+         copy(source, directory, target);
+      }
+      else
+      {
+         throw new RuntimeException("cannot copy resource type: " + source.getClass().getSimpleName());
+      }
+   }
 
-	      if (results.size() > 1)
-	      {
-	         throw new RuntimeException("ambiguous target file name: " + target);
-	      }
-	      else
-	      {
-	         Resource<?> targetResource = results.get(0);
-	         if (targetResource.exists())
-	         {
-	            if (isDirectory(targetResource))
-	            {
-	               targetResource = targetResource.getChild(source.getName());
-	            }
-	         }
-	         ((FileResource<?>) targetResource).setContents(source.getResourceInputStream());
-	         }
-	   }
-	   
-	   private void copyRecursively(final Resource<?> source, Resource<?> directory, final String target )
-	   {
-	      List<Resource<?>> results = new PathspecParser(resourceFactory, directory, target).resolve();
+   private void copy(final Resource<?> source, Resource<?> directory, final String target)
+   {
+      List<Resource<?>> results = new PathspecParser(resourceFactory, directory, target).resolve();
 
-	      if (results.size() > 1)
-	      {
-	         throw new RuntimeException("ambiguous target file name: " + target);
-	      }
-	      else
-	      {
-	         Resource<?> targetResource = results.get(0);
-	         List<Resource<?>>childs = source.listResources();
-	         Resource<?> newTargetDir=null;
-	       
-	         if (isDirectory(source)){
+      if (results.size() > 1)
+      {
+         throw new RuntimeException("ambiguous target file name: " + target);
+      }
+      else
+      {
+         Resource<?> targetResource = results.get(0);
+         if (targetResource.exists())
+         {
+            if (isDirectory(targetResource))
+            {
+               targetResource = targetResource.getChild(source.getName());
+            }
+         }
+         ((FileResource<?>) targetResource).setContents(source.getResourceInputStream());
+      }
+   }
 
-	        	 if(!targetResource.exists()){
-	        		 
-	        		 newTargetDir=((DirectoryResource) source.getParent()).getOrCreateChildDirectory( targetResource.getName() );
-	        		 
-	        	 }else{
-	        		 
-	        		 newTargetDir = ((DirectoryResource) targetResource).getOrCreateChildDirectory(source.getName());
-	        		 
-	        	 }
-	        	 	             
-	         }else if(isFile(source)){
+   private void copyRecursively(final Resource<?> source, Resource<?> directory, final String target)
+   {
+      List<Resource<?>> results = new PathspecParser(resourceFactory, directory, target).resolve();
 
-	        	 Resource<?> child = targetResource.getChild(source.getName());
-	        	 
-	        	 if(child==null){
-	        		 
-	        		 ((DirectoryResource) targetResource).getOrCreateChildDirectory(source.getName()).setContents( source.getResourceInputStream() );
-	        		 
-	        	 }else{
-	        		 
-	        		 ((FileResource<?>) child).setContents( source.getResourceInputStream() );
-	        		 
-	        	 }
-	        	 newTargetDir = (DirectoryResource) targetResource;
-	         }
-	         
-	          if(childs.size()> 0){
-	        	 for ( Resource<?> resource : childs ) {
-					copyRecursively( resource, directory,newTargetDir.getFullyQualifiedName() );
-				}
-	          }	
-	      }
-	   }
+      if (results.size() > 1)
+      {
+         throw new RuntimeException("ambiguous target file name: " + target);
+      }
+      else
+      {
+         Resource<?> targetResource = results.get(0);
+         List<Resource<?>> childs = source.listResources();
+         Resource<?> newTargetDir = null;
 
-	   private boolean isFile(Resource<?> source)
-	   {
-	      return source instanceof FileResource;
-	   }
+         if (isDirectory(source))
+         {
 
-	   private boolean isDirectory(Resource<?> source)
-	   {
-	      return source instanceof DirectoryResource;
-	   }
+            if (!targetResource.exists())
+            {
+
+               newTargetDir = ((DirectoryResource) source.getParent()).getOrCreateChildDirectory(targetResource
+                        .getName());
+
+            }
+            else
+            {
+
+               newTargetDir = ((DirectoryResource) targetResource).getOrCreateChildDirectory(source.getName());
+
+            }
+
+         }
+         else if (isFile(source))
+         {
+
+            Resource<?> child = targetResource.getChild(source.getName());
+
+            if (child == null)
+            {
+
+               ((DirectoryResource) targetResource).getOrCreateChildDirectory(source.getName()).setContents(
+                        source.getResourceInputStream());
+
+            }
+            else
+            {
+
+               ((FileResource<?>) child).setContents(source.getResourceInputStream());
+
+            }
+            newTargetDir = (DirectoryResource) targetResource;
+         }
+
+         if (childs.size() > 0)
+         {
+            for (Resource<?> resource : childs)
+            {
+               copyRecursively(resource, directory, newTargetDir.getFullyQualifiedName());
+            }
+         }
+      }
+   }
+
+   private boolean isFile(Resource<?> source)
+   {
+      return source instanceof FileResource;
+   }
+
+   private boolean isDirectory(Resource<?> source)
+   {
+      return source instanceof DirectoryResource;
+   }
 
 }

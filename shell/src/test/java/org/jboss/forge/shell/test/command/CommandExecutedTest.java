@@ -22,24 +22,26 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:koen.aers@gmail.com">Koen Aers</a>
  */
 @RunWith(Arquillian.class)
-public class CommandExecutedTest extends AbstractShellTest {
-	
-	@Inject CommandExecutedObserver observer;
+public class CommandExecutedTest extends AbstractShellTest
+{
 
-	@Test
-	public void testInvalidSuppliedOptionIsCorrected() throws Exception
-	{
-	    getShell().execute("motp motp");
-	    CommandExecuted event = observer.getEvent();
-	    assertNotNull(event);
-	    assertEquals(CommandExecuted.Status.SUCCESS, event.getStatus());
-	    CommandMetadata command = event.getCommand();
-	    assertNotNull(command);
-	    assertEquals("motp", command.getName());
-	    Object[] parameters = event.getParameters();
-	    assertNotNull(parameters);
-	    assertEquals(1, parameters.length);
-	    assertEquals("motp", parameters[0]);
-	}
+   @Inject
+   CommandExecutedObserver observer;
+
+   @Test
+   public void testInvalidSuppliedOptionIsCorrected() throws Exception
+   {
+      getShell().execute("motp motp");
+      CommandExecuted event = observer.getEvent();
+      assertNotNull(event);
+      assertEquals(CommandExecuted.Status.SUCCESS, event.getStatus());
+      CommandMetadata command = event.getCommand();
+      assertNotNull(command);
+      assertEquals("motp", command.getName());
+      Object[] parameters = event.getParameters();
+      assertNotNull(parameters);
+      assertEquals(1, parameters.length);
+      assertEquals("motp", parameters[0]);
+   }
 
 }

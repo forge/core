@@ -271,11 +271,13 @@ public class CommandMetadataImpl implements CommandMetadata
    @Override
    public boolean hasOrderedOptions()
    {
-      try {
+      try
+      {
          getOrderedOptionByIndex(0);
          return true;
       }
-      catch (Exception e) {
+      catch (Exception e)
+      {
          return false;
       }
    }

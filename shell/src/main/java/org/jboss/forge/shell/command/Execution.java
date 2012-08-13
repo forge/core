@@ -140,14 +140,16 @@ public class Execution
                finally
                {
                   Thread.currentThread().setContextClassLoader(current);
-                  manager.fireEvent(new CommandExecuted(status, command, originalStatement, parameterArray), new Annotation[] {});
+                  manager.fireEvent(new CommandExecuted(status, command, originalStatement, parameterArray),
+                           new Annotation[] {});
                }
             }
          }
       }
       else
       {
-         manager.fireEvent(new CommandExecuted(Status.MISSING, command, originalStatement, parameterArray), new Annotation[] {});
+         manager.fireEvent(new CommandExecuted(Status.MISSING, command, originalStatement, parameterArray),
+                  new Annotation[] {});
       }
 
    }

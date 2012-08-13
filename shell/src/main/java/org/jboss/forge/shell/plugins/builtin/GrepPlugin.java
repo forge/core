@@ -23,7 +23,7 @@ import org.mvel2.util.StringAppender;
 
 /**
  * A simple port of the Unix grep command.
- *
+ * 
  * @author Mike Brock .
  */
 @Alias("grep")
@@ -33,15 +33,13 @@ public class GrepPlugin implements Plugin
 {
    @DefaultCommand
    public void run(
-         @PipeIn final InputStream pipeIn,
-         @Option(name = "ignore-case", shortName = "i", help = "ignore case distinctions in both patterns and input", flagOnly = true)
-         boolean ignoreCase,
-         @Option(name = "regexp", shortName = "e", help = "match using a regular expression")
-         String regExp,
-         @Option(description = "PATTERN") String pattern,
-         @Option(description = "FILE ...") Resource<?>[] resources,
-         final PipeOut pipeOut
-   ) throws IOException
+            @PipeIn final InputStream pipeIn,
+            @Option(name = "ignore-case", shortName = "i", help = "ignore case distinctions in both patterns and input", flagOnly = true) boolean ignoreCase,
+            @Option(name = "regexp", shortName = "e", help = "match using a regular expression") String regExp,
+            @Option(description = "PATTERN") String pattern,
+            @Option(description = "FILE ...") Resource<?>[] resources,
+            final PipeOut pipeOut
+            ) throws IOException
    {
       Pattern matchPattern;
       if (regExp != null)

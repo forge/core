@@ -12,60 +12,60 @@ import java.util.ListIterator;
 
 /**
  * Console history.
- *
+ * 
  * @author <a href="mailto:mwp1@cornell.edu">Marc Prud'hommeaux</a>
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
  * @since 2.3
  */
 public interface History
-    extends Iterable<History.Entry>
+         extends Iterable<History.Entry>
 {
-    int size();
+   int size();
 
-    boolean isEmpty();
+   boolean isEmpty();
 
-    int index();
+   int index();
 
-    void clear();
+   void clear();
 
-    CharSequence get(int index);
+   CharSequence get(int index);
 
-    void add(CharSequence line);
+   void add(CharSequence line);
 
-    void replace(CharSequence item);
+   void replace(CharSequence item);
 
-    //
-    // Entries
-    //
-    
-    interface Entry
-    {
-        int index();
+   //
+   // Entries
+   //
 
-        CharSequence value();
-    }
+   interface Entry
+   {
+      int index();
 
-    ListIterator<Entry> entries(int index);
+      CharSequence value();
+   }
 
-    ListIterator<Entry> entries();
+   ListIterator<Entry> entries(int index);
 
-    Iterator<Entry> iterator();
+   ListIterator<Entry> entries();
 
-    //
-    // Navigation
-    //
+   Iterator<Entry> iterator();
 
-    CharSequence current();
+   //
+   // Navigation
+   //
 
-    boolean previous();
+   CharSequence current();
 
-    boolean next();
+   boolean previous();
 
-    boolean moveToFirst();
+   boolean next();
 
-    boolean moveToLast();
+   boolean moveToFirst();
 
-    boolean moveTo(int index);
+   boolean moveToLast();
 
-    void moveToEnd();
+   boolean moveTo(int index);
+
+   void moveToEnd();
 }

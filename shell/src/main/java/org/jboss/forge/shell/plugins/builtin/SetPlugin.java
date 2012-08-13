@@ -40,8 +40,8 @@ public class SetPlugin implements Plugin
 
    @DefaultCommand
    public void run(@Option(description = "varname",
-                        completer = EnvironmentPropertiesCompleter.class) final String variable,
-                   @Option(description = "value") final String... value)
+            completer = EnvironmentPropertiesCompleter.class) final String variable,
+            @Option(description = "value") final String... value)
    {
 
       if (variable == null)

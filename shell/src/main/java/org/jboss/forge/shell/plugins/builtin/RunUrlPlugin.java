@@ -34,47 +34,48 @@ import org.jboss.forge.shell.util.PluginUtil;
 @Topic("Shell Environment")
 public class RunUrlPlugin implements Plugin
 {
-    private final Shell shell;
+   private final Shell shell;
 
-    @Inject
-    private ResourceFactory factory;
+   @Inject
+   private ResourceFactory factory;
 
-    @Inject
-    public RunUrlPlugin(final Shell shell)
-    {
-        this.shell = shell;
-    }
+   @Inject
+   public RunUrlPlugin(final Shell shell)
+   {
+      this.shell = shell;
+   }
 
-    @DefaultCommand
-    public void run(@Option(description = "url...", required = true) final String url, final PipeOut pipeOut,
-                final String... args)
-                throws Exception
-    {
-        String urlPattern = "^(https?)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
-        if (Pattern.matches(urlPattern, url))
-        {
-            URL remote = new URL(url);
-            String temporalDir = System.getProperty("java.io.tmpdir");
-            File tempFile = new File(temporalDir, "temp" + UUID.randomUUID().toString().replace("-", ""));
-            tempFile.createNewFile();
-            UnknownFileResource tempResource = new UnknownFileResource(factory, tempFile);
-            PluginUtil.downloadFromURL(pipeOut, remote, tempResource);
+   @DefaultCommand
+   public void run(@Option(description = "url...", required = true) final String url, final PipeOut pipeOut,
+            final String... args)
+            throws Exception
+   {
+      String urlPattern = "^(https?)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
+      if (Pattern.matches(urlPattern, url))
+      {
+         URL remote = new URL(url);
+         String temporalDir = System.getProperty("java.io.tmpdir");
+         File tempFile = new File(temporalDir, "temp" + UUID.randomUUID().toString().replace("-", ""));
+         tempFile.createNewFile();
+         UnknownFileResource tempResource = new UnknownFileResource(factory, tempFile);
+         PluginUtil.downloadFromURL(pipeOut, remote, tempResource);
 
-            try
-            {
-                shell.execute(tempFile, args);
-            }
-            catch (UnknownHostException e) {
-               throw e;
-            }
-            catch (IOException e)
-            {
-                throw new RuntimeException("error executing script from url " + url);
-            }
-        }
-        else
-        {
-            throw new RuntimeException("resource must be a url: " + url);
-        }
-    }
+         try
+         {
+            shell.execute(tempFile, args);
+         }
+         catch (UnknownHostException e)
+         {
+            throw e;
+         }
+         catch (IOException e)
+         {
+            throw new RuntimeException("error executing script from url " + url);
+         }
+      }
+      else
+      {
+         throw new RuntimeException("resource must be a url: " + url);
+      }
+   }
 }

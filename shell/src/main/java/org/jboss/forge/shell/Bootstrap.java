@@ -38,12 +38,12 @@ import org.jboss.weld.environment.se.WeldContainer;
  */
 public class Bootstrap
 {
-   
+
    public static final String PROP_PLUGIN_DIR = "org.jboss.forge.pluginDir";
    public static final String PROP_EVALUATE = "org.jboss.forge.evaluate";
    private static final String ARG_PLUGIN_DIR = "-pluginDir";
    private static final String ARG_EVALUATE = "-e";
-   
+
    private static boolean pluginSystemEnabled = !Boolean.getBoolean("forge.plugins.disable");
    private static Thread currentShell = null;
    private static boolean restartRequested = false;
@@ -59,24 +59,31 @@ public class Bootstrap
       readArguments(args);
       init();
    }
-   
-   private static void readArguments(String[] args) {
+
+   private static void readArguments(String[] args)
+   {
       readPluginDirArgument(args);
       readEvaluateArgument(args);
    }
-   
-   private static void readPluginDirArgument(String[] args) {
-      for (int i = 0; i < args.length; i++) {
-         if (ARG_PLUGIN_DIR.equals(args[i]) && i + 1 < args.length) {
+
+   private static void readPluginDirArgument(String[] args)
+   {
+      for (int i = 0; i < args.length; i++)
+      {
+         if (ARG_PLUGIN_DIR.equals(args[i]) && i + 1 < args.length)
+         {
             System.setProperty(PROP_PLUGIN_DIR, args[i + 1]);
             return;
          }
       }
    }
-   
-   private static void readEvaluateArgument(String[] args) {
-      for (int i = 0; i < args.length; i++) {
-         if (ARG_EVALUATE.equals(args[i]) && i + 1 < args.length) {
+
+   private static void readEvaluateArgument(String[] args)
+   {
+      for (int i = 0; i < args.length; i++)
+      {
+         if (ARG_EVALUATE.equals(args[i]) && i + 1 < args.length)
+         {
             System.setProperty(PROP_EVALUATE, args[i + 1]);
             return;
          }
@@ -103,20 +110,25 @@ public class Bootstrap
                // FIXME this plugin loading scheme causes classloading issues w/weld because weld cannot load classes
                // from its own classloaders before plugins are loaded and pollute the classpath.
                // We can work around it by loading weld before we load plugins, then restarting weld, but this is SLOW.
-               try {
+               try
+               {
                   WeldContainer container = weld.initialize();
                   manager = container.getBeanManager();
                   weld.shutdown();
                }
-               catch (Exception e) {}
+               catch (Exception e)
+               {
+               }
 
-               try {
+               try
+               {
                   // TODO verify plugin API versions. only activate compatible plugins.
                   loadPlugins();
                   WeldContainer container = weld.initialize();
                   manager = container.getBeanManager();
                }
-               catch (Throwable e) {
+               catch (Throwable e)
+               {
                   // Boot up with external plugins disabled.
                   System.out
                            .println("Plugin system disabled due to failure while loading one or more plugins; try removing offending plugins with \"forge remove-plugin <TAB>\".");
@@ -174,7 +186,7 @@ public class Bootstrap
 
    synchronized private static void loadPlugins()
    {
-      
+
       if (!pluginSystemEnabled)
          return;
 
@@ -187,14 +199,16 @@ public class Bootstrap
 
          List<PluginEntry> toLoad = new ArrayList<InstalledPluginRegistry.PluginEntry>();
 
-         List<PluginEntry> installed = InstalledPluginRegistry.listByAPICompatibleVersion(InstalledPluginRegistry.getRuntimeAPIVersion());
+         List<PluginEntry> installed = InstalledPluginRegistry.listByAPICompatibleVersion(InstalledPluginRegistry
+                  .getRuntimeAPIVersion());
 
          toLoad.addAll(installed);
 
          List<PluginEntry> incompatible = InstalledPluginRegistry.list();
          incompatible.removeAll(installed);
 
-         for (PluginEntry pluginEntry : incompatible) {
+         for (PluginEntry pluginEntry : incompatible)
+         {
             System.out.println("Not loading plugin [" + pluginEntry.getName()
                      + "] because it references Forge API version [" + pluginEntry.getApiVersion()
                      + "] which may not be compatible with my current version [" + Bootstrap.class.getPackage()

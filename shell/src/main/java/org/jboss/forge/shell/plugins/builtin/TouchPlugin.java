@@ -19,26 +19,27 @@ import org.jboss.forge.shell.plugins.Topic;
 
 /**
  * A simple port of the Unix touch command.
- *
+ * 
  * @author Jose Donizetti.
  */
 @Alias("touch")
 @Topic("File & Resources")
 @Help("change file access and modification times")
-public class TouchPlugin implements Plugin {
+public class TouchPlugin implements Plugin
+{
 
-  @DefaultCommand
-  public void run(@Option(help = "name of file to be touched", required = true) final Resource<?>  resource)
-  {
-	FileResource<?> fileResource = (FileResource<?>) resource;
-    if (fileResource.exists())
-    {
-      File file = fileResource.getUnderlyingResourceObject();
-      file.setLastModified(System.currentTimeMillis());
-    }
-    else
-    {
-      fileResource.createNewFile();
-    }
-  }
+   @DefaultCommand
+   public void run(@Option(help = "name of file to be touched", required = true) final Resource<?> resource)
+   {
+      FileResource<?> fileResource = (FileResource<?>) resource;
+      if (fileResource.exists())
+      {
+         File file = fileResource.getUnderlyingResourceObject();
+         file.setLastModified(System.currentTimeMillis());
+      }
+      else
+      {
+         fileResource.createNewFile();
+      }
+   }
 }

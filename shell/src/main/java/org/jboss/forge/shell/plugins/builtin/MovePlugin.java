@@ -27,7 +27,7 @@ import org.jboss.forge.shell.util.PathspecParser;
 
 /**
  * Implementation of UNIX-style "mv" (move) command for use within the Forge Shell.
- *
+ * 
  * @author Mike Brock
  */
 @Alias("mv")

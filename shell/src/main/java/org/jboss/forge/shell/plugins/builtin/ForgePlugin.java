@@ -336,15 +336,15 @@ public class ForgePlugin implements Plugin
       /*
        * FileResource<?> source = resource.reify(FileResource.class); if ((source == null) || !source.exists()) { throw
        * new IllegalArgumentException("JAR file must be specified."); }
-       *
+       * 
        * if (environment.getPluginDirectory().equals(source.getParent())) { throw new
        * IllegalArgumentException("Plugin is already installed."); }
-       *
+       * 
        * ShellMessages.info(out, "WARNING!"); if (prompt.promptBoolean(
        * "Installing plugins from remote sources is dangerous, and can leave untracked plugins. Continue?", true)) {
        * FileResource<?> target = createIncrementedPluginJarFile(dep);
        * target.setContents(source.getResourceInputStream());
-       *
+       * 
        * ShellMessages.success(out, "Installed from [" + resource + "] successfully."); restart(); } else throw new
        * RuntimeException("Aborted.");
        */
@@ -908,7 +908,7 @@ public class ForgePlugin implements Plugin
 
    /**
     * Installs the plugin if missing
-    *
+    * 
     * @param commandExecuted
     */
    public void handleMissingPlugin(@Observes CommandExecuted commandExecuted)

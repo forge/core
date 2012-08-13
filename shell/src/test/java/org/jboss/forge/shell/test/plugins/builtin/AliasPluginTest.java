@@ -26,21 +26,26 @@ public class AliasPluginTest extends AbstractShellTest
       /*
        * Nobody home yet
        */
-      try {
+      try
+      {
          getShell().execute("doohickey");
          fail();
       }
-      catch (Exception e) {}
+      catch (Exception e)
+      {
+      }
 
       getShell().execute("alias \"doohickey=echo hello\"");
 
       /*
        * It should work now
        */
-      try {
+      try
+      {
          getShell().execute("doohickey");
       }
-      catch (Exception e) {
+      catch (Exception e)
+      {
          fail();
       }
 

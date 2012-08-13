@@ -486,9 +486,11 @@ public class FSHParser
 
          do
          {
-            while ((cursor != length) && isTokenPart(expr[cursor])) {              
-               if (expr[cursor] == '\\' && cursor + 1 < length && expr[cursor + 1] == ' ') {
-                  cursor++; // make sure '\ ' are included in the token            
+            while ((cursor != length) && isTokenPart(expr[cursor]))
+            {
+               if (expr[cursor] == '\\' && cursor + 1 < length && expr[cursor + 1] == ' ')
+               {
+                  cursor++; // make sure '\ ' are included in the token
                }
                cursor++;
             }

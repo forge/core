@@ -20,36 +20,36 @@ import org.jboss.forge.shell.util.PluginUtil;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- *
+ * 
  */
 public class IndexPluginNameCompleter extends SimpleTokenCompleter
 {
-    @Inject
-    private Shell shell;
-    
-    @Inject
-    private Configuration config;
-    
-    @Override
-    public Iterable<?> getCompletionTokens()
-    {
-        List<String> plugins = new ArrayList<String>();
-        try
-        {
-            List<PluginRef> refs = PluginUtil.findPluginSilent(shell, config, "*");
-            for (PluginRef pluginRef : refs)
-            {
-                plugins.add(pluginRef.getName());
-            }
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        
-        Collections.sort(plugins);
-        
-        return plugins;
-    }
+   @Inject
+   private Shell shell;
+
+   @Inject
+   private Configuration config;
+
+   @Override
+   public Iterable<?> getCompletionTokens()
+   {
+      List<String> plugins = new ArrayList<String>();
+      try
+      {
+         List<PluginRef> refs = PluginUtil.findPluginSilent(shell, config, "*");
+         for (PluginRef pluginRef : refs)
+         {
+            plugins.add(pluginRef.getName());
+         }
+      }
+      catch (Exception e)
+      {
+         e.printStackTrace();
+      }
+
+      Collections.sort(plugins);
+
+      return plugins;
+   }
 
 }

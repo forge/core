@@ -34,7 +34,7 @@ public class ResourceAPITests extends AbstractShellTest
    public void testPathNavigation()
    {
       DirectoryResource expect = new DirectoryResource(factory, new File("").getAbsoluteFile().getParentFile()
-            .getParentFile());
+               .getParentFile());
       DirectoryResource r = new DirectoryResource(factory, new File("").getAbsoluteFile());
 
       Assert.assertEquals(expect, ResourceUtil.parsePathspec(factory, r, "../..").iterator().next());
@@ -92,7 +92,6 @@ public class ResourceAPITests extends AbstractShellTest
 
       OSUtils.setPretendWindows(false);
    }
-
 
    @Test
    public void testWildCards()

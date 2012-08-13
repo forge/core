@@ -68,16 +68,16 @@ public class CommandLibraryExtension implements Extension
 
          plugins.get(pluginMeta.getName()).add(pluginMeta);
       }
-      
-      if(Facet.class.isAssignableFrom(clazz) && !clazz.isInterface() && !clazz.isAnnotation())
+
+      if (Facet.class.isAssignableFrom(clazz) && !clazz.isInterface() && !clazz.isAnnotation())
       {
-          facetTypes.add((Class<Facet>) clazz);
+         facetTypes.add((Class<Facet>) clazz);
       }
    }
 
    public Set<Class<? extends Facet>> getFacetTypes()
    {
-       return Collections.unmodifiableSet(facetTypes);
+      return Collections.unmodifiableSet(facetTypes);
    }
 
    public PluginMetadata getMetadataFor(final Class<? extends Plugin> plugin)

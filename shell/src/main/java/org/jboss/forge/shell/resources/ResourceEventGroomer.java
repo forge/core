@@ -27,7 +27,8 @@ public class ResourceEventGroomer implements EventBusGroomer
       List<Resource<?>> seen = new ArrayList<Resource<?>>();
       List<Object> result = new ArrayList<Object>();
 
-      for (Object e : events) {
+      for (Object e : events)
+      {
          if (e instanceof ResourceEvent)
          {
             Resource<?> resource = ((ResourceEvent) e).getResource();

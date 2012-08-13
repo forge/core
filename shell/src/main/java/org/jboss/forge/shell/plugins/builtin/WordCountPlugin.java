@@ -35,13 +35,13 @@ public class WordCountPlugin implements Plugin
 {
    @DefaultCommand
    public void run(
-         @PipeIn final InputStream pipeIn,
-         @Option(name = "lines", shortName = "l", flagOnly = true) boolean lineCount,
-         @Option(name = "words", shortName = "w", flagOnly = true) boolean wordCount,
-         @Option(name = "characters", shortName = "c", flagOnly = true) boolean charCount,
-         @Option(description = "file ...", required = false) Resource<?>[] resources,
-         final PipeOut out
-         ) throws IOException
+            @PipeIn final InputStream pipeIn,
+            @Option(name = "lines", shortName = "l", flagOnly = true) boolean lineCount,
+            @Option(name = "words", shortName = "w", flagOnly = true) boolean wordCount,
+            @Option(name = "characters", shortName = "c", flagOnly = true) boolean charCount,
+            @Option(description = "file ...", required = false) Resource<?>[] resources,
+            final PipeOut out
+            ) throws IOException
    {
 
       if (!(lineCount || wordCount || charCount))
@@ -98,7 +98,7 @@ public class WordCountPlugin implements Plugin
    }
 
    private static Results count(InputStream stream, boolean lines, boolean words, boolean chars)
-         throws IOException
+            throws IOException
    {
       byte[] buffer = new byte[1024];
       int read;

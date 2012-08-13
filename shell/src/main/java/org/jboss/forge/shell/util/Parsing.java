@@ -25,7 +25,8 @@ public abstract class Parsing
       return str.length();
    }
 
-   public static String firstToken(String str) {
+   public static String firstToken(String str)
+   {
       return str.substring(0, firstWhitespace(str));
    }
 }

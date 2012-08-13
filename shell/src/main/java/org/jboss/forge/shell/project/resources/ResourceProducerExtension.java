@@ -40,7 +40,8 @@ public class ResourceProducerExtension implements Extension
 
          public AnnotatedTypeBuilder<T> getBuilder()
          {
-            if (builder == null) {
+            if (builder == null)
+            {
                builder = new AnnotatedTypeBuilder<T>();
                builder.readFromType(event.getAnnotatedType());
             }

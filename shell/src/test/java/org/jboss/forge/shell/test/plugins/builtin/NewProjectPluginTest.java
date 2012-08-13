@@ -28,7 +28,7 @@ import org.junit.Test;
 
 /**
  * LsMavenPomPluginTestCase
- *
+ * 
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
@@ -85,7 +85,6 @@ public class NewProjectPluginTest extends AbstractShellTest
       assertEquals(PackagingType.JAR, project.getFacet(MavenPackagingFacet.class).getPackagingType());
    }
 
-
    @Test
    public void testCreatePomProject() throws Exception
    {
@@ -99,9 +98,9 @@ public class NewProjectPluginTest extends AbstractShellTest
    }
 
    /**
-    *
+    * 
     * Tests trying to create a zip (invalid) project, then changing to jar
-    *
+    * 
     * @throws Exception
     */
    @Test
@@ -176,12 +175,12 @@ public class NewProjectPluginTest extends AbstractShellTest
    @Test
    public void testCreateTopLevelPackage() throws Exception
    {
-	   initializeJavaProject();
-	   DirectoryResource root = getProject().getProjectRoot();
-	   Resource<?> srcMainJavaDirectory = root.getChild("/src/main/java");
-	   assertNotNull(srcMainJavaDirectory.reify(DirectoryResource.class));
-	   Resource<?> testDirectory = srcMainJavaDirectory.getChild("com/test");
-	   assertNotNull(testDirectory.reify(DirectoryResource.class));
+      initializeJavaProject();
+      DirectoryResource root = getProject().getProjectRoot();
+      Resource<?> srcMainJavaDirectory = root.getChild("/src/main/java");
+      assertNotNull(srcMainJavaDirectory.reify(DirectoryResource.class));
+      Resource<?> testDirectory = srcMainJavaDirectory.getChild("com/test");
+      assertNotNull(testDirectory.reify(DirectoryResource.class));
    }
 
 }

@@ -39,7 +39,6 @@ public class TokenNode extends Node
       this.value = value;
    }
 
-
    @Override
    public String toString()
    {

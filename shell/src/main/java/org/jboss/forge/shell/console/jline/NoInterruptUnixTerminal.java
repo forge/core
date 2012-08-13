@@ -20,25 +20,28 @@ package org.jboss.forge.shell.console.jline;
 
 /**
  * Non-interruptable (via CTRL-C) {@link UnixTerminal}.
- *
+ * 
  * @since 2.0
  */
 public class NoInterruptUnixTerminal
-    extends UnixTerminal
+         extends UnixTerminal
 {
-    public NoInterruptUnixTerminal() throws Exception {
-        super();
-    }
+   public NoInterruptUnixTerminal() throws Exception
+   {
+      super();
+   }
 
-    @Override
-    public void init() throws Exception {
-        super.init();
-        getSettings().set("intr undef");
-    }
+   @Override
+   public void init() throws Exception
+   {
+      super.init();
+      getSettings().set("intr undef");
+   }
 
-    @Override
-    public void restore() throws Exception {
-        getSettings().set("intr ^C");
-        super.restore();
-    }
+   @Override
+   public void restore() throws Exception
+   {
+      getSettings().set("intr ^C");
+      super.restore();
+   }
 }

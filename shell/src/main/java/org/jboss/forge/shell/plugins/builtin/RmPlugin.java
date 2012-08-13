@@ -36,8 +36,8 @@ public class RmPlugin implements Plugin
    @DefaultCommand
    public void rm(
             @Option(name = "recursive", shortName = "r", help = "recursively delete resources", flagOnly = true) final boolean recursive,
-                  @Option(name = "force", shortName = "f", help = "do not prompt to confirm operations", flagOnly = true) final boolean force,
-                  @Option(description = "path", required = true) final Resource<?>[] paths)
+            @Option(name = "force", shortName = "f", help = "do not prompt to confirm operations", flagOnly = true) final boolean force,
+            @Option(description = "path", required = true) final Resource<?>[] paths)
    {
       for (Resource<?> resource : paths)
       {

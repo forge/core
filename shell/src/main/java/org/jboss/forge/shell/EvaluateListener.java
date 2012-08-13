@@ -19,23 +19,23 @@ import org.jboss.forge.shell.events.PostStartup;
  */
 public class EvaluateListener
 {
-    @Inject
-    private Shell shell;
+   @Inject
+   private Shell shell;
 
-    public void evaluate(@Observes PostStartup event)
-    {
-        String evaluate = System.getProperty(Bootstrap.PROP_EVALUATE);
-        if (evaluate != null)
-        {
-            try
-            {
-                shell.execute(evaluate);
-                System.exit(0);
-            }
-            catch (Exception e)
-            {
-                System.exit(1);
-            }
-        }
-    }
+   public void evaluate(@Observes PostStartup event)
+   {
+      String evaluate = System.getProperty(Bootstrap.PROP_EVALUATE);
+      if (evaluate != null)
+      {
+         try
+         {
+            shell.execute(evaluate);
+            System.exit(0);
+         }
+         catch (Exception e)
+         {
+            System.exit(1);
+         }
+      }
+   }
 }

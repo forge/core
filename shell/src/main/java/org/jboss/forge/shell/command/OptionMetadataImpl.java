@@ -40,7 +40,8 @@ public class OptionMetadataImpl implements OptionMetadata
    private Class<? extends CommandCompleter> completerType;
 
    public OptionMetadataImpl()
-   {}
+   {
+   }
 
    /**
     * Get an informational string describing this Option

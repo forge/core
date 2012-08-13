@@ -18,18 +18,20 @@ package org.jboss.forge.shell.console.jline.console.completer;
 
 /**
  * {@link Completer} for {@link Enum} names.
- *
+ * 
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
  * @since 2.3
  */
 public class EnumCompleter
-    extends StringsCompleter
+         extends StringsCompleter
 {
-    public EnumCompleter(Class<? extends Enum<?>> source) {
-        assert source != null;
+   public EnumCompleter(Class<? extends Enum<?>> source)
+   {
+      assert source != null;
 
-        for (Enum<?> n : source.getEnumConstants()) {
-            this.getStrings().add(n.name().toLowerCase());
-        }
-    }
+      for (Enum<?> n : source.getEnumConstants())
+      {
+         this.getStrings().add(n.name().toLowerCase());
+      }
+   }
 }

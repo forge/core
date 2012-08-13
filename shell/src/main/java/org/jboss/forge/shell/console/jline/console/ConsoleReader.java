@@ -45,7 +45,7 @@ import org.jboss.forge.shell.integration.KeyListener;
  * editing. On some platforms, platform-specific commands will need to be issued before the reader will function
  * properly. See {@link org.jboss.forge.shell.console.jline.Terminal#init} for convenience methods for issuing
  * platform-specific setup commands.
- *
+ * 
  * @author <a href="mailto:mwp1@cornell.edu">Marc Prud'hommeaux</a>
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
  */
@@ -165,27 +165,27 @@ public class ConsoleReader
    /**
     * Set the echo character. For example, to have "*" entered when a password is typed:
     * <p/>
-    *
+    * 
     * <pre>
     * myConsoleReader.setEchoCharacter(new Character('*'));
     * </pre>
     * <p/>
     * Setting the character to
     * <p/>
-    *
+    * 
     * <pre>
     * null
     * </pre>
     * <p/>
     * will restore normal character echoing. Setting the character to
     * <p/>
-    *
+    * 
     * <pre>
     * new Character(0)
     * </pre>
     * <p/>
     * will cause nothing to be echoed.
-    *
+    * 
     * @param c the character to echo to the console in place of the typed character.
     */
    public void setEchoCharacter(final Character c)
@@ -203,7 +203,7 @@ public class ConsoleReader
 
    /**
     * Erase the current line.
-    *
+    * 
     * @return false if we failed (e.g., the buffer was empty)
     */
    final boolean resetLine() throws IOException
@@ -273,7 +273,7 @@ public class ConsoleReader
    /**
     * Set the current buffer's content to the specified {@link String}. The visual console will be modified to show the
     * current buffer.
-    *
+    * 
     * @param buffer the new contents of the buffer.
     */
    private void setBuffer(final String buffer) throws IOException
@@ -349,7 +349,7 @@ public class ConsoleReader
 
    /**
     * Clear the buffer and add its contents to the history.
-    *
+    * 
     * @return the former contents of the buffer.
     */
    final String finishBuffer() throws IOException
@@ -384,7 +384,7 @@ public class ConsoleReader
    /**
     * Expand event designator such as !!, !#, !3, etc... See
     * http://www.gnu.org/software/bash/manual/html_node/Event-Designators.html
-    *
+    * 
     * @param str
     * @return
     */
@@ -556,10 +556,10 @@ public class ConsoleReader
 
    }
 
-   /* Handle case where terminal does not move cursor to the next line
-   * when a character is inserted at the width of the terminal.  This also
-   * fixes backspace issue, where it assumes that the terminal is doing this.
-   */
+   /*
+    * Handle case where terminal does not move cursor to the next line when a character is inserted at the width of the
+    * terminal. This also fixes backspace issue, where it assumes that the terminal is doing this.
+    */
    private final void newlineAtWrap() throws IOException
    {
       int width = getTerminal().getWidth();
@@ -609,7 +609,7 @@ public class ConsoleReader
 
    /**
     * Redraw the rest of the buffer from the cursor onwards. This is necessary for inserting text into the buffer.
-    *
+    * 
     * @param clear the number of characters to clear after the end of the buffer
     */
    private void drawBuffer(final int clear) throws IOException
@@ -722,7 +722,7 @@ public class ConsoleReader
 
    /**
     * Issue <em>num</em> backspaces.
-    *
+    * 
     * @return the number of characters backed up
     */
    private int backspace(final int num) throws IOException
@@ -753,7 +753,7 @@ public class ConsoleReader
 
    /**
     * Issue a backspace.
-    *
+    * 
     * @return true if successful
     */
    public boolean backspace() throws IOException
@@ -828,7 +828,7 @@ public class ConsoleReader
 
    /**
     * Move the cursor <i>where</i> characters.
-    *
+    * 
     * @param num If less than 0, move abs(<i>where</i>) to the left, otherwise move <i>where</i> to the right.
     * @return The number of spaces we moved
     */
@@ -862,7 +862,7 @@ public class ConsoleReader
 
    /**
     * Move the cursor <i>where</i> characters, without checking the current buffer.
-    *
+    * 
     * @param where the number of characters to move to the right or left.
     */
    private void moveInternal(final int where) throws IOException
@@ -964,7 +964,7 @@ public class ConsoleReader
 
    /**
     * Read a character from the console.
-    *
+    * 
     * @return the character, or -1 if an EOF is received.
     */
    public final int readVirtualKey() throws IOException
@@ -1279,7 +1279,7 @@ public class ConsoleReader
 
    /**
     * Read a line from the <i>in</i> {@link InputStream}, and return the line (without any trailing newlines).
-    *
+    * 
     * @param prompt The prompt to issue to the console, may be null.
     * @return A line that is read from the terminal, or null if there was null input (e.g., <i>CTRL-D</i> was pressed).
     */
@@ -1641,7 +1641,7 @@ public class ConsoleReader
    /**
     * Add the specified {@link org.jboss.forge.shell.console.jline.console.completer.Completer} to the list of handlers
     * for tab-completion.
-    *
+    * 
     * @param completer the {@link org.jboss.forge.shell.console.jline.console.completer.Completer} to add
     * @return true if it was successfully added
     */
@@ -1653,7 +1653,7 @@ public class ConsoleReader
    /**
     * Remove the specified {@link org.jboss.forge.shell.console.jline.console.completer.Completer} from the list of
     * handlers for tab-completion.
-    *
+    * 
     * @param completer The {@link org.jboss.forge.shell.console.jline.console.completer.Completer} to remove
     * @return True if it was successfully removed
     */
@@ -1684,7 +1684,7 @@ public class ConsoleReader
 
    /**
     * Use the completers to modify the buffer with the appropriate completions.
-    *
+    * 
     * @return true if successful
     */
    private boolean complete() throws IOException
@@ -1833,10 +1833,12 @@ public class ConsoleReader
 
    private void print(final char c, final int i) throws IOException
    {
-      if (i == 1) {
+      if (i == 1)
+      {
          print(c);
       }
-      else {
+      else
+      {
          byte[] chars = new byte[i];
          Arrays.fill(chars, (byte) c);
          print(chars);
@@ -1933,7 +1935,7 @@ public class ConsoleReader
 
    /**
     * Issue a delete.
-    *
+    * 
     * @return true if successful
     */
    public final boolean delete() throws IOException
@@ -1945,18 +1947,16 @@ public class ConsoleReader
 
    /**
     * Issue <em>num</em> deletes.
-    *
+    * 
     * @return the number of characters backed up
     */
    private int delete(final int num) throws IOException
    {
       // TODO: Try to use jansi for this
 
-      /* Commented out because of DWA-2949:
-      if (buf.cursor == 0) {
-          return 0;
-      }
-      */
+      /*
+       * Commented out because of DWA-2949: if (buf.cursor == 0) { return 0; }
+       */
 
       buf.buffer.delete(buf.cursor, buf.cursor + 1);
       drawBuffer(1);
@@ -1966,7 +1966,7 @@ public class ConsoleReader
 
    /**
     * Kill the buffer ahead of the current cursor position.
-    *
+    * 
     * @return true if successful
     */
    public boolean killLine() throws IOException
@@ -2026,7 +2026,7 @@ public class ConsoleReader
 
    /**
     * Paste the contents of the clipboard into the console buffer
-    *
+    * 
     * @return true if clipboard contents pasted
     */
    public boolean paste() throws IOException
@@ -2277,7 +2277,7 @@ public class ConsoleReader
 
    /**
     * Erases the current line with the existing prompt, then redraws the line with the provided prompt and buffer
-    *
+    * 
     * @param prompt the new prompt
     * @param buffer the buffer to be drawn
     * @param cursorDest where you want the cursor set when the line has been drawn. -1 for end of line.
@@ -2327,7 +2327,7 @@ public class ConsoleReader
 
    /**
     * Search backward in history from a given position.
-    *
+    * 
     * @param searchTerm substring to search for.
     * @param startIndex the index from which on to search
     * @return index where this substring has been found, or -1 else.
@@ -2339,7 +2339,7 @@ public class ConsoleReader
 
    /**
     * Search backwards in history from the current position.
-    *
+    * 
     * @param searchTerm substring to search for.
     * @return index where the substring has been found, or -1 else.
     */
@@ -2379,7 +2379,7 @@ public class ConsoleReader
    /**
     * Checks to see if the specified character is a delimiter. We consider a character a delimiter if it is anything but
     * a letter or digit.
-    *
+    * 
     * @param c The character to test
     * @return True if it is a delimiter
     */

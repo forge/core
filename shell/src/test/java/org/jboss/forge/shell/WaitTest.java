@@ -20,28 +20,28 @@ public class WaitTest extends AbstractShellTest
 {
    @Inject
    private Wait wait;
-   
+
    @Inject
    private Shell shell;
 
    @Test
    public void testWaitCompletesAfterCommand() throws Exception
    {
-       Assert.assertFalse(wait.isWaiting());
-       wait.start();
-       Assert.assertTrue(wait.isWaiting());
-       shell.execute("echo foo");
-       Assert.assertFalse(wait.isWaiting());
+      Assert.assertFalse(wait.isWaiting());
+      wait.start();
+      Assert.assertTrue(wait.isWaiting());
+      shell.execute("echo foo");
+      Assert.assertFalse(wait.isWaiting());
    }
 
    @Test
    public void testWait() throws Exception
    {
-       Assert.assertFalse(wait.isWaiting());
-       wait.start();
-       Assert.assertTrue(wait.isWaiting());
-       Thread.sleep(1000);
-       wait.stop();
-       Assert.assertFalse(wait.isWaiting());
+      Assert.assertFalse(wait.isWaiting());
+      wait.start();
+      Assert.assertTrue(wait.isWaiting());
+      Thread.sleep(1000);
+      wait.stop();
+      Assert.assertFalse(wait.isWaiting());
    }
 }

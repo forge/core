@@ -30,7 +30,8 @@ public class CommandParserContext
    private boolean finalTokenComplete = false;
 
    public CommandParserContext()
-   {}
+   {
+   }
 
    public void incrementParmCount()
    {

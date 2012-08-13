@@ -50,7 +50,7 @@ public class PickupResourcePlugin implements Plugin
 
    @DefaultCommand
    public void run(@Option(required = false) Resource<?> resource,
-                   @Option(required = false, name = "find", shortName = "f") final String path)
+            @Option(required = false, name = "find", shortName = "f") final String path)
    {
 
       if (path != null)

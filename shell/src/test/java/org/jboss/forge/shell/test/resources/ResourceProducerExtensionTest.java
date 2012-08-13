@@ -35,7 +35,8 @@ public class ResourceProducerExtensionTest
 
    @Test
    public void testNothing()
-   {}
+   {
+   }
 
    @Deployment
    public static JavaArchive getDeployment()

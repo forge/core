@@ -86,103 +86,103 @@ public class BooleanConverter implements ConversionHandler
 
       CNV.put(Object.class,
                new Converter()
-            {
-               @Override
-               public Object convert(final Object o)
                {
-                  return stringConverter.convert(valueOf(o));
+                  @Override
+                  public Object convert(final Object o)
+                  {
+                     return stringConverter.convert(valueOf(o));
+                  }
                }
-            }
                );
 
       CNV.put(Boolean.class,
                new Converter()
-            {
-               @Override
-               public Object convert(final Object o)
                {
-                  return o;
+                  @Override
+                  public Object convert(final Object o)
+                  {
+                     return o;
+                  }
                }
-            }
                );
 
       CNV.put(Integer.class,
                new Converter()
-            {
-               @Override
-               public Boolean convert(final Object o)
                {
-                  return (((Integer) o) > 0);
+                  @Override
+                  public Boolean convert(final Object o)
+                  {
+                     return (((Integer) o) > 0);
+                  }
                }
-            }
                );
 
       CNV.put(Float.class,
                new Converter()
-            {
-               @Override
-               public Boolean convert(final Object o)
                {
-                  return (((Float) o) > 0);
+                  @Override
+                  public Boolean convert(final Object o)
+                  {
+                     return (((Float) o) > 0);
+                  }
                }
-            }
                );
 
       CNV.put(Double.class,
                new Converter()
-            {
-               @Override
-               public Boolean convert(final Object o)
                {
-                  return (((Double) o) > 0);
+                  @Override
+                  public Boolean convert(final Object o)
+                  {
+                     return (((Double) o) > 0);
+                  }
                }
-            }
                );
 
       CNV.put(Short.class,
                new Converter()
-            {
-               @Override
-               public Boolean convert(final Object o)
                {
-                  return (((Short) o) > 0);
+                  @Override
+                  public Boolean convert(final Object o)
+                  {
+                     return (((Short) o) > 0);
+                  }
                }
-            }
                );
 
       CNV.put(Long.class,
                new Converter()
-            {
-               @Override
-               public Boolean convert(final Object o)
                {
-                  return (((Long) o) > 0);
+                  @Override
+                  public Boolean convert(final Object o)
+                  {
+                     return (((Long) o) > 0);
+                  }
                }
-            }
                );
 
       CNV.put(boolean.class,
                new Converter()
-            {
-
-               @Override
-               public Boolean convert(final Object o)
                {
-                  return Boolean.valueOf((Boolean) o);
+
+                  @Override
+                  public Boolean convert(final Object o)
+                  {
+                     return Boolean.valueOf((Boolean) o);
+                  }
                }
-            }
                );
 
       CNV.put(BigDecimal.class,
                new Converter()
-            {
-
-               @Override
-               public Boolean convert(final Object o)
                {
-                  return Boolean.valueOf(((BigDecimal) o).doubleValue() > 0);
+
+                  @Override
+                  public Boolean convert(final Object o)
+                  {
+                     return Boolean.valueOf(((BigDecimal) o).doubleValue() > 0);
+                  }
                }
-            }
                );
 
    }

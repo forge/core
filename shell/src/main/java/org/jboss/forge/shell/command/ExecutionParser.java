@@ -49,7 +49,7 @@ public class ExecutionParser
 
    @Inject
    public ExecutionParser(final PluginRegistry registry, final Instance<Execution> executionInstance,
-                          final Shell shell, final PromptTypeConverter promptTypeConverter)
+            final Shell shell, final PromptTypeConverter promptTypeConverter)
    {
       this.registry = registry;
       this.executionInstance = executionInstance;

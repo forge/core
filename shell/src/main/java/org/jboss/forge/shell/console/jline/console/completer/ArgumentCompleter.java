@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * A {@link Completer} implementation that invokes a child completer using the appropriate <i>separator</i> argument.
  * This can be used instead of the individual completers having to know about argument parsing semantics.
- *
+ * 
  * @author <a href="mailto:mwp1@cornell.edu">Marc Prud'hommeaux</a>
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
  * @since 2.3
@@ -32,8 +32,8 @@ public class ArgumentCompleter
 
    /**
     * Create a new completer with the specified argument delimiter.
-    *
-    * @param delimiter  The delimiter for parsing arguments
+    * 
+    * @param delimiter The delimiter for parsing arguments
     * @param completers The embedded completers
     */
    public ArgumentCompleter(final ArgumentDelimiter delimiter, final Collection<Completer> completers)
@@ -46,8 +46,8 @@ public class ArgumentCompleter
 
    /**
     * Create a new completer with the specified argument delimiter.
-    *
-    * @param delimiter  The delimiter for parsing arguments
+    * 
+    * @param delimiter The delimiter for parsing arguments
     * @param completers The embedded completers
     */
    public ArgumentCompleter(final ArgumentDelimiter delimiter, final Completer... completers)
@@ -57,7 +57,7 @@ public class ArgumentCompleter
 
    /**
     * Create a new completer with the default {@link WhitespaceArgumentDelimiter}.
-    *
+    * 
     * @param completers The embedded completers
     */
    public ArgumentCompleter(final Completer... completers)
@@ -67,7 +67,7 @@ public class ArgumentCompleter
 
    /**
     * Create a new completer with the default {@link WhitespaceArgumentDelimiter}.
-    *
+    * 
     * @param completers The embedded completers
     */
    public ArgumentCompleter(final List<Completer> completers)
@@ -76,8 +76,7 @@ public class ArgumentCompleter
    }
 
    /**
-    * If true, a completion at argument index N will only succeed
-    * if all the completions from 0-(N-1) also succeed.
+    * If true, a completion at argument index N will only succeed if all the completions from 0-(N-1) also succeed.
     */
    public void setStrict(final boolean strict)
    {
@@ -85,9 +84,9 @@ public class ArgumentCompleter
    }
 
    /**
-    * Returns whether a completion at argument index N will success
-    * if all the completions from arguments 0-(N-1) also succeed.
-    *
+    * Returns whether a completion at argument index N will success if all the completions from arguments 0-(N-1) also
+    * succeed.
+    * 
     * @return True if strict.
     * @since 2.3
     */
@@ -190,7 +189,8 @@ public class ArgumentCompleter
          }
       }
 
-      org.jboss.forge.shell.console.jline.internal.Log.trace("Completing ", buffer, " (pos=", cursor, ") with: ", candidates, ": offset=", pos);
+      org.jboss.forge.shell.console.jline.internal.Log.trace("Completing ", buffer, " (pos=", cursor, ") with: ",
+               candidates, ": offset=", pos);
 
       return pos;
    }
@@ -198,25 +198,25 @@ public class ArgumentCompleter
    /**
     * The {@link ArgumentCompleter.ArgumentDelimiter} allows custom breaking up of a {@link String} into individual
     * arguments in order to dispatch the arguments to the nested {@link Completer}.
-    *
+    * 
     * @author <a href="mailto:mwp1@cornell.edu">Marc Prud'hommeaux</a>
     */
    public static interface ArgumentDelimiter
    {
       /**
        * Break the specified buffer into individual tokens that can be completed on their own.
-       *
+       * 
        * @param buffer The buffer to split
-       * @param pos    The current position of the cursor in the buffer
+       * @param pos The current position of the cursor in the buffer
        * @return The tokens
        */
       ArgumentList delimit(CharSequence buffer, int pos);
 
       /**
        * Returns true if the specified character is a whitespace parameter.
-       *
+       * 
        * @param buffer The complete command buffer
-       * @param pos    The index of the character in the buffer
+       * @param pos The index of the character in the buffer
        * @return True if the character should be a delimiter
        */
       boolean isDelimiter(CharSequence buffer, int pos);
@@ -225,7 +225,7 @@ public class ArgumentCompleter
    /**
     * Abstract implementation of a delimiter that uses the {@link #isDelimiter} method to determine if a particular
     * character should be used as a delimiter.
-    *
+    * 
     * @author <a href="mailto:mwp1@cornell.edu">Marc Prud'hommeaux</a>
     */
    public abstract static class AbstractArgumentDelimiter
@@ -233,9 +233,9 @@ public class ArgumentCompleter
    {
       // TODO: handle argument quoting and escape characters
 
-      private char[] quoteChars = {'\'', '"'};
+      private char[] quoteChars = { '\'', '"' };
 
-      private char[] escapeChars = {'\\'};
+      private char[] escapeChars = { '\\' };
 
       public void setQuoteChars(final char[] chars)
       {
@@ -295,11 +295,11 @@ public class ArgumentCompleter
 
       /**
        * Returns true if the specified character is a whitespace parameter. Check to ensure that the character is not
-       * escaped by any of {@link #getQuoteChars}, and is not escaped by ant of the {@link #getEscapeChars}, and
-       * returns true from {@link #isDelimiterChar}.
-       *
+       * escaped by any of {@link #getQuoteChars}, and is not escaped by ant of the {@link #getEscapeChars}, and returns
+       * true from {@link #isDelimiterChar}.
+       * 
        * @param buffer The complete command buffer
-       * @param pos    The index of the character in the buffer
+       * @param pos The index of the character in the buffer
        * @return True if the character should be a delimiter
        */
       public boolean isDelimiter(final CharSequence buffer, final int pos)
@@ -319,8 +319,7 @@ public class ArgumentCompleter
             return false;
          }
 
-         for (int i = 0; (escapeChars != null) && (i < escapeChars.length);
-              i++)
+         for (int i = 0; (escapeChars != null) && (i < escapeChars.length); i++)
          {
             if (buffer.charAt(pos) == escapeChars[i])
             {
@@ -332,8 +331,8 @@ public class ArgumentCompleter
       }
 
       /**
-       * Returns true if the character at the specified position if a delimiter. This method will only be called if
-       * the character is not enclosed in any of the {@link #getQuoteChars}, and is not escaped by ant of the
+       * Returns true if the character at the specified position if a delimiter. This method will only be called if the
+       * character is not enclosed in any of the {@link #getQuoteChars}, and is not escaped by ant of the
        * {@link #getEscapeChars}. To perform escaping manually, override {@link #isDelimiter} instead.
        */
       public abstract boolean isDelimiterChar(CharSequence buffer, int pos);
@@ -342,15 +341,14 @@ public class ArgumentCompleter
    /**
     * {@link ArgumentCompleter.ArgumentDelimiter} implementation that counts all whitespace (as reported by
     * {@link Character#isWhitespace}) as being a delimiter.
-    *
+    * 
     * @author <a href="mailto:mwp1@cornell.edu">Marc Prud'hommeaux</a>
     */
    public static class WhitespaceArgumentDelimiter
             extends AbstractArgumentDelimiter
    {
       /**
-       * The character is a delimiter if it is whitespace, and the
-       * preceding character is not an escape character.
+       * The character is a delimiter if it is whitespace, and the preceding character is not an escape character.
        */
       @Override
       public boolean isDelimiterChar(final CharSequence buffer, final int pos)
@@ -361,7 +359,7 @@ public class ArgumentCompleter
 
    /**
     * The result of a delimited buffer.
-    *
+    * 
     * @author <a href="mailto:mwp1@cornell.edu">Marc Prud'hommeaux</a>
     */
    public static class ArgumentList
@@ -375,12 +373,13 @@ public class ArgumentCompleter
       private int bufferPosition;
 
       /**
-       * @param arguments           The array of tokens
+       * @param arguments The array of tokens
        * @param cursorArgumentIndex The token index of the cursor
-       * @param argumentPosition    The position of the cursor in the current token
-       * @param bufferPosition      The position of the cursor in the whole buffer
+       * @param argumentPosition The position of the cursor in the current token
+       * @param bufferPosition The position of the cursor in the whole buffer
        */
-      public ArgumentList(final String[] arguments, final int cursorArgumentIndex, final int argumentPosition, final int bufferPosition)
+      public ArgumentList(final String[] arguments, final int cursorArgumentIndex, final int argumentPosition,
+               final int bufferPosition)
       {
          assert arguments != null;
 

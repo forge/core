@@ -12,12 +12,13 @@ import java.util.List;
 
 /**
  * Handler for dealing with candidates for tab-completion.
- *
+ * 
  * @author <a href="mailto:mwp1@cornell.edu">Marc Prud'hommeaux</a>
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
  * @since 2.3
  */
 public interface CompletionHandler
 {
-    boolean complete(org.jboss.forge.shell.console.jline.console.ConsoleReader reader, List<CharSequence> candidates, int position) throws IOException;
+   boolean complete(org.jboss.forge.shell.console.jline.console.ConsoleReader reader, List<CharSequence> candidates,
+            int position) throws IOException;
 }

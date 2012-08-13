@@ -17,20 +17,20 @@ import com.google.inject.Inject;
  */
 public class DefaultProjectLocator implements ProjectLocator
 {
-    @Inject
-    public DefaultProjectLocator()
-    {
-    }
+   @Inject
+   public DefaultProjectLocator()
+   {
+   }
 
-    @Override
-    public Project createProject(final DirectoryResource dir)
-    {
-        return null;
-    }
+   @Override
+   public Project createProject(final DirectoryResource dir)
+   {
+      return null;
+   }
 
-    @Override
-    public boolean containsProject(final DirectoryResource dir)
-    {
-        return false;
-    }
+   @Override
+   public boolean containsProject(final DirectoryResource dir)
+   {
+      return false;
+   }
 }

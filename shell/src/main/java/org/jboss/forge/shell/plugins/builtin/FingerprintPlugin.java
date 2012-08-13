@@ -27,11 +27,10 @@ public class FingerprintPlugin implements Plugin
    public void run(
             @PipeIn final InputStream pipeIn,
             @Option(name = "cipher", help = "hash cipher to use (default: 'SHA-256')",
-                     defaultValue = "SHA-256")
-            String cipher,
+                     defaultValue = "SHA-256") String cipher,
             @Option(description = "FILE ...", defaultValue = "*") Resource<?>[] resources,
             final PipeOut pipeOut
-   ) throws IOException
+            ) throws IOException
    {
 
       cipher = cipher.toUpperCase().trim();
@@ -52,8 +51,9 @@ public class FingerprintPlugin implements Plugin
             StringBuilder names = new StringBuilder();
             for (Resource<?> r : resources)
             {
-               if (r.isFlagSet(ResourceFlag.Node)) continue;
-               
+               if (r.isFlagSet(ResourceFlag.Node))
+                  continue;
+
                names.append(r.getName()).append(" ");
                try
                {
@@ -61,13 +61,15 @@ public class FingerprintPlugin implements Plugin
                }
                finally
                {
-                  if (inputStream != null) inputStream.close();
+                  if (inputStream != null)
+                     inputStream.close();
                }
             }
             name = names.toString().trim();
          }
 
-         if (pipeOut.isPiped()) {
+         if (pipeOut.isPiped())
+         {
             name = "";
          }
 

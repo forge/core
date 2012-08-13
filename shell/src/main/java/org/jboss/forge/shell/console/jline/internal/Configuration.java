@@ -28,100 +28,119 @@ import java.util.Properties;
 
 /**
  * Provides access to configuration values.
- *
+ * 
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
  * @since 2.4
  */
 public final class Configuration
 {
-    public static final String JLINE_RC = ".jline.rc";
+   public static final String JLINE_RC = ".jline.rc";
 
-    private static final Properties userprops;
+   private static final Properties userprops;
 
-    static {
-        Properties props = new Properties();
+   static
+   {
+      Properties props = new Properties();
 
-        File file = new File(getUserHome(), JLINE_RC);
-        if (file.exists() && file.canRead()) {
-            try {
-                InputStream input = new BufferedInputStream(new FileInputStream(file));
-                try {
-                    props.load(input);
-                    Log.debug("Loaded user configuration: ", file);
-                }
-                finally {
-                    input.close();
-                }
+      File file = new File(getUserHome(), JLINE_RC);
+      if (file.exists() && file.canRead())
+      {
+         try
+         {
+            InputStream input = new BufferedInputStream(new FileInputStream(file));
+            try
+            {
+               props.load(input);
+               Log.debug("Loaded user configuration: ", file);
             }
-            catch (IOException e) {
-                Log.warn("Unable to read user configuration: ", file, e);
+            finally
+            {
+               input.close();
             }
-        }
-        else {
-            Log.trace("User configuration file missing or unreadable: ", file);
-        }
+         }
+         catch (IOException e)
+         {
+            Log.warn("Unable to read user configuration: ", file, e);
+         }
+      }
+      else
+      {
+         Log.trace("User configuration file missing or unreadable: ", file);
+      }
 
-        userprops = props;
-    }
+      userprops = props;
+   }
 
-    private static boolean isEmpty(final String value) {
-        return value == null || value.trim().length() == 0;
-    }
+   private static boolean isEmpty(final String value)
+   {
+      return value == null || value.trim().length() == 0;
+   }
 
-    public static String getString(final String name, final String defaultValue) {
-        assert name != null;
+   public static String getString(final String name, final String defaultValue)
+   {
+      assert name != null;
 
-        String value;
+      String value;
 
-        // Check sysprops first, it always wins
-        value = System.getProperty(name);
+      // Check sysprops first, it always wins
+      value = System.getProperty(name);
 
-        if (isEmpty(value)) {
-            // Next try userprops
-            value = userprops.getProperty(name);
+      if (isEmpty(value))
+      {
+         // Next try userprops
+         value = userprops.getProperty(name);
 
-            if (isEmpty(value)) {
-                // else use the default
-                value = defaultValue;
-            }
-        }
+         if (isEmpty(value))
+         {
+            // else use the default
+            value = defaultValue;
+         }
+      }
 
-        return value;
-    }
+      return value;
+   }
 
-    public static String getString(final String name) {
-        return getString(name, null);
-    }
+   public static String getString(final String name)
+   {
+      return getString(name, null);
+   }
 
-    public static Boolean getBoolean(final String name, final Boolean defaultValue) {
-        String value = getString(name);
-        if (isEmpty(value)) {
-            return defaultValue;
-        }
-        return Boolean.valueOf(value);
-    }
+   public static Boolean getBoolean(final String name, final Boolean defaultValue)
+   {
+      String value = getString(name);
+      if (isEmpty(value))
+      {
+         return defaultValue;
+      }
+      return Boolean.valueOf(value);
+   }
 
-    public static Boolean getBoolean(final String name) {
-        return getBoolean(name, null);
-    }
+   public static Boolean getBoolean(final String name)
+   {
+      return getBoolean(name, null);
+   }
 
-    //
-    // System property helpers
-    //
-    
-    public static File getUserHome() {
-        return new File(System.getProperty("user.home"));
-    }
+   //
+   // System property helpers
+   //
 
-    public static String getOsName() {
-        return System.getProperty("os.name").toLowerCase();
-    }
+   public static File getUserHome()
+   {
+      return new File(System.getProperty("user.home"));
+   }
 
-    public static String getFileEncoding() {
-        return System.getProperty("file.encoding");
-    }
+   public static String getOsName()
+   {
+      return System.getProperty("os.name").toLowerCase();
+   }
 
-    public static String getInputEncoding() {
-        return System.getProperty("input.encoding", "UTF-8");
-    }
+   public static String getFileEncoding()
+   {
+      return System.getProperty("file.encoding");
+   }
+
+   public static String getInputEncoding()
+   {
+      return System.getProperty("input.encoding", "UTF-8");
+   }
 }

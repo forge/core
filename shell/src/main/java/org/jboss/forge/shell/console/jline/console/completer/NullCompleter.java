@@ -23,17 +23,18 @@ import java.util.List;
 
 /**
  * Null completer.
- *
+ * 
  * @author <a href="mailto:mwp1@cornell.edu">Marc Prud'hommeaux</a>
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
  * @since 2.3
  */
 public final class NullCompleter
-    implements Completer
+         implements Completer
 {
-    public static final NullCompleter INSTANCE = new NullCompleter();
+   public static final NullCompleter INSTANCE = new NullCompleter();
 
-    public int complete(final String buffer, final int cursor, final List<CharSequence> candidates) {
-        return -1;
-    }
+   public int complete(final String buffer, final int cursor, final List<CharSequence> candidates)
+   {
+      return -1;
+   }
 }

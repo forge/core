@@ -15,7 +15,7 @@ import java.nio.ByteBuffer;
 
 /**
  * A buffer to wrap JLine.
- *
+ * 
  * @author Mike Brock
  */
 public class JLineScreenBuffer implements BufferManager
@@ -150,7 +150,7 @@ public class JLineScreenBuffer implements BufferManager
 
    /**
     * For data that exceeds the maximum size of the buffer, write out the data in segments.
-    *
+    * 
     * @param b
     * @param offset
     * @param length

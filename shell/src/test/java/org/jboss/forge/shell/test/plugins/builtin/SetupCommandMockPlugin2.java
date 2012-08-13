@@ -23,20 +23,25 @@ import org.jboss.forge.shell.plugins.SetupCommand;
  */
 @Alias("testplugin2")
 @RequiresFacet({ MockFacet.class })
-public class SetupCommandMockPlugin2 implements Plugin {
-	@Inject
-	private Event<InstallFacets> install;
+public class SetupCommandMockPlugin2 implements Plugin
+{
+   @Inject
+   private Event<InstallFacets> install;
 
-	@SetupCommand
-	public void setup() {
-		install.fire(new InstallFacets(MockFacet2.class));
-	}
+   @SetupCommand
+   public void setup()
+   {
+      install.fire(new InstallFacets(MockFacet2.class));
+   }
 
-	@Command
-	public void other() {
+   @Command
+   public void other()
+   {
 
-	}
+   }
 
-	@DefaultCommand
-	public void deflt() {}
+   @DefaultCommand
+   public void deflt()
+   {
+   }
 }

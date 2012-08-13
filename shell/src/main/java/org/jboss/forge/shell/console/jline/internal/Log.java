@@ -23,88 +23,105 @@ import java.io.PrintStream;
 
 /**
  * Internal logger.
- *
+ * 
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
  * @since 2.0
  */
 public final class Log
 {
-    ///CLOVER:OFF
+   // /CLOVER:OFF
 
-    public static enum Level
-    {
-        TRACE,
-        DEBUG,
-        INFO,
-        WARN,
-        ERROR
-    }
+   public static enum Level
+   {
+      TRACE,
+      DEBUG,
+      INFO,
+      WARN,
+      ERROR
+   }
 
-    public static final boolean DEBUG = Boolean.getBoolean(Log.class.getName() + ".debug");
+   public static final boolean DEBUG = Boolean.getBoolean(Log.class.getName() + ".debug");
 
-    public static final boolean TRACE = Boolean.getBoolean(Log.class.getName() + ".trace");
+   public static final boolean TRACE = Boolean.getBoolean(Log.class.getName() + ".trace");
 
-    private static PrintStream output = System.err;
+   private static PrintStream output = System.err;
 
-    public static PrintStream getOutput() {
-        return output;
-    }
+   public static PrintStream getOutput()
+   {
+      return output;
+   }
 
-    public static void setOutput(final PrintStream out) {
-        assert out != null;
-        output = out;
-    }
+   public static void setOutput(final PrintStream out)
+   {
+      assert out != null;
+      output = out;
+   }
 
-    private static void print(final Object message) {
-        if (message instanceof Throwable) {
-            ((Throwable) message).printStackTrace();
-        }
-        else if (message.getClass().isArray()) {
-            Object[] array = (Object[]) message;
+   private static void print(final Object message)
+   {
+      if (message instanceof Throwable)
+      {
+         ((Throwable) message).printStackTrace();
+      }
+      else if (message.getClass().isArray())
+      {
+         Object[] array = (Object[]) message;
 
-            for (int i = 0; i < array.length; i++) {
-                output.print(array[i]);
-                if (i + 1 < array.length) {
-                    output.print(",");
-                }
+         for (int i = 0; i < array.length; i++)
+         {
+            output.print(array[i]);
+            if (i + 1 < array.length)
+            {
+               output.print(",");
             }
-        }
-        else {
-            output.print(message);
-        }
-    }
+         }
+      }
+      else
+      {
+         output.print(message);
+      }
+   }
 
-    private static void log(final Level level, final Object[] messages) {
-        //noinspection SynchronizeOnNonFinalField
-        synchronized (output) {
-            output.format("[%s] ", level);
+   private static void log(final Level level, final Object[] messages)
+   {
+      // noinspection SynchronizeOnNonFinalField
+      synchronized (output)
+      {
+         output.format("[%s] ", level);
 
-            for (Object message : messages) {
-                print(message);
-            }
+         for (Object message : messages)
+         {
+            print(message);
+         }
 
-            output.println();
-            output.flush();
-        }
-    }
+         output.println();
+         output.flush();
+      }
+   }
 
-    public static void trace(final Object... messages) {
-        if (TRACE) {
-            log(Level.TRACE, messages);
-        }
-    }
+   public static void trace(final Object... messages)
+   {
+      if (TRACE)
+      {
+         log(Level.TRACE, messages);
+      }
+   }
 
-    public static void debug(final Object... messages) {
-        if (TRACE || DEBUG) {
-            log(Level.DEBUG, messages);
-        }
-    }
+   public static void debug(final Object... messages)
+   {
+      if (TRACE || DEBUG)
+      {
+         log(Level.DEBUG, messages);
+      }
+   }
 
-    public static void warn(final Object... messages) {
-        log(Level.WARN, messages);
-    }
+   public static void warn(final Object... messages)
+   {
+      log(Level.WARN, messages);
+   }
 
-    public static void error(final Object... messages) {
-        log(Level.ERROR, messages);
-    }
+   public static void error(final Object... messages)
+   {
+      log(Level.ERROR, messages);
+   }
 }

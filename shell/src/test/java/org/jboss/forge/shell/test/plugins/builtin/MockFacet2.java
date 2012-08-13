@@ -15,22 +15,26 @@ import org.jboss.forge.shell.plugins.Alias;
  * 
  */
 @Alias("mockfacet2")
-public class MockFacet2 extends BaseFacet {
+public class MockFacet2 extends BaseFacet
+{
 
-	@Override
-	public boolean install() {
-		FileResource<?> child = (FileResource<?>) project.getProjectRoot().getChild("mockFacet2.installed");
-		
-		return child.createNewFile();
-	}
+   @Override
+   public boolean install()
+   {
+      FileResource<?> child = (FileResource<?>) project.getProjectRoot().getChild("mockFacet2.installed");
 
-	@Override
-	public boolean isInstalled() {
-		return project.getProjectRoot().getChild("mockFacet2.installed").exists();
-	}
+      return child.createNewFile();
+   }
 
-	@Override
-	public boolean uninstall() {
-		return project.getProjectRoot().getChild("mockFacet2.installed").delete();
-	}
+   @Override
+   public boolean isInstalled()
+   {
+      return project.getProjectRoot().getChild("mockFacet2.installed").exists();
+   }
+
+   @Override
+   public boolean uninstall()
+   {
+      return project.getProjectRoot().getChild("mockFacet2.installed").delete();
+   }
 }

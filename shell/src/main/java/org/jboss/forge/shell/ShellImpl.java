@@ -359,8 +359,8 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          this.registerKeyListener(ignoreEOF);
 
       /*
-       * Do this last so that we don't fire off plugin events before the shell has booted
-       * (Causing all kinds of wonderful issues)
+       * Do this last so that we don't fire off plugin events before the shell has booted (Causing all kinds of
+       * wonderful issues)
        */
       projectContext.setCurrentResource(resourceFactory.getResourceFrom(event.getWorkingDirectory()));
       environment.setProperty("CWD", getCurrentDirectory().getFullyQualifiedName());
@@ -396,7 +396,8 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
             historyOutstream.flush();
          }
          catch (IOException e)
-         {}
+         {
+         }
       }
    }
 
@@ -441,7 +442,8 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
                historyOutstream.close();
             }
             catch (Exception e)
-            {}
+            {
+            }
          }
       });
    }
@@ -504,7 +506,8 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    private void initReaderAndStreams() throws IOException
    {
       boolean noInitMode = isNoInitMode();
-      if ((_redirectedStream == null) && noInitMode) {
+      if ((_redirectedStream == null) && noInitMode)
+      {
          return;
       }
 

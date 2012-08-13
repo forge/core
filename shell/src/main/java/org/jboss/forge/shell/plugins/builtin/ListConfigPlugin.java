@@ -52,7 +52,8 @@ public class ListConfigPlugin implements Plugin
             writer.print(ShellColor.BOLD, key.toString());
             writer.print("=");
 
-            for (ConfigurationScope scope : ConfigurationScope.values()) {
+            for (ConfigurationScope scope : ConfigurationScope.values())
+            {
                Configuration scoped = config.getScopedConfiguration(scope);
                if (scoped != null)
                {

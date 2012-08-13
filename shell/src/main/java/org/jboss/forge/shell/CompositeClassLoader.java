@@ -24,7 +24,8 @@ public class CompositeClassLoader extends ConcurrentClassLoader
             .synchronizedList(new ArrayList<ConcurrentClassLoader>());
 
    public CompositeClassLoader()
-   {}
+   {
+   }
 
    /**
     * Add a loader to the internal List of loaders. Loaders will be used in the reverse order from which they were

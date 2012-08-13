@@ -22,9 +22,9 @@ import org.junit.Test;
 
 /**
  * Test for Copy Plugin
- *
+ * 
  * @author tremes@redhat.com
- *
+ * 
  */
 
 public class CopyPluginTest extends AbstractShellTest

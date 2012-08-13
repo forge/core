@@ -161,7 +161,8 @@ public class PluginRegistryImpl implements PluginRegistry
             command.setMethod(original.getMethod());
             command.setName(original.getName());
             command.setParent(temp);
-            for (OptionMetadata option : original.getOptions()) {
+            for (OptionMetadata option : original.getOptions())
+            {
                command.addOption(option);
             }
 

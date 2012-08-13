@@ -13,34 +13,34 @@ import java.util.ResourceBundle;
 
 /**
  * Representation of the input terminal for a platform.
- *
+ * 
  * @author <a href="mailto:mwp1@cornell.edu">Marc Prud'hommeaux</a>
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
  * @since 2.0
  */
 public interface Terminal
 {
-    void init() throws Exception;
+   void init() throws Exception;
 
-    void restore() throws Exception;
+   void restore() throws Exception;
 
-    void reset() throws Exception;
+   void reset() throws Exception;
 
-    boolean isSupported();
+   boolean isSupported();
 
-    int getWidth();
+   int getWidth();
 
-    int getHeight();
+   int getHeight();
 
-    boolean isAnsiSupported();
+   boolean isAnsiSupported();
 
-    boolean isEchoEnabled();
+   boolean isEchoEnabled();
 
-    void setEchoEnabled(boolean enabled);
+   void setEchoEnabled(boolean enabled);
 
-    int readCharacter(InputStream in) throws IOException;
+   int readCharacter(InputStream in) throws IOException;
 
-    int readVirtualKey(InputStream in) throws IOException;
+   int readVirtualKey(InputStream in) throws IOException;
 
-    ResourceBundle getDefaultBindings();
+   ResourceBundle getDefaultBindings();
 }

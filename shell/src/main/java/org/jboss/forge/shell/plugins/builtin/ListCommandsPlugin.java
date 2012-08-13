@@ -156,7 +156,7 @@ public class ListCommandsPlugin implements Plugin
 
    @SuppressWarnings("rawtypes")
    private static String render(final boolean showAll, final Class<? extends Resource> currResource,
-                                final CommandMetadata cmdMeta)
+            final CommandMetadata cmdMeta)
    {
       boolean contextual = cmdMeta.usableWithResource(currResource);
 

@@ -21,7 +21,7 @@ import org.jboss.forge.shell.plugins.Topic;
 
 /**
  * An aliasing wrapper for {@link MorePlugin}
- *
+ * 
  * @author Mike Brock .
  */
 @Alias("less")
@@ -38,9 +38,9 @@ public class LessPlugin implements Plugin
 
    @DefaultCommand
    public void run(@PipeIn InputStream pipeIn,
-                   final Resource<?> file,
-                   final PipeOut pipeOut)
-         throws IOException
+            final Resource<?> file,
+            final PipeOut pipeOut)
+            throws IOException
 
    {
       morePlugin.run(pipeIn, file, true, pipeOut);

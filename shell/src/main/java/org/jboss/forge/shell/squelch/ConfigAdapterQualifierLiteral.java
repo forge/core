@@ -12,9 +12,9 @@ import org.jboss.forge.shell.env.ConfigAdapterQualifier;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- *
+ * 
  */
-public class ConfigAdapterQualifierLiteral extends AnnotationLiteral<ConfigAdapterQualifier> 
+public class ConfigAdapterQualifierLiteral extends AnnotationLiteral<ConfigAdapterQualifier>
 {
-    private static final long serialVersionUID = 6887822398324205947L;
+   private static final long serialVersionUID = 6887822398324205947L;
 }

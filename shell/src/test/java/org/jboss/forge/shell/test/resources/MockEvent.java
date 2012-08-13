@@ -8,7 +8,7 @@ package org.jboss.forge.shell.test.resources;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- *
+ * 
  */
 public class MockEvent
 {

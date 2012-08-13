@@ -11,24 +11,24 @@ import java.io.IOException;
 
 /**
  * Persistent {@link History}.
- *
+ * 
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
  * @since 2.3
  */
 public interface PersistentHistory
-    extends History
+         extends History
 {
-    /**
-     * Flush all items to persistent storage.
-     *
-     * @throws IOException  Flush failed
-     */
-    void flush() throws IOException;
+   /**
+    * Flush all items to persistent storage.
+    * 
+    * @throws IOException Flush failed
+    */
+   void flush() throws IOException;
 
-    /**
-     * Purge persistent storage and {@link #clear}.
-     *
-     * @throws IOException  Purge failed
-     */
-    void purge() throws IOException;
+   /**
+    * Purge persistent storage and {@link #clear}.
+    * 
+    * @throws IOException Purge failed
+    */
+   void purge() throws IOException;
 }

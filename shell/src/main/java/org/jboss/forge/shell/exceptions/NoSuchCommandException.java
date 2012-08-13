@@ -9,9 +9,7 @@ package org.jboss.forge.shell.exceptions;
 import org.jboss.forge.shell.command.CommandMetadata;
 
 /**
- * User: christopherbrock
- * Date: 1-Sep-2010
- * Time: 7:07:39 PM
+ * User: christopherbrock Date: 1-Sep-2010 Time: 7:07:39 PM
  */
 public class NoSuchCommandException extends CommandExecutionException
 {

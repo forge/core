@@ -30,7 +30,7 @@ public class JavaExecutionPlugin implements Plugin
    @DefaultCommand
    public void executeJavaClass(
             @Option(name = "class", type = PromptType.JAVA_CLASS, required = true) final JavaResource classToExecute,
-                                @Option(name = "arguments") final String arguments) throws Exception
+            @Option(name = "arguments") final String arguments) throws Exception
    {
       String qualifiedName = classToExecute.getJavaSource().getQualifiedName();
       JavaExecutionFacet facet = project.getFacet(JavaExecutionFacet.class);

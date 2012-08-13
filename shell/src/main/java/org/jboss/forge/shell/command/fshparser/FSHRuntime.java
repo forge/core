@@ -33,8 +33,8 @@ public class FSHRuntime
 
    @Inject
    public FSHRuntime(Shell shell, PluginRegistry pluginRegistry,
-                     Instance<Execution> executionInstance,
-                     ExecutionParser executionParser)
+            Instance<Execution> executionInstance,
+            ExecutionParser executionParser)
    {
       this.shell = shell;
       this.pluginRegistry = pluginRegistry;

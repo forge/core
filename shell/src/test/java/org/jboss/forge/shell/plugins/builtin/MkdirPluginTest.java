@@ -52,5 +52,4 @@ public class MkdirPluginTest extends AbstractShellTest
       assertTrue(getProject().getProjectRoot().getChild("folderTwo/subFolder").exists());
    }
 
-
 }

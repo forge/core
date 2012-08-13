@@ -27,82 +27,93 @@ import java.util.List;
 
 /**
  * Completer which contains multiple completers and aggregates them together.
- *
+ * 
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
  * @since 2.3
  */
 public class AggregateCompleter
-    implements Completer
+         implements Completer
 {
-    private final List<Completer> completers = new ArrayList<Completer>();
+   private final List<Completer> completers = new ArrayList<Completer>();
 
-    public AggregateCompleter() {
-        // empty
-    }
+   public AggregateCompleter()
+   {
+      // empty
+   }
 
-    public AggregateCompleter(final Collection<Completer> completers) {
-        assert completers != null;
-        this.completers.addAll(completers);
-    }
+   public AggregateCompleter(final Collection<Completer> completers)
+   {
+      assert completers != null;
+      this.completers.addAll(completers);
+   }
 
-    public AggregateCompleter(final Completer... completers) {
-        this(Arrays.asList(completers));
-    }
+   public AggregateCompleter(final Completer... completers)
+   {
+      this(Arrays.asList(completers));
+   }
 
-    public Collection<Completer> getCompleters() {
-        return completers;
-    }
+   public Collection<Completer> getCompleters()
+   {
+      return completers;
+   }
 
-    public int complete(final String buffer, final int cursor, final List<CharSequence> candidates) {
-        // buffer could be null
-        assert candidates != null;
+   public int complete(final String buffer, final int cursor, final List<CharSequence> candidates)
+   {
+      // buffer could be null
+      assert candidates != null;
 
-        List<Completion> completions = new ArrayList<Completion>(completers.size());
+      List<Completion> completions = new ArrayList<Completion>(completers.size());
 
-        // Run each completer, saving its completion results
-        int max = -1;
-        for (Completer completer : completers) {
-            Completion completion = new Completion(candidates);
-            completion.complete(completer, buffer, cursor);
+      // Run each completer, saving its completion results
+      int max = -1;
+      for (Completer completer : completers)
+      {
+         Completion completion = new Completion(candidates);
+         completion.complete(completer, buffer, cursor);
 
-            // Compute the max cursor position
-            max = Math.max(max, completion.cursor);
+         // Compute the max cursor position
+         max = Math.max(max, completion.cursor);
 
-            completions.add(completion);
-        }
+         completions.add(completion);
+      }
 
-        // Append candidates from completions which have the same cursor position as max
-        for (Completion completion : completions) {
-            if (completion.cursor == max) {
-                candidates.addAll(completion.candidates);
-            }
-        }
+      // Append candidates from completions which have the same cursor position as max
+      for (Completion completion : completions)
+      {
+         if (completion.cursor == max)
+         {
+            candidates.addAll(completion.candidates);
+         }
+      }
 
-        return max;
-    }
+      return max;
+   }
 
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + "{" +
-            "completers=" + completers +
-            '}';
-    }
+   @Override
+   public String toString()
+   {
+      return getClass().getSimpleName() + "{" +
+               "completers=" + completers +
+               '}';
+   }
 
-    private class Completion
-    {
-        public final List<CharSequence> candidates;
+   private class Completion
+   {
+      public final List<CharSequence> candidates;
 
-        public int cursor;
+      public int cursor;
 
-        public Completion(final List<CharSequence> candidates) {
-            assert candidates != null;
-            this.candidates = new LinkedList<CharSequence>(candidates);
-        }
+      public Completion(final List<CharSequence> candidates)
+      {
+         assert candidates != null;
+         this.candidates = new LinkedList<CharSequence>(candidates);
+      }
 
-        public void complete(final Completer completer, final String buffer, final int cursor) {
-            assert completer != null;
+      public void complete(final Completer completer, final String buffer, final int cursor)
+      {
+         assert completer != null;
 
-            this.cursor = completer.complete(buffer, cursor, candidates);
-        }
-    }
+         this.cursor = completer.complete(buffer, cursor, candidates);
+      }
+   }
 }

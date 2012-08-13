@@ -6,7 +6,6 @@
  */
 package org.jboss.forge.shell.events;
 
-
 /**
  * An event representing the initialization of the project in the current working directory.
  * 

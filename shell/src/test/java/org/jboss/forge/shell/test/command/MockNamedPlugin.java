@@ -50,7 +50,7 @@ public class MockNamedPlugin implements Plugin
 
    @Command
    public void multiOption(@Option(name = "named") final String option,
-                           @Option(name = "foo") final boolean foo)
+            @Option(name = "foo") final boolean foo)
    {
 
    }

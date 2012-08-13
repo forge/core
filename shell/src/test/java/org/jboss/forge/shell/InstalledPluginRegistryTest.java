@@ -24,148 +24,148 @@ import org.junit.Test;
  */
 public class InstalledPluginRegistryTest
 {
-    private List<PluginEntry> installed;
+   private List<PluginEntry> installed;
 
-    @Before
-    public void before()
-    {
-        this.installed = InstalledPluginRegistry.list();
-        for (PluginEntry p : installed)
-        {
-            InstalledPluginRegistry.remove(p);
-        }
-        Assert.assertTrue(InstalledPluginRegistry.list().isEmpty());
-    }
+   @Before
+   public void before()
+   {
+      this.installed = InstalledPluginRegistry.list();
+      for (PluginEntry p : installed)
+      {
+         InstalledPluginRegistry.remove(p);
+      }
+      Assert.assertTrue(InstalledPluginRegistry.list().isEmpty());
+   }
 
-    @After
-    public void after()
-    {
-        List<PluginEntry> current = InstalledPluginRegistry.list();
-        for (PluginEntry p : current)
-        {
-            InstalledPluginRegistry.remove(p);
-        }
-        for (PluginEntry p : installed)
-        {
-            InstalledPluginRegistry.install(p.getName(), p.getApiVersion(), p.getSlot());
-        }
-    }
+   @After
+   public void after()
+   {
+      List<PluginEntry> current = InstalledPluginRegistry.list();
+      for (PluginEntry p : current)
+      {
+         InstalledPluginRegistry.remove(p);
+      }
+      for (PluginEntry p : installed)
+      {
+         InstalledPluginRegistry.install(p.getName(), p.getApiVersion(), p.getSlot());
+      }
+   }
 
-    /**
-     * Test method for {@link org.jboss.forge.shell.InstalledPluginRegistry#list()}.
-     */
-    @Test
-    public void testGetInstalledPlugins()
-    {
-        List<PluginEntry> originals = InstalledPluginRegistry.list();
-        assertFalse(InstalledPluginRegistry.has(new PluginEntry("test.test", "1.0.0-SNAPSHOT", "moo")));
-        PluginEntry installed = InstalledPluginRegistry.install("test.test", "1.0.0-SNAPSHOT", "moo");
-        assertTrue(InstalledPluginRegistry.has(installed));
-        List<PluginEntry> plugins = InstalledPluginRegistry.list();
+   /**
+    * Test method for {@link org.jboss.forge.shell.InstalledPluginRegistry#list()}.
+    */
+   @Test
+   public void testGetInstalledPlugins()
+   {
+      List<PluginEntry> originals = InstalledPluginRegistry.list();
+      assertFalse(InstalledPluginRegistry.has(new PluginEntry("test.test", "1.0.0-SNAPSHOT", "moo")));
+      PluginEntry installed = InstalledPluginRegistry.install("test.test", "1.0.0-SNAPSHOT", "moo");
+      assertTrue(InstalledPluginRegistry.has(installed));
+      List<PluginEntry> plugins = InstalledPluginRegistry.list();
 
-        boolean found = false;
-        for (PluginEntry plugin : plugins)
-        {
-            if ("test.test:1.0.0-SNAPSHOT:moo".equals(plugin.toCoordinates()))
-            {
-                InstalledPluginRegistry.remove(plugin);
-                assertFalse(InstalledPluginRegistry.has(plugin));
-                found = true;
-            }
-        }
-        assertTrue(found);
-
-        assertSame(originals.size(), InstalledPluginRegistry.list().size());
-        for (PluginEntry plugin : originals)
-        {
-            assertTrue(InstalledPluginRegistry.has(plugin));
+      boolean found = false;
+      for (PluginEntry plugin : plugins)
+      {
+         if ("test.test:1.0.0-SNAPSHOT:moo".equals(plugin.toCoordinates()))
+         {
             InstalledPluginRegistry.remove(plugin);
             assertFalse(InstalledPluginRegistry.has(plugin));
-        }
-    }
+            found = true;
+         }
+      }
+      assertTrue(found);
 
-    /**
-     * Test method for {@link org.jboss.forge.shell.InstalledPluginRegistry#list()}.
-     */
-    @Test
-    public void testAddNewVersion()
-    {
-        List<PluginEntry> originals = InstalledPluginRegistry.list();
-        InstalledPluginRegistry.install("test.test", "1.0.0-SNAPSHOT", "moo");
-        InstalledPluginRegistry.install("test.test", "1.0.0-SNAPSHOT", "foo");
-        List<PluginEntry> plugins = InstalledPluginRegistry.list();
+      assertSame(originals.size(), InstalledPluginRegistry.list().size());
+      for (PluginEntry plugin : originals)
+      {
+         assertTrue(InstalledPluginRegistry.has(plugin));
+         InstalledPluginRegistry.remove(plugin);
+         assertFalse(InstalledPluginRegistry.has(plugin));
+      }
+   }
 
-        boolean found = false;
-        for (PluginEntry plugin : plugins)
-        {
-            if (plugin.getName().equals("test.test"))
-            {
-                InstalledPluginRegistry.remove(plugin);
-                assertFalse(InstalledPluginRegistry.has(plugin));
-                found = true;
-            }
-        }
-        assertTrue(found);
+   /**
+    * Test method for {@link org.jboss.forge.shell.InstalledPluginRegistry#list()}.
+    */
+   @Test
+   public void testAddNewVersion()
+   {
+      List<PluginEntry> originals = InstalledPluginRegistry.list();
+      InstalledPluginRegistry.install("test.test", "1.0.0-SNAPSHOT", "moo");
+      InstalledPluginRegistry.install("test.test", "1.0.0-SNAPSHOT", "foo");
+      List<PluginEntry> plugins = InstalledPluginRegistry.list();
 
-        assertSame(originals.size(), InstalledPluginRegistry.list().size());
-        for (PluginEntry plugin : originals)
-        {
-            assertTrue(InstalledPluginRegistry.has(plugin));
+      boolean found = false;
+      for (PluginEntry plugin : plugins)
+      {
+         if (plugin.getName().equals("test.test"))
+         {
             InstalledPluginRegistry.remove(plugin);
             assertFalse(InstalledPluginRegistry.has(plugin));
-        }
-    }
+            found = true;
+         }
+      }
+      assertTrue(found);
 
-    @Test
-    public void testMultipleVersions() throws Exception
-    {
-        PluginEntry one = InstalledPluginRegistry.install("foo", "1", "s1");
-        PluginEntry two = InstalledPluginRegistry.install("foo", "2", "s2");
+      assertSame(originals.size(), InstalledPluginRegistry.list().size());
+      for (PluginEntry plugin : originals)
+      {
+         assertTrue(InstalledPluginRegistry.has(plugin));
+         InstalledPluginRegistry.remove(plugin);
+         assertFalse(InstalledPluginRegistry.has(plugin));
+      }
+   }
 
-        assertFalse(InstalledPluginRegistry.has(one));
-        assertTrue(InstalledPluginRegistry.has(two));
+   @Test
+   public void testMultipleVersions() throws Exception
+   {
+      PluginEntry one = InstalledPluginRegistry.install("foo", "1", "s1");
+      PluginEntry two = InstalledPluginRegistry.install("foo", "2", "s2");
 
-        InstalledPluginRegistry.remove(one);
-        InstalledPluginRegistry.remove(two);
+      assertFalse(InstalledPluginRegistry.has(one));
+      assertTrue(InstalledPluginRegistry.has(two));
 
-        assertFalse(InstalledPluginRegistry.has(one));
-        assertFalse(InstalledPluginRegistry.has(two));
-    }
+      InstalledPluginRegistry.remove(one);
+      InstalledPluginRegistry.remove(two);
 
-    @Test(expected = IllegalStateException.class)
-    public void testMinorVersionException() throws Exception
-    {
-        PluginEntry entry = PluginEntry.fromCoordinates("com.example.plugin:1.0.0-SNAPSHOT:main");
-        Assert.assertFalse(InstalledPluginRegistry.isApiCompatible(null, entry));
-    }
+      assertFalse(InstalledPluginRegistry.has(one));
+      assertFalse(InstalledPluginRegistry.has(two));
+   }
 
-    @Test(expected = IllegalStateException.class)
-    public void testMinorVersionException2() throws Exception
-    {
-        Assert.assertFalse(InstalledPluginRegistry.isApiCompatible("", (PluginEntry)null));
-    }
+   @Test(expected = IllegalStateException.class)
+   public void testMinorVersionException() throws Exception
+   {
+      PluginEntry entry = PluginEntry.fromCoordinates("com.example.plugin:1.0.0-SNAPSHOT:main");
+      Assert.assertFalse(InstalledPluginRegistry.isApiCompatible(null, entry));
+   }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testMinorVersionException3() throws Exception
-    {
-        PluginEntry entry = PluginEntry.fromCoordinates("com.example.plugin::main");
-        Assert.assertFalse(InstalledPluginRegistry.isApiCompatible("", entry));
-    }
+   @Test(expected = IllegalStateException.class)
+   public void testMinorVersionException2() throws Exception
+   {
+      Assert.assertFalse(InstalledPluginRegistry.isApiCompatible("", (PluginEntry) null));
+   }
 
-    @Test
-    public void testMinorVersionCompatible() throws Exception
-    {
-        PluginEntry entry = PluginEntry.fromCoordinates("com.example.plugin:1.0.0-SNAPSHOT:main");
-        Assert.assertTrue(InstalledPluginRegistry.isApiCompatible("1.0.1.Final", entry));
-        Assert.assertTrue(InstalledPluginRegistry.isApiCompatible("1.0.2.Final", entry));
-        Assert.assertTrue(InstalledPluginRegistry.isApiCompatible("1.0.2000.Final", entry));
-        Assert.assertTrue(InstalledPluginRegistry.isApiCompatible("1.0.2-SNAPSHOT", entry));
-        Assert.assertTrue(InstalledPluginRegistry.isApiCompatible("1.0.1000-SNAPSHOT", entry));
-        Assert.assertTrue(InstalledPluginRegistry.isApiCompatible("1.0.1000-adsfasfsd", entry));
-        Assert.assertFalse(InstalledPluginRegistry.isApiCompatible("1.1.0.Final", entry));
-        Assert.assertFalse(InstalledPluginRegistry.isApiCompatible("2.0.0.Final", entry));
-        Assert.assertFalse(InstalledPluginRegistry.isApiCompatible("s1.0.0.Final", entry));
-        Assert.assertFalse(InstalledPluginRegistry.isApiCompatible("", entry));
-    }
+   @Test(expected = IllegalArgumentException.class)
+   public void testMinorVersionException3() throws Exception
+   {
+      PluginEntry entry = PluginEntry.fromCoordinates("com.example.plugin::main");
+      Assert.assertFalse(InstalledPluginRegistry.isApiCompatible("", entry));
+   }
+
+   @Test
+   public void testMinorVersionCompatible() throws Exception
+   {
+      PluginEntry entry = PluginEntry.fromCoordinates("com.example.plugin:1.0.0-SNAPSHOT:main");
+      Assert.assertTrue(InstalledPluginRegistry.isApiCompatible("1.0.1.Final", entry));
+      Assert.assertTrue(InstalledPluginRegistry.isApiCompatible("1.0.2.Final", entry));
+      Assert.assertTrue(InstalledPluginRegistry.isApiCompatible("1.0.2000.Final", entry));
+      Assert.assertTrue(InstalledPluginRegistry.isApiCompatible("1.0.2-SNAPSHOT", entry));
+      Assert.assertTrue(InstalledPluginRegistry.isApiCompatible("1.0.1000-SNAPSHOT", entry));
+      Assert.assertTrue(InstalledPluginRegistry.isApiCompatible("1.0.1000-adsfasfsd", entry));
+      Assert.assertFalse(InstalledPluginRegistry.isApiCompatible("1.1.0.Final", entry));
+      Assert.assertFalse(InstalledPluginRegistry.isApiCompatible("2.0.0.Final", entry));
+      Assert.assertFalse(InstalledPluginRegistry.isApiCompatible("s1.0.0.Final", entry));
+      Assert.assertFalse(InstalledPluginRegistry.isApiCompatible("", entry));
+   }
 
 }

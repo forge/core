@@ -24,31 +24,36 @@ import java.io.OutputStream;
 
 /**
  * ANSI-supported {@link WindowsTerminal}.
- *
+ * 
  * @since 2.0
  */
 public class AnsiWindowsTerminal
-    extends WindowsTerminal
+         extends WindowsTerminal
 {
-    private final boolean ansiSupported = detectAnsiSupport();
+   private final boolean ansiSupported = detectAnsiSupport();
 
-    private static boolean detectAnsiSupport() {
-        OutputStream out = AnsiConsole.wrapOutputStream(new ByteArrayOutputStream());
-        try {
-            out.close();
-        }
-        catch (Exception e) {
-            // ignore;
-        }
-        return out instanceof WindowsAnsiOutputStream;
-    }
+   private static boolean detectAnsiSupport()
+   {
+      OutputStream out = AnsiConsole.wrapOutputStream(new ByteArrayOutputStream());
+      try
+      {
+         out.close();
+      }
+      catch (Exception e)
+      {
+         // ignore;
+      }
+      return out instanceof WindowsAnsiOutputStream;
+   }
 
-    public AnsiWindowsTerminal() throws Exception {
-        super();
-    }
+   public AnsiWindowsTerminal() throws Exception
+   {
+      super();
+   }
 
-    @Override
-    public boolean isAnsiSupported() {
-        return ansiSupported;
-    }
+   @Override
+   public boolean isAnsiSupported()
+   {
+      return ansiSupported;
+   }
 }

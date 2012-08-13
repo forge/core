@@ -42,7 +42,7 @@ import org.jboss.forge.shell.util.GeneralUtils;
 /**
  * Lists directory contents for filesystem based directories. This is a simplified version of the UNIX 'ls' command and
  * currently supports the - and -a flags, as in unix.
- *
+ * 
  * @author Mike Brock
  */
 @Alias("ls")
@@ -104,7 +104,7 @@ public class LsPlugin implements Plugin
          {
             if (resource.exists())
             {
-               childResources = Collections.<Resource<?>>singletonList(resource);
+               childResources = Collections.<Resource<?>> singletonList(resource);
             }
             else
             {
@@ -208,7 +208,7 @@ public class LsPlugin implements Plugin
             shell.bufferingMode();
             printOutTables(
                      listBuild,
-                     new boolean[]{false, false, false, true, false, false, true, false},
+                     new boolean[] { false, false, false, true, false, false, true, false },
                      out,
                      formatCallback);
          }

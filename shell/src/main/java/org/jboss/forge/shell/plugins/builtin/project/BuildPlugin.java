@@ -37,7 +37,8 @@ public class BuildPlugin implements Plugin
    private Project project;
 
    public BuildPlugin()
-   {}
+   {
+   }
 
    @Inject
    public BuildPlugin(final Project project)
@@ -55,18 +56,22 @@ public class BuildPlugin implements Plugin
 
       ProjectBuilder builder = packaging.createBuilder();
 
-      if (args == null) {
+      if (args == null)
+      {
          builder.addArguments("install");
       }
-      else {
+      else
+      {
          builder.addArguments(args);
       }
 
-      if (notest) {
+      if (notest)
+      {
          builder.runTests(false);
       }
 
-      if (profile != null) {
+      if (profile != null)
+      {
          builder.addArguments("-P" + profile);
       }
 

@@ -22,82 +22,97 @@ import java.io.Reader;
 /**
  * {@link History} using a file for persistent backing.
  * <p/>
- * Implementers should install shutdown hook to call {@link FileHistory#flush}
- * to save history to disk.
- *
+ * Implementers should install shutdown hook to call {@link FileHistory#flush} to save history to disk.
+ * 
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
  * @since 2.0
  */
 public class FileHistory
-    extends MemoryHistory
-    implements PersistentHistory, Flushable
+         extends MemoryHistory
+         implements PersistentHistory, Flushable
 {
-    private final File file;
+   private final File file;
 
-    public FileHistory(final File file) throws IOException {
-        assert file != null;
-        this.file = file;
-        load(file);
-    }
+   public FileHistory(final File file) throws IOException
+   {
+      assert file != null;
+      this.file = file;
+      load(file);
+   }
 
-    public File getFile() {
-        return file;
-    }
+   public File getFile()
+   {
+      return file;
+   }
 
-    public void load(final File file) throws IOException {
-        assert file != null;
-        if (file.exists()) {
-            org.jboss.forge.shell.console.jline.internal.Log.trace("Loading history from: ", file);
-            load(new FileReader(file));
-        }
-    }
+   public void load(final File file) throws IOException
+   {
+      assert file != null;
+      if (file.exists())
+      {
+         org.jboss.forge.shell.console.jline.internal.Log.trace("Loading history from: ", file);
+         load(new FileReader(file));
+      }
+   }
 
-    public void load(final InputStream input) throws IOException {
-        assert input != null;
-        load(new InputStreamReader(input));
-    }
+   public void load(final InputStream input) throws IOException
+   {
+      assert input != null;
+      load(new InputStreamReader(input));
+   }
 
-    public void load(final Reader reader) throws IOException {
-        assert reader != null;
-        BufferedReader input = new BufferedReader(reader);
+   public void load(final Reader reader) throws IOException
+   {
+      assert reader != null;
+      BufferedReader input = new BufferedReader(reader);
 
-        String item;
-        while ((item = input.readLine()) != null) {
-            add(item);
-        }
-    }
+      String item;
+      while ((item = input.readLine()) != null)
+      {
+         add(item);
+      }
+   }
 
-    public void flush() throws IOException {
-        org.jboss.forge.shell.console.jline.internal.Log.trace("Flushing history");
+   public void flush() throws IOException
+   {
+      org.jboss.forge.shell.console.jline.internal.Log.trace("Flushing history");
 
-        if (!file.exists()) {
-            File dir = file.getParentFile();
-            if (!dir.exists() && !dir.mkdirs()) {
-                org.jboss.forge.shell.console.jline.internal.Log.warn("Failed to create directory: ", dir);
-            }
-            if (!file.createNewFile()) {
-                org.jboss.forge.shell.console.jline.internal.Log.warn("Failed to create file: ", file);
-            }
-        }
+      if (!file.exists())
+      {
+         File dir = file.getParentFile();
+         if (!dir.exists() && !dir.mkdirs())
+         {
+            org.jboss.forge.shell.console.jline.internal.Log.warn("Failed to create directory: ", dir);
+         }
+         if (!file.createNewFile())
+         {
+            org.jboss.forge.shell.console.jline.internal.Log.warn("Failed to create file: ", file);
+         }
+      }
 
-        PrintStream out = new PrintStream(new BufferedOutputStream(new FileOutputStream(file)));
-        try {
-            for (Entry entry : this) {
-                out.println(entry.value());
-            }
-        }
-        finally {
-            out.close();
-        }
-    }
+      PrintStream out = new PrintStream(new BufferedOutputStream(new FileOutputStream(file)));
+      try
+      {
+         for (Entry entry : this)
+         {
+            out.println(entry.value());
+         }
+      }
+      finally
+      {
+         out.close();
+      }
+   }
 
-    public void purge() throws IOException {
-        org.jboss.forge.shell.console.jline.internal.Log.trace("Purging history");
+   public void purge() throws IOException
+   {
+      org.jboss.forge.shell.console.jline.internal.Log.trace("Purging history");
 
-        clear();
+      clear();
 
-        if (!file.delete()) {
-            org.jboss.forge.shell.console.jline.internal.Log.warn("Failed to delete history file: ", file);
-        }
-    }
+      if (!file.delete())
+      {
+         org.jboss.forge.shell.console.jline.internal.Log.warn("Failed to delete history file: ", file);
+      }
+   }
 }
