@@ -73,12 +73,12 @@ public class ResourceFactory implements Extension
       this.managerInstance = manager;
    }
 
-   public void scan(@Observes final ProcessBean<?> event, final BeanManager manager)
+   public void scan(@Observes final ProcessBean<Resource<?>> event, final BeanManager manager)
    {
       Bean<?> bean = event.getBean();
       Class<?> clazz = bean.getBeanClass();
 
-      if (Resource.class.isAssignableFrom(clazz) && clazz.isAnnotationPresent(ResourceHandles.class))
+      if (clazz.isAnnotationPresent(ResourceHandles.class))
       {
          for (String pspec : clazz.getAnnotation(ResourceHandles.class).value())
          {
