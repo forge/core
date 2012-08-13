@@ -35,6 +35,7 @@ import org.jboss.forge.maven.util.ProjectModelTest;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.dependencies.DependencyMetadata;
+import org.jboss.forge.project.dependencies.DependencyQueryBuilder;
 import org.jboss.forge.project.dependencies.DependencyRepository;
 import org.jboss.forge.project.dependencies.DependencyRepositoryImpl;
 import org.jboss.forge.project.dependencies.DependencyResolver;
@@ -67,7 +68,7 @@ public class RepositoryLookupTest extends ProjectModelTest
    {
       Dependency dep = DependencyBuilder.create("com.ocpsoft:prettyfaces-jsf2");
       DependencyRepository repo = new DependencyRepositoryImpl(KnownRepository.CENTRAL);
-      List<Dependency> versions = resolver.resolveVersions(dep, Arrays.asList(repo));
+      List<Dependency> versions = resolver.resolveVersions(new DependencyQueryBuilder(dep).setRepositories(repo));
       assertTrue(versions.size() > 4);
    }
 
@@ -76,7 +77,7 @@ public class RepositoryLookupTest extends ProjectModelTest
    {
       Dependency dep = DependencyBuilder.create("com.ocpsoft:prettyfaces-jsf2:3.2.0");
       DependencyRepository repo = new DependencyRepositoryImpl(KnownRepository.CENTRAL);
-      List<Dependency> versions = resolver.resolveVersions(dep, Arrays.asList(repo));
+      List<Dependency> versions = resolver.resolveVersions(new DependencyQueryBuilder(dep).setRepositories(repo));
       assertTrue(versions.size() >= 1);
    }
 
@@ -85,7 +86,7 @@ public class RepositoryLookupTest extends ProjectModelTest
    {
       Dependency dep = DependencyBuilder.create("org.jboss.errai.forge:forge-errai:1.0-SNAPSHOT");
       DependencyRepository repo = new DependencyRepositoryImpl(KnownRepository.JBOSS_NEXUS);
-      List<Dependency> versions = resolver.resolveVersions(dep, repo);
+      List<Dependency> versions = resolver.resolveVersions(new DependencyQueryBuilder(dep).setRepositories(repo));
       assertTrue(versions.size() >= 1);
    }
 
