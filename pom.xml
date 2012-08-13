@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
 
    <parent>
@@ -16,6 +17,13 @@
    <description>Simplified project bootstrapping, incremental
         enhancement framework, and plugins
    </description>
+
+   <licenses>
+      <license>
+         <name>Eclipse Public License version 1.0</name>
+         <url>http://www.eclipse.org/legal/epl-v10.html</url>
+      </license>
+   </licenses>
 
    <developers>
       <developer>
@@ -45,7 +53,7 @@
    </prerequisites>
 
    <properties>
-       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
       <!-- Build Info -->
       <forge.scm.connection>scm:git:git://github.com/forge/core.git</forge.scm.connection>
@@ -548,16 +556,16 @@
          <!-- Arquillian -->
 
          <dependency>
-             <groupId>org.jboss.arquillian</groupId>
-             <artifactId>arquillian-bom</artifactId>
-             <version>${arquillian.version}</version>
+            <groupId>org.jboss.arquillian</groupId>
+            <artifactId>arquillian-bom</artifactId>
+            <version>${arquillian.version}</version>
          </dependency>
          <dependency>
-             <groupId>org.jboss.arquillian</groupId>
-             <artifactId>arquillian-bom</artifactId>
-             <version>${arquillian.version}</version>
-             <scope>import</scope>
-             <type>pom</type>
+            <groupId>org.jboss.arquillian</groupId>
+            <artifactId>arquillian-bom</artifactId>
+            <version>${arquillian.version}</version>
+            <scope>import</scope>
+            <type>pom</type>
          </dependency>
          <dependency>
             <groupId>org.jboss.arquillian.junit</groupId>
@@ -572,14 +580,8 @@
             <scope>test</scope>
          </dependency>
 
-<!--
-         <dependency>
-            <groupId>org.jboss.shrinkwrap</groupId>
-            <artifactId>shrinkwrap-api</artifactId>
-            <version>${shrinkwrap.version}</version>
-            <scope>test</scope>
-         </dependency>
-         -->
+         <!-- <dependency> <groupId>org.jboss.shrinkwrap</groupId> <artifactId>shrinkwrap-api</artifactId> <version>${shrinkwrap.version}</version> 
+            <scope>test</scope> </dependency> -->
          <dependency>
             <groupId>org.jboss.shrinkwrap.descriptors</groupId>
             <artifactId>shrinkwrap-descriptors-api</artifactId>
@@ -607,13 +609,13 @@
          <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-	        <version>${slf4j.version}</version>
+            <version>${slf4j.version}</version>
          </dependency>
-	     <dependency>
-	        <groupId>org.slf4j</groupId>
-	        <artifactId>jcl-over-slf4j</artifactId>
-	        <version>${slf4j.version}</version>
-	     </dependency>
+         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${slf4j.version}</version>
+         </dependency>
          <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
@@ -627,7 +629,7 @@
          <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-ext</artifactId>
-           <version>${slf4j.version}</version>
+            <version>${slf4j.version}</version>
          </dependency>
          <dependency>
             <groupId>ch.qos.cal10n</groupId>
@@ -776,29 +778,29 @@
                </configuration>
             </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.8.1</version>
-				<configuration>
-				  <!-- Default configuration for all reports -->
-			        <outputDirectory>${project.build.directory}/javadoc/${project.version}</outputDirectory>
-			        <reportOutputDirectory>${project.build.directory}/javadoc/${project.version}</reportOutputDirectory>
-			        <destDir>${project.build.directory}/javadoc/${project.version}</destDir>
-				</configuration>
-				<executions>
-				  <execution>
-					<id>aggregate</id>
-					<goals>
-			            <goal>aggregate</goal>
-					</goals>
-					<phase>site</phase>
-					   <configuration>
-					      <!-- Specific configuration for the aggregate report -->
-					   </configuration>
-				    </execution>
-				</executions>
-			</plugin>
+            <plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-javadoc-plugin</artifactId>
+               <version>2.8.1</version>
+               <configuration>
+                  <!-- Default configuration for all reports -->
+                  <outputDirectory>${project.build.directory}/javadoc/${project.version}</outputDirectory>
+                  <reportOutputDirectory>${project.build.directory}/javadoc/${project.version}</reportOutputDirectory>
+                  <destDir>${project.build.directory}/javadoc/${project.version}</destDir>
+               </configuration>
+               <executions>
+                  <execution>
+                     <id>aggregate</id>
+                     <goals>
+                        <goal>aggregate</goal>
+                     </goals>
+                     <phase>site</phase>
+                     <configuration>
+                        <!-- Specific configuration for the aggregate report -->
+                     </configuration>
+                  </execution>
+               </executions>
+            </plugin>
 
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
@@ -832,8 +834,7 @@
 
 
             <plugin>
-               <!--TODO TEXT. This plugin's configuration is used in m2e
-                  only. -->
+               <!--TODO TEXT. This plugin's configuration is used in m2e only. -->
                <groupId>org.eclipse.m2e</groupId>
                <artifactId>lifecycle-mapping</artifactId>
                <version>1.0.0</version>
@@ -947,57 +948,57 @@
       </plugins>
    </reporting>
 
-    <profiles>
-        <profile>
-            <id>all</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-               <module>event-bus-api</module>
-               <module>parser-java-api</module>
-               <module>parser-xml</module>
-               <module>maven-api</module>
-               <module>shell-api</module>
-               <module>git-tools</module>
-               <module>git-tools-tests</module>
-               <module>parser-java</module>
-               <module>project-model-maven</module>
-               <module>project-model-maven-tests</module>
-               <module>test-harness</module>
-               <module>test-harness-web</module>
-               <module>shell</module>
-               <module>javaee-api</module>
-               <module>javaee-impl</module>
-               <module>scaffold-api</module>
-               <module>scaffold-plugins</module>
-               <module>scaffold-faces</module>
-               <module>dev-plugins</module>
-               <module>plugin-loader</module>
-               <module>dist</module>
-            </modules>
-        </profile>
+   <profiles>
+      <profile>
+         <id>all</id>
+         <activation>
+            <activeByDefault>true</activeByDefault>
+         </activation>
+         <modules>
+            <module>event-bus-api</module>
+            <module>parser-java-api</module>
+            <module>parser-xml</module>
+            <module>maven-api</module>
+            <module>shell-api</module>
+            <module>git-tools</module>
+            <module>git-tools-tests</module>
+            <module>parser-java</module>
+            <module>project-model-maven</module>
+            <module>project-model-maven-tests</module>
+            <module>test-harness</module>
+            <module>test-harness-web</module>
+            <module>shell</module>
+            <module>javaee-api</module>
+            <module>javaee-impl</module>
+            <module>scaffold-api</module>
+            <module>scaffold-plugins</module>
+            <module>scaffold-faces</module>
+            <module>dev-plugins</module>
+            <module>plugin-loader</module>
+            <module>dist</module>
+         </modules>
+      </profile>
 
-        <profile>
-            <id>javadoc</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <modules>
-              <module>event-bus-api</module>
-              <module>parser-java-api</module>
-              <module>parser-xml</module>
-              <module>maven-api</module>
-              <module>shell-api</module>
-              <module>parser-java</module>
-              <module>project-model-maven</module>
-              <module>test-harness</module>
-              <module>test-harness-web</module>
-              <module>javaee-api</module>
-              <module>scaffold-api</module>
-           </modules>
-        </profile>
-    </profiles>
+      <profile>
+         <id>javadoc</id>
+         <activation>
+            <activeByDefault>false</activeByDefault>
+         </activation>
+         <modules>
+            <module>event-bus-api</module>
+            <module>parser-java-api</module>
+            <module>parser-xml</module>
+            <module>maven-api</module>
+            <module>shell-api</module>
+            <module>parser-java</module>
+            <module>project-model-maven</module>
+            <module>test-harness</module>
+            <module>test-harness-web</module>
+            <module>javaee-api</module>
+            <module>scaffold-api</module>
+         </modules>
+      </profile>
+   </profiles>
 
    <scm>
       <connection>${forge.scm.connection}</connection>
