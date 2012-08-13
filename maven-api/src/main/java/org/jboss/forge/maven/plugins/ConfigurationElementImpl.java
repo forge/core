@@ -1,23 +1,8 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc., and individual contributors
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * Copyright 2012 Red Hat, Inc. and/or its affiliates.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
- *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Licensed under the Eclipse Public License version 1.0, available at
+ * http://www.eclipse.org/legal/epl-v10.html
  */
 
 package org.jboss.forge.maven.plugins;
@@ -34,7 +19,6 @@ public class ConfigurationElementImpl implements ConfigurationElement
    private String text;
    private List<PluginElement> children = new ArrayList<PluginElement>();
 
-
    public void setName(String name)
    {
       this.name = name;
@@ -45,22 +29,26 @@ public class ConfigurationElementImpl implements ConfigurationElement
       this.text = text;
    }
 
-   @Override public String getName()
+   @Override
+   public String getName()
    {
       return name;
    }
 
-   @Override public boolean isPlugin()
+   @Override
+   public boolean isPlugin()
    {
       return name.equals("plugin");
    }
 
-   @Override public boolean hasChilderen()
+   @Override
+   public boolean hasChilderen()
    {
       return children != null && children.size() > 0;
    }
 
-   @Override public String getText()
+   @Override
+   public String getText()
    {
       return text;
    }
@@ -80,47 +68,56 @@ public class ConfigurationElementImpl implements ConfigurationElement
       this.children = children;
    }
 
-   @Override public boolean hasChildByContent(String content, boolean directChildsOnly)
+   @Override
+   public boolean hasChildByContent(String content, boolean directChildsOnly)
    {
       return hasConfigElementByContentRecursive(this, content, FilterType.CONTENT, directChildsOnly);
    }
 
-   @Override public boolean hasChildByContent(String content)
+   @Override
+   public boolean hasChildByContent(String content)
    {
       return hasChildByContent(content, false);
    }
 
-   @Override public ConfigurationElement getChildByContent(String content, boolean directChildsOnly)
+   @Override
+   public ConfigurationElement getChildByContent(String content, boolean directChildsOnly)
    {
       return getConfigElementRecursiveByContent(this, content, FilterType.CONTENT, directChildsOnly);
    }
 
-   @Override public ConfigurationElement getChildByContent(String content)
+   @Override
+   public ConfigurationElement getChildByContent(String content)
    {
       return getConfigElementRecursiveByContent(this, content, FilterType.CONTENT, false);
    }
 
-   @Override public boolean hasChildByName(String name, boolean directChildsOnly)
+   @Override
+   public boolean hasChildByName(String name, boolean directChildsOnly)
    {
       return hasConfigElementByContentRecursive(this, name, FilterType.CONTENT, directChildsOnly);
    }
 
-   @Override public boolean hasChildByName(String name)
+   @Override
+   public boolean hasChildByName(String name)
    {
       return hasConfigElementByContentRecursive(this, name, FilterType.NAME, false);
    }
 
-   @Override public ConfigurationElement getChildByName(String name, boolean directChildsOnly)
+   @Override
+   public ConfigurationElement getChildByName(String name, boolean directChildsOnly)
    {
       return getConfigElementRecursiveByContent(this, name, FilterType.NAME, directChildsOnly);
    }
 
-   @Override public ConfigurationElement getChildByName(String name)
+   @Override
+   public ConfigurationElement getChildByName(String name)
    {
       return getConfigElementRecursiveByContent(this, name, FilterType.NAME, false);
    }
 
-   @Override public String toString()
+   @Override
+   public String toString()
    {
       StringBuilder b = new StringBuilder();
       b.append("<").append(name).append(">");
@@ -138,7 +135,8 @@ public class ConfigurationElementImpl implements ConfigurationElement
       return b.toString();
    }
 
-   private ConfigurationElement getConfigElementRecursiveByContent(ConfigurationElement parent, String filter, FilterType filterType, boolean directChildsOnly)
+   private ConfigurationElement getConfigElementRecursiveByContent(ConfigurationElement parent, String filter,
+            FilterType filterType, boolean directChildsOnly)
    {
       List<PluginElement> children = parent.getChildren();
       for (PluginElement child : children)
@@ -146,13 +144,13 @@ public class ConfigurationElementImpl implements ConfigurationElement
          if (child instanceof ConfigurationElement)
          {
 
-
             ConfigurationElement element = (ConfigurationElement) child;
 
             if (filterType.equals(FilterType.CONTENT) && filter.equals(element.getText()))
             {
                return parent;
-            } else if (filterType.equals(FilterType.NAME) && filter.equals(element.getName()))
+            }
+            else if (filterType.equals(FilterType.NAME) && filter.equals(element.getName()))
             {
                return element;
             }
@@ -162,28 +160,33 @@ public class ConfigurationElementImpl implements ConfigurationElement
                try
                {
                   return getConfigElementRecursiveByContent(element, filter, filterType, directChildsOnly);
-               } catch (ConfigurationElementNotFoundException ex)
+               }
+               catch (ConfigurationElementNotFoundException ex)
                {
-                  //Do nothing, first check other childs
+                  // Do nothing, first check other childs
                }
             }
 
-         } else
+         }
+         else
          {
-            throw new RuntimeException("Unexpected type " + child.getClass() + " found as a child of " + parent.getName());
+            throw new RuntimeException("Unexpected type " + child.getClass() + " found as a child of "
+                     + parent.getName());
          }
       }
 
       throw new ConfigurationElementNotFoundException(filter);
    }
 
-   private boolean hasConfigElementByContentRecursive(ConfigurationElement configurationElement, String filter, FilterType filterType, boolean directChildsOnly)
+   private boolean hasConfigElementByContentRecursive(ConfigurationElement configurationElement, String filter,
+            FilterType filterType, boolean directChildsOnly)
    {
       try
       {
          getConfigElementRecursiveByContent(configurationElement, filter, filterType, directChildsOnly);
          return true;
-      } catch (ConfigurationElementNotFoundException ex)
+      }
+      catch (ConfigurationElementNotFoundException ex)
       {
          return false;
       }
