@@ -1,9 +1,25 @@
 /*
- * Copyright 2012 Red Hat, Inc. and/or its affiliates.
+ * JBoss, by Red Hat.
+ * Copyright 2011, Red Hat, Inc., and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
  *
- * Licensed under the Eclipse Public License version 1.0, available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+
 package org.jboss.forge.shell.plugins.builtin;
 
 import java.net.ProxySelector;
@@ -80,9 +96,10 @@ import org.jboss.forge.shell.util.ProxySettings;
 @Help("Forge control and writer environment commands. Manage plugins and other forge addons.")
 public class ForgePlugin implements Plugin
 {
-   private static final int LETTERS_NEEDED_TO_BE_REPLACED = 2;
-   private static final String MODULE_TEMPLATE_XML = "/org/jboss/forge/modules/module-template.xml";
 
+   private static final int LETTERS_NEEDED_TO_BE_REPLACED = 2;
+
+   private static final String MODULE_TEMPLATE_XML = "/org/jboss/forge/modules/module-template.xml";
    private final Event<ReinitializeEnvironment> reinitializeEvent;
    private final ShellPrintWriter writer;
    private final DependencyResolver resolver;
@@ -163,7 +180,7 @@ public class ForgePlugin implements Plugin
    public void find(@Option(description = "search string") final String searchString, final PipeOut out)
             throws Exception
    {
-      List<PluginRef> pluginList = getPluginRefs(searchString);
+      List<PluginRef> pluginList = PluginUtil.findPlugin(shell, configuration, searchString);
 
       if (!pluginList.isEmpty())
       {
@@ -171,19 +188,14 @@ public class ForgePlugin implements Plugin
       }
       for (PluginRef ref : pluginList)
       {
-         displayPluginDetails(out, ref);
+         out.println(" - " + out.renderColor(ShellColor.BOLD, ref.getName()) + " (" + ref.getArtifact() + ")");
+         out.println("\tAuthor: " + ref.getAuthor());
+         out.println("\tWebsite: " + ref.getWebsite());
+         out.println("\tLocation: " + ref.getLocation());
+         out.println("\tTags: " + ref.getTags());
+         out.println("\tDescription: " + ref.getDescription());
+         out.println();
       }
-   }
-
-   private void displayPluginDetails(final ShellPrintWriter out, PluginRef ref)
-   {
-      out.println(" - " + out.renderColor(ShellColor.BOLD, ref.getName()) + " (" + ref.getArtifact() + ")");
-      out.println("\tAuthor: " + ref.getAuthor());
-      out.println("\tWebsite: " + ref.getWebsite());
-      out.println("\tLocation: " + ref.getLocation());
-      out.println("\tTags: " + ref.getTags());
-      out.println("\tDescription: " + ref.getDescription());
-      out.println();
    }
 
    @Command(value = "remove-plugin",
@@ -217,63 +229,41 @@ public class ForgePlugin implements Plugin
    public void installFromIndex(
             @Option(description = "plugin-name", completer = IndexPluginNameCompleter.class) final String pluginName,
             @Option(name = "version", description = "branch, tag, or version to build") final String version,
-            final ShellPrintWriter out) throws Exception
+            final PipeOut out) throws Exception
    {
-      List<PluginRef> plugins = getPluginRefs(pluginName);
+      List<PluginRef> plugins = PluginUtil.findPlugin(shell, configuration, pluginName);
 
       if (plugins.isEmpty())
       {
          throw new RuntimeException("no plugin found with name [" + pluginName + "]");
       }
-
-      PluginRef ref = plugins.get(0);
-      if (plugins.size() > 1)
+      else if (plugins.size() > 1)
       {
-         boolean found = false;
-         for (PluginRef pluginRef : plugins)
+         throw new RuntimeException("ambiguous plugin query: multiple matches for [" + pluginName + "]");
+      }
+      else
+      {
+         PluginRef ref = plugins.get(0);
+         ShellMessages.info(out, "Preparing to install plugin: " + ref.getName());
+
+         if (!ref.isGit())
          {
-            if (pluginName.equals(pluginRef.getName()))
-            {
-               ref = pluginRef;
-               found = true;
-            }
+            installFromMvnRepos(ref.getArtifact(), out, new DependencyRepositoryImpl("custom", ref.getHomeRepo()));
          }
-
-         if (!found)
-            throw new RuntimeException("ambiguous plugin query: multiple matches for [" + pluginName + "]");
-      }
-
-      installPlugin(version, out, ref);
-   }
-
-   private void installPlugin(final String version, final ShellPrintWriter out, PluginRef ref) throws Exception
-   {
-      ShellMessages.info(out, "Preparing to install plugin: " + ref.getName());
-      if (!ref.isGit())
-      {
-         installFromMvnRepos(ref.getArtifact(), out, new DependencyRepositoryImpl("custom", ref.getHomeRepo()));
-      }
-      else if (ref.isGit())
-      {
-         installFromGit(ref.getGitRepo(), Strings.isNullOrEmpty(version) ? ref.getGitRef() : version, null, out);
+         else if (ref.isGit())
+         {
+            installFromGit(ref.getGitRepo(), Strings.isNullOrEmpty(version) ? ref.getGitRef() : version, null, out);
+         }
       }
    }
 
-   private List<PluginRef> getPluginRefs(final String pluginName) throws Exception
-   {
-      List<PluginRef> plugins = PluginUtil.findPlugin(shell, configuration, pluginName);
-      return plugins;
-   }
-
-   private void installFromMvnRepos(final Dependency dep, final ShellPrintWriter out,
-            final DependencyRepository... repoList)
+   private void installFromMvnRepos(final Dependency dep, final PipeOut out, final DependencyRepository... repoList)
             throws Exception
    {
       installFromMvnRepos(dep, out, Arrays.asList(repoList));
    }
 
-   private void installFromMvnRepos(final Dependency dep, final ShellPrintWriter out,
-            final List<DependencyRepository> repoList)
+   private void installFromMvnRepos(final Dependency dep, final PipeOut out, final List<DependencyRepository> repoList)
             throws Exception
    {
       List<DependencyResource> temp = resolver.resolveArtifacts(dep, repoList);
@@ -392,7 +382,7 @@ public class ForgePlugin implements Plugin
             @Option(description = "git repo", required = true) final String gitRepo,
             @Option(name = "ref", description = "branch or tag to build") final String refName,
             @Option(name = "checkoutDir", description = "directory in which to clone the repository") final Resource<?> checkoutDir,
-            final ShellPrintWriter out) throws Exception
+            final PipeOut out) throws Exception
    {
 
       DirectoryResource workspace = shell.getCurrentDirectory().createTempResource();
@@ -554,7 +544,7 @@ public class ForgePlugin implements Plugin
    /*
     * Helpers
     */
-   private void buildFromCurrentProject(final ShellPrintWriter out, final DirectoryResource buildDir) throws Abort
+   private void buildFromCurrentProject(final PipeOut out, final DirectoryResource buildDir) throws Abort
    {
       DirectoryResource savedLocation = shell.getCurrentDirectory();
       try
@@ -728,8 +718,6 @@ public class ForgePlugin implements Plugin
       dependencies.createChild("module").attribute("name", "org.jboss.forge.scaffold.api")
                .attribute("services", "import");
       dependencies.createChild("module").attribute("name", "org.jboss.forge.shell.api")
-               .attribute("services", "import");
-      dependencies.createChild("module").attribute("name", "org.jboss.forge.git")
                .attribute("services", "import");
       dependencies.createChild("module").attribute("name", "org.jboss.seam.render").attribute("services", "import");
       dependencies.createChild("module").attribute("name", "javax.api");
@@ -938,4 +926,5 @@ public class ForgePlugin implements Plugin
          }
       }
    }
+
 }
