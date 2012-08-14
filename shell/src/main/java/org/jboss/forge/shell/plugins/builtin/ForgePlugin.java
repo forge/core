@@ -55,8 +55,7 @@ import org.jboss.forge.shell.ShellMessages;
 import org.jboss.forge.shell.ShellPrintWriter;
 import org.jboss.forge.shell.ShellPrompt;
 import org.jboss.forge.shell.command.PluginRegistry;
-import org.jboss.forge.shell.events.CommandExecuted;
-import org.jboss.forge.shell.events.CommandExecuted.Status;
+import org.jboss.forge.shell.events.CommandMissing;
 import org.jboss.forge.shell.events.ReinitializeEnvironment;
 import org.jboss.forge.shell.exceptions.Abort;
 import org.jboss.forge.shell.exceptions.NoSuchCommandException;
@@ -336,15 +335,15 @@ public class ForgePlugin implements Plugin
       /*
        * FileResource<?> source = resource.reify(FileResource.class); if ((source == null) || !source.exists()) { throw
        * new IllegalArgumentException("JAR file must be specified."); }
-       * 
+       *
        * if (environment.getPluginDirectory().equals(source.getParent())) { throw new
        * IllegalArgumentException("Plugin is already installed."); }
-       * 
+       *
        * ShellMessages.info(out, "WARNING!"); if (prompt.promptBoolean(
        * "Installing plugins from remote sources is dangerous, and can leave untracked plugins. Continue?", true)) {
        * FileResource<?> target = createIncrementedPluginJarFile(dep);
        * target.setContents(source.getResourceInputStream());
-       * 
+       *
        * ShellMessages.success(out, "Installed from [" + resource + "] successfully."); restart(); } else throw new
        * RuntimeException("Aborted.");
        */
@@ -908,61 +907,34 @@ public class ForgePlugin implements Plugin
 
    /**
     * Installs the plugin if missing
-    * 
-    * @param commandExecuted
+    *
+    * @param commandMissing
     */
-   public void handleMissingPlugin(@Observes CommandExecuted commandExecuted)
+   public void suggestMissingPlugin(@Observes CommandMissing commandMissing)
    {
-      if (commandExecuted.getStatus() == Status.MISSING)
+      String pluginName = commandMissing.getOriginalStatement().split(" ")[0];
+
+      // Find similar plugins
+      Set<String> similarPlugins = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+      for (String plugin : pluginRegistry.getPlugins().keySet())
       {
-         String pluginName = commandExecuted.getOriginalStatement().split(" ")[0];
-         Set<String> plugins = pluginRegistry.getPlugins().keySet();
-         ShellMessages.warn(shell, String.format(
-                  "The plugin '%s' was not found locally. Searching on the central plugin index ...", pluginName));
-         boolean showDidYouMean = true;
-         try
+         if (Strings.getLevenshteinDistance(pluginName, plugin) < LETTERS_NEEDED_TO_BE_REPLACED)
          {
-            List<PluginRef> pluginRefs = getPluginRefs(pluginName);
-            if (pluginRefs.size() == 1)
-            {
-               PluginRef ref = pluginRefs.get(0);
-               displayPluginDetails(shell, ref);
-               boolean confirm = shell.promptBoolean("This plugin will be installed. Is that ok ?");
-               if (confirm)
-               {
-                  installPlugin(null, shell, ref);
-                  ShellMessages.success(writer, "Please execute the command again.");
-                  showDidYouMean = false;
-               }
-            }
+            similarPlugins.add(plugin);
          }
-         catch (Exception ignored)
+      }
+      if (similarPlugins.isEmpty())
+      {
+         throw new NoSuchCommandException(null, "No such command: "
+                  + commandMissing.getOriginalStatement());
+      }
+      else
+      {
+         ShellMessages.error(shell, "No such command: " + pluginName);
+         writer.println("Did you mean any of these ?");
+         for (String plugin : similarPlugins)
          {
-         }
-         if (showDidYouMean)
-         {
-            // Find similar plugins
-            Set<String> similarPlugins = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
-            for (String plugin : plugins)
-            {
-               if (Strings.getLevenshteinDistance(pluginName, plugin) < LETTERS_NEEDED_TO_BE_REPLACED)
-               {
-                  similarPlugins.add(plugin);
-               }
-            }
-            if (similarPlugins.isEmpty())
-            {
-               throw new NoSuchCommandException(commandExecuted.getCommand(), "No such command: "
-                        + commandExecuted.getOriginalStatement());
-            }
-            else
-            {
-               writer.println("Did you mean any of these ?");
-               for (String plugin : similarPlugins)
-               {
-                  writer.println(ShellColor.BOLD, "\t" + plugin);
-               }
-            }
+            writer.println(ShellColor.BOLD, "\t" + plugin);
          }
       }
    }
