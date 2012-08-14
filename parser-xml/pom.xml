@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>forge-parent</artifactId>
 		<groupId>org.jboss.forge</groupId>
-		<version>1.0.7-SNAPSHOT</version>
+		<version>1.0.6.Final</version>
 		<relativePath>../</relativePath>
 	</parent>
 	

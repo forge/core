@@ -9,7 +9,7 @@
 
    <groupId>org.jboss.forge</groupId>
    <artifactId>forge-parent</artifactId>
-   <version>1.0.7-SNAPSHOT</version>
+   <version>1.0.6.Final</version>
    <packaging>pom</packaging>
 
    <name>Forge - Parent</name>
