@@ -14,8 +14,8 @@ import org.jboss.forge.project.services.ResourceFactory;
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.Resource;
-import org.jboss.forge.resources.ResourceFlag;
 import org.jboss.forge.shell.plugins.Alias;
+import org.jboss.forge.shell.plugins.Current;
 import org.jboss.forge.shell.plugins.DefaultCommand;
 import org.jboss.forge.shell.plugins.Help;
 import org.jboss.forge.shell.plugins.Option;
@@ -38,6 +38,8 @@ import org.jboss.forge.shell.util.PathspecParser;
 public class CopyPlugin implements Plugin
 {
 
+	@Inject @Current Resource<?> directory;
+	
    private final ResourceFactory resourceFactory;
 
    @Inject
@@ -47,18 +49,17 @@ public class CopyPlugin implements Plugin
    }
 
    @DefaultCommand
-   public void rename(
+   public void copy(
             @Option(description = "source", required = true) final Resource<?> source,
             @Option(description = "target", required = true) final String target)
    {
+	   
       if (isDirectory(source))
       {
-         Resource<?> directory = source.getParent();
          copyRecursively(source, directory, target);
       }
       else if (isFile(source))
       {
-         Resource<?> directory = source.isFlagSet(ResourceFlag.Leaf) ? source.getParent() : source;
          copy(source, directory, target);
       }
       else
@@ -108,36 +109,27 @@ public class CopyPlugin implements Plugin
 
             if (!targetResource.exists())
             {
-
-               newTargetDir = ((DirectoryResource) source.getParent()).getOrCreateChildDirectory(targetResource
+               newTargetDir = ((DirectoryResource) targetResource.getParent()).getOrCreateChildDirectory(targetResource
                         .getName());
-
             }
             else
             {
-
                newTargetDir = ((DirectoryResource) targetResource).getOrCreateChildDirectory(source.getName());
-
             }
 
          }
          else if (isFile(source))
          {
-
             Resource<?> child = targetResource.getChild(source.getName());
 
             if (child == null)
             {
-
                ((DirectoryResource) targetResource).getOrCreateChildDirectory(source.getName()).setContents(
                         source.getResourceInputStream());
-
             }
             else
             {
-
                ((FileResource<?>) child).setContents(source.getResourceInputStream());
-
             }
             newTargetDir = (DirectoryResource) targetResource;
          }
