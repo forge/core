@@ -20,6 +20,7 @@ import org.jboss.forge.shell.constraint.ConstraintEnforcer;
 import org.jboss.forge.shell.constraint.ConstraintException;
 import org.jboss.forge.shell.events.CommandExecuted;
 import org.jboss.forge.shell.events.CommandExecuted.Status;
+import org.jboss.forge.shell.events.CommandMissing;
 import org.jboss.forge.shell.exceptions.CommandExecutionException;
 import org.jboss.forge.shell.plugins.AliasLiteral;
 import org.jboss.forge.shell.plugins.PipeOut;
@@ -148,8 +149,7 @@ public class Execution
       }
       else
       {
-         manager.fireEvent(new CommandExecuted(Status.MISSING, command, originalStatement, parameterArray),
-                  new Annotation[] {});
+         manager.fireEvent(new CommandMissing(originalStatement, parameterArray));
       }
 
    }
