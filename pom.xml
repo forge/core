@@ -1,21 +1,20 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
 
    <parent>
       <groupId>org.jboss</groupId>
       <artifactId>jboss-parent</artifactId>
-      <version>6</version>
+      <version>9</version>
    </parent>
 
    <groupId>org.jboss.forge</groupId>
    <artifactId>forge-parent</artifactId>
-   <version>1.0.7-SNAPSHOT</version>
+   <version>2.0.0-SNAPSHOT</version>
    <packaging>pom</packaging>
 
    <name>Forge - Parent</name>
-   <description>Simplified project bootstrapping, incremental
-        enhancement framework, and plugins
-   </description>
+   <description>A core framework and next-generation container for tooling and automation at a fine-grained level.</description>
 
    <licenses>
       <license>
@@ -61,592 +60,93 @@
       <forge.release.codename>One</forge.release.codename>
       <forge.release.version>${project.version}</forge.release.version>
 
-      <!-- Build Plugin Versions -->
-      <version.exec.plugin>1.1.2-Beta1</version.exec.plugin>
-
-      <!-- Artifact Versions -->
-      <aether.version>1.11</aether.version>
-      <arquillian.version>1.0.0.CR7</arquillian.version>
-      <arquillian.container.version>1.0.0.CR3</arquillian.container.version>
-      <cal10n.version>0.7.2</cal10n.version>
-      <cdi.version>1.0-SP4</cdi.version>
-      <groovy.version>1.7.5</groovy.version>
-      <httpclient.version>4.0.1</httpclient.version>
-      <commonscodec.version>1.6</commonscodec.version>
-      <jansi.version>1.5</jansi.version>
-      <jboss.javaee.version>1.0.0.Final</jboss.javaee.version>
-      <jboss.logging.version>3.1.0.GA</jboss.logging.version>
-      <jboss.logmanager.version>1.2.2.GA</jboss.logmanager.version>
-      <jboss.modules.version>1.1.1.GA</jboss.modules.version>
-      <jgit.version>2.0.0.201206130900-r</jgit.version>
-      <jline.version>2.5</jline.version>
-      <junit.version>4.8.1</junit.version>
-      <log4j.version>1.2.16</log4j.version>
-      <log4j.extras.version>1.1</log4j.extras.version>
-      <maven.version>3.0.3</maven.version>
-      <mvel.version>2.1.Beta7</mvel.version>
-      <shrinkwrap.version>1.0.0-alpha-11</shrinkwrap.version>
-      <shrinkwrap.descriptors.version>1.1.0-beta-1</shrinkwrap.descriptors.version>
-      <slf4j.version>1.5.10</slf4j.version>
-      <version.sun.jaxb>2.2</version.sun.jaxb>
-      <version.jboss-jaxb-api_2.2_spec>1.0.3.Final</version.jboss-jaxb-api_2.2_spec>
-      <weld.version>1.1.2.Final</weld.version>
-      <seam.render.version>1.0.0.Final</seam.render.version>
-      <solder.version>3.1.0.Beta5</solder.version>
-      <wagon.version>2.0</wagon.version>
-      <yaml.version>1.7</yaml.version>
+      <version.arquillian>1.0.1.Final</version.arquillian>
+      <version.arquillian.container>1.0.0.CR3</version.arquillian.container>
+      <version.cdi>1.1.EDR1.2</version.cdi>
+      <version.jboss.spec>3.0.1.Final</version.jboss.spec>
+      <version.jboss.modules>1.1.3.GA</version.jboss.modules>
+      <version.junit>4.10</version.junit>
+      <version.mvel>2.1.0.Final</version.mvel>
+      <version.weld>2.0.0.Alpha3</version.weld>
+      <version.weld.api>2.0.Alpha2</version.weld.api>
    </properties>
-
-
 
    <dependencyManagement>
       <dependencies>
          <dependency>
-            <groupId>commons-configuration</groupId>
-            <artifactId>commons-configuration</artifactId>
-            <version>1.7</version>
-         </dependency>
-
-         <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-            <version>${commonscodec.version}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <version>${version.sun.jaxb}</version>
-            <exclusions>
-               <exclusion>
-                  <groupId>javax.xml.bind</groupId>
-                  <artifactId>jaxb-api</artifactId>
-               </exclusion>
-            </exclusions>
-         </dependency>
-
-         <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-xjc</artifactId>
-            <version>${version.sun.jaxb}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>javassist</groupId>
-            <artifactId>javassist</artifactId>
-            <version>3.12.1.GA</version>
-         </dependency>
-
-         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>${httpclient.version}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpcore</artifactId>
-            <version>${httpclient.version}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-core</artifactId>
-            <version>${maven.version}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-model</artifactId>
-            <version>${maven.version}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-embedder</artifactId>
-            <version>${maven.version}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-compat</artifactId>
-            <version>${maven.version}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-aether-provider</artifactId>
-            <version>${maven.version}</version>
-         </dependency>
-
-
-
-         <dependency>
-            <groupId>org.sonatype.aether</groupId>
-            <artifactId>aether-api</artifactId>
-            <version>${aether.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.sonatype.aether</groupId>
-            <artifactId>aether-util</artifactId>
-            <version>${aether.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.sonatype.aether</groupId>
-            <artifactId>aether-impl</artifactId>
-            <version>${aether.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.sonatype.aether</groupId>
-            <artifactId>aether-connector-wagon</artifactId>
-            <version>${aether.version}</version>
-            <exclusions>
-               <exclusion>
-                  <groupId>org.codehaus.plexus</groupId>
-                  <artifactId>plexus-container-default</artifactId>
-               </exclusion>
-            </exclusions>
-         </dependency>
-         <dependency>
-            <groupId>org.apache.maven.wagon</groupId>
-            <artifactId>wagon-file</artifactId>
-            <version>${wagon.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.apache.maven.wagon</groupId>
-            <artifactId>wagon-http-lightweight</artifactId>
-            <version>${wagon.version}</version>
-            <exclusions>
-               <exclusion>
-                  <groupId>nekohtml</groupId>
-                  <artifactId>nekohtml</artifactId>
-               </exclusion>
-               <exclusion>
-                  <groupId>nekohtml</groupId>
-                  <artifactId>xercesMinimal</artifactId>
-               </exclusion>
-            </exclusions>
-         </dependency>
-
-         <dependency>
-            <groupId>org.fusesource.jansi</groupId>
-            <artifactId>jansi</artifactId>
-            <version>${jansi.version}</version>
-         </dependency>
-
-         <dependency>
             <groupId>org.jboss.modules</groupId>
             <artifactId>jboss-modules</artifactId>
-            <version>${jboss.modules.version}</version>
+            <version>${version.jboss.modules}</version>
          </dependency>
-
-         <dependency>
-            <groupId>org.jboss.slf4j</groupId>
-            <artifactId>slf4j-jboss-logmanager</artifactId>
-            <version>1.0.0.CR4</version>
-         </dependency>
-
-         <!-- JavaEE APIs -->
-
          <dependency>
             <groupId>org.jboss.spec</groupId>
             <artifactId>jboss-javaee-6.0</artifactId>
-            <version>${jboss.javaee.version}</version>
-            <type>pom</type>
-         </dependency>
-
-         <dependency>
-            <groupId>org.hibernate.javax.persistence</groupId>
-            <artifactId>hibernate-jpa-2.0-api</artifactId>
-            <version>1.0.1.Final</version>
-         </dependency>
-
-         <dependency>
-            <groupId>org.jboss.spec.javax.annotation</groupId>
-            <artifactId>jboss-annotations-api_1.1_spec</artifactId>
-            <version>${jboss.javaee.version}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>org.jboss.spec.javax.ejb</groupId>
-            <artifactId>jboss-ejb-api_3.1_spec</artifactId>
-            <version>${jboss.javaee.version}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>org.jboss.spec.javax.el</groupId>
-            <artifactId>jboss-el-api_2.2_spec</artifactId>
-            <version>${jboss.javaee.version}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>org.jboss.spec.javax.enterprise.deploy</groupId>
-            <artifactId>jboss-jad-api_1.2_spec</artifactId>
-            <version>${jboss.javaee.version}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>org.jboss.spec.javax.interceptor</groupId>
-            <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
-            <version>${jboss.javaee.version}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>org.jboss.spec.javax.jms</groupId>
-            <artifactId>jboss-jms-api_1.1_spec</artifactId>
-            <version>${jboss.javaee.version}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>org.jboss.spec.javax.management.j2ee</groupId>
-            <artifactId>jboss-j2eemgmt-api_1.1_spec</artifactId>
-            <version>${jboss.javaee.version}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>org.jboss.spec.javax.resource</groupId>
-            <artifactId>jboss-connector-api_1.6_spec</artifactId>
-            <version>${jboss.javaee.version}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>org.jboss.spec.javax.rmi</groupId>
-            <artifactId>jboss-rmi-api_1.0_spec</artifactId>
-            <version>${jboss.javaee.version}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>org.jboss.spec.javax.security.auth.message</groupId>
-            <artifactId>jboss-jaspi-api_1.0_spec</artifactId>
-            <version>${jboss.javaee.version}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>org.jboss.spec.javax.security.jacc</groupId>
-            <artifactId>jboss-jacc-api_1.4_spec</artifactId>
-            <version>${jboss.javaee.version}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>org.jboss.spec.javax.servlet</groupId>
-            <artifactId>jboss-servlet-api_3.0_spec</artifactId>
-            <version>${jboss.javaee.version}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>org.jboss.spec.javax.servlet.jsp</groupId>
-            <artifactId>jboss-jsp-api_2.2_spec</artifactId>
-            <version>${jboss.javaee.version}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>org.jboss.spec.javax.servlet.jstl</groupId>
-            <artifactId>jboss-jstl-api_1.2_spec</artifactId>
-            <version>${jboss.javaee.version}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>org.jboss.spec.javax.transaction</groupId>
-            <artifactId>jboss-transaction-api_1.1_spec</artifactId>
-            <version>${jboss.javaee.version}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>org.jboss.spec.javax.ws.rs</groupId>
-            <artifactId>jboss-jaxrs-api_1.1_spec</artifactId>
-            <version>${jboss.javaee.version}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>org.jboss.spec.javax.xml.bind</groupId>
-            <artifactId>jboss-jaxb-api_2.2_spec</artifactId>
-            <version>${version.jboss-jaxb-api_2.2_spec}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>org.jboss.spec.javax.xml.registry</groupId>
-            <artifactId>jboss-jaxr-api_1.0_spec</artifactId>
-            <version>${jboss.javaee.version}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>org.jboss.spec.javax.xml.rpc</groupId>
-            <artifactId>jboss-jaxrpc-api_1.1_spec</artifactId>
-            <version>${jboss.javaee.version}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>org.jboss.spec.javax.xml.soap</groupId>
-            <artifactId>jboss-saaj-api_1.3_spec</artifactId>
-            <version>${jboss.javaee.version}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>org.jboss.spec.javax.xml.ws</groupId>
-            <artifactId>jboss-jaxws-api_2.2_spec</artifactId>
-            <version>${jboss.javaee.version}</version>
-         </dependency>
-
-
-         <dependency>
-            <groupId>org.jboss.spec.javax.faces</groupId>
-            <artifactId>jboss-jsf-api_2.1_spec</artifactId>
-            <version>2.0.0.Beta1</version>
-         </dependency>
-
-
-         <!-- Forge -->
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-event-bus</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-parser-java-api</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-parser-java</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <artifactId>forge-parser-xml</artifactId>
-            <groupId>org.jboss.forge</groupId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-git-tools</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-maven-api</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-project-model-maven</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-shell</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-shell-api</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-javaee-api</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-javaee-impl</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-dev-plugins</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-scaffold-api</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-scaffold-plugins</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-test-harness</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-test-harness-web</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>org.eclipse.jgit</groupId>
-            <artifactId>org.eclipse.jgit.pgm</artifactId>
-            <version>${jgit.version}</version>
-         </dependency>
-
-         <!-- TODO this needs to be moved into a separate repository -->
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-scaffold-faces</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-
-         <!-- MVEL -->
-         <dependency>
-            <groupId>org.mvel</groupId>
-            <artifactId>mvel2</artifactId>
-            <version>${mvel.version}</version>
-         </dependency>
-
-         <!-- Weld -->
-         <dependency>
-            <groupId>org.jboss.weld</groupId>
-            <artifactId>weld-core-bom</artifactId>
-            <version>${weld.version}</version>
+            <version>${version.jboss.spec}</version>
             <type>pom</type>
             <scope>import</scope>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.weld.se</groupId>
-            <artifactId>weld-se-core</artifactId>
-            <version>${weld.version}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>org.jboss.seam.render</groupId>
-            <artifactId>seam-render</artifactId>
-            <version>${seam.render.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.solder</groupId>
-            <artifactId>solder-impl</artifactId>
-            <version>${solder.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.logging</groupId>
-            <artifactId>jboss-logging</artifactId>
-            <version>${jboss.logging.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.logmanager</groupId>
-            <artifactId>jboss-logmanager</artifactId>
-            <version>${jboss.logmanager.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.sonatype.jline</groupId>
-            <artifactId>jline</artifactId>
-            <version>${jline.version}</version>
          </dependency>
          <dependency>
             <groupId>javax.enterprise</groupId>
             <artifactId>cdi-api</artifactId>
-            <version>${cdi.version}</version>
+            <version>${version.cdi}</version>
+            <scope>compile</scope>
          </dependency>
+         
+         <dependency>
+            <groupId>org.mvel</groupId>
+            <artifactId>mvel2</artifactId>
+            <version>${version.mvel}</version>
+         </dependency>
+
+         <!-- Test Dependencies -->
          <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
+            <version>${version.junit}</version>
             <scope>test</scope>
-         </dependency>
-
-         <!-- Arquillian -->
-
-         <dependency>
-            <groupId>org.jboss.arquillian</groupId>
-            <artifactId>arquillian-bom</artifactId>
-            <version>${arquillian.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.arquillian</groupId>
-            <artifactId>arquillian-bom</artifactId>
-            <version>${arquillian.version}</version>
-            <scope>import</scope>
-            <type>pom</type>
          </dependency>
          <dependency>
             <groupId>org.jboss.arquillian.junit</groupId>
             <artifactId>arquillian-junit-container</artifactId>
-            <version>${arquillian.version}</version>
+            <version>${version.arquillian}</version>
             <scope>test</scope>
          </dependency>
          <dependency>
             <groupId>org.jboss.arquillian.container</groupId>
-            <artifactId>arquillian-weld-ee-embedded-1.1</artifactId>
-            <version>${arquillian.container.version}</version>
+            <artifactId>arquillian-weld-se-embedded-1.1</artifactId>
+            <version>${version.arquillian.container}</version>
+            <scope>test</scope>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.weld</groupId>
+            <artifactId>weld-core</artifactId>
+            <version>${version.weld}</version>
+            <scope>test</scope>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.weld.se</groupId>
+            <artifactId>weld-se-core</artifactId>
+            <version>${version.weld}</version>
             <scope>test</scope>
          </dependency>
 
-         <!-- <dependency> <groupId>org.jboss.shrinkwrap</groupId> <artifactId>shrinkwrap-api</artifactId> <version>${shrinkwrap.version}</version> 
-            <scope>test</scope> </dependency> -->
+         <!-- Forge Dependencies -->
          <dependency>
-            <groupId>org.jboss.shrinkwrap.descriptors</groupId>
-            <artifactId>shrinkwrap-descriptors-api</artifactId>
-            <version>${shrinkwrap.descriptors.version}</version>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>forge-plugin-container-api</artifactId>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
-            <groupId>org.jboss.shrinkwrap.descriptors</groupId>
-            <artifactId>shrinkwrap-descriptors-impl</artifactId>
-            <version>${shrinkwrap.descriptors.version}</version>
-         </dependency>
-
-
-         <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-all</artifactId>
-            <version>${groovy.version}</version>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>forge-plugin-container</artifactId>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>${yaml.version}</version>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>forge-test-harness</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
          </dependency>
-
-         <!-- SLF4J Deps -->
-         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jcl-over-slf4j</artifactId>
-            <version>${slf4j.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>${slf4j.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-jdk14</artifactId>
-            <version>${slf4j.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-ext</artifactId>
-            <version>${slf4j.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>ch.qos.cal10n</groupId>
-            <artifactId>cal10n-api</artifactId>
-            <version>${cal10n.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>${log4j.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>apache-log4j-extras</artifactId>
-            <version>${log4j.extras.version}</version>
-         </dependency>
-         <!-- END SLF4J Deps -->
-
       </dependencies>
    </dependencyManagement>
 
@@ -654,7 +154,6 @@
       <dependency>
          <groupId>junit</groupId>
          <artifactId>junit</artifactId>
-         <scope>test</scope>
       </dependency>
    </dependencies>
 
@@ -718,11 +217,6 @@
                <target>1.6</target>
                <encoding>UTF-8</encoding>
             </configuration>
-         </plugin>
-         <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>${version.exec.plugin}</version>
          </plugin>
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -954,24 +448,16 @@
             <activeByDefault>true</activeByDefault>
          </activation>
          <modules>
-            <module>event-bus-api</module>
-            <module>parser-java-api</module>
-            <module>parser-xml</module>
-            <module>maven-api</module>
+            <module>plugin-container-api</module>
+            <module>plugin-container</module>
             <module>shell-api</module>
             <module>git-tools</module>
             <module>git-tools-tests</module>
             <module>parser-java</module>
-            <module>project-model-maven</module>
-            <module>project-model-maven-tests</module>
             <module>test-harness</module>
-            <module>test-harness-web</module>
             <module>shell</module>
             <module>javaee-api</module>
             <module>javaee-impl</module>
-            <module>scaffold-api</module>
-            <module>scaffold-plugins</module>
-            <module>scaffold-faces</module>
             <module>dev-plugins</module>
             <module>plugin-loader</module>
             <module>dist</module>

@@ -4,14 +4,14 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.shell.exceptions;
+package org.jboss.forge.container.exception;
 
-import org.jboss.forge.shell.command.CommandMetadata;
+import org.jboss.forge.plugin.meta.CommandMetadata;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class CommandExecutionException extends ShellExecutionException
+public class CommandExecutionException extends ContainerExecutionException
 {
    private static final long serialVersionUID = -6474891123733228235L;
    private final CommandMetadata command;
