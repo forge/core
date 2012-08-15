@@ -141,9 +141,6 @@ public class ShellConfig
    {
       return "@/* Automatically generated config file */;\n" +
                "about;\n" +
-               "if ($OS_NAME.startsWith(\"Windows\")) {\n" +
-               "    echo \"  Windows? Really? Okay...\\n\"\n" +
-               "}\n" +
                "\n" +
                "set " + ShellImpl.PROP_HISTORY + " " + true + ";\n" +
                "set " + ShellImpl.PROP_PROMPT + " \"" + ShellImpl.DEFAULT_PROMPT + "\";\n" +
