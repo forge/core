@@ -14,8 +14,8 @@ import org.jboss.forge.project.services.ResourceFactory;
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.Resource;
-import org.jboss.forge.resources.ResourceFlag;
 import org.jboss.forge.shell.plugins.Alias;
+import org.jboss.forge.shell.plugins.Current;
 import org.jboss.forge.shell.plugins.DefaultCommand;
 import org.jboss.forge.shell.plugins.Help;
 import org.jboss.forge.shell.plugins.Option;
@@ -36,6 +36,10 @@ import org.jboss.forge.shell.util.PathspecParser;
 @Help("Renames a file or directory")
 public class MovePlugin implements Plugin
 {
+	
+	@Inject @Current 
+	Resource<?> directory;
+	
    private final ResourceFactory resourceFactory;
 
    @Inject
@@ -51,20 +55,8 @@ public class MovePlugin implements Plugin
             @Option(name = "force", shortName = "f", description = "force operation", flagOnly = true) final boolean force,
             final PipeOut out)
    {
-      if (isDirectory(source))
-      {
-         Resource<?> directory = source.getParent();
+         Resource<?> directory = this.directory;
          rename(source, directory, target, force, out);
-      }
-      else if (isFile(source))
-      {
-         Resource<?> directory = source.isFlagSet(ResourceFlag.Leaf) ? source.getParent() : source;
-         rename(source, directory, target, force, out);
-      }
-      else
-      {
-         throw new RuntimeException("cannot rename resource type: " + source.getClass().getSimpleName());
-      }
    }
 
    private void rename(final Resource<?> source, Resource<?> directory, final String target, final boolean force,
