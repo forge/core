@@ -67,9 +67,46 @@
       <version.jboss.modules>1.1.3.GA</version.jboss.modules>
       <version.junit>4.10</version.junit>
       <version.mvel>2.1.0.Final</version.mvel>
+      <version.slf4j>1.6.6</version.slf4j>
       <version.weld>2.0.0.Alpha3</version.weld>
       <version.weld.api>2.0.Alpha2</version.weld.api>
    </properties>
+
+   <profiles>
+      <profile>
+         <id>all</id>
+         <activation>
+            <activeByDefault>true</activeByDefault>
+         </activation>
+         <modules>
+            <module>parser-xml</module>
+            <module>plugin-container-api</module>
+            <module>plugin-container</module>
+            <module>test-harness</module>
+            <module>dist</module>
+         </modules>
+      </profile>
+
+      <profile>
+         <id>javadoc</id>
+         <activation>
+            <activeByDefault>false</activeByDefault>
+         </activation>
+         <modules>
+            <module>event-bus-api</module>
+            <module>parser-java-api</module>
+            <module>parser-xml</module>
+            <module>maven-api</module>
+            <module>shell-api</module>
+            <module>parser-java</module>
+            <module>project-model-maven</module>
+            <module>test-harness</module>
+            <module>test-harness-web</module>
+            <module>javaee-api</module>
+            <module>scaffold-api</module>
+         </modules>
+      </profile>
+   </profiles>
 
    <dependencyManagement>
       <dependencies>
@@ -91,7 +128,7 @@
             <version>${version.cdi}</version>
             <scope>compile</scope>
          </dependency>
-         
+
          <dependency>
             <groupId>org.mvel</groupId>
             <artifactId>mvel2</artifactId>
@@ -117,20 +154,30 @@
             <version>${version.arquillian.container}</version>
             <scope>test</scope>
          </dependency>
+
+         <!-- Weld -->
          <dependency>
             <groupId>org.jboss.weld</groupId>
             <artifactId>weld-core</artifactId>
             <version>${version.weld}</version>
-            <scope>test</scope>
-         </dependency>
+         </dependency> 
          <dependency>
             <groupId>org.jboss.weld.se</groupId>
             <artifactId>weld-se-core</artifactId>
             <version>${version.weld}</version>
-            <scope>test</scope>
+         </dependency>
+         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>${version.slf4j}</version>
          </dependency>
 
          <!-- Forge Dependencies -->
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>forge-parser-xml</artifactId>
+            <version>${project.version}</version>
+         </dependency>
          <dependency>
             <groupId>org.jboss.forge</groupId>
             <artifactId>forge-plugin-container-api</artifactId>
@@ -440,50 +487,6 @@
          </plugin>
       </plugins>
    </reporting>
-
-   <profiles>
-      <profile>
-         <id>all</id>
-         <activation>
-            <activeByDefault>true</activeByDefault>
-         </activation>
-         <modules>
-            <module>plugin-container-api</module>
-            <module>plugin-container</module>
-            <module>shell-api</module>
-            <module>git-tools</module>
-            <module>git-tools-tests</module>
-            <module>parser-java</module>
-            <module>test-harness</module>
-            <module>shell</module>
-            <module>javaee-api</module>
-            <module>javaee-impl</module>
-            <module>dev-plugins</module>
-            <module>plugin-loader</module>
-            <module>dist</module>
-         </modules>
-      </profile>
-
-      <profile>
-         <id>javadoc</id>
-         <activation>
-            <activeByDefault>false</activeByDefault>
-         </activation>
-         <modules>
-            <module>event-bus-api</module>
-            <module>parser-java-api</module>
-            <module>parser-xml</module>
-            <module>maven-api</module>
-            <module>shell-api</module>
-            <module>parser-java</module>
-            <module>project-model-maven</module>
-            <module>test-harness</module>
-            <module>test-harness-web</module>
-            <module>javaee-api</module>
-            <module>scaffold-api</module>
-         </modules>
-      </profile>
-   </profiles>
 
    <scm>
       <connection>${forge.scm.connection}</connection>

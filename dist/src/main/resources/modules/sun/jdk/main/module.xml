@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ ~ Copyright 2012 Red Hat, Inc. and/or its affiliates.
+ ~
+ ~ Licensed under the Eclipse Public License version 1.0, available at
+ ~ http://www.eclipse.org/legal/epl-v10.html
+-->
+
+<module xmlns="urn:jboss:module:1.0" name="sun.jdk">
+	<resources>
+		<!-- currently jboss modules has not way of importing services from classes.jar 
+			so we duplicate them here -->
+		<resource-root path="service-loader-resources" />
+	</resources>
+	<dependencies>
+		<system export="true">
+			<paths>
+				<path name="com/sun/org/apache/xml/internal/serializer" />
+				<path name="com/sun/script/javascript" />
+				<path name="com/sun/jndi/dns" />
+				<path name="com/sun/jndi/ldap" />
+				<path name="com/sun/jndi/url" />
+				<path name="com/sun/jndi/url/dns" />
+				<path name="com/sun/security/auth" />
+				<path name="com/sun/security/auth/login" />
+				<path name="com/sun/security/auth/module" />
+				<path name="com/sun/tools/attach" />
+				<path name="sun/misc" />
+				<path name="sun/io" />
+				<path name="sun/nio" />
+				<path name="sun/nio/ch" />
+				<path name="sun/nio/cs" />
+				<path name="sun/security" />
+				<path name="sun/security/krb5" />
+				<path name="sun/util" />
+				<path name="sun/util/calendar" />
+				<path name="sun/util/locale" />
+				<path name="sun/security/provider" />
+				<path name="META-INF/services" />
+			</paths>
+			<exports>
+				<include-set>
+					<path name="META-INF/services" />
+				</include-set>
+			</exports>
+		</system>
+	</dependencies>
+</module>

@@ -10,14 +10,12 @@ package org.jboss.forge.test;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.Root;
-import org.jboss.forge.container.events.Shutdown;
-import org.jboss.forge.container.events.Startup;
+import org.jboss.forge.container.ContainerControl;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -33,15 +31,9 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public abstract class AbstractForgeTest
 {
-   static
-   {
-      System.setProperty("forge.debug.no_auto_init_streams", "true");
-   }
-
    @Deployment
    public static JavaArchive getDeployment()
    {
-
       JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar").addPackages(true, Root.class.getPackage())
                .addAsManifestResource("META-INF/beans.xml", ArchivePaths.create("beans.xml"));
 
@@ -49,7 +41,7 @@ public abstract class AbstractForgeTest
    }
 
    @Inject
-   private BeanManager beanManager;
+   private ContainerControl control;
 
    private ByteArrayOutputStream output = new ByteArrayOutputStream();
 
@@ -66,18 +58,13 @@ public abstract class AbstractForgeTest
    @Before
    public void beforeTest() throws Exception
    {
-      beanManager.fireEvent(new Startup());
+      control.start();
    }
 
    @After
    public void afterTest() throws IOException
    {
-      beanManager.fireEvent(new Shutdown());
-   }
-
-   protected BeanManager getBeanManager()
-   {
-      return beanManager;
+      control.stop();
    }
 
    protected String getOutput()

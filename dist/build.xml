@@ -1,0 +1,138 @@
+<!--
+ ~ Copyright 2012 Red Hat, Inc. and/or its affiliates.
+ ~
+ ~ Licensed under the Eclipse Public License Version 1.0 (the "License");
+ ~ you may not use this file except in compliance with the License.
+ ~ You may obtain a copy of the License at
+ ~
+ ~     http://www.eclipse.org/legal/epl-v10.html
+ ~
+ ~ Unless required by applicable law or agreed to in writing, software
+ ~ distributed under the License is distributed on an "AS IS" BASIS,
+ ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ~ See the License for the specific language governing permissions and
+ ~ limitations under the License.
+-->
+
+<project name="module-repository" basedir="." default="modules">
+
+	<import file="lib.xml" />
+
+	<property name="output.dir" value="target/forge-distribution-${forge.release.version}" />
+	<target name="copy-files">
+		<copy todir="${output.dir}">
+			<fileset dir="src/main/resources">
+				<include name="LICENSE.txt" />
+				<include name="README.txt" />
+				<include name="copyright.txt" />
+			</fileset>
+			<fileset dir="src/main/resources">
+				<include name="bin/**" />
+			</fileset>
+			<fileset dir="src/main/resources">
+				<include name="docs/**" />
+			</fileset>
+		</copy>
+		<chmod perm="+x">
+			<fileset dir="${output.dir}/bin">
+				<include name="**/*" />
+			</fileset>
+		</chmod>
+	</target>
+
+	<target name="make-dirs">
+		<mkdir dir="${output.dir}/lib" />
+	</target>
+
+	<target name="modules">
+
+		<copy file="${org.jboss.modules:jboss-modules:jar}" tofile="${output.dir}/jboss-modules.jar" />
+
+		<!--
+          ~ Complete list of modules to assemble.
+          ~
+          ~ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+          ~ +++++++   KEEP THIS LIST ALPHABETICAL BY MODULE NAME!   +++++++
+          ~ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+          -->
+
+		<module-def name="ch.qos.cal10n">
+			<maven-resource group="ch.qos.cal10n" artifact="cal10n-api" />
+		</module-def>
+
+		<module-def name="com.google.guava">
+			<maven-resource group="com.google.guava" artifact="guava" />
+			<maven-resource group="com.google.code.findbugs" artifact="jsr305" />
+		</module-def>
+
+		<module-def name="javax.api" />
+
+		<module-def name="javax.el.api">
+			<maven-resource group="javax.el" artifact="el-api" />
+		</module-def>
+
+		<module-def name="javax.enterprise.api">
+			<maven-resource group="javax.enterprise" artifact="cdi-api" />
+		</module-def>
+
+		<module-def name="javax.inject.api">
+			<maven-resource group="javax.inject" artifact="javax.inject" />
+		</module-def>
+
+		<module-def name="javax.interceptor.api">
+			<maven-resource group="org.jboss.spec.javax.interceptor" artifact="jboss-interceptors-api_1.1_spec" />
+		</module-def>
+
+		<!-- BEGIN Forge Modules -->
+		<module-def name="org.jboss.forge">
+			<maven-resource group="org.jboss.forge" artifact="forge-plugin-container" />
+		</module-def>
+
+		<module-def name="org.jboss.forge.parser.xml">
+			<maven-resource group="org.jboss.forge" artifact="forge-parser-xml" />
+		</module-def>
+
+		<module-def name="org.jboss.forge.api">
+			<maven-resource group="org.jboss.forge" artifact="forge-plugin-container-api" />
+		</module-def>
+		<!-- END Forge Modules -->
+
+		<module-def name="org.jboss.modules" />
+
+		<module-def name="org.jboss.weld">
+			<maven-resource group="javax.annotation" artifact="jsr250-api" />
+			<maven-resource group="org.jboss.classfilewriter" artifact="jboss-classfilewriter" />
+			<maven-resource group="org.jboss.spec.javax.interceptor" artifact="jboss-interceptors-api_1.1_spec" />
+			<maven-resource group="org.jboss.weld" artifact="weld-api" />
+			<maven-resource group="org.jboss.weld" artifact="weld-core" />
+			<maven-resource group="org.jboss.weld" artifact="weld-spi" />
+			<maven-resource group="org.jboss.weld.se" artifact="weld-se-core" />
+		</module-def>
+
+		<module-def name="org.mvel">
+			<maven-resource group="org.mvel" artifact="mvel2" />
+		</module-def>
+
+		<module-def name="org.slf4j">
+			<maven-resource group="org.slf4j" artifact="slf4j-api" />
+			<maven-resource group="org.slf4j" artifact="slf4j-ext" />
+			<maven-resource group="org.slf4j" artifact="slf4j-jdk14" />
+		</module-def>
+
+		<module-def name="sun.jdk" />
+		<module-def name="sun.misc" />
+	</target>
+
+	<target name="bundles">
+	</target>
+
+	<target name="clean-target">
+		<delete dir="${output.dir}" />
+	</target>
+
+	<target name="clean" depends="clean-target">
+		<delete file="maven-ant-tasks.jar" />
+	</target>
+
+	<target name="all" depends="clean-target, modules, bundles, copy-files, make-dirs" />
+</project>

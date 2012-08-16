@@ -7,7 +7,7 @@
 
 package org.jboss.forge.container.command;
 
-import org.jboss.forge.plugin.meta.CommandMetadata;
+import org.jboss.forge.container.meta.CommandMetadata;
 
 /**
  * Fired after a plugin/command has been executed and has finished processing.

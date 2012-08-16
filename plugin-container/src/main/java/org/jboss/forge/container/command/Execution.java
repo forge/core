@@ -17,13 +17,13 @@ import javax.inject.Inject;
 
 import org.jboss.forge.container.command.CommandExecuted.CommandStatus;
 import org.jboss.forge.container.exception.CommandExecutionException;
+import org.jboss.forge.container.meta.CommandMetadata;
+import org.jboss.forge.container.meta.OptionMetadata;
+import org.jboss.forge.container.plugin.AliasLiteral;
+import org.jboss.forge.container.plugin.PipeOut;
+import org.jboss.forge.container.plugin.Plugin;
 import org.jboss.forge.container.util.Enums;
 import org.jboss.forge.container.util.Types;
-import org.jboss.forge.plugin.AliasLiteral;
-import org.jboss.forge.plugin.PipeOut;
-import org.jboss.forge.plugin.Plugin;
-import org.jboss.forge.plugin.meta.CommandMetadata;
-import org.jboss.forge.plugin.meta.OptionMetadata;
 import org.mvel2.DataConversion;
 
 /**

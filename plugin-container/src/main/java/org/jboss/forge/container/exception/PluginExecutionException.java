@@ -6,7 +6,7 @@
  */
 package org.jboss.forge.container.exception;
 
-import org.jboss.forge.plugin.meta.PluginMetadata;
+import org.jboss.forge.container.meta.PluginMetadata;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

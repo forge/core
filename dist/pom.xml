@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ~ Copyright 2012 Red Hat, Inc. and/or its affiliates. ~ ~ Licensed under the Eclipse Public License version 1.0, available 
+   at ~ http://www.eclipse.org/legal/epl-v10.html -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+
+   <parent>
+      <groupId>org.jboss.forge</groupId>
+      <artifactId>forge-parent</artifactId>
+      <version>2.0.0-SNAPSHOT</version>
+      <relativePath>../pom.xml</relativePath>
+   </parent>
+
+   <artifactId>forge-distribution</artifactId>
+
+   <name>JBoss Forge - Distribution Build</name>
+   <packaging>pom</packaging>
+
+   <properties>
+      <version.org.jboss.jandex>1.0.3.Final</version.org.jboss.jandex>
+   </properties>
+
+   <build>
+      <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <inherited>false</inherited>
+            <executions>
+               <execution>
+                  <id>build-dist</id>
+                  <goals>
+                     <goal>run</goal>
+                  </goals>
+                  <phase>package</phase>
+                  <configuration>
+                     <target>
+                        <ant antfile="build.xml" inheritRefs="true">
+                           <target name="all" />
+                        </ant>
+                     </target>
+                  </configuration>
+               </execution>
+            </executions>
+            <dependencies>
+               <dependency>
+                  <groupId>org.jboss</groupId>
+                  <artifactId>jandex</artifactId>
+                  <version>${version.org.jboss.jandex}</version>
+               </dependency>
+            </dependencies>
+         </plugin>
+
+         <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <executions>
+               <execution>
+                  <phase>package</phase>
+               </execution>
+            </executions>
+         </plugin>
+
+      </plugins>
+   </build>
+
+   <dependencies>
+
+      <dependency>
+         <groupId>org.jboss</groupId>
+         <artifactId>jandex</artifactId>
+         <version>${version.org.jboss.jandex}</version>
+      </dependency>
+
+      <!-- Build deps go here -->
+      <dependency>
+         <groupId>javax.enterprise</groupId>
+         <artifactId>cdi-api</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>javax.inject</groupId>
+         <artifactId>javax.inject</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-parser-xml</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-plugin-container-api</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-plugin-container</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>org.jboss.modules</groupId>
+         <artifactId>jboss-modules</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>org.jboss.spec.javax.interceptor</groupId>
+         <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>org.jboss.weld.se</groupId>
+         <artifactId>weld-se-core</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>org.mvel</groupId>
+         <artifactId>mvel2</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>org.slf4j</groupId>
+         <artifactId>slf4j-jdk14</artifactId>
+      </dependency>
+
+   </dependencies>
+   
+   <profiles>
+      <profile>
+         <id>release</id>
+         <activation>
+            <property>
+               <name>release</name>
+               <value>true</value>
+            </property>
+         </activation>
+         <build>
+            <plugins>
+               <plugin>
+                  <groupId>org.codehaus.mojo</groupId>
+                  <artifactId>license-maven-plugin</artifactId>
+                  <inherited>false</inherited>
+                  <executions>
+                     <execution>
+                        <goals>
+                           <goal>download-licenses</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                           <licensesOutputDirectory>
+                              ${project.build.directory}/forge-distribution-${forge.release.version}/docs/licenses
+                           </licensesOutputDirectory>
+                           <licensesOutputFile>
+                              ${project.build.directory}/forge-distribution-${forge.release.version}/docs/licenses/licenses.xml
+                           </licensesOutputFile>
+                        </configuration>
+                     </execution>
+                  </executions>
+               </plugin>
+            </plugins>
+         </build>
+      </profile>
+      <profile>
+         <id>runForge</id>
+         <build>
+            <plugins>
+               <plugin>
+                  <groupId>org.codehaus.mojo</groupId>
+                  <artifactId>exec-maven-plugin</artifactId>
+                  <version>1.2.1</version>
+                  <configuration>
+                     <executable>java</executable>
+                     <workingDirectory>${java.io.tmpdir}</workingDirectory>
+                     <arguments>
+                        <argument>-cp</argument>
+                        <classpath />
+                        <argument>org.jboss.modules.Main</argument>
+                        <argument>-modulepath</argument>
+                        <argument>${project.build.directory}/${project.artifactId}-${forge.release.version}/modules:${user.home}/.forge/plugins</argument>
+                        <argument>org.jboss.forge</argument>
+                     </arguments>
+                  </configuration>
+               </plugin>
+            </plugins>
+         </build>
+      </profile>
+      <profile>
+         <id>debugForge</id>
+         <build>
+            <plugins>
+               <plugin>
+                  <groupId>org.codehaus.mojo</groupId>
+                  <artifactId>exec-maven-plugin</artifactId>
+                  <version>1.2.1</version>
+                  <configuration>
+                     <executable>java</executable>
+                     <workingDirectory>${java.io.tmpdir}</workingDirectory>
+                     <arguments>
+                        <argument>-Xdebug</argument>
+                        <argument>${debug.props}</argument>
+                        <argument>-cp</argument>
+                        <classpath />
+                        <argument>org.jboss.modules.Main</argument>
+                        <argument>-modulepath</argument>
+                        <argument>${project.build.directory}/${project.artifactId}-${forge.release.version}/modules:${user.home}/.forge/plugins</argument>
+                        <argument>org.jboss.forge</argument>
+                     </arguments>
+                  </configuration>
+               </plugin>
+            </plugins>
+         </build>
+      </profile>
+   </profiles>
+</project>

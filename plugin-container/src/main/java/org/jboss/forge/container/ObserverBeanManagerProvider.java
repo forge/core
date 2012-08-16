@@ -10,14 +10,14 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Singleton;
 
-import org.jboss.forge.container.events.PreStartup;
+import org.jboss.forge.container.event.ContainerStartup;
 
 @Singleton
 public class ObserverBeanManagerProvider
 {
    private BeanManager manager;
 
-   public void grab(@Observes final PreStartup event, final BeanManager m)
+   public void grab(@Observes final ContainerStartup event, final BeanManager m)
    {
       manager = m;
    }
@@ -26,5 +26,4 @@ public class ObserverBeanManagerProvider
    {
       return manager;
    }
-
 }

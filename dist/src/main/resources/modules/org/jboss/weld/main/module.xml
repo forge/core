@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ~ Copyright 2012 Red Hat, Inc. and/or its affiliates. ~ ~ Licensed under the Eclipse Public License version 1.0, available 
+   at ~ http://www.eclipse.org/legal/epl-v10.html -->
+
+<module xmlns="urn:jboss:module:1.0" name="org.jboss.weld">
+
+   <resources>
+      <!-- Insert resources here -->
+   </resources>
+
+   <dependencies>
+      <module name="ch.qos.cal10n" />
+      <module name="com.google.guava" />
+      <module name="javax.api" />
+      <module name="javax.el.api" />
+      <module name="javax.enterprise.api" />
+      <module name="javax.inject.api" />
+      <module name="javax.interceptor.api" />
+      <module name="org.slf4j" />
+   </dependencies>
+</module>
