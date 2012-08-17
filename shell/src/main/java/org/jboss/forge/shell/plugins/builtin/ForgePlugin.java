@@ -14,12 +14,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.UUID;
 
 import javax.enterprise.event.Event;
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode;
@@ -55,11 +52,8 @@ import org.jboss.forge.shell.ShellColor;
 import org.jboss.forge.shell.ShellMessages;
 import org.jboss.forge.shell.ShellPrintWriter;
 import org.jboss.forge.shell.ShellPrompt;
-import org.jboss.forge.shell.command.PluginRegistry;
-import org.jboss.forge.shell.events.CommandMissing;
 import org.jboss.forge.shell.events.ReinitializeEnvironment;
 import org.jboss.forge.shell.exceptions.Abort;
-import org.jboss.forge.shell.exceptions.NoSuchCommandException;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.Command;
 import org.jboss.forge.shell.plugins.DefaultCommand;
@@ -82,8 +76,6 @@ import org.jboss.forge.shell.util.ProxySettings;
 public class ForgePlugin implements Plugin
 {
 
-   private static final int LETTERS_NEEDED_TO_BE_REPLACED = 2;
-
    private static final String MODULE_TEMPLATE_XML = "/org/jboss/forge/modules/module-template.xml";
    private final Event<ReinitializeEnvironment> reinitializeEvent;
    private final ShellPrintWriter writer;
@@ -92,12 +84,11 @@ public class ForgePlugin implements Plugin
    private final ShellPrompt prompt;
    private final Shell shell;
    private final Configuration configuration;
-   private final PluginRegistry pluginRegistry;
 
    @Inject
    public ForgePlugin(final ForgeEnvironment environment, final Event<ReinitializeEnvironment> reinitializeEvent,
             final ShellPrintWriter writer, final ShellPrompt prompt, final DependencyResolver resolver,
-            final Shell shell, final Configuration configuration, final PluginRegistry pluginRegistry)
+            final Shell shell, final Configuration configuration)
    {
       this.environment = environment;
       this.reinitializeEvent = reinitializeEvent;
@@ -106,7 +97,6 @@ public class ForgePlugin implements Plugin
       this.shell = shell;
       this.resolver = resolver;
       this.configuration = configuration;
-      this.pluginRegistry = pluginRegistry;
    }
 
    /*
@@ -877,39 +867,4 @@ public class ForgePlugin implements Plugin
       dir = dir.getOrCreateChildDirectory(dep.getVersion());
       return dir;
    }
-
-   /**
-    * Installs the plugin if missing
-    *
-    * @param commandMissing
-    */
-   public void suggestMissingPlugin(@Observes CommandMissing commandMissing)
-   {
-      String pluginName = commandMissing.getOriginalStatement().split(" ")[0];
-
-      // Find similar plugins
-      Set<String> similarPlugins = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
-      for (String plugin : pluginRegistry.getPlugins().keySet())
-      {
-         if (Strings.getLevenshteinDistance(pluginName, plugin) < LETTERS_NEEDED_TO_BE_REPLACED)
-         {
-            similarPlugins.add(plugin);
-         }
-      }
-      if (similarPlugins.isEmpty())
-      {
-         throw new NoSuchCommandException(null, "No such command: "
-                  + commandMissing.getOriginalStatement());
-      }
-      else
-      {
-         ShellMessages.error(shell, "No such command: " + pluginName);
-         writer.println("Did you mean any of these ?");
-         for (String plugin : similarPlugins)
-         {
-            writer.println(ShellColor.BOLD, "\t" + plugin);
-         }
-      }
-   }
-
 }
