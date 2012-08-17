@@ -7,6 +7,7 @@
 package org.jboss.forge.shell.test.plugins.builtin;
 
 import org.jboss.forge.resources.DirectoryResource;
+import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.test.AbstractShellTest;
@@ -186,6 +187,94 @@ public class MovePluginTest extends AbstractShellTest
 
       assertFalse(directoryToRename.exists());
       assertTrue(renamedDirectory.exists());
+   }
+   
+   @Test
+   public void testMoveFileWithRelativePath() throws Exception
+   {
+
+	  String testFolder = "testFolder"; 
+      String file = "moveFile";
+      String nonExisting = "newNoneExisting";
+
+      initializeJavaProject();
+      Shell shell = getShell();
+      shell.execute("mkdir " + testFolder);
+      String relativePath =  testFolder.concat("/").concat(file);
+      shell.execute("touch " + relativePath);
+
+      Resource<?> fileToMove = shell.getCurrentDirectory().getChild(testFolder).getChild(file);
+      assertTrue(fileToMove.exists());
+
+      shell.execute("mv " + relativePath + " " + nonExisting);
+      Resource<?> move = shell.getCurrentDirectory().getChild(nonExisting);
+      assertTrue(move.exists());
+      assertFalse(fileToMove.exists());
+
+   }
+   
+   @Test
+   public void testMoveFolderToNonExistingFolder() throws Exception
+   {
+
+      String testFolder = "testFolder";
+      String newFolder = "newFolder";
+      String nonExisting = "nonExisting";
+      String subFolderA = "subFolder1";
+      String subFolderB = "subFolder2";
+      String fileA = "file1";
+      String fileB = "file2";
+      String relativePath = newFolder.concat("/").concat(nonExisting);
+
+      initializeJavaProject();
+      Shell shell = getShell();
+      shell.execute("mkdir " + testFolder);
+      shell.execute("mkdir " + newFolder);
+      shell.execute("cd " + testFolder);
+      shell.execute("mkdir " + subFolderA);
+      shell.execute("mkdir " + subFolderB);
+      shell.execute("touch " + fileA);
+      shell.execute("cd " + subFolderA);
+      shell.execute("touch " + fileB);
+      shell.execute("cd ..");
+      shell.execute("cd ..");
+    
+      Resource<?> dirToMove = shell.getCurrentDirectory().getChildDirectory(testFolder);
+      assertTrue(dirToMove.exists());
+      FileResource<?> file1 = (FileResource<?>) dirToMove.getChild(fileA);
+      assertTrue(file1.exists());
+      Resource<?> subFolder1 = ((DirectoryResource) dirToMove).getChildDirectory(subFolderA);
+      FileResource<?> file2 = (FileResource<?>) subFolder1.getChild(fileB);
+      assertTrue(file2.exists());
+
+      assertTrue(((DirectoryResource) subFolder1).isDirectory());
+      assertTrue(((DirectoryResource) subFolder1).exists());
+
+      Resource<?> subFolder2 = ((DirectoryResource) dirToMove).getChildDirectory(subFolderB);
+      assertTrue(((DirectoryResource) subFolder2).isDirectory());
+      assertTrue(((DirectoryResource) subFolder2).exists());
+
+      shell.execute("mv " + testFolder + " " + relativePath);
+
+      Resource<?> targetParent = shell.getCurrentDirectory().getChildDirectory(newFolder);
+      assertTrue(targetParent.exists());
+      assertTrue(((DirectoryResource) targetParent).isDirectory());
+
+      Resource<?> move = ((DirectoryResource) targetParent).getChildDirectory(nonExisting);
+      assertTrue(move.exists());
+      assertTrue(((DirectoryResource) move).isDirectory());
+
+      FileResource<?> movedfile1 = (FileResource<?>) move.getChild(fileA);
+      assertTrue(movedfile1.exists());
+
+      DirectoryResource movedSubFolder1 = ((DirectoryResource) move).getChildDirectory(subFolderA);
+      assertTrue(movedSubFolder1.exists());
+      FileResource<?> movedfile2 = (FileResource<?>) movedSubFolder1.getChild(fileB);
+      assertTrue(movedfile2.exists());
+
+      DirectoryResource movedSubFolder2 = ((DirectoryResource) move).getChildDirectory(subFolderB);
+      assertTrue(movedSubFolder2.exists());
+      assertFalse(dirToMove.exists());
    }
 
 }
