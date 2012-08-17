@@ -1499,7 +1499,6 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          TerminalFactory.configure(TerminalFactory.Type.NONE);
          TerminalFactory.reset();
       }
-      initReaderAndStreams();
    }
 
    @Override
