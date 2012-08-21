@@ -59,12 +59,6 @@ public class PluginCommandCompleter implements Completer
          }
       }
 
-      if ((state.getPlugin() != null) && !state.isFinalTokenComplete() && !state.hasSuggestions()
-               && state.isDuplicateBuffer())
-      {
-         candidates.add(" ");
-      }
-
       candidates.addAll(state.getCandidates());
 
       // ensure the completer is triggered always
