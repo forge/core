@@ -34,7 +34,7 @@ public class OrderedValueVarargsOptionParser implements CommandParser
             while (!tokens.isEmpty())
             {
                lastToken = tokens.peek();
-               if (lastToken.startsWith("-") && command.hasOption(lastToken.replaceAll("^--?", "")))
+               if (lastToken.startsWith("-") && isValidCommandOption(command, lastToken))
                {
                   break;
                }
@@ -56,4 +56,20 @@ public class OrderedValueVarargsOptionParser implements CommandParser
       return ctx;
    }
 
+   private boolean isValidCommandOption(final CommandMetadata command, final String lastToken)
+   {
+      String name = lastToken.replaceAll("^--?", "");
+      for (OptionMetadata option : command.getOptions())
+      {
+         if (!option.isNamed())
+         {
+            continue;
+         }
+         if (option.getName().startsWith(name) || (!option.getShortName().isEmpty() && option.getShortName().startsWith(name)))
+         {
+            return true;
+         }
+      }
+      return false;
+   }
 }
