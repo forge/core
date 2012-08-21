@@ -14,7 +14,7 @@
 	<div class="navbar navbar-fixed-top">
 		<div class="navbar-inner">
 			<div class="container">
-				<h:link id="brandLink" outcome="@{targetDir}/index.xhtml" styleClass="brand"> <h:outputText value="@{appName}" /></h:link>
+				<a href="@{targetDir}/index.xhtml" class="brand">@{appName}</a>
 				<div class="nav-collapse collapse">
 					<ul class="nav">
 						<li><a href="http://forge.jboss.org/docs/important_plugins/ui-scaffolding.html">How to Customize</a></li>
