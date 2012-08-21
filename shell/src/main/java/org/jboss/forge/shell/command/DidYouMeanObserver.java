@@ -63,7 +63,11 @@ public class DidYouMeanObserver
       else
       {
          ShellMessages.error(shell, "No such command: " + pluginName);
-         shell.println("Did you mean any of these ?");
+         if (similarPlugins.size() == 1) {
+            shell.println("Did you mean this ?");
+         } else {
+            shell.println("Did you mean any of these ?");
+         }
          for (String plugin : similarPlugins)
          {
             shell.println(ShellColor.BOLD, "\t" + plugin);

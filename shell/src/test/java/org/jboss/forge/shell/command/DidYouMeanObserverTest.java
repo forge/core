@@ -26,7 +26,7 @@ public class DidYouMeanObserverTest extends AbstractShellTest
    public void testSuggestInvalidCommand() throws Exception
    {
       getShell().execute("l");
-      assertTrue(getOutput().contains("Did you mean any of these ?\n\tls"));
+      assertTrue(getOutput().contains("Did you mean this ?\n\tls"));
    }
 
    @Test
