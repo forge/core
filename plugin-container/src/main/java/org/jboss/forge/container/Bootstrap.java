@@ -77,14 +77,14 @@ public class Bootstrap
       {
          ModuleLoader moduleLoader = Module.getBootModuleLoader();
          Module forge = moduleLoader.loadModule(ModuleIdentifier.fromString("org.jboss.forge:main"));
-         Thread controlThread = new Thread(new PluginRunnable(forge, registry));
+         Thread controlThread = new Thread(new PluginRunnable(forge, registry), forge.getIdentifier().getName() + ":" + forge.getIdentifier().getSlot());
          controlThread.start();
 
          Set<Module> plugins = loadPlugins();
 
          for (Module module : plugins)
          {
-            Thread pluginThread = new Thread(new PluginRunnable(module, registry));
+            Thread pluginThread = new Thread(new PluginRunnable(module, registry), module.getIdentifier().getName() + ":" + module.getIdentifier().getSlot());
             pluginThread.start();
          }
 
