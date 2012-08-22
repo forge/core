@@ -80,7 +80,7 @@ public class Bootstrap
          Thread controlThread = new Thread(new PluginRunnable(forge, registry), forge.getIdentifier().getName() + ":" + forge.getIdentifier().getSlot());
          controlThread.start();
 
-         Set<Module> plugins = loadPlugins();
+         Set<Module> plugins = loadPlugins(moduleLoader);
 
          for (Module module : plugins)
          {
@@ -115,13 +115,13 @@ public class Bootstrap
       }
    }
 
-   synchronized private static Set<Module> loadPlugins()
+   synchronized private static Set<Module> loadPlugins(ModuleLoader bootLoader)
    {
       Set<Module> result = new HashSet<Module>();
 
       try
       {
-         ModuleLoader moduleLoader = Module.getBootModuleLoader();
+         ModuleLoader moduleLoader = new PluginModuleLoader();
 
          List<PluginEntry> toLoad = new ArrayList<InstalledPluginRegistry.PluginEntry>();
          List<PluginEntry> installed = InstalledPluginRegistry.listByAPICompatibleVersion(InstalledPluginRegistry
