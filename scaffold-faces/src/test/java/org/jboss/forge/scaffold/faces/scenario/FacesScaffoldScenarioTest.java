@@ -167,7 +167,7 @@ public class FacesScaffoldScenarioTest extends AbstractFacesScaffoldTest
       FileResource<?> navigation = web.getWebResource("resources/scaffold/pageTemplate.xhtml");
       Assert.assertTrue(navigation.exists());
       contents = Streams.toString(navigation.getResourceInputStream());
-      Assert.assertTrue(contents.contains(" class=\"brand\">Test</a>"));
+      Assert.assertTrue(contents.contains(" styleClass=\"brand\">Test</h:link>"));
       Assert.assertTrue(!contents.contains("@{appName}"));
 
       StringBuilder navigationText = new StringBuilder("\n\t\t\t<ul>\r\n");

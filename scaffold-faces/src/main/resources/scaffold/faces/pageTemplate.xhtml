@@ -14,7 +14,7 @@
 	<div class="navbar navbar-fixed-top">
 		<div class="navbar-inner">
 			<div class="container">
-				<h:link id="brandLink" outcome="@{targetDir}/index.xhtml" styleClass="brand"> <h:outputText value="@{appName}" /></h:link>
+				<h:link id="brandLink" outcome="@{targetDir}/index.xhtml" styleClass="brand">@{appName}</h:link>
 				<div class="nav-collapse collapse">
 					<ul class="nav">
 						<li><a href="http://forge.jboss.org/docs/important_plugins/ui-scaffolding.html">How to Customize</a></li>
@@ -29,7 +29,7 @@
 			<h:link id="homeLink" outcome="@{targetDir}/index.xhtml">
 				<img src="#{resource['forge-logo.png']}" alt="Forge... get hammered" border="0" />
 			</h:link>
-			@{navigation}				
+			@{navigation}
 		</div>
 
 		<div id="content">
@@ -43,12 +43,12 @@
 			<ui:insert name="main" />
 		</div>
 	</div>
-		
+
 	<footer>
 		<div id="footer-wrapper">
 	    	<p>Powered by <a href="http://jboss.org/forge">Forge</a></p>
 	    </div>
 	</footer>
-		
+
 </h:body>
 </html>
