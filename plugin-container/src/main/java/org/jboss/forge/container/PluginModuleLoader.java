@@ -22,16 +22,20 @@ import org.jboss.modules.ModuleSpec;
 import org.jboss.modules.ModuleSpec.Builder;
 import org.jboss.modules.ResourceLoaderSpec;
 import org.jboss.modules.ResourceLoaders;
+import org.jboss.modules.filter.PathFilters;
 
 /**
+ * TODO See {@link JarModuleLoader} for how to do dynamic dependencies from an XML file within.
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
 public class PluginModuleLoader extends ModuleLoader
 {
    private static final ModuleIdentifier PLUGIN_CONTAINER_API = ModuleIdentifier.create("org.jboss.forge.api");
+   private static final ModuleIdentifier PLUGIN_CONTAINER = ModuleIdentifier.create("org.jboss.forge");
    private static final ModuleIdentifier WELD = ModuleIdentifier.create("org.jboss.weld");
-   
+
    private List<PluginEntry> installed;
    private ModuleLoader parent;
 
@@ -68,25 +72,30 @@ public class PluginModuleLoader extends ModuleLoader
 
       if (found)
       {
-         Builder specBuilder = ModuleSpec.build(id);
-         specBuilder.addDependency(DependencySpec.createModuleDependencySpec(PLUGIN_CONTAINER_API));
-         specBuilder.addDependency(DependencySpec.createModuleDependencySpec(WELD));
+         Builder builder = ModuleSpec.build(id);
 
+         builder.addDependency(DependencySpec.createModuleDependencySpec(PathFilters.acceptAll(),
+                  PathFilters.rejectAll(), parent, PLUGIN_CONTAINER_API, false));
+         builder.addDependency(DependencySpec.createModuleDependencySpec(PathFilters.acceptAll(),
+                  PathFilters.rejectAll(), parent, PLUGIN_CONTAINER, false));
+         builder.addDependency(DependencySpec.createModuleDependencySpec(PathFilters.acceptAll(),
+                  PathFilters.rejectAll(), parent, WELD, false));
+
+         File jarFile = new File("/Users/lbaxter/.forge/plugins/org/example/plugin/1.0.0-SNAPSHOT/plugin.jar");
          try
          {
-            specBuilder
-                     .addResourceRoot(ResourceLoaderSpec.createResourceLoaderSpec(ResourceLoaders
-                              .createJarResourceLoader(
-                                       "plugin.jar",
-                                       new JarFile(
-                                                new File(
-                                                         "/Users/lbaxter/.forge/plugins/org/example/plugin/1.0.0-SNAPSHOT/plugin.jar")))));
-            ModuleSpec moduleSpec = specBuilder.create();
+            builder.addResourceRoot(
+                     ResourceLoaderSpec.createResourceLoaderSpec(
+                              ResourceLoaders.createJarResourceLoader(jarFile.getName(), new JarFile(jarFile, true)),
+                              PathFilters.acceptAll())
+                     );
+
+            ModuleSpec moduleSpec = builder.create();
             return moduleSpec;
          }
          catch (IOException e)
          {
-            throw new ContainerException("Could not load plugin resource [*TODO*]", e);
+            throw new ContainerException("Could not load plugin resource [" + jarFile.getAbsolutePath() + "]", e);
          }
       }
       return null;

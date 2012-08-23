@@ -166,12 +166,13 @@ public class Bootstrap
                   + pluginEntry + ". Otherwise, try installing a new version of the plugin.");
       }
 
-      ModuleLoader moduleLoader = Module.getBootModuleLoader(); // new PluginModuleLoader(installed);
+      ModuleLoader moduleLoader = new PluginModuleLoader(installed);
       for (PluginEntry plugin : toLoad)
       {
          try
          {
             Module module = moduleLoader.loadModule(ModuleIdentifier.fromString(plugin.toModuleId()));
+            Module bootLoader = Module.getBootModuleLoader().loadModule(ModuleIdentifier.fromString(plugin.toModuleId()));
             result.add(module);
          }
          catch (Exception e)

@@ -46,8 +46,11 @@ public final class PluginRunnable implements Runnable
 
          Map<String, List<PluginMetadata>> plugins = registry.getPlugins();
          Assert.notNull(plugins, "PluginMetadata Map was null.");
-         
+
          globalRegistry.addPlugins(module, plugins);
+
+         Class<?> name = Class.forName("org.example.ExamplePlugin", true, module.getClassLoader());
+         System.out.println("Class [" + name + "] was loaded.");
 
          manager.fireEvent(new ContainerShutdown());
          weld.shutdown();
