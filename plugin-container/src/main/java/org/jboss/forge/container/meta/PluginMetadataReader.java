@@ -14,16 +14,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
-import javax.inject.Inject;
 
 import org.jboss.forge.container.doc.Help;
 import org.jboss.forge.container.doc.Topic;
-import org.jboss.forge.container.event.Startup;
-import org.jboss.forge.container.meta.CommandMetadata;
-import org.jboss.forge.container.meta.PluginMetadata;
 import org.jboss.forge.container.plugin.Alias;
 import org.jboss.forge.container.plugin.Command;
 import org.jboss.forge.container.plugin.DefaultCommand;
@@ -39,26 +34,17 @@ import org.jboss.forge.container.util.Annotations;
  */
 public class PluginMetadataReader
 {
-   private final Map<String, List<PluginMetadata>> plugins = new HashMap<String, List<PluginMetadata>>();
-
-   public Map<String, List<PluginMetadata>> getPlugins()
+   public Map<String, List<PluginMetadata>> getPlugins(BeanManager manager)
    {
-      return plugins;
-   }
-
-   @Inject
-   private BeanManager manager;
-
-   @SuppressWarnings("unchecked")
-   public void scan(@Observes final Startup event)
-   {
+      final Map<String, List<PluginMetadata>> plugins = new HashMap<String, List<PluginMetadata>>();
       Set<Bean<?>> beans = manager.getBeans(Plugin.class);
 
       for (Bean<?> bean : beans)
       {
-         Class<?> clazz = bean.getBeanClass();
+         @SuppressWarnings("unchecked")
+         Class<? extends Plugin> clazz = (Class<? extends Plugin>) bean.getBeanClass();
 
-         PluginMetadata pluginMeta = getMetadataFor((Class<? extends Plugin>) clazz);
+         PluginMetadata pluginMeta = getMetadataFor(clazz);
          if (!plugins.containsKey(pluginMeta.getName()))
          {
             plugins.put(pluginMeta.getName(), new ArrayList<PluginMetadata>());
@@ -66,6 +52,8 @@ public class PluginMetadataReader
 
          plugins.get(pluginMeta.getName()).add(pluginMeta);
       }
+
+      return plugins;
    }
 
    public PluginMetadata getMetadataFor(final Class<? extends Plugin> plugin)

@@ -34,13 +34,13 @@ public class ContainerControlImpl implements ContainerControl
 
    void bootstrap(@Observes ContainerStartup event)
    {
-      System.out.println("Starting container.");
+      System.out.println("Starting container [" + Thread.currentThread().getName() + "]");
       start();
    }
 
    void teardown(@Observes ContainerShutdown event)
    {
-      System.out.println("Stopping container.");
+      System.out.println("Stopping container [" + Thread.currentThread().getName() + "]");
       stop();
    }
 

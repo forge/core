@@ -9,6 +9,8 @@ package org.jboss.forge.container;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -16,9 +18,9 @@ import java.util.logging.Logger;
 
 import org.jboss.forge.container.InstalledPluginRegistry.PluginEntry;
 import org.jboss.forge.container.exception.ContainerException;
+import org.jboss.forge.container.meta.PluginMetadata;
 import org.jboss.modules.Module;
 import org.jboss.modules.ModuleIdentifier;
-import org.jboss.modules.ModuleLoadException;
 import org.jboss.modules.ModuleLoader;
 
 /**
@@ -75,25 +77,52 @@ public class Bootstrap
 
       try
       {
-         ModuleLoader moduleLoader = Module.getBootModuleLoader();
-         Module forge = moduleLoader.loadModule(ModuleIdentifier.fromString("org.jboss.forge:main"));
-         Thread controlThread = new Thread(new PluginRunnable(forge, registry), forge.getIdentifier().getName() + ":" + forge.getIdentifier().getSlot());
-         controlThread.start();
+         // ModuleLoader moduleLoader = Module.getBootModuleLoader();
+         // Module forge = moduleLoader.loadModule(ModuleIdentifier.fromString("org.jboss.forge:main"));
+         // ControlRunnable controlRunnable = new ControlRunnable(forge, registry);
+         // Thread controlThread = new Thread(controlRunnable, forge.getIdentifier().getName() + ":"
+         // + forge.getIdentifier().getSlot());
+         // controlThread.start();
 
-         Set<Module> plugins = loadPlugins(moduleLoader);
-
+         Set<Module> plugins = loadPlugins();
+         Set<Thread> threads = new HashSet<Thread>();
          for (Module module : plugins)
          {
-            Thread pluginThread = new Thread(new PluginRunnable(module, registry), module.getIdentifier().getName() + ":" + module.getIdentifier().getSlot());
+            PluginRunnable pluginRunnable = new PluginRunnable(module, registry);
+            Thread pluginThread = new Thread(pluginRunnable, module.getIdentifier().getName()
+                     + ":" + module.getIdentifier().getSlot());
+            threads.add(pluginThread);
             pluginThread.start();
          }
 
-         controlThread.join();
+         boolean alive;
+         do
+         {
+            Thread.sleep(10);
+            alive = false;
+            for (Thread thread : threads)
+            {
+               if (thread.isAlive())
+               {
+                  alive = true;
+               }
+            }
+         }
+         while (alive == true);
+
+         Map<Module, Map<String, List<PluginMetadata>>> loadedPlugins = registry.getPlugins();
+         for (Entry<Module, Map<String, List<PluginMetadata>>> entry : loadedPlugins.entrySet())
+         {
+            System.out.println("Plugins from module [" + entry.getKey().getIdentifier() + "] - " + entry.getValue());
+         }
+
+         // controlRunnable.terminate();
+         // controlThread.join();
       }
-      catch (ModuleLoadException e)
-      {
-         throw new ContainerException(e);
-      }
+      // catch (ModuleLoadException e)
+      // {
+      // throw new ContainerException(e);
+      // }
       catch (InterruptedException e)
       {
          throw new ContainerException(e);
@@ -115,49 +144,40 @@ public class Bootstrap
       }
    }
 
-   synchronized private static Set<Module> loadPlugins(ModuleLoader bootLoader)
+   synchronized private static Set<Module> loadPlugins()
    {
       Set<Module> result = new HashSet<Module>();
 
-      try
+      List<PluginEntry> toLoad = new ArrayList<InstalledPluginRegistry.PluginEntry>();
+      List<PluginEntry> installed = InstalledPluginRegistry.listByAPICompatibleVersion(InstalledPluginRegistry
+               .getRuntimeAPIVersion());
+
+      toLoad.addAll(installed);
+
+      List<PluginEntry> incompatible = InstalledPluginRegistry.list();
+      incompatible.removeAll(installed);
+
+      for (PluginEntry pluginEntry : incompatible)
       {
-         ModuleLoader moduleLoader = new PluginModuleLoader();
-
-         List<PluginEntry> toLoad = new ArrayList<InstalledPluginRegistry.PluginEntry>();
-         List<PluginEntry> installed = InstalledPluginRegistry.listByAPICompatibleVersion(InstalledPluginRegistry
-                  .getRuntimeAPIVersion());
-
-         toLoad.addAll(installed);
-
-         List<PluginEntry> incompatible = InstalledPluginRegistry.list();
-         incompatible.removeAll(installed);
-
-         for (PluginEntry pluginEntry : incompatible)
-         {
-            System.out.println("Not loading plugin [" + pluginEntry.getName()
-                     + "] because it references Forge API version [" + pluginEntry.getApiVersion()
-                     + "] which may not be compatible with my current version [" + Bootstrap.class.getPackage()
-                              .getImplementationVersion() + "]. To remove this plugin, type 'forge remove-plugin "
-                     + pluginEntry + ". Otherwise, try installing a new version of the plugin.");
-         }
-
-         for (PluginEntry plugin : toLoad)
-         {
-            try
-            {
-               Module module = moduleLoader.loadModule(ModuleIdentifier.fromString(plugin.toModuleId()));
-               result.add(module);
-            }
-            catch (Exception e)
-            {
-               System.out.println("Failed loading module for plugin [" + plugin + "]");
-               e.printStackTrace();
-            }
-         }
+         System.out.println("Not loading plugin [" + pluginEntry.getName()
+                  + "] because it references Forge API version [" + pluginEntry.getApiVersion()
+                  + "] which may not be compatible with my current version [" + Bootstrap.class.getPackage()
+                           .getImplementationVersion() + "]. To remove this plugin, type 'forge remove-plugin "
+                  + pluginEntry + ". Otherwise, try installing a new version of the plugin.");
       }
-      catch (Exception e)
+
+      ModuleLoader moduleLoader = Module.getBootModuleLoader(); // new PluginModuleLoader(installed);
+      for (PluginEntry plugin : toLoad)
       {
-         e.printStackTrace();
+         try
+         {
+            Module module = moduleLoader.loadModule(ModuleIdentifier.fromString(plugin.toModuleId()));
+            result.add(module);
+         }
+         catch (Exception e)
+         {
+            throw new ContainerException("Failed loading module for plugin [" + plugin + "]", e);
+         }
       }
 
       return result;

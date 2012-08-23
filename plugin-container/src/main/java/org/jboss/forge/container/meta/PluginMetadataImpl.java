@@ -188,5 +188,5 @@ public class PluginMetadataImpl implements PluginMetadata
    {
       this.topic = topic.toUpperCase();
    }
-
+   
 }

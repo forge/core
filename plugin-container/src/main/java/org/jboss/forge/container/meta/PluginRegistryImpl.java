@@ -45,7 +45,7 @@ public class PluginRegistryImpl implements PluginRegistry
    @PostConstruct
    public void init()
    {
-      plugins = library.getPlugins();
+      plugins = library.getPlugins(manager);
    }
 
    @Override

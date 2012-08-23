@@ -13,6 +13,12 @@ public class PluginModuleRegistry
 
    public void addPlugins(Module module, Map<String, List<PluginMetadata>> plugins)
    {
+      System.out.println("Added plugins " + plugins + " from module [" + module.getIdentifier() + "]");
       this.plugins.put(module, plugins);
+   }
+
+   public Map<Module, Map<String, List<PluginMetadata>>> getPlugins()
+   {
+      return plugins;
    }
 }
