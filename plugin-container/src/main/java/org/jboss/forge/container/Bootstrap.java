@@ -172,7 +172,6 @@ public class Bootstrap
          try
          {
             Module module = moduleLoader.loadModule(ModuleIdentifier.fromString(plugin.toModuleId()));
-            Module bootLoader = Module.getBootModuleLoader().loadModule(ModuleIdentifier.fromString(plugin.toModuleId()));
             result.add(module);
          }
          catch (Exception e)

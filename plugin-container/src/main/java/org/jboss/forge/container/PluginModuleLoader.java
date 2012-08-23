@@ -80,6 +80,7 @@ public class PluginModuleLoader extends ModuleLoader
                   PathFilters.rejectAll(), parent, PLUGIN_CONTAINER, false));
          builder.addDependency(DependencySpec.createModuleDependencySpec(PathFilters.acceptAll(),
                   PathFilters.rejectAll(), parent, WELD, false));
+         builder.addDependency(DependencySpec.createLocalDependencySpec());
 
          File jarFile = new File("/Users/lbaxter/.forge/plugins/org/example/plugin/1.0.0-SNAPSHOT/plugin.jar");
          try
