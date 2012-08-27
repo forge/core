@@ -140,11 +140,43 @@ public class Bootstrap
                   WeldContainer container = weld.initialize();
                   manager = container.getBeanManager();
                }
+               try
+               {
+                  manager.fireEvent(new PreStartup());
+               }
+               catch (Throwable t)
+               {
+                  System.out.println("Error during PreStartup event");
+                  t.printStackTrace();
+               }
+               try
+               {
+                  manager.fireEvent(new Startup(workingDir, restarting));
+               }
+               catch (Throwable t)
+               {
+                  System.out.println("Error during Startup event");
+                  t.printStackTrace();
+               }
+               try
+               {
 
-               manager.fireEvent(new PreStartup());
-               manager.fireEvent(new Startup(workingDir, restarting));
-               manager.fireEvent(new PostStartup());
-               manager.fireEvent(new AcceptUserInput());
+                  manager.fireEvent(new PostStartup());
+               }
+               catch (Throwable t)
+               {
+                  System.out.println("Error during PostStartup event");
+                  t.printStackTrace();
+               }
+               try
+               {
+                  manager.fireEvent(new AcceptUserInput());
+               }
+               catch (Throwable t)
+               {
+                  System.out.println("Error during AcceptUserInput event");
+                  t.printStackTrace();
+               }
                weld.shutdown();
             }
          });
