@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.jar.JarFile;
 
-import org.jboss.forge.container.InstalledPluginRegistry.PluginEntry;
+import org.jboss.forge.container.AddonRegistry.AddonEntry;
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.modules.DependencySpec;
 import org.jboss.modules.Module;
@@ -30,16 +30,16 @@ import org.jboss.modules.filter.PathFilters;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class PluginModuleLoader extends ModuleLoader
+public class AddonModuleLoader extends ModuleLoader
 {
    private static final ModuleIdentifier PLUGIN_CONTAINER_API = ModuleIdentifier.create("org.jboss.forge.api");
    private static final ModuleIdentifier PLUGIN_CONTAINER = ModuleIdentifier.create("org.jboss.forge");
    private static final ModuleIdentifier WELD = ModuleIdentifier.create("org.jboss.weld");
 
-   private List<PluginEntry> installed;
+   private List<AddonEntry> installed;
    private ModuleLoader parent;
 
-   public PluginModuleLoader(List<PluginEntry> installed)
+   public AddonModuleLoader(List<AddonEntry> installed)
    {
       this.installed = installed;
       this.parent = Module.getBootModuleLoader();
@@ -60,44 +60,47 @@ public class PluginModuleLoader extends ModuleLoader
    @Override
    protected ModuleSpec findModule(ModuleIdentifier id) throws ModuleLoadException
    {
-      boolean found = false;
-      for (PluginEntry plugin : installed)
+      AddonEntry found = null;
+      for (AddonEntry plugin : installed)
       {
          if (plugin.toModuleId().equals(id.toString()))
          {
-            found = true;
+            found = plugin;
             break;
          }
       }
 
-      if (found)
+      if (found != null)
       {
          Builder builder = ModuleSpec.build(id);
 
+         builder.addDependency(DependencySpec.createLocalDependencySpec());
          builder.addDependency(DependencySpec.createModuleDependencySpec(PathFilters.acceptAll(),
                   PathFilters.rejectAll(), parent, PLUGIN_CONTAINER_API, false));
          builder.addDependency(DependencySpec.createModuleDependencySpec(PathFilters.acceptAll(),
                   PathFilters.rejectAll(), parent, PLUGIN_CONTAINER, false));
          builder.addDependency(DependencySpec.createModuleDependencySpec(PathFilters.acceptAll(),
                   PathFilters.rejectAll(), parent, WELD, false));
-         builder.addDependency(DependencySpec.createLocalDependencySpec());
 
-         File jarFile = new File("/Users/lbaxter/.forge/plugins/org/example/plugin/1.0.0-SNAPSHOT/plugin.jar");
-         try
-         {
-            builder.addResourceRoot(
-                     ResourceLoaderSpec.createResourceLoaderSpec(
-                              ResourceLoaders.createJarResourceLoader(jarFile.getName(), new JarFile(jarFile, true)),
-                              PathFilters.acceptAll())
-                     );
+         List<File> jars = AddonRegistry.getPluginResourceJars(found);
 
-            ModuleSpec moduleSpec = builder.create();
-            return moduleSpec;
-         }
-         catch (IOException e)
+         for (File jarFile : jars)
          {
-            throw new ContainerException("Could not load plugin resource [" + jarFile.getAbsolutePath() + "]", e);
+            try
+            {
+               builder.addResourceRoot(
+                        ResourceLoaderSpec.createResourceLoaderSpec(
+                                 ResourceLoaders.createJarResourceLoader(jarFile.getName(), new JarFile(jarFile, true)),
+                                 PathFilters.acceptAll())
+                        );
+            }
+            catch (IOException e)
+            {
+               throw new ContainerException("Could not load plugin resource [" + jarFile.getAbsolutePath() + "]", e);
+            }
          }
+
+         return builder.create();
       }
       return null;
    }
@@ -105,7 +108,7 @@ public class PluginModuleLoader extends ModuleLoader
    @Override
    public String toString()
    {
-      return "Forge-plugin Module Loader";
+      return "AddonModuleLoader";
    }
 
 }

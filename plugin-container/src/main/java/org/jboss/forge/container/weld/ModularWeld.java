@@ -29,8 +29,6 @@ public class ModularWeld extends Weld
    {
       ModuleResourceLoader moduleResourceLoader = new ModuleResourceLoader(module);
       Deployment deployment = super.createDeployment(moduleResourceLoader, bootstrap);
-      
-      // Collection<BeanDeploymentArchive> archives = deployment.getBeanDeploymentArchives();
 
       return deployment;
    }

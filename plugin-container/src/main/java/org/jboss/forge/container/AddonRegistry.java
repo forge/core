@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,7 +33,7 @@ import org.jboss.forge.parser.xml.XMLParserException;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:koen.aers@gmail.com">Koen Aers</a>
  */
-public class InstalledPluginRegistry
+public class AddonRegistry
 {
    private static final String DEFAULT_SLOT = "main";
    private static final String ATTR_SLOT = "slot";
@@ -44,7 +45,7 @@ public class InstalledPluginRegistry
    private static String PLUGIN_DIR = null;
    private static String REGISTRY = null;
 
-   private static String getPluginDir()
+   private static String getPluginsDir()
    {
       if (PLUGIN_DIR == null)
       {
@@ -61,7 +62,7 @@ public class InstalledPluginRegistry
    {
       if (REGISTRY == null)
       {
-         REGISTRY = getPluginDir() + REGISTRY_FILE;
+         REGISTRY = getPluginsDir() + REGISTRY_FILE;
       }
       return REGISTRY;
    }
@@ -71,15 +72,15 @@ public class InstalledPluginRegistry
       return new File(getRegistry());
    }
 
-   public static List<PluginEntry> listByAPICompatibleVersion(final String version)
+   public static List<AddonEntry> listByAPICompatibleVersion(final String version)
    {
-      List<PluginEntry> list = list();
-      List<PluginEntry> result = list;
+      List<AddonEntry> list = list();
+      List<AddonEntry> result = list;
 
       if (version != null)
       {
-         result = new ArrayList<InstalledPluginRegistry.PluginEntry>();
-         for (PluginEntry entry : list)
+         result = new ArrayList<AddonRegistry.AddonEntry>();
+         for (AddonEntry entry : list)
          {
             if (isApiCompatible(version, entry))
             {
@@ -91,9 +92,9 @@ public class InstalledPluginRegistry
       return result;
    }
 
-   public static List<PluginEntry> list()
+   public static List<AddonEntry> list()
    {
-      List<PluginEntry> result = new ArrayList<PluginEntry>();
+      List<AddonEntry> result = new ArrayList<AddonEntry>();
       // File registryFile = new File(OSUtils.getUserHomePath() + getRegistry());
       File registryFile = getRegistryFile();
       try
@@ -102,7 +103,7 @@ public class InstalledPluginRegistry
          List<Node> list = installed.get("plugin");
          for (Node plugin : list)
          {
-            PluginEntry entry = new PluginEntry(plugin.getAttribute(ATTR_NAME),
+            AddonEntry entry = new AddonEntry(plugin.getAttribute(ATTR_NAME),
                      plugin.getAttribute(ATTR_API_VERSION),
                      plugin.getAttribute(ATTR_SLOT));
             result.add(entry);
@@ -120,7 +121,7 @@ public class InstalledPluginRegistry
       return result;
    }
 
-   public static PluginEntry install(final String name, final String apiVersion, String slot)
+   public static AddonEntry install(final String name, final String apiVersion, String slot)
    {
       if (Strings.isNullOrEmpty(name))
       {
@@ -135,8 +136,8 @@ public class InstalledPluginRegistry
          slot = DEFAULT_SLOT;
       }
 
-      List<PluginEntry> installedPlugins = list();
-      for (PluginEntry e : installedPlugins)
+      List<AddonEntry> installedPlugins = list();
+      for (AddonEntry e : installedPlugins)
       {
          if (name.equals(e.getName()))
          {
@@ -166,7 +167,7 @@ public class InstalledPluginRegistry
                   .attribute(ATTR_SLOT, slot);
          Streams.write(XMLParser.toXMLInputStream(installed), new FileOutputStream(registryFile));
 
-         return new PluginEntry(name, apiVersion, slot);
+         return new AddonEntry(name, apiVersion, slot);
       }
       catch (FileNotFoundException e)
       {
@@ -180,7 +181,7 @@ public class InstalledPluginRegistry
       }
    }
 
-   public static void remove(final PluginEntry plugin)
+   public static void remove(final AddonEntry plugin)
    {
       if (plugin == null)
       {
@@ -207,7 +208,7 @@ public class InstalledPluginRegistry
       }
    }
 
-   public static PluginEntry get(final PluginEntry plugin)
+   public static AddonEntry get(final AddonEntry plugin)
    {
       if (plugin == null)
       {
@@ -232,7 +233,7 @@ public class InstalledPluginRegistry
                      if ((plugin.getSlot() == null)
                               || plugin.getSlot().equals(child.getAttribute(ATTR_SLOT)))
                      {
-                        return new PluginEntry(child.getAttribute(ATTR_NAME),
+                        return new AddonEntry(child.getAttribute(ATTR_NAME),
                                  child.getAttribute(ATTR_API_VERSION),
                                  child.getAttribute(ATTR_SLOT));
                      }
@@ -249,32 +250,42 @@ public class InstalledPluginRegistry
       return null;
    }
 
-   public static boolean has(final PluginEntry plugin)
+   public static File getPluginDirectory(AddonEntry found)
+   {
+      Assert.notNull(found.getSlot(), "Plugin slot must be specified.");
+      Assert.notNull(found.getName(), "Plugin name must be specified.");
+
+      String path = found.getName().replaceAll("\\.", "/");
+      File pluginDir = new File(getPluginsDir() + "/" + path + "/" + found.getSlot());
+      return pluginDir;
+   }
+
+   public static boolean has(final AddonEntry plugin)
    {
       return get(plugin) != null;
    }
 
-   public static class PluginEntry
+   public static class AddonEntry
    {
       private final String name;
       private final String apiVersion;
       private final String slot;
 
-      public PluginEntry(final String name, final String apiVersion, final String slot)
+      public AddonEntry(final String name, final String apiVersion, final String slot)
       {
          this.name = name;
          this.apiVersion = apiVersion;
          this.slot = slot;
       }
 
-      public PluginEntry(final String name, final String apiVersion)
+      public AddonEntry(final String name, final String apiVersion)
       {
          this.name = name;
          this.apiVersion = apiVersion;
          this.slot = null;
       }
 
-      public PluginEntry(final String name)
+      public AddonEntry(final String name)
       {
          this.name = name;
          this.apiVersion = null;
@@ -302,7 +313,7 @@ public class InstalledPluginRegistry
          return name + ":" + apiVersion + ":" + slot;
       }
 
-      public static PluginEntry fromCoordinates(final String coordinates)
+      public static AddonEntry fromCoordinates(final String coordinates)
       {
          String[] split = coordinates.split(":");
          List<String> tokens = Arrays.asList(split);
@@ -316,7 +327,7 @@ public class InstalledPluginRegistry
             if (Strings.isNullOrEmpty(tokens.get(2)))
                throw new IllegalArgumentException("Slot was empty [" + coordinates + "]");
 
-            return new PluginEntry(tokens.get(0), tokens.get(1), tokens.get(2));
+            return new AddonEntry(tokens.get(0), tokens.get(1), tokens.get(2));
          }
          else
          {
@@ -350,7 +361,7 @@ public class InstalledPluginRegistry
             return false;
          if (getClass() != obj.getClass())
             return false;
-         PluginEntry other = (PluginEntry) obj;
+         AddonEntry other = (AddonEntry) obj;
          if (apiVersion == null)
          {
             if (other.apiVersion != null)
@@ -384,11 +395,11 @@ public class InstalledPluginRegistry
 
    public static String getRuntimeAPIVersion()
    {
-      return InstalledPluginRegistry.class.getPackage()
+      return AddonRegistry.class.getPackage()
                .getImplementationVersion();
    }
 
-   public static boolean isApiCompatible(CharSequence runtimeVersion, PluginEntry entry)
+   public static boolean isApiCompatible(CharSequence runtimeVersion, AddonEntry entry)
    {
       Assert.notNull(runtimeVersion, "Runtime API version must not be null.");
       Assert.notNull(entry, "Plugin entry must not be null.");
@@ -411,5 +422,18 @@ public class InstalledPluginRegistry
       }
 
       return false;
+   }
+
+   public static List<File> getPluginResourceJars(AddonEntry found)
+   {
+      File dir = AddonRegistry.getPluginDirectory(found);
+      return Arrays.asList(dir.listFiles(new FilenameFilter()
+      {
+         @Override
+         public boolean accept(File file, String name)
+         {
+            return name.endsWith(".jar");
+         }
+      }));
    }
 }

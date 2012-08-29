@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.jboss.forge.container.meta.PluginMetadata;
 import org.jboss.modules.Module;
 
-public class PluginModuleRegistry
+public class AddonModuleRegistry
 {
    private Map<Module, Map<String, List<PluginMetadata>>> plugins = new ConcurrentHashMap<Module, Map<String, List<PluginMetadata>>>();
 

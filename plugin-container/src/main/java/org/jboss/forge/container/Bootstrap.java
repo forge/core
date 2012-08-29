@@ -16,12 +16,15 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.jboss.forge.container.InstalledPluginRegistry.PluginEntry;
+import org.jboss.forge.container.AddonRegistry.AddonEntry;
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.meta.PluginMetadata;
 import org.jboss.modules.Module;
 import org.jboss.modules.ModuleIdentifier;
+import org.jboss.modules.ModuleLoadException;
 import org.jboss.modules.ModuleLoader;
+import org.jboss.weld.bootstrap.api.SingletonProvider;
+import org.jboss.weld.bootstrap.api.helpers.TCCLSingletonProvider;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -71,24 +74,28 @@ public class Bootstrap
 
    private static void init()
    {
-      initLogging();
+      // initLogging();
 
-      PluginModuleRegistry registry = new PluginModuleRegistry();
+      AddonModuleRegistry registry = new AddonModuleRegistry();
 
       try
       {
-         // ModuleLoader moduleLoader = Module.getBootModuleLoader();
-         // Module forge = moduleLoader.loadModule(ModuleIdentifier.fromString("org.jboss.forge:main"));
-         // ControlRunnable controlRunnable = new ControlRunnable(forge, registry);
-         // Thread controlThread = new Thread(controlRunnable, forge.getIdentifier().getName() + ":"
-         // + forge.getIdentifier().getSlot());
-         // controlThread.start();
+         Set<Module> addons = loadAddons();
 
-         Set<Module> plugins = loadPlugins();
+         // Make sure Weld uses ThreadSafe singletons.
+         SingletonProvider.initialize(new TCCLSingletonProvider());
+
+         ModuleLoader moduleLoader = Module.getBootModuleLoader();
+         Module forge = moduleLoader.loadModule(ModuleIdentifier.fromString("org.jboss.forge:main"));
+         ControlRunnable controlRunnable = new ControlRunnable(forge, registry, addons);
+         Thread controlThread = new Thread(controlRunnable, forge.getIdentifier().getName() + ":"
+                  + forge.getIdentifier().getSlot());
+         controlThread.start();
+
          Set<Thread> threads = new HashSet<Thread>();
-         for (Module module : plugins)
+         for (Module module : addons)
          {
-            PluginRunnable pluginRunnable = new PluginRunnable(module, registry);
+            AddonRunnable pluginRunnable = new AddonRunnable(module, registry, addons);
             Thread pluginThread = new Thread(pluginRunnable, module.getIdentifier().getName()
                      + ":" + module.getIdentifier().getSlot());
             threads.add(pluginThread);
@@ -110,19 +117,19 @@ public class Bootstrap
          }
          while (alive == true);
 
-         Map<Module, Map<String, List<PluginMetadata>>> loadedPlugins = registry.getPlugins();
-         for (Entry<Module, Map<String, List<PluginMetadata>>> entry : loadedPlugins.entrySet())
+         Map<Module, Map<String, List<PluginMetadata>>> loadedAddons = registry.getPlugins();
+         for (Entry<Module, Map<String, List<PluginMetadata>>> entry : loadedAddons.entrySet())
          {
-            System.out.println("Plugins from module [" + entry.getKey().getIdentifier() + "] - " + entry.getValue());
+            System.out.println("Plugins from addon module [" + entry.getKey().getIdentifier() + "] - "
+                     + entry.getValue());
          }
 
-         // controlRunnable.terminate();
-         // controlThread.join();
+         controlThread.join();
       }
-      // catch (ModuleLoadException e)
-      // {
-      // throw new ContainerException(e);
-      // }
+      catch (ModuleLoadException e)
+      {
+         throw new ContainerException(e);
+      }
       catch (InterruptedException e)
       {
          throw new ContainerException(e);
@@ -144,20 +151,20 @@ public class Bootstrap
       }
    }
 
-   synchronized private static Set<Module> loadPlugins()
+   synchronized private static Set<Module> loadAddons()
    {
       Set<Module> result = new HashSet<Module>();
 
-      List<PluginEntry> toLoad = new ArrayList<InstalledPluginRegistry.PluginEntry>();
-      List<PluginEntry> installed = InstalledPluginRegistry.listByAPICompatibleVersion(InstalledPluginRegistry
+      List<AddonEntry> toLoad = new ArrayList<AddonRegistry.AddonEntry>();
+      List<AddonEntry> installed = AddonRegistry.listByAPICompatibleVersion(AddonRegistry
                .getRuntimeAPIVersion());
 
       toLoad.addAll(installed);
 
-      List<PluginEntry> incompatible = InstalledPluginRegistry.list();
+      List<AddonEntry> incompatible = AddonRegistry.list();
       incompatible.removeAll(installed);
 
-      for (PluginEntry pluginEntry : incompatible)
+      for (AddonEntry pluginEntry : incompatible)
       {
          System.out.println("Not loading plugin [" + pluginEntry.getName()
                   + "] because it references Forge API version [" + pluginEntry.getApiVersion()
@@ -166,8 +173,8 @@ public class Bootstrap
                   + pluginEntry + ". Otherwise, try installing a new version of the plugin.");
       }
 
-      ModuleLoader moduleLoader = new PluginModuleLoader(installed);
-      for (PluginEntry plugin : toLoad)
+      ModuleLoader moduleLoader = new AddonModuleLoader(installed);
+      for (AddonEntry plugin : toLoad)
       {
          try
          {

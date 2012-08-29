@@ -33,6 +33,8 @@
       </module>
       
       <module name="org.jboss.weld" services="import" />
+      
+      <module name="org.slf4j" services="import" />
 
       <module name="org.mvel" export="true" />
 
