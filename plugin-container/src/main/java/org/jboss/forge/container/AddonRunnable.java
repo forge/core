@@ -58,7 +58,7 @@ public final class AddonRunnable implements Runnable
 
             while (globalRegistry.getPlugins().keySet().size() < addons.size())
             {
-               Thread.sleep(100);
+               Thread.sleep(10);
             }
 
             manager.fireEvent(new ContainerShutdown());

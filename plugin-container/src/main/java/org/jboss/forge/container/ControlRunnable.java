@@ -42,7 +42,7 @@ public final class ControlRunnable implements Runnable
 
             while (globalRegistry.getPlugins().keySet().size() < addons.size())
             {
-               Thread.sleep(100);
+               Thread.sleep(10);
             }
 
             System.out.println("Control thread plugin registry " + globalRegistry.getPlugins());

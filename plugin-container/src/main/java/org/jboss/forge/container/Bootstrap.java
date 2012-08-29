@@ -33,8 +33,12 @@ public class Bootstrap
 {
    public static final String PROP_PLUGIN_DIR = "org.jboss.forge.pluginDir";
    public static final String PROP_EVALUATE = "org.jboss.forge.evaluate";
+   public static final String PROP_CONCURRENT_PLUGINS = "org.jboss.forge.concurrent.Plugins";
    private static final String ARG_PLUGIN_DIR = "-pluginDir";
    private static final String ARG_EVALUATE = "-e";
+
+   private static int BATCH_SIZE = System.getProperty(PROP_CONCURRENT_PLUGINS) == null ? 4
+            : Integer.valueOf(System.getProperty(PROP_CONCURRENT_PLUGINS));
 
    public static void main(final String[] args)
    {
@@ -74,13 +78,15 @@ public class Bootstrap
 
    private static void init()
    {
-      // initLogging();
+      initLogging();
 
       AddonModuleRegistry registry = new AddonModuleRegistry();
 
       try
       {
          Set<Module> addons = loadAddons();
+         BATCH_SIZE = BATCH_SIZE > addons.size() ? addons.size() : BATCH_SIZE;
+         System.out.println("Batch size = " + BATCH_SIZE);
 
          // Make sure Weld uses ThreadSafe singletons.
          SingletonProvider.initialize(new TCCLSingletonProvider());
@@ -93,13 +99,23 @@ public class Bootstrap
          controlThread.start();
 
          Set<Thread> threads = new HashSet<Thread>();
+
+         int started = 0;
          for (Module module : addons)
          {
+            while (registry.getPlugins().keySet().size() + BATCH_SIZE <= started)
+            {
+               Thread.sleep(10);
+            }
+
             AddonRunnable pluginRunnable = new AddonRunnable(module, registry, addons);
             Thread pluginThread = new Thread(pluginRunnable, module.getIdentifier().getName()
                      + ":" + module.getIdentifier().getSlot());
             threads.add(pluginThread);
             pluginThread.start();
+
+            started++;
+
          }
 
          boolean alive;
