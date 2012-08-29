@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * // TODO document
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class ClassLoaders
