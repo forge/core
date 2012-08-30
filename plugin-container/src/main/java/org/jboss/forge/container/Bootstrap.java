@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,6 +22,7 @@ import java.util.logging.Logger;
 import org.jboss.forge.container.AddonRegistry.AddonEntry;
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.meta.PluginMetadata;
+import org.jboss.forge.container.util.ThreadNamingRunnable;
 import org.jboss.modules.Module;
 import org.jboss.modules.ModuleIdentifier;
 import org.jboss.modules.ModuleLoadException;
@@ -36,8 +40,6 @@ public class Bootstrap
    public static final String PROP_CONCURRENT_PLUGINS = "org.jboss.forge.concurrent.Plugins";
    private static final String ARG_PLUGIN_DIR = "-pluginDir";
    private static final String ARG_EVALUATE = "-e";
-
-   private static final int BATCH_SIZE = Integer.getInteger(PROP_CONCURRENT_PLUGINS, 4);
 
    public static void main(final String[] args)
    {
@@ -84,53 +86,30 @@ public class Bootstrap
       try
       {
          Set<Module> addons = loadAddons();
-         int batchSize = Math.min(BATCH_SIZE,addons.size());
-         System.out.println("Batch size = " + batchSize);
 
          // Make sure Weld uses ThreadSafe singletons.
          SingletonProvider.initialize(new TCCLSingletonProvider());
 
          ModuleLoader moduleLoader = Module.getBootModuleLoader();
          Module forge = moduleLoader.loadModule(ModuleIdentifier.fromString("org.jboss.forge:main"));
+
+         ExecutorService threadPool = Executors.newCachedThreadPool();
+
          ControlRunnable controlRunnable = new ControlRunnable(forge, registry, addons);
-         Thread controlThread = new Thread(controlRunnable, forge.getIdentifier().getName() + ":"
-                  + forge.getIdentifier().getSlot());
-         controlThread.start();
+         threadPool.submit(new ThreadNamingRunnable(forge.getIdentifier().getName() + ":"
+                  + forge.getIdentifier().getSlot(), controlRunnable));
 
-         Set<Thread> threads = new HashSet<Thread>();
-
-         int started = 0;
          for (Module module : addons)
          {
-            while (registry.getPlugins().keySet().size() + batchSize <= started)
-            {
-               Thread.sleep(10);
-            }
-
             AddonRunnable pluginRunnable = new AddonRunnable(module, registry, addons);
-            Thread pluginThread = new Thread(pluginRunnable, module.getIdentifier().getName()
-                     + ":" + module.getIdentifier().getSlot());
-            threads.add(pluginThread);
-            pluginThread.start();
-
-            started++;
-
+            threadPool.submit(new ThreadNamingRunnable(module.getIdentifier().getName()
+                     + ":" + module.getIdentifier().getSlot(), pluginRunnable));
          }
 
-         boolean alive;
-         do
-         {
-            Thread.sleep(10);
-            alive = false;
-            for (Thread thread : threads)
-            {
-               if (thread.isAlive())
-               {
-                  alive = true;
-               }
-            }
-         }
-         while (alive == true);
+         // Disable new tasks from being submitted
+         threadPool.shutdown();
+         // Wait for awhile for existing tasks to terminate
+         threadPool.awaitTermination(10, TimeUnit.MINUTES);
 
          Map<Module, Map<String, List<PluginMetadata>>> loadedAddons = registry.getPlugins();
          for (Entry<Module, Map<String, List<PluginMetadata>>> entry : loadedAddons.entrySet())
@@ -138,8 +117,6 @@ public class Bootstrap
             System.out.println("Plugins from addon module [" + entry.getKey().getIdentifier() + "] - "
                      + entry.getValue());
          }
-
-         controlThread.join();
       }
       catch (ModuleLoadException e)
       {
