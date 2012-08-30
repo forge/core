@@ -37,8 +37,7 @@ public class Bootstrap
    private static final String ARG_PLUGIN_DIR = "-pluginDir";
    private static final String ARG_EVALUATE = "-e";
 
-   private static int BATCH_SIZE = System.getProperty(PROP_CONCURRENT_PLUGINS) == null ? 4
-            : Integer.valueOf(System.getProperty(PROP_CONCURRENT_PLUGINS));
+   private static final int BATCH_SIZE = Integer.getInteger(PROP_CONCURRENT_PLUGINS, 4);
 
    public static void main(final String[] args)
    {
@@ -85,8 +84,8 @@ public class Bootstrap
       try
       {
          Set<Module> addons = loadAddons();
-         BATCH_SIZE = BATCH_SIZE > addons.size() ? addons.size() : BATCH_SIZE;
-         System.out.println("Batch size = " + BATCH_SIZE);
+         int batchSize = Math.min(BATCH_SIZE,addons.size());
+         System.out.println("Batch size = " + batchSize);
 
          // Make sure Weld uses ThreadSafe singletons.
          SingletonProvider.initialize(new TCCLSingletonProvider());
@@ -103,7 +102,7 @@ public class Bootstrap
          int started = 0;
          for (Module module : addons)
          {
-            while (registry.getPlugins().keySet().size() + BATCH_SIZE <= started)
+            while (registry.getPlugins().keySet().size() + batchSize <= started)
             {
                Thread.sleep(10);
             }
