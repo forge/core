@@ -8,7 +8,9 @@ package org.jboss.forge.container;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.jar.JarFile;
 
 import org.jboss.forge.container.AddonRegistry.AddonEntry;
@@ -26,9 +28,9 @@ import org.jboss.modules.filter.PathFilters;
 
 /**
  * TODO See {@link JarModuleLoader} for how to do dynamic dependencies from an XML file within.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ * @author <a href="mailto:gegastaldi@gmail.com">George Gastaldi</a>
  */
 public class AddonModuleLoader extends ModuleLoader
 {
@@ -36,12 +38,16 @@ public class AddonModuleLoader extends ModuleLoader
    private static final ModuleIdentifier PLUGIN_CONTAINER = ModuleIdentifier.create("org.jboss.forge");
    private static final ModuleIdentifier WELD = ModuleIdentifier.create("org.jboss.weld");
 
-   private List<AddonEntry> installed;
+   private Map<String, AddonEntry> installed;
    private ModuleLoader parent;
 
-   public AddonModuleLoader(List<AddonEntry> installed)
+   public AddonModuleLoader(List<AddonEntry> installedAddons)
    {
-      this.installed = installed;
+      this.installed = new HashMap<String, AddonRegistry.AddonEntry>();
+      for (AddonEntry entry : installedAddons)
+      {
+         this.installed.put(entry.toModuleId(), entry);
+      }
       this.parent = Module.getBootModuleLoader();
    }
 
@@ -60,16 +66,7 @@ public class AddonModuleLoader extends ModuleLoader
    @Override
    protected ModuleSpec findModule(ModuleIdentifier id) throws ModuleLoadException
    {
-      AddonEntry found = null;
-      for (AddonEntry plugin : installed)
-      {
-         if (plugin.toModuleId().equals(id.toString()))
-         {
-            found = plugin;
-            break;
-         }
-      }
-
+      AddonEntry found = installed.get(id.toString());
       if (found != null)
       {
          Builder builder = ModuleSpec.build(id);

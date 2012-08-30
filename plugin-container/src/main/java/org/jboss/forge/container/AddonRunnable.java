@@ -3,6 +3,7 @@ package org.jboss.forge.container;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 import javax.enterprise.inject.spi.BeanManager;
 
@@ -13,7 +14,6 @@ import org.jboss.forge.container.meta.PluginRegistry;
 import org.jboss.forge.container.util.Assert;
 import org.jboss.forge.container.util.BeanManagerUtils;
 import org.jboss.forge.container.util.ClassLoaders;
-import org.jboss.forge.container.util.ClassLoaders.Task;
 import org.jboss.forge.container.weld.ModularWeld;
 import org.jboss.modules.Module;
 import org.jboss.weld.environment.se.Weld;
@@ -35,10 +35,10 @@ public final class AddonRunnable implements Runnable
    @Override
    public void run()
    {
-      ClassLoaders.executeIn(module.getClassLoader(), new Task()
+      ClassLoaders.executeIn(module.getClassLoader(), new Callable<Object>()
       {
          @Override
-         public void perform() throws Exception
+         public Object call() throws Exception
          {
             Weld weld = new ModularWeld(module);
             WeldContainer container = weld.initialize();
@@ -63,6 +63,7 @@ public final class AddonRunnable implements Runnable
 
             manager.fireEvent(new ContainerShutdown());
             weld.shutdown();
+            return null;
          }
       });
    }
