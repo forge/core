@@ -22,7 +22,7 @@ public class RunPluginTest extends AbstractShellTest
    {
       File file = new File("src/test/resources/org/jboss/forge/shell/test/plugins/builtin/RunPluginTest.fsh");
       Assert.assertTrue("Script file does not exist", file.exists());
-      getShell().execute(file);
+      getShell().execute("run "+file.getAbsolutePath());
    }
 
 }

@@ -660,7 +660,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       {
          // unwrap any aborted exceptions
          Throwable cause = original;
-         while (cause != null)
+         while (cause.getCause() != null)
          {
             if (cause instanceof AbortedException)
                throw (AbortedException) cause;
@@ -668,7 +668,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
             cause = cause.getCause();
          }
 
-         throw original;
+         throw cause;
       }
       catch (AbortedException e)
       {
@@ -710,7 +710,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
             e.printStackTrace();
          }
       }
-      catch (Exception e)
+      catch (Throwable e)
       {
          if (!isVerbose())
          {
