@@ -78,10 +78,14 @@ public class PluginsPlugin implements Plugin
 
    @Command("new-plugin")
    public void newPlugin(final PipeOut out,
-            @Option(required = true, name = "named", description = "The plugin name") final String pluginName)
+            @Option(required = true, name = "named", description = "The plugin name") final String pluginName,
+            @Option(name = "alias", description = "The plugin alias") final String alias)
             throws FileNotFoundException
    {
-
+      String pluginAlias = Strings.isNullOrEmpty(alias) ? pluginName.replaceAll("([^A-Za-z0-9-])|[Plugin]", "").toLowerCase() : alias;
+      if (Strings.isNullOrEmpty(pluginAlias)) {
+         throw new RuntimeException("You should specify a valid alias for this plugin");
+      }
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
 
       String className = canonicalize(pluginName);
@@ -91,7 +95,7 @@ public class PluginsPlugin implements Plugin
 
       Map<Object, Object> context = new HashMap<Object, Object>();
       context.put("name", className);
-      context.put("alias", pluginName.replaceAll("[^A-Za-z0-9-]", "").toLowerCase());
+      context.put("alias", pluginAlias);
 
       CompiledTemplateResource pluginSource = compiler.compileResource(getClass().getResourceAsStream(
                "/org/jboss/forge/dev/PluginTemplate.jv"));

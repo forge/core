@@ -109,4 +109,15 @@ public class PluginsPluginTest extends AbstractShellTest
 
    }
 
+   @Test
+   public void testCreatePluginWithDifferentAlias() throws Exception
+   {
+      initializeJavaProject();
+      queueInputLines("", "14");
+      getShell().execute("plugins setup");
+      queueInputLines("");
+      getShell().execute("plugins new-plugin --named DemoPlugin --alias demo");
+      getShell().execute("build");
+   }
+
 }
