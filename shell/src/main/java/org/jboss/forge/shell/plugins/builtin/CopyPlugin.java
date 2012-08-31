@@ -25,11 +25,11 @@ import org.jboss.forge.shell.plugins.Topic;
 import org.jboss.forge.shell.util.PathspecParser;
 
 /**
- * 
+ *
  * Builtin copy plugin
- * 
+ *
  * @author tremes@redhat.com
- * 
+ *
  */
 @Alias("cp")
 @Topic("File & Resources")
@@ -38,8 +38,10 @@ import org.jboss.forge.shell.util.PathspecParser;
 public class CopyPlugin implements Plugin
 {
 
-	@Inject @Current Resource<?> directory;
-	
+   @Inject
+   @Current
+   Resource<?> directory;
+
    private final ResourceFactory resourceFactory;
 
    @Inject
@@ -53,7 +55,7 @@ public class CopyPlugin implements Plugin
             @Option(description = "source", required = true) final Resource<?> source,
             @Option(description = "target", required = true) final String target)
    {
-	   
+
       if (isDirectory(source))
       {
          copyRecursively(source, directory, target);
@@ -101,12 +103,10 @@ public class CopyPlugin implements Plugin
       else
       {
          Resource<?> targetResource = results.get(0);
-         List<Resource<?>> childs = source.listResources();
          Resource<?> newTargetDir = null;
 
          if (isDirectory(source))
          {
-
             if (!targetResource.exists())
             {
                newTargetDir = ((DirectoryResource) targetResource.getParent()).getOrCreateChildDirectory(targetResource
@@ -116,7 +116,10 @@ public class CopyPlugin implements Plugin
             {
                newTargetDir = ((DirectoryResource) targetResource).getOrCreateChildDirectory(source.getName());
             }
-
+            for (Resource<?> resource : source.listResources())
+            {
+               copyRecursively(resource, directory, newTargetDir.getFullyQualifiedName());
+            }
          }
          else if (isFile(source))
          {
@@ -132,14 +135,6 @@ public class CopyPlugin implements Plugin
                ((FileResource<?>) child).setContents(source.getResourceInputStream());
             }
             newTargetDir = (DirectoryResource) targetResource;
-         }
-
-         if (childs.size() > 0)
-         {
-            for (Resource<?> resource : childs)
-            {
-               copyRecursively(resource, directory, newTargetDir.getFullyQualifiedName());
-            }
          }
       }
    }
