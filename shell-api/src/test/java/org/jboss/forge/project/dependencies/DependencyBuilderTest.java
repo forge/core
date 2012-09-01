@@ -49,9 +49,9 @@ public class DependencyBuilderTest
       DependencyBuilder dep = DependencyBuilder.create("org.jboss.forge");
 
       assertEquals("org.jboss.forge", dep.getGroupId());
-      assertEquals(null, dep.getArtifactId());
-      assertEquals(null, dep.getVersion());
-      assertEquals(null, dep.getScopeType());
+      assertNull(dep.getArtifactId());
+      assertNull(dep.getVersion());
+      assertNull(dep.getScopeType());
    }
 
    @Test
@@ -60,8 +60,8 @@ public class DependencyBuilderTest
       DependencyBuilder dep = DependencyBuilder.create("org.jboss.forge::");
 
       assertEquals("org.jboss.forge", dep.getGroupId());
-      assertEquals(null, dep.getArtifactId());
-      assertEquals(null, dep.getVersion());
-      assertEquals(null, dep.getScopeType());
+      assertNull(dep.getArtifactId());
+      assertNull(dep.getVersion());
+      assertNull(dep.getScopeType());
    }
 }

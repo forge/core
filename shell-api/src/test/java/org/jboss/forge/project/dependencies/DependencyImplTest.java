@@ -7,9 +7,12 @@
 
 package org.jboss.forge.project.dependencies;
 
-import junit.framework.Assert;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 
 import org.jboss.forge.project.packaging.PackagingType;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class DependencyImplTest
@@ -56,6 +59,27 @@ public class DependencyImplTest
       right.setVersion("1.1.Final");
 
       Assert.assertEquals(left, right);
+   }
+
+   @Test
+   public void testEquality3()
+   {
+      DependencyImpl left = new DependencyImpl();
+      left.setArtifactId("weld-api-bom");
+      left.setGroupId("org.jboss.weld");
+      left.setPackagingType(PackagingType.BASIC);
+      left.setVersion("1.1.Final");
+      left.setScopeType(ScopeType.SYSTEM);
+      left.setSystemPath("/usr/local/weld.jar");
+
+      DependencyImpl right = new DependencyImpl();
+      right.setArtifactId("weld-api-bom");
+      right.setGroupId("org.jboss.weld");
+      right.setPackagingType(PackagingType.BASIC);
+      right.setScopeType(ScopeType.IMPORT);
+      right.setVersion("1.1.Final");
+
+      Assert.assertThat("Objects are not different", left, is(not(equalTo(right))));
    }
 
 }
