@@ -52,7 +52,7 @@ public class RepositoryLookupTest extends ProjectModelTest
    {
       Dependency dep = DependencyBuilder.create("com.ocpsoft:prettyfaces-jsf2");
       DependencyRepository repo = new DependencyRepositoryImpl(KnownRepository.CENTRAL);
-      List<Dependency> versions = resolver.resolveVersions(new DependencyQueryBuilder(dep).setRepositories(repo));
+      List<Dependency> versions = resolver.resolveVersions(DependencyQueryBuilder.create(dep).setRepositories(repo));
       assertTrue(versions.size() > 4);
    }
 
@@ -61,7 +61,7 @@ public class RepositoryLookupTest extends ProjectModelTest
    {
       Dependency dep = DependencyBuilder.create("com.ocpsoft:prettyfaces-jsf2:3.2.0");
       DependencyRepository repo = new DependencyRepositoryImpl(KnownRepository.CENTRAL);
-      List<Dependency> versions = resolver.resolveVersions(new DependencyQueryBuilder(dep).setRepositories(repo));
+      List<Dependency> versions = resolver.resolveVersions(DependencyQueryBuilder.create(dep).setRepositories(repo));
       assertTrue(versions.size() >= 1);
    }
 
@@ -70,7 +70,7 @@ public class RepositoryLookupTest extends ProjectModelTest
    {
       Dependency dep = DependencyBuilder.create("org.jboss.errai.forge:forge-errai:1.0-SNAPSHOT");
       DependencyRepository repo = new DependencyRepositoryImpl(KnownRepository.JBOSS_NEXUS);
-      List<Dependency> versions = resolver.resolveVersions(new DependencyQueryBuilder(dep).setRepositories(repo));
+      List<Dependency> versions = resolver.resolveVersions(DependencyQueryBuilder.create(dep).setRepositories(repo));
       assertTrue(versions.size() >= 1);
    }
 

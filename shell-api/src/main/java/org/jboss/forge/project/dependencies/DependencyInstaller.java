@@ -19,17 +19,34 @@ public interface DependencyInstaller
 {
    /**
     * Install given {@link Dependency} with the default {@link ScopeType}. This method overwrites existing dependencies.
-    * Any {@link Dependency#getPackagingType()}, {@link Dependency#getClassifier()}, and
+    * Any {@link Dependency#getPackagingType()}, {@link Dependency#getClassifier()} , and
     * {@link Dependency#getScopeType()} will be preserved in the added managed dependency.
     */
    Dependency install(Project project, Dependency dependency);
 
    /**
+    * Install given {@link Dependency} with the default {@link ScopeType}, applying the given {@link DependencyFilter}.
+    * This method overwrites existing dependencies. Any {@link Dependency#getPackagingType()},
+    * {@link Dependency#getClassifier()}, and {@link Dependency#getScopeType()} will be preserved in the added managed
+    * dependency.
+    */
+   Dependency install(Project project, Dependency dependency,
+            DependencyFilter filter);
+
+   /**
     * Install given {@link Dependency} with the given {@link ScopeType}. This method overwrites existing dependencies.
-    * Any {@link Dependency#getPackagingType()}, {@link Dependency#getClassifier()}, and
+    * Any {@link Dependency#getPackagingType()}, {@link Dependency#getClassifier()} , and
     * {@link Dependency#getScopeType()} will be preserved in the added managed dependency.
     */
    Dependency install(Project project, Dependency dependency, ScopeType type);
+
+   /**
+    * Install given {@link Dependency} with the given {@link ScopeType} and {@link DependencyFilter}. This method
+    * overwrites existing dependencies. Any {@link Dependency#getPackagingType()}, {@link Dependency#getClassifier()} ,
+    * and {@link Dependency#getScopeType()} will be preserved in the added managed dependency.
+    */
+   Dependency install(Project project, Dependency dependency, ScopeType type,
+            DependencyFilter filter);
 
    /**
     * Install given managed {@link Dependency} with the default {@link ScopeType}. This method overwrites existing
@@ -39,11 +56,29 @@ public interface DependencyInstaller
    Dependency installManaged(Project project, Dependency dependency);
 
    /**
-    * Install given managed {@link Dependency} with the given {@link ScopeType}. This method overwrites existing
-    * dependencies. Any {@link Dependency#getPackagingType()}, {@link Dependency#getClassifier()}, and
+    * Install given managed {@link Dependency} with the default {@link ScopeType}, applying the given
+    * {@link DependencyFilter}. This method overwrites existing managed dependencies. Any
+    * {@link Dependency#getPackagingType()}, {@link Dependency#getClassifier()} , and {@link Dependency#getScopeType()}
+    * will be preserved.
+    */
+   Dependency installManaged(Project project, Dependency dependency,
+            DependencyFilter filter);
+
+   /**
+    * Install given managed {@link Dependency} with the given {@link ScopeType} . This method overwrites existing
+    * dependencies. Any {@link Dependency#getPackagingType()}, {@link Dependency#getClassifier()} , and
     * {@link Dependency#getScopeType()} will be preserved.
     */
-   Dependency installManaged(Project project, Dependency dependency, ScopeType type);
+   Dependency installManaged(Project project, Dependency dependency,
+            ScopeType type);
+
+   /**
+    * Install given managed {@link Dependency} with the given {@link ScopeType} and {@link DependencyFilter}. This
+    * method overwrites existing dependencies. Any {@link Dependency#getPackagingType()},
+    * {@link Dependency#getClassifier()} , and {@link Dependency#getScopeType()} will be preserved.
+    */
+   Dependency installManaged(Project project, Dependency dependency,
+            ScopeType type, DependencyFilter filter);
 
    /**
     * Returns whether or not the given {@link Dependency} is installed.

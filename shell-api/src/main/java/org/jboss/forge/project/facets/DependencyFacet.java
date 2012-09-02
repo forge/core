@@ -14,6 +14,7 @@ import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
+import org.jboss.forge.project.dependencies.DependencyQuery;
 import org.jboss.forge.project.dependencies.DependencyRepository;
 import org.jboss.forge.project.dependencies.DependencyResolver;
 import org.jboss.forge.project.dependencies.ScopeType;
@@ -272,7 +273,7 @@ public interface DependencyFacet extends Facet
 
    /**
     * Given a {@link Dependency} with a populated groupId, versionId, and version range, identify the available
-    * artifacts in all known repositories for this project.
+    * artifacts in all known repositories for this project. By default, SNAPSHOT versions are excluded.
     * 
     * See {@link DependencyFacet#resolveAvailableVersions(String)}. For more comprehensive resolution features, see
     * {@link DependencyResolver}
@@ -280,17 +281,26 @@ public interface DependencyFacet extends Facet
    public List<Dependency> resolveAvailableVersions(final Dependency dep);
 
    /**
-    * Given a groupid:versionid:version-range, identify the available artifacts in all known repositories for this
-    * project. For example:
+    * Given a groupid:versionid:version-range, identify and resolve all matching artifacts in all known
+    * {@link DependencyRepository} instances for this {@link Project}. By default, SNAPSHOT versions are excluded. For
+    * example:
     * <p>
     * <code>dependencyFacet.resolveAvailableVersions("org.jboss.forge:example:[1.0.0,]");</code><br>
     * <code>dependencyFacet.resolveAvailableVersions("org.jboss.forge:example:[1.0.0,)");</code><br>
     * <code>dependencyFacet.resolveAvailableVersions("org.jboss.forge:example:(1.0.0,3.0.0]");</code><br>
     * <code>dependencyFacet.resolveAvailableVersions("org.jboss.forge:example:[1.0.0,3.0.0]");</code>
     * <p>
-    * For more comprehensive resolution features, see {@link DependencyResolver}
+    * For more comprehensive resolution features, see {@link #resolveAvailableVersions(DependencyQuery)} or
+    * {@link DependencyResolver}
     */
    public List<Dependency> resolveAvailableVersions(final String gavs);
+
+   /**
+    * Using the given {@link DependencyQuery}, identify and resolve all matching {@link Dependency} results in
+    * configured {@link DependencyRepository} instances for this {@link Project}. See also,
+    * {@link #resolveAvailableVersions(String)} and {@link #resolveAvailableVersions(Dependency)}
+    */
+   public List<Dependency> resolveAvailableVersions(DependencyQuery query);
 
    /**
     * Resolve properties in the given dependency, converting them to their actual values.

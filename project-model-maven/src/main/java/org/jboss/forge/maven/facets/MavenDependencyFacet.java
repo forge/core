@@ -140,7 +140,8 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
       List<Dependency> dependencies = MavenDependencyAdapter.fromMavenList(pom.getDependencies());
 
       List<Dependency> result = new ArrayList<Dependency>();
-      for (Dependency dependency : dependencies) {
+      for (Dependency dependency : dependencies)
+      {
          result.add(resolveProperties(dependency));
       }
 
@@ -194,7 +195,8 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
                );
 
       List<Dependency> result = new ArrayList<Dependency>();
-      for (Dependency dependency : deps) {
+      for (Dependency dependency : deps)
+      {
          result.add(resolveProperties(dependency));
       }
 
@@ -318,7 +320,8 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
          managedDependencies = new ArrayList<Dependency>();
 
       List<Dependency> result = new ArrayList<Dependency>();
-      for (Dependency dependency : managedDependencies) {
+      for (Dependency dependency : managedDependencies)
+      {
          managedDependencies.add(resolveProperties(dependency));
       }
       return result;
@@ -418,8 +421,18 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
    @Override
    public List<Dependency> resolveAvailableVersions(final Dependency dep)
    {
-      // Resolve dependencies without any snapshots
-      DependencyQuery query = new DependencyQueryBuilder(dep).setRepositories(getRepositories()).setFilter(new NonSnapshotDependencyFilter());
+      DependencyQueryBuilder query = DependencyQueryBuilder.create(dep).setRepositories(getRepositories());
+      if (dep.getVersion() != null && !dep.getVersion().contains("SNAPSHOT"))
+      {
+         query.setFilter(new NonSnapshotDependencyFilter());
+      }
+      List<Dependency> versions = resolver.resolveVersions(query);
+      return versions;
+   }
+
+   @Override
+   public List<Dependency> resolveAvailableVersions(final DependencyQuery query)
+   {
       List<Dependency> versions = resolver.resolveVersions(query);
       return versions;
    }

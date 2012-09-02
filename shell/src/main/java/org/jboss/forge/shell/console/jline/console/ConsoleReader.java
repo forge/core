@@ -2055,6 +2055,7 @@ public class ConsoleReader
 
       try
       {
+         @SuppressWarnings("deprecation")
          Object content = transferable.getTransferData(DataFlavor.plainTextFlavor);
 
          // This fix was suggested in bug #1060649 at

@@ -11,11 +11,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.jboss.forge.parser.java.util.Assert;
+
 /**
  * Builds a {@link DependencyQuery} object
  * 
  * @author George Gastaldi <ggastald@redhat.com>
- * 
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class DependencyQueryBuilder implements DependencyQuery
 {
@@ -23,13 +25,27 @@ public class DependencyQueryBuilder implements DependencyQuery
    private DependencyFilter dependencyFilter;
    private List<DependencyRepository> dependencyRepositories = new ArrayList<DependencyRepository>();
 
+   protected DependencyQueryBuilder()
+   {
+   }
+
+   /**
+    * @deprecated Use {@link DependencyQueryBuilder#create()} instead.
+    */
+   @Deprecated
    public DependencyQueryBuilder(Dependency dependency)
    {
-      assert dependency != null;
-      if (dependency == null)
-      {
-         throw new IllegalStateException("Dependency must be set");
-      }
+      setDependency(dependency);
+   }
+
+   public static DependencyQueryBuilder create(Dependency dependency)
+   {
+      return new DependencyQueryBuilder(dependency);
+   }
+
+   private void setDependency(Dependency dependency)
+   {
+      Assert.notNull(dependency, "Dependency must be set");
       this.dependency = dependency;
    }
 
@@ -70,4 +86,5 @@ public class DependencyQueryBuilder implements DependencyQuery
    {
       return dependencyRepositories;
    }
+
 }

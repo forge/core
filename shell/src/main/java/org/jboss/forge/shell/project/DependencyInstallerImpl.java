@@ -14,12 +14,18 @@ import org.jboss.forge.parser.java.util.Strings;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
+import org.jboss.forge.project.dependencies.DependencyFilter;
 import org.jboss.forge.project.dependencies.DependencyInstaller;
+import org.jboss.forge.project.dependencies.DependencyQuery;
+import org.jboss.forge.project.dependencies.DependencyQueryBuilder;
+import org.jboss.forge.project.dependencies.NonSnapshotDependencyFilter;
 import org.jboss.forge.project.dependencies.ScopeType;
 import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.shell.ShellPrompt;
 
 /**
+ * TODO This should be refactored to use {@link DependencyQuery} in method signatures.
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class DependencyInstallerImpl implements DependencyInstaller
@@ -35,11 +41,23 @@ public class DependencyInstallerImpl implements DependencyInstaller
    @Override
    public Dependency install(final Project project, final Dependency dependency)
    {
-      return install(project, dependency, null);
+      return install(project, dependency, (ScopeType) null);
+   }
+
+   @Override
+   public Dependency install(Project project, Dependency dependency, DependencyFilter filter)
+   {
+      return install(project, dependency, null, filter);
    }
 
    @Override
    public Dependency install(final Project project, final Dependency dependency, final ScopeType type)
+   {
+      return install(project, dependency, type, null);
+   }
+
+   @Override
+   public Dependency install(Project project, Dependency dependency, ScopeType type, DependencyFilter filter)
    {
       DependencyFacet deps = project.getFacet(DependencyFacet.class);
 
@@ -65,7 +83,7 @@ public class DependencyInstallerImpl implements DependencyInstaller
          else
          // version is different
          {
-            return promptAndUpdateAll(deps, dependency, unversioned);
+            return promptAndUpdateAll(deps, dependency, unversioned, filter);
          }
       }
       else if (existingManaged != null) // we don't have a dependency, or the existing dependency did not have a
@@ -89,7 +107,7 @@ public class DependencyInstallerImpl implements DependencyInstaller
          else
          // version is different or unspecified, and we had no existing version.
          {
-            return promptAndUpdateAll(deps, dependency, unversioned);
+            return promptAndUpdateAll(deps, dependency, unversioned, filter);
          }
       }
       else
@@ -97,7 +115,7 @@ public class DependencyInstallerImpl implements DependencyInstaller
       {
          if (Strings.isNullOrEmpty(dependency.getVersion()))
             // we didn't request a specific version
-            return promptAndUpdateAll(deps, dependency, unversioned);
+            return promptAndUpdateAll(deps, dependency, unversioned, filter);
          else
             // we requested a specific version
             return updateAll(deps, dependency, unversioned);
@@ -107,11 +125,17 @@ public class DependencyInstallerImpl implements DependencyInstaller
    @Override
    public Dependency installManaged(Project project, Dependency dependency)
    {
+      return installManaged(project, dependency, (DependencyFilter) null);
+   }
+
+   @Override
+   public Dependency installManaged(Project project, Dependency dependency, DependencyFilter filter)
+   {
       DependencyFacet deps = project.getFacet(DependencyFacet.class);
 
       if (Strings.isNullOrEmpty(dependency.getVersion()))
          // we didn't request a specific version
-         return promptAndUpdateManaged(deps, dependency);
+         return promptAndUpdateManaged(deps, dependency, filter);
       else
          // we requested a specific version
          updateManagedDependency(deps, dependency);
@@ -121,12 +145,18 @@ public class DependencyInstallerImpl implements DependencyInstaller
    @Override
    public Dependency installManaged(Project project, Dependency dependency, ScopeType type)
    {
+      return installManaged(project, dependency, (DependencyFilter) null);
+   }
+
+   @Override
+   public Dependency installManaged(Project project, Dependency dependency, ScopeType type, DependencyFilter filter)
+   {
       DependencyFacet deps = project.getFacet(DependencyFacet.class);
       DependencyBuilder withScopeType = getWithScopeType(dependency, type);
 
       if (Strings.isNullOrEmpty(dependency.getVersion()))
          // we didn't request a specific version
-         return promptAndUpdateManaged(deps, withScopeType);
+         return promptAndUpdateManaged(deps, withScopeType, filter);
       else
          // we requested a specific version
          updateManagedDependency(deps, withScopeType);
@@ -156,9 +186,9 @@ public class DependencyInstallerImpl implements DependencyInstaller
    }
 
    private Dependency promptAndUpdateAll(final DependencyFacet deps, final Dependency dependency,
-            final DependencyBuilder unversioned)
+            final DependencyBuilder unversioned, DependencyFilter filter)
    {
-      DependencyBuilder toAdd = DependencyBuilder.create(promptVersion(deps, dependency));
+      DependencyBuilder toAdd = DependencyBuilder.create(promptVersion(deps, dependency, filter));
 
       // ensure that the added managed dependency has the same traits as the dependency provided
       toAdd.setScopeType(dependency.getScopeType())
@@ -169,9 +199,10 @@ public class DependencyInstallerImpl implements DependencyInstaller
       return toAdd;
    }
 
-   private Dependency promptAndUpdateManaged(final DependencyFacet deps, final Dependency dependency)
+   private Dependency promptAndUpdateManaged(final DependencyFacet deps, final Dependency dependency,
+            DependencyFilter filter)
    {
-      DependencyBuilder toAdd = DependencyBuilder.create(promptVersion(deps, dependency));
+      DependencyBuilder toAdd = DependencyBuilder.create(promptVersion(deps, dependency, filter));
 
       // ensure that the added managed dependency has the same traits as the dependency provided
       toAdd.setScopeType(dependency.getScopeType())
@@ -200,10 +231,11 @@ public class DependencyInstallerImpl implements DependencyInstaller
       deps.addDirectDependency(dependency);
    }
 
-   private Dependency promptVersion(final DependencyFacet deps, final Dependency dependency)
+   private Dependency promptVersion(final DependencyFacet deps, final Dependency dependency, DependencyFilter filter)
    {
       Dependency result = dependency;
-      final List<Dependency> versions = deps.resolveAvailableVersions(dependency);
+      final List<Dependency> versions = deps.resolveAvailableVersions(DependencyQueryBuilder.create(dependency)
+               .setFilter(filter == null ? new NonSnapshotDependencyFilter() : filter));
       if (versions.size() > 0)
       {
          Dependency deflt = versions.get(versions.size() - 1);

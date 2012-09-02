@@ -35,9 +35,6 @@ public class MorePlugin implements Plugin
    private static final String PATTERN_NOT_FOUND = "-- Pattern not found: ";
    private static final String INVALID_COMMAND = "-- Invalid command: ";
 
-   private static final String SAVE_POS = new String(new char[] { 27, '7' });
-   private static final String RES_POS = new String(new char[] { 27, '8' });
-   private static final String HOME = new String(new char[] { 27, '[', 'H' });
    private static final String ERASE_TO_END = new String(new char[] { 27, '[', 'K' });
    private static final String ERASE_TO_END_AND_CR = new String(new char[] { 27, '[', 'K', '\n' });
 
