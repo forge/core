@@ -8,6 +8,8 @@
 package org.jboss.forge.shell.util;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,6 +20,7 @@ import org.jboss.forge.project.services.ResourceFactory;
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.resources.ResourceFlag;
+import org.jboss.forge.resources.URLResource;
 
 /**
  * Parser of UNIX-style pathspec. The parser accepts a resource, and provides a result set of resources based on the
@@ -104,6 +107,24 @@ public class PathspecParser
          int idx = path.indexOf(slashChar) + 1;
          r = new DirectoryResource(factory, new File(path.substring(0, idx)).getAbsoluteFile());
          cursor = idx;
+      }
+      // Is an URL ?
+      else if (path.matches(".*://.*"))
+      {
+         int idx = path.indexOf(" ");
+         if (idx == -1)
+         {
+            idx = length;
+         }
+         try
+         {
+            r = new URLResource(factory, new URL(path.substring(0, idx)));
+         }
+         catch (MalformedURLException e)
+         {
+            throw new RuntimeException(e);
+         }
+         cursor = idx + 1;
       }
 
       while (cursor < length)

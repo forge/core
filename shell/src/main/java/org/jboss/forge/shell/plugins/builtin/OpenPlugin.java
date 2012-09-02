@@ -9,11 +9,13 @@ package org.jboss.forge.shell.plugins.builtin;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import javax.inject.Inject;
 
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.Resource;
+import org.jboss.forge.resources.URLResource;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.DefaultCommand;
 import org.jboss.forge.shell.plugins.Help;
@@ -45,6 +47,18 @@ public class OpenPlugin implements Plugin
          {
             Desktop dt = Desktop.getDesktop();
             dt.open((File) resource.getUnderlyingResourceObject());
+         }
+         else if (resource instanceof URLResource)
+         {
+            Desktop dt = Desktop.getDesktop();
+            try
+            {
+               dt.browse(((URLResource) resource).getUnderlyingResourceObject().toURI());
+            }
+            catch (URISyntaxException e)
+            {
+               throw new RuntimeException("Bad URL syntax: " + e.getInput(), e);
+            }
          }
       }
    }

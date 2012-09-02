@@ -6,12 +6,9 @@
  */
 package org.jboss.forge.shell.plugins.builtin;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.DefaultCommand;
@@ -21,6 +18,7 @@ import org.jboss.forge.shell.plugins.PipeIn;
 import org.jboss.forge.shell.plugins.PipeOut;
 import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.Topic;
+import org.jboss.forge.shell.util.Streams;
 
 /**
  * @author Mike Brock .
@@ -48,25 +46,18 @@ public class ConcatenatePlugin implements Plugin
 
          for (Resource<?> res : paths)
          {
-            if (res instanceof FileResource)
+            InputStream is = null;
+            try
             {
-               InputStream istream = null;
-               try
+               is = res.getResourceInputStream();
+               if (is != null)
                {
-                  istream = new BufferedInputStream(new FileInputStream(res.getFullyQualifiedName()));
-                  lastBuf = writeOutToConsole(istream, out);
+                  lastBuf = writeOutToConsole(is, out);
                }
-               catch (IOException e)
-               {
-                  throw new RuntimeException("error opening file: " + res.getName());
-               }
-               finally
-               {
-                  if (istream != null)
-                  {
-                     istream.close();
-                  }
-               }
+            }
+            finally
+            {
+               Streams.closeQuietly(is);
             }
          }
       }
