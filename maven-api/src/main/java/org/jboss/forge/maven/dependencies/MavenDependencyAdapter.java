@@ -40,6 +40,7 @@ public class MavenDependencyAdapter extends org.apache.maven.model.Dependency im
       this.setScope(clone.getScope());
       this.setType(clone.getType());
       this.setVersion(clone.getVersion());
+      this.setSystemPath(clone.getSystemPath());
    }
 
    public MavenDependencyAdapter(final Dependency dep)
@@ -55,6 +56,7 @@ public class MavenDependencyAdapter extends org.apache.maven.model.Dependency im
       this.setScope(dep.getScopeType());
       this.setType(dep.getPackagingType());
       this.setClassifier(dep.getClassifier());
+      this.setSystemPath(dep.getSystemPath());
 
       for (Dependency exclusion : dep.getExcludedDependencies())
       {

@@ -14,7 +14,7 @@ import org.jboss.forge.project.packaging.PackagingType;
 /**
  * Builder to create {@link Dependency} objects. This class implements {@link Dependency} for easy consumption. (I.e.:
  * Use this class wherever you need to create and use a new {@link Dependency})
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class DependencyBuilder implements Dependency
@@ -42,6 +42,7 @@ public class DependencyBuilder implements Dependency
       builder.setPackagingType(dep.getPackagingType());
       builder.setScopeType(dep.getScopeType());
       builder.setClassifier(dep.getClassifier());
+      builder.setSystemPath(dep.getSystemPath());
       return builder;
    }
 
@@ -73,7 +74,7 @@ public class DependencyBuilder implements Dependency
     * @param identifier of the form "groupId:artifactId", "groupId:artifactId:version",
     *           "groupId:artifactId:scope, "groupId
     *           :artifactId:version:scope", "groupId:artifactId:version:scope:packaging"
-    * 
+    *
     *           For classifier specification, see {@link #setClassifier(String)}
     */
    public static DependencyBuilder create(final String identifier)
@@ -174,6 +175,18 @@ public class DependencyBuilder implements Dependency
       return this;
    }
 
+   public DependencyBuilder setSystemPath(final String systemPath)
+   {
+      dep.setSystemPath(systemPath);
+      return this;
+   }
+
+   @Override
+   public String getSystemPath()
+   {
+      return dep.getSystemPath();
+   }
+
    @Override
    public String getArtifactId()
    {
@@ -250,7 +263,7 @@ public class DependencyBuilder implements Dependency
     * Convenience method which should be used to convert a {@link Dependency} object into its id representation, for
     * example: "groupId:artifactId:::version", "groupId:artifactId:packaging::version" or
     * "groupId:artifactId:packaging:classifier:version"
-    * 
+    *
     * @see {@link Dependency#toCoordinates()}
     */
    public static String toId(final Dependency dep)
