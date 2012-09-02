@@ -84,6 +84,12 @@ public class ExcludedDependencyBuilder implements Dependency
    }
 
    @Override
+   public String getSystemPath()
+   {
+      throw new IllegalStateException("Not implemented for Exclusions");
+   }
+
+   @Override
    public List<Dependency> getExcludedDependencies()
    {
       return dep.getExcludedDependencies();

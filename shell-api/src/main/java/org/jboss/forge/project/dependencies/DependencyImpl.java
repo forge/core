@@ -14,7 +14,7 @@ import org.jboss.forge.project.packaging.PackagingType;
 
 /**
  * This class is internal; instead use {@link DependencyBuilder} for {@link Dependency} creation & instantiation.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class DependencyImpl implements Dependency
@@ -25,6 +25,8 @@ public class DependencyImpl implements Dependency
    private String scopeType;
    private String packagingType;
    private String classifier;
+   private String systemPath;
+
    private List<Dependency> excludedDependencies = new ArrayList<Dependency>();
 
    DependencyImpl()
@@ -130,6 +132,16 @@ public class DependencyImpl implements Dependency
       packagingType = type;
    }
 
+   public String getSystemPath()
+   {
+      return systemPath;
+   }
+
+   public void setSystemPath(String systemPath)
+   {
+      this.systemPath = systemPath;
+   }
+
    @Override
    public String toCoordinates()
    {
@@ -159,6 +171,7 @@ public class DependencyImpl implements Dependency
       result = prime * result + ((packagingType == null) ? 0 : packagingType.hashCode());
       result = prime * result + ((scopeType == null) ? 0 : scopeType.hashCode());
       result = prime * result + ((version == null) ? 0 : version.hashCode());
+      result = prime * result + ((systemPath== null) ? 0 : systemPath.hashCode());
       return result;
    }
 
@@ -208,9 +221,11 @@ public class DependencyImpl implements Dependency
       boolean versionEquals = version != null ? version.equals(that.getVersion()) : that.getVersion() == null;
       boolean classifierEquals = classifier != null ? classifier.equals(that.getClassifier())
                : that.getClassifier() == null;
+      boolean systemPathEquals = systemPath != null ? systemPath.equals(that.getSystemPath())
+               : that.getSystemPath() == null;
 
       return artifactIdEquals && exclusionsEqual && groupIdEquals && packagingTypeEquals && scopeTypeEquals
-               && versionEquals && classifierEquals;
+               && versionEquals && classifierEquals && systemPathEquals;
 
    }
 

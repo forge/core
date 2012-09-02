@@ -13,7 +13,7 @@ import org.jboss.forge.project.packaging.PackagingType;
 
 /**
  * Represents a project library dependency.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public interface Dependency
@@ -37,6 +37,11 @@ public interface Dependency
     * Get the version of this {@link Dependency}.
     */
    String getVersion();
+
+   /**
+    * Get the systemPath of this {@link Dependency}
+    */
+   String getSystemPath();
 
    /**
     * Get the specified packaging type of this {@link Dependency}
