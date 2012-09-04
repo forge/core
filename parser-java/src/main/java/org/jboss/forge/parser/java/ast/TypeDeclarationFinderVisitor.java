@@ -6,6 +6,9 @@
  */
 package org.jboss.forge.parser.java.ast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.AnnotationTypeDeclaration;
@@ -17,41 +20,32 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
  */
 public class TypeDeclarationFinderVisitor extends ASTVisitor
 {
-   private AbstractTypeDeclaration declaration = null;
+   private List<AbstractTypeDeclaration> declarations = new ArrayList<AbstractTypeDeclaration>();
 
    @Override
    public boolean visit(final TypeDeclaration node)
    {
-	   if (declaration == null)
-	   {
-		   declaration = node;
-	   }
+      declarations.add(node);
       return true;
    }
 
    @Override
    public boolean visit(final AnnotationTypeDeclaration node)
    {
-	   if (declaration == null)
-	   {
-		   declaration = node;
-	   }
+      declarations.add(node);
       return super.visit(node);
    }
 
    @Override
    public boolean visit(final EnumDeclaration node)
    {
-	   if (declaration == null)
-	   {
-		   declaration = node;
-	   }
+      declarations.add(node);
       return super.visit(node);
    }
 
-   public AbstractTypeDeclaration getTypeDeclaration()
+   public List<AbstractTypeDeclaration> getTypeDeclarations()
    {
-      return declaration;
+      return declarations;
    }
 
 }

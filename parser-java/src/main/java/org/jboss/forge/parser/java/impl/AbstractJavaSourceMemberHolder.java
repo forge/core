@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -33,9 +34,9 @@ import org.jboss.forge.parser.java.util.Types;
 public abstract class AbstractJavaSourceMemberHolder<O extends JavaSource<O>> extends AbstractJavaSource<O> implements
          MethodHolder<O>, FieldHolder<O>
 {
-   public AbstractJavaSourceMemberHolder(final Document document, final CompilationUnit unit)
+   public AbstractJavaSourceMemberHolder(JavaSource<?> enclosingType, final Document document, final CompilationUnit unit, BodyDeclaration declaration)
    {
-      super(document, unit);
+      super(enclosingType, document, unit, declaration);
    }
 
    /*
@@ -278,7 +279,7 @@ public abstract class AbstractJavaSourceMemberHolder<O extends JavaSource<O>> ex
       List<Method<O>> result = new ArrayList<Method<O>>();
 
       MethodFinderVisitor methodFinderVisitor = new MethodFinderVisitor();
-      unit.accept(methodFinderVisitor);
+      body.accept(methodFinderVisitor);
 
       List<MethodDeclaration> methods = methodFinderVisitor.getMethods();
       for (MethodDeclaration methodDeclaration : methods)

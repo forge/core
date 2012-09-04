@@ -12,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jdt.core.JavaCore;
@@ -19,6 +20,7 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.AnnotationTypeDeclaration;
+import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
@@ -105,29 +107,44 @@ public class JavaParserImpl implements JavaParserProvider
       TypeDeclarationFinderVisitor visitor = new TypeDeclarationFinderVisitor();
       unit.accept(visitor);
 
-      AbstractTypeDeclaration declaration = visitor.getTypeDeclaration();
+      List<AbstractTypeDeclaration> declarations = visitor.getTypeDeclarations();
+      if (!declarations.isEmpty())
+      {
+         AbstractTypeDeclaration declaration = declarations.get(0);
+         return getJavaSource(null, document, unit, declaration);
+      }
+      throw new ParserException("Could not find type declaration in Java source - is this actually code?");
+   }
+
+   /**
+    * Create a {@link JavaSource} instance from the given {@link Document}, {@link CompilationUnit},
+    * {@link TypeDeclaration}, and enclosing {@link JavaSource} type. 
+    */
+   public static JavaSource<?> getJavaSource(JavaSource<?> enclosingType, Document document, CompilationUnit unit,
+            BodyDeclaration declaration)
+   {
       if (declaration instanceof TypeDeclaration)
       {
          if (((TypeDeclaration) declaration).isInterface())
          {
-            return new JavaInterfaceImpl(document, unit);
+            return new JavaInterfaceImpl(enclosingType, document, unit, declaration);
          }
          else
          {
-            return new JavaClassImpl(document, unit);
+            return new JavaClassImpl(enclosingType, document, unit, declaration);
          }
       }
       else if (declaration instanceof EnumDeclaration)
       {
-         return new JavaEnumImpl(document, unit);
+         return new JavaEnumImpl(enclosingType, document, unit, declaration);
       }
       else if (declaration instanceof AnnotationTypeDeclaration)
       {
-         return new JavaAnnotationImpl(document, unit);
+         return new JavaAnnotationImpl(enclosingType, document, unit, declaration);
       }
       else
       {
-         throw new ParserException("Unknown JavaSource type.");
+         throw new ParserException("Unknown Java source type [" + declaration + "]");
       }
    }
 

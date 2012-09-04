@@ -15,7 +15,6 @@ import org.jboss.forge.parser.java.util.Types;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
  */
 public class ImportImpl implements Import
 {

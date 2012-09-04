@@ -26,7 +26,13 @@ public interface JavaSource<T extends JavaSource<T>> extends
          Origin<T>
 {
    /**
-    * Set the qualified-name of this {@link T} instance, where the qualified-name contains both the Java package and
+    * Return the canonical name of this {@link T} instance. This is equivalent to calling
+    * {@link Class#getCanonicalName()}
+    */
+   public String getCanonicalName();
+
+   /**
+    * Get the qualified-name of this {@link T} instance, where the qualified-name contains both the Java package and
     * simple class name of the type represented by this {@link T} instance.
     * <p/>
     * <strong>For example</strong>, calling: {@link #getQualifiedName()} is equivalent to calling "{@link #getPackage()}
@@ -64,6 +70,12 @@ public interface JavaSource<T extends JavaSource<T>> extends
     * Return true if this {@link JavaSource} represents a {@link JavaAnnotation}
     */
    public boolean isAnnotation();
+
+   /**
+    * Return the enclosing {@link JavaSource} type in which this class is defined. If this class is a top-level type,
+    * and is not a nested type, this object will return itself.
+    */
+   public JavaSource<?> getEnclosingType();
 
    /**
     * Return the {@link SourceType} of this {@link JavaSource} instance.

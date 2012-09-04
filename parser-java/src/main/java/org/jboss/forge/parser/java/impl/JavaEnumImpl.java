@@ -10,12 +10,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.EnumConstantDeclaration;
 import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jface.text.Document;
 import org.jboss.forge.parser.java.EnumConstant;
 import org.jboss.forge.parser.java.JavaEnum;
+import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.parser.java.SourceType;
 
 /**
@@ -25,9 +27,10 @@ import org.jboss.forge.parser.java.SourceType;
  */
 public class JavaEnumImpl extends AbstractJavaSource<JavaEnum> implements JavaEnum
 {
-   public JavaEnumImpl(final Document document, final CompilationUnit unit)
+   public JavaEnumImpl(JavaSource<?> enclosingType, final Document document, final CompilationUnit unit,
+            BodyDeclaration body)
    {
-      super(document, unit);
+      super(enclosingType, document, unit, body);
    }
 
    @Override

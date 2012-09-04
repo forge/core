@@ -7,6 +7,8 @@
 
 package org.jboss.forge.parser.java;
 
+import java.util.List;
+
 import org.jboss.forge.parser.JavaParser;
 
 /**
@@ -20,5 +22,11 @@ public interface JavaClass extends
          Extendable<JavaClass>,
          Abstractable<JavaClass>
 {
+   /**
+    * Return a list containing {@link JavaSource} instances for each nested {@link Class} declaration found within
+    * <code>this</code>. Any modification of returned {@link JavaSource} instances will result in modification of the
+    * contents contained by <code>this</code> the parent instance.
+    */
+   List<JavaSource<?>> getNestedClasses();
 
 }

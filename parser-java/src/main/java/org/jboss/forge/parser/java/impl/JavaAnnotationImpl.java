@@ -6,9 +6,11 @@
  */
 package org.jboss.forge.parser.java.impl;
 
+import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jface.text.Document;
 import org.jboss.forge.parser.java.JavaAnnotation;
+import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.parser.java.SourceType;
 
 /**
@@ -18,9 +20,10 @@ import org.jboss.forge.parser.java.SourceType;
 public class JavaAnnotationImpl extends AbstractJavaSource<JavaAnnotation> implements JavaAnnotation
 {
 
-   public JavaAnnotationImpl(final Document document, final CompilationUnit unit)
+   public JavaAnnotationImpl(JavaSource<?> enclosingType, final Document document, final CompilationUnit unit,
+            BodyDeclaration body)
    {
-      super(document, unit);
+      super(enclosingType, document, unit, body);
    }
 
    @Override

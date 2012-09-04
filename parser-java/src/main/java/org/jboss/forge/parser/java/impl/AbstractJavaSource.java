@@ -15,6 +15,7 @@ import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.AnnotationTypeDeclaration;
+import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.ImportDeclaration;
@@ -36,7 +37,6 @@ import org.jboss.forge.parser.java.SyntaxError;
 import org.jboss.forge.parser.java.Visibility;
 import org.jboss.forge.parser.java.ast.AnnotationAccessor;
 import org.jboss.forge.parser.java.ast.ModifierAccessor;
-import org.jboss.forge.parser.java.ast.TypeDeclarationFinderVisitor;
 import org.jboss.forge.parser.java.util.Formatter;
 import org.jboss.forge.parser.java.util.Strings;
 import org.jboss.forge.parser.java.util.Types;
@@ -54,16 +54,27 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
    private final AnnotationAccessor<O, O> annotations = new AnnotationAccessor<O, O>();
    private final ModifierAccessor modifiers = new ModifierAccessor();
 
-   private final Document document;
-   protected CompilationUnit unit;
+   protected final Document document;
+   protected final CompilationUnit unit;
+   protected final BodyDeclaration body;
+   protected final JavaSource<?> enclosingType;
 
    public static ServiceLoader<WildcardImportResolver> loader = ServiceLoader.load(WildcardImportResolver.class);
    private static List<WildcardImportResolver> resolvers;
 
-   public AbstractJavaSource(final Document document, final CompilationUnit unit)
+   public AbstractJavaSource(JavaSource<?> enclosingType, final Document document, final CompilationUnit unit,
+            BodyDeclaration body)
    {
+      this.enclosingType = enclosingType == null ? this : enclosingType;
       this.document = document;
       this.unit = unit;
+      this.body = body;
+   }
+
+   @Override
+   public JavaSource<?> getEnclosingType()
+   {
+      return enclosingType;
    }
 
    /*
@@ -130,13 +141,14 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
    @Override
    public Import addImport(final Class<?> type)
    {
-      return addImport(type.getName());
+      return addImport(type.getCanonicalName());
    }
 
    @Override
    public <T extends JavaSource<?>> Import addImport(final T type)
    {
-      return this.addImport(type.getQualifiedName());
+      String qualifiedName = type.getQualifiedName();
+      return this.addImport(qualifiedName);
    }
 
    @Override
@@ -401,16 +413,9 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
 
    protected AbstractTypeDeclaration getBodyDeclaration()
    {
-      TypeDeclarationFinderVisitor typeDeclarationFinder = new TypeDeclarationFinderVisitor();
-      unit.accept(typeDeclarationFinder);
-      AbstractTypeDeclaration declaration = typeDeclarationFinder.getTypeDeclaration();
-      if (declaration == null)
-      {
-         throw new RuntimeException(
-                  "A type-declaration is required in order to complete the current operation, but no type-declaration exists in compilation unit: "
-                           + unit.toString());
-      }
-      return declaration;
+      if (body instanceof AbstractTypeDeclaration)
+         return (AbstractTypeDeclaration) body;
+      throw new ParserException("Source body was not of the expected type.");
    }
 
    /*
@@ -429,6 +434,25 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
       return updateTypeNames(name);
    }
 
+   @Override
+   public String getCanonicalName()
+   {
+      String result = getName();
+
+      JavaSource<?> enclosingType = this;
+      while (enclosingType != enclosingType.getEnclosingType())
+      {
+         enclosingType = getEnclosingType();
+         result = enclosingType.getEnclosingType().getName() + "." + result;
+         enclosingType = enclosingType.getEnclosingType();
+      }
+
+      if (!Strings.isNullOrEmpty(getPackage()))
+         result = getPackage() + "." + result;
+
+      return result;
+   }
+
    /**
     * Call-back to allow updating of any necessary internal names with the given name.
     */
@@ -437,13 +461,20 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
    @Override
    public String getQualifiedName()
    {
-      String packg = getPackage();
-      String name = getName();
-      if ((packg != null) && !packg.isEmpty())
+      String result = getName();
+
+      JavaSource<?> enclosingType = this;
+      while (enclosingType != enclosingType.getEnclosingType())
       {
-         return packg + "." + name;
+         enclosingType = getEnclosingType();
+         result = enclosingType.getEnclosingType().getName() + "$" + result;
+         enclosingType = enclosingType.getEnclosingType();
       }
-      return name;
+
+      if (!Strings.isNullOrEmpty(getPackage()))
+         result = getPackage() + "." + result;
+
+      return result;
    }
 
    /*
@@ -590,20 +621,6 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
    @Override
    public O getOrigin()
    {
-      // try
-      // {
-      // TextEdit edit = unit.rewrite(document, null);
-      // edit.apply(document);
-      // }
-      // catch (MalformedTreeException e)
-      // {
-      // throw new RuntimeException(e);
-      // }
-      // catch (BadLocationException e)
-      // {
-      // throw new RuntimeException(e);
-      // }
-
       return (O) this;
    }
 
@@ -612,15 +629,52 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
    {
       final int prime = 31;
       int result = 1;
-      result = (prime * result) + ((toString() == null) ? 0 : unit.toString().hashCode());
+      result = prime * result + ((body == null) ? 0 : body.hashCode());
+      result = prime * result + ((document == null) ? 0 : document.hashCode());
+      result = prime * result + ((enclosingType == null) ? 0 : enclosingType.hashCode());
+      result = prime * result + ((unit == null) ? 0 : unit.hashCode());
       return result;
    }
 
    @Override
-   public boolean equals(final Object obj)
+   public boolean equals(Object obj)
    {
-      return (this == obj)
-               || ((obj != null) && (getClass() == obj.getClass()) && this.toString().equals(obj.toString()));
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      AbstractJavaSource<?> other = (AbstractJavaSource<?>) obj;
+      if (body == null)
+      {
+         if (other.body != null)
+            return false;
+      }
+      else if (!body.equals(other.body))
+         return false;
+      if (document == null)
+      {
+         if (other.document != null)
+            return false;
+      }
+      else if (!document.equals(other.document))
+         return false;
+      if (enclosingType == null)
+      {
+         if (other.enclosingType != null)
+            return false;
+      }
+      else if (!enclosingType.equals(other.enclosingType))
+         return false;
+      if (unit == null)
+      {
+         if (other.unit != null)
+            return false;
+      }
+      else if (!unit.equals(other.unit))
+         return false;
+      return true;
    }
 
    @Override
