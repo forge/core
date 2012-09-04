@@ -131,15 +131,14 @@ public class RestPluginTest extends AbstractJPATest
       getShell().execute("rest endpoint-from-entity");
 
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
-      JavaResource resource = java.getJavaResource(java.getBasePackage() + ".rest.UserEndpoint");
+      JavaResource resource = java.getJavaResource(java.getBasePackage() + ".rest.UserResource");
       JavaClass endpoint = (JavaClass) resource.getJavaSource();
 
-      assertEquals("/user", endpoint.getAnnotation(Path.class).getStringValue());
+      assertEquals("/users", endpoint.getAnnotation(Path.class).getStringValue());
       assertEquals("java.util.List", endpoint.getMethod("listAll").getQualifiedReturnType());
       Method<JavaClass> method = endpoint.getMethod("findById", Long.class);
       Type<JavaClass> returnTypeInspector = method.getReturnTypeInspector();
-      assertEquals("com.test." + PersistenceFacetImpl.DEFAULT_ENTITY_PACKAGE + ".User",
-               returnTypeInspector
+      assertEquals("javax.ws.rs.core.Response", returnTypeInspector
                         .getQualifiedName());
 
       assertTrue(java.getJavaResource(entity).getJavaSource().hasAnnotation(XmlRootElement.class));
@@ -163,10 +162,10 @@ public class RestPluginTest extends AbstractJPATest
       queueInputLines("");
       getShell().execute("rest endpoint-from-entity");
 
-      JavaResource resource = java.getJavaResource(java.getBasePackage() + ".rest.UserEndpoint");
+      JavaResource resource = java.getJavaResource(java.getBasePackage() + ".rest.UserResource");
       JavaClass endpoint = (JavaClass) resource.getJavaSource();
 
-      assertEquals("/user", endpoint.getAnnotation(Path.class).getStringValue());
+      assertEquals("/users", endpoint.getAnnotation(Path.class).getStringValue());
       assertTrue(endpoint.toString().contains("entity.setObjectId(id);"));
       getShell().execute("build");
    }
@@ -188,10 +187,10 @@ public class RestPluginTest extends AbstractJPATest
       queueInputLines("");
       getShell().execute("rest endpoint-from-entity");
 
-      JavaResource resource = java.getJavaResource(java.getBasePackage() + ".rest.User2Endpoint");
+      JavaResource resource = java.getJavaResource(java.getBasePackage() + ".rest.User2Resource");
       JavaClass endpoint = (JavaClass) resource.getJavaSource();
 
-      assertEquals("/user2", endpoint.getAnnotation(Path.class).getStringValue());
+      assertEquals("/user2s", endpoint.getAnnotation(Path.class).getStringValue());
       assertTrue(endpoint.toString().contains("entity.setObjectId(id);"));
       getShell().execute("build");
    }
@@ -213,10 +212,10 @@ public class RestPluginTest extends AbstractJPATest
       queueInputLines("");
       getShell().execute("rest endpoint-from-entity");
 
-      JavaResource resource = java.getJavaResource(java.getBasePackage() + ".rest.User3Endpoint");
+      JavaResource resource = java.getJavaResource(java.getBasePackage() + ".rest.User3Resource");
       JavaClass endpoint = (JavaClass) resource.getJavaSource();
 
-      assertEquals("/user3", endpoint.getAnnotation(Path.class).getStringValue());
+      assertEquals("/user3s", endpoint.getAnnotation(Path.class).getStringValue());
       assertTrue(endpoint.toString().contains("entity.setObjectId(id);"));
       getShell().execute("build");
    }
