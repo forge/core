@@ -61,6 +61,7 @@ import org.jboss.seam.render.template.CompiledTemplateResource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="mailto:sso@adorsys.de">Sandro Sonntag</a>
  */
 @Alias("rest")
 @RequiresFacet(RestFacet.class)
@@ -163,6 +164,7 @@ public class RestPlugin implements Plugin
             continue;
          }
          String idSetterName = resolveIdSetterName(entity);
+         String idGetterName = resolveIdGetterName(entity);
 
          CompiledTemplateResource template = compiler.compileResource(getClass().getResourceAsStream(
                   "/org/jboss/forge/rest/Endpoint.jv"));
@@ -171,27 +173,29 @@ public class RestPlugin implements Plugin
          map.put("entity", entity);
          map.put("idType", idType);
          map.put("setIdStatement", idSetterName);
+         map.put("getIdStatement", idGetterName);
          map.put("contentType", contentType);
-         map.put("entityTable", getEntityTable(entity));
+         String entityTable = getEntityTable(entity);
+         map.put("entityTable", entityTable);
+         map.put("resourcePath", entityTable.toLowerCase() + "s");
 
-         JavaClass endpoint = JavaParser.parse(JavaClass.class, template.render(map));
-         endpoint.addImport(entity.getQualifiedName());
-         endpoint.setPackage(java.getBasePackage() + ".rest");
-         endpoint.getAnnotation(Path.class).setStringValue("/" + getEntityTable(entity).toLowerCase());
+         JavaClass resource = JavaParser.parse(JavaClass.class, template.render(map));
+         resource.addImport(entity.getQualifiedName());
+         resource.setPackage(java.getBasePackage() + ".rest");
 
          /*
           * Save the sources
           */
          java.saveJavaSource(entity);
 
-         if (!java.getJavaResource(endpoint).exists()
-                  || prompt.promptBoolean("Endpoint [" + endpoint.getQualifiedName() + "] already, exists. Overwrite?"))
+         if (!java.getJavaResource(resource).exists()
+                  || prompt.promptBoolean("Endpoint [" + resource.getQualifiedName() + "] already, exists. Overwrite?"))
          {
-            java.saveJavaSource(endpoint);
+            java.saveJavaSource(resource);
             ShellMessages.success(out, "Generated REST endpoint for [" + entity.getQualifiedName() + "]");
          }
          else
-            ShellMessages.info(out, "Aborted endpoint generation for [" + entity.getQualifiedName() + "]");
+            ShellMessages.info(out, "Aborted REST endpoint generation for [" + entity.getQualifiedName() + "]");
       }
    }
 
@@ -280,6 +284,74 @@ public class RestPlugin implements Plugin
       if (result == null)
       {
          throw new RuntimeException("Could not determine @Id field and setter method for @Entity ["
+                  + entity.getQualifiedName()
+                  + "]. Aborting.");
+      }
+
+      return result;
+   }
+   
+
+   private String resolveIdGetterName(JavaClass entity)
+   {
+      String result = null;
+
+      for (Member<JavaClass, ?> member : entity.getMembers())
+      {
+         if (member.hasAnnotation(Id.class))
+         {
+            String name = member.getName();
+            String type = null;
+            if (member instanceof Method)
+            {
+               type = ((Method<?>) member).getReturnType();
+               if (name.startsWith("get"))
+               {
+                  name = name.substring(2);
+               }
+            }
+            else if (member instanceof Field)
+            {
+               type = ((Field<?>) member).getType();
+            }
+
+            if (type != null)
+            {
+               for (Method<JavaClass> method : entity.getMethods())
+               {
+                  // It's a getter
+                  if (method.getParameters().size() == 0 && type.equals(method.getReturnType()))
+                  {
+                    if (method.getName().toLowerCase().contains(name.toLowerCase()))
+                    {
+                      result = method.getName() + "()";
+                      break;
+                    }
+                  }
+               }
+            }
+
+            if (result != null)
+            {
+               break;
+            }
+            else if (type != null && result == null && member.isPublic())
+            {
+               String memberName = member.getName();
+               // Cheat a little if the member is public
+               if (member instanceof Method && memberName.startsWith("get"))
+               {
+                  memberName = memberName.substring(3);
+                  memberName = Strings.uncapitalize(memberName);
+               }
+               result = memberName;
+            }
+         }
+      }
+
+      if (result == null)
+      {
+         throw new RuntimeException("Could not determine @Id field and getter method for @Entity ["
                   + entity.getQualifiedName()
                   + "]. Aborting.");
       }
