@@ -1,0 +1,26 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+   <parent>
+      <groupId>org.jboss.forge</groupId>
+      <artifactId>forge-parent</artifactId>
+      <version>1.1.4-SNAPSHOT</version>
+      <relativePath>../pom.xml</relativePath>
+   </parent>
+
+   <artifactId>forge-tracking</artifactId>
+   <name>Forge - Tracking</name>
+
+   <dependencies>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-shell-api</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>com.dmurph</groupId>
+         <artifactId>JGoogleAnalyticsTracker</artifactId>
+         <version>1.2.0</version>
+      </dependency>
+   </dependencies>
+
+</project>
