@@ -216,7 +216,7 @@
 		<module-def name="org.apache.commons.codec">
 			<maven-resource group="commons-codec" artifact="commons-codec" />
 		</module-def>
-		
+
 		<module-def name="org.apache.commons.logging" />
 
 		<module-def name="org.apache.httpcomponents">
@@ -248,7 +248,7 @@
 		<!-- BEGIN Forge Modules -->
 		<module-def name="org.jboss.forge">
 			<maven-resource group="org.jboss.forge" artifact="forge-shell" />
-			
+
 			<!-- TODO make this a separate auto-install plugin -->
 			<maven-resource group="org.jboss.forge" artifact="forge-dev-plugins" />
 		</module-def>
@@ -257,7 +257,7 @@
 			<maven-resource group="org.jboss.forge" artifact="forge-event-bus" />
 		</module-def>
 
-		<!-- TODO this needs to be an extension, not built in (consider 
+		<!-- TODO this needs to be an extension, not built in (consider
 		dynamically providing extensions to the system via custom module loader) -->
 		<module-def name="org.jboss.forge.javaee.api">
 			<maven-resource group="org.jboss.forge" artifact="forge-javaee-api" />
@@ -275,7 +275,7 @@
 		<module-def name="org.jboss.forge.maven.api">
 			<maven-resource group="org.jboss.forge" artifact="forge-maven-api" />
 
-			
+
 			<!-- TODO this needs to be pulled into a module -->
 			<maven-resource group="commons-cli" artifact="commons-cli" />
 			<maven-resource group="org.apache.maven" artifact="maven-aether-provider" />
@@ -328,11 +328,11 @@
 		<module-def name="org.jboss.forge.parser.xml">
 			<maven-resource group="org.jboss.forge" artifact="forge-parser-xml" />
 		</module-def>
-		
+
 		<module-def name="org.jboss.forge.scaffold.api">
 			<maven-resource group="org.jboss.forge" artifact="forge-scaffold-api" />
 		</module-def>
-		
+
 		<module-def name="org.jboss.forge.scaffold.impl">
 			<maven-resource group="org.jboss.forge" artifact="forge-scaffold-plugins" />
 			<maven-resource group="org.jboss.forge" artifact="forge-scaffold-faces" />
@@ -341,6 +341,10 @@
 
 		<module-def name="org.jboss.forge.shell.api">
 			<maven-resource group="org.jboss.forge" artifact="forge-shell-api" />
+		</module-def>
+
+		<module-def name="org.jboss.forge.tracking">
+			<maven-resource group="org.jboss.forge" artifact="forge-tracking" />
 		</module-def>
 		<!-- END Forge Modules -->
 
@@ -355,7 +359,7 @@
 		<module-def name="javax.interceptor.api">
 			<maven-resource group="org.jboss.spec.javax.interceptor" artifact="jboss-interceptors-api_1.1_spec" />
 		</module-def>
-        
+
         <module-def name="org.jboss.logging">
             <maven-resource group="org.jboss.logging" artifact="jboss-logging"/>
         </module-def>
@@ -423,6 +427,9 @@
 
 		<module-def name="sun.misc" />
 
+		<module-def name="com.dmurph.JGoogleAnalyticsTracker">
+			<maven-resource group="com.dmurph" artifact="JGoogleAnalyticsTracker" />
+		</module-def>
 	</target>
 
 	<target name="bundles">

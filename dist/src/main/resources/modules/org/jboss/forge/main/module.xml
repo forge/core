@@ -17,7 +17,7 @@
 
    <dependencies>
       <module name="com.sun.xml.bind" />
-   
+
       <module name="javax.annotation.api" />
       <module name="javax.interceptor.api" />
       <module name="jline" />
@@ -109,14 +109,21 @@
             <include path="META-INF" />
          </imports>
       </module>
-      
+
+      <module name="org.jboss.forge.tracking" services="import">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+
       <module name="org.jboss.seam.render" services="import">
          <imports>
             <include path="**" />
             <include path="META-INF" />
          </imports>
       </module>
-      
+
       <module name="org.jboss.solder" services="import">
          <imports>
             <include path="**" />
@@ -131,7 +138,7 @@
             <include path="META-INF" />
          </imports>
       </module>
-      
+
       <module name="org.jboss.weld.core" services="import" />
       <module name="org.jboss.weld.spi" services="import" />
       <module name="org.jboss.weld.api" services="import" />
@@ -140,7 +147,7 @@
       <module name="org.yaml" />
       <module name="sun.jdk" />
       <module name="sun.misc" />
-      
+
       <module name="javax.api" />
    </dependencies>
 

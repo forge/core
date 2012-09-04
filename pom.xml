@@ -340,6 +340,12 @@
          </dependency>
 
          <dependency>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>forge-tracking</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+
+         <dependency>
             <groupId>org.eclipse.jgit</groupId>
             <artifactId>org.eclipse.jgit.pgm</artifactId>
             <version>${jgit.version}</version>
@@ -857,6 +863,7 @@
             <module>scaffold-faces</module>
             <module>dev-plugins</module>
             <module>plugin-loader</module>
+            <module>tracking</module>
             <module>dist</module>
          </modules>
       </profile>
@@ -887,5 +894,4 @@
       <developerConnection>${forge.developer.connection}</developerConnection>
       <url>${forge.scm.url}</url>
    </scm>
-
 </project>
