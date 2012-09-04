@@ -300,15 +300,15 @@ public class ForgePlugin implements Plugin
       /*
        * FileResource<?> source = resource.reify(FileResource.class); if ((source == null) || !source.exists()) { throw
        * new IllegalArgumentException("JAR file must be specified."); }
-       *
+       * 
        * if (environment.getPluginDirectory().equals(source.getParent())) { throw new
        * IllegalArgumentException("Plugin is already installed."); }
-       *
+       * 
        * ShellMessages.info(out, "WARNING!"); if (prompt.promptBoolean(
        * "Installing plugins from remote sources is dangerous, and can leave untracked plugins. Continue?", true)) {
        * FileResource<?> target = createIncrementedPluginJarFile(dep);
        * target.setContents(source.getResourceInputStream());
-       *
+       * 
        * ShellMessages.success(out, "Installed from [" + resource + "] successfully."); restart(); } else throw new
        * RuntimeException("Aborted.");
        */
@@ -576,6 +576,8 @@ public class ForgePlugin implements Plugin
           */
          // TODO Weld bug requires us to correct /add module for Seam Render dependency
          List<String> groupIds = Arrays.asList("org.jboss.seam.render", "org.jboss.forge");
+         List<String> providedDeps = Arrays.asList("forge-javaee-api", "forge-maven-api", "forge-scaffold-api",
+                  "forge-shell-api");
          List<Dependency> dependencies = deps.getDependencies();
          for (Dependency dependency : dependencies)
          {
@@ -586,6 +588,14 @@ public class ForgePlugin implements Plugin
                ShellMessages.warn(out, "Dependency [" + dependency.toCoordinates()
                         + "] was not correctly marked as PROVIDED scope; this has been corrected.");
                deps.addDirectDependency(DependencyBuilder.create(dependency).setScopeType(ScopeType.PROVIDED));
+            }
+            else if (dependency.getGroupId().equals("org.jboss.forge")
+                     && !providedDeps.contains(dependency.getArtifactId())
+                     && !ScopeType.TEST.equals(deps.getEffectiveDependency(dependency).getScopeTypeEnum()))
+            {
+               ShellMessages.warn(writer,
+                        "Plugin has a dependency on internal Forge API [" + dependency
+                                 + "] - this is not allowed and may cause failures.");
             }
          }
 
@@ -731,17 +741,23 @@ public class ForgePlugin implements Plugin
                      .attribute("name", "org.jboss.forge.javaee.api")
                      .attribute("services", "import");
          }
-         if (DependencyBuilder.areEquivalent(d, DependencyBuilder.create("org.jboss.forge:forge-scaffold-api")))
+         else if (DependencyBuilder.areEquivalent(d, DependencyBuilder.create("org.jboss.forge:forge-scaffold-api")))
          {
             module.getSingle("dependencies").createChild("module")
                      .attribute("name", "org.jboss.forge.scaffold.api")
                      .attribute("services", "import");
          }
-         if (DependencyBuilder.areEquivalent(d, DependencyBuilder.create("org.jboss.forge:forge-maven-api")))
+         else if (DependencyBuilder.areEquivalent(d, DependencyBuilder.create("org.jboss.forge:forge-maven-api")))
          {
             module.getSingle("dependencies").createChild("module")
                      .attribute("name", "org.jboss.forge.maven.api")
                      .attribute("services", "import");
+         }
+         else if (d.getGroupId().equals("org.jboss.forge"))
+         {
+            ShellMessages.error(writer,
+                     "Plugin has a dependency on internal Forge API [" + d
+                              + "] - this is not allowed and may cause failures.");
          }
       }
       return pluginDependencies;
