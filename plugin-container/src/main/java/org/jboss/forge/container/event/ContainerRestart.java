@@ -6,11 +6,12 @@
  */
 package org.jboss.forge.container.event;
 
-import org.jboss.forge.container.plugin.Plugin;
-
 /**
- * Causes Forge to re-start CDI and re-initialize {@link Plugin} metadata.
+ * Internal event to trigger container restart. 
+ * 
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class Restart
+public class ContainerRestart
 {
+
 }

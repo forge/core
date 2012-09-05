@@ -4,17 +4,12 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-
-package org.jboss.forge.container.plugin;
-
+package org.jboss.forge.container.services;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface ConstraintInspector
+public interface ServiceType
 {
-   /**
-    * Return the name of the given bean type.
-    */
-   public String getName(final Class<?> type);
+
 }

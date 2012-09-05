@@ -16,9 +16,10 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.jboss.forge.container.AddonRegistry.AddonEntry;
+import org.jboss.forge.container.InstalledAddonRegistry.AddonEntry;
 import org.jboss.forge.container.exception.ContainerException;
-import org.jboss.forge.container.meta.PluginMetadata;
+import org.jboss.forge.container.modules.AddonModuleLoader;
+import org.jboss.forge.container.services.ServiceType;
 import org.jboss.modules.Module;
 import org.jboss.modules.ModuleIdentifier;
 import org.jboss.modules.ModuleLoadException;
@@ -79,12 +80,12 @@ public class Bootstrap
    {
       initLogging();
 
-      AddonModuleRegistry registry = new AddonModuleRegistry();
+      AddonRegistry registry = new AddonRegistry();
 
       try
       {
          Set<Module> addons = loadAddons();
-         int batchSize = Math.min(BATCH_SIZE,addons.size());
+         int batchSize = Math.min(BATCH_SIZE, addons.size());
          System.out.println("Batch size = " + batchSize);
 
          // Make sure Weld uses ThreadSafe singletons.
@@ -102,7 +103,7 @@ public class Bootstrap
          int started = 0;
          for (Module module : addons)
          {
-            while (registry.getPlugins().keySet().size() + batchSize <= started)
+            while (registry.getServices().size() + batchSize <= started)
             {
                Thread.sleep(10);
             }
@@ -132,8 +133,8 @@ public class Bootstrap
          }
          while (alive == true);
 
-         Map<Module, Map<String, List<PluginMetadata>>> loadedAddons = registry.getPlugins();
-         for (Entry<Module, Map<String, List<PluginMetadata>>> entry : loadedAddons.entrySet())
+         Map<Module, List<ServiceType>> loadedAddons = registry.getServices();
+         for (Entry<Module, List<ServiceType>> entry : loadedAddons.entrySet())
          {
             System.out.println("Plugins from addon module [" + entry.getKey().getIdentifier() + "] - "
                      + entry.getValue());
@@ -170,13 +171,13 @@ public class Bootstrap
    {
       Set<Module> result = new HashSet<Module>();
 
-      List<AddonEntry> toLoad = new ArrayList<AddonRegistry.AddonEntry>();
-      List<AddonEntry> installed = AddonRegistry.listByAPICompatibleVersion(AddonRegistry
+      List<AddonEntry> toLoad = new ArrayList<InstalledAddonRegistry.AddonEntry>();
+      List<AddonEntry> installed = InstalledAddonRegistry.listByAPICompatibleVersion(InstalledAddonRegistry
                .getRuntimeAPIVersion());
 
       toLoad.addAll(installed);
 
-      List<AddonEntry> incompatible = AddonRegistry.list();
+      List<AddonEntry> incompatible = InstalledAddonRegistry.list();
       incompatible.removeAll(installed);
 
       for (AddonEntry pluginEntry : incompatible)

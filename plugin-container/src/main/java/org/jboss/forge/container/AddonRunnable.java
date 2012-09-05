@@ -1,20 +1,19 @@
 package org.jboss.forge.container;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.enterprise.inject.spi.BeanManager;
 
 import org.jboss.forge.container.event.ContainerShutdown;
 import org.jboss.forge.container.event.ContainerStartup;
-import org.jboss.forge.container.meta.PluginMetadata;
-import org.jboss.forge.container.meta.PluginRegistry;
+import org.jboss.forge.container.modules.ModularWeld;
+import org.jboss.forge.container.services.ServiceType;
+import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.container.util.Assert;
 import org.jboss.forge.container.util.BeanManagerUtils;
 import org.jboss.forge.container.util.ClassLoaders;
 import org.jboss.forge.container.util.ClassLoaders.Task;
-import org.jboss.forge.container.weld.ModularWeld;
 import org.jboss.modules.Module;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
@@ -22,10 +21,10 @@ import org.jboss.weld.environment.se.WeldContainer;
 public final class AddonRunnable implements Runnable
 {
    private Module module;
-   private AddonModuleRegistry globalRegistry;
+   private AddonRegistry globalRegistry;
    private Set<Module> addons;
 
-   public AddonRunnable(Module module, AddonModuleRegistry registry, Set<Module> addons)
+   public AddonRunnable(Module module, AddonRegistry registry, Set<Module> addons)
    {
       this.module = module;
       this.globalRegistry = registry;
@@ -48,15 +47,15 @@ public final class AddonRunnable implements Runnable
 
             manager.fireEvent(new ContainerStartup());
 
-            PluginRegistry registry = BeanManagerUtils.getContextualInstance(manager, PluginRegistry.class);
-            Assert.notNull(registry, "Plugin registry was null.");
+            ServiceRegistry registry = BeanManagerUtils.getContextualInstance(manager, ServiceRegistry.class);
+            Assert.notNull(registry, "Service registry was null.");
 
-            Map<String, List<PluginMetadata>> plugins = registry.getPlugins();
-            Assert.notNull(plugins, "PluginMetadata Map was null.");
+            List<ServiceType> services = registry.getServices();
+            Assert.notNull(services, "Services list was null.");
 
-            globalRegistry.addPlugins(module, plugins);
+            globalRegistry.addServices(module, services);
 
-            while (globalRegistry.getPlugins().keySet().size() < addons.size())
+            while (globalRegistry.getServices().size() < addons.size())
             {
                Thread.sleep(10);
             }

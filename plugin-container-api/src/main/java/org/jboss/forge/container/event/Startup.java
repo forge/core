@@ -7,7 +7,6 @@
 
 package org.jboss.forge.container.event;
 
-import java.io.File;
 
 /**
  * Fired when the container begins its startup process.
@@ -16,27 +15,10 @@ import java.io.File;
  */
 public final class Startup
 {
-   private File workingDirectory = new File("").getAbsoluteFile();
    private boolean restart;
 
    public Startup()
    {
-   }
-
-   public Startup(final File workingDirectory)
-   {
-      this.workingDirectory = workingDirectory;
-   }
-
-   public Startup(final File workingDirectory, final boolean restart)
-   {
-      this.workingDirectory = workingDirectory;
-      this.restart = restart;
-   }
-
-   public File getWorkingDirectory()
-   {
-      return workingDirectory;
    }
 
    public boolean isRestart()

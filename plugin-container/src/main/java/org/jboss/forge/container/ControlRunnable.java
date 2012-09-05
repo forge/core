@@ -6,9 +6,9 @@ import javax.enterprise.inject.spi.BeanManager;
 
 import org.jboss.forge.container.event.ContainerShutdown;
 import org.jboss.forge.container.event.ContainerStartup;
+import org.jboss.forge.container.modules.ModularWeld;
 import org.jboss.forge.container.util.ClassLoaders;
 import org.jboss.forge.container.util.ClassLoaders.Task;
-import org.jboss.forge.container.weld.ModularWeld;
 import org.jboss.modules.Module;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
@@ -16,10 +16,10 @@ import org.jboss.weld.environment.se.WeldContainer;
 public final class ControlRunnable implements Runnable
 {
    private Module module;
-   private AddonModuleRegistry globalRegistry;
+   private AddonRegistry globalRegistry;
    private Set<Module> addons;
 
-   public ControlRunnable(Module module, AddonModuleRegistry registry, Set<Module> addons)
+   public ControlRunnable(Module module, AddonRegistry registry, Set<Module> addons)
    {
       this.module = module;
       this.globalRegistry = registry;
@@ -40,12 +40,12 @@ public final class ControlRunnable implements Runnable
             BeanManager manager = container.getBeanManager();
             manager.fireEvent(new ContainerStartup());
 
-            while (globalRegistry.getPlugins().keySet().size() < addons.size())
+            while (globalRegistry.getServices().size() < addons.size())
             {
                Thread.sleep(10);
             }
 
-            System.out.println("Control thread plugin registry " + globalRegistry.getPlugins());
+            System.out.println("Control thread service registry " + globalRegistry.getServices());
 
             manager.fireEvent(new ContainerShutdown());
             weld.shutdown();

@@ -12,7 +12,6 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.Root;
 import org.jboss.forge.container.ContainerControl;
@@ -31,7 +30,6 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public abstract class AbstractForgeTest
 {
-   @Deployment
    public static JavaArchive getDeployment()
    {
       JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar").addPackages(true, Root.class.getPackage())

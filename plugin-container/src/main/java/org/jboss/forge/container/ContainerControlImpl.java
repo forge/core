@@ -10,11 +10,11 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
+import org.jboss.forge.container.event.ContainerRestart;
 import org.jboss.forge.container.event.ContainerShutdown;
 import org.jboss.forge.container.event.ContainerStartup;
 import org.jboss.forge.container.event.PostStartup;
 import org.jboss.forge.container.event.PreShutdown;
-import org.jboss.forge.container.event.Restart;
 import org.jboss.forge.container.event.Shutdown;
 import org.jboss.forge.container.event.Startup;
 
@@ -54,19 +54,6 @@ public class ContainerControlImpl implements ContainerControl
          status = Status.STARTED;
          manager.fireEvent(new PostStartup());
       }
-      /*
-       * One classloader/thread/weld container per plugin module. One primary executor container running, fires events
-       * to each plugin-container.
-       * 
-       * Multi-threaded bootstrap. Loads primary container, then attaches individual plugin containers as they come up.
-       * 
-       * Prevents weld library conflicts.
-       * 
-       * Ideas:
-       * 
-       * Plugins may depend on plugins, but that effectively disables the requested container and merges it with the
-       * requesting container, which now contains classes from both containers.
-       */
    }
 
    @Override
@@ -84,7 +71,7 @@ public class ContainerControlImpl implements ContainerControl
    @Override
    public void restart()
    {
-      manager.fireEvent(new Restart());
+      manager.fireEvent(new ContainerRestart());
       stop();
       start();
    }

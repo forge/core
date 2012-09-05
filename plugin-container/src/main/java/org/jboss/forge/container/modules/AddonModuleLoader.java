@@ -4,14 +4,15 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.container;
+package org.jboss.forge.container.modules;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.jar.JarFile;
 
-import org.jboss.forge.container.AddonRegistry.AddonEntry;
+import org.jboss.forge.container.InstalledAddonRegistry;
+import org.jboss.forge.container.InstalledAddonRegistry.AddonEntry;
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.modules.DependencySpec;
 import org.jboss.modules.Module;
@@ -82,7 +83,7 @@ public class AddonModuleLoader extends ModuleLoader
          builder.addDependency(DependencySpec.createModuleDependencySpec(PathFilters.acceptAll(),
                   PathFilters.rejectAll(), parent, WELD, false));
 
-         List<File> jars = AddonRegistry.getPluginResourceJars(found);
+         List<File> jars = InstalledAddonRegistry.getPluginResourceJars(found);
 
          for (File jarFile : jars)
          {

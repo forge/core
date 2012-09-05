@@ -1,9 +1,9 @@
 package org.jboss.forge.container;
 
-import org.jboss.forge.container.plugin.Plugin;
+import org.jboss.forge.container.services.ServiceType;
 
 /**
- * Controls the life-cycle of a forge {@link Plugin} container
+ * Controls the life-cycle of a Forge {@link ServiceType} container
  */
 public interface ContainerControl
 {

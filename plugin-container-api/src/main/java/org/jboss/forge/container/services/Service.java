@@ -4,30 +4,25 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
+package org.jboss.forge.container.services;
 
-package org.jboss.forge.container.doc;
-
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.ElementType.PARAMETER;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.jboss.forge.container.plugin.Plugin;
-
 /**
- * Supply help text for a {@link Plugin} or other type.
+ * Indicates that the annotated element comes from a {@link Remote} addon and should be imported.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Target({ TYPE })
-@Retention(RUNTIME)
 @Documented
-public @interface Help
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ FIELD, PARAMETER, METHOD })
+public @interface Service
 {
-   /**
-    * The help text.
-    */
-   String value();
+
 }

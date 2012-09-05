@@ -4,20 +4,15 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-
-package org.jboss.forge.container.plugin;
-
-import java.io.InputStream;
+package org.jboss.forge.container.services;
 
 /**
- * @author Mike Brock
+ * Marker interface that indicates when a type should be exported to addons outside of this container. It may be
+ * imported via the {@link Service} annotation.
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface PipeOut
+public interface Remote
 {
-   public boolean isPiped();
 
-   public void setPiped(boolean flag);
-
-   public InputStream getBuffer();
 }

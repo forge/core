@@ -1,4 +1,4 @@
-package org.jboss.forge.container.weld;
+package org.jboss.forge.container.modules;
 
 import org.jboss.modules.Module;
 import org.jboss.weld.resources.spi.ResourceLoader;
