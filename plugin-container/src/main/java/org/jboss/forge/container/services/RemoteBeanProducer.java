@@ -3,24 +3,38 @@ package org.jboss.forge.container.services;
 import java.util.Set;
 
 import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.Produces;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.Producer;
 
-public class RemoteProducerWrapper<T extends Remote> implements Producer<T>
+import net.sf.cglib.proxy.Enhancer;
+
+public class RemoteBeanProducer<T extends Remote> implements Producer<T>
 {
    private Producer<T> wrapped;
-   private Class<T> type;
+   private Class<?> type;
+   private BeanManager manager;
 
-   public RemoteProducerWrapper(Producer<T> wrapped, Class<T> type)
+   public RemoteBeanProducer(BeanManager manager, Producer<T> wrapped, Class<?> type)
    {
+      this.manager = manager;
       this.wrapped = wrapped;
       this.type = type;
    }
 
+   @Produces
+   @Service
+   public Remote produceGenericService()
+   {
+      return null;
+   }
+
    @Override
+   @SuppressWarnings("unchecked")
    public T produce(CreationalContext<T> ctx)
    {
-      return wrapped.produce(ctx);
+      return (T) Enhancer.create(type, new RemoteServiceCallback(manager, ctx, type));
    }
 
    @Override

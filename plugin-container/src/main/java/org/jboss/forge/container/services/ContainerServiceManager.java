@@ -12,8 +12,12 @@ import java.lang.reflect.Method;
 
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.AnnotatedMember;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
-import javax.enterprise.inject.spi.ProcessBean;
+import javax.enterprise.inject.spi.InjectionPoint;
+import javax.enterprise.inject.spi.ProcessAnnotatedType;
+import javax.enterprise.inject.spi.ProcessInjectionPoint;
+import javax.enterprise.inject.spi.ProcessManagedBean;
 import javax.enterprise.inject.spi.ProcessProducer;
 
 import org.jboss.forge.container.exception.ContainerException;
@@ -24,8 +28,6 @@ import org.jboss.forge.container.exception.ContainerException;
  * 
  * Multi-threaded bootstrap. Loads primary container, then attaches individual plugin containers as they come up.
  * 
- * Prevents weld library conflicts.
- * 
  * Ideas:
  * 
  * Addons may depend on other addons beans, but these beans must be explicitly exposed via the {@link Remote} and
@@ -33,11 +35,20 @@ import org.jboss.forge.container.exception.ContainerException;
  */
 public class ContainerServiceManager implements Extension
 {
-   public void processBean(@Observes ProcessBean<?> event)
+
+   public void processAnnotatedType(@Observes ProcessAnnotatedType<? extends Remote> event)
+   {
+      event.setAnnotatedType(new RemoteAnnotatedType(event.getAnnotatedType()));
+   }
+
+   public void processManagedBean(@Observes ProcessManagedBean<? extends Remote> event)
    {
    }
 
-   public void processProducer(@Observes ProcessProducer<?, ? extends Remote> event)
+   /**
+    * This occurs in the producing Module.
+    */
+   public void processProducer(@Observes ProcessProducer<?, ? extends Remote> event, BeanManager manager)
    {
       AnnotatedMember<?> annotatedMember = event.getAnnotatedMember();
       Member member = annotatedMember.getJavaMember();
@@ -54,7 +65,6 @@ public class ContainerServiceManager implements Extension
       else
          throw new ContainerException("Cannot handle producer for non-Field and non-Method member type");
 
-      if (type != null)
-         event.setProducer(new RemoteProducerWrapper(event.getProducer(), type));
+      event.setProducer(new RemoteBeanProducer(manager, event.getProducer(), type));
    }
 }

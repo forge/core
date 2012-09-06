@@ -84,6 +84,7 @@
             <module>plugin-container</module>
             <module>test-harness</module>
       		<module>forge-example-plugin</module>
+      		<module>forge-example-plugin-2</module>
             <module>dist</module>
          </modules>
       </profile>

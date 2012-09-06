@@ -14,12 +14,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import javax.inject.Qualifier;
+
 /**
  * Indicates that the annotated element comes from a {@link Remote} addon and should be imported.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Documented
+@Qualifier
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ FIELD, PARAMETER, METHOD })
 public @interface Service

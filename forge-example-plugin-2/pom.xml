@@ -7,18 +7,13 @@
       <version>2.0.0-SNAPSHOT</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
-   <artifactId>forge-example-plugin</artifactId>
-   <name>Forge - Example Plugin</name>
+   <artifactId>forge-example-plugin-2</artifactId>
+	<name>Forge - Example Plugin</name>
 
    <dependencies>
       <dependency>
          <groupId>org.jboss.forge</groupId>
          <artifactId>forge-plugin-container-api</artifactId>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>forge-example-plugin-2</artifactId>
-         <version>${project.version}</version>
       </dependency>
    </dependencies>
 </project>
