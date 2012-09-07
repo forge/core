@@ -6,21 +6,12 @@
  */
 package org.jboss.forge.container.services;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Member;
-import java.lang.reflect.Method;
-
 import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.AnnotatedMember;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
-import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.enterprise.inject.spi.ProcessInjectionPoint;
-import javax.enterprise.inject.spi.ProcessManagedBean;
 import javax.enterprise.inject.spi.ProcessProducer;
-
-import org.jboss.forge.container.exception.ContainerException;
 
 /**
  * One classloader/thread/weld container per plugin module. One primary executor container running, fires events to each
@@ -36,35 +27,20 @@ import org.jboss.forge.container.exception.ContainerException;
 public class ContainerServiceManager implements Extension
 {
 
+   @SuppressWarnings({ "rawtypes", "unchecked" })
    public void processAnnotatedType(@Observes ProcessAnnotatedType<? extends Remote> event)
    {
       event.setAnnotatedType(new RemoteAnnotatedType(event.getAnnotatedType()));
    }
 
-   public void processManagedBean(@Observes ProcessManagedBean<? extends Remote> event)
+   public void processInjectionPoint(@Observes ProcessInjectionPoint<?, ? extends Remote> event)
    {
+      event.setInjectionPoint(new RemoteInjectionPoint(event.getInjectionPoint()));
    }
 
-   /**
-    * This occurs in the producing Module.
-    */
+   @SuppressWarnings({ "rawtypes", "unchecked" })
    public void processProducer(@Observes ProcessProducer<?, ? extends Remote> event, BeanManager manager)
    {
-      AnnotatedMember<?> annotatedMember = event.getAnnotatedMember();
-      Member member = annotatedMember.getJavaMember();
-
-      Class<?> type = null;
-      if (member instanceof Method)
-      {
-         type = ((Method) member).getReturnType();
-      }
-      else if (member instanceof Field)
-      {
-         type = ((Field) member).getType();
-      }
-      else
-         throw new ContainerException("Cannot handle producer for non-Field and non-Method member type");
-
-      event.setProducer(new RemoteBeanProducer(manager, event.getProducer(), type));
+      event.setProducer(new RemoteProxyBeanProducer(event.getProducer()));
    }
 }

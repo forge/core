@@ -1,30 +1,30 @@
 package org.jboss.forge.container;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-import org.jboss.forge.container.services.ServiceType;
+import org.jboss.forge.container.services.RemoteInstance;
 import org.jboss.forge.container.services.ServiceRegistry;
 
 public class ServiceRegistryImpl implements ServiceRegistry
 {
-   private List<ServiceType> services = new ArrayList<ServiceType>();
+   private Map<Class<?>, RemoteInstance<?>> services = new ConcurrentHashMap<Class<?>, RemoteInstance<?>>();
 
    @Override
-   public void addService(ServiceType service)
+   public <T> void addService(Class<T> clazz, RemoteInstance<T> service)
    {
-      services.add(service);
+      services.put(clazz, service);
    }
 
    @Override
-   public ServiceType getService(Class<?> clazz)
+   @SuppressWarnings("unchecked")
+   public <T> RemoteInstance<T> getRemoteInstance(Class<T> clazz)
    {
-      // TODO implement
-      return null;
+      return (RemoteInstance<T>) services.get(clazz);
    }
 
    @Override
-   public List<ServiceType> getServices()
+   public Map<Class<?>, RemoteInstance<?>> getServices()
    {
       return services;
    }

@@ -1,27 +1,40 @@
 package org.jboss.forge.container.services;
 
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.spi.BeanManager;
-
 import net.sf.cglib.proxy.LazyLoader;
+
+import org.jboss.forge.container.AddonRegistry;
+import org.jboss.modules.Module;
+import org.jboss.modules.ModuleClassLoader;
 
 public class RemoteServiceCallback implements LazyLoader
 {
-   private CreationalContext<?> creationalContext;
    private Class<?> serviceType;
-   private BeanManager manager;
+   private AddonRegistry registry;
 
-   public RemoteServiceCallback(BeanManager manager, CreationalContext<?> creationalContext, Class<?> serviceType)
+   public RemoteServiceCallback(AddonRegistry registry, Class<?> serviceType)
    {
-      this.manager = manager;
-      this.creationalContext = creationalContext;
+      this.registry = registry;
       this.serviceType = serviceType;
    }
 
    @Override
    public Object loadObject() throws Exception
    {
-      // TODO this instance needs to come from a remote Weld container
-      return serviceType.newInstance();
+      Object result = null;
+      for (Module module : registry.getServices().keySet())
+      {
+         ModuleClassLoader classLoader = module.getClassLoader();
+         if (classLoader.equals(serviceType.getClassLoader()))
+         {
+            RemoteInstance<?> instance = registry.getServices().get(module).getRemoteInstance(serviceType);
+            result = instance.get();
+         }
+      }
+
+      if (result == null)
+         throw new IllegalStateException("Service [" + serviceType.getName() + "] is not registered.");
+
+      return result;
+
    }
 }

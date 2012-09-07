@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 import org.jboss.forge.container.InstalledAddonRegistry.AddonEntry;
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.modules.AddonModuleLoader;
-import org.jboss.forge.container.services.ServiceType;
+import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.modules.Module;
 import org.jboss.modules.ModuleIdentifier;
 import org.jboss.modules.ModuleLoadException;
@@ -80,8 +80,6 @@ public class Bootstrap
    {
       initLogging();
 
-      AddonRegistry registry = new AddonRegistry();
-
       try
       {
          Set<Module> addons = loadAddons();
@@ -93,6 +91,7 @@ public class Bootstrap
 
          ModuleLoader moduleLoader = Module.getBootModuleLoader();
          Module forge = moduleLoader.loadModule(ModuleIdentifier.fromString("org.jboss.forge:main"));
+         AddonRegistry registry = AddonRegistry.registry;
          ControlRunnable controlRunnable = new ControlRunnable(forge, registry, addons);
          Thread controlThread = new Thread(controlRunnable, forge.getIdentifier().getName() + ":"
                   + forge.getIdentifier().getSlot());
@@ -133,8 +132,8 @@ public class Bootstrap
          }
          while (alive == true);
 
-         Map<Module, List<ServiceType>> loadedAddons = registry.getServices();
-         for (Entry<Module, List<ServiceType>> entry : loadedAddons.entrySet())
+         Map<Module, ServiceRegistry> loadedAddons = registry.getServices();
+         for (Entry<Module, ServiceRegistry> entry : loadedAddons.entrySet())
          {
             System.out.println("Plugins from addon module [" + entry.getKey().getIdentifier() + "] - "
                      + entry.getValue());

@@ -9,7 +9,9 @@ package org.jboss.forge.container.services;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface ServiceType
+public interface RemoteInstance<T>
 {
+   T get();
 
+   void release(T instance);
 }

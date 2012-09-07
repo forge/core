@@ -1,6 +1,5 @@
 package org.jboss.forge.container;
 
-import java.util.List;
 import java.util.Set;
 
 import javax.enterprise.inject.spi.BeanManager;
@@ -8,7 +7,6 @@ import javax.enterprise.inject.spi.BeanManager;
 import org.jboss.forge.container.event.ContainerShutdown;
 import org.jboss.forge.container.event.ContainerStartup;
 import org.jboss.forge.container.modules.ModularWeld;
-import org.jboss.forge.container.services.ServiceType;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.container.util.Assert;
 import org.jboss.forge.container.util.BeanManagerUtils;
@@ -50,10 +48,7 @@ public final class AddonRunnable implements Runnable
             ServiceRegistry registry = BeanManagerUtils.getContextualInstance(manager, ServiceRegistry.class);
             Assert.notNull(registry, "Service registry was null.");
 
-            List<ServiceType> services = registry.getServices();
-            Assert.notNull(services, "Services list was null.");
-
-            globalRegistry.addServices(module, services);
+            globalRegistry.addServices(module, registry);
 
             while (globalRegistry.getServices().size() < addons.size())
             {

@@ -1,23 +1,45 @@
 package org.jboss.forge.container;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.jboss.forge.container.services.ServiceType;
+import javax.enterprise.inject.Produces;
+import javax.enterprise.inject.Typed;
+import javax.inject.Singleton;
+
+import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.modules.Module;
 
+@Typed()
 public class AddonRegistry
 {
-   private Map<Module, List<ServiceType>> services = new ConcurrentHashMap<Module, List<ServiceType>>();
+   private Map<Module, ServiceRegistry> services = new ConcurrentHashMap<Module, ServiceRegistry>();
 
-   public void addServices(Module module, List<ServiceType> services)
+   /**
+    * Global Addon registry.
+    */
+   static AddonRegistry registry = new AddonRegistry();
+
+   @Produces
+   @Typed(AddonRegistry.class)
+   @Singleton
+   public static AddonRegistry produceGlobalAddonRegistry()
    {
-      System.out.println("Added services " + services + " from module [" + module.getIdentifier() + "]");
-      this.services.put(module, services);
+      return AddonRegistry.registry;
    }
 
-   public Map<Module, List<ServiceType>> getServices()
+   public void addServices(Module module, ServiceRegistry registry)
+   {
+      System.out.println("Added services " + registry + " from module [" + module.getIdentifier() + "]");
+      if (!services.containsKey(module))
+         services.put(module, registry);
+
+      else
+         throw new IllegalStateException("ServiceRegistry already regisered for module [" + module.getIdentifier()
+                  + "]");
+   }
+
+   public Map<Module, ServiceRegistry> getServices()
    {
       return services;
    }

@@ -1,9 +1,9 @@
 package org.jboss.forge.container;
 
-import org.jboss.forge.container.services.ServiceType;
+import org.jboss.forge.container.services.RemoteInstance;
 
 /**
- * Controls the life-cycle of a Forge {@link ServiceType} container
+ * Controls the life-cycle of a Forge {@link RemoteInstance} container
  */
 public interface ContainerControl
 {
