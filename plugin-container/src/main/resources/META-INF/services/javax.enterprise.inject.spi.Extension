@@ -1,1 +1,1 @@
-org.jboss.forge.container.ServiceManager
+org.jboss.forge.container.services.ContainerServiceExtension
