@@ -1,35 +1,46 @@
 package org.jboss.forge.container;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Set;
 
+import javax.enterprise.inject.spi.BeanManager;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jboss.forge.container.services.RemoteInstance;
+import org.jboss.forge.container.services.RemoteInstanceImpl;
 import org.jboss.forge.container.services.ServiceRegistry;
+import org.jboss.forge.container.util.Sets;
 
 @Singleton
 public class ServiceRegistryImpl implements ServiceRegistry
 {
-   private Map<Class<?>, RemoteInstance<?>> services = new ConcurrentHashMap<Class<?>, RemoteInstance<?>>();
+   private Set<Class<?>> services = Sets.getConcurrentSet();
+
+   @Inject
+   private BeanManager manager;
 
    @Override
-   public <T> void addService(Class<T> clazz, RemoteInstance<T> service)
+   public <T> void addService(Class<T> clazz)
    {
-      services.put(clazz, service);
+      services.add(clazz);
    }
 
    @Override
-   @SuppressWarnings("unchecked")
    public <T> RemoteInstance<T> getRemoteInstance(Class<T> clazz)
    {
-      return (RemoteInstance<T>) services.get(clazz);
+      return new RemoteInstanceImpl<T>(manager, clazz);
    }
 
    @Override
-   public Map<Class<?>, RemoteInstance<?>> getServices()
+   public Set<Class<?>> getServices()
    {
       return services;
+   }
+
+   @Override
+   public boolean hasService(Class<?> serviceType)
+   {
+      return services.contains(serviceType);
    }
 
 }

@@ -8,12 +8,11 @@ import javax.enterprise.inject.Typed;
 import javax.inject.Singleton;
 
 import org.jboss.forge.container.services.ServiceRegistry;
-import org.jboss.modules.Module;
 
 @Typed()
 public class AddonRegistry
 {
-   private Map<Module, ServiceRegistry> services = new ConcurrentHashMap<Module, ServiceRegistry>();
+   private Map<ClassLoader, ServiceRegistry> services = new ConcurrentHashMap<ClassLoader, ServiceRegistry>();
 
    /**
     * Global Addon registry.
@@ -28,24 +27,18 @@ public class AddonRegistry
       return AddonRegistry.registry;
    }
 
-   public void addServices(Module module, ServiceRegistry registry)
+   public void addServices(ClassLoader loader, ServiceRegistry registry)
    {
-      if (module == null)
+      if (loader == null)
       {
          // Key on ClassLoader instead?
          return;
       }
 
-      if (!services.containsKey(module))
-      {
-         services.put(module, registry);
-         System.out.println("Added services " + registry + " from module [" + module + "]");
-      }
-      else
-         throw new IllegalStateException("ServiceRegistry already regisered for module [" + module + "]");
+      services.put(loader, registry);
    }
 
-   public Map<Module, ServiceRegistry> getServices()
+   public Map<ClassLoader, ServiceRegistry> getServices()
    {
       return services;
    }

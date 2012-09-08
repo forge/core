@@ -8,7 +8,6 @@ package org.jboss.forge.container.services;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.BeanManager;

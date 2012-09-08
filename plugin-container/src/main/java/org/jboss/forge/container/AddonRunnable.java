@@ -48,7 +48,7 @@ public final class AddonRunnable implements Runnable
             ServiceRegistry registry = BeanManagerUtils.getContextualInstance(manager, ServiceRegistry.class);
             Assert.notNull(registry, "Service registry was null.");
 
-            globalRegistry.addServices(module, registry);
+            globalRegistry.addServices(module.getClassLoader(), registry);
 
             while (globalRegistry.getServices().size() < addons.size())
             {

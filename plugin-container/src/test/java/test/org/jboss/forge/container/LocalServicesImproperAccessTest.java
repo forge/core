@@ -32,8 +32,7 @@ public class LocalServicesImproperAccessTest extends AbstractForgeTest
       Assert.assertNotNull(remoteLocal);
    }
 
-   @Test(expected = IllegalStateException.class)
-   public void testRemoteInvocationOfLocalServiceFails()
+   public void testRemoteInvocationOfLocalService()
    {
       Assert.assertNotNull(remoteLocal);
       remoteLocal.invoke();

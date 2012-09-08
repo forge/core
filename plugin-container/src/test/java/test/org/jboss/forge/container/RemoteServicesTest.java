@@ -32,8 +32,8 @@ public class RemoteServicesTest extends AbstractForgeTest
       Assert.assertNotNull(remoteRemote);
    }
 
-   @Test
-   public void testRemoteInvocationOfRemoteService()
+   @Test(expected = IllegalStateException.class)
+   public void testRemoteInvocationOfUnregisteredRemoteService()
    {
       Assert.assertNotNull(remoteRemote);
       remoteRemote.invoke();

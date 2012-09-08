@@ -5,7 +5,6 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.forge.container.services.ContainerServiceExtension;
-import org.jboss.forge.container.services.Service;
 import org.jboss.forge.test.AbstractForgeTest;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Assert;
@@ -24,10 +23,6 @@ public class LocalServicesTest extends AbstractForgeTest
    }
 
    @Inject
-   @Service
-   private LocalService remoteLocal;
-
-   @Inject
    private LocalService localLocal;
 
    @Test
@@ -37,22 +32,9 @@ public class LocalServicesTest extends AbstractForgeTest
    }
 
    @Test
-   public void testRemoteInjectionOfLocalService()
-   {
-      Assert.assertNotNull(remoteLocal);
-   }
-
-   @Test
    public void testLocalInvocationOfLocalService()
    {
       Assert.assertNotNull(localLocal);
       localLocal.invoke();
-   }
-
-   @Test(expected = IllegalStateException.class)
-   public void testRemoteInvocationOfLocalServiceFails()
-   {
-      Assert.assertNotNull(remoteLocal);
-      remoteLocal.invoke();
    }
 }

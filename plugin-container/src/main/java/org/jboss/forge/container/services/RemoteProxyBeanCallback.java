@@ -3,15 +3,13 @@ package org.jboss.forge.container.services;
 import net.sf.cglib.proxy.LazyLoader;
 
 import org.jboss.forge.container.AddonRegistry;
-import org.jboss.modules.Module;
-import org.jboss.modules.ModuleClassLoader;
 
-public class RemoteServiceCallback implements LazyLoader
+public class RemoteProxyBeanCallback implements LazyLoader
 {
    private Class<?> serviceType;
    private AddonRegistry registry;
 
-   public RemoteServiceCallback(AddonRegistry registry, Class<?> serviceType)
+   public RemoteProxyBeanCallback(AddonRegistry registry, Class<?> serviceType)
    {
       this.registry = registry;
       this.serviceType = serviceType;
@@ -21,13 +19,13 @@ public class RemoteServiceCallback implements LazyLoader
    public Object loadObject() throws Exception
    {
       Object result = null;
-      for (Module module : registry.getServices().keySet())
+      for (ClassLoader classLoader : registry.getServices().keySet())
       {
-         ModuleClassLoader classLoader = module.getClassLoader();
-         if (classLoader.equals(serviceType.getClassLoader()))
+         if (registry.getServices().get(classLoader).hasService(serviceType))
          {
-            RemoteInstance<?> instance = registry.getServices().get(module).getRemoteInstance(serviceType);
+            RemoteInstance<?> instance = registry.getServices().get(classLoader).getRemoteInstance(serviceType);
             result = instance.get();
+            break;
          }
       }
 

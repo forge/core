@@ -37,6 +37,6 @@ public class RemoteProxyBeanProducerMethod
       else
          throw new ContainerException("Cannot handle producer for non-Field and non-Method member type");
 
-      return Enhancer.create((Class<?>) type, new RemoteServiceCallback(registry, type));
+      return Enhancer.create((Class<?>) type, new RemoteProxyBeanCallback(registry, type));
    }
 }

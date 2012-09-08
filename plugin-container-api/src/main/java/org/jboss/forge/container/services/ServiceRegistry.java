@@ -7,7 +7,7 @@
 
 package org.jboss.forge.container.services;
 
-import java.util.Map;
+import java.util.Set;
 
 /**
  * Contains the collection of all installed and available {@link RemoteInstance} types.
@@ -16,9 +16,11 @@ import java.util.Map;
  */
 public interface ServiceRegistry
 {
-   public <T> void addService(Class<T> clazz, RemoteInstance<T> service);
+   <T> void addService(Class<T> serviceType);
 
-   <T> RemoteInstance<T> getRemoteInstance(Class<T> clazz);
+   <T> RemoteInstance<T> getRemoteInstance(Class<T> serviceType);
 
-   Map<Class<?>, RemoteInstance<?>> getServices();
+   Set<Class<?>> getServices();
+
+   boolean hasService(Class<?> serviceType);
 }
