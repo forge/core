@@ -4,8 +4,10 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.jboss.forge.container.event.PostStartup;
+import org.jboss.forge.container.services.Remote;
 import org.jboss.forge.container.services.Service;
 
+@Remote
 public class ConsumingService
 {
    @Inject

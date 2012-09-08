@@ -30,11 +30,6 @@
          <artifactId>arquillian-junit-container</artifactId>
          <scope>compile</scope>
       </dependency>
-      <dependency>
-         <groupId>org.jboss.arquillian.container</groupId>
-         <artifactId>arquillian-weld-se-embedded-1.1</artifactId>
-         <scope>compile</scope>
-      </dependency>
       <!-- END Arquillian Deps -->
    </dependencies>
 

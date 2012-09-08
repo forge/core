@@ -43,4 +43,9 @@ public class ServiceRegistryImpl implements ServiceRegistry
       return services.contains(serviceType);
    }
 
+   @Override
+   public String toString()
+   {
+      return services.toString();
+   }
 }

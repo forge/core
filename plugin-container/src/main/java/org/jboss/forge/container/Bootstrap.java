@@ -135,7 +135,7 @@ public class Bootstrap
          Map<ClassLoader, ServiceRegistry> loadedAddons = registry.getServices();
          for (Entry<ClassLoader, ServiceRegistry> entry : loadedAddons.entrySet())
          {
-            System.out.println("Plugins from addon module [" + Module.forClassLoader(entry.getKey(), false) + "] - "
+            System.out.println("Services from addon module [" + Module.forClassLoader(entry.getKey(), false) + "] - "
                      + entry.getValue());
          }
 

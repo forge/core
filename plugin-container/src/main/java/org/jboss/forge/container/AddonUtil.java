@@ -38,13 +38,13 @@ public final class AddonUtil
    private static final String ATTR_SLOT = "slot";
    private static final String ATTR_API_VERSION = "api-version";
    private static final String ATTR_NAME = "name";
-   private static final String PLUGIN_DIR_DEFAULT = "/.forge/plugins";
+   private static final String PLUGIN_DIR_DEFAULT = "/.forge/addons";
    private static final String REGISTRY_FILE = "/installed.xml";
 
    private static String PLUGIN_DIR = null;
    private static String REGISTRY = null;
 
-   private static String getPluginsDir()
+   public static String getAddonDirName()
    {
       if (PLUGIN_DIR == null)
       {
@@ -57,18 +57,18 @@ public final class AddonUtil
       return PLUGIN_DIR;
    }
 
-   private static String getRegistry()
+   public static String getRegistryFileName()
    {
       if (REGISTRY == null)
       {
-         REGISTRY = getPluginsDir() + REGISTRY_FILE;
+         REGISTRY = getAddonDirName() + REGISTRY_FILE;
       }
       return REGISTRY;
    }
 
    public static File getRegistryFile()
    {
-      return new File(getRegistry());
+      return new File(getRegistryFileName());
    }
 
    public static List<AddonEntry> listByAPICompatibleVersion(final String version)
@@ -249,13 +249,13 @@ public final class AddonUtil
       return null;
    }
 
-   public static File getPluginDirectory(AddonEntry found)
+   public static File getAddonDirectory(AddonEntry found)
    {
       Assert.notNull(found.getSlot(), "Plugin slot must be specified.");
       Assert.notNull(found.getName(), "Plugin name must be specified.");
 
       String path = found.getName().replaceAll("\\.", "/");
-      File pluginDir = new File(getPluginsDir() + "/" + path + "/" + found.getSlot());
+      File pluginDir = new File(getAddonDirName() + "/" + path + "/" + found.getSlot());
       return pluginDir;
    }
 
@@ -425,7 +425,7 @@ public final class AddonUtil
 
    public static List<File> getPluginResourceJars(AddonEntry found)
    {
-      File dir = AddonUtil.getPluginDirectory(found);
+      File dir = AddonUtil.getAddonDirectory(found);
       return Arrays.asList(dir.listFiles(new FilenameFilter()
       {
          @Override
