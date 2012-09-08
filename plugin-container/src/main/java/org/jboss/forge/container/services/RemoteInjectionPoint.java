@@ -23,9 +23,9 @@ public class RemoteInjectionPoint implements InjectionPoint
 
       Annotated annotated = wrapped.getAnnotated();
       if (annotated instanceof AnnotatedField<?>)
-         this.annotated = new RemoteAnnotatedField<Remote>((AnnotatedField<?>) annotated);
+         this.annotated = new RemoteAnnotatedField<Object>((AnnotatedField<?>) annotated);
       else if (annotated instanceof AnnotatedParameter<?>)
-         this.annotated = new RemoteAnnotatedParamter<Remote>((AnnotatedParameter<?>) annotated);
+         this.annotated = new RemoteAnnotatedParamter<Object>((AnnotatedParameter<?>) annotated);
       else
          throw new IllegalArgumentException("Unsupported Service injection point type ["
                   + wrapped.getMember().getName() + "]");
@@ -34,7 +34,7 @@ public class RemoteInjectionPoint implements InjectionPoint
    @Override
    public Type getType()
    {
-      return Remote.class;
+      return Object.class;
    }
 
    @Override

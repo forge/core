@@ -11,8 +11,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.jar.JarFile;
 
-import org.jboss.forge.container.InstalledAddonRegistry;
-import org.jboss.forge.container.InstalledAddonRegistry.AddonEntry;
+import org.jboss.forge.container.AddonUtil;
+import org.jboss.forge.container.AddonUtil.AddonEntry;
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.modules.DependencySpec;
 import org.jboss.modules.Module;
@@ -83,7 +83,7 @@ public class AddonModuleLoader extends ModuleLoader
          builder.addDependency(DependencySpec.createModuleDependencySpec(PathFilters.acceptAll(),
                   PathFilters.rejectAll(), parent, WELD, false));
 
-         List<File> jars = InstalledAddonRegistry.getPluginResourceJars(found);
+         List<File> jars = AddonUtil.getPluginResourceJars(found);
 
          for (File jarFile : jars)
          {

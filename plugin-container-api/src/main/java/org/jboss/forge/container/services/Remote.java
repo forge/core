@@ -6,13 +6,19 @@
  */
 package org.jboss.forge.container.services;
 
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 /**
- * Marker interface that indicates when a type should be exported to addons outside of this container. It may be
- * imported via the {@link Service} annotation.
+ * Marker that indicates when a type should be exported to other containers. It may be imported via the corresponding
+ * {@link Service} annotation.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface Remote
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Remote
 {
 
 }

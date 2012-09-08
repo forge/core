@@ -30,13 +30,19 @@ public class AddonRegistry
 
    public void addServices(Module module, ServiceRegistry registry)
    {
-      System.out.println("Added services " + registry + " from module [" + module.getIdentifier() + "]");
-      if (!services.containsKey(module))
-         services.put(module, registry);
+      if (module == null)
+      {
+         // Key on ClassLoader instead?
+         return;
+      }
 
+      if (!services.containsKey(module))
+      {
+         services.put(module, registry);
+         System.out.println("Added services " + registry + " from module [" + module + "]");
+      }
       else
-         throw new IllegalStateException("ServiceRegistry already regisered for module [" + module.getIdentifier()
-                  + "]");
+         throw new IllegalStateException("ServiceRegistry already regisered for module [" + module + "]");
    }
 
    public Map<Module, ServiceRegistry> getServices()

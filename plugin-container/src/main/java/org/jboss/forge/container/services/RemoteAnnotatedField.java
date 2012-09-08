@@ -22,14 +22,14 @@ public class RemoteAnnotatedField<R> implements AnnotatedField<R>
    @Override
    public Type getBaseType()
    {
-      return Remote.class;
+      return Object.class;
    }
 
    @Override
    @SuppressWarnings("unchecked")
    public Set<Type> getTypeClosure()
    {
-      return new HashSet<Type>(Arrays.asList(Remote.class));
+      return new HashSet<Type>(Arrays.asList(Object.class));
    }
 
    @Override

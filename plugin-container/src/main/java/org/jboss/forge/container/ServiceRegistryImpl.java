@@ -3,9 +3,12 @@ package org.jboss.forge.container;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.inject.Singleton;
+
 import org.jboss.forge.container.services.RemoteInstance;
 import org.jboss.forge.container.services.ServiceRegistry;
 
+@Singleton
 public class ServiceRegistryImpl implements ServiceRegistry
 {
    private Map<Class<?>, RemoteInstance<?>> services = new ConcurrentHashMap<Class<?>, RemoteInstance<?>>();

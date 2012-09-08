@@ -16,7 +16,7 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.jboss.forge.container.InstalledAddonRegistry.AddonEntry;
+import org.jboss.forge.container.AddonUtil.AddonEntry;
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.modules.AddonModuleLoader;
 import org.jboss.forge.container.services.ServiceRegistry;
@@ -170,13 +170,13 @@ public class Bootstrap
    {
       Set<Module> result = new HashSet<Module>();
 
-      List<AddonEntry> toLoad = new ArrayList<InstalledAddonRegistry.AddonEntry>();
-      List<AddonEntry> installed = InstalledAddonRegistry.listByAPICompatibleVersion(InstalledAddonRegistry
+      List<AddonEntry> toLoad = new ArrayList<AddonUtil.AddonEntry>();
+      List<AddonEntry> installed = AddonUtil.listByAPICompatibleVersion(AddonUtil
                .getRuntimeAPIVersion());
 
       toLoad.addAll(installed);
 
-      List<AddonEntry> incompatible = InstalledAddonRegistry.list();
+      List<AddonEntry> incompatible = AddonUtil.list();
       incompatible.removeAll(installed);
 
       for (AddonEntry pluginEntry : incompatible)
