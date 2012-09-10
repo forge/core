@@ -114,8 +114,8 @@
       </dependency>
 
       <dependency>
-         <groupId>org.mvel</groupId>
-         <artifactId>mvel2</artifactId>
+         <groupId>cglib</groupId>
+         <artifactId>cglib-nodep</artifactId>
       </dependency>
 
       <dependency>
@@ -124,7 +124,7 @@
       </dependency>
 
    </dependencies>
-   
+
    <profiles>
       <profile>
          <id>release</id>

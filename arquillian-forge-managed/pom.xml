@@ -13,34 +13,57 @@
    <artifactId>arquillian-forge-managed</artifactId>
 
    <dependencies>
-
       <dependency>
          <groupId>org.jboss.forge</groupId>
          <artifactId>forge-plugin-container</artifactId>
-         <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+         <groupId>org.eclipse.jetty</groupId>
+         <artifactId>jetty-server</artifactId>
+         <version>8.1.5.v20120716</version>
+      </dependency>
+      <dependency>
+         <groupId>org.eclipse.jetty</groupId>
+         <artifactId>jetty-servlet</artifactId>
+         <version>8.1.5.v20120716</version>
       </dependency>
 
       <dependency>
          <groupId>org.jboss.arquillian.container</groupId>
          <artifactId>arquillian-container-spi</artifactId>
-         <version>1.0.1.Final</version>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.arquillian.container</groupId>
+         <artifactId>arquillian-container-test-api</artifactId>
       </dependency>
       <dependency>
          <groupId>org.jboss.arquillian.container</groupId>
          <artifactId>arquillian-container-test-spi</artifactId>
-         <version>1.0.1.Final</version>
       </dependency>
       <dependency>
          <groupId>org.jboss.arquillian.testenricher</groupId>
          <artifactId>arquillian-testenricher-cdi</artifactId>
-         <version>1.0.1.Final</version>
+      </dependency>
+
+
+      <dependency>
+         <groupId>org.jboss.shrinkwrap.resolver</groupId>
+         <artifactId>shrinkwrap-resolver-api</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.shrinkwrap.resolver</groupId>
+         <artifactId>shrinkwrap-resolver-api-maven</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.shrinkwrap.resolver</groupId>
+         <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
       </dependency>
 
       <dependency>
          <groupId>junit</groupId>
          <artifactId>junit</artifactId>
          <scope>test</scope>
-         <version>4.10</version>
       </dependency>
    </dependencies>
 

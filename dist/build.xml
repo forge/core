@@ -56,6 +56,10 @@
           ~ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
           -->
 
+		<module-def name="cglib">
+			<maven-resource group="cglib" artifact="cglib-nodep" />
+		</module-def>
+
 		<module-def name="ch.qos.cal10n">
 			<maven-resource group="ch.qos.cal10n" artifact="cal10n-api" />
 		</module-def>
@@ -107,10 +111,6 @@
 			<maven-resource group="org.jboss.weld" artifact="weld-core" />
 			<maven-resource group="org.jboss.weld" artifact="weld-spi" />
 			<maven-resource group="org.jboss.weld.se" artifact="weld-se-core" />
-		</module-def>
-
-		<module-def name="org.mvel">
-			<maven-resource group="org.mvel" artifact="mvel2" />
 		</module-def>
 
 		<module-def name="org.slf4j">

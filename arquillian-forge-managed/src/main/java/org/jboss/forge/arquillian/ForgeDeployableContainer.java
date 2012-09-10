@@ -6,7 +6,11 @@ import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
+import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
+import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
+import org.jboss.forge.arquillian.protocol.ServletProtocolDescription;
+import org.jboss.forge.arquillian.util.NativeSystemCall;
 import org.jboss.forge.arquillian.util.ShrinkWrapUtil;
 import org.jboss.forge.container.AddonUtil;
 import org.jboss.forge.container.AddonUtil.AddonEntry;
@@ -16,8 +20,7 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
 public class ForgeDeployableContainer implements DeployableContainer<ForgeContainerConfiguration>
 {
-   private AddonEntry addon;
-   private File destDir;
+   private Process process;
 
    @Override
    public Class<ForgeContainerConfiguration> getConfigurationClass()
@@ -34,49 +37,62 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    @Override
    public void start() throws LifecycleException
    {
+      try
+      {
+         this.process = NativeSystemCall.exec("java", "-Dforge.home=/Users/lbaxter/dev/forge",
+                  "-jar", "/Users/lbaxter/dev/forge/jboss-modules.jar", "-modulepath",
+                  "/Users/lbaxter/dev/forge/modules:/Users/lbaxter/.forge/plugins:", "org.jboss.forge");
+      }
+      catch (Exception e)
+      {
+         throw new LifecycleException("Could not start Forge process.", e);
+      }
    }
 
    @Override
    public void stop() throws LifecycleException
    {
+      try
+      {
+         this.process.destroy();
+         int status = this.process.waitFor();
+         System.out.println("Forge exited with status: " + status);
+      }
+      catch (InterruptedException e)
+      {
+         throw new LifecycleException("Container was interrupted while stopping.", e);
+      }
    }
 
    @Override
    public ProtocolDescription getDefaultProtocol()
    {
-      return ProtocolDescription.DEFAULT;
+      return new ServletProtocolDescription();
    }
 
    @Override
    public ProtocolMetaData deploy(Archive<?> archive) throws DeploymentException
    {
-      addon = AddonUtil.install(archive.getName(), "2.0.0-SNAPSHOT", "main");
-      destDir = AddonUtil.getAddonDirectory(addon);
+      AddonEntry addon = new AddonEntry(archive.getName(), "2.0.0-SNAPSHOT", "main");
+      File destDir = AddonUtil.getAddonDirectory(addon);
       destDir.mkdirs();
 
       File jar = new File(destDir.getAbsolutePath() + "/plugin.jar");
-
       ShrinkWrapUtil.toFile(jar, archive);
 
-      try
-      {
-         int status = NativeSystemCall.exec("java", "-Dforge.home=/Users/lbaxter/dev/forge",
-                  "-jar", "/Users/lbaxter/dev/forge/jboss-modules.jar", "-modulepath",
-                  "/Users/lbaxter/dev/forge/modules:/Users/lbaxter/.forge/plugins:", "org.jboss.forge");
+      addon = AddonUtil.install(addon);
 
-         System.out.println("Forge process exited with status code: " + status);
-      }
-      catch (Exception e)
-      {
-         throw new DeploymentException("Could not start Forge process.", e);
-      }
+      HTTPContext httpContext = new HTTPContext("localhost", 4141);
+      httpContext.add(new Servlet("ArquillianServletRunner", "/ArquillianServletRunner"));
+      return new ProtocolMetaData()
+               .addContext(httpContext);
 
-      return new ProtocolMetaData();
    }
 
    @Override
    public void undeploy(Archive<?> archive) throws DeploymentException
    {
+      AddonEntry addon = new AddonEntry(archive.getName(), "2.0.0-SNAPSHOT", "main");
       AddonUtil.remove(addon);
 
       File dir = AddonUtil.getAddonDirectory(addon);

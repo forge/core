@@ -47,6 +47,7 @@ public final class Files
          System.gc(); // ensure no lingering handles that would prevent deletion
       }
 
+      file.deleteOnExit(); // be paranoid
       if (file.delete())
       {
          return true;

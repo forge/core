@@ -8,6 +8,7 @@ import javax.enterprise.inject.Typed;
 import javax.inject.Singleton;
 
 import org.jboss.forge.container.services.ServiceRegistry;
+import org.jboss.modules.ModuleClassLoader;
 
 @Typed()
 public class AddonRegistry
@@ -31,7 +32,6 @@ public class AddonRegistry
    {
       if (loader == null)
       {
-         // Key on ClassLoader instead?
          return;
       }
 
@@ -41,5 +41,10 @@ public class AddonRegistry
    public Map<ClassLoader, ServiceRegistry> getServices()
    {
       return services;
+   }
+
+   public ServiceRegistry removeServices(ModuleClassLoader classLoader)
+   {
+      return services.remove(classLoader);
    }
 }

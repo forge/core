@@ -37,12 +37,10 @@ public class AddonModuleLoader extends ModuleLoader
    private static final ModuleIdentifier PLUGIN_CONTAINER = ModuleIdentifier.create("org.jboss.forge");
    private static final ModuleIdentifier WELD = ModuleIdentifier.create("org.jboss.weld");
 
-   private List<AddonEntry> installed;
    private ModuleLoader parent;
 
-   public AddonModuleLoader(List<AddonEntry> installed)
+   public AddonModuleLoader()
    {
-      this.installed = installed;
       this.parent = Module.getBootModuleLoader();
    }
 
@@ -62,7 +60,7 @@ public class AddonModuleLoader extends ModuleLoader
    protected ModuleSpec findModule(ModuleIdentifier id) throws ModuleLoadException
    {
       AddonEntry found = null;
-      for (AddonEntry plugin : installed)
+      for (AddonEntry plugin : AddonUtil.listByAPICompatibleVersion("2.0.0-SNAPSHOT"))
       {
          if (plugin.toModuleId().equals(id.toString()))
          {

@@ -1,7 +1,5 @@
 package org.jboss.forge.container;
 
-import java.util.Set;
-
 import javax.enterprise.inject.spi.BeanManager;
 
 import org.jboss.forge.container.event.ContainerShutdown;
@@ -20,13 +18,17 @@ public final class AddonRunnable implements Runnable
 {
    private Module module;
    private AddonRegistry globalRegistry;
-   private Set<Module> addons;
+   private boolean shutdown = false;
 
-   public AddonRunnable(Module module, AddonRegistry registry, Set<Module> addons)
+   public AddonRunnable(Module module, AddonRegistry registry)
    {
       this.module = module;
       this.globalRegistry = registry;
-      this.addons = addons;
+   }
+
+   public void shutdown()
+   {
+      this.shutdown = true;
    }
 
    @Override
@@ -50,11 +52,15 @@ public final class AddonRunnable implements Runnable
 
             globalRegistry.addServices(module.getClassLoader(), registry);
 
-            while (globalRegistry.getServices().size() < addons.size())
+            System.out.println("Services loaded from addon module [" + module.getIdentifier() + "] - "
+                     + registry.getServices());
+
+            while (!shutdown)
             {
                Thread.sleep(10);
             }
 
+            globalRegistry.removeServices(module.getClassLoader());
             manager.fireEvent(new ContainerShutdown());
             weld.shutdown();
          }

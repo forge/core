@@ -34,6 +34,7 @@ import org.jboss.forge.parser.xml.XMLParserException;
  */
 public final class AddonUtil
 {
+   public static final String PROP_ADDON_DIR = "org.jboss.forge.addonDir";
    private static final String DEFAULT_SLOT = "main";
    private static final String ATTR_SLOT = "slot";
    private static final String ATTR_API_VERSION = "api-version";
@@ -48,7 +49,7 @@ public final class AddonUtil
    {
       if (PLUGIN_DIR == null)
       {
-         PLUGIN_DIR = System.getProperty(Bootstrap.PROP_PLUGIN_DIR);
+         PLUGIN_DIR = System.getProperty(PROP_ADDON_DIR);
          if (PLUGIN_DIR == null)
          {
             PLUGIN_DIR = OSUtils.getUserHomePath() + PLUGIN_DIR_DEFAULT;
@@ -118,6 +119,11 @@ public final class AddonUtil
          // this is OK, no plugins installed
       }
       return result;
+   }
+
+   public static AddonEntry install(AddonEntry addon)
+   {
+      return install(addon.getName(), addon.getApiVersion(), addon.getSlot());
    }
 
    public static AddonEntry install(final String name, final String apiVersion, String slot)
@@ -426,13 +432,18 @@ public final class AddonUtil
    public static List<File> getPluginResourceJars(AddonEntry found)
    {
       File dir = AddonUtil.getAddonDirectory(found);
-      return Arrays.asList(dir.listFiles(new FilenameFilter()
+      if (dir.exists())
       {
-         @Override
-         public boolean accept(File file, String name)
+         return Arrays.asList(dir.listFiles(new FilenameFilter()
          {
-            return name.endsWith(".jar");
-         }
-      }));
+            @Override
+            public boolean accept(File file, String name)
+            {
+               return name.endsWith(".jar");
+            }
+         }));
+      }
+      return new ArrayList<File>();
    }
+
 }

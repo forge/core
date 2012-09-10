@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.arquillian;
+package org.jboss.forge.arquillian.util;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,40 +68,29 @@ public class NativeSystemCall
     * 
     * @param command the system command to execute
     * @param parms the command parameters
-    * @param out a print writer to which command output will be streamed
     * 
-    * @return 0 on successful completion, any other return code denotes failure
+    * @return The started {@link Process}
     */
-   public static int exec(final String command, final String... parms) throws IOException
+   public static Process exec(final String command, final String... parms) throws IOException
    {
-      try
+      String[] commandTokens = parms == null ? new String[1] : new String[parms.length + 1];
+      commandTokens[0] = command;
+
+      if (commandTokens.length > 1)
       {
-         String[] commandTokens = parms == null ? new String[1] : new String[parms.length + 1];
-         commandTokens[0] = command;
-
-         if (commandTokens.length > 1)
-         {
-            System.arraycopy(parms, 0, commandTokens, 1, parms.length);
-         }
-
-         ProcessBuilder builder = new ProcessBuilder(commandTokens);
-         builder.redirectErrorStream(true);
-         Process p = builder.start();
-
-         InputStream stdout = p.getInputStream();
-
-         Thread outThread = new Thread(new Receiver(stdout, System.out));
-         outThread.start();
-         outThread.join();
-
-         return p.waitFor();
-
+         System.arraycopy(parms, 0, commandTokens, 1, parms.length);
       }
-      catch (InterruptedException e)
-      {
-         e.printStackTrace();
-         return -1;
-      }
+
+      ProcessBuilder builder = new ProcessBuilder(commandTokens);
+      builder.redirectErrorStream(true);
+      Process p = builder.start();
+
+      InputStream stdout = p.getInputStream();
+
+      Thread outThread = new Thread(new Receiver(stdout, System.out));
+      outThread.start();
+
+      return p;
    }
 
    /**

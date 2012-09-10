@@ -6,11 +6,8 @@
  */
 package org.jboss.forge.container;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -19,127 +16,49 @@ import java.util.logging.Logger;
 import org.jboss.forge.container.AddonUtil.AddonEntry;
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.modules.AddonModuleLoader;
-import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.modules.Module;
 import org.jboss.modules.ModuleIdentifier;
 import org.jboss.modules.ModuleLoadException;
 import org.jboss.modules.ModuleLoader;
-import org.jboss.weld.bootstrap.api.SingletonProvider;
-import org.jboss.weld.bootstrap.api.helpers.TCCLSingletonProvider;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class Bootstrap
 {
-   public static final String PROP_PLUGIN_DIR = "org.jboss.forge.pluginDir";
-   public static final String PROP_EVALUATE = "org.jboss.forge.evaluate";
-   public static final String PROP_CONCURRENT_PLUGINS = "org.jboss.forge.concurrent.Plugins";
-   private static final String ARG_PLUGIN_DIR = "-pluginDir";
-   private static final String ARG_EVALUATE = "-e";
+   public static final String PROP_CONCURRENT_PLUGINS = "org.jboss.forge.concurrentAddons";
 
    private static final int BATCH_SIZE = Integer.getInteger(PROP_CONCURRENT_PLUGINS, 4);
 
    public static void main(final String[] args)
    {
-      readArguments(args);
       init();
-   }
-
-   private static void readArguments(String[] args)
-   {
-      readPluginDirArgument(args);
-      readEvaluateArgument(args);
-   }
-
-   private static void readPluginDirArgument(String[] args)
-   {
-      for (int i = 0; i < args.length; i++)
-      {
-         if (ARG_PLUGIN_DIR.equals(args[i]) && i + 1 < args.length)
-         {
-            System.setProperty(PROP_PLUGIN_DIR, args[i + 1]);
-            return;
-         }
-      }
-   }
-
-   private static void readEvaluateArgument(String[] args)
-   {
-      for (int i = 0; i < args.length; i++)
-      {
-         if (ARG_EVALUATE.equals(args[i]) && i + 1 < args.length)
-         {
-            System.setProperty(PROP_EVALUATE, args[i + 1]);
-            return;
-         }
-      }
    }
 
    private static void init()
    {
-      initLogging();
+      // initLogging();
 
       try
       {
-         Set<Module> addons = loadAddons();
-         int batchSize = Math.min(BATCH_SIZE, addons.size());
-         System.out.println("Batch size = " + batchSize);
-
-         // Make sure Weld uses ThreadSafe singletons.
-         SingletonProvider.initialize(new TCCLSingletonProvider());
-
-         ModuleLoader moduleLoader = Module.getBootModuleLoader();
-         Module forge = moduleLoader.loadModule(ModuleIdentifier.fromString("org.jboss.forge:main"));
-         AddonRegistry registry = AddonRegistry.registry;
-         ControlRunnable controlRunnable = new ControlRunnable(forge, registry, addons);
+         ModuleLoader bootLoader = Module.getBootModuleLoader();
+         Module forge = bootLoader.loadModule(ModuleIdentifier.fromString("org.jboss.forge:main"));
+         ControlRunnable controlRunnable = new ControlRunnable(forge);
          Thread controlThread = new Thread(controlRunnable, forge.getIdentifier().getName() + ":"
                   + forge.getIdentifier().getSlot());
          controlThread.start();
 
-         Set<Thread> threads = new HashSet<Thread>();
-
-         int started = 0;
-         for (Module module : addons)
-         {
-            while (registry.getServices().size() + batchSize <= started)
-            {
-               Thread.sleep(10);
-            }
-
-            AddonRunnable pluginRunnable = new AddonRunnable(module, registry, addons);
-            Thread pluginThread = new Thread(pluginRunnable, module.getIdentifier().getName()
-                     + ":" + module.getIdentifier().getSlot());
-            threads.add(pluginThread);
-            pluginThread.start();
-
-            started++;
-
-         }
-
+         ModuleLoader addonLoader = new AddonModuleLoader();
+         Set<AddonThread> threads = new HashSet<AddonThread>();
          boolean alive;
          do
          {
+            updateAddons(threads, addonLoader);
+
             Thread.sleep(10);
-            alive = false;
-            for (Thread thread : threads)
-            {
-               if (thread.isAlive())
-               {
-                  alive = true;
-               }
-            }
+            alive = controlThread.isAlive();
          }
          while (alive == true);
-
-         Map<ClassLoader, ServiceRegistry> loadedAddons = registry.getServices();
-         for (Entry<ClassLoader, ServiceRegistry> entry : loadedAddons.entrySet())
-         {
-            System.out.println("Services from addon module [" + Module.forClassLoader(entry.getKey(), false) + "] - "
-                     + entry.getValue());
-         }
-
-         controlThread.join();
       }
       catch (ModuleLoadException e)
       {
@@ -148,6 +67,74 @@ public class Bootstrap
       catch (InterruptedException e)
       {
          throw new ContainerException(e);
+      }
+   }
+
+   private static void updateAddons(Set<AddonThread> threads, ModuleLoader addonLoader)
+   {
+      Set<Module> loadedAddons = new HashSet<Module>();
+      for (AddonThread thread : threads)
+      {
+         loadedAddons.add(thread.getModule());
+      }
+
+      Set<Module> toStop = new HashSet<Module>(loadedAddons);
+      Set<Module> updatedSet = loadAddonModules(addonLoader);
+      toStop.removeAll(updatedSet);
+
+      Set<Module> toStart = new HashSet<Module>(updatedSet);
+      toStart.removeAll(loadedAddons);
+
+      if (toStop.size() > 0)
+      {
+         System.out.println("Stopping addons " + toStop);
+         Set<AddonThread> stopped = new HashSet<AddonThread>();
+         for (Module module : toStop)
+         {
+            for (AddonThread thread : threads)
+            {
+               if (module.equals(thread.getModule()))
+               {
+                  thread.getRunnable().shutdown();
+                  stopped.add(thread);
+               }
+            }
+         }
+         threads.removeAll(stopped);
+      }
+
+      if (toStart.size() > 0)
+      {
+         System.out.println("Starting addons " + toStart);
+         Set<AddonThread> started = new HashSet<AddonThread>();
+         AddonRegistry registry = AddonRegistry.registry;
+
+         int startedThreads = 0;
+         int batchSize = Math.min(BATCH_SIZE, toStart.size());
+         for (Module module : toStart)
+         {
+            while (registry.getServices().size() + batchSize <= startedThreads)
+            {
+               try
+               {
+                  Thread.sleep(10);
+               }
+               catch (InterruptedException e)
+               {
+                  throw new ContainerException("Thread interrupted while waiting for an executor.", e);
+               }
+            }
+
+            AddonRunnable runnable = new AddonRunnable(module, registry);
+            Thread thread = new Thread(runnable, module.getIdentifier().getName() + ":"
+                     + module.getIdentifier().getSlot());
+            started.add(new AddonThread(module, thread, runnable));
+            thread.start();
+
+            startedThreads++;
+         }
+
+         threads.addAll(started);
       }
    }
 
@@ -166,39 +153,35 @@ public class Bootstrap
       }
    }
 
-   synchronized private static Set<Module> loadAddons()
+   synchronized private static Set<Module> loadAddonModules(ModuleLoader addonLoader)
    {
       Set<Module> result = new HashSet<Module>();
 
-      List<AddonEntry> toLoad = new ArrayList<AddonUtil.AddonEntry>();
       List<AddonEntry> installed = AddonUtil.listByAPICompatibleVersion(AddonUtil
                .getRuntimeAPIVersion());
-
-      toLoad.addAll(installed);
 
       List<AddonEntry> incompatible = AddonUtil.list();
       incompatible.removeAll(installed);
 
-      for (AddonEntry pluginEntry : incompatible)
+      for (AddonEntry entry : incompatible)
       {
-         System.out.println("Not loading plugin [" + pluginEntry.getName()
-                  + "] because it references Forge API version [" + pluginEntry.getApiVersion()
+         System.out.println("Not loading addon [" + entry.getName()
+                  + "] because it references Forge API version [" + entry.getApiVersion()
                   + "] which may not be compatible with my current version [" + Bootstrap.class.getPackage()
-                           .getImplementationVersion() + "]. To remove this plugin, type 'forge remove-plugin "
-                  + pluginEntry + ". Otherwise, try installing a new version of the plugin.");
+                           .getImplementationVersion() + "]. To remove this addon, type 'forge remove-addon "
+                  + entry + ". Otherwise, try installing a new version of the addon.");
       }
 
-      ModuleLoader moduleLoader = new AddonModuleLoader(installed);
-      for (AddonEntry plugin : toLoad)
+      for (AddonEntry entry : installed)
       {
          try
          {
-            Module module = moduleLoader.loadModule(ModuleIdentifier.fromString(plugin.toModuleId()));
+            Module module = addonLoader.loadModule(ModuleIdentifier.fromString(entry.toModuleId()));
             result.add(module);
          }
          catch (Exception e)
          {
-            throw new ContainerException("Failed loading module for plugin [" + plugin + "]", e);
+            throw new ContainerException("Failed loading module for addon [" + entry + "]", e);
          }
       }
 

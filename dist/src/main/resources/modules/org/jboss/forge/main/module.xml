@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!--
- ~ Copyright 2012 Red Hat, Inc. and/or its affiliates.
- ~
- ~ Licensed under the Eclipse Public License version 1.0, available at
- ~ http://www.eclipse.org/legal/epl-v10.html
--->
+<!-- ~ Copyright 2012 Red Hat, Inc. and/or its affiliates. ~ ~ Licensed under the Eclipse Public License version 1.0, available 
+   at ~ http://www.eclipse.org/legal/epl-v10.html -->
 
 <module xmlns="urn:jboss:module:1.0" name="org.jboss.forge">
 
@@ -31,12 +27,12 @@
             <include path="META-INF" />
          </imports>
       </module>
-      
+
       <module name="org.jboss.weld" services="import" />
-      
+
       <module name="org.slf4j" services="import" />
 
-      <module name="org.mvel" export="true" />
+      <module name="cglib" export="true" />
 
       <module name="sun.jdk" />
       <module name="sun.misc" />

@@ -7,30 +7,19 @@
       <version>2.0.0-SNAPSHOT</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
-   <artifactId>forge-example-plugin</artifactId>
-   <name>Forge - Example Plugin</name>
+   <artifactId>forge-control-api</artifactId>
+   <name>Forge - Control API</name>
 
    <dependencies>
       <dependency>
          <groupId>org.jboss.forge</groupId>
          <artifactId>forge-plugin-container-api</artifactId>
       </dependency>
-      <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>forge-example-plugin-2</artifactId>
-         <version>${project.version}</version>
-      </dependency>
 
       <dependency>
          <groupId>org.jboss.forge</groupId>
          <artifactId>forge-test-harness</artifactId>
          <scope>test</scope>
-      </dependency>
-
-      <dependency>
-         <groupId>org.jboss.arquillian.protocol</groupId>
-         <artifactId>arquillian-protocol-servlet</artifactId>
-         <version>1.0.1.Final</version>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge</groupId>
