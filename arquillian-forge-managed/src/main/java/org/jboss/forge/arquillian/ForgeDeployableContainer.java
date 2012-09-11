@@ -40,31 +40,31 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    @Override
    public void start() throws LifecycleException
    {
-      try
-      {
-         this.process = NativeSystemCall.exec("java", "-Dforge.home=" + FORGE_HOME,
-                  "-jar", FORGE_HOME + "/jboss-modules.jar", "-modulepath",
-                  FORGE_HOME + "/modules:" + OSUtils.getUserHomePath() + "/.forge/plugins:", "org.jboss.forge");
-      }
-      catch (Exception e)
-      {
-         throw new LifecycleException("Could not start Forge process.", e);
-      }
+      // try
+      // {
+      // this.process = NativeSystemCall.exec("java", "-Dforge.home=" + FORGE_HOME,
+      // "-jar", FORGE_HOME + "/jboss-modules.jar", "-modulepath",
+      // FORGE_HOME + "/modules:" + OSUtils.getUserHomePath() + "/.forge/plugins:", "org.jboss.forge");
+      // }
+      // catch (Exception e)
+      // {
+      // throw new LifecycleException("Could not start Forge process.", e);
+      // }
    }
 
    @Override
    public void stop() throws LifecycleException
    {
-      try
-      {
-         this.process.destroy();
-         int status = this.process.waitFor();
-         System.out.println("Forge exited with status: " + status);
-      }
-      catch (InterruptedException e)
-      {
-         throw new LifecycleException("Container was interrupted while stopping.", e);
-      }
+      // try
+      // {
+      // this.process.destroy();
+      // int status = this.process.waitFor();
+      // System.out.println("Forge exited with status: " + status);
+      // }
+      // catch (InterruptedException e)
+      // {
+      // throw new LifecycleException("Container was interrupted while stopping.", e);
+      // }
    }
 
    @Override
