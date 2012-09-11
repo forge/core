@@ -21,21 +21,19 @@ public class ServletTestServer
 
    public void startTestServer(@Observes Startup event) throws Exception
    {
-      // TODO allow custom ports
-      server = new Server(4141);
+      server = new Server(4141); // TODO allow custom ports
 
       Connector connector = new SelectChannelConnector();
       connector.setHost("127.0.0.1");
       connector.setPort(4141);
       server.setConnectors(new Connector[] { connector });
 
-      ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-      context.setContextPath("/");
-      server.setHandler(context);
+      ServletContextHandler handler = new ServletContextHandler(ServletContextHandler.SESSIONS);
+      handler.setContextPath("/ArquillianServletRunner");
+      handler.addServlet(new ServletHolder(new ServletTestRunner()), "/ArquillianServletRunner");
+      server.setHandler(handler);
 
-      context.addServlet(new ServletHolder(new ServletTestRunner()), "/ArquillianServletRunner");
       server.start();
-
       System.out.println("Remote test server started.");
    }
 

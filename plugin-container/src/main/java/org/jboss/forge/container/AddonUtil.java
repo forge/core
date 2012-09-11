@@ -77,8 +77,9 @@ public final class AddonUtil
             registryFile.delete();
             registryFile.createNewFile();
 
-            Streams.write(XMLParser.toXMLInputStream(XMLParser.parse("<installed></installed>")), new FileOutputStream(
-                     registryFile));
+            FileOutputStream stream = new FileOutputStream(registryFile);
+            Streams.write(XMLParser.toXMLInputStream(XMLParser.parse("<installed></installed>")), stream);
+            stream.close();
          }
          return new File(getRegistryFileName());
       }
@@ -111,7 +112,6 @@ public final class AddonUtil
    public static List<AddonEntry> list()
    {
       List<AddonEntry> result = new ArrayList<AddonEntry>();
-      // File registryFile = new File(OSUtils.getUserHomePath() + getRegistry());
       File registryFile = getRegistryFile();
       try
       {
@@ -269,7 +269,7 @@ public final class AddonUtil
       Assert.notNull(found.getSlot(), "Plugin slot must be specified.");
       Assert.notNull(found.getName(), "Plugin name must be specified.");
 
-      String path = found.getName().split(".")[0];
+      String path = found.getName().split("\\.")[0];
       File pluginDir = new File(getAddonDirName() + "/" + path);
       return pluginDir;
    }

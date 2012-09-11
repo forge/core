@@ -33,6 +33,7 @@ import org.jboss.modules.filter.PathFilters;
  */
 public class AddonModuleLoader extends ModuleLoader
 {
+   private static final ModuleIdentifier JAVAX_API = ModuleIdentifier.create("javax.api");
    private static final ModuleIdentifier PLUGIN_CONTAINER_API = ModuleIdentifier.create("org.jboss.forge.api");
    private static final ModuleIdentifier PLUGIN_CONTAINER = ModuleIdentifier.create("org.jboss.forge");
    private static final ModuleIdentifier WELD = ModuleIdentifier.create("org.jboss.weld");
@@ -73,6 +74,8 @@ public class AddonModuleLoader extends ModuleLoader
       {
          Builder builder = ModuleSpec.build(id);
 
+         builder.addDependency(DependencySpec.createModuleDependencySpec(PathFilters.acceptAll(),
+                  PathFilters.rejectAll(), parent, JAVAX_API, false));
          builder.addDependency(DependencySpec.createModuleDependencySpec(PathFilters.acceptAll(),
                   PathFilters.rejectAll(), parent, WELD, false));
          builder.addDependency(DependencySpec.createModuleDependencySpec(PathFilters.acceptAll(),

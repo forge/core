@@ -9,6 +9,7 @@ package org.jboss.forge.container;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.jboss.forge.container.event.ContainerRestart;
 import org.jboss.forge.container.event.ContainerShutdown;
@@ -21,6 +22,7 @@ import org.jboss.forge.container.event.Startup;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
+@Singleton
 public class ContainerControlImpl implements ContainerControl
 {
    @Inject

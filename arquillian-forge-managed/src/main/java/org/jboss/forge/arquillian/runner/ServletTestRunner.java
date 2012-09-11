@@ -157,7 +157,9 @@ public class ServletTestRunner extends HttpServlet
    {
       Class<?> testClass = SecurityActions.getContextClassLoader().loadClass(className);
       TestRunner runner = TestRunners.getTestRunner();
+
       TestResult testResult = runner.execute(testClass, methodName);
+
       if (OUTPUT_MODE_SERIALIZED.equalsIgnoreCase(outputMode))
       {
          writeObject(testResult, response);
