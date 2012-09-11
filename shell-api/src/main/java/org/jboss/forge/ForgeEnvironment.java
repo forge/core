@@ -64,8 +64,7 @@ public interface ForgeEnvironment
    FileResource<?> getUserConfiguration();
 
    /**
-    * Get the Forge Home directory
-    * @return
+    * Get the Forge Home directory. The current value is defined by the "forge.home" system.property
     */
    DirectoryResource getForgeHome();
 }
