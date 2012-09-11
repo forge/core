@@ -107,6 +107,7 @@
 			<maven-resource group="javax.annotation" artifact="jsr250-api" />
 			<maven-resource group="org.jboss.classfilewriter" artifact="jboss-classfilewriter" />
 			<maven-resource group="org.jboss.spec.javax.interceptor" artifact="jboss-interceptors-api_1.1_spec" />
+			<maven-resource group="org.jboss.spec.javax.servlet" artifact="jboss-servlet-api_3.0_spec" />
 			<maven-resource group="org.jboss.weld" artifact="weld-api" />
 			<maven-resource group="org.jboss.weld" artifact="weld-core" />
 			<maven-resource group="org.jboss.weld" artifact="weld-spi" />

@@ -6,7 +6,7 @@ import org.jboss.arquillian.container.test.spi.TestDeployment;
 import org.jboss.arquillian.container.test.spi.client.deployment.DeploymentPackager;
 import org.jboss.arquillian.container.test.spi.client.deployment.ProtocolArchiveProcessor;
 import org.jboss.arquillian.core.spi.LoadableExtension;
-import org.jboss.forge.arquillian.runner.RemoteTestServer;
+import org.jboss.forge.arquillian.runner.ServletTestServer;
 import org.jboss.forge.arquillian.runner.ServletLoadableExtension;
 import org.jboss.forge.arquillian.runner.ServletTestRunner;
 import org.jboss.shrinkwrap.api.Archive;
@@ -26,7 +26,7 @@ public class ForgeDeploymentPackager implements DeploymentPackager
          throw new IllegalStateException("Cannot deploy non JavaArchive.");
 
       JavaArchive deployment = JavaArchive.class.cast(testDeployment.getApplicationArchive());
-      deployment.addClasses(RemoteTestServer.class);
+      deployment.addClasses(ServletTestServer.class);
       deployment.addAsServiceProvider(LoadableExtension.class, ServletLoadableExtension.class);
 
       WebArchive container = ShrinkWrap.create(WebArchive.class);

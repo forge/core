@@ -21,14 +21,14 @@ public class ContainerAdapterTest
    public static JavaArchive getDeployment()
    {
       JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar")
-               .addClasses(ConsumingService.class)
+               .addClasses(SimpleService.class, ConsumingService.class)
                .addAsManifestResource("META-INF/beans.xml", ArchivePaths.create("beans.xml"));
 
       return archive;
    }
 
    @Inject
-   private ConsumingService service;
+   private SimpleService service;
 
    @Test
    public void testContainerStartup()

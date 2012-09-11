@@ -73,13 +73,13 @@ public class AddonModuleLoader extends ModuleLoader
       {
          Builder builder = ModuleSpec.build(id);
 
-         builder.addDependency(DependencySpec.createLocalDependencySpec());
+         builder.addDependency(DependencySpec.createModuleDependencySpec(PathFilters.acceptAll(),
+                  PathFilters.rejectAll(), parent, WELD, false));
          builder.addDependency(DependencySpec.createModuleDependencySpec(PathFilters.acceptAll(),
                   PathFilters.rejectAll(), parent, PLUGIN_CONTAINER_API, false));
          builder.addDependency(DependencySpec.createModuleDependencySpec(PathFilters.acceptAll(),
                   PathFilters.rejectAll(), parent, PLUGIN_CONTAINER, false));
-         builder.addDependency(DependencySpec.createModuleDependencySpec(PathFilters.acceptAll(),
-                  PathFilters.rejectAll(), parent, WELD, false));
+         builder.addDependency(DependencySpec.createLocalDependencySpec());
 
          List<File> jars = AddonUtil.getPluginResourceJars(found);
 
