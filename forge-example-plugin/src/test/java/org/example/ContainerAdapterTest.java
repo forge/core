@@ -1,5 +1,8 @@
 package org.example;
 
+import static org.junit.Assert.*;
+
+import javax.enterprise.inject.spi.Extension;
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -21,8 +24,9 @@ public class ContainerAdapterTest
    public static JavaArchive getDeployment()
    {
       JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar")
-               .addClasses(SimpleService.class, ConsumingService.class)
-               .addAsManifestResource("META-INF/beans.xml", ArchivePaths.create("beans.xml"));
+               .addClasses(SimpleService.class, ConsumingService.class, TestExtension.class)
+               .addAsManifestResource("META-INF/beans.xml", ArchivePaths.create("beans.xml"))
+               .addAsServiceProvider(Extension.class, TestExtension.class);
 
       return archive;
    }
@@ -30,9 +34,18 @@ public class ContainerAdapterTest
    @Inject
    private SimpleService service;
 
+   @Inject
+   private TestExtension extension;
+
    @Test
    public void testContainerStartup()
    {
       Assert.assertNotNull(service);
+   }
+
+   @Test
+   public void testCDIExtensionsFunctionNormally() throws Exception
+   {
+      Assert.assertTrue(extension.isInvoked());
    }
 }
