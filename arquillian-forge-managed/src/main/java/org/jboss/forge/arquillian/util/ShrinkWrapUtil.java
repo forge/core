@@ -3,8 +3,15 @@ package org.jboss.forge.arquillian.util;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URL;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import org.jboss.forge.container.util.Streams;
 import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.ArchivePath;
+import org.jboss.shrinkwrap.api.Filter;
+import org.jboss.shrinkwrap.api.Node;
+import org.jboss.shrinkwrap.api.asset.Asset;
 import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
@@ -28,6 +35,38 @@ public final class ShrinkWrapUtil
       catch (Exception e)
       {
          throw new RuntimeException("Could not export deployment to file [" + target.getAbsolutePath() + "]", e);
+      }
+   }
+
+   public static void unzip(File baseDir, Archive<?> archive)
+   {
+      try
+      {
+         Map<ArchivePath, Node> content = archive.getContent(new Filter<ArchivePath>()
+         {
+            @Override
+            public boolean include(ArchivePath object)
+            {
+               return object.get().endsWith(".jar");
+            }
+         });
+
+         for (Entry<ArchivePath, Node> entry : content.entrySet())
+         {
+            ArchivePath path = entry.getKey();
+            File target = new File(baseDir.getAbsolutePath() + "/" + path.get().replaceFirst("/WEB-INF/lib/", ""));
+            target.mkdirs();
+            target.delete();
+            target.createNewFile();
+
+            Node node = entry.getValue();
+            Asset asset = node.getAsset();
+            Streams.write(asset.openStream(), new FileOutputStream(target));
+         }
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
       }
    }
 

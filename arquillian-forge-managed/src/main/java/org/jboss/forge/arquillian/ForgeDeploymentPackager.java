@@ -10,7 +10,12 @@ import org.jboss.forge.arquillian.runner.RemoteTestServer;
 import org.jboss.forge.arquillian.runner.ServletLoadableExtension;
 import org.jboss.forge.arquillian.runner.ServletTestRunner;
 import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.GenericArchive;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.jboss.shrinkwrap.resolver.api.DependencyResolvers;
+import org.jboss.shrinkwrap.resolver.api.maven.MavenDependencyResolver;
 
 public class ForgeDeploymentPackager implements DeploymentPackager
 {
@@ -21,12 +26,24 @@ public class ForgeDeploymentPackager implements DeploymentPackager
          throw new IllegalStateException("Cannot deploy non JavaArchive.");
 
       JavaArchive deployment = JavaArchive.class.cast(testDeployment.getApplicationArchive());
-      deployment.addClasses(RemoteTestServer.class, ServletTestRunner.class);
+      deployment.addClasses(RemoteTestServer.class);
       deployment.addAsServiceProvider(LoadableExtension.class, ServletLoadableExtension.class);
 
-      // won't be added to the @Deployment unless I add them, and they won't be written to disk unless I write them
-      Collection<Archive<?>> auxiliaryArchives = testDeployment.getAuxiliaryArchives();
+      WebArchive container = ShrinkWrap.create(WebArchive.class);
+      container.addAsLibraries(ShrinkWrap.create(JavaArchive.class).addClass(ServletTestRunner.class));
+      container.addAsLibraries(deployment);
+      container.addAsLibraries(testDeployment.getAuxiliaryArchives());
+      container.addAsLibraries(resolveDependencies("org.eclipse.jetty:jetty-server:8.1.5.v20120716"));
+      container.addAsLibraries(resolveDependencies("org.eclipse.jetty:jetty-servlet:8.1.5.v20120716"));
 
-      return deployment;
+      return container;
+   }
+
+   protected static Collection<GenericArchive> resolveDependencies(final String coords)
+   {
+      return DependencyResolvers.use(MavenDependencyResolver.class)
+               .loadMetadataFromPom("pom.xml")
+               .artifacts(coords)
+               .resolveAs(GenericArchive.class);
    }
 }

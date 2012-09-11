@@ -11,7 +11,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -69,7 +68,24 @@ public final class AddonUtil
 
    public static File getRegistryFile()
    {
-      return new File(getRegistryFileName());
+      try
+      {
+         File registryFile = new File(getRegistryFileName());
+         if (!registryFile.exists())
+         {
+            registryFile.mkdirs();
+            registryFile.delete();
+            registryFile.createNewFile();
+
+            Streams.write(XMLParser.toXMLInputStream(XMLParser.parse("<installed></installed>")), new FileOutputStream(
+                     registryFile));
+         }
+         return new File(getRegistryFileName());
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException("Error initializing addon registry file.", e);
+      }
    }
 
    public static List<AddonEntry> listByAPICompatibleVersion(final String version)
@@ -154,19 +170,7 @@ public final class AddonUtil
       File registryFile = getRegistryFile();
       try
       {
-
-         if (registryFile.exists())
-         {
-            installed = XMLParser.parse(new FileInputStream(registryFile));
-         }
-         else
-         {
-            registryFile.mkdirs();
-            registryFile.delete();
-            registryFile.createNewFile();
-
-            installed = XMLParser.parse("<installed></installed>");
-         }
+         installed = XMLParser.parse(new FileInputStream(registryFile));
 
          installed.getOrCreate("plugin@" + ATTR_NAME + "=" + name + "&" + ATTR_API_VERSION + "=" + apiVersion)
                   .attribute(ATTR_SLOT, slot);
@@ -177,11 +181,6 @@ public final class AddonUtil
       catch (FileNotFoundException e)
       {
          throw new RuntimeException("Could not read [" + registryFile.getAbsolutePath()
-                  + "] - ", e);
-      }
-      catch (IOException e)
-      {
-         throw new RuntimeException("Error manipulating [" + registryFile.getAbsolutePath()
                   + "] - ", e);
       }
    }
@@ -255,13 +254,23 @@ public final class AddonUtil
       return null;
    }
 
-   public static File getAddonDirectory(AddonEntry found)
+   public static File getAddonResourceDir(AddonEntry found)
    {
       Assert.notNull(found.getSlot(), "Plugin slot must be specified.");
       Assert.notNull(found.getName(), "Plugin name must be specified.");
 
       String path = found.getName().replaceAll("\\.", "/");
       File pluginDir = new File(getAddonDirName() + "/" + path + "/" + found.getSlot());
+      return pluginDir;
+   }
+
+   public static File getAddonBaseDir(AddonEntry found)
+   {
+      Assert.notNull(found.getSlot(), "Plugin slot must be specified.");
+      Assert.notNull(found.getName(), "Plugin name must be specified.");
+
+      String path = found.getName().split(".")[0];
+      File pluginDir = new File(getAddonDirName() + "/" + path);
       return pluginDir;
    }
 
@@ -431,7 +440,7 @@ public final class AddonUtil
 
    public static List<File> getPluginResourceJars(AddonEntry found)
    {
-      File dir = AddonUtil.getAddonDirectory(found);
+      File dir = AddonUtil.getAddonResourceDir(found);
       if (dir.exists())
       {
          return Arrays.asList(dir.listFiles(new FilenameFilter()

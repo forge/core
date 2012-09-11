@@ -11,6 +11,7 @@
    </parent>
 
    <artifactId>arquillian-forge-managed</artifactId>
+	<name>Forge - Arquillian Container Adapter</name>
 
    <dependencies>
       <dependency>

@@ -1,7 +1,6 @@
 package org.jboss.forge.arquillian.runner;
 
 import javax.enterprise.event.Observes;
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.eclipse.jetty.server.Server;
@@ -16,9 +15,6 @@ import org.jboss.forge.container.event.Startup;
 @Singleton
 public class RemoteTestServer
 {
-   @Inject
-   private ServletTestRunner handler;
-
    private Server server;
 
    public void startTestServer(@Observes Startup event) throws Exception
@@ -31,7 +27,7 @@ public class RemoteTestServer
       context.setContextPath("/");
       server.setHandler(context);
 
-      context.addServlet(new ServletHolder(handler), "/ArquillianServletRunner");
+      context.addServlet(new ServletHolder(new ServletTestRunner()), "/ArquillianServletRunner");
       server.start();
 
       System.out.println("Remote test server started.");
