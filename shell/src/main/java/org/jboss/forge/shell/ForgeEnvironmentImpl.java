@@ -20,7 +20,7 @@ import org.jboss.forge.resources.FileResource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 @ApplicationScoped
 public class ForgeEnvironmentImpl implements ForgeEnvironment
@@ -108,5 +108,12 @@ public class ForgeEnvironmentImpl implements ForgeEnvironment
    public FileResource<?> getUserConfiguration()
    {
       return getConfigDirectory().getChild("config.xml").reify(FileResource.class);
+   }
+
+   @Override
+   public DirectoryResource getForgeHome()
+   {
+      String forgeHome = System.getProperty(ShellImpl.FORGE_HOME_SYSTEM_PROPERTY);
+      return resourceFactory.getResourceFrom(new File(forgeHome)).reify(DirectoryResource.class);
    }
 }

@@ -104,6 +104,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    public static final String PROP_EXCEPTION_HANDLING = "EXCEPTION_HANDLING";
    public static final String PROP_FORGE_VERSION = "FORGE_VERSION";
    static final String NO_INIT_SYSTEM_PROPERTY = "forge.debug.no_auto_init_streams";
+   static final String FORGE_HOME_SYSTEM_PROPERTY = "forge.home";
 
    static final String PROP_IGNORE_EOF = "IGNOREEOF";
    static final int DEFAULT_IGNORE_EOF = 1;

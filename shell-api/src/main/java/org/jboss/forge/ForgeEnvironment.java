@@ -14,7 +14,7 @@ import org.jboss.forge.resources.FileResource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 public interface ForgeEnvironment
 {
@@ -62,4 +62,10 @@ public interface ForgeEnvironment
     * Get the current User's configuration file.
     */
    FileResource<?> getUserConfiguration();
+
+   /**
+    * Get the Forge Home directory
+    * @return
+    */
+   DirectoryResource getForgeHome();
 }
