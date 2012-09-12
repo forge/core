@@ -102,7 +102,7 @@ public class EJBPluginTest extends AbstractShellTest {
 				.execute(
 						"ejb new-ejb --packageAndName by.giava.FlowerEjb --type STATELESS");
 		queueInputLines("", "");
-		getShell().execute("ejb add-extends java.io.Serializable");
+		getShell().execute("ejb add-implements java.io.Serializable");
 		JavaSourceFacet javaClass = project.getFacet(JavaSourceFacet.class);
 		JavaResource resource = javaClass.getJavaResource("by.giava.FlowerEjb");
 

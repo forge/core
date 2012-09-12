@@ -12,10 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.ActivationConfigProperty;
+import javax.ejb.MessageDriven;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
+import javax.jms.MessageListener;
 
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.Field;
@@ -113,18 +115,25 @@ public class EJBPlugin implements Plugin {
 					PromptType.ANY, "queue/test");
 			try {
 
+				ejb.addImport(ActivationConfigProperty.class);
+				ejb.addImport(MessageDriven.class);
+				ejb.addInterface(MessageListener.class);
+				ejb.addMethod("public void onMessage(Message message) {}");
 				ejb.addAnnotation(EjbType.MESSAGEDRIVEN.getAnnotation())
-						.setStringValue(
-								"name",
-								resource.getName().substring(0,
-										resource.getName().lastIndexOf(".")))
-						.setStringValue(
-								"activationConfig",
-								"\"{ @ActivationConfigProperty(propertyName = \"destinationType\", propertyValue = \""
+						// .setLiteralValue("name", "testName");
+						.setLiteralValue(
+								" @MessageDriven(name = \""
+										+ resource.getName().substring(
+												0,
+												resource.getName().lastIndexOf(
+														"."))
+										+ "\", activationConfig = {"
+										+ "		@ActivationConfigProperty(propertyName = \"destinationType\", propertyValue = \""
 										+ destinationType
-										+ "\") "
+										+ "\"),"
 										+ "@ActivationConfigProperty(propertyName = \"destination\", propertyValue = \""
-										+ destinationName + "\")}");
+										+ destinationName + ") })");
+
 			} catch (Exception e) {
 				shell.println("Exception: " + e.getMessage());
 			}
@@ -152,15 +161,7 @@ public class EJBPlugin implements Plugin {
 			if (!ejb.getInterfaces().contains(type)) {
 				shell.println("type: " + type);
 				ejb.addImport(type);
-				ejb.addInterface(type.substring(type.lastIndexOf(".") + 1));
-				List<String> methodList = getMethods(type);
-				ejb.addMethod("private java.text.DateFormat get(int a1,int a2,int a3,java.util.Locale a4){}");
-				// if (methodList != null && !methodList.isEmpty()) {
-				// for (String method : methodList) {
-				// shell.println("method: " + method);
-				// ejb.addMethod(method);
-				// }
-				// }
+				addMethodTo(ejb, type);
 				resource.setContents(ejb);
 			} else {
 				throw new RuntimeException(
@@ -281,14 +282,76 @@ public class EJBPlugin implements Plugin {
 		return field;
 	}
 
-	private List<String> getMethods(String name) throws ClassNotFoundException {
+	private void addMethodTo(JavaClass javaClass, String interfaceClass) {
+
+		javaClass.addInterface(interfaceClass);
+		Class clazz = null;
+		try {
+			clazz = Class.forName(interfaceClass);
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Method[] methods = clazz.getDeclaredMethods();
+		for (Method method : methods) {
+			org.jboss.forge.parser.java.Method<JavaClass> methodJavaClass = javaClass
+					.addMethod();
+			if (!method.getReturnType().isPrimitive()) {
+				javaClass.addImport(method.getReturnType());
+				methodJavaClass.setBody(" return null;");
+			} else {
+				methodJavaClass.setBody("");
+			}
+			methodJavaClass.setPublic().setReturnType(method.getReturnType())
+					.setName(method.getName());
+			Class<?>[] params = method.getParameterTypes();
+			if (params != null && params.length > 0) {
+				int i = 0;
+				StringBuffer sb = new StringBuffer();
+				for (Class<?> class1 : params) {
+					sb.append("," + class1.getName() + " arg" + i);
+					i++;
+					if (!javaClass.getInterfaces().contains(class1)) {
+						javaClass.addImport(class1);
+						// System.out.println(i + ") " + class1);
+					} else {
+						// System.out.println("NO) " + class1);
+					}
+				}
+				methodJavaClass.setParameters(sb.toString().substring(1));
+			}
+		}
+	}
+
+	private static List<String> getMethods(String name)
+			throws ClassNotFoundException {
 		List<String> methodList = new ArrayList<String>();
 		Class clazz = Class.forName(name);
 		Method[] methods = clazz.getDeclaredMethods();
 		for (Method method : methods) {
-			methodList.add(method.toString() + "{}");
+			methodList.add(method.toString().replaceAll("abstract", "") + "{}");
+			// TODO ADD RETURN ID RETURNTYPE != void
+			if (method.getReturnType() != null
+					&& !void.class.equals(method.getReturnType())) {
+				System.out.println("RET TYPE: " + method.getReturnType());
+			} else {
+				System.out.println("VOID");
+			}
+			System.out.println("NAME: " + method.getName());
+			Class<?>[] params = method.getParameterTypes();
+			for (Class<?> class1 : params) {
+				System.out.println("PARAM: " + class1);
+			}
 		}
 		return methodList;
+	}
+
+	public static void main(String[] args) throws ClassNotFoundException {
+		String interfaceT = "org.jboss.forge.spec.javaee.ejb.TestEjb";
+		List<String> metodi = getMethods(interfaceT);
+		for (String string : metodi) {
+			System.out.println(string);
+		}
 	}
 
 }
