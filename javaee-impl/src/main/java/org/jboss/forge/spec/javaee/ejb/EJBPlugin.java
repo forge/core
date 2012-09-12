@@ -17,6 +17,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
+import javax.jms.Message;
 import javax.jms.MessageListener;
 
 import org.jboss.forge.parser.JavaParser;
@@ -88,8 +89,8 @@ public class EJBPlugin implements Plugin {
 			@Option(required = false, name = "overwrite") final boolean overwrite)
 			throws FileNotFoundException {
 		JavaClass ejb = null;
+		JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
 		if (!resource.exists() || overwrite) {
-			JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
 			if (resource.createNewFile()) {
 				JavaClass javaClass = JavaParser.create(JavaClass.class);
 				javaClass.setName(java.calculateName(resource));
@@ -113,30 +114,23 @@ public class EJBPlugin implements Plugin {
 					JmsDestinationType.QUEUE.getDestinationType());
 			String destinationName = shell.promptCommon("Destination Name:",
 					PromptType.ANY, "queue/test");
-			try {
+			String name = ejb.getName();
+			ejb.addImport(ActivationConfigProperty.class);
+			ejb.addImport(MessageDriven.class);
+			ejb.addImport(Message.class);
+			ejb.addInterface(MessageListener.class);
+			ejb.addMethod("public void onMessage(Message message) {}");
+			ejb.addAnnotation(EjbType.MESSAGEDRIVEN.getAnnotation())
+					// .setLiteralValue("name", "testName");
+					.setLiteralValue("name", "\"" + name + "\"")
+					.setLiteralValue(
+							"activationConfig",
+							"{@ActivationConfigProperty(propertyName = \"destinationType\", propertyValue = \""
+									+ destinationType
+									+ "\"), "
+									+ "@ActivationConfigProperty(propertyName = \"destination\", propertyValue = \""
+									+ destinationName + "\")" + "}");
 
-				ejb.addImport(ActivationConfigProperty.class);
-				ejb.addImport(MessageDriven.class);
-				ejb.addInterface(MessageListener.class);
-				ejb.addMethod("public void onMessage(Message message) {}");
-				ejb.addAnnotation(EjbType.MESSAGEDRIVEN.getAnnotation())
-						// .setLiteralValue("name", "testName");
-						.setLiteralValue(
-								" @MessageDriven(name = \""
-										+ resource.getName().substring(
-												0,
-												resource.getName().lastIndexOf(
-														"."))
-										+ "\", activationConfig = {"
-										+ "		@ActivationConfigProperty(propertyName = \"destinationType\", propertyValue = \""
-										+ destinationType
-										+ "\"),"
-										+ "@ActivationConfigProperty(propertyName = \"destination\", propertyValue = \""
-										+ destinationName + ") })");
-
-			} catch (Exception e) {
-				shell.println("Exception: " + e.getMessage());
-			}
 		} else {
 			ejb.addAnnotation(type.getAnnotation());
 			ejb.addAnnotation("javax.ejb.LocalBean");

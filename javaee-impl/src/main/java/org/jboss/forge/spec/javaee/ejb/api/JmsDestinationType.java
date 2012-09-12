@@ -19,25 +19,22 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.forge.spec.javaee.ejb;
+package org.jboss.forge.spec.javaee.ejb.api;
 
 /**
  * @author <a href="mailto:fiorenzo.pizza@gmail.com">fiorenzo pizza</a>
  */
 
-public enum EjbType {
-	STATELESS("javax.ejb.Stateless"), 
-	STATEFUL("javax.ejb.Stateful"), 
-	SINGLETON("javax.ejb.Singleton"), 
-	MESSAGEDRIVEN("javax.ejb.MessageDriven");
+public enum JmsDestinationType {
+	QUEUE("javax.jms.Queue"), TOPIC("javax.jms.Topic");
 
-	private String annotation;
+	private String destinationType;
 
-	private EjbType(String annotation) {
-		this.annotation = annotation;
+	private JmsDestinationType(String destinationType) {
+		this.destinationType = destinationType;
 	}
 
-	public String getAnnotation() {
-		return annotation;
+	public String getDestinationType() {
+		return destinationType;
 	}
 }
