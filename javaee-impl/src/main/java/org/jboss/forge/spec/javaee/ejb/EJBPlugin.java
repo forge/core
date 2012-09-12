@@ -317,35 +317,4 @@ public class EJBPlugin implements Plugin {
 		}
 	}
 
-	private static List<String> getMethods(String name)
-			throws ClassNotFoundException {
-		List<String> methodList = new ArrayList<String>();
-		Class clazz = Class.forName(name);
-		Method[] methods = clazz.getDeclaredMethods();
-		for (Method method : methods) {
-			methodList.add(method.toString().replaceAll("abstract", "") + "{}");
-			// TODO ADD RETURN ID RETURNTYPE != void
-			if (method.getReturnType() != null
-					&& !void.class.equals(method.getReturnType())) {
-				System.out.println("RET TYPE: " + method.getReturnType());
-			} else {
-				System.out.println("VOID");
-			}
-			System.out.println("NAME: " + method.getName());
-			Class<?>[] params = method.getParameterTypes();
-			for (Class<?> class1 : params) {
-				System.out.println("PARAM: " + class1);
-			}
-		}
-		return methodList;
-	}
-
-	public static void main(String[] args) throws ClassNotFoundException {
-		String interfaceT = "org.jboss.forge.spec.javaee.ejb.TestEjb";
-		List<String> metodi = getMethods(interfaceT);
-		for (String string : metodi) {
-			System.out.println(string);
-		}
-	}
-
 }
