@@ -86,7 +86,7 @@ public class EJBPluginTest extends AbstractShellTest {
 		JavaResource resource = javaClass.getJavaResource("by.giava.FlowerEjb");
 		Assert.assertTrue(resource.exists());
 		JavaSource<?> source = resource.getJavaSource();
-		String content = resource.getJavaSource().toString();
+		String content = source.toString();
 		assertTrue(content.contains("java.io.Serializable"));
 	}
 
@@ -103,7 +103,7 @@ public class EJBPluginTest extends AbstractShellTest {
 		JavaResource resource = javaClass.getJavaResource("by.giava.FlowerEjb");
 		Assert.assertTrue(resource.exists());
 		JavaSource<?> source = resource.getJavaSource();
-		String content = resource.getJavaSource().toString();
+		String content = source.toString();
 		assertTrue(content.contains("@MessageDriven"));
 	}
 }

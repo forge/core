@@ -21,7 +21,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class EjbInitialTests extends AbstractShellTest {
+public class EjbInitialTest extends AbstractShellTest {
 
 	@Test
 	public void testAddMethod() throws ClassNotFoundException {

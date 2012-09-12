@@ -44,6 +44,7 @@ import org.jboss.forge.shell.plugins.SetupCommand;
 import org.jboss.forge.spec.javaee.EJBFacet;
 import org.jboss.forge.spec.javaee.ejb.api.EjbType;
 import org.jboss.forge.spec.javaee.ejb.api.JmsDestinationType;
+import org.jboss.forge.spec.javaee.ejb.util.JavaUtils;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -72,7 +73,6 @@ public class EJBPlugin implements Plugin {
 		if (!project.hasFacet(EJBFacet.class)) {
 			request.fire(new InstallFacets(EJBFacet.class));
 		}
-
 		if (project.hasFacet(EJBFacet.class)) {
 			ShellMessages.success(out,
 					"Enterprise Java Beans (EJB) is installed.");
@@ -98,7 +98,7 @@ public class EJBPlugin implements Plugin {
 				ejb = javaClass;
 			}
 		} else if (overwrite) {
-			ejb = getJavaClassFrom(resource);
+			ejb = JavaUtils.getJavaClassFrom(resource);
 		} else {
 			throw new RuntimeException("PackageAndName already exists ["
 					+ resource.getFullyQualifiedName()
@@ -135,7 +135,6 @@ public class EJBPlugin implements Plugin {
 			ejb.addAnnotation(type.getAnnotation());
 			ejb.addAnnotation("javax.ejb.LocalBean");
 		}
-
 		resource.setContents(ejb);
 		pickup.fire(new PickupResource(resource));
 
@@ -155,7 +154,7 @@ public class EJBPlugin implements Plugin {
 			if (!ejb.getInterfaces().contains(type)) {
 				shell.println("type: " + type);
 				ejb.addImport(type);
-				addMethodTo(ejb, type);
+				JavaUtils.addMethodTo(ejb, type, shell);
 				resource.setContents(ejb);
 			} else {
 				throw new RuntimeException(
@@ -204,7 +203,8 @@ public class EJBPlugin implements Plugin {
 			String javaType = (type.toLowerCase().endsWith(".java")) ? type
 					.substring(0, type.length() - 5) : type;
 
-			addFieldTo(ejb, javaType, fieldName, Inject.class);
+			JavaUtils.addFieldTo(ejb, javaType, fieldName, Inject.class,
+					project, shell);
 			resource.setContents(ejb);
 		} catch (FileNotFoundException e) {
 			shell.println("Could not locate the Class to be used as this field's type. No update was made.");
@@ -230,90 +230,14 @@ public class EJBPlugin implements Plugin {
 			throw new RuntimeException(
 					"Current resource contains TransactionAttributeType!");
 		}
-
 	}
 
 	private JavaClass getJavaClass() throws FileNotFoundException {
 		if (resource instanceof JavaResource) {
-			return getJavaClassFrom(resource);
+			return JavaUtils.getJavaClassFrom(resource);
 		} else {
 			throw new RuntimeException(
 					"Current resource is not a JavaResource!");
-		}
-
-	}
-
-	private JavaClass getJavaClassFrom(final Resource<?> resource)
-			throws FileNotFoundException {
-		JavaSource<?> source = ((JavaResource) resource).getJavaSource();
-		if (!source.isClass()) {
-			throw new IllegalStateException(
-					"Current resource is not a JavaClass!");
-		}
-		return (JavaClass) source;
-	}
-
-	private Field<JavaClass> addFieldTo(final JavaClass targetEjb,
-			final String fieldType, final String fieldName,
-			final Class<? extends java.lang.annotation.Annotation> annotation)
-			throws FileNotFoundException {
-		if (targetEjb.hasField(fieldName)) {
-			throw new IllegalStateException("Ejb already has a field named ["
-					+ fieldName + "]");
-		}
-
-		JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
-
-		Field<JavaClass> field = targetEjb.addField();
-		field.setName(fieldName).setPrivate()
-				.setType(Types.toSimpleName(fieldType))
-				.addAnnotation(annotation);
-		targetEjb.addImport(fieldType);
-		java.saveJavaSource(targetEjb);
-		shell.println("Added field to " + targetEjb.getQualifiedName() + ": "
-				+ field);
-
-		return field;
-	}
-
-	private void addMethodTo(JavaClass javaClass, String interfaceClass) {
-
-		javaClass.addInterface(interfaceClass);
-		Class clazz = null;
-		try {
-			clazz = Class.forName(interfaceClass);
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		Method[] methods = clazz.getDeclaredMethods();
-		for (Method method : methods) {
-			org.jboss.forge.parser.java.Method<JavaClass> methodJavaClass = javaClass
-					.addMethod();
-			if (!method.getReturnType().isPrimitive()) {
-				javaClass.addImport(method.getReturnType());
-				methodJavaClass.setBody(" return null;");
-			} else {
-				methodJavaClass.setBody("");
-			}
-			methodJavaClass.setPublic().setReturnType(method.getReturnType())
-					.setName(method.getName());
-			Class<?>[] params = method.getParameterTypes();
-			if (params != null && params.length > 0) {
-				int i = 0;
-				StringBuffer sb = new StringBuffer();
-				for (Class<?> class1 : params) {
-					sb.append("," + class1.getName() + " arg" + i);
-					i++;
-					if (!javaClass.getInterfaces().contains(class1)) {
-						javaClass.addImport(class1);
-						// System.out.println(i + ") " + class1);
-					} else {
-						// System.out.println("NO) " + class1);
-					}
-				}
-				methodJavaClass.setParameters(sb.toString().substring(1));
-			}
 		}
 	}
 
