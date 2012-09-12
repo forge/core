@@ -86,7 +86,7 @@ public class @{entity.getName()}Bean implements Serializable {
 		}
 
 		if (this.id == null) {
-			this.@{ccEntity} = this.search;
+			this.@{ccEntity} = this.example;
 		} else {
 			this.@{ccEntity} = findById(getId());
 		}
@@ -139,7 +139,7 @@ public class @{entity.getName()}Bean implements Serializable {
 	private long count;
 	private List<@{entity.getName()}> pageItems;
 	
-	private @{entity.getName()} search = new @{entity.getName()}();
+	private @{entity.getName()} example = new @{entity.getName()}();
 
 	public int getPage() {
 		return this.page;
@@ -153,12 +153,12 @@ public class @{entity.getName()}Bean implements Serializable {
 		return 10;
 	}
 
-	public @{entity.getName()} getSearch() {
-		return this.search;
+	public @{entity.getName()} getExample() {
+		return this.example;
 	}
 
-	public void setSearch(@{entity.getName()} search) {
-		this.search = search;
+	public void setExample(@{entity.getName()} example) {
+		this.example = example;
 	}
 
 	public void search() {

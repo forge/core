@@ -297,7 +297,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
                   this.viewTemplate.render(context), overwrite));
 
          // Generate search
-         this.searchMetawidget.setValue(StaticFacesUtils.wrapExpression(beanName + ".search"));
+         this.searchMetawidget.setValue(StaticFacesUtils.wrapExpression(beanName + ".example"));
          this.searchMetawidget.setPath(entity.getQualifiedName());
          this.beanMetawidget.setValue(StaticFacesUtils.wrapExpression(beanName + ".pageItems"));
          this.beanMetawidget.setPath(viewBean.getQualifiedName() + "/pageItems");
