@@ -8,8 +8,6 @@ package org.jboss.forge.spec.javaee.ejb;
 
 import java.io.FileNotFoundException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
@@ -44,6 +42,8 @@ import org.jboss.forge.shell.plugins.RequiresProject;
 import org.jboss.forge.shell.plugins.RequiresResource;
 import org.jboss.forge.shell.plugins.SetupCommand;
 import org.jboss.forge.spec.javaee.EJBFacet;
+import org.jboss.forge.spec.javaee.ejb.api.EjbType;
+import org.jboss.forge.spec.javaee.ejb.api.JmsDestinationType;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
