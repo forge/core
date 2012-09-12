@@ -8,10 +8,26 @@ package org.jboss.forge.parser.java.util;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 public class Assert
 {
+   public static void isTrue(boolean condition, String message)
+   {
+      if (!condition)
+      {
+         throw new IllegalStateException(message);
+      }
+   }
+
+   public static void isFalse(boolean condition, String message)
+   {
+      if (condition)
+      {
+         throw new IllegalStateException(message);
+      }
+   }
+
    public static void notNull(Object object, String message) throws IllegalStateException
    {
       if (object == null)
