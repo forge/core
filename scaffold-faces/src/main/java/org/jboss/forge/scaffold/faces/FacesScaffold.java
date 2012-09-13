@@ -837,6 +837,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
                Field<?> field = (Field<?>) m;
                pkName = field.getName();
                pkType = field.getType();
+               nullablePkType = field.getType();
                break;
             }
 
