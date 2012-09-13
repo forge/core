@@ -11,7 +11,7 @@
    </parent>
 
    <artifactId>arquillian-forge-managed</artifactId>
-	<name>Forge - Arquillian Container Adapter</name>
+   <name>Forge - Arquillian Container Adapter</name>
 
    <dependencies>
       <dependency>
@@ -48,6 +48,10 @@
       </dependency>
 
 
+      <dependency>
+         <groupId>org.jboss.shrinkwrap</groupId>
+         <artifactId>shrinkwrap-impl-base</artifactId>
+      </dependency>
       <dependency>
          <groupId>org.jboss.shrinkwrap.resolver</groupId>
          <artifactId>shrinkwrap-resolver-api</artifactId>

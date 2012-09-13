@@ -9,6 +9,7 @@ import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
+import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.arquillian.protocol.ServletProtocolDescription;
 import org.jboss.forge.arquillian.util.NativeSystemCall;
 import org.jboss.forge.arquillian.util.ShrinkWrapUtil;
@@ -17,7 +18,6 @@ import org.jboss.forge.container.AddonUtil.AddonEntry;
 import org.jboss.forge.container.util.Files;
 import org.jboss.forge.container.util.OSUtils;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
 public class ForgeDeployableContainer implements DeployableContainer<ForgeContainerConfiguration>
@@ -42,7 +42,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    {
       try
       {
-         this.process = NativeSystemCall.exec("java", "-Dforge.home=" + FORGE_HOME,
+         this.process = NativeSystemCall.exec("java", "-Dforge.logging=false -Dforge.home=" + FORGE_HOME,
                   "-jar", FORGE_HOME + "/jboss-modules.jar", "-modulepath",
                   FORGE_HOME + "/modules:" + OSUtils.getUserHomePath() + "/.forge/plugins:", "org.jboss.forge");
       }
@@ -76,18 +76,16 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    @Override
    public ProtocolMetaData deploy(Archive<?> archive) throws DeploymentException
    {
-      AddonEntry addon = new AddonEntry(archive.getName(), "2.0.0-SNAPSHOT", "main");
-      File destDir = AddonUtil.getAddonResourceDir(addon);
+      AddonEntry addon = getAddonEntry(archive);
+      File destDir = AddonUtil.getAddonSlotDir(addon);
       destDir.mkdirs();
 
-      if (archive instanceof WebArchive)
-      {
-         ShrinkWrapUtil.unzip(destDir, archive);
-      }
-      else
-      {
-         throw new DeploymentException("Packaging error - archive was not a container WebArchive");
-      }
+      if (!(archive instanceof ForgeArchive))
+         throw new IllegalArgumentException(
+                  "Invalid Archive type. Ensure that your @Deployment method returns type 'ForgeArchive'.");
+
+      ShrinkWrapUtil.toFile(new File(destDir.getAbsolutePath() + "/" + archive.getName()), archive);
+      ShrinkWrapUtil.unzip(destDir, archive);
 
       addon = AddonUtil.install(addon);
 
@@ -101,13 +99,18 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    @Override
    public void undeploy(Archive<?> archive) throws DeploymentException
    {
-      AddonEntry addon = new AddonEntry(archive.getName(), "2.0.0-SNAPSHOT", "main");
+      AddonEntry addon = getAddonEntry(archive);
       AddonUtil.remove(addon);
 
       File dir = AddonUtil.getAddonBaseDir(addon);
       boolean deleted = Files.delete(dir, true);
       if (!deleted)
          throw new IllegalStateException("Could not delete file [" + dir.getAbsolutePath() + "]");
+   }
+
+   private AddonEntry getAddonEntry(Archive<?> archive)
+   {
+      return new AddonEntry(archive.getName().replaceFirst("\\.jar$", ""), "2.0.0-SNAPSHOT", "main");
    }
 
    @Override

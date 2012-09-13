@@ -26,9 +26,11 @@ import org.jboss.modules.ModuleLoader;
  */
 public class Bootstrap
 {
-   public static final String PROP_CONCURRENT_PLUGINS = "org.jboss.forge.concurrentAddons";
+   public static final String PROP_CONCURRENT_PLUGINS = "forge.concurrentAddons";
+   public static final String PROP_LOG_ENABLE = "forge.logging";
 
    private static final int BATCH_SIZE = Integer.getInteger(PROP_CONCURRENT_PLUGINS, 4);
+   private static final boolean LOGGING_ENABLED = Boolean.getBoolean(PROP_LOG_ENABLE);
 
    public static void main(final String[] args)
    {
@@ -37,7 +39,8 @@ public class Bootstrap
 
    private static void init()
    {
-      // initLogging();
+      if (LOGGING_ENABLED)
+         initLogging();
 
       try
       {

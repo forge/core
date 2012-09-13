@@ -85,8 +85,6 @@
             <module>plugin-container</module>
             <module>arquillian-forge-managed</module>
             <module>test-harness</module>
-            <module>control-api</module>
-            <module>control-impl-rest</module>
             <module>forge-example-plugin</module>
             <module>forge-example-plugin-2</module>
             <module>dist</module>
@@ -99,17 +97,8 @@
             <activeByDefault>false</activeByDefault>
          </activation>
          <modules>
-            <module>event-bus-api</module>
-            <module>parser-java-api</module>
+            <module>plugin-container-api</module>
             <module>parser-xml</module>
-            <module>maven-api</module>
-            <module>shell-api</module>
-            <module>parser-java</module>
-            <module>project-model-maven</module>
-            <module>test-harness</module>
-            <module>test-harness-web</module>
-            <module>javaee-api</module>
-            <module>scaffold-api</module>
          </modules>
       </profile>
    </profiles>

@@ -54,7 +54,7 @@ public final class ShrinkWrapUtil
          for (Entry<ArchivePath, Node> entry : content.entrySet())
          {
             ArchivePath path = entry.getKey();
-            File target = new File(baseDir.getAbsolutePath() + "/" + path.get().replaceFirst("/WEB-INF/lib/", ""));
+            File target = new File(baseDir.getAbsolutePath() + "/" + path.get().replaceFirst("/lib/", ""));
             target.mkdirs();
             target.delete();
             target.createNewFile();

@@ -7,6 +7,6 @@ public class PublishedService
 {
    public String getMessage()
    {
-      return "Hello from PublishedService";
+      return "A message from PublishedService";
    }
 }

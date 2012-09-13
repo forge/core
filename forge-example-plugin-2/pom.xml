@@ -8,12 +8,23 @@
       <relativePath>../pom.xml</relativePath>
    </parent>
    <artifactId>forge-example-plugin-2</artifactId>
-	<name>Forge - Example Plugin</name>
+   <name>Forge - Example Plugin</name>
 
    <dependencies>
       <dependency>
          <groupId>org.jboss.forge</groupId>
          <artifactId>forge-plugin-container-api</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-test-harness</artifactId>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>arquillian-forge-managed</artifactId>
+         <scope>test</scope>
       </dependency>
    </dependencies>
 </project>

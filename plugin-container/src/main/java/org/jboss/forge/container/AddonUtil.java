@@ -38,23 +38,23 @@ public final class AddonUtil
    private static final String ATTR_SLOT = "slot";
    private static final String ATTR_API_VERSION = "api-version";
    private static final String ATTR_NAME = "name";
-   private static final String PLUGIN_DIR_DEFAULT = "/.forge/addons";
+   private static final String ADDON_DIR_DEFAULT = "/.forge/addons";
    private static final String REGISTRY_FILE = "/installed.xml";
 
-   private static String PLUGIN_DIR = null;
+   private static String ADDON_DIR = null;
    private static String REGISTRY = null;
 
    public static String getAddonDirName()
    {
-      if (PLUGIN_DIR == null)
+      if (ADDON_DIR == null)
       {
-         PLUGIN_DIR = System.getProperty(PROP_ADDON_DIR);
-         if (PLUGIN_DIR == null)
+         ADDON_DIR = System.getProperty(PROP_ADDON_DIR);
+         if (ADDON_DIR == null)
          {
-            PLUGIN_DIR = OSUtils.getUserHomePath() + PLUGIN_DIR_DEFAULT;
+            ADDON_DIR = OSUtils.getUserHomePath() + ADDON_DIR_DEFAULT;
          }
       }
-      return PLUGIN_DIR;
+      return ADDON_DIR;
    }
 
    public static String getRegistryFileName()
@@ -438,7 +438,7 @@ public final class AddonUtil
       return false;
    }
 
-   public static List<File> getPluginResourceJars(AddonEntry found)
+   public static List<File> getAddonResources(AddonEntry found)
    {
       File dir = AddonUtil.getAddonResourceDir(found);
       if (dir.exists())
@@ -455,4 +455,8 @@ public final class AddonUtil
       return new ArrayList<File>();
    }
 
+   public static File getAddonSlotDir(AddonEntry addon)
+   {
+      return new File(getAddonBaseDir(addon).getAbsolutePath() + "/" + addon.getSlot());
+   }
 }

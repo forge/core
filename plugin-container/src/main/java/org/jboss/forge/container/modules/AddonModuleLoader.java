@@ -84,21 +84,21 @@ public class AddonModuleLoader extends ModuleLoader
                   PathFilters.rejectAll(), parent, PLUGIN_CONTAINER, false));
          builder.addDependency(DependencySpec.createLocalDependencySpec());
 
-         List<File> jars = AddonUtil.getPluginResourceJars(found);
+         List<File> resources = AddonUtil.getAddonResources(found);
 
-         for (File jarFile : jars)
+         for (File file : resources)
          {
             try
             {
                builder.addResourceRoot(
                         ResourceLoaderSpec.createResourceLoaderSpec(
-                                 ResourceLoaders.createJarResourceLoader(jarFile.getName(), new JarFile(jarFile, true)),
+                                 ResourceLoaders.createJarResourceLoader(file.getName(), new JarFile(file)),
                                  PathFilters.acceptAll())
                         );
             }
             catch (IOException e)
             {
-               throw new ContainerException("Could not load plugin resource [" + jarFile.getAbsolutePath() + "]", e);
+               throw new ContainerException("Could not load resources from [" + file.getAbsolutePath() + "]", e);
             }
          }
 

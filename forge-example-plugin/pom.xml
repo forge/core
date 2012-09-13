@@ -26,7 +26,6 @@
          <artifactId>forge-test-harness</artifactId>
          <scope>test</scope>
       </dependency>
-
       <dependency>
          <groupId>org.jboss.forge</groupId>
          <artifactId>arquillian-forge-managed</artifactId>

@@ -147,7 +147,7 @@ public class NativeSystemCall
          }
          catch (IOException e)
          {
-            throw new RuntimeException("Error reading input from child process", e);
+            // Don't care right now.
          }
       }
    }

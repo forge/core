@@ -5,10 +5,10 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,20 +20,18 @@ import org.junit.runner.RunWith;
 public class ContainerAdapterTest
 {
    @Deployment
-   public static JavaArchive getDeployment()
+   public static ForgeArchive getDeployment()
    {
-      JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar")
+      ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                .addClasses(SimpleService.class, ConsumingService.class, TestExtension.class)
                .addAsManifestResource(new StringAsset(""), ArchivePaths.create("beans.xml"))
                .addAsServiceProvider(Extension.class, TestExtension.class);
-
-      System.out.println(archive.toString(true));
 
       return archive;
    }
 
    @Inject
-   private SimpleService service;
+   private SimpleService simple;
 
    @Inject
    private TestExtension extension;
@@ -41,16 +39,16 @@ public class ContainerAdapterTest
    @Test
    public void testContainerInjection()
    {
-      Assert.assertNotNull(service);
+      Assert.assertNotNull(simple);
    }
 
    @Test
    public void testLifecycle() throws Exception
    {
-      Assert.assertTrue(service.isStartupObserved());
-      Assert.assertTrue(service.isPostStartupObserved());
-      Assert.assertFalse(service.isPreShutdownObserved());
-      Assert.assertFalse(service.isShutdownObserved());
+      Assert.assertTrue(simple.isStartupObserved());
+      Assert.assertTrue(simple.isPostStartupObserved());
+      Assert.assertFalse(simple.isPreShutdownObserved());
+      Assert.assertFalse(simple.isShutdownObserved());
    }
 
    @Test
