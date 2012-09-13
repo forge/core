@@ -7,10 +7,19 @@
 
 package org.jboss.forge.shell.util;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
 public class Files
 {
@@ -31,9 +40,52 @@ public class Files
       return target;
    }
 
+   /**
+    * Returns the current working directory
+    * @return
+    */
    public static File getWorkingDirectory()
    {
       return new File("").getAbsoluteFile();
+   }
+
+   /**
+    * Unzips a specific file into a target directory
+    */
+   public static void unzip(File zipFile, File targetDirectory) throws IOException
+   {
+      OutputStream dest = null;
+      ZipInputStream zis = new
+               ZipInputStream(new BufferedInputStream(new
+                        FileInputStream(zipFile)));
+      ZipEntry entry;
+      try
+      {
+         while ((entry = zis.getNextEntry()) != null)
+         {
+            File file = new File(targetDirectory, entry.getName());
+
+            if (entry.isDirectory())
+            {
+               file.mkdirs();
+               continue;
+            }
+            try
+            {
+               dest = new BufferedOutputStream(new FileOutputStream(file));
+               Streams.write(zis, dest);
+            }
+            finally
+            {
+               dest.flush();
+               Streams.closeQuietly(dest);
+            }
+         }
+      }
+      finally
+      {
+         Streams.closeQuietly(zis);
+      }
    }
 
 }

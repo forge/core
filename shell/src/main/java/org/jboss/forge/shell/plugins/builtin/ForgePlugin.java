@@ -7,6 +7,7 @@
 
 package org.jboss.forge.shell.plugins.builtin;
 
+import java.io.IOException;
 import java.net.ProxySelector;
 import java.net.URL;
 import java.util.ArrayList;
@@ -26,15 +27,21 @@ import org.jboss.forge.ForgeEnvironment;
 import org.jboss.forge.env.Configuration;
 import org.jboss.forge.git.GitUtils;
 import org.jboss.forge.parser.ParserException;
+import org.jboss.forge.parser.java.util.Assert;
 import org.jboss.forge.parser.java.util.Strings;
 import org.jboss.forge.parser.xml.Node;
 import org.jboss.forge.parser.xml.XMLParser;
 import org.jboss.forge.project.Project;
+import org.jboss.forge.project.dependencies.CompositeDependencyFilter;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
+import org.jboss.forge.project.dependencies.DependencyFilter;
+import org.jboss.forge.project.dependencies.DependencyQuery;
+import org.jboss.forge.project.dependencies.DependencyQueryBuilder;
 import org.jboss.forge.project.dependencies.DependencyRepository;
 import org.jboss.forge.project.dependencies.DependencyRepositoryImpl;
 import org.jboss.forge.project.dependencies.DependencyResolver;
+import org.jboss.forge.project.dependencies.NonSnapshotDependencyFilter;
 import org.jboss.forge.project.dependencies.ScopeType;
 import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.facets.DependencyFacet.KnownRepository;
@@ -62,6 +69,7 @@ import org.jboss.forge.shell.plugins.Option;
 import org.jboss.forge.shell.plugins.PipeOut;
 import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.Topic;
+import org.jboss.forge.shell.util.Files;
 import org.jboss.forge.shell.util.ForgeProxySelector;
 import org.jboss.forge.shell.util.PluginRef;
 import org.jboss.forge.shell.util.PluginUtil;
@@ -300,15 +308,15 @@ public class ForgePlugin implements Plugin
       /*
        * FileResource<?> source = resource.reify(FileResource.class); if ((source == null) || !source.exists()) { throw
        * new IllegalArgumentException("JAR file must be specified."); }
-       * 
+       *
        * if (environment.getPluginDirectory().equals(source.getParent())) { throw new
        * IllegalArgumentException("Plugin is already installed."); }
-       * 
+       *
        * ShellMessages.info(out, "WARNING!"); if (prompt.promptBoolean(
        * "Installing plugins from remote sources is dangerous, and can leave untracked plugins. Continue?", true)) {
        * FileResource<?> target = createIncrementedPluginJarFile(dep);
        * target.setContents(source.getResourceInputStream());
-       * 
+       *
        * ShellMessages.success(out, "Installed from [" + resource + "] successfully."); restart(); } else throw new
        * RuntimeException("Aborted.");
        */
@@ -498,6 +506,118 @@ public class ForgePlugin implements Plugin
 
       ShellMessages.success(out, "Installed from [" + gitRepo + "] successfully.");
       restart();
+   }
+
+   /**
+    * Aborts a forge update
+    */
+   @Command(value = "update-abort", help = "Aborts a previous forge update")
+   public void updateAbort() throws IOException
+   {
+      DirectoryResource forgeHome = environment.getForgeHome();
+      DirectoryResource updateDirectory = forgeHome.getChildDirectory(".update");
+      if (updateDirectory.exists())
+      {
+         if (updateDirectory.delete(true))
+         {
+            ShellMessages.success(shell,
+                     "Update files were deleted. Run 'forge update' if you want to update this installation again.");
+         }
+         else
+         {
+            ShellMessages.info(shell, "Could not abort. Try to run 'forge update-abort' again");
+         }
+      }
+      else
+      {
+         ShellMessages.info(shell, "No update files found");
+      }
+   }
+
+   /**
+    * Updates the forge version
+    */
+   @Command(value = "update", help = "Update this forge installation")
+   public void update() throws IOException
+   {
+      DirectoryResource forgeHome = environment.getForgeHome();
+      DirectoryResource updateDir = forgeHome.getChildDirectory(".update");
+      if (updateDir.exists())
+      {
+         ShellMessages
+                  .warn(shell,
+                           "There is an update pending. Restart Forge for the update to take effect. To abort this update, type 'forge update-abort'");
+         return;
+      }
+      Dependency forgeDistribution = getLatestAvailableDistribution();
+      if (forgeDistribution == null)
+      {
+         ShellMessages.info(shell, "Forge is up to date! Enjoy!");
+      }
+      else
+      {
+         shell.print("This Forge installation will be updated to ");
+         shell.println(ShellColor.BOLD, forgeDistribution.getVersion());
+         if (prompt.promptBoolean("Is that ok ?", true))
+         {
+            updateForge(forgeDistribution);
+         }
+      }
+   }
+
+   /**
+    * Returns the latest available distribution
+    *
+    * @return
+    */
+   private Dependency getLatestAvailableDistribution()
+   {
+      final String runtimeVersion = environment.getRuntimeVersion();
+      DependencyQuery query = DependencyQueryBuilder.create(DependencyBuilder
+               .create("org.jboss.forge:forge-distribution:::zip")).setFilter(
+               new CompositeDependencyFilter(
+                        new NonSnapshotDependencyFilter(),
+                        new DependencyFilter()
+                        {
+                           /**
+                            * We are only interested in versions higher than the current version
+                            */
+                           @Override
+                           public boolean accept(Dependency dependency)
+                           {
+                              return dependency.getVersion().compareTo(runtimeVersion) > 0;
+                           }
+                        }
+               ));
+      List<Dependency> versions = resolver.resolveVersions(query);
+      return versions.isEmpty() ? null : versions.get(versions.size() - 1);
+   }
+
+   /**
+    * Unpacks the dependency info a specific folder
+    *
+    * @param dependency
+    */
+   private void updateForge(Dependency dependency) throws IOException
+   {
+      List<DependencyResource> resolvedArtifacts = resolver.resolveArtifacts(dependency);
+      Assert.isTrue(resolvedArtifacts.size() == 1, "Artifact was not found");
+      DependencyResource resource = resolvedArtifacts.get(0);
+      DirectoryResource forgeHome = environment.getForgeHome();
+      Files.unzip(resource.getUnderlyingResourceObject(), forgeHome.getUnderlyingResourceObject());
+
+      DirectoryResource childDirectory = forgeHome.getChildDirectory(dependency.getArtifactId() + "-"
+               + dependency.getVersion());
+
+      DirectoryResource updateDirectory = forgeHome.getChildDirectory(".update");
+      if (updateDirectory.exists())
+      {
+         updateDirectory.delete(true);
+      }
+      childDirectory.renameTo(updateDirectory);
+
+      ShellMessages.success(shell, "Forge will now restart to complete the update ...");
+      System.exit(0);
    }
 
    private void prepareProxyForJGit()
