@@ -1,6 +1,8 @@
 package org.jboss.forge.arquillian;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
@@ -17,7 +19,10 @@ import org.jboss.forge.container.AddonUtil;
 import org.jboss.forge.container.AddonUtil.AddonEntry;
 import org.jboss.forge.container.util.Files;
 import org.jboss.forge.container.util.OSUtils;
+import org.jboss.forge.container.util.Streams;
 import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.Node;
+import org.jboss.shrinkwrap.api.asset.Asset;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
 public class ForgeDeployableContainer implements DeployableContainer<ForgeContainerConfiguration>
@@ -86,6 +91,23 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
 
       ShrinkWrapUtil.toFile(new File(destDir.getAbsolutePath() + "/" + archive.getName()), archive);
       ShrinkWrapUtil.unzip(destDir, archive);
+
+      Node node = archive.get("/META-INF/forge.xml");
+      if (node != null)
+      {
+         Asset asset = node.getAsset();
+         try
+         {
+            Streams.write(asset.openStream(), new FileOutputStream(AddonUtil.getAddonDescriptor(addon)));
+         }
+         catch (FileNotFoundException e)
+         {
+            throw new DeploymentException("Could not open addon descriptor [" + AddonUtil.getAddonDescriptor(addon)
+                     + "].", e);
+         }
+      }
+
+      System.out.println("Unzipping " + archive.toString(true));
 
       addon = AddonUtil.install(addon);
 

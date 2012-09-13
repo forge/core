@@ -1,6 +1,7 @@
 package org.jboss.forge.arquillian.archive;
 
 import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.asset.Asset;
 import org.jboss.shrinkwrap.api.container.LibraryContainer;
 import org.jboss.shrinkwrap.api.container.ResourceContainer;
 import org.jboss.shrinkwrap.api.container.ServiceProviderContainer;
@@ -14,4 +15,9 @@ import org.jboss.shrinkwrap.api.container.ServiceProviderContainer;
 public interface ForgeArchive extends Archive<ForgeArchive>, LibraryContainer<ForgeArchive>,
          ResourceContainer<ForgeArchive>, ServiceProviderContainer<ForgeArchive>
 {
+
+   /**
+    * Sets the current forge.xml descritor for this archive.
+    */
+   ForgeArchive setAsForgeXML(Asset resource) throws IllegalArgumentException;
 }

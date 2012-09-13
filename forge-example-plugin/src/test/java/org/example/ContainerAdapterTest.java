@@ -25,7 +25,12 @@ public class ContainerAdapterTest
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                .addClasses(SimpleService.class, ConsumingService.class, TestExtension.class)
                .addAsManifestResource(new StringAsset(""), ArchivePaths.create("beans.xml"))
-               .addAsServiceProvider(Extension.class, TestExtension.class);
+               .addAsServiceProvider(Extension.class, TestExtension.class)
+               .setAsForgeXML(new StringAsset("<addon><dependency " +
+                        "name=\"3d09722c-6e71-4bac-b315-e8078217dc98\" " +
+                        "min-version=\"X\" " +
+                        "max-version=\"Y\" " +
+                        "optional=\"false\"/></addon>"));
 
       return archive;
    }

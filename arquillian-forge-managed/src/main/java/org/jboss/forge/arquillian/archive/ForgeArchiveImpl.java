@@ -21,6 +21,8 @@ import java.util.logging.Logger;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
 import org.jboss.shrinkwrap.api.ArchivePaths;
+import org.jboss.shrinkwrap.api.asset.Asset;
+import org.jboss.shrinkwrap.impl.base.Validate;
 import org.jboss.shrinkwrap.impl.base.container.ContainerBase;
 
 /**
@@ -54,6 +56,11 @@ public class ForgeArchiveImpl extends ContainerBase<ForgeArchive> implements For
     * Path to the manifests inside of the Archive.
     */
    private static final ArchivePath PATH_MANIFEST = ArchivePaths.create("META-INF");
+
+   /**
+    * Path to the forge XML config file inside of the Archive.
+    */
+   private static final ArchivePath PATH_FORGE_XML = ArchivePaths.create("META-INF/forge.xml");
 
    /**
     * Path to web archive service providers.
@@ -93,6 +100,11 @@ public class ForgeArchiveImpl extends ContainerBase<ForgeArchive> implements For
       return PATH_MANIFEST;
    }
 
+   protected ArchivePath getForgeXMLPath()
+   {
+      return PATH_FORGE_XML;
+   }
+
    /**
     * {@inheritDoc}
     * 
@@ -125,4 +137,12 @@ public class ForgeArchiveImpl extends ContainerBase<ForgeArchive> implements For
    {
       return PATH_CLASSES;
    }
+
+   @Override
+   public ForgeArchive setAsForgeXML(final Asset resource) throws IllegalArgumentException
+   {
+      Validate.notNull(resource, "Resource should be specified");
+      return add(resource, getForgeXMLPath());
+   }
+
 }

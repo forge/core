@@ -4,10 +4,10 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,12 +16,12 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @RunWith(Arquillian.class)
-public class ContainerAdapterTest
+public class ContainerAdapterTest2
 {
    @Deployment
-   public static JavaArchive getDeployment()
+   public static ForgeArchive getDeployment()
    {
-      JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar")
+      ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                .addClasses(PublishedService.class)
                .addAsManifestResource(new StringAsset(""), ArchivePaths.create("beans.xml"));
 

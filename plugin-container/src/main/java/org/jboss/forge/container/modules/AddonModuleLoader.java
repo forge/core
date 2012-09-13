@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.jar.JarFile;
 
 import org.jboss.forge.container.AddonUtil;
+import org.jboss.forge.container.AddonUtil.AddonDependency;
 import org.jboss.forge.container.AddonUtil.AddonEntry;
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.modules.DependencySpec;
@@ -60,15 +61,7 @@ public class AddonModuleLoader extends ModuleLoader
    @Override
    protected ModuleSpec findModule(ModuleIdentifier id) throws ModuleLoadException
    {
-      AddonEntry found = null;
-      for (AddonEntry plugin : AddonUtil.listByAPICompatibleVersion("2.0.0-SNAPSHOT"))
-      {
-         if (plugin.toModuleId().equals(id.toString()))
-         {
-            found = plugin;
-            break;
-         }
-      }
+      AddonEntry found = findInstalledModule(id);
 
       if (found != null)
       {
@@ -85,6 +78,22 @@ public class AddonModuleLoader extends ModuleLoader
          builder.addDependency(DependencySpec.createLocalDependencySpec());
 
          List<File> resources = AddonUtil.getAddonResources(found);
+         List<AddonDependency> addons = AddonUtil.getAddonDependencies(found);
+         for (AddonDependency dependency : addons)
+         {
+            ModuleIdentifier moduleId = findCompatibleInstalledModule(dependency);
+
+            if (moduleId == null && !dependency.isOptional())
+            {
+               // TODO implement proper fault handling
+               System.out.println("SEVERE: Could not dependency [" + dependency + "] for addon [" + found + "]");
+            }
+            else
+            {
+               builder.addDependency(DependencySpec.createModuleDependencySpec(PathFilters.acceptAll(),
+                        PathFilters.rejectAll(), this, moduleId, dependency.isOptional()));
+            }
+         }
 
          for (File file : resources)
          {
@@ -104,6 +113,39 @@ public class AddonModuleLoader extends ModuleLoader
 
          return builder.create();
       }
+      return null;
+   }
+
+   private AddonEntry findInstalledModule(ModuleIdentifier moduleId)
+   {
+      AddonEntry found = null;
+      for (AddonEntry addon : AddonUtil.listByAPICompatibleVersion("2.0.0-SNAPSHOT"))
+      {
+         if (addon.toModuleId().equals(moduleId.toString()))
+         {
+            found = addon;
+            break;
+         }
+      }
+      return found;
+   }
+
+   private ModuleIdentifier findCompatibleInstalledModule(AddonDependency dependency)
+   {
+      AddonEntry found = null;
+      for (AddonEntry addon : AddonUtil.listByAPICompatibleVersion("2.0.0-SNAPSHOT"))
+      {
+         // TODO implement proper version-range resolution
+         if (addon.getName().equals(dependency.getName()))
+         {
+            found = addon;
+            break;
+         }
+      }
+
+      if (found != null)
+         return ModuleIdentifier.create(found.getName(), found.getSlot());
+
       return null;
    }
 

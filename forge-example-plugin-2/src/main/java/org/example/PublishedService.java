@@ -1,12 +1,10 @@
 package org.example;
 
-import org.jboss.forge.container.services.Remote;
 
-@Remote
 public class PublishedService
 {
    public String getMessage()
    {
-      return "A message from PublishedService";
+      return "A message from PublishedService [" + this.getClass().getClassLoader() + "]";
    }
 }

@@ -5,7 +5,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import org.jboss.forge.container.event.ContainerShutdown;
 import org.jboss.forge.container.event.ContainerStartup;
 import org.jboss.forge.container.modules.ModularWeld;
-import org.jboss.forge.container.modules.TCCLSingletonProvider;
+import org.jboss.forge.container.modules.SilentTCCLSingletonProvider;
 import org.jboss.forge.container.util.ClassLoaders;
 import org.jboss.forge.container.util.ClassLoaders.Task;
 import org.jboss.modules.Module;
@@ -38,7 +38,7 @@ public final class ControlRunnable implements Runnable
          public void perform() throws Exception
          {
             // Make sure Weld uses ThreadSafe singletons.
-            SingletonProvider.initialize(new TCCLSingletonProvider());
+            SingletonProvider.initialize(new SilentTCCLSingletonProvider());
 
             Weld weld = new ModularWeld(module);
             WeldContainer container = weld.initialize();

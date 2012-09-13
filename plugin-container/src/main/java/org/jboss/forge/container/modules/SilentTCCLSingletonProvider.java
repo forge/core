@@ -31,13 +31,15 @@ import org.jboss.weld.bootstrap.api.Singleton;
 import org.jboss.weld.bootstrap.api.SingletonProvider;
 
 /**
- * Singleton provider that uses the Thread Context ClassLoader to differentiate between applications
+ * Singleton provider that uses the Thread Context ClassLoader to differentiate between applications.
+ * <p/>
+ * (<b>Note:</b> Modified from Weld to remove System.out.println() call.)
  * 
  * @author Sanjeeb.Sahoo@Sun.COM
  * @author Pete Muir
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class TCCLSingletonProvider extends SingletonProvider
+public class SilentTCCLSingletonProvider extends SingletonProvider
 {
    @Override
    public <T> Singleton<T> create(Class<? extends T> type)
