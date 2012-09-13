@@ -131,13 +131,13 @@ public class FacesScaffoldPetClinicClient
          assertEquals("Pet #1", table.getCellAt(1, 0).getTextContent());
 
          form = page.getFormByName("search");
-         form.getSelectByName("search:petBeanSearchOwner").setSelectedAttribute("3", true);
+         form.getSelectByName("search:petBeanExampleOwner").setSelectedAttribute("3", true);
          page = page.getAnchorByText("Search").click();
          table = (HtmlTable) page.getHtmlElementById("search:petBeanPageItems");
          assertEquals("", table.getCellAt(1, 0).getTextContent());
 
          form = page.getFormByName("search");
-         form.getSelectByName("search:petBeanSearchOwner").setSelectedAttribute("1", true);
+         form.getSelectByName("search:petBeanExampleOwner").setSelectedAttribute("1", true);
          page = page.getAnchorByText("Search").click();
          page = page.getAnchorByText("Pet #1").click();
 

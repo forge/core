@@ -217,23 +217,23 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       searchMetawidget.append("\t\t\t\t\t")
                .append("<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t")
-               .append("<h:outputLabel for=\"customerBeanSearchFirstName\" value=\"First Name:\"/>").append(CRLF);
+               .append("<h:outputLabel for=\"customerBeanExampleFirstName\" value=\"First Name:\"/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t").append("<h:panelGroup>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t\t")
-               .append("<h:inputText id=\"customerBeanSearchFirstName\" value=\"#{customerBean.search.firstName}\"/>")
+               .append("<h:inputText id=\"customerBeanExampleFirstName\" value=\"#{customerBean.example.firstName}\"/>")
                .append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t\t")
-               .append("<h:message for=\"customerBeanSearchFirstName\" styleClass=\"error\"/>").append(CRLF);
+               .append("<h:message for=\"customerBeanExampleFirstName\" styleClass=\"error\"/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t").append("</h:panelGroup>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t").append("<h:outputText/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t")
-               .append("<h:outputLabel for=\"customerBeanSearchLastName\" value=\"Last Name:\"/>").append(CRLF);
+               .append("<h:outputLabel for=\"customerBeanExampleLastName\" value=\"Last Name:\"/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t").append("<h:panelGroup>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t\t")
-               .append("<h:inputText id=\"customerBeanSearchLastName\" value=\"#{customerBean.search.lastName}\"/>")
+               .append("<h:inputText id=\"customerBeanExampleLastName\" value=\"#{customerBean.example.lastName}\"/>")
                .append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t\t")
-               .append("<h:message for=\"customerBeanSearchLastName\" styleClass=\"error\"/>").append(CRLF);
+               .append("<h:message for=\"customerBeanExampleLastName\" styleClass=\"error\"/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t").append("</h:panelGroup>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t").append("<h:outputText/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t").append("</h:panelGrid>").append(CRLF);
@@ -281,13 +281,13 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       qbeMetawidget.append("      ").append("List<Predicate> predicatesList = new ArrayList<Predicate>();")
                .append(CRLF);
       qbeMetawidget.append("").append("").append(CRLF);
-      qbeMetawidget.append("      ").append("String firstName = this.search.getFirstName();").append(CRLF);
+      qbeMetawidget.append("      ").append("String firstName = this.example.getFirstName();").append(CRLF);
       qbeMetawidget.append("      ").append("if (firstName != null && !\"\".equals(firstName)) {").append(CRLF);
       qbeMetawidget.append("         ")
                .append("predicatesList.add(builder.like(root.<String> get(\"firstName\"), '%' + firstName + '%'));")
                .append(CRLF);
       qbeMetawidget.append("      ").append("}").append(CRLF);
-      qbeMetawidget.append("      ").append("String lastName = this.search.getLastName();").append(CRLF);
+      qbeMetawidget.append("      ").append("String lastName = this.example.getLastName();").append(CRLF);
       qbeMetawidget.append("      ").append("if (lastName != null && !\"\".equals(lastName)) {").append(CRLF);
       qbeMetawidget.append("         ")
                .append("predicatesList.add(builder.like(root.<String> get(\"lastName\"), '%' + lastName + '%'));")
@@ -795,7 +795,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       contents = Streams.toString(customerBean.getResourceInputStream());
 
       StringBuilder qbeMetawidget = new StringBuilder();
-      qbeMetawidget.append("  ").append("Employer employer = this.search.getEmployer();").append(CRLF);
+      qbeMetawidget.append("  ").append("Employer employer = this.example.getEmployer();").append(CRLF);
       qbeMetawidget.append("    ").append("if (employer != null) {").append(CRLF);
       qbeMetawidget.append("       ").append("predicatesList.add(builder.equal(root.get(\"employer\"), employer));")
                .append(CRLF);
@@ -831,7 +831,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       String contents = Streams.toString(customerBean.getResourceInputStream());
 
       StringBuilder qbeMetawidget = new StringBuilder();
-      qbeMetawidget.append("  ").append("Customer customer = this.search.getCustomer();").append(CRLF);
+      qbeMetawidget.append("  ").append("Customer customer = this.example.getCustomer();").append(CRLF);
       qbeMetawidget.append("    ").append("if (customer != null) {").append(CRLF);
       qbeMetawidget.append("       ").append("predicatesList.add(builder.equal(root.get(\"customer\"), customer));")
                .append(CRLF);
@@ -1018,23 +1018,23 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       searchMetawidget.append("\t\t\t\t\t")
                .append("<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t")
-               .append("<h:outputLabel for=\"customerBeanSearchFirstName\" value=\"First Name:\"/>").append(CRLF);
+               .append("<h:outputLabel for=\"customerBeanExampleFirstName\" value=\"First Name:\"/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t").append("<h:panelGroup>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t\t")
-               .append("<h:inputText id=\"customerBeanSearchFirstName\" value=\"#{customerBean.search.firstName}\"/>")
+               .append("<h:inputText id=\"customerBeanExampleFirstName\" value=\"#{customerBean.example.firstName}\"/>")
                .append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t\t")
-               .append("<h:message for=\"customerBeanSearchFirstName\" styleClass=\"error\"/>").append(CRLF);
+               .append("<h:message for=\"customerBeanExampleFirstName\" styleClass=\"error\"/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t").append("</h:panelGroup>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t").append("<h:outputText/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t")
-               .append("<h:outputLabel for=\"customerBeanSearchLastName\" value=\"Last Name:\"/>").append(CRLF);
+               .append("<h:outputLabel for=\"customerBeanExampleLastName\" value=\"Last Name:\"/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t").append("<h:panelGroup>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t\t")
-               .append("<h:inputText id=\"customerBeanSearchLastName\" value=\"#{customerBean.search.lastName}\"/>")
+               .append("<h:inputText id=\"customerBeanExampleLastName\" value=\"#{customerBean.example.lastName}\"/>")
                .append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t\t")
-               .append("<h:message for=\"customerBeanSearchLastName\" styleClass=\"error\"/>").append(CRLF);
+               .append("<h:message for=\"customerBeanExampleLastName\" styleClass=\"error\"/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t").append("</h:panelGroup>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t").append("<h:outputText/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t").append("</h:panelGrid>").append(CRLF);
@@ -1196,53 +1196,53 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       searchMetawidget.append("\t\t\t\t\t")
                .append("<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t")
-               .append("<h:outputLabel for=\"customerBeanSearchField1\" value=\"Field 1:\"/>").append(CRLF);
+               .append("<h:outputLabel for=\"customerBeanExampleField1\" value=\"Field 1:\"/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t").append("<h:panelGroup>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t\t")
-               .append("<h:inputText id=\"customerBeanSearchField1\" value=\"#{customerBean.search.field1}\"/>")
+               .append("<h:inputText id=\"customerBeanExampleField1\" value=\"#{customerBean.example.field1}\"/>")
                .append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t\t")
-               .append("<h:message for=\"customerBeanSearchField1\" styleClass=\"error\"/>").append(CRLF);
+               .append("<h:message for=\"customerBeanExampleField1\" styleClass=\"error\"/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t").append("</h:panelGroup>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t").append("<h:outputText/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t")
-               .append("<h:outputLabel for=\"customerBeanSearchField2\" value=\"Field 2:\"/>").append(CRLF);
+               .append("<h:outputLabel for=\"customerBeanExampleField2\" value=\"Field 2:\"/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t").append("<h:panelGroup>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t\t")
-               .append("<h:inputText id=\"customerBeanSearchField2\" value=\"#{customerBean.search.field2}\"/>")
+               .append("<h:inputText id=\"customerBeanExampleField2\" value=\"#{customerBean.example.field2}\"/>")
                .append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t\t")
-               .append("<h:message for=\"customerBeanSearchField2\" styleClass=\"error\"/>").append(CRLF);
+               .append("<h:message for=\"customerBeanExampleField2\" styleClass=\"error\"/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t").append("</h:panelGroup>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t").append("<h:outputText/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t")
-               .append("<h:outputLabel for=\"customerBeanSearchField4\" value=\"Field 4:\"/>").append(CRLF);
+               .append("<h:outputLabel for=\"customerBeanExampleField4\" value=\"Field 4:\"/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t").append("<h:panelGroup>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t\t")
-               .append("<h:inputText id=\"customerBeanSearchField4\" value=\"#{customerBean.search.field4}\"/>")
+               .append("<h:inputText id=\"customerBeanExampleField4\" value=\"#{customerBean.example.field4}\"/>")
                .append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t\t")
-               .append("<h:message for=\"customerBeanSearchField4\" styleClass=\"error\"/>").append(CRLF);
+               .append("<h:message for=\"customerBeanExampleField4\" styleClass=\"error\"/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t").append("</h:panelGroup>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t").append("<h:outputText/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t")
-               .append("<h:outputLabel for=\"customerBeanSearchField5\" value=\"Field 5:\"/>").append(CRLF);
+               .append("<h:outputLabel for=\"customerBeanExampleField5\" value=\"Field 5:\"/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t").append("<h:panelGroup>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t\t")
-               .append("<h:inputText id=\"customerBeanSearchField5\" value=\"#{customerBean.search.field5}\"/>")
+               .append("<h:inputText id=\"customerBeanExampleField5\" value=\"#{customerBean.example.field5}\"/>")
                .append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t\t")
-               .append("<h:message for=\"customerBeanSearchField5\" styleClass=\"error\"/>").append(CRLF);
+               .append("<h:message for=\"customerBeanExampleField5\" styleClass=\"error\"/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t").append("</h:panelGroup>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t").append("<h:outputText/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t")
-               .append("<h:outputLabel for=\"customerBeanSearchField6\" value=\"Field 6:\"/>").append(CRLF);
+               .append("<h:outputLabel for=\"customerBeanExampleField6\" value=\"Field 6:\"/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t").append("<h:panelGroup>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t\t")
-               .append("<h:inputText id=\"customerBeanSearchField6\" value=\"#{customerBean.search.field6}\"/>")
+               .append("<h:inputText id=\"customerBeanExampleField6\" value=\"#{customerBean.example.field6}\"/>")
                .append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t\t")
-               .append("<h:message for=\"customerBeanSearchField6\" styleClass=\"error\"/>").append(CRLF);
+               .append("<h:message for=\"customerBeanExampleField6\" styleClass=\"error\"/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t").append("</h:panelGroup>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t").append("<h:outputText/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t").append("</h:panelGrid>").append(CRLF);
@@ -1404,30 +1404,30 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       searchMetawidget.append("\t\t\t\t\t")
                .append("<h:panelGrid columnClasses=\"label,component,required\" columns=\"3\">").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t")
-               .append("<h:outputLabel for=\"customerBeanSearchFirstName\" value=\"First Name:\"/>").append(CRLF);
+               .append("<h:outputLabel for=\"customerBeanExampleFirstName\" value=\"First Name:\"/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t").append("<h:panelGroup>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t\t")
-               .append("<h:inputText id=\"customerBeanSearchFirstName\" value=\"#{customerBean.search.firstName}\"/>")
+               .append("<h:inputText id=\"customerBeanExampleFirstName\" value=\"#{customerBean.example.firstName}\"/>")
                .append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t\t")
-               .append("<h:message for=\"customerBeanSearchFirstName\" styleClass=\"error\"/>").append(CRLF);
+               .append("<h:message for=\"customerBeanExampleFirstName\" styleClass=\"error\"/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t").append("</h:panelGroup>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t").append("<h:outputText/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t")
-               .append("<h:outputLabel for=\"customerBeanSearchLastName\" value=\"Last Name:\"/>").append(CRLF);
+               .append("<h:outputLabel for=\"customerBeanExampleLastName\" value=\"Last Name:\"/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t").append("<h:panelGroup>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t\t")
-               .append("<h:inputText id=\"customerBeanSearchLastName\" value=\"#{customerBean.search.lastName}\"/>")
+               .append("<h:inputText id=\"customerBeanExampleLastName\" value=\"#{customerBean.example.lastName}\"/>")
                .append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t\t")
-               .append("<h:message for=\"customerBeanSearchLastName\" styleClass=\"error\"/>").append(CRLF);
+               .append("<h:message for=\"customerBeanExampleLastName\" styleClass=\"error\"/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t").append("</h:panelGroup>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t").append("<h:outputText/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t")
-               .append("<h:outputLabel for=\"customerBeanSearchRating\" value=\"Rating:\"/>").append(CRLF);
+               .append("<h:outputLabel for=\"customerBeanExampleRating\" value=\"Rating:\"/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t").append("<h:panelGroup>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t\t")
-               .append("<h:selectOneMenu id=\"customerBeanSearchRating\" value=\"#{customerBean.search.rating}\">")
+               .append("<h:selectOneMenu id=\"customerBeanExampleRating\" value=\"#{customerBean.example.rating}\">")
                .append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t\t\t").append("<f:selectItem/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t\t\t").append("<f:selectItem itemValue=\"ONE_STAR\"/>").append(CRLF);
@@ -1435,7 +1435,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       searchMetawidget.append("\t\t\t\t\t\t\t\t").append("<f:selectItem itemValue=\"THREE_STAR\"/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t\t").append("</h:selectOneMenu>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t\t")
-               .append("<h:message for=\"customerBeanSearchRating\" styleClass=\"error\"/>").append(CRLF);
+               .append("<h:message for=\"customerBeanExampleRating\" styleClass=\"error\"/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t").append("</h:panelGroup>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t\t").append("<h:outputText/>").append(CRLF);
       searchMetawidget.append("\t\t\t\t\t").append("</h:panelGrid>").append(CRLF);
@@ -1493,19 +1493,19 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       qbeMetawidget.append("      ").append("List<Predicate> predicatesList = new ArrayList<Predicate>();")
                .append(CRLF);
       qbeMetawidget.append("").append("").append(CRLF);
-      qbeMetawidget.append("      ").append("String firstName = this.search.getFirstName();").append(CRLF);
+      qbeMetawidget.append("      ").append("String firstName = this.example.getFirstName();").append(CRLF);
       qbeMetawidget.append("      ").append("if (firstName != null && !\"\".equals(firstName)) {").append(CRLF);
       qbeMetawidget.append("         ")
                .append("predicatesList.add(builder.like(root.<String> get(\"firstName\"), '%' + firstName + '%'));")
                .append(CRLF);
       qbeMetawidget.append("      ").append("}").append(CRLF);
-      qbeMetawidget.append("      ").append("String lastName = this.search.getLastName();").append(CRLF);
+      qbeMetawidget.append("      ").append("String lastName = this.example.getLastName();").append(CRLF);
       qbeMetawidget.append("      ").append("if (lastName != null && !\"\".equals(lastName)) {").append(CRLF);
       qbeMetawidget.append("         ")
                .append("predicatesList.add(builder.like(root.<String> get(\"lastName\"), '%' + lastName + '%'));")
                .append(CRLF);
       qbeMetawidget.append("      ").append("}").append(CRLF);
-      qbeMetawidget.append("      ").append("RatingEnum rating = this.search.getRating();").append(CRLF);
+      qbeMetawidget.append("      ").append("RatingEnum rating = this.example.getRating();").append(CRLF);
       qbeMetawidget.append("      ").append("if (rating != null) {").append(CRLF);
       qbeMetawidget.append("         ").append("predicatesList.add(builder.equal(root.get(\"rating\"), rating));")
                .append(CRLF);

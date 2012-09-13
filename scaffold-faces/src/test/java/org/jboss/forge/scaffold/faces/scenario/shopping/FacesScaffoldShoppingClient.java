@@ -55,8 +55,8 @@ public class FacesScaffoldShoppingClient
 
          assertTrue(page.asText().contains("Search Address entities"));
          form = page.getFormByName("search");
-         form.getInputByName("search:addressBeanSearchStreet").setValueAttribute("Address Street #2");
-         form.getInputByName("search:addressBeanSearchCity").setValueAttribute("Address City #2");
+         form.getInputByName("search:addressBeanExampleStreet").setValueAttribute("Address Street #2");
+         form.getInputByName("search:addressBeanExampleCity").setValueAttribute("Address City #2");
          page = page.getAnchorByText("Create New").click();
 
          form = page.getFormByName("create");
