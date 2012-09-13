@@ -138,12 +138,19 @@ goto runForge
 set FORGE_MAIN_CLASS=org.jboss.forge.shell.Bootstrap
 %FORGE_JAVA_EXE% %FORGE_DEBUG_ARGS% %FORGE_OPTS% "-Dforge.home=%FORGE_HOME%" -Dforge.shell.colorEnabled=true -jar %JBOSS_MODULES% -modulepath "%FORGE_HOME%\modules;%USERHOME%\.forge\plugins;%FORGE_PLUGIN_DIR%" org.jboss.forge %FORGE_CMD_LINE_ARGS%
 if ERRORLEVEL 1 goto error
+IF EXIST "%FORGE_HOME%\.update\" (
+	rmdir /S/Q "%FORGE_HOME%\modules"
+	xcopy /S /Q /Y "%FORGE_HOME%\.update" "%FORGE_HOME%\" > NUL
+	rmdir /S/Q "%FORGE_HOME%\.update"
+	goto runForge
+)
 goto end
 
 :error
 if "%OS%"=="Windows_NT" @endlocal
 if "%OS%"=="WINNT" @endlocal
 set ERROR_CODE=1
+
 
 :end
 @REM set local scope for the variables with windows NT shell
