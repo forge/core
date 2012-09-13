@@ -33,6 +33,7 @@ import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresProject;
 import org.jboss.forge.spec.javaee.PersistenceFacet;
+import org.jboss.forge.spec.javaee.PersistenceMetaModelFacet;
 import org.jboss.forge.spec.javaee.jpa.api.DatabaseType;
 import org.jboss.forge.spec.javaee.jpa.api.JPAContainer;
 import org.jboss.forge.spec.javaee.jpa.api.JPADataSource;
@@ -178,11 +179,21 @@ public class PersistencePlugin implements Plugin
 
       jpa.saveConfig(config);
 
+      installMetaModelGenerator();
       installAdditionalDependencies(out, container, jpap, provider, providerVersion);
 
       if (project.hasFacet(PersistenceFacet.class))
       {
          ShellMessages.success(out, "Persistence (JPA) is installed.");
+      }
+   }
+   
+   private void installMetaModelGenerator()
+   {
+      if (!project.hasFacet(PersistenceMetaModelFacet.class) 
+               && prompt.promptBoolean("Do you want to install a JPA 2 metamodel generator?", false))
+      {
+         request.fire(new InstallFacets(PersistenceMetaModelFacet.class));
       }
    }
 

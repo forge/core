@@ -15,6 +15,7 @@ import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.spec.javaee.jpa.api.DatabaseType;
 import org.jboss.forge.spec.javaee.jpa.api.JPADataSource;
+import org.jboss.forge.spec.javaee.jpa.api.MetaModelProvider;
 import org.jboss.forge.spec.javaee.jpa.api.PersistenceProvider;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceUnitDef;
 
@@ -98,6 +99,12 @@ public class EclipseLinkProvider implements PersistenceProvider
    {
       return Arrays.asList((Dependency) DependencyBuilder.create("org.eclipse.persistence:eclipselink"),
                (Dependency) DependencyBuilder.create("org.eclipse.persistence:javax.persistence"));
+   }
+
+   @Override
+   public MetaModelProvider getMetaModelProvider()
+   {
+      return new EclipseLinkMetaModelProvider();
    }
 
 }

@@ -16,10 +16,12 @@ import org.jboss.forge.project.dependencies.Dependency;
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
  */
 public class MavenPluginImpl implements MavenPlugin {
+   
     private Dependency dependency;
     private Configuration configuration;
     private final List<Execution> executions = new ArrayList<Execution>();
     private boolean extensions;
+    private List<Dependency> pluginDependencies = new ArrayList<Dependency>();
 
     public MavenPluginImpl() {
     }
@@ -55,21 +57,16 @@ public class MavenPluginImpl implements MavenPlugin {
     public boolean isExtensionsEnabled() {
         return extensions;
     }
+    
+    @Override
+    public List<Dependency> getDirectDependencies() {
+       return pluginDependencies;
+    }
 
     @Override
     public String toString() {
         StringBuilder b = new StringBuilder("<plugin>");
-        if (dependency.getGroupId() != null) {
-            b.append("<groupId>").append(dependency.getGroupId()).append("</groupId>");
-        }
-
-        if (dependency.getArtifactId() != null) {
-            b.append("<artifactId>").append(dependency.getArtifactId()).append("</artifactId>");
-        }
-
-        if (dependency.getVersion() != null) {
-            b.append("<version>").append(dependency.getVersion()).append("</version>");
-        }
+        appendDependency(b, dependency);
 
         if(extensions) {
             b.append("<extensions>true</extensions>");
@@ -86,6 +83,16 @@ public class MavenPluginImpl implements MavenPlugin {
             }
             b.append("</executions>");
         }
+        
+        if (pluginDependencies.size() > 0) {
+           b.append("<dependencies>");
+           for (Dependency pluginDependency : pluginDependencies) {
+               b.append("<dependency>");
+               appendDependency(b, pluginDependency);
+               b.append("</dependency>");
+           }
+           b.append("</dependencies>");
+       }
 
         b.append("</plugin>");
         return b.toString();
@@ -102,4 +109,23 @@ public class MavenPluginImpl implements MavenPlugin {
     public void setExtenstions(boolean extenstions) {
         this.extensions = extenstions;
     }
+    
+    public void addPluginDependency(final Dependency dependency) {
+       pluginDependencies.add(dependency);
+    }
+    
+    private void appendDependency(StringBuilder buffer, Dependency appendDependency) {
+       if (appendDependency.getGroupId() != null) {
+          buffer.append("<groupId>").append(appendDependency.getGroupId()).append("</groupId>");
+      }
+
+      if (appendDependency.getArtifactId() != null) {
+         buffer.append("<artifactId>").append(appendDependency.getArtifactId()).append("</artifactId>");
+      }
+
+      if (appendDependency.getVersion() != null) {
+         buffer.append("<version>").append(appendDependency.getVersion()).append("</version>");
+      }
+    }
+
 }
