@@ -582,7 +582,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
          if (field.hasAnnotation(OneToOne.class))
          {
             Annotation<JavaClass> oneToOne = field.getAnnotation(OneToOne.class);
-            if (oneToOne.getStringValue("mappedBy") == null)
+            if (oneToOne.getStringValue("mappedBy") == null && oneToOne.getStringValue("cascade") == null)
             {
                oneToOne.setEnumValue("cascade", CascadeType.ALL);
             }
@@ -599,7 +599,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
          if (method.hasAnnotation(OneToOne.class))
          {
             Annotation<JavaClass> oneToOne = method.getAnnotation(OneToOne.class);
-            if (oneToOne.getStringValue("mappedBy") == null)
+            if (oneToOne.getStringValue("mappedBy") == null && oneToOne.getStringValue("cascade") == null)
             {
                oneToOne.setEnumValue("cascade", CascadeType.ALL);
             }
