@@ -105,29 +105,29 @@ public class PrimaryKeyFacesScaffoldTest extends AbstractFacesScaffoldTest
       // (fields should not be required)
 
       StringBuilder metawidget = new StringBuilder();
-      metawidget.append("\t\t\t\t\t\t").append("<h:outputLabel for=\"parentBeanSearchName\" value=\"Name:\"/>")
+      metawidget.append("\t\t\t\t\t\t").append("<h:outputLabel for=\"parentBeanExampleName\" value=\"Name:\"/>")
                .append(CRLF);
       metawidget.append("\t\t\t\t\t\t").append("<h:panelGroup>").append(CRLF);
       metawidget.append("\t\t\t\t\t\t\t")
-               .append("<h:inputText id=\"parentBeanSearchName\" value=\"#{parentBean.search.name}\"/>").append(CRLF);
-      metawidget.append("\t\t\t\t\t\t\t").append("<h:message for=\"parentBeanSearchName\" styleClass=\"error\"/>")
+               .append("<h:inputText id=\"parentBeanExampleName\" value=\"#{parentBean.example.name}\"/>").append(CRLF);
+      metawidget.append("\t\t\t\t\t\t\t").append("<h:message for=\"parentBeanExampleName\" styleClass=\"error\"/>")
                .append(CRLF);
       metawidget.append("\t\t\t\t\t\t").append("</h:panelGroup>").append(CRLF);
       metawidget.append("\t\t\t\t\t\t").append("<h:outputText/>").append(CRLF);
       assertTrue(contents.contains(metawidget));
 
       metawidget = new StringBuilder();
-      metawidget.append("\t\t\t\t\t\t").append("<h:outputLabel for=\"parentBeanSearchState\" value=\"State:\"/>")
+      metawidget.append("\t\t\t\t\t\t").append("<h:outputLabel for=\"parentBeanExampleState\" value=\"State:\"/>")
                .append(CRLF);
       metawidget.append("\t\t\t\t\t\t").append("<h:panelGroup>").append(CRLF);
       metawidget
                .append("\t\t\t\t\t\t\t")
-               .append("<h:selectOneMenu converter=\"#{stateBean.converter}\" id=\"parentBeanSearchState\" value=\"#{parentBean.search.state}\">")
+               .append("<h:selectOneMenu converter=\"#{stateBean.converter}\" id=\"parentBeanExampleState\" value=\"#{parentBean.example.state}\">")
                .append(CRLF);
       metawidget.append("\t\t\t\t\t\t\t\t").append("<f:selectItem/>").append(CRLF);
       metawidget.append("\t\t\t\t\t\t\t\t").append("<f:selectItems value=\"#{stateBean.all}\"/>").append(CRLF);
       metawidget.append("\t\t\t\t\t\t\t").append("</h:selectOneMenu>").append(CRLF);
-      metawidget.append("\t\t\t\t\t\t\t").append("<h:message for=\"parentBeanSearchState\" styleClass=\"error\"/>")
+      metawidget.append("\t\t\t\t\t\t\t").append("<h:message for=\"parentBeanExampleState\" styleClass=\"error\"/>")
                .append(CRLF);
       metawidget.append("\t\t\t\t\t\t").append("</h:panelGroup>").append(CRLF);
       assertTrue(contents.contains(metawidget));

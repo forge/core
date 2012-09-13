@@ -107,7 +107,7 @@ public class FacesScaffoldScenarioTest extends AbstractFacesScaffoldTest
       Assert.assertTrue(search.exists());
       contents = Streams.toString(search.getResourceInputStream());
 
-      Assert.assertTrue(contents.contains("\"#{addressBean.search.city}\""));
+      Assert.assertTrue(contents.contains("\"#{addressBean.example.city}\""));
       Assert.assertTrue(contents.contains("\"#{_item.city}\""));
       Assert.assertTrue(!contents.contains(".City"));
 
@@ -118,7 +118,7 @@ public class FacesScaffoldScenarioTest extends AbstractFacesScaffoldTest
       contents = Streams.toString(customerBean.getResourceInputStream());
 
       StringBuilder qbeMetawidget = new StringBuilder(
-               "      String City = this.search.getCity();\n");
+               "      String City = this.example.getCity();\n");
       qbeMetawidget.append("      if (City != null && !\"\".equals(City)) {\n");
       qbeMetawidget
                .append("         predicatesList.add(builder.like(root.<String> get(\"City\"), '%' + City + '%'));\n");

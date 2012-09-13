@@ -54,7 +54,7 @@ public class QueryByExampleWidgetBuilder
       {
          StaticJavaStub toReturn = new StaticJavaStub();
          toReturn.getChildren().add(
-                  new JavaStatement("String " + name + " = this.search.get" + StringUtils.capitalize(name) + "()"));
+                  new JavaStatement("String " + name + " = this.example.get" + StringUtils.capitalize(name) + "()"));
          JavaStatement ifNotEmpty = new JavaStatement("if (" + name + " != null && !\"\".equals(" + name + "))");
          ifNotEmpty.getChildren().add(
                   new JavaStatement("predicatesList.add(builder.like(root.<String>get(\"" + name + "\"), '%' + " + name
@@ -69,7 +69,7 @@ public class QueryByExampleWidgetBuilder
       {
          StaticJavaStub toReturn = new StaticJavaStub();
          toReturn.getChildren().add(
-                  new JavaStatement(clazz.getSimpleName() + " " + name + " = this.search.get"
+                  new JavaStatement(clazz.getSimpleName() + " " + name + " = this.example.get"
                            + StringUtils.capitalize(name) + "()"));
          JavaStatement ifNotEmpty = new JavaStatement("if (" + name + " != 0)");
          ifNotEmpty.getChildren().add(
@@ -85,7 +85,7 @@ public class QueryByExampleWidgetBuilder
       if (attributes.containsKey(LOOKUP))
       {
          StaticJavaStub toReturn = new StaticJavaStub();
-         JavaStatement getValue = new JavaStatement(ClassUtils.getSimpleName(type) + " " + name + " = this.search.get"
+         JavaStatement getValue = new JavaStatement(ClassUtils.getSimpleName(type) + " " + name + " = this.example.get"
                   + StringUtils.capitalize(name) + "()");
          getValue.putImport(type);
          toReturn.getChildren().add(getValue);
@@ -101,7 +101,7 @@ public class QueryByExampleWidgetBuilder
       if (attributes.containsKey(FACES_LOOKUP))
       {
          StaticJavaStub toReturn = new StaticJavaStub();
-         JavaStatement getValue = new JavaStatement(ClassUtils.getSimpleName(type) + " " + name + " = this.search.get"
+         JavaStatement getValue = new JavaStatement(ClassUtils.getSimpleName(type) + " " + name + " = this.example.get"
                   + StringUtils.capitalize(name) + "()");
          getValue.putImport(type);
          toReturn.getChildren().add(getValue);
@@ -115,8 +115,8 @@ public class QueryByExampleWidgetBuilder
       // We tried searching against N_TO_MANY relationships, but had the following problems:
       //
       // 1. Difficult to make JPA Criteria Builder search for 'a Set having all of the following items'. For 'a Set
-      // having the following item' can do: predicatesList.add(root.join("customers").in(this.search.getCustomer()));
-      // 2. Cumbersome to have a new class for this.search that only has a single Customer, as opposed to a Set
+      // having the following item' can do: predicatesList.add(root.join("customers").in(this.example.getCustomer()));
+      // 2. Cumbersome to have a new class for this.example that only has a single Customer, as opposed to a Set
       // 3. Difficult to make JSF's h:selectOne* bind to a Set
       // 4. Difficult to make JSF's h:selectMany* appear as a single item dropdown
       //
