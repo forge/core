@@ -91,6 +91,75 @@ public class EJBPluginTest extends AbstractShellTest {
 	}
 
 	@Test
+	public void testNewEJbStatelessAddExtends() throws Exception {
+		Project project = initializeJavaProject();
+		queueInputLines("", "");
+		getShell().execute("setup ejb");
+		getShell()
+				.execute(
+						"ejb new-ejb --packageAndName by.giava.FlowerEjb --type STATELESS");
+		queueInputLines("", "");
+		// create new abstract class
+
+		// add extends
+		getShell().execute("ejb add-extends --type java.io.Serializable");
+		JavaSourceFacet javaClass = project.getFacet(JavaSourceFacet.class);
+		JavaResource resource = javaClass.getJavaResource("by.giava.FlowerEjb");
+		Assert.assertTrue(resource.exists());
+		JavaSource<?> source = resource.getJavaSource();
+		String content = source.toString();
+		assertTrue(content.contains("java.io.Serializable"));
+	}
+
+	@Test
+	public void testNewEJbStatelessAndInject() throws Exception {
+		Project project = initializeJavaProject();
+		queueInputLines("", "");
+		getShell().execute("setup ejb");
+		getShell()
+				.execute(
+						"ejb new-ejb --packageAndName by.giava.FlowerEjbA --type STATELESS");
+
+		// create new abstract class
+		getShell()
+				.execute(
+						"ejb new-ejb --packageAndName by.giava.FlowerEjbB --type STATELESS");
+		// add extends
+		getShell().execute(
+				"ejb add-inject --named FlowerA --type by.giava.FlowerEjbA");
+		JavaSourceFacet javaClass = project.getFacet(JavaSourceFacet.class);
+		JavaResource resource = javaClass
+				.getJavaResource("by.giava.FlowerEjbB");
+		Assert.assertTrue(resource.exists());
+		JavaSource<?> source = resource.getJavaSource();
+		String content = source.toString();
+		assertTrue(content.contains("@Inject"));
+		assertTrue(content.contains("FlowerEjbB"));
+	}
+
+	@Test
+	public void testNewEJbStatelessAndAddTransactionAttribute()
+			throws Exception {
+		Project project = initializeJavaProject();
+		queueInputLines("", "");
+		getShell().execute("setup ejb");
+		getShell()
+				.execute(
+						"ejb new-ejb --packageAndName by.giava.FlowerEjb --type STATELESS");
+		queueInputLines("", "");
+		// create new abstract class
+
+		// add extends
+		getShell().execute("ejb add-transactionAttribute --type NOT_SUPPORTED");
+		JavaSourceFacet javaClass = project.getFacet(JavaSourceFacet.class);
+		JavaResource resource = javaClass.getJavaResource("by.giava.FlowerEjb");
+		Assert.assertTrue(resource.exists());
+		JavaSource<?> source = resource.getJavaSource();
+		String content = source.toString();
+		assertTrue(content.contains("javax.ejb.TransactionAttributeType"));
+	}
+
+	@Test
 	public void testNewMDB() throws Exception {
 		Project project = initializeJavaProject();
 		queueInputLines("", "", "", "");
