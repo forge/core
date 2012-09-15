@@ -2,6 +2,7 @@ package org.jboss.forge.spec.ejb;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.lang.reflect.TypeVariable;
 import java.util.List;
 
 import javax.ejb.ActivationConfigProperty;
@@ -22,6 +23,34 @@ import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
 public class EjbInitialTest extends AbstractShellTest {
+
+	@Test
+	public void testReflectionOnGenerics() {
+		Class clazz = null;
+		String type = "org.jboss.forge.spec.ejb.testClasses.BaseRepositoryMultiVar";
+		try {
+
+			clazz = Class.forName(type);
+		} catch (ClassNotFoundException e) {
+			System.out.println("Exception: " + e);
+		}
+		TypeVariable[] supList = clazz.getTypeParameters();
+		System.out.println(supList.toString());
+		for (TypeVariable typeVariable : supList) {
+			System.out.println(typeVariable.getName() + " - "
+					+ typeVariable.getClass());
+		}
+		JavaClass javaClass = JavaParser.create(JavaClass.class);
+		javaClass.setName("FlowerTest");
+		javaClass.setPackage("it.coopservice.test");
+		javaClass.addImport("org.jboss.forge.spec.ejb.testClasses.BaseEntity");
+		javaClass
+				.addImport("org.jboss.forge.spec.ejb.testClasses.BaseRepositoryMultiVar");
+		javaClass.setSuperType("BaseRepositoryMultiVar<BaseEntity>");
+		String content = javaClass.toString();
+		System.out.println(content);
+		Assert.assertNotNull(content);
+	}
 
 	@Test
 	public void testAddMethod() throws ClassNotFoundException {
