@@ -81,7 +81,7 @@ public class EJBPluginTest extends AbstractShellTest {
 				.execute(
 						"ejb new-ejb --packageAndName by.giava.FlowerEjb --type STATELESS");
 		queueInputLines("", "");
-		getShell().execute("ejb add-implements --type java.io.Serializable");
+		getShell().execute("ejb add-implements --type org.jboss.forge.spec.ejb.testClasses.Repository");
 		JavaSourceFacet javaClass = project.getFacet(JavaSourceFacet.class);
 		JavaResource resource = javaClass.getJavaResource("by.giava.FlowerEjb");
 		Assert.assertTrue(resource.exists());
@@ -102,13 +102,15 @@ public class EJBPluginTest extends AbstractShellTest {
 		// create new abstract class
 
 		// add extends
-		getShell().execute("ejb add-extends --type java.io.Serializable");
+		getShell()
+				.execute(
+						"ejb add-extends --type org.jboss.forge.spec.ejb.testClasses.BaseRepository");
 		JavaSourceFacet javaClass = project.getFacet(JavaSourceFacet.class);
 		JavaResource resource = javaClass.getJavaResource("by.giava.FlowerEjb");
 		Assert.assertTrue(resource.exists());
 		JavaSource<?> source = resource.getJavaSource();
 		String content = source.toString();
-		assertTrue(content.contains("java.io.Serializable"));
+		assertTrue(content.contains("org.jboss.forge.spec.ejb.testClasses.BaseRepository"));
 	}
 
 	@Test

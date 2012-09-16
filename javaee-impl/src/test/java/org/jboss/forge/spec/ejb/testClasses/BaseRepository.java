@@ -4,15 +4,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 /**
- * BaseRepository
- * 
- * @param <T>
+ * @author fiorenzo pizza
  */
 public abstract class BaseRepository<T> extends AbstractRepository<T> {
 
 	private static final long serialVersionUID = 1L;
-
-	// --- JPA ---------------------------------
 
 	@PersistenceContext(unitName = "PU")
 	protected EntityManager em;

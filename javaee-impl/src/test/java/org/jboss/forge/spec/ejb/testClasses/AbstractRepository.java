@@ -12,27 +12,19 @@ import javax.persistence.criteria.CriteriaQuery;
 
 /**
  * @author fiorenzo pizza
- * 
- * @param <T>
  */
 public abstract class AbstractRepository<T> implements Serializable,
 		Repository<T> {
 
 	private static final long serialVersionUID = 1L;
 
-	// --- JPA ---------------------------------
 	protected abstract EntityManager getEm();
 
 	public abstract void setEm(EntityManager em);
 
-	// --- Logger -------------------------------
-
 	protected static final Logger logger = Logger
 			.getLogger(AbstractRepository.class.getName());
 
-	// --- Mandatory logic --------------------------------
-
-	// protected abstract Class<T> getEntityType();
 	@SuppressWarnings("unchecked")
 	protected Class<T> getEntityType() {
 		ParameterizedType parameterizedType = (ParameterizedType) getClass()
@@ -40,10 +32,6 @@ public abstract class AbstractRepository<T> implements Serializable,
 		return (Class<T>) parameterizedType.getActualTypeArguments()[0];
 	}
 
-	// --- CRUD --------------
-	/*
-	 * (non-Javadoc)
-	 */
 	public T find(Object key) {
 		try {
 			return getEm().find(getEntityType(), key);
@@ -53,9 +41,6 @@ public abstract class AbstractRepository<T> implements Serializable,
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 */
 	public boolean update(T object) {
 		try {
 			getEm().merge(object);
@@ -66,8 +51,6 @@ public abstract class AbstractRepository<T> implements Serializable,
 		}
 	}
 
-	/*
-	 */
 	public boolean delete(Object key) {
 		try {
 			T obj = getEm().find(getEntityType(), key);
@@ -82,10 +65,6 @@ public abstract class AbstractRepository<T> implements Serializable,
 		}
 	}
 
-	// --- LIST ------------------------------------------
-
-	/*
-	 */
 	@SuppressWarnings("unchecked")
 	public List<T> getAllList() {
 		try {

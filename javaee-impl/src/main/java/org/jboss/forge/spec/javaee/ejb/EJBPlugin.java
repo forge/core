@@ -7,7 +7,6 @@
 package org.jboss.forge.spec.javaee.ejb;
 
 import java.io.FileNotFoundException;
-import java.lang.reflect.Method;
 
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
@@ -19,14 +18,10 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 
 import org.jboss.forge.parser.JavaParser;
-import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.JavaSource;
-import org.jboss.forge.parser.java.util.Types;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.project.facets.events.InstallFacets;
-import org.jboss.forge.resources.Resource;
 import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.shell.PromptType;
 import org.jboss.forge.shell.Shell;
@@ -154,7 +149,7 @@ public class EJBPlugin implements Plugin {
 			if (!ejb.getInterfaces().contains(type)) {
 				shell.println("type: " + type);
 				ejb.addImport(type);
-				JavaUtils.addMethodTo(ejb, type, shell);
+				JavaUtils.addAllMethodsTo(ejb, type, shell);
 				resource.setContents(ejb);
 			} else {
 				throw new RuntimeException(
@@ -179,6 +174,9 @@ public class EJBPlugin implements Plugin {
 			JavaClass ejb = getJavaClass();
 			if (!ejb.getSuperType().contains(type)) {
 				ejb.setSuperType(type);
+				// ADD ALL ABSTRACT METHODS AND VERIFY IF THE SUPER CLASS IS
+				// GENERIC
+				JavaUtils.addAbstractMethodsTo(ejb, type, shell);
 			} else {
 				throw new RuntimeException(
 						"Current resource contains Class to be used as super class!");
