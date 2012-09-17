@@ -51,6 +51,8 @@ public interface MavenPluginFacet extends Facet
    void addPlugin(MavenPlugin plugin);
 
    void removePlugin(Dependency dependency);
+   
+   void updatePlugin(final MavenPlugin plugin);
 
    /**
     * Add a {@link KnownRepository} to the project build system. This is where dependencies can be found, downloaded,

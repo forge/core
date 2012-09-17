@@ -19,6 +19,7 @@ import org.apache.maven.model.Repository;
 import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.maven.MavenPluginFacet;
 import org.jboss.forge.maven.facets.exceptions.PluginNotFoundException;
+import org.jboss.forge.maven.plugins.Execution;
 import org.jboss.forge.maven.plugins.MavenPlugin;
 import org.jboss.forge.maven.plugins.MavenPluginAdapter;
 import org.jboss.forge.maven.plugins.MavenPluginBuilder;
@@ -75,7 +76,10 @@ public class MavenPluginFacetImpl extends BaseFacet implements MavenPluginFacet,
                                             .setArtifactId(plugin.getArtifactId()).setVersion(plugin.getVersion()))
 
                             .setConfiguration(adapter.getConfig());
-
+                    for (Execution execution : adapter.listExecutions())
+                    {
+                       pluginBuilder.addExecution(execution);
+                    }
                     plugins.add(pluginBuilder);
                 }
             }
@@ -148,6 +152,34 @@ public class MavenPluginFacetImpl extends BaseFacet implements MavenPluginFacet,
             }
         }
     }
+    
+   @Override
+   public void updatePlugin(final MavenPlugin plugin)
+   {
+      MavenCoreFacet mavenCoreFacet = project.getFacet(MavenCoreFacet.class);
+      Model pom = mavenCoreFacet.getPOM();
+      Build build = pom.getBuild();
+      if (build != null)
+      {
+         List<org.apache.maven.model.Plugin> pomPlugins = build.getPlugins();
+         if (pomPlugins != null)
+         {
+            for (org.apache.maven.model.Plugin pomPlugin : pomPlugins)
+            {
+               Dependency pluginDep = DependencyBuilder.create().setGroupId(pomPlugin.getGroupId())
+                        .setArtifactId(pomPlugin.getArtifactId());
+
+               if (DependencyBuilder.areEquivalent(pluginDep, plugin.getDependency()))
+               {
+                  MavenPluginAdapter adapter = new MavenPluginAdapter(plugin);
+                  pomPlugin.setConfiguration(adapter.getConfiguration());
+                  mavenCoreFacet.setPOM(pom);
+                  break;
+               }
+            }
+         }
+      }
+   }
 
     @Override
     public void addPluginRepository(final KnownRepository repository) {
@@ -222,4 +254,5 @@ public class MavenPluginFacetImpl extends BaseFacet implements MavenPluginFacet,
         }
         return Collections.unmodifiableList(results);
     }
+
 }

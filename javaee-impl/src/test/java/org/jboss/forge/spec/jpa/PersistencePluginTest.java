@@ -11,8 +11,10 @@ import java.util.List;
 import junit.framework.Assert;
 
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.spec.javaee.PersistenceFacet;
+import org.jboss.forge.spec.javaee.PersistenceMetaModelFacet;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceUnitDef;
 import org.junit.Test;
@@ -30,7 +32,7 @@ public class PersistencePluginTest extends AbstractJPATest
    {
       Project project = getProject();
 
-      queueInputLines("");
+      queueInputLines("", "");
       getShell().execute(
                "persistence setup --provider HIBERNATE --container CUSTOM_JTA --jndiDataSource java:jboss:jta-ds ");
 
@@ -46,7 +48,7 @@ public class PersistencePluginTest extends AbstractJPATest
    {
       Project project = getProject();
 
-      queueInputLines("");
+      queueInputLines("", "");
       getShell().execute(
                "persistence setup --provider HIBERNATE --container JBOSS_AS7");
 
@@ -62,7 +64,7 @@ public class PersistencePluginTest extends AbstractJPATest
    {
       Project project = getProject();
 
-      queueInputLines("");
+      queueInputLines("", "");
       getShell().execute(
                "persistence setup --provider HIBERNATE --container JBOSS_AS7");
 
@@ -78,7 +80,7 @@ public class PersistencePluginTest extends AbstractJPATest
    {
       Project project = getProject();
 
-      queueInputLines("");
+      queueInputLines("", "");
       getShell().execute(
                "persistence setup --provider HIBERNATE --container JBOSS_AS7");
 
@@ -106,7 +108,7 @@ public class PersistencePluginTest extends AbstractJPATest
    {
       Project project = getProject();
 
-      queueInputLines("");
+      queueInputLines("", "");
       getShell().execute(
                "persistence setup --provider HIBERNATE --container JBOSS_AS7 --database MYSQL");
 
@@ -125,7 +127,7 @@ public class PersistencePluginTest extends AbstractJPATest
    {
       Project project = getProject();
 
-      queueInputLines("");
+      queueInputLines("", "");
       getShell()
                .execute(
                         "persistence setup --provider HIBERNATE --container JBOSS_AS6 --database MYSQL_INNODB --jndiDataSource java:demo");
@@ -140,5 +142,21 @@ public class PersistencePluginTest extends AbstractJPATest
       Assert.assertEquals("org.hibernate.dialect.MySQLInnoDBDialect", unit.getProperties().get(4).getValue());
 
       Assert.assertEquals(5, unit.getProperties().size());
+   }
+
+   @Test
+   public void testEclipseLinkWithMetaModel() throws Exception
+   {
+      Project project = getProject();
+
+      queueInputLines("y", "", "");
+      getShell().execute("persistence setup --provider ECLIPSELINK --container GLASSFISH_3");
+
+      Assert.assertTrue(project.hasFacet(PersistenceMetaModelFacet.class));
+      PersistenceMetaModelFacet facet = project.getFacet(PersistenceMetaModelFacet.class);
+      Assert.assertTrue(facet.getCompilerArgs().contains("eclipselink.persistencexml"));
+      Assert.assertEquals("org.eclipse.persistence.internal.jpa.modelgen.CanonicalModelProcessor", facet.getProcessor());
+      Assert.assertEquals("eclipselink", facet.getProcessorDependency().getArtifactId());
+      Assert.assertEquals(1, project.getFacet(MavenCoreFacet.class).getPOM().getPluginRepositories().size());
    }
 }

@@ -32,4 +32,9 @@ public interface PersistenceProvider
     * List any dependencies required by this provider.
     */
    List<Dependency> listDependencies();
+   
+   /**
+    * The JPA 2 meta model provider related to this persistence provider.
+    */
+   MetaModelProvider getMetaModelProvider();
 }

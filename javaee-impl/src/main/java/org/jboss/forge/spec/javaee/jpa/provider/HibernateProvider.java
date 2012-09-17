@@ -15,6 +15,7 @@ import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.spec.javaee.jpa.api.DatabaseType;
 import org.jboss.forge.spec.javaee.jpa.api.JPADataSource;
+import org.jboss.forge.spec.javaee.jpa.api.MetaModelProvider;
 import org.jboss.forge.spec.javaee.jpa.api.PersistenceProvider;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceUnitDef;
 
@@ -90,5 +91,11 @@ public class HibernateProvider implements PersistenceProvider
    public List<Dependency> listDependencies()
    {
       return Arrays.asList((Dependency) DependencyBuilder.create("org.hibernate:hibernate-entitymanager"));
+   }
+
+   @Override
+   public MetaModelProvider getMetaModelProvider()
+   {
+      return new HibernateMetaModelProvider();
    }
 }

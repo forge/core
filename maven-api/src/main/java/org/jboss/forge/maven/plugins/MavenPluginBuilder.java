@@ -75,6 +75,12 @@ public class MavenPluginBuilder implements MavenPlugin, PluginElement
       plugin.addExecution(execution);
       return this;
    }
+   
+   public MavenPluginBuilder addPluginDependency(final Dependency pluginDependency)
+   {
+      plugin.addPluginDependency(pluginDependency);
+      return this;
+   }
 
    public MavenPluginBuilder setExtensions(boolean extensions) {
        plugin.setExtenstions(extensions);
@@ -106,4 +112,11 @@ public class MavenPluginBuilder implements MavenPlugin, PluginElement
 
       return builder;
    }
+
+   @Override
+   public List<Dependency> getDirectDependencies()
+   {
+      return plugin.getDirectDependencies();
+   }
+
 }
