@@ -35,6 +35,22 @@ public class MavenPluginAdapter extends org.apache.maven.model.Plugin implements
       setConfiguration(parseConfig(mavenPlugin.getConfig()));
       setExecutions(transformExecutions(mavenPlugin));
       setExtensions(mavenPlugin.isExtensionsEnabled());
+      setDependencies(transformDependencies(mavenPlugin));
+   }
+
+   private List<org.apache.maven.model.Dependency> transformDependencies(MavenPlugin mavenPlugin)
+   {
+      List<org.apache.maven.model.Dependency> dependencies = new ArrayList<org.apache.maven.model.Dependency>();
+      for (Dependency dependency : mavenPlugin.getDirectDependencies())
+      {
+         org.apache.maven.model.Dependency pluginDependency = new org.apache.maven.model.Dependency();
+         pluginDependency.setArtifactId(dependency.getArtifactId());
+         pluginDependency.setGroupId(dependency.getGroupId());
+         pluginDependency.setVersion(dependency.getVersion());
+         pluginDependency.setScope(dependency.getScopeType());
+         dependencies.add(pluginDependency);
+      }
+      return dependencies;
    }
 
    private List<PluginExecution> transformExecutions(final MavenPlugin mavenPlugin)
@@ -47,7 +63,6 @@ public class MavenPluginAdapter extends org.apache.maven.model.Plugin implements
          pluginExecution.setPhase(execution.getPhase());
          pluginExecution.setGoals(execution.getGoals());
          pluginExecution.setConfiguration(parseConfig(execution.getConfig()));
-
          executions.add(pluginExecution);
       }
 
@@ -94,6 +109,10 @@ public class MavenPluginAdapter extends org.apache.maven.model.Plugin implements
          for (String goal : pluginExecution.getGoals()) {
             executionBuilder.addGoal(goal);
          }
+         if (pluginExecution.getConfiguration() != null)
+         {
+            executionBuilder.setConfig(new ConfigurationImpl((Xpp3Dom) pluginExecution.getConfiguration()));
+         }
          executions.add(executionBuilder);
       }
 
@@ -121,4 +140,22 @@ public class MavenPluginAdapter extends org.apache.maven.model.Plugin implements
     public boolean isExtensionsEnabled() {
         return isExtensions();
     }
+
+   @Override
+   public List<Dependency> getDirectDependencies()
+   {
+      List<Dependency> dependencies = new ArrayList<Dependency>();
+      for (org.apache.maven.model.Dependency pluginDependency : getDependencies())
+      {
+         DependencyBuilder builder = DependencyBuilder.create()
+                  .setArtifactId(pluginDependency.getArtifactId())
+                  .setGroupId(pluginDependency.getGroupId())
+                  .setVersion(pluginDependency.getVersion())
+                  .setPackagingType(pluginDependency.getType())
+                  .setScopeType(pluginDependency.getScope());
+         dependencies.add(builder);
+      }
+      return dependencies;
+   }
+
 }

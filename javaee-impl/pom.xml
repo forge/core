@@ -27,6 +27,11 @@
          <scope>provided</scope>
       </dependency>
       <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-maven-api</artifactId>
+         <scope>provided</scope>
+      </dependency>
+      <dependency>
          <groupId>org.jboss.seam.render</groupId>
          <artifactId>seam-render</artifactId>
       </dependency>

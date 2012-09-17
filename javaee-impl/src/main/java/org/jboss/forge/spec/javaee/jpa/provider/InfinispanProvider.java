@@ -12,6 +12,7 @@ import java.util.List;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.spec.javaee.jpa.api.JPADataSource;
+import org.jboss.forge.spec.javaee.jpa.api.MetaModelProvider;
 import org.jboss.forge.spec.javaee.jpa.api.PersistenceProvider;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceUnitDef;
 
@@ -40,5 +41,11 @@ public class InfinispanProvider implements PersistenceProvider
    {
       return Arrays.asList((Dependency) DependencyBuilder.create("org.hibernate.ogm:hibernate-ogm-core"),
                (Dependency) DependencyBuilder.create("org.hibernate:hibernate-search"));
+   }
+
+   @Override
+   public MetaModelProvider getMetaModelProvider()
+   {
+      return new HibernateMetaModelProvider();
    }
 }
