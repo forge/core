@@ -6,6 +6,8 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.container.services.Service;
+import org.jboss.forge.test.AbstractForgeTest;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
@@ -19,7 +21,7 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class ContainerAdapterTest
 {
-   @Deployment
+   @Deployment(order = 2)
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
@@ -27,10 +29,20 @@ public class ContainerAdapterTest
                .addAsManifestResource(new StringAsset(""), ArchivePaths.create("beans.xml"))
                .addAsServiceProvider(Extension.class, TestExtension.class)
                .setAsForgeXML(new StringAsset("<addon><dependency " +
-                        "name=\"3d09722c-6e71-4bac-b315-e8078217dc98\" " +
+                        "name=\"dependency\" " +
                         "min-version=\"X\" " +
                         "max-version=\"Y\" " +
                         "optional=\"false\"/></addon>"));
+
+      return archive;
+   }
+
+   @Deployment(name = "dependency", testable = false, order = 1)
+   public static ForgeArchive getDependencyDeployment()
+   {
+      ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class, "dependency")
+               .addAsLibraries(AbstractForgeTest.resolveDependencies("org.jboss.forge:forge-example-plugin-2"))
+               .setAsForgeXML(new StringAsset("<addon/>"));
 
       return archive;
    }
@@ -39,12 +51,27 @@ public class ContainerAdapterTest
    private SimpleService simple;
 
    @Inject
+   private ConsumingService consuming;
+
+   @Inject
    private TestExtension extension;
 
    @Test
    public void testContainerInjection()
    {
       Assert.assertNotNull(simple);
+   }
+
+   @Inject
+   @Service
+   PublishedService remote;
+
+   @Test
+   public void testRemoteServiceInjection() throws Exception
+   {
+      Assert.assertEquals("I am ConsumingService. Remote service says [I am PublishedService.]", consuming.getMessage());
+      Assert.assertNotSame(consuming, remote);
+      Assert.assertNotSame(consuming.getClassLoader(), remote.getClassLoader());
    }
 
    @Test

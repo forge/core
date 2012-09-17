@@ -182,6 +182,10 @@ public class Bootstrap
             Module module = addonLoader.loadModule(ModuleIdentifier.fromString(entry.toModuleId()));
             result.add(module);
          }
+         catch (ModuleLoadException e)
+         {
+            System.out.print("*");
+         }
          catch (Exception e)
          {
             throw new ContainerException("Failed loading module for addon [" + entry + "]", e);

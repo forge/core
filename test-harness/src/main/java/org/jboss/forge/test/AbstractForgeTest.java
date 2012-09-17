@@ -9,6 +9,7 @@ package org.jboss.forge.test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Collection;
 
 import javax.inject.Inject;
 
@@ -16,8 +17,11 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.Root;
 import org.jboss.forge.container.ContainerControl;
 import org.jboss.shrinkwrap.api.ArchivePaths;
+import org.jboss.shrinkwrap.api.GenericArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.resolver.api.DependencyResolvers;
+import org.jboss.shrinkwrap.resolver.api.maven.MavenDependencyResolver;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -68,6 +72,14 @@ public abstract class AbstractForgeTest
    protected String getOutput()
    {
       return output.toString();
+   }
+
+   public static Collection<GenericArchive> resolveDependencies(final String coords)
+   {
+      return DependencyResolvers.use(MavenDependencyResolver.class)
+               .loadMetadataFromPom("pom.xml")
+               .artifacts(coords)
+               .resolveAs(GenericArchive.class);
    }
 
 }

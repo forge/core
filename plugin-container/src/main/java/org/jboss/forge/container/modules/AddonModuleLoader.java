@@ -85,8 +85,8 @@ public class AddonModuleLoader extends ModuleLoader
 
             if (moduleId == null && !dependency.isOptional())
             {
-               // TODO implement proper fault handling
-               System.out.println("SEVERE: Could not dependency [" + dependency + "] for addon [" + found + "]");
+               // TODO implement proper fault handling. For now, abort.
+               return null;
             }
             else
             {

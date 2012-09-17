@@ -16,6 +16,16 @@ public class ConsumingService
 
    public void postStartup(@Observes PostStartup event)
    {
-      System.out.println("ConsumingService has been started. Remote service says [" + service.getMessage() + "]");
+      System.out.println(getMessage());
+   }
+
+   public String getMessage()
+   {
+      return "I am ConsumingService. Remote service says [" + service.getMessage() + "]";
+   }
+
+   public ClassLoader getClassLoader()
+   {
+      return getClass().getClassLoader();
    }
 }
