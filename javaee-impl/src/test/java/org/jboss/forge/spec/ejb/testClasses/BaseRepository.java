@@ -6,21 +6,24 @@ import javax.persistence.PersistenceContext;
 /**
  * @author fiorenzo pizza
  */
-public abstract class BaseRepository<T> extends AbstractRepository<T> {
+public abstract class BaseRepository<T> extends AbstractRepository<T>
+{
 
-	private static final long serialVersionUID = 1L;
+   private static final long serialVersionUID = 1L;
 
-	@PersistenceContext(unitName = "PU")
-	protected EntityManager em;
+   @PersistenceContext(unitName = "PU")
+   protected EntityManager em;
 
-	@Override
-	protected EntityManager getEm() {
-		return em;
-	}
+   @Override
+   protected EntityManager getEm()
+   {
+      return em;
+   }
 
-	@Override
-	public void setEm(EntityManager em) {
-		this.em = em;
-	}
+   @Override
+   public void setEm(EntityManager em)
+   {
+      this.em = em;
+   }
 
 }

@@ -16,87 +16,106 @@ import javax.persistence.criteria.CriteriaQuery;
  * @param <T>
  */
 public abstract class AbstractMultiVar<T, H> implements Serializable,
-		Repository<T> {
+         Repository<T>
+{
 
-	private static final long serialVersionUID = 1L;
+   private static final long serialVersionUID = 1L;
 
-	// --- JPA ---------------------------------
-	protected abstract EntityManager getEm();
+   // --- JPA ---------------------------------
+   protected abstract EntityManager getEm();
 
-	public abstract void setEm(EntityManager em);
+   public abstract void setEm(EntityManager em);
 
-	// --- Logger -------------------------------
+   // --- Logger -------------------------------
 
-	protected static final Logger logger = Logger
-			.getLogger(AbstractMultiVar.class.getName());
+   protected static final Logger logger = Logger
+            .getLogger(AbstractMultiVar.class.getName());
 
-	// --- Mandatory logic --------------------------------
+   // --- Mandatory logic --------------------------------
 
-	// protected abstract Class<T> getEntityType();
-	@SuppressWarnings("unchecked")
-	protected Class<T> getEntityType() {
-		ParameterizedType parameterizedType = (ParameterizedType) getClass()
-				.getGenericSuperclass();
-		return (Class<T>) parameterizedType.getActualTypeArguments()[0];
-	}
+   // protected abstract Class<T> getEntityType();
+   @SuppressWarnings("unchecked")
+   protected Class<T> getEntityType()
+   {
+      ParameterizedType parameterizedType = (ParameterizedType) getClass()
+               .getGenericSuperclass();
+      return (Class<T>) parameterizedType.getActualTypeArguments()[0];
+   }
 
-	// --- CRUD --------------
-	/*
-	 * (non-Javadoc)
+   // --- CRUD --------------
+   /*
+    * (non-Javadoc)
+    */
+   public T find(Object key)
+   {
+      try
+      {
+         return getEm().find(getEntityType(), key);
+      }
+      catch (Exception e)
+      {
+         logger.log(Level.SEVERE, null, e);
+         return null;
+      }
+   }
+
+   /*
+    * (non-Javadoc)
+    */
+   public boolean update(T object)
+   {
+      try
+      {
+         getEm().merge(object);
+         return true;
+      }
+      catch (Exception e)
+      {
+         logger.log(Level.SEVERE, null, e);
+         return false;
+      }
+   }
+
+   /*
 	 */
-	public T find(Object key) {
-		try {
-			return getEm().find(getEntityType(), key);
-		} catch (Exception e) {
-			logger.log(Level.SEVERE, null, e);
-			return null;
-		}
-	}
+   public boolean delete(Object key)
+   {
+      try
+      {
+         T obj = getEm().find(getEntityType(), key);
+         if (obj != null)
+         {
+            getEm().remove(obj);
+            // getEm().flush();
+         }
+         return true;
+      }
+      catch (Exception e)
+      {
+         logger.log(Level.SEVERE, null, e);
+         return false;
+      }
+   }
 
-	/*
-	 * (non-Javadoc)
+   // --- LIST ------------------------------------------
+
+   /*
 	 */
-	public boolean update(T object) {
-		try {
-			getEm().merge(object);
-			return true;
-		} catch (Exception e) {
-			logger.log(Level.SEVERE, null, e);
-			return false;
-		}
-	}
-
-	/*
-	 */
-	public boolean delete(Object key) {
-		try {
-			T obj = getEm().find(getEntityType(), key);
-			if (obj != null) {
-				getEm().remove(obj);
-				// getEm().flush();
-			}
-			return true;
-		} catch (Exception e) {
-			logger.log(Level.SEVERE, null, e);
-			return false;
-		}
-	}
-
-	// --- LIST ------------------------------------------
-
-	/*
-	 */
-	@SuppressWarnings("unchecked")
-	public List<T> getAllList() {
-		try {
-			CriteriaQuery<T> criteriaQuery = (CriteriaQuery<T>) getEm()
-					.getCriteriaBuilder().createQuery();
-			criteriaQuery.select(criteriaQuery.from(getEntityType()));
-			return getEm().createQuery(criteriaQuery).getResultList();
-		} catch (Exception ex) {
-			logger.log(Level.SEVERE, null, ex);
-			return new ArrayList<T>();
-		}
-	}
+   @SuppressWarnings("unchecked")
+   public List<T> getAllList()
+   {
+      try
+      {
+         CriteriaQuery<T> criteriaQuery = (CriteriaQuery<T>) getEm()
+                  .getCriteriaBuilder().createQuery();
+         criteriaQuery.select(criteriaQuery.from(getEntityType()));
+         return getEm().createQuery(criteriaQuery).getResultList();
+      }
+      catch (Exception ex)
+      {
+         logger.log(Level.SEVERE, null, ex);
+         return new ArrayList<T>();
+      }
+   }
 
 }

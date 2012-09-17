@@ -5,18 +5,19 @@ import java.util.List;
 /**
  * @author fiorenzo pizza
  */
-public interface Repository<T> {
+public interface Repository<T>
+{
 
-	public List<T> getAllList();
+   public List<T> getAllList();
 
-	public T find(Object key);
+   public T find(Object key);
 
-	public T fetch(Object key);
+   public T fetch(Object key);
 
-	public T persist(T object);
+   public T persist(T object);
 
-	public boolean update(T object);
+   public boolean update(T object);
 
-	public boolean delete(Object key);
+   public boolean delete(Object key);
 
 }

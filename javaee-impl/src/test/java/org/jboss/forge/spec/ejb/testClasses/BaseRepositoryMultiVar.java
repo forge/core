@@ -9,23 +9,26 @@ import javax.persistence.PersistenceContext;
  * @param <T, H>
  */
 public abstract class BaseRepositoryMultiVar<T, H> extends
-		AbstractMultiVar<T, H> {
+         AbstractMultiVar<T, H>
+{
 
-	private static final long serialVersionUID = 1L;
+   private static final long serialVersionUID = 1L;
 
-	// --- JPA ---------------------------------
+   // --- JPA ---------------------------------
 
-	@PersistenceContext(unitName = "PU")
-	protected EntityManager em;
+   @PersistenceContext(unitName = "PU")
+   protected EntityManager em;
 
-	@Override
-	protected EntityManager getEm() {
-		return em;
-	}
+   @Override
+   protected EntityManager getEm()
+   {
+      return em;
+   }
 
-	@Override
-	public void setEm(EntityManager em) {
-		this.em = em;
-	}
+   @Override
+   public void setEm(EntityManager em)
+   {
+      this.em = em;
+   }
 
 }

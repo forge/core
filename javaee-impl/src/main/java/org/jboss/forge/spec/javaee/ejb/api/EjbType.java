@@ -25,17 +25,20 @@ package org.jboss.forge.spec.javaee.ejb.api;
  * @author <a href="mailto:fiorenzo.pizza@gmail.com">fiorenzo pizza</a>
  */
 
-public enum EjbType {
-	STATELESS("javax.ejb.Stateless"), STATEFUL("javax.ejb.Stateful"), SINGLETON(
-			"javax.ejb.Singleton"), MESSAGEDRIVEN("javax.ejb.MessageDriven");
+public enum EjbType
+{
+   STATELESS("javax.ejb.Stateless"), STATEFUL("javax.ejb.Stateful"), SINGLETON(
+            "javax.ejb.Singleton"), MESSAGEDRIVEN("javax.ejb.MessageDriven");
 
-	private String annotation;
+   private String annotation;
 
-	private EjbType(String annotation) {
-		this.annotation = annotation;
-	}
+   private EjbType(String annotation)
+   {
+      this.annotation = annotation;
+   }
 
-	public String getAnnotation() {
-		return annotation;
-	}
+   public String getAnnotation()
+   {
+      return annotation;
+   }
 }

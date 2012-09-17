@@ -25,16 +25,19 @@ package org.jboss.forge.spec.javaee.ejb.api;
  * @author <a href="mailto:fiorenzo.pizza@gmail.com">fiorenzo pizza</a>
  */
 
-public enum JmsDestinationType {
-	QUEUE("javax.jms.Queue"), TOPIC("javax.jms.Topic");
+public enum JmsDestinationType
+{
+   QUEUE("javax.jms.Queue"), TOPIC("javax.jms.Topic");
 
-	private String destinationType;
+   private String destinationType;
 
-	private JmsDestinationType(String destinationType) {
-		this.destinationType = destinationType;
-	}
+   private JmsDestinationType(String destinationType)
+   {
+      this.destinationType = destinationType;
+   }
 
-	public String getDestinationType() {
-		return destinationType;
-	}
+   public String getDestinationType()
+   {
+      return destinationType;
+   }
 }
