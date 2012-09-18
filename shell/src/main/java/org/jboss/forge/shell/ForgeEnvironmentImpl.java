@@ -116,4 +116,10 @@ public class ForgeEnvironmentImpl implements ForgeEnvironment
       String forgeHome = System.getProperty(ShellImpl.FORGE_HOME_SYSTEM_PROPERTY);
       return resourceFactory.getResourceFrom(new File(forgeHome)).reify(DirectoryResource.class);
    }
+
+   @Override
+   public boolean isEmbedded()
+   {
+      return Boolean.getBoolean("forge.compatibility.IDE");
+   }
 }

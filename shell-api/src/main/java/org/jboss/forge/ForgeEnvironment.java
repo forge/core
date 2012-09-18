@@ -67,4 +67,9 @@ public interface ForgeEnvironment
     * Get the Forge Home directory. The current value is defined by the "forge.home" system.property
     */
    DirectoryResource getForgeHome();
+
+   /**
+    * Returns true if Forge is running in embedded mode (inside JBoss Tools for example)
+    */
+   boolean isEmbedded();
 }
