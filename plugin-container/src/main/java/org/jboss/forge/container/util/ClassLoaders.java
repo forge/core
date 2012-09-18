@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * // TODO document
- *
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class ClassLoaders
@@ -15,20 +15,21 @@ public class ClassLoaders
 
    public static interface Task
    {
-      void perform() throws Exception;
+      Object perform() throws Exception;
    }
 
    /**
-    * Execute the given {@link Task} in the {@link ClassLoader} provided.
+    * Execute the given {@link Task} in the {@link ClassLoader} provided. Return the result, if any.
     */
-   public static void executeIn(ClassLoader loader, Task task)
-   {log.debug("[Thread " + Thread.currentThread().getName() + "] ClassLoader ["
-            + loader + "] task began.");
+   public static Object executeIn(ClassLoader loader, Task task)
+   {
+      log.debug("[Thread " + Thread.currentThread().getName() + "] ClassLoader ["
+               + loader + "] task began.");
       ClassLoader original = Thread.currentThread().getContextClassLoader();
       try
       {
          Thread.currentThread().setContextClassLoader(loader);
-         task.perform();
+         return task.perform();
       }
       catch (Exception e)
       {

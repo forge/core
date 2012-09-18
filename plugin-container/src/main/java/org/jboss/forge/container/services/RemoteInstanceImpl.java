@@ -4,6 +4,9 @@ import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 
+import org.jboss.forge.container.util.ClassLoaders;
+import org.jboss.forge.container.util.ClassLoaders.Task;
+
 public class RemoteInstanceImpl<R> implements RemoteInstance<R>
 {
    private BeanManager manager;
@@ -20,9 +23,18 @@ public class RemoteInstanceImpl<R> implements RemoteInstance<R>
    @SuppressWarnings("unchecked")
    public R get()
    {
-      Bean<R> bean = (Bean<R>) manager.resolve(manager.getBeans(type));
-      context = manager.createCreationalContext(bean);
-      return (R) manager.getReference(bean, type, context);
+      Task task = new Task()
+      {
+         @Override
+         public Object perform() throws Exception
+         {
+            Bean<R> bean = (Bean<R>) manager.resolve(manager.getBeans(type));
+            context = manager.createCreationalContext(bean);
+            return manager.getReference(bean, type, context);
+         }
+      };
+
+      return (R) ClassLoaders.executeIn(type.getClassLoader(), task);
    }
 
    @Override

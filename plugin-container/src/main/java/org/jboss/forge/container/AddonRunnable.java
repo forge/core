@@ -37,7 +37,7 @@ public final class AddonRunnable implements Runnable
       ClassLoaders.executeIn(module.getClassLoader(), new Task()
       {
          @Override
-         public void perform() throws Exception
+         public Object perform() throws Exception
          {
             Weld weld = new ModularWeld(module);
             WeldContainer container = weld.initialize();
@@ -63,6 +63,8 @@ public final class AddonRunnable implements Runnable
             globalRegistry.removeServices(module.getClassLoader());
             manager.fireEvent(new ContainerShutdown());
             weld.shutdown();
+
+            return null;
          }
       });
    }

@@ -57,7 +57,7 @@ public class SilentTCCLSingletonProvider extends SingletonProvider
          T instance = store.get(getClassLoader());
          if (instance == null)
          {
-            throw new IllegalStateException("Singleton not set for " + getClassLoader());
+            throw new IllegalStateException("Singleton not set for [" + getClassLoader() + "]");
          }
          return instance;
       }

@@ -35,7 +35,7 @@ public final class ControlRunnable implements Runnable
       {
 
          @Override
-         public void perform() throws Exception
+         public Object perform() throws Exception
          {
             // Make sure Weld uses ThreadSafe singletons.
             SingletonProvider.initialize(new SilentTCCLSingletonProvider());
@@ -55,6 +55,8 @@ public final class ControlRunnable implements Runnable
 
             manager.fireEvent(new ContainerShutdown());
             weld.shutdown();
+
+            return null;
          }
       });
    }

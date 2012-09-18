@@ -7,7 +7,6 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.services.Service;
-import org.jboss.forge.test.AbstractForgeTest;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
@@ -19,7 +18,7 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @RunWith(Arquillian.class)
-public class ContainerAdapterTest
+public class AddonDependencyTest
 {
    @Deployment(order = 2)
    public static ForgeArchive getDeployment()
@@ -28,11 +27,13 @@ public class ContainerAdapterTest
                .addClasses(SimpleService.class, ConsumingService.class, TestExtension.class)
                .addAsManifestResource(new StringAsset(""), ArchivePaths.create("beans.xml"))
                .addAsServiceProvider(Extension.class, TestExtension.class)
-               .setAsForgeXML(new StringAsset("<addon><dependency " +
+               .setAsForgeXML(new StringAsset("<addon>" +
+                        "<dependency " +
                         "name=\"dependency\" " +
                         "min-version=\"X\" " +
                         "max-version=\"Y\" " +
-                        "optional=\"false\"/></addon>"));
+                        "optional=\"false\"/>" +
+                        "</addon>"));
 
       return archive;
    }
@@ -40,31 +41,20 @@ public class ContainerAdapterTest
    @Deployment(name = "dependency", testable = false, order = 1)
    public static ForgeArchive getDependencyDeployment()
    {
-      ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class, "dependency")
-               .addAsLibraries(AbstractForgeTest.resolveDependencies("org.jboss.forge:forge-example-plugin-2"))
+      ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class, "dependency.jar")
+               .addClasses(PublishedService.class)
+               .addAsManifestResource(new StringAsset(""), ArchivePaths.create("beans.xml"))
                .setAsForgeXML(new StringAsset("<addon/>"));
 
       return archive;
    }
 
    @Inject
-   private SimpleService simple;
-
-   @Inject
    private ConsumingService consuming;
 
    @Inject
-   private TestExtension extension;
-
-   @Test
-   public void testContainerInjection()
-   {
-      Assert.assertNotNull(simple);
-   }
-
-   @Inject
    @Service
-   PublishedService remote;
+   private PublishedService remote;
 
    @Test
    public void testRemoteServiceInjection() throws Exception
@@ -74,18 +64,4 @@ public class ContainerAdapterTest
       Assert.assertNotSame(consuming.getClassLoader(), remote.getClassLoader());
    }
 
-   @Test
-   public void testLifecycle() throws Exception
-   {
-      Assert.assertTrue(simple.isStartupObserved());
-      Assert.assertTrue(simple.isPostStartupObserved());
-      Assert.assertFalse(simple.isPreShutdownObserved());
-      Assert.assertFalse(simple.isShutdownObserved());
-   }
-
-   @Test
-   public void testCDIExtensionsFunctionNormally() throws Exception
-   {
-      Assert.assertTrue(extension.isInvoked());
-   }
 }

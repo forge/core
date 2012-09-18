@@ -77,43 +77,61 @@ public class AddonModuleLoader extends ModuleLoader
                   PathFilters.rejectAll(), parent, PLUGIN_CONTAINER, false));
          builder.addDependency(DependencySpec.createLocalDependencySpec());
 
-         List<File> resources = AddonUtil.getAddonResources(found);
-         List<AddonDependency> addons = AddonUtil.getAddonDependencies(found);
-         for (AddonDependency dependency : addons)
+         try
          {
-            ModuleIdentifier moduleId = findCompatibleInstalledModule(dependency);
-
-            if (moduleId == null && !dependency.isOptional())
-            {
-               // TODO implement proper fault handling. For now, abort.
-               return null;
-            }
-            else
-            {
-               builder.addDependency(DependencySpec.createModuleDependencySpec(PathFilters.acceptAll(),
-                        PathFilters.rejectAll(), this, moduleId, dependency.isOptional()));
-            }
+            addAddonDependencies(found, builder);
+         }
+         catch (ContainerException e)
+         {
+            // TODO implement proper fault handling. For now, abort.
+            return null;
          }
 
-         for (File file : resources)
-         {
-            try
-            {
-               builder.addResourceRoot(
-                        ResourceLoaderSpec.createResourceLoaderSpec(
-                                 ResourceLoaders.createJarResourceLoader(file.getName(), new JarFile(file)),
-                                 PathFilters.acceptAll())
-                        );
-            }
-            catch (IOException e)
-            {
-               throw new ContainerException("Could not load resources from [" + file.getAbsolutePath() + "]", e);
-            }
-         }
+         addLocalResources(found, builder);
 
          return builder.create();
       }
       return null;
+   }
+
+   private void addLocalResources(AddonEntry found, Builder builder)
+   {
+      List<File> resources = AddonUtil.getAddonResources(found);
+      for (File file : resources)
+      {
+         try
+         {
+            builder.addResourceRoot(
+                     ResourceLoaderSpec.createResourceLoaderSpec(
+                              ResourceLoaders.createJarResourceLoader(file.getName(), new JarFile(file)),
+                              PathFilters.acceptAll())
+                     );
+         }
+         catch (IOException e)
+         {
+            throw new ContainerException("Could not load resources from [" + file.getAbsolutePath() + "]", e);
+         }
+      }
+   }
+
+   private void addAddonDependencies(AddonEntry found, Builder builder) throws ContainerException
+   {
+      List<AddonDependency> addons = AddonUtil.getAddonDependencies(found);
+      for (AddonDependency dependency : addons)
+      {
+         ModuleIdentifier moduleId = findCompatibleInstalledModule(dependency);
+
+         if (moduleId == null && !dependency.isOptional())
+         {
+            throw new ContainerException("Dependency [" + dependency + "] could not be loaded for addon [" + found
+                     + "]");
+         }
+         else
+         {
+            builder.addDependency(DependencySpec.createModuleDependencySpec(PathFilters.acceptAll(),
+                     PathFilters.rejectAll(), this, moduleId, dependency.isOptional()));
+         }
+      }
    }
 
    private AddonEntry findInstalledModule(ModuleIdentifier moduleId)
