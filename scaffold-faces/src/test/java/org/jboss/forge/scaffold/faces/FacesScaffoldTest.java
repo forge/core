@@ -84,7 +84,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
    public void testScaffoldSetupWithScaffoldTypeWithoutTargetDir() throws Exception
    {
       Project project = initializeJavaProject();
-      queueInputLines("HIBERNATE", "JBOSS_AS7", "", "");
+      queueInputLines("HIBERNATE", "JBOSS_AS7", "", "", "");
       getShell().execute("persistence setup");
       queueInputLines("", "", "2", "", "", "");
       getShell().execute("scaffold setup --scaffoldType faces");
@@ -95,7 +95,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
    public void testScaffoldSetupWithScaffoldTypeAndTargetDir() throws Exception
    {
       Project project = initializeJavaProject();
-      queueInputLines("HIBERNATE", "JBOSS_AS7", "", "");
+      queueInputLines("HIBERNATE", "JBOSS_AS7", "", "", "");
       getShell().execute("persistence setup");
       queueInputLines("", "", "2", "", "", "");
       getShell().execute("scaffold setup --scaffoldType faces --targetDir store");
@@ -107,7 +107,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
    {
       initializeJavaProject();
 
-      queueInputLines("", "");
+      queueInputLines("", "", "");
       getShell().execute("persistence setup --provider HIBERNATE  --container JBOSS_AS7");
 
       queueInputLines("");
