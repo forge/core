@@ -405,6 +405,9 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/true.png"),
                getClass().getResourceAsStream("/scaffold/faces/true.png"), overwrite));
 
+      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/jboss-community.png"),
+               getClass().getResourceAsStream("/scaffold/faces/jboss-community.png"), overwrite));
+
       return result;
    }
 
