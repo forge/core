@@ -53,12 +53,14 @@ import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.shell.InstalledPluginRegistry;
-import org.jboss.forge.shell.InstalledPluginRegistry.PluginEntry;
+import org.jboss.forge.shell.PluginEntry;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.ShellColor;
 import org.jboss.forge.shell.ShellMessages;
 import org.jboss.forge.shell.ShellPrintWriter;
 import org.jboss.forge.shell.ShellPrompt;
+import org.jboss.forge.shell.events.PluginInstalled;
+import org.jboss.forge.shell.events.PluginRemoved;
 import org.jboss.forge.shell.events.ReinitializeEnvironment;
 import org.jboss.forge.shell.exceptions.Abort;
 import org.jboss.forge.shell.plugins.Alias;
@@ -86,6 +88,9 @@ public class ForgePlugin implements Plugin
 
    private static final String MODULE_TEMPLATE_XML = "/org/jboss/forge/modules/module-template.xml";
    private final Event<ReinitializeEnvironment> reinitializeEvent;
+
+   private final Event<PluginInstalled> pluginInstalledEvent;
+   private final Event<PluginRemoved> pluginRemovedEvent;
    private final ShellPrintWriter writer;
    private final DependencyResolver resolver;
    private final ForgeEnvironment environment;
@@ -96,7 +101,8 @@ public class ForgePlugin implements Plugin
    @Inject
    public ForgePlugin(final ForgeEnvironment environment, final Event<ReinitializeEnvironment> reinitializeEvent,
             final ShellPrintWriter writer, final ShellPrompt prompt, final DependencyResolver resolver,
-            final Shell shell, final Configuration configuration)
+            final Shell shell, final Configuration configuration, final Event<PluginInstalled> pluginInstalledEvent,
+            final Event<PluginRemoved> pluginRemovedEvent)
    {
       this.environment = environment;
       this.reinitializeEvent = reinitializeEvent;
@@ -105,6 +111,8 @@ public class ForgePlugin implements Plugin
       this.shell = shell;
       this.resolver = resolver;
       this.configuration = configuration;
+      this.pluginInstalledEvent = pluginInstalledEvent;
+      this.pluginRemovedEvent = pluginRemovedEvent;
    }
 
    /*
@@ -194,8 +202,9 @@ public class ForgePlugin implements Plugin
       {
          throw new RuntimeException("No such installed plugin [" + pluginName + "]");
       }
-      InstalledPluginRegistry.remove(InstalledPluginRegistry.get(plugin));
-
+      PluginEntry installedPlugin = InstalledPluginRegistry.get(plugin);
+      InstalledPluginRegistry.remove(installedPlugin);
+      pluginRemovedEvent.fire(new PluginRemoved(installedPlugin));
       if (!InstalledPluginRegistry.has(plugin))
       {
          ShellMessages.success(out, "Successfully removed [" + pluginName + "]");
@@ -958,7 +967,8 @@ public class ForgePlugin implements Plugin
 
    public void registerPlugin(final String pluginName, final String pluginSlot, final String apiVersion)
    {
-      InstalledPluginRegistry.install(pluginName, apiVersion, pluginSlot);
+      PluginEntry entry = InstalledPluginRegistry.install(pluginName, apiVersion, pluginSlot);
+      pluginInstalledEvent.fire(new PluginInstalled(entry));
    }
 
    public DirectoryResource getOrCreatePluginModuleDirectory(final Dependency dep)
