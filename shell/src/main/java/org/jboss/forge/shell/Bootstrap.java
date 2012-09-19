@@ -17,7 +17,6 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
-import org.jboss.forge.shell.InstalledPluginRegistry.PluginEntry;
 import org.jboss.forge.shell.events.AcceptUserInput;
 import org.jboss.forge.shell.events.PostStartup;
 import org.jboss.forge.shell.events.PreStartup;
@@ -229,7 +228,7 @@ public class Bootstrap
          CompositeClassLoader composite = new CompositeClassLoader();
          composite.add(Module.forClassLoader(Bootstrap.class.getClassLoader(), true).getClassLoader());
 
-         List<PluginEntry> toLoad = new ArrayList<InstalledPluginRegistry.PluginEntry>();
+         List<PluginEntry> toLoad = new ArrayList<PluginEntry>();
 
          List<PluginEntry> installed = InstalledPluginRegistry.listByAPICompatibleVersion(InstalledPluginRegistry
                   .getRuntimeAPIVersion());

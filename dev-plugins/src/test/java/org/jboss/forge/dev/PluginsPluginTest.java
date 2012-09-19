@@ -16,7 +16,7 @@ import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.project.facets.MetadataFacet;
 import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.shell.InstalledPluginRegistry;
-import org.jboss.forge.shell.InstalledPluginRegistry.PluginEntry;
+import org.jboss.forge.shell.PluginEntry;
 import org.jboss.forge.test.AbstractShellTest;
 import org.junit.Assert;
 import org.junit.Test;

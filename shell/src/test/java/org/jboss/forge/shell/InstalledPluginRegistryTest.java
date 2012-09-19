@@ -12,7 +12,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import org.jboss.forge.shell.InstalledPluginRegistry.PluginEntry;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
