@@ -86,6 +86,7 @@ public class JavaFieldResource extends
 			Method method = entity.getMethod("set" + methodNameSuffix);
 			entity.removeMethod(method);
 		}
+		((JavaResource) this.getParent()).setContents(entity.toString());
 		return true;
 	}
 
