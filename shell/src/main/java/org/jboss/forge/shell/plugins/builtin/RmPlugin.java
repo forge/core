@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 package org.jboss.forge.shell.plugins.builtin;
-
+ 
 import javax.inject.Inject;
 
 import org.jboss.forge.resources.Resource;
@@ -48,11 +48,14 @@ public class RmPlugin implements Plugin
             {
                throw new RuntimeException("error deleting files.");
             }
-            if(resource instanceof JavaFieldResource && shell.promptBoolean("delete also accessor methods for " + resource.getName() + "?")) {
-            	JavaFieldResource field = (JavaFieldResource) resource;
-            	if(!field.deleteAccessors()) {
-            		throw new RuntimeException("error deleting get/set methods.");
-            	}
+            if (resource instanceof JavaFieldResource
+                     && shell.promptBoolean("delete also accessor methods for " + resource.getName() + "?"))
+            {
+               JavaFieldResource field = (JavaFieldResource) resource;
+               if (!field.deleteAccessors())
+               {
+                  throw new RuntimeException("error deleting get/set methods.");
+               }
             }
          }
       }
