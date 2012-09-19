@@ -9,6 +9,7 @@ package org.jboss.forge.shell.plugins.builtin;
 import javax.inject.Inject;
 
 import org.jboss.forge.resources.Resource;
+import org.jboss.forge.resources.java.JavaFieldResource;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.DefaultCommand;
@@ -46,6 +47,12 @@ public class RmPlugin implements Plugin
             if (!resource.delete(recursive))
             {
                throw new RuntimeException("error deleting files.");
+            }
+            if(resource instanceof JavaFieldResource && shell.promptBoolean("delete also accessor methods for " + resource.getName() + "?")) {
+            	JavaFieldResource field = (JavaFieldResource) resource;
+            	if(!field.deleteAccessors()) {
+            		throw new RuntimeException("error deleting get/set methods.");
+            	}
             }
          }
       }
