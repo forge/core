@@ -9,7 +9,6 @@ package org.jboss.forge.shell.plugins.builtin;
 
 import java.io.IOException;
 import java.net.ProxySelector;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -38,13 +37,10 @@ import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.dependencies.DependencyFilter;
 import org.jboss.forge.project.dependencies.DependencyQuery;
 import org.jboss.forge.project.dependencies.DependencyQueryBuilder;
-import org.jboss.forge.project.dependencies.DependencyRepository;
-import org.jboss.forge.project.dependencies.DependencyRepositoryImpl;
 import org.jboss.forge.project.dependencies.DependencyResolver;
 import org.jboss.forge.project.dependencies.NonSnapshotDependencyFilter;
 import org.jboss.forge.project.dependencies.ScopeType;
 import org.jboss.forge.project.facets.DependencyFacet;
-import org.jboss.forge.project.facets.DependencyFacet.KnownRepository;
 import org.jboss.forge.project.facets.MetadataFacet;
 import org.jboss.forge.project.facets.PackagingFacet;
 import org.jboss.forge.project.packaging.PackagingType;
@@ -238,115 +234,15 @@ public class ForgePlugin implements Plugin
          PluginRef ref = plugins.get(0);
          ShellMessages.info(out, "Preparing to install plugin: " + ref.getName());
 
-         if (!ref.isGit())
-         {
-            installFromMvnRepos(ref.getArtifact(), out, new DependencyRepositoryImpl("custom", ref.getHomeRepo()));
-         }
-         else if (ref.isGit())
+         if (ref.isGit())
          {
             installFromGit(ref.getGitRepo(), Strings.isNullOrEmpty(version) ? ref.getGitRef() : version, null, out);
          }
-      }
-   }
-
-   private void installFromMvnRepos(final Dependency dep, final PipeOut out, final DependencyRepository... repoList)
-            throws Exception
-   {
-      installFromMvnRepos(dep, out, Arrays.asList(repoList));
-   }
-
-   private void installFromMvnRepos(final Dependency dep, final PipeOut out, final List<DependencyRepository> repoList)
-            throws Exception
-   {
-      List<DependencyResource> temp = resolver.resolveArtifacts(dep, repoList);
-      List<DependencyResource> artifacts = new ArrayList<DependencyResource>();
-
-      for (DependencyResource d : temp)
-      {
-         if (d.exists())
+         else
          {
-            artifacts.add(d);
+            throw new UnsupportedOperationException("Not yet implemented");
          }
       }
-
-      if (artifacts.isEmpty())
-      {
-         throw new RuntimeException("No artifacts found for [" + dep + "]");
-      }
-      else if (artifacts.size() > 1)
-      {
-         prompt.promptChoiceTyped("Install which version?", artifacts, artifacts.get(artifacts.size() - 1));
-      }
-      else
-      {
-         artifacts.get(0);
-      }
-
-      // TODO Build module from maven artifact
-      // createModuleFromMavenArtifact(artifact);
-      // ShellMessages.success(out, "Installed from [" + dep.toCoordinates() + "] successfully.");
-
-      throw new IllegalStateException("Not yet implemented.");
-   }
-
-   // @Command(value = "mvn-plugin",
-   // help = "Download and install a plugin from a maven repository")
-   public void installFromMvnRepos(@Option(description = "plugin-identifier", required = true) final Dependency dep,
-            @Option(name = "knownRepo", description = "target repository") final KnownRepository repo,
-            @Option(name = "repoUrl", description = "target repository URL") final String repoURL,
-            final PipeOut out) throws Exception
-   {
-      throw new IllegalStateException("Not implemented");
-      /*
-       * if (repoURL != null) { installFromMvnRepos(dep, out, new DependencyRepositoryImpl("custom", repoURL)); } else
-       * if (repo == null) { List<DependencyRepository> repos = new ArrayList<DependencyRepository>(); for
-       * (KnownRepository r : KnownRepository.values()) { repos.add(new DependencyRepositoryImpl(r)); }
-       * installFromMvnRepos(dep, out, repos); } else installFromMvnRepos(dep, out, new DependencyRepositoryImpl(repo));
-       */
-   }
-
-   // @Command(value = "jar-plugin",
-   // help = "Install a plugin from a local project folder")
-   public void installFromLocalJar(
-            @Option(name = "jar", description = "jar file to install", required = true) final Resource<?> resource,
-            @Option(name = "id", description = "plugin identifier, [e.g. \"com.example.group : example-plugin\"]", required = true) final Dependency dep,
-            final PipeOut out) throws Exception
-   {
-
-      throw new IllegalStateException("Not implemented");
-      /*
-       * FileResource<?> source = resource.reify(FileResource.class); if ((source == null) || !source.exists()) { throw
-       * new IllegalArgumentException("JAR file must be specified."); }
-       *
-       * if (environment.getPluginDirectory().equals(source.getParent())) { throw new
-       * IllegalArgumentException("Plugin is already installed."); }
-       *
-       * ShellMessages.info(out, "WARNING!"); if (prompt.promptBoolean(
-       * "Installing plugins from remote sources is dangerous, and can leave untracked plugins. Continue?", true)) {
-       * FileResource<?> target = createIncrementedPluginJarFile(dep);
-       * target.setContents(source.getResourceInputStream());
-       *
-       * ShellMessages.success(out, "Installed from [" + resource + "] successfully."); restart(); } else throw new
-       * RuntimeException("Aborted.");
-       */
-   }
-
-   // @Command(value = "url-plugin",
-   // help = "Download and install a plugin from the given URL")
-   public void installFromRemoteURL(
-            @Option(description = "URL of jar file", required = true) final URL url,
-            @Option(name = "id", description = "plugin identifier, [e.g. \"com.example.group : example-plugin\"]", required = true) final Dependency dep,
-            final PipeOut out) throws Exception
-   {
-
-      throw new IllegalStateException("Not implemented");
-      /*
-       * ShellMessages.info(out, "WARNING!"); if (prompt.promptBoolean(
-       * "Installing plugins from remote sources is dangerous, and can leave untracked plugins. Continue?", true)) {
-       * FileResource<?> jar = createIncrementedPluginJarFile(dep); PluginUtil.downloadFromURL(out, url, jar);
-       * ShellMessages.success(out, "Installed from [" + url.toExternalForm() + "] successfully."); restart(); } else
-       * throw new RuntimeException("Aborted.");
-       */
    }
 
    @Command(value = "source-plugin",
@@ -364,7 +260,6 @@ public class ForgePlugin implements Plugin
       buildFromCurrentProject(out, workspace);
 
       ShellMessages.success(out, "Installed from [" + workspace + "] successfully.");
-      // ShellMessages.info(out, "Please restart Forge to complete plugin installation.");
       restart();
    }
 
