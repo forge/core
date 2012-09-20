@@ -29,12 +29,13 @@ import org.jboss.forge.parser.java.util.Types;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 public abstract class AbstractJavaSourceMemberHolder<O extends JavaSource<O>> extends AbstractJavaSource<O> implements
          MethodHolder<O>, FieldHolder<O>
 {
-   public AbstractJavaSourceMemberHolder(JavaSource<?> enclosingType, final Document document, final CompilationUnit unit, BodyDeclaration declaration)
+   public AbstractJavaSourceMemberHolder(JavaSource<?> enclosingType, final Document document,
+            final CompilationUnit unit, BodyDeclaration declaration)
    {
       super(enclosingType, document, unit, declaration);
    }
@@ -47,7 +48,7 @@ public abstract class AbstractJavaSourceMemberHolder<O extends JavaSource<O>> ex
    public Field<O> addField()
    {
       Field<O> field = new FieldImpl<O>((O) this);
-      getBodyDeclaration().bodyDeclarations().add(field.getInternal());
+      addField(field);
       return field;
    }
 
@@ -56,8 +57,24 @@ public abstract class AbstractJavaSourceMemberHolder<O extends JavaSource<O>> ex
    public Field<O> addField(final String declaration)
    {
       Field<O> field = new FieldImpl<O>((O) this, declaration);
-      getBodyDeclaration().bodyDeclarations().add(field.getInternal());
+      addField(field);
       return field;
+   }
+
+   @SuppressWarnings("unchecked")
+   private void addField(Field<O> field)
+   {
+      List<Object> bodyDeclarations = getBodyDeclaration().bodyDeclarations();
+      int idx = 0;
+      for (Object object : bodyDeclarations)
+      {
+         if (!(object instanceof FieldDeclaration))
+         {
+            break;
+         }
+         idx++;
+      }
+      bodyDeclarations.add(idx, field.getInternal());
    }
 
    @Override
