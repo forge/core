@@ -27,7 +27,7 @@ import org.jboss.forge.shell.util.Streams;
 
 /**
  * Used to perform {@link Plugin} installation/registration operations.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:koen.aers@gmail.com">Koen Aers</a>
  */
@@ -42,6 +42,8 @@ public class InstalledPluginRegistry
 
    private static String PLUGIN_DIR = null;
    private static String REGISTRY = null;
+
+   private static final Pattern runtimeVersionPattern = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)(\\.|-)(.*)");
 
    private static String getPluginDir()
    {
@@ -271,11 +273,10 @@ public class InstalledPluginRegistry
 
    public static boolean isApiCompatible(CharSequence runtimeVersion, String pluginApiVersion)
    {
-      Pattern runtimeVersionPattern = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)(\\.|-)(.*)");
       Matcher matcher = runtimeVersionPattern.matcher(runtimeVersion);
       if (matcher.matches())
       {
-         if (pluginApiVersion.matches(matcher.group(1) + "\\." + matcher.group(2) + "\\.(\\d+).*"))
+         if (pluginApiVersion.matches(matcher.group(1) + "\\.(\\d+).*\\.(\\d+).*"))
          {
             return true;
          }
