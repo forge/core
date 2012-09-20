@@ -170,4 +170,23 @@ public class InstalledPluginRegistryTest
       Assert.assertFalse(InstalledPluginRegistry.isApiCompatible("", entry));
    }
 
+   @Test
+   public void testMinorVersionCompatibleBackwards() throws Exception
+   {
+      PluginEntry entry = PluginEntry.fromCoordinates("com.example.plugin:1.1.0-SNAPSHOT:main");
+      Assert.assertFalse(InstalledPluginRegistry.isApiCompatible("1.0.1.Final", entry));
+      Assert.assertFalse(InstalledPluginRegistry.isApiCompatible("1.0.2.Final", entry));
+      Assert.assertFalse(InstalledPluginRegistry.isApiCompatible("1.0.2000.Final", entry));
+      Assert.assertFalse(InstalledPluginRegistry.isApiCompatible("1.0.2-SNAPSHOT", entry));
+      Assert.assertFalse(InstalledPluginRegistry.isApiCompatible("1.0.1000-SNAPSHOT", entry));
+      Assert.assertFalse(InstalledPluginRegistry.isApiCompatible("1.0.1000-adsfasfsd", entry));
+      Assert.assertTrue(InstalledPluginRegistry.isApiCompatible("1.1.0.Final", entry));
+      Assert.assertTrue(InstalledPluginRegistry.isApiCompatible("1.1.1.Final", entry));
+      Assert.assertTrue(InstalledPluginRegistry.isApiCompatible("1.2.0.Final", entry));
+      Assert.assertTrue(InstalledPluginRegistry.isApiCompatible("1.2.1.Final", entry));
+      Assert.assertFalse(InstalledPluginRegistry.isApiCompatible("2.0.0.Final", entry));
+      Assert.assertFalse(InstalledPluginRegistry.isApiCompatible("s1.0.0.Final", entry));
+      Assert.assertFalse(InstalledPluginRegistry.isApiCompatible("", entry));
+   }
+
 }

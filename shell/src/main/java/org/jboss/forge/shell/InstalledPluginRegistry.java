@@ -43,7 +43,7 @@ public class InstalledPluginRegistry
    private static String PLUGIN_DIR = null;
    private static String REGISTRY = null;
 
-   private static final Pattern runtimeVersionPattern = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)(\\.|-)(.*)");
+   private static final Pattern VERSION_PATTERN = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)(\\.|-)(.*)");
 
    private static String getPluginDir()
    {
@@ -271,17 +271,37 @@ public class InstalledPluginRegistry
       return isApiCompatible(runtimeVersion, pluginApiVersion);
    }
 
+   /**
+    * This method only returns true if:
+    *
+    * - The major version of pluginApiVersion is equal to the major version of runtimeVersion AND
+    *
+    * - The minor version of pluginApiVersion is less or equal to the minor version of runtimeVersion
+    *
+    * @param runtimeVersion a version in the format x.x.x
+    * @param pluginApiVersion a version in the format x.x.x
+    * @return
+    */
    public static boolean isApiCompatible(CharSequence runtimeVersion, String pluginApiVersion)
    {
-      Matcher matcher = runtimeVersionPattern.matcher(runtimeVersion);
-      if (matcher.matches())
+      Matcher runtimeMatcher = VERSION_PATTERN.matcher(runtimeVersion);
+      if (runtimeMatcher.matches())
       {
-         if (pluginApiVersion.matches(matcher.group(1) + "\\.(\\d+).*\\.(\\d+).*"))
+         int runtimeMajorVersion = Integer.parseInt(runtimeMatcher.group(1));
+         int runtimeMinorVersion = Integer.parseInt(runtimeMatcher.group(2));
+
+         Matcher pluginApiMatcher = VERSION_PATTERN.matcher(pluginApiVersion);
+         if (pluginApiMatcher.matches())
          {
-            return true;
+            int pluginApiMajorVersion = Integer.parseInt(pluginApiMatcher.group(1));
+            int pluginApiMinorVersion = Integer.parseInt(pluginApiMatcher.group(2));
+
+            if (pluginApiMajorVersion == runtimeMajorVersion && pluginApiMinorVersion <= runtimeMinorVersion)
+            {
+               return true;
+            }
          }
       }
-
       return false;
    }
 }
