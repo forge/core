@@ -862,8 +862,23 @@ public class ForgePlugin implements Plugin
 
    public void registerPlugin(final String pluginName, final String pluginSlot, final String apiVersion)
    {
-      PluginEntry entry = InstalledPluginRegistry.install(pluginName, apiVersion, pluginSlot);
-      pluginInstalledEvent.fire(new PluginInstalled(entry));
+      String runtimeVersion = InstalledPluginRegistry.getRuntimeAPIVersion();
+      if (InstalledPluginRegistry.isApiCompatible(runtimeVersion, apiVersion))
+      {
+         PluginEntry entry = InstalledPluginRegistry.install(pluginName, apiVersion, pluginSlot);
+         pluginInstalledEvent.fire(new PluginInstalled(entry));
+      }
+      else
+      {
+         throw new RuntimeException(
+                  "Could not install plugin ["
+                           + pluginName
+                           + "] because it references Forge API version ["
+                           + apiVersion
+                           + "] which may not be compatible with my current version ["
+                           + runtimeVersion
+                           + "]. Please consider upgrading forge, by typing 'forge update'. Otherwise, try installing an older version of the plugin.");
+      }
    }
 
    public DirectoryResource getOrCreatePluginModuleDirectory(final Dependency dep)
