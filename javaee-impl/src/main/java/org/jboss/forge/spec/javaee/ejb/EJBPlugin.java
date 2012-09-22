@@ -261,7 +261,13 @@ public class EJBPlugin implements Plugin
       JavaSource<?> ejb;
       if (resource instanceof JavaResource)
       {
+
          ejb = JavaUtils.getJavaClassFrom(resource);
+         if (ejb.hasAnnotation(transactionAttributeType.name()))
+         {
+            throw new RuntimeException(
+                     "Current class have already TransactionAttribute annotation!");
+         }
          ejb.addAnnotation(TransactionAttribute.class).setEnumValue(
                   transactionAttributeType);
          save(ejb);
@@ -270,6 +276,11 @@ public class EJBPlugin implements Plugin
       {
          Method<? extends JavaSource<?>> m = ((JavaMethodResource) resource)
                   .getUnderlyingResourceObject();
+         if (m.hasAnnotation(transactionAttributeType.name()))
+         {
+            throw new RuntimeException(
+                     "Current method have already TransactionAttribute annotation!");
+         }
          m.addAnnotation(TransactionAttribute.class).setEnumValue(
                   transactionAttributeType);
          ejb = m.getOrigin();
