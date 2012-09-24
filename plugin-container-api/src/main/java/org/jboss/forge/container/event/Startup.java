@@ -10,12 +10,18 @@ package org.jboss.forge.container.event;
 
 /**
  * Fired when the container begins its startup process.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public final class Startup
 {
    private boolean restart;
+
+   public Startup(boolean restart)
+   {
+      super();
+      this.restart = restart;
+   }
 
    public Startup()
    {
