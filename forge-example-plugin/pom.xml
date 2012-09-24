@@ -17,12 +17,6 @@
       </dependency>
       <dependency>
          <groupId>org.jboss.forge</groupId>
-         <artifactId>forge-example-plugin-2</artifactId>
-         <version>${project.version}</version>
-      </dependency>
-
-      <dependency>
-         <groupId>org.jboss.forge</groupId>
          <artifactId>forge-test-harness</artifactId>
          <scope>test</scope>
       </dependency>
