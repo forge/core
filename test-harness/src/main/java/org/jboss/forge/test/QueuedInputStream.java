@@ -92,7 +92,6 @@ public class QueuedInputStream extends InputStream
             if (!inputQueue.isEmpty())
             {
                String line = inputQueue.remove();
-               System.out.println(); // makes the output look like someone typed the input :)
                byte[] bytes = new byte[] {};
 
                if (line != null)
