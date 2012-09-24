@@ -55,7 +55,6 @@ public class MavenMultiModuleProviderTest extends AbstractShellTest
       getShell().execute("new-project --named child1 --topLevelPackage com.test --type JAR");
 
       Model pom = pomPrj.getFacet(MavenCoreFacet.class).getPOM();
-      System.out.println(pom);
       assertEquals("wrong pom", "child1", pom.getArtifactId());
       assertNotNull("parent is null", pom.getParent());
       assertEquals("wrong parent", "test", pom.getParent().getArtifactId());
