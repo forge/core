@@ -1,13 +1,13 @@
 package org.jboss.forge.container.services;
 
 import java.lang.reflect.Method;
+import java.util.concurrent.Callable;
 
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.util.ClassLoaders;
-import org.jboss.forge.container.util.ClassLoaders.Task;
 
 public class RemoteClassLoaderCallback implements MethodInterceptor
 {
@@ -22,10 +22,10 @@ public class RemoteClassLoaderCallback implements MethodInterceptor
    public Object intercept(final Object obj, final Method method, final Object[] args, final MethodProxy proxy)
             throws Throwable
    {
-      Task task = new Task()
+      Callable<Object> task = new Callable<Object>()
       {
          @Override
-         public Object perform() throws Exception
+         public Object call() throws Exception
          {
             try
             {
