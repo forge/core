@@ -618,8 +618,49 @@
                </archive>
             </configuration>
          </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>2.8.1</version>
+            <configuration>
+               <!-- Default configuration for all reports -->
+               <finalName>forge-core</finalName>
+               <outputDirectory>${project.basedir}/javadoc</outputDirectory>
+               <destDir>${project.basedir}/javadoc</destDir>
+               <jarOutputDirectory>${project.basedir}/javadoc</jarOutputDirectory>
+            </configuration>
+            <executions>
+               <execution>
+                  <id>aggregate</id>
+                  <goals>
+                     <goal>aggregate-jar</goal>
+                  </goals>
+                  <phase>package</phase>
+                  <configuration>
+                     <!-- Specific configuration for the aggregate report -->
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <configuration>
+               <!-- Default configuration for all reports -->
+               <finalName>forge-core</finalName>
+               <outputDirectory>${project.basedir}/sources</outputDirectory>
+            </configuration>
+            <executions>
+               <execution>
+                  <id>aggregate-sources</id>
+                  <goals>
+                      <goal>aggregate</goal>
+                  </goals>
+                  <phase>package</phase>
+               </execution>
+            </executions>
+         </plugin>
       </plugins>
-
 
       <pluginManagement>
          <plugins>
@@ -656,30 +697,6 @@
                      </manifestSections>
                   </archive>
                </configuration>
-            </plugin>
-
-            <plugin>
-               <groupId>org.apache.maven.plugins</groupId>
-               <artifactId>maven-javadoc-plugin</artifactId>
-               <version>2.8.1</version>
-               <configuration>
-                  <!-- Default configuration for all reports -->
-                  <outputDirectory>${project.build.directory}/javadoc/${project.version}</outputDirectory>
-                  <reportOutputDirectory>${project.build.directory}/javadoc/${project.version}</reportOutputDirectory>
-                  <destDir>${project.build.directory}/javadoc/${project.version}</destDir>
-               </configuration>
-               <executions>
-                  <execution>
-                     <id>aggregate</id>
-                     <goals>
-                        <goal>aggregate</goal>
-                     </goals>
-                     <phase>site</phase>
-                     <configuration>
-                        <!-- Specific configuration for the aggregate report -->
-                     </configuration>
-                  </execution>
-               </executions>
             </plugin>
 
             <plugin>
