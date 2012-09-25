@@ -275,10 +275,6 @@ public class NewProjectPlugin implements Plugin
          packaging.setFinalName(name);
       }
 
-      if (project.hasFacet(ResourceFacet.class))
-      {
-         project.getFacet(ResourceFacet.class).createResource("<forge/>".toCharArray(), "META-INF/forge.xml");
-      }
       /*
        * Only change the environment after success!
        */
