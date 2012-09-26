@@ -22,10 +22,12 @@ public abstract class AbstractFacesScaffoldTest extends AbstractShellTest
    protected Project setupScaffoldProject() throws Exception
    {
       Project project = initializeJavaProject();
-      queueInputLines("HIBERNATE", "JBOSS_AS7", "", "", "");
-      getShell().execute("persistence setup");
+//      queueInputLines("HIBERNATE", "JBOSS_AS7", "", "", "");
+//      getShell().execute("persistence setup");
       queueInputLines("", "", "", "");
-      getShell().execute("scaffold setup");
+      getShell().execute("set ACCEPT_DEFAULTS true");
+      getShell().execute("persistence setup --provider HIBERNATE --container JBOSS_AS7");
+      getShell().execute("scaffold setup --scaffoldType faces");
       return project;
    }
 
