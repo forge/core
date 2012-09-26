@@ -27,7 +27,7 @@ package org.jboss.forge.spec.javaee.ejb.api;
 
 public enum JmsDestinationType
 {
-   QUEUE("javax.jms.Queue"), TOPIC("javax.jms.Topic");
+   queue("javax.jms.Queue"), topic("javax.jms.Topic");
 
    private String destinationType;
 

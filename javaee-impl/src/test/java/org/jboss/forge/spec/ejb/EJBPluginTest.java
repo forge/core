@@ -33,11 +33,6 @@ public class EJBPluginTest extends AbstractShellTest
       assertFalse(project.hasFacet(EJBFacet.class));
       queueInputLines("");
       getShell().execute("setup ejb");
-      // Assert.assertTrue(project
-      // .getFacet(DependencyFacet.class)
-      // .hasDirectManagedDependency(
-      // DependencyBuilder
-      // .create("org.jboss.spec.javax.ejb:jboss-ejb-api_3.1_spec")));
       assertTrue(project.hasFacet(EJBFacet.class));
    }
 
@@ -49,7 +44,7 @@ public class EJBPluginTest extends AbstractShellTest
       getShell().execute("setup ejb");
       getShell()
                .execute(
-                        "ejb new-ejb --packageAndName by.giava.FlowerEjb --type STATELESS");
+                        "ejb new-ejb --packageAndName by.giava.FlowerEjb --type stateless");
       JavaSourceFacet javaClass = project.getFacet(JavaSourceFacet.class);
       JavaResource resource = javaClass.getJavaResource("by.giava.FlowerEjb");
       Assert.assertTrue(resource.exists());
@@ -67,87 +62,13 @@ public class EJBPluginTest extends AbstractShellTest
       getShell().execute("setup ejb");
       getShell()
                .execute(
-                        "ejb new-ejb --packageAndName by.giava.FlowerEjb --type STATEFUL");
+                        "ejb new-ejb --packageAndName by.giava.FlowerEjb --type stateful");
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
       JavaResource resource = java.getJavaResource("by.giava.FlowerEjb");
       Assert.assertTrue(resource.exists());
       JavaSource<?> source = resource.getJavaSource();
       Assert.assertNotNull(source);
       Assert.assertEquals("by.giava", source.getPackage());
-   }
-
-   @Test
-   public void testNewEJbStatelessAddImplements() throws Exception
-   {
-      Project project = initializeJavaProject();
-      queueInputLines("", "");
-      getShell().execute("setup ejb");
-      getShell()
-               .execute(
-                        "ejb new-ejb --packageAndName by.giava.FlowerEjb --type STATELESS");
-      queueInputLines("", "");
-      getShell()
-               .execute(
-                        "ejb add-implements --type org.jboss.forge.spec.ejb.testClasses.Repository");
-      JavaSourceFacet javaClass = project.getFacet(JavaSourceFacet.class);
-      JavaResource resource = javaClass.getJavaResource("by.giava.FlowerEjb");
-      Assert.assertTrue(resource.exists());
-      JavaSource<?> source = resource.getJavaSource();
-      String content = source.toString();
-      assertTrue(content
-               .contains("org.jboss.forge.spec.ejb.testClasses.Repository"));
-   }
-
-   @Test
-   public void testNewEJbStatelessAddExtends() throws Exception
-   {
-      Project project = initializeJavaProject();
-      queueInputLines("", "");
-      getShell().execute("setup ejb");
-      getShell()
-               .execute(
-                        "ejb new-ejb --packageAndName by.giava.FlowerEjb --type STATELESS");
-      queueInputLines("", "");
-      // create new abstract class
-
-      // add extends
-      getShell()
-               .execute(
-                        "ejb add-extends --type org.jboss.forge.spec.ejb.testClasses.BaseRepository");
-      JavaSourceFacet javaClass = project.getFacet(JavaSourceFacet.class);
-      JavaResource resource = javaClass.getJavaResource("by.giava.FlowerEjb");
-      Assert.assertTrue(resource.exists());
-      JavaSource<?> source = resource.getJavaSource();
-      String content = source.toString();
-      assertTrue(content
-               .contains("org.jboss.forge.spec.ejb.testClasses.BaseRepository"));
-   }
-
-   @Test
-   public void testNewEJbStatelessAndInject() throws Exception
-   {
-      Project project = initializeJavaProject();
-      queueInputLines("", "");
-      getShell().execute("setup ejb");
-      getShell()
-               .execute(
-                        "ejb new-ejb --packageAndName by.giava.FlowerEjbA --type STATELESS");
-
-      // create new abstract class
-      getShell()
-               .execute(
-                        "ejb new-ejb --packageAndName by.giava.FlowerEjbB --type STATELESS");
-      // add extends
-      getShell().execute(
-               "ejb add-inject --named FlowerA --type by.giava.FlowerEjbA");
-      JavaSourceFacet javaClass = project.getFacet(JavaSourceFacet.class);
-      JavaResource resource = javaClass
-               .getJavaResource("by.giava.FlowerEjbB");
-      Assert.assertTrue(resource.exists());
-      JavaSource<?> source = resource.getJavaSource();
-      String content = source.toString();
-      assertTrue(content.contains("@Inject"));
-      assertTrue(content.contains("FlowerEjbB"));
    }
 
    @Test
@@ -159,18 +80,15 @@ public class EJBPluginTest extends AbstractShellTest
       getShell().execute("setup ejb");
       getShell()
                .execute(
-                        "ejb new-ejb --packageAndName by.giava.FlowerEjb --type STATELESS");
+                        "ejb new-ejb --packageAndName by.giava.FlowerEjb --type stateless");
       queueInputLines("", "");
-      // create new abstract class
-
-      // add extends
-      getShell().execute("ejb add-transactionAttribute --type NOT_SUPPORTED");
+      getShell().execute("ejb add-transactionAttribute --type notSupported");
       JavaSourceFacet javaClass = project.getFacet(JavaSourceFacet.class);
       JavaResource resource = javaClass.getJavaResource("by.giava.FlowerEjb");
       Assert.assertTrue(resource.exists());
       JavaSource<?> source = resource.getJavaSource();
       String content = source.toString();
-      assertTrue(content.contains("javax.ejb.TransactionAttributeType"));
+      assertTrue(source.hasAnnotation("javax.ejb.TransactionAttribute"));
    }
 
    @Test
@@ -181,13 +99,13 @@ public class EJBPluginTest extends AbstractShellTest
       getShell().execute("setup ejb");
       getShell()
                .execute(
-                        "ejb new-ejb --packageAndName by.giava.FlowerEjb --type MESSAGEDRIVEN");
+                        "ejb new-ejb --packageAndName by.giava.FlowerEjb --type messagedriven");
       queueInputLines("", "");
       JavaSourceFacet javaClass = project.getFacet(JavaSourceFacet.class);
       JavaResource resource = javaClass.getJavaResource("by.giava.FlowerEjb");
       Assert.assertTrue(resource.exists());
       JavaSource<?> source = resource.getJavaSource();
       String content = source.toString();
-      assertTrue(content.contains("@MessageDriven"));
+      assertTrue(source.hasAnnotation("javax.ejb.MessageDriven"));
    }
 }

@@ -27,8 +27,8 @@ package org.jboss.forge.spec.javaee.ejb.api;
 
 public enum EjbType
 {
-   STATELESS("javax.ejb.Stateless"), STATEFUL("javax.ejb.Stateful"), SINGLETON(
-            "javax.ejb.Singleton"), MESSAGEDRIVEN("javax.ejb.MessageDriven");
+   stateless("javax.ejb.Stateless"), stateful("javax.ejb.Stateful"), singleton(
+            "javax.ejb.Singleton"), messagedriven("javax.ejb.MessageDriven");
 
    private String annotation;
 

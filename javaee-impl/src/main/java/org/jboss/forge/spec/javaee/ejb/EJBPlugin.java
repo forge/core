@@ -11,7 +11,6 @@ import java.io.FileNotFoundException;
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
 import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.jms.Message;
@@ -24,6 +23,7 @@ import org.jboss.forge.parser.java.Method;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.project.facets.events.InstallFacets;
+import org.jboss.forge.resources.Resource;
 import org.jboss.forge.resources.java.JavaMethodResource;
 import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.shell.PromptType;
@@ -42,8 +42,7 @@ import org.jboss.forge.shell.plugins.SetupCommand;
 import org.jboss.forge.spec.javaee.EJBFacet;
 import org.jboss.forge.spec.javaee.ejb.api.EjbType;
 import org.jboss.forge.spec.javaee.ejb.api.JmsDestinationType;
-import org.jboss.forge.spec.javaee.ejb.util.JavaUtils;
-import org.jboss.forge.resources.Resource;
+import org.jboss.forge.spec.javaee.ejb.api.TransactionAttributeType;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -88,7 +87,7 @@ public class EJBPlugin implements Plugin
    @Command("new-ejb")
    public void newEjb(
             @Option(required = true, name = "packageAndName", description = "The ejb name with package: i.e. by.giava.service.Flower") final JavaResource resource,
-            @Option(required = false, name = "type", defaultValue = "STATELESS") EjbType type,
+            @Option(required = false, name = "type", defaultValue = "stateless") EjbType type,
             @Option(required = false, name = "overwrite") final boolean overwrite)
             throws FileNotFoundException
    {
@@ -106,7 +105,7 @@ public class EJBPlugin implements Plugin
       }
       else if (overwrite)
       {
-         ejb = JavaUtils.getJavaClassFrom(resource);
+         ejb = getJavaClassFrom(resource);
       }
       else
       {
@@ -116,14 +115,14 @@ public class EJBPlugin implements Plugin
       }
       if (type == null)
       {
-         type = EjbType.STATELESS;
+         type = EjbType.stateless;
       }
-      if (EjbType.MESSAGEDRIVEN.equals(type))
+      if (EjbType.messagedriven.equals(type))
       {
          String destinationType = shell.promptCommon(
                   "Destination type: javax.jms.Queue or javax.jms.Topic:",
                   PromptType.JAVA_CLASS,
-                  JmsDestinationType.QUEUE.getDestinationType());
+                  JmsDestinationType.queue.getDestinationType());
          String destinationName = shell.promptCommon("Destination Name:",
                   PromptType.ANY, "queue/test");
          String name = ejb.getName();
@@ -132,7 +131,7 @@ public class EJBPlugin implements Plugin
          ejb.addImport(Message.class);
          ejb.addInterface(MessageListener.class);
          ejb.addMethod("public void onMessage(Message message) {}");
-         ejb.addAnnotation(EjbType.MESSAGEDRIVEN.getAnnotation())
+         ejb.addAnnotation(EjbType.messagedriven.getAnnotation())
                   // .setLiteralValue("name", "testName");
                   .setLiteralValue("name", "\"" + name + "\"")
                   .setLiteralValue(
@@ -155,100 +154,6 @@ public class EJBPlugin implements Plugin
    }
 
    /*
-    * add some interface with all methods
-    */
-   @Command("add-implements")
-   @RequiresResource(JavaResource.class)
-   public void addInterface(
-            @Option(name = "type", required = true, type = PromptType.JAVA_CLASS, description = "The qualified Class to be used as interface") final String type,
-            final PipeOut out) throws FileNotFoundException,
-            ClassNotFoundException
-   {
-      try
-      {
-         JavaClass ejb = getJavaClass();
-         if (!ejb.getInterfaces().contains(type))
-         {
-            shell.println("type: " + type);
-            ejb.addImport(type);
-            JavaUtils.addAllMethodsTo(ejb, type, shell);
-            save(ejb);
-         }
-         else
-         {
-            throw new RuntimeException(
-                     "Current resource contains Class to be used as interface!");
-         }
-      }
-      catch (FileNotFoundException e)
-      {
-         shell.println("Could not locate the Class to be used as interface. No update was made.");
-      }
-      catch (Exception e)
-      {
-         shell.println("Exception: " + e);
-      }
-   }
-
-   /*
-    * add some superclass
-    */
-   @Command("add-extends")
-   @RequiresResource(JavaResource.class)
-   public void addSuperClass(
-            @Option(name = "type", required = true, type = PromptType.JAVA_CLASS, description = "The qualified Class to be used as super class") final String type,
-            final PipeOut out) throws FileNotFoundException
-   {
-      try
-      {
-         JavaClass ejb = getJavaClass();
-         if (!ejb.getSuperType().contains(type))
-         {
-            ejb.setSuperType(type);
-            // ADD ALL ABSTRACT METHODS AND VERIFY IF THE SUPER CLASS IS
-            // GENERIC
-            JavaUtils.addAbstractMethodsTo(ejb, type, shell);
-         }
-         else
-         {
-            throw new RuntimeException(
-                     "Current resource contains Class to be used as super class!");
-         }
-         save(ejb);
-      }
-      catch (FileNotFoundException e)
-      {
-         shell.println("Could not locate the Class to be used as super class. No update was made.");
-      }
-
-   }
-
-   /*
-    * add @Inject with some class
-    */
-   @Command("add-inject")
-   @RequiresResource(JavaResource.class)
-   public void addInject(
-            @Option(name = "named", required = true, description = "The field name", type = PromptType.JAVA_VARIABLE_NAME) final String fieldName,
-            @Option(name = "type", required = true, type = PromptType.JAVA_CLASS, description = "The qualified Class to be used as this field's type") final String type)
-   {
-      try
-      {
-         JavaClass ejb = getJavaClass();
-         String javaType = (type.toLowerCase().endsWith(".java")) ? type
-                  .substring(0, type.length() - 5) : type;
-
-         JavaUtils.addFieldTo(ejb, javaType, fieldName, Inject.class,
-                  project, shell);
-         save(ejb);
-      }
-      catch (FileNotFoundException e)
-      {
-         shell.println("Could not locate the Class to be used as this field's type. No update was made.");
-      }
-   }
-
-   /*
     * add @TransactionAttribute(TransactionAttributeType.MANDATORY|REQUIRED| REQUIRES_NEW|SUPPORTS|NOT_SUPPORTED|NEVER)
     */
 
@@ -262,27 +167,27 @@ public class EJBPlugin implements Plugin
       if (resource instanceof JavaResource)
       {
 
-         ejb = JavaUtils.getJavaClassFrom(resource);
-         if (ejb.hasAnnotation(transactionAttributeType.name()))
+         ejb = getJavaClassFrom(resource);
+         if (ejb.hasAnnotation(transactionAttributeType.getAnnotation()))
          {
             throw new RuntimeException(
                      "Current class have already TransactionAttribute annotation!");
          }
-         ejb.addAnnotation(TransactionAttribute.class).setEnumValue(
-                  transactionAttributeType);
+         ejb.addAnnotation(TransactionAttribute.class).setStringValue(
+                  transactionAttributeType.getAnnotation());
          save(ejb);
       }
       else if (resource instanceof JavaMethodResource)
       {
          Method<? extends JavaSource<?>> m = ((JavaMethodResource) resource)
                   .getUnderlyingResourceObject();
-         if (m.hasAnnotation(transactionAttributeType.name()))
+         if (m.hasAnnotation(transactionAttributeType.getAnnotation()))
          {
             throw new RuntimeException(
                      "Current method have already TransactionAttribute annotation!");
          }
-         m.addAnnotation(TransactionAttribute.class).setEnumValue(
-                  transactionAttributeType);
+         m.addAnnotation(TransactionAttribute.class).setStringValue(
+                  transactionAttributeType.getAnnotation());
          ejb = m.getOrigin();
          save(ejb);
       }
@@ -294,17 +199,16 @@ public class EJBPlugin implements Plugin
       }
    }
 
-   private JavaClass getJavaClass() throws FileNotFoundException
+   public static JavaClass getJavaClassFrom(Resource<?> resource)
+            throws FileNotFoundException
    {
-      if (resource instanceof JavaResource)
+      JavaSource<?> source = ((JavaResource) resource).getJavaSource();
+      if (!source.isClass())
       {
-         return JavaUtils.getJavaClassFrom(resource);
+         throw new IllegalStateException(
+                  "Current resource is not a JavaClass!");
       }
-      else
-      {
-         throw new RuntimeException(
-                  "Current resource is not a JavaResource!");
-      }
+      return (JavaClass) source;
    }
 
    private void save(JavaSource<?> javaSource) throws FileNotFoundException
