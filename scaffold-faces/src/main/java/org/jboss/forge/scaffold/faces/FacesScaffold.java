@@ -205,6 +205,12 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    {
       super.setProject(project);
 
+      resetMetaWidgets();
+
+   }
+
+   private void resetMetaWidgets()
+   {
       ForgeConfigReader configReader = new ForgeConfigReader(this.config, this.project);
 
       this.entityMetawidget = new StaticHtmlMetawidget();
@@ -222,16 +228,16 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       this.qbeMetawidget = new StaticJavaMetawidget();
       this.qbeMetawidget.setConfigReader(configReader);
       this.qbeMetawidget.setConfig("scaffold/faces/metawidget-qbe.xml");
-
    }
 
    @Override
    public List<Resource<?>> generateFromEntity(String targetDir, final Resource<?> template, final JavaClass entity,
             final boolean overwrite)
    {
+      resetMetaWidgets();
+
       // FORGE-460: setupRichFaces during generateFromEntity, not during setup, as generally 'richfaces setup' is called
       // *after* 'scaffold setup'
-
       setupRichFaces();
 
       // Track the list of resources generated
