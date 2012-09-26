@@ -74,7 +74,7 @@ public class @{entity.getName()}Bean implements Serializable {
 		this.conversation.begin();
 		return "create?faces-redirect=true";
 	}
-	
+
 	public void retrieve() {
 
 		if (FacesContext.getCurrentInstance().isPostback()) {
@@ -92,22 +92,22 @@ public class @{entity.getName()}Bean implements Serializable {
 		}
 	}
 
-	public @{entity.getName()} findById(Long id) {
+	public @{entity.getName()} findById(@{nullablePrimaryKeyType} id) {
 
 		return this.entityManager.find(@{entity.getName()}.class, id);
 	}
-	
+
 	/*
 	 * Support updating and deleting @{entity.getName()} entities
 	 */
 
 	public String update() {
 		this.conversation.end();
-		
+
 		try {
 			if (this.id == null) {
 				this.entityManager.persist(this.@{ccEntity});
-				return "search?faces-redirect=true";			
+				return "search?faces-redirect=true";
 			} else {
 				this.entityManager.merge(this.@{ccEntity});
 				return "view?faces-redirect=true&id=" + this.@{ccEntity}.get@{primaryKeyCC}();
@@ -138,7 +138,7 @@ public class @{entity.getName()}Bean implements Serializable {
 	private int page;
 	private long count;
 	private List<@{entity.getName()}> pageItems;
-	
+
 	private @{entity.getName()} example = new @{entity.getName()}();
 
 	public int getPage() {
@@ -226,14 +226,14 @@ public class @{entity.getName()}Bean implements Serializable {
 	public Converter getConverter() {
 
 		final @{entity.getName()}Bean ejbProxy = this.sessionContext.getBusinessObject(@{entity.getName()}Bean.class);
-		
+
 		return new Converter() {
 
 			@Override
 			public Object getAsObject(FacesContext context,
 					UIComponent component, String value) {
 
-				return ejbProxy.findById(Long.valueOf(value));
+				return ejbProxy.findById(@{nullablePrimaryKeyType}.valueOf(value));
 			}
 
 			@Override
@@ -248,11 +248,11 @@ public class @{entity.getName()}Bean implements Serializable {
 			}
 		};
 	}
-	
+
 	/*
 	 * Support adding children to bidirectional, one-to-many tables
 	 */
-	 
+
 	private @{entity.getName()} add = new @{entity.getName()}();
 
 	public @{entity.getName()} getAdd() {
