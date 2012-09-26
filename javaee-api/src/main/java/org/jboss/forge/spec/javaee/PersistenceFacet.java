@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.project.Facet;
+import org.jboss.forge.project.Project;
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceDescriptor;

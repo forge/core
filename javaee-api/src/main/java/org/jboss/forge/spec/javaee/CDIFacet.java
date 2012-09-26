@@ -6,15 +6,14 @@
  */
 package org.jboss.forge.spec.javaee;
 
-import java.beans.BeanDescriptor;
-
 import org.jboss.forge.project.Facet;
+import org.jboss.forge.project.Project;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.shrinkwrap.descriptor.api.spec.cdi.beans.BeansDescriptor;
 
 /**
  * If installed, this {@link Project} supports features from the CDI specification.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public interface CDIFacet extends Facet
@@ -25,7 +24,7 @@ public interface CDIFacet extends Facet
    BeansDescriptor getConfig();
 
    /**
-    * Save the given {@link BeanDescriptor} as this {@link Project}'s beans.xml file
+    * Save the given {@link BeansDescriptor} as this {@link Project}'s beans.xml file
     */
    void saveConfig(final BeansDescriptor model);
 

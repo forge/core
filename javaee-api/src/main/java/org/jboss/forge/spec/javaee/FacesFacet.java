@@ -9,6 +9,7 @@ package org.jboss.forge.spec.javaee;
 import java.util.List;
 
 import org.jboss.forge.project.Facet;
+import org.jboss.forge.project.Project;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.Resource;
 import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.FacesProjectStage;
