@@ -1,3 +1,9 @@
+/*
+ * Copyright 2012 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Eclipse Public License version 1.0, available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.jboss.forge.spec.javaee.jpa;
 
 import java.util.List;
@@ -37,7 +43,7 @@ public class PersistenceMetaModelFacetImpl extends BaseFacet implements Persiste
 
    @Inject
    private BeanManager manager;
-   
+
    @Inject
    private ShellPrompt prompt;
 
@@ -56,7 +62,7 @@ public class PersistenceMetaModelFacetImpl extends BaseFacet implements Persiste
    {
       return processorConfigured(lookupProvider());
    }
-   
+
    @Override
    public String getProcessor()
    {
@@ -94,22 +100,22 @@ public class PersistenceMetaModelFacetImpl extends BaseFacet implements Persiste
    {
       DependencyBuilder processorDependency = createProcessorDependency();
       Dependency versioned = promptVersion(processorDependency);
-      
+
       ConfigurationBuilder configuration = ConfigurationBuilder.create();
       configuration.createConfigurationElement("processors")
-                  .addChild("processor").setText(provider.getProcessor());
+               .addChild("processor").setText(provider.getProcessor());
       if (!Strings.isNullOrEmpty(provider.getCompilerArguments()))
       {
          configuration.createConfigurationElement("compilerArguments")
                   .setText(provider.getCompilerArguments());
       }
-                
+
       ExecutionBuilder execution = ExecutionBuilder.create()
                .setId("process")
                .setPhase("generate-sources")
                .addGoal("process")
                .setConfig(configuration);
-      
+
       Dependency aptDependency = provider.getAptDependency();
       if (Strings.isNullOrEmpty(aptDependency.getVersion()))
       {
@@ -119,7 +125,7 @@ public class PersistenceMetaModelFacetImpl extends BaseFacet implements Persiste
                .setDependency(versioned)
                .addExecution(execution)
                .addPluginDependency(aptDependency);
-      
+
       project.getFacet(MavenPluginFacet.class).addPlugin(processorPlugin);
    }
 
@@ -146,7 +152,7 @@ public class PersistenceMetaModelFacetImpl extends BaseFacet implements Persiste
       }
       pluginFacet.updatePlugin(compiler);
    }
-   
+
    private boolean processorConfigured(MetaModelProvider provider)
    {
       DependencyBuilder dependency = createProcessorDependency().setVersion(null);
@@ -166,7 +172,7 @@ public class PersistenceMetaModelFacetImpl extends BaseFacet implements Persiste
       }
       return false;
    }
-   
+
    private void addPluginRepository(MetaModelProvider provider)
    {
       Repository repository = provider.getAptPluginRepository();
@@ -176,7 +182,7 @@ public class PersistenceMetaModelFacetImpl extends BaseFacet implements Persiste
          pluginFacet.addPluginRepository(repository.getName(), repository.getUrl());
       }
    }
-   
+
    private Dependency promptVersion(Dependency dependency)
    {
       DependencyFacet dependencyFacet = project.getFacet(DependencyFacet.class);
