@@ -17,7 +17,6 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -290,7 +289,7 @@ public class RestPlugin implements Plugin
 
       return result;
    }
-   
+
 
    private String resolveIdGetterName(JavaClass entity)
    {

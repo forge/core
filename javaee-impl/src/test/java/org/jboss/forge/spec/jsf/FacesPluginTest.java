@@ -18,7 +18,6 @@ public class FacesPluginTest extends AbstractShellTest
    @Test
    public void testFacesConfig() throws Exception
    {
-      getShell().setOutputStream(System.out);
       Project project = initializeJavaProject();
       queueInputLines("Y", "", "Y", "Y");
       getShell().execute("faces setup");
