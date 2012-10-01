@@ -52,7 +52,7 @@ public abstract class SingletonAbstractShellTest
    {
       System.setProperty("forge.debug.no_auto_init_streams", "true");
    }
-   
+
    @Deployment
    public static JavaArchive getDeployment()
    {

@@ -11,6 +11,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.project.Project;
+import org.jboss.forge.project.dependencies.DependencyBuilder;
+import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.spec.javaee.EJBFacet;
 import org.jboss.forge.spec.javaee.JTAFacet;
 import org.jboss.forge.test.AbstractShellTest;
@@ -32,6 +34,8 @@ public class EEPluginTest extends AbstractShellTest
       queueInputLines("");
       getShell().execute("setup ejb");
       assertTrue(project.hasFacet(EJBFacet.class));
+      assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveDependency(
+               DependencyBuilder.create("org.jboss.spec.javax.ejb:jboss-ejb-api_3.1_spec")));
    }
 
    @Test
