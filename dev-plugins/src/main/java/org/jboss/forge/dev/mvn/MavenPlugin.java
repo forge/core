@@ -17,6 +17,7 @@ import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.parser.java.util.Assert;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.Dependency;
+import org.jboss.forge.project.dependencies.ScopeType;
 import org.jboss.forge.project.services.ProjectFactory;
 import org.jboss.forge.project.services.ResourceFactory;
 import org.jboss.forge.resources.DirectoryResource;
@@ -58,6 +59,34 @@ public class MavenPlugin implements Plugin
       this.project = project;
       this.factory = factory;
       this.resources = resources;
+   }
+
+   @Command("add-dependency")
+   public void addDependency(
+            final PipeOut out,
+            @Option(description = "the new groupId; for example: \"org.jboss.forge\"", name = "groupId", required = true) final String groupId,
+            @Option(description = "the new artifactId; for example: \"forge-parent\"", name = "artifactId", required = true) final String artifactId,
+            @Option(description = "the new version; for example: \"1.0.0\"", name = "version", required = false) final String version,
+            @Option(description = "Set the scope of the dependency: for example: \"PROVIDED\"", name = "scope", required = false, defaultValue = "PROVIDED") final ScopeType scope)
+   {
+      Assert.notNull(groupId, "GroupId must not be empty");
+      Assert.notNull(artifactId, "ArtifactId must not be empty");
+
+      MavenCoreFacet mvn = project.getFacet(MavenCoreFacet.class);
+
+      Model pom = mvn.getPOM();
+      org.apache.maven.model.Dependency dependency = new org.apache.maven.model.Dependency();
+      dependency.setGroupId(groupId);
+      dependency.setArtifactId(artifactId);
+      if (version != null && !artifactId.isEmpty())
+         dependency.setVersion(version);
+      if (scope != null)
+         dependency.setScope(scope.getScope());
+      else
+         dependency.setScope(ScopeType.PROVIDED.getScope());
+      pom.addDependency(dependency);
+      mvn.setPOM(pom);
+      out.println("Added dependecy: " + groupId + ":" + artifactId + ":" + version + ":" + scope.getScope());
    }
 
    @Command("set-groupid")
