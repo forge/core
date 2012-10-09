@@ -155,6 +155,8 @@ fi
 
 FORGE_MAIN_CLASS=org.jboss.forge.shell.Bootstrap
 
+MODULE_PATH="${FORGE_HOME}/modules:${HOME}/.forge/plugins:$PLUGIN_DIR"
+
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin; then
   [ -n "$FORGE_HOME" ] &&
@@ -163,9 +165,11 @@ if $cygwin; then
     JAVA_HOME=`cygpath --windows "$JAVA_HOME"`
   [ -n "$HOME" ] &&
     HOME=`cygpath --windows "$HOME"`
+
+  MODULE_PATH=`cygpath --windows --path $MODULE_PATH`
 fi
 
-forge_exec_cmd="\"$JAVACMD\" $FORGE_DEBUG_ARGS $FORGE_OPTS \"-Dforge.home=${FORGE_HOME}\"  \"-Dforge.shell.colorEnabled=true\" -jar \"${FORGE_HOME}/jboss-modules.jar\" -modulepath \"${FORGE_HOME}/modules:${HOME}/.forge/plugins:$PLUGIN_DIR\" org.jboss.forge"
+forge_exec_cmd="\"$JAVACMD\" $FORGE_DEBUG_ARGS $FORGE_OPTS \"-Dforge.home=${FORGE_HOME}\"  \"-Dforge.shell.colorEnabled=true\" -jar \"${FORGE_HOME}/jboss-modules.jar\" -modulepath \"$MODULE_PATH\" org.jboss.forge"
 
 eval $forge_exec_cmd "$QUOTED_ARGS"
 
