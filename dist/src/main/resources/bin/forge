@@ -166,7 +166,7 @@ if $cygwin; then
   [ -n "$HOME" ] &&
     HOME=`cygpath --windows "$HOME"`
 
-  MODULE_PATH=`cygpath --windows --path $MODULE_PATH`
+  MODULE_PATH=`cygpath --windows --path "$MODULE_PATH"`
 fi
 
 forge_exec_cmd="\"$JAVACMD\" $FORGE_DEBUG_ARGS $FORGE_OPTS \"-Dforge.home=${FORGE_HOME}\"  \"-Dforge.shell.colorEnabled=true\" -jar \"${FORGE_HOME}/jboss-modules.jar\" -modulepath \"$MODULE_PATH\" org.jboss.forge"
