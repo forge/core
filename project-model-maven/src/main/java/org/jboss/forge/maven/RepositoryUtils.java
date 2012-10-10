@@ -6,6 +6,13 @@
  */
 package org.jboss.forge.maven;
 
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
+import org.apache.maven.artifact.repository.MavenArtifactRepository;
+import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
+import org.apache.maven.artifact.repository.layout.FlatRepositoryLayout;
+import org.apache.maven.settings.Repository;
+import org.apache.maven.settings.RepositoryPolicy;
 import org.sonatype.aether.repository.Authentication;
 
 /**
@@ -28,6 +35,32 @@ public final class RepositoryUtils
          Authentication auth = new Authentication(proxy.getUsername(), proxy.getPassword());
          result = new org.sonatype.aether.repository.Proxy(proxy.getProtocol(), proxy.getHost(), proxy.getPort(), auth);
       }
+      return result;
+   }
+
+   public static ArtifactRepository convertFromMavenSettingsRepository(Repository repository)
+   {
+      MavenArtifactRepository result = new MavenArtifactRepository();
+      result.setId(repository.getId());
+      result.setUrl(repository.getUrl());
+
+      String layout = repository.getLayout();
+      if ("default".equals(layout))
+         result.setLayout(new DefaultRepositoryLayout());
+      else if ("flat".equals(layout))
+         result.setLayout(new FlatRepositoryLayout());
+
+      RepositoryPolicy releases = repository.getReleases();
+      if (releases != null)
+         result.setReleaseUpdatePolicy(new ArtifactRepositoryPolicy(releases.isEnabled(), releases.getUpdatePolicy(),
+                  releases.getChecksumPolicy()));
+
+      RepositoryPolicy snapshots = repository.getSnapshots();
+      if (snapshots != null)
+         result.setSnapshotUpdatePolicy(new ArtifactRepositoryPolicy(snapshots.isEnabled(),
+                  snapshots.getUpdatePolicy(),
+                  snapshots.getChecksumPolicy()));
+
       return result;
    }
 

@@ -8,6 +8,10 @@
 package org.jboss.forge.maven.facets;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -18,10 +22,12 @@ import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.execution.DefaultMavenExecutionRequest;
 import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.execution.MavenExecutionRequestPopulator;
+import org.apache.maven.settings.Profile;
 import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.apache.maven.settings.Proxy;
+import org.apache.maven.settings.Repository;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.building.DefaultSettingsBuilderFactory;
 import org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
@@ -84,12 +90,30 @@ public class MavenContainer
                   new ArtifactRepositoryPolicy(true, ArtifactRepositoryPolicy.UPDATE_POLICY_NEVER,
                            ArtifactRepositoryPolicy.CHECKSUM_POLICY_WARN));
          request.setLocalRepository(localRepository);
-         //request.setRemoteRepositories(new ArrayList<ArtifactRepository>());
+
+         List<ArtifactRepository> settingsRepos = new ArrayList<ArtifactRepository>();
+         List<String> activeProfiles = settings.getActiveProfiles();
+
+         @SuppressWarnings("unchecked")
+         Map<String, Profile> profiles = settings.getProfilesAsMap();
+
+         for (String id : activeProfiles)
+         {
+            Profile profile = profiles.get(id);
+            List<Repository> repositories = profile.getRepositories();
+            for (Repository repository : repositories)
+            {
+               settingsRepos.add(RepositoryUtils.convertFromMavenSettingsRepository(repository));
+            }
+         }
+
+         request.setRemoteRepositories(settingsRepos);
          request.setSystemProperties(System.getProperties());
 
          MavenRepositorySystemSession repositorySession = new MavenRepositorySystemSession();
          Proxy activeProxy = settings.getActiveProxy();
-         if (activeProxy != null) {
+         if (activeProxy != null)
+         {
             DefaultProxySelector dps = new DefaultProxySelector();
             dps.add(RepositoryUtils.convertFromMavenProxy(activeProxy), activeProxy.getNonProxyHosts());
             repositorySession.setProxySelector(dps);
@@ -99,7 +123,7 @@ public class MavenContainer
 
          request.setRepositorySession(repositorySession);
          request.setProcessPlugins(false);
-         //request.setPluginArtifactRepositories(Arrays.asList(localRepository));
+         // request.setPluginArtifactRepositories(Arrays.asList(localRepository));
          request.setResolveDependencies(false);
          return request;
       }
@@ -111,8 +135,8 @@ public class MavenContainer
       finally
       {
          /*
-          * We reset the classloader to prevent potential modules bugs 
-          * if Classwords container changes classloaders on us
+          * We reset the classloader to prevent potential modules bugs if Classwords container changes classloaders on
+          * us
           */
          Thread.currentThread().setContextClassLoader(cl);
       }
@@ -154,17 +178,19 @@ public class MavenContainer
    public <T> T lookup(Class<T> type)
    {
       ClassLoader cl = Thread.currentThread().getContextClassLoader();
-      try {
+      try
+      {
          return getContainer().lookup(type);
       }
-      catch (ComponentLookupException e) {
+      catch (ComponentLookupException e)
+      {
          throw new ProjectModelException("Could not look up component of type [" + type.getName() + "]", e);
       }
       finally
       {
          /*
-          * We reset the classloader to prevent potential modules bugs 
-          * if Classwords container changes classloaders on us
+          * We reset the classloader to prevent potential modules bugs if Classwords container changes classloaders on
+          * us
           */
          Thread.currentThread().setContextClassLoader(cl);
       }
@@ -192,8 +218,8 @@ public class MavenContainer
          finally
          {
             /*
-             * We reset the classloader to prevent potential modules bugs 
-             * if Classwords container changes classloaders on us
+             * We reset the classloader to prevent potential modules bugs if Classwords container changes classloaders
+             * on us
              */
             Thread.currentThread().setContextClassLoader(cl);
          }
