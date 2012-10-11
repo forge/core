@@ -15,6 +15,7 @@ import org.junit.Test;
 
 public class DidYouMeanObserverTest extends AbstractShellTest
 {
+   private static final String EOL = System.getProperty("line.separator");
 
    @Test(expected = NoSuchCommandException.class)
    public void testNoSuggestionsSuggestMissingPlugin() throws Exception
@@ -26,7 +27,8 @@ public class DidYouMeanObserverTest extends AbstractShellTest
    public void testSuggestInvalidCommand() throws Exception
    {
       getShell().execute("l");
-      assertTrue(getOutput().contains("Did you mean this ?\n\tls"));
+      assertTrue(getOutput().contains(String.format(
+         "Did you mean this ?%s\tls", EOL)));
    }
 
    @Test
@@ -34,7 +36,8 @@ public class DidYouMeanObserverTest extends AbstractShellTest
    {
       getShell().execute("alias \"ll=ls -l\"");
       getShell().execute("l");
-      assertTrue(getOutput().contains("Did you mean any of these ?\n\tll\n\tls"));
+      assertTrue(getOutput().contains(String.format(
+         "Did you mean any of these ?%1$s\tll%1$s\tls", EOL)));
    }
 
 }
