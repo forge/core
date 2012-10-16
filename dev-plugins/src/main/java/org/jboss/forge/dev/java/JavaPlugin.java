@@ -21,6 +21,7 @@ import org.jboss.forge.parser.java.FieldHolder;
 import org.jboss.forge.parser.java.Import;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaEnum;
+import org.jboss.forge.parser.java.JavaInterface;
 import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.parser.java.Method;
 import org.jboss.forge.parser.java.MethodHolder;
@@ -86,14 +87,9 @@ public class JavaPlugin implements Plugin
    @Command("new-class")
    public void newClass(
             @PipeIn final InputStream in,
-            @Option(required = false,
-                     help = "the package in which to build this Class",
-                     description = "source package",
-                     type = PromptType.JAVA_PACKAGE,
-                     name = "package") final String pckg,
-            @Option(required = false,
-                     help = "the class definition: surround with quotes",
-                     description = "class definition") final String... def) throws FileNotFoundException
+            @Option(required = false, help = "the package in which to build this Class", description = "source package", type = PromptType.JAVA_PACKAGE, name = "package") final String pckg,
+            @Option(required = false, help = "the class definition: surround with quotes", description = "class definition") final String... def)
+            throws FileNotFoundException
    {
 
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
@@ -131,7 +127,60 @@ public class JavaPlugin implements Plugin
          }
          writer.println();
 
-         if (prompt.promptBoolean("Your class has syntax errors, create anyway?", true))
+         if (prompt.promptBoolean(
+                  "Your class has syntax errors, create anyway?", true))
+         {
+            java.saveJavaSource(jc);
+         }
+      }
+      pickUp.fire(new PickupResource(java.getJavaResource(jc)));
+   }
+
+   @Command("new-interface")
+   public void newInterface(
+            @PipeIn final InputStream in,
+            @Option(required = false, help = "the package in which to build this Interface", description = "source package", type = PromptType.JAVA_PACKAGE, name = "package") final String pckg,
+            @Option(required = false, help = "the interface definition: surround with quotes", description = "interface definition") final String... def)
+            throws FileNotFoundException
+   {
+
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+
+      JavaInterface jc = null;
+      if (def != null)
+      {
+         String classDef = Strings.join(Arrays.asList(def), " ");
+         jc = JavaParser.parse(JavaInterface.class, classDef);
+      }
+      else if (in != null)
+      {
+         jc = JavaParser.parse(JavaInterface.class, in);
+      }
+      else
+      {
+         throw new RuntimeException("arguments required");
+      }
+
+      if (pckg != null)
+      {
+         jc.setPackage(pckg);
+      }
+
+      if (!jc.hasSyntaxErrors())
+      {
+         java.saveJavaSource(jc);
+      }
+      else
+      {
+         writer.println(ShellColor.RED, "Syntax Errors:");
+         for (SyntaxError error : jc.getSyntaxErrors())
+         {
+            writer.println(error.toString());
+         }
+         writer.println();
+
+         if (prompt.promptBoolean(
+                  "Your class has syntax errors, create anyway?", true))
          {
             java.saveJavaSource(jc);
          }
@@ -142,14 +191,9 @@ public class JavaPlugin implements Plugin
    @Command("new-enum-type")
    public void newEnumType(
             @PipeIn final InputStream in,
-            @Option(required = false,
-                     help = "the package in which to build this Class",
-                     description = "source package",
-                     type = PromptType.JAVA_PACKAGE,
-                     name = "package") final String pckg,
-            @Option(required = false,
-                     help = "the class definition: surround with quotes",
-                     description = "class definition") final String... def) throws FileNotFoundException
+            @Option(required = false, help = "the package in which to build this Class", description = "source package", type = PromptType.JAVA_PACKAGE, name = "package") final String pckg,
+            @Option(required = false, help = "the class definition: surround with quotes", description = "class definition") final String... def)
+            throws FileNotFoundException
    {
 
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
@@ -187,7 +231,8 @@ public class JavaPlugin implements Plugin
          }
          writer.println();
 
-         if (prompt.promptBoolean("Your class has syntax errors, create anyway?", true))
+         if (prompt.promptBoolean(
+                  "Your class has syntax errors, create anyway?", true))
          {
             java.saveEnumTypeSource(je);
          }
@@ -201,9 +246,8 @@ public class JavaPlugin implements Plugin
    public void newEnumConst(
             @PipeIn final String in,
             final PipeOut out,
-            @Option(required = false,
-                     help = "the enum field definition",
-                     description = "enum field definition") final String... def) throws FileNotFoundException
+            @Option(required = false, help = "the enum field definition", description = "enum field definition") final String... def)
+            throws FileNotFoundException
    {
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
 
@@ -229,13 +273,13 @@ public class JavaPlugin implements Plugin
 
    @Command("list-imports")
    @RequiresResource(JavaResource.class)
-   public void listImports(
-            final PipeOut out) throws FileNotFoundException
+   public void listImports(final PipeOut out) throws FileNotFoundException
    {
       List<Import> imports = resource.getJavaSource().getImports();
       for (Import i : imports)
       {
-         String str = "import " + (i.isStatic() ? "static " : "") + i.getQualifiedName() + ";";
+         String str = "import " + (i.isStatic() ? "static " : "")
+                  + i.getQualifiedName() + ";";
          str = JavaColorizer.format(out, str);
          out.println(str);
       }
@@ -246,9 +290,8 @@ public class JavaPlugin implements Plugin
    public void newField(
             @PipeIn final String in,
             final PipeOut out,
-            @Option(required = false,
-                     help = "the field definition: surround with single quotes",
-                     description = "field definition") final String... def) throws FileNotFoundException
+            @Option(required = false, help = "the field definition: surround with single quotes", description = "field definition") final String... def)
+            throws FileNotFoundException
    {
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
 
@@ -271,10 +314,13 @@ public class JavaPlugin implements Plugin
       {
          FieldHolder<?> clazz = ((FieldHolder<?>) source);
 
-         String name = JavaParser.parse(JavaClass.class, "public class Temp{}").addField(fieldDef).getName();
+         String name = JavaParser
+                  .parse(JavaClass.class, "public class Temp{}")
+                  .addField(fieldDef).getName();
          if (clazz.hasField(name))
          {
-            throw new IllegalStateException("Field named [" + name + "] already exists.");
+            throw new IllegalStateException("Field named [" + name
+                     + "] already exists.");
          }
 
          clazz.addField(fieldDef);
@@ -287,9 +333,8 @@ public class JavaPlugin implements Plugin
    public void newMethod(
             @PipeIn final String in,
             final PipeOut out,
-            @Option(required = false,
-                     help = "the method definition: surround with single quotes",
-                     description = "method definition") final String... def) throws FileNotFoundException
+            @Option(required = false, help = "the method definition: surround with single quotes", description = "method definition") final String... def)
+            throws FileNotFoundException
    {
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
 
@@ -312,11 +357,12 @@ public class JavaPlugin implements Plugin
       {
          MethodHolder<?> clazz = ((MethodHolder<?>) source);
 
-         Method<JavaClass> method = JavaParser.parse(JavaClass.class, "public class Temp{}").addMethod(methodDef);
+         Method<JavaClass> method = JavaParser.parse(JavaClass.class,
+                  "public class Temp{}").addMethod(methodDef);
          if (clazz.hasMethodSignature(method))
          {
-            throw new IllegalStateException("Method with signature [" + method.toSignature()
-                     + "] already exists.");
+            throw new IllegalStateException("Method with signature ["
+                     + method.toSignature() + "] already exists.");
          }
 
          clazz.addMethod(methodDef);
