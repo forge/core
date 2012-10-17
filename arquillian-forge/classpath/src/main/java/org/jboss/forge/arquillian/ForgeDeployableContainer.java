@@ -121,8 +121,6 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
          }
       }
 
-      System.out.println("Unzipping " + archive.toString(true));
-
       addon = AddonUtil.install(addon);
 
       HTTPContext httpContext = new HTTPContext("localhost", 4141);
