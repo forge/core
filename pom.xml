@@ -83,7 +83,7 @@
             <module>parser-xml</module>
             <module>plugin-container-api</module>
             <module>plugin-container</module>
-            <module>arquillian-forge-managed</module>
+            <module>arquillian-forge</module>
             <module>test-harness</module>
             <module>forge-example-plugin</module>
             <module>dist</module>
