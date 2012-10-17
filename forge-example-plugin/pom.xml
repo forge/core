@@ -22,7 +22,7 @@
       </dependency>
       <dependency>
          <groupId>org.jboss.forge</groupId>
-         <artifactId>arquillian-forge-managed</artifactId>
+         <artifactId>arquillian-forge-classpath</artifactId>
          <scope>test</scope>
       </dependency>
    </dependencies>

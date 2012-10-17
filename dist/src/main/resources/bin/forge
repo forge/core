@@ -153,7 +153,7 @@ if [ -z "$JAVA_HOME" ] ; then
   echo "Warning: JAVA_HOME environment variable is not set."
 fi
 
-FORGE_MAIN_CLASS=org.jboss.forge.shell.Bootstrap
+FORGE_MAIN_CLASS=org.jboss.forge.container.Bootstrap
 
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin; then
@@ -165,6 +165,6 @@ if $cygwin; then
     HOME=`cygpath --path --windows "$HOME"`
 fi
 
-forge_exec_cmd="\"$JAVACMD\" $FORGE_DEBUG_ARGS $FORGE_OPTS \"-Dforge.home=${FORGE_HOME}\"  \"-Dforge.shell.colorEnabled=true\" -jar \"${FORGE_HOME}/jboss-modules.jar\" -modulepath \"${FORGE_HOME}/modules:${HOME}/.forge/plugins:$PLUGIN_DIR\" org.jboss.forge"
+forge_exec_cmd="\"$JAVACMD\" $FORGE_DEBUG_ARGS $FORGE_OPTS \"-Dforge.home=${FORGE_HOME}\" -cp \"${FORGE_HOME}/lib/*\" $FORGE_MAIN_CLASS
 
 eval $forge_exec_cmd "$QUOTED_ARGS"

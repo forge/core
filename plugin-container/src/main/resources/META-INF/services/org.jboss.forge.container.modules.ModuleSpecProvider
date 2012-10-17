@@ -1,0 +1,4 @@
+org.jboss.forge.container.modules.providers.JavaxApiSpec
+org.jboss.forge.container.modules.providers.WeldSpec
+org.jboss.forge.container.modules.providers.PluginContainerSpec
+org.jboss.forge.container.modules.providers.PluginContainerAPISpec

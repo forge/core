@@ -20,40 +20,10 @@
    <packaging>pom</packaging>
 
    <properties>
-      <version.org.jboss.jandex>1.0.3.Final</version.org.jboss.jandex>
    </properties>
 
    <build>
       <plugins>
-         <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-antrun-plugin</artifactId>
-            <inherited>false</inherited>
-            <executions>
-               <execution>
-                  <id>build-dist</id>
-                  <goals>
-                     <goal>run</goal>
-                  </goals>
-                  <phase>package</phase>
-                  <configuration>
-                     <target>
-                        <ant antfile="build.xml" inheritRefs="true">
-                           <target name="all" />
-                        </ant>
-                     </target>
-                  </configuration>
-               </execution>
-            </executions>
-            <dependencies>
-               <dependency>
-                  <groupId>org.jboss</groupId>
-                  <artifactId>jandex</artifactId>
-                  <version>${version.org.jboss.jandex}</version>
-               </dependency>
-            </dependencies>
-         </plugin>
-
          <plugin>
             <artifactId>maven-assembly-plugin</artifactId>
             <executions>
@@ -62,17 +32,10 @@
                </execution>
             </executions>
          </plugin>
-
       </plugins>
    </build>
 
    <dependencies>
-
-      <dependency>
-         <groupId>org.jboss</groupId>
-         <artifactId>jandex</artifactId>
-         <version>${version.org.jboss.jandex}</version>
-      </dependency>
 
       <!-- Build deps go here -->
       <dependency>
@@ -179,10 +142,7 @@
                      <arguments>
                         <argument>-cp</argument>
                         <classpath />
-                        <argument>org.jboss.modules.Main</argument>
-                        <argument>-modulepath</argument>
-                        <argument>${project.build.directory}/${project.artifactId}-${forge.release.version}/modules:${user.home}/.forge/plugins</argument>
-                        <argument>org.jboss.forge</argument>
+                        <argument>org.jboss.forge.container.Bootstrap</argument>
                      </arguments>
                   </configuration>
                </plugin>
@@ -205,10 +165,7 @@
                         <argument>${debug.props}</argument>
                         <argument>-cp</argument>
                         <classpath />
-                        <argument>org.jboss.modules.Main</argument>
-                        <argument>-modulepath</argument>
-                        <argument>${project.build.directory}/${project.artifactId}-${forge.release.version}/modules:${user.home}/.forge/plugins</argument>
-                        <argument>org.jboss.forge</argument>
+                        <argument>org.jboss.forge.container.Bootstrap</argument>
                      </arguments>
                   </configuration>
                </plugin>

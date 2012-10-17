@@ -204,7 +204,19 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.forge</groupId>
+            <artifactId>arquillian-forge-classpath</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
             <artifactId>arquillian-forge-managed</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>arquillian-forge-remote</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
          </dependency>

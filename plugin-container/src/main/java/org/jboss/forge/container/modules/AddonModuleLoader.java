@@ -9,12 +9,14 @@ package org.jboss.forge.container.modules;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.ServiceLoader;
 import java.util.jar.JarFile;
 
 import org.jboss.forge.container.AddonUtil;
 import org.jboss.forge.container.AddonUtil.AddonDependency;
 import org.jboss.forge.container.AddonUtil.AddonEntry;
 import org.jboss.forge.container.exception.ContainerException;
+import org.jboss.forge.container.modules.providers.JavaxApiSpec;
 import org.jboss.modules.DependencySpec;
 import org.jboss.modules.Module;
 import org.jboss.modules.ModuleIdentifier;
@@ -34,32 +36,38 @@ import org.jboss.modules.filter.PathFilters;
  */
 public class AddonModuleLoader extends ModuleLoader
 {
-   private static final ModuleIdentifier JAVAX_API = ModuleIdentifier.create("javax.api");
-   private static final ModuleIdentifier PLUGIN_CONTAINER_API = ModuleIdentifier.create("org.jboss.forge.api");
-   private static final ModuleIdentifier PLUGIN_CONTAINER = ModuleIdentifier.create("org.jboss.forge");
-   private static final ModuleIdentifier WELD = ModuleIdentifier.create("org.jboss.weld");
-
-   private ModuleLoader parent;
-
-   public AddonModuleLoader()
-   {
-      this.parent = Module.getBootModuleLoader();
-   }
+   Iterable<ModuleSpecProvider> moduleProviders = ServiceLoader.load(ModuleSpecProvider.class);
 
    @Override
    protected Module preloadModule(ModuleIdentifier identifier) throws ModuleLoadException
    {
-      if (findModule(identifier) != null)
-      {
-         Module pluginModule = super.preloadModule(identifier);
-         return pluginModule;
-      }
-      else
-         return preloadModule(identifier, parent);
+      Module pluginModule = super.preloadModule(identifier);
+      return pluginModule;
    }
 
    @Override
    protected ModuleSpec findModule(ModuleIdentifier id) throws ModuleLoadException
+   {
+      ModuleSpec result = findAddonModule(id);
+      if (result == null)
+         result = findDependencyModule(id);
+
+      return result;
+   }
+
+   private ModuleSpec findDependencyModule(ModuleIdentifier id)
+   {
+      ModuleSpec result = null;
+      for (ModuleSpecProvider p : moduleProviders)
+      {
+         result = p.get(id);
+         if (result != null)
+            break;
+      }
+      return result;
+   }
+
+   public ModuleSpec findAddonModule(ModuleIdentifier id)
    {
       AddonEntry found = findInstalledModule(id);
 
@@ -67,18 +75,11 @@ public class AddonModuleLoader extends ModuleLoader
       {
          Builder builder = ModuleSpec.build(id);
 
-         builder.addDependency(DependencySpec.createModuleDependencySpec(PathFilters.acceptAll(),
-                  PathFilters.rejectAll(), parent, JAVAX_API, false));
-         builder.addDependency(DependencySpec.createModuleDependencySpec(PathFilters.acceptAll(),
-                  PathFilters.rejectAll(), parent, WELD, false));
-         builder.addDependency(DependencySpec.createModuleDependencySpec(PathFilters.acceptAll(),
-                  PathFilters.rejectAll(), parent, PLUGIN_CONTAINER_API, false));
-         builder.addDependency(DependencySpec.createModuleDependencySpec(PathFilters.acceptAll(),
-                  PathFilters.rejectAll(), parent, PLUGIN_CONTAINER, false));
          builder.addDependency(DependencySpec.createLocalDependencySpec());
 
          try
          {
+            // TODO increment service counter here?
             addAddonDependencies(found, builder);
          }
          catch (ContainerException e)
@@ -86,6 +87,11 @@ public class AddonModuleLoader extends ModuleLoader
             // TODO implement proper fault handling. For now, abort.
             return null;
          }
+
+         builder.addDependency(DependencySpec.createModuleDependencySpec(
+                  PathFilters.acceptAll(),
+                  PathFilters.acceptAll(),
+                  this, JavaxApiSpec.ID, false));
 
          addLocalResources(found, builder);
 

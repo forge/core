@@ -413,8 +413,9 @@ public final class AddonUtil
 
    public static String getRuntimeAPIVersion()
    {
-      return AddonUtil.class.getPackage()
+      String version = AddonUtil.class.getPackage()
                .getImplementationVersion();
+      return version;
    }
 
    public static boolean isApiCompatible(CharSequence runtimeVersion, AddonEntry entry)
@@ -594,5 +595,10 @@ public final class AddonUtil
          return true;
       }
 
+   }
+
+   public static boolean hasRuntimeAPIVersion()
+   {
+      return getRuntimeAPIVersion() != null;
    }
 }
