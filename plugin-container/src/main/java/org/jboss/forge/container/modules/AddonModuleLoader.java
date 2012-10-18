@@ -16,7 +16,7 @@ import org.jboss.forge.container.AddonUtil;
 import org.jboss.forge.container.AddonUtil.AddonDependency;
 import org.jboss.forge.container.AddonUtil.AddonEntry;
 import org.jboss.forge.container.exception.ContainerException;
-import org.jboss.forge.container.modules.providers.JavaxApiSpec;
+import org.jboss.forge.container.modules.providers.SystemClasspathSpec;
 import org.jboss.modules.DependencySpec;
 import org.jboss.modules.Module;
 import org.jboss.modules.ModuleIdentifier;
@@ -77,6 +77,10 @@ public class AddonModuleLoader extends ModuleLoader
 
          builder.addDependency(DependencySpec.createLocalDependencySpec());
 
+         // Set up the ClassPath for this addon Module
+         builder.addDependency(DependencySpec.createClassLoaderDependencySpec(ClassLoader.getSystemClassLoader(),
+                  SystemClasspathSpec.paths, false));
+
          try
          {
             // TODO increment service counter here?
@@ -87,11 +91,6 @@ public class AddonModuleLoader extends ModuleLoader
             // TODO implement proper fault handling. For now, abort.
             return null;
          }
-
-         builder.addDependency(DependencySpec.createModuleDependencySpec(
-                  PathFilters.acceptAll(),
-                  PathFilters.acceptAll(),
-                  this, JavaxApiSpec.ID, false));
 
          addLocalResources(found, builder);
 

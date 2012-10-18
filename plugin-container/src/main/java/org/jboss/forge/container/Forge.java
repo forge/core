@@ -15,8 +15,6 @@ import org.jboss.modules.Module;
 import org.jboss.modules.ModuleIdentifier;
 import org.jboss.modules.ModuleLoadException;
 import org.jboss.modules.ModuleLoader;
-import org.jboss.modules.log.JDKModuleLogger;
-import org.jboss.modules.log.StreamModuleLogger;
 
 public class Forge
 {
@@ -36,10 +34,10 @@ public class Forge
          System.out.println("Warning! Could not detect Forge runtime version - " +
                   "loading all addons, but failures may occur if versions are not compatible.");
 
-      Module.setModuleLogger(new StreamModuleLogger(System.err));
+      // Module.setModuleLogger(new StreamModuleLogger(System.err));
 
-      // if (LOGGING_ENABLED)
-      // initLogging();
+      if (LOGGING_ENABLED)
+         initLogging();
    }
 
    public Set<AddonThread> getThreads()

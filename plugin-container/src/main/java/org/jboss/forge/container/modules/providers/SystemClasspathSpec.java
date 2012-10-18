@@ -17,11 +17,11 @@ import org.jboss.modules.ModuleIdentifier;
 import org.jboss.modules.ModuleSpec;
 import org.jboss.modules.ModuleSpec.Builder;
 
-public class JavaxApiSpec implements ModuleSpecProvider
+public class SystemClasspathSpec implements ModuleSpecProvider
 {
    public static final ModuleIdentifier ID = ModuleIdentifier.create("javax.api");
 
-   private static Set<String> paths = new HashSet<String>();
+   public static Set<String> paths = new HashSet<String>();
 
    static
    {
@@ -34,11 +34,14 @@ public class JavaxApiSpec implements ModuleSpecProvider
          try
          {
             File file = new File(url.toURI());
-            if (file.isDirectory())
+            if (file.isDirectory()
+                     && (file.getAbsolutePath().contains("plugin-container")
+                              || file.getAbsolutePath().contains("parser-xml")
+                              || file.getAbsolutePath().contains("arquillian-forge")))
             {
                paths.addAll(getPathsFrom(file.getAbsolutePath(), file));
             }
-            else
+            else if (!file.isDirectory())
             {
                JarFile jar = new JarFile(file);
                Enumeration<JarEntry> entries = jar.entries();
@@ -61,10 +64,8 @@ public class JavaxApiSpec implements ModuleSpecProvider
          }
       }
       
-      for (String path : paths)
-      {
-         System.out.println(path);
-      }
+      paths.add("javax");
+      paths.add("javax/naming");
    }
 
    @Override
