@@ -9,10 +9,10 @@ package org.jboss.forge.parser.java.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Modifier.ModifierKeyword;
-import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jface.text.Document;
@@ -155,12 +155,38 @@ public class JavaClassImpl extends AbstractJavaSourceMemberHolder<JavaClass> imp
    @Override
    public JavaClass setSuperType(final String type)
    {
-      SimpleType simpleType = body.getAST().newSimpleType(body.getAST().newSimpleName(Types.toSimpleName(type)));
-      getBodyDeclaration().setStructuralProperty(TypeDeclaration.SUPERCLASS_TYPE_PROPERTY, simpleType);
-
-      if (!hasImport(type) && Types.isQualified(type))
+      if (type == null || type.trim().isEmpty())
       {
-         addImport(type);
+         getBodyDeclaration().setStructuralProperty(TypeDeclaration.SUPERCLASS_TYPE_PROPERTY, null);
+      }
+      else if (Types.isGeneric(type))
+      {
+         String typeD = Types.stripGenerics(type);
+         String sympleTypeDName = Types.toSimpleName(typeD);
+         String typeP = Types.getGenericsTypeParameter(type);
+         org.eclipse.jdt.core.dom.ParameterizedType pt = body.getAST().newParameterizedType(
+                  body.getAST().newSimpleType(body.getAST().newSimpleName(sympleTypeDName)));
+         pt.typeArguments().add(body.getAST().newSimpleType(body.getAST().newSimpleName(typeP)));
+         getBodyDeclaration().setStructuralProperty(TypeDeclaration.SUPERCLASS_TYPE_PROPERTY, pt);
+
+         if (!hasImport(typeD) && Types.isQualified(typeD))
+         {
+            addImport(typeD);
+         }
+         if (!hasImport(typeP) && Types.isQualified(typeP))
+         {
+            addImport(typeP);
+         }
+      }
+      else
+      {
+         SimpleType simpleType = body.getAST().newSimpleType(body.getAST().newSimpleName(Types.toSimpleName(type)));
+         getBodyDeclaration().setStructuralProperty(TypeDeclaration.SUPERCLASS_TYPE_PROPERTY, simpleType);
+
+         if (!hasImport(type) && Types.isQualified(type))
+         {
+            addImport(type);
+         }
       }
 
       return this;
