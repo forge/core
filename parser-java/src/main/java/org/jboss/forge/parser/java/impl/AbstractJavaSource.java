@@ -23,6 +23,7 @@ import org.eclipse.jdt.core.dom.Modifier.ModifierKeyword;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.eclipse.jdt.core.dom.TypeParameter;
 import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.TextEdit;
 import org.jboss.forge.parser.JavaParser;
@@ -416,6 +417,52 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
       if (body instanceof AbstractTypeDeclaration)
          return (AbstractTypeDeclaration) body;
       throw new ParserException("Source body was not of the expected type.");
+   }
+
+   @Override
+   public String getGenericType()
+   {
+      List types = unit.types();
+      if (types.size() > 0)
+      {
+         AbstractTypeDeclaration typeDeclaration = (AbstractTypeDeclaration) types.get(0);
+         if (ASTNode.TYPE_DECLARATION == typeDeclaration.getNodeType())
+         {
+            TypeDeclaration typeDeclaration2 = (TypeDeclaration) typeDeclaration;
+            if (typeDeclaration2.typeParameters() != null && typeDeclaration2.typeParameters().size() > 0)
+            {
+               TypeParameter tp2 = (TypeParameter) typeDeclaration2.typeParameters().get(0);
+               return tp2.getName().getIdentifier();
+            }
+         }
+      }
+      return "";
+   }
+
+   @Override
+   public void setGenericType(String genericType)
+   {
+      if (genericType != null && !genericType.isEmpty())
+      {
+         if (getGenericType() == null || !getGenericType().isEmpty())
+         {
+            removeGenericType();
+         }
+         TypeDeclaration type = (TypeDeclaration) body;
+         TypeParameter tp2 = unit.getAST().newTypeParameter();
+         tp2.setName(unit.getAST().newSimpleName(genericType));
+         type.typeParameters().add(tp2);
+      }
+      else
+      {
+         removeGenericType();
+      }
+   }
+
+   private void removeGenericType()
+   {
+      TypeDeclaration type = (TypeDeclaration) body;
+      type.typeParameters().remove(0);
    }
 
    /*
