@@ -233,6 +233,11 @@ public class Types
       return "";
    }
 
+   public static String getGenericsTypeParameter(final String type)
+   {
+      return getGenerics(type).replaceAll("<", "").replaceAll(">", "");
+   }
+
    public static boolean isArray(final String type)
    {
       return (type != null) && type.matches(".*\\[.*\\]$");

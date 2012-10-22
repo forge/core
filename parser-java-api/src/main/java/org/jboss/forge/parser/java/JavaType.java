@@ -8,14 +8,15 @@ package org.jboss.forge.parser.java;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 @SuppressWarnings("rawtypes")
 public interface JavaType<T extends JavaSource<T>> extends JavaSource<T>,
          InterfaceCapable<T>,
          MemberHolder<T, Member>,
          FieldHolder<T>,
-         MethodHolder<T>
+         MethodHolder<T>,
+         GenericCapable<T>
 {
 
 }

@@ -7,9 +7,9 @@
 
 package org.jboss.forge.parser.java;
 
-import org.jboss.forge.parser.Origin;
-
 import java.util.List;
+
+import org.jboss.forge.parser.Origin;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -23,7 +23,8 @@ public interface JavaSource<T extends JavaSource<T>> extends
          VisibilityScoped<T>,
          AnnotationTarget<T, T>,
          MemberHolder<T, Member>,
-         Origin<T>
+         Origin<T>,
+         GenericCapable<T>
 {
    /**
     * Return the canonical name of this {@link T} instance. This is equivalent to calling
