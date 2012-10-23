@@ -21,6 +21,7 @@ import org.jboss.forge.parser.java.FieldHolder;
 import org.jboss.forge.parser.java.Import;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaEnum;
+import org.jboss.forge.parser.java.JavaInterface;
 import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.parser.java.Method;
 import org.jboss.forge.parser.java.MethodHolder;
@@ -132,6 +133,53 @@ public class JavaPlugin implements Plugin
          writer.println();
 
          if (prompt.promptBoolean("Your class has syntax errors, create anyway?", true))
+         {
+            java.saveJavaSource(jc);
+         }
+      }
+      pickUp.fire(new PickupResource(java.getJavaResource(jc)));
+   }
+
+   @Command("new-interface")
+   public void newInterface(
+            @PipeIn final InputStream in,
+            @Option(required = false, help = "the package in which to build this Interface", description = "source package", type = PromptType.JAVA_PACKAGE, name = "package") final String pckg,
+            @Option(required = false, help = "the interface definition: surround with quotes", description = "interface definition") final String... def)
+            throws FileNotFoundException
+   {
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+      JavaInterface jc = null;
+      if (def != null)
+      {
+         String classDef = Strings.join(Arrays.asList(def), " ");
+         jc = JavaParser.parse(JavaInterface.class, classDef);
+      }
+      else if (in != null)
+      {
+         jc = JavaParser.parse(JavaInterface.class, in);
+      }
+      else
+      {
+         throw new RuntimeException("arguments required");
+      }
+      if (pckg != null)
+      {
+         jc.setPackage(pckg);
+      }
+      if (!jc.hasSyntaxErrors())
+      {
+         java.saveJavaSource(jc);
+      }
+      else
+      {
+         writer.println(ShellColor.RED, "Syntax Errors:");
+         for (SyntaxError error : jc.getSyntaxErrors())
+         {
+            writer.println(error.toString());
+         }
+         writer.println();
+         if (prompt.promptBoolean(
+                  "Your class has syntax errors, create anyway?", true))
          {
             java.saveJavaSource(jc);
          }
