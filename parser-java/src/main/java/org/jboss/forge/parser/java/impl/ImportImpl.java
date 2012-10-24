@@ -55,7 +55,15 @@ public class ImportImpl implements Import
    @Override
    public Import setName(final String name)
    {
-      imprt.setName(ast.newName(Types.tokenizeClassName(name)));
+      if (name.endsWith(".*"))
+      {
+         imprt.setName(ast.newName(Types.tokenizeClassName(name.replaceAll("\\.\\*", ""))));
+         imprt.setOnDemand(true);
+      }
+      else
+      {
+         imprt.setName(ast.newName(Types.tokenizeClassName(name)));
+      }
       return this;
    }
 
