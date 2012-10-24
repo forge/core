@@ -6,7 +6,7 @@ import java.net.URL;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.jboss.forge.container.util.Streams;
+import org.jboss.forge.container.impl.util.Streams;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
 import org.jboss.shrinkwrap.api.Filter;

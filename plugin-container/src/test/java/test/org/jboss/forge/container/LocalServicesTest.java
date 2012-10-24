@@ -4,7 +4,7 @@ import javax.enterprise.inject.spi.Extension;
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.forge.container.services.ContainerServiceExtension;
+import org.jboss.forge.container.impl.services.ContainerServiceExtension;
 import org.jboss.forge.test.AbstractForgeTest;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Assert;

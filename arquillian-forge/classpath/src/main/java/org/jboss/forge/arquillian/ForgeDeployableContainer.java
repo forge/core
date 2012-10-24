@@ -3,7 +3,6 @@ package org.jboss.forge.arquillian;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.util.Set;
 
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
@@ -15,13 +14,15 @@ import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.arquillian.protocol.ServletProtocolDescription;
 import org.jboss.forge.arquillian.util.ShrinkWrapUtil;
-import org.jboss.forge.container.AddonThread;
-import org.jboss.forge.container.AddonUtil;
-import org.jboss.forge.container.AddonUtil.AddonEntry;
-import org.jboss.forge.container.Bootstrap;
-import org.jboss.forge.container.Forge;
-import org.jboss.forge.container.util.Files;
-import org.jboss.forge.container.util.Streams;
+import org.jboss.forge.container.Addon;
+import org.jboss.forge.container.Status;
+import org.jboss.forge.container.impl.AddonEntry;
+import org.jboss.forge.container.impl.AddonRegistry;
+import org.jboss.forge.container.impl.AddonUtil;
+import org.jboss.forge.container.impl.Bootstrap;
+import org.jboss.forge.container.impl.Forge;
+import org.jboss.forge.container.impl.util.Files;
+import org.jboss.forge.container.impl.util.Streams;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.Node;
 import org.jboss.shrinkwrap.api.asset.Asset;
@@ -48,9 +49,9 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
          Thread.currentThread().interrupt();
       }
 
-      public Set<AddonThread> getThreads()
+      public Forge getForge()
       {
-         return forge.getThreads();
+         return forge;
       }
 
    }
@@ -129,13 +130,14 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       boolean deployed = false;
       while (!deployed)
       {
-         Set<AddonThread> threads = thread.getThreads();
-         for (AddonThread thread : threads)
+         AddonRegistry registry = thread.getForge().getAddonRegistry();
+         for (Addon entry : registry.getRegisteredAddons())
          {
-            String name = thread.getModule().getIdentifier().toString();
-            if (name.equals(addon.toModuleId()))
+            if (entry.getId().equals(addon.toModuleId()))
             {
-               deployed = true;
+               if (Status.STARTED.equals(entry.getStatus()) || Status.FAILED.equals(entry.getStatus()))
+                  deployed = true;
+
                break;
             }
          }
