@@ -165,22 +165,26 @@ public class JavaClassImpl extends AbstractJavaSourceMemberHolder<JavaClass> imp
          String typeD = Types.stripGenerics(type);
          String sympleTypeDName = Types.toSimpleName(typeD);
          String typesGeneric = Types.getGenericsTypeParameter(type);
+         
+         org.eclipse.jdt.core.dom.ParameterizedType pt = body.getAST().newParameterizedType(
+                     body.getAST().newSimpleType(body.getAST().newSimpleName(sympleTypeDName)));
+         
+         if (!hasImport(typeD) && Types.isQualified(typeD))
+         {
+             addImport(typeD);
+         }
+         
          for (String typeP : typesGeneric.split(","))
          {
-            org.eclipse.jdt.core.dom.ParameterizedType pt = body.getAST().newParameterizedType(
-                     body.getAST().newSimpleType(body.getAST().newSimpleName(sympleTypeDName)));
-            pt.typeArguments().add(body.getAST().newSimpleType(body.getAST().newSimpleName(typeP.trim())));
-            getBodyDeclaration().setStructuralProperty(TypeDeclaration.SUPERCLASS_TYPE_PROPERTY, pt);
-
-            if (!hasImport(typeD) && Types.isQualified(typeD))
-            {
-               addImport(typeD);
-            }
+            pt.typeArguments().add(body.getAST().newSimpleType(body.getAST().newSimpleName(Types.toSimpleName(typeP.trim()))));
+            
             if (!hasImport(typeP) && Types.isQualified(typeP))
             {
                addImport(typeP);
             }
          }
+         
+         getBodyDeclaration().setStructuralProperty(TypeDeclaration.SUPERCLASS_TYPE_PROPERTY, pt);
       }
       else
       {
