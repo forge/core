@@ -66,7 +66,8 @@ public class RepositoryLookup implements DependencyResolverProvider
    private ForgeEnvironment environment;
 
    public RepositoryLookup()
-   {}
+   {
+   }
 
    @Inject
    public RepositoryLookup(final MavenContainer container, final ResourceFactory factory,
@@ -110,7 +111,8 @@ public class RepositoryLookup implements DependencyResolverProvider
             segments.addAll(Arrays.asList((dep.getGroupId() + "." + dep.getArtifactId()).split("\\.")));
             segments.add(dep.getVersion());
 
-            for (String seg : segments) {
+            for (String seg : segments)
+            {
                dir = dir.getChildDirectory(seg);
                if (!dir.isDirectory())
                {
@@ -228,7 +230,8 @@ public class RepositoryLookup implements DependencyResolverProvider
          {
             File file = a.getArtifact().getFile();
             Dependency d = DependencyBuilder.create().setArtifactId(a.getArtifact().getArtifactId())
-                     .setGroupId(a.getArtifact().getGroupId()).setVersion(a.getArtifact().getVersion());
+                     .setGroupId(a.getArtifact().getGroupId()).setVersion(a.getArtifact().getVersion())
+                     .setPackagingType(a.getArtifact().getExtension());
             DependencyResource resource = new DependencyResource(factory, file, d);
             result.add(resource);
          }
