@@ -38,6 +38,31 @@ public class JavaClassGenericsTest
       Assert.assertTrue(javaClass.toString().contains("Bar<T>"));
       Assert.assertNotNull(javaClass.getImport("it.coopservice.test.Bar"));
    }
+   
+   @Test
+   public void addConcreteGenericSuperTypeWithPackage() throws ClassNotFoundException
+   {
+      JavaClass javaClass = JavaParser.create(JavaClass.class);
+      javaClass.setPackage("it.coopservice.test");
+      javaClass.setName("SimpleClass");
+      javaClass.setSuperType("it.coopservice.test.Bar<com.coopservice.test.MyConcreteSuperClass>");
+      Assert.assertTrue(javaClass.toString().contains("extends Bar<MyConcreteSuperClass>"));
+      Assert.assertNotNull(javaClass.getImport("it.coopservice.test.Bar"));
+      Assert.assertNotNull(javaClass.getImport("com.coopservice.test.MyConcreteSuperClass"));
+   }
+   
+   @Test
+   public void addMultipleConcreteGenericSuperTypeWithPackage() throws ClassNotFoundException
+   {
+      JavaClass javaClass = JavaParser.create(JavaClass.class);
+      javaClass.setPackage("it.coopservice.test");
+      javaClass.setName("SimpleClass");
+      javaClass.setSuperType("it.coopservice.test.Bar<com.coopservice.test.MyConcreteSuperClass,com.coopservice.test.MyOtherClass>");
+      Assert.assertTrue(javaClass.toString().contains("extends Bar<MyConcreteSuperClass, MyOtherClass>"));
+      Assert.assertNotNull(javaClass.getImport("it.coopservice.test.Bar"));
+      Assert.assertNotNull(javaClass.getImport("com.coopservice.test.MyConcreteSuperClass"));
+      Assert.assertNotNull(javaClass.getImport("com.coopservice.test.MyOtherClass"));
+   }
 
    @Test
    public void addGenericSuperTypeWithoutPackage() throws ClassNotFoundException
