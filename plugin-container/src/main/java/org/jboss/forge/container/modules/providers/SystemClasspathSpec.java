@@ -63,7 +63,7 @@ public class SystemClasspathSpec implements ModuleSpecProvider
             throw new RuntimeException(e);
          }
       }
-      
+
       paths.add("javax");
       paths.add("javax/naming");
    }
@@ -86,7 +86,7 @@ public class SystemClasspathSpec implements ModuleSpecProvider
       String[] children = file.list();
       for (String name : children)
       {
-         File child = new File(file.getAbsolutePath() + "/" + name);
+         File child = new File(file, name);
          if (child.isDirectory())
          {
             result.addAll(getPathsFrom(root, child));
