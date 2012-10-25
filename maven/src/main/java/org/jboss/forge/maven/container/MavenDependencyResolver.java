@@ -31,7 +31,6 @@ import org.sonatype.aether.collection.CollectRequest;
 import org.sonatype.aether.repository.Authentication;
 import org.sonatype.aether.repository.LocalRepository;
 import org.sonatype.aether.repository.RemoteRepository;
-import org.sonatype.aether.repository.RepositoryPolicy;
 import org.sonatype.aether.resolution.ArtifactResult;
 import org.sonatype.aether.resolution.DependencyRequest;
 import org.sonatype.aether.resolution.DependencyResolutionException;
@@ -122,24 +121,10 @@ public class MavenDependencyResolver implements DependencyResolver
 
    private List<RemoteRepository> convertToMavenRepos(final List<DependencyRepository> repositories)
    {
-      List<DependencyRepository> temp = new ArrayList<DependencyRepository>();
-      temp.addAll(repositories);
-
       List<RemoteRepository> remoteRepos = new ArrayList<RemoteRepository>();
-      boolean hasCentral = false;
-      for (DependencyRepository deprep : temp)
+      for (DependencyRepository deprep : repositories)
       {
          remoteRepos.add(convertToMavenRepo(deprep));
-         if (DependencyRepository.CENTRAL.getUrl().equals(deprep.getUrl()))
-         {
-            hasCentral = true;
-         }
-      }
-      if (!hasCentral)
-      {
-         RemoteRepository central = convertToMavenRepo(DependencyRepository.CENTRAL);
-         central.setPolicy(true, new RepositoryPolicy().setEnabled(false));
-         remoteRepos.add(central);
       }
       return remoteRepos;
    }

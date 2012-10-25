@@ -17,12 +17,9 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.maven.dependency.Dependency;
 import org.jboss.forge.maven.dependency.DependencyBuilder;
 import org.jboss.forge.maven.dependency.DependencyQueryBuilder;
-import org.jboss.forge.maven.dependency.DependencyRepository;
 import org.jboss.forge.maven.dependency.DependencyResolver;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -48,8 +45,7 @@ public class PluginLookupTest
 
       Dependency dep = DependencyBuilder.create("org.jboss.forge:forge-example-plugin:2.0.0-SNAPSHOT")
                .setPackagingType("far");
-      DependencyQueryBuilder query = DependencyQueryBuilder.create(dep).setRepositories(
-               DependencyRepository.JBOSS_NEXUS);
+      DependencyQueryBuilder query = DependencyQueryBuilder.create(dep);
       Set<Dependency> artifacts = resolver.resolveDependencies(query);
       for (Dependency dependencyResource : artifacts)
       {

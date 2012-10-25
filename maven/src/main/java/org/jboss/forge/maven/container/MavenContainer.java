@@ -60,7 +60,7 @@ public class MavenContainer
    public ProjectBuildingRequest getRequest()
    {
       boolean online = true;
-      //TODO: Online comes from ForgeEnvironment
+      // TODO: Online comes from ForgeEnvironment
       return getBuildingRequest(online == false);
    }
 

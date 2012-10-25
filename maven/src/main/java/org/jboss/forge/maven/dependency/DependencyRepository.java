@@ -13,13 +13,6 @@ package org.jboss.forge.maven.dependency;
  */
 public class DependencyRepository
 {
-   public static final DependencyRepository CENTRAL = new DependencyRepository("central",
-            "http://repo1.maven.org/maven2/");
-   public static final DependencyRepository JBOSS_NEXUS = new DependencyRepository("jboss",
-            "http://repository.jboss.org/nexus/content/groups/public");
-   public static final DependencyRepository JAVA_NET = new DependencyRepository("java_net",
-            "http://download.java.net/maven/2/");
-
    private final String id;
    private final String url;
 
