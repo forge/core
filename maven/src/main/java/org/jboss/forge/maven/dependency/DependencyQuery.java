@@ -11,17 +11,16 @@ import java.util.List;
 
 /**
  * A parameter object which is used to search dependencies
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ *
  */
 public interface DependencyQuery
 {
+   Dependency getDependency();
 
-   public abstract DependencyImpl getDependency();
+   List<DependencyRepository> getDependencyRepositories();
 
-   public abstract List<DependencyRepository> getDependencyRepositories();
-
-   public abstract DependencyFilter getDependencyFilter();
+   DependencyFilter getDependencyFilter();
 
 }

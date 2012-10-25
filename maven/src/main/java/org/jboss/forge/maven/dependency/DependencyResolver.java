@@ -7,14 +7,9 @@
 
 package org.jboss.forge.maven.dependency;
 
-import javax.inject.Singleton;
+import java.util.Set;
 
-/**
- * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- *
- */
-@Singleton
-public class DependencyResolver
+public interface DependencyResolver
 {
-
+   Set<Dependency> resolveDependencies(DependencyQuery query);
 }

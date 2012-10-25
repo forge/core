@@ -8,15 +8,15 @@
 package org.jboss.forge.maven.dependency;
 
 /**
- * Used to filter {@link DependencyImpl} objects in collections.
- * 
+ * Used to filter {@link Dependency} objects in collections.
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 public interface DependencyFilter
 {
    /**
     * Return true if the filter accepts this dependency, or false if the dependency should be filtered out.
     */
-   boolean accept(DependencyImpl dependency);
+   boolean accept(Dependency dependency);
 }

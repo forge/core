@@ -7,6 +7,7 @@
 
 package org.jboss.forge.maven.dependency;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,6 +25,7 @@ public class DependencyImpl implements Dependency
    private String packagingType;
    private String classifier;
    private String systemPath;
+   private File artifact;
    private boolean optional;
 
    private Set<Dependency> excludedDependencies = new HashSet<Dependency>();
@@ -131,6 +133,16 @@ public class DependencyImpl implements Dependency
       this.optional = optional;
    }
 
+   public void setArtifact(File artifact)
+   {
+      this.artifact = artifact;
+   }
+
+   public File getArtifact()
+   {
+      return artifact;
+   }
+
    @Override
    public String toString()
    {
@@ -142,6 +154,7 @@ public class DependencyImpl implements Dependency
    {
       final int prime = 31;
       int result = 1;
+      result = prime * result + ((artifact == null) ? 0 : artifact.hashCode());
       result = prime * result + ((artifactId == null) ? 0 : artifactId.hashCode());
       result = prime * result + ((classifier == null) ? 0 : classifier.hashCode());
       result = prime * result + ((excludedDependencies == null) ? 0 : excludedDependencies.hashCode());
@@ -164,6 +177,13 @@ public class DependencyImpl implements Dependency
       if (getClass() != obj.getClass())
          return false;
       DependencyImpl other = (DependencyImpl) obj;
+      if (artifact == null)
+      {
+         if (other.artifact != null)
+            return false;
+      }
+      else if (!artifact.equals(other.artifact))
+         return false;
       if (artifactId == null)
       {
          if (other.artifactId != null)
@@ -224,4 +244,5 @@ public class DependencyImpl implements Dependency
          return false;
       return true;
    }
+
 }

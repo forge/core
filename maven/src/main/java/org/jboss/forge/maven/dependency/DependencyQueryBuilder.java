@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class DependencyQueryBuilder implements DependencyQuery
 {
-   private DependencyImpl dependency;
+   private Dependency dependency;
    private DependencyFilter dependencyFilter;
    private List<DependencyRepository> dependencyRepositories = new ArrayList<DependencyRepository>();
 
@@ -27,17 +27,17 @@ public class DependencyQueryBuilder implements DependencyQuery
    {
    }
 
-   private DependencyQueryBuilder(DependencyImpl dependency)
+   private DependencyQueryBuilder(Dependency dependency)
    {
       setDependency(dependency);
    }
 
-   public static DependencyQueryBuilder create(DependencyImpl dependency)
+   public static DependencyQueryBuilder create(Dependency dependency)
    {
       return new DependencyQueryBuilder(dependency);
    }
 
-   private void setDependency(DependencyImpl dependency)
+   private void setDependency(Dependency dependency)
    {
       if (dependency == null)
       {
@@ -69,7 +69,7 @@ public class DependencyQueryBuilder implements DependencyQuery
       return this;
    }
 
-   public DependencyImpl getDependency()
+   public Dependency getDependency()
    {
       return dependency;
    }

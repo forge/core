@@ -7,10 +7,11 @@
 
 package org.jboss.forge.maven.dependency;
 
+import java.io.File;
 
 /**
- * Builder to create {@link DependencyImpl} objects. This class implements {@link DependencyImpl} for easy consumption. (I.e.:
- * Use this class wherever you need to create and use a new {@link DependencyImpl})
+ * Builder to create {@link DependencyImpl} objects. This class implements {@link DependencyImpl} for easy consumption.
+ * (I.e.: Use this class wherever you need to create and use a new {@link DependencyImpl})
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -46,7 +47,7 @@ public class DependencyBuilder implements Dependency
    /**
     * Return true if the groupId and artifactId of the two given dependencies are equal.
     */
-   public static boolean areEquivalent(final DependencyImpl l, final DependencyImpl r)
+   public static boolean areEquivalent(final Dependency l, final Dependency r)
    {
       if (l == r)
       {
@@ -215,7 +216,7 @@ public class DependencyBuilder implements Dependency
    }
 
    /**
-    * Convenience method which should be used to convert a {@link DependencyImpl} object into its string representation, for
+    * Convenience method which should be used to convert a {@link Dependency} object into its string representation, for
     * example: "groupId:artifactId:version:scope:packaging"
     */
    public static String toString(final Dependency dep)
@@ -245,6 +246,18 @@ public class DependencyBuilder implements Dependency
    public DependencyBuilder setOptional(boolean optional)
    {
       dep.setOptional(optional);
+      return this;
+   }
+
+   @Override
+   public File getArtifact()
+   {
+      return dep.getArtifact();
+   }
+
+   public DependencyBuilder setArtifact(File artifact)
+   {
+      dep.setArtifact(artifact);
       return this;
    }
 

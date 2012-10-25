@@ -7,6 +7,8 @@
 
 package org.jboss.forge.maven.dependency;
 
+import java.io.File;
+
 /**
  * Represents a project library dependency.
  *
@@ -59,6 +61,12 @@ public interface Dependency
     * Returns true if this dependency version is a SNAPSHOT
     */
    boolean isSnapshot();
+
+   /**
+    * Returns the file representing this artifact
+    *
+    */
+   File getArtifact();
 
    /**
     * Returns if this dependency is optional
