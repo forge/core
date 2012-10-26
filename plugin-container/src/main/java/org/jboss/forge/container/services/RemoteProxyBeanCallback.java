@@ -22,9 +22,10 @@ public class RemoteProxyBeanCallback implements LazyLoader
       Object result = null;
       for (ClassLoader classLoader : registry.getServices().keySet())
       {
-         if (registry.getServices().get(classLoader).hasService(serviceType))
+         ServiceRegistry serviceRegistry = registry.getServices().get(classLoader);
+         if (serviceRegistry != null && serviceRegistry.hasService(serviceType))
          {
-            RemoteInstance<?> instance = registry.getServices().get(classLoader).getRemoteInstance(serviceType);
+            RemoteInstance<?> instance = serviceRegistry.getRemoteInstance(serviceType);
             result = instance.get();
             break;
          }

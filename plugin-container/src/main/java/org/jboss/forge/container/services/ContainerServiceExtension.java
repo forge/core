@@ -36,14 +36,14 @@ public class ContainerServiceExtension implements Extension
    private Set<Class<?>> services = new HashSet<Class<?>>();
 
    // @SuppressWarnings({ "rawtypes", "unchecked" })
-   // public void processRemotes(@Observes ProcessAnnotatedType<?> event)
-   // {
-   // if (event.getAnnotatedType().getJavaClass().isAnnotationPresent(Remote.class))
-   // {
-   // event.setAnnotatedType(new RemoteAnnotatedType(event.getAnnotatedType()));
-   // services.add(event.getAnnotatedType().getJavaClass());
-   // }
-   // }
+   public void processRemotes(@Observes ProcessAnnotatedType<?> event)
+   {
+      if (event.getAnnotatedType().getJavaClass().isAnnotationPresent(Remote.class))
+      {
+         // event.setAnnotatedType(new RemoteAnnotatedType(event.getAnnotatedType()));
+         services.add(event.getAnnotatedType().getJavaClass());
+      }
+   }
 
    public void processRemoteInjectionPoint(@Observes ProcessInjectionPoint<?, ?> event)
    {

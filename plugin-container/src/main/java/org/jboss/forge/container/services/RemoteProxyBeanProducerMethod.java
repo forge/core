@@ -16,11 +16,6 @@ import org.jboss.forge.container.services.Service;
 
 public class RemoteProxyBeanProducerMethod
 {
-   static
-   {
-      System.out.println("Loaded RemoteProxyBeanProducerMethod");
-   }
-
    @Produces
    @Service
    public static Object produceRemoteService(AddonRegistry registry, InjectionPoint ip)
