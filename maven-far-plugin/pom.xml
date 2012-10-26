@@ -1,0 +1,148 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+
+   <parent>
+      <groupId>org.jboss</groupId>
+      <artifactId>jboss-parent</artifactId>
+      <version>6</version>
+   </parent>
+
+   <groupId>org.jboss.forge</groupId>
+   <artifactId>maven-far-plugin</artifactId>
+   <version>0.0.1-SNAPSHOT</version>
+   <packaging>maven-plugin</packaging>
+   <name>Forge - Maven Plugin</name>
+   <url>http://forge.jboss.org</url>
+
+   <prerequisites>
+      <maven>3.0</maven>
+   </prerequisites>
+
+   <properties>
+      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+      <forge.scm.connection>scm:git:git://github.com/forge/maven-extensions.git</forge.scm.connection>
+      <forge.developer.connection>scm:git:git@github.com:forge/maven-extensions.git</forge.developer.connection>
+      <forge.scm.url>http://github.com/forge/maven-extensions</forge.scm.url>
+
+      <maven.version>3.0.4</maven.version>
+   </properties>
+
+   <licenses>
+      <license>
+         <name>Eclipse Public License version 1.0</name>
+         <url>http://www.eclipse.org/legal/epl-v10.html</url>
+      </license>
+   </licenses>
+
+   <developers>
+      <developer>
+         <id>lincoln</id>
+         <name>Lincoln Baxter, III</name>
+         <email>lincolnbaxter@gmail.com</email>
+      </developer>
+      <developer>
+         <id>koen</id>
+         <name>Koen Aers</name>
+         <email>koen.aers@gmail.com</email>
+      </developer>
+      <developer>
+         <id>gastaldi</id>
+         <name>George Gastaldi</name>
+         <email>gegastaldi@gmail.com</email>
+      </developer>
+   </developers>
+
+   <dependencies>
+      <dependency>
+         <groupId>org.apache.maven</groupId>
+         <artifactId>maven-core</artifactId>
+         <version>${maven.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.apache.maven</groupId>
+         <artifactId>maven-plugin-api</artifactId>
+         <version>${maven.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.apache.maven</groupId>
+         <artifactId>maven-artifact</artifactId>
+         <version>${maven.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.apache.maven</groupId>
+         <artifactId>maven-archiver</artifactId>
+         <version>2.5</version>
+      </dependency>
+      <dependency>
+         <groupId>org.codehaus.plexus</groupId>
+         <artifactId>plexus-utils</artifactId>
+         <version>3.0.1</version>
+      </dependency>
+      <dependency>
+         <groupId>junit</groupId>
+         <artifactId>junit</artifactId>
+         <version>4.10</version>
+         <scope>test</scope>
+      </dependency>
+   </dependencies>
+
+   <scm>
+      <connection>${forge.scm.connection}</connection>
+      <developerConnection>${forge.developer.connection}</developerConnection>
+      <url>${forge.scm.url}</url>
+   </scm>
+   <build>
+      <pluginManagement>
+         <plugins>
+            <plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-plugin-plugin</artifactId>
+               <version>3.1</version>
+            </plugin>
+         </plugins>
+      </pluginManagement>
+
+      <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-plugin-plugin</artifactId>
+            <configuration>
+               <goalPrefix>forge</goalPrefix>
+            </configuration>
+            <executions>
+               <execution>
+                  <id>generated-helpmojo</id>
+                  <goals>
+                     <goal>helpmojo</goal>
+                  </goals>
+               </execution>
+            </executions>
+         </plugin>
+
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+               <source>1.6</source>
+               <target>1.6</target>
+               <encoding>UTF-8</encoding>
+            </configuration>
+         </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <inherited>true</inherited>
+            <configuration>
+               <archive>
+                  <manifest>
+                     <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                     <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                  </manifest>
+               </archive>
+            </configuration>
+         </plugin>
+      </plugins>
+   </build>
+
+</project>
