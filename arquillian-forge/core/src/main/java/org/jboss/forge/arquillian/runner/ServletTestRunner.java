@@ -33,7 +33,7 @@ import org.jboss.arquillian.container.test.spi.command.Command;
 import org.jboss.arquillian.container.test.spi.util.TestRunners;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
-import org.jboss.forge.container.impl.util.SecurityActions;
+import org.jboss.forge.container.util.SecurityActions;
 
 /**
  * ServletTestRunner

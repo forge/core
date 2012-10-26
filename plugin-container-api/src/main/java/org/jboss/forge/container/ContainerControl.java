@@ -21,4 +21,11 @@ public interface ContainerControl
     * Restart the container.
     */
    void restart();
+
+   /**
+    * Get the {@link Status} of the container.
+    * 
+    * @return
+    */
+   Status getStatus();
 }

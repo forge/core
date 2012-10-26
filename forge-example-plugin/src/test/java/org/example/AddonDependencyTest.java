@@ -3,6 +3,10 @@ package org.example;
 import javax.enterprise.inject.spi.Extension;
 import javax.inject.Inject;
 
+import org.example.consuming.ConsumingService;
+import org.example.extension.TestExtension;
+import org.example.published.PublishedService;
+import org.example.simple.SimpleService;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.archive.ForgeArchive;

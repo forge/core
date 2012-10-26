@@ -15,10 +15,10 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.arquillian.protocol.ServletProtocolDescription;
 import org.jboss.forge.arquillian.util.NativeSystemCall;
 import org.jboss.forge.arquillian.util.ShrinkWrapUtil;
-import org.jboss.forge.container.impl.AddonEntry;
-import org.jboss.forge.container.impl.AddonUtil;
-import org.jboss.forge.container.impl.util.Files;
-import org.jboss.forge.container.impl.util.Streams;
+import org.jboss.forge.container.AddonEntry;
+import org.jboss.forge.container.AddonUtil;
+import org.jboss.forge.container.util.Files;
+import org.jboss.forge.container.util.Streams;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.Node;
 import org.jboss.shrinkwrap.api.asset.Asset;
@@ -47,7 +47,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       try
       {
          this.process = NativeSystemCall.exec("java", "-Dforge.logging=false -Dforge.home=" + FORGE_HOME,
-                  "-cp", FORGE_HOME + "/lib/*", "org.jboss.forge.container.impl.Bootstrap");
+                  "-cp", FORGE_HOME + "/lib/*", "org.jboss.forge.container.Bootstrap");
       }
       catch (Exception e)
       {
