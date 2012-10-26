@@ -188,11 +188,6 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.forge</groupId>
-            <artifactId>maven-far-plugin</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
             <artifactId>forge-parser-xml</artifactId>
             <version>${project.version}</version>
          </dependency>
@@ -319,6 +314,11 @@
 
       <pluginManagement>
          <plugins>
+            <plugin>
+               <groupId>org.jboss.forge</groupId>
+               <artifactId>maven-far-plugin</artifactId>
+               <version>${project.version}</version>
+            </plugin>
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-jar-plugin</artifactId>
