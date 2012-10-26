@@ -20,7 +20,6 @@
          <extension>
             <groupId>org.jboss.forge</groupId>
             <artifactId>maven-far-plugin</artifactId>
-            <version>${project.version}</version>
          </extension>
       </extensions>
    </build>

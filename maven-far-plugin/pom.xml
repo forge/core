@@ -3,37 +3,19 @@
    <modelVersion>4.0.0</modelVersion>
 
    <parent>
-      <artifactId>forge-parent</artifactId>
       <groupId>org.jboss.forge</groupId>
+      <artifactId>forge-parent</artifactId>
       <version>2.0.0-SNAPSHOT</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
 
-   <groupId>org.jboss.forge</groupId>
    <artifactId>maven-far-plugin</artifactId>
    <packaging>maven-plugin</packaging>
    <name>Forge - Maven Plugin</name>
-   <url>http://forge.jboss.org</url>
-
-   <prerequisites>
-      <maven>3.0</maven>
-   </prerequisites>
 
    <properties>
-      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-      <forge.scm.connection>scm:git:git://github.com/forge/maven-extensions.git</forge.scm.connection>
-      <forge.developer.connection>scm:git:git@github.com:forge/maven-extensions.git</forge.developer.connection>
-      <forge.scm.url>http://github.com/forge/maven-extensions</forge.scm.url>
-
       <maven.version>3.0.4</maven.version>
    </properties>
-
-   <licenses>
-      <license>
-         <name>Eclipse Public License version 1.0</name>
-         <url>http://www.eclipse.org/legal/epl-v10.html</url>
-      </license>
-   </licenses>
 
    <developers>
       <developer>
@@ -87,11 +69,6 @@
       </dependency>
    </dependencies>
 
-   <scm>
-      <connection>${forge.scm.connection}</connection>
-      <developerConnection>${forge.developer.connection}</developerConnection>
-      <url>${forge.scm.url}</url>
-   </scm>
    <build>
       <pluginManagement>
          <plugins>

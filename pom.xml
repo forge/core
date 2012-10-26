@@ -30,19 +30,14 @@
          <email>lincolnbaxter@gmail.com</email>
       </developer>
       <developer>
-         <id>mike</id>
-         <name>Mike Brock</name>
-         <email>brockm@gmail.com</email>
+         <id>gastaldi</id>
+         <name>George Gastaldi</name>
+         <email>gegastaldi@gmail.com</email>
       </developer>
       <developer>
          <id>koen</id>
          <name>Koen Aers</name>
          <email>koen.aers@gmail.com</email>
-      </developer>
-      <developer>
-         <id>gastaldi</id>
-         <name>George Gastaldi</name>
-         <email>gegastaldi@gmail.com</email>
       </developer>
    </developers>
 
@@ -189,6 +184,11 @@
          <dependency>
             <groupId>org.jboss.forge</groupId>
             <artifactId>forge-maven</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>maven-far-plugin</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>
