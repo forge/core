@@ -1,9 +1,7 @@
 package org.example.published;
 
-import javax.enterprise.event.Observes;
 import javax.inject.Singleton;
 
-import org.jboss.forge.container.event.PostStartup;
 import org.jboss.forge.container.services.Remote;
 
 /**
@@ -13,11 +11,6 @@ import org.jboss.forge.container.services.Remote;
 @Singleton
 public class PublishedService
 {
-   public void onStartup(@Observes PostStartup event)
-   {
-      System.out.println(getMessage());
-   }
-   
    public String getMessage()
    {
       return "I am PublishedService.";
