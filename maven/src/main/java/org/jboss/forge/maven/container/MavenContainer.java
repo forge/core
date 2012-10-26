@@ -40,7 +40,6 @@ import org.apache.maven.settings.building.SettingsBuildingResult;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.logging.console.ConsoleLoggerManager;
-import org.jboss.forge.container.impl.util.OSUtils;
 import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManager;
 import org.sonatype.aether.repository.Authentication;
 import org.sonatype.aether.util.repository.DefaultProxySelector;
@@ -147,7 +146,7 @@ public class MavenContainer
          SettingsBuilder settingsBuilder = new DefaultSettingsBuilderFactory().newInstance();
          SettingsBuildingRequest settingsRequest = new DefaultSettingsBuildingRequest();
          settingsRequest
-                  .setUserSettingsFile(new File(OSUtils.getUserHomeDir().getAbsolutePath() + "/.m2/settings.xml"));
+                  .setUserSettingsFile(new File(getUserHomePath() + "/.m2/settings.xml"));
 
          if (M2_HOME != null)
             settingsRequest.setGlobalSettingsFile(new File(M2_HOME + "/conf/settings.xml"));
@@ -157,7 +156,7 @@ public class MavenContainer
 
          if (effectiveSettings.getLocalRepository() == null)
          {
-            effectiveSettings.setLocalRepository(OSUtils.getUserHomeDir().getAbsolutePath() + "/.m2/repository");
+            effectiveSettings.setLocalRepository(getUserHomePath() + "/.m2/repository");
          }
 
          return effectiveSettings;
@@ -260,6 +259,16 @@ public class MavenContainer
                   snapshots.getChecksumPolicy()));
 
       return result;
+   }
+
+   public static File getUserHomeDir()
+   {
+      return new File(System.getProperty("user.home")).getAbsoluteFile();
+   }
+
+   public static String getUserHomePath()
+   {
+      return getUserHomeDir().getAbsolutePath();
    }
 
 }
