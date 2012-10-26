@@ -3,14 +3,14 @@
    <modelVersion>4.0.0</modelVersion>
 
    <parent>
-      <groupId>org.jboss</groupId>
-      <artifactId>jboss-parent</artifactId>
-      <version>6</version>
+      <artifactId>forge-parent</artifactId>
+      <groupId>org.jboss.forge</groupId>
+      <version>2.0.0-SNAPSHOT</version>
+      <relativePath>../pom.xml</relativePath>
    </parent>
 
    <groupId>org.jboss.forge</groupId>
    <artifactId>maven-far-plugin</artifactId>
-   <version>0.0.1-SNAPSHOT</version>
    <packaging>maven-plugin</packaging>
    <name>Forge - Maven Plugin</name>
    <url>http://forge.jboss.org</url>

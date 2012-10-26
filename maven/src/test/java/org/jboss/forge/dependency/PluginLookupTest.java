@@ -17,6 +17,7 @@ import org.jboss.forge.maven.dependency.Dependency;
 import org.jboss.forge.maven.dependency.DependencyBuilder;
 import org.jboss.forge.maven.dependency.DependencyQueryBuilder;
 import org.jboss.forge.maven.dependency.DependencyResolver;
+import org.jboss.forge.test.AbstractForgeTest;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -28,18 +29,18 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @RunWith(Arquillian.class)
-public class PluginLookupTest
+public class PluginLookupTest extends AbstractForgeTest
 {
-   @Deployment
-   public static ForgeArchive getDependencyDeployment()
-   {
-      ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-               .addPackages(true, "org.jboss.forge.maven")
-               .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
-               .setAsForgeXML(new StringAsset("<addon/>"));
-
-      return archive;
-   }
+//   @Deployment
+//   public static ForgeArchive getDependencyDeployment()
+//   {
+//      ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
+//               .addPackages(true, "org.jboss.forge.maven")
+//               .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
+//               .setAsForgeXML(new StringAsset("<addon/>"));
+//
+//      return archive;
+//   }
 
    @Inject
    private DependencyResolver resolver;
