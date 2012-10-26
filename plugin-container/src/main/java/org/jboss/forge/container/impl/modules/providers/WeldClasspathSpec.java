@@ -3,11 +3,8 @@ package org.jboss.forge.container.impl.modules.providers;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.jboss.modules.DependencySpec;
 import org.jboss.modules.ModuleIdentifier;
 import org.jboss.modules.ModuleSpec.Builder;
-import org.jboss.modules.ResourceLoaders;
-import org.jboss.modules.filter.PathFilters;
 
 public class WeldClasspathSpec extends BaseModuleSpecProvider
 {

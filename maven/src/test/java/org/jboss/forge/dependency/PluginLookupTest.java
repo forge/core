@@ -10,18 +10,12 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.maven.dependency.Dependency;
 import org.jboss.forge.maven.dependency.DependencyBuilder;
 import org.jboss.forge.maven.dependency.DependencyQueryBuilder;
 import org.jboss.forge.maven.dependency.DependencyResolver;
 import org.jboss.forge.test.AbstractForgeTest;
-import org.jboss.shrinkwrap.api.ArchivePaths;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

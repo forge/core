@@ -28,7 +28,6 @@ public class RemoteServicesImproperInjectionTest
    }
 
    @Inject
-   @SuppressWarnings("unused")
    private RemoteService localRemote;
 
    @Test
