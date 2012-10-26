@@ -12,7 +12,6 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.Root;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.maven.dependency.Dependency;
 import org.jboss.forge.maven.dependency.DependencyBuilder;
@@ -20,6 +19,8 @@ import org.jboss.forge.maven.dependency.DependencyQueryBuilder;
 import org.jboss.forge.maven.dependency.DependencyResolver;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -30,10 +31,14 @@ import org.junit.runner.RunWith;
 public class PluginLookupTest
 {
    @Deployment
-   public static ForgeArchive createTestArchive()
+   public static ForgeArchive getDependencyDeployment()
    {
-      return ShrinkWrap.create(ForgeArchive.class, "test.jar").addPackages(true, Root.class.getPackage())
-               .addAsManifestResource("META-INF/beans.xml", ArchivePaths.create("beans.xml"));
+      ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
+               .addPackages(true, "org.jboss.forge.maven")
+               .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
+               .setAsForgeXML(new StringAsset("<addon/>"));
+
+      return archive;
    }
 
    @Inject
