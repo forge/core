@@ -8,6 +8,8 @@ package org.jboss.forge.container.modules;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.jar.JarFile;
@@ -28,6 +30,7 @@ import org.jboss.modules.ModuleSpec;
 import org.jboss.modules.ModuleSpec.Builder;
 import org.jboss.modules.ResourceLoaderSpec;
 import org.jboss.modules.ResourceLoaders;
+import org.jboss.modules.filter.PathFilter;
 import org.jboss.modules.filter.PathFilters;
 
 /**
@@ -140,7 +143,8 @@ public class AddonModuleLoader extends ModuleLoader
          }
          else
          {
-            builder.addDependency(DependencySpec.createModuleDependencySpec(PathFilters.acceptAll(),
+            builder.addDependency(DependencySpec.createModuleDependencySpec(
+                     PathFilters.not(PathFilters.in(new HashSet<String>(Arrays.asList("META-INF")))),
                      PathFilters.rejectAll(), this, moduleId, dependency.isOptional()));
          }
       }

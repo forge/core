@@ -63,7 +63,8 @@ public class AddonDependencyTest
    @Test
    public void testRemoteServiceInjection() throws Exception
    {
-      Assert.assertEquals("I am ConsumingService. Remote service says [I am PublishedService.]", consuming.getMessage());
+      Assert.assertEquals("I am ConsumingService. Remote service says [" + remote.getMessage() + "]",
+               consuming.getMessage());
       Assert.assertNotSame(consuming, remote);
       Assert.assertNotSame(consuming.getClassLoader(), remote.getClassLoader());
    }

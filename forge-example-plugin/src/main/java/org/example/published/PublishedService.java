@@ -13,7 +13,7 @@ public class PublishedService
 {
    public String getMessage()
    {
-      return "I am PublishedService.";
+      return "I am PublishedService [" + hashCode() + "]";
    }
 
    public ClassLoader getClassLoader()

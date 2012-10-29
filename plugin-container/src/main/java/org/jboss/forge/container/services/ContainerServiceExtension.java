@@ -10,17 +10,16 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.spi.AnnotatedMember;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.enterprise.inject.spi.ProcessInjectionPoint;
+import javax.enterprise.inject.spi.ProcessProducer;
 
 /**
  * One classloader/thread/weld container per plugin module. One primary executor container running, fires events to each
  * plugin-container.
- * 
- * Multi-threaded bootstrap. Loads primary container, then attaches individual plugin containers as they come up.
- * 
- * Ideas:
  * 
  * Addons may depend on other addons beans, but these beans must be explicitly exposed via the {@link Remote} and
  * {@link Service} API.
@@ -29,12 +28,13 @@ public class ContainerServiceExtension implements Extension
 {
    private Set<Class<?>> services = new HashSet<Class<?>>();
 
-   // @SuppressWarnings({ "rawtypes", "unchecked" })
+   @SuppressWarnings({ "rawtypes", "unchecked" })
    public void processRemotes(@Observes ProcessAnnotatedType<?> event)
    {
-      if (event.getAnnotatedType().getJavaClass().isAnnotationPresent(Remote.class))
+      Class<?> type = event.getAnnotatedType().getJavaClass();
+      if (type.isAnnotationPresent(Remote.class))
       {
-         // event.setAnnotatedType(new RemoteAnnotatedType(event.getAnnotatedType()));
+         event.setAnnotatedType(new RemoteAnnotatedType(event.getAnnotatedType()));
          services.add(event.getAnnotatedType().getJavaClass());
       }
    }
@@ -45,13 +45,13 @@ public class ContainerServiceExtension implements Extension
          event.setInjectionPoint(new RemoteInjectionPoint(event.getInjectionPoint()));
    }
 
-   // @SuppressWarnings({ "rawtypes", "unchecked" })
-   // public void processProducerHooks(@Observes ProcessProducer<?, ?> event, BeanManager manager)
-   // {
-   // AnnotatedMember<?> annotatedMember = event.getAnnotatedMember();
-   // if (annotatedMember.isAnnotationPresent(Remote.class))
-   // event.setProducer(new RemoteProxyBeanProducer(event.getProducer()));
-   // }
+   @SuppressWarnings({ "rawtypes", "unchecked" })
+   public void processProducerHooks(@Observes ProcessProducer<?, ?> event, BeanManager manager)
+   {
+      AnnotatedMember<?> annotatedMember = event.getAnnotatedMember();
+      if (annotatedMember.isAnnotationPresent(Remote.class))
+         event.setProducer(new RemoteProxyBeanProducer(event.getProducer()));
+   }
 
    public Set<Class<?>> getServices()
    {
