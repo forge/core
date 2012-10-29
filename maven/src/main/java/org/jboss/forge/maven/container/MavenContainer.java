@@ -261,14 +261,13 @@ public class MavenContainer
       return result;
    }
 
-   public static File getUserHomeDir()
+   private File getUserHomeDir()
    {
       return new File(System.getProperty("user.home")).getAbsoluteFile();
    }
 
-   public static String getUserHomePath()
+   private String getUserHomePath()
    {
       return getUserHomeDir().getAbsolutePath();
    }
-
 }

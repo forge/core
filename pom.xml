@@ -54,18 +54,15 @@
       <forge.scm.url>http://github.com/forge/core</forge.scm.url>
       <forge.release.codename>One</forge.release.codename>
       <forge.release.version>${project.version}</forge.release.version>
-      <version.aether>1.13.1</version.aether>
-      <version.arquillian>1.0.2.Final</version.arquillian>
-      <version.arquillian.container>1.0.0.CR3</version.arquillian.container>
+      <version.arquillian>1.0.3.Final</version.arquillian>
+      <version.arquillian.container>1.0.0.CR4</version.arquillian.container>
       <version.cdi>1.1.EDR1.2</version.cdi>
       <version.jboss.spec>3.0.1.Final</version.jboss.spec>
       <version.jboss.modules>1.1.3.GA</version.jboss.modules>
       <version.junit>4.10</version.junit>
-      <version.maven>3.0.4</version.maven>
       <version.mvel>2.1.0.Final</version.mvel>
       <version.shrinkwrap>2.0.0-alpha-1</version.shrinkwrap>
       <version.slf4j>1.6.6</version.slf4j>
-      <version.wagon>2.2</version.wagon>
       <version.weld>2.0.0.Alpha3</version.weld>
       <version.weld.api>2.0.Alpha2</version.weld.api>
    </properties>

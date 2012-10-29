@@ -28,10 +28,10 @@ import org.jboss.forge.maven.dependency.DependencyResolver;
 import org.sonatype.aether.RepositorySystem;
 import org.sonatype.aether.artifact.Artifact;
 import org.sonatype.aether.collection.CollectRequest;
+import org.sonatype.aether.graph.DependencyNode;
 import org.sonatype.aether.repository.Authentication;
 import org.sonatype.aether.repository.LocalRepository;
 import org.sonatype.aether.repository.RemoteRepository;
-import org.sonatype.aether.resolution.ArtifactResult;
 import org.sonatype.aether.resolution.DependencyRequest;
 import org.sonatype.aether.resolution.DependencyResolutionException;
 import org.sonatype.aether.resolution.DependencyResult;
@@ -57,11 +57,12 @@ public class MavenDependencyResolver implements DependencyResolver
       RepositorySystem system = container.lookup(RepositorySystem.class);
       MavenRepositorySystemSession session = setupRepoSession(system);
 
-      Artifact queryArtifact = dependencyToMavenArtifact(query.getDependency());
+      Dependency dependency = query.getDependency();
+      Artifact queryArtifact = dependencyToMavenArtifact(dependency);
 
-      CollectRequest collectRequest = new CollectRequest(new org.sonatype.aether.graph.Dependency(queryArtifact, null),
+      CollectRequest collectRequest = new CollectRequest(new org.sonatype.aether.graph.Dependency(queryArtifact,
+               dependency.getScopeType()),
                convertToMavenRepos(query.getDependencyRepositories()));
-
       DependencyRequest request = new DependencyRequest(collectRequest, null);
 
       DependencyResult artifacts;
@@ -73,18 +74,23 @@ public class MavenDependencyResolver implements DependencyResolver
       {
          throw new RuntimeException(e);
       }
-
-      for (ArtifactResult a : artifacts.getArtifactResults())
+      DependencyNode root = artifacts.getRoot();
+      for (DependencyNode node : root.getChildren())
       {
-         Artifact artifact = a.getArtifact();
+         org.sonatype.aether.graph.Dependency artifactDependency = node.getDependency();
+         Artifact artifact = artifactDependency.getArtifact();
          File file = artifact.getFile();
          Dependency d = DependencyBuilder.create().setArtifactId(artifact.getArtifactId())
                   .setGroupId(artifact.getGroupId()).setVersion(artifact.getVersion())
-                  .setPackagingType(artifact.getExtension()).setArtifact(file);
+                  .setPackagingType(artifact.getExtension()).setArtifact(file)
+                  .setOptional(artifactDependency.isOptional())
+                  .setClassifier(artifact.getClassifier())
+                  .setScopeType(artifactDependency.getScope());
          if (filter == null || filter.accept(d))
          {
             result.add(d);
          }
+
       }
       return result;
    }
