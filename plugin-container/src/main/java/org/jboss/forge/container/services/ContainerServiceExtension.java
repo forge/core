@@ -10,15 +10,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.AnnotatedMember;
-import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.enterprise.inject.spi.ProcessInjectionPoint;
-import javax.enterprise.inject.spi.ProcessProducer;
-
-import org.jboss.forge.container.services.Remote;
-import org.jboss.forge.container.services.Service;
 
 /**
  * One classloader/thread/weld container per plugin module. One primary executor container running, fires events to each
