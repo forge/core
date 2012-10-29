@@ -29,4 +29,9 @@ public class ConsumingService
    {
       return getClass().getClassLoader();
    }
+
+   public int getRemoteHashCode()
+   {
+      return service.hashCode();
+   }
 }
