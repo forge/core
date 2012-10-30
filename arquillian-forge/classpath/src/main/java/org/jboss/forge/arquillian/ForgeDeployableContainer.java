@@ -30,6 +30,7 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
 public class ForgeDeployableContainer implements DeployableContainer<ForgeContainerConfiguration>
 {
+   private static final int TEST_DEPLOYMENT_TIMEOUT = 5000;
    private ForgeRunnable thread;
 
    private class ForgeRunnable implements Runnable
@@ -127,8 +128,9 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       HTTPContext httpContext = new HTTPContext("localhost", 4141);
       httpContext.add(new Servlet("ArquillianServletRunner", "/ArquillianServletRunner"));
 
+      long start = System.currentTimeMillis();
       boolean deployed = false;
-      while (!deployed)
+      while (!deployed && (System.currentTimeMillis() - start < TEST_DEPLOYMENT_TIMEOUT))
       {
          AddonRegistry registry = thread.getForge().getAddonRegistry();
          for (Addon entry : registry.getRegisteredAddons())
