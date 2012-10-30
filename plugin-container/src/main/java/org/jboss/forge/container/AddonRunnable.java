@@ -22,6 +22,14 @@ import org.jboss.weld.environment.se.WeldContainer;
 
 public final class AddonRunnable implements Runnable
 {
+   static
+   {
+      /*
+       * This must happen once per JVM
+       */
+      SingletonProvider.initialize(new SilentTCCLSingletonProvider());
+   }
+
    private AddonImpl addon;
    private AddonRegistry addonRegistry;
    private boolean shutdown = false;
@@ -49,9 +57,6 @@ public final class AddonRunnable implements Runnable
          {
             try
             {
-               SingletonProvider.reset();
-               SingletonProvider.initialize(new SilentTCCLSingletonProvider());
-
                Weld weld = new ModularWeld(module);
                WeldContainer container = weld.initialize();
 
@@ -62,7 +67,7 @@ public final class AddonRunnable implements Runnable
                addon.setStatus(Status.STARTING);
 
                manager.fireEvent(new ContainerStartup());
-               
+
                ContainerControl control = BeanManagerUtils.getContextualInstance(manager, ContainerControl.class);
                Assert.notNull(control, "Container control was null.");
 
