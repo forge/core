@@ -42,5 +42,6 @@ public class PluginLookupTest
       Dependency dependency = artifacts.iterator().next();
       Assert.assertEquals("far", dependency.getPackagingType());
       Assert.assertNotNull(dependency.getScopeType());
+      Assert.assertTrue(dependency.isOptional());
    }
 }
