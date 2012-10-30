@@ -7,12 +7,13 @@
 
 package org.jboss.forge.maven.dependency;
 
+import java.util.List;
 import java.util.Set;
 
 public interface DependencyResolver
 {
    /**
-    * Resolve all the dependencies from a {@link Dependency} object.
+    * Resolve all the dependencies from a {@link DependencyQuery} object.
     *
     * The {@link Dependency} object included inside the {@link DependencyQuery} object is not included in the
     * {@link Set} returned
@@ -21,4 +22,12 @@ public interface DependencyResolver
     * @return
     */
    Set<Dependency> resolveDependencies(DependencyQuery query);
+
+   /**
+    * Resolve the versions from a {@link Dependency} object contained in the {@link DependencyQuery} object.
+    *
+    * @param query
+    * @return
+    */
+   List<Dependency> resolveVersions(DependencyQuery query);
 }

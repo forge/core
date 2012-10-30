@@ -35,7 +35,10 @@ import org.sonatype.aether.repository.RemoteRepository;
 import org.sonatype.aether.resolution.DependencyRequest;
 import org.sonatype.aether.resolution.DependencyResolutionException;
 import org.sonatype.aether.resolution.DependencyResult;
+import org.sonatype.aether.resolution.VersionRangeRequest;
+import org.sonatype.aether.resolution.VersionRangeResult;
 import org.sonatype.aether.util.artifact.DefaultArtifact;
+import org.sonatype.aether.version.Version;
 
 @Singleton
 public class MavenDependencyResolver implements DependencyResolver
@@ -95,7 +98,55 @@ public class MavenDependencyResolver implements DependencyResolver
       return result;
    }
 
+   @Override
+   public List<Dependency> resolveVersions(DependencyQuery query)
+   {
+      Dependency dep = query.getDependency();
+      VersionRangeResult r = getVersions(query);
+      List<Dependency> result = new ArrayList<Dependency>();
+      DependencyFilter filter = query.getDependencyFilter();
+      for (Version v : r.getVersions())
+      {
+         DependencyBuilder versionedDep = DependencyBuilder.create(dep).setVersion(v.toString());
+         if (filter == null || filter.accept(versionedDep))
+         {
+            result.add(versionedDep);
+         }
+      }
+      return result;
+   }
+
    // Utility Methods
+   private VersionRangeResult getVersions(DependencyQuery query)
+   {
+      Dependency dep = query.getDependency();
+      try
+      {
+         String version = dep.getVersion();
+         if (version == null || version.isEmpty())
+         {
+            dep = DependencyBuilder.create(dep).setVersion("[,)");
+         }
+         else if (!version.matches("(\\(|\\[).*?(\\)|\\])"))
+         {
+            dep = DependencyBuilder.create(dep).setVersion("[" + version + "]");
+         }
+
+         RepositorySystem maven = container.lookup(RepositorySystem.class);
+         MavenRepositorySystemSession session = setupRepoSession(maven);
+
+         Artifact artifact = dependencyToMavenArtifact(dep);
+         VersionRangeRequest rangeRequest = new VersionRangeRequest(artifact,
+                  convertToMavenRepos(query.getDependencyRepositories()), null);
+
+         VersionRangeResult rangeResult = maven.resolveVersionRange(session, rangeRequest);
+         return rangeResult;
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException("Failed to look up versions for [" + dep + "]", e);
+      }
+   }
 
    private MavenRepositorySystemSession setupRepoSession(final RepositorySystem repoSystem)
    {

@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.maven.dependency;
 
+import java.util.List;
 import java.util.Set;
 
 import org.jboss.forge.maven.container.MavenContainer;
@@ -43,5 +44,17 @@ public class PluginLookupTest
       Assert.assertEquals("far", dependency.getPackagingType());
       Assert.assertNotNull(dependency.getScopeType());
       Assert.assertTrue(dependency.isOptional());
+   }
+
+   @Test
+   public void testResolveVersions() throws Exception
+   {
+      DependencyQuery query = DependencyQueryBuilder.create(DependencyBuilder
+               .create("org.jboss.forge:forge-distribution:::zip")).setRepositories(
+               new DependencyRepository("jboss", "https://repository.jboss.org/nexus/content/groups/public/"));
+      List<Dependency> versions = resolver.resolveVersions(query);
+      System.out.println(versions);
+      Assert.assertNotNull(versions);
+      Assert.assertFalse(versions.isEmpty());
    }
 }
