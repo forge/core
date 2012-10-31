@@ -127,6 +127,9 @@ public class PersistenceMetaModelFacetImpl extends BaseFacet implements Persiste
                .addPluginDependency(aptDependency);
 
       project.getFacet(MavenPluginFacet.class).addPlugin(processorPlugin);
+      // FORGE-700
+      project.getFacet(DependencyFacet.class).addDirectDependency(
+               DependencyBuilder.create(aptDependency).setScopeType("provided"));
    }
 
    private DependencyBuilder createProcessorDependency()
