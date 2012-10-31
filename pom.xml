@@ -79,7 +79,7 @@
             <module>plugin-container</module>
             <module>arquillian-forge</module>
             <module>test-harness</module>
-            <module>maven-far-plugin</module>
+            <module>far-maven-plugin</module>
             <module>forge-example-plugin</module>
             <module>forge-otherexample-plugin</module>
             <module>maven</module>
@@ -313,7 +313,7 @@
          <plugins>
             <plugin>
                <groupId>org.jboss.forge</groupId>
-               <artifactId>maven-far-plugin</artifactId>
+               <artifactId>far-maven-plugin</artifactId>
                <version>${project.version}</version>
             </plugin>
             <plugin>

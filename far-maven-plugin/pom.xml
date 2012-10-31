@@ -9,7 +9,7 @@
       <relativePath>../pom.xml</relativePath>
    </parent>
 
-   <artifactId>maven-far-plugin</artifactId>
+   <artifactId>far-maven-plugin</artifactId>
    <packaging>maven-plugin</packaging>
    <name>Forge - Maven Plugin</name>
 

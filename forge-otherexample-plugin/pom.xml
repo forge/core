@@ -19,7 +19,7 @@
       <extensions>
          <extension>
             <groupId>org.jboss.forge</groupId>
-            <artifactId>maven-far-plugin</artifactId>
+            <artifactId>far-maven-plugin</artifactId>
          </extension>
       </extensions>
    </build>

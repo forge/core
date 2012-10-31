@@ -30,14 +30,13 @@ import org.jboss.modules.ModuleSpec;
 import org.jboss.modules.ModuleSpec.Builder;
 import org.jboss.modules.ResourceLoaderSpec;
 import org.jboss.modules.ResourceLoaders;
-import org.jboss.modules.filter.PathFilter;
 import org.jboss.modules.filter.PathFilters;
 
 /**
  * TODO See {@link JarModuleLoader} for how to do dynamic dependencies from an XML file within.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 public class AddonModuleLoader extends ModuleLoader
 {
