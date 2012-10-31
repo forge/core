@@ -13,6 +13,7 @@ import javax.inject.Inject;
 
 import org.apache.maven.model.Repository;
 import org.jboss.forge.maven.MavenPluginFacet;
+import org.jboss.forge.maven.facets.MavenDependencyFacet;
 import org.jboss.forge.maven.plugins.Configuration;
 import org.jboss.forge.maven.plugins.ConfigurationBuilder;
 import org.jboss.forge.maven.plugins.ConfigurationElement;
@@ -24,6 +25,7 @@ import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.dependencies.DependencyQueryBuilder;
 import org.jboss.forge.project.dependencies.NonSnapshotDependencyFilter;
+import org.jboss.forge.project.dependencies.ScopeType;
 import org.jboss.forge.project.facets.BaseFacet;
 import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.shell.ShellPrompt;
@@ -123,10 +125,12 @@ public class PersistenceMetaModelFacetImpl extends BaseFacet implements Persiste
       }
       MavenPluginBuilder processorPlugin = MavenPluginBuilder.create()
                .setDependency(versioned)
-               .addExecution(execution)
-               .addPluginDependency(aptDependency);
+               .addExecution(execution);
+//               .addPluginDependency(aptDependency);
 
       project.getFacet(MavenPluginFacet.class).addPlugin(processorPlugin);
+      //FORGE-700: Added dependency to the plugin and also as a provided dependency in the project
+      project.getFacet(MavenDependencyFacet.class).addDirectDependency(DependencyBuilder.create(aptDependency).setScopeType(ScopeType.PROVIDED));
    }
 
    private DependencyBuilder createProcessorDependency()
