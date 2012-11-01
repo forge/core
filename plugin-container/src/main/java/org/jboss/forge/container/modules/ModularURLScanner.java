@@ -39,7 +39,6 @@ public class ModularURLScanner {
     }
 
     public BeanDeploymentArchive scan() {
-        ModularFileSystemURLHandler handler = new ModularFileSystemURLHandler(resourceLoader);
         List<String> discoveredClasses = new ArrayList<String>();
         List<URL> discoveredBeanXmlUrls = new ArrayList<URL>();
         Collection<String> paths = new ArrayList<String>();
@@ -84,6 +83,8 @@ public class ModularURLScanner {
 
                 paths.add(urlPath);
             }
+
+            ModularFileSystemURLHandler handler = new ModularFileSystemURLHandler(resourceLoader);
             handler.handle(paths, discoveredClasses, discoveredBeanXmlUrls);
         }
         return new ImmutableBeanDeploymentArchive("classpath", discoveredClasses, bootstrap.parse(discoveredBeanXmlUrls));

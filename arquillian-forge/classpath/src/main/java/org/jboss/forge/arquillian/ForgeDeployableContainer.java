@@ -30,7 +30,7 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
 public class ForgeDeployableContainer implements DeployableContainer<ForgeContainerConfiguration>
 {
-   private static final int TEST_DEPLOYMENT_TIMEOUT = 5000;
+   private static final int TEST_DEPLOYMENT_TIMEOUT = 60000;
    private ForgeRunnable thread;
 
    private class ForgeRunnable implements Runnable

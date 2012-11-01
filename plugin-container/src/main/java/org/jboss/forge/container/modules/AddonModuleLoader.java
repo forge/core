@@ -88,7 +88,8 @@ public class AddonModuleLoader extends ModuleLoader
          builder.addDependency(DependencySpec.createModuleDependencySpec(PathFilters.acceptAll(),
                   PathFilters.rejectAll(), null, ForgeContainerSpec.ID, false));
 
-         builder.addDependency(DependencySpec.createLocalDependencySpec());
+         builder.addDependency(DependencySpec.createLocalDependencySpec(PathFilters.acceptAll(),
+                  PathFilters.acceptAll()));
 
          try
          {
@@ -142,8 +143,7 @@ public class AddonModuleLoader extends ModuleLoader
          }
          else
          {
-            builder.addDependency(DependencySpec.createModuleDependencySpec(
-                     PathFilters.not(PathFilters.in(new HashSet<String>(Arrays.asList("META-INF")))),
+            builder.addDependency(DependencySpec.createModuleDependencySpec(PathFilters.acceptAll(),
                      PathFilters.rejectAll(), this, moduleId, dependency.isOptional()));
          }
       }

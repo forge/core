@@ -8,6 +8,7 @@ package org.jboss.forge.container.modules;
 
 import org.jboss.modules.Module;
 import org.jboss.weld.bootstrap.api.Bootstrap;
+import org.jboss.weld.bootstrap.api.SingletonProvider;
 import org.jboss.weld.bootstrap.spi.Deployment;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.resources.spi.ResourceLoader;
@@ -17,6 +18,14 @@ import org.jboss.weld.resources.spi.ResourceLoader;
  */
 public class ModularWeld extends Weld
 {
+   static
+   {
+      /*
+       * This must happen once per JVM
+       */
+      SingletonProvider.initialize(new SilentTCCLSingletonProvider());
+   }
+
    private Module module;
 
    public ModularWeld(Module module)
