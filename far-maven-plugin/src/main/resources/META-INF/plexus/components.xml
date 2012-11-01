@@ -24,7 +24,7 @@
                   org.apache.maven.plugins:maven-surefire-plugin:2.10:test
                </test>
                <package>
-                  org.jboss.forge:maven-far-plugin:far
+                  org.jboss.forge:far-maven-plugin:far
                </package>
                <install>
                   org.apache.maven.plugins:maven-install-plugin:2.3.1:install

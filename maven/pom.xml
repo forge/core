@@ -9,7 +9,6 @@
    <artifactId>forge-maven</artifactId>
    <name>Forge - Maven Core</name>
    <description>Maven API integration</description>
-   <packaging>far</packaging>
    <properties>
       <version.aether>1.13.1</version.aether>
       <version.maven>3.0.4</version.maven>
@@ -71,12 +70,4 @@
          <scope>test</scope>
       </dependency>
    </dependencies>
-   <build>
-      <extensions>
-         <extension>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>far-maven-plugin</artifactId>
-         </extension>
-      </extensions>
-   </build>
 </project>
