@@ -79,7 +79,6 @@
             <module>plugin-container</module>
             <module>arquillian-forge</module>
             <module>test-harness</module>
-            <module>far-maven-plugin</module>
             <module>forge-example-plugin</module>
             <module>forge-otherexample-plugin</module>
             <module>maven</module>
