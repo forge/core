@@ -16,7 +16,6 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
@@ -67,11 +66,7 @@ public class MavenDependencyResolver implements DependencyResolver
       Artifact queryArtifact = dependencyToMavenArtifact(dependency);
 
       List<RemoteRepository> remoteRepos = convertToMavenRepos(query.getDependencyRepositories(), settings);
-      for (ArtifactRepository profileRepos : container.getEnabledRepositories(settings))
-      {
-         remoteRepos.add(convertToMavenRepo(new DependencyRepository(profileRepos.getId(), profileRepos.getUrl()),
-                  settings));
-      }
+      remoteRepos.addAll(container.getEnabledRepositoriesFromProfile(settings));
 
       CollectRequest collectRequest = new CollectRequest(new org.sonatype.aether.graph.Dependency(queryArtifact,
                dependency.getScopeType()), remoteRepos);
@@ -155,11 +150,7 @@ public class MavenDependencyResolver implements DependencyResolver
          Artifact artifact = dependencyToMavenArtifact(dep);
 
          List<RemoteRepository> remoteRepos = convertToMavenRepos(query.getDependencyRepositories(), settings);
-         for (ArtifactRepository profileRepos : container.getEnabledRepositories(settings))
-         {
-            remoteRepos.add(convertToMavenRepo(new DependencyRepository(profileRepos.getId(), profileRepos.getUrl()),
-                     settings));
-         }
+         remoteRepos.addAll(container.getEnabledRepositoriesFromProfile(settings));
 
          VersionRangeRequest rangeRequest = new VersionRangeRequest(artifact, remoteRepos, null);
 
