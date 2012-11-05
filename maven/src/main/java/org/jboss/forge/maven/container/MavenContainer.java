@@ -23,7 +23,6 @@ import org.apache.maven.artifact.repository.layout.FlatRepositoryLayout;
 import org.apache.maven.execution.DefaultMavenExecutionRequest;
 import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.execution.MavenExecutionRequestPopulator;
-import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.apache.maven.settings.Profile;
@@ -45,16 +44,14 @@ import org.sonatype.aether.repository.Authentication;
 import org.sonatype.aether.util.repository.DefaultProxySelector;
 
 /**
- * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * Configures the Maven API for usage inside Forge
  */
 @ApplicationScoped
 public class MavenContainer
 {
    private static final String M2_HOME = System.getenv().get("M2_HOME");
 
-   private ProjectBuildingRequest request;
    private DefaultPlexusContainer container = null;
-   private ProjectBuilder builder = null;
 
    public ProjectBuildingRequest getRequest()
    {
@@ -79,7 +76,8 @@ public class MavenContainer
 
          MavenExecutionRequest executionRequest = new DefaultMavenExecutionRequest();
          lookup(MavenExecutionRequestPopulator.class).populateFromSettings(executionRequest, getSettings());
-         request = executionRequest.getProjectBuildingRequest();
+         ProjectBuildingRequest request = executionRequest.getProjectBuildingRequest();
+
          ArtifactRepository localRepository = new MavenArtifactRepository(
                   "local", new File(settings.getLocalRepository()).toURI().toURL().toString(),
                   getContainer().lookup(ArtifactRepositoryLayout.class),
@@ -89,20 +87,7 @@ public class MavenContainer
                            ArtifactRepositoryPolicy.CHECKSUM_POLICY_WARN));
          request.setLocalRepository(localRepository);
 
-         List<ArtifactRepository> settingsRepos = new ArrayList<ArtifactRepository>();
-         List<String> activeProfiles = settings.getActiveProfiles();
-
-         Map<String, Profile> profiles = settings.getProfilesAsMap();
-
-         for (String id : activeProfiles)
-         {
-            Profile profile = profiles.get(id);
-            List<Repository> repositories = profile.getRepositories();
-            for (Repository repository : repositories)
-            {
-               settingsRepos.add(convertFromMavenSettingsRepository(repository));
-            }
-         }
+         List<ArtifactRepository> settingsRepos = getEnabledRepositories(settings);
 
          request.setRemoteRepositories(settingsRepos);
          request.setSystemProperties(System.getProperties());
@@ -139,6 +124,25 @@ public class MavenContainer
       }
    }
 
+   List<ArtifactRepository> getEnabledRepositories(Settings settings)
+   {
+      List<ArtifactRepository> settingsRepos = new ArrayList<ArtifactRepository>();
+      List<String> activeProfiles = settings.getActiveProfiles();
+
+      Map<String, Profile> profiles = settings.getProfilesAsMap();
+
+      for (String id : activeProfiles)
+      {
+         Profile profile = profiles.get(id);
+         List<Repository> repositories = profile.getRepositories();
+         for (Repository repository : repositories)
+         {
+            settingsRepos.add(convertFromMavenSettingsRepository(repository));
+         }
+      }
+      return settingsRepos;
+   }
+
    public Settings getSettings()
    {
       try
@@ -165,11 +169,6 @@ public class MavenContainer
       {
          throw new RuntimeException(e);
       }
-   }
-
-   public ProjectBuilder getBuilder()
-   {
-      return builder;
    }
 
    public <T> T lookup(Class<T> type)
@@ -203,9 +202,7 @@ public class MavenContainer
             container = new DefaultPlexusContainer();
             ConsoleLoggerManager loggerManager = new ConsoleLoggerManager();
             loggerManager.setThreshold("ERROR");
-            getContainer().setLoggerManager(loggerManager);
-
-            builder = getContainer().lookup(ProjectBuilder.class);
+            container.setLoggerManager(loggerManager);
          }
          catch (Exception e)
          {

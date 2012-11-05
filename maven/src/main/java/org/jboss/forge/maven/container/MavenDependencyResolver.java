@@ -16,6 +16,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
@@ -58,14 +59,23 @@ public class MavenDependencyResolver implements DependencyResolver
       Set<Dependency> result = new HashSet<Dependency>();
       DependencyFilter filter = query.getDependencyFilter();
       RepositorySystem system = container.lookup(RepositorySystem.class);
-      MavenRepositorySystemSession session = setupRepoSession(system);
+      Settings settings = container.getSettings();
+
+      MavenRepositorySystemSession session = setupRepoSession(system, settings);
 
       Dependency dependency = query.getDependency();
       Artifact queryArtifact = dependencyToMavenArtifact(dependency);
 
+      List<RemoteRepository> remoteRepos = convertToMavenRepos(query.getDependencyRepositories(), settings);
+      for (ArtifactRepository profileRepos : container.getEnabledRepositories(settings))
+      {
+         remoteRepos.add(convertToMavenRepo(new DependencyRepository(profileRepos.getId(), profileRepos.getUrl()),
+                  settings));
+      }
+
       CollectRequest collectRequest = new CollectRequest(new org.sonatype.aether.graph.Dependency(queryArtifact,
-               dependency.getScopeType()),
-               convertToMavenRepos(query.getDependencyRepositories()));
+               dependency.getScopeType()), remoteRepos);
+
       DependencyRequest request = new DependencyRequest(collectRequest, null);
 
       DependencyResult artifacts;
@@ -116,7 +126,12 @@ public class MavenDependencyResolver implements DependencyResolver
       return result;
    }
 
-   // Utility Methods
+   /**
+    * Returns the versions of a specific artifact
+    *
+    * @param query
+    * @return
+    */
    private VersionRangeResult getVersions(DependencyQuery query)
    {
       Dependency dep = query.getDependency();
@@ -133,11 +148,20 @@ public class MavenDependencyResolver implements DependencyResolver
          }
 
          RepositorySystem maven = container.lookup(RepositorySystem.class);
-         MavenRepositorySystemSession session = setupRepoSession(maven);
+         Settings settings = container.getSettings();
+
+         MavenRepositorySystemSession session = setupRepoSession(maven, settings);
 
          Artifact artifact = dependencyToMavenArtifact(dep);
-         VersionRangeRequest rangeRequest = new VersionRangeRequest(artifact,
-                  convertToMavenRepos(query.getDependencyRepositories()), null);
+
+         List<RemoteRepository> remoteRepos = convertToMavenRepos(query.getDependencyRepositories(), settings);
+         for (ArtifactRepository profileRepos : container.getEnabledRepositories(settings))
+         {
+            remoteRepos.add(convertToMavenRepo(new DependencyRepository(profileRepos.getId(), profileRepos.getUrl()),
+                     settings));
+         }
+
+         VersionRangeRequest rangeRequest = new VersionRangeRequest(artifact, remoteRepos, null);
 
          VersionRangeResult rangeResult = maven.resolveVersionRange(session, rangeRequest);
          return rangeResult;
@@ -148,11 +172,10 @@ public class MavenDependencyResolver implements DependencyResolver
       }
    }
 
-   private MavenRepositorySystemSession setupRepoSession(final RepositorySystem repoSystem)
+   private MavenRepositorySystemSession setupRepoSession(final RepositorySystem repoSystem, final Settings settings)
    {
       MavenRepositorySystemSession session = new MavenRepositorySystemSession();
       session.setOffline(false);
-      Settings settings = container.getSettings();
 
       LocalRepository localRepo = new LocalRepository(new File(settings.getLocalRepository()), "");
       session.setLocalRepositoryManager(repoSystem.newLocalRepositoryManager(localRepo));
@@ -162,10 +185,9 @@ public class MavenDependencyResolver implements DependencyResolver
       return session;
    }
 
-   private RemoteRepository convertToMavenRepo(final DependencyRepository repo)
+   private RemoteRepository convertToMavenRepo(final DependencyRepository repo, final Settings settings)
    {
       RemoteRepository remoteRepository = new RemoteRepository(repo.getId(), "default", repo.getUrl());
-      Settings settings = container.getSettings();
       Proxy activeProxy = settings.getActiveProxy();
       if (activeProxy != null)
       {
@@ -176,12 +198,13 @@ public class MavenDependencyResolver implements DependencyResolver
       return remoteRepository;
    }
 
-   private List<RemoteRepository> convertToMavenRepos(final List<DependencyRepository> repositories)
+   private List<RemoteRepository> convertToMavenRepos(final List<DependencyRepository> repositories,
+            final Settings settings)
    {
       List<RemoteRepository> remoteRepos = new ArrayList<RemoteRepository>();
       for (DependencyRepository deprep : repositories)
       {
-         remoteRepos.add(convertToMavenRepo(deprep));
+         remoteRepos.add(convertToMavenRepo(deprep, settings));
       }
       return remoteRepos;
    }

@@ -57,4 +57,15 @@ public class PluginLookupTest
       Assert.assertNotNull(versions);
       Assert.assertFalse(versions.isEmpty());
    }
+
+   @Test
+   public void testResolveVersionsDependency() throws Exception
+   {
+      DependencyQuery query = DependencyQueryBuilder.create(DependencyBuilder
+               .create("org.hibernate:hibernate-core"));
+      List<Dependency> versions = resolver.resolveVersions(query);
+      System.out.println(versions);
+      Assert.assertNotNull(versions);
+      Assert.assertFalse(versions.isEmpty());
+   }
 }
