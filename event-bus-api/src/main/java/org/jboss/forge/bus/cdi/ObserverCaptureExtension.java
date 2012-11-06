@@ -47,49 +47,63 @@ public class ObserverCaptureExtension implements Extension
    public <T> void scan(@Observes final ProcessAnnotatedType<T> event)
    {
       AnnotatedType<Object> originalType = (AnnotatedType<Object>) event.getAnnotatedType();
-      AnnotatedType<Object> newType;
-      List<AnnotatedMethod> obsoleteMethods = new ArrayList<AnnotatedMethod>();
-      List<AnnotatedMethod> replacementMethods = new ArrayList<AnnotatedMethod>();
-
-      for (AnnotatedMethod<?> method : getOrderedMethods(originalType))
-      {
-         for (AnnotatedParameter<?> param : method.getParameters())
-         {
-            if (param.isAnnotationPresent(Observes.class))
-            {
-               Set<Type> typeClosure = param.getTypeClosure();
-               for (Type type : typeClosure) {
-                  if (type instanceof Class)
-                  {
-                     if (Annotations.isAnnotationPresent((Class<?>) type, BusEvent.class))
-                     {
-                        replacementMethods.add(qualifyObservedEvent(method, param));
-                        obsoleteMethods.add(method);
-                        break;
-                     }
-                  }
-                  else if (type instanceof ParameterizedType)
-                  {
-                     Type rawType = ((ParameterizedType) type).getRawType();
-                     if (rawType instanceof Class)
-                     {
-                        if (Annotations.isAnnotationPresent((Class<?>) rawType, (BusEvent.class)))
-                        {
-                           replacementMethods.add(qualifyObservedEvent(method, param));
-                           obsoleteMethods.add(method);
-                           break;
-                        }
-                     }
-                  }
-               }
-            }
-         }
+      if (isAnnotated(originalType, Observes.class)) {
+          AnnotatedType<Object> newType;
+          List<AnnotatedMethod> obsoleteMethods = new ArrayList<AnnotatedMethod>();
+          List<AnnotatedMethod> replacementMethods = new ArrayList<AnnotatedMethod>();
+    
+          for (AnnotatedMethod<?> method : getOrderedMethods(originalType))
+          {
+             for (AnnotatedParameter<?> param : method.getParameters())
+             {
+                if (param.isAnnotationPresent(Observes.class))
+                {
+                   Set<Type> typeClosure = param.getTypeClosure();
+                   for (Type type : typeClosure) {
+                      if (type instanceof Class)
+                      {
+                         if (Annotations.isAnnotationPresent((Class<?>) type, BusEvent.class))
+                         {
+                            replacementMethods.add(qualifyObservedEvent(method, param));
+                            obsoleteMethods.add(method);
+                            break;
+                         }
+                      }
+                      else if (type instanceof ParameterizedType)
+                      {
+                         Type rawType = ((ParameterizedType) type).getRawType();
+                         if (rawType instanceof Class)
+                         {
+                            if (Annotations.isAnnotationPresent((Class<?>) rawType, (BusEvent.class)))
+                            {
+                               replacementMethods.add(qualifyObservedEvent(method, param));
+                               obsoleteMethods.add(method);
+                               break;
+                            }
+                         }
+                      }
+                   }
+                }
+             }
+          }
+    
+          newType = removeMethodsFromType(originalType, obsoleteMethods);
+          newType = addReplacementMethodsToType(newType, replacementMethods);
+    
+          event.setAnnotatedType((AnnotatedType<T>) newType);
+      } else {
+          event.setAnnotatedType((AnnotatedType<T>) originalType);
       }
+   }
 
-      newType = removeMethodsFromType(originalType, obsoleteMethods);
-      newType = addReplacementMethodsToType(newType, replacementMethods);
-
-      event.setAnnotatedType((AnnotatedType<T>) newType);
+   private boolean isAnnotated(AnnotatedType<?> type, Class<? extends Annotation> annotation) {
+       for (AnnotatedMethod<?> m : type.getMethods()) {
+           for (AnnotatedParameter<?> p : m.getParameters()) {
+               if (p.getAnnotation(annotation) != null)
+                   return true;
+           }
+       }
+       return false;
    }
 
    private List<AnnotatedMethod<? super Object>> getOrderedMethods(final AnnotatedType<Object> originalType)
