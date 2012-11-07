@@ -9,8 +9,14 @@ package org.jboss.forge.shell.test.plugins.builtin;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.parser.JavaParser;
+import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.project.Project;
+import org.jboss.forge.project.facets.JavaSourceFacet;
+import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.test.AbstractShellTest;
 import org.junit.Test;
@@ -43,4 +49,25 @@ public class RmPluginTest extends AbstractShellTest
       assertFalse(project.getProjectRoot().getChild("f o o").exists());
    }
 
+   @Test
+   public void testRmField() throws Exception
+   {
+      Project project = initializeJavaProject();
+      Shell shell = getShell();
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+      JavaClass javaClass = JavaParser
+               .parse(JavaClass.class,
+                        "public class MyClass { private String aField; public String getAField() {return aField;} public void setAField(String field){this.aField = field;}}");
+      javaClass.setPackage("org.example");
+      JavaResource javaResource = java.saveJavaSource(javaClass);
+      shell.setCurrentResource(javaResource);
+
+      // Execute SUT
+      queueInputLines("y", "y", "y");
+      shell.execute("rm aField");
+
+      // Check results
+      List<?> members = javaResource.getJavaSource().getMembers();
+      assertTrue(members.isEmpty());
+   }
 }
