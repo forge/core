@@ -7,6 +7,7 @@
 package org.jboss.forge.shell.test.plugins.builtin;
 
 import static org.junit.Assert.fail;
+import junit.framework.Assert;
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.shell.exceptions.NoSuchCommandException;
@@ -55,6 +56,16 @@ public class AliasPluginTest extends AbstractShellTest
        * Now we should fail again
        */
       getShell().execute("doohickey");
+   }
+
+   @Test
+   public void testCreateAliasWithSpaces() throws Exception
+   {
+      getShell().execute("alias \"doohickey =echo hello\"");
+
+      getShell().execute("doohickey");
+      Assert.assertFalse(getOutput().contains("echo hello"));
+      Assert.assertTrue(getOutput().contains("hello"));
    }
 
 }

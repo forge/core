@@ -21,7 +21,7 @@ import org.jboss.forge.shell.plugins.Plugin;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 @Help("Create an alias, aliases allow a string to be " +
          "substituted for a word when it is used as the " +
@@ -41,8 +41,8 @@ public class AliasPlugin implements Plugin
          String definition = Strings.join(Arrays.asList(tokens), " ");
          if (definition.contains("="))
          {
-            String alias = definition.substring(0, definition.indexOf("="));
-            String command = definition.substring(definition.indexOf("=") + 1);
+            String alias = definition.substring(0, definition.indexOf("=")).trim();
+            String command = definition.substring(definition.indexOf("=") + 1).trim();
 
             registry.createAlias(alias, command);
          }
