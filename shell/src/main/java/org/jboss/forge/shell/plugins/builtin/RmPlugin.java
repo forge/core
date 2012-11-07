@@ -6,8 +6,11 @@
  */
 package org.jboss.forge.shell.plugins.builtin;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
+import org.jboss.forge.resources.DeletionAware;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.plugins.Alias;
@@ -41,13 +44,42 @@ public class RmPlugin implements Plugin
    {
       for (Resource<?> resource : paths)
       {
-         if (force || shell.promptBoolean("delete: " + resource.getName() + ": are you sure?"))
+         deleteResource(recursive, force, resource);
+      }
+   }
+
+   private void deleteResource(final boolean recursive, final boolean force, Resource<?> resource)
+   {
+      if (force
+               || shell.promptBoolean("delete: " + resource.getName() + ": are you sure?",
+                        true))
+      {
+         if (!resource.delete(recursive))
          {
-            if (!resource.delete(recursive))
+            throw new RuntimeException("error deleting " + resource);
+         }
+
+         if (resource instanceof DeletionAware)
+         {
+            List<Resource<?>> toDeleteResources = ((DeletionAware) resource).getResources();
+            List<Resource<?>> toDeleteOptionalResources = ((DeletionAware) resource)
+                     .getOptionalResources();
+            if (toDeleteResources != null)
             {
-               throw new RuntimeException("error deleting files.");
+               for (Resource<?> deletionResource : toDeleteResources)
+               {
+                  deleteResource(recursive, true, deletionResource);
+               }
+            }
+            if (toDeleteOptionalResources != null)
+            {
+               for (Resource<?> deletionResource : toDeleteOptionalResources)
+               {
+                  deleteResource(recursive, force, deletionResource);
+               }
             }
          }
+
       }
    }
 }
