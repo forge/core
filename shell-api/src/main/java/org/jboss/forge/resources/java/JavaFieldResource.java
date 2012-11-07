@@ -7,19 +7,25 @@
 
 package org.jboss.forge.resources.java;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.FieldHolder;
+import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaSource;
+import org.jboss.forge.parser.java.Method;
+import org.jboss.forge.parser.java.util.Strings;
+import org.jboss.forge.resources.DeletionAware;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.resources.ResourceFlag;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class JavaFieldResource extends JavaMemberResource<Field<? extends JavaSource<?>>>
+public class JavaFieldResource extends JavaMemberResource<Field<? extends JavaSource<?>>> implements
+         DeletionAware
 {
    private final Field<? extends JavaSource<?>> field;
 
@@ -82,5 +88,32 @@ public class JavaFieldResource extends JavaMemberResource<Field<? extends JavaSo
    public boolean delete(final boolean recursive) throws UnsupportedOperationException
    {
       return delete();
+   }
+
+   @Override
+   public List<Resource<?>> getResources()
+   {
+      return null;
+   }
+
+   @Override
+   public List<Resource<?>> getOptionalResources()
+   {
+      List<Resource<?>> result = new ArrayList<Resource<?>>();
+      JavaClass entity = (JavaClass) field.getOrigin();
+      String methodNameSuffix = Strings.capitalize(field.getName());
+      // Condition to remove getField()
+      if (entity.hasMethodSignature("get" + methodNameSuffix))
+      {
+         Method<JavaClass> method = entity.getMethod("get" + methodNameSuffix);
+         result.add(new JavaMethodResource(this.getParent(), method));
+      }
+      // Condition to remove setField()
+      if (entity.hasMethodSignature("set" + methodNameSuffix, field.getQualifiedType()))
+      {
+         Method<JavaClass> method = entity.getMethod("set" + methodNameSuffix, field.getQualifiedType());
+         result.add(new JavaMethodResource(this.getParent(), method));
+      }
+      return result;
    }
 }
