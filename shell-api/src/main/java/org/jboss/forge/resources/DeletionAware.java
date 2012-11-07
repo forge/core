@@ -19,13 +19,15 @@ import java.util.List;
 public interface DeletionAware
 {
    /**
-    * Returns a {@link List} of {@link Resource} which do not need confirmation to delete
+    * Returns a {@link List} of additional {@link Resource} instances. These resources do not require user confirmation
+    * before deletion.
     *
     */
    List<Resource<?>> getResources();
 
    /**
-    * Returns a {@link List} of {@link Resource} as candidates for deletion
+    * Returns a {@link List} of additional {@link Resource} instances. These resources require user confirmation before
+    * deletion.
     *
     */
    List<Resource<?>> getOptionalResources();
