@@ -1,6 +1,7 @@
 package org.jboss.forge.container.modules;
 
 import org.jboss.modules.Module;
+import org.jboss.modules.ModuleClassLoader;
 import org.jboss.weld.resources.spi.ResourceLoader;
 import org.jboss.weld.resources.spi.ResourceLoadingException;
 
@@ -21,6 +22,11 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ModuleResourceLoader implements ResourceLoader
 {
+   @Override
+   public String toString()
+   {
+      return "ModuleResourceLoader [module=" + module + "]";
+   }
 
    private final Module module;
 
@@ -28,11 +34,13 @@ public class ModuleResourceLoader implements ResourceLoader
     * Additional classes that have been added to the bean archive by the container or by a portable extension
     */
    private final Map<String, Class<?>> classes;
+   private ModuleClassLoader classLoader;
 
    public ModuleResourceLoader(Module module)
    {
       this.module = module;
       this.classes = new ConcurrentHashMap<String, Class<?>>();
+      this.classLoader = module.getClassLoader();
    }
 
    /**
@@ -49,7 +57,7 @@ public class ModuleResourceLoader implements ResourceLoader
          {
             return classes.get(name);
          }
-         final Class<?> clazz = module.getClassLoader().loadClass(name);
+         final Class<?> clazz = classLoader.loadClass(name);
          classes.put(name, clazz);
          return clazz;
       }
@@ -114,7 +122,7 @@ public class ModuleResourceLoader implements ResourceLoader
    @Override
    public void cleanup()
    {
-      // nop
+      // noop
    }
 
 }

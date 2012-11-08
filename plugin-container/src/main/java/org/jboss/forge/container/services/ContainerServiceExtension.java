@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.spi.Annotated;
 import javax.enterprise.inject.spi.AnnotatedMember;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
@@ -41,7 +42,8 @@ public class ContainerServiceExtension implements Extension
 
    public void processRemoteInjectionPoint(@Observes ProcessInjectionPoint<?, ?> event)
    {
-      if (event.getInjectionPoint().getAnnotated().isAnnotationPresent(Service.class))
+      Annotated annotated = event.getInjectionPoint().getAnnotated();
+      if (annotated.isAnnotationPresent(Service.class))
          event.setInjectionPoint(new RemoteInjectionPoint(event.getInjectionPoint()));
    }
 

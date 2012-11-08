@@ -18,7 +18,8 @@ public class ModularWeldDeployment extends AbstractWeldSEDeployment
       super(bootstrap);
 
       ModuleResourceLoader resourceLoader = new ModuleResourceLoader(module);
-      this.beanDeploymentArchive = new ModularURLScanner(resourceLoader, bootstrap, RESOURCES).scan();
+      this.beanDeploymentArchive = new ModularURLScanner(resourceLoader, bootstrap,
+               new String[] { "META-INF/forge.xml" }).scan();
       this.beanDeploymentArchive.getServices().add(ResourceLoader.class, resourceLoader);
    }
 
