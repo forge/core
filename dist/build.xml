@@ -18,7 +18,8 @@
 
 	<import file="lib.xml" />
 
-	<property name="output.dir" value="target/forge-distribution-${forge.release.version}" />
+	<property name="target.dir" value="target" />
+	<property name="output.dir" value="${target.dir}/forge-distribution-${forge.release.version}" />
 	<target name="copy-files">
 		<copy todir="${output.dir}">
 			<fileset dir="src/main/resources">
@@ -428,6 +429,11 @@
 	<target name="bundles">
 	</target>
 
+	<target name="docs">
+		<copy file="../javadoc/forge-core-javadoc.jar" todir="${target.dir}"/>
+		<copy file="../sources/forge-core-sources.jar" todir="${target.dir}"/>
+	</target>
+
 	<target name="clean-target">
 		<delete dir="${output.dir}" />
 	</target>
@@ -436,5 +442,5 @@
 		<delete file="maven-ant-tasks.jar" />
 	</target>
 
-	<target name="all" depends="clean-target, modules, bundles, copy-files, make-dirs" />
+	<target name="all" depends="clean-target, modules, bundles, copy-files, docs, make-dirs" />
 </project>
