@@ -103,7 +103,7 @@ public class NewProjectPlugin implements Plugin
       // FORGE-571
       if (javaPackage == null)
       {
-         javaPackage = "com.example." + name;
+         javaPackage = "com.example." + Packages.toValidPackageName(name);
       }
       boolean skipFolderPrompt = false;
       try
