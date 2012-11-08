@@ -9,7 +9,7 @@ package org.jboss.forge.shell.util;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 public class Packages
 {
@@ -30,4 +30,21 @@ public class Packages
       return pkg.replace("/", ".");
    }
 
+   public static String toValidPackageName(String pkg)
+   {
+      if (pkg == null)
+      {
+         throw new IllegalArgumentException("Package should not be null");
+      }
+      StringBuilder sb = new StringBuilder(pkg.length());
+      for (int i = 0; i < pkg.length(); i++)
+      {
+         char c = pkg.charAt(i);
+         if (c == '.' || Character.isJavaIdentifierPart(c))
+         {
+            sb.append(c);
+         }
+      }
+      return sb.toString();
+   }
 }
