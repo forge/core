@@ -84,7 +84,7 @@ public class MavenJavaSourceFacet extends BaseFacet implements JavaSourceFacet, 
    @Override
    public String getBasePackage()
    {
-      return project.getFacet(MavenCoreFacet.class).getMavenProject().getGroupId();
+      return Packages.toValidPackageName(project.getFacet(MavenCoreFacet.class).getMavenProject().getGroupId());
    }
 
    @Override
