@@ -17,7 +17,7 @@ import org.jboss.forge.container.event.Startup;
 @Singleton
 public class ServletTestServer
 {
-   private Server server;
+   private static Server server;
 
    public void startTestServer(@Observes Startup event) throws Exception
    {
@@ -40,6 +40,7 @@ public class ServletTestServer
    public void stopTestServer(@Observes Shutdown event) throws Exception
    {
       server.stop();
+      server = null;
       System.out.println("Remote test server stopped.");
    }
 }

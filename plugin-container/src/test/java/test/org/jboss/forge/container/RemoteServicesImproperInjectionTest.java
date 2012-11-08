@@ -7,8 +7,8 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.forge.Root;
-import org.jboss.forge.container.services.ContainerServiceExtension;
-import org.jboss.shrinkwrap.api.ArchivePaths;
+import org.jboss.forge.container.impl.ContainerBeanRegistrant;
+import org.jboss.forge.container.impl.ContainerServiceExtension;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
@@ -23,7 +23,7 @@ public class RemoteServicesImproperInjectionTest
    public static JavaArchive getDeployment()
    {
       return ShrinkWrap.create(JavaArchive.class, "test.jar").addPackages(true, Root.class.getPackage())
-               .addAsManifestResource("META-INF/beans.xml", ArchivePaths.create("beans.xml"))
+               .addAsServiceProvider(Extension.class, ContainerBeanRegistrant.class)
                .addAsServiceProvider(Extension.class, ContainerServiceExtension.class);
    }
 

@@ -44,6 +44,7 @@ public class SinglePublishedAddonTest
    @Test
    public void testLocalServiceCanBeInvoked() throws Exception
    {
+      Assert.assertNotNull(remote);
       Assert.assertEquals("I am PublishedService.", remote.getMessage());
    }
 }

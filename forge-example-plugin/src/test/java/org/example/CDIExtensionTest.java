@@ -38,6 +38,7 @@ public class CDIExtensionTest
    @Test
    public void testCDIExtensionsFunctionNormally() throws Exception
    {
+      Assert.assertNotNull(extension);
       Assert.assertTrue(extension.isInvoked());
    }
 }

@@ -36,8 +36,16 @@ public abstract class AbstractForgeTest
 {
    public static JavaArchive getDeployment()
    {
-      JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar").addPackages(true, Root.class.getPackage())
-               .addAsManifestResource("META-INF/beans.xml", ArchivePaths.create("beans.xml"));
+      JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar").addPackages(true, Root.class.getPackage());
+
+      try
+      {
+         archive.addAsManifestResource("META-INF/beans.xml", ArchivePaths.create("beans.xml"));
+      }
+      catch (Exception e)
+      {
+         System.err.println("No beans.xml file in deployment for current test.");
+      }
 
       return archive;
    }

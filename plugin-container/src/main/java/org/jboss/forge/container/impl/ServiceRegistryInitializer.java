@@ -5,7 +5,6 @@ import javax.enterprise.inject.spi.BeanManager;
 
 import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.event.Startup;
-import org.jboss.forge.container.services.ContainerServiceExtension;
 import org.jboss.forge.container.services.ServiceRegistry;
 
 /**

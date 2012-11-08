@@ -18,20 +18,20 @@ public class WeldClasspathSpec extends BaseModuleSpecProvider
 
    static
    {
-      // paths.add("META-INF");
+      // systemPaths.add("META-INF");
       paths.add("META-INF/services");
    }
 
    @Override
    protected void configure(ModuleLoader loader, Builder builder)
    {
-      builder.addDependency(DependencySpec.createModuleDependencySpec(
+      builder.addDependency(DependencySpec.createSystemDependencySpec(
                PathFilters.acceptAll(),
-               PathFilters.any(Arrays
-                        .asList(PathFilters.isChildOf("javax"),
-                                 PathFilters.is("org/jboss/weld"),
-                                 PathFilters.isChildOf("org/jboss/weld"))),
-               loader, RuntimeClasspathSpec.ID, false));
+               PathFilters.any(Arrays.asList(
+                        PathFilters.isChildOf("javax"),
+                        PathFilters.is("org/jboss/weld"),
+                        PathFilters.isChildOf("org/jboss/weld"))),
+               systemPaths));
    }
 
    @Override

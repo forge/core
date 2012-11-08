@@ -25,15 +25,13 @@ public class ForgeContainerSpec extends BaseModuleSpecProvider
    @Override
    protected void configure(ModuleLoader loader, Builder builder)
    {
-      builder.addDependency(DependencySpec.createModuleDependencySpec(
+      builder.addDependency(DependencySpec.createSystemDependencySpec(
                PathFilters.acceptAll(),
-               PathFilters.any(Arrays
-                        .asList(
-                                 PathFilters.is("org/jboss/forge/container"),
-                                 PathFilters.isChildOf("org/jboss/forge/container"),
-                                 PathFilters.is("net/sf/cglib"), PathFilters.isChildOf("net/sf/cglib")
-                        )),
-               loader, RuntimeClasspathSpec.ID, false));
+               PathFilters.any(Arrays.asList(
+                        PathFilters.is("org/jboss/forge/container"),
+                        PathFilters.isChildOf("org/jboss/forge/container"),
+                        PathFilters.is("net/sf/cglib"), PathFilters.isChildOf("net/sf/cglib"))),
+               systemPaths));
    }
 
    @Override

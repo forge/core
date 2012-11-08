@@ -4,7 +4,7 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.container.services;
+package org.jboss.forge.container.impl;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -17,6 +17,12 @@ import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.enterprise.inject.spi.ProcessInjectionPoint;
 import javax.enterprise.inject.spi.ProcessProducer;
+
+import org.jboss.forge.container.services.Remote;
+import org.jboss.forge.container.services.RemoteAnnotatedType;
+import org.jboss.forge.container.services.RemoteInjectionPoint;
+import org.jboss.forge.container.services.RemoteProxyBeanProducer;
+import org.jboss.forge.container.services.Service;
 
 /**
  * One classloader/thread/weld container per plugin module. One primary executor container running, fires events to each

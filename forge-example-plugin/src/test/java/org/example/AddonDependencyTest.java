@@ -63,6 +63,8 @@ public class AddonDependencyTest
    @Test
    public void testRemoteServiceInjection() throws Exception
    {
+      Assert.assertNotNull(consuming);
+      Assert.assertNotNull(remote);
       Assert.assertEquals("I am ConsumingService. Remote service says [I am PublishedService.]",
                consuming.getMessage());
       Assert.assertEquals(remote.hashCode(), consuming.getRemoteHashCode());

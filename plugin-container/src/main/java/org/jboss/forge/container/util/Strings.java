@@ -763,7 +763,7 @@ public final class Strings
     * If the string is an invalid URL then it will be converted into a file URL.
     * 
     * @param urlspec The string to construct a URL for.
-    * @param relativePrefix The string to prepend to relative file paths, or null to disable prepending.
+    * @param relativePrefix The string to prepend to relative file systemPaths, or null to disable prepending.
     * @return A URL for the given string.
     * 
     * @throws MalformedURLException Could not make a URL for the given string.

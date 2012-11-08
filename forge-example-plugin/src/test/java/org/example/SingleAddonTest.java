@@ -42,6 +42,7 @@ public class SingleAddonTest
    @Test
    public void testLifecycle() throws Exception
    {
+      Assert.assertNotNull(simple);
       Assert.assertTrue(simple.isStartupObserved());
       Assert.assertTrue(simple.isPostStartupObserved());
       Assert.assertFalse(simple.isPreShutdownObserved());

@@ -7,7 +7,7 @@ import javax.enterprise.inject.spi.Extension;
 
 import org.jboss.forge.container.services.RemoteProxyBeanProducerMethod;
 
-public class BeanRegistrant implements Extension
+public class ContainerBeanRegistrant implements Extension
 {
    public void registerWeldSEBeans(@Observes BeforeBeanDiscovery event, BeanManager manager)
    {
