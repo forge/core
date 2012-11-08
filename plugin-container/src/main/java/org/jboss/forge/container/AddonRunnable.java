@@ -7,6 +7,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import org.jboss.forge.container.event.ContainerShutdown;
 import org.jboss.forge.container.event.ContainerStartup;
 import org.jboss.forge.container.exception.ContainerException;
+import org.jboss.forge.container.impl.AddonRegistryImpl;
 import org.jboss.forge.container.modules.ModularWeld;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.container.util.Assert;
@@ -19,10 +20,10 @@ import org.jboss.weld.environment.se.WeldContainer;
 public final class AddonRunnable implements Runnable
 {
    private AddonImpl addon;
-   private AddonRegistry addonRegistry;
+   private AddonRegistryImpl addonRegistry;
    private boolean shutdown = false;
 
-   public AddonRunnable(AddonImpl addon, AddonRegistry registry)
+   public AddonRunnable(AddonImpl addon, AddonRegistryImpl registry)
    {
       this.addon = addon;
       this.addonRegistry = registry;

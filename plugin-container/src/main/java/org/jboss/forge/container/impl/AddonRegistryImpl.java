@@ -1,35 +1,26 @@
-package org.jboss.forge.container;
+package org.jboss.forge.container.impl;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.Typed;
-import javax.inject.Singleton;
 
 import org.jboss.forge.container.Addon;
+import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.container.util.Sets;
 
 @Typed()
-public class AddonRegistry
+public class AddonRegistryImpl implements AddonRegistry
 {
    private Set<Addon> addons = Sets.getConcurrentSet();
 
    /**
     * Global Addon registry.
     */
-   static AddonRegistry registry = new AddonRegistry();
-
-   @Produces
-   @Typed(AddonRegistry.class)
-   @Singleton
-   public static AddonRegistry produceGlobalAddonRegistry()
-   {
-      return AddonRegistry.registry;
-   }
+   public static AddonRegistryImpl registry = new AddonRegistryImpl();
 
    public boolean register(Addon addon)
    {
@@ -40,6 +31,7 @@ public class AddonRegistry
       return addons.add(addon);
    }
 
+   @Override
    public Map<ClassLoader, ServiceRegistry> getServices()
    {
       Map<ClassLoader, ServiceRegistry> services = new HashMap<ClassLoader, ServiceRegistry>();
@@ -48,6 +40,20 @@ public class AddonRegistry
          services.put(addon.getClassLoader(), addon.getServiceRegistry());
       }
       return services;
+   }
+
+   @Override
+   public Map<ClassLoader, ServiceRegistry> getServices(Addon addon)
+   {
+      Map<ClassLoader, ServiceRegistry> services = new HashMap<ClassLoader, ServiceRegistry>();
+      services.put(addon.getClassLoader(), addon.getServiceRegistry());
+      return services;
+   }
+
+   @Override
+   public Set<Addon> getRegisteredAddons()
+   {
+      return Collections.unmodifiableSet(addons);
    }
 
    public boolean removeServices(ClassLoader classLoader) throws IllegalArgumentException
@@ -71,10 +77,5 @@ public class AddonRegistry
    public String toString()
    {
       return addons.toString();
-   }
-
-   public Set<Addon> getRegisteredAddons()
-   {
-      return Collections.unmodifiableSet(addons);
    }
 }

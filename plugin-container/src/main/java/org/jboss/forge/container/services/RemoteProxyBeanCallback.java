@@ -3,7 +3,6 @@ package org.jboss.forge.container.services;
 import net.sf.cglib.proxy.LazyLoader;
 
 import org.jboss.forge.container.AddonRegistry;
-import org.jboss.forge.container.services.RemoteInstance;
 
 public class RemoteProxyBeanCallback implements LazyLoader
 {

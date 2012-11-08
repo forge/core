@@ -1,10 +1,8 @@
 package org.example.consuming;
 
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.example.published.PublishedService;
-import org.jboss.forge.container.event.PostStartup;
 import org.jboss.forge.container.services.Remote;
 import org.jboss.forge.container.services.Service;
 
@@ -14,11 +12,6 @@ public class ConsumingService
    @Inject
    @Service
    private PublishedService service;
-
-   public void postStartup(@Observes PostStartup event)
-   {
-      System.out.println(getMessage());
-   }
 
    public String getMessage()
    {

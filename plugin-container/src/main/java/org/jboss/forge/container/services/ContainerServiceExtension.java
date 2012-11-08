@@ -30,13 +30,17 @@ public class ContainerServiceExtension implements Extension
    private Set<Class<?>> services = new HashSet<Class<?>>();
 
    @SuppressWarnings({ "rawtypes", "unchecked" })
-   public void processRemotes(@Observes ProcessAnnotatedType<?> event)
+   public void processRemotes(@Observes ProcessAnnotatedType<?> event) throws InstantiationException, IllegalAccessException
    {
       Class<?> type = event.getAnnotatedType().getJavaClass();
       if (type.isAnnotationPresent(Remote.class))
       {
          event.setAnnotatedType(new RemoteAnnotatedType(event.getAnnotatedType()));
-         services.add(event.getAnnotatedType().getJavaClass());
+         if (type.getClassLoader().equals(Thread.currentThread().getContextClassLoader()))
+         {
+            Object instance = type.newInstance();
+            services.add(event.getAnnotatedType().getJavaClass());
+         }
       }
    }
 

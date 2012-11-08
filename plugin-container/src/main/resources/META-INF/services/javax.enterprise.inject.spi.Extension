@@ -1,2 +1,2 @@
 org.jboss.forge.container.services.ContainerServiceExtension
-org.jboss.forge.container.BeanRegistrant
+org.jboss.forge.container.impl.BeanRegistrant

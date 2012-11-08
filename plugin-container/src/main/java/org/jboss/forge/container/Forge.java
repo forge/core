@@ -10,6 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.forge.container.exception.ContainerException;
+import org.jboss.forge.container.impl.AddonRegistryImpl;
 import org.jboss.forge.container.modules.AddonModuleLoader;
 import org.jboss.forge.container.util.Sets;
 import org.jboss.modules.Module;
@@ -123,7 +124,7 @@ public final class Forge
       {
          System.out.println("Starting addon(s) " + toStart);
          Set<AddonThread> started = new HashSet<AddonThread>();
-         AddonRegistry registry = AddonRegistry.registry;
+         AddonRegistryImpl registry = AddonRegistryImpl.registry;
 
          int startedThreads = 0;
          int batchSize = Math.min(BATCH_SIZE, toStart.size());
@@ -155,7 +156,7 @@ public final class Forge
 
    public AddonRegistry getAddonRegistry()
    {
-      return AddonRegistry.registry;
+      return AddonRegistryImpl.registry;
    }
 
    protected static void initLogging()

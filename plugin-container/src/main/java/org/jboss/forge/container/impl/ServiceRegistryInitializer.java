@@ -1,8 +1,9 @@
-package org.jboss.forge.container;
+package org.jboss.forge.container.impl;
 
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.BeanManager;
 
+import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.event.Startup;
 import org.jboss.forge.container.services.ContainerServiceExtension;
 import org.jboss.forge.container.services.ServiceRegistry;
@@ -14,7 +15,7 @@ import org.jboss.forge.container.services.ServiceRegistry;
  */
 public class ServiceRegistryInitializer
 {
-   public void registerServices(@Observes Startup event, BeanManager manager,
+   public static void registerServices(@Observes Startup event, BeanManager manager,
             ContainerServiceExtension extension, ServiceRegistry registry, AddonRegistry global)
    {
       for (Class<?> serviceType : extension.getServices())

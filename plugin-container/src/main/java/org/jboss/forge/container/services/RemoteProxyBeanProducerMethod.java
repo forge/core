@@ -11,8 +11,6 @@ import net.sf.cglib.proxy.Enhancer;
 
 import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.exception.ContainerException;
-import org.jboss.forge.container.services.Remote;
-import org.jboss.forge.container.services.Service;
 
 public class RemoteProxyBeanProducerMethod
 {

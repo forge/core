@@ -1,4 +1,4 @@
-package org.jboss.forge.container;
+package org.jboss.forge.container.impl;
 
 import java.util.Set;
 
