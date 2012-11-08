@@ -28,6 +28,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
 {
    private Process process;
    private String FORGE_HOME;
+   private AddonUtil addonUtil;
 
    @Override
    public Class<ForgeContainerConfiguration> getConfigurationClass()
@@ -44,6 +45,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    @Override
    public void start() throws LifecycleException
    {
+      this.addonUtil = AddonUtil.forDefaultAddonDir();
       try
       {
          this.process = NativeSystemCall.exec("java", "-Dforge.logging=false -Dforge.home=" + FORGE_HOME,
@@ -80,7 +82,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    public ProtocolMetaData deploy(Archive<?> archive) throws DeploymentException
    {
       AddonEntry addon = getAddonEntry(archive);
-      File destDir = AddonUtil.getAddonSlotDir(addon);
+      File destDir = addonUtil.getAddonSlotDir(addon);
       destDir.mkdirs();
 
       if (!(archive instanceof ForgeArchive))
@@ -96,18 +98,18 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
          Asset asset = node.getAsset();
          try
          {
-            Streams.write(asset.openStream(), new FileOutputStream(AddonUtil.getAddonDescriptor(addon)));
+            Streams.write(asset.openStream(), new FileOutputStream(addonUtil.getAddonDescriptor(addon)));
          }
          catch (FileNotFoundException e)
          {
-            throw new DeploymentException("Could not open addon descriptor [" + AddonUtil.getAddonDescriptor(addon)
+            throw new DeploymentException("Could not open addon descriptor [" + addonUtil.getAddonDescriptor(addon)
                      + "].", e);
          }
       }
 
       System.out.println("Unzipping " + archive.toString(true));
 
-      addon = AddonUtil.install(addon);
+      addon = addonUtil.install(addon);
 
       HTTPContext httpContext = new HTTPContext("localhost", 4141);
       httpContext.add(new Servlet("ArquillianServletRunner", "/ArquillianServletRunner"));
@@ -120,9 +122,9 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    public void undeploy(Archive<?> archive) throws DeploymentException
    {
       AddonEntry addon = getAddonEntry(archive);
-      AddonUtil.remove(addon);
+      addonUtil.remove(addon);
 
-      File dir = AddonUtil.getAddonBaseDir(addon);
+      File dir = addonUtil.getAddonBaseDir(addon);
       boolean deleted = Files.delete(dir, true);
       if (!deleted)
          throw new IllegalStateException("Could not delete file [" + dir.getAbsolutePath() + "]");

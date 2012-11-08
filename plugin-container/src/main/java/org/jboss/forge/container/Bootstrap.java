@@ -13,12 +13,7 @@ public class Bootstrap
 {
    public static void main(final String[] args)
    {
-      Forge forge = init();
+      Forge forge = new Forge();
       forge.start();
-   }
-
-   public static Forge init()
-   {
-      return new Forge();
    }
 }

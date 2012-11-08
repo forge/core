@@ -139,12 +139,12 @@ public class ModularFileSystemURLHandler
          String className = filenameToClassname(name);
          try
          {
-            resourceLoader.classForName(className);
+            // resourceLoader.classForName(className);
             discoveredClasses.add(className);
          }
          catch (Exception e)
          {
-            log.debug(
+            log.warn(
                      "Not loading Bean definition from class: ["
                               + className + "] because of underlying class loading error " +
                               "(probably the Bean was not actually defined in the addon module.)",

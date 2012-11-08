@@ -11,6 +11,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,66 +34,113 @@ import org.jboss.forge.parser.xml.XMLParserException;
  */
 public final class AddonUtil
 {
+   public static String getRuntimeAPIVersion()
+   {
+      String version = AddonUtil.class.getPackage()
+               .getImplementationVersion();
+      return version;
+   }
+
+   public static boolean hasRuntimeAPIVersion()
+   {
+      return getRuntimeAPIVersion() != null;
+   }
+
+   public static boolean isApiCompatible(CharSequence runtimeVersion, AddonEntry entry)
+   {
+      Assert.notNull(runtimeVersion, "Runtime API version must not be null.");
+      Assert.notNull(entry, "Addon entry must not be null.");
+      String addonApiVersion = entry.getApiVersion();
+      Assert.notNull(addonApiVersion, "Addon entry.getApiVersion() must not be null.");
+
+      return isApiCompatible(runtimeVersion, addonApiVersion);
+   }
+
+   public static boolean isApiCompatible(CharSequence runtimeVersion, String addonApiVersion)
+   {
+      Pattern runtimeVersionPattern = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)(\\.|-)(.*)");
+      Matcher matcher = runtimeVersionPattern.matcher(runtimeVersion);
+      if (matcher.matches())
+      {
+         if (addonApiVersion.matches(matcher.group(1) + "\\." + matcher.group(2) + "\\.(\\d+).*"))
+         {
+            return true;
+         }
+      }
+
+      return false;
+   }
 
    public static final String PROP_ADDON_DIR = "org.jboss.forge.addonDir";
    private static final String DEFAULT_SLOT = "main";
    private static final String ATTR_SLOT = "slot";
    private static final String ATTR_API_VERSION = "api-version";
    private static final String ATTR_NAME = "name";
-   private static final String ADDON_DIR_DEFAULT = "/.forge/addons";
-   private static final String REGISTRY_FILE = "/installed.xml";
+   private static final String ADDON_DIR_DEFAULT = ".forge/addons";
+   private static final String REGISTRY_FILE_NAME = "installed.xml";
 
-   private static String ADDON_DIR = null;
-   private static String REGISTRY = null;
+   private File addonDir;
 
-   public static String getAddonDirName()
+   private AddonUtil(File dir)
    {
-      if (ADDON_DIR == null)
+      this.addonDir = dir;
+   }
+
+   public static AddonUtil forAddonDir(File dir)
+   {
+      Assert.notNull(dir, "Addon directory must not be null.");
+      return new AddonUtil(dir);
+   }
+
+   public static AddonUtil forDefaultAddonDir()
+   {
+      return new AddonUtil(new File(OSUtils.getUserHomePath() + ADDON_DIR_DEFAULT));
+   }
+
+   public File getAddonDir()
+   {
+      if (!addonDir.exists() || !addonDir.isDirectory())
       {
-         ADDON_DIR = System.getProperty(PROP_ADDON_DIR);
-         if (ADDON_DIR == null)
+         addonDir.delete();
+         System.gc();
+         if(!addonDir.mkdirs())
          {
-            ADDON_DIR = OSUtils.getUserHomePath() + ADDON_DIR_DEFAULT;
+            throw new RuntimeException("Could not create Addon Directory ["+addonDir+"]");
          }
       }
-      return ADDON_DIR;
+      return addonDir;
    }
 
-   public static String getRegistryFileName()
+   public synchronized File getRegistryFile()
    {
-      if (REGISTRY == null)
-      {
-         REGISTRY = getAddonDirName() + REGISTRY_FILE;
-      }
-      return REGISTRY;
-   }
-
-   public static File getRegistryFile()
-   {
+      File registryFile = new File(getAddonDir(), REGISTRY_FILE_NAME);
       try
       {
-         File registryFile = new File(getRegistryFileName());
          if (!registryFile.exists())
          {
-            registryFile.mkdirs();
-            registryFile.delete();
             registryFile.createNewFile();
 
-            FileOutputStream stream = new FileOutputStream(registryFile);
-            Streams.write(XMLParser.toXMLInputStream(XMLParser.parse("<installed></installed>")), stream);
-            stream.close();
+            FileOutputStream out = new FileOutputStream(registryFile);
+            try
+            {
+               Streams.write(XMLParser.toXMLInputStream(XMLParser.parse("<installed></installed>")), out);
+            }
+            finally
+            {
+               out.close();
+            }
          }
          return registryFile;
       }
       catch (Exception e)
       {
-         throw new RuntimeException("Error initializing addon registry file.", e);
+         throw new RuntimeException("Error initializing addon registry file [" + registryFile + "]", e);
       }
    }
 
-   public static List<AddonEntry> listByAPICompatibleVersion(final String version)
+   public synchronized List<AddonEntry> listByAPICompatibleVersion(final String version)
    {
-      List<AddonEntry> list = list();
+      List<AddonEntry> list = listInstalled();
       List<AddonEntry> result = list;
 
       if (version != null)
@@ -110,20 +158,28 @@ public final class AddonUtil
       return result;
    }
 
-   public static List<AddonEntry> list()
+   public synchronized List<AddonEntry> listInstalled()
    {
       List<AddonEntry> result = new ArrayList<AddonEntry>();
       File registryFile = getRegistryFile();
       try
       {
-         Node installed = XMLParser.parse(new FileInputStream(registryFile));
-         List<Node> list = installed.get("addon");
-         for (Node addon : list)
+         FileInputStream in = new FileInputStream(registryFile);
+         try
          {
-            AddonEntry entry = new AddonEntry(addon.getAttribute(ATTR_NAME),
-                     addon.getAttribute(ATTR_API_VERSION),
-                     addon.getAttribute(ATTR_SLOT));
-            result.add(entry);
+            Node installed = XMLParser.parse(in);
+            List<Node> list = installed.get("addon");
+            for (Node addon : list)
+            {
+               AddonEntry entry = new AddonEntry(addon.getAttribute(ATTR_NAME),
+                        addon.getAttribute(ATTR_API_VERSION),
+                        addon.getAttribute(ATTR_SLOT));
+               result.add(entry);
+            }
+         }
+         finally
+         {
+            in.close();
          }
       }
       catch (XMLParserException e)
@@ -135,15 +191,19 @@ public final class AddonUtil
       {
          // this is OK, no addons installed
       }
+      catch (IOException e)
+      {
+         throw new RuntimeException("Error reading registry file", e);
+      }
       return result;
    }
 
-   public static AddonEntry install(AddonEntry addon)
+   public synchronized AddonEntry install(AddonEntry addon)
    {
       return install(addon.getName(), addon.getApiVersion(), addon.getSlot());
    }
 
-   public static AddonEntry install(final String name, final String apiVersion, String slot)
+   public synchronized AddonEntry install(final String name, final String apiVersion, String slot)
    {
       if (Strings.isNullOrEmpty(name))
       {
@@ -158,7 +218,7 @@ public final class AddonUtil
          slot = DEFAULT_SLOT;
       }
 
-      List<AddonEntry> installedAddons = list();
+      List<AddonEntry> installedAddons = listInstalled();
       for (AddonEntry e : installedAddons)
       {
          if (name.equals(e.getName()))
@@ -185,7 +245,7 @@ public final class AddonUtil
       }
    }
 
-   public static void remove(final AddonEntry addon)
+   public synchronized void remove(final AddonEntry addon)
    {
       if (addon == null)
       {
@@ -212,7 +272,7 @@ public final class AddonUtil
       }
    }
 
-   public static AddonEntry get(final AddonEntry addon)
+   public synchronized AddonEntry get(final AddonEntry addon)
    {
       if (addon == null)
       {
@@ -251,66 +311,34 @@ public final class AddonUtil
       return null;
    }
 
-   public static File getAddonResourceDir(AddonEntry found)
+   public synchronized File getAddonResourceDir(AddonEntry found)
    {
       Assert.notNull(found.getSlot(), "Addon slot must be specified.");
       Assert.notNull(found.getName(), "Addon name must be specified.");
 
       String path = found.getName().replaceAll("\\.", "/");
-      File addonDir = new File(getAddonDirName() + "/" + path + "/" + found.getSlot());
+      File addonDir = new File(getAddonDir(), path + "/" + found.getSlot());
       return addonDir;
    }
 
-   public static File getAddonBaseDir(AddonEntry found)
+   public synchronized File getAddonBaseDir(AddonEntry found)
    {
       Assert.notNull(found.getSlot(), "Addon slot must be specified.");
       Assert.notNull(found.getName(), "Addon name must be specified.");
 
       String path = found.getName().split("\\.")[0];
-      File addonDir = new File(getAddonDirName() + "/" + path);
+      File addonDir = new File(getAddonDir(), path);
       return addonDir;
    }
 
-   public static boolean has(final AddonEntry addon)
+   public synchronized boolean has(final AddonEntry addon)
    {
       return get(addon) != null;
    }
 
-   public static String getRuntimeAPIVersion()
+   public List<File> getAddonResources(AddonEntry found)
    {
-      String version = AddonUtil.class.getPackage()
-               .getImplementationVersion();
-      return version;
-   }
-
-   public static boolean isApiCompatible(CharSequence runtimeVersion, AddonEntry entry)
-   {
-      Assert.notNull(runtimeVersion, "Runtime API version must not be null.");
-      Assert.notNull(entry, "Addon entry must not be null.");
-      String addonApiVersion = entry.getApiVersion();
-      Assert.notNull(addonApiVersion, "Addon entry.getApiVersion() must not be null.");
-
-      return isApiCompatible(runtimeVersion, addonApiVersion);
-   }
-
-   public static boolean isApiCompatible(CharSequence runtimeVersion, String addonApiVersion)
-   {
-      Pattern runtimeVersionPattern = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)(\\.|-)(.*)");
-      Matcher matcher = runtimeVersionPattern.matcher(runtimeVersion);
-      if (matcher.matches())
-      {
-         if (addonApiVersion.matches(matcher.group(1) + "\\." + matcher.group(2) + "\\.(\\d+).*"))
-         {
-            return true;
-         }
-      }
-
-      return false;
-   }
-
-   public static List<File> getAddonResources(AddonEntry found)
-   {
-      File dir = AddonUtil.getAddonResourceDir(found);
+      File dir = getAddonResourceDir(found);
       if (dir.exists())
       {
          return Arrays.asList(dir.listFiles(new FilenameFilter()
@@ -325,12 +353,12 @@ public final class AddonUtil
       return new ArrayList<File>();
    }
 
-   public static File getAddonSlotDir(AddonEntry addon)
+   public File getAddonSlotDir(AddonEntry addon)
    {
       return new File(getAddonBaseDir(addon).getAbsolutePath() + "/" + addon.getSlot());
    }
 
-   public static List<AddonDependency> getAddonDependencies(AddonEntry addon)
+   public synchronized List<AddonDependency> getAddonDependencies(AddonEntry addon)
    {
       List<AddonDependency> result = new ArrayList<AddonUtil.AddonDependency>();
       File descriptor = getAddonDescriptor(addon);
@@ -360,7 +388,7 @@ public final class AddonUtil
       return result;
    }
 
-   public static File getAddonDescriptor(AddonEntry addon)
+   public synchronized File getAddonDescriptor(AddonEntry addon)
    {
       File descriptorFile = new File(getAddonResourceDir(addon).getAbsolutePath() + "/forge.xml");
       try
@@ -460,10 +488,5 @@ public final class AddonUtil
          return true;
       }
 
-   }
-
-   public static boolean hasRuntimeAPIVersion()
-   {
-      return getRuntimeAPIVersion() != null;
    }
 }

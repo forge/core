@@ -29,7 +29,8 @@ public class WeldClasspathSpec extends BaseModuleSpecProvider
                PathFilters.acceptAll(),
                PathFilters.any(Arrays
                         .asList(PathFilters.isChildOf("javax"),
-                                 PathFilters.is("org/jboss/weld"), PathFilters.isChildOf("org/jboss/weld"))),
+                                 PathFilters.is("org/jboss/weld"),
+                                 PathFilters.isChildOf("org/jboss/weld"))),
                loader, RuntimeClasspathSpec.ID, false));
    }
 

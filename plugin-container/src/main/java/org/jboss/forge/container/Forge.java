@@ -1,5 +1,6 @@
 package org.jboss.forge.container;
 
+import java.io.File;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.List;
@@ -28,7 +29,9 @@ public final class Forge
 
    Set<AddonThread> threads = Sets.getConcurrentSet();
 
-   Forge()
+   private AddonUtil addonUtil;
+
+   public Forge()
    {
       if (!AddonUtil.hasRuntimeAPIVersion())
          System.out.println("Warning! Could not detect Forge runtime version - " +
@@ -62,7 +65,7 @@ public final class Forge
       {
          try
          {
-            ModuleLoader addonLoader = new AddonModuleLoader();
+            ModuleLoader addonLoader = new AddonModuleLoader(addonUtil);
             alive = true;
             do
             {
@@ -175,11 +178,11 @@ public final class Forge
       Set<Addon> result = new HashSet<Addon>();
 
       String runtimeVersion = AddonUtil.getRuntimeAPIVersion();
-      List<AddonEntry> installed = AddonUtil.listByAPICompatibleVersion(runtimeVersion);
+      List<AddonEntry> installed = addonUtil.listByAPICompatibleVersion(runtimeVersion);
 
       if (AddonUtil.hasRuntimeAPIVersion())
       {
-         List<AddonEntry> incompatible = AddonUtil.list();
+         List<AddonEntry> incompatible = addonUtil.listInstalled();
          incompatible.removeAll(installed);
 
          for (AddonEntry entry : incompatible)
@@ -210,6 +213,11 @@ public final class Forge
       }
 
       return result;
+   }
+
+   public void setAddonDir(File dir)
+   {
+      this.addonUtil = AddonUtil.forAddonDir(dir);
    }
 
 }

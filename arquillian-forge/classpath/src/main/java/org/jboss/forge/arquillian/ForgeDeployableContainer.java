@@ -3,6 +3,8 @@ package org.jboss.forge.arquillian;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.concurrent.Callable;
 
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
@@ -18,9 +20,9 @@ import org.jboss.forge.container.Addon;
 import org.jboss.forge.container.AddonEntry;
 import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.AddonUtil;
-import org.jboss.forge.container.Bootstrap;
 import org.jboss.forge.container.Forge;
 import org.jboss.forge.container.Status;
+import org.jboss.forge.container.util.ClassLoaders;
 import org.jboss.forge.container.util.Files;
 import org.jboss.forge.container.util.Streams;
 import org.jboss.shrinkwrap.api.Archive;
@@ -32,16 +34,35 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
 {
    private static final int TEST_DEPLOYMENT_TIMEOUT = 60000;
    private ForgeRunnable thread;
+   private File addonDir;
+   private AddonUtil addonUtil;
 
    private class ForgeRunnable implements Runnable
    {
       private Forge forge;
+      private ClassLoader loader;
+      private File addonDir;
+
+      public ForgeRunnable(File addonDir, ClassLoader loader)
+      {
+         this.addonDir = addonDir;
+         this.loader = loader;
+      }
 
       @Override
       public void run()
       {
-         forge = Bootstrap.init();
-         forge.start();
+         ClassLoaders.executeIn(loader, new Callable<Object>()
+         {
+            @Override
+            public Object call() throws Exception
+            {
+               forge = new Forge();
+               forge.setAddonDir(addonDir);
+               forge.start();
+               return null;
+            }
+         });
       }
 
       public void stop()
@@ -73,7 +94,16 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    {
       try
       {
-         thread = new ForgeRunnable();
+         this.addonDir = File.createTempFile("forge-test-addon-dir", "");
+         this.addonUtil = AddonUtil.forAddonDir(addonDir);
+      }
+      catch (IOException e1)
+      {
+         throw new LifecycleException("Failed to create temporary addon directory", e1);
+      }
+      try
+      {
+         thread = new ForgeRunnable(addonDir, ClassLoader.getSystemClassLoader());
          new Thread(thread).start();
       }
       catch (Exception e)
@@ -98,7 +128,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    public ProtocolMetaData deploy(Archive<?> archive) throws DeploymentException
    {
       AddonEntry addon = getAddonEntry(archive);
-      File destDir = AddonUtil.getAddonSlotDir(addon);
+      File destDir = addonUtil.getAddonSlotDir(addon);
       destDir.mkdirs();
 
       if (!(archive instanceof ForgeArchive))
@@ -114,16 +144,16 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
          Asset asset = node.getAsset();
          try
          {
-            Streams.write(asset.openStream(), new FileOutputStream(AddonUtil.getAddonDescriptor(addon)));
+            Streams.write(asset.openStream(), new FileOutputStream(addonUtil.getAddonDescriptor(addon)));
          }
          catch (FileNotFoundException e)
          {
-            throw new DeploymentException("Could not open addon descriptor [" + AddonUtil.getAddonDescriptor(addon)
+            throw new DeploymentException("Could not open addon descriptor [" + addonUtil.getAddonDescriptor(addon)
                      + "].", e);
          }
       }
 
-      addon = AddonUtil.install(addon);
+      addon = addonUtil.install(addon);
 
       HTTPContext httpContext = new HTTPContext("localhost", 4141);
       httpContext.add(new Servlet("ArquillianServletRunner", "/ArquillianServletRunner"));
@@ -160,9 +190,9 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    public void undeploy(Archive<?> archive) throws DeploymentException
    {
       AddonEntry addon = getAddonEntry(archive);
-      AddonUtil.remove(addon);
+      addonUtil.remove(addon);
 
-      File dir = AddonUtil.getAddonBaseDir(addon);
+      File dir = addonUtil.getAddonBaseDir(addon);
       boolean deleted = Files.delete(dir, true);
       if (!deleted)
          throw new IllegalStateException("Could not delete file [" + dir.getAbsolutePath() + "]");
