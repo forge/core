@@ -24,6 +24,7 @@ package org.jboss.forge.container.modules;
 
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -42,59 +43,79 @@ import org.jboss.weld.environment.se.Weld;
  */
 public class SilentTCCLSingletonProvider extends SingletonProvider
 {
+   private Map<Class<?>, Singleton<?>> store = new HashMap<Class<?>, Singleton<?>>();
+
    @Override
+   @SuppressWarnings("unchecked")
    public <T> Singleton<T> create(Class<? extends T> type)
    {
-      return new TCCLSingleton<T>();
+      Singleton<?> singleton = store.get(type);
+      if (singleton == null)
+      {
+         singleton = new TCCLSingleton<T>(type);
+         store.put(type, singleton);
+      }
+      return (Singleton<T>) singleton;
    }
 
    private static class TCCLSingleton<T> implements Singleton<T>
    {
       // use Hashtable for concurrent access
       private final Map<ClassLoader, T> store = new Hashtable<ClassLoader, T>();
+      private Class<? extends T> type;
 
+      public TCCLSingleton(Class<? extends T> type)
+      {
+         this.type = type;
+      }
+
+      @Override
       public T get()
       {
          T instance = store.get(getClassLoader());
          if (instance == null)
          {
-            throw new IllegalStateException("Singleton not set for [" + getClassLoader() + "]");
+            throw new IllegalStateException("No instance of Singleton type [" + type.getName()
+                     + "] found, for classloader key [" + getClassLoader() + "]");
          }
          return instance;
       }
 
+      @Override
       public void set(T object)
       {
          store.put(getClassLoader(), object);
       }
 
+      @Override
       public void clear()
       {
          store.remove(getClassLoader());
       }
 
+      @Override
       public boolean isSet()
       {
          return store.containsKey(getClassLoader());
       }
+   }
 
-      private ClassLoader getClassLoader()
+   private static ClassLoader getClassLoader()
+   {
+      SecurityManager sm = System.getSecurityManager();
+      if (sm != null)
       {
-         SecurityManager sm = System.getSecurityManager();
-         if (sm != null)
+         return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>()
          {
-            return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>()
+            public ClassLoader run()
             {
-               public ClassLoader run()
-               {
-                  return Thread.currentThread().getContextClassLoader();
-               }
-            });
-         }
-         else
-         {
-            return Thread.currentThread().getContextClassLoader();
-         }
+               return Thread.currentThread().getContextClassLoader();
+            }
+         });
+      }
+      else
+      {
+         return Thread.currentThread().getContextClassLoader();
       }
    }
 }

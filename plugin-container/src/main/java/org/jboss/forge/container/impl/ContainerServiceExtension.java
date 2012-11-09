@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.spi.AfterBeanDiscovery;
 import javax.enterprise.inject.spi.Annotated;
 import javax.enterprise.inject.spi.AnnotatedMember;
 import javax.enterprise.inject.spi.BeanManager;
@@ -18,6 +19,7 @@ import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.enterprise.inject.spi.ProcessInjectionPoint;
 import javax.enterprise.inject.spi.ProcessProducer;
 
+import org.jboss.forge.container.events.CrossContainerObserverMethod;
 import org.jboss.forge.container.services.Remote;
 import org.jboss.forge.container.services.RemoteAnnotatedType;
 import org.jboss.forge.container.services.RemoteInjectionPoint;
@@ -34,6 +36,11 @@ import org.jboss.forge.container.services.Service;
 public class ContainerServiceExtension implements Extension
 {
    private Set<Class<?>> services = new HashSet<Class<?>>();
+   
+   public void wireCrossContainerEvents(@Observes AfterBeanDiscovery event)
+   {
+      event.addObserverMethod(new CrossContainerObserverMethod());
+   }
 
    @SuppressWarnings({ "rawtypes", "unchecked" })
    public void processRemotes(@Observes ProcessAnnotatedType<?> event) throws InstantiationException, IllegalAccessException
@@ -44,7 +51,6 @@ public class ContainerServiceExtension implements Extension
          event.setAnnotatedType(new RemoteAnnotatedType(event.getAnnotatedType()));
          if (type.getClassLoader().equals(Thread.currentThread().getContextClassLoader()))
          {
-            Object instance = type.newInstance();
             services.add(event.getAnnotatedType().getJavaClass());
          }
       }
@@ -64,7 +70,7 @@ public class ContainerServiceExtension implements Extension
       if (annotatedMember.isAnnotationPresent(Remote.class))
          event.setProducer(new RemoteProxyBeanProducer(event.getProducer()));
    }
-
+   
    public Set<Class<?>> getServices()
    {
       return services;

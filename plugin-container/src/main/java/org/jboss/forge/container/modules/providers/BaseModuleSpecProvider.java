@@ -327,6 +327,7 @@ public abstract class BaseModuleSpecProvider implements ModuleSpecProvider
       systemPaths.add("junit/runner");
       systemPaths.add("junit/textui");
       systemPaths.add("net/sf/cglib");
+      systemPaths.add("net/sf/cglib/core");
       systemPaths.add("net/sf/cglib/proxy");
       systemPaths.add("org/apache/commons/logging");
       systemPaths.add("org/apache/commons/logging/impl");

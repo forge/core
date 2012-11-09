@@ -16,8 +16,16 @@ public class ServiceRegistryImpl implements ServiceRegistry
 {
    private Set<Class<?>> services = Sets.getConcurrentSet();
 
-   @Inject
    private BeanManager manager;
+
+   private ClassLoader loader;
+
+   @Inject
+   public ServiceRegistryImpl(BeanManager manager)
+   {
+      this.manager = manager;
+      this.loader = Thread.currentThread().getContextClassLoader();
+   }
 
    @Override
    public <T> void addService(Class<T> clazz)
@@ -28,7 +36,7 @@ public class ServiceRegistryImpl implements ServiceRegistry
    @Override
    public <T> RemoteInstance<T> getRemoteInstance(Class<T> clazz)
    {
-      return new RemoteInstanceImpl<T>(manager, clazz);
+      return new RemoteInstanceImpl<T>(loader, manager, clazz);
    }
 
    @Override

@@ -192,6 +192,29 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       AddonEntry addon = getAddonEntry(archive);
       addonUtil.remove(addon);
 
+      long start = System.currentTimeMillis();
+      boolean deployed = true;
+      while (deployed && (System.currentTimeMillis() - start < TEST_DEPLOYMENT_TIMEOUT))
+      {
+         deployed = false;
+         AddonRegistry registry = thread.getForge().getAddonRegistry();
+         for (Addon entry : registry.getRegisteredAddons())
+         {
+            if (entry.getId().equals(addon.toModuleId()))
+            {
+               deployed = true;
+               break;
+            }
+         }
+         try
+         {
+            Thread.sleep(10);
+         }
+         catch (InterruptedException e)
+         {
+         }
+      }
+
       File dir = addonUtil.getAddonBaseDir(addon);
       boolean deleted = Files.delete(dir, true);
       if (!deleted)

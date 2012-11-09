@@ -11,10 +11,12 @@ import org.jboss.forge.container.util.ClassLoaders;
 
 public class RemoteClassLoaderCallback implements MethodInterceptor
 {
+   private ClassLoader loader;
    private Object delegate;
 
-   public RemoteClassLoaderCallback(Object delegate)
+   public RemoteClassLoaderCallback(ClassLoader loader, Object delegate)
    {
+      this.loader = loader;
       this.delegate = delegate;
    }
 
@@ -29,19 +31,19 @@ public class RemoteClassLoaderCallback implements MethodInterceptor
          {
             try
             {
-               return method.invoke(obj, args);
+               return method.invoke(delegate, args);
             }
             catch (Throwable e)
             {
                throw new ContainerException(
-                        "Could not invoke proxy method [" + method.getDeclaringClass().getName() + "."
+                        "Could not invoke proxy method [" + delegate.getClass().getName() + "."
                                  + method.getName() + "()] in ClassLoader ["
-                                 + Thread.currentThread().getContextClassLoader() + "]", e);
+                                 + loader + "]", e);
             }
          }
       };
 
-      return ClassLoaders.executeIn(delegate.getClass().getClassLoader(), task);
+      return ClassLoaders.executeIn(loader, task);
    }
 
 }
