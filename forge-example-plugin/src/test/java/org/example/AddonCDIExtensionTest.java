@@ -1,8 +1,9 @@
 package org.example;
 
+import javax.enterprise.inject.spi.Extension;
 import javax.inject.Inject;
 
-import org.example.simple.SimpleService;
+import org.example.extension.TestExtension;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -17,36 +18,27 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @RunWith(Arquillian.class)
-public class SingleAddonTest
+public class AddonCDIExtensionTest
 {
-   @Deployment
+   @Deployment(order = 2)
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-               .addClasses(SimpleService.class)
+               .addClasses(TestExtension.class)
                .addAsManifestResource(new StringAsset(""), ArchivePaths.create("beans.xml"))
+               .addAsServiceProvider(Extension.class, TestExtension.class)
                .setAsForgeXML(new StringAsset("<addon/>"));
 
       return archive;
    }
 
    @Inject
-   private SimpleService simple;
+   private TestExtension extension;
 
    @Test
-   public void testContainerInjection()
+   public void testCDIExtensionsFunctionNormally() throws Exception
    {
-      Assert.assertNotNull(simple);
+      Assert.assertNotNull(extension);
+      Assert.assertTrue(extension.isInvoked());
    }
-
-   @Test
-   public void testLifecycle() throws Exception
-   {
-      Assert.assertNotNull(simple);
-      Assert.assertTrue(simple.isStartupObserved());
-      Assert.assertTrue(simple.isPostStartupObserved());
-      Assert.assertFalse(simple.isPreShutdownObserved());
-      Assert.assertFalse(simple.isShutdownObserved());
-   }
-
 }

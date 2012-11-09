@@ -147,8 +147,12 @@ public class AddonModuleLoader extends ModuleLoader
          }
          else
          {
-            builder.addDependency(DependencySpec.createModuleDependencySpec(PathFilters.acceptAll(),
-                     PathFilters.rejectAll(), this, moduleId, dependency.isOptional()));
+            builder.addDependency(DependencySpec.createModuleDependencySpec(
+                     PathFilters.not(PathFilters.getMetaInfFilter()),
+                     PathFilters.rejectAll(),
+                     this,
+                     moduleId,
+                     dependency.isOptional()));
          }
       }
    }

@@ -22,7 +22,7 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @RunWith(Arquillian.class)
-public class AddonDependencyTest
+public class AddonDependencyInjectionTest
 {
    @Deployment(order = 2)
    public static ForgeArchive getDeployment()

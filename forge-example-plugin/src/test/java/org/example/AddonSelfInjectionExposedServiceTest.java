@@ -18,7 +18,7 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @RunWith(Arquillian.class)
-public class SinglePublishedAddonTest
+public class AddonSelfInjectionExposedServiceTest
 {
    @Deployment
    public static ForgeArchive getDependencyDeployment()
@@ -30,6 +30,9 @@ public class SinglePublishedAddonTest
 
       return archive;
    }
+
+   @Inject
+   private PublishedService local;
 
    @Inject
    @Service
@@ -46,5 +49,18 @@ public class SinglePublishedAddonTest
    {
       Assert.assertNotNull(remote);
       Assert.assertEquals("I am PublishedService.", remote.getMessage());
+   }
+
+   @Test
+   public void testLocalServiceIsInjectedUnqualified() throws Exception
+   {
+      Assert.assertNotNull(local);
+   }
+
+   @Test
+   public void testLocalServiceCanBeInvokedUnqualified() throws Exception
+   {
+      Assert.assertNotNull(local);
+      Assert.assertEquals("I am PublishedService.", local.getMessage());
    }
 }
