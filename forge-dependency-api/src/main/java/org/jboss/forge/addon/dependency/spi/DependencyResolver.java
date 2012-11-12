@@ -10,6 +10,7 @@ package org.jboss.forge.addon.dependency.spi;
 import java.util.List;
 import java.util.Set;
 
+import org.jboss.forge.addon.dependency.Coordinate;
 import org.jboss.forge.addon.dependency.Dependency;
 import org.jboss.forge.addon.dependency.DependencyQuery;
 
@@ -32,5 +33,5 @@ public interface DependencyResolver
     * @param query
     * @return
     */
-   List<Dependency> resolveVersions(DependencyQuery query);
+   List<Coordinate> resolveVersions(DependencyQuery query);
 }

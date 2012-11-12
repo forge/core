@@ -8,6 +8,9 @@ package org.jboss.forge.parser.xml;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
@@ -64,6 +67,34 @@ public class XMLParser
       catch (Exception e)
       {
          throw new XMLParserException("Could not export Node strcuture to XML", e);
+      }
+   }
+
+   public static Node parse(final File file) throws XMLParserException
+   {
+      FileInputStream fis = null;
+      try
+      {
+         fis = new FileInputStream(file);
+         return parse(fis);
+      }
+      catch (XMLParserException xe)
+      {
+         throw xe;
+      }
+      catch (IOException io)
+      {
+         throw new XMLParserException(io);
+      }
+      finally
+      {
+         try
+         {
+            fis.close();
+         }
+         catch (IOException ignored)
+         {
+         }
       }
    }
 

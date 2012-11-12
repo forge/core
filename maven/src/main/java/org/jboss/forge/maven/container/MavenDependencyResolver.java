@@ -8,7 +8,7 @@
 package org.jboss.forge.maven.container;
 
 import static org.jboss.forge.maven.container.MavenConvertUtils.convertToMavenRepos;
-import static org.jboss.forge.maven.container.MavenConvertUtils.dependencyToMavenArtifact;
+import static org.jboss.forge.maven.container.MavenConvertUtils.coordinateToMavenArtifact;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -21,6 +21,8 @@ import javax.inject.Singleton;
 
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.apache.maven.settings.Settings;
+import org.jboss.forge.addon.dependency.Coordinate;
+import org.jboss.forge.addon.dependency.CoordinateBuilder;
 import org.jboss.forge.addon.dependency.Dependency;
 import org.jboss.forge.addon.dependency.DependencyBuilder;
 import org.jboss.forge.addon.dependency.DependencyFilter;
@@ -61,14 +63,13 @@ public class MavenDependencyResolver implements DependencyResolver
 
       MavenRepositorySystemSession session = setupRepoSession(system, settings);
 
-      Dependency dependency = query.getDependency();
-      Artifact queryArtifact = dependencyToMavenArtifact(dependency);
+      Artifact queryArtifact = coordinateToMavenArtifact(query.getDependency().getCoordinate());
 
       List<RemoteRepository> remoteRepos = convertToMavenRepos(query.getDependencyRepositories(), settings);
       remoteRepos.addAll(container.getEnabledRepositoriesFromProfile(settings));
 
       CollectRequest collectRequest = new CollectRequest(new org.sonatype.aether.graph.Dependency(queryArtifact,
-               dependency.getScopeType()), remoteRepos);
+               query.getDependency().getScopeType()), remoteRepos);
 
       DependencyRequest request = new DependencyRequest(collectRequest, null);
 
@@ -87,9 +88,10 @@ public class MavenDependencyResolver implements DependencyResolver
          org.sonatype.aether.graph.Dependency artifactDependency = node.getDependency();
          Artifact artifact = artifactDependency.getArtifact();
          File file = artifact.getFile();
+
          Dependency d = DependencyBuilder.create().setArtifactId(artifact.getArtifactId())
                   .setGroupId(artifact.getGroupId()).setVersion(artifact.getVersion())
-                  .setPackagingType(artifact.getExtension()).setArtifact(file)
+                  .setPackaging(artifact.getExtension()).setArtifact(file)
                   .setOptional(artifactDependency.isOptional())
                   .setClassifier(artifact.getClassifier())
                   .setScopeType(artifactDependency.getScope());
@@ -103,18 +105,19 @@ public class MavenDependencyResolver implements DependencyResolver
    }
 
    @Override
-   public List<Dependency> resolveVersions(DependencyQuery query)
+   public List<Coordinate> resolveVersions(DependencyQuery query)
    {
       Dependency dep = query.getDependency();
       VersionRangeResult r = getVersions(query);
-      List<Dependency> result = new ArrayList<Dependency>();
+      List<Coordinate> result = new ArrayList<Coordinate>();
       DependencyFilter filter = query.getDependencyFilter();
       for (Version v : r.getVersions())
       {
-         DependencyBuilder versionedDep = DependencyBuilder.create(dep).setVersion(v.toString());
+         CoordinateBuilder coord = CoordinateBuilder.create(dep.getCoordinate()).setVersion(v.toString());
+         DependencyBuilder versionedDep = DependencyBuilder.create().setCoordinate(coord);
          if (filter == null || filter.accept(versionedDep))
          {
-            result.add(versionedDep);
+            result.add(coord);
          }
       }
       return result;
@@ -128,17 +131,17 @@ public class MavenDependencyResolver implements DependencyResolver
     */
    private VersionRangeResult getVersions(DependencyQuery query)
    {
-      Dependency dep = query.getDependency();
+      Coordinate dep = query.getDependency().getCoordinate();
       try
       {
          String version = dep.getVersion();
          if (version == null || version.isEmpty())
          {
-            dep = DependencyBuilder.create(dep).setVersion("[,)");
+            dep = CoordinateBuilder.create(dep).setVersion("[,)");
          }
          else if (!version.matches("(\\(|\\[).*?(\\)|\\])"))
          {
-            dep = DependencyBuilder.create(dep).setVersion("[" + version + "]");
+            dep = CoordinateBuilder.create(dep).setVersion("[" + version + "]");
          }
 
          RepositorySystem maven = container.lookup(RepositorySystem.class);
@@ -146,7 +149,7 @@ public class MavenDependencyResolver implements DependencyResolver
 
          MavenRepositorySystemSession session = setupRepoSession(maven, settings);
 
-         Artifact artifact = dependencyToMavenArtifact(dep);
+         Artifact artifact = coordinateToMavenArtifact(dep);
 
          List<RemoteRepository> remoteRepos = convertToMavenRepos(query.getDependencyRepositories(), settings);
          remoteRepos.addAll(container.getEnabledRepositoriesFromProfile(settings));

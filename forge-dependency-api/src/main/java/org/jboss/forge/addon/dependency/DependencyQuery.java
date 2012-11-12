@@ -19,8 +19,8 @@ public interface DependencyQuery
 {
    Dependency getDependency();
 
-   List<DependencyRepository> getDependencyRepositories();
-
    DependencyFilter getDependencyFilter();
+
+   List<DependencyRepository> getDependencyRepositories();
 
 }

@@ -8,17 +8,36 @@
 package org.jboss.forge.addon.dependency;
 
 /**
- * Marker interface for a Coordinate object.
  *
- * Implementations should provide additional methods about how to locate an artifact.
- *
- * Eg: If using Maven, the {@link Coordinate} implementation should return the artifact's groupId, artifactId and
- * version
+ * Allows to locate a specific artifact.
  *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  *
  */
 public interface Coordinate
 {
+   /**
+    * Get the major identifier
+    */
+   String getGroupId();
 
+   /**
+    * Get the minor-identifier
+    */
+   String getArtifactId();
+
+   /**
+    * Get the version
+    */
+   String getVersion();
+
+   /**
+    * Get the classifier. May be null
+    */
+   String getClassifier();
+
+   /**
+    * Get the packaging type. Defaults to "far"
+    */
+   String getPackaging();
 }

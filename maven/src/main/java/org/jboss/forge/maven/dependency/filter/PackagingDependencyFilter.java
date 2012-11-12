@@ -38,7 +38,7 @@ public class PackagingDependencyFilter implements DependencyFilter
    @Override
    public boolean accept(Dependency dependency)
    {
-      return packaging.equalsIgnoreCase(dependency.getPackagingType());
+      return packaging.equalsIgnoreCase(dependency.getCoordinate().getPackaging());
    }
 
 }

@@ -17,18 +17,15 @@ import java.io.File;
  */
 public class DependencyBuilder implements Dependency
 {
-   private String groupId;
-   private String artifactId;
-   private String version;
+   private CoordinateBuilder coordinate;
    private String scopeType;
-   private String packagingType;
-   private String classifier;
    private String systemPath;
    private File artifact;
    private boolean optional;
 
    private DependencyBuilder()
    {
+      this.coordinate = CoordinateBuilder.create();
    }
 
    /**
@@ -42,38 +39,10 @@ public class DependencyBuilder implements Dependency
    public static DependencyBuilder create(final Dependency dep)
    {
       DependencyBuilder builder = new DependencyBuilder();
-      builder.setGroupId(dep.getGroupId());
-      builder.setArtifactId(dep.getArtifactId());
-      builder.setVersion(dep.getVersion());
-      builder.setPackagingType(dep.getPackagingType());
+      builder.setCoordinate(dep.getCoordinate());
       builder.setScopeType(dep.getScopeType());
-      builder.setClassifier(dep.getClassifier());
       builder.setSystemPath(dep.getSystemPath());
       return builder;
-   }
-
-   /**
-    * Return true if the groupId and artifactId of the two given dependencies are equal.
-    */
-   public static boolean areEquivalent(final Dependency l, final Dependency r)
-   {
-      if (l == r)
-      {
-         return true;
-      }
-      if ((l == null) && (r == null))
-      {
-         return true;
-      }
-      else if ((l == null) || (r == null))
-      {
-         return false;
-      }
-
-      return !(l.getArtifactId() != null ? !l.getArtifactId().equals(r.getArtifactId()) : r.getArtifactId() != null) &&
-               !(l.getGroupId() != null ? !l.getGroupId().equals(r.getGroupId()) : r.getGroupId() != null) &&
-               !(l.getClassifier() != null ? !l.getClassifier().equals(r.getClassifier()) : r.getClassifier() != null);
-
    }
 
    /**
@@ -110,28 +79,34 @@ public class DependencyBuilder implements Dependency
          if (split.length > 4)
          {
             String trimmed = split[4].trim();
-            dependencyBuilder.setPackagingType(trimmed);
+            dependencyBuilder.setPackaging(trimmed);
          }
       }
 
       return dependencyBuilder;
    }
 
-   public DependencyBuilder setGroupId(final String groupId)
+   public DependencyBuilder setPackaging(String packaging)
    {
-      this.groupId = groupId;
+      getCoordinate().setPackaging(packaging);
       return this;
    }
 
-   public DependencyBuilder setArtifactId(final String artifactId)
+   public DependencyBuilder setArtifactId(String artifactId)
    {
-      this.artifactId = artifactId;
+      getCoordinate().setArtifactId(artifactId);
       return this;
    }
 
-   public DependencyBuilder setVersion(final String version)
+   public DependencyBuilder setVersion(String version)
    {
-      this.version = version;
+      getCoordinate().setVersion(version);
+      return this;
+   }
+
+   public DependencyBuilder setGroupId(String groupId)
+   {
+      getCoordinate().setGroupId(groupId);
       return this;
    }
 
@@ -141,46 +116,21 @@ public class DependencyBuilder implements Dependency
       return this;
    }
 
-   public DependencyBuilder setPackagingType(final String type)
-   {
-      this.packagingType = type;
-      return this;
-   }
-
-   public DependencyBuilder setClassifier(final String classifier)
-   {
-      this.classifier = classifier;
-      return this;
-   }
-
    public DependencyBuilder setSystemPath(final String systemPath)
    {
       this.systemPath = systemPath;
       return this;
    }
 
+   public String getGroupId()
+   {
+      return getCoordinate().getGroupId();
+   }
+
    @Override
    public String getSystemPath()
    {
       return systemPath;
-   }
-
-   @Override
-   public String getArtifactId()
-   {
-      return artifactId;
-   }
-
-   @Override
-   public String getGroupId()
-   {
-      return groupId;
-   }
-
-   @Override
-   public String getVersion()
-   {
-      return version;
    }
 
    @Override
@@ -192,47 +142,7 @@ public class DependencyBuilder implements Dependency
    @Override
    public boolean isSnapshot()
    {
-      return getVersion() != null && getVersion().endsWith("SNAPSHOT");
-   }
-
-   @Override
-   public String getPackagingType()
-   {
-      return packagingType;
-   }
-
-   @Override
-   public String getClassifier()
-   {
-      return classifier;
-   }
-
-   /**
-    * Convenience method which should be used to convert a {@link DependencyImpl} object into its id representation, for
-    * example: "groupId:artifactId:::version", "groupId:artifactId:packaging::version" or
-    * "groupId:artifactId:packaging:classifier:version"
-    *
-    * @see {@link DependencyImpl#toCoordinates()}
-    */
-   public static String toId(final Dependency dep)
-   {
-      String gav = (dep.getGroupId() + ":" + dep.getArtifactId());
-      gav += ":" + (dep.getPackagingType() == null ? "" : dep.getPackagingType());
-      gav += ":" + (dep.getClassifier() == null ? "" : dep.getClassifier());
-      gav += ":" + (dep.getVersion() == null ? "" : dep.getVersion());
-      return gav;
-   }
-
-   @Override
-   public String toCoordinates()
-   {
-      return toId(this);
-   }
-
-   @Override
-   public String toString()
-   {
-      return toCoordinates();
+      return getCoordinate().getVersion() != null && getCoordinate().getVersion().endsWith("SNAPSHOT");
    }
 
    @Override
@@ -253,9 +163,27 @@ public class DependencyBuilder implements Dependency
       return artifact;
    }
 
+   @Override
+   public CoordinateBuilder getCoordinate()
+   {
+      return coordinate;
+   }
+
+   public DependencyBuilder setCoordinate(Coordinate coordinate)
+   {
+      this.coordinate = CoordinateBuilder.create(coordinate);
+      return this;
+   }
+
    public DependencyBuilder setArtifact(File artifact)
    {
       this.artifact = artifact;
+      return this;
+   }
+
+   public DependencyBuilder setClassifier(String classifier)
+   {
+      getCoordinate().setClassifier(classifier);
       return this;
    }
 

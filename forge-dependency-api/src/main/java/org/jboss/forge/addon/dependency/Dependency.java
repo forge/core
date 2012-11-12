@@ -17,24 +17,9 @@ import java.io.File;
 public interface Dependency
 {
    /**
-    * Get the major identifier for this {@link Dependency}.
+    * Get the {@link Coordinate} for this {@link Dependency}
     */
-   String getGroupId();
-
-   /**
-    * Get the minor-identifier for this {@link Dependency}.
-    */
-   String getArtifactId();
-
-   /**
-    * Get the classifier for this {@link Dependency}
-    */
-   String getClassifier();
-
-   /**
-    * Get the version of this {@link Dependency}.
-    */
-   String getVersion();
+   Coordinate getCoordinate();
 
    /**
     * Get the systemPath of this {@link Dependency}
@@ -42,20 +27,9 @@ public interface Dependency
    String getSystemPath();
 
    /**
-    * Get the specified packaging type of this {@link Dependency}
-    */
-   String getPackagingType();
-
-   /**
     * Get the scope type of this {@link Dependency}
     */
    String getScopeType();
-
-   /**
-    * Return a string representing this dependency in the form of a standard identifier. E.g:
-    * "groupId : artifactId : version"
-    */
-   String toCoordinates();
 
    /**
     * Returns true if this dependency version is a SNAPSHOT

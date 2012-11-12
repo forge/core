@@ -12,7 +12,7 @@ import java.util.List;
 
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
-import org.jboss.forge.addon.dependency.Dependency;
+import org.jboss.forge.addon.dependency.Coordinate;
 import org.jboss.forge.addon.dependency.DependencyRepository;
 import org.sonatype.aether.artifact.Artifact;
 import org.sonatype.aether.repository.Authentication;
@@ -45,10 +45,10 @@ class MavenConvertUtils
       return remoteRepos;
    }
 
-   static Artifact dependencyToMavenArtifact(final Dependency dep)
+   static Artifact coordinateToMavenArtifact(final Coordinate dep)
    {
       Artifact artifact = new DefaultArtifact(dep.getGroupId(), dep.getArtifactId(), dep.getClassifier(),
-               dep.getPackagingType() == null ? "jar" : dep.getPackagingType(), dep.getVersion());
+               dep.getPackaging() == null ? "far" : dep.getPackaging(), dep.getVersion());
       return artifact;
    }
 }

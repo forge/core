@@ -9,6 +9,7 @@ package org.jboss.forge.maven.dependency;
 import java.util.List;
 import java.util.Set;
 
+import org.jboss.forge.addon.dependency.Coordinate;
 import org.jboss.forge.addon.dependency.Dependency;
 import org.jboss.forge.addon.dependency.DependencyBuilder;
 import org.jboss.forge.addon.dependency.DependencyQuery;
@@ -41,13 +42,13 @@ public class PluginLookupTest
    {
 
       Dependency dep = DependencyBuilder.create("org.jboss.forge:forge-example-plugin:2.0.0-SNAPSHOT")
-               .setPackagingType("far");
+               .setPackaging("far");
       DependencyQueryBuilder query = DependencyQueryBuilder.create(dep).setFilter(new PackagingDependencyFilter("far"));
       Set<Dependency> artifacts = resolver.resolveDependencies(query);
       Assert.assertFalse(artifacts.isEmpty());
       Assert.assertEquals(1, artifacts.size());
       Dependency dependency = artifacts.iterator().next();
-      Assert.assertEquals("far", dependency.getPackagingType());
+      Assert.assertEquals("far", dependency.getCoordinate().getPackaging());
       Assert.assertNotNull(dependency.getScopeType());
       Assert.assertTrue(dependency.isOptional());
    }
@@ -58,7 +59,7 @@ public class PluginLookupTest
       DependencyQuery query = DependencyQueryBuilder.create(DependencyBuilder
                .create("org.jboss.forge:forge-distribution:::zip")).setRepositories(
                new DependencyRepository("jboss", "https://repository.jboss.org/nexus/content/groups/public/"));
-      List<Dependency> versions = resolver.resolveVersions(query);
+      List<Coordinate> versions = resolver.resolveVersions(query);
       System.out.println(versions);
       Assert.assertNotNull(versions);
       Assert.assertFalse(versions.isEmpty());
@@ -69,7 +70,7 @@ public class PluginLookupTest
    {
       DependencyQuery query = DependencyQueryBuilder.create(DependencyBuilder
                .create("org.hibernate:hibernate-core"));
-      List<Dependency> versions = resolver.resolveVersions(query);
+      List<Coordinate> versions = resolver.resolveVersions(query);
       System.out.println(versions);
       Assert.assertNotNull(versions);
       Assert.assertFalse(versions.isEmpty());
