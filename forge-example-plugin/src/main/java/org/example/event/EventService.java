@@ -16,22 +16,46 @@ public class EventService
    @Named("1")
    private Event<Object> request;
 
-   private boolean responseRecieved = false;
+   private boolean localRequestRecieved = false;
+   private boolean remoteResponseRecieved = false;
+   private boolean wrongResponseRecieved = false;
 
    public void fire()
    {
       request.fire(this);
    }
 
-   public void handleResponse(@Observes @Named("2") Object event)
+   public void handleLocalRequest(@Observes @Named("1") Object event)
    {
-      System.out.println("Response: ****** " + event + " in " + Thread.currentThread().getContextClassLoader());
-      responseRecieved = true;
+      System.out.println("Request: ****** " + event + " in " + Thread.currentThread().getContextClassLoader());
+      localRequestRecieved = true;
    }
 
-   public boolean isResponseRecieved()
+   public void handleRemoteResponse(@Observes @Named("2") Object event)
    {
-      return responseRecieved;
+      System.out.println("Response: ****** " + event + " in " + Thread.currentThread().getContextClassLoader());
+      remoteResponseRecieved = true;
+   }
+
+   public void handleWrongResponse(@Observes @Named("3") Object event)
+   {
+      System.out.println("Wrong response: ****** " + event + " in " + Thread.currentThread().getContextClassLoader());
+      wrongResponseRecieved = true;
+   }
+
+   public boolean isLocalRequestRecieved()
+   {
+      return localRequestRecieved;
+   }
+
+   public boolean isRemoteResponseRecieved()
+   {
+      return remoteResponseRecieved;
+   }
+
+   public boolean isWrongResponseRecieved()
+   {
+      return wrongResponseRecieved;
    }
 
    @Override

@@ -54,9 +54,13 @@ public class AddonDependencyEventTest
    @Test
    public void testEventPropagationAcrossContainers() throws Exception
    {
-      Assert.assertFalse(sender.isResponseRecieved());
+      Assert.assertFalse(sender.isLocalRequestRecieved());
+      Assert.assertFalse(sender.isWrongResponseRecieved());
+      Assert.assertFalse(sender.isRemoteResponseRecieved());
       sender.fire();
-      Assert.assertTrue(sender.isResponseRecieved());
+      Assert.assertTrue(sender.isLocalRequestRecieved());
+      Assert.assertTrue(sender.isRemoteResponseRecieved());
+      Assert.assertFalse(sender.isWrongResponseRecieved());
    }
 
 }
