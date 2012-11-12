@@ -17,6 +17,7 @@ import org.jboss.modules.Module;
 import org.jboss.modules.ModuleIdentifier;
 import org.jboss.modules.ModuleLoadException;
 import org.jboss.modules.ModuleLoader;
+import org.jboss.modules.log.StreamModuleLogger;
 
 public final class Forge
 {
@@ -38,8 +39,6 @@ public final class Forge
          System.out.println("Warning! Could not detect Forge runtime version - " +
                   "loading all addons, but failures may occur if versions are not compatible.");
 
-      // Module.setModuleLogger(new StreamModuleLogger(System.err));
-
       try
       {
          Method method = ModuleLoader.class.getDeclaredMethod("installMBeanServer");
@@ -50,9 +49,14 @@ public final class Forge
       {
          throw new ContainerException("Could not install Modules MBean server", e);
       }
+   }
 
+   public Forge enableLogging()
+   {
+      Module.setModuleLogger(new StreamModuleLogger(System.err));
       // if (LOGGING_ENABLED)
       // initLogging();
+      return this;
    }
 
    public Set<AddonThread> getThreads()
@@ -60,7 +64,7 @@ public final class Forge
       return threads;
    }
 
-   public void start()
+   public Forge start()
    {
       if (!alive)
       {
@@ -71,7 +75,7 @@ public final class Forge
             do
             {
                updateAddons(threads, addonLoader);
-               Thread.sleep(10);
+               Thread.sleep(100);
             }
             while (alive == true);
          }
@@ -80,11 +84,13 @@ public final class Forge
             throw new ContainerException(e);
          }
       }
+      return this;
    }
 
-   public void stop()
+   public Forge stop()
    {
       alive = false;
+      return this;
    }
 
    private void updateAddons(Set<AddonThread> threads, ModuleLoader addonLoader)
@@ -216,9 +222,10 @@ public final class Forge
       return result;
    }
 
-   public void setAddonDir(File dir)
+   public Forge setAddonDir(File dir)
    {
       this.addonUtil = AddonUtil.forAddonDir(dir);
+      return this;
    }
 
 }
