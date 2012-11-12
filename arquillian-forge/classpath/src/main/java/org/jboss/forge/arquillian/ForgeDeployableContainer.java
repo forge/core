@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
@@ -58,9 +59,8 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
             public Object call() throws Exception
             {
                forge = new Forge();
-               forge.setAddonDir(addonDir);
-               forge.start();
-               return null;
+               forge.setAddonDir(addonDir).start();
+               return forge;
             }
          });
       }
@@ -95,6 +95,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       try
       {
          this.addonDir = File.createTempFile("forge-test-addon-dir", "");
+         System.out.println("Executing test case with addon dir [" + addonDir + "]");
          this.addonUtil = AddonUtil.forAddonDir(addonDir);
       }
       catch (IOException e1)
@@ -223,7 +224,8 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
 
    private AddonEntry getAddonEntry(Archive<?> archive)
    {
-      return new AddonEntry(archive.getName().replaceFirst("\\.jar$", ""), "2.0.0-SNAPSHOT", "main");
+      return new AddonEntry(archive.getName().replaceFirst("\\.jar$", ""), "2.0.0-SNAPSHOT", UUID.randomUUID()
+               .toString());
    }
 
    @Override
