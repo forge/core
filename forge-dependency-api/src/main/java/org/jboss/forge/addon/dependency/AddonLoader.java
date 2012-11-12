@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.jboss.forge.addon.dependency.builder.CoordinateBuilder;
 import org.jboss.forge.parser.xml.Node;
 
 public class AddonLoader

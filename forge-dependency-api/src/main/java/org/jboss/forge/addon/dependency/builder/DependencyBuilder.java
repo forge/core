@@ -5,9 +5,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.dependency;
+package org.jboss.forge.addon.dependency.builder;
 
 import java.io.File;
+
+import org.jboss.forge.addon.dependency.Coordinate;
+import org.jboss.forge.addon.dependency.Dependency;
 
 /**
  * Builder to create {@link Dependency} objects. This class implements {@link Dependency} for easy consumption. (I.e.:

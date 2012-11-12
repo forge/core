@@ -5,11 +5,16 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.dependency;
+package org.jboss.forge.addon.dependency.builder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import org.jboss.forge.addon.dependency.Dependency;
+import org.jboss.forge.addon.dependency.DependencyFilter;
+import org.jboss.forge.addon.dependency.DependencyQuery;
+import org.jboss.forge.addon.dependency.DependencyRepository;
 
 /**
  * Builds a {@link DependencyQuery} object

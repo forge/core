@@ -11,10 +11,10 @@ import java.util.Set;
 
 import org.jboss.forge.addon.dependency.Coordinate;
 import org.jboss.forge.addon.dependency.Dependency;
-import org.jboss.forge.addon.dependency.DependencyBuilder;
 import org.jboss.forge.addon.dependency.DependencyQuery;
-import org.jboss.forge.addon.dependency.DependencyQueryBuilder;
 import org.jboss.forge.addon.dependency.DependencyRepository;
+import org.jboss.forge.addon.dependency.builder.DependencyBuilder;
+import org.jboss.forge.addon.dependency.builder.DependencyQueryBuilder;
 import org.jboss.forge.addon.dependency.spi.DependencyResolver;
 import org.jboss.forge.maven.container.MavenContainer;
 import org.jboss.forge.maven.container.MavenDependencyResolver;

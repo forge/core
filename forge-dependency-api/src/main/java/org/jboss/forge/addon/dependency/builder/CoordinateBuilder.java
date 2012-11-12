@@ -5,9 +5,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.dependency;
+package org.jboss.forge.addon.dependency.builder;
 
 import java.util.Map;
+
+import org.jboss.forge.addon.dependency.Coordinate;
 
 public class CoordinateBuilder implements Coordinate
 {
