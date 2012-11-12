@@ -7,8 +7,8 @@
 
 package org.jboss.forge.maven.dependency.filter;
 
-import org.jboss.forge.maven.dependency.Dependency;
-import org.jboss.forge.maven.dependency.DependencyFilter;
+import org.jboss.forge.addon.dependency.Dependency;
+import org.jboss.forge.addon.dependency.DependencyFilter;
 
 /**
  * Filters non-snapshots dependencies
@@ -16,8 +16,10 @@ import org.jboss.forge.maven.dependency.DependencyFilter;
  * @author George Gastaldi <george.gastaldi@redhat.com>
  *
  */
-public class NonSnapshotDependencyFilter implements DependencyFilter
+public enum NonSnapshotDependencyFilter implements DependencyFilter
 {
+   INSTANCE;
+
    @Override
    public boolean accept(Dependency dependency)
    {

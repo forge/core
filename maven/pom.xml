@@ -9,6 +9,7 @@
    <artifactId>forge-maven</artifactId>
    <name>Forge - Maven Core</name>
    <description>Maven API integration</description>
+
    <properties>
       <version.aether>1.13.1</version.aether>
       <version.maven>3.0.4</version.maven>
@@ -57,6 +58,11 @@
                <artifactId>plexus-container-default</artifactId>
             </exclusion>
          </exclusions>
+      </dependency>
+
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-dependency-api</artifactId>
       </dependency>
 
       <dependency>

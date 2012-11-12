@@ -81,6 +81,7 @@
             <module>test-harness</module>
             <module>forge-example-plugin</module>
             <module>forge-otherexample-plugin</module>
+            <module>forge-dependency-api</module>
             <module>maven</module>
             <module>dist</module>
          </modules>
@@ -195,6 +196,11 @@
          <dependency>
             <groupId>org.jboss.forge</groupId>
             <artifactId>forge-plugin-container</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>forge-dependency-api</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>

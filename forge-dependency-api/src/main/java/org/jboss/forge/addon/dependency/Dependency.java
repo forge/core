@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.maven.dependency;
+package org.jboss.forge.addon.dependency;
 
 import java.io.File;
 
@@ -17,6 +17,11 @@ import java.io.File;
 public interface Dependency
 {
    /**
+    * Get the major identifier for this {@link Dependency}.
+    */
+   String getGroupId();
+
+   /**
     * Get the minor-identifier for this {@link Dependency}.
     */
    String getArtifactId();
@@ -25,11 +30,6 @@ public interface Dependency
     * Get the classifier for this {@link Dependency}
     */
    String getClassifier();
-
-   /**
-    * Get the major identifier for this {@link Dependency}.
-    */
-   String getGroupId();
 
    /**
     * Get the version of this {@link Dependency}.

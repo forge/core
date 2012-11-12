@@ -12,14 +12,14 @@ import java.util.List;
 
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
-import org.jboss.forge.maven.dependency.Dependency;
-import org.jboss.forge.maven.dependency.DependencyRepository;
+import org.jboss.forge.addon.dependency.Dependency;
+import org.jboss.forge.addon.dependency.DependencyRepository;
 import org.sonatype.aether.artifact.Artifact;
 import org.sonatype.aether.repository.Authentication;
 import org.sonatype.aether.repository.RemoteRepository;
 import org.sonatype.aether.util.artifact.DefaultArtifact;
 
-public class MavenConvertUtils
+class MavenConvertUtils
 {
    static RemoteRepository convertToMavenRepo(final DependencyRepository repo, final Settings settings)
    {

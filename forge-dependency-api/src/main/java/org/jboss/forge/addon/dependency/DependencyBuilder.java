@@ -5,19 +5,27 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.maven.dependency;
+package org.jboss.forge.addon.dependency;
 
 import java.io.File;
 
 /**
- * Builder to create {@link DependencyImpl} objects. This class implements {@link DependencyImpl} for easy consumption.
- * (I.e.: Use this class wherever you need to create and use a new {@link DependencyImpl})
+ * Builder to create {@link Dependency} objects. This class implements {@link Dependency} for easy consumption. (I.e.:
+ * Use this class wherever you need to create and use a new {@link Dependency})
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class DependencyBuilder implements Dependency
 {
-   private final DependencyImpl dep = new DependencyImpl();
+   private String groupId;
+   private String artifactId;
+   private String version;
+   private String scopeType;
+   private String packagingType;
+   private String classifier;
+   private String systemPath;
+   private File artifact;
+   private boolean optional;
 
    private DependencyBuilder()
    {
@@ -111,92 +119,92 @@ public class DependencyBuilder implements Dependency
 
    public DependencyBuilder setGroupId(final String groupId)
    {
-      dep.setGroupId(groupId);
+      this.groupId = groupId;
       return this;
    }
 
    public DependencyBuilder setArtifactId(final String artifactId)
    {
-      dep.setArtifactId(artifactId);
+      this.artifactId = artifactId;
       return this;
    }
 
    public DependencyBuilder setVersion(final String version)
    {
-      dep.setVersion(version);
+      this.version = version;
       return this;
    }
 
    public DependencyBuilder setScopeType(final String scope)
    {
-      dep.setScopeType(scope);
+      this.scopeType = scope;
       return this;
    }
 
    public DependencyBuilder setPackagingType(final String type)
    {
-      dep.setPackagingType(type);
+      this.packagingType = type;
       return this;
    }
 
    public DependencyBuilder setClassifier(final String classifier)
    {
-      dep.setClassifier(classifier);
+      this.classifier = classifier;
       return this;
    }
 
    public DependencyBuilder setSystemPath(final String systemPath)
    {
-      dep.setSystemPath(systemPath);
+      this.systemPath = systemPath;
       return this;
    }
 
    @Override
    public String getSystemPath()
    {
-      return dep.getSystemPath();
+      return systemPath;
    }
 
    @Override
    public String getArtifactId()
    {
-      return dep.getArtifactId();
+      return artifactId;
    }
 
    @Override
    public String getGroupId()
    {
-      return dep.getGroupId();
+      return groupId;
    }
 
    @Override
    public String getVersion()
    {
-      return dep.getVersion();
+      return version;
    }
 
    @Override
    public String getScopeType()
    {
-      return dep.getScopeType();
+      return scopeType;
    }
 
    @Override
    public boolean isSnapshot()
    {
-      return dep.isSnapshot();
+      return getVersion() != null && getVersion().endsWith("SNAPSHOT");
    }
 
    @Override
    public String getPackagingType()
    {
-      return dep.getPackagingType();
+      return packagingType;
    }
 
    @Override
    public String getClassifier()
    {
-      return dep.getClassifier();
+      return classifier;
    }
 
    /**
@@ -215,16 +223,6 @@ public class DependencyBuilder implements Dependency
       return gav;
    }
 
-   /**
-    * Convenience method which should be used to convert a {@link Dependency} object into its string representation, for
-    * example: "groupId:artifactId:version:scope:packaging"
-    */
-   public static String toString(final Dependency dep)
-   {
-      String gav = dep.toCoordinates();
-      return gav;
-   }
-
    @Override
    public String toCoordinates()
    {
@@ -234,69 +232,31 @@ public class DependencyBuilder implements Dependency
    @Override
    public String toString()
    {
-      return DependencyBuilder.toString(dep);
+      return toCoordinates();
    }
 
    @Override
    public boolean isOptional()
    {
-      return dep.isOptional();
+      return this.optional;
    }
 
    public DependencyBuilder setOptional(boolean optional)
    {
-      dep.setOptional(optional);
+      this.optional = optional;
       return this;
    }
 
    @Override
    public File getArtifact()
    {
-      return dep.getArtifact();
+      return artifact;
    }
 
    public DependencyBuilder setArtifact(File artifact)
    {
-      dep.setArtifact(artifact);
+      this.artifact = artifact;
       return this;
    }
 
-   @Override
-   public int hashCode()
-   {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((dep == null) ? 0 : dep.hashCode());
-      return result;
-   }
-
-   @Override
-   public boolean equals(final Object obj)
-   {
-      if (this == obj)
-      {
-         return true;
-      }
-      if (obj == null)
-      {
-         return false;
-      }
-      if (getClass() != obj.getClass())
-      {
-         return false;
-      }
-      DependencyBuilder other = (DependencyBuilder) obj;
-      if (dep == null)
-      {
-         if (other.dep != null)
-         {
-            return false;
-         }
-      }
-      else if (!dep.equals(other.dep))
-      {
-         return false;
-      }
-      return true;
-   }
 }

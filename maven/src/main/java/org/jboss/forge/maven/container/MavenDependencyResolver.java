@@ -21,11 +21,11 @@ import javax.inject.Singleton;
 
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.apache.maven.settings.Settings;
-import org.jboss.forge.maven.dependency.Dependency;
-import org.jboss.forge.maven.dependency.DependencyBuilder;
-import org.jboss.forge.maven.dependency.DependencyFilter;
-import org.jboss.forge.maven.dependency.DependencyQuery;
-import org.jboss.forge.maven.dependency.DependencyResolver;
+import org.jboss.forge.addon.dependency.Dependency;
+import org.jboss.forge.addon.dependency.DependencyBuilder;
+import org.jboss.forge.addon.dependency.DependencyFilter;
+import org.jboss.forge.addon.dependency.DependencyQuery;
+import org.jboss.forge.addon.dependency.spi.DependencyResolver;
 import org.sonatype.aether.RepositorySystem;
 import org.sonatype.aether.artifact.Artifact;
 import org.sonatype.aether.collection.CollectRequest;

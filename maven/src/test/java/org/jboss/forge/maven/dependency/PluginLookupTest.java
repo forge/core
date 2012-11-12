@@ -9,6 +9,12 @@ package org.jboss.forge.maven.dependency;
 import java.util.List;
 import java.util.Set;
 
+import org.jboss.forge.addon.dependency.Dependency;
+import org.jboss.forge.addon.dependency.DependencyBuilder;
+import org.jboss.forge.addon.dependency.DependencyQuery;
+import org.jboss.forge.addon.dependency.DependencyQueryBuilder;
+import org.jboss.forge.addon.dependency.DependencyRepository;
+import org.jboss.forge.addon.dependency.spi.DependencyResolver;
 import org.jboss.forge.maven.container.MavenContainer;
 import org.jboss.forge.maven.container.MavenDependencyResolver;
 import org.jboss.forge.maven.dependency.filter.PackagingDependencyFilter;
