@@ -55,6 +55,7 @@ import org.jboss.forge.shell.ShellColor;
 import org.jboss.forge.shell.ShellMessages;
 import org.jboss.forge.shell.ShellPrintWriter;
 import org.jboss.forge.shell.ShellPrompt;
+import org.jboss.forge.shell.Wait;
 import org.jboss.forge.shell.events.PluginInstalled;
 import org.jboss.forge.shell.events.PluginRemoved;
 import org.jboss.forge.shell.events.ReinitializeEnvironment;
@@ -95,6 +96,9 @@ public class ForgePlugin implements Plugin
    private final Configuration configuration;
 
    @Inject
+   private Wait wait;
+
+   @Inject
    public ForgePlugin(final ForgeEnvironment environment, final Event<ReinitializeEnvironment> reinitializeEvent,
             final ShellPrintWriter writer, final ShellPrompt prompt, final DependencyResolver resolver,
             final Shell shell, final Configuration configuration, final Event<PluginInstalled> pluginInstalledEvent,
@@ -127,8 +131,10 @@ public class ForgePlugin implements Plugin
       out.println("   |_|  \\___/|_|  \\__, |\\___| ");
       out.println("                   |___/      ");
       out.println("");
-      out.println("JBoss Forge, version [ " + environment.getRuntimeVersion()
-               + " ] - JBoss, by Red Hat, Inc. [ http://jboss.org/forge ]");
+      out.print(ShellColor.ITALIC, "JBoss Forge");
+      out.print(", version [ ");
+      out.print(ShellColor.BOLD, environment.getRuntimeVersion());
+      out.println(" ] - JBoss, by Red Hat, Inc. [ http://jboss.org/forge ]");
    }
 
    @Command(value = "restart", help = "Reload all plugins and default configurations")
@@ -460,6 +466,7 @@ public class ForgePlugin implements Plugin
       }
       else
       {
+         shell.print(ShellColor.YELLOW, "***INFO*** ");
          shell.print("This Forge installation will be updated to ");
          shell.println(ShellColor.BOLD, forgeDistribution.getVersion());
          if (prompt.promptBoolean("Is that ok ?", true))
@@ -483,12 +490,10 @@ public class ForgePlugin implements Plugin
                         new NonSnapshotDependencyFilter(),
                         new DependencyFilter()
                         {
-                           /**
-                            * We are only interested in versions higher than the current version
-                            */
                            @Override
                            public boolean accept(Dependency dependency)
                            {
+                              // We are only interested in versions higher than the current version
                               return dependency.getVersion().compareTo(runtimeVersion) > 0;
                            }
                         }
@@ -504,6 +509,7 @@ public class ForgePlugin implements Plugin
     */
    private void updateForge(Dependency dependency) throws IOException
    {
+      wait.start("Update in progress. Please wait");
       List<DependencyResource> resolvedArtifacts = resolver.resolveArtifacts(dependency);
       Assert.isTrue(resolvedArtifacts.size() == 1, "Artifact was not found");
       DependencyResource resource = resolvedArtifacts.get(0);
@@ -519,8 +525,8 @@ public class ForgePlugin implements Plugin
          updateDirectory.delete(true);
       }
       childDirectory.renameTo(updateDirectory);
-
-      ShellMessages.success(shell, "Forge will now restart to complete the update ...");
+      wait.stop();
+      ShellMessages.success(shell, "Forge will now restart to complete the update...");
       System.exit(0);
    }
 
