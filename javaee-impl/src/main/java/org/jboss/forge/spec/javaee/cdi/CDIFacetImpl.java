@@ -58,13 +58,16 @@ public class CDIFacetImpl extends BaseJavaEEFacet implements CDIFacet
       if (!isInstalled())
       {
          FileResource<?> descriptor = getConfigFile(project);
-         if (!descriptor.createNewFile())
+         if (!descriptor.exists())
          {
-            throw new RuntimeException("Failed to create required [" + descriptor.getFullyQualifiedName() + "]");
-         }
+            if (!descriptor.createNewFile())
+            {
+               throw new RuntimeException("Failed to create required [" + descriptor.getFullyQualifiedName() + "]");
+            }
 
-         descriptor.setContents(getClass()
-                  .getResourceAsStream("/org/jboss/forge/web/beans.xml"));
+            descriptor.setContents(getClass()
+                     .getResourceAsStream("/org/jboss/forge/web/beans.xml"));
+         }
       }
 
       return super.install();
