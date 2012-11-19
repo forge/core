@@ -7,12 +7,12 @@
 package org.jboss.forge.container;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -182,25 +182,30 @@ public final class AddonUtil
    {
       List<AddonEntry> result = new ArrayList<AddonEntry>();
       File registryFile = getRegistryFile();
-      if (registryFile.exists())
+      try
       {
-         try
+         Node installed = XMLParser.parse(registryFile);
+         if (installed == null)
          {
-            Node installed = XMLParser.parse(registryFile);
-            List<Node> list = installed.get("addon");
-            for (Node addon : list)
-            {
-               AddonEntry entry = new AddonEntry(addon.getAttribute(ATTR_NAME),
-                        addon.getAttribute(ATTR_API_VERSION),
-                        addon.getAttribute(ATTR_SLOT));
-               result.add(entry);
-            }
+            return Collections.emptyList();
          }
-         catch (XMLParserException e)
+         List<Node> list = installed.get("addon");
+         for (Node addon : list)
          {
-            throw new RuntimeException("Invalid syntax in [" + registryFile.getAbsolutePath()
-                     + "] - Please delete this file and restart Forge", e);
+            AddonEntry entry = new AddonEntry(addon.getAttribute(ATTR_NAME),
+                     addon.getAttribute(ATTR_API_VERSION),
+                     addon.getAttribute(ATTR_SLOT));
+            result.add(entry);
          }
+      }
+      catch (XMLParserException e)
+      {
+         throw new RuntimeException("Invalid syntax in [" + registryFile.getAbsolutePath()
+                  + "] - Please delete this file and restart Forge", e);
+      }
+      catch (FileNotFoundException e)
+      {
+         // this is OK, no addons installed
       }
       return result;
    }
@@ -237,7 +242,7 @@ public final class AddonUtil
       File registryFile = getRegistryFile();
       try
       {
-         Node installed = XMLParser.parse(new FileInputStream(registryFile));
+         Node installed = XMLParser.parse(registryFile);
 
          installed.getOrCreate("addon@" + ATTR_NAME + "=" + name + "&" + ATTR_API_VERSION + "=" + apiVersion)
                   .attribute(ATTR_SLOT, slot);
@@ -264,7 +269,7 @@ public final class AddonUtil
       {
          try
          {
-            Node installed = XMLParser.parse(new FileInputStream(registryFile));
+            Node installed = XMLParser.parse(registryFile);
 
             Node child = installed.getSingle("addon@" + ATTR_NAME + "=" + addon.getName() + "&"
                      + ATTR_API_VERSION
@@ -287,7 +292,7 @@ public final class AddonUtil
       }
 
       File registryFile = getRegistryFile();
-      if (registryFile.exists())
+      try
       {
          Node installed = XMLParser.parse(registryFile);
 
@@ -309,6 +314,10 @@ public final class AddonUtil
                }
             }
          }
+      }
+      catch (FileNotFoundException e)
+      {
+         // already removed
       }
 
       return null;
@@ -368,7 +377,7 @@ public final class AddonUtil
 
       try
       {
-         Node installed = XMLParser.parse(new FileInputStream(descriptor));
+         Node installed = XMLParser.parse(descriptor);
 
          List<Node> children = installed.get("dependency");
          for (Node child : children)

@@ -10,6 +10,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
@@ -70,7 +71,7 @@ public class XMLParser
       }
    }
 
-   public static Node parse(final File file) throws XMLParserException
+   public static Node parse(final File file) throws XMLParserException, FileNotFoundException
    {
       FileInputStream fis = null;
       try
@@ -78,19 +79,12 @@ public class XMLParser
          fis = new FileInputStream(file);
          return parse(fis);
       }
-      catch (XMLParserException xe)
-      {
-         throw xe;
-      }
-      catch (IOException io)
-      {
-         throw new XMLParserException(io);
-      }
       finally
       {
          try
          {
-            fis.close();
+            if (fis != null)
+               fis.close();
          }
          catch (IOException ignored)
          {
