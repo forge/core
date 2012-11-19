@@ -7,10 +7,9 @@
 
 package org.jboss.forge.container.event;
 
-
 /**
  * Fired when the container begins its startup process.
- *
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public final class Startup
@@ -27,6 +26,9 @@ public final class Startup
    {
    }
 
+   /**
+    * Returns true when the container is starting up again after a restart.
+    */
    public boolean isRestart()
    {
       return restart;

@@ -15,43 +15,44 @@ package org.jboss.forge.container.event;
  */
 public final class Shutdown
 {
-   private final Status status;
+   private final ExitStatus status;
 
    /**
-    * Status of the shell during shutdown.
+    * ExitStatus of the container during shutdown.
     */
-   public enum Status
+   public enum ExitStatus
    {
       /**
-       * The shell is shutting down normally.
+       * The container was shut down normally.
        */
       NORMAL,
+
       /**
-       * A fatal error has forced the shell to shut down.
+       * A fatal error has forced the container to shut down.
        */
       ERROR
    }
 
    /**
-    * Defaults to {@link Status#NORMAL}
+    * Defaults to {@link ExitStatus#NORMAL}
     */
    public Shutdown()
    {
-      this.status = Status.NORMAL;
+      this.status = ExitStatus.NORMAL;
    }
 
    /**
-    * Inform the shell to shut down with the given {@link Status}, now.
+    * Inform the container to shut down with the given {@link ExitStatus}, now.
     */
-   public Shutdown(final Status status)
+   public Shutdown(final ExitStatus status)
    {
       this.status = status;
    }
 
    /**
-    * Get the status with which the shell should shut down.
+    * Get the status with which the container should shut down.
     */
-   public Status getStatus()
+   public ExitStatus getStatus()
    {
       return status;
    }

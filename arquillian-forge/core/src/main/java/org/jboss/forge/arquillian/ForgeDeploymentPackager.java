@@ -14,6 +14,7 @@ import org.jboss.forge.arquillian.runner.ServletTestRunner;
 import org.jboss.forge.arquillian.runner.ServletTestServer;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.GenericArchive;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.resolver.api.DependencyResolvers;
 import org.jboss.shrinkwrap.resolver.api.maven.MavenDependencyResolver;
 
@@ -25,6 +26,8 @@ public class ForgeDeploymentPackager implements DeploymentPackager
       if (!(testDeployment.getApplicationArchive() instanceof ForgeArchive))
          throw new IllegalArgumentException(
                   "Invalid Archive type. Ensure that your @Deployment method returns type 'ForgeArchive'.");
+      
+      ShrinkWrap.create(ForgeArchive.class);
 
       ForgeArchive deployment = ForgeArchive.class.cast(testDeployment.getApplicationArchive());
       deployment.addClasses(ServletTestServer.class, ServletTestRunner.class, BeanManagerProducer.class,
