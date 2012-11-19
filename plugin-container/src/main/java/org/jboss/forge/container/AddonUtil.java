@@ -28,9 +28,10 @@ import org.jboss.forge.parser.xml.XMLParserException;
 
 /**
  * Used to perform Addon installation/registration operations.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:koen.aers@gmail.com">Koen Aers</a>
+ * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
 public final class AddonUtil
 {
@@ -56,18 +57,37 @@ public final class AddonUtil
       return isApiCompatible(runtimeVersion, addonApiVersion);
    }
 
+   /**
+    * This method only returns true if:
+    *
+    * - The major version of pluginApiVersion is equal to the major version of runtimeVersion AND
+    *
+    * - The minor version of pluginApiVersion is less or equal to the minor version of runtimeVersion
+    *
+    * @param runtimeVersion a version in the format x.x.x
+    * @param addonApiVersion a version in the format x.x.x
+    * @return
+    */
    public static boolean isApiCompatible(CharSequence runtimeVersion, String addonApiVersion)
    {
-      Pattern runtimeVersionPattern = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)(\\.|-)(.*)");
-      Matcher matcher = runtimeVersionPattern.matcher(runtimeVersion);
-      if (matcher.matches())
+      Matcher runtimeMatcher = VERSION_PATTERN.matcher(runtimeVersion);
+      if (runtimeMatcher.matches())
       {
-         if (addonApiVersion.matches(matcher.group(1) + "\\." + matcher.group(2) + "\\.(\\d+).*"))
+         int runtimeMajorVersion = Integer.parseInt(runtimeMatcher.group(1));
+         int runtimeMinorVersion = Integer.parseInt(runtimeMatcher.group(2));
+
+         Matcher pluginApiMatcher = VERSION_PATTERN.matcher(addonApiVersion);
+         if (pluginApiMatcher.matches())
          {
-            return true;
+            int pluginApiMajorVersion = Integer.parseInt(pluginApiMatcher.group(1));
+            int pluginApiMinorVersion = Integer.parseInt(pluginApiMatcher.group(2));
+
+            if (pluginApiMajorVersion == runtimeMajorVersion && pluginApiMinorVersion <= runtimeMinorVersion)
+            {
+               return true;
+            }
          }
       }
-
       return false;
    }
 
@@ -78,6 +98,7 @@ public final class AddonUtil
    private static final String ATTR_NAME = "name";
    private static final String ADDON_DIR_DEFAULT = ".forge/addons";
    private static final String REGISTRY_FILE_NAME = "installed.xml";
+   private static final Pattern VERSION_PATTERN = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)(\\.|-)(.*)");
 
    private File addonDir;
 
@@ -103,9 +124,9 @@ public final class AddonUtil
       {
          addonDir.delete();
          System.gc();
-         if(!addonDir.mkdirs())
+         if (!addonDir.mkdirs())
          {
-            throw new RuntimeException("Could not create Addon Directory ["+addonDir+"]");
+            throw new RuntimeException("Could not create Addon Directory [" + addonDir + "]");
          }
       }
       return addonDir;

@@ -108,7 +108,7 @@ public final class Forge
       Set<Addon> toStart = new HashSet<Addon>(updatedSet);
       toStart.removeAll(loadedAddons);
 
-      if (toStop.size() > 0)
+      if (!toStop.isEmpty())
       {
          System.out.println("Stopping addon(s) " + toStop);
          Set<AddonThread> stopped = new HashSet<AddonThread>();
@@ -126,38 +126,44 @@ public final class Forge
          threads.removeAll(stopped);
       }
 
-      if (toStart.size() > 0)
+      if (!toStart.isEmpty())
       {
-         System.out.println("Starting addon(s) " + toStart);
-         Set<AddonThread> started = new HashSet<AddonThread>();
-         AddonRegistryImpl registry = AddonRegistryImpl.registry;
-
-         int startedThreads = 0;
-         int batchSize = Math.min(BATCH_SIZE, toStart.size());
-         for (Addon addon : toStart)
-         {
-            while (registry.getServices().size() + batchSize <= startedThreads)
-            {
-               try
-               {
-                  Thread.sleep(10);
-               }
-               catch (InterruptedException e)
-               {
-                  throw new ContainerException("Thread interrupted while waiting for an executor.", e);
-               }
-            }
-
-            AddonRunnable runnable = new AddonRunnable((AddonImpl) addon, registry);
-            Thread thread = new Thread(runnable, addon.getId());
-            started.add(new AddonThread(thread, runnable));
-            thread.start();
-
-            startedThreads++;
-         }
+         Set<AddonThread> started = startAddons(toStart);
 
          threads.addAll(started);
       }
+   }
+
+   private Set<AddonThread> startAddons(Set<Addon> toStart)
+   {
+      System.out.println("Starting addon(s) " + toStart);
+      Set<AddonThread> started = new HashSet<AddonThread>();
+      AddonRegistryImpl registry = AddonRegistryImpl.registry;
+
+      int startedThreads = 0;
+      int batchSize = Math.min(BATCH_SIZE, toStart.size());
+      for (Addon addon : toStart)
+      {
+         while (registry.getServices().size() + batchSize <= startedThreads)
+         {
+            try
+            {
+               Thread.sleep(10);
+            }
+            catch (InterruptedException e)
+            {
+               throw new ContainerException("Thread interrupted while waiting for an executor.", e);
+            }
+         }
+
+         AddonRunnable runnable = new AddonRunnable((AddonImpl) addon, registry);
+         Thread thread = new Thread(runnable, addon.getId());
+         started.add(new AddonThread(thread, runnable));
+         thread.start();
+
+         startedThreads++;
+      }
+      return started;
    }
 
    public AddonRegistry getAddonRegistry()
