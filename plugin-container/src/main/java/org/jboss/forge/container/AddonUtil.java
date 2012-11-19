@@ -11,7 +11,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -183,12 +182,11 @@ public final class AddonUtil
    {
       List<AddonEntry> result = new ArrayList<AddonEntry>();
       File registryFile = getRegistryFile();
-      try
+      if (registryFile.exists())
       {
-         FileInputStream in = new FileInputStream(registryFile);
          try
          {
-            Node installed = XMLParser.parse(in);
+            Node installed = XMLParser.parse(registryFile);
             List<Node> list = installed.get("addon");
             for (Node addon : list)
             {
@@ -198,23 +196,11 @@ public final class AddonUtil
                result.add(entry);
             }
          }
-         finally
+         catch (XMLParserException e)
          {
-            in.close();
+            throw new RuntimeException("Invalid syntax in [" + registryFile.getAbsolutePath()
+                     + "] - Please delete this file and restart Forge", e);
          }
-      }
-      catch (XMLParserException e)
-      {
-         throw new RuntimeException("Invalid syntax in [" + registryFile.getAbsolutePath()
-                  + "] - Please delete this file and restart Forge", e);
-      }
-      catch (FileNotFoundException e)
-      {
-         // this is OK, no addons installed
-      }
-      catch (IOException e)
-      {
-         throw new RuntimeException("Error reading registry file", e);
       }
       return result;
    }
@@ -301,9 +287,9 @@ public final class AddonUtil
       }
 
       File registryFile = getRegistryFile();
-      try
+      if (registryFile.exists())
       {
-         Node installed = XMLParser.parse(new FileInputStream(registryFile));
+         Node installed = XMLParser.parse(registryFile);
 
          List<Node> children = installed.get("addon@" + ATTR_NAME + "=" + addon.getName());
          for (Node child : children)
@@ -323,10 +309,6 @@ public final class AddonUtil
                }
             }
          }
-      }
-      catch (FileNotFoundException e)
-      {
-         // already removed
       }
 
       return null;
