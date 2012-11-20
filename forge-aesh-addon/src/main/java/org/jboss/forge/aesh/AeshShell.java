@@ -9,56 +9,89 @@ package org.jboss.forge.aesh;
 import org.jboss.aesh.console.Console;
 import org.jboss.aesh.console.ConsoleOutput;
 import org.jboss.aesh.console.settings.Settings;
+import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.ContainerControl;
 import org.jboss.forge.container.event.Startup;
 import org.jboss.forge.container.services.Remote;
+import org.jboss.forge.container.services.ServiceRegistry;
 
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  */
 @Singleton
 @Remote
-public class AeshShell {
+public class AeshShell
+{
 
+   @Inject
+   private ContainerControl containerControl;
 
-    @Inject
-    private ContainerControl containerControl;
+   @Inject
+   private AddonRegistry registry;
 
-    public void observe(@Observes Startup startup) throws IOException {
+   public void observe(@Observes Startup startup) throws IOException
+   {
 
-        setup();
+      setup();
 
-        Console console = new Console();
-        String prompt = "[forge-2.0]$ ";
+      Console console = new Console();
+      String prompt = "[forge-2.0]$ ";
 
-        ConsoleOutput line;
-        while ((line = console.read(prompt)) != null) {
-            if (line.getBuffer().equalsIgnoreCase("quit") ||
-                    line.getBuffer().equalsIgnoreCase("exit") ||
-                    line.getBuffer().equalsIgnoreCase("reset")) {
-                break;
+      ConsoleOutput line;
+      while ((line = console.read(prompt)) != null)
+      {
+         if (line.getBuffer().equalsIgnoreCase("quit") ||
+                  line.getBuffer().equalsIgnoreCase("exit") ||
+                  line.getBuffer().equalsIgnoreCase("reset"))
+         {
+            break;
+         }
+         if (line.getBuffer().equals("clear"))
+            console.clear();
+         if (line.getBuffer().equals("list-services"))
+            listServices(console);
+      }
+      try
+      {
+         console.stop();
+         containerControl.stop();
+      }
+      catch (Exception e)
+      {
+      }
+   }
+
+   private void listServices(Console console) throws IOException
+   {
+      Map<ClassLoader, ServiceRegistry> serviceRegistries = registry.getServices();
+      for (ServiceRegistry registry : serviceRegistries.values())
+      {
+         Set<Class<?>> serviceClasses = registry.getServices();
+         for (Class<?> type : serviceClasses)
+         {
+            console.pushToStdOut("\n" + type.getName());
+            for (Method method : type.getMethods())
+            {
+               console.pushToStdOut("-- " + method.getName() + "(...)");
             }
-            if(line.getBuffer().equals("clear"))
-                console.clear();
-        }
-        try {
-            console.stop();
-            containerControl.stop();
-        }
-        catch (Exception e) {
-        }
-    }
+         }
+      }
+   }
 
-    //this need to be read from somewhere else, but for now we
-    //set the values here
-    private void setup() {
-        Settings.getInstance().setReadInputrc(false);
-        Settings.getInstance().setLogging(true);
-    }
+   // this need to be read from somewhere else, but for now we
+   // set the values here
+   private void setup()
+   {
+      Settings.getInstance().setReadInputrc(false);
+      Settings.getInstance().setLogging(true);
+   }
 
 }

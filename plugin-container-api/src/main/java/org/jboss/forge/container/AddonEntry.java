@@ -3,8 +3,6 @@ package org.jboss.forge.container;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jboss.forge.container.util.Strings;
-
 public class AddonEntry
 {
    private final String name;
@@ -67,11 +65,11 @@ public class AddonEntry
 
       if (tokens.size() == 3)
       {
-         if (Strings.isNullOrEmpty(tokens.get(0)))
+         if (tokens.get(0) == null || tokens.get(0).isEmpty())
             throw new IllegalArgumentException("Name was empty [" + coordinates + "]");
-         if (Strings.isNullOrEmpty(tokens.get(1)))
+         if (tokens.get(1) == null || tokens.get(1).isEmpty())
             throw new IllegalArgumentException("Version was empty [" + coordinates + "]");
-         if (Strings.isNullOrEmpty(tokens.get(2)))
+         if (tokens.get(2) == null || tokens.get(2).isEmpty())
             throw new IllegalArgumentException("Slot was empty [" + coordinates + "]");
 
          return new AddonEntry(tokens.get(0), tokens.get(1), tokens.get(2));

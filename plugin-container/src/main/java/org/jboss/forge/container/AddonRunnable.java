@@ -7,7 +7,9 @@ import javax.enterprise.inject.spi.BeanManager;
 import org.jboss.forge.container.event.ContainerShutdown;
 import org.jboss.forge.container.event.ContainerStartup;
 import org.jboss.forge.container.exception.ContainerException;
+import org.jboss.forge.container.impl.AddonImpl;
 import org.jboss.forge.container.impl.AddonRegistryImpl;
+import org.jboss.forge.container.impl.AddonRepositoryProducer;
 import org.jboss.forge.container.modules.ModularWeld;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.container.util.Assert;
@@ -19,12 +21,14 @@ import org.jboss.weld.environment.se.WeldContainer;
 
 public final class AddonRunnable implements Runnable
 {
+   private Forge forge;
    private AddonImpl addon;
    private AddonRegistryImpl addonRegistry;
    private boolean shutdown = false;
 
-   public AddonRunnable(AddonImpl addon, AddonRegistryImpl registry)
+   public AddonRunnable(Forge forge, AddonImpl addon, AddonRegistryImpl registry)
    {
+      this.forge = forge;
       this.addon = addon;
       this.addonRegistry = registry;
    }
@@ -58,6 +62,8 @@ public final class AddonRunnable implements Runnable
                manager.fireEvent(new ContainerStartup());
 
                ContainerControl control = BeanManagerUtils.getContextualInstance(manager, ContainerControl.class);
+               AddonRepositoryProducer repositoryProducer = BeanManagerUtils.getContextualInstance(manager, AddonRepositoryProducer.class);
+               repositoryProducer.setAddonDir(forge.getAddonDir());
                Assert.notNull(control, "Container control was null.");
 
                if (!Status.STARTED.equals(control.getStatus()))

@@ -16,7 +16,8 @@ import org.jboss.forge.arquillian.protocol.ServletProtocolDescription;
 import org.jboss.forge.arquillian.util.NativeSystemCall;
 import org.jboss.forge.arquillian.util.ShrinkWrapUtil;
 import org.jboss.forge.container.AddonEntry;
-import org.jboss.forge.container.AddonUtil;
+import org.jboss.forge.container.AddonRepository;
+import org.jboss.forge.container.impl.AddonRepositoryImpl;
 import org.jboss.forge.container.util.Files;
 import org.jboss.forge.container.util.Streams;
 import org.jboss.shrinkwrap.api.Archive;
@@ -28,7 +29,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
 {
    private Process process;
    private String FORGE_HOME;
-   private AddonUtil addonUtil;
+   private AddonRepository addonUtil;
 
    @Override
    public Class<ForgeContainerConfiguration> getConfigurationClass()
@@ -45,7 +46,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    @Override
    public void start() throws LifecycleException
    {
-      this.addonUtil = AddonUtil.forDefaultAddonDir();
+      this.addonUtil = AddonRepositoryImpl.forDefaultAddonDir();
       try
       {
          this.process = NativeSystemCall.exec("java", "-Dforge.logging=false -Dforge.home=" + FORGE_HOME,

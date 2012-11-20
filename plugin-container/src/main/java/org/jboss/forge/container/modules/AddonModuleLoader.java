@@ -12,10 +12,11 @@ import java.util.List;
 import java.util.ServiceLoader;
 import java.util.jar.JarFile;
 
+import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonEntry;
-import org.jboss.forge.container.AddonUtil;
-import org.jboss.forge.container.AddonUtil.AddonDependency;
+import org.jboss.forge.container.AddonRepository;
 import org.jboss.forge.container.exception.ContainerException;
+import org.jboss.forge.container.impl.AddonRepositoryImpl;
 import org.jboss.forge.container.modules.providers.ForgeContainerSpec;
 import org.jboss.forge.container.modules.providers.SystemClasspathSpec;
 import org.jboss.forge.container.modules.providers.WeldClasspathSpec;
@@ -39,9 +40,9 @@ import org.jboss.modules.filter.PathFilters;
 public class AddonModuleLoader extends ModuleLoader
 {
    private static Iterable<ModuleSpecProvider> moduleProviders = ServiceLoader.load(ModuleSpecProvider.class);
-   private AddonUtil addonUtil;
+   private AddonRepository addonUtil;
 
-   public AddonModuleLoader(AddonUtil addonUtil)
+   public AddonModuleLoader(AddonRepository addonUtil)
    {
       this.addonUtil = addonUtil;
    }
@@ -160,7 +161,7 @@ public class AddonModuleLoader extends ModuleLoader
    private AddonEntry findInstalledModule(ModuleIdentifier moduleId)
    {
       AddonEntry found = null;
-      for (AddonEntry addon : addonUtil.listByAPICompatibleVersion(AddonUtil.getRuntimeAPIVersion()))
+      for (AddonEntry addon : addonUtil.listByAPICompatibleVersion(AddonRepositoryImpl.getRuntimeAPIVersion()))
       {
          if (addon.toModuleId().equals(moduleId.toString()))
          {
@@ -174,7 +175,7 @@ public class AddonModuleLoader extends ModuleLoader
    private ModuleIdentifier findCompatibleInstalledModule(AddonDependency dependency)
    {
       AddonEntry found = null;
-      for (AddonEntry addon : addonUtil.listByAPICompatibleVersion(AddonUtil.getRuntimeAPIVersion()))
+      for (AddonEntry addon : addonUtil.listByAPICompatibleVersion(AddonRepositoryImpl.getRuntimeAPIVersion()))
       {
          // TODO implement proper version-range resolution
          if (addon.getName().equals(dependency.getName()))

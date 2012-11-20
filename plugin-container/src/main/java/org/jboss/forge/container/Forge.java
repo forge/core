@@ -10,7 +10,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.forge.container.exception.ContainerException;
+import org.jboss.forge.container.impl.AddonImpl;
 import org.jboss.forge.container.impl.AddonRegistryImpl;
+import org.jboss.forge.container.impl.AddonRepositoryImpl;
 import org.jboss.forge.container.modules.AddonModuleLoader;
 import org.jboss.forge.container.util.Sets;
 import org.jboss.modules.Module;
@@ -31,11 +33,11 @@ public final class Forge
 
    Set<AddonThread> threads = Sets.getConcurrentSet();
 
-   private AddonUtil addonUtil;
+   private AddonRepository repository;
 
    public Forge()
    {
-      if (!AddonUtil.hasRuntimeAPIVersion())
+      if (!AddonRepositoryImpl.hasRuntimeAPIVersion())
          System.out.println("Warning! Could not detect Forge runtime version - " +
                   "loading all addons, but failures may occur if versions are not compatible.");
 
@@ -70,7 +72,7 @@ public final class Forge
       {
          try
          {
-            ModuleLoader addonLoader = new AddonModuleLoader(addonUtil);
+            ModuleLoader addonLoader = new AddonModuleLoader(repository);
             alive = true;
             do
             {
@@ -156,7 +158,7 @@ public final class Forge
             }
          }
 
-         AddonRunnable runnable = new AddonRunnable((AddonImpl) addon, registry);
+         AddonRunnable runnable = new AddonRunnable(this, (AddonImpl) addon, registry);
          Thread thread = new Thread(runnable, addon.getId());
          started.add(new AddonThread(thread, runnable));
          thread.start();
@@ -190,12 +192,12 @@ public final class Forge
    {
       Set<Addon> result = new HashSet<Addon>();
 
-      String runtimeVersion = AddonUtil.getRuntimeAPIVersion();
-      List<AddonEntry> installed = addonUtil.listByAPICompatibleVersion(runtimeVersion);
+      String runtimeVersion = AddonRepositoryImpl.getRuntimeAPIVersion();
+      List<AddonEntry> installed = repository.listByAPICompatibleVersion(runtimeVersion);
 
-      if (AddonUtil.hasRuntimeAPIVersion())
+      if (AddonRepositoryImpl.hasRuntimeAPIVersion())
       {
-         List<AddonEntry> incompatible = addonUtil.listInstalled();
+         List<AddonEntry> incompatible = repository.listInstalled();
          incompatible.removeAll(installed);
 
          for (AddonEntry entry : incompatible)
@@ -230,8 +232,13 @@ public final class Forge
 
    public Forge setAddonDir(File dir)
    {
-      this.addonUtil = AddonUtil.forAddonDir(dir);
+      this.repository = AddonRepositoryImpl.forAddonDir(dir);
       return this;
+   }
+
+   public File getAddonDir()
+   {
+      return repository.getRepositoryDirectory();
    }
 
 }

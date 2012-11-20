@@ -20,9 +20,10 @@ import org.jboss.forge.arquillian.util.ShrinkWrapUtil;
 import org.jboss.forge.container.Addon;
 import org.jboss.forge.container.AddonEntry;
 import org.jboss.forge.container.AddonRegistry;
-import org.jboss.forge.container.AddonUtil;
+import org.jboss.forge.container.AddonRepository;
 import org.jboss.forge.container.Forge;
 import org.jboss.forge.container.Status;
+import org.jboss.forge.container.impl.AddonRepositoryImpl;
 import org.jboss.forge.container.util.ClassLoaders;
 import org.jboss.forge.container.util.Files;
 import org.jboss.forge.container.util.Streams;
@@ -36,7 +37,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    private static final int TEST_DEPLOYMENT_TIMEOUT = 60000;
    private ForgeRunnable thread;
    private File addonDir;
-   private AddonUtil addonUtil;
+   private AddonRepository addonUtil;
 
    private class ForgeRunnable implements Runnable
    {
@@ -96,7 +97,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       {
          this.addonDir = File.createTempFile("forge-test-addon-dir", "");
          System.out.println("Executing test case with addon dir [" + addonDir + "]");
-         this.addonUtil = AddonUtil.forAddonDir(addonDir);
+         this.addonUtil = AddonRepositoryImpl.forAddonDir(addonDir);
       }
       catch (IOException e1)
       {

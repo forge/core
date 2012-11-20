@@ -4,7 +4,7 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.container;
+package org.jboss.forge.container.impl;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -17,6 +17,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.enterprise.inject.Typed;
+
+import org.jboss.forge.container.AddonDependency;
+import org.jboss.forge.container.AddonEntry;
+import org.jboss.forge.container.AddonRepository;
 import org.jboss.forge.container.util.Assert;
 import org.jboss.forge.container.util.OSUtils;
 import org.jboss.forge.container.util.Streams;
@@ -27,16 +32,17 @@ import org.jboss.forge.parser.xml.XMLParserException;
 
 /**
  * Used to perform Addon installation/registration operations.
- *
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:koen.aers@gmail.com">Koen Aers</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-public final class AddonUtil
+@Typed()
+public final class AddonRepositoryImpl implements AddonRepository
 {
    public static String getRuntimeAPIVersion()
    {
-      String version = AddonUtil.class.getPackage()
+      String version = AddonRepository.class.getPackage()
                .getImplementationVersion();
       return version;
    }
@@ -58,11 +64,11 @@ public final class AddonUtil
 
    /**
     * This method only returns true if:
-    *
+    * 
     * - The major version of pluginApiVersion is equal to the major version of runtimeVersion AND
-    *
+    * 
     * - The minor version of pluginApiVersion is less or equal to the minor version of runtimeVersion
-    *
+    * 
     * @param runtimeVersion a version in the format x.x.x
     * @param addonApiVersion a version in the format x.x.x
     * @return
@@ -101,23 +107,23 @@ public final class AddonUtil
 
    private File addonDir;
 
-   private AddonUtil(File dir)
+   private AddonRepositoryImpl(File dir)
    {
+      Assert.notNull(dir, "Addon directory must not be null");
       this.addonDir = dir;
    }
 
-   public static AddonUtil forAddonDir(File dir)
+   public static AddonRepository forAddonDir(File dir)
    {
-      Assert.notNull(dir, "Addon directory must not be null.");
-      return new AddonUtil(dir);
+      return new AddonRepositoryImpl(dir);
    }
 
-   public static AddonUtil forDefaultAddonDir()
+   public static AddonRepository forDefaultAddonDir()
    {
-      return new AddonUtil(new File(OSUtils.getUserHomePath() + ADDON_DIR_DEFAULT));
+      return new AddonRepositoryImpl(new File(OSUtils.getUserHomePath() + ADDON_DIR_DEFAULT));
    }
 
-   public File getAddonDir()
+   public File getRepositoryDirectory()
    {
       if (!addonDir.exists() || !addonDir.isDirectory())
       {
@@ -133,7 +139,7 @@ public final class AddonUtil
 
    public synchronized File getRegistryFile()
    {
-      File registryFile = new File(getAddonDir(), REGISTRY_FILE_NAME);
+      File registryFile = new File(getRepositoryDirectory(), REGISTRY_FILE_NAME);
       try
       {
          if (!registryFile.exists())
@@ -329,7 +335,7 @@ public final class AddonUtil
       Assert.notNull(found.getName(), "Addon name must be specified.");
 
       String path = found.getName().replaceAll("\\.", "/");
-      File addonDir = new File(getAddonDir(), path + "/" + found.getSlot());
+      File addonDir = new File(getRepositoryDirectory(), path + "/" + found.getSlot());
       return addonDir;
    }
 
@@ -339,7 +345,7 @@ public final class AddonUtil
       Assert.notNull(found.getName(), "Addon name must be specified.");
 
       String path = found.getName().split("\\.")[0];
-      File addonDir = new File(getAddonDir(), path);
+      File addonDir = new File(getRepositoryDirectory(), path);
       return addonDir;
    }
 
@@ -372,7 +378,7 @@ public final class AddonUtil
 
    public synchronized List<AddonDependency> getAddonDependencies(AddonEntry addon)
    {
-      List<AddonDependency> result = new ArrayList<AddonUtil.AddonDependency>();
+      List<AddonDependency> result = new ArrayList<AddonDependency>();
       File descriptor = getAddonDescriptor(addon);
 
       try
@@ -421,84 +427,5 @@ public final class AddonUtil
       {
          throw new RuntimeException("Error initializing addon descriptor file.", e);
       }
-   }
-
-   public static class AddonDependency
-   {
-      private String name;
-      private String minVersion = null;
-      private String maxVersion = null;
-
-      private boolean optional = false;
-
-      public AddonDependency(String name, String minVersion, String maxVersion)
-      {
-         this(name, minVersion, maxVersion, false);
-      }
-
-      public AddonDependency(String name, String minVersion, String maxVersion, boolean optional)
-      {
-         this.optional = optional;
-         this.name = name;
-         this.minVersion = minVersion;
-         this.maxVersion = maxVersion;
-      }
-
-      public String getName()
-      {
-         return name;
-      }
-
-      public String getMinVersion()
-      {
-         return minVersion;
-      }
-
-      public String getMaxVersion()
-      {
-         return maxVersion;
-      }
-
-      public boolean isOptional()
-      {
-         return optional;
-      }
-
-      @Override
-      public String toString()
-      {
-         return "AddonDependency [name=" + name + ", minVersion=" + minVersion + ", maxVersion=" + maxVersion
-                  + ", optional=" + optional + "]";
-      }
-
-      @Override
-      public int hashCode()
-      {
-         final int prime = 31;
-         int result = 1;
-         result = prime * result + ((name == null) ? 0 : name.hashCode());
-         return result;
-      }
-
-      @Override
-      public boolean equals(Object obj)
-      {
-         if (this == obj)
-            return true;
-         if (obj == null)
-            return false;
-         if (getClass() != obj.getClass())
-            return false;
-         AddonDependency other = (AddonDependency) obj;
-         if (name == null)
-         {
-            if (other.name != null)
-               return false;
-         }
-         else if (!name.equals(other.name))
-            return false;
-         return true;
-      }
-
    }
 }

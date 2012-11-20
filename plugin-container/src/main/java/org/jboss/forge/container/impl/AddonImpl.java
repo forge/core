@@ -1,6 +1,7 @@
-package org.jboss.forge.container;
+package org.jboss.forge.container.impl;
 
 import org.jboss.forge.container.Addon;
+import org.jboss.forge.container.AddonEntry;
 import org.jboss.forge.container.Status;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.modules.Module;
