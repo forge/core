@@ -1,12 +1,15 @@
+/*
+ * Copyright 2012 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Eclipse Public License version 1.0, available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
+
 package org.jboss.forge.resources;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collections;
 import java.util.Enumeration;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -23,7 +26,9 @@ import org.jboss.forge.project.services.ResourceFactory;
 @ResourceHandles({ "*.zip", "*.jar", "*.war", "*.ear" })
 public class ZipResource extends FileResource<ZipResource>
 {
-   private List<Resource<?>> listCache;
+   private static final String SLASH = "/";
+
+   private ZipEntryResource root;
 
    @Inject
    public ZipResource(final ResourceFactory factory)
@@ -44,58 +49,53 @@ public class ZipResource extends FileResource<ZipResource>
       return new ZipResource(resourceFactory, file);
    }
 
-   @Override
-   public String toString()
+   /**
+    * Delegate to root {@link ZipEntryResource#listResources(ResourceFilter, boolean)}
+    */
+   public synchronized List<Resource<?>> listResources(final ResourceFilter filter, boolean recursively)
    {
-      return file.getName();
+      return getRootEntry().listResources(filter, recursively);
    }
 
+   /**
+    * Delegate to root {@link ZipEntryResource#doListResources()}
+    */
    @Override
    protected List<Resource<?>> doListResources()
    {
-      if (isStale())
-      {
-         listCache = null;
-      }
-
-      if (listCache == null)
-      {
-         listCache = new LinkedList<Resource<?>>();
-
-         ZipFile zip = null;
-         try
-         {
-            zip = new ZipFile(file);
-            Enumeration<? extends ZipEntry> entries = zip.entries();
-            while (entries.hasMoreElements())
-            {
-               listCache.add(getChild(entries.nextElement().getName()));
-            }
-         }
-         catch (IOException io)
-         {
-            throw new ResourceException("Error reading entries of zip file [" + getFullyQualifiedName() + "]", io);
-         }
-         finally
-         {
-            closeQuietily(zip);
-         }
-      }
-      return listCache.isEmpty() ? Collections.<Resource<?>> emptyList() : listCache;
+      return getRootEntry().doListResources();
    }
 
-   protected InputStream getEntryInputStream(String entryName)
+   /**
+    * Initialize entries in first access or if the zip is stale.
+    */
+   public ZipEntryResource getRootEntry()
+   {
+      if (root == null || isStale())
+      {
+         readEntries(root = new ZipEntryResource(resourceFactory, this));
+      }
+      return root;
+   }
+
+   /**
+    * Read all the zip entries and create the hierarchical tree.
+    */
+   protected void readEntries(ZipEntryResource parent)
    {
       ZipFile zip = null;
       try
       {
          zip = new ZipFile(file);
-         return new BufferedInputStream(zip.getInputStream(zip.getEntry(entryName)));
+         Enumeration<? extends ZipEntry> entries = zip.entries();
+         while (entries.hasMoreElements())
+         {
+            addEntry(parent, entries.nextElement());
+         }
       }
       catch (IOException io)
       {
-         throw new ResourceException("Error reading content of [" + entryName + "] in zip file ["
-                  + getFullyQualifiedName() + "]", io);
+         throw new ResourceException("Error reading entries of zip file [" + getFullyQualifiedName() + "]", io);
       }
       finally
       {
@@ -104,12 +104,62 @@ public class ZipResource extends FileResource<ZipResource>
    }
 
    /**
+    * Split the entry path by {@value #SLASH} and add recursively.
+    * 
+    * @see ZipEntryResource#getChildOrCreate(String)
+    */
+   protected void addEntry(ZipEntryResource parent, ZipEntry entry)
+   {
+      String[] names = trimSlash(entry.getName()).split(SLASH);
+
+      ZipEntryResource last = parent;
+
+      for (int i = 0; i < names.length; i++)
+      {
+         last = last.getChildOrCreate(names[i]);
+      }
+
+      last.setFlag(entry.isDirectory() ? ResourceFlag.Node : ResourceFlag.Leaf);
+   }
+
+   /**
     * Obtain a reference to the child resource.
     */
    @Override
-   public Resource<?> getChild(final String name)
+   public ZipEntryResource getChild(final String name)
    {
-      return new ZipEntryResource(resourceFactory, this, name);
+      for (Resource<?> resource : doListResources())
+      {
+         if (resource.getName().equals(name))
+         {
+            return (ZipEntryResource) resource;
+         }
+      }
+      return null;
+   }
+
+   protected File getFile()
+   {
+      return file;
+   }
+
+   private String trimSlash(String name)
+   {
+      if (name.startsWith(SLASH))
+      {
+         name = name.substring(1);
+      }
+      if (name.endsWith(SLASH))
+      {
+         name = name.substring(0, name.length() - 1);
+      }
+      return name;
+   }
+
+   @Override
+   public String toString()
+   {
+      return file.getName();
    }
 
    /*
@@ -119,7 +169,10 @@ public class ZipResource extends FileResource<ZipResource>
    {
       try
       {
-         zip.close();
+         if (zip != null)
+         {
+            zip.close();
+         }
       }
       catch (IOException e)
       {
