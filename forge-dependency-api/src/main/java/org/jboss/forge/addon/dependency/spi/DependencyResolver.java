@@ -34,4 +34,12 @@ public interface DependencyResolver
     * @return
     */
    List<Coordinate> resolveVersions(DependencyQuery query);
+
+   /**
+    * Resolve a single dependency
+    *
+    * @param query
+    * @return
+    */
+   Dependency resolveDependency(DependencyQuery query);
 }

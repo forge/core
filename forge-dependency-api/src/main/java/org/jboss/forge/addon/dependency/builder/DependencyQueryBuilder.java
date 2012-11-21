@@ -38,9 +38,30 @@ public class DependencyQueryBuilder implements DependencyQuery
       setCoordinate(coordinate);
    }
 
+   public static DependencyQueryBuilder create(String coordinate)
+   {
+      return new DependencyQueryBuilder(CoordinateBuilder.create(coordinate));
+   }
+
    public static DependencyQueryBuilder create(Coordinate coordinate)
    {
       return new DependencyQueryBuilder(coordinate);
+   }
+
+   /**
+    * Creates a {@link DependencyQueryBuilder} based on a {@link DependencyQuery}
+    *
+    * @param query
+    * @return
+    */
+   public static DependencyQueryBuilder create(DependencyQuery query)
+   {
+      DependencyQueryBuilder builder = new DependencyQueryBuilder();
+      builder.setCoordinate(query.getCoordinate());
+      builder.setFilter(query.getDependencyFilter());
+      builder.setRepositories(query.getDependencyRepositories());
+      builder.setScopeType(query.getScopeType());
+      return builder;
    }
 
    private void setCoordinate(Coordinate coordinate)
