@@ -7,6 +7,7 @@
 
 package org.jboss.forge.addon.dependency.spi;
 
+import java.io.File;
 import java.util.List;
 import java.util.Set;
 
@@ -36,10 +37,10 @@ public interface DependencyResolver
    List<Coordinate> resolveVersions(DependencyQuery query);
 
    /**
-    * Resolve a single dependency
+    * Resolve a single artifact
     *
     * @param query
     * @return
     */
-   Dependency resolveDependency(DependencyQuery query);
+   File resolveArtifact(DependencyQuery query);
 }

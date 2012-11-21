@@ -34,6 +34,9 @@ import org.sonatype.aether.collection.CollectRequest;
 import org.sonatype.aether.graph.DependencyNode;
 import org.sonatype.aether.repository.LocalRepository;
 import org.sonatype.aether.repository.RemoteRepository;
+import org.sonatype.aether.resolution.ArtifactRequest;
+import org.sonatype.aether.resolution.ArtifactResolutionException;
+import org.sonatype.aether.resolution.ArtifactResult;
 import org.sonatype.aether.resolution.DependencyRequest;
 import org.sonatype.aether.resolution.DependencyResolutionException;
 import org.sonatype.aether.resolution.DependencyResult;
@@ -175,5 +178,30 @@ public class MavenDependencyResolver implements DependencyResolver
       session.setNotFoundCachingEnabled(false);
 
       return session;
+   }
+
+   @Override
+   public File resolveArtifact(DependencyQuery query)
+   {
+      RepositorySystem system = container.lookup(RepositorySystem.class);
+      Settings settings = container.getSettings();
+
+      List<RemoteRepository> remoteRepos = convertToMavenRepos(query.getDependencyRepositories(), settings);
+      remoteRepos.addAll(container.getEnabledRepositoriesFromProfile(settings));
+
+      MavenRepositorySystemSession session = setupRepoSession(system, settings);
+
+      Artifact queryArtifact = coordinateToMavenArtifact(query.getCoordinate());
+      ArtifactRequest request = new ArtifactRequest(queryArtifact, remoteRepos, null);
+      try
+      {
+         ArtifactResult resolvedArtifact = system.resolveArtifact(session, request);
+         Artifact artifact = resolvedArtifact.getArtifact();
+         return artifact.getFile();
+      }
+      catch (ArtifactResolutionException e)
+      {
+         throw new MavenOperationException(e);
+      }
    }
 }

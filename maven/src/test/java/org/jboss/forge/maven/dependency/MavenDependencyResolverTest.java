@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.maven.dependency;
 
+import java.io.File;
 import java.util.List;
 import java.util.Set;
 
@@ -27,7 +28,7 @@ import org.junit.Test;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  *
  */
-public class PluginLookupTest
+public class MavenDependencyResolverTest
 {
    private DependencyResolver resolver;
 
@@ -73,5 +74,14 @@ public class PluginLookupTest
       List<Coordinate> versions = resolver.resolveVersions(query);
       Assert.assertNotNull(versions);
       Assert.assertFalse(versions.isEmpty());
+   }
+
+   @Test
+   public void testResolveArtifact() throws Exception
+   {
+      DependencyQuery query = DependencyQueryBuilder.create("org.jboss.forge:forge-example-plugin:far::2.0.0-SNAPSHOT");
+      File artifact = resolver.resolveArtifact(query);
+      Assert.assertNotNull(artifact);
+      Assert.assertTrue("Artifact does not exist: " + artifact, artifact.exists());
    }
 }
