@@ -17,7 +17,9 @@ import java.util.List;
  */
 public interface DependencyQuery
 {
-   Dependency getDependency();
+   Coordinate getCoordinate();
+
+   String getScopeType();
 
    DependencyFilter getDependencyFilter();
 

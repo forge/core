@@ -63,13 +63,13 @@ public class MavenDependencyResolver implements DependencyResolver
 
       MavenRepositorySystemSession session = setupRepoSession(system, settings);
 
-      Artifact queryArtifact = coordinateToMavenArtifact(query.getDependency().getCoordinate());
+      Artifact queryArtifact = coordinateToMavenArtifact(query.getCoordinate());
 
       List<RemoteRepository> remoteRepos = convertToMavenRepos(query.getDependencyRepositories(), settings);
       remoteRepos.addAll(container.getEnabledRepositoriesFromProfile(settings));
 
       CollectRequest collectRequest = new CollectRequest(new org.sonatype.aether.graph.Dependency(queryArtifact,
-               query.getDependency().getScopeType()), remoteRepos);
+               query.getScopeType()), remoteRepos);
 
       DependencyRequest request = new DependencyRequest(collectRequest, null);
 
@@ -107,13 +107,12 @@ public class MavenDependencyResolver implements DependencyResolver
    @Override
    public List<Coordinate> resolveVersions(DependencyQuery query)
    {
-      Dependency dep = query.getDependency();
       VersionRangeResult r = getVersions(query);
       List<Coordinate> result = new ArrayList<Coordinate>();
       DependencyFilter filter = query.getDependencyFilter();
       for (Version v : r.getVersions())
       {
-         CoordinateBuilder coord = CoordinateBuilder.create(dep.getCoordinate()).setVersion(v.toString());
+         CoordinateBuilder coord = CoordinateBuilder.create(query.getCoordinate()).setVersion(v.toString());
          DependencyBuilder versionedDep = DependencyBuilder.create().setCoordinate(coord);
          if (filter == null || filter.accept(versionedDep))
          {
@@ -131,7 +130,7 @@ public class MavenDependencyResolver implements DependencyResolver
     */
    private VersionRangeResult getVersions(DependencyQuery query)
    {
-      Coordinate dep = query.getDependency().getCoordinate();
+      Coordinate dep = query.getCoordinate();
       try
       {
          String version = dep.getVersion();

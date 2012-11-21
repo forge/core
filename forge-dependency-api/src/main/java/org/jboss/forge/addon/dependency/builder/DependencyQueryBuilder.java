@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jboss.forge.addon.dependency.Dependency;
+import org.jboss.forge.addon.dependency.Coordinate;
 import org.jboss.forge.addon.dependency.DependencyFilter;
 import org.jboss.forge.addon.dependency.DependencyQuery;
 import org.jboss.forge.addon.dependency.DependencyRepository;
@@ -19,12 +19,13 @@ import org.jboss.forge.addon.dependency.DependencyRepository;
 /**
  * Builds a {@link DependencyQuery} object
  *
- * @author George Gastaldi <ggastald@redhat.com>
- * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
+ *
  */
 public class DependencyQueryBuilder implements DependencyQuery
 {
-   private Dependency dependency;
+   private Coordinate coordinate;
+   private String scopeType;
    private DependencyFilter dependencyFilter;
    private List<DependencyRepository> dependencyRepositories = new ArrayList<DependencyRepository>();
 
@@ -32,23 +33,23 @@ public class DependencyQueryBuilder implements DependencyQuery
    {
    }
 
-   private DependencyQueryBuilder(Dependency dependency)
+   private DependencyQueryBuilder(Coordinate coordinate)
    {
-      setDependency(dependency);
+      setCoordinate(coordinate);
    }
 
-   public static DependencyQueryBuilder create(Dependency dependency)
+   public static DependencyQueryBuilder create(Coordinate coordinate)
    {
-      return new DependencyQueryBuilder(dependency);
+      return new DependencyQueryBuilder(coordinate);
    }
 
-   private void setDependency(Dependency dependency)
+   private void setCoordinate(Coordinate coordinate)
    {
-      if (dependency == null)
+      if (coordinate == null)
       {
-         throw new IllegalArgumentException("Dependency must be set");
+         throw new IllegalArgumentException("Coordinate must be set");
       }
-      this.dependency = dependency;
+      this.coordinate = coordinate;
    }
 
    public DependencyQueryBuilder setFilter(DependencyFilter dependencyFilter)
@@ -74,19 +75,34 @@ public class DependencyQueryBuilder implements DependencyQuery
       return this;
    }
 
-   public Dependency getDependency()
+   public DependencyQueryBuilder setScopeType(String scopeType)
    {
-      return dependency;
+      this.scopeType = scopeType;
+      return this;
    }
 
+   @Override
+   public Coordinate getCoordinate()
+   {
+      return coordinate;
+   }
+
+   @Override
    public DependencyFilter getDependencyFilter()
    {
       return dependencyFilter;
    }
 
+   @Override
    public List<DependencyRepository> getDependencyRepositories()
    {
       return dependencyRepositories;
+   }
+
+   @Override
+   public String getScopeType()
+   {
+      return scopeType;
    }
 
 }

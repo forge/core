@@ -19,6 +19,57 @@ public class CoordinateBuilder implements Coordinate
    private String classifier;
    private String packaging;
 
+   /**
+    *
+    * Creates a Coordinate
+    *
+    * @param coordinates The artifact coordinates in the format
+    *           {@code <groupId>:<artifactId>[:<packaging>[:<classifier>]]:<version>} , must not be {@code null} or
+    *           empty.
+    *
+    * @return
+    */
+   public static CoordinateBuilder create(String coordinates)
+   {
+      CoordinateBuilder builder = CoordinateBuilder.create();
+      // groupId:artifactId:packaging:classifier:version
+      String[] split = coordinates.split("\\:");
+      if (split.length == 0)
+      {
+         throw new IllegalArgumentException(
+                  "Malformed coordinate. Should be groupId:artifactId:[packaging]:[classifier]:[version]");
+      }
+      if (split.length > 0)
+      {
+         builder.setGroupId(split[0]);
+      }
+      if (split.length > 1)
+      {
+         builder.setArtifactId(split[1]);
+      }
+      if (split.length == 3)
+      {
+         // The last one is the version, otherwise, continue parsing
+         builder.setVersion(split[2]);
+      }
+      else
+      {
+         if (split.length > 2)
+         {
+            builder.setPackaging(split[2]);
+         }
+         if (split.length > 3)
+         {
+            builder.setClassifier(split[3]);
+         }
+         if (split.length > 4)
+         {
+            builder.setVersion(split[4]);
+         }
+      }
+      return builder;
+   }
+
    public static CoordinateBuilder create(Map<String, String> atts)
    {
       CoordinateBuilder builder = CoordinateBuilder.create();
@@ -166,11 +217,11 @@ public class CoordinateBuilder implements Coordinate
    @Override
    public String toString()
    {
-      return "CoordinateBuilder [" + (groupId != null ? "groupId=" + groupId + ", " : "")
+      return (groupId != null ? "groupId=" + groupId + ", " : "")
                + (artifactId != null ? "artifactId=" + artifactId + ", " : "")
-               + (version != null ? "version=" + version + ", " : "")
                + (classifier != null ? "classifier=" + classifier + ", " : "")
-               + (packaging != null ? "packaging=" + packaging : "") + "]";
+               + (packaging != null ? "packaging=" + packaging : "") + "]"
+               + (version != null ? "version=" + version + ", " : "");
    }
 
 }

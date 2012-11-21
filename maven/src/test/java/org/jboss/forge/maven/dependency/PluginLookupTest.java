@@ -13,7 +13,7 @@ import org.jboss.forge.addon.dependency.Coordinate;
 import org.jboss.forge.addon.dependency.Dependency;
 import org.jboss.forge.addon.dependency.DependencyQuery;
 import org.jboss.forge.addon.dependency.DependencyRepository;
-import org.jboss.forge.addon.dependency.builder.DependencyBuilder;
+import org.jboss.forge.addon.dependency.builder.CoordinateBuilder;
 import org.jboss.forge.addon.dependency.builder.DependencyQueryBuilder;
 import org.jboss.forge.addon.dependency.spi.DependencyResolver;
 import org.jboss.forge.maven.container.MavenContainer;
@@ -41,9 +41,10 @@ public class PluginLookupTest
    public void testResolveNonJarArtifact() throws Exception
    {
 
-      Dependency dep = DependencyBuilder.create("org.jboss.forge:forge-example-plugin:2.0.0-SNAPSHOT")
+      CoordinateBuilder coordinate = CoordinateBuilder.create("org.jboss.forge:forge-example-plugin:2.0.0-SNAPSHOT")
                .setPackaging("far");
-      DependencyQueryBuilder query = DependencyQueryBuilder.create(dep).setFilter(new PackagingDependencyFilter("far"));
+      DependencyQueryBuilder query = DependencyQueryBuilder.create(coordinate).setFilter(
+               new PackagingDependencyFilter("far"));
       Set<Dependency> artifacts = resolver.resolveDependencies(query);
       Assert.assertFalse(artifacts.isEmpty());
       Assert.assertEquals(1, artifacts.size());
@@ -56,11 +57,11 @@ public class PluginLookupTest
    @Test
    public void testResolveVersions() throws Exception
    {
-      DependencyQuery query = DependencyQueryBuilder.create(DependencyBuilder
-               .create("org.jboss.forge:forge-distribution:::zip")).setRepositories(
+
+      DependencyQuery query = DependencyQueryBuilder.create(CoordinateBuilder
+               .create("org.jboss.forge:forge-distribution").setPackaging("zip")).setRepositories(
                new DependencyRepository("jboss", "https://repository.jboss.org/nexus/content/groups/public/"));
       List<Coordinate> versions = resolver.resolveVersions(query);
-      System.out.println(versions);
       Assert.assertNotNull(versions);
       Assert.assertFalse(versions.isEmpty());
    }
@@ -68,10 +69,8 @@ public class PluginLookupTest
    @Test
    public void testResolveVersionsDependency() throws Exception
    {
-      DependencyQuery query = DependencyQueryBuilder.create(DependencyBuilder
-               .create("org.hibernate:hibernate-core"));
+      DependencyQuery query = DependencyQueryBuilder.create(CoordinateBuilder.create("org.hibernate:hibernate-core"));
       List<Coordinate> versions = resolver.resolveVersions(query);
-      System.out.println(versions);
       Assert.assertNotNull(versions);
       Assert.assertFalse(versions.isEmpty());
    }
