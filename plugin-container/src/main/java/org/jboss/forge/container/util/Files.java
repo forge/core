@@ -1,6 +1,11 @@
 package org.jboss.forge.container.util;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -9,6 +14,25 @@ public final class Files
 {
    public static final String HOME_ALIAS = "~";
    public static final String SLASH = File.separator;
+   /**
+    * The number of bytes in a kilobyte.
+    */
+   public static final long ONE_KB = 1024;
+
+   /**
+    * The number of bytes in a megabyte.
+    */
+   public static final long ONE_MB = ONE_KB * ONE_KB;
+
+   /**
+    * The number of bytes in a 50 MB.
+    */
+   private static final long FIFTY_MB = ONE_MB * 50;
+
+   /**
+    * The number of bytes in a gigabyte.
+    */
+   public static final long ONE_GB = ONE_KB * ONE_MB;
 
    public static boolean delete(File file)
    {
@@ -106,6 +130,145 @@ public final class Files
    public static File getWorkingDirectory()
    {
       return new File("").getAbsoluteFile();
+   }
+
+   /**
+    * Copies a file to a directory optionally preserving the file date.
+    * <p>
+    * This method copies the contents of the specified source file to a file of the same name in the specified
+    * destination directory. The destination directory is created if it does not exist. If the destination file exists,
+    * then this method will overwrite it.
+    * <p>
+    * <strong>Note:</strong> Setting <code>preserveFileDate</code> to <code>true</code> tries to preserve the file's
+    * last modified date/times using {@link File#setLastModified(long)}, however it is not guaranteed that the operation
+    * will succeed. If the modification operation fails, no indication is provided.
+    *
+    * @param srcFile an existing file to copy, must not be <code>null</code>
+    * @param destDir the directory to place the copy in, must not be <code>null</code>
+    *
+    * @throws NullPointerException if source or destination is <code>null</code>
+    * @throws IOException if source or destination is invalid
+    * @throws IOException if an IO error occurs during copying
+    * @see #copyFile(File, File)
+    * @since Commons IO 1.3
+    */
+   public static void copyFileToDirectory(File srcFile, File destDir) throws IOException
+   {
+      if (destDir == null)
+      {
+         throw new NullPointerException("Destination must not be null");
+      }
+      if (destDir.exists() && destDir.isDirectory() == false)
+      {
+         throw new IllegalArgumentException("Destination '" + destDir + "' is not a directory");
+      }
+      File destFile = new File(destDir, srcFile.getName());
+      copyFile(srcFile, destFile);
+   }
+
+   /**
+    * Copies a file to a new location.
+    * <p>
+    * This method copies the contents of the specified source file to the specified destination file. The directory
+    * holding the destination file is created if it does not exist. If the destination file exists, then this method
+    * will overwrite it.
+    * <p>
+    * <strong>Note:</strong> Setting <code>preserveFileDate</code> to <code>true</code> tries to preserve the file's
+    * last modified date/times using {@link File#setLastModified(long)}, however it is not guaranteed that the operation
+    * will succeed. If the modification operation fails, no indication is provided.
+    *
+    * @param srcFile an existing file to copy, must not be <code>null</code>
+    * @param destFile the new file, must not be <code>null</code>
+    * @param preserveFileDate true if the file date of the copy should be the same as the original
+    *
+    * @throws NullPointerException if source or destination is <code>null</code>
+    * @throws IOException if source or destination is invalid
+    * @throws IOException if an IO error occurs during copying
+    * @see #copyFileToDirectory(File, File, boolean)
+    */
+   public static void copyFile(File srcFile, File destFile) throws IOException
+   {
+      if (srcFile == null)
+      {
+         throw new NullPointerException("Source must not be null");
+      }
+      if (destFile == null)
+      {
+         throw new NullPointerException("Destination must not be null");
+      }
+      if (srcFile.exists() == false)
+      {
+         throw new FileNotFoundException("Source '" + srcFile + "' does not exist");
+      }
+      if (srcFile.isDirectory())
+      {
+         throw new IOException("Source '" + srcFile + "' exists but is a directory");
+      }
+      if (srcFile.getCanonicalPath().equals(destFile.getCanonicalPath()))
+      {
+         throw new IOException("Source '" + srcFile + "' and destination '" + destFile + "' are the same");
+      }
+      if (destFile.getParentFile() != null && destFile.getParentFile().exists() == false)
+      {
+         if (destFile.getParentFile().mkdirs() == false)
+         {
+            throw new IOException("Destination '" + destFile + "' directory cannot be created");
+         }
+      }
+      if (destFile.exists() && destFile.canWrite() == false)
+      {
+         throw new IOException("Destination '" + destFile + "' exists but is read-only");
+      }
+      doCopyFile(srcFile, destFile);
+   }
+
+   /**
+    * Internal copy file method.
+    *
+    * @param srcFile the validated source file, must not be <code>null</code>
+    * @param destFile the validated destination file, must not be <code>null</code>
+    * @param preserveFileDate whether to preserve the file date
+    * @throws IOException if an error occurs
+    */
+   private static void doCopyFile(File srcFile, File destFile) throws IOException
+   {
+      if (destFile.exists() && destFile.isDirectory())
+      {
+         throw new IOException("Destination '" + destFile + "' exists but is a directory");
+      }
+
+      FileInputStream fis = null;
+      FileOutputStream fos = null;
+      FileChannel input = null;
+      FileChannel output = null;
+      try
+      {
+         fis = new FileInputStream(srcFile);
+         fos = new FileOutputStream(destFile);
+         input = fis.getChannel();
+         output = fos.getChannel();
+         long size = input.size();
+         long pos = 0;
+         long count = 0;
+         while (pos < size)
+         {
+            count = (size - pos) > FIFTY_MB ? FIFTY_MB : (size - pos);
+            pos += output.transferFrom(input, pos, count);
+         }
+      }
+      finally
+      {
+         Streams.closeQuietly(output);
+         Streams.closeQuietly(fos);
+         Streams.closeQuietly(input);
+         Streams.closeQuietly(fis);
+      }
+
+      if (srcFile.length() != destFile.length())
+      {
+         throw new IOException("Failed to copy full contents from '" +
+                  srcFile + "' to '" + destFile + "'");
+      }
    }
 
 }
