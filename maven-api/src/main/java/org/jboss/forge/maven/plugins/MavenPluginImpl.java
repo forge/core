@@ -15,117 +15,163 @@ import org.jboss.forge.project.dependencies.Dependency;
 /**
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
  */
-public class MavenPluginImpl implements MavenPlugin {
-   
-    private Dependency dependency;
-    private Configuration configuration;
-    private final List<Execution> executions = new ArrayList<Execution>();
-    private boolean extensions;
-    private List<Dependency> pluginDependencies = new ArrayList<Dependency>();
+public class MavenPluginImpl implements MavenPlugin
+{
 
-    public MavenPluginImpl() {
-    }
+   private Dependency dependency;
+   private Configuration configuration;
+   private final List<Execution> executions = new ArrayList<Execution>();
+   private boolean extensions;
+   private List<Dependency> pluginDependencies = new ArrayList<Dependency>();
 
-    public MavenPluginImpl(final MavenPlugin plugin) {
-        this.dependency = plugin.getDependency();
-        this.configuration = plugin.getConfig();
-    }
+   public MavenPluginImpl()
+   {
+   }
 
-    @Override
-    public Dependency getDependency() {
-        return dependency;
-    }
+   public MavenPluginImpl(final MavenPlugin plugin)
+   {
+      this.dependency = plugin.getDependency();
+      this.configuration = plugin.getConfig();
+   }
 
-    public void setDependency(final Dependency dependency) {
-        this.dependency = dependency;
-    }
+   @Override
+   public Dependency getDependency()
+   {
+      return dependency;
+   }
 
-    @Override
-    public Configuration getConfig() {
-        if (configuration == null) {
-            configuration = ConfigurationBuilder.create();
-        }
-        return configuration;
-    }
+   public void setDependency(final Dependency dependency)
+   {
+      this.dependency = dependency;
+   }
 
-    @Override
-    public List<Execution> listExecutions() {
-        return executions;
-    }
+   @Override
+   public Configuration getConfig()
+   {
+      if (configuration == null)
+      {
+         configuration = ConfigurationBuilder.create();
+      }
+      return configuration;
+   }
 
-    @Override
-    public boolean isExtensionsEnabled() {
-        return extensions;
-    }
-    
-    @Override
-    public List<Dependency> getDirectDependencies() {
-       return pluginDependencies;
-    }
+   @Override
+   public List<Execution> listExecutions()
+   {
+      return executions;
+   }
 
-    @Override
-    public String toString() {
-        StringBuilder b = new StringBuilder("<plugin>");
-        appendDependency(b, dependency);
+   @Override
+   public boolean isExtensionsEnabled()
+   {
+      return extensions;
+   }
 
-        if(extensions) {
-            b.append("<extensions>true</extensions>");
-        }
+   @Override
+   public List<Dependency> getDirectDependencies()
+   {
+      return pluginDependencies;
+   }
 
-        if (configuration != null) {
-            b.append(configuration.toString());
-        }
+   @Override
+   public String toString()
+   {
+      StringBuilder b = new StringBuilder("<plugin>");
+      appendDependency(b, dependency);
 
-        if (executions.size() > 0) {
-            b.append("<executions>");
-            for (Execution execution : executions) {
-                b.append(execution.toString());
-            }
-            b.append("</executions>");
-        }
-        
-        if (pluginDependencies.size() > 0) {
-           b.append("<dependencies>");
-           for (Dependency pluginDependency : pluginDependencies) {
-               b.append("<dependency>");
-               appendDependency(b, pluginDependency);
-               b.append("</dependency>");
-           }
-           b.append("</dependencies>");
-       }
-
-        b.append("</plugin>");
-        return b.toString();
-    }
-
-    public void setConfiguration(final Configuration configuration) {
-        this.configuration = configuration;
-    }
-
-    public void addExecution(final Execution execution) {
-        executions.add(execution);
-    }
-
-    public void setExtenstions(boolean extenstions) {
-        this.extensions = extenstions;
-    }
-    
-    public void addPluginDependency(final Dependency dependency) {
-       pluginDependencies.add(dependency);
-    }
-    
-    private void appendDependency(StringBuilder buffer, Dependency appendDependency) {
-       if (appendDependency.getGroupId() != null) {
-          buffer.append("<groupId>").append(appendDependency.getGroupId()).append("</groupId>");
+      if (extensions)
+      {
+         b.append("<extensions>true</extensions>");
       }
 
-      if (appendDependency.getArtifactId() != null) {
-         buffer.append("<artifactId>").append(appendDependency.getArtifactId()).append("</artifactId>");
+      if (configuration != null)
+      {
+         b.append(configuration.toString());
       }
 
-      if (appendDependency.getVersion() != null) {
-         buffer.append("<version>").append(appendDependency.getVersion()).append("</version>");
+      if (executions.size() > 0)
+      {
+         b.append("<executions>");
+         for (Execution execution : executions)
+         {
+            b.append(execution.toString());
+         }
+         b.append("</executions>");
       }
-    }
+
+      if (pluginDependencies.size() > 0)
+      {
+         b.append("<dependencies>");
+         for (Dependency pluginDependency : pluginDependencies)
+         {
+            b.append("<dependency>");
+            appendDependency(b, pluginDependency);
+            b.append("</dependency>");
+         }
+         b.append("</dependencies>");
+      }
+
+      b.append("</plugin>");
+      return b.toString();
+   }
+
+   public void setConfiguration(final Configuration configuration)
+   {
+      this.configuration = configuration;
+   }
+
+   public void addExecution(final Execution execution)
+   {
+      executions.add(execution);
+   }
+
+   public void setExtenstions(boolean extenstions)
+   {
+      this.extensions = extenstions;
+   }
+
+   public void addPluginDependency(final Dependency dependency)
+   {
+      pluginDependencies.add(dependency);
+   }
+
+   private void appendDependency(StringBuilder builder, Dependency appendDependency)
+   {
+      appendDependencyData(builder, appendDependency, true);
+      if (!appendDependency.getExcludedDependencies().isEmpty())
+      {
+         builder.append("<exclusions>");
+         for (Dependency exclusion : appendDependency.getExcludedDependencies())
+         {
+            appendExclusion(builder, exclusion);
+         }
+         builder.append("</exclusions>");
+      }
+   }
+
+   private void appendExclusion(StringBuilder builder, Dependency exclusion)
+   {
+      builder.append("<exclusion>");
+      appendDependencyData(builder, exclusion, false);
+      builder.append("</exclusion>");
+   }
+
+   private void appendDependencyData(StringBuilder builder, Dependency dependency, boolean withVersion)
+   {
+      if (dependency.getGroupId() != null)
+      {
+         builder.append("<groupId>").append(dependency.getGroupId()).append("</groupId>");
+      }
+
+      if (dependency.getArtifactId() != null)
+      {
+         builder.append("<artifactId>").append(dependency.getArtifactId()).append("</artifactId>");
+      }
+
+      if (withVersion && dependency.getVersion() != null)
+      {
+         builder.append("<version>").append(dependency.getVersion()).append("</version>");
+      }
+   }
 
 }
