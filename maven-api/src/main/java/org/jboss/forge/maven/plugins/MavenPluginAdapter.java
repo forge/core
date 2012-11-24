@@ -11,6 +11,7 @@ import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.maven.model.Exclusion;
 import org.apache.maven.model.PluginExecution;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
@@ -34,7 +35,10 @@ public class MavenPluginAdapter extends org.apache.maven.model.Plugin implements
       setVersion(dependency.getVersion());
       setConfiguration(parseConfig(mavenPlugin.getConfig()));
       setExecutions(transformExecutions(mavenPlugin));
-      setExtensions(mavenPlugin.isExtensionsEnabled());
+      if (mavenPlugin.isExtensionsEnabled())
+      {
+         setExtensions(true);
+      }
       setDependencies(transformDependencies(mavenPlugin));
    }
 
@@ -48,9 +52,23 @@ public class MavenPluginAdapter extends org.apache.maven.model.Plugin implements
          pluginDependency.setGroupId(dependency.getGroupId());
          pluginDependency.setVersion(dependency.getVersion());
          pluginDependency.setScope(dependency.getScopeType());
+         pluginDependency.setExclusions(transformExclusions(dependency.getExcludedDependencies()));
          dependencies.add(pluginDependency);
       }
       return dependencies;
+   }
+
+   private List<Exclusion> transformExclusions(List<Dependency> excludedDependencies)
+   {
+      List<Exclusion> result = new ArrayList<Exclusion>(excludedDependencies.size());
+      for (Dependency dependency : excludedDependencies)
+      {
+         Exclusion exclusion = new Exclusion();
+         exclusion.setArtifactId(dependency.getArtifactId());
+         exclusion.setGroupId(dependency.getGroupId());
+         result.add(exclusion);
+      }
+      return result;
    }
 
    private List<PluginExecution> transformExecutions(final MavenPlugin mavenPlugin)
@@ -78,8 +96,7 @@ public class MavenPluginAdapter extends org.apache.maven.model.Plugin implements
 
       try {
          return Xpp3DomBuilder.build(
-                  new ByteArrayInputStream(
-                           configuration.toString().getBytes()), "UTF-8");
+                  new ByteArrayInputStream(configuration.toString().getBytes()), "UTF-8");
       }
       catch (Exception ex) {
          throw new RuntimeException("Exception while parsing configuration", ex);
