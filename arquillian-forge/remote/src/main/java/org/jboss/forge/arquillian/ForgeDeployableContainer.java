@@ -82,7 +82,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    public ProtocolMetaData deploy(Archive<?> archive) throws DeploymentException
    {
       AddonEntry addon = getAddonEntry(archive);
-      File destDir = addonUtil .getAddonSlotDir(addon);
+      File destDir = addonUtil.getAddonSlotDir(addon);
       destDir.mkdirs();
 
       if (!(archive instanceof ForgeArchive))
@@ -109,7 +109,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
 
       System.out.println("Unzipping " + archive.toString(true));
 
-      addon = addonUtil.install(addon);
+      addonUtil.install(addon);
 
       HTTPContext httpContext = new HTTPContext("localhost", 4141);
       httpContext.add(new Servlet("ArquillianServletRunner", "/ArquillianServletRunner"));
@@ -132,7 +132,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
 
    private AddonEntry getAddonEntry(Archive<?> archive)
    {
-      return new AddonEntry(archive.getName().replaceFirst("\\.jar$", ""), "2.0.0-SNAPSHOT", "main");
+      return AddonEntry.from(archive.getName().replaceFirst("\\.jar$", ""), "2.0.0-SNAPSHOT", "main");
    }
 
    @Override

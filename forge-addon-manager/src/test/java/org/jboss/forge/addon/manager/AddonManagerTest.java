@@ -12,11 +12,14 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.container.AddonEntry;
+import org.jboss.forge.container.AddonRepository;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,6 +30,9 @@ public class AddonManagerTest
 {
    @Inject
    private AddonManager addonManager;
+   
+   @Inject
+   private AddonRepository repository;
 
    @Deployment
    public static ForgeArchive getDeployment()
@@ -45,6 +51,7 @@ public class AddonManagerTest
    @Test
    public void testResolvingAddon()
    {
-      addonManager.install("org.jboss.forge:forge-example-plugin:far:2.0.0-SNAPSHOT");
+      AddonEntry installed = addonManager.install("org.jboss.forge:forge-example-plugin:far:2.0.0-SNAPSHOT");
+      Assert.assertTrue(repository.has(installed));
    }
 }

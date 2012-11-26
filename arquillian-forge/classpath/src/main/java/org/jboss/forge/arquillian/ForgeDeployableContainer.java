@@ -155,7 +155,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
          }
       }
 
-      addon = addonUtil.install(addon);
+      addonUtil.install(addon);
 
       HTTPContext httpContext = new HTTPContext("localhost", 4141);
       httpContext.add(new Servlet("ArquillianServletRunner", "/ArquillianServletRunner"));
@@ -225,7 +225,8 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
 
    private AddonEntry getAddonEntry(Archive<?> archive)
    {
-      return new AddonEntry(archive.getName().replaceFirst("\\.jar$", ""), "2.0.0-SNAPSHOT", UUID.randomUUID()
+      // FIXME - do not fix version
+      return AddonEntry.from(archive.getName().replaceFirst("\\.jar$", ""), "2.0.0-SNAPSHOT", UUID.randomUUID()
                .toString());
    }
 

@@ -33,13 +33,14 @@ public class AddonManager
    }
 
    // XXX
-   public void install(String coordinates)
+   public AddonEntry install(String coordinates)
    {
       MavenResolvedArtifact[] artifacts = null;
       artifacts = Maven.resolver().offline().resolve(coordinates).withTransitivity()
                .asResolvedArtifact();
       System.out.println("Transient files: ");
       list(artifacts);
+      return null;
 
       // MavenResolvedArtifact farArtifact = Maven.resolver().offline().resolve(coordinates).withoutTransitivity()
       // .asSingleResolvedArtifact();

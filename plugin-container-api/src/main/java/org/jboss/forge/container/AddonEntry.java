@@ -9,32 +9,18 @@ public class AddonEntry
    private final String apiVersion;
    private final String slot;
 
-   public AddonEntry(final String name, final String apiVersion, final String slot)
+   protected AddonEntry(final String name, final String apiVersion, final String slot)
    {
       this.name = name;
       this.apiVersion = apiVersion;
       this.slot = slot;
    }
 
-   public AddonEntry(final String name, final String apiVersion)
+   protected AddonEntry(final String name, final String apiVersion)
    {
       this.name = name;
       this.apiVersion = apiVersion;
       this.slot = null;
-   }
-
-   public AddonEntry(final String name)
-   {
-      this.name = name;
-      this.apiVersion = null;
-      this.slot = null;
-   }
-
-   public AddonEntry(AddonEntry entry)
-   {
-      this.name = entry.getName();
-      this.apiVersion = entry.getApiVersion();
-      this.slot = entry.getSlot();
    }
 
    public String getName()
@@ -79,6 +65,16 @@ public class AddonEntry
          throw new IllegalArgumentException("Coordinates must be of the form 'name:apiVersion:slot'");
       }
 
+   }
+
+   public static AddonEntry from(String name, String apiVersion)
+   {
+      return new AddonEntry(name, apiVersion);
+   }
+
+   public static AddonEntry from(String name, String apiVersion, String slot)
+   {
+      return new AddonEntry(name, apiVersion, slot);
    }
 
    public String toModuleId()
@@ -135,5 +131,5 @@ public class AddonEntry
    {
       return toString();
    }
-
+   
 }
