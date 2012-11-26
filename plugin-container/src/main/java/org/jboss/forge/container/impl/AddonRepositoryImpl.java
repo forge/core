@@ -435,16 +435,13 @@ public final class AddonRepositoryImpl implements AddonRepository
    @Override
    public synchronized AddonEntry deploy(AddonEntry entry, File farFile, File... dependencies)
    {
-      File addonBaseDir = getAddonBaseDir(entry);
       File addonSlotDir = getAddonSlotDir(entry);
       try
       {
          Files.copyFileToDirectory(farFile, addonSlotDir);
-         // TODO: Create a getAddonDependencyDir method ?
-         File dependencyDir = new File(addonBaseDir, "dependencies");
          for (File dependency : dependencies)
          {
-            Files.copyFileToDirectory(dependency, dependencyDir);
+            Files.copyFileToDirectory(dependency, addonSlotDir);
          }
       }
       catch (IOException io)
