@@ -32,6 +32,7 @@ import org.sonatype.aether.RepositorySystem;
 import org.sonatype.aether.artifact.Artifact;
 import org.sonatype.aether.collection.CollectRequest;
 import org.sonatype.aether.graph.DependencyNode;
+import org.sonatype.aether.graph.DependencyVisitor;
 import org.sonatype.aether.repository.LocalRepository;
 import org.sonatype.aether.repository.RemoteRepository;
 import org.sonatype.aether.resolution.ArtifactRequest;
@@ -42,6 +43,7 @@ import org.sonatype.aether.resolution.DependencyResolutionException;
 import org.sonatype.aether.resolution.DependencyResult;
 import org.sonatype.aether.resolution.VersionRangeRequest;
 import org.sonatype.aether.resolution.VersionRangeResult;
+import org.sonatype.aether.util.graph.TreeDependencyVisitor;
 import org.sonatype.aether.version.Version;
 
 @Singleton
@@ -88,16 +90,7 @@ public class MavenDependencyResolver implements DependencyResolver
       DependencyNode root = artifacts.getRoot();
       for (DependencyNode node : root.getChildren())
       {
-         org.sonatype.aether.graph.Dependency artifactDependency = node.getDependency();
-         Artifact artifact = artifactDependency.getArtifact();
-         File file = artifact.getFile();
-
-         Dependency d = DependencyBuilder.create().setArtifactId(artifact.getArtifactId())
-                  .setGroupId(artifact.getGroupId()).setVersion(artifact.getVersion())
-                  .setPackaging(artifact.getExtension()).setArtifact(file)
-                  .setOptional(artifactDependency.isOptional())
-                  .setClassifier(artifact.getClassifier())
-                  .setScopeType(artifactDependency.getScope());
+         Dependency d = MavenConvertUtils.convertToDependency(node);
          if (filter == null || filter.accept(d))
          {
             result.add(d);
@@ -202,6 +195,69 @@ public class MavenDependencyResolver implements DependencyResolver
       catch (ArtifactResolutionException e)
       {
          throw new MavenOperationException(e);
+      }
+   }
+
+   public List<Dependency> resolveAddonDependencies(String coordinates) throws Exception
+   {
+      RepositorySystem system = container.lookup(RepositorySystem.class);
+      Settings settings = container.getSettings();
+      MavenRepositorySystemSession session = setupRepoSession(system, settings);
+      final CoordinateBuilder coord = CoordinateBuilder.create(coordinates);
+      Artifact queryArtifact = coordinateToMavenArtifact(coord);
+      CollectRequest collectRequest = new CollectRequest(new org.sonatype.aether.graph.Dependency(queryArtifact,
+               null), container.getEnabledRepositoriesFromProfile(settings));
+
+      DependencyRequest dr = new DependencyRequest(collectRequest, null);
+      DependencyResult result = system.resolveDependencies(session, dr);
+      List<Dependency> collect = new ArrayList<Dependency>();
+      DependencyVisitor visitor = new TreeDependencyVisitor(new AddonDependencyVisitor(coord.getGroupId(),
+               coord.getArtifactId(), collect));
+      result.getRoot().accept(visitor);
+      return collect;
+   }
+
+   private class AddonDependencyVisitor implements DependencyVisitor
+   {
+      private String addonGroupId;
+      private String addonArtifactId;
+      private List<Dependency> dependencies;
+
+      public AddonDependencyVisitor(String addonGroupId, String addonArtifactId, List<Dependency> listCollector)
+      {
+         super();
+         this.addonGroupId = addonGroupId;
+         this.addonArtifactId = addonArtifactId;
+         this.dependencies = listCollector;
+      }
+
+      @Override
+      public boolean visitEnter(DependencyNode node)
+      {
+         Artifact artifact = node.getDependency().getArtifact();
+         // If it is the
+         if (addonGroupId.equals(artifact.getGroupId()) && addonArtifactId.equals(artifact.getArtifactId()))
+         {
+            return true;
+         }
+         else
+         {
+            if ("far".equals(artifact.getExtension()))
+            {
+               return false;
+            }
+            else
+            {
+               dependencies.add(MavenConvertUtils.convertToDependency(node));
+               return true;
+            }
+         }
+      }
+
+      @Override
+      public boolean visitLeave(DependencyNode node)
+      {
+         return true;
       }
    }
 }

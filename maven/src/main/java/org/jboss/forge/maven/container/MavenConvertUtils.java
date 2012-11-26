@@ -7,14 +7,18 @@
 
 package org.jboss.forge.maven.container;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
 import org.jboss.forge.addon.dependency.Coordinate;
+import org.jboss.forge.addon.dependency.Dependency;
 import org.jboss.forge.addon.dependency.DependencyRepository;
+import org.jboss.forge.addon.dependency.builder.DependencyBuilder;
 import org.sonatype.aether.artifact.Artifact;
+import org.sonatype.aether.graph.DependencyNode;
 import org.sonatype.aether.repository.Authentication;
 import org.sonatype.aether.repository.RemoteRepository;
 import org.sonatype.aether.util.artifact.DefaultArtifact;
@@ -51,4 +55,20 @@ class MavenConvertUtils
                dep.getPackaging() == null ? "far" : dep.getPackaging(), dep.getVersion());
       return artifact;
    }
+
+   static Dependency convertToDependency(DependencyNode node)
+   {
+      org.sonatype.aether.graph.Dependency artifactDependency = node.getDependency();
+      Artifact artifact = artifactDependency.getArtifact();
+      File file = artifact.getFile();
+
+      Dependency d = DependencyBuilder.create().setArtifactId(artifact.getArtifactId())
+               .setGroupId(artifact.getGroupId()).setVersion(artifact.getVersion())
+               .setPackaging(artifact.getExtension()).setArtifact(file)
+               .setOptional(artifactDependency.isOptional())
+               .setClassifier(artifact.getClassifier())
+               .setScopeType(artifactDependency.getScope());
+      return d;
+   }
+
 }

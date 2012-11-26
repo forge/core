@@ -16,7 +16,6 @@ import org.jboss.forge.addon.dependency.DependencyQuery;
 import org.jboss.forge.addon.dependency.DependencyRepository;
 import org.jboss.forge.addon.dependency.builder.CoordinateBuilder;
 import org.jboss.forge.addon.dependency.builder.DependencyQueryBuilder;
-import org.jboss.forge.addon.dependency.spi.DependencyResolver;
 import org.jboss.forge.maven.container.MavenContainer;
 import org.jboss.forge.maven.container.MavenDependencyResolver;
 import org.jboss.forge.maven.dependency.filter.PackagingDependencyFilter;
@@ -30,7 +29,7 @@ import org.junit.Test;
  */
 public class MavenDependencyResolverTest
 {
-   private DependencyResolver resolver;
+   private MavenDependencyResolver resolver;
 
    @Before
    public void setUp()
@@ -83,5 +82,15 @@ public class MavenDependencyResolverTest
       File artifact = resolver.resolveArtifact(query);
       Assert.assertNotNull(artifact);
       Assert.assertTrue("Artifact does not exist: " + artifact, artifact.exists());
+   }
+
+   @Test
+   public void testResolveNode() throws Exception
+   {
+      List<Dependency> addonDeps = resolver
+               .resolveAddonDependencies("org.jboss.forge:forge-example-plugin:far::2.0.0-SNAPSHOT");
+      Assert.assertNotNull(addonDeps);
+      Assert.assertEquals(1, addonDeps.size());
+      Assert.assertEquals("commons-lang", addonDeps.get(0).getCoordinate().getArtifactId());
    }
 }
