@@ -10,8 +10,6 @@ public interface AddonRegistry
 
    Set<Addon> getRegisteredAddons();
 
-   Map<ClassLoader, ServiceRegistry> getServices(Addon addon);
-
-   Map<ClassLoader, ServiceRegistry> getServices();
+   Map<Addon, ServiceRegistry> getServices();
 
 }

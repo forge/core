@@ -13,6 +13,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.AddonEntry;
+import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.AddonRepository;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -26,6 +27,9 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class AddonManagerTest
 {
+   @Inject
+   private AddonRegistry registry;
+
    @Inject
    private AddonManager addonManager;
 
@@ -43,16 +47,17 @@ public class AddonManagerTest
                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
                .setAsForgeXML(new StringAsset("<addon/>"));
 
-      System.out.println(archive.toString(true));
-
       return archive;
    }
 
    @Test
-   public void testResolvingAddon()
+   public void testResolvingAddon() throws InterruptedException
    {
+      int addonCount = registry.getRegisteredAddons().size();
       AddonEntry addon = AddonEntry.fromCoordinates("org.jboss.forge:forge-example-plugin:2.0.0-SNAPSHOT");
       Assert.assertTrue(addonManager.install(addon));
       Assert.assertTrue(repository.has(addon));
+      Thread.sleep(500);
+      Assert.assertEquals(addonCount + 1, registry.getRegisteredAddons().size());
    }
 }

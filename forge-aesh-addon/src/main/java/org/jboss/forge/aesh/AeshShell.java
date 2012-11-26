@@ -6,22 +6,22 @@
  */
 package org.jboss.forge.aesh;
 
-import org.jboss.aesh.console.Console;
-import org.jboss.aesh.console.ConsoleOutput;
-import org.jboss.aesh.console.settings.Settings;
-import org.jboss.forge.container.AddonRegistry;
-import org.jboss.forge.container.ContainerControl;
-import org.jboss.forge.container.event.Startup;
-import org.jboss.forge.container.services.Remote;
-import org.jboss.forge.container.services.ServiceRegistry;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.Set;
 
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.Set;
+
+import org.jboss.aesh.console.Console;
+import org.jboss.aesh.console.ConsoleOutput;
+import org.jboss.aesh.console.settings.Settings;
+import org.jboss.forge.container.Addon;
+import org.jboss.forge.container.AddonRegistry;
+import org.jboss.forge.container.ContainerControl;
+import org.jboss.forge.container.event.Startup;
+import org.jboss.forge.container.services.Remote;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
@@ -71,10 +71,10 @@ public class AeshShell
 
    private void listServices(Console console) throws IOException
    {
-      Map<ClassLoader, ServiceRegistry> serviceRegistries = registry.getServices();
-      for (ServiceRegistry registry : serviceRegistries.values())
+      Set<Addon> addons = registry.getRegisteredAddons();
+      for (Addon addon : addons)
       {
-         Set<Class<?>> serviceClasses = registry.getServices();
+         Set<Class<?>> serviceClasses = addon.getServiceRegistry().getServices();
          for (Class<?> type : serviceClasses)
          {
             console.pushToStdOut("\n" + type.getName());

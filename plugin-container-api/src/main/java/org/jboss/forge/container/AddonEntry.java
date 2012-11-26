@@ -5,6 +5,7 @@ import java.util.List;
 
 public class AddonEntry
 {
+   private static final String DEFAULT_SLOT = "main";
    private final String name;
    private final String apiVersion;
    private final String slot;
@@ -35,13 +36,13 @@ public class AddonEntry
 
    public String getSlot()
    {
-      return slot;
+      return slot == null ? DEFAULT_SLOT : slot;
    }
 
    @Override
    public String toString()
    {
-      return name + ":" + apiVersion + ":" + slot;
+      return toCoordinates();
    }
 
    public static AddonEntry fromCoordinates(final String coordinates)
@@ -77,9 +78,14 @@ public class AddonEntry
       return new AddonEntry(name, apiVersion, slot);
    }
 
+   public String toCoordinates()
+   {
+      return getName() + ":" + getApiVersion() + ":" + getSlot();
+   }
+
    public String toModuleId()
    {
-      return name + ":" + slot;
+      return getName() + ":" + getSlot();
    }
 
    @Override
@@ -126,10 +132,4 @@ public class AddonEntry
          return false;
       return true;
    }
-
-   public String toCoordinates()
-   {
-      return toString();
-   }
-   
 }

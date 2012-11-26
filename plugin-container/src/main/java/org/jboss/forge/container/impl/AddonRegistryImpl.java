@@ -32,21 +32,13 @@ public class AddonRegistryImpl implements AddonRegistry
    }
 
    @Override
-   public Map<ClassLoader, ServiceRegistry> getServices()
+   public Map<Addon, ServiceRegistry> getServices()
    {
-      Map<ClassLoader, ServiceRegistry> services = new HashMap<ClassLoader, ServiceRegistry>();
+      Map<Addon, ServiceRegistry> services = new HashMap<Addon, ServiceRegistry>();
       for (Addon addon : addons)
       {
-         services.put(addon.getClassLoader(), addon.getServiceRegistry());
+         services.put(addon, addon.getServiceRegistry());
       }
-      return services;
-   }
-
-   @Override
-   public Map<ClassLoader, ServiceRegistry> getServices(Addon addon)
-   {
-      Map<ClassLoader, ServiceRegistry> services = new HashMap<ClassLoader, ServiceRegistry>();
-      services.put(addon.getClassLoader(), addon.getServiceRegistry());
       return services;
    }
 
