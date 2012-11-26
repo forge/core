@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,7 +23,9 @@ import javax.enterprise.inject.Typed;
 import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonEntry;
 import org.jboss.forge.container.AddonRepository;
+import org.jboss.forge.container.exception.AddonDeploymentException;
 import org.jboss.forge.container.util.Assert;
+import org.jboss.forge.container.util.Files;
 import org.jboss.forge.container.util.OSUtils;
 import org.jboss.forge.container.util.Streams;
 import org.jboss.forge.container.util.Strings;
@@ -32,7 +35,7 @@ import org.jboss.forge.parser.xml.XMLParserException;
 
 /**
  * Used to perform Addon installation/registration operations.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:koen.aers@gmail.com">Koen Aers</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
@@ -64,16 +67,16 @@ public final class AddonRepositoryImpl implements AddonRepository
 
    /**
     * This method only returns true if:
-    * 
+    *
     * - The major version of pluginApiVersion is equal to the major version of runtimeVersion AND
-    * 
+    *
     * - The minor version of pluginApiVersion is less or equal to the minor version of runtimeVersion
-    * 
+    *
     * @param runtimeVersion a version in the format x.x.x
     * @param addonApiVersion a version in the format x.x.x
     * @return
     */
-   public static boolean isApiCompatible(CharSequence runtimeVersion, String addonApiVersion)
+   public static boolean isApiCompatible(CharSequence runtimeVersion, CharSequence addonApiVersion)
    {
       Matcher runtimeMatcher = VERSION_PATTERN.matcher(runtimeVersion);
       if (runtimeMatcher.matches())
@@ -81,13 +84,13 @@ public final class AddonRepositoryImpl implements AddonRepository
          int runtimeMajorVersion = Integer.parseInt(runtimeMatcher.group(1));
          int runtimeMinorVersion = Integer.parseInt(runtimeMatcher.group(2));
 
-         Matcher pluginApiMatcher = VERSION_PATTERN.matcher(addonApiVersion);
-         if (pluginApiMatcher.matches())
+         Matcher addonApiMatcher = VERSION_PATTERN.matcher(addonApiVersion);
+         if (addonApiMatcher.matches())
          {
-            int pluginApiMajorVersion = Integer.parseInt(pluginApiMatcher.group(1));
-            int pluginApiMinorVersion = Integer.parseInt(pluginApiMatcher.group(2));
+            int addonApiMajorVersion = Integer.parseInt(addonApiMatcher.group(1));
+            int addonApiMinorVersion = Integer.parseInt(addonApiMatcher.group(2));
 
-            if (pluginApiMajorVersion == runtimeMajorVersion && pluginApiMinorVersion <= runtimeMinorVersion)
+            if (addonApiMajorVersion == runtimeMajorVersion && addonApiMinorVersion <= runtimeMinorVersion)
             {
                return true;
             }
@@ -96,7 +99,6 @@ public final class AddonRepositoryImpl implements AddonRepository
       return false;
    }
 
-   public static final String PROP_ADDON_DIR = "org.jboss.forge.addonDir";
    private static final String DEFAULT_SLOT = "main";
    private static final String ATTR_SLOT = "slot";
    private static final String ATTR_API_VERSION = "api-version";
@@ -104,6 +106,7 @@ public final class AddonRepositoryImpl implements AddonRepository
    private static final String ADDON_DIR_DEFAULT = ".forge/addons";
    private static final String REGISTRY_FILE_NAME = "installed.xml";
    private static final Pattern VERSION_PATTERN = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)(\\.|-)(.*)");
+   private static final String FAR_DESCRIPTOR_FILENAME = "forge.xml";
 
    private File addonDir;
 
@@ -373,7 +376,7 @@ public final class AddonRepositoryImpl implements AddonRepository
 
    public File getAddonSlotDir(AddonEntry addon)
    {
-      return new File(getAddonBaseDir(addon).getAbsolutePath() + "/" + addon.getSlot());
+      return new File(getAddonBaseDir(addon).getAbsolutePath(), addon.getSlot());
    }
 
    public synchronized List<AddonDependency> getAddonDependencies(AddonEntry addon)
@@ -408,7 +411,7 @@ public final class AddonRepositoryImpl implements AddonRepository
 
    public synchronized File getAddonDescriptor(AddonEntry addon)
    {
-      File descriptorFile = new File(getAddonResourceDir(addon).getAbsolutePath() + "/forge.xml");
+      File descriptorFile = new File(getAddonResourceDir(addon), FAR_DESCRIPTOR_FILENAME);
       try
       {
          if (!descriptorFile.exists())
@@ -427,5 +430,27 @@ public final class AddonRepositoryImpl implements AddonRepository
       {
          throw new RuntimeException("Error initializing addon descriptor file.", e);
       }
+   }
+
+   @Override
+   public synchronized AddonEntry deploy(AddonEntry entry, File farFile, File... dependencies)
+   {
+      File addonBaseDir = getAddonBaseDir(entry);
+      File addonSlotDir = getAddonSlotDir(entry);
+      try
+      {
+         Files.copyFileToDirectory(farFile, addonSlotDir);
+         // TODO: Create a getAddonDependencyDir method ?
+         File dependencyDir = new File(addonBaseDir, "dependencies");
+         for (File dependency : dependencies)
+         {
+            Files.copyFileToDirectory(dependency, dependencyDir);
+         }
+      }
+      catch (IOException io)
+      {
+         throw new AddonDeploymentException("Could not deploy addon " + entry, io);
+      }
+      return entry;
    }
 }

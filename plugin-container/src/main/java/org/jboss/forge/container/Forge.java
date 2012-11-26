@@ -41,6 +41,11 @@ public final class Forge
          System.out.println("Warning! Could not detect Forge runtime version - " +
                   "loading all addons, but failures may occur if versions are not compatible.");
 
+      installMBeanServer();
+   }
+
+   private void installMBeanServer()
+   {
       try
       {
          Method method = ModuleLoader.class.getDeclaredMethod("installMBeanServer");
@@ -239,6 +244,11 @@ public final class Forge
    public File getAddonDir()
    {
       return repository.getRepositoryDirectory();
+   }
+
+   public AddonRepository getRepository()
+   {
+      return repository;
    }
 
 }

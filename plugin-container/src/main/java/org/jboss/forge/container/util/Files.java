@@ -172,10 +172,6 @@ public final class Files
     * This method copies the contents of the specified source file to the specified destination file. The directory
     * holding the destination file is created if it does not exist. If the destination file exists, then this method
     * will overwrite it.
-    * <p>
-    * <strong>Note:</strong> Setting <code>preserveFileDate</code> to <code>true</code> tries to preserve the file's
-    * last modified date/times using {@link File#setLastModified(long)}, however it is not guaranteed that the operation
-    * will succeed. If the modification operation fails, no indication is provided.
     *
     * @param srcFile an existing file to copy, must not be <code>null</code>
     * @param destFile the new file, must not be <code>null</code>

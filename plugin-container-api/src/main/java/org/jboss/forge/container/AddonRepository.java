@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * Used to perform Addon installation/registration operations.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:koen.aers@gmail.com">Koen Aers</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
@@ -47,4 +47,6 @@ public interface AddonRepository
    public List<AddonDependency> getAddonDependencies(AddonEntry addon);
 
    public File getAddonDescriptor(AddonEntry addon);
+
+   public AddonEntry deploy(AddonEntry entry, File farFile, File... dependencies);
 }
