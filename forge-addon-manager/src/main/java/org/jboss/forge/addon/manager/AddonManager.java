@@ -77,7 +77,7 @@ public class AddonManager
 
    public String toMavenCoordinates(AddonEntry entry)
    {
-      return entry.toCoordinates().replaceAll("([^:]+):([^:]+):([^:]+)", "$1:$2:far:$3");
+      return entry.getName() + ":far:" + entry.getVersion();
    }
 
    public boolean install(AddonEntry entry, File farFile, File[] dependencies)

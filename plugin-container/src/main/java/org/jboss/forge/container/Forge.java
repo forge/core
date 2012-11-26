@@ -198,24 +198,23 @@ public final class Forge
       Set<Addon> result = new HashSet<Addon>();
 
       String runtimeVersion = AddonRepositoryImpl.getRuntimeAPIVersion();
-      List<AddonEntry> installed = repository.listByAPICompatibleVersion(runtimeVersion);
+      List<AddonEntry> enabledCompatible = repository.listEnabledCompatibleWithVersion(runtimeVersion);
 
       if (AddonRepositoryImpl.hasRuntimeAPIVersion())
       {
-         List<AddonEntry> incompatible = repository.listInstalled();
-         incompatible.removeAll(installed);
+         List<AddonEntry> incompatible = repository.listEnabled();
+         incompatible.removeAll(enabledCompatible);
 
          for (AddonEntry entry : incompatible)
          {
             System.out.println("Not loading addon [" + entry.getName()
                      + "] because it references Forge API version [" + entry.getApiVersion()
                      + "] which may not be compatible with my current version [" + Bootstrap.class.getPackage()
-                              .getImplementationVersion() + "]. To remove this addon, type 'forge remove-addon "
-                     + entry + ". Otherwise, try installing a new version of the addon.");
+                              .getImplementationVersion() + "].");
          }
       }
 
-      for (AddonEntry entry : installed)
+      for (AddonEntry entry : enabledCompatible)
       {
          try
          {
@@ -249,6 +248,11 @@ public final class Forge
    public AddonRepository getRepository()
    {
       return repository;
+   }
+
+   public String getVersion()
+   {
+      return AddonRepositoryImpl.getRuntimeAPIVersion();
    }
 
 }

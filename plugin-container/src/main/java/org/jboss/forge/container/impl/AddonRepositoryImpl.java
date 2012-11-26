@@ -56,27 +56,29 @@ public final class AddonRepositoryImpl implements AddonRepository
 
    public static boolean isApiCompatible(CharSequence runtimeVersion, AddonEntry entry)
    {
-      Assert.notNull(runtimeVersion, "Runtime API version must not be null.");
       Assert.notNull(entry, "Addon entry must not be null.");
-      String addonApiVersion = entry.getApiVersion();
-      Assert.notNull(addonApiVersion, "Addon entry.getApiVersion() must not be null.");
 
-      return isApiCompatible(runtimeVersion, addonApiVersion);
+      return isApiCompatible(runtimeVersion, entry.getApiVersion());
    }
 
    /**
     * This method only returns true if:
     * 
-    * - The major version of pluginApiVersion is equal to the major version of runtimeVersion AND
+    * - The major version of addonApiVersion is equal to the major version of runtimeVersion AND
     * 
-    * - The minor version of pluginApiVersion is less or equal to the minor version of runtimeVersion
+    * - The minor version of addonApiVersion is less or equal to the minor version of runtimeVersion
+    * 
+    * - The addonApiVersion is null
     * 
     * @param runtimeVersion a version in the format x.x.x
     * @param addonApiVersion a version in the format x.x.x
-    * @return
     */
    public static boolean isApiCompatible(CharSequence runtimeVersion, CharSequence addonApiVersion)
    {
+      if (addonApiVersion == null || addonApiVersion.length() == 0
+               || runtimeVersion == null || runtimeVersion.length() == 0)
+         return true;
+
       Matcher runtimeMatcher = VERSION_PATTERN.matcher(runtimeVersion);
       if (runtimeMatcher.matches())
       {
@@ -98,7 +100,7 @@ public final class AddonRepositoryImpl implements AddonRepository
       return false;
    }
 
-   private static final String ATTR_SLOT = "slot";
+   private static final String ATTR_VERSION = "version";
    private static final String ATTR_API_VERSION = "api-version";
    private static final String ATTR_NAME = "name";
    private static final String ADDON_DIR_DEFAULT = ".forge/addons";
@@ -165,27 +167,23 @@ public final class AddonRepositoryImpl implements AddonRepository
       }
    }
 
-   public synchronized List<AddonEntry> listByAPICompatibleVersion(final String version)
+   public synchronized List<AddonEntry> listEnabledCompatibleWithVersion(final String version)
    {
-      List<AddonEntry> list = listInstalled();
+      List<AddonEntry> list = listEnabled();
       List<AddonEntry> result = list;
 
-      if (version != null)
+      result = new ArrayList<AddonEntry>();
+      for (AddonEntry entry : list)
       {
-         result = new ArrayList<AddonEntry>();
-         for (AddonEntry entry : list)
+         if (isApiCompatible(version, entry))
          {
-            if (isApiCompatible(version, entry))
-            {
-               result.add(entry);
-            }
+            result.add(entry);
          }
       }
-
       return result;
    }
 
-   public synchronized List<AddonEntry> listInstalled()
+   public synchronized List<AddonEntry> listEnabled()
    {
       List<AddonEntry> result = new ArrayList<AddonEntry>();
       File registryFile = getRegistryFile();
@@ -200,8 +198,8 @@ public final class AddonRepositoryImpl implements AddonRepository
          for (Node addon : list)
          {
             AddonEntry entry = AddonEntry.from(addon.getAttribute(ATTR_NAME),
-                     addon.getAttribute(ATTR_API_VERSION),
-                     addon.getAttribute(ATTR_SLOT));
+                     addon.getAttribute(ATTR_VERSION),
+                     addon.getAttribute(ATTR_API_VERSION));
             result.add(entry);
          }
       }
@@ -228,16 +226,16 @@ public final class AddonRepositoryImpl implements AddonRepository
       {
          throw new RuntimeException("Addon name must not be null");
       }
+      if (Strings.isNullOrEmpty(addon.getVersion()))
+      {
+         throw new RuntimeException("Addon version must not be null");
+      }
       if (Strings.isNullOrEmpty(addon.getApiVersion()))
       {
-         throw new RuntimeException("Addon API version must not be null");
-      }
-      if (Strings.isNullOrEmpty(addon.getSlot()))
-      {
-         addon = AddonEntry.from(addon.getName(), addon.getApiVersion(), addon.getSlot());
+         addon = AddonEntry.from(addon.getName(), addon.getVersion(), addon.getApiVersion());
       }
 
-      List<AddonEntry> installedAddons = listInstalled();
+      List<AddonEntry> installedAddons = listEnabled();
       for (AddonEntry e : installedAddons)
       {
          if (addon.getName().equals(e.getName()))
@@ -251,9 +249,9 @@ public final class AddonRepositoryImpl implements AddonRepository
       {
          Node installed = XMLParser.parse(registryFile);
 
-         installed.getOrCreate("addon@" + ATTR_NAME + "=" + addon.getName() +
-                  "&" + ATTR_API_VERSION + "=" + addon.getApiVersion())
-                  .attribute(ATTR_SLOT, addon.getSlot());
+         installed.getOrCreate("addon@" + ATTR_NAME + "=" + (addon.getName() == null ? "" : addon.getName()) +
+                  "&" + ATTR_VERSION + "=" + addon.getVersion())
+                  .attribute(ATTR_API_VERSION, (addon.getApiVersion() == null ? "" : addon.getApiVersion()));
          Streams.write(XMLParser.toXMLInputStream(installed), new FileOutputStream(registryFile));
 
          return true;
@@ -279,8 +277,7 @@ public final class AddonRepositoryImpl implements AddonRepository
             Node installed = XMLParser.parse(registryFile);
 
             Node child = installed.getSingle("addon@" + ATTR_NAME + "=" + addon.getName() + "&"
-                     + ATTR_API_VERSION
-                     + "=" + addon.getApiVersion());
+                     + ATTR_VERSION + "=" + addon.getVersion());
             installed.removeChild(child);
             Streams.write(XMLParser.toXMLInputStream(installed), new FileOutputStream(registryFile));
             return true;
@@ -293,7 +290,7 @@ public final class AddonRepositoryImpl implements AddonRepository
       return false;
    }
 
-   public synchronized AddonEntry get(final AddonEntry addon)
+   private synchronized AddonEntry getEnabled(final AddonEntry addon)
    {
       if (addon == null)
       {
@@ -313,12 +310,12 @@ public final class AddonRepositoryImpl implements AddonRepository
                if ((addon.getApiVersion() == null)
                         || addon.getApiVersion().equals(child.getAttribute(ATTR_API_VERSION)))
                {
-                  if ((addon.getSlot() == null)
-                           || addon.getSlot().equals(child.getAttribute(ATTR_SLOT)))
+                  if ((addon.getVersion() == null)
+                           || addon.getVersion().equals(child.getAttribute(ATTR_VERSION)))
                   {
                      return AddonEntry.from(child.getAttribute(ATTR_NAME),
-                              child.getAttribute(ATTR_API_VERSION),
-                              child.getAttribute(ATTR_SLOT));
+                              child.getAttribute(ATTR_VERSION),
+                              child.getAttribute(ATTR_API_VERSION));
                   }
                }
             }
@@ -334,17 +331,17 @@ public final class AddonRepositoryImpl implements AddonRepository
 
    public synchronized File getAddonResourceDir(AddonEntry found)
    {
-      Assert.notNull(found.getSlot(), "Addon slot must be specified.");
+      Assert.notNull(found.getVersion(), "Addon version must be specified.");
       Assert.notNull(found.getName(), "Addon name must be specified.");
 
       String path = found.getName().replaceAll("\\.", "/");
-      File addonDir = new File(getRepositoryDirectory(), path + "/" + found.getSlot());
+      File addonDir = new File(getRepositoryDirectory(), path + "/" + found.getVersion());
       return addonDir;
    }
 
    public synchronized File getAddonBaseDir(AddonEntry found)
    {
-      Assert.notNull(found.getSlot(), "Addon slot must be specified.");
+      Assert.notNull(found.getVersion(), "Addon version must be specified.");
       Assert.notNull(found.getName(), "Addon name must be specified.");
 
       String path = found.getName().split("\\.")[0];
@@ -352,9 +349,9 @@ public final class AddonRepositoryImpl implements AddonRepository
       return addonDir;
    }
 
-   public synchronized boolean has(final AddonEntry addon)
+   public synchronized boolean isEnabled(final AddonEntry addon)
    {
-      return get(addon) != null;
+      return getEnabled(addon) != null;
    }
 
    public List<File> getAddonResources(AddonEntry found)
@@ -376,7 +373,7 @@ public final class AddonRepositoryImpl implements AddonRepository
 
    public File getAddonSlotDir(AddonEntry addon)
    {
-      return new File(getAddonBaseDir(addon).getAbsolutePath(), addon.getSlot());
+      return new File(getAddonBaseDir(addon).getAbsolutePath(), addon.getVersion());
    }
 
    public synchronized List<AddonDependency> getAddonDependencies(AddonEntry addon)

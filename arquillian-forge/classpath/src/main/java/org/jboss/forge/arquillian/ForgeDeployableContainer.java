@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
@@ -37,7 +39,9 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    private static final int TEST_DEPLOYMENT_TIMEOUT = 60000;
    private ForgeRunnable thread;
    private File addonDir;
-   private AddonRepository addonUtil;
+   private AddonRepository repository;
+
+   private Map<Archive<?>, AddonEntry> deployedAddons = new HashMap<Archive<?>, AddonEntry>();
 
    private class ForgeRunnable implements Runnable
    {
@@ -97,7 +101,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       {
          this.addonDir = File.createTempFile("forge-test-addon-dir", "");
          System.out.println("Executing test case with addon dir [" + addonDir + "]");
-         this.addonUtil = AddonRepositoryImpl.forAddonDir(addonDir);
+         this.repository = AddonRepositoryImpl.forAddonDir(addonDir);
       }
       catch (IOException e1)
       {
@@ -130,7 +134,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    public ProtocolMetaData deploy(Archive<?> archive) throws DeploymentException
    {
       AddonEntry addon = getAddonEntry(archive);
-      File destDir = addonUtil.getAddonSlotDir(addon);
+      File destDir = repository.getAddonSlotDir(addon);
       destDir.mkdirs();
 
       if (!(archive instanceof ForgeArchive))
@@ -146,16 +150,16 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
          Asset asset = node.getAsset();
          try
          {
-            Streams.write(asset.openStream(), new FileOutputStream(addonUtil.getAddonDescriptor(addon)));
+            Streams.write(asset.openStream(), new FileOutputStream(repository.getAddonDescriptor(addon)));
          }
          catch (FileNotFoundException e)
          {
-            throw new DeploymentException("Could not open addon descriptor [" + addonUtil.getAddonDescriptor(addon)
+            throw new DeploymentException("Could not open addon descriptor [" + repository.getAddonDescriptor(addon)
                      + "].", e);
          }
       }
 
-      addonUtil.enable(addon);
+      repository.enable(addon);
 
       HTTPContext httpContext = new HTTPContext("localhost", 4141);
       httpContext.add(new Servlet("ArquillianServletRunner", "/ArquillianServletRunner"));
@@ -192,7 +196,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    public void undeploy(Archive<?> archive) throws DeploymentException
    {
       AddonEntry addon = getAddonEntry(archive);
-      addonUtil.disable(addon);
+      repository.disable(addon);
 
       long start = System.currentTimeMillis();
       boolean deployed = true;
@@ -217,7 +221,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
          }
       }
 
-      File dir = addonUtil.getAddonBaseDir(addon);
+      File dir = repository.getAddonBaseDir(addon);
       boolean deleted = Files.delete(dir, true);
       if (!deleted)
          throw new IllegalStateException("Could not delete file [" + dir.getAbsolutePath() + "]");
@@ -225,9 +229,15 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
 
    private AddonEntry getAddonEntry(Archive<?> archive)
    {
-      // FIXME - do not fix version
-      return AddonEntry.from(archive.getName().replaceFirst("\\.jar$", ""), "2.0.0-SNAPSHOT", UUID.randomUUID()
-               .toString());
+      if (!deployedAddons.containsKey(archive))
+      {
+         AddonEntry entry = AddonEntry.from(archive.getName().replaceFirst("\\.jar$", ""),
+                  UUID.randomUUID().toString(),
+                  thread.getForge().getVersion()
+                  );
+         deployedAddons.put(archive, entry);
+      }
+      return deployedAddons.get(archive);
    }
 
    @Override

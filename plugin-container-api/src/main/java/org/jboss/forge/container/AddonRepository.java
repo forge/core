@@ -10,7 +10,8 @@ import java.io.File;
 import java.util.List;
 
 /**
- * Used to perform Addon installation/registration operations. May be obtained using CDI injection:<p>
+ * Used to perform Addon installation/registration operations. May be obtained using CDI injection:
+ * <p>
  * <code>@{@link Inject} private {@link AddonRepository} repository;</code>
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -20,8 +21,6 @@ import java.util.List;
 public interface AddonRepository
 {
    public boolean deploy(AddonEntry entry, File farFile, File... dependencies);
-
-   public AddonEntry get(final AddonEntry addon);
 
    public File getAddonBaseDir(AddonEntry found);
 
@@ -39,13 +38,13 @@ public interface AddonRepository
 
    public File getRepositoryDirectory();
 
-   public boolean has(final AddonEntry addon);
+   public boolean isEnabled(final AddonEntry addon);
 
    public boolean enable(AddonEntry addon);
 
-   public List<AddonEntry> listByAPICompatibleVersion(final String version);
+   public List<AddonEntry> listEnabledCompatibleWithVersion(final String version);
 
-   public List<AddonEntry> listInstalled();
+   public List<AddonEntry> listEnabled();
 
    public boolean disable(final AddonEntry addon);
 }

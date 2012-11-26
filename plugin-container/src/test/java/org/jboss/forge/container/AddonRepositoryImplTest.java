@@ -17,7 +17,7 @@ public class AddonRepositoryImplTest
    @Test
    public void testMinorVersionCompatible() throws Exception
    {
-      AddonEntry entry = AddonEntry.fromCoordinates("com.example.plugin:1.0.0-SNAPSHOT:main");
+      AddonEntry entry = AddonEntry.fromCoordinates("com.example.plugin,40,1.0.0-SNAPSHOT");
       Assert.assertTrue(AddonRepositoryImpl.isApiCompatible("1.0.1.Final", entry));
       Assert.assertTrue(AddonRepositoryImpl.isApiCompatible("1.0.2.Final", entry));
       Assert.assertTrue(AddonRepositoryImpl.isApiCompatible("1.0.2000.Final", entry));
@@ -30,13 +30,13 @@ public class AddonRepositoryImplTest
       Assert.assertTrue(AddonRepositoryImpl.isApiCompatible("1.2.1.Final", entry));
       Assert.assertFalse(AddonRepositoryImpl.isApiCompatible("2.0.0.Final", entry));
       Assert.assertFalse(AddonRepositoryImpl.isApiCompatible("s1.0.0.Final", entry));
-      Assert.assertFalse(AddonRepositoryImpl.isApiCompatible("", entry));
+      Assert.assertTrue(AddonRepositoryImpl.isApiCompatible(null, entry));
    }
 
    @Test
    public void testMinorVersionCompatibleBackwards() throws Exception
    {
-      AddonEntry entry = AddonEntry.fromCoordinates("com.example.plugin:1.1.0-SNAPSHOT:main");
+      AddonEntry entry = AddonEntry.fromCoordinates("com.example.plugin,20.0i,1.1.0-SNAPSHOT");
       Assert.assertFalse(AddonRepositoryImpl.isApiCompatible("1.0.1.Final", entry));
       Assert.assertFalse(AddonRepositoryImpl.isApiCompatible("1.0.2.Final", entry));
       Assert.assertFalse(AddonRepositoryImpl.isApiCompatible("1.0.2000.Final", entry));
@@ -49,7 +49,8 @@ public class AddonRepositoryImplTest
       Assert.assertTrue(AddonRepositoryImpl.isApiCompatible("1.2.1.Final", entry));
       Assert.assertFalse(AddonRepositoryImpl.isApiCompatible("2.0.0.Final", entry));
       Assert.assertFalse(AddonRepositoryImpl.isApiCompatible("s1.0.0.Final", entry));
-      Assert.assertFalse(AddonRepositoryImpl.isApiCompatible("", entry));
+      Assert.assertTrue(AddonRepositoryImpl.isApiCompatible("", entry));
+      Assert.assertTrue(AddonRepositoryImpl.isApiCompatible(null, entry));
    }
 
 }

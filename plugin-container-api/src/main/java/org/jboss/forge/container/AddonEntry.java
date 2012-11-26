@@ -5,23 +5,23 @@ import java.util.List;
 
 public class AddonEntry
 {
-   private static final String DEFAULT_SLOT = "main";
+   private static final String NONE = null;
    private final String name;
    private final String apiVersion;
-   private final String slot;
+   private final String version;
 
-   protected AddonEntry(final String name, final String apiVersion, final String slot)
+   protected AddonEntry(final String name, final String version, final String apiVersion)
    {
       this.name = name;
+      this.version = version;
       this.apiVersion = apiVersion;
-      this.slot = slot;
    }
 
-   protected AddonEntry(final String name, final String apiVersion)
+   public AddonEntry(String name, String version)
    {
       this.name = name;
-      this.apiVersion = apiVersion;
-      this.slot = null;
+      this.version = version;
+      this.apiVersion = NONE;
    }
 
    public String getName()
@@ -31,12 +31,12 @@ public class AddonEntry
 
    public String getApiVersion()
    {
-      return apiVersion;
+      return apiVersion == null ? "" : apiVersion;
    }
 
-   public String getSlot()
+   public String getVersion()
    {
-      return slot == null ? DEFAULT_SLOT : slot;
+      return version;
    }
 
    @Override
@@ -47,45 +47,50 @@ public class AddonEntry
 
    public static AddonEntry fromCoordinates(final String coordinates)
    {
-      String[] split = coordinates.split(":");
+      String[] split = coordinates.split(",");
       List<String> tokens = Arrays.asList(split);
 
-      if (tokens.size() == 3)
+      if (tokens.size() >= 2)
       {
          if (tokens.get(0) == null || tokens.get(0).isEmpty())
             throw new IllegalArgumentException("Name was empty [" + coordinates + "]");
          if (tokens.get(1) == null || tokens.get(1).isEmpty())
             throw new IllegalArgumentException("Version was empty [" + coordinates + "]");
-         if (tokens.get(2) == null || tokens.get(2).isEmpty())
-            throw new IllegalArgumentException("Slot was empty [" + coordinates + "]");
-
-         return new AddonEntry(tokens.get(0), tokens.get(1), tokens.get(2));
       }
       else
       {
-         throw new IllegalArgumentException("Coordinates must be of the form 'name:apiVersion:slot'");
+         throw new IllegalArgumentException(
+                  "Coordinates must be of the form 'name,version' or 'name,version,api-version");
       }
 
+      if (tokens.size() == 3)
+      {
+         if (tokens.get(2) == null || tokens.get(2).isEmpty())
+            throw new IllegalArgumentException("API version was empty [" + coordinates + "]");
+         return new AddonEntry(tokens.get(0), tokens.get(1), tokens.get(2));
+      }
+      return new AddonEntry(tokens.get(0), tokens.get(1));
+
    }
 
-   public static AddonEntry from(String name, String apiVersion)
+   public static AddonEntry from(String name, String version)
    {
-      return new AddonEntry(name, apiVersion);
+      return new AddonEntry(name, version);
    }
 
-   public static AddonEntry from(String name, String apiVersion, String slot)
+   public static AddonEntry from(String name, String version, String apiVersion)
    {
-      return new AddonEntry(name, apiVersion, slot);
+      return new AddonEntry(name, version, apiVersion);
    }
 
    public String toCoordinates()
    {
-      return getName() + ":" + getApiVersion() + ":" + getSlot();
+      return getName() + "," + getVersion() + "," + getApiVersion();
    }
 
    public String toModuleId()
    {
-      return getName() + ":" + getSlot();
+      return getName().replaceAll(":", ".") + ":" + getVersion();
    }
 
    @Override
@@ -95,7 +100,7 @@ public class AddonEntry
       int result = 1;
       result = (prime * result) + ((apiVersion == null) ? 0 : apiVersion.hashCode());
       result = (prime * result) + ((name == null) ? 0 : name.hashCode());
-      result = (prime * result) + ((slot == null) ? 0 : slot.hashCode());
+      result = (prime * result) + ((version == null) ? 0 : version.hashCode());
       return result;
    }
 
@@ -123,12 +128,12 @@ public class AddonEntry
       }
       else if (!name.equals(other.name))
          return false;
-      if (slot == null)
+      if (version == null)
       {
-         if (other.slot != null)
+         if (other.version != null)
             return false;
       }
-      else if (!slot.equals(other.slot))
+      else if (!version.equals(other.version))
          return false;
       return true;
    }

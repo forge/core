@@ -161,7 +161,7 @@ public class AddonModuleLoader extends ModuleLoader
    private AddonEntry findInstalledModule(ModuleIdentifier moduleId)
    {
       AddonEntry found = null;
-      for (AddonEntry addon : addonUtil.listByAPICompatibleVersion(AddonRepositoryImpl.getRuntimeAPIVersion()))
+      for (AddonEntry addon : addonUtil.listEnabledCompatibleWithVersion(AddonRepositoryImpl.getRuntimeAPIVersion()))
       {
          if (addon.toModuleId().equals(moduleId.toString()))
          {
@@ -175,7 +175,7 @@ public class AddonModuleLoader extends ModuleLoader
    private ModuleIdentifier findCompatibleInstalledModule(AddonDependency dependency)
    {
       AddonEntry found = null;
-      for (AddonEntry addon : addonUtil.listByAPICompatibleVersion(AddonRepositoryImpl.getRuntimeAPIVersion()))
+      for (AddonEntry addon : addonUtil.listEnabledCompatibleWithVersion(AddonRepositoryImpl.getRuntimeAPIVersion()))
       {
          // TODO implement proper version-range resolution
          if (addon.getName().equals(dependency.getName()))
@@ -186,7 +186,7 @@ public class AddonModuleLoader extends ModuleLoader
       }
 
       if (found != null)
-         return ModuleIdentifier.create(found.getName(), found.getSlot());
+         return ModuleIdentifier.create(found.getName(), found.getVersion());
 
       return null;
    }

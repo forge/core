@@ -54,9 +54,9 @@ public class AddonManagerTest
    public void testResolvingAddon() throws InterruptedException
    {
       int addonCount = registry.getRegisteredAddons().size();
-      AddonEntry addon = AddonEntry.fromCoordinates("org.jboss.forge:forge-example-plugin:2.0.0-SNAPSHOT");
+      AddonEntry addon = AddonEntry.fromCoordinates("org.jboss.forge:forge-example-plugin,2.0.0-SNAPSHOT");
       Assert.assertTrue(addonManager.install(addon));
-      Assert.assertTrue(repository.has(addon));
+      Assert.assertTrue(repository.isEnabled(addon));
       Thread.sleep(500);
       Assert.assertEquals(addonCount + 1, registry.getRegisteredAddons().size());
    }
