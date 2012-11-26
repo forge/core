@@ -9,8 +9,7 @@ import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.jboss.shrinkwrap.resolver.api.DependencyResolvers;
-import org.jboss.shrinkwrap.resolver.api.maven.MavenDependencyResolver;
+import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,9 +23,12 @@ public class AeshAddonTest
    @Deployment
    public static ForgeArchive getDeployment()
    {
-      ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
+      ForgeArchive archive = ShrinkWrap
+               .create(ForgeArchive.class)
                .addClasses(AeshShell.class)
-               .addAsLibraries(DependencyResolvers.use(MavenDependencyResolver.class).loadMetadataFromPom("pom.xml").artifact("org.jboss.aesh:aesh:0.22").resolveAs(JavaArchive.class))
+               .addAsLibraries(
+                        Maven.resolver().loadPomFromFile("pom.xml").resolve("org.jboss.aesh:aesh:0.22")
+                                 .withTransitivity().as(JavaArchive.class))
                .addAsManifestResource(new StringAsset(""), ArchivePaths.create("beans.xml"))
                .setAsForgeXML(new StringAsset("<addon/>"));
 
