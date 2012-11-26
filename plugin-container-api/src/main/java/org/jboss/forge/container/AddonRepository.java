@@ -19,7 +19,7 @@ import java.util.List;
  */
 public interface AddonRepository
 {
-   public AddonEntry deploy(AddonEntry entry, File farFile, File... dependencies);
+   public boolean deploy(AddonEntry entry, File farFile, File... dependencies);
 
    public AddonEntry get(final AddonEntry addon);
 
@@ -41,11 +41,11 @@ public interface AddonRepository
 
    public boolean has(final AddonEntry addon);
 
-   public boolean install(AddonEntry addon);
+   public boolean enable(AddonEntry addon);
 
    public List<AddonEntry> listByAPICompatibleVersion(final String version);
 
    public List<AddonEntry> listInstalled();
 
-   public boolean remove(final AddonEntry addon);
+   public boolean disable(final AddonEntry addon);
 }

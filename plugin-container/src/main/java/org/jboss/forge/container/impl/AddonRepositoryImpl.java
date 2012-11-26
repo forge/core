@@ -23,7 +23,6 @@ import javax.enterprise.inject.Typed;
 import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonEntry;
 import org.jboss.forge.container.AddonRepository;
-import org.jboss.forge.container.exception.AddonDeploymentException;
 import org.jboss.forge.container.util.Assert;
 import org.jboss.forge.container.util.Files;
 import org.jboss.forge.container.util.OSUtils;
@@ -218,7 +217,7 @@ public final class AddonRepositoryImpl implements AddonRepository
       return result;
    }
 
-   public synchronized boolean install(AddonEntry addon)
+   public synchronized boolean enable(AddonEntry addon)
    {
       if (addon == null)
       {
@@ -243,7 +242,7 @@ public final class AddonRepositoryImpl implements AddonRepository
       {
          if (addon.getName().equals(e.getName()))
          {
-            remove(e);
+            disable(e);
          }
       }
 
@@ -252,8 +251,8 @@ public final class AddonRepositoryImpl implements AddonRepository
       {
          Node installed = XMLParser.parse(registryFile);
 
-         installed.getOrCreate(
-                  "addon@" + ATTR_NAME + "=" + addon.getName() + "&" + ATTR_API_VERSION + "=" + addon.getApiVersion())
+         installed.getOrCreate("addon@" + ATTR_NAME + "=" + addon.getName() +
+                  "&" + ATTR_API_VERSION + "=" + addon.getApiVersion())
                   .attribute(ATTR_SLOT, addon.getSlot());
          Streams.write(XMLParser.toXMLInputStream(installed), new FileOutputStream(registryFile));
 
@@ -261,12 +260,11 @@ public final class AddonRepositoryImpl implements AddonRepository
       }
       catch (FileNotFoundException e)
       {
-         throw new RuntimeException("Could not read [" + registryFile.getAbsolutePath()
-                  + "] - ", e);
+         throw new RuntimeException("Could not read [" + registryFile.getAbsolutePath() + "] - ", e);
       }
    }
 
-   public synchronized boolean remove(final AddonEntry addon)
+   public synchronized boolean disable(final AddonEntry addon)
    {
       if (addon == null)
       {
@@ -289,6 +287,7 @@ public final class AddonRepositoryImpl implements AddonRepository
          }
          catch (FileNotFoundException e)
          {
+            throw new RuntimeException("Could not read [" + registryFile.getAbsolutePath() + "] - ", e);
          }
       }
       return false;
@@ -434,7 +433,7 @@ public final class AddonRepositoryImpl implements AddonRepository
    }
 
    @Override
-   public synchronized AddonEntry deploy(AddonEntry entry, File farFile, File... dependencies)
+   public synchronized boolean deploy(AddonEntry entry, File farFile, File... dependencies)
    {
       File addonSlotDir = getAddonSlotDir(entry);
       try
@@ -444,11 +443,13 @@ public final class AddonRepositoryImpl implements AddonRepository
          {
             Files.copyFileToDirectory(dependency, addonSlotDir);
          }
+         return true;
       }
       catch (IOException io)
       {
-         throw new AddonDeploymentException("Could not deploy addon " + entry, io);
+         // TODO throw exception instead?
+         io.printStackTrace();
+         return false;
       }
-      return entry;
    }
 }

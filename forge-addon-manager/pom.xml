@@ -17,14 +17,8 @@
       <dependency>
          <groupId>org.jboss.shrinkwrap.resolver</groupId>
          <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
-         <scope>compile</scope>
-         <exclusions>
-            <exclusion>
-               <groupId>com.google.collections</groupId>
-               <artifactId>google-collections</artifactId>
-            </exclusion>
-         </exclusions>
       </dependency>
+
       <dependency>
          <groupId>org.jboss.forge</groupId>
          <artifactId>forge-test-harness</artifactId>

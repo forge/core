@@ -20,17 +20,15 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-@Ignore
 public class AddonManagerTest
 {
    @Inject
    private AddonManager addonManager;
-   
+
    @Inject
    private AddonRepository repository;
 
@@ -41,17 +39,20 @@ public class AddonManagerTest
                .create(ForgeArchive.class)
                .addPackages(true, AddonManager.class.getPackage())
                .addAsLibraries(
-                        Maven.resolver().offline().loadPomFromFile("pom.xml").importRuntimeDependencies()
-                                 .asFile())
+                        Maven.resolver().offline().loadPomFromFile("pom.xml").importRuntimeDependencies().asFile())
                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
                .setAsForgeXML(new StringAsset("<addon/>"));
+
+      System.out.println(archive.toString(true));
+
       return archive;
    }
 
    @Test
    public void testResolvingAddon()
    {
-      AddonEntry installed = addonManager.install("org.jboss.forge:forge-example-plugin:far:2.0.0-SNAPSHOT");
-      Assert.assertTrue(repository.has(installed));
+      AddonEntry addon = AddonEntry.fromCoordinates("org.jboss.forge:forge-example-plugin:2.0.0-SNAPSHOT");
+      Assert.assertTrue(addonManager.install(addon));
+      Assert.assertTrue(repository.has(addon));
    }
 }

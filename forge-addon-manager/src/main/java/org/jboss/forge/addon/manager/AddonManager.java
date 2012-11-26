@@ -8,23 +8,58 @@ não * Copyright 2012 Red Hat, Inc. and/or its affiliates.
 package org.jboss.forge.addon.manager;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.inject.Inject;
 
 import org.jboss.forge.container.AddonEntry;
 import org.jboss.forge.container.AddonRepository;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.jboss.shrinkwrap.resolver.api.maven.MavenResolvedArtifact;
+import org.jboss.shrinkwrap.resolver.api.maven.coordinate.MavenDependency;
+import org.jboss.shrinkwrap.resolver.api.maven.filter.MavenResolutionFilter;
+import org.jboss.shrinkwrap.resolver.api.maven.strategy.MavenResolutionStrategy;
 
 /**
  * Installs addons into an {@link AddonRepository}
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 public class AddonManager
 {
    private AddonRepository repository;
+   private MavenResolutionStrategy strategy = new MavenResolutionStrategy()
+   {
+
+      @Override
+      public MavenResolutionFilter[] getPreResolutionFilters()
+      {
+         return Arrays.asList(new MavenResolutionFilter()
+         {
+            @Override
+            public boolean accepts(MavenDependency dependency, List<MavenDependency> dependenciesForResolution)
+            {
+               // TODO Auto-generated method stub
+               return false;
+            }
+         }).toArray(new MavenResolutionFilter[] {});
+      }
+
+      @Override
+      public MavenResolutionFilter[] getResolutionFilters()
+      {
+         return Arrays.asList(new MavenResolutionFilter()
+         {
+            @Override
+            public boolean accepts(MavenDependency dependency, List<MavenDependency> dependenciesForResolution)
+            {
+               // TODO Auto-generated method stub
+               return false;
+            }
+         }).toArray(new MavenResolutionFilter[] {});
+      }
+   };
 
    @Inject
    public AddonManager(AddonRepository repository)
@@ -32,43 +67,27 @@ public class AddonManager
       this.repository = repository;
    }
 
-   // XXX
-   public AddonEntry install(String coordinates)
+   public boolean install(AddonEntry entry)
    {
-      MavenResolvedArtifact[] artifacts = null;
-      artifacts = Maven.resolver().offline().resolve(coordinates).withTransitivity()
-               .asResolvedArtifact();
-      System.out.println("Transient files: ");
-      list(artifacts);
-      return null;
-
-      // MavenResolvedArtifact farArtifact = Maven.resolver().offline().resolve(coordinates).withoutTransitivity()
-      // .asSingleResolvedArtifact();
-      // repository.deploy(entry, farFile, dependencies)
+      String coordinates = toMavenCoordinates(entry);
+      File far = Maven.resolver().offline().resolve(coordinates).withoutTransitivity().asSingleFile();
+      File[] dependencies = Maven.resolver().offline().resolve(coordinates).using(strategy).asFile();
+      return install(entry, far, dependencies);
    }
 
-   private void list(MavenResolvedArtifact[] artifacts)
+   public String toMavenCoordinates(AddonEntry entry)
    {
-      for (MavenResolvedArtifact mavenArtifact : artifacts)
-      {
-         if ("far".equals(mavenArtifact.getExtension()))
-         {
-            System.out.println("Depends on addon : " + mavenArtifact.getCoordinate() + " - " + mavenArtifact.asFile());
-         }
-         else
-         {
-            System.out.println(mavenArtifact.asFile());
-         }
-      }
+      return entry.toCoordinates().replaceAll("([^:]+):([^:]+):([^:]+)", "$1:$2:far:$3");
    }
 
-   public void install(AddonEntry entry, File farFile, File[] dependencies)
+   public boolean install(AddonEntry entry, File farFile, File[] dependencies)
    {
+      repository.deploy(entry, farFile, dependencies);
+      return repository.enable(entry);
    }
 
-   public void remove(String coordinates)
+   public boolean remove(AddonEntry entry)
    {
-      AddonEntry entry = AddonEntry.fromCoordinates(coordinates);
-      repository.remove(entry);
+      return repository.disable(entry);
    }
 }

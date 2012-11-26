@@ -155,7 +155,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
          }
       }
 
-      addonUtil.install(addon);
+      addonUtil.enable(addon);
 
       HTTPContext httpContext = new HTTPContext("localhost", 4141);
       httpContext.add(new Servlet("ArquillianServletRunner", "/ArquillianServletRunner"));
@@ -192,7 +192,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    public void undeploy(Archive<?> archive) throws DeploymentException
    {
       AddonEntry addon = getAddonEntry(archive);
-      addonUtil.remove(addon);
+      addonUtil.disable(addon);
 
       long start = System.currentTimeMillis();
       boolean deployed = true;
