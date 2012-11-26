@@ -10,6 +10,7 @@ import org.jboss.forge.container.AddonRepository;
 import org.jboss.forge.container.ContainerControl;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.junit.Assert;
 import org.junit.Test;
@@ -25,7 +26,7 @@ public class AddonInjectableAPIsTest
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-               .addAsManifestResource(new StringAsset(""), ArchivePaths.create("beans.xml"));
+               .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
 
       return archive;
    }

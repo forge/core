@@ -1,5 +1,6 @@
 package org.jboss.forge.arquillian;
 
+import java.io.File;
 import java.util.Collection;
 
 import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
@@ -13,10 +14,8 @@ import org.jboss.forge.arquillian.runner.CDIEnricherRemoteExtensionWorkaround;
 import org.jboss.forge.arquillian.runner.ServletTestRunner;
 import org.jboss.forge.arquillian.runner.ServletTestServer;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.GenericArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.resolver.api.DependencyResolvers;
-import org.jboss.shrinkwrap.resolver.api.maven.MavenDependencyResolver;
+import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 
 public class ForgeDeploymentPackager implements DeploymentPackager
 {
@@ -26,7 +25,7 @@ public class ForgeDeploymentPackager implements DeploymentPackager
       if (!(testDeployment.getApplicationArchive() instanceof ForgeArchive))
          throw new IllegalArgumentException(
                   "Invalid Archive type. Ensure that your @Deployment method returns type 'ForgeArchive'.");
-      
+
       ShrinkWrap.create(ForgeArchive.class);
 
       ForgeArchive deployment = ForgeArchive.class.cast(testDeployment.getApplicationArchive());
@@ -44,11 +43,10 @@ public class ForgeDeploymentPackager implements DeploymentPackager
       return deployment;
    }
 
-   protected static Collection<GenericArchive> resolveDependencies(final String coords)
+   protected static File[] resolveDependencies(final String coords)
    {
-      return DependencyResolvers.use(MavenDependencyResolver.class)
-               .loadMetadataFromPom("pom.xml")
-               .artifacts(coords)
-               .resolveAs(GenericArchive.class);
+      return Maven.resolver().loadPomFromFile("pom.xml")
+               .resolve(coords)
+               .withTransitivity().asFile();
    }
 }

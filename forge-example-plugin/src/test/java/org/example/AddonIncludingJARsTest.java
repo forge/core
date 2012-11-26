@@ -7,12 +7,10 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.ContainerControl;
 import org.jboss.forge.container.Status;
+import org.jboss.forge.test.AbstractForgeTest;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.jboss.shrinkwrap.resolver.api.DependencyResolvers;
-import org.jboss.shrinkwrap.resolver.api.maven.MavenDependencyResolver;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,9 +26,7 @@ public class AddonIncludingJARsTest
    {
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
-               .addAsLibraries(
-                        DependencyResolvers.use(MavenDependencyResolver.class).loadMetadataFromPom("pom.xml")
-                                 .artifact("javax.enterprise:cdi-api:1.0").resolveAs(JavaArchive.class))
+               .addAsLibraries(AbstractForgeTest.resolveDependencies("javax.enterprise:cdi-api:1.0"))
                .addAsManifestResource(new StringAsset(""), ArchivePaths.create("beans.xml"))
                .setAsForgeXML(new StringAsset("<addon/>"));
 
