@@ -75,14 +75,14 @@
          </activation>
          <modules>
             <module>parser-xml</module>
-            <module>plugin-container-api</module>
-            <module>forge-addon-manager</module>
-            <module>plugin-container</module>
-            <module>arquillian-forge</module>
+            <module>container-api</module>
+            <module>addon-manager</module>
+            <module>container</module>
+            <module>arquillian</module>
             <module>test-harness</module>
-            <module>forge-example-plugin</module>
-            <module>forge-otherexample-plugin</module>
-            <module>forge-dependency-api</module>
+            <module>example</module>
+            <module>example2</module>
+            <module>dependency-api</module>
             <module>maven</module>
             <module>dist</module>
          </modules>
@@ -94,7 +94,7 @@
             <activeByDefault>false</activeByDefault>
          </activation>
          <modules>
-            <module>plugin-container-api</module>
+            <module>container-api</module>
             <module>parser-xml</module>
          </modules>
       </profile>
@@ -204,12 +204,12 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-plugin-container-api</artifactId>
+            <artifactId>forge-addon-container-api</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-plugin-container</artifactId>
+            <artifactId>forge-addon-container</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>
@@ -335,12 +335,6 @@
 
       <pluginManagement>
          <plugins>
-            <plugin>
-               <groupId>org.jboss.forge</groupId>
-               <artifactId>far-maven-plugin</artifactId>
-               <version>${project.version}</version>
-               <extensions>true</extensions>
-            </plugin>
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-jar-plugin</artifactId>

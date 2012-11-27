@@ -1,4 +1,0 @@
-<installed>
-   <dependency groupId="org.jboss.forge" artifactId="forge-addon" version="1.0" />
-   <dependency groupId="org.jboss.forge" artifactId="forge-addon-two" version="2.0" />
-</installed>

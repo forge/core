@@ -14,5 +14,9 @@
    <name>Forge - Arquillian Container Adapter - Core</name>
 
    <dependencies>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-addon-container-api</artifactId>
+      </dependency>
    </dependencies>
 </project>

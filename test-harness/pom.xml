@@ -15,7 +15,7 @@
    <dependencies>
       <dependency>
          <groupId>org.jboss.forge</groupId>
-         <artifactId>forge-plugin-container-api</artifactId>
+         <artifactId>forge-addon-container-api</artifactId>
          <scope>provided</scope>
       </dependency>
 

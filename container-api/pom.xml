@@ -10,9 +10,9 @@
       <relativePath>../pom.xml</relativePath>
    </parent>
 
-   <artifactId>forge-plugin-container-api</artifactId>
+   <artifactId>forge-addon-container-api</artifactId>
 
-   <name>Forge - Plugin Container API</name>
+   <name>Forge - Addon Container API</name>
 
    <dependencies>
       <dependency>

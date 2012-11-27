@@ -18,9 +18,9 @@
       <relativePath>../pom.xml</relativePath>
    </parent>
 
-   <artifactId>forge-plugin-container</artifactId>
+   <artifactId>forge-addon-container</artifactId>
    <packaging>jar</packaging>
-   <name>Forge - Plugin Container</name>
+   <name>Forge - Addon Container</name>
 
    <properties>
    </properties>
@@ -28,7 +28,7 @@
    <dependencies>
       <dependency>
          <groupId>org.jboss.forge</groupId>
-         <artifactId>forge-plugin-container-api</artifactId>
+         <artifactId>forge-addon-container-api</artifactId>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge</groupId>
