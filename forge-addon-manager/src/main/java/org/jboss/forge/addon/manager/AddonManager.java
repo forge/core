@@ -21,9 +21,9 @@ import org.jboss.forge.maven.container.MavenDependencyResolver;
 
 /**
  * Installs addons into an {@link AddonRepository}
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ *
  */
 public class AddonManager
 {
@@ -52,7 +52,7 @@ public class AddonManager
       {
          result.add(dependency.getArtifact());
       }
-      return result.toArray(new File[] {});
+      return result.toArray(new File[dependencies.size()]);
    }
 
    public String toMavenCoordinates(AddonEntry entry)
