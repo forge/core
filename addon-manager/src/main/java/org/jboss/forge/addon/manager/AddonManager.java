@@ -14,11 +14,12 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.dependency.Dependency;
+import org.jboss.forge.addon.dependency.DependencyNode;
 import org.jboss.forge.addon.dependency.builder.DependencyQueryBuilder;
+import org.jboss.forge.addon.dependency.spi.DependencyResolver;
 import org.jboss.forge.container.AddonEntry;
 import org.jboss.forge.container.AddonRepository;
 import org.jboss.forge.container.services.Remote;
-import org.jboss.forge.maven.container.MavenDependencyResolver;
 
 /**
  * Installs addons into an {@link AddonRepository}
@@ -30,10 +31,10 @@ import org.jboss.forge.maven.container.MavenDependencyResolver;
 public class AddonManager
 {
    private AddonRepository repository;
-   private MavenDependencyResolver resolver;
+   private DependencyResolver resolver;
 
    @Inject
-   public AddonManager(AddonRepository repository, MavenDependencyResolver resolver)
+   public AddonManager(AddonRepository repository, DependencyResolver resolver)
    {
       this.repository = repository;
       this.resolver = resolver;
@@ -43,6 +44,7 @@ public class AddonManager
    {
       String coordinates = toMavenCoordinates(entry);
       File far = resolver.resolveArtifact(DependencyQueryBuilder.create(toMavenCoordinates(entry)));
+      DependencyNode root = resolver.resolveDependencyHierarchy(coordinates);
       File[] dependencies = toDependencies(resolver.resolveAddonDependencies(coordinates));
       return install(entry, far, dependencies);
    }

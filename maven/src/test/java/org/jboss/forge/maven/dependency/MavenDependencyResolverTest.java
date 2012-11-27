@@ -13,6 +13,7 @@ import java.util.Set;
 import org.jboss.forge.addon.dependency.Coordinate;
 import org.jboss.forge.addon.dependency.Dependency;
 import org.jboss.forge.addon.dependency.DependencyFilter;
+import org.jboss.forge.addon.dependency.DependencyNode;
 import org.jboss.forge.addon.dependency.DependencyQuery;
 import org.jboss.forge.addon.dependency.DependencyRepository;
 import org.jboss.forge.addon.dependency.builder.CoordinateBuilder;
@@ -103,4 +104,24 @@ public class MavenDependencyResolverTest
       Assert.assertEquals(1, addonDeps.size());
       Assert.assertEquals("commons-lang", addonDeps.get(0).getCoordinate().getArtifactId());
    }
+
+   @Test
+   public void testResolveDependencyHierarchy() throws Exception
+   {
+      DependencyNode root = resolver
+               .resolveDependencyHierarchy("org.jboss.forge:forge-example-plugin:jar:forge-addon:2.0.0-SNAPSHOT");
+      Assert.assertNotNull(root);
+      // commons-lang and example2
+      Assert.assertEquals(2, root.getChildren().size());
+      System.out.println(root);
+   }
+
+   @Test
+   public void testResolveDependencyHierarchy2() throws Exception
+   {
+      DependencyNode root = resolver
+               .resolveDependencyHierarchy("org.hibernate:hibernate-core:4.0.0.Final");
+      System.out.println(root);
+   }
+
 }

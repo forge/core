@@ -217,11 +217,21 @@ public class CoordinateBuilder implements Coordinate
    @Override
    public String toString()
    {
-      return (groupId != null ? "groupId=" + groupId + ", " : "")
-               + (artifactId != null ? "artifactId=" + artifactId + ", " : "")
-               + (classifier != null ? "classifier=" + classifier + ", " : "")
-               + (packaging != null ? "packaging=" + packaging : "") + "]"
-               + (version != null ? "version=" + version + ", " : "");
+      StringBuilder builder = new StringBuilder();
+      builder.append("Coordinate [");
+      if (groupId != null)
+         builder.append("groupId=").append(groupId).append(", ");
+      if (artifactId != null)
+         builder.append("artifactId=").append(artifactId).append(", ");
+      if (version != null)
+         builder.append("version=").append(version).append(", ");
+      if (classifier != null)
+         builder.append("classifier=").append(classifier).append(", ");
+      if (packaging != null)
+         builder.append("packaging=").append(packaging);
+      builder.append("]");
+      return builder.toString();
    }
+
 
 }

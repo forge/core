@@ -190,4 +190,15 @@ public class DependencyBuilder implements Dependency
       return this;
    }
 
+   @Override
+   public String toString()
+   {
+      StringBuilder builder = new StringBuilder();
+      builder.append("Dependency [");
+      if (coordinate != null)
+         builder.append(coordinate);
+      builder.append("]");
+      return builder.toString();
+   }
+
 }

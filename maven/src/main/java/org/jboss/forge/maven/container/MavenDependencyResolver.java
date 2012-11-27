@@ -225,6 +225,29 @@ public class MavenDependencyResolver implements DependencyResolver
       }
    }
 
+   @Override
+   public MavenDependencyNode resolveDependencyHierarchy(String coordinates)
+   {
+      try
+      {
+         RepositorySystem system = container.lookup(RepositorySystem.class);
+         Settings settings = container.getSettings();
+         MavenRepositorySystemSession session = setupRepoSession(system, settings);
+         final CoordinateBuilder coord = CoordinateBuilder.create(coordinates);
+         Artifact queryArtifact = coordinateToMavenArtifact(coord);
+         CollectRequest collectRequest = new CollectRequest(new org.sonatype.aether.graph.Dependency(queryArtifact,
+                  null), container.getEnabledRepositoriesFromProfile(settings));
+
+         DependencyRequest dr = new DependencyRequest(collectRequest, null);
+         DependencyResult result = system.resolveDependencies(session, dr);
+         return MavenConvertUtils.toDependencyNode(result.getRoot());
+      }
+      catch (DependencyResolutionException e)
+      {
+         throw new RuntimeException("Could not resolve dependencies for addon [" + coordinates + "]", e);
+      }
+   }
+
    private class AddonDependencyVisitor implements DependencyVisitor
    {
       private String addonGroupId;

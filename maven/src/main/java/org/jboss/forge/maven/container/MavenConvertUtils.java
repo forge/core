@@ -71,4 +71,15 @@ class MavenConvertUtils
       return d;
    }
 
+   static MavenDependencyNode toDependencyNode(DependencyNode aetherNode)
+   {
+      MavenDependencyNode node = new MavenDependencyNode(MavenConvertUtils.convertToDependency(aetherNode));
+      for (DependencyNode childNode : aetherNode.getChildren())
+      {
+         node.getChildren().add(toDependencyNode(childNode));
+      }
+      return node;
+   }
+
+
 }

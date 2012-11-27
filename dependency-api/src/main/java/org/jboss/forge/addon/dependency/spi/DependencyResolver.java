@@ -13,6 +13,7 @@ import java.util.Set;
 
 import org.jboss.forge.addon.dependency.Coordinate;
 import org.jboss.forge.addon.dependency.Dependency;
+import org.jboss.forge.addon.dependency.DependencyNode;
 import org.jboss.forge.addon.dependency.DependencyQuery;
 
 public interface DependencyResolver
@@ -43,4 +44,21 @@ public interface DependencyResolver
     * @return
     */
    File resolveArtifact(DependencyQuery query);
+
+   /**
+    * Resolve the entire dependency hierarchy
+    *
+    * @param coordinates
+    * @return
+    */
+   DependencyNode resolveDependencyHierarchy(String coordinates);
+
+   /**
+    * Resolve the addon dependencies
+    *
+    * @param coordinates
+    * @return
+    */
+   @Deprecated
+   List<Dependency> resolveAddonDependencies(String coordinates);
 }

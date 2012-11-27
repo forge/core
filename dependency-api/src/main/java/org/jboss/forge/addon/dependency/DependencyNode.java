@@ -14,6 +14,4 @@ public interface DependencyNode
    public Dependency getDependency();
 
    public List<DependencyNode> getChildren();
-
-   public DependencyNode getParent();
 }
