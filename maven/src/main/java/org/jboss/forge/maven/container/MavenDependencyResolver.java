@@ -50,6 +50,7 @@ import org.sonatype.aether.version.Version;
 public class MavenDependencyResolver implements DependencyResolver
 {
    private MavenContainer container;
+   public static final String FORGE_ADDON_CLASSIFIER = "forge-addon";
 
    @Inject
    public MavenDependencyResolver(MavenContainer container)
@@ -120,7 +121,7 @@ public class MavenDependencyResolver implements DependencyResolver
 
    /**
     * Returns the versions of a specific artifact
-    * 
+    *
     * @param query
     * @return
     */
@@ -249,7 +250,7 @@ public class MavenDependencyResolver implements DependencyResolver
          }
          else
          {
-            if ("far".equals(artifact.getExtension()))
+            if (FORGE_ADDON_CLASSIFIER.equals(artifact.getClassifier()))
             {
                return false;
             }

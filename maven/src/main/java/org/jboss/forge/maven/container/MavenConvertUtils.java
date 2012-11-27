@@ -52,7 +52,7 @@ class MavenConvertUtils
    static Artifact coordinateToMavenArtifact(final Coordinate dep)
    {
       Artifact artifact = new DefaultArtifact(dep.getGroupId(), dep.getArtifactId(), dep.getClassifier(),
-               dep.getPackaging() == null ? "far" : dep.getPackaging(), dep.getVersion());
+               dep.getPackaging() == null ? "jar" : dep.getPackaging(), dep.getVersion());
       return artifact;
    }
 

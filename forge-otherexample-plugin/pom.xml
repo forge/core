@@ -8,7 +8,6 @@
    </parent>
    <artifactId>forge-otherexample-plugin</artifactId>
    <name>Forge - Other Example Plugin</name>
-   <packaging>far</packaging>
    <dependencies>
       <dependency>
          <groupId>org.jboss.forge</groupId>
@@ -23,11 +22,14 @@
       </dependency>
    </dependencies>
    <build>
-      <extensions>
-         <extension>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>far-maven-plugin</artifactId>
-         </extension>
-      </extensions>
+      <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <configuration>
+               <classifier>forge-addon</classifier>
+            </configuration>
+         </plugin>
+      </plugins>
    </build>
 </project>

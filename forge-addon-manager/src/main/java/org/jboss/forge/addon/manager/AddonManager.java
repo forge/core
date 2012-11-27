@@ -57,7 +57,7 @@ public class AddonManager
 
    public String toMavenCoordinates(AddonEntry entry)
    {
-      return entry.getName() + ":far::" + entry.getVersion();
+      return entry.getName() + ":jar:forge-addon:" + entry.getVersion();
    }
 
    public boolean install(AddonEntry entry, File farFile, File[] dependencies)
