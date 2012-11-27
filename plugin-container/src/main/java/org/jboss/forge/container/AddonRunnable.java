@@ -18,6 +18,8 @@ import org.jboss.forge.container.util.ClassLoaders;
 import org.jboss.modules.Module;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class AddonRunnable implements Runnable
 {
@@ -25,6 +27,7 @@ public final class AddonRunnable implements Runnable
    private AddonImpl addon;
    private AddonRegistryImpl addonRegistry;
    private boolean shutdown = false;
+   private static final Logger LOGGER = LoggerFactory.getLogger(AddonRunnable.class);
 
    public AddonRunnable(Forge forge, AddonImpl addon, AddonRegistryImpl registry)
    {
@@ -62,7 +65,8 @@ public final class AddonRunnable implements Runnable
                manager.fireEvent(new ContainerStartup());
 
                ContainerControl control = BeanManagerUtils.getContextualInstance(manager, ContainerControl.class);
-               AddonRepositoryProducer repositoryProducer = BeanManagerUtils.getContextualInstance(manager, AddonRepositoryProducer.class);
+               AddonRepositoryProducer repositoryProducer = BeanManagerUtils.getContextualInstance(manager,
+                        AddonRepositoryProducer.class);
                repositoryProducer.setAddonDir(forge.getAddonDir());
                Assert.notNull(control, "Container control was null.");
 
@@ -77,8 +81,8 @@ public final class AddonRunnable implements Runnable
 
                addon.setStatus(Status.STARTED);
 
-               System.out.println("Services loaded from addon module [" + module.getIdentifier() + "] - "
-                        + registry.getServices());
+               LOGGER.info("Services loaded from addon module [{}] - {} ", module.getIdentifier(),
+                        registry.getServices());
 
                while (!shutdown)
                {

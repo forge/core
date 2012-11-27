@@ -20,6 +20,8 @@ import org.jboss.forge.container.event.PostStartup;
 import org.jboss.forge.container.event.PreShutdown;
 import org.jboss.forge.container.event.Shutdown;
 import org.jboss.forge.container.event.Startup;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -30,16 +32,17 @@ public class ContainerControlImpl implements ContainerControl
    @Inject
    private BeanManager manager;
    private Status status = Status.STOPPED;
+   private Logger logger = LoggerFactory.getLogger(ContainerControl.class);
 
    void bootstrap(@Observes ContainerStartup event)
    {
-      System.out.println("Starting container [" + Thread.currentThread().getName() + "]");
+      logger.info("Starting container [{}]", Thread.currentThread().getName());
       start();
    }
 
    void teardown(@Observes ContainerShutdown event)
    {
-      System.out.println("Stopping container [" + Thread.currentThread().getName() + "]");
+      logger.info("Stopping container [{}]", Thread.currentThread().getName());
       stop();
    }
 

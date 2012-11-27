@@ -5,9 +5,6 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.impl.AddonImpl;
@@ -20,14 +17,16 @@ import org.jboss.modules.ModuleIdentifier;
 import org.jboss.modules.ModuleLoadException;
 import org.jboss.modules.ModuleLoader;
 import org.jboss.modules.log.StreamModuleLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class Forge
 {
    private static final String PROP_CONCURRENT_PLUGINS = "forge.concurrentAddons";
-   // private static final String PROP_LOG_ENABLE = "forge.logging";
 
    private static final int BATCH_SIZE = Integer.getInteger(PROP_CONCURRENT_PLUGINS, 4);
-   // private static final boolean LOGGING_ENABLED = Boolean.getBoolean(PROP_LOG_ENABLE);
+
+   private Logger logger = LoggerFactory.getLogger(getClass());
 
    private volatile boolean alive = false;
 
@@ -38,7 +37,7 @@ public final class Forge
    public Forge()
    {
       if (!AddonRepositoryImpl.hasRuntimeAPIVersion())
-         System.out.println("Warning! Could not detect Forge runtime version - " +
+         logger.warn("Could not detect Forge runtime version - " +
                   "loading all addons, but failures may occur if versions are not compatible.");
 
       installMBeanServer();
@@ -117,7 +116,7 @@ public final class Forge
 
       if (!toStop.isEmpty())
       {
-         System.out.println("Stopping addon(s) " + toStop);
+         logger.info("Stopping addon(s) " + toStop);
          Set<AddonThread> stopped = new HashSet<AddonThread>();
          for (Addon addon : toStop)
          {
@@ -143,7 +142,7 @@ public final class Forge
 
    private Set<AddonThread> startAddons(Set<Addon> toStart)
    {
-      System.out.println("Starting addon(s) " + toStart);
+      logger.info("Starting addon(s) " + toStart);
       Set<AddonThread> started = new HashSet<AddonThread>();
       AddonRegistryImpl registry = AddonRegistryImpl.registry;
 
@@ -178,21 +177,6 @@ public final class Forge
       return AddonRegistryImpl.registry;
    }
 
-   protected static void initLogging()
-   {
-      String[] loggerNames = new String[] { "", "main", Logger.GLOBAL_LOGGER_NAME };
-      for (String loggerName : loggerNames)
-      {
-         Logger globalLogger = Logger.getLogger(loggerName);
-         Handler[] handlers = globalLogger.getHandlers();
-         for (Handler handler : handlers)
-         {
-            handler.setLevel(Level.SEVERE);
-            globalLogger.removeHandler(handler);
-         }
-      }
-   }
-
    synchronized private Set<Addon> loadAddons(ModuleLoader addonLoader)
    {
       Set<Addon> result = new HashSet<Addon>();
@@ -207,7 +191,7 @@ public final class Forge
 
          for (AddonEntry entry : incompatible)
          {
-            System.out.println("Not loading addon [" + entry.getName()
+            logger.info("Not loading addon [" + entry.getName()
                      + "] because it references Forge API version [" + entry.getApiVersion()
                      + "] which may not be compatible with my current version [" + Bootstrap.class.getPackage()
                               .getImplementationVersion() + "].");
