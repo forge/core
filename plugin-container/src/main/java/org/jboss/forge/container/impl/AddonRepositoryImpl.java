@@ -11,10 +11,13 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -331,12 +334,7 @@ public final class AddonRepositoryImpl implements AddonRepository
 
    public synchronized File getAddonResourceDir(AddonEntry found)
    {
-      Assert.notNull(found.getVersion(), "Addon version must be specified.");
-      Assert.notNull(found.getName(), "Addon name must be specified.");
-
-      String path = found.getName().replaceAll("\\.", "/");
-      File addonDir = new File(getRepositoryDirectory(), path + "/" + found.getVersion());
-      return addonDir;
+      return getAddonBaseDir(found);
    }
 
    public synchronized File getAddonBaseDir(AddonEntry found)
@@ -344,8 +342,7 @@ public final class AddonRepositoryImpl implements AddonRepository
       Assert.notNull(found.getVersion(), "Addon version must be specified.");
       Assert.notNull(found.getName(), "Addon name must be specified.");
 
-      String path = found.getName().split("\\.")[0];
-      File addonDir = new File(getRepositoryDirectory(), path);
+      File addonDir = new File(getRepositoryDirectory(), found.toModuleId());
       return addonDir;
    }
 
@@ -364,16 +361,11 @@ public final class AddonRepositoryImpl implements AddonRepository
             @Override
             public boolean accept(File file, String name)
             {
-               return name.endsWith(".jar");
+               return name.endsWith(".jar") || name.endsWith(".far");
             }
          }));
       }
       return new ArrayList<File>();
-   }
-
-   public File getAddonSlotDir(AddonEntry addon)
-   {
-      return new File(getAddonBaseDir(addon).getAbsolutePath(), addon.getVersion());
    }
 
    public synchronized List<AddonDependency> getAddonDependencies(AddonEntry addon)
@@ -432,10 +424,13 @@ public final class AddonRepositoryImpl implements AddonRepository
    @Override
    public synchronized boolean deploy(AddonEntry entry, File farFile, File... dependencies)
    {
-      File addonSlotDir = getAddonSlotDir(entry);
+      File addonSlotDir = getAddonBaseDir(entry);
       try
       {
          Files.copyFileToDirectory(farFile, addonSlotDir);
+
+         deployForgeXml(entry, farFile);
+
          for (File dependency : dependencies)
          {
             Files.copyFileToDirectory(dependency, addonSlotDir);
@@ -447,6 +442,20 @@ public final class AddonRepositoryImpl implements AddonRepository
          // TODO throw exception instead?
          io.printStackTrace();
          return false;
+      }
+   }
+
+   private void deployForgeXml(AddonEntry entry, File farFile) throws IOException, FileNotFoundException
+   {
+      JarFile farJar = new JarFile(farFile);
+      JarEntry forgeXmlEntry = farJar.getJarEntry("META-INF/forge.xml");
+      InputStream forgeXml = farJar.getInputStream(forgeXmlEntry);
+
+      if (forgeXml != null)
+      {
+         File descriptor = getAddonDescriptor(entry);
+         FileOutputStream fos = new FileOutputStream(descriptor);
+         Streams.write(forgeXml, fos);
       }
    }
 }

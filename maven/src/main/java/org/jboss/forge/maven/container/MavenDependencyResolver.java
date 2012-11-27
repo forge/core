@@ -120,7 +120,7 @@ public class MavenDependencyResolver implements DependencyResolver
 
    /**
     * Returns the versions of a specific artifact
-    *
+    * 
     * @param query
     * @return
     */
@@ -198,23 +198,30 @@ public class MavenDependencyResolver implements DependencyResolver
       }
    }
 
-   public List<Dependency> resolveAddonDependencies(String coordinates) throws Exception
+   public List<Dependency> resolveAddonDependencies(String coordinates)
    {
-      RepositorySystem system = container.lookup(RepositorySystem.class);
-      Settings settings = container.getSettings();
-      MavenRepositorySystemSession session = setupRepoSession(system, settings);
-      final CoordinateBuilder coord = CoordinateBuilder.create(coordinates);
-      Artifact queryArtifact = coordinateToMavenArtifact(coord);
-      CollectRequest collectRequest = new CollectRequest(new org.sonatype.aether.graph.Dependency(queryArtifact,
-               null), container.getEnabledRepositoriesFromProfile(settings));
+      try
+      {
+         RepositorySystem system = container.lookup(RepositorySystem.class);
+         Settings settings = container.getSettings();
+         MavenRepositorySystemSession session = setupRepoSession(system, settings);
+         final CoordinateBuilder coord = CoordinateBuilder.create(coordinates);
+         Artifact queryArtifact = coordinateToMavenArtifact(coord);
+         CollectRequest collectRequest = new CollectRequest(new org.sonatype.aether.graph.Dependency(queryArtifact,
+                  null), container.getEnabledRepositoriesFromProfile(settings));
 
-      DependencyRequest dr = new DependencyRequest(collectRequest, null);
-      DependencyResult result = system.resolveDependencies(session, dr);
-      List<Dependency> collect = new ArrayList<Dependency>();
-      DependencyVisitor visitor = new TreeDependencyVisitor(new AddonDependencyVisitor(coord.getGroupId(),
-               coord.getArtifactId(), collect));
-      result.getRoot().accept(visitor);
-      return collect;
+         DependencyRequest dr = new DependencyRequest(collectRequest, null);
+         DependencyResult result = system.resolveDependencies(session, dr);
+         List<Dependency> collect = new ArrayList<Dependency>();
+         DependencyVisitor visitor = new TreeDependencyVisitor(new AddonDependencyVisitor(coord.getGroupId(),
+                  coord.getArtifactId(), collect));
+         result.getRoot().accept(visitor);
+         return collect;
+      }
+      catch (DependencyResolutionException e)
+      {
+         throw new RuntimeException("Could not resolve dependencies for addon [" + coordinates + "]", e);
+      }
    }
 
    private class AddonDependencyVisitor implements DependencyVisitor

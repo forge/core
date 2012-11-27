@@ -36,13 +36,6 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
 public class ForgeDeployableContainer implements DeployableContainer<ForgeContainerConfiguration>
 {
-   private static final int TEST_DEPLOYMENT_TIMEOUT = 60000;
-   private ForgeRunnable thread;
-   private File addonDir;
-   private AddonRepository repository;
-
-   private Map<Archive<?>, AddonEntry> deployedAddons = new HashMap<Archive<?>, AddonEntry>();
-
    private class ForgeRunnable implements Runnable
    {
       private Forge forge;
@@ -53,6 +46,11 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       {
          this.addonDir = addonDir;
          this.loader = loader;
+      }
+
+      public Forge getForge()
+      {
+         return forge;
       }
 
       @Override
@@ -76,65 +74,20 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
          Thread.currentThread().interrupt();
       }
 
-      public Forge getForge()
-      {
-         return forge;
-      }
-
    }
+   private static final int TEST_DEPLOYMENT_TIMEOUT = 60000;
+   private ForgeRunnable thread;
+   private File addonDir;
 
-   @Override
-   public Class<ForgeContainerConfiguration> getConfigurationClass()
-   {
-      return ForgeContainerConfiguration.class;
-   }
+   private AddonRepository repository;
 
-   @Override
-   public void setup(ForgeContainerConfiguration configuration)
-   {
-   }
-
-   @Override
-   public void start() throws LifecycleException
-   {
-      try
-      {
-         this.addonDir = File.createTempFile("forge-test-addon-dir", "");
-         System.out.println("Executing test case with addon dir [" + addonDir + "]");
-         this.repository = AddonRepositoryImpl.forAddonDir(addonDir);
-      }
-      catch (IOException e1)
-      {
-         throw new LifecycleException("Failed to create temporary addon directory", e1);
-      }
-      try
-      {
-         thread = new ForgeRunnable(addonDir, ClassLoader.getSystemClassLoader());
-         new Thread(thread).start();
-      }
-      catch (Exception e)
-      {
-         throw new LifecycleException("Could not start Forge thread.", e);
-      }
-   }
-
-   @Override
-   public void stop() throws LifecycleException
-   {
-      this.thread.stop();
-   }
-
-   @Override
-   public ProtocolDescription getDefaultProtocol()
-   {
-      return new ServletProtocolDescription();
-   }
+   private Map<Archive<?>, AddonEntry> deployedAddons = new HashMap<Archive<?>, AddonEntry>();
 
    @Override
    public ProtocolMetaData deploy(Archive<?> archive) throws DeploymentException
    {
       AddonEntry addon = getAddonEntry(archive);
-      File destDir = repository.getAddonSlotDir(addon);
+      File destDir = repository.getAddonBaseDir(addon);
       destDir.mkdirs();
 
       if (!(archive instanceof ForgeArchive))
@@ -193,6 +146,72 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    }
 
    @Override
+   public void deploy(Descriptor descriptor) throws DeploymentException
+   {
+      throw new UnsupportedOperationException("Descriptors not supported by Forge");
+   }
+
+   private AddonEntry getAddonEntry(Archive<?> archive)
+   {
+      if (!deployedAddons.containsKey(archive))
+      {
+         AddonEntry entry = AddonEntry.from(archive.getName().replaceFirst("\\.jar$", ""),
+                  UUID.randomUUID().toString(),
+                  thread.getForge().getVersion()
+                  );
+         deployedAddons.put(archive, entry);
+      }
+      return deployedAddons.get(archive);
+   }
+
+   @Override
+   public Class<ForgeContainerConfiguration> getConfigurationClass()
+   {
+      return ForgeContainerConfiguration.class;
+   }
+
+   @Override
+   public ProtocolDescription getDefaultProtocol()
+   {
+      return new ServletProtocolDescription();
+   }
+
+   @Override
+   public void setup(ForgeContainerConfiguration configuration)
+   {
+   }
+
+   @Override
+   public void start() throws LifecycleException
+   {
+      try
+      {
+         this.addonDir = File.createTempFile("forge-test-addon-dir", "");
+         System.out.println("Executing test case with addon dir [" + addonDir + "]");
+         this.repository = AddonRepositoryImpl.forAddonDir(addonDir);
+      }
+      catch (IOException e1)
+      {
+         throw new LifecycleException("Failed to create temporary addon directory", e1);
+      }
+      try
+      {
+         thread = new ForgeRunnable(addonDir, ClassLoader.getSystemClassLoader());
+         new Thread(thread).start();
+      }
+      catch (Exception e)
+      {
+         throw new LifecycleException("Could not start Forge thread.", e);
+      }
+   }
+
+   @Override
+   public void stop() throws LifecycleException
+   {
+      this.thread.stop();
+   }
+
+   @Override
    public void undeploy(Archive<?> archive) throws DeploymentException
    {
       AddonEntry addon = getAddonEntry(archive);
@@ -225,25 +244,6 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       boolean deleted = Files.delete(dir, true);
       if (!deleted)
          throw new IllegalStateException("Could not delete file [" + dir.getAbsolutePath() + "]");
-   }
-
-   private AddonEntry getAddonEntry(Archive<?> archive)
-   {
-      if (!deployedAddons.containsKey(archive))
-      {
-         AddonEntry entry = AddonEntry.from(archive.getName().replaceFirst("\\.jar$", ""),
-                  UUID.randomUUID().toString(),
-                  thread.getForge().getVersion()
-                  );
-         deployedAddons.put(archive, entry);
-      }
-      return deployedAddons.get(archive);
-   }
-
-   @Override
-   public void deploy(Descriptor descriptor) throws DeploymentException
-   {
-      throw new UnsupportedOperationException("Descriptors not supported by Forge");
    }
 
    @Override

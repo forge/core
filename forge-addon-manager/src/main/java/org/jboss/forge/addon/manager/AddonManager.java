@@ -8,17 +8,16 @@ não * Copyright 2012 Red Hat, Inc. and/or its affiliates.
 package org.jboss.forge.addon.manager;
 
 import java.io.File;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.addon.dependency.Dependency;
+import org.jboss.forge.addon.dependency.builder.DependencyQueryBuilder;
 import org.jboss.forge.container.AddonEntry;
 import org.jboss.forge.container.AddonRepository;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.jboss.shrinkwrap.resolver.api.maven.coordinate.MavenDependency;
-import org.jboss.shrinkwrap.resolver.api.maven.filter.MavenResolutionFilter;
-import org.jboss.shrinkwrap.resolver.api.maven.strategy.MavenResolutionStrategy;
+import org.jboss.forge.maven.container.MavenDependencyResolver;
 
 /**
  * Installs addons into an {@link AddonRepository}
@@ -29,55 +28,36 @@ import org.jboss.shrinkwrap.resolver.api.maven.strategy.MavenResolutionStrategy;
 public class AddonManager
 {
    private AddonRepository repository;
-   private MavenResolutionStrategy strategy = new MavenResolutionStrategy()
-   {
-
-      @Override
-      public MavenResolutionFilter[] getPreResolutionFilters()
-      {
-         return Arrays.asList(new MavenResolutionFilter()
-         {
-            @Override
-            public boolean accepts(MavenDependency dependency, List<MavenDependency> dependenciesForResolution)
-            {
-               // TODO Auto-generated method stub
-               return false;
-            }
-         }).toArray(new MavenResolutionFilter[] {});
-      }
-
-      @Override
-      public MavenResolutionFilter[] getResolutionFilters()
-      {
-         return Arrays.asList(new MavenResolutionFilter()
-         {
-            @Override
-            public boolean accepts(MavenDependency dependency, List<MavenDependency> dependenciesForResolution)
-            {
-               // TODO Auto-generated method stub
-               return false;
-            }
-         }).toArray(new MavenResolutionFilter[] {});
-      }
-   };
+   private MavenDependencyResolver resolver;
 
    @Inject
-   public AddonManager(AddonRepository repository)
+   public AddonManager(AddonRepository repository, MavenDependencyResolver resolver)
    {
       this.repository = repository;
+      this.resolver = resolver;
    }
 
    public boolean install(AddonEntry entry)
    {
       String coordinates = toMavenCoordinates(entry);
-      File far = Maven.resolver().offline().resolve(coordinates).withoutTransitivity().asSingleFile();
-      File[] dependencies = Maven.resolver().offline().resolve(coordinates).using(strategy).asFile();
+      File far = resolver.resolveArtifact(DependencyQueryBuilder.create(toMavenCoordinates(entry)));
+      File[] dependencies = toDependencies(resolver.resolveAddonDependencies(coordinates));
       return install(entry, far, dependencies);
+   }
+
+   private File[] toDependencies(List<Dependency> dependencies)
+   {
+      List<File> result = new ArrayList<File>();
+      for (Dependency dependency : dependencies)
+      {
+         result.add(dependency.getArtifact());
+      }
+      return result.toArray(new File[] {});
    }
 
    public String toMavenCoordinates(AddonEntry entry)
    {
-      return entry.getName() + ":far:" + entry.getVersion();
+      return entry.getName() + ":far::" + entry.getVersion();
    }
 
    public boolean install(AddonEntry entry, File farFile, File[] dependencies)

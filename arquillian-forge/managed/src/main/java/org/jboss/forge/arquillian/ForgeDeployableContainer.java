@@ -83,7 +83,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    public ProtocolMetaData deploy(Archive<?> archive) throws DeploymentException
    {
       AddonEntry addon = getAddonEntry(archive);
-      File destDir = addonUtil.getAddonSlotDir(addon);
+      File destDir = addonUtil.getAddonBaseDir(addon);
       destDir.mkdirs();
 
       if (!(archive instanceof ForgeArchive))

@@ -32,8 +32,6 @@ public interface AddonRepository
 
    public List<File> getAddonResources(AddonEntry found);
 
-   public File getAddonSlotDir(AddonEntry addon);
-
    public File getRegistryFile();
 
    public File getRepositoryDirectory();
