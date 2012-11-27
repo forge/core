@@ -7,6 +7,8 @@
 
 package org.jboss.forge.container;
 
+import java.io.File;
+
 import org.jboss.forge.container.impl.AddonRepositoryImpl;
 import org.junit.Assert;
 import org.junit.Test;
@@ -53,4 +55,11 @@ public class AddonRepositoryImplTest
       Assert.assertTrue(AddonRepositoryImpl.isApiCompatible(null, entry));
    }
 
+   @Test
+   public void testAddonDirNaming() throws Exception
+   {
+      AddonRepository repository = AddonRepositoryImpl.forDefaultAddonDir();
+      File dir = repository.getAddonBaseDir(AddonEntry.from("123#$%456", "!@#789*-0"));
+      Assert.assertEquals("123-456-789-0", dir.getName());
+   }
 }

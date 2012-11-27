@@ -17,6 +17,7 @@ import org.jboss.forge.addon.dependency.Dependency;
 import org.jboss.forge.addon.dependency.builder.DependencyQueryBuilder;
 import org.jboss.forge.container.AddonEntry;
 import org.jboss.forge.container.AddonRepository;
+import org.jboss.forge.container.services.Remote;
 import org.jboss.forge.maven.container.MavenDependencyResolver;
 
 /**
@@ -25,6 +26,7 @@ import org.jboss.forge.maven.container.MavenDependencyResolver;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  *
  */
+@Remote
 public class AddonManager
 {
    private AddonRepository repository;

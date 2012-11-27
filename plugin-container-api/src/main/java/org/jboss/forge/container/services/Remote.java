@@ -7,8 +7,10 @@
 package org.jboss.forge.container.services;
 
 import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Marker that indicates when a type should be exported to other containers. It may be imported via the corresponding
@@ -18,6 +20,7 @@ import java.lang.annotation.RetentionPolicy;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
 public @interface Remote
 {
 

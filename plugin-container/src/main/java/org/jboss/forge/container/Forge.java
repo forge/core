@@ -33,7 +33,7 @@ public final class Forge
 
    Set<AddonThread> threads = Sets.getConcurrentSet();
 
-   private AddonRepository repository;
+   private AddonRepository repository = AddonRepositoryImpl.forDefaultAddonDir();
 
    public Forge()
    {

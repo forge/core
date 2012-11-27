@@ -20,7 +20,11 @@ import java.util.List;
  */
 public interface AddonRepository
 {
-   public boolean deploy(AddonEntry entry, File farFile, File... dependencies);
+   public boolean deploy(AddonEntry entry, File addonJar, File... dependencyJars);
+
+   public boolean disable(final AddonEntry addon);
+
+   public boolean enable(AddonEntry addon);
 
    public File getAddonBaseDir(AddonEntry found);
 
@@ -28,21 +32,15 @@ public interface AddonRepository
 
    public File getAddonDescriptor(AddonEntry addon);
 
-   public File getAddonResourceDir(AddonEntry found);
-
    public List<File> getAddonResources(AddonEntry found);
-
-   public File getRegistryFile();
 
    public File getRepositoryDirectory();
 
+   public File getRepositoryRegistryFile();
+
    public boolean isEnabled(final AddonEntry addon);
-
-   public boolean enable(AddonEntry addon);
-
-   public List<AddonEntry> listEnabledCompatibleWithVersion(final String version);
 
    public List<AddonEntry> listEnabled();
 
-   public boolean disable(final AddonEntry addon);
+   public List<AddonEntry> listEnabledCompatibleWithVersion(final String version);
 }
