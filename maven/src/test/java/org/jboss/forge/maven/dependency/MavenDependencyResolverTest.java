@@ -22,6 +22,7 @@ import org.jboss.forge.maven.container.MavenContainer;
 import org.jboss.forge.maven.container.MavenDependencyResolver;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -109,7 +110,7 @@ public class MavenDependencyResolverTest
    public void testResolveDependencyHierarchy() throws Exception
    {
       DependencyNode root = resolver
-               .resolveDependencyHierarchy("org.jboss.forge:forge-example-plugin:jar:forge-addon:2.0.0-SNAPSHOT");
+               .resolveDependencyHierarchy("org.jboss.forge:example:jar:forge-addon:2.0.0-SNAPSHOT");
       Assert.assertNotNull(root);
       // commons-lang and example2
       Assert.assertEquals(2, root.getChildren().size());
@@ -117,6 +118,7 @@ public class MavenDependencyResolverTest
    }
 
    @Test
+   @Ignore("Just for verification purposes")
    public void testResolveDependencyHierarchy2() throws Exception
    {
       DependencyNode root = resolver
