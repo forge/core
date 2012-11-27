@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.impl.AddonImpl;
@@ -17,8 +18,6 @@ import org.jboss.modules.ModuleIdentifier;
 import org.jboss.modules.ModuleLoadException;
 import org.jboss.modules.ModuleLoader;
 import org.jboss.modules.log.StreamModuleLogger;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class Forge
 {
@@ -26,7 +25,7 @@ public final class Forge
 
    private static final int BATCH_SIZE = Integer.getInteger(PROP_CONCURRENT_PLUGINS, 4);
 
-   private Logger logger = LoggerFactory.getLogger(getClass());
+   private Logger logger = Logger.getLogger(getClass().getName());
 
    private volatile boolean alive = false;
 
@@ -37,7 +36,7 @@ public final class Forge
    public Forge()
    {
       if (!AddonRepositoryImpl.hasRuntimeAPIVersion())
-         logger.warn("Could not detect Forge runtime version - " +
+         logger.warning("Could not detect Forge runtime version - " +
                   "loading all addons, but failures may occur if versions are not compatible.");
 
       installMBeanServer();
