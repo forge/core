@@ -48,9 +48,12 @@ public class MavenDependencyNode implements DependencyNode
    {
       for (int i = 0; i < depth; i++)
       {
-         builder.append("\t");
+         builder.append(" ");
       }
-      builder.append("|-").append(dependency).append("\n");
+      if (depth > 0) {
+         builder.append("|-");
+      }
+      builder.append(dependency).append("\n");
       for (DependencyNode child : getChildren())
       {
          ((MavenDependencyNode) child).prettyPrint(builder, depth + 1);
