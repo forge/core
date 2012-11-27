@@ -42,7 +42,7 @@ public class MavenDependencyResolverTest
    public void testResolveNonJarArtifact() throws Exception
    {
 
-      CoordinateBuilder coordinate = CoordinateBuilder.create("org.jboss.forge:forge-example-plugin:2.0.0-SNAPSHOT")
+      CoordinateBuilder coordinate = CoordinateBuilder.create("org.jboss.forge:example:2.0.0-SNAPSHOT")
                .setClassifier(MavenDependencyResolver.FORGE_ADDON_CLASSIFIER);
       DependencyQueryBuilder query = DependencyQueryBuilder.create(coordinate).setFilter(
                new DependencyFilter()
@@ -99,7 +99,7 @@ public class MavenDependencyResolverTest
    public void testResolveNode() throws Exception
    {
       List<Dependency> addonDeps = resolver
-               .resolveAddonDependencies("org.jboss.forge:forge-example-plugin:jar:forge-addon:2.0.0-SNAPSHOT");
+               .resolveAddonDependencies("org.jboss.forge:example:jar:forge-addon:2.0.0-SNAPSHOT");
       Assert.assertNotNull(addonDeps);
       Assert.assertEquals(1, addonDeps.size());
       Assert.assertEquals("commons-lang", addonDeps.get(0).getCoordinate().getArtifactId());

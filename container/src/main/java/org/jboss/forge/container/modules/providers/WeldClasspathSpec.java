@@ -18,7 +18,6 @@ public class WeldClasspathSpec extends BaseModuleSpecProvider
 
    static
    {
-      // systemPaths.add("META-INF");
       paths.add("META-INF/services");
    }
 

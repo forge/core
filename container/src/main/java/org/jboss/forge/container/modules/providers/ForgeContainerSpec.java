@@ -18,7 +18,6 @@ public class ForgeContainerSpec extends BaseModuleSpecProvider
 
    static
    {
-      paths.add("META-INF");
       paths.add("META-INF/services");
    }
 
