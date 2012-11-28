@@ -90,7 +90,7 @@ public class MavenDependencyResolverTest
    public void testResolveArtifact() throws Exception
    {
       DependencyQuery query = DependencyQueryBuilder
-               .create("org.jboss.forge:forge-example-plugin:jar:forge-addon:2.0.0-SNAPSHOT");
+               .create("org.jboss.forge:example:jar:forge-addon:2.0.0-SNAPSHOT");
       File artifact = resolver.resolveArtifact(query);
       Assert.assertNotNull(artifact);
       Assert.assertTrue("Artifact does not exist: " + artifact, artifact.exists());
