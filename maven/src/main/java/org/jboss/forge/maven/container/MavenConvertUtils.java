@@ -17,6 +17,7 @@ import org.jboss.forge.addon.dependency.Coordinate;
 import org.jboss.forge.addon.dependency.Dependency;
 import org.jboss.forge.addon.dependency.DependencyRepository;
 import org.jboss.forge.addon.dependency.builder.DependencyBuilder;
+import org.jboss.forge.addon.dependency.builder.DependencyNodeBuilder;
 import org.sonatype.aether.artifact.Artifact;
 import org.sonatype.aether.graph.DependencyNode;
 import org.sonatype.aether.repository.Authentication;
@@ -71,9 +72,9 @@ class MavenConvertUtils
       return d;
    }
 
-   static MavenDependencyNode toDependencyNode(DependencyNode aetherNode)
+   static DependencyNodeBuilder toDependencyNode(DependencyNode aetherNode)
    {
-      MavenDependencyNode node = new MavenDependencyNode(MavenConvertUtils.convertToDependency(aetherNode));
+      DependencyNodeBuilder node = DependencyNodeBuilder.create(MavenConvertUtils.convertToDependency(aetherNode));
       for (DependencyNode childNode : aetherNode.getChildren())
       {
          node.getChildren().add(toDependencyNode(childNode));

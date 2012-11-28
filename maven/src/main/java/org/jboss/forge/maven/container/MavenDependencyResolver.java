@@ -23,10 +23,10 @@ import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.apache.maven.settings.Settings;
 import org.jboss.forge.addon.dependency.Coordinate;
 import org.jboss.forge.addon.dependency.Dependency;
-import org.jboss.forge.addon.dependency.DependencyFilter;
 import org.jboss.forge.addon.dependency.DependencyQuery;
 import org.jboss.forge.addon.dependency.builder.CoordinateBuilder;
 import org.jboss.forge.addon.dependency.builder.DependencyBuilder;
+import org.jboss.forge.addon.dependency.collection.DependencyFilter;
 import org.jboss.forge.addon.dependency.spi.DependencyResolver;
 import org.sonatype.aether.RepositorySystem;
 import org.sonatype.aether.artifact.Artifact;
@@ -226,7 +226,7 @@ public class MavenDependencyResolver implements DependencyResolver
    }
 
    @Override
-   public MavenDependencyNode resolveDependencyHierarchy(String coordinates)
+   public org.jboss.forge.addon.dependency.DependencyNode resolveDependencyHierarchy(String coordinates)
    {
       try
       {

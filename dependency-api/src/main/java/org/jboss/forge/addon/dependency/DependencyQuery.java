@@ -9,6 +9,8 @@ package org.jboss.forge.addon.dependency;
 
 import java.util.List;
 
+import org.jboss.forge.addon.dependency.collection.DependencyFilter;
+
 /**
  * A parameter object which is used to search dependencies
  *

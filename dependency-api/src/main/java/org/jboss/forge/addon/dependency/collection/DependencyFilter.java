@@ -5,7 +5,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.dependency;
+package org.jboss.forge.addon.dependency.collection;
+
+import org.jboss.forge.addon.dependency.Dependency;
 
 /**
  * Used to filter {@link Dependency} objects in collections.

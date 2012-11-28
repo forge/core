@@ -33,18 +33,18 @@ import org.jboss.modules.filter.PathFilters;
 
 /**
  * TODO See {@link JarModuleLoader} for how to do dynamic dependencies from an XML file within.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 public class AddonModuleLoader extends ModuleLoader
 {
    private static Iterable<ModuleSpecProvider> moduleProviders = ServiceLoader.load(ModuleSpecProvider.class);
-   private AddonRepository addonUtil;
+   private AddonRepository repository;
 
-   public AddonModuleLoader(AddonRepository addonUtil)
+   public AddonModuleLoader(AddonRepository repository)
    {
-      this.addonUtil = addonUtil;
+      this.repository = repository;
    }
 
    @Override
@@ -116,7 +116,7 @@ public class AddonModuleLoader extends ModuleLoader
 
    private void addLocalResources(AddonEntry found, Builder builder)
    {
-      List<File> resources = addonUtil.getAddonResources(found);
+      List<File> resources = repository.getAddonResources(found);
       for (File file : resources)
       {
          try
@@ -136,7 +136,7 @@ public class AddonModuleLoader extends ModuleLoader
 
    private void addAddonDependencies(AddonEntry found, Builder builder) throws ContainerException
    {
-      List<AddonDependency> addons = addonUtil.getAddonDependencies(found);
+      List<AddonDependency> addons = repository.getAddonDependencies(found);
       for (AddonDependency dependency : addons)
       {
          ModuleIdentifier moduleId = findCompatibleInstalledModule(dependency);
@@ -161,7 +161,7 @@ public class AddonModuleLoader extends ModuleLoader
    private AddonEntry findInstalledModule(ModuleIdentifier moduleId)
    {
       AddonEntry found = null;
-      for (AddonEntry addon : addonUtil.listEnabledCompatibleWithVersion(AddonRepositoryImpl.getRuntimeAPIVersion()))
+      for (AddonEntry addon : repository.listEnabledCompatibleWithVersion(AddonRepositoryImpl.getRuntimeAPIVersion()))
       {
          if (addon.toModuleId().equals(moduleId.toString()))
          {
@@ -175,7 +175,7 @@ public class AddonModuleLoader extends ModuleLoader
    private ModuleIdentifier findCompatibleInstalledModule(AddonDependency dependency)
    {
       AddonEntry found = null;
-      for (AddonEntry addon : addonUtil.listEnabledCompatibleWithVersion(AddonRepositoryImpl.getRuntimeAPIVersion()))
+      for (AddonEntry addon : repository.listEnabledCompatibleWithVersion(AddonRepositoryImpl.getRuntimeAPIVersion()))
       {
          // TODO implement proper version-range resolution
          if (addon.getName().equals(dependency.getName()))

@@ -12,9 +12,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.jboss.forge.addon.dependency.Coordinate;
-import org.jboss.forge.addon.dependency.DependencyFilter;
 import org.jboss.forge.addon.dependency.DependencyQuery;
 import org.jboss.forge.addon.dependency.DependencyRepository;
+import org.jboss.forge.addon.dependency.collection.DependencyFilter;
 
 /**
  * Builds a {@link DependencyQuery} object

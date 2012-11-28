@@ -8,7 +8,7 @@
 package org.jboss.forge.maven.dependency.filter;
 
 import org.jboss.forge.addon.dependency.Dependency;
-import org.jboss.forge.addon.dependency.DependencyFilter;
+import org.jboss.forge.addon.dependency.collection.DependencyFilter;
 
 /**
  * Filters a set of {@link Dependency} objects by its packaging
