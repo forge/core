@@ -29,7 +29,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
 {
    private Process process;
    private String FORGE_HOME;
-   private AddonRepository addonUtil = AddonRepositoryImpl.forDefaultAddonDir();
+   private AddonRepository addonUtil = AddonRepositoryImpl.forDefaultDirectory();
 
    @Override
    public Class<ForgeContainerConfiguration> getConfigurationClass()

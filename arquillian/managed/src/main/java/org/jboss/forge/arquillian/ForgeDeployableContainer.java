@@ -46,7 +46,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    @Override
    public void start() throws LifecycleException
    {
-      this.addonUtil = AddonRepositoryImpl.forDefaultAddonDir();
+      this.addonUtil = AddonRepositoryImpl.forDefaultDirectory();
       try
       {
          this.process = NativeSystemCall.exec("java", "-Dforge.logging=false -Dforge.home=" + FORGE_HOME,

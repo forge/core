@@ -18,7 +18,7 @@ public class AddonRepositoryProducer
    @Singleton
    public AddonRepository produceGlobalAddonRepository()
    {
-      return AddonRepositoryImpl.forAddonDir(addonDir);
+      return AddonRepositoryImpl.forDirectory(addonDir);
    }
 
    public void setAddonDir(File addonDir)

@@ -31,7 +31,7 @@ public final class Forge
 
    Set<AddonThread> threads = Sets.getConcurrentSet();
 
-   private AddonRepository repository = AddonRepositoryImpl.forDefaultAddonDir();
+   private AddonRepository repository = AddonRepositoryImpl.forDefaultDirectory();
 
    public Forge()
    {
@@ -219,7 +219,7 @@ public final class Forge
 
    public Forge setAddonDir(File dir)
    {
-      this.repository = AddonRepositoryImpl.forAddonDir(dir);
+      this.repository = AddonRepositoryImpl.forDirectory(dir);
       return this;
    }
 

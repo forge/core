@@ -2,23 +2,22 @@ package org.jboss.forge.container;
 
 public class AddonDependency
 {
-   private String name;
-   private String minVersion = null;
-   private String maxVersion = null;
-
-   private boolean optional = false;
-
-   public AddonDependency(String name, String minVersion, String maxVersion)
+   public enum ExportType
    {
-      this(name, minVersion, maxVersion, false);
+      NONE, ONDEMAND, ALWAYS
    }
 
-   public AddonDependency(String name, String minVersion, String maxVersion, boolean optional)
+   private String name;
+   private String version = null;
+   private ExportType exportType = ExportType.NONE;
+   private boolean optional = false;
+
+   public AddonDependency(String name, String version, ExportType exportType, boolean optional)
    {
-      this.optional = optional;
       this.name = name;
-      this.minVersion = minVersion;
-      this.maxVersion = maxVersion;
+      this.version = version;
+      this.exportType = exportType;
+      this.optional = optional;
    }
 
    public String getName()
@@ -26,14 +25,14 @@ public class AddonDependency
       return name;
    }
 
-   public String getMinVersion()
+   public String getVersion()
    {
-      return minVersion;
+      return version;
    }
 
-   public String getMaxVersion()
+   public ExportType getExportType()
    {
-      return maxVersion;
+      return exportType;
    }
 
    public boolean isOptional()
@@ -42,18 +41,12 @@ public class AddonDependency
    }
 
    @Override
-   public String toString()
-   {
-      return "AddonDependency [name=" + name + ", minVersion=" + minVersion + ", maxVersion=" + maxVersion
-               + ", optional=" + optional + "]";
-   }
-
-   @Override
    public int hashCode()
    {
       final int prime = 31;
       int result = 1;
       result = prime * result + ((name == null) ? 0 : name.hashCode());
+      result = prime * result + ((version == null) ? 0 : version.hashCode());
       return result;
    }
 
@@ -73,6 +66,13 @@ public class AddonDependency
             return false;
       }
       else if (!name.equals(other.name))
+         return false;
+      if (version == null)
+      {
+         if (other.version != null)
+            return false;
+      }
+      else if (!version.equals(other.version))
          return false;
       return true;
    }

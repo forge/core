@@ -8,7 +8,10 @@
 package org.jboss.forge.container;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 
+import org.jboss.forge.container.AddonDependency.ExportType;
 import org.jboss.forge.container.impl.AddonRepositoryImpl;
 import org.junit.Assert;
 import org.junit.Test;
@@ -58,8 +61,48 @@ public class AddonRepositoryImplTest
    @Test
    public void testAddonDirNaming() throws Exception
    {
-      AddonRepository repository = AddonRepositoryImpl.forDefaultAddonDir();
+      AddonRepository repository = AddonRepositoryImpl.forDefaultDirectory();
       File dir = repository.getAddonBaseDir(AddonEntry.from("123#$%456", "!@#789*-0"));
       Assert.assertEquals("123-456-789-0", dir.getName());
+   }
+
+   @Test
+   public void testDeployAddonEntryNoDependencies() throws Exception
+   {
+      AddonRepository repository = AddonRepositoryImpl.forDirectory(File.createTempFile("addonDir", "test"));
+
+      AddonEntry addon = AddonEntry.from("1", "2");
+      repository.deploy(addon, new ArrayList<AddonDependency>(), new File[] {});
+
+      Assert.assertEquals(0, repository.getAddonDependencies(addon).size());
+   }
+
+   @Test
+   public void testDeployAddonEntrySingleDependency() throws Exception
+   {
+      AddonRepository repository = AddonRepositoryImpl.forDirectory(File.createTempFile("addonDir", "test"));
+
+      AddonEntry addon = AddonEntry.from("1", "2");
+      AddonDependency dependency = new AddonDependency("nm", "ver", ExportType.ONDEMAND, false);
+      repository.deploy(addon, Arrays.asList(dependency), new File[] {});
+
+      Assert.assertEquals(1, repository.getAddonDependencies(addon).size());
+      Assert.assertEquals(dependency, repository.getAddonDependencies(addon).get(0));
+   }
+
+   @Test
+   public void testDeployAddonEntryMultipleDependencies() throws Exception
+   {
+      AddonRepository repository = AddonRepositoryImpl.forDirectory(File.createTempFile("addonDir", "test"));
+
+      AddonEntry addon = AddonEntry.from("1", "2");
+      AddonDependency dependency0 = new AddonDependency("nm1", "ver", ExportType.ONDEMAND, false);
+      AddonDependency dependency1 = new AddonDependency("nm2", "ver", ExportType.ONDEMAND, false);
+
+      repository.deploy(addon, Arrays.asList(dependency0, dependency1), new File[] {});
+
+      Assert.assertEquals(2, repository.getAddonDependencies(addon).size());
+      Assert.assertEquals(dependency0, repository.getAddonDependencies(addon).get(0));
+      Assert.assertEquals(dependency1, repository.getAddonDependencies(addon).get(1));
    }
 }

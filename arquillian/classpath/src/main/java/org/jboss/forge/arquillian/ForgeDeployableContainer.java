@@ -188,7 +188,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       {
          this.addonDir = File.createTempFile("forge-test-addon-dir", "");
          System.out.println("Executing test case with addon dir [" + addonDir + "]");
-         this.repository = AddonRepositoryImpl.forAddonDir(addonDir);
+         this.repository = AddonRepositoryImpl.forDirectory(addonDir);
       }
       catch (IOException e1)
       {

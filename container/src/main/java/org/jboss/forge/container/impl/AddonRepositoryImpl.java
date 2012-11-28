@@ -11,19 +11,17 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.enterprise.inject.Typed;
 
 import org.jboss.forge.container.AddonDependency;
+import org.jboss.forge.container.AddonDependency.ExportType;
 import org.jboss.forge.container.AddonEntry;
 import org.jboss.forge.container.AddonRepository;
 import org.jboss.forge.container.util.Assert;
@@ -37,7 +35,7 @@ import org.jboss.forge.parser.xml.XMLParserException;
 
 /**
  * Used to perform Addon installation/registration operations.
- *
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:koen.aers@gmail.com">Koen Aers</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
@@ -45,26 +43,26 @@ import org.jboss.forge.parser.xml.XMLParserException;
 @Typed()
 public final class AddonRepositoryImpl implements AddonRepository
 {
+   private static final String ATTR_API_VERSION = "api-version";
+   private static final String ATTR_EXPORT = "export";
+   private static final String ATTR_NAME = "name";
+   private static final String ATTR_OPTIONAL = "optional";
    private static final String ATTR_VERSION = "version";
 
-   private static final String ATTR_API_VERSION = "api-version";
+   private static final String DEFAULT_ADDON_DIR = ".forge/addons";
+   private static final String REGISTRY_DESCRIPTOR_NAME = "installed.xml";
+   private static final String ADDON_DESCRIPTOR_FILENAME = "addon.xml";
 
-   private static final String ATTR_NAME = "name";
-
-   private static final String ADDON_DIR_DEFAULT = ".forge/addons";
-
-   private static final String REGISTRY_FILE_NAME = "installed.xml";
    private static final Pattern VERSION_PATTERN = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)(\\.|-)(.*)");
-   private static final String FAR_DESCRIPTOR_FILENAME = "forge.xml";
 
-   public static AddonRepository forAddonDir(File dir)
+   public static AddonRepository forDirectory(File dir)
    {
       return new AddonRepositoryImpl(dir);
    }
 
-   public static AddonRepository forDefaultAddonDir()
+   public static AddonRepository forDefaultDirectory()
    {
-      return new AddonRepositoryImpl(new File(OSUtils.getUserHomePath(), ADDON_DIR_DEFAULT));
+      return new AddonRepositoryImpl(new File(OSUtils.getUserHomePath(), DEFAULT_ADDON_DIR));
    }
 
    public static String getRuntimeAPIVersion()
@@ -88,13 +86,13 @@ public final class AddonRepositoryImpl implements AddonRepository
 
    /**
     * This method only returns true if:
-    *
+    * 
     * - The major version of addonApiVersion is equal to the major version of runtimeVersion AND
-    *
+    * 
     * - The minor version of addonApiVersion is less or equal to the minor version of runtimeVersion
-    *
+    * 
     * - The addonApiVersion is null
-    *
+    * 
     * @param runtimeVersion a version in the format x.x.x
     * @param addonApiVersion a version in the format x.x.x
     */
@@ -134,19 +132,36 @@ public final class AddonRepositoryImpl implements AddonRepository
    }
 
    @Override
-   public synchronized boolean deploy(AddonEntry entry, File farFile, File... dependencies)
+   public synchronized boolean deploy(AddonEntry addon, List<AddonDependency> dependencies, File... resourceJars)
    {
-      File addonSlotDir = getAddonBaseDir(entry);
+      File addonSlotDir = getAddonBaseDir(addon);
       try
       {
-         Files.copyFileToDirectory(farFile, addonSlotDir);
-
-         deployForgeXml(entry, farFile);
-
-         for (File dependency : dependencies)
+         for (File jar : resourceJars)
          {
-            Files.copyFileToDirectory(dependency, addonSlotDir);
+            Files.copyFileToDirectory(jar, addonSlotDir);
          }
+
+         /*
+          * Write out the addon module dependency configuration
+          */
+         File descriptor = getAddonDescriptor(addon);
+         Node addonXml = XMLParser.parse(descriptor);
+         Node dependenciesNode = addonXml.createChild("dependencies");
+
+         for (AddonDependency dependency : dependencies)
+         {
+            Node dep = dependenciesNode.createChild("dependency");
+            dep.attribute(ATTR_NAME, dependency.getName());
+            dep.attribute(ATTR_VERSION, dependency.getVersion());
+            dep.attribute(ATTR_EXPORT, dependency.getExportType());
+            dep.attribute(ATTR_OPTIONAL, dependency.isOptional());
+         }
+
+         FileOutputStream fos = new FileOutputStream(descriptor);
+         Streams.write(XMLParser.toXMLInputStream(addonXml), fos);
+         fos.close();
+
          return true;
       }
       catch (IOException io)
@@ -154,20 +169,6 @@ public final class AddonRepositoryImpl implements AddonRepository
          // TODO throw exception instead?
          io.printStackTrace();
          return false;
-      }
-   }
-
-   private void deployForgeXml(AddonEntry entry, File farFile) throws IOException, FileNotFoundException
-   {
-      JarFile farJar = new JarFile(farFile);
-      JarEntry forgeXmlEntry = farJar.getJarEntry("META-INF/forge.xml");
-      InputStream forgeXml = farJar.getInputStream(forgeXmlEntry);
-
-      if (forgeXml != null)
-      {
-         File descriptor = getAddonDescriptor(entry);
-         FileOutputStream fos = new FileOutputStream(descriptor);
-         Streams.write(forgeXml, fos);
       }
    }
 
@@ -188,12 +189,14 @@ public final class AddonRepositoryImpl implements AddonRepository
             Node child = installed.getSingle("addon@" + ATTR_NAME + "=" + addon.getName() + "&"
                      + ATTR_VERSION + "=" + addon.getVersion());
             installed.removeChild(child);
-            Streams.write(XMLParser.toXMLInputStream(installed), new FileOutputStream(registryFile));
+            FileOutputStream outStream = new FileOutputStream(registryFile);
+            Streams.write(XMLParser.toXMLInputStream(installed), outStream);
+            outStream.close();
             return true;
          }
-         catch (FileNotFoundException e)
+         catch (IOException e)
          {
-            throw new RuntimeException("Could not read [" + registryFile.getAbsolutePath() + "] - ", e);
+            throw new RuntimeException("Could not modify [" + registryFile.getAbsolutePath() + "] - ", e);
          }
       }
       return false;
@@ -263,16 +266,16 @@ public final class AddonRepositoryImpl implements AddonRepository
       {
          Node installed = XMLParser.parse(descriptor);
 
-         List<Node> children = installed.get("dependency");
+         List<Node> children = installed.get("dependencies/dependency");
          for (Node child : children)
          {
             if (child != null)
             {
                result.add(new AddonDependency(
                         child.getAttribute(ATTR_NAME),
-                        child.getAttribute("min-version"),
-                        child.getAttribute("max-version"),
-                        Boolean.valueOf(child.getAttribute("optional"))));
+                        child.getAttribute(ATTR_VERSION),
+                        ExportType.valueOf(child.getAttribute(ATTR_EXPORT)),
+                        Boolean.valueOf(child.getAttribute(ATTR_OPTIONAL))));
             }
          }
       }
@@ -286,7 +289,7 @@ public final class AddonRepositoryImpl implements AddonRepository
 
    public synchronized File getAddonDescriptor(AddonEntry addon)
    {
-      File descriptorFile = new File(getAddonBaseDir(addon), FAR_DESCRIPTOR_FILENAME);
+      File descriptorFile = new File(getAddonBaseDir(addon), ADDON_DESCRIPTOR_FILENAME);
       try
       {
          if (!descriptorFile.exists())
@@ -317,7 +320,7 @@ public final class AddonRepositoryImpl implements AddonRepository
             @Override
             public boolean accept(File file, String name)
             {
-               return name.endsWith(".jar") || name.endsWith(".far");
+               return name.endsWith(".jar");
             }
          }));
       }
@@ -379,7 +382,7 @@ public final class AddonRepositoryImpl implements AddonRepository
 
    public synchronized File getRepositoryRegistryFile()
    {
-      File registryFile = new File(getRepositoryDirectory(), REGISTRY_FILE_NAME);
+      File registryFile = new File(getRepositoryDirectory(), REGISTRY_DESCRIPTOR_NAME);
       try
       {
          if (!registryFile.exists())
