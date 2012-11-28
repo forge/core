@@ -64,7 +64,7 @@ public class MavenDependencyResolver implements DependencyResolver
    {
       Set<Dependency> result = new HashSet<Dependency>();
       DependencyFilter filter = query.getDependencyFilter();
-      RepositorySystem system = container.lookup(RepositorySystem.class);
+      RepositorySystem system = container.getRepositorySystem();
       Settings settings = container.getSettings();
 
       MavenRepositorySystemSession session = setupRepoSession(system, settings);
@@ -140,7 +140,7 @@ public class MavenDependencyResolver implements DependencyResolver
             dep = CoordinateBuilder.create(dep).setVersion("[" + version + "]");
          }
 
-         RepositorySystem maven = container.lookup(RepositorySystem.class);
+         RepositorySystem maven = container.getRepositorySystem();
          Settings settings = container.getSettings();
 
          MavenRepositorySystemSession session = setupRepoSession(maven, settings);
@@ -177,7 +177,7 @@ public class MavenDependencyResolver implements DependencyResolver
    @Override
    public File resolveArtifact(DependencyQuery query)
    {
-      RepositorySystem system = container.lookup(RepositorySystem.class);
+      RepositorySystem system = container.getRepositorySystem();
       Settings settings = container.getSettings();
 
       List<RemoteRepository> remoteRepos = convertToMavenRepos(query.getDependencyRepositories(), settings);
@@ -203,7 +203,7 @@ public class MavenDependencyResolver implements DependencyResolver
    {
       try
       {
-         RepositorySystem system = container.lookup(RepositorySystem.class);
+         RepositorySystem system = container.getRepositorySystem();
          Settings settings = container.getSettings();
          MavenRepositorySystemSession session = setupRepoSession(system, settings);
          final CoordinateBuilder coord = CoordinateBuilder.create(coordinates);
@@ -230,7 +230,7 @@ public class MavenDependencyResolver implements DependencyResolver
    {
       try
       {
-         RepositorySystem system = container.lookup(RepositorySystem.class);
+         RepositorySystem system = container.getRepositorySystem();
          Settings settings = container.getSettings();
          MavenRepositorySystemSession session = setupRepoSession(system, settings);
          final CoordinateBuilder coord = CoordinateBuilder.create(coordinates);

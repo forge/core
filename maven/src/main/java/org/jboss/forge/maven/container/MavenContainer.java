@@ -14,6 +14,9 @@ import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import org.apache.maven.model.building.DefaultModelBuilderFactory;
+import org.apache.maven.model.building.ModelBuilder;
+import org.apache.maven.repository.internal.MavenServiceLocator;
 import org.apache.maven.settings.Profile;
 import org.apache.maven.settings.Repository;
 import org.apache.maven.settings.Settings;
@@ -23,21 +26,22 @@ import org.apache.maven.settings.building.SettingsBuilder;
 import org.apache.maven.settings.building.SettingsBuildingException;
 import org.apache.maven.settings.building.SettingsBuildingRequest;
 import org.apache.maven.settings.building.SettingsBuildingResult;
-import org.codehaus.plexus.DefaultPlexusContainer;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.codehaus.plexus.logging.console.ConsoleLoggerManager;
+import org.sonatype.aether.RepositorySystem;
+import org.sonatype.aether.connector.wagon.WagonRepositoryConnectorFactory;
+import org.sonatype.aether.impl.internal.DefaultServiceLocator;
 import org.sonatype.aether.repository.Authentication;
 import org.sonatype.aether.repository.RemoteRepository;
+import org.sonatype.aether.spi.connector.RepositoryConnectorFactory;
 
 /**
  * Configures the Maven API for usage inside Forge
+ *
+ * TODO: Remove in the future, use the ShrinkWrap Descriptors API ?
  */
 @ApplicationScoped
 public class MavenContainer
 {
    private static final String M2_HOME = System.getenv().get("M2_HOME");
-
-   private DefaultPlexusContainer container = null;
 
    public List<RemoteRepository> getEnabledRepositoriesFromProfile(Settings settings)
    {
@@ -86,54 +90,15 @@ public class MavenContainer
       }
    }
 
-   public <T> T lookup(Class<T> type)
+   public RepositorySystem getRepositorySystem()
    {
-      ClassLoader cl = Thread.currentThread().getContextClassLoader();
-      try
-      {
-         return getContainer().lookup(type);
-      }
-      catch (ComponentLookupException e)
-      {
-         throw new RuntimeException("Could not look up component of type [" + type.getName() + "]", e);
-      }
-      finally
-      {
-         /*
-          * We reset the classloader to prevent potential modules bugs if Classwords container changes classloaders on
-          * us
-          */
-         Thread.currentThread().setContextClassLoader(cl);
-      }
-   }
 
-   private DefaultPlexusContainer getContainer()
-   {
-      if (container == null)
-      {
-         ClassLoader cl = Thread.currentThread().getContextClassLoader();
-         try
-         {
-            container = new DefaultPlexusContainer();
-            ConsoleLoggerManager loggerManager = new ConsoleLoggerManager();
-            loggerManager.setThreshold("ERROR");
-            container.setLoggerManager(loggerManager);
-         }
-         catch (Exception e)
-         {
-            throw new RuntimeException(
-                     "Could not initialize Maven", e);
-         }
-         finally
-         {
-            /*
-             * We reset the classloader to prevent potential modules bugs if Classwords container changes classloaders
-             * on us
-             */
-            Thread.currentThread().setContextClassLoader(cl);
-         }
-      }
-      return container;
+      final DefaultServiceLocator locator = new MavenServiceLocator();
+      locator.setServices(ModelBuilder.class, new DefaultModelBuilderFactory().newInstance());
+      locator.addService(RepositoryConnectorFactory.class, WagonRepositoryConnectorFactory.class);
+
+      final RepositorySystem repositorySystem = locator.getService(RepositorySystem.class);
+      return repositorySystem;
    }
 
    public static org.sonatype.aether.repository.Proxy convertFromMavenProxy(org.apache.maven.settings.Proxy proxy)
