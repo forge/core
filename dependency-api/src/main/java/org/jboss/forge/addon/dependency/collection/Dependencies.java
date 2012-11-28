@@ -161,11 +161,23 @@ public final class Dependencies
       return new PreorderFirstIterator(dependencyNode);
    }
 
+   /**
+    * Checks if the {@link DependencyNode} object is holding a Forge Addon dependency
+    *
+    * @param node
+    * @return
+    */
    public static boolean isForgeAddon(DependencyNode node)
    {
       return isForgeAddon(node.getDependency());
    }
 
+   /**
+    * Check if the {@link Dependency} object is pointing to a Forge Addon artifact
+    *
+    * @param dependency
+    * @return
+    */
    public static boolean isForgeAddon(Dependency dependency)
    {
       return FORGE_ADDON_CLASSIFIER.equals(dependency.getCoordinate().getClassifier());
