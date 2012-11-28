@@ -10,6 +10,7 @@ package org.jboss.forge.addon.dependency.builder;
 import java.util.Map;
 
 import org.jboss.forge.addon.dependency.Coordinate;
+import org.jboss.forge.addon.dependency.Dependency;
 
 public class CoordinateBuilder implements Coordinate
 {
@@ -214,24 +215,38 @@ public class CoordinateBuilder implements Coordinate
       return true;
    }
 
+   /**
+    * Convenience method which should be used to convert a {@link Dependency} object into its id representation, for
+    * example: "groupId:artifactId:::version", "groupId:artifactId:packaging::version" or
+    * "groupId:artifactId:packaging:classifier:version"
+    *
+    * @see {@link Dependency#toCoordinates()}
+    */
+   private String toId()
+   {
+      StringBuilder gav = new StringBuilder(getGroupId()).append(":").append(getArtifactId());
+      gav.append(":");
+      if (getPackaging() != null)
+      {
+         gav.append(getPackaging());
+      }
+      gav.append(":");
+      if (getClassifier() != null)
+      {
+         gav.append(getClassifier());
+      }
+      gav.append(":");
+      if (getVersion() != null)
+      {
+         gav.append(getVersion());
+      }
+      return gav.toString();
+   }
+
    @Override
    public String toString()
    {
-      StringBuilder builder = new StringBuilder();
-      builder.append("Coordinate [");
-      if (groupId != null)
-         builder.append("groupId=").append(groupId).append(", ");
-      if (artifactId != null)
-         builder.append("artifactId=").append(artifactId).append(", ");
-      if (version != null)
-         builder.append("version=").append(version).append(", ");
-      if (classifier != null)
-         builder.append("classifier=").append(classifier).append(", ");
-      if (packaging != null)
-         builder.append("packaging=").append(packaging);
-      builder.append("]");
-      return builder.toString();
+      return toId();
    }
-
 
 }

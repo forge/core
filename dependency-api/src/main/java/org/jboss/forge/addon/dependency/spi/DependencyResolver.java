@@ -59,6 +59,5 @@ public interface DependencyResolver
     * @param coordinates
     * @return
     */
-   @Deprecated
    List<Dependency> resolveAddonDependencies(String coordinates);
 }

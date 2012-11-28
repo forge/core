@@ -8,14 +8,10 @@ não * Copyright 2012 Red Hat, Inc. and/or its affiliates.
 package org.jboss.forge.addon.manager;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.addon.dependency.Dependency;
 import org.jboss.forge.addon.dependency.DependencyNode;
-import org.jboss.forge.addon.dependency.builder.DependencyQueryBuilder;
 import org.jboss.forge.addon.dependency.spi.DependencyResolver;
 import org.jboss.forge.container.AddonEntry;
 import org.jboss.forge.container.AddonRepository;
@@ -40,23 +36,11 @@ public class AddonManager
       this.resolver = resolver;
    }
 
-   public boolean install(AddonEntry entry)
+   public InstallRequest install(AddonEntry entry)
    {
       String coordinates = toMavenCoordinates(entry);
-      File far = resolver.resolveArtifact(DependencyQueryBuilder.create(toMavenCoordinates(entry)));
       DependencyNode root = resolver.resolveDependencyHierarchy(coordinates);
-      File[] dependencies = toDependencies(resolver.resolveAddonDependencies(coordinates));
-      return install(entry, far, dependencies);
-   }
-
-   private File[] toDependencies(List<Dependency> dependencies)
-   {
-      List<File> result = new ArrayList<File>();
-      for (Dependency dependency : dependencies)
-      {
-         result.add(dependency.getArtifact());
-      }
-      return result.toArray(new File[dependencies.size()]);
+      return new InstallRequest(repository, resolver, root);
    }
 
    public String toMavenCoordinates(AddonEntry entry)

@@ -55,9 +55,11 @@ public class AddonManagerTest
    {
       int addonCount = registry.getRegisteredAddons().size();
       AddonEntry addon = AddonEntry.fromCoordinates("org.jboss.forge:example,2.0.0-SNAPSHOT");
-      Assert.assertTrue(addonManager.install(addon));
+      InstallRequest request = addonManager.install(addon);
+      Assert.assertEquals(1, request.getRequiredAddons().size());
+      request.perform();
       Assert.assertTrue(repository.isEnabled(addon));
       Thread.sleep(500);
-      Assert.assertEquals(addonCount + 1, registry.getRegisteredAddons().size());
+      Assert.assertEquals(addonCount + 2, registry.getRegisteredAddons().size());
    }
 }

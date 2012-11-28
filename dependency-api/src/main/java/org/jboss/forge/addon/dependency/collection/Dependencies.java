@@ -29,6 +29,7 @@ import org.jboss.forge.addon.dependency.DependencyNode;
  */
 public final class Dependencies
 {
+   public static final String FORGE_ADDON_CLASSIFIER = "forge-addon";
 
    private Dependencies()
    {
@@ -158,6 +159,16 @@ public final class Dependencies
    public static Iterator<DependencyNode> preorderIterator(DependencyNode dependencyNode)
    {
       return new PreorderFirstIterator(dependencyNode);
+   }
+
+   public static boolean isForgeAddon(DependencyNode node)
+   {
+      return isForgeAddon(node.getDependency());
+   }
+
+   public static boolean isForgeAddon(Dependency dependency)
+   {
+      return FORGE_ADDON_CLASSIFIER.equals(dependency.getCoordinate().getClassifier());
    }
 
    /**
@@ -307,6 +318,5 @@ public final class Dependencies
       {
          throw new UnsupportedOperationException("remove");
       }
-
    }
 }
