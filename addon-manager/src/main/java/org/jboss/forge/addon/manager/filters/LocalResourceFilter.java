@@ -1,8 +1,8 @@
 package org.jboss.forge.addon.manager.filters;
 
 import org.jboss.forge.addon.dependency.DependencyNode;
+import org.jboss.forge.addon.dependency.collection.Dependencies;
 import org.jboss.forge.addon.dependency.collection.Predicate;
-import org.jboss.forge.addon.manager.AddonManager;
 
 public class LocalResourceFilter implements Predicate<DependencyNode>
 {
@@ -18,7 +18,7 @@ public class LocalResourceFilter implements Predicate<DependencyNode>
 
    public boolean isDependencyAddon(DependencyNode node)
    {
-      return AddonManager.FORGE_ADDON_CLASSIFIER.equals(node.getDependency().getCoordinate().getClassifier())
+      return Dependencies.isForgeAddon(node.getDependency().getCoordinate())
                && node.getParent() != null;
    }
 

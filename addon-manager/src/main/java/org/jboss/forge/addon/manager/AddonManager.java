@@ -18,15 +18,13 @@ import org.jboss.forge.container.services.Remote;
 
 /**
  * Installs addons into an {@link AddonRepository}
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ *
  */
 @Remote
 public class AddonManager
 {
-   public static final String FORGE_ADDON_CLASSIFIER = "forge-addon";
-
    private AddonRepository repository;
    private DependencyResolver resolver;
 
