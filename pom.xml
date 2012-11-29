@@ -85,6 +85,7 @@
             <module>facets</module>
             <module>dependency-api</module>
             <module>maven</module>
+            <module>bootstrap</module>
             <module>dist</module>
          </modules>
       </profile>
@@ -193,6 +194,16 @@
          </dependency>
 
          <!-- Forge Dependencies -->
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>forge-bootstrap</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>forge-addon-manager</artifactId>
+            <version>${project.version}</version>
+         </dependency>
          <dependency>
             <groupId>org.jboss.forge</groupId>
             <artifactId>forge-maven</artifactId>

@@ -38,7 +38,6 @@ public final class Forge
       if (!AddonRepositoryImpl.hasRuntimeAPIVersion())
          logger.warning("Could not detect Forge runtime version - " +
                   "loading all addons, but failures may occur if versions are not compatible.");
-
       installMBeanServer();
    }
 
@@ -192,8 +191,8 @@ public final class Forge
          {
             logger.info("Not loading addon [" + entry.getName()
                      + "] because it references Forge API version [" + entry.getApiVersion()
-                     + "] which may not be compatible with my current version [" + Bootstrap.class.getPackage()
-                              .getImplementationVersion() + "].");
+                     + "] which may not be compatible with my current version ["
+                     + AddonRepositoryImpl.getRuntimeAPIVersion() + "].");
          }
       }
 
