@@ -6,7 +6,6 @@
  */
 package org.jboss.forge.addon.facets;
 
-
 /**
  * @author <a href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>
  */
@@ -19,14 +18,14 @@ public interface Faceted
    boolean hasFacet(Class<? extends Facet> type);
 
    /**
-    * Return true if all {@link Facet}s of the given types are present; otherwise, if any of the given facet types
-    * is missing, return false.
+    * Return true if all {@link Facet}s of the given types are present; otherwise, if any of the given facet types is
+    * missing, return false.
     */
    boolean hasAllFacets(Iterable<Class<? extends Facet>> facetDependencies);
 
    /**
-    * Return true if all {@link Facet}s of the given types are present; otherwise, if any of the given facet types
-    * is missing, return false.
+    * Return true if all {@link Facet}s of the given types are present; otherwise, if any of the given facet types is
+    * missing, return false.
     */
    boolean hasAllFacets(Class<? extends Facet>... facetDependencies);
 
@@ -51,25 +50,15 @@ public interface Faceted
     * Install and register the given {@link Facet}. If the facet is already installed, register it instead (See
     * {@link #registerFacet(Facet)}.
     */
-   boolean installFacet(Facet facet);
-
-   /**
-    * Add the given {@link Facet} to the internal collection of installed facets.
-    */
-   boolean registerFacet(Facet facet);
+   boolean install(Facet facet);
 
    /**
     * Remove the given {@link Facet} from the internal collection of installed facets.
     */
-   boolean unregisterFacet(Facet facet);
-
-   /**
-    * Remove the given {@link Facet} from the internal collection of installed facets.
-    */
-   boolean removeFacet(Facet facet);
+   boolean uninstall(Facet facet);
 
    /**
     * Return true if the given {@link Facet} is supported.
     */
-   boolean supportsFacet(Facet facet);
+   boolean supports(Class<? extends Facet> type);
 }
