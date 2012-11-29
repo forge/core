@@ -6,7 +6,6 @@
  */
 package org.jboss.forge.addon.facets;
 
-import java.util.Collection;
 
 /**
  * @author <a href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>
@@ -23,7 +22,7 @@ public interface Faceted
     * Return true if all {@link Facet}s of the given types are present; otherwise, if any of the given facet types
     * is missing, return false.
     */
-   boolean hasAllFacets(Collection<Class<? extends Facet>> facetDependencies);
+   boolean hasAllFacets(Iterable<Class<? extends Facet>> facetDependencies);
 
    /**
     * Return true if all {@link Facet}s of the given types are present; otherwise, if any of the given facet types
@@ -38,15 +37,15 @@ public interface Faceted
    <F extends Facet> F getFacet(Class<F> type) throws FacetNotFoundException;
 
    /**
-    * Return a {@link Collection} of the currently installed {@link Facet}s. Return an empty list if no facets of that
+    * Return a {@link Iterable} of the currently installed {@link Facet}s. Return an empty list if no facets of that
     * type were found.
     */
-   Collection<Facet> getFacets();
+   Iterable<Facet> getFacets();
 
    /**
-    * Return a {@link Collection} of the currently installed {@link Facet}s matching the given type.
+    * Return a {@link Iterable} of the currently installed {@link Facet}s matching the given type.
     */
-   <F extends Facet> Collection<F> getFacets(Class<F> type);
+   <F extends Facet> Iterable<F> getFacets(Class<F> type);
 
    /**
     * Install and register the given {@link Facet}. If the facet is already installed, register it instead (See
