@@ -1,5 +1,5 @@
 /*
-não * Copyright 2012 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2012 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -9,8 +9,6 @@ package org.jboss.forge.addon.manager;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.addon.dependency.DependencyNode;
-import org.jboss.forge.addon.dependency.builder.DependencyQueryBuilder;
 import org.jboss.forge.addon.dependency.spi.DependencyResolver;
 import org.jboss.forge.container.AddonEntry;
 import org.jboss.forge.container.AddonRepository;
@@ -37,9 +35,7 @@ public class AddonManager
 
    public InstallRequest install(AddonEntry entry)
    {
-      String coordinates = entry.getName() + ":jar:forge-addon:" + entry.getVersion();
-      DependencyNode root = resolver.resolveDependencyHierarchy(DependencyQueryBuilder.create(coordinates));
-      return new InstallRequest(repository, resolver, root);
+      return new InstallRequest(repository, resolver, entry);
    }
 
    public boolean remove(AddonEntry entry)

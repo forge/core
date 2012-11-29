@@ -38,38 +38,46 @@ public class InstallRequest
    private AddonRepository repository;
    private DependencyResolver dependencyResolver;
 
-   private DependencyNode requestedAddon;
+   private AddonEntry requestedAddonEntry;
+   private DependencyNode requestedAddonNode;
    private Stack<DependencyNode> requiredAddons = new Stack<DependencyNode>();
    private Stack<DependencyNode> optionalAddons = new Stack<DependencyNode>();
 
-   public InstallRequest(AddonRepository repository, DependencyResolver resolver, DependencyNode requestedAddon)
+   public InstallRequest(AddonRepository repository, DependencyResolver resolver, AddonEntry requestedAddonEntry)
    {
       this.repository = repository;
-      this.requestedAddon = requestedAddon;
       this.dependencyResolver = resolver;
+      this.requestedAddonEntry = requestedAddonEntry;
+
+      String coordinates = requestedAddonEntry.getName() + ":jar:forge-addon:" + requestedAddonEntry.getVersion();
+      this.requestedAddonNode = resolver.resolveDependencyHierarchy(DependencyQueryBuilder.create(coordinates));
 
       /*
        * To return the addons on which this addon depends, we'll need to traverse the tree using the breadth first
        * order, and then add them to a stack. This will guarantee their order.
        */
       requiredAddons.clear();
-      Iterator<DependencyNode> iterator = Dependencies.breadthFirstIterator(requestedAddon);
+      Iterator<DependencyNode> iterator = Dependencies.breadthFirstIterator(requestedAddonNode);
       while (iterator.hasNext())
       {
          DependencyNode node = iterator.next();
-         if (Dependencies.isForgeAddon(node.getDependency().getCoordinate()) && !node.equals(requestedAddon))
+         if (Dependencies.isForgeAddon(node.getDependency().getCoordinate()) && !node.equals(requestedAddonNode))
          {
-            if (!node.getDependency().isOptional())
-               requiredAddons.push(node);
-            else
+            if (node.getDependency().isOptional())
+            {
                optionalAddons.push(node);
+            }
+            else
+            {
+               requiredAddons.push(node);
+            }
          }
       }
    }
 
    public DependencyNode getRequestedAddon()
    {
-      return this.requestedAddon;
+      return this.requestedAddonNode;
    }
 
    /**
@@ -101,9 +109,8 @@ public class InstallRequest
          deploy(addonEntry, requiredAddon);
       }
 
-      AddonEntry requestedAddonEntry = toAddonEntry(requestedAddon);
       entries.add(requestedAddonEntry);
-      deploy(requestedAddonEntry, requestedAddon);
+      deploy(requestedAddonEntry, requestedAddonNode);
 
       enable(entries);
    }
