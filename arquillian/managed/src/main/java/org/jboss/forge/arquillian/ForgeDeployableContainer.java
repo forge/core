@@ -15,7 +15,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.arquillian.protocol.ServletProtocolDescription;
 import org.jboss.forge.arquillian.util.NativeSystemCall;
 import org.jboss.forge.arquillian.util.ShrinkWrapUtil;
-import org.jboss.forge.container.AddonEntry;
+import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.AddonRepository;
 import org.jboss.forge.container.impl.AddonRepositoryImpl;
 import org.jboss.forge.container.util.Files;
@@ -82,7 +82,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    @Override
    public ProtocolMetaData deploy(Archive<?> archive) throws DeploymentException
    {
-      AddonEntry addon = getAddonEntry(archive);
+      AddonId addon = getAddonEntry(archive);
       File destDir = addonUtil.getAddonBaseDir(addon);
       destDir.mkdirs();
 
@@ -122,7 +122,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    @Override
    public void undeploy(Archive<?> archive) throws DeploymentException
    {
-      AddonEntry addon = getAddonEntry(archive);
+      AddonId addon = getAddonEntry(archive);
       addonUtil.disable(addon);
 
       File dir = addonUtil.getAddonBaseDir(addon);
@@ -131,9 +131,9 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
          throw new IllegalStateException("Could not delete file [" + dir.getAbsolutePath() + "]");
    }
 
-   private AddonEntry getAddonEntry(Archive<?> archive)
+   private AddonId getAddonEntry(Archive<?> archive)
    {
-      return AddonEntry.from(archive.getName().replaceFirst("\\.jar$", ""), "2.0.0-SNAPSHOT", "main");
+      return AddonId.from(archive.getName().replaceFirst("\\.jar$", ""), "2.0.0-SNAPSHOT", "main");
    }
 
    @Override

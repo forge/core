@@ -8,7 +8,7 @@ public class AddonEntryTest
    @Test
    public void testFromCoordinates()
    {
-      AddonEntry entry = AddonEntry.fromCoordinates("org.example:example-addon,1.0.0-SNAPSHOT,2.0.0");
+      AddonId entry = AddonId.fromCoordinates("org.example:example-addon,1.0.0-SNAPSHOT,2.0.0");
       Assert.assertEquals("org.example:example-addon,1.0.0-SNAPSHOT,2.0.0", entry.toCoordinates());
       Assert.assertEquals("org.example.example-addon:1.0.0-SNAPSHOT", entry.toModuleId());
    }
@@ -16,8 +16,63 @@ public class AddonEntryTest
    @Test
    public void testFromIndividual()
    {
-      AddonEntry entry = AddonEntry.from("org.example:example-addon", "1.0.0-SNAPSHOT", "2.0.0");
+      AddonId entry = AddonId.from("org.example:example-addon", "1.0.0-SNAPSHOT", "2.0.0");
       Assert.assertEquals("org.example:example-addon,1.0.0-SNAPSHOT,2.0.0", entry.toCoordinates());
       Assert.assertEquals("org.example.example-addon:1.0.0-SNAPSHOT", entry.toModuleId());
+   }
+
+   @Test(expected = IllegalArgumentException.class)
+   public void testNoName()
+   {
+      AddonId.from(null, "1.0.0-SNAPSHOT", "2.0.0");
+   }
+
+   @Test(expected = IllegalArgumentException.class)
+   public void testNoVersion()
+   {
+      AddonId.from("name", "", "2.0.0");
+   }
+
+   @Test(expected = IllegalArgumentException.class)
+   public void testNoNameOrVersion()
+   {
+      AddonId.from(null, null, "2.0.0");
+   }
+
+   @Test(expected = IllegalArgumentException.class)
+   public void testNullVersion()
+   {
+      AddonId.from("name", null, "2.0.0");
+   }
+
+   @Test(expected = IllegalArgumentException.class)
+   public void testNullNameCompact()
+   {
+      AddonId.from(null, "1.0.0-SNAPSHOT");
+   }
+
+   @Test(expected = IllegalArgumentException.class)
+   public void testNoNameCompact()
+   {
+      AddonId.from("", "1.0.0-SNAPSHOT");
+   }
+
+   @Test(expected = IllegalArgumentException.class)
+   public void testNullVersionCompact()
+   {
+      AddonId.from("name", null);
+   }
+
+   @Test(expected = IllegalArgumentException.class)
+   public void testNoNameOrVersionCompact()
+   {
+      AddonId.from(null, null);
+   }
+
+   @Test
+   public void testNoApi()
+   {
+      AddonId.from("name", "1.0.0-SNAPSHOT", null);
+      AddonId.from("name", "1.0.0-SNAPSHOT");
    }
 }

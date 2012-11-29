@@ -2,35 +2,40 @@ package org.jboss.forge.container;
 
 public class AddonDependency
 {
-   public enum ExportType
-   {
-      NONE, ONDEMAND, ALWAYS
-   }
-
-   private AddonEntry addon;
-   private ExportType exportType = ExportType.NONE;
+   private AddonId addon;
+   private boolean export = false;
    private boolean optional = false;
 
-   public static AddonDependency create(AddonEntry addon, ExportType export, boolean optional)
+   public static AddonDependency create(AddonId addon)
+   {
+      return create(addon, false);
+   }
+
+   public static AddonDependency create(AddonId addon, boolean export)
+   {
+      return create(addon, export, false);
+   }
+
+   public static AddonDependency create(AddonId addon, boolean export, boolean optional)
    {
       return new AddonDependency(addon, export, optional);
    }
 
-   private AddonDependency(AddonEntry addon, ExportType export, boolean optional)
+   private AddonDependency(AddonId addon, boolean export, boolean optional)
    {
       this.addon = addon;
-      this.exportType = export;
+      this.export = export;
       this.optional = optional;
    }
 
-   public AddonEntry getAddon()
+   public AddonId getId()
    {
       return addon;
    }
 
-   public ExportType getExportType()
+   public boolean isExport()
    {
-      return exportType;
+      return export;
    }
 
    public boolean isOptional()
@@ -65,6 +70,12 @@ public class AddonDependency
       else if (!addon.equals(other.addon))
          return false;
       return true;
+   }
+
+   @Override
+   public String toString()
+   {
+      return "(addon=" + addon + ", export=" + export + ", optional=" + optional + ")";
    }
 
 }

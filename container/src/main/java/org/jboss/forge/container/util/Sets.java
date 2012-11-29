@@ -9,6 +9,11 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Sets
 {
+   public static <T> Set<T> getConcurrentSet(Class<T> type)
+   {
+      return Collections.newSetFromMap(new ConcurrentHashMap<T, Boolean>());
+   }
+
    public static <T> Set<T> getConcurrentSet()
    {
       return Collections.newSetFromMap(new ConcurrentHashMap<T, Boolean>());

@@ -21,8 +21,7 @@ import java.util.regex.Pattern;
 import javax.enterprise.inject.Typed;
 
 import org.jboss.forge.container.AddonDependency;
-import org.jboss.forge.container.AddonDependency.ExportType;
-import org.jboss.forge.container.AddonEntry;
+import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.AddonRepository;
 import org.jboss.forge.container.util.Assert;
 import org.jboss.forge.container.util.Files;
@@ -34,7 +33,7 @@ import org.jboss.forge.parser.xml.XMLParser;
 import org.jboss.forge.parser.xml.XMLParserException;
 
 /**
- * Used to perform Addon installation/registration operations.
+ * Used to perform RegisteredAddon installation/registration operations.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:koen.aers@gmail.com">Koen Aers</a>
@@ -77,9 +76,9 @@ public final class AddonRepositoryImpl implements AddonRepository
       return getRuntimeAPIVersion() != null;
    }
 
-   public static boolean isApiCompatible(CharSequence runtimeVersion, AddonEntry entry)
+   public static boolean isApiCompatible(CharSequence runtimeVersion, AddonId entry)
    {
-      Assert.notNull(entry, "Addon entry must not be null.");
+      Assert.notNull(entry, "RegisteredAddon entry must not be null.");
 
       return isApiCompatible(runtimeVersion, entry.getApiVersion());
    }
@@ -127,12 +126,12 @@ public final class AddonRepositoryImpl implements AddonRepository
 
    private AddonRepositoryImpl(File dir)
    {
-      Assert.notNull(dir, "Addon directory must not be null");
+      Assert.notNull(dir, "RegisteredAddon directory must not be null");
       this.addonDir = dir;
    }
 
    @Override
-   public synchronized boolean deploy(AddonEntry addon, List<AddonDependency> dependencies, List<File> resourceJars)
+   public synchronized boolean deploy(AddonId addon, List<AddonDependency> dependencies, List<File> resourceJars)
    {
       File addonSlotDir = getAddonBaseDir(addon);
       try
@@ -154,9 +153,9 @@ public final class AddonRepositoryImpl implements AddonRepository
             for (AddonDependency dependency : dependencies)
             {
                Node dep = dependenciesNode.createChild("dependency");
-               dep.attribute(ATTR_NAME, dependency.getAddon().getName());
-               dep.attribute(ATTR_VERSION, dependency.getAddon().getVersion());
-               dep.attribute(ATTR_EXPORT, dependency.getExportType());
+               dep.attribute(ATTR_NAME, dependency.getId().getName());
+               dep.attribute(ATTR_VERSION, dependency.getId().getVersion());
+               dep.attribute(ATTR_EXPORT, dependency.isExport());
                dep.attribute(ATTR_OPTIONAL, dependency.isOptional());
             }
 
@@ -174,11 +173,11 @@ public final class AddonRepositoryImpl implements AddonRepository
       }
    }
 
-   public synchronized boolean disable(final AddonEntry addon)
+   public synchronized boolean disable(final AddonId addon)
    {
       if (addon == null)
       {
-         throw new RuntimeException("Addon must not be null");
+         throw new RuntimeException("RegisteredAddon must not be null");
       }
 
       File registryFile = getRepositoryRegistryFile();
@@ -204,27 +203,27 @@ public final class AddonRepositoryImpl implements AddonRepository
       return false;
    }
 
-   public synchronized boolean enable(AddonEntry addon)
+   public synchronized boolean enable(AddonId addon)
    {
       if (addon == null)
       {
-         throw new RuntimeException("Addon must not be null");
+         throw new RuntimeException("RegisteredAddon must not be null");
       }
       if (Strings.isNullOrEmpty(addon.getName()))
       {
-         throw new RuntimeException("Addon name must not be null");
+         throw new RuntimeException("RegisteredAddon name must not be null");
       }
       if (Strings.isNullOrEmpty(addon.getVersion()))
       {
-         throw new RuntimeException("Addon version must not be null");
+         throw new RuntimeException("RegisteredAddon version must not be null");
       }
       if (Strings.isNullOrEmpty(addon.getApiVersion()))
       {
-         addon = AddonEntry.from(addon.getName(), addon.getVersion(), addon.getApiVersion());
+         addon = AddonId.from(addon.getName(), addon.getVersion(), addon.getApiVersion());
       }
 
-      List<AddonEntry> installedAddons = listEnabled();
-      for (AddonEntry e : installedAddons)
+      List<AddonId> installedAddons = listEnabled();
+      for (AddonId e : installedAddons)
       {
          if (addon.getName().equals(e.getName()))
          {
@@ -250,16 +249,16 @@ public final class AddonRepositoryImpl implements AddonRepository
       }
    }
 
-   public synchronized File getAddonBaseDir(AddonEntry found)
+   public synchronized File getAddonBaseDir(AddonId found)
    {
-      Assert.notNull(found.getVersion(), "Addon version must be specified.");
-      Assert.notNull(found.getName(), "Addon name must be specified.");
+      Assert.notNull(found.getVersion(), "RegisteredAddon version must be specified.");
+      Assert.notNull(found.getName(), "RegisteredAddon name must be specified.");
 
       File addonDir = new File(getRepositoryDirectory(), found.toModuleId().replaceAll("[^a-zA-Z0-9]+", "-"));
       return addonDir;
    }
 
-   public synchronized List<AddonDependency> getAddonDependencies(AddonEntry addon)
+   public synchronized List<AddonDependency> getAddonDependencies(AddonId addon)
    {
       List<AddonDependency> result = new ArrayList<AddonDependency>();
       File descriptor = getAddonDescriptor(addon);
@@ -273,9 +272,9 @@ public final class AddonRepositoryImpl implements AddonRepository
          {
             if (child != null)
             {
-               result.add(AddonDependency.create(AddonEntry.from(child.getAttribute(ATTR_NAME),
+               result.add(AddonDependency.create(AddonId.from(child.getAttribute(ATTR_NAME),
                         child.getAttribute(ATTR_VERSION)),
-                        ExportType.valueOf(child.getAttribute(ATTR_EXPORT)),
+                        Boolean.valueOf(child.getAttribute(ATTR_EXPORT)),
                         Boolean.valueOf(child.getAttribute(ATTR_OPTIONAL))));
             }
          }
@@ -288,9 +287,9 @@ public final class AddonRepositoryImpl implements AddonRepository
       return result;
    }
 
-   public synchronized File getAddonDescriptor(AddonEntry addon)
+   public synchronized File getAddonDescriptor(AddonId addon)
    {
-      File descriptorFile = new File(getAddonBaseDir(addon), ADDON_DESCRIPTOR_FILENAME);
+      File descriptorFile = getAddonDescriptorFile(addon);
       try
       {
          if (!descriptorFile.exists())
@@ -311,7 +310,12 @@ public final class AddonRepositoryImpl implements AddonRepository
       }
    }
 
-   public List<File> getAddonResources(AddonEntry found)
+   private File getAddonDescriptorFile(AddonId addon)
+   {
+      return new File(getAddonBaseDir(addon), ADDON_DESCRIPTOR_FILENAME);
+   }
+
+   public List<File> getAddonResources(AddonId found)
    {
       File dir = getAddonBaseDir(found);
       if (dir.exists())
@@ -328,11 +332,11 @@ public final class AddonRepositoryImpl implements AddonRepository
       return new ArrayList<File>();
    }
 
-   private synchronized AddonEntry getEnabled(final AddonEntry addon)
+   private synchronized AddonId getEnabled(final AddonId addon)
    {
       if (addon == null)
       {
-         throw new RuntimeException("Addon must not be null");
+         throw new RuntimeException("RegisteredAddon must not be null");
       }
 
       File registryFile = getRepositoryRegistryFile();
@@ -351,7 +355,7 @@ public final class AddonRepositoryImpl implements AddonRepository
                   if ((addon.getVersion() == null)
                            || addon.getVersion().equals(child.getAttribute(ATTR_VERSION)))
                   {
-                     return AddonEntry.from(child.getAttribute(ATTR_NAME),
+                     return AddonId.from(child.getAttribute(ATTR_NAME),
                               child.getAttribute(ATTR_VERSION),
                               child.getAttribute(ATTR_API_VERSION));
                   }
@@ -375,7 +379,7 @@ public final class AddonRepositoryImpl implements AddonRepository
          System.gc();
          if (!addonDir.mkdirs())
          {
-            throw new RuntimeException("Could not create Addon Directory [" + addonDir + "]");
+            throw new RuntimeException("Could not create RegisteredAddon Directory [" + addonDir + "]");
          }
       }
       return addonDir;
@@ -408,14 +412,23 @@ public final class AddonRepositoryImpl implements AddonRepository
       }
    }
 
-   public synchronized boolean isEnabled(final AddonEntry addon)
+   @Override
+   public boolean isDeployed(AddonId addon)
+   {
+      return getAddonBaseDir(addon).exists() && getAddonDescriptorFile(addon).exists()
+               && !getAddonResources(addon).isEmpty();
+   }
+
+   @Override
+   public synchronized boolean isEnabled(final AddonId addon)
    {
       return getEnabled(addon) != null;
    }
 
-   public synchronized List<AddonEntry> listEnabled()
+   @Override
+   public synchronized List<AddonId> listEnabled()
    {
-      List<AddonEntry> result = new ArrayList<AddonEntry>();
+      List<AddonId> result = new ArrayList<AddonId>();
       File registryFile = getRepositoryRegistryFile();
       try
       {
@@ -427,7 +440,7 @@ public final class AddonRepositoryImpl implements AddonRepository
          List<Node> list = installed.get("addon");
          for (Node addon : list)
          {
-            AddonEntry entry = AddonEntry.from(addon.getAttribute(ATTR_NAME),
+            AddonId entry = AddonId.from(addon.getAttribute(ATTR_NAME),
                      addon.getAttribute(ATTR_VERSION),
                      addon.getAttribute(ATTR_API_VERSION));
             result.add(entry);
@@ -445,13 +458,13 @@ public final class AddonRepositoryImpl implements AddonRepository
       return result;
    }
 
-   public synchronized List<AddonEntry> listEnabledCompatibleWithVersion(final String version)
+   public synchronized List<AddonId> listEnabledCompatibleWithVersion(final String version)
    {
-      List<AddonEntry> list = listEnabled();
-      List<AddonEntry> result = list;
+      List<AddonId> list = listEnabled();
+      List<AddonId> result = list;
 
-      result = new ArrayList<AddonEntry>();
-      for (AddonEntry entry : list)
+      result = new ArrayList<AddonId>();
+      for (AddonId entry : list)
       {
          if (isApiCompatible(version, entry))
          {
@@ -459,5 +472,12 @@ public final class AddonRepositoryImpl implements AddonRepository
          }
       }
       return result;
+   }
+
+   @Override
+   public boolean undeploy(AddonId addon)
+   {
+      File dir = getAddonBaseDir(addon);
+      return Files.delete(dir, true);
    }
 }

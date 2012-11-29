@@ -12,7 +12,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 /**
- * Used to perform Addon installation/registration operations. May be obtained using CDI injection:
+ * Used to perform RegisteredAddon installation/registration operations. May be obtained using CDI injection:
  * <p>
  * <code>@{@link Inject} private {@link AddonRepository} repository;</code>
  * 
@@ -22,28 +22,32 @@ import javax.inject.Inject;
  */
 public interface AddonRepository
 {
-   public boolean deploy(AddonEntry addon, List<AddonDependency> dependencies, List<File> resourceJars);
+   public boolean deploy(AddonId addon, List<AddonDependency> dependencies, List<File> resourceJars);
 
-   public boolean disable(final AddonEntry addon);
+   public boolean disable(final AddonId addon);
 
-   public boolean enable(AddonEntry addon);
+   public boolean enable(AddonId addon);
 
-   public File getAddonBaseDir(AddonEntry addon);
+   public File getAddonBaseDir(AddonId addon);
 
-   public List<AddonDependency> getAddonDependencies(AddonEntry addon);
+   public List<AddonDependency> getAddonDependencies(AddonId addon);
 
-   public File getAddonDescriptor(AddonEntry addon);
+   public File getAddonDescriptor(AddonId addon);
 
-   public List<File> getAddonResources(AddonEntry addon);
+   public List<File> getAddonResources(AddonId addon);
 
    public File getRepositoryDirectory();
 
    public File getRepositoryRegistryFile();
 
-   public boolean isEnabled(final AddonEntry addon);
+   public boolean isDeployed(AddonId addon);
 
-   public List<AddonEntry> listEnabled();
+   public boolean isEnabled(final AddonId addon);
 
-   public List<AddonEntry> listEnabledCompatibleWithVersion(final String version);
+   public List<AddonId> listEnabled();
+
+   public List<AddonId> listEnabledCompatibleWithVersion(final String version);
+
+   public boolean undeploy(AddonId addonEntry);
 
 }

@@ -2,9 +2,9 @@ package org.jboss.forge.container;
 
 import org.jboss.forge.container.services.ServiceRegistry;
 
-public interface Addon
+public interface RegisteredAddon
 {
-   public String getId();
+   public AddonId getId();
 
    public ClassLoader getClassLoader();
 

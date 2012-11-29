@@ -23,7 +23,7 @@ import org.jboss.forge.addon.dependency.spi.DependencyResolver;
 import org.jboss.forge.addon.manager.filters.DirectAddonFilter;
 import org.jboss.forge.addon.manager.filters.LocalResourceFilter;
 import org.jboss.forge.container.AddonDependency;
-import org.jboss.forge.container.AddonEntry;
+import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.AddonRepository;
 
 /**
@@ -101,21 +101,22 @@ public class InstallRequest
     */
    public void perform()
    {
-      List<AddonEntry> entries = new ArrayList<AddonEntry>(requiredAddons.size() + 1);
+      List<AddonId> entries = new ArrayList<AddonId>(requiredAddons.size() + 1);
       for (DependencyNode requiredAddon : getRequiredAddons())
       {
-         AddonEntry addonEntry = toAddonEntry(requiredAddon);
+         AddonId addonEntry = toAddonEntry(requiredAddon);
          entries.add(addonEntry);
          deploy(addonEntry, requiredAddon);
       }
 
+      AddonId requestedAddonEntry = toAddonEntry(requestedAddon);
       entries.add(requestedAddonEntry);
       deploy(requestedAddonEntry, requestedAddonNode);
 
       enable(entries);
    }
 
-   private AddonEntry toAddonEntry(DependencyNode node)
+   private AddonId toAddonEntry(DependencyNode node)
    {
       Coordinate coord = node.getDependency().getCoordinate();
       DependencyNode forgeApi = Dependencies.selectFirst(Dependencies.breadthFirstIterator(node),
@@ -136,10 +137,10 @@ public class InstallRequest
          apiVersion = forgeApi.getDependency().getCoordinate().getVersion();
       }
 
-      return AddonEntry.from(coord.getGroupId() + ":" + coord.getArtifactId(), coord.getVersion(), apiVersion);
+      return AddonId.from(coord.getGroupId() + ":" + coord.getArtifactId(), coord.getVersion(), apiVersion);
    }
 
-   private void deploy(AddonEntry addon, DependencyNode root)
+   private void deploy(AddonId addon, DependencyNode root)
    {
       Coordinate coordinate = root.getDependency().getCoordinate();
 
@@ -168,9 +169,9 @@ public class InstallRequest
       return result;
    }
 
-   private void enable(List<AddonEntry> entries)
+   private void enable(List<AddonId> entries)
    {
-      for (AddonEntry addonEntry : entries)
+      for (AddonId addonEntry : entries)
       {
          repository.enable(addonEntry);
       }

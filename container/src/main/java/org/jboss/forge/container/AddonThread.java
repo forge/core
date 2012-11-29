@@ -1,6 +1,5 @@
 package org.jboss.forge.container;
 
-
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -23,6 +22,12 @@ public class AddonThread
    public AddonRunnable getRunnable()
    {
       return runnable;
+   }
+
+   @Override
+   public String toString()
+   {
+      return "AddonThread [thread=" + thread + ", runnable=" + runnable + "]";
    }
 
 }

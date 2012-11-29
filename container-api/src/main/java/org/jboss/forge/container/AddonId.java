@@ -3,25 +3,23 @@ package org.jboss.forge.container;
 import java.util.Arrays;
 import java.util.List;
 
-public class AddonEntry
+public final class AddonId
 {
-   private static final String NONE = null;
    private final String name;
    private final String apiVersion;
    private final String version;
 
-   protected AddonEntry(final String name, final String version, final String apiVersion)
+   private AddonId(final String name, final String version, final String apiVersion)
    {
+      if (name == null || name.isEmpty())
+         throw new IllegalArgumentException("Name cannot be null.");
       this.name = name;
-      this.version = version;
-      this.apiVersion = apiVersion;
-   }
 
-   public AddonEntry(String name, String version)
-   {
-      this.name = name;
+      if (version == null || version.isEmpty())
+         throw new IllegalArgumentException("Version cannot be null.");
       this.version = version;
-      this.apiVersion = NONE;
+
+      this.apiVersion = apiVersion;
    }
 
    public String getName()
@@ -45,19 +43,12 @@ public class AddonEntry
       return toCoordinates();
    }
 
-   public static AddonEntry fromCoordinates(final String coordinates)
+   public static AddonId fromCoordinates(final String coordinates)
    {
       String[] split = coordinates.split(",");
       List<String> tokens = Arrays.asList(split);
 
-      if (tokens.size() >= 2)
-      {
-         if (tokens.get(0) == null || tokens.get(0).isEmpty())
-            throw new IllegalArgumentException("Name was empty [" + coordinates + "]");
-         if (tokens.get(1) == null || tokens.get(1).isEmpty())
-            throw new IllegalArgumentException("Version was empty [" + coordinates + "]");
-      }
-      else
+      if (tokens.size() < 2)
       {
          throw new IllegalArgumentException(
                   "Coordinates must be of the form 'name,version' or 'name,version,api-version");
@@ -67,20 +58,20 @@ public class AddonEntry
       {
          if (tokens.get(2) == null || tokens.get(2).isEmpty())
             throw new IllegalArgumentException("API version was empty [" + coordinates + "]");
-         return new AddonEntry(tokens.get(0), tokens.get(1), tokens.get(2));
+         return from(tokens.get(0), tokens.get(1), tokens.get(2));
       }
-      return new AddonEntry(tokens.get(0), tokens.get(1));
+      return from(tokens.get(0), tokens.get(1));
 
    }
 
-   public static AddonEntry from(String name, String version)
+   public static AddonId from(String name, String version)
    {
-      return new AddonEntry(name, version);
+      return from(name, version, null);
    }
 
-   public static AddonEntry from(String name, String version, String apiVersion)
+   public static AddonId from(String name, String version, String apiVersion)
    {
-      return new AddonEntry(name, version, apiVersion);
+      return new AddonId(name, version, apiVersion);
    }
 
    public String toCoordinates()
@@ -112,7 +103,7 @@ public class AddonEntry
          return false;
       if (getClass() != obj.getClass())
          return false;
-      AddonEntry other = (AddonEntry) obj;
+      AddonId other = (AddonId) obj;
       if (name == null)
       {
          if (other.name != null)

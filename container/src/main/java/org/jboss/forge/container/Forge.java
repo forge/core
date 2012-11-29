@@ -4,18 +4,19 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.forge.container.exception.ContainerException;
-import org.jboss.forge.container.impl.AddonImpl;
 import org.jboss.forge.container.impl.AddonRegistryImpl;
 import org.jboss.forge.container.impl.AddonRepositoryImpl;
+import org.jboss.forge.container.impl.RegisteredAddonImpl;
 import org.jboss.forge.container.modules.AddonModuleLoader;
 import org.jboss.forge.container.util.Sets;
 import org.jboss.modules.Module;
 import org.jboss.modules.ModuleIdentifier;
-import org.jboss.modules.ModuleLoadException;
 import org.jboss.modules.ModuleLoader;
 import org.jboss.modules.log.StreamModuleLogger;
 
@@ -29,9 +30,9 @@ public final class Forge
 
    private volatile boolean alive = false;
 
-   Set<AddonThread> threads = Sets.getConcurrentSet();
-
    private AddonRepository repository = AddonRepositoryImpl.forDefaultDirectory();
+
+   Set<AddonThread> threads = Sets.getConcurrentSet();
 
    public Forge()
    {
@@ -99,31 +100,34 @@ public final class Forge
 
    private void updateAddons(Set<AddonThread> threads, ModuleLoader addonLoader)
    {
-      Set<Addon> loadedAddons = new HashSet<Addon>();
+      Set<RegisteredAddon> loadedAddons = new HashSet<RegisteredAddon>();
       for (AddonThread thread : threads)
       {
          loadedAddons.add(thread.getRunnable().getAddon());
       }
 
-      Set<Addon> toStop = new HashSet<Addon>(loadedAddons);
-      Set<Addon> updatedSet = loadAddons(addonLoader);
+      Set<RegisteredAddon> toStop = new HashSet<RegisteredAddon>(loadedAddons);
+      Set<RegisteredAddon> updatedSet = loadAddons(addonLoader);
       toStop.removeAll(updatedSet);
 
-      Set<Addon> toStart = new HashSet<Addon>(updatedSet);
+      Set<RegisteredAddon> toStart = new HashSet<RegisteredAddon>(updatedSet);
       toStart.removeAll(loadedAddons);
 
       if (!toStop.isEmpty())
       {
-         logger.info("Stopping addon(s) " + toStop);
          Set<AddonThread> stopped = new HashSet<AddonThread>();
-         for (Addon addon : toStop)
+         for (RegisteredAddon addon : toStop)
          {
+            // TODO This needs to handle dependencies and ordering.
+            ((RegisteredAddonImpl) addon).setStatus(Status.STOPPING);
+            logger.info("Stopping addon (" + addon.getId() + ")");
             for (AddonThread thread : threads)
             {
                if (addon.equals(thread.getRunnable().getAddon()))
                {
                   thread.getRunnable().shutdown();
                   stopped.add(thread);
+                  AddonRegistryImpl.registry.remove(addon);
                }
             }
          }
@@ -133,21 +137,21 @@ public final class Forge
       if (!toStart.isEmpty())
       {
          Set<AddonThread> started = startAddons(toStart);
-
          threads.addAll(started);
       }
    }
 
-   private Set<AddonThread> startAddons(Set<Addon> toStart)
+   private Set<AddonThread> startAddons(Set<RegisteredAddon> toStart)
    {
-      logger.info("Starting addon(s) " + toStart);
       Set<AddonThread> started = new HashSet<AddonThread>();
       AddonRegistryImpl registry = AddonRegistryImpl.registry;
 
       int startedThreads = 0;
       int batchSize = Math.min(BATCH_SIZE, toStart.size());
-      for (Addon addon : toStart)
+      for (RegisteredAddon addon : toStart)
       {
+         ((RegisteredAddonImpl) addon).setStatus(Status.STARTING);
+         logger.info("Starting addon (" + addon.getId() + ")");
          while (registry.getServices().size() + batchSize <= startedThreads)
          {
             try
@@ -160,8 +164,8 @@ public final class Forge
             }
          }
 
-         AddonRunnable runnable = new AddonRunnable(this, (AddonImpl) addon, registry);
-         Thread thread = new Thread(runnable, addon.getId());
+         AddonRunnable runnable = new AddonRunnable(this, (RegisteredAddonImpl) addon);
+         Thread thread = new Thread(runnable, addon.getId().toCoordinates());
          started.add(new AddonThread(thread, runnable));
          thread.start();
 
@@ -175,19 +179,19 @@ public final class Forge
       return AddonRegistryImpl.registry;
    }
 
-   synchronized private Set<Addon> loadAddons(ModuleLoader addonLoader)
+   synchronized private Set<RegisteredAddon> loadAddons(ModuleLoader addonLoader)
    {
-      Set<Addon> result = new HashSet<Addon>();
+      Set<RegisteredAddon> result = new HashSet<RegisteredAddon>();
 
       String runtimeVersion = AddonRepositoryImpl.getRuntimeAPIVersion();
-      List<AddonEntry> enabledCompatible = repository.listEnabledCompatibleWithVersion(runtimeVersion);
+      List<AddonId> enabledCompatible = repository.listEnabledCompatibleWithVersion(runtimeVersion);
 
       if (AddonRepositoryImpl.hasRuntimeAPIVersion())
       {
-         List<AddonEntry> incompatible = repository.listEnabled();
+         List<AddonId> incompatible = repository.listEnabled();
          incompatible.removeAll(enabledCompatible);
 
-         for (AddonEntry entry : incompatible)
+         for (AddonId entry : incompatible)
          {
             logger.info("Not loading addon [" + entry.getName()
                      + "] because it references Forge API version [" + entry.getApiVersion()
@@ -196,24 +200,101 @@ public final class Forge
          }
       }
 
-      for (AddonEntry entry : enabledCompatible)
+      for (AddonId entry : enabledCompatible)
       {
-         try
-         {
-            Module module = addonLoader.loadModule(ModuleIdentifier.fromString(entry.toModuleId()));
-            result.add(new AddonImpl(entry, module));
-         }
-         catch (ModuleLoadException e)
-         {
-            throw new RuntimeException(e);
-         }
-         catch (Exception e)
-         {
-            throw new ContainerException("Failed loading module for addon [" + entry + "]", e);
-         }
+         loadAddon(addonLoader, result, entry);
       }
 
       return result;
+   }
+
+   private RegisteredAddon loadAddon(ModuleLoader addonLoader, Set<RegisteredAddon> result, AddonId addonId)
+   {
+      AddonRegistryImpl registry = AddonRegistryImpl.registry;
+      Map<RegisteredAddon, Set<RegisteredAddon>> waitlist = registry.getMutableWaitlist();
+
+      RegisteredAddonImpl addonToLoad = (RegisteredAddonImpl) registry.getRegisteredAddon(addonId);
+      if (addonToLoad == null)
+      {
+         addonToLoad = new RegisteredAddonImpl(addonId);
+         registry.register(addonToLoad);
+      }
+
+      if (!(repository.isDeployed(addonId) && repository.isEnabled(addonId)))
+      {
+         addonToLoad.setStatus(Status.FAILED);
+      }
+      else
+      {
+         if (!registry.isWaiting(addonToLoad))
+         {
+            Set<RegisteredAddon> missingDependencies = new HashSet<RegisteredAddon>();
+            for (AddonDependency dependency : repository.getAddonDependencies(addonId))
+            {
+               RegisteredAddon registeredDependency;
+
+               AddonId dependencyId = dependency.getId();
+               if (!registry.isRegistered(dependencyId))
+               {
+                  if (repository.isDeployed(dependencyId) && repository.isEnabled(dependencyId))
+                  {
+                     if (!Status.STARTED.equals(registry.getRegisteredAddon(dependencyId).getStatus()))
+                     {
+                        registeredDependency = loadAddon(addonLoader, result, dependencyId);
+                        if (Status.FAILED.equals(registeredDependency.getStatus()))
+                        {
+                           if (dependency.isOptional())
+                              logger.log(Level.WARNING, "Could not load optional dependency: " + dependency
+                                       + ", module will be restarted if dependency becomes available.");
+                           else
+                              missingDependencies.add(registeredDependency);
+                        }
+                     }
+                  }
+                  else
+                  {
+                     registeredDependency = new RegisteredAddonImpl(dependencyId).setStatus(Status.STOPPED);
+                     registry.register(registeredDependency);
+                     missingDependencies.add(registeredDependency);
+                  }
+               }
+            }
+
+            if (!missingDependencies.isEmpty())
+            {
+               addonToLoad.setStatus(Status.FAILED);
+               waitlist.put(addonToLoad, missingDependencies); // overwrite existing missing deps with new ones
+               logger.warning("Addon [" + addonToLoad + "] has [" + missingDependencies.size()
+                        + "] missing dependencies: "
+                        + missingDependencies + " and will be added to the waitlisted until all required"
+                        + " missing dependencies are available.");
+            }
+            else
+            {
+               try
+               {
+                  Module module = addonLoader.loadModule(ModuleIdentifier.fromString(addonId.toModuleId()));
+                  addonToLoad.setModule(module);
+                  result.add(addonToLoad);
+
+                  for (RegisteredAddon waiting : waitlist.keySet())
+                  {
+                     Set<RegisteredAddon> dependencies = waitlist.get(waiting);
+                     if (dependencies.remove(addonToLoad) && dependencies.isEmpty())
+                     {
+                        ((RegisteredAddonImpl) waiting).setStatus(Status.STOPPED);
+                     }
+                  }
+               }
+               catch (Exception e)
+               {
+                  addonToLoad.setStatus(Status.FAILED);
+               }
+            }
+         }
+      }
+
+      return addonToLoad;
    }
 
    public Forge setAddonDir(File dir)

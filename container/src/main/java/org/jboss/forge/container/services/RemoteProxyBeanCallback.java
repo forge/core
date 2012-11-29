@@ -2,7 +2,7 @@ package org.jboss.forge.container.services;
 
 import net.sf.cglib.proxy.LazyLoader;
 
-import org.jboss.forge.container.Addon;
+import org.jboss.forge.container.RegisteredAddon;
 import org.jboss.forge.container.AddonRegistry;
 
 public class RemoteProxyBeanCallback implements LazyLoader
@@ -20,7 +20,7 @@ public class RemoteProxyBeanCallback implements LazyLoader
    public Object loadObject() throws Exception
    {
       Object result = null;
-      for (Addon addon : registry.getServices().keySet())
+      for (RegisteredAddon addon : registry.getServices().keySet())
       {
          ServiceRegistry serviceRegistry = addon.getServiceRegistry();
          if (serviceRegistry != null && serviceRegistry.hasService(serviceType))

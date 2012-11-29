@@ -7,9 +7,16 @@ import org.jboss.forge.container.services.ServiceRegistry;
 
 public interface AddonRegistry
 {
+   RegisteredAddon getRegisteredAddon(AddonId entry);
 
-   Set<Addon> getRegisteredAddons();
+   Set<RegisteredAddon> getRegisteredAddons();
 
-   Map<Addon, ServiceRegistry> getServices();
+   boolean isRegistered(AddonId id);
+
+   boolean isWaiting(RegisteredAddon addon);
+
+   Map<RegisteredAddon, ServiceRegistry> getServices();
+
+   Map<RegisteredAddon, Set<RegisteredAddon>> getWaitlistedAddons();
 
 }

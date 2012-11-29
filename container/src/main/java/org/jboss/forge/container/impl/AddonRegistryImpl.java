@@ -3,39 +3,52 @@ package org.jboss.forge.container.impl;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.enterprise.inject.Typed;
 
-import org.jboss.forge.container.Addon;
+import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.AddonRegistry;
+import org.jboss.forge.container.RegisteredAddon;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.container.util.Sets;
 
 @Typed()
 public class AddonRegistryImpl implements AddonRegistry
 {
-   private Set<Addon> addons = Sets.getConcurrentSet();
+   private Map<RegisteredAddon, Set<RegisteredAddon>> addonMap = new ConcurrentHashMap<RegisteredAddon, Set<RegisteredAddon>>();
 
    /**
-    * Global Addon registry.
+    * Global RegisteredAddon registry.
     */
    public static AddonRegistryImpl registry = new AddonRegistryImpl();
 
-   public boolean register(Addon addon)
+   @Override
+   public RegisteredAddon getRegisteredAddon(AddonId id)
    {
-      if (addons.contains(addon))
+      for (RegisteredAddon addon : addonMap.keySet())
       {
-         throw new IllegalArgumentException("Addon [" + addon + "] already registered.");
+         if (addon.getId().equals(id))
+            return addon;
       }
-      return addons.add(addon);
+      return null;
+   }
+
+   public void register(RegisteredAddon addon)
+   {
+      if (!addonMap.containsKey(addon))
+      {
+         addonMap.put(addon, Sets.getConcurrentSet(RegisteredAddon.class));
+      }
    }
 
    @Override
-   public Map<Addon, ServiceRegistry> getServices()
+   public Map<RegisteredAddon, ServiceRegistry> getServices()
    {
-      Map<Addon, ServiceRegistry> services = new HashMap<Addon, ServiceRegistry>();
-      for (Addon addon : addons)
+      Map<RegisteredAddon, ServiceRegistry> services = new HashMap<RegisteredAddon, ServiceRegistry>();
+      for (RegisteredAddon addon : addonMap.keySet())
       {
          services.put(addon, addon.getServiceRegistry());
       }
@@ -43,31 +56,59 @@ public class AddonRegistryImpl implements AddonRegistry
    }
 
    @Override
-   public Set<Addon> getRegisteredAddons()
+   public Set<RegisteredAddon> getRegisteredAddons()
    {
-      return Collections.unmodifiableSet(addons);
+      return Collections.unmodifiableSet(addonMap.keySet());
    }
 
-   public boolean removeServices(ClassLoader classLoader) throws IllegalArgumentException
+   @Override
+   public Map<RegisteredAddon, Set<RegisteredAddon>> getWaitlistedAddons()
    {
-      for (Addon addon : addons)
+      Map<RegisteredAddon, Set<RegisteredAddon>> result = new HashMap<RegisteredAddon, Set<RegisteredAddon>>();
+      for (Entry<RegisteredAddon, Set<RegisteredAddon>> entry : addonMap.entrySet())
+      {
+         if (!entry.getValue().isEmpty())
+            result.put(entry.getKey(), entry.getValue());
+      }
+      return Collections.unmodifiableMap(result);
+   }
+
+   public Map<RegisteredAddon, Set<RegisteredAddon>> getMutableWaitlist()
+   {
+      return addonMap;
+   }
+
+   public void removeServices(ClassLoader classLoader) throws IllegalArgumentException
+   {
+      for (RegisteredAddon addon : addonMap.keySet())
       {
          if (addon.getClassLoader().equals(classLoader))
          {
-            return addons.remove(addon);
+            addonMap.remove(addon);
          }
       }
-      return false;
    }
 
-   public boolean remove(Addon addon)
+   public void remove(RegisteredAddon addon)
    {
-      return addons.remove(addon);
+      addonMap.remove(addon);
    }
 
    @Override
    public String toString()
    {
-      return addons.toString();
+      return addonMap.keySet().toString();
+   }
+
+   @Override
+   public boolean isRegistered(AddonId id)
+   {
+      return getRegisteredAddon(id) != null;
+   }
+
+   @Override
+   public boolean isWaiting(RegisteredAddon addon)
+   {
+      return isRegistered(addon.getId()) && !addonMap.get(addon).isEmpty();
    }
 }

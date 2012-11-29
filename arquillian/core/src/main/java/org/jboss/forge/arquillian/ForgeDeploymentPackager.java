@@ -14,7 +14,6 @@ import org.jboss.forge.arquillian.runner.CDIEnricherRemoteExtensionWorkaround;
 import org.jboss.forge.arquillian.runner.ServletTestRunner;
 import org.jboss.forge.arquillian.runner.ServletTestServer;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 
 public class ForgeDeploymentPackager implements DeploymentPackager
@@ -26,13 +25,11 @@ public class ForgeDeploymentPackager implements DeploymentPackager
          throw new IllegalArgumentException(
                   "Invalid Archive type. Ensure that your @Deployment method returns type 'ForgeArchive'.");
 
-      ShrinkWrap.create(ForgeArchive.class);
-
       ForgeArchive deployment = ForgeArchive.class.cast(testDeployment.getApplicationArchive());
+
       deployment.addClasses(ServletTestServer.class, ServletTestRunner.class, BeanManagerProducer.class,
                CDIEnricherRemoteExtensionWorkaround.class);
       deployment.addAsServiceProvider(RemoteLoadableExtension.class, CDIEnricherRemoteExtensionWorkaround.class);
-
       deployment.addAsLibraries(testDeployment.getAuxiliaryArchives());
       deployment.addAsLibraries(resolveDependencies("org.jboss.shrinkwrap:shrinkwrap-impl-base:1.0.1"));
       deployment.addAsLibraries(resolveDependencies("org.eclipse.jetty:jetty-server:8.1.5.v20120716"));

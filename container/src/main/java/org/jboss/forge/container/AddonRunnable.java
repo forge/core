@@ -8,8 +8,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import org.jboss.forge.container.event.ContainerShutdown;
 import org.jboss.forge.container.event.ContainerStartup;
 import org.jboss.forge.container.exception.ContainerException;
-import org.jboss.forge.container.impl.AddonImpl;
-import org.jboss.forge.container.impl.AddonRegistryImpl;
+import org.jboss.forge.container.impl.RegisteredAddonImpl;
 import org.jboss.forge.container.impl.AddonRepositoryProducer;
 import org.jboss.forge.container.modules.ModularWeld;
 import org.jboss.forge.container.services.ServiceRegistry;
@@ -23,16 +22,14 @@ import org.jboss.weld.environment.se.WeldContainer;
 public final class AddonRunnable implements Runnable
 {
    private Forge forge;
-   private AddonImpl addon;
-   private AddonRegistryImpl addonRegistry;
+   private RegisteredAddonImpl addon;
    private boolean shutdown = false;
    private static final Logger LOGGER = Logger.getLogger(AddonRunnable.class.getName());
 
-   public AddonRunnable(Forge forge, AddonImpl addon, AddonRegistryImpl registry)
+   public AddonRunnable(Forge forge, RegisteredAddonImpl addon)
    {
       this.forge = forge;
       this.addon = addon;
-      this.addonRegistry = registry;
    }
 
    public void shutdown()
@@ -52,14 +49,13 @@ public final class AddonRunnable implements Runnable
          {
             try
             {
+               addon.setStatus(Status.STARTING);
+
                Weld weld = new ModularWeld(module);
                WeldContainer container = weld.initialize();
 
                BeanManager manager = container.getBeanManager();
                Assert.notNull(manager, "BeanManager was null");
-
-               addonRegistry.register(addon);
-               addon.setStatus(Status.STARTING);
 
                manager.fireEvent(new ContainerStartup());
 
@@ -90,7 +86,6 @@ public final class AddonRunnable implements Runnable
 
                addon.setStatus(Status.STOPPING);
 
-               addonRegistry.remove(addon);
                manager.fireEvent(new ContainerShutdown());
                weld.shutdown();
 
@@ -106,7 +101,7 @@ public final class AddonRunnable implements Runnable
       });
    }
 
-   public AddonImpl getAddon()
+   public RegisteredAddonImpl getAddon()
    {
       return addon;
    }

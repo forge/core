@@ -14,7 +14,7 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
-import org.jboss.forge.container.AddonEntry;
+import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.AddonRepository;
 import org.jboss.shrinkwrap.api.ArchivePaths;
@@ -54,7 +54,7 @@ public class AddonManagerTest
    public void testInstallingAddonWithSingleOptionalAddonDependency() throws InterruptedException
    {
       int addonCount = registry.getRegisteredAddons().size();
-      AddonEntry addon = AddonEntry.fromCoordinates("org.jboss.forge:example,2.0.0-SNAPSHOT");
+      AddonId addon = AddonId.fromCoordinates("org.jboss.forge:example,2.0.0-SNAPSHOT");
       InstallRequest request = addonManager.install(addon);
 
       Assert.assertEquals(0, request.getRequiredAddons().size());

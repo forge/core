@@ -13,7 +13,7 @@ import java.util.ServiceLoader;
 import java.util.jar.JarFile;
 
 import org.jboss.forge.container.AddonDependency;
-import org.jboss.forge.container.AddonEntry;
+import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.AddonRepository;
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.impl.AddonRepositoryImpl;
@@ -59,12 +59,12 @@ public class AddonModuleLoader extends ModuleLoader
    {
       ModuleSpec result = findAddonModule(id);
       if (result == null)
-         result = findDependencyModule(id);
+         result = findRegularModule(id);
 
       return result;
    }
 
-   private ModuleSpec findDependencyModule(ModuleIdentifier id)
+   private ModuleSpec findRegularModule(ModuleIdentifier id)
    {
       ModuleSpec result = null;
       for (ModuleSpecProvider p : moduleProviders)
@@ -78,7 +78,7 @@ public class AddonModuleLoader extends ModuleLoader
 
    public ModuleSpec findAddonModule(ModuleIdentifier id)
    {
-      AddonEntry found = findInstalledModule(id);
+      AddonId found = findInstalledModule(id);
 
       if (found != null)
       {
@@ -98,7 +98,6 @@ public class AddonModuleLoader extends ModuleLoader
 
          try
          {
-            // TODO increment service counter here?
             addAddonDependencies(found, builder);
          }
          catch (ContainerException e)
@@ -114,7 +113,7 @@ public class AddonModuleLoader extends ModuleLoader
       return null;
    }
 
-   private void addLocalResources(AddonEntry found, Builder builder)
+   private void addLocalResources(AddonId found, Builder builder)
    {
       List<File> resources = repository.getAddonResources(found);
       for (File file : resources)
@@ -134,7 +133,7 @@ public class AddonModuleLoader extends ModuleLoader
       }
    }
 
-   private void addAddonDependencies(AddonEntry found, Builder builder) throws ContainerException
+   private void addAddonDependencies(AddonId found, Builder builder) throws ContainerException
    {
       List<AddonDependency> addons = repository.getAddonDependencies(found);
       for (AddonDependency dependency : addons)
@@ -150,7 +149,7 @@ public class AddonModuleLoader extends ModuleLoader
          {
             builder.addDependency(DependencySpec.createModuleDependencySpec(
                      PathFilters.not(PathFilters.getMetaInfFilter()),
-                     PathFilters.rejectAll(),
+                     dependency.isExport() ? PathFilters.acceptAll() : PathFilters.rejectAll(),
                      this,
                      moduleId,
                      dependency.isOptional()));
@@ -158,10 +157,10 @@ public class AddonModuleLoader extends ModuleLoader
       }
    }
 
-   private AddonEntry findInstalledModule(ModuleIdentifier moduleId)
+   private AddonId findInstalledModule(ModuleIdentifier moduleId)
    {
-      AddonEntry found = null;
-      for (AddonEntry addon : repository.listEnabledCompatibleWithVersion(AddonRepositoryImpl.getRuntimeAPIVersion()))
+      AddonId found = null;
+      for (AddonId addon : repository.listEnabledCompatibleWithVersion(AddonRepositoryImpl.getRuntimeAPIVersion()))
       {
          if (addon.toModuleId().equals(moduleId.toString()))
          {
@@ -174,11 +173,11 @@ public class AddonModuleLoader extends ModuleLoader
 
    private ModuleIdentifier findCompatibleInstalledModule(AddonDependency dependency)
    {
-      AddonEntry found = null;
-      for (AddonEntry addon : repository.listEnabledCompatibleWithVersion(AddonRepositoryImpl.getRuntimeAPIVersion()))
+      AddonId found = null;
+      for (AddonId addon : repository.listEnabledCompatibleWithVersion(AddonRepositoryImpl.getRuntimeAPIVersion()))
       {
          // TODO implement proper version-range resolution
-         if (addon.getName().equals(dependency.getAddon().getName()))
+         if (addon.getName().equals(dependency.getId().getName()))
          {
             found = addon;
             break;

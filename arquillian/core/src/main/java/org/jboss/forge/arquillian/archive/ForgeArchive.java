@@ -10,7 +10,7 @@ import org.jboss.shrinkwrap.api.container.ResourceContainer;
 import org.jboss.shrinkwrap.api.container.ServiceProviderContainer;
 
 /**
- * Archive representing a Forge Addon deployment.
+ * Archive representing a Forge RegisteredAddon deployment.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */

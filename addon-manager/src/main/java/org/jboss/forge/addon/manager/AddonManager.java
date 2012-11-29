@@ -10,7 +10,7 @@ package org.jboss.forge.addon.manager;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.dependency.spi.DependencyResolver;
-import org.jboss.forge.container.AddonEntry;
+import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.AddonRepository;
 import org.jboss.forge.container.services.Remote;
 
@@ -33,12 +33,12 @@ public class AddonManager
       this.resolver = resolver;
    }
 
-   public InstallRequest install(AddonEntry entry)
+   public InstallRequest install(AddonId entry)
    {
       return new InstallRequest(repository, resolver, entry);
    }
 
-   public boolean remove(AddonEntry entry)
+   public boolean remove(AddonId entry)
    {
       return repository.disable(entry);
    }

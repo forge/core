@@ -1,29 +1,36 @@
 package org.jboss.forge.container.impl;
 
-import org.jboss.forge.container.Addon;
-import org.jboss.forge.container.AddonEntry;
+import org.jboss.forge.container.RegisteredAddon;
+import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.Status;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.modules.Module;
 
-public class AddonImpl implements Addon
+public class RegisteredAddonImpl implements RegisteredAddon
 {
    private Module module;
    private ServiceRegistry registry;
    private Status status = Status.STOPPED;
-   private AddonEntry entry;
+   private AddonId entry;
 
-   public AddonImpl(AddonEntry entry, Module module)
+   public RegisteredAddonImpl(AddonId entry)
    {
       this.entry = entry;
+   }
+
+   public RegisteredAddonImpl(AddonId entry, Module module)
+   {
+      this(entry);
       this.module = module;
    }
 
-   public String getId()
+   @Override
+   public AddonId getId()
    {
-      return entry.toModuleId();
+      return entry;
    }
 
+   @Override
    public ClassLoader getClassLoader()
    {
       return module.getClassLoader();
@@ -34,14 +41,22 @@ public class AddonImpl implements Addon
       return module;
    }
 
+   public RegisteredAddon setModule(Module module)
+   {
+      this.module = module;
+      return this;
+   }
+
+   @Override
    public ServiceRegistry getServiceRegistry()
    {
       return registry;
    }
 
-   public void setServiceRegistry(ServiceRegistry registry)
+   public RegisteredAddon setServiceRegistry(ServiceRegistry registry)
    {
       this.registry = registry;
+      return this;
    }
 
    @Override
@@ -50,15 +65,16 @@ public class AddonImpl implements Addon
       return status;
    }
 
-   public void setStatus(Status status)
+   public RegisteredAddon setStatus(Status status)
    {
       this.status = status;
+      return this;
    }
 
    @Override
    public String toString()
    {
-      return getId();
+      return getId().toCoordinates() + " - " + status;
    }
 
    @Override
@@ -79,7 +95,7 @@ public class AddonImpl implements Addon
          return false;
       if (getClass() != obj.getClass())
          return false;
-      AddonImpl other = (AddonImpl) obj;
+      RegisteredAddonImpl other = (RegisteredAddonImpl) obj;
       if (entry == null)
       {
          if (other.entry != null)
