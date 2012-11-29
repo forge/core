@@ -37,7 +37,7 @@ public interface Coordinate
    String getClassifier();
 
    /**
-    * Get the packaging type. Defaults to "far"
+    * Get the packaging type. Defaults to "jar"
     */
    String getPackaging();
 }

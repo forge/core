@@ -9,6 +9,8 @@ package org.jboss.forge.container;
 import java.io.File;
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * Used to perform Addon installation/registration operations. May be obtained using CDI injection:
  * <p>
@@ -20,7 +22,7 @@ import java.util.List;
  */
 public interface AddonRepository
 {
-   public boolean deploy(AddonEntry addon, List<AddonDependency> dependencies, File... resourceJars);
+   public boolean deploy(AddonEntry addon, List<AddonDependency> dependencies, List<File> resourceJars);
 
    public boolean disable(final AddonEntry addon);
 
@@ -43,4 +45,5 @@ public interface AddonRepository
    public List<AddonEntry> listEnabled();
 
    public List<AddonEntry> listEnabledCompatibleWithVersion(final String version);
+
 }

@@ -16,8 +16,12 @@
  */
 package org.jboss.forge.arquillian.archive;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Logger;
 
+import org.jboss.forge.container.AddonDependency;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
 import org.jboss.shrinkwrap.api.ArchivePaths;
@@ -66,6 +70,8 @@ public class ForgeArchiveImpl extends ContainerBase<ForgeArchive> implements For
     * Path to web archive service providers.
     */
    private static final ArchivePath PATH_SERVICE_PROVIDERS = ArchivePaths.create(PATH_CLASSES, "META-INF/services");
+
+   private List<AddonDependency> addonDependencies = new ArrayList<AddonDependency>();
 
    // -------------------------------------------------------------------------------------||
    // Instance Members -------------------------------------------------------------------||
@@ -145,4 +151,17 @@ public class ForgeArchiveImpl extends ContainerBase<ForgeArchive> implements For
       return add(resource, getForgeXMLPath());
    }
 
+   @Override
+   public ForgeArchive addAsAddonDependencies(AddonDependency... dependencies)
+   {
+      if (dependencies != null)
+         addonDependencies.addAll(Arrays.asList(dependencies));
+      return this;
+   }
+
+   @Override
+   public List<AddonDependency> getAddonDependencies()
+   {
+      return addonDependencies;
+   }
 }

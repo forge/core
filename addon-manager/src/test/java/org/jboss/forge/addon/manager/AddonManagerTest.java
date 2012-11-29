@@ -7,6 +7,8 @@
 
 package org.jboss.forge.addon.manager;
 
+import java.io.File;
+
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -18,7 +20,6 @@ import org.jboss.forge.container.AddonRepository;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Assert;
 import org.junit.Test;
@@ -40,26 +41,35 @@ public class AddonManagerTest
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap
-               .create(ForgeArchive.class)
+               .create(ForgeArchive.class, "test-archive.jar")
                .addPackages(true, AddonManager.class.getPackage())
                .addAsLibraries(
                         Maven.resolver().offline().loadPomFromFile("pom.xml").importRuntimeDependencies().asFile())
-               .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
-               .setAsForgeXML(new StringAsset("<addon/>"));
+               .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
 
       return archive;
    }
 
    @Test
-   public void testResolvingAddon() throws InterruptedException
+   public void testInstallingAddonWithSingleOptionalAddonDependency() throws InterruptedException
    {
       int addonCount = registry.getRegisteredAddons().size();
       AddonEntry addon = AddonEntry.fromCoordinates("org.jboss.forge:example,2.0.0-SNAPSHOT");
       InstallRequest request = addonManager.install(addon);
-      Assert.assertEquals(1, request.getRequiredAddons().size());
+
+      Assert.assertEquals(0, request.getRequiredAddons().size());
+      Assert.assertEquals(1, request.getOptionalAddons().size());
+
       request.perform();
+
       Assert.assertTrue(repository.isEnabled(addon));
+      Assert.assertEquals(2, repository.getAddonResources(addon).size());
+      Assert.assertTrue(repository.getAddonResources(addon).contains(
+               new File(repository.getAddonBaseDir(addon), "commons-lang-2.6.jar")));
+      Assert.assertTrue(repository.getAddonResources(addon).contains(
+               new File(repository.getAddonBaseDir(addon), "example-2.0.0-SNAPSHOT-forge-addon.jar")));
+
       Thread.sleep(500);
-      Assert.assertEquals(addonCount + 2, registry.getRegisteredAddons().size());
+      Assert.assertEquals(addonCount + 1, registry.getRegisteredAddons().size());
    }
 }

@@ -32,7 +32,6 @@ import org.sonatype.aether.RepositorySystem;
 import org.sonatype.aether.artifact.Artifact;
 import org.sonatype.aether.collection.CollectRequest;
 import org.sonatype.aether.graph.DependencyNode;
-import org.sonatype.aether.graph.DependencyVisitor;
 import org.sonatype.aether.repository.LocalRepository;
 import org.sonatype.aether.repository.RemoteRepository;
 import org.sonatype.aether.resolution.ArtifactRequest;
@@ -43,14 +42,12 @@ import org.sonatype.aether.resolution.DependencyResolutionException;
 import org.sonatype.aether.resolution.DependencyResult;
 import org.sonatype.aether.resolution.VersionRangeRequest;
 import org.sonatype.aether.resolution.VersionRangeResult;
-import org.sonatype.aether.util.graph.TreeDependencyVisitor;
 import org.sonatype.aether.version.Version;
 
 @Singleton
 public class MavenDependencyResolver implements DependencyResolver
 {
    private MavenContainer container;
-   public static final String FORGE_ADDON_CLASSIFIER = "forge-addon";
 
    @Inject
    public MavenDependencyResolver(MavenContainer container)
@@ -121,7 +118,7 @@ public class MavenDependencyResolver implements DependencyResolver
 
    /**
     * Returns the versions of a specific artifact
-    *
+    * 
     * @param query
     * @return
     */
@@ -175,7 +172,7 @@ public class MavenDependencyResolver implements DependencyResolver
    }
 
    @Override
-   public File resolveArtifact(DependencyQuery query)
+   public Dependency resolveArtifact(DependencyQuery query)
    {
       RepositorySystem system = container.getRepositorySystem();
       Settings settings = container.getSettings();
@@ -191,7 +188,13 @@ public class MavenDependencyResolver implements DependencyResolver
       {
          ArtifactResult resolvedArtifact = system.resolveArtifact(session, request);
          Artifact artifact = resolvedArtifact.getArtifact();
-         return artifact.getFile();
+         return DependencyBuilder.create()
+                  .setArtifact(artifact.getFile())
+                  .setGroupId(artifact.getGroupId())
+                  .setArtifactId(artifact.getArtifactId())
+                  .setClassifier(artifact.getClassifier())
+                  .setPackaging(artifact.getExtension())
+                  .setVersion(artifact.getVersion());
       }
       catch (ArtifactResolutionException e)
       {
@@ -199,96 +202,27 @@ public class MavenDependencyResolver implements DependencyResolver
       }
    }
 
-   public List<Dependency> resolveAddonDependencies(String coordinates)
-   {
-      try
-      {
-         RepositorySystem system = container.getRepositorySystem();
-         Settings settings = container.getSettings();
-         MavenRepositorySystemSession session = setupRepoSession(system, settings);
-         final CoordinateBuilder coord = CoordinateBuilder.create(coordinates);
-         Artifact queryArtifact = coordinateToMavenArtifact(coord);
-         CollectRequest collectRequest = new CollectRequest(new org.sonatype.aether.graph.Dependency(queryArtifact,
-                  null), container.getEnabledRepositoriesFromProfile(settings));
-
-         DependencyRequest dr = new DependencyRequest(collectRequest, null);
-         DependencyResult result = system.resolveDependencies(session, dr);
-         List<Dependency> collect = new ArrayList<Dependency>();
-         DependencyVisitor visitor = new TreeDependencyVisitor(new AddonDependencyVisitor(coord.getGroupId(),
-                  coord.getArtifactId(), collect));
-         result.getRoot().accept(visitor);
-         return collect;
-      }
-      catch (DependencyResolutionException e)
-      {
-         throw new RuntimeException("Could not resolve dependencies for addon [" + coordinates + "]", e);
-      }
-   }
-
    @Override
-   public org.jboss.forge.addon.dependency.DependencyNode resolveDependencyHierarchy(String coordinates)
+   public org.jboss.forge.addon.dependency.DependencyNode resolveDependencyHierarchy(DependencyQuery query)
    {
       try
       {
          RepositorySystem system = container.getRepositorySystem();
          Settings settings = container.getSettings();
          MavenRepositorySystemSession session = setupRepoSession(system, settings);
-         final CoordinateBuilder coord = CoordinateBuilder.create(coordinates);
+         final CoordinateBuilder coord = CoordinateBuilder.create(query.getCoordinate());
          Artifact queryArtifact = coordinateToMavenArtifact(coord);
          CollectRequest collectRequest = new CollectRequest(new org.sonatype.aether.graph.Dependency(queryArtifact,
                   null), container.getEnabledRepositoriesFromProfile(settings));
 
          DependencyRequest dr = new DependencyRequest(collectRequest, null);
          DependencyResult result = system.resolveDependencies(session, dr);
-         return MavenConvertUtils.toDependencyNode(result.getRoot());
+         return MavenConvertUtils.toDependencyNode(null, result.getRoot());
       }
       catch (DependencyResolutionException e)
       {
-         throw new RuntimeException("Could not resolve dependencies for addon [" + coordinates + "]", e);
+         throw new RuntimeException("Could not resolve dependencies for addon [" + query.getCoordinate() + "]", e);
       }
    }
 
-   private class AddonDependencyVisitor implements DependencyVisitor
-   {
-      private String addonGroupId;
-      private String addonArtifactId;
-      private List<Dependency> dependencies;
-
-      public AddonDependencyVisitor(String addonGroupId, String addonArtifactId, List<Dependency> listCollector)
-      {
-         super();
-         this.addonGroupId = addonGroupId;
-         this.addonArtifactId = addonArtifactId;
-         this.dependencies = listCollector;
-      }
-
-      @Override
-      public boolean visitEnter(DependencyNode node)
-      {
-         Artifact artifact = node.getDependency().getArtifact();
-         // If it is the
-         if (addonGroupId.equals(artifact.getGroupId()) && addonArtifactId.equals(artifact.getArtifactId()))
-         {
-            return true;
-         }
-         else
-         {
-            if (FORGE_ADDON_CLASSIFIER.equals(artifact.getClassifier()))
-            {
-               return false;
-            }
-            else
-            {
-               dependencies.add(MavenConvertUtils.convertToDependency(node));
-               return true;
-            }
-         }
-      }
-
-      @Override
-      public boolean visitLeave(DependencyNode node)
-      {
-         return true;
-      }
-   }
 }

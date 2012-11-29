@@ -23,9 +23,9 @@ import org.jboss.forge.addon.dependency.DependencyNode;
 
 /**
  * Provides utility methods for working with {@link Dependency} and {@link DependencyNode} objects
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 public final class Dependencies
 {
@@ -38,11 +38,11 @@ public final class Dependencies
    /**
     * Returns the {@link DependencyNode} objects that satisfy the filter. The method
     * {@link DependencyNode#getChildren()} is called for each found node.
-    *
+    * 
     * @param root a {@link DependencyNode} as the starting point
     * @param filter the {@link DependencyNodeFilter} being used
     * @return list of matched elements
-    *
+    * 
     */
    public static List<DependencyNode> collect(Iterator<DependencyNode> nodeIterator, DependencyNodeFilter filter)
    {
@@ -61,13 +61,29 @@ public final class Dependencies
    /**
     * Returns the {@link DependencyNode} objects that satisfy the filter. The method
     * {@link DependencyNode#getChildren()} is called for each found node.
-    *
+    * 
+    * @param root a {@link DependencyNode} as the starting point
+    * @param filter the {@link DependencyNodeFilter} being used
+    * @return the {@link Collection} with the output
+    * 
+    */
+   public static List<DependencyNode> collect(DependencyNode node, DependencyNodeFilter filter)
+   {
+      List<DependencyNode> result = new ArrayList<DependencyNode>();
+      collect(node, filter, result);
+      return result;
+   }
+
+   /**
+    * Returns the {@link DependencyNode} objects that satisfy the filter. The method
+    * {@link DependencyNode#getChildren()} is called for each found node.
+    * 
     * @param root a {@link DependencyNode} as the starting point
     * @param filter the {@link DependencyNodeFilter} being used
     * @param outputList the {@link Collection} with the output
-    *
+    * 
     */
-   public static void collect(DependencyNode node, DependencyNodeFilter filter, Collection<DependencyNode> outputList)
+   private static void collect(DependencyNode node, DependencyNodeFilter filter, Collection<DependencyNode> outputList)
    {
       if (filter.accept(node))
       {
@@ -81,7 +97,7 @@ public final class Dependencies
 
    /**
     * Prints a tree-like structure for this object
-    *
+    * 
     * @param root
     * @return
     */
@@ -113,10 +129,10 @@ public final class Dependencies
     * Creates and returns an iterator that traverses the subtree rooted at this node in depth-first order. The first
     * node returned by {@link Iterator#next()} is the leftmost leaf.
     * <P>
-    *
+    * 
     * Modifying the tree by inserting, removing, or moving a node invalidates any iterators created before the
     * modification.
-    *
+    * 
     * @see #breadthFirstIterator(DependencyNode)
     * @see #preorderIterator(DependencyNode)
     * @return an iterator for traversing the tree in depth-first order
@@ -130,10 +146,10 @@ public final class Dependencies
     * Creates and returns an iterator that traverses the subtree rooted at this node in breadth-first order. The first
     * node returned by {@link Iterator#next()} is this node.
     * <P>
-    *
+    * 
     * Modifying the tree by inserting, removing, or moving a node invalidates any iterators created before the
     * modification.
-    *
+    * 
     * @see #depthFirstIterator(DependencyNode)
     * @see #preorderIterator(DependencyNode)
     * @return an enumeration for traversing the tree in breadth-first order
@@ -147,13 +163,13 @@ public final class Dependencies
     * Creates and returns an iterator that traverses the subtree rooted at this node in preorder. The first node
     * returned by {@link Iterator#next()} is this node.
     * <P>
-    *
+    * 
     * Modifying the tree by inserting, removing, or moving a node invalidates any iterators created before the
     * modification.
-    *
+    * 
     * @see #depthFirstIterator(DependencyNode)
     * @see #breadthFirstIterator(DependencyNode)
-    *
+    * 
     * @return an enumeration for traversing the tree in breadth-first order
     */
    public static Iterator<DependencyNode> preorderIterator(DependencyNode dependencyNode)
@@ -163,7 +179,7 @@ public final class Dependencies
 
    /**
     * Checks if the {@link DependencyNode} object is holding a Forge Addon dependency
-    *
+    * 
     * @param node
     * @return
     */
@@ -174,7 +190,7 @@ public final class Dependencies
 
    /**
     * Check if the {@link Dependency} object is pointing to a Forge Addon artifact
-    *
+    * 
     * @param dependency
     * @return
     */
@@ -185,9 +201,9 @@ public final class Dependencies
 
    /**
     * Based on {@link DefaultMutableTreeNode#preorderEnumeration()}
-    *
+    * 
     * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
-    *
+    * 
     */
    private static final class PreorderFirstIterator implements Iterator<DependencyNode>
    {
@@ -234,9 +250,9 @@ public final class Dependencies
 
    /**
     * Based on {@link DefaultMutableTreeNode#breadthFirstEnumeration()}
-    *
+    * 
     * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
-    *
+    * 
     */
    private static final class BreadthFirstIterator implements Iterator<DependencyNode>
    {
@@ -279,9 +295,9 @@ public final class Dependencies
 
    /**
     * Based on {@link DefaultMutableTreeNode#postorderEnumeration()}
-    *
+    * 
     * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
-    *
+    * 
     */
    private static final class PostorderIterator implements Iterator<DependencyNode>
    {

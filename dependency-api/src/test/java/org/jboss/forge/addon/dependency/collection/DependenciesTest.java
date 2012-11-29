@@ -20,17 +20,17 @@ public class DependenciesTest
    @Test
    public void testDepthFirstIterator()
    {
-      DependencyNodeBuilder root = DependencyNodeBuilder.create(DependencyBuilder
+      DependencyNodeBuilder root = DependencyNodeBuilder.create(null, DependencyBuilder
                .create("org.jboss.forge:example1:2.0.0-SNAPSHOT"));
-      DependencyNodeBuilder childOne = DependencyNodeBuilder.create(
+      DependencyNodeBuilder childOne = DependencyNodeBuilder.create(root,
                DependencyBuilder.create("org.jboss.forge:example1-child-one:2.0.0-SNAPSHOT"));
-      DependencyNodeBuilder childTwo = DependencyNodeBuilder.create(
+      DependencyNodeBuilder childTwo = DependencyNodeBuilder.create(root,
                DependencyBuilder.create("org.jboss.forge:example1-child-two:2.0.0-SNAPSHOT"));
 
-      DependencyNodeBuilder childOneGrandChildOne = DependencyNodeBuilder.create(
+      DependencyNodeBuilder childOneGrandChildOne = DependencyNodeBuilder.create(childOne,
                DependencyBuilder.create("org.jboss.forge:example1-child-one-grandchild-one:2.0.0-SNAPSHOT"));
 
-      DependencyNodeBuilder childOneGrandChildTwo = DependencyNodeBuilder.create(
+      DependencyNodeBuilder childOneGrandChildTwo = DependencyNodeBuilder.create(childOne,
                DependencyBuilder.create("org.jboss.forge:example1-child-one-grandchild-two:2.0.0-SNAPSHOT"));
       childOne.getChildren().add(childOneGrandChildOne);
       childOne.getChildren().add(childOneGrandChildTwo);
@@ -63,17 +63,17 @@ public class DependenciesTest
    @Test
    public void testBreadthFirstIterator()
    {
-      DependencyNodeBuilder root = DependencyNodeBuilder.create(DependencyBuilder
+      DependencyNodeBuilder root = DependencyNodeBuilder.create(null, DependencyBuilder
                .create("org.jboss.forge:example1:2.0.0-SNAPSHOT"));
-      DependencyNodeBuilder childOne = DependencyNodeBuilder.create(
+      DependencyNodeBuilder childOne = DependencyNodeBuilder.create(root,
                DependencyBuilder.create("org.jboss.forge:example1-child-one:2.0.0-SNAPSHOT"));
-      DependencyNodeBuilder childTwo = DependencyNodeBuilder.create(
+      DependencyNodeBuilder childTwo = DependencyNodeBuilder.create(root,
                DependencyBuilder.create("org.jboss.forge:example1-child-two:2.0.0-SNAPSHOT"));
 
-      DependencyNodeBuilder childOneGrandChildOne = DependencyNodeBuilder.create(
+      DependencyNodeBuilder childOneGrandChildOne = DependencyNodeBuilder.create(childOne,
                DependencyBuilder.create("org.jboss.forge:example1-child-one-grandchild-one:2.0.0-SNAPSHOT"));
 
-      DependencyNodeBuilder childOneGrandChildTwo = DependencyNodeBuilder.create(
+      DependencyNodeBuilder childOneGrandChildTwo = DependencyNodeBuilder.create(childOne,
                DependencyBuilder.create("org.jboss.forge:example1-child-one-grandchild-two:2.0.0-SNAPSHOT"));
       childOne.getChildren().add(childOneGrandChildOne);
       childOne.getChildren().add(childOneGrandChildTwo);
@@ -106,17 +106,17 @@ public class DependenciesTest
    @Test
    public void testPreorderIterator()
    {
-      DependencyNodeBuilder root = DependencyNodeBuilder.create(DependencyBuilder
+      DependencyNodeBuilder root = DependencyNodeBuilder.create(null, DependencyBuilder
                .create("org.jboss.forge:example1:2.0.0-SNAPSHOT"));
-      DependencyNodeBuilder childOne = DependencyNodeBuilder.create(
+      DependencyNodeBuilder childOne = DependencyNodeBuilder.create(root,
                DependencyBuilder.create("org.jboss.forge:example1-child-one:2.0.0-SNAPSHOT"));
-      DependencyNodeBuilder childTwo = DependencyNodeBuilder.create(
+      DependencyNodeBuilder childTwo = DependencyNodeBuilder.create(root,
                DependencyBuilder.create("org.jboss.forge:example1-child-two:2.0.0-SNAPSHOT"));
 
-      DependencyNodeBuilder childOneGrandChildOne = DependencyNodeBuilder.create(
+      DependencyNodeBuilder childOneGrandChildOne = DependencyNodeBuilder.create(childOne,
                DependencyBuilder.create("org.jboss.forge:example1-child-one-grandchild-one:2.0.0-SNAPSHOT"));
 
-      DependencyNodeBuilder childOneGrandChildTwo = DependencyNodeBuilder.create(
+      DependencyNodeBuilder childOneGrandChildTwo = DependencyNodeBuilder.create(childOne,
                DependencyBuilder.create("org.jboss.forge:example1-child-one-grandchild-two:2.0.0-SNAPSHOT"));
       childOne.getChildren().add(childOneGrandChildOne);
       childOne.getChildren().add(childOneGrandChildTwo);

@@ -98,14 +98,13 @@ public class AddonEntry
    {
       final int prime = 31;
       int result = 1;
-      result = (prime * result) + ((apiVersion == null) ? 0 : apiVersion.hashCode());
-      result = (prime * result) + ((name == null) ? 0 : name.hashCode());
-      result = (prime * result) + ((version == null) ? 0 : version.hashCode());
+      result = prime * result + ((name == null) ? 0 : name.hashCode());
+      result = prime * result + ((version == null) ? 0 : version.hashCode());
       return result;
    }
 
    @Override
-   public boolean equals(final Object obj)
+   public boolean equals(Object obj)
    {
       if (this == obj)
          return true;
@@ -114,13 +113,6 @@ public class AddonEntry
       if (getClass() != obj.getClass())
          return false;
       AddonEntry other = (AddonEntry) obj;
-      if (apiVersion == null)
-      {
-         if (other.apiVersion != null)
-            return false;
-      }
-      else if (!apiVersion.equals(other.apiVersion))
-         return false;
       if (name == null)
       {
          if (other.name != null)
@@ -137,4 +129,5 @@ public class AddonEntry
          return false;
       return true;
    }
+
 }

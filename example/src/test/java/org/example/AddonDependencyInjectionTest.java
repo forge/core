@@ -10,6 +10,9 @@ import org.example.simple.SimpleService;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.container.AddonDependency;
+import org.jboss.forge.container.AddonEntry;
+import org.jboss.forge.container.AddonDependency.ExportType;
 import org.jboss.forge.container.services.Service;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -27,17 +30,13 @@ public class AddonDependencyInjectionTest
    @Deployment(order = 2)
    public static ForgeArchive getDeployment()
    {
-      ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
+      ForgeArchive archive = ShrinkWrap
+               .create(ForgeArchive.class)
                .addClasses(SimpleService.class, ConsumingService.class, TestExtension.class)
                .addAsManifestResource(new StringAsset(""), ArchivePaths.create("beans.xml"))
                .addAsServiceProvider(Extension.class, TestExtension.class)
-               .setAsForgeXML(new StringAsset("<addon>" +
-                        "<dependency " +
-                        "name=\"dependency\" " +
-                        "min-version=\"X\" " +
-                        "max-version=\"Y\" " +
-                        "optional=\"false\"/>" +
-                        "</addon>"));
+               .addAsAddonDependencies(
+                        AddonDependency.create(AddonEntry.from("dependency", ""), ExportType.NONE, false));
 
       return archive;
    }
@@ -47,8 +46,7 @@ public class AddonDependencyInjectionTest
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class, "dependency.jar")
                .addClasses(PublishedService.class)
-               .addAsManifestResource(new StringAsset(""), ArchivePaths.create("beans.xml"))
-               .setAsForgeXML(new StringAsset("<addon/>"));
+               .addAsManifestResource(new StringAsset(""), ArchivePaths.create("beans.xml"));
 
       return archive;
    }

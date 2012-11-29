@@ -1,9 +1,8 @@
 package org.jboss.forge.arquillian;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -28,10 +27,7 @@ import org.jboss.forge.container.Status;
 import org.jboss.forge.container.impl.AddonRepositoryImpl;
 import org.jboss.forge.container.util.ClassLoaders;
 import org.jboss.forge.container.util.Files;
-import org.jboss.forge.container.util.Streams;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.Node;
-import org.jboss.shrinkwrap.api.asset.Asset;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
 public class ForgeDeployableContainer implements DeployableContainer<ForgeContainerConfiguration>
@@ -75,6 +71,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       }
 
    }
+
    private static final int TEST_DEPLOYMENT_TIMEOUT = 60000;
    private ForgeRunnable thread;
    private File addonDir;
@@ -97,21 +94,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       ShrinkWrapUtil.toFile(new File(destDir.getAbsolutePath() + "/" + archive.getName()), archive);
       ShrinkWrapUtil.unzip(destDir, archive);
 
-      Node node = archive.get("/META-INF/forge.xml");
-      if (node != null)
-      {
-         Asset asset = node.getAsset();
-         try
-         {
-            Streams.write(asset.openStream(), new FileOutputStream(repository.getAddonDescriptor(addon)));
-         }
-         catch (FileNotFoundException e)
-         {
-            throw new DeploymentException("Could not open addon descriptor [" + repository.getAddonDescriptor(addon)
-                     + "].", e);
-         }
-      }
-
+      repository.deploy(addon, ((ForgeArchive) archive).getAddonDependencies(), new ArrayList<File>());
       repository.enable(addon);
 
       HTTPContext httpContext = new HTTPContext("localhost", 4141);

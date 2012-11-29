@@ -7,27 +7,25 @@ public class AddonDependency
       NONE, ONDEMAND, ALWAYS
    }
 
-   private String name;
-   private String version = null;
+   private AddonEntry addon;
    private ExportType exportType = ExportType.NONE;
    private boolean optional = false;
 
-   public AddonDependency(String name, String version, ExportType exportType, boolean optional)
+   public static AddonDependency create(AddonEntry addon, ExportType export, boolean optional)
    {
-      this.name = name;
-      this.version = version;
-      this.exportType = exportType;
+      return new AddonDependency(addon, export, optional);
+   }
+
+   private AddonDependency(AddonEntry addon, ExportType export, boolean optional)
+   {
+      this.addon = addon;
+      this.exportType = export;
       this.optional = optional;
    }
 
-   public String getName()
+   public AddonEntry getAddon()
    {
-      return name;
-   }
-
-   public String getVersion()
-   {
-      return version;
+      return addon;
    }
 
    public ExportType getExportType()
@@ -45,8 +43,7 @@ public class AddonDependency
    {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((version == null) ? 0 : version.hashCode());
+      result = prime * result + ((addon == null) ? 0 : addon.hashCode());
       return result;
    }
 
@@ -60,19 +57,12 @@ public class AddonDependency
       if (getClass() != obj.getClass())
          return false;
       AddonDependency other = (AddonDependency) obj;
-      if (name == null)
+      if (addon == null)
       {
-         if (other.name != null)
+         if (other.addon != null)
             return false;
       }
-      else if (!name.equals(other.name))
-         return false;
-      if (version == null)
-      {
-         if (other.version != null)
-            return false;
-      }
-      else if (!version.equals(other.version))
+      else if (!addon.equals(other.addon))
          return false;
       return true;
    }

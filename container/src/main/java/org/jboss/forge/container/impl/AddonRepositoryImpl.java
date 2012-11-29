@@ -132,15 +132,16 @@ public final class AddonRepositoryImpl implements AddonRepository
    }
 
    @Override
-   public synchronized boolean deploy(AddonEntry addon, List<AddonDependency> dependencies, File... resourceJars)
+   public synchronized boolean deploy(AddonEntry addon, List<AddonDependency> dependencies, List<File> resourceJars)
    {
       File addonSlotDir = getAddonBaseDir(addon);
       try
       {
-         for (File jar : resourceJars)
-         {
-            Files.copyFileToDirectory(jar, addonSlotDir);
-         }
+         if (resourceJars != null)
+            for (File jar : resourceJars)
+            {
+               Files.copyFileToDirectory(jar, addonSlotDir);
+            }
 
          /*
           * Write out the addon module dependency configuration
@@ -149,14 +150,15 @@ public final class AddonRepositoryImpl implements AddonRepository
          Node addonXml = XMLParser.parse(descriptor);
          Node dependenciesNode = addonXml.createChild("dependencies");
 
-         for (AddonDependency dependency : dependencies)
-         {
-            Node dep = dependenciesNode.createChild("dependency");
-            dep.attribute(ATTR_NAME, dependency.getName());
-            dep.attribute(ATTR_VERSION, dependency.getVersion());
-            dep.attribute(ATTR_EXPORT, dependency.getExportType());
-            dep.attribute(ATTR_OPTIONAL, dependency.isOptional());
-         }
+         if (dependencies != null)
+            for (AddonDependency dependency : dependencies)
+            {
+               Node dep = dependenciesNode.createChild("dependency");
+               dep.attribute(ATTR_NAME, dependency.getAddon().getName());
+               dep.attribute(ATTR_VERSION, dependency.getAddon().getVersion());
+               dep.attribute(ATTR_EXPORT, dependency.getExportType());
+               dep.attribute(ATTR_OPTIONAL, dependency.isOptional());
+            }
 
          FileOutputStream fos = new FileOutputStream(descriptor);
          Streams.write(XMLParser.toXMLInputStream(addonXml), fos);
@@ -271,9 +273,8 @@ public final class AddonRepositoryImpl implements AddonRepository
          {
             if (child != null)
             {
-               result.add(new AddonDependency(
-                        child.getAttribute(ATTR_NAME),
-                        child.getAttribute(ATTR_VERSION),
+               result.add(AddonDependency.create(AddonEntry.from(child.getAttribute(ATTR_NAME),
+                        child.getAttribute(ATTR_VERSION)),
                         ExportType.valueOf(child.getAttribute(ATTR_EXPORT)),
                         Boolean.valueOf(child.getAttribute(ATTR_OPTIONAL))));
             }

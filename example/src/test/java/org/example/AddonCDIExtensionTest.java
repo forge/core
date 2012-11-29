@@ -26,8 +26,7 @@ public class AddonCDIExtensionTest
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                .addClasses(TestExtension.class)
                .addAsManifestResource(new StringAsset(""), ArchivePaths.create("beans.xml"))
-               .addAsServiceProvider(Extension.class, TestExtension.class)
-               .setAsForgeXML(new StringAsset("<addon/>"));
+               .addAsServiceProvider(Extension.class, TestExtension.class);
 
       return archive;
    }

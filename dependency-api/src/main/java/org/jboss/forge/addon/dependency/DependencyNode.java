@@ -11,6 +11,8 @@ import java.util.List;
 
 public interface DependencyNode
 {
+   public DependencyNode getParent();
+   
    public Dependency getDependency();
 
    public List<DependencyNode> getChildren();

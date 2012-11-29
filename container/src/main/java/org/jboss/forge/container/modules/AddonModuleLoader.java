@@ -33,9 +33,9 @@ import org.jboss.modules.filter.PathFilters;
 
 /**
  * TODO See {@link JarModuleLoader} for how to do dynamic dependencies from an XML file within.
- *
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- *
+ * 
  */
 public class AddonModuleLoader extends ModuleLoader
 {
@@ -178,7 +178,7 @@ public class AddonModuleLoader extends ModuleLoader
       for (AddonEntry addon : repository.listEnabledCompatibleWithVersion(AddonRepositoryImpl.getRuntimeAPIVersion()))
       {
          // TODO implement proper version-range resolution
-         if (addon.getName().equals(dependency.getName()))
+         if (addon.getName().equals(dependency.getAddon().getName()))
          {
             found = addon;
             break;

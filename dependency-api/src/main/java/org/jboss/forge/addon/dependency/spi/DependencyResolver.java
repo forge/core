@@ -7,7 +7,6 @@
 
 package org.jboss.forge.addon.dependency.spi;
 
-import java.io.File;
 import java.util.List;
 import java.util.Set;
 
@@ -19,45 +18,25 @@ import org.jboss.forge.addon.dependency.DependencyQuery;
 public interface DependencyResolver
 {
    /**
+    * Resolve a single artifact
+    */
+   Dependency resolveArtifact(DependencyQuery query);
+
+   /**
     * Resolve all the dependencies from a {@link DependencyQuery} object.
-    *
+    * 
     * The {@link Dependency} object included inside the {@link DependencyQuery} object is not included in the
     * {@link Set} returned
-    *
-    * @param query
-    * @return
     */
    Set<Dependency> resolveDependencies(DependencyQuery query);
 
    /**
+    * Resolve the entire dependency hierarchy for the given {@link DependencyQuery}
+    */
+   DependencyNode resolveDependencyHierarchy(DependencyQuery query);
+
+   /**
     * Resolve the versions from a {@link Dependency} object contained in the {@link DependencyQuery} object.
-    *
-    * @param query
-    * @return
     */
    List<Coordinate> resolveVersions(DependencyQuery query);
-
-   /**
-    * Resolve a single artifact
-    *
-    * @param query
-    * @return
-    */
-   File resolveArtifact(DependencyQuery query);
-
-   /**
-    * Resolve the entire dependency hierarchy
-    *
-    * @param coordinates
-    * @return
-    */
-   DependencyNode resolveDependencyHierarchy(String coordinates);
-
-   /**
-    * Resolve the addon dependencies
-    *
-    * @param coordinates
-    * @return
-    */
-   List<Dependency> resolveAddonDependencies(String coordinates);
 }

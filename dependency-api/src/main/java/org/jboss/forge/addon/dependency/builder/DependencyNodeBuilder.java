@@ -16,23 +16,25 @@ import org.jboss.forge.addon.dependency.collection.Dependencies;
 
 /**
  * Creates a {@link DependencyNode} object
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 public class DependencyNodeBuilder implements DependencyNode
 {
+   private DependencyNode parent;
    private Dependency dependency;
    private List<DependencyNode> children = new ArrayList<DependencyNode>();
 
-   private DependencyNodeBuilder(Dependency dependency)
+   private DependencyNodeBuilder(DependencyNode parent, Dependency dependency)
    {
+      this.parent = parent;
       this.dependency = dependency;
    }
 
-   public static DependencyNodeBuilder create(Dependency dependency)
+   public static DependencyNodeBuilder create(DependencyNode parent, Dependency dependency)
    {
-      DependencyNodeBuilder builder = new DependencyNodeBuilder(dependency);
+      DependencyNodeBuilder builder = new DependencyNodeBuilder(parent, dependency);
       return builder;
    }
 
@@ -46,6 +48,12 @@ public class DependencyNodeBuilder implements DependencyNode
    public List<DependencyNode> getChildren()
    {
       return children;
+   }
+
+   @Override
+   public DependencyNode getParent()
+   {
+      return parent;
    }
 
    @Override

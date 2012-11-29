@@ -7,6 +7,9 @@ import org.example.event.EventService;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.container.AddonDependency;
+import org.jboss.forge.container.AddonEntry;
+import org.jboss.forge.container.AddonDependency.ExportType;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
@@ -23,16 +26,12 @@ public class AddonDependencyEventTest
    @Deployment(order = 2)
    public static ForgeArchive getDeployment()
    {
-      ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
+      ForgeArchive archive = ShrinkWrap
+               .create(ForgeArchive.class)
                .addClasses(EventService.class)
                .addAsManifestResource(new StringAsset(""), ArchivePaths.create("beans.xml"))
-               .setAsForgeXML(new StringAsset("<addon>" +
-                        "<dependency " +
-                        "name=\"dependency\" " +
-                        "min-version=\"X\" " +
-                        "max-version=\"Y\" " +
-                        "optional=\"false\"/>" +
-                        "</addon>"));
+               .addAsAddonDependencies(
+                        AddonDependency.create(AddonEntry.from("dependency", ""), ExportType.NONE, false));
 
       return archive;
    }
@@ -42,8 +41,7 @@ public class AddonDependencyEventTest
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class, "dependency.jar")
                .addClasses(EventResponseService.class)
-               .addAsManifestResource(new StringAsset(""), ArchivePaths.create("beans.xml"))
-               .setAsForgeXML(new StringAsset("<addon/>"));
+               .addAsManifestResource(new StringAsset(""), ArchivePaths.create("beans.xml"));
 
       return archive;
    }

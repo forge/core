@@ -24,8 +24,7 @@ public class AddonSelfInjectionTest
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                .addClasses(SimpleService.class)
-               .addAsManifestResource(new StringAsset(""), ArchivePaths.create("beans.xml"))
-               .setAsForgeXML(new StringAsset("<addon/>"));
+               .addAsManifestResource(new StringAsset(""), ArchivePaths.create("beans.xml"));
 
       return archive;
    }

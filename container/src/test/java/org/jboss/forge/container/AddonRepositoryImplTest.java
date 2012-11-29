@@ -72,7 +72,7 @@ public class AddonRepositoryImplTest
       AddonRepository repository = AddonRepositoryImpl.forDirectory(File.createTempFile("addonDir", "test"));
 
       AddonEntry addon = AddonEntry.from("1", "2");
-      repository.deploy(addon, new ArrayList<AddonDependency>(), new File[] {});
+      repository.deploy(addon, new ArrayList<AddonDependency>(), new ArrayList<File>());
 
       Assert.assertEquals(0, repository.getAddonDependencies(addon).size());
    }
@@ -83,8 +83,8 @@ public class AddonRepositoryImplTest
       AddonRepository repository = AddonRepositoryImpl.forDirectory(File.createTempFile("addonDir", "test"));
 
       AddonEntry addon = AddonEntry.from("1", "2");
-      AddonDependency dependency = new AddonDependency("nm", "ver", ExportType.ONDEMAND, false);
-      repository.deploy(addon, Arrays.asList(dependency), new File[] {});
+      AddonDependency dependency = AddonDependency.create(AddonEntry.from("nm", "ver"), ExportType.ONDEMAND, false);
+      repository.deploy(addon, Arrays.asList(dependency), new ArrayList<File>());
 
       Assert.assertEquals(1, repository.getAddonDependencies(addon).size());
       Assert.assertEquals(dependency, repository.getAddonDependencies(addon).get(0));
@@ -96,10 +96,10 @@ public class AddonRepositoryImplTest
       AddonRepository repository = AddonRepositoryImpl.forDirectory(File.createTempFile("addonDir", "test"));
 
       AddonEntry addon = AddonEntry.from("1", "2");
-      AddonDependency dependency0 = new AddonDependency("nm1", "ver", ExportType.ONDEMAND, false);
-      AddonDependency dependency1 = new AddonDependency("nm2", "ver", ExportType.ONDEMAND, false);
+      AddonDependency dependency0 = AddonDependency.create(AddonEntry.from("nm1", "ver"), ExportType.ONDEMAND, false);
+      AddonDependency dependency1 = AddonDependency.create(AddonEntry.from("nm2", "ver"), ExportType.ONDEMAND, false);
 
-      repository.deploy(addon, Arrays.asList(dependency0, dependency1), new File[] {});
+      repository.deploy(addon, Arrays.asList(dependency0, dependency1), new ArrayList<File>());
 
       Assert.assertEquals(2, repository.getAddonDependencies(addon).size());
       Assert.assertEquals(dependency0, repository.getAddonDependencies(addon).get(0));

@@ -72,15 +72,16 @@ class MavenConvertUtils
       return d;
    }
 
-   static DependencyNodeBuilder toDependencyNode(DependencyNode aetherNode)
+   static DependencyNodeBuilder toDependencyNode(org.jboss.forge.addon.dependency.DependencyNode parent,
+            DependencyNode aetherNode)
    {
-      DependencyNodeBuilder node = DependencyNodeBuilder.create(MavenConvertUtils.convertToDependency(aetherNode));
+      DependencyNodeBuilder node = DependencyNodeBuilder.create(parent,
+               MavenConvertUtils.convertToDependency(aetherNode));
       for (DependencyNode childNode : aetherNode.getChildren())
       {
-         node.getChildren().add(toDependencyNode(childNode));
+         node.getChildren().add(toDependencyNode(node, childNode));
       }
       return node;
    }
-
 
 }
