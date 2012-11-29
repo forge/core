@@ -29,9 +29,9 @@ import org.jboss.forge.container.AddonRepository;
 /**
  * When an addon is installed, another addons could be required. This object returns the necessary information for the
  * installation of an addon to succeed, like required addons and dependencies
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ *
  */
 public class InstallRequest
 {
@@ -111,7 +111,7 @@ public class InstallRequest
    private AddonEntry toAddonEntry(DependencyNode node)
    {
       Coordinate coord = node.getDependency().getCoordinate();
-      List<DependencyNode> forgeApi = Dependencies.collect(Dependencies.breadthFirstIterator(node),
+      DependencyNode forgeApi = Dependencies.selectFirst(Dependencies.breadthFirstIterator(node),
                new DependencyNodeFilter()
                {
                   @Override
@@ -124,9 +124,9 @@ public class InstallRequest
                });
 
       String apiVersion = null;
-      if (forgeApi.size() > 0)
+      if (forgeApi != null)
       {
-         apiVersion = forgeApi.get(0).getDependency().getCoordinate().getVersion();
+         apiVersion = forgeApi.getDependency().getCoordinate().getVersion();
       }
 
       return AddonEntry.from(coord.getGroupId() + ":" + coord.getArtifactId(), coord.getVersion(), apiVersion);
@@ -137,11 +137,11 @@ public class InstallRequest
       Coordinate coordinate = root.getDependency().getCoordinate();
 
       dependencyResolver.resolveDependencyHierarchy(DependencyQueryBuilder.create(coordinate));
-      List<File> resourceJars = toResourceJars(Dependencies.collect(root, new LocalResourceFilter()));
+      List<File> resourceJars = toResourceJars(Dependencies.select(root, new LocalResourceFilter()));
       resourceJars.add(dependencyResolver.resolveArtifact(DependencyQueryBuilder.create(coordinate)).getArtifact());
 
       List<AddonDependency> addonDependencies =
-               toAddonDependencies(Dependencies.collect(root, new DirectAddonFilter(root)));
+               toAddonDependencies(Dependencies.select(root, new DirectAddonFilter(root)));
 
       repository.deploy(addon, addonDependencies, resourceJars);
    }
