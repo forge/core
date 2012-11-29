@@ -59,7 +59,7 @@ mingw=false
 case "`uname`" in
   CYGWIN*) cygwin=true ;;
   MINGW*) mingw=true;;
-  Darwin*) darwin=true 
+  Darwin*) darwin=true
            if [ -z "$JAVA_VERSION" ] ; then
              JAVA_VERSION="CurrentJDK"
            fi
@@ -142,18 +142,18 @@ fi
 JAVAVER=`$JAVACMD -version 2>&1`
 case $JAVAVER in
 *1.[6-9]*) ;;
-*1.[1-5]*) 
+*1.[1-5]*)
 	echo " Error: a Java 1.6 or higher JRE is required to run Forge; found [$JAVACMD -version == $JAVAVER]."
 	exit 1
  ;;
-esac 
+esac
 
 
 if [ -z "$JAVA_HOME" ] ; then
   echo "Warning: JAVA_HOME environment variable is not set."
 fi
 
-FORGE_MAIN_CLASS=org.jboss.forge.container.Bootstrap
+FORGE_MAIN_CLASS=org.jboss.forge.bootstrap.Bootstrap
 
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin; then
