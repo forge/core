@@ -47,14 +47,14 @@ public final class Dependencies
     * @see #depthFirstIterator(DependencyNode)
     * @see #preorderIterator(DependencyNode)
     */
-   public static DependencyNode selectFirst(Iterator<DependencyNode> nodeIterator, Predicate<DependencyNode> filter)
+   public static <T> T selectFirst(Iterator<T> nodeIterator, Predicate<T> filter)
    {
       while (nodeIterator.hasNext())
       {
-         DependencyNode node = nodeIterator.next();
-         if (filter.accept(node))
+         T element = nodeIterator.next();
+         if (filter.accept(element))
          {
-            return node;
+            return element;
          }
       }
       return null;
@@ -64,20 +64,20 @@ public final class Dependencies
     * Returns a {@link List} of {@link DependencyNode} objects that satisfy the filter based on the elements returned by
     * the {@link Iterator}.
     *
-    * @param nodeIterator An iterator for the {@link DependencyNode} hierarchy tree
+    * @param iterator An iterator for the {@link DependencyNode} hierarchy tree
     * @param filter the {@link DependencyNodeFilter} being used
     * @return list of matched elements
     *
     */
-   public static List<DependencyNode> select(Iterator<DependencyNode> nodeIterator, Predicate<DependencyNode> filter)
+   public static <T> List<T> select(Iterator<T> iterator, Predicate<T> filter)
    {
-      List<DependencyNode> result = new ArrayList<DependencyNode>();
-      while (nodeIterator.hasNext())
+      List<T> result = new ArrayList<T>();
+      while (iterator.hasNext())
       {
-         DependencyNode node = nodeIterator.next();
-         if (filter.accept(node))
+         T element = iterator.next();
+         if (filter.accept(element))
          {
-            result.add(node);
+            result.add(element);
          }
       }
       return result;
