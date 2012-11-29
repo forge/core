@@ -2,12 +2,11 @@ package org.jboss.forge.addon.manager.filters;
 
 import org.jboss.forge.addon.dependency.Coordinate;
 import org.jboss.forge.addon.dependency.DependencyNode;
+import org.jboss.forge.addon.dependency.collection.Dependencies;
 import org.jboss.forge.addon.dependency.collection.DependencyNodeFilter;
 
 public class DirectAddonFilter implements DependencyNodeFilter
 {
-   private static final String FORGE_ADDON_CLASSIFIER = "forge-addon";
-
    private DependencyNode root;
 
    public DirectAddonFilter(DependencyNode root)
@@ -19,8 +18,7 @@ public class DirectAddonFilter implements DependencyNodeFilter
    public boolean accept(DependencyNode node)
    {
       Coordinate artifact = node.getDependency().getCoordinate();
-      if (FORGE_ADDON_CLASSIFIER.equals(artifact.getClassifier())
-               && root.getChildren().contains(node))
+      if (Dependencies.isForgeAddon(artifact) && root.getChildren().contains(node))
       {
          return true;
       }

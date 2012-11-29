@@ -20,8 +20,8 @@ import org.jboss.forge.addon.dependency.builder.DependencyQueryBuilder;
 import org.jboss.forge.addon.dependency.collection.Dependencies;
 import org.jboss.forge.addon.dependency.collection.DependencyNodeFilter;
 import org.jboss.forge.addon.dependency.spi.DependencyResolver;
-import org.jboss.forge.addon.manager.filters.LocalResourceFilter;
 import org.jboss.forge.addon.manager.filters.DirectAddonFilter;
+import org.jboss.forge.addon.manager.filters.LocalResourceFilter;
 import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonEntry;
 import org.jboss.forge.container.AddonRepository;
@@ -57,7 +57,7 @@ public class InstallRequest
       while (iterator.hasNext())
       {
          DependencyNode node = iterator.next();
-         if (Dependencies.isForgeAddon(node) && !node.equals(requestedAddon))
+         if (Dependencies.isForgeAddon(node.getDependency().getCoordinate()) && !node.equals(requestedAddon))
          {
             if (!node.getDependency().isOptional())
                requiredAddons.push(node);

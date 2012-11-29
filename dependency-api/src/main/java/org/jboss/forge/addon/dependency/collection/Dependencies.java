@@ -18,6 +18,7 @@ import java.util.Stack;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.jboss.forge.addon.dependency.Coordinate;
 import org.jboss.forge.addon.dependency.Dependency;
 import org.jboss.forge.addon.dependency.DependencyNode;
 
@@ -60,10 +61,10 @@ public final class Dependencies
    }
 
    /**
-    * Returns a {@link List} of {@link DependencyNode} objects that satisfy the filter. The method
-    * {@link DependencyNode#getChildren()} is called for each found node.
+    * Returns a {@link List} of {@link DependencyNode} objects that satisfy the filter based on the elements returned by
+    * the {@link Iterator}.
     *
-    * @param root a {@link DependencyNode} as the starting point
+    * @param nodeIterator An iterator for the {@link DependencyNode} hierarchy tree
     * @param filter the {@link DependencyNodeFilter} being used
     * @return list of matched elements
     *
@@ -83,8 +84,7 @@ public final class Dependencies
    }
 
    /**
-    * Returns the {@link DependencyNode} objects that satisfy the filter. The method
-    * {@link DependencyNode#getChildren()} is called for each found node. The nodes are traversed using a pre-order
+    * Returns the {@link DependencyNode} objects that satisfy the filter. The nodes are traversed using a pre order
     * iterator
     *
     * @param root a {@link DependencyNode} as the starting point
@@ -182,25 +182,14 @@ public final class Dependencies
    }
 
    /**
-    * Checks if the {@link DependencyNode} object is holding a Forge Addon dependency
-    *
-    * @param node
-    * @return
-    */
-   public static boolean isForgeAddon(DependencyNode node)
-   {
-      return isForgeAddon(node.getDependency());
-   }
-
-   /**
     * Check if the {@link Dependency} object is pointing to a Forge Addon artifact
     *
-    * @param dependency
+    * @param coordinate
     * @return
     */
-   public static boolean isForgeAddon(Dependency dependency)
+   public static boolean isForgeAddon(Coordinate coordinate)
    {
-      return FORGE_ADDON_CLASSIFIER.equals(dependency.getCoordinate().getClassifier());
+      return FORGE_ADDON_CLASSIFIER.equals(coordinate.getClassifier());
    }
 
    /**
