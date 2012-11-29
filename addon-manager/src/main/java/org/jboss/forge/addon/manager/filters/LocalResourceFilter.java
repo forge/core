@@ -1,10 +1,10 @@
 package org.jboss.forge.addon.manager.filters;
 
 import org.jboss.forge.addon.dependency.DependencyNode;
-import org.jboss.forge.addon.dependency.collection.DependencyNodeFilter;
+import org.jboss.forge.addon.dependency.collection.Predicate;
 import org.jboss.forge.addon.manager.AddonManager;
 
-public class LocalResourceFilter implements DependencyNodeFilter
+public class LocalResourceFilter implements Predicate<DependencyNode>
 {
    @Override
    public boolean accept(DependencyNode node)

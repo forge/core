@@ -12,9 +12,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.jboss.forge.addon.dependency.Coordinate;
+import org.jboss.forge.addon.dependency.Dependency;
 import org.jboss.forge.addon.dependency.DependencyQuery;
 import org.jboss.forge.addon.dependency.DependencyRepository;
-import org.jboss.forge.addon.dependency.collection.DependencyFilter;
+import org.jboss.forge.addon.dependency.collection.Predicate;
 
 /**
  * Builds a {@link DependencyQuery} object
@@ -26,7 +27,7 @@ public class DependencyQueryBuilder implements DependencyQuery
 {
    private Coordinate coordinate;
    private String scopeType;
-   private DependencyFilter dependencyFilter;
+   private Predicate<Dependency> dependencyFilter;
    private List<DependencyRepository> dependencyRepositories = new ArrayList<DependencyRepository>();
 
    protected DependencyQueryBuilder()
@@ -73,7 +74,7 @@ public class DependencyQueryBuilder implements DependencyQuery
       this.coordinate = coordinate;
    }
 
-   public DependencyQueryBuilder setFilter(DependencyFilter dependencyFilter)
+   public DependencyQueryBuilder setFilter(Predicate<Dependency> dependencyFilter)
    {
       this.dependencyFilter = dependencyFilter;
       return this;
@@ -109,7 +110,7 @@ public class DependencyQueryBuilder implements DependencyQuery
    }
 
    @Override
-   public DependencyFilter getDependencyFilter()
+   public Predicate<Dependency> getDependencyFilter()
    {
       return dependencyFilter;
    }

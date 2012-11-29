@@ -16,7 +16,7 @@ import org.jboss.forge.addon.dependency.DependencyQuery;
 import org.jboss.forge.addon.dependency.DependencyRepository;
 import org.jboss.forge.addon.dependency.builder.CoordinateBuilder;
 import org.jboss.forge.addon.dependency.builder.DependencyQueryBuilder;
-import org.jboss.forge.addon.dependency.collection.DependencyFilter;
+import org.jboss.forge.addon.dependency.collection.Predicate;
 import org.jboss.forge.maven.container.MavenContainer;
 import org.jboss.forge.maven.container.MavenDependencyResolver;
 import org.junit.Assert;
@@ -25,12 +25,12 @@ import org.junit.Test;
 
 /**
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ *
  */
 public class MavenDependencyResolverTest
 {
    private MavenDependencyResolver resolver;
-   private DependencyFilter addonFilter = new DependencyFilter()
+   private Predicate<Dependency> addonFilter = new Predicate<Dependency>()
    {
       @Override
       public boolean accept(Dependency dependency)

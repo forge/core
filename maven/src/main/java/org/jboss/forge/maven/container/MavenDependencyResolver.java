@@ -26,7 +26,7 @@ import org.jboss.forge.addon.dependency.Dependency;
 import org.jboss.forge.addon.dependency.DependencyQuery;
 import org.jboss.forge.addon.dependency.builder.CoordinateBuilder;
 import org.jboss.forge.addon.dependency.builder.DependencyBuilder;
-import org.jboss.forge.addon.dependency.collection.DependencyFilter;
+import org.jboss.forge.addon.dependency.collection.Predicate;
 import org.jboss.forge.addon.dependency.spi.DependencyResolver;
 import org.sonatype.aether.RepositorySystem;
 import org.sonatype.aether.artifact.Artifact;
@@ -60,7 +60,7 @@ public class MavenDependencyResolver implements DependencyResolver
    public Set<Dependency> resolveDependencies(DependencyQuery query)
    {
       Set<Dependency> result = new HashSet<Dependency>();
-      DependencyFilter filter = query.getDependencyFilter();
+      Predicate<Dependency> filter = query.getDependencyFilter();
       RepositorySystem system = container.getRepositorySystem();
       Settings settings = container.getSettings();
 
@@ -103,7 +103,7 @@ public class MavenDependencyResolver implements DependencyResolver
    {
       VersionRangeResult r = getVersions(query);
       List<Coordinate> result = new ArrayList<Coordinate>();
-      DependencyFilter filter = query.getDependencyFilter();
+      Predicate<Dependency> filter = query.getDependencyFilter();
       for (Version v : r.getVersions())
       {
          CoordinateBuilder coord = CoordinateBuilder.create(query.getCoordinate()).setVersion(v.toString());
@@ -118,7 +118,7 @@ public class MavenDependencyResolver implements DependencyResolver
 
    /**
     * Returns the versions of a specific artifact
-    * 
+    *
     * @param query
     * @return
     */

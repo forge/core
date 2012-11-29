@@ -47,7 +47,7 @@ public final class Dependencies
     * @see #depthFirstIterator(DependencyNode)
     * @see #preorderIterator(DependencyNode)
     */
-   public static DependencyNode selectFirst(Iterator<DependencyNode> nodeIterator, DependencyNodeFilter filter)
+   public static DependencyNode selectFirst(Iterator<DependencyNode> nodeIterator, Predicate<DependencyNode> filter)
    {
       while (nodeIterator.hasNext())
       {
@@ -69,7 +69,7 @@ public final class Dependencies
     * @return list of matched elements
     *
     */
-   public static List<DependencyNode> select(Iterator<DependencyNode> nodeIterator, DependencyNodeFilter filter)
+   public static List<DependencyNode> select(Iterator<DependencyNode> nodeIterator, Predicate<DependencyNode> filter)
    {
       List<DependencyNode> result = new ArrayList<DependencyNode>();
       while (nodeIterator.hasNext())
@@ -94,7 +94,7 @@ public final class Dependencies
     * @see #preorderIterator(DependencyNode)
     *
     */
-   public static List<DependencyNode> select(DependencyNode node, DependencyNodeFilter filter)
+   public static List<DependencyNode> select(DependencyNode node, Predicate<DependencyNode> filter)
    {
       return select(preorderIterator(node), filter);
    }

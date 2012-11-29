@@ -9,7 +9,7 @@ package org.jboss.forge.addon.dependency;
 
 import java.util.List;
 
-import org.jboss.forge.addon.dependency.collection.DependencyFilter;
+import org.jboss.forge.addon.dependency.collection.Predicate;
 
 /**
  * A parameter object which is used to search dependencies
@@ -23,7 +23,7 @@ public interface DependencyQuery
 
    String getScopeType();
 
-   DependencyFilter getDependencyFilter();
+   Predicate<Dependency> getDependencyFilter();
 
    List<DependencyRepository> getDependencyRepositories();
 

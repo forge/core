@@ -8,7 +8,7 @@
 package org.jboss.forge.maven.dependency.filter;
 
 import org.jboss.forge.addon.dependency.Dependency;
-import org.jboss.forge.addon.dependency.collection.DependencyFilter;
+import org.jboss.forge.addon.dependency.collection.Predicate;
 
 /**
  * Filters a set of {@link Dependency} objects by its packaging
@@ -16,7 +16,7 @@ import org.jboss.forge.addon.dependency.collection.DependencyFilter;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  *
  */
-public class PackagingDependencyFilter implements DependencyFilter
+public class PackagingDependencyFilter implements Predicate<Dependency>
 {
    private String packaging;
 

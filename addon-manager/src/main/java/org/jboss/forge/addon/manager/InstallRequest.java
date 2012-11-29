@@ -18,7 +18,7 @@ import org.jboss.forge.addon.dependency.Coordinate;
 import org.jboss.forge.addon.dependency.DependencyNode;
 import org.jboss.forge.addon.dependency.builder.DependencyQueryBuilder;
 import org.jboss.forge.addon.dependency.collection.Dependencies;
-import org.jboss.forge.addon.dependency.collection.DependencyNodeFilter;
+import org.jboss.forge.addon.dependency.collection.Predicate;
 import org.jboss.forge.addon.dependency.spi.DependencyResolver;
 import org.jboss.forge.addon.manager.filters.DirectAddonFilter;
 import org.jboss.forge.addon.manager.filters.LocalResourceFilter;
@@ -112,7 +112,7 @@ public class InstallRequest
    {
       Coordinate coord = node.getDependency().getCoordinate();
       DependencyNode forgeApi = Dependencies.selectFirst(Dependencies.breadthFirstIterator(node),
-               new DependencyNodeFilter()
+               new Predicate<DependencyNode>()
                {
                   @Override
                   public boolean accept(DependencyNode node)

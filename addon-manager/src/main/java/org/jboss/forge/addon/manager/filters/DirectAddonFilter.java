@@ -3,9 +3,9 @@ package org.jboss.forge.addon.manager.filters;
 import org.jboss.forge.addon.dependency.Coordinate;
 import org.jboss.forge.addon.dependency.DependencyNode;
 import org.jboss.forge.addon.dependency.collection.Dependencies;
-import org.jboss.forge.addon.dependency.collection.DependencyNodeFilter;
+import org.jboss.forge.addon.dependency.collection.Predicate;
 
-public class DirectAddonFilter implements DependencyNodeFilter
+public class DirectAddonFilter implements Predicate<DependencyNode>
 {
    private DependencyNode root;
 
