@@ -49,6 +49,11 @@ public class MavenDependencyResolver implements DependencyResolver
 {
    private MavenContainer container;
 
+   public MavenDependencyResolver()
+   {
+      this(new MavenContainer());
+   }
+
    @Inject
    public MavenDependencyResolver(MavenContainer container)
    {
