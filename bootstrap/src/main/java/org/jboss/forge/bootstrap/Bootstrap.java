@@ -13,16 +13,16 @@ import java.util.logging.Logger;
 import org.jboss.forge.addon.dependency.spi.DependencyResolver;
 import org.jboss.forge.addon.manager.AddonManager;
 import org.jboss.forge.addon.manager.InstallRequest;
-import org.jboss.forge.container.AddonEntry;
+import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.Forge;
 
 /**
  * A class with a main method to bootstrap Forge.
- *
+ * 
  * You can deploy addons by calling {@link Bootstrap#deploy(String)}
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 public class Bootstrap
 {
@@ -49,7 +49,7 @@ public class Bootstrap
 
    public void deploy(String addonCoordinates)
    {
-      AddonEntry addon = AddonEntry.fromCoordinates(addonCoordinates);
+      AddonId addon = AddonId.fromCoordinates(addonCoordinates);
       DependencyResolver dependencyResolver = lookup(DependencyResolver.class);
       AddonManager addonManager = new AddonManager(forge.getRepository(), dependencyResolver);
       InstallRequest request = addonManager.install(addon);

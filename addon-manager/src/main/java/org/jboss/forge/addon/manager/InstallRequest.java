@@ -29,25 +29,25 @@ import org.jboss.forge.container.AddonRepository;
 /**
  * When an addon is installed, another addons could be required. This object returns the necessary information for the
  * installation of an addon to succeed, like required addons and dependencies
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 public class InstallRequest
 {
    private AddonRepository repository;
    private DependencyResolver dependencyResolver;
 
-   private AddonEntry requestedAddonEntry;
+   private AddonId requestedAddonId;
    private DependencyNode requestedAddonNode;
    private Stack<DependencyNode> requiredAddons = new Stack<DependencyNode>();
    private Stack<DependencyNode> optionalAddons = new Stack<DependencyNode>();
 
-   public InstallRequest(AddonRepository repository, DependencyResolver resolver, AddonEntry requestedAddonEntry)
+   public InstallRequest(AddonRepository repository, DependencyResolver resolver, AddonId requestedAddonEntry)
    {
       this.repository = repository;
       this.dependencyResolver = resolver;
-      this.requestedAddonEntry = requestedAddonEntry;
+      this.requestedAddonId = requestedAddonEntry;
 
       String coordinates = requestedAddonEntry.getName() + ":jar:forge-addon:" + requestedAddonEntry.getVersion();
       this.requestedAddonNode = resolver.resolveDependencyHierarchy(DependencyQueryBuilder.create(coordinates));
@@ -109,9 +109,8 @@ public class InstallRequest
          deploy(addonEntry, requiredAddon);
       }
 
-      AddonId requestedAddonEntry = toAddonEntry(requestedAddon);
-      entries.add(requestedAddonEntry);
-      deploy(requestedAddonEntry, requestedAddonNode);
+      entries.add(requestedAddonId);
+      deploy(requestedAddonId, requestedAddonNode);
 
       enable(entries);
    }
