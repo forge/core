@@ -217,13 +217,11 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
          if (thread.isAlive())
          {
             AddonRegistry registry = runnable.getForge().getAddonRegistry();
-            for (RegisteredAddon addon : registry.getRegisteredAddons())
+            if (registry.isRegistered(addonToUndeploy)
+                     && !registry.isWaiting(registry.getRegisteredAddon(addonToUndeploy)))
             {
-               if (addon.getId().equals(addonToUndeploy))
-               {
-                  deployed = true;
-                  break;
-               }
+               deployed = true;
+               break;
             }
             try
             {

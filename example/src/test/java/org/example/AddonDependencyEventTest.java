@@ -29,12 +29,12 @@ public class AddonDependencyEventTest
                .create(ForgeArchive.class)
                .addClasses(EventService.class)
                .addAsManifestResource(new StringAsset(""), ArchivePaths.create("beans.xml"))
-               .addAsAddonDependencies(AddonDependency.create(AddonId.from("dependency", "")));
+               .addAsAddonDependencies(AddonDependency.create(AddonId.from("dependency", "1")));
 
       return archive;
    }
 
-   @Deployment(name = "dependency", testable = false, order = 1)
+   @Deployment(name = "dependency,1", testable = false, order = 1)
    public static ForgeArchive getDependencyDeployment()
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class, "dependency.jar")

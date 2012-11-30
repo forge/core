@@ -34,12 +34,12 @@ public class AddonDependencyInjectionTest
                .addClasses(SimpleService.class, ConsumingService.class, TestExtension.class)
                .addAsManifestResource(new StringAsset(""), ArchivePaths.create("beans.xml"))
                .addAsServiceProvider(Extension.class, TestExtension.class)
-               .addAsAddonDependencies(AddonDependency.create(AddonId.from("dependency", "")));
+               .addAsAddonDependencies(AddonDependency.create(AddonId.from("dependency", "2")));
 
       return archive;
    }
 
-   @Deployment(name = "dependency", testable = false, order = 1)
+   @Deployment(name = "dependency,2", testable = false, order = 1)
    public static ForgeArchive getDependencyDeployment()
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class, "dependency.jar")

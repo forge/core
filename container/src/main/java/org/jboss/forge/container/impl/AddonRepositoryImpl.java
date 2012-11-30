@@ -54,6 +54,9 @@ public final class AddonRepositoryImpl implements AddonRepository
 
    private static final Pattern VERSION_PATTERN = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)(\\.|-)(.*)");
 
+   //FIXME Enhance this synchronization/locking with actual NIO file locking
+   private static Object lock = new Object();
+
    public static AddonRepository forDirectory(File dir)
    {
       return new AddonRepositoryImpl(dir);
@@ -131,39 +134,42 @@ public final class AddonRepositoryImpl implements AddonRepository
    }
 
    @Override
-   public synchronized boolean deploy(AddonId addon, List<AddonDependency> dependencies, List<File> resourceJars)
+   public boolean deploy(AddonId addon, List<AddonDependency> dependencies, List<File> resourceJars)
    {
       File addonSlotDir = getAddonBaseDir(addon);
+      File descriptor = getAddonDescriptor(addon);
       try
       {
-         if (resourceJars != null)
-            for (File jar : resourceJars)
-            {
-               Files.copyFileToDirectory(jar, addonSlotDir);
-            }
+         synchronized (lock)
+         {
+            if (resourceJars != null)
+               for (File jar : resourceJars)
+               {
+                  Files.copyFileToDirectory(jar, addonSlotDir);
+               }
 
-         /*
-          * Write out the addon module dependency configuration
-          */
-         File descriptor = getAddonDescriptor(addon);
-         Node addonXml = XMLParser.parse(descriptor);
-         Node dependenciesNode = addonXml.createChild("dependencies");
+            /*
+             * Write out the addon module dependency configuration
+             */
+            Node addonXml = XMLParser.parse(descriptor);
+            Node dependenciesNode = addonXml.createChild("dependencies");
 
-         if (dependencies != null)
-            for (AddonDependency dependency : dependencies)
-            {
-               Node dep = dependenciesNode.createChild("dependency");
-               dep.attribute(ATTR_NAME, dependency.getId().getName());
-               dep.attribute(ATTR_VERSION, dependency.getId().getVersion());
-               dep.attribute(ATTR_EXPORT, dependency.isExport());
-               dep.attribute(ATTR_OPTIONAL, dependency.isOptional());
-            }
+            if (dependencies != null)
+               for (AddonDependency dependency : dependencies)
+               {
+                  Node dep = dependenciesNode.createChild("dependency");
+                  dep.attribute(ATTR_NAME, dependency.getId().getName());
+                  dep.attribute(ATTR_VERSION, dependency.getId().getVersion());
+                  dep.attribute(ATTR_EXPORT, dependency.isExport());
+                  dep.attribute(ATTR_OPTIONAL, dependency.isOptional());
+               }
 
-         FileOutputStream fos = new FileOutputStream(descriptor);
-         Streams.write(XMLParser.toXMLInputStream(addonXml), fos);
-         fos.close();
+            FileOutputStream fos = new FileOutputStream(descriptor);
+            Streams.write(XMLParser.toXMLInputStream(addonXml), fos);
+            fos.close();
 
-         return true;
+            return true;
+         }
       }
       catch (IOException io)
       {
@@ -173,7 +179,7 @@ public final class AddonRepositoryImpl implements AddonRepository
       }
    }
 
-   public synchronized boolean disable(final AddonId addon)
+   public boolean disable(final AddonId addon)
    {
       if (addon == null)
       {
@@ -181,75 +187,74 @@ public final class AddonRepositoryImpl implements AddonRepository
       }
 
       File registryFile = getRepositoryRegistryFile();
-      if (registryFile.exists())
+      synchronized (lock)
       {
-         try
+         if (registryFile.exists())
          {
-            Node installed = XMLParser.parse(registryFile);
+            try
+            {
+               Node installed = XMLParser.parse(registryFile);
 
-            Node child = installed.getSingle("addon@" + ATTR_NAME + "=" + addon.getName() + "&"
-                     + ATTR_VERSION + "=" + addon.getVersion());
-            installed.removeChild(child);
-            FileOutputStream outStream = new FileOutputStream(registryFile);
-            Streams.write(XMLParser.toXMLInputStream(installed), outStream);
-            outStream.close();
-            return true;
-         }
-         catch (IOException e)
-         {
-            throw new RuntimeException("Could not modify [" + registryFile.getAbsolutePath() + "] - ", e);
+               Node child = installed.getSingle("addon@" + ATTR_NAME + "=" + addon.getName() + "&"
+                        + ATTR_VERSION + "=" + addon.getVersion());
+               installed.removeChild(child);
+               FileOutputStream outStream = new FileOutputStream(registryFile);
+               Streams.write(XMLParser.toXMLInputStream(installed), outStream);
+               outStream.close();
+               return true;
+            }
+            catch (IOException e)
+            {
+               throw new RuntimeException("Could not modify [" + registryFile.getAbsolutePath() + "] - ", e);
+            }
          }
       }
       return false;
    }
 
-   public synchronized boolean enable(AddonId addon)
+   public boolean enable(AddonId addon)
    {
       if (addon == null)
       {
-         throw new RuntimeException("RegisteredAddon must not be null");
+         throw new RuntimeException("AddonId must not be null");
       }
-      if (Strings.isNullOrEmpty(addon.getName()))
-      {
-         throw new RuntimeException("RegisteredAddon name must not be null");
-      }
-      if (Strings.isNullOrEmpty(addon.getVersion()))
-      {
-         throw new RuntimeException("RegisteredAddon version must not be null");
-      }
+
       if (Strings.isNullOrEmpty(addon.getApiVersion()))
       {
          addon = AddonId.from(addon.getName(), addon.getVersion(), addon.getApiVersion());
       }
 
-      List<AddonId> installedAddons = listEnabled();
-      for (AddonId e : installedAddons)
-      {
-         if (addon.getName().equals(e.getName()))
-         {
-            disable(e);
-         }
-      }
-
       File registryFile = getRepositoryRegistryFile();
-      try
+      List<AddonId> installedAddons = listEnabled();
+      synchronized (lock)
       {
-         Node installed = XMLParser.parse(registryFile);
+         for (AddonId e : installedAddons)
+         {
+            if (addon.getName().equals(e.getName()))
+            {
+               disable(e);
+            }
+         }
 
-         installed.getOrCreate("addon@" + ATTR_NAME + "=" + (addon.getName() == null ? "" : addon.getName()) +
-                  "&" + ATTR_VERSION + "=" + addon.getVersion())
-                  .attribute(ATTR_API_VERSION, (addon.getApiVersion() == null ? "" : addon.getApiVersion()));
-         Streams.write(XMLParser.toXMLInputStream(installed), new FileOutputStream(registryFile));
+         try
+         {
+            Node installed = XMLParser.parse(registryFile);
 
-         return true;
-      }
-      catch (FileNotFoundException e)
-      {
-         throw new RuntimeException("Could not read [" + registryFile.getAbsolutePath() + "] - ", e);
+            installed.getOrCreate("addon@" + ATTR_NAME + "=" + (addon.getName() == null ? "" : addon.getName()) +
+                     "&" + ATTR_VERSION + "=" + addon.getVersion())
+                     .attribute(ATTR_API_VERSION, (addon.getApiVersion() == null ? "" : addon.getApiVersion()));
+            Streams.write(XMLParser.toXMLInputStream(installed), new FileOutputStream(registryFile));
+
+            return true;
+         }
+         catch (FileNotFoundException e)
+         {
+            throw new RuntimeException("Could not read [" + registryFile.getAbsolutePath() + "] - ", e);
+         }
       }
    }
 
-   public synchronized File getAddonBaseDir(AddonId found)
+   public File getAddonBaseDir(AddonId found)
    {
       Assert.notNull(found.getVersion(), "RegisteredAddon version must be specified.");
       Assert.notNull(found.getName(), "RegisteredAddon name must be specified.");
@@ -258,55 +263,61 @@ public final class AddonRepositoryImpl implements AddonRepository
       return addonDir;
    }
 
-   public synchronized List<AddonDependency> getAddonDependencies(AddonId addon)
+   public List<AddonDependency> getAddonDependencies(AddonId addon)
    {
       List<AddonDependency> result = new ArrayList<AddonDependency>();
       File descriptor = getAddonDescriptor(addon);
 
-      try
+      synchronized (lock)
       {
-         Node installed = XMLParser.parse(descriptor);
-
-         List<Node> children = installed.get("dependencies/dependency");
-         for (Node child : children)
+         try
          {
-            if (child != null)
+            Node installed = XMLParser.parse(descriptor);
+
+            List<Node> children = installed.get("dependencies/dependency");
+            for (Node child : children)
             {
-               result.add(AddonDependency.create(AddonId.from(child.getAttribute(ATTR_NAME),
-                        child.getAttribute(ATTR_VERSION)),
-                        Boolean.valueOf(child.getAttribute(ATTR_EXPORT)),
-                        Boolean.valueOf(child.getAttribute(ATTR_OPTIONAL))));
+               if (child != null)
+               {
+                  result.add(AddonDependency.create(AddonId.from(child.getAttribute(ATTR_NAME),
+                           child.getAttribute(ATTR_VERSION)),
+                           Boolean.valueOf(child.getAttribute(ATTR_EXPORT)),
+                           Boolean.valueOf(child.getAttribute(ATTR_OPTIONAL))));
+               }
             }
          }
-      }
-      catch (FileNotFoundException e)
-      {
-         // already removed
-      }
+         catch (FileNotFoundException e)
+         {
+            // already removed
+         }
 
-      return result;
+         return result;
+      }
    }
 
-   public synchronized File getAddonDescriptor(AddonId addon)
+   public File getAddonDescriptor(AddonId addon)
    {
       File descriptorFile = getAddonDescriptorFile(addon);
-      try
+      synchronized (lock)
       {
-         if (!descriptorFile.exists())
+         try
          {
-            descriptorFile.mkdirs();
-            descriptorFile.delete();
-            descriptorFile.createNewFile();
+            if (!descriptorFile.exists())
+            {
+               descriptorFile.mkdirs();
+               descriptorFile.delete();
+               descriptorFile.createNewFile();
 
-            FileOutputStream stream = new FileOutputStream(descriptorFile);
-            Streams.write(XMLParser.toXMLInputStream(XMLParser.parse("<addon/>")), stream);
-            stream.close();
+               FileOutputStream stream = new FileOutputStream(descriptorFile);
+               Streams.write(XMLParser.toXMLInputStream(XMLParser.parse("<addon/>")), stream);
+               stream.close();
+            }
+            return descriptorFile;
          }
-         return descriptorFile;
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException("Error initializing addon descriptor file.", e);
+         catch (Exception e)
+         {
+            throw new RuntimeException("Error initializing addon descriptor file.", e);
+         }
       }
    }
 
@@ -318,18 +329,21 @@ public final class AddonRepositoryImpl implements AddonRepository
    public List<File> getAddonResources(AddonId found)
    {
       File dir = getAddonBaseDir(found);
-      if (dir.exists())
+      synchronized (lock)
       {
-         return Arrays.asList(dir.listFiles(new FilenameFilter()
+         if (dir.exists())
          {
-            @Override
-            public boolean accept(File file, String name)
+            return Arrays.asList(dir.listFiles(new FilenameFilter()
             {
-               return name.endsWith(".jar");
-            }
-         }));
+               @Override
+               public boolean accept(File file, String name)
+               {
+                  return name.endsWith(".jar");
+               }
+            }));
+         }
+         return new ArrayList<File>();
       }
-      return new ArrayList<File>();
    }
 
    private synchronized AddonId getEnabled(final AddonId addon)
@@ -340,32 +354,35 @@ public final class AddonRepositoryImpl implements AddonRepository
       }
 
       File registryFile = getRepositoryRegistryFile();
-      try
+      synchronized (lock)
       {
-         Node installed = XMLParser.parse(registryFile);
-
-         List<Node> children = installed.get("addon@" + ATTR_NAME + "=" + addon.getName());
-         for (Node child : children)
+         try
          {
-            if (child != null)
+            Node installed = XMLParser.parse(registryFile);
+
+            List<Node> children = installed.get("addon@" + ATTR_NAME + "=" + addon.getName());
+            for (Node child : children)
             {
-               if ((addon.getApiVersion() == null)
-                        || addon.getApiVersion().equals(child.getAttribute(ATTR_API_VERSION)))
+               if (child != null)
                {
-                  if ((addon.getVersion() == null)
-                           || addon.getVersion().equals(child.getAttribute(ATTR_VERSION)))
+                  if ((addon.getApiVersion() == null)
+                           || addon.getApiVersion().equals(child.getAttribute(ATTR_API_VERSION)))
                   {
-                     return AddonId.from(child.getAttribute(ATTR_NAME),
-                              child.getAttribute(ATTR_VERSION),
-                              child.getAttribute(ATTR_API_VERSION));
+                     if ((addon.getVersion() == null)
+                              || addon.getVersion().equals(child.getAttribute(ATTR_VERSION)))
+                     {
+                        return AddonId.from(child.getAttribute(ATTR_NAME),
+                                 child.getAttribute(ATTR_VERSION),
+                                 child.getAttribute(ATTR_API_VERSION));
+                     }
                   }
                }
             }
          }
-      }
-      catch (FileNotFoundException e)
-      {
-         // already removed
+         catch (FileNotFoundException e)
+         {
+            // already removed
+         }
       }
 
       return null;
@@ -375,33 +392,39 @@ public final class AddonRepositoryImpl implements AddonRepository
    {
       if (!addonDir.exists() || !addonDir.isDirectory())
       {
-         addonDir.delete();
-         System.gc();
-         if (!addonDir.mkdirs())
+         synchronized (lock)
          {
-            throw new RuntimeException("Could not create RegisteredAddon Directory [" + addonDir + "]");
+            addonDir.delete();
+            System.gc();
+            if (!addonDir.mkdirs())
+            {
+               throw new RuntimeException("Could not create RegisteredAddon Directory [" + addonDir + "]");
+            }
          }
       }
       return addonDir;
    }
 
-   public synchronized File getRepositoryRegistryFile()
+   public File getRepositoryRegistryFile()
    {
       File registryFile = new File(getRepositoryDirectory(), REGISTRY_DESCRIPTOR_NAME);
       try
       {
-         if (!registryFile.exists())
+         synchronized (lock)
          {
-            registryFile.createNewFile();
+            if (!registryFile.exists())
+            {
+               registryFile.createNewFile();
 
-            FileOutputStream out = new FileOutputStream(registryFile);
-            try
-            {
-               Streams.write(XMLParser.toXMLInputStream(XMLParser.parse("<installed></installed>")), out);
-            }
-            finally
-            {
-               out.close();
+               FileOutputStream out = new FileOutputStream(registryFile);
+               try
+               {
+                  Streams.write(XMLParser.toXMLInputStream(XMLParser.parse("<installed></installed>")), out);
+               }
+               finally
+               {
+                  out.close();
+               }
             }
          }
          return registryFile;
@@ -420,7 +443,7 @@ public final class AddonRepositoryImpl implements AddonRepository
    }
 
    @Override
-   public synchronized boolean isEnabled(final AddonId addon)
+   public boolean isEnabled(final AddonId addon)
    {
       return getEnabled(addon) != null;
    }
@@ -432,18 +455,21 @@ public final class AddonRepositoryImpl implements AddonRepository
       File registryFile = getRepositoryRegistryFile();
       try
       {
-         Node installed = XMLParser.parse(registryFile);
-         if (installed == null)
+         synchronized (lock)
          {
-            return Collections.emptyList();
-         }
-         List<Node> list = installed.get("addon");
-         for (Node addon : list)
-         {
-            AddonId entry = AddonId.from(addon.getAttribute(ATTR_NAME),
-                     addon.getAttribute(ATTR_VERSION),
-                     addon.getAttribute(ATTR_API_VERSION));
-            result.add(entry);
+            Node installed = XMLParser.parse(registryFile);
+            if (installed == null)
+            {
+               return Collections.emptyList();
+            }
+            List<Node> list = installed.get("addon");
+            for (Node addon : list)
+            {
+               AddonId entry = AddonId.from(addon.getAttribute(ATTR_NAME),
+                        addon.getAttribute(ATTR_VERSION),
+                        addon.getAttribute(ATTR_API_VERSION));
+               result.add(entry);
+            }
          }
       }
       catch (XMLParserException e)
@@ -458,7 +484,7 @@ public final class AddonRepositoryImpl implements AddonRepository
       return result;
    }
 
-   public synchronized List<AddonId> listEnabledCompatibleWithVersion(final String version)
+   public List<AddonId> listEnabledCompatibleWithVersion(final String version)
    {
       List<AddonId> list = listEnabled();
       List<AddonId> result = list;
@@ -478,6 +504,9 @@ public final class AddonRepositoryImpl implements AddonRepository
    public boolean undeploy(AddonId addon)
    {
       File dir = getAddonBaseDir(addon);
-      return Files.delete(dir, true);
+      synchronized (lock)
+      {
+         return Files.delete(dir, true);
+      }
    }
 }
