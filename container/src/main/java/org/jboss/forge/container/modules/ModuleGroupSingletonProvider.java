@@ -74,6 +74,7 @@ public class ModuleGroupSingletonProvider extends SingletonProvider
 
       private volatile Map<ClassLoader, T> store = Collections.emptyMap();
 
+      @Override
       public T get()
       {
          T instance = store.get(findParentModuleCl(getClassLoader()));
@@ -84,6 +85,7 @@ public class ModuleGroupSingletonProvider extends SingletonProvider
          return instance;
       }
 
+      @Override
       public synchronized void set(T object)
       {
          final Map<ClassLoader, T> store = new IdentityHashMap<ClassLoader, T>(this.store);
@@ -99,6 +101,7 @@ public class ModuleGroupSingletonProvider extends SingletonProvider
          this.store = store;
       }
 
+      @Override
       public synchronized void clear()
       {
          ClassLoader classLoader = getClassLoader();
@@ -114,6 +117,7 @@ public class ModuleGroupSingletonProvider extends SingletonProvider
          this.store = store;
       }
 
+      @Override
       public boolean isSet()
       {
          return store.containsKey(findParentModuleCl(getClassLoader()));
@@ -142,6 +146,7 @@ public class ModuleGroupSingletonProvider extends SingletonProvider
          {
             return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>()
             {
+               @Override
                public ClassLoader run()
                {
                   return Thread.currentThread().getContextClassLoader();

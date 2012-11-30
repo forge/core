@@ -179,6 +179,7 @@ public final class AddonRepositoryImpl implements AddonRepository
       }
    }
 
+   @Override
    public boolean disable(final AddonId addon)
    {
       if (addon == null)
@@ -212,6 +213,7 @@ public final class AddonRepositoryImpl implements AddonRepository
       return false;
    }
 
+   @Override
    public boolean enable(AddonId addon)
    {
       if (addon == null)
@@ -254,6 +256,7 @@ public final class AddonRepositoryImpl implements AddonRepository
       }
    }
 
+   @Override
    public File getAddonBaseDir(AddonId found)
    {
       Assert.notNull(found.getVersion(), "RegisteredAddon version must be specified.");
@@ -263,6 +266,7 @@ public final class AddonRepositoryImpl implements AddonRepository
       return addonDir;
    }
 
+   @Override
    public List<AddonDependency> getAddonDependencies(AddonId addon)
    {
       List<AddonDependency> result = new ArrayList<AddonDependency>();
@@ -295,6 +299,7 @@ public final class AddonRepositoryImpl implements AddonRepository
       }
    }
 
+   @Override
    public File getAddonDescriptor(AddonId addon)
    {
       File descriptorFile = getAddonDescriptorFile(addon);
@@ -326,6 +331,7 @@ public final class AddonRepositoryImpl implements AddonRepository
       return new File(getAddonBaseDir(addon), ADDON_DESCRIPTOR_FILENAME);
    }
 
+   @Override
    public List<File> getAddonResources(AddonId found)
    {
       File dir = getAddonBaseDir(found);
@@ -388,6 +394,7 @@ public final class AddonRepositoryImpl implements AddonRepository
       return null;
    }
 
+   @Override
    public File getRepositoryDirectory()
    {
       if (!addonDir.exists() || !addonDir.isDirectory())
@@ -405,6 +412,7 @@ public final class AddonRepositoryImpl implements AddonRepository
       return addonDir;
    }
 
+   @Override
    public File getRepositoryRegistryFile()
    {
       File registryFile = new File(getRepositoryDirectory(), REGISTRY_DESCRIPTOR_NAME);
@@ -484,6 +492,7 @@ public final class AddonRepositoryImpl implements AddonRepository
       return result;
    }
 
+   @Override
    public List<AddonId> listEnabledCompatibleWithVersion(final String version)
    {
       List<AddonId> list = listEnabled();

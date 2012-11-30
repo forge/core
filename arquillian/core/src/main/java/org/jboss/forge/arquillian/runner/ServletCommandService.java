@@ -30,6 +30,7 @@ public class ServletCommandService implements CommandService
 {
    private static long TIMEOUT = 30000;
    
+   @Override
    @SuppressWarnings("unchecked")
    public <T> T execute(Command<T> command)
    {

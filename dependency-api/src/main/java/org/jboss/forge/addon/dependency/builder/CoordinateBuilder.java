@@ -99,16 +99,19 @@ public class CoordinateBuilder implements Coordinate
    {
    }
 
+   @Override
    public String getGroupId()
    {
       return groupId;
    }
 
+   @Override
    public String getArtifactId()
    {
       return artifactId;
    }
 
+   @Override
    public String getVersion()
    {
       return version;
@@ -132,6 +135,7 @@ public class CoordinateBuilder implements Coordinate
       return this;
    }
 
+   @Override
    public String getClassifier()
    {
       return classifier;
@@ -143,6 +147,7 @@ public class CoordinateBuilder implements Coordinate
       return this;
    }
 
+   @Override
    public String getPackaging()
    {
       return packaging;

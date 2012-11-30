@@ -1179,6 +1179,7 @@ public final class Strings
 
       class WhitespaceChecker implements CharacterFilter
       {
+         @Override
          public boolean isCharacterLegal(char character)
          {
             return Character.isWhitespace(character);
@@ -1209,6 +1210,7 @@ public final class Strings
    {
       return trimLeadingCharacter(str, new CharacterFilter()
       {
+         @Override
          public boolean isCharacterLegal(char character)
          {
             return character == leadingCharacter;

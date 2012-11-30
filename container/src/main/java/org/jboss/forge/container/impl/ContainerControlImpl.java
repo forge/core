@@ -78,6 +78,7 @@ public class ContainerControlImpl implements ContainerControl
       start();
    }
 
+   @Override
    public Status getStatus()
    {
       return status;

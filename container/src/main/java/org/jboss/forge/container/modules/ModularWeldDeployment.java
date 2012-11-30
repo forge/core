@@ -22,11 +22,13 @@ public class ModularWeldDeployment extends AbstractWeldSEDeployment
       this.beanDeploymentArchive.getServices().add(ResourceLoader.class, resourceLoader);
    }
 
+   @Override
    public List<BeanDeploymentArchive> getBeanDeploymentArchives()
    {
       return Collections.singletonList(beanDeploymentArchive);
    }
 
+   @Override
    public BeanDeploymentArchive loadBeanDeploymentArchive(Class<?> beanClass)
    {
       return beanDeploymentArchive;

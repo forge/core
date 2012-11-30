@@ -8,7 +8,6 @@
 package org.jboss.forge.bootstrap;
 
 import java.util.ServiceLoader;
-import java.util.logging.Logger;
 
 import org.jboss.forge.addon.dependency.spi.DependencyResolver;
 import org.jboss.forge.addon.manager.AddonManager;
@@ -26,14 +25,11 @@ import org.jboss.forge.container.Forge;
  */
 public class Bootstrap
 {
-   static Logger logger = Logger.getLogger(Bootstrap.class.getName());
-
    private Forge forge;
 
    public static void main(final String[] args)
    {
       Bootstrap bootstrap = new Bootstrap();
-      logger.info("Starting Forge embedded ...");
       bootstrap.start();
    }
 

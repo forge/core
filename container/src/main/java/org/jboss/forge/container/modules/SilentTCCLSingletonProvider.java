@@ -107,6 +107,7 @@ public class SilentTCCLSingletonProvider extends SingletonProvider
       {
          return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>()
          {
+            @Override
             public ClassLoader run()
             {
                return Thread.currentThread().getContextClassLoader();
