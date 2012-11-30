@@ -86,6 +86,7 @@
             <module>dependency-api</module>
             <module>maven</module>
             <module>bootstrap</module>
+            <module>aesh</module>
             <module>dist</module>
          </modules>
       </profile>
