@@ -127,7 +127,7 @@ public final class Forge
                {
                   thread.getRunnable().shutdown();
                   stopped.add(thread);
-                  AddonRegistryImpl.registry.remove(addon);
+                  AddonRegistryImpl.INSTANCE.remove(addon);
                }
             }
          }
@@ -144,7 +144,7 @@ public final class Forge
    private Set<AddonThread> startAddons(Set<RegisteredAddon> toStart)
    {
       Set<AddonThread> started = new HashSet<AddonThread>();
-      AddonRegistryImpl registry = AddonRegistryImpl.registry;
+      AddonRegistryImpl registry = AddonRegistryImpl.INSTANCE;
 
       int startedThreads = 0;
       int batchSize = Math.min(BATCH_SIZE, toStart.size());
@@ -176,7 +176,7 @@ public final class Forge
 
    public AddonRegistry getAddonRegistry()
    {
-      return AddonRegistryImpl.registry;
+      return AddonRegistryImpl.INSTANCE;
    }
 
    synchronized private Set<RegisteredAddon> loadAddons(ModuleLoader addonLoader)
@@ -210,7 +210,7 @@ public final class Forge
 
    private RegisteredAddon loadAddon(ModuleLoader addonLoader, Set<RegisteredAddon> result, AddonId addonId)
    {
-      AddonRegistryImpl registry = AddonRegistryImpl.registry;
+      AddonRegistryImpl registry = AddonRegistryImpl.INSTANCE;
       Map<RegisteredAddon, Set<RegisteredAddon>> waitlist = registry.getMutableWaitlist();
 
       RegisteredAddonImpl addonToLoad = (RegisteredAddonImpl) registry.getRegisteredAddon(addonId);

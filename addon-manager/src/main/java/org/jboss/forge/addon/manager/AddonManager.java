@@ -9,6 +9,8 @@ package org.jboss.forge.addon.manager;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.addon.dependency.DependencyNode;
+import org.jboss.forge.addon.dependency.builder.DependencyQueryBuilder;
 import org.jboss.forge.addon.dependency.spi.DependencyResolver;
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.AddonRepository;
@@ -33,9 +35,13 @@ public class AddonManager
       this.resolver = resolver;
    }
 
-   public InstallRequest install(AddonId entry)
+   public InstallRequest install(AddonId addonId)
    {
-      return new InstallRequest(repository, resolver, entry);
+      String coordinates = addonId.getName() + ":jar:forge-addon:" + addonId.getVersion();
+      DependencyNode requestedAddonNode = resolver.resolveDependencyHierarchy(DependencyQueryBuilder
+               .create(coordinates));
+
+      return new InstallRequest(repository, requestedAddonNode);
    }
 
    public boolean remove(AddonId entry)

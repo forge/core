@@ -4,8 +4,10 @@ import org.jboss.forge.addon.dependency.DependencyNode;
 import org.jboss.forge.addon.dependency.collection.Dependencies;
 import org.jboss.forge.addon.dependency.collection.Predicate;
 
-public class LocalResourceFilter implements Predicate<DependencyNode>
+public enum LocalResourceFilter implements Predicate<DependencyNode>
 {
+   INSTANCE;
+
    @Override
    public boolean accept(DependencyNode node)
    {

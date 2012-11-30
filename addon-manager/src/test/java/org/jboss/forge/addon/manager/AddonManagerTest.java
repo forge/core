@@ -70,6 +70,6 @@ public class AddonManagerTest
                new File(repository.getAddonBaseDir(addon), "example-2.0.0-SNAPSHOT-forge-addon.jar")));
 
       Thread.sleep(500);
-      Assert.assertEquals(addonCount + 1, registry.getRegisteredAddons().size());
+      Assert.assertEquals(addonCount + 2, registry.getRegisteredAddons().size());
    }
 }

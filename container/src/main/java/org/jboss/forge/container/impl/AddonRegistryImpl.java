@@ -7,23 +7,17 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.enterprise.inject.Typed;
-
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.RegisteredAddon;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.container.util.Sets;
 
-@Typed()
-public class AddonRegistryImpl implements AddonRegistry
+public enum AddonRegistryImpl implements AddonRegistry
 {
-   private Map<RegisteredAddon, Set<RegisteredAddon>> addonMap = new ConcurrentHashMap<RegisteredAddon, Set<RegisteredAddon>>();
+   INSTANCE;
 
-   /**
-    * Global RegisteredAddon registry.
-    */
-   public static AddonRegistryImpl registry = new AddonRegistryImpl();
+   private Map<RegisteredAddon, Set<RegisteredAddon>> addonMap = new ConcurrentHashMap<RegisteredAddon, Set<RegisteredAddon>>();
 
    @Override
    public RegisteredAddon getRegisteredAddon(AddonId id)

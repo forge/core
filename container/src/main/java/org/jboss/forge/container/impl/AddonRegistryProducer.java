@@ -13,6 +13,6 @@ public class AddonRegistryProducer
    @Singleton
    public static AddonRegistry produceGlobalAddonRegistry()
    {
-      return AddonRegistryImpl.registry;
+      return AddonRegistryImpl.INSTANCE;
    }
 }
