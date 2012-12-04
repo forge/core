@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.ServiceLoader;
+import java.util.Set;
 import java.util.jar.JarFile;
 
 import org.jboss.forge.container.AddonDependency;
@@ -135,7 +136,7 @@ public class AddonModuleLoader extends ModuleLoader
 
    private void addAddonDependencies(AddonId found, Builder builder) throws ContainerException
    {
-      List<AddonDependency> addons = repository.getAddonDependencies(found);
+      Set<AddonDependency> addons = repository.getAddonDependencies(found);
       for (AddonDependency dependency : addons)
       {
          ModuleIdentifier moduleId = findCompatibleInstalledModule(dependency);
@@ -185,7 +186,10 @@ public class AddonModuleLoader extends ModuleLoader
       }
 
       if (found != null)
-         return ModuleIdentifier.create(found.getName(), found.getVersion());
+      {
+         String[] split = found.toModuleId().split(":");
+         return ModuleIdentifier.create(split[0], split[1]);
+      }
 
       return null;
    }

@@ -12,8 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.enterprise.context.ApplicationScoped;
-
 import org.apache.maven.model.building.DefaultModelBuilderFactory;
 import org.apache.maven.model.building.ModelBuilder;
 import org.apache.maven.repository.internal.MavenServiceLocator;
@@ -35,10 +33,9 @@ import org.sonatype.aether.spi.connector.RepositoryConnectorFactory;
 
 /**
  * Configures the Maven API for usage inside Forge
- *
+ * 
  * TODO: Remove in the future, use the ShrinkWrap Descriptors API ?
  */
-@ApplicationScoped
 public class MavenContainer
 {
    private static final String M2_HOME = System.getenv().get("M2_HOME");

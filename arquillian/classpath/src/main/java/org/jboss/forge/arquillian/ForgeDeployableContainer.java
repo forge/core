@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Callable;
@@ -20,17 +20,24 @@ import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaD
 import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.forge.addon.dependency.spi.DependencyResolver;
+import org.jboss.forge.addon.manager.AddonManager;
+import org.jboss.forge.addon.manager.InstallRequest;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.arquillian.archive.ForgeRemoteAddon;
 import org.jboss.forge.arquillian.protocol.ServletProtocolDescription;
 import org.jboss.forge.arquillian.util.ShrinkWrapUtil;
+import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.AddonRepository;
 import org.jboss.forge.container.Forge;
 import org.jboss.forge.container.RegisteredAddon;
+import org.jboss.forge.container.RegisteredAddonFilter;
 import org.jboss.forge.container.Status;
 import org.jboss.forge.container.impl.AddonRepositoryImpl;
 import org.jboss.forge.container.util.ClassLoaders;
+import org.jboss.forge.container.util.Threads;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
@@ -50,73 +57,86 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    @Override
    public ProtocolMetaData deploy(Archive<?> archive) throws DeploymentException
    {
-      AddonId addonToDeploy = getAddonEntry(deploymentInstance.get());
+      final AddonId addonToDeploy = getAddonEntry(deploymentInstance.get());
       File destDir = repository.getAddonBaseDir(addonToDeploy);
       destDir.mkdirs();
 
-      if (!(archive instanceof ForgeArchive))
+      if (archive instanceof ForgeArchive)
+      {
+         ShrinkWrapUtil.toFile(new File(destDir.getAbsolutePath() + "/" + archive.getName()), archive);
+         ShrinkWrapUtil.unzip(destDir, archive);
+
+         repository.deploy(addonToDeploy, ((ForgeArchive) archive).getAddonDependencies(), new ArrayList<File>());
+         repository.enable(addonToDeploy);
+         System.out.println("Deployed [" + addonToDeploy + "]");
+      }
+      else if (archive instanceof ForgeRemoteAddon)
+      {
+         ForgeRemoteAddon remoteAddon = (ForgeRemoteAddon) archive;
+         AddonManager addonManager = new AddonManager(repository, ServiceLoader.load(DependencyResolver.class)
+                  .iterator().next());
+         InstallRequest request = addonManager.install(remoteAddon.getAddonId());
+         request.perform();
+         System.out.println("Deployed [" + remoteAddon.getAddonId() + "]");
+      }
+      else
+      {
          throw new IllegalArgumentException(
                   "Invalid Archive type. Ensure that your @Deployment method returns type 'ForgeArchive'.");
-
-      ShrinkWrapUtil.toFile(new File(destDir.getAbsolutePath() + "/" + archive.getName()), archive);
-      ShrinkWrapUtil.unzip(destDir, archive);
-
-      AddonRegistry registry = runnable.getForge().getAddonRegistry();
-      Map<RegisteredAddon, Set<RegisteredAddon>> waitlist = registry.getWaitlistedAddons();
-
-      Set<RegisteredAddon> waitFor = new HashSet<RegisteredAddon>();
-      for (RegisteredAddon waiting : waitlist.keySet())
-      {
-         Set<RegisteredAddon> dependencies = waitlist.get(waiting);
-         if (dependencies.size() == 1)
-         {
-            for (RegisteredAddon dependency : dependencies)
-            {
-               if (dependency.getId().equals(addonToDeploy))
-               {
-                  waitFor.add(waiting);
-               }
-            }
-         }
       }
-
-      repository.deploy(addonToDeploy, ((ForgeArchive) archive).getAddonDependencies(), new ArrayList<File>());
-      repository.enable(addonToDeploy);
 
       HTTPContext httpContext = new HTTPContext("localhost", 4141);
       httpContext.add(new Servlet("ArquillianServletRunner", "/ArquillianServletRunner"));
+
+      final AddonRegistry registry = runnable.getForge().getAddonRegistry();
+      RegisteredAddonFilter waitForFilter = new RegisteredAddonFilter()
+      {
+         @Override
+         public boolean accept(RegisteredAddon addon)
+         {
+            boolean result = false;
+            Set<AddonDependency> dependencies = repository.getAddonDependencies(addon.getId());
+            if (Status.WAITING.equals(addon.getStatus()))
+            {
+               boolean waitingOnOther = false;
+               for (AddonDependency dependency : dependencies)
+               {
+                  if (!dependency.getId().equals(addonToDeploy) && !registry.isRegistered(dependency.getId()))
+                  {
+                     waitingOnOther = true;
+                  }
+               }
+               result = !waitingOnOther;
+            }
+            return result;
+         }
+      };
+
+      final Set<RegisteredAddon> waitFor = registry.getRegisteredAddons(waitForFilter);
 
       boolean deployed = false;
       while (!deployed || !waitFor.isEmpty())
       {
          if (thread.isAlive())
          {
-            for (RegisteredAddon registeredAddon : registry.getRegisteredAddons())
+            for (RegisteredAddon addon : registry.getRegisteredAddons())
             {
-               if (registeredAddon.getId().equals(addonToDeploy))
+               if (addon.getId().equals(addonToDeploy) && isDeploymentComplete(addon))
                {
-                  if (Status.STARTED.equals(registeredAddon.getStatus())
-                           || Status.FAILED.equals(registeredAddon.getStatus()))
-                  {
-                     deployed = true;
-                  }
-               }
-               else if (waitFor.contains(registeredAddon))
-               {
-                  if (Status.STARTED.equals(registeredAddon.getStatus())
-                           || Status.FAILED.equals(registeredAddon.getStatus()))
-                  {
-                     waitFor.remove(registeredAddon);
-                  }
+                  deployed = true;
                }
             }
-            try
-            {
-               Thread.sleep(10);
-            }
-            catch (InterruptedException e)
-            {
-            }
+
+            Threads.sleep(10);
+
+            if (!waitFor.isEmpty())
+               for (RegisteredAddon addon : registry.getRegisteredAddons())
+               {
+                  if (waitFor.contains(addon) && isDeploymentComplete(addon))
+                  {
+                     waitFor.remove(addon);
+                  }
+               }
          }
          else
          {
@@ -126,6 +146,14 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
 
       return new ProtocolMetaData()
                .addContext(httpContext);
+   }
+
+   private boolean isDeploymentComplete(RegisteredAddon addon)
+   {
+      return Status.STARTED.equals(addon.getStatus())
+               || Status.FAILED.equals(addon.getStatus())
+               || Status.STOPPED.equals(addon.getStatus())
+               || Status.WAITING.equals(addon.getStatus());
    }
 
    @Override
@@ -209,28 +237,13 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       AddonId addonToUndeploy = getAddonEntry(deploymentInstance.get());
       repository.disable(addonToUndeploy);
       repository.undeploy(addonToUndeploy);
+      AddonRegistry registry = runnable.getForge().getAddonRegistry();
 
-      boolean deployed = true;
-      while (deployed)
+      while (registry.isRegistered(addonToUndeploy)
+               && !isDeploymentComplete(registry.getRegisteredAddon(addonToUndeploy))
+               && thread.isAlive())
       {
-         deployed = false;
-         if (thread.isAlive())
-         {
-            AddonRegistry registry = runnable.getForge().getAddonRegistry();
-            if (registry.isRegistered(addonToUndeploy)
-                     && !registry.isWaiting(registry.getRegisteredAddon(addonToUndeploy)))
-            {
-               deployed = true;
-               break;
-            }
-            try
-            {
-               Thread.sleep(10);
-            }
-            catch (InterruptedException e)
-            {
-            }
-         }
+         Threads.sleep(10);
       }
    }
 

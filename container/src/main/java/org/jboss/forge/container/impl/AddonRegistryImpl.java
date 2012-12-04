@@ -2,27 +2,26 @@ package org.jboss.forge.container.impl;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.RegisteredAddon;
+import org.jboss.forge.container.RegisteredAddonFilter;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.container.util.Sets;
 
 public enum AddonRegistryImpl implements AddonRegistry
 {
    INSTANCE;
-
-   private Map<RegisteredAddon, Set<RegisteredAddon>> addonMap = new ConcurrentHashMap<RegisteredAddon, Set<RegisteredAddon>>();
+   private Set<RegisteredAddon> addons = Sets.getConcurrentSet();
 
    @Override
    public RegisteredAddon getRegisteredAddon(AddonId id)
    {
-      for (RegisteredAddon addon : addonMap.keySet())
+      for (RegisteredAddon addon : addons)
       {
          if (addon.getId().equals(id))
             return addon;
@@ -32,9 +31,9 @@ public enum AddonRegistryImpl implements AddonRegistry
 
    public void register(RegisteredAddon addon)
    {
-      if (!addonMap.containsKey(addon))
+      if (!addons.contains(addon))
       {
-         addonMap.put(addon, Sets.getConcurrentSet(RegisteredAddon.class));
+         addons.add(addon);
       }
    }
 
@@ -42,7 +41,7 @@ public enum AddonRegistryImpl implements AddonRegistry
    public Map<RegisteredAddon, ServiceRegistry> getServices()
    {
       Map<RegisteredAddon, ServiceRegistry> services = new HashMap<RegisteredAddon, ServiceRegistry>();
-      for (RegisteredAddon addon : addonMap.keySet())
+      for (RegisteredAddon addon : addons)
       {
          services.put(addon, addon.getServiceRegistry());
       }
@@ -52,46 +51,35 @@ public enum AddonRegistryImpl implements AddonRegistry
    @Override
    public Set<RegisteredAddon> getRegisteredAddons()
    {
-      return Collections.unmodifiableSet(addonMap.keySet());
+      return Collections.unmodifiableSet(addons);
    }
 
    @Override
-   public Map<RegisteredAddon, Set<RegisteredAddon>> getWaitlistedAddons()
+   public Set<RegisteredAddon> getRegisteredAddons(RegisteredAddonFilter filter)
    {
-      Map<RegisteredAddon, Set<RegisteredAddon>> result = new HashMap<RegisteredAddon, Set<RegisteredAddon>>();
-      for (Entry<RegisteredAddon, Set<RegisteredAddon>> entry : addonMap.entrySet())
+      Set<RegisteredAddon> result = new HashSet<RegisteredAddon>();
+      for (RegisteredAddon registeredAddon : addons)
       {
-         if (!entry.getValue().isEmpty())
-            result.put(entry.getKey(), entry.getValue());
+         if (filter.accept(registeredAddon))
+            result.add(registeredAddon);
       }
-      return Collections.unmodifiableMap(result);
-   }
-
-   public Map<RegisteredAddon, Set<RegisteredAddon>> getMutableWaitlist()
-   {
-      return addonMap;
+      return result;
    }
 
    public void removeServices(ClassLoader classLoader) throws IllegalArgumentException
    {
-      for (RegisteredAddon addon : addonMap.keySet())
+      for (RegisteredAddon addon : addons)
       {
          if (addon.getClassLoader().equals(classLoader))
          {
-            addonMap.remove(addon);
+            addons.remove(addon);
          }
       }
    }
 
    public void remove(RegisteredAddon addon)
    {
-      addonMap.remove(addon);
-   }
-
-   @Override
-   public String toString()
-   {
-      return addonMap.keySet().toString();
+      addons.remove(addon);
    }
 
    @Override
@@ -101,8 +89,8 @@ public enum AddonRegistryImpl implements AddonRegistry
    }
 
    @Override
-   public boolean isWaiting(RegisteredAddon addon)
+   public String toString()
    {
-      return isRegistered(addon.getId()) && !addonMap.get(addon).isEmpty();
+      return addons.toString();
    }
 }

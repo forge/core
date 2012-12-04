@@ -9,9 +9,7 @@ import java.lang.annotation.Target;
 @Documented
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface AddonDependency
+public @interface Dependencies
 {
-   String name();
-
-   String version();
+   Addon[] value();
 }

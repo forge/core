@@ -8,6 +8,7 @@ package org.jboss.forge.container;
 
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -30,7 +31,7 @@ public interface AddonRepository
 
    public File getAddonBaseDir(AddonId addon);
 
-   public List<AddonDependency> getAddonDependencies(AddonId addon);
+   public Set<AddonDependency> getAddonDependencies(AddonId addon);
 
    public File getAddonDescriptor(AddonId addon);
 

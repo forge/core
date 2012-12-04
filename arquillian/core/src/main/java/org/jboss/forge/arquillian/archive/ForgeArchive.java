@@ -23,12 +23,12 @@ public interface ForgeArchive extends Archive<ForgeArchive>, LibraryContainer<Fo
    ForgeArchive setAsForgeXML(Asset resource) throws IllegalArgumentException;
 
    /**
-    * Adds the given {@link AddonDependency} instances as addon module dependencies for this test deployment.
+    * Adds the given {@link Dependencies} instances as addon module dependencies for this test deployment.
     */
    ForgeArchive addAsAddonDependencies(AddonDependency... dependencies);
 
    /**
-    * Get the currently specified {@link AddonDependency} instances for this addon test deployment.
+    * Get the currently specified {@link Dependencies} instances for this addon test deployment.
     */
    List<AddonDependency> getAddonDependencies();
 }

@@ -1,0 +1,3 @@
+implementingClassName=org.jboss.forge.arquillian.archive.ForgeRemoteAddonImpl
+extension=.jar
+archiveFormat=ZIP

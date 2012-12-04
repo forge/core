@@ -3,6 +3,7 @@ package org.jboss.forge.arquillian;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
@@ -14,7 +15,10 @@ import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.jboss.arquillian.container.test.spi.client.deployment.DeploymentScenarioGenerator;
 import org.jboss.arquillian.test.spi.TestClass;
+import org.jboss.forge.arquillian.archive.ForgeRemoteAddon;
+import org.jboss.forge.container.AddonId;
 import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
 public class ForgeDeploymentScenarioGenerator implements DeploymentScenarioGenerator
@@ -28,17 +32,28 @@ public class ForgeDeploymentScenarioGenerator implements DeploymentScenarioGener
       for (Method deploymentMethod : deploymentMethods)
       {
          validate(deploymentMethod);
-         if (deploymentMethod.isAnnotationPresent(AddonDependency.class))
-            deployments.add(generateDependencyDeployments(deploymentMethod));
+         if (deploymentMethod.isAnnotationPresent(Dependencies.class))
+            deployments.addAll(generateDependencyDeployments(deploymentMethod));
          deployments.add(generateDeployment(deploymentMethod));
       }
 
       return deployments;
    }
 
-   private DeploymentDescription generateDependencyDeployments(Method deploymentMethod)
+   private Collection<DeploymentDescription> generateDependencyDeployments(Method deploymentMethod)
    {
-      return null;
+      Dependencies dependency = deploymentMethod.getAnnotation(Dependencies.class);
+      Collection<DeploymentDescription> deployments = new ArrayList<DeploymentDescription>();
+
+      if (dependency.value() != null)
+         for (Addon addon : dependency.value())
+         {
+            AddonId id = AddonId.from(addon.name(), addon.version());
+            deployments.add(new DeploymentDescription(id.toCoordinates(),
+                     ShrinkWrap.create(ForgeRemoteAddon.class).setAddonId(id)));
+         }
+
+      return deployments;
    }
 
    private void validate(Method deploymentMethod)

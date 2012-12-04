@@ -10,18 +10,13 @@ public class RegisteredAddonImpl implements RegisteredAddon
 {
    private Module module;
    private ServiceRegistry registry;
-   private Status status = Status.STOPPED;
+   private Status status;
    private AddonId entry;
 
-   public RegisteredAddonImpl(AddonId entry)
+   public RegisteredAddonImpl(AddonId entry, Status status)
    {
       this.entry = entry;
-   }
-
-   public RegisteredAddonImpl(AddonId entry, Module module)
-   {
-      this(entry);
-      this.module = module;
+      this.status = status;
    }
 
    @Override

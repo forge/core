@@ -2,11 +2,11 @@ package org.jboss.forge.container;
 
 import java.io.File;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.forge.container.exception.ContainerException;
@@ -202,21 +202,24 @@ public final class Forge
 
       for (AddonId entry : enabledCompatible)
       {
-         loadAddon(addonLoader, result, entry);
+         RegisteredAddon addonToLoad = loadAddon(addonLoader, entry);
+         if (Status.STARTING.equals(addonToLoad.getStatus()) || Status.STARTED.equals(addonToLoad.getStatus()))
+            result.add(addonToLoad);
       }
 
       return result;
    }
 
-   private RegisteredAddon loadAddon(ModuleLoader addonLoader, Set<RegisteredAddon> result, AddonId addonId)
+   private Map<RegisteredAddon, Set<RegisteredAddon>> waitlist = new HashMap<RegisteredAddon, Set<RegisteredAddon>>();
+
+   private RegisteredAddon loadAddon(ModuleLoader addonLoader, AddonId addonId)
    {
       AddonRegistryImpl registry = AddonRegistryImpl.INSTANCE;
-      Map<RegisteredAddon, Set<RegisteredAddon>> waitlist = registry.getMutableWaitlist();
 
       RegisteredAddonImpl addonToLoad = (RegisteredAddonImpl) registry.getRegisteredAddon(addonId);
       if (addonToLoad == null)
       {
-         addonToLoad = new RegisteredAddonImpl(addonId);
+         addonToLoad = new RegisteredAddonImpl(addonId, Status.STARTING);
          registry.register(addonToLoad);
       }
 
@@ -224,76 +227,53 @@ public final class Forge
       {
          addonToLoad.setStatus(Status.FAILED);
       }
-      else
+      else if (!waitlist.containsKey(addonToLoad) && (addonToLoad.getModule() == null))
       {
-         if (!registry.isWaiting(addonToLoad))
+         Set<RegisteredAddon> missingDependencies = new HashSet<RegisteredAddon>();
+         for (AddonDependency dependency : repository.getAddonDependencies(addonId))
          {
-            Set<RegisteredAddon> missingDependencies = new HashSet<RegisteredAddon>();
-            for (AddonDependency dependency : repository.getAddonDependencies(addonId))
+            AddonId dependencyId = dependency.getId();
+            if (!registry.isRegistered(dependencyId) && !dependency.isOptional())
             {
-               RegisteredAddon registeredDependency;
+               RegisteredAddonImpl missingDependency = new RegisteredAddonImpl(dependencyId, null);
+               missingDependencies.add(missingDependency);
+            }
+         }
 
-               AddonId dependencyId = dependency.getId();
-               if (!registry.isRegistered(dependencyId))
+         if (!missingDependencies.isEmpty())
+         {
+            waitlist.put(addonToLoad, missingDependencies);
+            addonToLoad.setStatus(Status.WAITING);
+            logger.warning("Addon [" + addonToLoad + "] has [" + missingDependencies.size()
+                     + "] missing dependencies: "
+                     + missingDependencies + " and will be not be loaded until all required"
+                     + " dependencies are available.");
+         }
+         else
+         {
+            try
+            {
+               Module module = addonLoader.loadModule(ModuleIdentifier.fromString(addonId.toModuleId()));
+               addonToLoad.setModule(module);
+               addonToLoad.setStatus(Status.STARTING);
+
+               for (RegisteredAddon waiting : waitlist.keySet())
                {
-                  if (repository.isDeployed(dependencyId) && repository.isEnabled(dependencyId))
+                  waitlist.get(waiting).remove(addonToLoad);
+                  if (waitlist.get(waiting).isEmpty())
                   {
-                     if (!Status.STARTED.equals(registry.getRegisteredAddon(dependencyId).getStatus()))
-                     {
-                        registeredDependency = loadAddon(addonLoader, result, dependencyId);
-                        if (Status.FAILED.equals(registeredDependency.getStatus()))
-                        {
-                           if (dependency.isOptional())
-                              logger.log(Level.WARNING, "Could not load optional dependency: " + dependency
-                                       + ", module will be restarted if dependency becomes available.");
-                           else
-                              missingDependencies.add(registeredDependency);
-                        }
-                     }
-                  }
-                  else
-                  {
-                     registeredDependency = new RegisteredAddonImpl(dependencyId).setStatus(Status.STOPPED);
-                     registry.register(registeredDependency);
-                     missingDependencies.add(registeredDependency);
+                     ((RegisteredAddonImpl) registry.getRegisteredAddon(waiting.getId())).setStatus(Status.STARTING);
+                     waitlist.remove(waiting);
                   }
                }
             }
-
-            if (!missingDependencies.isEmpty())
+            catch (Exception e)
             {
                addonToLoad.setStatus(Status.FAILED);
-               waitlist.put(addonToLoad, missingDependencies); // overwrite existing missing deps with new ones
-               logger.warning("Addon [" + addonToLoad + "] has [" + missingDependencies.size()
-                        + "] missing dependencies: "
-                        + missingDependencies + " and will be added to the waitlisted until all required"
-                        + " missing dependencies are available.");
-            }
-            else
-            {
-               try
-               {
-                  Module module = addonLoader.loadModule(ModuleIdentifier.fromString(addonId.toModuleId()));
-                  addonToLoad.setModule(module);
-                  result.add(addonToLoad);
-
-                  for (RegisteredAddon waiting : waitlist.keySet())
-                  {
-                     Set<RegisteredAddon> dependencies = waitlist.get(waiting);
-                     if (dependencies.remove(addonToLoad) && dependencies.isEmpty())
-                     {
-                        ((RegisteredAddonImpl) waiting).setStatus(Status.STOPPED);
-                     }
-                  }
-               }
-               catch (Exception e)
-               {
-                  addonToLoad.setStatus(Status.FAILED);
-               }
+               e.printStackTrace();
             }
          }
       }
-
       return addonToLoad;
    }
 

@@ -86,7 +86,7 @@ public class AddonRepositoryImplTest
       repository.deploy(addon, Arrays.asList(dependency), new ArrayList<File>());
 
       Assert.assertEquals(1, repository.getAddonDependencies(addon).size());
-      Assert.assertEquals(dependency, repository.getAddonDependencies(addon).get(0));
+      Assert.assertTrue(repository.getAddonDependencies(addon).contains(dependency));
    }
 
    @Test
@@ -101,7 +101,7 @@ public class AddonRepositoryImplTest
       repository.deploy(addon, Arrays.asList(dependency0, dependency1), new ArrayList<File>());
 
       Assert.assertEquals(2, repository.getAddonDependencies(addon).size());
-      Assert.assertEquals(dependency0, repository.getAddonDependencies(addon).get(0));
-      Assert.assertEquals(dependency1, repository.getAddonDependencies(addon).get(1));
+      Assert.assertTrue(repository.getAddonDependencies(addon).contains(dependency0));
+      Assert.assertTrue(repository.getAddonDependencies(addon).contains(dependency1));
    }
 }

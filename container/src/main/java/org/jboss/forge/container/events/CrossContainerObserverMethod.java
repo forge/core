@@ -16,6 +16,7 @@ import javax.enterprise.inject.spi.ObserverMethod;
 
 import org.jboss.forge.container.RegisteredAddon;
 import org.jboss.forge.container.AddonRegistry;
+import org.jboss.forge.container.RegisteredAddonFilters;
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.services.ServiceRegistry;
 
@@ -76,7 +77,7 @@ public class CrossContainerObserverMethod implements ObserverMethod<Object>
          if (contextClassLoader.equals(eventClassLoader))
          {
             AddonRegistry addonRegistry = CDI.current().select(AddonRegistry.class).get();
-            for (RegisteredAddon addon : addonRegistry.getRegisteredAddons())
+            for (RegisteredAddon addon : addonRegistry.getRegisteredAddons(RegisteredAddonFilters.allStarted()))
             {
                // Events should not be fired back into the container from which they originated
                ClassLoader addonClassLoader = addon.getClassLoader();

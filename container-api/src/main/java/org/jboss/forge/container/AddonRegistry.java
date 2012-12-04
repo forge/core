@@ -11,12 +11,9 @@ public interface AddonRegistry
 
    Set<RegisteredAddon> getRegisteredAddons();
 
+   Set<RegisteredAddon> getRegisteredAddons(RegisteredAddonFilter filter);
+
    boolean isRegistered(AddonId id);
 
-   boolean isWaiting(RegisteredAddon addon);
-
    Map<RegisteredAddon, ServiceRegistry> getServices();
-
-   Map<RegisteredAddon, Set<RegisteredAddon>> getWaitlistedAddons();
-
 }

@@ -61,6 +61,7 @@ public class AddonManagerTest
       Assert.assertEquals(1, request.getOptionalAddons().size());
 
       request.perform();
+      Thread.sleep(500);
 
       Assert.assertTrue(repository.isEnabled(addon));
       Assert.assertEquals(2, repository.getAddonResources(addon).size());
@@ -70,6 +71,6 @@ public class AddonManagerTest
                new File(repository.getAddonBaseDir(addon), "example-2.0.0-SNAPSHOT-forge-addon.jar")));
 
       Thread.sleep(500);
-      Assert.assertEquals(addonCount + 2, registry.getRegisteredAddons().size());
+      Assert.assertEquals(addonCount + 1, registry.getRegisteredAddons().size());
    }
 }

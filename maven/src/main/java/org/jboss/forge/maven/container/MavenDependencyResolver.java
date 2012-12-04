@@ -16,9 +16,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.apache.maven.settings.Settings;
 import org.jboss.forge.addon.dependency.Coordinate;
@@ -44,7 +41,6 @@ import org.sonatype.aether.resolution.VersionRangeRequest;
 import org.sonatype.aether.resolution.VersionRangeResult;
 import org.sonatype.aether.version.Version;
 
-@Singleton
 public class MavenDependencyResolver implements DependencyResolver
 {
    private MavenContainer container;
@@ -54,7 +50,6 @@ public class MavenDependencyResolver implements DependencyResolver
       this(new MavenContainer());
    }
 
-   @Inject
    public MavenDependencyResolver(MavenContainer container)
    {
       super();

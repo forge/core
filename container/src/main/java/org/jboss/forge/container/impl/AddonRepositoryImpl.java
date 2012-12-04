@@ -14,7 +14,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -54,7 +56,7 @@ public final class AddonRepositoryImpl implements AddonRepository
 
    private static final Pattern VERSION_PATTERN = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)(\\.|-)(.*)");
 
-   //FIXME Enhance this synchronization/locking with actual NIO file locking
+   // FIXME Enhance this synchronization/locking with actual NIO file locking
    private static Object lock = new Object();
 
    public static AddonRepository forDirectory(File dir)
@@ -267,9 +269,9 @@ public final class AddonRepositoryImpl implements AddonRepository
    }
 
    @Override
-   public List<AddonDependency> getAddonDependencies(AddonId addon)
+   public Set<AddonDependency> getAddonDependencies(AddonId addon)
    {
-      List<AddonDependency> result = new ArrayList<AddonDependency>();
+      Set<AddonDependency> result = new HashSet<AddonDependency>();
       File descriptor = getAddonDescriptor(addon);
 
       synchronized (lock)
