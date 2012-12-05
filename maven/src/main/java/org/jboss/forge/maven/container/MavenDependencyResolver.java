@@ -28,6 +28,7 @@ import org.jboss.forge.addon.dependency.spi.DependencyResolver;
 import org.sonatype.aether.RepositorySystem;
 import org.sonatype.aether.artifact.Artifact;
 import org.sonatype.aether.collection.CollectRequest;
+import org.sonatype.aether.graph.DependencyFilter;
 import org.sonatype.aether.graph.DependencyNode;
 import org.sonatype.aether.repository.LocalRepository;
 import org.sonatype.aether.repository.RemoteRepository;
@@ -118,7 +119,7 @@ public class MavenDependencyResolver implements DependencyResolver
 
    /**
     * Returns the versions of a specific artifact
-    *
+    * 
     * @param query
     * @return
     */
@@ -215,7 +216,15 @@ public class MavenDependencyResolver implements DependencyResolver
          CollectRequest collectRequest = new CollectRequest(new org.sonatype.aether.graph.Dependency(queryArtifact,
                   null), container.getEnabledRepositoriesFromProfile(settings));
 
-         DependencyRequest dr = new DependencyRequest(collectRequest, null);
+         DependencyRequest dr = new DependencyRequest(collectRequest, new DependencyFilter()
+         {
+            @Override
+            public boolean accept(DependencyNode node, List<DependencyNode> parents)
+            {
+               return true;
+            }
+         });
+         
          DependencyResult result = system.resolveDependencies(session, dr);
          return MavenConvertUtils.toDependencyNode(null, result.getRoot());
       }

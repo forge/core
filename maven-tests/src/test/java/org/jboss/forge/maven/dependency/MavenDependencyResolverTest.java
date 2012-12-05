@@ -25,7 +25,7 @@ import org.junit.Test;
 
 /**
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 public class MavenDependencyResolverTest
 {
@@ -63,10 +63,8 @@ public class MavenDependencyResolverTest
    @Test
    public void testResolveVersions() throws Exception
    {
-
       DependencyQuery query = DependencyQueryBuilder.create(CoordinateBuilder
-               .create("org.jboss.forge:forge-distribution").setPackaging("zip")).setRepositories(
-               new DependencyRepository("jboss", "https://repository.jboss.org/nexus/content/groups/public/"));
+               .create("org.jboss.forge:forge-maven").setPackaging("zip"));
       List<Coordinate> versions = resolver.resolveVersions(query);
       Assert.assertNotNull(versions);
       Assert.assertFalse(versions.isEmpty());

@@ -85,6 +85,7 @@
             <module>facets</module>
             <module>dependency-api</module>
             <module>maven</module>
+            <module>maven-tests</module>
             <module>bootstrap</module>
             <module>aesh</module>
             <module>dist</module>
@@ -212,6 +213,11 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.forge</groupId>
+            <artifactId>forge-addon-manager-addon</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
             <artifactId>forge-maven</artifactId>
             <version>${project.version}</version>
          </dependency>
@@ -235,6 +241,12 @@
             <artifactId>forge-dependency-api</artifactId>
             <version>${project.version}</version>
          </dependency>
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>example</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <!-- Test Dependencies -->
          <dependency>
             <groupId>org.jboss.forge</groupId>
             <artifactId>forge-test-harness</artifactId>

@@ -26,13 +26,5 @@
          <groupId>org.jboss.forge</groupId>
          <artifactId>forge-dependency-api</artifactId>
       </dependency>
-
-      <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>example2</artifactId>
-         <version>2.0.0-SNAPSHOT</version>
-         <classifier>forge-addon</classifier>
-         <scope>test</scope>
-      </dependency>
    </dependencies>
 </project>

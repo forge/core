@@ -15,6 +15,7 @@
    <modules>
       <module>addon-manager-impl</module>
       <module>addon-manager-addon</module>
+      <module>addon-manager-tests</module>
    </modules>
 
    <dependencyManagement>
