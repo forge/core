@@ -37,8 +37,7 @@ public class ApacheBeanValidationProvider implements ValidationProvider
         // add apache bean validation dependencies
         final DependencyBuilder apacheBeanValidation = DependencyBuilder.create()
                 .setGroupId("org.apache.bval")
-                .setArtifactId("org.apache.bval.bundle")
-                .setVersion("[0.1-incubating,)");
+                .setArtifactId("org.apache.bval.bundle");
 
         final Set<Dependency> tmpSet = new LinkedHashSet<Dependency>();
         tmpSet.add(apacheBeanValidation);

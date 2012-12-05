@@ -61,7 +61,7 @@ public class PropertyConstraintPluginTest extends SingletonAbstractShellTest
       initializeJavaProject();
 
       // setup validation
-      queueInputLines("", "");
+      queueInputLines("", "", "");
       getShell().execute(VALIDATION_PLUGIN_NAME + " setup");
 
       // create a class
