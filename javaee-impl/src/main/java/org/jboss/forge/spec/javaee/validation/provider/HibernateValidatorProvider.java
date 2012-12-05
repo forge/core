@@ -39,7 +39,7 @@ public class HibernateValidatorProvider implements ValidationProvider
       final DependencyBuilder hibernateValidator = DependencyBuilder.create()
                .setGroupId("org.hibernate")
                .setArtifactId("hibernate-validator")
-               .setVersion("[4.1.0.Final,)")
+               .setVersion("4.3.0.Final")
                .setScopeType(PROVIDED);
 
       final Set<Dependency> dependenciesTmpSet = new LinkedHashSet<Dependency>();

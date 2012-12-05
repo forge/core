@@ -109,8 +109,9 @@ public abstract class AbstractResource<T> implements Resource<T>
    public synchronized List<Resource<?>> listResources()
    {
       List<Resource<?>> resources = doListResources();
-
+      
       Collections.sort(resources, new FQNResourceComparator());
+      
       return resources;
    }
 
