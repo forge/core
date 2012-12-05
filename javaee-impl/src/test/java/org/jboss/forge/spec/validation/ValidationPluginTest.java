@@ -47,7 +47,7 @@ public class ValidationPluginTest extends SingletonAbstractShellTest
    @Test
    public void testFacetInstalledWhenSetUp() throws Exception
    {
-      queueInputLines("", "");
+      queueInputLines("", "", "");
       getShell().execute(PLUGIN_NAME + " setup --provider " + HIBERNATE_VALIDATOR);
 
       assertTrue(getProject().hasFacet(ValidationFacet.class));
@@ -57,7 +57,7 @@ public class ValidationPluginTest extends SingletonAbstractShellTest
    public void testValidatorProviderConfigIsGeneratedWhenSetUp() throws Exception
    {
       // Hibernate Validator
-      queueInputLines("", "");
+      queueInputLines("", "", "");
       getShell().execute(PLUGIN_NAME + " setup --provider " + HIBERNATE_VALIDATOR);
 
       assertTrue(getProject().hasFacet(ValidationFacet.class));
@@ -72,7 +72,7 @@ public class ValidationPluginTest extends SingletonAbstractShellTest
       assertValidationDescriptorValuesAreEquals(providerDescriptor, generatedDescriptor);
 
       // Apache Bean Validation
-      queueInputLines("");
+      queueInputLines("", "");
       getShell().execute(PLUGIN_NAME + " setup --provider " + APACHE_BEAN_VALIDATION);
 
       assertTrue(getProject().hasFacet(ValidationFacet.class));
@@ -100,7 +100,7 @@ public class ValidationPluginTest extends SingletonAbstractShellTest
       shellCommand.append(" --traversableResolver ").append(providedTraversableResolver);
       shellCommand.append(" --constraintValidatorFactory ").append(providedConstraintValidatorFactory);
 
-      queueInputLines("", "");
+      queueInputLines("", "", "");
       getShell().execute(shellCommand.toString());
 
       assertTrue(getProject().hasFacet(ValidationFacet.class));
@@ -120,7 +120,7 @@ public class ValidationPluginTest extends SingletonAbstractShellTest
    public void testValidationProviderDependenciesAreInstalledWhenSetUp() throws Exception
    {
       // Hibernate Validator
-      queueInputLines("", "");
+      queueInputLines("", "", "");
       getShell().execute(PLUGIN_NAME + " setup --provider " + HIBERNATE_VALIDATOR);
 
       assertTrue(getProject().hasFacet(ValidationFacet.class));
@@ -132,7 +132,7 @@ public class ValidationPluginTest extends SingletonAbstractShellTest
       assertProjectHasDependencies(provider.getDependencies(), getProject());
 
       // Apache Bean Validation
-      queueInputLines("");
+      queueInputLines("", "");
       getShell().execute(PLUGIN_NAME + " setup --provider " + APACHE_BEAN_VALIDATION);
 
       assertTrue(getProject().hasFacet(ValidationFacet.class));
