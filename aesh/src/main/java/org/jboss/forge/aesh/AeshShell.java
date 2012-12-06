@@ -7,22 +7,23 @@
 package org.jboss.forge.aesh;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.console.Console;
 import org.jboss.aesh.console.ConsoleOutput;
 import org.jboss.aesh.console.settings.Settings;
+import org.jboss.forge.aesh.commands.ClearCommand;
+import org.jboss.forge.aesh.commands.ForgeCommand;
+import org.jboss.forge.aesh.commands.ListServicesCommand;
+import org.jboss.forge.aesh.commands.StopCommand;
 import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.ContainerControl;
-import org.jboss.forge.container.Addon;
 import org.jboss.forge.container.event.Perform;
 import org.jboss.forge.container.services.Remote;
 
@@ -33,6 +34,10 @@ import org.jboss.forge.container.services.Remote;
 @Remote
 public class AeshShell
 {
+   private Console console;
+   private ConsoleOutput output;
+
+   private List<ForgeCommand> commands;
 
    @Inject
    private ContainerControl containerControl;
@@ -42,83 +47,65 @@ public class AeshShell
 
    public void observe(@Observes Perform startup) throws IOException
    {
+   }
 
-      setup();
+    public void addCommand(ForgeCommand command) {
+        command.setConsole(console);
+        commands.add(command);
+    }
 
-      Console console = new Console();
+    public void initShell() throws IOException {
+        Settings.getInstance().setReadInputrc(false);
+        Settings.getInstance().setLogging(true);
+
+        commands = new ArrayList<ForgeCommand>();
+        console = new Console();
+
+        //internal commands
+        commands.add(new StopCommand(console));
+        commands.add(new ClearCommand(console));
+        commands.add(new ListServicesCommand(console, registry));
+    }
+
+   public void startShell() throws IOException {
       String prompt = "[forge-2.0]$ ";
 
-      ConsoleOutput line;
-      while ((line = console.read(prompt)) != null)
-      {
-         if (line.getBuffer().equalsIgnoreCase("quit") ||
-                  line.getBuffer().equalsIgnoreCase("exit") ||
-                  line.getBuffer().equalsIgnoreCase("reset"))
-         {
-            break;
-         }
-         if (line.getBuffer().equals("clear"))
-            console.clear();
-         if (line.getBuffer().equals("list-services"))
-            listServices(console);
-      }
-      try
-      {
-         console.stop();
-         containerControl.stop();
-      }
-      catch (Exception e)
-      {
-      }
+       output = null;
+       while ((output = console.read(prompt)) != null)
+       {
+           CommandLine cl = null;
+           for(ForgeCommand command : commands) {
+               try {
+                   cl = command.parse(output.getBuffer());
+                   if(cl != null) {
+                       command.run(output, cl);
+                       break;
+                   }
+               }
+               catch (IllegalArgumentException iae) {
+                   System.out.println("Command: "+command+", did not match: "+output.getBuffer());
+                   //ignored for now
+               }
+           }
+           //hack to just read one and one line when we're testing
+           if(Settings.getInstance().getName().equals("test"))
+               break;
+
+           if(!console.isRunning()) {
+               break;
+           }
+       }
    }
 
-   private void listServices(Console console) throws IOException
-   {
-      Set<Addon> addons = registry.getRegisteredAddons();
-      for (Addon addon : addons)
-      {
-         Set<Class<?>> serviceClasses = addon.getServiceRegistry().getServices();
-         for (Class<?> type : serviceClasses)
-         {
-            console.pushToStdOut(type.getName());
-            for (Method method : type.getMethods())
-            {
-               console.pushToStdOut("\n\t - " + getName(method));
-            }
-            console.pushToStdOut("\n");
-         }
-      }
-   }
+    public Console getConsole() {
+        return console;
+    }
 
-   public String getName(Method method)
-   {
-      String params = "(";
-      List<Class<?>> parameters = Arrays.asList(method.getParameterTypes());
+    public void stopShell() throws IOException {
+        if(console != null)
+            console.stop();
+        containerControl.stop();
+    }
 
-      Iterator<Class<?>> iterator = parameters.iterator();
-      while (iterator.hasNext())
-      {
-         Class<?> p = iterator.next();
-         params += p.getName();
-
-         if (iterator.hasNext())
-         {
-            params += ",";
-         }
-      }
-
-      params += ")";
-
-      String returnType = method.getReturnType().getName() == null ? "void" : method.getReturnType().getName();
-      return method.getName() + params + "::" + returnType;
-   }
-
-   // this need to be read from somewhere else, but for now we
-   // set the values here
-   private void setup()
-   {
-      Settings.getInstance().setReadInputrc(false);
-      Settings.getInstance().setLogging(true);
-   }
 
 }
