@@ -56,15 +56,15 @@
       <forge.release.version>${project.version}</forge.release.version>
       <version.arquillian>1.0.3.Final</version.arquillian>
       <version.arquillian.container>1.0.0.CR4</version.arquillian.container>
-      <version.cdi>1.1.EDR1.2</version.cdi>
+      <version.cdi>1.1-PRD</version.cdi>
       <version.jboss.spec>3.0.1.Final</version.jboss.spec>
       <version.jboss.modules>1.1.3.GA</version.jboss.modules>
       <version.junit>4.11</version.junit>
       <version.mvel>2.1.0.Final</version.mvel>
       <version.shrinkwrap.resolver>2.0.0-alpha-6-SNAPSHOT</version.shrinkwrap.resolver>
       <version.slf4j>1.6.1</version.slf4j>
-      <version.weld>2.0.0.Alpha3</version.weld>
-      <version.weld.api>2.0.Alpha2</version.weld.api>
+      <version.weld>2.0.0.Beta1</version.weld>
+      <version.weld.spi>2.0.Beta1</version.weld.spi>
    </properties>
 
    <profiles>
@@ -187,7 +187,7 @@
          <dependency>
             <groupId>org.jboss.weld</groupId>
             <artifactId>weld-spi</artifactId>
-            <version>2.0.Alpha2</version>
+            <version>${version.weld.spi}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.weld.se</groupId>
