@@ -435,7 +435,6 @@ public class NewFieldPluginTest extends AbstractJPATest
       assertFalse(rightEntity.hasSyntaxErrors());
    }
 
-
    @Test
    public void testNewOneToManySelfRelationshipInverse() throws Exception
    {
@@ -523,7 +522,8 @@ public class NewFieldPluginTest extends AbstractJPATest
    {
       Project project = getProject();
       JavaClass rightEntity = generateEntity(project);
-      JavaClass leftEntity = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(rightEntity).getJavaSource();
+      JavaClass leftEntity = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(rightEntity)
+               .getJavaSource();
 
       getShell().execute(
                ConstraintInspector.getName(FieldPlugin.class) + " manyToMany --named right --fieldType ~."
@@ -549,6 +549,47 @@ public class NewFieldPluginTest extends AbstractJPATest
       assertFalse(rightEntity.hasField("left"));
       assertTrue(rightEntity.hasImport(ManyToMany.class));
       assertFalse(rightEntity.hasImport(leftEntity.getQualifiedName()));
+      assertFalse(rightEntity.hasSyntaxErrors());
+   }
+
+   @Test
+   public void testNewManyToOneSelfRelationshipInverseWithJavaExtension() throws Exception
+   {
+      Project project = getProject();
+      JavaClass rightEntity = generateEntity(project);
+      JavaClass leftEntity = rightEntity;
+
+      getShell().execute(
+               ConstraintInspector.getName(FieldPlugin.class) + " manyToOne --named right --fieldType ~."
+                        + PersistenceFacetImpl.DEFAULT_ENTITY_PACKAGE + "."
+                        + rightEntity.getName()
+                        + ".java --inverseFieldName left");
+
+      leftEntity = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(leftEntity).getJavaSource();
+
+      assertTrue(leftEntity.hasAnnotation(Entity.class));
+      assertTrue(leftEntity.hasField("right"));
+      assertEquals(rightEntity.getName(), leftEntity.getField("right").getType());
+      assertTrue(leftEntity.getField("right").hasAnnotation(ManyToOne.class));
+      assertNull(leftEntity.getField("right").getAnnotation(ManyToOne.class).getStringValue("mappedBy"));
+      assertFalse(leftEntity.hasImport(rightEntity.getQualifiedName()));
+      assertTrue(leftEntity.hasImport(ManyToOne.class));
+      assertFalse(leftEntity.hasSyntaxErrors());
+
+      rightEntity = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(rightEntity).getJavaSource();
+
+      assertTrue(rightEntity.hasField("left"));
+
+      assertEquals("Set", rightEntity.getField("left").getType());
+      assertEquals(leftEntity.getQualifiedName(), rightEntity.getField("left").getTypeInspector().getTypeArguments()
+               .get(0).getQualifiedName());
+
+      assertTrue(rightEntity.getField("left").hasAnnotation(OneToMany.class));
+      assertEquals("right", rightEntity.getField("left").getAnnotation(OneToMany.class).getStringValue("mappedBy"));
+      assertEquals("CascadeType.ALL",
+               rightEntity.getField("left").getAnnotation(OneToMany.class).getLiteralValue("cascade"));
+      assertFalse(rightEntity.hasImport(leftEntity.getQualifiedName()));
+      assertTrue(rightEntity.hasImport(OneToMany.class));
       assertFalse(rightEntity.hasSyntaxErrors());
    }
 

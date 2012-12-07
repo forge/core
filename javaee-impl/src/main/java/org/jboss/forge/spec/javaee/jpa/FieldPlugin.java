@@ -29,6 +29,7 @@ import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.parser.java.util.Refactory;
+import org.jboss.forge.parser.java.util.Strings;
 import org.jboss.forge.parser.java.util.Types;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
@@ -276,7 +277,7 @@ public class FieldPlugin implements Plugin
       {
          JavaClass entityClass = getJavaClass();
          JavaClass fieldEntityClass;
-         if (fieldType.equals(entityClass.getCanonicalName()))
+         if (areTypesSame(fieldType, entityClass.getCanonicalName()))
          {
             fieldEntityClass = entityClass;
          }
@@ -321,7 +322,7 @@ public class FieldPlugin implements Plugin
       {
          JavaClass entity = getJavaClass();
          JavaClass otherEntity;
-         if (fieldType.equals(entity.getCanonicalName()))
+         if (areTypesSame(fieldType, entity.getCanonicalName()))
          {
             otherEntity = entity;
          }
@@ -339,7 +340,7 @@ public class FieldPlugin implements Plugin
          Annotation<JavaClass> annotation = field.addAnnotation(ManyToMany.class);
          Refactory.createGetterAndSetter(entity, field);
 
-         if ((inverseFieldName != null) && !inverseFieldName.isEmpty())
+         if (!Strings.isNullOrEmpty(inverseFieldName))
          {
             annotation.setStringValue("mappedBy", inverseFieldName);
 
@@ -387,7 +388,8 @@ public class FieldPlugin implements Plugin
       {
          JavaClass one = getJavaClass();
          JavaClass many;
-         if (fieldType.equals(one.getCanonicalName()))
+         // Field type may end with .java
+         if (areTypesSame(fieldType, one.getCanonicalName()))
          {
             many = one;
          }
@@ -405,7 +407,7 @@ public class FieldPlugin implements Plugin
          Annotation<JavaClass> annotation = oneField.addAnnotation(OneToMany.class);
          Refactory.createGetterAndSetter(one, oneField);
 
-         if ((inverseFieldName != null) && !inverseFieldName.isEmpty())
+         if (!Strings.isNullOrEmpty(inverseFieldName))
          {
             annotation.setStringValue("mappedBy", inverseFieldName);
             annotation.setLiteralValue("cascade", "CascadeType.ALL");
@@ -449,7 +451,7 @@ public class FieldPlugin implements Plugin
       {
          JavaClass many = getJavaClass();
          JavaClass one;
-         if (fieldType.equals(many.getCanonicalName()))
+         if (areTypesSame(fieldType, many.getCanonicalName()))
          {
             one = many;
          }
@@ -462,7 +464,7 @@ public class FieldPlugin implements Plugin
          manyField.addAnnotation(ManyToOne.class);
          Refactory.createGetterAndSetter(many, manyField);
 
-         if ((inverseFieldName != null) && !inverseFieldName.isEmpty())
+         if (!Strings.isNullOrEmpty(inverseFieldName))
          {
             one.addImport(Set.class);
             one.addImport(HashSet.class);
@@ -628,6 +630,20 @@ public class FieldPlugin implements Plugin
          throw new RuntimeException("Current resource is not a JavaResource!");
       }
 
+   }
+
+   /**
+    * Checks if the types are the same, removing the ".java" in the end of the string in case it exists
+    *
+    * @param from
+    * @param to
+    * @return
+    */
+   private boolean areTypesSame(String from, String to)
+   {
+      String fromCompare = from.endsWith(".java") ? from.substring(0, from.length() - 5) : from;
+      String toCompare = to.endsWith(".java") ? to.substring(0, to.length() - 5) : to;
+      return fromCompare.equals(toCompare);
    }
 
    private JavaClass getJavaClassFrom(final Resource<?> resource) throws FileNotFoundException
