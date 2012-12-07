@@ -6,22 +6,13 @@ import static junit.framework.Assert.assertTrue;
 
 import java.util.List;
 
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.shell.util.Streams;
 import org.jboss.forge.test.AbstractShellTest;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 
 public class GitIgnorePluginTest extends AbstractShellTest
 {
-
-   @Deployment
-   public static JavaArchive getDeployment()
-   {
-      return AbstractShellTest.getDeployment().addPackages(true, GitIgnore.class.getPackage());
-   }
-
    @Test
    public void should_setup_gibo() throws Exception
    {
@@ -30,9 +21,7 @@ public class GitIgnorePluginTest extends AbstractShellTest
       Resource<?> cloneFolder = cloneFolder();
       queueInputLines(cloneFolder.getFullyQualifiedName(), "\n");
 
-      // when
-      getShell().execute("project install-facet forge.vcs.git");
-      getShell().execute("gitignore setup");
+      doSetup();
 
       // then
       List<Resource<?>> resources = cloneFolder.listResources();
@@ -50,7 +39,7 @@ public class GitIgnorePluginTest extends AbstractShellTest
       }
       assertTrue(counter > 0);
    }
-   
+
    @Test
    public void should_update_gibo() throws Exception
    {
@@ -59,15 +48,13 @@ public class GitIgnorePluginTest extends AbstractShellTest
       Resource<?> cloneFolder = cloneFolder();
       queueInputLines(cloneFolder.getFullyQualifiedName(), "\n");
 
-      // when
-      getShell().execute("project install-facet forge.vcs.git");
-      getShell().execute("gitignore setup");
+      doSetup();
       getShell().execute("gitignore update-repo");
 
       // then
       assertTrue(getOutput().contains("Local gitignore repository updated"));
    }
-   
+
    @Test
    public void should_list_templates() throws Exception
    {
@@ -76,9 +63,7 @@ public class GitIgnorePluginTest extends AbstractShellTest
       Resource<?> cloneFolder = cloneFolder();
       queueInputLines(cloneFolder.getFullyQualifiedName(), "\n");
 
-      // when
-      getShell().execute("project install-facet forge.vcs.git");
-      getShell().execute("gitignore setup");
+      doSetup();
       getShell().execute("gitignore list-templates");
 
       // then
@@ -89,7 +74,7 @@ public class GitIgnorePluginTest extends AbstractShellTest
       assertTrue(listOutput.contains("Java"));
       assertTrue(listOutput.contains("Eclipse"));
    }
-   
+
    @Test
    public void should_create_gitignore() throws Exception
    {
@@ -98,9 +83,7 @@ public class GitIgnorePluginTest extends AbstractShellTest
       Resource<?> cloneFolder = cloneFolder();
       queueInputLines(cloneFolder.getFullyQualifiedName(), "\n");
 
-      // when
-      getShell().execute("project install-facet forge.vcs.git");
-      getShell().execute("gitignore setup");
+      doSetup();
       getShell().execute("gitignore create Eclipse Maven");
 
       // then
@@ -110,7 +93,7 @@ public class GitIgnorePluginTest extends AbstractShellTest
       assertTrue(content.contains(".classpath"));
       assertTrue(content.contains("target/"));
    }
-   
+
    @Test
    public void should_add_pattern() throws Exception
    {
@@ -119,9 +102,7 @@ public class GitIgnorePluginTest extends AbstractShellTest
       Resource<?> cloneFolder = cloneFolder();
       queueInputLines(cloneFolder.getFullyQualifiedName(), "\n");
 
-      // when
-      getShell().execute("project install-facet forge.vcs.git");
-      getShell().execute("gitignore setup");
+      doSetup();
       getShell().execute("gitignore create Eclipse");
       getShell().execute("gitignore-edit add *.forge");
 
@@ -129,7 +110,7 @@ public class GitIgnorePluginTest extends AbstractShellTest
       String content = Streams.toString(gitIgnoreResource().getResourceInputStream());
       assertTrue(content.contains("*.forge"));
    }
-   
+
    @Test
    public void should_remove_pattern() throws Exception
    {
@@ -139,14 +120,19 @@ public class GitIgnorePluginTest extends AbstractShellTest
       queueInputLines(cloneFolder.getFullyQualifiedName(), "\n");
 
       // when
-      getShell().execute("project install-facet forge.vcs.git");
-      getShell().execute("gitignore setup");
+      doSetup();
       getShell().execute("gitignore create Eclipse");
       getShell().execute("gitignore-edit remove .classpath");
 
       // then
       String content = Streams.toString(gitIgnoreResource().getResourceInputStream());
       assertFalse(content.contains(".classpath"));
+   }
+
+   private void doSetup() throws Exception
+   {
+      getShell().execute("project install-facet forge.vcs.git");
+      getShell().execute("gitignore setup");
    }
 
    private GitIgnoreResource gitIgnoreResource()
