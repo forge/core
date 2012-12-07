@@ -274,8 +274,17 @@ public class FieldPlugin implements Plugin
 
       try
       {
-         JavaClass fieldEntityClass = findEntity(fieldType);
          JavaClass entityClass = getJavaClass();
+         JavaClass fieldEntityClass;
+         if (fieldType.equals(entityClass.getCanonicalName()))
+         {
+            fieldEntityClass = entityClass;
+         }
+         else
+         {
+            fieldEntityClass = findEntity(fieldType);
+         }
+
          Field<JavaClass> localField = addFieldTo(entityClass, fieldEntityClass, fieldName, OneToOne.class);
          if ((inverseFieldName != null) && !inverseFieldName.isEmpty())
          {
@@ -311,11 +320,19 @@ public class FieldPlugin implements Plugin
       try
       {
          JavaClass entity = getJavaClass();
-         JavaClass otherEntity = findEntity(fieldType);
+         JavaClass otherEntity;
+         if (fieldType.equals(entity.getCanonicalName()))
+         {
+            otherEntity = entity;
+         }
+         else
+         {
+            otherEntity = findEntity(fieldType);
+            entity.addImport(otherEntity.getQualifiedName());
+         }
 
          entity.addImport(Set.class);
          entity.addImport(HashSet.class);
-         entity.addImport(otherEntity.getQualifiedName());
          Field<JavaClass> field = entity.addField("private Set<" + otherEntity.getName() + "> " + fieldName
                   + "= new HashSet<"
                   + otherEntity.getName() + ">();");
@@ -328,7 +345,10 @@ public class FieldPlugin implements Plugin
 
             otherEntity.addImport(Set.class);
             otherEntity.addImport(HashSet.class);
-            otherEntity.addImport(entity.getQualifiedName());
+            if (!otherEntity.getCanonicalName().equals(entity.getCanonicalName()))
+            {
+               otherEntity.addImport(entity.getQualifiedName());
+            }
             Field<JavaClass> otherField = otherEntity.addField("private Set<" + entity.getName() + "> "
                      + inverseFieldName
                      + "= new HashSet<" + entity.getName() + ">();");
@@ -366,11 +386,20 @@ public class FieldPlugin implements Plugin
       try
       {
          JavaClass one = getJavaClass();
-         JavaClass many = findEntity(fieldType);
+         JavaClass many;
+         if (fieldType.equals(one.getCanonicalName()))
+         {
+            many = one;
+         }
+         else
+         {
+            many = findEntity(fieldType);
+            one.addImport(many.getQualifiedName());
+         }
 
          one.addImport(Set.class);
          one.addImport(HashSet.class);
-         one.addImport(many.getQualifiedName());
+
          Field<JavaClass> oneField = one.addField("private Set<" + many.getName() + "> " + fieldName + "= new HashSet<"
                   + many.getName() + ">();");
          Annotation<JavaClass> annotation = oneField.addAnnotation(OneToMany.class);
@@ -382,8 +411,10 @@ public class FieldPlugin implements Plugin
             annotation.setLiteralValue("cascade", "CascadeType.ALL");
             annotation.getOrigin().addImport(CascadeType.class);
             annotation.setLiteralValue("orphanRemoval", "true");
-
-            many.addImport(one);
+            if (!many.getCanonicalName().equals(one.getCanonicalName()))
+            {
+               many.addImport(one);
+            }
             Field<JavaClass> manyField = many.addField("private " + one.getName() + " " + inverseFieldName + ";");
             manyField.addAnnotation(ManyToOne.class);
             Refactory.createGetterAndSetter(many, manyField);
@@ -417,9 +448,16 @@ public class FieldPlugin implements Plugin
       try
       {
          JavaClass many = getJavaClass();
-         JavaClass one = findEntity(fieldType);
-
-         many.addImport(one);
+         JavaClass one;
+         if (fieldType.equals(many.getCanonicalName()))
+         {
+            one = many;
+         }
+         else
+         {
+            one = findEntity(fieldType);
+            many.addImport(one);
+         }
          Field<JavaClass> manyField = many.addField("private " + one.getName() + " " + fieldName + ";");
          manyField.addAnnotation(ManyToOne.class);
          Refactory.createGetterAndSetter(many, manyField);
@@ -428,7 +466,10 @@ public class FieldPlugin implements Plugin
          {
             one.addImport(Set.class);
             one.addImport(HashSet.class);
-            one.addImport(many.getQualifiedName());
+            if (!one.getCanonicalName().equals(many.getCanonicalName()))
+            {
+               one.addImport(many.getQualifiedName());
+            }
             Field<JavaClass> oneField = one.addField("private Set<" + many.getName() + "> " + inverseFieldName
                      + "= new HashSet<"
                      + many.getName() + ">();");
@@ -465,7 +506,10 @@ public class FieldPlugin implements Plugin
 
       Field<JavaClass> field = targetEntity.addField();
       field.setName(fieldName).setPrivate().setType(fieldEntity.getName()).addAnnotation(annotation);
-      targetEntity.addImport(fieldEntity.getQualifiedName());
+      if (!targetEntity.getCanonicalName().equals(fieldEntity.getCanonicalName()))
+      {
+         targetEntity.addImport(fieldEntity.getQualifiedName());
+      }
       Refactory.createGetterAndSetter(targetEntity, field);
       updateToString(targetEntity);
 
@@ -487,7 +531,10 @@ public class FieldPlugin implements Plugin
 
       Field<JavaClass> field = targetEntity.addField();
       field.setName(fieldName).setPrivate().setType(Types.toSimpleName(fieldType)).addAnnotation(annotation);
-      targetEntity.addImport(fieldType);
+      if (!targetEntity.getCanonicalName().equals(fieldType))
+      {
+         targetEntity.addImport(fieldType);
+      }
       Refactory.createGetterAndSetter(targetEntity, field);
 
       updateToString(targetEntity);
@@ -510,7 +557,8 @@ public class FieldPlugin implements Plugin
 
       Field<JavaClass> field = targetEntity.addField();
       field.setName(fieldName).setPrivate().setType(fieldType).addAnnotation(Temporal.class).setEnumValue(temporalType);
-      if (!fieldType.getName().startsWith("java.lang.") && !fieldType.isPrimitive())
+      if (!fieldType.getName().startsWith("java.lang.") && !fieldType.isPrimitive()
+               && !fieldType.getCanonicalName().equals(targetEntity.getCanonicalName()))
       {
          targetEntity.addImport(fieldType);
       }
@@ -534,7 +582,8 @@ public class FieldPlugin implements Plugin
 
       Field<JavaClass> field = targetEntity.addField();
       field.setName(fieldName).setPrivate().setType(fieldType).addAnnotation(annotation);
-      if (!fieldType.getName().startsWith("java.lang.") && !fieldType.isPrimitive())
+      if (!fieldType.getCanonicalName().startsWith("java.lang.") && !fieldType.isPrimitive()
+               && !fieldType.getCanonicalName().equals(targetEntity.getCanonicalName()))
       {
          targetEntity.addImport(fieldType);
       }
