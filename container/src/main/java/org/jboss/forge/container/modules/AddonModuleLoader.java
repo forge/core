@@ -152,7 +152,7 @@ public class AddonModuleLoader extends ModuleLoader
                      PathFilters.not(PathFilters.getMetaInfFilter()),
                      dependency.isExport() ? PathFilters.acceptAll() : PathFilters.rejectAll(),
                      this,
-                     moduleId,
+                     toModuleId(dependency.getId()),
                      dependency.isOptional()));
          }
       }
@@ -187,11 +187,16 @@ public class AddonModuleLoader extends ModuleLoader
 
       if (found != null)
       {
-         String[] split = found.toModuleId().split(":");
-         return ModuleIdentifier.create(split[0], split[1]);
+         return toModuleId(found);
       }
 
       return null;
+   }
+
+   public ModuleIdentifier toModuleId(AddonId id)
+   {
+      String[] split = id.toModuleId().split(":");
+      return ModuleIdentifier.create(split[0], split[1]);
    }
 
    @Override
