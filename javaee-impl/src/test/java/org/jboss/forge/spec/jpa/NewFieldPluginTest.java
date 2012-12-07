@@ -593,4 +593,22 @@ public class NewFieldPluginTest extends AbstractJPATest
       assertFalse(rightEntity.hasSyntaxErrors());
    }
 
+   @Test(expected = IllegalStateException.class)
+   public void testNewManyToOneSelfRelationshipInverseWithJavaExtensionDuplicateAttributes() throws Exception
+   {
+      Project project = getProject();
+      JavaClass entity = generateEntity(project);
+
+      getShell().execute(
+               ConstraintInspector.getName(FieldPlugin.class) + " manyToOne --named right --fieldType ~."
+                        + PersistenceFacetImpl.DEFAULT_ENTITY_PACKAGE + "."
+                        + entity.getName()
+                        + ".java --inverseFieldName left");
+      getShell().execute(
+               ConstraintInspector.getName(FieldPlugin.class) + " manyToOne --named right --fieldType ~."
+                        + PersistenceFacetImpl.DEFAULT_ENTITY_PACKAGE + "."
+                        + entity.getName()
+                        + ".java --inverseFieldName left");
+   }
+
 }

@@ -332,6 +332,18 @@ public class FieldPlugin implements Plugin
             entity.addImport(otherEntity.getQualifiedName());
          }
 
+         if (entity.hasField(fieldName))
+         {
+            throw new IllegalStateException("Entity [" + entity.getCanonicalName() + "] already has a field named ["
+                     + fieldName + "]");
+         }
+         if (!Strings.isNullOrEmpty(inverseFieldName) && otherEntity.hasField(inverseFieldName))
+         {
+            throw new IllegalStateException("Entity [" + otherEntity.getCanonicalName()
+                     + "] already has a field named ["
+                     + inverseFieldName + "]");
+         }
+
          entity.addImport(Set.class);
          entity.addImport(HashSet.class);
          Field<JavaClass> field = entity.addField("private Set<" + otherEntity.getName() + "> " + fieldName
@@ -399,6 +411,17 @@ public class FieldPlugin implements Plugin
             one.addImport(many.getQualifiedName());
          }
 
+         if (one.hasField(fieldName))
+         {
+            throw new IllegalStateException("Entity [" + one.getCanonicalName() + "] already has a field named ["
+                     + fieldName + "]");
+         }
+         if (!Strings.isNullOrEmpty(inverseFieldName) && many.hasField(inverseFieldName))
+         {
+            throw new IllegalStateException("Entity [" + many.getCanonicalName() + "] already has a field named ["
+                     + inverseFieldName + "]");
+         }
+
          one.addImport(Set.class);
          one.addImport(HashSet.class);
 
@@ -460,6 +483,17 @@ public class FieldPlugin implements Plugin
             one = findEntity(fieldType);
             many.addImport(one);
          }
+         if (many.hasField(fieldName))
+         {
+            throw new IllegalStateException("Entity [" + many.getCanonicalName() + "] already has a field named ["
+                     + fieldName + "]");
+         }
+         if (!Strings.isNullOrEmpty(inverseFieldName) && one.hasField(inverseFieldName))
+         {
+            throw new IllegalStateException("Entity [" + one.getCanonicalName() + "] already has a field named ["
+                     + inverseFieldName + "]");
+         }
+
          Field<JavaClass> manyField = many.addField("private " + one.getName() + " " + fieldName + ";");
          manyField.addAnnotation(ManyToOne.class);
          Refactory.createGetterAndSetter(many, manyField);
@@ -501,7 +535,8 @@ public class FieldPlugin implements Plugin
    {
       if (targetEntity.hasField(fieldName))
       {
-         throw new IllegalStateException("Entity already has a field named [" + fieldName + "]");
+         throw new IllegalStateException("Entity [" + targetEntity.getCanonicalName() + "] already has a field named ["
+                  + fieldName + "]");
       }
 
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
