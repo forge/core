@@ -21,7 +21,7 @@ public class RegisteredAddonFilters
          @Override
          public boolean accept(RegisteredAddon addon)
          {
-            return Status.STARTED.equals(addon.getStatus());
+            return Status.WAITING.equals(addon.getStatus());
          }
       };
    }
