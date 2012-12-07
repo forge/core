@@ -13,7 +13,6 @@ import org.jboss.forge.addon.dependency.Coordinate;
 import org.jboss.forge.addon.dependency.Dependency;
 import org.jboss.forge.addon.dependency.DependencyNode;
 import org.jboss.forge.addon.dependency.DependencyQuery;
-import org.jboss.forge.addon.dependency.DependencyRepository;
 import org.jboss.forge.addon.dependency.builder.CoordinateBuilder;
 import org.jboss.forge.addon.dependency.builder.DependencyQueryBuilder;
 import org.jboss.forge.addon.dependency.collection.Predicate;
