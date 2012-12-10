@@ -9,7 +9,7 @@ package org.jboss.forge.parser.java;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 public interface Field<O extends JavaSource<O>> extends Member<O, Field<O>>
 {
@@ -68,4 +68,6 @@ public interface Field<O extends JavaSource<O>> extends Member<O, Field<O>>
    Field<O> setStringInitializer(String value);
 
    boolean isPrimitive();
+
+   boolean isArray();
 }

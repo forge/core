@@ -250,7 +250,16 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
    @Override
    public boolean hasImport(final String type)
    {
-      return getImport(type) != null;
+      String resultType = type;
+      if (Types.isArray(type))
+      {
+         resultType = Types.stripArray(type);
+      }
+      if (Types.isGeneric(type))
+      {
+         resultType = Types.stripGenerics(type);
+      }
+      return getImport(resultType) != null;
    }
 
    @Override
@@ -262,9 +271,18 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
    @Override
    public boolean requiresImport(final String type)
    {
-      if (!validImport(type)
-               || hasImport(type)
-               || type.startsWith("java.lang."))
+      String resultType = type;
+      if (Types.isArray(resultType))
+      {
+         resultType = Types.stripArray(type);
+      }
+      if (Types.isGeneric(resultType))
+      {
+         resultType = Types.stripGenerics(resultType);
+      }
+      if (!validImport(resultType)
+               || hasImport(resultType)
+               || Types.isJavaLang(resultType))
       {
          return false;
       }
@@ -277,11 +295,6 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
       String original = type;
       String result = type;
 
-      if (Types.isPrimitive(result))
-      {
-         return result;
-      }
-
       // Strip away any characters that might hinder the type matching process
       if (Types.isArray(result))
       {
@@ -293,6 +306,11 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
       {
          original = Types.stripGenerics(result);
          result = Types.stripGenerics(result);
+      }
+
+      if (Types.isPrimitive(result))
+      {
+         return result;
       }
 
       // Check for direct import matches first since they are the fastest and least work-intensive
@@ -365,7 +383,7 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
 
    private boolean validImport(final String type)
    {
-      return (type != null) && !type.matches("byte|short|int|long|float|double|char|boolean");
+      return !Strings.isNullOrEmpty(type) && !Types.isPrimitive(type);
    }
 
    @Override
