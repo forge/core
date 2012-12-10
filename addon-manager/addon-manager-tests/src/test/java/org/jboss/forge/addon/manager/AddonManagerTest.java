@@ -8,12 +8,14 @@
 package org.jboss.forge.addon.manager;
 
 import java.io.File;
+import java.util.Set;
 
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.AddonRepository;
@@ -69,6 +71,16 @@ public class AddonManagerTest
                new File(repository.getAddonBaseDir(addon), "commons-lang-2.6.jar")));
       Assert.assertTrue(repository.getAddonResources(addon).contains(
                new File(repository.getAddonBaseDir(addon), "example-2.0.0-SNAPSHOT-forge-addon.jar")));
+
+      Set<AddonDependency> dependencies = repository.getAddonDependencies(addon);
+      Assert.assertEquals(1, dependencies.size());
+      AddonDependency dependency = dependencies.toArray(new AddonDependency[dependencies.size()])[0];
+      Assert.assertEquals("org.jboss.forge:example2", dependency
+               .getId().getName());
+      Assert.assertEquals("2.0.0-SNAPSHOT", dependency
+               .getId().getVersion());
+      Assert.assertTrue(dependency.isOptional());
+      Assert.assertFalse(dependency.isExport());
 
       Thread.sleep(500);
       Assert.assertEquals(addonCount + 1, registry.getRegisteredAddons().size());
