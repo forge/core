@@ -205,4 +205,15 @@ public class FieldTypeTest
       Assert.assertEquals("java.util.List", arguments.get(1).getQualifiedName());
    }
 
+   @Test
+   public void testFieldTypeByteArrayTest()
+   {
+      final JavaClass javaClass = JavaParser.create(JavaClass.class);
+      final Field<JavaClass> field = javaClass.addField();
+      field.setName("content");
+      field.setType(byte[].class);
+      Assert.assertEquals("byte", field.getQualifiedType());
+      Assert.assertTrue(field.isArray());
+   }
+
 }

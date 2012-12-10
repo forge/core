@@ -384,8 +384,22 @@ public class FieldImpl<O extends JavaSource<O>> implements Field<O>
       {
          if (!origin.requiresImport(typeName))
          {
-            Name name = ast.newSimpleName(simpleName);
-            type = ast.newSimpleType(name);
+            if (Types.isArray(typeName))
+            {
+               String arrayType = Types.stripArray(typeName);
+               if (Types.isPrimitive(arrayType))
+               {
+                  type = ast.newArrayType(ast.newPrimitiveType(PrimitiveType.toCode(arrayType)));
+               }
+               else
+               {
+                  type = ast.newArrayType(ast.newSimpleType(ast.newSimpleName(arrayType)));
+               }
+            }
+            else
+            {
+               type = ast.newSimpleType(ast.newSimpleName(simpleName));
+            }
          }
          else
          {
@@ -522,4 +536,15 @@ public class FieldImpl<O extends JavaSource<O>> implements Field<O>
       return result;
    }
 
+   @Override
+   public boolean isArray()
+   {
+      boolean result = false;
+      Type type = field.getType();
+      if (type != null)
+      {
+         result = type.isArrayType();
+      }
+      return result;
+   }
 }
