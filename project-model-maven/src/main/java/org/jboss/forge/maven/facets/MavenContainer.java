@@ -16,16 +16,13 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
-import org.apache.maven.artifact.repository.MavenArtifactRepository;
-import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.execution.DefaultMavenExecutionRequest;
 import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.execution.MavenExecutionRequestPopulator;
-import org.apache.maven.settings.Profile;
 import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
+import org.apache.maven.settings.Profile;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Repository;
 import org.apache.maven.settings.Settings;
@@ -41,6 +38,7 @@ import org.codehaus.plexus.logging.console.ConsoleLoggerManager;
 import org.jboss.forge.ForgeEnvironment;
 import org.jboss.forge.maven.RepositoryUtils;
 import org.jboss.forge.project.ProjectModelException;
+import org.jboss.forge.project.facets.DependencyFacet.KnownRepository;
 import org.jboss.forge.shell.util.OSUtils;
 import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManager;
 import org.sonatype.aether.util.repository.DefaultProxySelector;
@@ -82,13 +80,9 @@ public class MavenContainer
          MavenExecutionRequest executionRequest = new DefaultMavenExecutionRequest();
          lookup(MavenExecutionRequestPopulator.class).populateFromSettings(executionRequest, getSettings());
          request = executionRequest.getProjectBuildingRequest();
-         ArtifactRepository localRepository = new MavenArtifactRepository(
-                  "local", new File(settings.getLocalRepository()).toURI().toURL().toString(),
-                  getContainer().lookup(ArtifactRepositoryLayout.class),
-                  new ArtifactRepositoryPolicy(true, ArtifactRepositoryPolicy.UPDATE_POLICY_NEVER,
-                           ArtifactRepositoryPolicy.CHECKSUM_POLICY_WARN),
-                  new ArtifactRepositoryPolicy(true, ArtifactRepositoryPolicy.UPDATE_POLICY_NEVER,
-                           ArtifactRepositoryPolicy.CHECKSUM_POLICY_WARN));
+
+         ArtifactRepository localRepository = RepositoryUtils.toArtifactRepository("local",
+                  new File(settings.getLocalRepository()).toURI().toURL().toString(), null, true, true);
          request.setLocalRepository(localRepository);
 
          List<ArtifactRepository> settingsRepos = new ArrayList<ArtifactRepository>();
@@ -105,6 +99,13 @@ public class MavenContainer
             {
                settingsRepos.add(RepositoryUtils.convertFromMavenSettingsRepository(repository));
             }
+         }
+
+         // No repository set, enable central
+         if (!offline && settingsRepos.isEmpty())
+         {
+            KnownRepository repo = KnownRepository.CENTRAL;
+            settingsRepos.add(RepositoryUtils.toArtifactRepository(repo.getId(), repo.getUrl(), null, true, false));
          }
 
          request.setRemoteRepositories(settingsRepos);
