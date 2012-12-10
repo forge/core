@@ -18,10 +18,7 @@ public class GitIgnorePluginTest extends AbstractShellTest
    {
       // given
       initializeJavaProject();
-      Resource<?> cloneFolder = cloneFolder();
-      queueInputLines(cloneFolder.getFullyQualifiedName(), "\n");
-
-      doSetup();
+      Resource<?> cloneFolder = doSetup();
 
       // then
       List<Resource<?>> resources = cloneFolder.listResources();
@@ -45,10 +42,9 @@ public class GitIgnorePluginTest extends AbstractShellTest
    {
       // given
       initializeJavaProject();
-      Resource<?> cloneFolder = cloneFolder();
-      queueInputLines(cloneFolder.getFullyQualifiedName(), "\n");
 
       doSetup();
+
       getShell().execute("gitignore update-repo");
 
       // then
@@ -60,10 +56,8 @@ public class GitIgnorePluginTest extends AbstractShellTest
    {
       // given
       initializeJavaProject();
-      Resource<?> cloneFolder = cloneFolder();
-      queueInputLines(cloneFolder.getFullyQualifiedName(), "\n");
-
       doSetup();
+
       getShell().execute("gitignore list-templates");
 
       // then
@@ -80,9 +74,6 @@ public class GitIgnorePluginTest extends AbstractShellTest
    {
       // given
       initializeJavaProject();
-      Resource<?> cloneFolder = cloneFolder();
-      queueInputLines(cloneFolder.getFullyQualifiedName(), "\n");
-
       doSetup();
       getShell().execute("gitignore create Eclipse Maven");
 
@@ -99,10 +90,9 @@ public class GitIgnorePluginTest extends AbstractShellTest
    {
       // given
       initializeJavaProject();
-      Resource<?> cloneFolder = cloneFolder();
-      queueInputLines(cloneFolder.getFullyQualifiedName(), "\n");
 
       doSetup();
+
       getShell().execute("gitignore create Eclipse");
       getShell().execute("gitignore-edit add *.forge");
 
@@ -129,10 +119,15 @@ public class GitIgnorePluginTest extends AbstractShellTest
       assertFalse(content.contains(".classpath"));
    }
 
-   private void doSetup() throws Exception
+   private Resource<?> doSetup() throws Exception
    {
+      Resource<?> cloneFolder = cloneFolder();
+      queueInputLines(cloneFolder.getFullyQualifiedName(), "\n");
+
       getShell().execute("project install-facet forge.vcs.git");
       getShell().execute("gitignore setup");
+
+      return cloneFolder;
    }
 
    private GitIgnoreResource gitIgnoreResource()
