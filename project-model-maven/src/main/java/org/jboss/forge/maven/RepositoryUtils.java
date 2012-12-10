@@ -13,13 +13,14 @@ import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
 import org.apache.maven.artifact.repository.layout.FlatRepositoryLayout;
 import org.apache.maven.settings.Repository;
 import org.apache.maven.settings.RepositoryPolicy;
+import org.jboss.forge.parser.java.util.Strings;
 import org.sonatype.aether.repository.Authentication;
 
 /**
  * Repository Utils
- * 
+ *
  * @author George Gastaldi <gegastaldi@gmail.com>
- * 
+ *
  */
 public final class RepositoryUtils
 {
@@ -62,6 +63,32 @@ public final class RepositoryUtils
                   snapshots.getChecksumPolicy()));
 
       return result;
+   }
+
+   public static ArtifactRepository toArtifactRepository(String id, String url, String layout,
+            boolean containsReleases,
+            boolean containsSnapshots)
+   {
+      MavenArtifactRepository result = new MavenArtifactRepository();
+      result.setId(id);
+      result.setUrl(url);
+
+      if (Strings.isNullOrEmpty(layout) || "default".equals(layout))
+      {
+         result.setLayout(new DefaultRepositoryLayout());
+      }
+      else if ("flat".equals(layout))
+      {
+         result.setLayout(new FlatRepositoryLayout());
+      }
+      result.setReleaseUpdatePolicy(new ArtifactRepositoryPolicy(containsReleases,
+               ArtifactRepositoryPolicy.UPDATE_POLICY_NEVER,
+               ArtifactRepositoryPolicy.CHECKSUM_POLICY_WARN));
+      result.setSnapshotUpdatePolicy(new ArtifactRepositoryPolicy(containsSnapshots,
+               ArtifactRepositoryPolicy.UPDATE_POLICY_DAILY,
+               ArtifactRepositoryPolicy.CHECKSUM_POLICY_WARN));
+      return result;
+
    }
 
 }
