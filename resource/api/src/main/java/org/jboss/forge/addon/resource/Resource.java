@@ -9,6 +9,8 @@ package org.jboss.forge.addon.resource;
 import java.io.InputStream;
 import java.util.List;
 
+import org.jboss.forge.addon.facets.Faceted;
+
 /**
  * A Resource is an abstraction on top of usable items within a Forge project. For instance, files, source code, etc.
  * Like a simplified virtual file system, a Resource is represented hierarchically with a parent and children. This
@@ -23,7 +25,7 @@ import java.util.List;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>
  */
-public interface Resource<T>
+public interface Resource<T> extends Faceted
 {
 
    /**

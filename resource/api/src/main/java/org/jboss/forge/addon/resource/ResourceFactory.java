@@ -7,18 +7,18 @@
 package org.jboss.forge.addon.resource;
 
 import java.io.File;
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
-import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.ProcessBean;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jboss.forge.addon.resource.events.ResourceEvent;
 import org.jboss.forge.container.event.PostStartup;
 
 /**
@@ -26,7 +26,8 @@ import org.jboss.forge.container.event.PostStartup;
  * @author <a href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>
  */
 @Singleton
-public class ResourceFactory implements Extension
+public class ResourceFactory
+// implements Extension
 {
    @Inject
    private Instance<BeanManager> managerInstance;
@@ -52,23 +53,23 @@ public class ResourceFactory implements Extension
       this.managerInstance = manager;
    }
 
-   public void scan(@Observes final ProcessBean<Resource<?>> event, final BeanManager manager)
-   {
-      Bean<?> bean = event.getBean();
-      Class<?> clazz = bean.getBeanClass();
-
-      if (clazz.isAnnotationPresent(ResourceHandles.class))
-      {
-         for (String pspec : clazz.getAnnotation(ResourceHandles.class).value())
-         {
-            Pattern p = Pattern.compile(pathspecToRegEx(pspec));
-            CreationalContext<?> creationalCtx = manager.createCreationalContext(bean);
-            Resource<?> rInst = (Resource<?>) manager.getReference(bean, bean.getBeanClass(), creationalCtx);
-
-            resourceGenerators.add(new ResourceGenerator(p, rInst));
-         }
-      }
-   }
+   // public void scan(@Observes final ProcessBean<Resource<?>> event, final BeanManager manager)
+   // {
+   // Bean<?> bean = event.getBean();
+   // Class<?> clazz = bean.getBeanClass();
+   //
+   // if (clazz.isAnnotationPresent(ResourceHandles.class))
+   // {
+   // for (String pspec : clazz.getAnnotation(ResourceHandles.class).value())
+   // {
+   // Pattern p = Pattern.compile(pathspecToRegEx(pspec));
+   // CreationalContext<?> creationalCtx = manager.createCreationalContext(bean);
+   // Resource<?> rInst = (Resource<?>) manager.getReference(bean, bean.getBeanClass(), creationalCtx);
+   //
+   // resourceGenerators.add(new ResourceGenerator(p, rInst));
+   // }
+   // }
+   // }
 
    @SuppressWarnings("unchecked")
    public <E, T extends Resource<E>> T createFromType(final Class<T> type, final E underlyingResource)
@@ -124,7 +125,13 @@ public class ResourceFactory implements Extension
       return new UnknownFileResource(this, file);
    }
 
-   public BeanManager getManagerInstance()
+   public ResourceFactory fireEvent(ResourceEvent event)
+   {
+      getManagerInstance().fireEvent(event, new Annotation[] {});
+      return this;
+   }
+
+   private BeanManager getManagerInstance()
    {
       if (managerInstance != null)
       {
@@ -167,8 +174,8 @@ public class ResourceFactory implements Extension
       }
    }
 
-   private static String pathspecToRegEx(final String pathSpec)
-   {
-      return "^" + pathSpec.replaceAll("\\*", "\\.\\*").replaceAll("\\?", "\\.") + "$";
-   }
+   // private static String pathspecToRegEx(final String pathSpec)
+   // {
+   // return "^" + pathSpec.replaceAll("\\*", "\\.\\*").replaceAll("\\?", "\\.") + "$";
+   // }
 }

@@ -9,21 +9,25 @@ package org.jboss.forge.addon.resource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.EnumSet;
 import java.util.List;
-import java.util.Set;
+
+import org.jboss.forge.addon.facets.BaseFaceted;
+import org.jboss.forge.addon.facets.Faceted;
 
 /**
  * @author Mike Brock <cbrock@redhat.com>
  * @author <a href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>
  */
-public abstract class AbstractResource<T> implements Resource<T>
+public abstract class AbstractResource<T> extends BaseFaceted implements Resource<T>, Faceted
 {
    protected final ResourceFactory resourceFactory;
    protected Resource<?> parent;
 
    protected AbstractResource(final ResourceFactory factory, final Resource<?> parent)
    {
+      if (factory == null)
+         throw new IllegalArgumentException("ResourceFactory must not be null.");
+
       this.resourceFactory = factory;
       this.parent = parent;
    }
