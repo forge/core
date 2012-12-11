@@ -68,6 +68,4 @@ public interface Field<O extends JavaSource<O>> extends Member<O, Field<O>>
    Field<O> setStringInitializer(String value);
 
    boolean isPrimitive();
-
-   boolean isArray();
 }
