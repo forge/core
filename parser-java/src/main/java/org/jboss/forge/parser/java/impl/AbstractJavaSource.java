@@ -162,24 +162,25 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
    @Override
    public Import addImport(final String className)
    {
+      String strippedClassName = Types.stripGenerics(Types.stripArray(className));
       Import imprt;
-      if (Types.isSimpleName(className) && !hasImport(className))
+      if (Types.isSimpleName(strippedClassName) && !hasImport(strippedClassName))
       {
-         throw new IllegalArgumentException("Cannot import class without a package [" + className + "]");
+         throw new IllegalArgumentException("Cannot import class without a package [" + strippedClassName + "]");
       }
 
-      if (!hasImport(className) && validImport(className))
+      if (!hasImport(strippedClassName) && validImport(strippedClassName))
       {
-         imprt = new ImportImpl(this).setName(className);
+         imprt = new ImportImpl(this).setName(strippedClassName);
          unit.imports().add(imprt.getInternal());
       }
-      else if (hasImport(className))
+      else if (hasImport(strippedClassName))
       {
-         imprt = getImport(className);
+         imprt = getImport(strippedClassName);
       }
       else
       {
-         throw new IllegalArgumentException("Attempted to import the illegal type [" + className + "]");
+         throw new IllegalArgumentException("Attempted to import the illegal type [" + strippedClassName + "]");
       }
       return imprt;
    }

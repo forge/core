@@ -29,7 +29,7 @@ public class Types
    // [S=short,
    // [Z=boolean
    private static final Pattern CLASS_ARRAY_PATTERN = Pattern.compile("\\[+(B|F|C|D|I|J|S|Z|L)([0-9a-zA-Z\\.\\$]*);?");
-   private static final Pattern SIMPLE_ARRAY_PATTERN = Pattern.compile("(.*)\\[\\]");
+   private static final Pattern SIMPLE_ARRAY_PATTERN = Pattern.compile("([0-9a-zA-Z\\.\\$\\<\\>\\,]+)(\\[\\])+");
    private static final Pattern GENERIC_PATTERN = Pattern.compile(".*<.*>$");
 
    private static final List<String> LANG_TYPES = Arrays.asList(
@@ -323,5 +323,30 @@ public class Types
    public static boolean isPrimitive(final String result)
    {
       return Arrays.asList("byte", "short", "int", "long", "float", "double", "boolean", "char").contains(result);
+   }
+
+   /**
+    * Returns the dimension of the array.
+    *
+    * It simply counts the "[" from the string.
+    *
+    * @param name an array type, e.g.: byte[] or [Ljava.lang.Boolean;
+    * @return the array dimension. -1 if the type is not a valid array
+    */
+   public static int getArrayDimension(String name)
+   {
+      if (!Types.isArray(name))
+      {
+         return -1;
+      }
+      int count = 0;
+      for (char c : name.toCharArray())
+      {
+         if (c == '[')
+         {
+            count++;
+         }
+      }
+      return count;
    }
 }

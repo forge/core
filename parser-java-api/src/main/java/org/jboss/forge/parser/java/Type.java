@@ -12,7 +12,7 @@ import org.jboss.forge.parser.Origin;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 public interface Type<O extends JavaSource<O>> extends Origin<O>
 {
@@ -26,6 +26,8 @@ public interface Type<O extends JavaSource<O>> extends Origin<O>
 
    public abstract boolean isArray();
 
+   public abstract int getArrayDimensions();
+
    public abstract boolean isParameterized();
 
    public abstract boolean isPrimitive();
@@ -33,5 +35,6 @@ public interface Type<O extends JavaSource<O>> extends Origin<O>
    public abstract boolean isQualified();
 
    public abstract boolean isWildcard();
+
 
 }
