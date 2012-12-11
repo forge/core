@@ -7,30 +7,25 @@
 package org.jboss.forge.addon.facets;
 
 /**
- * A {@link Facet} is an access point to common functionality, file manipulations,
- * descriptors that extend a {@link Faceted} instance. When implementing this interface, consider extending
- * {@link BaseFacet} for convenience.
+ * A {@link Facet} is an access point to common functionality, file manipulations, descriptors that extend a
+ * {@link Faceted} instance. When implementing this interface, consider extending {@link BaseFacet} for convenience.
  * 
- * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>, <a href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>
+ * 
  * @see {@link BaseFacet}
  */
-public interface Facet
+public interface Facet<FACETED extends Faceted>
 {
    /**
     * Return the {@link Faceted} instance on which this {@link Facet} operates.
     */
-   Faceted getFaceted();
+   FACETED getOrigin();
 
    /**
-    * Initialize this {@link Facet} for operation on the {@link Faceted} instance. This method is responsible for ensuring
-    * that the {@link Facet} instance is ready for use, and must be called before any other methods.
-    * @param <T>
-    */
-   void setFaceted(Faceted faceted);
-
-   /**
-    * Perform necessary setup for this {@link Facet} to be considered installed in the given {@link Faceted} instance. This
-    * method should NOT register the facet; facet registration is handled by the {@link Faceted} instance if installation is successful.
+    * Perform necessary setup for this {@link Facet} to be considered installed in the given {@link Faceted} instance.
+    * This method should NOT register the facet; facet registration is handled by the {@link Faceted} instance if
+    * installation is successful.
     * 
     * @return true if installation was successful, false if not.
     */

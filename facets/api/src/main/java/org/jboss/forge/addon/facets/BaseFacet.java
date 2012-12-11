@@ -9,22 +9,25 @@ package org.jboss.forge.addon.facets;
 /**
  * A base convenience {@link Facet} abstract class.
  * 
- * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>, <a href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>, <a
+ *         href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>
  */
-public abstract class BaseFacet implements Facet
+public abstract class BaseFacet<FACETED extends Faceted> implements Facet<FACETED>
 {
-   protected Faceted facetedInstance;
+   protected FACETED origin;
 
-   @Override
-   public Faceted getFaceted()
+   protected BaseFacet(FACETED origin)
    {
-      return this.facetedInstance;
+      if (origin == null)
+         throw new IllegalArgumentException("Origin must not be null");
+
+      this.origin = origin;
    }
 
    @Override
-   public void setFaceted(Faceted faceted)
+   public FACETED getOrigin()
    {
-      this.facetedInstance = faceted;
+      return this.origin;
    }
 
    @Override
@@ -41,7 +44,7 @@ public abstract class BaseFacet implements Facet
    {
       final int prime = 31;
       int result = 1;
-      result = (prime * result) + ((facetedInstance == null) ? 0 : facetedInstance.hashCode());
+      result = (prime * result) + ((origin == null) ? 0 : origin.hashCode());
       return result;
    }
 
@@ -54,13 +57,13 @@ public abstract class BaseFacet implements Facet
          return false;
       if (getClass() != obj.getClass())
          return false;
-      BaseFacet other = (BaseFacet) obj;
-      if (facetedInstance == null)
+      BaseFacet<?> other = (BaseFacet<?>) obj;
+      if (origin == null)
       {
-         if (other.facetedInstance != null)
+         if (other.origin != null)
             return false;
       }
-      else if (!facetedInstance.equals(other.facetedInstance))
+      else if (!origin.equals(other.origin))
          return false;
       return true;
    }
