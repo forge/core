@@ -335,16 +335,15 @@ public class Types
     */
    public static int getArrayDimension(String name)
    {
-      if (!Types.isArray(name))
-      {
-         return -1;
-      }
       int count = 0;
-      for (char c : name.toCharArray())
+      if (name != null)
       {
-         if (c == '[')
+         for (char c : name.toCharArray())
          {
-            count++;
+            if (c == '[')
+            {
+               count++;
+            }
          }
       }
       return count;
