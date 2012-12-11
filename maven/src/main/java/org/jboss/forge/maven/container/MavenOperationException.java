@@ -9,31 +9,25 @@ package org.jboss.forge.maven.container;
 
 public class MavenOperationException extends RuntimeException
 {
+   private static final long serialVersionUID = 3436297543207124937L;
 
    public MavenOperationException()
    {
       super();
-      // TODO Auto-generated constructor stub
    }
 
    public MavenOperationException(String message, Throwable cause)
    {
       super(message, cause);
-      // TODO Auto-generated constructor stub
    }
 
    public MavenOperationException(String message)
    {
       super(message);
-      // TODO Auto-generated constructor stub
    }
 
    public MavenOperationException(Throwable cause)
    {
       super(cause);
-      // TODO Auto-generated constructor stub
    }
-
-   private static final long serialVersionUID = 1L;
-
 }

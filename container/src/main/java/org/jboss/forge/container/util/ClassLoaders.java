@@ -7,8 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * // TODO document
- *
+ * Utility class for executing fragments of code within a specific {@link Thread#getContextClassLoader()}
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class ClassLoaders

@@ -28,34 +28,35 @@ import org.jboss.shrinkwrap.api.ArchivePaths;
 
 /**
  * ServletUtil
- *
+ * 
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
 public final class ServletUtil
 {
    public static final ArchivePath WEB_XML_PATH = ArchivePaths.create("WEB-INF/web.xml");
-   public static final ArchivePath APPLICATION_XML_PATH = ArchivePaths.create("META-INF/application.xml");   
-   
-   private ServletUtil() {}
-   
+   public static final ArchivePath APPLICATION_XML_PATH = ArchivePaths.create("META-INF/application.xml");
+
+   private ServletUtil()
+   {
+   }
+
    public static URI determineBaseURI(ServletProtocolConfiguration config, HTTPContext context, String servletName)
    {
       String address = config.getHost();
       Integer port = config.getPort();
 
-      // TODO: can not set contextRoot in config, change to prefixContextRoot
-      String contextRoot = null; //protocolConfiguration.getContextRoot(); 
-      
+      String contextRoot = null; // protocolConfiguration.getContextRoot();
+
       Servlet servlet = context.getServletByName(ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME);
-      if(servlet != null)
+      if (servlet != null)
       {
          // use the context where the Arquillian servlet is found
-         if(address == null)
+         if (address == null)
          {
             address = context.getHost();
          }
-         if(port == null)
+         if (port == null)
          {
             port = context.getPort();
          }
@@ -64,23 +65,25 @@ public final class ServletUtil
       else
       {
          throw new IllegalArgumentException(
-              ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME + " not found. " +
-              "Could not determine ContextRoot from ProtocolMetadata, please contact DeployableContainer developer.");
+                  ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME
+                           + " not found. "
+                           +
+                           "Could not determine ContextRoot from ProtocolMetadata, please contact DeployableContainer developer.");
       }
       return URI.create("http://" + address + ":" + port + contextRoot);
    }
 
    public static String calculateContextRoot(String archiveName)
    {
-       String correctedName = archiveName;
-       if(correctedName.startsWith("/"))
-       {
-          correctedName = correctedName.substring(1);
-       }
-       if(correctedName.indexOf(".") != -1)
-       {
-          correctedName = correctedName.substring(0, correctedName.lastIndexOf("."));
-       }
-       return correctedName;
+      String correctedName = archiveName;
+      if (correctedName.startsWith("/"))
+      {
+         correctedName = correctedName.substring(1);
+      }
+      if (correctedName.indexOf(".") != -1)
+      {
+         correctedName = correctedName.substring(0, correctedName.lastIndexOf("."));
+      }
+      return correctedName;
    }
 }

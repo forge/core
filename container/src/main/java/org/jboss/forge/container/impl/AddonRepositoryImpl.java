@@ -175,7 +175,6 @@ public final class AddonRepositoryImpl implements AddonRepository
       }
       catch (IOException io)
       {
-         // TODO throw exception instead?
          io.printStackTrace();
          return false;
       }

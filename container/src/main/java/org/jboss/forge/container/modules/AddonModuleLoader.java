@@ -33,10 +33,7 @@ import org.jboss.modules.ResourceLoaders;
 import org.jboss.modules.filter.PathFilters;
 
 /**
- * TODO See {@link JarModuleLoader} for how to do dynamic dependencies from an XML file within.
- * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
  */
 public class AddonModuleLoader extends ModuleLoader
 {

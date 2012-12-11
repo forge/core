@@ -166,7 +166,6 @@ public class ServletTestRunner extends HttpServlet
       }
       else
       {
-         // TODO: implement a html view of the result
          response.setContentType("text/html");
          response.setStatus(HttpServletResponse.SC_OK);
          PrintWriter writer = response.getWriter();

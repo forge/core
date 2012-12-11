@@ -16,7 +16,6 @@ import javax.enterprise.inject.Stereotype;
 /**
  * Utility class for common @{@link Annotation} operations.
  * <p/>
- * TODO: This should probably go into weld-extensions so other portable extensions can leverage it.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com>Lincoln Baxter, III</a>
  */
@@ -66,7 +65,8 @@ public class Annotations
       }
       else
       {
-         for (Annotation nested : a.getClass().getAnnotations()) {
+         for (Annotation nested : a.getClass().getAnnotations())
+         {
             if (isAnnotationPresent(nested, type))
             {
                result = true;

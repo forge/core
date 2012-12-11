@@ -21,7 +21,7 @@ public class ServletTestServer
 
    public void startTestServer(@Observes Startup event) throws Exception
    {
-      server = new Server(4141); // TODO allow custom ports
+      server = new Server(4141);
 
       Connector connector = new SelectChannelConnector();
       connector.setHost("127.0.0.1");
