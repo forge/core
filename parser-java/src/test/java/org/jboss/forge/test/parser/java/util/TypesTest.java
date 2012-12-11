@@ -101,7 +101,7 @@ public class TypesTest
    @Test
    public void testArrayDimensions()
    {
-      assertEquals(-1, Types.getArrayDimension(Boolean.class.getName()));
+      assertEquals(0, Types.getArrayDimension(Boolean.class.getName()));
       assertEquals(1, Types.getArrayDimension(int[].class.getName()));
       assertEquals(2, Types.getArrayDimension(int[][].class.getName()));
       assertEquals(3, Types.getArrayDimension(int[][][].class.getName()));
