@@ -88,6 +88,7 @@
             <module>maven-tests</module>
             <module>bootstrap</module>
             <module>aesh</module>
+            <module>ui</module>
             <module>dist</module>
          </modules>
       </profile>
