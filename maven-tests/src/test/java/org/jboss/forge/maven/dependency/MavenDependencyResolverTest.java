@@ -72,7 +72,7 @@ public class MavenDependencyResolverTest
    @Test
    public void testResolveVersionsDependency() throws Exception
    {
-      DependencyQuery query = DependencyQueryBuilder.create(CoordinateBuilder.create("org.hibernate:hibernate-core"));
+      DependencyQuery query = DependencyQueryBuilder.create(CoordinateBuilder.create("org.jboss.forge:forge-parser-xml"));
       List<Coordinate> versions = resolver.resolveVersions(query);
       Assert.assertNotNull(versions);
       Assert.assertFalse(versions.isEmpty());
