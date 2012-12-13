@@ -7,6 +7,7 @@
 
 package org.jboss.forge.bootstrap;
 
+import java.io.File;
 import java.util.ServiceLoader;
 
 import org.jboss.forge.addon.dependency.spi.DependencyResolver;
@@ -17,25 +18,49 @@ import org.jboss.forge.container.Forge;
 
 /**
  * A class with a main method to bootstrap Forge.
- * 
+ *
  * You can deploy addons by calling {@link Bootstrap#deploy(String)}
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ *
  */
 public class Bootstrap
 {
-   private Forge forge;
+   private final Forge forge;
+   private final AddonManager addonManager;
 
    public static void main(final String[] args)
    {
-      Bootstrap bootstrap = new Bootstrap();
+      Bootstrap bootstrap = new Bootstrap(args);
       bootstrap.start();
    }
 
-   public Bootstrap()
+   public Bootstrap(String[] args)
    {
+      String installAddon = null;
       forge = new Forge();
+      if (args.length > 0 && args.length % 2 == 0)
+      {
+         for (int i = 0; i < args.length; i++)
+         {
+            if ("--install".equals(args[i]))
+            {
+               installAddon = args[++i];
+            }
+            if ("--addonDir".equals(args[i]))
+            {
+               forge.setAddonDir(new File(args[++i]));
+            }
+         }
+      }
+
+      final DependencyResolver dependencyResolver = lookup(DependencyResolver.class);
+      addonManager = new AddonManager(forge.getRepository(), dependencyResolver);
+
+      if (installAddon != null)
+      {
+         deploy(installAddon);
+      }
    }
 
    public void start()
@@ -46,8 +71,6 @@ public class Bootstrap
    public void deploy(String addonCoordinates)
    {
       AddonId addon = AddonId.fromCoordinates(addonCoordinates);
-      DependencyResolver dependencyResolver = lookup(DependencyResolver.class);
-      AddonManager addonManager = new AddonManager(forge.getRepository(), dependencyResolver);
       InstallRequest request = addonManager.install(addon);
       request.perform();
    }
