@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 
 import javax.enterprise.inject.spi.BeanManager;
 
+import org.jboss.forge.container.event.Perform;
 import org.jboss.forge.container.events.InitializeServices;
 import org.jboss.forge.container.impl.AddonRepositoryProducer;
 import org.jboss.forge.container.impl.RegisteredAddonImpl;
@@ -88,7 +89,9 @@ public final class AddonRunnable implements Runnable
 
             addon.setStatus(Status.STARTED);
 
-            while (!shutdown)
+            manager.fireEvent(new Perform());
+
+            while (!shutdown && !Status.STOPPED.equals(control.getStatus()))
             {
                Thread.sleep(10);
             }

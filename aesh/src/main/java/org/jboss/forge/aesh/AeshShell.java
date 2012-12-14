@@ -23,7 +23,7 @@ import org.jboss.aesh.console.settings.Settings;
 import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.ContainerControl;
 import org.jboss.forge.container.RegisteredAddon;
-import org.jboss.forge.container.event.Startup;
+import org.jboss.forge.container.event.Perform;
 import org.jboss.forge.container.services.Remote;
 
 /**
@@ -40,7 +40,7 @@ public class AeshShell
    @Inject
    private AddonRegistry registry;
 
-   public void observe(@Observes Startup startup) throws IOException
+   public void observe(@Observes Perform startup) throws IOException
    {
 
       setup();
