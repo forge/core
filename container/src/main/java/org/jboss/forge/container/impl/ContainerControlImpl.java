@@ -6,18 +6,12 @@
  */
 package org.jboss.forge.container.impl;
 
-import java.util.logging.Logger;
-
-import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jboss.forge.container.ContainerControl;
 import org.jboss.forge.container.Status;
-import org.jboss.forge.container.event.ContainerRestart;
-import org.jboss.forge.container.event.ContainerShutdown;
-import org.jboss.forge.container.event.ContainerStartup;
 import org.jboss.forge.container.event.PostStartup;
 import org.jboss.forge.container.event.PreShutdown;
 import org.jboss.forge.container.event.Shutdown;
@@ -32,19 +26,6 @@ public class ContainerControlImpl implements ContainerControl
    @Inject
    private BeanManager manager;
    private Status status = Status.STOPPED;
-   private Logger logger = Logger.getLogger(ContainerControl.class.getName());
-
-   void bootstrap(@Observes ContainerStartup event)
-   {
-      logger.info("Starting container [" + Thread.currentThread().getName() + "]");
-      start();
-   }
-
-   void teardown(@Observes ContainerShutdown event)
-   {
-      logger.info("Stopping container [" + Thread.currentThread().getName() + "]");
-      stop();
-   }
 
    @Override
    public void start()
@@ -73,7 +54,6 @@ public class ContainerControlImpl implements ContainerControl
    @Override
    public void restart()
    {
-      manager.fireEvent(new ContainerRestart());
       stop();
       start();
    }

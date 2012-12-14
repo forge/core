@@ -18,16 +18,17 @@ import org.jboss.forge.container.Forge;
 
 /**
  * A class with a main method to bootstrap Forge.
- *
+ * 
  * You can deploy addons by calling {@link Bootstrap#deploy(String)}
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 public class Bootstrap
 {
    private final Forge forge;
    private final AddonManager addonManager;
+   private boolean exitAfter = false;
 
    public static void main(final String[] args)
    {
@@ -51,6 +52,10 @@ public class Bootstrap
             {
                forge.setAddonDir(new File(args[++i]));
             }
+            if ("--server".equals(args[i]))
+            {
+               forge.setServerMode(true);
+            }
          }
       }
 
@@ -65,14 +70,26 @@ public class Bootstrap
 
    public void start()
    {
-      forge.start();
+      if (!exitAfter)
+         forge.start();
    }
 
    public void deploy(String addonCoordinates)
    {
-      AddonId addon = AddonId.fromCoordinates(addonCoordinates);
-      InstallRequest request = addonManager.install(addon);
-      request.perform();
+      try
+      {
+         AddonId addon = AddonId.fromCoordinates(addonCoordinates);
+         InstallRequest request = addonManager.install(addon);
+         request.perform();
+      }
+      catch (Exception e)
+      {
+         e.printStackTrace();
+      }
+      finally
+      {
+         exitAfter = true;
+      }
    }
 
    private <T> T lookup(Class<? extends T> service)

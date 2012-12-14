@@ -32,6 +32,10 @@ public final class Forge
 
    private AddonRepository repository = AddonRepositoryImpl.forDefaultDirectory();
 
+   private Map<RegisteredAddon, Set<RegisteredAddon>> waitlist = new HashMap<RegisteredAddon, Set<RegisteredAddon>>();
+
+   private boolean serverMode = false;
+
    Set<AddonThread> threads = Sets.getConcurrentSet();
 
    public Forge()
@@ -82,7 +86,7 @@ public final class Forge
                updateAddons(threads, addonLoader);
                Thread.sleep(100);
             }
-            while (alive == true);
+            while (serverMode && alive == true);
          }
          catch (InterruptedException e)
          {
@@ -210,8 +214,6 @@ public final class Forge
       return result;
    }
 
-   private Map<RegisteredAddon, Set<RegisteredAddon>> waitlist = new HashMap<RegisteredAddon, Set<RegisteredAddon>>();
-
    private RegisteredAddon loadAddon(ModuleLoader addonLoader, AddonId addonId)
    {
       AddonRegistryImpl registry = AddonRegistryImpl.INSTANCE;
@@ -280,6 +282,12 @@ public final class Forge
    public Forge setAddonDir(File dir)
    {
       this.repository = AddonRepositoryImpl.forDirectory(dir);
+      return this;
+   }
+
+   public Forge setServerMode(boolean server)
+   {
+      this.serverMode = server;
       return this;
    }
 

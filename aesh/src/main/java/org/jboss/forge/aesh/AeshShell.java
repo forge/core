@@ -8,6 +8,9 @@ package org.jboss.forge.aesh;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import javax.enterprise.event.Observes;
@@ -77,13 +80,37 @@ public class AeshShell
          Set<Class<?>> serviceClasses = addon.getServiceRegistry().getServices();
          for (Class<?> type : serviceClasses)
          {
-            console.pushToStdOut("\n" + type.getName());
+            console.pushToStdOut(type.getName());
             for (Method method : type.getMethods())
             {
-               console.pushToStdOut("-- " + method.getName() + "(...)");
+               console.pushToStdOut("\n\t - " + getName(method));
             }
+            console.pushToStdOut("\n");
          }
       }
+   }
+
+   public String getName(Method method)
+   {
+      String params = "(";
+      List<Class<?>> parameters = Arrays.asList(method.getParameterTypes());
+
+      Iterator<Class<?>> iterator = parameters.iterator();
+      while (iterator.hasNext())
+      {
+         Class<?> p = iterator.next();
+         params += p.getName();
+
+         if (iterator.hasNext())
+         {
+            params += ",";
+         }
+      }
+
+      params += ")";
+
+      String returnType = method.getReturnType().getName() == null ? "void" : method.getReturnType().getName();
+      return method.getName() + params + "::" + returnType;
    }
 
    // this need to be read from somewhere else, but for now we

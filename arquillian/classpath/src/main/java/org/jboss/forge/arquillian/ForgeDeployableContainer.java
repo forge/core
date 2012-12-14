@@ -279,7 +279,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
             public Object call() throws Exception
             {
                forge = new Forge();
-               forge.setAddonDir(addonDir).start();
+               forge.setServerMode(true).setAddonDir(addonDir).start();
                return forge;
             }
          });
