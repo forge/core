@@ -34,15 +34,7 @@ public final class AddonRunnable implements Runnable
    public void shutdown()
    {
       LOGGER.info("Stopping container [" + Thread.currentThread().getName() + "]");
-      ClassLoaders.executeIn(addon.getClassLoader(), new Callable<Object>()
-      {
-         @Override
-         public Object call() throws Exception
-         {
-            shutdown = true;
-            return null;
-         }
-      });
+      shutdown = true;
    }
 
    @Override
