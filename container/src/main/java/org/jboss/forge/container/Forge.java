@@ -34,7 +34,7 @@ public final class Forge
 
    private Map<RegisteredAddon, Set<RegisteredAddon>> waitlist = new HashMap<RegisteredAddon, Set<RegisteredAddon>>();
 
-   private boolean serverMode = false;
+   private boolean serverMode = true;
 
    Set<AddonThread> threads = Sets.getConcurrentSet();
 

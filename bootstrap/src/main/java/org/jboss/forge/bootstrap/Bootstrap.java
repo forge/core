@@ -52,9 +52,9 @@ public class Bootstrap
             {
                forge.setAddonDir(new File(args[++i]));
             }
-            if ("--server".equals(args[i]))
+            if ("--batchMode".equals(args[i]))
             {
-               forge.setServerMode(true);
+               forge.setServerMode(false);
             }
          }
       }
