@@ -17,7 +17,7 @@ import org.jboss.forge.parser.java.SourceType;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class JavaInterfaceImpl extends AbstractJavaSourceMemberHolder<JavaInterface> implements JavaInterface
+public class JavaInterfaceImpl extends AbstractGenericCapableJavaSource<JavaInterface> implements JavaInterface
 {
 
    public JavaInterfaceImpl(JavaSource<?> enclosingType, final Document document, final CompilationUnit unit, BodyDeclaration body)
