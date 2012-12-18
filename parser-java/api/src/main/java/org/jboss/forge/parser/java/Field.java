@@ -66,6 +66,4 @@ public interface Field<O extends JavaSource<O>> extends Member<O, Field<O>>
    Field<O> setLiteralInitializer(String value);
 
    Field<O> setStringInitializer(String value);
-
-   boolean isPrimitive();
 }

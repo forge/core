@@ -178,8 +178,8 @@ public class FieldTest
       Field<JavaClass> objectField = javaClass.addField("public Boolean flag = false;");
       Field<JavaClass> primitiveField = javaClass.addField("public boolean flag = false;");
 
-      assertFalse(objectField.isPrimitive());
-      assertTrue(primitiveField.isPrimitive());
+      assertFalse(objectField.getTypeInspector().isPrimitive());
+      assertTrue(primitiveField.getTypeInspector().isPrimitive());
 
    }
 

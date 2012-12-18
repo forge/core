@@ -316,7 +316,7 @@ public class FieldImpl<O extends JavaSource<O>> implements Field<O>
          return true;
       }
 
-      if (isPrimitive() && type.getSimpleName().equals(getType()))
+      if (getTypeInspector().isPrimitive() && type.getSimpleName().equals(getType()))
       {
          return true;
       }
@@ -523,20 +523,5 @@ public class FieldImpl<O extends JavaSource<O>> implements Field<O>
          return false;
       }
       return true;
-   }
-
-   /**
-    * TODO: Should we deprecate this method in favor of {@link Field#getTypeInspector()#isPrimitive()} ?
-    */
-   @Override
-   public boolean isPrimitive()
-   {
-      boolean result = false;
-      Type type = field.getType();
-      if (type != null)
-      {
-         result = type.isPrimitiveType();
-      }
-      return result;
    }
 }
