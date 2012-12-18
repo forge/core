@@ -21,7 +21,7 @@ import org.junit.Test;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 public abstract class InterfacedTestBase<T extends JavaType<T>>
 {
@@ -40,8 +40,9 @@ public abstract class InterfacedTestBase<T extends JavaType<T>>
    public void testAddInterfaceString() throws Exception
    {
       assertFalse(this.source.hasInterface("com.foo.Bar"));
-      this.source.addInterface(Serializable.class);
-      assertTrue(this.source.hasInterface(Serializable.class));
+      assertFalse(this.source.hasInterface("java.io.Serializable"));
+      this.source.addInterface("java.io.Serializable");
+      assertTrue(this.source.hasInterface("java.io.Serializable"));
    }
 
    @Test
