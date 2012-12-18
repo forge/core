@@ -8,11 +8,14 @@ package org.jboss.forge.parser.java.ast;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
+import org.eclipse.jdt.core.dom.AnnotationTypeDeclaration;
+import org.eclipse.jdt.core.dom.BodyDeclaration;
+import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,7 +31,23 @@ public class MethodFinderVisitor extends ASTVisitor
    public boolean visit(final TypeDeclaration node)
    {
       parent = node;
-      methods.addAll(Arrays.asList(node.getMethods()));
+      addMethods(node);
+      return super.visit(node);
+   }
+   
+   @Override
+   public boolean visit(EnumDeclaration node)
+   {
+      parent = node;
+      addMethods(node);
+      return super.visit(node);
+   }
+   
+   @Override
+   public boolean visit(AnnotationTypeDeclaration node)
+   {
+      parent = node;
+      addMethods(node);
       return super.visit(node);
    }
 
@@ -40,5 +59,17 @@ public class MethodFinderVisitor extends ASTVisitor
    public TypeDeclaration getParent()
    {
       return (TypeDeclaration) parent;
+   }
+
+   private void addMethods(AbstractTypeDeclaration node)
+   {
+      @SuppressWarnings("unchecked")
+      final List<BodyDeclaration> bodyDeclarations = node.bodyDeclarations();
+      for (BodyDeclaration bodyDeclaration : bodyDeclarations)
+      {
+         if (bodyDeclaration instanceof MethodDeclaration) {
+            methods.add((MethodDeclaration) bodyDeclaration);
+         }
+      }
    }
 }

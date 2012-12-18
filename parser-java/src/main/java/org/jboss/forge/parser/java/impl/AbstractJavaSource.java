@@ -439,52 +439,6 @@ public abstract class AbstractJavaSource<O extends JavaSource<O>> implements
       throw new ParserException("Source body was not of the expected type.");
    }
 
-   @Override
-   public List<String> getGenericTypes()
-   {
-      List<String> result = new ArrayList<String>();
-      TypeDeclaration type = (TypeDeclaration) body;
-      List<TypeParameter> typeParameters = type.typeParameters();
-      if (typeParameters != null)
-      {
-         for (TypeParameter typeParameter : typeParameters)
-         {
-            result.add(typeParameter.getName().getIdentifier());
-         }
-      }
-      return Collections.unmodifiableList(result);
-   }
-
-   @Override
-   public O addGenericType(String genericType)
-   {
-      TypeDeclaration type = (TypeDeclaration) body;
-      TypeParameter tp2 = unit.getAST().newTypeParameter();
-      tp2.setName(unit.getAST().newSimpleName(genericType));
-      type.typeParameters().add(tp2);
-      return (O) this;
-   }
-
-   @Override
-   public O removeGenericType(String genericType)
-   {
-      TypeDeclaration type = (TypeDeclaration) body;
-      List<TypeParameter> typeParameters = type.typeParameters();
-      if (typeParameters != null)
-      {
-         Iterator<TypeParameter> it = typeParameters.iterator();
-         while (it.hasNext())
-         {
-            TypeParameter typeParameter = it.next();
-            if (typeParameter.getName().getIdentifier().equals(genericType))
-            {
-               it.remove();
-            }
-         }
-      }
-      return (O) this;
-   }
-
    /*
     * Name modifiers
     */

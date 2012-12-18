@@ -17,7 +17,8 @@ import org.jboss.forge.parser.JavaParser;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface JavaEnum extends JavaSource<JavaEnum>
+public interface JavaEnum extends JavaSource<JavaEnum>, InterfaceCapable<JavaEnum>, FieldHolder<JavaEnum>,
+         MethodHolder<JavaEnum>
 {
    /**
     * Add a new {@link EnumConstant}
