@@ -14,7 +14,6 @@ import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jface.text.Document;
 import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.FieldHolder;
@@ -94,9 +93,13 @@ public abstract class AbstractJavaSourceMemberHolder<O extends JavaSource<O>> ex
    {
       List<Field<O>> result = new ArrayList<Field<O>>();
 
-      for (FieldDeclaration field : ((TypeDeclaration) getBodyDeclaration()).getFields())
+      List<BodyDeclaration> bodyDeclarations = getBodyDeclaration().bodyDeclarations();
+      for (BodyDeclaration bodyDeclaration : bodyDeclarations)
       {
-         result.add(new FieldImpl<O>((O) this, field));
+         if (bodyDeclaration instanceof FieldDeclaration)
+         {
+            result.add(new FieldImpl<O>((O) this, bodyDeclaration));
+         }
       }
 
       return Collections.unmodifiableList(result);

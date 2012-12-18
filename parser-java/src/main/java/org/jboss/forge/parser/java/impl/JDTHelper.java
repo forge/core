@@ -10,10 +10,12 @@ import java.util.List;
 
 import org.eclipse.jdt.core.dom.ArrayType;
 import org.eclipse.jdt.core.dom.BodyDeclaration;
+import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.ParameterizedType;
 import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.QualifiedType;
 import org.eclipse.jdt.core.dom.SimpleType;
+import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.WildcardType;
@@ -62,8 +64,13 @@ public class JDTHelper
    @SuppressWarnings("unchecked")
    public static List<Type> getInterfaces(final BodyDeclaration dec)
    {
-      return (List<Type>) dec.getStructuralProperty(
-               TypeDeclaration.SUPER_INTERFACE_TYPES_PROPERTY);
+      StructuralPropertyDescriptor desc;
+      if (dec instanceof EnumDeclaration) {
+         desc = EnumDeclaration.SUPER_INTERFACE_TYPES_PROPERTY;
+      } else {
+         desc = TypeDeclaration.SUPER_INTERFACE_TYPES_PROPERTY;
+      }
+      return (List<Type>) dec.getStructuralProperty(desc);
    }
 
 }

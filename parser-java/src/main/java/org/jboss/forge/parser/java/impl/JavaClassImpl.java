@@ -30,7 +30,7 @@ import org.jboss.forge.parser.spi.JavaParserImpl;
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class JavaClassImpl extends AbstractJavaSourceMemberHolder<JavaClass> implements JavaClass
+public class JavaClassImpl extends AbstractGenericCapableJavaSource<JavaClass> implements JavaClass
 {
    private final ModifierAccessor modifiers = new ModifierAccessor();
 

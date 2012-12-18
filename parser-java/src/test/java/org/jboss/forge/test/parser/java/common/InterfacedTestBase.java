@@ -14,8 +14,9 @@ import static org.junit.Assert.fail;
 import java.io.Serializable;
 
 import org.jboss.forge.parser.JavaParser;
+import org.jboss.forge.parser.java.InterfaceCapable;
 import org.jboss.forge.parser.java.JavaInterface;
-import org.jboss.forge.parser.java.JavaType;
+import org.jboss.forge.parser.java.JavaSource;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,10 +24,10 @@ import org.junit.Test;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  *
  */
-public abstract class InterfacedTestBase<T extends JavaType<T>>
+public abstract class InterfacedTestBase<T extends JavaSource<T> & InterfaceCapable<T>>
 {
 
-   private JavaType<T> source;
+   private T source;
 
    @Before
    public void reset()
@@ -34,7 +35,7 @@ public abstract class InterfacedTestBase<T extends JavaType<T>>
       this.source = getSource();
    }
 
-   protected abstract JavaType<T> getSource();
+   protected abstract T getSource();
 
    @Test
    public void testAddInterfaceString() throws Exception
