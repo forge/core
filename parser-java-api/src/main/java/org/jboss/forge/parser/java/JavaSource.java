@@ -23,8 +23,7 @@ public interface JavaSource<T extends JavaSource<T>> extends
          VisibilityScoped<T>,
          AnnotationTarget<T, T>,
          MemberHolder<T, Member>,
-         Origin<T>,
-         GenericCapable<T>
+         Origin<T>
 {
    /**
     * Return the canonical name of this {@link T} instance. This is equivalent to calling
