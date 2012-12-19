@@ -3,6 +3,7 @@ package org.jboss.forge.container;
 import java.util.Map;
 import java.util.Set;
 
+import org.jboss.forge.container.services.RemoteInstance;
 import org.jboss.forge.container.services.ServiceRegistry;
 
 public interface AddonRegistry
@@ -15,5 +16,7 @@ public interface AddonRegistry
 
    boolean isRegistered(AddonId id);
 
-   Map<RegisteredAddon, ServiceRegistry> getServices();
+   Map<RegisteredAddon, ServiceRegistry> getServiceRegistries();
+
+   <T> Set<RemoteInstance<T>> getRemoteServices(Class<T> type);
 }

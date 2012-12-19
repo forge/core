@@ -156,7 +156,7 @@ public final class Forge
       {
          ((RegisteredAddonImpl) addon).setStatus(Status.STARTING);
          logger.info("Starting addon (" + addon.getId() + ")");
-         while (registry.getServices().size() + batchSize <= startedThreads)
+         while (registry.getServiceRegistries().size() + batchSize <= startedThreads)
          {
             try
             {

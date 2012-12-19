@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.resource;
+package org.jboss.forge.resource;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,7 +46,7 @@ public class DirectoryResource extends FileResource<DirectoryResource>
          {
             for (File f : files)
             {
-               listCache.add(resourceFactory.getResourceFrom(f));
+               listCache.add(resourceFactory.create(f));
             }
          }
       }
@@ -60,7 +60,7 @@ public class DirectoryResource extends FileResource<DirectoryResource>
    @Override
    public Resource<?> getChild(final String name)
    {
-      return resourceFactory.getResourceFrom(new File(file.getAbsolutePath(), name));
+      return resourceFactory.create(new File(file.getAbsolutePath(), name));
    }
 
    /**
@@ -118,7 +118,7 @@ public class DirectoryResource extends FileResource<DirectoryResource>
       else
       {
          E underlyingResource = (E) child.getUnderlyingResourceObject();
-         result = resourceFactory.createFromType(type, underlyingResource);
+         result = resourceFactory.create(type, underlyingResource);
       }
       return result;
    }

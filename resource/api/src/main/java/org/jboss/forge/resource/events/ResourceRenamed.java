@@ -5,9 +5,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.resource.events;
+package org.jboss.forge.resource.events;
 
-import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.resource.Resource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

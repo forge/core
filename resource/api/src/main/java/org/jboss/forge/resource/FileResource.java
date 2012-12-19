@@ -1,4 +1,4 @@
-package org.jboss.forge.addon.resource;
+package org.jboss.forge.resource;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -10,11 +10,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.jboss.forge.addon.resource.events.ResourceCreated;
-import org.jboss.forge.addon.resource.events.ResourceDeleted;
-import org.jboss.forge.addon.resource.events.ResourceModified;
-import org.jboss.forge.addon.resource.events.ResourceRenamed;
-import org.jboss.forge.addon.resource.events.TempResourceCreated;
+import org.jboss.forge.resource.events.ResourceCreated;
+import org.jboss.forge.resource.events.ResourceDeleted;
+import org.jboss.forge.resource.events.ResourceModified;
+import org.jboss.forge.resource.events.ResourceRenamed;
+import org.jboss.forge.resource.events.TempResourceCreated;
 
 /**
  * A standard, built-in resource for representing files on the filesystem.
@@ -145,7 +145,7 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
    {
       if (file.mkdir())
       {
-         fireResourceCreated();
+         resourceFactory.fireEvent(new ResourceCreated(this));
          return true;
       }
       return false;
@@ -158,7 +158,7 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
    {
       if (file.mkdirs())
       {
-         fireResourceCreated();
+         resourceFactory.fireEvent(new ResourceCreated(this));
          return true;
       }
       return false;
@@ -183,7 +183,7 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
       {
          if (_deleteRecursive(file, true))
          {
-            fireResourceDeleted();
+            resourceFactory.fireEvent(new ResourceDeleted(this));
             return true;
          }
          return false;
@@ -201,7 +201,7 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
 
       if (file.delete())
       {
-         fireResourceDeleted();
+         resourceFactory.fireEvent(new ResourceDeleted(this));
          return true;
       }
       return false;
@@ -316,7 +316,7 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
             }
          }
 
-         fireResourceModified();
+         resourceFactory.fireEvent(new ResourceModified(this));
       }
       catch (IOException e)
       {
@@ -345,7 +345,7 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
          }
          if (file.createNewFile())
          {
-            fireResourceCreated();
+            resourceFactory.fireEvent(new ResourceCreated(this));
             return true;
          }
          return false;
@@ -365,7 +365,7 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
       try
       {
          T result = (T) createFrom(File.createTempFile("forgetemp", ""));
-         fireTempResourceCreated(result);
+         resourceFactory.fireEvent(new TempResourceCreated(result));
          return result;
       }
       catch (IOException e)
@@ -374,19 +374,14 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
       }
    }
 
-   private void fireTempResourceCreated(final T result)
-   {
-      resourceFactory.fireEvent(new TempResourceCreated(result));
-   }
-
    @Override
    @SuppressWarnings("unchecked")
    public <R extends Resource<?>> R reify(final Class<R> type)
    {
-      Resource<?> queryResult = resourceFactory.getResourceFrom(file);
-      if (type.isAssignableFrom(queryResult.getClass()))
+      Resource<?> result = resourceFactory.create(file);
+      if (type.isAssignableFrom(result.getClass()))
       {
-         return (R) queryResult;
+         return (R) result;
       }
       else
       {
@@ -418,29 +413,9 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
       File original = file.getAbsoluteFile();
       if (file.renameTo(target))
       {
-         fireResourceMoved(original);
+         resourceFactory.fireEvent(new ResourceRenamed(this, original.getAbsolutePath(), file.getAbsolutePath()));
          return true;
       }
       return false;
-   }
-
-   private void fireResourceMoved(final File original)
-   {
-      resourceFactory.fireEvent(new ResourceRenamed(this, original.getAbsolutePath(), file.getAbsolutePath()));
-   }
-
-   private void fireResourceModified()
-   {
-      resourceFactory.fireEvent(new ResourceModified(this));
-   }
-
-   private void fireResourceCreated()
-   {
-      resourceFactory.fireEvent(new ResourceCreated(this));
-   }
-
-   private void fireResourceDeleted()
-   {
-      resourceFactory.fireEvent(new ResourceDeleted(this));
    }
 }

@@ -1,4 +1,4 @@
-package org.jboss.forge.addon.resource;
+package org.jboss.forge.resource;
 
 /**
  * Represents a generic Exception thrown by the Forge {@link Resource} API

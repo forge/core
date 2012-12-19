@@ -10,6 +10,7 @@ import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.RegisteredAddon;
 import org.jboss.forge.container.RegisteredAddonFilter;
+import org.jboss.forge.container.services.RemoteInstance;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.container.util.Sets;
 
@@ -38,7 +39,7 @@ public enum AddonRegistryImpl implements AddonRegistry
    }
 
    @Override
-   public Map<RegisteredAddon, ServiceRegistry> getServices()
+   public Map<RegisteredAddon, ServiceRegistry> getServiceRegistries()
    {
       Map<RegisteredAddon, ServiceRegistry> services = new HashMap<RegisteredAddon, ServiceRegistry>();
       for (RegisteredAddon addon : addons)
@@ -92,5 +93,18 @@ public enum AddonRegistryImpl implements AddonRegistry
    public String toString()
    {
       return addons.toString();
+   }
+
+   @Override
+   public <T> Set<RemoteInstance<T>> getRemoteServices(Class<T> type)
+   {
+      // TODO This needs to block addon installation/removal;
+      Set<RemoteInstance<T>> result = new HashSet<RemoteInstance<T>>();
+      for (RegisteredAddon addon : addons)
+      {
+         ServiceRegistry serviceRegistry = addon.getServiceRegistry();
+         result.addAll(serviceRegistry.getRemoteInstances(type));
+      }
+      return result;
    }
 }

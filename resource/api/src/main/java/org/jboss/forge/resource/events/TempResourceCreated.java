@@ -5,19 +5,19 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.resource.events;
+package org.jboss.forge.resource.events;
 
-import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.resource.Resource;
 
 /**
- * Fired when a {@link Resource} has been deleted.
+ * Fired when a temporary {@link Resource} has been created. Used to distinguish between
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class ResourceDeleted extends ResourceEvent
+public class TempResourceCreated extends ResourceCreated
 {
-   public ResourceDeleted(final Resource<?> resource)
+   public TempResourceCreated(final Resource<?> resource)
    {
       super(resource);
    }

@@ -5,19 +5,19 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.resource.events;
+package org.jboss.forge.resource.events;
 
-import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.resource.Resource;
 
 /**
- * Fired when a {@link Resource} has been created.
+ * Fired when a {@link Resource} has been deleted.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class ResourceCreated extends ResourceEvent
+public class ResourceDeleted extends ResourceEvent
 {
-   public ResourceCreated(final Resource<?> resource)
+   public ResourceDeleted(final Resource<?> resource)
    {
       super(resource);
    }

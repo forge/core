@@ -20,6 +20,8 @@ public interface ServiceRegistry
 
    <T> RemoteInstance<T> getRemoteInstance(Class<T> serviceType);
 
+   <T> Set<RemoteInstance<T>> getRemoteInstances(Class<T> serviceType);
+
    Set<Class<?>> getServices();
 
    boolean hasService(Class<?> serviceType);

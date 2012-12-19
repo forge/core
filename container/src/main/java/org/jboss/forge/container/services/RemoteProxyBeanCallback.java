@@ -20,7 +20,7 @@ public class RemoteProxyBeanCallback implements LazyLoader
    public Object loadObject() throws Exception
    {
       Object result = null;
-      for (RegisteredAddon addon : registry.getServices().keySet())
+      for (RegisteredAddon addon : registry.getServiceRegistries().keySet())
       {
          ServiceRegistry serviceRegistry = addon.getServiceRegistry();
          if (serviceRegistry != null && serviceRegistry.hasService(serviceType))

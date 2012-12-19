@@ -1,5 +1,6 @@
 package org.jboss.forge.container.impl;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.enterprise.inject.spi.BeanManager;
@@ -55,5 +56,20 @@ public class ServiceRegistryImpl implements ServiceRegistry
    public String toString()
    {
       return services.toString();
+   }
+
+   @Override
+   @SuppressWarnings("unchecked")
+   public <T> Set<RemoteInstance<T>> getRemoteInstances(Class<T> serviceType)
+   {
+      Set<RemoteInstance<T>> result = new HashSet<RemoteInstance<T>>();
+      for (Class<?> type : services)
+      {
+         if (serviceType.isAssignableFrom(type))
+         {
+            result.add((RemoteInstance<T>) getRemoteInstance(type));
+         }
+      }
+      return result;
    }
 }
