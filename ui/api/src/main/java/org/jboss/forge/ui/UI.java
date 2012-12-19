@@ -5,9 +5,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.ui.api;
+package org.jboss.forge.ui;
 
-public interface Defaultable<T>
+public interface UI
 {
-   T getDefaultValue();
+
 }

@@ -5,11 +5,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.ui.api;
+package org.jboss.forge.ui;
 
-public interface InputState
+public interface UIContext
 {
-   boolean isRequired();
-
-   boolean isReadOnly();
+   UIBuilder getUI();
 }
