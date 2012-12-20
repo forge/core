@@ -1,12 +1,12 @@
 package org.jboss.forge.container.impl;
 
-import org.jboss.forge.container.RegisteredAddon;
+import org.jboss.forge.container.Addon;
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.Status;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.modules.Module;
 
-public class RegisteredAddonImpl implements RegisteredAddon
+public class RegisteredAddonImpl implements Addon
 {
    private Module module;
    private ServiceRegistry registry;
@@ -36,7 +36,7 @@ public class RegisteredAddonImpl implements RegisteredAddon
       return module;
    }
 
-   public RegisteredAddon setModule(Module module)
+   public Addon setModule(Module module)
    {
       this.module = module;
       return this;
@@ -48,7 +48,7 @@ public class RegisteredAddonImpl implements RegisteredAddon
       return registry;
    }
 
-   public RegisteredAddon setServiceRegistry(ServiceRegistry registry)
+   public Addon setServiceRegistry(ServiceRegistry registry)
    {
       this.registry = registry;
       return this;
@@ -60,7 +60,7 @@ public class RegisteredAddonImpl implements RegisteredAddon
       return status;
    }
 
-   public RegisteredAddon setStatus(Status status)
+   public Addon setStatus(Status status)
    {
       this.status = status;
       return this;

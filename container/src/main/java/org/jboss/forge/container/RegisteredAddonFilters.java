@@ -2,36 +2,36 @@ package org.jboss.forge.container;
 
 public class RegisteredAddonFilters
 {
-   public static RegisteredAddonFilter allStarted()
+   public static AddonFilter allStarted()
    {
-      return new RegisteredAddonFilter()
+      return new AddonFilter()
       {
          @Override
-         public boolean accept(RegisteredAddon addon)
+         public boolean accept(Addon addon)
          {
             return Status.STARTED.equals(addon.getStatus());
          }
       };
    }
 
-   public static RegisteredAddonFilter allWaiting()
+   public static AddonFilter allWaiting()
    {
-      return new RegisteredAddonFilter()
+      return new AddonFilter()
       {
          @Override
-         public boolean accept(RegisteredAddon addon)
+         public boolean accept(Addon addon)
          {
             return Status.WAITING.equals(addon.getStatus());
          }
       };
    }
 
-   public static RegisteredAddonFilter allNotStarted()
+   public static AddonFilter allNotStarted()
    {
-      return new RegisteredAddonFilter()
+      return new AddonFilter()
       {
          @Override
-         public boolean accept(RegisteredAddon addon)
+         public boolean accept(Addon addon)
          {
             return !Status.STARTED.equals(addon.getStatus());
          }

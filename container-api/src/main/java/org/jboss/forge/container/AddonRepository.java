@@ -13,7 +13,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 /**
- * Used to perform RegisteredAddon installation/registration operations. May be obtained using CDI injection:
+ * Used to perform Addon installation/registration operations. May be obtained using CDI injection:
  * <p>
  * <code>@{@link Inject} private {@link AddonRepository} repository;</code>
  * 

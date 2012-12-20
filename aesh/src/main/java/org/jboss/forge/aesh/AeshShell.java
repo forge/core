@@ -22,7 +22,7 @@ import org.jboss.aesh.console.ConsoleOutput;
 import org.jboss.aesh.console.settings.Settings;
 import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.ContainerControl;
-import org.jboss.forge.container.RegisteredAddon;
+import org.jboss.forge.container.Addon;
 import org.jboss.forge.container.event.Perform;
 import org.jboss.forge.container.services.Remote;
 
@@ -74,8 +74,8 @@ public class AeshShell
 
    private void listServices(Console console) throws IOException
    {
-      Set<RegisteredAddon> addons = registry.getRegisteredAddons();
-      for (RegisteredAddon addon : addons)
+      Set<Addon> addons = registry.getRegisteredAddons();
+      for (Addon addon : addons)
       {
          Set<Class<?>> serviceClasses = addon.getServiceRegistry().getServices();
          for (Class<?> type : serviceClasses)

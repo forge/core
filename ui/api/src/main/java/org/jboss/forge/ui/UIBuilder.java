@@ -9,5 +9,5 @@ package org.jboss.forge.ui;
 
 public interface UIBuilder
 {
-
+   UIBuilder add(UIInput<?> input);
 }

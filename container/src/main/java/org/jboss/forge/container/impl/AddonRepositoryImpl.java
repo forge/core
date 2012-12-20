@@ -35,7 +35,7 @@ import org.jboss.forge.parser.xml.XMLParser;
 import org.jboss.forge.parser.xml.XMLParserException;
 
 /**
- * Used to perform RegisteredAddon installation/registration operations.
+ * Used to perform Addon installation/registration operations.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:koen.aers@gmail.com">Koen Aers</a>
@@ -83,7 +83,7 @@ public final class AddonRepositoryImpl implements AddonRepository
 
    public static boolean isApiCompatible(CharSequence runtimeVersion, AddonId entry)
    {
-      Assert.notNull(entry, "RegisteredAddon entry must not be null.");
+      Assert.notNull(entry, "Addon entry must not be null.");
 
       return isApiCompatible(runtimeVersion, entry.getApiVersion());
    }
@@ -131,7 +131,7 @@ public final class AddonRepositoryImpl implements AddonRepository
 
    private AddonRepositoryImpl(File dir)
    {
-      Assert.notNull(dir, "RegisteredAddon directory must not be null");
+      Assert.notNull(dir, "Addon directory must not be null");
       this.addonDir = dir;
    }
 
@@ -185,7 +185,7 @@ public final class AddonRepositoryImpl implements AddonRepository
    {
       if (addon == null)
       {
-         throw new RuntimeException("RegisteredAddon must not be null");
+         throw new RuntimeException("Addon must not be null");
       }
 
       File registryFile = getRepositoryRegistryFile();
@@ -251,8 +251,8 @@ public final class AddonRepositoryImpl implements AddonRepository
    @Override
    public File getAddonBaseDir(AddonId found)
    {
-      Assert.notNull(found.getVersion(), "RegisteredAddon version must be specified.");
-      Assert.notNull(found.getName(), "RegisteredAddon name must be specified.");
+      Assert.notNull(found.getVersion(), "Addon version must be specified.");
+      Assert.notNull(found.getName(), "Addon name must be specified.");
 
       File addonDir = new File(getRepositoryDirectory(), found.toModuleId().replaceAll("[^a-zA-Z0-9]+", "-"));
       return addonDir;
@@ -348,7 +348,7 @@ public final class AddonRepositoryImpl implements AddonRepository
    {
       if (addon == null)
       {
-         throw new RuntimeException("RegisteredAddon must not be null");
+         throw new RuntimeException("Addon must not be null");
       }
 
       File registryFile = getRepositoryRegistryFile();
@@ -397,7 +397,7 @@ public final class AddonRepositoryImpl implements AddonRepository
             System.gc();
             if (!addonDir.mkdirs())
             {
-               throw new RuntimeException("Could not create RegisteredAddon Directory [" + addonDir + "]");
+               throw new RuntimeException("Could not create Addon Directory [" + addonDir + "]");
             }
          }
       }

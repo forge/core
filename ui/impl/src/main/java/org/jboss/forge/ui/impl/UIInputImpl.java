@@ -9,21 +9,26 @@ package org.jboss.forge.ui.impl;
 
 import java.util.concurrent.Callable;
 
+import javax.enterprise.inject.Typed;
+
 import org.jboss.forge.ui.UIInput;
 import org.jboss.forge.ui.impl.util.Callables;
 
 /**
  * Implementation of a {@link UIInput} object
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  * @param <T>
  */
+@Typed()
 public class UIInputImpl<T> implements UIInput<T>
 {
    private final String name;
    private final Class<T> type;
 
+   private String label;
+   private Callable<Boolean> enabled;
    private T value;
    private Callable<Boolean> required;
    private Callable<T> defaultValue;
@@ -35,15 +40,15 @@ public class UIInputImpl<T> implements UIInput<T>
    }
 
    @Override
-   public String getName()
+   public String getLabel()
    {
-      return name;
+      return label;
    }
 
    @Override
-   public Class<T> getType()
+   public String getName()
    {
-      return type;
+      return name;
    }
 
    @Override
@@ -53,9 +58,28 @@ public class UIInputImpl<T> implements UIInput<T>
    }
 
    @Override
+   public Class<T> getValueType()
+   {
+      return type;
+   }
+
+   @Override
+   public boolean isEnabled()
+   {
+      return Callables.call(enabled);
+   }
+
+   @Override
    public boolean isRequired()
    {
       return Callables.call(required);
+   }
+
+   @Override
+   public UIInput<T> setDefaultValue(Callable<T> callback)
+   {
+      this.defaultValue = callback;
+      return this;
    }
 
    @Override
@@ -66,9 +90,23 @@ public class UIInputImpl<T> implements UIInput<T>
    }
 
    @Override
-   public UIInput<T> setDefaultValue(Callable<T> callback)
+   public UIInput<T> setEnabled(boolean enabled)
    {
-      this.defaultValue = callback;
+      this.enabled = Callables.constant(enabled);
+      return this;
+   }
+
+   @Override
+   public UIInput<T> setEnabled(Callable<Boolean> callback)
+   {
+      enabled = callback;
+      return this;
+   }
+
+   @Override
+   public UIInput<T> setLabel(String label)
+   {
+      this.label = label;
       return this;
    }
 

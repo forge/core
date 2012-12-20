@@ -9,7 +9,7 @@ package org.jboss.forge.ui;
 
 public interface UICommand
 {
-   public UI initializeUI(UIContext context) throws Exception;
+   public void initializeUI(UIContext context) throws Exception;
 
    public void validate(UIValidationContext context);
 

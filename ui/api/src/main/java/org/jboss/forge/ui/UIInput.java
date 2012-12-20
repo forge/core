@@ -11,11 +11,15 @@ import java.util.concurrent.Callable;
 
 public interface UIInput<T>
 {
+   String getLabel();
+
    String getName();
 
-   Class<T> getType();
+   Class<T> getValueType();
 
    T getValue();
+
+   boolean isEnabled();
 
    boolean isRequired();
 
@@ -23,9 +27,16 @@ public interface UIInput<T>
 
    UIInput<T> setDefaultValue(Callable<T> callback);
 
+   UIInput<T> setEnabled(boolean b);
+
+   UIInput<T> setEnabled(Callable<Boolean> callable);
+
+   UIInput<T> setLabel(String label);
+
    UIInput<T> setRequired(boolean required);
 
    UIInput<T> setRequired(Callable<Boolean> required);
 
    UIInput<T> setValue(T value);
+
 }

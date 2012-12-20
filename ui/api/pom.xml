@@ -8,4 +8,15 @@
    </parent>
    <artifactId>ui-api</artifactId>
    <name>Forge - UI API</name>
+
+   <dependencies>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>resource</artifactId>
+         <version>${project.version}</version>
+         <classifier>forge-addon</classifier>
+         <scope>compile</scope>
+      </dependency>
+   </dependencies>
+
 </project>

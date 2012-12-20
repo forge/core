@@ -32,8 +32,8 @@ import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.AddonRepository;
 import org.jboss.forge.container.Forge;
-import org.jboss.forge.container.RegisteredAddon;
-import org.jboss.forge.container.RegisteredAddonFilter;
+import org.jboss.forge.container.Addon;
+import org.jboss.forge.container.AddonFilter;
 import org.jboss.forge.container.Status;
 import org.jboss.forge.container.impl.AddonRepositoryImpl;
 import org.jboss.forge.container.util.ClassLoaders;
@@ -89,10 +89,10 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       httpContext.add(new Servlet("ArquillianServletRunner", "/ArquillianServletRunner"));
 
       final AddonRegistry registry = runnable.getForge().getAddonRegistry();
-      RegisteredAddonFilter waitForFilter = new RegisteredAddonFilter()
+      AddonFilter waitForFilter = new AddonFilter()
       {
          @Override
-         public boolean accept(RegisteredAddon addon)
+         public boolean accept(Addon addon)
          {
             boolean result = false;
             Set<AddonDependency> dependencies = repository.getAddonDependencies(addon.getId());
@@ -112,14 +112,14 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
          }
       };
 
-      final Set<RegisteredAddon> waitFor = registry.getRegisteredAddons(waitForFilter);
+      final Set<Addon> waitFor = registry.getRegisteredAddons(waitForFilter);
 
       boolean deployed = false;
       while (!deployed || !waitFor.isEmpty())
       {
          if (thread.isAlive())
          {
-            for (RegisteredAddon addon : registry.getRegisteredAddons())
+            for (Addon addon : registry.getRegisteredAddons())
             {
                if (addon.getId().equals(addonToDeploy) && isDeploymentComplete(addon))
                {
@@ -130,7 +130,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
             Threads.sleep(10);
 
             if (!waitFor.isEmpty())
-               for (RegisteredAddon addon : registry.getRegisteredAddons())
+               for (Addon addon : registry.getRegisteredAddons())
                {
                   if (waitFor.contains(addon) && isDeploymentComplete(addon))
                   {
@@ -148,7 +148,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
                .addContext(httpContext);
    }
 
-   private boolean isDeploymentComplete(RegisteredAddon addon)
+   private boolean isDeploymentComplete(Addon addon)
    {
       return Status.STARTED.equals(addon.getStatus())
                || Status.FAILED.equals(addon.getStatus())

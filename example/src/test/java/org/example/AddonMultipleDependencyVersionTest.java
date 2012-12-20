@@ -13,7 +13,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.AddonRegistry;
-import org.jboss.forge.container.RegisteredAddon;
+import org.jboss.forge.container.Addon;
 import org.jboss.forge.container.services.RemoteInstance;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.shrinkwrap.api.ArchivePaths;
@@ -71,9 +71,9 @@ public class AddonMultipleDependencyVersionTest
    @Test
    public void testVersionLookup() throws Exception
    {
-      Map<RegisteredAddon, ServiceRegistry> services = registry.getServiceRegistries();
+      Map<Addon, ServiceRegistry> services = registry.getServiceRegistries();
       int count = 0;
-      for (Entry<RegisteredAddon, ServiceRegistry> entry : services.entrySet())
+      for (Entry<Addon, ServiceRegistry> entry : services.entrySet())
       {
          for (Class<?> service : entry.getValue().getServices())
          {

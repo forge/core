@@ -2,7 +2,7 @@ package org.jboss.forge.container;
 
 import org.jboss.forge.container.services.ServiceRegistry;
 
-public interface RegisteredAddon
+public interface Addon
 {
    public AddonId getId();
 

@@ -10,7 +10,7 @@ package org.jboss.forge.ui.impl;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
-import org.jboss.forge.ui.UI;
+import org.jboss.forge.ui.UICommand;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -24,7 +24,7 @@ public abstract class AbstractUITest
    {
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
-               .addPackages(true, UI.class.getPackage())
+               .addPackages(true, UICommand.class.getPackage())
                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
 
       return archive;

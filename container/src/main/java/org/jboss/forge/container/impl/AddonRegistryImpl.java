@@ -8,8 +8,8 @@ import java.util.Set;
 
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.AddonRegistry;
-import org.jboss.forge.container.RegisteredAddon;
-import org.jboss.forge.container.RegisteredAddonFilter;
+import org.jboss.forge.container.Addon;
+import org.jboss.forge.container.AddonFilter;
 import org.jboss.forge.container.services.RemoteInstance;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.container.util.Sets;
@@ -17,12 +17,12 @@ import org.jboss.forge.container.util.Sets;
 public enum AddonRegistryImpl implements AddonRegistry
 {
    INSTANCE;
-   private Set<RegisteredAddon> addons = Sets.getConcurrentSet();
+   private Set<Addon> addons = Sets.getConcurrentSet();
 
    @Override
-   public RegisteredAddon getRegisteredAddon(AddonId id)
+   public Addon getRegisteredAddon(AddonId id)
    {
-      for (RegisteredAddon addon : addons)
+      for (Addon addon : addons)
       {
          if (addon.getId().equals(id))
             return addon;
@@ -30,7 +30,7 @@ public enum AddonRegistryImpl implements AddonRegistry
       return null;
    }
 
-   public void register(RegisteredAddon addon)
+   public void register(Addon addon)
    {
       if (!addons.contains(addon))
       {
@@ -39,10 +39,10 @@ public enum AddonRegistryImpl implements AddonRegistry
    }
 
    @Override
-   public Map<RegisteredAddon, ServiceRegistry> getServiceRegistries()
+   public Map<Addon, ServiceRegistry> getServiceRegistries()
    {
-      Map<RegisteredAddon, ServiceRegistry> services = new HashMap<RegisteredAddon, ServiceRegistry>();
-      for (RegisteredAddon addon : addons)
+      Map<Addon, ServiceRegistry> services = new HashMap<Addon, ServiceRegistry>();
+      for (Addon addon : addons)
       {
          services.put(addon, addon.getServiceRegistry());
       }
@@ -50,16 +50,16 @@ public enum AddonRegistryImpl implements AddonRegistry
    }
 
    @Override
-   public Set<RegisteredAddon> getRegisteredAddons()
+   public Set<Addon> getRegisteredAddons()
    {
       return Collections.unmodifiableSet(addons);
    }
 
    @Override
-   public Set<RegisteredAddon> getRegisteredAddons(RegisteredAddonFilter filter)
+   public Set<Addon> getRegisteredAddons(AddonFilter filter)
    {
-      Set<RegisteredAddon> result = new HashSet<RegisteredAddon>();
-      for (RegisteredAddon registeredAddon : addons)
+      Set<Addon> result = new HashSet<Addon>();
+      for (Addon registeredAddon : addons)
       {
          if (filter.accept(registeredAddon))
             result.add(registeredAddon);
@@ -69,7 +69,7 @@ public enum AddonRegistryImpl implements AddonRegistry
 
    public void removeServices(ClassLoader classLoader) throws IllegalArgumentException
    {
-      for (RegisteredAddon addon : addons)
+      for (Addon addon : addons)
       {
          if (addon.getClassLoader().equals(classLoader))
          {
@@ -78,7 +78,7 @@ public enum AddonRegistryImpl implements AddonRegistry
       }
    }
 
-   public void remove(RegisteredAddon addon)
+   public void remove(Addon addon)
    {
       addons.remove(addon);
    }
@@ -100,7 +100,7 @@ public enum AddonRegistryImpl implements AddonRegistry
    {
       // TODO This needs to block addon installation/removal;
       Set<RemoteInstance<T>> result = new HashSet<RemoteInstance<T>>();
-      for (RegisteredAddon addon : addons)
+      for (Addon addon : addons)
       {
          ServiceRegistry serviceRegistry = addon.getServiceRegistry();
          result.addAll(serviceRegistry.getRemoteInstances(type));

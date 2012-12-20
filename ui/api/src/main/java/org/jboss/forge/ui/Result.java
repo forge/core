@@ -7,6 +7,7 @@
 
 package org.jboss.forge.ui;
 
+
 public abstract class Result
 {
 
@@ -23,6 +24,11 @@ public abstract class Result
       return new ResultSuccess(message);
    }
 
+   public static final Result success(Class<? extends UICommand> command)
+   {
+      return new ResultSuccess(command);
+   }
+
    public static final Result success(Class<? extends UICommand> next, String message)
    {
       return new ResultSuccess(message);
@@ -31,6 +37,11 @@ public abstract class Result
    public static final Result fail(String message)
    {
       return new ResultFail(message);
+   }
+
+   public static final Result fail(Class<? extends UICommand> command)
+   {
+      return new ResultFail(command);
    }
 
    public static final Result fail(Class<? extends UICommand> next, String message)

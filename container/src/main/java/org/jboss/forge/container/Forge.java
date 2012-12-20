@@ -32,7 +32,7 @@ public final class Forge
 
    private AddonRepository repository = AddonRepositoryImpl.forDefaultDirectory();
 
-   private Map<RegisteredAddon, Set<RegisteredAddon>> waitlist = new HashMap<RegisteredAddon, Set<RegisteredAddon>>();
+   private Map<Addon, Set<Addon>> waitlist = new HashMap<Addon, Set<Addon>>();
 
    private boolean serverMode = true;
 
@@ -104,23 +104,23 @@ public final class Forge
 
    private void updateAddons(Set<AddonThread> threads, ModuleLoader addonLoader)
    {
-      Set<RegisteredAddon> loadedAddons = new HashSet<RegisteredAddon>();
+      Set<Addon> loadedAddons = new HashSet<Addon>();
       for (AddonThread thread : threads)
       {
          loadedAddons.add(thread.getRunnable().getAddon());
       }
 
-      Set<RegisteredAddon> toStop = new HashSet<RegisteredAddon>(loadedAddons);
-      Set<RegisteredAddon> updatedSet = loadAddons(addonLoader);
+      Set<Addon> toStop = new HashSet<Addon>(loadedAddons);
+      Set<Addon> updatedSet = loadAddons(addonLoader);
       toStop.removeAll(updatedSet);
 
-      Set<RegisteredAddon> toStart = new HashSet<RegisteredAddon>(updatedSet);
+      Set<Addon> toStart = new HashSet<Addon>(updatedSet);
       toStart.removeAll(loadedAddons);
 
       if (!toStop.isEmpty())
       {
          Set<AddonThread> stopped = new HashSet<AddonThread>();
-         for (RegisteredAddon addon : toStop)
+         for (Addon addon : toStop)
          {
             // TODO This needs to handle dependencies and ordering.
             ((RegisteredAddonImpl) addon).setStatus(Status.STOPPING);
@@ -145,14 +145,14 @@ public final class Forge
       }
    }
 
-   private Set<AddonThread> startAddons(Set<RegisteredAddon> toStart)
+   private Set<AddonThread> startAddons(Set<Addon> toStart)
    {
       Set<AddonThread> started = new HashSet<AddonThread>();
       AddonRegistryImpl registry = AddonRegistryImpl.INSTANCE;
 
       int startedThreads = 0;
       int batchSize = Math.min(BATCH_SIZE, toStart.size());
-      for (RegisteredAddon addon : toStart)
+      for (Addon addon : toStart)
       {
          ((RegisteredAddonImpl) addon).setStatus(Status.STARTING);
          logger.info("Starting addon (" + addon.getId() + ")");
@@ -183,9 +183,9 @@ public final class Forge
       return AddonRegistryImpl.INSTANCE;
    }
 
-   synchronized private Set<RegisteredAddon> loadAddons(ModuleLoader addonLoader)
+   synchronized private Set<Addon> loadAddons(ModuleLoader addonLoader)
    {
-      Set<RegisteredAddon> result = new HashSet<RegisteredAddon>();
+      Set<Addon> result = new HashSet<Addon>();
 
       String runtimeVersion = AddonRepositoryImpl.getRuntimeAPIVersion();
       List<AddonId> enabledCompatible = repository.listEnabledCompatibleWithVersion(runtimeVersion);
@@ -206,7 +206,7 @@ public final class Forge
 
       for (AddonId entry : enabledCompatible)
       {
-         RegisteredAddon addonToLoad = loadAddon(addonLoader, entry);
+         Addon addonToLoad = loadAddon(addonLoader, entry);
          if (Status.STARTING.equals(addonToLoad.getStatus()) || Status.STARTED.equals(addonToLoad.getStatus()))
             result.add(addonToLoad);
       }
@@ -214,7 +214,7 @@ public final class Forge
       return result;
    }
 
-   private RegisteredAddon loadAddon(ModuleLoader addonLoader, AddonId addonId)
+   private Addon loadAddon(ModuleLoader addonLoader, AddonId addonId)
    {
       AddonRegistryImpl registry = AddonRegistryImpl.INSTANCE;
 
@@ -231,7 +231,7 @@ public final class Forge
       }
       else if (!waitlist.containsKey(addonToLoad) && (addonToLoad.getModule() == null))
       {
-         Set<RegisteredAddon> missingDependencies = new HashSet<RegisteredAddon>();
+         Set<Addon> missingDependencies = new HashSet<Addon>();
          for (AddonDependency dependency : repository.getAddonDependencies(addonId))
          {
             AddonId dependencyId = dependency.getId();
@@ -259,7 +259,7 @@ public final class Forge
                addonToLoad.setModule(module);
                addonToLoad.setStatus(Status.STARTING);
 
-               for (RegisteredAddon waiting : waitlist.keySet())
+               for (Addon waiting : waitlist.keySet())
                {
                   waitlist.get(waiting).remove(addonToLoad);
                   if (waitlist.get(waiting).isEmpty())

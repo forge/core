@@ -30,7 +30,7 @@ public class UIInputInjectionTest extends AbstractUITest
    public void testInputValues()
    {
       Assert.assertEquals("firstName", firstName.getName());
-      Assert.assertEquals(String.class, firstName.getType());
+      Assert.assertEquals(String.class, firstName.getValueType());
    }
 
    @Test

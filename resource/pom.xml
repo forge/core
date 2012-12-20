@@ -9,7 +9,7 @@
    </parent>
    <artifactId>resource-parent</artifactId>
    <packaging>pom</packaging>
-   <name>Forge - Resource AddOn Parent</name>
+   <name>Forge - Resource Addon Parent</name>
    <modules>
       <module>api</module>
       <module>impl</module>

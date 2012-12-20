@@ -8,15 +8,15 @@ import org.jboss.forge.container.services.ServiceRegistry;
 
 public interface AddonRegistry
 {
-   RegisteredAddon getRegisteredAddon(AddonId entry);
+   Addon getRegisteredAddon(AddonId entry);
 
-   Set<RegisteredAddon> getRegisteredAddons();
+   Set<Addon> getRegisteredAddons();
 
-   Set<RegisteredAddon> getRegisteredAddons(RegisteredAddonFilter filter);
+   Set<Addon> getRegisteredAddons(AddonFilter filter);
 
    boolean isRegistered(AddonId id);
 
-   Map<RegisteredAddon, ServiceRegistry> getServiceRegistries();
+   Map<Addon, ServiceRegistry> getServiceRegistries();
 
    <T> Set<RemoteInstance<T>> getRemoteServices(Class<T> type);
 }
