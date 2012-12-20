@@ -50,4 +50,26 @@ public class UIInputInjectionTest
       Assert.assertEquals("firstName", firstName.getName());
       Assert.assertEquals(String.class, firstName.getType());
    }
+
+   @Test
+   public void testRequired()
+   {
+      firstName.setRequired(true);
+      Assert.assertTrue(firstName.isRequired());
+      firstName.setRequired(false);
+      Assert.assertFalse(firstName.isRequired());
+   }
+
+   @Test
+   public void testDefaultValue()
+   {
+      String inputVal = "A String";
+      firstName.setDefaultValue(inputVal);
+      Assert.assertEquals(inputVal, firstName.getValue());
+      final String inputVal2 = "Another String";
+
+      firstName.setDefaultValue(Callables.constant(inputVal2));
+      Assert.assertEquals(inputVal2, firstName.getValue());
+
+   }
 }
