@@ -13,7 +13,7 @@ import org.jboss.forge.container.services.Service;
 import org.jboss.forge.resource.ResourceFactory;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,7 +28,7 @@ public class ResourceGeneratorAddonTest
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-               .addAsManifestResource(new StringAsset(""), ArchivePaths.create("beans.xml"))
+               .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
                .addAsAddonDependencies(
                         AddonDependency.create(AddonId.from("resources", "1"), false, false),
                         AddonDependency.create(AddonId.from("mockstring", "1"), false, false));
@@ -42,7 +42,7 @@ public class ResourceGeneratorAddonTest
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                .addPackages(true, ResourceFactory.class.getPackage())
-               .addAsManifestResource(new StringAsset(""), ArchivePaths.create("beans.xml"))
+               .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
                .addAsAddonDependencies(
                         AddonDependency.create(AddonId.from("org.jboss.forge:facets", "2.0.0-SNAPSHOT"), true, false));
 
@@ -54,7 +54,7 @@ public class ResourceGeneratorAddonTest
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                .addClasses(MockStringResource.class, MockStringResourceGenerator.class)
-               .addAsManifestResource(new StringAsset(""), ArchivePaths.create("beans.xml"))
+               .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
                .addAsAddonDependencies(
                         AddonDependency.create(AddonId.from("resources", "1"), false, false));
 
