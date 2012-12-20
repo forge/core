@@ -88,6 +88,7 @@
             <module>maven-tests</module>
             <module>bootstrap</module>
             <module>aesh</module>
+            <module>resource</module>
             <module>ui</module>
             <module>parser-java</module>
             <module>dist</module>
