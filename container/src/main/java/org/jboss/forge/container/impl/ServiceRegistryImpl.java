@@ -41,6 +41,22 @@ public class ServiceRegistryImpl implements ServiceRegistry
    }
 
    @Override
+   @SuppressWarnings("unchecked")
+   public <T> RemoteInstance<T> getRemoteInstance(String serviceType)
+   {
+      Class<?> type;
+      try
+      {
+         type = Class.forName(serviceType, true, loader);
+         return (RemoteInstance<T>) getRemoteInstance(type);
+      }
+      catch (ClassNotFoundException e)
+      {
+         return null;
+      }
+   }
+
+   @Override
    public Set<Class<?>> getServices()
    {
       return services;
@@ -71,5 +87,20 @@ public class ServiceRegistryImpl implements ServiceRegistry
          }
       }
       return result;
+   }
+
+   @Override
+   public Set<? extends RemoteInstance<?>> getRemoteInstances(String typeName)
+   {
+      Class<?> type;
+      try
+      {
+         type = Class.forName(typeName, true, loader);
+         return getRemoteInstances(type);
+      }
+      catch (ClassNotFoundException e)
+      {
+         return null;
+      }
    }
 }

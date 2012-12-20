@@ -3,31 +3,31 @@ package org.jboss.forge.arquillian.protocol;
 import java.util.Collection;
 
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
-import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
 import org.jboss.arquillian.container.test.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.container.test.spi.client.deployment.DeploymentPackager;
 import org.jboss.arquillian.container.test.spi.client.protocol.Protocol;
 import org.jboss.arquillian.container.test.spi.command.CommandCallback;
-import org.jboss.forge.arquillian.ForgeContainerMethodExecutor;
 import org.jboss.forge.arquillian.ForgeDeploymentPackager;
+import org.jboss.forge.arquillian.ForgeTestMethodExecutor;
+import org.jboss.forge.container.Forge;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class ServletProtocol implements Protocol<ServletProtocolConfiguration>
+public class ForgeProtocol implements Protocol<ForgeProtocolConfiguration>
 {
 
    @Override
-   public Class<ServletProtocolConfiguration> getProtocolConfigurationClass()
+   public Class<ForgeProtocolConfiguration> getProtocolConfigurationClass()
    {
-      return ServletProtocolConfiguration.class;
+      return ForgeProtocolConfiguration.class;
    }
 
    @Override
    public ProtocolDescription getDescription()
    {
-      return new ServletProtocolDescription();
+      return new ForgeProtocolDescription();
    }
 
    @Override
@@ -37,17 +37,17 @@ public class ServletProtocol implements Protocol<ServletProtocolConfiguration>
    }
 
    @Override
-   public ContainerMethodExecutor getExecutor(ServletProtocolConfiguration protocolConfiguration,
+   public ContainerMethodExecutor getExecutor(ForgeProtocolConfiguration protocolConfiguration,
             ProtocolMetaData metaData, CommandCallback callback)
    {
-      Collection<HTTPContext> contexts = metaData.getContexts(HTTPContext.class);
+      Collection<Forge> contexts = metaData.getContexts(Forge.class);
       if (contexts.size() == 0)
       {
          throw new IllegalArgumentException(
-                  "No " + HTTPContext.class.getName() + " found in " + ProtocolMetaData.class.getName() + ". " +
-                           "Servlet protocol can not be used");
+                  "No " + Forge.class.getName() + " found in " + ProtocolMetaData.class.getName() + ". " +
+                           "Forge protocol can not be used");
       }
-      return new ForgeContainerMethodExecutor(protocolConfiguration, contexts, callback);
+      return new ForgeTestMethodExecutor(protocolConfiguration, contexts.iterator().next());
    }
 
 }

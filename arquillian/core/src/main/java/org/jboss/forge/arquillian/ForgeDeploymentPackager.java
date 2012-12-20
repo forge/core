@@ -10,10 +10,7 @@ import org.jboss.arquillian.container.test.spi.client.deployment.ProtocolArchive
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.arquillian.archive.ForgeArchiveImpl;
 import org.jboss.forge.arquillian.archive.ForgeRemoteAddon;
-import org.jboss.forge.arquillian.runner.BeanManagerProducer;
 import org.jboss.forge.arquillian.runner.CDIEnricherRemoteExtensionWorkaround;
-import org.jboss.forge.arquillian.runner.ServletTestRunner;
-import org.jboss.forge.arquillian.runner.ServletTestServer;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 
@@ -26,14 +23,9 @@ public class ForgeDeploymentPackager implements DeploymentPackager
       {
          ForgeArchive deployment = ForgeArchive.class.cast(testDeployment.getApplicationArchive());
 
-         deployment.addClasses(ServletTestServer.class, ServletTestRunner.class, BeanManagerProducer.class,
-                  CDIEnricherRemoteExtensionWorkaround.class);
          deployment.addAsServiceProvider(RemoteLoadableExtension.class, CDIEnricherRemoteExtensionWorkaround.class);
          deployment.addAsLibraries(testDeployment.getAuxiliaryArchives());
          deployment.addAsLibraries(resolveDependencies("org.jboss.shrinkwrap:shrinkwrap-impl-base:1.0.1"));
-         deployment.addAsLibraries(resolveDependencies("org.eclipse.jetty:jetty-server:8.1.5.v20120716"));
-         deployment.addAsLibraries(resolveDependencies("org.eclipse.jetty:jetty-servlet:8.1.5.v20120716"));
-
          deployment.addClasses(ForgeArchive.class, ForgeArchiveImpl.class);
 
          return deployment;

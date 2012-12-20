@@ -6,10 +6,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.jboss.forge.container.AddonId;
-import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.Addon;
 import org.jboss.forge.container.AddonFilter;
+import org.jboss.forge.container.AddonId;
+import org.jboss.forge.container.AddonRegistry;
+import org.jboss.forge.container.Status;
 import org.jboss.forge.container.services.RemoteInstance;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.container.util.Sets;
@@ -96,14 +97,33 @@ public enum AddonRegistryImpl implements AddonRegistry
    }
 
    @Override
-   public <T> Set<RemoteInstance<T>> getRemoteServices(Class<T> type)
+   public <T> Set<RemoteInstance<T>> getRemoteInstances(Class<T> type)
    {
       // TODO This needs to block addon installation/removal;
       Set<RemoteInstance<T>> result = new HashSet<RemoteInstance<T>>();
       for (Addon addon : addons)
       {
-         ServiceRegistry serviceRegistry = addon.getServiceRegistry();
-         result.addAll(serviceRegistry.getRemoteInstances(type));
+         if (Status.STARTED.equals(addon.getStatus()))
+         {
+            ServiceRegistry serviceRegistry = addon.getServiceRegistry();
+            result.addAll(serviceRegistry.getRemoteInstances(type));
+         }
+      }
+      return result;
+   }
+
+   @Override
+   public Set<RemoteInstance<?>> getRemoteInstances(String typeName)
+   {
+      // TODO This needs to block addon installation/removal;
+      Set<RemoteInstance<?>> result = new HashSet<RemoteInstance<?>>();
+      for (Addon addon : addons)
+      {
+         if (Status.STARTED.equals(addon.getStatus()))
+         {
+            ServiceRegistry serviceRegistry = addon.getServiceRegistry();
+            result.addAll(serviceRegistry.getRemoteInstances(typeName));
+         }
       }
       return result;
    }

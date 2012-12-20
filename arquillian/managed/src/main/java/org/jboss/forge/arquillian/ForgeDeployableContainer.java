@@ -12,7 +12,7 @@ import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
-import org.jboss.forge.arquillian.protocol.ServletProtocolDescription;
+import org.jboss.forge.arquillian.protocol.ForgeProtocolDescription;
 import org.jboss.forge.arquillian.util.NativeSystemCall;
 import org.jboss.forge.arquillian.util.ShrinkWrapUtil;
 import org.jboss.forge.container.AddonId;
@@ -76,7 +76,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    @Override
    public ProtocolDescription getDefaultProtocol()
    {
-      return new ServletProtocolDescription();
+      return new ForgeProtocolDescription();
    }
 
    @Override

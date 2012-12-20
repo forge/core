@@ -4,7 +4,7 @@ import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.test.spi.client.deployment.DeploymentScenarioGenerator;
 import org.jboss.arquillian.container.test.spi.client.protocol.Protocol;
 import org.jboss.arquillian.core.spi.LoadableExtension;
-import org.jboss.forge.arquillian.protocol.ServletProtocol;
+import org.jboss.forge.arquillian.protocol.ForgeProtocol;
 
 public class ForgeLoadableExtension implements LoadableExtension
 {
@@ -13,6 +13,6 @@ public class ForgeLoadableExtension implements LoadableExtension
    {
       builder.service(DeployableContainer.class, ForgeDeployableContainer.class);
       builder.service(DeploymentScenarioGenerator.class, ForgeDeploymentScenarioGenerator.class);
-      builder.service(Protocol.class, ServletProtocol.class);
+      builder.service(Protocol.class, ForgeProtocol.class);
    }
 }

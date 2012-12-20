@@ -10,32 +10,21 @@
       <relativePath>../pom.xml</relativePath>
    </parent>
 
-	<packaging>pom</packaging>
+   <packaging>pom</packaging>
    <artifactId>arquillian-forge-parent</artifactId>
    <name>Forge - Arquillian Container Adapters</name>
 
-	<modules>
-		<module>core</module>
-		<module>managed</module>
-		<module>classpath</module>
-		<module>remote</module>
-	</modules>
+   <modules>
+      <module>core</module>
+      <module>managed</module>
+      <module>classpath</module>
+      <module>remote</module>
+   </modules>
 
    <dependencies>
       <dependency>
          <groupId>org.jboss.forge</groupId>
          <artifactId>forge-addon-container</artifactId>
-      </dependency>
-
-      <dependency>
-         <groupId>org.eclipse.jetty</groupId>
-         <artifactId>jetty-server</artifactId>
-         <version>8.1.5.v20120716</version>
-      </dependency>
-      <dependency>
-         <groupId>org.eclipse.jetty</groupId>
-         <artifactId>jetty-servlet</artifactId>
-         <version>8.1.5.v20120716</version>
       </dependency>
 
       <dependency>

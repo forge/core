@@ -15,9 +15,7 @@ import org.jboss.arquillian.container.spi.client.container.DeploymentException;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
 import org.jboss.arquillian.container.spi.client.deployment.Deployment;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
-import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
-import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.forge.addon.dependency.spi.DependencyResolver;
@@ -25,15 +23,15 @@ import org.jboss.forge.addon.manager.AddonManager;
 import org.jboss.forge.addon.manager.InstallRequest;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.arquillian.archive.ForgeRemoteAddon;
-import org.jboss.forge.arquillian.protocol.ServletProtocolDescription;
+import org.jboss.forge.arquillian.protocol.ForgeProtocolDescription;
 import org.jboss.forge.arquillian.util.ShrinkWrapUtil;
+import org.jboss.forge.container.Addon;
 import org.jboss.forge.container.AddonDependency;
+import org.jboss.forge.container.AddonFilter;
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.AddonRepository;
 import org.jboss.forge.container.Forge;
-import org.jboss.forge.container.Addon;
-import org.jboss.forge.container.AddonFilter;
 import org.jboss.forge.container.Status;
 import org.jboss.forge.container.impl.AddonRepositoryImpl;
 import org.jboss.forge.container.util.ClassLoaders;
@@ -84,9 +82,6 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
          throw new IllegalArgumentException(
                   "Invalid Archive type. Ensure that your @Deployment method returns type 'ForgeArchive'.");
       }
-
-      HTTPContext httpContext = new HTTPContext("localhost", 4141);
-      httpContext.add(new Servlet("ArquillianServletRunner", "/ArquillianServletRunner"));
 
       final AddonRegistry registry = runnable.getForge().getAddonRegistry();
       AddonFilter waitForFilter = new AddonFilter()
@@ -144,8 +139,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
          }
       }
 
-      return new ProtocolMetaData()
-               .addContext(httpContext);
+      return new ProtocolMetaData().addContext(runnable.getForge());
    }
 
    private boolean isDeploymentComplete(Addon addon)
@@ -192,7 +186,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    @Override
    public ProtocolDescription getDefaultProtocol()
    {
-      return new ServletProtocolDescription();
+      return new ForgeProtocolDescription();
    }
 
    @Override

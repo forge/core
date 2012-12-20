@@ -7,18 +7,19 @@ import org.jboss.modules.Module;
 import org.jboss.weld.bootstrap.api.Bootstrap;
 import org.jboss.weld.bootstrap.spi.BeanDeploymentArchive;
 import org.jboss.weld.environment.se.discovery.AbstractWeldSEDeployment;
+import org.jboss.weld.environment.se.discovery.ImmutableBeanDeploymentArchive;
 import org.jboss.weld.resources.spi.ResourceLoader;
 
 public class ModularWeldDeployment extends AbstractWeldSEDeployment
 {
    private final BeanDeploymentArchive beanDeploymentArchive;
 
-   public ModularWeldDeployment(Module module, Bootstrap bootstrap)
+   public ModularWeldDeployment(Module module, Bootstrap bootstrap, ResourceLoader resourceLoader,
+            ModuleScanResult scanResult)
    {
       super(bootstrap);
-
-      ModuleResourceLoader resourceLoader = new ModuleResourceLoader(module);
-      this.beanDeploymentArchive = new ModularURLScanner(resourceLoader, bootstrap, RESOURCES).scan();
+      this.beanDeploymentArchive = new ImmutableBeanDeploymentArchive("classpath", scanResult.getDiscoveredClasses(),
+               bootstrap.parse(scanResult.getDiscoveredResourceUrls()));
       this.beanDeploymentArchive.getServices().add(ResourceLoader.class, resourceLoader);
    }
 

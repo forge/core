@@ -18,5 +18,7 @@ public interface AddonRegistry
 
    Map<Addon, ServiceRegistry> getServiceRegistries();
 
-   <T> Set<RemoteInstance<T>> getRemoteServices(Class<T> type);
+   <T> Set<RemoteInstance<T>> getRemoteInstances(Class<T> type);
+
+   Set<RemoteInstance<?>> getRemoteInstances(String typeName);
 }

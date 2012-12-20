@@ -75,7 +75,7 @@ public class ResourceFactory
    @SuppressWarnings("rawtypes")
    private Iterable<RemoteInstance<ResourceGenerator>> getRegisteredResourceGenerators()
    {
-      return registry.getRemoteServices(ResourceGenerator.class);
+      return registry.getRemoteInstances(ResourceGenerator.class);
    }
 
    public ResourceFactory fireEvent(ResourceEvent event)

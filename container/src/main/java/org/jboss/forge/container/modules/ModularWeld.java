@@ -27,15 +27,17 @@ public class ModularWeld extends Weld
    }
 
    private Module module;
+   private ModuleScanResult scanResult;
 
-   public ModularWeld(Module module)
+   public ModularWeld(Module module, ModuleScanResult scanResult)
    {
       this.module = module;
+      this.scanResult = scanResult;
    }
 
    @Override
    protected Deployment createDeployment(final ResourceLoader resourceLoader, final Bootstrap bootstrap)
    {
-      return new ModularWeldDeployment(module, bootstrap);
+      return new ModularWeldDeployment(module, bootstrap, scanResult.getResourceLoader(), scanResult);
    }
 }

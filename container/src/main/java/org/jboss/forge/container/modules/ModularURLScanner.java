@@ -8,9 +8,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.jboss.weld.bootstrap.api.Bootstrap;
-import org.jboss.weld.bootstrap.spi.BeanDeploymentArchive;
-import org.jboss.weld.environment.se.discovery.ImmutableBeanDeploymentArchive;
 import org.jboss.weld.environment.se.discovery.url.ClasspathScanningException;
 import org.jboss.weld.resources.spi.ResourceLoader;
 import org.slf4j.Logger;
@@ -31,19 +28,17 @@ public class ModularURLScanner
    private static final Logger log = LoggerFactory.getLogger(ModularURLScanner.class);
    private final String[] resources;
    private final ResourceLoader resourceLoader;
-   private final Bootstrap bootstrap;
 
-   public ModularURLScanner(ResourceLoader resourceLoader, Bootstrap bootstrap, String... resources)
+   public ModularURLScanner(ResourceLoader resourceLoader, String... resources)
    {
       this.resources = resources;
       this.resourceLoader = resourceLoader;
-      this.bootstrap = bootstrap;
    }
 
-   public BeanDeploymentArchive scan()
+   public ModuleScanResult scan()
    {
       List<String> discoveredClasses = new ArrayList<String>();
-      List<URL> discoveredBeanXmlUrls = new ArrayList<URL>();
+      List<URL> discoveredResourceUrls = new ArrayList<URL>();
       Collection<String> paths = new ArrayList<String>();
       for (String resourceName : resources)
       {
@@ -101,9 +96,10 @@ public class ModularURLScanner
          }
 
          ModularFileSystemURLHandler handler = new ModularFileSystemURLHandler(resourceLoader);
-         handler.handle(paths, discoveredClasses, discoveredBeanXmlUrls);
+         handler.handle(paths, discoveredClasses, discoveredResourceUrls);
       }
-      return new ImmutableBeanDeploymentArchive("classpath", discoveredClasses, bootstrap.parse(discoveredBeanXmlUrls));
+
+      return new ModuleScanResult(resourceLoader, discoveredResourceUrls, discoveredClasses);
    }
 
 }
