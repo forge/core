@@ -21,12 +21,12 @@ public class ConverterProducer
 
    @Produces
    @Default
-   @SuppressWarnings("rawtypes")
-   public Converter produceConverter(InjectionPoint injectionPoint)
+   @SuppressWarnings("unchecked")
+   public <S, T> Converter<S, T> produceConverter(InjectionPoint injectionPoint)
    {
       ParameterizedType ptype = (ParameterizedType) injectionPoint.getType();
       Type[] actualTypeArguments = ptype.getActualTypeArguments();
-      return ConverterRegistryImpl.INSTANCE.getConverter((Class<?>) actualTypeArguments[0],
-               (Class<?>) actualTypeArguments[1]);
+      return ConverterRegistryImpl.INSTANCE.getConverter((Class<S>) actualTypeArguments[0],
+               (Class<T>) actualTypeArguments[1]);
    }
 }

@@ -7,17 +7,17 @@
 
 package org.jboss.forge.ui.impl.converter;
 
+import javax.inject.Inject;
+
 import org.jboss.forge.ui.converter.Converter;
 import org.jboss.forge.ui.impl.AbstractUITest;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore("Injection still not working")
 public class CDIConverterTest extends AbstractUITest
 {
 
-//   @Inject
+   @Inject
    private Converter<String, Long> converter;
 
    @Test
