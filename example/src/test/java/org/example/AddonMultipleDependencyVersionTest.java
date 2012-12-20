@@ -14,6 +14,7 @@ import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.RegisteredAddon;
+import org.jboss.forge.container.services.RemoteInstance;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -78,6 +79,11 @@ public class AddonMultipleDependencyVersionTest
          {
             if (service.getName().equals(SimpleService.class.getName()))
             {
+               RemoteInstance<?> instance = entry.getValue().getRemoteInstance(service);
+               Object serviceInstance = instance.get();
+               Assert.assertNotNull(serviceInstance);
+               Object result = serviceInstance.getClass().getMethod("isStartupObserved").invoke(serviceInstance);
+               Assert.assertTrue((Boolean) result);
                count++;
             }
          }
