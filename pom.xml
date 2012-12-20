@@ -63,7 +63,7 @@
       <version.mvel>2.1.0.Final</version.mvel>
       <version.shrinkwrap.resolver>2.0.0-alpha-6</version.shrinkwrap.resolver>
       <version.slf4j>1.6.1</version.slf4j>
-      <version.weld>2.0.0.Beta1</version.weld>
+      <version.weld>2.0.0.Beta2</version.weld>
       <version.weld.spi>2.0.Beta1</version.weld.spi>
    </properties>
 
