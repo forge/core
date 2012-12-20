@@ -14,7 +14,6 @@ import org.jboss.forge.ui.UIValidationContext;
 import org.jboss.forge.ui.wizard.UIWizardContext;
 import org.jboss.forge.ui.wizard.UIWizardStep;
 import org.jboss.forge.ui.wizard.WizardId;
-import org.jboss.weld.bootstrap.api.Environment;
 
 @Remote
 public class MockNewProjectCommand implements UICommand, UIWizardStep
