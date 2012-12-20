@@ -1,11 +1,11 @@
 package org.jboss.forge.ui.impl;
 
+import java.io.File;
 import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
 import org.jboss.forge.container.services.Remote;
-import org.jboss.forge.resource.DirectoryResource;
 import org.jboss.forge.ui.Result;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UIContext;
@@ -27,7 +27,7 @@ public class MockNewProjectCommand implements UICommand, UIWizardStep
    private UIInput<String> projectName;
 
    @Inject
-   private UIInput<DirectoryResource> projectDir;
+   private UIInput<File> projectDir;
 
    // Rendered as a checkbox
    @Inject
@@ -43,10 +43,10 @@ public class MockNewProjectCommand implements UICommand, UIWizardStep
 
       // context.addFieldRelationship(projectDir).enabledWhen(projectName).isValid();
 
-      projectDir.setDefaultValue(new Callable<DirectoryResource>()
+      projectDir.setDefaultValue(new Callable<File>()
       {
          @Override
-         public DirectoryResource call()
+         public File call()
          {
             return null;
          }
