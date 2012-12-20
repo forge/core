@@ -69,7 +69,7 @@ public class MockNewProjectCommand implements UICommand, UIWizardStep
    }
 
    /*
-    * 
+    *
     * Defines the action to take once inputs are valid and submitted
     */
 
@@ -85,7 +85,7 @@ public class MockNewProjectCommand implements UICommand, UIWizardStep
    }
 
    /*
-    * 
+    *
     * Defines the action to take once inputs are valid and submitted
     */
 
