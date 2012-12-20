@@ -55,7 +55,7 @@
       <forge.release.codename>Two</forge.release.codename>
       <forge.release.version>${project.version}</forge.release.version>
       <version.arquillian>1.0.3.Final</version.arquillian>
-      <version.arquillian.container>1.0.0.CR4</version.arquillian.container>
+      <version.arquillian.container>1.0.0.CR5</version.arquillian.container>
       <version.cdi>1.1-PRD</version.cdi>
       <version.jboss.spec>3.0.1.Final</version.jboss.spec>
       <version.jboss.modules>1.1.3.GA</version.jboss.modules>
