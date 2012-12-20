@@ -1,6 +1,6 @@
 package org.jboss.forge.container;
 
-public class RegisteredAddonFilters
+public class AddonFilters
 {
    public static AddonFilter allStarted()
    {

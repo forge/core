@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.impl.AddonRegistryImpl;
 import org.jboss.forge.container.impl.AddonRepositoryImpl;
-import org.jboss.forge.container.impl.RegisteredAddonImpl;
+import org.jboss.forge.container.impl.AddonImpl;
 import org.jboss.forge.container.modules.AddonModuleLoader;
 import org.jboss.forge.container.util.Sets;
 import org.jboss.modules.Module;
@@ -123,7 +123,7 @@ public final class Forge
          for (Addon addon : toStop)
          {
             // TODO This needs to handle dependencies and ordering.
-            ((RegisteredAddonImpl) addon).setStatus(Status.STOPPING);
+            ((AddonImpl) addon).setStatus(Status.STOPPING);
             logger.info("Stopping addon (" + addon.getId() + ")");
             for (AddonThread thread : threads)
             {
@@ -154,7 +154,7 @@ public final class Forge
       int batchSize = Math.min(BATCH_SIZE, toStart.size());
       for (Addon addon : toStart)
       {
-         ((RegisteredAddonImpl) addon).setStatus(Status.STARTING);
+         ((AddonImpl) addon).setStatus(Status.STARTING);
          logger.info("Starting addon (" + addon.getId() + ")");
          while (registry.getServiceRegistries().size() + batchSize <= startedThreads)
          {
@@ -168,7 +168,7 @@ public final class Forge
             }
          }
 
-         AddonRunnable runnable = new AddonRunnable(this, (RegisteredAddonImpl) addon);
+         AddonRunnable runnable = new AddonRunnable(this, (AddonImpl) addon);
          Thread thread = new Thread(runnable, addon.getId().toCoordinates());
          started.add(new AddonThread(thread, runnable));
          thread.start();
@@ -218,10 +218,10 @@ public final class Forge
    {
       AddonRegistryImpl registry = AddonRegistryImpl.INSTANCE;
 
-      RegisteredAddonImpl addonToLoad = (RegisteredAddonImpl) registry.getRegisteredAddon(addonId);
+      AddonImpl addonToLoad = (AddonImpl) registry.getRegisteredAddon(addonId);
       if (addonToLoad == null)
       {
-         addonToLoad = new RegisteredAddonImpl(addonId, Status.STARTING);
+         addonToLoad = new AddonImpl(addonId, Status.STARTING);
          registry.register(addonToLoad);
       }
 
@@ -237,7 +237,7 @@ public final class Forge
             AddonId dependencyId = dependency.getId();
             if (!registry.isRegistered(dependencyId) && !dependency.isOptional())
             {
-               RegisteredAddonImpl missingDependency = new RegisteredAddonImpl(dependencyId, null);
+               AddonImpl missingDependency = new AddonImpl(dependencyId, null);
                missingDependencies.add(missingDependency);
             }
          }
@@ -264,7 +264,7 @@ public final class Forge
                   waitlist.get(waiting).remove(addonToLoad);
                   if (waitlist.get(waiting).isEmpty())
                   {
-                     ((RegisteredAddonImpl) registry.getRegisteredAddon(waiting.getId())).setStatus(Status.STARTING);
+                     ((AddonImpl) registry.getRegisteredAddon(waiting.getId())).setStatus(Status.STARTING);
                      waitlist.remove(waiting);
                   }
                }

@@ -8,7 +8,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import org.jboss.forge.container.event.Perform;
 import org.jboss.forge.container.events.InitializeServices;
 import org.jboss.forge.container.impl.AddonRepositoryProducer;
-import org.jboss.forge.container.impl.RegisteredAddonImpl;
+import org.jboss.forge.container.impl.AddonImpl;
 import org.jboss.forge.container.modules.ModularWeld;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.container.util.Assert;
@@ -20,13 +20,13 @@ import org.jboss.weld.environment.se.WeldContainer;
 public final class AddonRunnable implements Runnable
 {
    private Forge forge;
-   private RegisteredAddonImpl addon;
+   private AddonImpl addon;
    private boolean shutdown = false;
    private static final Logger LOGGER = Logger.getLogger(AddonRunnable.class.getName());
 
    private CDIContainer container;
 
-   public AddonRunnable(Forge forge, RegisteredAddonImpl addon)
+   public AddonRunnable(Forge forge, AddonImpl addon)
    {
       this.forge = forge;
       this.addon = addon;
@@ -46,7 +46,7 @@ public final class AddonRunnable implements Runnable
       ClassLoaders.executeIn(addon.getClassLoader(), container);
    }
 
-   public RegisteredAddonImpl getAddon()
+   public AddonImpl getAddon()
    {
       return addon;
    }

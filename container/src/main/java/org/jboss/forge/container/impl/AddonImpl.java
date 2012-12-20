@@ -6,14 +6,14 @@ import org.jboss.forge.container.Status;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.modules.Module;
 
-public class RegisteredAddonImpl implements Addon
+public class AddonImpl implements Addon
 {
    private Module module;
    private ServiceRegistry registry;
    private Status status;
    private AddonId entry;
 
-   public RegisteredAddonImpl(AddonId entry, Status status)
+   public AddonImpl(AddonId entry, Status status)
    {
       this.entry = entry;
       this.status = status;
@@ -90,7 +90,7 @@ public class RegisteredAddonImpl implements Addon
          return false;
       if (getClass() != obj.getClass())
          return false;
-      RegisteredAddonImpl other = (RegisteredAddonImpl) obj;
+      AddonImpl other = (AddonImpl) obj;
       if (entry == null)
       {
          if (other.entry != null)
