@@ -5,31 +5,28 @@
       <groupId>org.jboss.forge</groupId>
       <artifactId>ui-parent</artifactId>
       <version>2.0.0-SNAPSHOT</version>
-      <relativePath>../pom.xml</relativePath>
    </parent>
-   <artifactId>ui</artifactId>
-   <name>Forge - UI Addon</name>
+   <artifactId>ui-impl</artifactId>
+   <name>Forge - UI Impl</name>
    <dependencies>
+      <dependency>
+         <groupId>javax.enterprise</groupId>
+         <artifactId>cdi-api</artifactId>
+         <scope>provided</scope>
+      </dependency>
       <dependency>
          <groupId>org.jboss.forge</groupId>
          <artifactId>ui-api</artifactId>
-         <scope>compile</scope>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge</groupId>
-         <artifactId>ui-impl</artifactId>
-         <scope>runtime</scope>
+         <artifactId>forge-test-harness</artifactId>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>arquillian-forge-classpath</artifactId>
+         <scope>test</scope>
       </dependency>
    </dependencies>
-   <build>
-      <plugins>
-         <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-jar-plugin</artifactId>
-            <configuration>
-               <classifier>forge-addon</classifier>
-            </configuration>
-         </plugin>
-      </plugins>
-   </build>
 </project>

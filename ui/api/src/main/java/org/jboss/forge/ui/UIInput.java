@@ -26,4 +26,6 @@ public interface UIInput<T>
    UIInput<T> setRequired(boolean required);
 
    UIInput<T> setRequired(Callable<Boolean> required);
+
+   UIInput<T> setValue(T value);
 }

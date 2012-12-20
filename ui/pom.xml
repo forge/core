@@ -12,9 +12,7 @@
    <name>Forge - UI AddOn Parent</name>
    <modules>
       <module>api</module>
-      <!--
       <module>impl</module>
-       -->
       <module>bom</module>
    </modules>
    <dependencyManagement>
@@ -24,13 +22,11 @@
             <artifactId>ui-api</artifactId>
             <version>${project.version}</version>
          </dependency>
-         <!--
          <dependency>
             <groupId>org.jboss.forge</groupId>
-            <artifactId>resource-impl</artifactId>
+            <artifactId>ui-impl</artifactId>
             <version>${project.version}</version>
          </dependency>
-          -->
       </dependencies>
    </dependencyManagement>
 </project>
