@@ -41,7 +41,7 @@ public class Bootstrap
       String installAddon = null;
       String removeAddon = null;
       forge = new Forge();
-      if (args.length > 0 && args.length % 2 == 0)
+      if (args.length > 0)
       {
          for (int i = 0; i < args.length; i++)
          {
