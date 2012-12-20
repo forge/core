@@ -18,8 +18,8 @@ import org.jboss.forge.container.services.RemoteInstance;
 import org.jboss.forge.resource.events.ResourceEvent;
 
 /**
- * @author Mike Brock <cbrock@redhat.com>
  * @author <a href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>
+ * @author Mike Brock <cbrock@redhat.com>
  */
 @Remote
 @Singleton

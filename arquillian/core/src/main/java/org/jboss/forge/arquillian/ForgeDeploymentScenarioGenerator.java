@@ -49,8 +49,10 @@ public class ForgeDeploymentScenarioGenerator implements DeploymentScenarioGener
          for (Addon addon : dependency.value())
          {
             AddonId id = AddonId.from(addon.name(), addon.version());
-            deployments.add(new DeploymentDescription(id.toCoordinates(),
-                     ShrinkWrap.create(ForgeRemoteAddon.class).setAddonId(id)));
+            DeploymentDescription deploymentDescription = new DeploymentDescription(id.toCoordinates(),
+                     ShrinkWrap.create(ForgeRemoteAddon.class).setAddonId(id));
+            deploymentDescription.shouldBeTestable(false);
+            deployments.add(deploymentDescription);
          }
 
       return deployments;

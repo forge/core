@@ -9,6 +9,6 @@ public class ServletProtocolDescription extends ProtocolDescription
 {
    public ServletProtocolDescription()
    {
-      super("FORGE-2.0");
+      super("_FORGE_2_");
    }
 }
