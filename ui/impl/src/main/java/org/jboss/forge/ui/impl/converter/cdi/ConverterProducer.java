@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.ui.impl.converter;
+package org.jboss.forge.ui.impl.converter.cdi;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -15,6 +15,7 @@ import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 
 import org.jboss.forge.ui.converter.Converter;
+import org.jboss.forge.ui.impl.converter.ConverterRegistryImpl;
 
 public class ConverterProducer
 {

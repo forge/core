@@ -65,6 +65,7 @@ public enum ConverterRegistryImpl implements ConverterRegistry
       customConverters.remove(key);
    }
 
+   // TODO: Do comparison based on the class hierarchy
    private static class ClassPairEntry
    {
       private final String sourceClassName;
