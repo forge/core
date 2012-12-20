@@ -9,7 +9,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +25,7 @@ public class AddonCDIExtensionTest
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                .addClasses(TestExtension.class)
-               .addAsManifestResource(new StringAsset(""), ArchivePaths.create("beans.xml"))
+               .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
                .addAsServiceProvider(Extension.class, TestExtension.class);
 
       return archive;

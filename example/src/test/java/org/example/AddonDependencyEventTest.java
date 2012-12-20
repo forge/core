@@ -11,7 +11,7 @@ import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonId;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,7 +28,7 @@ public class AddonDependencyEventTest
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
                .addClasses(EventService.class)
-               .addAsManifestResource(new StringAsset(""), ArchivePaths.create("beans.xml"))
+               .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
                .addAsAddonDependencies(AddonDependency.create(AddonId.from("dependency", "1")));
 
       return archive;
@@ -39,7 +39,7 @@ public class AddonDependencyEventTest
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class, "dependency.jar")
                .addClasses(EventResponseService.class)
-               .addAsManifestResource(new StringAsset(""), ArchivePaths.create("beans.xml"));
+               .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
 
       return archive;
    }

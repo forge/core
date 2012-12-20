@@ -9,7 +9,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.services.Service;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +25,7 @@ public class AddonSelfInjectionExposedServiceTest
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                .addClasses(PublishedService.class)
-               .addAsManifestResource(new StringAsset(""), ArchivePaths.create("beans.xml"));
+               .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
 
       return archive;
    }

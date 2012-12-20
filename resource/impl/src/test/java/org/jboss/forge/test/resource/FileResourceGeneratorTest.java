@@ -17,6 +17,7 @@ import org.jboss.forge.resource.ResourceFactory;
 import org.jboss.forge.resource.UnknownFileResource;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.junit.Assert;
 import org.junit.Test;
@@ -35,7 +36,7 @@ public class FileResourceGeneratorTest
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
                .addPackages(true, ResourceFactory.class.getPackage())
-               .addAsManifestResource(new StringAsset(""), ArchivePaths.create("beans.xml"))
+               .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
                .addAsAddonDependencies(
                         AddonDependency.create(AddonId.from("org.jboss.forge:facets", "2.0.0-SNAPSHOT")));
 
