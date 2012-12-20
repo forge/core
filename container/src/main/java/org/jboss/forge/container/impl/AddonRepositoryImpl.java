@@ -228,17 +228,8 @@ public final class AddonRepositoryImpl implements AddonRepository
       }
 
       File registryFile = getRepositoryRegistryFile();
-      List<AddonId> installedAddons = listEnabled();
       synchronized (lock)
       {
-         for (AddonId e : installedAddons)
-         {
-            if (addon.getName().equals(e.getName()))
-            {
-               disable(e);
-            }
-         }
-
          try
          {
             Node installed = XMLParser.parse(registryFile);

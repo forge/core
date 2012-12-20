@@ -69,7 +69,7 @@ public class RegisteredAddonImpl implements RegisteredAddon
    @Override
    public String toString()
    {
-      return getId().toCoordinates() + " - " + status;
+      return getId().toCoordinates() + (status == null ? "" : " - " + status);
    }
 
    @Override
