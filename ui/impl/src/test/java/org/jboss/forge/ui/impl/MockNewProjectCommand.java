@@ -20,8 +20,8 @@ import org.jboss.weld.bootstrap.api.Environment;
 public class MockNewProjectCommand implements UICommand, UIWizardStep
 {
 
-   @Inject
-   private Environment env;
+   // @Inject
+   // private Environment env;
 
    @Inject
    private UIInput<String> projectName;
