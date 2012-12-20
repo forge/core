@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.ui.impl;
+package org.jboss.forge.ui.impl.util;
 
 import java.util.concurrent.Callable;
 

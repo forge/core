@@ -7,12 +7,16 @@
 
 package org.jboss.forge.ui;
 
-
 public abstract class Result
 {
 
    private final Class<? extends UICommand> command;
    private final String message;
+
+   public static final Result success()
+   {
+      return new ResultSuccess((String) null);
+   }
 
    public static final Result success(String message)
    {

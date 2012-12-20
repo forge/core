@@ -10,6 +10,7 @@ package org.jboss.forge.ui.impl;
 import java.util.concurrent.Callable;
 
 import org.jboss.forge.ui.UIInput;
+import org.jboss.forge.ui.impl.util.Callables;
 
 /**
  * Implementation of a {@link UIInput} object

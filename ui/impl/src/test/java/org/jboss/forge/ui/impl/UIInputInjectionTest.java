@@ -9,31 +9,13 @@ package org.jboss.forge.ui.impl;
 
 import javax.inject.Inject;
 
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
-import org.jboss.forge.ui.UI;
 import org.jboss.forge.ui.UIInput;
-import org.jboss.shrinkwrap.api.ArchivePaths;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.forge.ui.impl.util.Callables;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-@RunWith(Arquillian.class)
-public class UIInputInjectionTest
+public class UIInputInjectionTest extends AbstractUITest
 {
-   @Deployment
-   public static ForgeArchive getDeployment()
-   {
-      ForgeArchive archive = ShrinkWrap
-               .create(ForgeArchive.class)
-               .addPackages(true, UI.class.getPackage())
-               .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
-
-      return archive;
-   }
 
    @Inject
    UIInput<String> firstName;
