@@ -39,6 +39,7 @@ public class Bootstrap
    public Bootstrap(String[] args)
    {
       String installAddon = null;
+      String removeAddon = null;
       forge = new Forge();
       if (args.length > 0 && args.length % 2 == 0)
       {
@@ -47,6 +48,10 @@ public class Bootstrap
             if ("--install".equals(args[i]))
             {
                installAddon = args[++i];
+            }
+            if ("--remove".equals(args[i]))
+            {
+               removeAddon = args[++i];
             }
             if ("--addonDir".equals(args[i]))
             {
@@ -63,9 +68,9 @@ public class Bootstrap
       addonManager = new AddonManager(forge.getRepository(), dependencyResolver);
 
       if (installAddon != null)
-      {
          deploy(installAddon);
-      }
+      if (removeAddon != null)
+         undeploy(removeAddon);
    }
 
    public void start()
@@ -81,6 +86,24 @@ public class Bootstrap
          AddonId addon = AddonId.fromCoordinates(addonCoordinates);
          InstallRequest request = addonManager.install(addon);
          request.perform();
+      }
+      catch (Exception e)
+      {
+         e.printStackTrace();
+      }
+      finally
+      {
+         exitAfter = true;
+      }
+   }
+
+   public void undeploy(String addonCoordinates)
+   {
+      try
+      {
+         AddonId addon = AddonId.fromCoordinates(addonCoordinates);
+         forge.getRepository().disable(addon);
+         forge.getRepository().undeploy(addon);
       }
       catch (Exception e)
       {
