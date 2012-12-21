@@ -17,9 +17,11 @@ import org.jboss.forge.spec.javaee.PersistenceFacet;
 import org.jboss.forge.spec.javaee.PersistenceMetaModelFacet;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceUnitDef;
+import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.Property;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static org.jboss.forge.spec.javaee.jpa.container.WebLogic12cContainer.*;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -59,7 +61,33 @@ public class PersistencePluginTest extends AbstractJPATest
       Assert.assertEquals("java:jboss/datasources/ExampleDS", unit.getJtaDataSource());
    }
 
-   @Test
+    @Test
+    public void testWebLogic12cDataSource() throws Exception
+    {
+        Project project = getProject();
+
+        queueInputLines("", "");
+        getShell().execute(
+                "persistence setup --provider HIBERNATE --container WEBLOGIC_12C --jndiDataSource jdbc/test/data/source ");
+
+        PersistenceDescriptor config = project.getFacet(PersistenceFacet.class).getConfig();
+        List<PersistenceUnitDef> units = config.listUnits();
+        PersistenceUnitDef unit = units.get(0);
+
+        Assert.assertTrue(containsPropertyAndValue(unit, HIBERNATE_TRANSACTION_JTA_PLATFORM, WEBLOGIC_JTA_PLATFORM));
+    }
+
+    private boolean containsPropertyAndValue(PersistenceUnitDef unit, String property, String value) {
+        for(Property jpaProperty: unit.getProperties()) {
+            if( property.equals(jpaProperty.getName()) ) {
+                Assert.assertEquals(value, jpaProperty.getValue());
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Test
    public void testAS7DataSource() throws Exception
    {
       Project project = getProject();
