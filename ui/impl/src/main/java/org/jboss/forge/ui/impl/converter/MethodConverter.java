@@ -32,6 +32,7 @@ public class MethodConverter<S, T> implements Converter<S, T>
       this.method = method;
    }
 
+   @Override
    @SuppressWarnings("unchecked")
    public T convert(S source) throws Exception
    {

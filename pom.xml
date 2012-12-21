@@ -92,6 +92,7 @@
             <module>ui</module>
             <module>parser-java</module>
             <module>dist</module>
+            <module>se</module>
          </modules>
       </profile>
 
