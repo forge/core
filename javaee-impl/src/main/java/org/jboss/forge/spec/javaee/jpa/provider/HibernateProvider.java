@@ -21,10 +21,12 @@ import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceUnitD
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 public class HibernateProvider implements PersistenceProvider
 {
+   public static final String JPA_PROVIDER = "org.hibernate.ejb.HibernatePersistence";
+
    private static Map<DatabaseType, String> dialects = new HashMap<DatabaseType, String>();
 
    static
@@ -84,7 +86,7 @@ public class HibernateProvider implements PersistenceProvider
    @Override
    public String getProvider()
    {
-      return "org.hibernate.ejb.HibernatePersistence";
+      return JPA_PROVIDER;
    }
 
    @Override

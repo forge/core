@@ -15,6 +15,7 @@ import org.jboss.forge.spec.javaee.jpa.container.GlassFish3Container;
 import org.jboss.forge.spec.javaee.jpa.container.JBossAS6Container;
 import org.jboss.forge.spec.javaee.jpa.container.JBossAS7Container;
 import org.jboss.forge.spec.javaee.jpa.container.NonJTAContainer;
+import org.jboss.forge.spec.javaee.jpa.container.WebLogic12cContainer;
 
 /**
  * Represents the list of known/supported JPA container types.
@@ -28,6 +29,7 @@ public enum JPAContainer
    JBOSS_AS7(JBossAS7Container.class),
    JBOSS_EAP6(JBossAS7Container.class),
    GLASSFISH_3(GlassFish3Container.class),
+   WEBLOGIC_12C(WebLogic12cContainer.class),
    CUSTOM_JDBC(CustomJDBCContainer.class),
    CUSTOM_JTA(CustomJTAContainer.class),
    CUSTOM_NON_JTA(NonJTAContainer.class);

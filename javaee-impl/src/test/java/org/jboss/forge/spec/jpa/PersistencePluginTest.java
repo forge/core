@@ -6,6 +6,9 @@
  */
 package org.jboss.forge.spec.jpa;
 
+import static org.jboss.forge.spec.javaee.jpa.container.WebLogic12cContainer.HIBERNATE_TRANSACTION_JTA_PLATFORM;
+import static org.jboss.forge.spec.javaee.jpa.container.WebLogic12cContainer.WEBLOGIC_JTA_PLATFORM;
+
 import java.util.List;
 
 import junit.framework.Assert;
@@ -57,6 +60,39 @@ public class PersistencePluginTest extends AbstractJPATest
       PersistenceUnitDef unit = units.get(0);
 
       Assert.assertEquals("java:jboss/datasources/ExampleDS", unit.getJtaDataSource());
+   }
+
+   @Test
+   public void testWebLogic12cDataSource() throws Exception
+   {
+      Project project = getProject();
+
+      queueInputLines("", "");
+      getShell()
+               .execute(
+                        "persistence setup --provider HIBERNATE --container WEBLOGIC_12C --jndiDataSource jdbc/test/data/source ");
+
+      PersistenceDescriptor config = project.getFacet(PersistenceFacet.class).getConfig();
+      List<PersistenceUnitDef> units = config.listUnits();
+      PersistenceUnitDef unit = units.get(0);
+
+      Assert.assertEquals(5, unit.getProperties().size());
+
+      Assert.assertEquals(HIBERNATE_TRANSACTION_JTA_PLATFORM, unit.getProperties().get(0).getName());
+      Assert.assertEquals(WEBLOGIC_JTA_PLATFORM, unit.getProperties().get(0).getValue());
+
+      Assert.assertEquals("hibernate.hbm2ddl.auto", unit.getProperties().get(1).getName());
+      Assert.assertEquals("create-drop", unit.getProperties().get(1).getValue());
+
+      Assert.assertEquals("hibernate.show_sql", unit.getProperties().get(2).getName());
+      Assert.assertEquals("true", unit.getProperties().get(2).getValue());
+
+      Assert.assertEquals("hibernate.format_sql", unit.getProperties().get(3).getName());
+      Assert.assertEquals("true", unit.getProperties().get(3).getValue());
+
+      Assert.assertEquals("hibernate.transaction.flush_before_completion", unit.getProperties().get(4).getName());
+      Assert.assertEquals("true", unit.getProperties().get(4).getValue());
+
    }
 
    @Test

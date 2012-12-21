@@ -18,10 +18,12 @@ import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceUnitD
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 public class InfinispanProvider implements PersistenceProvider
 {
+   public static final String JPA_PROVIDER = "org.hibernate.ogm.HibernateOgmPersistence";
+
    @Override
    public PersistenceUnitDef configure(final PersistenceUnitDef unit, final JPADataSource ds)
    {
@@ -33,7 +35,7 @@ public class InfinispanProvider implements PersistenceProvider
    @Override
    public String getProvider()
    {
-      return "org.hibernate.ogm.HibernateOgmPersistence";
+      return JPA_PROVIDER;
    }
 
    @Override
