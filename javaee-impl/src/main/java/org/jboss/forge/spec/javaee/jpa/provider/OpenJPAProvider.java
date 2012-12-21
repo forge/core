@@ -21,10 +21,12 @@ import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceUnitD
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 public class OpenJPAProvider implements PersistenceProvider
 {
+   public static final String JPA_PROVIDER = "org.apache.openjpa.persistence.PersistenceProviderImpl";
+
    private static Map<DatabaseType, String> dictionary = new HashMap<DatabaseType, String>();
 
    static
@@ -79,7 +81,7 @@ public class OpenJPAProvider implements PersistenceProvider
    @Override
    public String getProvider()
    {
-      return "org.apache.openjpa.persistence.PersistenceProviderImpl";
+      return JPA_PROVIDER;
    }
 
    @Override

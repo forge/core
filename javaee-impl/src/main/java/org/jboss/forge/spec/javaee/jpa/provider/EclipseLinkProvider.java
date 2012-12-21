@@ -21,6 +21,8 @@ import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceUnitD
 
 public class EclipseLinkProvider implements PersistenceProvider
 {
+   public static final String JPA_PROVIDER = "org.eclipse.persistence.jpa.PersistenceProvider";
+
    private static Map<DatabaseType, String> platforms = new HashMap<DatabaseType, String>();
 
    static
@@ -28,7 +30,7 @@ public class EclipseLinkProvider implements PersistenceProvider
 
       /*
        * TODO Add additional database types?
-       * 
+       *
        * Non-Oracle Database platforms are located in org.eclipse.persistence.platform.database package and include the
        * following:
        */
@@ -91,7 +93,7 @@ public class EclipseLinkProvider implements PersistenceProvider
    @Override
    public String getProvider()
    {
-      return "org.eclipse.persistence.jpa.PersistenceProvider";
+      return JPA_PROVIDER;
    }
 
    @Override
