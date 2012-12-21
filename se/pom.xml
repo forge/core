@@ -14,9 +14,9 @@
       <relativePath>../pom.xml</relativePath>
    </parent>
 
-   <artifactId>forge</artifactId>
+   <artifactId>forge-se</artifactId>
 
-   <name>JBoss Forge - Embeddable Jar Build</name>
+   <name>JBoss Forge - Java SE UberJar Build</name>
 
    <build>
       <plugins>
