@@ -19,7 +19,7 @@ import org.jboss.forge.container.Forge;
 /**
  * A class with a main method to bootstrap Forge.
  * 
- * You can deploy addons by calling {@link Bootstrap#deploy(String)}
+ * You can deploy addons by calling {@link Bootstrap#install(String)}
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
@@ -68,9 +68,9 @@ public class Bootstrap
       addonManager = new AddonManager(forge.getRepository(), dependencyResolver);
 
       if (installAddon != null)
-         deploy(installAddon);
+         install(installAddon);
       if (removeAddon != null)
-         undeploy(removeAddon);
+         remove(removeAddon);
    }
 
    public void start()
@@ -79,12 +79,13 @@ public class Bootstrap
          forge.start();
    }
 
-   public void deploy(String addonCoordinates)
+   public void install(String addonCoordinates)
    {
       try
       {
          AddonId addon = AddonId.fromCoordinates(addonCoordinates);
          InstallRequest request = addonManager.install(addon);
+         System.out.println(request);
          request.perform();
       }
       catch (Exception e)
@@ -97,7 +98,7 @@ public class Bootstrap
       }
    }
 
-   public void undeploy(String addonCoordinates)
+   public void remove(String addonCoordinates)
    {
       try
       {

@@ -4,9 +4,14 @@ import org.jboss.forge.addon.dependency.DependencyNode;
 import org.jboss.forge.addon.dependency.collection.Dependencies;
 import org.jboss.forge.addon.dependency.collection.Predicate;
 
-public enum LocalResourceFilter implements Predicate<DependencyNode>
+public class LocalResourceFilter implements Predicate<DependencyNode>
 {
-   INSTANCE;
+   private DependencyNode addon;
+
+   public LocalResourceFilter(DependencyNode addon)
+   {
+      this.addon = addon;
+   }
 
    @Override
    public boolean accept(DependencyNode node)
@@ -21,7 +26,7 @@ public enum LocalResourceFilter implements Predicate<DependencyNode>
    public boolean isDependencyAddon(DependencyNode node)
    {
       return Dependencies.isForgeAddon(node.getDependency().getCoordinate())
-               && node.getParent() != null;
+               && node.getParent() != null && node != addon;
    }
 
    public boolean isProvided(DependencyNode node)
@@ -34,7 +39,7 @@ public enum LocalResourceFilter implements Predicate<DependencyNode>
       DependencyNode parent = node.getParent();
       while (parent != null)
       {
-         if (isDependencyAddon(parent))
+         if (isDependencyAddon(parent) && !addon.equals(parent))
             return true;
          parent = parent.getParent();
       }

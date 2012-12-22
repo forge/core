@@ -85,4 +85,45 @@ public class AddonManagerTest
       Thread.sleep(500);
       Assert.assertEquals(addonCount + 1, registry.getRegisteredAddons().size());
    }
+
+   @Test
+   public void testInstallingAddonWithSingleRequiredAddonDependency() throws InterruptedException
+   {
+      int addonCount = registry.getRegisteredAddons().size();
+      AddonId resources = AddonId.fromCoordinates("org.jboss.forge:resource,2.0.0-SNAPSHOT");
+      InstallRequest request = addonManager.install(resources);
+
+      Assert.assertEquals(1, request.getRequiredAddons().size());
+      Assert.assertEquals(0, request.getOptionalAddons().size());
+
+      request.perform();
+
+      Assert.assertTrue(repository.isEnabled(resources));
+      Assert.assertEquals(3, repository.getAddonResources(resources).size());
+      Assert.assertTrue(repository.getAddonResources(resources).contains(
+               new File(repository.getAddonBaseDir(resources), "resource-2.0.0-SNAPSHOT-forge-addon.jar")));
+      Assert.assertTrue(repository.getAddonResources(resources).contains(
+               new File(repository.getAddonBaseDir(resources), "resource-api-2.0.0-SNAPSHOT.jar")));
+      Assert.assertTrue(repository.getAddonResources(resources).contains(
+               new File(repository.getAddonBaseDir(resources), "resource-impl-2.0.0-SNAPSHOT.jar")));
+
+      AddonId facets = AddonId.from("org.jboss.forge:facets", "2.0.0-SNAPSHOT");
+      Assert.assertTrue(repository.getAddonResources(facets)
+               .contains(new File(repository.getAddonBaseDir(facets), "facets-2.0.0-SNAPSHOT-forge-addon.jar")));
+      Assert.assertTrue(repository.getAddonResources(facets)
+               .contains(new File(repository.getAddonBaseDir(facets), "facets-api-2.0.0-SNAPSHOT.jar")));
+
+      Set<AddonDependency> dependencies = repository.getAddonDependencies(resources);
+      Assert.assertEquals(1, dependencies.size());
+      AddonDependency dependency = dependencies.toArray(new AddonDependency[dependencies.size()])[0];
+      Assert.assertEquals("org.jboss.forge:facets", dependency.getId().getName());
+      Assert.assertEquals("2.0.0-SNAPSHOT", dependency.getId().getVersion());
+      Assert.assertFalse(dependency.isOptional());
+
+      // FIXME Should this be true?
+      // Assert.assertTrue(dependency.isExport());
+
+      Thread.sleep(500);
+      Assert.assertEquals(addonCount + 2, registry.getRegisteredAddons().size());
+   }
 }

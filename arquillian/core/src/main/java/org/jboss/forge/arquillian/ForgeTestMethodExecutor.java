@@ -124,6 +124,22 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
          {
             result = new TestResult(Status.FAILED, e);
          }
+         catch (Exception e)
+         {
+            Throwable cause = e.getCause();
+            while (cause != null)
+            {
+               if (cause instanceof AssertionError)
+               {
+                  result = new TestResult(Status.FAILED, cause);
+                  break;
+               }
+               cause = cause.getCause();
+            }
+
+            if (!Status.FAILED.equals(result.getStatus()))
+               throw e;
+         }
 
          return result;
       }

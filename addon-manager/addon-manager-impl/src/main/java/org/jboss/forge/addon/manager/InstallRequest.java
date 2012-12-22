@@ -27,9 +27,9 @@ import org.jboss.forge.container.AddonRepository;
 /**
  * When an addon is installed, another addons could be required. This object returns the necessary information for the
  * installation of an addon to succeed, like required addons and dependencies
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 public class InstallRequest
 {
@@ -140,7 +140,7 @@ public class InstallRequest
 
    private void deploy(AddonId addon, DependencyNode root)
    {
-      List<File> resourceJars = toResourceJars(Dependencies.select(root, LocalResourceFilter.INSTANCE));
+      List<File> resourceJars = toResourceJars(Dependencies.select(root, new LocalResourceFilter(root)));
 
       List<AddonDependency> addonDependencies =
                toAddonDependencies(Dependencies.select(root, new DirectAddonFilter(root)));
@@ -177,5 +177,19 @@ public class InstallRequest
       {
          repository.enable(addonEntry);
       }
+   }
+
+   @Override
+   public String toString()
+   {
+      return Dependencies.prettyPrint(requestedAddonNode, new Predicate<DependencyNode>()
+      {
+         @Override
+         public boolean accept(DependencyNode node)
+         {
+            return Dependencies.isForgeAddon(node.getDependency().getCoordinate())
+                     && !node.getDependency().isOptional();
+         }
+      });
    }
 }
