@@ -1,22 +1,24 @@
 package org.jboss.forge.container;
 
+import java.util.concurrent.Future;
+
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class AddonThread
 {
-   private Thread thread;
+   private Future<?> future;
    private AddonRunnable runnable;
 
-   public AddonThread(Thread thread, AddonRunnable runnable)
+   public AddonThread(Future<?> future, AddonRunnable runnable)
    {
-      this.thread = thread;
+      this.future = future;
       this.runnable = runnable;
    }
 
-   public Thread getThread()
+   public Future<?> getFuture()
    {
-      return thread;
+      return future;
    }
 
    public AddonRunnable getRunnable()
@@ -27,7 +29,7 @@ public class AddonThread
    @Override
    public String toString()
    {
-      return "AddonThread [thread=" + thread + ", runnable=" + runnable + "]";
+      return "AddonThread [future=" + future + ", runnable=" + runnable + "]";
    }
 
 }

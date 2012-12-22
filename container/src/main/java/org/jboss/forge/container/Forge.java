@@ -7,6 +7,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
 import org.jboss.forge.container.exception.ContainerException;
@@ -37,6 +41,8 @@ public final class Forge
    private boolean serverMode = true;
 
    Set<AddonThread> threads = Sets.getConcurrentSet();
+
+   ExecutorService executor;
 
    public Forge()
    {
@@ -87,6 +93,8 @@ public final class Forge
                Thread.sleep(100);
             }
             while (serverMode && alive == true);
+
+            shutdownThreads();
          }
          catch (InterruptedException e)
          {
@@ -94,6 +102,22 @@ public final class Forge
          }
       }
       return this;
+   }
+
+   private void shutdownThreads()
+   {
+      for (AddonThread thread : threads)
+      {
+         try
+         {
+            thread.getRunnable().shutdown();
+         }
+         catch (Exception e)
+         {
+            e.printStackTrace();
+         }
+      }
+      executor.shutdown();
    }
 
    public Forge stop()
@@ -148,32 +172,29 @@ public final class Forge
    private Set<AddonThread> startAddons(Set<Addon> toStart)
    {
       Set<AddonThread> started = new HashSet<AddonThread>();
-      AddonRegistryImpl registry = AddonRegistryImpl.INSTANCE;
 
-      int startedThreads = 0;
-      int batchSize = Math.min(BATCH_SIZE, toStart.size());
+      executor = Executors.newFixedThreadPool(BATCH_SIZE);
       for (Addon addon : toStart)
       {
-         ((AddonImpl) addon).setStatus(Status.STARTING);
          logger.info("Starting addon (" + addon.getId() + ")");
-         while (registry.getServiceRegistries().size() + batchSize <= startedThreads)
-         {
-            try
-            {
-               Thread.sleep(10);
-            }
-            catch (InterruptedException e)
-            {
-               throw new ContainerException("Thread interrupted while waiting for an executor.", e);
-            }
-         }
-
          AddonRunnable runnable = new AddonRunnable(this, (AddonImpl) addon);
-         Thread thread = new Thread(runnable, addon.getId().toCoordinates());
-         started.add(new AddonThread(thread, runnable));
-         thread.start();
+         Future<?> future = executor.submit(runnable);
+         try
+         {
+            future.get();
+         }
+         catch (InterruptedException e)
+         {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+         }
+         catch (ExecutionException e)
+         {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+         }
+         started.add(new AddonThread(future, runnable));
 
-         startedThreads++;
       }
       return started;
    }
