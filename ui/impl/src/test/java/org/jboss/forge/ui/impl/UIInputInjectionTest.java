@@ -50,7 +50,7 @@ public class UIInputInjectionTest extends AbstractUITest
       Assert.assertEquals(inputVal, firstName.getValue());
       final String inputVal2 = "Another String";
 
-      firstName.setDefaultValue(Callables.constant(inputVal2));
+      firstName.setDefaultValue(Callables.returning(inputVal2));
       Assert.assertEquals(inputVal2, firstName.getValue());
 
    }

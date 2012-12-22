@@ -28,7 +28,7 @@ public final class Callables
     * @param value
     * @return
     */
-   public static <T> Callable<T> constant(T value)
+   public static <T> Callable<T> returning(T value)
    {
       return new ConstantCallable<T>(value);
    }

@@ -85,14 +85,14 @@ public class UIInputImpl<T> implements UIInput<T>
    @Override
    public UIInput<T> setDefaultValue(T value)
    {
-      this.defaultValue = Callables.constant(value);
+      this.defaultValue = Callables.returning(value);
       return this;
    }
 
    @Override
    public UIInput<T> setEnabled(boolean enabled)
    {
-      this.enabled = Callables.constant(enabled);
+      this.enabled = Callables.returning(enabled);
       return this;
    }
 
@@ -113,7 +113,7 @@ public class UIInputImpl<T> implements UIInput<T>
    @Override
    public UIInput<T> setRequired(boolean required)
    {
-      this.required = Callables.constant(required);
+      this.required = Callables.returning(required);
       return this;
    }
 
