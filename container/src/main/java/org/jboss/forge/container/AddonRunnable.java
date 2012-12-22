@@ -121,7 +121,7 @@ public final class AddonRunnable implements Runnable
 
                manager.fireEvent(new InitializeServices());
 
-               LOGGER.info("Services loaded from addon module [" + Thread.currentThread().getName() + "] -  "
+               LOGGER.info("Services loaded from addon [" + addon.getId() + "] -  "
                         + registry.getServices());
 
                Callable<Object> listener = new Callable<Object>()

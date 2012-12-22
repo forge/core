@@ -10,8 +10,6 @@ import java.util.List;
 
 import org.jboss.weld.environment.se.discovery.url.ClasspathScanningException;
 import org.jboss.weld.resources.spi.ResourceLoader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Scan the classloader
@@ -24,8 +22,6 @@ import org.slf4j.LoggerFactory;
  */
 public class ModularURLScanner
 {
-
-   private static final Logger log = LoggerFactory.getLogger(ModularURLScanner.class);
    private final String[] resources;
    private final ResourceLoader resourceLoader;
 
@@ -88,11 +84,7 @@ public class ModularURLScanner
                throw new ClasspathScanningException("Error decoding URL using UTF-8");
             }
 
-            log.debug("URL Type: " + urlType);
-
-            File file = new File("").getAbsoluteFile();
-            if (!urlPath.contains(file.getAbsolutePath()))
-               paths.add(urlPath);
+            paths.add(urlPath);
          }
 
          ModularFileSystemURLHandler handler = new ModularFileSystemURLHandler(resourceLoader);
