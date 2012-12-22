@@ -132,7 +132,10 @@ public final class Forge
             e.printStackTrace();
          }
       }
-      executor.shutdown();
+      if (executor != null)
+      {
+         executor.shutdown();
+      }
    }
 
    public Forge stop()
