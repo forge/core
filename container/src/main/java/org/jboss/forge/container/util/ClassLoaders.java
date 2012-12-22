@@ -8,7 +8,7 @@ import org.jboss.forge.container.exception.ContainerException;
 
 /**
  * Utility class for executing fragments of code within a specific {@link Thread#getContextClassLoader()}
- *
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class ClassLoaders
@@ -20,6 +20,9 @@ public class ClassLoaders
     */
    public static <T> T executeIn(ClassLoader loader, Callable<T> task)
    {
+      if (task == null)
+         return null;
+
       if (log.isLoggable(Level.FINE))
       {
          log.fine("[Thread " + Thread.currentThread().getName() + "] ClassLoader ["

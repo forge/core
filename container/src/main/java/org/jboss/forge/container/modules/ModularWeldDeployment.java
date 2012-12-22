@@ -3,7 +3,6 @@ package org.jboss.forge.container.modules;
 import java.util.Collections;
 import java.util.List;
 
-import org.jboss.modules.Module;
 import org.jboss.weld.bootstrap.api.Bootstrap;
 import org.jboss.weld.bootstrap.spi.BeanDeploymentArchive;
 import org.jboss.weld.environment.se.discovery.AbstractWeldSEDeployment;
@@ -14,8 +13,7 @@ public class ModularWeldDeployment extends AbstractWeldSEDeployment
 {
    private final BeanDeploymentArchive beanDeploymentArchive;
 
-   public ModularWeldDeployment(Module module, Bootstrap bootstrap, ResourceLoader resourceLoader,
-            ModuleScanResult scanResult)
+   public ModularWeldDeployment(Bootstrap bootstrap, ResourceLoader resourceLoader, ModuleScanResult scanResult)
    {
       super(bootstrap);
       this.beanDeploymentArchive = new ImmutableBeanDeploymentArchive("classpath", scanResult.getDiscoveredClasses(),

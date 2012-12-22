@@ -10,6 +10,14 @@
    <artifactId>resource</artifactId>
    <name>Forge - Resource Addon</name>
    <dependencies>
+      <!-- FIXME Addons dependencies must be specified in the top level addon POM or they are not picked up as an addon, but are 
+         still ignored as plain JAR files -->
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>facets</artifactId>
+         <version>2.0.0-SNAPSHOT</version>
+         <classifier>forge-addon</classifier>
+      </dependency>
       <dependency>
          <groupId>org.jboss.forge</groupId>
          <artifactId>resource-api</artifactId>

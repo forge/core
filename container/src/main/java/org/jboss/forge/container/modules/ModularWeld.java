@@ -6,7 +6,6 @@
  */
 package org.jboss.forge.container.modules;
 
-import org.jboss.modules.Module;
 import org.jboss.weld.bootstrap.api.Bootstrap;
 import org.jboss.weld.bootstrap.api.SingletonProvider;
 import org.jboss.weld.bootstrap.spi.Deployment;
@@ -26,18 +25,16 @@ public class ModularWeld extends Weld
       SingletonProvider.initialize(new SilentTCCLSingletonProvider());
    }
 
-   private Module module;
    private ModuleScanResult scanResult;
 
-   public ModularWeld(Module module, ModuleScanResult scanResult)
+   public ModularWeld(ModuleScanResult scanResult)
    {
-      this.module = module;
       this.scanResult = scanResult;
    }
 
    @Override
    protected Deployment createDeployment(final ResourceLoader resourceLoader, final Bootstrap bootstrap)
    {
-      return new ModularWeldDeployment(module, bootstrap, scanResult.getResourceLoader(), scanResult);
+      return new ModularWeldDeployment(bootstrap, resourceLoader, scanResult);
    }
 }

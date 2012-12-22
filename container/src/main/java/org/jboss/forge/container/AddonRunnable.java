@@ -35,7 +35,16 @@ public final class AddonRunnable implements Runnable
    private static final Logger LOGGER = Logger.getLogger(AddonRunnable.class.getName());
 
    private AddonContainerStartup container;
-   private Callable<Object> shutdownCallable;
+   private Callable<Object> shutdownCallable = new Callable<Object>()
+   {
+      @Override
+      public Object call() throws Exception
+      {
+         addon.setStatus(Status.STOPPING);
+         addon.setStatus(Status.STOPPED);
+         return null;
+      }
+   };
 
    public AddonRunnable(Forge forge, AddonImpl addon)
    {
@@ -102,7 +111,7 @@ public final class AddonRunnable implements Runnable
             }
             else
             {
-               final Weld weld = new ModularWeld(addon.getModule(), scanResult);
+               final Weld weld = new ModularWeld(scanResult);
                WeldContainer container = weld.initialize();
 
                BeanManager manager = container.getBeanManager();
