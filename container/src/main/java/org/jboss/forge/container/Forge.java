@@ -89,7 +89,7 @@ public final class Forge
 
          public void run()
          {
-            start();
+            Forge.this.start();
          };
       }.start();
    }
