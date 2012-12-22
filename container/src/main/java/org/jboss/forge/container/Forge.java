@@ -14,9 +14,9 @@ import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
 import org.jboss.forge.container.exception.ContainerException;
+import org.jboss.forge.container.impl.AddonImpl;
 import org.jboss.forge.container.impl.AddonRegistryImpl;
 import org.jboss.forge.container.impl.AddonRepositoryImpl;
-import org.jboss.forge.container.impl.AddonImpl;
 import org.jboss.forge.container.modules.AddonModuleLoader;
 import org.jboss.forge.container.util.Sets;
 import org.jboss.modules.Module;
@@ -77,6 +77,21 @@ public final class Forge
    public Set<AddonThread> getThreads()
    {
       return threads;
+   }
+
+   /**
+    * Starts Forge in a new Thread
+    */
+   public void startAsync()
+   {
+      new Thread()
+      {
+
+         public void run()
+         {
+            start();
+         };
+      }.start();
    }
 
    public Forge start()
