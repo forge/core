@@ -37,12 +37,13 @@ import org.jboss.modules.filter.PathFilters;
  */
 public class AddonModuleLoader extends ModuleLoader
 {
-   private static Iterable<ModuleSpecProvider> moduleProviders = ServiceLoader.load(ModuleSpecProvider.class);
+   private final Iterable<ModuleSpecProvider> moduleProviders;
    private AddonRepository repository;
 
-   public AddonModuleLoader(AddonRepository repository)
+   public AddonModuleLoader(AddonRepository repository, ClassLoader loader)
    {
       this.repository = repository;
+      moduleProviders = ServiceLoader.load(ModuleSpecProvider.class, loader);
    }
 
    @Override
@@ -83,17 +84,15 @@ public class AddonModuleLoader extends ModuleLoader
          Builder builder = ModuleSpec.build(id);
 
          // Set up the ClassPath for this addon Module
-         builder.addDependency(DependencySpec.createModuleDependencySpec(SystemClasspathSpec.ID));
 
+         builder.addDependency(DependencySpec.createModuleDependencySpec(SystemClasspathSpec.ID));
+         builder.addDependency(DependencySpec.createModuleDependencySpec(PathFilters.acceptAll(),
+                  PathFilters.rejectAll(), null, ForgeContainerSpec.ID, false));
          builder.addDependency(DependencySpec.createModuleDependencySpec(PathFilters.acceptAll(),
                   PathFilters.rejectAll(), null, WeldClasspathSpec.ID, false));
 
-         builder.addDependency(DependencySpec.createModuleDependencySpec(PathFilters.acceptAll(),
-                  PathFilters.rejectAll(), null, ForgeContainerSpec.ID, false));
-
          builder.addDependency(DependencySpec.createLocalDependencySpec(PathFilters.acceptAll(),
                   PathFilters.acceptAll()));
-
          try
          {
             addAddonDependencies(found, builder);

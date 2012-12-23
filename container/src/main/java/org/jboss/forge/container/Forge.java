@@ -69,8 +69,6 @@ public final class Forge
    public Forge enableLogging()
    {
       Module.setModuleLogger(new StreamModuleLogger(System.err));
-      // if (LOGGING_ENABLED)
-      // initLogging();
       return this;
    }
 
@@ -82,25 +80,37 @@ public final class Forge
    /**
     * Starts Forge in a new Thread
     */
-   public void startAsync()
+   public Forge startAsync()
+   {
+      return startAsync(Thread.currentThread().getContextClassLoader());
+   }
+
+   public Forge startAsync(final ClassLoader loader)
    {
       new Thread()
       {
          @Override
          public void run()
          {
-            Forge.this.start();
+            Forge.this.start(loader);
          };
       }.start();
+
+      return this;
    }
 
    public Forge start()
+   {
+      return start(Thread.currentThread().getContextClassLoader());
+   }
+
+   public Forge start(ClassLoader loader)
    {
       if (!alive)
       {
          try
          {
-            ModuleLoader addonLoader = new AddonModuleLoader(repository);
+            ModuleLoader addonLoader = new AddonModuleLoader(repository, loader);
             alive = true;
             do
             {

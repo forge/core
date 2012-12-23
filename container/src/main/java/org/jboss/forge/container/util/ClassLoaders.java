@@ -25,27 +25,24 @@ public class ClassLoaders
 
       if (log.isLoggable(Level.FINE))
       {
-         log.fine("[Thread " + Thread.currentThread().getName() + "] ClassLoader ["
-                  + loader + "] task began.");
+         log.fine("ClassLoader [" + loader + "] task began.");
       }
-      ClassLoader original = Thread.currentThread().getContextClassLoader();
+      ClassLoader original = SecurityActions.getContextClassLoader();
       try
       {
-         Thread.currentThread().setContextClassLoader(loader);
+         SecurityActions.setContextClassLoader(loader);
          return task.call();
       }
       catch (Exception e)
       {
-         throw new ContainerException("[Thread - " + Thread.currentThread().getName()
-                  + "] Error invoking Task within ClassLoader [" + loader + "]", e);
+         throw new ContainerException("Error invoking Task within ClassLoader [" + loader + "]", e);
       }
       finally
       {
-         Thread.currentThread().setContextClassLoader(original);
+         SecurityActions.setContextClassLoader(original);
          if (log.isLoggable(Level.FINE))
          {
-            log.fine("[Thread " + Thread.currentThread().getName() + "] ClassLoader ["
-                     + loader + "] task ended.");
+            log.fine("ClassLoader [" + loader + "] task ended.");
          }
       }
    }

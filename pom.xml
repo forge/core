@@ -143,14 +143,12 @@
             <groupId>javax.enterprise</groupId>
             <artifactId>cdi-api</artifactId>
             <version>${version.cdi}</version>
-            <scope>compile</scope>
          </dependency>
 
          <dependency>
             <groupId>cglib</groupId>
             <artifactId>cglib-nodep</artifactId>
             <version>2.2</version>
-            <scope>compile</scope>
          </dependency>
 
          <!-- Test Dependencies -->

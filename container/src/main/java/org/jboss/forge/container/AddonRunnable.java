@@ -25,11 +25,6 @@ import org.jboss.weld.resources.spi.ResourceLoader;
 
 public final class AddonRunnable implements Runnable
 {
-   protected interface ShutdownManager
-   {
-
-   }
-
    private Forge forge;
    private AddonImpl addon;
    private static final Logger LOGGER = Logger.getLogger(AddonRunnable.class.getName());
@@ -89,7 +84,7 @@ public final class AddonRunnable implements Runnable
             ResourceLoader loader = new ModuleResourceLoader(addon.getModule());
             ModularURLScanner scanner = new ModularURLScanner(loader, "META-INF/beans.xml");
             ModuleScanResult scanResult = scanner.scan();
-
+            
             if (scanResult.getDiscoveredResourceUrls().isEmpty())
             {
                /*
