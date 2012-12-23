@@ -24,7 +24,7 @@ import org.jboss.modules.ModuleIdentifier;
 import org.jboss.modules.ModuleLoader;
 import org.jboss.modules.log.StreamModuleLogger;
 
-public final class Forge
+public class Forge
 {
    private static final String PROP_CONCURRENT_PLUGINS = "forge.concurrentAddons";
 
