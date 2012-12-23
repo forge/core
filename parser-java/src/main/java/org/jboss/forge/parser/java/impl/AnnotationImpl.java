@@ -36,7 +36,7 @@ public class AnnotationImpl<O extends JavaSource<O>, T> implements Annotation<O>
    private AST ast = null;
    private org.eclipse.jdt.core.dom.Annotation annotation;
 
-   private enum AnnotationType
+   public enum AnnotationType
    {
       MARKER, SINGLE, NORMAL
    }
