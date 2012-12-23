@@ -17,7 +17,7 @@ public class ClassLoaderAdapterCallback implements MethodInterceptor
    private final ClassLoader loader;
    private final Object delegate;
 
-   public ClassLoaderAdapterCallback(ClassLoader loader, Object delegate, Class<?> resultType)
+   public ClassLoaderAdapterCallback(ClassLoader loader, Object delegate)
    {
       this.loader = loader;
       this.delegate = delegate;
@@ -45,8 +45,7 @@ public class ClassLoaderAdapterCallback implements MethodInterceptor
 
                return Enhancer.create(
                         method.getReturnType(),
-                        new ClassLoaderAdapterCallback(loader, delegateMethod.invoke(delegate, args), method
-                                 .getReturnType()));
+                        new ClassLoaderAdapterCallback(loader, delegateMethod.invoke(delegate, args)));
             }
             catch (Throwable e)
             {
