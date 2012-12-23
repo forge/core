@@ -36,7 +36,7 @@ public class AnnotationImpl<O extends JavaSource<O>, T> implements Annotation<O>
    private AST ast = null;
    private org.eclipse.jdt.core.dom.Annotation annotation;
 
-   private enum AnnotationType
+   public enum AnnotationType
    {
       MARKER, SINGLE, NORMAL
    }
@@ -371,9 +371,9 @@ public class AnnotationImpl<O extends JavaSource<O>, T> implements Annotation<O>
    public Annotation<O> setEnumValue(final Enum<?>... values)
    {
       O origin = getOrigin();
-      
+
       String result = new String();// = "{";
-      
+
       if(values.length > 1) {
 	  result = "{";
       }
@@ -381,23 +381,23 @@ public class AnnotationImpl<O extends JavaSource<O>, T> implements Annotation<O>
       if (origin instanceof JavaSource)
       {
          JavaSource<?> source = origin;
-         
+
          for(Enum<?> value : values) {
              if (!source.hasImport(value.getDeclaringClass()))
              {
                 source.addImport(value.getDeclaringClass());
              }
-             
+
              result = result.concat(value.getDeclaringClass().getSimpleName() + "." + value.name() + ",");
          }
-         
+
          result = result.substring(0, result.length()-1);
-         
+
          if(values.length > 1) {
              result = result.concat("}");
          }
       }
-      
+
       return setLiteralValue(result);
    }
 
