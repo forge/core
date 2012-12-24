@@ -18,11 +18,11 @@ import org.jboss.forge.container.Forge;
 
 /**
  * A class with a main method to bootstrap Forge.
- * 
+ *
  * You can deploy addons by calling {@link Bootstrap#install(String)}
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ *
  */
 public class Bootstrap
 {
@@ -40,7 +40,7 @@ public class Bootstrap
    {
       String installAddon = null;
       String removeAddon = null;
-      forge = new Forge();
+      forge = ServiceLoader.load(Forge.class).iterator().next();
       if (args.length > 0)
       {
          for (int i = 0; i < args.length; i++)

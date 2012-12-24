@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 
 import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.Forge;
+import org.jboss.forge.container.ForgeImpl;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -13,10 +14,10 @@ public class BootstrapClassLoaderTestCase
    public void shouldBeAbleToLoadEnvironment() throws Exception
    {
       final BootstrapClassLoader cl = new BootstrapClassLoader("bootpath");
-      Class<?> bootstrapType = cl.loadClass("org.jboss.forge.container.Forge");
+      Class<?> bootstrapType = cl.loadClass("org.jboss.forge.container.ForgeImpl");
       Method method = bootstrapType.getMethod("startAsync", new Class<?>[] { ClassLoader.class });
       Object result = method.invoke(bootstrapType.newInstance(), cl);
-      Assert.assertEquals(Forge.class.getName(), result.getClass().getName());
+      Assert.assertEquals(ForgeImpl.class.getName(), result.getClass().getName());
    }
 
    @Test

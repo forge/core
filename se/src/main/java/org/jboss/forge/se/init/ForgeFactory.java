@@ -11,7 +11,7 @@ public class ForgeFactory
       try
       {
          final BootstrapClassLoader cl = new BootstrapClassLoader("bootpath");
-         Class<?> bootstrapType = cl.loadClass("org.jboss.forge.container.Forge");
+         Class<?> bootstrapType = cl.loadClass("org.jboss.forge.container.ForgeImpl");
          return (Forge) Enhancer.create(Forge.class, new ClassLoaderAdapterCallback(cl, bootstrapType.newInstance()));
       }
       catch (Exception e)

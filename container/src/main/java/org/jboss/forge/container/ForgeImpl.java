@@ -24,7 +24,7 @@ import org.jboss.modules.ModuleIdentifier;
 import org.jboss.modules.ModuleLoader;
 import org.jboss.modules.log.StreamModuleLogger;
 
-public class Forge
+public class ForgeImpl implements Forge
 {
    private static final String PROP_CONCURRENT_PLUGINS = "forge.concurrentAddons";
 
@@ -44,7 +44,7 @@ public class Forge
 
    ExecutorService executor;
 
-   public Forge()
+   public ForgeImpl()
    {
       if (!AddonRepositoryImpl.hasRuntimeAPIVersion())
          logger.warning("Could not detect Forge runtime version - " +
@@ -77,14 +77,23 @@ public class Forge
       return threads;
    }
 
-   /**
-    * Starts Forge in a new Thread
+   /*
+    * (non-Javadoc)
+    *
+    * @see org.jboss.forge.container.Forge#startAsync()
     */
+   @Override
    public Forge startAsync()
    {
       return startAsync(Thread.currentThread().getContextClassLoader());
    }
 
+   /*
+    * (non-Javadoc)
+    *
+    * @see org.jboss.forge.container.Forge#startAsync(java.lang.ClassLoader)
+    */
+   @Override
    public Forge startAsync(final ClassLoader loader)
    {
       new Thread()
@@ -92,18 +101,30 @@ public class Forge
          @Override
          public void run()
          {
-            Forge.this.start(loader);
+            ForgeImpl.this.start(loader);
          };
       }.start();
 
       return this;
    }
 
+   /*
+    * (non-Javadoc)
+    *
+    * @see org.jboss.forge.container.Forge#start()
+    */
+   @Override
    public Forge start()
    {
       return start(Thread.currentThread().getContextClassLoader());
    }
 
+   /*
+    * (non-Javadoc)
+    *
+    * @see org.jboss.forge.container.Forge#start(java.lang.ClassLoader)
+    */
+   @Override
    public Forge start(ClassLoader loader)
    {
       if (!alive)
@@ -148,6 +169,12 @@ public class Forge
       }
    }
 
+   /*
+    * (non-Javadoc)
+    *
+    * @see org.jboss.forge.container.Forge#stop()
+    */
+   @Override
    public Forge stop()
    {
       alive = false;
@@ -227,6 +254,12 @@ public class Forge
       return started;
    }
 
+   /*
+    * (non-Javadoc)
+    *
+    * @see org.jboss.forge.container.Forge#getAddonRegistry()
+    */
+   @Override
    public AddonRegistry getAddonRegistry()
    {
       return AddonRegistryImpl.INSTANCE;
@@ -328,28 +361,58 @@ public class Forge
       return addonToLoad;
    }
 
+   /*
+    * (non-Javadoc)
+    *
+    * @see org.jboss.forge.container.Forge#setAddonDir(java.io.File)
+    */
+   @Override
    public Forge setAddonDir(File dir)
    {
       this.repository = AddonRepositoryImpl.forDirectory(dir);
       return this;
    }
 
+   /*
+    * (non-Javadoc)
+    *
+    * @see org.jboss.forge.container.Forge#setServerMode(boolean)
+    */
+   @Override
    public Forge setServerMode(boolean server)
    {
       this.serverMode = server;
       return this;
    }
 
+   /*
+    * (non-Javadoc)
+    *
+    * @see org.jboss.forge.container.Forge#getAddonDir()
+    */
+   @Override
    public File getAddonDir()
    {
       return repository.getRepositoryDirectory();
    }
 
+   /*
+    * (non-Javadoc)
+    *
+    * @see org.jboss.forge.container.Forge#getRepository()
+    */
+   @Override
    public AddonRepository getRepository()
    {
       return repository;
    }
 
+   /*
+    * (non-Javadoc)
+    *
+    * @see org.jboss.forge.container.Forge#getVersion()
+    */
+   @Override
    public String getVersion()
    {
       return AddonRepositoryImpl.getRuntimeAPIVersion();
