@@ -2,6 +2,7 @@ package org.jboss.forge.se.init;
 
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -69,14 +70,17 @@ public class BootstrapClassLoader extends URLClassLoader
       private List<URL> handle(String urlPath, URL original) throws IOException
       {
          File file = new File(urlPath);
-         if (file.isDirectory())
-         {
-            return handle(file);
-         }
+         if (file.exists())
+            if (file.isDirectory())
+            {
+               return handle(file);
+            }
+            else
+            {
+               return handleArchiveByFile(file, original);
+            }
          else
-         {
-            return handleArchiveByFile(file, original);
-         }
+            throw new FileNotFoundException(urlPath);
       }
 
       private List<URL> handle(File file)
