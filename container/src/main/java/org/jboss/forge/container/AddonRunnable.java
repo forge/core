@@ -81,8 +81,8 @@ public final class AddonRunnable implements Runnable
          {
             addon.setStatus(Status.STARTING);
 
-            ResourceLoader loader = new ModuleResourceLoader(addon.getModule());
-            ModularURLScanner scanner = new ModularURLScanner(loader, "META-INF/beans.xml");
+            ResourceLoader resourceLoader = new ModuleResourceLoader(addon.getModule());
+            ModularURLScanner scanner = new ModularURLScanner(resourceLoader, "META-INF/beans.xml");
             ModuleScanResult scanResult = scanner.scan();
             
             if (scanResult.getDiscoveredResourceUrls().isEmpty())

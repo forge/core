@@ -32,6 +32,7 @@ import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.AddonRepository;
 import org.jboss.forge.container.Forge;
+import org.jboss.forge.container.ForgeImpl;
 import org.jboss.forge.container.Status;
 import org.jboss.forge.container.impl.AddonRepositoryImpl;
 import org.jboss.forge.container.util.ClassLoaders;
@@ -272,8 +273,8 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
             @Override
             public Object call() throws Exception
             {
-               forge = ServiceLoader.load(Forge.class).iterator().next();
-               forge.setServerMode(true).setAddonDir(addonDir).start();
+               forge = new ForgeImpl();
+               forge.setServerMode(true).setAddonDir(addonDir).start(loader);
                return forge;
             }
          });

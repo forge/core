@@ -27,6 +27,7 @@ public class ForgeContainerSpec extends BaseModuleSpecProvider
       builder.addDependency(DependencySpec.createSystemDependencySpec(
                PathFilters.acceptAll(),
                PathFilters.any(Arrays.asList(
+                        PathFilters.is("META-INF/services"),
                         PathFilters.is("org/jboss/forge/container"),
                         PathFilters.isChildOf("org/jboss/forge/container"),
                         PathFilters.is("net/sf/cglib"), PathFilters.isChildOf("net/sf/cglib"))),
