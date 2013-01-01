@@ -8,7 +8,7 @@
       <relativePath>../pom.xml</relativePath>
    </parent>
 
-   <artifactId>addon-manager</artifactId>
+   <artifactId>addon-manager-parent</artifactId>
    <name>Forge - Addon Manager - Parent</name>
    <packaging>pom</packaging>
 
@@ -17,27 +17,5 @@
       <module>addon-manager-addon</module>
       <module>addon-manager-tests</module>
    </modules>
-
-   <dependencyManagement>
-      <dependencies>
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-addon-manager-impl</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-addon-manager-addon</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-      </dependencies>
-   </dependencyManagement>
-
-   <dependencies>
-      <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>forge-addon-manager-addon</artifactId>
-      </dependency>
-   </dependencies>
 
 </project>

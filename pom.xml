@@ -205,17 +205,12 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-addon-manager</artifactId>
+            <artifactId>addon-manager</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-addon-manager-impl</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-addon-manager-addon</artifactId>
+            <artifactId>addon-manager-impl</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>

@@ -1,35 +1,47 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-   <modelVersion>4.0.0</modelVersion>
-   <parent>
-      <groupId>org.jboss.forge</groupId>
-      <artifactId>forge-parent</artifactId>
-      <version>2.0.0-SNAPSHOT</version>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.jboss.forge</groupId>
+		<artifactId>forge-parent</artifactId>
+		<version>2.0.0-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
-   </parent>
+	</parent>
 
-   <artifactId>forge-addon-manager-addon</artifactId>
-   <name>Forge - Addon Manager - Addon</name>
+	<artifactId>addon-manager</artifactId>
+	<name>Forge - Addon Manager - Addon</name>
 
-   <dependencies>
-      <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>forge-addon-container-api</artifactId>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>forge-addon-manager-impl</artifactId>
-      </dependency>
+	<dependencies>
+		<dependency>
+			<groupId>org.jboss.forge</groupId>
+			<artifactId>forge-addon-container-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.forge</groupId>
+			<artifactId>addon-manager-impl</artifactId>
+		</dependency>
 
-      <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>forge-test-harness</artifactId>
-         <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>arquillian-forge-classpath</artifactId>
-         <scope>test</scope>
-      </dependency>
-   </dependencies>
+		<dependency>
+			<groupId>org.jboss.forge</groupId>
+			<artifactId>forge-test-harness</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.forge</groupId>
+			<artifactId>arquillian-forge-classpath</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<classifier>forge-addon</classifier>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>

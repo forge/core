@@ -8,7 +8,7 @@
 		<relativePath>../../pom.xml</relativePath>
    </parent>
 
-   <artifactId>forge-addon-manager-impl</artifactId>
+   <artifactId>addon-manager-impl</artifactId>
    <name>Forge - Addon Manager - Impl</name>
 
    <dependencies>

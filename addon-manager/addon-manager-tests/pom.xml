@@ -8,13 +8,13 @@
       <relativePath>../../pom.xml</relativePath>
    </parent>
 
-   <artifactId>forge-addon-manager-tests</artifactId>
+   <artifactId>addon-manager-tests</artifactId>
    <name>Forge - Addon Manager - Tests</name>
 
    <dependencies>
       <dependency>
          <groupId>org.jboss.forge</groupId>
-         <artifactId>forge-addon-manager-addon</artifactId>
+         <artifactId>addon-manager</artifactId>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge</groupId>
