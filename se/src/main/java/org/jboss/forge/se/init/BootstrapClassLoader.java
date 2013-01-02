@@ -103,6 +103,7 @@ public class BootstrapClassLoader extends URLClassLoader
          return result;
       }
 
+      @SuppressWarnings("deprecation")
       private List<URL> handleArchiveByFile(File file, URL url) throws IOException
       {
          List<URL> result = new ArrayList<URL>();

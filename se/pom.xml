@@ -1,87 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- ~ Copyright 2012 Red Hat, Inc. and/or its affiliates. ~ ~ Licensed under the Eclipse Public License version 1.0, available 
-   at ~ http://www.eclipse.org/legal/epl-v10.html -->
+<!-- ~ Copyright 2012 Red Hat, Inc. and/or its affiliates. ~ ~ Licensed under 
+	the Eclipse Public License version 1.0, available at ~ http://www.eclipse.org/legal/epl-v10.html -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-   <modelVersion>4.0.0</modelVersion>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-   <parent>
-      <groupId>org.jboss.forge</groupId>
-      <artifactId>forge-parent</artifactId>
-      <version>2.0.0-SNAPSHOT</version>
-      <relativePath>../pom.xml</relativePath>
-   </parent>
+	<parent>
+		<groupId>org.jboss.forge</groupId>
+		<artifactId>forge-parent</artifactId>
+		<version>2.0.0-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
 
-   <artifactId>forge-se</artifactId>
+	<artifactId>forge-se</artifactId>
 
-   <name>JBoss Forge - Java SE UberJar Build</name>
+	<name>JBoss Forge - Java SE UberJar Build</name>
 
-   <build>
-      <plugins>
-         <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-dependency-plugin</artifactId>
-            <version>2.5.1</version>
-            <executions>
-               <execution>
-                  <id>copy-dependencies</id>
-                  <phase>generate-resources</phase>
-                  <goals>
-                     <goal>copy-dependencies</goal>
-                  </goals>
-                  <configuration>
-                     <includeScope>provided</includeScope>
-                     <outputDirectory>${project.build.outputDirectory}/bootpath</outputDirectory>
-                  </configuration>
-               </execution>
-            </executions>
-         </plugin>
-      </plugins>
-      <pluginManagement>
-         <plugins>
-            <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven 
-               build itself. -->
-            <plugin>
-               <groupId>org.eclipse.m2e</groupId>
-               <artifactId>lifecycle-mapping</artifactId>
-               <version>1.0.0</version>
-               <configuration>
-                  <lifecycleMappingMetadata>
-                     <pluginExecutions>
-                        <pluginExecution>
-                           <pluginExecutionFilter>
-                              <groupId>org.apache.maven.plugins</groupId>
-                              <artifactId>maven-dependency-plugin</artifactId>
-                              <versionRange>[2.5.1,)</versionRange>
-                              <goals>
-                                 <goal>copy-dependencies</goal>
-                              </goals>
-                           </pluginExecutionFilter>
-                           <action>
-                              <ignore></ignore>
-                           </action>
-                        </pluginExecution>
-                     </pluginExecutions>
-                  </lifecycleMappingMetadata>
-               </configuration>
-            </plugin>
-         </plugins>
-      </pluginManagement>
-   </build>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<includeScope>provided</includeScope>
+							<includeScope>compile</includeScope>
+							<outputDirectory>${project.build.outputDirectory}/bootpath</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-dependency-plugin</artifactId>
+										<versionRange>[2.5.1,)</versionRange>
+										<goals>
+											<goal>copy-dependencies</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
 
-   <dependencies>
-      <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>forge-bootstrap</artifactId>
-         <scope>provided</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>forge-jboss-modules</artifactId>
-         <scope>provided</scope>
-         <version>1</version>
-      </dependency>
-   </dependencies>
+	<dependencies>
+		<dependency>
+			<groupId>org.jboss.forge</groupId>
+			<artifactId>forge-addon-container</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.forge</groupId>
+			<artifactId>forge-addon-container-api</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib-nodep</artifactId>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
 </project>

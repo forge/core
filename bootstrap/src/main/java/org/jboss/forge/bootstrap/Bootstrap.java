@@ -15,6 +15,7 @@ import org.jboss.forge.addon.manager.AddonManager;
 import org.jboss.forge.addon.manager.InstallRequest;
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.Forge;
+import org.jboss.forge.se.init.ForgeFactory;
 
 /**
  * A class with a main method to bootstrap Forge.
@@ -40,7 +41,7 @@ public class Bootstrap
    {
       String installAddon = null;
       String removeAddon = null;
-      forge = ServiceLoader.load(Forge.class).iterator().next();
+      forge = ForgeFactory.getInstance();
       if (args.length > 0)
       {
          for (int i = 0; i < args.length; i++)

@@ -11,7 +11,7 @@
    <dependencies>
       <dependency>
          <groupId>org.jboss.forge</groupId>
-         <artifactId>forge-addon-container</artifactId>
+         <artifactId>forge-se</artifactId>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge</groupId>

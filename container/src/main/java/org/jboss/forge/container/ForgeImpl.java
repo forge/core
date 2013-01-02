@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -77,22 +76,12 @@ public class ForgeImpl implements Forge
       return threads;
    }
 
-   /*
-    * (non-Javadoc)
-    *
-    * @see org.jboss.forge.container.Forge#startAsync()
-    */
    @Override
    public Forge startAsync()
    {
       return startAsync(Thread.currentThread().getContextClassLoader());
    }
 
-   /*
-    * (non-Javadoc)
-    *
-    * @see org.jboss.forge.container.Forge#startAsync(java.lang.ClassLoader)
-    */
    @Override
    public Forge startAsync(final ClassLoader loader)
    {
@@ -108,22 +97,12 @@ public class ForgeImpl implements Forge
       return this;
    }
 
-   /*
-    * (non-Javadoc)
-    *
-    * @see org.jboss.forge.container.Forge#start()
-    */
    @Override
    public Forge start()
    {
       return start(Thread.currentThread().getContextClassLoader());
    }
 
-   /*
-    * (non-Javadoc)
-    *
-    * @see org.jboss.forge.container.Forge#start(java.lang.ClassLoader)
-    */
    @Override
    public Forge start(ClassLoader loader)
    {
@@ -169,11 +148,6 @@ public class ForgeImpl implements Forge
       }
    }
 
-   /*
-    * (non-Javadoc)
-    *
-    * @see org.jboss.forge.container.Forge#stop()
-    */
    @Override
    public Forge stop()
    {
@@ -238,15 +212,9 @@ public class ForgeImpl implements Forge
          {
             future.get();
          }
-         catch (InterruptedException e)
+         catch (Exception e)
          {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-         }
-         catch (ExecutionException e)
-         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new ContainerException("Failed to start addon [" + addon + "]", e);
          }
          started.add(new AddonThread(future, runnable));
 
@@ -254,11 +222,6 @@ public class ForgeImpl implements Forge
       return started;
    }
 
-   /*
-    * (non-Javadoc)
-    *
-    * @see org.jboss.forge.container.Forge#getAddonRegistry()
-    */
    @Override
    public AddonRegistry getAddonRegistry()
    {
@@ -354,18 +317,13 @@ public class ForgeImpl implements Forge
             catch (Exception e)
             {
                addonToLoad.setStatus(Status.FAILED);
-               e.printStackTrace();
+               throw new ContainerException("Failed to load addon [" + addonId + "]", e);
             }
          }
       }
       return addonToLoad;
    }
 
-   /*
-    * (non-Javadoc)
-    *
-    * @see org.jboss.forge.container.Forge#setAddonDir(java.io.File)
-    */
    @Override
    public Forge setAddonDir(File dir)
    {
@@ -373,11 +331,6 @@ public class ForgeImpl implements Forge
       return this;
    }
 
-   /*
-    * (non-Javadoc)
-    *
-    * @see org.jboss.forge.container.Forge#setServerMode(boolean)
-    */
    @Override
    public Forge setServerMode(boolean server)
    {
@@ -385,33 +338,18 @@ public class ForgeImpl implements Forge
       return this;
    }
 
-   /*
-    * (non-Javadoc)
-    *
-    * @see org.jboss.forge.container.Forge#getAddonDir()
-    */
    @Override
    public File getAddonDir()
    {
       return repository.getRepositoryDirectory();
    }
 
-   /*
-    * (non-Javadoc)
-    *
-    * @see org.jboss.forge.container.Forge#getRepository()
-    */
    @Override
    public AddonRepository getRepository()
    {
       return repository;
    }
 
-   /*
-    * (non-Javadoc)
-    *
-    * @see org.jboss.forge.container.Forge#getVersion()
-    */
    @Override
    public String getVersion()
    {

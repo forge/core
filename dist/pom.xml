@@ -43,59 +43,6 @@
          <artifactId>forge-bootstrap</artifactId>
       </dependency>
 
-      <dependency>
-         <groupId>javax.enterprise</groupId>
-         <artifactId>cdi-api</artifactId>
-      </dependency>
-
-      <dependency>
-         <groupId>javax.inject</groupId>
-         <artifactId>javax.inject</artifactId>
-      </dependency>
-
-      <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>forge-parser-xml</artifactId>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>forge-addon-container-api</artifactId>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>forge-addon-container</artifactId>
-      </dependency>
-
-      <dependency>
-         <groupId>org.jboss.modules</groupId>
-         <artifactId>jboss-modules</artifactId>
-      </dependency>
-
-      <dependency>
-         <groupId>org.jboss.spec.javax.interceptor</groupId>
-         <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
-      </dependency>
-
-      <dependency>
-         <groupId>org.jboss.spec.javax.servlet</groupId>
-         <artifactId>jboss-servlet-api_3.0_spec</artifactId>
-      </dependency>
-
-      <dependency>
-         <groupId>org.jboss.weld.se</groupId>
-         <artifactId>weld-se-core</artifactId>
-      </dependency>
-
-      <dependency>
-         <groupId>cglib</groupId>
-         <artifactId>cglib-nodep</artifactId>
-      </dependency>
-
-      <dependency>
-         <groupId>org.slf4j</groupId>
-         <artifactId>slf4j-jdk14</artifactId>
-      </dependency>
-
    </dependencies>
 
    <profiles>
