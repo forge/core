@@ -287,4 +287,21 @@ public abstract class AnnotationTest<O extends JavaSource<O>, T>
       assertEquals(Test.class.getSimpleName(), annotation.getName());
       assertEquals(Test.class.getName(), annotation.getQualifiedName());
    }
+
+   @Test
+   public void testReAddObjectValue() throws Exception
+   {
+      int size = target.getAnnotations().size();
+
+      target.addAnnotation(Test.class)
+               .setLiteralValue("foo", "bar").setLiteralValue("foo", "baz");
+
+      List<Annotation<O>> annotations = target.getAnnotations();
+      assertEquals(size + 1, annotations.size());
+
+      Annotation<O> annotation = annotations.get(annotations.size() - 1);
+      assertEquals(Test.class.getSimpleName(), annotation.getName());
+      assertEquals(null, annotation.getLiteralValue());
+      assertEquals("baz", annotation.getLiteralValue("foo"));
+   }
 }
