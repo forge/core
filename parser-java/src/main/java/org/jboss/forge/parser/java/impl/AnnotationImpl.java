@@ -8,6 +8,7 @@ package org.jboss.forge.parser.java.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.AST;
@@ -293,14 +294,18 @@ public class AnnotationImpl<O extends JavaSource<O>, T> implements Annotation<O>
       JavaClass temp = (JavaClass) JavaParser.parse(stub);
 
       NormalAnnotation anno = (NormalAnnotation) temp.getAnnotations().get(0).getInternal();
+      MemberValuePair mvp = (MemberValuePair) anno.values().get(0);
 
-      for (Object v : anno.values())
+      List<MemberValuePair> values = na.values();
+      for (Iterator<MemberValuePair> iter = values.iterator(); iter.hasNext();)
       {
-         if (v instanceof MemberValuePair)
+         if (iter.next().getName().getIdentifier().equals(name))
          {
-            na.values().add(ASTNode.copySubtree(annotation.getAST(), (MemberValuePair) v));
+            iter.remove();
+            break;
          }
       }
+      values.add((MemberValuePair) ASTNode.copySubtree(annotation.getAST(), mvp));
 
       return this;
    }
