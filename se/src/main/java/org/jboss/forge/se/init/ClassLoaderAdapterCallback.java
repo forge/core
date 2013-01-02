@@ -37,7 +37,10 @@ public class ClassLoaderAdapterCallback implements MethodInterceptor
                List<Class<?>> parameterTypes = new ArrayList<Class<?>>();
                for (Class<?> type : method.getParameterTypes())
                {
-                  parameterTypes.add(loader.loadClass(type.getName()));
+                  if (!type.isPrimitive())
+                     parameterTypes.add(loader.loadClass(type.getName()));
+                  else
+                     parameterTypes.add(type);
                }
 
                Method delegateMethod = delegate.getClass().getMethod(method.getName(),
