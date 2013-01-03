@@ -10,8 +10,10 @@ package org.jboss.forge.parser.java.ast;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.eclipse.jdt.core.dom.BodyDeclaration;
+import org.eclipse.jdt.core.dom.IExtendedModifier;
 import org.jboss.forge.parser.java.Annotation;
 import org.jboss.forge.parser.java.AnnotationTarget;
 import org.jboss.forge.parser.java.JavaSource;
@@ -27,8 +29,14 @@ public class AnnotationAccessor<O extends JavaSource<O>, T>
    @SuppressWarnings("unchecked")
    public Annotation<O> addAnnotation(final AnnotationTarget<O, T> target, final BodyDeclaration body)
    {
+      ListIterator<IExtendedModifier> iter = body.modifiers().listIterator();
+      while (iter.hasNext() && iter.next().isAnnotation());
+      if (iter.hasPrevious())
+      {
+         iter.previous();
+      }
       Annotation<O> annotation = new AnnotationImpl<O, T>(target);
-      body.modifiers().add(0, annotation.getInternal());
+      iter.add((IExtendedModifier) annotation.getInternal());
       return annotation;
    }
 
