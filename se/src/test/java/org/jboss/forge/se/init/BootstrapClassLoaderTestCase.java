@@ -2,6 +2,8 @@ package org.jboss.forge.se.init;
 
 import java.lang.reflect.Method;
 
+import org.jboss.forge.container.AddonFilters;
+import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.Forge;
 import org.jboss.forge.container.ForgeImpl;
@@ -27,5 +29,44 @@ public class BootstrapClassLoaderTestCase
       Assert.assertNotNull(instance);
       AddonRegistry registry = instance.getAddonRegistry();
       Assert.assertNotNull(registry);
+   }
+
+   @Test
+   public void shouldBeAbleToPassPrimitivesIntoDelegate() throws Exception
+   {
+      Forge instance = ForgeFactory.getInstance();
+      Assert.assertNotNull(instance);
+      instance.setServerMode(false);
+   }
+
+   @Test
+   public void shouldBeAbleToPassClassesIntoDelegate() throws Exception
+   {
+      Forge instance = ForgeFactory.getInstance();
+      instance.getRepository().getAddonResources(AddonId.from("a", "1"));
+   }
+
+   @Test
+   public void shouldBeAbleToPassInterfacesIntoDelegate() throws Exception
+   {
+      Forge instance = ForgeFactory.getInstance();
+      instance.getAddonRegistry().getRegisteredAddons(AddonFilters.allWaiting());
+   }
+
+   @Test
+   public void shouldBeAbleToEnhanceAddonId() throws Exception
+   {
+      ClassLoader loader = AddonId.class.getClassLoader();
+      ClassLoaderAdapterCallback.enhance(loader, loader, AddonId.from("a", "1"), AddonId.class);
+   }
+
+   @Test
+   public void shouldBeAbleToEnhanceAddonIdIntoDelegate() throws Exception
+   {
+      Forge instance = ForgeFactory.getInstance();
+      ClassLoader fromLoader = AddonId.class.getClassLoader();
+      ClassLoader toLoader = instance.getClass().getSuperclass().getClassLoader();
+      ClassLoaderAdapterCallback.enhance(fromLoader, toLoader,
+               AddonId.from("a", "1"), AddonId.class);
    }
 }

@@ -18,4 +18,12 @@ public class Assert
          throw new IllegalStateException(message);
       }
    }
+
+   public static void isTrue(boolean value, String message)
+   {
+      if (value != true)
+      {
+         throw new IllegalStateException(message);
+      }
+   }
 }

@@ -251,6 +251,7 @@ public final class AddonRepositoryImpl implements AddonRepository
    @Override
    public File getAddonBaseDir(AddonId found)
    {
+      Assert.notNull(found, "Addon must be specified.");
       Assert.notNull(found.getVersion(), "Addon version must be specified.");
       Assert.notNull(found.getName(), "Addon name must be specified.");
 

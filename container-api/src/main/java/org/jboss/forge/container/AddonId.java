@@ -3,13 +3,23 @@ package org.jboss.forge.container;
 import java.util.Arrays;
 import java.util.List;
 
-public final class AddonId
+public abstract class AddonId
 {
    private final String name;
    private final String apiVersion;
    private final String version;
 
-   private AddonId(final String name, final String version, final String apiVersion)
+   /*
+    * For CGLib
+    */
+   AddonId()
+   {
+      name = null;
+      apiVersion = null;
+      version = null;
+   }
+
+   AddonId(final String name, final String version, final String apiVersion)
    {
       if (name == null || name.isEmpty())
          throw new IllegalArgumentException("Name cannot be null.");
@@ -71,7 +81,9 @@ public final class AddonId
 
    public static AddonId from(String name, String version, String apiVersion)
    {
-      return new AddonId(name, version, apiVersion);
+      return new AddonId(name, version, apiVersion)
+      {
+      };
    }
 
    public String toCoordinates()

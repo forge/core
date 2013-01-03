@@ -1,7 +1,5 @@
 package org.jboss.forge.se.init;
 
-import net.sf.cglib.proxy.Enhancer;
-
 import org.jboss.forge.container.Forge;
 
 public class ForgeFactory
@@ -12,7 +10,8 @@ public class ForgeFactory
       {
          final BootstrapClassLoader cl = new BootstrapClassLoader("bootpath");
          Class<?> bootstrapType = cl.loadClass("org.jboss.forge.container.ForgeImpl");
-         return (Forge) Enhancer.create(Forge.class, new ClassLoaderAdapterCallback(cl, bootstrapType.newInstance()));
+         return (Forge) ClassLoaderAdapterCallback.enhance(ForgeFactory.class.getClassLoader(), cl,
+                  bootstrapType.newInstance(), Forge.class);
       }
       catch (Exception e)
       {
