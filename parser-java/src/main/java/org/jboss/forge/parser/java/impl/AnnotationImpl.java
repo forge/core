@@ -430,20 +430,17 @@ public class AnnotationImpl<O extends JavaSource<O>, T> implements Annotation<O>
    @SuppressWarnings("unchecked")
    private void convertTo(final AnnotationType type)
    {
-      BodyDeclaration node = (BodyDeclaration) annotation.getParent();
       String value = this.getLiteralValue();
-
-      for (Object o : node.modifiers())
+      
+      BodyDeclaration node = (BodyDeclaration) annotation.getParent();
+      
+      int pos = node.modifiers().indexOf(annotation);
+      if (pos >= 0)
       {
-         if (o.equals(annotation))
-         {
-            node.modifiers().remove(annotation);
-            Annotation<O> na = new AnnotationImpl<O, T>(parent, type);
-            na.setName(getName());
-            annotation = (org.eclipse.jdt.core.dom.Annotation) na.getInternal();
-            node.modifiers().add(annotation);
-            break;
-         }
+         Annotation<O> na = new AnnotationImpl<O, T>(parent, type);
+         na.setName(getName());
+         annotation = (org.eclipse.jdt.core.dom.Annotation) na.getInternal();
+         node.modifiers().set(pos, annotation);
       }
 
       if (!AnnotationType.MARKER.equals(type) && (value != null))
