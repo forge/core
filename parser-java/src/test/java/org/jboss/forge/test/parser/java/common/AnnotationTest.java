@@ -69,6 +69,7 @@ public abstract class AnnotationTest<O extends JavaSource<O>, T>
       Annotation<O> annotation = target.addAnnotation().setName("RequestScoped");
       List<Annotation<O>> annotations = target.getAnnotations();
       assertEquals(size + 1, annotations.size());
+      assertEquals(annotation, target.getAnnotations().get(size));
       assertEquals("RequestScoped", annotation.getName());
    }
 
@@ -79,6 +80,7 @@ public abstract class AnnotationTest<O extends JavaSource<O>, T>
       Annotation<O> annotation = target.addAnnotation(Test.class);
       List<Annotation<O>> annotations = target.getAnnotations();
       assertEquals(size + 1, annotations.size());
+      assertEquals(annotation, target.getAnnotations().get(size));
       assertEquals(Test.class.getSimpleName(), annotation.getName());
       assertTrue(target.toString().contains("@" + Test.class.getSimpleName()));
       assertTrue(target.getOrigin().hasImport(Test.class));
@@ -91,6 +93,7 @@ public abstract class AnnotationTest<O extends JavaSource<O>, T>
       Annotation<O> annotation = target.addAnnotation("RequestScoped");
       List<Annotation<O>> annotations = target.getAnnotations();
       assertEquals(size + 1, annotations.size());
+      assertEquals(annotation, target.getAnnotations().get(size));
       assertEquals("RequestScoped", annotation.getName());
       assertTrue(target.toString().contains("@RequestScoped"));
       assertFalse(target.getOrigin().hasImport("RequestScoped"));
