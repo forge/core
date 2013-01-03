@@ -35,9 +35,14 @@ public class AnnotationImpl<O extends JavaSource<O>, T> implements Annotation<O>
 {
    private class Nested extends AnnotationImpl<O, T>
    {
-      public Nested(AnnotationImpl<O, T> owner)
+      Nested(AnnotationImpl<O, T> owner)
       {
          super(owner.parent);
+      }
+
+      Nested(AnnotationImpl<O, T> owner, Object internal)
+      {
+         super(owner.parent, internal);
       }
 
       @Override
@@ -582,6 +587,48 @@ public class AnnotationImpl<O extends JavaSource<O>, T> implements Annotation<O>
       iter.add(mvpCopy);
 
       return result;
+   }
+
+   @Override
+   public Annotation<O> getAnnotationValue()
+   {
+      if (isSingleValue())
+      {
+         SingleMemberAnnotation single = (SingleMemberAnnotation) annotation;
+         Expression value = single.getValue();
+         if (value instanceof org.eclipse.jdt.core.dom.Annotation)
+         {
+            return new Nested(this, value);
+         }
+      }
+      if (isNormal())
+      {
+         return getAnnotationValue(DEFAULT_VALUE);
+      }
+      return null;
+   }
+
+   @Override
+   public Annotation<O> getAnnotationValue(String name)
+   {
+      if (isNormal())
+      {
+         NormalAnnotation normal = (NormalAnnotation) annotation;
+         @SuppressWarnings("unchecked")
+         List<MemberValuePair> values = normal.values();
+         for (MemberValuePair memberValuePair : values)
+         {
+            if (Strings.areEqual(name, memberValuePair.getName().getIdentifier()))
+            {
+               return new Nested(this, memberValuePair.getValue());
+            }
+         }
+      }
+      if (isSingleValue() && DEFAULT_VALUE.equals(name))
+      {
+         return getAnnotationValue();
+      }
+      return null;
    }
 
 }
