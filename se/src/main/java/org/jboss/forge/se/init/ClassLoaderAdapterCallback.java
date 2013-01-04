@@ -8,15 +8,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import net.sf.cglib.proxy.CallbackFilter;
-import net.sf.cglib.proxy.Enhancer;
-import net.sf.cglib.proxy.MethodInterceptor;
-import net.sf.cglib.proxy.MethodProxy;
+import javassist.util.proxy.MethodFilter;
+import javassist.util.proxy.MethodHandler;
+import javassist.util.proxy.ProxyFactory;
+import javassist.util.proxy.ProxyObject;
 
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.util.Arrays;
 
-public class ClassLoaderAdapterCallback implements MethodInterceptor
+public class ClassLoaderAdapterCallback implements MethodHandler
 {
    private final ClassLoader fromLoader;
    private final ClassLoader toLoader;
@@ -30,14 +30,14 @@ public class ClassLoaderAdapterCallback implements MethodInterceptor
    }
 
    @Override
-   public Object intercept(final Object obj, final Method method, final Object[] args, final MethodProxy proxy)
+   public Object invoke(final Object obj, final Method proxy, final Method method, final Object[] args)
             throws Throwable
    {
       try
       {
-         List<Class<?>> parameterTypes = convertParameterTypes(method);
+         List<Class<?>> parameterTypes = convertParameterTypes(proxy);
 
-         Method delegateMethod = delegate.getClass().getMethod(method.getName(),
+         Method delegateMethod = delegate.getClass().getMethod(proxy.getName(),
                   parameterTypes.toArray(new Class<?>[parameterTypes.size()]));
 
          List<Object> parameterValues = convertParameterValues(args, delegateMethod);
@@ -45,13 +45,13 @@ public class ClassLoaderAdapterCallback implements MethodInterceptor
          AccessibleObject.setAccessible(new AccessibleObject[] { delegateMethod }, true);
          Object result = delegateMethod.invoke(delegate, parameterValues.toArray());
 
-         return enhanceResult(method, result);
+         return enhanceResult(proxy, result);
       }
       catch (Throwable e)
       {
          throw new ContainerException(
                   "Could not invoke proxy method [" + delegate.getClass().getName() + "."
-                           + method.getName() + "()] in ClassLoader ["
+                           + proxy.getName() + "()] in ClassLoader ["
                            + toLoader + "]", e);
       }
    }
@@ -98,21 +98,9 @@ public class ClassLoaderAdapterCallback implements MethodInterceptor
             final Class<?> parameterType = parameterValue.getClass();
             if (!delegateParameterType.isAssignableFrom(parameterType))
             {
-               if (parameterValue instanceof Enhanced)
-               {
-                  Object delegateParameterValue = ((Enhanced) parameterValue).getDelegate();
-                  if (toLoader.equals(delegateParameterValue.getClass().getClassLoader()))
-                     parameterValues.add(delegateParameterValue);
-                  else
-                     parameterValues.add(enhance(toLoader, fromLoader, delegateParameterValue,
-                              delegateParameterType));
-               }
-               else
-               {
-                  Object delegateParameterValue = enhance(toLoader, fromLoader, parameterType,
-                           delegateParameterType);
-                  parameterValues.add(delegateParameterValue);
-               }
+               Object delegateParameterValue = enhance(toLoader, fromLoader, parameterType,
+                        delegateParameterType);
+               parameterValues.add(delegateParameterValue);
             }
             else
                parameterValues.add(parameterValue);
@@ -200,47 +188,56 @@ public class ClassLoaderAdapterCallback implements MethodInterceptor
       else
          hierarchy = Arrays.copy(types, new Class<?>[types.length]);
 
-      CallbackFilter filter = new CallbackFilter()
+      MethodFilter filter = new MethodFilter()
       {
          @Override
-         public int accept(Method method)
+         public boolean isHandled(Method method)
          {
             if (!method.getDeclaringClass().getName().contains("java.lang"))
-               return 0;
-            else if (Enhanced.class.equals(method.getDeclaringClass()))
-               return 1;
-            else
-               return 2;
+               return true;
+            return false;
          }
       };
 
-      MethodInterceptor[] callbacks = new MethodInterceptor[] {
-               new ClassLoaderAdapterCallback(fromLoader, toLoader, delegate),
-               new EnhancedCallback(delegate),
-               new NullCallback(delegate) };
-
       Object enhancedResult = null;
 
-      if (hierarchy[0].isInterface())
+      ProxyFactory f = new ProxyFactory();
+
+      f.setUseCache(false);
+
+      if (!hierarchy[0].isInterface())
       {
-         enhancedResult = Enhancer.create(hierarchy[0], Arrays.append(hierarchy, Enhanced.class),
-                  filter, callbacks);
+         f.setSuperclass(hierarchy[0]);
+         hierarchy = Arrays.shiftLeft(hierarchy, new Class<?>[hierarchy.length - 1]);
       }
-      else
+
+      if (hierarchy.length > 0)
+         f.setInterfaces(hierarchy);
+
+      f.setFilter(filter);
+      Class<?> c = f.createClass();
+
+      try
       {
-         try
-         {
-            Class<?> supertype = types[0];
-            hierarchy[0] = Enhanced.class;
-            if (!Enhancer.isEnhanced(supertype))
-               enhancedResult = Enhancer.create(supertype, hierarchy, filter, callbacks);
-            else
-               enhancedResult = delegate;
-         }
-         catch (Exception e)
-         {
-            throw new RuntimeException(e);
-         }
+         enhancedResult = c.newInstance();
+      }
+      catch (InstantiationException e)
+      {
+         throw new IllegalStateException(e);
+      }
+      catch (IllegalAccessException e)
+      {
+         throw new IllegalStateException(e);
+      }
+
+      try
+      {
+         ((ProxyObject) enhancedResult).setHandler(
+                  new ClassLoaderAdapterCallback(fromLoader, toLoader, delegate));
+      }
+      catch (Exception e)
+      {
+         throw new IllegalStateException(e);
       }
 
       return (T) enhancedResult;

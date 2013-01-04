@@ -1,7 +1,9 @@
 package org.jboss.forge.se.init;
 
 import java.lang.reflect.Method;
+import java.util.Set;
 
+import org.jboss.forge.container.Addon;
 import org.jboss.forge.container.AddonFilters;
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.AddonRegistry;
@@ -50,14 +52,17 @@ public class BootstrapClassLoaderTestCase
    public void shouldBeAbleToPassInterfacesIntoDelegate() throws Exception
    {
       Forge instance = ForgeFactory.getInstance();
-      instance.getAddonRegistry().getRegisteredAddons(AddonFilters.allWaiting());
+      Set<Addon> addons = instance.getAddonRegistry().getRegisteredAddons(AddonFilters.allWaiting());
+      Assert.assertNotNull(addons);
    }
 
    @Test
    public void shouldBeAbleToEnhanceAddonId() throws Exception
    {
       ClassLoader loader = AddonId.class.getClassLoader();
-      ClassLoaderAdapterCallback.enhance(loader, loader, AddonId.from("a", "1"), AddonId.class);
+      AddonId enhanced = ClassLoaderAdapterCallback.enhance(loader, loader, AddonId.from("a", "1"), AddonId.class);
+      Assert.assertNotNull(enhanced);
+
    }
 
    @Test
