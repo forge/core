@@ -212,7 +212,8 @@ public class ClassLoaderAdapterCallback implements MethodHandler
          @Override
          public boolean isHandled(Method method)
          {
-            if (!method.getDeclaringClass().getName().contains("java.lang"))
+            if (!method.getDeclaringClass().getName().contains("java.lang")
+                     || ("toString".equals(method.getName()) && method.getParameterTypes().length == 0))
                return true;
             return false;
          }
