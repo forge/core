@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 import javassist.util.proxy.MethodFilter;
 import javassist.util.proxy.MethodHandler;
@@ -15,6 +16,7 @@ import javassist.util.proxy.ProxyObject;
 
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.util.Arrays;
+import org.jboss.forge.container.util.ClassLoaders;
 
 public class ClassLoaderAdapterCallback implements MethodHandler
 {
@@ -33,27 +35,34 @@ public class ClassLoaderAdapterCallback implements MethodHandler
    public Object invoke(final Object obj, final Method proxy, final Method method, final Object[] args)
             throws Throwable
    {
-      try
+      return ClassLoaders.executeIn(toLoader, new Callable<Object>()
       {
-         List<Class<?>> parameterTypes = convertParameterTypes(proxy);
+         @Override
+         public Object call() throws Exception
+         {
+            try
+            {
+               List<Class<?>> parameterTypes = convertParameterTypes(proxy);
 
-         Method delegateMethod = delegate.getClass().getMethod(proxy.getName(),
-                  parameterTypes.toArray(new Class<?>[parameterTypes.size()]));
+               Method delegateMethod = delegate.getClass().getMethod(proxy.getName(),
+                        parameterTypes.toArray(new Class<?>[parameterTypes.size()]));
 
-         List<Object> parameterValues = convertParameterValues(args, delegateMethod);
+               List<Object> parameterValues = convertParameterValues(args, delegateMethod);
 
-         AccessibleObject.setAccessible(new AccessibleObject[] { delegateMethod }, true);
-         Object result = delegateMethod.invoke(delegate, parameterValues.toArray());
+               AccessibleObject.setAccessible(new AccessibleObject[] { delegateMethod }, true);
+               Object result = delegateMethod.invoke(delegate, parameterValues.toArray());
 
-         return enhanceResult(proxy, result);
-      }
-      catch (Throwable e)
-      {
-         throw new ContainerException(
-                  "Could not invoke proxy method [" + delegate.getClass().getName() + "."
-                           + proxy.getName() + "()] in ClassLoader ["
-                           + toLoader + "]", e);
-      }
+               return enhanceResult(proxy, result);
+            }
+            catch (Throwable e)
+            {
+               throw new ContainerException(
+                        "Could not invoke proxy method [" + delegate.getClass().getName() + "."
+                                 + proxy.getName() + "()] in ClassLoader ["
+                                 + toLoader + "]", e);
+            }
+         }
+      });
    }
 
    private Object enhanceResult(final Method method, Object result)
@@ -61,24 +70,34 @@ public class ClassLoaderAdapterCallback implements MethodHandler
       if (result != null)
       {
          Class<?> returnType = method.getReturnType();
-         if (!returnType.isPrimitive() && !Modifier.isFinal(returnType.getModifiers()))
+         if (needsEnhancement(result))
          {
-            if (Object.class.equals(returnType) && !Object.class.equals(result))
+            if (!Modifier.isFinal(returnType.getModifiers()))
             {
-               result = enhance(fromLoader, toLoader, method, result,
-                        getObjectClassHierarchy(fromLoader, result));
+               if (Object.class.equals(returnType) && !Object.class.equals(result))
+               {
+                  result = enhance(fromLoader, toLoader, method, result,
+                           getObjectClassHierarchy(fromLoader, result));
+               }
+               else
+               {
+                  result = enhance(fromLoader, toLoader, method, result, returnType);
+               }
             }
             else
             {
-               result = enhance(fromLoader, toLoader, method, result, returnType);
+               result = enhance(fromLoader, toLoader, method, getClassHierarchy(fromLoader, returnType));
             }
-         }
-         else if (Modifier.isFinal(returnType.getModifiers()))
-         {
-            result = enhance(fromLoader, toLoader, method, getClassHierarchy(fromLoader, returnType));
          }
       }
       return result;
+   }
+
+   private boolean needsEnhancement(Object object)
+   {
+      Class<? extends Object> type = object.getClass();
+      return !type.getName().contains("java.lang") &&
+               !type.isPrimitive();
    }
 
    private List<Object> convertParameterValues(final Object[] args, Method delegateMethod)
@@ -98,7 +117,7 @@ public class ClassLoaderAdapterCallback implements MethodHandler
             final Class<?> parameterType = parameterValue.getClass();
             if (!delegateParameterType.isAssignableFrom(parameterType))
             {
-               Object delegateParameterValue = enhance(toLoader, fromLoader, parameterType,
+               Object delegateParameterValue = enhance(toLoader, fromLoader, parameterValue,
                         delegateParameterType);
                parameterValues.add(delegateParameterValue);
             }
@@ -232,8 +251,18 @@ public class ClassLoaderAdapterCallback implements MethodHandler
 
       try
       {
-         ((ProxyObject) enhancedResult).setHandler(
-                  new ClassLoaderAdapterCallback(fromLoader, toLoader, delegate));
+         Class<?>[] interfaces = enhancedResult.getClass().getInterfaces();
+         for (Class<?> type : interfaces)
+         {
+            if (ProxyObject.class.getName().equals(type.getName()))
+            {
+               type.getMethod("setHandler", fromLoader.loadClass(MethodHandler.class.getName()))
+                        .invoke(enhancedResult,
+                                 fromLoader.loadClass(ClassLoaderAdapterCallback.class.getName()).getConstructors()[0]
+                                          .newInstance(fromLoader, toLoader, delegate));
+            }
+         }
+
       }
       catch (Exception e)
       {
