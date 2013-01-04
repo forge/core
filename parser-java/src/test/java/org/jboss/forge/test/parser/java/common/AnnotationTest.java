@@ -77,6 +77,17 @@ public abstract class AnnotationTest<O extends JavaSource<O>, T>
    }
 
    @Test
+   public void testAddAnonymousAnnotation() throws Exception
+   {
+      int size = target.getAnnotations().size();
+      Annotation<O> annotation = target.addAnnotation();
+      List<Annotation<O>> annotations = target.getAnnotations();
+      assertEquals(size + 1, annotations.size());
+      assertEquals(annotation, target.getAnnotations().get(size));
+      assertEquals("@MISSING", annotation.toString());
+   }
+
+   @Test
    public void testAddAnnotationByClass() throws Exception
    {
       int size = target.getAnnotations().size();
@@ -180,6 +191,37 @@ public abstract class AnnotationTest<O extends JavaSource<O>, T>
    }
 
    @Test
+   public void testAddNestedAnonymousAnnotationValue() throws Exception
+   {
+      target.addAnnotation(Test.class).setAnnotationValue()
+      .setEnumValue(ElementType.FIELD, ElementType.METHOD);
+
+      List<Annotation<O>> annotations = target.getAnnotations();
+
+      Annotation<O> annotation = annotations.get(annotations.size() - 1);
+      assertEquals("@MISSING({ElementType.FIELD,ElementType.METHOD})", annotation.getLiteralValue());
+
+      Annotation<O> nested = annotation.getAnnotationValue();
+      assertEquals("MISSING", nested.getName());
+      assertEquals("{ElementType.FIELD,ElementType.METHOD}", nested.getLiteralValue());
+   }
+
+   @Test
+   public void testAddNestedAnonymousAnnotationNameValue() throws Exception
+   {
+      target.addAnnotation(Test.class).setAnnotationValue("foo").setStringValue("bar", "baz");
+
+      List<Annotation<O>> annotations = target.getAnnotations();
+
+      Annotation<O> annotation = annotations.get(annotations.size() - 1);
+      assertEquals("@MISSING(bar=\"baz\")", annotation.getLiteralValue("foo"));
+
+      Annotation<O> nested = annotation.getAnnotationValue("foo");
+      assertEquals("MISSING", nested.getName());
+      assertEquals("baz", nested.getStringValue("bar"));
+   }
+
+   @Test
    public void testAddDeeplyNestedAnnotationValue() throws Exception
    {
       target.addAnnotation(Test.class).setAnnotationValue().setName("com.test.Foo")
@@ -210,7 +252,38 @@ public abstract class AnnotationTest<O extends JavaSource<O>, T>
       assertEquals("com.test.Bar", deeplyNested.getName());
       assertTrue(deeplyNested.isMarker());
    }
-   
+
+   @Test
+   public void testAddDeeplyNestedAnonymousAnnotationValue() throws Exception
+   {
+      target.addAnnotation(Test.class).setAnnotationValue().setName("com.test.Foo")
+      .setAnnotationValue();
+
+      List<Annotation<O>> annotations = target.getAnnotations();
+
+      Annotation<O> annotation = annotations.get(annotations.size() - 1);
+      assertEquals("@com.test.Foo(@MISSING)", annotation.getLiteralValue());
+
+      Annotation<O> deeplyNested = annotation.getAnnotationValue().getAnnotationValue();
+      assertEquals("MISSING", deeplyNested.getName());
+      assertTrue(deeplyNested.isMarker());
+   }
+
+   @Test
+   public void testAddDeeplyNestedAnonymousAnnotationNameValue() throws Exception
+   {
+      target.addAnnotation(Test.class).setAnnotationValue("foo").setName("com.test.Foo").setAnnotationValue("bar");
+
+      List<Annotation<O>> annotations = target.getAnnotations();
+
+      Annotation<O> annotation = annotations.get(annotations.size() - 1);
+      assertEquals("@com.test.Foo(bar=@MISSING)", annotation.getLiteralValue("foo"));
+
+      Annotation<O> deeplyNested = annotation.getAnnotationValue("foo").getAnnotationValue("bar");
+      assertEquals("MISSING", deeplyNested.getName());
+      assertTrue(deeplyNested.isMarker());
+   }
+
    @Test
    public void testAddLiteralValue() throws Exception
    {
