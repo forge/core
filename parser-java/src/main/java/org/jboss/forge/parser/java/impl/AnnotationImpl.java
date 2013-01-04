@@ -8,8 +8,8 @@ package org.jboss.forge.parser.java.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -31,6 +31,27 @@ import org.jboss.forge.parser.java.util.Strings;
  */
 public class AnnotationImpl<O extends JavaSource<O>, T> implements Annotation<O>
 {
+   private class Nested extends AnnotationImpl<O, T>
+   {
+      public Nested(AnnotationImpl<O, T> owner)
+      {
+         super(owner.parent);
+      }
+
+      @Override
+      protected void replace(org.eclipse.jdt.core.dom.Annotation oldNode, org.eclipse.jdt.core.dom.Annotation newNode)
+      {
+         if (oldNode.getParent() instanceof SingleMemberAnnotation)
+         {
+            ((SingleMemberAnnotation) oldNode.getParent()).setValue(newNode);
+         }
+         else
+         {
+            ((MemberValuePair) oldNode.getParent()).setValue(newNode);
+         }
+      }
+   }
+
    private static final String DEFAULT_VALUE = "value";
 
    private AnnotationTarget<O, T> parent = null;
@@ -42,12 +63,6 @@ public class AnnotationImpl<O extends JavaSource<O>, T> implements Annotation<O>
       MARKER, SINGLE, NORMAL
    }
 
-   private void init(final AnnotationTarget<O, T> parent)
-   {
-      this.parent = parent;
-      ast = ((ASTNode) parent.getInternal()).getAST();
-   }
-
    public AnnotationImpl(final AnnotationTarget<O, T> parent)
    {
       this(parent, AnnotationType.MARKER);
@@ -55,24 +70,28 @@ public class AnnotationImpl<O extends JavaSource<O>, T> implements Annotation<O>
 
    public AnnotationImpl(final AnnotationTarget<O, T> parent, final Object internal)
    {
-      init(parent);
-      this.annotation = (org.eclipse.jdt.core.dom.Annotation) internal;
+      this.parent = parent;
+      ast = ((ASTNode) parent.getInternal()).getAST();
+      annotation = (org.eclipse.jdt.core.dom.Annotation) internal;
    }
 
    public AnnotationImpl(final AnnotationTarget<O, T> parent, final AnnotationType type)
    {
-      init(parent);
+      this(parent, createAnnotation(parent, type));
+   }
+
+   private static org.eclipse.jdt.core.dom.Annotation createAnnotation(final AnnotationTarget<?, ?> parent,
+            final AnnotationType type)
+   {
+      AST ast = ((ASTNode) parent.getInternal()).getAST();
       switch (type)
       {
       case MARKER:
-         this.annotation = ast.newMarkerAnnotation();
-         break;
+         return ast.newMarkerAnnotation();
       case SINGLE:
-         this.annotation = ast.newSingleMemberAnnotation();
-         break;
+         return ast.newSingleMemberAnnotation();
       case NORMAL:
-         this.annotation = ast.newNormalAnnotation();
-         break;
+         return ast.newNormalAnnotation();
       default:
          throw new IllegalArgumentException("Unknown annotation type: " + type);
       }
@@ -297,7 +316,8 @@ public class AnnotationImpl<O extends JavaSource<O>, T> implements Annotation<O>
       MemberValuePair mvp = (MemberValuePair) anno.values().get(0);
 
       List<MemberValuePair> values = na.values();
-      for (Iterator<MemberValuePair> iter = values.iterator(); iter.hasNext();)
+      ListIterator<MemberValuePair> iter = values.listIterator();
+      while (iter.hasNext())
       {
          if (iter.next().getName().getIdentifier().equals(name))
          {
@@ -305,7 +325,7 @@ public class AnnotationImpl<O extends JavaSource<O>, T> implements Annotation<O>
             break;
          }
       }
-      values.add((MemberValuePair) ASTNode.copySubtree(annotation.getAST(), mvp));
+      iter.add((MemberValuePair) ASTNode.copySubtree(annotation.getAST(), mvp));
 
       return this;
    }
@@ -376,33 +396,36 @@ public class AnnotationImpl<O extends JavaSource<O>, T> implements Annotation<O>
    public Annotation<O> setEnumValue(final Enum<?>... values)
    {
       O origin = getOrigin();
-      
+
       String result = new String();// = "{";
-      
-      if(values.length > 1) {
-	  result = "{";
+
+      if (values.length > 1)
+      {
+         result = "{";
       }
 
       if (origin instanceof JavaSource)
       {
          JavaSource<?> source = origin;
-         
-         for(Enum<?> value : values) {
-             if (!source.hasImport(value.getDeclaringClass()))
-             {
-                source.addImport(value.getDeclaringClass());
-             }
-             
-             result = result.concat(value.getDeclaringClass().getSimpleName() + "." + value.name() + ",");
+
+         for (Enum<?> value : values)
+         {
+            if (!source.hasImport(value.getDeclaringClass()))
+            {
+               source.addImport(value.getDeclaringClass());
+            }
+
+            result = result.concat(value.getDeclaringClass().getSimpleName() + "." + value.name() + ",");
          }
-         
-         result = result.substring(0, result.length()-1);
-         
-         if(values.length > 1) {
-             result = result.concat("}");
+
+         result = result.substring(0, result.length() - 1);
+
+         if (values.length > 1)
+         {
+            result = result.concat("}");
          }
       }
-      
+
       return setLiteralValue(result);
    }
 
@@ -428,22 +451,26 @@ public class AnnotationImpl<O extends JavaSource<O>, T> implements Annotation<O>
    }
 
    @SuppressWarnings("unchecked")
-   private void convertTo(final AnnotationType type)
+   protected void replace(org.eclipse.jdt.core.dom.Annotation oldNode, org.eclipse.jdt.core.dom.Annotation newNode)
    {
-      String value = this.getLiteralValue();
-      
       BodyDeclaration node = (BodyDeclaration) annotation.getParent();
       
       int pos = node.modifiers().indexOf(annotation);
       if (pos >= 0)
       {
-         Annotation<O> na = new AnnotationImpl<O, T>(parent, type);
-         na.setName(getName());
-         annotation = (org.eclipse.jdt.core.dom.Annotation) na.getInternal();
-         node.modifiers().set(pos, annotation);
+         node.modifiers().set(pos, newNode);
       }
+   }
 
-      if (!AnnotationType.MARKER.equals(type) && (value != null))
+   private void convertTo(final AnnotationType type)
+   {
+      String value = this.getLiteralValue();
+      AnnotationImpl<O, T> na = new AnnotationImpl<O, T>(parent, type);
+      na.setName(getName());
+      replace(annotation, na.annotation);
+      annotation = na.annotation;
+
+      if (AnnotationType.MARKER != type && (value != null))
       {
          setLiteralValue(value);
       }
@@ -486,6 +513,60 @@ public class AnnotationImpl<O extends JavaSource<O>, T> implements Annotation<O>
          return false;
       }
       return true;
+   }
+
+   @Override
+   public Annotation<O> setAnnotationValue()
+   {
+      if (isMarker())
+      {
+         convertTo(AnnotationType.SINGLE);
+      }
+
+      if (isSingleValue())
+      {
+         final Annotation<O> result = new Nested(this);
+         ((SingleMemberAnnotation) annotation).setValue((Expression) result.getInternal());
+         return result;
+      }
+      return setAnnotationValue(DEFAULT_VALUE);
+   }
+
+   @Override
+   public Annotation<O> setAnnotationValue(String name)
+   {
+      if (!isNormal() && DEFAULT_VALUE.equals(name)) {
+         return setAnnotationValue();
+      }
+      if (!isNormal())
+      {
+         convertTo(AnnotationType.NORMAL);
+      }
+      Annotation<O> result = new Nested(this);
+      
+      
+      String stub = "@" + getName() + "(" + name + "= 0 ) public class Stub { }";
+      JavaClass temp = (JavaClass) JavaParser.parse(stub);
+
+      NormalAnnotation anno = (NormalAnnotation) temp.getAnnotations().get(0).getInternal();
+      MemberValuePair mvp = (MemberValuePair) anno.values().get(0);
+
+      @SuppressWarnings("unchecked")
+      List<MemberValuePair> values = ((NormalAnnotation) annotation).values();
+      ListIterator<MemberValuePair> iter = values.listIterator();
+      while (iter.hasNext())
+      {
+         if (iter.next().getName().getIdentifier().equals(name))
+         {
+            iter.remove();
+            break;
+         }
+      }
+      MemberValuePair mvpCopy = (MemberValuePair) ASTNode.copySubtree(annotation.getAST(), mvp);
+      mvpCopy.setValue((Expression) result.getInternal());
+      iter.add(mvpCopy);
+
+      return result;
    }
 
 }
