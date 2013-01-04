@@ -158,6 +158,10 @@ public abstract class AnnotationTest<O extends JavaSource<O>, T>
 
       Annotation<O> annotation = annotations.get(annotations.size() - 1);
       assertEquals("@com.test.Foo({ElementType.FIELD,ElementType.METHOD})", annotation.getLiteralValue());
+      
+      Annotation<O> nested = annotation.getAnnotationValue();
+      assertEquals("com.test.Foo", nested.getName());
+      assertEquals("{ElementType.FIELD,ElementType.METHOD}", nested.getLiteralValue());
    }
 
    @Test
@@ -169,6 +173,10 @@ public abstract class AnnotationTest<O extends JavaSource<O>, T>
 
       Annotation<O> annotation = annotations.get(annotations.size() - 1);
       assertEquals("@com.test.Foo(bar=\"baz\")", annotation.getLiteralValue("foo"));
+
+      Annotation<O> nested = annotation.getAnnotationValue("foo");
+      assertEquals("com.test.Foo", nested.getName());
+      assertEquals("baz", nested.getStringValue("bar"));
    }
 
    @Test
@@ -181,6 +189,10 @@ public abstract class AnnotationTest<O extends JavaSource<O>, T>
 
       Annotation<O> annotation = annotations.get(annotations.size() - 1);
       assertEquals("@com.test.Foo(@com.test.Bar)", annotation.getLiteralValue());
+
+      Annotation<O> deeplyNested = annotation.getAnnotationValue().getAnnotationValue();
+      assertEquals("com.test.Bar", deeplyNested.getName());
+      assertTrue(deeplyNested.isMarker());
    }
 
    @Test
@@ -193,6 +205,10 @@ public abstract class AnnotationTest<O extends JavaSource<O>, T>
       
       Annotation<O> annotation = annotations.get(annotations.size() - 1);
       assertEquals("@com.test.Foo(bar=@com.test.Bar)", annotation.getLiteralValue("foo"));
+
+      Annotation<O> deeplyNested = annotation.getAnnotationValue("foo").getAnnotationValue("bar");
+      assertEquals("com.test.Bar", deeplyNested.getName());
+      assertTrue(deeplyNested.isMarker());
    }
    
    @Test
