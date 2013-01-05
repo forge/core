@@ -1,15 +1,11 @@
 /*
- * Copyright 2012 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2012-2013 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
 package org.jboss.forge.parser.java.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Modifier.ModifierKeyword;
@@ -21,9 +17,7 @@ import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.parser.java.Method;
 import org.jboss.forge.parser.java.SourceType;
 import org.jboss.forge.parser.java.ast.ModifierAccessor;
-import org.jboss.forge.parser.java.ast.TypeDeclarationFinderVisitor;
 import org.jboss.forge.parser.java.util.Types;
-import org.jboss.forge.parser.spi.JavaParserImpl;
 
 /**
  * Represents a Java Source File
@@ -52,40 +46,6 @@ public class JavaClassImpl extends AbstractGenericCapableJavaSource<JavaClass> i
          }
       }
       return this;
-   }
-
-   @Override
-   public List<JavaSource<?>> getNestedClasses()
-   {
-      List<AbstractTypeDeclaration> declarations = getNestedDeclarations(body);
-
-      List<JavaSource<?>> result = new ArrayList<JavaSource<?>>();
-      for (AbstractTypeDeclaration declaration : declarations)
-      {
-         result.add(JavaParserImpl.getJavaSource(this, document, unit, declaration));
-      }
-      return result;
-   }
-
-   private List<AbstractTypeDeclaration> getNestedDeclarations(BodyDeclaration body)
-   {
-
-      TypeDeclarationFinderVisitor typeDeclarationFinder = new TypeDeclarationFinderVisitor();
-      body.accept(typeDeclarationFinder);
-      List<AbstractTypeDeclaration> declarations = typeDeclarationFinder.getTypeDeclarations();
-
-      List<AbstractTypeDeclaration> result = new ArrayList<AbstractTypeDeclaration>(declarations);
-      if (!declarations.isEmpty())
-      {
-         // We don't want to return the current class' declaration.
-         result.remove(declarations.remove(0));
-         for (AbstractTypeDeclaration declaration : declarations)
-         {
-            result.removeAll(getNestedDeclarations(declaration));
-         }
-      }
-
-      return result;
    }
 
    /*
