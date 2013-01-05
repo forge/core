@@ -57,4 +57,12 @@ public interface Annotation<O extends JavaSource<O>> extends Internal, Origin<O>
    Annotation<O> setStringValue(String value);
 
    Annotation<O> setStringValue(String name, String value);
+
+   Annotation<O> getAnnotationValue();
+
+   Annotation<O> getAnnotationValue(String name);
+
+   Annotation<O> setAnnotationValue();
+
+   Annotation<O> setAnnotationValue(String name);
 }

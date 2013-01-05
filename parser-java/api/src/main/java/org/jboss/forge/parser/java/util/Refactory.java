@@ -15,9 +15,9 @@ import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.Method;
 
 /**
- *
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- *
+ * 
  */
 public class Refactory
 {
@@ -87,7 +87,7 @@ public class Refactory
          {
             String line = "";
 
-            if (!field.getTypeInspector().isPrimitive())
+            if (!field.isPrimitive())
                if (field.isType(String.class))
                   line += "if(" + field.getName() + " != null && !" + field.getName() + ".trim().isEmpty())\n";
                else

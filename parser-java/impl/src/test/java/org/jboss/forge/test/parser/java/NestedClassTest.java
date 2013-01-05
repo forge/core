@@ -2,11 +2,12 @@ package org.jboss.forge.test.parser.java;
 
 import java.util.List;
 
+import junit.framework.Assert;
+
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.Import;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaSource;
-import org.junit.Assert;
 import org.junit.Test;
 
 public class NestedClassTest
