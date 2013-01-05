@@ -78,6 +78,13 @@ public interface JavaSource<T extends JavaSource<T>> extends
    public JavaSource<?> getEnclosingType();
 
    /**
+    * Return a list containing {@link JavaSource} instances for each nested {@link Class} declaration found within
+    * <code>this</code>. Any modification of returned {@link JavaSource} instances will result in modification of the
+    * contents contained by <code>this</code> the parent instance.
+    */
+   public List<JavaSource<?>> getNestedClasses();
+
+   /**
     * Return the {@link SourceType} of this {@link JavaSource} instance.
     */
    public SourceType getSourceType();
