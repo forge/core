@@ -549,7 +549,6 @@ public class AnnotationImpl<O extends JavaSource<O>, T> implements Annotation<O>
       }
       Annotation<O> result = new Nested(this);
       
-      
       String stub = "@" + getName() + "(" + name + "= 0 ) public class Stub { }";
       JavaClass temp = (JavaClass) JavaParser.parse(stub);
 
