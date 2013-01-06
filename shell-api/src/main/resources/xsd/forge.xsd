@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ ~ Copyright 2013 Red Hat, Inc. and/or its affiliates.
+ ~
+ ~ Licensed under the Eclipse Public License version 1.0, available at
+ ~ http://www.eclipse.org/legal/epl-v10.html
+-->
+<xs:schema elementFormDefault="qualified"
+	targetNamespace="http://www.jboss.com/xml/ns/forge" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="forge">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="dependencies-as-resource-root" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
