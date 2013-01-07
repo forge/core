@@ -88,7 +88,12 @@ public abstract class AddonId
 
    public String toCoordinates()
    {
-      return getName() + "," + getVersion() + "," + getApiVersion();
+      StringBuilder coord = new StringBuilder(getName()).append(",").append(getVersion());
+      if (getApiVersion() != null && !getApiVersion().isEmpty())
+      {
+         coord.append(",").append(getApiVersion());
+      }
+      return coord.toString();
    }
 
    public String toModuleId()
