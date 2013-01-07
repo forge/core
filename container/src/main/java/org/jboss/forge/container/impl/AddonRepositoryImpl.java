@@ -36,7 +36,7 @@ import org.jboss.forge.parser.xml.XMLParserException;
 
 /**
  * Used to perform Addon installation/registration operations.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:koen.aers@gmail.com">Koen Aers</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
@@ -90,13 +90,13 @@ public final class AddonRepositoryImpl implements AddonRepository
 
    /**
     * This method only returns true if:
-    * 
+    *
     * - The major version of addonApiVersion is equal to the major version of runtimeVersion AND
-    * 
+    *
     * - The minor version of addonApiVersion is less or equal to the minor version of runtimeVersion
-    * 
+    *
     * - The addonApiVersion is null
-    * 
+    *
     * @param runtimeVersion a version in the format x.x.x
     * @param addonApiVersion a version in the format x.x.x
     */
@@ -166,10 +166,16 @@ public final class AddonRepositoryImpl implements AddonRepository
                   dep.attribute(ATTR_OPTIONAL, dependency.isOptional());
                }
 
-            FileOutputStream fos = new FileOutputStream(descriptor);
-            Streams.write(XMLParser.toXMLInputStream(addonXml), fos);
-            fos.close();
-
+            FileOutputStream fos = null;
+            try
+            {
+               fos = new FileOutputStream(descriptor);
+               Streams.write(XMLParser.toXMLInputStream(addonXml), fos);
+            }
+            finally
+            {
+               Streams.closeQuietly(fos);
+            }
             return true;
          }
       }
@@ -200,9 +206,16 @@ public final class AddonRepositoryImpl implements AddonRepository
                Node child = installed.getSingle("addon@" + ATTR_NAME + "=" + addon.getName() + "&"
                         + ATTR_VERSION + "=" + addon.getVersion());
                installed.removeChild(child);
-               FileOutputStream outStream = new FileOutputStream(registryFile);
-               Streams.write(XMLParser.toXMLInputStream(installed), outStream);
-               outStream.close();
+               FileOutputStream outStream = null;
+               try
+               {
+                  outStream = new FileOutputStream(registryFile);
+                  Streams.write(XMLParser.toXMLInputStream(installed), outStream);
+               }
+               finally
+               {
+                  Streams.closeQuietly(outStream);
+               }
                return true;
             }
             catch (IOException e)
@@ -237,7 +250,16 @@ public final class AddonRepositoryImpl implements AddonRepository
             installed.getOrCreate("addon@" + ATTR_NAME + "=" + (addon.getName() == null ? "" : addon.getName()) +
                      "&" + ATTR_VERSION + "=" + addon.getVersion())
                      .attribute(ATTR_API_VERSION, (addon.getApiVersion() == null ? "" : addon.getApiVersion()));
-            Streams.write(XMLParser.toXMLInputStream(installed), new FileOutputStream(registryFile));
+            FileOutputStream destination = null;
+            try
+            {
+               destination = new FileOutputStream(registryFile);
+               Streams.write(XMLParser.toXMLInputStream(installed), destination);
+            }
+            finally
+            {
+               Streams.closeQuietly(destination);
+            }
 
             return true;
          }
@@ -306,9 +328,16 @@ public final class AddonRepositoryImpl implements AddonRepository
                descriptorFile.delete();
                descriptorFile.createNewFile();
 
-               FileOutputStream stream = new FileOutputStream(descriptorFile);
-               Streams.write(XMLParser.toXMLInputStream(XMLParser.parse("<addon/>")), stream);
-               stream.close();
+               FileOutputStream stream = null;
+               try
+               {
+                  stream = new FileOutputStream(descriptorFile);
+                  Streams.write(XMLParser.toXMLInputStream(XMLParser.parse("<addon/>")), stream);
+               }
+               finally
+               {
+                  Streams.closeQuietly(stream);
+               }
             }
             return descriptorFile;
          }
@@ -417,14 +446,15 @@ public final class AddonRepositoryImpl implements AddonRepository
             {
                registryFile.createNewFile();
 
-               FileOutputStream out = new FileOutputStream(registryFile);
+               FileOutputStream out = null;
                try
                {
+                  out = new FileOutputStream(registryFile);
                   Streams.write(XMLParser.toXMLInputStream(XMLParser.parse("<installed></installed>")), out);
                }
                finally
                {
-                  out.close();
+                  Streams.closeQuietly(out);
                }
             }
          }
