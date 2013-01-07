@@ -8,7 +8,7 @@ target/
 *.ipr
 *.iws
 /*/src/main/java/META-INF
-.gitignore.swp
+*.swp
 docs/reference/src/main/docbook/en-US/version_info.xml
 .idea
 .forge_settings
