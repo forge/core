@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2012-2013 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -119,7 +119,7 @@ public class LsJavaPlugin implements Plugin
                      String entry = out.renderColor(ShellColor.BLUE, method.getVisibility().scope());
                      String parameterString = "(";
 
-                     for (Parameter param : method.getParameters())
+                     for (Parameter<JavaClass> param : method.getParameters())
                      {
                         parameterString += param.toString();
                      }

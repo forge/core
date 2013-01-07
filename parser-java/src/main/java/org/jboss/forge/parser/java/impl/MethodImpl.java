@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2012-2013 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -17,6 +17,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Modifier.ModifierKeyword;
 import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.VariableDeclaration;
 import org.jboss.forge.parser.JavaParser;
@@ -83,8 +84,8 @@ public class MethodImpl<O extends JavaSource<O>> implements Method<O>
                .scope()) + " ";
       signature += this.getName() + "(";
 
-      List<Parameter> parameters = this.getParameters();
-      for (Parameter p : parameters)
+      List<Parameter<O>> parameters = this.getParameters();
+      for (Parameter<O> p : parameters)
       {
          signature += p.getType();
          if (parameters.indexOf(p) < (parameters.size() - 1))
@@ -376,14 +377,14 @@ public class MethodImpl<O extends JavaSource<O>> implements Method<O>
    }
 
    @Override
-   @SuppressWarnings("unchecked")
-   public List<Parameter> getParameters()
+   public List<Parameter<O>> getParameters()
    {
-      List<Parameter> results = new ArrayList<Parameter>();
-      List<VariableDeclaration> parameters = method.parameters();
-      for (VariableDeclaration param : parameters)
+      List<Parameter<O>> results = new ArrayList<Parameter<O>>();
+      @SuppressWarnings("unchecked")
+      List<SingleVariableDeclaration> parameters = method.parameters();
+      for (SingleVariableDeclaration param : parameters)
       {
-         results.add(new ParameterImpl(parent, param));
+         results.add(new ParameterImpl<O>(parent, param));
       }
       return Collections.unmodifiableList(results);
    }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2012-2013 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -25,12 +25,11 @@ import org.junit.Test;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
 public class JavaEnumMethodTest
 {
    private InputStream stream;
    private JavaEnum javaEnum;
-   private Method method;
+   private Method<JavaEnum> method;
 
    @Before
    public void reset()
@@ -87,7 +86,7 @@ public class JavaEnumMethodTest
    public void testSetParameters() throws Exception
    {
       method.setParameters("final int foo, final String bar");
-      List<Parameter> parameters = method.getParameters();
+      List<Parameter<JavaEnum>> parameters = method.getParameters();
       assertEquals(2, parameters.size());
       assertEquals("foo", parameters.get(0).getName());
       assertEquals("bar", parameters.get(1).getName());
@@ -97,7 +96,7 @@ public class JavaEnumMethodTest
    public void testGetParameterType() throws Exception
    {
       method.setParameters("final int foo, final String bar");
-      List<Parameter> parameters = method.getParameters();
+      List<Parameter<JavaEnum>> parameters = method.getParameters();
       assertEquals(2, parameters.size());
       assertEquals("int", parameters.get(0).getType());
       assertEquals("String", parameters.get(1).getType());
