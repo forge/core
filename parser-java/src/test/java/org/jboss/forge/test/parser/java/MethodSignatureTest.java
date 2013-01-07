@@ -49,6 +49,12 @@ public class MethodSignatureTest
       Assert.assertEquals("String", parameters.get(0).getTypeInspector().toString());
       Assert.assertEquals("int", parameters.get(1).getTypeInspector().toString());
    }
+
+   @Test(expected = UnsupportedOperationException.class)
+   public void testUnmodifiableMethodParams() throws Exception
+   {
+      JavaParser.create(JavaClass.class).addMethod("public void hello(String foo, int bar)").getParameters().add(null);
+   }
    
    @Test
    public void testMethodVisibility() throws Exception {
