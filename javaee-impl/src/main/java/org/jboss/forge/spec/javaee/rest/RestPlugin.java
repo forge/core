@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2012-2013 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -247,7 +247,7 @@ public class RestPlugin implements Plugin
                   // It's a setter
                   if (method.getParameters().size() == 1 && method.getReturnType() == null)
                   {
-                     Parameter param = method.getParameters().get(0);
+                     Parameter<JavaClass> param = method.getParameters().get(0);
 
                      // The type matches ID field's type
                      if (type.equals(param.getType()))
