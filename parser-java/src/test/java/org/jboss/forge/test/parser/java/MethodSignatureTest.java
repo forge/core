@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2012-2013 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -44,7 +44,7 @@ public class MethodSignatureTest
    public void testMethodParams() throws Exception
    {
       Method<JavaClass> method = JavaParser.create(JavaClass.class).addMethod("public void hello(String foo, int bar)");
-      List<Parameter> parameters = method.getParameters();
+      List<Parameter<JavaClass>> parameters = method.getParameters();
 
       Assert.assertEquals("String", parameters.get(0).getTypeInspector().toString());
       Assert.assertEquals("int", parameters.get(1).getTypeInspector().toString());

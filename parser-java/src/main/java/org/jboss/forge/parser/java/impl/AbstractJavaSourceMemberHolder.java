@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2012-2013 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -8,6 +8,7 @@ package org.jboss.forge.parser.java.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.BodyDeclaration;
@@ -200,14 +201,14 @@ public abstract class AbstractJavaSourceMemberHolder<O extends JavaSource<O>> ex
       {
          if (local.getName().equals(name))
          {
-            List<Parameter> localParams = local.getParameters();
+            List<Parameter<O>> localParams = local.getParameters();
             if (((paramTypes != null) && (localParams.size() == 0))
                      || (localParams.size() == paramTypes.length))
             {
                boolean matches = true;
                for (int i = 0; i < localParams.size(); i++)
                {
-                  Parameter localParam = localParams.get(i);
+                  Parameter<O> localParam = localParams.get(i);
                   String type = paramTypes[i];
                   if (!Types.areEquivalent(localParam.getType(), type))
                   {
@@ -246,21 +247,16 @@ public abstract class AbstractJavaSourceMemberHolder<O extends JavaSource<O>> ex
       {
          if (local.getName().equals(method.getName()))
          {
-            List<Parameter> localParams = local.getParameters();
-            List<Parameter> methodParams = method.getParameters();
-            if (localParams.size() == methodParams.size())
+            Iterator<Parameter<O>> localParams = local.getParameters().iterator();
+            for (Parameter<? extends JavaSource<?>> methodParam : method.getParameters())
             {
-               for (int i = 0; i < localParams.size(); i++)
+               if (localParams.hasNext() && Strings.areEqual(localParams.next().getType(), methodParam.getType()))
                {
-                  Parameter localParam = localParams.get(i);
-                  Parameter methodParam = methodParams.get(i);
-                  if (!Strings.areEqual(localParam.getType(), methodParam.getType()))
-                  {
-                     return false;
-                  }
+                  continue;
                }
-               return true;
+               return false;
             }
+            return !localParams.hasNext();
          }
       }
       return false;

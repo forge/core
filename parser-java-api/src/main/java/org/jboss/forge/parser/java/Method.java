@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2012-2013 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -93,7 +93,7 @@ public interface Method<O extends JavaSource<O>> extends Abstractable<Method<O>>
    /**
     * Get a list of this {@link Method}'s parameters.
     */
-   public List<Parameter> getParameters();
+   public List<Parameter<O>> getParameters();
 
    /**
     * Convert this {@link Method} into a string representing its unique signature.

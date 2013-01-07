@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2012-2013 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -241,9 +241,10 @@ public class ForgePropertyStyle
     * This method will be called after <code>lookupFields</code> and <code>lookupGetters</code>.
     */
 
-   protected void lookupSetters(final Map<String, Property> properties, final MethodHolder<?> clazz)
+   protected <O extends JavaSource<O>> void lookupSetters(final Map<String, Property> properties,
+            final MethodHolder<O> clazz)
    {
-      for (Method<?> method : clazz.getMethods())
+      for (Method<O> method : clazz.getMethods())
       {
          // Exclude static methods
 
@@ -254,7 +255,7 @@ public class ForgePropertyStyle
 
          // Get type
 
-         List<Parameter> parameters = method.getParameters();
+         List<Parameter<O>> parameters = method.getParameters();
 
          if (parameters.size() != 1)
          {
