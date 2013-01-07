@@ -7,6 +7,7 @@
 package org.jboss.forge.parser.java.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.AST;
@@ -384,7 +385,7 @@ public class MethodImpl<O extends JavaSource<O>> implements Method<O>
       {
          results.add(new ParameterImpl(parent, param));
       }
-      return results;
+      return Collections.unmodifiableList(results);
    }
 
    /*
