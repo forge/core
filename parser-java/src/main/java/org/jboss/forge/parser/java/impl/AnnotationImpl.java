@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2012-2013 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -15,9 +15,11 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.IExtendedModifier;
 import org.eclipse.jdt.core.dom.MemberValuePair;
 import org.eclipse.jdt.core.dom.NormalAnnotation;
 import org.eclipse.jdt.core.dom.SingleMemberAnnotation;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.Annotation;
 import org.jboss.forge.parser.java.AnnotationTarget;
@@ -458,12 +460,25 @@ public class AnnotationImpl<O extends JavaSource<O>, T> implements Annotation<O>
    @SuppressWarnings("unchecked")
    protected void replace(org.eclipse.jdt.core.dom.Annotation oldNode, org.eclipse.jdt.core.dom.Annotation newNode)
    {
-      BodyDeclaration node = (BodyDeclaration) annotation.getParent();
+      List<IExtendedModifier> modifiers;
+      ASTNode parentNode = oldNode.getParent();
+      if (parentNode instanceof BodyDeclaration)
+      {
+         modifiers = ((BodyDeclaration) parentNode).modifiers();
+      }
+      else if (parentNode instanceof SingleVariableDeclaration)
+      {
+         modifiers = ((SingleVariableDeclaration) parentNode).modifiers();
+      }
+      else
+      {
+         throw new IllegalStateException("Cannot handle annotations attached to " + parentNode);
+      }
       
-      int pos = node.modifiers().indexOf(annotation);
+      int pos = modifiers.indexOf(annotation);
       if (pos >= 0)
       {
-         node.modifiers().set(pos, newNode);
+         modifiers.set(pos, newNode);
       }
    }
 
