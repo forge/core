@@ -90,17 +90,17 @@ public class ServiceRegistryImpl implements ServiceRegistry
    }
 
    @Override
-   public Set<? extends RemoteInstance<?>> getRemoteInstances(String typeName)
+   public <T> Set<RemoteInstance<T>> getRemoteInstances(String typeName)
    {
-      Class<?> type;
       try
       {
-         type = Class.forName(typeName, true, loader);
+         @SuppressWarnings("unchecked")
+         Class<T> type = (Class<T>) Class.forName(typeName, true, loader);
          return getRemoteInstances(type);
       }
-      catch (ClassNotFoundException e)
+      catch (Exception e)
       {
-         return null;
+         return new HashSet<RemoteInstance<T>>();
       }
    }
 }

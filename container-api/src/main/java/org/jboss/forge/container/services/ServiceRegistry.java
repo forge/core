@@ -24,7 +24,7 @@ public interface ServiceRegistry
 
    <T> Set<RemoteInstance<T>> getRemoteInstances(Class<T> serviceType);
 
-   Set<? extends RemoteInstance<?>> getRemoteInstances(String serviceType);
+   <T> Set<RemoteInstance<T>> getRemoteInstances(String serviceType);
 
    Set<Class<?>> getServices();
 

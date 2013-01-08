@@ -1,5 +1,6 @@
 package org.jboss.forge.container.impl;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -106,23 +107,24 @@ public enum AddonRegistryImpl implements AddonRegistry
          if (Status.STARTED.equals(addon.getStatus()))
          {
             ServiceRegistry serviceRegistry = addon.getServiceRegistry();
-            result.addAll(serviceRegistry.getRemoteInstances(type));
+            result.addAll((Collection<? extends RemoteInstance<T>>) serviceRegistry.getRemoteInstances(type));
          }
       }
       return result;
    }
 
    @Override
-   public Set<RemoteInstance<?>> getRemoteInstances(String typeName)
+   public <T> Set<RemoteInstance<T>> getRemoteInstances(String typeName)
    {
       // TODO This needs to block addon installation/removal;
-      Set<RemoteInstance<?>> result = new HashSet<RemoteInstance<?>>();
+      Set<RemoteInstance<T>> result = new HashSet<RemoteInstance<T>>();
       for (Addon addon : addons)
       {
          if (Status.STARTED.equals(addon.getStatus()))
          {
             ServiceRegistry serviceRegistry = addon.getServiceRegistry();
-            result.addAll(serviceRegistry.getRemoteInstances(typeName));
+            Set<RemoteInstance<T>> remoteInstances = serviceRegistry.getRemoteInstances(typeName);
+            result.addAll(remoteInstances);
          }
       }
       return result;

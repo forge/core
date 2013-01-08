@@ -20,5 +20,5 @@ public interface AddonRegistry
 
    <T> Set<RemoteInstance<T>> getRemoteInstances(Class<T> type);
 
-   Set<RemoteInstance<?>> getRemoteInstances(String typeName);
+   <T> Set<RemoteInstance<T>> getRemoteInstances(String typeName);
 }
