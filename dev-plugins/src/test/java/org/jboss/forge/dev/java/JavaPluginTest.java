@@ -8,12 +8,18 @@
 package org.jboss.forge.dev.java;
 
 import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
+import org.jboss.forge.parser.java.AnnotationElement;
 import org.jboss.forge.parser.java.EnumConstant;
 import org.jboss.forge.parser.java.Field;
+import org.jboss.forge.parser.java.JavaAnnotation;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaEnum;
 import org.jboss.forge.parser.java.JavaInterface;
+import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.parser.java.Method;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.shell.util.Packages;
@@ -117,4 +123,47 @@ public class JavaPluginTest extends AbstractShellTest
       EnumConstant<JavaEnum> enumConst = javaEnum.getEnumConstant("A");
       assertNotNull(enumConst);
    }
+
+   @Test
+   public void testCreateAnnotationType() throws Exception
+   {
+      getShell()
+               .execute(
+                        "java new-annotation-type --package org.jboss.forge.test.types \"public @interface TestingAnnotationTypeCreation{}\"");
+      getShell().execute("ls");
+      getShell().execute("build");
+      JavaSource<?> source = getProject().getFacet(JavaSourceFacet.class)
+               .getJavaResource(Packages.toFileSyntax("org.jboss.forge.test.types.TestingAnnotationTypeCreation"))
+               .getJavaSource();
+      assertNotNull(source);
+      assertTrue(source.isAnnotation());
+   }
+
+   @Test
+   public void testCreateAnnotationElement() throws Exception
+   {
+      getShell()
+               .execute(
+                        "java new-annotation-type --package org.jboss.forge.test.types \"public @interface TestingAnnotationTypeCreation {}\"");
+      getShell().execute("java new-annotation-element \"int testInt();\"");
+      getShell().execute("java new-annotation-element 'String[] testStrings() default {\"\"};'");
+      getShell().execute("ls");
+      getShell().execute("build");
+      JavaSource<?> source = getProject().getFacet(JavaSourceFacet.class)
+               .getJavaResource(Packages.toFileSyntax("org.jboss.forge.test.types.TestingAnnotationTypeCreation"))
+               .getJavaSource();
+      assertTrue(source.isAnnotation());
+      AnnotationElement testInt = JavaAnnotation.class.cast(source).getAnnotationElement("testInt");
+      assertNotNull(testInt);
+      assertEquals("testInt", testInt.getName());
+      assertEquals("int", testInt.getType());
+      assertNull(testInt.getDefaultValue().getLiteral());
+
+      AnnotationElement testStrings = JavaAnnotation.class.cast(source).getAnnotationElement("testStrings");
+      assertNotNull(testStrings);
+      assertEquals("testStrings", testStrings.getName());
+      assertEquals("String[]", testStrings.getTypeInspector().getName());
+      assertEquals("{\"\"}", testStrings.getDefaultValue().getLiteral());
+   }
+
 }
