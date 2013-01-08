@@ -17,6 +17,7 @@
 package org.jboss.forge.arquillian;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map.Entry;
 
@@ -116,8 +117,18 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
 
             if (result == null)
             {
-               method.invoke(instance);
-               result = new TestResult(Status.PASSED);
+               try
+               {
+                  method.invoke(instance);
+                  result = new TestResult(Status.PASSED);
+               }
+               catch (InvocationTargetException e)
+               {
+                  if (e.getCause() != null)
+                     result = new TestResult(Status.FAILED, e.getCause());
+                  else
+                     throw e;
+               }
             }
          }
          catch (AssertionError e)
@@ -126,6 +137,8 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
          }
          catch (Exception e)
          {
+            result = new TestResult(Status.FAILED, e);
+
             Throwable cause = e.getCause();
             while (cause != null)
             {
@@ -136,9 +149,6 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
                }
                cause = cause.getCause();
             }
-
-            if (!Status.FAILED.equals(result.getStatus()))
-               throw e;
          }
 
          return result;
