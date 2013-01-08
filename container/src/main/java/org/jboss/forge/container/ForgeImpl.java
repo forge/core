@@ -39,7 +39,7 @@ public class ForgeImpl implements Forge
 
    private boolean serverMode = true;
 
-   Set<AddonThread> threads = Sets.getConcurrentSet();
+   Set<AddonRunnable> runnables = Sets.getConcurrentSet();
 
    ExecutorService executor;
 
@@ -69,11 +69,6 @@ public class ForgeImpl implements Forge
    {
       Module.setModuleLogger(new StreamModuleLogger(System.err));
       return this;
-   }
-
-   public Set<AddonThread> getThreads()
-   {
-      return threads;
    }
 
    @Override
@@ -114,7 +109,7 @@ public class ForgeImpl implements Forge
             alive = true;
             do
             {
-               updateAddons(threads, addonLoader);
+               updateAddons(addonLoader);
                Thread.sleep(100);
             }
             while (serverMode && alive == true);
@@ -131,11 +126,11 @@ public class ForgeImpl implements Forge
 
    private void shutdownThreads()
    {
-      for (AddonThread thread : threads)
+      for (AddonRunnable runnable : runnables)
       {
          try
          {
-            thread.getRunnable().shutdown();
+            runnable.shutdown();
          }
          catch (Exception e)
          {
@@ -155,12 +150,12 @@ public class ForgeImpl implements Forge
       return this;
    }
 
-   private void updateAddons(Set<AddonThread> threads, ModuleLoader addonLoader)
+   private void updateAddons(ModuleLoader addonLoader)
    {
       Set<Addon> loadedAddons = new HashSet<Addon>();
-      for (AddonThread thread : threads)
+      for (AddonRunnable runnable : runnables)
       {
-         loadedAddons.add(thread.getRunnable().getAddon());
+         loadedAddons.add(runnable.getAddon());
       }
 
       Set<Addon> toStop = new HashSet<Addon>(loadedAddons);
@@ -172,35 +167,35 @@ public class ForgeImpl implements Forge
 
       if (!toStop.isEmpty())
       {
-         Set<AddonThread> stopped = new HashSet<AddonThread>();
+         Set<AddonRunnable> stopped = new HashSet<AddonRunnable>();
          for (Addon addon : toStop)
          {
             // TODO This needs to handle dependencies and ordering.
             ((AddonImpl) addon).setStatus(Status.STOPPING);
             logger.info("Stopping addon (" + addon.getId() + ")");
-            for (AddonThread thread : threads)
+            for (AddonRunnable runnable : runnables)
             {
-               if (addon.equals(thread.getRunnable().getAddon()))
+               if (addon.equals(runnable.getAddon()))
                {
-                  thread.getRunnable().shutdown();
-                  stopped.add(thread);
+                  runnable.shutdown();
+                  stopped.add(runnable);
                   AddonRegistryImpl.INSTANCE.remove(addon);
                }
             }
          }
-         threads.removeAll(stopped);
+         runnables.removeAll(stopped);
       }
 
       if (!toStart.isEmpty())
       {
-         Set<AddonThread> started = startAddons(toStart);
-         threads.addAll(started);
+         Set<AddonRunnable> started = startAddons(toStart);
+         runnables.addAll(started);
       }
    }
 
-   private Set<AddonThread> startAddons(Set<Addon> toStart)
+   private Set<AddonRunnable> startAddons(Set<Addon> toStart)
    {
-      Set<AddonThread> started = new HashSet<AddonThread>();
+      Set<AddonRunnable> started = new HashSet<AddonRunnable>();
 
       executor = Executors.newFixedThreadPool(BATCH_SIZE);
       for (Addon addon : toStart)
@@ -216,16 +211,10 @@ public class ForgeImpl implements Forge
          {
             throw new ContainerException("Failed to start addon [" + addon + "]", e);
          }
-         started.add(new AddonThread(future, runnable));
+         started.add(runnable);
 
       }
       return started;
-   }
-
-   @Override
-   public AddonRegistry getAddonRegistry()
-   {
-      return AddonRegistryImpl.INSTANCE;
    }
 
    synchronized private Set<Addon> loadAddons(ModuleLoader addonLoader)
@@ -342,6 +331,12 @@ public class ForgeImpl implements Forge
    public File getAddonDir()
    {
       return repository.getRepositoryDirectory();
+   }
+
+   @Override
+   public AddonRegistry getAddonRegistry()
+   {
+      return AddonRegistryImpl.INSTANCE;
    }
 
    @Override
