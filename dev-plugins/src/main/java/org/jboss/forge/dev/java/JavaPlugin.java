@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2012-2013 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -9,6 +9,9 @@ package org.jboss.forge.dev.java;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
@@ -254,6 +257,14 @@ public class JavaPlugin implements Plugin
                      type = PromptType.JAVA_PACKAGE,
                      name = "package") final String pckg,
             @Option(required = false,
+                     help = "the @Retention policy for this annotation",
+                     description = "retention policy",
+                     name = "retention-policy") final RetentionPolicy retentionPolicy,
+            @Option(required = false,
+                     help = "whether the annotation is @Documented",
+                     description = "documented",
+                     name = "documented") final boolean documented,
+            @Option(required = false,
                      help = "the annotation definition: surround with quotes",
                      description = "annotation definition") final String... def) throws FileNotFoundException
    {
@@ -279,6 +290,14 @@ public class JavaPlugin implements Plugin
          type.setPackage(pckg);
       }
 
+      if (documented)
+      {
+         type.addAnnotation(Documented.class);
+      }
+      if (retentionPolicy != null)
+      {
+         type.addAnnotation(Retention.class).setEnumValue(retentionPolicy);
+      }
       if (!type.hasSyntaxErrors())
       {
          java.saveJavaSource(type);
