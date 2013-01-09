@@ -2,13 +2,12 @@ package org.jboss.forge.container.dependencies;
 
 import javax.inject.Inject;
 
-import org.example.published.PublishedService;
+import org.example.PublisherService;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonId;
-import org.jboss.forge.container.services.Service;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -37,15 +36,14 @@ public class AddonMissingDelayedRequiredDependencyTest
    public static ForgeArchive getDependencyDeployment()
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class, "dependency.jar")
-               .addClasses(PublishedService.class)
+               .addClasses(PublisherService.class)
                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
 
       return archive;
    }
 
    @Inject
-   @Service
-   private PublishedService published;
+   private PublisherService published;
 
    @Test
    public void testInjection() throws Exception

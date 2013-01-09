@@ -5,12 +5,12 @@ import net.sf.cglib.proxy.LazyLoader;
 import org.jboss.forge.container.Addon;
 import org.jboss.forge.container.AddonRegistry;
 
-public class RemoteProxyBeanCallback implements LazyLoader
+public class RemoteServiceProxyBeanCallback implements LazyLoader
 {
    private Class<?> serviceType;
    private AddonRegistry registry;
 
-   public RemoteProxyBeanCallback(AddonRegistry registry, Class<?> serviceType)
+   public RemoteServiceProxyBeanCallback(AddonRegistry registry, Class<?> serviceType)
    {
       this.registry = registry;
       this.serviceType = serviceType;
@@ -32,7 +32,7 @@ public class RemoteProxyBeanCallback implements LazyLoader
       }
 
       if (result == null)
-         throw new IllegalStateException("Service [" + serviceType.getName() + "] is not registered.");
+         throw new IllegalStateException("Remote service [" + serviceType.getName() + "] is not registered.");
 
       return result;
 

@@ -5,7 +5,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.Extension;
 
-import org.jboss.forge.container.services.RemoteProxyBeanProducerMethod;
+import org.jboss.forge.container.services.RemoteServiceProxyBeanProducerMethod;
 
 public class ContainerBeanRegistrant implements Extension
 {
@@ -17,6 +17,6 @@ public class ContainerBeanRegistrant implements Extension
       event.addAnnotatedType(manager.createAnnotatedType(AddonRepositoryProducer.class));
       event.addAnnotatedType(manager.createAnnotatedType(ServiceRegistryImpl.class));
       event.addAnnotatedType(manager.createAnnotatedType(ServiceRegistryInitializer.class));
-      event.addAnnotatedType(manager.createAnnotatedType(RemoteProxyBeanProducerMethod.class));
+      event.addAnnotatedType(manager.createAnnotatedType(RemoteServiceProxyBeanProducerMethod.class));
    }
 }

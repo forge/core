@@ -1,4 +1,4 @@
-package org.example.published;
+package org.example;
 
 import javax.inject.Singleton;
 
@@ -9,7 +9,7 @@ import org.jboss.forge.container.services.Remote;
  */
 @Remote
 @Singleton
-public class PublishedService
+public class PublisherService
 {
    public String getMessage()
    {

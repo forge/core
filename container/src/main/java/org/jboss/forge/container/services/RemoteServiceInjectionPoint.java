@@ -3,6 +3,9 @@ package org.jboss.forge.container.services;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Member;
 import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.enterprise.inject.spi.Annotated;
@@ -15,10 +18,14 @@ public class RemoteServiceInjectionPoint implements InjectionPoint
 {
    private InjectionPoint wrapped;
    private Annotated annotated;
+   private Set<Annotation> qualifiers = new HashSet<Annotation>();
 
-   public RemoteServiceInjectionPoint(InjectionPoint wrapped)
+   public RemoteServiceInjectionPoint(InjectionPoint wrapped, Annotation... qualifiers)
    {
       this.wrapped = wrapped;
+
+      if (qualifiers != null)
+         this.qualifiers.addAll(Arrays.asList(qualifiers));
 
       Annotated annotated = wrapped.getAnnotated();
       if (annotated instanceof AnnotatedField<?>)
@@ -26,7 +33,7 @@ public class RemoteServiceInjectionPoint implements InjectionPoint
       else if (annotated instanceof AnnotatedParameter<?>)
          this.annotated = new RemoteServiceAnnotatedParameter<Object>((AnnotatedParameter<?>) annotated);
       else
-         throw new IllegalArgumentException("Unsupported Service injection point type ["
+         throw new IllegalArgumentException("Unsupported injection point type ["
                   + wrapped.getMember().getName() + "]");
    }
 
@@ -39,7 +46,7 @@ public class RemoteServiceInjectionPoint implements InjectionPoint
    @Override
    public Set<Annotation> getQualifiers()
    {
-      return wrapped.getQualifiers();
+      return Collections.unmodifiableSet(qualifiers);
    }
 
    @Override

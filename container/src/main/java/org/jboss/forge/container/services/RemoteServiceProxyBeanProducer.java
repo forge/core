@@ -8,11 +8,11 @@ import javax.enterprise.inject.spi.Producer;
 
 import org.jboss.forge.container.services.Remote;
 
-public class RemoteProxyBeanProducer<T extends Remote> implements Producer<T>
+public class RemoteServiceProxyBeanProducer<T extends Remote> implements Producer<T>
 {
    private Producer<T> wrapped;
 
-   public RemoteProxyBeanProducer(Producer<T> wrapped)
+   public RemoteServiceProxyBeanProducer(Producer<T> wrapped)
    {
       this.wrapped = wrapped;
    }

@@ -11,8 +11,9 @@ import net.sf.cglib.proxy.Enhancer;
 
 import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.exception.ContainerException;
+import org.jboss.forge.container.impl.Service;
 
-public class RemoteProxyBeanProducerMethod
+public class RemoteServiceProxyBeanProducerMethod
 {
    @Produces
    @Service
@@ -37,6 +38,6 @@ public class RemoteProxyBeanProducerMethod
       else
          throw new ContainerException("Cannot handle producer for non-Field and non-Method member type");
 
-      return Enhancer.create((Class<?>) type, new RemoteProxyBeanCallback(registry, type));
+      return Enhancer.create((Class<?>) type, new RemoteServiceProxyBeanCallback(registry, type));
    }
 }

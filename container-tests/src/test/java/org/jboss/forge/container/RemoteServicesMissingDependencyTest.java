@@ -7,7 +7,6 @@ import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.exception.ContainerException;
-import org.jboss.forge.container.services.Service;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -32,8 +31,7 @@ public class RemoteServicesMissingDependencyTest
    }
 
    @Inject
-   @Service
-   private RemoteService remoteRemote;
+   private ServiceBean remote;
 
    @Test
    public void testRemoteInjectionOfRemoteService()

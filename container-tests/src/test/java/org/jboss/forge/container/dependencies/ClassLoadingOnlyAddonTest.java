@@ -1,7 +1,7 @@
 package org.jboss.forge.container.dependencies;
 
-import org.example.published.PublishedService;
-import org.example.simple.SimpleService;
+import org.example.NonService;
+import org.example.PublisherService;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -24,7 +24,7 @@ public class ClassLoadingOnlyAddonTest
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-               .addClass(PublishedService.class)
+               .addClass(PublisherService.class)
                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
                .addAsAddonDependencies(AddonDependency.create(AddonId.from("noncdi", "1")));
 
@@ -35,14 +35,14 @@ public class ClassLoadingOnlyAddonTest
    public static ForgeArchive getDeployment2()
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-               .addClasses(SimpleService.class);
+               .addClasses(NonService.class);
 
       return archive;
    }
 
    @Test
-   public void testCDIExtensionsFunctionNormally() throws Exception
+   public void testClassesLoadedNormallyFromDependencyAddons() throws Exception
    {
-      Assert.assertEquals("SimpleService", SimpleService.class.getSimpleName());
+      Assert.assertEquals("NonService", NonService.class.getSimpleName());
    }
 }

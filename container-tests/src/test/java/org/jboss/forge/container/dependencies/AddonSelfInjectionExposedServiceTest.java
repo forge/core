@@ -2,7 +2,7 @@ package org.jboss.forge.container.dependencies;
 
 import javax.inject.Inject;
 
-import org.example.published.PublishedService;
+import org.example.PublisherService;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -23,14 +23,14 @@ public class AddonSelfInjectionExposedServiceTest
    public static ForgeArchive getDependencyDeployment()
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-               .addClasses(PublishedService.class)
+               .addClasses(PublisherService.class)
                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
 
       return archive;
    }
 
    @Inject
-   private PublishedService local;
+   private PublisherService local;
 
    @Test
    public void testLocalServiceIsInjectedUnqualified() throws Exception

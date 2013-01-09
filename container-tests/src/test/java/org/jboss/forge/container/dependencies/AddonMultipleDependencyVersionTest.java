@@ -5,8 +5,9 @@ import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
-import org.example.published.PublishedService;
-import org.example.simple.SimpleService;
+import org.example.LifecycleListenerService;
+import org.example.NonService;
+import org.example.PublisherService;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -48,7 +49,7 @@ public class AddonMultipleDependencyVersionTest
    {
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
-               .addClass(SimpleService.class)
+               .addClass(LifecycleListenerService.class)
                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
 
       return archive;
@@ -59,7 +60,7 @@ public class AddonMultipleDependencyVersionTest
    {
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
-               .addClasses(SimpleService.class, PublishedService.class)
+               .addClasses(LifecycleListenerService.class, PublisherService.class)
                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
 
       return archive;
@@ -77,7 +78,7 @@ public class AddonMultipleDependencyVersionTest
       {
          for (Class<?> service : entry.getValue().getServices())
          {
-            if (service.getName().equals(SimpleService.class.getName()))
+            if (service.getName().equals(LifecycleListenerService.class.getName()))
             {
                RemoteInstance<?> instance = entry.getValue().getRemoteInstance(service);
                Object serviceInstance = instance.get();

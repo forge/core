@@ -16,6 +16,8 @@ import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.enterprise.inject.Vetoed;
+
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.impl.AddonImpl;
 import org.jboss.forge.container.impl.AddonRegistryImpl;

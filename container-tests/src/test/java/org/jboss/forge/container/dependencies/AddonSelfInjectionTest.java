@@ -2,7 +2,7 @@ package org.jboss.forge.container.dependencies;
 
 import javax.inject.Inject;
 
-import org.example.simple.SimpleService;
+import org.example.NonService;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -23,14 +23,14 @@ public class AddonSelfInjectionTest
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-               .addClasses(SimpleService.class)
+               .addClasses(NonService.class)
                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
 
       return archive;
    }
 
    @Inject
-   private SimpleService simple;
+   private NonService simple;
 
    @Test
    public void testContainerInjection()

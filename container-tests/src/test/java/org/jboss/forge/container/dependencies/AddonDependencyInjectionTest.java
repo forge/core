@@ -3,16 +3,15 @@ package org.jboss.forge.container.dependencies;
 import javax.enterprise.inject.spi.Extension;
 import javax.inject.Inject;
 
-import org.example.consuming.ConsumingService;
+import org.example.ConsumingService;
+import org.example.NonService;
+import org.example.PublisherService;
 import org.example.extension.TestExtension;
-import org.example.published.PublishedService;
-import org.example.simple.SimpleService;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonId;
-import org.jboss.forge.container.services.Service;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -31,7 +30,7 @@ public class AddonDependencyInjectionTest
    {
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
-               .addClasses(SimpleService.class, ConsumingService.class, TestExtension.class)
+               .addClasses(ConsumingService.class, TestExtension.class)
                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
                .addAsServiceProvider(Extension.class, TestExtension.class)
                .addAsAddonDependencies(AddonDependency.create(AddonId.from("dependency", "2")));
@@ -43,7 +42,7 @@ public class AddonDependencyInjectionTest
    public static ForgeArchive getDependencyDeployment()
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class, "dependency.jar")
-               .addClasses(PublishedService.class)
+               .addClasses(PublisherService.class)
                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
 
       return archive;
@@ -53,8 +52,7 @@ public class AddonDependencyInjectionTest
    private ConsumingService consuming;
 
    @Inject
-   @Service
-   private PublishedService remote;
+   private PublisherService remote;
 
    @Test
    public void testRemoteServiceInjection() throws Exception

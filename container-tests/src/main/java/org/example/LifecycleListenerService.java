@@ -1,4 +1,4 @@
-package org.example.simple;
+package org.example;
 
 import java.io.IOException;
 
@@ -16,7 +16,7 @@ import org.jboss.forge.container.services.Remote;
  */
 @Remote
 @Singleton
-public class SimpleService
+public class LifecycleListenerService
 {
    private boolean startupObserved;
    private boolean postStartupObserved;

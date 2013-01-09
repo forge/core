@@ -1,17 +1,14 @@
-package org.example.consuming;
+package org.example;
 
 import javax.inject.Inject;
 
-import org.example.published.PublishedService;
 import org.jboss.forge.container.services.Remote;
-import org.jboss.forge.container.services.Service;
 
 @Remote
 public class ConsumingService
 {
    @Inject
-   @Service
-   private PublishedService service;
+   private PublisherService service;
 
    public String getMessage()
    {

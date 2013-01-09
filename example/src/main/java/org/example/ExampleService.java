@@ -1,16 +1,14 @@
-package org.example.consuming;
+package org.example;
 
 import javax.inject.Inject;
 
 import org.example.other.OtherExampleAddon;
 import org.jboss.forge.container.services.Remote;
-import org.jboss.forge.container.services.Service;
 
 @Remote
-public class ConsumingService
+public class ExampleService
 {
    @Inject
-   @Service
    private OtherExampleAddon service;
 
    public int getRemoteHashCode()

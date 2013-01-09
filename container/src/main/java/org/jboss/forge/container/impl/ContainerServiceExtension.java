@@ -6,16 +6,22 @@
  */
 package org.jboss.forge.container.impl;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.AfterBeanDiscovery;
 import javax.enterprise.inject.spi.Annotated;
+import javax.enterprise.inject.spi.AnnotatedConstructor;
+import javax.enterprise.inject.spi.AnnotatedField;
 import javax.enterprise.inject.spi.AnnotatedMember;
+import javax.enterprise.inject.spi.AnnotatedMethod;
+import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
@@ -23,12 +29,9 @@ import javax.enterprise.inject.spi.ProcessInjectionPoint;
 import javax.enterprise.inject.spi.ProcessProducer;
 
 import org.jboss.forge.container.events.CrossContainerObserverMethod;
-import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.services.Remote;
-import org.jboss.forge.container.services.RemoteAnnotatedType;
-import org.jboss.forge.container.services.RemoteProxyBeanProducer;
 import org.jboss.forge.container.services.RemoteServiceInjectionPoint;
-import org.jboss.forge.container.services.Service;
+import org.jboss.forge.container.services.RemoteServiceProxyBeanProducer;
 import org.jboss.forge.container.util.Annotations;
 
 /**
@@ -40,6 +43,7 @@ import org.jboss.forge.container.util.Annotations;
  */
 public class ContainerServiceExtension implements Extension
 {
+   private Logger logger = Logger.getLogger(getClass().getName());
    private Set<Class<?>> services = new HashSet<Class<?>>();
 
    public void wireCrossContainerEvents(@Observes AfterBeanDiscovery event)
@@ -67,50 +71,34 @@ public class ContainerServiceExtension implements Extension
       Annotated annotated = event.getInjectionPoint().getAnnotated();
 
       Remote remote = getRemote(annotated);
-      if (remote != null)
+      Class<?> injectionPointDeclaringType = toClass(event.getInjectionPoint().getMember().getDeclaringClass());
+      Class<?> injectionBeanValueType = toClass(annotated.getBaseType());
+
+      boolean local = isClassLocal(injectionPointDeclaringType, injectionBeanValueType);
+      if (!local)
       {
-         Class<?> targetType = toClass(event.getInjectionPoint().getMember().getDeclaringClass());
-         Class<?> injectionType = toClass(annotated.getBaseType());
-
-         boolean local = isClassLocal(targetType, injectionType);
-         boolean serviceAnnotationPresent = annotated.isAnnotationPresent(Service.class);
-         boolean remoteService = remote.service();
-
-         if (serviceAnnotationPresent && !remoteService)
+         if (remote == null)
          {
-            event.addDefinitionError(new ContainerException(
-                     "ERROR: Illegal attempt to inject an instance when the target type [" + targetType.getName()
-                              + "] is not @" + Remote.class.getSimpleName() + "(service=true). Remove @"
-                              + Service.class.getSimpleName() + " from injection point " + annotated
-                              + ", or ensure that the target type is @" + Remote.class.getSimpleName()));
+            // event.addDefinitionError(new ContainerException(
+            // "ERROR: Illegal attempt to inject [" + injectionBeanValueType.getName()
+            // + "], which does not originate from this Addon but is not a @"
+            // + Remote.class.getSimpleName() + " bean, at injection point " + annotated + "."));
          }
-         else if (serviceAnnotationPresent && local)
+         else
          {
-            event.addDefinitionError(new ContainerException(
-                     "ERROR: Illegal attempt to inject a @" + Remote.class.getSimpleName()
-                              + " service when the target type [" + targetType.getName()
-                              + "] is local. Remove the @" + Service.class.getSimpleName()
-                              + " annotation from injection point " + annotated + "."));
-         }
-         else if (!serviceAnnotationPresent && remoteService && !local)
-         {
-            event.addDefinitionError(new ContainerException("ERROR: Illegal attempt to @Inject non-local target type ["
-                     + targetType.getName() + "]. You must either use the @" + Service.class.getSimpleName()
-                     + " qualifier at " + annotated + ", or the target type must be marked @"
-                     + Remote.class.getSimpleName() + "(service=false)"));
-         }
-         else if (serviceAnnotationPresent && remoteService)
-         {
-            event.setInjectionPoint(new RemoteServiceInjectionPoint(event.getInjectionPoint()));
-         }
-         else if (!remoteService)
-         {
-            event.setInjectionPoint(new RemoteServiceInjectionPoint(event.getInjectionPoint()));
+            event.setInjectionPoint(new RemoteServiceInjectionPoint(event.getInjectionPoint(), new Service()
+            {
+               @Override
+               public Class<? extends Annotation> annotationType()
+               {
+                  return Service.class;
+               }
+            }));
          }
       }
-      else
+      else if (remote != null)
       {
-         System.out.println("Not @Remote type " + annotated);
+         logger.fine("Not @Remote type " + annotated);
       }
    }
 
@@ -162,11 +150,76 @@ public class ContainerServiceExtension implements Extension
    {
       AnnotatedMember<?> annotatedMember = event.getAnnotatedMember();
       if (annotatedMember.isAnnotationPresent(Remote.class))
-         event.setProducer(new RemoteProxyBeanProducer(event.getProducer()));
+         event.setProducer(new RemoteServiceProxyBeanProducer(event.getProducer()));
    }
 
    public Set<Class<?>> getServices()
    {
       return services;
+   }
+
+   public class RemoteAnnotatedType<R> implements AnnotatedType<R>
+   {
+      private AnnotatedType<R> wrapped;
+
+      public RemoteAnnotatedType(AnnotatedType<R> wrapped)
+      {
+         this.wrapped = wrapped;
+      }
+
+      @Override
+      public Type getBaseType()
+      {
+         return wrapped.getBaseType();
+      }
+
+      @Override
+      public Set<Type> getTypeClosure()
+      {
+         return wrapped.getTypeClosure();
+      }
+
+      @Override
+      public <T extends Annotation> T getAnnotation(Class<T> annotationType)
+      {
+         return wrapped.getAnnotation(annotationType);
+      }
+
+      @Override
+      public Set<Annotation> getAnnotations()
+      {
+         return wrapped.getAnnotations();
+      }
+
+      @Override
+      public boolean isAnnotationPresent(Class<? extends Annotation> annotationType)
+      {
+         return wrapped.isAnnotationPresent(annotationType);
+      }
+
+      @Override
+      public Class<R> getJavaClass()
+      {
+         return (Class<R>) wrapped.getJavaClass();
+      }
+
+      @Override
+      public Set<AnnotatedConstructor<R>> getConstructors()
+      {
+         return wrapped.getConstructors();
+      }
+
+      @Override
+      public Set<AnnotatedMethod<? super R>> getMethods()
+      {
+         return wrapped.getMethods();
+      }
+
+      @Override
+      public Set<AnnotatedField<? super R>> getFields()
+      {
+         return wrapped.getFields();
+      }
+
    }
 }

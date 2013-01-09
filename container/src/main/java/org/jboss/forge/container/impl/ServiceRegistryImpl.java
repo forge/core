@@ -8,7 +8,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jboss.forge.container.services.RemoteInstance;
-import org.jboss.forge.container.services.RemoteInstanceImpl;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.container.util.Sets;
 

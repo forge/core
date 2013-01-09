@@ -9,7 +9,6 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonId;
-import org.jboss.forge.container.services.Service;
 import org.jboss.forge.resource.ResourceFactory;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -62,7 +61,6 @@ public class ResourceGeneratorAddonTest
    }
 
    @Inject
-   @Service
    private ResourceFactory factory;
 
    @Test
