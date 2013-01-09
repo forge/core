@@ -31,7 +31,8 @@ public class ForgeImpl implements Forge
 {
 
    private static final String PROP_CONCURRENT_PLUGINS = "forge.concurrentAddons";
-   private static final int BATCH_SIZE = Integer.getInteger(PROP_CONCURRENT_PLUGINS, 4);
+   private static final int BATCH_SIZE = Integer.getInteger(PROP_CONCURRENT_PLUGINS, Runtime.getRuntime()
+            .availableProcessors());
 
    private Logger logger = Logger.getLogger(getClass().getName());
 

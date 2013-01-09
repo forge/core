@@ -9,25 +9,18 @@ package org.jboss.forge.ui.impl.converter;
 
 import java.util.HashMap;
 import java.util.Properties;
-import java.util.ServiceLoader;
 import java.util.Vector;
 
 import org.jboss.forge.ui.converter.Converter;
 import org.jboss.forge.ui.converter.ConverterNotFoundException;
 import org.jboss.forge.ui.converter.ConverterRegistry;
+import org.jboss.forge.ui.impl.ConverterRegistryImpl;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 public class ConverterTest
 {
-   private ConverterRegistry registry;
-
-   @Before
-   public void setUp()
-   {
-      registry = ServiceLoader.load(ConverterRegistry.class).iterator().next();
-   }
+   private ConverterRegistry registry = ConverterRegistryImpl.INSTANCE;
 
    @Test
    public void testSimpleConversion() throws Exception
