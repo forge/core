@@ -71,4 +71,17 @@ public class ExecutionParserTest extends AbstractShellTest
       assertTrue(plugin.getVarargsOptions().contains("--bar"));
       assertTrue(plugin.getVarargsOptions().contains("-ext"));
    }
+
+   @Test
+   public void testNamedVarargs() throws Exception
+   {
+      getShell().execute("motp namedVarargsOption --opt foo bar baz");
+      assertEquals(3, plugin.getVarargsOptions().size());
+      assertTrue(plugin.getVarargsOptions().contains("foo"));
+      assertTrue(plugin.getVarargsOptions().contains("bar"));
+      assertTrue(plugin.getVarargsOptions().contains("baz"));
+
+      getShell().execute("motp namedVarargsOption");
+      assertNull(plugin.getVarargsOptions());
+   }
 }

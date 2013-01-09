@@ -35,10 +35,10 @@ public class NamedValueOptionParser implements CommandParser
             if (command.hasOption(currentToken))
             {
                OptionMetadata option = command.getNamedOption(currentToken);
-               tokens.remove();
 
-               if (!option.isBoolean())
+               if (!option.isBoolean() && !option.isVarargs())
                {
+                  tokens.remove();
                   String value = null;
                   if (!tokens.isEmpty())
                   {
