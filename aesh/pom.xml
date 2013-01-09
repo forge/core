@@ -13,7 +13,7 @@
       <dependency>
          <groupId>org.jboss.aesh</groupId>
          <artifactId>aesh</artifactId>
-         <version>0.22</version>
+         <version>0.28</version>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge</groupId>
