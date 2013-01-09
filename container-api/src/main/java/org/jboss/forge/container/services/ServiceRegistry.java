@@ -16,18 +16,18 @@ import java.util.Set;
  */
 public interface ServiceRegistry
 {
-   <T> void addService(Class<T> serviceType);
+   <T> void addService(Class<T> clazz);
 
-   <T> RemoteInstance<T> getRemoteInstance(Class<T> serviceType);
+   <T> RemoteInstance<T> getRemoteInstance(Class<T> clazz);
 
-   <T> RemoteInstance<T> getRemoteInstance(String serviceType);
+   <T> RemoteInstance<T> getRemoteInstance(String clazz);
 
-   <T> Set<RemoteInstance<T>> getRemoteInstances(Class<T> serviceType);
+   <T> Set<RemoteInstance<T>> getRemoteInstances(Class<T> clazz);
 
-   <T> Set<RemoteInstance<T>> getRemoteInstances(String serviceType);
+   <T> Set<RemoteInstance<T>> getRemoteInstances(String clazz);
 
    Set<Class<?>> getServices();
 
-   boolean hasService(Class<?> serviceType);
+   boolean hasService(Class<?> clazz);
 
 }

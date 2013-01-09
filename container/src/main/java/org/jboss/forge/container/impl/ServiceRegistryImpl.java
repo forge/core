@@ -37,17 +37,19 @@ public class ServiceRegistryImpl implements ServiceRegistry
    @Override
    public <T> RemoteInstance<T> getRemoteInstance(Class<T> clazz)
    {
-      return new RemoteInstanceImpl<T>(loader, manager, clazz);
+      if (!manager.getBeans(clazz).isEmpty())
+         return new RemoteInstanceImpl<T>(loader, manager, clazz);
+      return null;
    }
 
    @Override
    @SuppressWarnings("unchecked")
-   public <T> RemoteInstance<T> getRemoteInstance(String serviceType)
+   public <T> RemoteInstance<T> getRemoteInstance(String clazz)
    {
       Class<?> type;
       try
       {
-         type = Class.forName(serviceType, true, loader);
+         type = Class.forName(clazz, true, loader);
          return (RemoteInstance<T>) getRemoteInstance(type);
       }
       catch (ClassNotFoundException e)
@@ -63,9 +65,9 @@ public class ServiceRegistryImpl implements ServiceRegistry
    }
 
    @Override
-   public boolean hasService(Class<?> serviceType)
+   public boolean hasService(Class<?> clazz)
    {
-      return services.contains(serviceType);
+      return services.contains(clazz);
    }
 
    @Override
@@ -76,12 +78,12 @@ public class ServiceRegistryImpl implements ServiceRegistry
 
    @Override
    @SuppressWarnings("unchecked")
-   public <T> Set<RemoteInstance<T>> getRemoteInstances(Class<T> serviceType)
+   public <T> Set<RemoteInstance<T>> getRemoteInstances(Class<T> clazz)
    {
       Set<RemoteInstance<T>> result = new HashSet<RemoteInstance<T>>();
       for (Class<?> type : services)
       {
-         if (serviceType.isAssignableFrom(type))
+         if (clazz.isAssignableFrom(type))
          {
             result.add((RemoteInstance<T>) getRemoteInstance(type));
          }
@@ -90,15 +92,15 @@ public class ServiceRegistryImpl implements ServiceRegistry
    }
 
    @Override
-   public <T> Set<RemoteInstance<T>> getRemoteInstances(String typeName)
+   public <T> Set<RemoteInstance<T>> getRemoteInstances(String clazz)
    {
       try
       {
          @SuppressWarnings("unchecked")
-         Class<T> type = (Class<T>) Class.forName(typeName, true, loader);
+         Class<T> type = (Class<T>) Class.forName(clazz, true, loader);
          return getRemoteInstances(type);
       }
-      catch (Exception e)
+      catch (ClassNotFoundException e)
       {
          return new HashSet<RemoteInstance<T>>();
       }

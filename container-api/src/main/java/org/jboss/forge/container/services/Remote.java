@@ -23,5 +23,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface Remote
 {
-
+   boolean service() default true;
 }

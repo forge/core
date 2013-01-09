@@ -34,6 +34,10 @@ public class RemoteInstanceImpl<R> implements RemoteInstance<R>
          public Object call() throws Exception
          {
             Bean<R> bean = (Bean<R>) manager.resolve(manager.getBeans(type));
+            if(bean == null)
+            {
+               System.out.println("wtf?");
+            }
             context = manager.createCreationalContext(bean);
             return Enhancer.create((Class<?>) type,
                      new RemoteClassLoaderCallback(loader, manager.getReference(bean, type, context)));

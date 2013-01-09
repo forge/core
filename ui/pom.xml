@@ -14,6 +14,7 @@
       <module>api</module>
       <module>impl</module>
       <module>bom</module>
+      <module>tests</module>
    </modules>
    <dependencyManagement>
       <dependencies>

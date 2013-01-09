@@ -7,6 +7,9 @@
 
 package org.jboss.forge.ui;
 
+import org.jboss.forge.container.services.Remote;
+
+@Remote
 public interface UICommand
 {
    public void initializeUI(UIContext context) throws Exception;

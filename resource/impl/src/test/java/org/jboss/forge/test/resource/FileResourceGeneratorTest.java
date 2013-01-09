@@ -11,6 +11,7 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonId;
+import org.jboss.forge.container.services.Service;
 import org.jboss.forge.resource.DirectoryResource;
 import org.jboss.forge.resource.FileResource;
 import org.jboss.forge.resource.ResourceFactory;

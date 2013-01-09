@@ -16,9 +16,9 @@ import org.jboss.forge.ui.UIInput;
 
 /**
  * Produces UIInput objects
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 public class UIInputProducer
 {

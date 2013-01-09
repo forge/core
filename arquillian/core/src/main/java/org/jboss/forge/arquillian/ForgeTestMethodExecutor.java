@@ -66,17 +66,19 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
       {
          AddonRegistry addonRegistry = forge.getAddonRegistry();
          Object instance = null;
-         for (Entry<Addon, ServiceRegistry> serviceRegistry : addonRegistry.getServiceRegistries().entrySet())
+         for (Entry<Addon, ServiceRegistry> entry : addonRegistry.getServiceRegistries().entrySet())
          {
-            ServiceRegistry registry = serviceRegistry.getValue();
+            ServiceRegistry registry = entry.getValue();
+            Addon addon = entry.getKey();
             while (registry == null)
             {
                /*
                 * Ensure the addon is fully started and initialized.
                 */
                Threads.sleep(10);
-               registry = addonRegistry.getServiceRegistries().get(serviceRegistry.getKey());
+               registry = addonRegistry.getServiceRegistries().get(addon);
             }
+
             String testClassName = testMethodExecutor.getInstance().getClass().getName();
             RemoteInstance<?> result = registry.getRemoteInstance(testClassName);
 
@@ -124,8 +126,8 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
                }
                catch (InvocationTargetException e)
                {
-                  if (e.getCause() != null)
-                     result = new TestResult(Status.FAILED, e.getCause());
+                  if (e.getCause() != null && e.getCause() instanceof Exception)
+                     throw (Exception) e.getCause();
                   else
                      throw e;
                }

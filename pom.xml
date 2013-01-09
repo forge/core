@@ -74,25 +74,28 @@
             <activeByDefault>true</activeByDefault>
          </activation>
          <modules>
-            <module>parser-xml</module>
-            <module>container-api</module>
-            <module>addon-manager</module>
-            <module>container</module>
             <module>arquillian</module>
-            <module>test-harness</module>
-            <module>example</module>
-            <module>example2</module>
-            <module>facets</module>
-            <module>dependency-api</module>
+            <module>bootstrap</module>
+            <module>container</module>
+            <module>container-api</module>
+            <module>container-tests</module>
             <module>maven</module>
             <module>maven-tests</module>
-            <module>bootstrap</module>
+            <module>parser-xml</module>
+            <module>se</module>
+            <module>test-harness</module>
+            <module>dist</module>
+
+            <module>example</module>
+            <module>example2</module>
+
+            <module>addon-manager</module>
             <module>aesh</module>
+            <module>dependency-api</module>
+            <module>facets</module>
+            <module>parser-java</module>
             <module>resource</module>
             <module>ui</module>
-            <module>parser-java</module>
-            <module>dist</module>
-            <module>se</module>
          </modules>
       </profile>
 

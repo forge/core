@@ -88,23 +88,7 @@ public class Annotations
     */
    public static boolean isAnnotationPresent(final Class<?> c, final Class<? extends Annotation> type)
    {
-      boolean result = false;
-      if (c.isAnnotationPresent(type))
-      {
-         result = true;
-      }
-      else
-      {
-         for (Annotation a : c.getAnnotations())
-         {
-            if (isAnnotationPresent(a, type))
-            {
-               result = true;
-               break;
-            }
-         }
-      }
-      return result;
+      return getAnnotation(c, type) != null;
    }
 
    /**
@@ -202,6 +186,36 @@ public class Annotations
     * @return The annotation instance found on this class, or null if no matching annotation was found.
     */
    public static <A extends Annotation> A getAnnotation(final Class<?> c, final Class<A> type)
+   {
+      A result = null;
+      result = getAnnotationFromType(c, type);
+      if (result == null)
+      {
+         Class<?> superclass = c.getSuperclass();
+         while (superclass != null)
+         {
+            result = getAnnotation(superclass, type);
+            if (result != null)
+               break;
+            superclass = superclass.getSuperclass();
+         }
+      }
+
+      if (result == null)
+      {
+         Class<?>[] interfaces = c.getInterfaces();
+         for (Class<?> i : interfaces)
+         {
+            result = getAnnotation(i, type);
+            if (result != null)
+               break;
+         }
+      }
+
+      return result;
+   }
+
+   private static <A extends Annotation> A getAnnotationFromType(final Class<?> c, final Class<A> type)
    {
       if (c != null)
       {

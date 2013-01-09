@@ -9,6 +9,9 @@ package org.jboss.forge.ui;
 
 import java.util.concurrent.Callable;
 
+import org.jboss.forge.container.services.Remote;
+
+@Remote(service=false)
 public interface UIInput<T>
 {
    String getLabel();

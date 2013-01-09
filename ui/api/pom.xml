@@ -9,4 +9,11 @@
    <artifactId>ui-api</artifactId>
    <name>Forge - UI API</name>
 
+   <dependencies>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-addon-container-api</artifactId>
+      </dependency>
+   </dependencies>
+
 </project>

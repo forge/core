@@ -8,6 +8,9 @@ import org.jboss.arquillian.container.test.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.container.test.spi.client.deployment.DeploymentPackager;
 import org.jboss.arquillian.container.test.spi.client.protocol.Protocol;
 import org.jboss.arquillian.container.test.spi.command.CommandCallback;
+import org.jboss.arquillian.test.spi.TestMethodExecutor;
+import org.jboss.arquillian.test.spi.TestResult;
+import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.jboss.forge.arquillian.ForgeDeploymentPackager;
 import org.jboss.forge.arquillian.ForgeTestMethodExecutor;
 import org.jboss.forge.container.Forge;
@@ -40,6 +43,18 @@ public class ForgeProtocol implements Protocol<ForgeProtocolConfiguration>
    public ContainerMethodExecutor getExecutor(ForgeProtocolConfiguration protocolConfiguration,
             ProtocolMetaData metaData, CommandCallback callback)
    {
+      if (metaData == null)
+      {
+         return new ContainerMethodExecutor()
+         {
+            @Override
+            public TestResult invoke(TestMethodExecutor arg0)
+            {
+               return new TestResult(Status.SKIPPED);
+            }
+         };
+      }
+
       Collection<Forge> contexts = metaData.getContexts(Forge.class);
       if (contexts.size() == 0)
       {

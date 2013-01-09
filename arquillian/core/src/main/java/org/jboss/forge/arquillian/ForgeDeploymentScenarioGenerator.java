@@ -115,7 +115,6 @@ public class ForgeDeploymentScenarioGenerator implements DeploymentScenarioGener
       if (deploymentMethod.isAnnotationPresent(ShouldThrowException.class))
       {
          deployment.setExpectedException(deploymentMethod.getAnnotation(ShouldThrowException.class).value());
-         deployment.shouldBeTestable(false); // can't test against failing deployments
       }
 
       return deployment;

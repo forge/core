@@ -34,6 +34,7 @@ import org.jboss.forge.container.AddonRepository;
 import org.jboss.forge.container.Forge;
 import org.jboss.forge.container.ForgeImpl;
 import org.jboss.forge.container.Status;
+import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.impl.AddonRepositoryImpl;
 import org.jboss.forge.container.util.ClassLoaders;
 import org.jboss.forge.container.util.Threads;
@@ -56,7 +57,8 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    @Override
    public ProtocolMetaData deploy(Archive<?> archive) throws DeploymentException
    {
-      final AddonId addonToDeploy = getAddonEntry(deploymentInstance.get());
+      Deployment deployment = deploymentInstance.get();
+      final AddonId addonToDeploy = getAddonEntry(deployment);
       File destDir = repository.getAddonBaseDir(addonToDeploy);
       destDir.mkdirs();
 
@@ -140,6 +142,17 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
          }
       }
 
+      Addon addon = registry.getRegisteredAddon(addonToDeploy);
+      if (addon == null || Status.FAILED.equals(addon.getStatus()))
+      {
+         ContainerException e = new ContainerException("Addon " + addon + " failed to deploy.");
+         deployment.deployedWithError(e);
+         throw e;
+         // throw new DeploymentException("Failed to deploy addon.", e);
+      }
+      else
+         deployment.deployed();
+
       return new ProtocolMetaData().addContext(runnable.getForge());
    }
 
@@ -166,12 +179,11 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
          if (coordinates.length == 3)
             entry = AddonId.from(coordinates[0], coordinates[1], coordinates[2]);
          else if (coordinates.length == 2)
-            entry = AddonId.from(coordinates[0], coordinates[1], runnable.getForge().getVersion());
+            entry = AddonId.from(coordinates[0], coordinates[1]);
          else if (coordinates.length == 1)
-            entry = AddonId.from(coordinates[0], UUID.randomUUID().toString(), runnable.getForge().getVersion());
+            entry = AddonId.from(coordinates[0], UUID.randomUUID().toString());
          else
-            entry = AddonId.from(UUID.randomUUID().toString(), UUID.randomUUID().toString(), runnable.getForge()
-                     .getVersion());
+            entry = AddonId.from(UUID.randomUUID().toString(), UUID.randomUUID().toString());
 
          deployedAddons.put(deployment, entry);
       }
