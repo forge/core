@@ -38,6 +38,7 @@
 				<include name="**/*" />
 			</fileset>
 		</chmod>
+		<fixcrlf file="${output.dir}/bin/forge" eol="unix" />
 	</target>
 
 	<target name="make-dirs">
