@@ -6,9 +6,13 @@
  */
 package org.jboss.forge.spec.cdi;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
+
 import junit.framework.Assert;
 
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
@@ -70,5 +74,41 @@ public class BeansPluginTest extends AbstractShellTest
       Assert.assertNotNull(source);
       Assert.assertEquals("foo.beans", source.getPackage());
       project.getFacet(CDIFacet.class).getConfig();
+   }
+
+   @Test(expected = RuntimeException.class)
+   public void testCannotOverwriteBean() throws Exception
+   {
+      Project project = initializeJavaProject();
+      queueInputLines("y", "");
+      getShell().execute("beans setup");
+      String command = "beans new-bean --type foo.beans.ExampleBean --scoped REQUEST";
+      getShell().execute(command);
+
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+      JavaResource resource = java.getJavaResource("foo.beans.ExampleBean");
+
+      Assert.assertTrue(resource.exists());
+      getShell().execute(command);
+   }
+
+   @Test
+   public void testOverwriteBean() throws Exception
+   {
+      Project project = initializeJavaProject();
+      queueInputLines("y", "");
+      getShell().execute("beans setup");
+      getShell().execute("beans new-bean --type foo.beans.ExampleBean --scoped REQUEST");
+
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+      JavaResource resource = java.getJavaResource("foo.beans.ExampleBean");
+
+      Assert.assertTrue(resource.exists());
+      Assert.assertTrue(JavaClass.class.cast(resource.getJavaSource()).hasAnnotation(RequestScoped.class));
+
+      getShell().execute("beans new-bean --type foo.beans.ExampleBean --scoped APPLICATION --overwrite");
+      // reload:
+      resource = java.getJavaResource("foo.beans.ExampleBean");
+      Assert.assertTrue(JavaClass.class.cast(resource.getJavaSource()).hasAnnotation(ApplicationScoped.class));
    }
 }
