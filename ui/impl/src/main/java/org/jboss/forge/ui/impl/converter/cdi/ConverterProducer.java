@@ -10,8 +10,6 @@ package org.jboss.forge.ui.impl.converter.cdi;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
-import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 
@@ -22,8 +20,6 @@ public class ConverterProducer
 {
 
    @Produces
-   @Default
-   @Dependent
    @SuppressWarnings("unchecked")
    public <S, T> Converter<S, T> produceConverter(InjectionPoint injectionPoint, ConverterRegistry registry)
    {

@@ -8,6 +8,7 @@ package org.jboss.forge.container.modules;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.Set;
@@ -44,6 +45,24 @@ public class AddonModuleLoader extends ModuleLoader
    {
       this.repository = repository;
       moduleProviders = ServiceLoader.load(ModuleSpecProvider.class, loader);
+      installMBeanServer();
+   }
+
+   /**
+    * Installs the MBeanServer.
+    */
+   private void installMBeanServer()
+   {
+      try
+      {
+         Method method = ModuleLoader.class.getDeclaredMethod("installMBeanServer");
+         method.setAccessible(true);
+         method.invoke(null);
+      }
+      catch (Exception e)
+      {
+         throw new ContainerException("Could not install Modules MBean server", e);
+      }
    }
 
    @Override
@@ -193,6 +212,11 @@ public class AddonModuleLoader extends ModuleLoader
    {
       String[] split = id.toModuleId().split(":");
       return ModuleIdentifier.create(split[0], split[1]);
+   }
+
+   public AddonRepository getRepository()
+   {
+      return repository;
    }
 
    @Override
