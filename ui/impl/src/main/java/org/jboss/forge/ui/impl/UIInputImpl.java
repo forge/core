@@ -12,7 +12,7 @@ import java.util.concurrent.Callable;
 import javax.enterprise.inject.Typed;
 
 import org.jboss.forge.ui.UIInput;
-import org.jboss.forge.ui.impl.util.Callables;
+import org.jboss.forge.ui.util.Callables;
 
 /**
  * Implementation of a {@link UIInput} object

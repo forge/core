@@ -5,15 +5,20 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.ui.impl.converter;
+package org.jboss.forge.ui.impl;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.enterprise.inject.Vetoed;
+
 import org.jboss.forge.ui.converter.Converter;
 import org.jboss.forge.ui.converter.ConverterNotFoundException;
 import org.jboss.forge.ui.converter.ConverterRegistry;
+import org.jboss.forge.ui.impl.converter.ConstructorConverter;
+import org.jboss.forge.ui.impl.converter.MethodConverter;
 
+@Vetoed
 public enum ConverterRegistryImpl implements ConverterRegistry
 {
    INSTANCE;

@@ -7,12 +7,15 @@
 
 package org.jboss.forge.ui.converter;
 
+import org.jboss.forge.container.services.Remote;
+
 /**
  * Stores converter objects
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
+@Remote
 public interface ConverterRegistry
 {
    /**
@@ -23,7 +26,7 @@ public interface ConverterRegistry
 
    /**
     * Remove any converters from sourceType to targetType.
-    *
+    * 
     * @param sourceType the source type
     * @param targetType the target type
     */
@@ -31,7 +34,7 @@ public interface ConverterRegistry
 
    /**
     * Returns a converter for the supplied source and target
-    *
+    * 
     * @param source
     * @param target
     * @return

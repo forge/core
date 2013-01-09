@@ -2,7 +2,6 @@ package org.jboss.forge.ui;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.container.services.Service;
 import org.jboss.forge.ui.wizard.UIWizardBegin;
 import org.jboss.forge.ui.wizard.UIWizardContext;
 import org.jboss.forge.ui.wizard.WizardId;

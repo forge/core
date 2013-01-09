@@ -11,7 +11,7 @@ import java.util.concurrent.Callable;
 
 import org.jboss.forge.container.services.Remote;
 
-@Remote(service=false)
+@Remote
 public interface UIInput<T>
 {
    String getLabel();

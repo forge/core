@@ -15,7 +15,7 @@ import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 
 import org.jboss.forge.ui.converter.Converter;
-import org.jboss.forge.ui.impl.converter.ConverterRegistryImpl;
+import org.jboss.forge.ui.converter.ConverterRegistry;
 
 public class ConverterProducer
 {
@@ -23,11 +23,10 @@ public class ConverterProducer
    @Produces
    @Default
    @SuppressWarnings("unchecked")
-   public <S, T> Converter<S, T> produceConverter(InjectionPoint injectionPoint)
+   public <S, T> Converter<S, T> produceConverter(InjectionPoint injectionPoint, ConverterRegistry registry)
    {
       ParameterizedType ptype = (ParameterizedType) injectionPoint.getType();
       Type[] actualTypeArguments = ptype.getActualTypeArguments();
-      return ConverterRegistryImpl.INSTANCE.getConverter((Class<S>) actualTypeArguments[0],
-               (Class<T>) actualTypeArguments[1]);
+      return registry.getConverter((Class<S>) actualTypeArguments[0], (Class<T>) actualTypeArguments[1]);
    }
 }
