@@ -1,6 +1,10 @@
 package org.jboss.forge.container.impl;
 
+import java.util.Collections;
+import java.util.Set;
+
 import org.jboss.forge.container.Addon;
+import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.Status;
 import org.jboss.forge.container.services.ServiceRegistry;
@@ -11,11 +15,23 @@ public class AddonImpl implements Addon
    private Module module;
    private ServiceRegistry registry;
    private Status status;
-   private AddonId entry;
+   private final AddonId entry;
+   private final Set<AddonDependency> dependencies;
+
+   public AddonImpl(AddonId entry, Set<AddonDependency> dependencies)
+   {
+      this.entry = entry;
+      this.dependencies = dependencies;
+   }
+
+   public AddonImpl(AddonId entry)
+   {
+      this(entry, Collections.<AddonDependency> emptySet());
+   }
 
    public AddonImpl(AddonId entry, Status status)
    {
-      this.entry = entry;
+      this(entry);
       this.status = status;
    }
 
@@ -23,6 +39,12 @@ public class AddonImpl implements Addon
    public AddonId getId()
    {
       return entry;
+   }
+
+   @Override
+   public Set<AddonDependency> getDependencies()
+   {
+      return dependencies;
    }
 
    @Override

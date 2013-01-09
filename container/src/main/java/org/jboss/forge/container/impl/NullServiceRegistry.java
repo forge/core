@@ -1,6 +1,6 @@
 package org.jboss.forge.container.impl;
 
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
 
 import javax.enterprise.inject.Typed;
@@ -10,7 +10,7 @@ import org.jboss.forge.container.services.ServiceRegistry;
 
 /**
  * Used when an addon does not provide services.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Typed()
@@ -41,14 +41,14 @@ public class NullServiceRegistry implements ServiceRegistry
    public <T> Set<RemoteInstance<T>> getRemoteInstances(Class<T> serviceType)
    {
       // no-op
-      return new HashSet<RemoteInstance<T>>();
+      return Collections.emptySet();
    }
 
    @Override
    public Set<Class<?>> getServices()
    {
       // no-op
-      return new HashSet<Class<?>>();
+      return Collections.emptySet();
    }
 
    @Override
@@ -59,10 +59,10 @@ public class NullServiceRegistry implements ServiceRegistry
    }
 
    @Override
-   public Set<? extends RemoteInstance<?>> getRemoteInstances(String typeName)
+   public Set<RemoteInstance<Object>> getRemoteInstances(String typeName)
    {
       // no-op
-      return new HashSet<RemoteInstance<?>>();
+      return Collections.emptySet();
    }
 
 }

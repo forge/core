@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,10 +35,7 @@ public enum AddonRegistryImpl implements AddonRegistry
 
    public void register(Addon addon)
    {
-      if (!addons.contains(addon))
-      {
-         addons.add(addon);
-      }
+      addons.add(addon);
    }
 
    @Override
@@ -64,18 +62,22 @@ public enum AddonRegistryImpl implements AddonRegistry
       for (Addon registeredAddon : addons)
       {
          if (filter.accept(registeredAddon))
+         {
             result.add(registeredAddon);
+         }
       }
       return result;
    }
 
    public void removeServices(ClassLoader classLoader) throws IllegalArgumentException
    {
-      for (Addon addon : addons)
+      Iterator<Addon> it = addons.iterator();
+      while (it.hasNext())
       {
+         Addon addon = it.next();
          if (addon.getClassLoader().equals(classLoader))
          {
-            addons.remove(addon);
+            it.remove();
          }
       }
    }

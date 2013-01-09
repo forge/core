@@ -1,5 +1,6 @@
 package org.jboss.forge.container;
 
+import java.io.File;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
@@ -23,9 +24,13 @@ import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 import org.jboss.weld.resources.spi.ResourceLoader;
 
-public final class AddonRunnable implements Runnable
+/**
+ * Loads an addon
+ */
+final class AddonRunnable implements Runnable
 {
-   private Forge forge;
+
+   private File addonDir;
    private AddonImpl addon;
    private static final Logger LOGGER = Logger.getLogger(AddonRunnable.class.getName());
 
@@ -41,9 +46,9 @@ public final class AddonRunnable implements Runnable
       }
    };
 
-   public AddonRunnable(Forge forge, AddonImpl addon)
+   AddonRunnable(File addonDir, AddonImpl addon)
    {
-      this.forge = forge;
+      this.addonDir = addonDir;
       this.addon = addon;
    }
 
@@ -117,7 +122,7 @@ public final class AddonRunnable implements Runnable
                         manager, ContainerControl.class);
                AddonRepositoryProducer repositoryProducer = BeanManagerUtils.getContextualInstance(manager,
                         AddonRepositoryProducer.class);
-               repositoryProducer.setAddonDir(forge.getAddonDir());
+               repositoryProducer.setAddonDir(addonDir);
                Assert.notNull(control, "Container control was null.");
 
                ServiceRegistry registry = BeanManagerUtils.getContextualInstance(manager, ServiceRegistry.class);
@@ -158,5 +163,34 @@ public final class AddonRunnable implements Runnable
             throw e;
          }
       }
+   }
+
+   @Override
+   public int hashCode()
+   {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((addon == null) ? 0 : addon.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj)
+   {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      AddonRunnable other = (AddonRunnable) obj;
+      if (addon == null)
+      {
+         if (other.addon != null)
+            return false;
+      }
+      else if (!addon.equals(other.addon))
+         return false;
+      return true;
    }
 }

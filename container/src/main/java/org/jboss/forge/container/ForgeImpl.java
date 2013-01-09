@@ -2,6 +2,9 @@ package org.jboss.forge.container;
 
 import java.io.File;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -26,23 +29,21 @@ import org.jboss.modules.log.StreamModuleLogger;
 
 public class ForgeImpl implements Forge
 {
-   private static final String PROP_CONCURRENT_PLUGINS = "forge.concurrentAddons";
 
+   private static final String PROP_CONCURRENT_PLUGINS = "forge.concurrentAddons";
    private static final int BATCH_SIZE = Integer.getInteger(PROP_CONCURRENT_PLUGINS, 4);
 
    private Logger logger = Logger.getLogger(getClass().getName());
 
    private volatile boolean alive = false;
+   private boolean serverMode = true;
 
    private AddonRepository repository = AddonRepositoryImpl.forDefaultDirectory();
 
    private Map<Addon, Set<Addon>> waitlist = new HashMap<Addon, Set<Addon>>();
+   private Set<AddonRunnable> runnables = Sets.getConcurrentSet();
 
-   private boolean serverMode = true;
-
-   Set<AddonRunnable> runnables = Sets.getConcurrentSet();
-
-   ExecutorService executor;
+   private ExecutorService executor = Executors.newFixedThreadPool(BATCH_SIZE);
 
    public ForgeImpl()
    {
@@ -135,7 +136,7 @@ public class ForgeImpl implements Forge
          }
          catch (Exception e)
          {
-            e.printStackTrace();
+            logger.log(Level.FINE, "Error while shutting down", e);
          }
       }
       if (executor != null)
@@ -153,6 +154,7 @@ public class ForgeImpl implements Forge
 
    private void updateAddons(ModuleLoader addonLoader)
    {
+      // Fetch the loaded addons
       Set<Addon> loadedAddons = new HashSet<Addon>();
       for (AddonRunnable runnable : runnables)
       {
@@ -198,11 +200,22 @@ public class ForgeImpl implements Forge
    {
       Set<AddonRunnable> started = new HashSet<AddonRunnable>();
 
-      executor = Executors.newFixedThreadPool(BATCH_SIZE);
-      for (Addon addon : toStart)
+      List<Addon> addons = new ArrayList<Addon>(toStart);
+
+      // Ordering by dependencies number
+      // TODO: Replace this with a more precise order based on the dependencies
+      Collections.sort(addons, new Comparator<Addon>()
+      {
+         @Override
+         public int compare(Addon o1, Addon o2)
+         {
+            return o1.getDependencies().size() - o2.getDependencies().size();
+         }
+      });
+      for (Addon addon : addons)
       {
          logger.info("Starting addon (" + addon.getId() + ")");
-         AddonRunnable runnable = new AddonRunnable(this, (AddonImpl) addon);
+         AddonRunnable runnable = new AddonRunnable(getAddonDir(), (AddonImpl) addon);
          Future<?> future = executor.submit(runnable);
          try
          {
@@ -214,7 +227,6 @@ public class ForgeImpl implements Forge
             logger.log(Level.WARNING, "Failed to start addon [" + addon + "]", e);
          }
          started.add(runnable);
-
       }
       return started;
    }
@@ -243,8 +255,10 @@ public class ForgeImpl implements Forge
       for (AddonId entry : enabledCompatible)
       {
          Addon addonToLoad = loadAddon(addonLoader, entry);
-         if (Status.STARTING.equals(addonToLoad.getStatus()) || Status.STARTED.equals(addonToLoad.getStatus()))
+         if (Status.STARTING == addonToLoad.getStatus() || Status.STARTED == addonToLoad.getStatus())
+         {
             result.add(addonToLoad);
+         }
       }
 
       return result;
@@ -257,7 +271,8 @@ public class ForgeImpl implements Forge
       AddonImpl addonToLoad = (AddonImpl) registry.getRegisteredAddon(addonId);
       if (addonToLoad == null)
       {
-         addonToLoad = new AddonImpl(addonId, Status.STARTING);
+         addonToLoad = new AddonImpl(addonId, repository.getAddonDependencies(addonId));
+         addonToLoad.setStatus(Status.STARTING);
          registry.register(addonToLoad);
       }
 
@@ -273,7 +288,7 @@ public class ForgeImpl implements Forge
             AddonId dependencyId = dependency.getId();
             if (!registry.isRegistered(dependencyId) && !dependency.isOptional())
             {
-               AddonImpl missingDependency = new AddonImpl(dependencyId, null);
+               AddonImpl missingDependency = new AddonImpl(dependencyId);
                missingDependencies.add(missingDependency);
             }
          }
@@ -352,5 +367,4 @@ public class ForgeImpl implements Forge
    {
       return AddonRepositoryImpl.getRuntimeAPIVersion();
    }
-
 }
