@@ -6,58 +6,54 @@
  */
 package org.jboss.forge.aesh.commands;
 
-import org.jboss.aesh.cl.CommandLine;
-import org.jboss.aesh.cl.CommandLineParser;
-import org.jboss.aesh.cl.OptionBuilder;
-import org.jboss.aesh.cl.ParameterBuilder;
-import org.jboss.aesh.cl.ParserBuilder;
-import org.jboss.aesh.complete.CompleteOperation;
 import org.jboss.aesh.console.Console;
-import org.jboss.aesh.console.ConsoleOutput;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import org.jboss.forge.aesh.ShellContext;
+import org.jboss.forge.ui.*;
+import org.jboss.forge.ui.impl.UIInputImpl;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  */
-public class StopCommand extends ForgeCommand {
+public class StopCommand implements UICommand {
 
-    private CommandLineParser parser;
+    private Console console;
 
-    private List<String> names = new ArrayList<String>();
+    private UIInput<String> exit;
+    private UIInput<String> quit;
 
     public StopCommand(Console console) {
         setConsole(console);
-        names.add("exit");
-        names.add("quit");
-        createParsers();
+    }
+
+    private void setConsole(Console console) {
+        this.console = console;
     }
 
     @Override
-    public CommandLine parse(String line) throws IllegalArgumentException {
-        return parser.parse(line);
-    }
+    public void initializeUI(UIContext context) throws Exception {
+        exit = new UIInputImpl<String>("exit", String.class);
+        exit.setLabel("exit");
+        exit.setRequired(true);
+        context.getUIBuilder().add(exit);
 
-    @Override
-    public void run(ConsoleOutput consoleOutput, CommandLine commandLine) throws IOException {
-        //not doing much other than stopping the console
-        getConsole().stop();
-    }
+        quit = new UIInputImpl<String>("quit", String.class);
+        quit.setLabel("quit");
+        quit.setRequired(true);
+        context.getUIBuilder().add(quit);
 
-    public void complete(CompleteOperation completeOperation) {
-        for(String name : names) {
-            if(name.startsWith(completeOperation.getBuffer()))
-                completeOperation.addCompletionCandidate(name);
+        if(context instanceof ShellContext) {
+            ((ShellContext) context).setStandalone(false);
         }
     }
 
-    private void createParsers() {
-        ParserBuilder builder = new ParserBuilder();
-        for(String name : names)
-            builder.addParameter(new ParameterBuilder().name(name).generateParameter());
-
-        parser = builder.generateParser();
+    @Override
+    public void validate(UIValidationContext context) {
     }
+
+    @Override
+    public Result execute(UIContext context) throws Exception {
+        console.stop();
+        return Result.success("");
+    }
+
 }

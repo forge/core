@@ -19,7 +19,6 @@ import org.jboss.aesh.console.Console;
 import org.jboss.aesh.console.ConsoleOutput;
 import org.jboss.aesh.console.settings.Settings;
 import org.jboss.forge.aesh.commands.ClearCommand;
-import org.jboss.forge.aesh.commands.ForgeCommand;
 import org.jboss.forge.aesh.commands.ListServicesCommand;
 import org.jboss.forge.aesh.commands.StopCommand;
 import org.jboss.forge.container.AddonRegistry;
@@ -34,68 +33,85 @@ import org.jboss.forge.container.services.Remote;
 @Remote
 public class AeshShell
 {
-   private Console console;
-   private ConsoleOutput output;
+    private Console console;
+    private ConsoleOutput output;
+    private String prompt = "[forge-2.0]$ ";
 
-   private List<ForgeCommand> commands;
 
-   @Inject
-   private ContainerControl containerControl;
+    private List<ShellCommand> commands;
 
-   @Inject
-   private AddonRegistry registry;
+    @Inject
+    private ContainerControl containerControl;
 
-   public void observe(@Observes Perform startup) throws IOException
-   {
-   }
+    @Inject
+    private AddonRegistry registry;
 
-    public void addCommand(ForgeCommand command) {
+    public void observe(@Observes Perform startup) throws IOException
+    {
+    }
+
+    public void addCommand(ShellCommand command) {
         command.setConsole(console);
         commands.add(command);
     }
 
-    public void initShell() throws IOException {
+    public void initShell() throws Exception {
         Settings.getInstance().setReadInputrc(false);
         Settings.getInstance().setLogging(true);
 
-        commands = new ArrayList<ForgeCommand>();
+        commands = new ArrayList<ShellCommand>();
         console = new Console();
 
         //internal commands
-        commands.add(new StopCommand(console));
-        commands.add(new ClearCommand(console));
-        commands.add(new ListServicesCommand(console, registry));
+        addCommand(new ShellCommand(new ListServicesCommand(registry)));
+        addCommand(new ShellCommand(new StopCommand(console)));
+        addCommand(new ShellCommand(new ClearCommand(console)));
     }
 
-   public void startShell() throws IOException {
-      String prompt = "[forge-2.0]$ ";
+    public void startShell() throws Exception {
+        prompt = "[forge-2.0]$ ";
 
-       output = null;
-       while ((output = console.read(prompt)) != null)
-       {
-           CommandLine cl = null;
-           for(ForgeCommand command : commands) {
-               try {
-                   cl = command.parse(output.getBuffer());
-                   if(cl != null) {
-                       command.run(output, cl);
-                       break;
-                   }
-               }
-               catch (IllegalArgumentException iae) {
-                   System.out.println("Command: "+command+", did not match: "+output.getBuffer());
-                   //ignored for now
-               }
-           }
-           //hack to just read one and one line when we're testing
-           if(Settings.getInstance().getName().equals("test"))
-               break;
+        output = null;
+        while ((output = console.read(prompt)) != null)
+        {
+            CommandLine cl = null;
+            for(ShellCommand command : commands) {
+                try {
+                    cl = command.parse(output.getBuffer());
+                    if(cl != null) {
+                        //need some way of deciding if the command is standalone
+                        if(command.getContext().isStandalone()) {
+                            //console.
 
-           if(!console.isRunning()) {
-               break;
-           }
-       }
-   }
+                        }
+                        else {
+                            command.run(output, cl);
+                            break;
+                        }
+                    }
+                }
+                catch (IllegalArgumentException iae) {
+                    System.out.println("Command: "+command+", did not match: "+output.getBuffer());
+                    //ignored for now
+                }
+            }
+            //if we didnt find any commands matching
+            if(cl == null) {
+               console.pushToStdOut(output.getBuffer()+": command not found.");
+            }
+            //hack to just read one and one line when we're testing
+            if(Settings.getInstance().getName().equals("test"))
+                break;
+
+            if(!console.isRunning()) {
+                break;
+            }
+        }
+    }
+
+    public String getPrompt() {
+        return prompt;
+    }
 
     public Console getConsole() {
         return console;
@@ -106,6 +122,5 @@ public class AeshShell
             console.stop();
         containerControl.stop();
     }
-
 
 }
