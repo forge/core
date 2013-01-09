@@ -3,7 +3,7 @@ package org.jboss.forge.container;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class AddonEntryTest
+public class AddonIdTest
 {
    @Test
    public void testFromCoordinates()
