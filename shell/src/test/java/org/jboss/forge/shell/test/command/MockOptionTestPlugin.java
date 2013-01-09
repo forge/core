@@ -60,6 +60,12 @@ public class MockOptionTestPlugin implements Plugin
       varargsOptions = options;
    }
 
+   @Command("namedVarargsOption")
+   public void namedVarargsOption(@Option(name = "opt") final String... options)
+   {
+      varargsOptions = options;
+   }
+
    @Command("booleanOptionOmitted")
    public void booleanOptionOmitted(@Option(required = false,
             description = "Some boolean flag") final boolean option)
@@ -109,6 +115,6 @@ public class MockOptionTestPlugin implements Plugin
 
    public List<String> getVarargsOptions()
    {
-      return Arrays.asList(varargsOptions);
+      return varargsOptions == null ? null : Arrays.asList(varargsOptions);
    }
 }
