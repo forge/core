@@ -8,6 +8,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.AddonRepository;
 import org.jboss.forge.container.ContainerControl;
+import org.jboss.forge.container.LocalService;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -25,6 +26,7 @@ public class AddonInjectableAPIsTest
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
+               .addClasses(LocalService.class)
                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
 
       return archive;

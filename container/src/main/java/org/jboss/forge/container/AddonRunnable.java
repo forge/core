@@ -84,7 +84,7 @@ public final class AddonRunnable implements Runnable
             ResourceLoader resourceLoader = new ModuleResourceLoader(addon.getModule());
             ModularURLScanner scanner = new ModularURLScanner(resourceLoader, "META-INF/beans.xml");
             ModuleScanResult scanResult = scanner.scan();
-            
+
             if (scanResult.getDiscoveredResourceUrls().isEmpty())
             {
                /*
@@ -107,7 +107,8 @@ public final class AddonRunnable implements Runnable
             else
             {
                final Weld weld = new ModularWeld(scanResult);
-               WeldContainer container = weld.initialize();
+               WeldContainer container;
+               container = weld.initialize();
 
                BeanManager manager = container.getBeanManager();
                Assert.notNull(manager, "BeanManager was null");

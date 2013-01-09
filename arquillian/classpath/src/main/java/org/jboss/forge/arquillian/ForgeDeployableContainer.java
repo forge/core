@@ -145,7 +145,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       Addon addon = registry.getRegisteredAddon(addonToDeploy);
       if (addon == null || Status.FAILED.equals(addon.getStatus()))
       {
-         ContainerException e = new ContainerException("Addon " + addon + " failed to deploy.");
+         ContainerException e = new ContainerException("Addon " + addonToDeploy + " failed to deploy.");
          deployment.deployedWithError(e);
          throw e;
          // throw new DeploymentException("Failed to deploy addon.", e);
@@ -223,7 +223,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       try
       {
          runnable = new ForgeRunnable(addonDir, ClassLoader.getSystemClassLoader());
-         thread = new Thread(runnable);
+         thread = new Thread(runnable, "Arq-Forge Runtime");
          thread.start();
       }
       catch (Exception e)
