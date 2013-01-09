@@ -220,32 +220,26 @@ public class BeansPlugin implements Plugin
             @Option(required = false, name = "overwrite") final boolean overwrite
             ) throws FileNotFoundException
    {
-      if (!resource.exists() || overwrite)
-      {
-         JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
-         if (resource.createNewFile())
-         {
-            JavaClass javaClass = JavaParser.create(JavaClass.class);
-            javaClass.setName(java.calculateName(resource));
-            javaClass.setPackage(java.calculatePackage(resource));
-
-            if (BeanScope.CUSTOM.equals(scope))
-            {
-               String annoType = prompt.promptCommon("Enter the qualified custom scope type:", PromptType.JAVA_CLASS);
-               javaClass.addAnnotation(annoType);
-            }
-            else if (!BeanScope.DEPENDENT.equals(scope))
-            {
-               javaClass.addAnnotation(scope.getAnnotation());
-            }
-            resource.setContents(javaClass);
-            pickup.fire(new PickupResource(resource));
-         }
-      }
-      else
+      if (!resource.createNewFile() && !overwrite)
       {
          throw new RuntimeException("Type already exists [" + resource.getFullyQualifiedName()
                   + "] Re-run with '--overwrite' to continue.");
       }
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+      JavaClass javaClass = JavaParser.create(JavaClass.class);
+      javaClass.setName(java.calculateName(resource));
+      javaClass.setPackage(java.calculatePackage(resource));
+
+      if (BeanScope.CUSTOM == scope)
+      {
+         String annoType = prompt.promptCommon("Enter the qualified custom scope type:", PromptType.JAVA_CLASS);
+         javaClass.addAnnotation(annoType);
+      }
+      else if (BeanScope.DEPENDENT != scope)
+      {
+         javaClass.addAnnotation(scope.getAnnotation());
+      }
+      resource.setContents(javaClass);
+      pickup.fire(new PickupResource(resource));
    }
 }
