@@ -82,6 +82,18 @@ public class AddonModuleLoader extends ModuleLoader
       return result;
    }
 
+   /**
+    * Loads a module based on the {@link AddonId}
+    *
+    * @param addonId
+    * @return
+    * @throws ModuleLoadException
+    */
+   public final Module loadModule(AddonId addonId) throws ModuleLoadException
+   {
+      return loadModule(ModuleIdentifier.fromString(addonId.toModuleId()));
+   }
+
    private ModuleSpec findRegularModule(ModuleIdentifier id)
    {
       ModuleSpec result = null;

@@ -7,6 +7,7 @@
 
 package org.jboss.forge.container;
 
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -27,8 +28,6 @@ import org.jboss.forge.container.impl.AddonRegistryImpl;
 import org.jboss.forge.container.impl.AddonRepositoryImpl;
 import org.jboss.forge.container.modules.AddonModuleLoader;
 import org.jboss.forge.container.util.Sets;
-import org.jboss.modules.Module;
-import org.jboss.modules.ModuleIdentifier;
 
 /**
  * Encapsulates the addon loading process
@@ -211,8 +210,7 @@ public final class AddonLoader
          {
             try
             {
-               Module module = moduleLoader.loadModule(ModuleIdentifier.fromString(addonId.toModuleId()));
-               addonToLoad.setModule(module);
+               addonToLoad.setModule(moduleLoader.loadModule(addonId));
                addonToLoad.setStatus(Status.STARTING);
 
                for (Addon waiting : waitlist.keySet())
