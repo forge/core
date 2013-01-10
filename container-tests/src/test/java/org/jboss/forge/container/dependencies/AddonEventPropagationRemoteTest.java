@@ -2,6 +2,7 @@ package org.jboss.forge.container.dependencies;
 
 import javax.inject.Inject;
 
+import org.example.event.EventPayload1;
 import org.example.event.EventResponseService;
 import org.example.event.EventService;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -20,14 +21,14 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @RunWith(Arquillian.class)
-public class AddonDependencyEventTest
+public class AddonEventPropagationRemoteTest
 {
    @Deployment(order = 2)
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
-               .addClasses(EventService.class)
+               .addClasses(EventService.class, EventPayload1.class)
                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
                .addAsAddonDependencies(AddonDependency.create(AddonId.from("dependency", "1")));
 

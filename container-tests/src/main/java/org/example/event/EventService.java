@@ -22,7 +22,12 @@ public class EventService
 
    public void fire()
    {
-      request.fire(this);
+      request.fire(new EventPayload1());
+   }
+
+   public void fireNonRemote()
+   {
+      request.fire(new EventPayload2());
    }
 
    public void handleLocalRequest(@Observes @Named("1") Object event)

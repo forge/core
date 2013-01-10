@@ -1,11 +1,10 @@
 package org.jboss.forge.container.dependencies;
 
-import javax.enterprise.inject.spi.Extension;
 import javax.inject.Inject;
 
-import org.example.ConsumingService;
-import org.example.PublisherService;
-import org.example.extension.TestExtension;
+import org.example.event.EventPayload2;
+import org.example.event.EventResponseService;
+import org.example.event.EventService;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -22,47 +21,43 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @RunWith(Arquillian.class)
-public class AddonDependencyInjectionTest
+public class AddonEventPropagationNonRemoteTest
 {
    @Deployment(order = 2)
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
-               .addClasses(ConsumingService.class, TestExtension.class)
+               .addClasses(EventService.class)
                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
-               .addAsServiceProvider(Extension.class, TestExtension.class)
-               .addAsAddonDependencies(AddonDependency.create(AddonId.from("dependency", "2")));
+               .addAsAddonDependencies(AddonDependency.create(AddonId.from("dependency", "1")));
 
       return archive;
    }
 
-   @Deployment(name = "dependency,2", testable = false, order = 1)
+   @Deployment(name = "dependency,1", testable = false, order = 1)
    public static ForgeArchive getDependencyDeployment()
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class, "dependency.jar")
-               .addClasses(PublisherService.class)
+               .addClasses(EventResponseService.class, EventPayload2.class)
                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
 
       return archive;
    }
 
    @Inject
-   private ConsumingService consuming;
-
-   @Inject
-   private PublisherService remote;
+   private EventService sender;
 
    @Test
-   public void testRemoteServiceInjection() throws Exception
+   public void testNonRemoteEventPropagationDoesNotCrossContainers() throws Exception
    {
-      Assert.assertNotNull(consuming);
-      Assert.assertNotNull(remote);
-      Assert.assertEquals("I am ConsumingService. Remote service says [I am PublishedService.]",
-               consuming.getMessage());
-      Assert.assertEquals(remote.hashCode(), consuming.getRemoteHashCode());
-      Assert.assertNotSame(consuming, remote);
-      Assert.assertNotSame(consuming.getClassLoader(), remote.getClassLoader());
+      Assert.assertFalse(sender.isLocalRequestRecieved());
+      Assert.assertFalse(sender.isWrongResponseRecieved());
+      Assert.assertFalse(sender.isRemoteResponseRecieved());
+      sender.fireNonRemote();
+      Assert.assertTrue(sender.isLocalRequestRecieved());
+      Assert.assertFalse(sender.isRemoteResponseRecieved());
+      Assert.assertFalse(sender.isWrongResponseRecieved());
    }
 
 }
