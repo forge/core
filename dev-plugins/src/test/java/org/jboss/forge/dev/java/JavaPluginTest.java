@@ -188,4 +188,38 @@ public class JavaPluginTest extends AbstractShellTest
       assertEquals("{\"\"}", testStrings.getDefaultValue().getLiteral());
    }
 
+   @Test
+   public void testCreateAnnotationElementFromTypeAndName() throws Exception
+   {
+      getShell()
+               .execute(
+                        "java new-annotation-type --package org.jboss.forge.test.types \"public @interface TestingAnnotationTypeCreation {}\"");
+      getShell().execute("java new-annotation-element --type int --name testInt");
+      getShell().execute("java new-annotation-element --type String[] --name testStrings");
+      getShell().execute("ls");
+      getShell().execute("build");
+      JavaSource<?> source = getProject().getFacet(JavaSourceFacet.class)
+               .getJavaResource(Packages.toFileSyntax("org.jboss.forge.test.types.TestingAnnotationTypeCreation"))
+               .getJavaSource();
+      assertTrue(source.isAnnotation());
+      AnnotationElement testInt = JavaAnnotation.class.cast(source).getAnnotationElement("testInt");
+      assertNotNull(testInt);
+      assertEquals("testInt", testInt.getName());
+      assertEquals("int", testInt.getType());
+      assertNull(testInt.getDefaultValue().getLiteral());
+      
+      AnnotationElement testStrings = JavaAnnotation.class.cast(source).getAnnotationElement("testStrings");
+      assertNotNull(testStrings);
+      assertEquals("testStrings", testStrings.getName());
+      assertNull(testStrings.getDefaultValue().getLiteral());
+   }
+
+   @Test(expected = RuntimeException.class)
+   public void testCreateAnnotationElementMissingOptions() throws Exception
+   {
+      getShell()
+               .execute(
+                        "java new-annotation-type --package org.jboss.forge.test.types \"public @interface TestingAnnotationTypeCreation {}\"");
+      getShell().execute("java new-annotation-element");
+   }
 }
