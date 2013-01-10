@@ -453,6 +453,8 @@ public class JavaPlugin implements Plugin
    public void newAnnotationElement(
             @PipeIn final String in,
             final PipeOut out,
+            @Option(name = "name", required = false, help = "the annotation element name; use with --type", description = "annotation element name") final String name,
+            @Option(name = "type", required = false, help = "the annotation element type; use with --name", description = "annotation element type") final String type,
             @Option(required = false,
                      help = "the annotation element definition: surround with single quotes",
                      description = "annotation element definition") final String... def) throws FileNotFoundException
@@ -468,7 +470,7 @@ public class JavaPlugin implements Plugin
       {
          elementDef = in;
       }
-      else
+      else if (Strings.isNullOrEmpty(name) || Strings.isNullOrEmpty(type))
       {
          throw new RuntimeException("arguments required");
       }
@@ -476,15 +478,31 @@ public class JavaPlugin implements Plugin
       JavaSource<?> source = resource.getJavaSource();
       if (source.isAnnotation())
       {
-         JavaAnnotation type = JavaAnnotation.class.cast(source);
+         JavaAnnotation parent = JavaAnnotation.class.cast(source);
 
-         String name = JavaParser.parse(JavaAnnotation.class, "public @interface Temp{}").addAnnotationElement(elementDef).getName();
-         if (type.hasAnnotationElement(name))
+         String addName;
+         if (elementDef != null)
          {
-            throw new IllegalStateException("Element named [" + name + "] already exists.");
+            addName = JavaParser.parse(JavaAnnotation.class, "public @interface Temp{}").addAnnotationElement(elementDef).getName();
+         }
+         else
+         {
+            addName = name;
          }
 
-         type.addAnnotationElement(elementDef);
+         if (parent.hasAnnotationElement(addName))
+         {
+            throw new IllegalStateException("Element named [" + addName + "] already exists.");
+         }
+
+         if (elementDef != null)
+         {
+            parent.addAnnotationElement(elementDef);
+         }
+         else
+         {
+            parent.addAnnotationElement().setName(name).setType(type);
+         }
          java.saveJavaSource(source);
       }
    }
