@@ -10,36 +10,102 @@ package org.jboss.forge.ui;
 import java.util.concurrent.Callable;
 
 import org.jboss.forge.container.services.Remote;
+import org.jboss.forge.ui.util.Callables;
 
 @Remote
-public interface UIInput<T>
+public class UIInput<T>
 {
-   String getLabel();
+   private final String name;
+   private final Class<T> type;
 
-   String getName();
+   private String label;
+   private Callable<Boolean> enabled;
+   private T value;
+   private Callable<Boolean> required;
+   private Callable<T> defaultValue;
 
-   Class<T> getValueType();
+   public UIInput(String name, Class<T> type)
+   {
+      this.name = name;
+      this.type = type;
+   }
 
-   T getValue();
+   public String getLabel()
+   {
+      return label;
+   }
 
-   boolean isEnabled();
+   public String getName()
+   {
+      return name;
+   }
 
-   boolean isRequired();
+   public T getValue()
+   {
+      return (value == null) ? Callables.call(defaultValue) : value;
+   }
 
-   UIInput<T> setDefaultValue(T value);
+   public Class<T> getValueType()
+   {
+      return type;
+   }
 
-   UIInput<T> setDefaultValue(Callable<T> callback);
+   public boolean isEnabled()
+   {
+      return Callables.call(enabled);
+   }
 
-   UIInput<T> setEnabled(boolean b);
+   public boolean isRequired()
+   {
+      return Callables.call(required);
+   }
 
-   UIInput<T> setEnabled(Callable<Boolean> callable);
+   public UIInput<T> setDefaultValue(Callable<T> callback)
+   {
+      this.defaultValue = callback;
+      return this;
+   }
 
-   UIInput<T> setLabel(String label);
+   public UIInput<T> setDefaultValue(T value)
+   {
+      this.defaultValue = Callables.returning(value);
+      return this;
+   }
 
-   UIInput<T> setRequired(boolean required);
+   public UIInput<T> setEnabled(boolean enabled)
+   {
+      this.enabled = Callables.returning(enabled);
+      return this;
+   }
 
-   UIInput<T> setRequired(Callable<Boolean> required);
+   public UIInput<T> setEnabled(Callable<Boolean> callback)
+   {
+      enabled = callback;
+      return this;
+   }
 
-   UIInput<T> setValue(T value);
+   public UIInput<T> setLabel(String label)
+   {
+      this.label = label;
+      return this;
+   }
+
+   public UIInput<T> setRequired(boolean required)
+   {
+      this.required = Callables.returning(required);
+      return this;
+   }
+
+   public UIInput<T> setRequired(Callable<Boolean> required)
+   {
+      this.required = required;
+      return this;
+   }
+
+   public UIInput<T> setValue(T value)
+   {
+      this.value = value;
+      return this;
+   }
 
 }
