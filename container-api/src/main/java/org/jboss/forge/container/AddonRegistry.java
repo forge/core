@@ -2,13 +2,15 @@ package org.jboss.forge.container;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Future;
 
 import org.jboss.forge.container.services.RemoteInstance;
 import org.jboss.forge.container.services.ServiceRegistry;
 
 public interface AddonRegistry
 {
-   Addon getRegisteredAddon(AddonId entry);
+
+   Addon getRegisteredAddon(AddonId id);
 
    Set<Addon> getRegisteredAddons();
 
@@ -21,4 +23,9 @@ public interface AddonRegistry
    <T> Set<RemoteInstance<T>> getRemoteInstances(Class<T> clazz);
 
    <T> Set<RemoteInstance<T>> getRemoteInstances(String clazz);
+
+   Future<?> start(Addon addon);
+
+   void stop(Addon addon);
+
 }

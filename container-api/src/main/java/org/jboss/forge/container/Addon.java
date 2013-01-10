@@ -6,6 +6,7 @@ import org.jboss.forge.container.services.ServiceRegistry;
 
 public interface Addon
 {
+
    public AddonId getId();
 
    public ClassLoader getClassLoader();
@@ -15,4 +16,17 @@ public interface Addon
    public Status getStatus();
 
    public Set<AddonDependency> getDependencies();
+
+   public boolean isFailed();
+
+   public boolean isStarted();
+
+   public boolean isStarting();
+
+   public boolean isStopped();
+
+   public boolean isStopping();
+
+   public boolean isWaiting();
+
 }

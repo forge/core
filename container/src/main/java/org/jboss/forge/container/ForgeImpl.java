@@ -12,18 +12,19 @@ import org.jboss.modules.log.StreamModuleLogger;
 
 public class ForgeImpl implements Forge
 {
-   private Logger logger = Logger.getLogger(getClass().getName());
+   private static Logger logger = Logger.getLogger(ForgeImpl.class.getName());
 
    private volatile boolean alive = false;
    private boolean serverMode = true;
-   private AddonLoader addonLoader;
    private AddonRepository repository = AddonRepositoryImpl.forDefaultDirectory();
+   private AddonRegistryImpl registry = new AddonRegistryImpl(this);
 
    public ForgeImpl()
    {
       if (!AddonRepositoryImpl.hasRuntimeAPIVersion())
          logger.warning("Could not detect Forge runtime version - " +
                   "loading all addons, but failures may occur if versions are not compatible.");
+
    }
 
    public Forge enableLogging()
@@ -66,17 +67,17 @@ public class ForgeImpl implements Forge
       {
          try
          {
-            AddonModuleLoader addonModuleLoader = new AddonModuleLoader(repository, loader);
-            addonLoader = new AddonLoader(addonModuleLoader);
+            AddonModuleLoader moduleLoader = new AddonModuleLoader(repository, loader);
+            registry.setAddonLoader(moduleLoader);
             alive = true;
             do
             {
-               addonLoader.updateAddons();
+               registry.startAll();
                Thread.sleep(100);
             }
             while (serverMode && alive == true);
 
-            addonLoader.shutdown();
+            registry.stopAll();
          }
          catch (InterruptedException e)
          {
@@ -116,7 +117,7 @@ public class ForgeImpl implements Forge
    @Override
    public AddonRegistry getAddonRegistry()
    {
-      return AddonRegistryImpl.INSTANCE;
+      return registry;
    }
 
    @Override

@@ -1,7 +1,7 @@
 package org.jboss.forge.container;
 
-import java.io.File;
 import java.util.concurrent.Callable;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.enterprise.inject.spi.BeanManager;
@@ -9,8 +9,10 @@ import javax.enterprise.inject.spi.BeanManager;
 import org.jboss.forge.container.event.Perform;
 import org.jboss.forge.container.events.InitializeServices;
 import org.jboss.forge.container.impl.AddonImpl;
+import org.jboss.forge.container.impl.AddonRegistryProducer;
 import org.jboss.forge.container.impl.AddonRepositoryProducer;
 import org.jboss.forge.container.impl.ContainerControlImpl;
+import org.jboss.forge.container.impl.ForgeProducer;
 import org.jboss.forge.container.impl.NullServiceRegistry;
 import org.jboss.forge.container.modules.ModularURLScanner;
 import org.jboss.forge.container.modules.ModularWeld;
@@ -27,12 +29,12 @@ import org.jboss.weld.resources.spi.ResourceLoader;
 /**
  * Loads an addon
  */
-final class AddonRunnable implements Runnable
+public final class AddonRunnable implements Runnable
 {
+   private static final Logger logger = Logger.getLogger(AddonRunnable.class.getName());
 
-   private File addonDir;
+   private Forge forge;
    private AddonImpl addon;
-   private static final Logger LOGGER = Logger.getLogger(AddonRunnable.class.getName());
 
    private AddonContainerStartup container;
    private Callable<Object> shutdownCallable = new Callable<Object>()
@@ -46,29 +48,29 @@ final class AddonRunnable implements Runnable
       }
    };
 
-   AddonRunnable(File addonDir, AddonImpl addon)
+   public AddonRunnable(Forge forge, AddonImpl addon)
    {
-      this.addonDir = addonDir;
+      this.forge = forge;
       this.addon = addon;
    }
 
    public void shutdown()
    {
-      LOGGER.info("Stopping container [" + addon.getId() + "]");
+      logger.info("Stopping container [" + addon.getId() + "]");
       long start = System.currentTimeMillis();
       ClassLoaders.executeIn(addon.getClassLoader(), shutdownCallable);
-      LOGGER.info("Stopped container [" + addon.getId() + "] - "
+      logger.info("Stopped container [" + addon.getId() + "] - "
                + (System.currentTimeMillis() - start) + "ms");
    }
 
    @Override
    public void run()
    {
-      LOGGER.info("Starting container [" + addon.getId() + "]");
+      logger.info("Starting container [" + addon.getId() + "]");
       long start = System.currentTimeMillis();
       container = new AddonContainerStartup();
       shutdownCallable = ClassLoaders.executeIn(addon.getClassLoader(), container);
-      LOGGER.info("Started container [" + addon.getId() + "] - "
+      logger.info("Started container [" + addon.getId() + "] - "
                + (System.currentTimeMillis() - start) + "ms");
    }
 
@@ -85,7 +87,6 @@ final class AddonRunnable implements Runnable
          try
          {
             addon.setStatus(Status.STARTING);
-
             ResourceLoader resourceLoader = new ModuleResourceLoader(addon.getModule());
             ModularURLScanner scanner = new ModularURLScanner(resourceLoader, "META-INF/beans.xml");
             ModuleScanResult scanResult = scanner.scan();
@@ -122,7 +123,16 @@ final class AddonRunnable implements Runnable
                         manager, ContainerControl.class);
                AddonRepositoryProducer repositoryProducer = BeanManagerUtils.getContextualInstance(manager,
                         AddonRepositoryProducer.class);
-               repositoryProducer.setAddonDir(addonDir);
+               repositoryProducer.setAddonDir(forge.getAddonDir());
+
+               ForgeProducer forgeProducer = BeanManagerUtils.getContextualInstance(manager,
+                        ForgeProducer.class);
+               forgeProducer.setForge(forge);
+
+               AddonRegistryProducer addonRegistryProducer = BeanManagerUtils.getContextualInstance(manager,
+                        AddonRegistryProducer.class);
+               addonRegistryProducer.setRegistry(forge.getAddonRegistry());
+
                Assert.notNull(control, "Container control was null.");
 
                ServiceRegistry registry = BeanManagerUtils.getContextualInstance(manager, ServiceRegistry.class);
@@ -131,8 +141,7 @@ final class AddonRunnable implements Runnable
 
                manager.fireEvent(new InitializeServices());
 
-               LOGGER.info("Services loaded from addon [" + addon.getId() + "] -  "
-                        + registry.getServices());
+               logger.info("Services loaded from addon [" + addon.getId() + "] -  " + registry.getServices());
 
                Callable<Object> listener = new Callable<Object>()
                {
@@ -160,6 +169,7 @@ final class AddonRunnable implements Runnable
          catch (Exception e)
          {
             addon.setStatus(Status.FAILED);
+            logger.log(Level.WARNING, "Failed to start addon " + addon.getId(), e);
             throw e;
          }
       }

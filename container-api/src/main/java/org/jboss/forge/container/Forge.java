@@ -11,10 +11,6 @@ import java.io.File;
 
 public interface Forge
 {
-
-   /**
-    * Starts Forge in a new Thread
-    */
    public abstract Forge startAsync();
 
    public abstract Forge startAsync(ClassLoader loader);
@@ -36,5 +32,4 @@ public interface Forge
    public abstract AddonRepository getRepository();
 
    public abstract String getVersion();
-
 }

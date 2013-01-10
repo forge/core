@@ -15,6 +15,7 @@ public class ContainerBeanRegistrant implements Extension
       event.addAnnotatedType(manager.createAnnotatedType(ContainerControlImpl.class));
       event.addAnnotatedType(manager.createAnnotatedType(AddonRegistryProducer.class));
       event.addAnnotatedType(manager.createAnnotatedType(AddonRepositoryProducer.class));
+      event.addAnnotatedType(manager.createAnnotatedType(ForgeProducer.class));
       event.addAnnotatedType(manager.createAnnotatedType(ServiceRegistryImpl.class));
       event.addAnnotatedType(manager.createAnnotatedType(ServiceRegistryInitializer.class));
       event.addAnnotatedType(manager.createAnnotatedType(RemoteServiceProxyBeanProducerMethod.class));

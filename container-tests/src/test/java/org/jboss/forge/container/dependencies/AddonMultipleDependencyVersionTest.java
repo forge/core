@@ -6,15 +6,14 @@ import java.util.Map.Entry;
 import javax.inject.Inject;
 
 import org.example.LifecycleListenerService;
-import org.example.NonService;
 import org.example.PublisherService;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.container.Addon;
 import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.AddonRegistry;
-import org.jboss.forge.container.Addon;
 import org.jboss.forge.container.services.RemoteInstance;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.shrinkwrap.api.ArchivePaths;

@@ -6,13 +6,21 @@ import javax.inject.Singleton;
 
 import org.jboss.forge.container.AddonRegistry;
 
+@Singleton
 public class AddonRegistryProducer
 {
+   private AddonRegistry registry;
+
    @Produces
    @Typed(AddonRegistry.class)
    @Singleton
-   public static AddonRegistry produceGlobalAddonRegistry()
+   public AddonRegistry produceGlobalAddonRegistry()
    {
-      return AddonRegistryImpl.INSTANCE;
+      return registry;
+   }
+
+   public void setRegistry(AddonRegistry registry)
+   {
+      this.registry = registry;
    }
 }

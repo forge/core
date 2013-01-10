@@ -2,10 +2,12 @@ package org.jboss.forge.container.impl;
 
 import java.util.Collections;
 import java.util.Set;
+import java.util.concurrent.Future;
 
 import org.jboss.forge.container.Addon;
 import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonId;
+import org.jboss.forge.container.AddonRunnable;
 import org.jboss.forge.container.Status;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.modules.Module;
@@ -17,6 +19,9 @@ public class AddonImpl implements Addon
    private Status status;
    private final AddonId entry;
    private final Set<AddonDependency> dependencies;
+   private Set<AddonDependency> missingDependencies;
+   private Future<Addon> future;
+   private AddonRunnable runnable;
 
    public AddonImpl(AddonId entry, Set<AddonDependency> dependencies)
    {
@@ -27,12 +32,6 @@ public class AddonImpl implements Addon
    public AddonImpl(AddonId entry)
    {
       this(entry, Collections.<AddonDependency> emptySet());
-   }
-
-   public AddonImpl(AddonId entry, Status status)
-   {
-      this(entry);
-      this.status = status;
    }
 
    @Override
@@ -121,6 +120,72 @@ public class AddonImpl implements Addon
       else if (!entry.equals(other.entry))
          return false;
       return true;
+   }
+
+   @Override
+   public boolean isFailed()
+   {
+      return Status.FAILED.equals(status);
+   }
+
+   @Override
+   public boolean isStarted()
+   {
+      return Status.STARTED.equals(status);
+   }
+
+   @Override
+   public boolean isStarting()
+   {
+      return Status.STARTING.equals(status);
+   }
+
+   @Override
+   public boolean isStopping()
+   {
+      return Status.STOPPING.equals(status);
+   }
+
+   @Override
+   public boolean isStopped()
+   {
+      return Status.STOPPED.equals(status);
+   }
+
+   @Override
+   public boolean isWaiting()
+   {
+      return Status.WAITING.equals(status);
+   }
+
+   public void setMissingDependencies(Set<AddonDependency> missingDependencies)
+   {
+      this.missingDependencies = missingDependencies;
+   }
+
+   public Set<AddonDependency> getMissingDependencies()
+   {
+      return missingDependencies;
+   }
+
+   public Future<Addon> getFuture()
+   {
+      return future;
+   }
+
+   public void setFuture(Future<Addon> future)
+   {
+      this.future = future;
+   }
+
+   public AddonRunnable getRunnable()
+   {
+      return runnable;
+   }
+
+   public void setRunnable(AddonRunnable runnable)
+   {
+      this.runnable = runnable;
    }
 
 }

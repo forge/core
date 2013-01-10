@@ -202,7 +202,8 @@ public class ClassLoaderAdapterCallback implements MethodHandler
       {
          hierarchy = getObjectClassHierarchy(delegate);
          if (types == null || types.length == 0)
-            throw new IllegalArgumentException("Must specify at least one non-final type to enhance.");
+            throw new IllegalArgumentException("Must specify at least one non-final type to enhance for Object: "
+                     + delegate);
       }
       else
          hierarchy = Arrays.copy(types, new Class<?>[types.length]);
