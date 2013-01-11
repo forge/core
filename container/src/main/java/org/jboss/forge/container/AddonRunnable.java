@@ -12,8 +12,11 @@ import org.jboss.forge.container.impl.AddonImpl;
 import org.jboss.forge.container.impl.AddonRegistryProducer;
 import org.jboss.forge.container.impl.AddonRepositoryProducer;
 import org.jboss.forge.container.impl.ContainerControlImpl;
+import org.jboss.forge.container.impl.ContainerServiceExtension;
 import org.jboss.forge.container.impl.ForgeProducer;
 import org.jboss.forge.container.impl.NullServiceRegistry;
+import org.jboss.forge.container.impl.ServiceRegistryImpl;
+import org.jboss.forge.container.impl.ServiceRegistryProducer;
 import org.jboss.forge.container.modules.ModularURLScanner;
 import org.jboss.forge.container.modules.ModularWeld;
 import org.jboss.forge.container.modules.ModuleResourceLoader;
@@ -132,6 +135,12 @@ public final class AddonRunnable implements Runnable
                AddonRegistryProducer addonRegistryProducer = BeanManagerUtils.getContextualInstance(manager,
                         AddonRegistryProducer.class);
                addonRegistryProducer.setRegistry(forge.getAddonRegistry());
+
+               ContainerServiceExtension extension = BeanManagerUtils.getContextualInstance(manager,
+                        ContainerServiceExtension.class);
+               ServiceRegistryProducer serviceRegistryProducer = BeanManagerUtils.getContextualInstance(manager,
+                        ServiceRegistryProducer.class);
+               serviceRegistryProducer.setServiceRegistry(new ServiceRegistryImpl(addon, manager, extension));
 
                Assert.notNull(control, "Container control was null.");
 

@@ -4,14 +4,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.enterprise.inject.spi.BeanManager;
-import javax.inject.Inject;
-import javax.inject.Singleton;
 
+import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.services.RemoteInstance;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.container.util.Sets;
 
-@Singleton
 public class ServiceRegistryImpl implements ServiceRegistry
 {
    private Set<Class<?>> services = Sets.getConcurrentSet();
@@ -20,11 +18,18 @@ public class ServiceRegistryImpl implements ServiceRegistry
 
    private ClassLoader loader;
 
-   @Inject
-   public ServiceRegistryImpl(BeanManager manager)
+   private AddonImpl addon;
+
+   public ServiceRegistryImpl(AddonImpl addon, BeanManager manager, ContainerServiceExtension extension)
    {
+      this.addon = addon;
       this.manager = manager;
       this.loader = Thread.currentThread().getContextClassLoader();
+      
+      for (Class<?> clazz : extension.getServices())
+      {
+         addService(clazz);
+      }
    }
 
    @Override
@@ -36,6 +41,7 @@ public class ServiceRegistryImpl implements ServiceRegistry
    @Override
    public <T> RemoteInstance<T> getRemoteInstance(Class<T> clazz)
    {
+      ensureAddonStarted();
       if (!manager.getBeans(clazz).isEmpty())
          return new RemoteInstanceImpl<T>(loader, manager, clazz);
       return null;
@@ -102,6 +108,18 @@ public class ServiceRegistryImpl implements ServiceRegistry
       catch (ClassNotFoundException e)
       {
          return new HashSet<RemoteInstance<T>>();
+      }
+   }
+
+   private void ensureAddonStarted()
+   {
+      try
+      {
+         addon.getFuture().get();
+      }
+      catch (Exception e)
+      {
+         throw new ContainerException("Addon was not started.", e);
       }
    }
 }
