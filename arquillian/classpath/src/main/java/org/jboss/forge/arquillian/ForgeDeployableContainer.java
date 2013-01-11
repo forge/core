@@ -91,11 +91,11 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       Future<?> future = registry.start(addon);
       try
       {
-         if (!addon.isWaiting() && future != null)
+         if (!addon.getStatus().isWaiting() && future != null)
          {
             addon = registry.getRegisteredAddon(addonToDeploy);
             future.get();
-            if (addon.isFailed())
+            if (addon.getStatus().isFailed())
             {
                ContainerException e = new ContainerException("Addon " + addonToDeploy + " failed to deploy.");
                deployment.deployedWithError(e);

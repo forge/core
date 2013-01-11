@@ -49,7 +49,7 @@ public class AddonRegistryImpl implements AddonRegistry
       @Override
       public boolean accept(Addon addon)
       {
-         return addon.isWaiting();
+         return addon.getStatus().isWaiting();
       }
    };
 
@@ -146,7 +146,7 @@ public class AddonRegistryImpl implements AddonRegistry
             Future<Addon> future = addonImpl.getFuture();
             try
             {
-               if (future != null && addon.isStarted())
+               if (future != null && addon.getStatus().isStarted())
                {
                   addonImpl.getRunnable().shutdown();
                }
@@ -171,7 +171,7 @@ public class AddonRegistryImpl implements AddonRegistry
          updateAddons();
          for (Addon addon : addons)
          {
-            if (addon.isWaiting())
+            if (addon.getStatus().isWaiting())
             {
                start(addon);
             }
@@ -267,7 +267,7 @@ public class AddonRegistryImpl implements AddonRegistry
 
          if (!missingDependencies.isEmpty())
          {
-            if (!addon.isWaiting())
+            if (!addon.getStatus().isWaiting())
             {
                logger.warning("Addon [" + addon + "] has [" + missingDependencies.size()
                         + "] missing dependencies: "
@@ -363,7 +363,7 @@ public class AddonRegistryImpl implements AddonRegistry
       Set<RemoteInstance<T>> result = new HashSet<RemoteInstance<T>>();
       for (Addon addon : addons)
       {
-         if (Status.STARTED.equals(addon.getStatus()))
+         if (addon.getStatus().isStarted())
          {
             ServiceRegistry serviceRegistry = addon.getServiceRegistry();
             Set<RemoteInstance<T>> remoteInstances = serviceRegistry.getRemoteInstances(typeName);

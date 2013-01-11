@@ -17,16 +17,4 @@ public interface Addon
 
    public Set<AddonDependency> getDependencies();
 
-   public boolean isFailed();
-
-   public boolean isStarted();
-
-   public boolean isStarting();
-
-   public boolean isStopped();
-
-   public boolean isStopping();
-
-   public boolean isWaiting();
-
 }

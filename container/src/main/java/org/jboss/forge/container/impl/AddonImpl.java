@@ -16,7 +16,7 @@ public class AddonImpl implements Addon
 {
    private Module module;
    private ServiceRegistry registry;
-   private Status status;
+   private Status status = Status.WAITING;
    private final AddonId entry;
    private final Set<AddonDependency> dependencies;
    private Set<AddonDependency> missingDependencies;
@@ -120,42 +120,6 @@ public class AddonImpl implements Addon
       else if (!entry.equals(other.entry))
          return false;
       return true;
-   }
-
-   @Override
-   public boolean isFailed()
-   {
-      return Status.FAILED.equals(status);
-   }
-
-   @Override
-   public boolean isStarted()
-   {
-      return Status.STARTED.equals(status);
-   }
-
-   @Override
-   public boolean isStarting()
-   {
-      return Status.STARTING.equals(status);
-   }
-
-   @Override
-   public boolean isStopping()
-   {
-      return Status.STOPPING.equals(status);
-   }
-
-   @Override
-   public boolean isStopped()
-   {
-      return Status.STOPPED.equals(status);
-   }
-
-   @Override
-   public boolean isWaiting()
-   {
-      return Status.WAITING.equals(status);
    }
 
    public void setMissingDependencies(Set<AddonDependency> missingDependencies)
