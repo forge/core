@@ -9,6 +9,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import org.jboss.forge.container.event.Perform;
 import org.jboss.forge.container.events.InitializeServices;
 import org.jboss.forge.container.impl.AddonImpl;
+import org.jboss.forge.container.impl.AddonRegistryImpl;
 import org.jboss.forge.container.impl.AddonRegistryProducer;
 import org.jboss.forge.container.impl.AddonRepositoryProducer;
 import org.jboss.forge.container.impl.ContainerControlImpl;
@@ -147,6 +148,8 @@ public final class AddonRunnable implements Runnable
                ServiceRegistry registry = BeanManagerUtils.getContextualInstance(manager, ServiceRegistry.class);
                Assert.notNull(registry, "Service registry was null.");
                addon.setServiceRegistry(registry);
+
+               ((AddonRegistryImpl) forge.getAddonRegistry()).clearWaiting(addon);
 
                manager.fireEvent(new InitializeServices());
 

@@ -223,6 +223,23 @@ public class AddonRegistryImpl implements AddonRegistry
       }
    }
 
+   public void clearWaiting(Addon addon)
+   {
+      Set<Addon> waitingAddons = getRegisteredAddons(waitingFilter);
+      for (Addon waiting : waitingAddons)
+      {
+         Set<AddonDependency> dependencies = ((AddonImpl) waiting).getMissingDependencies();
+         for (AddonDependency dependency : dependencies)
+         {
+            if (addon.getId().equals(dependency.getId()))
+            {
+               dependencies.remove(dependency);
+               break;
+            }
+         }
+      }
+   }
+
    private void loadAddon(AddonId addonId)
    {
       AddonRepository repository = moduleLoader.getRepository();
@@ -290,20 +307,6 @@ public class AddonRegistryImpl implements AddonRegistry
 
                if (!isRegistered(addonId))
                   addons.add(addon);
-
-               Set<Addon> waitingAddons = getRegisteredAddons(waitingFilter);
-               for (Addon waiting : waitingAddons)
-               {
-                  Set<AddonDependency> dependencies = ((AddonImpl) waiting).getMissingDependencies();
-                  for (AddonDependency dependency : dependencies)
-                  {
-                     if (addon.getId().equals(dependency.getId()))
-                     {
-                        dependencies.remove(dependency);
-                        break;
-                     }
-                  }
-               }
             }
             catch (Exception e)
             {

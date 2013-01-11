@@ -25,7 +25,7 @@ public class ServiceRegistryImpl implements ServiceRegistry
       this.addon = addon;
       this.manager = manager;
       this.loader = Thread.currentThread().getContextClassLoader();
-      
+
       for (Class<?> clazz : extension.getServices())
       {
          addService(clazz);
@@ -42,8 +42,16 @@ public class ServiceRegistryImpl implements ServiceRegistry
    public <T> RemoteInstance<T> getRemoteInstance(Class<T> clazz)
    {
       ensureAddonStarted();
-      if (!manager.getBeans(clazz).isEmpty())
-         return new RemoteInstanceImpl<T>(loader, manager, clazz);
+      try
+      {
+         if (!manager.getBeans(clazz).isEmpty())
+            return new RemoteInstanceImpl<T>(loader, manager, clazz);
+      }
+      catch (Exception e)
+      {
+         e.printStackTrace();
+         ensureAddonStarted();
+      }
       return null;
    }
 
