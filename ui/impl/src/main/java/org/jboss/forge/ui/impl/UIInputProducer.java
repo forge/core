@@ -16,9 +16,9 @@ import org.jboss.forge.ui.UIInput;
 
 /**
  * Produces UIInput objects
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 public class UIInputProducer
 {
@@ -29,6 +29,6 @@ public class UIInputProducer
       String name = injectionPoint.getMember().getName();
       ParameterizedType ptype = (ParameterizedType) injectionPoint.getType();
       Class<T> c = (Class<T>) ptype.getActualTypeArguments()[0];
-      return new UIInput<T>(name, c);
+      return new UIInputImpl<T>(name, c);
    }
 }
