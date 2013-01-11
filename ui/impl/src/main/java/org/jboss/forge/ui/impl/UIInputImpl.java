@@ -9,7 +9,7 @@ package org.jboss.forge.ui.impl;
 
 import java.util.concurrent.Callable;
 
-import javax.enterprise.inject.Typed;
+import javax.enterprise.inject.Vetoed;
 
 import org.jboss.forge.ui.UIInput;
 import org.jboss.forge.ui.util.Callables;
@@ -21,7 +21,7 @@ import org.jboss.forge.ui.util.Callables;
  * 
  * @param <T>
  */
-@Typed()
+@Vetoed
 public class UIInputImpl<T> implements UIInput<T>
 {
    private final String name;

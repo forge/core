@@ -6,6 +6,13 @@
  */
 package org.jboss.forge.container.util;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.GenericArrayType;
+import java.lang.reflect.Member;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+
 public class Types
 {
    public static Class<?> boxPrimitive(Class<?> cls)
@@ -146,5 +153,49 @@ public class Types
       }
 
       return cls;
+   }
+
+   public static Class<?> toClass(Type baseType)
+   {
+      Class<?> result = null;
+      if (baseType instanceof Class)
+      {
+         result = (Class<?>) baseType;
+      }
+      else if (baseType instanceof ParameterizedType)
+      {
+         ParameterizedType parameterizedType = (ParameterizedType) baseType;
+         Type rawType = parameterizedType.getRawType();
+         if (rawType instanceof Class)
+         {
+            result = (Class<?>) rawType;
+         }
+      }
+      else if (baseType instanceof GenericArrayType)
+      {
+         GenericArrayType parameterizedType = (GenericArrayType) baseType;
+         Type genericType = parameterizedType.getGenericComponentType();
+         if (genericType instanceof Class)
+         {
+            result = (Class<?>) genericType;
+         }
+      }
+      return result;
+   }
+
+   public static Class<?> toClass(Member member)
+   {
+      Class<?> result;
+      if (member instanceof Field)
+         result = toClass(((Field) member).getType());
+      if (member instanceof Method)
+         result = toClass(((Method) member).getReturnType());
+      else
+         throw new IllegalArgumentException("Types may only be inspected on Field and Method instances.");
+
+      if (result.isArray())
+         result = result.getComponentType();
+
+      return result;
    }
 }

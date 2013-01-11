@@ -6,6 +6,7 @@ import java.util.concurrent.Callable;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.InjectionPoint;
 
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
@@ -39,13 +40,29 @@ public class RemoteInstanceImpl<R> implements RemoteInstance<R>
          public Object call() throws Exception
          {
             Bean<R> bean = (Bean<R>) manager.resolve(manager.getBeans(type));
-            if(bean == null)
-            {
-               System.out.println("wtf?");
-            }
             context = manager.createCreationalContext(bean);
-            return Enhancer.create((Class<?>) type,
-                     new RemoteClassLoaderInterceptor(loader, manager.getReference(bean, type, context)));
+            Object delegate = manager.getReference(bean, type, context);
+            return Enhancer.create((Class<?>) type, new RemoteClassLoaderInterceptor(loader, delegate));
+         }
+      };
+
+      return (R) ClassLoaders.executeIn(loader, task);
+   }
+
+   @SuppressWarnings("unchecked")
+   public Object get(final InjectionPoint injectionPoint)
+   {
+      // FIXME remove the need for this method (which is currently still not working right for producer methods that
+      // require an InjectionPoint
+      Callable<Object> task = new Callable<Object>()
+      {
+         @Override
+         public Object call() throws Exception
+         {
+            Bean<R> bean = (Bean<R>) manager.resolve(manager.getBeans(type));
+            context = manager.createCreationalContext(bean);
+            Object delegate = manager.getInjectableReference(injectionPoint, context);
+            return Enhancer.create((Class<?>) type, new RemoteClassLoaderInterceptor(loader, delegate));
          }
       };
 
@@ -63,8 +80,8 @@ public class RemoteInstanceImpl<R> implements RemoteInstance<R>
    {
       return "RemoteInstanceImpl [type=" + type + ", classLoader=" + type.getClassLoader() + "]";
    }
-   
-   public class RemoteClassLoaderInterceptor implements MethodInterceptor
+
+   private class RemoteClassLoaderInterceptor implements MethodInterceptor
    {
       private ClassLoader loader;
       private Object delegate;
@@ -91,9 +108,8 @@ public class RemoteInstanceImpl<R> implements RemoteInstance<R>
                catch (Throwable e)
                {
                   throw new ContainerException(
-                           "Could not invoke proxy method [" + delegate.getClass().getName() + "."
-                                    + method.getName() + "()] in ClassLoader ["
-                                    + loader + "]", e);
+                           "Failed during invocation of proxy method [" + delegate.getClass().getName() + "."
+                                    + method.getName() + "()] in ClassLoader [" + loader + "]", e);
                }
             }
          };

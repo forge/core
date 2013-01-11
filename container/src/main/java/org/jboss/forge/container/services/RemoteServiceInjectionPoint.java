@@ -44,6 +44,18 @@ public class RemoteServiceInjectionPoint implements InjectionPoint
    }
 
    @Override
+   public boolean isDelegate()
+   {
+      return wrapped.isDelegate();
+   }
+
+   @Override
+   public boolean isTransient()
+   {
+      return wrapped.isTransient();
+   }
+
+   @Override
    public Set<Annotation> getQualifiers()
    {
       return Collections.unmodifiableSet(qualifiers);
@@ -65,18 +77,6 @@ public class RemoteServiceInjectionPoint implements InjectionPoint
    public Annotated getAnnotated()
    {
       return annotated;
-   }
-
-   @Override
-   public boolean isDelegate()
-   {
-      return wrapped.isDelegate();
-   }
-
-   @Override
-   public boolean isTransient()
-   {
-      return wrapped.isTransient();
    }
 
    @Override

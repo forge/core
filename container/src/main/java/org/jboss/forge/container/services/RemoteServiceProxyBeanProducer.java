@@ -3,16 +3,16 @@ package org.jboss.forge.container.services;
 import java.util.Set;
 
 import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.Producer;
 
-import org.jboss.forge.container.services.Remote;
-
-public class RemoteServiceProxyBeanProducer<T extends Remote> implements Producer<T>
+public class RemoteServiceProxyBeanProducer<T> implements Producer<T>
 {
+
    private Producer<T> wrapped;
 
-   public RemoteServiceProxyBeanProducer(Producer<T> wrapped)
+   public RemoteServiceProxyBeanProducer(BeanManager manager, Producer<T> wrapped, Class<?> type)
    {
       this.wrapped = wrapped;
    }
@@ -34,5 +34,4 @@ public class RemoteServiceProxyBeanProducer<T extends Remote> implements Produce
    {
       return wrapped.getInjectionPoints();
    }
-
 }

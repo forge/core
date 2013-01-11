@@ -18,7 +18,6 @@ import org.jboss.forge.ui.converter.ConverterRegistry;
 
 public class ConverterProducer
 {
-
    @Produces
    @SuppressWarnings("unchecked")
    public <S, T> Converter<S, T> produceConverter(InjectionPoint injectionPoint, ConverterRegistry registry)

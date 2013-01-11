@@ -20,10 +20,9 @@ public class RemoteServiceProxyBeanProducerMethod
    public static Object produceRemoteService(AddonRegistry registry, InjectionPoint ip)
    {
       if (ip == null)
-         throw new IllegalStateException(
-                  "Cannot perform dynamic lookup of @"
-                           + Remote.class.getName()
-                           + " instances - they must be injected directly into a field or as a method/constructor parameter.");
+         throw new IllegalStateException("Cannot perform dynamic lookup of @"
+                  + Remote.class.getName() + " instances - they must be injected directly into" +
+                  " a field or as a method/constructor parameter.");
 
       Member member = ip.getMember();
       Class<?> type = null;
@@ -40,7 +39,7 @@ public class RemoteServiceProxyBeanProducerMethod
 
       try
       {
-         return Enhancer.create((Class<?>) type, new RemoteServiceProxyBeanCallback(registry, type));
+         return Enhancer.create((Class<?>) type, new RemoteServiceProxyBeanCallback(registry, type, ip));
       }
       catch (Exception e)
       {

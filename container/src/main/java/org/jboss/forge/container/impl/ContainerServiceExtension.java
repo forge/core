@@ -7,8 +7,6 @@
 package org.jboss.forge.container.impl;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.GenericArrayType;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,7 +17,6 @@ import javax.enterprise.inject.spi.AfterBeanDiscovery;
 import javax.enterprise.inject.spi.Annotated;
 import javax.enterprise.inject.spi.AnnotatedConstructor;
 import javax.enterprise.inject.spi.AnnotatedField;
-import javax.enterprise.inject.spi.AnnotatedMember;
 import javax.enterprise.inject.spi.AnnotatedMethod;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.BeanManager;
@@ -33,6 +30,7 @@ import org.jboss.forge.container.services.Remote;
 import org.jboss.forge.container.services.RemoteServiceInjectionPoint;
 import org.jboss.forge.container.services.RemoteServiceProxyBeanProducer;
 import org.jboss.forge.container.util.Annotations;
+import org.jboss.forge.container.util.Types;
 
 /**
  * One classloader/thread/weld container per plugin module. One primary executor container running, fires events to each
@@ -71,8 +69,8 @@ public class ContainerServiceExtension implements Extension
       Annotated annotated = event.getInjectionPoint().getAnnotated();
 
       Remote remote = getRemote(annotated);
-      Class<?> injectionPointDeclaringType = toClass(event.getInjectionPoint().getMember().getDeclaringClass());
-      Class<?> injectionBeanValueType = toClass(annotated.getBaseType());
+      Class<?> injectionPointDeclaringType = Types.toClass(event.getInjectionPoint().getMember().getDeclaringClass());
+      Class<?> injectionBeanValueType = Types.toClass(annotated.getBaseType());
 
       boolean local = isClassLocal(injectionPointDeclaringType, injectionBeanValueType);
       if (!local)
@@ -102,6 +100,26 @@ public class ContainerServiceExtension implements Extension
       }
    }
 
+   @SuppressWarnings({ "rawtypes", "unchecked" })
+   public void processProducerHooks(@Observes ProcessProducer<?, ?> event, BeanManager manager)
+   {
+      Class<?> type = Types.toClass(event.getAnnotatedMember().getJavaMember());
+      ClassLoader classLoader = type.getClassLoader();
+      if (type != null && classLoader != null && classLoader.equals(Thread.currentThread().getContextClassLoader()))
+      {
+         if (Annotations.isAnnotationPresent(type, Remote.class))
+         {
+            event.setProducer(new RemoteServiceProxyBeanProducer(manager, event.getProducer(), type));
+            services.add(type);
+         }
+      }
+   }
+
+   public Set<Class<?>> getServices()
+   {
+      return services;
+   }
+
    private boolean isClassLocal(Class<?> reference, Class<?> type)
    {
       ClassLoader referenceLoader = reference.getClassLoader();
@@ -113,52 +131,11 @@ public class ContainerServiceExtension implements Extension
 
    private Remote getRemote(Annotated annotated)
    {
-      Class<?> clazz = toClass(annotated.getBaseType());
+      Class<?> clazz = Types.toClass(annotated.getBaseType());
       return Annotations.getAnnotation(clazz, Remote.class);
    }
 
-   private Class<?> toClass(Type baseType)
-   {
-      Class<?> result = null;
-      if (baseType instanceof Class)
-      {
-         result = (Class<?>) baseType;
-      }
-      else if (baseType instanceof ParameterizedType)
-      {
-         ParameterizedType parameterizedType = (ParameterizedType) baseType;
-         Type rawType = parameterizedType.getRawType();
-         if (rawType instanceof Class)
-         {
-            result = (Class<?>) rawType;
-         }
-      }
-      else if (baseType instanceof GenericArrayType)
-      {
-         GenericArrayType parameterizedType = (GenericArrayType) baseType;
-         Type genericType = parameterizedType.getGenericComponentType();
-         if (genericType instanceof Class)
-         {
-            result = (Class<?>) genericType;
-         }
-      }
-      return result;
-   }
-
-   @SuppressWarnings({ "rawtypes", "unchecked" })
-   public void processProducerHooks(@Observes ProcessProducer<?, ?> event, BeanManager manager)
-   {
-      AnnotatedMember<?> annotatedMember = event.getAnnotatedMember();
-      if (annotatedMember.isAnnotationPresent(Remote.class))
-         event.setProducer(new RemoteServiceProxyBeanProducer(event.getProducer()));
-   }
-
-   public Set<Class<?>> getServices()
-   {
-      return services;
-   }
-
-   public class RemoteAnnotatedType<R> implements AnnotatedType<R>
+   private class RemoteAnnotatedType<R> implements AnnotatedType<R>
    {
       private AnnotatedType<R> wrapped;
 
@@ -220,6 +197,5 @@ public class ContainerServiceExtension implements Extension
       {
          return wrapped.getFields();
       }
-
    }
 }
