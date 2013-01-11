@@ -36,8 +36,15 @@ public class RemoteServiceProxyBeanProducerMethod
          type = ((Field) member).getType();
       }
       else
-         throw new ContainerException("Cannot handle producer for non-Field and non-Method member type");
+         throw new ContainerException("Cannot handle producer for non-Field and non-Method member type: " + member);
 
-      return Enhancer.create((Class<?>) type, new RemoteServiceProxyBeanCallback(registry, type));
+      try
+      {
+         return Enhancer.create((Class<?>) type, new RemoteServiceProxyBeanCallback(registry, type));
+      }
+      catch (Exception e)
+      {
+         throw new ContainerException("Failed to proxy bean of type:" + type, e);
+      }
    }
 }
