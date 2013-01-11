@@ -3,6 +3,7 @@ package org.jboss.forge.container.dependencies;
 import javax.inject.Inject;
 
 import org.example.event.EventPayload1;
+import org.example.event.EventPayload3;
 import org.example.event.EventResponseService;
 import org.example.event.EventService;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -39,7 +40,7 @@ public class AddonEventPropagationRemoteTest
    public static ForgeArchive getDependencyDeployment()
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class, "dependency.jar")
-               .addClasses(EventResponseService.class)
+               .addClasses(EventResponseService.class, EventPayload3.class)
                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
 
       return archive;

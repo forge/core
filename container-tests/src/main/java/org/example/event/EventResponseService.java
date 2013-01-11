@@ -14,6 +14,6 @@ public class EventResponseService
    public void observeFirst(@Observes @Named("1") Object event)
    {
       System.out.println("Observed: ****** " + event + " in " + Thread.currentThread().getContextClassLoader());
-      response.fire(this);
+      response.fire(new EventPayload3());
    }
 }
