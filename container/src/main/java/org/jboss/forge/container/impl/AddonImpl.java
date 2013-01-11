@@ -10,13 +10,14 @@ import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.AddonRunnable;
 import org.jboss.forge.container.Status;
 import org.jboss.forge.container.services.ServiceRegistry;
+import org.jboss.forge.container.util.Assert;
 import org.jboss.modules.Module;
 
 public class AddonImpl implements Addon
 {
    private Module module;
    private ServiceRegistry registry;
-   private Status status = Status.WAITING;
+   private Status status = Status.UNKNOWN;
    private final AddonId entry;
    private final Set<AddonDependency> dependencies;
    private Set<AddonDependency> missingDependencies;
@@ -71,6 +72,7 @@ public class AddonImpl implements Addon
 
    public Addon setServiceRegistry(ServiceRegistry registry)
    {
+      Assert.notNull(registry, "Registry must not be null.");
       this.registry = registry;
       return this;
    }
@@ -83,8 +85,42 @@ public class AddonImpl implements Addon
 
    public Addon setStatus(Status status)
    {
+      Assert.notNull(status, "Status must not be null.");
       this.status = status;
       return this;
+   }
+
+   public void setMissingDependencies(Set<AddonDependency> missingDependencies)
+   {
+      Assert.notNull(missingDependencies, "Missing dependencies must not be null.");
+      this.missingDependencies = missingDependencies;
+   }
+
+   public Set<AddonDependency> getMissingDependencies()
+   {
+      return missingDependencies;
+   }
+
+   public Future<Addon> getFuture()
+   {
+      return future;
+   }
+
+   public void setFuture(Future<Addon> future)
+   {
+      Assert.notNull(future, "Future must not be null.");
+      this.future = future;
+   }
+
+   public AddonRunnable getRunnable()
+   {
+      return runnable;
+   }
+
+   public void setRunnable(AddonRunnable runnable)
+   {
+      Assert.notNull(runnable, "Runnable must not be null.");
+      this.runnable = runnable;
    }
 
    @Override
@@ -120,36 +156,6 @@ public class AddonImpl implements Addon
       else if (!entry.equals(other.entry))
          return false;
       return true;
-   }
-
-   public void setMissingDependencies(Set<AddonDependency> missingDependencies)
-   {
-      this.missingDependencies = missingDependencies;
-   }
-
-   public Set<AddonDependency> getMissingDependencies()
-   {
-      return missingDependencies;
-   }
-
-   public Future<Addon> getFuture()
-   {
-      return future;
-   }
-
-   public void setFuture(Future<Addon> future)
-   {
-      this.future = future;
-   }
-
-   public AddonRunnable getRunnable()
-   {
-      return runnable;
-   }
-
-   public void setRunnable(AddonRunnable runnable)
-   {
-      this.runnable = runnable;
    }
 
 }

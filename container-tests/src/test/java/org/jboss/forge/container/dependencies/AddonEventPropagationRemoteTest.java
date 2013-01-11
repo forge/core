@@ -31,15 +31,15 @@ public class AddonEventPropagationRemoteTest
                .create(ForgeArchive.class)
                .addClasses(EventService.class, EventPayload1.class)
                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
-               .addAsAddonDependencies(AddonDependency.create(AddonId.from("dependency", "1")));
+               .addAsAddonDependencies(AddonDependency.create(AddonId.from("dependencyA", "1")));
 
       return archive;
    }
 
-   @Deployment(name = "dependency,1", testable = false, order = 1)
+   @Deployment(name = "dependencyA,1", testable = false, order = 1)
    public static ForgeArchive getDependencyDeployment()
    {
-      ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class, "dependency.jar")
+      ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class, "dependencyA.jar")
                .addClasses(EventResponseService.class, EventPayload3.class)
                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
 
