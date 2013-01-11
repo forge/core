@@ -30,4 +30,6 @@ public interface ServiceRegistry
 
    boolean hasService(Class<?> clazz);
 
+   boolean hasService(String clazz);
+
 }

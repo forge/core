@@ -78,9 +78,28 @@ public class ServiceRegistryImpl implements ServiceRegistry
    }
 
    @Override
+   public boolean hasService(String clazz)
+   {
+      try
+      {
+         Class<?> type = Class.forName(clazz, true, loader);
+         return hasService(type);
+      }
+      catch (ClassNotFoundException e)
+      {
+         return false;
+      }
+   }
+
+   @Override
    public boolean hasService(Class<?> clazz)
    {
-      return services.contains(clazz);
+      for (Class<?> service : services)
+      {
+         if (clazz.isAssignableFrom(service))
+            return true;
+      }
+      return false;
    }
 
    @Override

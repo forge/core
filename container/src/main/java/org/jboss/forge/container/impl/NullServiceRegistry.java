@@ -10,7 +10,7 @@ import org.jboss.forge.container.services.ServiceRegistry;
 
 /**
  * Used when an addon does not provide services.
- *
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Typed()
@@ -53,6 +53,13 @@ public class NullServiceRegistry implements ServiceRegistry
 
    @Override
    public boolean hasService(Class<?> serviceType)
+   {
+      // no-op
+      return false;
+   }
+
+   @Override
+   public boolean hasService(String clazz)
    {
       // no-op
       return false;
