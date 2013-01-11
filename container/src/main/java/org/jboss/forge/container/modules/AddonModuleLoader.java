@@ -45,13 +45,13 @@ public class AddonModuleLoader extends ModuleLoader
    {
       this.repository = repository;
       moduleProviders = ServiceLoader.load(ModuleSpecProvider.class, loader);
-      installMBeanServer();
+      installModuleMBeanServer();
    }
 
    /**
     * Installs the MBeanServer.
     */
-   private void installMBeanServer()
+   private void installModuleMBeanServer()
    {
       try
       {
