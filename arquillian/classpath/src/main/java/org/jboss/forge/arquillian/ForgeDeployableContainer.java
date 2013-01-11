@@ -34,6 +34,7 @@ import org.jboss.forge.container.ForgeImpl;
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.impl.AddonRepositoryImpl;
 import org.jboss.forge.container.util.ClassLoaders;
+import org.jboss.forge.container.util.Threads;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
@@ -65,6 +66,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
 
          repository.deploy(addonToDeploy, ((ForgeArchive) archive).getAddonDependencies(), new ArrayList<File>());
          repository.enable(addonToDeploy);
+         Threads.sleep(200);
          System.out.println("Deployed [" + addonToDeploy + "]");
       }
       else if (archive instanceof ForgeRemoteAddon)
