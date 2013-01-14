@@ -20,10 +20,11 @@ public class RemoteServiceProxyBeanProducerMethod
    public static Object produceRemoteService(AddonRegistry registry, InjectionPoint ip)
    {
       if (ip == null)
+      {
          throw new IllegalStateException("Cannot perform dynamic lookup of @"
                   + Remote.class.getName() + " instances - they must be injected directly into" +
                   " a field or as a method/constructor parameter.");
-
+      }
       Member member = ip.getMember();
       Class<?> type = null;
       if (member instanceof Method)
@@ -35,15 +36,10 @@ public class RemoteServiceProxyBeanProducerMethod
          type = ((Field) member).getType();
       }
       else
+      {
          throw new ContainerException("Cannot handle producer for non-Field and non-Method member type: " + member);
+      }
 
-      try
-      {
-         return Enhancer.create((Class<?>) type, new RemoteServiceProxyBeanCallback(registry, type, ip));
-      }
-      catch (Exception e)
-      {
-         throw new ContainerException("Failed to proxy bean of type:" + type, e);
-      }
+      return Enhancer.create((Class<?>) type, new RemoteServiceProxyBeanCallback(registry, type, ip));
    }
 }

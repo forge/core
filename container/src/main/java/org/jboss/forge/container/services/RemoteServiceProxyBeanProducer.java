@@ -9,8 +9,7 @@ import javax.enterprise.inject.spi.Producer;
 
 public class RemoteServiceProxyBeanProducer<T> implements Producer<T>
 {
-
-   private Producer<T> wrapped;
+   private final Producer<T> wrapped;
 
    public RemoteServiceProxyBeanProducer(BeanManager manager, Producer<T> wrapped, Class<?> type)
    {

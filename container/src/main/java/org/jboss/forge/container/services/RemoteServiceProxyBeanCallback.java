@@ -10,10 +10,9 @@ import org.jboss.forge.container.impl.RemoteInstanceImpl;
 
 public class RemoteServiceProxyBeanCallback implements LazyLoader
 {
-
-   private Class<?> serviceType;
-   private AddonRegistry registry;
-   private InjectionPoint injectionPoint;
+   private final Class<?> serviceType;
+   private final AddonRegistry registry;
+   private final InjectionPoint injectionPoint;
 
    public RemoteServiceProxyBeanCallback(AddonRegistry registry, Class<?> serviceType, InjectionPoint injectionPoint)
    {
@@ -42,7 +41,9 @@ public class RemoteServiceProxyBeanCallback implements LazyLoader
       }
 
       if (result == null)
+      {
          throw new IllegalStateException("Remote service [" + serviceType.getName() + "] is not registered.");
+      }
 
       return result;
    }

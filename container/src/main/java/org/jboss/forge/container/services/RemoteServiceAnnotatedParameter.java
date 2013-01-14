@@ -2,8 +2,7 @@ package org.jboss.forge.container.services;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
 
 import javax.enterprise.inject.spi.AnnotatedCallable;
@@ -25,10 +24,9 @@ public class RemoteServiceAnnotatedParameter<R> implements AnnotatedParameter<R>
    }
 
    @Override
-   @SuppressWarnings("unchecked")
    public Set<Type> getTypeClosure()
    {
-      return new HashSet<Type>(Arrays.asList(Object.class));
+      return Collections.<Type> singleton(Object.class);
    }
 
    @Override

@@ -16,9 +16,9 @@ import javax.enterprise.inject.spi.InjectionPoint;
 
 public class RemoteServiceInjectionPoint implements InjectionPoint
 {
-   private InjectionPoint wrapped;
-   private Annotated annotated;
-   private Set<Annotation> qualifiers = new HashSet<Annotation>();
+   private final InjectionPoint wrapped;
+   private final Annotated annotated;
+   private final Set<Annotation> qualifiers = new HashSet<Annotation>();
 
    public RemoteServiceInjectionPoint(InjectionPoint wrapped, Annotation... qualifiers)
    {
@@ -29,12 +29,18 @@ public class RemoteServiceInjectionPoint implements InjectionPoint
 
       Annotated annotated = wrapped.getAnnotated();
       if (annotated instanceof AnnotatedField<?>)
+      {
          this.annotated = new RemoteServiceAnnotatedField<Object>((AnnotatedField<?>) annotated);
+      }
       else if (annotated instanceof AnnotatedParameter<?>)
+      {
          this.annotated = new RemoteServiceAnnotatedParameter<Object>((AnnotatedParameter<?>) annotated);
+      }
       else
+      {
          throw new IllegalArgumentException("Unsupported injection point type ["
                   + wrapped.getMember().getName() + "]");
+      }
    }
 
    @Override
