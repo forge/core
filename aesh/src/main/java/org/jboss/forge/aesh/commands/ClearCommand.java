@@ -6,47 +6,45 @@
  */
 package org.jboss.forge.aesh.commands;
 
-import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.cl.CommandLineParser;
-import org.jboss.aesh.cl.ParameterBuilder;
-import org.jboss.aesh.cl.ParserBuilder;
-import org.jboss.aesh.complete.CompleteOperation;
 import org.jboss.aesh.console.Console;
-import org.jboss.aesh.console.ConsoleOutput;
-
-import java.io.IOException;
+import org.jboss.forge.ui.*;
+import org.jboss.forge.ui.impl.UIInputImpl;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  */
-public class ClearCommand extends ForgeCommand {
+public class ClearCommand implements UICommand {
 
+    private Console console;
     private CommandLineParser parser;
 
-    private String name = "clear";
+    private UIInput<String> clear;
 
     public ClearCommand(Console console) {
         setConsole(console);
-        createParsers();
+    }
+
+    private void setConsole(Console console) {
+        this.console = console;
     }
 
     @Override
-    public CommandLine parse(String line) throws IllegalArgumentException {
-        return parser.parse(line);
+    public void initializeUI(UIContext context) throws Exception {
+        clear = new UIInputImpl<String>("clear", String.class);
+        clear.setLabel("clear");
+        clear.setRequired(true);
+        context.getUIBuilder().add(clear);
     }
 
     @Override
-    public void run(ConsoleOutput consoleOutput, CommandLine commandLine) throws IOException {
-        getConsole().clear();
+    public void validate(UIValidationContext context) {
     }
 
-    public void complete(CompleteOperation completeOperation) {
-        if(name.startsWith(completeOperation.getBuffer()))
-            completeOperation.addCompletionCandidate(name);
+    @Override
+    public Result execute(UIContext context) throws Exception {
+        console.clear();
+        return Result.success("");
     }
 
-    private void createParsers() {
-        parser = new ParserBuilder(
-                new ParameterBuilder().name(name).generateParameter()).generateParser();
-    }
 }

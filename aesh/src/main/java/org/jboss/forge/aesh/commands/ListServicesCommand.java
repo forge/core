@@ -6,15 +6,15 @@
  */
 package org.jboss.forge.aesh.commands;
 
-import org.jboss.aesh.cl.CommandLine;
-import org.jboss.aesh.cl.CommandLineParser;
-import org.jboss.aesh.cl.ParameterBuilder;
-import org.jboss.aesh.cl.ParserBuilder;
-import org.jboss.aesh.complete.CompleteOperation;
-import org.jboss.aesh.console.Console;
-import org.jboss.aesh.console.ConsoleOutput;
 import org.jboss.forge.container.Addon;
 import org.jboss.forge.container.AddonRegistry;
+import org.jboss.forge.container.services.Remote;
+import org.jboss.forge.ui.Result;
+import org.jboss.forge.ui.UICommand;
+import org.jboss.forge.ui.UIContext;
+import org.jboss.forge.ui.UIInput;
+import org.jboss.forge.ui.UIValidationContext;
+import org.jboss.forge.ui.impl.UIInputImpl;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -26,59 +26,55 @@ import java.util.Set;
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  */
-public class ListServicesCommand extends ForgeCommand {
+@Remote
+public class ListServicesCommand implements UICommand {
+
+    private UIInput<String> name;
 
     private AddonRegistry registry;
 
-    private CommandLineParser parser;
-
-    private String name = "list-services";
-
-    public ListServicesCommand(Console console, AddonRegistry registry) {
-        setConsole(console);
+    public ListServicesCommand(AddonRegistry registry) {
         this.registry = registry;
-        createParsers();
     }
 
     @Override
-    public CommandLine parse(String line) throws IllegalArgumentException {
-        return parser.parse(line);
+    public void initializeUI(UIContext context) throws Exception {
+        name = new UIInputImpl<String>("list-services", String.class);
+        name.setLabel("list-services");
+        name.setRequired(true);
+
+        context.getUIBuilder().add(name);
     }
 
     @Override
-    public void run(ConsoleOutput consoleOutput, CommandLine commandLine) throws IOException {
-        listServices();
+    public void validate(UIValidationContext context) {
+
     }
 
     @Override
-    public void complete(CompleteOperation completeOperation) {
-       if(name.startsWith(completeOperation.getBuffer()))
-           completeOperation.addCompletionCandidate(name);
+    public Result execute(UIContext context) throws Exception {
+        return Result.success(listServices());
     }
 
-    private void createParsers() {
-        parser = new ParserBuilder(
-                new ParameterBuilder().name(name).generateParameter()).generateParser();
-    }
-
-    private void listServices() throws IOException
+    private String listServices() throws IOException
     {
+        StringBuilder builder = new StringBuilder();
         Set<Addon> addons = registry.getRegisteredAddons();
-        System.out.println("listing addons: "+addons);
         for (Addon addon : addons)
         {
             Set<Class<?>> serviceClasses = addon.getServiceRegistry().getServices();
             for (Class<?> type : serviceClasses)
             {
-                System.out.println("NAME: "+type.getName());
-                getConsole().pushToStdOut(type.getName());
+                builder.append(type.getName()).append("\n");
                 for (Method method : type.getMethods())
                 {
-                    getConsole().pushToStdOut("\n\t - " + getName(method));
+                    builder.append("\n\type - " + getName(method));
                 }
-                getConsole().pushToStdOut("\n");
+                builder.append("\n");
             }
         }
+
+        return builder.toString();
     }
 
    public String getName(Method method)
