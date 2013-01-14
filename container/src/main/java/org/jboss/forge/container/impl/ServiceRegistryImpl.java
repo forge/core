@@ -1,5 +1,6 @@
 package org.jboss.forge.container.impl;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,15 +17,12 @@ public class ServiceRegistryImpl implements ServiceRegistry
 
    private BeanManager manager;
 
-   private ClassLoader loader;
-
    private AddonImpl addon;
 
    public ServiceRegistryImpl(AddonImpl addon, BeanManager manager, ContainerServiceExtension extension)
    {
       this.addon = addon;
       this.manager = manager;
-      this.loader = Thread.currentThread().getContextClassLoader();
 
       for (Class<?> clazz : extension.getServices())
       {
@@ -45,12 +43,11 @@ public class ServiceRegistryImpl implements ServiceRegistry
       try
       {
          if (!manager.getBeans(clazz).isEmpty())
-            return new RemoteInstanceImpl<T>(loader, manager, clazz);
+            return new RemoteInstanceImpl<T>(addon.getClassLoader(), manager, clazz);
       }
       catch (Exception e)
       {
          e.printStackTrace();
-         ensureAddonStarted();
       }
       return null;
    }
@@ -62,7 +59,7 @@ public class ServiceRegistryImpl implements ServiceRegistry
       Class<?> type;
       try
       {
-         type = Class.forName(clazz, true, loader);
+         type = Class.forName(clazz, true, addon.getClassLoader());
          return (RemoteInstance<T>) getRemoteInstance(type);
       }
       catch (ClassNotFoundException e)
@@ -82,7 +79,7 @@ public class ServiceRegistryImpl implements ServiceRegistry
    {
       try
       {
-         Class<?> type = Class.forName(clazz, true, loader);
+         Class<?> type = Class.forName(clazz, true, addon.getClassLoader());
          return hasService(type);
       }
       catch (ClassNotFoundException e)
@@ -129,12 +126,12 @@ public class ServiceRegistryImpl implements ServiceRegistry
       try
       {
          @SuppressWarnings("unchecked")
-         Class<T> type = (Class<T>) Class.forName(clazz, true, loader);
+         Class<T> type = (Class<T>) Class.forName(clazz, true, addon.getClassLoader());
          return getRemoteInstances(type);
       }
       catch (ClassNotFoundException e)
       {
-         return new HashSet<RemoteInstance<T>>();
+         return Collections.emptySet();
       }
    }
 
