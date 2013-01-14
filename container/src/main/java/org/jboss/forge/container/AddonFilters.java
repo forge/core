@@ -9,7 +9,7 @@ public class AddonFilters
          @Override
          public boolean accept(Addon addon)
          {
-            return Status.STARTED.equals(addon.getStatus());
+            return addon.getStatus().isStarted();
          }
       };
    }
@@ -21,7 +21,7 @@ public class AddonFilters
          @Override
          public boolean accept(Addon addon)
          {
-            return Status.WAITING.equals(addon.getStatus());
+            return addon.getStatus().isWaiting();
          }
       };
    }
@@ -33,7 +33,7 @@ public class AddonFilters
          @Override
          public boolean accept(Addon addon)
          {
-            return !Status.STARTED.equals(addon.getStatus());
+            return !addon.getStatus().isStarted();
          }
       };
    }
