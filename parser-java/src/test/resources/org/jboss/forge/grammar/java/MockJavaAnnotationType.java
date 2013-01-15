@@ -12,6 +12,10 @@ public @interface MockJavaAnnotationType
 
       @Deprecated
       MockEnumType metasyntacticVariable() default FOO;
+
+      Class<? extends Number>[] numberTypes() default {};
+
+      MockEnumType[] metasyntacticVariables() default {};
    }
 
    MockNestedJavaAnnotationType value() default @MockNestedJavaAnnotationType(-1);

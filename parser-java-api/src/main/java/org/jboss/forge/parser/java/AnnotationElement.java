@@ -23,15 +23,28 @@ public interface AnnotationElement extends AnnotationTarget<JavaAnnotation, Anno
 
       <T extends Enum<T>> T getEnum(Class<T> type);
 
+      <T extends Enum<T>> T[] getEnumArray(Class<T> type);
+
       Annotation<JavaAnnotation> getAnnotation();
+
+      Class<?> getSingleClass();
+
+      Class<?>[] getClassArray();
 
       DefaultValue setLiteral(String value);
 
       DefaultValue setString(String value);
 
-      <T extends Enum<T>> DefaultValue setEnum(T... value);
+      <T extends Enum<T>> DefaultValue setEnum(T value);
+
+      <T extends Enum<T>> DefaultValue setEnumArray(T... values);
 
       Annotation<JavaAnnotation> setAnnotation();
+
+      DefaultValue setSingleClass(Class<?> value);
+
+      DefaultValue setClassArray(Class<?>... values);
+
    }
 
    String getName();
