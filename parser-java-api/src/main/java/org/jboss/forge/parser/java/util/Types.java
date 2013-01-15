@@ -29,7 +29,8 @@ public class Types
    // [S=short,
    // [Z=boolean
    private static final Pattern CLASS_ARRAY_PATTERN = Pattern.compile("\\[+(B|F|C|D|I|J|S|Z|L)([0-9a-zA-Z\\.\\$]*);?");
-   private static final Pattern SIMPLE_ARRAY_PATTERN = Pattern.compile("([0-9a-zA-Z\\.\\$\\<\\>\\,]+)(\\[\\])+");
+   private static final Pattern SIMPLE_ARRAY_PATTERN = Pattern
+            .compile("((?:[0-9a-zA-Z\\$]+)(?:\\<[^\\.^\\[]+)?(?:\\.(?:[0-9a-zA-Z\\$]+)(?:\\<[^\\.^\\[]+)?)*)(\\[\\])+");
    private static final Pattern GENERIC_PATTERN = Pattern.compile(".*<.*>$");
 
    private static final List<String> LANG_TYPES = Arrays.asList(
@@ -237,9 +238,26 @@ public class Types
 
    public static String stripGenerics(final String type)
    {
-      if (isGeneric(type))
+      final String componentType;
+      final int arrayDimensions;
+      if (isArray(type))
       {
-         return type.replaceFirst("^([^<]*)<.*>$", "$1");
+         arrayDimensions = getArrayDimension(type);
+         componentType = stripArray(type);
+      }
+      else
+      {
+         arrayDimensions = 0;
+         componentType = type;
+      }
+      if (isGeneric(componentType))
+      {
+         final StringBuilder result = new StringBuilder(componentType.replaceFirst("^([^<]*)<.*?>$", "$1"));
+         for (int i = 0; i < arrayDimensions; i++)
+         {
+            result.append("[]");
+         }
+         return result.toString();
       }
       return type;
    }
@@ -248,7 +266,7 @@ public class Types
    {
       if (isGeneric(type))
       {
-         return type.replaceFirst("^[^<]*(<.*>)$", "$1");
+         return type.replaceFirst("^[^<]*(<.*?>)$", "$1");
       }
       return "";
    }
