@@ -7,9 +7,11 @@
 package org.jboss.forge.shell.test.plugins.builtin;
 
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.shell.InstalledPluginRegistry;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.ShellImpl;
 import org.jboss.forge.test.AbstractShellTest;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -55,6 +57,28 @@ public class ForgePluginTest extends AbstractShellTest
    {
       getShell().getEnvironment().setProperty(ShellImpl.PROP_FORGE_VERSION, "1.0.3.Final");
       getShell().execute("forge install-plugin ocpsoft-prettyfaces");
+   }
+
+   @Test
+   public void testListPlugins() throws Exception
+   {
+      InstalledPluginRegistry.install("test.test", "1.0.0-SNAPSHOT", "moo");
+      getShell().execute("forge list-plugins arquillian");
+      Assert.assertFalse(getOutput().contains("test.test"));
+
+      getShell().execute("forge list-plugins test.test");
+      Assert.assertTrue(getOutput().contains("test.test"));
+   }
+
+   @Test
+   public void testListPluginsGrep() throws Exception
+   {
+      InstalledPluginRegistry.install("test.test", "1.0.0-SNAPSHOT", "moo");
+      getShell().execute("forge list-plugins | grep arquillian");
+      Assert.assertFalse(getOutput().contains("test.test"));
+
+      getShell().execute("forge list-plugins | grep test.test");
+      Assert.assertTrue(getOutput().contains("test.test"));
    }
 
 }

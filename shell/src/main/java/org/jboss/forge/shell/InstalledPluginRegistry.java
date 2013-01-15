@@ -95,7 +95,6 @@ public class InstalledPluginRegistry
    public static List<PluginEntry> list()
    {
       List<PluginEntry> result = new ArrayList<PluginEntry>();
-      // File registryFile = new File(OSUtils.getUserHomePath() + getRegistry());
       File registryFile = getRegistryFile();
       try
       {
