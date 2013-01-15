@@ -6,65 +6,64 @@
  */
 package org.jboss.forge.container.impl;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import java.util.HashSet;
+import java.lang.reflect.Field;
+import java.lang.reflect.Member;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.AfterBeanDiscovery;
 import javax.enterprise.inject.spi.Annotated;
-import javax.enterprise.inject.spi.AnnotatedConstructor;
-import javax.enterprise.inject.spi.AnnotatedField;
-import javax.enterprise.inject.spi.AnnotatedMethod;
 import javax.enterprise.inject.spi.AnnotatedType;
+import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
+import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.enterprise.inject.spi.ProcessInjectionPoint;
 import javax.enterprise.inject.spi.ProcessProducer;
 
+import net.sf.cglib.proxy.Enhancer;
+
+import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.events.CrossContainerObserverMethod;
+import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.services.Remote;
 import org.jboss.forge.container.services.RemoteServiceInjectionPoint;
-import org.jboss.forge.container.services.RemoteServiceProxyBeanProducer;
+import org.jboss.forge.container.services.RemoteServiceProxyBeanCallback;
 import org.jboss.forge.container.util.Annotations;
+import org.jboss.forge.container.util.BeanManagerUtils;
 import org.jboss.forge.container.util.Types;
+import org.jboss.forge.container.util.cdi.BeanBuilder;
+import org.jboss.forge.container.util.cdi.ContextualLifecycle;
 
-/**
- * One classloader/thread/weld container per plugin module. One primary executor container running, fires events to each
- * plugin-container.
- * 
- * Addons may depend on other addons beans, but these beans must be explicitly exposed via the {@link Remote} and
- * {@link Service} API.
- */
 public class ContainerServiceExtension implements Extension
 {
-   private Logger logger = Logger.getLogger(getClass().getName());
-   private Set<Class<?>> services = new HashSet<Class<?>>();
+   private static Logger logger = Logger.getLogger(ContainerServiceExtension.class.getName());
 
-   public void wireCrossContainerEvents(@Observes AfterBeanDiscovery event)
-   {
-      event.addObserverMethod(new CrossContainerObserverMethod());
-   }
+   private Map<Class<?>, AnnotatedType<?>> services = new HashMap<Class<?>, AnnotatedType<?>>();
+   private Map<Class<?>, InjectionPoint> requestedServices = new HashMap<Class<?>, InjectionPoint>();
+   private static final ServiceLiteral SERVICE_LITERAL = new ServiceLiteral();
 
-   @SuppressWarnings({ "rawtypes", "unchecked" })
    public void processRemotes(@Observes ProcessAnnotatedType<?> event) throws InstantiationException,
             IllegalAccessException
    {
       Class<?> type = event.getAnnotatedType().getJavaClass();
       if (Annotations.isAnnotationPresent(type, Remote.class))
       {
-         event.setAnnotatedType(new RemoteAnnotatedType(event.getAnnotatedType()));
          if (type.getClassLoader().equals(Thread.currentThread().getContextClassLoader()))
          {
-            services.add(event.getAnnotatedType().getJavaClass());
+            services.put(event.getAnnotatedType().getJavaClass(), event.getAnnotatedType());
          }
       }
    }
 
-   public void processRemoteInjectionPoint(@Observes ProcessInjectionPoint<?, ?> event, BeanManager manager)
+   public void processRemoteInjectionPointConsumer(@Observes ProcessInjectionPoint<?, ?> event, BeanManager manager)
    {
       Annotated annotated = event.getInjectionPoint().getAnnotated();
 
@@ -84,14 +83,8 @@ public class ContainerServiceExtension implements Extension
          }
          else
          {
-            event.setInjectionPoint(new RemoteServiceInjectionPoint(event.getInjectionPoint(), new Service()
-            {
-               @Override
-               public Class<? extends Annotation> annotationType()
-               {
-                  return Service.class;
-               }
-            }));
+            event.setInjectionPoint(new RemoteServiceInjectionPoint(event.getInjectionPoint(), SERVICE_LITERAL));
+            requestedServices.put(injectionBeanValueType, event.getInjectionPoint());
          }
       }
       else if (remote != null)
@@ -100,7 +93,6 @@ public class ContainerServiceExtension implements Extension
       }
    }
 
-   @SuppressWarnings({ "rawtypes", "unchecked" })
    public void processProducerHooks(@Observes ProcessProducer<?, ?> event, BeanManager manager)
    {
       Class<?> type = Types.toClass(event.getAnnotatedMember().getJavaMember());
@@ -109,15 +101,70 @@ public class ContainerServiceExtension implements Extension
       {
          if (Annotations.isAnnotationPresent(type, Remote.class))
          {
-            event.setProducer(new RemoteServiceProxyBeanProducer(manager, event.getProducer(), type));
-            services.add(type);
+            services.put(type, manager.createAnnotatedType(type));
          }
       }
    }
 
+   public void wireCrossContainerEvents(@Observes AfterBeanDiscovery event, final BeanManager manager)
+   {
+      event.addObserverMethod(new CrossContainerObserverMethod());
+
+      // needs to happen in the addon that is requesting the service
+      for (final Entry<Class<?>, InjectionPoint> entry : requestedServices.entrySet())
+      {
+         Bean<?> serviceBean = new BeanBuilder<Object>(manager)
+                  .beanClass(entry.getKey())
+                  .types(entry.getValue().getAnnotated().getTypeClosure())
+                  .beanLifecycle(new ContextualLifecycle<Object>()
+                  {
+                     @Override
+                     public void destroy(Bean<Object> bean, Object instance, CreationalContext<Object> creationalContext)
+                     {
+                        System.out.println();
+                     }
+
+                     @Override
+                     public Object create(Bean<Object> bean, CreationalContext<Object> creationalContext)
+                     {
+                        return produceRemoteService(
+                                 BeanManagerUtils.getContextualInstance(manager, AddonRegistry.class), entry.getValue());
+                     }
+
+                     private Object produceRemoteService(AddonRegistry registry, InjectionPoint ip)
+                     {
+                        Member member = ip.getMember();
+                        Class<?> type = null;
+                        if (member instanceof Method)
+                        {
+                           type = ((Method) member).getReturnType();
+                        }
+                        else if (member instanceof Field)
+                        {
+                           type = ((Field) member).getType();
+                        }
+                        else
+                        {
+                           throw new ContainerException(
+                                    "Cannot handle producer for non-Field and non-Method member type: " + member);
+                        }
+
+                        return Enhancer.create((Class<?>) type, new RemoteServiceProxyBeanCallback(registry, type, ip));
+                     }
+                  })
+                  .qualifiers(SERVICE_LITERAL)
+                  .create();
+
+         event.addBean(serviceBean);
+      }
+   }
+
+   /*
+    * Helpers
+    */
    public Set<Class<?>> getServices()
    {
-      return services;
+      return services.keySet();
    }
 
    private boolean isClassLocal(Class<?> reference, Class<?> type)
@@ -133,69 +180,5 @@ public class ContainerServiceExtension implements Extension
    {
       Class<?> clazz = Types.toClass(annotated.getBaseType());
       return Annotations.getAnnotation(clazz, Remote.class);
-   }
-
-   private class RemoteAnnotatedType<R> implements AnnotatedType<R>
-   {
-      private AnnotatedType<R> wrapped;
-
-      public RemoteAnnotatedType(AnnotatedType<R> wrapped)
-      {
-         this.wrapped = wrapped;
-      }
-
-      @Override
-      public Type getBaseType()
-      {
-         return wrapped.getBaseType();
-      }
-
-      @Override
-      public Set<Type> getTypeClosure()
-      {
-         return wrapped.getTypeClosure();
-      }
-
-      @Override
-      public <T extends Annotation> T getAnnotation(Class<T> annotationType)
-      {
-         return wrapped.getAnnotation(annotationType);
-      }
-
-      @Override
-      public Set<Annotation> getAnnotations()
-      {
-         return wrapped.getAnnotations();
-      }
-
-      @Override
-      public boolean isAnnotationPresent(Class<? extends Annotation> annotationType)
-      {
-         return wrapped.isAnnotationPresent(annotationType);
-      }
-
-      @Override
-      public Class<R> getJavaClass()
-      {
-         return (Class<R>) wrapped.getJavaClass();
-      }
-
-      @Override
-      public Set<AnnotatedConstructor<R>> getConstructors()
-      {
-         return wrapped.getConstructors();
-      }
-
-      @Override
-      public Set<AnnotatedMethod<? super R>> getMethods()
-      {
-         return wrapped.getMethods();
-      }
-
-      @Override
-      public Set<AnnotatedField<? super R>> getFields()
-      {
-         return wrapped.getFields();
-      }
    }
 }

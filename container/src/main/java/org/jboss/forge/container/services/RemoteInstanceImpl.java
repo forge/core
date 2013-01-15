@@ -1,4 +1,4 @@
-package org.jboss.forge.container.impl;
+package org.jboss.forge.container.services;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.Callable;

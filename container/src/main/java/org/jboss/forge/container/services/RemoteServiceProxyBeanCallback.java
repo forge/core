@@ -14,7 +14,6 @@ import net.sf.cglib.proxy.LazyLoader;
 
 import org.jboss.forge.container.Addon;
 import org.jboss.forge.container.AddonRegistry;
-import org.jboss.forge.container.impl.RemoteInstanceImpl;
 import org.jboss.forge.container.impl.Service;
 
 public class RemoteServiceProxyBeanCallback implements LazyLoader

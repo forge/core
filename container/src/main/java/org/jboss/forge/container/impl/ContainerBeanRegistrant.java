@@ -5,8 +5,6 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.Extension;
 
-import org.jboss.forge.container.services.RemoteServiceProxyBeanProducerMethod;
-
 public class ContainerBeanRegistrant implements Extension
 {
    public void registerWeldSEBeans(@Observes BeforeBeanDiscovery event, BeanManager manager)
@@ -17,6 +15,5 @@ public class ContainerBeanRegistrant implements Extension
       event.addAnnotatedType(manager.createAnnotatedType(AddonRepositoryProducer.class));
       event.addAnnotatedType(manager.createAnnotatedType(ForgeProducer.class));
       event.addAnnotatedType(manager.createAnnotatedType(ServiceRegistryProducer.class));
-      event.addAnnotatedType(manager.createAnnotatedType(RemoteServiceProxyBeanProducerMethod.class));
    }
 }

@@ -8,6 +8,7 @@ import javax.enterprise.inject.spi.BeanManager;
 
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.services.RemoteInstance;
+import org.jboss.forge.container.services.RemoteInstanceImpl;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.container.util.Sets;
 
