@@ -150,7 +150,19 @@ public class TypeImpl<O extends JavaSource<O>> implements Type<O>
    public String getName()
    {
       String result = type.toString();
-      return Types.stripGenerics(result);
+      if (isParameterized())
+      {
+         if (isArray())
+         {
+            result = Types.stripArray(result);
+         }
+         result = Types.stripGenerics(result);
+         if (isArray())
+         {
+            result += "[]";
+         }
+      }
+      return result;
    }
 
    @Override
