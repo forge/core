@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2012-2013 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -30,6 +30,10 @@ public interface Annotation<O extends JavaSource<O>> extends Internal, Origin<O>
 
    <T extends Enum<T>> T getEnumValue(Class<T> type, String name);
 
+   <T extends Enum<T>> T[] getEnumArrayValue(Class<T> type);
+
+   <T extends Enum<T>> T[] getEnumArrayValue(Class<T> type, String name);
+
    String getLiteralValue();
 
    String getLiteralValue(String name);
@@ -50,6 +54,10 @@ public interface Annotation<O extends JavaSource<O>> extends Internal, Origin<O>
 
    Annotation<O> setEnumValue(Enum<?>... value);
 
+   Annotation<O> setEnumArrayValue(String name, Enum<?>... values);
+   
+   Annotation<O> setEnumArrayValue(Enum<?>... values);
+
    Annotation<O> setLiteralValue(String value);
 
    Annotation<O> setLiteralValue(String name, String value);
@@ -65,4 +73,21 @@ public interface Annotation<O extends JavaSource<O>> extends Internal, Origin<O>
    Annotation<O> setAnnotationValue();
 
    Annotation<O> setAnnotationValue(String name);
+
+   Class<?> getClassValue();
+
+   Class<?> getClassValue(String name);
+
+   Class<?>[] getClassArrayValue();
+
+   Class<?>[] getClassArrayValue(String name);
+
+   Annotation<O> setClassValue(String name, Class<?> value);
+
+   Annotation<O> setClassValue(Class<?> value);
+
+   Annotation<O> setClassArrayValue(String name, Class<?>... values);
+
+   Annotation<O> setClassArrayValue(Class<?>... values);
+
 }
