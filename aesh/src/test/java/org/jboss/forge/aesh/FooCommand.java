@@ -6,7 +6,7 @@
  */
 package org.jboss.forge.aesh;
 
-import org.jboss.forge.container.services.Remote;
+import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.ui.Result;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UIContext;
@@ -18,7 +18,7 @@ import org.jboss.forge.ui.impl.UIInputImpl;
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  */
-@Remote
+@Exported
 public class FooCommand implements UICommand {
 
     private UIInput<String> name;

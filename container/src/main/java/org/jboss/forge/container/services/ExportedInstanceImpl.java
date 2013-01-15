@@ -13,17 +13,17 @@ import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
 import org.jboss.forge.container.exception.ContainerException;
-import org.jboss.forge.container.services.RemoteInstance;
+import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.container.util.ClassLoaders;
 
-public class RemoteInstanceImpl<R> implements RemoteInstance<R>
+public class ExportedInstanceImpl<R> implements ExportedInstance<R>
 {
    private ClassLoader loader;
    private BeanManager manager;
    private Class<R> type;
    private CreationalContext<R> context;
 
-   public RemoteInstanceImpl(ClassLoader loader, BeanManager manager, Class<R> type)
+   public ExportedInstanceImpl(ClassLoader loader, BeanManager manager, Class<R> type)
    {
       this.loader = loader;
       this.manager = manager;

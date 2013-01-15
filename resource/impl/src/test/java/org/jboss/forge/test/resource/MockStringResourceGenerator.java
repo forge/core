@@ -1,11 +1,11 @@
 package org.jboss.forge.test.resource;
 
-import org.jboss.forge.container.services.Remote;
+import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.resource.Resource;
 import org.jboss.forge.resource.ResourceFactory;
 import org.jboss.forge.resource.ResourceGenerator;
 
-@Remote
+@Exported
 public class MockStringResourceGenerator implements ResourceGenerator<String>
 {
    @Override

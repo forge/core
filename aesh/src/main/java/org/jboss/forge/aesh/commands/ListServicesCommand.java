@@ -8,7 +8,7 @@ package org.jboss.forge.aesh.commands;
 
 import org.jboss.forge.container.Addon;
 import org.jboss.forge.container.AddonRegistry;
-import org.jboss.forge.container.services.Remote;
+import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.ui.Result;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UIContext;
@@ -26,7 +26,7 @@ import java.util.Set;
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  */
-@Remote
+@Exported
 public class ListServicesCommand implements UICommand {
 
     private UIInput<String> name;

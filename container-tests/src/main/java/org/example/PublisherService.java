@@ -2,12 +2,12 @@ package org.example;
 
 import javax.inject.Singleton;
 
-import org.jboss.forge.container.services.Remote;
+import org.jboss.forge.container.services.Exported;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Remote
+@Exported
 @Singleton
 public class PublisherService
 {

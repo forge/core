@@ -16,14 +16,14 @@ import org.jboss.forge.container.Addon;
 import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.impl.Service;
 
-public class RemoteServiceProxyBeanCallback implements LazyLoader
+public class ExportedInstanceProxyBeanCallback implements LazyLoader
 {
 
    private final Class<?> serviceType;
    private final AddonRegistry registry;
    private final InjectionPoint injectionPoint;
 
-   public RemoteServiceProxyBeanCallback(AddonRegistry registry, Class<?> serviceType, InjectionPoint injectionPoint)
+   public ExportedInstanceProxyBeanCallback(AddonRegistry registry, Class<?> serviceType, InjectionPoint injectionPoint)
    {
       this.registry = registry;
       this.serviceType = serviceType;
@@ -39,10 +39,10 @@ public class RemoteServiceProxyBeanCallback implements LazyLoader
          ServiceRegistry serviceRegistry = addon.getServiceRegistry();
          if (serviceRegistry != null && serviceRegistry.hasService(serviceType))
          {
-            RemoteInstance<?> instance = serviceRegistry.getRemoteInstance(serviceType);
-            if (instance instanceof RemoteInstanceImpl)
+            ExportedInstance<?> instance = serviceRegistry.getExportedInstance(serviceType);
+            if (instance instanceof ExportedInstanceImpl)
                // FIXME remove the need for this implementation coupling
-               result = ((RemoteInstanceImpl<?>) instance).get(new NativeServiceInjectionPoint(injectionPoint,
+               result = ((ExportedInstanceImpl<?>) instance).get(new NativeServiceInjectionPoint(injectionPoint,
                         serviceType));
             else
                result = instance.get();

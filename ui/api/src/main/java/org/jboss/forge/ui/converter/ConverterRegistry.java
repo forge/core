@@ -7,7 +7,7 @@
 
 package org.jboss.forge.ui.converter;
 
-import org.jboss.forge.container.services.Remote;
+import org.jboss.forge.container.services.Exported;
 
 /**
  * Stores converter objects
@@ -15,7 +15,7 @@ import org.jboss.forge.container.services.Remote;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
  */
-@Remote
+@Exported
 public interface ConverterRegistry
 {
    /**

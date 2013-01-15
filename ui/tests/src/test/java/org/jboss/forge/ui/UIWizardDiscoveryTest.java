@@ -11,7 +11,7 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonId;
-import org.jboss.forge.container.services.RemoteInstance;
+import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.ui.wizard.UIWizard;
 import org.jboss.shrinkwrap.api.ArchivePaths;
@@ -46,9 +46,9 @@ public class UIWizardDiscoveryTest
    @Test
    public void testWizardRegisteredWithoutRemote() throws Exception
    {
-      Set<RemoteInstance<UIWizard>> wizards = registry.getRemoteInstances(UIWizard.class);
+      Set<ExportedInstance<UIWizard>> wizards = registry.getExportedInstances(UIWizard.class);
       Assert.assertFalse(wizards.isEmpty());
-      RemoteInstance<UIWizard> instance = wizards.iterator().next();
+      ExportedInstance<UIWizard> instance = wizards.iterator().next();
       Assert.assertNotNull(instance);
       UIWizard uiWizard = instance.get();
       Assert.assertNotNull(uiWizard);

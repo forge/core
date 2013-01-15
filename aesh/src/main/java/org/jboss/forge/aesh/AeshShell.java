@@ -24,13 +24,13 @@ import org.jboss.forge.aesh.commands.StopCommand;
 import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.ContainerControl;
 import org.jboss.forge.container.event.Perform;
-import org.jboss.forge.container.services.Remote;
+import org.jboss.forge.container.services.Exported;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  */
 @Singleton
-@Remote
+@Exported
 public class AeshShell
 {
     private Console console;

@@ -7,9 +7,9 @@
 
 package org.jboss.forge.ui.converter;
 
-import org.jboss.forge.container.services.Remote;
+import org.jboss.forge.container.services.Exported;
 
-@Remote
+@Exported
 public interface Converter<S, T>
 {
    /**

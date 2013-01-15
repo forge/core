@@ -9,7 +9,7 @@ package org.jboss.forge.container.services;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface RemoteInstance<T>
+public interface ExportedInstance<T>
 {
    T get();
 

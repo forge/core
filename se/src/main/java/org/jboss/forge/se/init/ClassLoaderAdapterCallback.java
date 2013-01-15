@@ -15,7 +15,6 @@ import javassist.util.proxy.ProxyFactory;
 import javassist.util.proxy.ProxyObject;
 
 import org.jboss.forge.container.exception.ContainerException;
-import org.jboss.forge.container.util.Arrays;
 import org.jboss.forge.container.util.ClassLoaders;
 
 public class ClassLoaderAdapterCallback implements MethodHandler

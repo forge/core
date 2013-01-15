@@ -14,7 +14,7 @@ import org.jboss.forge.addon.dependency.builder.DependencyQueryBuilder;
 import org.jboss.forge.addon.dependency.spi.DependencyResolver;
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.AddonRepository;
-import org.jboss.forge.container.services.Remote;
+import org.jboss.forge.container.services.Exported;
 
 /**
  * Installs addons into an {@link AddonRepository}
@@ -22,7 +22,7 @@ import org.jboss.forge.container.services.Remote;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  *
  */
-@Remote
+@Exported
 public class AddonManager
 {
    private AddonRepository repository;

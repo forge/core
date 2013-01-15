@@ -12,12 +12,12 @@ import javax.enterprise.inject.spi.Annotated;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.InjectionPoint;
 
-public class RemoteServiceInjectionPoint implements InjectionPoint
+public class ExportedInstanceInjectionPoint implements InjectionPoint
 {
    private final InjectionPoint wrapped;
    private final Set<Annotation> qualifiers = new HashSet<Annotation>();
 
-   public RemoteServiceInjectionPoint(final InjectionPoint wrapped, Annotation... qualifiers)
+   public ExportedInstanceInjectionPoint(final InjectionPoint wrapped, Annotation... qualifiers)
    {
       this.wrapped = wrapped;
 

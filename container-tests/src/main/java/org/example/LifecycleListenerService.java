@@ -9,12 +9,12 @@ import org.jboss.forge.container.event.PostStartup;
 import org.jboss.forge.container.event.PreShutdown;
 import org.jboss.forge.container.event.Shutdown;
 import org.jboss.forge.container.event.Startup;
-import org.jboss.forge.container.services.Remote;
+import org.jboss.forge.container.services.Exported;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Remote
+@Exported
 @Singleton
 public class LifecycleListenerService
 {

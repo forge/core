@@ -2,9 +2,9 @@ package org.example;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.container.services.Remote;
+import org.jboss.forge.container.services.Exported;
 
-@Remote
+@Exported
 public class ConsumingService
 {
    @Inject

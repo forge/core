@@ -1,6 +1,6 @@
 package org.jboss.forge.container.util;
 
-import org.jboss.forge.container.services.Remote;
+import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.container.util.Annotations;
 import org.junit.Assert;
 import org.junit.Test;
@@ -13,25 +13,25 @@ public class AnnotationsTest
    @Test
    public void testInheritFromInterface() throws Exception
    {
-      Assert.assertTrue(Annotations.isAnnotationPresent(InheritsRemote.class, Remote.class));
+      Assert.assertTrue(Annotations.isAnnotationPresent(InheritsRemote.class, Exported.class));
    }
 
    @Test
    public void testInheritFromInterfaceInheritingRemote() throws Exception
    {
-      Assert.assertTrue(Annotations.isAnnotationPresent(InheritsRemoteFromExtendedInterface.class, Remote.class));
+      Assert.assertTrue(Annotations.isAnnotationPresent(InheritsRemoteFromExtendedInterface.class, Exported.class));
    }
 
    @Test
    public void testInheritFromSuperclass() throws Exception
    {
-      Assert.assertTrue(Annotations.isAnnotationPresent(SuperClassAnnotatedWithRemote.class, Remote.class));
+      Assert.assertTrue(Annotations.isAnnotationPresent(SuperClassAnnotatedWithRemote.class, Exported.class));
    }
 
    @Test
    public void testInheritFromSuperclassInheritingRemote() throws Exception
    {
-      Assert.assertTrue(Annotations.isAnnotationPresent(InheritsRemoteFromSuperClassInheriting.class, Remote.class));
+      Assert.assertTrue(Annotations.isAnnotationPresent(InheritsRemoteFromSuperClassInheriting.class, Exported.class));
    }
 
    public class InheritsRemote implements AnnotatedWithRemote
@@ -39,7 +39,7 @@ public class AnnotationsTest
 
    }
 
-   @Remote
+   @Exported
    public interface AnnotatedWithRemote
    {
 
@@ -55,7 +55,7 @@ public class AnnotationsTest
 
    }
 
-   @Remote
+   @Exported
    public class SuperClassAnnotatedWithRemote
    {
 

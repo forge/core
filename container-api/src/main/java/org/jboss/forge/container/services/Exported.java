@@ -23,6 +23,6 @@ import javax.inject.Inject;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE })
-public @interface Remote
+public @interface Exported
 {
 }

@@ -13,15 +13,15 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jboss.forge.container.AddonRegistry;
-import org.jboss.forge.container.services.Remote;
-import org.jboss.forge.container.services.RemoteInstance;
+import org.jboss.forge.container.services.Exported;
+import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.resource.events.ResourceEvent;
 
 /**
  * @author <a href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>
  * @author Mike Brock <cbrock@redhat.com>
  */
-@Remote
+@Exported
 @Singleton
 public class ResourceFactory
 {
@@ -36,7 +36,7 @@ public class ResourceFactory
    {
       synchronized (this)
       {
-         for (RemoteInstance<ResourceGenerator> instance : getRegisteredResourceGenerators())
+         for (ExportedInstance<ResourceGenerator> instance : getRegisteredResourceGenerators())
          {
             ResourceGenerator generator = instance.get();
             if (generator.handles(underlyingResource))
@@ -58,7 +58,7 @@ public class ResourceFactory
    {
       synchronized (this)
       {
-         for (RemoteInstance<ResourceGenerator> instance : getRegisteredResourceGenerators())
+         for (ExportedInstance<ResourceGenerator> instance : getRegisteredResourceGenerators())
          {
             ResourceGenerator generator = instance.get();
             if (generator.handles(underlyingResource))
@@ -73,9 +73,9 @@ public class ResourceFactory
    }
 
    @SuppressWarnings("rawtypes")
-   private Iterable<RemoteInstance<ResourceGenerator>> getRegisteredResourceGenerators()
+   private Iterable<ExportedInstance<ResourceGenerator>> getRegisteredResourceGenerators()
    {
-      return registry.getRemoteInstances(ResourceGenerator.class);
+      return registry.getExportedInstances(ResourceGenerator.class);
    }
 
    public ResourceFactory fireEvent(ResourceEvent event)

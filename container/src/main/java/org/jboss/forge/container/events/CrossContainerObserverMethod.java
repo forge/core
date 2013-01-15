@@ -18,7 +18,7 @@ import org.jboss.forge.container.Addon;
 import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.AddonFilters;
 import org.jboss.forge.container.exception.ContainerException;
-import org.jboss.forge.container.services.Remote;
+import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.container.util.Annotations;
 
@@ -72,7 +72,7 @@ public class CrossContainerObserverMethod implements ObserverMethod<Object>
    @Override
    public void notify(final Object event, final Set<Annotation> qualifiers)
    {
-      if (Annotations.isAnnotationPresent(event.getClass(), Remote.class))
+      if (Annotations.isAnnotationPresent(event.getClass(), Exported.class))
       {
          try
          {
@@ -90,7 +90,7 @@ public class CrossContainerObserverMethod implements ObserverMethod<Object>
                            || ClassLoader.getSystemClassLoader().equals(eventClassLoader)))
                   {
                      ServiceRegistry addonServiceRegistry = addon.getServiceRegistry();
-                     BeanManager manager = addonServiceRegistry.getRemoteInstance(BeanManager.class).get();
+                     BeanManager manager = addonServiceRegistry.getExportedInstance(BeanManager.class).get();
                      manager.fireEvent(event, qualifiers.toArray(new Annotation[] {}));
                   }
                }

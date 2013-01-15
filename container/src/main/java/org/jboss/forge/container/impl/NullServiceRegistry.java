@@ -5,7 +5,7 @@ import java.util.Set;
 
 import javax.enterprise.inject.Typed;
 
-import org.jboss.forge.container.services.RemoteInstance;
+import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.container.services.ServiceRegistry;
 
 /**
@@ -18,27 +18,21 @@ public class NullServiceRegistry implements ServiceRegistry
 {
 
    @Override
-   public <T> void addService(Class<T> serviceType)
-   {
-      // no-op
-   }
-
-   @Override
-   public <T> RemoteInstance<T> getRemoteInstance(Class<T> serviceType)
+   public <T> ExportedInstance<T> getExportedInstance(Class<T> serviceType)
    {
       // no-op
       return null;
    }
 
    @Override
-   public <T> RemoteInstance<T> getRemoteInstance(String serviceType)
+   public <T> ExportedInstance<T> getExportedInstance(String serviceType)
    {
       // no-op
       return null;
    }
 
    @Override
-   public <T> Set<RemoteInstance<T>> getRemoteInstances(Class<T> serviceType)
+   public <T> Set<ExportedInstance<T>> getExportedInstances(Class<T> serviceType)
    {
       // no-op
       return Collections.emptySet();
@@ -66,7 +60,7 @@ public class NullServiceRegistry implements ServiceRegistry
    }
 
    @Override
-   public Set<RemoteInstance<Object>> getRemoteInstances(String typeName)
+   public Set<ExportedInstance<Object>> getExportedInstances(String typeName)
    {
       // no-op
       return Collections.emptySet();

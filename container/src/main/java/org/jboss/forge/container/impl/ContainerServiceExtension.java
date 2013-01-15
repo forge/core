@@ -33,9 +33,9 @@ import net.sf.cglib.proxy.Enhancer;
 import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.events.CrossContainerObserverMethod;
 import org.jboss.forge.container.exception.ContainerException;
-import org.jboss.forge.container.services.Remote;
-import org.jboss.forge.container.services.RemoteServiceInjectionPoint;
-import org.jboss.forge.container.services.RemoteServiceProxyBeanCallback;
+import org.jboss.forge.container.services.Exported;
+import org.jboss.forge.container.services.ExportedInstanceInjectionPoint;
+import org.jboss.forge.container.services.ExportedInstanceProxyBeanCallback;
 import org.jboss.forge.container.util.Annotations;
 import org.jboss.forge.container.util.BeanManagerUtils;
 import org.jboss.forge.container.util.Types;
@@ -54,7 +54,7 @@ public class ContainerServiceExtension implements Extension
             IllegalAccessException
    {
       Class<?> type = event.getAnnotatedType().getJavaClass();
-      if (Annotations.isAnnotationPresent(type, Remote.class))
+      if (Annotations.isAnnotationPresent(type, Exported.class))
       {
          if (type.getClassLoader().equals(Thread.currentThread().getContextClassLoader()))
          {
@@ -67,7 +67,7 @@ public class ContainerServiceExtension implements Extension
    {
       Annotated annotated = event.getInjectionPoint().getAnnotated();
 
-      Remote remote = getRemote(annotated);
+      Exported remote = getRemote(annotated);
       Class<?> injectionPointDeclaringType = Types.toClass(event.getInjectionPoint().getMember().getDeclaringClass());
       Class<?> injectionBeanValueType = Types.toClass(annotated.getBaseType());
 
@@ -83,7 +83,7 @@ public class ContainerServiceExtension implements Extension
          }
          else
          {
-            event.setInjectionPoint(new RemoteServiceInjectionPoint(event.getInjectionPoint(), SERVICE_LITERAL));
+            event.setInjectionPoint(new ExportedInstanceInjectionPoint(event.getInjectionPoint(), SERVICE_LITERAL));
             requestedServices.put(injectionBeanValueType, event.getInjectionPoint());
          }
       }
@@ -99,7 +99,7 @@ public class ContainerServiceExtension implements Extension
       ClassLoader classLoader = type.getClassLoader();
       if (type != null && classLoader != null && classLoader.equals(Thread.currentThread().getContextClassLoader()))
       {
-         if (Annotations.isAnnotationPresent(type, Remote.class))
+         if (Annotations.isAnnotationPresent(type, Exported.class))
          {
             services.put(type, manager.createAnnotatedType(type));
          }
@@ -121,7 +121,7 @@ public class ContainerServiceExtension implements Extension
                      @Override
                      public void destroy(Bean<Object> bean, Object instance, CreationalContext<Object> creationalContext)
                      {
-                        System.out.println();
+                        creationalContext.release();
                      }
 
                      @Override
@@ -149,7 +149,8 @@ public class ContainerServiceExtension implements Extension
                                     "Cannot handle producer for non-Field and non-Method member type: " + member);
                         }
 
-                        return Enhancer.create((Class<?>) type, new RemoteServiceProxyBeanCallback(registry, type, ip));
+                        return Enhancer.create((Class<?>) type, new ExportedInstanceProxyBeanCallback(registry, type,
+                                 ip));
                      }
                   })
                   .qualifiers(SERVICE_LITERAL)
@@ -176,9 +177,9 @@ public class ContainerServiceExtension implements Extension
       return false;
    }
 
-   private Remote getRemote(Annotated annotated)
+   private Exported getRemote(Annotated annotated)
    {
       Class<?> clazz = Types.toClass(annotated.getBaseType());
-      return Annotations.getAnnotation(clazz, Remote.class);
+      return Annotations.getAnnotation(clazz, Exported.class);
    }
 }

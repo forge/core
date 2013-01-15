@@ -24,7 +24,7 @@ import org.jboss.forge.container.Forge;
 import org.jboss.forge.container.Status;
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.modules.AddonModuleLoader;
-import org.jboss.forge.container.services.RemoteInstance;
+import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.container.util.Assert;
 import org.jboss.forge.container.util.Sets;
@@ -344,32 +344,32 @@ public class AddonRegistryImpl implements AddonRegistry
    }
 
    @Override
-   public <T> Set<RemoteInstance<T>> getRemoteInstances(Class<T> type)
+   public <T> Set<ExportedInstance<T>> getExportedInstances(Class<T> type)
    {
       // TODO This needs to block addon installation/removal;
-      Set<RemoteInstance<T>> result = new HashSet<RemoteInstance<T>>();
+      Set<ExportedInstance<T>> result = new HashSet<ExportedInstance<T>>();
       for (Addon addon : addons)
       {
          if (Status.STARTED.equals(addon.getStatus()))
          {
             ServiceRegistry serviceRegistry = addon.getServiceRegistry();
-            result.addAll((Collection<? extends RemoteInstance<T>>) serviceRegistry.getRemoteInstances(type));
+            result.addAll((Collection<? extends ExportedInstance<T>>) serviceRegistry.getExportedInstances(type));
          }
       }
       return result;
    }
 
    @Override
-   public <T> Set<RemoteInstance<T>> getRemoteInstances(String typeName)
+   public <T> Set<ExportedInstance<T>> getExportedInstances(String typeName)
    {
       // TODO This needs to block addon installation/removal;
-      Set<RemoteInstance<T>> result = new HashSet<RemoteInstance<T>>();
+      Set<ExportedInstance<T>> result = new HashSet<ExportedInstance<T>>();
       for (Addon addon : addons)
       {
          if (addon.getStatus().isStarted())
          {
             ServiceRegistry serviceRegistry = addon.getServiceRegistry();
-            Set<RemoteInstance<T>> remoteInstances = serviceRegistry.getRemoteInstances(typeName);
+            Set<ExportedInstance<T>> remoteInstances = serviceRegistry.getExportedInstances(typeName);
             result.addAll(remoteInstances);
          }
       }

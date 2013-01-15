@@ -1,9 +1,9 @@
 package org.jboss.forge.container;
 
-import org.jboss.forge.container.services.RemoteInstance;
+import org.jboss.forge.container.services.ExportedInstance;
 
 /**
- * Controls the life-cycle of a Forge {@link RemoteInstance} container
+ * Controls the life-cycle of a Forge {@link ExportedInstance} container
  */
 public interface ContainerControl
 {

@@ -1,8 +1,8 @@
 package org.example.event;
 
-import org.jboss.forge.container.services.Remote;
+import org.jboss.forge.container.services.Exported;
 
-@Remote
+@Exported
 public class EventPayload1
 {
 

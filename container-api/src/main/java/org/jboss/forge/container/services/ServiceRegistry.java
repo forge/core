@@ -10,21 +10,19 @@ package org.jboss.forge.container.services;
 import java.util.Set;
 
 /**
- * Contains the collection of all installed and available {@link RemoteInstance} types.
+ * Contains the collection of all installed and available {@link ExportedInstance} types.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public interface ServiceRegistry
 {
-   <T> void addService(Class<T> clazz);
+   <T> ExportedInstance<T> getExportedInstance(Class<T> clazz);
 
-   <T> RemoteInstance<T> getRemoteInstance(Class<T> clazz);
+   <T> ExportedInstance<T> getExportedInstance(String clazz);
 
-   <T> RemoteInstance<T> getRemoteInstance(String clazz);
+   <T> Set<ExportedInstance<T>> getExportedInstances(Class<T> clazz);
 
-   <T> Set<RemoteInstance<T>> getRemoteInstances(Class<T> clazz);
-
-   <T> Set<RemoteInstance<T>> getRemoteInstances(String clazz);
+   <T> Set<ExportedInstance<T>> getExportedInstances(String clazz);
 
    Set<Class<?>> getServices();
 

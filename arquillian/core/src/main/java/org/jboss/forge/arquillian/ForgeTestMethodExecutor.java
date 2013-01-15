@@ -29,7 +29,7 @@ import org.jboss.forge.arquillian.protocol.ForgeProtocolConfiguration;
 import org.jboss.forge.container.Addon;
 import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.Forge;
-import org.jboss.forge.container.services.RemoteInstance;
+import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.container.util.Threads;
 
@@ -80,7 +80,7 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
             }
 
             String testClassName = testMethodExecutor.getInstance().getClass().getName();
-            RemoteInstance<?> result = registry.getRemoteInstance(testClassName);
+            ExportedInstance<?> result = registry.getExportedInstance(testClassName);
 
             if (result != null)
             {

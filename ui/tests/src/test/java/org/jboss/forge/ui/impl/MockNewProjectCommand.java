@@ -5,7 +5,7 @@ import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.container.services.Remote;
+import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.ui.Result;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UIContext;
@@ -15,7 +15,7 @@ import org.jboss.forge.ui.wizard.UIWizardContext;
 import org.jboss.forge.ui.wizard.UIWizardStep;
 import org.jboss.forge.ui.wizard.WizardId;
 
-@Remote
+@Exported
 public class MockNewProjectCommand implements UICommand, UIWizardStep
 {
 

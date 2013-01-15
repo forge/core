@@ -2,9 +2,9 @@ package org.jboss.forge.resource;
 
 import java.io.File;
 
-import org.jboss.forge.container.services.Remote;
+import org.jboss.forge.container.services.Exported;
 
-@Remote
+@Exported
 public class FileResourceGenerator implements ResourceGenerator<File>
 {
    @Override
