@@ -7,21 +7,25 @@
 
 package org.jboss.forge.parser.java.impl;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.AnnotationTypeMemberDeclaration;
+import org.eclipse.jdt.core.dom.ArrayInitializer;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.PrimitiveType;
+import org.eclipse.jdt.core.dom.TypeLiteral;
 import org.eclipse.jdt.core.dom.PrimitiveType.Code;
-import org.eclipse.jdt.core.dom.Type;
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.Annotation;
 import org.jboss.forge.parser.java.AnnotationElement;
 import org.jboss.forge.parser.java.JavaAnnotation;
 import org.jboss.forge.parser.java.JavaSource;
+import org.jboss.forge.parser.java.Type;
 import org.jboss.forge.parser.java.ast.AnnotationAccessor;
 import org.jboss.forge.parser.java.util.Assert;
 import org.jboss.forge.parser.java.util.Strings;
@@ -70,26 +74,9 @@ public class AnnotationElementImpl implements AnnotationElement
       }
 
       @Override
-      public <E extends Enum<E>> E getEnum(Class<E> type)
+      public <E extends Enum<E>> E getEnum(final Class<E> type)
       {
-         String literalValue = getLiteral();
-
-         E[] constants = type.getEnumConstants();
-
-         for (E inst : constants)
-         {
-            String[] tokens = literalValue.split("\\.");
-            if (tokens.length > 1)
-            {
-               literalValue = tokens[tokens.length - 1];
-            }
-
-            if (inst.name().equals(literalValue))
-            {
-               return inst;
-            }
-         }
-         return null;
+         return convertLiteralToEnum(type, getLiteral());
       }
 
       @Override
@@ -114,10 +101,9 @@ public class AnnotationElementImpl implements AnnotationElement
          {
             String stub = "public @interface Stub { String stub() default " + value + "; }";
             JavaAnnotation temp = (JavaAnnotation) JavaParser.parse(stub);
-            AnnotationTypeMemberDeclaration internal = (AnnotationTypeMemberDeclaration) temp.getAnnotations().get(0)
-                     .getInternal();
-            member.setDefault((Expression)
-                     ASTNode.copySubtree(ast, internal.getDefault()));
+            AnnotationTypeMemberDeclaration internal = (AnnotationTypeMemberDeclaration) temp.getAnnotationElements()
+                     .get(0).getInternal();
+            member.setDefault((Expression) ASTNode.copySubtree(ast, internal.getDefault()));
          }
          return this;
       }
@@ -129,38 +115,29 @@ public class AnnotationElementImpl implements AnnotationElement
          return setLiteral(Strings.enquote(value));
       }
 
+      @SuppressWarnings("unchecked")
       @Override
-      public <T extends Enum<T>> DefaultValue setEnum(T... values)
+      public <T extends Enum<T>> DefaultValue setEnum(T values)
       {
-         JavaAnnotation origin = getOrigin();
+         return setEnumArray(values);
+      }
 
-         String result = new String();// = "{";
+      @Override
+      public <T extends Enum<T>> DefaultValue setEnumArray(T... values)
+      {
+         Assert.notNull(values, "null array not accepted");
 
-         if (values.length > 1)
-         {
-            result = "{";
-         }
-
-         JavaSource<?> source = origin;
+         final List<String> literals = new ArrayList<String>();
 
          for (Enum<?> value : values)
          {
-            if (!origin.hasImport(value.getDeclaringClass()))
-            {
-               source.addImport(value.getDeclaringClass());
-            }
+            Assert.notNull(value, "null value not accepted");
 
-            result = result.concat(value.getDeclaringClass().getSimpleName() + "." + value.name() + ",");
+            getOrigin().addImport(value.getDeclaringClass());
+            literals.add(value.getDeclaringClass().getSimpleName() + "." + value.name());
          }
 
-         result = result.substring(0, result.length() - 1);
-
-         if (values.length > 1)
-         {
-            result = result.concat("}");
-         }
-
-         return setLiteral(result);
+         return setLiteral(literals.size() == 1 ? literals.get(0) : String.format("{%s}", Strings.join(literals, ",")));
       }
 
       @Override
@@ -171,6 +148,142 @@ public class AnnotationElementImpl implements AnnotationElement
          return result;
       }
 
+      @Override
+      public <E extends Enum<E>> E[] getEnumArray(Class<E> type)
+      {
+         Expression expr = member.getDefault();
+         if (expr instanceof ArrayInitializer)
+         {
+            final List<E> results = new ArrayList<E>();
+            @SuppressWarnings("unchecked")
+            final List<Expression> arrayElements = ((ArrayInitializer) expr).expressions();
+            for (Expression arrayElement : arrayElements)
+            {
+               results.add(convertLiteralToEnum(type, arrayElement.toString()));
+            }
+            @SuppressWarnings("unchecked")
+            final E[] result = (E[]) Array.newInstance(type, results.size());
+            return results.toArray(result);
+         }
+         else if (expr != null)
+         {
+            final E instance = convertLiteralToEnum(type, expr.toString());
+            if (type.isInstance(instance))
+            {
+               @SuppressWarnings("unchecked")
+               final E[] result = (E[]) Array.newInstance(type, 1);
+               result[0] = instance;
+               return result;
+            }
+         }
+         return null;
+      }
+
+      @Override
+      public DefaultValue setSingleClass(Class<?> value)
+      {
+         return setClassArray(value);
+      }
+
+      @Override
+      public DefaultValue setClassArray(Class<?>... values)
+      {
+         Assert.notNull(values, "null array not accepted");
+
+         final List<String> literals = new ArrayList<String>();
+         for (Class<?> value : values)
+         {
+            Assert.notNull(value, "null value not accepted");
+
+            if (!value.isPrimitive())
+            {
+               getOrigin().addImport(value);
+            }
+            literals.add(value.getSimpleName() + ".class");
+         }
+         return setLiteral(literals.size() == 1 ? literals.get(0) : String.format("{%s}", Strings.join(literals, ",")));
+      }
+
+      private <E extends Enum<E>> E convertLiteralToEnum(final Class<E> type, String literalValue)
+      {
+         for (E inst : type.getEnumConstants())
+         {
+            String[] tokens = literalValue.split("\\.");
+            if (tokens.length > 1)
+            {
+               literalValue = tokens[tokens.length - 1];
+            }
+
+            if (inst.name().equals(literalValue))
+            {
+               return inst;
+            }
+         }
+         return null;
+         
+      }
+
+      @Override
+      public Class<?> getSingleClass()
+      {
+         final Expression expr = member.getDefault();
+         if (expr instanceof TypeLiteral)
+         {
+            return resolveTypeLiteral((TypeLiteral) expr);
+         }
+         return null;
+      }
+
+      @Override
+      public Class<?>[] getClassArray()
+      {
+         final Expression expr = member.getDefault();
+         if (expr instanceof ArrayInitializer)
+         {
+            final List<Class<?>> result = new ArrayList<Class<?>>();
+            @SuppressWarnings("unchecked")
+            final List<Expression> arrayElements = ((ArrayInitializer) expr).expressions();
+            for (Expression arrayElement : arrayElements)
+            {
+               result.add(resolveTypeLiteral((TypeLiteral) arrayElement));
+            }
+            return result.toArray(new Class[result.size()]);
+         }
+         if (expr instanceof TypeLiteral)
+         {
+            return new Class[] { resolveTypeLiteral((TypeLiteral) expr) };
+         }
+         return null;
+      }
+      
+      private Class<?> resolveTypeLiteral(TypeLiteral typeLiteral)
+      {
+         final Type<JavaAnnotation> type = new TypeImpl<JavaAnnotation>(getOrigin(), typeLiteral.getType());
+         if (type.isPrimitive())
+         {
+            final Class<?>[] primitiveTypes = { boolean.class, byte.class, short.class, int.class, long.class,
+                     float.class, double.class };
+            for (Class<?> c : primitiveTypes)
+            {
+               if (c.getSimpleName().equals(type.getName()))
+               {
+                  return c;
+               }
+            }
+            return null;
+         }
+
+         final String classname = type.getQualifiedName();
+
+         try
+         {
+            return Class.forName(getOrigin().resolveType(classname));
+         }
+         catch (ClassNotFoundException e)
+         {
+            return null;
+         }
+      }
    }
 
    private final AnnotationAccessor<JavaAnnotation, AnnotationElement> annotations = new AnnotationAccessor<JavaAnnotation, AnnotationElement>();
@@ -392,7 +505,7 @@ public class AnnotationElementImpl implements AnnotationElement
 
       Code primitive = PrimitiveType.toCode(typeName);
 
-      Type type = null;
+      org.eclipse.jdt.core.dom.Type type = null;
       if (primitive != null)
       {
          type = ast.newPrimitiveType(primitive);

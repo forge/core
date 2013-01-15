@@ -30,6 +30,7 @@ import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.parser.java.Type;
 import org.jboss.forge.parser.java.ValuePair;
+import org.jboss.forge.parser.java.util.Assert;
 import org.jboss.forge.parser.java.util.Strings;
 
 /**
@@ -279,6 +280,8 @@ public class AnnotationImpl<O extends JavaSource<O>, T> implements Annotation<O>
    @Override
    public Annotation<O> setLiteralValue(final String value)
    {
+      Assert.notNull(value, "null not accepted");
+
       if (isMarker())
       {
          convertTo(AnnotationType.SINGLE);
@@ -308,6 +311,8 @@ public class AnnotationImpl<O extends JavaSource<O>, T> implements Annotation<O>
    @SuppressWarnings("unchecked")
    public Annotation<O> setLiteralValue(final String name, final String value)
    {
+      Assert.notNull(value, "null not accepted");
+
       if (!isNormal() && !DEFAULT_VALUE.equals(name))
       {
          convertTo(AnnotationType.NORMAL);
@@ -411,10 +416,13 @@ public class AnnotationImpl<O extends JavaSource<O>, T> implements Annotation<O>
    @Override
    public Annotation<O> setEnumArrayValue(String name, final Enum<?>... values)
    {
+      Assert.notNull(values, "null array not accepted");
+
       final List<String> literals = new ArrayList<String>();
 
       for (Enum<?> value : values)
       {
+         Assert.notNull(value, "null value not accepted");
          getOrigin().addImport(value.getDeclaringClass());
          literals.add(value.getDeclaringClass().getSimpleName() + "." + value.name());
       }
@@ -699,6 +707,8 @@ public class AnnotationImpl<O extends JavaSource<O>, T> implements Annotation<O>
    @Override
    public Annotation<O> setClassValue(String name, Class<?> value)
    {
+      Assert.notNull(value, "null not accepted");
+
       if (!value.isPrimitive())
       {
          getOrigin().addImport(value);
@@ -721,10 +731,14 @@ public class AnnotationImpl<O extends JavaSource<O>, T> implements Annotation<O>
    @Override
    public Annotation<O> setClassArrayValue(String name, Class<?>... values)
    {
+      Assert.notNull(values, "null array not accepted");
+
       final List<String> literals = new ArrayList<String>();
 
       for (Class<?> value : values)
       {
+         Assert.notNull(value, "null value not accepted");
+
          if (!value.isPrimitive())
          {
             getOrigin().addImport(value);
