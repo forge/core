@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.ui.impl.converter;
+package test.org.jboss.forge.ui.impl.converter;
 
 import java.util.HashMap;
 import java.util.Properties;

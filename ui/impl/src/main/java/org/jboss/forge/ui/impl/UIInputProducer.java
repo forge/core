@@ -8,11 +8,13 @@
 package org.jboss.forge.ui.impl;
 
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 
 import org.jboss.forge.ui.UIInput;
+import org.jboss.forge.ui.converter.Converter;
 
 /**
  * Produces UIInput objects
@@ -27,8 +29,16 @@ public class UIInputProducer
    public <T> UIInput<T> produceInput(InjectionPoint injectionPoint)
    {
       String name = injectionPoint.getMember().getName();
-      ParameterizedType ptype = (ParameterizedType) injectionPoint.getType();
-      Class<T> c = (Class<T>) ptype.getActualTypeArguments()[0];
-      return new UIInputImpl<T>(name, c);
+      Type type = injectionPoint.getAnnotated().getTypeClosure().iterator().next();
+      if (type instanceof ParameterizedType)
+      {
+         Type[] typeArguments = ((ParameterizedType) type).getActualTypeArguments();
+         Class<T> target = (Class<T>) typeArguments[0];
+         return new UIInputImpl<T>(name, target);
+      }
+      else
+         throw new IllegalStateException("Cannot inject a generic instance of type " + Converter.class.getName()
+                  + "<?,?> without specifying concrete generic types at injection point " + injectionPoint + ".");
+
    }
 }

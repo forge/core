@@ -22,8 +22,16 @@ public class ConverterProducer
    @SuppressWarnings("unchecked")
    public <S, T> Converter<S, T> produceConverter(InjectionPoint injectionPoint, ConverterRegistry registry)
    {
-      ParameterizedType ptype = (ParameterizedType) injectionPoint.getType();
-      Type[] actualTypeArguments = ptype.getActualTypeArguments();
-      return registry.getConverter((Class<S>) actualTypeArguments[0], (Class<T>) actualTypeArguments[1]);
+      Type type = injectionPoint.getAnnotated().getTypeClosure().iterator().next();
+      if (type instanceof ParameterizedType)
+      {
+         Type[] typeArguments = ((ParameterizedType) type).getActualTypeArguments();
+         Class<S> source = (Class<S>) typeArguments[0];
+         Class<T> target = (Class<T>) typeArguments[1];
+         return registry.getConverter(source, target);
+      }
+      else
+         throw new IllegalStateException("Cannot inject a generic instance of type " + Converter.class.getName()
+                  + "<?,?> without specifying concrete generic types at injection point " + injectionPoint + ".");
    }
 }
