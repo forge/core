@@ -144,23 +144,15 @@ public class ForgePlugin implements Plugin
    }
 
    @Command(value = "list-plugins", help = "List all installed plugin JAR files.")
-   public void listInstalled(
-            @Option(name = "all",
-                     shortName = "a",
-                     description = "Show extra information about each installed plugin",
-                     defaultValue = "false") final boolean showAll)
-   {
-      DirectoryResource pluginDir = environment.getPluginDirectory();
-
-      displayModules(pluginDir);
-   }
-
-   private void displayModules(final DirectoryResource pluginDir)
+   public void listInstalled(PipeOut out, String input)
    {
       List<PluginEntry> plugins = InstalledPluginRegistry.list();
       for (PluginEntry plugin : plugins)
       {
-         writer.println(plugin.toString());
+         if (Strings.isNullOrEmpty(input) || plugin.toString().contains(input))
+         {
+            out.println(plugin.toString());
+         }
       }
    }
 
