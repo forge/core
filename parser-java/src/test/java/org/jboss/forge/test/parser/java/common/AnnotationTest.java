@@ -1,11 +1,12 @@
 /*
- * Copyright 2012 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2012-2013 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
 package org.jboss.forge.test.parser.java.common;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -157,6 +158,80 @@ public abstract class AnnotationTest<O extends JavaSource<O>, T>
       Annotation<O> annotation = annotations.get(annotations.size() - 1);
       MockEnumType enumValue = annotation.getEnumValue(MockEnumType.class, "name");
       assertEquals(MockEnumType.BAR, enumValue);
+   }
+
+   @Test
+   public void testAddEnumArrayValue() throws Exception
+   {
+      target.addAnnotation(Test.class).setEnumValue(MockEnumType.FOO, MockEnumType.BAR);
+
+      List<Annotation<O>> annotations = target.getAnnotations();
+
+      Annotation<O> annotation = annotations.get(annotations.size() - 1);
+      MockEnumType[] enumArrayValue = annotation.getEnumArrayValue(MockEnumType.class);
+      assertArrayEquals(MockEnumType.values(), enumArrayValue);
+   }
+
+   @Test
+   public void testAddEnumArrayNameValue() throws Exception
+   {
+      target.addAnnotation(Test.class).setEnumArrayValue("name", MockEnumType.FOO, MockEnumType.BAR);
+
+      List<Annotation<O>> annotations = target.getAnnotations();
+
+      Annotation<O> annotation = annotations.get(annotations.size() - 1);
+      MockEnumType[] enumArrayValue = annotation.getEnumArrayValue(MockEnumType.class, "name");
+      assertArrayEquals(MockEnumType.values(), enumArrayValue);
+   }
+
+   @Test
+   public void testAddClassValue() throws Exception
+   {
+      target.addAnnotation(Test.class).setClassValue(Integer.class);
+
+      List<Annotation<O>> annotations = target.getAnnotations();
+
+      Annotation<O> annotation = annotations.get(annotations.size() - 1);
+      assertEquals(Integer.class, annotation.getClassValue());
+
+      annotation.setClassValue(int.class);
+      assertEquals(int.class, annotation.getClassValue());
+   }
+
+   @Test
+   public void testAddClassNameValue() throws Exception
+   {
+      target.addAnnotation(Test.class).setClassValue("type", Integer.class);
+
+      List<Annotation<O>> annotations = target.getAnnotations();
+
+      Annotation<O> annotation = annotations.get(annotations.size() - 1);
+      assertEquals(Integer.class, annotation.getClassValue("type"));
+
+      annotation.setClassValue("type", int.class);
+      assertEquals(int.class, annotation.getClassValue("type"));
+   }
+
+   @Test
+   public void testAddClassArrayValue() throws Exception
+   {
+      target.addAnnotation(Test.class).setClassArrayValue(Integer.class, int.class);
+
+      List<Annotation<O>> annotations = target.getAnnotations();
+
+      Annotation<O> annotation = annotations.get(annotations.size() - 1);
+      assertArrayEquals(new Class[] { Integer.class, int.class }, annotation.getClassArrayValue());
+   }
+
+   @Test
+   public void testAddClassArrayNameValue() throws Exception
+   {
+      target.addAnnotation(Test.class).setClassArrayValue("types", Integer.class, int.class);
+
+      List<Annotation<O>> annotations = target.getAnnotations();
+
+      Annotation<O> annotation = annotations.get(annotations.size() - 1);
+      assertArrayEquals(new Class[] { Integer.class, int.class }, annotation.getClassArrayValue("types"));
    }
 
    @Test
