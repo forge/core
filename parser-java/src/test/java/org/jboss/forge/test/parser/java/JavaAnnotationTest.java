@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.test.parser.java;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -68,7 +69,7 @@ public class JavaAnnotationTest
                javaAnnotation.getNestedClasses().get(0).getSourceType());
       JavaAnnotation nestedAnnotation = (JavaAnnotation) javaAnnotation.getNestedClasses().get(0);
       assertEquals("MockNestedJavaAnnotationType", nestedAnnotation.getName());
-      assertEquals(3, nestedAnnotation.getAnnotationElements().size());
+      assertEquals(5, nestedAnnotation.getAnnotationElements().size());
 
       assertTrue(nestedAnnotation.hasAnnotationElement("value"));
       AnnotationElement value = nestedAnnotation.getAnnotationElement("value");
@@ -91,6 +92,7 @@ public class JavaAnnotationTest
                charSequenceTypeType.getTypeArguments().get(0).getName());
       assertTrue(charSequenceTypeType.getTypeArguments().get(0).isWildcard());
       assertEquals("String.class", charSequenceType.getDefaultValue().getLiteral());
+      assertEquals(String.class, charSequenceType.getDefaultValue().getSingleClass());
 
       assertTrue(nestedAnnotation.hasAnnotationElement("metasyntacticVariable"));
       AnnotationElement metasyntacticVariable = nestedAnnotation.getAnnotationElement("metasyntacticVariable");
@@ -98,10 +100,36 @@ public class JavaAnnotationTest
       assertEquals("metasyntacticVariable", metasyntacticVariable.getName());
       Type<JavaAnnotation> metasyntacticVariableType = metasyntacticVariable.getTypeInspector();
       assertEquals("org.jboss.forge.test.parser.java.common.MockEnumType", metasyntacticVariableType.getQualifiedName());
+      assertFalse(metasyntacticVariableType.isArray());
       assertEquals(1, metasyntacticVariable.getAnnotations().size());
       assertEquals("Deprecated",
                metasyntacticVariable.getAnnotations().get(0).getName());
       assertSame(MockEnumType.FOO, metasyntacticVariable.getDefaultValue().getEnum(MockEnumType.class));
+
+      assertTrue(nestedAnnotation.hasAnnotationElement("numberTypes"));
+      AnnotationElement numberTypes = nestedAnnotation.getAnnotationElement("numberTypes");
+      assertTrue(nestedAnnotation.hasAnnotationElement(numberTypes));
+      assertEquals("numberTypes", numberTypes.getName());
+      Type<JavaAnnotation> numberTypesType = numberTypes.getTypeInspector();
+      assertEquals(Class.class.getSimpleName() + "[]", numberTypesType.getName());
+      assertTrue(numberTypesType.isParameterized());
+      assertEquals(1, numberTypesType.getTypeArguments().size());
+      assertEquals("? extends Number", numberTypesType.getTypeArguments().get(0).getName());
+      assertTrue(numberTypesType.getTypeArguments().get(0).isWildcard());
+      assertEquals(0, numberTypes.getDefaultValue().getClassArray().length);
+      numberTypes.getDefaultValue().setClassArray(Long.class, Double.class);
+      assertArrayEquals(new Class[] { Long.class, Double.class }, numberTypes.getDefaultValue().getClassArray());
+
+      assertTrue(nestedAnnotation.hasAnnotationElement("metasyntacticVariables"));
+      AnnotationElement metasyntacticVariables = nestedAnnotation.getAnnotationElement("metasyntacticVariables");
+      assertTrue(nestedAnnotation.hasAnnotationElement(metasyntacticVariables));
+      assertEquals("metasyntacticVariables", metasyntacticVariables.getName());
+      Type<JavaAnnotation> metasyntacticVariablesType = metasyntacticVariables.getTypeInspector();
+      assertEquals("org.jboss.forge.test.parser.java.common.MockEnumType", metasyntacticVariablesType.getQualifiedName());
+      assertTrue(metasyntacticVariablesType.isArray());
+      assertEquals(0, metasyntacticVariables.getDefaultValue().getEnumArray(MockEnumType.class).length);
+      metasyntacticVariables.getDefaultValue().setEnumArray(MockEnumType.values());
+      assertArrayEquals(MockEnumType.values(), metasyntacticVariables.getDefaultValue().getEnumArray(MockEnumType.class));
    }
 
    @Test
