@@ -1,0 +1,36 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+   <groupId>com.jboss.forge.ui</groupId>
+   <artifactId>firstui-addon</artifactId>
+   <version>0.0.1-SNAPSHOT</version>
+
+   <dependencies>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-addon-container-api</artifactId>
+         <version>2.0.0-SNAPSHOT</version>
+         <scope>provided</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>ui</artifactId>
+         <version>2.0.0-SNAPSHOT</version>
+         <classifier>forge-addon</classifier>
+      </dependency>
+   </dependencies>
+
+   <build>
+      <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <version>2.4</version>
+            <configuration>
+               <classifier>forge-addon</classifier>
+            </configuration>
+         </plugin>
+      </plugins>
+   </build>
+
+</project>
