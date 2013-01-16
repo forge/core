@@ -1,12 +1,14 @@
-package org.george.forge;
+package org.jboss.forge.ui.example;
 
-import org.jboss.forge.container.services.Remote;
+import javax.inject.Inject;
+
+import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.ui.Result;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UIContext;
 import org.jboss.forge.ui.UIInput;
 import org.jboss.forge.ui.UIValidationContext;
-import org.jboss.forge.ui.impl.UIInputImpl;
+
 
 /*
  * Copyright 2013 Red Hat, Inc. and/or its affiliates.
@@ -15,11 +17,12 @@ import org.jboss.forge.ui.impl.UIInputImpl;
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-@Remote
+@Exported
 public class MyFirstWizard implements UICommand
 {
 
-   private UIInput<String> firstName = new UIInputImpl<String>("firstName", String.class);
+   @Inject
+   private UIInput<String> firstName;
 
    public void initializeUI(UIContext context) throws Exception
    {

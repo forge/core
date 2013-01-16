@@ -15,6 +15,7 @@
       <module>impl</module>
       <module>bom</module>
       <module>tests</module>
+      <module>example</module>
    </modules>
    <dependencyManagement>
       <dependencies>
