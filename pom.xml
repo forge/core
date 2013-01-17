@@ -94,8 +94,9 @@
             <module>aesh</module>
             <module>dependency-api</module>
             <module>facets</module>
+            <module>projects</module>
             <module>parser-java</module>
-            <module>resource</module>
+            <module>resources</module>
             <module>ui</module>
          </modules>
       </profile>
