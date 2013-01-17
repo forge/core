@@ -7,7 +7,9 @@
 
 package org.jboss.forge.ui;
 
-
+/**
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ */
 public abstract class Result
 {
 

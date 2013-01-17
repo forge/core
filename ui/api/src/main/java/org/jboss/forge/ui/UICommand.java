@@ -12,6 +12,8 @@ import org.jboss.forge.container.services.Exported;
 @Exported
 public interface UICommand
 {
+   public UICommandID getId();
+
    public void initializeUI(UIContext context) throws Exception;
 
    public void validate(UIValidationContext context);

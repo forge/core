@@ -6,16 +6,6 @@
  */
 package org.jboss.forge.aesh.commands;
 
-import org.jboss.forge.container.Addon;
-import org.jboss.forge.container.AddonRegistry;
-import org.jboss.forge.container.services.Exported;
-import org.jboss.forge.ui.Result;
-import org.jboss.forge.ui.UICommand;
-import org.jboss.forge.ui.UIContext;
-import org.jboss.forge.ui.UIInput;
-import org.jboss.forge.ui.UIValidationContext;
-import org.jboss.forge.ui.impl.UIInputImpl;
-
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -23,59 +13,81 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+
+import org.jboss.forge.container.Addon;
+import org.jboss.forge.container.AddonRegistry;
+import org.jboss.forge.ui.Result;
+import org.jboss.forge.ui.UICommand;
+import org.jboss.forge.ui.UICommandID;
+import org.jboss.forge.ui.UIContext;
+import org.jboss.forge.ui.UIInput;
+import org.jboss.forge.ui.UIValidationContext;
+import org.jboss.forge.ui.base.SimpleUICommandID;
+
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  */
-@Exported
-public class ListServicesCommand implements UICommand {
+public class ListServicesCommand implements UICommand
+{
+   @Inject
+   private UIInput<String> name;
 
-    private UIInput<String> name;
+   @Inject
+   private AddonRegistry registry;
 
-    private AddonRegistry registry;
+   public ListServicesCommand(AddonRegistry registry)
+   {
+      this.registry = registry;
+   }
 
-    public ListServicesCommand(AddonRegistry registry) {
-        this.registry = registry;
-    }
+   @Override
+   public UICommandID getId()
+   {
+      return new SimpleUICommandID("list-services", "List all available services");
+   }
 
-    @Override
-    public void initializeUI(UIContext context) throws Exception {
-        name = new UIInputImpl<String>("list-services", String.class);
-        name.setLabel("list-services");
-        name.setRequired(true);
+   @Override
+   public void initializeUI(UIContext context) throws Exception
+   {
+      name.setLabel("list-services");
+      name.setRequired(true);
 
-        context.getUIBuilder().add(name);
-    }
+      context.getUIBuilder().add(name);
+   }
 
-    @Override
-    public void validate(UIValidationContext context) {
+   @Override
+   public void validate(UIValidationContext context)
+   {
 
-    }
+   }
 
-    @Override
-    public Result execute(UIContext context) throws Exception {
-        return Result.success(listServices());
-    }
+   @Override
+   public Result execute(UIContext context) throws Exception
+   {
+      return Result.success(listServices());
+   }
 
-    private String listServices() throws IOException
-    {
-        StringBuilder builder = new StringBuilder();
-        Set<Addon> addons = registry.getRegisteredAddons();
-        for (Addon addon : addons)
-        {
-            Set<Class<?>> serviceClasses = addon.getServiceRegistry().getServices();
-            for (Class<?> type : serviceClasses)
+   private String listServices() throws IOException
+   {
+      StringBuilder builder = new StringBuilder();
+      Set<Addon> addons = registry.getRegisteredAddons();
+      for (Addon addon : addons)
+      {
+         Set<Class<?>> serviceClasses = addon.getServiceRegistry().getServices();
+         for (Class<?> type : serviceClasses)
+         {
+            builder.append(type.getName()).append("\n");
+            for (Method method : type.getMethods())
             {
-                builder.append(type.getName()).append("\n");
-                for (Method method : type.getMethods())
-                {
-                    builder.append("\n\type - " + getName(method));
-                }
-                builder.append("\n");
+               builder.append("\n\type - " + getName(method));
             }
-        }
+            builder.append("\n");
+         }
+      }
 
-        return builder.toString();
-    }
+      return builder.toString();
+   }
 
    public String getName(Method method)
    {

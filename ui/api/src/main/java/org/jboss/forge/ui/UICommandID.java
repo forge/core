@@ -5,9 +5,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.ui.wizard;
+package org.jboss.forge.ui;
 
-public interface WizardId
+/**
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ */
+public interface UICommandID
 {
    String getName();
 

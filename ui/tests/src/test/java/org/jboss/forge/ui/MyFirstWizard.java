@@ -4,7 +4,6 @@ import javax.inject.Inject;
 
 import org.jboss.forge.ui.wizard.UIWizardBegin;
 import org.jboss.forge.ui.wizard.UIWizardContext;
-import org.jboss.forge.ui.wizard.WizardId;
 
 /*
  * Copyright 2013 Red Hat, Inc. and/or its affiliates.
@@ -18,25 +17,28 @@ public class MyFirstWizard implements UIWizardBegin
    @Inject
    private UIInput<String> firstName;
 
+   @Override
    public void initializeUI(UIContext context) throws Exception
    {
       context.getUIBuilder().add(firstName);
    }
 
+   @Override
    public void validate(UIValidationContext context)
    {
       System.out.println("Validate");
    }
 
+   @Override
    public Result execute(UIContext context) throws Exception
    {
       return Result.success();
    }
 
    @Override
-   public WizardId getId()
+   public UICommandID getId()
    {
-      return new WizardId()
+      return new UICommandID()
       {
          @Override
          public String getName()

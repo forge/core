@@ -13,9 +13,9 @@ import org.jboss.forge.ui.base.SimpleUICommandID;
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  */
-public class StopCommand extends ExitCommand
+public class QuitCommand extends ExitCommand
 {
-   public StopCommand(Console console)
+   public QuitCommand(Console console)
    {
       super(console);
    }
@@ -23,6 +23,6 @@ public class StopCommand extends ExitCommand
    @Override
    public UICommandID getId()
    {
-      return new SimpleUICommandID("stop", "Exit the shell");
+      return new SimpleUICommandID("quit", "Exit the shell");
    }
 }

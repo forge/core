@@ -6,10 +6,11 @@
  */
 package org.jboss.forge.aesh;
 
+import java.util.List;
+
 import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.cl.CommandLineParser;
 import org.jboss.aesh.cl.ParserBuilder;
-import org.jboss.aesh.cl.ParserGenerator;
 import org.jboss.aesh.cl.internal.ParameterInt;
 import org.jboss.aesh.complete.CompleteOperation;
 import org.jboss.aesh.complete.Completion;
@@ -18,8 +19,6 @@ import org.jboss.aesh.console.ConsoleOutput;
 import org.jboss.forge.ui.Result;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UIInput;
-
-import java.util.List;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>

@@ -11,5 +11,4 @@ import org.jboss.forge.ui.UICommand;
 
 public interface UIWizard extends UICommand
 {
-   public WizardId getId();
 }

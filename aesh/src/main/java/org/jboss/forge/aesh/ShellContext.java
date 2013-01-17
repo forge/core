@@ -6,15 +6,14 @@
  */
 package org.jboss.forge.aesh;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jboss.aesh.cl.CommandLine;
-import org.jboss.aesh.cl.CommandLineParser;
 import org.jboss.forge.ui.UIBuilder;
 import org.jboss.forge.ui.UIContext;
 import org.jboss.forge.ui.UIInput;
 import org.jboss.forge.ui.UIValidationContext;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>

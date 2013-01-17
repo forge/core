@@ -5,10 +5,11 @@ import javax.inject.Inject;
 import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.ui.Result;
 import org.jboss.forge.ui.UICommand;
+import org.jboss.forge.ui.UICommandID;
 import org.jboss.forge.ui.UIContext;
 import org.jboss.forge.ui.UIInput;
 import org.jboss.forge.ui.UIValidationContext;
-
+import org.jboss.forge.ui.base.SimpleUICommandID;
 
 /*
  * Copyright 2013 Red Hat, Inc. and/or its affiliates.
@@ -24,16 +25,25 @@ public class MyFirstWizard implements UICommand
    @Inject
    private UIInput<String> firstName;
 
+   @Override
+   public UICommandID getId()
+   {
+      return new SimpleUICommandID("Wizard", "Exit the shell");
+   }
+
+   @Override
    public void initializeUI(UIContext context) throws Exception
    {
       context.getUIBuilder().add(firstName);
    }
 
+   @Override
    public void validate(UIValidationContext context)
    {
       System.out.println("Validate");
    }
 
+   @Override
    public Result execute(UIContext context) throws Exception
    {
       return Result.success();
