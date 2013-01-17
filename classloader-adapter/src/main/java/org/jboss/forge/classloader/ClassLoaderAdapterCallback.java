@@ -36,23 +36,14 @@ public class ClassLoaderAdapterCallback implements MethodHandler
    public Object invoke(final Object obj, final Method proxy, final Method method, final Object[] args)
             throws Throwable
    {
-      return ClassLoaders.executeIn(toLoader, new Callable<Object>()
+      return ClassLoaders.executeIn(ProxyObject.class.getClassLoader(), new Callable<Object>()
       {
          @Override
          public Object call() throws Exception
          {
             try
             {
-               List<Class<?>> parameterTypes = convertParameterTypes(proxy);
-               
-               for (Method m : delegate.getClass().getMethods())
-               {
-                  m.getParameterTypes();
-               }
-               
-
-               Method delegateMethod = delegate.getClass().getMethod(proxy.getName(),
-                        parameterTypes.toArray(new Class<?>[parameterTypes.size()]));
+               Method delegateMethod = getDelegateMethod(proxy);
 
                List<Object> parameterValues = convertParameterValues(args, delegateMethod);
 
@@ -68,6 +59,15 @@ public class ClassLoaderAdapterCallback implements MethodHandler
                                  + proxy.getName() + "()] in ClassLoader ["
                                  + toLoader + "]", e);
             }
+         }
+
+         private Method getDelegateMethod(final Method proxy) throws ClassNotFoundException, NoSuchMethodException
+         {
+            List<Class<?>> parameterTypes = convertParameterTypes(proxy);
+
+            Method delegateMethod = delegate.getClass().getMethod(proxy.getName(),
+                     parameterTypes.toArray(new Class<?>[parameterTypes.size()]));
+            return delegateMethod;
          }
       });
    }
