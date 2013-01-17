@@ -21,6 +21,8 @@ import org.jboss.forge.container.util.ClassLoaders;
 
 public class ClassLoaderAdapterCallback implements MethodHandler
 {
+   private static final ClassLoader JAVASSIST_LOADER = ProxyObject.class.getClassLoader();
+
    private final ClassLoader fromLoader;
    private final ClassLoader toLoader;
    private final Object delegate;
@@ -61,17 +63,17 @@ public class ClassLoaderAdapterCallback implements MethodHandler
             }
          }
 
-         private Method getDelegateMethod(final Method proxy) throws ClassNotFoundException
+         private Method getDelegateMethod(final Method proxy) throws ClassNotFoundException, NoSuchMethodException
          {
-            List<Class<?>> parameterTypes = convertParameterTypes(proxy);
 
             Method delegateMethod = null;
             try
             {
+               List<Class<?>> parameterTypes = convertParameterTypes(proxy);
                delegateMethod = delegate.getClass().getMethod(proxy.getName(),
                         parameterTypes.toArray(new Class<?>[parameterTypes.size()]));
             }
-            catch (NoSuchMethodException e)
+            catch (ClassNotFoundException e)
             {
                method: for (Method m : delegate.getClass().getMethods())
                {
@@ -79,7 +81,7 @@ public class ClassLoaderAdapterCallback implements MethodHandler
                   String delegateMethodName = m.getName();
                   if (methodName.equals(delegateMethodName))
                   {
-                     Class<?>[] methodParameterTypes = method.getParameterTypes();
+                     Class<?>[] methodParameterTypes = proxy.getParameterTypes();
                      Class<?>[] delegateParameterTypes = m.getParameterTypes();
 
                      if (methodParameterTypes.length == delegateParameterTypes.length)
@@ -100,7 +102,10 @@ public class ClassLoaderAdapterCallback implements MethodHandler
                      }
                   }
                }
+               if (delegateMethod == null)
+                  throw e;
             }
+
             return delegateMethod;
          }
       });
@@ -204,7 +209,7 @@ public class ClassLoaderAdapterCallback implements MethodHandler
             final Object delegate, final Class<?>... types)
    {
 
-      return ClassLoaders.executeIn(ProxyObject.class.getClassLoader(), new Callable<T>()
+      return ClassLoaders.executeIn(JAVASSIST_LOADER, new Callable<T>()
       {
          @Override
          public T call() throws Exception

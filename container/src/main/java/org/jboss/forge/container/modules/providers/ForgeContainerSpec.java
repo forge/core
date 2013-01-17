@@ -1,3 +1,4 @@
+
 package org.jboss.forge.container.modules.providers;
 
 import java.util.Arrays;
@@ -30,7 +31,9 @@ public class ForgeContainerSpec extends BaseModuleSpecProvider
                         PathFilters.is("META-INF/services"),
                         PathFilters.is("org/jboss/forge/container"),
                         PathFilters.isChildOf("org/jboss/forge/container"),
-                        PathFilters.is("net/sf/cglib"), PathFilters.isChildOf("net/sf/cglib"))),
+                        PathFilters.is("net/sf/cglib"), PathFilters.isChildOf("net/sf/cglib"),
+                        PathFilters.is("javassist"), PathFilters.isChildOf("javassist")
+                        )),
                systemPaths));
    }
 
