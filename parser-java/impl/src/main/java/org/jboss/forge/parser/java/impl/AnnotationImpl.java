@@ -1,11 +1,12 @@
 /*
- * Copyright 2012 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2012-2013 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
 package org.jboss.forge.parser.java.impl;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -13,17 +14,23 @@ import java.util.ListIterator;
 
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ArrayInitializer;
 import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.IExtendedModifier;
 import org.eclipse.jdt.core.dom.MemberValuePair;
 import org.eclipse.jdt.core.dom.NormalAnnotation;
 import org.eclipse.jdt.core.dom.SingleMemberAnnotation;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
+import org.eclipse.jdt.core.dom.TypeLiteral;
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.Annotation;
 import org.jboss.forge.parser.java.AnnotationTarget;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaSource;
+import org.jboss.forge.parser.java.Type;
 import org.jboss.forge.parser.java.ValuePair;
+import org.jboss.forge.parser.java.util.Assert;
 import org.jboss.forge.parser.java.util.Strings;
 
 /**
@@ -273,6 +280,8 @@ public class AnnotationImpl<O extends JavaSource<O>, T> implements Annotation<O>
    @Override
    public Annotation<O> setLiteralValue(final String value)
    {
+      Assert.notNull(value, "null not accepted");
+
       if (isMarker())
       {
          convertTo(AnnotationType.SINGLE);
@@ -302,6 +311,8 @@ public class AnnotationImpl<O extends JavaSource<O>, T> implements Annotation<O>
    @SuppressWarnings("unchecked")
    public Annotation<O> setLiteralValue(final String name, final String value)
    {
+      Assert.notNull(value, "null not accepted");
+
       if (!isNormal() && !DEFAULT_VALUE.equals(name))
       {
          convertTo(AnnotationType.NORMAL);
@@ -309,6 +320,9 @@ public class AnnotationImpl<O extends JavaSource<O>, T> implements Annotation<O>
       else if (!isSingleValue() && !isNormal() && DEFAULT_VALUE.equals(name))
       {
          convertTo(AnnotationType.SINGLE);
+      }
+      if (isSingleValue() && DEFAULT_VALUE.equals(name))
+      {
          return setLiteralValue(value);
       }
 
@@ -384,54 +398,36 @@ public class AnnotationImpl<O extends JavaSource<O>, T> implements Annotation<O>
    @Override
    public Annotation<O> setEnumValue(final String name, final Enum<?> value)
    {
-      O origin = getOrigin();
-
-      if (origin instanceof JavaSource)
-      {
-         JavaSource<?> source = origin;
-         if (!source.hasImport(value.getDeclaringClass()))
-         {
-            source.addImport(value.getDeclaringClass());
-         }
-      }
-      return setLiteralValue(name, value.getDeclaringClass().getSimpleName() + "." + value.name());
+      return setEnumArrayValue(name, value);
    }
 
    @Override
    public Annotation<O> setEnumValue(final Enum<?>... values)
    {
-      O origin = getOrigin();
+      return setEnumArrayValue(values);
+   }
 
-      String result = new String();// = "{";
+   @Override
+   public Annotation<O> setEnumArrayValue(Enum<?>... values)
+   {
+      return setEnumArrayValue(DEFAULT_VALUE, values);
+   }
 
-      if (values.length > 1)
+   @Override
+   public Annotation<O> setEnumArrayValue(String name, final Enum<?>... values)
+   {
+      Assert.notNull(values, "null array not accepted");
+
+      final List<String> literals = new ArrayList<String>();
+
+      for (Enum<?> value : values)
       {
-         result = "{";
+         Assert.notNull(value, "null value not accepted");
+         getOrigin().addImport(value.getDeclaringClass());
+         literals.add(value.getDeclaringClass().getSimpleName() + "." + value.name());
       }
-
-      if (origin instanceof JavaSource)
-      {
-         JavaSource<?> source = origin;
-
-         for (Enum<?> value : values)
-         {
-            if (!source.hasImport(value.getDeclaringClass()))
-            {
-               source.addImport(value.getDeclaringClass());
-            }
-
-            result = result.concat(value.getDeclaringClass().getSimpleName() + "." + value.name() + ",");
-         }
-
-         result = result.substring(0, result.length() - 1);
-
-         if (values.length > 1)
-         {
-            result = result.concat("}");
-         }
-      }
-
-      return setLiteralValue(result);
+      return setLiteralValue(name,
+               literals.size() == 1 ? literals.get(0) : String.format("{%s}", Strings.join(literals, ",")));
    }
 
    /*
@@ -458,12 +454,25 @@ public class AnnotationImpl<O extends JavaSource<O>, T> implements Annotation<O>
    @SuppressWarnings("unchecked")
    protected void replace(org.eclipse.jdt.core.dom.Annotation oldNode, org.eclipse.jdt.core.dom.Annotation newNode)
    {
-      BodyDeclaration node = (BodyDeclaration) annotation.getParent();
+      List<IExtendedModifier> modifiers;
+      ASTNode parentNode = oldNode.getParent();
+      if (parentNode instanceof BodyDeclaration)
+      {
+         modifiers = ((BodyDeclaration) parentNode).modifiers();
+      }
+      else if (parentNode instanceof SingleVariableDeclaration)
+      {
+         modifiers = ((SingleVariableDeclaration) parentNode).modifiers();
+      }
+      else
+      {
+         throw new IllegalStateException("Cannot handle annotations attached to " + parentNode);
+      }
       
-      int pos = node.modifiers().indexOf(annotation);
+      int pos = modifiers.indexOf(annotation);
       if (pos >= 0)
       {
-         node.modifiers().set(pos, newNode);
+         modifiers.set(pos, newNode);
       }
    }
 
@@ -549,7 +558,6 @@ public class AnnotationImpl<O extends JavaSource<O>, T> implements Annotation<O>
       }
       Annotation<O> result = new Nested(this);
       
-      
       String stub = "@" + getName() + "(" + name + "= 0 ) public class Stub { }";
       JavaClass temp = (JavaClass) JavaParser.parse(stub);
 
@@ -616,4 +624,184 @@ public class AnnotationImpl<O extends JavaSource<O>, T> implements Annotation<O>
       return null;
    }
 
+   @Override
+   public <E extends Enum<E>> E[] getEnumArrayValue(Class<E> type)
+   {
+      return getEnumArrayValue(type, DEFAULT_VALUE);
+   }
+
+   @Override
+   public <E extends Enum<E>> E[] getEnumArrayValue(Class<E> type, String name)
+   {
+      final Expression expr = getElementValueExpression(name);
+      if (expr instanceof ArrayInitializer)
+      {
+         final List<E> results = new ArrayList<E>();
+         @SuppressWarnings("unchecked")
+         final List<Expression> arrayElements = ((ArrayInitializer) expr).expressions();
+         for (Expression arrayElement : arrayElements)
+         {
+            final E instance = convertLiteralToEnum(type, arrayElement.toString());
+            results.add(instance);
+         }
+         @SuppressWarnings("unchecked")
+         final E[] result = (E[]) Array.newInstance(type, results.size());
+         return results.toArray(result);
+      }
+      else if (expr != null)
+      {
+         final E instance = convertLiteralToEnum(type, expr.toString());
+         if (type.isInstance(instance))
+         {
+            @SuppressWarnings("unchecked")
+            final E[] result = (E[]) Array.newInstance(type, 1);
+            result[0] = instance;
+            return result;
+         }
+      }
+      return null;
+   }
+
+   @Override
+   public Class<?> getClassValue()
+   {
+      return getClassValue(DEFAULT_VALUE);
+   }
+
+   @Override
+   public Class<?> getClassValue(String name)
+   {
+      final TypeLiteral typeLiteral = getElementValueExpression(name);
+      return resolveTypeLiteral(typeLiteral);
+   }
+
+   @Override
+   public Class<?>[] getClassArrayValue()
+   {
+      return getClassArrayValue(DEFAULT_VALUE);
+   }
+
+   @Override
+   public Class<?>[] getClassArrayValue(String name)
+   {
+      final Expression expr = getElementValueExpression(name);
+      if (expr instanceof ArrayInitializer)
+      {
+         final List<Class<?>> result = new ArrayList<Class<?>>();
+         @SuppressWarnings("unchecked")
+         final List<Expression> arrayElements = ((ArrayInitializer) expr).expressions();
+         for (Expression expression : arrayElements)
+         {
+            final Class<?> type = resolveTypeLiteral((TypeLiteral) expression);
+            result.add(type);
+         }
+         return result.toArray(new Class[result.size()]);
+      }
+      else if (expr instanceof TypeLiteral)
+      {
+         return new Class[] { resolveTypeLiteral((TypeLiteral) expr) };
+      }
+      return null;
+   }
+
+   @Override
+   public Annotation<O> setClassValue(String name, Class<?> value)
+   {
+      Assert.notNull(value, "null not accepted");
+
+      if (!value.isPrimitive())
+      {
+         getOrigin().addImport(value);
+      }
+      return setLiteralValue(name, value.getSimpleName() + ".class");
+   }
+
+   @Override
+   public Annotation<O> setClassValue(Class<?> value)
+   {
+      return setClassValue(DEFAULT_VALUE, value);
+   }
+
+   @Override
+   public Annotation<O> setClassArrayValue(Class<?>... values)
+   {
+      return setClassArrayValue(DEFAULT_VALUE, values);
+   }
+
+   @Override
+   public Annotation<O> setClassArrayValue(String name, Class<?>... values)
+   {
+      Assert.notNull(values, "null array not accepted");
+
+      final List<String> literals = new ArrayList<String>();
+
+      for (Class<?> value : values)
+      {
+         Assert.notNull(value, "null value not accepted");
+
+         if (!value.isPrimitive())
+         {
+            getOrigin().addImport(value);
+         }
+         literals.add(value.getSimpleName() + ".class");
+      }
+      return setLiteralValue(name,
+               literals.size() == 1 ? literals.get(0) : String.format("{%s}", Strings.join(literals, ",")));
+   }
+
+   private <E extends Expression> E getElementValueExpression(String name)
+   {
+      if (isSingleValue() && DEFAULT_VALUE.equals(name))
+      {
+         @SuppressWarnings("unchecked")
+         final E result = (E) ((SingleMemberAnnotation) annotation).getValue();
+         return result;
+      }
+      if (isNormal())
+      {
+         for (Object v : ((NormalAnnotation) annotation).values())
+         {
+            if (v instanceof MemberValuePair)
+            {
+               MemberValuePair pair = (MemberValuePair) v;
+               if (pair.getName().getFullyQualifiedName().equals(name))
+               {
+                  @SuppressWarnings("unchecked")
+                  final E result = (E) pair.getValue();
+                  return result;
+               }
+            }
+         }
+      }
+      return null;
+   }
+
+   private Class<?> resolveTypeLiteral(TypeLiteral typeLiteral)
+   {
+      final Type<O> type = new TypeImpl<O>(getOrigin(), typeLiteral.getType());
+      if (type.isPrimitive())
+      {
+         final Class<?>[] primitiveTypes = { boolean.class, byte.class, short.class, int.class, long.class,
+                  float.class, double.class };
+         for (Class<?> c : primitiveTypes)
+         {
+            if (c.getSimpleName().equals(type.getName()))
+            {
+               return c;
+            }
+         }
+         return null;
+      }
+
+      final String classname = type.getQualifiedName();
+
+      try
+      {
+         return Class.forName(getOrigin().resolveType(classname));
+      }
+      catch (ClassNotFoundException e)
+      {
+         return null;
+      }
+   }
 }

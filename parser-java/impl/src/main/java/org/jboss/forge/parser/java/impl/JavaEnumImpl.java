@@ -14,20 +14,15 @@ import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.EnumConstantDeclaration;
 import org.eclipse.jdt.core.dom.EnumDeclaration;
-import org.eclipse.jdt.core.dom.Type;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jface.text.Document;
 import org.jboss.forge.parser.java.EnumConstant;
-import org.jboss.forge.parser.java.Import;
 import org.jboss.forge.parser.java.JavaEnum;
 import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.parser.java.SourceType;
-import org.jboss.forge.parser.java.util.Strings;
-import org.jboss.forge.parser.java.util.Types;
 
 /**
  * Represents a Java Source File containing an Enum Type.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class JavaEnumImpl extends AbstractJavaSourceMemberHolder<JavaEnum> implements JavaEnum

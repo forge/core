@@ -95,7 +95,12 @@ public class TypesTest
 
       assertEquals("int", Types.stripArray(int[][][][][].class.getSimpleName()));
       assertEquals("List<Long>", Types.stripArray("List<Long>[]"));
-
+      assertEquals("java.lang.Class<?>", Types.stripArray("java.lang.Class<?>[]"));
+      assertEquals("java.lang.Class<T>", Types.stripArray("java.lang.Class<T>[]"));
+      assertEquals("java.lang.Class<LONG_TYPE_VARIABLE_NAME>",
+               Types.stripArray("java.lang.Class<LONG_TYPE_VARIABLE_NAME>[]"));
+      assertEquals("java.lang.Class<? extends Number>", Types.stripArray("java.lang.Class<? extends Number>[]"));
+      assertEquals("java.lang.Class<E extends Enum<E>>", Types.stripArray("java.lang.Class<E extends Enum<E>>[]"));
    }
 
    @Test
@@ -107,4 +112,22 @@ public class TypesTest
       assertEquals(3, Types.getArrayDimension(int[][][].class.getName()));
 
    }
+
+   @Test
+   public void testGenerics()
+   {
+      assertEquals("byte", Types.stripGenerics("byte"));
+      assertEquals("byte[]", Types.stripGenerics("byte[]"));
+      assertEquals("java.lang.Class", Types.stripGenerics("java.lang.Class"));
+      assertEquals("java.lang.Class", Types.stripGenerics("java.lang.Class<?>"));
+      assertEquals("java.lang.Class", Types.stripGenerics("java.lang.Class<? extends Number>"));
+      assertEquals("java.lang.Class", Types.stripGenerics("java.lang.Class<E extends Enum<E>>"));
+      assertEquals("java.lang.Class[]", Types.stripGenerics("java.lang.Class[]"));
+      assertEquals("java.lang.Class[]", Types.stripGenerics("java.lang.Class<?>[]"));
+      assertEquals("java.lang.Class[]", Types.stripGenerics("java.lang.Class<T>[]"));
+      assertEquals("java.lang.Class[]", Types.stripGenerics("java.lang.Class<LONG_TYPE_VARIABLE_NAME>[]"));
+      assertEquals("java.lang.Class[]", Types.stripGenerics("java.lang.Class<? extends Number>[]"));
+      assertEquals("java.lang.Class[]", Types.stripGenerics("java.lang.Class<E extends Enum<E>>[]"));
+   }
+
 }
