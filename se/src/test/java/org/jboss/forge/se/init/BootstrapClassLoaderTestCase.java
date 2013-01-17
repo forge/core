@@ -3,6 +3,7 @@ package org.jboss.forge.se.init;
 import java.lang.reflect.Method;
 import java.util.Set;
 
+import org.jboss.forge.classloader.ClassLoaderAdapterCallback;
 import org.jboss.forge.container.Addon;
 import org.jboss.forge.container.AddonFilters;
 import org.jboss.forge.container.AddonId;

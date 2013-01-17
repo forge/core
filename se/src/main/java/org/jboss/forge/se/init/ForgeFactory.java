@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.se.init;
 
+import org.jboss.forge.classloader.ClassLoaderAdapterCallback;
 import org.jboss.forge.container.Forge;
 
 public class ForgeFactory

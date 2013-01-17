@@ -9,7 +9,7 @@
    </parent>
    <artifactId>ui-parent</artifactId>
    <packaging>pom</packaging>
-   <name>Forge - UI AddOn Parent</name>
+   <name>Forge - UI Addon Parent</name>
    <modules>
       <module>api</module>
       <module>impl</module>

@@ -127,21 +127,16 @@ public class ContainerServiceExtension implements Extension
                      @Override
                      public Object create(Bean<Object> bean, CreationalContext<Object> creationalContext)
                      {
-                        return produceRemoteService(
-                                 BeanManagerUtils.getContextualInstance(manager, AddonRegistry.class), entry.getValue());
-                     }
-
-                     private Object produceRemoteService(AddonRegistry registry, InjectionPoint ip)
-                     {
-                        Member member = ip.getMember();
-                        Class<?> type = null;
+                        InjectionPoint injectionPoint = entry.getValue();
+                        Member member = injectionPoint.getMember();
+                        Class<?> serviceType = null;
                         if (member instanceof Method)
                         {
-                           type = ((Method) member).getReturnType();
+                           serviceType = ((Method) member).getReturnType();
                         }
                         else if (member instanceof Field)
                         {
-                           type = ((Field) member).getType();
+                           serviceType = ((Field) member).getType();
                         }
                         else
                         {
@@ -149,8 +144,15 @@ public class ContainerServiceExtension implements Extension
                                     "Cannot handle producer for non-Field and non-Method member type: " + member);
                         }
 
-                        return Enhancer.create((Class<?>) type, new ExportedInstanceProxyBeanCallback(registry, type,
-                                 ip));
+                        return Enhancer.create((Class<?>) serviceType,
+                                 new ExportedInstanceProxyBeanCallback(
+                                          BeanManagerUtils.getContextualInstance(
+                                                   manager,
+                                                   AddonRegistry.class
+                                                   ),
+                                          serviceType,
+                                          injectionPoint
+                                 ));
                      }
                   })
                   .qualifiers(SERVICE_LITERAL)
