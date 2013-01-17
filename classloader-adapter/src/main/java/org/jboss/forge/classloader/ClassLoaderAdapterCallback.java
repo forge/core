@@ -5,7 +5,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -36,7 +36,7 @@ public class ClassLoaderAdapterCallback implements MethodHandler
    public Object invoke(final Object obj, final Method proxy, final Method method, final Object[] args)
             throws Throwable
    {
-      return ClassLoaders.executeIn(ProxyObject.class.getClassLoader(), new Callable<Object>()
+      return ClassLoaders.executeIn(toLoader, new Callable<Object>()
       {
          @Override
          public Object call() throws Exception
@@ -61,12 +61,46 @@ public class ClassLoaderAdapterCallback implements MethodHandler
             }
          }
 
-         private Method getDelegateMethod(final Method proxy) throws ClassNotFoundException, NoSuchMethodException
+         private Method getDelegateMethod(final Method proxy) throws ClassNotFoundException
          {
             List<Class<?>> parameterTypes = convertParameterTypes(proxy);
 
-            Method delegateMethod = delegate.getClass().getMethod(proxy.getName(),
-                     parameterTypes.toArray(new Class<?>[parameterTypes.size()]));
+            Method delegateMethod = null;
+            try
+            {
+               delegateMethod = delegate.getClass().getMethod(proxy.getName(),
+                        parameterTypes.toArray(new Class<?>[parameterTypes.size()]));
+            }
+            catch (NoSuchMethodException e)
+            {
+               method: for (Method m : delegate.getClass().getMethods())
+               {
+                  String methodName = proxy.getName();
+                  String delegateMethodName = m.getName();
+                  if (methodName.equals(delegateMethodName))
+                  {
+                     Class<?>[] methodParameterTypes = method.getParameterTypes();
+                     Class<?>[] delegateParameterTypes = m.getParameterTypes();
+
+                     if (methodParameterTypes.length == delegateParameterTypes.length)
+                     {
+                        for (int i = 0; i < methodParameterTypes.length; i++)
+                        {
+                           Class<?> methodType = methodParameterTypes[i];
+                           Class<?> delegateType = delegateParameterTypes[i];
+
+                           if (!methodType.getName().equals(delegateType.getName()))
+                           {
+                              continue method;
+                           }
+                        }
+
+                        delegateMethod = m;
+                        break;
+                     }
+                  }
+               }
+            }
             return delegateMethod;
          }
       });
@@ -203,7 +237,7 @@ public class ClassLoaderAdapterCallback implements MethodHandler
 
             ProxyFactory f = new ProxyFactory();
 
-            f.setUseCache(false);
+            f.setUseCache(true);
 
             if (!hierarchy[0].isInterface())
             {
@@ -268,7 +302,7 @@ public class ClassLoaderAdapterCallback implements MethodHandler
    {
       public static Class<?>[] getCompatibleClassHierarchy(ClassLoader loader, Class<?> origin)
       {
-         Set<Class<?>> hierarchy = new HashSet<Class<?>>();
+         Set<Class<?>> hierarchy = new LinkedHashSet<Class<?>>();
 
          Class<?> baseClass = origin;
 
