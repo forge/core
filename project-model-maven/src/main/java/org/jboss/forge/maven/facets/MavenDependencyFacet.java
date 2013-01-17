@@ -322,7 +322,7 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
       List<Dependency> result = new ArrayList<Dependency>();
       for (Dependency dependency : managedDependencies)
       {
-         managedDependencies.add(resolveProperties(dependency));
+         result.add(resolveProperties(dependency));
       }
       return result;
    }
