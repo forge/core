@@ -39,11 +39,11 @@ public class ResourceFactory
          for (ExportedInstance<ResourceGenerator> instance : getRegisteredResourceGenerators())
          {
             ResourceGenerator generator = instance.get();
-            if (generator.handles(underlyingResource))
+            if (generator.handles(type, underlyingResource))
             {
-               if (type.isAssignableFrom(generator.getResourceType(underlyingResource)))
+               if (type.isAssignableFrom(generator.getResourceType(type, underlyingResource)))
                {
-                  Resource<?> resource = generator.getResource(this, underlyingResource);
+                  Resource<?> resource = generator.getResource(this, type, underlyingResource);
                   return (T) resource;
                }
             }
@@ -61,9 +61,9 @@ public class ResourceFactory
          for (ExportedInstance<ResourceGenerator> instance : getRegisteredResourceGenerators())
          {
             ResourceGenerator generator = instance.get();
-            if (generator.handles(underlyingResource))
+            if (generator.handles(Resource.class, underlyingResource))
             {
-               Resource<?> resource = generator.getResource(this, underlyingResource);
+               Resource<?> resource = generator.getResource(this, Resource.class, underlyingResource);
                return (Resource<E>) resource;
             }
             instance.release(generator);

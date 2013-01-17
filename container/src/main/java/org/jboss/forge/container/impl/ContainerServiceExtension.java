@@ -9,6 +9,7 @@ package org.jboss.forge.container.impl;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -47,8 +48,8 @@ public class ContainerServiceExtension implements Extension
    private static Logger logger = Logger.getLogger(ContainerServiceExtension.class.getName());
 
    private Map<Class<?>, AnnotatedType<?>> services = new HashMap<Class<?>, AnnotatedType<?>>();
-   private Map<Class<?>, InjectionPoint> requestedServices = new HashMap<Class<?>, InjectionPoint>();
-   private static final ServiceLiteral SERVICE_LITERAL = new ServiceLiteral();
+   private Map<InjectionPoint, Class<?>> requestedServices = new HashMap<InjectionPoint, Class<?>>();
+   private Map<InjectionPoint, ServiceLiteral> requestedServiceLiterals = new HashMap<InjectionPoint, ServiceLiteral>();
 
    public void processRemotes(@Observes ProcessAnnotatedType<?> event) throws InstantiationException,
             IllegalAccessException
@@ -83,8 +84,10 @@ public class ContainerServiceExtension implements Extension
          }
          else
          {
-            event.setInjectionPoint(new ExportedInstanceInjectionPoint(event.getInjectionPoint(), SERVICE_LITERAL));
-            requestedServices.put(injectionBeanValueType, event.getInjectionPoint());
+            ServiceLiteral serviceLiteral = new ServiceLiteral();
+            event.setInjectionPoint(new ExportedInstanceInjectionPoint(event.getInjectionPoint(), serviceLiteral));
+            requestedServices.put(event.getInjectionPoint(), injectionBeanValueType);
+            requestedServiceLiterals.put(event.getInjectionPoint(), serviceLiteral);
          }
       }
       else if (remote != null)
@@ -106,16 +109,21 @@ public class ContainerServiceExtension implements Extension
       }
    }
 
-   public void wireCrossContainerEvents(@Observes AfterBeanDiscovery event, final BeanManager manager)
+   public void wireCrossContainerServicesAndEvents(@Observes AfterBeanDiscovery event, final BeanManager manager)
    {
       event.addObserverMethod(new CrossContainerObserverMethod());
 
       // needs to happen in the addon that is requesting the service
-      for (final Entry<Class<?>, InjectionPoint> entry : requestedServices.entrySet())
+      for (final Entry<InjectionPoint, Class<?>> entry : requestedServices.entrySet())
       {
+         final InjectionPoint injectionPoint = entry.getKey();
+         Set<Type> typeClosure = injectionPoint.getAnnotated().getTypeClosure();
+         Class<?> beanClass = entry.getValue();
+         final Member member = injectionPoint.getMember();
+
          Bean<?> serviceBean = new BeanBuilder<Object>(manager)
-                  .beanClass(entry.getKey())
-                  .types(entry.getValue().getAnnotated().getTypeClosure())
+                  .beanClass(beanClass)
+                  .types(typeClosure)
                   .beanLifecycle(new ContextualLifecycle<Object>()
                   {
                      @Override
@@ -127,8 +135,6 @@ public class ContainerServiceExtension implements Extension
                      @Override
                      public Object create(Bean<Object> bean, CreationalContext<Object> creationalContext)
                      {
-                        InjectionPoint injectionPoint = entry.getValue();
-                        Member member = injectionPoint.getMember();
                         Class<?> serviceType = null;
                         if (member instanceof Method)
                         {
@@ -155,7 +161,7 @@ public class ContainerServiceExtension implements Extension
                                  ));
                      }
                   })
-                  .qualifiers(SERVICE_LITERAL)
+                  .qualifiers(requestedServiceLiterals.get(injectionPoint))
                   .create();
 
          event.addBean(serviceBean);

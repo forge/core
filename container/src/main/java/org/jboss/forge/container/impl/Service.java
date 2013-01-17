@@ -14,5 +14,5 @@ import javax.inject.Qualifier;
 @Target({ ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
 public @interface Service
 {
-
+   int id();
 }

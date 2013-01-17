@@ -22,7 +22,7 @@ import org.jboss.forge.resource.events.TempResourceCreated;
  * @author Mike Brock
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public abstract class FileResource<T extends FileResource<?>> extends AbstractResource<File>
+public abstract class FileResource<T extends FileResource<T>> extends AbstractResource<File>
 {
    protected boolean scratch;
 

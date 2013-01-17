@@ -5,10 +5,10 @@ import java.io.File;
 import org.jboss.forge.container.services.Exported;
 
 @Exported
-public class FileResourceGenerator implements ResourceGenerator<File>
+public class FileResourceGenerator implements ResourceGenerator<FileResource<?>, File>
 {
    @Override
-   public boolean handles(Object resource)
+   public boolean handles(Class<?> type, Object resource)
    {
       if (resource instanceof File)
       {
@@ -18,19 +18,19 @@ public class FileResourceGenerator implements ResourceGenerator<File>
    }
 
    @Override
-   public Class<? extends Resource<File>> getResourceType(File resource)
+   @SuppressWarnings("unchecked")
+   public <T extends Resource<File>> T getResource(ResourceFactory factory, Class<FileResource<?>> type, File resource)
    {
-      if (resource.isDirectory())
-         return DirectoryResource.class;
-      return UnknownFileResource.class;
+      if (type.isAssignableFrom(DirectoryResource.class) || resource.isDirectory())
+         return (T) new DirectoryResource(factory, resource);
+      return (T) new UnknownFileResource(factory, resource);
    }
 
    @Override
-   @SuppressWarnings("unchecked")
-   public <T extends Resource<File>> T getResource(ResourceFactory factory, File resource)
+   public <T extends Resource<File>> Class<?> getResourceType(Class<FileResource<?>> type, File resource)
    {
-      if (resource.isDirectory())
-         return (T) new DirectoryResource(factory, resource);
-      return (T) new UnknownFileResource(factory, resource);
+      if (type.isAssignableFrom(DirectoryResource.class) || resource.isDirectory())
+         return DirectoryResource.class;
+      return UnknownFileResource.class;
    }
 }

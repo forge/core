@@ -104,4 +104,27 @@ public class NewProjectCommand implements UICommand
       return Result.success();
    }
 
+   /*
+    * Getters
+    */
+
+   public UIInput<String> getNamed()
+   {
+      return named;
+   }
+
+   public UIInput<DirectoryResource> getTargetDirectory()
+   {
+      return targetDirectory;
+   }
+
+   public UIInput<Boolean> getOverwrite()
+   {
+      return overwrite;
+   }
+
+   public UIInput<ProjectType> getType()
+   {
+      return type;
+   }
 }

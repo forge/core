@@ -6,10 +6,10 @@ import org.jboss.forge.resource.ResourceFactory;
 import org.jboss.forge.resource.ResourceGenerator;
 
 @Exported
-public class MockStringResourceGenerator implements ResourceGenerator<String>
+public class MockStringResourceGenerator implements ResourceGenerator<MockStringResource, String>
 {
    @Override
-   public boolean handles(Object resource)
+   public boolean handles(Class<?> type, Object resource)
    {
       if (resource instanceof String)
       {
@@ -20,15 +20,16 @@ public class MockStringResourceGenerator implements ResourceGenerator<String>
    }
 
    @Override
-   public Class<? extends Resource<String>> getResourceType(String resource)
+   @SuppressWarnings("unchecked")
+   public <T extends Resource<String>> T getResource(ResourceFactory factory, Class<MockStringResource> type,
+            String resource)
    {
-      return MockStringResource.class;
+      return (T) new MockStringResource(factory, resource);
    }
 
    @Override
-   @SuppressWarnings("unchecked")
-   public <T extends Resource<String>> T getResource(ResourceFactory factory, String resource)
+   public <T extends Resource<String>> Class<?> getResourceType(Class<MockStringResource> type, String resource)
    {
-      return (T) new MockStringResource(factory, resource);
+      return MockStringResource.class;
    }
 }
