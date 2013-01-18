@@ -6,14 +6,6 @@
  */
 package org.jboss.forge.aesh;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.console.Console;
 import org.jboss.aesh.console.ConsoleOutput;
@@ -25,6 +17,13 @@ import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.ContainerControl;
 import org.jboss.forge.container.event.Perform;
 import org.jboss.forge.container.services.Exported;
+
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>

@@ -6,8 +6,6 @@
  */
 package org.jboss.forge.aesh;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.ui.Result;
 import org.jboss.forge.ui.UICommand;
@@ -16,6 +14,8 @@ import org.jboss.forge.ui.UIContext;
 import org.jboss.forge.ui.UIInput;
 import org.jboss.forge.ui.UIValidationContext;
 import org.jboss.forge.ui.base.SimpleUICommandID;
+
+import javax.inject.Inject;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>

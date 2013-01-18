@@ -6,15 +6,6 @@
  */
 package org.jboss.forge.aesh.commands;
 
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-
 import org.jboss.forge.container.Addon;
 import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.ui.Result;
@@ -25,14 +16,19 @@ import org.jboss.forge.ui.UIInput;
 import org.jboss.forge.ui.UIValidationContext;
 import org.jboss.forge.ui.base.SimpleUICommandID;
 
+import javax.inject.Inject;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  */
 public class ListServicesCommand implements UICommand
 {
-   @Inject
-   private UIInput<String> name;
-
    @Inject
    private AddonRegistry registry;
 
@@ -50,10 +46,6 @@ public class ListServicesCommand implements UICommand
    @Override
    public void initializeUI(UIContext context) throws Exception
    {
-      name.setLabel("list-services");
-      name.setRequired(true);
-
-      context.getUIBuilder().add(name);
    }
 
    @Override

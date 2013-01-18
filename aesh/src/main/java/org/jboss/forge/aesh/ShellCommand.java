@@ -6,19 +6,18 @@
  */
 package org.jboss.forge.aesh;
 
-import java.util.List;
-
 import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.cl.CommandLineParser;
-import org.jboss.aesh.cl.ParserBuilder;
 import org.jboss.aesh.cl.internal.ParameterInt;
 import org.jboss.aesh.complete.CompleteOperation;
 import org.jboss.aesh.complete.Completion;
 import org.jboss.aesh.console.Console;
 import org.jboss.aesh.console.ConsoleOutput;
+import org.jboss.forge.aesh.util.CommandLineUtil;
 import org.jboss.forge.ui.Result;
 import org.jboss.forge.ui.UICommand;
-import org.jboss.forge.ui.UIInput;
+
+import java.util.List;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
@@ -50,14 +49,7 @@ public class ShellCommand implements Completion {
     }
 
     public void generateParser(UICommand command) {
-        ParserBuilder builder = new ParserBuilder();
-        ParameterInt parameter =
-                new ParameterInt(command.getId().getName(), command.getId().getDescription());
-        for(UIInput<?> input : context.getInputs()) {
-            //TODO: add inputs as parameter options
-        }
-        builder.addParameter(parameter);
-        parser = builder.generateParser();
+        parser = CommandLineUtil.generateParser(command, context);
     }
 
     public CommandLine parse(String line) throws IllegalArgumentException {
@@ -65,7 +57,7 @@ public class ShellCommand implements Completion {
     }
 
     public void run(ConsoleOutput consoleOutput, CommandLine commandLine) throws Exception {
-        context.setCommandLine(commandLine);
+        CommandLineUtil.populateUIInputs(commandLine, context);
         Result result = command.execute(context);
         if(result != null &&
                 result.getMessage() != null && result.getMessage().length() > 0)

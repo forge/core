@@ -6,33 +6,23 @@
  */
 package org.jboss.forge.aesh;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.jboss.aesh.cl.CommandLine;
 import org.jboss.forge.ui.UIBuilder;
 import org.jboss.forge.ui.UIContext;
 import org.jboss.forge.ui.UIInput;
 import org.jboss.forge.ui.UIValidationContext;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  */
 public class ShellContext implements UIValidationContext, UIContext, UIBuilder {
 
-    private CommandLine commandLine;
     private boolean standalone = false;
     private List<UIInput<?>> inputs = new ArrayList<UIInput<?>>();
 
     public ShellContext() {
-    }
-
-    public CommandLine getCommandLine() {
-        return commandLine;
-    }
-
-    public void setCommandLine(CommandLine cl) {
-        commandLine = cl;
     }
 
     public boolean isStandalone() {
@@ -51,6 +41,14 @@ public class ShellContext implements UIValidationContext, UIContext, UIBuilder {
 
     public List<UIInput<?>> getInputs() {
         return inputs;
+    }
+
+    public UIInput<?> findInput(String name) {
+        for(UIInput<?> input : inputs) {
+            if(input.getName().equals(name))
+                return input;
+        }
+        return null;
     }
 
     @Override
