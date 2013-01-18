@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
+import java.util.logging.Logger;
 
 import org.jboss.forge.addon.dependency.Coordinate;
 import org.jboss.forge.addon.dependency.DependencyNode;
@@ -27,9 +28,9 @@ import org.jboss.forge.container.AddonRepository;
 /**
  * When an addon is installed, another addons could be required. This object returns the necessary information for the
  * installation of an addon to succeed, like required addons and dependencies
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ *
  */
 public class InstallRequest
 {
@@ -38,6 +39,8 @@ public class InstallRequest
    private DependencyNode requestedAddonNode;
    private Stack<DependencyNode> requiredAddons = new Stack<DependencyNode>();
    private Stack<DependencyNode> optionalAddons = new Stack<DependencyNode>();
+
+   private Logger log = Logger.getLogger(getClass().getName());
 
    /**
     * Package-access constructor. Only AddonManager should be allowed to call this constructor.
@@ -101,8 +104,15 @@ public class InstallRequest
       for (DependencyNode requiredAddon : getRequiredAddons())
       {
          AddonId addonEntry = toAddonId(requiredAddon);
-         entries.add(addonEntry);
-         deploy(addonEntry, requiredAddon);
+         if (repository.isDeployed(addonEntry))
+         {
+            log.info("Addon " + addonEntry + " is already deployed. Skipping...");
+         }
+         else
+         {
+            entries.add(addonEntry);
+            deploy(addonEntry, requiredAddon);
+         }
       }
 
       // Deploy the requested addon
@@ -142,9 +152,18 @@ public class InstallRequest
    {
       List<File> resourceJars = toResourceJars(Dependencies.select(root, new LocalResourceFilter(root)));
 
+      if (resourceJars.isEmpty())
+      {
+         log.fine("No resource JARs found for " + addon);
+      }
       List<AddonDependency> addonDependencies =
-               toAddonDependencies(Dependencies.select(root, new DirectAddonFilter(root)));
+               toAddonDependencies(Dependencies.select(root.getChildren().iterator(), new DirectAddonFilter(root)));
 
+      if (addonDependencies.isEmpty())
+      {
+         log.fine("No dependencies found for addon " + addon);
+      }
+      log.info("Deploying addon " + addon);
       repository.deploy(addon, addonDependencies, resourceJars);
    }
 

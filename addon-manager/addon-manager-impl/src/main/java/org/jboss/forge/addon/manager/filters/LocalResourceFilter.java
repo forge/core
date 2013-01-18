@@ -4,9 +4,17 @@ import org.jboss.forge.addon.dependency.DependencyNode;
 import org.jboss.forge.addon.dependency.collection.Dependencies;
 import org.jboss.forge.addon.dependency.collection.Predicate;
 
+/**
+ * Figures out if a dependency should be treated as a JAR or as an Addon.
+ *
+ * Also if that dependency is a direct dependency of the current addon.
+ *
+ * If it is direct, then it should be accepted and packaged as a JAR in the addon deployment. Otherwise, ignore it
+ *
+ */
 public class LocalResourceFilter implements Predicate<DependencyNode>
 {
-   private DependencyNode addon;
+   private final DependencyNode addon;
 
    public LocalResourceFilter(DependencyNode addon)
    {
@@ -16,7 +24,7 @@ public class LocalResourceFilter implements Predicate<DependencyNode>
    @Override
    public boolean accept(DependencyNode node)
    {
-      if (isDependencyAddon(node) || isProvided(node) || isNotLocal(node))
+      if (isDependencyAddon(node) || isProvided(node))
       {
          return false;
       }
@@ -25,8 +33,7 @@ public class LocalResourceFilter implements Predicate<DependencyNode>
 
    public boolean isDependencyAddon(DependencyNode node)
    {
-      return Dependencies.isForgeAddon(node.getDependency().getCoordinate())
-               && node.getParent() != null && node != addon;
+      return (Dependencies.isForgeAddon(node.getDependency().getCoordinate()) && !node.equals(addon));
    }
 
    public boolean isProvided(DependencyNode node)
@@ -34,15 +41,4 @@ public class LocalResourceFilter implements Predicate<DependencyNode>
       return "provided".equals(node.getDependency().getScopeType());
    }
 
-   private boolean isNotLocal(DependencyNode node)
-   {
-      DependencyNode parent = node.getParent();
-      while (parent != null)
-      {
-         if (isDependencyAddon(parent) && !addon.equals(parent))
-            return true;
-         parent = parent.getParent();
-      }
-      return false;
-   }
 }

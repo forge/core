@@ -5,9 +5,12 @@ import org.jboss.forge.addon.dependency.DependencyNode;
 import org.jboss.forge.addon.dependency.collection.Dependencies;
 import org.jboss.forge.addon.dependency.collection.Predicate;
 
+/**
+ * Checks if an addon node is a direct dependency of another node (root)
+ */
 public class DirectAddonFilter implements Predicate<DependencyNode>
 {
-   private DependencyNode root;
+   private final DependencyNode root;
 
    public DirectAddonFilter(DependencyNode root)
    {
