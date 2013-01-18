@@ -51,13 +51,13 @@ public class ShellCommand implements Completion {
 
     public void generateParser(UICommand command) {
         ParserBuilder builder = new ParserBuilder();
+        ParameterInt parameter =
+                new ParameterInt(command.getId().getName(), command.getId().getDescription());
         for(UIInput<?> input : context.getInputs()) {
-            builder.addParameter(new ParameterInt(input.getName(), null));
-
+            //TODO: add inputs as parameter options
         }
+        builder.addParameter(parameter);
         parser = builder.generateParser();
-        //here we generate the CommandLineParser based on command
-        //parser = ParserGenerator.generateParser(command.getClass());
     }
 
     public CommandLine parse(String line) throws IllegalArgumentException {
