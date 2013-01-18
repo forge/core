@@ -79,7 +79,7 @@ public class GoogleAnalyticsPlugin implements Plugin
             enabled = shell
                      .promptBoolean(
                               "Will you allow the Forge team to receive anonymous usage statistics for this instance of JBoss Forge?",
-                              true);
+                              false);
          }
          configuration.setProperty(ANALYTICS_ENABLED, enabled);
       }
