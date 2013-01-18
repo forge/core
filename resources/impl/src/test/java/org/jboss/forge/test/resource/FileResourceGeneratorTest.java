@@ -1,6 +1,7 @@
 package org.jboss.forge.test.resource;
 
 import java.io.File;
+import java.util.UUID;
 
 import javax.inject.Inject;
 
@@ -13,6 +14,7 @@ import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.resource.DirectoryResource;
 import org.jboss.forge.resource.FileResource;
+import org.jboss.forge.resource.Resource;
 import org.jboss.forge.resource.ResourceFactory;
 import org.jboss.forge.resource.UnknownFileResource;
 import org.jboss.shrinkwrap.api.ArchivePaths;
@@ -46,6 +48,14 @@ public class FileResourceGeneratorTest
    private ResourceFactory factory;
 
    @Test
+   public void testCreateUnknownFileResource() throws Exception
+   {
+      FileResource<?> resource = factory.create(new File(UUID.randomUUID().toString())).reify(FileResource.class);
+      Assert.assertNotNull(resource);
+      Assert.assertEquals(UnknownFileResource.class, resource.getClass());
+   }
+
+   @Test
    public void testCreateFileResource() throws Exception
    {
       File file = File.createTempFile("temp", "file");
@@ -56,6 +66,19 @@ public class FileResourceGeneratorTest
 
    @Test
    public void testCreateDirectoryResource() throws Exception
+   {
+      File dir = File.createTempFile("temp", "file");
+      dir.delete();
+      dir.mkdir();
+
+      Resource<File> resource = factory.create(dir);
+      Assert.assertNotNull(resource);
+      Assert.assertTrue(resource.exists());
+      Assert.assertTrue(resource instanceof DirectoryResource);
+   }
+
+   @Test
+   public void testCreateDirectoryResourceViaRiefy() throws Exception
    {
       File dir = File.createTempFile("temp", "file");
       dir.delete();

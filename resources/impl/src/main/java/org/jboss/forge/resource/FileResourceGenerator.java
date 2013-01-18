@@ -21,7 +21,7 @@ public class FileResourceGenerator implements ResourceGenerator<FileResource<?>,
    @SuppressWarnings("unchecked")
    public <T extends Resource<File>> T getResource(ResourceFactory factory, Class<FileResource<?>> type, File resource)
    {
-      if (type.isAssignableFrom(DirectoryResource.class) || resource.isDirectory())
+      if (DirectoryResource.class.isAssignableFrom(type) || (resource.exists() && resource.isDirectory()))
          return (T) new DirectoryResource(factory, resource);
       return (T) new UnknownFileResource(factory, resource);
    }
@@ -29,7 +29,7 @@ public class FileResourceGenerator implements ResourceGenerator<FileResource<?>,
    @Override
    public <T extends Resource<File>> Class<?> getResourceType(Class<FileResource<?>> type, File resource)
    {
-      if (type.isAssignableFrom(DirectoryResource.class) || resource.isDirectory())
+      if (DirectoryResource.class.isAssignableFrom(type) || (resource.exists() && resource.isDirectory()))
          return DirectoryResource.class;
       return UnknownFileResource.class;
    }

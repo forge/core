@@ -1,16 +1,21 @@
 package org.jboss.forge.aesh;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+
+import javax.inject.Inject;
+
 import junit.framework.TestCase;
+
 import org.jboss.aesh.console.Config;
 import org.jboss.aesh.console.settings.Settings;
 import org.jboss.aesh.edit.KeyOperation;
 import org.jboss.aesh.edit.actions.Operation;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.aesh.commands.ClearCommand;
-import org.jboss.forge.aesh.commands.ExitCommand;
-import org.jboss.forge.aesh.commands.ListServicesCommand;
-import org.jboss.forge.aesh.commands.StopCommand;
 import org.jboss.forge.arquillian.Addon;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -23,13 +28,6 @@ import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -48,16 +46,9 @@ public class AeshAddonTest extends TestCase
    {
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
-               .addClasses(AeshShell.class)
-               .addClass(ShellCommand.class)
-               .addClass(ShellContext.class)
-               .addClass(StopCommand.class)
-               .addClass(ExitCommand.class)
-               .addClass(ClearCommand.class)
-               .addClass(FooCommand.class)
-               .addClass(ListServicesCommand.class)
+               .addPackages(true, AeshShell.class.getPackage())
                .addAsLibraries(Maven.resolver().loadPomFromFile("pom.xml")
-                       .resolve("org.jboss.aesh:aesh:0.29").withTransitivity().asFile())
+                        .resolve("org.jboss.aesh:aesh:0.29").withTransitivity().asFile())
                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
                .addAsAddonDependencies(AddonDependency.create(AddonId.from("org.jboss.forge:ui", "2.0.0-SNAPSHOT")));
 
