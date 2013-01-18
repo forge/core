@@ -448,7 +448,7 @@ public class FieldImpl<O extends JavaSource<O>> implements Field<O>
    @Override
    public Field<O> setLiteralInitializer(final String value)
    {
-      String stub = "public class Stub { private Field<O> stub = " + value + " }";
+      String stub = "public class Stub { private String stub = " + value + " }";
       JavaClass temp = (JavaClass) JavaParser.parse(stub);
       FieldDeclaration internal = (FieldDeclaration) temp.getFields().get(0).getInternal();
 
