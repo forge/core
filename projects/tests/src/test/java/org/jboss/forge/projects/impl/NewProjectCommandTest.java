@@ -47,7 +47,6 @@ public class NewProjectCommandTest
                         AddonDependency.create(AddonId.from("org.jboss.forge:resources", "2.0.0-SNAPSHOT")),
                         AddonDependency.create(AddonId.from("org.jboss.forge:projects", "2.0.0-SNAPSHOT")),
                         AddonDependency.create(AddonId.from("org.jboss.forge:ui", "2.0.0-SNAPSHOT"))
-               // FIXME We should not need to explicitly list the entire dependency graph, fix addon XML transitivity
                );
 
       return archive;
