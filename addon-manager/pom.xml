@@ -13,9 +13,9 @@
    <packaging>pom</packaging>
 
    <modules>
-      <module>addon-manager-impl</module>
-      <module>addon-manager-addon</module>
-      <module>addon-manager-tests</module>
+      <module>impl</module>
+      <module>addon</module>
+      <module>tests</module>
    </modules>
 
 </project>

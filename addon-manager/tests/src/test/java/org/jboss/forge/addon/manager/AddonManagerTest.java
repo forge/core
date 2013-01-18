@@ -90,7 +90,7 @@ public class AddonManagerTest
    public void testInstallingAddonWithSingleRequiredAddonDependency() throws InterruptedException
    {
       int addonCount = registry.getRegisteredAddons().size();
-      AddonId resources = AddonId.fromCoordinates("org.jboss.forge:resource,2.0.0-SNAPSHOT");
+      AddonId resources = AddonId.fromCoordinates("org.jboss.forge:resources,2.0.0-SNAPSHOT");
       InstallRequest request = addonManager.install(resources);
 
       Assert.assertEquals(1, request.getRequiredAddons().size());
@@ -101,11 +101,11 @@ public class AddonManagerTest
       Assert.assertTrue(repository.isEnabled(resources));
       Assert.assertEquals(3, repository.getAddonResources(resources).size());
       Assert.assertTrue(repository.getAddonResources(resources).contains(
-               new File(repository.getAddonBaseDir(resources), "resource-2.0.0-SNAPSHOT-forge-addon.jar")));
+               new File(repository.getAddonBaseDir(resources), "resources-2.0.0-SNAPSHOT-forge-addon.jar")));
       Assert.assertTrue(repository.getAddonResources(resources).contains(
-               new File(repository.getAddonBaseDir(resources), "resource-api-2.0.0-SNAPSHOT.jar")));
+               new File(repository.getAddonBaseDir(resources), "resources-api-2.0.0-SNAPSHOT.jar")));
       Assert.assertTrue(repository.getAddonResources(resources).contains(
-               new File(repository.getAddonBaseDir(resources), "resource-impl-2.0.0-SNAPSHOT.jar")));
+               new File(repository.getAddonBaseDir(resources), "resources-impl-2.0.0-SNAPSHOT.jar")));
 
       AddonId facets = AddonId.from("org.jboss.forge:facets", "2.0.0-SNAPSHOT");
       Assert.assertTrue(repository.getAddonResources(facets)
