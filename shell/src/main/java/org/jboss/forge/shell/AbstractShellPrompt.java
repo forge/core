@@ -13,6 +13,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.enterprise.inject.spi.BeanManager;
 
@@ -370,8 +372,27 @@ public abstract class AbstractShellPrompt implements Shell
    public <T> T promptChoice(final String message, final Map<String, T> options)
    {
       println(message);
-      List<Entry<String, T>> entries = new ArrayList<Map.Entry<String, T>>();
+      final List<Entry<String, T>> entries = new ArrayList<Map.Entry<String, T>>();
       entries.addAll(options.entrySet());
+
+      //very like StringsCompleter
+      class ChoiceCompleter implements Completer
+      {
+         final SortedSet<String> keys = new TreeSet<String>(options.keySet());
+
+         @Override
+         public int complete(String buffer, int cursor, List<CharSequence> candidates)
+         {
+            for (String s : keys.tailSet(buffer)) {
+               if (!s.startsWith(buffer))
+               {
+                  break;
+               }
+               candidates.add(s);
+            }
+            return candidates.isEmpty() ? -1 : 0;
+         }
+      }
 
       Object result = InvalidInput.INSTANCE;
       while (result instanceof InvalidInput)
@@ -384,7 +405,8 @@ public abstract class AbstractShellPrompt implements Shell
             count++;
          }
          println();
-         String input = prompt("Choose an option by typing the name or number of the selection: ");
+         String input = promptWithCompleter("Choose an option by typing the name or number of the selection: ",
+                  new ChoiceCompleter());
          if (options.containsKey(input))
          {
             result = options.get(input);
