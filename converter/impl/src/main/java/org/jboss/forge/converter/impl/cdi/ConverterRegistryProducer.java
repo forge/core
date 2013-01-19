@@ -8,7 +8,6 @@
 package org.jboss.forge.converter.impl.cdi;
 
 import javax.enterprise.inject.Produces;
-import javax.enterprise.inject.spi.InjectionPoint;
 
 import org.jboss.forge.converter.ConverterRegistry;
 import org.jboss.forge.converter.impl.ConverterRegistryImpl;
@@ -16,7 +15,7 @@ import org.jboss.forge.converter.impl.ConverterRegistryImpl;
 public class ConverterRegistryProducer
 {
    @Produces
-   public ConverterRegistry produce(InjectionPoint injectionPoint)
+   public ConverterRegistry produce()
    {
       return ConverterRegistryImpl.INSTANCE;
    }
