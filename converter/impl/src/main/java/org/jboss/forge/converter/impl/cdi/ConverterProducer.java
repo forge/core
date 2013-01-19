@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.ui.impl;
+package org.jboss.forge.converter.impl.cdi;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -13,33 +13,25 @@ import java.lang.reflect.Type;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 
-import org.jboss.forge.ui.UIInput;
+import org.jboss.forge.converter.Converter;
+import org.jboss.forge.converter.ConverterRegistry;
 
-/**
- * Produces UIInput objects
- *
- * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
- */
-public class UIInputProducer
+public class ConverterProducer
 {
-   @SuppressWarnings("unchecked")
    @Produces
-   public <T> UIInput<T> produceInput(InjectionPoint injectionPoint)
+   @SuppressWarnings("unchecked")
+   public <S, T> Converter<S, T> produceConverter(InjectionPoint injectionPoint, ConverterRegistry registry)
    {
-      String name = injectionPoint.getMember().getName();
       Type type = injectionPoint.getAnnotated().getTypeClosure().iterator().next();
       if (type instanceof ParameterizedType)
       {
          Type[] typeArguments = ((ParameterizedType) type).getActualTypeArguments();
-         Class<T> target = (Class<T>) typeArguments[0];
-         return new UIInputImpl<T>(name, target);
+         Class<S> source = (Class<S>) typeArguments[0];
+         Class<T> target = (Class<T>) typeArguments[1];
+         return registry.getConverter(source, target);
       }
       else
-      {
-         throw new IllegalStateException("Cannot inject a generic instance of type " + UIInput.class.getName()
+         throw new IllegalStateException("Cannot inject a generic instance of type " + Converter.class.getName()
                   + "<?,?> without specifying concrete generic types at injection point " + injectionPoint + ".");
-      }
-
    }
 }

@@ -86,7 +86,8 @@
             <module>se</module>
             <module>test-harness</module>
             <module>dist</module>
-
+            
+            <!-- TODO: Remove these modules -->
             <module>example</module>
             <module>example2</module>
 
@@ -98,6 +99,7 @@
             <module>parser-java</module>
             <module>resources</module>
             <module>ui</module>
+            <module>converter</module>
          </modules>
       </profile>
 
