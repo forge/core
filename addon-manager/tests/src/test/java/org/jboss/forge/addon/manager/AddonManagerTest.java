@@ -8,6 +8,8 @@
 package org.jboss.forge.addon.manager;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -87,13 +89,13 @@ public class AddonManagerTest
    }
 
    @Test
-   public void testInstallingAddonWithSingleRequiredAddonDependency() throws InterruptedException
+   public void testInstallingAddonWithTwoRequiredAddonDependency() throws InterruptedException
    {
-      int addonCount = registry.getRegisteredAddons().size();
+      final int addonInitialCount = registry.getRegisteredAddons().size();
       AddonId resources = AddonId.fromCoordinates("org.jboss.forge:resources,2.0.0-SNAPSHOT");
       InstallRequest request = addonManager.install(resources);
 
-      Assert.assertEquals(1, request.getRequiredAddons().size());
+      Assert.assertEquals(2, request.getRequiredAddons().size());
       Assert.assertEquals(0, request.getOptionalAddons().size());
 
       request.perform();
@@ -114,16 +116,28 @@ public class AddonManagerTest
                .contains(new File(repository.getAddonBaseDir(facets), "facets-api-2.0.0-SNAPSHOT.jar")));
 
       Set<AddonDependency> dependencies = repository.getAddonDependencies(resources);
-      Assert.assertEquals(1, dependencies.size());
-      AddonDependency dependency = dependencies.toArray(new AddonDependency[dependencies.size()])[0];
-      Assert.assertEquals("org.jboss.forge:facets", dependency.getId().getName());
-      Assert.assertEquals("2.0.0-SNAPSHOT", dependency.getId().getVersion());
-      Assert.assertFalse(dependency.isOptional());
+      Assert.assertEquals(2, dependencies.size());
+      List<String> addonDependenciesIds = new ArrayList<String>();
+      addonDependenciesIds.add("org.jboss.forge:convert");
+      addonDependenciesIds.add("org.jboss.forge:facets");
 
+      final int addonDepsSize = addonDependenciesIds.size();
+
+      for (AddonDependency dependency : dependencies)
+      {
+         Assert.assertTrue("Not a valid addon dependency: " + dependency.getId().getName(),
+                  addonDependenciesIds.remove(dependency.getId().getName()));
+         Assert.assertEquals("2.0.0-SNAPSHOT", dependency.getId().getVersion());
+         Assert.assertFalse(dependency.isOptional());
+      }
+      Assert.assertTrue("Addons not detected as dependency: " + addonDependenciesIds, addonDependenciesIds.isEmpty());
       // FIXME Should this be true?
       // Assert.assertTrue(dependency.isExport());
 
       Thread.sleep(500);
-      Assert.assertEquals(addonCount + 2, registry.getRegisteredAddons().size());
+
+      // The total registered addons is represented as the sum of the initial count, the addon dependencies and the
+      // tested addon
+      Assert.assertEquals(addonInitialCount + addonDepsSize + 1, registry.getRegisteredAddons().size());
    }
 }

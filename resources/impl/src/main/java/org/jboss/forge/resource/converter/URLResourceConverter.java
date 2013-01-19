@@ -12,8 +12,7 @@ import java.net.URL;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.container.services.Exported;
-import org.jboss.forge.converter.Converter;
+import org.jboss.forge.convert.Converter;
 import org.jboss.forge.resource.Resource;
 import org.jboss.forge.resource.ResourceFactory;
 
@@ -23,7 +22,6 @@ import org.jboss.forge.resource.ResourceFactory;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  *
  */
-@Exported
 public class URLResourceConverter implements Converter<URL, Resource<URL>>
 {
    private final ResourceFactory resourceFactory;
