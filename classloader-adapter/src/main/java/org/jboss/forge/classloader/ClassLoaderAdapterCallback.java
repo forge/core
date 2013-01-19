@@ -318,7 +318,7 @@ public class ClassLoaderAdapterCallback implements MethodHandler
 
          if (ClassLoaders.containsClass(loader, baseClass)
                   && !Object.class.equals(baseClass)
-                  && isInstantiable(baseClass))
+                  && (isInstantiable(baseClass) || baseClass.isInterface()))
          {
             hierarchy.add(ClassLoaders.loadClass(loader, baseClass));
          }
