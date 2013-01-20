@@ -84,7 +84,7 @@ public class AddonModuleLoader extends ModuleLoader
 
    /**
     * Loads a module based on the {@link AddonId}
-    *
+    * 
     * @param addonId
     * @return
     * @throws ModuleLoadException
@@ -148,11 +148,12 @@ public class AddonModuleLoader extends ModuleLoader
       {
          try
          {
-            builder.addResourceRoot(
-                     ResourceLoaderSpec.createResourceLoaderSpec(
-                              ResourceLoaders.createJarResourceLoader(file.getName(), new JarFile(file)),
-                              PathFilters.acceptAll())
-                     );
+            if (file.length() > 0)
+               builder.addResourceRoot(
+                        ResourceLoaderSpec.createResourceLoaderSpec(
+                                 ResourceLoaders.createJarResourceLoader(file.getName(), new JarFile(file)),
+                                 PathFilters.acceptAll())
+                        );
          }
          catch (IOException e)
          {
