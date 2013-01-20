@@ -7,17 +7,23 @@
 
 package org.jboss.forge.convert;
 
-import org.jboss.forge.container.services.Exported;
-
-@Exported
 public interface Converter<S, T>
 {
+   /**
+    * Get the source {@link Class} type this {@link Converter} accepts in input.
+    */
+   Class<S> getSourceType();
+
+   /**
+    * Get the target {@link Class} type this {@link Converter} produces.
+    */
+   Class<T> getTargetType();
+
    /**
     * Convert the source of type S to target type T.
     * 
     * @param source the source object to convert, which must be an instance of S
     * @return the converted object, which must be an instance of T
-    * @throws IllegalArgumentException if the source could not be converted to the desired target type
     */
-   T convert(S source) throws Exception;
+   T convert(S source);
 }

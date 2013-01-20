@@ -10,8 +10,8 @@
    <name>Forge - Convert Impl</name>
    <dependencies>
       <dependency>
-         <groupId>javax.enterprise</groupId>
-         <artifactId>cdi-api</artifactId>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-addon-container-api</artifactId>
          <scope>provided</scope>
       </dependency>
       <dependency>

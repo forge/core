@@ -5,15 +5,15 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.convert;
+package org.jboss.forge.convert.exception;
 
 /**
  * Thrown when a converter is not found in the registry
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
-public class ConverterNotFoundException extends RuntimeException
+public class ConverterNotFoundException extends ConversionException
 {
    private static final long serialVersionUID = 1L;
 

@@ -11,31 +11,40 @@ import java.lang.reflect.Constructor;
 
 import javax.enterprise.inject.Vetoed;
 
-import org.jboss.forge.convert.Converter;
+import org.jboss.forge.convert.BaseConverter;
+import org.jboss.forge.convert.exception.ConversionException;
 
 /**
  * Converter that uses a constructor
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
- * @param <S>
- * @param <T>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * 
+ * @param <SOURCETYPE>
+ * @param <TARGETTYPE>
  */
 
 @Vetoed
-public class ConstructorConverter<S, T> implements Converter<S, T>
+public class ConstructorConverter<SOURCETYPE, TARGETTYPE> extends BaseConverter<SOURCETYPE, TARGETTYPE>
 {
-   private final Constructor<T> constructor;
+   private final Constructor<TARGETTYPE> constructor;
 
-   public ConstructorConverter(Constructor<T> constructor)
+   public ConstructorConverter(Class<SOURCETYPE> sourceType, Class<TARGETTYPE> targetType, Constructor<TARGETTYPE> constructor)
    {
-      super();
+      super(sourceType, targetType);
       this.constructor = constructor;
    }
 
    @Override
-   public T convert(S source) throws Exception
+   public TARGETTYPE convert(SOURCETYPE source)
    {
-      return constructor.newInstance(source);
+      try
+      {
+         return constructor.newInstance(source);
+      }
+      catch (Exception e)
+      {
+         throw new ConversionException("Could not convert [" + source + "] to type [" + getTargetType() + "]", e);
+      }
    }
 }

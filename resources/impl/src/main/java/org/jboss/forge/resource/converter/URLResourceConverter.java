@@ -12,29 +12,33 @@ import java.net.URL;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.convert.Converter;
+import org.jboss.forge.container.services.Exported;
+import org.jboss.forge.convert.BaseConverter;
 import org.jboss.forge.resource.Resource;
 import org.jboss.forge.resource.ResourceFactory;
+import org.jboss.forge.resource.URLResource;
 
 /**
  * Converts a {@link File} object to a {@link Resource}
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
-public class URLResourceConverter implements Converter<URL, Resource<URL>>
+@Exported
+public class URLResourceConverter extends BaseConverter<URL, URLResource>
 {
    private final ResourceFactory resourceFactory;
 
    @Inject
    public URLResourceConverter(ResourceFactory resourceFactory)
    {
+      super(URL.class, URLResource.class);
       this.resourceFactory = resourceFactory;
    }
 
    @Override
-   public Resource<URL> convert(URL source) throws Exception
+   public URLResource convert(URL source)
    {
-      return resourceFactory.create(source);
+      return (URLResource) resourceFactory.create(source);
    }
 }

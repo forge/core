@@ -52,12 +52,16 @@ public class CDIConverterTest
    }
 
    @Inject
-   private Converter<String, Long> converter;
+   private Converter<String, Long> stringToLong;
+
+   @Inject
+   private Converter<Integer, String> intToString;
 
    @Test
    public void testNotNull() throws Exception
    {
-      Assert.assertNotNull(converter);
+      Assert.assertNotNull(stringToLong);
+      Assert.assertNotNull(intToString);
    }
 
    @Test
@@ -65,7 +69,15 @@ public class CDIConverterTest
    {
       String input = "123";
       Long expected = 123L;
-      Assert.assertEquals(expected, converter.convert(input));
+      Assert.assertEquals(expected, stringToLong.convert(input));
+   }
+
+   @Test
+   public void testSimpleConversion2() throws Exception
+   {
+      Integer input = 123;
+      String expected = "123";
+      Assert.assertEquals(expected, intToString.convert(input));
    }
 
 }

@@ -11,29 +11,34 @@ import java.io.File;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.convert.Converter;
+import org.jboss.forge.container.services.Exported;
+import org.jboss.forge.convert.BaseConverter;
+import org.jboss.forge.resource.FileResource;
 import org.jboss.forge.resource.Resource;
 import org.jboss.forge.resource.ResourceFactory;
 
 /**
  * Converts a {@link File} object to a {@link Resource}
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
-public class FileResourceConverter implements Converter<File, Resource<File>>
+@Exported
+@SuppressWarnings("rawtypes")
+public class FileResourceConverter extends BaseConverter<File, FileResource>
 {
    private final ResourceFactory resourceFactory;
 
    @Inject
    public FileResourceConverter(ResourceFactory resourceFactory)
    {
+      super(File.class, FileResource.class);
       this.resourceFactory = resourceFactory;
    }
 
    @Override
-   public Resource<File> convert(File source) throws Exception
+   public FileResource<?> convert(File source)
    {
-      return resourceFactory.create(source);
+      return (FileResource<?>) resourceFactory.create(source);
    }
 }

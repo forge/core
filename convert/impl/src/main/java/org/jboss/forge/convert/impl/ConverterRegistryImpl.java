@@ -10,50 +10,59 @@ package org.jboss.forge.convert.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.enterprise.inject.Vetoed;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
+import org.jboss.forge.container.AddonRegistry;
+import org.jboss.forge.container.services.Exported;
+import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.convert.Converter;
-import org.jboss.forge.convert.ConverterNotFoundException;
 import org.jboss.forge.convert.ConverterRegistry;
+import org.jboss.forge.convert.exception.ConverterNotFoundException;
 
-@Vetoed
-public enum ConverterRegistryImpl implements ConverterRegistry
+@Exported
+@Singleton
+public class ConverterRegistryImpl implements ConverterRegistry
 {
-   INSTANCE;
 
-   private Map<ClassPairEntry, Converter<?, ?>> customConverters = new HashMap<ClassPairEntry, Converter<?, ?>>();
-
-   @Override
-   public <S, T> void addConverter(Class<S> sourceType, Class<T> targetType, Converter<S, T> converter)
-   {
-      ClassPairEntry key = new ClassPairEntry(sourceType.getName(), targetType.getName());
-      customConverters.put(key, converter);
-   }
+   @Inject
+   private AddonRegistry registry;
 
    @Override
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    public <S, T> Converter<S, T> getConverter(Class<S> source, Class<T> target)
    {
+      Map<ClassPairEntry, Converter<?, ?>> customConverters = new HashMap<ClassPairEntry, Converter<?, ?>>();
+
+      for (ExportedInstance<Converter> converterInstance : registry.getExportedInstances(Converter.class))
+      {
+         Converter<?, ?> converter = converterInstance.get();
+         customConverters.put(
+                  new ClassPairEntry(converter.getSourceType(), converter.getTargetType()),
+                  converter);
+      }
+
       Converter<S, T> result;
-      ClassPairEntry key = new ClassPairEntry(source.getName(), target.getName());
+      ClassPairEntry key = new ClassPairEntry(source, target);
       result = (Converter<S, T>) customConverters.get(key);
+      if (result == null && String.class.equals(target))
+      {
+         result = (Converter<S, T>) new ToStringConverter<S>((Class<S>) source.getClass());
+      }
       if (result == null)
       {
-         // No Custom Converter found. Try valueOf
          try
          {
-            result = new MethodConverter<S, T>(null, target.getMethod("valueOf", source));
+            result = new MethodConverter<S, T>(source, target, null, target.getMethod("valueOf", source));
          }
          catch (NoSuchMethodException noValueOf)
          {
-            // No valueOf found. Try Constructor
             try
             {
-               result = new ConstructorConverter<S, T>(target.getConstructor(source));
+               result = new ConstructorConverter<S, T>(source, target, target.getConstructor(source));
             }
             catch (NoSuchMethodException noConstructor)
             {
-               // No Constructor found. Fail.
                throw new ConverterNotFoundException(source, target);
             }
          }
@@ -61,24 +70,17 @@ public enum ConverterRegistryImpl implements ConverterRegistry
       return result;
    }
 
-   @Override
-   public void removeConverter(Class<?> sourceType, Class<?> targetType)
-   {
-      ClassPairEntry key = new ClassPairEntry(sourceType.getName(), targetType.getName());
-      customConverters.remove(key);
-   }
-
    // TODO: Do comparison based on the class hierarchy
    private static class ClassPairEntry
    {
-      private final String sourceClassName;
-      private final String targetClassName;
+      private final Class<?> sourceType;
+      private final Class<?> targetType;
 
-      public ClassPairEntry(String source, String target)
+      public ClassPairEntry(Class<?> sourceType, Class<?> targetType)
       {
          super();
-         this.sourceClassName = source;
-         this.targetClassName = target;
+         this.sourceType = sourceType;
+         this.targetType = targetType;
       }
 
       @Override
@@ -86,8 +88,8 @@ public enum ConverterRegistryImpl implements ConverterRegistry
       {
          final int prime = 31;
          int result = 1;
-         result = prime * result + ((sourceClassName == null) ? 0 : sourceClassName.hashCode());
-         result = prime * result + ((targetClassName == null) ? 0 : targetClassName.hashCode());
+         result = prime * result + ((sourceType == null) ? 0 : sourceType.hashCode());
+         result = prime * result + ((targetType == null) ? 0 : targetType.hashCode());
          return result;
       }
 
@@ -101,19 +103,19 @@ public enum ConverterRegistryImpl implements ConverterRegistry
          if (getClass() != obj.getClass())
             return false;
          ClassPairEntry other = (ClassPairEntry) obj;
-         if (sourceClassName == null)
+         if (sourceType == null)
          {
-            if (other.sourceClassName != null)
+            if (other.sourceType != null)
                return false;
          }
-         else if (!sourceClassName.equals(other.sourceClassName))
+         else if (!sourceType.equals(other.sourceType))
             return false;
-         if (targetClassName == null)
+         if (targetType == null)
          {
-            if (other.targetClassName != null)
+            if (other.targetType != null)
                return false;
          }
-         else if (!targetClassName.equals(other.targetClassName))
+         else if (!targetType.equals(other.targetType))
             return false;
          return true;
       }
