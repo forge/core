@@ -3,6 +3,8 @@ package org.jboss.forge.container.impl;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.enterprise.inject.spi.BeanManager;
 
@@ -20,6 +22,8 @@ public class ServiceRegistryImpl implements ServiceRegistry
 
    private AddonImpl addon;
 
+   private Logger log = Logger.getLogger(getClass().getName());
+
    public ServiceRegistryImpl(AddonImpl addon, BeanManager manager, ContainerServiceExtension extension)
    {
       this.addon = addon;
@@ -36,18 +40,30 @@ public class ServiceRegistryImpl implements ServiceRegistry
       services.add(clazz);
    }
 
+   @SuppressWarnings("unchecked")
    @Override
    public <T> ExportedInstance<T> getExportedInstance(Class<T> clazz)
    {
       ensureAddonStarted();
       try
       {
-         if (!manager.getBeans(clazz).isEmpty())
-            return new ExportedInstanceImpl<T>(addon.getClassLoader(), manager, clazz);
+         final Class<T> type;
+         if (clazz.getClassLoader() == addon.getClassLoader())
+         {
+            type = clazz;
+         }
+         else
+         {
+            type = (Class<T>) Class.forName(clazz.getName(), true, addon.getClassLoader());
+         }
+         if (!manager.getBeans(type).isEmpty())
+         {
+            return new ExportedInstanceImpl<T>(addon.getClassLoader(), manager, type);
+         }
       }
       catch (Exception e)
       {
-         e.printStackTrace();
+         log.log(Level.FINE, "Error while fetching exported instances", e);
       }
       return null;
    }

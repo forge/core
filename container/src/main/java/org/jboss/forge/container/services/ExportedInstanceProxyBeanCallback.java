@@ -15,6 +15,7 @@ import net.sf.cglib.proxy.LazyLoader;
 import org.jboss.forge.container.Addon;
 import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.impl.Service;
+import org.jboss.forge.container.util.Assert;
 
 public class ExportedInstanceProxyBeanCallback implements LazyLoader
 {
@@ -40,6 +41,7 @@ public class ExportedInstanceProxyBeanCallback implements LazyLoader
          if (serviceRegistry != null && serviceRegistry.hasService(serviceType))
          {
             ExportedInstance<?> instance = serviceRegistry.getExportedInstance(serviceType);
+            Assert.notNull(instance, "Exported Instance not found, but ServiceRegistry hasService returned true");
             if (instance instanceof ExportedInstanceImpl)
                // FIXME remove the need for this implementation coupling
                result = ((ExportedInstanceImpl<?>) instance).get(new NativeServiceInjectionPoint(injectionPoint,
@@ -60,7 +62,7 @@ public class ExportedInstanceProxyBeanCallback implements LazyLoader
 
    /**
     * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
-    * 
+    *
     */
    public class NativeServiceInjectionPoint implements InjectionPoint
    {

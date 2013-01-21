@@ -15,6 +15,8 @@
       <dependency>
          <groupId>org.jboss.forge</groupId>
          <artifactId>addon-manager</artifactId>
+         <version>${project.version}</version>
+         <classifier>forge-addon</classifier>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge</groupId>
@@ -25,6 +27,8 @@
       <dependency>
          <groupId>org.jboss.forge</groupId>
          <artifactId>example</artifactId>
+         <version>${project.version}</version>
+         <classifier>forge-addon</classifier>
       </dependency>
 
       <dependency>

@@ -256,6 +256,7 @@
             <groupId>org.jboss.forge</groupId>
             <artifactId>example</artifactId>
             <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
          </dependency>
          <!-- Test Dependencies -->
          <dependency>
