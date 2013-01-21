@@ -134,7 +134,9 @@ public class ForgePlugin implements Plugin
       out.print(ShellColor.ITALIC, "JBoss Forge");
       out.print(", version [ ");
       out.print(ShellColor.BOLD, environment.getRuntimeVersion());
-      out.println(" ] - JBoss, by Red Hat, Inc. [ http://jboss.org/forge ]");
+      out.print(" ] - JBoss, by ");
+      out.print(ShellColor.RED,"Red Hat, Inc.");
+      out.println(" [ http://forge.jboss.org ]");
    }
 
    @Command(value = "restart", help = "Reload all plugins and default configurations")
