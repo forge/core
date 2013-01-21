@@ -6,16 +6,16 @@
  */
 package org.jboss.forge.maven.mavenplugins;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+
 import org.jboss.forge.maven.plugins.ConfigurationElement;
 import org.jboss.forge.maven.plugins.ConfigurationElementNotFoundException;
 import org.jboss.forge.maven.plugins.MavenPlugin;
 import org.jboss.forge.maven.plugins.MavenPluginBuilder;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.junit.Test;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
 
 public class ConfigurationElementImplTest
 {

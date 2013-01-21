@@ -6,10 +6,10 @@
  */
 package org.jboss.forge.shell;
 
-import org.jboss.forge.shell.console.jline.TerminalSupport;
-
 import java.io.IOException;
 import java.io.InputStream;
+
+import org.jboss.forge.shell.console.jline.TerminalSupport;
 
 public class IdeTerminal extends TerminalSupport
 {

@@ -17,8 +17,8 @@ import javax.enterprise.inject.spi.BeanManager;
 
 import org.jboss.forge.env.Configuration;
 import org.jboss.forge.env.ConfigurationScope;
-import org.jboss.forge.shell.squelch.Squelched;
 import org.jboss.forge.shell.squelch.ConfigAdapterQualifierLiteral;
+import org.jboss.forge.shell.squelch.Squelched;
 import org.jboss.forge.shell.util.BeanManagerUtils;
 
 /**

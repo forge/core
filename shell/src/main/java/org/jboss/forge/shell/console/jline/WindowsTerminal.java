@@ -7,6 +7,13 @@
 
 package org.jboss.forge.shell.console.jline;
 
+import static org.jboss.forge.shell.console.jline.WindowsTerminal.ConsoleMode.ENABLE_ECHO_INPUT;
+import static org.jboss.forge.shell.console.jline.WindowsTerminal.ConsoleMode.ENABLE_LINE_INPUT;
+import static org.jboss.forge.shell.console.jline.WindowsTerminal.ConsoleMode.ENABLE_PROCESSED_INPUT;
+import static org.jboss.forge.shell.console.jline.WindowsTerminal.ConsoleMode.ENABLE_WINDOW_INPUT;
+import static org.jboss.forge.shell.console.jline.WindowsTerminal.WindowsKey.NUMPAD_KEY_INDICATOR;
+import static org.jboss.forge.shell.console.jline.WindowsTerminal.WindowsKey.SPECIAL_KEY_INDICATOR;
+
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -17,11 +24,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.fusesource.jansi.internal.WindowsSupport;
-
 import org.jboss.forge.shell.console.jline.console.Key;
-
-import static org.jboss.forge.shell.console.jline.WindowsTerminal.ConsoleMode.*;
-import static org.jboss.forge.shell.console.jline.WindowsTerminal.WindowsKey.*;
 
 /**
  * Terminal implementation for Microsoft Windows. Terminal initialization in {@link #init} is accomplished by extracting

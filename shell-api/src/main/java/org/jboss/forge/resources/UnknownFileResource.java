@@ -7,11 +7,11 @@
 
 package org.jboss.forge.resources;
 
-import org.jboss.forge.project.services.ResourceFactory;
-
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+
+import org.jboss.forge.project.services.ResourceFactory;
 
 /**
  * Represents any regular file which Forge does not hav any special handler for.

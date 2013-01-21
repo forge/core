@@ -10,13 +10,12 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
-import junit.framework.Assert;
-
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.Method;
 import org.jboss.forge.parser.java.Parameter;
 import org.jboss.forge.parser.java.Visibility;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -55,47 +54,47 @@ public class MethodSignatureTest
    {
       JavaParser.create(JavaClass.class).addMethod("public void hello(String foo, int bar)").getParameters().add(null);
    }
-   
+
    @Test
    public void testMethodVisibility() throws Exception {
        JavaClass javaClass = JavaParser.create(JavaClass.class);
-       
+
        Method<JavaClass> method = javaClass.addMethod("public void hello()");
        assertVisibility(Visibility.PUBLIC, method);
        assertVisibility("public", method);
-       
+
        method = javaClass.addMethod("protected void hello()");
        assertVisibility(Visibility.PROTECTED, method);
        assertVisibility("protected", method);
-       
+
        method = javaClass.addMethod("private void hello()");
        assertVisibility(Visibility.PRIVATE, method);
        assertVisibility("private", method);
-       
+
        method = javaClass.addMethod("void hello()");
        assertVisibility(Visibility.PACKAGE_PRIVATE, method);
        assertVisibility("", method);
    }
-   
+
    @Test
    public void testMethodVisibilityWithSetter() throws Exception {
-       JavaClass javaClass = JavaParser.create(JavaClass.class);       
+       JavaClass javaClass = JavaParser.create(JavaClass.class);
        Method<JavaClass> method = javaClass.addMethod().setName("hello");
        assertVisibility("", method);
-       
+
        method.setVisibility(Visibility.PUBLIC);
        assertVisibility("public", method);
-       
+
        method.setVisibility(Visibility.PROTECTED);
        assertVisibility("protected", method);
-       
+
        method.setVisibility(Visibility.PRIVATE);
        assertVisibility("private", method);
-       
+
        method.setVisibility(Visibility.PACKAGE_PRIVATE);
        assertVisibility("", method);
    }
-   
+
    private void assertVisibility(Visibility visibility, Method<JavaClass> method) {
        Assert.assertEquals(visibility, method.getVisibility());
    }

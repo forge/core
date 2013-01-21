@@ -6,7 +6,7 @@
  */
 package org.jboss.forge.scaffold.faces.metawidget.inspectionresultprocessor;
 
-import static org.metawidget.inspector.InspectionResultConstants.*;
+import static org.metawidget.inspector.InspectionResultConstants.REQUIRED;
 
 import java.util.Map;
 

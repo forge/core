@@ -8,8 +8,6 @@ package org.jboss.forge.spec.jpa;
 
 import java.io.FileNotFoundException;
 
-import junit.framework.Assert;
-
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
@@ -18,6 +16,7 @@ import org.jboss.forge.shell.util.ConstraintInspector;
 import org.jboss.forge.shell.util.Packages;
 import org.jboss.forge.spec.javaee.PersistenceFacet;
 import org.jboss.forge.spec.javaee.jpa.FieldPlugin;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

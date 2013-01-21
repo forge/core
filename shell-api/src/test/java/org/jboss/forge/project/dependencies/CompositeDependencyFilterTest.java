@@ -7,7 +7,8 @@
 
 package org.jboss.forge.project.dependencies;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

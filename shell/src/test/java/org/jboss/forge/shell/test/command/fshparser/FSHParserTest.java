@@ -10,12 +10,11 @@ import java.util.Queue;
 
 import javax.inject.Inject;
 
-import junit.framework.Assert;
-
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.shell.command.fshparser.FSHParser;
 import org.jboss.forge.shell.command.fshparser.FSHRuntime;
 import org.jboss.forge.shell.command.fshparser.LogicalStatement;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

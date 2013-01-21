@@ -11,8 +11,6 @@ import static org.junit.Assert.assertTrue;
 
 import javax.ejb.Stateless;
 
-import junit.framework.Assert;
-
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.parser.java.MethodHolder;
@@ -22,14 +20,15 @@ import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.spec.javaee.EJBFacet;
 import org.jboss.forge.test.SingletonAbstractShellTest;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * 
+ *
  * @author fiorenzo pizza - fiorenzo.pizza@gmail.com
- * 
+ *
  */
 @RunWith(Arquillian.class)
 public class EJBPluginTest extends SingletonAbstractShellTest

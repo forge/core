@@ -6,8 +6,13 @@
  */
 package org.jboss.forge.scaffold.faces.metawidget.widgetbuilder;
 
-import static org.metawidget.inspector.InspectionResultConstants.*;
-import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.*;
+import static org.metawidget.inspector.InspectionResultConstants.ENTITY;
+import static org.metawidget.inspector.InspectionResultConstants.HIDDEN;
+import static org.metawidget.inspector.InspectionResultConstants.LOOKUP;
+import static org.metawidget.inspector.InspectionResultConstants.NAME;
+import static org.metawidget.inspector.InspectionResultConstants.TRUE;
+import static org.metawidget.inspector.InspectionResultConstants.TYPE;
+import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.FACES_LOOKUP;
 
 import java.util.Map;
 

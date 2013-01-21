@@ -10,8 +10,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import junit.framework.Assert;
-
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.ScopeType;
@@ -23,6 +21,7 @@ import org.jboss.forge.spec.javaee.FacesAPIFacet;
 import org.jboss.forge.spec.javaee.FacesFacet;
 import org.jboss.forge.spec.javaee.jsf.FacesAPIFacetImpl;
 import org.jboss.forge.test.SingletonAbstractShellTest;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

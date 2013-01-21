@@ -6,6 +6,9 @@
  */
 package org.jboss.forge.spec.javaee.validation;
 
+import static org.jboss.forge.spec.javaee.validation.util.JavaHelper.getFieldAccessor;
+import static org.jboss.forge.spec.javaee.validation.util.ResourceHelper.getJavaClassFromResource;
+
 import java.io.FileNotFoundException;
 import java.util.List;
 
@@ -27,9 +30,6 @@ import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresResource;
 import org.jboss.forge.spec.javaee.ValidationFacet;
 import org.jboss.forge.spec.javaee.validation.completer.PropertyCompleter;
-
-import static org.jboss.forge.spec.javaee.validation.util.JavaHelper.getFieldAccessor;
-import static org.jboss.forge.spec.javaee.validation.util.ResourceHelper.getJavaClassFromResource;
 
 /**
  * @author Kevin Pollet

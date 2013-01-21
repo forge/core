@@ -17,8 +17,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Qualifier;
 
-import junit.framework.Assert;
-
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.JavaAnnotation;
@@ -32,6 +30,7 @@ import org.jboss.forge.project.facets.ResourceFacet;
 import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.spec.javaee.CDIFacet;
 import org.jboss.forge.test.AbstractShellTest;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

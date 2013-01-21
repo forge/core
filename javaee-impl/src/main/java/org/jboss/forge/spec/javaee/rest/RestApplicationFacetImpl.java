@@ -6,6 +6,10 @@
  */
 package org.jboss.forge.spec.javaee.rest;
 
+import java.io.FileNotFoundException;
+
+import javax.inject.Inject;
+
 import org.jboss.forge.env.Configuration;
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.JavaClass;
@@ -17,9 +21,6 @@ import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.spec.javaee.RestApplicationFacet;
 import org.jboss.forge.spec.javaee.RestFacet;
-
-import javax.inject.Inject;
-import java.io.FileNotFoundException;
 
 /**
  * @Author Paul Bakker - paul.bakker@luminis.eu

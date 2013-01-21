@@ -13,8 +13,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import junit.framework.Assert;
-
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.shell.completer.CompletedCommandHolder;
 import org.jboss.forge.shell.completer.OptionAwareCompletionHandler;
@@ -22,6 +20,7 @@ import org.jboss.forge.shell.console.jline.Terminal;
 import org.jboss.forge.shell.console.jline.UnsupportedTerminal;
 import org.jboss.forge.shell.console.jline.console.ConsoleReader;
 import org.jboss.forge.test.AbstractShellTest;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

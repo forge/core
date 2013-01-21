@@ -6,6 +6,8 @@
  */
 package org.jboss.forge.spec.javaee.validation.completer;
 
+import static org.jboss.forge.spec.javaee.validation.util.ResourceHelper.getJavaClassFromResource;
+
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +19,6 @@ import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.completer.SimpleTokenCompleter;
-
-import static org.jboss.forge.spec.javaee.validation.util.ResourceHelper.getJavaClassFromResource;
 
 /**
  * @author Kevin Pollet

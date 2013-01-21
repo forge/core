@@ -6,7 +6,12 @@
  */
 package org.jboss.forge.shell.test.resources;
 
-import junit.framework.Assert;
+import java.io.File;
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.project.services.ResourceFactory;
 import org.jboss.forge.resources.DirectoryResource;
@@ -15,13 +20,9 @@ import org.jboss.forge.shell.util.OSUtils;
 import org.jboss.forge.shell.util.PathspecParser;
 import org.jboss.forge.shell.util.ResourceUtil;
 import org.jboss.forge.test.AbstractShellTest;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.io.File;
-import java.util.List;
 
 @Singleton
 @RunWith(Arquillian.class)

@@ -6,10 +6,10 @@
  */
 package org.jboss.forge.spec;
 
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertTrue;
 import static org.jboss.forge.project.dependencies.DependencyBuilder.create;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.project.dependencies.Dependency;

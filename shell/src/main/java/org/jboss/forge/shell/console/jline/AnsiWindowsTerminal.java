@@ -16,11 +16,11 @@
 
 package org.jboss.forge.shell.console.jline;
 
-import org.fusesource.jansi.AnsiConsole;
-import org.fusesource.jansi.WindowsAnsiOutputStream;
-
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+
+import org.fusesource.jansi.AnsiConsole;
+import org.fusesource.jansi.WindowsAnsiOutputStream;
 
 /**
  * ANSI-supported {@link WindowsTerminal}.

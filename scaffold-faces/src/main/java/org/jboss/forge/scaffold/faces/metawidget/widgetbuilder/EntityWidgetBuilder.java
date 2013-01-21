@@ -6,9 +6,19 @@
  */
 package org.jboss.forge.scaffold.faces.metawidget.widgetbuilder;
 
-import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.*;
-import static org.metawidget.inspector.InspectionResultConstants.*;
-import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.*;
+import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.N_TO_MANY;
+import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.ONE_TO_ONE;
+import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.PRIMARY_KEY;
+import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.REVERSE_PRIMARY_KEY;
+import static org.metawidget.inspector.InspectionResultConstants.ENTITY;
+import static org.metawidget.inspector.InspectionResultConstants.INVERSE_RELATIONSHIP;
+import static org.metawidget.inspector.InspectionResultConstants.NAME;
+import static org.metawidget.inspector.InspectionResultConstants.PARAMETERIZED_TYPE;
+import static org.metawidget.inspector.InspectionResultConstants.REQUIRED;
+import static org.metawidget.inspector.InspectionResultConstants.TRUE;
+import static org.metawidget.inspector.InspectionResultConstants.TYPE;
+import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.FACES_CONVERTER_ID;
+import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.FACES_LOOKUP;
 
 import java.util.Collection;
 import java.util.List;

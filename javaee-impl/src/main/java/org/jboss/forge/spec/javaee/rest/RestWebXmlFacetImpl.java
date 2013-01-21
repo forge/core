@@ -6,6 +6,8 @@
  */
 package org.jboss.forge.spec.javaee.rest;
 
+import javax.inject.Inject;
+
 import org.jboss.forge.env.Configuration;
 import org.jboss.forge.project.facets.BaseFacet;
 import org.jboss.forge.shell.plugins.Alias;
@@ -15,8 +17,6 @@ import org.jboss.forge.spec.javaee.RestWebXmlFacet;
 import org.jboss.forge.spec.javaee.ServletFacet;
 import org.jboss.shrinkwrap.descriptor.impl.spec.servlet.web.WebAppDescriptorImpl;
 import org.jboss.shrinkwrap.descriptor.spi.node.Node;
-
-import javax.inject.Inject;
 
 /**
  * @Author Paul Bakker - paul.bakker@luminis.eu

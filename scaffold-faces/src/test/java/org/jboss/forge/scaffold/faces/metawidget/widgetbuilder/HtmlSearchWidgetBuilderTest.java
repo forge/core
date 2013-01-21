@@ -6,12 +6,20 @@
  */
 package org.jboss.forge.scaffold.faces.metawidget.widgetbuilder;
 
-import static org.metawidget.inspector.InspectionResultConstants.*;
-import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.*;
+import static org.metawidget.inspector.InspectionResultConstants.LOOKUP;
+import static org.metawidget.inspector.InspectionResultConstants.NAME;
+import static org.metawidget.inspector.InspectionResultConstants.PARAMETERIZED_TYPE;
+import static org.metawidget.inspector.InspectionResultConstants.PROPERTY;
+import static org.metawidget.inspector.InspectionResultConstants.REQUIRED;
+import static org.metawidget.inspector.InspectionResultConstants.TRUE;
+import static org.metawidget.inspector.InspectionResultConstants.TYPE;
+import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.FACES_LOOKUP;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import junit.framework.TestCase;
 
 import org.metawidget.inspector.annotation.MetawidgetAnnotationInspector;
 import org.metawidget.inspector.annotation.UiComesAfter;
@@ -30,8 +38,6 @@ import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlWidgetBu
 import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlWidgetBuilderConfig;
 import org.metawidget.statically.layout.SimpleLayout;
 import org.metawidget.util.CollectionUtils;
-
-import junit.framework.TestCase;
 
 public class HtmlSearchWidgetBuilderTest extends TestCase
 {

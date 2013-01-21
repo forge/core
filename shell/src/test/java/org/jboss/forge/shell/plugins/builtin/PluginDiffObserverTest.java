@@ -7,7 +7,7 @@
 
 package org.jboss.forge.shell.plugins.builtin;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import org.jboss.forge.test.AbstractShellTest;
 import org.junit.Ignore;

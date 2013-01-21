@@ -7,6 +7,10 @@
 
 package org.jboss.forge.maven.facets;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -20,10 +24,6 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

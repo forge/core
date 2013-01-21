@@ -7,12 +7,12 @@
 
 package org.jboss.forge.maven.profiles;
 
-import org.jboss.forge.project.dependencies.Dependency;
-import org.jboss.forge.project.dependencies.DependencyRepository;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
+import org.jboss.forge.project.dependencies.Dependency;
+import org.jboss.forge.project.dependencies.DependencyRepository;
 
 public class ProfileImpl implements Profile
 {

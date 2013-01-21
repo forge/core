@@ -6,7 +6,8 @@
  */
 package org.jboss.forge.scaffold.faces.scenario.shopping;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.jboss.jsfunit.api.InitialPage;
 import org.jboss.jsfunit.api.JSFUnitResource;

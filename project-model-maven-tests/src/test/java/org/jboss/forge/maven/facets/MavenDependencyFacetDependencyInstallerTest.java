@@ -9,8 +9,6 @@ package org.jboss.forge.maven.facets;
 
 import javax.inject.Inject;
 
-import junit.framework.Assert;
-
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
@@ -19,6 +17,7 @@ import org.jboss.forge.project.dependencies.ScopeType;
 import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.packaging.PackagingType;
 import org.jboss.forge.test.AbstractShellTest;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

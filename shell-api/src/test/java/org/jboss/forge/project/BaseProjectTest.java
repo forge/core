@@ -7,7 +7,7 @@
 
 package org.jboss.forge.project;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import org.jboss.forge.resources.DirectoryResource;
 import org.junit.Assert;

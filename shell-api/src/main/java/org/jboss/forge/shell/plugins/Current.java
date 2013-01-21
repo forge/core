@@ -7,17 +7,21 @@
 
 package org.jboss.forge.shell.plugins;
 
-import org.jboss.forge.resources.Resource;
-import org.jboss.forge.shell.project.ResourceScoped;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.ElementType.TYPE;
 
-import javax.inject.Inject;
-import javax.inject.Qualifier;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import static java.lang.annotation.ElementType.*;
+import javax.inject.Inject;
+import javax.inject.Qualifier;
+
+import org.jboss.forge.resources.Resource;
+import org.jboss.forge.shell.project.ResourceScoped;
 
 /**
  * Used to @{@link Inject} the current working {@link Resource}, e.g:

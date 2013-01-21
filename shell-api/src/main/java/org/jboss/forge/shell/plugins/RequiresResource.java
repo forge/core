@@ -7,14 +7,14 @@
 
 package org.jboss.forge.shell.plugins;
 
-import org.jboss.forge.resources.Resource;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import org.jboss.forge.resources.Resource;
 
 /**
  * Signals to the framework that in order for the annotated element to be visible, applicable, or "in scope," the

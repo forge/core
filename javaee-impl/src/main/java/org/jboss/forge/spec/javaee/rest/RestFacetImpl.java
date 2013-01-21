@@ -6,6 +6,11 @@
  */
 package org.jboss.forge.spec.javaee.rest;
 
+import java.util.Arrays;
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.jboss.forge.env.Configuration;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
@@ -15,10 +20,6 @@ import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.spec.javaee.BaseJavaEEFacet;
 import org.jboss.forge.spec.javaee.RestFacet;
 import org.jboss.forge.spec.javaee.ServletFacet;
-
-import javax.inject.Inject;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

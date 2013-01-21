@@ -6,12 +6,12 @@
  */
 package org.jboss.forge.maven.mavenplugins;
 
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
+
 import org.jboss.forge.maven.plugins.ConfigurationBuilder;
 import org.jboss.forge.maven.plugins.ExecutionBuilder;
 import org.junit.Test;
-
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
 
 public class ExecutionBuilderTest {
     @Test

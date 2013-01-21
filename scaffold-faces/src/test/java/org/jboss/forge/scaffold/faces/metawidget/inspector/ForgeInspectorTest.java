@@ -6,9 +6,15 @@
  */
 package org.jboss.forge.scaffold.faces.metawidget.inspector;
 
-import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.*;
-import static org.metawidget.inspector.InspectionResultConstants.*;
-import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.*;
+import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.N_TO_MANY;
+import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.ONE_TO_ONE;
+import static org.metawidget.inspector.InspectionResultConstants.ENTITY;
+import static org.metawidget.inspector.InspectionResultConstants.NAME;
+import static org.metawidget.inspector.InspectionResultConstants.PROPERTY;
+import static org.metawidget.inspector.InspectionResultConstants.TRUE;
+import static org.metawidget.inspector.InspectionResultConstants.TYPE;
+import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.FACES_CONVERTER_ID;
+import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.FACES_LOOKUP;
 
 import java.util.Set;
 

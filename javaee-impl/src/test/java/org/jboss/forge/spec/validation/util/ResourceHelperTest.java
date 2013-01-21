@@ -6,11 +6,11 @@
  */
 package org.jboss.forge.spec.validation.util;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
 import static org.jboss.forge.spec.javaee.validation.util.ResourceHelper.getJavaClassFromResource;
 import static org.jboss.forge.spec.javaee.validation.util.ResourceHelper.hasAnnotation;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.FileNotFoundException;
 

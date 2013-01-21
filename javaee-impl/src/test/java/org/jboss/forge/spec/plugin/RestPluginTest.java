@@ -6,6 +6,14 @@
  */
 package org.jboss.forge.spec.plugin;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import javax.ws.rs.Path;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.JavaClass;
@@ -28,11 +36,6 @@ import org.jboss.shrinkwrap.descriptor.impl.spec.servlet.web.WebAppDescriptorImp
 import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.ws.rs.Path;
-import javax.xml.bind.annotation.XmlRootElement;
-
-import static org.junit.Assert.*;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
