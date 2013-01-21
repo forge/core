@@ -6,6 +6,8 @@
  */
 package org.jboss.forge.spec.javaee.validation.provider;
 
+import static java.util.Collections.unmodifiableSet;
+
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -14,8 +16,6 @@ import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.spec.javaee.descriptor.ValidationDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
-
-import static java.util.Collections.unmodifiableSet;
 
 /**
  * @author Kevin Pollet

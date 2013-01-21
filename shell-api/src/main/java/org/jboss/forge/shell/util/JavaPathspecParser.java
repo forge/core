@@ -7,6 +7,11 @@
 
 package org.jboss.forge.shell.util;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.jboss.forge.parser.java.util.Strings;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.project.services.ResourceFactory;
@@ -14,11 +19,6 @@ import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.resources.ResourceFilter;
 import org.jboss.forge.resources.UnknownFileResource;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Parser accepts a Java path, and provides a result set of resources based on the relative path provided.

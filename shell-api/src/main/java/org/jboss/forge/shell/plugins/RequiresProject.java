@@ -7,9 +7,13 @@
 
 package org.jboss.forge.shell.plugins;
 
-import org.jboss.forge.project.Project;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.lang.annotation.*;
+import org.jboss.forge.project.Project;
 
 /**
  * The annotated element requires an active {@link Project}

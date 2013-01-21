@@ -22,7 +22,6 @@ import javax.inject.Singleton;
 
 import org.jboss.forge.project.Project;
 import org.jboss.forge.shell.events.ProjectChanged;
-import org.jboss.forge.shell.project.ProjectScoped;
 import org.jboss.forge.shell.util.BeanManagerUtils;
 
 /**

@@ -11,10 +11,9 @@ import static org.junit.Assert.assertTrue;
 
 import javax.inject.Inject;
 
-import junit.framework.Assert;
-
 import org.jboss.forge.ForgeEnvironment;
 import org.jboss.forge.test.AbstractShellTest;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**

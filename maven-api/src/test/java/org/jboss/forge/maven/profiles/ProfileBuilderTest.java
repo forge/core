@@ -7,13 +7,15 @@
 
 package org.jboss.forge.maven.profiles;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+
 import org.apache.maven.model.Profile;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.dependencies.DependencyRepositoryImpl;
 import org.junit.Test;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
 
 public class ProfileBuilderTest
 {

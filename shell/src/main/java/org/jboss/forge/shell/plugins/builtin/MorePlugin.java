@@ -6,19 +6,26 @@
  */
 package org.jboss.forge.shell.plugins.builtin;
 
-import org.fusesource.jansi.Ansi;
-import org.jboss.forge.resources.Resource;
-import org.jboss.forge.shell.Shell;
-import org.jboss.forge.shell.ShellColor;
-import org.jboss.forge.shell.plugins.*;
+import static org.jboss.forge.shell.util.GeneralUtils.pad;
 
-import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
-import static org.jboss.forge.shell.util.GeneralUtils.pad;
+import javax.inject.Inject;
+
+import org.fusesource.jansi.Ansi;
+import org.jboss.forge.resources.Resource;
+import org.jboss.forge.shell.Shell;
+import org.jboss.forge.shell.ShellColor;
+import org.jboss.forge.shell.plugins.Alias;
+import org.jboss.forge.shell.plugins.DefaultCommand;
+import org.jboss.forge.shell.plugins.Option;
+import org.jboss.forge.shell.plugins.PipeIn;
+import org.jboss.forge.shell.plugins.PipeOut;
+import org.jboss.forge.shell.plugins.Plugin;
+import org.jboss.forge.shell.plugins.Topic;
 
 /**
  * Implementation of more & less, but called more. "More is less".

@@ -7,7 +7,16 @@
 
 package org.jboss.forge.shell.console.jline;
 
-import org.jboss.forge.shell.console.jline.console.Key;
+import static org.jboss.forge.shell.console.jline.UnixTerminal.UnixKey.ARROW_DOWN;
+import static org.jboss.forge.shell.console.jline.UnixTerminal.UnixKey.ARROW_LEFT;
+import static org.jboss.forge.shell.console.jline.UnixTerminal.UnixKey.ARROW_PREFIX;
+import static org.jboss.forge.shell.console.jline.UnixTerminal.UnixKey.ARROW_RIGHT;
+import static org.jboss.forge.shell.console.jline.UnixTerminal.UnixKey.ARROW_START;
+import static org.jboss.forge.shell.console.jline.UnixTerminal.UnixKey.ARROW_UP;
+import static org.jboss.forge.shell.console.jline.UnixTerminal.UnixKey.DEL_THIRD;
+import static org.jboss.forge.shell.console.jline.UnixTerminal.UnixKey.END_CODE;
+import static org.jboss.forge.shell.console.jline.UnixTerminal.UnixKey.HOME_CODE;
+import static org.jboss.forge.shell.console.jline.UnixTerminal.UnixKey.O_PREFIX;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,7 +24,7 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.jboss.forge.shell.console.jline.UnixTerminal.UnixKey.*;
+import org.jboss.forge.shell.console.jline.console.Key;
 
 /**
  * Terminal that is used for unix platforms. Terminal initialization is handled by issuing the <em>stty</em> command

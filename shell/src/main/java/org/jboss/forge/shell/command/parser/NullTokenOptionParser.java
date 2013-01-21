@@ -6,9 +6,9 @@
  */
 package org.jboss.forge.shell.command.parser;
 
-import org.jboss.forge.shell.command.CommandMetadata;
-
 import java.util.Queue;
+
+import org.jboss.forge.shell.command.CommandMetadata;
 
 /**
  * Used at the end of the {@link CommandParser} chain to signal with an {@link IllegalStateException} that an invalid

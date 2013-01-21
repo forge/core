@@ -10,8 +10,6 @@ import java.util.Arrays;
 
 import javax.inject.Inject;
 
-import junit.framework.Assert;
-
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.project.Project;
@@ -20,6 +18,7 @@ import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.scaffold.faces.AbstractFacesScaffoldTest;
 import org.jboss.forge.shell.util.Streams;
 import org.jboss.forge.test.web.WebTest;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

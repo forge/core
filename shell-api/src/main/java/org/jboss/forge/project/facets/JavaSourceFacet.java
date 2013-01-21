@@ -7,6 +7,10 @@
 
 package org.jboss.forge.project.facets;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.List;
+
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaEnum;
 import org.jboss.forge.parser.java.JavaSource;
@@ -15,10 +19,6 @@ import org.jboss.forge.project.Project;
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.resources.java.JavaResourceVisitor;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.List;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

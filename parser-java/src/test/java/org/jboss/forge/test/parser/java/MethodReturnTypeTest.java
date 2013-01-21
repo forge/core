@@ -9,12 +9,11 @@ package org.jboss.forge.test.parser.java;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.Assert;
-
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.Method;
 import org.jboss.forge.parser.java.Type;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**

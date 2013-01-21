@@ -6,14 +6,13 @@
  */
 package org.jboss.forge.scaffold.faces.scenario.weather;
 
-import junit.framework.Assert;
-
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.scaffold.faces.AbstractFacesScaffoldTest;
 import org.jboss.forge.shell.util.Streams;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

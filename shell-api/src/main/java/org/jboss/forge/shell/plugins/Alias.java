@@ -7,6 +7,9 @@
 
 package org.jboss.forge.shell.plugins;
 
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
@@ -19,9 +22,6 @@ import javax.inject.Qualifier;
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.shell.util.ConstraintInspector;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.PARAMETER;
 
 /**
  * Most commonly, {@link Alias} is used when naming a {@link Plugin} or a {@link Facet}, but it can also be used for

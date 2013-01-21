@@ -7,15 +7,14 @@
 
 package org.jboss.forge.maven.dependencies;
 
+import static org.junit.Assert.assertEquals;
+
 import org.apache.maven.model.Exclusion;
-import org.jboss.forge.maven.dependencies.MavenDependencyAdapter;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.dependencies.ScopeType;
 import org.jboss.forge.project.packaging.PackagingType;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

@@ -6,17 +6,17 @@
  */
 package org.jboss.forge.spec.validation.util;
 
+import static org.jboss.forge.parser.JavaParser.create;
+import static org.jboss.forge.spec.javaee.validation.util.JavaHelper.getFieldAccessor;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.io.IOException;
 
 import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.Method;
 import org.junit.Test;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static org.jboss.forge.parser.JavaParser.create;
-import static org.jboss.forge.spec.javaee.validation.util.JavaHelper.getFieldAccessor;
 
 /**
  * @author Kevin Pollet

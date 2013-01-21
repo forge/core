@@ -8,6 +8,7 @@
 package org.jboss.forge.shell.exceptions;
 
 import org.jboss.forge.shell.Shell;
+import org.jboss.forge.shell.plugins.Plugin;
 
 /**
  * Thrown when one of a running {@link Plugin} or a command running with {@link Shell#execute(String)} are aborted.

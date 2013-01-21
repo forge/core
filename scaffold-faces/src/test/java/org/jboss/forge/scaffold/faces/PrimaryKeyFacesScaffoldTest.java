@@ -6,7 +6,7 @@
  */
 package org.jboss.forge.scaffold.faces;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import java.io.FileNotFoundException;
 import java.io.Serializable;

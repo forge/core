@@ -6,9 +6,9 @@
  */
 package org.jboss.forge.shell.completer;
 
-import org.jboss.forge.shell.console.jline.console.completer.Completer;
-
 import java.util.List;
+
+import org.jboss.forge.shell.console.jline.console.completer.Completer;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

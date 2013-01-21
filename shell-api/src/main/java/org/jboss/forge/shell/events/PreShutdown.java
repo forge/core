@@ -7,6 +7,8 @@
 
 package org.jboss.forge.shell.events;
 
+import org.jboss.forge.shell.Shell;
+
 /**
  * Fired in response to receipt of the shell {@link Shutdown} command event. This event must be fired before the
  * {@link Shell} continues shutdown procedures.

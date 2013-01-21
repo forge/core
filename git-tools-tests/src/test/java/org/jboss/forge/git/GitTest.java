@@ -7,6 +7,8 @@
 
 package org.jboss.forge.git;
 
+import javax.inject.Inject;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.DependencyResolver;
@@ -14,8 +16,6 @@ import org.jboss.forge.test.AbstractShellTest;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Assert;
 import org.junit.Test;
-
-import javax.inject.Inject;
 
 /**
  * @author <a href="mailto:jevgeni.zelenkov@gmail.com">Jevgeni Zelenkov</a>

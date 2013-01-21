@@ -7,11 +7,11 @@
 package org.jboss.forge.shell.test.plugins.builtin;
 
 import static org.junit.Assert.fail;
-import junit.framework.Assert;
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.shell.exceptions.NoSuchCommandException;
 import org.jboss.forge.test.AbstractShellTest;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

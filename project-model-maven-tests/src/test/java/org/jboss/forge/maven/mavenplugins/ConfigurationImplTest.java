@@ -7,23 +7,23 @@
 
 package org.jboss.forge.maven.mavenplugins;
 
-import org.apache.maven.model.Plugin;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
-import org.jboss.forge.maven.plugins.Configuration;
-import org.jboss.forge.maven.plugins.MavenPluginAdapter;
-import org.jboss.forge.maven.plugins.ConfigurationElement;
-import org.jboss.forge.maven.plugins.ConfigurationElementBuilder;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.io.ByteArrayInputStream;
-import java.util.List;
-
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+
+import java.io.ByteArrayInputStream;
+import java.util.List;
+
+import org.apache.maven.model.Plugin;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
+import org.jboss.forge.maven.plugins.Configuration;
+import org.jboss.forge.maven.plugins.ConfigurationElement;
+import org.jboss.forge.maven.plugins.ConfigurationElementBuilder;
+import org.jboss.forge.maven.plugins.MavenPluginAdapter;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>

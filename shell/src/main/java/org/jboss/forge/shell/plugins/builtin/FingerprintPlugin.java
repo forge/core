@@ -6,14 +6,21 @@
  */
 package org.jboss.forge.shell.plugins.builtin;
 
-import org.jboss.forge.resources.Resource;
-import org.jboss.forge.resources.ResourceFlag;
-import org.jboss.forge.shell.plugins.*;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
+import org.jboss.forge.resources.Resource;
+import org.jboss.forge.resources.ResourceFlag;
+import org.jboss.forge.shell.plugins.Alias;
+import org.jboss.forge.shell.plugins.DefaultCommand;
+import org.jboss.forge.shell.plugins.Help;
+import org.jboss.forge.shell.plugins.Option;
+import org.jboss.forge.shell.plugins.PipeIn;
+import org.jboss.forge.shell.plugins.PipeOut;
+import org.jboss.forge.shell.plugins.Plugin;
+import org.jboss.forge.shell.plugins.Topic;
 
 /**
  * @author Mike Brock

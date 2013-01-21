@@ -6,11 +6,11 @@
  */
 package org.jboss.forge.spec.validation;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
 import static org.jboss.forge.shell.util.ConstraintInspector.getName;
 import static org.jboss.forge.spec.javaee.validation.util.ResourceHelper.getJavaClassFromResource;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import javax.validation.Valid;
 import javax.validation.constraints.AssertFalse;

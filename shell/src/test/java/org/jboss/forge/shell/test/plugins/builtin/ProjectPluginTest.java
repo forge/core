@@ -6,6 +6,14 @@
  */
 package org.jboss.forge.shell.test.plugins.builtin;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.matchers.JUnitMatchers.hasItem;
+
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.jboss.arquillian.junit.Arquillian;
@@ -19,14 +27,6 @@ import org.jboss.forge.project.packaging.PackagingType;
 import org.jboss.forge.test.AbstractShellTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.matchers.JUnitMatchers.hasItem;
 
 /**
  * @author <a href="mailto:macdude357@gmail.com">Tim Pedone</a>

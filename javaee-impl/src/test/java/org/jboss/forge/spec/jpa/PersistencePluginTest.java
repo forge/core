@@ -11,8 +11,6 @@ import static org.jboss.forge.spec.javaee.jpa.container.WebLogic12cContainer.WEB
 
 import java.util.List;
 
-import junit.framework.Assert;
-
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.project.Project;
@@ -20,6 +18,7 @@ import org.jboss.forge.spec.javaee.PersistenceFacet;
 import org.jboss.forge.spec.javaee.PersistenceMetaModelFacet;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceUnitDef;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

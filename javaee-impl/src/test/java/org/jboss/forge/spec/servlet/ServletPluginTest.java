@@ -6,8 +6,6 @@
  */
 package org.jboss.forge.spec.servlet;
 
-import junit.framework.Assert;
-
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
@@ -16,6 +14,7 @@ import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.spec.javaee.ServletFacet;
 import org.jboss.forge.test.AbstractShellTest;
 import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -31,7 +30,7 @@ public class ServletPluginTest extends AbstractShellTest
       Project project = initializeJavaProject();
       queueInputLines("y", "");
       getShell().execute("servlet setup");
-      
+
       Assert.assertTrue(project.hasFacet(ServletFacet.class));
       Assert.assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveDependency(
                DependencyBuilder.create("org.jboss.spec.javax.servlet:jboss-servlet-api_3.0_spec")));
@@ -48,7 +47,7 @@ public class ServletPluginTest extends AbstractShellTest
       Assert.assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveDependency(
                DependencyBuilder.create("org.jboss.spec.javax.servlet:jboss-servlet-api_3.0_spec")));
       Assert.assertTrue(project.hasFacet(ServletFacet.class));
-      
+
       WebAppDescriptor config = project.getFacet(ServletFacet.class).getConfig();
       Assert.assertFalse(project.getFacet(WebResourceFacet.class).getWebResource("WEB-INF/web.xml").exists());
       project.getFacet(ServletFacet.class).saveConfig(config);

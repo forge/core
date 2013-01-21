@@ -15,8 +15,6 @@ import javax.inject.Inject;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.command.CommandMetadata;
 import org.jboss.forge.shell.command.PluginMetadata;
-import org.jboss.forge.shell.completer.CommandCompleter;
-import org.jboss.forge.shell.completer.CommandCompleterState;
 
 public class CommandResolverCompleter implements CommandCompleter
 {

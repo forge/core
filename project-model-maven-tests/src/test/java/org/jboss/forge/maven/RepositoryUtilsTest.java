@@ -6,7 +6,9 @@
  */
 package org.jboss.forge.maven;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import org.apache.maven.settings.Proxy;
 import org.junit.Test;

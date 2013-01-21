@@ -6,14 +6,15 @@
  */
 package org.jboss.forge.shell.plugins.builtin.project;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.apache.maven.model.Profile;
 import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.shell.completer.SimpleTokenCompleter;
-
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @Author Paul Bakker - paul.bakker.nl@gmail.com

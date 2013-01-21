@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Queue;
 
 import org.jboss.forge.shell.command.parser.Tokenizer;
-import org.jboss.forge.shell.completer.CommandCompleterState;
 
 /**
  * Holds state during TAB completion.

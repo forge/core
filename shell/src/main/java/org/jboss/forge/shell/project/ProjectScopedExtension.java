@@ -11,8 +11,6 @@ import javax.enterprise.inject.spi.AfterBeanDiscovery;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
 
-import org.jboss.forge.shell.project.ProjectScoped;
-
 /**
  * An extension to provide {@link ProjectScoped} support.
  * 

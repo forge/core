@@ -6,14 +6,15 @@
  */
 package org.jboss.forge.shell.plugins.builtin.project;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.DependencyRepository;
 import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.shell.completer.SimpleTokenCompleter;
-
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Provides completion for project build properties

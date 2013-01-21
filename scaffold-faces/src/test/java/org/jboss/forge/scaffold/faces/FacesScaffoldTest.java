@@ -6,12 +6,11 @@
  */
 package org.jboss.forge.scaffold.faces;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.List;
-
-import junit.framework.Assert;
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.parser.xml.Node;
@@ -26,6 +25,7 @@ import org.jboss.forge.scaffold.faces.metawidget.widgetbuilder.EntityWidgetBuild
 import org.jboss.forge.shell.exceptions.PluginExecutionException;
 import org.jboss.forge.shell.util.Streams;
 import org.jboss.forge.spec.javaee.ServletFacet;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.metawidget.statically.StaticXmlMetawidget;

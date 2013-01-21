@@ -6,13 +6,15 @@
  */
 package org.jboss.forge.shell.test.plugins.builtin;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.test.AbstractShellTest;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  * @author Jose Donizetti

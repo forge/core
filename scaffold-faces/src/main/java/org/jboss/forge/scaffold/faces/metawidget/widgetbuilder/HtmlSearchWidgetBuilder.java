@@ -6,8 +6,9 @@
  */
 package org.jboss.forge.scaffold.faces.metawidget.widgetbuilder;
 
-import static org.metawidget.inspector.InspectionResultConstants.*;
-import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.*;
+import static org.metawidget.inspector.InspectionResultConstants.LOOKUP;
+import static org.metawidget.inspector.InspectionResultConstants.LOOKUP_LABELS;
+import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.FACES_LOOKUP;
 
 import java.util.List;
 import java.util.Map;

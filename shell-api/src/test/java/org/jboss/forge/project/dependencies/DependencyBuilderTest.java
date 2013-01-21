@@ -10,8 +10,6 @@ package org.jboss.forge.project.dependencies;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import org.jboss.forge.project.dependencies.DependencyBuilder;
-import org.jboss.forge.project.dependencies.ScopeType;
 import org.jboss.forge.project.packaging.PackagingType;
 import org.junit.Test;
 

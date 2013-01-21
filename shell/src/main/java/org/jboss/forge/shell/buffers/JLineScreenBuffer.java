@@ -6,12 +6,12 @@
  */
 package org.jboss.forge.shell.buffers;
 
-import org.jboss.forge.shell.integration.BufferManager;
-import org.jboss.forge.shell.console.jline.Terminal;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+
+import org.jboss.forge.shell.console.jline.Terminal;
+import org.jboss.forge.shell.integration.BufferManager;
 
 /**
  * A buffer to wrap JLine.

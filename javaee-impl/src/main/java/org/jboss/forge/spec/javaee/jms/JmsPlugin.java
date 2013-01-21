@@ -6,15 +6,20 @@
  */
 package org.jboss.forge.spec.javaee.jms;
 
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.facets.events.InstallFacets;
 import org.jboss.forge.shell.ShellMessages;
-import org.jboss.forge.shell.plugins.*;
+import org.jboss.forge.shell.plugins.Alias;
+import org.jboss.forge.shell.plugins.PipeOut;
+import org.jboss.forge.shell.plugins.Plugin;
+import org.jboss.forge.shell.plugins.RequiresFacet;
+import org.jboss.forge.shell.plugins.RequiresProject;
+import org.jboss.forge.shell.plugins.SetupCommand;
 import org.jboss.forge.spec.javaee.JMSFacet;
-
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
 
 /**
  * @Author Paul Bakker - paul.bakker@luminis.eu
