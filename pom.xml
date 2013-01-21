@@ -88,9 +88,6 @@
             <module>dist</module>
 
             <!-- TODO: Remove these modules -->
-            <module>example</module>
-            <module>example2</module>
-
             <module>addon-manager</module>
             <module>aesh</module>
             <module>dependency-api</module>

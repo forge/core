@@ -13,6 +13,8 @@
    <packaging>pom</packaging>
 
    <modules>
+      <module>example</module>
+      <module>example2</module>
       <module>impl</module>
       <module>addon</module>
       <module>tests</module>

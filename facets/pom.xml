@@ -12,7 +12,7 @@
    <name>Forge - Facets AddOn Parent</name>
    <modules>
       <module>api</module>
-      <module>bom</module>
+      <module>addon</module>
    </modules>
    <dependencyManagement>
       <dependencies>

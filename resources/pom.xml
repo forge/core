@@ -13,7 +13,7 @@
    <modules>
       <module>api</module>
       <module>impl</module>
-      <module>bom</module>
+      <module>addon</module>
    </modules>
    <dependencyManagement>
       <dependencies>

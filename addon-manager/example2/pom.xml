@@ -5,38 +5,21 @@
       <groupId>org.jboss.forge</groupId>
       <artifactId>forge-parent</artifactId>
       <version>2.0.0-SNAPSHOT</version>
-      <relativePath>../pom.xml</relativePath>
+		<relativePath>../../pom.xml</relativePath>
    </parent>
-   <artifactId>example</artifactId>
-   <name>Forge - Example Addon</name>
+   <artifactId>example2</artifactId>
+   <name>Forge - Example Addon 2</name>
    <dependencies>
       <dependency>
          <groupId>org.jboss.forge</groupId>
          <artifactId>forge-addon-container-api</artifactId>
          <scope>provided</scope>
       </dependency>
-      <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>example2</artifactId>
-         <version>2.0.0-SNAPSHOT</version>
-         <classifier>forge-addon</classifier>
-         <optional>true</optional>
-      </dependency>
       <!-- Just added for testing dependency resolution -->
       <dependency>
-         <groupId>commons-lang</groupId>
-         <artifactId>commons-lang</artifactId>
-         <version>2.6</version>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>forge-test-harness</artifactId>
-         <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>arquillian-forge-classpath</artifactId>
-         <scope>test</scope>
+         <groupId>commons-io</groupId>
+         <artifactId>commons-io</artifactId>
+         <version>2.4</version>
       </dependency>
    </dependencies>
    <build>
