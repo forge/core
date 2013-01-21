@@ -6,12 +6,12 @@
  */
 package org.jboss.forge.parser.java.ast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.Modifier.ModifierKeyword;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ModifierAccessor
 {
