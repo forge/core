@@ -5,6 +5,7 @@ import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UICommandID;
 import org.jboss.forge.ui.UIContext;
 import org.jboss.forge.ui.UIValidationContext;
+import org.jboss.forge.ui.base.SimpleUICommandID;
 
 public class MockChooseFrameworkStep implements UICommand
 {
@@ -12,20 +13,7 @@ public class MockChooseFrameworkStep implements UICommand
    @Override
    public UICommandID getId()
    {
-      return new UICommandID()
-      {
-         @Override
-         public String getName()
-         {
-            return "Choose Framework";
-         }
-
-         @Override
-         public String getDescription()
-         {
-            return "Pick the framework you wish to use for this command.";
-         }
-      };
+      return new SimpleUICommandID("Choose Framework", "Pick the framework you wish to use for this command.");
    }
 
    @Override

@@ -377,6 +377,46 @@ public class AddonRegistryImpl implements AddonRegistry
    }
 
    @Override
+   public <T> ExportedInstance<T> getExportedInstance(Class<T> type)
+   {
+      // TODO This needs to block addon installation/removal;
+      ExportedInstance<T> result = null;
+      for (Addon addon : addons)
+      {
+         if (addon.getStatus().isStarted())
+         {
+            ServiceRegistry serviceRegistry = addon.getServiceRegistry();
+            result = serviceRegistry.getExportedInstance(type);
+            if (result != null)
+            {
+               break;
+            }
+         }
+      }
+      return result;
+   }
+
+   @Override
+   public <T> ExportedInstance<T> getExportedInstance(String type)
+   {
+      // TODO This needs to block addon installation/removal;
+      ExportedInstance<T> result = null;
+      for (Addon addon : addons)
+      {
+         if (addon.getStatus().isStarted())
+         {
+            ServiceRegistry serviceRegistry = addon.getServiceRegistry();
+            result = serviceRegistry.getExportedInstance(type);
+            if (result != null)
+            {
+               break;
+            }
+         }
+      }
+      return result;
+   }
+
+   @Override
    public String toString()
    {
       return addons.toString();

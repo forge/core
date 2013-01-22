@@ -23,6 +23,10 @@ public interface AddonRegistry
 
    <T> Set<ExportedInstance<T>> getExportedInstances(String clazz);
 
+   <T> ExportedInstance<T> getExportedInstance(Class<T> type);
+
+   <T> ExportedInstance<T> getExportedInstance(String type);
+
    Future<?> start(Addon addon);
 
    void stop(Addon addon);

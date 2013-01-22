@@ -126,9 +126,28 @@ public class ServiceRegistryImpl implements ServiceRegistry
    public <T> Set<ExportedInstance<T>> getExportedInstances(Class<T> clazz)
    {
       Set<ExportedInstance<T>> result = new HashSet<ExportedInstance<T>>();
+      final Class<T> addonLoadedType;
+      if (clazz.getClassLoader() == addon.getClassLoader())
+      {
+         addonLoadedType = clazz;
+      }
+      else
+      {
+         try
+         {
+            addonLoadedType = (Class<T>) Class.forName(clazz.getName(), true, addon.getClassLoader());
+         }
+         catch (Exception e)
+         {
+            log.log(Level.FINE, "Error while fetching exported instances", e);
+            return result;
+         }
+      }
+
       for (Class<?> type : services)
       {
-         if (clazz.isAssignableFrom(type))
+
+         if (addonLoadedType.isAssignableFrom(type))
          {
             result.add((ExportedInstance<T>) getExportedInstance(type));
          }
