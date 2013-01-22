@@ -11,7 +11,7 @@ import net.sf.cglib.proxy.LazyLoader;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 public class MockService
 {
@@ -53,5 +53,10 @@ public class MockService
    public Object getResultEnhancedReturnTypeObject()
    {
       return getResultEnhanced();
+   }
+
+   public String echo(String value)
+   {
+      return value;
    }
 }

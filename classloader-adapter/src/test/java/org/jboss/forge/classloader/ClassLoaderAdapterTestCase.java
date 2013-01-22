@@ -3,7 +3,6 @@ package org.jboss.forge.classloader;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.LazyLoader;
 
-import org.jboss.forge.classloader.ClassLoaderAdapterCallback;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -129,5 +128,24 @@ public class ClassLoaderAdapterTestCase
       MockService adapter = ClassLoaderAdapterCallback.enhance(loader, loader, delegate, MockService.class);
 
       Assert.assertNotEquals(internal.getResultInterfaceFinalImpl(), adapter.getResultInterfaceFinalImpl());
+   }
+
+   @Test
+   public void testNullValuesAsMethodParameters() throws Exception
+   {
+      ClassLoader loader = MockService.class.getClassLoader();
+      final MockService internal = new MockService();
+
+      MockService delegate = (MockService) Enhancer.create(MockService.class, new LazyLoader()
+      {
+         @Override
+         public Object loadObject() throws Exception
+         {
+            return internal;
+         }
+      });
+      MockService adapter = ClassLoaderAdapterCallback.enhance(loader, loader, delegate, MockService.class);
+      Assert.assertNull(internal.echo(null));
+      Assert.assertNull(adapter.echo(null));
    }
 }
