@@ -12,6 +12,17 @@ package org.jboss.forge.ui.hints;
  */
 public enum InputTypes implements InputType
 {
-   DEFAULT_TEXT,
-   FILE_CHOOSER
+   CHECKBOX,
+   RADIO_GROUP,
+   
+   TEXTAREA,
+   TEXTBOX,
+   
+   FILE_PICKER,
+   MULTI_FILE_PICKER,
+   
+   SELECT_ONE,
+   SELECT_MANY,
+   
+   PASSWORD,
 }
