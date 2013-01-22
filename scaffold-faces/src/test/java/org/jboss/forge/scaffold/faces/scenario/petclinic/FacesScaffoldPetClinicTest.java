@@ -50,7 +50,7 @@ public class FacesScaffoldPetClinicTest extends AbstractFacesScaffoldTest
       getShell().execute("field string --named telephone");
       getShell().execute("field string --named homePage");
       getShell().execute("field string --named email");
-      getShell().execute("field date --named birthday");
+      getShell().execute("field temporal --type DATE --named birthday");
       getShell().execute("entity --named Vet");
       getShell().execute("field string --named firstName");
       getShell().execute("field string --named lastName");
@@ -59,18 +59,17 @@ public class FacesScaffoldPetClinicTest extends AbstractFacesScaffoldTest
       getShell().execute("field string --named telephone");
       getShell().execute("field string --named homePage");
       getShell().execute("field string --named email");
-      getShell().execute("field date --named birthday");
-      getShell().execute("field date --named employedSince");
+      getShell().execute("field temporal --type DATE --named birthday");
+      getShell().execute("field temporal --type DATE --named employedSince");
       getShell().execute("field int --named specialty");
       getShell().execute("entity --named Pet");
       getShell().execute("field string --named name");
-      getShell().execute("field float --named weight");
       getShell().execute("field int --named type");
       getShell().execute("field boolean --named sendReminders");
       getShell().execute("field manyToOne --named owner --fieldType com.test.model.Owner");
       getShell().execute("entity --named Visit");
       getShell().execute("field string --named description");
-      getShell().execute("field data --named visitDate");
+      getShell().execute("field temporal --type DATE --named visitDate");
       getShell().execute("field manyToOne --named pet --fieldType com.test.model.Pet");
       getShell().execute("field manyToOne --named vet --fieldType com.test.model.Vet");
 
@@ -82,7 +81,7 @@ public class FacesScaffoldPetClinicTest extends AbstractFacesScaffoldTest
 
       // Check search screen has h:message
 
-      FileResource<?> search = web.getWebResource(targetDir+"/pet/search.xhtml");
+      FileResource<?> search = web.getWebResource(targetDir + "/pet/search.xhtml");
       Assert.assertTrue(search.exists());
       String contents = Streams.toString(search.getResourceInputStream());
 
@@ -112,7 +111,7 @@ public class FacesScaffoldPetClinicTest extends AbstractFacesScaffoldTest
 
       // Check create screen has h:selectBooleanCheckbox
 
-      FileResource<?> create = web.getWebResource(targetDir+"/pet/create.xhtml");
+      FileResource<?> create = web.getWebResource(targetDir + "/pet/create.xhtml");
       Assert.assertTrue(create.exists());
       contents = Streams.toString(create.getResourceInputStream());
 
@@ -126,7 +125,7 @@ public class FacesScaffoldPetClinicTest extends AbstractFacesScaffoldTest
 
       // Check view screen has boolean graphic
 
-      FileResource<?> view = web.getWebResource(targetDir+"/pet/view.xhtml");
+      FileResource<?> view = web.getWebResource(targetDir + "/pet/view.xhtml");
       Assert.assertTrue(view.exists());
       contents = Streams.toString(view.getResourceInputStream());
 
@@ -144,7 +143,14 @@ public class FacesScaffoldPetClinicTest extends AbstractFacesScaffoldTest
                ".addAsResource(\"META-INF/persistence.xml\", \"META-INF/persistence.xml\")"
                ));
       this.webTest.addAsTestClass(project, clazz);
-
-      getShell().execute("build");
+      try
+      {
+         getShell().execute("build");
+      }
+      catch (Exception e)
+      {
+         System.err.println(getOutput());
+         throw e;
+      }
    }
 }

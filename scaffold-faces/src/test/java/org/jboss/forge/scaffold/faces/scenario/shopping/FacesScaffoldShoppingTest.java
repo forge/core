@@ -147,6 +147,14 @@ public class FacesScaffoldShoppingTest extends AbstractFacesScaffoldTest
                ));
       this.webTest.addAsTestClass(project, clazz);
 
-      getShell().execute("build");
+      try
+      {
+         getShell().execute("build");
+      }
+      catch (Exception e)
+      {
+         System.err.println(getOutput());
+         throw e;
+      }
    }
 }
