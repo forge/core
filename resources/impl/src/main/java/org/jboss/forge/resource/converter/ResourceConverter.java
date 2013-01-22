@@ -8,37 +8,41 @@
 package org.jboss.forge.resource.converter;
 
 import java.io.File;
-import java.net.URL;
 
 import javax.inject.Inject;
 
 import org.jboss.forge.container.services.Exported;
-import org.jboss.forge.convert.BaseConverter;
+import org.jboss.forge.convert.Converter;
 import org.jboss.forge.resource.Resource;
 import org.jboss.forge.resource.ResourceFactory;
-import org.jboss.forge.resource.URLResource;
 
 /**
  * Converts a {@link File} object to a {@link Resource}
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ *
  */
 @Exported
-public class URLResourceConverter extends BaseConverter<URL, URLResource>
+public class ResourceConverter implements Converter<Object, Resource<?>>
 {
    private final ResourceFactory resourceFactory;
 
    @Inject
-   public URLResourceConverter(ResourceFactory resourceFactory)
+   public ResourceConverter(ResourceFactory resourceFactory)
    {
-      super(URL.class, URLResource.class);
       this.resourceFactory = resourceFactory;
    }
 
    @Override
-   public URLResource convert(URL source)
+   public Resource<?> convert(Object source)
    {
-      return (URLResource) resourceFactory.create(source);
+      return resourceFactory.create(source);
+   }
+
+   @Override
+   public boolean handles(Class<?> source, Class<?> target)
+   {
+      // TODO: Shall the source be checked ?
+      return Resource.class.isAssignableFrom(target);
    }
 }

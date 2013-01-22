@@ -13,16 +13,20 @@ public abstract class BaseConverter<SOURCETYPE, TARGETTYPE> implements Converter
       this.targetType = targetType;
    }
 
-   @Override
    public Class<SOURCETYPE> getSourceType()
    {
       return sourceType;
    }
 
-   @Override
    public Class<TARGETTYPE> getTargetType()
    {
       return targetType;
    }
 
+   @Override
+   public boolean handles(Class<?> source, Class<?> target)
+   {
+      return getSourceType().isAssignableFrom(source) &&
+               getTargetType().isAssignableFrom(target);
+   }
 }
