@@ -24,5 +24,5 @@ public enum InputTypes implements InputType
    SELECT_ONE,
    SELECT_MANY,
    
-   PASSWORD,
+   PASSWORD;
 }
