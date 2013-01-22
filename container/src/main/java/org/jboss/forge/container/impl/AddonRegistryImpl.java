@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -164,8 +165,9 @@ public class AddonRegistryImpl implements AddonRegistry
       }
    }
 
-   public void startAll()
+   public Set<Future<Addon>> startAll()
    {
+      Set<Future<Addon>> result = new LinkedHashSet<Future<Addon>>();
       synchronized (addons)
       {
          updateAddons();
@@ -173,10 +175,11 @@ public class AddonRegistryImpl implements AddonRegistry
          {
             if (addon.getStatus().isWaiting())
             {
-               start(addon);
+               result.add(start(addon));
             }
          }
       }
+      return result;
    }
 
    public void stopAll()
@@ -185,6 +188,9 @@ public class AddonRegistryImpl implements AddonRegistry
       {
          stop(addon);
       }
+      List<Runnable> waiting = executor.shutdownNow();
+      if (waiting != null && !waiting.isEmpty())
+         logger.info("(" + waiting.size() + ") addons were aborted while loading.");
    }
 
    public void updateAddons()

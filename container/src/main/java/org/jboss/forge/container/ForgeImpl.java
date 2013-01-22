@@ -1,6 +1,11 @@
 package org.jboss.forge.container;
 
 import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.Logger;
 
 import org.jboss.forge.container.exception.ContainerException;
@@ -70,21 +75,44 @@ public class ForgeImpl implements Forge
             AddonModuleLoader moduleLoader = new AddonModuleLoader(repository, loader);
             registry.setAddonLoader(moduleLoader);
             alive = true;
+            Set<Future<Addon>> futures = new HashSet<Future<Addon>>();
             do
             {
-               registry.startAll();
+               futures.addAll(registry.startAll());
                Thread.sleep(100);
             }
-            while (serverMode && alive == true);
-
-            registry.stopAll();
+            while (alive == true && (serverMode || isStartingAddons(futures)));
          }
          catch (InterruptedException e)
          {
             throw new ContainerException(e);
          }
+         finally
+         {
+            registry.stopAll();
+         }
       }
       return this;
+   }
+
+   private boolean isStartingAddons(Set<Future<Addon>> futures)
+   {
+      for (Future<Addon> future : futures)
+      {
+         try
+         {
+            future.get(0, TimeUnit.MILLISECONDS);
+         }
+         catch (TimeoutException e)
+         {
+            return true;
+         }
+         catch (Exception e)
+         {
+            throw new ContainerException(e);
+         }
+      }
+      return false;
    }
 
    @Override
