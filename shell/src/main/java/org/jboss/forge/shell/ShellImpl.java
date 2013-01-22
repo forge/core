@@ -156,7 +156,6 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    // overrides
    private InputStream _redirectedStream;
    private List<String> _historyOverride;
-   private List<Completer> _deferredCompleters;
 
    private enum BufferingMode
    {
@@ -322,6 +321,8 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       });
 
       configureOSTerminal();
+
+      this.completer = new AggregateCompleter(pluginCompleter);
       initReaderAndStreams();
       initParameters();
 
@@ -348,8 +349,6 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       {
          environment.setProperty(OFFLINE_FLAG, false);
       }
-
-      initCompleters(pluginCompleter);
 
       shellConfig.loadHistory(this);
       shellConfig.loadConfig(this);
@@ -473,32 +472,6 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       reader.setHistory(history);
    }
 
-   private void initCompleters(final PluginCommandCompleter pluginCompleter)
-   {
-      List<Completer> completers = new ArrayList<Completer>();
-      completers.add(pluginCompleter);
-      completer = new AggregateCompleter(completers);
-
-      if (isNoInitMode())
-      {
-         if (_deferredCompleters == null)
-         {
-            _deferredCompleters = new ArrayList<Completer>();
-         }
-         _deferredCompleters.add(pluginCompleter);
-      }
-      else
-      {
-         _initCompleters(pluginCompleter);
-      }
-   }
-
-   private void _initCompleters(final Completer completer)
-   {
-      this.reader.addCompleter(this.completer);
-      this.reader.setCompletionHandler(new OptionAwareCompletionHandler(commandHolder, this));
-   }
-
    boolean isNoInitMode()
    {
       return Boolean.getBoolean(NO_INIT_SYSTEM_PROPERTY);
@@ -566,19 +539,12 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       {
          if (_historyOverride != null)
          {
-
             _setHistory(_historyOverride);
-         }
-
-         if (_deferredCompleters != null)
-         {
-            for (Completer completer : _deferredCompleters)
-            {
-               _initCompleters(completer);
-            }
          }
       }
 
+      this.reader.addCompleter(completer);
+      this.reader.setCompletionHandler(new OptionAwareCompletionHandler(commandHolder, this));
    }
 
    private void initParameters()
