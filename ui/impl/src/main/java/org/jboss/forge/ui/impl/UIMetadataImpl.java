@@ -15,7 +15,7 @@ import org.jboss.forge.ui.UIMetadata;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 public class UIMetadataImpl implements UIMetadata
 {
@@ -30,7 +30,14 @@ public class UIMetadataImpl implements UIMetadata
    @Override
    public UIMetadata set(Object key, Object value)
    {
-      store.put(key, value);
+      if (value == null)
+      {
+         store.remove(key);
+      }
+      else
+      {
+         store.put(key, value);
+      }
       return this;
    }
 
