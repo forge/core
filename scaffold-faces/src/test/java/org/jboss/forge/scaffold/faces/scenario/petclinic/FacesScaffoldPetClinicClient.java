@@ -100,12 +100,12 @@ public class FacesScaffoldPetClinicClient
          assertEquals("", booleanNode.getTextContent());
          assertEquals("boolean-true", booleanNode.getAttributes().getNamedItem("class").getNodeValue());
 
-         assertEquals("Owner Firstname #1 Owner Lastname #1 Owner Address #1", table.getCellAt(1, 3)
+         assertEquals("Owner firstName: Owner Firstname #1, lastName: Owner Lastname #1, address: Owner Address #1", table.getCellAt(1, 3)
                   .getTextContent());
 
          page = page.getAnchorByText("Pet #1").click();
          assertTrue(page.asText().contains("View existing Pet"));
-         page = page.getAnchorByText("Owner Firstname #1 Owner Lastname #1 Owner Address #1").click();
+         page = page.getAnchorByText("Owner firstName: Owner Firstname #1, lastName: Owner Lastname #1, address: Owner Address #1").click();
          assertTrue(page.asText().contains("View existing Owner"));
 
          // Create a new Owner
