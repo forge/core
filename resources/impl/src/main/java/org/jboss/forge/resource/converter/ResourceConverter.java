@@ -12,7 +12,7 @@ import java.io.File;
 import javax.inject.Inject;
 
 import org.jboss.forge.container.services.Exported;
-import org.jboss.forge.convert.Converter;
+import org.jboss.forge.convert.BaseConverter;
 import org.jboss.forge.resource.Resource;
 import org.jboss.forge.resource.ResourceFactory;
 
@@ -23,13 +23,15 @@ import org.jboss.forge.resource.ResourceFactory;
  *
  */
 @Exported
-public class ResourceConverter implements Converter<Object, Resource<?>>
+@SuppressWarnings("rawtypes")
+public class ResourceConverter extends BaseConverter<Object, Resource>
 {
    private final ResourceFactory resourceFactory;
 
    @Inject
    public ResourceConverter(ResourceFactory resourceFactory)
    {
+      super(Object.class, Resource.class);
       this.resourceFactory = resourceFactory;
    }
 
@@ -37,12 +39,5 @@ public class ResourceConverter implements Converter<Object, Resource<?>>
    public Resource<?> convert(Object source)
    {
       return resourceFactory.create(source);
-   }
-
-   @Override
-   public boolean handles(Class<?> source, Class<?> target)
-   {
-      // TODO: Shall the source be checked ?
-      return Resource.class.isAssignableFrom(target);
    }
 }
