@@ -20,7 +20,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.ui.UIInput;
-import org.jboss.forge.ui.UIInputCompleter;
+import org.jboss.forge.ui.UICompleter;
 import org.jboss.forge.ui.UIMetadata;
 import org.jboss.forge.ui.util.Callables;
 import org.jboss.shrinkwrap.api.ArchivePaths;
@@ -84,9 +84,9 @@ public class UIInputInjectionTest
    @Test
    public void testCompleter()
    {
-      UIInputCompleter<String> originalCompleter = firstName.getCompleter();
+      UICompleter<String> originalCompleter = firstName.getCompleter();
       Assert.assertNotNull(originalCompleter);
-      Assert.assertEquals(firstName, firstName.setCompleter(new UIInputCompleter<String>()
+      Assert.assertEquals(firstName, firstName.setCompleter(new UICompleter<String>()
       {
          @Override
          public List<String> getCompletionProposals(String value)
@@ -109,6 +109,6 @@ public class UIInputInjectionTest
       metadata.set(UIInput.class, firstName);
       Assert.assertSame(firstName, firstName);
       Assert.assertSame(firstName, metadata.get(UIInput.class));
-      Assert.assertNull(metadata.get(UIInputCompleter.class));
+      Assert.assertNull(metadata.get(UICompleter.class));
    }
 }

@@ -12,7 +12,7 @@ import java.util.concurrent.Callable;
 import javax.enterprise.inject.Vetoed;
 
 import org.jboss.forge.ui.UIInput;
-import org.jboss.forge.ui.UIInputCompleter;
+import org.jboss.forge.ui.UICompleter;
 import org.jboss.forge.ui.UIMetadata;
 import org.jboss.forge.ui.util.Callables;
 
@@ -35,7 +35,7 @@ public class UIInputImpl<T> implements UIInput<T>
    private Callable<Boolean> required;
    private Callable<T> defaultValue;
    private UIMetadata metadata = new UIMetadataImpl();
-   private UIInputCompleter<T> completer;
+   private UICompleter<T> completer;
 
    public UIInputImpl(String name, Class<T> type)
    {
@@ -45,7 +45,7 @@ public class UIInputImpl<T> implements UIInput<T>
 
    @Override
    @SuppressWarnings("unchecked")
-   public UIInputCompleter<T> getCompleter()
+   public UICompleter<T> getCompleter()
    {
       return this.completer == null ? new NoopCompleter() : this.completer;
    }
@@ -93,7 +93,7 @@ public class UIInputImpl<T> implements UIInput<T>
    }
 
    @Override
-   public UIInput<T> setCompleter(UIInputCompleter<T> completer)
+   public UIInput<T> setCompleter(UICompleter<T> completer)
    {
       this.completer = completer;
       return this;

@@ -12,7 +12,7 @@ import java.util.List;
  * @param VALUETYPE The value type to be provided by completion.
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface UIInputCompleter<VALUETYPE>
+public interface UICompleter<VALUETYPE>
 {
    // FIXME this needs to be thought out, before or after validation?
    // Should this take a String or the actual VALUETYPE instead?

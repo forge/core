@@ -9,15 +9,15 @@ package org.jboss.forge.ui.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.forge.ui.UIInputCompleter;
+import org.jboss.forge.ui.UICompleter;
 
 /**
- * A {@link UIInputCompleter} that always returns zero proposals.
+ * A {@link UICompleter} that always returns zero proposals.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @SuppressWarnings("rawtypes")
-public class NoopCompleter implements UIInputCompleter
+public class NoopCompleter implements UICompleter
 {
    @Override
    public List getCompletionProposals(String value)

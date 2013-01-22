@@ -14,7 +14,7 @@ import org.jboss.forge.container.services.Exported;
 @Exported
 public interface UIInput<T>
 {
-   UIInputCompleter<T> getCompleter();
+   UICompleter<T> getCompleter();
 
    String getLabel();
 
@@ -30,7 +30,7 @@ public interface UIInput<T>
 
    boolean isRequired();
 
-   UIInput<T> setCompleter(UIInputCompleter<T> completer);
+   UIInput<T> setCompleter(UICompleter<T> completer);
 
    UIInput<T> setDefaultValue(T value);
 
