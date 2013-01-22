@@ -91,11 +91,13 @@
             <module>addon-manager</module>
             <module>aesh</module>
             <module>dependency-api</module>
+            <module>environment</module>
             <module>facets</module>
             <module>projects</module>
             <module>parser-java</module>
             <module>resources</module>
             <module>ui</module>
+            <module>ui-hints</module>
             <module>convert</module>
          </modules>
       </profile>
