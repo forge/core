@@ -5,7 +5,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.convert;
+package test.org.jboss.forge.convert;
+
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -33,6 +35,7 @@ public class CDIEnvironmentTest
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
+               .addPackages(true, CDIEnvironmentTest.class.getPackage())
                .addAsLibraries(
                         Maven.resolver().offline().loadPomFromFile("pom.xml").importRuntimeDependencies().asFile())
                .addAsAddonDependencies(
@@ -60,4 +63,23 @@ public class CDIEnvironmentTest
       Assert.assertNotNull(environment);
    }
 
+   @Test
+   public void testGetCategory() throws Exception
+   {
+      Map<Object, Object> mapTest = environment.get(TestCategory.class);
+      Map<Object, Object> mapUI = environment.get(UserInterfaceCategory.class);
+
+      Assert.assertNotNull(mapTest);
+      Assert.assertNotNull(mapUI);
+
+      Assert.assertNotSame(mapTest, mapUI);
+
+      mapTest.put("Key", "Value");
+      Assert.assertFalse(mapTest.isEmpty());
+
+      Map<Object, Object> newMap = environment.get(TestCategory.class);
+
+      Assert.assertSame(mapTest, newMap);
+      Assert.assertEquals("Value", newMap.get("Key"));
+   }
 }

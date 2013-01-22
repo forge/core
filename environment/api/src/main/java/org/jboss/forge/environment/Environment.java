@@ -7,7 +7,22 @@
 
 package org.jboss.forge.environment;
 
+import java.util.Map;
+
+/**
+ * An {@link Environment} stores information separated into categories
+ *
+ * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
+ *
+ */
 public interface Environment
 {
 
+   /**
+    * Returns a mutable map that contains the properties for a specific {@link Category}
+    *
+    * @param key
+    * @return
+    */
+   <K, V> Map<K, V> get(Class<? extends Category> key);
 }
