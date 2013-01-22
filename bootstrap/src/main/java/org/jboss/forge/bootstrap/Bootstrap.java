@@ -8,7 +8,9 @@
 package org.jboss.forge.bootstrap;
 
 import java.io.File;
+import java.util.List;
 import java.util.ServiceLoader;
+import java.util.logging.Logger;
 
 import org.jboss.forge.addon.dependency.spi.DependencyResolver;
 import org.jboss.forge.addon.manager.AddonManager;
@@ -18,14 +20,16 @@ import org.jboss.forge.container.Forge;
 
 /**
  * A class with a main method to bootstrap Forge.
- *
+ * 
  * You can deploy addons by calling {@link Bootstrap#install(String)}
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 public class Bootstrap
 {
+   private static Logger logger = Logger.getLogger(Bootstrap.class.getName());
+
    private final Forge forge;
    private final AddonManager addonManager;
    private boolean exitAfter = false;
@@ -36,8 +40,9 @@ public class Bootstrap
       bootstrap.start();
    }
 
-   public Bootstrap(String[] args)
+   private Bootstrap(String[] args)
    {
+      boolean listInstalled = false;
       String installAddon = null;
       String removeAddon = null;
       forge = ServiceLoader.load(Forge.class).iterator().next();
@@ -49,37 +54,65 @@ public class Bootstrap
             {
                installAddon = args[++i];
             }
-            if ("--remove".equals(args[i]))
+            else if ("--remove".equals(args[i]))
             {
                removeAddon = args[++i];
             }
-            if ("--addonDir".equals(args[i]))
+            else if ("--list".equals(args[i]))
+            {
+               listInstalled = true;
+            }
+            else if ("--addonDir".equals(args[i]))
             {
                forge.setAddonDir(new File(args[++i]));
             }
-            if ("--batchMode".equals(args[i]))
+            else if ("--batchMode".equals(args[i]))
             {
                forge.setServerMode(false);
             }
+            else
+               logger.warning("Unknown option: " + args[i]);
          }
       }
 
       final DependencyResolver dependencyResolver = lookup(DependencyResolver.class);
       addonManager = new AddonManager(forge.getRepository(), dependencyResolver);
 
+      if (listInstalled)
+         list();
       if (installAddon != null)
          install(installAddon);
       if (removeAddon != null)
          remove(removeAddon);
    }
 
-   public void start()
+   private void list()
+   {
+      try
+      {
+         List<AddonId> addons = forge.getRepository().listEnabled();
+         for (AddonId addon : addons)
+         {
+            logger.info(addon.toCoordinates());
+         }
+      }
+      catch (Exception e)
+      {
+         e.printStackTrace();
+      }
+      finally
+      {
+         exitAfter = true;
+      }
+   }
+
+   private void start()
    {
       if (!exitAfter)
          forge.start();
    }
 
-   public void install(String addonCoordinates)
+   private void install(String addonCoordinates)
    {
       try
       {
@@ -98,7 +131,7 @@ public class Bootstrap
       }
    }
 
-   public void remove(String addonCoordinates)
+   private void remove(String addonCoordinates)
    {
       try
       {
