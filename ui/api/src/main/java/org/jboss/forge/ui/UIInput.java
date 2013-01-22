@@ -14,7 +14,11 @@ import org.jboss.forge.container.services.Exported;
 @Exported
 public interface UIInput<T>
 {
+   UIInputCompleter<T> getCompleter();
+
    String getLabel();
+
+   UIMetadata getMetadata();
 
    String getName();
 
@@ -25,6 +29,8 @@ public interface UIInput<T>
    boolean isEnabled();
 
    boolean isRequired();
+
+   UIInput<T> setCompleter(UIInputCompleter<T> completer);
 
    UIInput<T> setDefaultValue(T value);
 

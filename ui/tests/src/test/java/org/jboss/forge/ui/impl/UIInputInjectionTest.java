@@ -7,6 +7,9 @@
 
 package org.jboss.forge.ui.impl;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -17,6 +20,8 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.ui.UIInput;
+import org.jboss.forge.ui.UIInputCompleter;
+import org.jboss.forge.ui.UIMetadata;
 import org.jboss.forge.ui.util.Callables;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -74,6 +79,36 @@ public class UIInputInjectionTest
 
       firstName.setDefaultValue(Callables.returning(inputVal2));
       Assert.assertEquals(inputVal2, firstName.getValue());
+   }
 
+   @Test
+   public void testCompleter()
+   {
+      UIInputCompleter<String> originalCompleter = firstName.getCompleter();
+      Assert.assertNotNull(originalCompleter);
+      Assert.assertEquals(firstName, firstName.setCompleter(new UIInputCompleter<String>()
+      {
+         @Override
+         public List<String> getCompletionProposals(String value)
+         {
+            return Arrays.asList("foo", "bar", "baz");
+         }
+      }));
+      Assert.assertNotEquals(originalCompleter, firstName.getCompleter());
+      Assert.assertEquals(3, firstName.getCompleter().getCompletionProposals(null).size());
+      Assert.assertEquals(0, originalCompleter.getCompletionProposals(null).size());
+   }
+
+   @Test
+   public void testMetadata()
+   {
+      UIMetadata metadata = firstName.getMetadata();
+      Assert.assertNotNull(metadata);
+      Assert.assertFalse(metadata.iterator().hasNext());
+
+      metadata.set(UIInput.class, firstName);
+      Assert.assertSame(firstName, firstName);
+      Assert.assertSame(firstName, metadata.get(UIInput.class));
+      Assert.assertNull(metadata.get(UIInputCompleter.class));
    }
 }
