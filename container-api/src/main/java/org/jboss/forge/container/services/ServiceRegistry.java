@@ -11,7 +11,7 @@ import java.util.Set;
 
 /**
  * Contains the collection of all installed and available {@link ExportedInstance} types.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public interface ServiceRegistry

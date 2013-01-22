@@ -40,25 +40,44 @@ public class ServiceRegistryImpl implements ServiceRegistry
       services.add(clazz);
    }
 
+   @Override
    @SuppressWarnings("unchecked")
+   public <T> ExportedInstance<T> getExportedInstance(String clazz)
+   {
+      ensureAddonStarted();
+      Class<T> type;
+      try
+      {
+         type = (Class<T>) loadAddonClass(clazz);
+         return (ExportedInstance<T>) getExportedInstance(type, type);
+      }
+      catch (ClassNotFoundException e)
+      {
+         return null;
+      }
+   }
+
    @Override
    public <T> ExportedInstance<T> getExportedInstance(Class<T> clazz)
    {
       ensureAddonStarted();
+      return getExportedInstance(clazz, clazz);
+   }
+
+   /**
+    * @param requestedType interface
+    * @param actualType Implementation
+    * @return
+    */
+   private <T> ExportedInstance<T> getExportedInstance(Class<T> requestedType, Class<T> actualType)
+   {
       try
       {
-         final Class<T> type;
-         if (clazz.getClassLoader() == addon.getClassLoader())
+         final Class<T> requestedLoadedType = loadAddonClass(requestedType);
+         final Class<? extends T> actualLoadedType = loadAddonClass(actualType);
+         if (!manager.getBeans(requestedLoadedType).isEmpty())
          {
-            type = clazz;
-         }
-         else
-         {
-            type = (Class<T>) Class.forName(clazz.getName(), true, addon.getClassLoader());
-         }
-         if (!manager.getBeans(type).isEmpty())
-         {
-            return new ExportedInstanceImpl<T>(addon.getClassLoader(), manager, type);
+            return new ExportedInstanceImpl<T>(addon.getClassLoader(), manager, requestedLoadedType, actualLoadedType);
          }
       }
       catch (Exception e)
@@ -66,22 +85,6 @@ public class ServiceRegistryImpl implements ServiceRegistry
          log.log(Level.FINE, "Error while fetching exported instances", e);
       }
       return null;
-   }
-
-   @Override
-   @SuppressWarnings("unchecked")
-   public <T> ExportedInstance<T> getExportedInstance(String clazz)
-   {
-      Class<?> type;
-      try
-      {
-         type = Class.forName(clazz, true, addon.getClassLoader());
-         return (ExportedInstance<T>) getExportedInstance(type);
-      }
-      catch (ClassNotFoundException e)
-      {
-         return null;
-      }
    }
 
    @Override
@@ -95,7 +98,7 @@ public class ServiceRegistryImpl implements ServiceRegistry
    {
       try
       {
-         Class<?> type = Class.forName(clazz, true, addon.getClassLoader());
+         Class<?> type = loadAddonClass(clazz);
          return hasService(type);
       }
       catch (ClassNotFoundException e)
@@ -107,67 +110,65 @@ public class ServiceRegistryImpl implements ServiceRegistry
    @Override
    public boolean hasService(Class<?> clazz)
    {
+      Class<?> type;
+      try
+      {
+         type = loadAddonClass(clazz);
+      }
+      catch (ClassNotFoundException e)
+      {
+         return false;
+      }
       for (Class<?> service : services)
       {
-         if (clazz.isAssignableFrom(service))
+         if (type.isAssignableFrom(service))
+         {
             return true;
+         }
       }
       return false;
    }
 
    @Override
-   public String toString()
-   {
-      return services.toString();
-   }
-
-   @Override
    @SuppressWarnings("unchecked")
-   public <T> Set<ExportedInstance<T>> getExportedInstances(Class<T> clazz)
-   {
-      Set<ExportedInstance<T>> result = new HashSet<ExportedInstance<T>>();
-      final Class<T> addonLoadedType;
-      if (clazz.getClassLoader() == addon.getClassLoader())
-      {
-         addonLoadedType = clazz;
-      }
-      else
-      {
-         try
-         {
-            addonLoadedType = (Class<T>) Class.forName(clazz.getName(), true, addon.getClassLoader());
-         }
-         catch (Exception e)
-         {
-            log.log(Level.FINE, "Error while fetching exported instances", e);
-            return result;
-         }
-      }
-
-      for (Class<?> type : services)
-      {
-
-         if (addonLoadedType.isAssignableFrom(type))
-         {
-            result.add((ExportedInstance<T>) getExportedInstance(type));
-         }
-      }
-      return result;
-   }
-
-   @Override
    public <T> Set<ExportedInstance<T>> getExportedInstances(String clazz)
    {
       try
       {
-         @SuppressWarnings("unchecked")
-         Class<T> type = (Class<T>) Class.forName(clazz, true, addon.getClassLoader());
+         Class<T> type = (Class<T>) loadAddonClass(clazz);
          return getExportedInstances(type);
       }
       catch (ClassNotFoundException e)
       {
          return Collections.emptySet();
       }
+   }
+
+   @SuppressWarnings("unchecked")
+   @Override
+   public <T> Set<ExportedInstance<T>> getExportedInstances(Class<T> requestedType)
+   {
+      ensureAddonStarted();
+      Set<ExportedInstance<T>> result = new HashSet<ExportedInstance<T>>();
+      Class<T> requestedLoadedType;
+      try
+      {
+         requestedLoadedType = loadAddonClass(requestedType);
+      }
+      catch (ClassNotFoundException e)
+      {
+         return result;
+      }
+      for (Class<?> type : services)
+      {
+         if (requestedLoadedType.isAssignableFrom(type))
+         {
+            Class<? extends T> assignableClass = (Class<? extends T>) type;
+            result.add(new ExportedInstanceImpl<T>(addon.getClassLoader(), manager, requestedLoadedType,
+                     assignableClass));
+         }
+      }
+      return result;
    }
 
    private void ensureAddonStarted()
@@ -181,4 +182,38 @@ public class ServiceRegistryImpl implements ServiceRegistry
          throw new ContainerException("Addon was not started.", e);
       }
    }
+
+   /**
+    * Ensures that the returned class is loaded from the addon
+    *
+    * @param actualType
+    * @return
+    * @throws ClassNotFoundException
+    */
+   @SuppressWarnings("unchecked")
+   private <T> Class<T> loadAddonClass(Class<T> actualType) throws ClassNotFoundException
+   {
+      final Class<T> type;
+      if (actualType.getClassLoader() == addon.getClassLoader())
+      {
+         type = actualType;
+      }
+      else
+      {
+         type = (Class<T>) loadAddonClass(actualType.getName());
+      }
+      return type;
+   }
+
+   private Class<?> loadAddonClass(String className) throws ClassNotFoundException
+   {
+      return Class.forName(className, true, addon.getClassLoader());
+   }
+
+   @Override
+   public String toString()
+   {
+      return services.toString();
+   }
+
 }

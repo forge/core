@@ -20,14 +20,18 @@ public class ExportedInstanceImpl<R> implements ExportedInstance<R>
 {
    private ClassLoader loader;
    private BeanManager manager;
-   private Class<R> type;
    private CreationalContext<R> context;
 
-   public ExportedInstanceImpl(ClassLoader loader, BeanManager manager, Class<R> type)
+   private Class<R> requestedType;
+   private Class<? extends R> actualType;
+
+   public ExportedInstanceImpl(ClassLoader loader, BeanManager manager, Class<R> requestedType,
+            Class<? extends R> actualType)
    {
       this.loader = loader;
       this.manager = manager;
-      this.type = type;
+      this.requestedType = requestedType;
+      this.actualType = actualType;
    }
 
    @Override
@@ -39,10 +43,10 @@ public class ExportedInstanceImpl<R> implements ExportedInstance<R>
          @Override
          public Object call() throws Exception
          {
-            Bean<R> bean = (Bean<R>) manager.resolve(manager.getBeans(type));
+            Bean<R> bean = (Bean<R>) manager.resolve(manager.getBeans(actualType));
             context = manager.createCreationalContext(bean);
-            Object delegate = manager.getReference(bean, type, context);
-            return Enhancer.create((Class<?>) type, new RemoteClassLoaderInterceptor(loader, delegate));
+            Object delegate = manager.getReference(bean, actualType, context);
+            return Enhancer.create(requestedType, new RemoteClassLoaderInterceptor(loader, delegate));
          }
       };
 
@@ -59,10 +63,10 @@ public class ExportedInstanceImpl<R> implements ExportedInstance<R>
          @Override
          public Object call() throws Exception
          {
-            Bean<R> bean = (Bean<R>) manager.resolve(manager.getBeans(type));
+            Bean<R> bean = (Bean<R>) manager.resolve(manager.getBeans(actualType));
             context = manager.createCreationalContext(bean);
             Object delegate = manager.getInjectableReference(injectionPoint, context);
-            return Enhancer.create((Class<?>) type, new RemoteClassLoaderInterceptor(loader, delegate));
+            return Enhancer.create(requestedType, new RemoteClassLoaderInterceptor(loader, delegate));
          }
       };
 
@@ -78,7 +82,16 @@ public class ExportedInstanceImpl<R> implements ExportedInstance<R>
    @Override
    public String toString()
    {
-      return "RemoteInstanceImpl [type=" + type + ", classLoader=" + type.getClassLoader() + "]";
+      StringBuilder builder = new StringBuilder();
+      builder.append("ExportedInstanceImpl [");
+      if (requestedType != null)
+         builder.append("requestedType=").append(requestedType).append(", ");
+      if (actualType != null)
+         builder.append("actualType=").append(actualType).append(", ");
+      if (loader != null)
+         builder.append("loader=").append(loader);
+      builder.append("]");
+      return builder.toString();
    }
 
    private class RemoteClassLoaderInterceptor implements MethodInterceptor
