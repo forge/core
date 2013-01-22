@@ -157,7 +157,7 @@ public class ClassLoaderAdapterCallback implements MethodHandler
          final Class<?> delegateParameterType = delegateMethod.getParameterTypes()[i];
          final Object parameterValue = args[i];
 
-         if (delegateParameterType.isPrimitive())
+         if (delegateParameterType.isPrimitive() || parameterValue == null)
          {
             parameterValues.add(parameterValue);
          }
@@ -171,7 +171,9 @@ public class ClassLoaderAdapterCallback implements MethodHandler
                parameterValues.add(delegateParameterValue);
             }
             else
+            {
                parameterValues.add(parameterValue);
+            }
          }
       }
       return parameterValues;
