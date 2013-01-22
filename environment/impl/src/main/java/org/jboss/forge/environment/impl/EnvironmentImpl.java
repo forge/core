@@ -7,8 +7,10 @@
 
 package org.jboss.forge.environment.impl;
 
+import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.environment.Environment;
 
+@Exported
 public class EnvironmentImpl implements Environment
 {
 
