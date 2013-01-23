@@ -7,12 +7,12 @@
 
 package org.jboss.forge.resource.converter;
 
-import javax.annotation.Resource;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.convert.ConverterGenerator;
+import org.jboss.forge.resource.Resource;
 
 @Exported
 public class ResourceConverterGenerator implements ConverterGenerator
