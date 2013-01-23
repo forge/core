@@ -23,12 +23,10 @@ import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-@Ignore
 public class CDIEnvironmentTest
 {
    @Deployment
@@ -37,6 +35,7 @@ public class CDIEnvironmentTest
    {
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
+               .addPackages(true, CDIEnvironmentTest.class.getPackage())
                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
                .addAsAddonDependencies(
                         AddonDependency.create(AddonId.from("org.jboss.forge:environment", "2.0.0-SNAPSHOT")));

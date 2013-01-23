@@ -9,12 +9,15 @@ package org.jboss.forge.environment;
 
 import java.util.Map;
 
+import org.jboss.forge.container.services.Exported;
+
 /**
  * An {@link Environment} stores information separated into categories
  *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  *
  */
+@Exported
 public interface Environment
 {
 
