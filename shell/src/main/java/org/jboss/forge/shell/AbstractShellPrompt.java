@@ -9,9 +9,12 @@ package org.jboss.forge.shell;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -25,8 +28,10 @@ import org.jboss.forge.shell.command.PromptTypeConverter;
 import org.jboss.forge.shell.completer.CommandCompleter;
 import org.jboss.forge.shell.completer.CompleterAdaptor;
 import org.jboss.forge.shell.completer.EnumCompleter;
+import org.jboss.forge.shell.console.jline.console.completer.AggregateCompleter;
 import org.jboss.forge.shell.console.jline.console.completer.Completer;
 import org.jboss.forge.shell.console.jline.console.completer.FileNameCompleter;
+import org.jboss.forge.shell.console.jline.console.completer.StringsCompleter;
 import org.jboss.forge.shell.util.BeanManagerUtils;
 import org.jboss.forge.shell.util.Enums;
 import org.jboss.forge.shell.util.Files;
@@ -624,4 +629,44 @@ public abstract class AbstractShellPrompt implements Shell
       return secret;
    }
 
+   @Override
+   public <T> Set<T> promptMultiSelect(String message, Set<T> options)
+   {
+      return promptMultiSelectWithWildcard(null, message, options);
+   }
+
+   @Override
+   public <T> Set<T> promptMultiSelectWithWildcard(String wildcard, String message, Set<T> options)
+   {
+      final Map<String, T> optionMap = new LinkedHashMap<String, T>();
+      for (T t : options)
+      {
+         if (t == null)
+         {
+            throw new IllegalArgumentException("null values not allowed");
+         }
+         // use #name() for enums, which may not be the same as #toString()
+         optionMap.put(t.getClass().isEnum() ? ((Enum<?>) t).name() : t.toString(), t);
+      }
+      return promptMultiSelectWithWildcard(wildcard, message, optionMap);
+   }
+
+   @Override
+   public <T> Set<T> promptMultiSelect(String message, Map<String, T> options)
+   {
+      return promptMultiSelectWithWildcard(null, message, options);
+   }
+
+   @Override
+   public <T> Set<T> promptMultiSelect(String message, T... options)
+   {
+      return promptMultiSelect(message, new LinkedHashSet<T>(Arrays.asList(options)));
+   }
+   
+   @Override
+   public <T> Set<T> promptMultiSelectWithWildcard(String wildcard, String message, T... options)
+   {
+      return promptMultiSelectWithWildcard(wildcard, message, new LinkedHashSet<T>(Arrays.asList(options)));
+   }
+   
 }

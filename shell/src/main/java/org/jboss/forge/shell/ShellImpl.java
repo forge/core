@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2012-2013 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -18,7 +18,12 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -1374,6 +1379,71 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          reader.setHistoryEnabled(true);
          reader.setPrompt("");
       }
+   }
+
+   @Override
+   public <T> Set<T> promptMultiSelectWithWildcard(String wildcard, String message, Map<String, T> options)
+   {
+      if ((options == null) || options.isEmpty())
+      {
+         throw new IllegalArgumentException(
+                  "promptMultiSelect() Cannot ask user to select from a list of nothing. Ensure you have values in your options list.");
+      }
+      if (options.containsKey(""))
+      {
+         throw new IllegalArgumentException("empty labels not allowed");
+      }
+      if (options.containsKey(wildcard))
+      {
+         throw new IllegalArgumentException("wildcard label duplicated among option labels");
+      }
+      if (wildcard != null && wildcard.trim().isEmpty())
+      {
+         throw new IllegalArgumentException("blank/empty wildcard labels not allowed");
+      }
+      final Map<String, String> fullOptions = new LinkedHashMap<String, String>();
+      for (String key : options.keySet())
+      {
+         fullOptions.put(key, key);
+      }
+      if (wildcard != null)
+      {
+         fullOptions.put(wildcard, wildcard);
+      }
+      fullOptions.put("", null);
+
+      println(message);
+
+      final Set<T> result = new LinkedHashSet<T>();
+
+      StringBuilder prompt = new StringBuilder("select (");
+      if (wildcard != null)
+      {
+         prompt.append('"').append(wildcard).append('"').append(" = all values; ");
+      }
+      prompt.append("empty = done)");
+
+      while (true)
+      {
+         final String choice = promptChoice(prompt.toString(), fullOptions);
+         if (choice == null)
+         {
+            break;
+         }
+         if (choice.equals(wildcard))
+         {
+            result.addAll(options.values());
+            break;
+         }
+         result.add(options.get(choice));
+         fullOptions.remove(choice);
+         if (result.size() == options.size())
+         {
+            break;
+         }
+      }
+
+      return Collections.unmodifiableSet(result);
    }
 
    @Override
