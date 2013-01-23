@@ -230,6 +230,23 @@ public class ShellPromptTest extends AbstractShellTest
    }
 
    @Test
+   public void testPromptChoiceMapByNameWithCompletion() throws Exception
+   {
+      Map<String, String> options = new HashMap<String, String>();
+      options.put("black", "option1");
+      options.put("blue", "option2");
+      options.put("purple", "option3");
+      queueInputLines("p\t");
+
+      assertEquals("option3", getShell().promptChoice("What color is your bruise?", options));
+      
+      resetInputQueue();
+      queueInputLines("b\ta\t");
+      
+      assertEquals("option1", getShell().promptChoice("What color is your bruise?", options));
+   }
+
+   @Test
    public void testPromptChoiceMapLoopsIfNonExistingIndex() throws Exception
    {
       Map<String, String> options = new HashMap<String, String>();

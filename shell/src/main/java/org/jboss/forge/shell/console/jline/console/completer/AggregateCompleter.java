@@ -22,8 +22,10 @@ package org.jboss.forge.shell.console.jline.console.completer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Completer which contains multiple completers and aggregates them together.
@@ -77,14 +79,17 @@ public class AggregateCompleter
          completions.add(completion);
       }
 
+      final Set<CharSequence> uniqueCandidates = new LinkedHashSet<CharSequence>();
+
       // Append candidates from completions which have the same cursor position as max
       for (Completion completion : completions)
       {
          if (completion.cursor == max)
          {
-            candidates.addAll(completion.candidates);
+            uniqueCandidates.addAll(completion.candidates);
          }
       }
+      candidates.addAll(uniqueCandidates);
 
       return max;
    }
