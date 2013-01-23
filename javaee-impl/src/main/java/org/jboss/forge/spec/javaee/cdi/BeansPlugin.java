@@ -14,14 +14,21 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.io.FileNotFoundException;
 import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.enterprise.context.Conversation;
 import javax.enterprise.event.Event;
+import javax.enterprise.inject.Alternative;
+import javax.enterprise.inject.Stereotype;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Qualifier;
 
 import org.jboss.forge.parser.JavaParser;
@@ -58,6 +65,14 @@ import org.jboss.forge.spec.javaee.CDIFacet;
 @RequiresFacet(CDIFacet.class)
 public class BeansPlugin implements Plugin
 {
+   private static final Set<ElementType> STEREOTYPE_TARGETS;
+   static
+   {
+      Set<ElementType> stereotypeTargets = new LinkedHashSet<ElementType>();
+      Collections.addAll(stereotypeTargets, TYPE, METHOD, FIELD);
+      STEREOTYPE_TARGETS = Collections.unmodifiableSet(stereotypeTargets);
+   }
+
    @Inject
    private Event<InstallFacets> install;
 
@@ -232,7 +247,7 @@ public class BeansPlugin implements Plugin
             @Option(required = false, name = "overwrite") final boolean overwrite
             ) throws FileNotFoundException
    {
-      if (!resource.createNewFile() && !overwrite)
+      if (resource.exists() && !overwrite)
       {
          throw new RuntimeException("Type already exists [" + resource.getFullyQualifiedName()
                   + "] Re-run with '--overwrite' to continue.");
@@ -251,8 +266,8 @@ public class BeansPlugin implements Plugin
       {
          javaClass.addAnnotation(scope.getAnnotation());
       }
-      resource.setContents(javaClass);
-      pickup.fire(new PickupResource(resource));
+      java.saveJavaSource(javaClass);
+      pickup.fire(new PickupResource(java.getJavaResource(javaClass)));
    }
 
    @Command("new-qualifier")
@@ -263,7 +278,7 @@ public class BeansPlugin implements Plugin
             @Option(required = false, name = "inherited") final boolean inherited
             ) throws FileNotFoundException
    {
-      if (!resource.createNewFile() && !overwrite)
+      if (resource.exists() && !overwrite)
       {
          throw new RuntimeException("Type already exists [" + resource.getFullyQualifiedName()
                   + "] Re-run with '--overwrite' to continue.");
@@ -282,7 +297,78 @@ public class BeansPlugin implements Plugin
       qualifier.addAnnotation(Target.class).setEnumValue(METHOD, FIELD, PARAMETER, TYPE);
       qualifier.addAnnotation(Documented.class);
 
-      resource.setContents(qualifier);
-      pickup.fire(new PickupResource(resource));
+      java.saveJavaSource(qualifier);
+      pickup.fire(new PickupResource(java.getJavaResource(qualifier)));
+   }
+
+   @Command("new-stereotype")
+   public void newStereotype(
+            @Option(required = true,
+                     name = "type") final JavaResource resource,
+            @Option(required = false, name = "overwrite") final boolean overwrite,
+            @Option(required = false, name = "inherited") final boolean inherited,
+            @Option(required = false, name = "named") final boolean named,
+            @Option(required = false, name = "alternative") final boolean alternative,
+            @Option(required = false,
+                     help = "allow this stereotype to be used on any valid @Target element type (TYPE, METHOD, FIELD)",
+                     description = "all @Target element types",
+                     name = "all-targets") final boolean allTargets
+            ) throws FileNotFoundException
+   {
+      if (resource.exists() && !overwrite)
+      {
+         throw new RuntimeException("Type already exists [" + resource.getFullyQualifiedName()
+                  + "] Re-run with '--overwrite' to continue.");
+      }
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+      JavaAnnotation stereotype = JavaParser.create(JavaAnnotation.class);
+      stereotype.setName(java.calculateName(resource));
+      stereotype.setPackage(java.calculatePackage(resource));
+      stereotype.addAnnotation(Stereotype.class);
+      if (inherited)
+      {
+         stereotype.addAnnotation(Inherited.class);
+      }
+      if (named)
+      {
+         stereotype.addAnnotation(Named.class);
+      }
+      if (alternative)
+      {
+         stereotype.addAnnotation(Alternative.class);
+      }
+      stereotype.addAnnotation(Retention.class).setEnumValue(RUNTIME);
+
+      final Set<ElementType> targetTypes;
+      if (allTargets)
+      {
+         targetTypes = STEREOTYPE_TARGETS;
+      }
+      else
+      {
+         Set<ElementType> input;
+         while (true)
+         {
+            input = shell.promptMultiSelect("Select target element types", STEREOTYPE_TARGETS);
+            if (input.isEmpty())
+            {
+               shell.println(ShellColor.RED, "No target element types selected");
+               continue;
+            }
+            if (input.contains(TYPE) && input.size() == 2)
+            {
+               shell.println(ShellColor.RED, "Invalid combination of target element types: " + input);
+               continue;
+            }
+            break;
+         }
+         targetTypes = input;
+      }
+
+      stereotype.addAnnotation(Target.class).setEnumValue(targetTypes.toArray(new ElementType[targetTypes.size()]));
+      stereotype.addAnnotation(Documented.class);
+
+      java.saveJavaSource(stereotype);
+      pickup.fire(new PickupResource(java.getJavaResource(stereotype)));
    }
 }
