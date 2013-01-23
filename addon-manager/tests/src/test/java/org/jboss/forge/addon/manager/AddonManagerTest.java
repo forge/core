@@ -121,7 +121,7 @@ public class AddonManagerTest
       addonDependenciesIds.add("org.jboss.forge:convert");
       addonDependenciesIds.add("org.jboss.forge:facets");
 
-      final int addonDepsSize = addonDependenciesIds.size();
+      final int addonDepsSize = addonDependenciesIds.size() - request.getOptionalAddons().size();
 
       for (AddonDependency dependency : dependencies)
       {
