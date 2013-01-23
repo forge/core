@@ -247,7 +247,7 @@ public class BeansPlugin implements Plugin
             @Option(required = false, name = "overwrite") final boolean overwrite
             ) throws FileNotFoundException
    {
-      if (!resource.createNewFile() && !overwrite)
+      if (resource.exists() && !overwrite)
       {
          throw new RuntimeException("Type already exists [" + resource.getFullyQualifiedName()
                   + "] Re-run with '--overwrite' to continue.");
@@ -266,8 +266,8 @@ public class BeansPlugin implements Plugin
       {
          javaClass.addAnnotation(scope.getAnnotation());
       }
-      resource.setContents(javaClass);
-      pickup.fire(new PickupResource(resource));
+      java.saveJavaSource(javaClass);
+      pickup.fire(new PickupResource(java.getJavaResource(javaClass)));
    }
 
    @Command("new-qualifier")
@@ -278,7 +278,7 @@ public class BeansPlugin implements Plugin
             @Option(required = false, name = "inherited") final boolean inherited
             ) throws FileNotFoundException
    {
-      if (!resource.createNewFile() && !overwrite)
+      if (resource.exists() && !overwrite)
       {
          throw new RuntimeException("Type already exists [" + resource.getFullyQualifiedName()
                   + "] Re-run with '--overwrite' to continue.");
@@ -297,8 +297,8 @@ public class BeansPlugin implements Plugin
       qualifier.addAnnotation(Target.class).setEnumValue(METHOD, FIELD, PARAMETER, TYPE);
       qualifier.addAnnotation(Documented.class);
 
-      resource.setContents(qualifier);
-      pickup.fire(new PickupResource(resource));
+      java.saveJavaSource(qualifier);
+      pickup.fire(new PickupResource(java.getJavaResource(qualifier)));
    }
 
    @Command("new-stereotype")
@@ -313,9 +313,9 @@ public class BeansPlugin implements Plugin
                      help = "allow this stereotype to be used on any valid @Target element type (TYPE, METHOD, FIELD)",
                      description = "all @Target element types",
                      name = "all-targets") final boolean allTargets
-            )
+            ) throws FileNotFoundException
    {
-      if (!resource.createNewFile() && !overwrite)
+      if (resource.exists() && !overwrite)
       {
          throw new RuntimeException("Type already exists [" + resource.getFullyQualifiedName()
                   + "] Re-run with '--overwrite' to continue.");
@@ -368,7 +368,7 @@ public class BeansPlugin implements Plugin
       stereotype.addAnnotation(Target.class).setEnumValue(targetTypes.toArray(new ElementType[targetTypes.size()]));
       stereotype.addAnnotation(Documented.class);
 
-      resource.setContents(stereotype);
-      pickup.fire(new PickupResource(resource));
+      java.saveJavaSource(stereotype);
+      pickup.fire(new PickupResource(java.getJavaResource(stereotype)));
    }
 }
