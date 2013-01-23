@@ -113,7 +113,7 @@ public class JavaPluginTest extends AbstractShellTest
       getShell().execute("ls");
       getShell().execute("build");
       JavaEnum javaEnum = (JavaEnum) getProject().getFacet(JavaSourceFacet.class)
-               .getEnumTypeResource(Packages.toFileSyntax("org.jboss.forge.test.types.TestingEnumTypeCreation"))
+               .getJavaResource(Packages.toFileSyntax("org.jboss.forge.test.types.TestingEnumTypeCreation"))
                .getJavaSource();
       assertNotNull(javaEnum);
    }
@@ -127,7 +127,7 @@ public class JavaPluginTest extends AbstractShellTest
       getShell().execute("ls");
       getShell().execute("build");
       JavaEnum javaEnum = (JavaEnum) getProject().getFacet(JavaSourceFacet.class)
-               .getEnumTypeResource(Packages.toFileSyntax("org.jboss.forge.test.types.TestingEnumTypeCreation"))
+               .getJavaResource(Packages.toFileSyntax("org.jboss.forge.test.types.TestingEnumTypeCreation"))
                .getJavaSource();
       EnumConstant<JavaEnum> enumConst = javaEnum.getEnumConstant("A");
       assertNotNull(enumConst);
@@ -154,8 +154,8 @@ public class JavaPluginTest extends AbstractShellTest
 
       resetInputQueue();
       getShell()
-      .execute(
-               "java new-annotation-type --package org.jboss.forge.test.types --no-target \"public @interface TestingAnnotationTypeCreation{}\"");
+               .execute(
+                        "java new-annotation-type --package org.jboss.forge.test.types --no-target \"public @interface TestingAnnotationTypeCreation{}\"");
       getShell().execute("ls");
       getShell().execute("build");
       source = getProject().getFacet(JavaSourceFacet.class)
@@ -167,7 +167,7 @@ public class JavaPluginTest extends AbstractShellTest
       assertFalse(annotation.hasAnnotation(Documented.class));
       assertFalse(annotation.hasAnnotation(Retention.class));
       assertFalse(annotation.hasAnnotation(Target.class));
-      
+
       resetInputQueue();
       queueInputLines("*");
       getShell()
@@ -235,7 +235,7 @@ public class JavaPluginTest extends AbstractShellTest
       assertEquals("testInt", testInt.getName());
       assertEquals("int", testInt.getType());
       assertNull(testInt.getDefaultValue().getLiteral());
-      
+
       AnnotationElement testStrings = JavaAnnotation.class.cast(source).getAnnotationElement("testStrings");
       assertNotNull(testStrings);
       assertEquals("testStrings", testStrings.getName());
@@ -251,4 +251,24 @@ public class JavaPluginTest extends AbstractShellTest
                         "java new-annotation-type --package org.jboss.forge.test.types \"public @interface TestingAnnotationTypeCreation {}\"");
       getShell().execute("java new-annotation-element");
    }
+
+   @Test
+   public void testCreateAnnotationInRootFolder() throws Exception
+   {
+      queueInputLines("");
+      getShell()
+               .execute(
+                        "java new-annotation-type \"public @interface TestingAnnotationTypeCreation {}\"");
+   }
+
+   @Test
+   public void testCreateEnumInRootFolder() throws Exception
+   {
+      queueInputLines("");
+      getShell()
+               .execute(
+                        "java new-enum-type \"public enum TestingEnumTypeCreation {}\"");
+   }
+
+
 }

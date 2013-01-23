@@ -67,7 +67,7 @@ public interface JavaSourceFacet extends Facet
    /**
     * Create or update a Java file in the primary source directory: {@link #getSourceFolder()} - use information in the
     * given {@link JavaSource} to determine the appropriate package; packages will be created if necessary.
-    * 
+    *
     * @param source The java class to create
     * @return The created or updated {@link JavaResource}
     * @throws FileNotFoundException
@@ -77,18 +77,21 @@ public interface JavaSourceFacet extends Facet
    /**
     * Create or update a Java file in the primary source directory: {@link #getSourceFolder()} - use information in the
     * given {@link JavaEnum} to determine the appropriate package; packages will be created if necessary.
-    * 
+    *
     * @param source The java enum type to create
     * @return The created or updated {@link EnumTypeResource}
     * @throws FileNotFoundException
+    *
+    * @deprecated Use {@link JavaSourceFacet#saveJavaSource(JavaSource)}
     */
+   @Deprecated
    public JavaResource saveEnumTypeSource(final JavaEnum source) throws FileNotFoundException;
 
    /**
     * Create or update a Java file in the primary test source directory: {@link #getTestSourceFolder()} - use
     * information in the given {@link JavaSource} to determine the appropriate package; packages will be created if
     * necessary.
-    * 
+    *
     * @param source The java class to create
     * @return The created or updated {@link JavaResource}
     */
@@ -96,7 +99,7 @@ public interface JavaSourceFacet extends Facet
 
    /**
     * Return the {@link JavaClass} at the given path relative to {@link #getSourceFolder()}.
-    * 
+    *
     * @param relativePath The file or package path of the target Java source file.
     * @throws FileNotFoundException if the target {@link JavaResource} does not exist
     */
@@ -105,7 +108,7 @@ public interface JavaSourceFacet extends Facet
    /**
     * Attempt to locate and re-parse the given {@link JavaClass} from its location on disk, relative to
     * {@link #getSourceFolder()}. The given instance will not be modified, and a new instance will be returned.
-    * 
+    *
     * @param javaClass The {@link JavaClass} to re-parse.
     * @throws FileNotFoundException if the target {@link JavaResource} does not exist
     */
@@ -113,24 +116,30 @@ public interface JavaSourceFacet extends Facet
 
    /**
     * Return the {@link JavaEnum} at the given path relative to {@link #getSourceFolder()}.
-    * 
+    *
     * @param relativePath The file or package path of the target Java source file.
     * @throws FileNotFoundException if the target {@link JavaResource} does not exist
+    *
+    * @deprecated Use {@link JavaSourceFacet#getJavaResource(String} instead
     */
+   @Deprecated
    public JavaResource getEnumTypeResource(String relativePath) throws FileNotFoundException;
 
    /**
     * Attempt to locate and re-parse the given {@link JavaEnum} from its location on disk, relative to
     * {@link #getSourceFolder()}. The given instance will not be modified, and a new instance will be returned.
-    * 
+    *
     * @param javaClass The {@link JavaClass} to re-parse.
     * @throws FileNotFoundException if the target {@link JavaResource} does not exist
+    *
+    * @deprecated Use {@link JavaSourceFacet#getJavaResource(JavaSource)} instead
     */
+   @Deprecated
    public JavaResource getEnumTypeResource(JavaEnum javaEnum) throws FileNotFoundException;
 
    /**
     * Return the {@link JavaClass} at the given path relative to {@link #getTestSourceFolder()}.
-    * 
+    *
     * @param relativePath The package path of the target Java source {@link JavaResource}.
     */
    public JavaResource getTestJavaResource(String relativePath) throws FileNotFoundException;
@@ -138,7 +147,7 @@ public interface JavaSourceFacet extends Facet
    /**
     * Attempt to locate and re-parse the given {@link JavaClass} from its location on disk, relative to
     * {@link #getTestSourceFolder()}. The given instance will not be modified, and a new instance will be returned.
-    * 
+    *
     * @param javaClass The {@link JavaClass} to re-parse.
     * @throws FileNotFoundException if the target {@link JavaResource} does not exist
     */
@@ -146,14 +155,14 @@ public interface JavaSourceFacet extends Facet
 
    /**
     * Recursively loops over all the source directories and for each java file it finds, calls the visitor.
-    * 
+    *
     * @param visitor The {@link JavaResourceVisitor} that processes all the found java files. Cannot be null.
     */
    public void visitJavaSources(JavaResourceVisitor visitor);
 
    /**
     * Recursively loops over all the test source directories and for each java file it finds, calls the visitor.
-    * 
+    *
     * @param visitor The {@link JavaResourceVisitor} that processes all the found java files. Cannot be null.
     */
    public void visitJavaTestSources(JavaResourceVisitor visitor);
