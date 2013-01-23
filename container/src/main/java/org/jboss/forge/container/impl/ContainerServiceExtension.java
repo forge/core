@@ -68,21 +68,14 @@ public class ContainerServiceExtension implements Extension
    {
       Annotated annotated = event.getInjectionPoint().getAnnotated();
 
-      Exported remote = getRemote(annotated);
+      Exported exported = getExported(annotated);
       Class<?> injectionPointDeclaringType = Types.toClass(event.getInjectionPoint().getMember().getDeclaringClass());
       Class<?> injectionBeanValueType = Types.toClass(annotated.getBaseType());
 
       boolean local = isClassLocal(injectionPointDeclaringType, injectionBeanValueType);
       if (!local)
       {
-         if (remote == null)
-         {
-            // event.addDefinitionError(new ContainerException(
-            // "ERROR: Illegal attempt to inject [" + injectionBeanValueType.getName()
-            // + "], which does not originate from this Addon but is not a @"
-            // + Remote.class.getSimpleName() + " bean, at injection point " + annotated + "."));
-         }
-         else
+         if (exported != null)
          {
             ServiceLiteral serviceLiteral = new ServiceLiteral();
             event.setInjectionPoint(new ExportedInstanceInjectionPoint(event.getInjectionPoint(), serviceLiteral));
@@ -90,9 +83,9 @@ public class ContainerServiceExtension implements Extension
             requestedServiceLiterals.put(event.getInjectionPoint(), serviceLiteral);
          }
       }
-      else if (remote != null)
+      else if (exported != null)
       {
-         logger.fine("Not @Remote type " + annotated);
+         logger.fine("Not @Exported type " + annotated);
       }
    }
 
@@ -185,7 +178,7 @@ public class ContainerServiceExtension implements Extension
       return false;
    }
 
-   private Exported getRemote(Annotated annotated)
+   private Exported getExported(Annotated annotated)
    {
       Class<?> clazz = Types.toClass(annotated.getBaseType());
       return Annotations.getAnnotation(clazz, Exported.class);
