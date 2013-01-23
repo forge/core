@@ -28,7 +28,7 @@ public class ResourceConverterGenerator implements ConverterGenerator
    }
 
    @Override
-   public ResourceConverter generateConverter()
+   public ResourceConverter generateConverter(Class<?> source, Class<?> target)
    {
       return converter.get();
    }

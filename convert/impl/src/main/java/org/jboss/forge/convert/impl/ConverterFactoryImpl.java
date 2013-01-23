@@ -36,7 +36,7 @@ public class ConverterFactoryImpl implements ConverterFactory
          ConverterGenerator generator = generatorInstance.get();
          if (generator.handles(source, target))
          {
-            result = (Converter<S, T>) generator.generateConverter();
+            result = (Converter<S, T>) generator.generateConverter(source,target);
             break;
          }
       }

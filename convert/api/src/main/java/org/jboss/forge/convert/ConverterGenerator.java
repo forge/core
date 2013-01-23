@@ -11,7 +11,7 @@ public interface ConverterGenerator
 {
    boolean handles(Class<?> source, Class<?> target);
 
-   Converter<?, ?> generateConverter();
+   Converter<?, ?> generateConverter(Class<?> source, Class<?> target);
 
    Class<? extends Converter<?, ?>> getConverterType();
 }
