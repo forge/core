@@ -5,11 +5,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package test.org.jboss.forge.convert;
+package test.org.jboss.forge.environment;
 
 import org.jboss.forge.environment.Category;
 
-public interface TestCategory extends Category
+public interface UserInterfaceCategory extends Category
 {
 
 }
