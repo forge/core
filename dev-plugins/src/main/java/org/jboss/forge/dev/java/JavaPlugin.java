@@ -104,6 +104,10 @@ public class JavaPlugin implements Plugin
                      description = "source package",
                      type = PromptType.JAVA_PACKAGE,
                      name = "package") final String pckg,
+            @Option(name = "named",
+                     required = false,
+                     description = "The class name",
+                     type = PromptType.JAVA_CLASS) final String className,
             @Option(required = false,
                      help = "the class definition: surround with quotes",
                      description = "class definition") final String... def) throws FileNotFoundException
@@ -120,6 +124,10 @@ public class JavaPlugin implements Plugin
       else if (in != null)
       {
          jc = JavaParser.parse(JavaClass.class, in);
+      }
+      else if (className != null)
+      {
+         jc = JavaParser.create(JavaClass.class).setName(className);
       }
       else
       {
@@ -148,6 +156,10 @@ public class JavaPlugin implements Plugin
          {
             java.saveJavaSource(jc);
          }
+         else
+         {
+            return;
+         }
       }
       pickUp.fire(new PickupResource(java.getJavaResource(jc)));
    }
@@ -155,6 +167,7 @@ public class JavaPlugin implements Plugin
    @Command("new-interface")
    public void newInterface(
             @PipeIn final InputStream in,
+            @Option(name = "named", required = false, description = "The interface name", type = PromptType.JAVA_CLASS) final String interfaceName,
             @Option(required = false, help = "the package in which to build this Interface", description = "source package", type = PromptType.JAVA_PACKAGE, name = "package") final String pckg,
             @Option(required = false, help = "the interface definition: surround with quotes", description = "interface definition") final String... def)
             throws FileNotFoundException
@@ -170,10 +183,15 @@ public class JavaPlugin implements Plugin
       {
          jc = JavaParser.parse(JavaInterface.class, in);
       }
+      else if (interfaceName != null)
+      {
+         jc = JavaParser.create(JavaInterface.class).setName(interfaceName);
+      }
       else
       {
          throw new RuntimeException("arguments required");
       }
+
       if (pckg != null)
       {
          jc.setPackage(pckg);
@@ -195,6 +213,10 @@ public class JavaPlugin implements Plugin
          {
             java.saveJavaSource(jc);
          }
+         else
+         {
+            return;
+         }
       }
       pickUp.fire(new PickupResource(java.getJavaResource(jc)));
    }
@@ -207,6 +229,11 @@ public class JavaPlugin implements Plugin
                      description = "source package",
                      type = PromptType.JAVA_PACKAGE,
                      name = "package") final String pckg,
+            @Option(name = "named",
+                     required = false,
+                     description = "The enum name",
+                     type = PromptType.JAVA_CLASS) final String enumName,
+
             @Option(required = false,
                      help = "the class definition: surround with quotes",
                      description = "class definition") final String... def) throws FileNotFoundException
@@ -223,6 +250,10 @@ public class JavaPlugin implements Plugin
       else if (in != null)
       {
          je = JavaParser.parse(JavaEnum.class, in);
+      }
+      else if (enumName != null)
+      {
+         je = JavaParser.create(JavaEnum.class).setName(enumName);
       }
       else
       {
@@ -251,6 +282,10 @@ public class JavaPlugin implements Plugin
          {
             java.saveJavaSource(je);
          }
+         else
+         {
+            return;
+         }
       }
 
       pickUp.fire(new PickupResource(java.getJavaResource(je)));
@@ -264,6 +299,10 @@ public class JavaPlugin implements Plugin
                      description = "source package",
                      type = PromptType.JAVA_PACKAGE,
                      name = "package") final String pckg,
+            @Option(name = "named",
+                     required = false,
+                     description = "The annotation name",
+                     type = PromptType.JAVA_CLASS) final String annotationName,
             @Option(required = false,
                      help = "the @Retention policy for this annotation",
                      description = "retention policy",
@@ -273,9 +312,9 @@ public class JavaPlugin implements Plugin
                      description = "documented",
                      name = "documented") final boolean documented,
             @Option(required = false,
-            help = "whether to omit the @Target annotation (if omitted the user will be prompted for the target types)",
-            description = "omit @Target",
-            name = "no-target") final boolean noTarget,
+                     help = "whether to omit the @Target annotation (if omitted the user will be prompted for the target types)",
+                     description = "omit @Target",
+                     name = "no-target") final boolean noTarget,
             @Option(required = false,
                      help = "the annotation definition: surround with quotes",
                      description = "annotation definition") final String... def) throws FileNotFoundException
@@ -291,6 +330,10 @@ public class JavaPlugin implements Plugin
       else if (in != null)
       {
          type = JavaParser.parse(JavaAnnotation.class, in);
+      }
+      else if (annotationName != null)
+      {
+         type = JavaParser.create(JavaAnnotation.class).setName(annotationName);
       }
       else
       {
@@ -345,6 +388,10 @@ public class JavaPlugin implements Plugin
          if (prompt.promptBoolean("Your annotation has syntax errors, create anyway?", true))
          {
             java.saveJavaSource(type);
+         }
+         else
+         {
+            return;
          }
       }
 
@@ -514,7 +561,8 @@ public class JavaPlugin implements Plugin
          String addName;
          if (elementDef != null)
          {
-            addName = JavaParser.parse(JavaAnnotation.class, "public @interface Temp{}").addAnnotationElement(elementDef).getName();
+            addName = JavaParser.parse(JavaAnnotation.class, "public @interface Temp{}")
+                     .addAnnotationElement(elementDef).getName();
          }
          else
          {
