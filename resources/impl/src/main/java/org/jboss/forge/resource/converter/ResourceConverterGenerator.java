@@ -24,7 +24,7 @@ public class ResourceConverterGenerator implements ConverterGenerator
    @Override
    public boolean handles(Class<?> source, Class<?> target)
    {
-      return target == Resource.class;
+      return Resource.class.isAssignableFrom(target);
    }
 
    @Override

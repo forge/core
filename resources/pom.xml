@@ -19,6 +19,12 @@
       <dependencies>
          <dependency>
             <groupId>org.jboss.forge</groupId>
+            <artifactId>resources</artifactId>
+            <classifier>forge-addon</classifier>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
             <artifactId>resources-api</artifactId>
             <version>${project.version}</version>
          </dependency>

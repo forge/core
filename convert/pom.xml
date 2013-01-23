@@ -20,6 +20,12 @@
       <dependencies>
          <dependency>
             <groupId>org.jboss.forge</groupId>
+            <artifactId>convert</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
             <artifactId>convert-api</artifactId>
             <version>${project.version}</version>
          </dependency>
