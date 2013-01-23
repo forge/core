@@ -236,7 +236,7 @@ public class JavaPlugin implements Plugin
 
       if (!je.hasSyntaxErrors())
       {
-         java.saveEnumTypeSource(je);
+         java.saveJavaSource(je);
       }
       else
       {
@@ -247,13 +247,13 @@ public class JavaPlugin implements Plugin
          }
          writer.println();
 
-         if (prompt.promptBoolean("Your class has syntax errors, create anyway?", true))
+         if (prompt.promptBoolean("Your enum has syntax errors, create anyway?", true))
          {
-            java.saveEnumTypeSource(je);
+            java.saveJavaSource(je);
          }
       }
 
-      pickUp.fire(new PickupResource(java.getEnumTypeResource(je)));
+      pickUp.fire(new PickupResource(java.getJavaResource(je)));
    }
 
    @Command("new-annotation-type")
@@ -378,7 +378,7 @@ public class JavaPlugin implements Plugin
 
       JavaEnum source = (JavaEnum) resource.getJavaSource();
       source.addEnumConstant(enumConstDef);
-      java.saveEnumTypeSource(source);
+      java.saveJavaSource(source);
 
    }
 

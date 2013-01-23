@@ -22,6 +22,7 @@ import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.parser.java.JavaEnum;
 import org.jboss.forge.parser.java.JavaSource;
+import org.jboss.forge.parser.java.util.Strings;
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.ProjectModelException;
 import org.jboss.forge.project.facets.BaseFacet;
@@ -100,9 +101,12 @@ public class MavenJavaSourceFacet extends BaseFacet implements JavaSourceFacet, 
       MavenCoreFacet mavenFacet = project.getFacet(MavenCoreFacet.class);
       Build build = mavenFacet.getPOM().getBuild();
       String srcFolderName;
-      if (build != null && build.getSourceDirectory() != null) {
+      if (build != null && build.getSourceDirectory() != null)
+      {
          srcFolderName = build.getSourceDirectory();
-      } else {
+      }
+      else
+      {
          srcFolderName = "src" + File.separator + "main" + File.separator + "java";
       }
       DirectoryResource projectRoot = project.getProjectRoot();
@@ -115,9 +119,12 @@ public class MavenJavaSourceFacet extends BaseFacet implements JavaSourceFacet, 
       MavenCoreFacet mavenFacet = project.getFacet(MavenCoreFacet.class);
       Build build = mavenFacet.getPOM().getBuild();
       String srcFolderName;
-      if (build != null && build.getTestSourceDirectory() != null) {
+      if (build != null && build.getTestSourceDirectory() != null)
+      {
          srcFolderName = build.getTestSourceDirectory();
-      } else {
+      }
+      else
+      {
          srcFolderName = "src" + File.separator + "test" + File.separator + "java";
       }
       DirectoryResource projectRoot = project.getProjectRoot();
@@ -197,19 +204,23 @@ public class MavenJavaSourceFacet extends BaseFacet implements JavaSourceFacet, 
    @Override
    public JavaResource getJavaResource(final JavaSource<?> javaClass) throws FileNotFoundException
    {
-      return getJavaResource(javaClass.getPackage() + "." + javaClass.getName());
+      String pkg = Strings.isNullOrEmpty(javaClass.getPackage()) ? "" : javaClass.getPackage() + ".";
+      return getJavaResource(pkg + javaClass.getName());
    }
 
    @Override
+   @Deprecated
    public JavaResource getEnumTypeResource(final JavaEnum javaEnum) throws FileNotFoundException
    {
-      return getEnumTypeResource(javaEnum.getPackage() + "." + javaEnum.getName());
+      String pkg = Strings.isNullOrEmpty(javaEnum.getPackage()) ? "" : javaEnum.getPackage() + ".";
+      return getEnumTypeResource(pkg + javaEnum.getName());
    }
 
    @Override
    public JavaResource getTestJavaResource(final JavaSource<?> javaClass) throws FileNotFoundException
    {
-      return getTestJavaResource(javaClass.getPackage() + "." + javaClass.getName());
+      String pkg = Strings.isNullOrEmpty(javaClass.getPackage()) ? "" : javaClass.getPackage() + ".";
+      return getTestJavaResource(pkg + javaClass.getName());
    }
 
    @Override
@@ -218,10 +229,14 @@ public class MavenJavaSourceFacet extends BaseFacet implements JavaSourceFacet, 
       return getJavaResource(getSourceFolder(), relativePath);
    }
 
+   /**
+    * @deprecated Use the getJavaResource
+    */
    @Override
+   @Deprecated
    public JavaResource getEnumTypeResource(final String relativePath) throws FileNotFoundException
    {
-      return getEnumTypeResource(getSourceFolder(), relativePath);
+      return getJavaResource(getSourceFolder(), relativePath);
    }
 
    @Override
@@ -240,22 +255,16 @@ public class MavenJavaSourceFacet extends BaseFacet implements JavaSourceFacet, 
       return target;
    }
 
-   private JavaResource getEnumTypeResource(final DirectoryResource sourceDir, final String relativePath)
-   {
-      String path = relativePath.trim().endsWith(".java")
-               ? relativePath.substring(0, relativePath.lastIndexOf(".java")) : relativePath;
-
-      path = Packages.toFileSyntax(path) + ".java";
-      JavaResource target = sourceDir.getChildOfType(JavaResource.class, path);
-      return target;
-   }
-
    @Override
    public JavaResource saveJavaSource(final JavaSource<?> source) throws FileNotFoundException
    {
       return getJavaResource(source.getQualifiedName()).setContents(source);
    }
 
+   /**
+    * @deprecated use {@link MavenJavaSourceFacet#saveJavaSource(JavaSource)}
+    */
+   @Deprecated
    @Override
    public JavaResource saveEnumTypeSource(final JavaEnum source) throws FileNotFoundException
    {
@@ -277,26 +286,31 @@ public class MavenJavaSourceFacet extends BaseFacet implements JavaSourceFacet, 
    @Override
    public void visitJavaTestSources(final JavaResourceVisitor visitor)
    {
-       visitSources(getTestSourceFolder(), visitor);
+      visitSources(getTestSourceFolder(), visitor);
    }
 
-   private  void visitSources(final Resource<?> searchFolder, final JavaResourceVisitor visitor )
+   private void visitSources(final Resource<?> searchFolder, final JavaResourceVisitor visitor)
    {
-       if (searchFolder instanceof DirectoryResource) {
+      if (searchFolder instanceof DirectoryResource)
+      {
 
-             searchFolder.listResources(new ResourceFilter() {
-               @Override
-               public boolean accept(Resource<?> resource) {
-                   if (resource instanceof DirectoryResource) {
-                       visitSources(resource, visitor);
-                   }
-                   if (resource instanceof JavaResource) {
-                       visitor.visit((JavaResource) resource);
-                   }
-
-                   return false;
+         searchFolder.listResources(new ResourceFilter()
+         {
+            @Override
+            public boolean accept(Resource<?> resource)
+            {
+               if (resource instanceof DirectoryResource)
+               {
+                  visitSources(resource, visitor);
                }
-           });
-       }
+               if (resource instanceof JavaResource)
+               {
+                  visitor.visit((JavaResource) resource);
+               }
+
+               return false;
+            }
+         });
+      }
    }
 }

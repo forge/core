@@ -50,7 +50,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
 @Ignore
-public class JavaExectionFacetTest
+public class JavaExecutionFacetTest
 {
    private JavaExecutionFacet executionFacet;
 
