@@ -3,7 +3,6 @@ package org.jboss.forge.container.impl;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.enterprise.inject.spi.BeanManager;
@@ -12,6 +11,7 @@ import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.container.services.ExportedInstanceImpl;
 import org.jboss.forge.container.services.ServiceRegistry;
+import org.jboss.forge.container.util.Assert;
 import org.jboss.forge.container.util.Sets;
 
 public class ServiceRegistryImpl implements ServiceRegistry
@@ -71,20 +71,43 @@ public class ServiceRegistryImpl implements ServiceRegistry
     */
    private <T> ExportedInstance<T> getExportedInstance(Class<T> requestedType, Class<T> actualType)
    {
+      Assert.notNull(requestedType, "Requested Class type may not be null");
+      Assert.notNull(actualType, "Actual Class type may not be null");
+
+      final Class<T> requestedLoadedType;
+      final Class<? extends T> actualLoadedType;
       try
       {
-         final Class<T> requestedLoadedType = loadAddonClass(requestedType);
-         final Class<? extends T> actualLoadedType = loadAddonClass(actualType);
+         requestedLoadedType = loadAddonClass(requestedType);
+      }
+      catch (ClassNotFoundException cnfe)
+      {
+         log.fine("Class " + requestedType.getName() + " is not present in this addon classloader");
+         return null;
+      }
+      try
+      {
+         actualLoadedType = loadAddonClass(actualType);
+      }
+      catch (ClassNotFoundException cnfe)
+      {
+         log.fine("Class " + actualType.getName() + " is not present in this addon classloader");
+         return null;
+      }
+
+      try
+      {
+         ExportedInstance<T> result = null;
          if (!manager.getBeans(requestedLoadedType).isEmpty())
          {
-            return new ExportedInstanceImpl<T>(addon.getClassLoader(), manager, requestedLoadedType, actualLoadedType);
+            result = new ExportedInstanceImpl<T>(addon.getClassLoader(), manager, requestedLoadedType, actualLoadedType);
          }
+         return result;
       }
       catch (Exception e)
       {
-         log.log(Level.FINE, "Error while fetching exported instances", e);
+         throw new ContainerException("Error while fetching exported instance", e);
       }
-      return null;
    }
 
    @Override

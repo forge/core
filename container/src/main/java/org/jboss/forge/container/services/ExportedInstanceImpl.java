@@ -13,7 +13,6 @@ import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
 import org.jboss.forge.container.exception.ContainerException;
-import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.container.util.ClassLoaders;
 
 public class ExportedInstanceImpl<R> implements ExportedInstance<R>
