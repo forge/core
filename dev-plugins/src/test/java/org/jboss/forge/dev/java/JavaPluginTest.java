@@ -58,11 +58,38 @@ public class JavaPluginTest extends AbstractShellTest
    }
 
    @Test
+   public void testCreateJavaClassNamed() throws Exception
+   {
+      getShell().execute(
+               "java new-class --named TestingClassCreation --package org.jboss.forge.test.classes");
+      getShell().execute("build");
+      JavaClass javaClass = (JavaClass) getProject().getFacet(JavaSourceFacet.class)
+               .getJavaResource(Packages.toFileSyntax("org.jboss.forge.test.classes.TestingClassCreation"))
+               .getJavaSource();
+      assertNotNull(javaClass);
+   }
+
+   @Test
    public void testCreateJavaInterface() throws Exception
    {
       getShell()
                .execute(
                         "java new-interface --package org.jboss.forge.test.interfaces \"public interface TestingInterfaceCreation {}\"");
+      getShell().execute("build");
+      JavaInterface javaInterface = (JavaInterface) getProject()
+               .getFacet(JavaSourceFacet.class)
+               .getJavaResource(
+                        Packages.toFileSyntax("org.jboss.forge.test.interfaces.TestingInterfaceCreation"))
+               .getJavaSource();
+      assertNotNull(javaInterface);
+   }
+
+   @Test
+   public void testCreateJavaInterfaceNamed() throws Exception
+   {
+      getShell()
+               .execute(
+                        "java new-interface --named TestingInterfaceCreation --package org.jboss.forge.test.interfaces");
       getShell().execute("build");
       JavaInterface javaInterface = (JavaInterface) getProject()
                .getFacet(JavaSourceFacet.class)
@@ -110,6 +137,19 @@ public class JavaPluginTest extends AbstractShellTest
    {
       getShell().execute(
                "java new-enum-type --package org.jboss.forge.test.types \"public enum TestingEnumTypeCreation{}\"");
+      getShell().execute("ls");
+      getShell().execute("build");
+      JavaEnum javaEnum = (JavaEnum) getProject().getFacet(JavaSourceFacet.class)
+               .getJavaResource(Packages.toFileSyntax("org.jboss.forge.test.types.TestingEnumTypeCreation"))
+               .getJavaSource();
+      assertNotNull(javaEnum);
+   }
+
+   @Test
+   public void testCreateEnumTypeNamed() throws Exception
+   {
+      getShell().execute(
+               "java new-enum-type --named TestingEnumTypeCreation --package org.jboss.forge.test.types");
       getShell().execute("ls");
       getShell().execute("build");
       JavaEnum javaEnum = (JavaEnum) getProject().getFacet(JavaSourceFacet.class)
@@ -258,7 +298,13 @@ public class JavaPluginTest extends AbstractShellTest
       queueInputLines("");
       getShell()
                .execute(
-                        "java new-annotation-type \"public @interface TestingAnnotationTypeCreation {}\"");
+                        "java new-annotation-type --named TestingAnnotationTypeCreation");
+      assertTrue(getProject()
+               .getFacet(JavaSourceFacet.class)
+               .getJavaResource(
+                        Packages.toFileSyntax("TestingAnnotationTypeCreation"))
+               .exists());
+
    }
 
    @Test
@@ -267,8 +313,43 @@ public class JavaPluginTest extends AbstractShellTest
       queueInputLines("");
       getShell()
                .execute(
-                        "java new-enum-type \"public enum TestingEnumTypeCreation {}\"");
+                        "java new-enum-type --named TestingEnumTypeCreation");
+      assertTrue(getProject()
+               .getFacet(JavaSourceFacet.class)
+               .getJavaResource(
+                        Packages.toFileSyntax("TestingEnumTypeCreation"))
+               .exists());
    }
 
+   @Test
+   public void testCreateAnnotationWithoutBrackets() throws Exception
+   {
+      queueInputLines("", "N");
+      getShell()
+               .execute(
+                        "java new-annotation-type \"public @interface TestingAnnotationTypeCreation\"");
+      assertFalse(getProject()
+               .getFacet(JavaSourceFacet.class)
+               .getJavaResource(
+                        Packages.toFileSyntax("TestingAnnotationTypeCreation"))
+               .exists());
+
+   }
+
+   @Test
+   public void testCreateAnnotationNamed() throws Exception
+   {
+      queueInputLines("");
+      getShell()
+               .execute(
+                        "java new-annotation-type --named TestingAnnotationTypeCreation --package org.jboss.forge.test.annotations");
+      getShell().execute("build");
+
+      assertNotNull(getProject()
+               .getFacet(JavaSourceFacet.class)
+               .getJavaResource(
+                        Packages.toFileSyntax("org.jboss.forge.test.annotations.TestingAnnotationTypeCreation"))
+               .getJavaSource());
+   }
 
 }
