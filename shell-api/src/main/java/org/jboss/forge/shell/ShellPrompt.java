@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2012-2013 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -9,6 +9,7 @@ package org.jboss.forge.shell;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.shell.completer.CommandCompleter;
@@ -219,4 +220,76 @@ public interface ShellPrompt
     */
    String promptSecret(String string, String defaultIfEmpty);
 
+   /**
+    * Prompt for user input, first printing the given message, followed by a keyed list of options. Loop until the user
+    * has selected all available options or signifies he is finished by entering an empty response, then return a set
+    * of all values selected.
+    * 
+    * @param <T> The type of the objects to be selected
+    * @param message The prompt message to display
+    * @param options The set of selection options
+    * @return the selected options
+    */
+   <T> Set<T> promptMultiSelect(String message, Set<T> options);
+
+   /**
+    * Prompt for user input, first printing the given message, followed by a keyed list of options, including a
+    * "wildcard" option to select all. Loop until the user has selected all available options or signifies he is
+    * finished by entering an empty response, then return a set of all values selected.
+    * 
+    * @param <T> The type of the objects to be selected
+    * @param wildcard the shortcut response signifying "select all options", not {@code null}
+    * @param message The prompt message to display
+    * @param options The set of selection options
+    * @return the selected options
+    */
+   <T> Set<T> promptMultiSelectWithWildcard(String wildcard, String message, Set<T> options);
+
+   /**
+    * Prompt for user input, first printing the given message, followed by a keyed list of options. Loop until the user
+    * signifies he is finished by entering an empty response, then return a set of all values selected.
+    * 
+    * @param <T> The type of the objects to be selected
+    * @param message The prompt message to display
+    * @param options The array of unique selection options
+    * @return the selected options
+    */
+   <T> Set<T> promptMultiSelect(String message, T... options);
+
+   /**
+    * Prompt for user input, first printing the given message, followed by a keyed list of options, including a
+    * "wildcard" option to select all. Loop until the user has selected all available options or signifies he is
+    * finished by entering an empty response, then return a set of all values selected.
+    * 
+    * @param <T> The type of the objects to be selected
+    * @param wildcard the shortcut response signifying "select all options", not {@code null}
+    * @param message The prompt message to display
+    * @param options The array of unique selection options
+    * @return the selected options
+    */
+   <T> Set<T> promptMultiSelectWithWildcard(String wildcard, String message, T... options);
+
+   /**
+    * Prompt for user input, first printing the given message, followed by a keyed list of options. Loop until the user
+    * signifies he is finished by entering an empty response, then return a set of all values selected.
+    * 
+    * @param <T> The type of the objects to be selected
+    * @param message The prompt message to display
+    * @param options The map of selection options
+    * @return the selected options
+    */
+   <T> Set<T> promptMultiSelect(String message, Map<String, T> options);
+
+   /**
+    * Prompt for user input, first printing the given message, followed by a keyed list of options, including a
+    * "wildcard" option to select all. Loop until the user has selected all available options or signifies he is
+    * finished by entering an empty response, then return a set of all values selected.
+    * 
+    * @param <T> The type of the objects to be selected
+    * @param wildcard the shortcut response signifying "select all options", not {@code null}
+    * @param message The prompt message to display
+    * @param options The map of selection options
+    * @return the selected options
+    */
+   <T> Set<T> promptMultiSelectWithWildcard(String wildcard, String message, Map<String, T> options);
 }
