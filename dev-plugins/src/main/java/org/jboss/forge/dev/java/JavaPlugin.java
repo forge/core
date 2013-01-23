@@ -10,11 +10,15 @@ package org.jboss.forge.dev.java;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -35,6 +39,7 @@ import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.shell.PromptType;
+import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.ShellColor;
 import org.jboss.forge.shell.ShellPrintWriter;
 import org.jboss.forge.shell.ShellPrompt;
@@ -74,6 +79,9 @@ public class JavaPlugin implements Plugin
 
    @Inject
    private Event<PickupResource> pickUp;
+
+   @Inject
+   private Shell shell;
 
    @DefaultCommand(help = "Prints all Java system property information.")
    public void info(final PipeOut out)
@@ -265,6 +273,10 @@ public class JavaPlugin implements Plugin
                      description = "documented",
                      name = "documented") final boolean documented,
             @Option(required = false,
+            help = "whether to omit the @Target annotation (if omitted the user will be prompted for the target types)",
+            description = "omit @Target",
+            name = "no-target") final boolean noTarget,
+            @Option(required = false,
                      help = "the annotation definition: surround with quotes",
                      description = "annotation definition") final String... def) throws FileNotFoundException
    {
@@ -298,6 +310,25 @@ public class JavaPlugin implements Plugin
       {
          type.addAnnotation(Retention.class).setEnumValue(retentionPolicy);
       }
+      final Set<ElementType> targetTypes;
+      if (noTarget)
+      {
+         targetTypes = Collections.emptySet();
+      }
+      else
+      {
+         targetTypes = shell.promptMultiSelectWithWildcard("*",
+                  "Select target element types", ElementType.values());
+      }
+      if (targetTypes.isEmpty())
+      {
+         shell.printlnVerbose("Skipping @Target annotation");
+      }
+      else
+      {
+         type.addAnnotation(Target.class).setEnumValue(targetTypes.toArray(new ElementType[targetTypes.size()]));
+      }
+
       if (!type.hasSyntaxErrors())
       {
          java.saveJavaSource(type);
@@ -506,4 +537,5 @@ public class JavaPlugin implements Plugin
          java.saveJavaSource(source);
       }
    }
+
 }
