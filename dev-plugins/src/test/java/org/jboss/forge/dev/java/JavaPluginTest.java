@@ -7,15 +7,19 @@
 
 package org.jboss.forge.dev.java;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 import org.jboss.forge.parser.java.AnnotationElement;
 import org.jboss.forge.parser.java.EnumConstant;
@@ -29,7 +33,6 @@ import org.jboss.forge.parser.java.Method;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.shell.util.Packages;
 import org.jboss.forge.test.AbstractShellTest;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -133,6 +136,7 @@ public class JavaPluginTest extends AbstractShellTest
    @Test
    public void testCreateAnnotationType() throws Exception
    {
+      queueInputLines("");
       getShell()
                .execute(
                         "java new-annotation-type --package org.jboss.forge.test.types \"public @interface TestingAnnotationTypeCreation{}\"");
@@ -146,7 +150,26 @@ public class JavaPluginTest extends AbstractShellTest
       JavaAnnotation annotation = JavaAnnotation.class.cast(source);
       assertFalse(annotation.hasAnnotation(Documented.class));
       assertFalse(annotation.hasAnnotation(Retention.class));
+      assertFalse(annotation.hasAnnotation(Target.class));
 
+      resetInputQueue();
+      getShell()
+      .execute(
+               "java new-annotation-type --package org.jboss.forge.test.types --no-target \"public @interface TestingAnnotationTypeCreation{}\"");
+      getShell().execute("ls");
+      getShell().execute("build");
+      source = getProject().getFacet(JavaSourceFacet.class)
+               .getJavaResource(Packages.toFileSyntax("org.jboss.forge.test.types.TestingAnnotationTypeCreation"))
+               .getJavaSource();
+      assertNotNull(source);
+      assertTrue(source.isAnnotation());
+      annotation = JavaAnnotation.class.cast(source);
+      assertFalse(annotation.hasAnnotation(Documented.class));
+      assertFalse(annotation.hasAnnotation(Retention.class));
+      assertFalse(annotation.hasAnnotation(Target.class));
+      
+      resetInputQueue();
+      queueInputLines("*");
       getShell()
                .execute(
                         "java new-annotation-type --package org.jboss.forge.test.types  --documented --retention-policy RUNTIME \"public @interface TestingAnnotationTypeCreation{}\"");
@@ -158,12 +181,16 @@ public class JavaPluginTest extends AbstractShellTest
       annotation = JavaAnnotation.class.cast(source);
       assertTrue(annotation.hasAnnotation(Documented.class));
       assertTrue(annotation.hasAnnotation(Retention.class));
-      Assert.assertSame(RetentionPolicy.RUNTIME, annotation.getAnnotation(Retention.class).getEnumValue(RetentionPolicy.class));
+      assertTrue(annotation.hasAnnotation(Target.class));
+      assertArrayEquals(ElementType.values(),
+               annotation.getAnnotation(Target.class).getEnumArrayValue(ElementType.class));
+      assertSame(RetentionPolicy.RUNTIME, annotation.getAnnotation(Retention.class).getEnumValue(RetentionPolicy.class));
    }
 
    @Test
    public void testCreateAnnotationElement() throws Exception
    {
+      queueInputLines("");
       getShell()
                .execute(
                         "java new-annotation-type --package org.jboss.forge.test.types \"public @interface TestingAnnotationTypeCreation {}\"");
@@ -191,6 +218,7 @@ public class JavaPluginTest extends AbstractShellTest
    @Test
    public void testCreateAnnotationElementFromTypeAndName() throws Exception
    {
+      queueInputLines("");
       getShell()
                .execute(
                         "java new-annotation-type --package org.jboss.forge.test.types \"public @interface TestingAnnotationTypeCreation {}\"");
@@ -217,6 +245,7 @@ public class JavaPluginTest extends AbstractShellTest
    @Test(expected = RuntimeException.class)
    public void testCreateAnnotationElementMissingOptions() throws Exception
    {
+      queueInputLines("");
       getShell()
                .execute(
                         "java new-annotation-type --package org.jboss.forge.test.types \"public @interface TestingAnnotationTypeCreation {}\"");
