@@ -22,11 +22,4 @@ public abstract class BaseConverter<SOURCETYPE, TARGETTYPE> implements Converter
    {
       return targetType;
    }
-
-   @Override
-   public boolean handles(Class<?> source, Class<?> target)
-   {
-      return getSourceType().isAssignableFrom(source) &&
-               getTargetType().isAssignableFrom(target);
-   }
 }

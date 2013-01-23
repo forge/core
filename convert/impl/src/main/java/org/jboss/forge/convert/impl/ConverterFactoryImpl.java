@@ -14,27 +14,29 @@ import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.convert.Converter;
-import org.jboss.forge.convert.ConverterRegistry;
+import org.jboss.forge.convert.ConverterFactory;
+import org.jboss.forge.convert.ConverterGenerator;
 import org.jboss.forge.convert.exception.ConverterNotFoundException;
 
 @Exported
 @Singleton
-public class ConverterRegistryImpl implements ConverterRegistry
+public class ConverterFactoryImpl implements ConverterFactory
 {
    @Inject
    private AddonRegistry registry;
 
    @Override
-   @SuppressWarnings({ "unchecked", "rawtypes" })
+   @SuppressWarnings({ "unchecked" })
    public <S, T> Converter<S, T> getConverter(Class<S> source, Class<T> target)
    {
       Converter<S, T> result = null;
-      for (ExportedInstance<Converter> converterInstance : registry.getExportedInstances(Converter.class))
+      for (ExportedInstance<ConverterGenerator> generatorInstance : registry
+               .getExportedInstances(ConverterGenerator.class))
       {
-         Converter<?, ?> converter = converterInstance.get();
-         if (converter.handles(source, target))
+         ConverterGenerator generator = generatorInstance.get();
+         if (generator.handles(source, target))
          {
-            result = (Converter<S, T>) converter;
+            result = (Converter<S, T>) generator.generateConverter();
             break;
          }
       }

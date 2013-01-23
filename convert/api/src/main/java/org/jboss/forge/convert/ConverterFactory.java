@@ -7,21 +7,20 @@
 
 package org.jboss.forge.convert;
 
-
 /**
- * Stores converter objects
- * 
+ * Creates {@link Converter} objects
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ *
  */
-public interface ConverterRegistry
+public interface ConverterFactory
 {
    /**
     * Returns a converter for the supplied source and target
-    * 
+    *
     * @param source
     * @param target
     * @return
     */
-   <S, T> Converter<S, T> getConverter(Class<S> source, Class<T> target);
+   <SOURCE, TARGET> Converter<SOURCE, TARGET> getConverter(Class<SOURCE> source, Class<TARGET> target);
 }

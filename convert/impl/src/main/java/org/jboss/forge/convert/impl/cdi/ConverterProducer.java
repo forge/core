@@ -14,13 +14,13 @@ import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 
 import org.jboss.forge.convert.Converter;
-import org.jboss.forge.convert.ConverterRegistry;
+import org.jboss.forge.convert.ConverterFactory;
 
 public class ConverterProducer
 {
    @Produces
    @SuppressWarnings("unchecked")
-   public <S, T> Converter<S, T> produceConverter(InjectionPoint injectionPoint, ConverterRegistry registry)
+   public <S, T> Converter<S, T> produceConverter(InjectionPoint injectionPoint, ConverterFactory registry)
    {
       Type type = injectionPoint.getAnnotated().getTypeClosure().iterator().next();
       if (type instanceof ParameterizedType)

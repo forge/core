@@ -7,21 +7,17 @@
 
 package org.jboss.forge.convert;
 
-public interface Converter<S, T>
+import org.jboss.forge.container.services.Exported;
+
+@Exported
+public interface Converter<SOURCE_TYPE, TARGET_TYPE>
 {
    /**
-    * Convert the source of type S to target type T.
+    * Convert the source of type SOURCE_TYPE to target type TARGET_TYPE.
     *
     * @param source the source object to convert, which must be an instance of S
     * @return the converted object, which must be an instance of T
     */
-   T convert(S source);
+   TARGET_TYPE convert(SOURCE_TYPE source);
 
-   /**
-    * Checks if this converter is capable of handling files of this type
-    *
-    * @param source
-    * @return
-    */
-   boolean handles(Class<?> source, Class<?> target);
 }
