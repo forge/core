@@ -1,7 +1,10 @@
 package org.jboss.forge.convert.impl;
 
+import javax.enterprise.inject.Vetoed;
+
 import org.jboss.forge.convert.BaseConverter;
 
+@Vetoed
 public class ToStringConverter<S> extends BaseConverter<S, String>
 {
    public ToStringConverter(Class<S> sourceType)

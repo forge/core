@@ -95,8 +95,8 @@ public class AddonManagerTest
       AddonId resources = AddonId.fromCoordinates("org.jboss.forge:resources,2.0.0-SNAPSHOT");
       InstallRequest request = addonManager.install(resources);
 
-      Assert.assertEquals(1, request.getRequiredAddons().size());
-      Assert.assertEquals(1, request.getOptionalAddons().size());
+      Assert.assertEquals(2, request.getRequiredAddons().size());
+      Assert.assertEquals(0, request.getOptionalAddons().size());
 
       request.perform();
 
