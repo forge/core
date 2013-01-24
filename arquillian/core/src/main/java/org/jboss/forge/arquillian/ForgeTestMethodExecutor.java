@@ -70,7 +70,7 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
          {
             ServiceRegistry registry = entry.getValue();
             Addon addon = entry.getKey();
-            while (registry == null)
+            while (!(addon.getStatus().isStarted() || addon.getStatus().isFailed()) || registry == null)
             {
                /*
                 * Ensure the addon is fully started and initialized.
