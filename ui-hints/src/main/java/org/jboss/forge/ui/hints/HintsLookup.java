@@ -6,33 +6,30 @@
  */
 package org.jboss.forge.ui.hints;
 
+import org.jboss.forge.environment.Category;
+import org.jboss.forge.environment.Environment;
 
 /**
- * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * Look up UI Hints. This allows manipulation of default UI type to render for a given input value type.
  * 
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class HintsLookup
+public class HintsLookup implements Category
 {
-   // private static String INPUT_TYPE_MAP_KEY = HintsLookup.class.getName() + "_INPUT_TYPE_MAP_KEY";
-   //
-   // public static InputType getInputType(Environment environment, Class<?> valueType)
-   // {
-   // return getCategoryMap(environment, INPUT_TYPE_MAP_KEY).get(valueType);
-   // }
-   //   
-   // public static void setInputType(Environment environment, Class<?> valueType, InputType type)
-   // {
-   // return getCategoryMap(environment, INPUT_TYPE_MAP_KEY).set(valueType, hint);
-   // }
-   //
-   // private static Map<?, ?> getCategoryMap(Environment environment, String mapKey)
-   // {
-   // Map<?, ?> map = environment.get(mapKey);
-   // if (map == null)
-   // {
-   // map = new HashMap<Object, Object>();
-   // environment.set(mapKey, map);
-   // }
-   // return map;
-   // }
+   private final Environment environment;
+
+   public HintsLookup(Environment environment)
+   {
+      this.environment = environment;
+   }
+
+   public InputType getInputType(Class<?> valueType)
+   {
+      return (InputType) environment.get(HintsLookup.class).get(valueType);
+   }
+
+   public void setInputType(Class<?> valueType, InputType type)
+   {
+      environment.get(HintsLookup.class).put(valueType, type);
+   }
 }

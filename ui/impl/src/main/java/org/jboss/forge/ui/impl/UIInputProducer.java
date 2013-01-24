@@ -12,19 +12,26 @@ import java.lang.reflect.Type;
 
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
+import javax.inject.Inject;
 
+import org.jboss.forge.environment.Environment;
 import org.jboss.forge.ui.UIInput;
+import org.jboss.forge.ui.hints.HintsLookup;
+import org.jboss.forge.ui.hints.InputType;
 
 /**
  * Produces UIInput objects
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 public class UIInputProducer
 {
-   @SuppressWarnings("unchecked")
+   @Inject
+   private Environment environment;
+
    @Produces
+   @SuppressWarnings("unchecked")
    public <T> UIInput<T> produceInput(InjectionPoint injectionPoint)
    {
       String name = injectionPoint.getMember().getName();
@@ -32,8 +39,13 @@ public class UIInputProducer
       if (type instanceof ParameterizedType)
       {
          Type[] typeArguments = ((ParameterizedType) type).getActualTypeArguments();
-         Class<T> target = (Class<T>) typeArguments[0];
-         return new UIInputImpl<T>(name, target);
+         Class<T> valueType = (Class<T>) typeArguments[0];
+         UIInputImpl<T> input = new UIInputImpl<T>(name, valueType);
+
+         HintsLookup hints = new HintsLookup(environment);
+         input.getMetadata().set(InputType.class, hints.getInputType(valueType));
+
+         return input;
       }
       else
       {
