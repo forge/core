@@ -9,7 +9,7 @@
    </parent>
    <artifactId>facets-parent</artifactId>
    <packaging>pom</packaging>
-   <name>Forge - Facets AddOn Parent</name>
+   <name>Forge - Facets Addon Parent</name>
    <modules>
       <module>api</module>
       <module>addon</module>
