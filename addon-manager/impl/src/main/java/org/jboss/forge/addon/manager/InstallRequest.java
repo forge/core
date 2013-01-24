@@ -28,9 +28,9 @@ import org.jboss.forge.container.AddonRepository;
 /**
  * When an addon is installed, another addons could be required. This object returns the necessary information for the
  * installation of an addon to succeed, like required addons and dependencies
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 public class InstallRequest
 {
@@ -174,6 +174,14 @@ public class InstallRequest
       {
          boolean export = false;
          boolean optional = dep.getDependency().isOptional();
+         String scopeType = dep.getDependency().getScopeType();
+         if (scopeType != null && !optional)
+         {
+            if ("compile".equalsIgnoreCase(scopeType) || "runtime".equalsIgnoreCase(scopeType))
+               export = true;
+            else if ("provided".equalsIgnoreCase(scopeType))
+               export = false;
+         }
          AddonDependency addonDep = AddonDependency.create(toAddonId(dep), export, optional);
          addonDependencies.add(addonDep);
       }
