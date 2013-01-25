@@ -20,9 +20,9 @@ import org.jboss.forge.ui.util.Callables;
 
 /**
  * Implementation of a {@link UIInput} object
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ *
  * @param <T>
  */
 @Vetoed
@@ -153,7 +153,7 @@ public class UIInputImpl<T> extends BaseFaceted implements UIInput<T>
    @Override
    public boolean supports(Class<? extends Facet<?>> type)
    {
-      return type.isAssignableFrom(HintsFacet.class);
+      return HintsFacet.class.isAssignableFrom(type);
    }
 
 }

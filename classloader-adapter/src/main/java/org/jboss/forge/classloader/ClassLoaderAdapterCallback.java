@@ -157,7 +157,32 @@ public class ClassLoaderAdapterCallback implements MethodHandler
          final Class<?> delegateParameterType = delegateMethod.getParameterTypes()[i];
          final Object parameterValue = args[i];
 
-         if (delegateParameterType.isPrimitive() || parameterValue == null)
+         // If it is a class, use the toLoader loaded version
+         if (parameterValue instanceof Class<?>)
+         {
+            Class<?> paramClassValue = (Class<?>) parameterValue;
+            Class<?> loadedClass;
+            try
+            {
+               loadedClass = toLoader.loadClass(paramClassValue.getName());
+            }
+            catch (ClassNotFoundException e)
+            {
+               // Oh oh, there is no class with this type in the target.
+               // Trying with delegate ClassLoader;
+               try
+               {
+                  loadedClass = delegate.getClass().getClassLoader().loadClass(paramClassValue.getName());
+               }
+               catch (ClassNotFoundException cnfe)
+               {
+                  // No way, here is the original class and god bless you :)
+                  loadedClass = paramClassValue;
+               }
+            }
+            parameterValues.add(loadedClass);
+         }
+         else if (delegateParameterType.isPrimitive() || parameterValue == null)
          {
             parameterValues.add(parameterValue);
          }

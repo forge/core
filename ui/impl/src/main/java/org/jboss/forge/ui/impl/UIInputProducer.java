@@ -16,7 +16,7 @@ import javax.inject.Inject;
 
 import org.jboss.forge.environment.Environment;
 import org.jboss.forge.ui.UIInput;
-import org.jboss.forge.ui.facets.HintsFacet;
+import org.jboss.forge.ui.impl.facets.HintsFacetImpl;
 
 /**
  * Produces UIInput objects
@@ -41,7 +41,7 @@ public class UIInputProducer
          Class<T> valueType = (Class<T>) typeArguments[0];
          UIInputImpl<T> input = new UIInputImpl<T>(name, valueType);
 
-         HintsFacet hintsFacet = new HintsFacet(input, environment);
+         HintsFacetImpl hintsFacet = new HintsFacetImpl(input, environment);
          input.install(hintsFacet);
          return input;
       }
