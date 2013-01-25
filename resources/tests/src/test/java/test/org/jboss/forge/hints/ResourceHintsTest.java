@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package test.org.jboss.forge.convert;
+package test.org.jboss.forge.hints;
 
 import javax.inject.Inject;
 
