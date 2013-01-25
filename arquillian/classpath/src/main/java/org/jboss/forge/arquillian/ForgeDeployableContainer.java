@@ -239,7 +239,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
             @Override
             public Object call() throws Exception
             {
-               forge = new ForgeImpl().enableLogging();
+               forge = new ForgeImpl();
                forge.setServerMode(true).setAddonDir(addonDir).start(loader);
                return forge;
             }
