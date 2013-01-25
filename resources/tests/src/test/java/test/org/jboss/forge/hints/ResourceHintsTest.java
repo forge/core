@@ -40,10 +40,10 @@ public class ResourceHintsTest
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
-               .addClass(ResourceHintsTest.class)
                .addAsAddonDependencies(
                         AddonDependency.create(AddonId.from("org.jboss.forge:resources", "2.0.0-SNAPSHOT")),
-                        AddonDependency.create(AddonId.from("org.jboss.forge:ui-hints", "2.0.0-SNAPSHOT")));
+                        AddonDependency.create(AddonId.from("org.jboss.forge:ui-hints", "2.0.0-SNAPSHOT"))
+               );
 
       return archive;
    }

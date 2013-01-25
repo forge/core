@@ -15,10 +15,15 @@ import org.jboss.forge.ui.hints.InputTypes;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class UIInputHintsRegistrant
+public class InputTypeHintsRegistrant
 {
-   @Inject
    private Environment environment;
+
+   @Inject
+   public InputTypeHintsRegistrant(Environment environment)
+   {
+      this.environment = environment;
+   }
 
    public void initialize(@Observes Startup event)
    {
