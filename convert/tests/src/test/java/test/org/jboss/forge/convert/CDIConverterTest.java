@@ -47,6 +47,9 @@ public class CDIConverterTest
    @Inject
    private Converter<Integer, String> intToString;
 
+   @Inject
+   private Converter<Boolean, Boolean> noopConverter;
+
    @Test
    public void testNotNull() throws Exception
    {
@@ -68,6 +71,15 @@ public class CDIConverterTest
       Integer input = 123;
       String expected = "123";
       Assert.assertEquals(expected, intToString.convert(input));
+   }
+
+   @Test
+   public void testNoopConversion()
+   {
+      Boolean input = Boolean.TRUE;
+      Boolean expected = input;
+      Assert.assertSame(expected, noopConverter.convert(input));
+
    }
 
 }

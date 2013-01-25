@@ -36,13 +36,20 @@ public class ConverterFactoryImpl implements ConverterFactory
          ConverterGenerator generator = generatorInstance.get();
          if (generator.handles(source, target))
          {
-            result = (Converter<S, T>) generator.generateConverter(source,target);
+            result = (Converter<S, T>) generator.generateConverter(source, target);
             break;
          }
       }
       if (result == null && String.class.equals(target))
       {
          result = (Converter<S, T>) new ToStringConverter<S>((Class<S>) source.getClass());
+      }
+      if (result == null)
+      {
+         if (target.isAssignableFrom(source))
+         {
+            result = (Converter<S, T>) new NoopConverter<S>(source);
+         }
       }
       if (result == null)
       {
