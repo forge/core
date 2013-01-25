@@ -8,7 +8,7 @@
 package org.jboss.forge.environment.impl;
 
 import java.util.Collections;
-import java.util.IdentityHashMap;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -22,19 +22,19 @@ import org.jboss.forge.environment.Environment;
 @Singleton
 public class EnvironmentImpl implements Environment
 {
-   private Map<Class<? extends Category>, Map<Object, Object>> categorizedMap =
+   private Map<String, Map<Object, Object>> categorizedMap =
             Collections.synchronizedMap(
-                     new IdentityHashMap<Class<? extends Category>, Map<Object, Object>>());
+                     new HashMap<String, Map<Object, Object>>());
 
    @SuppressWarnings("unchecked")
    @Override
    public <K, V> Map<K, V> get(Class<? extends Category> key)
    {
-      Map<Object, Object> map = categorizedMap.get(key);
+      Map<Object, Object> map = categorizedMap.get(key.getName());
       if (map == null)
       {
          map = new ConcurrentHashMap<Object, Object>();
-         categorizedMap.put(key, map);
+         categorizedMap.put(key.getName(), map);
       }
       return (Map<K, V>) map;
    }
