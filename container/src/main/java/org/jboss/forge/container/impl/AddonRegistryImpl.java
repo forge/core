@@ -136,9 +136,8 @@ public class AddonRegistryImpl implements AddonRegistry
    public void stop(Addon addon)
    {
       Assert.notNull(addon, "Addon must not be null.");
-      AddonImpl addonImpl = (AddonImpl) getRegisteredAddon(addon.getId());
+      AddonImpl addonToStop = (AddonImpl) getRegisteredAddon(addon.getId());
 
-      Set<AddonImpl> stopped = new HashSet<AddonImpl>();
       for (AddonImpl dependentAddon : addons)
       {
          for (AddonDependency dependency : dependentAddon.getDependencies())
@@ -146,23 +145,20 @@ public class AddonRegistryImpl implements AddonRegistry
             if (addon.getId().equals(dependency.getId()) && dependentAddon.getFuture() != null)
             {
                stop(dependentAddon);
-               stopped.add(dependentAddon);
             }
          }
       }
-      
-      addons.removeAll(stopped);
 
       synchronized (addons)
       {
-         if (addonImpl != null)
+         if (addonToStop != null)
          {
-            Future<Addon> future = addonImpl.getFuture();
+            Future<Addon> future = addonToStop.getFuture();
             try
             {
-               if (future != null)
+               if (future != null && addon.getStatus().isStarted())
                {
-                  addonImpl.getRunnable().shutdown();
+                  addonToStop.getRunnable().shutdown();
                }
             }
             catch (Exception e)
@@ -173,6 +169,8 @@ public class AddonRegistryImpl implements AddonRegistry
             {
                if (future != null && !future.isDone())
                   future.cancel(true);
+               
+               addons.remove(addonToStop);
             }
          }
       }
@@ -234,7 +232,11 @@ public class AddonRegistryImpl implements AddonRegistry
             toRemove.add(addon);
          }
       }
-      addons.removeAll(toRemove);
+
+      for (Addon addon : toRemove)
+      {
+         stop(addon);
+      }
 
       for (AddonId entry : enabledCompatible)
       {
