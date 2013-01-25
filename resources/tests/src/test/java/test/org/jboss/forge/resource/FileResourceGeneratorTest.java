@@ -1,4 +1,4 @@
-package org.jboss.forge.test.resource;
+package test.org.jboss.forge.resource;
 
 import java.io.File;
 import java.util.UUID;
@@ -31,15 +31,17 @@ import org.junit.runner.RunWith;
 public class FileResourceGeneratorTest
 {
    @Deployment
-   @Dependencies(@Addon(name = "org.jboss.forge:facets", version = "2.0.0-SNAPSHOT"))
+   @Dependencies({
+            @Addon(name = "org.jboss.forge:facets", version = "2.0.0-SNAPSHOT"),
+            @Addon(name = "org.jboss.forge:resources", version = "2.0.0-SNAPSHOT") })
    public static ForgeArchive getDeployment()
    {
-      ForgeArchive archive = ShrinkWrap
-               .create(ForgeArchive.class)
-               .addPackages(true, ResourceFactory.class.getPackage())
+      ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
                .addAsAddonDependencies(
-                        AddonDependency.create(AddonId.from("org.jboss.forge:facets", "2.0.0-SNAPSHOT")));
+                        AddonDependency.create(AddonId.from("org.jboss.forge:facets", "2.0.0-SNAPSHOT")),
+                        AddonDependency.create(AddonId.from("org.jboss.forge:resources", "2.0.0-SNAPSHOT"))
+               );
 
       return archive;
    }

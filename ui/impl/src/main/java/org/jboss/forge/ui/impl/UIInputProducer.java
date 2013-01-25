@@ -34,7 +34,7 @@ public class UIInputProducer
    public <T> UIInput<T> produceInput(InjectionPoint injectionPoint)
    {
       String name = injectionPoint.getMember().getName();
-      Type type = injectionPoint.getAnnotated().getTypeClosure().iterator().next();
+      Type type = injectionPoint.getAnnotated().getBaseType();
       if (type instanceof ParameterizedType)
       {
          Type[] typeArguments = ((ParameterizedType) type).getActualTypeArguments();

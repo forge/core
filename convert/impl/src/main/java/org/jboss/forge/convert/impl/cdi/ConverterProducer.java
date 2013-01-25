@@ -22,7 +22,7 @@ public class ConverterProducer
    @SuppressWarnings("unchecked")
    public <S, T> Converter<S, T> produceConverter(InjectionPoint injectionPoint, ConverterFactory registry)
    {
-      Type type = injectionPoint.getAnnotated().getTypeClosure().iterator().next();
+      Type type = injectionPoint.getAnnotated().getBaseType();
       if (type instanceof ParameterizedType)
       {
          Type[] typeArguments = ((ParameterizedType) type).getActualTypeArguments();

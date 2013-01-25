@@ -1,4 +1,4 @@
-package org.jboss.forge.test.resource;
+package test.org.jboss.forge.resource;
 
 import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.resource.Resource;

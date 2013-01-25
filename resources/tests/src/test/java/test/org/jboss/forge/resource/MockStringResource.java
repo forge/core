@@ -1,4 +1,4 @@
-package org.jboss.forge.test.resource;
+package test.org.jboss.forge.resource;
 
 import java.util.List;
 

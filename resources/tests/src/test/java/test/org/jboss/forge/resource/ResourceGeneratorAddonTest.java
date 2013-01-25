@@ -1,4 +1,4 @@
-package org.jboss.forge.test.resource;
+package test.org.jboss.forge.resource;
 
 import javax.inject.Inject;
 
@@ -24,26 +24,15 @@ import org.junit.runner.RunWith;
 public class ResourceGeneratorAddonTest
 {
    @Deployment(order = 1)
+   @Dependencies({ @Addon(name = "org.jboss.forge:resources", version = "2.0.0-SNAPSHOT") })
    public static ForgeArchive getDeployment()
    {
-      ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
+      ForgeArchive archive = ShrinkWrap
+               .create(ForgeArchive.class)
                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
                .addAsAddonDependencies(
-                        AddonDependency.create(AddonId.from("resources", "1"), false, false),
-                        AddonDependency.create(AddonId.from("mockstring", "1"), false, false));
-
-      return archive;
-   }
-
-   @Deployment(testable = false, name = "resources,1", order = 2)
-   @Dependencies(@Addon(name = "org.jboss.forge:facets", version = "2.0.0-SNAPSHOT"))
-   public static ForgeArchive getResourcesDeployment()
-   {
-      ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-               .addPackages(true, ResourceFactory.class.getPackage())
-               .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
-               .addAsAddonDependencies(
-                        AddonDependency.create(AddonId.from("org.jboss.forge:facets", "2.0.0-SNAPSHOT"), true, false));
+                        AddonDependency.create(AddonId.from("org.jboss.forge:resources", "2.0.0-SNAPSHOT")),
+                        AddonDependency.create(AddonId.from("mockstring", "1")));
 
       return archive;
    }
@@ -55,7 +44,8 @@ public class ResourceGeneratorAddonTest
                .addClasses(MockStringResource.class, MockStringResourceGenerator.class)
                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
                .addAsAddonDependencies(
-                        AddonDependency.create(AddonId.from("resources", "1"), false, false));
+                        AddonDependency.create(AddonId.from("org.jboss.forge:resources", "2.0.0-SNAPSHOT"))
+               );
 
       return archive;
    }
