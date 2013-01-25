@@ -34,6 +34,7 @@ import org.jboss.forge.container.AddonRepository;
  */
 public class InstallRequest
 {
+   private AddonManager addonManager;
    private AddonRepository repository;
 
    private DependencyNode requestedAddonNode;
@@ -44,9 +45,12 @@ public class InstallRequest
 
    /**
     * Package-access constructor. Only AddonManager should be allowed to call this constructor.
+    * 
+    * @param addonManager
     */
-   InstallRequest(AddonRepository repository, DependencyNode requestedAddonNode)
+   InstallRequest(AddonManager addonManager, AddonRepository repository, DependencyNode requestedAddonNode)
    {
+      this.addonManager = addonManager;
       this.repository = repository;
       this.requestedAddonNode = requestedAddonNode;
 
@@ -98,30 +102,22 @@ public class InstallRequest
     */
    public void perform()
    {
-      List<AddonId> entries = new ArrayList<AddonId>(requiredAddons.size() + 1);
-
-      // Deploy the required addons
       for (DependencyNode requiredAddon : getRequiredAddons())
       {
-         AddonId addonEntry = toAddonId(requiredAddon);
-         if (repository.isDeployed(addonEntry))
+         AddonId requiredAddonId = toAddonId(requiredAddon);
+         if (repository.isDeployed(requiredAddonId))
          {
-            log.info("Addon " + addonEntry + " is already deployed. Skipping...");
+            log.info("Addon " + requiredAddonId + " is already deployed. Skipping...");
          }
          else
          {
-            entries.add(addonEntry);
-            deploy(addonEntry, requiredAddon);
+            addonManager.install(requiredAddonId).perform();
          }
       }
 
-      // Deploy the requested addon
       AddonId requestedAddonId = toAddonId(requestedAddonNode);
-      entries.add(requestedAddonId);
       deploy(requestedAddonId, requestedAddonNode);
-
-      // Enable all the deployed addons
-      enable(entries);
+      repository.enable(requestedAddonId);
    }
 
    private AddonId toAddonId(DependencyNode node)
@@ -196,14 +192,6 @@ public class InstallRequest
          result.add(dependency.getDependency().getArtifact());
       }
       return result;
-   }
-
-   private void enable(List<AddonId> entries)
-   {
-      for (AddonId addonEntry : entries)
-      {
-         repository.enable(addonEntry);
-      }
    }
 
    @Override

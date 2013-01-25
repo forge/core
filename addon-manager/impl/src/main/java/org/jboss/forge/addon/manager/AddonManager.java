@@ -41,7 +41,7 @@ public class AddonManager
       DependencyNode requestedAddonNode = resolver.resolveDependencyHierarchy(DependencyQueryBuilder
                .create(coordinates));
 
-      return new InstallRequest(repository, requestedAddonNode);
+      return new InstallRequest(this, repository, requestedAddonNode);
    }
 
    public boolean remove(AddonId entry)
