@@ -6,7 +6,6 @@
  */
 package org.jboss.forge.aesh.commands;
 
-import org.jboss.aesh.console.Console;
 import org.jboss.forge.ui.UICommandID;
 import org.jboss.forge.ui.base.SimpleUICommandID;
 
@@ -15,11 +14,6 @@ import org.jboss.forge.ui.base.SimpleUICommandID;
  */
 public class QuitCommand extends ExitCommand
 {
-   public QuitCommand(Console console)
-   {
-      super(console);
-   }
-
    @Override
    public UICommandID getId()
    {

@@ -58,6 +58,9 @@ public class AeshAddonTest extends TestCase
    @Inject
    private AeshShell shell;
 
+   @Inject
+   private FooCommand fooCommand;
+
    @Test
    public void testContainerInjection()
    {
@@ -72,7 +75,7 @@ public class AeshAddonTest extends TestCase
          setupSettings(pipedInputStream, out);
 
          shell.initShell();
-         shell.addCommand(new ShellCommand(new FooCommand()));
+         shell.addCommand(new ShellCommand(fooCommand));
 
          outputStream.write(("foo\n").getBytes());
          shell.startShell();

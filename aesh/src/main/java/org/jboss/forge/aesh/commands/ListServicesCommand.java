@@ -6,17 +6,6 @@
  */
 package org.jboss.forge.aesh.commands;
 
-import org.jboss.forge.container.Addon;
-import org.jboss.forge.container.AddonRegistry;
-import org.jboss.forge.ui.Result;
-import org.jboss.forge.ui.UICommand;
-import org.jboss.forge.ui.UICommandID;
-import org.jboss.forge.ui.UIContext;
-import org.jboss.forge.ui.UIInput;
-import org.jboss.forge.ui.UIValidationContext;
-import org.jboss.forge.ui.base.SimpleUICommandID;
-
-import javax.inject.Inject;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -24,14 +13,25 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+
+import org.jboss.forge.container.Addon;
+import org.jboss.forge.container.AddonRegistry;
+import org.jboss.forge.ui.Result;
+import org.jboss.forge.ui.UICommand;
+import org.jboss.forge.ui.UICommandID;
+import org.jboss.forge.ui.UIContext;
+import org.jboss.forge.ui.UIValidationContext;
+import org.jboss.forge.ui.base.SimpleUICommandID;
+
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  */
 public class ListServicesCommand implements UICommand
 {
-   @Inject
    private AddonRegistry registry;
 
+   @Inject
    public ListServicesCommand(AddonRegistry registry)
    {
       this.registry = registry;

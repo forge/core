@@ -27,20 +27,16 @@ public class ClearCommand implements UICommand
    @Inject
    private UIInput<String> clear;
 
-   public ClearCommand(Console console)
-   {
-      setConsole(console);
-   }
-
    @Override
    public UICommandID getId()
    {
       return new SimpleUICommandID("clear", "Clear the console");
    }
 
-   private void setConsole(Console console)
+   public ClearCommand setConsole(Console console)
    {
       this.console = console;
+      return this;
    }
 
    @Override

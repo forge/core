@@ -32,94 +32,116 @@ import java.util.List;
 @Exported
 public class AeshShell
 {
-    private Console console;
-    private ConsoleOutput output;
-    private String prompt = "[forge-2.0]$ ";
+   private Console console;
+   private ConsoleOutput output;
+   private String prompt = "[forge-2.0]$ ";
 
+   @Inject
+   private ListServicesCommand listServicesCommand;
 
-    private List<ShellCommand> commands;
+   @Inject
+   private StopCommand stopCommand;
 
-    @Inject
-    private ContainerControl containerControl;
+   @Inject
+   private ClearCommand clearCommand;
 
-    @Inject
-    private AddonRegistry registry;
+   private List<ShellCommand> commands;
 
-    public void observe(@Observes Perform startup) throws IOException
-    {
-    }
+   @Inject
+   private ContainerControl containerControl;
 
-    public void addCommand(ShellCommand command) {
-        command.setConsole(console);
-        commands.add(command);
-    }
+   @Inject
+   private AddonRegistry registry;
 
-    public void initShell() throws Exception {
-        Settings.getInstance().setReadInputrc(false);
-        Settings.getInstance().setLogging(true);
+   public void observe(@Observes Perform startup) throws IOException
+   {
+   }
 
-        commands = new ArrayList<ShellCommand>();
-        console = new Console();
+   public void addCommand(ShellCommand command)
+   {
+      command.setConsole(console);
+      commands.add(command);
+   }
 
-        //internal commands
-        addCommand(new ShellCommand(new ListServicesCommand(registry)));
-        addCommand(new ShellCommand(new StopCommand(console)));
-        addCommand(new ShellCommand(new ClearCommand(console)));
-    }
+   public void initShell() throws Exception
+   {
+      Settings.getInstance().setReadInputrc(false);
+      Settings.getInstance().setLogging(true);
 
-    public void startShell() throws Exception {
-        prompt = "[forge-2.0]$ ";
+      commands = new ArrayList<ShellCommand>();
+      console = new Console();
 
-        output = null;
-        while ((output = console.read(prompt)) != null)
-        {
-            CommandLine cl = null;
-            for(ShellCommand command : commands) {
-                try {
-                    cl = command.parse(output.getBuffer());
-                    if(cl != null) {
-                        //need some way of deciding if the command is standalone
-                        if(command.getContext().isStandalone()) {
-                            //console.
+      // internal commands
+      addCommand(new ShellCommand(listServicesCommand));
+      addCommand(new ShellCommand(stopCommand.setConsole(console)));
+      addCommand(new ShellCommand(clearCommand.setConsole(console)));
+   }
 
-                        }
-                        else {
-                            command.run(output, cl);
-                            break;
-                        }
-                    }
-                }
-                catch (IllegalArgumentException iae) {
-                    System.out.println("Command: "+command+", did not match: "+output.getBuffer());
-                    //ignored for now
-                }
+   public void startShell() throws Exception
+   {
+      prompt = "[forge-2.0]$ ";
+
+      output = null;
+      while ((output = console.read(prompt)) != null)
+      {
+         CommandLine cl = null;
+         for (ShellCommand command : commands)
+         {
+            try
+            {
+               cl = command.parse(output.getBuffer());
+               if (cl != null)
+               {
+                  // need some way of deciding if the command is standalone
+                  if (command.getContext().isStandalone())
+                  {
+                     // console.
+
+                  }
+                  else
+                  {
+                     command.run(output, cl);
+                     break;
+                  }
+               }
             }
-            //if we didnt find any commands matching
-            if(cl == null) {
-               console.pushToStdOut(output.getBuffer()+": command not found.");
+            catch (IllegalArgumentException iae)
+            {
+               System.out.println("Command: " + command + ", did not match: " + output.getBuffer());
+               // ignored for now
             }
-            //hack to just read one and one line when we're testing
-            if(Settings.getInstance().getName().equals("test"))
-                break;
+         }
+         // if we didnt find any commands matching
+         if (cl == null)
+         {
+            console.pushToStdOut(output.getBuffer() + ": command not found.");
+         }
+         // hack to just read one and one line when we're testing
+         if (Settings.getInstance().getName().equals("test"))
+            break;
 
-            if(!console.isRunning()) {
-                break;
-            }
-        }
-    }
+         if (!console.isRunning())
+         {
+            break;
+         }
+      }
+   }
 
-    public String getPrompt() {
-        return prompt;
-    }
+   public String getPrompt()
+   {
+      return prompt;
+   }
 
-    public Console getConsole() {
-        return console;
-    }
+   public Console getConsole()
+   {
+      return console;
+   }
 
-    public void stopShell() throws IOException {
-        if(console != null)
-            console.stop();
-        containerControl.stop();
-    }
+   public void stopShell() throws IOException
+   {
+      if (console != null)
+         console.stop();
+      containerControl.stop();
+   }
 
 }

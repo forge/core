@@ -15,11 +15,6 @@ import org.jboss.forge.ui.base.SimpleUICommandID;
  */
 public class StopCommand extends ExitCommand
 {
-   public StopCommand(Console console)
-   {
-      super(console);
-   }
-
    @Override
    public UICommandID getId()
    {
