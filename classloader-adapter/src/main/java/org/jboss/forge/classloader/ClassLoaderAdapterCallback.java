@@ -158,7 +158,7 @@ public class ClassLoaderAdapterCallback implements MethodHandler
          final Object parameterValue = args[i];
 
          // If it is a class, use the toLoader loaded version
-         if (parameterValue instanceof Class<?>)
+         /*if (parameterValue instanceof Class<?>)
          {
             Class<?> paramClassValue = (Class<?>) parameterValue;
             Class<?> loadedClass;
@@ -182,7 +182,9 @@ public class ClassLoaderAdapterCallback implements MethodHandler
             }
             parameterValues.add(loadedClass);
          }
-         else if (delegateParameterType.isPrimitive() || parameterValue == null)
+         else
+            */
+         if (delegateParameterType.isPrimitive() || parameterValue == null)
          {
             parameterValues.add(parameterValue);
          }
