@@ -30,7 +30,6 @@ import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.container.util.Assert;
 import org.jboss.forge.container.util.Sets;
 import org.jboss.modules.Module;
-import org.jboss.modules.ModuleIdentifier;
 
 public class AddonRegistryImpl implements AddonRegistry
 {
@@ -307,7 +306,7 @@ public class AddonRegistryImpl implements AddonRegistry
          {
             try
             {
-               Module module = moduleLoader.loadModule(ModuleIdentifier.fromString(addonId.toModuleId()));
+               Module module = moduleLoader.loadModule(addonId);
                addon.setModule(module);
                addon.setStatus(Status.WAITING);
 

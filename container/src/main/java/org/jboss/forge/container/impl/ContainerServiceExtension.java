@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.container.impl;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
@@ -20,6 +21,7 @@ import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.AfterBeanDiscovery;
 import javax.enterprise.inject.spi.Annotated;
+import javax.enterprise.inject.spi.AnnotatedParameter;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
@@ -110,9 +112,11 @@ public class ContainerServiceExtension implements Extension
       for (final Entry<InjectionPoint, Class<?>> entry : requestedServices.entrySet())
       {
          final InjectionPoint injectionPoint = entry.getKey();
-         Set<Type> typeClosure = injectionPoint.getAnnotated().getTypeClosure();
-         Class<?> beanClass = entry.getValue();
+         final Annotated annotated = injectionPoint.getAnnotated();
          final Member member = injectionPoint.getMember();
+
+         Set<Type> typeClosure = annotated.getTypeClosure();
+         Class<?> beanClass = entry.getValue();
 
          Bean<?> serviceBean = new BeanBuilder<Object>(manager)
                   .beanClass(beanClass)
@@ -136,6 +140,14 @@ public class ContainerServiceExtension implements Extension
                         else if (member instanceof Field)
                         {
                            serviceType = ((Field) member).getType();
+                        }
+                        else if (member instanceof Constructor)
+                        {
+                           if (annotated instanceof AnnotatedParameter)
+                           {
+                              serviceType = ((Constructor<?>) member).getParameterTypes()[((AnnotatedParameter<?>) annotated)
+                                       .getPosition()];
+                           }
                         }
                         else
                         {

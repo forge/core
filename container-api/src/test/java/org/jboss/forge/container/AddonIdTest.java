@@ -10,7 +10,6 @@ public class AddonIdTest
    {
       AddonId entry = AddonId.fromCoordinates("org.example:example-addon,1.0.0-SNAPSHOT,2.0.0");
       Assert.assertEquals("org.example:example-addon,1.0.0-SNAPSHOT,2.0.0", entry.toCoordinates());
-      Assert.assertEquals("org.example.example-addon:1.0.0-SNAPSHOT", entry.toModuleId());
    }
 
    @Test
@@ -18,7 +17,6 @@ public class AddonIdTest
    {
       AddonId entry = AddonId.from("org.example:example-addon", "1.0.0-SNAPSHOT", "2.0.0");
       Assert.assertEquals("org.example:example-addon,1.0.0-SNAPSHOT,2.0.0", entry.toCoordinates());
-      Assert.assertEquals("org.example.example-addon:1.0.0-SNAPSHOT", entry.toModuleId());
    }
 
    @Test(expected = IllegalArgumentException.class)

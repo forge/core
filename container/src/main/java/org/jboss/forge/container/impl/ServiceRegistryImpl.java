@@ -133,6 +133,7 @@ public class ServiceRegistryImpl implements ServiceRegistry
    @Override
    public boolean hasService(Class<?> clazz)
    {
+      ensureAddonStarted();
       Class<?> type;
       try
       {
@@ -198,7 +199,11 @@ public class ServiceRegistryImpl implements ServiceRegistry
    {
       try
       {
-         addon.getFuture().get();
+         while (!addon.getStatus().isStarted() && !addon.getStatus().isFailed())
+         {
+            addon.getFuture().get();
+            Thread.sleep(10);
+         }
       }
       catch (Exception e)
       {
@@ -208,7 +213,7 @@ public class ServiceRegistryImpl implements ServiceRegistry
 
    /**
     * Ensures that the returned class is loaded from the addon
-    *
+    * 
     * @param actualType
     * @return
     * @throws ClassNotFoundException

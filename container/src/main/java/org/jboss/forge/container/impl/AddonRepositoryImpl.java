@@ -36,7 +36,7 @@ import org.jboss.forge.parser.xml.XMLParserException;
 
 /**
  * Used to perform Addon installation/registration operations.
- *
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:koen.aers@gmail.com">Koen Aers</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
@@ -90,13 +90,13 @@ public final class AddonRepositoryImpl implements AddonRepository
 
    /**
     * This method only returns true if:
-    *
+    * 
     * - The major version of addonApiVersion is equal to the major version of runtimeVersion AND
-    *
+    * 
     * - The minor version of addonApiVersion is less or equal to the minor version of runtimeVersion
-    *
+    * 
     * - The addonApiVersion is null
-    *
+    * 
     * @param runtimeVersion a version in the format x.x.x
     * @param addonApiVersion a version in the format x.x.x
     */
@@ -277,7 +277,7 @@ public final class AddonRepositoryImpl implements AddonRepository
       Assert.notNull(found.getVersion(), "Addon version must be specified.");
       Assert.notNull(found.getName(), "Addon name must be specified.");
 
-      File addonDir = new File(getRepositoryDirectory(), found.toModuleId().replaceAll("[^a-zA-Z0-9]+", "-"));
+      File addonDir = new File(getRepositoryDirectory(), found.toCoordinates().replaceAll("[^a-zA-Z0-9]+", "-"));
       return addonDir;
    }
 

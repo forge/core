@@ -96,11 +96,6 @@ public abstract class AddonId
       return coord.toString();
    }
 
-   public String toModuleId()
-   {
-      return getName().replaceAll(":", ".") + ":" + getVersion();
-   }
-
    @Override
    public int hashCode()
    {

@@ -40,10 +40,13 @@ public class AddonModuleLoader extends ModuleLoader
 {
    private final Iterable<ModuleSpecProvider> moduleProviders;
    private AddonRepository repository;
+   private AddonModuleIdentifierCache moduleCache;
 
    public AddonModuleLoader(AddonRepository repository, ClassLoader loader)
    {
       this.repository = repository;
+      this.moduleCache = new AddonModuleIdentifierCache();
+
       moduleProviders = ServiceLoader.load(ModuleSpecProvider.class, loader);
       installModuleMBeanServer();
    }
@@ -91,7 +94,8 @@ public class AddonModuleLoader extends ModuleLoader
     */
    public final Module loadModule(AddonId addonId) throws ModuleLoadException
    {
-      return loadModule(ModuleIdentifier.fromString(addonId.toModuleId()));
+      moduleCache.clear(addonId);
+      return loadModule(moduleCache.getModuleId(addonId));
    }
 
    private ModuleSpec findRegularModule(ModuleIdentifier id)
@@ -180,7 +184,7 @@ public class AddonModuleLoader extends ModuleLoader
                      PathFilters.not(PathFilters.getMetaInfFilter()),
                      dependency.isExport() ? PathFilters.acceptAll() : PathFilters.rejectAll(),
                      this,
-                     toModuleId(dependency.getId()),
+                     moduleCache.getModuleId(dependency.getId()),
                      dependency.isOptional()));
          }
       }
@@ -191,7 +195,7 @@ public class AddonModuleLoader extends ModuleLoader
       AddonId found = null;
       for (AddonId addon : repository.listEnabledCompatibleWithVersion(AddonRepositoryImpl.getRuntimeAPIVersion()))
       {
-         if (addon.toModuleId().equals(moduleId.toString()))
+         if (moduleCache.getModuleId(addon).equals(moduleId))
          {
             found = addon;
             break;
@@ -215,16 +219,10 @@ public class AddonModuleLoader extends ModuleLoader
 
       if (found != null)
       {
-         return toModuleId(found);
+         return moduleCache.getModuleId(found);
       }
 
       return null;
-   }
-
-   public ModuleIdentifier toModuleId(AddonId id)
-   {
-      String[] split = id.toModuleId().split(":");
-      return ModuleIdentifier.create(split[0], split[1]);
    }
 
    public AddonRepository getRepository()
