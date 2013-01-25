@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.jboss.forge.facet.Facet;
 import org.junit.Assert;
 import org.junit.Test;
 

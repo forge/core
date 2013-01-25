@@ -1,4 +1,4 @@
-package org.jboss.forge.addon.facets;
+package org.jboss.forge.facet;
 
 import java.util.Collections;
 import java.util.HashSet;

@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.jboss.forge.addon.facets.Facet;
+import org.jboss.forge.facet.Facet;
 
 /**
  * A standard, build-in, resource for representing directories on the file-system.

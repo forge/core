@@ -9,7 +9,7 @@ package org.jboss.forge.resource;
 import java.io.InputStream;
 import java.util.List;
 
-import org.jboss.forge.addon.facets.Faceted;
+import org.jboss.forge.facet.Faceted;
 
 /**
  * A Resource is an abstraction on top of usable items within a Forge project. For instance, files, source code, etc.
