@@ -19,9 +19,11 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonId;
-import org.jboss.forge.ui.UIInput;
 import org.jboss.forge.ui.UICompleter;
-import org.jboss.forge.ui.UIMetadata;
+import org.jboss.forge.ui.UIInput;
+import org.jboss.forge.ui.facets.HintsFacet;
+import org.jboss.forge.ui.hints.InputType;
+import org.jboss.forge.ui.hints.InputTypes;
 import org.jboss.forge.ui.util.Callables;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -100,15 +102,14 @@ public class UIInputInjectionTest
    }
 
    @Test
-   public void testMetadata()
+   public void testInputType()
    {
-      UIMetadata metadata = firstName.getMetadata();
-      Assert.assertNotNull(metadata);
-      Assert.assertFalse(metadata.iterator().hasNext());
+      HintsFacet hints = firstName.getFacet(HintsFacet.class);
+      InputType inputType = hints.getInputType();
+      Assert.assertNull(inputType);
 
-      metadata.set(UIInput.class, firstName);
+      hints.setInputType(InputTypes.TEXTAREA);
       Assert.assertSame(firstName, firstName);
-      Assert.assertSame(firstName, metadata.get(UIInput.class));
-      Assert.assertNull(metadata.get(UICompleter.class));
+      Assert.assertSame(InputTypes.TEXTAREA, hints.getInputType());
    }
 }

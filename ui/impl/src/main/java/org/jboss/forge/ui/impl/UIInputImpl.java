@@ -11,9 +11,11 @@ import java.util.concurrent.Callable;
 
 import javax.enterprise.inject.Vetoed;
 
-import org.jboss.forge.ui.UIInput;
+import org.jboss.forge.facets.BaseFaceted;
+import org.jboss.forge.facets.Facet;
 import org.jboss.forge.ui.UICompleter;
-import org.jboss.forge.ui.UIMetadata;
+import org.jboss.forge.ui.UIInput;
+import org.jboss.forge.ui.facets.HintsFacet;
 import org.jboss.forge.ui.util.Callables;
 
 /**
@@ -24,7 +26,7 @@ import org.jboss.forge.ui.util.Callables;
  * @param <T>
  */
 @Vetoed
-public class UIInputImpl<T> implements UIInput<T>
+public class UIInputImpl<T> extends BaseFaceted implements UIInput<T>
 {
    private final String name;
    private final Class<T> type;
@@ -34,7 +36,6 @@ public class UIInputImpl<T> implements UIInput<T>
    private T value;
    private Callable<Boolean> required;
    private Callable<T> defaultValue;
-   private UIMetadata metadata = new UIMetadataImpl();
    private UICompleter<T> completer;
 
    public UIInputImpl(String name, Class<T> type)
@@ -54,12 +55,6 @@ public class UIInputImpl<T> implements UIInput<T>
    public String getLabel()
    {
       return label;
-   }
-
-   @Override
-   public UIMetadata getMetadata()
-   {
-      return metadata;
    }
 
    @Override
@@ -153,6 +148,12 @@ public class UIInputImpl<T> implements UIInput<T>
    {
       this.value = value;
       return this;
+   }
+
+   @Override
+   public boolean supports(Class<? extends Facet<?>> type)
+   {
+      return type.isAssignableFrom(HintsFacet.class);
    }
 
 }

@@ -10,15 +10,14 @@ package org.jboss.forge.ui;
 import java.util.concurrent.Callable;
 
 import org.jboss.forge.container.services.Exported;
+import org.jboss.forge.facets.Faceted;
 
 @Exported
-public interface UIInput<T>
+public interface UIInput<T> extends Faceted
 {
    UICompleter<T> getCompleter();
 
    String getLabel();
-
-   UIMetadata getMetadata();
 
    String getName();
 
