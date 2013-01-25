@@ -11,8 +11,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.jboss.forge.facet.BaseFaceted;
-import org.jboss.forge.facet.Faceted;
+import org.jboss.forge.facets.BaseFaceted;
+import org.jboss.forge.facets.Faceted;
 
 /**
  * @author Mike Brock <cbrock@redhat.com>

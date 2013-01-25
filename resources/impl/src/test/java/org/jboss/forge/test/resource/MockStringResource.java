@@ -2,7 +2,7 @@ package org.jboss.forge.test.resource;
 
 import java.util.List;
 
-import org.jboss.forge.facet.Facet;
+import org.jboss.forge.facets.Facet;
 import org.jboss.forge.resource.Resource;
 import org.jboss.forge.resource.ResourceFactory;
 import org.jboss.forge.resource.VirtualResource;

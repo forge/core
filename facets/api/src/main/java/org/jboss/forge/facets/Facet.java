@@ -4,7 +4,7 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.facet;
+package org.jboss.forge.facets;
 
 /**
  * A {@link Facet} is an access point to common functionality, file manipulations, descriptors that extend a

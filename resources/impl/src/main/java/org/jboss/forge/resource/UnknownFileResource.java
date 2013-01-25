@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
-import org.jboss.forge.facet.Facet;
+import org.jboss.forge.facets.Facet;
 
 public class UnknownFileResource extends FileResource<UnknownFileResource>
 {
