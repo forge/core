@@ -24,15 +24,15 @@ public class AddonImpl implements Addon
    private Future<Addon> future;
    private AddonRunnable runnable;
 
+   public AddonImpl(AddonId entry)
+   {
+      this(entry, Collections.<AddonDependency> emptySet());
+   }
+
    public AddonImpl(AddonId entry, Set<AddonDependency> dependencies)
    {
       this.entry = entry;
       this.dependencies = dependencies;
-   }
-
-   public AddonImpl(AddonId entry)
-   {
-      this(entry, Collections.<AddonDependency> emptySet());
    }
 
    @Override

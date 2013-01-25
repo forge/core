@@ -59,11 +59,11 @@ public class AddonRegistryImpl implements AddonRegistry
    }
 
    @Override
-   public Addon getRegisteredAddon(AddonId id)
+   public AddonImpl getRegisteredAddon(AddonId id)
    {
       synchronized (addons)
       {
-         for (Addon addon : addons)
+         for (AddonImpl addon : addons)
          {
             if (addon.getId().equals(id))
                return addon;
@@ -122,8 +122,8 @@ public class AddonRegistryImpl implements AddonRegistry
                logger.info("Starting addon (" + addon.getId() + ")");
                AddonRunnable runnable = new AddonRunnable(forge, addonImpl);
                future = executor.submit(runnable, addon);
-               addonImpl.setFuture(future);
                addonImpl.setRunnable(runnable);
+               addonImpl.setFuture(future);
             }
             return addonImpl.getFuture();
          }
@@ -138,15 +138,29 @@ public class AddonRegistryImpl implements AddonRegistry
       Assert.notNull(addon, "Addon must not be null.");
       AddonImpl addonImpl = (AddonImpl) getRegisteredAddon(addon.getId());
 
+      Set<AddonImpl> stopped = new HashSet<AddonImpl>();
+      for (AddonImpl dependentAddon : addons)
+      {
+         for (AddonDependency dependency : dependentAddon.getDependencies())
+         {
+            if (addon.getId().equals(dependency.getId()) && dependentAddon.getFuture() != null)
+            {
+               stop(dependentAddon);
+               stopped.add(dependentAddon);
+            }
+         }
+      }
+      
+      addons.removeAll(stopped);
+
       synchronized (addons)
       {
-
          if (addonImpl != null)
          {
             Future<Addon> future = addonImpl.getFuture();
             try
             {
-               if (future != null && addon.getStatus().isStarted())
+               if (future != null)
                {
                   addonImpl.getRunnable().shutdown();
                }

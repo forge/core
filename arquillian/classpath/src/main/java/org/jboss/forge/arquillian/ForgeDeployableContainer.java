@@ -195,11 +195,12 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
 
       try
       {
-         registry.stop(registry.getRegisteredAddon(addonToUndeploy));
+         if (registry.isRegistered(addonToUndeploy))
+            registry.stop(registry.getRegisteredAddon(addonToUndeploy));
       }
       catch (Exception e)
       {
-         throw new DeploymentException("Failed to undeploy " + addonToUndeploy);
+         throw new DeploymentException("Failed to undeploy " + addonToUndeploy, e);
       }
       finally
       {
