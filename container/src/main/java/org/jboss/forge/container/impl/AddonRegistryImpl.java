@@ -1,5 +1,6 @@
 package org.jboss.forge.container.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -169,7 +170,7 @@ public class AddonRegistryImpl implements AddonRegistry
             {
                if (future != null && !future.isDone())
                   future.cancel(true);
-               
+
                addons.remove(addonToStop);
                moduleLoader.removeFromCache(addonToStop.getId());
             }
@@ -207,30 +208,33 @@ public class AddonRegistryImpl implements AddonRegistry
 
    public void updateAddons()
    {
-      AddonRepository repository = moduleLoader.getRepository();
-      String runtimeVersion = AddonRepositoryImpl.getRuntimeAPIVersion();
-      List<AddonId> enabledCompatible = repository.listEnabledCompatibleWithVersion(runtimeVersion);
-
-      if (AddonRepositoryImpl.hasRuntimeAPIVersion())
-      {
-         List<AddonId> incompatible = repository.listEnabled();
-         incompatible.removeAll(enabledCompatible);
-
-         for (AddonId entry : incompatible)
-         {
-            logger.info("Not loading addon [" + entry.getName()
-                     + "] because it references Forge API version [" + entry.getApiVersion()
-                     + "] which may not be compatible with my current version ["
-                     + AddonRepositoryImpl.getRuntimeAPIVersion() + "].");
-         }
-      }
-
       Set<Addon> toRemove = new HashSet<Addon>();
-      for (Addon addon : addons)
+      List<AddonId> enabledCompatible = new ArrayList<AddonId>();
+      synchronized (addons)
       {
-         if (!enabledCompatible.contains(addon.getId()))
+         AddonRepository repository = moduleLoader.getRepository();
+         enabledCompatible = repository.listEnabledCompatibleWithVersion(forge.getVersion());
+
+         if (AddonRepositoryImpl.hasRuntimeAPIVersion())
          {
-            toRemove.add(addon);
+            List<AddonId> incompatible = repository.listEnabled();
+            incompatible.removeAll(enabledCompatible);
+
+            for (AddonId entry : incompatible)
+            {
+               logger.info("Not loading addon [" + entry.getName()
+                        + "] because it references Forge API version [" + entry.getApiVersion()
+                        + "] which may not be compatible with my current version ["
+                        + AddonRepositoryImpl.getRuntimeAPIVersion() + "].");
+            }
+         }
+
+         for (Addon addon : addons)
+         {
+            if (!enabledCompatible.contains(addon.getId()))
+            {
+               toRemove.add(addon);
+            }
          }
       }
 
