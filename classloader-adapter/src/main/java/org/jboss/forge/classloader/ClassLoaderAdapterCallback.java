@@ -47,7 +47,7 @@ public class ClassLoaderAdapterCallback implements MethodHandler
             {
                try
                {
-                  if (proxy.getDeclaringClass().equals(toLoader.loadClass(ClassLoaderAdapterProxy.class.getName())))
+                  if (proxy.getDeclaringClass().equals(fromLoader.loadClass(ClassLoaderAdapterProxy.class.getName())))
                   {
                      return delegate;
                   }
@@ -380,11 +380,6 @@ public class ClassLoaderAdapterCallback implements MethodHandler
    /*
     * Helper Types
     */
-   public static interface ClassLoaderAdapterProxy
-   {
-      Object getDelegate();
-   }
-
    static class ProxyTypeInspector
    {
       public static Class<?>[] getCompatibleClassHierarchy(ClassLoader loader, Class<?> origin)
