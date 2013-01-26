@@ -55,7 +55,7 @@ public class NewProjectCommand implements UICommand
          {
             // TODO Forge should probably have the concept of a "working directory" from which relative paths can be
             // formed in cases like this, where Forge may be started from a completely random directory.
-            return factory.create(DirectoryResource.class, new File(named.getValue()));
+            return factory.create(DirectoryResource.class, new File(""));
          }
       });
 
@@ -90,19 +90,23 @@ public class NewProjectCommand implements UICommand
    public Result execute(UIContext context) throws Exception
    {
       DirectoryResource directory = targetDirectory.getValue();
+      DirectoryResource targetDir = directory.getChildDirectory(named.getValue());
 
-      directory.mkdirs();
+      if (targetDir.mkdirs() || overwrite.getValue())
+      {
+         FileResource<?> pom = targetDir.getChild("pom.xml").reify(FileResource.class);
+         pom.createNewFile();
+         pom.setContents(getClass().getClassLoader().getResourceAsStream("/pom-template.xml"));
 
-      FileResource<?> pom = directory.getChild("pom.xml").reify(FileResource.class);
-      pom.createNewFile();
-      pom.setContents(getClass().getClassLoader().getResourceAsStream("/pom-template.xml"));
+         targetDir.getChildDirectory("src/main/java").mkdirs();
+         targetDir.getChildDirectory("src/main/resources").mkdirs();
+         targetDir.getChildDirectory("src/test/java").mkdirs();
+         targetDir.getChildDirectory("src/test/resources").mkdirs();
+      }
+      else
+         return Results.fail("Could not create target directory: " + targetDir);
 
-      directory.getChildDirectory("src/main/java").mkdirs();
-      directory.getChildDirectory("src/main/resources").mkdirs();
-      directory.getChildDirectory("src/test/java").mkdirs();
-      directory.getChildDirectory("src/test/resources").mkdirs();
-
-      return Results.success();
+      return Results.success("New project has been created.");
    }
 
    /*
