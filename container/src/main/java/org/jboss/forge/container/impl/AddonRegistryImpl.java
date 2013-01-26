@@ -171,6 +171,7 @@ public class AddonRegistryImpl implements AddonRegistry
                   future.cancel(true);
                
                addons.remove(addonToStop);
+               moduleLoader.removeFromCache(addonToStop.getId());
             }
          }
       }

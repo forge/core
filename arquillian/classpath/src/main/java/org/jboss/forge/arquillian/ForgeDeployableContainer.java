@@ -195,6 +195,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
 
       try
       {
+         repository.disable(addonToUndeploy);
          if (registry.isRegistered(addonToUndeploy))
             registry.stop(registry.getRegisteredAddon(addonToUndeploy));
       }
@@ -204,7 +205,6 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       }
       finally
       {
-         repository.disable(addonToUndeploy);
          repository.undeploy(addonToUndeploy);
       }
    }

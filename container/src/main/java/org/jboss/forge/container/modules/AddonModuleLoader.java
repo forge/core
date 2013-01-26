@@ -95,7 +95,15 @@ public class AddonModuleLoader extends ModuleLoader
    public final Module loadModule(AddonId addonId) throws ModuleLoadException
    {
       moduleCache.clear(addonId);
-      return loadModule(moduleCache.getModuleId(addonId));
+      try
+      {
+         return loadModule(moduleCache.getModuleId(addonId));
+      }
+      catch (ModuleLoadException e)
+      {
+         e.printStackTrace();
+         throw e;
+      }
    }
 
    private ModuleSpec findRegularModule(ModuleIdentifier id)
@@ -234,6 +242,11 @@ public class AddonModuleLoader extends ModuleLoader
    public String toString()
    {
       return "AddonModuleLoader";
+   }
+
+   public void removeFromCache(AddonId addonId)
+   {
+      moduleCache.clear(addonId);
    }
 
 }
