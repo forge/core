@@ -11,6 +11,7 @@ import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.container.services.ExportedInstanceImpl;
 import org.jboss.forge.container.services.ServiceRegistry;
+import org.jboss.forge.container.util.Addons;
 import org.jboss.forge.container.util.Assert;
 import org.jboss.forge.container.util.Sets;
 
@@ -44,7 +45,7 @@ public class ServiceRegistryImpl implements ServiceRegistry
    @SuppressWarnings("unchecked")
    public <T> ExportedInstance<T> getExportedInstance(String clazz)
    {
-      ensureAddonStarted();
+      Addons.waitUntilStarted(addon);
       Class<T> type;
       try
       {
@@ -60,7 +61,7 @@ public class ServiceRegistryImpl implements ServiceRegistry
    @Override
    public <T> ExportedInstance<T> getExportedInstance(Class<T> clazz)
    {
-      ensureAddonStarted();
+      Addons.waitUntilStarted(addon);
       return getExportedInstance(clazz, clazz);
    }
 
@@ -73,7 +74,8 @@ public class ServiceRegistryImpl implements ServiceRegistry
    {
       Assert.notNull(requestedType, "Requested Class type may not be null");
       Assert.notNull(actualType, "Actual Class type may not be null");
-
+      Addons.waitUntilStarted(addon);
+      
       final Class<T> requestedLoadedType;
       final Class<? extends T> actualLoadedType;
       try
@@ -133,7 +135,7 @@ public class ServiceRegistryImpl implements ServiceRegistry
    @Override
    public boolean hasService(Class<?> clazz)
    {
-      ensureAddonStarted();
+      Addons.waitUntilStarted(addon);
       Class<?> type;
       try
       {
@@ -172,7 +174,7 @@ public class ServiceRegistryImpl implements ServiceRegistry
    @Override
    public <T> Set<ExportedInstance<T>> getExportedInstances(Class<T> requestedType)
    {
-      ensureAddonStarted();
+      Addons.waitUntilStarted(addon);
       Set<ExportedInstance<T>> result = new HashSet<ExportedInstance<T>>();
       Class<T> requestedLoadedType;
       try
@@ -193,22 +195,6 @@ public class ServiceRegistryImpl implements ServiceRegistry
          }
       }
       return result;
-   }
-
-   private void ensureAddonStarted()
-   {
-      try
-      {
-         while (!addon.getStatus().isStarted() && !addon.getStatus().isFailed())
-         {
-            addon.getFuture().get();
-            Thread.sleep(10);
-         }
-      }
-      catch (Exception e)
-      {
-         throw new ContainerException("Addon was not started.", e);
-      }
    }
 
    /**

@@ -60,22 +60,22 @@ public final class AddonRunnable implements Runnable
 
    public void shutdown()
    {
-      logger.info("Stopping container [" + addon.getId() + "]");
+      logger.info("< Stopping container [" + addon.getId() + "]");
       long start = System.currentTimeMillis();
       ClassLoaders.executeIn(addon.getClassLoader(), shutdownCallable);
-      logger.info("Stopped container [" + addon.getId() + "] - "
-               + (System.currentTimeMillis() - start) + "ms");
+      logger.info("<< Stopped container [" + addon.getId() + "] - "
+               + (System.currentTimeMillis() - start) + "ms" + "                    <<");
    }
 
    @Override
    public void run()
    {
-      logger.info("Starting container [" + addon.getId() + "]");
+      logger.info("> Starting container [" + addon.getId() + "]");
       long start = System.currentTimeMillis();
       container = new AddonContainerStartup();
       shutdownCallable = ClassLoaders.executeIn(addon.getClassLoader(), container);
-      logger.info("Started container [" + addon.getId() + "] - "
-               + (System.currentTimeMillis() - start) + "ms");
+      logger.info(">> Started container [" + addon.getId() + "] - "
+               + (System.currentTimeMillis() - start) + "ms" + "                    >>");
    }
 
    public AddonImpl getAddon()
