@@ -45,6 +45,19 @@ public class ClassLoaderAdapterCallback implements MethodHandler
          {
             try
             {
+               try
+               {
+                  if (proxy.getDeclaringClass().equals(toLoader.loadClass(ClassLoaderAdapterProxy.class.getName())))
+                  {
+                     return delegate;
+                  }
+               }
+               catch (Exception e)
+               {
+                  System.out.println("No CLAP!");
+                  e.printStackTrace();
+               }
+
                Method delegateMethod = getDelegateMethod(proxy);
 
                List<Object> parameterValues = convertParameterValues(args, delegateMethod);
@@ -281,6 +294,16 @@ public class ClassLoaderAdapterCallback implements MethodHandler
             else
                hierarchy = Arrays.copy(types, new Class<?>[types.length]);
 
+            try
+            {
+               hierarchy = Arrays.append(hierarchy, fromLoader.loadClass(ClassLoaderAdapterProxy.class.getName()));
+            }
+            catch (Exception e)
+            {
+               System.out.println("No CLAP!");
+               e.printStackTrace();
+            }
+
             MethodFilter filter = new MethodFilter()
             {
                @Override
@@ -357,6 +380,10 @@ public class ClassLoaderAdapterCallback implements MethodHandler
    /*
     * Helper Types
     */
+   public static interface ClassLoaderAdapterProxy
+   {
+      Object getDelegate();
+   }
 
    static class ProxyTypeInspector
    {
@@ -476,5 +503,12 @@ public class ClassLoaderAdapterCallback implements MethodHandler
          System.arraycopy(source, 1, target, 0, target.length);
          return target;
       }
+   }
+
+   public static Object unwrap(Object object)
+   {
+      if (object instanceof ClassLoaderAdapterProxy)
+         return ((ClassLoaderAdapterProxy) object).getDelegate();
+      return object;
    }
 }

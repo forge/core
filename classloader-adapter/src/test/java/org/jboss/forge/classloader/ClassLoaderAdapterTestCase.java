@@ -128,6 +128,8 @@ public class ClassLoaderAdapterTestCase
       MockService adapter = ClassLoaderAdapterCallback.enhance(loader, loader, delegate, MockService.class);
 
       Assert.assertNotEquals(internal.getResultInterfaceFinalImpl(), adapter.getResultInterfaceFinalImpl());
+      Object unwrapped = ClassLoaderAdapterCallback.unwrap(adapter);
+      Assert.assertNotSame(adapter, unwrapped);
    }
 
    @Test

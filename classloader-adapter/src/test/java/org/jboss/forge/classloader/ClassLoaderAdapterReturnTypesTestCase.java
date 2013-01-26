@@ -19,6 +19,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.AddonRegistry;
+import org.jboss.forge.ui.Results;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -63,5 +64,8 @@ public class ClassLoaderAdapterReturnTypesTestCase
 
       AddonRegistry adapter = ClassLoaderAdapterCallback.enhance(uiLoader, thisLoader, registry);
       Assert.assertTrue(adapter.getClass().getName().contains("_javassist_"));
+      
+
+      ClassLoaderAdapterCallback.enhance(uiLoader, thisLoader, Results.success());
    }
 }
