@@ -10,7 +10,7 @@ package org.jboss.forge.ui;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public final class ResultSuccess extends Result
+public class ResultSuccess extends Results
 {
    ResultSuccess(String message)
    {

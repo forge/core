@@ -32,7 +32,7 @@ public class MyFirstWizard implements UIWizardBegin
    @Override
    public Result execute(UIContext context) throws Exception
    {
-      return Result.success();
+      return Results.success();
    }
 
    @Override

@@ -7,6 +7,7 @@ import javax.inject.Inject;
 
 import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.ui.Result;
+import org.jboss.forge.ui.Results;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UIContext;
 import org.jboss.forge.ui.UIInput;
@@ -78,10 +79,10 @@ public class MockNewProjectCommand implements UICommand, UIWizardStep
    {
       if (useFramework.getValue())
       {
-         return Result.success(MockChooseFrameworkStep.class);
+         return Results.success(MockChooseFrameworkStep.class);
       }
 
-      return Result.success();
+      return Results.success();
    }
 
    /*
@@ -94,10 +95,10 @@ public class MockNewProjectCommand implements UICommand, UIWizardStep
    {
       if (projectDir.getValue().mkdirs())
       {
-         return Result.success("Success");
+         return Results.success("Success");
       }
 
-      return Result.fail("Reason");
+      return Results.fail("Reason");
 
    }
 

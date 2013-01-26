@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.ui.Result;
+import org.jboss.forge.ui.Results;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UICommandID;
 import org.jboss.forge.ui.UIContext;
@@ -46,7 +47,7 @@ public class MyFirstWizard implements UICommand
    @Override
    public Result execute(UIContext context) throws Exception
    {
-      return Result.success();
+      return Results.success();
    }
 
 }

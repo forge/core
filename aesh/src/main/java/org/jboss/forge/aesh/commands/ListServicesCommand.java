@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import org.jboss.forge.container.Addon;
 import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.ui.Result;
+import org.jboss.forge.ui.Results;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UICommandID;
 import org.jboss.forge.ui.UIContext;
@@ -57,7 +58,7 @@ public class ListServicesCommand implements UICommand
    @Override
    public Result execute(UIContext context) throws Exception
    {
-      return Result.success(listServices());
+      return Results.success(listServices());
    }
 
    private String listServices() throws IOException

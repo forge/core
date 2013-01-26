@@ -7,11 +7,10 @@
 package org.jboss.forge.aesh.util;
 
 import junit.framework.TestCase;
+
 import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.cl.CommandLineParser;
 import org.jboss.aesh.cl.OptionBuilder;
-import org.jboss.aesh.cl.ParsedOption;
-import org.jboss.aesh.cl.internal.OptionInt;
 import org.jboss.aesh.cl.internal.ParameterInt;
 import org.jboss.forge.aesh.ShellContext;
 import org.jboss.forge.ui.Result;

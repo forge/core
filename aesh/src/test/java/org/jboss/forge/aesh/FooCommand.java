@@ -8,6 +8,7 @@ package org.jboss.forge.aesh;
 
 import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.ui.Result;
+import org.jboss.forge.ui.Results;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UICommandID;
 import org.jboss.forge.ui.UIContext;
@@ -52,6 +53,6 @@ public class FooCommand implements UICommand
    @Override
    public Result execute(UIContext context) throws Exception
    {
-      return Result.success("boo");
+      return Results.success("boo");
    }
 }

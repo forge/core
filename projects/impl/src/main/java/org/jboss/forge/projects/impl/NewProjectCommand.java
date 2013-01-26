@@ -10,6 +10,7 @@ import org.jboss.forge.resource.DirectoryResource;
 import org.jboss.forge.resource.FileResource;
 import org.jboss.forge.resource.ResourceFactory;
 import org.jboss.forge.ui.Result;
+import org.jboss.forge.ui.Results;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UICommandID;
 import org.jboss.forge.ui.UIContext;
@@ -101,7 +102,7 @@ public class NewProjectCommand implements UICommand
       directory.getChildDirectory("src/test/java").mkdirs();
       directory.getChildDirectory("src/test/resources").mkdirs();
 
-      return Result.success();
+      return Results.success();
    }
 
    /*

@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import org.jboss.aesh.console.Console;
 import org.jboss.forge.aesh.ShellContext;
 import org.jboss.forge.ui.Result;
+import org.jboss.forge.ui.Results;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UICommandID;
 import org.jboss.forge.ui.UIContext;
@@ -69,7 +70,7 @@ public class ExitCommand implements UICommand
    public Result execute(UIContext context) throws Exception
    {
       console.stop();
-      return Result.success("");
+      return Results.success("");
    }
 
 }

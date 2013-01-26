@@ -8,6 +8,7 @@ package org.jboss.forge.aesh.commands;
 
 import org.jboss.aesh.console.Console;
 import org.jboss.forge.ui.Result;
+import org.jboss.forge.ui.Results;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UICommandID;
 import org.jboss.forge.ui.UIContext;
@@ -56,7 +57,7 @@ public class ClearCommand implements UICommand
    public Result execute(UIContext context) throws Exception
    {
       console.clear();
-      return Result.success("");
+      return Results.success("");
    }
 
 }
