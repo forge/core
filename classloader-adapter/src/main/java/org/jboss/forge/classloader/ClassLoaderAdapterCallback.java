@@ -238,7 +238,7 @@ public class ClassLoaderAdapterCallback implements MethodHandler
             }
             else
             {
-               parameterValues.add(parameterValue);
+               parameterValues.add(unwrap(parameterValue));
             }
          }
       }
