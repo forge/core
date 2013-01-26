@@ -118,28 +118,56 @@ public class ClassLoaderAdapterCallback implements MethodHandler
          Class<?> returnType = method.getReturnType();
          if (needsEnhancement(result))
          {
+            Class<?>[] resultHierarchy = ProxyTypeInspector.getCompatibleClassHierarchy(fromLoader,
+                     ProxyTypeInspector.unwrapProxyTypes(result.getClass(), fromLoader, toLoader));
+
+            Class<?>[] returnTypeHierarchy = ProxyTypeInspector.getCompatibleClassHierarchy(fromLoader,
+                     ProxyTypeInspector.unwrapProxyTypes(returnType, fromLoader, toLoader));
+
             if (!Modifier.isFinal(returnType.getModifiers()))
             {
                if (Object.class.equals(returnType) && !Object.class.equals(result))
                {
-                  result = enhance(fromLoader, toLoader, method, result,
-                           ProxyTypeInspector.getCompatibleClassHierarchy(fromLoader,
-                                    ProxyTypeInspector.unwrapProxyTypes(result.getClass(), fromLoader, toLoader)));
+                  result = enhance(fromLoader, toLoader, method, result, resultHierarchy);
                }
                else
                {
-                  result = enhance(fromLoader, toLoader, method, result, returnType);
+                  if (returnTypeHierarchy.length == 0)
+                  {
+                     returnTypeHierarchy = new Class[] { returnType };
+                  }
+                  result = enhance(fromLoader, toLoader, method, result,
+                           mergeHierarchies(returnTypeHierarchy, resultHierarchy));
                }
             }
             else
             {
-               result = enhance(fromLoader, toLoader, method,
-                        ProxyTypeInspector.getCompatibleClassHierarchy(fromLoader,
-                                 ProxyTypeInspector.unwrapProxyTypes(returnType, fromLoader, toLoader)));
+               result = enhance(fromLoader, toLoader, method, returnTypeHierarchy);
             }
          }
       }
       return result;
+   }
+
+   @SuppressWarnings("unchecked")
+   private Class<?>[] mergeHierarchies(Class<?>[] left, Class<?>[] right)
+   {
+      for (Class<?> type : right)
+      {
+         boolean found = false;
+         for (Class<?> existing : left)
+         {
+            if (type.equals(existing))
+            {
+               found = true;
+               break;
+            }
+         }
+
+         if (!found && type.isInterface())
+            left = Arrays.append(left, type);
+      }
+      return left;
    }
 
    private boolean needsEnhancement(Object object)
@@ -415,11 +443,20 @@ public class ClassLoaderAdapterCallback implements MethodHandler
 
    static class Arrays
    {
-      public static <ELEMENTTYPE> ELEMENTTYPE[] append(ELEMENTTYPE[] array, ELEMENTTYPE element)
+      public static <ELEMENTTYPE> ELEMENTTYPE[] append(ELEMENTTYPE[] array, ELEMENTTYPE... elements)
       {
          final int length = array.length;
-         array = java.util.Arrays.copyOf(array, length + 1);
-         array[length] = element;
+         array = java.util.Arrays.copyOf(array, length + elements.length);
+         System.arraycopy(elements, 0, array, length, elements.length);
+         return array;
+      }
+
+      public static <ELEMENTTYPE> ELEMENTTYPE[] prepend(ELEMENTTYPE[] array, ELEMENTTYPE... elements)
+      {
+         final int length = array.length;
+         array = java.util.Arrays.copyOf(array, length + elements.length);
+         System.arraycopy(array, 0, array, elements.length, length);
+         System.arraycopy(elements, 0, array, 0, elements.length);
          return array;
       }
 
