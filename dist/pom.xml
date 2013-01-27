@@ -171,6 +171,20 @@
 
       <dependency>
          <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-javadoc</artifactId>
+         <version>${project.version}</version>
+         <classifier>javadoc</classifier>
+      </dependency>
+
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-javadoc</artifactId>
+         <version>${project.version}</version>
+         <classifier>sources</classifier>
+      </dependency>
+
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
          <artifactId>forge-javaee-api</artifactId>
       </dependency>
 
@@ -453,6 +467,39 @@
                      </execution>
                   </executions>
                </plugin>
+
+            <plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-assembly-plugin</artifactId>
+               <version>2.2-beta-5</version>
+               <executions>
+                  <execution>
+                     <id>javadoc</id>
+                     <phase>package</phase>
+                     <goals>
+                        <goal>single</goal>
+                     </goals>
+                     <configuration>
+                        <descriptors>
+                           <descriptor>src/main/assembly/assembly-javadoc.xml</descriptor>
+                        </descriptors>
+                     </configuration>
+                  </execution>
+                  <execution>
+                     <id>sources</id>
+                     <phase>package</phase>
+                     <goals>
+                        <goal>single</goal>
+                     </goals>
+                     <configuration>
+                        <descriptors>
+                           <descriptor>src/main/assembly/assembly-sources.xml</descriptor>
+                        </descriptors>
+                     </configuration>
+                  </execution>
+               </executions>
+            </plugin>
+
             </plugins>
          </build>
       </profile>
