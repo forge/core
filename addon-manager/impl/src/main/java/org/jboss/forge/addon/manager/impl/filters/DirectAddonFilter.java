@@ -1,9 +1,9 @@
 package org.jboss.forge.addon.manager.impl.filters;
 
-import org.jboss.forge.addon.dependency.Coordinate;
-import org.jboss.forge.addon.dependency.DependencyNode;
-import org.jboss.forge.addon.dependency.collection.Dependencies;
-import org.jboss.forge.addon.dependency.collection.Predicate;
+import org.jboss.forge.dependencies.Coordinate;
+import org.jboss.forge.dependencies.DependencyNode;
+import org.jboss.forge.dependencies.collection.Dependencies;
+import org.jboss.forge.dependencies.collection.Predicate;
 
 /**
  * Checks if an addon node is a direct dependency of another node (root)

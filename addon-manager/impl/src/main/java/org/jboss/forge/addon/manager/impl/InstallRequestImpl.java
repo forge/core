@@ -15,10 +15,6 @@ import java.util.List;
 import java.util.Stack;
 import java.util.logging.Logger;
 
-import org.jboss.forge.addon.dependency.Coordinate;
-import org.jboss.forge.addon.dependency.DependencyNode;
-import org.jboss.forge.addon.dependency.collection.Dependencies;
-import org.jboss.forge.addon.dependency.collection.Predicate;
 import org.jboss.forge.addon.manager.AddonManager;
 import org.jboss.forge.addon.manager.InstallRequest;
 import org.jboss.forge.addon.manager.impl.filters.DirectAddonFilter;
@@ -26,6 +22,10 @@ import org.jboss.forge.addon.manager.impl.filters.LocalResourceFilter;
 import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.AddonRepository;
+import org.jboss.forge.dependencies.Coordinate;
+import org.jboss.forge.dependencies.DependencyNode;
+import org.jboss.forge.dependencies.collection.Dependencies;
+import org.jboss.forge.dependencies.collection.Predicate;
 
 /**
  * When an addon is installed, another addons could be required. This object returns the necessary information for the

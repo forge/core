@@ -3,33 +3,24 @@
    <modelVersion>4.0.0</modelVersion>
    <parent>
       <groupId>org.jboss.forge</groupId>
-      <artifactId>addon-manager-parent</artifactId>
+      <artifactId>dependencies-parent</artifactId>
       <version>2.0.0-SNAPSHOT</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
-
-   <artifactId>addon-manager</artifactId>
-   <name>Forge - Addon Manager Addon</name>
-
+   <artifactId>dependencies</artifactId>
+   <name>Forge - Dependencies Addon</name>
    <dependencies>
       <dependency>
          <groupId>org.jboss.forge</groupId>
-         <artifactId>dependencies</artifactId>
-         <version>2.0.0-SNAPSHOT</version>
-         <classifier>forge-addon</classifier>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>addon-manager-api</artifactId>
+         <artifactId>dependencies-api</artifactId>
          <scope>compile</scope>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge</groupId>
-         <artifactId>addon-manager-impl</artifactId>
+         <artifactId>dependencies-impl</artifactId>
          <scope>runtime</scope>
       </dependency>
    </dependencies>
-
    <build>
       <plugins>
          <plugin>

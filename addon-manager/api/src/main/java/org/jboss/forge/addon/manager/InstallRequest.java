@@ -9,7 +9,7 @@ package org.jboss.forge.addon.manager;
 
 import java.util.List;
 
-import org.jboss.forge.addon.dependency.DependencyNode;
+import org.jboss.forge.dependencies.DependencyNode;
 
 /**
  * When an addon is installed, another addons could be required. This object returns the necessary information for the

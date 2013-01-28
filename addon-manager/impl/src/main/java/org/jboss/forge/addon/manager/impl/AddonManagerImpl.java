@@ -9,14 +9,14 @@ package org.jboss.forge.addon.manager.impl;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.addon.dependency.DependencyNode;
-import org.jboss.forge.addon.dependency.builder.DependencyQueryBuilder;
-import org.jboss.forge.addon.dependency.spi.DependencyResolver;
 import org.jboss.forge.addon.manager.AddonManager;
 import org.jboss.forge.addon.manager.InstallRequest;
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.AddonRepository;
 import org.jboss.forge.container.services.Exported;
+import org.jboss.forge.dependencies.DependencyNode;
+import org.jboss.forge.dependencies.builder.DependencyQueryBuilder;
+import org.jboss.forge.dependencies.spi.DependencyResolver;
 
 /**
  * Installs addons into an {@link AddonRepository}

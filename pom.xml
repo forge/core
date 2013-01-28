@@ -79,8 +79,6 @@
             <module>container</module>
             <module>container-api</module>
             <module>container-tests</module>
-            <module>maven</module>
-            <module>maven-tests</module>
             <module>parser-xml</module>
             <module>classloader-adapter</module>
             <module>se</module>
@@ -90,7 +88,7 @@
             <!-- TODO: Remove these modules -->
             <module>addon-manager</module>
             <module>aesh</module>
-            <module>dependency-api</module>
+            <module>dependencies</module>
             <module>environment</module>
             <module>facets</module>
             <module>projects</module>
@@ -231,11 +229,6 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-maven</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
             <artifactId>forge-parser-xml</artifactId>
             <version>${project.version}</version>
          </dependency>
@@ -251,7 +244,12 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-dependency-api</artifactId>
+            <artifactId>dependencies-api</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>dependencies-impl</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>
