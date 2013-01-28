@@ -31,6 +31,11 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.forge</groupId>
+            <artifactId>ui-api</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
             <artifactId>addon-manager-impl</artifactId>
             <version>${project.version}</version>
          </dependency>
