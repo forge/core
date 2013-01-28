@@ -13,11 +13,28 @@
    <packaging>pom</packaging>
 
    <modules>
-      <module>example</module>
-      <module>example2</module>
+      <module>api</module>
       <module>impl</module>
       <module>addon</module>
       <module>tests</module>
+      <module>example</module>
+      <module>example2</module>
    </modules>
+
+
+   <dependencyManagement>
+      <dependencies>
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>addon-manager-api</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>addon-manager-impl</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+      </dependencies>
+   </dependencyManagement>
 
 </project>

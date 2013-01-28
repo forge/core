@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.manager;
+package org.jboss.forge.addon.manager.impl;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -19,8 +19,10 @@ import org.jboss.forge.addon.dependency.Coordinate;
 import org.jboss.forge.addon.dependency.DependencyNode;
 import org.jboss.forge.addon.dependency.collection.Dependencies;
 import org.jboss.forge.addon.dependency.collection.Predicate;
-import org.jboss.forge.addon.manager.filters.DirectAddonFilter;
-import org.jboss.forge.addon.manager.filters.LocalResourceFilter;
+import org.jboss.forge.addon.manager.AddonManager;
+import org.jboss.forge.addon.manager.InstallRequest;
+import org.jboss.forge.addon.manager.impl.filters.DirectAddonFilter;
+import org.jboss.forge.addon.manager.impl.filters.LocalResourceFilter;
 import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.AddonRepository;
@@ -28,11 +30,11 @@ import org.jboss.forge.container.AddonRepository;
 /**
  * When an addon is installed, another addons could be required. This object returns the necessary information for the
  * installation of an addon to succeed, like required addons and dependencies
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ *
  */
-public class InstallRequest
+public class InstallRequestImpl implements InstallRequest
 {
    private AddonManager addonManager;
    private AddonRepository repository;
@@ -45,10 +47,10 @@ public class InstallRequest
 
    /**
     * Package-access constructor. Only AddonManager should be allowed to call this constructor.
-    * 
+    *
     * @param addonManager
     */
-   InstallRequest(AddonManager addonManager, AddonRepository repository, DependencyNode requestedAddonNode)
+   InstallRequestImpl(AddonManager addonManager, AddonRepository repository, DependencyNode requestedAddonNode)
    {
       this.addonManager = addonManager;
       this.repository = repository;
@@ -76,30 +78,37 @@ public class InstallRequest
       }
    }
 
+   /* (non-Javadoc)
+    * @see org.jboss.forge.addon.manager.impl.InstallRequest#getRequestedAddon()
+    */
+   @Override
    public DependencyNode getRequestedAddon()
    {
       return this.requestedAddonNode;
    }
 
-   /**
-    * Returns an unmodifiable list of the required addons
+   /* (non-Javadoc)
+    * @see org.jboss.forge.addon.manager.impl.InstallRequest#getOptionalAddons()
     */
+   @Override
    public List<DependencyNode> getOptionalAddons()
    {
       return Collections.unmodifiableList(optionalAddons);
    }
 
-   /**
-    * Returns an unmodifiable list of the required addons
+   /* (non-Javadoc)
+    * @see org.jboss.forge.addon.manager.impl.InstallRequest#getRequiredAddons()
     */
+   @Override
    public List<DependencyNode> getRequiredAddons()
    {
       return Collections.unmodifiableList(requiredAddons);
    }
 
-   /**
-    * This will deploy all the required addons
+   /* (non-Javadoc)
+    * @see org.jboss.forge.addon.manager.impl.InstallRequest#perform()
     */
+   @Override
    public void perform()
    {
       for (DependencyNode requiredAddon : getRequiredAddons())

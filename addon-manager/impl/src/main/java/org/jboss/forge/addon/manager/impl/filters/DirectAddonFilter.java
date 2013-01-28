@@ -1,4 +1,4 @@
-package org.jboss.forge.addon.manager.filters;
+package org.jboss.forge.addon.manager.impl.filters;
 
 import org.jboss.forge.addon.dependency.Coordinate;
 import org.jboss.forge.addon.dependency.DependencyNode;
