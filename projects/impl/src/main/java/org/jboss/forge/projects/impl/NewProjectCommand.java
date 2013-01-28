@@ -27,7 +27,7 @@ public class NewProjectCommand implements UICommand
    private UIInput<String> named;
 
    @Inject
-   private UIInput<DirectoryResource> targetDirectory;
+   private UIInput<DirectoryResource> targetLocation;
 
    @Inject
    private UIInput<Boolean> overwrite;
@@ -47,8 +47,8 @@ public class NewProjectCommand implements UICommand
       named.setLabel("Project name");
       named.setRequired(true);
 
-      targetDirectory.setLabel("Project directory");
-      targetDirectory.setDefaultValue(new Callable<DirectoryResource>()
+      targetLocation.setLabel("Project location");
+      targetLocation.setDefaultValue(new Callable<DirectoryResource>()
       {
          @Override
          public DirectoryResource call() throws Exception
@@ -59,21 +59,21 @@ public class NewProjectCommand implements UICommand
          }
       });
 
-      overwrite.setLabel("Overwrite existing project directory");
+      overwrite.setLabel("Overwrite existing project location");
       overwrite.setDefaultValue(false).setEnabled(new Callable<Boolean>()
       {
          @Override
          public Boolean call() throws Exception
          {
-            return targetDirectory.getValue() != null
-                     && targetDirectory.getValue().exists()
-                     && !targetDirectory.getValue().listResources().isEmpty();
+            return targetLocation.getValue() != null
+                     && targetLocation.getValue().exists()
+                     && !targetLocation.getValue().listResources().isEmpty();
          }
       });
 
       type.setRequired(false);
 
-      context.getUIBuilder().add(named).add(targetDirectory).add(overwrite).add(type);
+      context.getUIBuilder().add(named).add(targetLocation).add(overwrite).add(type);
    }
 
    @Override
@@ -81,7 +81,7 @@ public class NewProjectCommand implements UICommand
    {
       if (overwrite.isEnabled() && overwrite.getValue() == false)
       {
-         context.addValidationError(targetDirectory, "Target directory is not empty.");
+         context.addValidationError(targetLocation, "Target location is not empty.");
       }
 
    }
@@ -89,7 +89,7 @@ public class NewProjectCommand implements UICommand
    @Override
    public Result execute(UIContext context) throws Exception
    {
-      DirectoryResource directory = targetDirectory.getValue();
+      DirectoryResource directory = targetLocation.getValue();
       DirectoryResource targetDir = directory.getChildDirectory(named.getValue());
 
       if (targetDir.mkdirs() || overwrite.getValue())
@@ -104,32 +104,8 @@ public class NewProjectCommand implements UICommand
          targetDir.getChildDirectory("src/test/resources").mkdirs();
       }
       else
-         return Results.fail("Could not create target directory: " + targetDir);
+         return Results.fail("Could not create target location: " + targetDir);
 
       return Results.success("New project has been created.");
-   }
-
-   /*
-    * Getters
-    */
-
-   public UIInput<String> getNamed()
-   {
-      return named;
-   }
-
-   public UIInput<DirectoryResource> getTargetDirectory()
-   {
-      return targetDirectory;
-   }
-
-   public UIInput<Boolean> getOverwrite()
-   {
-      return overwrite;
-   }
-
-   public UIInput<ProjectType> getType()
-   {
-      return type;
    }
 }
