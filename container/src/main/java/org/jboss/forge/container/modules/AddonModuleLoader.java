@@ -87,14 +87,13 @@ public class AddonModuleLoader extends ModuleLoader
 
    /**
     * Loads a module based on the {@link AddonId}
-    * 
+    *
     * @param addonId
     * @return
     * @throws ModuleLoadException
     */
    public final Module loadModule(AddonId addonId) throws ModuleLoadException
    {
-      moduleCache.clear(addonId);
       try
       {
          return loadModule(moduleCache.getModuleId(addonId));
