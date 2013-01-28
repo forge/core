@@ -18,6 +18,7 @@ import java.util.Set;
 
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.apache.maven.settings.Settings;
+import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.dependencies.Coordinate;
 import org.jboss.forge.dependencies.Dependency;
 import org.jboss.forge.dependencies.DependencyQuery;
@@ -42,6 +43,7 @@ import org.sonatype.aether.resolution.VersionRangeRequest;
 import org.sonatype.aether.resolution.VersionRangeResult;
 import org.sonatype.aether.version.Version;
 
+@Exported
 public class MavenDependencyResolver implements DependencyResolver
 {
    private MavenContainer container;
@@ -119,7 +121,7 @@ public class MavenDependencyResolver implements DependencyResolver
 
    /**
     * Returns the versions of a specific artifact
-    * 
+    *
     * @param query
     * @return
     */
@@ -224,7 +226,7 @@ public class MavenDependencyResolver implements DependencyResolver
                return true;
             }
          });
-         
+
          DependencyResult result = system.resolveDependencies(session, dr);
          return MavenConvertUtils.toDependencyNode(null, result.getRoot());
       }

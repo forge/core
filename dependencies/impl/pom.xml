@@ -23,5 +23,10 @@
          <groupId>org.jboss.forge</groupId>
          <artifactId>dependencies-api</artifactId>
       </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-addon-container-api</artifactId>
+         <scope>provided</scope>
+      </dependency>
    </dependencies>
 </project>

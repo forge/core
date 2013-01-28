@@ -8,4 +8,11 @@
    </parent>
    <artifactId>dependencies-api</artifactId>
    <name>Forge - Dependencies API</name>
+   <dependencies>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-addon-container-api</artifactId>
+         <scope>provided</scope>
+      </dependency>
+   </dependencies>
 </project>
