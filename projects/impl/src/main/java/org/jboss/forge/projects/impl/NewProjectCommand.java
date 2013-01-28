@@ -108,4 +108,24 @@ public class NewProjectCommand implements UICommand
 
       return Results.success("New project has been created.");
    }
+
+   public UIInput<String> getNamed()
+   {
+      return named;
+   }
+
+   public UIInput<DirectoryResource> getTargetLocation()
+   {
+      return targetLocation;
+   }
+
+   public UIInput<Boolean> getOverwrite()
+   {
+      return overwrite;
+   }
+
+   public UIInput<ProjectType> getType()
+   {
+      return type;
+   }
 }

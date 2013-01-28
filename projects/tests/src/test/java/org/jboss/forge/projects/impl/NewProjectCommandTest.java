@@ -103,12 +103,12 @@ public class NewProjectCommandTest
          }
       });
 
-      DirectoryResource targetDirectory = command.getTargetDirectory().getValue().getChildDirectory("test");
+      DirectoryResource targetDirectory = command.getTargetLocation().getValue().getChildDirectory("test");
 
       Assert.assertFalse(targetDirectory.exists());
       command.execute(context);
       Assert.assertTrue(targetDirectory.exists());
-      
+
       targetDirectory.delete(true);
    }
 }
