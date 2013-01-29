@@ -7,91 +7,38 @@ import org.jboss.forge.addon.manager.AddonManager;
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.ui.Result;
 import org.jboss.forge.ui.Results;
-import org.jboss.forge.ui.UICommand;
-import org.jboss.forge.ui.UICommandID;
 import org.jboss.forge.ui.UIContext;
-import org.jboss.forge.ui.UIInput;
-import org.jboss.forge.ui.UIValidationContext;
-import org.jboss.forge.ui.base.SimpleUICommandID;
 
 @Singleton
-public class AddonInstallCommand implements UICommand
+public class AddonInstallCommand extends AddonCommand
 {
-
-   private static final String COMMAND_NAME =
-            "Install an Addon";
-   private static final String COMMAND_DESCRIPTION =
-            "Command to install a Forge 2 addon.";
-
-   @Inject
-   private UIInput<String> groupId;
-   @Inject
-   private UIInput<String> name;
-   @Inject
-   private UIInput<String> version;
 
    @Inject
    private AddonManager addonManager;
 
-   public UICommandID getId()
+   protected String getName()
    {
-      return new SimpleUICommandID(COMMAND_NAME, COMMAND_DESCRIPTION);
+      return ADDON_INSTALL_COMMAND_NAME;
    }
 
-   public void initializeUI(UIContext context) throws Exception
+   protected String getDescription()
    {
-      initializeGroupIdInput(context);
-      initializeNameInput(context);
-      initializeVersionInput(context);
+      return ADDON_INSTALL_COMMAND_DESCRIPTION;
    }
-
-   private void initializeGroupIdInput(UIContext context)
-   {
-      groupId.setLabel("Group Id:");
-      groupId.setRequired(true);
-      context.getUIBuilder().add(groupId);
-   }
-
-   private void initializeNameInput(UIContext context)
-   {
-      name.setLabel("Name:");
-      name.setRequired(true);
-      context.getUIBuilder().add(name);
-   }
-
-   private void initializeVersionInput(UIContext context)
-   {
-      version.setLabel("Version:");
-      version.setRequired(true);
-      context.getUIBuilder().add(version);
-   }
-
-   public void validate(UIValidationContext context)
-   {
-      // TODO Auto-generated method stub
-
-   }
-
+   
    public Result execute(UIContext context)
    {
-      String coordinates =
-               groupId.getValue() + ':' +
-                        name.getValue() + ',' +
-                        version.getValue();
-      System.out.println("About to install addon: " + coordinates);
-      if (addonManager == null)
-         System.out.println("addonManager is null");
+      String coordinates = getCoordinates();
       try
       {
          addonManager.install(AddonId.fromCoordinates(coordinates)).perform();
-         System.out.println("Addon installed: " + coordinates);
+         return Results.success("Addon " + coordinates + " was installed succesfully.");
       }
       catch (Throwable t)
       {
-         System.out.println("Something went wrong");
-         t.printStackTrace();
+         // TODO it should be possible to add the error to the result as payload
+         return Results.fail("Addon " + coordinates + " could not be installed.");
       }
-      return Results.success("Addon " + coordinates + " was installed succesfully.");
    }
 
 }
