@@ -13,10 +13,9 @@ package org.jboss.forge.ui;
 public interface UICompleter<T>
 {
    /**
-    * Get completion proposals for the provided {@link UIInput} and unconverted partial {@link String} value.
+    * Get completion proposals for the provided {@link UIInput} and un-converted partial {@link String} value.
     * 
-    * @param input The {@link UIInput} that provided this {@link UICompleter} instance, via
-    *           {@link UIInput#getCompleter()}.
+    * @param input The {@link UIInput} currently being completed.
     * @param value The user input value requiring completion, or null, if no value yet exists. These values will undergo
     *           conversion to fit the type required by the corresponding {@link UIInput}.
     */
