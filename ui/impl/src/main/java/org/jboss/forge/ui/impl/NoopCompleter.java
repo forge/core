@@ -6,10 +6,10 @@
  */
 package org.jboss.forge.ui.impl;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 
 import org.jboss.forge.ui.UICompleter;
+import org.jboss.forge.ui.UIInput;
 
 /**
  * A {@link UICompleter} that always returns zero proposals.
@@ -20,8 +20,8 @@ import org.jboss.forge.ui.UICompleter;
 public class NoopCompleter implements UICompleter
 {
    @Override
-   public List getCompletionProposals(String value)
+   public Iterable getCompletionProposals(UIInput input, String value)
    {
-      return new ArrayList();
+      return Collections.emptyList();
    }
 }

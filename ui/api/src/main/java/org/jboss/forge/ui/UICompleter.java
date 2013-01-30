@@ -6,15 +6,19 @@
  */
 package org.jboss.forge.ui;
 
-import java.util.List;
-
 /**
  * @param VALUETYPE The value type to be provided by completion.
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface UICompleter<VALUETYPE>
+public interface UICompleter<T>
 {
-   // FIXME this needs to be thought out, before or after validation?
-   // Should this take a String or the actual VALUETYPE instead?
-   List<VALUETYPE> getCompletionProposals(String value);
+   /**
+    * Get completion proposals for the provided {@link UIInput} and unconverted partial {@link String} value.
+    * 
+    * @param input The {@link UIInput} that provided this {@link UICompleter} instance, via
+    *           {@link UIInput#getCompleter()}.
+    * @param value The user input value requiring completion, or null, if no value yet exists. These values will undergo
+    *           conversion to fit the type required by the corresponding {@link UIInput}.
+    */
+   Iterable<String> getCompletionProposals(UIInput<T> input, String value);
 }

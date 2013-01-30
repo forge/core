@@ -8,7 +8,7 @@
 package org.jboss.forge.ui.impl;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Iterator;
 
 import javax.inject.Inject;
 
@@ -91,14 +91,20 @@ public class UIInputInjectionTest
       Assert.assertEquals(firstName, firstName.setCompleter(new UICompleter<String>()
       {
          @Override
-         public List<String> getCompletionProposals(String value)
+         public Iterable<String> getCompletionProposals(UIInput<String> input, String value)
          {
-            return Arrays.asList("foo", "bar", "baz");
+            return Arrays.asList("one", "two", "three");
          }
       }));
       Assert.assertNotEquals(originalCompleter, firstName.getCompleter());
-      Assert.assertEquals(3, firstName.getCompleter().getCompletionProposals(null).size());
-      Assert.assertEquals(0, originalCompleter.getCompletionProposals(null).size());
+
+      Iterator<String> iterator = firstName.getCompleter().getCompletionProposals(null, null).iterator();
+      Assert.assertEquals("one", iterator.next());
+      Assert.assertEquals("two", iterator.next());
+      Assert.assertEquals("three", iterator.next());
+      Assert.assertFalse(iterator.hasNext());
+
+      Assert.assertFalse(originalCompleter.getCompletionProposals(null, null).iterator().hasNext());
    }
 
    @Test
