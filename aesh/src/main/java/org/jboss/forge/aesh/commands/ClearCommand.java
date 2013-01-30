@@ -10,11 +10,11 @@ import org.jboss.aesh.console.Console;
 import org.jboss.forge.ui.Result;
 import org.jboss.forge.ui.Results;
 import org.jboss.forge.ui.UICommand;
-import org.jboss.forge.ui.UICommandID;
+import org.jboss.forge.ui.UICommandMetadata;
 import org.jboss.forge.ui.UIContext;
 import org.jboss.forge.ui.UIInput;
 import org.jboss.forge.ui.UIValidationContext;
-import org.jboss.forge.ui.base.SimpleUICommandID;
+import org.jboss.forge.ui.base.UICommandMetadataBase;
 
 import javax.inject.Inject;
 
@@ -29,9 +29,9 @@ public class ClearCommand implements UICommand
    private UIInput<String> clear;
 
    @Override
-   public UICommandID getId()
+   public UICommandMetadata getMetadata()
    {
-      return new SimpleUICommandID("clear", "Clear the console");
+      return new UICommandMetadataBase("clear", "Clear the console");
    }
 
    public ClearCommand setConsole(Console console)

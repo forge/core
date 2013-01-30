@@ -15,11 +15,11 @@ import org.jboss.aesh.cl.internal.ParameterInt;
 import org.jboss.forge.aesh.ShellContext;
 import org.jboss.forge.ui.Result;
 import org.jboss.forge.ui.UICommand;
-import org.jboss.forge.ui.UICommandID;
+import org.jboss.forge.ui.UICommandMetadata;
 import org.jboss.forge.ui.UIContext;
 import org.jboss.forge.ui.UIInput;
 import org.jboss.forge.ui.UIValidationContext;
-import org.jboss.forge.ui.base.SimpleUICommandID;
+import org.jboss.forge.ui.base.UICommandMetadataBase;
 import org.jboss.forge.ui.impl.UIInputImpl;
 
 /**
@@ -100,7 +100,7 @@ public class CommandLineUtilTest extends TestCase {
 
     private class Foo1Command implements UICommand {
         @Override
-        public UICommandID getId() { return new SimpleUICommandID("foo1", "bla"); }
+        public UICommandMetadata getMetadata() { return new UICommandMetadataBase("foo1", "bla"); }
         @Override
         public void initializeUI(UIContext context) throws Exception { }
         @Override
@@ -113,7 +113,7 @@ public class CommandLineUtilTest extends TestCase {
         private UIInput<String> str;
         private UIInput<Boolean> bool;
         @Override
-        public UICommandID getId() { return new SimpleUICommandID("foo2", "bla2"); }
+        public UICommandMetadata getMetadata() { return new UICommandMetadataBase("foo2", "bla2"); }
         @Override
         public void initializeUI(UIContext context) throws Exception {
             str = new UIInputImpl<String>("str", String.class);

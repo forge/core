@@ -10,11 +10,11 @@ import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.ui.Result;
 import org.jboss.forge.ui.Results;
 import org.jboss.forge.ui.UICommand;
-import org.jboss.forge.ui.UICommandID;
+import org.jboss.forge.ui.UICommandMetadata;
 import org.jboss.forge.ui.UIContext;
 import org.jboss.forge.ui.UIInput;
 import org.jboss.forge.ui.UIValidationContext;
-import org.jboss.forge.ui.base.SimpleUICommandID;
+import org.jboss.forge.ui.base.UICommandMetadataBase;
 
 import javax.inject.Inject;
 
@@ -31,9 +31,9 @@ public class FooCommand implements UICommand
    private UIInput<String> foo;
 
    @Override
-   public UICommandID getId()
+   public UICommandMetadata getMetadata()
    {
-      return new SimpleUICommandID("foo", "Do some foo");
+      return new UICommandMetadataBase("foo", "Do some foo");
    }
 
    @Override

@@ -6,8 +6,8 @@
  */
 package org.jboss.forge.aesh.commands;
 
-import org.jboss.forge.ui.UICommandID;
-import org.jboss.forge.ui.base.SimpleUICommandID;
+import org.jboss.forge.ui.UICommandMetadata;
+import org.jboss.forge.ui.base.UICommandMetadataBase;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
@@ -15,8 +15,8 @@ import org.jboss.forge.ui.base.SimpleUICommandID;
 public class QuitCommand extends ExitCommand
 {
    @Override
-   public UICommandID getId()
+   public UICommandMetadata getMetadata()
    {
-      return new SimpleUICommandID("quit", "Exit the shell");
+      return new UICommandMetadataBase("quit", "Exit the shell");
    }
 }

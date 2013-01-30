@@ -3,11 +3,11 @@ package org.jboss.forge.addon.manager.impl.commands;
 import javax.inject.Inject;
 
 import org.jboss.forge.ui.UICommand;
-import org.jboss.forge.ui.UICommandID;
+import org.jboss.forge.ui.UICommandMetadata;
 import org.jboss.forge.ui.UIContext;
 import org.jboss.forge.ui.UIInput;
 import org.jboss.forge.ui.UIValidationContext;
-import org.jboss.forge.ui.base.SimpleUICommandID;
+import org.jboss.forge.ui.base.UICommandMetadataBase;
 
 public abstract class AddonCommand implements UICommand, AddonCommandConstants
 {
@@ -31,9 +31,9 @@ public abstract class AddonCommand implements UICommand, AddonCommandConstants
    }
 
    @Override
-   public UICommandID getId()
+   public UICommandMetadata getMetadata()
    {
-      return new SimpleUICommandID(getName(), getDescription());
+      return new UICommandMetadataBase(getName(), getDescription());
    }
 
    public void initializeUI(UIContext context) throws Exception

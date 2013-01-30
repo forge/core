@@ -12,7 +12,7 @@ import org.jboss.forge.container.services.Exported;
 @Exported
 public interface UICommand
 {
-   public UICommandID getId();
+   public UICommandMetadata getMetadata();
 
    public void initializeUI(UIContext context) throws Exception;
 

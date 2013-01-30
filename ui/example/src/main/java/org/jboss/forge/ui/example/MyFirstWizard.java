@@ -6,11 +6,11 @@ import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.ui.Result;
 import org.jboss.forge.ui.Results;
 import org.jboss.forge.ui.UICommand;
-import org.jboss.forge.ui.UICommandID;
+import org.jboss.forge.ui.UICommandMetadata;
 import org.jboss.forge.ui.UIContext;
 import org.jboss.forge.ui.UIInput;
 import org.jboss.forge.ui.UIValidationContext;
-import org.jboss.forge.ui.base.SimpleUICommandID;
+import org.jboss.forge.ui.base.UICommandMetadataBase;
 
 /*
  * Copyright 2013 Red Hat, Inc. and/or its affiliates.
@@ -27,9 +27,9 @@ public class MyFirstWizard implements UICommand
    private UIInput<String> firstName;
 
    @Override
-   public UICommandID getId()
+   public UICommandMetadata getMetadata()
    {
-      return new SimpleUICommandID("Wizard", "Exit the shell");
+      return new UICommandMetadataBase("Wizard", "Exit the shell");
    }
 
    @Override

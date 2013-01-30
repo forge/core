@@ -25,7 +25,7 @@ public class CommandLineUtil {
         ParserBuilder builder = new ParserBuilder();
 
                ParameterInt parameter =
-                new ParameterInt(command.getId().getName(), command.getId().getDescription());
+                new ParameterInt(command.getMetadata().getName(), command.getMetadata().getDescription());
         for(UIInput<?> input : context.getInputs()) {
             if(input.getValueType() == Boolean.class) {
                 parameter.addOption(

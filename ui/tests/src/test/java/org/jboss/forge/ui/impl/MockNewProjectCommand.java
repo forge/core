@@ -12,7 +12,7 @@ import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UIContext;
 import org.jboss.forge.ui.UIInput;
 import org.jboss.forge.ui.UIValidationContext;
-import org.jboss.forge.ui.UICommandID;
+import org.jboss.forge.ui.UICommandMetadata;
 import org.jboss.forge.ui.wizard.UIWizardContext;
 import org.jboss.forge.ui.wizard.UIWizardStep;
 
@@ -103,7 +103,7 @@ public class MockNewProjectCommand implements UICommand, UIWizardStep
    }
 
    @Override
-   public UICommandID getId()
+   public UICommandMetadata getMetadata()
    {
       // TODO Auto-generated method stub
       return null;

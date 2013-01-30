@@ -13,11 +13,11 @@ import org.jboss.forge.aesh.ShellContext;
 import org.jboss.forge.ui.Result;
 import org.jboss.forge.ui.Results;
 import org.jboss.forge.ui.UICommand;
-import org.jboss.forge.ui.UICommandID;
+import org.jboss.forge.ui.UICommandMetadata;
 import org.jboss.forge.ui.UIContext;
 import org.jboss.forge.ui.UIInput;
 import org.jboss.forge.ui.UIValidationContext;
-import org.jboss.forge.ui.base.SimpleUICommandID;
+import org.jboss.forge.ui.base.UICommandMetadataBase;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
@@ -33,9 +33,9 @@ public class ExitCommand implements UICommand
    private UIInput<String> quit;
 
    @Override
-   public UICommandID getId()
+   public UICommandMetadata getMetadata()
    {
-      return new SimpleUICommandID("exit", "Exit the shell");
+      return new UICommandMetadataBase("exit", "Exit the shell");
    }
 
    public ExitCommand setConsole(Console console)

@@ -2,6 +2,7 @@ package org.jboss.forge.ui;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.ui.util.Categories;
 import org.jboss.forge.ui.wizard.UIWizardBegin;
 import org.jboss.forge.ui.wizard.UIWizardContext;
 
@@ -36,9 +37,9 @@ public class MyFirstWizard implements UIWizardBegin
    }
 
    @Override
-   public UICommandID getId()
+   public UICommandMetadata getMetadata()
    {
-      return new UICommandID()
+      return new UICommandMetadata()
       {
          @Override
          public String getName()
@@ -50,6 +51,12 @@ public class MyFirstWizard implements UIWizardBegin
          public String getDescription()
          {
             return "generic test wizard";
+         }
+
+         @Override
+         public UICategory getCategory()
+         {
+            return Categories.create("Example");
          }
       };
    }

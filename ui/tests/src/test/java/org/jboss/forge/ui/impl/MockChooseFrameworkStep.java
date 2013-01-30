@@ -2,18 +2,18 @@ package org.jboss.forge.ui.impl;
 
 import org.jboss.forge.ui.Result;
 import org.jboss.forge.ui.UICommand;
-import org.jboss.forge.ui.UICommandID;
+import org.jboss.forge.ui.UICommandMetadata;
 import org.jboss.forge.ui.UIContext;
 import org.jboss.forge.ui.UIValidationContext;
-import org.jboss.forge.ui.base.SimpleUICommandID;
+import org.jboss.forge.ui.base.UICommandMetadataBase;
 
 public class MockChooseFrameworkStep implements UICommand
 {
 
    @Override
-   public UICommandID getId()
+   public UICommandMetadata getMetadata()
    {
-      return new SimpleUICommandID("Choose Framework", "Pick the framework you wish to use for this command.");
+      return new UICommandMetadataBase("Choose Framework", "Pick the framework you wish to use for this command.");
    }
 
    @Override
