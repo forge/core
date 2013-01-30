@@ -1,5 +1,6 @@
 package org.jboss.forge.addon.manager.impl.commands;
 
+import javax.enterprise.inject.Vetoed;
 import javax.inject.Inject;
 
 import org.jboss.forge.ui.UICommand;
@@ -9,6 +10,7 @@ import org.jboss.forge.ui.UIInput;
 import org.jboss.forge.ui.UIValidationContext;
 import org.jboss.forge.ui.base.UICommandMetadataBase;
 
+@Vetoed
 public abstract class AddonCommand implements UICommand, AddonCommandConstants
 {
 

@@ -1,4 +1,4 @@
-package org.jboss.forge.container;
+package org.jboss.forge.container.mocks;
 
 import org.jboss.forge.container.services.Exported;
 

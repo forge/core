@@ -10,6 +10,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
@@ -57,7 +58,9 @@ public class ContainerServiceExtension implements Extension
             IllegalAccessException
    {
       Class<?> type = event.getAnnotatedType().getJavaClass();
-      if (Annotations.isAnnotationPresent(type, Exported.class))
+      if (Annotations.isAnnotationPresent(type, Exported.class)
+               && !(Modifier.isAbstract(type.getModifiers())
+               || Modifier.isInterface(type.getModifiers())))
       {
          if (type.getClassLoader().equals(Thread.currentThread().getContextClassLoader()))
          {

@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 
 import org.jboss.forge.container.exception.ContainerException;
@@ -70,12 +71,13 @@ public class ServiceRegistryImpl implements ServiceRegistry
     * @param actualType Implementation
     * @return
     */
+   @SuppressWarnings("unchecked")
    private <T> ExportedInstance<T> getExportedInstance(Class<T> requestedType, Class<T> actualType)
    {
       Assert.notNull(requestedType, "Requested Class type may not be null");
       Assert.notNull(actualType, "Actual Class type may not be null");
       Addons.waitUntilStarted(addon);
-      
+
       final Class<T> requestedLoadedType;
       final Class<? extends T> actualLoadedType;
       try
@@ -100,9 +102,16 @@ public class ServiceRegistryImpl implements ServiceRegistry
       try
       {
          ExportedInstance<T> result = null;
-         if (!manager.getBeans(requestedLoadedType).isEmpty())
+         Set<Bean<?>> beans = manager.getBeans(requestedLoadedType);
+         if (!beans.isEmpty())
          {
-            result = new ExportedInstanceImpl<T>(addon.getClassLoader(), manager, requestedLoadedType, actualLoadedType);
+            result = new ExportedInstanceImpl<T>(
+                     addon.getClassLoader(),
+                     manager, (Bean<T>)
+                     manager.resolve(beans),
+                     requestedLoadedType,
+                     actualLoadedType
+                     );
          }
          return result;
       }
@@ -189,9 +198,15 @@ public class ServiceRegistryImpl implements ServiceRegistry
       {
          if (requestedLoadedType.isAssignableFrom(type))
          {
+            Set<Bean<?>> beans = manager.getBeans(type);
             Class<? extends T> assignableClass = (Class<? extends T>) type;
-            result.add(new ExportedInstanceImpl<T>(addon.getClassLoader(), manager, requestedLoadedType,
-                     assignableClass));
+            result.add(new ExportedInstanceImpl<T>(
+                     addon.getClassLoader(),
+                     manager,
+                     (Bean<T>) manager.resolve(beans),
+                     requestedLoadedType,
+                     assignableClass
+                     ));
          }
       }
       return result;

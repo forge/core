@@ -21,14 +21,16 @@ public class ExportedInstanceImpl<R> implements ExportedInstance<R>
    private BeanManager manager;
    private CreationalContext<R> context;
 
+   private Bean<R> requestedBean;
    private Class<R> requestedType;
    private Class<? extends R> actualType;
 
-   public ExportedInstanceImpl(ClassLoader loader, BeanManager manager, Class<R> requestedType,
+   public ExportedInstanceImpl(ClassLoader loader, BeanManager manager, Bean<R> requestedBean, Class<R> requestedType,
             Class<? extends R> actualType)
    {
       this.loader = loader;
       this.manager = manager;
+      this.requestedBean = requestedBean;
       this.requestedType = requestedType;
       this.actualType = actualType;
    }
@@ -42,9 +44,8 @@ public class ExportedInstanceImpl<R> implements ExportedInstance<R>
          @Override
          public Object call() throws Exception
          {
-            Bean<R> bean = (Bean<R>) manager.resolve(manager.getBeans(actualType));
-            context = manager.createCreationalContext(bean);
-            Object delegate = manager.getReference(bean, actualType, context);
+            context = manager.createCreationalContext(requestedBean);
+            Object delegate = manager.getReference(requestedBean, actualType, context);
             return Enhancer.create(requestedType, new RemoteClassLoaderInterceptor(loader, delegate));
          }
       };
