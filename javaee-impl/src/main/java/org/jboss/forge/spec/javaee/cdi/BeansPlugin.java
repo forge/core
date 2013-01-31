@@ -24,14 +24,17 @@ import java.util.List;
 import java.util.Set;
 
 import javax.enterprise.context.Conversation;
+import javax.enterprise.context.NormalScope;
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Alternative;
 import javax.enterprise.inject.Stereotype;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Qualifier;
+import javax.inject.Scope;
 
 import org.jboss.forge.parser.JavaParser;
+import org.jboss.forge.parser.java.Annotation;
 import org.jboss.forge.parser.java.JavaAnnotation;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.Method;
@@ -352,12 +355,12 @@ public class BeansPlugin implements Plugin
             input = shell.promptMultiSelect("Select target element types", STEREOTYPE_TARGETS);
             if (input.isEmpty())
             {
-               shell.println(ShellColor.RED, "No target element types selected");
+               ShellMessages.error(shell, "No target element types selected");
                continue;
             }
             if (input.contains(TYPE) && input.size() == 2)
             {
-               shell.println(ShellColor.RED, "Invalid combination of target element types: " + input);
+               ShellMessages.error(shell, "Invalid combination of target element types: " + input);
                continue;
             }
             break;
@@ -371,4 +374,50 @@ public class BeansPlugin implements Plugin
       java.saveJavaSource(stereotype);
       pickup.fire(new PickupResource(java.getJavaResource(stereotype)));
    }
+
+   @Command("new-scope")
+   public void newScope(
+            @Option(required = true,
+                     name = "type") final JavaResource resource,
+            @Option(required = false, name = "overwrite") final boolean overwrite,
+            @Option(required = false, name = "pseudo", help = "mutually exclusive with 'passivating'") final boolean pseudo,
+            @Option(required = false, name = "passivating", help = "mutually exclusive with 'pseudo'") final boolean passivating
+            ) throws FileNotFoundException
+   {
+      if (pseudo && passivating)
+      {
+         throw new RuntimeException("Cannot create a passivating pseudo-scope!");
+      }
+
+      if (resource.exists() && !overwrite)
+      {
+         throw new RuntimeException("Type already exists [" + resource.getFullyQualifiedName()
+                  + "] Re-run with '--overwrite' to continue.");
+      }
+
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+      JavaAnnotation scope = JavaParser.create(JavaAnnotation.class);
+      scope.setName(java.calculateName(resource));
+      scope.setPackage(java.calculatePackage(resource));
+
+      if (pseudo)
+      {
+         scope.addAnnotation(Scope.class);
+      }
+      else
+      {
+         Annotation<JavaAnnotation> normalScope = scope.addAnnotation(NormalScope.class);
+         if (passivating)
+         {
+            normalScope.setLiteralValue("passivating", Boolean.toString(true));
+         }
+      }
+      scope.addAnnotation(Retention.class).setEnumValue(RUNTIME);
+      scope.addAnnotation(Target.class).setEnumValue(TYPE, METHOD, FIELD);
+      scope.addAnnotation(Documented.class);
+
+      java.saveJavaSource(scope);
+      pickup.fire(new PickupResource(java.getJavaResource(scope)));
+   }
+
 }
