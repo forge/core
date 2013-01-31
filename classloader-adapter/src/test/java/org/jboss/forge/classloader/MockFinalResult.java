@@ -12,6 +12,7 @@ package org.jboss.forge.classloader;
  */
 public final class MockFinalResult implements Result
 {
+   @Override
    public Object getValue()
    {
       return Object.class;

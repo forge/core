@@ -62,7 +62,7 @@ public class CommandLineUtil {
         }
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({ "unchecked" })
     private static void setInputValue(UIInput<?> input, String value) {
 
         if(input.getValueType() == String.class) {

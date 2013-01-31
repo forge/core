@@ -16,16 +16,19 @@ public class AddonInstallCommand extends AddonCommand
    @Inject
    private AddonManager addonManager;
 
+   @Override
    protected String getName()
    {
       return ADDON_INSTALL_COMMAND_NAME;
    }
 
+   @Override
    protected String getDescription()
    {
       return ADDON_INSTALL_COMMAND_DESCRIPTION;
    }
-   
+
+   @Override
    public Result execute(UIContext context)
    {
       String coordinates = getCoordinates();

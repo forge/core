@@ -70,6 +70,7 @@ final class Annotateds
             implements Comparator<AnnotatedCallable<? super T>>, Serializable
    {
 
+      @Override
       public int compare(AnnotatedCallable<? super T> arg0, AnnotatedCallable<? super T> arg1)
       {
          // compare the names first
@@ -102,6 +103,7 @@ final class Annotateds
          return new AnnotatedMethodComparator<T>();
       }
 
+      @Override
       public int compare(AnnotatedMethod<? super T> arg0, AnnotatedMethod<? super T> arg1)
       {
          int result = callableComparator.compare(arg0, arg1);
@@ -136,6 +138,7 @@ final class Annotateds
          return new AnnotatedConstructorComparator<T>();
       }
 
+      @Override
       public int compare(AnnotatedConstructor<? super T> arg0, AnnotatedConstructor<? super T> arg1)
       {
          int result = callableComparator.compare(arg0, arg1);
@@ -168,6 +171,7 @@ final class Annotateds
          return new AnnotatedFieldComparator<T>();
       }
 
+      @Override
       public int compare(AnnotatedField<? super T> arg0, AnnotatedField<? super T> arg1)
       {
          if (arg0.getJavaMember().getName().equals(arg1.getJavaMember().getName()))
@@ -186,6 +190,7 @@ final class Annotateds
 
       public static final Comparator<Annotation> INSTANCE = new AnnotationComparator();
 
+      @Override
       public int compare(Annotation arg0, Annotation arg1)
       {
          return arg0.annotationType().getName().compareTo(arg1.annotationType().getName());
@@ -197,6 +202,7 @@ final class Annotateds
 
       public static final Comparator<Method> INSTANCE = new MethodComparator();
 
+      @Override
       public int compare(Method arg0, Method arg1)
       {
          return arg0.getName().compareTo(arg1.getName());

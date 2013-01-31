@@ -25,7 +25,7 @@ public abstract class AddonCommand implements UICommand, AddonCommandConstants
 
    protected abstract String getDescription();
 
-   protected String getCoordinates() 
+   protected String getCoordinates()
    {
       return groupId.getValue() + ':' +
                name.getValue() + ',' +
@@ -38,6 +38,7 @@ public abstract class AddonCommand implements UICommand, AddonCommandConstants
       return new UICommandMetadataBase(getName(), getDescription());
    }
 
+   @Override
    public void initializeUI(UIContext context) throws Exception
    {
       initializeGroupIdInput(context);

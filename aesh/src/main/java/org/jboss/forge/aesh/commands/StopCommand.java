@@ -6,7 +6,6 @@
  */
 package org.jboss.forge.aesh.commands;
 
-import org.jboss.aesh.console.Console;
 import org.jboss.forge.ui.UICommandMetadata;
 import org.jboss.forge.ui.base.UICommandMetadataBase;
 

@@ -43,6 +43,7 @@ class DelegatingContextualLifecycle<T> implements ContextualLifecycle<T>
       this.injectionTarget = injectionTarget;
    }
 
+   @Override
    public T create(Bean<T> bean, CreationalContext<T> creationalContext)
    {
       T instance = injectionTarget.produce(creationalContext);
@@ -51,6 +52,7 @@ class DelegatingContextualLifecycle<T> implements ContextualLifecycle<T>
       return instance;
    }
 
+   @Override
    public void destroy(Bean<T> bean, T instance, CreationalContext<T> creationalContext)
    {
       try

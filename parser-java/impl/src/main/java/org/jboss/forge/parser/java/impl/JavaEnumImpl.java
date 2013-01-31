@@ -83,6 +83,7 @@ public class JavaEnumImpl extends AbstractJavaSourceMemberHolder<JavaEnum> imple
       return null;
    }
 
+   @Override
    protected JavaEnum updateTypeNames(final String newName)
    {
       return this;
