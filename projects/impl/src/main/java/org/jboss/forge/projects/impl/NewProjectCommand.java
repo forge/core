@@ -44,6 +44,12 @@ public class NewProjectCommand implements UICommand
    }
 
    @Override
+   public boolean isEnabled(UIContext context)
+   {
+      return true;
+   }
+
+   @Override
    public void initializeUI(UIContext context) throws Exception
    {
       named.setLabel("Project name");

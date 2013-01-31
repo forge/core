@@ -16,8 +16,10 @@ public abstract class AddonCommand implements UICommand, AddonCommandConstants
 
    @Inject
    private UIInput<String> groupId;
+
    @Inject
    private UIInput<String> name;
+
    @Inject
    private UIInput<String> version;
 
@@ -27,9 +29,13 @@ public abstract class AddonCommand implements UICommand, AddonCommandConstants
 
    protected String getCoordinates()
    {
-      return groupId.getValue() + ':' +
-               name.getValue() + ',' +
-               version.getValue();
+      return groupId.getValue() + ':' + name.getValue() + ',' + version.getValue();
+   }
+
+   @Override
+   public boolean isEnabled(UIContext context)
+   {
+      return true;
    }
 
    @Override

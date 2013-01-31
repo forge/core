@@ -67,4 +67,10 @@ public class MyFirstWizard implements UIWizardBegin
       throw new IllegalStateException("not implemented");
    }
 
+   @Override
+   public boolean isEnabled(UIContext context)
+   {
+      return true;
+   }
+
 }

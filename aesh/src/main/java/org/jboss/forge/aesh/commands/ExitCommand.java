@@ -38,6 +38,12 @@ public class ExitCommand implements UICommand
       return new UICommandMetadataBase("exit", "Exit the shell");
    }
 
+   @Override
+   public boolean isEnabled(UIContext context)
+   {
+      return true;
+   }
+
    public ExitCommand setConsole(Console console)
    {
       this.console = console;

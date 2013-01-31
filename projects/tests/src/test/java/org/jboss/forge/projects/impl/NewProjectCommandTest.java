@@ -23,6 +23,7 @@ import org.jboss.forge.resource.DirectoryResource;
 import org.jboss.forge.ui.UIBuilder;
 import org.jboss.forge.ui.UIContext;
 import org.jboss.forge.ui.UIInput;
+import org.jboss.forge.ui.UISelection;
 import org.jboss.forge.ui.UIValidationContext;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -83,6 +84,12 @@ public class NewProjectCommandTest
          {
             return builder;
          }
+
+         @Override
+         public UISelection<?> getCurrentSelection()
+         {
+            return null;
+         }
       };
 
       command.initializeUI(context);
@@ -99,7 +106,12 @@ public class NewProjectCommandTest
          @Override
          public void addValidationError(UIInput<?> input, String errorMessage)
          {
-            // TODO implement
+         }
+
+         @Override
+         public UISelection<?> getCurrentSelection()
+         {
+            return null;
          }
       });
 

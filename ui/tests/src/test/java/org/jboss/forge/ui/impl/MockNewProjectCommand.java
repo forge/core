@@ -20,8 +20,11 @@ import org.jboss.forge.ui.wizard.UIWizardStep;
 public class MockNewProjectCommand implements UICommand, UIWizardStep
 {
 
-   // @Inject
-   // private Environment env;
+   @Override
+   public boolean isEnabled(UIContext context)
+   {
+      return true;
+   }
 
    @Inject
    private UIInput<String> projectName;
@@ -70,7 +73,7 @@ public class MockNewProjectCommand implements UICommand, UIWizardStep
    }
 
    /*
-    *
+    * 
     * Defines the action to take once inputs are valid and submitted
     */
 
@@ -86,7 +89,7 @@ public class MockNewProjectCommand implements UICommand, UIWizardStep
    }
 
    /*
-    *
+    * 
     * Defines the action to take once inputs are valid and submitted
     */
 

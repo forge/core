@@ -11,6 +11,12 @@ public class MockChooseFrameworkStep implements UICommand
 {
 
    @Override
+   public boolean isEnabled(UIContext context)
+   {
+      return true;
+   }
+
+   @Override
    public UICommandMetadata getMetadata()
    {
       return new UICommandMetadataBase("Choose Framework", "Pick the framework you wish to use for this command.");

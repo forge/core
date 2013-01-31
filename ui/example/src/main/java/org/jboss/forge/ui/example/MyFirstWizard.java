@@ -9,6 +9,7 @@ import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UICommandMetadata;
 import org.jboss.forge.ui.UIContext;
 import org.jboss.forge.ui.UIInput;
+import org.jboss.forge.ui.UISelection;
 import org.jboss.forge.ui.UIValidationContext;
 import org.jboss.forge.ui.base.UICommandMetadataBase;
 
@@ -48,6 +49,13 @@ public class MyFirstWizard implements UICommand
    public Result execute(UIContext context) throws Exception
    {
       return Results.success();
+   }
+
+   @Override
+   public boolean isEnabled(UIContext context)
+   {
+      UISelection<?> selection = context.getCurrentSelection();
+      return selection != null;
    }
 
 }

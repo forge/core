@@ -37,6 +37,12 @@ public class FooCommand implements UICommand
    }
 
    @Override
+   public boolean isEnabled(UIContext context)
+   {
+      return true;
+   }
+
+   @Override
    public void initializeUI(UIContext context) throws Exception
    {
       name.setLabel("foo");

@@ -10,4 +10,6 @@ package org.jboss.forge.ui;
 public interface UIContext
 {
    UIBuilder getUIBuilder();
+
+   UISelection<?> getCurrentSelection();
 }

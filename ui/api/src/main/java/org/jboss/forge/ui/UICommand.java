@@ -14,6 +14,8 @@ public interface UICommand
 {
    public UICommandMetadata getMetadata();
 
+   public boolean isEnabled(UIContext context);
+
    public void initializeUI(UIContext context) throws Exception;
 
    public void validate(UIValidationContext context);
