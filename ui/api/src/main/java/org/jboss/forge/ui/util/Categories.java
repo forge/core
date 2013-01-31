@@ -13,7 +13,7 @@ import org.jboss.forge.ui.UICategory;
 
 /**
  * Utility for creating hierarchical {@link UICategory} instances.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class Categories
@@ -63,6 +63,49 @@ public class Categories
       public UICategory getSubCategory()
       {
          return subCategory;
+      }
+
+      @Override
+      public String toString()
+      {
+         return getName() + "/" + (getSubCategory() != null ? getSubCategory() : "");
+      }
+
+      @Override
+      public int hashCode()
+      {
+         final int prime = 31;
+         int result = 1;
+         result = prime * result + ((name == null) ? 0 : name.hashCode());
+         result = prime * result + ((subCategory == null) ? 0 : subCategory.hashCode());
+         return result;
+      }
+
+      @Override
+      public boolean equals(Object obj)
+      {
+         if (this == obj)
+            return true;
+         if (obj == null)
+            return false;
+         if (getClass() != obj.getClass())
+            return false;
+         UICategoryImpl other = (UICategoryImpl) obj;
+         if (name == null)
+         {
+            if (other.name != null)
+               return false;
+         }
+         else if (!name.equals(other.name))
+            return false;
+         if (subCategory == null)
+         {
+            if (other.subCategory != null)
+               return false;
+         }
+         else if (!subCategory.equals(other.subCategory))
+            return false;
+         return true;
       }
    }
 }
