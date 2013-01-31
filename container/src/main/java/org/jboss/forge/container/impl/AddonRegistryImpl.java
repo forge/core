@@ -1,7 +1,6 @@
 package org.jboss.forge.container.impl;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -110,7 +109,7 @@ public class AddonRegistryImpl implements AddonRegistry
    {
       Assert.notNull(addon, "Addon must not be null.");
       updateAddons();
-      AddonImpl addonImpl = (AddonImpl) getRegisteredAddon(addon.getId());
+      AddonImpl addonImpl = getRegisteredAddon(addon.getId());
 
       synchronized (addons)
       {
@@ -137,7 +136,7 @@ public class AddonRegistryImpl implements AddonRegistry
    public void stop(Addon addon)
    {
       Assert.notNull(addon, "Addon must not be null.");
-      AddonImpl addonToStop = (AddonImpl) getRegisteredAddon(addon.getId());
+      AddonImpl addonToStop = getRegisteredAddon(addon.getId());
 
       for (AddonImpl dependentAddon : addons)
       {
@@ -379,7 +378,7 @@ public class AddonRegistryImpl implements AddonRegistry
          if (Status.STARTED.equals(addon.getStatus()))
          {
             ServiceRegistry serviceRegistry = addon.getServiceRegistry();
-            result.addAll((Collection<? extends ExportedInstance<T>>) serviceRegistry.getExportedInstances(type));
+            result.addAll(serviceRegistry.getExportedInstances(type));
          }
       }
       return result;

@@ -22,7 +22,7 @@ import java.util.StringTokenizer;
 
 /**
  * A collection of String utilities.
- * 
+ *
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
  * @author <a href="Scott.Stark@jboss.org">Scott Stark</a>
  * @author <a href="claudio.vesco@previnet.it">Claudio Vesco</a>
@@ -132,7 +132,7 @@ public final class Strings
 
    /**
     * Substitute sub-strings in side of a string.
-    * 
+    *
     * @param buff Stirng buffer to use for substitution (buffer is not reset)
     * @param from String to substitute from
     * @param to String to substitute to
@@ -165,7 +165,7 @@ public final class Strings
 
    /**
     * Substitute sub-strings in side of a string.
-    * 
+    *
     * @param from String to substitute from
     * @param to String to substitute to
     * @param string String to look for from in
@@ -179,7 +179,7 @@ public final class Strings
 
    /**
     * Substitute sub-strings in side of a string.
-    * 
+    *
     * @param buff String buffer to use for substitution (buffer is not reset)
     * @param string String to subst mappings in
     * @param map Map of from->to strings
@@ -223,7 +223,7 @@ public final class Strings
 
    /**
     * Substitute sub-strings in side of a string.
-    * 
+    *
     * @param string String to subst mappings in
     * @param map Map of from->to strings
     * @param beginToken Beginning token
@@ -238,7 +238,7 @@ public final class Strings
 
    /**
     * Substitute index identifiers with the replacement value from the given array for the corresponding index.
-    * 
+    *
     * @param buff The string buffer used for the substitution (buffer is not reset).
     * @param string String substitution format.
     * @param replace Array of strings whose values will be used as replacements in the given string when a token with
@@ -286,7 +286,7 @@ public final class Strings
 
    /**
     * Substitute index identifiers with the replacement value from the given array for the corresponding index.
-    * 
+    *
     * @param string String substitution format.
     * @param replace Array of strings whose values will be used as replacements in the given string when a token with
     *           their index is found.
@@ -302,7 +302,7 @@ public final class Strings
    /**
     * Substitute index identifiers (with <code>%</code> for the index token) with the replacement value from the given
     * array for the corresponding index.
-    * 
+    *
     * @param string String substitution format.
     * @param replace Array of strings whose values will be used as replacements in the given string when a token with
     *           their index is found.
@@ -330,7 +330,7 @@ public final class Strings
 
       /**
        * Construct a new range.
-       * 
+       *
        * @param begin The beginning of the range.
        * @param end The end of the range.
        */
@@ -350,7 +350,7 @@ public final class Strings
 
    /**
     * Return the range from a begining token to an ending token.
-    * 
+    *
     * @param beginToken String to indicate begining of range.
     * @param endToken String to indicate ending of range.
     * @param string String to look for range in.
@@ -376,7 +376,7 @@ public final class Strings
 
    /**
     * Return the range from a begining token to an ending token.
-    * 
+    *
     * @param beginToken String to indicate begining of range.
     * @param endToken String to indicate ending of range.
     * @param string String to look for range in.
@@ -394,7 +394,7 @@ public final class Strings
 
    /**
     * Split up a string into multiple strings based on a delimiter.
-    * 
+    *
     * @param string String to split up.
     * @param delim Delimiter.
     * @param limit Limit the number of strings to split into (-1 for no limit).
@@ -440,7 +440,7 @@ public final class Strings
 
    /**
     * Split up a string into multiple strings based on a delimiter.
-    * 
+    *
     * @param string String to split up.
     * @param delim Delimiter.
     * @return Array of strings.
@@ -456,7 +456,7 @@ public final class Strings
 
    /**
     * Join an array of strings into one delimited string.
-    * 
+    *
     * @param buff String buffered used for join (buffer is not reset).
     * @param array Array of objects to join as strings.
     * @param delim Delimiter to join strings with or <i>null</i>.
@@ -483,7 +483,7 @@ public final class Strings
 
    /**
     * Join an array of strings into one delimited string.
-    * 
+    *
     * @param array Array of objects to join as strings.
     * @param delim Delimiter to join strings with or <i>null</i>.
     * @return Joined string.
@@ -495,7 +495,7 @@ public final class Strings
 
    /**
     * Convert and join an array of objects into one string.
-    * 
+    *
     * @param array Array of objects to join as strings.
     * @return Converted and joined objects.
     */
@@ -506,7 +506,7 @@ public final class Strings
 
    /**
     * Convert and join an array of bytes into one string.
-    * 
+    *
     * @param array Array of objects to join as strings.
     * @return Converted and joined objects.
     */
@@ -523,7 +523,7 @@ public final class Strings
 
    /**
     * Return a string composed of the given array.
-    * 
+    *
     * @param buff Buffer used to construct string value (not reset).
     * @param array Array of objects.
     * @param prefix String prefix.
@@ -544,7 +544,7 @@ public final class Strings
 
    /**
     * Return a string composed of the given array.
-    * 
+    *
     * @param array Array of objects.
     * @param prefix String prefix.
     * @param separator Element sepearator.
@@ -563,7 +563,7 @@ public final class Strings
 
    /**
     * Count the number of instances of substring within a string.
-    * 
+    *
     * @param string String to look for substring in.
     * @param substring Sub-string to look for.
     * @return Count of substrings in string.
@@ -584,7 +584,7 @@ public final class Strings
 
    /**
     * Count the number of instances of character within a string.
-    * 
+    *
     * @param string String to look for substring in.
     * @param c Character to look for.
     * @return Count of substrings in string.
@@ -600,7 +600,7 @@ public final class Strings
 
    /**
     * Return a string padded with the given string for the given count.
-    * 
+    *
     * @param buff String buffer used for padding (buffer is not reset).
     * @param string Pad element.
     * @param count Pad count.
@@ -619,7 +619,7 @@ public final class Strings
 
    /**
     * Return a string padded with the given string for the given count.
-    * 
+    *
     * @param string Pad element.
     * @param count Pad count.
     * @return Padded string.
@@ -631,7 +631,7 @@ public final class Strings
 
    /**
     * Return a string padded with the given string value of an object for the given count.
-    * 
+    *
     * @param obj Object to convert to a string.
     * @param count Pad count.
     * @return Padded string.
@@ -648,15 +648,16 @@ public final class Strings
    /**
     * <p>
     * Compare two strings.
-    * 
+    *
     * <p>
     * Both or one of them may be null.
-    * 
+    *
     * @param me
     * @param you
-    * 
+    *
     * @return true if object equals or intern ==, else false.
     */
+   @SuppressWarnings("null")
    public static boolean compare(final String me, final String you)
    {
       // If both null or intern equals
@@ -673,7 +674,7 @@ public final class Strings
 
    /**
     * Check if the given string is empty.
-    * 
+    *
     * @param string String to check
     * @return True if string is empty
     */
@@ -684,7 +685,7 @@ public final class Strings
 
    /**
     * Check if the given string is null or empty.
-    * 
+    *
     * @param string String to check
     * @return True if string is empty
     */
@@ -695,7 +696,7 @@ public final class Strings
 
    /**
     * Return the <i>nth</i> index of the given token occurring in the given string.
-    * 
+    *
     * @param string String to search.
     * @param token Token to match.
     * @param index <i>Nth</i> index.
@@ -718,10 +719,10 @@ public final class Strings
 
    /**
     * Capitalize the first character of the given string.
-    * 
+    *
     * @param string String to capitalize.
     * @return Capitalized string.
-    * 
+    *
     * @throws IllegalArgumentException String is <kk>null</kk> or empty.
     */
    public static String capitalize(final String string)
@@ -736,10 +737,10 @@ public final class Strings
 
    /**
     * Trim each string in the given string array.
-    * 
+    *
     * <p>
     * This modifies the string array.
-    * 
+    *
     * @param strings String array to trim.
     * @return String array with each element trimmed.
     */
@@ -755,17 +756,17 @@ public final class Strings
 
    /**
     * Make a URL from the given string.
-    * 
+    *
     * <p>
     * If the string is a properly formatted file URL, then the file portion will be made canonical.
-    * 
+    *
     * <p>
     * If the string is an invalid URL then it will be converted into a file URL.
-    * 
+    *
     * @param urlspec The string to construct a URL for.
     * @param relativePrefix The string to prepend to relative file systemPaths, or null to disable prepending.
     * @return A URL for the given string.
-    * 
+    *
     * @throws MalformedURLException Could not make a URL for the given string.
     */
    public static URL toURL(String urlspec, final String relativePrefix) throws MalformedURLException
@@ -867,12 +868,12 @@ public final class Strings
 
    /**
     * Make a URL from the given string.
-    * 
+    *
     * @see #toURL(String,String)
-    * 
+    *
     * @param urlspec The string to construct a URL for.
     * @return A URL for the given string.
-    * 
+    *
     * @throws MalformedURLException Could not make a URL for the given string.
     */
    public static URL toURL(final String urlspec) throws MalformedURLException
@@ -881,7 +882,7 @@ public final class Strings
    }
 
    /**
-    * 
+    *
     * @param urispec
     * @return the uri
     * @throws URISyntaxException for any error
@@ -894,9 +895,9 @@ public final class Strings
 
    /**
     * Check whether the given String is a reserved Java Keyword according to the Java Language Specifications.
-    * 
+    *
     * @param s String to check
-    * 
+    *
     * @return <code>true</code> if the given String is a reserved Java keyword, <code>false</code> otherwise.
     */
    public final static boolean isJavaKeyword(String s)
@@ -920,9 +921,9 @@ public final class Strings
    /**
     * Check whether the given String is an identifier according to the EJB-QL definition. See The EJB 2.0 Documentation
     * Section 11.2.6.1.
-    * 
+    *
     * @param s String to check
-    * 
+    *
     * @return <code>true</code> if the given String is a reserved identifier in EJB-QL, <code>false</code> otherwise.
     */
    public final static boolean isEjbQlIdentifier(String s)
@@ -945,11 +946,11 @@ public final class Strings
 
    /**
     * Check whether the given String is a valid identifier according to the Java Language specifications.
-    * 
+    *
     * See The Java Language Specification Second Edition, Section 3.8 for the definition of what is a valid identifier.
-    * 
+    *
     * @param s String to check
-    * 
+    *
     * @return <code>true</code> if the given String is a valid Java identifier, <code>false</code> otherwise.
     */
    public final static boolean isValidJavaIdentifier(String s)
@@ -979,7 +980,7 @@ public final class Strings
 
    /**
     * Returns a new string with all the whitespace removed
-    * 
+    *
     * @param s the source string
     * @return the string without whitespace or null
     */
@@ -1006,7 +1007,7 @@ public final class Strings
 
    /**
     * The default toString implementation of an object
-    * 
+    *
     * @param object the object
     * @return a string in the form className@hexHashCode
     */
@@ -1020,7 +1021,7 @@ public final class Strings
 
    /**
     * The default toString implementation of an object
-    * 
+    *
     * @param object the object
     * @param buffer the string builder
     */
@@ -1038,7 +1039,7 @@ public final class Strings
 
    /**
     * The default toString implementation of an object
-    * 
+    *
     * @param object the object
     * @param buffer the string buffer
     */
@@ -1056,14 +1057,14 @@ public final class Strings
 
    /**
     * Parses a time period into a long.
-    * 
+    *
     * Translates possible [msec|sec|min|h] suffixes
-    * 
+    *
     * For example: "1" -> 1 (msec) "1msec -> 1 (msec) "1sec" -> 1000 (msecs) "1min" -> 60000 (msecs) "1h" -> 3600000
     * (msecs)
-    * 
+    *
     * Accepts negative periods, e.g. "-1"
-    * 
+    *
     * @param period the stringfied time period
     * @return the parsed time period as long
     * @throws NumberFormatException
@@ -1111,7 +1112,7 @@ public final class Strings
 
    /**
     * Same like parseTimePeriod(), but guards for negative entries.
-    * 
+    *
     * @param period the stringfied time period
     * @return the parsed time period as long
     * @throws NumberFormatException
@@ -1128,11 +1129,11 @@ public final class Strings
 
    /**
     * Tokenize the given String into a String array via a StringTokenizer.
-    * 
+    *
     * The given delimiters string is supposed to consist of any number of delimiter characters. Each of those characters
     * can be used to separate tokens. A delimiter is always a single character; for multi-character delimiters, consider
     * using delimitedListToStringArray
-    * 
+    *
     * @param str the String to tokenize
     * @param delimiters the delimiter characters, assembled as String (each of those characters is individually
     *           considered as delimiter)
@@ -1171,7 +1172,7 @@ public final class Strings
 
       /**
        * Is character legal.
-       * 
+       *
        * @param character the char parameter
        * @return true if legal, false otherwise
        */
@@ -1189,7 +1190,7 @@ public final class Strings
 
    /**
     * Trim leading whitespace from the given String.
-    * 
+    *
     * @param str the string to check
     * @return the trimmed String
     * @see java.lang.Character#isWhitespace(char)
@@ -1201,7 +1202,7 @@ public final class Strings
 
    /**
     * Trim all occurences of the supplied leading character from the given String.
-    * 
+    *
     * @param str the string to check
     * @param leadingCharacter the leading character to be trimmed
     * @return the trimmed String
@@ -1220,7 +1221,7 @@ public final class Strings
 
    /**
     * Trim all occurences of the supplied leading character from the given String.
-    * 
+    *
     * @param str the string to check
     * @param checker the character checker
     * @return the trimmed String
@@ -1245,7 +1246,7 @@ public final class Strings
 
    /**
     * Check that the given string param is neither null nor of length 0.
-    * 
+    *
     * @param string the string
     * @return true if the String is not null and has length
     */
@@ -1256,9 +1257,9 @@ public final class Strings
 
    /**
     * Parse the given localeString into a {@link java.util.Locale}.
-    * 
+    *
     * This is the inverse operation of {@link java.util.Locale#toString Locale's toString}.
-    * 
+    *
     * @param localeString the locale string
     * @return a corresponding Locale instance
     */

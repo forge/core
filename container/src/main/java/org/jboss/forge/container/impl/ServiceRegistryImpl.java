@@ -51,7 +51,7 @@ public class ServiceRegistryImpl implements ServiceRegistry
       try
       {
          type = (Class<T>) loadAddonClass(clazz);
-         return (ExportedInstance<T>) getExportedInstance(type, type);
+         return getExportedInstance(type, type);
       }
       catch (ClassNotFoundException e)
       {
@@ -214,7 +214,7 @@ public class ServiceRegistryImpl implements ServiceRegistry
 
    /**
     * Ensures that the returned class is loaded from the addon
-    * 
+    *
     * @param actualType
     * @return
     * @throws ClassNotFoundException

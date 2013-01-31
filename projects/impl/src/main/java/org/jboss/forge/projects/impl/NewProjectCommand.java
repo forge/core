@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import org.jboss.forge.projects.ProjectType;
 import org.jboss.forge.resource.DirectoryResource;
 import org.jboss.forge.resource.FileResource;
+import org.jboss.forge.resource.Resource;
 import org.jboss.forge.resource.ResourceFactory;
 import org.jboss.forge.ui.Result;
 import org.jboss.forge.ui.Results;
@@ -15,6 +16,7 @@ import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UICommandMetadata;
 import org.jboss.forge.ui.UIContext;
 import org.jboss.forge.ui.UIInput;
+import org.jboss.forge.ui.UISelection;
 import org.jboss.forge.ui.UIValidationContext;
 import org.jboss.forge.ui.base.UICommandMetadataBase;
 import org.jboss.forge.ui.util.Categories;
@@ -50,23 +52,27 @@ public class NewProjectCommand implements UICommand
    }
 
    @Override
-   public void initializeUI(UIContext context) throws Exception
+   public void initializeUI(final UIContext context) throws Exception
    {
+
       named.setLabel("Project name");
       named.setRequired(true);
 
       targetLocation.setLabel("Project location");
-      targetLocation.setDefaultValue(new Callable<DirectoryResource>()
-      {
-         @Override
-         public DirectoryResource call() throws Exception
-         {
-            // TODO Forge should probably have the concept of a "working directory" from which relative paths can be
-            // formed in cases like this, where Forge may be started from a completely random directory.
-            return factory.create(DirectoryResource.class, new File(""));
-         }
-      });
 
+      UISelection<Resource<?>> currentSelection = context.getCurrentSelection();
+      if (currentSelection != null)
+      {
+         Resource<?> resource = currentSelection.get();
+         if (resource instanceof DirectoryResource)
+         {
+            targetLocation.setDefaultValue((DirectoryResource) resource);
+         }
+      }
+      else
+      {
+         targetLocation.setDefaultValue(factory.create(DirectoryResource.class, new File("")));
+      }
       overwrite.setLabel("Overwrite existing project location");
       overwrite.setDefaultValue(false).setEnabled(new Callable<Boolean>()
       {

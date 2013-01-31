@@ -36,7 +36,7 @@ import org.jboss.forge.parser.xml.XMLParserException;
 
 /**
  * Used to perform Addon installation/registration operations.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:koen.aers@gmail.com">Koen Aers</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
@@ -90,13 +90,13 @@ public final class AddonRepositoryImpl implements AddonRepository
 
    /**
     * This method only returns true if:
-    * 
+    *
     * - The major version of addonApiVersion is equal to the major version of runtimeVersion AND
-    * 
+    *
     * - The minor version of addonApiVersion is less or equal to the minor version of runtimeVersion
-    * 
+    *
     * - The addonApiVersion is null
-    * 
+    *
     * @param runtimeVersion a version in the format x.x.x
     * @param addonApiVersion a version in the format x.x.x
     */
@@ -135,6 +135,7 @@ public final class AddonRepositoryImpl implements AddonRepository
       this.addonDir = dir;
    }
 
+   @SuppressWarnings("resource")
    @Override
    public boolean deploy(AddonId addon, List<AddonDependency> dependencies, List<File> resourceJars)
    {
@@ -186,6 +187,7 @@ public final class AddonRepositoryImpl implements AddonRepository
       }
    }
 
+   @SuppressWarnings("resource")
    @Override
    public boolean disable(final AddonId addon)
    {
@@ -227,6 +229,7 @@ public final class AddonRepositoryImpl implements AddonRepository
       return false;
    }
 
+   @SuppressWarnings("resource")
    @Override
    public boolean enable(AddonId addon)
    {
@@ -314,6 +317,7 @@ public final class AddonRepositoryImpl implements AddonRepository
       }
    }
 
+   @SuppressWarnings("resource")
    @Override
    public File getAddonDescriptor(AddonId addon)
    {
@@ -434,6 +438,7 @@ public final class AddonRepositoryImpl implements AddonRepository
       return addonDir;
    }
 
+   @SuppressWarnings("resource")
    @Override
    public File getRepositoryRegistryFile()
    {

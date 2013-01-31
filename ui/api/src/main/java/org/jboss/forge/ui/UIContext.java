@@ -11,5 +11,5 @@ public interface UIContext
 {
    UIBuilder getUIBuilder();
 
-   UISelection<?> getCurrentSelection();
+   <T> UISelection<T> getCurrentSelection();
 }

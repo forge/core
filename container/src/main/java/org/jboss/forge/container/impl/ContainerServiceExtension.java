@@ -98,7 +98,7 @@ public class ContainerServiceExtension implements Extension
    {
       Class<?> type = Types.toClass(event.getAnnotatedMember().getJavaMember());
       ClassLoader classLoader = type.getClassLoader();
-      if (type != null && classLoader != null && classLoader.equals(Thread.currentThread().getContextClassLoader()))
+      if (classLoader != null && classLoader.equals(Thread.currentThread().getContextClassLoader()))
       {
          if (Annotations.isAnnotationPresent(type, Exported.class))
          {
@@ -158,7 +158,7 @@ public class ContainerServiceExtension implements Extension
                                     "Cannot handle producer for non-Field and non-Method member type: " + member);
                         }
 
-                        return Enhancer.create((Class<?>) serviceType,
+                        return Enhancer.create(serviceType,
                                  new ExportedInstanceProxyBeanCallback(
                                           BeanManagerUtils.getContextualInstance(
                                                    manager,
