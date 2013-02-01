@@ -32,7 +32,7 @@ public class ProxiesTest
       @Override
       public Object getDelegate()
       {
-         return null;
+         return new MockService();
       }
    };
    

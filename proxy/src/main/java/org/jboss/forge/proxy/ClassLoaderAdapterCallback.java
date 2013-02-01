@@ -25,13 +25,22 @@ public class ClassLoaderAdapterCallback implements MethodHandler
 
    private final ClassLoader fromLoader;
    private final ClassLoader toLoader;
+   private final ClassLoader delegateLoader;
    private final Object delegate;
+
+   private final Object unwrappedDelegate;
+   private final Class<?> unwrappedDelegateType;
 
    public ClassLoaderAdapterCallback(ClassLoader fromLoader, ClassLoader toLoader, Object delegate)
    {
       this.fromLoader = fromLoader;
       this.toLoader = toLoader;
       this.delegate = delegate;
+
+      unwrappedDelegate = Proxies.unwrap(delegate);
+      unwrappedDelegateType = Proxies.unwrapProxyTypes(unwrappedDelegate.getClass(), fromLoader, toLoader,
+               unwrappedDelegate.getClass().getClassLoader());
+      delegateLoader = unwrappedDelegateType.getClassLoader();
    }
 
    @Override
@@ -218,57 +227,62 @@ public class ClassLoaderAdapterCallback implements MethodHandler
          final Class<?> delegateParameterType = delegateMethod.getParameterTypes()[i];
          final Object parameterValue = args[i];
 
-         Object unwrappedDelegate = Proxies.unwrap(delegate);
-         Class<?> unwrappedDelegateType = unwrappedDelegate.getClass();
-
-         ClassLoader delegateFromLoader = fromLoader;
-         if (!ClassLoaders.containsClass(fromLoader, unwrappedDelegateType))
-         {
-            delegateFromLoader = Proxies.unwrapProxyTypes(unwrappedDelegateType, fromLoader, toLoader,
-                     unwrappedDelegateType.getClassLoader()).getClassLoader();
-         }
-
-         // If it is a class, use the toLoader loaded version
-         if (parameterValue instanceof Class<?>)
-         {
-            Class<?> paramClassValue = (Class<?>) parameterValue;
-            Class<?> loadedClass;
-            try
-            {
-               loadedClass = toLoader.loadClass(paramClassValue.getName());
-            }
-            catch (ClassNotFoundException e)
-            {
-               // Oh oh, there is no class with this type in the target.
-               // Trying with delegate ClassLoader;
-               try
-               {
-                  loadedClass = delegateFromLoader.loadClass(paramClassValue.getName());
-               }
-               catch (ClassNotFoundException cnfe)
-               {
-                  // No way, here is the original class and god bless you :)
-                  loadedClass = paramClassValue;
-               }
-            }
-            parameterValues.add(loadedClass);
-         }
-         else if (delegateParameterType.isPrimitive() || parameterValue == null)
-         {
-            parameterValues.add(parameterValue);
-         }
+         if (parameterValue == null)
+            parameterValues.add(null);
          else
          {
-            final Class<?> parameterType = parameterValue.getClass();
-            if (!delegateParameterType.isAssignableFrom(parameterType))
+            Object unwrappedValue = Proxies.unwrap(parameterValue);
+            Class<?> unwrappedValueType = Proxies.unwrapProxyTypes(unwrappedValue.getClass(), fromLoader, toLoader,
+                     unwrappedValue.getClass().getClassLoader());
+
+            ClassLoader valueFromLoader = fromLoader;
+            if (!ClassLoaders.containsClass(fromLoader, unwrappedValueType))
             {
-               Object delegateParameterValue = enhance(toLoader, delegateFromLoader, parameterValue,
-                        delegateParameterType);
-               parameterValues.add(delegateParameterValue);
+               valueFromLoader = unwrappedValueType.getClassLoader();
+            }
+
+            // If it is a class, use the toLoader loaded version
+            if (parameterValue instanceof Class<?>)
+            {
+               Class<?> paramClassValue = (Class<?>) parameterValue;
+               Class<?> loadedClass;
+               try
+               {
+                  loadedClass = toLoader.loadClass(paramClassValue.getName());
+               }
+               catch (ClassNotFoundException e)
+               {
+                  // Oh oh, there is no class with this type in the target.
+                  // Trying with delegate ClassLoader;
+                  try
+                  {
+                     loadedClass = delegateLoader.loadClass(paramClassValue.getName());
+                  }
+                  catch (ClassNotFoundException cnfe)
+                  {
+                     // No way, here is the original class and god bless you :)
+                     loadedClass = paramClassValue;
+                  }
+               }
+               parameterValues.add(loadedClass);
+            }
+            else if (delegateParameterType.isPrimitive() || parameterValue == null)
+            {
+               parameterValues.add(parameterValue);
             }
             else
             {
-               parameterValues.add(Proxies.unwrap(parameterValue));
+               final Class<?> parameterType = parameterValue.getClass();
+               if (!delegateParameterType.isAssignableFrom(parameterType))
+               {
+                  Object delegateParameterValue = enhance(toLoader, valueFromLoader, parameterValue,
+                           delegateParameterType);
+                  parameterValues.add(delegateParameterValue);
+               }
+               else
+               {
+                  parameterValues.add(Proxies.unwrap(parameterValue));
+               }
             }
          }
       }

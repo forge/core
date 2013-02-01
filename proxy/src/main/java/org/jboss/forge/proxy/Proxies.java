@@ -98,19 +98,28 @@ public class Proxies
    @SuppressWarnings("unchecked")
    public static <T> T unwrap(Object object)
    {
-      if (isForgeProxy(object))
+      T result = (T) object;
+
+      if (object != null)
       {
-         try
+         while (isForgeProxy(result))
          {
-            Method method = object.getClass().getMethod("getDelegate");
-            method.setAccessible(true);
-            return (T) method.invoke(object);
+            try
+            {
+               Method method = result.getClass().getMethod("getDelegate");
+               method.setAccessible(true);
+               result = (T) method.invoke(result);
+            }
+            catch (Exception e)
+            {
+               break;
+            }
          }
-         catch (Exception e)
-         {
-         }
+
+         if (result == null)
+            result = (T) object;
       }
-      return (T) object;
+      return result;
    }
 
    /**
@@ -118,14 +127,17 @@ public class Proxies
     */
    public static boolean isForgeProxy(Object object)
    {
-      Class<?>[] interfaces = object.getClass().getInterfaces();
-      if (interfaces != null)
+      if (object != null)
       {
-         for (Class<?> iface : interfaces)
+         Class<?>[] interfaces = object.getClass().getInterfaces();
+         if (interfaces != null)
          {
-            if (iface.getName().equals(ForgeProxy.class.getName()))
+            for (Class<?> iface : interfaces)
             {
-               return true;
+               if (iface.getName().equals(ForgeProxy.class.getName()))
+               {
+                  return true;
+               }
             }
          }
       }
@@ -136,34 +148,37 @@ public class Proxies
    {
       Class<?> result = type;
 
-      Class<?> superclass = result.getSuperclass();
-      while (superclass != null && !superclass.getName().equals(Object.class.getName()) && isProxyType(superclass))
+      if (isProxyType(result))
       {
-         superclass = superclass.getSuperclass();
-      }
-
-      if (superclass != null && !superclass.getName().equals(Object.class.getName()))
-         return superclass;
-
-      for (ClassLoader loader : loaders)
-      {
-         try
+         Class<?> superclass = result.getSuperclass();
+         while (superclass != null && !superclass.getName().equals(Object.class.getName()) && isProxyType(superclass))
          {
-            if (result.getName().contains("$$EnhancerByCGLIB$$"))
-            {
-               String typeName = result.getName().replaceAll("^(.*)\\$\\$EnhancerByCGLIB\\$\\$.*", "$1");
-               result = loader.loadClass(typeName);
-               break;
-            }
-            else if (result.getName().contains("_javassist_"))
-            {
-               String typeName = result.getName().replaceAll("^(.*)_javassist_.*", "$1");
-               result = loader.loadClass(typeName);
-               break;
-            }
+            superclass = superclass.getSuperclass();
          }
-         catch (ClassNotFoundException e)
+
+         if (superclass != null && !superclass.getName().equals(Object.class.getName()))
+            return superclass;
+
+         for (ClassLoader loader : loaders)
          {
+            try
+            {
+               if (result.getName().contains("$$EnhancerByCGLIB$$"))
+               {
+                  String typeName = result.getName().replaceAll("^(.*)\\$\\$EnhancerByCGLIB\\$\\$.*", "$1");
+                  result = loader.loadClass(typeName);
+                  break;
+               }
+               else if (result.getName().contains("_javassist_"))
+               {
+                  String typeName = result.getName().replaceAll("^(.*)_javassist_.*", "$1");
+                  result = loader.loadClass(typeName);
+                  break;
+               }
+            }
+            catch (ClassNotFoundException e)
+            {
+            }
          }
       }
       return result;
