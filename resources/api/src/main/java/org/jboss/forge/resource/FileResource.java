@@ -47,6 +47,12 @@ public abstract class FileResource<T extends FileResource<T>> extends AbstractRe
       return file.getName();
    }
 
+   @Override
+   public String toString()
+   {
+      return getFullyQualifiedName();
+   }
+
    /**
     * Get the actual underlying file resource that this resource instance represents, whether existing or non-existing.
     *

@@ -16,7 +16,7 @@ import org.jboss.forge.facets.Facet;
 
 /**
  * A standard, build-in, resource for representing directories on the file-system.
- * 
+ *
  * @author Mike Brock
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -175,12 +175,6 @@ public class DirectoryResource extends FileResource<DirectoryResource>
       String fileName = file.getName();
       // Windows: drive letter is needed. If filename is empty, we are on a root folder
       return (OSUtils.isWindows() && fileName.length() == 0) ? file.getPath() : fileName;
-   }
-
-   @Override
-   public String toString()
-   {
-      return getName();
    }
 
    @Override
