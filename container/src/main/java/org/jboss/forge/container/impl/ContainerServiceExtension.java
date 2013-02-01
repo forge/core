@@ -32,14 +32,12 @@ import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.enterprise.inject.spi.ProcessInjectionPoint;
 import javax.enterprise.inject.spi.ProcessProducer;
 
-import net.sf.cglib.proxy.Enhancer;
-
 import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.events.CrossContainerObserverMethod;
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.container.services.ExportedInstanceInjectionPoint;
-import org.jboss.forge.container.services.ExportedInstanceProxyBeanCallback;
+import org.jboss.forge.container.services.ExportedInstanceLazyLoader;
 import org.jboss.forge.container.util.Annotations;
 import org.jboss.forge.container.util.BeanManagerUtils;
 import org.jboss.forge.container.util.Types;
@@ -158,15 +156,11 @@ public class ContainerServiceExtension implements Extension
                                     "Cannot handle producer for non-Field and non-Method member type: " + member);
                         }
 
-                        return Enhancer.create(serviceType,
-                                 new ExportedInstanceProxyBeanCallback(
-                                          BeanManagerUtils.getContextualInstance(
-                                                   manager,
-                                                   AddonRegistry.class
-                                                   ),
-                                          serviceType,
-                                          injectionPoint
-                                 ));
+                        return ExportedInstanceLazyLoader.create(
+                                 BeanManagerUtils.getContextualInstance(manager, AddonRegistry.class),
+                                 injectionPoint,
+                                 serviceType
+                                 );
                      }
                   })
                   .qualifiers(requestedServiceLiterals.get(injectionPoint))

@@ -14,37 +14,19 @@
       <relativePath>../pom.xml</relativePath>
    </parent>
 
-   <artifactId>forge-classloader-adapter</artifactId>
+   <artifactId>forge-proxy</artifactId>
 
-   <name>Forge - ClassLoader Adapter</name>
+   <name>Forge - Proxy Utilities</name>
 
    <dependencies>
       <dependency>
          <groupId>org.javassist</groupId>
          <artifactId>javassist</artifactId>
-         <version>3.15.0-GA</version>
-         <scope>compile</scope>
       </dependency>
 
       <dependency>
          <groupId>org.jboss.forge</groupId>
          <artifactId>forge-addon-container-api</artifactId>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>ui-example</artifactId>
-         <version>${project.version}</version>
-         <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>forge-test-harness</artifactId>
-         <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>arquillian-forge-classpath</artifactId>
-         <scope>test</scope>
       </dependency>
    </dependencies>
 </project>

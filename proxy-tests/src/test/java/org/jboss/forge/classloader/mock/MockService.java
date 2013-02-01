@@ -4,7 +4,7 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.classloader;
+package org.jboss.forge.classloader.mock;
 
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.LazyLoader;
@@ -13,7 +13,7 @@ import net.sf.cglib.proxy.LazyLoader;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  *
  */
-public class MockService
+public class MockService implements MockInterface1, MockInterface2
 {
    public MockResult getResult()
    {

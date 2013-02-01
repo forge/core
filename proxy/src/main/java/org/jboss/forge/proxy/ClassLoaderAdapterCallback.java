@@ -1,13 +1,11 @@
-package org.jboss.forge.classloader;
+package org.jboss.forge.proxy;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.Callable;
 
 import javassist.util.proxy.MethodFilter;
@@ -16,9 +14,11 @@ import javassist.util.proxy.ProxyFactory;
 import javassist.util.proxy.ProxyObject;
 
 import org.jboss.forge.container.exception.ContainerException;
-import org.jboss.forge.container.util.Assert;
 import org.jboss.forge.container.util.ClassLoaders;
 
+/**
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ */
 public class ClassLoaderAdapterCallback implements MethodHandler
 {
    private static final ClassLoader JAVASSIST_LOADER = ProxyObject.class.getClassLoader();
@@ -35,7 +35,7 @@ public class ClassLoaderAdapterCallback implements MethodHandler
    }
 
    @Override
-   public Object invoke(final Object obj, final Method proxy, final Method method, final Object[] args)
+   public Object invoke(final Object obj, final Method thisMethod, final Method proceed, final Object[] args)
             throws Throwable
    {
       return ClassLoaders.executeIn(toLoader, new Callable<Object>()
@@ -47,31 +47,29 @@ public class ClassLoaderAdapterCallback implements MethodHandler
             {
                try
                {
-                  if (proxy.getDeclaringClass().equals(fromLoader.loadClass(ClassLoaderAdapterProxy.class.getName())))
+                  if (thisMethod.getDeclaringClass().equals(fromLoader.loadClass(ForgeProxy.class.getName())))
                   {
                      return delegate;
                   }
                }
                catch (Exception e)
                {
-                  System.out.println("No CLAP!");
-                  e.printStackTrace();
                }
 
-               Method delegateMethod = getDelegateMethod(proxy);
+               Method delegateMethod = getDelegateMethod(thisMethod);
 
                List<Object> parameterValues = convertParameterValues(args, delegateMethod);
 
                AccessibleObject.setAccessible(new AccessibleObject[] { delegateMethod }, true);
                Object result = delegateMethod.invoke(delegate, parameterValues.toArray());
 
-               return enhanceResult(proxy, result);
+               return enhanceResult(thisMethod, result);
             }
             catch (Throwable e)
             {
                throw new ContainerException(
                         "Could not invoke proxy method [" + delegate.getClass().getName() + "."
-                                 + proxy.getName() + "()] in ClassLoader ["
+                                 + thisMethod.getName() + "()] in ClassLoader ["
                                  + toLoader + "]", e);
             }
          }
@@ -128,20 +126,24 @@ public class ClassLoaderAdapterCallback implements MethodHandler
    {
       if (result != null)
       {
+         ClassLoader resultClassLoader = Proxies.unwrapProxyTypes(result.getClass(), fromLoader, toLoader,
+                  result.getClass().getClassLoader())
+                  .getClassLoader();
+
          Class<?> returnType = method.getReturnType();
-         if (needsEnhancement(result))
+         if (returnTypeNeedsEnhancement(returnType, result))
          {
             Class<?>[] resultHierarchy = ProxyTypeInspector.getCompatibleClassHierarchy(fromLoader,
-                     ProxyTypeInspector.unwrapProxyTypes(result.getClass(), fromLoader, toLoader));
+                     Proxies.unwrapProxyTypes(result.getClass(), fromLoader, toLoader, resultClassLoader));
 
             Class<?>[] returnTypeHierarchy = ProxyTypeInspector.getCompatibleClassHierarchy(fromLoader,
-                     ProxyTypeInspector.unwrapProxyTypes(returnType, fromLoader, toLoader));
+                     Proxies.unwrapProxyTypes(returnType, fromLoader, toLoader, resultClassLoader));
 
             if (!Modifier.isFinal(returnType.getModifiers()))
             {
                if (Object.class.equals(returnType) && !Object.class.equals(result))
                {
-                  result = enhance(fromLoader, toLoader, method, result, resultHierarchy);
+                  result = enhance(fromLoader, resultClassLoader, method, result, resultHierarchy);
                }
                else
                {
@@ -149,13 +151,13 @@ public class ClassLoaderAdapterCallback implements MethodHandler
                   {
                      returnTypeHierarchy = new Class[] { returnType };
                   }
-                  result = enhance(fromLoader, toLoader, method, result,
+                  result = enhance(fromLoader, resultClassLoader, method, result,
                            mergeHierarchies(returnTypeHierarchy, resultHierarchy));
                }
             }
             else
             {
-               result = enhance(fromLoader, toLoader, method, returnTypeHierarchy);
+               result = enhance(fromLoader, resultClassLoader, method, returnTypeHierarchy);
             }
          }
       }
@@ -183,11 +185,23 @@ public class ClassLoaderAdapterCallback implements MethodHandler
       return left;
    }
 
-   private boolean needsEnhancement(Object object)
+   private boolean returnTypeNeedsEnhancement(Class<?> methodReturnType, Object returnValue)
    {
-      Class<? extends Object> type = object.getClass();
-      return !type.getName().contains("java.lang")
-               && !type.isPrimitive();
+      String name = methodReturnType.getName();
+      if (!Object.class.equals(methodReturnType) && (name.startsWith("java.lang") || methodReturnType.isPrimitive()))
+      {
+         return false;
+      }
+      else if (!ClassLoaders.containsClass(fromLoader, methodReturnType))
+      {
+         return true;
+      }
+
+      Class<?> returnValueType = returnValue.getClass();
+      boolean result = !returnValueType.getName().contains("java.lang")
+               && !returnValueType.isPrimitive();
+
+      return result;
    }
 
    private List<Object> convertParameterValues(final Object[] args, Method delegateMethod)
@@ -238,7 +252,7 @@ public class ClassLoaderAdapterCallback implements MethodHandler
             }
             else
             {
-               parameterValues.add(unwrap(parameterValue));
+               parameterValues.add(Proxies.unwrap(parameterValue));
             }
          }
       }
@@ -286,23 +300,13 @@ public class ClassLoaderAdapterCallback implements MethodHandler
             if (types == null || types.length == 0)
             {
                hierarchy = ProxyTypeInspector.getCompatibleClassHierarchy(toLoader,
-                        ProxyTypeInspector.unwrapProxyTypes(delegate.getClass(), fromLoader, toLoader));
+                        Proxies.unwrapProxyTypes(delegate.getClass(), fromLoader, toLoader));
                if (hierarchy == null || hierarchy.length == 0)
                   throw new IllegalArgumentException("Must specify at least one non-final type to enhance for Object: "
                            + delegate);
             }
             else
                hierarchy = Arrays.copy(types, new Class<?>[types.length]);
-
-            try
-            {
-               hierarchy = Arrays.append(hierarchy, fromLoader.loadClass(ClassLoaderAdapterProxy.class.getName()));
-            }
-            catch (Exception e)
-            {
-               System.out.println("No CLAP!");
-               e.printStackTrace();
-            }
 
             MethodFilter filter = new MethodFilter()
             {
@@ -322,11 +326,21 @@ public class ClassLoaderAdapterCallback implements MethodHandler
 
             f.setUseCache(true);
 
-            if (!hierarchy[0].isInterface())
+            Class<?> first = hierarchy[0];
+            if (!first.isInterface())
             {
-               f.setSuperclass(hierarchy[0]);
+               f.setSuperclass(Proxies.unwrapProxyTypes(first, fromLoader, toLoader));
                hierarchy = Arrays.shiftLeft(hierarchy, new Class<?>[hierarchy.length - 1]);
             }
+
+            int index = Arrays.indexOf(hierarchy, ProxyObject.class);
+            if (index >= 0)
+            {
+               hierarchy = Arrays.removeElementAtIndex(hierarchy, index);
+            }
+
+            if (!Proxies.isProxyType(first) && !Arrays.contains(hierarchy, ForgeProxy.class))
+               hierarchy = Arrays.append(hierarchy, ForgeProxy.class);
 
             if (hierarchy.length > 0)
                f.setInterfaces(hierarchy);
@@ -375,135 +389,5 @@ public class ClassLoaderAdapterCallback implements MethodHandler
             return (T) enhancedResult;
          }
       });
-   }
-
-   /*
-    * Helper Types
-    */
-   static class ProxyTypeInspector
-   {
-      public static Class<?>[] getCompatibleClassHierarchy(ClassLoader loader, Class<?> origin)
-      {
-         Set<Class<?>> hierarchy = new LinkedHashSet<Class<?>>();
-
-         Class<?> baseClass = origin;
-
-         while (Modifier.isFinal(baseClass.getModifiers()))
-         {
-            baseClass = baseClass.getSuperclass();
-         }
-
-         if (ClassLoaders.containsClass(loader, baseClass)
-                  && !Object.class.equals(baseClass)
-                  && (isInstantiable(baseClass) || baseClass.isInterface()))
-         {
-            hierarchy.add(ClassLoaders.loadClass(loader, baseClass));
-         }
-
-         baseClass = origin;
-         while (baseClass != null)
-         {
-            for (Class<?> type : baseClass.getInterfaces())
-            {
-               if (ClassLoaders.containsClass(loader, type))
-                  hierarchy.add(ClassLoaders.loadClass(loader, type));
-            }
-            baseClass = baseClass.getSuperclass();
-         }
-
-         return hierarchy.toArray(new Class<?>[hierarchy.size()]);
-      }
-
-      private static boolean isInstantiable(Class<?> type)
-      {
-         try
-         {
-            type.getConstructor();
-            return true;
-         }
-         catch (SecurityException e)
-         {
-         }
-         catch (NoSuchMethodException e)
-         {
-         }
-         return false;
-      }
-
-      /*
-       * Helpers
-       */
-
-      private static Class<?> unwrapProxyTypes(Class<?> type, ClassLoader... loaders)
-      {
-         Class<?> result = type;
-
-         for (ClassLoader loader : loaders)
-         {
-            try
-            {
-               if (result.getName().contains("$$EnhancerByCGLIB$$"))
-               {
-                  String typeName = result.getName().replaceAll("^(.*)\\$\\$EnhancerByCGLIB\\$\\$.*", "$1");
-                  result = loader.loadClass(typeName);
-                  break;
-               }
-               else if (result.getName().contains("_javassist_"))
-               {
-                  String typeName = result.getName().replaceAll("^(.*)_javassist_.*", "$1");
-                  result = loader.loadClass(typeName);
-                  break;
-               }
-            }
-            catch (ClassNotFoundException e)
-            {
-            }
-         }
-         return result;
-      }
-   }
-
-   static class Arrays
-   {
-      public static <ELEMENTTYPE> ELEMENTTYPE[] append(ELEMENTTYPE[] array, ELEMENTTYPE... elements)
-      {
-         final int length = array.length;
-         array = java.util.Arrays.copyOf(array, length + elements.length);
-         System.arraycopy(elements, 0, array, length, elements.length);
-         return array;
-      }
-
-      public static <ELEMENTTYPE> ELEMENTTYPE[] prepend(ELEMENTTYPE[] array, ELEMENTTYPE... elements)
-      {
-         final int length = array.length;
-         array = java.util.Arrays.copyOf(array, length + elements.length);
-         System.arraycopy(array, 0, array, elements.length, length);
-         System.arraycopy(elements, 0, array, 0, elements.length);
-         return array;
-      }
-
-      public static <ELEMENTTYPE> ELEMENTTYPE[] copy(ELEMENTTYPE[] source, ELEMENTTYPE[] target)
-      {
-         Assert.isTrue(source.length == target.length, "Source and destination arrays must be of the same length.");
-         System.arraycopy(source, 0, target, 0, source.length);
-         return target;
-      }
-
-      public static <ELEMENTTYPE> ELEMENTTYPE[] shiftLeft(ELEMENTTYPE[] source, ELEMENTTYPE[] target)
-      {
-         Assert.isTrue(source.length > 0, "Source array length cannot be zero.");
-         Assert.isTrue(source.length - 1 == target.length,
-                  "Destination array must be one element shorter than the source array.");
-
-         System.arraycopy(source, 1, target, 0, target.length);
-         return target;
-      }
-   }
-
-   public static Object unwrap(Object object)
-   {
-      if (object instanceof ClassLoaderAdapterProxy)
-         return ((ClassLoaderAdapterProxy) object).getDelegate();
-      return object;
    }
 }

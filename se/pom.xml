@@ -84,7 +84,7 @@
       </dependency>
       <dependency>
          <groupId>org.jboss.forge</groupId>
-         <artifactId>forge-classloader-adapter</artifactId>
+         <artifactId>forge-proxy</artifactId>
          <scope>compile</scope>
       </dependency>
 

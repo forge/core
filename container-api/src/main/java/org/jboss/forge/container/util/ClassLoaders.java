@@ -54,7 +54,7 @@ public class ClassLoaders
 
       try
       {
-         loader.loadClass(type.getName());
+         loader.loadClass(type.getName()).equals(type);
          return true;
       }
       catch (ClassNotFoundException e)

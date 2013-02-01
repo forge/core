@@ -80,7 +80,8 @@
             <module>container-api</module>
             <module>container-tests</module>
             <module>parser-xml</module>
-            <module>classloader-adapter</module>
+            <module>proxy</module>
+            <module>proxy-tests</module>
             <module>se</module>
             <module>test-harness</module>
             <module>dist</module>
@@ -150,9 +151,10 @@
          </dependency>
 
          <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib-nodep</artifactId>
-            <version>2.2.2</version>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.15.0-GA</version>
+            <scope>compile</scope>
          </dependency>
 
          <!-- Test Dependencies -->
@@ -209,7 +211,7 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-classloader-adapter</artifactId>
+            <artifactId>forge-proxy</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>

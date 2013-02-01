@@ -657,7 +657,6 @@ public final class Strings
     *
     * @return true if object equals or intern ==, else false.
     */
-   @SuppressWarnings("null")
    public static boolean compare(final String me, final String you)
    {
       // If both null or intern equals

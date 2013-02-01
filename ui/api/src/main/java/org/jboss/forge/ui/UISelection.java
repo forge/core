@@ -13,7 +13,7 @@ package org.jboss.forge.ui;
 public interface UISelection<SELECTIONTYPE> extends Iterable<SELECTIONTYPE>
 {
    /**
-    * Provides the first selected element as a{@code SELECTIONTYPE}.
+    * Provides the first selected element as a {@code SELECTIONTYPE}.
     *
     * This is a convenience method to avoid iteration.
     *

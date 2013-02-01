@@ -547,7 +547,6 @@ public abstract class BaseModuleSpecProvider implements ModuleSpecProvider
       systemPaths.add("org/jboss/forge/arquillian/protocol");
       systemPaths.add("org/jboss/forge/arquillian/runner");
       systemPaths.add("org/jboss/forge/arquillian/util");
-      systemPaths.add("org/jboss/forge/classloader");
       systemPaths.add("org/jboss/forge/container");
       systemPaths.add("org/jboss/forge/container/event");
       systemPaths.add("org/jboss/forge/container/exception");
@@ -561,6 +560,7 @@ public abstract class BaseModuleSpecProvider implements ModuleSpecProvider
       systemPaths.add("org/jboss/forge/parser/xml");
       systemPaths.add("org/jboss/forge/parser/xml/query");
       systemPaths.add("org/jboss/forge/parser/xml/util");
+      systemPaths.add("org/jboss/forge/proxy");
       systemPaths.add("org/jboss/forge/test");
       systemPaths.add("org/jboss/modules");
       systemPaths.add("org/jboss/modules/filter");

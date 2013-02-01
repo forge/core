@@ -31,9 +31,8 @@ public class ForgeContainerSpec extends BaseModuleSpecProvider
                         PathFilters.is("META-INF/services"),
                         PathFilters.is("org/jboss/forge/container"),
                         PathFilters.isChildOf("org/jboss/forge/container"),
-                        PathFilters.is("org/jboss/forge/classloader"),
-                        PathFilters.isChildOf("org/jboss/forge/classloader"),
-                        PathFilters.is("net/sf/cglib"), PathFilters.isChildOf("net/sf/cglib"),
+                        PathFilters.is("org/jboss/forge/proxy"),
+                        PathFilters.isChildOf("org/jboss/forge/proxy"),
                         PathFilters.is("javassist"), PathFilters.isChildOf("javassist")
                         )),
                systemPaths));
