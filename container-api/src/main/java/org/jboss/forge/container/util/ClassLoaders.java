@@ -54,7 +54,22 @@ public class ClassLoaders
 
       try
       {
-         loader.loadClass(type.getName()).equals(type);
+         return loader.loadClass(type.getName()).equals(type);
+      }
+      catch (ClassNotFoundException e)
+      {
+         return false;
+      }
+   }
+
+   public static boolean containsClass(ClassLoader loader, String type)
+   {
+      Assert.notNull(loader, "Class loader to inspect must not be null.");
+      Assert.notNull(type, "Class to find must not be null.");
+
+      try
+      {
+         loader.loadClass(type);
          return true;
       }
       catch (ClassNotFoundException e)

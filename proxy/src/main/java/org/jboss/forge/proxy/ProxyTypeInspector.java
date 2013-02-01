@@ -19,7 +19,7 @@ class ProxyTypeInspector
          baseClass = baseClass.getSuperclass();
       }
 
-      if (ClassLoaders.containsClass(loader, baseClass)
+      if (ClassLoaders.containsClass(loader, baseClass.getName())
                && !Object.class.equals(baseClass)
                && (isInstantiable(baseClass) || baseClass.isInterface()))
       {
@@ -31,7 +31,7 @@ class ProxyTypeInspector
       {
          for (Class<?> type : baseClass.getInterfaces())
          {
-            if (ClassLoaders.containsClass(loader, type))
+            if (ClassLoaders.containsClass(loader, type.getName()))
                hierarchy.add(ClassLoaders.loadClass(loader, type));
          }
          baseClass = baseClass.getSuperclass();

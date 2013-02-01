@@ -146,7 +146,7 @@ public class ClassLoaderAdapterCallback implements MethodHandler
          }
 
          Class<?> returnType = method.getReturnType();
-         if (returnTypeNeedsEnhancement(returnType, result))
+         if (returnTypeNeedsEnhancement(returnType, result, unwrappedResultType))
          {
             Class<?>[] resultHierarchy = ProxyTypeInspector.getCompatibleClassHierarchy(fromLoader,
                      Proxies.unwrapProxyTypes(result.getClass(), fromLoader, toLoader, resultToLoader));
@@ -200,23 +200,29 @@ public class ClassLoaderAdapterCallback implements MethodHandler
       return left;
    }
 
-   private boolean returnTypeNeedsEnhancement(Class<?> methodReturnType, Object returnValue)
+   private boolean returnTypeNeedsEnhancement(Class<?> methodReturnType, Object returnValue,
+            Class<?> unwrappedReturnValueType)
    {
-      String name = methodReturnType.getName();
-      if (!Object.class.equals(methodReturnType) && (name.startsWith("java.lang") || methodReturnType.isPrimitive()))
+      if (unwrappedReturnValueType.getName().contains("java.lang") || unwrappedReturnValueType.isPrimitive())
       {
          return false;
       }
-      else if (!ClassLoaders.containsClass(fromLoader, methodReturnType))
+      else if (!Object.class.equals(methodReturnType)
+               && (methodReturnType.getName().startsWith("java.lang") || methodReturnType.isPrimitive()))
       {
-         return true;
+         return false;
       }
 
-      Class<?> returnValueType = returnValue.getClass();
-      boolean result = !returnValueType.getName().contains("java.lang")
-               && !returnValueType.isPrimitive();
-
-      return result;
+      if (unwrappedReturnValueType.getClassLoader() != null
+               && !unwrappedReturnValueType.getClassLoader().equals(fromLoader))
+      {
+         if (ClassLoaders.containsClass(fromLoader, unwrappedReturnValueType)
+                  && ClassLoaders.containsClass(fromLoader, methodReturnType))
+         {
+            return false;
+         }
+      }
+      return true;
    }
 
    private List<Object> convertParameterValues(final Object[] args, Method delegateMethod)
