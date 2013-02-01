@@ -8,11 +8,10 @@ package org.jboss.forge.classloader;
 
 import java.lang.reflect.Method;
 
-import javassist.util.proxy.MethodHandler;
-
 import org.jboss.forge.classloader.mock.MockResult;
 import org.jboss.forge.classloader.mock.MockService;
 import org.jboss.forge.proxy.ClassLoaderAdapterCallback;
+import org.jboss.forge.proxy.ForgeProxy;
 import org.jboss.forge.proxy.Proxies;
 import org.junit.Assert;
 import org.junit.Test;
@@ -22,17 +21,24 @@ import org.junit.Test;
  */
 public class ProxiesTest
 {
+   ForgeProxy handler = new ForgeProxy()
+   {
+      @Override
+      public Object invoke(Object self, Method thisMethod, Method proceed, Object[] args) throws Throwable
+      {
+         return null;
+      }
+
+      @Override
+      public Object getDelegate()
+      {
+         return null;
+      }
+   };
+   
    @Test
    public void testNestedProxy() throws Exception
    {
-      MethodHandler handler = new MethodHandler()
-      {
-         @Override
-         public Object invoke(Object self, Method thisMethod, Method proceed, Object[] args) throws Throwable
-         {
-            return null;
-         }
-      };
 
       Object object = Proxies.enhance(MockService.class, handler);
       Proxies.enhance(object.getClass(), handler);
@@ -61,15 +67,6 @@ public class ProxiesTest
    @Test
    public void testNestedProxyAdapterCallback() throws Exception
    {
-      MethodHandler handler = new MethodHandler()
-      {
-         @Override
-         public Object invoke(Object self, Method thisMethod, Method proceed, Object[] args) throws Throwable
-         {
-            return null;
-         }
-      };
-
       MockService object = Proxies.enhance(MockService.class, handler);
       ClassLoader loader = ProxiesTest.class.getClassLoader();
       MockService object2 = ClassLoaderAdapterCallback.enhance(loader, loader, object, MockService.class);

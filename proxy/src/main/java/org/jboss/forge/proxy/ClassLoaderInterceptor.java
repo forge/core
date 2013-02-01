@@ -3,15 +3,13 @@ package org.jboss.forge.proxy;
 import java.lang.reflect.Method;
 import java.util.concurrent.Callable;
 
-import javassist.util.proxy.MethodHandler;
-
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.util.ClassLoaders;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class ClassLoaderInterceptor implements MethodHandler, ForgeProxy
+public class ClassLoaderInterceptor implements ForgeProxy
 {
    private ClassLoader loader;
    private Object delegate;

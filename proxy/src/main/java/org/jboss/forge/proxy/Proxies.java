@@ -9,7 +9,6 @@ package org.jboss.forge.proxy;
 import java.lang.reflect.Method;
 
 import javassist.util.proxy.MethodFilter;
-import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 import javassist.util.proxy.ProxyObject;
 
@@ -22,7 +21,7 @@ public class Proxies
     * Create a proxy for the given {@link Class} type.
     */
    @SuppressWarnings("unchecked")
-   public static <T> T enhance(Class<T> type, MethodHandler handler)
+   public static <T> T enhance(Class<T> type, ForgeProxy handler)
    {
       MethodFilter filter = new MethodFilter()
       {
@@ -99,17 +98,38 @@ public class Proxies
    @SuppressWarnings("unchecked")
    public static <T> T unwrap(Object object)
    {
-      if (object instanceof ForgeProxy)
-         return (T) ((ForgeProxy) object).getDelegate();
+      if (isForgeProxy(object))
+      {
+         try
+         {
+            Method method = object.getClass().getMethod("getDelegate");
+            method.setAccessible(true);
+            return (T) method.invoke(object);
+         }
+         catch (Exception e)
+         {
+         }
+      }
       return (T) object;
    }
 
    /**
     * Returns true if the given object was created via {@link Proxies}.
     */
-   public static boolean isProxy(Object object)
+   public static boolean isForgeProxy(Object object)
    {
-      return object instanceof ForgeProxy;
+      Class<?>[] interfaces = object.getClass().getInterfaces();
+      if (interfaces != null)
+      {
+         for (Class<?> iface : interfaces)
+         {
+            if (iface.getName().equals(ForgeProxy.class.getName()))
+            {
+               return true;
+            }
+         }
+      }
+      return false;
    }
 
    public static Class<?> unwrapProxyTypes(Class<?> type, ClassLoader... loaders)

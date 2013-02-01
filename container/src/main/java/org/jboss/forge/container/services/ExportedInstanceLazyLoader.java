@@ -2,8 +2,6 @@ package org.jboss.forge.container.services;
 
 import java.lang.reflect.Method;
 
-import javassist.util.proxy.MethodHandler;
-
 import javax.enterprise.inject.spi.InjectionPoint;
 
 import org.jboss.forge.container.Addon;
@@ -13,7 +11,7 @@ import org.jboss.forge.container.util.Assert;
 import org.jboss.forge.proxy.ForgeProxy;
 import org.jboss.forge.proxy.Proxies;
 
-public class ExportedInstanceLazyLoader implements MethodHandler
+public class ExportedInstanceLazyLoader implements ForgeProxy
 {
    private final Class<?> serviceType;
    private final AddonRegistry registry;
@@ -81,6 +79,12 @@ public class ExportedInstanceLazyLoader implements MethodHandler
       }
 
       return result;
+   }
+
+   @Override
+   public Object getDelegate()
+   {
+      return delegate;
    }
 
 }

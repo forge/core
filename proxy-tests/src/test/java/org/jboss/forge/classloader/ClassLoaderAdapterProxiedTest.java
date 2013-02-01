@@ -100,7 +100,7 @@ public class ClassLoaderAdapterProxiedTest
 
       MockService adapter = ClassLoaderAdapterCallback.enhance(loader, loader, delegate, MockService.class);
       MockFinalResult result = adapter.getResultFinalReturnType();
-      Assert.assertFalse(Proxies.isProxy(result));
+      Assert.assertFalse(Proxies.isForgeProxy(result));
       Assert.assertNotNull(result);
    }
 

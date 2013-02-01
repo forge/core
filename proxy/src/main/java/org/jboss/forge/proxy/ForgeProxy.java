@@ -6,12 +6,14 @@
  */
 package org.jboss.forge.proxy;
 
+import javassist.util.proxy.MethodHandler;
+
 /**
  * Marks an instance that was created via {@link Proxies}.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface ForgeProxy
+public interface ForgeProxy extends MethodHandler
 {
    /**
     * Get the underlying delegate instance, if possible.
