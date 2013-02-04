@@ -60,6 +60,7 @@ public class ProjectInitializer
 
             Project temp = new BaseProject()
             {
+               @Override
                public DirectoryResource getProjectRoot()
                {
                   return newRoot;
