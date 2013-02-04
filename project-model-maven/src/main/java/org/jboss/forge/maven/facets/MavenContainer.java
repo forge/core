@@ -94,10 +94,13 @@ public class MavenContainer
          for (String id : activeProfiles)
          {
             Profile profile = profiles.get(id);
-            List<Repository> repositories = profile.getRepositories();
-            for (Repository repository : repositories)
+            if(profile != null)
             {
-               settingsRepos.add(RepositoryUtils.convertFromMavenSettingsRepository(repository));
+               List<Repository> repositories = profile.getRepositories();
+               for (Repository repository : repositories)
+               {
+                  settingsRepos.add(RepositoryUtils.convertFromMavenSettingsRepository(repository));
+               }
             }
          }
 
