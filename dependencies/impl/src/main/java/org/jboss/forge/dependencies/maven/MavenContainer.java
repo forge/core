@@ -50,10 +50,13 @@ public class MavenContainer
       for (String id : activeProfiles)
       {
          Profile profile = profiles.get(id);
-         List<Repository> repositories = profile.getRepositories();
-         for (Repository repository : repositories)
+         if (profile != null)
          {
-            settingsRepos.add(new RemoteRepository(repository.getId(), repository.getLayout(), repository.getUrl()));
+            List<Repository> repositories = profile.getRepositories();
+            for (Repository repository : repositories)
+            {
+               settingsRepos.add(new RemoteRepository(repository.getId(), repository.getLayout(), repository.getUrl()));
+            }
          }
       }
       return settingsRepos;
