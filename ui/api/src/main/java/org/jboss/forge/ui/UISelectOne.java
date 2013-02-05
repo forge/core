@@ -6,9 +6,9 @@
  */
 package org.jboss.forge.ui;
 
-public interface UISelectOne<T> extends UIInput<T>
+public interface UISelectOne<VALUETYPE> extends UIInputComponent<UISelectOne<VALUETYPE>, VALUETYPE>
 {
-   Iterable<T> getValueChoices();
+   Iterable<VALUETYPE> getValueChoices();
 
-   UISelectOne<T> setValueChoices(Iterable<T> values);
+   UISelectOne<VALUETYPE> setValueChoices(Iterable<VALUETYPE> values);
 }

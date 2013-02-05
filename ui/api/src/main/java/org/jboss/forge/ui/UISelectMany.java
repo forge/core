@@ -6,11 +6,10 @@
  */
 package org.jboss.forge.ui;
 
-import java.util.Set;
 
-public interface UISelectMany<T> extends UIInput<Set<T>>
+public interface UISelectMany<VALUETYPE> extends UIInputComponent<UISelectMany<VALUETYPE>, Iterable<VALUETYPE>>
 {
-   Set<T> getValueChoices();
+   Iterable<VALUETYPE> getValueChoices();
 
-   UISelectMany<T> setValueChoices(Set<T> values);
+   UISelectMany<VALUETYPE> setValueChoices(Iterable<VALUETYPE> values);
 }

@@ -15,6 +15,7 @@ import org.jboss.forge.facets.BaseFaceted;
 import org.jboss.forge.facets.Facet;
 import org.jboss.forge.ui.UICompleter;
 import org.jboss.forge.ui.UIInput;
+import org.jboss.forge.ui.UIInputComponent;
 import org.jboss.forge.ui.facets.HintsFacet;
 import org.jboss.forge.ui.util.Callables;
 
@@ -23,31 +24,32 @@ import org.jboss.forge.ui.util.Callables;
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
- * @param <T>
+ * @param <VALUETYPE>
  */
 @Vetoed
-public class UIInputImpl<T> extends BaseFaceted implements UIInput<T>
+public abstract class UIInputComponentBase<IMPLTYPE extends UIInputComponent<IMPLTYPE, VALUETYPE>, VALUETYPE> extends BaseFaceted
+         implements UIInputComponent<IMPLTYPE, VALUETYPE>
 {
    private final String name;
-   private final Class<T> type;
+   private final Class<VALUETYPE> type;
 
    private String label;
    private Callable<Boolean> enabled;
-   private T value;
+   private VALUETYPE value;
    private Callable<Boolean> required;
-   private Callable<T> defaultValue;
-   private UICompleter<T> completer;
+   private Callable<VALUETYPE> defaultValue;
+   private UICompleter<VALUETYPE> completer;
 
    @SuppressWarnings("unchecked")
-   public UIInputImpl(String name, Class<?> type)
+   public UIInputComponentBase(String name, Class<?> type)
    {
       this.name = name;
-      this.type = (Class<T>) type;
+      this.type = (Class<VALUETYPE>) type;
    }
 
    @Override
    @SuppressWarnings("unchecked")
-   public UICompleter<T> getCompleter()
+   public UICompleter<VALUETYPE> getCompleter()
    {
       return this.completer == null ? new NoopCompleter() : this.completer;
    }
@@ -65,13 +67,13 @@ public class UIInputImpl<T> extends BaseFaceted implements UIInput<T>
    }
 
    @Override
-   public T getValue()
+   public VALUETYPE getValue()
    {
       return (value == null) ? Callables.call(defaultValue) : value;
    }
 
    @Override
-   public Class<T> getValueType()
+   public Class<VALUETYPE> getValueType()
    {
       return type;
    }
@@ -88,67 +90,76 @@ public class UIInputImpl<T> extends BaseFaceted implements UIInput<T>
       return Callables.call(required);
    }
 
+   @SuppressWarnings("unchecked")
    @Override
-   public UIInput<T> setCompleter(UICompleter<T> completer)
+   public IMPLTYPE setCompleter(UICompleter<VALUETYPE> completer)
    {
       this.completer = completer;
-      return this;
+      return (IMPLTYPE) this;
    }
 
+   @SuppressWarnings("unchecked")
    @Override
-   public UIInput<T> setDefaultValue(Callable<T> callback)
+   public IMPLTYPE setDefaultValue(Callable<VALUETYPE> callback)
    {
       this.defaultValue = callback;
-      return this;
+      return (IMPLTYPE) this;
    }
 
+   @SuppressWarnings("unchecked")
    @Override
-   public UIInput<T> setDefaultValue(T value)
+   public IMPLTYPE setDefaultValue(VALUETYPE value)
    {
       this.defaultValue = Callables.returning(value);
-      return this;
+      return (IMPLTYPE) this;
    }
 
+   @SuppressWarnings("unchecked")
    @Override
-   public UIInput<T> setEnabled(boolean enabled)
+   public IMPLTYPE setEnabled(boolean enabled)
    {
       this.enabled = Callables.returning(enabled);
-      return this;
+      return (IMPLTYPE) this;
    }
 
+   @SuppressWarnings("unchecked")
    @Override
-   public UIInput<T> setEnabled(Callable<Boolean> callback)
+   public IMPLTYPE setEnabled(Callable<Boolean> callback)
    {
       enabled = callback;
-      return this;
+      return (IMPLTYPE) this;
    }
 
+   @SuppressWarnings("unchecked")
    @Override
-   public UIInput<T> setLabel(String label)
+   public IMPLTYPE setLabel(String label)
    {
       this.label = label;
-      return this;
+      return (IMPLTYPE) this;
    }
 
+   @SuppressWarnings("unchecked")
    @Override
-   public UIInput<T> setRequired(boolean required)
+   public IMPLTYPE setRequired(boolean required)
    {
       this.required = Callables.returning(required);
-      return this;
+      return (IMPLTYPE) this;
    }
 
+   @SuppressWarnings("unchecked")
    @Override
-   public UIInput<T> setRequired(Callable<Boolean> required)
+   public IMPLTYPE setRequired(Callable<Boolean> required)
    {
       this.required = required;
-      return this;
+      return (IMPLTYPE) this;
    }
 
+   @SuppressWarnings("unchecked")
    @Override
-   public UIInput<T> setValue(T value)
+   public IMPLTYPE setValue(VALUETYPE value)
    {
       this.value = value;
-      return this;
+      return (IMPLTYPE) this;
    }
 
    @Override

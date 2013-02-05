@@ -8,21 +8,21 @@ package org.jboss.forge.ui.impl.facets;
 
 import org.jboss.forge.environment.Environment;
 import org.jboss.forge.facets.BaseFacet;
-import org.jboss.forge.ui.UIInput;
+import org.jboss.forge.ui.UIInputComponent;
 import org.jboss.forge.ui.facets.HintsFacet;
 import org.jboss.forge.ui.hints.HintsLookup;
 import org.jboss.forge.ui.hints.InputType;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- *
+ * 
  */
-public class HintsFacetImpl extends BaseFacet<UIInput<?>> implements HintsFacet
+public class HintsFacetImpl extends BaseFacet<UIInputComponent<?, ?>> implements HintsFacet
 {
    private HintsLookup hintsLookup;
    private InputType inputType;
 
-   public HintsFacetImpl(UIInput<?> origin, Environment environment)
+   public HintsFacetImpl(UIInputComponent<?, ?> origin, Environment environment)
    {
       super(origin);
       if (environment == null)
@@ -47,7 +47,7 @@ public class HintsFacetImpl extends BaseFacet<UIInput<?>> implements HintsFacet
 
    /*
     * (non-Javadoc)
-    *
+    * 
     * @see org.jboss.forge.ui.facets.HintsFacet#getInputType()
     */
    @Override
@@ -63,7 +63,7 @@ public class HintsFacetImpl extends BaseFacet<UIInput<?>> implements HintsFacet
 
    /*
     * (non-Javadoc)
-    *
+    * 
     * @see org.jboss.forge.ui.facets.HintsFacet#setInputType(org.jboss.forge.ui.hints.InputType)
     */
    @Override

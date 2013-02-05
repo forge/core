@@ -43,6 +43,7 @@ public class UIInputInjectionTest
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
+               .addClasses(Career.class)
                .addAsAddonDependencies(AddonDependency.create(AddonId.from("org.jboss.forge:ui", "2.0.0-SNAPSHOT")));
 
       return archive;
@@ -70,6 +71,12 @@ public class UIInputInjectionTest
    {
       Assert.assertEquals("firstName", firstName.getName());
       Assert.assertEquals(String.class, firstName.getValueType());
+
+      Assert.assertEquals("careers", careers.getName());
+      Assert.assertEquals(Career.class, careers.getValueType());
+
+      Assert.assertEquals("partners", partners.getName());
+      Assert.assertEquals(String.class, partners.getValueType());
    }
 
    @Test

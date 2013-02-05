@@ -16,6 +16,8 @@ import javax.inject.Inject;
 
 import org.jboss.forge.environment.Environment;
 import org.jboss.forge.ui.UIInput;
+import org.jboss.forge.ui.UISelectMany;
+import org.jboss.forge.ui.UISelectOne;
 import org.jboss.forge.ui.impl.facets.HintsFacetImpl;
 
 /**
@@ -31,31 +33,76 @@ public class UIInputProducer
 
    @Produces
    @SuppressWarnings("unchecked")
-   public <T> UIInput<T> produceInput(InjectionPoint injectionPoint)
+   public <T> UISelectOne<T> produceSelectOne(InjectionPoint injectionPoint)
    {
       String name = injectionPoint.getMember().getName();
       Type type = injectionPoint.getAnnotated().getBaseType();
-      
+
       if (type instanceof ParameterizedType)
       {
          ParameterizedType parameterizedType = (ParameterizedType) type;
-         
-         Type rawType = parameterizedType.getRawType();
-         
-         
+
          Type[] typeArguments = parameterizedType.getActualTypeArguments();
          Class<T> valueType = (Class<T>) typeArguments[0];
-         UIInputImpl<T> input = new UIInputImpl<T>(name, valueType);
-
-         HintsFacetImpl hintsFacet = new HintsFacetImpl(input, environment);
-         input.install(hintsFacet);
-         return input;
+         UISelectOne<T> result = new UISelectOneImpl<T>(name, valueType);
+         HintsFacetImpl hintsFacet = new HintsFacetImpl(result, environment);
+         result.install(hintsFacet);
+         return result;
       }
       else
       {
          throw new IllegalStateException("Cannot inject a generic instance of type " + UIInput.class.getName()
                   + "<?,?> without specifying concrete generic types at injection point " + injectionPoint + ".");
       }
+   }
 
+   @Produces
+   @SuppressWarnings({ "unchecked" })
+   public <T> UISelectMany<T> produceSelectMany(InjectionPoint injectionPoint)
+   {
+      String name = injectionPoint.getMember().getName();
+      Type type = injectionPoint.getAnnotated().getBaseType();
+
+      if (type instanceof ParameterizedType)
+      {
+         ParameterizedType parameterizedType = (ParameterizedType) type;
+
+         Type[] typeArguments = parameterizedType.getActualTypeArguments();
+         Class<T> valueType = (Class<T>) typeArguments[0];
+         UISelectMany<T> result = new UISelectManyImpl<T>(name, valueType);
+         HintsFacetImpl hintsFacet = new HintsFacetImpl(result, environment);
+         result.install(hintsFacet);
+         return result;
+      }
+      else
+      {
+         throw new IllegalStateException("Cannot inject a generic instance of type " + UIInput.class.getName()
+                  + "<?,?> without specifying concrete generic types at injection point " + injectionPoint + ".");
+      }
+   }
+
+   @Produces
+   @SuppressWarnings({ "unchecked" })
+   public <T> UIInput<T> produceInput(InjectionPoint injectionPoint)
+   {
+      String name = injectionPoint.getMember().getName();
+      Type type = injectionPoint.getAnnotated().getBaseType();
+
+      if (type instanceof ParameterizedType)
+      {
+         ParameterizedType parameterizedType = (ParameterizedType) type;
+
+         Type[] typeArguments = parameterizedType.getActualTypeArguments();
+         Class<T> valueType = (Class<T>) typeArguments[0];
+         UIInputImpl<T> result = new UIInputImpl<T>(name, valueType);
+         HintsFacetImpl hintsFacet = new HintsFacetImpl(result, environment);
+         result.install(hintsFacet);
+         return result;
+      }
+      else
+      {
+         throw new IllegalStateException("Cannot inject a generic instance of type " + UIInput.class.getName()
+                  + "<?,?> without specifying concrete generic types at injection point " + injectionPoint + ".");
+      }
    }
 }

@@ -9,15 +9,16 @@ package org.jboss.forge.ui.facets;
 
 import org.jboss.forge.facets.Facet;
 import org.jboss.forge.ui.UIInput;
+import org.jboss.forge.ui.UIInputComponent;
 import org.jboss.forge.ui.hints.InputType;
 
 /**
  * Hints facet
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
-public interface HintsFacet extends Facet<UIInput<?>>
+public interface HintsFacet extends Facet<UIInputComponent<?, ?>>
 {
    public abstract InputType getInputType();
 
