@@ -21,6 +21,8 @@ import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.ui.UICompleter;
 import org.jboss.forge.ui.UIInput;
+import org.jboss.forge.ui.UISelectMany;
+import org.jboss.forge.ui.UISelectOne;
 import org.jboss.forge.ui.facets.HintsFacet;
 import org.jboss.forge.ui.hints.InputType;
 import org.jboss.forge.ui.hints.InputTypes;
@@ -49,10 +51,18 @@ public class UIInputInjectionTest
    @Inject
    UIInput<String> firstName;
 
+   @Inject
+   UISelectOne<Career> careers;
+
+   @Inject
+   UISelectMany<String> partners;
+
    @Test
    public void testInjectionNotNull()
    {
       Assert.assertNotNull(firstName);
+      Assert.assertNotNull(careers);
+      Assert.assertNotNull(partners);
    }
 
    @Test
