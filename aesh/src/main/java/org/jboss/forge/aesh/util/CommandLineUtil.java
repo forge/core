@@ -14,6 +14,7 @@ import org.jboss.aesh.cl.internal.ParameterInt;
 import org.jboss.forge.aesh.ShellContext;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UIInput;
+import org.jboss.forge.ui.UIInputComponent;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
@@ -26,7 +27,7 @@ public class CommandLineUtil {
 
                ParameterInt parameter =
                 new ParameterInt(command.getMetadata().getName(), command.getMetadata().getDescription());
-        for(UIInput<?> input : context.getInputs()) {
+        for(UIInputComponent<?, ?> input : context.getInputs()) {
             if(input.getValueType() == Boolean.class) {
                 parameter.addOption(
                         new OptionBuilder().name(input.getName().charAt(0)).
@@ -43,7 +44,7 @@ public class CommandLineUtil {
     }
 
     public static void populateUIInputs(CommandLine commandLine, ShellContext context) {
-        for(UIInput<?> input : context.getInputs()) {
+        for(UIInputComponent<?, ?> input : context.getInputs()) {
             //String value;
             //if((value = commandLine.getOptionValue(input.getName())) != null)
             if(commandLine.hasOption(input.getName())) {
@@ -63,7 +64,7 @@ public class CommandLineUtil {
     }
 
     @SuppressWarnings({ "unchecked" })
-    private static void setInputValue(UIInput<?> input, String value) {
+    private static void setInputValue(UIInputComponent<?, ?> input, String value) {
 
         if(input.getValueType() == String.class) {
             ((UIInput<String>) input).setValue(value);

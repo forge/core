@@ -22,7 +22,7 @@ import org.jboss.forge.container.AddonId;
 import org.jboss.forge.resource.DirectoryResource;
 import org.jboss.forge.ui.UIBuilder;
 import org.jboss.forge.ui.UIContext;
-import org.jboss.forge.ui.UIInput;
+import org.jboss.forge.ui.UIInputComponent;
 import org.jboss.forge.ui.UISelection;
 import org.jboss.forge.ui.UIValidationContext;
 import org.jboss.shrinkwrap.api.ArchivePaths;
@@ -65,12 +65,12 @@ public class NewProjectCommandTest
    @Test
    public void testInvokeCommand() throws Exception
    {
-      final List<UIInput<?>> inputs = new ArrayList<UIInput<?>>();
+      final List<UIInputComponent<?, ?>> inputs = new ArrayList<UIInputComponent<?, ?>>();
 
       final UIBuilder builder = new UIBuilder()
       {
          @Override
-         public UIBuilder add(UIInput<?> input)
+         public UIBuilder add(UIInputComponent<?, ?> input)
          {
             inputs.add(input);
             return this;
@@ -104,7 +104,7 @@ public class NewProjectCommandTest
          }
 
          @Override
-         public void addValidationError(UIInput<?> input, String errorMessage)
+         public void addValidationError(UIInputComponent<?, ?> input, String errorMessage)
          {
          }
 

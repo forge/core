@@ -9,6 +9,7 @@ package org.jboss.forge.aesh;
 import org.jboss.forge.ui.UIBuilder;
 import org.jboss.forge.ui.UIContext;
 import org.jboss.forge.ui.UIInput;
+import org.jboss.forge.ui.UIInputComponent;
 import org.jboss.forge.ui.UISelection;
 import org.jboss.forge.ui.UIValidationContext;
 
@@ -22,7 +23,7 @@ public class ShellContext implements UIValidationContext, UIContext, UIBuilder
 {
 
    private boolean standalone = false;
-   private List<UIInput<?>> inputs = new ArrayList<UIInput<?>>();
+   private List<UIInputComponent<?, ?>> inputs = new ArrayList<UIInputComponent<?, ?>>();
 
    public ShellContext()
    {
@@ -39,20 +40,20 @@ public class ShellContext implements UIValidationContext, UIContext, UIBuilder
    }
 
    @Override
-   public UIBuilder add(UIInput<?> input)
+   public UIBuilder add(UIInputComponent<?, ?> input)
    {
       inputs.add(input);
       return this;
    }
 
-   public List<UIInput<?>> getInputs()
+   public List<UIInputComponent<?, ?>> getInputs()
    {
       return inputs;
    }
 
-   public UIInput<?> findInput(String name)
+   public UIInputComponent<?, ?> findInput(String name)
    {
-      for (UIInput<?> input : inputs)
+      for (UIInputComponent<?, ?> input : inputs)
       {
          if (input.getName().equals(name))
             return input;
@@ -61,7 +62,7 @@ public class ShellContext implements UIValidationContext, UIContext, UIBuilder
    }
 
    @Override
-   public void addValidationError(UIInput<?> input, String errorMessage)
+   public void addValidationError(UIInputComponent<?, ?> input, String errorMessage)
    {
       // TODO: ignoring errorMessage for now
       inputs.add(input);
