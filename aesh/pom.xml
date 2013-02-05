@@ -13,7 +13,7 @@
       <dependency>
          <groupId>org.jboss.aesh</groupId>
          <artifactId>aesh</artifactId>
-         <version>0.29</version>
+         <version>0.31</version>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge</groupId>
@@ -23,17 +23,16 @@
       <dependency>
          <groupId>org.jboss.forge</groupId>
          <artifactId>ui</artifactId>
-         <scope>provided</scope>
          <classifier>forge-addon</classifier>
          <version>2.0.0-SNAPSHOT</version>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge</groupId>
-         <artifactId>ui-api</artifactId>
-         <scope>provided</scope>
+         <artifactId>convert</artifactId>
+         <classifier>forge-addon</classifier>
          <version>2.0.0-SNAPSHOT</version>
       </dependency>
-      <dependency>
+       <dependency>
          <groupId>org.jboss.forge</groupId>
          <artifactId>forge-test-harness</artifactId>
          <scope>test</scope>

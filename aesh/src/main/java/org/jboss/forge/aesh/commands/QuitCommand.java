@@ -12,7 +12,7 @@ import org.jboss.forge.ui.base.UICommandMetadataBase;
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  */
-public class QuitCommand extends ExitCommand
+public class QuitCommand extends BaseExitCommand
 {
    @Override
    public UICommandMetadata getMetadata()
