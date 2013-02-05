@@ -86,7 +86,7 @@ public class NewProjectCommandTest
          }
 
          @Override
-         public <T> UISelection<T> getCurrentSelection()
+         public <T> UISelection<T> getInitialSelection()
          {
             return null;
          }
@@ -109,7 +109,7 @@ public class NewProjectCommandTest
          }
 
          @Override
-         public <T> UISelection<T> getCurrentSelection()
+         public <T> UISelection<T> getInitialSelection()
          {
             return null;
          }

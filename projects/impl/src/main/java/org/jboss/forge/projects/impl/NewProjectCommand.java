@@ -60,7 +60,7 @@ public class NewProjectCommand implements UICommand
 
       targetLocation.setLabel("Project location");
 
-      UISelection<Resource<?>> currentSelection = context.getCurrentSelection();
+      UISelection<Resource<?>> currentSelection = context.getInitialSelection();
       if (currentSelection != null)
       {
          Resource<?> resource = currentSelection.get();

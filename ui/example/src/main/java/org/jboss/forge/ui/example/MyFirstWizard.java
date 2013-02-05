@@ -54,7 +54,7 @@ public class MyFirstWizard implements UICommand
    @Override
    public boolean isEnabled(UIContext context)
    {
-      UISelection<?> selection = context.getCurrentSelection();
+      UISelection<?> selection = context.getInitialSelection();
       return selection != null;
    }
 

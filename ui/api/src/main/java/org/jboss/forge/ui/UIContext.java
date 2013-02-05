@@ -11,5 +11,5 @@ public interface UIContext
 {
    UIBuilder getUIBuilder();
 
-   <T> UISelection<T> getCurrentSelection();
+   <SELECTIONTYPE> UISelection<SELECTIONTYPE> getInitialSelection();
 }

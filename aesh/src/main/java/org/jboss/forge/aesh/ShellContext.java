@@ -74,7 +74,7 @@ public class ShellContext implements UIValidationContext, UIContext, UIBuilder
    }
 
    @Override
-   public UISelection<Object> getCurrentSelection()
+   public UISelection<Object> getInitialSelection()
    {
       throw new IllegalStateException("not implemented");
    }
