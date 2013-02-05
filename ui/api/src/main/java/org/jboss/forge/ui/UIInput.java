@@ -7,8 +7,9 @@
 
 package org.jboss.forge.ui;
 
-
 public interface UIInput<VALUETYPE> extends UIInputComponent<UIInput<VALUETYPE>, VALUETYPE>
 {
+   UICompleter<VALUETYPE> getCompleter();
 
+   UIInput<VALUETYPE> setCompleter(UICompleter<VALUETYPE> completer);
 }

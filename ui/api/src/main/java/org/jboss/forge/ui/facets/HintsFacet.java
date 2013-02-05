@@ -8,7 +8,6 @@
 package org.jboss.forge.ui.facets;
 
 import org.jboss.forge.facets.Facet;
-import org.jboss.forge.ui.UIInput;
 import org.jboss.forge.ui.UIInputComponent;
 import org.jboss.forge.ui.hints.InputType;
 

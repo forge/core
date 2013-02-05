@@ -17,7 +17,6 @@ import org.jboss.forge.facets.Faceted;
 @Exported
 public interface UIInputComponent<IMPLTYPE, VALUETYPE> extends Faceted
 {
-   UICompleter<VALUETYPE> getCompleter();
 
    String getLabel();
 
@@ -30,8 +29,6 @@ public interface UIInputComponent<IMPLTYPE, VALUETYPE> extends Faceted
    boolean isEnabled();
 
    boolean isRequired();
-
-   IMPLTYPE setCompleter(UICompleter<VALUETYPE> completer);
 
    IMPLTYPE setDefaultValue(VALUETYPE value);
 

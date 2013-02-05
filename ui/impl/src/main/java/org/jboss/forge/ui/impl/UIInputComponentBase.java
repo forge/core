@@ -13,7 +13,6 @@ import javax.enterprise.inject.Vetoed;
 
 import org.jboss.forge.facets.BaseFaceted;
 import org.jboss.forge.facets.Facet;
-import org.jboss.forge.ui.UICompleter;
 import org.jboss.forge.ui.UIInput;
 import org.jboss.forge.ui.UIInputComponent;
 import org.jboss.forge.ui.facets.HintsFacet;
@@ -38,20 +37,12 @@ public abstract class UIInputComponentBase<IMPLTYPE extends UIInputComponent<IMP
    private VALUETYPE value;
    private Callable<Boolean> required;
    private Callable<VALUETYPE> defaultValue;
-   private UICompleter<VALUETYPE> completer;
 
    @SuppressWarnings("unchecked")
    public UIInputComponentBase(String name, Class<?> type)
    {
       this.name = name;
       this.type = (Class<VALUETYPE>) type;
-   }
-
-   @Override
-   @SuppressWarnings("unchecked")
-   public UICompleter<VALUETYPE> getCompleter()
-   {
-      return this.completer == null ? new NoopCompleter() : this.completer;
    }
 
    @Override
@@ -88,14 +79,6 @@ public abstract class UIInputComponentBase<IMPLTYPE extends UIInputComponent<IMP
    public boolean isRequired()
    {
       return Callables.call(required);
-   }
-
-   @SuppressWarnings("unchecked")
-   @Override
-   public IMPLTYPE setCompleter(UICompleter<VALUETYPE> completer)
-   {
-      this.completer = completer;
-      return (IMPLTYPE) this;
    }
 
    @SuppressWarnings("unchecked")
