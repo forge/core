@@ -24,11 +24,7 @@ import org.jboss.forge.resource.events.TempResourceCreated;
  */
 public abstract class FileResource<T extends FileResource<T>> extends AbstractResource<File>
 {
-   protected boolean scratch;
-
    protected File file;
-   protected File scratchFile;
-
    protected long lastModification;
 
    protected FileResource(final ResourceFactory factory, final File file)
@@ -61,14 +57,7 @@ public abstract class FileResource<T extends FileResource<T>> extends AbstractRe
    @Override
    public File getUnderlyingResourceObject()
    {
-      if (scratch)
-      {
-         return scratchFile;
-      }
-      else
-      {
-         return file;
-      }
+      return file;
    }
 
    @Override
