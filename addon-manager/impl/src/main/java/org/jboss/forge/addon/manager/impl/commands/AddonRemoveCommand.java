@@ -1,7 +1,7 @@
 package org.jboss.forge.addon.manager.impl.commands;
 
+import javax.enterprise.inject.Vetoed;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.Forge;
@@ -9,7 +9,7 @@ import org.jboss.forge.ui.Result;
 import org.jboss.forge.ui.Results;
 import org.jboss.forge.ui.UIContext;
 
-@Singleton
+@Vetoed
 public class AddonRemoveCommand extends AddonCommand
 {
 
