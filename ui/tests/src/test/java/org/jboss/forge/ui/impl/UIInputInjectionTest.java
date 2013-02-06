@@ -21,6 +21,7 @@ import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.ui.UICompleter;
 import org.jboss.forge.ui.UIInput;
+import org.jboss.forge.ui.UIInputComponent;
 import org.jboss.forge.ui.UIInputMany;
 import org.jboss.forge.ui.UISelectMany;
 import org.jboss.forge.ui.UISelectOne;
@@ -116,7 +117,7 @@ public class UIInputInjectionTest
       Assert.assertEquals(firstName, firstName.setCompleter(new UICompleter<String>()
       {
          @Override
-         public Iterable<String> getCompletionProposals(UIInput<String> input, String value)
+         public Iterable<String> getCompletionProposals(UIInputComponent<?, String> input, String value)
          {
             return Arrays.asList("one", "two", "three");
          }

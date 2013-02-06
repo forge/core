@@ -9,7 +9,7 @@ package org.jboss.forge.ui.impl;
 import java.util.Collections;
 
 import org.jboss.forge.ui.UICompleter;
-import org.jboss.forge.ui.UIInput;
+import org.jboss.forge.ui.UIInputComponent;
 
 /**
  * A {@link UICompleter} that always returns zero proposals.
@@ -20,7 +20,7 @@ import org.jboss.forge.ui.UIInput;
 public class NoopCompleter implements UICompleter
 {
    @Override
-   public Iterable getCompletionProposals(UIInput input, String value)
+   public Iterable getCompletionProposals(UIInputComponent input, String value)
    {
       return Collections.emptyList();
    }
