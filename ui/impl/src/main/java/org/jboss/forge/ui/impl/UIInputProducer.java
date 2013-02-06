@@ -16,6 +16,7 @@ import javax.inject.Inject;
 
 import org.jboss.forge.environment.Environment;
 import org.jboss.forge.ui.UIInput;
+import org.jboss.forge.ui.UIInputMany;
 import org.jboss.forge.ui.UISelectMany;
 import org.jboss.forge.ui.UISelectOne;
 import org.jboss.forge.ui.impl.facets.HintsFacetImpl;
@@ -95,6 +96,31 @@ public class UIInputProducer
          Type[] typeArguments = parameterizedType.getActualTypeArguments();
          Class<T> valueType = (Class<T>) typeArguments[0];
          UIInputImpl<T> result = new UIInputImpl<T>(name, valueType);
+         HintsFacetImpl hintsFacet = new HintsFacetImpl(result, environment);
+         result.install(hintsFacet);
+         return result;
+      }
+      else
+      {
+         throw new IllegalStateException("Cannot inject a generic instance of type " + UIInput.class.getName()
+                  + "<?,?> without specifying concrete generic types at injection point " + injectionPoint + ".");
+      }
+   }
+
+   @Produces
+   @SuppressWarnings({ "unchecked" })
+   public <T> UIInputMany<T> produceInputMany(InjectionPoint injectionPoint)
+   {
+      String name = injectionPoint.getMember().getName();
+      Type type = injectionPoint.getAnnotated().getBaseType();
+
+      if (type instanceof ParameterizedType)
+      {
+         ParameterizedType parameterizedType = (ParameterizedType) type;
+
+         Type[] typeArguments = parameterizedType.getActualTypeArguments();
+         Class<T> valueType = (Class<T>) typeArguments[0];
+         UIInputManyImpl<T> result = new UIInputManyImpl<T>(name, valueType);
          HintsFacetImpl hintsFacet = new HintsFacetImpl(result, environment);
          result.install(hintsFacet);
          return result;
