@@ -46,7 +46,7 @@ public class AeshAddonTest extends TestCase
                .create(ForgeArchive.class)
                .addPackages(true, ForgeShell.class.getPackage())
                .addAsLibraries(Maven.resolver().loadPomFromFile("pom.xml")
-                        .resolve("org.jboss.aesh:aesh:0.31").withTransitivity().asFile())
+                        .resolve("org.jboss.aesh:aesh:0.32").withTransitivity().asFile())
                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
                .addAsAddonDependencies(AddonDependency.create(AddonId.from("org.jboss.forge:ui", "2.0.0-SNAPSHOT")));
 
