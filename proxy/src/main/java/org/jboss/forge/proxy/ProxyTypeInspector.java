@@ -14,7 +14,16 @@ class ProxyTypeInspector
 
       Class<?> baseClass = origin;
 
-      while (Modifier.isFinal(baseClass.getModifiers()))
+      while (baseClass != null && Modifier.isFinal(baseClass.getModifiers()))
+      {
+         baseClass = baseClass.getSuperclass();
+      }
+
+      while (baseClass != null
+               && !baseClass.isInterface()
+               && baseClass.getSuperclass() != null
+               && !baseClass.getSuperclass().equals(Object.class)
+               && !isInstantiable(baseClass))
       {
          baseClass = baseClass.getSuperclass();
       }
@@ -49,11 +58,12 @@ class ProxyTypeInspector
       }
       catch (SecurityException e)
       {
+         return false;
       }
       catch (NoSuchMethodException e)
       {
+         return false;
       }
-      return false;
    }
 
 }

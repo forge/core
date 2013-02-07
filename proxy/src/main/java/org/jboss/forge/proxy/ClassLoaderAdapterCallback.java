@@ -23,31 +23,32 @@ public class ClassLoaderAdapterCallback implements MethodHandler
 {
    private static final ClassLoader JAVASSIST_LOADER = ProxyObject.class.getClassLoader();
 
-   private final ClassLoader fromLoader;
-   private final ClassLoader toLoader;
-   private final ClassLoader delegateLoader;
    private final Object delegate;
+
+   private final ClassLoader callingLoader;
+   private final ClassLoader delegateLoader;
 
    private final Object unwrappedDelegate;
    private final Class<?> unwrappedDelegateType;
+   private final ClassLoader unwrappedDelegateLoader;
 
-   public ClassLoaderAdapterCallback(ClassLoader fromLoader, ClassLoader toLoader, Object delegate)
+   public ClassLoaderAdapterCallback(ClassLoader callingLoader, ClassLoader delegateLoader, Object delegate)
    {
-      this.fromLoader = fromLoader;
-      this.toLoader = toLoader;
+      this.callingLoader = callingLoader;
+      this.delegateLoader = delegateLoader;
       this.delegate = delegate;
 
       unwrappedDelegate = Proxies.unwrap(delegate);
-      unwrappedDelegateType = Proxies.unwrapProxyTypes(unwrappedDelegate.getClass(), fromLoader, toLoader,
+      unwrappedDelegateType = Proxies.unwrapProxyTypes(unwrappedDelegate.getClass(), callingLoader, delegateLoader,
                unwrappedDelegate.getClass().getClassLoader());
-      delegateLoader = unwrappedDelegateType.getClassLoader();
+      unwrappedDelegateLoader = unwrappedDelegateType.getClassLoader();
    }
 
    @Override
    public Object invoke(final Object obj, final Method thisMethod, final Method proceed, final Object[] args)
             throws Throwable
    {
-      return ClassLoaders.executeIn(toLoader, new Callable<Object>()
+      return ClassLoaders.executeIn(delegateLoader, new Callable<Object>()
       {
          @Override
          public Object call() throws Exception
@@ -56,7 +57,7 @@ public class ClassLoaderAdapterCallback implements MethodHandler
             {
                try
                {
-                  if (thisMethod.getDeclaringClass().equals(fromLoader.loadClass(ForgeProxy.class.getName())))
+                  if (thisMethod.getDeclaringClass().equals(callingLoader.loadClass(ForgeProxy.class.getName())))
                   {
                      return delegate;
                   }
@@ -79,7 +80,7 @@ public class ClassLoaderAdapterCallback implements MethodHandler
                throw new ContainerException(
                         "Could not invoke proxy method [" + delegate.getClass().getName() + "."
                                  + thisMethod.getName() + "()] in ClassLoader ["
-                                 + toLoader + "]", e);
+                                 + delegateLoader + "]", e);
             }
          }
 
@@ -138,27 +139,27 @@ public class ClassLoaderAdapterCallback implements MethodHandler
          Object unwrappedResult = Proxies.unwrap(result);
          Class<?> unwrappedResultType = unwrappedResult.getClass();
 
-         ClassLoader resultToLoader = toLoader;
-         if (!ClassLoaders.containsClass(toLoader, unwrappedResultType))
+         ClassLoader resultInstanceLoader = delegateLoader;
+         if (!ClassLoaders.containsClass(delegateLoader, unwrappedResultType))
          {
-            resultToLoader = Proxies.unwrapProxyTypes(unwrappedResultType, fromLoader, toLoader,
+            resultInstanceLoader = Proxies.unwrapProxyTypes(unwrappedResultType, callingLoader, delegateLoader,
                      unwrappedResultType.getClassLoader()).getClassLoader();
          }
 
          Class<?> returnType = method.getReturnType();
          if (returnTypeNeedsEnhancement(returnType, result, unwrappedResultType))
          {
-            Class<?>[] resultHierarchy = ProxyTypeInspector.getCompatibleClassHierarchy(fromLoader,
-                     Proxies.unwrapProxyTypes(result.getClass(), fromLoader, toLoader, resultToLoader));
+            Class<?>[] resultHierarchy = ProxyTypeInspector.getCompatibleClassHierarchy(callingLoader,
+                     Proxies.unwrapProxyTypes(result.getClass(), callingLoader, delegateLoader, resultInstanceLoader));
 
-            Class<?>[] returnTypeHierarchy = ProxyTypeInspector.getCompatibleClassHierarchy(fromLoader,
-                     Proxies.unwrapProxyTypes(returnType, fromLoader, toLoader, resultToLoader));
+            Class<?>[] returnTypeHierarchy = ProxyTypeInspector.getCompatibleClassHierarchy(callingLoader,
+                     Proxies.unwrapProxyTypes(returnType, callingLoader, delegateLoader, resultInstanceLoader));
 
             if (!Modifier.isFinal(returnType.getModifiers()))
             {
                if (Object.class.equals(returnType) && !Object.class.equals(result))
                {
-                  result = enhance(fromLoader, resultToLoader, method, result, resultHierarchy);
+                  result = enhance(callingLoader, resultInstanceLoader, method, result, resultHierarchy);
                }
                else
                {
@@ -166,13 +167,13 @@ public class ClassLoaderAdapterCallback implements MethodHandler
                   {
                      returnTypeHierarchy = new Class[] { returnType };
                   }
-                  result = enhance(fromLoader, resultToLoader, method, result,
+                  result = enhance(callingLoader, resultInstanceLoader, method, result,
                            mergeHierarchies(returnTypeHierarchy, resultHierarchy));
                }
             }
             else
             {
-               result = enhance(fromLoader, resultToLoader, method, returnTypeHierarchy);
+               result = enhance(callingLoader, resultInstanceLoader, method, returnTypeHierarchy);
             }
          }
       }
@@ -214,10 +215,10 @@ public class ClassLoaderAdapterCallback implements MethodHandler
       }
 
       if (unwrappedReturnValueType.getClassLoader() != null
-               && !unwrappedReturnValueType.getClassLoader().equals(fromLoader))
+               && !unwrappedReturnValueType.getClassLoader().equals(callingLoader))
       {
-         if (ClassLoaders.containsClass(fromLoader, unwrappedReturnValueType)
-                  && ClassLoaders.containsClass(fromLoader, methodReturnType))
+         if (ClassLoaders.containsClass(callingLoader, unwrappedReturnValueType)
+                  && ClassLoaders.containsClass(callingLoader, methodReturnType))
          {
             return false;
          }
@@ -238,23 +239,32 @@ public class ClassLoaderAdapterCallback implements MethodHandler
          else
          {
             Object unwrappedValue = Proxies.unwrap(parameterValue);
-            Class<?> unwrappedValueType = Proxies.unwrapProxyTypes(unwrappedValue.getClass(), fromLoader, toLoader,
-                     unwrappedValue.getClass().getClassLoader());
+            Class<?> unwrappedValueType = Proxies.unwrapProxyTypes(unwrappedValue.getClass(), delegateMethod
+                     .getDeclaringClass().getClassLoader(), callingLoader,
+                     delegateLoader, unwrappedValue.getClass()
+                              .getClassLoader());
 
-            ClassLoader valueFromLoader = fromLoader;
-            if (!ClassLoaders.containsClass(fromLoader, unwrappedValueType))
+            ClassLoader valueDelegateLoader = delegateLoader;
+            ClassLoader methodLoader = delegateMethod.getDeclaringClass().getClassLoader();
+            if (methodLoader != null && ClassLoaders.containsClass(methodLoader, unwrappedValueType))
             {
-               valueFromLoader = unwrappedValueType.getClassLoader();
+               valueDelegateLoader = methodLoader;
             }
 
-            // If it is a class, use the toLoader loaded version
+            ClassLoader valueCallingLoader = callingLoader;
+            if (!ClassLoaders.containsClass(callingLoader, unwrappedValueType))
+            {
+               valueCallingLoader = unwrappedValueType.getClassLoader();
+            }
+
+            // If it is a class, use the delegateLoader loaded version
             if (parameterValue instanceof Class<?>)
             {
                Class<?> paramClassValue = (Class<?>) parameterValue;
                Class<?> loadedClass;
                try
                {
-                  loadedClass = toLoader.loadClass(paramClassValue.getName());
+                  loadedClass = delegateLoader.loadClass(paramClassValue.getName());
                }
                catch (ClassNotFoundException e)
                {
@@ -262,7 +272,7 @@ public class ClassLoaderAdapterCallback implements MethodHandler
                   // Trying with delegate ClassLoader;
                   try
                   {
-                     loadedClass = delegateLoader.loadClass(paramClassValue.getName());
+                     loadedClass = unwrappedDelegateLoader.loadClass(paramClassValue.getName());
                   }
                   catch (ClassNotFoundException cnfe)
                   {
@@ -281,8 +291,12 @@ public class ClassLoaderAdapterCallback implements MethodHandler
                final Class<?> parameterType = parameterValue.getClass();
                if (!delegateParameterType.isAssignableFrom(parameterType))
                {
-                  Object delegateParameterValue = enhance(toLoader, valueFromLoader, parameterValue,
-                           delegateParameterType);
+                  Class<?>[] compatibleClassHierarchy = ProxyTypeInspector.getCompatibleClassHierarchy(
+                           valueDelegateLoader, unwrappedValueType);
+                  if (compatibleClassHierarchy.length == 0)
+                     compatibleClassHierarchy = new Class[] { delegateParameterType };
+                  Object delegateParameterValue = enhance(valueDelegateLoader, valueCallingLoader, parameterValue,
+                           compatibleClassHierarchy);
                   parameterValues.add(delegateParameterValue);
                }
                else
@@ -308,24 +322,28 @@ public class ClassLoaderAdapterCallback implements MethodHandler
          }
          else
          {
-            Class<?> delegateParameterType = toLoader.loadClass(parameterType.getName());
+            Class<?> delegateParameterType = delegateLoader.loadClass(parameterType.getName());
             parameterTypes.add(delegateParameterType);
          }
       }
       return parameterTypes;
    }
 
-   public static <T> T enhance(final ClassLoader fromLoader, final ClassLoader toLoader, final Object delegate,
+   public static <T> T enhance(final ClassLoader callingLoader, final ClassLoader delegateLoader,
+            final Object delegate,
             final Class<?>... types)
    {
-      return enhance(fromLoader, toLoader, null, delegate, types);
+      return enhance(callingLoader, delegateLoader, null, delegate, types);
    }
 
    @SuppressWarnings("unchecked")
-   private static <T> T enhance(final ClassLoader fromLoader, final ClassLoader toLoader,
+   private static <T> T enhance(final ClassLoader callingLoader, final ClassLoader delegateLoader,
             final Method sourceMethod,
             final Object delegate, final Class<?>... types)
    {
+      // TODO consider removing option to set type hierarchy here. Instead it might just be
+      // best to use type inspection of the given callingLoader ClassLoader to figure out the proper type.
+      final Class<?> delegateType = delegate.getClass();
 
       return ClassLoaders.executeIn(JAVASSIST_LOADER, new Callable<T>()
       {
@@ -335,11 +353,11 @@ public class ClassLoaderAdapterCallback implements MethodHandler
             Class<?>[] hierarchy = null;
             if (types == null || types.length == 0)
             {
-               hierarchy = ProxyTypeInspector.getCompatibleClassHierarchy(toLoader,
-                        Proxies.unwrapProxyTypes(delegate.getClass(), fromLoader, toLoader));
+               hierarchy = ProxyTypeInspector.getCompatibleClassHierarchy(callingLoader,
+                        Proxies.unwrapProxyTypes(delegateType, callingLoader, delegateLoader));
                if (hierarchy == null || hierarchy.length == 0)
                   throw new IllegalArgumentException("Must specify at least one non-final type to enhance for Object: "
-                           + delegate);
+                           + delegate + " of type " + delegate.getClass());
             }
             else
                hierarchy = Arrays.copy(types, new Class<?>[types.length]);
@@ -365,7 +383,7 @@ public class ClassLoaderAdapterCallback implements MethodHandler
             Class<?> first = hierarchy[0];
             if (!first.isInterface())
             {
-               f.setSuperclass(Proxies.unwrapProxyTypes(first, fromLoader, toLoader));
+               f.setSuperclass(Proxies.unwrapProxyTypes(first, callingLoader, delegateLoader));
                hierarchy = Arrays.shiftLeft(hierarchy, new Class<?>[hierarchy.length - 1]);
             }
 
@@ -400,7 +418,7 @@ public class ClassLoaderAdapterCallback implements MethodHandler
             try
             {
                ((ProxyObject) enhancedResult)
-                        .setHandler(new ClassLoaderAdapterCallback(fromLoader, toLoader, delegate));
+                        .setHandler(new ClassLoaderAdapterCallback(callingLoader, delegateLoader, delegate));
             }
             catch (ClassCastException e)
             {
@@ -417,7 +435,7 @@ public class ClassLoaderAdapterCallback implements MethodHandler
                      Class<?> typeArgument = javassistLoader.loadClass(MethodHandler.class.getName());
                      Method setHandlerMethod = javassistType.getMethod("setHandler", typeArgument);
                      setHandlerMethod.invoke(enhancedResult,
-                              callbackConstructor.newInstance(fromLoader, toLoader, delegate));
+                              callbackConstructor.newInstance(callingLoader, delegateLoader, delegate));
                   }
                }
             }

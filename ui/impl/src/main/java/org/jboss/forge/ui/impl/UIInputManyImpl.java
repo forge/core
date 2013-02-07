@@ -22,8 +22,7 @@ import org.jboss.forge.ui.UIInputMany;
  */
 @Vetoed
 public class UIInputManyImpl<VALUETYPE> extends UIInputComponentBase<UIInputMany<VALUETYPE>, Iterable<VALUETYPE>>
-         implements
-         UIInputMany<VALUETYPE>
+         implements UIInputMany<VALUETYPE>
 {
    public UIInputManyImpl(String name, Class<?> type)
    {
