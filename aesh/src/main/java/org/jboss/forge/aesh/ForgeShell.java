@@ -28,7 +28,9 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
@@ -77,6 +79,43 @@ public class ForgeShell
        }
    }
 
+    //not very optimal atm.
+    private void verifyLoadedCommands() throws Exception {
+        //only bother to check whats been added/removed if it doesnt
+        // have the same size
+        if(registry.getExportedInstances(UICommand.class).size() !=
+                commands.size()) {
+            for(ExportedInstance<UICommand> instance : registry.getExportedInstances(UICommand.class)) {
+                if(!doCommandExist(instance.get().getMetadata().getName())) {
+                    addCommand(new ShellCommand(instance.get(), this));
+                }
+            }
+            Iterator<ShellCommand> iterable = commands.iterator();
+            while(iterable.hasNext()) {
+                if(!isCommandFound(iterable.next().getCommand().getMetadata().getName(),
+                        registry.getExportedInstances(UICommand.class))) {
+                    iterable.remove();
+                }
+            }
+        }
+    }
+
+    private boolean doCommandExist(String name) {
+        for(ShellCommand command : commands) {
+            if(command.getCommand().getMetadata().getName().equals(name))
+                return true;
+        }
+        return false;
+    }
+
+    private boolean isCommandFound(String name, Set<ExportedInstance<UICommand>> uiCommands) {
+        for(ExportedInstance<UICommand> command : uiCommands) {
+           if(command.get().getMetadata().getName().equals(name))
+               return true;
+        }
+        return false;
+    }
+
    public void startShell() throws Exception
    {
       output = null;
@@ -84,6 +123,7 @@ public class ForgeShell
       {
          CommandLine cl = null;
           if(output.getBuffer() != null && !output.getBuffer().trim().isEmpty()) {
+              verifyLoadedCommands();
               for (ShellCommand command : commands)
               {
                   try
@@ -165,8 +205,8 @@ public class ForgeShell
                 CharacterType.BOLD));
         chars.add(new TerminalCharacter(']', Color.DEFAULT_BG, Color.BLUE_TEXT,
                 CharacterType.PLAIN));
-        chars.add(new TerminalCharacter('$', Color.DEFAULT_BG, Color.WHITE_TEXT));
-        chars.add(new TerminalCharacter(' ', Color.DEFAULT_BG, Color.WHITE_TEXT));
+        chars.add(new TerminalCharacter('$', Color.DEFAULT_BG, Color.DEFAULT_TEXT));
+        chars.add(new TerminalCharacter(' ', Color.DEFAULT_BG, Color.DEFAULT_TEXT));
 
         return new Prompt(chars);
     }

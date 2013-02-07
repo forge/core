@@ -53,6 +53,10 @@ public class ShellCommand implements Completion {
         return aeshell;
     }
 
+    public UICommand getCommand() {
+        return command;
+    }
+
     public void generateParser(UICommand command) {
         parser = CommandLineUtil.generateParser(command, context);
     }

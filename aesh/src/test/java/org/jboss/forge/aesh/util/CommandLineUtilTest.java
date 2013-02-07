@@ -6,8 +6,6 @@
  */
 package org.jboss.forge.aesh.util;
 
-import junit.framework.TestCase;
-
 import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.cl.CommandLineParser;
 import org.jboss.aesh.cl.OptionBuilder;
@@ -22,19 +20,22 @@ import org.jboss.forge.ui.UIValidationContext;
 import org.jboss.forge.ui.base.UICommandMetadataBase;
 import org.jboss.forge.ui.impl.UIInputImpl;
 import org.junit.Ignore;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  */
 @Ignore
-public class CommandLineUtilTest extends TestCase
+public class CommandLineUtilTest
 {
 
    public CommandLineUtilTest(String name)
    {
-      super(name);
    }
 
+    @Test
    public void testGenerateParser() throws Exception
    {
       ShellContext context = new ShellContext(null);
@@ -55,6 +56,7 @@ public class CommandLineUtilTest extends TestCase
 
    }
 
+    @Test
    public void testPopulateUIInputs()
    {
       UIInput<String> input1 = new UIInputImpl<String>("str", String.class);
@@ -92,6 +94,7 @@ public class CommandLineUtilTest extends TestCase
       assertNull(input2.getValue());
    }
 
+    @Test
    public void testGenerateAndPopulate() throws Exception
    {
       ShellContext context = new ShellContext(null);
