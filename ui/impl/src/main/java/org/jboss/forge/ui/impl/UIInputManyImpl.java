@@ -7,11 +7,14 @@
 
 package org.jboss.forge.ui.impl;
 
+import java.util.concurrent.Callable;
+
 import javax.enterprise.inject.Vetoed;
 
 import org.jboss.forge.ui.UICompleter;
 import org.jboss.forge.ui.UIInput;
 import org.jboss.forge.ui.UIInputMany;
+import org.jboss.forge.ui.util.Callables;
 
 /**
  * Implementation of a {@link UIInput} object
@@ -21,10 +24,13 @@ import org.jboss.forge.ui.UIInputMany;
  * @param <VALUETYPE>
  */
 @Vetoed
-public class UIInputManyImpl<VALUETYPE> extends UIInputComponentBase<UIInputMany<VALUETYPE>, Iterable<VALUETYPE>>
+public class UIInputManyImpl<VALUETYPE> extends UIInputComponentBase<UIInputMany<VALUETYPE>, VALUETYPE>
          implements UIInputMany<VALUETYPE>
 {
-   public UIInputManyImpl(String name, Class<?> type)
+   private Iterable<VALUETYPE> value;
+   private Callable<Iterable<VALUETYPE>> defaultValue;
+
+   public UIInputManyImpl(String name, Class<VALUETYPE> type)
    {
       super(name, type);
    }
@@ -44,4 +50,32 @@ public class UIInputManyImpl<VALUETYPE> extends UIInputComponentBase<UIInputMany
       this.completer = completer;
       return this;
    }
+
+   @Override
+   public UIInputMany<VALUETYPE> setValue(Iterable<VALUETYPE> value)
+   {
+      this.value = value;
+      return this;
+   }
+
+   @Override
+   public UIInputMany<VALUETYPE> setDefaultValue(Callable<Iterable<VALUETYPE>> callback)
+   {
+      this.defaultValue = callback;
+      return this;
+   }
+
+   @Override
+   public UIInputMany<VALUETYPE> setDefaultValue(Iterable<VALUETYPE> value)
+   {
+      this.defaultValue = Callables.returning(value);
+      return this;
+   }
+
+   @Override
+   public Iterable<VALUETYPE> getValue()
+   {
+      return (value == null) ? Callables.call(defaultValue) : value;
+   }
+
 }

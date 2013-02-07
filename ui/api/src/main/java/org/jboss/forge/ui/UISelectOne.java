@@ -6,9 +6,19 @@
  */
 package org.jboss.forge.ui;
 
+import java.util.concurrent.Callable;
+
 public interface UISelectOne<VALUETYPE> extends UIInputComponent<UISelectOne<VALUETYPE>, VALUETYPE>
 {
    Iterable<VALUETYPE> getValueChoices();
 
    UISelectOne<VALUETYPE> setValueChoices(Iterable<VALUETYPE> values);
+
+   VALUETYPE getValue();
+
+   UISelectOne<VALUETYPE> setDefaultValue(VALUETYPE value);
+
+   UISelectOne<VALUETYPE> setDefaultValue(Callable<VALUETYPE> callback);
+
+   UISelectOne<VALUETYPE> setValue(VALUETYPE value);
 }

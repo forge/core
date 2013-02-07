@@ -10,7 +10,7 @@ package org.jboss.forge.ui;
  * @param VALUETYPE The value type to be provided by completion.
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface UICompleter<T>
+public interface UICompleter<VALUETYPE>
 {
    /**
     * Get completion proposals for the provided {@link UIInput} and un-converted partial {@link String} value.
@@ -19,5 +19,5 @@ public interface UICompleter<T>
     * @param value The user input value requiring completion, or null, if no value yet exists. These values will undergo
     *           conversion to fit the type required by the corresponding {@link UIInput}.
     */
-   Iterable<String> getCompletionProposals(UIInputComponent<?, T> input, String value);
+   Iterable<String> getCompletionProposals(UIInputComponent<?, VALUETYPE> input, String value);
 }

@@ -7,9 +7,19 @@
 
 package org.jboss.forge.ui;
 
-public interface UIInputMany<VALUETYPE> extends UIInputComponent<UIInputMany<VALUETYPE>, Iterable<VALUETYPE>>
+import java.util.concurrent.Callable;
+
+public interface UIInputMany<VALUETYPE> extends UIInputComponent<UIInputMany<VALUETYPE>, VALUETYPE>
 {
    UICompleter<VALUETYPE> getCompleter();
 
    UIInputMany<VALUETYPE> setCompleter(UICompleter<VALUETYPE> completer);
+
+   Iterable<VALUETYPE> getValue();
+
+   UIInputMany<VALUETYPE> setDefaultValue(Iterable<VALUETYPE> value);
+
+   UIInputMany<VALUETYPE> setDefaultValue(Callable<Iterable<VALUETYPE>> callback);
+
+   UIInputMany<VALUETYPE> setValue(Iterable<VALUETYPE> value);
 }

@@ -20,7 +20,7 @@ import org.jboss.forge.ui.UIInputComponent;
 public class NoopCompleter implements UICompleter
 {
    @Override
-   public Iterable getCompletionProposals(UIInputComponent input, String value)
+   public Iterable<String> getCompletionProposals(UIInputComponent input, String value)
    {
       return Collections.emptyList();
    }

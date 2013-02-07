@@ -17,22 +17,15 @@ import org.jboss.forge.facets.Faceted;
 @Exported
 public interface UIInputComponent<IMPLTYPE, VALUETYPE> extends Faceted
 {
-
    String getLabel();
 
    String getName();
 
    Class<VALUETYPE> getValueType();
 
-   VALUETYPE getValue();
-
    boolean isEnabled();
 
    boolean isRequired();
-
-   IMPLTYPE setDefaultValue(VALUETYPE value);
-
-   IMPLTYPE setDefaultValue(Callable<VALUETYPE> callback);
 
    IMPLTYPE setEnabled(boolean b);
 
@@ -43,6 +36,4 @@ public interface UIInputComponent<IMPLTYPE, VALUETYPE> extends Faceted
    IMPLTYPE setRequired(boolean required);
 
    IMPLTYPE setRequired(Callable<Boolean> required);
-
-   IMPLTYPE setValue(VALUETYPE value);
 }

@@ -6,32 +6,63 @@
  */
 package org.jboss.forge.ui.impl;
 
+import java.util.concurrent.Callable;
+
 import org.jboss.forge.ui.UISelectMany;
+import org.jboss.forge.ui.util.Callables;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class UISelectManyImpl<T> extends UIInputComponentBase<UISelectMany<T>, Iterable<T>> implements
-         UISelectMany<T>
+public class UISelectManyImpl<VALUETYPE> extends UIInputComponentBase<UISelectMany<VALUETYPE>, VALUETYPE> implements
+         UISelectMany<VALUETYPE>
 {
-   private Iterable<T> choices;
+   private Iterable<VALUETYPE> choices;
+   private Iterable<VALUETYPE> value;
+   private Callable<Iterable<VALUETYPE>> defaultValue;
 
-   public UISelectManyImpl(String name, Class<T> type)
+   public UISelectManyImpl(String name, Class<VALUETYPE> type)
    {
       super(name, type);
    }
 
    @Override
-   public Iterable<T> getValueChoices()
+   public Iterable<VALUETYPE> getValueChoices()
    {
       return choices;
    }
 
    @Override
-   public UISelectMany<T> setValueChoices(Iterable<T> choices)
+   public UISelectMany<VALUETYPE> setValueChoices(Iterable<VALUETYPE> choices)
    {
       this.choices = choices;
       return this;
    }
 
+   @Override
+   public UISelectMany<VALUETYPE> setValue(Iterable<VALUETYPE> value)
+   {
+      this.value = value;
+      return this;
+   }
+
+   @Override
+   public UISelectMany<VALUETYPE> setDefaultValue(Callable<Iterable<VALUETYPE>> callback)
+   {
+      this.defaultValue = callback;
+      return this;
+   }
+
+   @Override
+   public UISelectMany<VALUETYPE> setDefaultValue(Iterable<VALUETYPE> value)
+   {
+      this.defaultValue = Callables.returning(value);
+      return this;
+   }
+
+   @Override
+   public Iterable<VALUETYPE> getValue()
+   {
+      return (value == null) ? Callables.call(defaultValue) : value;
+   }
 }

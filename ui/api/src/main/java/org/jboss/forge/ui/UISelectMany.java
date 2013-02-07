@@ -6,10 +6,19 @@
  */
 package org.jboss.forge.ui;
 
+import java.util.concurrent.Callable;
 
-public interface UISelectMany<VALUETYPE> extends UIInputComponent<UISelectMany<VALUETYPE>, Iterable<VALUETYPE>>
+public interface UISelectMany<VALUETYPE> extends UIInputComponent<UISelectMany<VALUETYPE>, VALUETYPE>
 {
    Iterable<VALUETYPE> getValueChoices();
 
    UISelectMany<VALUETYPE> setValueChoices(Iterable<VALUETYPE> values);
+
+   Iterable<VALUETYPE> getValue();
+
+   UISelectMany<VALUETYPE> setDefaultValue(Iterable<VALUETYPE> value);
+
+   UISelectMany<VALUETYPE> setDefaultValue(Callable<Iterable<VALUETYPE>> callback);
+
+   UISelectMany<VALUETYPE> setValue(Iterable<VALUETYPE> value);
 }

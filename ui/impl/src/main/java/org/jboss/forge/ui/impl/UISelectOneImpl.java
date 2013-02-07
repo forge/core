@@ -6,30 +6,63 @@
  */
 package org.jboss.forge.ui.impl;
 
+import java.util.concurrent.Callable;
+
 import org.jboss.forge.ui.UISelectOne;
+import org.jboss.forge.ui.util.Callables;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class UISelectOneImpl<T> extends UIInputComponentBase<UISelectOne<T>, T> implements UISelectOne<T>
+public class UISelectOneImpl<VALUETYPE> extends UIInputComponentBase<UISelectOne<VALUETYPE>, VALUETYPE> implements
+         UISelectOne<VALUETYPE>
 {
-   private Iterable<T> choices;
+   private Iterable<VALUETYPE> choices;
+   private VALUETYPE value;
+   private Callable<VALUETYPE> defaultValue;
 
-   public UISelectOneImpl(String name, Class<T> type)
+   public UISelectOneImpl(String name, Class<VALUETYPE> type)
    {
       super(name, type);
    }
 
    @Override
-   public Iterable<T> getValueChoices()
+   public Iterable<VALUETYPE> getValueChoices()
    {
       return choices;
    }
 
    @Override
-   public UISelectOne<T> setValueChoices(Iterable<T> values)
+   public UISelectOne<VALUETYPE> setValueChoices(Iterable<VALUETYPE> values)
    {
       return this;
+   }
+
+   @Override
+   public UISelectOne<VALUETYPE> setValue(VALUETYPE value)
+   {
+      this.value = value;
+      return this;
+   }
+
+   @Override
+   public UISelectOne<VALUETYPE> setDefaultValue(Callable<VALUETYPE> callback)
+   {
+      this.defaultValue = callback;
+      return this;
+   }
+
+   @Override
+   public UISelectOne<VALUETYPE> setDefaultValue(VALUETYPE value)
+   {
+      this.defaultValue = Callables.returning(value);
+      return this;
+   }
+
+   @Override
+   public VALUETYPE getValue()
+   {
+      return (value == null) ? Callables.call(defaultValue) : value;
    }
 
 }

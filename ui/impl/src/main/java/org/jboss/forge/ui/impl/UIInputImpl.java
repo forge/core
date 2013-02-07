@@ -7,10 +7,13 @@
 
 package org.jboss.forge.ui.impl;
 
+import java.util.concurrent.Callable;
+
 import javax.enterprise.inject.Vetoed;
 
 import org.jboss.forge.ui.UICompleter;
 import org.jboss.forge.ui.UIInput;
+import org.jboss.forge.ui.util.Callables;
 
 /**
  * Implementation of a {@link UIInput} object
@@ -23,7 +26,10 @@ import org.jboss.forge.ui.UIInput;
 public class UIInputImpl<VALUETYPE> extends UIInputComponentBase<UIInput<VALUETYPE>, VALUETYPE> implements
          UIInput<VALUETYPE>
 {
-   public UIInputImpl(String name, Class<?> type)
+   private VALUETYPE value;
+   private Callable<VALUETYPE> defaultValue;
+
+   public UIInputImpl(String name, Class<VALUETYPE> type)
    {
       super(name, type);
    }
@@ -42,5 +48,32 @@ public class UIInputImpl<VALUETYPE> extends UIInputComponentBase<UIInput<VALUETY
    {
       this.completer = completer;
       return this;
+   }
+
+   @Override
+   public UIInput<VALUETYPE> setValue(VALUETYPE value)
+   {
+      this.value = value;
+      return this;
+   }
+
+   @Override
+   public UIInput<VALUETYPE> setDefaultValue(Callable<VALUETYPE> callback)
+   {
+      this.defaultValue = callback;
+      return this;
+   }
+
+   @Override
+   public UIInput<VALUETYPE> setDefaultValue(VALUETYPE value)
+   {
+      this.defaultValue = Callables.returning(value);
+      return this;
+   }
+
+   @Override
+   public VALUETYPE getValue()
+   {
+      return (value == null) ? Callables.call(defaultValue) : value;
    }
 }

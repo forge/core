@@ -30,19 +30,17 @@ public abstract class UIInputComponentBase<IMPLTYPE extends UIInputComponent<IMP
          implements UIInputComponent<IMPLTYPE, VALUETYPE>
 {
    private final String name;
-   private final Class<VALUETYPE> type;
 
    private String label;
    private Callable<Boolean> enabled;
-   private VALUETYPE value;
    private Callable<Boolean> required;
-   private Callable<VALUETYPE> defaultValue;
 
-   @SuppressWarnings("unchecked")
-   public UIInputComponentBase(String name, Class<?> type)
+   private Class<VALUETYPE> type;
+
+   public UIInputComponentBase(String name, Class<VALUETYPE> type)
    {
       this.name = name;
-      this.type = (Class<VALUETYPE>) type;
+      this.type = type;
    }
 
    @Override
@@ -55,12 +53,6 @@ public abstract class UIInputComponentBase<IMPLTYPE extends UIInputComponent<IMP
    public String getName()
    {
       return name;
-   }
-
-   @Override
-   public VALUETYPE getValue()
-   {
-      return (value == null) ? Callables.call(defaultValue) : value;
    }
 
    @Override
@@ -79,22 +71,6 @@ public abstract class UIInputComponentBase<IMPLTYPE extends UIInputComponent<IMP
    public boolean isRequired()
    {
       return Callables.call(required);
-   }
-
-   @SuppressWarnings("unchecked")
-   @Override
-   public IMPLTYPE setDefaultValue(Callable<VALUETYPE> callback)
-   {
-      this.defaultValue = callback;
-      return (IMPLTYPE) this;
-   }
-
-   @SuppressWarnings("unchecked")
-   @Override
-   public IMPLTYPE setDefaultValue(VALUETYPE value)
-   {
-      this.defaultValue = Callables.returning(value);
-      return (IMPLTYPE) this;
    }
 
    @SuppressWarnings("unchecked")
@@ -134,14 +110,6 @@ public abstract class UIInputComponentBase<IMPLTYPE extends UIInputComponent<IMP
    public IMPLTYPE setRequired(Callable<Boolean> required)
    {
       this.required = required;
-      return (IMPLTYPE) this;
-   }
-
-   @SuppressWarnings("unchecked")
-   @Override
-   public IMPLTYPE setValue(VALUETYPE value)
-   {
-      this.value = value;
       return (IMPLTYPE) this;
    }
 
