@@ -400,7 +400,23 @@ public class ClassLoaderAdapterCallback implements MethodHandler
                f.setInterfaces(hierarchy);
 
             f.setFilter(filter);
-            Class<?> c = f.createClass();
+            Class<?> c = null;
+            try
+            {
+               c = f.createClass();
+            }
+            catch (Exception e)
+            {
+               try
+               {
+                  // FIXME Why is this failing to proxy the type
+                  c = f.createClass();
+               }
+               catch (Exception e1)
+               {
+                  throw e;
+               }
+            }
 
             try
             {
