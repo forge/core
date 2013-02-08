@@ -9,6 +9,7 @@ package org.jboss.forge.aesh.commands;
 import javax.inject.Inject;
 
 import org.jboss.forge.aesh.ForgeShell;
+import org.jboss.forge.aesh.ShellContext;
 import org.jboss.forge.ui.Result;
 import org.jboss.forge.ui.Results;
 import org.jboss.forge.ui.UICommand;
@@ -35,7 +36,7 @@ public abstract class BaseExitCommand implements UICommand
    @Override
    public boolean isEnabled(UIContext context)
    {
-      return true;
+      return context instanceof ShellContext;
    }
 
    @Override

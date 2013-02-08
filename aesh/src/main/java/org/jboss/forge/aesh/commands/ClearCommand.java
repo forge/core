@@ -6,7 +6,10 @@
  */
 package org.jboss.forge.aesh.commands;
 
+import javax.inject.Inject;
+
 import org.jboss.aesh.console.Console;
+import org.jboss.forge.aesh.ShellContext;
 import org.jboss.forge.ui.Result;
 import org.jboss.forge.ui.Results;
 import org.jboss.forge.ui.UICommand;
@@ -15,8 +18,6 @@ import org.jboss.forge.ui.UIContext;
 import org.jboss.forge.ui.UIInput;
 import org.jboss.forge.ui.UIValidationContext;
 import org.jboss.forge.ui.base.UICommandMetadataBase;
-
-import javax.inject.Inject;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
@@ -43,7 +44,7 @@ public class ClearCommand implements UICommand
    @Override
    public boolean isEnabled(UIContext context)
    {
-      return true;
+      return context instanceof ShellContext;
    }
 
    @Override
