@@ -1,13 +1,13 @@
 package org.jboss.forge.container;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.enterprise.inject.spi.BeanManager;
 
 import org.jboss.forge.container.event.Perform;
-import org.jboss.forge.container.events.InitializeServices;
 import org.jboss.forge.container.impl.AddonImpl;
 import org.jboss.forge.container.impl.AddonRegistryImpl;
 import org.jboss.forge.container.impl.AddonRegistryProducer;
@@ -26,6 +26,7 @@ import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.container.util.Assert;
 import org.jboss.forge.container.util.BeanManagerUtils;
 import org.jboss.forge.container.util.ClassLoaders;
+import org.jboss.forge.container.util.Threads;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 import org.jboss.weld.resources.spi.ResourceLoader;
@@ -39,8 +40,8 @@ public final class AddonRunnable implements Runnable
 
    private Forge forge;
    private AddonImpl addon;
-
    private AddonContainerStartup container;
+
    private Callable<Object> shutdownCallable = new Callable<Object>()
    {
       @Override
@@ -85,6 +86,8 @@ public final class AddonRunnable implements Runnable
 
    public class AddonContainerStartup implements Callable<Callable<Object>>
    {
+      private Future<Object> operation;
+
       @Override
       public Callable<Object> call() throws Exception
       {
@@ -120,7 +123,7 @@ public final class AddonRunnable implements Runnable
                WeldContainer container;
                container = weld.initialize();
 
-               BeanManager manager = container.getBeanManager();
+               final BeanManager manager = container.getBeanManager();
                Assert.notNull(manager, "BeanManager was null");
 
                final ContainerControlImpl control = (ContainerControlImpl) BeanManagerUtils.getContextualInstance(
@@ -151,8 +154,6 @@ public final class AddonRunnable implements Runnable
 
                ((AddonRegistryImpl) forge.getAddonRegistry()).clearWaiting(addon);
 
-               manager.fireEvent(new InitializeServices());
-
                logger.info("Services loaded from addon [" + addon.getId() + "] -  " + registry.getServices());
 
                Callable<Object> listener = new Callable<Object>()
@@ -164,6 +165,7 @@ public final class AddonRunnable implements Runnable
                      control.removeShutdownListener(this);
                      control.stop();
                      weld.shutdown();
+                     operation.cancel(true);
                      addon.setStatus(Status.STOPPED);
                      return null;
                   }
@@ -172,8 +174,17 @@ public final class AddonRunnable implements Runnable
                control.registerShutdownListener(listener);
                control.start();
 
+               operation = Threads.runAsync(new Callable<Object>()
+               {
+                  @Override
+                  public Object call() throws Exception
+                  {
+                     manager.fireEvent(new Perform());
+                     return null;
+                  }
+               });
+
                addon.setStatus(Status.STARTED);
-               manager.fireEvent(new Perform());
 
                return listener;
             }

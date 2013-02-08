@@ -14,6 +14,7 @@ import org.jboss.forge.ui.UISelection;
 import org.jboss.forge.ui.UIValidationContext;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -24,11 +25,11 @@ public class ShellContext implements UIValidationContext, UIContext, UIBuilder
 
    private boolean standalone = false;
    private List<UIInputComponent<?, ?>> inputs = new ArrayList<UIInputComponent<?, ?>>();
-    private ForgeShell aeshell;
+   private ForgeShell aeshell;
 
    public ShellContext(ForgeShell aeshell)
    {
-       this.aeshell = aeshell;
+      this.aeshell = aeshell;
    }
 
    public boolean isStandalone()
@@ -41,9 +42,10 @@ public class ShellContext implements UIValidationContext, UIContext, UIBuilder
       this.standalone = standalone;
    }
 
-    public ForgeShell getShell() {
-        return aeshell;
-    }
+   public ForgeShell getShell()
+   {
+      return aeshell;
+   }
 
    @Override
    public UIBuilder add(UIInputComponent<?, ?> input)
@@ -80,13 +82,34 @@ public class ShellContext implements UIValidationContext, UIContext, UIBuilder
       return this;
    }
 
-    public <T> UISelection<T> getCurrentSelection() {
-        return null; //not implemented
-    }
+   public <T> UISelection<T> getCurrentSelection()
+   {
+      return null; // not implemented
+   }
 
-    @Override
+   @Override
    public UISelection<Object> getInitialSelection()
    {
-      throw new IllegalStateException("not implemented");
+      return new UISelection<Object>()
+      {
+
+         @Override
+         public Iterator<Object> iterator()
+         {
+            return new ArrayList<Object>().iterator();
+         }
+
+         @Override
+         public Object get()
+         {
+            return null;
+         }
+
+         @Override
+         public int size()
+         {
+            return 0;
+         }
+      };
    }
 }
