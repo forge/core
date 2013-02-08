@@ -173,8 +173,13 @@ public class ForgeShell
                      }
                      else
                      {
-                        command.run(output, cl);
-                        break;
+                         try {
+                             command.run(output, cl);
+                             break;
+                         }
+                         catch (Exception e) {
+                             logger.log(Level.SEVERE, "Command "+command+" failed to run with: "+output);
+                         }
                      }
                   }
                }
