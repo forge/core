@@ -4,13 +4,16 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.aesh.util;
+package org.jboss.forge.aesh;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.cl.CommandLineParser;
 import org.jboss.aesh.cl.OptionBuilder;
 import org.jboss.aesh.cl.internal.ParameterInt;
-import org.jboss.forge.aesh.ShellContext;
+import org.jboss.forge.aesh.util.CommandLineUtil;
 import org.jboss.forge.ui.Result;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UICommandMetadata;
@@ -21,8 +24,6 @@ import org.jboss.forge.ui.base.UICommandMetadataBase;
 import org.jboss.forge.ui.impl.UIInputImpl;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
@@ -105,7 +106,7 @@ public class CommandLineUtilTest
       CommandLine cl = clp.parse("foo2 --str yay");
       CommandLineUtil.populateUIInputs(cl, context, null);
 
-      assertEquals("yay", ((UIInput) context.findInput("str")).getValue());
+      assertEquals("yay", ((UIInput<?>) context.findInput("str")).getValue());
    }
 
    private class Foo1Command implements UICommand

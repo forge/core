@@ -1,6 +1,10 @@
 package org.jboss.forge.aesh;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 
 import javax.inject.Inject;
 
@@ -20,9 +24,7 @@ import org.jboss.forge.container.AddonId;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -30,11 +32,10 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @RunWith(Arquillian.class)
-@Ignore
 public class AeshAddonTest extends TestCase
 {
 
-    private KeyOperation completeChar =  new KeyOperation(9, Operation.COMPLETE);
+   private KeyOperation completeChar = new KeyOperation(9, Operation.COMPLETE);
 
    public AeshAddonTest()
    {
@@ -42,25 +43,24 @@ public class AeshAddonTest extends TestCase
 
    @Deployment
    @Dependencies({
-           @Addon(name = "org.jboss.forge:ui", version = "2.0.0-SNAPSHOT"),
-           @Addon(name = "org.jboss.forge:aesh-test", version = "2.0.0-SNAPSHOT")
+            @Addon(name = "org.jboss.forge:ui", version = "2.0.0-SNAPSHOT"),
+            @Addon(name = "org.jboss.forge:aesh", version = "2.0.0-SNAPSHOT"),
+            @Addon(name = "org.jboss.forge:aesh-test", version = "2.0.0-SNAPSHOT")
    })
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
-               .addPackages(true, ForgeShell.class.getPackage())
-               .addAsLibraries(Maven.resolver().loadPomFromFile("pom.xml")
-                        .resolve("org.jboss.aesh:aesh:0.32").withTransitivity().asFile())
                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
                .addAsAddonDependencies(AddonDependency.create(AddonId.from("org.jboss.forge:ui", "2.0.0-SNAPSHOT")))
-               .addAsAddonDependencies(AddonDependency.create(AddonId.from("org.jboss.forge:aesh-test", "2.0.0-SNAPSHOT")));
+               .addAsAddonDependencies(
+                        AddonDependency.create(AddonId.from("org.jboss.forge:aesh-test", "2.0.0-SNAPSHOT")));
 
       return archive;
    }
 
-    @Inject
-    private ShellStreamProvider streamProvider;
+   @Inject
+   private ShellStreamProvider streamProvider;
 
    @Inject
    private ForgeShell shell;
@@ -92,8 +92,8 @@ public class AeshAddonTest extends TestCase
                   outString.substring(shell.getPrompt().length() + "foo\n".length()));
 
          outputStream.write("fo".getBytes());
-          outputStream.write(completeChar.getFirstValue());
-          outputStream.write("\n".getBytes());
+         outputStream.write(completeChar.getFirstValue());
+         outputStream.write("\n".getBytes());
          shell.startShell();
          outString = out.toString();
          System.out.println(outString);
@@ -115,11 +115,11 @@ public class AeshAddonTest extends TestCase
 
    private void setupSettings(InputStream input, OutputStream out)
    {
-       streamProvider.setInputStream(input);
-       streamProvider.setOutputStream(out);
+      streamProvider.setInputStream(input);
+      streamProvider.setOutputStream(out);
       Settings.getInstance().setName("test");
-      //Settings.getInstance().setInputStream(input);
-      //Settings.getInstance().setStdOut(out);
+      // Settings.getInstance().setInputStream(input);
+      // Settings.getInstance().setStdOut(out);
       // aeshProducer.getSettings().setStdOut(new ByteArrayOutputStream());
       if (!Config.isOSPOSIXCompatible())
          Settings.getInstance().setAnsiConsole(false);

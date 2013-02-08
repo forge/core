@@ -8,7 +8,7 @@
       <relativePath>../pom.xml</relativePath>
    </parent>
    <artifactId>aesh-test</artifactId>
-   <name>Forge - Aesh Test Addon</name>
+   <name>Forge - Aesh Addon Tests</name>
    <dependencies>
       <dependency>
          <groupId>org.jboss.forge</groupId>
@@ -18,8 +18,24 @@
       </dependency>
       <dependency>
          <groupId>org.jboss.forge</groupId>
+         <artifactId>ui</artifactId>
+         <classifier>forge-addon</classifier>
+         <version>2.0.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
          <artifactId>forge-addon-container-api</artifactId>
          <scope>provided</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-test-harness</artifactId>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>arquillian-forge-classpath</artifactId>
+         <scope>test</scope>
       </dependency>
    </dependencies>
    <build>

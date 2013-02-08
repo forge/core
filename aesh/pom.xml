@@ -20,6 +20,7 @@
          <artifactId>forge-addon-container-api</artifactId>
          <scope>provided</scope>
       </dependency>
+
       <dependency>
          <groupId>org.jboss.forge</groupId>
          <artifactId>ui</artifactId>
@@ -31,16 +32,6 @@
          <artifactId>convert</artifactId>
          <classifier>forge-addon</classifier>
          <version>2.0.0-SNAPSHOT</version>
-      </dependency>
-       <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>forge-test-harness</artifactId>
-         <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>arquillian-forge-classpath</artifactId>
-         <scope>test</scope>
       </dependency>
    </dependencies>
    <build>
