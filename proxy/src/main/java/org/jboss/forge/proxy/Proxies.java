@@ -159,22 +159,13 @@ public class Proxies
          if (superclass != null && !superclass.getName().equals(Object.class.getName()))
             return superclass;
 
+         String typeName = unwrapProxyClassName(result);
          for (ClassLoader loader : loaders)
          {
             try
             {
-               if (result.getName().contains("$$EnhancerByCGLIB$$"))
-               {
-                  String typeName = result.getName().replaceAll("^(.*)\\$\\$EnhancerByCGLIB\\$\\$.*", "$1");
-                  result = loader.loadClass(typeName);
-                  break;
-               }
-               else if (result.getName().contains("_javassist_"))
-               {
-                  String typeName = result.getName().replaceAll("^(.*)_javassist_.*", "$1");
-                  result = loader.loadClass(typeName);
-                  break;
-               }
+               result = loader.loadClass(typeName);
+               break;
             }
             catch (ClassNotFoundException e)
             {
@@ -184,4 +175,28 @@ public class Proxies
       return result;
    }
 
+   /**
+    * Unwraps the proxy type if javassist or CGLib is used
+    *
+    * @param type the class type
+    * @return the unproxied class name
+    */
+   public static String unwrapProxyClassName(Class<?> type)
+   {
+      String typeName;
+      if (type.getName().contains("$$EnhancerByCGLIB$$"))
+      {
+         typeName = type.getName().replaceAll("^(.*)\\$\\$EnhancerByCGLIB\\$\\$.*", "$1");
+      }
+      else if (type.getName().contains("_javassist_"))
+      {
+         typeName = type.getName().replaceAll("^(.*)_\\$\\$_javassist_.*", "$1");
+      }
+      else
+      {
+         typeName = type.getName();
+      }
+      return typeName;
+
+   }
 }
