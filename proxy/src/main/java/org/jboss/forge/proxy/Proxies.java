@@ -21,6 +21,98 @@ public class Proxies
     * Create a proxy for the given {@link Class} type.
     */
    @SuppressWarnings("unchecked")
+   public static <T> T enhance(final ClassLoader loader, Object instance, ForgeProxy handler)
+   {
+      MethodFilter filter = new MethodFilter()
+      {
+         @Override
+         public boolean isHandled(Method method)
+         {
+            String name = method.getName();
+            Class<?>[] parameterTypes = method.getParameterTypes();
+            if (!method.getDeclaringClass().getName().contains("java.lang")
+                     || ("clone".equals(name) && parameterTypes.length == 0)
+                     || ("equals".equals(name) && parameterTypes.length == 1)
+                     || ("hashCode".equals(name) && parameterTypes.length == 0)
+                     || ("toString".equals(name) && parameterTypes.length == 0))
+               return true;
+            return false;
+         }
+      };
+
+      Object enhancedResult = null;
+
+      ProxyFactory f = new ProxyFactory()
+      {
+         @Override
+         protected ClassLoader getClassLoader()
+         {
+            return loader;
+         }
+      };
+
+      f.setUseCache(true);
+
+      Class<?>[] hierarchy = null;
+      Class<?> unwrappedInstanceType = Proxies.unwrapProxyTypes(instance.getClass(), loader);
+      hierarchy = ProxyTypeInspector.getCompatibleClassHierarchy(loader, unwrappedInstanceType);
+      if (hierarchy == null || hierarchy.length == 0)
+         throw new IllegalArgumentException("Must specify at least one non-final type to enhance for Object: "
+                  + instance + " of type " + instance.getClass());
+
+      Class<?> first = hierarchy[0];
+      if (!first.isInterface())
+      {
+         f.setSuperclass(Proxies.unwrapProxyTypes(first, loader));
+         hierarchy = Arrays.shiftLeft(hierarchy, new Class<?>[hierarchy.length - 1]);
+      }
+
+      int index = Arrays.indexOf(hierarchy, ProxyObject.class);
+      if (index >= 0)
+      {
+         hierarchy = Arrays.removeElementAtIndex(hierarchy, index);
+      }
+
+      if (!Proxies.isProxyType(first) && !Arrays.contains(hierarchy, ForgeProxy.class))
+         hierarchy = Arrays.append(hierarchy, ForgeProxy.class);
+
+      if (hierarchy.length > 0)
+         f.setInterfaces(hierarchy);
+
+      f.setFilter(filter);
+
+      Class<?> c;
+      try
+      {
+         c = f.createClass();
+      }
+      catch (RuntimeException e)
+      {
+         throw e;
+      }
+
+      try
+      {
+         enhancedResult = c.newInstance();
+      }
+      catch (InstantiationException e)
+      {
+         throw new IllegalStateException(e);
+      }
+      catch (IllegalAccessException e)
+      {
+         throw new IllegalStateException(e);
+      }
+
+      ((ProxyObject) enhancedResult).setHandler(handler);
+
+      return (T) enhancedResult;
+   }
+
+   /**
+    * Create a proxy for the given {@link Class} type.
+    */
+   @SuppressWarnings("unchecked")
    public static <T> T enhance(Class<T> type, ForgeProxy handler)
    {
       MethodFilter filter = new MethodFilter()
@@ -62,7 +154,15 @@ public class Proxies
       }
 
       f.setFilter(filter);
-      Class<?> c = f.createClass();
+      Class<?> c;
+      try
+      {
+         c = f.createClass();
+      }
+      catch (RuntimeException e)
+      {
+         throw e;
+      }
 
       try
       {
@@ -177,7 +277,7 @@ public class Proxies
 
    /**
     * Unwraps the proxy type if javassist or CGLib is used
-    *
+    * 
     * @param type the class type
     * @return the unproxied class name
     */

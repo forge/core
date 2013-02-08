@@ -61,32 +61,41 @@ public class AddonRegistryImpl implements AddonRegistry
    @Override
    public AddonImpl getRegisteredAddon(AddonId id)
    {
-      for (AddonImpl addon : addons)
+      synchronized (addons)
       {
-         if (addon.getId().equals(id))
-            return addon;
+         for (AddonImpl addon : addons)
+         {
+            if (addon.getId().equals(id))
+               return addon;
+         }
+         return null;
       }
-      return null;
    }
 
    @Override
    public Set<Addon> getRegisteredAddons()
    {
-      return new HashSet<Addon>(addons);
+      synchronized (addons)
+      {
+         return new HashSet<Addon>(addons);
+      }
    }
 
    @Override
    public Set<Addon> getRegisteredAddons(AddonFilter filter)
    {
-      Set<Addon> result = new HashSet<Addon>();
-      for (Addon registeredAddon : addons)
+      synchronized (addons)
       {
-         if (filter.accept(registeredAddon))
+         Set<Addon> result = new HashSet<Addon>();
+         for (Addon registeredAddon : addons)
          {
-            result.add(registeredAddon);
+            if (filter.accept(registeredAddon))
+            {
+               result.add(registeredAddon);
+            }
          }
+         return result;
       }
-      return result;
    }
 
    @Override
@@ -102,21 +111,25 @@ public class AddonRegistryImpl implements AddonRegistry
       updateAddons();
       AddonImpl addonImpl = getRegisteredAddon(addon.getId());
 
-      if (addonImpl != null)
+      synchronized (addons)
       {
-         Future<Addon> future = addonImpl.getFuture();
-         if (addonImpl.getMissingDependencies().isEmpty() && future == null)
-         {
-            logger.info("Starting addon (" + addon.getId() + ")");
-            AddonRunnable runnable = new AddonRunnable(forge, addonImpl);
-            future = executor.submit(runnable, addon);
-            addonImpl.setRunnable(runnable);
-            addonImpl.setFuture(future);
-         }
-         return addonImpl.getFuture();
-      }
 
-      return null;
+         if (addonImpl != null)
+         {
+            Future<Addon> future = addonImpl.getFuture();
+            if (addonImpl.getMissingDependencies().isEmpty() && future == null)
+            {
+               logger.info("Starting addon (" + addon.getId() + ")");
+               AddonRunnable runnable = new AddonRunnable(forge, addonImpl);
+               future = executor.submit(runnable, addon);
+               addonImpl.setRunnable(runnable);
+               addonImpl.setFuture(future);
+            }
+            return addonImpl.getFuture();
+         }
+
+         return null;
+      }
    }
 
    @Override
@@ -136,27 +149,30 @@ public class AddonRegistryImpl implements AddonRegistry
          }
       }
 
-      if (addonToStop != null)
+      synchronized (addons)
       {
-         Future<Addon> future = addonToStop.getFuture();
-         try
+         if (addonToStop != null)
          {
-            if (future != null && addon.getStatus().isStarted())
+            Future<Addon> future = addonToStop.getFuture();
+            try
             {
-               addonToStop.getRunnable().shutdown();
+               if (future != null && addon.getStatus().isStarted())
+               {
+                  addonToStop.getRunnable().shutdown();
+               }
             }
-         }
-         catch (Exception e)
-         {
-            logger.log(Level.WARNING, "Failed to shut down addon " + addon, e);
-         }
-         finally
-         {
-            if (future != null && !future.isDone())
-               future.cancel(true);
+            catch (Exception e)
+            {
+               logger.log(Level.WARNING, "Failed to shut down addon " + addon, e);
+            }
+            finally
+            {
+               if (future != null && !future.isDone())
+                  future.cancel(true);
 
-            addons.remove(addonToStop);
-            moduleLoader.removeFromCache(addonToStop.getId());
+               addons.remove(addonToStop);
+               moduleLoader.removeFromCache(addonToStop.getId());
+            }
          }
       }
    }
@@ -164,12 +180,15 @@ public class AddonRegistryImpl implements AddonRegistry
    public Set<Future<Addon>> startAll()
    {
       Set<Future<Addon>> result = new LinkedHashSet<Future<Addon>>();
-      updateAddons();
-      for (Addon addon : addons)
+      synchronized (addons)
       {
-         if (addon.getStatus().isWaiting())
+         updateAddons();
+         for (Addon addon : addons)
          {
-            result.add(start(addon));
+            if (addon.getStatus().isWaiting())
+            {
+               result.add(start(addon));
+            }
          }
       }
       return result;
@@ -190,28 +209,31 @@ public class AddonRegistryImpl implements AddonRegistry
    {
       Set<Addon> toRemove = new HashSet<Addon>();
       List<AddonId> enabledCompatible = new ArrayList<AddonId>();
-      AddonRepository repository = moduleLoader.getRepository();
-      enabledCompatible = repository.listEnabledCompatibleWithVersion(forge.getVersion());
-
-      if (AddonRepositoryImpl.hasRuntimeAPIVersion())
+      synchronized (addons)
       {
-         List<AddonId> incompatible = repository.listEnabled();
-         incompatible.removeAll(enabledCompatible);
+         AddonRepository repository = moduleLoader.getRepository();
+         enabledCompatible = repository.listEnabledCompatibleWithVersion(forge.getVersion());
 
-         for (AddonId entry : incompatible)
+         if (AddonRepositoryImpl.hasRuntimeAPIVersion())
          {
-            logger.info("Not loading addon [" + entry.getName()
-                     + "] because it references Forge API version [" + entry.getApiVersion()
-                     + "] which may not be compatible with my current version ["
-                     + AddonRepositoryImpl.getRuntimeAPIVersion() + "].");
+            List<AddonId> incompatible = repository.listEnabled();
+            incompatible.removeAll(enabledCompatible);
+
+            for (AddonId entry : incompatible)
+            {
+               logger.info("Not loading addon [" + entry.getName()
+                        + "] because it references Forge API version [" + entry.getApiVersion()
+                        + "] which may not be compatible with my current version ["
+                        + AddonRepositoryImpl.getRuntimeAPIVersion() + "].");
+            }
          }
-      }
 
-      for (Addon addon : addons)
-      {
-         if (!enabledCompatible.contains(addon.getId()))
+         for (Addon addon : addons)
          {
-            toRemove.add(addon);
+            if (!enabledCompatible.contains(addon.getId()))
+            {
+               toRemove.add(addon);
+            }
          }
       }
 

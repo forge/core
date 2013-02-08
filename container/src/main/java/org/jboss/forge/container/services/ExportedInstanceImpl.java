@@ -43,7 +43,7 @@ public class ExportedInstanceImpl<R> implements ExportedInstance<R>
          {
             context = manager.createCreationalContext(requestedBean);
             Object delegate = manager.getReference(requestedBean, actualType, context);
-            return Proxies.enhance(requestedType, new ClassLoaderInterceptor(loader, delegate));
+            return Proxies.enhance(loader, delegate, new ClassLoaderInterceptor(loader, delegate));
          }
       };
 
@@ -63,7 +63,7 @@ public class ExportedInstanceImpl<R> implements ExportedInstance<R>
             Bean<R> bean = (Bean<R>) manager.resolve(manager.getBeans(actualType));
             context = manager.createCreationalContext(bean);
             Object delegate = manager.getInjectableReference(injectionPoint, context);
-            return Proxies.enhance(requestedType, new ClassLoaderInterceptor(loader, delegate));
+            return Proxies.enhance(loader, delegate, new ClassLoaderInterceptor(loader, delegate));
          }
       };
 
