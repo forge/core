@@ -6,6 +6,18 @@
  */
 package org.jboss.forge.aesh;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.console.Config;
 import org.jboss.aesh.console.Console;
@@ -15,24 +27,12 @@ import org.jboss.aesh.console.settings.Settings;
 import org.jboss.aesh.terminal.CharacterType;
 import org.jboss.aesh.terminal.Color;
 import org.jboss.aesh.terminal.TerminalCharacter;
-import org.jboss.forge.aesh.commands.*;
 import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.ContainerControl;
 import org.jboss.forge.container.event.Perform;
 import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.ui.UICommand;
-
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
@@ -70,6 +70,17 @@ public class ForgeShell
    public void initShell() throws Exception
    {
       prompt = createPrompt();
+
+      for (ExportedInstance<ShellStreamProvider> provider : registry.getExportedInstances(ShellStreamProvider.class))
+      {
+         System.out.println("Loaded: ShellStreamProvider - " + provider.get());
+         // Configure the stream here. This will only execute if there is a addon deployed BEFORE aesh, which is the
+         // case in tests. We control that order there (or can fix if it is not working.)
+
+         // in the test @Inject the ShellStreamProvider and if there is one deployed, it will work. Otherwise there
+         // will be problems when you call .get();
+      }
+
       Settings.getInstance().setReadInputrc(false);
       Settings.getInstance().setLogging(true);
 

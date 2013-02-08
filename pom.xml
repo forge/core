@@ -89,6 +89,7 @@
             <!-- TODO: Remove these modules -->
             <module>addon-manager</module>
             <module>aesh</module>
+            <module>aesh-test</module>
             <module>dependencies</module>
             <module>environment</module>
             <module>facets</module>
