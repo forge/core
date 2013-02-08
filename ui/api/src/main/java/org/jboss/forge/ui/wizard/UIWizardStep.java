@@ -7,12 +7,15 @@
 
 package org.jboss.forge.ui.wizard;
 
-import org.jboss.forge.ui.Result;
-
+/**
+ * Marker interface for wizard steps.
+ *
+ * Classes that implement this interface are not considered starting entry points, hence MUST not be shown in the
+ * available addon list
+ *
+ * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
+ *
+ */
 public interface UIWizardStep extends UIWizard
 {
-   /*
-    * Called when user clicks “next” or final confirmation of step completion is received.
-    */
-   public Result next(UIWizardContext context) throws Exception;
 }

@@ -9,11 +9,11 @@ import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.ui.Result;
 import org.jboss.forge.ui.Results;
 import org.jboss.forge.ui.UICommand;
+import org.jboss.forge.ui.UICommandMetadata;
 import org.jboss.forge.ui.UIContext;
 import org.jboss.forge.ui.UIInput;
 import org.jboss.forge.ui.UIValidationContext;
-import org.jboss.forge.ui.UICommandMetadata;
-import org.jboss.forge.ui.wizard.UIWizardContext;
+import org.jboss.forge.ui.wizard.UIWizard;
 import org.jboss.forge.ui.wizard.UIWizardStep;
 
 @Exported
@@ -73,23 +73,22 @@ public class MockNewProjectCommand implements UICommand, UIWizardStep
    }
 
    /*
-    * 
+    *
     * Defines the action to take once inputs are valid and submitted
     */
 
    @Override
-   public Result next(UIWizardContext context) throws Exception
+   public Class<? extends UIWizard> getSuccessor()
    {
       if (useFramework.getValue())
       {
-         return Results.success(MockChooseFrameworkStep.class);
+         return MockChooseFrameworkStep.class;
       }
-
-      return Results.success();
+      return null;
    }
 
    /*
-    * 
+    *
     * Defines the action to take once inputs are valid and submitted
     */
 

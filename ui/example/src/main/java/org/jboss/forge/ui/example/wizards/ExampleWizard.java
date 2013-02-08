@@ -1,8 +1,16 @@
-package org.jboss.forge.ui;
+package org.jboss.forge.ui.example.wizards;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.ui.util.Categories;
+import org.jboss.forge.ui.Result;
+import org.jboss.forge.ui.Results;
+import org.jboss.forge.ui.UICommand;
+import org.jboss.forge.ui.UICommandMetadata;
+import org.jboss.forge.ui.UIContext;
+import org.jboss.forge.ui.UIInput;
+import org.jboss.forge.ui.UISelection;
+import org.jboss.forge.ui.UIValidationContext;
+import org.jboss.forge.ui.base.UICommandMetadataBase;
 import org.jboss.forge.ui.wizard.UIWizard;
 
 /*
@@ -12,10 +20,17 @@ import org.jboss.forge.ui.wizard.UIWizard;
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-public class MyFirstWizard implements UIWizard
+public class ExampleWizard implements UIWizard
 {
+
    @Inject
    private UIInput<String> firstName;
+
+   @Override
+   public UICommandMetadata getMetadata()
+   {
+      return new UICommandMetadataBase("Wizard", "Exit the shell");
+   }
 
    @Override
    public void initializeUI(UIContext context) throws Exception
@@ -36,40 +51,16 @@ public class MyFirstWizard implements UIWizard
    }
 
    @Override
-   public UICommandMetadata getMetadata()
+   public boolean isEnabled(UIContext context)
    {
-      return new UICommandMetadata()
-      {
-         @Override
-         public String getName()
-         {
-            return MyFirstWizard.class.getName();
-         }
-
-         @Override
-         public String getDescription()
-         {
-            return "generic test wizard";
-         }
-
-         @Override
-         public UICategory getCategory()
-         {
-            return Categories.create("Example");
-         }
-      };
+      UISelection<?> selection = context.getInitialSelection();
+      return selection != null;
    }
 
    @Override
    public Class<? extends UIWizard> getSuccessor()
    {
-      return null;
-   }
-
-   @Override
-   public boolean isEnabled(UIContext context)
-   {
-      return true;
+      return ExampleStepOne.class;
    }
 
 }

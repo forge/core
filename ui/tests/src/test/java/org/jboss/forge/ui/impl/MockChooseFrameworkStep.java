@@ -1,13 +1,14 @@
 package org.jboss.forge.ui.impl;
 
 import org.jboss.forge.ui.Result;
-import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UICommandMetadata;
 import org.jboss.forge.ui.UIContext;
 import org.jboss.forge.ui.UIValidationContext;
 import org.jboss.forge.ui.base.UICommandMetadataBase;
+import org.jboss.forge.ui.wizard.UIWizard;
+import org.jboss.forge.ui.wizard.UIWizardStep;
 
-public class MockChooseFrameworkStep implements UICommand
+public class MockChooseFrameworkStep implements UIWizardStep
 {
 
    @Override
@@ -37,5 +38,13 @@ public class MockChooseFrameworkStep implements UICommand
    {
       return null;
    }
+
+   @Override
+   public Class<? extends UIWizard> getSuccessor()
+   {
+      return null;
+   }
+
+
 
 }
