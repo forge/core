@@ -150,7 +150,7 @@ public class ClassLoaderAdapterCallback implements MethodHandler
          if (returnTypeNeedsEnhancement(returnType, result, unwrappedResultType))
          {
             Class<?>[] resultHierarchy = ProxyTypeInspector.getCompatibleClassHierarchy(callingLoader,
-                     Proxies.unwrapProxyTypes(result.getClass(), callingLoader, delegateLoader, resultInstanceLoader));
+                     Proxies.unwrapProxyTypes(unwrappedResultType, callingLoader, delegateLoader, resultInstanceLoader));
 
             Class<?>[] returnTypeHierarchy = ProxyTypeInspector.getCompatibleClassHierarchy(callingLoader,
                      Proxies.unwrapProxyTypes(returnType, callingLoader, delegateLoader, resultInstanceLoader));
