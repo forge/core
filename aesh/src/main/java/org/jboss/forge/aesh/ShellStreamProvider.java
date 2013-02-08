@@ -8,6 +8,9 @@ package org.jboss.forge.aesh;
 
 import org.jboss.forge.container.services.Exported;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -15,4 +18,11 @@ import org.jboss.forge.container.services.Exported;
 public interface ShellStreamProvider
 {
    // Methods to do Stream configuration/get stream handles
+    void setInputStream(InputStream input);
+
+    InputStream getInputStream();
+
+    void setOutputStream(OutputStream output);
+
+    OutputStream getOutputStream();
 }

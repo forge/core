@@ -6,11 +6,31 @@
  */
 package org.jboss.forge.aesh;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
 public class TestShellStreamProvider implements ShellStreamProvider
 {
+    private InputStream input;
+    private OutputStream output;
 
+    public void setInputStream(InputStream input) {
+        this.input = input;
+    }
+
+    public InputStream getInputStream() {
+        return input;
+    }
+
+    public void setOutputStream(OutputStream output) {
+        this.output = output;
+    }
+
+    public OutputStream getOutputStream() {
+        return output;
+    }
 }
