@@ -6,22 +6,14 @@
  */
 package org.jboss.forge.aesh;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.jboss.forge.container.services.Exported;
+import org.jboss.forge.ui.*;
+import org.jboss.forge.ui.base.UICommandMetadataBase;
 
 import javax.inject.Inject;
-
-import org.jboss.forge.container.services.Exported;
-import org.jboss.forge.ui.Result;
-import org.jboss.forge.ui.Results;
-import org.jboss.forge.ui.UICommand;
-import org.jboss.forge.ui.UICommandMetadata;
-import org.jboss.forge.ui.UICompleter;
-import org.jboss.forge.ui.UIContext;
-import org.jboss.forge.ui.UIInput;
-import org.jboss.forge.ui.UIInputComponent;
-import org.jboss.forge.ui.UIValidationContext;
-import org.jboss.forge.ui.base.UICommandMetadataBase;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
