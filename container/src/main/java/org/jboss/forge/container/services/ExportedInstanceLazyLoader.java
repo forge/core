@@ -57,9 +57,9 @@ public class ExportedInstanceLazyLoader implements ForgeProxy
       Object result = null;
       for (Addon addon : registry.getServiceRegistries().keySet())
       {
+         Addons.waitUntilStarted(addon);
          if (serviceType.getClassLoader().equals(addon.getClassLoader()))
          {
-            Addons.waitUntilStarted(addon);
             ServiceRegistry serviceRegistry = addon.getServiceRegistry();
             ExportedInstance<?> instance = serviceRegistry.getExportedInstance(serviceType);
             Assert.notNull(instance, "Exported Instance not found in originating ServiceRegistry.");
