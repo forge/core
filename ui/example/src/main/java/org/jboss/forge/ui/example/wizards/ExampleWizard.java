@@ -1,3 +1,9 @@
+/*
+ * Copyright 2013 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Eclipse Public License version 1.0, available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.jboss.forge.ui.example.wizards;
 
 import javax.inject.Inject;
@@ -11,13 +17,6 @@ import org.jboss.forge.ui.UISelection;
 import org.jboss.forge.ui.UIValidationContext;
 import org.jboss.forge.ui.base.UICommandMetadataBase;
 import org.jboss.forge.ui.wizard.UIWizard;
-
-/*
- * Copyright 2013 Red Hat, Inc. and/or its affiliates.
- *
- * Licensed under the Eclipse Public License version 1.0, available at
- * http://www.eclipse.org/legal/epl-v10.html
- */
 
 public class ExampleWizard implements UIWizard
 {
