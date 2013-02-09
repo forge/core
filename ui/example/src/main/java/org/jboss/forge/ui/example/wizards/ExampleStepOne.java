@@ -4,7 +4,6 @@ import javax.inject.Inject;
 
 import org.jboss.forge.ui.Result;
 import org.jboss.forge.ui.Results;
-import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UICommandMetadata;
 import org.jboss.forge.ui.UIContext;
 import org.jboss.forge.ui.UIInput;
@@ -36,6 +35,7 @@ public class ExampleStepOne implements UIWizardStep
    @Override
    public void initializeUI(UIContext context) throws Exception
    {
+      address.setLabel("Address:");
       context.getUIBuilder().add(address);
    }
 

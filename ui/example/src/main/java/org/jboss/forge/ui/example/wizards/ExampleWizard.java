@@ -4,7 +4,6 @@ import javax.inject.Inject;
 
 import org.jboss.forge.ui.Result;
 import org.jboss.forge.ui.Results;
-import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UICommandMetadata;
 import org.jboss.forge.ui.UIContext;
 import org.jboss.forge.ui.UIInput;
@@ -29,7 +28,7 @@ public class ExampleWizard implements UIWizard
    @Override
    public UICommandMetadata getMetadata()
    {
-      return new UICommandMetadataBase("Wizard", "Exit the shell");
+      return new UICommandMetadataBase("Wizard", "This is the First screen of the Wizard");
    }
 
    @Override

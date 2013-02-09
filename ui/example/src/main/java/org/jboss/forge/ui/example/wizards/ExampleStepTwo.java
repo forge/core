@@ -36,6 +36,7 @@ public class ExampleStepTwo implements UIWizardStep
    @Override
    public void initializeUI(UIContext context) throws Exception
    {
+      location.setLabel("Location:");
       context.getUIBuilder().add(location);
    }
 
