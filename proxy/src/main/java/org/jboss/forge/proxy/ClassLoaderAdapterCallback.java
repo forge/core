@@ -282,7 +282,7 @@ public class ClassLoaderAdapterCallback implements MethodHandler
                }
                parameterValues.add(loadedClass);
             }
-            else if (delegateParameterType.isPrimitive() || parameterValue == null)
+            else if (delegateParameterType.isPrimitive())
             {
                parameterValues.add(parameterValue);
             }

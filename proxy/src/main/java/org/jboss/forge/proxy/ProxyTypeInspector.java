@@ -28,7 +28,7 @@ class ProxyTypeInspector
          baseClass = baseClass.getSuperclass();
       }
 
-      if (ClassLoaders.containsClass(loader, baseClass.getName())
+      if (baseClass != null && ClassLoaders.containsClass(loader, baseClass.getName())
                && !Object.class.equals(baseClass)
                && (isInstantiable(baseClass) || baseClass.isInterface()))
       {
