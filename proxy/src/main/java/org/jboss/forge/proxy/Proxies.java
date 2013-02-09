@@ -81,15 +81,7 @@ public class Proxies
 
       f.setFilter(filter);
 
-      Class<?> c;
-      try
-      {
-         c = f.createClass();
-      }
-      catch (RuntimeException e)
-      {
-         throw e;
-      }
+      Class<?> c = f.createClass();
 
       try
       {
@@ -277,7 +269,7 @@ public class Proxies
 
    /**
     * Unwraps the proxy type if javassist or CGLib is used
-    * 
+    *
     * @param type the class type
     * @return the unproxied class name
     */

@@ -67,7 +67,7 @@ public class ExportedInstanceImpl<R> implements ExportedInstance<R>
          }
       };
 
-      return (R) ClassLoaders.executeIn(loader, task);
+      return ClassLoaders.executeIn(loader, task);
    }
 
    @Override
