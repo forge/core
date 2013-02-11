@@ -21,6 +21,7 @@ import org.apache.maven.settings.Settings;
 import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.dependencies.Coordinate;
 import org.jboss.forge.dependencies.Dependency;
+import org.jboss.forge.dependencies.DependencyException;
 import org.jboss.forge.dependencies.DependencyQuery;
 import org.jboss.forge.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.dependencies.builder.DependencyBuilder;
@@ -121,7 +122,7 @@ public class MavenDependencyResolver implements DependencyResolver
 
    /**
     * Returns the versions of a specific artifact
-    *
+    * 
     * @param query
     * @return
     */
@@ -230,9 +231,9 @@ public class MavenDependencyResolver implements DependencyResolver
          DependencyResult result = system.resolveDependencies(session, dr);
          return MavenConvertUtils.toDependencyNode(null, result.getRoot());
       }
-      catch (DependencyResolutionException e)
+      catch (Exception e)
       {
-         throw new RuntimeException("Could not resolve dependencies for addon [" + query.getCoordinate() + "]", e);
+         throw new DependencyException("Could not resolve dependencies for addon [" + query.getCoordinate() + "]", e);
       }
    }
 

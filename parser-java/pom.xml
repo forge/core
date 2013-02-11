@@ -9,11 +9,12 @@
    </parent>
    <artifactId>parser-java-parent</artifactId>
    <packaging>pom</packaging>
-   <name>Forge - Java Parser AddOn Parent</name>
+   <name>Forge - Java Parser Addon Parent</name>
    <modules>
       <module>api</module>
       <module>impl</module>
       <module>addon</module>
+      <module>tests</module>
    </modules>
    <dependencyManagement>
       <dependencies>
