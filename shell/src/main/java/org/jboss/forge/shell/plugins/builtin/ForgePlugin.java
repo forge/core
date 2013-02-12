@@ -135,7 +135,7 @@ public class ForgePlugin implements Plugin
       out.print(", version [ ");
       out.print(ShellColor.BOLD, environment.getRuntimeVersion());
       out.print(" ] - JBoss, by ");
-      out.print(ShellColor.RED,"Red Hat, Inc.");
+      out.print(ShellColor.RED, "Red Hat, Inc.");
       out.println(" [ http://forge.jboss.org ]");
    }
 
@@ -219,24 +219,19 @@ public class ForgePlugin implements Plugin
             @Option(name = "version", description = "branch, tag, or version to build") final String version,
             final PipeOut out) throws Exception
    {
-      List<PluginRef> plugins = PluginUtil.findPlugin(shell, configuration, pluginName);
+      PluginRef plugin = PluginUtil.findPluginByName(shell, configuration, pluginName, true);
 
-      if (plugins.isEmpty())
+      if (plugin == null)
       {
          throw new RuntimeException("no plugin found with name [" + pluginName + "]");
       }
-      else if (plugins.size() > 1)
-      {
-         throw new RuntimeException("ambiguous plugin query: multiple matches for [" + pluginName + "]");
-      }
       else
       {
-         PluginRef ref = plugins.get(0);
-         ShellMessages.info(out, "Preparing to install plugin: " + ref.getName());
+         ShellMessages.info(out, "Preparing to install plugin: " + plugin.getName());
 
-         if (ref.isGit())
+         if (plugin.isGit())
          {
-            installFromGit(ref.getGitRepo(), Strings.isNullOrEmpty(version) ? ref.getGitRef() : version, null, out);
+            installFromGit(plugin.getGitRepo(), Strings.isNullOrEmpty(version) ? plugin.getGitRef() : version, null, out);
          }
          else
          {

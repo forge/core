@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -19,6 +18,7 @@ import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -68,8 +68,25 @@ public class PluginUtil
       return findPlugin(shell, config, searchString, false);
    }
 
+   @SuppressWarnings("resource")
    public static List<PluginRef> findPlugin(final Shell shell, Configuration config, final String searchString,
             boolean speak) throws Exception
+   {
+      InputStream repoStream = getPluginRepositoryStream(shell, config, speak);
+      return getPluginsFromRepoStream(searchString, repoStream);
+   }
+
+   @SuppressWarnings("resource")
+   public static PluginRef findPluginByName(final Shell shell, Configuration config, final String name,
+            boolean verbose) throws Exception
+   {
+      InputStream repoStream = getPluginRepositoryStream(shell, config, verbose);
+      return getPluginsFromRepoStreamByName(name, repoStream);
+   }
+
+   @SuppressWarnings("resource")
+   private static InputStream getPluginRepositoryStream(final Shell shell, Configuration config, boolean speak)
+            throws IOException, ClientProtocolException
    {
       String defaultRepo = getDefaultRepo(shell.getEnvironment());
 
@@ -94,21 +111,20 @@ public class PluginUtil
          case 404:
             if (speak)
                shell.println("failed! (plugin index not found: " + defaultRepo + ")");
-            return Collections.emptyList();
+            return null;
 
          default:
             if (speak)
                shell.println("failed! (server returned status code: "
                         + httpResponse.getStatusLine().getStatusCode());
-            return Collections.emptyList();
+            return null;
          }
 
          repoStream = httpResponse.getEntity().getContent();
          setCachedRepoStream(defaultRepo, shell.getEnvironment(), repoStream);
          repoStream = getCachedRepoStream(getDefaultRepo(shell.getEnvironment()), shell.getEnvironment());
       }
-
-      return getPluginsFromRepoStream(searchString, repoStream);
+      return repoStream;
    }
 
    @SuppressWarnings("unchecked")
@@ -144,30 +160,54 @@ public class PluginUtil
       return null;
    }
 
+   private static PluginRef getPluginsFromRepoStreamByName(final String name, InputStream stream)
+   {
+      if (stream != null)
+      {
+         for (Object o : new Yaml().loadAll(stream))
+         {
+            if (o == null)
+            {
+               continue;
+            }
+
+            @SuppressWarnings("unchecked")
+            Map<String, String> map = (Map<String, String>) o;
+
+            PluginRef ref = bindToPuginRef(map);
+            if (name.equalsIgnoreCase(ref.getName()))
+            {
+               return ref;
+            }
+         }
+      }
+      return null;
+   }
+
    private static List<PluginRef> getPluginsFromRepoStream(final String searchString, InputStream stream)
    {
       List<PluginRef> pluginList = new ArrayList<PluginRef>();
-
-      Yaml yaml = new Yaml();
-      Pattern pattern = Pattern.compile(GeneralUtils.pathspecToRegEx("*" + searchString + "*"));
-      for (Object o : yaml.loadAll(stream))
+      if (stream != null)
       {
-         if (o == null)
+         Pattern pattern = Pattern.compile(GeneralUtils.pathspecToRegEx("*" + searchString + "*"));
+         for (Object o : new Yaml().loadAll(stream))
          {
-            continue;
-         }
+            if (o == null)
+            {
+               continue;
+            }
 
-         @SuppressWarnings("unchecked")
-         Map<String, String> map = (Map<String, String>) o;
+            @SuppressWarnings("unchecked")
+            Map<String, String> map = (Map<String, String>) o;
 
-         PluginRef ref = bindToPuginRef(map);
-         if (pattern.matcher(ref.getName()).matches() || pattern.matcher(ref.getDescription()).matches()
-                  || pattern.matcher(ref.getTags()).matches())
-         {
-            pluginList.add(ref);
+            PluginRef ref = bindToPuginRef(map);
+            if (pattern.matcher(ref.getName()).matches() || pattern.matcher(ref.getDescription()).matches()
+                     || pattern.matcher(ref.getTags()).matches())
+            {
+               pluginList.add(ref);
+            }
          }
       }
-
       return pluginList;
    }
 
