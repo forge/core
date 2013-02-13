@@ -3,6 +3,7 @@ package org.jboss.forge.addon.manager.impl.commands;
 import javax.enterprise.inject.Vetoed;
 import javax.inject.Inject;
 
+import org.jboss.forge.ui.UIBuilder;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UICommandMetadata;
 import org.jboss.forge.ui.UIContext;
@@ -45,32 +46,32 @@ public abstract class AddonCommand implements UICommand, AddonCommandConstants
    }
 
    @Override
-   public void initializeUI(UIContext context) throws Exception
+   public void initializeUI(UIBuilder builder) throws Exception
    {
-      initializeGroupIdInput(context);
-      initializeNameInput(context);
-      initializeVersionInput(context);
+      initializeGroupIdInput(builder);
+      initializeNameInput(builder);
+      initializeVersionInput(builder);
    }
 
-   private void initializeGroupIdInput(UIContext context)
+   private void initializeGroupIdInput(UIBuilder builder)
    {
       groupId.setLabel("Group Id:");
       groupId.setRequired(true);
-      context.getUIBuilder().add(groupId);
+      builder.add(groupId);
    }
 
-   private void initializeNameInput(UIContext context)
+   private void initializeNameInput(UIBuilder builder)
    {
       name.setLabel("Name:");
       name.setRequired(true);
-      context.getUIBuilder().add(name);
+      builder.add(name);
    }
 
-   private void initializeVersionInput(UIContext context)
+   private void initializeVersionInput(UIBuilder builder)
    {
       version.setLabel("Version:");
       version.setRequired(true);
-      context.getUIBuilder().add(version);
+      builder.add(version);
    }
 
    @Override

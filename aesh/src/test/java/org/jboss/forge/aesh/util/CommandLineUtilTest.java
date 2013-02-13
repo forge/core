@@ -6,12 +6,16 @@
  */
 package org.jboss.forge.aesh.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.cl.CommandLineParser;
 import org.jboss.aesh.cl.OptionBuilder;
 import org.jboss.aesh.cl.internal.ParameterInt;
 import org.jboss.forge.aesh.ShellContext;
 import org.jboss.forge.ui.Result;
+import org.jboss.forge.ui.UIBuilder;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UICommandMetadata;
 import org.jboss.forge.ui.UIContext;
@@ -21,8 +25,6 @@ import org.jboss.forge.ui.base.UICommandMetadataBase;
 import org.jboss.forge.ui.impl.UIInputImpl;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
@@ -35,7 +37,7 @@ public class CommandLineUtilTest
    {
    }
 
-    @Test
+   @Test
    public void testGenerateParser() throws Exception
    {
       ShellContext context = new ShellContext(null);
@@ -56,7 +58,7 @@ public class CommandLineUtilTest
 
    }
 
-    @Test
+   @Test
    public void testPopulateUIInputs()
    {
       UIInput<String> input1 = new UIInputImpl<String>("str", String.class);
@@ -94,7 +96,7 @@ public class CommandLineUtilTest
       assertNull(input2.getValue());
    }
 
-    @Test
+   @Test
    public void testGenerateAndPopulate() throws Exception
    {
       ShellContext context = new ShellContext(null);
@@ -123,7 +125,7 @@ public class CommandLineUtilTest
       }
 
       @Override
-      public void initializeUI(UIContext context) throws Exception
+      public void initializeUI(UIBuilder builder) throws Exception
       {
       }
 
@@ -151,13 +153,12 @@ public class CommandLineUtilTest
       }
 
       @Override
-      public void initializeUI(UIContext context) throws Exception
+      public void initializeUI(UIBuilder builder) throws Exception
       {
          str = new UIInputImpl<String>("str", String.class);
          bool = new UIInputImpl<Boolean>("bool", Boolean.class);
 
-         context.getUIBuilder().add(str);
-         context.getUIBuilder().add(bool);
+         builder.add(str).add(bool);
       }
 
    }

@@ -6,16 +6,15 @@
  */
 package org.jboss.forge.aesh;
 
-import org.jboss.forge.ui.UIBuilder;
-import org.jboss.forge.ui.UIContext;
-import org.jboss.forge.ui.UIInput;
-import org.jboss.forge.ui.UIInputComponent;
-import org.jboss.forge.ui.UISelection;
-import org.jboss.forge.ui.UIValidationContext;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import org.jboss.forge.ui.UIBuilder;
+import org.jboss.forge.ui.UIContext;
+import org.jboss.forge.ui.UIInputComponent;
+import org.jboss.forge.ui.UISelection;
+import org.jboss.forge.ui.UIValidationContext;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
@@ -77,7 +76,7 @@ public class ShellContext implements UIValidationContext, UIContext, UIBuilder
    }
 
    @Override
-   public UIBuilder getUIBuilder()
+   public UIContext getUIContext()
    {
       return this;
    }

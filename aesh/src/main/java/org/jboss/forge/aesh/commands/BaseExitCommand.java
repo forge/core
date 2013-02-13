@@ -12,6 +12,7 @@ import org.jboss.forge.aesh.ForgeShell;
 import org.jboss.forge.aesh.ShellContext;
 import org.jboss.forge.ui.Result;
 import org.jboss.forge.ui.Results;
+import org.jboss.forge.ui.UIBuilder;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UICommandMetadata;
 import org.jboss.forge.ui.UIContext;
@@ -40,7 +41,7 @@ public abstract class BaseExitCommand implements UICommand
    }
 
    @Override
-   public void initializeUI(UIContext context) throws Exception
+   public void initializeUI(UIBuilder context) throws Exception
    {
    }
 

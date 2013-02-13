@@ -1,16 +1,26 @@
 package org.jboss.forge.aesh.commands;
 
-import org.jboss.aesh.console.Config;
-import org.jboss.aesh.util.Parser;
-import org.jboss.forge.aesh.ShellContext;
-import org.jboss.forge.ui.*;
-import org.jboss.forge.ui.base.UICommandMetadataBase;
-
-import javax.inject.Inject;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.inject.Inject;
+
+import org.jboss.aesh.util.Parser;
+import org.jboss.forge.aesh.ShellContext;
+import org.jboss.forge.ui.Result;
+import org.jboss.forge.ui.Results;
+import org.jboss.forge.ui.UIBuilder;
+import org.jboss.forge.ui.UICommand;
+import org.jboss.forge.ui.UICommandMetadata;
+import org.jboss.forge.ui.UICompleter;
+import org.jboss.forge.ui.UIContext;
+import org.jboss.forge.ui.UIInput;
+import org.jboss.forge.ui.UIInputComponent;
+import org.jboss.forge.ui.UIInputMany;
+import org.jboss.forge.ui.UIValidationContext;
+import org.jboss.forge.ui.base.UICommandMetadataBase;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
@@ -36,7 +46,7 @@ public class LsCommand  implements UICommand
    }
 
    @Override
-   public void initializeUI(UIContext context) throws Exception
+   public void initializeUI(UIBuilder builder) throws Exception
    {
       about.setLabel("about");
       about.setRequired(false);
@@ -50,7 +60,7 @@ public class LsCommand  implements UICommand
                return out;
            }
        });
-       context.getUIBuilder().add(about);
+       builder.add(about);
 
        arguments.setLabel("");
        arguments.setRequired(false);
@@ -65,7 +75,7 @@ public class LsCommand  implements UICommand
            }
        }); */
 
-       context.getUIBuilder().add(arguments);
+       builder.add(arguments);
    }
 
    @Override

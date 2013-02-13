@@ -9,6 +9,7 @@ import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.Forge;
 import org.jboss.forge.ui.Result;
 import org.jboss.forge.ui.Results;
+import org.jboss.forge.ui.UIBuilder;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UICommandMetadata;
 import org.jboss.forge.ui.UIContext;
@@ -36,16 +37,16 @@ public class AddonRemoveCommandNew implements UICommand, AddonCommandConstants
    public UICommandMetadata getMetadata()
    {
       return new UICommandMetadataBase(
-               ADDON_REMOVE_COMMAND_NAME, 
+               ADDON_REMOVE_COMMAND_NAME,
                ADDON_REMOVE_COMMAND_DESCRIPTION);
    }
 
    @Override
-   public void initializeUI(UIContext context) throws Exception
+   public void initializeUI(UIBuilder builder) throws Exception
    {
       addons.setLabel("Installed addons");
       addons.setValueChoices(forge.getRepository().listEnabled());
-      context.getUIBuilder().add(addons);
+      builder.add(addons);
    }
 
    @Override

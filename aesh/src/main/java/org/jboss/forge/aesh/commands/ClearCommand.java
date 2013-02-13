@@ -12,6 +12,7 @@ import org.jboss.aesh.console.Console;
 import org.jboss.forge.aesh.ShellContext;
 import org.jboss.forge.ui.Result;
 import org.jboss.forge.ui.Results;
+import org.jboss.forge.ui.UIBuilder;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UICommandMetadata;
 import org.jboss.forge.ui.UIContext;
@@ -48,11 +49,11 @@ public class ClearCommand implements UICommand
    }
 
    @Override
-   public void initializeUI(UIContext context) throws Exception
+   public void initializeUI(UIBuilder builder) throws Exception
    {
       clear.setLabel("clear");
       clear.setRequired(true);
-      context.getUIBuilder().add(clear);
+      builder.add(clear);
    }
 
    @Override

@@ -12,6 +12,7 @@ import org.jboss.forge.resource.Resource;
 import org.jboss.forge.resource.ResourceFactory;
 import org.jboss.forge.ui.Result;
 import org.jboss.forge.ui.Results;
+import org.jboss.forge.ui.UIBuilder;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UICommandMetadata;
 import org.jboss.forge.ui.UIContext;
@@ -52,7 +53,7 @@ public class NewProjectCommand implements UICommand
    }
 
    @Override
-   public void initializeUI(final UIContext context) throws Exception
+   public void initializeUI(final UIBuilder builder) throws Exception
    {
 
       named.setLabel("Project name");
@@ -60,7 +61,7 @@ public class NewProjectCommand implements UICommand
 
       targetLocation.setLabel("Project location");
 
-      UISelection<Resource<?>> currentSelection = context.getInitialSelection();
+      UISelection<Resource<?>> currentSelection = builder.getUIContext().getInitialSelection();
       if (currentSelection != null)
       {
          Resource<?> resource = currentSelection.get();
@@ -87,7 +88,7 @@ public class NewProjectCommand implements UICommand
 
       type.setRequired(false);
 
-      context.getUIBuilder().add(named).add(targetLocation).add(overwrite).add(type);
+      builder.add(named).add(targetLocation).add(overwrite).add(type);
    }
 
    @Override

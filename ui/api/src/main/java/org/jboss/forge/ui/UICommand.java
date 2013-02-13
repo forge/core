@@ -16,9 +16,9 @@ public interface UICommand
 
    public boolean isEnabled(UIContext context);
 
-   public void initializeUI(UIContext context) throws Exception;
+   public void initializeUI(UIBuilder builder) throws Exception;
 
-   public void validate(UIValidationContext context);
+   public void validate(UIValidationContext validator);
 
    public Result execute(UIContext context) throws Exception;
 }

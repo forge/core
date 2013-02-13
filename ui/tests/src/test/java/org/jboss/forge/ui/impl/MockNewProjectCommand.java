@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.ui.Result;
 import org.jboss.forge.ui.Results;
+import org.jboss.forge.ui.UIBuilder;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UICommandMetadata;
 import org.jboss.forge.ui.UIContext;
@@ -37,7 +38,7 @@ public class MockNewProjectCommand implements UICommand, UIWizardStep
    private UIInput<Boolean> useFramework;
 
    @Override
-   public void initializeUI(UIContext context) throws Exception
+   public void initializeUI(UIBuilder builder) throws Exception
    {
       projectDir.setRequired(false);
 
@@ -60,7 +61,7 @@ public class MockNewProjectCommand implements UICommand, UIWizardStep
 
       // Define the order in builder
 
-      context.getUIBuilder().add(projectName).add(projectDir);
+      builder.add(projectName).add(projectDir);
    }
 
    @Override

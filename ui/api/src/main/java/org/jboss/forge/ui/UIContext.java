@@ -9,7 +9,5 @@ package org.jboss.forge.ui;
 
 public interface UIContext
 {
-   UIBuilder getUIBuilder();
-
    <SELECTIONTYPE> UISelection<SELECTIONTYPE> getInitialSelection();
 }

@@ -6,14 +6,23 @@
  */
 package org.jboss.forge.aesh;
 
-import org.jboss.forge.container.services.Exported;
-import org.jboss.forge.ui.*;
-import org.jboss.forge.ui.base.UICommandMetadataBase;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+
+import org.jboss.forge.container.services.Exported;
+import org.jboss.forge.ui.Result;
+import org.jboss.forge.ui.Results;
+import org.jboss.forge.ui.UIBuilder;
+import org.jboss.forge.ui.UICommand;
+import org.jboss.forge.ui.UICommandMetadata;
+import org.jboss.forge.ui.UICompleter;
+import org.jboss.forge.ui.UIContext;
+import org.jboss.forge.ui.UIInput;
+import org.jboss.forge.ui.UIInputComponent;
+import org.jboss.forge.ui.UIValidationContext;
+import org.jboss.forge.ui.base.UICommandMetadataBase;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
@@ -27,11 +36,11 @@ public class FooCommand implements UICommand
    @Inject
    private UIInput<String> foo;
 
-    @Inject
-    private UIInput<Boolean> bool;
+   @Inject
+   private UIInput<Boolean> bool;
 
-    @Inject
-    private UIInput<String> bar;
+   @Inject
+   private UIInput<String> bar;
 
    @Override
    public UICommandMetadata getMetadata()
@@ -46,24 +55,23 @@ public class FooCommand implements UICommand
    }
 
    @Override
-   public void initializeUI(UIContext context) throws Exception
+   public void initializeUI(UIBuilder builder) throws Exception
    {
       name.setLabel("foo");
       name.setRequired(true);
 
-       foo.setCompleter(new UICompleter<String>() {
-           @Override
-           public Iterable<String> getCompletionProposals(UIInputComponent<?,String> input, String value) {
-               List<String> out = new ArrayList<String>();
-               out.add("foo1");
-               return out;
-           }
-       });
+      foo.setCompleter(new UICompleter<String>()
+      {
+         @Override
+         public Iterable<String> getCompletionProposals(UIInputComponent<?, String> input, String value)
+         {
+            List<String> out = new ArrayList<String>();
+            out.add("foo1");
+            return out;
+         }
+      });
 
-       context.getUIBuilder().add(name);
-       context.getUIBuilder().add(foo);
-       context.getUIBuilder().add(bool);
-       context.getUIBuilder().add(bar);
+      builder.add(name).add(foo).add(bool).add(bar);
    }
 
    @Override

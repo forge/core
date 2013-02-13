@@ -67,6 +67,14 @@ public class NewProjectCommandTest
    {
       final List<UIInputComponent<?, ?>> inputs = new ArrayList<UIInputComponent<?, ?>>();
 
+      final UIContext context = new UIContext()
+      {
+         @Override
+         public <T> UISelection<T> getInitialSelection()
+         {
+            return null;
+         }
+      };
       final UIBuilder builder = new UIBuilder()
       {
          @Override
@@ -75,43 +83,28 @@ public class NewProjectCommandTest
             inputs.add(input);
             return this;
          }
-      };
-
-      UIContext context = new UIContext()
-      {
-         @Override
-         public UIBuilder getUIBuilder()
-         {
-            return builder;
-         }
 
          @Override
-         public <T> UISelection<T> getInitialSelection()
+         public UIContext getUIContext()
          {
-            return null;
+            return context;
          }
       };
 
-      command.initializeUI(context);
+      command.initializeUI(builder);
       command.getNamed().setValue("test");
 
       command.validate(new UIValidationContext()
       {
          @Override
-         public UIBuilder getUIBuilder()
+         public UIContext getUIContext()
          {
-            return builder;
+            return context;
          }
 
          @Override
          public void addValidationError(UIInputComponent<?, ?> input, String errorMessage)
          {
-         }
-
-         @Override
-         public <T> UISelection<T> getInitialSelection()
-         {
-            return null;
          }
       });
 

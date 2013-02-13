@@ -10,6 +10,7 @@ import javax.inject.Inject;
 
 import org.jboss.forge.ui.Result;
 import org.jboss.forge.ui.Results;
+import org.jboss.forge.ui.UIBuilder;
 import org.jboss.forge.ui.UICommandMetadata;
 import org.jboss.forge.ui.UIContext;
 import org.jboss.forge.ui.UIInput;
@@ -31,9 +32,9 @@ public class ExampleWizard implements UIWizard
    }
 
    @Override
-   public void initializeUI(UIContext context) throws Exception
+   public void initializeUI(UIBuilder builder) throws Exception
    {
-      context.getUIBuilder().add(firstName);
+      builder.add(firstName);
    }
 
    @Override

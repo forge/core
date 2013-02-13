@@ -18,9 +18,9 @@ public class MyFirstWizard implements UIWizard
    private UIInput<String> firstName;
 
    @Override
-   public void initializeUI(UIContext context) throws Exception
+   public void initializeUI(UIBuilder builder) throws Exception
    {
-      context.getUIBuilder().add(firstName);
+      builder.add(firstName);
    }
 
    @Override

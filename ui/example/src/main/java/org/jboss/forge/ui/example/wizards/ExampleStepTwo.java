@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import org.jboss.forge.resource.DirectoryResource;
 import org.jboss.forge.ui.Result;
 import org.jboss.forge.ui.Results;
+import org.jboss.forge.ui.UIBuilder;
 import org.jboss.forge.ui.UICommandMetadata;
 import org.jboss.forge.ui.UIContext;
 import org.jboss.forge.ui.UIInput;
@@ -34,10 +35,10 @@ public class ExampleStepTwo implements UIWizardStep
    }
 
    @Override
-   public void initializeUI(UIContext context) throws Exception
+   public void initializeUI(UIBuilder builder) throws Exception
    {
       location.setLabel("Location:");
-      context.getUIBuilder().add(location);
+      builder.add(location);
    }
 
    @Override

@@ -19,6 +19,7 @@ import org.jboss.forge.container.Addon;
 import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.ui.Result;
 import org.jboss.forge.ui.Results;
+import org.jboss.forge.ui.UIBuilder;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UICommandMetadata;
 import org.jboss.forge.ui.UIContext;
@@ -51,7 +52,7 @@ public class ListServicesCommand implements UICommand
    }
 
    @Override
-   public void initializeUI(UIContext context) throws Exception
+   public void initializeUI(UIBuilder builder) throws Exception
    {
    }
 

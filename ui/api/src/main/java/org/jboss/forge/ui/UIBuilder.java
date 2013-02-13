@@ -7,7 +7,15 @@
 
 package org.jboss.forge.ui;
 
-public interface UIBuilder
+/**
+ * Allows {@link UICommand} objects to specify the order of the displayed fields
+ *
+ * Each wizard page receives an unique instance of {@link UIBuilder}
+ *
+ * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
+ *
+ */
+public interface UIBuilder extends UIContextProvider
 {
    UIBuilder add(UIInputComponent<?, ?> input);
 }
