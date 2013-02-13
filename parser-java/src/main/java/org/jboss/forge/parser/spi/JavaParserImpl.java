@@ -49,7 +49,20 @@ public class JavaParserImpl implements JavaParserProvider
    public JavaSource<?> parse(final File file) throws FileNotFoundException
    {
       FileInputStream stream = new FileInputStream(file);
-      return parse(stream);
+      try
+      {
+         return parse(stream);
+      }
+      finally
+      {
+         try
+         {
+            stream.close();
+         }
+         catch (IOException io)
+         {
+         }
+      }
    }
 
    @Override
@@ -66,16 +79,13 @@ public class JavaParserImpl implements JavaParserProvider
       }
       finally
       {
-         if (data != null)
+         try
          {
-            try
-            {
-               data.close();
-            }
-            catch (IOException e)
-            {
-               throw new IllegalStateException(e);
-            }
+            data.close();
+         }
+         catch (IOException e)
+         {
+            throw new IllegalStateException(e);
          }
       }
    }
