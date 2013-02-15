@@ -60,7 +60,7 @@ public class AddonRepositoryImplTest
    @Test
    public void testAddonDirNaming() throws Exception
    {
-      AddonRepository repository = AddonRepositoryImpl.forDefaultDirectory();
+      AddonRepository repository = AddonRepositoryImpl.forDirectory(File.createTempFile("addonDir", "test"));
       File dir = repository.getAddonBaseDir(AddonId.from("123#$%456", "!@#789*-0"));
       Assert.assertEquals("123-456-789-0", dir.getName());
    }
