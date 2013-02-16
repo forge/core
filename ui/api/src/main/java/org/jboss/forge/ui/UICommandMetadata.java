@@ -7,6 +7,8 @@
 
 package org.jboss.forge.ui;
 
+import java.net.URL;
+
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -17,4 +19,12 @@ public interface UICommandMetadata
    String getDescription();
 
    UICategory getCategory();
+
+   /**
+    * Returns the location of the documentation of this command
+    *
+    * @return null if no documentation was found
+    */
+   URL getDocLocation();
+
 }

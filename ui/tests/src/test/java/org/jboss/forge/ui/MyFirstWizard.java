@@ -2,6 +2,7 @@ package org.jboss.forge.ui;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.ui.base.UICommandMetadataBase;
 import org.jboss.forge.ui.util.Categories;
 import org.jboss.forge.ui.wizard.UIWizard;
 
@@ -38,26 +39,8 @@ public class MyFirstWizard implements UIWizard
    @Override
    public UICommandMetadata getMetadata()
    {
-      return new UICommandMetadata()
-      {
-         @Override
-         public String getName()
-         {
-            return MyFirstWizard.class.getName();
-         }
-
-         @Override
-         public String getDescription()
-         {
-            return "generic test wizard";
-         }
-
-         @Override
-         public UICategory getCategory()
-         {
-            return Categories.create("Example");
-         }
-      };
+      return new UICommandMetadataBase(MyFirstWizard.class.getName(), "generic test wizard",
+               Categories.create("Example"));
    }
 
    @Override
