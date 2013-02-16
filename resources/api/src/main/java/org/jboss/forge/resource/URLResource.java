@@ -2,6 +2,7 @@ package org.jboss.forge.resource;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.jboss.forge.facets.Facet;
@@ -58,7 +59,7 @@ public class URLResource extends VirtualResource<URL>
    @Override
    protected List<Resource<?>> doListResources()
    {
-      return new ArrayList<Resource<?>>();
+      return Collections.emptyList();
    }
 
 }
