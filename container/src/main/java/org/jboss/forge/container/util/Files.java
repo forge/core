@@ -226,6 +226,7 @@ public final class Files
     * @param preserveFileDate whether to preserve the file date
     * @throws IOException if an error occurs
     */
+   @SuppressWarnings("resource")
    private static void doCopyFile(File srcFile, File destFile) throws IOException
    {
       if (destFile.exists() && destFile.isDirectory())

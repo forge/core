@@ -135,6 +135,7 @@ public final class AddonRepositoryImpl implements AddonRepository
       this.addonDir = dir;
    }
 
+   @SuppressWarnings("resource")
    @Override
    public boolean deploy(AddonId addon, List<AddonDependency> dependencies, List<File> resourceJars)
    {
@@ -186,6 +187,7 @@ public final class AddonRepositoryImpl implements AddonRepository
       }
    }
 
+   @SuppressWarnings("resource")
    @Override
    public boolean disable(final AddonId addon)
    {
@@ -227,6 +229,7 @@ public final class AddonRepositoryImpl implements AddonRepository
       return false;
    }
 
+   @SuppressWarnings("resource")
    @Override
    public boolean enable(AddonId addon)
    {
@@ -314,6 +317,7 @@ public final class AddonRepositoryImpl implements AddonRepository
       }
    }
 
+   @SuppressWarnings("resource")
    @Override
    public File getAddonDescriptor(AddonId addon)
    {
@@ -434,6 +438,7 @@ public final class AddonRepositoryImpl implements AddonRepository
       return addonDir;
    }
 
+   @SuppressWarnings("resource")
    @Override
    public File getRepositoryRegistryFile()
    {
