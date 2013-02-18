@@ -9,6 +9,7 @@ package org.jboss.forge.dev.mvn;
 
 import java.util.List;
 
+import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
 import org.apache.maven.model.Model;
@@ -49,15 +50,17 @@ public class MavenPlugin implements Plugin
    private final Project project;
    private final ProjectFactory factory;
    private final ResourceFactory resources;
+   private final BeanManager manager;
 
    @Inject
    public MavenPlugin(final Shell shell, final Project project, final ProjectFactory factory,
-            final ResourceFactory resources)
+            final ResourceFactory resources, BeanManager manager)
    {
       this.shell = shell;
       this.project = project;
       this.factory = factory;
       this.resources = resources;
+      this.manager = manager;
    }
 
    @Command("set-groupid")
@@ -229,6 +232,14 @@ public class MavenPlugin implements Plugin
       else
       {
          out.println("Nothing to remove...");
+      }
+   }
+   
+   @Command("update") 
+   public void updateDependencies()
+   {
+      if(!new VersionUpdater(project, shell, this.factory, manager).update()) {
+         shell.println("No nothing to update");
       }
    }
 }

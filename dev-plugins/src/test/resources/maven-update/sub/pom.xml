@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.jboss.forge.test</groupId>
+		<artifactId>maven-update</artifactId>
+		<version>1.0.0</version>
+		<relativePath>../</relativePath>	
+	</parent>
+
+	<artifactId>maven-update-sub</artifactId>
+	<name>Forge - Dev Plugins - Maven Update Sub Test</name>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.jboss.shrinkwrap</groupId>
+			<artifactId>shrinkwrap-api</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.shrinkwrap</groupId>
+			<artifactId>shrinkwrap-impl-base</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${version.junit}</version>
+		</dependency>
+	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>container</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.jboss.arquillian.container</groupId>
+					<artifactId>arquillian-weld-se-embedded-1.1</artifactId>
+					<version>1.0.0.CR4</version>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>a</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.jboss.shrinkwrap</groupId>
+					<artifactId>shrinkwrap-spi</artifactId>
+					<version>1.0.0</version>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>b</id>
+			<properties>
+				<vesion.descriptor>2.0.0-alpha-1</vesion.descriptor>
+			</properties>
+			<dependencies>
+				<dependency>
+					<groupId>org.jboss.shrinkwrap.descriptors</groupId>
+					<artifactId>shrinkwrap-descriptors-bom</artifactId>
+					<version>${vesion.descriptor}</version>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
+</project>
