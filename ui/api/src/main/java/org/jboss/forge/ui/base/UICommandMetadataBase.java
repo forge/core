@@ -3,6 +3,7 @@ package org.jboss.forge.ui.base;
 import java.net.URL;
 
 import org.jboss.forge.ui.UICategory;
+import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UICommandMetadata;
 
 public class UICommandMetadataBase implements UICommandMetadata
@@ -59,4 +60,16 @@ public class UICommandMetadataBase implements UICommandMetadata
    {
       return docLocation;
    }
+
+   /**
+    * Calculates the location of the documentation of a specific {@link UICommand}
+    *
+    * @param type an {@link UICommand} instance
+    * @return the URL with the location for the {@link UICommand} documentation
+    */
+   public static URL getDocLocationFor(Class<? extends UICommand> type)
+   {
+      return type.getResource(type.getSimpleName() + ".asciidoc");
+   }
+
 }
