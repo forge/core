@@ -7,6 +7,7 @@
 
 package org.jboss.forge.project.dependencies.events;
 
+import org.jboss.forge.QueuedEvent;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.Dependency;
 
@@ -14,6 +15,7 @@ import org.jboss.forge.project.dependencies.Dependency;
  * Fired when a dependency is finishes updating
  *
  */
+@QueuedEvent
 public final class UpdatedDependency
 {
    private Dependency from;

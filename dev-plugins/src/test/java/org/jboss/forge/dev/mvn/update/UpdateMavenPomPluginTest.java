@@ -77,7 +77,5 @@ public class UpdateMavenPomPluginTest extends AbstractShellTest
       Assert.assertTrue(
                "Should show list of available versions",
                pom.contains("Which version would you like to update to"));
-
-      System.out.println(pom);
    }
 }
