@@ -8,6 +8,9 @@ import org.jboss.forge.ui.UICommandMetadata;
 
 public class UICommandMetadataBase implements UICommandMetadata
 {
+
+   private static String[] VALID_DOC_EXTENSIONS = { ".txt.gzip", ".txt.gz", ".txt" };
+
    private final String name;
    private final String description;
    private final UICategory category;
@@ -65,11 +68,20 @@ public class UICommandMetadataBase implements UICommandMetadata
     * Calculates the location of the documentation of a specific {@link UICommand}
     *
     * @param type an {@link UICommand} instance
-    * @return the URL with the location for the {@link UICommand} documentation
+    * @return the URL with the location for the {@link UICommand} documentation, or null if not found
     */
    public static URL getDocLocationFor(Class<? extends UICommand> type)
    {
-      return type.getResource(type.getSimpleName() + ".asciidoc");
+      URL url = null;
+      for (String extension : VALID_DOC_EXTENSIONS)
+      {
+         String docFileName = type.getSimpleName() + extension;
+         url = type.getResource(docFileName);
+         if (url != null)
+         {
+            break;
+         }
+      }
+      return url;
    }
-
 }
