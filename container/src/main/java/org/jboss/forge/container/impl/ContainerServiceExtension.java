@@ -33,7 +33,6 @@ import javax.enterprise.inject.spi.ProcessInjectionPoint;
 import javax.enterprise.inject.spi.ProcessProducer;
 
 import org.jboss.forge.container.AddonRegistry;
-import org.jboss.forge.container.events.CrossContainerObserverMethod;
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.container.services.ExportedInstanceInjectionPoint;
@@ -105,10 +104,8 @@ public class ContainerServiceExtension implements Extension
       }
    }
 
-   public void wireCrossContainerServicesAndEvents(@Observes AfterBeanDiscovery event, final BeanManager manager)
+   public void wireCrossContainerServices(@Observes AfterBeanDiscovery event, final BeanManager manager)
    {
-      event.addObserverMethod(new CrossContainerObserverMethod());
-
       // needs to happen in the addon that is requesting the service
       for (final Entry<InjectionPoint, Class<?>> entry : requestedServices.entrySet())
       {

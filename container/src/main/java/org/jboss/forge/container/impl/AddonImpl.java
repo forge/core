@@ -7,7 +7,6 @@ import java.util.concurrent.Future;
 import org.jboss.forge.container.Addon;
 import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonId;
-import org.jboss.forge.container.AddonRunnable;
 import org.jboss.forge.container.Status;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.container.util.Assert;

@@ -1,4 +1,7 @@
-package org.jboss.forge.container;
+package org.jboss.forge.container.util;
+
+import org.jboss.forge.container.Addon;
+import org.jboss.forge.container.AddonFilter;
 
 public class AddonFilters
 {

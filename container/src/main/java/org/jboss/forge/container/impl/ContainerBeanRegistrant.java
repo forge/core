@@ -11,6 +11,8 @@ public class ContainerBeanRegistrant implements Extension
    {
       // Impl types
       event.addAnnotatedType(manager.createAnnotatedType(ContainerControlImpl.class));
+      // TODO Re-enable Cross Container Events
+      // event.addAnnotatedType(manager.createAnnotatedType(CrossContainerObserverMethod.class));
       event.addAnnotatedType(manager.createAnnotatedType(AddonRegistryProducer.class));
       event.addAnnotatedType(manager.createAnnotatedType(AddonRepositoryProducer.class));
       event.addAnnotatedType(manager.createAnnotatedType(ForgeProducer.class));

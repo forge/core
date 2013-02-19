@@ -1,4 +1,4 @@
-package org.jboss.forge.container;
+package org.jboss.forge.container.impl;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
@@ -7,17 +7,10 @@ import java.util.logging.Logger;
 
 import javax.enterprise.inject.spi.BeanManager;
 
+import org.jboss.forge.container.ContainerControl;
+import org.jboss.forge.container.Forge;
+import org.jboss.forge.container.Status;
 import org.jboss.forge.container.event.Perform;
-import org.jboss.forge.container.impl.AddonImpl;
-import org.jboss.forge.container.impl.AddonRegistryImpl;
-import org.jboss.forge.container.impl.AddonRegistryProducer;
-import org.jboss.forge.container.impl.AddonRepositoryProducer;
-import org.jboss.forge.container.impl.ContainerControlImpl;
-import org.jboss.forge.container.impl.ContainerServiceExtension;
-import org.jboss.forge.container.impl.ForgeProducer;
-import org.jboss.forge.container.impl.NullServiceRegistry;
-import org.jboss.forge.container.impl.ServiceRegistryImpl;
-import org.jboss.forge.container.impl.ServiceRegistryProducer;
 import org.jboss.forge.container.modules.ModularURLScanner;
 import org.jboss.forge.container.modules.ModularWeld;
 import org.jboss.forge.container.modules.ModuleResourceLoader;

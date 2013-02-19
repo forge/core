@@ -20,7 +20,6 @@ import org.jboss.forge.container.AddonFilter;
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.AddonRepository;
-import org.jboss.forge.container.AddonRunnable;
 import org.jboss.forge.container.Forge;
 import org.jboss.forge.container.Status;
 import org.jboss.forge.container.exception.ContainerException;

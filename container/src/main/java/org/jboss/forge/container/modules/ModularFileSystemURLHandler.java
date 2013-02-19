@@ -137,17 +137,17 @@ public class ModularFileSystemURLHandler
       if (name.endsWith(".class"))
       {
          String className = filenameToClassname(name);
-         try
-         {
-            resourceLoader.classForName(className);
+//         try
+//         {
+//            resourceLoader.classForName(className);
             discoveredClasses.add(className);
-         }
-         catch (Exception e)
-         {
-            log.warn("Not loading Bean definition from class: ["
-                     + className + "] because of underlying class loading error. " +
-                     "Class found in [" + resourceLoader + "] but could not be loaded.)", e);
-         }
+         // }
+         // catch (Exception e)
+         // {
+         // log.warn("Not loading Bean definition from class: ["
+         // + className + "] because of underlying class loading error. " +
+         // "Class found in [" + resourceLoader + "] but could not be loaded.)", e);
+         // }
       }
       else if (name.endsWith("beans.xml"))
       {
