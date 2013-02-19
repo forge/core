@@ -5,7 +5,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.ui;
+package org.jboss.forge.ui.context;
+
+import org.jboss.forge.ui.input.UISelection;
 
 public interface UIContext
 {

@@ -7,6 +7,9 @@
 
 package org.jboss.forge.ui;
 
+import org.jboss.forge.ui.context.UIContextProvider;
+import org.jboss.forge.ui.input.UIInputComponent;
+
 /**
  * Allows {@link UICommand} objects to specify the order of the displayed fields
  *

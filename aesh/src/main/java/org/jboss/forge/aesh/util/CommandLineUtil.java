@@ -16,9 +16,9 @@ import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.convert.Converter;
 import org.jboss.forge.convert.ConverterFactory;
 import org.jboss.forge.ui.UICommand;
-import org.jboss.forge.ui.UIInput;
-import org.jboss.forge.ui.UIInputComponent;
-import org.jboss.forge.ui.UIInputMany;
+import org.jboss.forge.ui.input.UIInput;
+import org.jboss.forge.ui.input.UIInputComponent;
+import org.jboss.forge.ui.input.UIInputMany;
 
 import java.util.ArrayList;
 import java.util.List;

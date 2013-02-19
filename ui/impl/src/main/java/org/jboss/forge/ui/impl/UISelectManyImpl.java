@@ -8,7 +8,7 @@ package org.jboss.forge.ui.impl;
 
 import java.util.concurrent.Callable;
 
-import org.jboss.forge.ui.UISelectMany;
+import org.jboss.forge.ui.input.UISelectMany;
 import org.jboss.forge.ui.util.Callables;
 
 /**

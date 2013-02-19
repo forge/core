@@ -6,6 +6,9 @@
  */
 package org.jboss.forge.ui;
 
+import org.jboss.forge.ui.input.UIInput;
+import org.jboss.forge.ui.input.UIInputComponent;
+
 /**
  * @param VALUETYPE The value type to be provided by completion.
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

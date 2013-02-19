@@ -2,15 +2,15 @@ package org.jboss.forge.ui.example.wizards;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.ui.Result;
-import org.jboss.forge.ui.Results;
 import org.jboss.forge.ui.UIBuilder;
 import org.jboss.forge.ui.UICommandMetadata;
-import org.jboss.forge.ui.UIContext;
-import org.jboss.forge.ui.UIInput;
-import org.jboss.forge.ui.UISelection;
-import org.jboss.forge.ui.UIValidationContext;
 import org.jboss.forge.ui.base.UICommandMetadataBase;
+import org.jboss.forge.ui.context.UIContext;
+import org.jboss.forge.ui.context.UIValidationContext;
+import org.jboss.forge.ui.input.UIInput;
+import org.jboss.forge.ui.input.UISelection;
+import org.jboss.forge.ui.result.Result;
+import org.jboss.forge.ui.result.Results;
 import org.jboss.forge.ui.wizard.UIWizard;
 import org.jboss.forge.ui.wizard.UIWizardStep;
 

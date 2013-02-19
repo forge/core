@@ -12,7 +12,7 @@ import java.util.concurrent.Callable;
 import javax.enterprise.inject.Vetoed;
 
 import org.jboss.forge.ui.UICompleter;
-import org.jboss.forge.ui.UIInput;
+import org.jboss.forge.ui.input.UIInput;
 import org.jboss.forge.ui.util.Callables;
 
 /**

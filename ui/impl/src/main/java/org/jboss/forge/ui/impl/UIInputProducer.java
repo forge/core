@@ -15,11 +15,11 @@ import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Inject;
 
 import org.jboss.forge.environment.Environment;
-import org.jboss.forge.ui.UIInput;
-import org.jboss.forge.ui.UIInputMany;
-import org.jboss.forge.ui.UISelectMany;
-import org.jboss.forge.ui.UISelectOne;
 import org.jboss.forge.ui.impl.facets.HintsFacetImpl;
+import org.jboss.forge.ui.input.UIInput;
+import org.jboss.forge.ui.input.UIInputMany;
+import org.jboss.forge.ui.input.UISelectMany;
+import org.jboss.forge.ui.input.UISelectOne;
 
 /**
  * Produces UIInput objects

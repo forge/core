@@ -5,24 +5,26 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.ui;
+package org.jboss.forge.ui.result;
+
+import org.jboss.forge.ui.UICommand;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class ResultSuccess extends Results
+public class ResultFail extends Results
 {
-   ResultSuccess(String message)
+   ResultFail(String message)
    {
       super(message);
    }
 
-   ResultSuccess(Class<? extends UICommand> command)
+   ResultFail(Class<? extends UICommand> command)
    {
       super(command);
    }
 
-   ResultSuccess(Class<? extends UICommand> command, String message)
+   ResultFail(Class<? extends UICommand> command, String message)
    {
       super(command, message);
    }

@@ -3,6 +3,11 @@ package org.jboss.forge.ui;
 import javax.inject.Inject;
 
 import org.jboss.forge.ui.base.UICommandMetadataBase;
+import org.jboss.forge.ui.context.UIContext;
+import org.jboss.forge.ui.context.UIValidationContext;
+import org.jboss.forge.ui.input.UIInput;
+import org.jboss.forge.ui.result.Result;
+import org.jboss.forge.ui.result.Results;
 import org.jboss.forge.ui.util.Categories;
 import org.jboss.forge.ui.wizard.UIWizard;
 

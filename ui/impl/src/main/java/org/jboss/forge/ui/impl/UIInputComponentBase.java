@@ -13,9 +13,9 @@ import javax.enterprise.inject.Vetoed;
 
 import org.jboss.forge.facets.BaseFaceted;
 import org.jboss.forge.facets.Facet;
-import org.jboss.forge.ui.UIInput;
-import org.jboss.forge.ui.UIInputComponent;
 import org.jboss.forge.ui.facets.HintsFacet;
+import org.jboss.forge.ui.input.UIInput;
+import org.jboss.forge.ui.input.UIInputComponent;
 import org.jboss.forge.ui.util.Callables;
 
 /**

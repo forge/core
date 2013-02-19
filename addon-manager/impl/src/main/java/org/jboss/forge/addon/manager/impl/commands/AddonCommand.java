@@ -6,10 +6,10 @@ import javax.inject.Inject;
 import org.jboss.forge.ui.UIBuilder;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UICommandMetadata;
-import org.jboss.forge.ui.UIContext;
-import org.jboss.forge.ui.UIInput;
-import org.jboss.forge.ui.UIValidationContext;
 import org.jboss.forge.ui.base.UICommandMetadataBase;
+import org.jboss.forge.ui.context.UIContext;
+import org.jboss.forge.ui.context.UIValidationContext;
+import org.jboss.forge.ui.input.UIInput;
 
 @Vetoed
 public abstract class AddonCommand implements UICommand, AddonCommandConstants

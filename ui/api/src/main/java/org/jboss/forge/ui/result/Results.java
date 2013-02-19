@@ -5,7 +5,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.ui;
+package org.jboss.forge.ui.result;
+
+import org.jboss.forge.ui.UICommand;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -17,7 +19,8 @@ public abstract class Results implements Result
 
    public static final Results success()
    {
-      return new ResultSuccess((String) null);
+      String msg = null;
+      return new ResultSuccess(msg);
    }
 
    public static final Results success(String message)
@@ -32,7 +35,7 @@ public abstract class Results implements Result
 
    public static final Results success(Class<? extends UICommand> next, String message)
    {
-      return new ResultSuccess(message);
+      return new ResultSuccess(next, message);
    }
 
    public static final Results fail(String message)
@@ -47,7 +50,7 @@ public abstract class Results implements Result
 
    public static final Results fail(Class<? extends UICommand> next, String message)
    {
-      return new ResultFail(message);
+      return new ResultFail(next, message);
    }
 
    Results(String message)

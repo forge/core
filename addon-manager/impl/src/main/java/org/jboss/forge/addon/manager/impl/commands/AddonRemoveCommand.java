@@ -5,9 +5,9 @@ import javax.inject.Inject;
 
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.Forge;
-import org.jboss.forge.ui.Result;
-import org.jboss.forge.ui.Results;
-import org.jboss.forge.ui.UIContext;
+import org.jboss.forge.ui.context.UIContext;
+import org.jboss.forge.ui.result.Result;
+import org.jboss.forge.ui.result.Results;
 
 @Vetoed
 public class AddonRemoveCommand extends AddonCommand

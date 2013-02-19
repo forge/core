@@ -9,7 +9,7 @@ package org.jboss.forge.ui.impl;
 import java.util.Collections;
 
 import org.jboss.forge.ui.UICompleter;
-import org.jboss.forge.ui.UIInputComponent;
+import org.jboss.forge.ui.input.UIInputComponent;
 
 /**
  * A {@link UICompleter} that always returns zero proposals.

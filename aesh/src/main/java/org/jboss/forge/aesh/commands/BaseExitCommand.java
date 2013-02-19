@@ -10,14 +10,14 @@ import javax.inject.Inject;
 
 import org.jboss.forge.aesh.ForgeShell;
 import org.jboss.forge.aesh.ShellContext;
-import org.jboss.forge.ui.Result;
-import org.jboss.forge.ui.Results;
 import org.jboss.forge.ui.UIBuilder;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UICommandMetadata;
-import org.jboss.forge.ui.UIContext;
-import org.jboss.forge.ui.UIValidationContext;
 import org.jboss.forge.ui.base.UICommandMetadataBase;
+import org.jboss.forge.ui.context.UIContext;
+import org.jboss.forge.ui.context.UIValidationContext;
+import org.jboss.forge.ui.result.Result;
+import org.jboss.forge.ui.result.Results;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>

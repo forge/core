@@ -11,10 +11,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jboss.forge.ui.UIBuilder;
-import org.jboss.forge.ui.UIContext;
-import org.jboss.forge.ui.UIInputComponent;
-import org.jboss.forge.ui.UISelection;
-import org.jboss.forge.ui.UIValidationContext;
+import org.jboss.forge.ui.context.UIContext;
+import org.jboss.forge.ui.context.UIValidationContext;
+import org.jboss.forge.ui.input.UIInputComponent;
+import org.jboss.forge.ui.input.UISelection;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>

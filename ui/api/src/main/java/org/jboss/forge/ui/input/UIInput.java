@@ -5,9 +5,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.ui;
+package org.jboss.forge.ui.input;
 
 import java.util.concurrent.Callable;
+
+import org.jboss.forge.ui.UICompleter;
 
 public interface UIInput<VALUETYPE> extends UIInputComponent<UIInput<VALUETYPE>, VALUETYPE>
 {

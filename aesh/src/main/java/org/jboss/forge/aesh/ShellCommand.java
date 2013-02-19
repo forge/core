@@ -21,6 +21,10 @@ import org.jboss.aesh.console.ConsoleOutput;
 import org.jboss.aesh.util.FileLister;
 import org.jboss.forge.aesh.util.CommandLineUtil;
 import org.jboss.forge.ui.*;
+import org.jboss.forge.ui.input.UIInput;
+import org.jboss.forge.ui.input.UIInputComponent;
+import org.jboss.forge.ui.input.UIInputMany;
+import org.jboss.forge.ui.result.Result;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>

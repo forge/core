@@ -7,15 +7,15 @@ import javax.inject.Singleton;
 
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.Forge;
-import org.jboss.forge.ui.Result;
-import org.jboss.forge.ui.Results;
 import org.jboss.forge.ui.UIBuilder;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UICommandMetadata;
-import org.jboss.forge.ui.UIContext;
-import org.jboss.forge.ui.UISelectMany;
-import org.jboss.forge.ui.UIValidationContext;
 import org.jboss.forge.ui.base.UICommandMetadataBase;
+import org.jboss.forge.ui.context.UIContext;
+import org.jboss.forge.ui.context.UIValidationContext;
+import org.jboss.forge.ui.input.UISelectMany;
+import org.jboss.forge.ui.result.Result;
+import org.jboss.forge.ui.result.Results;
 
 @Singleton
 public class AddonRemoveCommandNew implements UICommand, AddonCommandConstants
