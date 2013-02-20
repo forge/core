@@ -33,8 +33,8 @@ public abstract class UIInputComponentBase<IMPLTYPE extends UIInputComponent<IMP
    private final String name;
 
    private String label;
-   private Callable<Boolean> enabled;
-   private Callable<Boolean> required;
+   private Callable<Boolean> enabled = Callables.returning(Boolean.TRUE);
+   private Callable<Boolean> required = Callables.returning(Boolean.FALSE);
    private String requiredMessage;
 
    private Class<VALUETYPE> type;
