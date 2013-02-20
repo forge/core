@@ -8,6 +8,8 @@
 package org.jboss.forge.ui.wizard;
 
 import org.jboss.forge.ui.UICommand;
+import org.jboss.forge.ui.context.UIContext;
+import org.jboss.forge.ui.result.NavigationResult;
 
 /**
  * An {@link UICommand} that supports multiple steps.
@@ -20,7 +22,7 @@ import org.jboss.forge.ui.UICommand;
 public interface UIWizard extends UICommand
 {
    /**
-    * Returns the next wizard step, or null if there are no pages to be displayed next
+    * Returns the next wizard step, or null if there are no pages to be displayed after this
     */
-   Class<? extends UIWizard> getSuccessor();
+   public NavigationResult next(UIContext context) throws Exception;
 }

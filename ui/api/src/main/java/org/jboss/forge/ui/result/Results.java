@@ -14,60 +14,35 @@ import org.jboss.forge.ui.UICommand;
  */
 public abstract class Results implements Result
 {
-   private final Class<? extends UICommand> command;
    private final String message;
 
-   public static final Results success()
+   public static final Result success()
    {
-      String msg = null;
-      return new ResultSuccess(msg);
+      return success(null);
    }
 
-   public static final Results success(String message)
+   public static final Result success(String message)
    {
       return new ResultSuccess(message);
    }
 
-   public static final Results success(Class<? extends UICommand> command)
-   {
-      return new ResultSuccess(command);
-   }
-
-   public static final Results success(Class<? extends UICommand> next, String message)
-   {
-      return new ResultSuccess(next, message);
-   }
-
-   public static final Results fail(String message)
+   public static final Result fail(String message)
    {
       return new ResultFail(message);
    }
 
-   public static final Results fail(Class<? extends UICommand> command)
+   public static final NavigationResult navigateTo(Class<? extends UICommand> next)
    {
-      return new ResultFail(command);
+      return navigateTo(next, null);
    }
 
-   public static final Results fail(Class<? extends UICommand> next, String message)
+   public static final NavigationResult navigateTo(Class<? extends UICommand> next, String message)
    {
-      return new ResultFail(next, message);
+      return new NavigationResultImpl(message, next);
    }
 
    Results(String message)
    {
-      this.message = message;
-      this.command = null;
-   }
-
-   Results(Class<? extends UICommand> command)
-   {
-      this.message = null;
-      this.command = command;
-   }
-
-   Results(Class<? extends UICommand> command, String message)
-   {
-      this.command = command;
       this.message = message;
    }
 
@@ -75,11 +50,5 @@ public abstract class Results implements Result
    public String getMessage()
    {
       return this.message;
-   }
-
-   @Override
-   public Class<? extends UICommand> getCommand()
-   {
-      return this.command;
    }
 }

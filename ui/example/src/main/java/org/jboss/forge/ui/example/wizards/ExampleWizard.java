@@ -15,6 +15,7 @@ import org.jboss.forge.ui.context.UIContext;
 import org.jboss.forge.ui.context.UIValidationContext;
 import org.jboss.forge.ui.input.UIInput;
 import org.jboss.forge.ui.input.UISelection;
+import org.jboss.forge.ui.result.NavigationResult;
 import org.jboss.forge.ui.result.Result;
 import org.jboss.forge.ui.result.Results;
 import org.jboss.forge.ui.wizard.UIWizard;
@@ -28,7 +29,8 @@ public class ExampleWizard implements UIWizard
    @Override
    public UICommandMetadata getMetadata()
    {
-      return new UICommandMetadataBase("Wizard", "This is the First screen of the Wizard");
+      return new UICommandMetadataBase("Wizard", "This is the First screen of the Wizard",
+               UICommandMetadataBase.getDocLocationFor(getClass()));
    }
 
    @Override
@@ -57,9 +59,8 @@ public class ExampleWizard implements UIWizard
    }
 
    @Override
-   public Class<? extends UIWizard> getSuccessor()
+   public NavigationResult next(UIContext context) throws Exception
    {
-      return ExampleStepOne.class;
+      return Results.navigateTo(ExampleStepOne.class);
    }
-
 }

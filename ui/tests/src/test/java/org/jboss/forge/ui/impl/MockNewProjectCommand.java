@@ -12,9 +12,9 @@ import org.jboss.forge.ui.UICommandMetadata;
 import org.jboss.forge.ui.context.UIContext;
 import org.jboss.forge.ui.context.UIValidationContext;
 import org.jboss.forge.ui.input.UIInput;
+import org.jboss.forge.ui.result.NavigationResult;
 import org.jboss.forge.ui.result.Result;
 import org.jboss.forge.ui.result.Results;
-import org.jboss.forge.ui.wizard.UIWizard;
 import org.jboss.forge.ui.wizard.UIWizardStep;
 
 @Exported
@@ -79,11 +79,11 @@ public class MockNewProjectCommand implements UICommand, UIWizardStep
     */
 
    @Override
-   public Class<? extends UIWizard> getSuccessor()
+   public NavigationResult next(UIContext context) throws Exception
    {
       if (useFramework.getValue())
       {
-         return MockChooseFrameworkStep.class;
+         return Results.navigateTo(MockChooseFrameworkStep.class);
       }
       return null;
    }

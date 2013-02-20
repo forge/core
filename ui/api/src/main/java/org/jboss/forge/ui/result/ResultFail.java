@@ -7,8 +7,6 @@
 
 package org.jboss.forge.ui.result;
 
-import org.jboss.forge.ui.UICommand;
-
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -17,15 +15,5 @@ public class ResultFail extends Results
    ResultFail(String message)
    {
       super(message);
-   }
-
-   ResultFail(Class<? extends UICommand> command)
-   {
-      super(command);
-   }
-
-   ResultFail(Class<? extends UICommand> command, String message)
-   {
-      super(command, message);
    }
 }

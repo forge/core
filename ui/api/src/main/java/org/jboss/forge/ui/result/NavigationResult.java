@@ -4,14 +4,18 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
+
 package org.jboss.forge.ui.result;
 
+import org.jboss.forge.ui.UICommand;
+
 /**
- * The result of an execution
+ * The result of a navigation
  *
- * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
+ *
  */
-public interface Result
+public interface NavigationResult extends Result
 {
-   public String getMessage();
+   Class<? extends UICommand> getNext();
 }
