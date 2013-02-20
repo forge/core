@@ -289,6 +289,41 @@ public class Proxies
          typeName = type.getName();
       }
       return typeName;
+   }
 
+   /**
+    * This method tests if two proxied objects are equivalent.
+    *
+    * It does so by comparing the class names and the hashCode, since they may be loaded from different classloaders.
+    *
+    */
+   public static boolean areEquivalent(Object proxiedObj, Object anotherProxiedObj)
+   {
+      if (proxiedObj == null && anotherProxiedObj == null)
+      {
+         return true;
+      }
+      else if (proxiedObj == null || anotherProxiedObj == null)
+      {
+         return false;
+      }
+      else
+      {
+         Object unproxiedObj = unwrap(proxiedObj);
+         Object anotherUnproxiedObj = unwrap(anotherProxiedObj);
+
+         boolean sameClassName = unwrapProxyClassName(unproxiedObj.getClass()).equals(
+                  unwrapProxyClassName(anotherUnproxiedObj.getClass()));
+         boolean sameHashcode = (unproxiedObj.hashCode() == anotherUnproxiedObj.hashCode());
+         return sameClassName && sameHashcode;
+      }
+   }
+
+   /**
+    * Checks if a proxied object is an instance of the specified {@link Class}
+    */
+   public static boolean isInstance(Class<?> type, Object proxiedObject)
+   {
+      return type.isInstance(unwrap(proxiedObject));
    }
 }

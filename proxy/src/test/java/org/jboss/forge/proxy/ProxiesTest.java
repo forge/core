@@ -33,8 +33,55 @@ public class ProxiesTest
             return null;
          }
       });
+      Assert.assertNotEquals(Bean.class.getName(), enhancedObj.getClass().getName());
       String result = Proxies.unwrapProxyClassName(enhancedObj.getClass());
       Assert.assertEquals(Bean.class.getName(), result);
+   }
+
+   @Test
+   public void testAreEquivalent()
+   {
+      Bean enhancedObj = Proxies.enhance(Bean.class, new ForgeProxy()
+      {
+
+         @Override
+         public Object invoke(Object self, Method thisMethod, Method proceed, Object[] args) throws Throwable
+         {
+            return proceed.invoke(self, args);
+         }
+
+         @Override
+         public Object getDelegate()
+         {
+            return null;
+         }
+      });
+      enhancedObj.setAtt("String");
+      Bean bean2 = new Bean();
+      bean2.setAtt("String");
+
+      Assert.assertTrue(Proxies.areEquivalent(enhancedObj, bean2));
+   }
+
+   @Test
+   public void testIsInstance()
+   {
+      Bean enhancedObj = Proxies.enhance(Bean.class, new ForgeProxy()
+      {
+
+         @Override
+         public Object invoke(Object self, Method thisMethod, Method proceed, Object[] args) throws Throwable
+         {
+            return proceed.invoke(self, args);
+         }
+
+         @Override
+         public Object getDelegate()
+         {
+            return null;
+         }
+      });
+      Assert.assertTrue(Proxies.isInstance(Bean.class, enhancedObj));
    }
 
 }
