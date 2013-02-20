@@ -314,8 +314,22 @@ public class Proxies
 
          boolean sameClassName = unwrapProxyClassName(unproxiedObj.getClass()).equals(
                   unwrapProxyClassName(anotherUnproxiedObj.getClass()));
-         boolean sameHashcode = (unproxiedObj.hashCode() == anotherUnproxiedObj.hashCode());
-         return sameClassName && sameHashcode;
+         if (sameClassName)
+         {
+            if (unproxiedObj.getClass().isEnum())
+            {
+               // Enum hashCode is different if loaded from different classloaders and cannot be overriden.
+               return unproxiedObj.toString().equals(anotherUnproxiedObj.toString());
+            }
+            else
+            {
+               return (unproxiedObj.hashCode() == anotherUnproxiedObj.hashCode());
+            }
+         }
+         else
+         {
+            return false;
+         }
       }
    }
 
