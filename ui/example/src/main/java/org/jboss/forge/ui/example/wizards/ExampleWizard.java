@@ -45,7 +45,11 @@ public class ExampleWizard implements UIWizard
    @Override
    public void validate(UIValidationContext context)
    {
-      System.out.println("Validate");
+      String value = firstName.getValue();
+      if (value != null && !value.isEmpty() && !value.matches("[a-zA-Z]+"))
+      {
+         context.addValidationError(firstName, "First Name contains invalid characters");
+      }
    }
 
    @Override

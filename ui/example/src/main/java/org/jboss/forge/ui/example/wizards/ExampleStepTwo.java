@@ -44,7 +44,6 @@ public class ExampleStepTwo implements UIWizardStep
    @Override
    public void validate(UIValidationContext context)
    {
-      System.out.println("Validate Step Two");
    }
 
    @Override

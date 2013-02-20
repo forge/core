@@ -43,7 +43,11 @@ public class ExampleStepOne implements UIWizardStep
    @Override
    public void validate(UIValidationContext context)
    {
-      System.out.println("Validate");
+      String value = address.getValue();
+      if (value != null && !value.isEmpty() && !value.matches("[a-zA-Z0-9, ]+"))
+      {
+         context.addValidationError(address, "Address contains invalid characters");
+      }
    }
 
    @Override
