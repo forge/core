@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.parser.resources;
+package org.jboss.forge.parser.java.resources;
 
 import java.io.File;
 import java.io.FileNotFoundException;

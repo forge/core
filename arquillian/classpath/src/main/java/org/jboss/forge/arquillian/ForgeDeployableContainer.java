@@ -34,6 +34,7 @@ import org.jboss.forge.container.ForgeImpl;
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.impl.AddonRepositoryImpl;
 import org.jboss.forge.container.util.ClassLoaders;
+import org.jboss.forge.container.util.Files;
 import org.jboss.forge.container.util.Threads;
 import org.jboss.forge.dependencies.spi.DependencyResolver;
 import org.jboss.shrinkwrap.api.Archive;
@@ -162,7 +163,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    {
       try
       {
-         this.addonDir = File.createTempFile("forge-test-addon-dir", "");
+         this.addonDir = File.createTempFile("forge", "test-addon-dir");
          System.out.println("Executing test case with addon dir [" + addonDir + "]");
          this.repository = AddonRepositoryImpl.forDirectory(addonDir);
       }
@@ -173,7 +174,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       try
       {
          runnable = new ForgeRunnable(addonDir, ClassLoader.getSystemClassLoader());
-         thread = new Thread(runnable, "Arq-Forge Runtime");
+         thread = new Thread(runnable, "Arquillian Forge Runtime");
          thread.start();
       }
       catch (Exception e)
@@ -186,6 +187,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    public void stop() throws LifecycleException
    {
       this.runnable.stop();
+      Files.delete(addonDir, true);
    }
 
    @Override

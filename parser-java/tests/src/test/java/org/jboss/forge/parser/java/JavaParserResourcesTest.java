@@ -7,7 +7,7 @@ package org.jboss.forge.parser.java;
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-import static org.junit.Assert.*;
+import java.io.File;
 
 import javax.inject.Inject;
 
@@ -19,21 +19,22 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.parser.JavaParser;
+import org.jboss.forge.parser.java.resources.JavaResource;
 import org.jboss.forge.resource.ResourceFactory;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
 public class JavaParserResourcesTest
 {
-
    @Deployment
    @Dependencies({
-            @Addon(name = "org.jboss.forge:parser-java", version = "2.0.0-SNAPSHOT"),
-            @Addon(name = "org.jboss.forge:resources", version = "2.0.0-SNAPSHOT")
+            @Addon(name = "org.jboss.forge:resources", version = "2.0.0-SNAPSHOT"),
+            @Addon(name = "org.jboss.forge:parser-java", version = "2.0.0-SNAPSHOT")
    })
    public static ForgeArchive getDeployment()
    {
@@ -54,6 +55,11 @@ public class JavaParserResourcesTest
    public void testJavaResourceCreation() throws Exception
    {
       JavaClass javaClass = JavaParser.create(JavaClass.class).setPackage("org.jboss.forge.test").setName("Example");
+      JavaResource resource = factory.create(JavaResource.class, File.createTempFile("forge", ".java"));
+      resource.createNewFile();
+      resource.setContents(javaClass);
 
+      Assert.assertEquals("Example", resource.getJavaSource().getName());
+      Assert.assertEquals("org.jboss.forge.test", resource.getJavaSource().getPackage());
    }
 }

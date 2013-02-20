@@ -7,6 +7,8 @@
 package org.jboss.forge.resource;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
@@ -34,8 +36,10 @@ public class ResourceFactory
    @SuppressWarnings({ "unchecked", "rawtypes" })
    public <E, T extends Resource<E>> T create(final Class<T> type, final E underlyingResource)
    {
+      T result = null;
       synchronized (this)
       {
+         List<Resource<?>> generated = new ArrayList<Resource<?>>();
          for (ExportedInstance<ResourceGenerator> instance : getRegisteredResourceGenerators())
          {
             ResourceGenerator generator = instance.get();
@@ -43,33 +47,51 @@ public class ResourceFactory
             {
                if (type.isAssignableFrom(generator.getResourceType(type, underlyingResource)))
                {
-                  Resource<?> resource = generator.getResource(this, type, underlyingResource);
-                  return (T) resource;
+                  generated.add(generator.getResource(this, type, underlyingResource));
                }
             }
             instance.release(generator);
          }
+
+         /*
+          * Choose the resource that is most specialized. TODO This needs to handle forks in the type hierarchy.
+          */
+         for (Resource<?> resource : generated)
+         {
+            if (result == null || result.getClass().isAssignableFrom(resource.getClass()))
+               result = (T) resource;
+         }
       }
-      return null;
+      return result;
    }
 
    @SuppressWarnings({ "unchecked", "rawtypes" })
    public <E> Resource<E> create(E underlyingResource)
    {
+      Resource<E> result = null;
       synchronized (this)
       {
+         List<Resource<?>> generated = new ArrayList<Resource<?>>();
          for (ExportedInstance<ResourceGenerator> instance : getRegisteredResourceGenerators())
          {
             ResourceGenerator generator = instance.get();
             if (generator.handles(Resource.class, underlyingResource))
             {
-               Resource<?> resource = generator.getResource(this, Resource.class, underlyingResource);
-               return (Resource<E>) resource;
+               generated.add(generator.getResource(this, Resource.class, underlyingResource));
             }
             instance.release(generator);
          }
+
+         /*
+          * Choose the resource that is most specialized. TODO This needs to handle forks in the type hierarchy.
+          */
+         for (Resource<?> resource : generated)
+         {
+            if (result == null || result.getClass().isAssignableFrom(resource.getClass()))
+               result = (Resource<E>) resource;
+         }
       }
-      return null;
+      return result;
    }
 
    @SuppressWarnings("rawtypes")
