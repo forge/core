@@ -26,6 +26,9 @@ public class ExampleWizard implements UIWizard
    @Inject
    private UIInput<String> firstName;
 
+   @Inject
+   private UIInput<Boolean> goToLastStep;
+
    @Override
    public UICommandMetadata getMetadata()
    {
@@ -36,7 +39,7 @@ public class ExampleWizard implements UIWizard
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      builder.add(firstName);
+      builder.add(firstName).add(goToLastStep);
    }
 
    @Override
@@ -61,6 +64,10 @@ public class ExampleWizard implements UIWizard
    @Override
    public NavigationResult next(UIContext context) throws Exception
    {
+      if (goToLastStep.getValue() != null && goToLastStep.getValue())
+      {
+         return Results.navigateTo(ExampleStepTwo.class);
+      }
       return Results.navigateTo(ExampleStepOne.class);
    }
 }
