@@ -319,7 +319,9 @@ public class Proxies
             if (unproxiedObj.getClass().isEnum())
             {
                // Enum hashCode is different if loaded from different classloaders and cannot be overriden.
-               return unproxiedObj.toString().equals(anotherUnproxiedObj.toString());
+               Enum<?> enumLeft = Enum.class.cast(unproxiedObj);
+               Enum<?> enumRight = Enum.class.cast(anotherUnproxiedObj);
+               return (enumLeft.name().equals(enumRight.name())) && (enumLeft.ordinal() == enumRight.ordinal());
             }
             else
             {
