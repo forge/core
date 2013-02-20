@@ -93,6 +93,7 @@
             <module>dependencies</module>
             <module>environment</module>
             <module>facets</module>
+            <module>maven</module>
             <module>projects</module>
             <module>parser-java</module>
             <module>resources</module>
