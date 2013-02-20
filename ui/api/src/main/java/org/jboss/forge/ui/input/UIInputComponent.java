@@ -27,6 +27,8 @@ public interface UIInputComponent<IMPLTYPE, VALUETYPE> extends Faceted
 
    boolean isRequired();
 
+   String getRequiredMessage();
+
    IMPLTYPE setEnabled(boolean b);
 
    IMPLTYPE setEnabled(Callable<Boolean> callable);
@@ -36,4 +38,7 @@ public interface UIInputComponent<IMPLTYPE, VALUETYPE> extends Faceted
    IMPLTYPE setRequired(boolean required);
 
    IMPLTYPE setRequired(Callable<Boolean> required);
+
+   IMPLTYPE setRequiredMessage(String message);
+
 }

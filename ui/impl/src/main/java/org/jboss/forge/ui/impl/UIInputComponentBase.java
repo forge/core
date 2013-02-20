@@ -20,12 +20,13 @@ import org.jboss.forge.ui.util.Callables;
 
 /**
  * Implementation of a {@link UIInput} object
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ *
  * @param <VALUETYPE>
  */
 @Vetoed
+@SuppressWarnings("unchecked")
 public abstract class UIInputComponentBase<IMPLTYPE extends UIInputComponent<IMPLTYPE, VALUETYPE>, VALUETYPE> extends BaseFaceted
          implements UIInputComponent<IMPLTYPE, VALUETYPE>
 {
@@ -34,6 +35,7 @@ public abstract class UIInputComponentBase<IMPLTYPE extends UIInputComponent<IMP
    private String label;
    private Callable<Boolean> enabled;
    private Callable<Boolean> required;
+   private String requiredMessage;
 
    private Class<VALUETYPE> type;
 
@@ -73,7 +75,6 @@ public abstract class UIInputComponentBase<IMPLTYPE extends UIInputComponent<IMP
       return Callables.call(required);
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    public IMPLTYPE setEnabled(boolean enabled)
    {
@@ -81,7 +82,6 @@ public abstract class UIInputComponentBase<IMPLTYPE extends UIInputComponent<IMP
       return (IMPLTYPE) this;
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    public IMPLTYPE setEnabled(Callable<Boolean> callback)
    {
@@ -89,7 +89,6 @@ public abstract class UIInputComponentBase<IMPLTYPE extends UIInputComponent<IMP
       return (IMPLTYPE) this;
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    public IMPLTYPE setLabel(String label)
    {
@@ -97,7 +96,6 @@ public abstract class UIInputComponentBase<IMPLTYPE extends UIInputComponent<IMP
       return (IMPLTYPE) this;
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    public IMPLTYPE setRequired(boolean required)
    {
@@ -105,7 +103,6 @@ public abstract class UIInputComponentBase<IMPLTYPE extends UIInputComponent<IMP
       return (IMPLTYPE) this;
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    public IMPLTYPE setRequired(Callable<Boolean> required)
    {
@@ -117,6 +114,19 @@ public abstract class UIInputComponentBase<IMPLTYPE extends UIInputComponent<IMP
    public boolean supports(Class<? extends Facet<?>> type)
    {
       return HintsFacet.class.isAssignableFrom(type);
+   }
+
+   @Override
+   public String getRequiredMessage()
+   {
+      return requiredMessage;
+   }
+
+   @Override
+   public IMPLTYPE setRequiredMessage(String requiredMessage)
+   {
+      this.requiredMessage = requiredMessage;
+      return (IMPLTYPE) this;
    }
 
 }

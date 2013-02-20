@@ -36,7 +36,7 @@ public class ExampleStepOne implements UIWizardStep
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      address.setLabel("Address:");
+      address.setLabel("Address:").setRequired(true);
       builder.add(address);
    }
 

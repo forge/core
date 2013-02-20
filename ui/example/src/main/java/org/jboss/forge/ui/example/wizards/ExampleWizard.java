@@ -39,6 +39,7 @@ public class ExampleWizard implements UIWizard
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
+      firstName.setRequired(true).setRequiredMessage("First Name must be informed !");
       builder.add(firstName).add(goToLastStep);
    }
 
