@@ -8,22 +8,25 @@ package org.jboss.forge.ui.hints;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 public enum InputTypes implements InputType
 {
    CHECKBOX,
-   
+
    TEXTBOX,
    TEXTAREA,
-   
+
    FILE_PICKER,
    MULTI_FILE_PICKER,
-   
+
    SELECT_ONE_DROPDOWN,
    SELECT_ONE_RADIO,
    SELECT_MANY,
    SELECT_MANY_CHECKBOX,
-   
-   SECRET;
+
+   SECRET,
+
+   JAVA_CLASS_PICKER,
+   MULTI_JAVA_CLASS_PICKER;
 }
