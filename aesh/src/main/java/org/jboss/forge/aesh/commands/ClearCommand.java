@@ -25,7 +25,6 @@ import org.jboss.forge.ui.util.Metadata;
  */
 public class ClearCommand implements UICommand
 {
-   private Console console;
 
    @Inject
    private UIInput<String> clear;
@@ -34,12 +33,6 @@ public class ClearCommand implements UICommand
    public UICommandMetadata getMetadata()
    {
       return Metadata.forCommand(getClass()).name("clear").description("Clear the console");
-   }
-
-   public ClearCommand setConsole(Console console)
-   {
-      this.console = console;
-      return this;
    }
 
    @Override
@@ -64,7 +57,9 @@ public class ClearCommand implements UICommand
    @Override
    public Result execute(UIContext context) throws Exception
    {
-      console.clear();
+       if(context instanceof ShellContext) {
+          ((ShellContext) context).getShell().getConsole().clear();
+       }
       return Results.success("");
    }
 
