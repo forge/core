@@ -10,7 +10,6 @@ import java.io.File;
 
 import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.cl.CommandLineCompletionParser;
-import org.jboss.aesh.cl.CommandLineParser;
 import org.jboss.aesh.cl.ParsedCompleteObject;
 import org.jboss.aesh.cl.internal.ParameterInt;
 import org.jboss.aesh.complete.CompleteOperation;
@@ -20,7 +19,7 @@ import org.jboss.aesh.console.Console;
 import org.jboss.aesh.console.ConsoleOutput;
 import org.jboss.aesh.util.FileLister;
 import org.jboss.forge.aesh.util.CommandLineUtil;
-import org.jboss.forge.ui.*;
+import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.input.UIInput;
 import org.jboss.forge.ui.input.UIInputComponent;
 import org.jboss.forge.ui.input.UIInputMany;
@@ -29,149 +28,188 @@ import org.jboss.forge.ui.result.Result;
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  */
-public class ShellCommand implements Completion {
+public class ShellCommand implements Completion
+{
 
-    private UICommand command;
-    private ShellContext context;
+   private UICommand command;
+   private ShellContext context;
 
-    private ForgeShell aeshell;
+   private ForgeShell aeshell;
 
-    public ShellCommand(UICommand command, ForgeShell aeshell) throws Exception {
-        this.command = command;
-        this.context = new ShellContext(aeshell);
-        this.aeshell = aeshell;
-        command.initializeUI(context);
-        generateParser(command);
-    }
+   public ShellCommand(UICommand command, ForgeShell aeshell) throws Exception
+   {
+      this.command = command;
+      this.context = new ShellContext(aeshell);
+      this.aeshell = aeshell;
+      command.initializeUI(context);
+      generateParser(command);
+   }
 
-    public Console getConsole() {
-        return aeshell.getConsole();
-    }
+   public Console getConsole()
+   {
+      return aeshell.getConsole();
+   }
 
-    public ShellContext getContext() {
-        return context;
-    }
+   public ShellContext getContext()
+   {
+      return context;
+   }
 
-    public ForgeShell getAeshell() {
-        return aeshell;
-    }
+   public ForgeShell getAeshell()
+   {
+      return aeshell;
+   }
 
-    public UICommand getCommand() {
-        return command;
-    }
+   public UICommand getCommand()
+   {
+      return command;
+   }
 
-    public void generateParser(UICommand command) {
-        context.setParser(CommandLineUtil.generateParser(command, context));
-    }
+   public void generateParser(UICommand command)
+   {
+      context.setParser(CommandLineUtil.generateParser(command, context));
+   }
 
-    public CommandLine parse(String line) throws IllegalArgumentException {
-        return context.getParser().parse(line);
-    }
+   public CommandLine parse(String line) throws IllegalArgumentException
+   {
+      return context.getParser().parse(line);
+   }
 
-    public void run(ConsoleOutput consoleOutput, CommandLine commandLine) throws Exception {
-        CommandLineUtil.populateUIInputs(commandLine, context, getAeshell().getRegistry());
-        context.setConsoleOutput(consoleOutput);
-        Result result = command.execute(context);
-        if(result != null &&
-                result.getMessage() != null && result.getMessage().length() > 0)
-        getConsole().pushToStdOut(result.getMessage()+ Config.getLineSeparator());
-    }
+   public void run(ConsoleOutput consoleOutput, CommandLine commandLine) throws Exception
+   {
+      CommandLineUtil.populateUIInputs(commandLine, context, getAeshell().getRegistry());
+      context.setConsoleOutput(consoleOutput);
+      Result result = command.execute(context);
+      if (result != null &&
+               result.getMessage() != null && result.getMessage().length() > 0)
+         getConsole().pushToStdOut(result.getMessage() + Config.getLineSeparator());
+   }
 
-    public boolean isStandalone() {
-        return context.isStandalone();
-    }
+   public boolean isStandalone()
+   {
+      return context.isStandalone();
+   }
 
-    @Override
-    public void complete(CompleteOperation completeOperation) {
-        ParameterInt param = context.getParser().getParameters().get(0);
-        //complete command names
-        if(param.getName().startsWith(completeOperation.getBuffer()))
-            completeOperation.addCompletionCandidate(param.getName());
-            //complete options/arguments
-        else if(completeOperation.getBuffer().startsWith(param.getName())) {
-            ParsedCompleteObject completeObject =
-                    new CommandLineCompletionParser(context.getParser()).findCompleteObject(completeOperation.getBuffer());
-            if(completeObject.doDisplayOptions()) {
-                if(param.getOptionLongNamesWithDash().size() > 1) {
-                    completeOperation.addCompletionCandidates( param.getOptionLongNamesWithDash());
-                }
-                else {
-                    completeOperation.addCompletionCandidates( param.getOptionLongNamesWithDash());
-                    completeOperation.setOffset( completeOperation.getCursor()-
-                            completeObject.getOffset());
-                }
+   @SuppressWarnings({ "rawtypes", "unchecked" })
+   @Override
+   public void complete(CompleteOperation completeOperation)
+   {
+      ParameterInt param = context.getParser().getParameters().get(0);
+      // complete command names
+      if (param.getName().startsWith(completeOperation.getBuffer()))
+         completeOperation.addCompletionCandidate(param.getName());
+      // complete options/arguments
+      else if (completeOperation.getBuffer().startsWith(param.getName()))
+      {
+         ParsedCompleteObject completeObject =
+                  new CommandLineCompletionParser(context.getParser())
+                           .findCompleteObject(completeOperation.getBuffer());
+         if (completeObject.doDisplayOptions())
+         {
+            if (param.getOptionLongNamesWithDash().size() > 1)
+            {
+               completeOperation.addCompletionCandidates(param.getOptionLongNamesWithDash());
             }
-            //try to complete an options value
-            else if(completeObject.isOption()) {
-                UIInputComponent inputOption = context.findInput(completeObject.getName());
-                //option type == File
-                if(inputOption != null && inputOption.getValueType() == File.class) {
-                    completeOperation.setOffset(completeOperation.getCursor());
-                    if(completeObject.getValue() == null)
-                        new FileLister("", new File(System.getProperty("user.dir"))).findMatchingDirectories(completeOperation);
-                    else
-                        new FileLister(completeObject.getValue(), new File(System.getProperty("user.dir"))).findMatchingDirectories(completeOperation);
-                }
-                else if(inputOption != null && inputOption.getValueType() == Boolean.class) {
-                    //TODO
-                }
-                //this shouldnt be needed
-                if(inputOption != null && inputOption instanceof UIInput) {
-                    Iterable<String> iter = ((UIInput) inputOption).getCompleter().getCompletionProposals(inputOption, completeObject.getValue());
-                    if(iter != null) {
-                        for(String s : iter)
-                            completeOperation.addCompletionCandidate(s);
-                    }
-                    if(completeOperation.getCompletionCandidates().size() == 1) {
-                        completeOperation.setOffset( completeOperation.getCursor()-
-                                completeObject.getOffset());
-                    }
-                }
+            else
+            {
+               completeOperation.addCompletionCandidates(param.getOptionLongNamesWithDash());
+               completeOperation.setOffset(completeOperation.getCursor() -
+                        completeObject.getOffset());
             }
-            //try to complete a argument value
-            else if(completeObject.isArgument()) {
-                UIInputComponent inputOption = context.findInput("arguments"); //default for arguments
-
-                if(inputOption != null && inputOption.getValueType() == File.class) {
-                    completeOperation.setOffset(completeOperation.getCursor());
-                    if(completeObject.getValue() == null)
-                        new FileLister("", new File(System.getProperty("user.dir"))).findMatchingDirectories(completeOperation);
-                    else
-                        new FileLister(completeObject.getValue(), new File(System.getProperty("user.dir"))).findMatchingDirectories(completeOperation);
-                }
-                else if(inputOption != null && inputOption.getValueType() == Boolean.class) {
-                    //TODO
-                }
-                //check if the command actually implements Completion
-                else if(command instanceof Completion) {
-                    ((Completion) command).complete(completeOperation);
-                }
-                else {
-                    //this shouldnt be needed
-                    if(inputOption != null && inputOption instanceof UIInputMany) {
-                        Iterable<String> iter = ((UIInputMany) inputOption).getCompleter().getCompletionProposals(inputOption, completeObject.getValue());
-                        if(iter != null) {
-                            for(String s : iter) {
-                                completeOperation.addCompletionCandidate(s);
-                            }
-                        }
-                        if(completeOperation.getCompletionCandidates().size() == 1) {
-                            completeOperation.setOffset( completeOperation.getCursor()-
-                                    completeObject.getOffset());
-                        }
-                    }
-                }
+         }
+         // try to complete an options value
+         else if (completeObject.isOption())
+         {
+            UIInputComponent inputOption = context.findInput(completeObject.getName());
+            // option type == File
+            if (inputOption != null && inputOption.getValueType() == File.class)
+            {
+               completeOperation.setOffset(completeOperation.getCursor());
+               if (completeObject.getValue() == null)
+                  new FileLister("", new File(System.getProperty("user.dir")))
+                           .findMatchingDirectories(completeOperation);
+               else
+                  new FileLister(completeObject.getValue(), new File(System.getProperty("user.dir")))
+                           .findMatchingDirectories(completeOperation);
             }
+            else if (inputOption != null && inputOption.getValueType() == Boolean.class)
+            {
+               // TODO
+            }
+            // this shouldnt be needed
+            if (inputOption != null && inputOption instanceof UIInput)
+            {
+               Iterable<String> iter = ((UIInput) inputOption).getCompleter().getCompletionProposals(inputOption,
+                        completeObject.getValue());
+               if (iter != null)
+               {
+                  for (String s : iter)
+                     completeOperation.addCompletionCandidate(s);
+               }
+               if (completeOperation.getCompletionCandidates().size() == 1)
+               {
+                  completeOperation.setOffset(completeOperation.getCursor() -
+                           completeObject.getOffset());
+               }
+            }
+         }
+         // try to complete a argument value
+         else if (completeObject.isArgument())
+         {
+            UIInputComponent inputOption = context.findInput("arguments"); // default for arguments
 
-        }
-    }
+            if (inputOption != null && inputOption.getValueType() == File.class)
+            {
+               completeOperation.setOffset(completeOperation.getCursor());
+               if (completeObject.getValue() == null)
+                  new FileLister("", new File(System.getProperty("user.dir")))
+                           .findMatchingDirectories(completeOperation);
+               else
+                  new FileLister(completeObject.getValue(), new File(System.getProperty("user.dir")))
+                           .findMatchingDirectories(completeOperation);
+            }
+            else if (inputOption != null && inputOption.getValueType() == Boolean.class)
+            {
+               // TODO
+            }
+            // check if the command actually implements Completion
+            else if (command instanceof Completion)
+            {
+               ((Completion) command).complete(completeOperation);
+            }
+            else
+            {
+               // this shouldnt be needed
+               if (inputOption != null && inputOption instanceof UIInputMany)
+               {
+                  Iterable<String> iter = ((UIInputMany) inputOption).getCompleter().getCompletionProposals(
+                           inputOption, completeObject.getValue());
+                  if (iter != null)
+                  {
+                     for (String s : iter)
+                     {
+                        completeOperation.addCompletionCandidate(s);
+                     }
+                  }
+                  if (completeOperation.getCompletionCandidates().size() == 1)
+                  {
+                     completeOperation.setOffset(completeOperation.getCursor() -
+                              completeObject.getOffset());
+                  }
+               }
+            }
+         }
 
-    @Override
-    public String toString() {
-        return "ShellCommand{" +
-                "command=" + command +
-                ", context=" + context +
-                ", aeshell=" + aeshell +
-                '}';
-    }
+      }
+   }
+
+   @Override
+   public String toString()
+   {
+      return "ShellCommand{" +
+               "command=" + command +
+               ", context=" + context +
+               ", aeshell=" + aeshell +
+               '}';
+   }
 }
