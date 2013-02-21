@@ -17,12 +17,12 @@ import org.jboss.forge.aesh.ShellContext;
 import org.jboss.forge.ui.UIBuilder;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UICommandMetadata;
-import org.jboss.forge.ui.base.UICommandMetadataBase;
 import org.jboss.forge.ui.context.UIContext;
 import org.jboss.forge.ui.context.UIValidationContext;
 import org.jboss.forge.ui.impl.UIInputImpl;
 import org.jboss.forge.ui.input.UIInput;
 import org.jboss.forge.ui.result.Result;
+import org.jboss.forge.ui.util.Metadata;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -107,7 +107,7 @@ public class CommandLineUtilTest
       CommandLine cl = clp.parse("foo2 --str yay");
       CommandLineUtil.populateUIInputs(cl, context, null);
 
-      assertEquals("yay", ((UIInput) context.findInput("str")).getValue());
+      assertEquals("yay", ((UIInput<?>) context.findInput("str")).getValue());
    }
 
    private class Foo1Command implements UICommand
@@ -115,7 +115,7 @@ public class CommandLineUtilTest
       @Override
       public UICommandMetadata getMetadata()
       {
-         return new UICommandMetadataBase("foo1", "bla");
+         return Metadata.forCommand(getClass()).name("foo1").description("bla");
       }
 
       @Override
@@ -149,7 +149,7 @@ public class CommandLineUtilTest
       @Override
       public UICommandMetadata getMetadata()
       {
-         return new UICommandMetadataBase("foo2", "bla2");
+         return Metadata.forCommand(getClass()).name("foo2").description("bla2");
       }
 
       @Override

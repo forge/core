@@ -13,7 +13,6 @@ import org.jboss.forge.resource.ResourceFactory;
 import org.jboss.forge.ui.UIBuilder;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UICommandMetadata;
-import org.jboss.forge.ui.base.UICommandMetadataBase;
 import org.jboss.forge.ui.context.UIContext;
 import org.jboss.forge.ui.context.UIValidationContext;
 import org.jboss.forge.ui.input.UIInput;
@@ -21,6 +20,7 @@ import org.jboss.forge.ui.input.UISelection;
 import org.jboss.forge.ui.result.Result;
 import org.jboss.forge.ui.result.Results;
 import org.jboss.forge.ui.util.Categories;
+import org.jboss.forge.ui.util.Metadata;
 
 public class NewProjectCommand implements UICommand
 {
@@ -42,8 +42,8 @@ public class NewProjectCommand implements UICommand
    @Override
    public UICommandMetadata getMetadata()
    {
-      return new UICommandMetadataBase("New Project", "Create a new project",
-               Categories.create("Project", "Generation"));
+      return Metadata.forCommand(getClass()).name("New Project").description("Create a new project")
+               .category(Categories.create("Project", "Generation"));
    }
 
    @Override

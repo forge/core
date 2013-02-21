@@ -5,27 +5,77 @@ import javax.inject.Singleton;
 
 import org.jboss.forge.addon.manager.AddonManager;
 import org.jboss.forge.container.AddonId;
+import org.jboss.forge.ui.UIBuilder;
+import org.jboss.forge.ui.UICommand;
+import org.jboss.forge.ui.UICommandMetadata;
 import org.jboss.forge.ui.context.UIContext;
+import org.jboss.forge.ui.context.UIValidationContext;
+import org.jboss.forge.ui.input.UIInput;
 import org.jboss.forge.ui.result.Result;
 import org.jboss.forge.ui.result.Results;
+import org.jboss.forge.ui.util.Metadata;
 
 @Singleton
-public class AddonInstallCommand extends AddonCommand
+public class AddonInstallCommand implements UICommand
 {
 
    @Inject
    private AddonManager addonManager;
 
+   @Inject
+   private UIInput<String> groupId;
+
+   @Inject
+   private UIInput<String> name;
+
+   @Inject
+   private UIInput<String> version;
+
    @Override
-   protected String getName()
+   public UICommandMetadata getMetadata()
    {
-      return ADDON_INSTALL_COMMAND_NAME;
+      return Metadata.forCommand(getClass()).name(AddonCommandConstants.ADDON_INSTALL_COMMAND_NAME)
+               .description(AddonCommandConstants.ADDON_INSTALL_COMMAND_DESCRIPTION);
    }
 
    @Override
-   protected String getDescription()
+   public boolean isEnabled(UIContext context)
    {
-      return ADDON_INSTALL_COMMAND_DESCRIPTION;
+      return true;
+   }
+
+   @Override
+   public void initializeUI(UIBuilder builder) throws Exception
+   {
+      initializeGroupIdInput(builder);
+      initializeNameInput(builder);
+      initializeVersionInput(builder);
+   }
+
+   private void initializeGroupIdInput(UIBuilder builder)
+   {
+      groupId.setLabel("Group Id:");
+      groupId.setRequired(true);
+      builder.add(groupId);
+   }
+
+   private void initializeNameInput(UIBuilder builder)
+   {
+      name.setLabel("Name:");
+      name.setRequired(true);
+      builder.add(name);
+   }
+
+   private void initializeVersionInput(UIBuilder builder)
+   {
+      version.setLabel("Version:");
+      version.setRequired(true);
+      builder.add(version);
+   }
+
+   @Override
+   public void validate(UIValidationContext context)
+   {
    }
 
    @Override
@@ -39,9 +89,13 @@ public class AddonInstallCommand extends AddonCommand
       }
       catch (Throwable t)
       {
-         // TODO it should be possible to add the error to the result as payload
-         return Results.fail("Addon " + coordinates + " could not be installed.");
+         return Results.fail("Addon " + coordinates + " could not be installed.", t);
       }
+   }
+
+   protected String getCoordinates()
+   {
+      return groupId.getValue() + ':' + name.getValue() + ',' + version.getValue();
    }
 
 }

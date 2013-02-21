@@ -5,7 +5,6 @@ import javax.inject.Inject;
 import org.jboss.forge.resource.DirectoryResource;
 import org.jboss.forge.ui.UIBuilder;
 import org.jboss.forge.ui.UICommandMetadata;
-import org.jboss.forge.ui.base.UICommandMetadataBase;
 import org.jboss.forge.ui.context.UIContext;
 import org.jboss.forge.ui.context.UIValidationContext;
 import org.jboss.forge.ui.input.UIInput;
@@ -13,6 +12,7 @@ import org.jboss.forge.ui.input.UISelection;
 import org.jboss.forge.ui.result.NavigationResult;
 import org.jboss.forge.ui.result.Result;
 import org.jboss.forge.ui.result.Results;
+import org.jboss.forge.ui.util.Metadata;
 import org.jboss.forge.ui.wizard.UIWizardStep;
 
 /*
@@ -31,7 +31,7 @@ public class ExampleStepTwo implements UIWizardStep
    @Override
    public UICommandMetadata getMetadata()
    {
-      return new UICommandMetadataBase("Step 2", "Select a folder");
+      return Metadata.forCommand(getClass()).name("Step 2").description("Select a folder");
    }
 
    @Override

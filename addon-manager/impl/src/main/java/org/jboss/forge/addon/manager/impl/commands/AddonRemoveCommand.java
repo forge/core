@@ -1,49 +1,67 @@
 package org.jboss.forge.addon.manager.impl.commands;
 
-import javax.enterprise.inject.Vetoed;
+import java.util.Iterator;
+
 import javax.inject.Inject;
 
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.Forge;
+import org.jboss.forge.ui.UIBuilder;
+import org.jboss.forge.ui.UICommand;
+import org.jboss.forge.ui.UICommandMetadata;
 import org.jboss.forge.ui.context.UIContext;
+import org.jboss.forge.ui.context.UIValidationContext;
+import org.jboss.forge.ui.input.UISelectMany;
 import org.jboss.forge.ui.result.Result;
 import org.jboss.forge.ui.result.Results;
+import org.jboss.forge.ui.util.Metadata;
 
-@Vetoed
-public class AddonRemoveCommand extends AddonCommand
+public class AddonRemoveCommand implements UICommand, AddonCommandConstants
 {
 
    @Inject
    private Forge forge;
 
+   @Inject
+   private UISelectMany<AddonId> addons;
+
    @Override
-   protected String getName()
+   public boolean isEnabled(UIContext context)
    {
-      return ADDON_REMOVE_COMMAND_NAME;
+      return true;
    }
 
    @Override
-   protected String getDescription()
+   public UICommandMetadata getMetadata()
    {
-      return ADDON_REMOVE_COMMAND_DESCRIPTION;
+      return Metadata.forCommand(getClass()).name(ADDON_REMOVE_COMMAND_NAME)
+               .description(ADDON_REMOVE_COMMAND_DESCRIPTION);
+   }
+
+   @Override
+   public void initializeUI(UIBuilder builder) throws Exception
+   {
+      addons.setLabel("Installed addons");
+      addons.setValueChoices(forge.getRepository().listEnabled());
+      builder.add(addons);
+   }
+
+   @Override
+   public void validate(UIValidationContext context)
+   {
    }
 
    @Override
    public Result execute(UIContext context) throws Exception
    {
-      String coordinates = getCoordinates();
-      try
+      Iterator<AddonId> iterator = addons.getValue().iterator();
+      while (iterator.hasNext())
       {
-         AddonId addon = AddonId.fromCoordinates(coordinates);
-         forge.getRepository().disable(addon);
-         forge.getRepository().undeploy(addon);
-         return Results.success("Addon " + coordinates + " was removed succesfully.");
+         AddonId addonId = iterator.next();
+         forge.getRepository().disable(addonId);
+         forge.getRepository().undeploy(addonId);
       }
-      catch (Throwable t)
-      {
-         // TODO it should be possible to add the error to the result as payload
-         return Results.fail("Addon " + coordinates + " could not be removed.");
-      }
+      return Results.success("hoorray");
    }
 
 }

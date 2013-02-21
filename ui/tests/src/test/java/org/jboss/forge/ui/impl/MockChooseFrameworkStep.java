@@ -2,11 +2,11 @@ package org.jboss.forge.ui.impl;
 
 import org.jboss.forge.ui.UIBuilder;
 import org.jboss.forge.ui.UICommandMetadata;
-import org.jboss.forge.ui.base.UICommandMetadataBase;
 import org.jboss.forge.ui.context.UIContext;
 import org.jboss.forge.ui.context.UIValidationContext;
 import org.jboss.forge.ui.result.NavigationResult;
 import org.jboss.forge.ui.result.Result;
+import org.jboss.forge.ui.util.Metadata;
 import org.jboss.forge.ui.wizard.UIWizardStep;
 
 public class MockChooseFrameworkStep implements UIWizardStep
@@ -21,7 +21,8 @@ public class MockChooseFrameworkStep implements UIWizardStep
    @Override
    public UICommandMetadata getMetadata()
    {
-      return new UICommandMetadataBase("Choose Framework", "Pick the framework you wish to use for this command.");
+      return Metadata.forCommand(getClass()).name("Choose Framework")
+               .description("Pick the framework you wish to use for this command.");
    }
 
    @Override

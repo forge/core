@@ -4,16 +4,14 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.jboss.forge.ui.result;
 
 /**
+ * Represents a failed {@link Result}
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class ResultFail extends Results
+public interface Failed extends Result
 {
-   ResultFail(String message)
-   {
-      super(message);
-   }
+   public Throwable getException();
 }

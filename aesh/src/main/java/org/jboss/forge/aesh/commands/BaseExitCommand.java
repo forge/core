@@ -13,11 +13,11 @@ import org.jboss.forge.aesh.ShellContext;
 import org.jboss.forge.ui.UIBuilder;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UICommandMetadata;
-import org.jboss.forge.ui.base.UICommandMetadataBase;
 import org.jboss.forge.ui.context.UIContext;
 import org.jboss.forge.ui.context.UIValidationContext;
 import org.jboss.forge.ui.result.Result;
 import org.jboss.forge.ui.result.Results;
+import org.jboss.forge.ui.util.Metadata;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
@@ -25,13 +25,13 @@ import org.jboss.forge.ui.result.Results;
 public abstract class BaseExitCommand implements UICommand
 {
 
-    @Inject
+   @Inject
    private ForgeShell aeshell;
 
    @Override
    public UICommandMetadata getMetadata()
    {
-      return new UICommandMetadataBase("exiting", "Exit the shell");
+      return Metadata.forCommand(getClass()).name("exiting").description("Exit the shell");
    }
 
    @Override

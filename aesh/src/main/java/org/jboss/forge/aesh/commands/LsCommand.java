@@ -13,7 +13,6 @@ import org.jboss.forge.ui.UIBuilder;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UICommandMetadata;
 import org.jboss.forge.ui.UICompleter;
-import org.jboss.forge.ui.base.UICommandMetadataBase;
 import org.jboss.forge.ui.context.UIContext;
 import org.jboss.forge.ui.context.UIValidationContext;
 import org.jboss.forge.ui.input.UIInput;
@@ -21,22 +20,23 @@ import org.jboss.forge.ui.input.UIInputComponent;
 import org.jboss.forge.ui.input.UIInputMany;
 import org.jboss.forge.ui.result.Result;
 import org.jboss.forge.ui.result.Results;
+import org.jboss.forge.ui.util.Metadata;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  */
-public class LsCommand  implements UICommand
+public class LsCommand implements UICommand
 {
    @Inject
    private UIInput<String> about;
 
-    @Inject
-    private UIInputMany<File> arguments;
+   @Inject
+   private UIInputMany<File> arguments;
 
    @Override
    public UICommandMetadata getMetadata()
    {
-      return new UICommandMetadataBase("ls", "list files");
+      return Metadata.forCommand(getClass()).name("ls").description("List files");
    }
 
    @Override
@@ -50,32 +50,31 @@ public class LsCommand  implements UICommand
    {
       about.setLabel("about");
       about.setRequired(false);
-       about.setDefaultValue("");
+      about.setDefaultValue("");
 
-       about.setCompleter(new UICompleter<String>() {
-           @Override
-           public Iterable<String> getCompletionProposals(UIInputComponent<?,String> input, String value) {
-               List<String> out = new ArrayList<String>();
-               out.add("foo1");
-               return out;
-           }
-       });
-       builder.add(about);
+      about.setCompleter(new UICompleter<String>()
+      {
+         @Override
+         public Iterable<String> getCompletionProposals(UIInputComponent<?, String> input, String value)
+         {
+            List<String> out = new ArrayList<String>();
+            out.add("foo1");
+            return out;
+         }
+      });
+      builder.add(about);
 
-       arguments.setLabel("");
-       arguments.setRequired(false);
+      arguments.setLabel("");
+      arguments.setRequired(false);
 
-       /* not needed for File
-       arguments.setCompleter(new UICompleter<String>() {
-           @Override
-           public Iterable<String> getCompletionProposals(UIInputComponent<?,String> input, String value) {
-               List<String> out = new ArrayList<String>();
-               out.add("arguments!");
-               return out;
-           }
-       }); */
+      /*
+       * not needed for File arguments.setCompleter(new UICompleter<String>() {
+       * 
+       * @Override public Iterable<String> getCompletionProposals(UIInputComponent<?,String> input, String value) {
+       * List<String> out = new ArrayList<String>(); out.add("arguments!"); return out; } });
+       */
 
-       builder.add(arguments);
+      builder.add(arguments);
    }
 
    @Override
@@ -86,39 +85,46 @@ public class LsCommand  implements UICommand
    @Override
    public Result execute(UIContext context) throws Exception
    {
-       StringBuilder builder = new StringBuilder();
-       if(arguments.getValue() != null) {
-           Iterator<File> iter = arguments.getValue().iterator();
-           while(iter.hasNext()) {
-               builder.append(iter.next().getAbsolutePath()+", ");
-           }
-       }
+      StringBuilder builder = new StringBuilder();
+      if (arguments.getValue() != null)
+      {
+         Iterator<File> iter = arguments.getValue().iterator();
+         while (iter.hasNext())
+         {
+            builder.append(iter.next().getAbsolutePath() + ", ");
+         }
+      }
 
-      return Results.success( listMany(arguments.getValue(),(ShellContext) context));
+      return Results.success(listMany(arguments.getValue(), (ShellContext) context));
    }
 
-    private String listMany(Iterable<File> files, ShellContext context) {
-       if(arguments.getValue() != null) {
-           Iterator<File> iter = arguments.getValue().iterator();
-           while(iter.hasNext()) {
-               return listLs(iter.next(), context);
-           }
-       }
-        return null;
-    }
+   private String listMany(Iterable<File> files, ShellContext context)
+   {
+      if (arguments.getValue() != null)
+      {
+         Iterator<File> iter = arguments.getValue().iterator();
+         while (iter.hasNext())
+         {
+            return listLs(iter.next(), context);
+         }
+      }
+      return null;
+   }
 
-    private String listLs(File path, ShellContext context) {
-       if(path.isDirectory()) {
-           List<String> files = new ArrayList<String>();
-           for(File f : path.listFiles())
-               files.add(f.getName());
-           return Parser.formatDisplayList(files,
-                   context.getShell().getConsole().getTerminalSize().getHeight(),
-                   context.getShell().getConsole().getTerminalSize().getWidth());
-       }
-       else if(path.isFile())
-           return path.getName();
-        else
-           return null;
-    }
+   private String listLs(File path, ShellContext context)
+   {
+      if (path.isDirectory())
+      {
+         List<String> files = new ArrayList<String>();
+         for (File f : path.listFiles())
+            files.add(f.getName());
+         return Parser.formatDisplayList(files,
+                  context.getShell().getConsole().getTerminalSize().getHeight(),
+                  context.getShell().getConsole().getTerminalSize().getWidth());
+      }
+      else if (path.isFile())
+         return path.getName();
+      else
+         return null;
+   }
 }

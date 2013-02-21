@@ -12,9 +12,10 @@ import org.jboss.forge.ui.UICommand;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public abstract class Results implements Result
+public abstract class Results implements Result, Failed
 {
    private final String message;
+   private Throwable exception;
 
    public static final Result success()
    {
@@ -28,7 +29,12 @@ public abstract class Results implements Result
 
    public static final Result fail(String message)
    {
-      return new ResultFail(message);
+      return new ResultsFail(message);
+   }
+
+   public static final Result fail(String message, Throwable e)
+   {
+      return new ResultsFail(message, e);
    }
 
    public static final NavigationResult navigateTo(Class<? extends UICommand> next)
@@ -46,9 +52,21 @@ public abstract class Results implements Result
       this.message = message;
    }
 
+   public Results(String message, Throwable e)
+   {
+      this.message = message;
+      this.exception = e;
+   }
+
    @Override
    public String getMessage()
    {
       return this.message;
+   }
+
+   @Override
+   public Throwable getException()
+   {
+      return exception;
    }
 }

@@ -16,13 +16,13 @@ import org.jboss.forge.ui.UIBuilder;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.UICommandMetadata;
 import org.jboss.forge.ui.UICompleter;
-import org.jboss.forge.ui.base.UICommandMetadataBase;
 import org.jboss.forge.ui.context.UIContext;
 import org.jboss.forge.ui.context.UIValidationContext;
 import org.jboss.forge.ui.input.UIInput;
 import org.jboss.forge.ui.input.UIInputComponent;
 import org.jboss.forge.ui.result.Result;
 import org.jboss.forge.ui.result.Results;
+import org.jboss.forge.ui.util.Metadata;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
@@ -45,7 +45,7 @@ public class FooCommand implements UICommand
    @Override
    public UICommandMetadata getMetadata()
    {
-      return new UICommandMetadataBase("foo", "Do some foo");
+      return Metadata.forCommand(getClass()).name("foo").description("Do some foo");
    }
 
    @Override
