@@ -17,7 +17,7 @@ DESCRIPTION
 -----------
 *man* is forge's manual pager. Each page argument given to man is normally
 the name of a program, utility, function or command. The 'manual' 'page'
-assiciated with each of these arguments is then found and displayed.
+associated with each of these arguments is then found and displayed.
 'Sections' are not yet supported.
 
 
