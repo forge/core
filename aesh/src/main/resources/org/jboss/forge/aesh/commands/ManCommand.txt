@@ -1,0 +1,56 @@
+MAN(1)
+===========
+:doctype: manpage
+
+
+NAME
+----
+man - an interface to the online reference manuals
+
+
+SYNOPSIS
+--------
+*man* ['OPTIONS'] 'FILE'
+
+
+DESCRIPTION
+-----------
+*man* is forge's manual pager. Each page argument given to man is normally
+the name of a program, utility, function or command. The 'manual' 'page'
+assiciated with each of these arguments is then found and displayed.
+'Sections' are not yet supported.
+
+
+OPTIONS
+-------
+None yet
+
+
+FORMAT
+------
+The man page need to be written in 'asciidoc' 'manpage' syntax. More info
+can be found here: 'http://www.methods.co.nz/asciidoc/userguide.html#X1'
+An example can be seen here: http://asciidoc.googlecode.com/hg/doc/asciidoc.1.txt
+
+
+BUGS
+----
+Probably a lot
+
+
+AUTHOR
+------
+The Forge team
+
+
+RESOURCES
+---------
+forge: <http://forge.jboss.org/>
+asciidoc: <http://asciidoc.org/>
+
+
+COPYING
+-------
+Copyright 2012 Red Hat, Inc. and/or its affiliates.
+Licensed under the Eclipse Public License version 1.0, available at
+http://www.eclipse.org/legal/epl-v10.html

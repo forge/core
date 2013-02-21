@@ -31,7 +31,6 @@ import org.jboss.forge.ui.result.Result;
  */
 public class ShellCommand implements Completion {
 
-    private CommandLineParser parser;
     private UICommand command;
     private ShellContext context;
 
@@ -62,15 +61,16 @@ public class ShellCommand implements Completion {
     }
 
     public void generateParser(UICommand command) {
-        parser = CommandLineUtil.generateParser(command, context);
+        context.setParser(CommandLineUtil.generateParser(command, context));
     }
 
     public CommandLine parse(String line) throws IllegalArgumentException {
-        return parser.parse(line);
+        return context.getParser().parse(line);
     }
 
     public void run(ConsoleOutput consoleOutput, CommandLine commandLine) throws Exception {
         CommandLineUtil.populateUIInputs(commandLine, context, getAeshell().getRegistry());
+        context.setConsoleOutput(consoleOutput);
         Result result = command.execute(context);
         if(result != null &&
                 result.getMessage() != null && result.getMessage().length() > 0)
@@ -83,14 +83,14 @@ public class ShellCommand implements Completion {
 
     @Override
     public void complete(CompleteOperation completeOperation) {
-        ParameterInt param = parser.getParameters().get(0);
+        ParameterInt param = context.getParser().getParameters().get(0);
         //complete command names
         if(param.getName().startsWith(completeOperation.getBuffer()))
             completeOperation.addCompletionCandidate(param.getName());
             //complete options/arguments
         else if(completeOperation.getBuffer().startsWith(param.getName())) {
             ParsedCompleteObject completeObject =
-                    new CommandLineCompletionParser(parser).findCompleteObject(completeOperation.getBuffer());
+                    new CommandLineCompletionParser(context.getParser()).findCompleteObject(completeOperation.getBuffer());
             if(completeObject.doDisplayOptions()) {
                 if(param.getOptionLongNamesWithDash().size() > 1) {
                     completeOperation.addCompletionCandidates( param.getOptionLongNamesWithDash());
@@ -142,6 +142,10 @@ public class ShellCommand implements Completion {
                 else if(inputOption != null && inputOption.getValueType() == Boolean.class) {
                     //TODO
                 }
+                //check if the command actually implements Completion
+                else if(command instanceof Completion) {
+                    ((Completion) command).complete(completeOperation);
+                }
                 else {
                     //this shouldnt be needed
                     if(inputOption != null && inputOption instanceof UIInputMany) {
@@ -160,5 +164,14 @@ public class ShellCommand implements Completion {
             }
 
         }
+    }
+
+    @Override
+    public String toString() {
+        return "ShellCommand{" +
+                "command=" + command +
+                ", context=" + context +
+                ", aeshell=" + aeshell +
+                '}';
     }
 }

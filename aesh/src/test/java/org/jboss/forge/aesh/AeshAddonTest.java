@@ -4,6 +4,11 @@ import javax.inject.Inject;
 
 import junit.framework.TestCase;
 
+import org.jboss.aesh.console.Config;
+import org.jboss.aesh.console.settings.Settings;
+import org.jboss.aesh.edit.KeyOperation;
+import org.jboss.aesh.edit.actions.Operation;
+import org.jboss.aesh.terminal.Key;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.Addon;
@@ -25,7 +30,7 @@ import org.junit.runner.RunWith;
 public class AeshAddonTest extends TestCase
 {
 
-   // private KeyOperation completeChar = new KeyOperation(9, Operation.COMPLETE);
+    //private KeyOperation completeChar =  new KeyOperation(Key.CTRL_I, Operation.COMPLETE);
 
    public AeshAddonTest()
    {
@@ -39,7 +44,9 @@ public class AeshAddonTest extends TestCase
                .create(ForgeArchive.class)
                .addPackages(true, ForgeShell.class.getPackage())
                .addAsLibraries(Maven.resolver().loadPomFromFile("pom.xml")
-                        .resolve("org.jboss.aesh:aesh:0.32").withTransitivity().asFile())
+                       .resolve("org.jboss.aesh:aesh:0.33").withTransitivity().asFile())
+              .addAsLibraries(Maven.resolver().loadPomFromFile("pom.xml")
+                      .resolve("org.jboss.aesh:aesh-extensions:0.33").withTransitivity().asFile())
                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
                .addAsAddonDependencies(AddonDependency.create(AddonId.from("org.jboss.forge:ui", "2.0.0-SNAPSHOT")));
 

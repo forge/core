@@ -21,6 +21,7 @@ import javax.inject.Singleton;
 import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.console.Config;
 import org.jboss.aesh.console.Console;
+import org.jboss.aesh.console.ConsoleCallback;
 import org.jboss.aesh.console.ConsoleOutput;
 import org.jboss.aesh.console.Prompt;
 import org.jboss.aesh.console.settings.Settings;
@@ -44,7 +45,6 @@ public class ForgeShell
    private static final Logger logger = Logger.getLogger(ForgeShell.class.getName());
 
    private Console console;
-   private ConsoleOutput output;
    private Prompt prompt;
 
    private List<ShellCommand> commands;
@@ -85,7 +85,9 @@ public class ForgeShell
       Settings.getInstance().setLogging(true);
 
       commands = new ArrayList<ShellCommand>();
-      console = new Console();
+      console = Console.getInstance();
+      console.setPrompt(prompt);
+      console.setConsoleCallback(new ForgeConsoleCallback());
 
       // internal commands
       // addCommand(new ShellCommand(listServicesCommand));
@@ -151,60 +153,7 @@ public class ForgeShell
 
    public void startShell() throws Exception
    {
-      output = null;
-      while ((output = console.read(prompt, null)) != null)
-      {
-         CommandLine cl = null;
-         if (output.getBuffer() != null && !output.getBuffer().trim().isEmpty())
-         {
-            verifyLoadedCommands();
-            for (ShellCommand command : commands)
-            {
-               try
-               {
-                  cl = command.parse(output.getBuffer());
-                  if (cl != null)
-                  {
-                     // need some way of deciding if the command is standalone
-                     if (command.getContext().isStandalone())
-                     {
-                        // console.
-
-                     }
-                     else
-                     {
-                         try {
-                             command.run(output, cl);
-                             break;
-                         }
-                         catch (Exception e) {
-                             logger.log(Level.SEVERE, "Command "+command+" failed to run with: "+output);
-                         }
-                     }
-                  }
-               }
-               catch (IllegalArgumentException iae)
-               {
-                  // System.out.println("Command: " + command + ", did not match: " + output.getBuffer());
-                  // ignored for now
-               }
-            }
-            // if we didnt find any commands matching
-            if (cl == null)
-            {
-               console.pushToStdOut(output.getBuffer() + ": command not found."
-                        + Config.getLineSeparator());
-            }
-            // hack to just read one and one line when we're testing
-            if (Settings.getInstance().getName().equals("test"))
-               break;
-
-            if (!console.isRunning())
-            {
-               break;
-            }
-         }
-      }
+      console.start();
    }
 
    public AddonRegistry getRegistry()
@@ -251,4 +200,58 @@ public class ForgeShell
 
       return new Prompt(chars);
    }
+
+    class ForgeConsoleCallback implements ConsoleCallback {
+        @Override
+        public int readConsoleOutput(ConsoleOutput output) throws IOException {
+            CommandLine cl = null;
+            if (output.getBuffer() != null && !output.getBuffer().trim().isEmpty())
+            {
+                //TODO: should clean this up
+                try {
+                    verifyLoadedCommands();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                for (ShellCommand command : commands)
+                {
+                    try
+                    {
+                        cl = command.parse(output.getBuffer());
+                        if (cl != null)
+                        {
+                            // need some way of deciding if the command is standalone
+                            if (command.getContext().isStandalone())
+                            {
+                                // console.
+
+                            }
+                            else
+                            {
+                                try {
+                                    command.run(output, cl);
+                                    break;
+                                }
+                                catch (Exception e) {
+                                    logger.log(Level.SEVERE, "Command "+command+" failed to run with: "+output);
+                                }
+                            }
+                        }
+                    }
+                    catch (IllegalArgumentException iae)
+                    {
+                        // System.out.println("Command: " + command + ", did not match: " + output.getBuffer());
+                        // ignored for now
+                    }
+                }
+                // if we didnt find any commands matching
+                if (cl == null)
+                {
+                    console.pushToStdOut(output.getBuffer() + ": command not found."
+                            + Config.getLineSeparator());
+                }
+            }
+            return 0;
+        }
+    }
 }

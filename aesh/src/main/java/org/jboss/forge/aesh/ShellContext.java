@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.jboss.aesh.cl.CommandLineParser;
+import org.jboss.aesh.console.ConsoleOutput;
 import org.jboss.forge.ui.UIBuilder;
 import org.jboss.forge.ui.context.UIContext;
 import org.jboss.forge.ui.context.UIValidationContext;
@@ -25,6 +27,8 @@ public class ShellContext implements UIValidationContext, UIContext, UIBuilder
    private boolean standalone = false;
    private List<UIInputComponent<?, ?>> inputs = new ArrayList<UIInputComponent<?, ?>>();
    private ForgeShell aeshell;
+   private CommandLineParser parser;
+    private ConsoleOutput consoleOutput;
 
    public ShellContext(ForgeShell aeshell)
    {
@@ -44,6 +48,26 @@ public class ShellContext implements UIValidationContext, UIContext, UIBuilder
    public ForgeShell getShell()
    {
       return aeshell;
+   }
+
+   public void setParser(CommandLineParser parser)
+   {
+       this.parser = parser;
+   }
+
+   public CommandLineParser getParser()
+   {
+       return parser;
+   }
+
+   public void setConsoleOutput(ConsoleOutput output)
+   {
+       this.consoleOutput = output;
+   }
+
+   public ConsoleOutput getConsoleOutput()
+   {
+       return consoleOutput;
    }
 
    @Override
