@@ -9,7 +9,8 @@ import org.jboss.forge.ui.UICommandMetadata;
 public class UICommandMetadataBase implements UICommandMetadata
 {
 
-   private static String[] VALID_DOC_EXTENSIONS = { ".txt.gzip", ".txt.gz", ".txt" };
+   private static String[] VALID_DOC_EXTENSIONS = { ".txt.gzip", ".txt.gz", ".txt", ".asciidoc.gzip", ".asciidoc.gz",
+            ".asciidoc" };
 
    private final String name;
    private final String description;
