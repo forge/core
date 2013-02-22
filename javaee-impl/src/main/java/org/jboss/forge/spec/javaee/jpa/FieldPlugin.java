@@ -17,6 +17,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -269,7 +270,10 @@ public class FieldPlugin implements Plugin
             @Option(name = "inverseFieldName",
                      required = false,
                      description = "Create a bi-directional relationship, using this value as the name of the inverse field.",
-                     type = PromptType.JAVA_VARIABLE_NAME) final String inverseFieldName)
+                     type = PromptType.JAVA_VARIABLE_NAME) final String inverseFieldName,
+            @Option(name = "fetchType",
+                     required = false,
+                     description = "Whether the association should be lazily loaded or must be eagerly fetched.") final FetchType fetchType)
    {
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
 
@@ -293,6 +297,13 @@ public class FieldPlugin implements Plugin
             inverseField.getAnnotation(OneToOne.class).setStringValue("mappedBy", localField.getName());
             java.saveJavaSource(fieldEntityClass);
          }
+         
+         if (fetchType != null)
+         {
+            Annotation<JavaClass> annotation = localField.getAnnotation(OneToOne.class);
+            annotation.setEnumValue("fetch", fetchType);
+            java.saveJavaSource(entityClass);
+         }
       }
       catch (FileNotFoundException e)
       {
@@ -313,7 +324,10 @@ public class FieldPlugin implements Plugin
             @Option(name = "inverseFieldName",
                      required = false,
                      description = "Create an bi-directional relationship, using this value as the name of the inverse field.",
-                     type = PromptType.JAVA_VARIABLE_NAME) final String inverseFieldName)
+                     type = PromptType.JAVA_VARIABLE_NAME) final String inverseFieldName,
+            @Option(name = "fetchType",
+                     required = false,
+                     description = "Whether the association should be lazily loaded or must be eagerly fetched.") final FetchType fetchType)
    {
 
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
@@ -370,6 +384,11 @@ public class FieldPlugin implements Plugin
 
             java.saveJavaSource(otherEntity);
          }
+         
+         if (fetchType != null)
+         {
+            annotation.setEnumValue("fetch", fetchType);
+         }
          java.saveJavaSource(entity);
       }
       catch (FileNotFoundException e)
@@ -392,7 +411,10 @@ public class FieldPlugin implements Plugin
             @Option(name = "inverseFieldName",
                      required = false,
                      description = "Create an bi-directional relationship, using this value as the name of the inverse field.",
-                     type = PromptType.JAVA_VARIABLE_NAME) final String inverseFieldName)
+                     type = PromptType.JAVA_VARIABLE_NAME) final String inverseFieldName,
+            @Option(name = "fetchType",
+                     required = false,
+                     description = "Whether the association should be lazily loaded or must be eagerly fetched.") final FetchType fetchType)
    {
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
 
@@ -445,6 +467,11 @@ public class FieldPlugin implements Plugin
             Refactory.createGetterAndSetter(many, manyField);
             java.saveJavaSource(many);
          }
+         
+         if (fetchType != null)
+         {
+            annotation.setEnumValue("fetch", fetchType);
+         }
          java.saveJavaSource(one);
       }
       catch (FileNotFoundException e)
@@ -466,7 +493,10 @@ public class FieldPlugin implements Plugin
             @Option(name = "inverseFieldName",
                      required = false,
                      description = "Create an bi-directional relationship, using this value as the name of the inverse field.",
-                     type = PromptType.JAVA_VARIABLE_NAME) final String inverseFieldName)
+                     type = PromptType.JAVA_VARIABLE_NAME) final String inverseFieldName,
+            @Option(name = "fetchType",
+                     required = false,
+                     description = "Whether the association should be lazily loaded or must be eagerly fetched.") final FetchType fetchType)
    {
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
 
@@ -495,7 +525,7 @@ public class FieldPlugin implements Plugin
          }
 
          Field<JavaClass> manyField = many.addField("private " + one.getName() + " " + fieldName + ";");
-         manyField.addAnnotation(ManyToOne.class);
+         Annotation<JavaClass> manyAnnotation = manyField.addAnnotation(ManyToOne.class);
          Refactory.createGetterAndSetter(many, manyField);
 
          if (!Strings.isNullOrEmpty(inverseFieldName))
@@ -516,6 +546,11 @@ public class FieldPlugin implements Plugin
 
             Refactory.createGetterAndSetter(one, oneField);
             java.saveJavaSource(one);
+         }
+         
+         if(fetchType != null)
+         {
+            manyAnnotation.setEnumValue("fetch", fetchType);
          }
          java.saveJavaSource(many);
       }
