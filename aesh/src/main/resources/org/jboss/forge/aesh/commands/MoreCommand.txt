@@ -1,0 +1,54 @@
+MORE(1)
+===========
+:doctype: manpage
+
+
+NAME
+----
+  *more* — file perusal filter for crt viewing
+
+
+SYNOPSIS
+--------
+*more* ['OPTIONS'] 'FILE'
+
+
+DESCRIPTION
+-----------
+'more' is a filter for paging through text one screenful at a time. Users should realize
+that 'less' provides 'more' emulation plus extensive enhancements.
+
+COMMANDS
+--------
+More commands will be supported later.
+
+  SPACE, PgDn or Ctrl-f
+     Scroll forward N lines, N is the size of a window.
+
+  ENTER
+     Scroll forward 1 line
+
+  Ctrl-b
+     Scroll backward N lines, N is the size of a window. 
+  
+
+BUGS
+----
+yes, we have them
+
+
+AUTHOR
+------
+The Forge team
+
+
+RESOURCES
+---------
+forge: <http://forge.jboss.org/>
+
+
+COPYING
+-------
+Copyright 2012 Red Hat, Inc. and/or its affiliates.
+Licensed under the Eclipse Public License version 1.0, available at
+http://www.eclipse.org/legal/epl-v10.html

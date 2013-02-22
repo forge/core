@@ -1,0 +1,59 @@
+LESS(1)
+===========
+:doctype: manpage
+
+
+NAME
+----
+*less* - opposite of more
+
+
+SYNOPSIS
+--------
+*less* ['OPTIONS'] 'FILE'
+
+
+DESCRIPTION
+-----------
+'Less' is a program similar to 'more', but with more features.
+
+Commands are based on both 'more' and 'vi'. It support search but it is not bug free.
+
+
+COMMANDS
+--------
+More commands will be supported later.
+
+  SPACE, PgDn or Ctrl-f
+     Scroll forward N lines, N is the size of a window.
+
+  ENTER, arrow down or j
+     Scroll forward 1 line
+
+  Ctrl-b or PgUp
+     Scroll backward N lines, N is the size of a window. 
+
+  k or arrow up
+     Scroll backward 1 line
+  
+
+BUGS
+----
+yes, we have them
+
+
+AUTHOR
+------
+The Forge team
+
+
+RESOURCES
+---------
+forge: <http://forge.jboss.org/>
+
+
+COPYING
+-------
+Copyright 2012 Red Hat, Inc. and/or its affiliates.
+Licensed under the Eclipse Public License version 1.0, available at
+http://www.eclipse.org/legal/epl-v10.html
