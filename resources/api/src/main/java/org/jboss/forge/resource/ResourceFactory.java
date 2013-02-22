@@ -6,12 +6,14 @@
  */
 package org.jboss.forge.resource;
 
+import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.resource.events.ResourceEvent;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
+@Exported
 public interface ResourceFactory
 {
    /**
