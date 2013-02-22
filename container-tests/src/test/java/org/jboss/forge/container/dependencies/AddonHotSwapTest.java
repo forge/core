@@ -26,12 +26,11 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class AddonHotSwapTest
 {
-   @Deployment(order = 1)
+   @Deployment(order = 3)
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-               .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml")
-               );
+               .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
 
       return archive;
    }
@@ -47,7 +46,7 @@ public class AddonHotSwapTest
       return archive;
    }
 
-   @Deployment(name = "dep,2", testable = false, order = 3)
+   @Deployment(name = "dep,2", testable = false, order = 1)
    public static ForgeArchive getDeploymentDep2()
    {
       ForgeArchive archive = ShrinkWrap
@@ -66,26 +65,28 @@ public class AddonHotSwapTest
    @Test
    public void testHotSwap() throws Exception
    {
-      AddonId d1id = AddonId.from("dep", "1");
-      AddonId d2id = AddonId.from("dep", "2");
+      AddonId depOneId = AddonId.from("dep", "1");
+      AddonId depTwoId = AddonId.from("dep", "2");
 
-      Addon d1 = registry.getRegisteredAddon(d1id);
-      Addon d2 = registry.getRegisteredAddon(d2id);
+      Addon depOne = registry.getRegisteredAddon(depOneId);
+      Addon depTwo = registry.getRegisteredAddon(depTwoId);
 
-      ClassLoader d1cl = d1.getClassLoader();
-      ClassLoader d2cl = d2.getClassLoader();
+      ClassLoader depOneClassloader = depOne.getClassLoader();
+      ClassLoader depTwoClassloader = depTwo.getClassLoader();
 
-      repository.disable(d2id);
-      registry.stop(d2);
+      repository.disable(depTwoId);
+      registry.stop(depTwo);
 
-      repository.enable(d2id);
-      Future<?> future = registry.start(d2);
+      repository.enable(depTwoId);
+      Future<?> future = registry.start(depTwo);
       future.get(10, TimeUnit.SECONDS); // shouldn't take this long
 
-      Assert.assertNotEquals(d1cl, registry.getRegisteredAddon(d1id).getClassLoader());
-      Assert.assertNotEquals(d1cl.toString(), registry.getRegisteredAddon(d1id).getClassLoader().toString());
-      Assert.assertNotEquals(d2cl, registry.getRegisteredAddon(d2id).getClassLoader());
-      Assert.assertNotEquals(d2cl.toString(), registry.getRegisteredAddon(d2id).getClassLoader().toString());
+      Assert.assertNotEquals(depOneClassloader, registry.getRegisteredAddon(depOneId).getClassLoader());
+      Assert.assertNotEquals(depOneClassloader.toString(), registry.getRegisteredAddon(depOneId).getClassLoader()
+               .toString());
+      Assert.assertNotEquals(depTwoClassloader, registry.getRegisteredAddon(depTwoId).getClassLoader());
+      Assert.assertNotEquals(depTwoClassloader.toString(), registry.getRegisteredAddon(depTwoId).getClassLoader()
+               .toString());
    }
 
 }
