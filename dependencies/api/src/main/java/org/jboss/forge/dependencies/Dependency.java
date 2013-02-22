@@ -7,11 +7,11 @@
 
 package org.jboss.forge.dependencies;
 
-import java.io.File;
+import org.jboss.forge.resource.FileResource;
 
 /**
  * Represents a project library dependency.
- *
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public interface Dependency
@@ -22,25 +22,15 @@ public interface Dependency
    Coordinate getCoordinate();
 
    /**
-    * Get the systemPath of this {@link Dependency}
-    */
-   String getSystemPath();
-
-   /**
     * Get the scope type of this {@link Dependency}
     */
    String getScopeType();
 
    /**
-    * Returns true if this dependency version is a SNAPSHOT
-    */
-   boolean isSnapshot();
-
-   /**
     * Returns the file representing this artifact
-    *
+    * 
     */
-   File getArtifact();
+   FileResource<?> getArtifact() throws DependencyException;
 
    /**
     * Returns if this dependency is optional

@@ -16,7 +16,7 @@ import org.jboss.forge.addon.manager.InstallRequest;
 import org.jboss.forge.addon.manager.impl.AddonManagerImpl;
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.Forge;
-import org.jboss.forge.dependencies.spi.DependencyResolver;
+import org.jboss.forge.dependencies.DependencyResolver;
 
 /**
  * A class with a main method to bootstrap Forge.

@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ServiceLoader;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
@@ -36,7 +35,9 @@ import org.jboss.forge.container.impl.AddonRepositoryImpl;
 import org.jboss.forge.container.util.ClassLoaders;
 import org.jboss.forge.container.util.Files;
 import org.jboss.forge.container.util.Threads;
-import org.jboss.forge.dependencies.spi.DependencyResolver;
+import org.jboss.forge.maven.dependencies.FileResourceFactory;
+import org.jboss.forge.maven.dependencies.MavenContainer;
+import org.jboss.forge.maven.dependencies.MavenDependencyResolver;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
@@ -74,8 +75,8 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       else if (archive instanceof ForgeRemoteAddon)
       {
          ForgeRemoteAddon remoteAddon = (ForgeRemoteAddon) archive;
-         AddonManager addonManager = new AddonManagerImpl(repository, ServiceLoader.load(DependencyResolver.class)
-                  .iterator().next());
+         AddonManager addonManager = new AddonManagerImpl(repository, new MavenDependencyResolver(
+                  new FileResourceFactory(), new MavenContainer()));
          InstallRequest request = addonManager.install(remoteAddon.getAddonId());
          request.perform();
          System.out.println("Deployed [" + remoteAddon.getAddonId() + "]");

@@ -26,6 +26,12 @@
       </dependency>
       <dependency>
          <groupId>org.jboss.forge</groupId>
+         <artifactId>maven</artifactId>
+         <version>${project.version}</version>
+         <classifier>forge-addon</classifier>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
          <artifactId>example</artifactId>
          <version>${project.version}</version>
          <classifier>forge-addon</classifier>

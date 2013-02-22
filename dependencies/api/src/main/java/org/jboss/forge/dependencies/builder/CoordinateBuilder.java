@@ -19,15 +19,16 @@ public class CoordinateBuilder implements Coordinate
    private String version;
    private String classifier;
    private String packaging;
+   private String systemPath;
 
    /**
-    *
+    * 
     * Creates a Coordinate
-    *
+    * 
     * @param coordinates The artifact coordinates in the format
     *           {@code <groupId>:<artifactId>[:<packaging>[:<classifier>]]:<version>} , must not be {@code null} or
     *           empty.
-    *
+    * 
     * @return
     */
    public static CoordinateBuilder create(String coordinates)
@@ -117,6 +118,12 @@ public class CoordinateBuilder implements Coordinate
       return version;
    }
 
+   @Override
+   public boolean isSnapshot()
+   {
+      return getVersion() != null && getVersion().endsWith("SNAPSHOT");
+   }
+
    public CoordinateBuilder setGroupId(String groupId)
    {
       this.groupId = groupId;
@@ -153,9 +160,21 @@ public class CoordinateBuilder implements Coordinate
       return packaging;
    }
 
+   @Override
+   public String getSystemPath()
+   {
+      return systemPath;
+   }
+
    public CoordinateBuilder setPackaging(String packaging)
    {
       this.packaging = packaging;
+      return this;
+   }
+
+   public CoordinateBuilder setSystemPath(final String systemPath)
+   {
+      this.systemPath = systemPath;
       return this;
    }
 
@@ -224,7 +243,7 @@ public class CoordinateBuilder implements Coordinate
     * Convenience method which should be used to convert a {@link Dependency} object into its id representation, for
     * example: "groupId:artifactId:::version", "groupId:artifactId:packaging::version" or
     * "groupId:artifactId:packaging:classifier:version"
-    *
+    * 
     * @see {@link Dependency#toCoordinates()}
     */
    private String toId()

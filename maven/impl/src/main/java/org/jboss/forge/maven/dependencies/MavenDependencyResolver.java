@@ -5,16 +5,18 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.dependencies.maven;
+package org.jboss.forge.maven.dependencies;
 
-import static org.jboss.forge.dependencies.maven.MavenConvertUtils.convertToMavenRepos;
-import static org.jboss.forge.dependencies.maven.MavenConvertUtils.coordinateToMavenArtifact;
+import static org.jboss.forge.maven.dependencies.MavenConvertUtils.convertToMavenRepos;
+import static org.jboss.forge.maven.dependencies.MavenConvertUtils.coordinateToMavenArtifact;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.inject.Inject;
 
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.apache.maven.settings.Settings;
@@ -23,10 +25,12 @@ import org.jboss.forge.dependencies.Coordinate;
 import org.jboss.forge.dependencies.Dependency;
 import org.jboss.forge.dependencies.DependencyException;
 import org.jboss.forge.dependencies.DependencyQuery;
+import org.jboss.forge.dependencies.DependencyResolver;
 import org.jboss.forge.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.dependencies.collection.Predicate;
-import org.jboss.forge.dependencies.spi.DependencyResolver;
+import org.jboss.forge.resource.FileResource;
+import org.jboss.forge.resource.ResourceFactory;
 import org.sonatype.aether.RepositorySystem;
 import org.sonatype.aether.artifact.Artifact;
 import org.sonatype.aether.collection.CollectRequest;
@@ -48,16 +52,14 @@ import org.sonatype.aether.version.Version;
 public class MavenDependencyResolver implements DependencyResolver
 {
    private MavenContainer container;
+   private ResourceFactory factory;
 
-   public MavenDependencyResolver()
-   {
-      this(new MavenContainer());
-   }
-
-   public MavenDependencyResolver(MavenContainer container)
+   @Inject
+   public MavenDependencyResolver(ResourceFactory factory, MavenContainer container)
    {
       super();
       this.container = container;
+      this.factory = factory;
    }
 
    @Override
@@ -92,7 +94,7 @@ public class MavenDependencyResolver implements DependencyResolver
       DependencyNode root = artifacts.getRoot();
       for (DependencyNode node : root.getChildren())
       {
-         Dependency d = MavenConvertUtils.convertToDependency(node);
+         Dependency d = MavenConvertUtils.convertToDependency(factory, node);
          if (filter == null || filter.accept(d))
          {
             result.add(d);
@@ -192,8 +194,12 @@ public class MavenDependencyResolver implements DependencyResolver
       {
          ArtifactResult resolvedArtifact = system.resolveArtifact(session, request);
          Artifact artifact = resolvedArtifact.getArtifact();
+
+         @SuppressWarnings("unchecked")
+         FileResource<?> artifactResource = factory.create(FileResource.class, artifact.getFile());
+
          return DependencyBuilder.create()
-                  .setArtifact(artifact.getFile())
+                  .setArtifact(artifactResource)
                   .setGroupId(artifact.getGroupId())
                   .setArtifactId(artifact.getArtifactId())
                   .setClassifier(artifact.getClassifier())
@@ -229,7 +235,7 @@ public class MavenDependencyResolver implements DependencyResolver
          });
 
          DependencyResult result = system.resolveDependencies(session, dr);
-         return MavenConvertUtils.toDependencyNode(null, result.getRoot());
+         return MavenConvertUtils.toDependencyNode(factory, null, result.getRoot());
       }
       catch (Exception e)
       {

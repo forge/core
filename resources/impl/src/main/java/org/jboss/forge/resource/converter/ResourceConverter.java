@@ -12,8 +12,8 @@ import java.io.File;
 import javax.inject.Inject;
 
 import org.jboss.forge.convert.BaseConverter;
-import org.jboss.forge.resource.Resource;
 import org.jboss.forge.resource.ResourceFactory;
+import org.jboss.forge.resource.Resource;
 
 /**
  * Converts a {@link File} object to a {@link Resource}

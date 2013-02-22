@@ -16,15 +16,16 @@ import org.jboss.forge.dependencies.DependencyQuery;
 import org.jboss.forge.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.dependencies.builder.DependencyQueryBuilder;
 import org.jboss.forge.dependencies.collection.Predicate;
-import org.jboss.forge.dependencies.maven.MavenContainer;
-import org.jboss.forge.dependencies.maven.MavenDependencyResolver;
+import org.jboss.forge.maven.dependencies.FileResourceFactory;
+import org.jboss.forge.maven.dependencies.MavenContainer;
+import org.jboss.forge.maven.dependencies.MavenDependencyResolver;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 public class MavenDependencyResolverTest
 {
@@ -41,7 +42,7 @@ public class MavenDependencyResolverTest
    @Before
    public void setUp()
    {
-      resolver = new MavenDependencyResolver(new MavenContainer());
+      resolver = new MavenDependencyResolver(new FileResourceFactory(), new MavenContainer());
    }
 
    @Test

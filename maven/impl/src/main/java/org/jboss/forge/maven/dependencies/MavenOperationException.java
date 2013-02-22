@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.dependencies.maven;
+package org.jboss.forge.maven.dependencies;
 
 public class MavenOperationException extends RuntimeException
 {

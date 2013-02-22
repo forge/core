@@ -7,23 +7,21 @@
 
 package org.jboss.forge.dependencies.builder;
 
-import java.io.File;
-
 import org.jboss.forge.dependencies.Coordinate;
 import org.jboss.forge.dependencies.Dependency;
+import org.jboss.forge.resource.FileResource;
 
 /**
  * Builder to create {@link Dependency} objects. This class implements {@link Dependency} for easy consumption. (I.e.:
  * Use this class wherever you need to create and use a new {@link Dependency})
- *
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class DependencyBuilder implements Dependency
 {
    private CoordinateBuilder coordinate;
    private String scopeType;
-   private String systemPath;
-   private File artifact;
+   private FileResource<?> artifact;
    private boolean optional;
 
    private DependencyBuilder()
@@ -44,7 +42,6 @@ public class DependencyBuilder implements Dependency
       DependencyBuilder builder = new DependencyBuilder();
       builder.setCoordinate(dep.getCoordinate());
       builder.setScopeType(dep.getScopeType());
-      builder.setSystemPath(dep.getSystemPath());
       return builder;
    }
 
@@ -52,7 +49,7 @@ public class DependencyBuilder implements Dependency
     * @param identifier of the form "groupId:artifactId", "groupId:artifactId:version",
     *           "groupId:artifactId:scope, "groupId
     *           :artifactId:version:scope", "groupId:artifactId:version:scope:packaging"
-    *
+    * 
     *           For classifier specification, see {@link #setClassifier(String)}
     */
    public static DependencyBuilder create(final String identifier)
@@ -119,33 +116,15 @@ public class DependencyBuilder implements Dependency
       return this;
    }
 
-   public DependencyBuilder setSystemPath(final String systemPath)
-   {
-      this.systemPath = systemPath;
-      return this;
-   }
-
    public String getGroupId()
    {
       return getCoordinate().getGroupId();
    }
 
    @Override
-   public String getSystemPath()
-   {
-      return systemPath;
-   }
-
-   @Override
    public String getScopeType()
    {
       return scopeType;
-   }
-
-   @Override
-   public boolean isSnapshot()
-   {
-      return getCoordinate().getVersion() != null && getCoordinate().getVersion().endsWith("SNAPSHOT");
    }
 
    @Override
@@ -161,7 +140,7 @@ public class DependencyBuilder implements Dependency
    }
 
    @Override
-   public File getArtifact()
+   public FileResource<?> getArtifact()
    {
       return artifact;
    }
@@ -178,7 +157,7 @@ public class DependencyBuilder implements Dependency
       return this;
    }
 
-   public DependencyBuilder setArtifact(File artifact)
+   public DependencyBuilder setArtifact(FileResource<?> artifact)
    {
       this.artifact = artifact;
       return this;

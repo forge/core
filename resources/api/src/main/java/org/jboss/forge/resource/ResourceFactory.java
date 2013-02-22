@@ -6,104 +6,28 @@
  */
 package org.jboss.forge.resource;
 
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.enterprise.inject.spi.BeanManager;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import org.jboss.forge.container.AddonRegistry;
-import org.jboss.forge.container.services.Exported;
-import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.resource.events.ResourceEvent;
 
 /**
- * @author <a href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>
- * @author Mike Brock <cbrock@redhat.com>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * 
  */
-@Exported
-@Singleton
-public class ResourceFactory
+public interface ResourceFactory
 {
-   @Inject
-   private BeanManager manager;
+   /**
+    * Create a {@link Resource} of the given type, using the provided underlying resource instance.
+    */
+   public abstract <E, T extends Resource<E>> T create(Class<T> type, E underlyingResource);
 
-   @Inject
-   private AddonRegistry registry;
+   /**
+    * Create a {@link Resource} to represent the provided underlying resource. The resource type will be detected
+    * automatically.
+    */
+   public abstract <E> Resource<E> create(E underlyingResource);
 
-   @SuppressWarnings({ "unchecked", "rawtypes" })
-   public <E, T extends Resource<E>> T create(final Class<T> type, final E underlyingResource)
-   {
-      T result = null;
-      synchronized (this)
-      {
-         List<Resource<?>> generated = new ArrayList<Resource<?>>();
-         for (ExportedInstance<ResourceGenerator> instance : getRegisteredResourceGenerators())
-         {
-            ResourceGenerator generator = instance.get();
-            if (generator.handles(type, underlyingResource))
-            {
-               if (type.isAssignableFrom(generator.getResourceType(type, underlyingResource)))
-               {
-                  generated.add(generator.getResource(this, type, underlyingResource));
-               }
-            }
-            instance.release(generator);
-         }
-
-         /*
-          * Choose the resource that is most specialized. TODO This needs to handle forks in the type hierarchy.
-          */
-         for (Resource<?> resource : generated)
-         {
-            if (result == null || result.getClass().isAssignableFrom(resource.getClass()))
-               result = (T) resource;
-         }
-      }
-      return result;
-   }
-
-   @SuppressWarnings({ "unchecked", "rawtypes" })
-   public <E> Resource<E> create(E underlyingResource)
-   {
-      Resource<E> result = null;
-      synchronized (this)
-      {
-         List<Resource<?>> generated = new ArrayList<Resource<?>>();
-         for (ExportedInstance<ResourceGenerator> instance : getRegisteredResourceGenerators())
-         {
-            ResourceGenerator generator = instance.get();
-            if (generator.handles(Resource.class, underlyingResource))
-            {
-               generated.add(generator.getResource(this, Resource.class, underlyingResource));
-            }
-            instance.release(generator);
-         }
-
-         /*
-          * Choose the resource that is most specialized. TODO This needs to handle forks in the type hierarchy.
-          */
-         for (Resource<?> resource : generated)
-         {
-            if (result == null || result.getClass().isAssignableFrom(resource.getClass()))
-               result = (Resource<E>) resource;
-         }
-      }
-      return result;
-   }
-
-   @SuppressWarnings("rawtypes")
-   private Iterable<ExportedInstance<ResourceGenerator>> getRegisteredResourceGenerators()
-   {
-      return registry.getExportedInstances(ResourceGenerator.class);
-   }
-
-   public ResourceFactory fireEvent(ResourceEvent event)
-   {
-      manager.fireEvent(event, new Annotation[] {});
-      return this;
-   }
+   /**
+    * Broadcast a {@link ResourceEvent}
+    */
+   public abstract ResourceFactory fireEvent(ResourceEvent event);
 
 }

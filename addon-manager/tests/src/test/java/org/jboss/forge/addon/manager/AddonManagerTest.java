@@ -16,6 +16,8 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.arquillian.Addon;
+import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonId;
@@ -24,7 +26,6 @@ import org.jboss.forge.container.AddonRepository;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,6 +33,24 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class AddonManagerTest
 {
+
+   @Deployment
+   @Dependencies({
+            @Addon(name = "org.jboss.forge:addon-manager", version = "2.0.0-SNAPSHOT"),
+            @Addon(name = "org.jboss.forge:maven", version = "2.0.0-SNAPSHOT")
+   })
+   public static ForgeArchive getDeployment()
+   {
+      ForgeArchive archive = ShrinkWrap
+               .create(ForgeArchive.class)
+               .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
+               .addAsAddonDependencies(
+                        AddonDependency.create(AddonId.from("org.jboss.forge:addon-manager", "2.0.0-SNAPSHOT"))
+               );
+
+      return archive;
+   }
+
    @Inject
    private AddonRegistry registry;
 
@@ -40,19 +59,6 @@ public class AddonManagerTest
 
    @Inject
    private AddonRepository repository;
-
-   @Deployment
-   public static ForgeArchive getDeployment()
-   {
-      ForgeArchive archive = ShrinkWrap
-               .create(ForgeArchive.class, "test-archive.jar")
-               .addPackages(true, AddonManager.class.getPackage())
-               .addAsLibraries(
-                        Maven.resolver().offline().loadPomFromFile("pom.xml").importRuntimeDependencies().asFile())
-               .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
-
-      return archive;
-   }
 
    @Test
    public void testInstallingAddonWithSingleOptionalAddonDependency() throws InterruptedException
@@ -84,12 +90,14 @@ public class AddonManagerTest
       Assert.assertTrue(dependency.isOptional());
       Assert.assertFalse(dependency.isExport());
 
+      Assert.assertFalse(registry.isRegistered(AddonId.from("org.jboss.forge:example2", "2.0.0-SNAPSHOT")));
+
       Thread.sleep(500);
       Assert.assertEquals(addonCount + 1, registry.getRegisteredAddons().size());
    }
 
    @Test
-   public void testInstallingAddonWithTwoRequiredAddonDependency() throws InterruptedException
+   public void testInstallingAlreadyInstalledAddonWithTwoRequiredAddonDependency() throws InterruptedException
    {
       final int addonInitialCount = registry.getRegisteredAddons().size();
       AddonId resources = AddonId.fromCoordinates("org.jboss.forge:resources,2.0.0-SNAPSHOT");
@@ -122,8 +130,6 @@ public class AddonManagerTest
       addonDependenciesIds.add("org.jboss.forge:facets");
       addonDependenciesIds.add("org.jboss.forge:ui-hints");
 
-      final int addonDepsSize = addonDependenciesIds.size() - request.getOptionalAddons().size();
-
       for (AddonDependency dependency : dependencies)
       {
          Assert.assertTrue("Not a valid addon dependency: " + dependency.getId().getName(),
@@ -131,14 +137,9 @@ public class AddonManagerTest
          Assert.assertEquals("2.0.0-SNAPSHOT", dependency.getId().getVersion());
       }
       Assert.assertTrue("Addons not detected as dependency: " + addonDependenciesIds, addonDependenciesIds.isEmpty());
-      // FIXME Should this be true?
-      // Assert.assertTrue(dependency.isExport());
 
       Thread.sleep(500);
 
-      // The total registered addons is represented as the sum of the initial count, the addon dependencies and the
-      // tested addon
-      // FIXME Optional addons should not be installed by default!
-      Assert.assertEquals(addonInitialCount + addonDepsSize + 2, registry.getRegisteredAddons().size());
+      Assert.assertEquals(addonInitialCount, registry.getRegisteredAddons().size());
    }
 }

@@ -8,11 +8,10 @@
 package org.jboss.forge.dependencies;
 
 /**
- *
- * Allows to locate a specific artifact.
- *
+ * Coordinates for a single {@link Dependency}.
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public interface Coordinate
 {
@@ -40,4 +39,14 @@ public interface Coordinate
     * Get the packaging type. Defaults to "jar"
     */
    String getPackaging();
+
+   /**
+    * Get the systemPath of this {@link Dependency}
+    */
+   String getSystemPath();
+
+   /**
+    * Returns true if this coordinate version is a SNAPSHOT
+    */
+   boolean isSnapshot();
 }

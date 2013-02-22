@@ -5,16 +5,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.dependencies.spi;
+package org.jboss.forge.dependencies;
 
 import java.util.List;
 import java.util.Set;
 
 import org.jboss.forge.container.services.Exported;
-import org.jboss.forge.dependencies.Coordinate;
-import org.jboss.forge.dependencies.Dependency;
-import org.jboss.forge.dependencies.DependencyNode;
-import org.jboss.forge.dependencies.DependencyQuery;
 
 @Exported
 public interface DependencyResolver
@@ -26,7 +22,7 @@ public interface DependencyResolver
 
    /**
     * Resolve all the dependencies from a {@link DependencyQuery} object.
-    *
+    * 
     * The {@link Dependency} object included inside the {@link DependencyQuery} object is not included in the
     * {@link Set} returned
     */

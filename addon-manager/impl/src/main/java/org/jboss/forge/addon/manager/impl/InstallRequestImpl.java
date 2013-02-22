@@ -30,9 +30,9 @@ import org.jboss.forge.dependencies.collection.Predicate;
 /**
  * When an addon is installed, another addons could be required. This object returns the necessary information for the
  * installation of an addon to succeed, like required addons and dependencies
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 public class InstallRequestImpl implements InstallRequest
 {
@@ -47,7 +47,7 @@ public class InstallRequestImpl implements InstallRequest
 
    /**
     * Package-access constructor. Only AddonManager should be allowed to call this constructor.
-    *
+    * 
     * @param addonManager
     */
    InstallRequestImpl(AddonManager addonManager, AddonRepository repository, DependencyNode requestedAddonNode)
@@ -78,7 +78,9 @@ public class InstallRequestImpl implements InstallRequest
       }
    }
 
-   /* (non-Javadoc)
+   /*
+    * (non-Javadoc)
+    * 
     * @see org.jboss.forge.addon.manager.impl.InstallRequest#getRequestedAddon()
     */
    @Override
@@ -87,7 +89,9 @@ public class InstallRequestImpl implements InstallRequest
       return this.requestedAddonNode;
    }
 
-   /* (non-Javadoc)
+   /*
+    * (non-Javadoc)
+    * 
     * @see org.jboss.forge.addon.manager.impl.InstallRequest#getOptionalAddons()
     */
    @Override
@@ -96,7 +100,9 @@ public class InstallRequestImpl implements InstallRequest
       return Collections.unmodifiableList(optionalAddons);
    }
 
-   /* (non-Javadoc)
+   /*
+    * (non-Javadoc)
+    * 
     * @see org.jboss.forge.addon.manager.impl.InstallRequest#getRequiredAddons()
     */
    @Override
@@ -105,7 +111,9 @@ public class InstallRequestImpl implements InstallRequest
       return Collections.unmodifiableList(requiredAddons);
    }
 
-   /* (non-Javadoc)
+   /*
+    * (non-Javadoc)
+    * 
     * @see org.jboss.forge.addon.manager.impl.InstallRequest#perform()
     */
    @Override
@@ -198,7 +206,7 @@ public class InstallRequestImpl implements InstallRequest
       List<File> result = new ArrayList<File>();
       for (DependencyNode dependency : dependencies)
       {
-         result.add(dependency.getDependency().getArtifact());
+         result.add(dependency.getDependency().getArtifact().getUnderlyingResourceObject());
       }
       return result;
    }

@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.dependencies.maven;
+package org.jboss.forge.maven.dependencies;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -18,6 +18,8 @@ import org.jboss.forge.dependencies.Dependency;
 import org.jboss.forge.dependencies.DependencyRepository;
 import org.jboss.forge.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.dependencies.builder.DependencyNodeBuilder;
+import org.jboss.forge.resource.FileResource;
+import org.jboss.forge.resource.ResourceFactory;
 import org.sonatype.aether.artifact.Artifact;
 import org.sonatype.aether.graph.DependencyNode;
 import org.sonatype.aether.repository.Authentication;
@@ -57,29 +59,32 @@ class MavenConvertUtils
       return artifact;
    }
 
-   static Dependency convertToDependency(DependencyNode node)
+   static Dependency convertToDependency(ResourceFactory factory, DependencyNode node)
    {
       org.sonatype.aether.graph.Dependency artifactDependency = node.getDependency();
       Artifact artifact = artifactDependency.getArtifact();
       File file = artifact.getFile();
 
+      @SuppressWarnings("unchecked")
+      FileResource<?> artifactResource = factory.create(FileResource.class, file);
+
       Dependency d = DependencyBuilder.create().setArtifactId(artifact.getArtifactId())
                .setGroupId(artifact.getGroupId()).setVersion(artifact.getVersion())
-               .setPackaging(artifact.getExtension()).setArtifact(file)
+               .setPackaging(artifact.getExtension()).setArtifact(artifactResource)
                .setOptional(artifactDependency.isOptional())
                .setClassifier(artifact.getClassifier())
                .setScopeType(artifactDependency.getScope());
       return d;
    }
 
-   static DependencyNodeBuilder toDependencyNode(org.jboss.forge.dependencies.DependencyNode parent,
-            DependencyNode aetherNode)
+   static DependencyNodeBuilder toDependencyNode(ResourceFactory factory,
+            org.jboss.forge.dependencies.DependencyNode parent, DependencyNode aetherNode)
    {
       DependencyNodeBuilder node = DependencyNodeBuilder.create(parent,
-               MavenConvertUtils.convertToDependency(aetherNode));
+               MavenConvertUtils.convertToDependency(factory, aetherNode));
       for (DependencyNode childNode : aetherNode.getChildren())
       {
-         node.getChildren().add(toDependencyNode(node, childNode));
+         node.getChildren().add(toDependencyNode(factory, node, childNode));
       }
       return node;
    }
