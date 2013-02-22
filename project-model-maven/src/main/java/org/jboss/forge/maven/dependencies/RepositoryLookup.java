@@ -380,6 +380,7 @@ public class RepositoryLookup implements DependencyResolverProvider
 
          RepositorySystem maven = container.lookup(RepositorySystem.class);
          MavenRepositorySystemSession session = setupRepoSession(maven);
+         session.setUpdatePolicy(RepositoryPolicy.UPDATE_POLICY_ALWAYS);
 
          Artifact artifact = dependencyToMavenArtifact(dep);
          VersionRangeRequest rangeRequest = new VersionRangeRequest(artifact, repositories, null);
