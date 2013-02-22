@@ -37,6 +37,7 @@ import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.dependencies.DependencyFilter;
 import org.jboss.forge.project.dependencies.DependencyQuery;
 import org.jboss.forge.project.dependencies.DependencyQueryBuilder;
+import org.jboss.forge.project.dependencies.DependencyRepositoryImpl;
 import org.jboss.forge.project.dependencies.DependencyResolver;
 import org.jboss.forge.project.dependencies.NonSnapshotDependencyFilter;
 import org.jboss.forge.project.dependencies.ScopeType;
@@ -486,7 +487,7 @@ public class ForgePlugin implements Plugin
                               return dependency.getVersion().compareTo(runtimeVersion) > 0;
                            }
                         }
-               ));
+               )).setRepositories(new DependencyRepositoryImpl(DependencyFacet.KnownRepository.JBOSS_NEXUS));
       List<Dependency> versions = resolver.resolveVersions(query);
       return versions.isEmpty() ? null : versions.get(versions.size() - 1);
    }
