@@ -17,6 +17,9 @@ import org.jboss.forge.addon.manager.impl.AddonManagerImpl;
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.Forge;
 import org.jboss.forge.dependencies.DependencyResolver;
+import org.jboss.forge.maven.dependencies.FileResourceFactory;
+import org.jboss.forge.maven.dependencies.MavenContainer;
+import org.jboss.forge.maven.dependencies.MavenDependencyResolver;
 
 /**
  * A class with a main method to bootstrap Forge.
@@ -112,7 +115,8 @@ public class Bootstrap
    {
       try
       {
-         AddonManagerImpl addonManager = new AddonManagerImpl(forge.getRepository(), lookup(DependencyResolver.class));
+         AddonManagerImpl addonManager = new AddonManagerImpl(forge.getRepository(), new MavenDependencyResolver(
+                  new FileResourceFactory(), new MavenContainer()));
          AddonId addon = AddonId.fromCoordinates(addonCoordinates);
          InstallRequest request = addonManager.install(addon);
          System.out.println(request);

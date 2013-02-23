@@ -2,6 +2,7 @@ package org.jboss.forge.aesh.commands;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -66,6 +67,13 @@ public class LsCommand implements UICommand
 
       arguments.setLabel("");
       arguments.setRequired(false);
+
+      if (builder.getUIContext() instanceof ShellContext)
+      {
+         Object selection = builder.getUIContext().getInitialSelection().get();
+         if (selection instanceof File)
+            arguments.setDefaultValue(Arrays.asList((File) selection));
+      }
 
       /*
        * not needed for File arguments.setCompleter(new UICompleter<String>() {
