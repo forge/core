@@ -11,9 +11,7 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonId;
-import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -44,7 +42,7 @@ public class AeshAddonTest extends TestCase
                         .resolve("org.jboss.aesh:aesh:0.33").withTransitivity().asFile())
                .addAsLibraries(Maven.resolver().loadPomFromFile("pom.xml")
                         .resolve("org.jboss.aesh:aesh-extensions:0.33").withTransitivity().asFile())
-               .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
+               .addBeansXML()
                .addAsAddonDependencies(AddonDependency.create(AddonId.from("org.jboss.forge:ui", "2.0.0-SNAPSHOT")));
 
       return archive;
@@ -61,28 +59,28 @@ public class AeshAddonTest extends TestCase
    {
       /*
        * try {
-       * 
+       *
        * Assert.assertNotNull(shell);
-       * 
+       *
        * PipedOutputStream outputStream = new PipedOutputStream(); PipedInputStream pipedInputStream = new
        * PipedInputStream(outputStream); ByteArrayOutputStream out = new ByteArrayOutputStream();
-       * 
+       *
        * setupSettings(pipedInputStream, out);
-       * 
+       *
        * shell.initShell(); shell.addCommand(new ShellCommand(fooCommand));
-       * 
+       *
        * outputStream.write(("foo\n").getBytes()); shell.startShell(); String outString = out.toString();
        * assertEquals("boo", outString.substring(shell.getPrompt().length() + "foo\n".length()));
-       * 
+       *
        * outputStream.write("fo".getBytes()); outputStream.write(completeChar.getFirstValue());
        * outputStream.write("\n".getBytes()); shell.startShell(); outString = out.toString();
        * System.out.println(outString);
-       * 
+       *
        * outputStream.write(("list-services\n").getBytes()); shell.startShell(); // System.out.println("OUT:"+
        * out.toString());
-       * 
+       *
        * outputStream.write(("exit\n").getBytes()); shell.startShell();
-       * 
+       *
        * // shell.stopShell(); } catch (Exception ioe) { ioe.printStackTrace(); }
        */
    }

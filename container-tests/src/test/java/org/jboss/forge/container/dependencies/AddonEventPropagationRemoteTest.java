@@ -11,9 +11,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonId;
-import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -32,7 +30,7 @@ public class AddonEventPropagationRemoteTest
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
                .addClasses(EventService.class, EventPayload1.class)
-               .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
+               .addBeansXML()
                .addAsAddonDependencies(AddonDependency.create(AddonId.from("dependencyA", "1")));
 
       return archive;
@@ -43,7 +41,7 @@ public class AddonEventPropagationRemoteTest
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class, "dependencyA.jar")
                .addClasses(EventResponseService.class, EventPayload3.class)
-               .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
+               .addBeansXML();
 
       return archive;
    }

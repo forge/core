@@ -22,9 +22,7 @@ import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.resources.JavaResource;
 import org.jboss.forge.resource.ResourceFactory;
-import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,7 +38,7 @@ public class JavaParserResourcesTest
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-               .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
+               .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependency.create(AddonId.from("org.jboss.forge:parser-java", "2.0.0-SNAPSHOT")),
                         AddonDependency.create(AddonId.from("org.jboss.forge:resources", "2.0.0-SNAPSHOT"))

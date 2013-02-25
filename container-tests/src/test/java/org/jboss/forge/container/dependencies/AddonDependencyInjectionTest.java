@@ -11,9 +11,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonId;
-import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,7 +28,7 @@ public class AddonDependencyInjectionTest
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
                .addClasses(ConsumingService.class, TestExtension.class)
-               .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
+               .addBeansXML()
                .addAsServiceProvider(Extension.class, TestExtension.class)
                .addAsAddonDependencies(AddonDependency.create(AddonId.from("dependency", "2")));
 
@@ -42,7 +40,7 @@ public class AddonDependencyInjectionTest
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class, "dependency.jar")
                .addClasses(PublisherService.class)
-               .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
+               .addBeansXML();
 
       return archive;
    }

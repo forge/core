@@ -16,9 +16,7 @@ import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.container.services.ServiceRegistry;
-import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,7 +32,7 @@ public class AddonMultipleDependencyVersionTest
    {
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
-               .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
+               .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependency.create(AddonId.from("dep", "1")),
                         AddonDependency.create(AddonId.from("dep", "2"))
@@ -49,7 +47,7 @@ public class AddonMultipleDependencyVersionTest
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
                .addClass(LifecycleListenerService.class)
-               .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
+               .addBeansXML();
 
       return archive;
    }
@@ -60,7 +58,7 @@ public class AddonMultipleDependencyVersionTest
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
                .addClasses(LifecycleListenerService.class, PublisherService.class)
-               .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
+               .addBeansXML();
 
       return archive;
    }

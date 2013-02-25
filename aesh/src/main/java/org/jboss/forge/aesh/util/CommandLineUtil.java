@@ -6,6 +6,9 @@
  */
 package org.jboss.forge.aesh.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.cl.CommandLineParser;
 import org.jboss.aesh.cl.OptionBuilder;
@@ -19,9 +22,6 @@ import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.input.UIInput;
 import org.jboss.forge.ui.input.UIInputComponent;
 import org.jboss.forge.ui.input.UIInputMany;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>

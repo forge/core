@@ -8,7 +8,6 @@ package org.jboss.forge.aesh.commands;
 
 import javax.inject.Inject;
 
-import org.jboss.aesh.console.Console;
 import org.jboss.forge.aesh.ShellContext;
 import org.jboss.forge.ui.UIBuilder;
 import org.jboss.forge.ui.UICommand;

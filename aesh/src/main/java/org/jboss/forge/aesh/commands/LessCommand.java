@@ -6,6 +6,11 @@
  */
 package org.jboss.forge.aesh.commands;
 
+import java.io.File;
+import java.util.Iterator;
+
+import javax.inject.Inject;
+
 import org.jboss.aesh.console.Config;
 import org.jboss.aesh.console.Console;
 import org.jboss.aesh.extensions.less.Less;
@@ -19,10 +24,6 @@ import org.jboss.forge.ui.input.UIInputMany;
 import org.jboss.forge.ui.result.Result;
 import org.jboss.forge.ui.result.Results;
 import org.jboss.forge.ui.util.Metadata;
-
-import javax.inject.Inject;
-import java.io.File;
-import java.util.Iterator;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>

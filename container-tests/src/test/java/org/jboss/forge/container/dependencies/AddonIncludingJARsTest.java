@@ -8,9 +8,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.ContainerControl;
 import org.jboss.forge.container.Status;
 import org.jboss.forge.test.Tests;
-import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +25,7 @@ public class AddonIncludingJARsTest
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
                .addAsLibraries(Tests.resolveDependencies("javax.enterprise:cdi-api:1.0"))
-               .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
+               .addBeansXML();
 
       return archive;
    }

@@ -26,6 +26,7 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.asset.Asset;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.impl.base.Validate;
 import org.jboss.shrinkwrap.impl.base.container.ContainerBase;
 
@@ -83,7 +84,7 @@ public class ForgeArchiveImpl extends ContainerBase<ForgeArchive> implements For
 
    /**
     * Create a new {@link ForgeArchive} with any type storage engine as backing.
-    * 
+    *
     * @param delegate The storage backing.
     */
    public ForgeArchiveImpl(final Archive<?> delegate)
@@ -97,7 +98,7 @@ public class ForgeArchiveImpl extends ContainerBase<ForgeArchive> implements For
 
    /**
     * {@inheritDoc}
-    * 
+    *
     * @see org.jboss.shrinkwrap.impl.base.container.ContainerBase#getManifestPath()
     */
    @Override
@@ -113,7 +114,7 @@ public class ForgeArchiveImpl extends ContainerBase<ForgeArchive> implements For
 
    /**
     * {@inheritDoc}
-    * 
+    *
     * @see org.jboss.shrinkwrap.impl.base.container.ContainerBase#getClassesPath()
     */
    @Override
@@ -124,7 +125,7 @@ public class ForgeArchiveImpl extends ContainerBase<ForgeArchive> implements For
 
    /**
     * {@inheritDoc}
-    * 
+    *
     * @see org.jboss.shrinkwrap.impl.base.container.ContainerBase#getLibraryPath()
     */
    @Override
@@ -163,5 +164,19 @@ public class ForgeArchiveImpl extends ContainerBase<ForgeArchive> implements For
    public List<AddonDependency> getAddonDependencies()
    {
       return addonDependencies;
+   }
+
+   @Override
+   public ForgeArchive addBeansXML()
+   {
+      addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
+      return this;
+   }
+
+   @Override
+   public ForgeArchive addBeansXML(Asset resource)
+   {
+      addAsManifestResource(resource, ArchivePaths.create("beans.xml"));
+      return this;
    }
 }

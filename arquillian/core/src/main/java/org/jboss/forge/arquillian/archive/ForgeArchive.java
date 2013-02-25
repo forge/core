@@ -11,7 +11,7 @@ import org.jboss.shrinkwrap.api.container.ServiceProviderContainer;
 
 /**
  * Archive representing a Forge Addon deployment.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public interface ForgeArchive extends Archive<ForgeArchive>, LibraryContainer<ForgeArchive>,
@@ -23,12 +23,22 @@ public interface ForgeArchive extends Archive<ForgeArchive>, LibraryContainer<Fo
    ForgeArchive setAsForgeXML(Asset resource) throws IllegalArgumentException;
 
    /**
-    * Adds the given {@link Dependencies} instances as addon module dependencies for this test deployment.
+    * Adds the given {@link AddonDependency} instances as addon module dependencies for this test deployment.
     */
    ForgeArchive addAsAddonDependencies(AddonDependency... dependencies);
 
    /**
-    * Get the currently specified {@link Dependencies} instances for this addon test deployment.
+    * Get the currently specified {@link AddonDependency} instances for this addon test deployment.
     */
    List<AddonDependency> getAddonDependencies();
+
+   /**
+    * Adds an empty beans.xml file in this archive
+    */
+   ForgeArchive addBeansXML();
+
+   /**
+    * Adds an beans.xml file in this archive with the specified content
+    */
+   ForgeArchive addBeansXML(Asset resource);
 }

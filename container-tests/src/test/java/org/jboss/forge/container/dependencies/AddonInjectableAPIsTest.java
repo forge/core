@@ -9,9 +9,7 @@ import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.AddonRepository;
 import org.jboss.forge.container.ContainerControl;
 import org.jboss.forge.container.mocks.ServiceBean;
-import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,7 +26,7 @@ public class AddonInjectableAPIsTest
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                .addClasses(ServiceBean.class)
-               .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
+               .addBeansXML();
 
       return archive;
    }

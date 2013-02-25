@@ -45,7 +45,7 @@ public class ClassLoaderAdapterCollisionsTest
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-               .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
+               .addBeansXml()
                .addPackages(true, ClassWithGetterAndSetter.class.getPackage())
                .addAsAddonDependencies(
                         AddonDependency.create(AddonId.from("dep", "1")),
@@ -60,7 +60,7 @@ public class ClassLoaderAdapterCollisionsTest
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                .addPackages(true, ClassWithGetterAndSetter.class.getPackage())
-               .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
+               .addBeansXml();
 
       return archive;
    }
@@ -70,7 +70,7 @@ public class ClassLoaderAdapterCollisionsTest
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                .addPackages(true, ClassWithGetterAndSetter.class.getPackage())
-               .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
+               .addBeansXml();
 
       return archive;
    }

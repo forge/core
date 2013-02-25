@@ -39,7 +39,7 @@ public class BootstrapClassLoaderAdapterTest
                .addClasses(ClassLoaderAdapterCallback.class)
 
                .addPackages(true, Loader.class.getPackage())
-               .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
+               .addBeansXml()
                .addAsAddonDependencies(
                         AddonDependency.create(AddonId.from("org.jboss.forge:ui", "2.0.0-SNAPSHOT")));
 
@@ -64,6 +64,6 @@ public class BootstrapClassLoaderAdapterTest
 
       AddonRegistry adapter = ClassLoaderAdapterCallback.enhance(uiLoader, thisLoader, registry);
       Assert.assertTrue(adapter.getClass().getName().contains("_javassist_"));
-      
+
    }
 }

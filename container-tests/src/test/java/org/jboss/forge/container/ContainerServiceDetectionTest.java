@@ -15,9 +15,7 @@ import org.jboss.forge.container.mocks.ExportedInterface;
 import org.jboss.forge.container.mocks.ImplementingClass1;
 import org.jboss.forge.container.mocks.ImplementingClass2;
 import org.jboss.forge.container.services.ExportedInstance;
-import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,7 +36,7 @@ public class ContainerServiceDetectionTest
                         ExportedInterface.class,
                         ImplementingClass1.class,
                         ImplementingClass2.class)
-               .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
+               .addBeansXML();
 
       return archive;
    }
