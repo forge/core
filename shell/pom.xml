@@ -1,18 +1,14 @@
-<!-- ~ JBoss, by Red Hat. ~ Copyright 2010, Red Hat, Inc., and individual
-   contributors ~ by the @authors tag. See the copyright.txt in the distribution
-   for a ~ full listing of individual contributors. ~ ~ This is free software;
-   you can redistribute it and/or modify it ~ under the terms of the GNU Lesser
-   General Public License as ~ published by the Free Software Foundation; either
-   version 2.1 of ~ the License, or (at your option) any later version. ~ ~
-   This software is distributed in the hope that it will be useful, ~ but WITHOUT
-   ANY WARRANTY; without even the implied warranty of ~ MERCHANTABILITY or FITNESS
-   FOR A PARTICULAR PURPOSE. See the GNU ~ Lesser General Public License for
-   more details. ~ ~ You should have received a copy of the GNU Lesser General
-   Public ~ License along with this software; if not, write to the Free ~ Software
-   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA ~ 02110-1301 USA,
-   or see the FSF site: http://www.fsf.org. -->
+<?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<!--
+ ~ Copyright 2012 Red Hat, Inc. and/or its affiliates.
+ ~
+ ~ Licensed under the Eclipse Public License version 1.0, available at
+ ~ http://www.eclipse.org/legal/epl-v10.html
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
    <modelVersion>4.0.0</modelVersion>
 
    <parent>
@@ -27,8 +23,9 @@
    <name>Forge - Shell</name>
 
    <properties>
-		<jansi.version>1.5</jansi.version>
-		<jline.version>2.5</jline.version>
+      <jansi.version>1.5</jansi.version>
+      <jline.version>2.5</jline.version>
+      <jetty.version>7.1.6.v20100715</jetty.version>
    </properties>
 
    <dependencies>
@@ -121,18 +118,18 @@
       </dependency>
 
 
-	<!-- Repository deps -->
-       <dependency>
-           <groupId>org.apache.httpcomponents</groupId>
-           <artifactId>httpclient</artifactId>
-       </dependency>
-       <dependency>
-           <groupId>org.yaml</groupId>
-           <artifactId>snakeyaml</artifactId>
-       </dependency>
+      <!-- Repository deps -->
       <dependency>
-        <groupId>commons-codec</groupId>
-        <artifactId>commons-codec</artifactId>
+         <groupId>org.apache.httpcomponents</groupId>
+         <artifactId>httpclient</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.yaml</groupId>
+         <artifactId>snakeyaml</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>commons-codec</groupId>
+         <artifactId>commons-codec</artifactId>
       </dependency>
 
       <!-- Test Deps -->
@@ -168,27 +165,13 @@
          <artifactId>cal10n-api</artifactId>
          <scope>test</scope>
       </dependency>
-   </dependencies>
+      <dependency>
+         <groupId>org.eclipse.jetty</groupId>
+         <artifactId>jetty-server</artifactId>
+         <version>${jetty.version}</version>
+         <scope>test</scope>
+      </dependency>
 
-   <build>
-      <plugins>
-         <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>1.1.1</version>
-            <executions>
-               <execution>
-                  <goals>
-                     <goal>java</goal>
-                  </goals>
-               </execution>
-            </executions>
-            <configuration>
-               <classpathScope>test</classpathScope>
-               <mainClass>org.jboss.weld.environment.se.StartMain</mainClass>
-            </configuration>
-         </plugin>
-      </plugins>
-   </build>
+   </dependencies>
 </project>
 
