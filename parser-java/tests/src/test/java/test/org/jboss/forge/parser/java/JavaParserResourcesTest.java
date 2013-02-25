@@ -1,4 +1,4 @@
-package org.jboss.forge.parser.java;
+package test.org.jboss.forge.parser.java;
 
 /*
  * Copyright 2012 Red Hat, Inc. and/or its affiliates.
@@ -19,6 +19,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.parser.JavaParser;
+import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.resources.JavaResource;
 import org.jboss.forge.resource.ResourceFactory;
 import org.jboss.shrinkwrap.api.ArchivePaths;
