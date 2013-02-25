@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
 
    <parent>
@@ -60,9 +61,6 @@
       <forge.scm.url>http://github.com/forge/core</forge.scm.url>
       <forge.release.codename>One</forge.release.codename>
       <forge.release.version>${project.version}</forge.release.version>
-
-      <!-- Build Plugin Versions -->
-      <version.exec.plugin>1.1.2-Beta1</version.exec.plugin>
 
       <!-- Artifact Versions -->
       <aether.version>1.11</aether.version>
@@ -574,39 +572,12 @@
       <plugins>
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-enforcer-plugin</artifactId>
-            <configuration>
-               <rules>
-                  <requireMavenVersion>
-                     <version>[3.0,4.0)</version>
-                  </requireMavenVersion>
-                  <requireJavaVersion>
-                     <version>[1.6.0-30,1.7)</version>
-                  </requireJavaVersion>
-               </rules>
-            </configuration>
-            <executions>
-               <execution>
-                  <id>enforce-versions</id>
-                  <goals>
-                     <goal>enforce</goal>
-                  </goals>
-               </execution>
-            </executions>
-         </plugin>
-         <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
             <configuration>
                <source>1.6</source>
                <target>1.6</target>
                <encoding>UTF-8</encoding>
             </configuration>
-         </plugin>
-         <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>${version.exec.plugin}</version>
          </plugin>
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -714,13 +685,6 @@
                   </execution>
                </executions>
             </plugin>
-
-            <plugin>
-               <groupId>org.apache.maven.plugins</groupId>
-               <artifactId>maven-enforcer-plugin</artifactId>
-               <version>1.1.1</version>
-            </plugin>
-
             <plugin>
                <!--TODO TEXT. This plugin's configuration is used in m2e only. -->
                <groupId>org.eclipse.m2e</groupId>
