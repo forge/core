@@ -31,9 +31,7 @@ import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.proxy.ClassLoaderAdapterBuilder;
 import org.jboss.forge.proxy.Proxies;
-import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,7 +43,7 @@ public class ClassLoaderAdapterCollisionsTest
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-               .addBeansXml()
+               .addBeansXML()
                .addPackages(true, ClassWithGetterAndSetter.class.getPackage())
                .addAsAddonDependencies(
                         AddonDependency.create(AddonId.from("dep", "1")),
@@ -60,7 +58,7 @@ public class ClassLoaderAdapterCollisionsTest
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                .addPackages(true, ClassWithGetterAndSetter.class.getPackage())
-               .addBeansXml();
+               .addBeansXML();
 
       return archive;
    }
@@ -70,7 +68,7 @@ public class ClassLoaderAdapterCollisionsTest
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                .addPackages(true, ClassWithGetterAndSetter.class.getPackage())
-               .addBeansXml();
+               .addBeansXML();
 
       return archive;
    }
