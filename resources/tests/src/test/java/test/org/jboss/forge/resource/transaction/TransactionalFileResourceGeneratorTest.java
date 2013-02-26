@@ -1,6 +1,13 @@
+/*
+ * Copyright 2013 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Eclipse Public License version 1.0, available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
 package test.org.jboss.forge.resource.transaction;
 
 import java.io.File;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -12,18 +19,19 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonId;
-import org.jboss.forge.resource.DirectoryResource;
 import org.jboss.forge.resource.FileResource;
 import org.jboss.forge.resource.Resource;
 import org.jboss.forge.resource.ResourceFactory;
-import org.jboss.forge.resource.UnknownFileResource;
+import org.jboss.forge.resource.transaction.ChangeSet;
+import org.jboss.forge.resource.transaction.ResourceTransaction;
+import org.jboss.forge.resource.transaction.ResourceTransactionManager;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
 @RunWith(Arquillian.class)
 public class TransactionalFileResourceGeneratorTest
@@ -47,53 +55,32 @@ public class TransactionalFileResourceGeneratorTest
    @Inject
    private ResourceFactory factory;
 
+   @Inject
+   private ResourceTransactionManager transactionManager;
+
    @Test
-   public void testCreateUnknownFileResource() throws Exception
+   public void testTransactionManagerNotNull() throws Exception
    {
-      FileResource<?> resource = factory.create(new File(UUID.randomUUID().toString())).reify(FileResource.class);
-      Assert.assertNotNull(resource);
-      Assert.assertEquals(UnknownFileResource.class, resource.getClass());
+      Assert.assertNotNull(transactionManager);
    }
 
    @Test
-   public void testCreateFileResource() throws Exception
+   public void testTrackResourceCreation() throws Exception
    {
-      File file = File.createTempFile("temp", "file");
-      FileResource<?> resource = factory.create(file).reify(FileResource.class);
+      ResourceTransaction transaction = transactionManager.startTransaction();
+      Assert.assertNotNull(transaction);
+      File underlyingResource = new File(UUID.randomUUID().toString());
+      FileResource<?> resource = factory.create(underlyingResource).reify(FileResource.class);
       Assert.assertNotNull(resource);
-      Assert.assertEquals(UnknownFileResource.class, resource.getClass());
+      ChangeSet changeSet = transaction.getChangeSet();
+      Assert.assertNotNull(changeSet);
+      Set<Resource<?>> modifiedResources = changeSet.getModifiedResources();
+      Assert.assertNotNull(modifiedResources);
+      Assert.assertEquals(1, modifiedResources.size());
+      Resource<?> changedResource = modifiedResources.iterator().next();
+      Assert.assertTrue(changedResource instanceof FileResource);
+      Assert.assertEquals(underlyingResource, changedResource.getUnderlyingResourceObject());
+      transaction.commit();
+      Assert.assertNull(transactionManager.getCurrentTransaction());
    }
-
-   @Test
-   public void testCreateDirectoryResource() throws Exception
-   {
-      File dir = File.createTempFile("temp", "file");
-      dir.delete();
-      dir.mkdir();
-
-      Resource<File> resource = factory.create(dir);
-      Assert.assertNotNull(resource);
-      Assert.assertTrue(resource.exists());
-      Assert.assertTrue(resource instanceof DirectoryResource);
-   }
-
-   @Test
-   public void testCreateDirectoryResourceViaRiefy() throws Exception
-   {
-      File dir = File.createTempFile("temp", "file");
-      dir.delete();
-      dir.mkdir();
-
-      File child = new File(dir, "child");
-      child.mkdir();
-
-      DirectoryResource resource = factory.create(dir).reify(DirectoryResource.class);
-      Assert.assertNotNull(resource);
-      Assert.assertTrue(resource.exists());
-
-      DirectoryResource childResource = resource.getChild("child").reify(DirectoryResource.class);
-      Assert.assertNotNull(childResource);
-      Assert.assertTrue(childResource.exists());
-   }
-
 }

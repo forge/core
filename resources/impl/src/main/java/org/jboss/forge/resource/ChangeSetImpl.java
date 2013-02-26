@@ -7,14 +7,14 @@
 
 package org.jboss.forge.resource;
 
+import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.jboss.forge.resource.transaction.ChangeSet;
 
 public class ChangeSetImpl implements ChangeSet
 {
-   private Set<Resource<?>> changeSet = new TreeSet<Resource<?>>();
+   private Set<Resource<?>> changeSet = new HashSet<Resource<?>>();
 
    public ChangeSetImpl()
    {
