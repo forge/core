@@ -23,12 +23,14 @@ public class IdeTerminal extends TerminalSupport
       setAnsiSupported(true);
    }
 
+   @Override
    public int readCharacter(final InputStream in) throws IOException
    {
       int result = in.read();
       return result == '\r' ? in.read() : result;
    }
 
+   @Override
    public int getWidth()
    {
       return DEFAULT_WIDTH;

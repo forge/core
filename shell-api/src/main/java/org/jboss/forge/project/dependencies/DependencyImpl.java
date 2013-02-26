@@ -132,6 +132,7 @@ public class DependencyImpl implements Dependency
       packagingType = type;
    }
 
+   @Override
    public String getSystemPath()
    {
       return systemPath;

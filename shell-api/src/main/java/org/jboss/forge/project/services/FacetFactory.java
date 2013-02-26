@@ -52,6 +52,7 @@ public class FacetFactory
    /**
     * @deprecated Use #getFacetTypes() instead. This will be removed in a future release.
     */
+   @Deprecated
    public List<Facet> getFacets()
    {
       if (facets == null)

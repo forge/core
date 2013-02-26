@@ -42,7 +42,7 @@ import org.jboss.forge.shell.console.jline.console.Key;
  * which are otherwise inaccessible via the {@link System#in} stream. Using JNI reading can be bypassed by setting the
  * <code>jline.WindowsTerminal.directConsole</code> system property to <code>false</code>.
  * </p>
- * 
+ *
  * @author <a href="mailto:mwp1@cornell.edu">Marc Prud'hommeaux</a>
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
  * @since 2.0
@@ -125,7 +125,7 @@ public class WindowsTerminal
    }
 
    @Override
-   public void setEchoEnabled(final boolean enabled)
+   public synchronized void setEchoEnabled(final boolean enabled)
    {
       // Must set these four modes at the same time to make it work fine.
       if (enabled)

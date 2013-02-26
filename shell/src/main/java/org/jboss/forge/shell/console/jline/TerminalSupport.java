@@ -13,7 +13,7 @@ import java.util.ResourceBundle;
 
 /**
  * Provides support for {@link Terminal} instances.
- * 
+ *
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
  * @since 2.0
  */
@@ -39,17 +39,20 @@ public abstract class TerminalSupport
       this.supported = supported;
    }
 
+   @Override
    public void init() throws Exception
    {
       installShutdownHook(new RestoreHook());
    }
 
+   @Override
    public void restore() throws Exception
    {
       TerminalFactory.resetIf(this);
       removeShutdownHook();
    }
 
+   @Override
    public void reset() throws Exception
    {
       restore();
@@ -98,11 +101,13 @@ public abstract class TerminalSupport
       }
    }
 
+   @Override
    public final boolean isSupported()
    {
       return supported;
    }
 
+   @Override
    public synchronized boolean isAnsiSupported()
    {
       return ansiSupported;
@@ -114,37 +119,44 @@ public abstract class TerminalSupport
       org.jboss.forge.shell.console.jline.internal.Log.debug("Ansi supported: ", supported);
    }
 
+   @Override
    public int getWidth()
    {
       return DEFAULT_WIDTH;
    }
 
+   @Override
    public int getHeight()
    {
       return DEFAULT_HEIGHT;
    }
 
+   @Override
    public synchronized boolean isEchoEnabled()
    {
       return echoEnabled;
    }
 
+   @Override
    public synchronized void setEchoEnabled(final boolean enabled)
    {
       this.echoEnabled = enabled;
       org.jboss.forge.shell.console.jline.internal.Log.debug("Echo enabled: ", enabled);
    }
 
+   @Override
    public int readCharacter(final InputStream in) throws IOException
    {
       return in.read();
    }
 
+   @Override
    public int readVirtualKey(final InputStream in) throws IOException
    {
       return readCharacter(in);
    }
 
+   @Override
    public ResourceBundle getDefaultBindings()
    {
       return ResourceBundle.getBundle("org.jboss.forge.keybindings");
@@ -157,7 +169,8 @@ public abstract class TerminalSupport
    protected class RestoreHook
             extends Thread
    {
-      public void start()
+      @Override
+      public synchronized void start()
       {
          try
          {

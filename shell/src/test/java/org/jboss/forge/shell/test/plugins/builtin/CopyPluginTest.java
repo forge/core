@@ -22,9 +22,9 @@ import org.junit.Test;
 
 /**
  * Test for Copy Plugin
- * 
+ *
  * @author tremes@redhat.com
- * 
+ *
  */
 
 public class CopyPluginTest extends AbstractShellTest
@@ -74,12 +74,12 @@ public class CopyPluginTest extends AbstractShellTest
       assertTrue(copy.exists());
 
    }
-   
+
    @Test
    public void testCopyFileWithRelativePathToNewFile() throws Exception
    {
 
-	  String testFolder = "testFolder"; 
+	  String testFolder = "testFolder";
       String file = "copyFile";
       String nonExisting = "newNoneExisting";
 
@@ -97,12 +97,12 @@ public class CopyPluginTest extends AbstractShellTest
       assertTrue(copy.exists());
 
    }
-   
+
    @Test
    public void testCopyFileWithRelativePathToExistingFolder() throws Exception
    {
 
-	  String testFolder = "testFolder"; 
+	  String testFolder = "testFolder";
 	  String targetFolder = "targetFolder";
       String file = "copyFile";
 
@@ -242,7 +242,7 @@ public class CopyPluginTest extends AbstractShellTest
 
       DirectoryResource copySubFolder1 = ((DirectoryResource) copy).getChildDirectory(subFolderA);
       assertTrue(copySubFolder1.exists());
-      Resource<?> copyfile2 = ((DirectoryResource) copySubFolder1).getChild(fileB);
+      Resource<?> copyfile2 = copySubFolder1.getChild(fileB);
       assertTrue(copyfile2.exists());
 
       DirectoryResource copySubFolder2 = ((DirectoryResource) copy).getChildDirectory(subFolderA);
@@ -312,7 +312,7 @@ public class CopyPluginTest extends AbstractShellTest
       DirectoryResource copySubFolder2 = ((DirectoryResource) copy).getChildDirectory(subFolderB);
       assertTrue(copySubFolder2.exists());
    }
-   
+
    @Test
    public void testCopyFolderToNonExistingFolder() throws Exception
    {
@@ -338,7 +338,7 @@ public class CopyPluginTest extends AbstractShellTest
       shell.execute("touch " + fileB);
       shell.execute("cd ..");
       shell.execute("cd ..");
-    
+
       Resource<?> dirToCopy = shell.getCurrentDirectory().getChildDirectory(testFolder);
       assertTrue(dirToCopy.exists());
       FileResource<?> file1 = (FileResource<?>) dirToCopy.getChild(fileA);
@@ -378,6 +378,7 @@ public class CopyPluginTest extends AbstractShellTest
       assertTrue(copySubFolder2.exists());
    }
 
+   @SuppressWarnings("resource")
    private boolean compareFiles(File f1, File f2)
    {
       boolean ret = false;

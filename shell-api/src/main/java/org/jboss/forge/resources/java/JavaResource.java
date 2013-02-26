@@ -113,7 +113,7 @@ public class JavaResource extends FileResource<JavaResource>
          {
             for (EnumConstant<JavaEnum> e : ((JavaEnum) getJavaSource()).getEnumConstants())
             {
-               list.add(new EnumConstantResource(this, (EnumConstant<JavaEnum>) e));
+               list.add(new EnumConstantResource(this, e));
             }
          }
 

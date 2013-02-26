@@ -33,6 +33,7 @@ public final class NullCompleter
 {
    public static final NullCompleter INSTANCE = new NullCompleter();
 
+   @Override
    public int complete(final String buffer, final int cursor, final List<CharSequence> candidates)
    {
       return -1;

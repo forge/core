@@ -30,6 +30,7 @@ public class CandidateListCompletionHandler
 {
    // TODO: handle quotes and escaped quotes && enable automatic escaping of whitespace
 
+   @Override
    public boolean complete(final org.jboss.forge.shell.console.jline.console.ConsoleReader reader,
             final List<CharSequence> candidates, final int pos) throws
             IOException

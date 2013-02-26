@@ -40,6 +40,7 @@ public class FileNameCompleter
       OS_IS_WINDOWS = os.contains("windows");
    }
 
+   @Override
    public int complete(String buffer, final int cursor, final List<CharSequence> candidates)
    {
       // buffer can be null

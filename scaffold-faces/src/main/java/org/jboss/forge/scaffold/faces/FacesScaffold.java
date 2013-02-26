@@ -725,9 +725,17 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
          loadTemplates();
       }
 
-      return ScaffoldUtil.createOrOverwrite(this.prompt, (FileResource<?>) getTemplateStrategy().getDefaultTemplate(),
-               this.navigationTemplate.render(context),
-               overwrite);
+      try
+      {
+         return ScaffoldUtil.createOrOverwrite(this.prompt, (FileResource<?>) getTemplateStrategy()
+                  .getDefaultTemplate(),
+                  this.navigationTemplate.render(context),
+                  overwrite);
+      }
+      finally
+      {
+         writer.close();
+      }
    }
 
    /**

@@ -98,6 +98,7 @@ public final class ReplayPrefixOneCharInputStream
       }
    }
 
+   @Override
    public int read() throws IOException
    {
       if (available() == 0)
@@ -119,6 +120,7 @@ public final class ReplayPrefixOneCharInputStream
     * InputStreamReader is greedy and will try to read bytes in advance. We do NOT want this to happen since we use a
     * temporary/"losing bytes" InputStreamReader above, that's why we hide the real wrappedStream.available() here.
     */
+   @Override
    public int available()
    {
       return byteLength - byteRead;

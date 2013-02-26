@@ -32,7 +32,7 @@ import org.jboss.forge.shell.plugins.Topic;
 
 /**
  * LsMavenPomPlugin
- * 
+ *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
@@ -46,6 +46,7 @@ public class LsMavenPomPlugin implements Plugin
    @Current
    private MavenPomResource pom;
 
+   @SuppressWarnings("resource")
    @DefaultCommand
    public void run(
             @Option(flagOnly = true, name = "all", shortName = "a", required = false) final boolean showAll,

@@ -42,6 +42,7 @@ public class Files
 
    /**
     * Returns the current working directory
+    *
     * @return
     */
    public static File getWorkingDirectory()
@@ -52,6 +53,7 @@ public class Files
    /**
     * Unzips a specific file into a target directory
     */
+   @SuppressWarnings("resource")
    public static void unzip(File zipFile, File targetDirectory) throws IOException
    {
       OutputStream dest = null;
@@ -77,7 +79,8 @@ public class Files
             }
             finally
             {
-               dest.flush();
+               if (dest != null)
+                  dest.flush();
                Streams.closeQuietly(dest);
             }
          }

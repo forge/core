@@ -195,6 +195,7 @@ public class JLineScreenBuffer implements BufferManager
       }
    }
 
+   @Override
    public void setBufferPosition(int row, int col)
    {
       // try

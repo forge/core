@@ -262,6 +262,7 @@ public class CommandMetadataImpl implements CommandMetadata
       this.resourceScopes = new HashSet<Class<? extends Resource>>(resourceScopes);
    }
 
+   @Override
    @SuppressWarnings("rawtypes")
    public boolean usableWithResource(final Class<? extends Resource> resource)
    {

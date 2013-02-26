@@ -24,7 +24,7 @@ import org.fusesource.jansi.WindowsAnsiOutputStream;
 
 /**
  * ANSI-supported {@link WindowsTerminal}.
- * 
+ *
  * @since 2.0
  */
 public class AnsiWindowsTerminal
@@ -52,7 +52,7 @@ public class AnsiWindowsTerminal
    }
 
    @Override
-   public boolean isAnsiSupported()
+   public synchronized boolean isAnsiSupported()
    {
       return ansiSupported;
    }

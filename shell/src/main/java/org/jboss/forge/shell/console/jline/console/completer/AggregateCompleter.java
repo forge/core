@@ -59,6 +59,7 @@ public class AggregateCompleter
       return completers;
    }
 
+   @Override
    public int complete(final String buffer, final int cursor, final List<CharSequence> candidates)
    {
       // buffer could be null

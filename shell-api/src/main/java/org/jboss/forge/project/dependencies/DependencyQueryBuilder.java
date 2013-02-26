@@ -72,16 +72,19 @@ public class DependencyQueryBuilder implements DependencyQuery
       return this;
    }
 
+   @Override
    public Dependency getDependency()
    {
       return dependency;
    }
 
+   @Override
    public DependencyFilter getDependencyFilter()
    {
       return dependencyFilter;
    }
 
+   @Override
    public List<DependencyRepository> getDependencyRepositories()
    {
       return dependencyRepositories;

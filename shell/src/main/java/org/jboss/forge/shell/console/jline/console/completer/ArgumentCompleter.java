@@ -111,6 +111,7 @@ public class ArgumentCompleter
       return completers;
    }
 
+   @Override
    public int complete(final String buffer, final int cursor, final List<CharSequence> candidates)
    {
       // buffer can be null
@@ -257,6 +258,7 @@ public class ArgumentCompleter
          return this.escapeChars;
       }
 
+      @Override
       public ArgumentList delimit(final CharSequence buffer, final int cursor)
       {
          List<String> args = new LinkedList<String>();
@@ -302,6 +304,7 @@ public class ArgumentCompleter
        * @param pos The index of the character in the buffer
        * @return True if the character should be a delimiter
        */
+      @Override
       public boolean isDelimiter(final CharSequence buffer, final int pos)
       {
          return !isQuoted(buffer, pos) && !isEscaped(buffer, pos) && isDelimiterChar(buffer, pos);

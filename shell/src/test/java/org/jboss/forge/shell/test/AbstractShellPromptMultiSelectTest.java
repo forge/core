@@ -36,6 +36,7 @@ public abstract class AbstractShellPromptMultiSelectTest extends AbstractShellTe
          this.fullName = fullName;
       }
 
+      @Override
       public String toString()
       {
          return fullName;

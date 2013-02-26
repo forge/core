@@ -202,6 +202,7 @@ public class LinuxSystem
          super(name, releaseFilePath);
       }
 
+      @Override
       protected boolean isDistro()
       {
          return distroFileContains(getName());

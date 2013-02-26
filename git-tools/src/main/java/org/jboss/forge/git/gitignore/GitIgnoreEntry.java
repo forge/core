@@ -123,6 +123,7 @@ public class GitIgnoreEntry
       return true;
    }
 
+   @Override
    public String toString()
    {
       if (content == null)

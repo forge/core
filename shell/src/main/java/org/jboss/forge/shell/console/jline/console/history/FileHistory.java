@@ -23,7 +23,7 @@ import java.io.Reader;
  * {@link History} using a file for persistent backing.
  * <p/>
  * Implementers should install shutdown hook to call {@link FileHistory#flush} to save history to disk.
- * 
+ *
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
  * @since 2.0
  */
@@ -73,6 +73,7 @@ public class FileHistory
       }
    }
 
+   @Override
    public void flush() throws IOException
    {
       org.jboss.forge.shell.console.jline.internal.Log.trace("Flushing history");
@@ -104,6 +105,7 @@ public class FileHistory
       }
    }
 
+   @Override
    public void purge() throws IOException
    {
       org.jboss.forge.shell.console.jline.internal.Log.trace("Purging history");

@@ -14,7 +14,7 @@ import java.util.NoSuchElementException;
 
 /**
  * Non-persistent {@link History}.
- * 
+ *
  * @author <a href="mailto:mwp1@cornell.edu">Marc Prud'hommeaux</a>
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
  * @since 2.3
@@ -77,21 +77,25 @@ public class MemoryHistory
       this.autoTrim = flag;
    }
 
+   @Override
    public int size()
    {
       return items.size();
    }
 
+   @Override
    public boolean isEmpty()
    {
       return items.isEmpty();
    }
 
+   @Override
    public int index()
    {
       return offset + index;
    }
 
+   @Override
    public void clear()
    {
       items.clear();
@@ -99,11 +103,13 @@ public class MemoryHistory
       index = 0;
    }
 
+   @Override
    public CharSequence get(final int index)
    {
       return items.get(index - offset);
    }
 
+   @Override
    public void add(CharSequence item)
    {
       assert item != null;
@@ -126,6 +132,7 @@ public class MemoryHistory
       maybeResize();
    }
 
+   @Override
    public void replace(final CharSequence item)
    {
       items.removeLast();
@@ -143,16 +150,19 @@ public class MemoryHistory
       index = size();
    }
 
+   @Override
    public ListIterator<Entry> entries(final int index)
    {
       return new EntriesIterator(index - offset);
    }
 
+   @Override
    public ListIterator<Entry> entries()
    {
       return entries(offset);
    }
 
+   @Override
    public Iterator<Entry> iterator()
    {
       return entries();
@@ -171,11 +181,13 @@ public class MemoryHistory
          this.value = value;
       }
 
+      @Override
       public int index()
       {
          return index;
       }
 
+      @Override
       public CharSequence value()
       {
          return value;
@@ -198,6 +210,7 @@ public class MemoryHistory
          source = items.listIterator(index);
       }
 
+      @Override
       public Entry next()
       {
          if (!source.hasNext())
@@ -207,6 +220,7 @@ public class MemoryHistory
          return new EntryImpl(offset + source.nextIndex(), source.next());
       }
 
+      @Override
       public Entry previous()
       {
          if (!source.hasPrevious())
@@ -216,36 +230,43 @@ public class MemoryHistory
          return new EntryImpl(offset + source.previousIndex(), source.previous());
       }
 
+      @Override
       public int nextIndex()
       {
          return offset + source.nextIndex();
       }
 
+      @Override
       public int previousIndex()
       {
          return offset + source.previousIndex();
       }
 
+      @Override
       public boolean hasNext()
       {
          return source.hasNext();
       }
 
+      @Override
       public boolean hasPrevious()
       {
          return source.hasPrevious();
       }
 
+      @Override
       public void remove()
       {
          throw new UnsupportedOperationException();
       }
 
+      @Override
       public void set(final Entry entry)
       {
          throw new UnsupportedOperationException();
       }
 
+      @Override
       public void add(final Entry entry)
       {
          throw new UnsupportedOperationException();
@@ -258,9 +279,10 @@ public class MemoryHistory
 
    /**
     * This moves the history to the last entry. This entry is one position before the moveToEnd() position.
-    * 
+    *
     * @return Returns false if there were no history entries or the history index was already at the last entry.
     */
+   @Override
    public boolean moveToLast()
    {
       int lastEntry = size() - 1;
@@ -275,10 +297,11 @@ public class MemoryHistory
 
    /**
     * Move to the specified index in the history
-    * 
+    *
     * @param index
     * @return
     */
+   @Override
    public boolean moveTo(int index)
    {
       index -= offset;
@@ -292,9 +315,10 @@ public class MemoryHistory
 
    /**
     * Moves the history index to the first entry.
-    * 
+    *
     * @return Return false if there are no entries in the history or if the history is already at the beginning.
     */
+   @Override
    public boolean moveToFirst()
    {
       if (size() > 0 && index != 0)
@@ -309,6 +333,7 @@ public class MemoryHistory
    /**
     * Move to the end of the history buffer. This will be a blank entry, after all of the other entries.
     */
+   @Override
    public void moveToEnd()
    {
       index = size();
@@ -317,6 +342,7 @@ public class MemoryHistory
    /**
     * Return the content of the current buffer.
     */
+   @Override
    public CharSequence current()
    {
       if (index >= size())
@@ -329,9 +355,10 @@ public class MemoryHistory
 
    /**
     * Move the pointer to the previous element in the buffer.
-    * 
+    *
     * @return true if we successfully went to the previous element
     */
+   @Override
    public boolean previous()
    {
       if (index <= 0)
@@ -346,9 +373,10 @@ public class MemoryHistory
 
    /**
     * Move the pointer to the next element in the buffer.
-    * 
+    *
     * @return true if we successfully went to the next element
     */
+   @Override
    public boolean next()
    {
       if (index >= size())

@@ -134,7 +134,7 @@ public class CopyPlugin implements Plugin
             {
                ((FileResource<?>) child).setContents(source.getResourceInputStream());
             }
-            newTargetDir = (DirectoryResource) targetResource;
+            newTargetDir = targetResource;
          }
       }
    }

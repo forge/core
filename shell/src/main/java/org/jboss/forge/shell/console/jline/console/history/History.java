@@ -12,7 +12,7 @@ import java.util.ListIterator;
 
 /**
  * Console history.
- * 
+ *
  * @author <a href="mailto:mwp1@cornell.edu">Marc Prud'hommeaux</a>
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
  * @since 2.3
@@ -49,6 +49,7 @@ public interface History
 
    ListIterator<Entry> entries();
 
+   @Override
    Iterator<Entry> iterator();
 
    //

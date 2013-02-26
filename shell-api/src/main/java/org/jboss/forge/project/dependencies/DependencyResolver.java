@@ -155,6 +155,7 @@ public class DependencyResolver
    /**
     * @deprecated Use {@link DependencyResolver#resolveVersions(DependencyQuery)}
     */
+   @Deprecated
    public List<Dependency> resolveVersions(final Dependency query)
    {
       for (DependencyResolverProvider p : providers)
@@ -171,6 +172,7 @@ public class DependencyResolver
    /**
     * @deprecated Use {@link DependencyResolver#resolveVersions(DependencyQuery)}
     */
+   @Deprecated
    public List<Dependency> resolveVersions(final Dependency query, final DependencyRepository repository)
    {
       for (DependencyResolverProvider p : providers)
@@ -187,6 +189,7 @@ public class DependencyResolver
    /**
     * @deprecated Use {@link DependencyResolver#resolveVersions(DependencyQuery)}
     */
+   @Deprecated
    public List<Dependency> resolveVersions(final Dependency query, final List<DependencyRepository> repositories)
    {
       for (DependencyResolverProvider p : providers)
