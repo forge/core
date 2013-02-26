@@ -232,7 +232,8 @@ public class ForgePlugin implements Plugin
 
          if (plugin.isGit())
          {
-            installFromGit(plugin.getGitRepo(), Strings.isNullOrEmpty(version) ? plugin.getGitRef() : version, null, out);
+            installFromGit(plugin.getGitRepo(), Strings.isNullOrEmpty(version) ? plugin.getGitRef() : version, null,
+                     out);
          }
          else
          {
@@ -565,12 +566,9 @@ public class ForgePlugin implements Plugin
          }
          else
          {
-            if (apiVersion == null)
-            {
-               Dependency directDependency = deps.getDirectDependency(shellApi);
-               if ((directDependency != null) && !Strings.isNullOrEmpty(directDependency.getVersion()))
-                  apiVersion = directDependency.getVersion();
-            }
+            Dependency directDependency = deps.getDirectDependency(shellApi);
+            if ((directDependency != null) && !Strings.isNullOrEmpty(directDependency.getVersion()))
+               apiVersion = directDependency.getVersion();
 
             if (apiVersion == null)
             {
@@ -638,7 +636,7 @@ public class ForgePlugin implements Plugin
          }
          else
          {
-            throw new IllegalStateException("Build artifact [" + artifact.getFullyQualifiedName()
+            throw new IllegalStateException("Build artifact [" + artifact
                      + "] is missing and cannot be installed. Please resolve build errors and try again.");
          }
       }

@@ -123,8 +123,18 @@ public class MavenFacetsTest extends ProjectModelTest
       assertTrue(file.exists());
 
       MavenXpp3Reader reader = new MavenXpp3Reader();
-      Model result = reader.read(new FileInputStream(file));
-      assertEquals(pom.getArtifactId(), result.getArtifactId());
+      FileInputStream in = null;
+      try
+      {
+         in = new FileInputStream(file);
+         Model result = reader.read(in);
+         assertEquals(pom.getArtifactId(), result.getArtifactId());
+      }
+      finally
+      {
+         if (in != null)
+            in.close();
+      }
    }
 
    @Test

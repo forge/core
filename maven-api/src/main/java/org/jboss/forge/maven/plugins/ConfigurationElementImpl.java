@@ -58,6 +58,7 @@ public class ConfigurationElementImpl implements ConfigurationElement
       children.add(element);
    }
 
+   @Override
    public List<PluginElement> getChildren()
    {
       return children;

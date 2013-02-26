@@ -1143,37 +1143,34 @@ public class ConsoleReader
       //
       // keycode: operation name
 
-      if (input != null)
+      input = new BufferedInputStream(input);
+      Properties p = new Properties();
+      p.load(input);
+      input.close();
+
+      for (Object key : p.keySet())
       {
-         input = new BufferedInputStream(input);
-         Properties p = new Properties();
-         p.load(input);
-         input.close();
+         String val = (String) key;
 
-         for (Object key : p.keySet())
+         try
          {
-            String val = (String) key;
-
-            try
-            {
-               short code = Short.parseShort(val);
-               String name = p.getProperty(val);
-               org.jboss.forge.shell.console.jline.console.Operation op = org.jboss.forge.shell.console.jline.console.Operation
-                        .valueOf(name);
-               keyBindings[code] = op.code;
-            }
-            catch (NumberFormatException e)
-            {
-               org.jboss.forge.shell.console.jline.internal.Log.error("Failed to convert binding code: ", val, e);
-            }
+            short code = Short.parseShort(val);
+            String name = p.getProperty(val);
+            org.jboss.forge.shell.console.jline.console.Operation op = org.jboss.forge.shell.console.jline.console.Operation
+                     .valueOf(name);
+            keyBindings[code] = op.code;
          }
-
-         // hardwired arrow key bindings
-         // keybindings[VK_UP] = PREV_HISTORY;
-         // keybindings[VK_DOWN] = NEXT_HISTORY;
-         // keybindings[VK_LEFT] = PREV_CHAR;
-         // keybindings[VK_RIGHT] = NEXT_CHAR;
+         catch (NumberFormatException e)
+         {
+            org.jboss.forge.shell.console.jline.internal.Log.error("Failed to convert binding code: ", val, e);
+         }
       }
+
+      // hardwired arrow key bindings
+      // keybindings[VK_UP] = PREV_HISTORY;
+      // keybindings[VK_DOWN] = NEXT_HISTORY;
+      // keybindings[VK_LEFT] = PREV_CHAR;
+      // keybindings[VK_RIGHT] = NEXT_CHAR;
 
       return keyBindings;
    }

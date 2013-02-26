@@ -12,7 +12,6 @@ import static org.junit.Assert.assertNotNull;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
-import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.test.AbstractShellTest;
@@ -33,7 +32,7 @@ public class ProjectFactoryTest extends AbstractShellTest
       initializeJavaProject();
 
       Project project = getProject();
-      Assert.assertTrue(project instanceof Project);
+      Assert.assertNotNull(project);
       Resource<?> projectResource = shell.getCurrentResource();
 
       shell.execute("cd /");
@@ -47,7 +46,7 @@ public class ProjectFactoryTest extends AbstractShellTest
       Assert.assertEquals(projectResource, currentResource);
 
       project = getProject();
-      Assert.assertTrue(project.getProjectRoot() instanceof DirectoryResource);
+      Assert.assertNotNull(project.getProjectRoot());
 
       JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
 

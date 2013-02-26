@@ -157,7 +157,7 @@ public class FacesFacetImpl extends BaseJavaEEFacet implements FacesFacet
          };
       }
 
-      return (FileResource<?>) child;
+      return child;
    }
 
    @Override
@@ -222,6 +222,8 @@ public class FacesFacetImpl extends BaseJavaEEFacet implements FacesFacet
       return results;
    }
 
+   @SuppressWarnings("resource")
+   @Override
    public void setFacesMapping(final String mapping)
    {
       ServletFacet facet = project.getFacet(ServletFacet.class);
@@ -231,6 +233,8 @@ public class FacesFacetImpl extends BaseJavaEEFacet implements FacesFacet
       {
          facet.getConfigFile().setContents(newWebXml);
       }
+      Streams.closeQuietly(webXml);
+      Streams.closeQuietly(newWebXml);
    }
 
    @Override

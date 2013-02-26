@@ -266,7 +266,7 @@ public class RestPlugin implements Plugin
             {
                break;
             }
-            else if (type != null && result == null && member.isPublic())
+            else if (type != null && member.isPublic())
             {
                String memberName = member.getName();
                // Cheat a little if the member is public
@@ -289,7 +289,6 @@ public class RestPlugin implements Plugin
 
       return result;
    }
-
 
    private String resolveIdGetterName(JavaClass entity)
    {
@@ -321,11 +320,11 @@ public class RestPlugin implements Plugin
                   // It's a getter
                   if (method.getParameters().size() == 0 && type.equals(method.getReturnType()))
                   {
-                    if (method.getName().toLowerCase().contains(name.toLowerCase()))
-                    {
-                      result = method.getName() + "()";
-                      break;
-                    }
+                     if (method.getName().toLowerCase().contains(name.toLowerCase()))
+                     {
+                        result = method.getName() + "()";
+                        break;
+                     }
                   }
                }
             }
@@ -334,7 +333,7 @@ public class RestPlugin implements Plugin
             {
                break;
             }
-            else if (type != null && result == null && member.isPublic())
+            else if (type != null && member.isPublic())
             {
                String memberName = member.getName();
                // Cheat a little if the member is public

@@ -69,6 +69,7 @@ public class RestWebXmlFacetImpl extends BaseFacet implements RestWebXmlFacet
       return getServletPath() != null;
    }
 
+   @Override
    public String getServletPath()
    {
       ServletFacet servlet = project.getFacet(ServletFacet.class);

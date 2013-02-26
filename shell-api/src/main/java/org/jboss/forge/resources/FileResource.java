@@ -292,7 +292,6 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
     */
    public T setContents(final InputStream data)
    {
-      T temp = null;
       try
       {
          if (!exists())
@@ -335,13 +334,6 @@ public abstract class FileResource<T extends FileResource<?>> extends AbstractRe
       catch (IOException e)
       {
          throw new ProjectModelException(e);
-      }
-      finally
-      {
-         if (temp != null)
-         {
-            temp.delete();
-         }
       }
       return (T) this;
    }

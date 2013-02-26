@@ -83,14 +83,22 @@ public class ServletFacetImpl extends BaseJavaEEFacet implements ServletFacet
    /*
     * Facet Methods
     */
+   @SuppressWarnings("resource")
    @Override
    public WebAppDescriptor getConfig()
    {
       DescriptorImporter<WebAppDescriptor> importer = Descriptors.importAs(WebAppDescriptor.class);
       FileResource<?> configFile = getConfigFile();
       InputStream inputStream = configFile.getResourceInputStream();
-      WebAppDescriptor descriptor = importer.from(inputStream);
-      return descriptor;
+      try
+      {
+         WebAppDescriptor descriptor = importer.from(inputStream);
+         return descriptor;
+      }
+      finally
+      {
+         Streams.closeQuietly(inputStream);
+      }
    }
 
    @Override
@@ -132,7 +140,7 @@ public class ServletFacetImpl extends BaseJavaEEFacet implements ServletFacet
             @Override
             public UnknownFileResource setContents(InputStream data)
             {
-               if(!exists())
+               if (!exists())
                {
                   createNewFile();
                }
@@ -142,7 +150,7 @@ public class ServletFacetImpl extends BaseJavaEEFacet implements ServletFacet
             @Override
             public UnknownFileResource setContents(char[] data)
             {
-               if(!exists())
+               if (!exists())
                {
                   createNewFile();
                }
@@ -152,7 +160,7 @@ public class ServletFacetImpl extends BaseJavaEEFacet implements ServletFacet
             @Override
             public UnknownFileResource setContents(String data)
             {
-               if(!exists())
+               if (!exists())
                {
                   createNewFile();
                }
