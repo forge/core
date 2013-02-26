@@ -15,6 +15,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.jboss.forge.git.GitFacet;
 import org.jboss.forge.git.GitUtils;
@@ -55,7 +56,8 @@ public class GitIgnoreFacet extends BaseFacet
          DirectoryResource cloneDir = cloneDir();
          String repo = config.remoteRepository();
          ShellMessages.info(shell, "Cloning " + repo + " into " + cloneDir.getFullyQualifiedName());
-         GitUtils.clone(cloneDir, repo);
+         Git git = GitUtils.clone(cloneDir, repo);
+         GitUtils.close(git);
          return true;
       }
       catch (Exception e)
@@ -87,7 +89,7 @@ public class GitIgnoreFacet extends BaseFacet
 
    /**
     * Read the content of a gitignore template
-    * 
+    *
     * @param template Template name.
     * @return Template content as string.
     */
@@ -110,13 +112,15 @@ public class GitIgnoreFacet extends BaseFacet
 
    /**
     * Update the templates from the remote repository.
-    * 
+    *
     * @throws IOException Failure reading the git repository.
     * @throws GitAPIException Git failure.
     */
    public void update() throws IOException, GitAPIException
    {
-      GitUtils.pull(GitUtils.git(cloneDir()), 10000);
+      Git git = GitUtils.git(cloneDir());
+      GitUtils.pull(git, 10000);
+      GitUtils.close(git);
    }
 
    private List<String> listGitignores(DirectoryResource dir)

@@ -371,4 +371,9 @@ public abstract class GitUtils
 
       return newBranch;
    }
+
+   public static void close(final Git repo)
+   {
+      repo.getRepository().close();
+   }
 }

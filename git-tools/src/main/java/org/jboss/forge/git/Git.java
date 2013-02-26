@@ -63,7 +63,8 @@ public class Git implements Plugin
             ((FileResource<?>) folder).mkdirs();
             folder = folder.reify(DirectoryResource.class);
          }
-         GitUtils.clone((DirectoryResource) folder, uri);
+         org.eclipse.jgit.api.Git clone = GitUtils.clone((DirectoryResource) folder, uri);
+         GitUtils.close(clone);
          shell.setCurrentResource(folder);
       }
       else
@@ -80,6 +81,8 @@ public class Git implements Plugin
             @Option(name = "track", shortName = "t", description = "remote tracking mode", defaultValue = "master") SetupUpstreamMode mode,
             @Option(name = "force") boolean force) throws Exception
    {
-      GitUtils.checkout(GitUtils.git(shell.getCurrentProject().getProjectRoot()), ref, createBranch, mode, force);
+      org.eclipse.jgit.api.Git git = GitUtils.git(shell.getCurrentProject().getProjectRoot());
+      GitUtils.checkout(git, ref, createBranch, mode, force);
+      GitUtils.close(git);
    }
 }

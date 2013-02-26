@@ -33,7 +33,7 @@ public class GitFacet extends BaseFacet
 
          try
          {
-            init.call();
+            GitUtils.close(init.call());
          }
          catch (GitAPIException e)
          {
