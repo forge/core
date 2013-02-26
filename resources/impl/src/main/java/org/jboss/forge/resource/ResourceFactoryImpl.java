@@ -15,23 +15,25 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jboss.forge.container.AddonRegistry;
-import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.resource.events.ResourceEvent;
+import org.jboss.forge.resource.transaction.ResourceTransaction;
+import org.jboss.forge.resource.transaction.ResourceTransactionManager;
 
 /**
  * @author <a href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>
  * @author Mike Brock <cbrock@redhat.com>
  */
-@Exported
 @Singleton
-public class ResourceFactoryImpl implements ResourceFactory
+public class ResourceFactoryImpl implements ResourceFactory, ResourceTransactionManager
 {
    @Inject
    private BeanManager manager;
 
    @Inject
    private AddonRegistry registry;
+
+   private ResourceTransactionImpl transaction;
 
    @Override
    @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -79,7 +81,8 @@ public class ResourceFactoryImpl implements ResourceFactory
             ResourceGenerator generator = instance.get();
             if (generator.handles(Resource.class, underlyingResource))
             {
-               generated.add(generator.getResource(this, Resource.class, underlyingResource));
+               Resource resource = generator.getResource(this, Resource.class, underlyingResource);
+               generated.add(resource);
             }
             instance.release(generator);
          }
@@ -90,9 +93,17 @@ public class ResourceFactoryImpl implements ResourceFactory
          for (Resource<?> resource : generated)
          {
             if (result == null || result.getClass().isAssignableFrom(resource.getClass()))
+            {
                result = (Resource<E>) resource;
+            }
          }
       }
+      // Transaction Hook
+      if (result != null && transaction != null)
+      {
+         result = transaction.decorateResource(result);
+      }
+
       return result;
    }
 
@@ -107,6 +118,28 @@ public class ResourceFactoryImpl implements ResourceFactory
    {
       manager.fireEvent(event, new Annotation[] {});
       return this;
+   }
+
+   @Override
+   public ResourceTransaction getCurrentTransaction()
+   {
+      return transaction;
+   }
+
+   @Override
+   public ResourceTransaction startTransaction() throws ResourceException
+   {
+      if (transaction != null)
+      {
+         throw new ResourceException("Transaction already exists!");
+      }
+      transaction = new ResourceTransactionImpl(this);
+      return transaction;
+   }
+
+   void unsetTransaction()
+   {
+      transaction = null;
    }
 
 }
