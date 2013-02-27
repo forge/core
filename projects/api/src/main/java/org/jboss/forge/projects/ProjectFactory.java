@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.projects;
 
+import org.jboss.forge.container.util.Predicate;
 import org.jboss.forge.resource.Resource;
 
 /**
@@ -16,7 +17,13 @@ import org.jboss.forge.resource.Resource;
 public interface ProjectFactory
 {
    /**
-    * Locate a {@link Project} in the parent hierarchy of the given {@link Resource}.
+    * Locate a {@link Project} in the ancestry of the given {@link Resource}.
     */
    public Project findProject(final Resource<?> target);
+
+   /**
+    * Locate a {@link Project} in the ancestry of the given {@link Resource}. Filter results using the given
+    * {@link Predicate}
+    */
+   public Project findProject(final Resource<?> target, Predicate<Project> filter);
 }
