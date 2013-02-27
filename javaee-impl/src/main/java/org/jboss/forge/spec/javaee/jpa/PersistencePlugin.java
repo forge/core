@@ -25,13 +25,13 @@ import org.jboss.forge.shell.ShellColor;
 import org.jboss.forge.shell.ShellMessages;
 import org.jboss.forge.shell.ShellPrompt;
 import org.jboss.forge.shell.plugins.Alias;
-import org.jboss.forge.shell.plugins.Command;
 import org.jboss.forge.shell.plugins.DefaultCommand;
 import org.jboss.forge.shell.plugins.Option;
 import org.jboss.forge.shell.plugins.PipeOut;
 import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresProject;
+import org.jboss.forge.shell.plugins.SetupCommand;
 import org.jboss.forge.spec.javaee.PersistenceFacet;
 import org.jboss.forge.spec.javaee.PersistenceMetaModelFacet;
 import org.jboss.forge.spec.javaee.jpa.api.DatabaseType;
@@ -136,7 +136,7 @@ public class PersistencePlugin implements Plugin
       }
    }
 
-   @Command("setup")
+   @SetupCommand
    public void setup(
             @Option(name = "provider", required = true) final JPAProvider jpap,
             @Option(name = "provider-version", required = false) final String providerVersion,
@@ -187,10 +187,10 @@ public class PersistencePlugin implements Plugin
          ShellMessages.success(out, "Persistence (JPA) is installed.");
       }
    }
-   
+
    private void installMetaModelGenerator()
    {
-      if (!project.hasFacet(PersistenceMetaModelFacet.class) 
+      if (!project.hasFacet(PersistenceMetaModelFacet.class)
                && prompt.promptBoolean("Do you want to install a JPA 2 metamodel generator?", false))
       {
          request.fire(new InstallFacets(PersistenceMetaModelFacet.class));
