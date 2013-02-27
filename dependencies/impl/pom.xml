@@ -7,6 +7,7 @@
       <version>2.0.0-SNAPSHOT</version>
    </parent>
    <artifactId>dependencies-impl</artifactId>
+   <name>Forge - Dependencies Impl</name>
 
    <dependencies>
       <dependency>
