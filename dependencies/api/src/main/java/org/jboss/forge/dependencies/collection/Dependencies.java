@@ -18,6 +18,7 @@ import java.util.Stack;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.jboss.forge.container.util.Predicate;
 import org.jboss.forge.dependencies.Coordinate;
 import org.jboss.forge.dependencies.Dependency;
 import org.jboss.forge.dependencies.DependencyNode;

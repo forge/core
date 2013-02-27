@@ -16,7 +16,6 @@ import org.jboss.forge.addon.manager.InstallRequest;
 import org.jboss.forge.addon.manager.impl.AddonManagerImpl;
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.Forge;
-import org.jboss.forge.dependencies.DependencyResolver;
 import org.jboss.forge.maven.dependencies.FileResourceFactory;
 import org.jboss.forge.maven.dependencies.MavenContainer;
 import org.jboss.forge.maven.dependencies.MavenDependencyResolver;
@@ -148,11 +147,6 @@ public class Bootstrap
       {
          exitAfter = true;
       }
-   }
-
-   private <T> T lookup(Class<? extends T> service)
-   {
-      return ServiceLoader.load(service).iterator().next();
    }
 
 }

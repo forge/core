@@ -8,10 +8,10 @@
 package org.jboss.forge.environment;
 
 /**
- * Marker interface needed to restrict the possible keys in an {@link Environment}
- *
+ * Marker interface restricting the possible keys in an {@link Environment}
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 public interface Category
 {

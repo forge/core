@@ -9,13 +9,13 @@ package test.org.jboss.forge.dependencies.maven;
 import java.util.List;
 import java.util.Set;
 
+import org.jboss.forge.container.util.Predicate;
 import org.jboss.forge.dependencies.Coordinate;
 import org.jboss.forge.dependencies.Dependency;
 import org.jboss.forge.dependencies.DependencyNode;
 import org.jboss.forge.dependencies.DependencyQuery;
 import org.jboss.forge.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.dependencies.builder.DependencyQueryBuilder;
-import org.jboss.forge.dependencies.collection.Predicate;
 import org.jboss.forge.maven.dependencies.FileResourceFactory;
 import org.jboss.forge.maven.dependencies.MavenContainer;
 import org.jboss.forge.maven.dependencies.MavenDependencyResolver;

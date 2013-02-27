@@ -11,11 +11,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.jboss.forge.container.util.Predicate;
 import org.jboss.forge.dependencies.Coordinate;
 import org.jboss.forge.dependencies.Dependency;
 import org.jboss.forge.dependencies.DependencyQuery;
 import org.jboss.forge.dependencies.DependencyRepository;
-import org.jboss.forge.dependencies.collection.Predicate;
 
 /**
  * Builds a {@link DependencyQuery} object

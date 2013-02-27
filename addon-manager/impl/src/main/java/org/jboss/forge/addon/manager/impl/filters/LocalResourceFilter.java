@@ -1,8 +1,8 @@
 package org.jboss.forge.addon.manager.impl.filters;
 
+import org.jboss.forge.container.util.Predicate;
 import org.jboss.forge.dependencies.DependencyNode;
 import org.jboss.forge.dependencies.collection.Dependencies;
-import org.jboss.forge.dependencies.collection.Predicate;
 
 /**
  * Figures out if a dependency should be treated as a JAR or as an Addon.

@@ -22,10 +22,10 @@ import org.jboss.forge.addon.manager.impl.filters.LocalResourceFilter;
 import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.AddonRepository;
+import org.jboss.forge.container.util.Predicate;
 import org.jboss.forge.dependencies.Coordinate;
 import org.jboss.forge.dependencies.DependencyNode;
 import org.jboss.forge.dependencies.collection.Dependencies;
-import org.jboss.forge.dependencies.collection.Predicate;
 
 /**
  * When an addon is installed, another addons could be required. This object returns the necessary information for the
