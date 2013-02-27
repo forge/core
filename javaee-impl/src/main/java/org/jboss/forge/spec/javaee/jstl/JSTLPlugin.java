@@ -13,10 +13,10 @@ import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.events.InstallFacets;
 import org.jboss.forge.shell.ShellMessages;
 import org.jboss.forge.shell.plugins.Alias;
-import org.jboss.forge.shell.plugins.Command;
 import org.jboss.forge.shell.plugins.PipeOut;
 import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.RequiresProject;
+import org.jboss.forge.shell.plugins.SetupCommand;
 import org.jboss.forge.spec.javaee.JSTLFacet;
 
 /**
@@ -32,7 +32,7 @@ public class JSTLPlugin implements Plugin
    @Inject
    private Event<InstallFacets> request;
 
-   @Command("setup")
+   @SetupCommand
    public void setup(final PipeOut out)
    {
       if (!project.hasFacet(JSTLFacet.class))
