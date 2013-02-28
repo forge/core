@@ -8,8 +8,6 @@ package org.jboss.forge.ui.input;
 
 import java.util.concurrent.Callable;
 
-import org.jboss.forge.convert.Converter;
-
 /**
  * A {@link UISelectMany} should be used when the number of items to be chosen are known before rendering the component.
  *
@@ -17,12 +15,8 @@ import org.jboss.forge.convert.Converter;
  *
  * @param <VALUETYPE>
  */
-public interface UISelectMany<VALUETYPE> extends UIInputComponent<UISelectMany<VALUETYPE>, VALUETYPE>
+public interface UISelectMany<VALUETYPE> extends UISelectComponent<UISelectMany<VALUETYPE>, VALUETYPE>
 {
-   Iterable<VALUETYPE> getValueChoices();
-
-   UISelectMany<VALUETYPE> setValueChoices(Iterable<VALUETYPE> values);
-
    Iterable<VALUETYPE> getValue();
 
    UISelectMany<VALUETYPE> setDefaultValue(Iterable<VALUETYPE> value);
@@ -30,8 +24,4 @@ public interface UISelectMany<VALUETYPE> extends UIInputComponent<UISelectMany<V
    UISelectMany<VALUETYPE> setDefaultValue(Callable<Iterable<VALUETYPE>> callback);
 
    UISelectMany<VALUETYPE> setValue(Iterable<VALUETYPE> value);
-
-   Converter<VALUETYPE, String> getItemLabelConverter();
-
-   UISelectMany<VALUETYPE> setItemLabelConverter(Converter<VALUETYPE, String> converter);
 }

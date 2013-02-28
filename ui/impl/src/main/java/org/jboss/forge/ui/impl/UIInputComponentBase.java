@@ -11,6 +11,7 @@ import java.util.concurrent.Callable;
 
 import javax.enterprise.inject.Vetoed;
 
+import org.jboss.forge.convert.Converter;
 import org.jboss.forge.facets.BaseFaceted;
 import org.jboss.forge.facets.Facet;
 import org.jboss.forge.ui.facets.HintsFacet;
@@ -38,6 +39,7 @@ public abstract class UIInputComponentBase<IMPLTYPE extends UIInputComponent<IMP
    private String requiredMessage;
 
    private Class<VALUETYPE> type;
+   private Converter<String, VALUETYPE> valueConverter;
 
    public UIInputComponentBase(String name, Class<VALUETYPE> type)
    {
@@ -126,6 +128,19 @@ public abstract class UIInputComponentBase<IMPLTYPE extends UIInputComponent<IMP
    public IMPLTYPE setRequiredMessage(String requiredMessage)
    {
       this.requiredMessage = requiredMessage;
+      return (IMPLTYPE) this;
+   }
+
+   @Override
+   public Converter<String, VALUETYPE> getValueConverter()
+   {
+      return valueConverter;
+   }
+
+   @Override
+   public IMPLTYPE setValueConverter(Converter<String, VALUETYPE> converter)
+   {
+      this.valueConverter = converter;
       return (IMPLTYPE) this;
    }
 

@@ -8,38 +8,22 @@ package org.jboss.forge.ui.impl;
 
 import java.util.concurrent.Callable;
 
-import org.jboss.forge.convert.Converter;
 import org.jboss.forge.ui.input.UISelectMany;
 import org.jboss.forge.ui.util.Callables;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class UISelectManyImpl<VALUETYPE> extends UIInputComponentBase<UISelectMany<VALUETYPE>, VALUETYPE> implements
+public class UISelectManyImpl<VALUETYPE> extends UISelectInputComponentBase<UISelectMany<VALUETYPE>, VALUETYPE>
+         implements
          UISelectMany<VALUETYPE>
 {
-   private Iterable<VALUETYPE> choices;
    private Iterable<VALUETYPE> value;
    private Callable<Iterable<VALUETYPE>> defaultValue;
-   private Converter<String, VALUETYPE> valueConverter;
-   private Converter<VALUETYPE, String> itemLabelConverter;
 
    public UISelectManyImpl(String name, Class<VALUETYPE> type)
    {
       super(name, type);
-   }
-
-   @Override
-   public Iterable<VALUETYPE> getValueChoices()
-   {
-      return choices;
-   }
-
-   @Override
-   public UISelectMany<VALUETYPE> setValueChoices(Iterable<VALUETYPE> choices)
-   {
-      this.choices = choices;
-      return this;
    }
 
    @Override
@@ -67,31 +51,5 @@ public class UISelectManyImpl<VALUETYPE> extends UIInputComponentBase<UISelectMa
    public Iterable<VALUETYPE> getValue()
    {
       return (value == null) ? Callables.call(defaultValue) : value;
-   }
-
-   @Override
-   public Converter<String, VALUETYPE> getValueConverter()
-   {
-      return valueConverter;
-   }
-
-   @Override
-   public UISelectMany<VALUETYPE> setValueConverter(Converter<String, VALUETYPE> converter)
-   {
-      this.valueConverter = converter;
-      return this;
-   }
-
-   @Override
-   public Converter<VALUETYPE, String> getItemLabelConverter()
-   {
-      return itemLabelConverter;
-   }
-
-   @Override
-   public UISelectMany<VALUETYPE> setItemLabelConverter(Converter<VALUETYPE, String> converter)
-   {
-      this.itemLabelConverter = converter;
-      return this;
    }
 }
