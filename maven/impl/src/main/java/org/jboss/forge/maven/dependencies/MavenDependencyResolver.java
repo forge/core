@@ -80,12 +80,24 @@ public class MavenDependencyResolver implements DependencyResolver
       CollectRequest collectRequest = new CollectRequest(new org.sonatype.aether.graph.Dependency(queryArtifact,
                query.getScopeType()), remoteRepos);
 
-      DependencyRequest request = new DependencyRequest(collectRequest, null);
+      DependencyRequest request = new DependencyRequest(collectRequest, new DependencyFilter()
+      {
+         @Override
+         public boolean accept(DependencyNode node, List<DependencyNode> parents)
+         {
+            return true;
+         }
+      });
 
       DependencyResult artifacts;
       try
       {
          artifacts = system.resolveDependencies(session, request);
+      }
+      catch (NullPointerException e)
+      {
+         throw new RuntimeException("Could not resolve dependencies from Query [" + query
+                  + "] due to underlying exception", e);
       }
       catch (DependencyResolutionException e)
       {

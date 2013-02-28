@@ -14,6 +14,7 @@ import org.jboss.aesh.cl.CommandLineParser;
 import org.jboss.aesh.console.ConsoleOutput;
 import org.jboss.forge.ui.context.UIBuilder;
 import org.jboss.forge.ui.context.UIContext;
+import org.jboss.forge.ui.context.UIContextBase;
 import org.jboss.forge.ui.context.UISelection;
 import org.jboss.forge.ui.context.UIValidationContext;
 import org.jboss.forge.ui.input.InputComponent;
@@ -21,14 +22,14 @@ import org.jboss.forge.ui.input.InputComponent;
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  */
-public class ShellContext implements UIValidationContext, UIContext, UIBuilder
+public class ShellContext extends UIContextBase implements UIValidationContext, UIContext, UIBuilder
 {
 
    private boolean standalone = false;
    private List<InputComponent<?, ?>> inputs = new ArrayList<InputComponent<?, ?>>();
    private ForgeShell aeshell;
    private CommandLineParser parser;
-    private ConsoleOutput consoleOutput;
+   private ConsoleOutput consoleOutput;
 
    public ShellContext(ForgeShell aeshell)
    {
@@ -52,22 +53,22 @@ public class ShellContext implements UIValidationContext, UIContext, UIBuilder
 
    public void setParser(CommandLineParser parser)
    {
-       this.parser = parser;
+      this.parser = parser;
    }
 
    public CommandLineParser getParser()
    {
-       return parser;
+      return parser;
    }
 
    public void setConsoleOutput(ConsoleOutput output)
    {
-       this.consoleOutput = output;
+      this.consoleOutput = output;
    }
 
    public ConsoleOutput getConsoleOutput()
    {
-       return consoleOutput;
+      return consoleOutput;
    }
 
    @Override

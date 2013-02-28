@@ -59,28 +59,28 @@ public class AeshAddonTest extends TestCase
    {
       /*
        * try {
-       *
+       * 
        * Assert.assertNotNull(shell);
-       *
+       * 
        * PipedOutputStream outputStream = new PipedOutputStream(); PipedInputStream pipedInputStream = new
        * PipedInputStream(outputStream); ByteArrayOutputStream out = new ByteArrayOutputStream();
-       *
+       * 
        * setupSettings(pipedInputStream, out);
-       *
+       * 
        * shell.initShell(); shell.addCommand(new ShellCommand(fooCommand));
-       *
+       * 
        * outputStream.write(("foo\n").getBytes()); shell.startShell(); String outString = out.toString();
        * assertEquals("boo", outString.substring(shell.getPrompt().length() + "foo\n".length()));
-       *
+       * 
        * outputStream.write("fo".getBytes()); outputStream.write(completeChar.getFirstValue());
        * outputStream.write("\n".getBytes()); shell.startShell(); outString = out.toString();
        * System.out.println(outString);
-       *
+       * 
        * outputStream.write(("list-services\n").getBytes()); shell.startShell(); // System.out.println("OUT:"+
        * out.toString());
-       *
+       * 
        * outputStream.write(("exit\n").getBytes()); shell.startShell();
-       *
+       * 
        * // shell.stopShell(); } catch (Exception ioe) { ioe.printStackTrace(); }
        */
    }

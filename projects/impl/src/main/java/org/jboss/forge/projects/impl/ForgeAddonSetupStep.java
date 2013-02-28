@@ -6,15 +6,8 @@
  */
 package org.jboss.forge.projects.impl;
 
-import java.util.Set;
-
 import javax.inject.Inject;
 
-import org.jboss.forge.dependencies.Dependency;
-import org.jboss.forge.dependencies.DependencyQuery;
-import org.jboss.forge.dependencies.DependencyResolver;
-import org.jboss.forge.dependencies.builder.CoordinateBuilder;
-import org.jboss.forge.dependencies.builder.DependencyQueryBuilder;
 import org.jboss.forge.ui.context.UIBuilder;
 import org.jboss.forge.ui.context.UIContext;
 import org.jboss.forge.ui.context.UIValidationContext;
@@ -34,8 +27,6 @@ public class ForgeAddonSetupStep implements UIWizardStep
 {
    @Inject
    private UIInput<Boolean> splitApiImpl;
-   
-   @Inject DependencyResolver resolver;
 
    @Override
    public UICommandMetadata getMetadata()
@@ -54,11 +45,6 @@ public class ForgeAddonSetupStep implements UIWizardStep
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      DependencyQuery query = DependencyQueryBuilder.create(CoordinateBuilder.create().setGroupId("org.jboss.forge")
-               .setClassifier("forge-addon"));
-      
-      Set<Dependency> coreAddons = resolver.resolveDependencies(query);
-      
       builder.add(splitApiImpl);
    }
 

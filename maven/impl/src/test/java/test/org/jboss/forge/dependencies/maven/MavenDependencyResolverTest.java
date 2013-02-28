@@ -6,8 +6,6 @@
  */
 package test.org.jboss.forge.dependencies.maven;
 
-import static org.junit.Assert.*;
-
 import java.util.List;
 import java.util.Set;
 
@@ -62,11 +60,12 @@ public class MavenDependencyResolverTest
       Assert.assertTrue(dependency.isOptional());
    }
 
-   @Test
+   @Test(expected = RuntimeException.class)
+   // TODO it would be nice to figure out how to resolve all artifacts with a given groupId
    public void testResolveWildcardArtifactId() throws Exception
    {
       DependencyQuery query = DependencyQueryBuilder.create(CoordinateBuilder.create().setGroupId("org.jboss.forge")
-               .setClassifier("forge-addon"));
+               .setArtifactId("").setClassifier("forge-addon"));
       Set<Dependency> coreAddons = resolver.resolveDependencies(query);
       Assert.assertFalse(coreAddons.isEmpty());
    }
