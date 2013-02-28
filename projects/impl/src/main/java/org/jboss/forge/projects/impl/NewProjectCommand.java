@@ -5,6 +5,8 @@ import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.container.AddonRegistry;
+import org.jboss.forge.convert.Converter;
 import org.jboss.forge.projects.ProjectType;
 import org.jboss.forge.resource.DirectoryResource;
 import org.jboss.forge.resource.FileResource;
@@ -16,6 +18,7 @@ import org.jboss.forge.ui.UICommandMetadata;
 import org.jboss.forge.ui.context.UIContext;
 import org.jboss.forge.ui.context.UIValidationContext;
 import org.jboss.forge.ui.input.UIInput;
+import org.jboss.forge.ui.input.UISelectOne;
 import org.jboss.forge.ui.input.UISelection;
 import org.jboss.forge.ui.result.Result;
 import org.jboss.forge.ui.result.Results;
@@ -24,6 +27,9 @@ import org.jboss.forge.ui.util.Metadata;
 
 public class NewProjectCommand implements UICommand
 {
+   @Inject
+   private AddonRegistry registry;
+
    @Inject
    private ResourceFactory factory;
 
@@ -37,7 +43,7 @@ public class NewProjectCommand implements UICommand
    private UIInput<Boolean> overwrite;
 
    @Inject
-   private UIInput<ProjectType> type;
+   private UISelectOne<ProjectType> type;
 
    @Override
    public UICommandMetadata getMetadata()
@@ -55,7 +61,6 @@ public class NewProjectCommand implements UICommand
    @Override
    public void initializeUI(final UIBuilder builder) throws Exception
    {
-
       named.setLabel("Project name");
       named.setRequired(true);
 
@@ -87,6 +92,14 @@ public class NewProjectCommand implements UICommand
       });
 
       type.setRequired(false);
+      type.setItemLabelConverter(new Converter<ProjectType, String>()
+      {
+         @Override
+         public String convert(ProjectType source)
+         {
+            return source.getType();
+         }
+      });
 
       builder.add(named).add(targetLocation).add(overwrite).add(type);
    }
@@ -139,7 +152,7 @@ public class NewProjectCommand implements UICommand
       return overwrite;
    }
 
-   public UIInput<ProjectType> getType()
+   public UISelectOne<ProjectType> getType()
    {
       return type;
    }

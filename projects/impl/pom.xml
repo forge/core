@@ -12,7 +12,24 @@
          <groupId>org.jboss.forge</groupId>
          <artifactId>projects-api</artifactId>
       </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-addon-container-api</artifactId>
+         <scope>provided</scope>
+      </dependency>
 
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>convert-api</artifactId>
+         <scope>provided</scope>
+         <version>2.0.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>facets-api</artifactId>
+         <scope>provided</scope>
+         <version>2.0.0-SNAPSHOT</version>
+      </dependency>
       <dependency>
          <groupId>org.jboss.forge</groupId>
          <artifactId>ui-api</artifactId>

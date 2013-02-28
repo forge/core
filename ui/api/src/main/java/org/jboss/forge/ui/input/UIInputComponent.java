@@ -9,6 +9,7 @@ package org.jboss.forge.ui.input;
 import java.util.concurrent.Callable;
 
 import org.jboss.forge.container.services.Exported;
+import org.jboss.forge.convert.Converter;
 import org.jboss.forge.facets.Faceted;
 
 /**
@@ -40,5 +41,9 @@ public interface UIInputComponent<IMPLTYPE, VALUETYPE> extends Faceted
    IMPLTYPE setRequired(Callable<Boolean> required);
 
    IMPLTYPE setRequiredMessage(String message);
+
+   Converter<String, VALUETYPE> getValueConverter();
+
+   IMPLTYPE setValueConverter(Converter<String, VALUETYPE> converter);
 
 }

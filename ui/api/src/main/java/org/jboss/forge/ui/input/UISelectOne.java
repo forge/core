@@ -8,6 +8,8 @@ package org.jboss.forge.ui.input;
 
 import java.util.concurrent.Callable;
 
+import org.jboss.forge.convert.Converter;
+
 public interface UISelectOne<VALUETYPE> extends UIInputComponent<UISelectOne<VALUETYPE>, VALUETYPE>
 {
    Iterable<VALUETYPE> getValueChoices();
@@ -21,4 +23,8 @@ public interface UISelectOne<VALUETYPE> extends UIInputComponent<UISelectOne<VAL
    UISelectOne<VALUETYPE> setDefaultValue(Callable<VALUETYPE> callback);
 
    UISelectOne<VALUETYPE> setValue(VALUETYPE value);
+   
+   Converter<VALUETYPE, String> getItemLabelConverter();
+   
+   UISelectOne<VALUETYPE> setItemLabelConverter(Converter<VALUETYPE, String> converter);
 }

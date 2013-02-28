@@ -19,6 +19,7 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonId;
+import org.jboss.forge.convert.Converter;
 import org.jboss.forge.ui.UICompleter;
 import org.jboss.forge.ui.facets.HintsFacet;
 import org.jboss.forge.ui.hints.InputType;
@@ -84,6 +85,44 @@ public class UIInputInjectionTest
 
       Assert.assertEquals("unknown", unknown.getName());
       Assert.assertEquals(String.class, unknown.getValueType());
+   }
+
+   @Test
+   public void testValueConverters()
+   {
+      Converter<String, String> stringValueConverter = new Converter<String, String>()
+      {
+         @Override
+         public String convert(String source)
+         {
+            return "NAME: " + source;
+         }
+      };
+
+      Converter<String, Career> careersValueConverter = new Converter<String, Career>()
+      {
+         @Override
+         public Career convert(String source)
+         {
+            return Career.valueOf(source);
+         }
+      };
+
+      Assert.assertNull(firstName.getValueConverter());
+      firstName.setValueConverter(stringValueConverter);
+      Assert.assertSame(firstName.getValueConverter(), stringValueConverter);
+
+      Assert.assertNull(careers.getValueConverter());
+      careers.setValueConverter(careersValueConverter);
+      Assert.assertSame(careers.getValueConverter(), careersValueConverter);
+
+      Assert.assertNull(partners.getValueConverter());
+      partners.setValueConverter(stringValueConverter);
+      Assert.assertSame(partners.getValueConverter(), stringValueConverter);
+
+      Assert.assertNull(unknown.getValueConverter());
+      unknown.setValueConverter(stringValueConverter);
+      Assert.assertSame(unknown.getValueConverter(), stringValueConverter);
    }
 
    @Test

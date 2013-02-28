@@ -11,6 +11,7 @@ import java.util.concurrent.Callable;
 
 import javax.enterprise.inject.Vetoed;
 
+import org.jboss.forge.convert.Converter;
 import org.jboss.forge.ui.UICompleter;
 import org.jboss.forge.ui.input.UIInput;
 import org.jboss.forge.ui.util.Callables;
@@ -28,13 +29,13 @@ public class UIInputImpl<VALUETYPE> extends UIInputComponentBase<UIInput<VALUETY
 {
    private VALUETYPE value;
    private Callable<VALUETYPE> defaultValue;
+   private UICompleter<VALUETYPE> completer;
+   private Converter<String, VALUETYPE> converter;
 
    public UIInputImpl(String name, Class<VALUETYPE> type)
    {
       super(name, type);
    }
-
-   private UICompleter<VALUETYPE> completer;
 
    @Override
    @SuppressWarnings("unchecked")
@@ -75,5 +76,18 @@ public class UIInputImpl<VALUETYPE> extends UIInputComponentBase<UIInput<VALUETY
    public VALUETYPE getValue()
    {
       return (value == null) ? Callables.call(defaultValue) : value;
+   }
+
+   @Override
+   public Converter<String, VALUETYPE> getValueConverter()
+   {
+      return converter;
+   }
+
+   @Override
+   public UIInput<VALUETYPE> setValueConverter(Converter<String, VALUETYPE> converter)
+   {
+      this.converter = converter;
+      return this;
    }
 }
