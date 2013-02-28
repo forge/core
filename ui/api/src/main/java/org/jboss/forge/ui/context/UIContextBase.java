@@ -9,8 +9,6 @@ package org.jboss.forge.ui.context;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jboss.forge.ui.input.UISelection;
-
 /**
  * A default implementation of {@link UIContext}.
  * 

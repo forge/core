@@ -6,6 +6,8 @@
  */
 package test.org.jboss.forge.dependencies.maven;
 
+import static org.junit.Assert.*;
+
 import java.util.List;
 import java.util.Set;
 
@@ -58,6 +60,15 @@ public class MavenDependencyResolverTest
       Assert.assertEquals("forge-addon", dependency.getCoordinate().getClassifier());
       Assert.assertNotNull(dependency.getScopeType());
       Assert.assertTrue(dependency.isOptional());
+   }
+
+   @Test
+   public void testResolveWildcardArtifactId() throws Exception
+   {
+      DependencyQuery query = DependencyQueryBuilder.create(CoordinateBuilder.create().setGroupId("org.jboss.forge")
+               .setClassifier("forge-addon"));
+      Set<Dependency> coreAddons = resolver.resolveDependencies(query);
+      Assert.assertFalse(coreAddons.isEmpty());
    }
 
    @Test
