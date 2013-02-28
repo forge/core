@@ -16,17 +16,20 @@ import org.jboss.forge.addon.manager.InstallRequest;
 import org.jboss.forge.addon.manager.impl.AddonManagerImpl;
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.Forge;
+import org.jboss.forge.dependencies.Coordinate;
+import org.jboss.forge.dependencies.builder.CoordinateBuilder;
+import org.jboss.forge.dependencies.builder.DependencyQueryBuilder;
 import org.jboss.forge.maven.dependencies.FileResourceFactory;
 import org.jboss.forge.maven.dependencies.MavenContainer;
 import org.jboss.forge.maven.dependencies.MavenDependencyResolver;
 
 /**
  * A class with a main method to bootstrap Forge.
- * 
+ *
  * You can deploy addons by calling {@link Bootstrap#install(String)}
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ *
  */
 public class Bootstrap
 {
@@ -114,9 +117,28 @@ public class Bootstrap
    {
       try
       {
-         AddonManagerImpl addonManager = new AddonManagerImpl(forge.getRepository(), new MavenDependencyResolver(
-                  new FileResourceFactory(), new MavenContainer()));
-         AddonId addon = AddonId.fromCoordinates(addonCoordinates);
+         MavenDependencyResolver resolver = new MavenDependencyResolver(new FileResourceFactory(), new MavenContainer());
+         AddonManagerImpl addonManager = new AddonManagerImpl(forge.getRepository(), resolver);
+
+         AddonId addon;
+         // This allows forge --instal maven
+         if (addonCoordinates.contains(","))
+         {
+            addon = AddonId.fromCoordinates(addonCoordinates);
+         }
+         else
+         {
+            String coordinates = "org.jboss.forge:" + addonCoordinates;
+            CoordinateBuilder coordinate = CoordinateBuilder.create(coordinates);
+            List<Coordinate> versions = resolver.resolveVersions(DependencyQueryBuilder.create(coordinate));
+            if (versions.isEmpty())
+            {
+               throw new IllegalArgumentException("No Artifact version found for " + coordinate);
+            }
+            Coordinate vCoord = versions.get(versions.size() - 1);
+            addon = AddonId.from(vCoord.getGroupId() + ":" + vCoord.getArtifactId(), vCoord.getVersion());
+         }
+
          InstallRequest request = addonManager.install(addon);
          System.out.println(request);
          request.perform();
