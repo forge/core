@@ -10,6 +10,13 @@ import java.util.concurrent.Callable;
 
 import org.jboss.forge.convert.Converter;
 
+/**
+ * An {@link UISelectMany} should be used when you know in advance the number of items you can select from.
+ *
+ * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
+ *
+ * @param <VALUETYPE>
+ */
 public interface UISelectMany<VALUETYPE> extends UIInputComponent<UISelectMany<VALUETYPE>, VALUETYPE>
 {
    Iterable<VALUETYPE> getValueChoices();

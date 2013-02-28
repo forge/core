@@ -11,6 +11,20 @@ import java.util.concurrent.Callable;
 
 import org.jboss.forge.ui.UICompleter;
 
+/**
+ * An {@link UIInput} prompts for a single value.
+ *
+ *
+ * An {@link UICompleter} should be set when you may have N items to select from, and you don't have a specific limit or
+ * pre-defined list.<br>
+ *
+ * <br>
+ * If you're interested in prompting for multiple values, see {@link UIInputMany}. <br>
+ *
+ * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
+ *
+ * @param <VALUETYPE>
+ */
 public interface UIInput<VALUETYPE> extends UIInputComponent<UIInput<VALUETYPE>, VALUETYPE>
 {
    UICompleter<VALUETYPE> getCompleter();

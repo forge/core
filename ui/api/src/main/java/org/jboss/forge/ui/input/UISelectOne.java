@@ -10,6 +10,13 @@ import java.util.concurrent.Callable;
 
 import org.jboss.forge.convert.Converter;
 
+/**
+ * An {@link UISelectOne} should be used when you know in advance the number of items you can select from.
+ *
+ * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
+ *
+ * @param <VALUETYPE>
+ */
 public interface UISelectOne<VALUETYPE> extends UIInputComponent<UISelectOne<VALUETYPE>, VALUETYPE>
 {
    Iterable<VALUETYPE> getValueChoices();
@@ -23,8 +30,8 @@ public interface UISelectOne<VALUETYPE> extends UIInputComponent<UISelectOne<VAL
    UISelectOne<VALUETYPE> setDefaultValue(Callable<VALUETYPE> callback);
 
    UISelectOne<VALUETYPE> setValue(VALUETYPE value);
-   
+
    Converter<VALUETYPE, String> getItemLabelConverter();
-   
+
    UISelectOne<VALUETYPE> setItemLabelConverter(Converter<VALUETYPE, String> converter);
 }

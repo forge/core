@@ -13,6 +13,8 @@ import org.jboss.forge.convert.Converter;
 import org.jboss.forge.facets.Faceted;
 
 /**
+ * This is the parent interface of all inputs.
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Exported
