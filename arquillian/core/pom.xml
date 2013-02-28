@@ -20,7 +20,14 @@
       <dependency>
          <groupId>org.jboss.forge</groupId>
          <artifactId>maven-impl</artifactId>
-         <version>2.0.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>dependencies-api</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>resources-api</artifactId>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge</groupId>

@@ -13,18 +13,27 @@
    <dependencies>
       <dependency>
          <groupId>org.jboss.forge</groupId>
+         <artifactId>addon-manager-api</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
          <artifactId>forge-addon-container-api</artifactId>
+         <scope>provided</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>dependencies-api</artifactId>
+         <scope>provided</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>resources-api</artifactId>
          <scope>provided</scope>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge</groupId>
          <artifactId>ui-api</artifactId>
          <scope>provided</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>addon-manager-api</artifactId>
-         <scope>compile</scope>
       </dependency>
    </dependencies>
 </project>
