@@ -39,7 +39,7 @@ public abstract class AddonId
 
    public String getApiVersion()
    {
-      return apiVersion == null ? "" : apiVersion;
+      return apiVersion;
    }
 
    public String getVersion()
@@ -86,13 +86,12 @@ public abstract class AddonId
       };
    }
 
+   /**
+    * The name and version, comma separated.
+    */
    public String toCoordinates()
    {
       StringBuilder coord = new StringBuilder(getName()).append(",").append(getVersion());
-      if (getApiVersion() != null && !getApiVersion().isEmpty())
-      {
-         coord.append(",").append(getApiVersion());
-      }
       return coord.toString();
    }
 

@@ -25,7 +25,7 @@ import org.jboss.forge.facets.Faceted;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>
  */
-public interface Resource<T> extends Faceted
+public interface Resource<T> extends Faceted<ResourceFacet>
 {
 
    /**

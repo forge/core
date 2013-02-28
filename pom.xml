@@ -38,6 +38,11 @@
          <name>Koen Aers</name>
          <email>koen.aers@gmail.com</email>
       </developer>
+      <developer>
+         <id>stale</id>
+         <name>Stale Pedersen</name>
+         <email>stalep@gmail.com</email>
+      </developer>
    </developers>
 
    <prerequisites>
@@ -87,6 +92,7 @@
 
             <!-- TODO: Remove these modules -->
             <module>addon-manager</module>
+            <module>addons</module>
             <module>aesh</module>
             <module>aesh-test</module>
             <module>dependencies</module>

@@ -11,14 +11,15 @@ import java.util.concurrent.Callable;
 import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.convert.Converter;
 import org.jboss.forge.facets.Faceted;
+import org.jboss.forge.ui.facets.HintsFacet;
 
 /**
  * This is the parent interface of all inputs.
- *
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Exported
-public interface InputComponent<IMPLTYPE, VALUETYPE> extends Faceted
+public interface InputComponent<IMPLTYPE, VALUETYPE> extends Faceted<HintsFacet>
 {
    String getLabel();
 

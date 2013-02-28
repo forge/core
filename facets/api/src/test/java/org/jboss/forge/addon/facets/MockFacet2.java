@@ -1,15 +1,19 @@
 package org.jboss.forge.addon.facets;
 
-import org.jboss.forge.facets.BaseFacet;
-
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class MockFacet2 extends BaseFacet<MockFaceted>
+public class MockFacet2 extends MockFacet
 {
    public MockFacet2(MockFaceted origin)
    {
       super(origin);
+   }
+
+   @Override
+   public boolean isSupported()
+   {
+      return false;
    }
 
    private boolean installed = false;

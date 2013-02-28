@@ -14,11 +14,10 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jboss.forge.container.util.Assert;
-import org.jboss.forge.facets.Facet;
 
 /**
  * Represents a {@link URL} resource
- *
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
@@ -65,12 +64,6 @@ public class URLResource extends VirtualResource<URL>
    }
 
    @Override
-   public boolean supports(Class<? extends Facet<?>> type)
-   {
-      return false;
-   }
-
-   @Override
    public InputStream getResourceInputStream()
    {
       try
@@ -110,4 +103,9 @@ public class URLResource extends VirtualResource<URL>
       return Collections.emptyList();
    }
 
+   @Override
+   public boolean supports(ResourceFacet type)
+   {
+      return false;
+   }
 }

@@ -2,8 +2,8 @@ package test.org.jboss.forge.resource;
 
 import java.util.List;
 
-import org.jboss.forge.facets.Facet;
 import org.jboss.forge.resource.Resource;
+import org.jboss.forge.resource.ResourceFacet;
 import org.jboss.forge.resource.ResourceFactory;
 import org.jboss.forge.resource.VirtualResource;
 
@@ -47,7 +47,7 @@ public class MockStringResource extends VirtualResource<String>
    }
 
    @Override
-   public boolean supports(Class<? extends Facet<?>> type)
+   public boolean supports(ResourceFacet type)
    {
       return false;
    }

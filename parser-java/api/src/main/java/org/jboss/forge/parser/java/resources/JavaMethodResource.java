@@ -11,13 +11,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.jboss.forge.facets.Facet;
 import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.parser.java.Method;
 import org.jboss.forge.parser.java.MethodHolder;
 import org.jboss.forge.parser.java.Parameter;
 import org.jboss.forge.parser.java.util.Strings;
 import org.jboss.forge.resource.Resource;
+import org.jboss.forge.resource.ResourceFacet;
 import org.jboss.forge.resource.ResourceFactory;
 
 /**
@@ -96,7 +96,7 @@ public class JavaMethodResource extends JavaMemberResource<Method>
    }
 
    @Override
-   public boolean supports(Class<? extends Facet<?>> type)
+   public boolean supports(ResourceFacet type)
    {
       return false;
    }

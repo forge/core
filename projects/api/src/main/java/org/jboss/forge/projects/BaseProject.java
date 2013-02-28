@@ -17,7 +17,7 @@ import org.jboss.forge.facets.BaseFaceted;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public abstract class BaseProject extends BaseFaceted implements Project
+public abstract class BaseProject extends BaseFaceted<ProjectFacet> implements Project
 {
    private final Map<Object, Object> attributes = new HashMap<Object, Object>();
 

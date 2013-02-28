@@ -24,7 +24,7 @@ public class HintsFacetImpl extends BaseFacet<InputComponent<?, ?>> implements H
 
    public HintsFacetImpl(InputComponent<?, ?> origin, Environment environment)
    {
-      super(origin);
+      super.setOrigin(origin);
       if (environment == null)
       {
          throw new IllegalStateException("Environment must not be null.");

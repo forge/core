@@ -11,8 +11,6 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
-import org.jboss.forge.facets.Facet;
-
 /**
  * Represents any regular file which Forge does not hav any special handler for.
  * 
@@ -49,7 +47,7 @@ public class UnknownFileResource extends FileResource<UnknownFileResource>
    }
 
    @Override
-   public boolean supports(Class<? extends Facet<?>> type)
+   public boolean supports(ResourceFacet type)
    {
       return false;
    }

@@ -10,11 +10,11 @@ package org.jboss.forge.parser.java.resources;
 import java.util.Collections;
 import java.util.List;
 
-import org.jboss.forge.facets.Facet;
 import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.FieldHolder;
 import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.resource.Resource;
+import org.jboss.forge.resource.ResourceFacet;
 import org.jboss.forge.resource.ResourceFactory;
 
 /**
@@ -85,7 +85,7 @@ public class JavaFieldResource extends JavaMemberResource<Field<? extends JavaSo
    }
 
    @Override
-   public boolean supports(Class<? extends Facet<?>> type)
+   public boolean supports(ResourceFacet type)
    {
       return false;
    }

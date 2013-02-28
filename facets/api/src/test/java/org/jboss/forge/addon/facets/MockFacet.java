@@ -9,7 +9,12 @@ public class MockFacet extends BaseFacet<MockFaceted>
 {
    public MockFacet(MockFaceted origin)
    {
-      super(origin);
+      super.setOrigin(origin);
+   }
+
+   public boolean isSupported()
+   {
+      return true;
    }
 
    private boolean installed = false;

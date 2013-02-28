@@ -4,8 +4,12 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.projects.impl;
+package org.jboss.forge.addons;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.jboss.forge.projects.ProjectFacet;
 import org.jboss.forge.projects.ProjectType;
 import org.jboss.forge.ui.wizard.UIWizardStep;
 
@@ -25,5 +29,13 @@ public class ForgeAddonProjectType implements ProjectType
    public Class<? extends UIWizardStep> getSetupFlow()
    {
       return ForgeAddonSetupStep.class;
+   }
+
+   @Override
+   public Iterable<Class<? extends ProjectFacet>> getRequiredFacets()
+   {
+      List<Class<? extends ProjectFacet>> result = new ArrayList<Class<? extends ProjectFacet>>();
+      result.add(ForgeAddonFacet.class);
+      return result;
    }
 }

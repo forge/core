@@ -21,7 +21,7 @@ public class BaseFacetedTest
 
       Assert.assertTrue(faceted.install(facet));
       Assert.assertTrue(faceted.hasFacet(MockFacet.class));
-      List<Class<? extends Facet<?>>> list = new ArrayList<Class<? extends Facet<?>>>();
+      List<Class<? extends MockFacet>> list = new ArrayList<Class<? extends MockFacet>>();
       list.add(MockFacet.class);
       Assert.assertTrue(faceted.hasAllFacets(list));
       Assert.assertEquals(facet, faceted.getFacet(MockFacet.class));
@@ -68,7 +68,7 @@ public class BaseFacetedTest
    {
       MockFaceted faceted = new MockFaceted();
 
-      Assert.assertTrue(faceted.supports(MockFacet.class));
-      Assert.assertFalse(faceted.supports(MockFacet2.class));
+      Assert.assertTrue(faceted.supports(new MockFacet(faceted)));
+      Assert.assertFalse(faceted.supports(new MockFacet2(faceted)));
    }
 }

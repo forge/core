@@ -13,22 +13,21 @@ import javax.enterprise.inject.Vetoed;
 
 import org.jboss.forge.convert.Converter;
 import org.jboss.forge.facets.BaseFaceted;
-import org.jboss.forge.facets.Facet;
 import org.jboss.forge.ui.facets.HintsFacet;
-import org.jboss.forge.ui.input.UIInput;
 import org.jboss.forge.ui.input.InputComponent;
+import org.jboss.forge.ui.input.UIInput;
 import org.jboss.forge.ui.util.Callables;
 
 /**
  * Implementation of a {@link UIInput} object
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  * @param <VALUETYPE>
  */
 @Vetoed
 @SuppressWarnings("unchecked")
-public abstract class UIInputComponentBase<IMPLTYPE extends InputComponent<IMPLTYPE, VALUETYPE>, VALUETYPE> extends BaseFaceted
+public abstract class UIInputComponentBase<IMPLTYPE extends InputComponent<IMPLTYPE, VALUETYPE>, VALUETYPE> extends BaseFaceted<HintsFacet>
          implements InputComponent<IMPLTYPE, VALUETYPE>
 {
    private final String name;
@@ -113,9 +112,9 @@ public abstract class UIInputComponentBase<IMPLTYPE extends InputComponent<IMPLT
    }
 
    @Override
-   public boolean supports(Class<? extends Facet<?>> type)
+   public boolean supports(HintsFacet type)
    {
-      return HintsFacet.class.isAssignableFrom(type);
+      return true;
    }
 
    @Override

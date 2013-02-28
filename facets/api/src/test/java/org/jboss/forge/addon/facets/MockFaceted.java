@@ -1,16 +1,15 @@
 package org.jboss.forge.addon.facets;
 
 import org.jboss.forge.facets.BaseFaceted;
-import org.jboss.forge.facets.Facet;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class MockFaceted extends BaseFaceted
+public class MockFaceted extends BaseFaceted<MockFacet>
 {
    @Override
-   public boolean supports(Class<? extends Facet<?>> type)
+   public boolean supports(MockFacet facet)
    {
-      return MockFacet.class.isAssignableFrom(type);
+      return facet.isSupported();
    }
 }

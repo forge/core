@@ -16,7 +16,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.facets.Facet;
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.ParserException;
 import org.jboss.forge.parser.java.EnumConstant;
@@ -28,6 +27,7 @@ import org.jboss.forge.parser.java.Method;
 import org.jboss.forge.resource.FileResource;
 import org.jboss.forge.resource.Resource;
 import org.jboss.forge.resource.ResourceException;
+import org.jboss.forge.resource.ResourceFacet;
 import org.jboss.forge.resource.ResourceFactory;
 
 /**
@@ -162,7 +162,7 @@ public class JavaResource extends FileResource<JavaResource>
    }
 
    @Override
-   public boolean supports(Class<? extends Facet<?>> type)
+   public boolean supports(ResourceFacet type)
    {
       return false;
    }

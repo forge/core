@@ -1,6 +1,7 @@
 package org.jboss.forge.projects;
 
 import org.jboss.forge.container.services.Exported;
+import org.jboss.forge.facets.Facet;
 import org.jboss.forge.ui.wizard.UIWizardStep;
 
 /**
@@ -20,4 +21,9 @@ public interface ProjectType
     * Return the {@link UIWizardStep} {@link Class} that begins project configuration of this type.
     */
    public Class<? extends UIWizardStep> getSetupFlow();
+
+   /**
+    * Return all {@link Facet} {@link Class} types required by a project of this type.
+    */
+   public Iterable<Class<? extends ProjectFacet>> getRequiredFacets();
 }

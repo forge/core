@@ -12,11 +12,9 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.jboss.forge.facets.Facet;
-
 /**
  * A standard, build-in, resource for representing directories on the file-system.
- *
+ * 
  * @author Mike Brock
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -184,7 +182,7 @@ public class DirectoryResource extends FileResource<DirectoryResource>
    }
 
    @Override
-   public boolean supports(Class<? extends Facet<?>> type)
+   public boolean supports(ResourceFacet type)
    {
       return false;
    }

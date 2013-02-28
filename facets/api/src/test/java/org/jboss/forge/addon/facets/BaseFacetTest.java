@@ -13,10 +13,4 @@ public class BaseFacetTest
 
       Assert.assertEquals(faceted, facet.getOrigin());
    }
-
-   @Test(expected = IllegalArgumentException.class)
-   public void testInstantiationWithoutOriginThrowsException()
-   {
-      new MockFacet(null);
-   }
 }

@@ -12,22 +12,22 @@ package org.jboss.forge.facets;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>, <a
  *         href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>
  */
-public abstract class BaseFacet<FACETED extends Faceted> implements Facet<FACETED>
+public abstract class BaseFacet<FACETED extends Faceted<?>> implements Facet<FACETED>
 {
    protected FACETED origin;
-
-   protected BaseFacet(FACETED origin)
-   {
-      if (origin == null)
-         throw new IllegalArgumentException("Origin must not be null");
-
-      this.origin = origin;
-   }
 
    @Override
    public FACETED getOrigin()
    {
       return this.origin;
+   }
+
+   /**
+    * Set the <FACETED> origin on which this {@link Facet} will operate.
+    */
+   protected void setOrigin(FACETED origin)
+   {
+      this.origin = origin;
    }
 
    @Override

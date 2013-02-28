@@ -8,55 +8,57 @@ package org.jboss.forge.facets;
 
 /**
  * @author <a href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>
+ * 
+ * @param <FACETTYPE> the base {@link Facet} type supported by this {@link Faceted} type.
  */
-public interface Faceted
+public interface Faceted<FACETTYPE extends Facet<?>>
 {
    /**
     * Return true if a facet of the given type is present; return false otherwise.
     */
-   boolean hasFacet(Class<? extends Facet<?>> type);
+   boolean hasFacet(Class<? extends FACETTYPE> type);
 
    /**
     * Return true if all {@link Facet}s of the given types are present; otherwise, if any of the given facet types is
     * missing, return false.
     */
-   boolean hasAllFacets(Iterable<Class<? extends Facet<?>>> facetDependencies);
+   boolean hasAllFacets(Iterable<Class<? extends FACETTYPE>> facetDependencies);
 
    /**
     * Return true if all {@link Facet}s of the given types are present; otherwise, if any of the given facet types is
     * missing, return false.
     */
-   boolean hasAllFacets(Class<? extends Facet<?>>... facetDependencies);
+   boolean hasAllFacets(Class<? extends FACETTYPE>... facetDependencies);
 
    /**
     * Return the instance of the requested {@link Facet} type, or throw a {@link FacetNotFoundException} if no
     * {@link Facet} of that type is installed.
     */
-   <F extends Facet<?>> F getFacet(Class<F> type) throws FacetNotFoundException;
+   <F extends FACETTYPE> F getFacet(Class<F> type) throws FacetNotFoundException;
 
    /**
     * Return a {@link Iterable} of the currently installed {@link Facet}s. Return an empty list if no facets of that
     * type were found.
     */
-   Iterable<? extends Facet<?>> getFacets();
+   Iterable<FACETTYPE> getFacets();
 
    /**
     * Return a {@link Iterable} of the currently installed {@link Facet}s matching the given type.
     */
-   <F extends Facet<?>> Iterable<F> getFacets(Class<F> type);
+   <F extends FACETTYPE> Iterable<F> getFacets(Class<F> type);
 
    /**
     * Install and register the given {@link Facet}. If the facet is already installed, return true.
     */
-   boolean install(Facet<?> facet);
+   boolean install(FACETTYPE facet);
 
    /**
     * Remove the given {@link Facet} from the internal collection of installed facets.
     */
-   boolean uninstall(Facet<?> facet);
+   boolean uninstall(FACETTYPE facet);
 
    /**
     * Return true if the given {@link Facet} is supported.
     */
-   boolean supports(Class<? extends Facet<?>> type);
+   <F extends FACETTYPE> boolean supports(F facet);
 }

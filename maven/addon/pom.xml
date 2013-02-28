@@ -38,6 +38,11 @@
          <artifactId>maven-impl</artifactId>
          <scope>runtime</scope>
       </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>maven-impl-projects</artifactId>
+         <scope>runtime</scope>
+      </dependency>
    </dependencies>
    <build>
       <plugins>

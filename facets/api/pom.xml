@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
    <modelVersion>4.0.0</modelVersion>
    <parent>
       <groupId>org.jboss.forge</groupId>
@@ -8,4 +9,11 @@
    </parent>
    <artifactId>facets-api</artifactId>
    <name>Forge - Facets Addon API</name>
+
+   <dependencies>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-addon-container-api</artifactId>
+      </dependency>
+   </dependencies>
 </project>

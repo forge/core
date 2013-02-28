@@ -12,6 +12,7 @@
    <modules>
       <module>api</module>
       <module>impl</module>
+      <module>impl-projects</module>
       <module>addon</module>
       <module>tests</module>
    </modules>
@@ -31,6 +32,11 @@
          <dependency>
             <groupId>org.jboss.forge</groupId>
             <artifactId>maven-impl</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>maven-impl-projects</artifactId>
             <version>${project.version}</version>
          </dependency>
       </dependencies>

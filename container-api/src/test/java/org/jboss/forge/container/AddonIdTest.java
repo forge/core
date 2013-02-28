@@ -6,17 +6,26 @@ import org.junit.Test;
 public class AddonIdTest
 {
    @Test
+   public void testFromCoordinatesMissingAPIVersion() throws Exception
+   {
+      AddonId addon = AddonId.fromCoordinates("org.jboss.forge:resources,2.0.0-SNAPSHOT");
+      Assert.assertNull(addon.getApiVersion());
+      Assert.assertEquals("org.jboss.forge:resources", addon.getName());
+      Assert.assertEquals("2.0.0-SNAPSHOT", addon.getVersion());
+   }
+
+   @Test
    public void testFromCoordinates()
    {
       AddonId entry = AddonId.fromCoordinates("org.example:example-addon,1.0.0-SNAPSHOT,2.0.0");
-      Assert.assertEquals("org.example:example-addon,1.0.0-SNAPSHOT,2.0.0", entry.toCoordinates());
+      Assert.assertEquals("org.example:example-addon,1.0.0-SNAPSHOT", entry.toCoordinates());
    }
 
    @Test
    public void testFromIndividual()
    {
       AddonId entry = AddonId.from("org.example:example-addon", "1.0.0-SNAPSHOT", "2.0.0");
-      Assert.assertEquals("org.example:example-addon,1.0.0-SNAPSHOT,2.0.0", entry.toCoordinates());
+      Assert.assertEquals("org.example:example-addon,1.0.0-SNAPSHOT", entry.toCoordinates());
    }
 
    @Test(expected = IllegalArgumentException.class)
