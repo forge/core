@@ -17,8 +17,7 @@ public interface ProjectType
    public String getType();
 
    /**
-    * Return the {@link UIWizardStep} that begins project configuration of this type.
+    * Return the {@link UIWizardStep} {@link Class} that begins project configuration of this type.
     */
-   public UIWizardStep getSetupFlow();
-
+   public Class<? extends UIWizardStep> getSetupFlow();
 }

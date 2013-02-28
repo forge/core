@@ -44,6 +44,9 @@ public abstract class Results implements Result, Failed
 
    public static final NavigationResult navigateTo(Class<? extends UICommand> next, String message)
    {
+      if (next == null)
+         return null;
+
       return new NavigationResultImpl(message, next);
    }
 

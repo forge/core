@@ -7,20 +7,20 @@
 
 package org.jboss.forge.ui.context;
 
+import org.jboss.forge.ui.UICommand;
 
 /**
  * Provides a {@link UIContext} object
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 public interface UIContextProvider
 {
 
    /**
-    * Returns the {@link UIContext} that is shared through all the wizard screens
-    *
-    * @return
+    * Returns the {@link UIContext} that is shared through all the {@link UICommand} instances in an interaction with
+    * the user.
     */
    public abstract UIContext getUIContext();
 

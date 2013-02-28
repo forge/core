@@ -13,16 +13,16 @@ import org.jboss.forge.ui.result.NavigationResult;
 
 /**
  * An {@link UICommand} that supports multiple steps.
- *
+ * 
  * Eg: Next, Previous buttons are enabled in Eclipse
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 public interface UIWizard extends UICommand
 {
    /**
-    * Returns the next wizard step, or null if there are no pages to be displayed after this
+    * Returns the next {@link UIWizardStep}, or null if this is the last {@link UICommand} in the flow.
     */
    public NavigationResult next(UIContext context) throws Exception;
 }

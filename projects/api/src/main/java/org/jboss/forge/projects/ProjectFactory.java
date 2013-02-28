@@ -7,6 +7,7 @@
 package org.jboss.forge.projects;
 
 import org.jboss.forge.container.util.Predicate;
+import org.jboss.forge.resource.DirectoryResource;
 import org.jboss.forge.resource.Resource;
 
 /**
@@ -26,4 +27,9 @@ public interface ProjectFactory
     * {@link Predicate}
     */
    public Project findProject(final Resource<?> target, Predicate<Project> filter);
+
+   /**
+    * Create a {@link Project} of the given {@link ProjectType} in the specified {@link DirectoryResource}.
+    */
+   public Project createProject(DirectoryResource targetDir, ProjectType value);
 }

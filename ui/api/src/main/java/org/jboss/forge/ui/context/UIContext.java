@@ -10,5 +10,27 @@ package org.jboss.forge.ui.context;
 
 public interface UIContext
 {
+   /**
+    * Get an {@link Object} from the {@link UIContext} attribute map.
+    * 
+    * @return <code>null</code> if no value was set.
+    */
+   public Object getAttribute(Object key);
+
+   /**
+    * Remove an {@link Object} from the {@link UIContext} attribute map.
+    * 
+    * @return <code>null</code> if no value was set.
+    */
+   public Object removeAttribute(Object key);
+
+   /**
+    * Set an {@link Object} key in the {@link UIContext} attribute map to the given value.
+    */
+   public void setAttribute(Object key, Object value);
+
+   /**
+    * Get the user's initial selection.
+    */
    <SELECTIONTYPE> UISelection<SELECTIONTYPE> getInitialSelection();
 }

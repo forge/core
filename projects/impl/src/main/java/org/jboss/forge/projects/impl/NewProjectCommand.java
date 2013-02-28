@@ -7,12 +7,12 @@ import javax.inject.Inject;
 
 import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.convert.Converter;
+import org.jboss.forge.projects.Project;
+import org.jboss.forge.projects.ProjectFactory;
 import org.jboss.forge.projects.ProjectType;
 import org.jboss.forge.resource.DirectoryResource;
-import org.jboss.forge.resource.FileResource;
 import org.jboss.forge.resource.Resource;
 import org.jboss.forge.resource.ResourceFactory;
-import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.context.UIBuilder;
 import org.jboss.forge.ui.context.UIContext;
 import org.jboss.forge.ui.context.UISelection;
@@ -20,18 +20,23 @@ import org.jboss.forge.ui.context.UIValidationContext;
 import org.jboss.forge.ui.input.UIInput;
 import org.jboss.forge.ui.input.UISelectOne;
 import org.jboss.forge.ui.metadata.UICommandMetadata;
+import org.jboss.forge.ui.result.NavigationResult;
 import org.jboss.forge.ui.result.Result;
 import org.jboss.forge.ui.result.Results;
 import org.jboss.forge.ui.util.Categories;
 import org.jboss.forge.ui.util.Metadata;
+import org.jboss.forge.ui.wizard.UIWizard;
 
-public class NewProjectCommand implements UICommand
+public class NewProjectCommand implements UIWizard
 {
    @Inject
    private AddonRegistry registry;
 
    @Inject
-   private ResourceFactory factory;
+   private ProjectFactory projectFactory;
+
+   @Inject
+   private ResourceFactory resourceFactory;
 
    @Inject
    private UIInput<String> named;
@@ -77,7 +82,7 @@ public class NewProjectCommand implements UICommand
       }
       else
       {
-         targetLocation.setDefaultValue(factory.create(DirectoryResource.class, new File("")));
+         targetLocation.setDefaultValue(resourceFactory.create(DirectoryResource.class, new File("")));
       }
       overwrite.setLabel("Overwrite existing project location");
       overwrite.setDefaultValue(false).setEnabled(new Callable<Boolean>()
@@ -91,7 +96,7 @@ public class NewProjectCommand implements UICommand
          }
       });
 
-      type.setRequired(false);
+      type.setRequired(true);
       type.setItemLabelConverter(new Converter<ProjectType, String>()
       {
          @Override
@@ -117,24 +122,22 @@ public class NewProjectCommand implements UICommand
    @Override
    public Result execute(UIContext context) throws Exception
    {
+      Result result = Results.success("New project has been created.");
       DirectoryResource directory = targetLocation.getValue();
       DirectoryResource targetDir = directory.getChildDirectory(named.getValue());
 
       if (targetDir.mkdirs() || overwrite.getValue())
       {
-         FileResource<?> pom = targetDir.getChild("pom.xml").reify(FileResource.class);
-         pom.createNewFile();
-         pom.setContents(getClass().getClassLoader().getResourceAsStream("/pom-template.xml"));
-
-         targetDir.getChildDirectory("src/main/java").mkdirs();
-         targetDir.getChildDirectory("src/main/resources").mkdirs();
-         targetDir.getChildDirectory("src/test/java").mkdirs();
-         targetDir.getChildDirectory("src/test/resources").mkdirs();
+         Project project = projectFactory.createProject(targetDir, type.getValue());
+         if (project != null)
+            context.setAttribute(Project.class, project);
+         else
+            result = Results.fail("Could not create project of type: [" + type.getValue() + "]");
       }
       else
-         return Results.fail("Could not create target location: " + targetDir);
+         result = Results.fail("Could not create target location: " + targetDir);
 
-      return Results.success("New project has been created.");
+      return result;
    }
 
    public UIInput<String> getNamed()
@@ -155,5 +158,11 @@ public class NewProjectCommand implements UICommand
    public UISelectOne<ProjectType> getType()
    {
       return type;
+   }
+
+   @Override
+   public NavigationResult next(UIContext context) throws Exception
+   {
+      return Results.navigateTo(type.getValue().getSetupFlow());
    }
 }

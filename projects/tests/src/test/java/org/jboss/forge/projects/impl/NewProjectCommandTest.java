@@ -22,7 +22,7 @@ import org.jboss.forge.container.AddonId;
 import org.jboss.forge.resource.DirectoryResource;
 import org.jboss.forge.ui.context.UIBuilder;
 import org.jboss.forge.ui.context.UIContext;
-import org.jboss.forge.ui.context.UISelection;
+import org.jboss.forge.ui.context.UIContextBase;
 import org.jboss.forge.ui.context.UIValidationContext;
 import org.jboss.forge.ui.input.InputComponent;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -65,14 +65,7 @@ public class NewProjectCommandTest
    {
       final List<InputComponent<?, ?>> inputs = new ArrayList<InputComponent<?, ?>>();
 
-      final UIContext context = new UIContext()
-      {
-         @Override
-         public <T> UISelection<T> getInitialSelection()
-         {
-            return null;
-         }
-      };
+      final UIContext context = new UIContextBase();
       final UIBuilder builder = new UIBuilder()
       {
          @Override
