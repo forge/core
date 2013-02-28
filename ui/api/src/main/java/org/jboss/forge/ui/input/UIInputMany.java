@@ -7,9 +7,6 @@
 
 package org.jboss.forge.ui.input;
 
-import java.util.concurrent.Callable;
-
-import org.jboss.forge.ui.UICompleter;
 
 /**
  * A {@link UIInputMany} prompts for multiple values.
@@ -25,17 +22,7 @@ import org.jboss.forge.ui.UICompleter;
  *
  * @param <VALUETYPE>
  */
-public interface UIInputMany<VALUETYPE> extends UIInputComponent<UIInputMany<VALUETYPE>, VALUETYPE>
+public interface UIInputMany<VALUETYPE> extends InputComponent<UIInputMany<VALUETYPE>, VALUETYPE>,
+         ManyValued<UIInputMany<VALUETYPE>, VALUETYPE>, HasCompleter<UIInputMany<VALUETYPE>, VALUETYPE>
 {
-   UICompleter<VALUETYPE> getCompleter();
-
-   UIInputMany<VALUETYPE> setCompleter(UICompleter<VALUETYPE> completer);
-
-   Iterable<VALUETYPE> getValue();
-
-   UIInputMany<VALUETYPE> setDefaultValue(Iterable<VALUETYPE> value);
-
-   UIInputMany<VALUETYPE> setDefaultValue(Callable<Iterable<VALUETYPE>> callback);
-
-   UIInputMany<VALUETYPE> setValue(Iterable<VALUETYPE> value);
 }

@@ -6,7 +6,7 @@
  */
 package org.jboss.forge.ui.util;
 
-import org.jboss.forge.ui.UICategory;
+import org.jboss.forge.ui.metadata.UICategory;
 import org.junit.Assert;
 import org.junit.Test;
 

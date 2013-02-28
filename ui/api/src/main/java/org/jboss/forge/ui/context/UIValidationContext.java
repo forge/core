@@ -7,9 +7,9 @@
 
 package org.jboss.forge.ui.context;
 
-import org.jboss.forge.ui.input.UIInputComponent;
+import org.jboss.forge.ui.input.InputComponent;
 
 public interface UIValidationContext extends UIContextProvider
 {
-   public void addValidationError(UIInputComponent<?, ?> input, String errorMessage);
+   public void addValidationError(InputComponent<?, ?> input, String errorMessage);
 }

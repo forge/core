@@ -17,7 +17,7 @@ import org.jboss.forge.convert.Converter;
  * @param <IMPLTYPE>
  * @param <VALUETYPE>
  */
-public interface UISelectComponent<IMPLTYPE, VALUETYPE> extends UIInputComponent<IMPLTYPE, VALUETYPE>
+public interface SelectComponent<IMPLTYPE, VALUETYPE> extends InputComponent<IMPLTYPE, VALUETYPE>
 {
    Iterable<VALUETYPE> getValueChoices();
 

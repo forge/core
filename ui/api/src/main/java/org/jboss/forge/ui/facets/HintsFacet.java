@@ -9,7 +9,7 @@ package org.jboss.forge.ui.facets;
 
 import org.jboss.forge.facets.Facet;
 import org.jboss.forge.ui.hints.InputType;
-import org.jboss.forge.ui.input.UIInputComponent;
+import org.jboss.forge.ui.input.InputComponent;
 
 /**
  * Hints facet
@@ -17,7 +17,7 @@ import org.jboss.forge.ui.input.UIInputComponent;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
  */
-public interface HintsFacet extends Facet<UIInputComponent<?, ?>>
+public interface HintsFacet extends Facet<InputComponent<?, ?>>
 {
    public abstract InputType getInputType();
 

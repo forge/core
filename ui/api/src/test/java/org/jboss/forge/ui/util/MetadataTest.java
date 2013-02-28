@@ -6,7 +6,7 @@
  */
 package org.jboss.forge.ui.util;
 
-import org.jboss.forge.ui.UICommandMetadata;
+import org.jboss.forge.ui.metadata.UICommandMetadata;
 import org.junit.Assert;
 import org.junit.Test;
 

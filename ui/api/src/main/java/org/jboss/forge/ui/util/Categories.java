@@ -9,7 +9,7 @@ package org.jboss.forge.ui.util;
 import java.util.Arrays;
 
 import org.jboss.forge.container.util.Assert;
-import org.jboss.forge.ui.UICategory;
+import org.jboss.forge.ui.metadata.UICategory;
 
 /**
  * Utility for creating hierarchical {@link UICategory} instances.

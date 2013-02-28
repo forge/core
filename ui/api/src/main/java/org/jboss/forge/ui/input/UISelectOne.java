@@ -6,7 +6,6 @@
  */
 package org.jboss.forge.ui.input;
 
-import java.util.concurrent.Callable;
 
 /**
  * A {@link UISelectMany} should be used when the number of items to be chosen are known before rendering the component.
@@ -15,13 +14,7 @@ import java.util.concurrent.Callable;
  *
  * @param <VALUETYPE>
  */
-public interface UISelectOne<VALUETYPE> extends UISelectComponent<UISelectOne<VALUETYPE>, VALUETYPE>
+public interface UISelectOne<VALUETYPE> extends SelectComponent<UISelectOne<VALUETYPE>, VALUETYPE>,
+         SingleValued<UISelectOne<VALUETYPE>, VALUETYPE>
 {
-   VALUETYPE getValue();
-
-   UISelectOne<VALUETYPE> setDefaultValue(VALUETYPE value);
-
-   UISelectOne<VALUETYPE> setDefaultValue(Callable<VALUETYPE> callback);
-
-   UISelectOne<VALUETYPE> setValue(VALUETYPE value);
 }

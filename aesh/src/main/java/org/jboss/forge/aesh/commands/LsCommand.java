@@ -10,15 +10,15 @@ import javax.inject.Inject;
 
 import org.jboss.aesh.util.Parser;
 import org.jboss.forge.aesh.ShellContext;
-import org.jboss.forge.ui.UIBuilder;
 import org.jboss.forge.ui.UICommand;
-import org.jboss.forge.ui.UICommandMetadata;
-import org.jboss.forge.ui.UICompleter;
+import org.jboss.forge.ui.context.UIBuilder;
 import org.jboss.forge.ui.context.UIContext;
 import org.jboss.forge.ui.context.UIValidationContext;
+import org.jboss.forge.ui.input.UICompleter;
 import org.jboss.forge.ui.input.UIInput;
-import org.jboss.forge.ui.input.UIInputComponent;
+import org.jboss.forge.ui.input.InputComponent;
 import org.jboss.forge.ui.input.UIInputMany;
+import org.jboss.forge.ui.metadata.UICommandMetadata;
 import org.jboss.forge.ui.result.Result;
 import org.jboss.forge.ui.result.Results;
 import org.jboss.forge.ui.util.Metadata;
@@ -56,7 +56,7 @@ public class LsCommand implements UICommand
       about.setCompleter(new UICompleter<String>()
       {
          @Override
-         public Iterable<String> getCompletionProposals(UIInputComponent<?, String> input, String value)
+         public Iterable<String> getCompletionProposals(InputComponent<?, String> input, String value)
          {
             List<String> out = new ArrayList<String>();
             out.add("foo1");

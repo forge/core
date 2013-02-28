@@ -4,9 +4,8 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.ui.input;
+package org.jboss.forge.ui.context;
 
-import org.jboss.forge.ui.context.UIContext;
 
 /**
  * Represents the objects with on which the {@link UIContext} is currently focused. This may be the current working

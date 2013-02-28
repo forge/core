@@ -6,11 +6,11 @@
  */
 package org.jboss.forge.ui.util;
 
-import org.jboss.forge.ui.UIBuilder;
 import org.jboss.forge.ui.UICommand;
-import org.jboss.forge.ui.UICommandMetadata;
+import org.jboss.forge.ui.context.UIBuilder;
 import org.jboss.forge.ui.context.UIContext;
 import org.jboss.forge.ui.context.UIValidationContext;
+import org.jboss.forge.ui.metadata.UICommandMetadata;
 import org.jboss.forge.ui.result.Result;
 
 /**

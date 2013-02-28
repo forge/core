@@ -16,7 +16,7 @@ import org.jboss.forge.facets.BaseFaceted;
 import org.jboss.forge.facets.Facet;
 import org.jboss.forge.ui.facets.HintsFacet;
 import org.jboss.forge.ui.input.UIInput;
-import org.jboss.forge.ui.input.UIInputComponent;
+import org.jboss.forge.ui.input.InputComponent;
 import org.jboss.forge.ui.util.Callables;
 
 /**
@@ -28,8 +28,8 @@ import org.jboss.forge.ui.util.Callables;
  */
 @Vetoed
 @SuppressWarnings("unchecked")
-public abstract class UIInputComponentBase<IMPLTYPE extends UIInputComponent<IMPLTYPE, VALUETYPE>, VALUETYPE> extends BaseFaceted
-         implements UIInputComponent<IMPLTYPE, VALUETYPE>
+public abstract class UIInputComponentBase<IMPLTYPE extends InputComponent<IMPLTYPE, VALUETYPE>, VALUETYPE> extends BaseFaceted
+         implements InputComponent<IMPLTYPE, VALUETYPE>
 {
    private final String name;
 

@@ -7,9 +7,6 @@
 
 package org.jboss.forge.ui.input;
 
-import java.util.concurrent.Callable;
-
-import org.jboss.forge.ui.UICompleter;
 
 /**
  * A {@link UIInput} prompts for a single value.
@@ -25,17 +22,8 @@ import org.jboss.forge.ui.UICompleter;
  *
  * @param <VALUETYPE>
  */
-public interface UIInput<VALUETYPE> extends UIInputComponent<UIInput<VALUETYPE>, VALUETYPE>
+public interface UIInput<VALUETYPE> extends InputComponent<UIInput<VALUETYPE>, VALUETYPE>,
+         SingleValued<UIInput<VALUETYPE>, VALUETYPE>, HasCompleter<UIInput<VALUETYPE>, VALUETYPE>
 {
-   UICompleter<VALUETYPE> getCompleter();
 
-   UIInput<VALUETYPE> setCompleter(UICompleter<VALUETYPE> completer);
-
-   VALUETYPE getValue();
-
-   UIInput<VALUETYPE> setDefaultValue(VALUETYPE value);
-
-   UIInput<VALUETYPE> setDefaultValue(Callable<VALUETYPE> callback);
-
-   UIInput<VALUETYPE> setValue(VALUETYPE value);
 }

@@ -20,12 +20,12 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.convert.Converter;
-import org.jboss.forge.ui.UICompleter;
 import org.jboss.forge.ui.facets.HintsFacet;
 import org.jboss.forge.ui.hints.InputType;
 import org.jboss.forge.ui.hints.InputTypes;
+import org.jboss.forge.ui.input.UICompleter;
 import org.jboss.forge.ui.input.UIInput;
-import org.jboss.forge.ui.input.UIInputComponent;
+import org.jboss.forge.ui.input.InputComponent;
 import org.jboss.forge.ui.input.UIInputMany;
 import org.jboss.forge.ui.input.UISelectMany;
 import org.jboss.forge.ui.input.UISelectOne;
@@ -154,7 +154,7 @@ public class UIInputInjectionTest
       Assert.assertEquals(firstName, firstName.setCompleter(new UICompleter<String>()
       {
          @Override
-         public Iterable<String> getCompletionProposals(UIInputComponent<?, String> input, String value)
+         public Iterable<String> getCompletionProposals(InputComponent<?, String> input, String value)
          {
             return Arrays.asList("one", "two", "three");
          }

@@ -20,7 +20,7 @@ import org.jboss.forge.convert.Converter;
 import org.jboss.forge.convert.ConverterFactory;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.input.UIInput;
-import org.jboss.forge.ui.input.UIInputComponent;
+import org.jboss.forge.ui.input.InputComponent;
 import org.jboss.forge.ui.input.UIInputMany;
 
 /**
@@ -35,7 +35,7 @@ public class CommandLineUtil {
 
                ParameterInt parameter =
                 new ParameterInt(command.getMetadata().getName(), command.getMetadata().getDescription());
-        for(UIInputComponent<?, ?> input : context.getInputs()) {
+        for(InputComponent<?, ?> input : context.getInputs()) {
             if(!input.getName().equals("arguments")) {
                 if(input.getValueType() == Boolean.class) {
                     parameter.addOption(
@@ -55,7 +55,7 @@ public class CommandLineUtil {
 
     public static void populateUIInputs(CommandLine commandLine,
                                         ShellContext context, AddonRegistry registry) {
-        for(UIInputComponent<?, ?> input : context.getInputs()) {
+        for(InputComponent<?, ?> input : context.getInputs()) {
             if(commandLine.hasOption(input.getName()) &&
                     input instanceof UIInput) {
                 String value = commandLine.getOptionValue(input.getName());

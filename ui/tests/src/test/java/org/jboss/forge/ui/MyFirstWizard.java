@@ -2,9 +2,11 @@ package org.jboss.forge.ui;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.ui.context.UIBuilder;
 import org.jboss.forge.ui.context.UIContext;
 import org.jboss.forge.ui.context.UIValidationContext;
 import org.jboss.forge.ui.input.UIInput;
+import org.jboss.forge.ui.metadata.UICommandMetadata;
 import org.jboss.forge.ui.result.NavigationResult;
 import org.jboss.forge.ui.result.Result;
 import org.jboss.forge.ui.result.Results;

@@ -9,12 +9,12 @@ package org.jboss.forge.aesh.commands;
 import javax.inject.Inject;
 
 import org.jboss.forge.aesh.ShellContext;
-import org.jboss.forge.ui.UIBuilder;
 import org.jboss.forge.ui.UICommand;
-import org.jboss.forge.ui.UICommandMetadata;
+import org.jboss.forge.ui.context.UIBuilder;
 import org.jboss.forge.ui.context.UIContext;
 import org.jboss.forge.ui.context.UIValidationContext;
 import org.jboss.forge.ui.input.UIInput;
+import org.jboss.forge.ui.metadata.UICommandMetadata;
 import org.jboss.forge.ui.result.Result;
 import org.jboss.forge.ui.result.Results;
 import org.jboss.forge.ui.util.Metadata;

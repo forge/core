@@ -12,11 +12,11 @@ import java.util.List;
 
 import org.jboss.aesh.cl.CommandLineParser;
 import org.jboss.aesh.console.ConsoleOutput;
-import org.jboss.forge.ui.UIBuilder;
+import org.jboss.forge.ui.context.UIBuilder;
 import org.jboss.forge.ui.context.UIContext;
+import org.jboss.forge.ui.context.UISelection;
 import org.jboss.forge.ui.context.UIValidationContext;
-import org.jboss.forge.ui.input.UIInputComponent;
-import org.jboss.forge.ui.input.UISelection;
+import org.jboss.forge.ui.input.InputComponent;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
@@ -25,7 +25,7 @@ public class ShellContext implements UIValidationContext, UIContext, UIBuilder
 {
 
    private boolean standalone = false;
-   private List<UIInputComponent<?, ?>> inputs = new ArrayList<UIInputComponent<?, ?>>();
+   private List<InputComponent<?, ?>> inputs = new ArrayList<InputComponent<?, ?>>();
    private ForgeShell aeshell;
    private CommandLineParser parser;
     private ConsoleOutput consoleOutput;
@@ -71,20 +71,20 @@ public class ShellContext implements UIValidationContext, UIContext, UIBuilder
    }
 
    @Override
-   public UIBuilder add(UIInputComponent<?, ?> input)
+   public UIBuilder add(InputComponent<?, ?> input)
    {
       inputs.add(input);
       return this;
    }
 
-   public List<UIInputComponent<?, ?>> getInputs()
+   public List<InputComponent<?, ?>> getInputs()
    {
       return inputs;
    }
 
-   public UIInputComponent<?, ?> findInput(String name)
+   public InputComponent<?, ?> findInput(String name)
    {
-      for (UIInputComponent<?, ?> input : inputs)
+      for (InputComponent<?, ?> input : inputs)
       {
          if (input.getName().equals(name))
             return input;
@@ -93,7 +93,7 @@ public class ShellContext implements UIValidationContext, UIContext, UIBuilder
    }
 
    @Override
-   public void addValidationError(UIInputComponent<?, ?> input, String errorMessage)
+   public void addValidationError(InputComponent<?, ?> input, String errorMessage)
    {
       // TODO: ignoring errorMessage for now
       inputs.add(input);

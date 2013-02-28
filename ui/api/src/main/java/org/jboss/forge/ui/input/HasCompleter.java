@@ -4,17 +4,22 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
+
 package org.jboss.forge.ui.input;
 
 
 /**
- * A {@link UISelectMany} should be used when the number of items to be chosen are known before rendering the component.
+ * Provides a {@link UICompleter} object
  *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  *
+ * @param <IMPL>
  * @param <VALUETYPE>
  */
-public interface UISelectMany<VALUETYPE> extends SelectComponent<UISelectMany<VALUETYPE>, VALUETYPE>,
-         ManyValued<UISelectMany<VALUETYPE>, VALUETYPE>
+public interface HasCompleter<IMPL, VALUETYPE>
 {
+   UICompleter<VALUETYPE> getCompleter();
+
+   IMPL setCompleter(UICompleter<VALUETYPE> completer);
+
 }

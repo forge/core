@@ -18,7 +18,7 @@ import org.jboss.forge.facets.Faceted;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Exported
-public interface UIInputComponent<IMPLTYPE, VALUETYPE> extends Faceted
+public interface InputComponent<IMPLTYPE, VALUETYPE> extends Faceted
 {
    String getLabel();
 

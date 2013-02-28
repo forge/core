@@ -4,10 +4,8 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.ui;
+package org.jboss.forge.ui.input;
 
-import org.jboss.forge.ui.input.UIInput;
-import org.jboss.forge.ui.input.UIInputComponent;
 
 /**
  * @param VALUETYPE The value type to be provided by completion.
@@ -22,5 +20,5 @@ public interface UICompleter<VALUETYPE>
     * @param value The user input value requiring completion, or null, if no value yet exists. These values will undergo
     *           conversion to fit the type required by the corresponding {@link UIInput}.
     */
-   Iterable<String> getCompletionProposals(UIInputComponent<?, VALUETYPE> input, String value);
+   Iterable<String> getCompletionProposals(InputComponent<?, VALUETYPE> input, String value);
 }

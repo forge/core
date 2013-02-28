@@ -10,10 +10,10 @@ package org.jboss.forge.ui.impl;
 import javax.enterprise.inject.Vetoed;
 
 import org.jboss.forge.convert.Converter;
-import org.jboss.forge.ui.input.UISelectComponent;
+import org.jboss.forge.ui.input.SelectComponent;
 
 /**
- * Implementation of a {@link UISelectComponent} object
+ * Implementation of a {@link SelectComponent} object
  *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  *
@@ -21,8 +21,8 @@ import org.jboss.forge.ui.input.UISelectComponent;
  */
 @Vetoed
 @SuppressWarnings("unchecked")
-public abstract class UISelectInputComponentBase<IMPLTYPE extends UISelectComponent<IMPLTYPE, VALUETYPE>, VALUETYPE> extends UIInputComponentBase<IMPLTYPE, VALUETYPE>
-         implements UISelectComponent<IMPLTYPE, VALUETYPE>
+public abstract class UISelectInputComponentBase<IMPLTYPE extends SelectComponent<IMPLTYPE, VALUETYPE>, VALUETYPE> extends UIInputComponentBase<IMPLTYPE, VALUETYPE>
+         implements SelectComponent<IMPLTYPE, VALUETYPE>
 {
    private Iterable<VALUETYPE> choices;
    private Converter<VALUETYPE, String> itemLabelConverter;

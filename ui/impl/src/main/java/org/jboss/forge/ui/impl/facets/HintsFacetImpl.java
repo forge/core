@@ -11,18 +11,18 @@ import org.jboss.forge.facets.BaseFacet;
 import org.jboss.forge.ui.facets.HintsFacet;
 import org.jboss.forge.ui.hints.HintsLookup;
 import org.jboss.forge.ui.hints.InputType;
-import org.jboss.forge.ui.input.UIInputComponent;
+import org.jboss.forge.ui.input.InputComponent;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class HintsFacetImpl extends BaseFacet<UIInputComponent<?, ?>> implements HintsFacet
+public class HintsFacetImpl extends BaseFacet<InputComponent<?, ?>> implements HintsFacet
 {
    private HintsLookup hintsLookup;
    private InputType inputType;
 
-   public HintsFacetImpl(UIInputComponent<?, ?> origin, Environment environment)
+   public HintsFacetImpl(InputComponent<?, ?> origin, Environment environment)
    {
       super(origin);
       if (environment == null)

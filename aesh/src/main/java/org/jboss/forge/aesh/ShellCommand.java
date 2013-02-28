@@ -21,7 +21,7 @@ import org.jboss.aesh.util.FileLister;
 import org.jboss.forge.aesh.util.CommandLineUtil;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.input.UIInput;
-import org.jboss.forge.ui.input.UIInputComponent;
+import org.jboss.forge.ui.input.InputComponent;
 import org.jboss.forge.ui.input.UIInputMany;
 import org.jboss.forge.ui.result.Result;
 
@@ -120,7 +120,7 @@ public class ShellCommand implements Completion
          // try to complete an options value
          else if (completeObject.isOption())
          {
-            UIInputComponent inputOption = context.findInput(completeObject.getName());
+            InputComponent inputOption = context.findInput(completeObject.getName());
             // option type == File
             if (inputOption != null && inputOption.getValueType() == File.class)
             {
@@ -156,7 +156,7 @@ public class ShellCommand implements Completion
          // try to complete a argument value
          else if (completeObject.isArgument())
          {
-            UIInputComponent inputOption = context.findInput("arguments"); // default for arguments
+            InputComponent inputOption = context.findInput("arguments"); // default for arguments
 
             if (inputOption != null && inputOption.getValueType() == File.class)
             {

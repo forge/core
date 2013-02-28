@@ -20,11 +20,11 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.resource.DirectoryResource;
-import org.jboss.forge.ui.UIBuilder;
+import org.jboss.forge.ui.context.UIBuilder;
 import org.jboss.forge.ui.context.UIContext;
+import org.jboss.forge.ui.context.UISelection;
 import org.jboss.forge.ui.context.UIValidationContext;
-import org.jboss.forge.ui.input.UIInputComponent;
-import org.jboss.forge.ui.input.UISelection;
+import org.jboss.forge.ui.input.InputComponent;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -63,7 +63,7 @@ public class NewProjectCommandTest
    @Test
    public void testInvokeCommand() throws Exception
    {
-      final List<UIInputComponent<?, ?>> inputs = new ArrayList<UIInputComponent<?, ?>>();
+      final List<InputComponent<?, ?>> inputs = new ArrayList<InputComponent<?, ?>>();
 
       final UIContext context = new UIContext()
       {
@@ -76,7 +76,7 @@ public class NewProjectCommandTest
       final UIBuilder builder = new UIBuilder()
       {
          @Override
-         public UIBuilder add(UIInputComponent<?, ?> input)
+         public UIBuilder add(InputComponent<?, ?> input)
          {
             inputs.add(input);
             return this;
@@ -101,7 +101,7 @@ public class NewProjectCommandTest
          }
 
          @Override
-         public void addValidationError(UIInputComponent<?, ?> input, String errorMessage)
+         public void addValidationError(InputComponent<?, ?> input, String errorMessage)
          {
          }
       });

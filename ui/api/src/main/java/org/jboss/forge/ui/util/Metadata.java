@@ -8,9 +8,9 @@ package org.jboss.forge.ui.util;
 
 import java.net.URL;
 
-import org.jboss.forge.ui.UICategory;
 import org.jboss.forge.ui.UICommand;
-import org.jboss.forge.ui.UICommandMetadata;
+import org.jboss.forge.ui.metadata.UICategory;
+import org.jboss.forge.ui.metadata.UICommandMetadata;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

@@ -7,7 +7,6 @@
 
 package org.jboss.forge.ui.context;
 
-import org.jboss.forge.ui.input.UISelection;
 
 public interface UIContext
 {

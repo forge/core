@@ -5,10 +5,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.ui;
+package org.jboss.forge.ui.context;
 
-import org.jboss.forge.ui.context.UIContextProvider;
-import org.jboss.forge.ui.input.UIInputComponent;
+import org.jboss.forge.ui.UICommand;
+import org.jboss.forge.ui.input.InputComponent;
 
 /**
  * Allows {@link UICommand} objects to specify the order of the displayed fields
@@ -20,5 +20,5 @@ import org.jboss.forge.ui.input.UIInputComponent;
  */
 public interface UIBuilder extends UIContextProvider
 {
-   UIBuilder add(UIInputComponent<?, ?> input);
+   UIBuilder add(InputComponent<?, ?> input);
 }
