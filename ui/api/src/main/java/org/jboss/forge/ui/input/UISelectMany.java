@@ -11,7 +11,7 @@ import java.util.concurrent.Callable;
 import org.jboss.forge.convert.Converter;
 
 /**
- * An {@link UISelectMany} should be used when you know in advance the number of items you can select from.
+ * A {@link UISelectMany} should be used when the number of items to be chosen are known before rendering the component.
  *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  *
