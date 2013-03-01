@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import org.jboss.forge.addon.manager.InstallRequest;
 import org.jboss.forge.addon.manager.impl.AddonManagerImpl;
 import org.jboss.forge.container.AddonId;
+import org.jboss.forge.container.AddonRepository;
 import org.jboss.forge.container.Forge;
 import org.jboss.forge.dependencies.Coordinate;
 import org.jboss.forge.dependencies.builder.CoordinateBuilder;
@@ -121,7 +122,7 @@ public class Bootstrap
          AddonManagerImpl addonManager = new AddonManagerImpl(forge.getRepository(), resolver);
 
          AddonId addon;
-         // This allows forge --instal maven
+         // This allows forge --install maven
          if (addonCoordinates.contains(","))
          {
             addon = AddonId.fromCoordinates(addonCoordinates);
@@ -157,9 +158,31 @@ public class Bootstrap
    {
       try
       {
-         AddonId addon = AddonId.fromCoordinates(addonCoordinates);
-         forge.getRepository().disable(addon);
-         forge.getRepository().undeploy(addon);
+         AddonRepository repository = forge.getRepository();
+         AddonId addon = null;
+         // This allows forge --remove maven
+         if (addonCoordinates.contains(","))
+         {
+            addon = AddonId.fromCoordinates(addonCoordinates);
+         }
+         else
+         {
+            String coordinates = "org.jboss.forge:" + addonCoordinates;
+            for (AddonId id : repository.listEnabled())
+            {
+               if (coordinates.equals(id.getName()))
+               {
+                  addon = id;
+                  break;
+               }
+            }
+            if (addon == null)
+            {
+               throw new IllegalArgumentException("No addon exists with id " + coordinates);
+            }
+         }
+         repository.disable(addon);
+         repository.undeploy(addon);
       }
       catch (Exception e)
       {
