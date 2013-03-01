@@ -30,9 +30,9 @@ import org.jboss.forge.dependencies.collection.Dependencies;
 /**
  * When an addon is installed, another addons could be required. This object returns the necessary information for the
  * installation of an addon to succeed, like required addons and dependencies
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 public class InstallRequestImpl implements InstallRequest
 {
@@ -47,7 +47,7 @@ public class InstallRequestImpl implements InstallRequest
 
    /**
     * Package-access constructor. Only AddonManager should be allowed to call this constructor.
-    *
+    * 
     * @param addonManager
     */
    InstallRequestImpl(AddonManager addonManager, AddonRepository repository, DependencyNode requestedAddonNode)
@@ -80,7 +80,7 @@ public class InstallRequestImpl implements InstallRequest
 
    /*
     * (non-Javadoc)
-    *
+    * 
     * @see org.jboss.forge.addon.manager.impl.InstallRequest#getRequestedAddon()
     */
    @Override
@@ -91,7 +91,7 @@ public class InstallRequestImpl implements InstallRequest
 
    /*
     * (non-Javadoc)
-    *
+    * 
     * @see org.jboss.forge.addon.manager.impl.InstallRequest#getOptionalAddons()
     */
    @Override
@@ -102,7 +102,7 @@ public class InstallRequestImpl implements InstallRequest
 
    /*
     * (non-Javadoc)
-    *
+    * 
     * @see org.jboss.forge.addon.manager.impl.InstallRequest#getRequiredAddons()
     */
    @Override
@@ -113,13 +113,12 @@ public class InstallRequestImpl implements InstallRequest
 
    /*
     * (non-Javadoc)
-    *
+    * 
     * @see org.jboss.forge.addon.manager.impl.InstallRequest#perform()
     */
    @Override
    public void perform()
    {
-      List<AddonId> addonsToEnable = new ArrayList<AddonId>();
       for (DependencyNode requiredAddon : getRequiredAddons())
       {
          AddonId requiredAddonId = toAddonId(requiredAddon);
@@ -127,16 +126,14 @@ public class InstallRequestImpl implements InstallRequest
          {
             log.info("Addon " + requiredAddonId + " is already deployed. Skipping...");
          }
-         deploy(requiredAddonId, requiredAddon);
-         addonsToEnable.add(requiredAddonId);
+         else
+         {
+            addonManager.install(requiredAddonId).perform();
+         }
       }
 
       AddonId requestedAddonId = toAddonId(requestedAddonNode);
       deploy(requestedAddonId, requestedAddonNode);
-      for (AddonId addonId : addonsToEnable)
-      {
-         repository.enable(addonId);
-      }
       repository.enable(requestedAddonId);
    }
 
