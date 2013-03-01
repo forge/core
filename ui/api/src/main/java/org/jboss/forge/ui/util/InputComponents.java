@@ -138,9 +138,17 @@ public final class InputComponents
       Converter<String, Object> valueConverter = input.getValueConverter();
       if (valueConverter != null)
       {
-         Converter<Object, String> stringConverter = converterFactory.getConverter(sourceType, String.class);
-         CompositeConverter compositeConverter = new CompositeConverter(stringConverter, valueConverter);
-         convertedType = compositeConverter.convert(value);
+         if (value instanceof String)
+         {
+            convertedType = valueConverter.convert((String) value);
+         }
+         else
+         {
+            Converter<Object, String> stringConverter = converterFactory.getConverter(sourceType, String.class);
+            CompositeConverter compositeConverter = new CompositeConverter(stringConverter, valueConverter);
+            convertedType = compositeConverter.convert(value);
+         }
+
       }
       else
       {
