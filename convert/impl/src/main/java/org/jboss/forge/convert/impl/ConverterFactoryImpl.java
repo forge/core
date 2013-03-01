@@ -44,12 +44,9 @@ public class ConverterFactoryImpl implements ConverterFactory
       {
          result = (Converter<S, T>) Converters.TO_STRING;
       }
-      if (result == null)
+      if (result == null && target.isAssignableFrom(source))
       {
-         if (target.isAssignableFrom(source))
-         {
-            result = (Converter<S, T>) Converters.NOOP;
-         }
+         result = (Converter<S, T>) Converters.NOOP;
       }
       if (result == null)
       {
