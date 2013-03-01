@@ -6,11 +6,11 @@ import org.jboss.forge.dependencies.collection.Dependencies;
 
 /**
  * Figures out if a dependency should be treated as a JAR or as an Addon.
- *
+ * 
  * Also if that dependency is a direct dependency of the current addon.
- *
+ * 
  * If it is direct, then it should be accepted and packaged as a JAR in the addon deployment. Otherwise, ignore it
- *
+ * 
  */
 public class LocalResourceFilter implements Predicate<DependencyNode>
 {
@@ -24,7 +24,7 @@ public class LocalResourceFilter implements Predicate<DependencyNode>
    @Override
    public boolean accept(DependencyNode node)
    {
-      if (isDependencyAddon(node) || isProvided(node))
+      if (isDependencyAddon(node) || !isCompile(node))
       {
          return false;
       }
@@ -36,9 +36,12 @@ public class LocalResourceFilter implements Predicate<DependencyNode>
       return (Dependencies.isForgeAddon(node.getDependency().getCoordinate()) && !node.equals(addon));
    }
 
-   public boolean isProvided(DependencyNode node)
+   public boolean isCompile(DependencyNode node)
    {
-      return "provided".equals(node.getDependency().getScopeType());
+      return node.getDependency().getScopeType() == null
+               || node.getDependency().getScopeType().isEmpty()
+               || "compile".equals(node.getDependency().getScopeType())
+               || "runtime".equals(node.getDependency().getScopeType());
    }
 
 }

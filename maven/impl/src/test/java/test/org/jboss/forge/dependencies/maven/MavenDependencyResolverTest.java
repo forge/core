@@ -107,9 +107,9 @@ public class MavenDependencyResolverTest
                .resolveDependencyHierarchy(DependencyQueryBuilder
                         .create("org.jboss.forge:example:jar:forge-addon:2.0.0-SNAPSHOT"));
       Assert.assertNotNull(root);
-      Assert.assertEquals(2, root.getChildren().size());
-      Assert.assertEquals("example2", root.getChildren().get(0).getDependency().getCoordinate().getArtifactId());
-      Assert.assertEquals("commons-lang", root.getChildren().get(1).getDependency().getCoordinate().getArtifactId());
+      Assert.assertEquals(3, root.getChildren().size());
+      Assert.assertEquals("example2", root.getChildren().get(1).getDependency().getCoordinate().getArtifactId());
+      Assert.assertEquals("commons-lang", root.getChildren().get(2).getDependency().getCoordinate().getArtifactId());
    }
 
    @Test
@@ -118,8 +118,7 @@ public class MavenDependencyResolverTest
       DependencyNode root = resolver
                .resolveDependencyHierarchy(DependencyQueryBuilder
                         .create("org.jboss.forge:addons:jar:forge-addon:2.0.0-SNAPSHOT"));
-//      System.out.println(root);
       Assert.assertNotNull(root);
-      Assert.assertEquals(2, root.getChildren().size());
+      Assert.assertEquals(3, root.getChildren().size());
    }
 }

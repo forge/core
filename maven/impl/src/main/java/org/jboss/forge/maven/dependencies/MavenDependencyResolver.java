@@ -140,7 +140,7 @@ public class MavenDependencyResolver implements DependencyResolver
 
    /**
     * Returns the versions of a specific artifact
-    *
+    * 
     * @param query
     * @return
     */
@@ -229,7 +229,7 @@ public class MavenDependencyResolver implements DependencyResolver
    }
 
    @Override
-   public org.jboss.forge.dependencies.DependencyNode resolveDependencyHierarchy(DependencyQuery query)
+   public org.jboss.forge.dependencies.DependencyNode resolveDependencyHierarchy(final DependencyQuery query)
    {
       try
       {
@@ -243,16 +243,10 @@ public class MavenDependencyResolver implements DependencyResolver
             @Override
             public boolean traverseDependency(org.sonatype.aether.graph.Dependency dependency)
             {
-               if ("test".equals(dependency.getScope()))
-               {
-                  return false;
-               }
-               if ("provided".equals(dependency.getScope()))
-               {
-                  String classifier = dependency.getArtifact().getClassifier();
-                  return "forge-addon".equals(classifier);
-               }
-               return true;
+               if (query.getScopeType() != null)
+                  return query.getScopeType().equals(dependency.getScope());
+               else
+                  return !"test".equals(dependency.getScope());
             }
 
             @Override
@@ -266,16 +260,10 @@ public class MavenDependencyResolver implements DependencyResolver
             @Override
             public boolean selectDependency(org.sonatype.aether.graph.Dependency dependency)
             {
-               if ("test".equals(dependency.getScope()))
-               {
-                  return false;
-               }
-               if ("provided".equals(dependency.getScope()))
-               {
-                  String classifier = dependency.getArtifact().getClassifier();
-                  return "forge-addon".equals(classifier);
-               }
-               return true;
+               if (query.getScopeType() != null)
+                  return query.getScopeType().equals(dependency.getScope());
+               else
+                  return !"test".equals(dependency.getScope());
             }
 
             @Override

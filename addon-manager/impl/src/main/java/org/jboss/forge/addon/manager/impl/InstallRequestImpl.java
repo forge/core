@@ -111,11 +111,6 @@ public class InstallRequestImpl implements InstallRequest
       return Collections.unmodifiableList(requiredAddons);
    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.forge.addon.manager.impl.InstallRequest#perform()
-    */
    @Override
    public void perform()
    {

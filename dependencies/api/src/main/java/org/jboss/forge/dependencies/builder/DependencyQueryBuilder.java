@@ -19,9 +19,9 @@ import org.jboss.forge.dependencies.DependencyRepository;
 
 /**
  * Builds a {@link DependencyQuery} object
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 public class DependencyQueryBuilder implements DependencyQuery
 {
@@ -51,9 +51,6 @@ public class DependencyQueryBuilder implements DependencyQuery
 
    /**
     * Creates a {@link DependencyQueryBuilder} based on a {@link DependencyQuery}
-    *
-    * @param query
-    * @return
     */
    public static DependencyQueryBuilder create(DependencyQuery query)
    {
@@ -125,6 +122,12 @@ public class DependencyQueryBuilder implements DependencyQuery
    public String getScopeType()
    {
       return scopeType;
+   }
+
+   @Override
+   public String toString()
+   {
+      return coordinate.toString() + " - " + scopeType;
    }
 
 }
