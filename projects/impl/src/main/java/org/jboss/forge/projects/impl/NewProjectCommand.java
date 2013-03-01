@@ -1,11 +1,14 @@
 package org.jboss.forge.projects.impl;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
 import org.jboss.forge.container.AddonRegistry;
+import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.convert.Converter;
 import org.jboss.forge.projects.Project;
 import org.jboss.forge.projects.ProjectFactory;
@@ -105,6 +108,14 @@ public class NewProjectCommand implements UIWizard
             return source.getType();
          }
       });
+
+      // Add Project types
+      List<ProjectType> projectTypes = new ArrayList<ProjectType>();
+      for (ExportedInstance<ProjectType> instance : registry.getExportedInstances(ProjectType.class))
+      {
+         projectTypes.add(instance.get());
+      }
+      type.setValueChoices(projectTypes);
 
       builder.add(named).add(targetLocation).add(overwrite).add(type);
    }

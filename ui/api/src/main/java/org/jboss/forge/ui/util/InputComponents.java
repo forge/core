@@ -100,21 +100,19 @@ public final class InputComponents
    private static void setManyInputValue(final ConverterFactory converterFactory,
             final InputComponent<?, Object> input, Object value)
    {
-      final List<Object> convertedValues;
+      final Iterable<Object> convertedValues;
       if (value != null)
       {
-         convertedValues = new ArrayList<Object>();
          if (value instanceof Iterable)
          {
-            Iterable<Object> values = (Iterable) value;
-            for (Object obj : values)
-            {
-               convertedValues.add(convertToUIInputValue(converterFactory, input, obj));
-            }
+            // TODO: Should convert each value ?
+            convertedValues = (Iterable<Object>) value;
          }
          else
          {
-            convertedValues.add(convertToUIInputValue(converterFactory, input, value));
+            List<Object> convertedValuesList = new ArrayList<Object>();
+            convertedValuesList.add(convertToUIInputValue(converterFactory, input, value));
+            convertedValues = convertedValuesList;
          }
       }
       else
