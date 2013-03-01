@@ -40,30 +40,34 @@ public class ConverterFactoryImpl implements ConverterFactory
             break;
          }
       }
-      if (result == null && String.class.equals(target))
-      {
-         result = (Converter<S, T>) Converters.TO_STRING;
-      }
-      if (result == null && target.isAssignableFrom(source))
-      {
-         result = (Converter<S, T>) Converters.NOOP;
-      }
       if (result == null)
       {
-         try
+         if (String.class.equals(target))
          {
-            result = new MethodConverter<S, T>(source, target, null, target.getMethod("valueOf", source));
+            result = (Converter<S, T>) Converters.TO_STRING;
          }
-         catch (NoSuchMethodException noValueOf)
+         else if (target.isAssignableFrom(source))
+         {
+            result = (Converter<S, T>) Converters.NOOP;
+         }
+         else
          {
             try
             {
-               result = new ConstructorConverter<S, T>(source, target, target.getConstructor(source));
+               result = new MethodConverter<S, T>(source, target, null, target.getMethod("valueOf", source));
             }
-            catch (NoSuchMethodException noConstructor)
+            catch (NoSuchMethodException noValueOf)
             {
-               throw new ConverterNotFoundException(source, target);
+               try
+               {
+                  result = new ConstructorConverter<S, T>(source, target, target.getConstructor(source));
+               }
+               catch (NoSuchMethodException noConstructor)
+               {
+                  throw new ConverterNotFoundException(source, target);
+               }
             }
+
          }
       }
       return result;
