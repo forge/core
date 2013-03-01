@@ -42,13 +42,13 @@ public class ConverterFactoryImpl implements ConverterFactory
       }
       if (result == null && String.class.equals(target))
       {
-         result = (Converter<S, T>) new ToStringConverter<S>((Class<S>) source.getClass());
+         result = (Converter<S, T>) Converters.TO_STRING;
       }
       if (result == null)
       {
          if (target.isAssignableFrom(source))
          {
-            result = (Converter<S, T>) new NoopConverter<S>(source);
+            result = (Converter<S, T>) Converters.NOOP;
          }
       }
       if (result == null)
