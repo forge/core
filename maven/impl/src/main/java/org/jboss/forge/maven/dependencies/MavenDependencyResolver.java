@@ -22,6 +22,7 @@ import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.apache.maven.settings.Settings;
 import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.container.util.Predicate;
+import org.jboss.forge.dependencies.AddonDependencyResolver;
 import org.jboss.forge.dependencies.Coordinate;
 import org.jboss.forge.dependencies.Dependency;
 import org.jboss.forge.dependencies.DependencyException;
@@ -29,6 +30,7 @@ import org.jboss.forge.dependencies.DependencyQuery;
 import org.jboss.forge.dependencies.DependencyResolver;
 import org.jboss.forge.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.dependencies.builder.DependencyBuilder;
+import org.jboss.forge.dependencies.builder.DependencyNodeBuilder;
 import org.jboss.forge.resource.FileResource;
 import org.jboss.forge.resource.ResourceFactory;
 import org.jboss.shrinkwrap.resolver.impl.maven.logging.LogTransferListener;
@@ -36,7 +38,6 @@ import org.sonatype.aether.RepositorySystem;
 import org.sonatype.aether.artifact.Artifact;
 import org.sonatype.aether.collection.CollectRequest;
 import org.sonatype.aether.collection.DependencyCollectionContext;
-import org.sonatype.aether.collection.DependencySelector;
 import org.sonatype.aether.collection.DependencyTraverser;
 import org.sonatype.aether.graph.DependencyFilter;
 import org.sonatype.aether.graph.DependencyNode;
@@ -50,10 +51,11 @@ import org.sonatype.aether.resolution.DependencyResolutionException;
 import org.sonatype.aether.resolution.DependencyResult;
 import org.sonatype.aether.resolution.VersionRangeRequest;
 import org.sonatype.aether.resolution.VersionRangeResult;
+import org.sonatype.aether.util.graph.selector.ScopeDependencySelector;
 import org.sonatype.aether.version.Version;
 
 @Exported
-public class MavenDependencyResolver implements DependencyResolver
+public class MavenDependencyResolver implements DependencyResolver, AddonDependencyResolver
 {
    private MavenContainer container;
    private ResourceFactory factory;
@@ -228,6 +230,52 @@ public class MavenDependencyResolver implements DependencyResolver
       }
    }
 
+
+   public org.jboss.forge.dependencies.DependencyNode resolveAddonDependencyHierarchy(final DependencyQuery query)
+   {
+      try
+      {
+         RepositorySystem system = container.getRepositorySystem();
+         Settings settings = container.getSettings();
+         MavenRepositorySystemSession session = setupRepoSession(system, settings);
+         session.setTransferListener(new LogTransferListener());
+
+         session.setDependencyTraverser(new DependencyTraverser()
+         {
+            @Override
+            public boolean traverseDependency(org.sonatype.aether.graph.Dependency dependency)
+            {
+               if (query.getScopeType() != null)
+                  return query.getScopeType().equals(dependency.getScope());
+               else
+                  return !"test".equals(dependency.getScope());
+            }
+
+            @Override
+            public DependencyTraverser deriveChildTraverser(DependencyCollectionContext context)
+            {
+               return this;
+            }
+         });
+         session.setDependencySelector(new ScopeDependencySelector("test", "provided"));
+
+         final CoordinateBuilder coord = CoordinateBuilder.create(query.getCoordinate());
+         Artifact queryArtifact = coordinateToMavenArtifact(coord);
+         CollectRequest collectRequest = new CollectRequest(new org.sonatype.aether.graph.Dependency(queryArtifact,
+                  null), container.getEnabledRepositoriesFromProfile(settings));
+
+         DependencyRequest dr = new DependencyRequest(collectRequest, null);
+
+         DependencyResult result = system.resolveDependencies(session, dr);
+         DependencyNodeBuilder hierarchy = MavenConvertUtils.toDependencyNode(factory, null, result.getRoot());
+         return hierarchy;
+      }
+      catch (Exception e)
+      {
+         throw new DependencyException("Could not resolve dependencies for addon [" + query.getCoordinate() + "]", e);
+      }
+   }
+
    @Override
    public org.jboss.forge.dependencies.DependencyNode resolveDependencyHierarchy(final DependencyQuery query)
    {
@@ -255,23 +303,7 @@ public class MavenDependencyResolver implements DependencyResolver
                return this;
             }
          });
-         session.setDependencySelector(new DependencySelector()
-         {
-            @Override
-            public boolean selectDependency(org.sonatype.aether.graph.Dependency dependency)
-            {
-               if (query.getScopeType() != null)
-                  return query.getScopeType().equals(dependency.getScope());
-               else
-                  return !"test".equals(dependency.getScope());
-            }
-
-            @Override
-            public DependencySelector deriveChildSelector(DependencyCollectionContext context)
-            {
-               return this;
-            }
-         });
+         session.setDependencySelector(new ScopeDependencySelector("test"));
 
          final CoordinateBuilder coord = CoordinateBuilder.create(query.getCoordinate());
          Artifact queryArtifact = coordinateToMavenArtifact(coord);
@@ -281,7 +313,8 @@ public class MavenDependencyResolver implements DependencyResolver
          DependencyRequest dr = new DependencyRequest(collectRequest, null);
 
          DependencyResult result = system.resolveDependencies(session, dr);
-         return MavenConvertUtils.toDependencyNode(factory, null, result.getRoot());
+         DependencyNodeBuilder hierarchy = MavenConvertUtils.toDependencyNode(factory, null, result.getRoot());
+         return hierarchy;
       }
       catch (Exception e)
       {

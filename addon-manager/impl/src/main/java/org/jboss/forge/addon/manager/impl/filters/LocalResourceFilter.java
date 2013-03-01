@@ -5,12 +5,11 @@ import org.jboss.forge.dependencies.DependencyNode;
 import org.jboss.forge.dependencies.collection.Dependencies;
 
 /**
- * Figures out if a dependency should be treated as a JAR or as an Addon.
+ * Figures out if a {@link DependencyNode} should be treated as a JAR or as an Addon. Also if that dependency is a
+ * direct dependency of the current addon. If it is a runtime required resource belonging to the given Addon, then it
+ * should be accepted and packaged as a JAR in the addon deployment. Otherwise, ignore it
  * 
- * Also if that dependency is a direct dependency of the current addon.
- * 
- * If it is direct, then it should be accepted and packaged as a JAR in the addon deployment. Otherwise, ignore it
- * 
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class LocalResourceFilter implements Predicate<DependencyNode>
 {

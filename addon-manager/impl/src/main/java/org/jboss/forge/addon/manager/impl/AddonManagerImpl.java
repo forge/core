@@ -13,44 +13,39 @@ import org.jboss.forge.addon.manager.AddonManager;
 import org.jboss.forge.addon.manager.InstallRequest;
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.AddonRepository;
+import org.jboss.forge.dependencies.AddonDependencyResolver;
 import org.jboss.forge.dependencies.DependencyNode;
-import org.jboss.forge.dependencies.DependencyResolver;
 import org.jboss.forge.dependencies.builder.DependencyQueryBuilder;
 
 /**
  * Installs addons into an {@link AddonRepository}
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * 
  */
 public class AddonManagerImpl implements AddonManager
 {
    private AddonRepository repository;
-   private DependencyResolver resolver;
+   private AddonDependencyResolver resolver;
 
    @Inject
-   public AddonManagerImpl(AddonRepository repository, DependencyResolver resolver)
+   public AddonManagerImpl(AddonRepository repository, AddonDependencyResolver resolver)
    {
       this.repository = repository;
       this.resolver = resolver;
    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.forge.addon.manager.impl.AddonManager#install(org.jboss.forge.container.AddonId)
-    */
    @Override
    public InstallRequest install(AddonId addonId)
    {
       String coordinates = addonId.getName() + ":jar:forge-addon:" + addonId.getVersion();
-      DependencyNode requestedAddonNode = resolver.resolveDependencyHierarchy(DependencyQueryBuilder
+      DependencyNode requestedAddonNode = resolver.resolveAddonDependencyHierarchy(DependencyQueryBuilder
                .create(coordinates));
 
       return new InstallRequestImpl(this, repository, requestedAddonNode);
    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.forge.addon.manager.impl.AddonManager#remove(org.jboss.forge.container.AddonId)
-    */
    @Override
    public boolean remove(AddonId entry)
    {

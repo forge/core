@@ -7,6 +7,8 @@ import org.jboss.forge.dependencies.collection.Dependencies;
 
 /**
  * Checks if an addon node is a direct dependency of another node (root)
+ * 
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class DirectAddonFilter implements Predicate<DependencyNode>
 {
