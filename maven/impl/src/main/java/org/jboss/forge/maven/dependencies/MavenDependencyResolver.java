@@ -230,7 +230,6 @@ public class MavenDependencyResolver implements DependencyResolver, AddonDepende
       }
    }
 
-
    public org.jboss.forge.dependencies.DependencyNode resolveAddonDependencyHierarchy(final DependencyQuery query)
    {
       try
@@ -257,7 +256,7 @@ public class MavenDependencyResolver implements DependencyResolver, AddonDepende
                return this;
             }
          });
-         session.setDependencySelector(new ScopeDependencySelector("test", "provided"));
+         session.setDependencySelector(new AddonDependencySelector());
 
          final CoordinateBuilder coord = CoordinateBuilder.create(query.getCoordinate());
          Artifact queryArtifact = coordinateToMavenArtifact(coord);

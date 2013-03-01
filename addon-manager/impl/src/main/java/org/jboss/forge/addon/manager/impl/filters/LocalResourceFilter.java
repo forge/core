@@ -23,7 +23,7 @@ public class LocalResourceFilter implements Predicate<DependencyNode>
    @Override
    public boolean accept(DependencyNode node)
    {
-      if (isDependencyAddon(node) || !isCompile(node))
+      if (isDependencyAddon(node) || !shouldPackageResource(node))
       {
          return false;
       }
@@ -35,7 +35,7 @@ public class LocalResourceFilter implements Predicate<DependencyNode>
       return (Dependencies.isForgeAddon(node.getDependency().getCoordinate()) && !node.equals(addon));
    }
 
-   public boolean isCompile(DependencyNode node)
+   public boolean shouldPackageResource(DependencyNode node)
    {
       return node.getDependency().getScopeType() == null
                || node.getDependency().getScopeType().isEmpty()
