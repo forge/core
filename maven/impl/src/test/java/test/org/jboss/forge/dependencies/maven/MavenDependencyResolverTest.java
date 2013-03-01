@@ -25,7 +25,7 @@ import org.junit.Test;
 
 /**
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ *
  */
 public class MavenDependencyResolverTest
 {
@@ -110,7 +110,16 @@ public class MavenDependencyResolverTest
       Assert.assertEquals(2, root.getChildren().size());
       Assert.assertEquals("example2", root.getChildren().get(0).getDependency().getCoordinate().getArtifactId());
       Assert.assertEquals("commons-lang", root.getChildren().get(1).getDependency().getCoordinate().getArtifactId());
-      System.out.println(root);
    }
 
+   @Test
+   public void testResolveProvidedAddons() throws Exception
+   {
+      DependencyNode root = resolver
+               .resolveDependencyHierarchy(DependencyQueryBuilder
+                        .create("org.jboss.forge:addons:jar:forge-addon:2.0.0-SNAPSHOT"));
+//      System.out.println(root);
+      Assert.assertNotNull(root);
+      Assert.assertEquals(2, root.getChildren().size());
+   }
 }

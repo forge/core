@@ -31,9 +31,13 @@ import org.jboss.forge.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.resource.FileResource;
 import org.jboss.forge.resource.ResourceFactory;
+import org.jboss.shrinkwrap.resolver.impl.maven.logging.LogTransferListener;
 import org.sonatype.aether.RepositorySystem;
 import org.sonatype.aether.artifact.Artifact;
 import org.sonatype.aether.collection.CollectRequest;
+import org.sonatype.aether.collection.DependencyCollectionContext;
+import org.sonatype.aether.collection.DependencySelector;
+import org.sonatype.aether.collection.DependencyTraverser;
 import org.sonatype.aether.graph.DependencyFilter;
 import org.sonatype.aether.graph.DependencyNode;
 import org.sonatype.aether.repository.LocalRepository;
@@ -136,7 +140,7 @@ public class MavenDependencyResolver implements DependencyResolver
 
    /**
     * Returns the versions of a specific artifact
-    * 
+    *
     * @param query
     * @return
     */
@@ -232,19 +236,61 @@ public class MavenDependencyResolver implements DependencyResolver
          RepositorySystem system = container.getRepositorySystem();
          Settings settings = container.getSettings();
          MavenRepositorySystemSession session = setupRepoSession(system, settings);
+         session.setTransferListener(new LogTransferListener());
+
+         session.setDependencyTraverser(new DependencyTraverser()
+         {
+            @Override
+            public boolean traverseDependency(org.sonatype.aether.graph.Dependency dependency)
+            {
+               if ("test".equals(dependency.getScope()))
+               {
+                  return false;
+               }
+               if ("provided".equals(dependency.getScope()))
+               {
+                  String classifier = dependency.getArtifact().getClassifier();
+                  return "forge-addon".equals(classifier);
+               }
+               return true;
+            }
+
+            @Override
+            public DependencyTraverser deriveChildTraverser(DependencyCollectionContext context)
+            {
+               return this;
+            }
+         });
+         session.setDependencySelector(new DependencySelector()
+         {
+            @Override
+            public boolean selectDependency(org.sonatype.aether.graph.Dependency dependency)
+            {
+               if ("test".equals(dependency.getScope()))
+               {
+                  return false;
+               }
+               if ("provided".equals(dependency.getScope()))
+               {
+                  String classifier = dependency.getArtifact().getClassifier();
+                  return "forge-addon".equals(classifier);
+               }
+               return true;
+            }
+
+            @Override
+            public DependencySelector deriveChildSelector(DependencyCollectionContext context)
+            {
+               return this;
+            }
+         });
+
          final CoordinateBuilder coord = CoordinateBuilder.create(query.getCoordinate());
          Artifact queryArtifact = coordinateToMavenArtifact(coord);
          CollectRequest collectRequest = new CollectRequest(new org.sonatype.aether.graph.Dependency(queryArtifact,
                   null), container.getEnabledRepositoriesFromProfile(settings));
 
-         DependencyRequest dr = new DependencyRequest(collectRequest, new DependencyFilter()
-         {
-            @Override
-            public boolean accept(DependencyNode node, List<DependencyNode> parents)
-            {
-               return true;
-            }
-         });
+         DependencyRequest dr = new DependencyRequest(collectRequest, null);
 
          DependencyResult result = system.resolveDependencies(session, dr);
          return MavenConvertUtils.toDependencyNode(factory, null, result.getRoot());
@@ -254,5 +300,4 @@ public class MavenDependencyResolver implements DependencyResolver
          throw new DependencyException("Could not resolve dependencies for addon [" + query.getCoordinate() + "]", e);
       }
    }
-
 }

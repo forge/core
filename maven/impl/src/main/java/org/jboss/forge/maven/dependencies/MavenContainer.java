@@ -24,7 +24,10 @@ import org.apache.maven.settings.building.SettingsBuilder;
 import org.apache.maven.settings.building.SettingsBuildingException;
 import org.apache.maven.settings.building.SettingsBuildingRequest;
 import org.apache.maven.settings.building.SettingsBuildingResult;
+import org.apache.maven.wagon.Wagon;
+import org.apache.maven.wagon.providers.http.HttpWagon;
 import org.sonatype.aether.RepositorySystem;
+import org.sonatype.aether.connector.wagon.WagonProvider;
 import org.sonatype.aether.connector.wagon.WagonRepositoryConnectorFactory;
 import org.sonatype.aether.impl.internal.DefaultServiceLocator;
 import org.sonatype.aether.repository.Authentication;
@@ -33,7 +36,7 @@ import org.sonatype.aether.spi.connector.RepositoryConnectorFactory;
 
 /**
  * Configures the Maven API for usage inside Forge
- * 
+ *
  * TODO: Remove in the future, use the ShrinkWrap Descriptors API ?
  */
 public class MavenContainer
@@ -95,8 +98,26 @@ public class MavenContainer
 
       final DefaultServiceLocator locator = new MavenServiceLocator();
       locator.setServices(ModelBuilder.class, new DefaultModelBuilderFactory().newInstance());
-      locator.addService(RepositoryConnectorFactory.class, WagonRepositoryConnectorFactory.class);
+      // Installing Wagon to fetch from HTTP repositories
+      locator.setServices(WagonProvider.class,
+               new WagonProvider()
+               {
+                  @Override
+                  public void release(Wagon wagon)
+                  {
+                  }
 
+                  @Override
+                  public Wagon lookup(String roleHint) throws Exception
+                  {
+                     if (roleHint != null && roleHint.startsWith("http"))
+                     {
+                        return new HttpWagon();
+                     }
+                     return null;
+                  }
+               });
+      locator.addService(RepositoryConnectorFactory.class, WagonRepositoryConnectorFactory.class);
       final RepositorySystem repositorySystem = locator.getService(RepositorySystem.class);
       return repositorySystem;
    }
