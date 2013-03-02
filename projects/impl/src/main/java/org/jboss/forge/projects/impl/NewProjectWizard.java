@@ -30,7 +30,7 @@ import org.jboss.forge.ui.util.Categories;
 import org.jboss.forge.ui.util.Metadata;
 import org.jboss.forge.ui.wizard.UIWizard;
 
-public class NewProjectCommand implements UIWizard
+public class NewProjectWizard implements UIWizard
 {
    @Inject
    private AddonRegistry registry;
@@ -105,7 +105,7 @@ public class NewProjectCommand implements UIWizard
          @Override
          public String convert(ProjectType source)
          {
-            return source.getType();
+            return source == null ? null : source.getType();
          }
       });
 
@@ -174,6 +174,13 @@ public class NewProjectCommand implements UIWizard
    @Override
    public NavigationResult next(UIContext context) throws Exception
    {
-      return Results.navigateTo(type.getValue().getSetupFlow());
+      if (type.getValue() != null)
+      {
+         return Results.navigateTo(type.getValue().getSetupFlow());
+      }
+      else
+      {
+         return null;
+      }
    }
 }

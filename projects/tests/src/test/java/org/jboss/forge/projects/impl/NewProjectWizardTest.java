@@ -31,7 +31,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class NewProjectCommandTest
+public class NewProjectWizardTest
 {
    @Deployment
    @Dependencies({
@@ -52,7 +52,7 @@ public class NewProjectCommandTest
    }
 
    @Inject
-   private NewProjectCommand command;
+   private NewProjectWizard command;
 
    @Test
    public void testInjectionNotNull()
