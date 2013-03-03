@@ -137,7 +137,6 @@ public class ForgePropertyStyle
       }
       catch (Exception e)
       {
-         e.printStackTrace();
          throw InspectorException.newException(e);
       }
    }
