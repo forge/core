@@ -200,7 +200,7 @@ public abstract class AbstractShellTest
    @After
    public void afterTest() throws IOException
    {
-      output.reset();
+      resetOutput();
       for (FileResource<?> file : tempFolders)
       {
          if (file.exists())
@@ -254,6 +254,18 @@ public abstract class AbstractShellTest
    protected Project initializeJavaProject() throws Exception
    {
       return initializeProject(PackagingType.JAR);
+   }
+
+   /**
+    * Resets the current output
+    *
+    * @return the current output before resetting
+    */
+   protected final String resetOutput()
+   {
+      String currentOutput = getOutput();
+      output.reset();
+      return currentOutput;
    }
 
 }
