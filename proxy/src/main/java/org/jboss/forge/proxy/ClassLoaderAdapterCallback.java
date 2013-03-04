@@ -7,6 +7,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.logging.Logger;
 
 import javassist.util.proxy.MethodFilter;
 import javassist.util.proxy.MethodHandler;
@@ -356,8 +357,16 @@ public class ClassLoaderAdapterCallback implements MethodHandler
                hierarchy = ProxyTypeInspector.getCompatibleClassHierarchy(callingLoader,
                         Proxies.unwrapProxyTypes(delegateType, callingLoader, delegateLoader));
                if (hierarchy == null || hierarchy.length == 0)
-                  throw new IllegalArgumentException("Must specify at least one non-final type to enhance for Object: "
-                           + delegate + " of type " + delegate.getClass());
+               {
+                  Logger.getLogger(getClass().getName()).severe(
+                           "Must specify at least one non-final type to enhance for Object: "
+                                    + delegate + " of type " + delegate.getClass());
+
+                  return (T) delegate;
+                  // throw new
+                  // IllegalArgumentException("Must specify at least one non-final type to enhance for Object: " +
+                  // delegate + " of type " + delegate.getClass());
+               }
             }
             else
                hierarchy = Arrays.copy(types, new Class<?>[types.length]);
