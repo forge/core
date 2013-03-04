@@ -64,6 +64,7 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
 
       try
       {
+         String testClassName = testMethodExecutor.getInstance().getClass().getName();
          AddonRegistry addonRegistry = forge.getAddonRegistry();
          Object instance = null;
          for (Entry<Addon, ServiceRegistry> entry : addonRegistry.getServiceRegistries().entrySet())
@@ -79,7 +80,6 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
                registry = addonRegistry.getServiceRegistries().get(addon);
             }
 
-            String testClassName = testMethodExecutor.getInstance().getClass().getName();
             ExportedInstance<?> result = registry.getExportedInstance(testClassName);
 
             if (result != null)
@@ -88,7 +88,7 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
                {
                   instance = result.get();
                }
-               else if (result != null)
+               else
                {
                   throw new IllegalStateException(
                            "Multiple test classes found in deployed addons. " +
@@ -158,8 +158,8 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
       catch (Exception e)
       {
          throw new IllegalStateException("Error launching test "
-                  + testMethodExecutor.getInstance().getClass().getName() + " "
-                  + testMethodExecutor.getMethod(), e);
+                  + testMethodExecutor.getInstance().getClass().getName() + "."
+                  + testMethodExecutor.getMethod().getName()+"()", e);
       }
    }
 }
