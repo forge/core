@@ -12,6 +12,8 @@ import org.jboss.forge.ui.context.UIBuilder;
 import org.jboss.forge.ui.context.UIContext;
 import org.jboss.forge.ui.context.UISelection;
 import org.jboss.forge.ui.context.UIValidationContext;
+import org.jboss.forge.ui.facets.HintsFacet;
+import org.jboss.forge.ui.hints.InputTypes;
 import org.jboss.forge.ui.input.UIInput;
 import org.jboss.forge.ui.metadata.UICommandMetadata;
 import org.jboss.forge.ui.result.NavigationResult;
@@ -26,6 +28,9 @@ public class ExampleStepOne implements UIWizardStep
    @Inject
    private UIInput<String> address;
 
+   @Inject
+   private UIInput<String> password;
+
    @Override
    public UICommandMetadata getMetadata()
    {
@@ -36,7 +41,8 @@ public class ExampleStepOne implements UIWizardStep
    public void initializeUI(UIBuilder builder) throws Exception
    {
       address.setLabel("Address:").setRequired(true);
-      builder.add(address);
+      password.getFacet(HintsFacet.class).setInputType(InputTypes.SECRET);
+      builder.add(address).add(password);
    }
 
    @Override
