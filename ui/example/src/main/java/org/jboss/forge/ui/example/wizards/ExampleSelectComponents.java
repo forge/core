@@ -6,13 +6,18 @@
  */
 package org.jboss.forge.ui.example.wizards;
 
+import java.util.Arrays;
+
 import javax.inject.Inject;
 
+import org.jboss.forge.convert.Converter;
 import org.jboss.forge.ui.context.UIBuilder;
 import org.jboss.forge.ui.context.UIContext;
 import org.jboss.forge.ui.context.UISelection;
 import org.jboss.forge.ui.context.UIValidationContext;
-import org.jboss.forge.ui.input.UISelectMany;
+import org.jboss.forge.ui.facets.HintsFacet;
+import org.jboss.forge.ui.hints.InputTypes;
+import org.jboss.forge.ui.input.UISelectOne;
 import org.jboss.forge.ui.metadata.UICommandMetadata;
 import org.jboss.forge.ui.result.NavigationResult;
 import org.jboss.forge.ui.result.Result;
@@ -24,7 +29,10 @@ public class ExampleSelectComponents implements UIWizardStep
 {
 
    @Inject
-   private UISelectMany<Bean> beanChoices;
+   private UISelectOne<Bean> radioBean;
+
+   @Inject
+   private UISelectOne<Bean> radioBeanTwo;
 
    @Override
    public UICommandMetadata getMetadata()
@@ -35,6 +43,22 @@ public class ExampleSelectComponents implements UIWizardStep
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
+      radioBean.getFacet(HintsFacet.class).setInputType(InputTypes.SELECT_ONE_RADIO);
+      radioBeanTwo.getFacet(HintsFacet.class).setInputType(InputTypes.SELECT_ONE_RADIO);
+      radioBean.setValueChoices(Arrays.asList(new Bean("One"), new Bean("Two"), new Bean("Three")));
+      radioBeanTwo.setValueChoices(Arrays.asList(new Bean("A"), new Bean("B"), new Bean("C")));
+
+      Converter<Bean, String> converter = new Converter<Bean, String>()
+      {
+         @Override
+         public String convert(Bean source)
+         {
+            return source.getName();
+         }
+      };
+      radioBean.setItemLabelConverter(converter);
+      radioBeanTwo.setItemLabelConverter(converter);
+      builder.add(radioBean).add(radioBeanTwo);
    }
 
    @Override

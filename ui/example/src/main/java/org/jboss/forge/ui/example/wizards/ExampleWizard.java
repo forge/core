@@ -27,6 +27,9 @@ public class ExampleWizard implements UIWizard
    private UIInput<String> firstName;
 
    @Inject
+   private UIInput<Boolean> showSelectComponents;
+
+   @Inject
    private UIInput<Boolean> goToLastStep;
 
    @Override
@@ -39,7 +42,7 @@ public class ExampleWizard implements UIWizard
    public void initializeUI(UIBuilder builder) throws Exception
    {
       firstName.setRequired(true).setRequiredMessage("First Name must be informed !");
-      builder.add(firstName).add(goToLastStep);
+      builder.add(firstName).add(showSelectComponents).add(goToLastStep);
    }
 
    @Override
@@ -68,6 +71,10 @@ public class ExampleWizard implements UIWizard
    @Override
    public NavigationResult next(UIContext context) throws Exception
    {
+      if (showSelectComponents.getValue() != null && showSelectComponents.getValue())
+      {
+         return Results.navigateTo(ExampleSelectComponents.class);
+      }
       if (goToLastStep.getValue() != null && goToLastStep.getValue())
       {
          return Results.navigateTo(ExampleStepTwo.class);
