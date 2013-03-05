@@ -218,7 +218,7 @@ public class Types
       }
       for (String t : LANG_TYPES)
       {
-         if (type.endsWith(t))
+         if (type.equals(t))
             return true;
       }
       return false;
