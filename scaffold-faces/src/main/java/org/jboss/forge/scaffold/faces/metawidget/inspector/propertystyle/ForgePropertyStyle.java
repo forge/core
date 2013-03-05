@@ -14,9 +14,11 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 
+import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.EnumConstant;
 import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.FieldHolder;
+import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaEnum;
 import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.parser.java.Method;
@@ -129,19 +131,39 @@ public class ForgePropertyStyle
 
          // Lookup properties
 
-         JavaSource<?> clazz = sourceForName(this.project,type);
-
-         if (clazz instanceof MethodHolder<?>)
-         {
-            lookupGetters(properties, (MethodHolder<?>) clazz);
-            lookupSetters(properties, (MethodHolder<?>) clazz);
-         }
+         inspectClassProperties(type, properties);
 
          return properties;
       }
       catch (Exception e)
       {
          throw InspectorException.newException(e);
+      }
+   }
+
+   /**
+    * Recursive lookup for properties from superclass in order to support inheritance
+    */
+   private void inspectClassProperties(final String type,
+            Map<String, Property> properties)
+   {
+
+      JavaSource<?> clazz = sourceForName(this.project, type);
+
+      if (clazz instanceof MethodHolder<?>)
+      {
+         lookupGetters(properties, (MethodHolder<?>) clazz);
+         lookupSetters(properties, (MethodHolder<?>) clazz);
+
+         if (clazz instanceof JavaClass)
+         {
+            JavaClass source = JavaParser.parse(JavaClass.class,
+                     clazz.toString());
+            if (!source.getSuperType().equals("java.lang.Object"))
+            {
+               inspectClassProperties(source.getSuperType(), properties);
+            }
+         }
       }
    }
 
