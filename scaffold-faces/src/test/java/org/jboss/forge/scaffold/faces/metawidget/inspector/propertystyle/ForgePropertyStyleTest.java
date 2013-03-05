@@ -133,6 +133,52 @@ public class ForgePropertyStyleTest
       assertEquals( 3, properties.size() );
    }
 
+   @Test
+   public void testInheritance()
+            throws Exception
+   {
+      Project project = initializeJavaProject();
+
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+      ScaffoldUtil
+               .createOrOverwrite(
+                        null,
+                        java.getJavaResource("org/jboss/forge/scaffold/faces/metawidget/inspector/propertystyle/ManuallyGeneratedClass.java"),
+                        getClass()
+                                 .getResourceAsStream(
+                                          "/org/jboss/forge/scaffold/faces/metawidget/inspector/propertystyle/ManuallyGeneratedClass.java"),
+                        true);
+      ScaffoldUtil
+               .createOrOverwrite(
+                        null,
+                        java.getJavaResource("org/jboss/forge/scaffold/faces/metawidget/inspector/propertystyle/ManuallyGeneratedSubclass.java"),
+                        getClass()
+                                 .getResourceAsStream(
+                                          "/org/jboss/forge/scaffold/faces/metawidget/inspector/propertystyle/ManuallyGeneratedSubclass.java"),
+                        true);
+
+      ForgePropertyStyle propertyStyle = new ForgePropertyStyle(new ForgePropertyStyleConfig().setProject(project));
+      Map<String, Property> properties = propertyStyle
+               .getProperties("org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle.ManuallyGeneratedSubclass");
+
+      Property property = properties.get("normalField");
+      assertEquals( "normalField", ((ForgeProperty) property).getName() );
+      assertEquals( "public getNormalField() : String", ((ForgeProperty) property).getReadMethod().toSignature() );
+      assertEquals( "public setNormalField(String) : void", ((ForgeProperty) property).getWriteMethod().toSignature() );
+
+      property = properties.get("URL");
+      assertEquals( "URL", ((ForgeProperty) property).getName() );
+      assertEquals( "public getURL() : String", ((ForgeProperty) property).getReadMethod().toSignature() );
+      assertEquals( "public setURL(String) : void", ((ForgeProperty) property).getWriteMethod().toSignature() );
+
+      property = properties.get("aFIELD");
+      assertEquals( "aFIELD", ((ForgeProperty) property).getName() );
+      assertEquals( "public getaFIELD() : String", ((ForgeProperty) property).getReadMethod().toSignature() );
+      assertEquals( "public setaFIELD(String) : void", ((ForgeProperty) property).getWriteMethod().toSignature() );
+
+      assertEquals( 4, properties.size());
+   }
+
    public void testConfig()
    {
       ForgePropertyStyleConfig config1 = new ForgePropertyStyleConfig();
