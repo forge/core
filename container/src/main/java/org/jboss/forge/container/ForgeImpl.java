@@ -2,6 +2,7 @@ package org.jboss.forge.container;
 
 import java.io.File;
 import java.util.HashSet;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -12,6 +13,7 @@ import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.impl.AddonRegistryImpl;
 import org.jboss.forge.container.impl.AddonRepositoryImpl;
 import org.jboss.forge.container.modules.AddonModuleLoader;
+import org.jboss.forge.container.spi.ContainerLifecycleListener;
 import org.jboss.modules.Module;
 import org.jboss.modules.log.StreamModuleLogger;
 
@@ -68,6 +70,7 @@ public class ForgeImpl implements Forge
    @Override
    public Forge start(ClassLoader loader)
    {
+      fireBeforeContainerStartedEvent(loader);
       if (!alive)
       {
          try
@@ -89,10 +92,37 @@ public class ForgeImpl implements Forge
          }
          finally
          {
+            fireBeforeContainerStoppedEvent(loader);
             registry.stopAll();
          }
       }
+      fireAfterContainerStoppedEvent(loader);
       return this;
+   }
+
+   private void fireBeforeContainerStartedEvent(ClassLoader loader)
+   {
+      for (ContainerLifecycleListener listener : ServiceLoader.load(ContainerLifecycleListener.class, loader))
+      {
+         listener.beforeStart(this);
+      }
+   }
+
+   private void fireBeforeContainerStoppedEvent(ClassLoader loader)
+   {
+      for (ContainerLifecycleListener listener : ServiceLoader.load(ContainerLifecycleListener.class, loader))
+      {
+         listener.beforeStop(this);
+      }
+   }
+
+   private void fireAfterContainerStoppedEvent(ClassLoader loader)
+   {
+      for (ContainerLifecycleListener listener : ServiceLoader.load(ContainerLifecycleListener.class, loader))
+      {
+         listener.afterStop(this);
+      }
+
    }
 
    private boolean isStartingAddons(Set<Future<Addon>> futures)
