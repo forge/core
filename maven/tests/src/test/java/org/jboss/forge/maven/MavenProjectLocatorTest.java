@@ -69,6 +69,7 @@ public class MavenProjectLocatorTest
       DirectoryResource addonDir = factory.create(forge.getAddonDir()).reify(DirectoryResource.class);
       DirectoryResource projectDir = addonDir.createTempResource();
       FileResource<?> pomFile = projectDir.getChild("pom.xml").reify(FileResource.class);
+      Assert.assertFalse(locator.containsProject(projectDir));
       pomFile.createNewFile();
       pomFile.setContents(getClass().getClassLoader().getResourceAsStream("/pom-template.xml"));
 
