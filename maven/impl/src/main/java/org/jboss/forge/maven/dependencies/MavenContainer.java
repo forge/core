@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.apache.maven.model.building.DefaultModelBuilderFactory;
 import org.apache.maven.model.building.ModelBuilder;
+import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.apache.maven.repository.internal.MavenServiceLocator;
 import org.apache.maven.settings.Profile;
 import org.apache.maven.settings.Repository;
@@ -29,6 +30,7 @@ import org.sonatype.aether.connector.wagon.WagonProvider;
 import org.sonatype.aether.connector.wagon.WagonRepositoryConnectorFactory;
 import org.sonatype.aether.impl.internal.DefaultServiceLocator;
 import org.sonatype.aether.repository.Authentication;
+import org.sonatype.aether.repository.LocalRepository;
 import org.sonatype.aether.repository.RemoteRepository;
 import org.sonatype.aether.spi.connector.RepositoryConnectorFactory;
 
@@ -122,5 +124,18 @@ public class MavenContainer
    private String getUserHomePath()
    {
       return getUserHomeDir().getAbsolutePath();
+   }
+
+   MavenRepositorySystemSession setupRepoSession(final RepositorySystem repoSystem, final Settings settings)
+   {
+      MavenRepositorySystemSession session = new MavenRepositorySystemSession();
+      session.setOffline(false);
+
+      LocalRepository localRepo = new LocalRepository(new File(settings.getLocalRepository()), "");
+      session.setLocalRepositoryManager(repoSystem.newLocalRepositoryManager(localRepo));
+      session.setTransferErrorCachingEnabled(false);
+      session.setNotFoundCachingEnabled(false);
+//      session.setWorkspaceReader(new ClasspathWorkspaceReader());
+      return session;
    }
 }

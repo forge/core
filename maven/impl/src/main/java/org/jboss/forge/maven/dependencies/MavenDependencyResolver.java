@@ -10,7 +10,6 @@ package org.jboss.forge.maven.dependencies;
 import static org.jboss.forge.maven.dependencies.MavenConvertUtils.convertToMavenRepos;
 import static org.jboss.forge.maven.dependencies.MavenConvertUtils.coordinateToMavenArtifact;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -33,7 +32,6 @@ import org.jboss.forge.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.dependencies.builder.DependencyNodeBuilder;
 import org.jboss.forge.resource.FileResource;
 import org.jboss.forge.resource.ResourceFactory;
-import org.jboss.shrinkwrap.resolver.impl.maven.aether.ClasspathWorkspaceReader;
 import org.jboss.shrinkwrap.resolver.impl.maven.logging.LogTransferListener;
 import org.sonatype.aether.RepositorySystem;
 import org.sonatype.aether.artifact.Artifact;
@@ -42,7 +40,6 @@ import org.sonatype.aether.collection.DependencyCollectionContext;
 import org.sonatype.aether.collection.DependencyTraverser;
 import org.sonatype.aether.graph.DependencyFilter;
 import org.sonatype.aether.graph.DependencyNode;
-import org.sonatype.aether.repository.LocalRepository;
 import org.sonatype.aether.repository.RemoteRepository;
 import org.sonatype.aether.resolution.ArtifactRequest;
 import org.sonatype.aether.resolution.ArtifactResolutionException;
@@ -77,7 +74,7 @@ public class MavenDependencyResolver implements DependencyResolver, AddonDepende
       RepositorySystem system = container.getRepositorySystem();
       Settings settings = container.getSettings();
 
-      MavenRepositorySystemSession session = setupRepoSession(system, settings);
+      MavenRepositorySystemSession session = container.setupRepoSession(system, settings);
 
       Artifact queryArtifact = coordinateToMavenArtifact(query.getCoordinate());
 
@@ -147,7 +144,7 @@ public class MavenDependencyResolver implements DependencyResolver, AddonDepende
     * @param query
     * @return
     */
-   private VersionRangeResult getVersions(DependencyQuery query)
+   VersionRangeResult getVersions(DependencyQuery query)
    {
       Coordinate dep = query.getCoordinate();
       try
@@ -165,7 +162,7 @@ public class MavenDependencyResolver implements DependencyResolver, AddonDepende
          RepositorySystem maven = container.getRepositorySystem();
          Settings settings = container.getSettings();
 
-         MavenRepositorySystemSession session = setupRepoSession(maven, settings);
+         MavenRepositorySystemSession session = container.setupRepoSession(maven, settings);
 
          Artifact artifact = coordinateToMavenArtifact(dep);
 
@@ -183,19 +180,6 @@ public class MavenDependencyResolver implements DependencyResolver, AddonDepende
       }
    }
 
-   private MavenRepositorySystemSession setupRepoSession(final RepositorySystem repoSystem, final Settings settings)
-   {
-      MavenRepositorySystemSession session = new MavenRepositorySystemSession();
-      session.setOffline(false);
-
-      LocalRepository localRepo = new LocalRepository(new File(settings.getLocalRepository()), "");
-      session.setLocalRepositoryManager(repoSystem.newLocalRepositoryManager(localRepo));
-      session.setTransferErrorCachingEnabled(false);
-      session.setNotFoundCachingEnabled(false);
-      session.setWorkspaceReader(new ClasspathWorkspaceReader());
-      return session;
-   }
-
    @Override
    public Dependency resolveArtifact(DependencyQuery query)
    {
@@ -205,7 +189,7 @@ public class MavenDependencyResolver implements DependencyResolver, AddonDepende
       List<RemoteRepository> remoteRepos = convertToMavenRepos(query.getDependencyRepositories(), settings);
       remoteRepos.addAll(container.getEnabledRepositoriesFromProfile(settings));
 
-      MavenRepositorySystemSession session = setupRepoSession(system, settings);
+      MavenRepositorySystemSession session = container.setupRepoSession(system, settings);
 
       Artifact queryArtifact = coordinateToMavenArtifact(query.getCoordinate());
       ArtifactRequest request = new ArtifactRequest(queryArtifact, remoteRepos, null);
@@ -238,7 +222,7 @@ public class MavenDependencyResolver implements DependencyResolver, AddonDepende
       {
          RepositorySystem system = container.getRepositorySystem();
          Settings settings = container.getSettings();
-         MavenRepositorySystemSession session = setupRepoSession(system, settings);
+         MavenRepositorySystemSession session = container.setupRepoSession(system, settings);
          session.setTransferListener(new LogTransferListener());
 
          session.setDependencyTraverser(new DependencyTraverser()
@@ -284,7 +268,7 @@ public class MavenDependencyResolver implements DependencyResolver, AddonDepende
       {
          RepositorySystem system = container.getRepositorySystem();
          Settings settings = container.getSettings();
-         MavenRepositorySystemSession session = setupRepoSession(system, settings);
+         MavenRepositorySystemSession session = container.setupRepoSession(system, settings);
          session.setTransferListener(new LogTransferListener());
 
          session.setDependencyTraverser(new DependencyTraverser()
