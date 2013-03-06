@@ -33,6 +33,7 @@ import org.jboss.forge.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.dependencies.builder.DependencyNodeBuilder;
 import org.jboss.forge.resource.FileResource;
 import org.jboss.forge.resource.ResourceFactory;
+import org.jboss.shrinkwrap.resolver.impl.maven.aether.ClasspathWorkspaceReader;
 import org.jboss.shrinkwrap.resolver.impl.maven.logging.LogTransferListener;
 import org.sonatype.aether.RepositorySystem;
 import org.sonatype.aether.artifact.Artifact;
@@ -142,7 +143,7 @@ public class MavenDependencyResolver implements DependencyResolver, AddonDepende
 
    /**
     * Returns the versions of a specific artifact
-    * 
+    *
     * @param query
     * @return
     */
@@ -191,7 +192,7 @@ public class MavenDependencyResolver implements DependencyResolver, AddonDepende
       session.setLocalRepositoryManager(repoSystem.newLocalRepositoryManager(localRepo));
       session.setTransferErrorCachingEnabled(false);
       session.setNotFoundCachingEnabled(false);
-
+      session.setWorkspaceReader(new ClasspathWorkspaceReader());
       return session;
    }
 
@@ -230,6 +231,7 @@ public class MavenDependencyResolver implements DependencyResolver, AddonDepende
       }
    }
 
+   @Override
    public org.jboss.forge.dependencies.DependencyNode resolveAddonDependencyHierarchy(final DependencyQuery query)
    {
       try

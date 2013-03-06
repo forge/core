@@ -7,7 +7,7 @@ import org.sonatype.aether.util.graph.selector.StaticDependencySelector;
 
 /**
  * A dependency selector that filters based on their scope and classifier "forge-addon"
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class AddonDependencySelector
@@ -26,6 +26,7 @@ public class AddonDependencySelector
       this.depth = depth;
    }
 
+   @Override
    public boolean selectDependency(Dependency dependency)
    {
       if (depth < 1)
@@ -42,6 +43,7 @@ public class AddonDependencySelector
       return result;
    }
 
+   @Override
    public DependencySelector deriveChildSelector(DependencyCollectionContext context)
    {
       if ((depth > 0) && FORGE_ADDON.equals(context.getDependency().getArtifact().getClassifier()))
