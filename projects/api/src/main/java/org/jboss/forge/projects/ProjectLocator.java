@@ -1,5 +1,6 @@
 package org.jboss.forge.projects;
 
+import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.resource.DirectoryResource;
 import org.jboss.forge.resource.Resource;
 
@@ -8,6 +9,7 @@ import org.jboss.forge.resource.Resource;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
+@Exported
 public interface ProjectLocator
 {
    /**
