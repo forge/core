@@ -32,8 +32,8 @@ public class MavenProjectLocatorTest
    @Deployment
    @Dependencies({
             @Addon(name = "org.jboss.forge:resources", version = "2.0.0-SNAPSHOT"),
-            @Addon(name = "org.jboss.forge:maven", version = "2.0.0-SNAPSHOT"),
-            @Addon(name = "org.jboss.forge:projects", version = "2.0.0-SNAPSHOT")
+            @Addon(name = "org.jboss.forge:projects", version = "2.0.0-SNAPSHOT"),
+            @Addon(name = "org.jboss.forge:maven", version = "2.0.0-SNAPSHOT")
    })
    public static ForgeArchive getDeployment()
    {
@@ -68,8 +68,9 @@ public class MavenProjectLocatorTest
    {
       DirectoryResource addonDir = factory.create(forge.getAddonDir()).reify(DirectoryResource.class);
       DirectoryResource projectDir = addonDir.createTempResource();
-      projectDir.getChild("pom.xml").reify(FileResource.class)
-               .setContents(getClass().getClassLoader().getResourceAsStream("/pom-template.xml"));
+      FileResource<?> pomFile = projectDir.getChild("pom.xml").reify(FileResource.class);
+      pomFile.createNewFile();
+      pomFile.setContents(getClass().getClassLoader().getResourceAsStream("/pom-template.xml"));
 
       Assert.assertTrue(locator.containsProject(projectDir));
    }

@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.jboss.forge.container.util.Assert;
 import org.jboss.forge.resource.events.ResourceCreated;
 import org.jboss.forge.resource.events.ResourceDeleted;
 import org.jboss.forge.resource.events.ResourceModified;
@@ -273,6 +274,8 @@ public abstract class FileResource<T extends FileResource<T>> extends AbstractRe
     */
    public T setContents(final InputStream data)
    {
+      Assert.notNull(data, "InputStream must not be null.");
+      
       try
       {
          if (!exists())

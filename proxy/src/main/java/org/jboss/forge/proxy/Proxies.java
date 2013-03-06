@@ -89,7 +89,10 @@ public class Proxies
       }
       catch (InstantiationException e)
       {
-         throw new IllegalStateException(e);
+         throw new IllegalStateException(
+                  "Could not instantiate proxy for object [" + instance + "] of type [" + unwrappedInstanceType
+                           + "]. For optimal proxy compatability, ensure " +
+                           "that this type is an interface, or a class with a default constructor.", e);
       }
       catch (IllegalAccessException e)
       {
@@ -162,7 +165,10 @@ public class Proxies
       }
       catch (InstantiationException e)
       {
-         throw new IllegalStateException(e);
+         throw new IllegalStateException(
+                  "Could not instantiate proxy for type [" + type
+                           + "]. For optimal proxy compatability, ensure " +
+                           "that this type is an interface, or a class with a default constructor.", e);
       }
       catch (IllegalAccessException e)
       {
@@ -269,7 +275,7 @@ public class Proxies
 
    /**
     * Unwraps the proxy type if javassist or CGLib is used
-    *
+    * 
     * @param type the class type
     * @return the unproxied class name
     */
@@ -293,9 +299,9 @@ public class Proxies
 
    /**
     * This method tests if two proxied objects are equivalent.
-    *
+    * 
     * It does so by comparing the class names and the hashCode, since they may be loaded from different classloaders.
-    *
+    * 
     */
    public static boolean areEquivalent(Object proxiedObj, Object anotherProxiedObj)
    {
@@ -341,5 +347,31 @@ public class Proxies
    public static boolean isInstance(Class<?> type, Object proxiedObject)
    {
       return type.isInstance(unwrap(proxiedObject));
+   }
+
+   /**
+    * Determine whether or not a given {@link Class} type is instantiable.
+    */
+   public static boolean isInstantiable(Class<?> type)
+   {
+      if (type != null)
+      {
+         try
+         {
+            if (type.isInterface())
+               return true;
+            type.getConstructor();
+            return true;
+         }
+         catch (SecurityException e)
+         {
+            return false;
+         }
+         catch (NoSuchMethodException e)
+         {
+            return false;
+         }
+      }
+      return false;
    }
 }

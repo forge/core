@@ -18,6 +18,11 @@
          <groupId>org.jboss.forge</groupId>
          <artifactId>resources-api</artifactId>
          <scope>provided</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>projects-api</artifactId>
+         <scope>provided</scope>
          <version>2.0.0-SNAPSHOT</version>
       </dependency>
       <dependency>

@@ -23,14 +23,14 @@ class ProxyTypeInspector
                && !baseClass.isInterface()
                && baseClass.getSuperclass() != null
                && !baseClass.getSuperclass().equals(Object.class)
-               && !isInstantiable(baseClass))
+               && !Proxies.isInstantiable(baseClass))
       {
          baseClass = baseClass.getSuperclass();
       }
 
       if (baseClass != null && ClassLoaders.containsClass(loader, baseClass.getName())
                && !Object.class.equals(baseClass)
-               && (isInstantiable(baseClass) || baseClass.isInterface()))
+               && (Proxies.isInstantiable(baseClass) || baseClass.isInterface()))
       {
          hierarchy.add(ClassLoaders.loadClass(loader, baseClass));
       }
@@ -47,23 +47,6 @@ class ProxyTypeInspector
       }
 
       return hierarchy.toArray(new Class<?>[hierarchy.size()]);
-   }
-
-   private static boolean isInstantiable(Class<?> type)
-   {
-      try
-      {
-         type.getConstructor();
-         return true;
-      }
-      catch (SecurityException e)
-      {
-         return false;
-      }
-      catch (NoSuchMethodException e)
-      {
-         return false;
-      }
    }
 
 }

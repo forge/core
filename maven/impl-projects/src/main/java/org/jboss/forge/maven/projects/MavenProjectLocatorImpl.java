@@ -27,12 +27,12 @@ import org.jboss.forge.resource.Resource;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class MavenProjectLocator implements ProjectLocator
+public class MavenProjectLocatorImpl implements MavenProjectLocator
 {
    private ProjectFactory factory;
 
    @Inject
-   public MavenProjectLocator(final ProjectFactory factory)
+   public MavenProjectLocatorImpl(final ProjectFactory factory)
    {
       this.factory = factory;
    }

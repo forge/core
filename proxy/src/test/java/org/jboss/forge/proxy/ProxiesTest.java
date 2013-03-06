@@ -84,4 +84,11 @@ public class ProxiesTest
       Assert.assertTrue(Proxies.isInstance(Bean.class, enhancedObj));
    }
 
+   @Test
+   public void testIsInstantiable() throws Exception
+   {
+      Assert.assertFalse(Proxies.isInstantiable(TypeWithNonDefaultConstructor.class));
+      Assert.assertTrue(Proxies.isInstantiable(Bean.class));
+   }
+
 }
