@@ -206,9 +206,18 @@ public class ForgeImpl implements Forge
    }
 
    @Override
-   public Forge addContainerLifecycleListener(ContainerLifecycleListener listener)
+   public ListenerRegistration<ContainerLifecycleListener> addContainerLifecycleListener(
+            final ContainerLifecycleListener listener)
    {
       registeredListeners.add(listener);
-      return this;
+      return new ListenerRegistration<ContainerLifecycleListener>()
+      {
+         @Override
+         public ContainerLifecycleListener removeListener()
+         {
+            registeredListeners.remove(listener);
+            return listener;
+         }
+      };
    }
 }

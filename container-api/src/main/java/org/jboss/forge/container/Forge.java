@@ -35,5 +35,6 @@ public interface Forge
 
    public String getVersion();
 
-   public Forge addContainerLifecycleListener(ContainerLifecycleListener listener);
+   public ListenerRegistration<ContainerLifecycleListener> addContainerLifecycleListener(
+            ContainerLifecycleListener listener);
 }
