@@ -42,13 +42,13 @@ public class GreetingListener implements ContainerLifecycleListener
    @Override
    public void beforeStop(Forge forge) throws ContainerException
    {
-      logger.info("Shutting down JBoss Forge...");
+      // Do nothing
    }
 
    @Override
    public void afterStop(Forge forge) throws ContainerException
    {
-      logger.info("JBoss Forge has been shutdown successfully. Come back anytime!");
+      // Do nothing
    }
 
 }
