@@ -13,29 +13,27 @@ import org.jboss.forge.container.spi.ContainerLifecycleListener;
 
 public interface Forge
 {
-   public abstract Forge startAsync();
+   public Forge startAsync();
 
-   public abstract Forge startAsync(ClassLoader loader);
+   public Forge startAsync(ClassLoader loader);
 
-   public abstract Forge start();
+   public Forge start();
 
-   public abstract Forge start(ClassLoader loader);
+   public Forge start(ClassLoader loader);
 
-   public abstract Forge stop();
+   public Forge stop();
 
-   public abstract AddonRegistry getAddonRegistry();
+   public Forge setServerMode(boolean server);
 
-   public abstract Forge setAddonDir(File dir);
+   public Forge setAddonDir(File dir);
 
-   public abstract Forge setServerMode(boolean server);
+   public File getAddonDir();
 
-   public abstract File getAddonDir();
+   public AddonRegistry getAddonRegistry();
 
-   public abstract AddonRepository getRepository();
+   public AddonRepository getRepository();
 
-   public abstract Forge registerContainerLifecycleListener(ContainerLifecycleListener listener);
+   public String getVersion();
 
-   public abstract Forge unregisterContainerLifecycleListener(ContainerLifecycleListener listener);
-
-   public abstract String getVersion();
+   public Forge addContainerLifecycleListener(ContainerLifecycleListener listener);
 }
