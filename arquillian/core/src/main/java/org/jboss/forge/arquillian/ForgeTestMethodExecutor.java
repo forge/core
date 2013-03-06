@@ -99,9 +99,9 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
 
          if (instance == null)
             throw new IllegalStateException(
-                     "Test class could not be found in any deployment. "
-                              + "You must have one @Deployment(testable=true) deployment that contains a "
-                              + "non 'ClassLoading Only' Addon(e.g. An addon that is capable of providing remote services.).");
+                     "Test runner could not locate test class in any deployment. "
+                              + "Verify that your test case is deployed in an addon that supports remote " +
+                              "services (Did you forget beans.xml in your deployment?)");
 
          TestResult result = null;
          try
@@ -159,7 +159,7 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
       {
          throw new IllegalStateException("Error launching test "
                   + testMethodExecutor.getInstance().getClass().getName() + "."
-                  + testMethodExecutor.getMethod().getName()+"()", e);
+                  + testMethodExecutor.getMethod().getName() + "()", e);
       }
    }
 }
