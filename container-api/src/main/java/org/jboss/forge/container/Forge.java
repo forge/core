@@ -9,6 +9,8 @@ package org.jboss.forge.container;
 
 import java.io.File;
 
+import org.jboss.forge.container.spi.ContainerLifecycleListener;
+
 public interface Forge
 {
    public abstract Forge startAsync();
@@ -30,6 +32,10 @@ public interface Forge
    public abstract File getAddonDir();
 
    public abstract AddonRepository getRepository();
+
+   public abstract Forge registerContainerLifecycleListener(ContainerLifecycleListener listener);
+
+   public abstract Forge unregisterContainerLifecycleListener(ContainerLifecycleListener listener);
 
    public abstract String getVersion();
 }

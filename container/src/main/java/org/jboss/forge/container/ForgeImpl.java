@@ -1,7 +1,9 @@
 package org.jboss.forge.container;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.Future;
@@ -25,13 +27,13 @@ public class ForgeImpl implements Forge
    private boolean serverMode = true;
    private AddonRepository repository = AddonRepositoryImpl.forDefaultDirectory();
    private AddonRegistryImpl registry = new AddonRegistryImpl(this);
+   private List<ContainerLifecycleListener> registeredListeners = new ArrayList<ContainerLifecycleListener>();
 
    public ForgeImpl()
    {
       if (!AddonRepositoryImpl.hasRuntimeAPIVersion())
          logger.warning("Could not detect Forge runtime version - " +
                   "loading all addons, but failures may occur if versions are not compatible.");
-
    }
 
    public Forge enableLogging()
@@ -102,6 +104,10 @@ public class ForgeImpl implements Forge
 
    private void fireBeforeContainerStartedEvent(ClassLoader loader)
    {
+      for (ContainerLifecycleListener listener : registeredListeners)
+      {
+         listener.beforeStart(this);
+      }
       for (ContainerLifecycleListener listener : ServiceLoader.load(ContainerLifecycleListener.class, loader))
       {
          listener.beforeStart(this);
@@ -110,6 +116,10 @@ public class ForgeImpl implements Forge
 
    private void fireBeforeContainerStoppedEvent(ClassLoader loader)
    {
+      for (ContainerLifecycleListener listener : registeredListeners)
+      {
+         listener.beforeStop(this);
+      }
       for (ContainerLifecycleListener listener : ServiceLoader.load(ContainerLifecycleListener.class, loader))
       {
          listener.beforeStop(this);
@@ -118,6 +128,11 @@ public class ForgeImpl implements Forge
 
    private void fireAfterContainerStoppedEvent(ClassLoader loader)
    {
+      for (ContainerLifecycleListener listener : registeredListeners)
+      {
+         listener.afterStop(this);
+      }
+
       for (ContainerLifecycleListener listener : ServiceLoader.load(ContainerLifecycleListener.class, loader))
       {
          listener.afterStop(this);
@@ -188,5 +203,19 @@ public class ForgeImpl implements Forge
    public String getVersion()
    {
       return AddonRepositoryImpl.getRuntimeAPIVersion();
+   }
+
+   @Override
+   public Forge registerContainerLifecycleListener(ContainerLifecycleListener listener)
+   {
+      registeredListeners.add(listener);
+      return this;
+   }
+
+   @Override
+   public Forge unregisterContainerLifecycleListener(ContainerLifecycleListener listener)
+   {
+      registeredListeners.remove(listener);
+      return this;
    }
 }
