@@ -17,12 +17,6 @@ import org.jboss.forge.projects.ProjectFacet;
 public class ForgeAddonFacet extends BaseFacet<Project> implements ProjectFacet
 {
    @Override
-   public Project getOrigin()
-   {
-      return null;
-   }
-
-   @Override
    public boolean install()
    {
       return false;
@@ -35,15 +29,8 @@ public class ForgeAddonFacet extends BaseFacet<Project> implements ProjectFacet
    }
 
    @Override
-   public boolean uninstall()
+   public void setOrigin(Project origin)
    {
-      return false;
+      super.setOrigin(origin);
    }
-
-   @Override
-   public void setOrigin(Project project)
-   {
-
-   }
-
 }

@@ -27,6 +27,24 @@ public class BaseFacetedTest
       Assert.assertEquals(facet, faceted.getFacet(MockFacet.class));
    }
 
+   @Test(expected=IllegalArgumentException.class)
+   public void testInstallNullOrigin()
+   {
+      MockFaceted faceted = new MockFaceted();
+      MockFacet facet = new MockFacet(null);
+
+      Assert.assertTrue(faceted.install(facet));
+   }
+
+   @Test(expected=IllegalArgumentException.class)
+   public void testInstallDifferentOrigin()
+   {
+      MockFaceted faceted = new MockFaceted();
+      MockFacet facet = new MockFacet(new MockFaceted());
+
+      Assert.assertTrue(faceted.install(facet));
+   }
+
    @Test
    public void testInstallUnsupported()
    {

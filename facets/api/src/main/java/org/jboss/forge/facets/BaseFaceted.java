@@ -86,7 +86,7 @@ public abstract class BaseFaceted<FACETTYPE extends Facet<?>> implements Faceted
    public boolean install(FACETTYPE facet)
    {
       if (facet.getOrigin() != this)
-         throw new IllegalArgumentException("Facet.getOrigin() was [" + facet.getOrigin()
+         throw new IllegalArgumentException("[" + facet + "].getOrigin() was [" + facet.getOrigin()
                   + "] but needed to be [" + this + "].");
 
       if (supports(facet))
