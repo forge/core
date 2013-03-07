@@ -2,7 +2,6 @@ package org.jboss.forge.projects;
 
 import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.resource.DirectoryResource;
-import org.jboss.forge.resource.Resource;
 
 /**
  * Locates project root directories, and creates instances of projects for that type.
@@ -13,12 +12,13 @@ import org.jboss.forge.resource.Resource;
 public interface ProjectLocator
 {
    /**
-    * Create a {@link Project} of the given {@link ProjectType} in the specified {@link DirectoryResource}.
+    * Create a new or existing {@link Project} with the given {@link DirectoryResource} as
+    * {@link Project#getProjectRoot()}.
     */
-   public Project createProject(DirectoryResource targetDir, ProjectType value);
+   public Project createProject(DirectoryResource targetDir);
 
    /**
-    * Returns true if the given {@link Resource} contains an existing {@link Project}.
+    * Returns true if the given {@link DirectoryResource} contains an existing {@link Project}.
     */
-   public boolean containsProject(Resource<?> resource);
+   public boolean containsProject(DirectoryResource resource);
 }

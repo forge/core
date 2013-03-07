@@ -8,7 +8,10 @@ package org.jboss.forge.resource;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
@@ -42,15 +45,16 @@ public class ResourceFactoryImpl implements ResourceFactory, ResourceTransaction
       T result = null;
       synchronized (this)
       {
-         List<Resource<?>> generated = new ArrayList<Resource<?>>();
+         Map<Class<?>, Resource<?>> generated = new HashMap<Class<?>, Resource<?>>();
          for (ExportedInstance<ResourceGenerator> instance : getRegisteredResourceGenerators())
          {
             ResourceGenerator generator = instance.get();
             if (generator.handles(type, underlyingResource))
             {
-               if (type.isAssignableFrom(generator.getResourceType(type, underlyingResource)))
+               Class resourceType = generator.getResourceType(type, underlyingResource);
+               if (type.isAssignableFrom(resourceType))
                {
-                  generated.add(generator.getResource(this, type, underlyingResource));
+                  generated.put(resourceType, generator.getResource(this, type, underlyingResource));
                }
             }
             instance.release(generator);
@@ -59,10 +63,16 @@ public class ResourceFactoryImpl implements ResourceFactory, ResourceTransaction
          /*
           * Choose the resource that is most specialized. TODO This needs to handle forks in the type hierarchy.
           */
-         for (Resource<?> resource : generated)
+         for (Entry<Class<?>, Resource<?>> entry : generated.entrySet())
          {
+            Class<?> generatedType = entry.getKey();
+            Resource<?> resource = entry.getValue();
             if (result == null || result.getClass().isAssignableFrom(resource.getClass()))
+            {
                result = (T) resource;
+               if (generatedType.equals(type))
+                  break;
+            }
          }
       }
       return result;

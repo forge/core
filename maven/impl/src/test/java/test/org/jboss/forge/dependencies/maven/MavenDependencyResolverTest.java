@@ -48,12 +48,12 @@ public class MavenDependencyResolverTest
    @Test
    public void testResolveClassifiedArtifact() throws Exception
    {
-      CoordinateBuilder coordinate = CoordinateBuilder.create("org.jboss.forge:example:2.0.0-SNAPSHOT")
+      CoordinateBuilder coordinate = CoordinateBuilder.create("org.jboss.forge:resources:2.0.0-SNAPSHOT")
                .setClassifier("forge-addon");
       DependencyQueryBuilder query = DependencyQueryBuilder.create(coordinate).setFilter(addonFilter);
       Set<Dependency> artifacts = resolver.resolveDependencies(query);
       Assert.assertFalse(artifacts.isEmpty());
-      Assert.assertEquals(1, artifacts.size());
+      Assert.assertEquals(3, artifacts.size());
       Dependency dependency = artifacts.iterator().next();
       Assert.assertEquals("forge-addon", dependency.getCoordinate().getClassifier());
       Assert.assertNotNull(dependency.getScopeType());
@@ -94,7 +94,7 @@ public class MavenDependencyResolverTest
    public void testResolveArtifact() throws Exception
    {
       DependencyQuery query = DependencyQueryBuilder
-               .create("org.jboss.forge:example:jar:forge-addon:2.0.0-SNAPSHOT");
+               .create("org.jboss.forge:resources:jar:forge-addon:2.0.0-SNAPSHOT");
       Dependency artifact = resolver.resolveArtifact(query);
       Assert.assertNotNull(artifact);
       Assert.assertTrue("Artifact does not exist: " + artifact, artifact.getArtifact().exists());
@@ -105,11 +105,11 @@ public class MavenDependencyResolverTest
    {
       DependencyNode root = resolver
                .resolveDependencyHierarchy(DependencyQueryBuilder
-                        .create("org.jboss.forge:example:jar:forge-addon:2.0.0-SNAPSHOT"));
+                        .create("org.jboss.forge:resources:jar:forge-addon:2.0.0-SNAPSHOT"));
       Assert.assertNotNull(root);
-      Assert.assertEquals(3, root.getChildren().size());
-      Assert.assertEquals("example2", root.getChildren().get(1).getDependency().getCoordinate().getArtifactId());
-      Assert.assertEquals("commons-lang", root.getChildren().get(2).getDependency().getCoordinate().getArtifactId());
+      Assert.assertEquals(5, root.getChildren().size());
+      Assert.assertEquals("convert", root.getChildren().get(1).getDependency().getCoordinate().getArtifactId());
+      Assert.assertEquals("ui-hints", root.getChildren().get(2).getDependency().getCoordinate().getArtifactId());
    }
 
    @Test

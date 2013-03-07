@@ -1,4 +1,4 @@
-package org.jboss.forge.maven;
+package org.jboss.forge.projects.impl;
 
 /*
  * Copyright 2012 Red Hat, Inc. and/or its affiliates.
@@ -17,9 +17,10 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.AddonDependency;
 import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.Forge;
-import org.jboss.forge.maven.projects.MavenProjectLocator;
+import org.jboss.forge.container.util.Predicate;
+import org.jboss.forge.projects.Project;
+import org.jboss.forge.projects.ProjectFactory;
 import org.jboss.forge.resource.DirectoryResource;
-import org.jboss.forge.resource.FileResource;
 import org.jboss.forge.resource.ResourceFactory;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
@@ -27,7 +28,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class MavenProjectLocatorTest
+public class ProjectFactoryImplTest
 {
    @Deployment
    @Dependencies({
@@ -55,12 +56,12 @@ public class MavenProjectLocatorTest
    private Forge forge;
 
    @Inject
-   private MavenProjectLocator locator;
+   private ProjectFactory projectFactory;
 
    @Test
    public void testInjectionNotNull()
    {
-      Assert.assertNotNull(locator);
+      Assert.assertNotNull(projectFactory);
    }
 
    @Test
@@ -68,13 +69,21 @@ public class MavenProjectLocatorTest
    {
       DirectoryResource addonDir = factory.create(forge.getAddonDir()).reify(DirectoryResource.class);
       DirectoryResource projectDir = addonDir.createTempResource();
-      FileResource<?> pomFile = projectDir.getChild("pom.xml").reify(FileResource.class);
-      Assert.assertFalse(locator.containsProject(projectDir));
-      pomFile.createNewFile();
-      pomFile.setContents(getClass().getClassLoader().getResourceAsStream("/pom-template.xml"));
-
-      Assert.assertTrue(locator.containsProject(projectDir));
-
+      Assert.assertNull(projectFactory.findProject(projectDir));
+      
+      Project project = projectFactory.createProject(projectDir);
+      
+      Assert.assertNotNull(project);
+      Assert.assertNotNull(projectFactory.findProject(projectDir));
+      Assert.assertNull(projectFactory.findProject(projectDir, new Predicate<Project>()
+      {
+         @Override
+         public boolean accept(Project type)
+         {
+            return false;
+         }
+      }));
+      
       projectDir.delete(true);
    }
 }

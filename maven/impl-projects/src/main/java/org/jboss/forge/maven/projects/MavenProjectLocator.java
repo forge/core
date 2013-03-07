@@ -6,39 +6,21 @@
  */
 package org.jboss.forge.maven.projects;
 
-import java.io.File;
-
-import javax.inject.Inject;
-
 import org.jboss.forge.projects.BaseProject;
 import org.jboss.forge.projects.Project;
 import org.jboss.forge.projects.ProjectFacet;
-import org.jboss.forge.projects.ProjectFactory;
 import org.jboss.forge.projects.ProjectLocator;
-import org.jboss.forge.projects.ProjectType;
 import org.jboss.forge.resource.DirectoryResource;
 import org.jboss.forge.resource.FileResource;
 import org.jboss.forge.resource.Resource;
 
 /**
- * Locate a Maven project starting in the current directory, and progressing up the chain of parent directories until a
- * project is found, or the root directory is found. If a project is found, return the {@link File} referring to the
- * directory containing that project, or return null if no projects were found.
- * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class MavenProjectLocatorImpl implements MavenProjectLocator
+public class MavenProjectLocator implements ProjectLocator
 {
-   private ProjectFactory factory;
-
-   @Inject
-   public MavenProjectLocatorImpl(final ProjectFactory factory)
-   {
-      this.factory = factory;
-   }
-
    @Override
-   public Project createProject(final DirectoryResource dir, ProjectType type)
+   public Project createProject(final DirectoryResource dir)
    {
       Project project = new BaseProject()
       {
@@ -55,15 +37,19 @@ public class MavenProjectLocatorImpl implements MavenProjectLocator
          }
       };
 
-      project.install(new MavenFacetImpl());
-
-      Iterable<Class<? extends ProjectFacet>> requiredFacets = type.getRequiredFacets();
+      MavenFacetImpl mavenFacetImpl = new MavenFacetImpl();
+      mavenFacetImpl.setOrigin(project);
+      if (!project.install(mavenFacetImpl))
+      {
+         throw new IllegalStateException("Could not install Maven into Project located at ["
+                  + dir.getFullyQualifiedName() + "]");
+      }
 
       return project;
    }
 
    @Override
-   public boolean containsProject(final Resource<?> dir)
+   public boolean containsProject(final DirectoryResource dir)
    {
       Resource<?> pom = dir.getChild("pom.xml");
       return pom.exists() && pom instanceof FileResource;

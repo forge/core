@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
    <modelVersion>4.0.0</modelVersion>
    <parent>
       <groupId>org.jboss.forge</groupId>
@@ -8,10 +9,19 @@
    <artifactId>maven-api</artifactId>
    <name>Forge - Maven API</name>
 
+   <properties>
+      <version.maven>3.0.5</version.maven>
+   </properties>
+
    <dependencies>
       <dependency>
          <groupId>org.jboss.forge</groupId>
          <artifactId>forge-addon-container-api</artifactId>
+         <scope>provided</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>dependencies-api</artifactId>
          <scope>provided</scope>
       </dependency>
       <dependency>
@@ -31,10 +41,10 @@
          <scope>provided</scope>
       </dependency>
 
-      <!-- ShrinkWrap Resolver -->
       <dependency>
-         <groupId>org.jboss.shrinkwrap.resolver</groupId>
-         <artifactId>shrinkwrap-resolver-api-maven</artifactId>
+         <groupId>org.apache.maven</groupId>
+         <artifactId>maven-model</artifactId>
+         <version>${version.maven}</version>
       </dependency>
    </dependencies>
 

@@ -7,13 +7,14 @@
 package org.jboss.forge.maven.projects;
 
 import org.jboss.forge.facets.BaseFacet;
+import org.jboss.forge.maven.resources.MavenPomResource;
 import org.jboss.forge.projects.Project;
 import org.jboss.forge.projects.ProjectFacet;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class MavenFacetImpl extends BaseFacet<Project> implements ProjectFacet
+public class MavenFacetImpl extends BaseFacet<Project> implements ProjectFacet, MavenFacet
 {
 
    @Override
@@ -25,13 +26,28 @@ public class MavenFacetImpl extends BaseFacet<Project> implements ProjectFacet
    @Override
    public boolean install()
    {
-      return false;
+      if (!isInstalled())
+      {
+         MavenPomResource pom = getPomResource();
+         if (!pom.createNewFile())
+            throw new IllegalStateException("Could not create POM file.");
+
+         pom.setContents(getClass().getClassLoader().getResourceAsStream("/pom-template.xml"));
+      }
+      return isInstalled();
+   }
+
+   @Override
+   public MavenPomResource getPomResource()
+   {
+      return (MavenPomResource) getOrigin().getProjectRoot().getChild("pom.xml").reify(MavenPomResource.class);
    }
 
    @Override
    public boolean isInstalled()
    {
-      return false;
+      MavenPomResource pom = getPomResource();
+      return pom != null && pom.exists();
    }
 
 }

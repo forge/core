@@ -1,27 +1,10 @@
-/*
- * Copyright 2013 Red Hat, Inc. and/or its affiliates.
- *
- * Licensed under the Eclipse Public License version 1.0, available at
- * http://www.eclipse.org/legal/epl-v10.html
- */
-package snippet;
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   <modelVersion>4.0.0</modelVersion>
 
-/**
- * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- *
- */
-public class Snippet
-{
-   <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-      <modelVersion>4.0.0</modelVersion>
-   
-      <artifactId>projects-impl</artifactId>
-      <groupId>org.example</groupId>
-      <name>Forge - Projects Impl</name>
-   
-      <dependencies>
-      </dependencies>
-   </project>
-}
+   <artifactId>ARTIFACT_ID</artifactId>
+   <groupId>GROUP_ID</groupId>
+   <version>VERSION</version>
+   <name>NAME</name>
 
+</project>

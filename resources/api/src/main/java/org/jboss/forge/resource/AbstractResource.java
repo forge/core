@@ -125,4 +125,10 @@ public abstract class AbstractResource<T> extends BaseFaceted<ResourceFacet> imp
          return left.getFullyQualifiedName().compareTo(right.getFullyQualifiedName());
       }
    }
+
+   @Override
+   public <F extends ResourceFacet> boolean supports(F facet)
+   {
+      return facet instanceof ResourceFacet;
+   }
 }

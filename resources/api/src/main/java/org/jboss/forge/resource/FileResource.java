@@ -19,7 +19,7 @@ import org.jboss.forge.resource.events.TempResourceCreated;
 
 /**
  * A standard, built-in resource for representing files on the filesystem.
- *
+ * 
  * @author Mike Brock
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -52,7 +52,7 @@ public abstract class FileResource<T extends FileResource<T>> extends AbstractRe
 
    /**
     * Get the actual underlying file resource that this resource instance represents, whether existing or non-existing.
-    *
+    * 
     * @return An instance of {@link File}
     */
    @Override
@@ -76,7 +76,7 @@ public abstract class FileResource<T extends FileResource<T>> extends AbstractRe
 
    /**
     * Get the parent of the current resource. Returns null if the current resource is the project root.
-    *
+    * 
     * @return An instance of the resource parent.
     */
    @Override
@@ -94,7 +94,7 @@ public abstract class FileResource<T extends FileResource<T>> extends AbstractRe
    /**
     * Create a new {@link Resource} instance for the target file. The new {@link Resource} should be of the same type as
     * <b>this</b>.
-    *
+    * 
     * @param file The file to create the resource instance from.
     * @return A new resource.
     */
@@ -117,7 +117,7 @@ public abstract class FileResource<T extends FileResource<T>> extends AbstractRe
 
    /**
     * Returns true if the underlying resource has been modified on the file system since it was initially loaded.
-    *
+    * 
     * @return boolean true if resource is changed.
     */
    public boolean isStale()
@@ -275,7 +275,7 @@ public abstract class FileResource<T extends FileResource<T>> extends AbstractRe
    public T setContents(final InputStream data)
    {
       Assert.notNull(data, "InputStream must not be null.");
-      
+
       try
       {
          if (!exists())
@@ -365,10 +365,10 @@ public abstract class FileResource<T extends FileResource<T>> extends AbstractRe
    }
 
    @Override
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    public <R extends Resource<?>> R reify(final Class<R> type)
    {
-      Resource<?> result = resourceFactory.create(file);
+      Resource<?> result = resourceFactory.create((Class) type, file);
       if (type.isAssignableFrom(result.getClass()))
       {
          return (R) result;

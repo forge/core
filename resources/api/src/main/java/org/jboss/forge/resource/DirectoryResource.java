@@ -181,9 +181,4 @@ public class DirectoryResource extends FileResource<DirectoryResource>
       return (obj instanceof DirectoryResource) && ((DirectoryResource) obj).file.equals(file);
    }
 
-   @Override
-   public boolean supports(ResourceFacet type)
-   {
-      return false;
-   }
 }
