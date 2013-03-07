@@ -25,7 +25,7 @@ import org.junit.Test;
 
 /**
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ *
  */
 public class MavenDependencyResolverTest
 {
@@ -57,7 +57,6 @@ public class MavenDependencyResolverTest
       Dependency dependency = artifacts.iterator().next();
       Assert.assertEquals("forge-addon", dependency.getCoordinate().getClassifier());
       Assert.assertNotNull(dependency.getScopeType());
-      Assert.assertTrue(dependency.isOptional());
    }
 
    @Test(expected = RuntimeException.class)
