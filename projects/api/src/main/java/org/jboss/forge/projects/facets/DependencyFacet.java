@@ -24,30 +24,6 @@ import org.jboss.forge.projects.ProjectFacet;
  */
 public interface DependencyFacet extends ProjectFacet
 {
-   public enum KnownRepository
-   {
-      CENTRAL("http://repo1.maven.org/maven2/"),
-      JBOSS_NEXUS("http://repository.jboss.org/nexus/content/groups/public"),
-      JAVA_NET("http://download.java.net/maven/2/");
-
-      private final String url;
-
-      private KnownRepository(final String url)
-      {
-         this.url = url;
-      }
-
-      public String getId()
-      {
-         return this.name();
-      }
-
-      public String getUrl()
-      {
-         return url;
-      }
-   }
-
    /**
     * Add the given {@link Dependency} to this {@link Project}'s immediate list of dependencies. This method does not
     * check for existence of dependencies in the hierarchy, instead, directly adds or replaces a direct dependency.
@@ -73,12 +49,6 @@ public interface DependencyFacet extends ProjectFacet
     * See also: {@link DependencyBuilder}.
     */
    public void addDirectManagedDependency(Dependency dep);
-
-   /**
-    * Add a {@link KnownRepository} to the project build system. This is where dependencies can be found, downloaded,
-    * and installed to the project build script.
-    */
-   public void addRepository(KnownRepository repository);
 
    /**
     * Add a repository to the project build system. This is where dependencies can be found, downloaded, and installed
@@ -107,7 +77,7 @@ public interface DependencyFacet extends ProjectFacet
     * <b>Notice:</b> This method checks only the immediate project dependencies, meaning that if a dependency is
     * declared somewhere else in the hierarchy, it will not be detected by this method, even though by
     * {@link #hasDependency(Dependency)} may return true.
-    * 
+    *
     * @return
     */
    public Dependency getDirectDependency(Dependency dependency);
@@ -130,7 +100,7 @@ public interface DependencyFacet extends ProjectFacet
     * and return it.
     * <p/>
     * See also: {@link DependencyBuilder}. See also: {@link #hasEffectiveDependency(Dependency)}.
-    * 
+    *
     * @return
     */
    Dependency getEffectiveDependency(Dependency dependency);
@@ -158,7 +128,7 @@ public interface DependencyFacet extends ProjectFacet
     * Attempt to locate the given managed {@link Dependency}, if it exists in the {@link Project}, and return it.
     * <p/>
     * See also: {@link DependencyBuilder}. See also: {@link #hasEffectiveManagedDependency(Dependency)}.
-    * 
+    *
     * @return
     */
    public Dependency getManagedDependency(Dependency managedDependency);
@@ -224,11 +194,6 @@ public interface DependencyFacet extends ProjectFacet
    public boolean hasDirectManagedDependency(Dependency managedDependency);
 
    /**
-    * Return true if the given {@link KnownRepository} is already registered in this project's build system.
-    */
-   public boolean hasRepository(KnownRepository repository);
-
-   /**
     * Return true if the given repository URL is already registered in this project's build system.
     */
    public boolean hasRepository(String url);
@@ -274,7 +239,7 @@ public interface DependencyFacet extends ProjectFacet
    /**
     * Given a {@link Dependency} with a populated groupId, versionId, and version range, identify the available
     * artifacts in all known repositories for this project. By default, SNAPSHOT versions are excluded.
-    * 
+    *
     * See {@link DependencyFacet#resolveAvailableVersions(String)}. For more comprehensive resolution features, see
     * {@link DependencyResolver}
     */
