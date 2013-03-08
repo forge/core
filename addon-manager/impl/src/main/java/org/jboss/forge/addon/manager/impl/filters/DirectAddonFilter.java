@@ -3,7 +3,7 @@ package org.jboss.forge.addon.manager.impl.filters;
 import org.jboss.forge.container.util.Predicate;
 import org.jboss.forge.dependencies.Coordinate;
 import org.jboss.forge.dependencies.DependencyNode;
-import org.jboss.forge.dependencies.collection.Dependencies;
+import org.jboss.forge.dependencies.collection.DependencyNodeUtil;
 
 /**
  * Checks if an addon node is a direct dependency of another node (root)
@@ -23,7 +23,7 @@ public class DirectAddonFilter implements Predicate<DependencyNode>
    public boolean accept(DependencyNode node)
    {
       Coordinate artifact = node.getDependency().getCoordinate();
-      if (Dependencies.isForgeAddon(artifact) && root.getChildren().contains(node))
+      if (DependencyNodeUtil.isForgeAddon(artifact) && root.getChildren().contains(node))
       {
          return true;
       }

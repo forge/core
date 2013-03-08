@@ -12,7 +12,7 @@ import java.util.List;
 
 import org.jboss.forge.dependencies.Dependency;
 import org.jboss.forge.dependencies.DependencyNode;
-import org.jboss.forge.dependencies.collection.Dependencies;
+import org.jboss.forge.dependencies.collection.DependencyNodeUtil;
 
 /**
  * Creates a {@link DependencyNode} object
@@ -59,7 +59,7 @@ public class DependencyNodeBuilder implements DependencyNode
    @Override
    public String toString()
    {
-      return Dependencies.prettyPrint(this).toString();
+      return DependencyNodeUtil.prettyPrint(this).toString();
    }
 
    @Override

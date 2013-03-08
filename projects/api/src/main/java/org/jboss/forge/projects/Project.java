@@ -8,6 +8,7 @@
 package org.jboss.forge.projects;
 
 import org.jboss.forge.facets.Faceted;
+import org.jboss.forge.resource.DirectoryResource;
 import org.jboss.forge.resource.Resource;
 
 /**
@@ -33,7 +34,7 @@ public interface Project extends Faceted<ProjectFacet>
    public void removeAttribute(Object key);
 
    /**
-    * Get the {@link Resource} representing the root directory of this {@link Project}.
+    * Get the {@link DirectoryResource} representing the root directory of this {@link Project}.
     */
-   public Resource<?> getProjectRoot();
+   public DirectoryResource getProjectRoot();
 }

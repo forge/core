@@ -25,7 +25,7 @@ import org.jboss.forge.container.AddonRepository;
 import org.jboss.forge.container.util.Predicate;
 import org.jboss.forge.dependencies.Coordinate;
 import org.jboss.forge.dependencies.DependencyNode;
-import org.jboss.forge.dependencies.collection.Dependencies;
+import org.jboss.forge.dependencies.collection.DependencyNodeUtil;
 
 /**
  * When an addon is installed, another addons could be required. This object returns the necessary information for the
@@ -60,11 +60,11 @@ public class InstallRequestImpl implements InstallRequest
        * To return the addons on which this addon depends, we'll need to traverse the tree using the breadth first
        * order, and then add them to a stack. This will guarantee their order.
        */
-      Iterator<DependencyNode> iterator = Dependencies.breadthFirstIterator(requestedAddonNode);
+      Iterator<DependencyNode> iterator = DependencyNodeUtil.breadthFirstIterator(requestedAddonNode);
       while (iterator.hasNext())
       {
          DependencyNode node = iterator.next();
-         if (Dependencies.isForgeAddon(node.getDependency().getCoordinate()) && !node.equals(requestedAddonNode))
+         if (DependencyNodeUtil.isForgeAddon(node.getDependency().getCoordinate()) && !node.equals(requestedAddonNode))
          {
             if (node.getDependency().isOptional())
             {
@@ -135,7 +135,7 @@ public class InstallRequestImpl implements InstallRequest
    private AddonId toAddonId(DependencyNode node)
    {
       Coordinate coord = node.getDependency().getCoordinate();
-      DependencyNode forgeApi = Dependencies.selectFirst(Dependencies.breadthFirstIterator(node),
+      DependencyNode forgeApi = DependencyNodeUtil.selectFirst(DependencyNodeUtil.breadthFirstIterator(node),
                new Predicate<DependencyNode>()
                {
                   @Override
@@ -158,14 +158,14 @@ public class InstallRequestImpl implements InstallRequest
 
    private void deploy(AddonId addon, DependencyNode root)
    {
-      List<File> resourceJars = toResourceJars(Dependencies.select(root, new LocalResourceFilter(root)));
+      List<File> resourceJars = toResourceJars(DependencyNodeUtil.select(root, new LocalResourceFilter(root)));
 
       if (resourceJars.isEmpty())
       {
          log.fine("No resource JARs found for " + addon);
       }
       List<AddonDependency> addonDependencies =
-               toAddonDependencies(Dependencies.select(root.getChildren().iterator(), new DirectAddonFilter(root)));
+               toAddonDependencies(DependencyNodeUtil.select(root.getChildren().iterator(), new DirectAddonFilter(root)));
 
       if (addonDependencies.isEmpty())
       {
@@ -209,12 +209,12 @@ public class InstallRequestImpl implements InstallRequest
    @Override
    public String toString()
    {
-      return Dependencies.prettyPrint(requestedAddonNode, new Predicate<DependencyNode>()
+      return DependencyNodeUtil.prettyPrint(requestedAddonNode, new Predicate<DependencyNode>()
       {
          @Override
          public boolean accept(DependencyNode node)
          {
-            return Dependencies.isForgeAddon(node.getDependency().getCoordinate())
+            return DependencyNodeUtil.isForgeAddon(node.getDependency().getCoordinate())
                      && !node.getDependency().isOptional();
          }
       });

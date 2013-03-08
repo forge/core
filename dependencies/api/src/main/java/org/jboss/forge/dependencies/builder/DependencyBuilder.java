@@ -7,6 +7,9 @@
 
 package org.jboss.forge.dependencies.builder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jboss.forge.dependencies.Coordinate;
 import org.jboss.forge.dependencies.Dependency;
 import org.jboss.forge.resource.FileResource;
@@ -23,6 +26,7 @@ public class DependencyBuilder implements Dependency
    private String scopeType;
    private FileResource<?> artifact;
    private boolean optional;
+   private List<Coordinate> exclusions;
 
    private DependencyBuilder()
    {
@@ -84,6 +88,27 @@ public class DependencyBuilder implements Dependency
       }
 
       return dependencyBuilder;
+   }
+
+   public DependencyBuilder addExclusion(Coordinate coordinate)
+   {
+      if (exclusions == null)
+         exclusions = new ArrayList<Coordinate>();
+
+      exclusions.add(coordinate);
+      return this;
+   }
+
+   @Override
+   public List<Coordinate> getExcludedCoordinates()
+   {
+      return exclusions;
+   }
+
+   public DependencyBuilder setExcludedCoordinates(List<Coordinate> coordinates)
+   {
+      this.exclusions = coordinates;
+      return this;
    }
 
    public DependencyBuilder setPackaging(String packaging)

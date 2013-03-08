@@ -11,7 +11,7 @@ import java.io.File;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public final class OSUtils
+public final class OperatingSystemUtils
 {
    private static boolean PRETEND_WINDOWS = Boolean.getBoolean("forge.pretend_windows");
 

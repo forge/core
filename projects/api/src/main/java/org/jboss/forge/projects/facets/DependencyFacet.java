@@ -10,12 +10,13 @@ package org.jboss.forge.projects.facets;
 import java.util.List;
 import java.util.Map;
 
+import org.jboss.forge.dependencies.Coordinate;
 import org.jboss.forge.dependencies.Dependency;
 import org.jboss.forge.dependencies.DependencyQuery;
 import org.jboss.forge.dependencies.DependencyRepository;
 import org.jboss.forge.dependencies.DependencyResolver;
 import org.jboss.forge.dependencies.builder.DependencyBuilder;
-import org.jboss.forge.dependencies.collection.Dependencies;
+import org.jboss.forge.dependencies.collection.DependencyNodeUtil;
 import org.jboss.forge.projects.Project;
 import org.jboss.forge.projects.ProjectFacet;
 
@@ -57,7 +58,7 @@ public interface DependencyFacet extends ProjectFacet
    public void addRepository(String name, String url);
 
    /**
-    * Return an immutable list of all direct {@link Dependencies} contained within this project. (i.e.: all dependencies
+    * Return an immutable list of all direct {@link DependencyNodeUtil} contained within this project. (i.e.: all dependencies
     * for which {@link DependencyFacet#hasDirectDependency(Dependency)} returns true;
     */
    public List<Dependency> getDependencies();
@@ -77,13 +78,13 @@ public interface DependencyFacet extends ProjectFacet
     * <b>Notice:</b> This method checks only the immediate project dependencies, meaning that if a dependency is
     * declared somewhere else in the hierarchy, it will not be detected by this method, even though by
     * {@link #hasDependency(Dependency)} may return true.
-    *
+    * 
     * @return
     */
    public Dependency getDirectDependency(Dependency dependency);
 
    /**
-    * Return an immutable list of all {@link Dependencies} contained anywhere within this project's dependency
+    * Return an immutable list of all {@link DependencyNodeUtil} contained anywhere within this project's dependency
     * hierarchy. (i.e.: all dependencies for which {@link DependencyFacet#hasEffectiveDependency(Dependency)} returns
     * true;
     */
@@ -100,7 +101,7 @@ public interface DependencyFacet extends ProjectFacet
     * and return it.
     * <p/>
     * See also: {@link DependencyBuilder}. See also: {@link #hasEffectiveDependency(Dependency)}.
-    *
+    * 
     * @return
     */
    Dependency getEffectiveDependency(Dependency dependency);
@@ -119,7 +120,7 @@ public interface DependencyFacet extends ProjectFacet
    public Dependency getEffectiveManagedDependency(Dependency manDep);
 
    /**
-    * Return an immutable list of all direct managed {@link Dependencies} contained within this project. (i.e.: all
+    * Return an immutable list of all direct managed {@link DependencyNodeUtil} contained within this project. (i.e.: all
     * managed dependencies for which {@link ManagedDependencyFacet#hasManagedDependency(Dependency)} returns true;
     */
    public List<Dependency> getManagedDependencies();
@@ -128,7 +129,7 @@ public interface DependencyFacet extends ProjectFacet
     * Attempt to locate the given managed {@link Dependency}, if it exists in the {@link Project}, and return it.
     * <p/>
     * See also: {@link DependencyBuilder}. See also: {@link #hasEffectiveManagedDependency(Dependency)}.
-    *
+    * 
     * @return
     */
    public Dependency getManagedDependency(Dependency managedDependency);
@@ -238,15 +239,15 @@ public interface DependencyFacet extends ProjectFacet
 
    /**
     * Given a {@link Dependency} with a populated groupId, versionId, and version range, identify the available
-    * artifacts in all known repositories for this project. By default, SNAPSHOT versions are excluded.
-    *
+    * {@link Coordinate} in all known repositories for this project. By default, SNAPSHOT versions are excluded.
+    * 
     * See {@link DependencyFacet#resolveAvailableVersions(String)}. For more comprehensive resolution features, see
     * {@link DependencyResolver}
     */
-   public List<Dependency> resolveAvailableVersions(final Dependency dep);
+   public List<Coordinate> resolveAvailableVersions(final Dependency dep);
 
    /**
-    * Given a groupid:versionid:version-range, identify and resolve all matching artifacts in all known
+    * Given a groupid:versionid:version-range, identify and resolve all matching {@link Coordinate} in all known
     * {@link DependencyRepository} instances for this {@link Project}. By default, SNAPSHOT versions are excluded. For
     * example:
     * <p>
@@ -258,14 +259,14 @@ public interface DependencyFacet extends ProjectFacet
     * For more comprehensive resolution features, see {@link #resolveAvailableVersions(DependencyQuery)} or
     * {@link DependencyResolver}
     */
-   public List<Dependency> resolveAvailableVersions(final String gavs);
+   public List<Coordinate> resolveAvailableVersions(final String gavs);
 
    /**
-    * Using the given {@link DependencyQuery}, identify and resolve all matching {@link Dependency} results in
+    * Using the given {@link DependencyQuery}, identify and resolve all matching {@link Coordinate} results in
     * configured {@link DependencyRepository} instances for this {@link Project}. See also,
     * {@link #resolveAvailableVersions(String)} and {@link #resolveAvailableVersions(Dependency)}
     */
-   public List<Dependency> resolveAvailableVersions(DependencyQuery query);
+   public List<Coordinate> resolveAvailableVersions(DependencyQuery query);
 
    /**
     * Resolve properties in the given dependency, converting them to their actual values.

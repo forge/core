@@ -6,6 +6,13 @@
  */
 package org.jboss.forge.maven.projects;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.jboss.forge.maven.projects.facets.MavenDependencyFacet;
+import org.jboss.forge.maven.projects.facets.MavenMetadataFacet;
+import org.jboss.forge.maven.projects.facets.MavenPackagingFacet;
+import org.jboss.forge.maven.projects.facets.MavenResourceFacet;
 import org.jboss.forge.projects.BaseProject;
 import org.jboss.forge.projects.Project;
 import org.jboss.forge.projects.ProjectFacet;
@@ -31,12 +38,25 @@ public class MavenProjectLocator implements ProjectLocator
          }
 
          @Override
-         public Resource<?> getProjectRoot()
+         public DirectoryResource getProjectRoot()
          {
             return dir;
          }
+
+         @Override
+         public String toString()
+         {
+            return dir.toString();
+         }
       };
 
+      List<Class<? extends ProjectFacet>> result = new ArrayList<Class<? extends ProjectFacet>>();
+      result.add(MavenFacetImpl.class);
+      result.add(MavenMetadataFacet.class);
+      result.add(MavenPackagingFacet.class);
+      result.add(MavenDependencyFacet.class);
+      result.add(MavenResourceFacet.class);
+      
       MavenFacetImpl mavenFacetImpl = new MavenFacetImpl();
       mavenFacetImpl.setOrigin(project);
       if (!project.install(mavenFacetImpl))

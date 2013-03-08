@@ -2,7 +2,7 @@ package org.jboss.forge.addon.manager.impl.filters;
 
 import org.jboss.forge.container.util.Predicate;
 import org.jboss.forge.dependencies.DependencyNode;
-import org.jboss.forge.dependencies.collection.Dependencies;
+import org.jboss.forge.dependencies.collection.DependencyNodeUtil;
 
 /**
  * Figures out if a {@link DependencyNode} should be treated as a JAR or as an Addon. Also if that dependency is a
@@ -32,7 +32,7 @@ public class LocalResourceFilter implements Predicate<DependencyNode>
 
    public boolean isDependencyAddon(DependencyNode node)
    {
-      return (Dependencies.isForgeAddon(node.getDependency().getCoordinate()) && !node.equals(addon));
+      return (DependencyNodeUtil.isForgeAddon(node.getDependency().getCoordinate()) && !node.equals(addon));
    }
 
    public boolean shouldPackageResource(DependencyNode node)

@@ -66,7 +66,7 @@ public final class Files
          throw new RuntimeException("directory not empty");
       }
 
-      if (OSUtils.isWindows())
+      if (OperatingSystemUtils.isWindows())
       {
          System.gc(); // ensure no lingering handles that would prevent deletion
       }
@@ -81,7 +81,7 @@ public final class Files
 
    private static boolean _deleteRecursive(final File file, final boolean collect)
    {
-      if (collect && OSUtils.isWindows())
+      if (collect && OperatingSystemUtils.isWindows())
       {
          System.gc(); // ensure no lingering handles that would prevent deletion
       }
@@ -120,7 +120,7 @@ public final class Files
    {
       if (target.startsWith(Files.HOME_ALIAS))
       {
-         String homePath = OSUtils.getUserHomePath();
+         String homePath = OperatingSystemUtils.getUserHomePath();
          target = homePath + target.substring(1, target.length());
       }
 

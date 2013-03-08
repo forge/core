@@ -8,8 +8,9 @@
 package org.jboss.forge.dependencies;
 
 /**
+ * Represents a repository from which {@link Dependency} instances may be resolved via {@link DependencyResolver}
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- *
  */
 public class DependencyRepository
 {

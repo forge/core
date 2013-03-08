@@ -7,8 +7,11 @@
 package org.jboss.forge.ui.hints;
 
 /**
+ * The set of supported {@link InputType} hints that determine custom display options for various input types meriting
+ * advanced display options or validation that would otherwise be impossible without implementation in the user
+ * interface provider.
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- *
  */
 public enum InputTypes implements InputType
 {
@@ -28,5 +31,8 @@ public enum InputTypes implements InputType
    SECRET,
 
    JAVA_CLASS_PICKER,
-   MULTI_JAVA_CLASS_PICKER;
+   MULTI_JAVA_CLASS_PICKER,
+
+   JAVA_PACKAGE_PICKER,
+   MULTI_JAVA_PACKAGE_PICKER;
 }

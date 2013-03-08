@@ -7,6 +7,8 @@
 
 package org.jboss.forge.dependencies;
 
+import java.util.List;
+
 import org.jboss.forge.resource.FileResource;
 
 /**
@@ -28,7 +30,6 @@ public interface Dependency
 
    /**
     * Returns the file representing this artifact
-    * 
     */
    FileResource<?> getArtifact() throws DependencyException;
 
@@ -36,5 +37,10 @@ public interface Dependency
     * Returns if this dependency is optional
     */
    boolean isOptional();
+
+   /**
+    * Returns the set of {@link Coordinate} instances that are excluded from this {@link Dependency} child hierarchy.
+    */
+   List<Coordinate> getExcludedCoordinates();
 
 }

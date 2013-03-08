@@ -29,11 +29,11 @@ import org.jboss.forge.dependencies.DependencyNode;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
  */
-public final class Dependencies
+public final class DependencyNodeUtil
 {
    public static final String FORGE_ADDON_CLASSIFIER = "forge-addon";
 
-   private Dependencies()
+   private DependencyNodeUtil()
    {
    }
 

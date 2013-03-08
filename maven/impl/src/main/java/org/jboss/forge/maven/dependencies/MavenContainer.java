@@ -138,4 +138,5 @@ public class MavenContainer
 //      session.setWorkspaceReader(new ClasspathWorkspaceReader());
       return session;
    }
+
 }

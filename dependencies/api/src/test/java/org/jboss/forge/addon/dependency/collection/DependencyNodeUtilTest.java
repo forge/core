@@ -12,11 +12,11 @@ import java.util.Iterator;
 import org.jboss.forge.dependencies.DependencyNode;
 import org.jboss.forge.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.dependencies.builder.DependencyNodeBuilder;
-import org.jboss.forge.dependencies.collection.Dependencies;
+import org.jboss.forge.dependencies.collection.DependencyNodeUtil;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class DependenciesTest
+public class DependencyNodeUtilTest
 {
    @Test
    public void testDepthFirstIterator()
@@ -40,7 +40,7 @@ public class DependenciesTest
       root.getChildren().add(childTwo);
 
       // Execute SUT
-      Iterator<DependencyNode> iterator = Dependencies.depthFirstIterator(root);
+      Iterator<DependencyNode> iterator = DependencyNodeUtil.depthFirstIterator(root);
 
       // Check SUT outcome
       Assert.assertTrue("Iterator is empty", iterator.hasNext());
@@ -83,7 +83,7 @@ public class DependenciesTest
       root.getChildren().add(childTwo);
 
       // Execute SUT
-      Iterator<DependencyNode> iterator = Dependencies.breadthFirstIterator(root);
+      Iterator<DependencyNode> iterator = DependencyNodeUtil.breadthFirstIterator(root);
 
       // Check SUT outcome
       Assert.assertTrue("Iterator is empty", iterator.hasNext());
@@ -126,7 +126,7 @@ public class DependenciesTest
       root.getChildren().add(childTwo);
 
       // Execute SUT
-      Iterator<DependencyNode> iterator = Dependencies.preorderIterator(root);
+      Iterator<DependencyNode> iterator = DependencyNodeUtil.preorderIterator(root);
 
       // Check SUT outcome
       Assert.assertTrue("Iterator is empty", iterator.hasNext());

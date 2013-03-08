@@ -27,7 +27,7 @@ import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.AddonRepository;
 import org.jboss.forge.container.util.Assert;
 import org.jboss.forge.container.util.Files;
-import org.jboss.forge.container.util.OSUtils;
+import org.jboss.forge.container.util.OperatingSystemUtils;
 import org.jboss.forge.container.util.Streams;
 import org.jboss.forge.container.util.Strings;
 import org.jboss.forge.parser.xml.Node;
@@ -66,7 +66,7 @@ public final class AddonRepositoryImpl implements AddonRepository
 
    public static AddonRepository forDefaultDirectory()
    {
-      return new AddonRepositoryImpl(new File(OSUtils.getUserHomePath(), DEFAULT_ADDON_DIR));
+      return new AddonRepositoryImpl(new File(OperatingSystemUtils.getUserHomePath(), DEFAULT_ADDON_DIR));
    }
 
    public static String getRuntimeAPIVersion()
