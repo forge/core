@@ -56,21 +56,29 @@ public class InstallRequiredAddonsListener implements ContainerLifecycleListener
    @Override
    public void beforeStart(Forge forge) throws ContainerException
    {
-      AddonRepository repository = forge.getRepository();
-      List<AddonId> addons = new ArrayList<AddonId>();
-      for (String addonCoordinate : REQUIRED_ADDON_COORDINATES)
+      if (Boolean.getBoolean("skipPreInstall"))
       {
-         AddonId addonId = toAddonId(addonCoordinate);
-         if (repository.isDeployed(addonId))
-         {
-            logger.fine("Addon " + addonId + " is already deployed");
-         }
-         else
-         {
-            addons.add(addonId);
-         }
+         logger.info("Skipping pre-installation of required addons");
       }
-      install(forge, addons);
+      else
+      {
+         logger.info("Pre-installing required addons...");
+         AddonRepository repository = forge.getRepository();
+         List<AddonId> addons = new ArrayList<AddonId>();
+         for (String addonCoordinate : REQUIRED_ADDON_COORDINATES)
+         {
+            AddonId addonId = toAddonId(addonCoordinate);
+            if (repository.isDeployed(addonId))
+            {
+               logger.fine("Addon " + addonId + " is already deployed");
+            }
+            else
+            {
+               addons.add(addonId);
+            }
+         }
+         install(forge, addons);
+      }
    }
 
    @Override
@@ -93,6 +101,7 @@ public class InstallRequiredAddonsListener implements ContainerLifecycleListener
 
          for (AddonId addon : addons)
          {
+            logger.info("Installing " + addon);
             InstallRequest request = addonManager.install(addon);
             logger.info(request.toString());
             request.perform();
