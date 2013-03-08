@@ -84,6 +84,7 @@ public class NewProjectWizardTest
 
       command.initializeUI(builder);
       command.getNamed().setValue("test");
+      command.getTopLevelPackage().setValue("org.example");
 
       command.validate(new UIValidationContext()
       {

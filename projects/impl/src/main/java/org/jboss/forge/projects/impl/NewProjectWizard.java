@@ -192,8 +192,7 @@ public class NewProjectWizard implements UIWizard
 
    public SingleValued<UIInput<String>, String> getTopLevelPackage()
    {
-      // TODO Auto-generated method stub
-      return null;
+      return topLevelPackage;
    }
 
    @Override
