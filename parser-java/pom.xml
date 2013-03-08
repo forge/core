@@ -18,6 +18,12 @@
 			<artifactId>forge-parser-java-api</artifactId>
 		</dependency>
 
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-shell-api</artifactId>
+         <scope>provided</scope>
+      </dependency>
+      
 		<!-- Eclipse Java Development Tools (JDT) parser and its (many) required 
 			libraries -->
 		<dependency>

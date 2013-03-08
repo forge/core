@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.jboss.forge</groupId>
+		<artifactId>forge-parent</artifactId>
+		<version>1.2.2-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+	
+	<artifactId>forge-parser-java-tests</artifactId>
+	<name>Forge - parser java tests</name>
+	<url>http://maven.apache.org</url>
+	
+	<dependencies>
+		<dependency>
+			<groupId>org.jboss.forge</groupId>
+			<artifactId>forge-parser-java</artifactId>
+		</dependency>
+
+		<!-- Eclipse Java Development Tools (JDT) parser and its (many) required 
+			libraries -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.jboss.forge</groupId>
+			<artifactId>forge-test-harness</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.forge</groupId>
+			<artifactId>forge-shell</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.forge</groupId>
+			<artifactId>forge-shell-api</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+</project>

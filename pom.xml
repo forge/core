@@ -815,7 +815,7 @@
             <module>git-tools</module>
             <module>git-tools-tests</module>
             <module>parser-java</module>
-            <module>project-model-maven</module>
+			<module>parser-java-tests</module>            <module>project-model-maven</module>
             <module>project-model-maven-tests</module>
             <module>test-harness</module>
             <module>test-harness-web</module>
@@ -859,4 +859,3 @@
       <url>${forge.scm.url}</url>
    </scm>
 </project>
-
