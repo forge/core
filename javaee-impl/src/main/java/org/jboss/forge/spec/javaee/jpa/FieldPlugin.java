@@ -273,7 +273,8 @@ public class FieldPlugin implements Plugin
                      type = PromptType.JAVA_VARIABLE_NAME) final String inverseFieldName,
             @Option(name = "fetchType",
                      required = false,
-                     description = "Whether the association should be lazily loaded or must be eagerly fetched.") final FetchType fetchType)
+                     description = "Whether the association should be lazily loaded or must be eagerly fetched.") final FetchType fetchType,
+            @Option(name = "required", required = false, flagOnly = true, description = "Whether the association is required. Sets the optional attribute to false.") final boolean required)
    {
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
 
@@ -291,6 +292,7 @@ public class FieldPlugin implements Plugin
          }
 
          Field<JavaClass> localField = addFieldTo(entityClass, fieldEntityClass, fieldName, OneToOne.class);
+         Annotation<JavaClass> annotation = localField.getAnnotation(OneToOne.class);
          if ((inverseFieldName != null) && !inverseFieldName.isEmpty())
          {
             Field<JavaClass> inverseField = addFieldTo(fieldEntityClass, entityClass, inverseFieldName, OneToOne.class);
@@ -300,10 +302,14 @@ public class FieldPlugin implements Plugin
          
          if (fetchType != null)
          {
-            Annotation<JavaClass> annotation = localField.getAnnotation(OneToOne.class);
             annotation.setEnumValue("fetch", fetchType);
-            java.saveJavaSource(entityClass);
          }
+         if (required)
+         {
+            // Set the optional attribute of @OneToOne/@ManyToOne only when false, since the default value is true
+            annotation.setLiteralValue("optional", "false");
+         }
+         java.saveJavaSource(entityClass);
       }
       catch (FileNotFoundException e)
       {
@@ -496,7 +502,8 @@ public class FieldPlugin implements Plugin
                      type = PromptType.JAVA_VARIABLE_NAME) final String inverseFieldName,
             @Option(name = "fetchType",
                      required = false,
-                     description = "Whether the association should be lazily loaded or must be eagerly fetched.") final FetchType fetchType)
+                     description = "Whether the association should be lazily loaded or must be eagerly fetched.") final FetchType fetchType,
+            @Option(name = "required", required = false, flagOnly = true, description = "Whether the association is required. Sets the optional attribute to false.") final boolean required)
    {
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
 
@@ -551,6 +558,11 @@ public class FieldPlugin implements Plugin
          if(fetchType != null)
          {
             manyAnnotation.setEnumValue("fetch", fetchType);
+         }
+         if (required)
+         {
+            // Set the optional attribute of @OneToOne/@ManyToOne only when false, since the default value is true
+            manyAnnotation.setLiteralValue("optional", "false");
          }
          java.saveJavaSource(many);
       }
