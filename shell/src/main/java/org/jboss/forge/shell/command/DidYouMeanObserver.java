@@ -21,6 +21,12 @@ import org.jboss.forge.shell.events.CommandMissing;
 import org.jboss.forge.shell.exceptions.NoSuchCommandException;
 import org.jboss.forge.shell.plugins.builtin.AliasRegistry;
 
+/**
+ * An observer that suggests possible commands if the issued command was not found.
+ *
+ * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
+ *
+ */
 public class DidYouMeanObserver
 {
 
@@ -63,9 +69,12 @@ public class DidYouMeanObserver
       else
       {
          ShellMessages.error(shell, "No such command: " + pluginName);
-         if (similarPlugins.size() == 1) {
+         if (similarPlugins.size() == 1)
+         {
             shell.println("Did you mean this ?");
-         } else {
+         }
+         else
+         {
             shell.println("Did you mean any of these ?");
          }
          for (String plugin : similarPlugins)
