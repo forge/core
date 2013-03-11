@@ -14,6 +14,7 @@ import org.jboss.forge.spec.javaee.jpa.container.CustomJTAContainer;
 import org.jboss.forge.spec.javaee.jpa.container.GlassFish3Container;
 import org.jboss.forge.spec.javaee.jpa.container.JBossAS6Container;
 import org.jboss.forge.spec.javaee.jpa.container.JBossAS7Container;
+import org.jboss.forge.spec.javaee.jpa.container.LeanJavaServerContainer;
 import org.jboss.forge.spec.javaee.jpa.container.NonJTAContainer;
 import org.jboss.forge.spec.javaee.jpa.container.TomEEContainer;
 import org.jboss.forge.spec.javaee.jpa.container.WebLogic12cContainer;
@@ -34,7 +35,8 @@ public enum JPAContainer
    CUSTOM_JDBC(CustomJDBCContainer.class),
    CUSTOM_JTA(CustomJTAContainer.class),
    CUSTOM_NON_JTA(NonJTAContainer.class),
-   TOMEE(TomEEContainer.class);
+   TOMEE(TomEEContainer.class),
+   LJS(LeanJavaServerContainer.class);
 
    private Class<? extends PersistenceContainer> containerType;
 
