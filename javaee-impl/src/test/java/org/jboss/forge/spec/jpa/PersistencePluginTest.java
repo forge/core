@@ -194,4 +194,15 @@ public class PersistencePluginTest extends AbstractJPATest
       Assert.assertEquals("eclipselink", facet.getProcessorDependency().getArtifactId());
       Assert.assertEquals(1, project.getFacet(MavenCoreFacet.class).getPOM().getPluginRepositories().size());
    }
+
+   @Test
+   public void testSetupLjsPersistence() throws Exception {
+       queueInputLines("", "");
+       getShell().execute("persistence setup --provider HIBERNATE --container LJS");        
+       PersistenceDescriptor config = getProject().getFacet(PersistenceFacet.class).getConfig();
+       List<PersistenceUnitDef> units = config.listUnits();
+       PersistenceUnitDef unit = units.get(0);
+
+       Assert.assertEquals("jdbc/DefaultDB", unit.getJtaDataSource());
+   }
 }
