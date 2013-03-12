@@ -183,7 +183,10 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
                         && foundArtifact.getArtifactId().equals(artifact.getArtifactId())
                         && foundArtifact.getVersion().equals(artifact.getVersion()))
                {
-//                  System.out.println("################################# Artifact: " + artifact + " File: " + pomFile);
+                  if (log.isLoggable(Level.FINE))
+                  {
+                     log.fine("################################# Artifact: " + artifact + " File: " + pomFile);
+                  }
                   return pomFile;
                }
             }
@@ -204,7 +207,10 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
                   final File pomFile = new File(file.getParentFile().getParentFile(), "pom.xml");
                   if (pomFile.isFile())
                   {
-//                     System.out.println("################################# Artifact: " + artifact + " File: " + pomFile);
+                     if (log.isLoggable(Level.FINE))
+                     {
+                        log.fine("################################# Artifact: " + artifact + " File: " + pomFile);
+                     }
                      return pomFile;
                   }
                }
@@ -219,7 +225,10 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
                if (file.getAbsolutePath().endsWith(name.toString()))
                {
                   // return raw file
-//                  System.out.println("################################# Artifact: " + artifact + " File: " + file);
+                  if (log.isLoggable(Level.FINE))
+                  {
+                     log.fine("################################# Artifact: " + artifact + " File: " + file);
+                  }
                   return file;
                }
             }
@@ -279,7 +288,10 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
             }
          }
       }
-//      System.out.println("################################# Artifact: " + artifact + " Versions: " + versions);
+      if (log.isLoggable(Level.FINE))
+      {
+         log.fine("################################# Artifact: " + artifact + " Versions: " + versions);
+      }
       return versions;
    }
 
