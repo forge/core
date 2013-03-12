@@ -187,7 +187,14 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
                   {
                      log.fine("################################# Artifact: " + artifact + " File: " + pomFile);
                   }
-                  return pomFile;
+                  if ("pom".equals(artifact.getExtension()))
+                  {
+                     return pomFile;
+                  }
+                  else
+                  {
+                     return new File(file.getParentFile(), "classes");
+                  }
                }
             }
          }

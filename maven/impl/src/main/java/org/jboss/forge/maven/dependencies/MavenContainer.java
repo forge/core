@@ -135,7 +135,7 @@ public class MavenContainer
       session.setLocalRepositoryManager(repoSystem.newLocalRepositoryManager(localRepo));
       session.setTransferErrorCachingEnabled(false);
       session.setNotFoundCachingEnabled(false);
-//      session.setWorkspaceReader(new ClasspathWorkspaceReader());
+      session.setWorkspaceReader(new ClasspathWorkspaceReader());
       return session;
    }
 

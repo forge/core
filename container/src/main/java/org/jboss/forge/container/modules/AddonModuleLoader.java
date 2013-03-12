@@ -159,12 +159,22 @@ public class AddonModuleLoader extends ModuleLoader
       {
          try
          {
-            if (file.length() > 0)
+            if (file.isDirectory())
+            {
+               builder.addResourceRoot(
+                        ResourceLoaderSpec.createResourceLoaderSpec(
+                                 ResourceLoaders.createFileResourceLoader(file.getName(), file),
+                                 PathFilters.acceptAll())
+                        );
+            }
+            else if (file.length() > 0)
+            {
                builder.addResourceRoot(
                         ResourceLoaderSpec.createResourceLoaderSpec(
                                  ResourceLoaders.createJarResourceLoader(file.getName(), new JarFile(file)),
                                  PathFilters.acceptAll())
                         );
+            }
          }
          catch (IOException e)
          {

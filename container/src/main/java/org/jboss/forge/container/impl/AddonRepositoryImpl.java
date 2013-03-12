@@ -7,9 +7,9 @@
 package org.jboss.forge.container.impl;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,7 +36,7 @@ import org.jboss.forge.parser.xml.XMLParserException;
 
 /**
  * Used to perform Addon installation/registration operations.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:koen.aers@gmail.com">Koen Aers</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
@@ -90,13 +90,13 @@ public final class AddonRepositoryImpl implements AddonRepository
 
    /**
     * This method only returns true if:
-    * 
+    *
     * - The major version of addonApiVersion is equal to the major version of runtimeVersion AND
-    * 
+    *
     * - The minor version of addonApiVersion is less or equal to the minor version of runtimeVersion
-    * 
+    *
     * - The addonApiVersion is null
-    * 
+    *
     * @param runtimeVersion a version in the format x.x.x
     * @param addonApiVersion a version in the format x.x.x
     */
@@ -135,8 +135,9 @@ public final class AddonRepositoryImpl implements AddonRepository
       this.addonDir = dir;
    }
 
+   @SuppressWarnings("resource")
    @Override
-   public boolean deploy(AddonId addon, List<AddonDependency> dependencies, List<File> resourceJars)
+   public boolean deploy(AddonId addon, List<AddonDependency> dependencies, List<File> resources)
    {
       File addonSlotDir = getAddonBaseDir(addon);
       File descriptor = getAddonDescriptor(addon);
@@ -144,12 +145,20 @@ public final class AddonRepositoryImpl implements AddonRepository
       {
          synchronized (lock)
          {
-            if (resourceJars != null)
-               for (File jar : resourceJars)
+            if (resources != null && !resources.isEmpty())
+            {
+               for (File resource : resources)
                {
-                  Files.copyFileToDirectory(jar, addonSlotDir);
+                  if (resource.isDirectory())
+                  {
+                     Files.copyDirectory(resource, new File(addonSlotDir, resource.getName()));
+                  }
+                  else
+                  {
+                     Files.copyFileToDirectory(resource, addonSlotDir);
+                  }
                }
-
+            }
             /*
              * Write out the addon module dependency configuration
              */
@@ -361,16 +370,17 @@ public final class AddonRepositoryImpl implements AddonRepository
       {
          if (dir.exists())
          {
-            return Arrays.asList(dir.listFiles(new FilenameFilter()
+            File[] files = dir.listFiles(new FileFilter()
             {
                @Override
-               public boolean accept(File file, String name)
+               public boolean accept(File pathname)
                {
-                  return name.endsWith(".jar");
+                  return pathname.isDirectory() || pathname.getName().endsWith(".jar");
                }
-            }));
+            });
+            return Arrays.asList(files);
          }
-         return new ArrayList<File>();
+         return Collections.emptyList();
       }
    }
 
