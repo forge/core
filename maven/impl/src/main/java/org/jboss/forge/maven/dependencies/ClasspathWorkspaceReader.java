@@ -27,6 +27,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import javax.xml.xpath.XPathFactoryConfigurationException;
 
 import org.jboss.shrinkwrap.resolver.impl.maven.util.Validate;
 import org.sonatype.aether.artifact.Artifact;
@@ -182,6 +183,7 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
                         && foundArtifact.getArtifactId().equals(artifact.getArtifactId())
                         && foundArtifact.getVersion().equals(artifact.getVersion()))
                {
+//                  System.out.println("################################# Artifact: " + artifact + " File: " + pomFile);
                   return pomFile;
                }
             }
@@ -202,6 +204,7 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
                   final File pomFile = new File(file.getParentFile().getParentFile(), "pom.xml");
                   if (pomFile.isFile())
                   {
+//                     System.out.println("################################# Artifact: " + artifact + " File: " + pomFile);
                      return pomFile;
                   }
                }
@@ -216,6 +219,7 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
                if (file.getAbsolutePath().endsWith(name.toString()))
                {
                   // return raw file
+//                  System.out.println("################################# Artifact: " + artifact + " File: " + file);
                   return file;
                }
             }
@@ -253,12 +257,9 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
          // this is needed for Surefire when runned as 'mvn package'
          else if (fileInfo.isFile())
          {
-            final StringBuilder name = new StringBuilder(artifact.getArtifactId()).append("-").append(
-                     artifact.getVersion());
-
             // TODO: This is nasty
             // we need to get a a pom.xml file to be sure we fetch transitive deps as well
-            if (file.getAbsolutePath().contains(name.toString()))
+            if (file.getAbsolutePath().contains(artifact.getArtifactId()))
             {
                if ("pom".equals(artifact.getExtension()))
                {
@@ -278,6 +279,7 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
             }
          }
       }
+//      System.out.println("################################# Artifact: " + artifact + " Versions: " + versions);
       return versions;
    }
 
@@ -287,7 +289,7 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
       {
          return Collections.emptySet();
       }
-      return new LinkedHashSet<String>(Arrays.asList(classPath.split(String.valueOf(File.pathSeparatorChar))));
+      return new LinkedHashSet<String>(Arrays.asList(classPath.split(File.pathSeparator)));
    }
 
    private FileInfo getClasspathFileInfo(final String classpathEntry)
@@ -394,7 +396,21 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
    {
       if (xPath == null)
       {
-         final XPathFactory factory = XPathFactory.newInstance();
+         XPathFactory factory;
+         try
+         {
+            factory = XPathFactory.newInstance(XPathFactory.DEFAULT_OBJECT_MODEL_URI,
+                     "com.sun.org.apache.xpath.internal.jaxp.XPathFactoryImpl", getClass()
+                              .getClassLoader());
+         }
+         catch (XPathFactoryConfigurationException e)
+         {
+            throw new RuntimeException(
+                     "XPathFactory#newInstance() failed to create an XPathFactory for the default object model: "
+                              + XPathFactory.DEFAULT_OBJECT_MODEL_URI
+                              + " with the XPathFactoryConfigurationException: "
+                              + e.toString());
+         }
          xPath = factory.newXPath();
       }
       return xPath;
