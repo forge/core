@@ -8,7 +8,7 @@
 package org.jboss.forge.maven.dependencies;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,26 +20,18 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-import javax.xml.xpath.XPathFactoryConfigurationException;
-
+import org.jboss.forge.parser.xml.Node;
+import org.jboss.forge.parser.xml.XMLParser;
+import org.jboss.forge.parser.xml.XMLParserException;
 import org.jboss.shrinkwrap.resolver.impl.maven.util.Validate;
 import org.sonatype.aether.artifact.Artifact;
 import org.sonatype.aether.repository.WorkspaceReader;
 import org.sonatype.aether.repository.WorkspaceRepository;
 import org.sonatype.aether.util.artifact.DefaultArtifact;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 /**
  * {@link WorkspaceReader} implementation capable of reading from the ClassPath
- *
+ * 
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @author <a href="mailto:mmatloka@gmail.com">Michal Matloka</a>
  */
@@ -103,48 +95,24 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
 
    /**
     * Cache classpath File objects and retrieved isFile isDirectory values. Key is a classpath entry
-    *
+    * 
     * @see #getClasspathFileInfo(String)
     */
    private final Map<String, FileInfo> classpathFileInfoCache = new HashMap<String, FileInfo>();
 
    /**
     * Cache pom File objects and retrieved isFile isDirectory values. Key - child File
-    *
+    * 
     * @see #getPomFileInfo(java.io.File)
     */
    private final Map<File, FileInfo> pomFileInfoCache = new HashMap<File, FileInfo>();
 
    /**
     * Cache Found in classpath artifacts. Key is a pom file.
-    *
+    * 
     * @see #getFoundArtifact(java.io.File)
     */
    private final Map<File, Artifact> foundArtifactCache = new HashMap<File, Artifact>();
-
-   /**
-    * Reuse DocumentBuilder.
-    *
-    * @see #getDocumentBuilder()
-    */
-   private DocumentBuilder documentBuilder;
-
-   /**
-    * Reuse XPath
-    *
-    * @see #getXPath()
-    */
-   private XPath xPath;
-
-   /*
-    * Compiled lazy-loaded xpath expressions. See getter methods.
-    */
-   private XPathExpression xPathParentGroupIdExpression;
-   private XPathExpression xPathGroupIdExpression;
-   private XPathExpression xPathArtifactIdExpression;
-   private XPathExpression xPathTypeExpression;
-   private XPathExpression xPathVersionExpression;
-   private XPathExpression xPathParentVersionExpression;
 
    public ClasspathWorkspaceReader()
    {
@@ -359,18 +327,16 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
             log.fine("Processing " + pomFile.getAbsolutePath() + " for classpath artifact resolution");
          }
 
-         // TODO: load pom using Maven Model?
-         // This might include a cycle in graph reconstruction, to be investigated
-         final Document pom = loadPom(pomFile);
+         final Node pom = loadPom(pomFile);
 
-         String groupId = getXPathGroupIdExpression().evaluate(pom);
-         String artifactId = getXPathArtifactIdExpression().evaluate(pom);
-         String type = getXPathTypeExpression().evaluate(pom);
-         String version = getXPathVersionExpression().evaluate(pom);
+         String groupId = pom.getTextValueForPatternName("groupId");
+         String artifactId = pom.getTextValueForPatternName("artifactId");
+         String type = pom.getTextValueForPatternName("packaging");
+         String version = pom.getTextValueForPatternName("version");
 
          if (Validate.isNullOrEmpty(groupId))
          {
-            groupId = getXPathParentGroupIdExpression().evaluate(pom);
+            groupId = pom.getTextValueForPatternName("parent/groupId");
          }
          if (Validate.isNullOrEmpty(type))
          {
@@ -378,7 +344,7 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
          }
          if (version == null || version.equals(""))
          {
-            version = getXPathParentVersionExpression().evaluate(pom);
+            version = pom.getTextValueForPatternName("parent/version");
          }
 
          final Artifact foundArtifact = new DefaultArtifact(groupId + ":" + artifactId + ":" + type + ":" + version);
@@ -391,102 +357,9 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
       }
    }
 
-   private Document loadPom(final File pom) throws IOException, SAXException, ParserConfigurationException
+   private Node loadPom(final File pom) throws XMLParserException, FileNotFoundException
    {
-      final DocumentBuilder documentBuilder = getDocumentBuilder();
-      return documentBuilder.parse(pom);
-   }
-
-   private DocumentBuilder getDocumentBuilder() throws ParserConfigurationException
-   {
-      if (documentBuilder == null)
-      {
-         final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-         documentBuilder = factory.newDocumentBuilder();
-      }
-      return documentBuilder;
-   }
-
-   /*
-    * XPath expressions reuse
-    */
-
-   private XPath getXPath()
-   {
-      if (xPath == null)
-      {
-         XPathFactory factory;
-         try
-         {
-            factory = XPathFactory.newInstance(XPathFactory.DEFAULT_OBJECT_MODEL_URI,
-                     "com.sun.org.apache.xpath.internal.jaxp.XPathFactoryImpl", getClass()
-                              .getClassLoader());
-         }
-         catch (XPathFactoryConfigurationException e)
-         {
-            throw new RuntimeException(
-                     "XPathFactory#newInstance() failed to create an XPathFactory for the default object model: "
-                              + XPathFactory.DEFAULT_OBJECT_MODEL_URI
-                              + " with the XPathFactoryConfigurationException: "
-                              + e.toString());
-         }
-         xPath = factory.newXPath();
-      }
-      return xPath;
-   }
-
-   private XPathExpression getXPathParentGroupIdExpression() throws XPathExpressionException
-   {
-      if (xPathParentGroupIdExpression == null)
-      {
-         xPathParentGroupIdExpression = getXPath().compile("/project/parent/groupId");
-      }
-      return xPathParentGroupIdExpression;
-   }
-
-   private XPathExpression getXPathGroupIdExpression() throws XPathExpressionException
-   {
-      if (xPathGroupIdExpression == null)
-      {
-         xPathGroupIdExpression = getXPath().compile("/project/groupId");
-      }
-      return xPathGroupIdExpression;
-   }
-
-   private XPathExpression getXPathArtifactIdExpression() throws XPathExpressionException
-   {
-      if (xPathArtifactIdExpression == null)
-      {
-         xPathArtifactIdExpression = getXPath().compile("/project/artifactId");
-      }
-      return xPathArtifactIdExpression;
-   }
-
-   private XPathExpression getXPathTypeExpression() throws XPathExpressionException
-   {
-      if (xPathTypeExpression == null)
-      {
-         xPathTypeExpression = getXPath().compile("/project/packaging");
-      }
-      return xPathTypeExpression;
-   }
-
-   private XPathExpression getXPathVersionExpression() throws XPathExpressionException
-   {
-      if (xPathVersionExpression == null)
-      {
-         xPathVersionExpression = getXPath().compile("/project/version");
-      }
-      return xPathVersionExpression;
-   }
-
-   private XPathExpression getXPathParentVersionExpression() throws XPathExpressionException
-   {
-      if (xPathParentVersionExpression == null)
-      {
-         xPathParentVersionExpression = getXPath().compile("/project/parent/version");
-      }
-      return xPathParentVersionExpression;
+      return XMLParser.parse(pom);
    }
 
 }
