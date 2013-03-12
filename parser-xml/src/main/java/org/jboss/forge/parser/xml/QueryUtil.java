@@ -1,63 +1,55 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * Copyright 2012 Red Hat, Inc. and/or its affiliates.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Licensed under the Eclipse Public License version 1.0, available at
+ * http://www.eclipse.org/legal/epl-v10.html
  */
 package org.jboss.forge.parser.xml;
 
-
-
 /**
  * Helper util for building {@link Query} implementations
- *
+ * 
  * @author <a href="mailto:andrew.rubinger@jboss.org">ALR</a>
  */
-final class QueryUtil {
+final class QueryUtil
+{
 
-    // -------------------------------------------------------------------------------------||
-    // Constructor ------------------------------------------------------------------------||
-    // -------------------------------------------------------------------------------------||
+   // -------------------------------------------------------------------------------------||
+   // Constructor ------------------------------------------------------------------------||
+   // -------------------------------------------------------------------------------------||
 
-    /**
-     * No instances allowed
-     */
-    private QueryUtil() {
-        throw new UnsupportedOperationException("No instances");
-    }
+   /**
+    * No instances allowed
+    */
+   private QueryUtil()
+   {
+      throw new UnsupportedOperationException("No instances");
+   }
 
-    // -------------------------------------------------------------------------------------||
-    // Functional Methods -----------------------------------------------------------------||
-    // -------------------------------------------------------------------------------------||
+   // -------------------------------------------------------------------------------------||
+   // Functional Methods -----------------------------------------------------------------||
+   // -------------------------------------------------------------------------------------||
 
-    /**
-     * Validates input
-     *
-     * @param node
-     * @param patterns
-     * @throws IllegalArgumentException
-     *             If the {@link Node} is not specified or no {@link Pattern}s are specified
-     */
-    public static void validateNodeAndPatterns(final Node node, final Pattern... patterns)
-        throws IllegalArgumentException {
-        // Precondition checks
-        if (node == null) {
-            throw new IllegalArgumentException("node must be specified");
-        }
-        if (patterns == null || patterns.length == 0) {
-            throw new IllegalArgumentException("At least one pattern must be specified");
-        }
+   /**
+    * Validates input
+    * 
+    * @param node
+    * @param patterns
+    * @throws IllegalArgumentException If the {@link Node} is not specified or no {@link Pattern}s are specified
+    */
+   public static void validateNodeAndPatterns(final Node node, final Pattern... patterns)
+            throws IllegalArgumentException
+   {
+      // Precondition checks
+      if (node == null)
+      {
+         throw new IllegalArgumentException("node must be specified");
+      }
+      if (patterns == null || patterns.length == 0)
+      {
+         throw new IllegalArgumentException("At least one pattern must be specified");
+      }
 
-        // OK
-    }
+      // OK
+   }
 }
