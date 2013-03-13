@@ -21,7 +21,6 @@ import java.util.logging.Logger;
 
 import org.jboss.forge.parser.xml.Node;
 import org.jboss.forge.parser.xml.XMLParser;
-import org.jboss.shrinkwrap.resolver.impl.maven.util.Validate;
 import org.sonatype.aether.artifact.Artifact;
 import org.sonatype.aether.repository.WorkspaceReader;
 import org.sonatype.aether.repository.WorkspaceRepository;
@@ -152,9 +151,10 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
                   }
                }
                // SHRINKRES-102, consider classifier as well
-               if (!Validate.isNullOrEmpty(artifact.getClassifier()))
+               String classifier = artifact.getClassifier();
+               if (classifier != null && !classifier.isEmpty())
                {
-                  name.append("-").append(artifact.getClassifier());
+                  name.append("-").append(classifier);
                }
 
                // we are looking for a non pom artifact, let's get it
@@ -232,7 +232,7 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
 
    private Set<String> getClassPathEntries(final String classPath)
    {
-      if (Validate.isNullOrEmpty(classPath))
+      if (classPath == null || classPath.isEmpty())
       {
          return Collections.emptySet();
       }
@@ -288,15 +288,15 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
          String type = pom.getTextValueForPatternName("packaging");
          String version = pom.getTextValueForPatternName("version");
 
-         if (Validate.isNullOrEmpty(groupId))
+         if (groupId == null || groupId.isEmpty())
          {
             groupId = pom.getTextValueForPatternName("parent/groupId");
          }
-         if (Validate.isNullOrEmpty(type))
+         if (type == null || type.isEmpty())
          {
             type = "jar";
          }
-         if (version == null || version.equals(""))
+         if (version == null || version.isEmpty())
          {
             version = pom.getTextValueForPatternName("parent/version");
          }
