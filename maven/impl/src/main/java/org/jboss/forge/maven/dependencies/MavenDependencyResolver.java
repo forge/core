@@ -38,7 +38,6 @@ import org.sonatype.aether.artifact.Artifact;
 import org.sonatype.aether.collection.CollectRequest;
 import org.sonatype.aether.collection.DependencyCollectionContext;
 import org.sonatype.aether.collection.DependencyTraverser;
-import org.sonatype.aether.graph.DependencyFilter;
 import org.sonatype.aether.graph.DependencyNode;
 import org.sonatype.aether.repository.RemoteRepository;
 import org.sonatype.aether.resolution.ArtifactRequest;
@@ -84,14 +83,7 @@ public class MavenDependencyResolver implements DependencyResolver, AddonDepende
       CollectRequest collectRequest = new CollectRequest(new org.sonatype.aether.graph.Dependency(queryArtifact,
                query.getScopeType()), remoteRepos);
 
-      DependencyRequest request = new DependencyRequest(collectRequest, new DependencyFilter()
-      {
-         @Override
-         public boolean accept(DependencyNode node, List<DependencyNode> parents)
-         {
-            return true;
-         }
-      });
+      DependencyRequest request = new DependencyRequest(collectRequest, null);
 
       DependencyResult artifacts;
       try
