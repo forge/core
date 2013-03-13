@@ -4,10 +4,10 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.Future;
 
-import org.jboss.forge.container.Addon;
-import org.jboss.forge.container.AddonDependency;
-import org.jboss.forge.container.AddonId;
-import org.jboss.forge.container.Status;
+import org.jboss.forge.container.addons.Addon;
+import org.jboss.forge.container.addons.AddonDependency;
+import org.jboss.forge.container.addons.AddonId;
+import org.jboss.forge.container.addons.Status;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.container.util.Assert;
 import org.jboss.modules.Module;

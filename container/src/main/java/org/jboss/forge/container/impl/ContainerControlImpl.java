@@ -15,7 +15,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jboss.forge.container.ContainerControl;
-import org.jboss.forge.container.Status;
+import org.jboss.forge.container.addons.Status;
 import org.jboss.forge.container.event.PostStartup;
 import org.jboss.forge.container.event.PreShutdown;
 import org.jboss.forge.container.event.Shutdown;

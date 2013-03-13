@@ -4,8 +4,8 @@ import java.lang.reflect.Method;
 
 import javax.enterprise.inject.spi.InjectionPoint;
 
-import org.jboss.forge.container.Addon;
-import org.jboss.forge.container.AddonRegistry;
+import org.jboss.forge.container.addons.Addon;
+import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.util.Addons;
 import org.jboss.forge.container.util.Assert;
 import org.jboss.forge.proxy.ForgeProxy;

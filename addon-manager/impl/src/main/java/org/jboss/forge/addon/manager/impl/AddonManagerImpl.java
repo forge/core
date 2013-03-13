@@ -11,8 +11,8 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.manager.AddonManager;
 import org.jboss.forge.addon.manager.InstallRequest;
-import org.jboss.forge.container.AddonId;
-import org.jboss.forge.container.AddonRepository;
+import org.jboss.forge.container.addons.AddonId;
+import org.jboss.forge.container.repositories.AddonRepository;
 import org.jboss.forge.dependencies.AddonDependencyResolver;
 import org.jboss.forge.dependencies.DependencyNode;
 import org.jboss.forge.dependencies.builder.DependencyQueryBuilder;

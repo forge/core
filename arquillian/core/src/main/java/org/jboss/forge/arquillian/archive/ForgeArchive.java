@@ -2,7 +2,7 @@ package org.jboss.forge.arquillian.archive;
 
 import java.util.List;
 
-import org.jboss.forge.container.AddonDependency;
+import org.jboss.forge.container.addons.AddonDependency;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.asset.Asset;
 import org.jboss.shrinkwrap.api.container.LibraryContainer;

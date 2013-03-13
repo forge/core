@@ -6,8 +6,8 @@
  */
 package org.jboss.forge.dependencies;
 
-import org.jboss.forge.container.Addon;
-import org.jboss.forge.container.AddonRepository;
+import org.jboss.forge.container.addons.Addon;
+import org.jboss.forge.container.repositories.AddonRepository;
 import org.jboss.forge.container.services.Exported;
 
 /**

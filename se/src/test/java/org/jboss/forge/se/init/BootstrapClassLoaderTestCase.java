@@ -3,11 +3,11 @@ package org.jboss.forge.se.init;
 import java.lang.reflect.Method;
 import java.util.Set;
 
-import org.jboss.forge.container.Addon;
-import org.jboss.forge.container.AddonId;
-import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.Forge;
 import org.jboss.forge.container.ForgeImpl;
+import org.jboss.forge.container.addons.Addon;
+import org.jboss.forge.container.addons.AddonId;
+import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.util.AddonFilters;
 import org.jboss.forge.proxy.ClassLoaderAdapterCallback;
 import org.junit.Assert;

@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import org.jboss.forge.container.AddonId;
+import org.jboss.forge.container.addons.AddonId;
 import org.jboss.modules.ModuleIdentifier;
 
 /**

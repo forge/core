@@ -6,7 +6,7 @@ import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.Typed;
 import javax.inject.Singleton;
 
-import org.jboss.forge.container.AddonRepository;
+import org.jboss.forge.container.repositories.AddonRepository;
 
 @Singleton
 public class AddonRepositoryProducer

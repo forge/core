@@ -14,14 +14,14 @@ import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.jar.JarFile;
 
-import org.jboss.forge.container.AddonDependency;
-import org.jboss.forge.container.AddonId;
-import org.jboss.forge.container.AddonRepository;
+import org.jboss.forge.container.addons.AddonDependency;
+import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.impl.AddonRepositoryImpl;
 import org.jboss.forge.container.modules.providers.ForgeContainerSpec;
 import org.jboss.forge.container.modules.providers.SystemClasspathSpec;
 import org.jboss.forge.container.modules.providers.WeldClasspathSpec;
+import org.jboss.forge.container.repositories.AddonRepository;
 import org.jboss.modules.DependencySpec;
 import org.jboss.modules.Module;
 import org.jboss.modules.ModuleIdentifier;

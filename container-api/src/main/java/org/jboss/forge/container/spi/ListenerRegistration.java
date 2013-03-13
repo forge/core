@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.container;
+package org.jboss.forge.container.spi;
 
 /**
  * Allows removal of a registered listener in the Forge container

@@ -10,7 +10,7 @@ package org.jboss.forge.convert.impl;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jboss.forge.container.AddonRegistry;
+import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.convert.Converter;

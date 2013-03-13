@@ -22,9 +22,9 @@ import java.util.regex.Pattern;
 
 import javax.enterprise.inject.Typed;
 
-import org.jboss.forge.container.AddonDependency;
-import org.jboss.forge.container.AddonId;
-import org.jboss.forge.container.AddonRepository;
+import org.jboss.forge.container.addons.AddonDependency;
+import org.jboss.forge.container.addons.AddonId;
+import org.jboss.forge.container.repositories.AddonRepository;
 import org.jboss.forge.container.util.Assert;
 import org.jboss.forge.container.util.Files;
 import org.jboss.forge.container.util.OperatingSystemUtils;

@@ -4,7 +4,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jboss.forge.addon.manager.AddonManager;
-import org.jboss.forge.container.AddonId;
+import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.context.UIBuilder;
 import org.jboss.forge.ui.context.UIContext;

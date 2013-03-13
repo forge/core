@@ -6,7 +6,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.ContainerControl;
-import org.jboss.forge.container.Status;
+import org.jboss.forge.container.addons.Status;
 import org.jboss.forge.test.Tests;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;

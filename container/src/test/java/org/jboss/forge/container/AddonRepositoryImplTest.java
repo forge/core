@@ -11,7 +11,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.jboss.forge.container.addons.AddonDependency;
+import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.impl.AddonRepositoryImpl;
+import org.jboss.forge.container.repositories.AddonRepository;
 import org.junit.Assert;
 import org.junit.Test;
 

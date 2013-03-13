@@ -4,13 +4,16 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.container;
+package org.jboss.forge.container.repositories;
 
 import java.io.File;
 import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
+
+import org.jboss.forge.container.addons.AddonDependency;
+import org.jboss.forge.container.addons.AddonId;
 
 /**
  * Used to perform Addon installation/registration operations. May be obtained using CDI injection:
@@ -23,12 +26,6 @@ import javax.inject.Inject;
  */
 public interface AddonRepository
 {
-   public boolean deploy(AddonId addon, List<AddonDependency> dependencies, List<File> resourceJars);
-
-   public boolean disable(final AddonId addon);
-
-   public boolean enable(AddonId addon);
-
    public File getAddonBaseDir(AddonId addon);
 
    public Set<AddonDependency> getAddonDependencies(AddonId addon);
@@ -39,8 +36,6 @@ public interface AddonRepository
 
    public File getRepositoryDirectory();
 
-   public File getRepositoryRegistryFile();
-
    public boolean isDeployed(AddonId addon);
 
    public boolean isEnabled(final AddonId addon);
@@ -48,7 +43,4 @@ public interface AddonRepository
    public List<AddonId> listEnabled();
 
    public List<AddonId> listEnabledCompatibleWithVersion(final String version);
-
-   public boolean undeploy(AddonId addonEntry);
-
 }

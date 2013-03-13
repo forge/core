@@ -4,8 +4,8 @@ import java.util.Iterator;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.Forge;
+import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.context.UIBuilder;
 import org.jboss.forge.ui.context.UIContext;

@@ -9,7 +9,7 @@ import javax.enterprise.inject.spi.BeanManager;
 
 import org.jboss.forge.container.ContainerControl;
 import org.jboss.forge.container.Forge;
-import org.jboss.forge.container.Status;
+import org.jboss.forge.container.addons.Status;
 import org.jboss.forge.container.event.Perform;
 import org.jboss.forge.container.modules.ModularURLScanner;
 import org.jboss.forge.container.modules.ModularWeld;

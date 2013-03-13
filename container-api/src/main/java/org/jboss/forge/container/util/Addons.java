@@ -1,6 +1,6 @@
 package org.jboss.forge.container.util;
 
-import org.jboss.forge.container.Addon;
+import org.jboss.forge.container.addons.Addon;
 import org.jboss.forge.container.exception.ContainerException;
 
 public class Addons

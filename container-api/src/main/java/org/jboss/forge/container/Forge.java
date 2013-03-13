@@ -7,9 +7,13 @@
 
 package org.jboss.forge.container;
 
-import java.io.File;
+import java.util.List;
 
+import org.jboss.forge.container.addons.AddonRegistry;
+import org.jboss.forge.container.repositories.AddonRepository;
 import org.jboss.forge.container.spi.ContainerLifecycleListener;
+import org.jboss.forge.container.spi.ListenerRegistration;
+import org.jboss.forge.container.versions.Version;
 
 public interface Forge
 {
@@ -25,15 +29,13 @@ public interface Forge
 
    public Forge setServerMode(boolean server);
 
-   public Forge setAddonDir(File dir);
-
-   public File getAddonDir();
-
    public AddonRegistry getAddonRegistry();
 
-   public AddonRepository getRepository();
+   public List<AddonRepository> getRepositories();
 
-   public String getVersion();
+   public void setRepositories(List<AddonRepository> repositories);
+
+   public Version getVersion();
 
    public ListenerRegistration<ContainerLifecycleListener> addContainerLifecycleListener(
             ContainerLifecycleListener listener);

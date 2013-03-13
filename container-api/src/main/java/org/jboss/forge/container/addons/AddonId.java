@@ -1,13 +1,16 @@
-package org.jboss.forge.container;
+package org.jboss.forge.container.addons;
 
 import java.util.Arrays;
 import java.util.List;
 
+import org.jboss.forge.container.versions.SingleVersion;
+import org.jboss.forge.container.versions.Version;
+
 public abstract class AddonId
 {
    private final String name;
-   private final String apiVersion;
-   private final String version;
+   private final Version apiVersion;
+   private final Version version;
 
    /*
     * For CGLib
@@ -19,13 +22,13 @@ public abstract class AddonId
       version = null;
    }
 
-   AddonId(final String name, final String version, final String apiVersion)
+   AddonId(final String name, final Version version, final Version apiVersion)
    {
       if (name == null || name.isEmpty())
          throw new IllegalArgumentException("Name cannot be null.");
       this.name = name;
 
-      if (version == null || version.isEmpty())
+      if (version == null)
          throw new IllegalArgumentException("Version cannot be null.");
       this.version = version;
 
@@ -37,12 +40,12 @@ public abstract class AddonId
       return name;
    }
 
-   public String getApiVersion()
+   public Version getApiVersion()
    {
       return apiVersion;
    }
 
-   public String getVersion()
+   public Version getVersion()
    {
       return version;
    }
@@ -81,7 +84,7 @@ public abstract class AddonId
 
    public static AddonId from(String name, String version, String apiVersion)
    {
-      return new AddonId(name, version, apiVersion)
+      return new AddonId(name, new SingleVersion(version), new SingleVersion(apiVersion))
       {
       };
    }

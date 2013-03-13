@@ -7,7 +7,7 @@ import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.container.AddonRegistry;
+import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.convert.Converter;
 import org.jboss.forge.projects.Project;

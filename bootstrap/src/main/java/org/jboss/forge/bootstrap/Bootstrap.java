@@ -14,9 +14,9 @@ import java.util.logging.Logger;
 
 import org.jboss.forge.addon.manager.InstallRequest;
 import org.jboss.forge.addon.manager.impl.AddonManagerImpl;
-import org.jboss.forge.container.AddonId;
-import org.jboss.forge.container.AddonRepository;
 import org.jboss.forge.container.Forge;
+import org.jboss.forge.container.addons.AddonId;
+import org.jboss.forge.container.repositories.AddonRepository;
 import org.jboss.forge.dependencies.Coordinate;
 import org.jboss.forge.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.dependencies.builder.DependencyQueryBuilder;
