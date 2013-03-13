@@ -8,7 +8,6 @@
 package org.jboss.forge.maven.dependencies;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,7 +21,6 @@ import java.util.logging.Logger;
 
 import org.jboss.forge.parser.xml.Node;
 import org.jboss.forge.parser.xml.XMLParser;
-import org.jboss.forge.parser.xml.XMLParserException;
 import org.jboss.shrinkwrap.resolver.impl.maven.util.Validate;
 import org.sonatype.aether.artifact.Artifact;
 import org.sonatype.aether.repository.WorkspaceReader;
@@ -31,9 +29,11 @@ import org.sonatype.aether.util.artifact.DefaultArtifact;
 
 /**
  * {@link WorkspaceReader} implementation capable of reading from the ClassPath
- * 
- * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @author <a href="mailto:mmatloka@gmail.com">Michal Matloka</a>
+ *
+ * Based on the ClasspathWorkspaceReader provided by ShrinkWrap Resolver
+ *
+ * @author <a href="mailto:ggastakd@redhat.com">George Gastaldi</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class ClasspathWorkspaceReader implements WorkspaceReader
 {
@@ -49,76 +49,40 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
     */
    private static final String SUREFIRE_CLASS_PATH_KEY = "surefire.test.class.path";
 
-   /**
-    * Contains File object and retrieved cached isFile and isDirectory values
-    */
-   private static final class FileInfo
-   {
-      private final File file;
-      private final boolean isFile;
-      private final boolean isDirectory;
-
-      private FileInfo(final File file, final boolean isFile, final boolean isDirectory)
-      {
-         this.file = file;
-         this.isFile = isFile;
-         this.isDirectory = isDirectory;
-      }
-
-      private FileInfo(final File file)
-      {
-         this(file, file.isFile(), file.isDirectory());
-      }
-
-      private FileInfo(final String classpathEntry)
-      {
-         this(new File(classpathEntry));
-      }
-
-      private File getFile()
-      {
-         return file;
-      }
-
-      private boolean isFile()
-      {
-         return isFile;
-      }
-
-      private boolean isDirectory()
-      {
-         return isDirectory;
-      }
-   }
-
    private final Set<String> classPathEntries = new LinkedHashSet<String>();
 
    /**
     * Cache classpath File objects and retrieved isFile isDirectory values. Key is a classpath entry
-    * 
-    * @see #getClasspathFileInfo(String)
+    *
+    * @see #getClasspathFile(String)
     */
-   private final Map<String, FileInfo> classpathFileInfoCache = new HashMap<String, FileInfo>();
+   private final Map<String, File> classpathFileInfoCache = new HashMap<String, File>();
 
    /**
     * Cache pom File objects and retrieved isFile isDirectory values. Key - child File
-    * 
-    * @see #getPomFileInfo(java.io.File)
+    *
+    * @see #getPomFile(java.io.File)
     */
-   private final Map<File, FileInfo> pomFileInfoCache = new HashMap<File, FileInfo>();
+   private final Map<File, File> pomFileInfoCache = new HashMap<File, File>();
 
    /**
     * Cache Found in classpath artifacts. Key is a pom file.
-    * 
+    *
     * @see #getFoundArtifact(java.io.File)
     */
    private final Map<File, Artifact> foundArtifactCache = new HashMap<File, Artifact>();
+
+   /**
+    * Repository unique in this instance
+    *
+    * @see #getRepository()
+    */
+   private WorkspaceRepository repository = new WorkspaceRepository("classpath");
 
    public ClasspathWorkspaceReader()
    {
       final String classPath = System.getProperty(CLASS_PATH_KEY);
       final String surefireClassPath = System.getProperty(SUREFIRE_CLASS_PATH_KEY);
-
       this.classPathEntries.addAll(getClassPathEntries(surefireClassPath));
       this.classPathEntries.addAll(getClassPathEntries(classPath));
    }
@@ -126,7 +90,7 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
    @Override
    public WorkspaceRepository getRepository()
    {
-      return new WorkspaceRepository("classpath");
+      return repository;
    }
 
    @Override
@@ -134,16 +98,14 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
    {
       for (String classpathEntry : classPathEntries)
       {
-         final FileInfo fileInfo = getClasspathFileInfo(classpathEntry);
-         final File file = fileInfo.getFile();
+         final File file = getClasspathFile(classpathEntry);
 
-         if (fileInfo.isDirectory())
+         if (file.isDirectory())
          {
             // TODO: This is not reliable, file might have different name
             // FIXME: Surefire might user jar in the classpath instead of the target/classes
-            final FileInfo pomFileInfo = getPomFileInfo(file);
-            final File pomFile = pomFileInfo.getFile();
-            if (pomFileInfo.isFile())
+            final File pomFile = getPomFile(file);
+            if (pomFile.isFile())
             {
                final Artifact foundArtifact = getFoundArtifact(pomFile);
 
@@ -167,7 +129,7 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
             }
          }
          // this is needed for Surefire when runned as 'mvn package'
-         else if (fileInfo.isFile())
+         else if (file.isFile())
          {
             final StringBuilder name = new StringBuilder(artifact.getArtifactId()).append("-").append(
                      artifact.getVersion());
@@ -218,16 +180,14 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
       List<String> versions = new ArrayList<String>();
       for (String classpathEntry : classPathEntries)
       {
-         final FileInfo fileInfo = getClasspathFileInfo(classpathEntry);
-         final File file = fileInfo.getFile();
+         final File file = getClasspathFile(classpathEntry);
 
-         if (fileInfo.isDirectory())
+         if (file.isDirectory())
          {
             // TODO: This is not reliable, file might have different name
             // FIXME: Surefire might user jar in the classpath instead of the target/classes
-            final FileInfo pomFileInfo = getPomFileInfo(file);
-            final File pomFile = pomFileInfo.getFile();
-            if (pomFileInfo.isFile())
+            final File pomFile = getPomFile(file);
+            if (pomFile.isFile())
             {
                final Artifact foundArtifact = getFoundArtifact(pomFile);
 
@@ -239,7 +199,7 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
             }
          }
          // this is needed for Surefire when runned as 'mvn package'
-         else if (fileInfo.isFile())
+         else if (file.isFile())
          {
             // TODO: This is nasty
             // we need to get a a pom.xml file to be sure we fetch transitive deps as well
@@ -279,32 +239,26 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
       return new LinkedHashSet<String>(Arrays.asList(classPath.split(File.pathSeparator)));
    }
 
-   private FileInfo getClasspathFileInfo(final String classpathEntry)
+   private File getClasspathFile(final String classpathEntry)
    {
-      FileInfo classpathFileInfo = classpathFileInfoCache.get(classpathEntry);
+      File classpathFileInfo = classpathFileInfoCache.get(classpathEntry);
       if (classpathFileInfo == null)
       {
-         classpathFileInfo = new FileInfo(classpathEntry);
+         classpathFileInfo = new File(classpathEntry);
          classpathFileInfoCache.put(classpathEntry, classpathFileInfo);
       }
       return classpathFileInfo;
    }
 
-   private FileInfo getPomFileInfo(final File childFile)
+   private File getPomFile(final File childFile)
    {
-      FileInfo pomFileInfo = pomFileInfoCache.get(childFile);
+      File pomFileInfo = pomFileInfoCache.get(childFile);
       if (pomFileInfo == null)
       {
-         pomFileInfo = createPomFileInfo(childFile);
+         pomFileInfo = new File(childFile.getParentFile().getParentFile(), "pom.xml");
          pomFileInfoCache.put(childFile, pomFileInfo);
       }
       return pomFileInfo;
-   }
-
-   private FileInfo createPomFileInfo(final File childFile)
-   {
-      final File pomFile = new File(childFile.getParentFile().getParentFile(), "pom.xml");
-      return new FileInfo(pomFile);
    }
 
    private Artifact getFoundArtifact(final File pomFile)
@@ -327,7 +281,7 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
             log.fine("Processing " + pomFile.getAbsolutePath() + " for classpath artifact resolution");
          }
 
-         final Node pom = loadPom(pomFile);
+         final Node pom = XMLParser.parse(pomFile);
 
          String groupId = pom.getTextValueForPatternName("groupId");
          String artifactId = pom.getTextValueForPatternName("artifactId");
@@ -356,10 +310,4 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
          throw new RuntimeException("Could not parse pom.xml: " + pomFile, e);
       }
    }
-
-   private Node loadPom(final File pom) throws XMLParserException, FileNotFoundException
-   {
-      return XMLParser.parse(pom);
-   }
-
 }
