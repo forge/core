@@ -77,8 +77,7 @@ public class AddonHotSwapTest
       ClassLoader depTwoClassloader = depTwo.getClassLoader();
 
       ((MutableAddonRepository) repository).disable(depTwoId);
-      Future<Set<Addon>> futureStopped = registry.stop(depTwo);
-      Set<Addon> stopped = futureStopped.get();
+      Set<Addon> stopped = registry.stop(depTwo);
       Assert.assertTrue(stopped.contains(depOne));
       Assert.assertTrue(stopped.contains(depTwo));
 

@@ -17,7 +17,6 @@ import org.jboss.forge.container.util.Assert;
  */
 public class AddonDependencyEntry
 {
-
    private AddonId id;
    private boolean exported;
    private boolean optional;

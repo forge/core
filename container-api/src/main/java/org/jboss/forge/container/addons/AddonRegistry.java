@@ -59,7 +59,7 @@ public interface AddonRegistry
     * Stop the given {@link Addon}, and all dependent {@link Addon} instances. Dependents for which this {@link Addon}
     * is an optional dependency will be restarted.
     * 
-    * @return a {@link Future}, the result of which is the {@link Set} of all stopped addons.
+    * @return the {@link Set} of all stopped addons.
     */
-   Future<Set<Addon>> stop(Addon addon);
+   Set<Addon> stop(Addon addon);
 }

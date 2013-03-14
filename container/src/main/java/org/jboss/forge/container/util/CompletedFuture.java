@@ -4,25 +4,23 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.container.impl.util;
+package org.jboss.forge.container.util;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.jboss.forge.container.addons.Addon;
-
 /**
  * A pass-through {@link Future} that simply returns the specified value immediately.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class CompletedFuture<T> implements Future<Addon>
+public class CompletedFuture<T> implements Future<T>
 {
-   private Addon value;
+   private T value;
 
-   public CompletedFuture(Addon value)
+   public CompletedFuture(T value)
    {
       super();
       this.value = value;
@@ -35,13 +33,13 @@ public class CompletedFuture<T> implements Future<Addon>
    }
 
    @Override
-   public Addon get() throws InterruptedException, ExecutionException
+   public T get() throws InterruptedException, ExecutionException
    {
       return value;
    }
 
    @Override
-   public Addon get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException
+   public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException
    {
       return value;
    }

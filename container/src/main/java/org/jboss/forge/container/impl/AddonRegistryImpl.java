@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -23,7 +24,6 @@ import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.addons.Status;
 import org.jboss.forge.container.exception.ContainerException;
-import org.jboss.forge.container.impl.util.CompletedFuture;
 import org.jboss.forge.container.lock.LockManager;
 import org.jboss.forge.container.lock.LockMode;
 import org.jboss.forge.container.modules.AddonModuleLoader;
@@ -32,6 +32,7 @@ import org.jboss.forge.container.repositories.AddonRepository;
 import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.container.util.Assert;
+import org.jboss.forge.container.util.CompletedFuture;
 import org.jboss.forge.container.util.Sets;
 import org.jboss.forge.container.versions.SingleVersionRange;
 import org.jboss.modules.Module;
@@ -282,7 +283,7 @@ public class AddonRegistryImpl implements AddonRegistry
             Future<Addon> result = null;
             AddonImpl addon = loadAddon(id);
 
-            if (addon.getStatus().isStarted())
+            if (addon.getFuture() != null)
             {
                result = addon.getFuture();
             }
@@ -290,6 +291,8 @@ public class AddonRegistryImpl implements AddonRegistry
             {
                AddonRunnable runnable = new AddonRunnable(forge, addon);
                result = executor.submit(runnable, (Addon) addon);
+               addon.setFuture(result);
+               addon.setRunnable(runnable);
             }
             else
             {
@@ -362,17 +365,16 @@ public class AddonRegistryImpl implements AddonRegistry
                }
             }
 
-            addon.setMissingDependencies(missingRequiredDependencies);
-
             if (!missingRequiredDependencies.isEmpty())
             {
-               if (addon.getStatus().isMissing())
+               if (addon.getMissingDependencies().size() != missingRequiredDependencies.size())
                {
                   logger.warning("Addon [" + addon + "] has [" + missingRequiredDependencies.size()
                            + "] missing dependencies: "
                            + missingRequiredDependencies + " and will be not be loaded until all required"
                            + " dependencies are available.");
                }
+               addon.setMissingDependencies(missingRequiredDependencies);
             }
             else
             {
@@ -381,6 +383,7 @@ public class AddonRegistryImpl implements AddonRegistry
                   AddonModuleLoader moduleLoader = getAddonModuleLoader(repository);
                   Module module = moduleLoader.loadModule(addonId);
                   addon.setModule(module);
+                  addon.setRepository(repository);
                   addon.setStatus(Status.STOPPED);
 
                   if (!isRegistered(addonId))
@@ -408,14 +411,52 @@ public class AddonRegistryImpl implements AddonRegistry
    }
 
    @Override
-   public Future<Set<Addon>> stop(Addon addon)
+   public Set<Addon> stop(final Addon addonToStop)
    {
-      return lock.performLocked(LockMode.WRITE, new Callable<Future<Set<Addon>>>()
+      Assert.notNull(addonToStop, "Addon must not be null.");
+
+      return lock.performLocked(LockMode.WRITE, new Callable<Set<Addon>>()
       {
          @Override
-         public Future<Set<Addon>> call() throws Exception
+         public Set<Addon> call() throws Exception
          {
-            return null;
+            Set<Addon> result = new HashSet<Addon>();
+            for (AddonImpl dependentAddon : addons)
+            {
+               for (AddonDependency dependency : dependentAddon.getDependencies())
+               {
+                  if (addonToStop.equals(dependency.getDependency()) && dependentAddon.getStatus().isStarted())
+                  {
+                     result.addAll(stop(dependentAddon));
+                  }
+               }
+            }
+
+            if (addonToStop != null)
+            {
+               Future<Addon> future = ((AddonImpl) addonToStop).getFuture();
+               try
+               {
+                  if (future != null && addonToStop.getStatus().isStarted())
+                  {
+                     ((AddonImpl) addonToStop).getRunnable().shutdown();
+                  }
+               }
+               catch (Exception e)
+               {
+                  logger.log(Level.WARNING, "Failed to shut down addon " + addonToStop, e);
+               }
+               finally
+               {
+                  if (future != null && !future.isDone())
+                     future.cancel(true);
+
+                  addons.remove(addonToStop);
+                  getAddonModuleLoader(addonToStop.getRepository()).removeFromCache(addonToStop.getId());
+               }
+            }
+
+            return result;
          }
       });
    }
@@ -442,11 +483,19 @@ public class AddonRegistryImpl implements AddonRegistry
 
    public void stopAll()
    {
-      // TODO Auto-generated method stub
+      for (AddonImpl addon : addons)
+      {
+         stop(addon);
+      }
+      List<Runnable> waiting = executor.shutdownNow();
+      if (waiting != null && !waiting.isEmpty())
+         logger.info("(" + waiting.size() + ") addons were aborted while loading.");
    }
 
    private AddonModuleLoader getAddonModuleLoader(AddonRepository repository)
    {
+      Assert.notNull(repository, "Repository must not be null.");
+
       if (!loaders.containsKey(repository))
          loaders.put(repository, new AddonModuleLoader(repository, forge.getRuntimeClassLoader()));
       return loaders.get(repository);

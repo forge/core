@@ -1,6 +1,7 @@
 package org.jboss.forge.container.impl;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Future;
 
@@ -16,13 +17,15 @@ import org.jboss.modules.Module;
 
 public class AddonImpl implements Addon
 {
+   @SuppressWarnings("unused")
+   private final LockManager lock;
    private final AddonId entry;
    private final Set<AddonDependency> dependencies;
    private Status status = Status.MISSING;
 
    private Module module;
    private ServiceRegistry registry;
-   private Set<AddonDependency> missingDependencies;
+   private Set<AddonDependency> missingDependencies = new HashSet<AddonDependency>();
    private Future<Addon> future;
    private AddonRunnable runnable;
    private AddonRepository repository;
@@ -32,14 +35,16 @@ public class AddonImpl implements Addon
       this(lock, entry, null, Collections.<AddonDependency> emptySet());
    }
 
-   public AddonImpl(LockManager lock, AddonId entry, AddonRepository respository, Set<AddonDependency> dependencies)
+   public AddonImpl(LockManager lock, AddonId entry, AddonRepository repository, Set<AddonDependency> dependencies)
    {
       Assert.notNull(lock, "LockManager must not be null.");
       Assert.notNull(entry, "AddonId must not be null.");
       Assert.notNull(dependencies, "Dependencies must not be null.");
 
+      this.lock = lock;
       this.entry = entry;
       this.dependencies = dependencies;
+      this.repository = repository;
    }
 
    @Override
