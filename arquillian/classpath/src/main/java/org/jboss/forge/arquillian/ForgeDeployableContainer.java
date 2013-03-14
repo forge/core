@@ -157,18 +157,16 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       try
       {
          this.addonDir = File.createTempFile("forge", "test-addon-dir");
-         System.out.println("Executing test case with addon dir [" + addonDir + "]");
-         this.repository = (MutableAddonRepository) AddonRepositoryImpl.forDirectory(addonDir);
-      }
-      catch (IOException e1)
-      {
-         throw new LifecycleException("Failed to create temporary addon directory", e1);
-      }
-      try
-      {
          runnable = new ForgeRunnable(addonDir, ClassLoader.getSystemClassLoader());
          thread = new Thread(runnable, "Arquillian Forge Runtime");
+         System.out.println("Executing test case with addon dir [" + addonDir + "]");
+         this.repository = (MutableAddonRepository) AddonRepositoryImpl.forDirectory(runnable.forge, addonDir);
+
          thread.start();
+      }
+      catch (IOException e)
+      {
+         throw new LifecycleException("Failed to create temporary addon directory", e);
       }
       catch (Exception e)
       {
@@ -219,6 +217,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
 
       public ForgeRunnable(File addonDir, ClassLoader loader)
       {
+         this.forge = new ForgeImpl();
          this.addonDir = addonDir;
          this.loader = loader;
       }
@@ -236,8 +235,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
             @Override
             public Object call() throws Exception
             {
-               forge = new ForgeImpl();
-               forge.setServerMode(true).setRepositories(AddonRepositoryImpl.forDirectory(addonDir))
+               forge.setServerMode(true).setRepositories(AddonRepositoryImpl.forDirectory(forge, addonDir))
                         .start(loader);
                return forge;
             }

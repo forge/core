@@ -65,7 +65,8 @@ public class AddonRepositoryImplTest
    @Test
    public void testAddonDirNaming() throws Exception
    {
-      AddonRepository repository = AddonRepositoryImpl.forDirectory(File.createTempFile("addonDir", "test"));
+      AddonRepository repository = AddonRepositoryImpl.forDirectory(new ForgeImpl(),
+               File.createTempFile("addonDir", "test"));
       File dir = repository.getAddonBaseDir(AddonId.from("123#$%456", "!@#789*-0"));
       Assert.assertEquals("123-456-789-0", dir.getName());
    }
@@ -73,7 +74,8 @@ public class AddonRepositoryImplTest
    @Test
    public void testDeployAddonEntryNoDependencies() throws Exception
    {
-      MutableAddonRepository repository = AddonRepositoryImpl.forDirectory(File.createTempFile("addonDir", "test"));
+      MutableAddonRepository repository = AddonRepositoryImpl.forDirectory(new ForgeImpl(),
+               File.createTempFile("addonDir", "test"));
 
       AddonId addon = AddonId.from("1", "2");
       repository.deploy(addon, new ArrayList<AddonDependencyEntry>(), new ArrayList<File>());
@@ -84,7 +86,8 @@ public class AddonRepositoryImplTest
    @Test
    public void testDeployAddonEntrySingleDependency() throws Exception
    {
-      MutableAddonRepository repository = AddonRepositoryImpl.forDirectory(File.createTempFile("addonDir", "test"));
+      MutableAddonRepository repository = AddonRepositoryImpl.forDirectory(new ForgeImpl(),
+               File.createTempFile("addonDir", "test"));
 
       AddonId addon = AddonId.from("1", "2");
       AddonDependencyEntry dependency = AddonDependencyEntry.create(AddonId.from("nm", "ver"), false, true);
@@ -97,7 +100,8 @@ public class AddonRepositoryImplTest
    @Test
    public void testDeployAddonEntryMultipleDependencies() throws Exception
    {
-      MutableAddonRepository repository = AddonRepositoryImpl.forDirectory(File.createTempFile("addonDir", "test"));
+      MutableAddonRepository repository = AddonRepositoryImpl.forDirectory(new ForgeImpl(),
+               File.createTempFile("addonDir", "test"));
 
       AddonId addon = AddonId.from("1", "2");
       AddonDependencyEntry dependency0 = AddonDependencyEntry.create(AddonId.from("nm1", "ver"), true, false);

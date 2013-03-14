@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.jboss.forge.container.addons.Addon;
 import org.jboss.forge.container.addons.AddonRegistry;
+import org.jboss.forge.container.lock.LockManager;
 import org.jboss.forge.container.repositories.AddonRepository;
 import org.jboss.forge.container.spi.ContainerLifecycleListener;
 import org.jboss.forge.container.spi.ListenerRegistration;
@@ -95,4 +96,6 @@ public interface Forge
     * Get the {@link ClassLoader} from which {@link Forge} loaded its internal classes.
     */
    public ClassLoader getRuntimeClassLoader();
+
+   public LockManager getLockManager();
 }
