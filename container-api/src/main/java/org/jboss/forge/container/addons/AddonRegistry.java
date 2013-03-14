@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
 
-import org.jboss.forge.container.lock.LockManager;
 import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.container.services.ServiceRegistry;
 
@@ -20,16 +19,25 @@ import org.jboss.forge.container.services.ServiceRegistry;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public interface AddonRegistry extends LockManager
+public interface AddonRegistry
 {
-   Addon getRegisteredAddon(AddonId id);
-
-   Set<Addon> getRegisteredAddons();
-
-   Set<Addon> getRegisteredAddons(AddonFilter filter);
-
    boolean isRegistered(AddonId id);
 
+   Addon getRegisteredAddon(AddonId id);
+
+   /**
+    * Get all currently registered {@link Addon} instances.
+    */
+   Set<Addon> getRegisteredAddons();
+
+   /**
+    * Get all registered {@link Addon} instances matching the given {@link AddonFilter}.
+    */
+   Set<Addon> getRegisteredAddons(AddonFilter filter);
+
+   /**
+    * Return a {@link Map} of currently registered {@link ServiceRegistry} instances for each {@link Addon}.
+    */
    Map<Addon, ServiceRegistry> getServiceRegistries();
 
    <T> Set<ExportedInstance<T>> getExportedInstances(Class<T> clazz);
@@ -41,13 +49,17 @@ public interface AddonRegistry extends LockManager
    <T> ExportedInstance<T> getExportedInstance(String type);
 
    /**
-    * Start the given {@link Addon} and all its dependencies, if possible. Return a {@link Future} which can be used to
-    * retrieve the final {@link Addon} {@link Status} after the operation has been performed.
+    * Start the given {@link AddonId} and all its dependencies, if possible. Return a {@link Future} which can be used
+    * to retrieve the final {@link Addon} after the operation has been performed. Existing dependents for which this
+    * {@link AddonId} is an optional dependency will be restarted.
     */
-   Future<Status> start(Addon addon);
+   Future<Addon> start(AddonId addon);
 
    /**
-    * Start the given {@link Addon}, and all dependent {@link Addon} instances.
+    * Stop the given {@link Addon}, and all dependent {@link Addon} instances. Dependents for which this {@link Addon}
+    * is an optional dependency will be restarted.
+    * 
+    * @return a {@link Future}, the result of which is the {@link Set} of all stopped addons.
     */
-   void stop(Addon addon);
+   Future<Set<Addon>> stop(Addon addon);
 }

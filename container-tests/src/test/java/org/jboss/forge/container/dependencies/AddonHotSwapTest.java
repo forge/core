@@ -1,5 +1,6 @@
 package org.jboss.forge.container.dependencies;
 
+import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -9,10 +10,11 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.addons.Addon;
-import org.jboss.forge.container.addons.AddonDependency;
 import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.addons.AddonRegistry;
+import org.jboss.forge.container.repositories.AddonDependencyEntry;
 import org.jboss.forge.container.repositories.AddonRepository;
+import org.jboss.forge.container.repositories.MutableAddonRepository;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -41,7 +43,7 @@ public class AddonHotSwapTest
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
                .addBeansXML()
-               .addAsAddonDependencies(AddonDependency.create(AddonId.from("dep", "2")));
+               .addAsAddonDependencies(AddonDependencyEntry.create(AddonId.from("dep", "2")));
 
       return archive;
    }
@@ -74,11 +76,14 @@ public class AddonHotSwapTest
       ClassLoader depOneClassloader = depOne.getClassLoader();
       ClassLoader depTwoClassloader = depTwo.getClassLoader();
 
-      repository.disable(depTwoId);
-      registry.stop(depTwo);
+      ((MutableAddonRepository) repository).disable(depTwoId);
+      Future<Set<Addon>> futureStopped = registry.stop(depTwo);
+      Set<Addon> stopped = futureStopped.get();
+      Assert.assertTrue(stopped.contains(depOne));
+      Assert.assertTrue(stopped.contains(depTwo));
 
-      repository.enable(depTwoId);
-      Future<?> future = registry.start(depTwo);
+      ((MutableAddonRepository) repository).enable(depTwoId);
+      Future<Addon> future = registry.start(depTwoId);
       future.get(10, TimeUnit.SECONDS); // shouldn't take this long
 
       Assert.assertNotEquals(depOneClassloader, registry.getRegisteredAddon(depOneId).getClassLoader());

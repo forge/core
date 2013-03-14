@@ -4,7 +4,7 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.container.impl;
+package org.jboss.forge.container.impl.repository;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -17,19 +17,20 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.enterprise.inject.Typed;
 
-import org.jboss.forge.container.addons.AddonDependency;
 import org.jboss.forge.container.addons.AddonId;
+import org.jboss.forge.container.repositories.AddonDependencyEntry;
 import org.jboss.forge.container.repositories.AddonRepository;
+import org.jboss.forge.container.repositories.MutableAddonRepository;
 import org.jboss.forge.container.util.Assert;
 import org.jboss.forge.container.util.Files;
 import org.jboss.forge.container.util.OperatingSystemUtils;
 import org.jboss.forge.container.util.Streams;
-import org.jboss.forge.container.util.Strings;
+import org.jboss.forge.container.versions.SingleVersion;
+import org.jboss.forge.container.versions.Version;
+import org.jboss.forge.container.versions.Versions;
 import org.jboss.forge.parser.xml.Node;
 import org.jboss.forge.parser.xml.XMLParser;
 import org.jboss.forge.parser.xml.XMLParserException;
@@ -42,7 +43,7 @@ import org.jboss.forge.parser.xml.XMLParserException;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
 @Typed()
-public final class AddonRepositoryImpl implements AddonRepository
+public final class AddonRepositoryImpl implements MutableAddonRepository
 {
    private static final String ATTR_API_VERSION = "api-version";
    private static final String ATTR_EXPORT = "export";
@@ -54,17 +55,14 @@ public final class AddonRepositoryImpl implements AddonRepository
    private static final String REGISTRY_DESCRIPTOR_NAME = "installed.xml";
    private static final String ADDON_DESCRIPTOR_FILENAME = "addon.xml";
 
-   private static final Pattern VERSION_PATTERN = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)(\\.|-)(.*)");
+   private Object lock;
 
-   // FIXME Enhance this synchronization/locking with actual NIO file locking
-   private static Object lock = new Object();
-
-   public static AddonRepository forDirectory(File dir)
+   public static MutableAddonRepository forDirectory(File dir)
    {
       return new AddonRepositoryImpl(dir);
    }
 
-   public static AddonRepository forDefaultDirectory()
+   public static MutableAddonRepository forDefaultDirectory()
    {
       return new AddonRepositoryImpl(new File(OperatingSystemUtils.getUserHomePath(), DEFAULT_ADDON_DIR));
    }
@@ -81,62 +79,25 @@ public final class AddonRepositoryImpl implements AddonRepository
       return getRuntimeAPIVersion() != null;
    }
 
-   public static boolean isApiCompatible(CharSequence runtimeVersion, AddonId entry)
+   public static boolean isApiCompatible(Version runtimeVersion, AddonId entry)
    {
       Assert.notNull(entry, "Addon entry must not be null.");
 
-      return isApiCompatible(runtimeVersion, entry.getApiVersion());
-   }
-
-   /**
-    * This method only returns true if:
-    * 
-    * - The major version of addonApiVersion is equal to the major version of runtimeVersion AND
-    * 
-    * - The minor version of addonApiVersion is less or equal to the minor version of runtimeVersion
-    * 
-    * - The addonApiVersion is null
-    * 
-    * @param runtimeVersion a version in the format x.x.x
-    * @param addonApiVersion a version in the format x.x.x
-    */
-   public static boolean isApiCompatible(CharSequence runtimeVersion, CharSequence addonApiVersion)
-   {
-      if (addonApiVersion == null || addonApiVersion.length() == 0
-               || runtimeVersion == null || runtimeVersion.length() == 0)
-         return true;
-
-      Matcher runtimeMatcher = VERSION_PATTERN.matcher(runtimeVersion);
-      if (runtimeMatcher.matches())
-      {
-         int runtimeMajorVersion = Integer.parseInt(runtimeMatcher.group(1));
-         int runtimeMinorVersion = Integer.parseInt(runtimeMatcher.group(2));
-
-         Matcher addonApiMatcher = VERSION_PATTERN.matcher(addonApiVersion);
-         if (addonApiMatcher.matches())
-         {
-            int addonApiMajorVersion = Integer.parseInt(addonApiMatcher.group(1));
-            int addonApiMinorVersion = Integer.parseInt(addonApiMatcher.group(2));
-
-            if (addonApiMajorVersion == runtimeMajorVersion && addonApiMinorVersion <= runtimeMinorVersion)
-            {
-               return true;
-            }
-         }
-      }
-      return false;
+      return Versions.isApiCompatible(runtimeVersion, entry.getApiVersion());
    }
 
    private File addonDir;
 
    private AddonRepositoryImpl(File dir)
    {
-      Assert.notNull(dir, "Addon directory must not be null");
+      // TODO Assert.notNull(lock, "LockManager must not be null.");
+      Assert.notNull(dir, "Addon directory must not be null.");
       this.addonDir = dir;
+      this.lock = new Object();
    }
 
    @Override
-   public boolean deploy(AddonId addon, List<AddonDependency> dependencies, List<File> resources)
+   public boolean deploy(AddonId addon, List<AddonDependencyEntry> dependencies, List<File> resources)
    {
       File addonSlotDir = getAddonBaseDir(addon);
       File descriptor = getAddonDescriptor(addon);
@@ -165,12 +126,12 @@ public final class AddonRepositoryImpl implements AddonRepository
             Node dependenciesNode = addonXml.createChild("dependencies");
 
             if (dependencies != null)
-               for (AddonDependency dependency : dependencies)
+               for (AddonDependencyEntry dependency : dependencies)
                {
                   Node dep = dependenciesNode.createChild("dependency");
                   dep.attribute(ATTR_NAME, dependency.getId().getName());
                   dep.attribute(ATTR_VERSION, dependency.getId().getVersion());
-                  dep.attribute(ATTR_EXPORT, dependency.isExport());
+                  dep.attribute(ATTR_EXPORT, dependency.isExported());
                   dep.attribute(ATTR_OPTIONAL, dependency.isOptional());
                }
 
@@ -243,11 +204,6 @@ public final class AddonRepositoryImpl implements AddonRepository
          throw new RuntimeException("AddonId must not be null");
       }
 
-      if (Strings.isNullOrEmpty(addon.getApiVersion()))
-      {
-         addon = AddonId.from(addon.getName(), addon.getVersion(), addon.getApiVersion());
-      }
-
       File registryFile = getRepositoryRegistryFile();
       synchronized (lock)
       {
@@ -290,9 +246,9 @@ public final class AddonRepositoryImpl implements AddonRepository
    }
 
    @Override
-   public Set<AddonDependency> getAddonDependencies(AddonId addon)
+   public Set<AddonDependencyEntry> getAddonDependencies(AddonId addon)
    {
-      Set<AddonDependency> result = new HashSet<AddonDependency>();
+      Set<AddonDependencyEntry> result = new HashSet<AddonDependencyEntry>();
       File descriptor = getAddonDescriptor(addon);
 
       synchronized (lock)
@@ -302,14 +258,14 @@ public final class AddonRepositoryImpl implements AddonRepository
             Node installed = XMLParser.parse(descriptor);
 
             List<Node> children = installed.get("dependencies/dependency");
-            for (Node child : children)
+            for (final Node child : children)
             {
                if (child != null)
                {
-                  result.add(AddonDependency.create(AddonId.from(child.getAttribute(ATTR_NAME),
-                           child.getAttribute(ATTR_VERSION)),
-                           Boolean.valueOf(child.getAttribute(ATTR_EXPORT)),
-                           Boolean.valueOf(child.getAttribute(ATTR_OPTIONAL))));
+                  result.add(AddonDependencyEntry.create(AddonId.from(child.getAttribute(ATTR_NAME),
+                           child.getAttribute(ATTR_VERSION)), Boolean.valueOf(child.getAttribute(ATTR_EXPORT)),
+                           Boolean.valueOf(child.getAttribute(ATTR_OPTIONAL)))
+                           );
                }
             }
          }
@@ -443,8 +399,7 @@ public final class AddonRepositoryImpl implements AddonRepository
       return addonDir;
    }
 
-   @Override
-   public File getRepositoryRegistryFile()
+   private File getRepositoryRegistryFile()
    {
       File registryFile = new File(getRepositoryDirectory(), REGISTRY_DESCRIPTOR_NAME);
       try
@@ -533,7 +488,7 @@ public final class AddonRepositoryImpl implements AddonRepository
       result = new ArrayList<AddonId>();
       for (AddonId entry : list)
       {
-         if (isApiCompatible(version, entry))
+         if (Versions.isApiCompatible(new SingleVersion(version), entry.getApiVersion()))
          {
             result.add(entry);
          }
@@ -547,6 +502,7 @@ public final class AddonRepositoryImpl implements AddonRepository
       File dir = getAddonBaseDir(addon);
       synchronized (lock)
       {
+         disable(addon);
          return Files.delete(dir, true);
       }
    }

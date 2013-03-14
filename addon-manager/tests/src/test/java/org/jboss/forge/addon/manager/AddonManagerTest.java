@@ -19,9 +19,9 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.Addon;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
-import org.jboss.forge.container.addons.AddonDependency;
 import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.addons.AddonRegistry;
+import org.jboss.forge.container.repositories.AddonDependencyEntry;
 import org.jboss.forge.container.repositories.AddonRepository;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
@@ -43,7 +43,7 @@ public class AddonManagerTest
                .create(ForgeArchive.class)
                .addBeansXML()
                .addAsAddonDependencies(
-                        AddonDependency.create(AddonId.from("org.jboss.forge:addon-manager", "2.0.0-SNAPSHOT"))
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:addon-manager", "2.0.0-SNAPSHOT"))
                );
 
       return archive;
@@ -78,15 +78,15 @@ public class AddonManagerTest
       Assert.assertTrue(repository.getAddonResources(addon).contains(
                new File(repository.getAddonBaseDir(addon), "example-2.0.0-SNAPSHOT-forge-addon.jar")));
 
-      Set<AddonDependency> dependencies = repository.getAddonDependencies(addon);
+      Set<AddonDependencyEntry> dependencies = repository.getAddonDependencies(addon);
       Assert.assertEquals(1, dependencies.size());
-      AddonDependency dependency = dependencies.toArray(new AddonDependency[dependencies.size()])[0];
+      AddonDependencyEntry dependency = dependencies.toArray(new AddonDependencyEntry[dependencies.size()])[0];
       Assert.assertEquals("org.jboss.forge:example2", dependency
                .getId().getName());
       Assert.assertEquals("2.0.0-SNAPSHOT", dependency
                .getId().getVersion());
       Assert.assertTrue(dependency.isOptional());
-      Assert.assertFalse(dependency.isExport());
+      Assert.assertFalse(dependency.isExported());
 
       Assert.assertFalse(registry.isRegistered(AddonId.from("org.jboss.forge:example2", "2.0.0-SNAPSHOT")));
 
@@ -121,14 +121,14 @@ public class AddonManagerTest
       Assert.assertTrue(repository.getAddonResources(facets)
                .contains(new File(repository.getAddonBaseDir(facets), "facets-api-2.0.0-SNAPSHOT.jar")));
 
-      Set<AddonDependency> dependencies = repository.getAddonDependencies(resources);
+      Set<AddonDependencyEntry> dependencies = repository.getAddonDependencies(resources);
       Assert.assertEquals(3, dependencies.size());
       List<String> addonDependenciesIds = new ArrayList<String>();
       addonDependenciesIds.add("org.jboss.forge:convert");
       addonDependenciesIds.add("org.jboss.forge:facets");
       addonDependenciesIds.add("org.jboss.forge:ui-hints");
 
-      for (AddonDependency dependency : dependencies)
+      for (AddonDependencyEntry dependency : dependencies)
       {
          Assert.assertTrue("Not a valid addon dependency: " + dependency.getId().getName(),
                   addonDependenciesIds.remove(dependency.getId().getName()));

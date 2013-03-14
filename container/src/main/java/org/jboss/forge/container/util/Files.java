@@ -145,10 +145,10 @@ public final class Files
     * <strong>Note:</strong> Setting <code>preserveFileDate</code> to <code>true</code> tries to preserve the file's
     * last modified date/times using {@link File#setLastModified(long)}, however it is not guaranteed that the operation
     * will succeed. If the modification operation fails, no indication is provided.
-    *
+    * 
     * @param srcFile an existing file to copy, must not be <code>null</code>
     * @param destDir the directory to place the copy in, must not be <code>null</code>
-    *
+    * 
     * @throws NullPointerException if source or destination is <code>null</code>
     * @throws IOException if source or destination is invalid
     * @throws IOException if an IO error occurs during copying
@@ -175,11 +175,11 @@ public final class Files
     * This method copies the contents of the specified source file to the specified destination file. The directory
     * holding the destination file is created if it does not exist. If the destination file exists, then this method
     * will overwrite it.
-    *
+    * 
     * @param srcFile an existing file to copy, must not be <code>null</code>
     * @param destFile the new file, must not be <code>null</code>
     * @param preserveFileDate true if the file date of the copy should be the same as the original
-    *
+    * 
     * @throws NullPointerException if source or destination is <code>null</code>
     * @throws IOException if source or destination is invalid
     * @throws IOException if an IO error occurs during copying
@@ -223,12 +223,11 @@ public final class Files
 
    /**
     * Internal copy file method.
-    *
+    * 
     * @param srcFile the validated source file, must not be <code>null</code>
     * @param destFile the validated destination file, must not be <code>null</code>
     * @throws IOException if an error occurs
     */
-   @SuppressWarnings("resource")
    private static void doCopyFile(File srcFile, File destFile) throws IOException
    {
       if (destFile.exists() && destFile.isDirectory())
@@ -281,10 +280,10 @@ public final class Files
     * <strong>Note:</strong> Setting <code>preserveFileDate</code> to {@code true} tries to preserve the files' last
     * modified date/times using {@link File#setLastModified(long)}, however it is not guaranteed that those operations
     * will succeed. If the modification operation fails, no indication is provided.
-    *
+    * 
     * @param srcDir an existing directory to copy, must not be {@code null}
     * @param destDir the new directory, must not be {@code null}
-    *
+    * 
     * @throws NullPointerException if source or destination is {@code null}
     * @throws IOException if source or destination is invalid
     * @throws IOException if an IO error occurs during copying
@@ -306,33 +305,33 @@ public final class Files
     * <strong>Note:</strong> Setting <code>preserveFileDate</code> to {@code true} tries to preserve the files' last
     * modified date/times using {@link File#setLastModified(long)}, however it is not guaranteed that those operations
     * will succeed. If the modification operation fails, no indication is provided.
-    *
+    * 
     * <h4>Example: Copy directories only</h4>
-    *
+    * 
     * <pre>
     * // only copy the directory structure
     * FileUtils.copyDirectory(srcDir, destDir, DirectoryFileFilter.DIRECTORY, false);
     * </pre>
-    *
+    * 
     * <h4>Example: Copy directories and txt files</h4>
-    *
+    * 
     * <pre>
     * // Create a filter for &quot;.txt&quot; files
     * IOFileFilter txtSuffixFilter = FileFilterUtils.suffixFileFilter(&quot;.txt&quot;);
     * IOFileFilter txtFiles = FileFilterUtils.andFileFilter(FileFileFilter.FILE, txtSuffixFilter);
-    *
+    * 
     * // Create a filter for either directories or &quot;.txt&quot; files
     * FileFilter filter = FileFilterUtils.orFileFilter(DirectoryFileFilter.DIRECTORY, txtFiles);
-    *
+    * 
     * // Copy using the filter
     * FileUtils.copyDirectory(srcDir, destDir, filter, false);
     * </pre>
-    *
+    * 
     * @param srcDir an existing directory to copy, must not be {@code null}
     * @param destDir the new directory, must not be {@code null}
     * @param filter the filter to apply, null means copy all directories and files
     * @param preserveFileDate true if the file date of the copy should be the same as the original
-    *
+    * 
     * @throws NullPointerException if source or destination is {@code null}
     * @throws IOException if source or destination is invalid
     * @throws IOException if an IO error occurs during copying
@@ -382,7 +381,7 @@ public final class Files
 
    /**
     * Internal copy directory method.
-    *
+    * 
     * @param srcDir the validated source directory, must not be {@code null}
     * @param destDir the validated destination directory, must not be {@code null}
     * @param filter the filter to apply, null means copy all directories and files

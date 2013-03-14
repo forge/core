@@ -8,28 +8,36 @@ import org.jboss.forge.container.addons.Addon;
 import org.jboss.forge.container.addons.AddonDependency;
 import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.addons.Status;
+import org.jboss.forge.container.lock.LockManager;
+import org.jboss.forge.container.repositories.AddonRepository;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.container.util.Assert;
 import org.jboss.modules.Module;
 
 public class AddonImpl implements Addon
 {
-   private Module module;
-   private ServiceRegistry registry;
-   private Status status = Status.UNKNOWN;
    private final AddonId entry;
    private final Set<AddonDependency> dependencies;
+   private Status status = Status.MISSING;
+
+   private Module module;
+   private ServiceRegistry registry;
    private Set<AddonDependency> missingDependencies;
    private Future<Addon> future;
    private AddonRunnable runnable;
+   private AddonRepository repository;
 
-   public AddonImpl(AddonId entry)
+   public AddonImpl(LockManager lock, AddonId entry)
    {
-      this(entry, Collections.<AddonDependency> emptySet());
+      this(lock, entry, null, Collections.<AddonDependency> emptySet());
    }
 
-   public AddonImpl(AddonId entry, Set<AddonDependency> dependencies)
+   public AddonImpl(LockManager lock, AddonId entry, AddonRepository respository, Set<AddonDependency> dependencies)
    {
+      Assert.notNull(lock, "LockManager must not be null.");
+      Assert.notNull(entry, "AddonId must not be null.");
+      Assert.notNull(dependencies, "Dependencies must not be null.");
+
       this.entry = entry;
       this.dependencies = dependencies;
    }
@@ -61,6 +69,17 @@ public class AddonImpl implements Addon
    {
       this.module = module;
       return this;
+   }
+
+   @Override
+   public AddonRepository getRepository()
+   {
+      return repository;
+   }
+
+   public void setRepository(AddonRepository repository)
+   {
+      this.repository = repository;
    }
 
    @Override

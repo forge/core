@@ -10,6 +10,7 @@ import java.util.concurrent.locks.Lock;
 
 import org.jboss.forge.container.lock.LockManager;
 import org.jboss.forge.container.lock.LockMode;
+import org.jboss.forge.container.util.Assert;
 import org.jboss.forge.container.versions.VersionRange;
 
 /**
@@ -31,7 +32,11 @@ public class AddonDependencyImpl implements AddonDependency
    public AddonDependencyImpl(LockManager lockManager,
             Addon dependent, VersionRange dependencyVersionRange, Addon dependency, boolean exported, boolean optional)
    {
-      super();
+      Assert.notNull(lockManager, "LockManager must not be null.");
+      Assert.notNull(dependent, "Dependent Addon must not be null.");
+      Assert.notNull(dependencyVersionRange, "VersionRange must not be null.");
+      Assert.notNull(dependency, "Dependency Addon not be null.");
+
       this.lockManager = lockManager;
       this.dependent = dependent;
       this.dependencyVersionRange = dependencyVersionRange;

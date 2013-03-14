@@ -8,6 +8,7 @@ package org.jboss.forge.container.addons;
 
 import java.util.Set;
 
+import org.jboss.forge.container.repositories.AddonRepository;
 import org.jboss.forge.container.services.ServiceRegistry;
 
 /**
@@ -16,7 +17,6 @@ import org.jboss.forge.container.services.ServiceRegistry;
  * @see {@link AddonDependency}
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
  */
 public interface Addon
 {
@@ -34,6 +34,11 @@ public interface Addon
     * Get the {@link ServiceRegistry} containing services provided by this {@link Addon}.
     */
    public ServiceRegistry getServiceRegistry();
+
+   /**
+    * Get the {@link AddonRepository} from which this {@link Addon} was loaded.
+    */
+   public AddonRepository getRepository();
 
    /**
     * Get the {@link Status} of this {@link Addon}.

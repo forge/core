@@ -5,7 +5,7 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
-import org.jboss.forge.container.ContainerControl;
+import org.jboss.forge.container.addons.Addon;
 import org.jboss.forge.container.addons.Status;
 import org.jboss.forge.test.Tests;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -31,13 +31,13 @@ public class AddonIncludingJARsTest
    }
 
    @Inject
-   private ContainerControl control;
+   private Addon self;
 
    @Test
    public void testContainerInjectionWorksWithConflictingCDIDependency()
    {
-      Assert.assertNotNull(control);
-      Assert.assertEquals(Status.STARTED, control.getStatus());
+      Assert.assertNotNull(self);
+      Assert.assertEquals(Status.STARTED, self.getStatus());
    }
 
 }

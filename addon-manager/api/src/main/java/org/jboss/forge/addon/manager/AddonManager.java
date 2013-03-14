@@ -13,7 +13,9 @@ import org.jboss.forge.container.services.Exported;
 @Exported
 public interface AddonManager
 {
-   public abstract InstallRequest install(AddonId addonId);
+   public abstract InstallRequest install(AddonId id);
 
-   public abstract boolean remove(AddonId entry);
+   public abstract boolean remove(AddonId id);
+
+   public abstract boolean disable(AddonId id);
 }

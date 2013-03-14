@@ -9,8 +9,8 @@ import org.example.event.EventService;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
-import org.jboss.forge.container.addons.AddonDependency;
 import org.jboss.forge.container.addons.AddonId;
+import org.jboss.forge.container.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -31,7 +31,7 @@ public class AddonEventPropagationRemoteTest
                .create(ForgeArchive.class)
                .addClasses(EventService.class, EventPayload1.class)
                .addBeansXML()
-               .addAsAddonDependencies(AddonDependency.create(AddonId.from("dependencyA", "1")));
+               .addAsAddonDependencies(AddonDependencyEntry.create(AddonId.from("dependencyA", "1")));
 
       return archive;
    }

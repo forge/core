@@ -15,4 +15,8 @@ import org.jboss.forge.container.addons.Addon;
  */
 public interface Version
 {
+   /**
+    * Get the {@link String} representation of this {@link Version} instance.
+    */
+   String getVersionString();
 }

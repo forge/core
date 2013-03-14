@@ -1,6 +1,4 @@
-package org.jboss.forge.container.impl;
-
-import java.io.File;
+package org.jboss.forge.container.impl.repository;
 
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.Typed;
@@ -11,18 +9,19 @@ import org.jboss.forge.container.repositories.AddonRepository;
 @Singleton
 public class AddonRepositoryProducer
 {
-   private File addonDir;
+   private AddonRepository repository;
 
    @Produces
-   @Typed(AddonRepository.class)
    @Singleton
+   @Typed(AddonRepository.class)
    public AddonRepository produceGlobalAddonRepository()
    {
-      return AddonRepositoryImpl.forDirectory(addonDir);
+      return repository;
    }
 
-   public void setAddonDir(File addonDir)
+   public void setRespository(AddonRepository repository)
    {
-      this.addonDir = addonDir;
+      this.repository = repository;
+      ;
    }
 }

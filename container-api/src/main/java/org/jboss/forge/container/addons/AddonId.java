@@ -3,37 +3,15 @@ package org.jboss.forge.container.addons;
 import java.util.Arrays;
 import java.util.List;
 
+import org.jboss.forge.container.util.Assert;
 import org.jboss.forge.container.versions.SingleVersion;
 import org.jboss.forge.container.versions.Version;
 
-public abstract class AddonId
+public class AddonId
 {
-   private final String name;
-   private final Version apiVersion;
-   private final Version version;
-
-   /*
-    * For CGLib
-    */
-   AddonId()
-   {
-      name = null;
-      apiVersion = null;
-      version = null;
-   }
-
-   AddonId(final String name, final Version version, final Version apiVersion)
-   {
-      if (name == null || name.isEmpty())
-         throw new IllegalArgumentException("Name cannot be null.");
-      this.name = name;
-
-      if (version == null)
-         throw new IllegalArgumentException("Version cannot be null.");
-      this.version = version;
-
-      this.apiVersion = apiVersion;
-   }
+   private String name;
+   private Version apiVersion;
+   private Version version;
 
    public String getName()
    {
@@ -84,9 +62,17 @@ public abstract class AddonId
 
    public static AddonId from(String name, String version, String apiVersion)
    {
-      return new AddonId(name, new SingleVersion(version), new SingleVersion(apiVersion))
-      {
-      };
+      Assert.notNull(name, "Name cannot be null.");
+      Assert.notNull(version, "Version cannot be null.");
+
+      AddonId id = new AddonId();
+
+      id.name = name;
+      id.version = new SingleVersion(version);
+      id.apiVersion = apiVersion == null ? null : new SingleVersion(apiVersion);
+
+      return id;
+
    }
 
    /**

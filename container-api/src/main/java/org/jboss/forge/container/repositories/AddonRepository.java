@@ -12,7 +12,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.container.addons.AddonDependency;
 import org.jboss.forge.container.addons.AddonId;
 
 /**
@@ -28,7 +27,7 @@ public interface AddonRepository
 {
    public File getAddonBaseDir(AddonId addon);
 
-   public Set<AddonDependency> getAddonDependencies(AddonId addon);
+   public Set<AddonDependencyEntry> getAddonDependencies(AddonId addon);
 
    public File getAddonDescriptor(AddonId addon);
 

@@ -24,6 +24,8 @@ public class ModularFileSystemURLHandler
 {
 
    private static final Logger log = LoggerFactory.getLogger(ModularFileSystemURLHandler.class);
+
+   @SuppressWarnings("unused")
    private ResourceLoader resourceLoader;
 
    public ModularFileSystemURLHandler(ResourceLoader resourceLoader)
@@ -137,10 +139,10 @@ public class ModularFileSystemURLHandler
       if (name.endsWith(".class"))
       {
          String className = filenameToClassname(name);
-//         try
-//         {
-//            resourceLoader.classForName(className);
-            discoveredClasses.add(className);
+         // try
+         // {
+         // resourceLoader.classForName(className);
+         discoveredClasses.add(className);
          // }
          // catch (Exception e)
          // {

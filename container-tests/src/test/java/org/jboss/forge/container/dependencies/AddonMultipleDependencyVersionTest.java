@@ -11,9 +11,9 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.addons.Addon;
-import org.jboss.forge.container.addons.AddonDependency;
 import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.addons.AddonRegistry;
+import org.jboss.forge.container.repositories.AddonDependencyEntry;
 import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -34,8 +34,8 @@ public class AddonMultipleDependencyVersionTest
                .create(ForgeArchive.class)
                .addBeansXML()
                .addAsAddonDependencies(
-                        AddonDependency.create(AddonId.from("dep", "1")),
-                        AddonDependency.create(AddonId.from("dep", "2"))
+                        AddonDependencyEntry.create(AddonId.from("dep", "1")),
+                        AddonDependencyEntry.create(AddonId.from("dep", "2"))
                );
 
       return archive;
