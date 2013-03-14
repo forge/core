@@ -301,7 +301,7 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
             version = pom.getTextValueForPatternName("parent/version");
          }
 
-         final Artifact foundArtifact = new DefaultArtifact(groupId + ":" + artifactId + ":" + type + ":" + version);
+         final Artifact foundArtifact = new DefaultArtifact(groupId, artifactId, type, version);
          foundArtifact.setFile(pomFile);
          return foundArtifact;
       }
