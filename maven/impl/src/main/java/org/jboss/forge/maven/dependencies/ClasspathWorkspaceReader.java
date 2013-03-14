@@ -374,7 +374,7 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
             version = getXPathParentVersionExpression().evaluate(pom);
          }
 
-         final Artifact foundArtifact = new DefaultArtifact(groupId + ":" + artifactId + ":" + type + ":" + version);
+         final Artifact foundArtifact = new DefaultArtifact(groupId, artifactId, type, version);
          foundArtifact.setFile(pomFile);
          return foundArtifact;
       }
