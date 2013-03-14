@@ -69,7 +69,8 @@ public class AddonId
 
       id.name = name;
       id.version = new SingleVersion(version);
-      id.apiVersion = apiVersion == null ? null : new SingleVersion(apiVersion);
+      if (apiVersion == null || apiVersion.trim().isEmpty())
+         id.apiVersion = null;
 
       return id;
 

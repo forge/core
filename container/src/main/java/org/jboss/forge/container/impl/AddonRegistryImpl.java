@@ -1,9 +1,9 @@
 package org.jboss.forge.container.impl;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -23,6 +23,7 @@ import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.addons.Status;
 import org.jboss.forge.container.exception.ContainerException;
+import org.jboss.forge.container.impl.util.CompletedFuture;
 import org.jboss.forge.container.lock.LockManager;
 import org.jboss.forge.container.lock.LockMode;
 import org.jboss.forge.container.modules.AddonModuleLoader;
@@ -30,10 +31,10 @@ import org.jboss.forge.container.repositories.AddonDependencyEntry;
 import org.jboss.forge.container.repositories.AddonRepository;
 import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.container.services.ServiceRegistry;
+import org.jboss.forge.container.util.Assert;
 import org.jboss.forge.container.util.Sets;
 import org.jboss.forge.container.versions.SingleVersionRange;
 import org.jboss.modules.Module;
-import org.jboss.modules.ModuleLoader;
 
 public class AddonRegistryImpl implements AddonRegistry
 {
@@ -51,6 +52,9 @@ public class AddonRegistryImpl implements AddonRegistry
 
    public AddonRegistryImpl(Forge forge, LockManager lock)
    {
+      Assert.notNull(forge, "Forge instance must not be null.");
+      Assert.notNull(lock, "LockManager must not be null.");
+
       logger.log(Level.FINE, "Instantiated AddonRegistryImpl: " + this);
       this.forge = forge;
       this.lock = lock;
@@ -275,14 +279,24 @@ public class AddonRegistryImpl implements AddonRegistry
          @Override
          public Future<Addon> call() throws Exception
          {
-            for (AddonRepository repository : forge.getRepositories())
+            Future<Addon> result = null;
+            AddonImpl addon = loadAddon(id);
+
+            if (addon.getStatus().isStarted())
             {
-               if (repository.isEnabled(id))
-               {
-               }
+               result = addon.getFuture();
             }
-            // TODO Auto-generated method stub
-            return null;
+            else if (!addon.getStatus().isMissing())
+            {
+               AddonRunnable runnable = new AddonRunnable(forge, addon);
+               result = executor.submit(runnable, (Addon) addon);
+            }
+            else
+            {
+               result = new CompletedFuture<Addon>(addon);
+            }
+
+            return result;
          }
       });
    }
@@ -292,78 +306,9 @@ public class AddonRegistryImpl implements AddonRegistry
       AddonImpl addon = null;
       for (AddonRepository repository : forge.getRepositories())
       {
-         if (repository.isEnabled(addonId))
-         {
-            for (AddonImpl a : addons)
-            {
-               if (addonId.equals(a.getId()))
-               {
-                  addon = a;
-               }
-            }
-
-            Set<AddonDependency> addonDependencies =
-                     fromAddonDependencyEntries(addon, repository.getAddonDependencies(addonId));
-
-            if (addon == null)
-            {
-               addon = new AddonImpl(lock, addonId, repository, addonDependencies);
-            }
-
-            if (addon.getModule() == null)
-            {
-               Set<AddonDependency> missingRequiredDependencies = new HashSet<AddonDependency>();
-               for (AddonDependency dependency : addonDependencies)
-               {
-                  AddonId dependencyId = dependency.getDependency().getId();
-
-                  boolean available = false;
-                  for (Addon a : addons)
-                  {
-                     if (a.getId().equals(dependencyId) && !a.getStatus().isMissing())
-                     {
-                        available = true;
-                     }
-                  }
-                  if (!available && !dependency.isOptional())
-                  {
-                     missingRequiredDependencies.add(dependency);
-                  }
-               }
-
-               addon.setMissingDependencies(missingRequiredDependencies);
-
-               if (!missingRequiredDependencies.isEmpty())
-               {
-                  if (!addon.getStatus().isMissing())
-                  {
-                     logger.warning("Addon [" + addon + "] has [" + missingRequiredDependencies.size()
-                              + "] missing dependencies: "
-                              + missingRequiredDependencies + " and will be not be loaded until all required"
-                              + " dependencies are available.");
-
-                     if (!isRegistered(addonId))
-                        addons.add(addon);
-                  }
-               }
-               else
-               {
-                  try
-                  {
-                     AddonModuleLoader moduleLoader = getAddonModuleLoader(repository);
-                     Module module = moduleLoader.loadModule(addonId);
-                     addon.setModule(module);
-
-                     if (!isRegistered(addonId))
-                        addons.add(addon);
-                  }
-                  catch (Exception e)
-                  {
-                     throw new ContainerException("Failed to load addon [" + addonId + "]", e);
-                  }
-               }
-            }
-         }
+         addon = loadAddonFromRepository(repository, addonId);
+         if (addon != null)
+            break;
       }
 
       if (addon == null)
@@ -372,6 +317,82 @@ public class AddonRegistryImpl implements AddonRegistry
          addons.add(addon);
       }
 
+      return addon;
+   }
+
+   private AddonImpl loadAddonFromRepository(AddonRepository repository, AddonId addonId)
+   {
+      AddonImpl addon = null;
+      if (repository.isEnabled(addonId))
+      {
+         for (AddonImpl a : addons)
+         {
+            if (addonId.equals(a.getId()))
+            {
+               addon = a;
+            }
+         }
+
+         if (addon == null)
+         {
+            HashSet<AddonDependency> dependencies = new HashSet<AddonDependency>();
+            addon = new AddonImpl(lock, addonId, repository, dependencies);
+            dependencies.addAll(fromAddonDependencyEntries(addon, repository.getAddonDependencies(addonId)));
+            addons.add(addon);
+         }
+
+         if (addon.getModule() == null)
+         {
+            Set<AddonDependency> missingRequiredDependencies = new HashSet<AddonDependency>();
+            for (AddonDependency dependency : addon.getDependencies())
+            {
+               AddonId dependencyId = dependency.getDependency().getId();
+
+               boolean available = false;
+               for (Addon a : addons)
+               {
+                  if (a.getId().equals(dependencyId) && !a.getStatus().isMissing())
+                  {
+                     available = true;
+                  }
+               }
+               if (!available && !dependency.isOptional())
+               {
+                  missingRequiredDependencies.add(dependency);
+               }
+            }
+
+            addon.setMissingDependencies(missingRequiredDependencies);
+
+            if (!missingRequiredDependencies.isEmpty())
+            {
+               if (addon.getStatus().isMissing())
+               {
+                  logger.warning("Addon [" + addon + "] has [" + missingRequiredDependencies.size()
+                           + "] missing dependencies: "
+                           + missingRequiredDependencies + " and will be not be loaded until all required"
+                           + " dependencies are available.");
+               }
+            }
+            else
+            {
+               try
+               {
+                  AddonModuleLoader moduleLoader = getAddonModuleLoader(repository);
+                  Module module = moduleLoader.loadModule(addonId);
+                  addon.setModule(module);
+                  addon.setStatus(Status.STOPPED);
+
+                  if (!isRegistered(addonId))
+                     addons.add(addon);
+               }
+               catch (Exception e)
+               {
+                  throw new ContainerException("Failed to load addon [" + addonId + "]", e);
+               }
+            }
+         }
+      }
       return addon;
    }
 
@@ -394,16 +415,29 @@ public class AddonRegistryImpl implements AddonRegistry
          @Override
          public Future<Set<Addon>> call() throws Exception
          {
-            // TODO Auto-generated method stub
             return null;
          }
       });
    }
 
-   public Collection<? extends Future<Addon>> startAll()
+   public Set<Future<Addon>> startAll()
    {
-      // TODO Auto-generated method stub
-      return null;
+      return lock.performLocked(LockMode.WRITE, new Callable<Set<Future<Addon>>>()
+      {
+         @Override
+         public Set<Future<Addon>> call() throws Exception
+         {
+            Set<Future<Addon>> result = new LinkedHashSet<Future<Addon>>();
+            for (AddonRepository repository : forge.getRepositories())
+            {
+               for (AddonId enabled : repository.listEnabled())
+               {
+                  result.add(start(enabled));
+               }
+            }
+            return result;
+         }
+      });
    }
 
    public void stopAll()

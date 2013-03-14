@@ -83,4 +83,10 @@ public class AddonDependencyImpl implements AddonDependency
       return optional;
    }
 
+   @Override
+   public String toString()
+   {
+      return dependency.getId().toCoordinates();
+   }
+
 }

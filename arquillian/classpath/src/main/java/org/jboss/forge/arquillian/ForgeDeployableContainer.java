@@ -93,7 +93,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       try
       {
          Addon addon = future.get();
-         if (addon.getStatus().isFailed() || addon.getStatus().isMissing())
+         if (addon.getStatus().isFailed())
          {
             ContainerException e = new ContainerException("Addon " + addonToDeploy + " failed to deploy.");
             deployment.deployedWithError(e);

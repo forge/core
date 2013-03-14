@@ -359,10 +359,10 @@ public final class AddonRepositoryImpl implements MutableAddonRepository
                if (child != null)
                {
                   if ((addon.getApiVersion() == null)
-                           || addon.getApiVersion().equals(child.getAttribute(ATTR_API_VERSION)))
+                           || addon.getApiVersion().equals(new SingleVersion(child.getAttribute(ATTR_API_VERSION))))
                   {
                      if ((addon.getVersion() == null)
-                              || addon.getVersion().equals(child.getAttribute(ATTR_VERSION)))
+                              || addon.getVersion().equals(new SingleVersion(child.getAttribute(ATTR_VERSION))))
                      {
                         return AddonId.from(child.getAttribute(ATTR_NAME),
                                  child.getAttribute(ATTR_VERSION),
@@ -488,7 +488,8 @@ public final class AddonRepositoryImpl implements MutableAddonRepository
       result = new ArrayList<AddonId>();
       for (AddonId entry : list)
       {
-         if (Versions.isApiCompatible(new SingleVersion(version), entry.getApiVersion()))
+         if (version == null || entry.getApiVersion() == null
+                  || Versions.isApiCompatible(new SingleVersion(version), entry.getApiVersion()))
          {
             result.add(entry);
          }
