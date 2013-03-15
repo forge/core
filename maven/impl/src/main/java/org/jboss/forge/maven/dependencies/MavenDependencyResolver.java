@@ -30,6 +30,7 @@ import org.jboss.forge.dependencies.DependencyResolver;
 import org.jboss.forge.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.dependencies.builder.DependencyNodeBuilder;
+import org.jboss.forge.dependencies.collection.DependencyNodeUtil;
 import org.jboss.forge.resource.FileResource;
 import org.jboss.forge.resource.ResourceFactory;
 import org.jboss.shrinkwrap.resolver.impl.maven.logging.LogTransferListener;
@@ -222,10 +223,23 @@ public class MavenDependencyResolver implements DependencyResolver, AddonDepende
             @Override
             public boolean traverseDependency(org.sonatype.aether.graph.Dependency dependency)
             {
+               boolean isForgeAddon = DependencyNodeUtil.FORGE_ADDON_CLASSIFIER.equals(dependency.getArtifact()
+                        .getClassifier());
+               // We don't want to traverse non-addons optional dependencies
+               if (!isForgeAddon && dependency.isOptional())
+               {
+                  return false;
+               }
+               boolean result;
                if (query.getScopeType() != null)
-                  return query.getScopeType().equals(dependency.getScope());
+               {
+                  result = query.getScopeType().equals(dependency.getScope());
+               }
                else
-                  return !"test".equals(dependency.getScope());
+               {
+                  result = !"test".equals(dependency.getScope());
+               }
+               return result;
             }
 
             @Override
