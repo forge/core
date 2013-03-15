@@ -145,6 +145,7 @@ public class InstallRequestImpl implements InstallRequest
             MutableAddonRepository mutableAddonRespository = (MutableAddonRepository) repository;
             deploy(mutableAddonRespository, requestedAddonId, requestedAddonNode);
             mutableAddonRespository.enable(requestedAddonId);
+            break;
          }
       }
    }
