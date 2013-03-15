@@ -23,6 +23,7 @@ import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.repositories.AddonDependencyEntry;
 import org.jboss.forge.container.repositories.AddonRepository;
+import org.jboss.forge.container.versions.SingleVersion;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -83,7 +84,7 @@ public class AddonManagerTest
       AddonDependencyEntry dependency = dependencies.toArray(new AddonDependencyEntry[dependencies.size()])[0];
       Assert.assertEquals("org.jboss.forge:example2", dependency
                .getId().getName());
-      Assert.assertEquals("2.0.0-SNAPSHOT", dependency
+      Assert.assertEquals(new SingleVersion("2.0.0-SNAPSHOT"), dependency
                .getId().getVersion());
       Assert.assertTrue(dependency.isOptional());
       Assert.assertFalse(dependency.isExported());
@@ -132,7 +133,7 @@ public class AddonManagerTest
       {
          Assert.assertTrue("Not a valid addon dependency: " + dependency.getId().getName(),
                   addonDependenciesIds.remove(dependency.getId().getName()));
-         Assert.assertEquals("2.0.0-SNAPSHOT", dependency.getId().getVersion());
+         Assert.assertEquals(new SingleVersion("2.0.0-SNAPSHOT"), dependency.getId().getVersion());
       }
       Assert.assertTrue("Addons not detected as dependency: " + addonDependenciesIds, addonDependenciesIds.isEmpty());
 
