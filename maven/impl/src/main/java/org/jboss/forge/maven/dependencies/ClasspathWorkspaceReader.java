@@ -16,6 +16,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,6 +37,7 @@ import org.sonatype.aether.util.artifact.DefaultArtifact;
  */
 public class ClasspathWorkspaceReader implements WorkspaceReader
 {
+
    private static final Logger log = Logger.getLogger(ClasspathWorkspaceReader.class.getName());
 
    /**
@@ -112,10 +114,8 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
                         && foundArtifact.getArtifactId().equals(artifact.getArtifactId())
                         && foundArtifact.getVersion().equals(artifact.getVersion()))
                {
-                  if (log.isLoggable(Level.FINE))
-                  {
-                     log.fine("################################# Artifact: " + artifact + " File: " + pomFile);
-                  }
+                  // System.out.println("BUILD: ################################# Artifact: " + artifact + " DIRPOM: "
+                  // + pomFile);
                   if ("pom".equals(artifact.getExtension()))
                   {
                      return pomFile;
@@ -127,7 +127,7 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
                }
             }
          }
-         // this is needed for Surefire when runned as 'mvn package'
+         // this is needed for Surefire when run as 'mvn package'
          else if (file.isFile())
          {
             final StringBuilder name = new StringBuilder(artifact.getArtifactId()).append("-").append(
@@ -135,7 +135,7 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
 
             // TODO: This is nasty
             // we need to get a a pom.xml file to be sure we fetch transitive deps as well
-            if (file.getAbsolutePath().contains(name.toString()))
+            if (file.getName().contains(name.toString()))
             {
                if ("pom".equals(artifact.getExtension()))
                {
@@ -143,11 +143,17 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
                   final File pomFile = new File(file.getParentFile().getParentFile(), "pom.xml");
                   if (pomFile.isFile())
                   {
-                     if (log.isLoggable(Level.FINE))
+                     Artifact foundArtifact = getFoundArtifact(pomFile);
+                     if (foundArtifact.getGroupId().equals(artifact.getGroupId())
+                              && foundArtifact.getArtifactId().equals(artifact.getArtifactId())
+                              && foundArtifact.getVersion().equals(artifact.getVersion()))
                      {
-                        log.fine("################################# Artifact: " + artifact + " File: " + pomFile);
+
+                        // System.out
+                        // .println("BUILD: ################################# Artifact: " + artifact + " POM: "
+                        // + pomFile);
+                        return pomFile;
                      }
-                     return pomFile;
                   }
                }
                // SHRINKRES-102, consider classifier as well
@@ -159,25 +165,26 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
 
                // we are looking for a non pom artifact, let's get it
                name.append(".").append(artifact.getExtension());
-               if (file.getAbsolutePath().endsWith(name.toString()))
+               if (file.getName().equals(name.toString()))
                {
                   // return raw file
-                  if (log.isLoggable(Level.FINE))
-                  {
-                     log.fine("################################# Artifact: " + artifact + " File: " + file);
-                  }
+                  // System.out.println("BUILD: ################################# Artifact: " + artifact + " OTHER: "
+                  // + file);
                   return file;
                }
             }
          }
       }
+      // return raw file
+      // System.out.println("BUILD: ################################# Artifact: " + artifact + " NOTHING RETURNED");
+
       return null;
    }
 
    @Override
    public List<String> findVersions(final Artifact artifact)
    {
-      List<String> versions = new ArrayList<String>();
+      Set<String> versions = new TreeSet<String>();
       for (String classpathEntry : classPathEntries)
       {
          final File file = getClasspathFile(classpathEntry);
@@ -185,7 +192,7 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
          if (file.isDirectory())
          {
             // TODO: This is not reliable, file might have different name
-            // FIXME: Surefire might user jar in the classpath instead of the target/classes
+            // FIXME: Surefire might use jar in the classpath instead of the target/classes
             final File pomFile = getPomFile(file);
             if (pomFile.isFile())
             {
@@ -198,12 +205,15 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
                }
             }
          }
-         // this is needed for Surefire when runned as 'mvn package'
+         // this is needed for Surefire when run as 'mvn package'
          else if (file.isFile())
          {
+            final StringBuilder name = new StringBuilder(artifact.getArtifactId()).append("-").append(
+                     artifact.getVersion());
+
             // TODO: This is nasty
             // we need to get a a pom.xml file to be sure we fetch transitive deps as well
-            if (file.getAbsolutePath().contains(artifact.getArtifactId()))
+            if (file.getName().contains(name.toString()))
             {
                if ("pom".equals(artifact.getExtension()))
                {
@@ -223,11 +233,9 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
             }
          }
       }
-      if (log.isLoggable(Level.FINE))
-      {
-         log.fine("################################# Artifact: " + artifact + " Versions: " + versions);
-      }
-      return versions;
+      // System.out.println("BUILD: ################################# Artifact: " + artifact + " VERSIONS: " +
+      // versions);
+      return new ArrayList<String>(versions);
    }
 
    private Set<String> getClassPathEntries(final String classPath)
