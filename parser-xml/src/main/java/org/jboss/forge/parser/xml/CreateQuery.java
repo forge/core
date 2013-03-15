@@ -4,12 +4,9 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.parser.xml.query;
+package org.jboss.forge.parser.xml;
 
 import java.util.Map;
-
-import org.jboss.forge.parser.xml.Node;
-import org.jboss.forge.parser.xml.util.QueryUtil;
 
 /**
  * Creates the specified {@link Pattern}s starting at the specified {@link Node}.
@@ -17,15 +14,16 @@ import org.jboss.forge.parser.xml.util.QueryUtil;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @author <a href="mailto:andrew.rubinger@jboss.org">ALR</a>
  */
-public enum CreateQuery implements Query<Node>
+enum CreateQuery implements Query<Node>
 {
+
    INSTANCE;
 
    /**
     * {@inheritDoc}
     * 
-    * @see org.jboss.shrinkwrap.descriptor.spi.node.query.Query#execute(org.jboss.shrinkwrap.descriptor.spi.node.Node,
-    *      org.jboss.shrinkwrap.descriptor.spi.node.query.Pattern[])
+    * @see org.jboss.shrinkwrap.descriptor.spi.node.Query#execute(org.jboss.forge.parser.xml.org.jboss.forge.parser.xml.shrinkwrap.descriptor.spi.node.Node,
+    *      org.jboss.forge.parser.xml.org.jboss.forge.parser.xml.query.shrinkwrap.descriptor.spi.node.Pattern[])
     */
    @Override
    public Node execute(final Node node, final Pattern... patterns)

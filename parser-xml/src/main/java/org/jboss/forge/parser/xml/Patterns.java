@@ -4,12 +4,10 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.parser.xml.util;
+package org.jboss.forge.parser.xml;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
-import org.jboss.forge.parser.xml.query.Pattern;
 
 /**
  * Helper class for creating queries (collections of {@link Pattern}s) from String query expressions
@@ -17,9 +15,9 @@ import org.jboss.forge.parser.xml.query.Pattern;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class Patterns
+class Patterns
 {
-   private static final String PATH_SEPARATOR = "/";
+   private static final String PATH_SEPARATOR = "(?<!\\\\)[/]";
 
    private static final String ATTR_PATH_SEPERATOR = "@";
 
@@ -27,8 +25,7 @@ public class Patterns
 
    private static final String ATTR_VALUE_SEPERATOR = "=";
 
-   private static final Pattern[] ARRAY_CAST = new Pattern[]
-   {};
+   private static final Pattern[] ARRAY_CAST = new Pattern[] {};
 
    /**
     * Creates a query collection of {@link Pattern}s from the specified {@link String}-formed query expression
@@ -41,10 +38,10 @@ public class Patterns
    {
       if (queryExpression == null)
       {
-         throw new IllegalArgumentException("query expression must be specified");
+         throw new IllegalArgumentException("Query expression must be specified");
       }
 
-      boolean isAbsolute = queryExpression.startsWith(PATH_SEPARATOR);
+      boolean isAbsolute = queryExpression.startsWith("/");
       final Collection<Pattern> patterns = new ArrayList<Pattern>();
 
       final String[] paths = (isAbsolute ? queryExpression.substring(1) : queryExpression).split(PATH_SEPARATOR);
@@ -55,10 +52,10 @@ public class Patterns
 
          String name = nameSegment.indexOf(ATTR_VALUE_SEPERATOR) != -1 ? nameSegment.substring(0,
                   nameSegment.indexOf(ATTR_VALUE_SEPERATOR)) : nameSegment;
-         String text = nameSegment.indexOf(ATTR_VALUE_SEPERATOR) != -1 ? nameSegment.substring(nameSegment
-                  .indexOf(ATTR_VALUE_SEPERATOR) + 1) : null;
-         String attribute = path.indexOf(ATTR_PATH_SEPERATOR) != -1 ? path.substring(path.indexOf(ATTR_PATH_SEPERATOR)
-                  + ATTR_PATH_SEPERATOR.length(), path.length()) : null;
+         String text = nameSegment.indexOf(ATTR_VALUE_SEPERATOR) != -1 ? nameSegment.substring(
+                  nameSegment.indexOf(ATTR_VALUE_SEPERATOR) + 1).replaceAll("\\\\", "") : null;
+         String attribute = path.indexOf(ATTR_PATH_SEPERATOR) != -1 ? path.substring(
+                  path.indexOf(ATTR_PATH_SEPERATOR) + ATTR_PATH_SEPERATOR.length(), path.length()) : null;
          String[] attributes = attribute == null ? new String[0] : attribute.split(ATTR_SEPERATOR);
 
          Pattern pattern = new Pattern(name);
@@ -68,8 +65,8 @@ public class Patterns
             String[] nameValue = attr.split(ATTR_VALUE_SEPERATOR);
             if (nameValue.length != 2)
             {
-               throw new IllegalArgumentException("Attribute without name or value found: " + attr + " in expression: "
-                        + queryExpression);
+               throw new IllegalArgumentException("Attribute without name or value found: " + attr
+                        + " in expression: " + queryExpression);
             }
             pattern.attribute(nameValue[0], nameValue[1]);
          }

@@ -12,13 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jboss.forge.parser.xml.query.CreateQuery;
-import org.jboss.forge.parser.xml.query.GetOrCreateQuery;
-import org.jboss.forge.parser.xml.query.GetQuery;
-import org.jboss.forge.parser.xml.query.GetSingleQuery;
-import org.jboss.forge.parser.xml.query.Pattern;
-import org.jboss.forge.parser.xml.util.Patterns;
-
 /**
  * {@link Node} is a data structure representing a container in a classic tree. May sometimes be synonymous with the
  * term "Element" in XML. It may contain a {@link Map} of attributes ({@link String}s), a reference to a {@link List} of
@@ -97,7 +90,7 @@ public class Node
    public Node(final String name, final Node parent) throws IllegalArgumentException
    {
       // Precondition checks
-      if (name == null)
+      if (name == null || name.trim().length() == 0)
       {
          throw new IllegalArgumentException("name must be specified");
       }
@@ -170,7 +163,7 @@ public class Node
    public String removeAttribute(final String name) throws IllegalArgumentException
    {
       // Precondition check
-      if ((name == null) || (name.length() == 0))
+      if (name == null || name.length() == 0)
       {
          throw new IllegalArgumentException("name must be specified");
       }
@@ -267,7 +260,7 @@ public class Node
    public Node createChild(final String name) throws IllegalArgumentException
    {
       // Precondition checks
-      if ((name == null) || (name.length() == 0))
+      if (name == null || name.trim().length() == 0)
       {
          throw new IllegalArgumentException("name must be specified");
       }
@@ -292,14 +285,14 @@ public class Node
     * @see #createChild(String)
     * @throws IllegalArgumentException if multiple children with name exists.
     */
-   public Node getOrCreate(final String name)
+   public Node getOrCreate(String name)
    {
       return getOrCreate(Patterns.from(name));
    }
 
    public Node getOrCreate(final Pattern... patterns)
    {
-      return GetOrCreateQuery.INSTANCE.execute(this, patterns);
+      return GetOrCreateQuery.INSTANCE.execute(this, includeRootPatternFirst(patterns));
    }
 
    /**
@@ -311,14 +304,14 @@ public class Node
     * @return The named child node or null if non found
     * @throws IllegalArgumentException if multiple children with name exists.
     */
-   public Node getSingle(final String name)
+   public Node getSingle(String name)
    {
       return getSingle(Patterns.from(name));
    }
 
    public Node getSingle(final Pattern... patterns)
    {
-      return GetSingleQuery.INSTANCE.execute(this, patterns);
+      return AbsoluteGetSingleQuery.INSTANCE.execute(this, includeRootPatternFirst(patterns));
    }
 
    /**
@@ -327,7 +320,7 @@ public class Node
     * @param name The child node name.
     * @return All found children, or empty list if none found.
     */
-   public List<Node> get(final String name)
+   public List<Node> get(String name)
    {
       return get(Patterns.from(name));
    }
@@ -340,7 +333,7 @@ public class Node
     */
    public List<Node> get(final Pattern... patterns)
    {
-      return GetQuery.INSTANCE.execute(this, patterns);
+      return AbsoluteGetQuery.INSTANCE.execute(this, includeRootPatternFirst(patterns));
    }
 
    /**
@@ -351,7 +344,7 @@ public class Node
     */
    public List<Node> removeChildren(final String name) throws IllegalArgumentException
    {
-      if ((name == null) || name.trim().isEmpty())
+      if (name == null || name.trim().length() == 0)
       {
          throw new IllegalArgumentException("Path must not be null or empty");
       }
@@ -426,7 +419,7 @@ public class Node
     * @return
     * @see #text(String)
     */
-   public Node text(final Object text)
+   public Node text(Object text)
    {
       return text(String.valueOf(text));
    }
@@ -437,7 +430,7 @@ public class Node
     * @param text The text content
     * @return This
     */
-   public Node text(final String text)
+   public Node text(String text)
    {
       this.text = text;
       return this;
@@ -539,7 +532,8 @@ public class Node
     */
    public String toString(final boolean verbose)
    {
-      if (!verbose) {
+      if (!verbose)
+      {
          return this.toString();
       }
 
@@ -605,5 +599,10 @@ public class Node
          merged.add(p);
       }
       return merged.toArray(PATTERN_CAST);
+   }
+
+   private Pattern[] includeRootPatternFirst(final Pattern... patterns)
+   {
+      return validateAndMergePatternInput(new Pattern(name), patterns);
    }
 }

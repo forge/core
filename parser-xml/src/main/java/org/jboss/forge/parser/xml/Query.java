@@ -4,9 +4,7 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.parser.xml.query;
-
-import org.jboss.forge.parser.xml.Node;
+package org.jboss.forge.parser.xml;
 
 /**
  * Contract for something capable of executing a query (collection of {@link Pattern}s) upon a {@link Node} to find a
@@ -16,8 +14,9 @@ import org.jboss.forge.parser.xml.Node;
  * @author <a href="mailto:andrew.rubinger@jboss.org">ALR</a>
  * @param <T> Expected return value from executing a query
  */
-public interface Query<T>
+interface Query<T>
 {
+
    /**
     * Queries the tree starting at the specified {@link Node} for the specified {@link Pattern}s.
     * 
@@ -27,4 +26,5 @@ public interface Query<T>
     * @throws IllegalArgumentException If the {@link Node} is not specified or no {@link Pattern}s are specified
     */
    T execute(Node node, Pattern... patterns) throws IllegalArgumentException;
+
 }

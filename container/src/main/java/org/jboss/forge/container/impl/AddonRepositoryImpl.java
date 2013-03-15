@@ -7,9 +7,9 @@
 package org.jboss.forge.container.impl;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -136,7 +136,7 @@ public final class AddonRepositoryImpl implements AddonRepository
    }
 
    @Override
-   public boolean deploy(AddonId addon, List<AddonDependency> dependencies, List<File> resourceJars)
+   public boolean deploy(AddonId addon, List<AddonDependency> dependencies, List<File> resources)
    {
       File addonSlotDir = getAddonBaseDir(addon);
       File descriptor = getAddonDescriptor(addon);
@@ -144,12 +144,20 @@ public final class AddonRepositoryImpl implements AddonRepository
       {
          synchronized (lock)
          {
-            if (resourceJars != null)
-               for (File jar : resourceJars)
+            if (resources != null && !resources.isEmpty())
+            {
+               for (File resource : resources)
                {
-                  Files.copyFileToDirectory(jar, addonSlotDir);
+                  if (resource.isDirectory())
+                  {
+                     Files.copyDirectory(resource, new File(addonSlotDir, resource.getName()));
+                  }
+                  else
+                  {
+                     Files.copyFileToDirectory(resource, addonSlotDir);
+                  }
                }
-
+            }
             /*
              * Write out the addon module dependency configuration
              */
@@ -361,16 +369,17 @@ public final class AddonRepositoryImpl implements AddonRepository
       {
          if (dir.exists())
          {
-            return Arrays.asList(dir.listFiles(new FilenameFilter()
+            File[] files = dir.listFiles(new FileFilter()
             {
                @Override
-               public boolean accept(File file, String name)
+               public boolean accept(File pathname)
                {
-                  return name.endsWith(".jar");
+                  return pathname.isDirectory() || pathname.getName().endsWith(".jar");
                }
-            }));
+            });
+            return Arrays.asList(files);
          }
-         return new ArrayList<File>();
+         return Collections.emptyList();
       }
    }
 

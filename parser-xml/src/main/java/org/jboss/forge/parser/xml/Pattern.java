@@ -4,13 +4,11 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.parser.xml.query;
+package org.jboss.forge.parser.xml;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.jboss.forge.parser.xml.Node;
 
 /**
  * A pattern that may be executed as part of a {@link Query} upon a {@link Node} in a search, or used to define a target
@@ -21,7 +19,7 @@ import org.jboss.forge.parser.xml.Node;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:andrew.rubinger@jboss.org">ALR</a>
  */
-public final class Pattern
+final class Pattern
 {
    // -------------------------------------------------------------------------------------||
    // Instance Members -------------------------------------------------------------------||
@@ -46,7 +44,7 @@ public final class Pattern
    public Pattern(final String name) throws IllegalArgumentException
    {
       // Precondition check
-      if ((name == null) || (name.length() == 0))
+      if (name == null || name.trim().length() == 0)
       {
          throw new IllegalArgumentException("name must be specified");
       }
@@ -63,7 +61,8 @@ public final class Pattern
    @Override
    public String toString()
    {
-      return this.getClass().getSimpleName() + " [attributes=" + attributes + ", name=" + name + ", text=" + text + "]";
+      return this.getClass().getSimpleName() + " [attributes=" + attributes + ", name=" + name + ", text=" + text
+               + "]";
    }
 
    /**
@@ -150,21 +149,26 @@ public final class Pattern
       {
          return false;
       }
-      if (((text != null) && (node.getText() == null))
-               || ((text != null) && !text.trim().equals(node.getText().trim())))
+
+      if ((text != null && node.getText() == null) || (text != null && !text.trim().equals(node.getText().trim())))
       {
          return false;
       }
+
       if (attributes != null)
       {
-         for (Map.Entry<String, String> attribute : attributes.entrySet())
+         for (final Map.Entry<String, String> attribute : attributes.entrySet())
          {
-            if (!attribute.getValue().equals(node.getAttribute(attribute.getKey())))
+            final String attrValue = attribute.getValue();
+            final String attrName = attribute.getKey();
+
+            if (!attrValue.equals(node.getAttribute(attrName)))
             {
                return false;
             }
          }
       }
+
       return true;
    }
 
