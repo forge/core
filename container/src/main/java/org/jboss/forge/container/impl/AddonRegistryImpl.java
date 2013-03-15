@@ -1,6 +1,11 @@
+/*
+ * Copyright 2013 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Eclipse Public License version 1.0, available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.jboss.forge.container.impl;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -37,6 +42,9 @@ import org.jboss.forge.container.util.Sets;
 import org.jboss.forge.container.versions.SingleVersionRange;
 import org.jboss.modules.Module;
 
+/**
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ */
 public class AddonRegistryImpl implements AddonRegistry
 {
    private static Logger logger = Logger.getLogger(AddonRegistryImpl.class.getName());
@@ -126,24 +134,6 @@ public class AddonRegistryImpl implements AddonRegistry
          public Boolean call() throws Exception
          {
             return getRegisteredAddon(id) != null;
-         }
-      });
-   }
-
-   @Override
-   public Map<Addon, ServiceRegistry> getServiceRegistries()
-   {
-      return lock.performLocked(LockMode.READ, new Callable<Map<Addon, ServiceRegistry>>()
-      {
-         @Override
-         public Map<Addon, ServiceRegistry> call() throws Exception
-         {
-            Map<Addon, ServiceRegistry> services = new HashMap<Addon, ServiceRegistry>();
-            for (Addon addon : addons)
-            {
-               services.put(addon, addon.getServiceRegistry());
-            }
-            return services;
          }
       });
    }
@@ -287,7 +277,7 @@ public class AddonRegistryImpl implements AddonRegistry
             {
                result = addon.getFuture();
             }
-            else if (!addon.getStatus().isMissing())
+            else if (addon.getStatus().isLoaded())
             {
                AddonRunnable runnable = new AddonRunnable(forge, addon);
                result = executor.submit(runnable, (Addon) addon);
@@ -316,7 +306,7 @@ public class AddonRegistryImpl implements AddonRegistry
 
       if (addon == null)
       {
-         addon = new AddonImpl(lock, addonId, null, new HashSet<AddonDependency>());
+         addon = new AddonImpl(lock, addonId);
          addons.add(addon);
       }
 
@@ -338,11 +328,14 @@ public class AddonRegistryImpl implements AddonRegistry
 
          if (addon == null)
          {
-            HashSet<AddonDependency> dependencies = new HashSet<AddonDependency>();
-            addon = new AddonImpl(lock, addonId, repository, dependencies);
-            dependencies.addAll(fromAddonDependencyEntries(addon, repository.getAddonDependencies(addonId)));
+            addon = new AddonImpl(lock, addonId);
+            addon.setRepository(repository);
             addons.add(addon);
          }
+
+         Set<AddonDependency> dependencies = fromAddonDependencyEntries(addon,
+                  repository.getAddonDependencies(addonId));
+         addon.setDependencies(dependencies);
 
          if (addon.getModule() == null)
          {
@@ -351,15 +344,15 @@ public class AddonRegistryImpl implements AddonRegistry
             {
                AddonId dependencyId = dependency.getDependency().getId();
 
-               boolean available = false;
+               boolean loaded = false;
                for (Addon a : addons)
                {
                   if (a.getId().equals(dependencyId) && !a.getStatus().isMissing())
                   {
-                     available = true;
+                     loaded = true;
                   }
                }
-               if (!available && !dependency.isOptional())
+               if (!loaded && !dependency.isOptional())
                {
                   missingRequiredDependencies.add(dependency);
                }
@@ -382,12 +375,10 @@ public class AddonRegistryImpl implements AddonRegistry
                {
                   AddonModuleLoader moduleLoader = getAddonModuleLoader(repository);
                   Module module = moduleLoader.loadModule(addonId);
+                  addon.setModuleLoader(moduleLoader);
                   addon.setModule(module);
                   addon.setRepository(repository);
-                  addon.setStatus(Status.STOPPED);
-
-                  if (!isRegistered(addonId))
-                     addons.add(addon);
+                  addon.setStatus(Status.LOADED);
                }
                catch (Exception e)
                {
@@ -414,6 +405,7 @@ public class AddonRegistryImpl implements AddonRegistry
    public Set<Addon> stop(final Addon addonToStop)
    {
       Assert.notNull(addonToStop, "Addon must not be null.");
+      Assert.isTrue(addons.contains(addonToStop), "Addon to stop must originate this AddonRegistry.");
 
       return lock.performLocked(LockMode.WRITE, new Callable<Set<Addon>>()
       {
@@ -421,38 +413,41 @@ public class AddonRegistryImpl implements AddonRegistry
          public Set<Addon> call() throws Exception
          {
             Set<Addon> result = new HashSet<Addon>();
-            for (AddonImpl dependentAddon : addons)
+
+            if (addonToStop.getStatus().isStarted())
             {
-               for (AddonDependency dependency : dependentAddon.getDependencies())
+               for (AddonImpl dependentAddon : addons)
                {
-                  if (addonToStop.equals(dependency.getDependency()) && dependentAddon.getStatus().isStarted())
+                  for (AddonDependency dependency : dependentAddon.getDependencies())
                   {
-                     result.addAll(stop(dependentAddon));
+                     if (addonToStop.equals(dependency.getDependency()) && dependentAddon.getStatus().isStarted())
+                     {
+                        result.addAll(stop(dependentAddon));
+                     }
                   }
                }
-            }
 
-            if (addonToStop != null)
-            {
-               Future<Addon> future = ((AddonImpl) addonToStop).getFuture();
-               try
+               if (addonToStop != null)
                {
-                  if (future != null && addonToStop.getStatus().isStarted())
+                  Future<Addon> future = ((AddonImpl) addonToStop).getFuture();
+                  try
                   {
-                     ((AddonImpl) addonToStop).getRunnable().shutdown();
+                     if (future != null)
+                     {
+                        ((AddonImpl) addonToStop).getRunnable().shutdown();
+                     }
                   }
-               }
-               catch (Exception e)
-               {
-                  logger.log(Level.WARNING, "Failed to shut down addon " + addonToStop, e);
-               }
-               finally
-               {
-                  if (future != null && !future.isDone())
-                     future.cancel(true);
+                  catch (Exception e)
+                  {
+                     logger.log(Level.WARNING, "Failed to shut down addon " + addonToStop, e);
+                  }
+                  finally
+                  {
+                     if (future != null && !future.isDone())
+                        future.cancel(true);
 
-                  addons.remove(addonToStop);
-                  getAddonModuleLoader(addonToStop.getRepository()).removeFromCache(addonToStop.getId());
+                     ((AddonImpl) addonToStop).reset();
+                  }
                }
             }
 

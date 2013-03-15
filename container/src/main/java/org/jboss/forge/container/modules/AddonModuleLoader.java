@@ -16,7 +16,7 @@ import java.util.jar.JarFile;
 
 import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.exception.ContainerException;
-import org.jboss.forge.container.impl.repository.AddonRepositoryImpl;
+import org.jboss.forge.container.impl.AddonRepositoryImpl;
 import org.jboss.forge.container.modules.providers.ForgeContainerSpec;
 import org.jboss.forge.container.modules.providers.SystemClasspathSpec;
 import org.jboss.forge.container.modules.providers.WeldClasspathSpec;

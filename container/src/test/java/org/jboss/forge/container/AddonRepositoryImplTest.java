@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.jboss.forge.container.addons.AddonId;
-import org.jboss.forge.container.impl.repository.AddonRepositoryImpl;
+import org.jboss.forge.container.impl.AddonRepositoryImpl;
 import org.jboss.forge.container.repositories.AddonDependencyEntry;
 import org.jboss.forge.container.repositories.AddonRepository;
 import org.jboss.forge.container.repositories.MutableAddonRepository;

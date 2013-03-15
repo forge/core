@@ -16,8 +16,8 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.Addon;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
-import org.jboss.forge.container.addons.AddonDependency;
 import org.jboss.forge.container.addons.AddonId;
+import org.jboss.forge.container.repositories.AddonDependencyEntry;
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.resources.JavaResource;
@@ -40,8 +40,8 @@ public class JavaParserResourcesTest
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                .addBeansXML()
                .addAsAddonDependencies(
-                        AddonDependency.create(AddonId.from("org.jboss.forge:parser-java", "2.0.0-SNAPSHOT")),
-                        AddonDependency.create(AddonId.from("org.jboss.forge:resources", "2.0.0-SNAPSHOT"))
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:parser-java", "2.0.0-SNAPSHOT")),
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:resources", "2.0.0-SNAPSHOT"))
                );
 
       return archive;

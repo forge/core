@@ -6,12 +6,10 @@
  */
 package org.jboss.forge.container.addons;
 
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
 
 import org.jboss.forge.container.services.ExportedInstance;
-import org.jboss.forge.container.services.ServiceRegistry;
 
 /**
  * Provides methods for registering, starting, stopping, and interacting with registered {@link Addon} instances.
@@ -35,11 +33,6 @@ public interface AddonRegistry
     */
    Set<Addon> getRegisteredAddons(AddonFilter filter);
 
-   /**
-    * Return a {@link Map} of currently registered {@link ServiceRegistry} instances for each {@link Addon}.
-    */
-   Map<Addon, ServiceRegistry> getServiceRegistries();
-
    <T> Set<ExportedInstance<T>> getExportedInstances(Class<T> clazz);
 
    <T> Set<ExportedInstance<T>> getExportedInstances(String clazz);
@@ -56,8 +49,8 @@ public interface AddonRegistry
    Future<Addon> start(AddonId addon);
 
    /**
-    * Stop the given {@link Addon}, and all dependent {@link Addon} instances. Dependents for which this {@link Addon}
-    * is an optional dependency will be restarted.
+    * Stop the given {@link Addon} that originated from this {@link AddonRegistry}. Also stop all dependent
+    * {@link Addon} instances. Dependents for which this {@link Addon} is an optional dependency will be restarted.
     * 
     * @return the {@link Set} of all stopped addons.
     */

@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import org.jboss.forge.addon.manager.InstallRequest;
 import org.jboss.forge.addon.manager.impl.AddonManagerImpl;
 import org.jboss.forge.container.Forge;
+import org.jboss.forge.container.addons.Addon;
 import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.repositories.AddonRepository;
@@ -26,10 +27,10 @@ import org.jboss.forge.maven.dependencies.MavenContainer;
 import org.jboss.forge.maven.dependencies.MavenDependencyResolver;
 
 /**
- * Installs the required addons
- *
+ * Installs the required core org.jboss.forge {@link Addon} instances.
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 public class InstallRequiredAddonsListener implements ContainerLifecycleListener
 {
@@ -39,7 +40,7 @@ public class InstallRequiredAddonsListener implements ContainerLifecycleListener
             new MavenContainer());
 
    /**
-    * These addons will be installed when forge starts
+    * {@link Addon} coordinates to be installed when forge starts
     */
    private static final String[] REQUIRED_ADDON_COORDINATES = {
             "ui",
@@ -63,18 +64,19 @@ public class InstallRequiredAddonsListener implements ContainerLifecycleListener
       else
       {
          logger.info("Pre-installing required addons...");
-         AddonRepository repository = forge.getRepository();
          List<AddonId> addons = new ArrayList<AddonId>();
          for (String addonCoordinate : REQUIRED_ADDON_COORDINATES)
          {
             AddonId addonId = toAddonId(addonCoordinate);
-            if (repository.isDeployed(addonId))
-            {
-               logger.fine("Addon " + addonId + " is already deployed");
-            }
-            else
+            for (AddonRepository repository : forge.getRepositories())
             {
                addons.add(addonId);
+               if (repository.isDeployed(addonId))
+               {
+                  logger.fine("Addon " + addonId + " is already deployed.");
+                  addons.remove(addonId);
+                  break;
+               }
             }
          }
          install(forge, addons);
@@ -97,7 +99,7 @@ public class InstallRequiredAddonsListener implements ContainerLifecycleListener
    {
       try
       {
-         AddonManagerImpl addonManager = new AddonManagerImpl(forge.getRepository(), resolver);
+         AddonManagerImpl addonManager = new AddonManagerImpl(forge, resolver);
 
          for (AddonId addon : addons)
          {

@@ -30,7 +30,7 @@ import org.jboss.forge.container.addons.Addon;
 import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.exception.ContainerException;
-import org.jboss.forge.container.impl.repository.AddonRepositoryImpl;
+import org.jboss.forge.container.impl.AddonRepositoryImpl;
 import org.jboss.forge.container.repositories.MutableAddonRepository;
 import org.jboss.forge.container.util.ClassLoaders;
 import org.jboss.forge.container.util.Files;
@@ -70,7 +70,6 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
          repository.deploy(addonToDeploy, ((ForgeArchive) archive).getAddonDependencies(), new ArrayList<File>());
          repository.enable(addonToDeploy);
          Threads.sleep(200);
-         System.out.println("Deployed [" + addonToDeploy + "]");
       }
       else if (archive instanceof ForgeRemoteAddon)
       {
@@ -79,7 +78,6 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
                   new FileResourceFactory(), new MavenContainer()));
          InstallRequest request = addonManager.install(remoteAddon.getAddonId());
          request.perform();
-         System.out.println("Deployed [" + remoteAddon.getAddonId() + "]");
       }
       else
       {

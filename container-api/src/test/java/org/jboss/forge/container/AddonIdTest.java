@@ -1,6 +1,7 @@
 package org.jboss.forge.container;
 
 import org.jboss.forge.container.addons.AddonId;
+import org.jboss.forge.container.versions.SingleVersion;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -12,7 +13,7 @@ public class AddonIdTest
       AddonId addon = AddonId.fromCoordinates("org.jboss.forge:resources,2.0.0-SNAPSHOT");
       Assert.assertNull(addon.getApiVersion());
       Assert.assertEquals("org.jboss.forge:resources", addon.getName());
-      Assert.assertEquals("2.0.0-SNAPSHOT", addon.getVersion());
+      Assert.assertEquals(new SingleVersion("2.0.0-SNAPSHOT"), addon.getVersion());
    }
 
    @Test

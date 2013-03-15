@@ -33,7 +33,7 @@ public interface AddonRepository
 
    public List<File> getAddonResources(AddonId addon);
 
-   public File getRepositoryDirectory();
+   public File getRootDirectory();
 
    public boolean isDeployed(AddonId addon);
 

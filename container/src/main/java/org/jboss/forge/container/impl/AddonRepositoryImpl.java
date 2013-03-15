@@ -4,7 +4,7 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.container.impl.repository;
+package org.jboss.forge.container.impl;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -264,7 +264,7 @@ public final class AddonRepositoryImpl implements MutableAddonRepository
          public File call() throws Exception
          {
 
-            File addonDir = new File(getRepositoryDirectory(), found.toCoordinates().replaceAll("[^a-zA-Z0-9]+", "-"));
+            File addonDir = new File(getRootDirectory(), found.toCoordinates().replaceAll("[^a-zA-Z0-9]+", "-"));
             return addonDir;
          }
       });
@@ -431,7 +431,7 @@ public final class AddonRepositoryImpl implements MutableAddonRepository
    }
 
    @Override
-   public File getRepositoryDirectory()
+   public File getRootDirectory()
    {
       return lock.performLocked(LockMode.READ, new Callable<File>()
       {
@@ -459,7 +459,7 @@ public final class AddonRepositoryImpl implements MutableAddonRepository
          @Override
          public File call() throws Exception
          {
-            File registryFile = new File(getRepositoryDirectory(), REGISTRY_DESCRIPTOR_NAME);
+            File registryFile = new File(getRootDirectory(), REGISTRY_DESCRIPTOR_NAME);
             try
             {
                if (!registryFile.exists())

@@ -19,7 +19,7 @@ package org.jboss.forge.arquillian;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Map.Entry;
+import java.util.concurrent.Future;
 
 import org.jboss.arquillian.container.test.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
@@ -31,7 +31,7 @@ import org.jboss.forge.container.addons.Addon;
 import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.container.services.ServiceRegistry;
-import org.jboss.forge.container.util.Threads;
+import org.jboss.forge.container.util.ClassLoaders;
 
 /**
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
@@ -67,25 +67,32 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
          String testClassName = testMethodExecutor.getInstance().getClass().getName();
          AddonRegistry addonRegistry = forge.getAddonRegistry();
          Object instance = null;
-         for (Entry<Addon, ServiceRegistry> entry : addonRegistry.getServiceRegistries().entrySet())
+
+         for (Addon addon : addonRegistry.getRegisteredAddons())
          {
-            ServiceRegistry registry = entry.getValue();
-            Addon addon = entry.getKey();
-            registry = addonRegistry.getServiceRegistries().get(addon);
-
-            ExportedInstance<?> result = registry.getExportedInstance(testClassName);
-
-            if (result != null)
+            if (!addon.getStatus().isMissing() && ClassLoaders.containsClass(addon.getClassLoader(), testClassName))
             {
-               if (instance == null)
+               Future<Addon> future = addonRegistry.start(addon.getId());
+               future.get();
+            }
+
+            if (addon.getStatus().isStarted())
+            {
+               ServiceRegistry registry = addon.getServiceRegistry();
+               ExportedInstance<?> result = registry.getExportedInstance(testClassName);
+
+               if (result != null)
                {
-                  instance = result.get();
-               }
-               else
-               {
-                  throw new IllegalStateException(
-                           "Multiple test classes found in deployed addons. " +
-                                    "You must have only one @Deployment(testable=true\"); deployment");
+                  if (instance == null)
+                  {
+                     instance = result.get();
+                  }
+                  else
+                  {
+                     throw new IllegalStateException(
+                              "Multiple test classes found in deployed addons. " +
+                                       "You must have only one @Deployment(testable=true\"); deployment");
+                  }
                }
             }
          }
@@ -114,8 +121,15 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
             {
                try
                {
-                  method.invoke(instance);
-                  result = new TestResult(Status.PASSED);
+                  try
+                  {
+                     System.out.println("Executing test method: " + method);
+                     method.invoke(instance);
+                     result = new TestResult(Status.PASSED);
+                  }
+                  finally
+                  {
+                  }
                }
                catch (InvocationTargetException e)
                {

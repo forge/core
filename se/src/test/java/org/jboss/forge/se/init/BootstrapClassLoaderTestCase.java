@@ -46,14 +46,14 @@ public class BootstrapClassLoaderTestCase
    public void shouldBeAbleToPassClassesIntoDelegate() throws Exception
    {
       Forge instance = ForgeFactory.getInstance();
-      instance.getRepository().getAddonResources(AddonId.from("a", "1"));
+      instance.getRepositories().get(0).getAddonResources(AddonId.from("a", "1"));
    }
 
    @Test
    public void shouldBeAbleToPassInterfacesIntoDelegate() throws Exception
    {
       Forge instance = ForgeFactory.getInstance();
-      Set<Addon> addons = instance.getAddonRegistry().getRegisteredAddons(AddonFilters.allWaiting());
+      Set<Addon> addons = instance.getAddonRegistry().getRegisteredAddons(AddonFilters.allStarted());
       Assert.assertNotNull(addons);
    }
 

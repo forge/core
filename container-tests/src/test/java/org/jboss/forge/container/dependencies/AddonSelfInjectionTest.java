@@ -40,10 +40,8 @@ public class AddonSelfInjectionTest
    public void testLifecycle() throws Exception
    {
       Assert.assertNotNull(simple);
-      Assert.assertTrue(simple.isStartupObserved());
-      Assert.assertTrue(simple.isPostStartupObserved());
+      Assert.assertTrue(simple.isPerformObserved());
       Assert.assertFalse(simple.isPreShutdownObserved());
-      Assert.assertFalse(simple.isShutdownObserved());
    }
 
 }

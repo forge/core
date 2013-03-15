@@ -14,7 +14,7 @@ import org.junit.Test;
  */
 public class SingleVersionTest
 {
-   @Test(expected = IllegalStateException.class)
+   @Test(expected = IllegalArgumentException.class)
    public void testVersionMustNotBeNull()
    {
       new SingleVersion(null);

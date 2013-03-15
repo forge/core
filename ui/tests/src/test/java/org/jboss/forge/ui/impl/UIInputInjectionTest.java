@@ -17,15 +17,15 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.Addon;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
-import org.jboss.forge.container.addons.AddonDependency;
 import org.jboss.forge.container.addons.AddonId;
+import org.jboss.forge.container.repositories.AddonDependencyEntry;
 import org.jboss.forge.convert.Converter;
 import org.jboss.forge.ui.facets.HintsFacet;
 import org.jboss.forge.ui.hints.InputType;
 import org.jboss.forge.ui.hints.InputTypes;
+import org.jboss.forge.ui.input.InputComponent;
 import org.jboss.forge.ui.input.UICompleter;
 import org.jboss.forge.ui.input.UIInput;
-import org.jboss.forge.ui.input.InputComponent;
 import org.jboss.forge.ui.input.UIInputMany;
 import org.jboss.forge.ui.input.UISelectMany;
 import org.jboss.forge.ui.input.UISelectOne;
@@ -45,7 +45,7 @@ public class UIInputInjectionTest
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                .addBeansXML()
                .addClasses(Career.class)
-               .addAsAddonDependencies(AddonDependency.create(AddonId.from("org.jboss.forge:ui", "2.0.0-SNAPSHOT")));
+               .addAsAddonDependencies(AddonDependencyEntry.create(AddonId.from("org.jboss.forge:ui", "2.0.0-SNAPSHOT")));
 
       return archive;
    }

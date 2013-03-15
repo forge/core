@@ -8,11 +8,16 @@ package org.jboss.forge.container.addons;
 
 public enum Status
 {
-   MISSING, STARTED, STOPPED, FAILED;
+   MISSING, LOADED, STARTED, STOPPED, FAILED;
 
    public boolean isMissing()
    {
       return this == MISSING;
+   }
+
+   public boolean isLoaded()
+   {
+      return this == LOADED;
    }
 
    public boolean isFailed()

@@ -63,7 +63,11 @@ public class AddonId
    public static AddonId from(String name, String version, String apiVersion)
    {
       Assert.notNull(name, "Name cannot be null.");
+      if (name.trim().isEmpty())
+         throw new IllegalArgumentException("Name cannot be empty.");
       Assert.notNull(version, "Version cannot be null.");
+      if (version.trim().isEmpty())
+         throw new IllegalArgumentException("Version cannot be empty.");
 
       AddonId id = new AddonId();
 

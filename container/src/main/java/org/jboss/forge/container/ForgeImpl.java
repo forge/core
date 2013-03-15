@@ -14,7 +14,7 @@ import org.jboss.forge.container.addons.Addon;
 import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.impl.AddonRegistryImpl;
-import org.jboss.forge.container.impl.repository.AddonRepositoryImpl;
+import org.jboss.forge.container.impl.AddonRepositoryImpl;
 import org.jboss.forge.container.lock.LockManager;
 import org.jboss.forge.container.repositories.AddonRepository;
 import org.jboss.forge.container.spi.ContainerLifecycleListener;

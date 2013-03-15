@@ -1,3 +1,9 @@
+/*
+ * Copyright 2013 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Eclipse Public License version 1.0, available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.jboss.forge.container.impl;
 
 import java.util.concurrent.Callable;
@@ -10,7 +16,8 @@ import javax.enterprise.inject.spi.BeanManager;
 import org.jboss.forge.container.Forge;
 import org.jboss.forge.container.addons.Status;
 import org.jboss.forge.container.event.Perform;
-import org.jboss.forge.container.impl.repository.AddonRepositoryProducer;
+import org.jboss.forge.container.event.PreShutdown;
+import org.jboss.forge.container.lock.LockMode;
 import org.jboss.forge.container.modules.ModularURLScanner;
 import org.jboss.forge.container.modules.ModularWeld;
 import org.jboss.forge.container.modules.ModuleResourceLoader;
@@ -122,9 +129,11 @@ public final class AddonRunnable implements Runnable
                         AddonRepositoryProducer.class);
                repositoryProducer.setRespository(addon.getRepository());
 
-               ForgeProducer forgeProducer = BeanManagerUtils.getContextualInstance(manager,
-                        ForgeProducer.class);
+               ForgeProducer forgeProducer = BeanManagerUtils.getContextualInstance(manager, ForgeProducer.class);
                forgeProducer.setForge(forge);
+
+               AddonProducer addonProducer = BeanManagerUtils.getContextualInstance(manager, AddonProducer.class);
+               addonProducer.setAddon(addon);
 
                AddonRegistryProducer addonRegistryProducer = BeanManagerUtils.getContextualInstance(manager,
                         AddonRegistryProducer.class);
@@ -147,9 +156,22 @@ public final class AddonRunnable implements Runnable
                   @Override
                   public Object call() throws Exception
                   {
+                     try
+                     {
+                        manager.fireEvent(new PreShutdown());
+                     }
+                     catch (Exception e)
+                     {
+                        logger.log(Level.SEVERE, "Failed to execute pre-Shutdown event: ", e);
+                     }
+                     finally
+                     {
+                        addon.setStatus(Status.STOPPED);
+                        if (operation != null)
+                           operation.cancel(true);
+                     }
+
                      weld.shutdown();
-                     operation.cancel(true);
-                     addon.setStatus(Status.STOPPED);
                      return null;
                   }
                };
@@ -159,8 +181,15 @@ public final class AddonRunnable implements Runnable
                   @Override
                   public Object call() throws Exception
                   {
-                     manager.fireEvent(new Perform());
-                     return null;
+                     return forge.getLockManager().performLocked(LockMode.READ, new Callable<Object>()
+                     {
+                        @Override
+                        public Object call() throws Exception
+                        {
+                           manager.fireEvent(new Perform());
+                           return null;
+                        }
+                     });
                   }
                });
 

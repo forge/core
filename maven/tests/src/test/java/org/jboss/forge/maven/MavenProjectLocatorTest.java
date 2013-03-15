@@ -15,8 +15,8 @@ import org.jboss.forge.arquillian.Addon;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.Forge;
-import org.jboss.forge.container.addons.AddonDependency;
 import org.jboss.forge.container.addons.AddonId;
+import org.jboss.forge.container.repositories.AddonDependencyEntry;
 import org.jboss.forge.maven.projects.MavenProjectLocator;
 import org.jboss.forge.resource.DirectoryResource;
 import org.jboss.forge.resource.FileResource;
@@ -41,8 +41,8 @@ public class MavenProjectLocatorTest
                .create(ForgeArchive.class)
                .addBeansXML()
                .addAsAddonDependencies(
-                        AddonDependency.create(AddonId.from("org.jboss.forge:maven", "2.0.0-SNAPSHOT")),
-                        AddonDependency.create(AddonId.from("org.jboss.forge:projects", "2.0.0-SNAPSHOT"))
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:maven", "2.0.0-SNAPSHOT")),
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:projects", "2.0.0-SNAPSHOT"))
                );
 
       return archive;
@@ -66,7 +66,8 @@ public class MavenProjectLocatorTest
    @Test
    public void testFindProject() throws Exception
    {
-      DirectoryResource addonDir = factory.create(forge.getAddonDir()).reify(DirectoryResource.class);
+      DirectoryResource addonDir = factory.create(forge.getRepositories().get(0).getRootDirectory()).reify(
+               DirectoryResource.class);
       DirectoryResource projectDir = addonDir.createTempResource();
       FileResource<?> pomFile = projectDir.getChild("pom.xml").reify(FileResource.class);
       Assert.assertFalse(locator.containsProject(projectDir));

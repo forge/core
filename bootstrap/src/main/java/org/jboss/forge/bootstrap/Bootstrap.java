@@ -8,6 +8,7 @@
 package org.jboss.forge.bootstrap;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.logging.Logger;
@@ -16,7 +17,9 @@ import org.jboss.forge.addon.manager.InstallRequest;
 import org.jboss.forge.addon.manager.impl.AddonManagerImpl;
 import org.jboss.forge.container.Forge;
 import org.jboss.forge.container.addons.AddonId;
+import org.jboss.forge.container.impl.AddonRepositoryImpl;
 import org.jboss.forge.container.repositories.AddonRepository;
+import org.jboss.forge.container.repositories.MutableAddonRepository;
 import org.jboss.forge.dependencies.Coordinate;
 import org.jboss.forge.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.dependencies.builder.DependencyQueryBuilder;
@@ -26,11 +29,11 @@ import org.jboss.forge.maven.dependencies.MavenDependencyResolver;
 
 /**
  * A class with a main method to bootstrap Forge.
- *
+ * 
  * You can deploy addons by calling {@link Bootstrap#install(String)}
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 public class Bootstrap
 {
@@ -51,6 +54,8 @@ public class Bootstrap
       String installAddon = null;
       String removeAddon = null;
       forge = ServiceLoader.load(Forge.class).iterator().next();
+
+      List<AddonRepository> repositories = new ArrayList<AddonRepository>();
       if (args.length > 0)
       {
          for (int i = 0; i < args.length; i++)
@@ -69,7 +74,7 @@ public class Bootstrap
             }
             else if ("--addonDir".equals(args[i]))
             {
-               forge.setAddonDir(new File(args[++i]));
+               repositories.add(AddonRepositoryImpl.forDirectory(forge, new File(args[++i])));
             }
             else if ("--batchMode".equals(args[i]))
             {
@@ -79,6 +84,9 @@ public class Bootstrap
                logger.warning("Unknown option: " + args[i]);
          }
       }
+
+      if (!repositories.isEmpty())
+         forge.setRepositories(repositories);
 
       if (listInstalled)
          list();
@@ -92,10 +100,14 @@ public class Bootstrap
    {
       try
       {
-         List<AddonId> addons = forge.getRepository().listEnabled();
-         for (AddonId addon : addons)
+         for (AddonRepository repository : forge.getRepositories())
          {
-            System.out.println(addon.toCoordinates());
+            System.out.println(repository.getRootDirectory().getCanonicalPath() + ":");
+            List<AddonId> addons = repository.listEnabled();
+            for (AddonId addon : addons)
+            {
+               System.out.println(addon.toCoordinates());
+            }
          }
       }
       catch (Exception e)
@@ -119,7 +131,7 @@ public class Bootstrap
       try
       {
          MavenDependencyResolver resolver = new MavenDependencyResolver(new FileResourceFactory(), new MavenContainer());
-         AddonManagerImpl addonManager = new AddonManagerImpl(forge.getRepository(), resolver);
+         AddonManagerImpl addonManager = new AddonManagerImpl(forge, resolver);
 
          AddonId addon;
          // This allows forge --install maven
@@ -158,7 +170,6 @@ public class Bootstrap
    {
       try
       {
-         AddonRepository repository = forge.getRepository();
          AddonId addon = null;
          // This allows forge --remove maven
          if (addonCoordinates.contains(","))
@@ -168,12 +179,20 @@ public class Bootstrap
          else
          {
             String coordinates = "org.jboss.forge:" + addonCoordinates;
-            for (AddonId id : repository.listEnabled())
+            REPOS: for (AddonRepository repository : forge.getRepositories())
             {
-               if (coordinates.equals(id.getName()))
+               for (AddonId id : repository.listEnabled())
                {
-                  addon = id;
-                  break;
+                  if (coordinates.equals(id.getName()))
+                  {
+                     addon = id;
+                     if (repository instanceof MutableAddonRepository)
+                     {
+                        ((MutableAddonRepository) repository).disable(addon);
+                        ((MutableAddonRepository) repository).undeploy(addon);
+                     }
+                     break REPOS;
+                  }
                }
             }
             if (addon == null)
@@ -181,8 +200,6 @@ public class Bootstrap
                throw new IllegalArgumentException("No addon exists with id " + coordinates);
             }
          }
-         repository.disable(addon);
-         repository.undeploy(addon);
       }
       catch (Exception e)
       {

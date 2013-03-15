@@ -28,7 +28,7 @@ import org.jboss.aesh.console.settings.Settings;
 import org.jboss.aesh.terminal.CharacterType;
 import org.jboss.aesh.terminal.Color;
 import org.jboss.aesh.terminal.TerminalCharacter;
-import org.jboss.forge.container.ContainerControl;
+import org.jboss.forge.container.addons.Addon;
 import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.event.Perform;
 import org.jboss.forge.container.services.Exported;
@@ -50,7 +50,7 @@ public class ForgeShell
    private List<ShellCommand> commands;
 
    @Inject
-   private ContainerControl containerControl;
+   private Addon self;
 
    @Inject
    private AddonRegistry registry;
@@ -175,7 +175,8 @@ public class ForgeShell
    {
       if (console != null)
          console.stop();
-      containerControl.stop();
+
+      registry.stop(self);
    }
 
    private Prompt createPrompt()
@@ -201,57 +202,64 @@ public class ForgeShell
       return new Prompt(chars);
    }
 
-    class ForgeConsoleCallback implements ConsoleCallback {
-        @Override
-        public int readConsoleOutput(ConsoleOutput output) throws IOException {
-            CommandLine cl = null;
-            if (output.getBuffer() != null && !output.getBuffer().trim().isEmpty())
+   class ForgeConsoleCallback implements ConsoleCallback
+   {
+      @Override
+      public int readConsoleOutput(ConsoleOutput output) throws IOException
+      {
+         CommandLine cl = null;
+         if (output.getBuffer() != null && !output.getBuffer().trim().isEmpty())
+         {
+            // TODO: should clean this up
+            try
             {
-                //TODO: should clean this up
-                try {
-                    verifyLoadedCommands();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                for (ShellCommand command : commands)
-                {
-                    try
-                    {
-                        cl = command.parse(output.getBuffer());
-                        if (cl != null)
-                        {
-                            // need some way of deciding if the command is standalone
-                            if (command.getContext().isStandalone())
-                            {
-                                // console.
-
-                            }
-                            else
-                            {
-                                try {
-                                    command.run(output, cl);
-                                    break;
-                                }
-                                catch (Exception e) {
-                                    logger.log(Level.SEVERE, "Command "+command+" failed to run with: "+output);
-                                }
-                            }
-                        }
-                    }
-                    catch (IllegalArgumentException iae)
-                    {
-                        // System.out.println("Command: " + command + ", did not match: " + output.getBuffer());
-                        // ignored for now
-                    }
-                }
-                // if we didnt find any commands matching
-                if (cl == null)
-                {
-                    console.pushToStdOut(output.getBuffer() + ": command not found."
-                            + Config.getLineSeparator());
-                }
+               verifyLoadedCommands();
             }
-            return 0;
-        }
-    }
+            catch (Exception e)
+            {
+               e.printStackTrace();
+            }
+            for (ShellCommand command : commands)
+            {
+               try
+               {
+                  cl = command.parse(output.getBuffer());
+                  if (cl != null)
+                  {
+                     // need some way of deciding if the command is standalone
+                     if (command.getContext().isStandalone())
+                     {
+                        // console.
+
+                     }
+                     else
+                     {
+                        try
+                        {
+                           command.run(output, cl);
+                           break;
+                        }
+                        catch (Exception e)
+                        {
+                           logger.log(Level.SEVERE, "Command " + command + " failed to run with: " + output);
+                        }
+                     }
+                  }
+               }
+               catch (IllegalArgumentException iae)
+               {
+                  // System.out.println("Command: " + command + ", did not match: " + output.getBuffer());
+                  // ignored for now
+               }
+            }
+            // if we didnt find any commands matching
+            if (cl == null)
+            {
+               console.pushToStdOut(output.getBuffer() + ": command not found."
+                        + Config.getLineSeparator());
+            }
+         }
+         return 0;
+      }
+   }
 }

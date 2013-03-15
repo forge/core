@@ -1,4 +1,4 @@
-package org.jboss.forge.container.impl.repository;
+package org.jboss.forge.container.impl;
 
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.Typed;

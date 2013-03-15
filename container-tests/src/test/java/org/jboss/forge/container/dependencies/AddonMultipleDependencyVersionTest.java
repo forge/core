@@ -1,8 +1,5 @@
 package org.jboss.forge.container.dependencies;
 
-import java.util.Map;
-import java.util.Map.Entry;
-
 import javax.inject.Inject;
 
 import org.example.LifecycleListenerService;
@@ -15,7 +12,7 @@ import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.repositories.AddonDependencyEntry;
 import org.jboss.forge.container.services.ExportedInstance;
-import org.jboss.forge.container.services.ServiceRegistry;
+import org.jboss.forge.container.util.AddonFilters;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -69,18 +66,17 @@ public class AddonMultipleDependencyVersionTest
    @Test
    public void testVersionLookup() throws Exception
    {
-      Map<Addon, ServiceRegistry> services = registry.getServiceRegistries();
       int count = 0;
-      for (Entry<Addon, ServiceRegistry> entry : services.entrySet())
+      for (Addon addon : registry.getRegisteredAddons(AddonFilters.allStarted()))
       {
-         for (Class<?> service : entry.getValue().getServices())
+         for (Class<?> service : addon.getServiceRegistry().getServices())
          {
             if (service.getName().equals(LifecycleListenerService.class.getName()))
             {
-               ExportedInstance<?> instance = entry.getValue().getExportedInstance(service);
+               ExportedInstance<?> instance = addon.getServiceRegistry().getExportedInstance(service);
                Object serviceInstance = instance.get();
                Assert.assertNotNull(serviceInstance);
-               Object result = serviceInstance.getClass().getMethod("isStartupObserved").invoke(serviceInstance);
+               Object result = serviceInstance.getClass().getMethod("isPerformObserved").invoke(serviceInstance);
                Assert.assertTrue((Boolean) result);
                count++;
             }
@@ -88,5 +84,4 @@ public class AddonMultipleDependencyVersionTest
       }
       Assert.assertEquals(2, count);
    }
-
 }
