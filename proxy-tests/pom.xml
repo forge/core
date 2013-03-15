@@ -35,6 +35,7 @@
          <groupId>org.jboss.forge</groupId>
          <artifactId>ui-example</artifactId>
          <version>${project.version}</version>
+		 <classifier>forge-addon</classifier>
          <scope>test</scope>
       </dependency>
       <dependency>
