@@ -7,6 +7,9 @@
 package org.jboss.forge.spec.javaee.rest;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -17,6 +20,10 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -55,8 +62,9 @@ import org.jboss.forge.spec.javaee.PersistenceFacet;
 import org.jboss.forge.spec.javaee.RestActivatorType;
 import org.jboss.forge.spec.javaee.RestApplicationFacet;
 import org.jboss.forge.spec.javaee.RestFacet;
-import org.jboss.seam.render.TemplateCompiler;
-import org.jboss.seam.render.template.CompiledTemplateResource;
+import freemarker.template.DefaultObjectWrapper;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -76,9 +84,6 @@ public class RestPlugin implements Plugin
    @Inject
    @Current
    private Resource<?> currentResource;
-
-   @Inject
-   private TemplateCompiler compiler;
 
    @Inject
    private ShellPrompt prompt;
@@ -165,9 +170,10 @@ public class RestPlugin implements Plugin
          String idSetterName = resolveIdSetterName(entity);
          String idGetterName = resolveIdGetterName(entity);
 
-         CompiledTemplateResource template = compiler.compileResource(getClass().getResourceAsStream(
-                  "/org/jboss/forge/rest/Endpoint.jv"));
-
+         freemarker.template.Configuration freemarkerConfig = new freemarker.template.Configuration();
+         freemarkerConfig.setClassForTemplateLoading(getClass(), "/");
+         freemarkerConfig.setObjectWrapper(new DefaultObjectWrapper());
+         
          Map<Object, Object> map = new HashMap<Object, Object>();
          map.put("entity", entity);
          map.put("idType", idType);
@@ -175,10 +181,30 @@ public class RestPlugin implements Plugin
          map.put("getIdStatement", idGetterName);
          map.put("contentType", contentType);
          String entityTable = getEntityTable(entity);
+         String selectExpression = getSelectExpression(entity, entityTable);
+         String idClause = getIdClause(entity, entityTable);
          map.put("entityTable", entityTable);
+         map.put("selectExpression", selectExpression);
+         map.put("idClause", idClause);
          map.put("resourcePath", entityTable.toLowerCase() + "s");
 
-         JavaClass resource = JavaParser.parse(JavaClass.class, template.render(map));
+         Writer output = new StringWriter();
+         try
+         {
+            Template templateFile = freemarkerConfig.getTemplate("org/jboss/forge/rest/Endpoint.jv");
+            templateFile.process(map, output);
+            output.flush();
+         }
+         catch (IOException ioEx)
+         {
+            throw new RuntimeException(ioEx);
+         }
+         catch (TemplateException templateEx)
+         {
+            throw new RuntimeException(templateEx);
+         }
+         
+         JavaClass resource = JavaParser.parse(JavaClass.class, output.toString());
          resource.addImport(entity.getQualifiedName());
          resource.setPackage(java.getBasePackage() + ".rest");
 
@@ -374,7 +400,78 @@ public class RestPlugin implements Plugin
       }
       return table;
    }
+   
+   private String getSelectExpression(JavaClass entity, String entityTable)
+   {
+      char entityVariable = entityTable.toLowerCase().charAt(0);
+      StringBuilder expressionBuilder = new StringBuilder();
+      expressionBuilder.append("SELECT ");
+      expressionBuilder.append(entityVariable);
+      expressionBuilder.append(" FROM ");
+      expressionBuilder.append(entityTable);
+      expressionBuilder.append(" ");
+      expressionBuilder.append(entityVariable);
 
+      for (Member<JavaClass, ?> member : entity.getMembers())
+      {
+         if (member.hasAnnotation(OneToOne.class) || member.hasAnnotation(OneToMany.class)
+                  || member.hasAnnotation(ManyToMany.class) || member.hasAnnotation(ManyToOne.class))
+         {
+            String name = member.getName();
+            String associationField = null;
+            if (member instanceof Method)
+            {
+               if (name.startsWith("get"))
+               {
+                  associationField = Strings.uncapitalize(name.substring(2));
+               }
+            }
+            else if (member instanceof Field)
+            {
+               associationField = name;
+            }
+
+            if (associationField == null)
+            {
+               throw new RuntimeException("Could not compute the association field for member:" + member.getName()
+                        + " in entity" + entity.getName());
+            }
+            else
+            {
+               expressionBuilder.append(" LEFT JOIN FETCH ");
+               expressionBuilder.append(entityVariable);
+               expressionBuilder.append('.');
+               expressionBuilder.append(associationField);
+            }
+         }
+      }
+      return expressionBuilder.toString();
+   }
+
+   private String getIdClause(JavaClass entity, String entityTable)
+   {
+      for (Member<JavaClass, ?> member : entity.getMembers())
+      {
+         if (member.hasAnnotation(Id.class))
+         {
+            String memberName = member.getName();
+            String id = null;
+            if (member instanceof Method)
+            {
+               // Getters are expected to obey JavaBean conventions
+               id = Strings.uncapitalize(memberName.substring(2));
+            }
+            if (member instanceof Field)
+            {
+               id = memberName;
+            }
+            char entityVariable = entityTable.toLowerCase().charAt(0);
+            return "WHERE " + entityVariable + "." + id + " = " + ":entityId";
+         }
+      }
+      return null;
+   }
+   
    private List<JavaResource> selectTargets(final PipeOut out, Resource<?>[] targets)
             throws FileNotFoundException
    {

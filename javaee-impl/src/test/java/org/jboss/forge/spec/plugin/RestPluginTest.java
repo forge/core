@@ -221,6 +221,53 @@ public class RestPluginTest extends AbstractJPATest
       assertTrue(endpoint.toString().contains("entity.setObjectId(id);"));
       getShell().execute("build");
    }
+   
+   @Test
+   public void testCreateEndpointWithAssociation() throws Exception
+   {
+      Project project = getProject();
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+      JavaClass userEntity = JavaParser.parse(JavaClass.class,
+               RestPluginTest.class.getResourceAsStream("User.java"));
+      userEntity.setPackage(java.getBasePackage() + ".model");
+      java.saveJavaSource(userEntity);
+      JavaClass groupEntity = JavaParser.parse(JavaClass.class,
+               RestPluginTest.class.getResourceAsStream("Group.java"));
+      groupEntity.setPackage(java.getBasePackage() + ".model");
+      java.saveJavaSource(groupEntity);
+
+      getShell().setCurrentResource(java.getJavaResource(groupEntity));
+
+      setupRest();
+
+      queueInputLines("");
+      getShell().execute("rest endpoint-from-entity com.test.model.*");
+
+      JavaResource userResource = java.getJavaResource(java.getBasePackage() + ".rest.UserEndpoint");
+      JavaClass userEndpoint = (JavaClass) userResource.getJavaSource();
+
+      assertEquals("/users", userEndpoint.getAnnotation(Path.class).getStringValue());
+      assertEquals("java.util.List", userEndpoint.getMethod("listAll").getQualifiedReturnType());
+      Method<JavaClass> findUserByIdMethod = userEndpoint.getMethod("findById", Long.class);
+      Type<JavaClass> returnTypeInspector = findUserByIdMethod.getReturnTypeInspector();
+      assertEquals("javax.ws.rs.core.Response", returnTypeInspector
+                        .getQualifiedName());
+
+      assertTrue(java.getJavaResource(userEntity).getJavaSource().hasAnnotation(XmlRootElement.class));
+      
+      JavaResource groupResource = java.getJavaResource(java.getBasePackage() + ".rest.GroupEndpoint");
+      JavaClass groupEndpoint = (JavaClass) groupResource.getJavaSource();
+
+      assertEquals("/groups", groupEndpoint.getAnnotation(Path.class).getStringValue());
+      assertEquals("java.util.List", groupEndpoint.getMethod("listAll").getQualifiedReturnType());
+      Method<JavaClass> findGroupByIdMethod = userEndpoint.getMethod("findById", Long.class);
+      returnTypeInspector = findGroupByIdMethod.getReturnTypeInspector();
+      assertEquals("javax.ws.rs.core.Response", returnTypeInspector
+                        .getQualifiedName());
+
+      assertTrue(java.getJavaResource(groupEntity).getJavaSource().hasAnnotation(XmlRootElement.class));
+      getShell().execute("build");
+   }
 
    @Test
    public void testInstallWebIntoXML() throws Exception

@@ -32,8 +32,8 @@
          <scope>provided</scope>
       </dependency>
       <dependency>
-         <groupId>org.jboss.seam.render</groupId>
-         <artifactId>seam-render</artifactId>
+         <groupId>org.freemarker</groupId>
+         <artifactId>freemarker</artifactId>
       </dependency>
 
       <!-- Test Dependencies -->

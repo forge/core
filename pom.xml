@@ -67,6 +67,7 @@
       <arquillian.container.version>1.0.0.CR3</arquillian.container.version>
       <cal10n.version>0.7.2</cal10n.version>
       <cdi.version>1.0-SP4</cdi.version>
+      <freemarker.version>2.3.19</freemarker.version>
       <groovy.version>1.7.5</groovy.version>
       <httpclient.version>4.0.1</httpclient.version>
       <commonscodec.version>1.6</commonscodec.version>
@@ -376,6 +377,11 @@
             <version>${weld.version}</version>
          </dependency>
 
+         <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+            <version>${freemarker.version}</version>
+         </dependency>
          <dependency>
             <groupId>org.jboss.seam.render</groupId>
             <artifactId>seam-render</artifactId>
