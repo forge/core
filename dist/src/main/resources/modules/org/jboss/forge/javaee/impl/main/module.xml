@@ -14,7 +14,7 @@
    </resources>
 
    <dependencies>
-      <module name="org.jboss.seam.render" services="import">
+      <module name="org.freemarker" services="import">
          <imports>
             <include path="**" />
             <include path="META-INF" />

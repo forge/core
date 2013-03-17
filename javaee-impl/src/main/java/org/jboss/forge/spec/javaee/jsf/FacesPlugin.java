@@ -6,8 +6,13 @@
  */
 package org.jboss.forge.spec.javaee.jsf;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.enterprise.event.Event;
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.jboss.forge.project.Project;
@@ -30,10 +35,13 @@ import org.jboss.forge.spec.javaee.CDIFacet;
 import org.jboss.forge.spec.javaee.FacesAPIFacet;
 import org.jboss.forge.spec.javaee.FacesFacet;
 import org.jboss.forge.spec.javaee.ServletFacet;
-import org.jboss.seam.render.TemplateCompiler;
-import org.jboss.seam.render.template.CompiledTemplateResource;
 import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.FacesProjectStage;
 import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
+
+import freemarker.template.Configuration;
+import freemarker.template.DefaultObjectWrapper;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -49,9 +57,6 @@ public class FacesPlugin implements Plugin
 
    @Inject
    private Event<InstallFacets> request;
-
-   @Inject
-   private Instance<TemplateCompiler> compiler;
 
    @Inject
    private ShellPrompt prompt;
@@ -120,15 +125,35 @@ public class FacesPlugin implements Plugin
    @Command("new-view")
    public void newView(final PipeOut out, @Option(name = "target") final Resource<?> target)
    {
-      CompiledTemplateResource viewTemplate = compiler.get().compile(VIEW_TEMPLATE);
+      Configuration freemarkerConfig = new Configuration();
+      freemarkerConfig.setClassForTemplateLoading(getClass(), "/");
+      freemarkerConfig.setObjectWrapper(new DefaultObjectWrapper());
+      Map<Object, Object> map = new HashMap<Object, Object>();
+
+      Writer output = new StringWriter();
+      try
+      {
+         Template templateFile = freemarkerConfig.getTemplate(VIEW_TEMPLATE);
+         templateFile.process(map, output);
+         output.flush();
+      }
+      catch (IOException ioEx)
+      {
+         throw new RuntimeException(ioEx);
+      }
+      catch (TemplateException templateEx)
+      {
+         throw new RuntimeException(templateEx);
+      }
+      
       if (!target.exists())
       {
          ((FileResource<?>) target).createNewFile();
-         ((FileResource<?>) target).setContents(viewTemplate.render());
+         ((FileResource<?>) target).setContents(output.toString());
       }
       else if (prompt.promptBoolean("File exists. Overwrite with blank view?"))
       {
-         ((FileResource<?>) target).setContents(viewTemplate.render());
+         ((FileResource<?>) target).setContents(output.toString());
       }
       else
       {

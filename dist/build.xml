@@ -242,6 +242,10 @@
 			<maven-resource group="org.eclipse" artifact="text" />
 		</module-def>
 
+        <module-def name="org.freemarker">
+            <maven-resource group="org.freemarker" artifact="freemarker" />
+        </module-def>
+		
 		<module-def name="org.javassist">
 			<maven-resource group="javassist" artifact="javassist" />
 		</module-def>
