@@ -73,6 +73,13 @@ public class MockOptionTestPlugin implements Plugin
       booleanOptionOmitted = option;
    }
 
+   @Command("deprecated")
+   @Deprecated
+   public void deprecatedCommand(@Option(required = true) final String args)
+   {
+      setDefaultCommandArg(args);
+   }
+
    public String getSuppliedOption()
    {
       return suppliedOption;
