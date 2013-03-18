@@ -184,4 +184,16 @@ public abstract class SingletonAbstractShellTest
       return project;
    }
 
+   /**
+    * Resets the current output
+    *
+    * @return the current output before resetting
+    */
+   protected final String resetOutput()
+   {
+      String currentOutput = getOutput();
+      output.reset();
+      return currentOutput;
+   }
+
 }
