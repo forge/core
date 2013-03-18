@@ -230,7 +230,7 @@ public class RepositoryLookup implements DependencyResolverProvider
          {
             File file = a.getArtifact().getFile();
             Dependency d = DependencyBuilder.create().setArtifactId(a.getArtifact().getArtifactId())
-                     .setGroupId(a.getArtifact().getGroupId()).setVersion(a.getArtifact().getVersion())
+                     .setGroupId(a.getArtifact().getGroupId()).setVersion(a.getArtifact().getBaseVersion())
                      .setPackagingType(a.getArtifact().getExtension());
             DependencyResource resource = new DependencyResource(factory, file, d);
             result.add(resource);
@@ -275,7 +275,7 @@ public class RepositoryLookup implements DependencyResolverProvider
 
          Artifact a = results.getArtifact();
          Dependency d = DependencyBuilder.create().setArtifactId(a.getArtifactId()).setGroupId(a.getGroupId())
-                  .setVersion(a.getVersion());
+                  .setVersion(a.getBaseVersion());
 
          return new DependencyMetadataImpl(d, results);
       }
