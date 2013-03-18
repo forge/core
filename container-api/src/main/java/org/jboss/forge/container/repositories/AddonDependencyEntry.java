@@ -55,7 +55,7 @@ public class AddonDependencyEntry
    @Override
    public String toString()
    {
-      return id + ", exported=" + exported + ", optional=" + optional;
+      return id + ": exported=" + exported + ", optional=" + optional;
    }
 
    @Override

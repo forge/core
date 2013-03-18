@@ -142,9 +142,9 @@ public class InstallRequestImpl implements InstallRequest
       {
          if (repository instanceof MutableAddonRepository)
          {
-            MutableAddonRepository mutableAddonRespository = (MutableAddonRepository) repository;
-            deploy(mutableAddonRespository, requestedAddonId, requestedAddonNode);
-            mutableAddonRespository.enable(requestedAddonId);
+            MutableAddonRepository mutableRespository = (MutableAddonRepository) repository;
+            deploy(mutableRespository, requestedAddonId, requestedAddonNode);
+            mutableRespository.enable(requestedAddonId);
             break;
          }
       }

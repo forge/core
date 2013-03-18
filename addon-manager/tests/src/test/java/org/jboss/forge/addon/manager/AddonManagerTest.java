@@ -29,10 +29,14 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+/**
+ * FIXME This test needs to be refactored to be a bit less brittle. It breaks when addon POMs change.
+ * 
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ */
 @RunWith(Arquillian.class)
 public class AddonManagerTest
 {
-
    @Deployment
    @Dependencies({
             @Addon(name = "org.jboss.forge:addon-manager", version = "2.0.0-SNAPSHOT"),
@@ -70,7 +74,6 @@ public class AddonManagerTest
       Assert.assertEquals(1, request.getOptionalAddons().size());
 
       request.perform();
-      Thread.sleep(500);
 
       Assert.assertTrue(repository.isEnabled(addon));
       Assert.assertEquals(2, repository.getAddonResources(addon).size());
@@ -89,9 +92,9 @@ public class AddonManagerTest
       Assert.assertTrue(dependency.isOptional());
       Assert.assertFalse(dependency.isExported());
 
-      Assert.assertFalse(registry.isRegistered(AddonId.from("org.jboss.forge:example2", "2.0.0-SNAPSHOT")));
+      Assert.assertTrue(registry.getRegisteredAddon(AddonId.from("org.jboss.forge:example2", "2.0.0-SNAPSHOT"))
+               .getStatus().isMissing());
 
-      Thread.sleep(500);
       Assert.assertEquals(addonCount + 1, registry.getRegisteredAddons().size());
    }
 
@@ -109,18 +112,9 @@ public class AddonManagerTest
 
       Assert.assertTrue(repository.isEnabled(resources));
       Assert.assertEquals(3, repository.getAddonResources(resources).size());
-      Assert.assertTrue(repository.getAddonResources(resources).contains(
-               new File(repository.getAddonBaseDir(resources), "resources-2.0.0-SNAPSHOT-forge-addon.jar")));
-      Assert.assertTrue(repository.getAddonResources(resources).contains(
-               new File(repository.getAddonBaseDir(resources), "resources-api-2.0.0-SNAPSHOT.jar")));
-      Assert.assertTrue(repository.getAddonResources(resources).contains(
-               new File(repository.getAddonBaseDir(resources), "resources-impl-2.0.0-SNAPSHOT.jar")));
 
       AddonId facets = AddonId.from("org.jboss.forge:facets", "2.0.0-SNAPSHOT");
-      Assert.assertTrue(repository.getAddonResources(facets)
-               .contains(new File(repository.getAddonBaseDir(facets), "facets-2.0.0-SNAPSHOT-forge-addon.jar")));
-      Assert.assertTrue(repository.getAddonResources(facets)
-               .contains(new File(repository.getAddonBaseDir(facets), "facets-api-2.0.0-SNAPSHOT.jar")));
+      Assert.assertTrue(repository.isEnabled(facets));
 
       Set<AddonDependencyEntry> dependencies = repository.getAddonDependencies(resources);
       Assert.assertEquals(3, dependencies.size());
