@@ -19,6 +19,7 @@ package org.jboss.forge.arquillian;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
 import org.jboss.arquillian.container.test.spi.ContainerMethodExecutor;
@@ -29,6 +30,7 @@ import org.jboss.forge.arquillian.protocol.ForgeProtocolConfiguration;
 import org.jboss.forge.container.Forge;
 import org.jboss.forge.container.addons.Addon;
 import org.jboss.forge.container.addons.AddonRegistry;
+import org.jboss.forge.container.lock.LockMode;
 import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.container.util.ClassLoaders;
@@ -64,38 +66,47 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
 
       try
       {
-         String testClassName = testMethodExecutor.getInstance().getClass().getName();
-         AddonRegistry addonRegistry = forge.getAddonRegistry();
-         Object instance = null;
+         final String testClassName = testMethodExecutor.getInstance().getClass().getName();
+         final AddonRegistry addonRegistry = forge.getAddonRegistry();
 
-         for (Addon addon : addonRegistry.getRegisteredAddons())
+         final Object instance = forge.getLockManager().performLocked(LockMode.WRITE, new Callable<Object>()
          {
-            if (!addon.getStatus().isMissing() && ClassLoaders.containsClass(addon.getClassLoader(), testClassName))
+            @Override
+            public Object call() throws Exception
             {
-               Future<Addon> future = addonRegistry.start(addon.getId());
-               future.get();
-            }
-
-            if (addon.getStatus().isStarted())
-            {
-               ServiceRegistry registry = addon.getServiceRegistry();
-               ExportedInstance<?> result = registry.getExportedInstance(testClassName);
-
-               if (result != null)
+               Object result = null;
+               for (Addon addon : addonRegistry.getRegisteredAddons())
                {
-                  if (instance == null)
+                  if (!addon.getStatus().isMissing()
+                           && ClassLoaders.containsClass(addon.getClassLoader(), testClassName))
                   {
-                     instance = result.get();
+                     Future<Addon> future = addonRegistry.start(addon.getId());
+                     future.get();
                   }
-                  else
+
+                  if (addon.getStatus().isStarted())
                   {
-                     throw new IllegalStateException(
-                              "Multiple test classes found in deployed addons. " +
-                                       "You must have only one @Deployment(testable=true\"); deployment");
+                     ServiceRegistry registry = addon.getServiceRegistry();
+                     ExportedInstance<?> testInstance = registry.getExportedInstance(testClassName);
+
+                     if (testInstance != null)
+                     {
+                        if (result == null)
+                        {
+                           result = testInstance.get();
+                        }
+                        else
+                        {
+                           throw new IllegalStateException(
+                                    "Multiple test classes found in deployed addons. " +
+                                             "You must have only one @Deployment(testable=true\"); deployment");
+                        }
+                     }
                   }
                }
+               return result;
             }
-         }
+         });
 
          if (instance == null)
             throw new IllegalStateException(

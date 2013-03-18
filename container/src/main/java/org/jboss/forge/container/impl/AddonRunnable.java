@@ -20,7 +20,7 @@ import org.jboss.forge.container.event.PreShutdown;
 import org.jboss.forge.container.lock.LockMode;
 import org.jboss.forge.container.modules.ModularURLScanner;
 import org.jboss.forge.container.modules.ModularWeld;
-import org.jboss.forge.container.modules.ModuleResourceLoader;
+import org.jboss.forge.container.modules.AddonResourceLoader;
 import org.jboss.forge.container.modules.ModuleScanResult;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.container.util.Assert;
@@ -92,7 +92,7 @@ public final class AddonRunnable implements Runnable
       {
          try
          {
-            ResourceLoader resourceLoader = new ModuleResourceLoader(addon.getModule());
+            ResourceLoader resourceLoader = new AddonResourceLoader(addon);
             ModularURLScanner scanner = new ModularURLScanner(resourceLoader, "META-INF/beans.xml");
             ModuleScanResult scanResult = scanner.scan();
 

@@ -146,9 +146,9 @@ public class ModularFileSystemURLHandler
          }
          catch (Exception e)
          {
-            log.warn("Not loading Bean definition from class: ["
-                     + className + "] because of underlying class loading error. " +
-                     "Class found in [" + resourceLoader + "] but could not be loaded.)", e);
+            log.warn("Not loading class: ["
+                     + className + "] from addon [" + resourceLoader
+                     + "] because a required import could not be resolved.");
          }
       }
       else if (name.endsWith("beans.xml"))

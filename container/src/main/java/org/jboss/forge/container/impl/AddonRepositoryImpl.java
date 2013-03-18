@@ -68,7 +68,8 @@ public final class AddonRepositoryImpl implements MutableAddonRepository
 
    public static MutableAddonRepository forDefaultDirectory(Forge forge)
    {
-      return new AddonRepositoryImpl(forge.getLockManager(), new File(OperatingSystemUtils.getUserHomePath(), DEFAULT_ADDON_DIR));
+      return new AddonRepositoryImpl(forge.getLockManager(), new File(OperatingSystemUtils.getUserHomePath(),
+               DEFAULT_ADDON_DIR));
    }
 
    public static String getRuntimeAPIVersion()
@@ -118,7 +119,8 @@ public final class AddonRepositoryImpl implements MutableAddonRepository
                   {
                      if (resource.isDirectory())
                      {
-                        Files.copyDirectory(resource, new File(addonSlotDir, resource.getName()));
+                        Files.copyDirectory(resource, new File(addonSlotDir, addon.getName()
+                                 + resource.getParentFile().getParentFile().getName()));
                      }
                      else
                      {
