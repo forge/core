@@ -10,15 +10,27 @@ import javax.enterprise.event.Observes;
 import javax.inject.Singleton;
 
 import org.jboss.forge.shell.events.CommandExecuted;
+import org.jboss.forge.shell.events.PreCommandExecution;
 
 /**
  * @author <a href="mailto:koen.aers@gmail.com">Koen Aers</a>
- * 
+ *
  */
 @Singleton
 public class CommandExecutedObserver
 {
    private CommandExecuted event;
+   private PreCommandExecution preCommandExecutionEvent;
+   private boolean veto;
+
+   void handleCommand(@Observes final PreCommandExecution event)
+   {
+      this.preCommandExecutionEvent = event;
+      if (veto)
+      {
+         event.veto();
+      }
+   }
 
    void handleCommand(@Observes final CommandExecuted event)
    {
@@ -28,6 +40,23 @@ public class CommandExecutedObserver
    public CommandExecuted getEvent()
    {
       return event;
+   }
+
+   public PreCommandExecution getPreCommandExecutionEvent()
+   {
+      return preCommandExecutionEvent;
+   }
+
+   public void setVeto(boolean veto)
+   {
+      this.veto = veto;
+   }
+
+   public void reset()
+   {
+      this.veto = false;
+      this.event = null;
+      this.preCommandExecutionEvent = null;
    }
 
 }

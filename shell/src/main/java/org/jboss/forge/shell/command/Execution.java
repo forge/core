@@ -21,6 +21,7 @@ import org.jboss.forge.shell.constraint.ConstraintException;
 import org.jboss.forge.shell.events.CommandExecuted;
 import org.jboss.forge.shell.events.CommandExecuted.Status;
 import org.jboss.forge.shell.events.CommandMissing;
+import org.jboss.forge.shell.events.PreCommandExecution;
 import org.jboss.forge.shell.exceptions.CommandExecutionException;
 import org.jboss.forge.shell.plugins.AliasLiteral;
 import org.jboss.forge.shell.plugins.PipeOut;
@@ -128,11 +129,18 @@ public class Execution
 
                Status status = Status.FAILURE;
                ClassLoader current = Thread.currentThread().getContextClassLoader();
+               boolean vetoed = false;
                try
                {
                   Thread.currentThread().setContextClassLoader(plugin.getClass().getClassLoader());
-                  command.getMethod().invoke(plugin, paramStaging);
-                  status = Status.SUCCESS;
+                  PreCommandExecution event = new PreCommandExecution(command, originalStatement, parameterArray);
+                  manager.fireEvent(event, new Annotation[0]);
+                  vetoed = event.isVetoed();
+                  if (!vetoed)
+                  {
+                     command.getMethod().invoke(plugin, paramStaging);
+                     status = Status.SUCCESS;
+                  }
                }
                catch (Exception e)
                {
@@ -141,8 +149,11 @@ public class Execution
                finally
                {
                   Thread.currentThread().setContextClassLoader(current);
-                  manager.fireEvent(new CommandExecuted(status, command, originalStatement, parameterArray),
-                           new Annotation[] {});
+                  if (!vetoed)
+                  {
+                     manager.fireEvent(new CommandExecuted(status, command, originalStatement, parameterArray),
+                              new Annotation[0]);
+                  }
                }
             }
          }
