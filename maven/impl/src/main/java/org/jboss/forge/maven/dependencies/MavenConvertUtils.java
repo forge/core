@@ -69,7 +69,7 @@ class MavenConvertUtils
       FileResource<?> artifactResource = factory.create(FileResource.class, file);
 
       Dependency d = DependencyBuilder.create().setArtifactId(artifact.getArtifactId())
-               .setGroupId(artifact.getGroupId()).setVersion(artifact.getVersion())
+               .setGroupId(artifact.getGroupId()).setVersion(artifact.getBaseVersion())
                .setPackaging(artifact.getExtension()).setArtifact(artifactResource)
                .setOptional(artifactDependency.isOptional())
                .setClassifier(artifact.getClassifier())
