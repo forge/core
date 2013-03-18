@@ -1043,6 +1043,9 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          ansi.a(Ansi.Attribute.ITALIC);
          ansi.a(Ansi.Attribute.INTENSITY_FAINT);
          break;
+      case UNDERLINE:
+         ansi.a(Ansi.Attribute.UNDERLINE);
+         break;
 
       default:
          return output;

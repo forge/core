@@ -12,5 +12,5 @@ package org.jboss.forge.shell;
  */
 public enum ShellColor
 {
-   NONE, BLACK, BLUE, CYAN, GREEN, MAGENTA, RED, YELLOW, WHITE, BOLD, ITALIC
+   NONE, BLACK, BLUE, CYAN, GREEN, MAGENTA, RED, YELLOW, WHITE, BOLD, ITALIC, UNDERLINE
 }
