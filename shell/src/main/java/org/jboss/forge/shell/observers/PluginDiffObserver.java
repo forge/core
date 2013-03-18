@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.shell.plugins.builtin;
+package org.jboss.forge.shell.observers;
 
 import java.util.Set;
 import java.util.TreeSet;

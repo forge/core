@@ -5,10 +5,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.shell.plugins.builtin;
+package org.jboss.forge.shell.observers;
 
 import static org.junit.Assert.fail;
 
+import org.jboss.forge.shell.observers.PluginDiffObserver;
 import org.jboss.forge.test.AbstractShellTest;
 import org.junit.Ignore;
 import org.junit.Test;

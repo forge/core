@@ -5,12 +5,13 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.shell.command;
+package org.jboss.forge.shell.observers;
 
 import javax.enterprise.event.Observes;
 
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.ShellMessages;
+import org.jboss.forge.shell.command.CommandMetadata;
 import org.jboss.forge.shell.events.PreCommandExecution;
 
 /**

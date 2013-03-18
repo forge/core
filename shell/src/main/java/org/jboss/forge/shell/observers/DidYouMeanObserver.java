@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.shell.command;
+package org.jboss.forge.shell.observers;
 
 import java.util.Set;
 import java.util.TreeSet;
@@ -17,6 +17,7 @@ import org.jboss.forge.parser.java.util.Strings;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.ShellColor;
 import org.jboss.forge.shell.ShellMessages;
+import org.jboss.forge.shell.command.PluginRegistry;
 import org.jboss.forge.shell.events.CommandMissing;
 import org.jboss.forge.shell.exceptions.NoSuchCommandException;
 import org.jboss.forge.shell.plugins.builtin.AliasRegistry;
