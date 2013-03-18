@@ -1046,7 +1046,9 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       case UNDERLINE:
          ansi.a(Ansi.Attribute.UNDERLINE);
          break;
-
+      case STRIKEOUT:
+         ansi.a(Ansi.Attribute.STRIKETHROUGH_ON);
+         break;
       default:
          return output;
       }
