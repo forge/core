@@ -6,7 +6,7 @@
  */
 package org.jboss.forge.container.addons;
 
-import java.util.concurrent.locks.Lock;
+import java.util.concurrent.Callable;
 
 import org.jboss.forge.container.lock.LockManager;
 import org.jboss.forge.container.lock.LockMode;
@@ -15,7 +15,7 @@ import org.jboss.forge.container.versions.VersionRange;
 
 /**
  * An edge in the registered {@link Addon} graph.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class AddonDependencyImpl implements AddonDependency
@@ -57,12 +57,17 @@ public class AddonDependencyImpl implements AddonDependency
       return dependency;
    }
 
-   public void setDependency(Addon dependency)
+   public void setDependency(final Addon dependency)
    {
-      Lock lock = lockManager.obtainLock(LockMode.WRITE);
-      lock.lock();
-      this.dependency = dependency;
-      lock.unlock();
+      lockManager.performLocked(LockMode.WRITE, new Callable<Object>()
+      {
+         @Override
+         public Object call() throws Exception
+         {
+            AddonDependencyImpl.this.dependency = dependency;
+            return dependency;
+         }
+      });
    }
 
    @Override

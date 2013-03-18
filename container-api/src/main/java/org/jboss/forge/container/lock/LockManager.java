@@ -12,18 +12,13 @@ import java.util.concurrent.locks.Lock;
 /**
  * An interface that provides read and write {@link Lock} instances for interacting with the underlying locking
  * mechanism.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  * @see {@link LockMode}
  */
 public interface LockManager
 {
-   /**
-    * Obtain a {@link Lock} for the given {@link LockMode} type.
-    */
-   Lock obtainLock(LockMode mode);
-
    /**
     * Perform the given {@link Callable} task after acquiring a {@link Lock} of the given {@link LockMode} type. Return
     * the result, if any.

@@ -22,8 +22,7 @@ public class LockManagerImpl implements LockManager
 {
    private ReentrantReadWriteLock readWriteLock;
 
-   @Override
-   public Lock obtainLock(LockMode mode)
+   private Lock obtainLock(LockMode mode)
    {
       if (readWriteLock == null)
          readWriteLock = new ReentrantReadWriteLock(true);
