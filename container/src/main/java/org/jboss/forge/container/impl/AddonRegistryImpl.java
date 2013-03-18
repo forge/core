@@ -492,13 +492,22 @@ public class AddonRegistryImpl implements AddonRegistry
 
    public void stopAll()
    {
-      for (AddonImpl addon : addons)
+      lock.performLocked(LockMode.WRITE, new Callable<Void>()
       {
-         stop(addon);
-      }
-      List<Runnable> waiting = executor.shutdownNow();
-      if (waiting != null && !waiting.isEmpty())
-         logger.info("(" + waiting.size() + ") addons were aborted while loading.");
+         @Override
+         public Void call() throws Exception
+         {
+            for (AddonImpl addon : addons)
+            {
+               stop(addon);
+            }
+            List<Runnable> waiting = executor.shutdownNow();
+            if (waiting != null && !waiting.isEmpty())
+               logger.info("(" + waiting.size() + ") addons were aborted while loading.");
+
+            return null;
+         }
+      });
    }
 
    private AddonModuleLoader getAddonModuleLoader(AddonRepository repository)
