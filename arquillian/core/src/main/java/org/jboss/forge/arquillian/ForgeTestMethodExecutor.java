@@ -33,7 +33,6 @@ import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.lock.LockMode;
 import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.container.services.ServiceRegistry;
-import org.jboss.forge.container.util.ClassLoaders;
 
 /**
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
@@ -69,6 +68,25 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
          final String testClassName = testMethodExecutor.getInstance().getClass().getName();
          final AddonRegistry addonRegistry = forge.getAddonRegistry();
 
+         Thread lock = new Thread(new Runnable()
+         {
+            @Override
+            public void run()
+            {
+               forge.getLockManager().performLocked(LockMode.WRITE, new Callable<Void>()
+               {
+                  @Override
+                  public Void call() throws Exception
+                  {
+                     return null;
+                  }
+               });
+            }
+         });
+
+         lock.start();
+         lock.join();
+
          final Object instance = forge.getLockManager().performLocked(LockMode.WRITE, new Callable<Object>()
          {
             @Override
@@ -77,12 +95,8 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
                Object result = null;
                for (Addon addon : addonRegistry.getRegisteredAddons())
                {
-                  if (!addon.getStatus().isMissing()
-                           && ClassLoaders.containsClass(addon.getClassLoader(), testClassName))
-                  {
-                     Future<Addon> future = addonRegistry.start(addon.getId());
-                     future.get();
-                  }
+                  Future<Addon> future = addonRegistry.start(addon.getId());
+                  future.get();
 
                   if (addon.getStatus().isStarted())
                   {

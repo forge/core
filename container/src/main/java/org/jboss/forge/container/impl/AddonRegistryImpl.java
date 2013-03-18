@@ -309,6 +309,19 @@ public class AddonRegistryImpl implements AddonRegistry
          addon = new AddonImpl(lock, addonId);
          addons.add(addon);
       }
+      else
+      {
+         for (Addon registered : addons)
+         {
+            for (AddonDependency dep : registered.getDependencies())
+            {
+               if (dep.getDependency().equals(addon))
+               {
+                  loadAddon(dep.getDependent().getId());
+               }
+            }
+         }
+      }
 
       return addon;
    }
@@ -451,6 +464,7 @@ public class AddonRegistryImpl implements AddonRegistry
                }
             }
 
+            result.add(addonToStop);
             return result;
          }
       });

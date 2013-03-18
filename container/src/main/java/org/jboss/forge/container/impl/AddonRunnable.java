@@ -47,7 +47,7 @@ public final class AddonRunnable implements Runnable
       @Override
       public Object call() throws Exception
       {
-         addon.setStatus(Status.STOPPED);
+         addon.setStatus(Status.LOADED);
          return null;
       }
    };
@@ -111,7 +111,7 @@ public final class AddonRunnable implements Runnable
                   @Override
                   public Object call() throws Exception
                   {
-                     addon.setStatus(Status.STOPPED);
+                     addon.setStatus(Status.LOADED);
                      return null;
                   }
                };
@@ -166,7 +166,7 @@ public final class AddonRunnable implements Runnable
                      }
                      finally
                      {
-                        addon.setStatus(Status.STOPPED);
+                        addon.setStatus(Status.LOADED);
                         if (operation != null)
                            operation.cancel(true);
                      }

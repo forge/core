@@ -21,12 +21,13 @@ import org.jboss.forge.maven.dependencies.MavenContainer;
 import org.jboss.forge.maven.dependencies.MavenDependencyResolver;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
  */
+@Ignore
 public class MavenDependencyResolverTest
 {
    private MavenDependencyResolver resolver;

@@ -8,7 +8,7 @@ package org.jboss.forge.container.addons;
 
 public enum Status
 {
-   MISSING, LOADED, STARTED, STOPPED, FAILED;
+   MISSING, LOADED, STARTED, FAILED;
 
    public boolean isMissing()
    {
@@ -17,7 +17,7 @@ public enum Status
 
    public boolean isLoaded()
    {
-      return this == LOADED;
+      return !isMissing();
    }
 
    public boolean isFailed()
@@ -32,7 +32,7 @@ public enum Status
 
    public boolean isStopped()
    {
-      return this == STOPPED || this == FAILED;
+      return this == LOADED || this == FAILED;
    }
 
 }
