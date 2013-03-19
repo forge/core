@@ -6,11 +6,13 @@
  */
 package org.jboss.forge.container.impl;
 
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,6 +29,7 @@ import org.jboss.forge.container.addons.AddonDependencyImpl;
 import org.jboss.forge.container.addons.AddonFilter;
 import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.addons.AddonRegistry;
+import org.jboss.forge.container.addons.AddonTree;
 import org.jboss.forge.container.addons.Status;
 import org.jboss.forge.container.lock.LockManager;
 import org.jboss.forge.container.lock.LockMode;
@@ -35,9 +38,11 @@ import org.jboss.forge.container.repositories.AddonDependencyEntry;
 import org.jboss.forge.container.repositories.AddonRepository;
 import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.container.services.ServiceRegistry;
+import org.jboss.forge.container.util.AddonFilters;
 import org.jboss.forge.container.util.Assert;
 import org.jboss.forge.container.util.CompletedFuture;
-import org.jboss.forge.container.util.Sets;
+import org.jboss.forge.container.util.ValuedVisitor;
+import org.jboss.forge.container.util.Visitor;
 import org.jboss.forge.container.versions.SingleVersionRange;
 import org.jboss.modules.Module;
 
@@ -52,7 +57,7 @@ public class AddonRegistryImpl implements AddonRegistry
             .availableProcessors());
 
    private Forge forge;
-   private Set<AddonImpl> addons = Sets.getConcurrentSet();
+   private AddonTree addons;
 
    private final ExecutorService executor = Executors.newFixedThreadPool(BATCH_SIZE);
    private Map<AddonRepository, AddonModuleLoader> loaders = new ConcurrentHashMap<AddonRepository, AddonModuleLoader>();
@@ -63,9 +68,11 @@ public class AddonRegistryImpl implements AddonRegistry
       Assert.notNull(forge, "Forge instance must not be null.");
       Assert.notNull(lock, "LockManager must not be null.");
 
-      logger.log(Level.FINE, "Instantiated AddonRegistryImpl: " + this);
       this.forge = forge;
       this.lock = lock;
+      this.addons = new AddonTree(lock);
+
+      logger.log(Level.FINE, "Instantiated AddonRegistryImpl: " + this);
    }
 
    /*
@@ -79,12 +86,22 @@ public class AddonRegistryImpl implements AddonRegistry
          @Override
          public AddonImpl call() throws Exception
          {
-            for (AddonImpl addon : addons)
+            ValuedVisitor<AddonImpl, Addon> visitor = new ValuedVisitor<AddonImpl, Addon>()
             {
-               if (addon.getId().equals(id))
-                  return addon;
-            }
+               @Override
+               public void visit(Addon instance)
+               {
+                  if (instance.getId().equals(id))
+                  {
+                     setResult((AddonImpl) instance);
+                  }
+               }
+            };
 
+            addons.depthFirst(visitor);
+
+            if (visitor.hasResult())
+               return visitor.getResult();
             return loadAddon(id);
          }
       });
@@ -93,14 +110,7 @@ public class AddonRegistryImpl implements AddonRegistry
    @Override
    public Set<Addon> getRegisteredAddons()
    {
-      return lock.performLocked(LockMode.READ, new Callable<Set<Addon>>()
-      {
-         @Override
-         public Set<Addon> call() throws Exception
-         {
-            return new HashSet<Addon>(addons);
-         }
-      });
+      return getRegisteredAddons(AddonFilters.all());
    }
 
    @Override
@@ -111,15 +121,30 @@ public class AddonRegistryImpl implements AddonRegistry
          @Override
          public Set<Addon> call() throws Exception
          {
-            Set<Addon> result = new HashSet<Addon>();
-            for (Addon registeredAddon : addons)
+            return lock.performLocked(LockMode.READ, new Callable<Set<Addon>>()
             {
-               if (filter.accept(registeredAddon))
+               @Override
+               public Set<Addon> call() throws Exception
                {
-                  result.add(registeredAddon);
+                  ValuedVisitor<Set<Addon>, Addon> visitor = new ValuedVisitor<Set<Addon>, Addon>()
+                  {
+                     {
+                        setResult(new HashSet<Addon>());
+                     }
+
+                     @Override
+                     public void visit(Addon instance)
+                     {
+                        if (filter.accept(instance))
+                           getResult().add(instance);
+                     }
+                  };
+
+                  addons.breadthFirst(visitor);
+
+                  return visitor.getResult();
                }
-            }
-            return result;
+            });
          }
       });
    }
@@ -133,27 +158,6 @@ public class AddonRegistryImpl implements AddonRegistry
          public Boolean call() throws Exception
          {
             return getRegisteredAddon(id) != null;
-         }
-      });
-   }
-
-   public void removeServices(final ClassLoader classLoader) throws IllegalArgumentException
-   {
-      lock.performLocked(LockMode.WRITE, new Callable<Void>()
-      {
-         @Override
-         public Void call() throws Exception
-         {
-            Iterator<AddonImpl> it = addons.iterator();
-            while (it.hasNext())
-            {
-               Addon addon = it.next();
-               if (addon.getClassLoader().equals(classLoader))
-               {
-                  it.remove();
-               }
-            }
-            return null;
          }
       });
    }
@@ -278,14 +282,7 @@ public class AddonRegistryImpl implements AddonRegistry
             }
             else if (addon.getStatus().isLoaded())
             {
-               if (executor.isShutdown())
-               {
-                  throw new IllegalStateException("Cannot start additional addons once Shutdown has been initiated.");
-               }
-               AddonRunnable runnable = new AddonRunnable(forge, addon);
-               result = executor.submit(runnable, (Addon) addon);
-               addon.setFuture(result);
-               addon.setRunnable(runnable);
+               result = doStart(addon);
             }
             else
             {
@@ -329,18 +326,27 @@ public class AddonRegistryImpl implements AddonRegistry
       return addon;
    }
 
-   private AddonImpl loadAddonFromRepository(AddonRepository repository, AddonId addonId)
+   private AddonImpl loadAddonFromRepository(AddonRepository repository, final AddonId addonId)
    {
       AddonImpl addon = null;
       if (repository.isEnabled(addonId))
       {
-         for (AddonImpl a : addons)
+
+         ValuedVisitor<AddonImpl, Addon> visitor = new ValuedVisitor<AddonImpl, Addon>()
          {
-            if (addonId.equals(a.getId()))
+            @Override
+            public void visit(Addon instance)
             {
-               addon = a;
+               if (instance.getId().equals(addonId))
+               {
+                  setResult((AddonImpl) instance);
+               }
             }
-         }
+         };
+
+         addons.depthFirst(visitor);
+
+         addon = visitor.getResult();
 
          if (addon == null)
          {
@@ -352,6 +358,7 @@ public class AddonRegistryImpl implements AddonRegistry
          Set<AddonDependency> dependencies = fromAddonDependencyEntries(addon,
                   repository.getAddonDependencies(addonId));
          addon.setDependencies(dependencies);
+         addons.prune();
 
          if (addon.getModule() == null)
          {
@@ -429,47 +436,54 @@ public class AddonRegistryImpl implements AddonRegistry
          @Override
          public Set<Addon> call() throws Exception
          {
-            Set<Addon> result = new HashSet<Addon>();
+            List<Addon> result = new ArrayList<Addon>();
+
+            final Queue<Addon> toRestart = new LinkedList<Addon>();
 
             if (addonToStop.getStatus().isStarted())
             {
-               for (AddonImpl dependentAddon : addons)
+               ValuedVisitor<List<Addon>, Addon> visitor = new ValuedVisitor<List<Addon>, Addon>()
                {
-                  for (AddonDependency dependency : dependentAddon.getDependencies())
                   {
-                     if (addonToStop.equals(dependency.getDependency()) && dependentAddon.getStatus().isStarted())
+                     setResult(new ArrayList<Addon>());
+                  }
+
+                  @Override
+                  public void visit(Addon instance)
+                  {
+                     for (AddonDependency dependency : instance.getDependencies())
                      {
-                        result.addAll(stop(dependentAddon));
+                        if (dependency.getDependency().equals(addonToStop)
+                                 || getResult().contains(dependency.getDependency()))
+                        {
+                           getResult().add(instance);
+
+                           if (dependency.isOptional())
+                           {
+                              toRestart.add(instance);
+                           }
+                        }
                      }
                   }
+               };
+
+               addons.breadthFirst(visitor);
+
+               result.addAll(visitor.getResult());
+               result.add(addonToStop);
+
+               for (Addon addon : result)
+               {
+                  doStop(addon);
                }
 
-               if (addonToStop != null)
+               for (Addon addon : toRestart)
                {
-                  Future<Addon> future = ((AddonImpl) addonToStop).getFuture();
-                  try
-                  {
-                     if (future != null)
-                     {
-                        ((AddonImpl) addonToStop).getRunnable().shutdown();
-                     }
-                  }
-                  catch (Exception e)
-                  {
-                     logger.log(Level.WARNING, "Failed to shut down addon " + addonToStop, e);
-                  }
-                  finally
-                  {
-                     if (future != null && !future.isDone())
-                        future.cancel(true);
-
-                     ((AddonImpl) addonToStop).reset();
-                  }
+                  doStart((AddonImpl) addon);
                }
             }
 
-            result.add(addonToStop);
-            return result;
+            return new HashSet<Addon>(result);
          }
       });
    }
@@ -501,10 +515,15 @@ public class AddonRegistryImpl implements AddonRegistry
          @Override
          public Void call() throws Exception
          {
-            for (AddonImpl addon : addons)
+            addons.breadthFirst(new Visitor<Addon>()
             {
-               stop(addon);
-            }
+               @Override
+               public void visit(Addon addon)
+               {
+                  doStop(addon);
+               }
+            });
+
             List<Runnable> waiting = executor.shutdownNow();
             if (waiting != null && !waiting.isEmpty())
                logger.info("(" + waiting.size() + ") addons were aborted while loading.");
@@ -521,5 +540,44 @@ public class AddonRegistryImpl implements AddonRegistry
       if (!loaders.containsKey(repository))
          loaders.put(repository, new AddonModuleLoader(repository, forge.getRuntimeClassLoader()));
       return loaders.get(repository);
+   }
+
+   private void doStop(Addon addon)
+   {
+      if (addon != null)
+      {
+         Future<Addon> future = ((AddonImpl) addon).getFuture();
+         try
+         {
+            if (future != null)
+            {
+               ((AddonImpl) addon).getRunnable().shutdown();
+            }
+         }
+         catch (Exception e)
+         {
+            logger.log(Level.WARNING, "Failed to shut down addon " + addon, e);
+         }
+         finally
+         {
+            if (future != null && !future.isDone())
+               future.cancel(true);
+
+            ((AddonImpl) addon).reset();
+         }
+      }
+   }
+
+   private Future<Addon> doStart(AddonImpl addon)
+   {
+      if (executor.isShutdown())
+      {
+         throw new IllegalStateException("Cannot start additional addons once Shutdown has been initiated.");
+      }
+      AddonRunnable runnable = new AddonRunnable(forge, addon);
+      Future<Addon> result = executor.submit(runnable, (Addon) addon);
+      addon.setFuture(result);
+      addon.setRunnable(runnable);
+      return result;
    }
 }

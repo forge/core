@@ -7,7 +7,6 @@
 package org.jboss.forge.container.impl;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Future;
 
@@ -20,6 +19,7 @@ import org.jboss.forge.container.modules.AddonModuleLoader;
 import org.jboss.forge.container.repositories.AddonRepository;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.container.util.Assert;
+import org.jboss.forge.container.util.Sets;
 import org.jboss.modules.Module;
 
 /**
@@ -30,8 +30,8 @@ public class AddonImpl implements Addon
    private static class Memento
    {
       public Status status = Status.MISSING;
-      public Set<AddonDependency> dependencies = new HashSet<AddonDependency>();
-      public Set<AddonDependency> missingDependencies = new HashSet<AddonDependency>();
+      public Set<AddonDependency> dependencies = Sets.getConcurrentSet();
+      public Set<AddonDependency> missingDependencies = Sets.getConcurrentSet();
 
       public AddonModuleLoader moduleLoader;
       public Module module;
@@ -57,7 +57,8 @@ public class AddonImpl implements Addon
 
    public void reset()
    {
-      getModuleLoader().removeFromCache(id);
+      if (getModuleLoader() != null)
+         getModuleLoader().removeFromCache(id);
       this.state = new Memento();
    }
 
@@ -73,9 +74,17 @@ public class AddonImpl implements Addon
       return Collections.unmodifiableSet(state.dependencies);
    }
 
+   public Set<AddonDependency> getMutableDependencies()
+   {
+      return state.dependencies;
+   }
+
    public void setDependencies(Set<AddonDependency> dependencies)
    {
-      this.state.dependencies = dependencies;
+      Assert.notNull(dependencies, "Dependencies must not be null.");
+
+      this.state.dependencies = Sets.getConcurrentSet();
+      this.state.dependencies.addAll(dependencies);
    }
 
    @Override
@@ -147,12 +156,14 @@ public class AddonImpl implements Addon
    public void setMissingDependencies(Set<AddonDependency> missingDependencies)
    {
       Assert.notNull(missingDependencies, "Missing dependencies must not be null.");
-      this.state.missingDependencies = missingDependencies;
+
+      this.state.missingDependencies = Sets.getConcurrentSet();
+      this.state.missingDependencies.addAll(missingDependencies);
    }
 
    public Set<AddonDependency> getMissingDependencies()
    {
-      return state.missingDependencies;
+      return Collections.unmodifiableSet(state.missingDependencies);
    }
 
    public Future<Addon> getFuture()

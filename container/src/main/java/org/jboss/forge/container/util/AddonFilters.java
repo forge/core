@@ -29,4 +29,16 @@ public class AddonFilters
       };
    }
 
+   public static AddonFilter all()
+   {
+      return new AddonFilter()
+      {
+         @Override
+         public boolean accept(Addon addon)
+         {
+            return true;
+         }
+      };
+   }
+
 }
