@@ -24,9 +24,4 @@ public interface LockManager
     * the result, if any.
     */
    <T> T performLocked(LockMode mode, Callable<T> task);
-
-   /**
-    * Perform the given {@link Runnable} task after acquiring a {@link Lock} of the given {@link LockMode} type.
-    */
-   void performLocked(LockMode mode, Runnable runnable);
 }

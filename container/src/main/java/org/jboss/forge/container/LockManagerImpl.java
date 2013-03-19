@@ -58,26 +58,4 @@ public class LockManagerImpl implements LockManager
       return result;
    }
 
-   @Override
-   public void performLocked(LockMode mode, Runnable task)
-   {
-      Assert.notNull(mode, "LockMode must not be null.");
-      Assert.notNull(task, "Task to perform must not be null.");
-
-      Lock lock = obtainLock(mode);
-      lock.lock();
-      try
-      {
-         task.run();
-      }
-      catch (Exception e)
-      {
-         throw new ContainerException(e);
-      }
-      finally
-      {
-         lock.unlock();
-      }
-   }
-
 }
