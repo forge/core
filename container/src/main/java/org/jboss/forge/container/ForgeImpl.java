@@ -113,8 +113,9 @@ public class ForgeImpl implements Forge
                Thread.sleep(100);
             }
             while (alive == true && (serverMode || isStartingAddons(futures)));
+            System.out.println("Exiting...");
          }
-         catch (InterruptedException e)
+         catch (Exception e)
          {
             throw new ContainerException(e);
          }

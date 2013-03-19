@@ -28,7 +28,6 @@ import org.jboss.forge.container.addons.AddonFilter;
 import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.addons.Status;
-import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.lock.LockManager;
 import org.jboss.forge.container.lock.LockMode;
 import org.jboss.forge.container.modules.AddonModuleLoader;
@@ -279,6 +278,10 @@ public class AddonRegistryImpl implements AddonRegistry
             }
             else if (addon.getStatus().isLoaded())
             {
+               if (executor.isShutdown())
+               {
+                  throw new IllegalStateException("Cannot start additional addons once Shutdown has been initiated.");
+               }
                AddonRunnable runnable = new AddonRunnable(forge, addon);
                result = executor.submit(runnable, (Addon) addon);
                addon.setFuture(result);
@@ -395,7 +398,8 @@ public class AddonRegistryImpl implements AddonRegistry
                }
                catch (Exception e)
                {
-                  throw new ContainerException("Failed to load addon [" + addonId + "]", e);
+                  // logger.log(Level.FINE, "Failed to load addon [" + addonId + "]", e);
+                  // // throw new ContainerException("Failed to load addon [" + addonId + "]", e);
                }
             }
          }
