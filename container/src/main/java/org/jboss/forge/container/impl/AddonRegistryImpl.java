@@ -140,10 +140,11 @@ public class AddonRegistryImpl implements AddonRegistry
 
    public void removeServices(final ClassLoader classLoader) throws IllegalArgumentException
    {
-      lock.performLocked(LockMode.WRITE, new Callable<Void>()
+      lock.performLocked(LockMode.WRITE, new Runnable()
       {
+
          @Override
-         public Void call() throws Exception
+         public void run()
          {
             Iterator<AddonImpl> it = addons.iterator();
             while (it.hasNext())
@@ -154,7 +155,6 @@ public class AddonRegistryImpl implements AddonRegistry
                   it.remove();
                }
             }
-            return null;
          }
       });
    }
