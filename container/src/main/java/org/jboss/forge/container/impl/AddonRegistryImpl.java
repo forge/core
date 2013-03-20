@@ -254,7 +254,6 @@ public class AddonRegistryImpl implements AddonRegistry
             {
                List<Addon> toStart = new ArrayList<Addon>();
                calculateAddonsToStart(addonToStart, toStart);
-               System.out.println(toStart);
 
                for (Addon addon : toStart)
                {
