@@ -291,9 +291,9 @@ public class ClassLoaderAdapterCollisionsTest
       ClassCreatesInstanceFromClassLoader creator;
       try
       {
+         @SuppressWarnings("unused")
          ClassWithGetterAndSetter result = new ClassCreatesInstanceFromClassLoader()
                   .create(dep2Loader, ClassWithGetterAndSetter.class);
-         System.out.println(result);
          Assert.fail("Should have received a " + ClassCastException.class.getName());
       }
       catch (ClassCastException e)

@@ -41,8 +41,6 @@ public class AddonTree implements Iterable<Addon>
             throw new IllegalArgumentException("Cannot add duplicate Addon [" + addon + "] to the registry.");
       }
       reattach(addon);
-
-      System.out.println("Added [" + addon + "]");
    }
 
    public void reattach(Addon addon)

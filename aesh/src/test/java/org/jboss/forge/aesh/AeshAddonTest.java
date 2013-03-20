@@ -43,7 +43,8 @@ public class AeshAddonTest extends TestCase
                .addAsLibraries(Maven.resolver().loadPomFromFile("pom.xml")
                         .resolve("org.jboss.aesh:aesh-extensions:0.33").withTransitivity().asFile())
                .addBeansXML()
-               .addAsAddonDependencies(AddonDependencyEntry.create(AddonId.from("org.jboss.forge:ui", "2.0.0-SNAPSHOT")));
+               .addAsAddonDependencies(
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:ui", "2.0.0-SNAPSHOT")));
 
       return archive;
    }
@@ -74,7 +75,6 @@ public class AeshAddonTest extends TestCase
        * 
        * outputStream.write("fo".getBytes()); outputStream.write(completeChar.getFirstValue());
        * outputStream.write("\n".getBytes()); shell.startShell(); outString = out.toString();
-       * System.out.println(outString);
        * 
        * outputStream.write(("list-services\n").getBytes()); shell.startShell(); // System.out.println("OUT:"+
        * out.toString());

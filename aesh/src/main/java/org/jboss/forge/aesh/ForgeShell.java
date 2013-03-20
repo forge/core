@@ -73,7 +73,6 @@ public class ForgeShell
 
       for (ExportedInstance<ShellStreamProvider> provider : registry.getExportedInstances(ShellStreamProvider.class))
       {
-         System.out.println("Loaded: ShellStreamProvider - " + provider.get());
          // Configure the stream here. This will only execute if there is a addon deployed BEFORE aesh, which is the
          // case in tests. We control that order there (or can fix if it is not working.)
 

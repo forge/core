@@ -60,10 +60,6 @@ public class BootstrapClassLoader extends URLClassLoader
             throw new RuntimeException("Could not load jars from " + path, e);
          }
 
-         // for (URL url : result)
-         // {
-         // System.out.println("Bootpath JAR: " + url);
-         // }
          return result.toArray(new URL[0]);
       }
 

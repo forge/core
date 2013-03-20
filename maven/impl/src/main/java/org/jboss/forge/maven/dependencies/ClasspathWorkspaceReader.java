@@ -114,8 +114,6 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
                         && foundArtifact.getArtifactId().equals(artifact.getArtifactId())
                         && foundArtifact.getVersion().equals(artifact.getVersion()))
                {
-                  // System.out.println("BUILD: ################################# Artifact: " + artifact + " DIRPOM: "
-                  // + pomFile);
                   if ("pom".equals(artifact.getExtension()))
                   {
                      return pomFile;
@@ -168,15 +166,11 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
                if (file.getName().equals(name.toString()))
                {
                   // return raw file
-                  // System.out.println("BUILD: ################################# Artifact: " + artifact + " OTHER: "
-                  // + file);
                   return file;
                }
             }
          }
       }
-      // return raw file
-      // System.out.println("BUILD: ################################# Artifact: " + artifact + " NOTHING RETURNED");
 
       return null;
    }
@@ -233,8 +227,6 @@ public class ClasspathWorkspaceReader implements WorkspaceReader
             }
          }
       }
-      // System.out.println("BUILD: ################################# Artifact: " + artifact + " VERSIONS: " +
-      // versions);
       return new ArrayList<String>(versions);
    }
 

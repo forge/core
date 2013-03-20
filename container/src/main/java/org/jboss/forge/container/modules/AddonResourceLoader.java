@@ -28,11 +28,6 @@ public class AddonResourceLoader implements ResourceLoader
       this.classes = new ConcurrentHashMap<String, Class<?>>();
       this.addon = addon;
       this.classLoader = addon.getClassLoader();
-      
-      if(classLoader == null)
-      {
-         System.out.println();
-      }
    }
 
    @Override

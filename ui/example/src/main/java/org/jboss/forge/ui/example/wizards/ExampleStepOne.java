@@ -58,7 +58,6 @@ public class ExampleStepOne implements UIWizardStep
    @Override
    public Result execute(UIContext context) throws Exception
    {
-      System.out.println("Step 1 Address: " + address.getValue());
       return Results.success();
    }
 
