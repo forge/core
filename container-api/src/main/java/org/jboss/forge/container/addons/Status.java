@@ -27,12 +27,7 @@ public enum Status
 
    public boolean isStarted()
    {
-      return this == STARTED;
-   }
-
-   public boolean isStopped()
-   {
-      return this == LOADED || this == FAILED;
+      return this == STARTED || this == FAILED;
    }
 
 }

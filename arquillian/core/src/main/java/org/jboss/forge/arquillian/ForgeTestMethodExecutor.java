@@ -90,40 +90,32 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
          lock.start();
          lock.join();
 
-         final Object instance = forge.getLockManager().performLocked(LockMode.WRITE, new Callable<Object>()
+         Object instance = null;
+         for (Addon addon : addonRegistry.getRegisteredAddons())
          {
-            @Override
-            public Object call() throws Exception
+            Future<Addon> future = addonRegistry.start(addon.getId());
+            future.get();
+
+            if (addon.getStatus().isStarted())
             {
-               Object result = null;
-               for (Addon addon : addonRegistry.getRegisteredAddons())
+               ServiceRegistry registry = addon.getServiceRegistry();
+               ExportedInstance<?> testInstance = registry.getExportedInstance(testClassName);
+
+               if (testInstance != null)
                {
-                  Future<Addon> future = addonRegistry.start(addon.getId());
-                  future.get();
-
-                  if (addon.getStatus().isStarted())
+                  if (instance == null)
                   {
-                     ServiceRegistry registry = addon.getServiceRegistry();
-                     ExportedInstance<?> testInstance = registry.getExportedInstance(testClassName);
-
-                     if (testInstance != null)
-                     {
-                        if (result == null)
-                        {
-                           result = testInstance.get();
-                        }
-                        else
-                        {
-                           throw new IllegalStateException(
-                                    "Multiple test classes found in deployed addons. " +
-                                             "You must have only one @Deployment(testable=true\"); deployment");
-                        }
-                     }
+                     instance = testInstance.get();
+                  }
+                  else
+                  {
+                     throw new IllegalStateException(
+                              "Multiple test classes found in deployed addons. " +
+                                       "You must have only one @Deployment(testable=true\"); deployment");
                   }
                }
-               return result;
             }
-         });
+         }
 
          if (instance == null)
             throw new IllegalStateException(

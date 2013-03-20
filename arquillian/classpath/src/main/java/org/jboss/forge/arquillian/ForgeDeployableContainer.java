@@ -35,7 +35,6 @@ import org.jboss.forge.container.repositories.MutableAddonRepository;
 import org.jboss.forge.container.util.Addons;
 import org.jboss.forge.container.util.ClassLoaders;
 import org.jboss.forge.container.util.Files;
-import org.jboss.forge.container.util.Threads;
 import org.jboss.forge.maven.dependencies.FileResourceFactory;
 import org.jboss.forge.maven.dependencies.MavenContainer;
 import org.jboss.forge.maven.dependencies.MavenDependencyResolver;
@@ -70,7 +69,6 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
 
          repository.deploy(addonToDeploy, ((ForgeArchive) archive).getAddonDependencies(), new ArrayList<File>());
          repository.enable(addonToDeploy);
-         Threads.sleep(200);
       }
       else if (archive instanceof ForgeRemoteAddon)
       {

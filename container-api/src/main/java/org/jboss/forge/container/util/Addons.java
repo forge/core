@@ -19,7 +19,7 @@ public class Addons
    {
       try
       {
-         while (!addon.getStatus().isStarted() && !addon.getStatus().isFailed())
+         while (!addon.getStatus().isStarted())
          {
             Thread.sleep(10);
          }
@@ -34,7 +34,7 @@ public class Addons
    {
       try
       {
-         while (!(addon.getStatus().isStopped() || addon.getStatus().isMissing()))
+         while (addon.getStatus().isStarted())
          {
             Thread.sleep(10);
          }
