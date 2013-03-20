@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import javax.enterprise.inject.spi.BeanManager;
 
 import org.jboss.forge.container.Forge;
+import org.jboss.forge.container.addons.Addon;
 import org.jboss.forge.container.addons.Status;
 import org.jboss.forge.container.event.Perform;
 import org.jboss.forge.container.event.PreShutdown;
@@ -32,7 +33,7 @@ import org.jboss.weld.environment.se.WeldContainer;
 import org.jboss.weld.resources.spi.ResourceLoader;
 
 /**
- * Loads an addon
+ * Loads an {@link Addon}
  */
 public final class AddonRunnable implements Runnable
 {
@@ -60,38 +61,54 @@ public final class AddonRunnable implements Runnable
 
    public void shutdown()
    {
-      forge.getLockManager().performLocked(LockMode.READ, new Callable<Void>()
+      try
       {
-         @Override
-         public Void call() throws Exception
+         forge.getLockManager().performLocked(LockMode.READ, new Callable<Void>()
          {
-            logger.info("< Stopping container [" + addon.getId() + "]");
-            long start = System.currentTimeMillis();
-            ClassLoaders.executeIn(addon.getClassLoader(), shutdownCallable);
-            logger.info("<< Stopped container [" + addon.getId() + "] - "
-                     + (System.currentTimeMillis() - start) + "ms" + "                    <<");
-            return null;
-         }
-      });
+            @Override
+            public Void call() throws Exception
+            {
+               logger.info("< Stopping container [" + addon.getId() + "]");
+               long start = System.currentTimeMillis();
+               ClassLoaders.executeIn(addon.getClassLoader(), shutdownCallable);
+               logger.info("<< Stopped container [" + addon.getId() + "] - "
+                        + (System.currentTimeMillis() - start) + "ms" + "                    <<");
+               return null;
+            }
+         });
+      }
+      catch (RuntimeException e)
+      {
+         logger.log(Level.SEVERE, "Failed to shut down addon " + addon.getId(), e);
+         throw e;
+      }
    }
 
    @Override
    public void run()
    {
-      forge.getLockManager().performLocked(LockMode.READ, new Callable<Void>()
+      try
       {
-         @Override
-         public Void call() throws Exception
+         forge.getLockManager().performLocked(LockMode.READ, new Callable<Void>()
          {
-            logger.info("> Starting container [" + addon.getId() + "]");
-            long start = System.currentTimeMillis();
-            container = new AddonContainerStartup();
-            shutdownCallable = ClassLoaders.executeIn(addon.getClassLoader(), container);
-            logger.info(">> Started container [" + addon.getId() + "] - "
-                     + (System.currentTimeMillis() - start) + "ms" + "                    >>");
-            return null;
-         }
-      });
+            @Override
+            public Void call() throws Exception
+            {
+               logger.info("> Starting container [" + addon.getId() + "]");
+               long start = System.currentTimeMillis();
+               container = new AddonContainerStartup();
+               shutdownCallable = ClassLoaders.executeIn(addon.getClassLoader(), container);
+               logger.info(">> Started container [" + addon.getId() + "] - "
+                        + (System.currentTimeMillis() - start) + "ms" + "                    >>");
+               return null;
+            }
+         });
+      }
+      catch (RuntimeException e)
+      {
+         logger.log(Level.SEVERE, "Failed to start addon " + addon.getId(), e);
+         throw e;
+      }
    }
 
    public AddonImpl getAddon()
@@ -178,7 +195,7 @@ public final class AddonRunnable implements Runnable
                      }
                      catch (Exception e)
                      {
-                        logger.log(Level.SEVERE, "Failed to execute pre-Shutdown event: ", e);
+                        logger.log(Level.SEVERE, "Failed to execute pre-Shutdown event.", e);
                      }
                      finally
                      {
@@ -217,7 +234,6 @@ public final class AddonRunnable implements Runnable
          catch (Exception e)
          {
             addon.setStatus(Status.FAILED);
-            logger.log(Level.WARNING, "Failed to start addon " + addon.getId(), e);
             throw e;
          }
       }

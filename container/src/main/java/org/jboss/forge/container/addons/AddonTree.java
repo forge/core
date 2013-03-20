@@ -131,6 +131,7 @@ public class AddonTree implements Iterable<Addon>
             {
                visitor.visit(dependency);
                queue.add(dependency);
+               seen.add(dependency);
             }
          }
       }

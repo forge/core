@@ -549,14 +549,20 @@ public class AddonRegistryImpl implements AddonRegistry
          @Override
          public Void call() throws Exception
          {
+            final List<Addon> toStop = new ArrayList<Addon>();
             tree.breadthFirst(new Visitor<Addon>()
             {
                @Override
                public void visit(Addon addon)
                {
-                  doStop(addon);
+                  toStop.add(addon);
                }
             });
+            
+            for (Addon addon : toStop)
+            {
+               doStop(addon);
+            }
 
             List<Runnable> waiting = executor.shutdownNow();
             if (waiting != null && !waiting.isEmpty())

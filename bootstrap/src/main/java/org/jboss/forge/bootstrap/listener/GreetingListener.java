@@ -37,6 +37,7 @@ public class GreetingListener implements ContainerLifecycleListener
       out.print(" ] - JBoss, by Red Hat, Inc. [ http://forge.jboss.org ]");
       out.println();
       logger.info(sw.toString());
+      System.out.println(sw.toString());
    }
 
    @Override
