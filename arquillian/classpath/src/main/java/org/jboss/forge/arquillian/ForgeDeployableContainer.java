@@ -189,9 +189,9 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       try
       {
          repository.disable(addonToUndeploy);
-         Addon registeredAddon = registry.getRegisteredAddon(addonToUndeploy);
-         registry.stop(registeredAddon);
-         Addons.waitUntilStopped(registry.getRegisteredAddon(addonToUndeploy));
+         Addon addonToStop = registry.getRegisteredAddon(addonToUndeploy);
+         registry.stop(addonToStop);
+         Addons.waitUntilStopped(addonToStop);
       }
       catch (Exception e)
       {

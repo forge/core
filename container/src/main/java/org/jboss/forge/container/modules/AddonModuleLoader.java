@@ -87,10 +87,6 @@ public class AddonModuleLoader extends ModuleLoader
 
    /**
     * Loads a module based on the {@link AddonId}
-    * 
-    * @param addonId
-    * @return
-    * @throws ModuleLoadException
     */
    public final Module loadModule(AddonId addonId) throws ModuleLoadException
    {
@@ -100,7 +96,6 @@ public class AddonModuleLoader extends ModuleLoader
       }
       catch (ModuleLoadException e)
       {
-         e.printStackTrace();
          throw e;
       }
    }

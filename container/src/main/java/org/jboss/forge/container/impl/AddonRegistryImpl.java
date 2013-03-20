@@ -405,31 +405,57 @@ public class AddonRegistryImpl implements AddonRegistry
          @Override
          public Set<Addon> call() throws Exception
          {
-            List<Addon> result = new ArrayList<Addon>();
-
+            final List<Addon> toStop = new ArrayList<Addon>();
             final Queue<Addon> toRestart = new LinkedList<Addon>();
 
             if (addonToStop.getStatus().isStarted())
             {
-               ValuedVisitor<List<Addon>, Addon> visitor = new ValuedVisitor<List<Addon>, Addon>()
-               {
-                  {
-                     setResult(new ArrayList<Addon>());
-                  }
+               calculateAddonsToStop(addonToStop, toStop, toRestart);
+               toRestart.removeAll(toStop);
 
+               for (Addon addon : toStop)
+               {
+                  doStop(addon);
+               }
+
+               doStop(addonToStop);
+
+               for (Addon addon : toRestart)
+               {
+                  doStop(addon);
+                  start(addon.getId());
+               }
+            }
+
+            return new HashSet<Addon>(toStop);
+         }
+
+         private void calculateAddonsToStop(final Addon addonToStop, final List<Addon> toStop,
+                  final Queue<Addon> toRestart)
+         {
+            if (!(toStop.contains(addonToStop) || toRestart.contains(addonToStop)))
+            {
+               Visitor<Addon> visitor = new Visitor<Addon>()
+               {
                   @Override
                   public void visit(Addon instance)
                   {
-                     for (AddonDependency dependency : instance.getDependencies())
+                     if (instance.getStatus().isStarted())
                      {
-                        if (dependency.getDependency().equals(addonToStop)
-                                 || getResult().contains(dependency.getDependency()))
+                        for (AddonDependency dependency : instance.getDependencies())
                         {
-                           getResult().add(instance);
-
-                           if (dependency.isOptional())
+                           if (!(toStop.contains(instance) || toRestart.contains(instance)))
                            {
-                              toRestart.add(instance);
+                              if (dependency.getDependency().equals(addonToStop)
+                                       || toStop.contains(dependency.getDependency()))
+                              {
+                                 if (dependency.isOptional())
+                                    toRestart.add(instance);
+                                 else
+                                    toStop.add(instance);
+
+                                 calculateAddonsToStop(instance, toStop, toRestart);
+                              }
                            }
                         }
                      }
@@ -437,22 +463,7 @@ public class AddonRegistryImpl implements AddonRegistry
                };
 
                tree.breadthFirst(visitor);
-
-               result.addAll(visitor.getResult());
-               result.add(addonToStop);
-
-               for (Addon addon : result)
-               {
-                  doStop(addon);
-               }
-
-               for (Addon addon : toRestart)
-               {
-                  doStart((AddonImpl) addon);
-               }
             }
-
-            return new HashSet<Addon>(result);
          }
       });
    }
