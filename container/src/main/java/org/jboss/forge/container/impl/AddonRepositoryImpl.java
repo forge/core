@@ -18,6 +18,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.enterprise.inject.Typed;
 
@@ -49,6 +51,8 @@ import org.jboss.forge.parser.xml.XMLParserException;
 @Typed()
 public final class AddonRepositoryImpl implements MutableAddonRepository
 {
+   private static final Logger logger = Logger.getLogger(AddonRepositoryImpl.class.getName());
+
    private static final String ATTR_API_VERSION = "api-version";
    private static final String ATTR_EXPORT = "export";
    private static final String ATTR_NAME = "name";
@@ -591,12 +595,19 @@ public final class AddonRepositoryImpl implements MutableAddonRepository
 
    private Node getXmlRoot(File registryFile) throws FileNotFoundException, InterruptedException
    {
-      Node installed = XMLParser.parse(registryFile);
+      Node installed = null;
 
       while (installed == null)
       {
          Thread.sleep(10);
-         installed = XMLParser.parse(registryFile);
+         try
+         {
+            installed = XMLParser.parse(registryFile);
+         }
+         catch (XMLParserException e)
+         {
+            logger.log(Level.WARNING, "Error occurred while parsing [" + registryFile + "]", e);
+         }
       }
 
       return installed;
