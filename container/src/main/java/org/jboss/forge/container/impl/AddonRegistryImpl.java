@@ -7,6 +7,7 @@
 package org.jboss.forge.container.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -243,22 +244,73 @@ public class AddonRegistryImpl implements AddonRegistry
          public Future<Addon> call() throws Exception
          {
             Future<Addon> result = null;
-            AddonImpl addon = getRegisteredAddon(id);
+            AddonImpl addonToStart = getRegisteredAddon(id);
 
-            if (addon.getFuture() != null)
+            if (addonToStart.getFuture() != null)
             {
-               result = addon.getFuture();
+               result = addonToStart.getFuture();
             }
-            else if (addon.getStatus().isLoaded())
+            else if (addonToStart.getStatus().isLoaded())
             {
-               result = doStart(addon);
+               List<Addon> toStart = new ArrayList<Addon>();
+               calculateAddonsToStart(addonToStart, toStart);
+               System.out.println(toStart);
+
+               for (Addon addon : toStart)
+               {
+                  if (addon.getStatus().isStarted())
+                  {
+                     doStop(getRegisteredAddon(addon.getId()));
+                  }
+               }
+
+               result = doStart(addonToStart);
+               Collections.reverse(toStart);
+
+               for (Addon addon : toStart)
+               {
+                  loadAddon(addon.getId());
+                  if (addon.getStatus().isLoaded())
+                  {
+                     doStart(getRegisteredAddon(addon.getId()));
+                  }
+               }
+
             }
             else
             {
-               result = new CompletedFuture<Addon>(addon);
+               result = new CompletedFuture<Addon>(addonToStart);
             }
 
             return result;
+         }
+
+         private void calculateAddonsToStart(final Addon addonToStart, final List<Addon> toStart)
+         {
+            if (!toStart.contains(addonToStart))
+            {
+               Visitor<Addon> visitor = new Visitor<Addon>()
+               {
+                  @Override
+                  public void visit(Addon instance)
+                  {
+                     for (AddonDependency dependency : instance.getDependencies())
+                     {
+                        if (!toStart.contains(instance))
+                        {
+                           if (dependency.getDependency().equals(addonToStart)
+                                    || toStart.contains(dependency.getDependency()))
+                           {
+                              toStart.add(instance);
+                              calculateAddonsToStart(instance, toStart);
+                           }
+                        }
+                     }
+                  }
+               };
+
+               tree.depthFirst(visitor);
+            }
          }
       });
    }

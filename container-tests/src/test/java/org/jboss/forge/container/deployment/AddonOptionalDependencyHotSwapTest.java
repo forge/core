@@ -1,5 +1,6 @@
 package org.jboss.forge.container.deployment;
 
+import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -14,6 +15,7 @@ import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.repositories.AddonDependencyEntry;
 import org.jboss.forge.container.repositories.AddonRepository;
 import org.jboss.forge.container.repositories.MutableAddonRepository;
+import org.jboss.forge.container.util.Addons;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -23,7 +25,7 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @RunWith(Arquillian.class)
-public class AddonHotSwapTest
+public class AddonOptionalDependencyHotSwapTest
 {
    @Deployment(order = 3)
    public static ForgeArchive getDeployment()
@@ -40,7 +42,7 @@ public class AddonHotSwapTest
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
                .addBeansXML()
-               .addAsAddonDependencies(AddonDependencyEntry.create(AddonId.from("dep", "2")));
+               .addAsAddonDependencies(AddonDependencyEntry.create(AddonId.from("dep", "2"), false, true));
 
       return archive;
    }
@@ -74,29 +76,24 @@ public class AddonHotSwapTest
       ClassLoader depTwoClassloader = depTwo.getClassLoader();
 
       ((MutableAddonRepository) repository).disable(depTwoId);
-      registry.stop(depTwo);
+      Set<Addon> stopped = registry.stop(depTwo);
+
+      Assert.assertFalse(stopped.contains(depOne));
+      Assert.assertTrue(stopped.contains(depTwo));
+
+      Assert.assertNotEquals(depOneClassloader, depOne.getClassLoader());
+      depOneClassloader = depOne.getClassLoader();
 
       ((MutableAddonRepository) repository).enable(depTwoId);
       Future<Addon> future = registry.start(depTwoId);
       future.get(10, TimeUnit.SECONDS); // shouldn't take this long
 
-      /*
-       * Verify existing references are updated.
-       */
+      Addons.waitUntilStarted(depOne, 10, TimeUnit.SECONDS); // shouldn't take this long
+
       Assert.assertNotEquals(depOneClassloader, depOne.getClassLoader());
       Assert.assertNotEquals(depOneClassloader.toString(), depOne.getClassLoader().toString());
       Assert.assertNotEquals(depTwoClassloader, depTwo.getClassLoader());
       Assert.assertNotEquals(depTwoClassloader.toString(), depTwo.getClassLoader().toString());
-
-      /*
-       * Now retrieving fresh references.
-       */
-      Assert.assertNotEquals(depOneClassloader, registry.getRegisteredAddon(depOneId).getClassLoader());
-      Assert.assertNotEquals(depOneClassloader.toString(), registry.getRegisteredAddon(depOneId).getClassLoader()
-               .toString());
-      Assert.assertNotEquals(depTwoClassloader, registry.getRegisteredAddon(depTwoId).getClassLoader());
-      Assert.assertNotEquals(depTwoClassloader.toString(), registry.getRegisteredAddon(depTwoId).getClassLoader()
-               .toString());
    }
 
 }
