@@ -567,6 +567,12 @@ public abstract class BaseModuleSpecProvider implements ModuleSpecProvider
       systemPaths.add("org/jboss/forge/parser/xml/util");
       systemPaths.add("org/jboss/forge/proxy");
       systemPaths.add("org/jboss/forge/test");
+      systemPaths.add("org/jboss/logmanager");
+      systemPaths.add("org/jboss/logmanager/config");
+      systemPaths.add("org/jboss/logmanager/errormanager");
+      systemPaths.add("org/jboss/logmanager/filters");
+      systemPaths.add("org/jboss/logmanager/formatters");
+      systemPaths.add("org/jboss/logmanager/handlers");
       systemPaths.add("org/jboss/modules");
       systemPaths.add("org/jboss/modules/filter");
       systemPaths.add("org/jboss/modules/log");
