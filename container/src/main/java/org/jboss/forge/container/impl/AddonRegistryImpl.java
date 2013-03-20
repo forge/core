@@ -463,7 +463,8 @@ public class AddonRegistryImpl implements AddonRegistry
             {
                calculateAddonsToStop(addonToStop, toStop, toRestart);
                toRestart.removeAll(toStop);
-
+               
+               Collections.reverse(toStop);
                for (Addon addon : toStop)
                {
                   doStop(addon);
@@ -488,37 +489,35 @@ public class AddonRegistryImpl implements AddonRegistry
          private void calculateAddonsToStop(final Addon addonToStop, final List<Addon> toStop,
                   final Queue<Addon> toRestart)
          {
-            if (!(toStop.contains(addonToStop) || toRestart.contains(addonToStop)))
+            Visitor<Addon> visitor = new Visitor<Addon>()
             {
-               Visitor<Addon> visitor = new Visitor<Addon>()
+               @Override
+               public void visit(Addon instance)
                {
-                  @Override
-                  public void visit(Addon instance)
+                  if (instance.getStatus().isStarted())
                   {
-                     if (instance.getStatus().isStarted())
+                     for (AddonDependency dependency : instance.getDependencies())
                      {
-                        for (AddonDependency dependency : instance.getDependencies())
+                        if (!(toStop.contains(instance) || toRestart.contains(instance)))
                         {
-                           if (!(toStop.contains(instance) || toRestart.contains(instance)))
+                           if (dependency.getDependency().equals(addonToStop)
+                                    || toStop.contains(dependency.getDependency())
+                                    || toRestart.contains(dependency.getDependency()))
                            {
-                              if (dependency.getDependency().equals(addonToStop)
-                                       || toStop.contains(dependency.getDependency()))
-                              {
-                                 if (dependency.isOptional())
-                                    toRestart.add(instance);
-                                 else
-                                    toStop.add(instance);
+                              if (dependency.isOptional())
+                                 toRestart.add(instance);
+                              else
+                                 toStop.add(instance);
 
-                                 calculateAddonsToStop(instance, toStop, toRestart);
-                              }
+                              calculateAddonsToStop(instance, toStop, toRestart);
                            }
                         }
                      }
                   }
-               };
+               }
+            };
 
-               tree.breadthFirst(visitor);
-            }
+            tree.breadthFirst(visitor);
          }
       });
    }
