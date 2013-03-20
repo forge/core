@@ -149,8 +149,7 @@ public class RestPlugin implements Plugin
       List<JavaResource> javaTargets = selectTargets(out, targets);
       if (javaTargets.isEmpty())
       {
-         ShellMessages.error(out, "Must specify a domain @Entity on which to operate.");
-         return;
+         throw new IllegalArgumentException("Must specify a domain @Entity on which to operate.");
       }
 
       final JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
@@ -173,7 +172,7 @@ public class RestPlugin implements Plugin
          freemarker.template.Configuration freemarkerConfig = new freemarker.template.Configuration();
          freemarkerConfig.setClassForTemplateLoading(getClass(), "/");
          freemarkerConfig.setObjectWrapper(new DefaultObjectWrapper());
-         
+
          Map<Object, Object> map = new HashMap<Object, Object>();
          map.put("entity", entity);
          map.put("idType", idType);
@@ -203,7 +202,7 @@ public class RestPlugin implements Plugin
          {
             throw new RuntimeException(templateEx);
          }
-         
+
          JavaClass resource = JavaParser.parse(JavaClass.class, output.toString());
          resource.addImport(entity.getQualifiedName());
          resource.setPackage(java.getBasePackage() + ".rest");
@@ -400,7 +399,7 @@ public class RestPlugin implements Plugin
       }
       return table;
    }
-   
+
    private String getSelectExpression(JavaClass entity, String entityTable)
    {
       char entityVariable = entityTable.toLowerCase().charAt(0);
@@ -471,7 +470,7 @@ public class RestPlugin implements Plugin
       }
       return null;
    }
-   
+
    private List<JavaResource> selectTargets(final PipeOut out, Resource<?>[] targets)
             throws FileNotFoundException
    {
