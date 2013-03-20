@@ -412,13 +412,12 @@ public class AddonRegistryImpl implements AddonRegistry
             {
                calculateAddonsToStop(addonToStop, toStop, toRestart);
                toRestart.removeAll(toStop);
+               toStop.add(addonToStop);
 
                for (Addon addon : toStop)
                {
                   doStop(addon);
                }
-
-               doStop(addonToStop);
 
                for (Addon addon : toRestart)
                {
