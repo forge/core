@@ -110,6 +110,25 @@ public class ForgeImpl implements Forge
             do
             {
                futures.addAll(registry.startAll());
+               
+               for (Addon addon : registry.getRegisteredAddons())
+               {
+                  boolean enabled = false;
+                  for (AddonRepository repository : repositories)
+                  {
+                     if(repository.isEnabled(addon.getId()))
+                     {
+                        enabled = true;
+                        break;
+                     }
+                  }
+                  
+                  if(!enabled && addon.getStatus().isStarted())
+                  {
+                     registry.stop(addon);
+                  }
+               }
+               
                Thread.sleep(100);
             }
             while (alive == true && (serverMode || isStartingAddons(futures)));

@@ -131,7 +131,7 @@ public final class AddonRepositoryImpl implements MutableAddonRepository
                /*
                 * Write out the addon module dependency configuration
                 */
-               Node addonXml = XMLParser.parse(descriptor);
+               Node addonXml = getXmlRoot(descriptor);
                Node dependenciesNode = addonXml.createChild("dependencies");
 
                if (dependencies != null)
@@ -183,7 +183,7 @@ public final class AddonRepositoryImpl implements MutableAddonRepository
             {
                try
                {
-                  Node installed = XMLParser.parse(registryFile);
+                  Node installed = getXmlRoot(registryFile);
 
                   Node child = installed.getSingle("addon@" + ATTR_NAME + "=" + addon.getName() + "&"
                            + ATTR_VERSION + "=" + addon.getVersion());
@@ -227,7 +227,7 @@ public final class AddonRepositoryImpl implements MutableAddonRepository
             File registryFile = getRepositoryRegistryFile();
             try
             {
-               Node installed = XMLParser.parse(registryFile);
+               Node installed = getXmlRoot(registryFile);
 
                installed.getOrCreate("addon@" + ATTR_NAME + "=" + (addon.getName() == null ? "" : addon.getName()) +
                         "&" + ATTR_VERSION + "=" + addon.getVersion())
@@ -285,7 +285,7 @@ public final class AddonRepositoryImpl implements MutableAddonRepository
 
             try
             {
-               Node installed = XMLParser.parse(descriptor);
+               Node installed = getXmlRoot(descriptor);
 
                List<Node> children = installed.get("dependencies/dependency");
                for (final Node child : children)
@@ -401,7 +401,7 @@ public final class AddonRepositoryImpl implements MutableAddonRepository
             File registryFile = getRepositoryRegistryFile();
             try
             {
-               Node installed = XMLParser.parse(registryFile);
+               Node installed = getXmlRoot(registryFile);
 
                List<Node> children = installed.get("addon@" + ATTR_NAME + "=" + addon.getName());
                for (Node child : children)
@@ -521,7 +521,7 @@ public final class AddonRepositoryImpl implements MutableAddonRepository
             File registryFile = getRepositoryRegistryFile();
             try
             {
-               Node installed = XMLParser.parse(registryFile);
+               Node installed = getXmlRoot(registryFile);
                if (installed == null)
                {
                   return Collections.emptyList();
@@ -587,5 +587,18 @@ public final class AddonRepositoryImpl implements MutableAddonRepository
             return Files.delete(dir, true);
          }
       });
+   }
+
+   private Node getXmlRoot(File registryFile) throws FileNotFoundException, InterruptedException
+   {
+      Node installed = XMLParser.parse(registryFile);
+
+      while (installed == null)
+      {
+         Thread.sleep(10);
+         installed = XMLParser.parse(registryFile);
+      }
+
+      return installed;
    }
 }
