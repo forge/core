@@ -26,7 +26,22 @@ public class Addons
       }
       catch (Exception e)
       {
-         throw new ContainerException("Addon was not started.", e);
+         throw new ContainerException("Addon [" + addon + "]  was not started.", e);
+      }
+   }
+
+   public static void waitUntilStopped(Addon addon)
+   {
+      try
+      {
+         while (!(addon.getStatus().isStopped() || addon.getStatus().isMissing()))
+         {
+            Thread.sleep(10);
+         }
+      }
+      catch (Exception e)
+      {
+         throw new ContainerException("Addon [" + addon + "] was not stopped.", e);
       }
    }
 

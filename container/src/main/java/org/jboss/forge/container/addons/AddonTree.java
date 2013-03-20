@@ -35,26 +35,23 @@ public class AddonTree implements Iterable<Addon>
 
    public void add(final Addon addon)
    {
-      ValuedVisitor<Boolean, Addon> exists = new ValuedVisitor<Boolean, Addon>()
+      for (Addon existing : this)
       {
-         @Override
-         public void visit(Addon instance)
-         {
-            if (instance.equals(addon) || instance.getId().equals(addon.getId()))
-               setResult(true);
-         }
-      };
-
-      if (exists.getResult() != null && exists.getResult() == true)
-      {
-         throw new IllegalArgumentException("Cannot add duplicate Addon [" + addon + "] to the registry.");
+         if (existing.equals(addon) || existing.getId().equals(addon.getId()))
+            throw new IllegalArgumentException("Cannot add duplicate Addon [" + addon + "] to the registry.");
       }
-      else
+      reattach(addon);
+
+      System.out.println("Added [" + addon + "]");
+   }
+
+   public void reattach(Addon addon)
+   {
+      if (!contains(addon))
       {
          root.getMutableDependencies().add(
                   new AddonDependencyImpl(lock, root, new SingleVersionRange(addon.getId().getVersion()), addon,
                            false, false));
-
          prune();
       }
    }
@@ -100,6 +97,7 @@ public class AddonTree implements Iterable<Addon>
    public void depthFirst(Visitor<Addon> visitor)
    {
       Set<Addon> seen = new HashSet<Addon>();
+      seen.add(root);
       visitDepthFirst(seen, root, visitor);
    }
 
@@ -122,9 +120,7 @@ public class AddonTree implements Iterable<Addon>
       Queue<Addon> queue = new LinkedList<Addon>();
       Set<Addon> seen = new HashSet<Addon>();
 
-      visitor.visit(root);
       seen.add(root);
-
       queue.add(root);
 
       while (!queue.isEmpty())
@@ -154,7 +150,8 @@ public class AddonTree implements Iterable<Addon>
          @Override
          public void visit(Addon instance)
          {
-            getResult().add(instance);
+            if (!root.equals(instance))
+               getResult().add(instance);
          }
       };
 

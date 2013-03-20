@@ -1,4 +1,4 @@
-package org.jboss.forge.container.dependencies;
+package org.jboss.forge.container.deployment;
 
 import java.util.Set;
 import java.util.concurrent.Future;

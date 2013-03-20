@@ -65,6 +65,9 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
 
       try
       {
+         System.out.println("Executing test class: "
+                  + testMethodExecutor.getInstance().getClass().getName());
+
          final String testClassName = testMethodExecutor.getInstance().getClass().getName();
          final AddonRegistry addonRegistry = forge.getAddonRegistry();
 
@@ -148,7 +151,10 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
                {
                   try
                   {
-                     System.out.println("Executing test method: " + method);
+                     System.out.println("Executing test method: "
+                              + testMethodExecutor.getInstance().getClass().getName() + "."
+                              + testMethodExecutor.getMethod().getName() + "()");
+
                      method.invoke(instance);
                      result = new TestResult(Status.PASSED);
                   }
@@ -189,9 +195,11 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
       }
       catch (Exception e)
       {
-         throw new IllegalStateException("Error launching test "
+         String message = "Error launching test "
                   + testMethodExecutor.getInstance().getClass().getName() + "."
-                  + testMethodExecutor.getMethod().getName() + "()", e);
+                  + testMethodExecutor.getMethod().getName() + "()";
+         System.out.println(message);
+         throw new IllegalStateException(message, e);
       }
    }
 }

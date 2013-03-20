@@ -51,17 +51,17 @@ import org.jboss.modules.Module;
  */
 public class AddonRegistryImpl implements AddonRegistry
 {
-   private static Logger logger = Logger.getLogger(AddonRegistryImpl.class.getName());
+   private static final Logger logger = Logger.getLogger(AddonRegistryImpl.class.getName());
    private static final String PROP_CONCURRENT_PLUGINS = "forge.concurrentAddons";
    private static final int BATCH_SIZE = Integer.getInteger(PROP_CONCURRENT_PLUGINS, Runtime.getRuntime()
             .availableProcessors());
 
-   private Forge forge;
-   private AddonTree addons;
+   private final Forge forge;
+   private final LockManager lock;
+   private final AddonTree tree;
 
    private final ExecutorService executor = Executors.newFixedThreadPool(BATCH_SIZE);
-   private Map<AddonRepository, AddonModuleLoader> loaders = new ConcurrentHashMap<AddonRepository, AddonModuleLoader>();
-   private LockManager lock;
+   private final Map<AddonRepository, AddonModuleLoader> loaders = new ConcurrentHashMap<AddonRepository, AddonModuleLoader>();
 
    public AddonRegistryImpl(Forge forge, LockManager lock)
    {
@@ -70,7 +70,7 @@ public class AddonRegistryImpl implements AddonRegistry
 
       this.forge = forge;
       this.lock = lock;
-      this.addons = new AddonTree(lock);
+      this.tree = new AddonTree(lock);
 
       logger.log(Level.FINE, "Instantiated AddonRegistryImpl: " + this);
    }
@@ -86,22 +86,6 @@ public class AddonRegistryImpl implements AddonRegistry
          @Override
          public AddonImpl call() throws Exception
          {
-            ValuedVisitor<AddonImpl, Addon> visitor = new ValuedVisitor<AddonImpl, Addon>()
-            {
-               @Override
-               public void visit(Addon instance)
-               {
-                  if (instance.getId().equals(id))
-                  {
-                     setResult((AddonImpl) instance);
-                  }
-               }
-            };
-
-            addons.depthFirst(visitor);
-
-            if (visitor.hasResult())
-               return visitor.getResult();
             return loadAddon(id);
          }
       });
@@ -121,30 +105,15 @@ public class AddonRegistryImpl implements AddonRegistry
          @Override
          public Set<Addon> call() throws Exception
          {
-            return lock.performLocked(LockMode.READ, new Callable<Set<Addon>>()
+            HashSet<Addon> result = new HashSet<Addon>();
+
+            for (Addon addon : tree)
             {
-               @Override
-               public Set<Addon> call() throws Exception
-               {
-                  ValuedVisitor<Set<Addon>, Addon> visitor = new ValuedVisitor<Set<Addon>, Addon>()
-                  {
-                     {
-                        setResult(new HashSet<Addon>());
-                     }
+               if (filter.accept(addon))
+                  result.add(addon);
+            }
 
-                     @Override
-                     public void visit(Addon instance)
-                     {
-                        if (filter.accept(instance))
-                           getResult().add(instance);
-                     }
-                  };
-
-                  addons.breadthFirst(visitor);
-
-                  return visitor.getResult();
-               }
-            });
+            return result;
          }
       });
    }
@@ -171,7 +140,7 @@ public class AddonRegistryImpl implements AddonRegistry
          public Set<ExportedInstance<T>> call() throws Exception
          {
             Set<ExportedInstance<T>> result = new HashSet<ExportedInstance<T>>();
-            for (Addon addon : addons)
+            for (Addon addon : tree)
             {
                if (Status.STARTED.equals(addon.getStatus()))
                {
@@ -193,7 +162,7 @@ public class AddonRegistryImpl implements AddonRegistry
          public Set<ExportedInstance<T>> call() throws Exception
          {
             Set<ExportedInstance<T>> result = new HashSet<ExportedInstance<T>>();
-            for (Addon addon : addons)
+            for (Addon addon : tree)
             {
                if (addon.getStatus().isStarted())
                {
@@ -216,7 +185,7 @@ public class AddonRegistryImpl implements AddonRegistry
          public ExportedInstance<T> call() throws Exception
          {
             ExportedInstance<T> result = null;
-            for (Addon addon : addons)
+            for (Addon addon : tree)
             {
                if (addon.getStatus().isStarted())
                {
@@ -242,7 +211,7 @@ public class AddonRegistryImpl implements AddonRegistry
          public ExportedInstance<T> call() throws Exception
          {
             ExportedInstance<T> result = null;
-            for (Addon addon : addons)
+            for (Addon addon : tree)
             {
                if (addon.getStatus().isStarted())
                {
@@ -262,7 +231,7 @@ public class AddonRegistryImpl implements AddonRegistry
    @Override
    public String toString()
    {
-      return addons.toString();
+      return tree.toString();
    }
 
    @Override
@@ -274,7 +243,7 @@ public class AddonRegistryImpl implements AddonRegistry
          public Future<Addon> call() throws Exception
          {
             Future<Addon> result = null;
-            AddonImpl addon = loadAddon(id);
+            AddonImpl addon = getRegisteredAddon(id);
 
             if (addon.getFuture() != null)
             {
@@ -296,6 +265,8 @@ public class AddonRegistryImpl implements AddonRegistry
 
    private AddonImpl loadAddon(AddonId addonId)
    {
+      Assert.notNull(addonId, "AddonId to load must not be null.");
+
       AddonImpl addon = null;
       for (AddonRepository repository : forge.getRepositories())
       {
@@ -306,21 +277,20 @@ public class AddonRegistryImpl implements AddonRegistry
 
       if (addon == null)
       {
-         addon = new AddonImpl(lock, addonId);
-         addons.add(addon);
-      }
-      else
-      {
-         for (Addon registered : addons)
+         for (Addon existing : tree)
          {
-            for (AddonDependency dep : registered.getDependencies())
+            if (existing.getId().equals(addonId))
             {
-               if (dep.getDependency().equals(addon))
-               {
-                  loadAddon(dep.getDependent().getId());
-               }
+               addon = (AddonImpl) existing;
+               break;
             }
          }
+      }
+
+      if (addon == null)
+      {
+         addon = new AddonImpl(lock, addonId);
+         tree.add(addon);
       }
 
       return addon;
@@ -329,9 +299,8 @@ public class AddonRegistryImpl implements AddonRegistry
    private AddonImpl loadAddonFromRepository(AddonRepository repository, final AddonId addonId)
    {
       AddonImpl addon = null;
-      if (repository.isEnabled(addonId))
+      if (repository.isEnabled(addonId) && repository.isDeployed(addonId))
       {
-
          ValuedVisitor<AddonImpl, Addon> visitor = new ValuedVisitor<AddonImpl, Addon>()
          {
             @Override
@@ -344,7 +313,7 @@ public class AddonRegistryImpl implements AddonRegistry
             }
          };
 
-         addons.depthFirst(visitor);
+         tree.depthFirst(visitor);
 
          addon = visitor.getResult();
 
@@ -352,13 +321,13 @@ public class AddonRegistryImpl implements AddonRegistry
          {
             addon = new AddonImpl(lock, addonId);
             addon.setRepository(repository);
-            addons.add(addon);
+            tree.add(addon);
          }
 
          Set<AddonDependency> dependencies = fromAddonDependencyEntries(addon,
                   repository.getAddonDependencies(addonId));
          addon.setDependencies(dependencies);
-         addons.prune();
+         tree.prune();
 
          if (addon.getModule() == null)
          {
@@ -368,7 +337,7 @@ public class AddonRegistryImpl implements AddonRegistry
                AddonId dependencyId = dependency.getDependency().getId();
 
                boolean loaded = false;
-               for (Addon a : addons)
+               for (Addon a : tree)
                {
                   if (a.getId().equals(dependencyId) && !a.getStatus().isMissing())
                   {
@@ -429,7 +398,7 @@ public class AddonRegistryImpl implements AddonRegistry
    public Set<Addon> stop(final Addon addonToStop)
    {
       Assert.notNull(addonToStop, "Addon must not be null.");
-      Assert.isTrue(addons.contains(addonToStop), "Addon to stop must originate this AddonRegistry.");
+      Assert.isTrue(tree.contains(addonToStop), "Addon to stop must originate this AddonRegistry.");
 
       return lock.performLocked(LockMode.WRITE, new Callable<Set<Addon>>()
       {
@@ -467,7 +436,7 @@ public class AddonRegistryImpl implements AddonRegistry
                   }
                };
 
-               addons.breadthFirst(visitor);
+               tree.breadthFirst(visitor);
 
                result.addAll(visitor.getResult());
                result.add(addonToStop);
@@ -515,7 +484,7 @@ public class AddonRegistryImpl implements AddonRegistry
          @Override
          public Void call() throws Exception
          {
-            addons.breadthFirst(new Visitor<Addon>()
+            tree.breadthFirst(new Visitor<Addon>()
             {
                @Override
                public void visit(Addon addon)
@@ -563,7 +532,13 @@ public class AddonRegistryImpl implements AddonRegistry
             if (future != null && !future.isDone())
                future.cancel(true);
 
+            Set<AddonDependency> dependencies = addon.getDependencies();
             ((AddonImpl) addon).reset();
+
+            for (AddonDependency dependency : dependencies)
+            {
+               tree.reattach(dependency.getDependency());
+            }
          }
       }
    }

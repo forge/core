@@ -39,6 +39,13 @@ public class AddonImpl implements Addon
       public Future<Addon> future;
       public AddonRepository repository;
       public ServiceRegistry registry;
+
+      @Override
+      public String toString()
+      {
+         return status.toString();
+      }
+
    }
 
    @SuppressWarnings("unused")

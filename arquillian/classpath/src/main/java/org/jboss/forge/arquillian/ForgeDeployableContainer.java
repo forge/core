@@ -32,6 +32,7 @@ import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.impl.AddonRepositoryImpl;
 import org.jboss.forge.container.repositories.MutableAddonRepository;
+import org.jboss.forge.container.util.Addons;
 import org.jboss.forge.container.util.ClassLoaders;
 import org.jboss.forge.container.util.Files;
 import org.jboss.forge.container.util.Threads;
@@ -188,8 +189,9 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       try
       {
          repository.disable(addonToUndeploy);
-         if (registry.isRegistered(addonToUndeploy))
-            registry.stop(registry.getRegisteredAddon(addonToUndeploy));
+         Addon registeredAddon = registry.getRegisteredAddon(addonToUndeploy);
+         registry.stop(registeredAddon);
+         Addons.waitUntilStopped(registry.getRegisteredAddon(addonToUndeploy));
       }
       catch (Exception e)
       {

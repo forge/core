@@ -37,7 +37,7 @@ public class ForgeImpl implements Forge
 
    private List<AddonRepository> repositories = new ArrayList<AddonRepository>();
 
-   private LockManager lock = new LockManagerImpl();
+   private final LockManager lock = new LockManagerImpl();
 
    public ForgeImpl()
    {
