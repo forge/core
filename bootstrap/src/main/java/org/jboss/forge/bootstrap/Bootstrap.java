@@ -7,7 +7,11 @@
 
 package org.jboss.forge.bootstrap;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
@@ -29,31 +33,38 @@ import org.jboss.forge.maven.dependencies.MavenDependencyResolver;
 
 /**
  * A class with a main method to bootstrap Forge.
- * 
+ *
  * You can deploy addons by calling {@link Bootstrap#install(String)}
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ *
  */
 public class Bootstrap
 {
-   private static Logger logger = Logger.getLogger(Bootstrap.class.getName());
 
    private final Forge forge;
    private boolean exitAfter = false;
 
    public static void main(final String[] args)
    {
+      // Look for a logmanager before any logging takes place
+      final String logManagerName = getServiceName(Bootstrap.class.getClassLoader(), "java.util.logging.LogManager");
+      if (logManagerName != null)
+      {
+         System.setProperty("java.util.logging.manager", logManagerName);
+      }
       Bootstrap bootstrap = new Bootstrap(args);
       bootstrap.start();
    }
 
    private Bootstrap(String[] args)
    {
+      final Logger logger = Logger.getLogger(Bootstrap.class.getName());
       boolean listInstalled = false;
       String installAddon = null;
       String removeAddon = null;
       forge = ServiceLoader.load(Forge.class).iterator().next();
+
 
       List<AddonRepository> repositories = new ArrayList<AddonRepository>();
       if (args.length > 0)
@@ -209,6 +220,46 @@ public class Bootstrap
       {
          exitAfter = true;
       }
+   }
+
+   private static String getServiceName(final ClassLoader classLoader, final String className)
+   {
+      final InputStream stream = classLoader.getResourceAsStream("META-INF/services/" + className);
+      if (stream != null)
+      {
+         try
+         {
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+            String line;
+            while ((line = reader.readLine()) != null)
+            {
+               final int i = line.indexOf('#');
+               if (i != -1)
+               {
+                  line = line.substring(0, i);
+               }
+               line = line.trim();
+               if (line.length() == 0) continue;
+               return line;
+            }
+
+         }
+         catch (IOException ignored)
+         {
+            // ignore
+         }
+         finally
+         {
+            try
+            {
+               stream.close();
+            } catch (IOException ignored)
+            {
+               // ignore
+            }
+         }
+      }
+      return null;
    }
 
 }
