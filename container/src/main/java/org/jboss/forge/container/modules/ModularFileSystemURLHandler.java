@@ -19,11 +19,13 @@ import org.slf4j.LoggerFactory;
  * This class provides file-system orientated scanning
  * 
  * @author Pete Muir
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class ModularFileSystemURLHandler
 {
 
    private static final Logger log = LoggerFactory.getLogger(ModularFileSystemURLHandler.class);
+
    private ResourceLoader resourceLoader;
 
    public ModularFileSystemURLHandler(ResourceLoader resourceLoader)
@@ -137,17 +139,17 @@ public class ModularFileSystemURLHandler
       if (name.endsWith(".class"))
       {
          String className = filenameToClassname(name);
-//         try
-//         {
-//            resourceLoader.classForName(className);
+         try
+         {
+            resourceLoader.classForName(className);
             discoveredClasses.add(className);
-         // }
-         // catch (Exception e)
-         // {
-         // log.warn("Not loading Bean definition from class: ["
-         // + className + "] because of underlying class loading error. " +
-         // "Class found in [" + resourceLoader + "] but could not be loaded.)", e);
-         // }
+         }
+         catch (Exception e)
+         {
+            log.warn("Not loading class: ["
+                     + className + "] from addon [" + resourceLoader
+                     + "] because a required import could not be resolved.");
+         }
       }
       else if (name.endsWith("beans.xml"))
       {

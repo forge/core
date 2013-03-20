@@ -1,6 +1,5 @@
 package org.jboss.forge.container;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -11,11 +10,17 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Logger;
 
+import org.jboss.forge.container.addons.Addon;
+import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.impl.AddonRegistryImpl;
 import org.jboss.forge.container.impl.AddonRepositoryImpl;
-import org.jboss.forge.container.modules.AddonModuleLoader;
+import org.jboss.forge.container.lock.LockManager;
+import org.jboss.forge.container.repositories.AddonRepository;
 import org.jboss.forge.container.spi.ContainerLifecycleListener;
+import org.jboss.forge.container.spi.ListenerRegistration;
+import org.jboss.forge.container.versions.SingleVersion;
+import org.jboss.forge.container.versions.Version;
 import org.jboss.modules.Module;
 import org.jboss.modules.log.StreamModuleLogger;
 
@@ -25,19 +30,40 @@ public class ForgeImpl implements Forge
 
    private volatile boolean alive = false;
    private boolean serverMode = true;
-   private AddonRepository repository = AddonRepositoryImpl.forDefaultDirectory();
-   private AddonRegistryImpl registry = new AddonRegistryImpl(this);
+   private AddonRegistryImpl registry;
    private List<ContainerLifecycleListener> registeredListeners = new ArrayList<ContainerLifecycleListener>();
+
+   private ClassLoader loader;
+
+   private List<AddonRepository> repositories = new ArrayList<AddonRepository>();
+
+   private final LockManager lock = new LockManagerImpl();
 
    public ForgeImpl()
    {
       if (!AddonRepositoryImpl.hasRuntimeAPIVersion())
          logger.warning("Could not detect Forge runtime version - " +
                   "loading all addons, but failures may occur if versions are not compatible.");
+
+      repositories.add(AddonRepositoryImpl.forDefaultDirectory(this));
+      registry = new AddonRegistryImpl(this, lock);
+   }
+
+   @Override
+   public LockManager getLockManager()
+   {
+      return lock;
+   }
+
+   @Override
+   public ClassLoader getRuntimeClassLoader()
+   {
+      return loader;
    }
 
    public Forge enableLogging()
    {
+      assertNotAlive();
       Module.setModuleLogger(new StreamModuleLogger(System.err));
       return this;
    }
@@ -72,13 +98,13 @@ public class ForgeImpl implements Forge
    @Override
    public Forge start(ClassLoader loader)
    {
+      assertNotAlive();
+      this.loader = loader;
       fireBeforeContainerStartedEvent(loader);
       if (!alive)
       {
          try
          {
-            AddonModuleLoader moduleLoader = new AddonModuleLoader(repository, loader);
-            registry.setAddonLoader(moduleLoader);
             alive = true;
             Set<Future<Addon>> futures = new HashSet<Future<Addon>>();
             do
@@ -87,8 +113,9 @@ public class ForgeImpl implements Forge
                Thread.sleep(100);
             }
             while (alive == true && (serverMode || isStartingAddons(futures)));
+            System.out.println("Exiting...");
          }
-         catch (InterruptedException e)
+         catch (Exception e)
          {
             throw new ContainerException(e);
          }
@@ -168,23 +195,11 @@ public class ForgeImpl implements Forge
    }
 
    @Override
-   public Forge setAddonDir(File dir)
-   {
-      this.repository = AddonRepositoryImpl.forDirectory(dir);
-      return this;
-   }
-
-   @Override
    public Forge setServerMode(boolean server)
    {
+      assertNotAlive();
       this.serverMode = server;
       return this;
-   }
-
-   @Override
-   public File getAddonDir()
-   {
-      return repository.getRepositoryDirectory();
    }
 
    @Override
@@ -194,15 +209,9 @@ public class ForgeImpl implements Forge
    }
 
    @Override
-   public AddonRepository getRepository()
+   public Version getVersion()
    {
-      return repository;
-   }
-
-   @Override
-   public String getVersion()
-   {
-      return AddonRepositoryImpl.getRuntimeAPIVersion();
+      return new SingleVersion(AddonRepositoryImpl.getRuntimeAPIVersion());
    }
 
    @Override
@@ -219,5 +228,36 @@ public class ForgeImpl implements Forge
             return listener;
          }
       };
+   }
+
+   @Override
+   public List<AddonRepository> getRepositories()
+   {
+      return repositories;
+   }
+
+   @Override
+   public Forge setRepositories(AddonRepository... repositories)
+   {
+      List<AddonRepository> temp = new ArrayList<AddonRepository>();
+      for (AddonRepository repository : repositories)
+      {
+         temp.add(repository);
+      }
+      return setRepositories(temp);
+   }
+
+   @Override
+   public Forge setRepositories(List<AddonRepository> repositories)
+   {
+      assertNotAlive();
+      this.repositories = repositories;
+      return this;
+   }
+
+   public void assertNotAlive()
+   {
+      if (alive)
+         throw new IllegalStateException("Cannot modify a running Forge instance. Call .stop() first.");
    }
 }

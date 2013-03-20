@@ -19,6 +19,7 @@ import org.jboss.weld.resources.spi.ResourceLoader;
  * @author Norman Richards
  * @author Pete Muir
  * @author Peter Royle
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class ModularURLScanner
 {

@@ -1,131 +1,204 @@
+/*
+ * Copyright 2013 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Eclipse Public License version 1.0, available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.jboss.forge.container.impl;
 
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.Future;
 
-import org.jboss.forge.container.Addon;
-import org.jboss.forge.container.AddonDependency;
-import org.jboss.forge.container.AddonId;
-import org.jboss.forge.container.Status;
+import org.jboss.forge.container.addons.Addon;
+import org.jboss.forge.container.addons.AddonDependency;
+import org.jboss.forge.container.addons.AddonId;
+import org.jboss.forge.container.addons.Status;
+import org.jboss.forge.container.lock.LockManager;
+import org.jboss.forge.container.modules.AddonModuleLoader;
+import org.jboss.forge.container.repositories.AddonRepository;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.container.util.Assert;
+import org.jboss.forge.container.util.Sets;
 import org.jboss.modules.Module;
 
+/**
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ */
 public class AddonImpl implements Addon
 {
-   private Module module;
-   private ServiceRegistry registry;
-   private Status status = Status.UNKNOWN;
-   private final AddonId entry;
-   private final Set<AddonDependency> dependencies;
-   private Set<AddonDependency> missingDependencies;
-   private Future<Addon> future;
-   private AddonRunnable runnable;
-
-   public AddonImpl(AddonId entry)
+   private static class Memento
    {
-      this(entry, Collections.<AddonDependency> emptySet());
+      public Status status = Status.MISSING;
+      public Set<AddonDependency> dependencies = Sets.getConcurrentSet();
+      public Set<AddonDependency> missingDependencies = Sets.getConcurrentSet();
+
+      public AddonModuleLoader moduleLoader;
+      public Module module;
+      public AddonRunnable runnable;
+      public Future<Addon> future;
+      public AddonRepository repository;
+      public ServiceRegistry registry;
+
+      @Override
+      public String toString()
+      {
+         return status.toString();
+      }
+
    }
 
-   public AddonImpl(AddonId entry, Set<AddonDependency> dependencies)
+   @SuppressWarnings("unused")
+   private final LockManager lock;
+   private final AddonId id;
+   private Memento state = new Memento();
+
+   public AddonImpl(LockManager lock, AddonId id)
    {
-      this.entry = entry;
-      this.dependencies = dependencies;
+      Assert.notNull(lock, "LockManager must not be null.");
+      Assert.notNull(id, "AddonId must not be null.");
+
+      this.id = id;
+      this.lock = lock;
+   }
+
+   public void reset()
+   {
+      if (getModuleLoader() != null)
+         getModuleLoader().removeFromCache(id);
+      this.state = new Memento();
    }
 
    @Override
    public AddonId getId()
    {
-      return entry;
+      return id;
    }
 
    @Override
    public Set<AddonDependency> getDependencies()
    {
-      return dependencies;
+      return Collections.unmodifiableSet(state.dependencies);
+   }
+
+   public Set<AddonDependency> getMutableDependencies()
+   {
+      return state.dependencies;
+   }
+
+   public void setDependencies(Set<AddonDependency> dependencies)
+   {
+      Assert.notNull(dependencies, "Dependencies must not be null.");
+
+      this.state.dependencies = Sets.getConcurrentSet();
+      this.state.dependencies.addAll(dependencies);
    }
 
    @Override
    public ClassLoader getClassLoader()
    {
-      return module.getClassLoader();
+      if (state.module != null)
+         return state.module.getClassLoader();
+      return null;
    }
 
    public Module getModule()
    {
-      return module;
+      return state.module;
    }
 
    public Addon setModule(Module module)
    {
-      this.module = module;
+      this.state.module = module;
       return this;
+   }
+
+   public AddonModuleLoader getModuleLoader()
+   {
+      return state.moduleLoader;
+   }
+
+   public void setModuleLoader(AddonModuleLoader moduleLoader)
+   {
+      this.state.moduleLoader = moduleLoader;
+   }
+
+   @Override
+   public AddonRepository getRepository()
+   {
+      return state.repository;
+   }
+
+   public void setRepository(AddonRepository repository)
+   {
+      this.state.repository = repository;
    }
 
    @Override
    public ServiceRegistry getServiceRegistry()
    {
-      return registry;
+      return state.registry;
    }
 
    public Addon setServiceRegistry(ServiceRegistry registry)
    {
       Assert.notNull(registry, "Registry must not be null.");
-      this.registry = registry;
+      this.state.registry = registry;
       return this;
    }
 
    @Override
    public Status getStatus()
    {
-      return status;
+      return state.status;
    }
 
    public Addon setStatus(Status status)
    {
       Assert.notNull(status, "Status must not be null.");
-      this.status = status;
+      this.state.status = status;
       return this;
    }
 
    public void setMissingDependencies(Set<AddonDependency> missingDependencies)
    {
       Assert.notNull(missingDependencies, "Missing dependencies must not be null.");
-      this.missingDependencies = missingDependencies;
+
+      this.state.missingDependencies = Sets.getConcurrentSet();
+      this.state.missingDependencies.addAll(missingDependencies);
    }
 
    public Set<AddonDependency> getMissingDependencies()
    {
-      return missingDependencies;
+      return Collections.unmodifiableSet(state.missingDependencies);
    }
 
    public Future<Addon> getFuture()
    {
-      return future;
+      return state.future;
    }
 
    public void setFuture(Future<Addon> future)
    {
       Assert.notNull(future, "Future must not be null.");
-      this.future = future;
+      this.state.future = future;
    }
 
    public AddonRunnable getRunnable()
    {
-      return runnable;
+      return state.runnable;
    }
 
    public void setRunnable(AddonRunnable runnable)
    {
       Assert.notNull(runnable, "Runnable must not be null.");
-      this.runnable = runnable;
+      this.state.runnable = runnable;
    }
 
    @Override
    public String toString()
    {
-      return getId().toCoordinates() + (status == null ? "" : " - " + status);
+      return getId().toCoordinates() + (state.status == null ? "" : " - " + state.status);
    }
 
    @Override
@@ -133,7 +206,7 @@ public class AddonImpl implements Addon
    {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((entry == null) ? 0 : entry.hashCode());
+      result = prime * result + ((id == null) ? 0 : id.hashCode());
       return result;
    }
 
@@ -147,12 +220,12 @@ public class AddonImpl implements Addon
       if (getClass() != obj.getClass())
          return false;
       AddonImpl other = (AddonImpl) obj;
-      if (entry == null)
+      if (id == null)
       {
-         if (other.entry != null)
+         if (other.id != null)
             return false;
       }
-      else if (!entry.equals(other.entry))
+      else if (!id.equals(other.id))
          return false;
       return true;
    }

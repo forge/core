@@ -32,7 +32,7 @@ import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.enterprise.inject.spi.ProcessInjectionPoint;
 import javax.enterprise.inject.spi.ProcessProducer;
 
-import org.jboss.forge.container.AddonRegistry;
+import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.container.services.ExportedInstanceInjectionPoint;

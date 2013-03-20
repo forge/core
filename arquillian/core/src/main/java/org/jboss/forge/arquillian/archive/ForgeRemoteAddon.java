@@ -1,6 +1,6 @@
 package org.jboss.forge.arquillian.archive;
 
-import org.jboss.forge.container.AddonId;
+import org.jboss.forge.container.addons.AddonId;
 import org.jboss.shrinkwrap.api.Archive;
 
 /**

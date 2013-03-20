@@ -13,7 +13,6 @@ public class EventResponseService
 
    public void observeFirst(@Observes @Named("1") Object event)
    {
-      System.out.println("Observed: ****** " + event + " in " + Thread.currentThread().getContextClassLoader());
       response.fire(new EventPayload3());
    }
 }

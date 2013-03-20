@@ -15,7 +15,7 @@ public class Assert
    {
       if (object == null)
       {
-         throw new IllegalStateException(message);
+         throw new IllegalArgumentException(message);
       }
    }
 
@@ -23,7 +23,7 @@ public class Assert
    {
       if (value != true)
       {
-         throw new IllegalStateException(message);
+         throw new IllegalArgumentException(message);
       }
    }
 }

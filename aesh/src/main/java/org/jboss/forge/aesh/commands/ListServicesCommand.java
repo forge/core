@@ -15,8 +15,8 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.container.Addon;
-import org.jboss.forge.container.AddonRegistry;
+import org.jboss.forge.container.addons.Addon;
+import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.context.UIBuilder;
 import org.jboss.forge.ui.context.UIContext;

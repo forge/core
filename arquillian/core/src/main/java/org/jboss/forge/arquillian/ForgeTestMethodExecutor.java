@@ -19,19 +19,20 @@ package org.jboss.forge.arquillian;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Map.Entry;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 
 import org.jboss.arquillian.container.test.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.jboss.forge.arquillian.protocol.ForgeProtocolConfiguration;
-import org.jboss.forge.container.Addon;
-import org.jboss.forge.container.AddonRegistry;
 import org.jboss.forge.container.Forge;
+import org.jboss.forge.container.addons.Addon;
+import org.jboss.forge.container.addons.AddonRegistry;
+import org.jboss.forge.container.lock.LockMode;
 import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.container.services.ServiceRegistry;
-import org.jboss.forge.container.util.Threads;
 
 /**
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
@@ -64,35 +65,54 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
 
       try
       {
-         String testClassName = testMethodExecutor.getInstance().getClass().getName();
-         AddonRegistry addonRegistry = forge.getAddonRegistry();
-         Object instance = null;
-         for (Entry<Addon, ServiceRegistry> entry : addonRegistry.getServiceRegistries().entrySet())
+         System.out.println("Executing test class: "
+                  + testMethodExecutor.getInstance().getClass().getName());
+
+         final String testClassName = testMethodExecutor.getInstance().getClass().getName();
+         final AddonRegistry addonRegistry = forge.getAddonRegistry();
+
+         Thread lock = new Thread(new Runnable()
          {
-            ServiceRegistry registry = entry.getValue();
-            Addon addon = entry.getKey();
-            while (!(addon.getStatus().isStarted() || addon.getStatus().isFailed()) || registry == null)
+            @Override
+            public void run()
             {
-               /*
-                * Ensure the addon is fully started and initialized.
-                */
-               Threads.sleep(10);
-               registry = addonRegistry.getServiceRegistries().get(addon);
+               forge.getLockManager().performLocked(LockMode.WRITE, new Callable<Void>()
+               {
+                  @Override
+                  public Void call() throws Exception
+                  {
+                     return null;
+                  }
+               });
             }
+         });
 
-            ExportedInstance<?> result = registry.getExportedInstance(testClassName);
+         lock.start();
+         lock.join();
 
-            if (result != null)
+         Object instance = null;
+         for (Addon addon : addonRegistry.getRegisteredAddons())
+         {
+            Future<Addon> future = addonRegistry.start(addon.getId());
+            future.get();
+
+            if (addon.getStatus().isStarted())
             {
-               if (instance == null)
+               ServiceRegistry registry = addon.getServiceRegistry();
+               ExportedInstance<?> testInstance = registry.getExportedInstance(testClassName);
+
+               if (testInstance != null)
                {
-                  instance = result.get();
-               }
-               else
-               {
-                  throw new IllegalStateException(
-                           "Multiple test classes found in deployed addons. " +
-                                    "You must have only one @Deployment(testable=true\"); deployment");
+                  if (instance == null)
+                  {
+                     instance = testInstance.get();
+                  }
+                  else
+                  {
+                     throw new IllegalStateException(
+                              "Multiple test classes found in deployed addons. " +
+                                       "You must have only one @Deployment(testable=true\"); deployment");
+                  }
                }
             }
          }
@@ -121,8 +141,18 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
             {
                try
                {
-                  method.invoke(instance);
-                  result = new TestResult(Status.PASSED);
+                  try
+                  {
+                     System.out.println("Executing test method: "
+                              + testMethodExecutor.getInstance().getClass().getName() + "."
+                              + testMethodExecutor.getMethod().getName() + "()");
+
+                     method.invoke(instance);
+                     result = new TestResult(Status.PASSED);
+                  }
+                  finally
+                  {
+                  }
                }
                catch (InvocationTargetException e)
                {
@@ -157,9 +187,11 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
       }
       catch (Exception e)
       {
-         throw new IllegalStateException("Error launching test "
+         String message = "Error launching test "
                   + testMethodExecutor.getInstance().getClass().getName() + "."
-                  + testMethodExecutor.getMethod().getName() + "()", e);
+                  + testMethodExecutor.getMethod().getName() + "()";
+         System.out.println(message);
+         throw new IllegalStateException(message, e);
       }
    }
 }

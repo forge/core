@@ -24,17 +24,17 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.arquillian.archive.ForgeRemoteAddon;
 import org.jboss.forge.arquillian.protocol.ForgeProtocolDescription;
 import org.jboss.forge.arquillian.util.ShrinkWrapUtil;
-import org.jboss.forge.container.Addon;
-import org.jboss.forge.container.AddonId;
-import org.jboss.forge.container.AddonRegistry;
-import org.jboss.forge.container.AddonRepository;
 import org.jboss.forge.container.Forge;
 import org.jboss.forge.container.ForgeImpl;
+import org.jboss.forge.container.addons.Addon;
+import org.jboss.forge.container.addons.AddonId;
+import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.impl.AddonRepositoryImpl;
+import org.jboss.forge.container.repositories.MutableAddonRepository;
+import org.jboss.forge.container.util.Addons;
 import org.jboss.forge.container.util.ClassLoaders;
 import org.jboss.forge.container.util.Files;
-import org.jboss.forge.container.util.Threads;
 import org.jboss.forge.maven.dependencies.FileResourceFactory;
 import org.jboss.forge.maven.dependencies.MavenContainer;
 import org.jboss.forge.maven.dependencies.MavenDependencyResolver;
@@ -49,7 +49,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    private ForgeRunnable runnable;
    private File addonDir;
 
-   private AddonRepository repository;
+   private MutableAddonRepository repository;
 
    private Map<Deployment, AddonId> deployedAddons = new HashMap<Deployment, AddonId>();
    private Thread thread;
@@ -69,17 +69,14 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
 
          repository.deploy(addonToDeploy, ((ForgeArchive) archive).getAddonDependencies(), new ArrayList<File>());
          repository.enable(addonToDeploy);
-         Threads.sleep(200);
-         System.out.println("Deployed [" + addonToDeploy + "]");
       }
       else if (archive instanceof ForgeRemoteAddon)
       {
          ForgeRemoteAddon remoteAddon = (ForgeRemoteAddon) archive;
-         AddonManager addonManager = new AddonManagerImpl(repository, new MavenDependencyResolver(
+         AddonManager addonManager = new AddonManagerImpl(runnable.forge, new MavenDependencyResolver(
                   new FileResourceFactory(), new MavenContainer()));
          InstallRequest request = addonManager.install(remoteAddon.getAddonId());
          request.perform();
-         System.out.println("Deployed [" + remoteAddon.getAddonId() + "]");
       }
       else
       {
@@ -89,23 +86,15 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
 
       AddonRegistry registry = runnable.getForge().getAddonRegistry();
 
-      Addon addon = null;
-      while (addon == null)
-         addon = registry.getRegisteredAddon(addonToDeploy);
-
-      Future<?> future = registry.start(addon);
+      Future<Addon> future = registry.start(addonToDeploy);
       try
       {
-         if (!addon.getStatus().isWaiting() && future != null)
+         Addon addon = future.get();
+         if (addon.getStatus().isFailed())
          {
-            addon = registry.getRegisteredAddon(addonToDeploy);
-            future.get();
-            if (addon.getStatus().isFailed())
-            {
-               ContainerException e = new ContainerException("Addon " + addonToDeploy + " failed to deploy.");
-               deployment.deployedWithError(e);
-               throw e;
-            }
+            ContainerException e = new ContainerException("Addon " + addonToDeploy + " failed to deploy.");
+            deployment.deployedWithError(e);
+            throw e;
          }
       }
       catch (Exception e)
@@ -165,18 +154,16 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       try
       {
          this.addonDir = File.createTempFile("forge", "test-addon-dir");
-         System.out.println("Executing test case with addon dir [" + addonDir + "]");
-         this.repository = AddonRepositoryImpl.forDirectory(addonDir);
-      }
-      catch (IOException e1)
-      {
-         throw new LifecycleException("Failed to create temporary addon directory", e1);
-      }
-      try
-      {
          runnable = new ForgeRunnable(addonDir, ClassLoader.getSystemClassLoader());
          thread = new Thread(runnable, "Arquillian Forge Runtime");
+         System.out.println("Executing test case with addon dir [" + addonDir + "]");
+         this.repository = (MutableAddonRepository) AddonRepositoryImpl.forDirectory(runnable.forge, addonDir);
+
          thread.start();
+      }
+      catch (IOException e)
+      {
+         throw new LifecycleException("Failed to create temporary addon directory", e);
       }
       catch (Exception e)
       {
@@ -200,8 +187,9 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       try
       {
          repository.disable(addonToUndeploy);
-         if (registry.isRegistered(addonToUndeploy))
-            registry.stop(registry.getRegisteredAddon(addonToUndeploy));
+         Addon addonToStop = registry.getRegisteredAddon(addonToUndeploy);
+         registry.stop(addonToStop);
+         Addons.waitUntilStopped(addonToStop);
       }
       catch (Exception e)
       {
@@ -227,6 +215,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
 
       public ForgeRunnable(File addonDir, ClassLoader loader)
       {
+         this.forge = new ForgeImpl();
          this.addonDir = addonDir;
          this.loader = loader;
       }
@@ -244,8 +233,8 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
             @Override
             public Object call() throws Exception
             {
-               forge = new ForgeImpl();
-               forge.setServerMode(true).setAddonDir(addonDir).start(loader);
+               forge.setServerMode(true).setRepositories(AddonRepositoryImpl.forDirectory(forge, addonDir))
+                        .start(loader);
                return forge;
             }
          });

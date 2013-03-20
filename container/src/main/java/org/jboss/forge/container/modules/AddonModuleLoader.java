@@ -14,14 +14,14 @@ import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.jar.JarFile;
 
-import org.jboss.forge.container.AddonDependency;
-import org.jboss.forge.container.AddonId;
-import org.jboss.forge.container.AddonRepository;
+import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.impl.AddonRepositoryImpl;
 import org.jboss.forge.container.modules.providers.ForgeContainerSpec;
 import org.jboss.forge.container.modules.providers.SystemClasspathSpec;
 import org.jboss.forge.container.modules.providers.WeldClasspathSpec;
+import org.jboss.forge.container.repositories.AddonDependencyEntry;
+import org.jboss.forge.container.repositories.AddonRepository;
 import org.jboss.modules.DependencySpec;
 import org.jboss.modules.Module;
 import org.jboss.modules.ModuleIdentifier;
@@ -87,10 +87,6 @@ public class AddonModuleLoader extends ModuleLoader
 
    /**
     * Loads a module based on the {@link AddonId}
-    *
-    * @param addonId
-    * @return
-    * @throws ModuleLoadException
     */
    public final Module loadModule(AddonId addonId) throws ModuleLoadException
    {
@@ -100,7 +96,6 @@ public class AddonModuleLoader extends ModuleLoader
       }
       catch (ModuleLoadException e)
       {
-         e.printStackTrace();
          throw e;
       }
    }
@@ -185,10 +180,10 @@ public class AddonModuleLoader extends ModuleLoader
 
    private void addAddonDependencies(AddonId found, Builder builder) throws ContainerException
    {
-      Set<AddonDependency> addons = repository.getAddonDependencies(found);
-      for (AddonDependency dependency : addons)
+      Set<AddonDependencyEntry> addons = repository.getAddonDependencies(found);
+      for (AddonDependencyEntry dependency : addons)
       {
-         ModuleIdentifier moduleId = findCompatibleInstalledModule(dependency);
+         ModuleIdentifier moduleId = findCompatibleInstalledModule(dependency.getId());
 
          if (moduleId == null && !dependency.isOptional())
          {
@@ -199,7 +194,7 @@ public class AddonModuleLoader extends ModuleLoader
          {
             builder.addDependency(DependencySpec.createModuleDependencySpec(
                      PathFilters.not(PathFilters.getMetaInfFilter()),
-                     dependency.isExport() ? PathFilters.acceptAll() : PathFilters.rejectAll(),
+                     dependency.isExported() ? PathFilters.acceptAll() : PathFilters.rejectAll(),
                      this,
                      moduleCache.getModuleId(dependency.getId()),
                      dependency.isOptional()));
@@ -221,13 +216,13 @@ public class AddonModuleLoader extends ModuleLoader
       return found;
    }
 
-   private ModuleIdentifier findCompatibleInstalledModule(AddonDependency dependency)
+   private ModuleIdentifier findCompatibleInstalledModule(AddonId addonId)
    {
       AddonId found = null;
       for (AddonId addon : repository.listEnabledCompatibleWithVersion(AddonRepositoryImpl.getRuntimeAPIVersion()))
       {
          // TODO implement proper version-range resolution
-         if (addon.getName().equals(dependency.getId().getName()))
+         if (addon.getName().equals(addonId.getName()))
          {
             found = addon;
             break;

@@ -35,7 +35,6 @@ public class MyFirstWizard implements UIWizard
    @Override
    public void validate(UIValidationContext context)
    {
-      System.out.println("Validate");
    }
 
    @Override

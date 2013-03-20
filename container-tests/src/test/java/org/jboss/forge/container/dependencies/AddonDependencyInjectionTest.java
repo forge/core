@@ -9,8 +9,8 @@ import org.example.extension.TestExtension;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
-import org.jboss.forge.container.AddonDependency;
-import org.jboss.forge.container.AddonId;
+import org.jboss.forge.container.addons.AddonId;
+import org.jboss.forge.container.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -30,7 +30,7 @@ public class AddonDependencyInjectionTest
                .addClasses(ConsumingService.class, TestExtension.class)
                .addBeansXML()
                .addAsServiceProvider(Extension.class, TestExtension.class)
-               .addAsAddonDependencies(AddonDependency.create(AddonId.from("dependency", "2")));
+               .addAsAddonDependencies(AddonDependencyEntry.create(AddonId.from("dependency", "2")));
 
       return archive;
    }

@@ -1,3 +1,9 @@
+/*
+ * Copyright 2013 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Eclipse Public License version 1.0, available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.jboss.forge.container.impl;
 
 import java.util.concurrent.Callable;
@@ -7,13 +13,14 @@ import java.util.logging.Logger;
 
 import javax.enterprise.inject.spi.BeanManager;
 
-import org.jboss.forge.container.ContainerControl;
 import org.jboss.forge.container.Forge;
-import org.jboss.forge.container.Status;
+import org.jboss.forge.container.addons.Status;
 import org.jboss.forge.container.event.Perform;
+import org.jboss.forge.container.event.PreShutdown;
+import org.jboss.forge.container.lock.LockMode;
 import org.jboss.forge.container.modules.ModularURLScanner;
 import org.jboss.forge.container.modules.ModularWeld;
-import org.jboss.forge.container.modules.ModuleResourceLoader;
+import org.jboss.forge.container.modules.AddonResourceLoader;
 import org.jboss.forge.container.modules.ModuleScanResult;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.container.util.Assert;
@@ -40,8 +47,7 @@ public final class AddonRunnable implements Runnable
       @Override
       public Object call() throws Exception
       {
-         addon.setStatus(Status.STOPPING);
-         addon.setStatus(Status.STOPPED);
+         addon.setStatus(Status.LOADED);
          return null;
       }
    };
@@ -54,22 +60,38 @@ public final class AddonRunnable implements Runnable
 
    public void shutdown()
    {
-      logger.info("< Stopping container [" + addon.getId() + "]");
-      long start = System.currentTimeMillis();
-      ClassLoaders.executeIn(addon.getClassLoader(), shutdownCallable);
-      logger.info("<< Stopped container [" + addon.getId() + "] - "
-               + (System.currentTimeMillis() - start) + "ms" + "                    <<");
+      forge.getLockManager().performLocked(LockMode.READ, new Callable<Void>()
+      {
+         @Override
+         public Void call() throws Exception
+         {
+            logger.info("< Stopping container [" + addon.getId() + "]");
+            long start = System.currentTimeMillis();
+            ClassLoaders.executeIn(addon.getClassLoader(), shutdownCallable);
+            logger.info("<< Stopped container [" + addon.getId() + "] - "
+                     + (System.currentTimeMillis() - start) + "ms" + "                    <<");
+            return null;
+         }
+      });
    }
 
    @Override
    public void run()
    {
-      logger.info("> Starting container [" + addon.getId() + "]");
-      long start = System.currentTimeMillis();
-      container = new AddonContainerStartup();
-      shutdownCallable = ClassLoaders.executeIn(addon.getClassLoader(), container);
-      logger.info(">> Started container [" + addon.getId() + "] - "
-               + (System.currentTimeMillis() - start) + "ms" + "                    >>");
+      forge.getLockManager().performLocked(LockMode.READ, new Callable<Void>()
+      {
+         @Override
+         public Void call() throws Exception
+         {
+            logger.info("> Starting container [" + addon.getId() + "]");
+            long start = System.currentTimeMillis();
+            container = new AddonContainerStartup();
+            shutdownCallable = ClassLoaders.executeIn(addon.getClassLoader(), container);
+            logger.info(">> Started container [" + addon.getId() + "] - "
+                     + (System.currentTimeMillis() - start) + "ms" + "                    >>");
+            return null;
+         }
+      });
    }
 
    public AddonImpl getAddon()
@@ -86,10 +108,11 @@ public final class AddonRunnable implements Runnable
       {
          try
          {
-            addon.setStatus(Status.STARTING);
-            ResourceLoader resourceLoader = new ModuleResourceLoader(addon.getModule());
+            ResourceLoader resourceLoader = new AddonResourceLoader(addon);
             ModularURLScanner scanner = new ModularURLScanner(resourceLoader, "META-INF/beans.xml");
             ModuleScanResult scanResult = scanner.scan();
+
+            Callable<Object> shutdownCallback = null;
 
             if (scanResult.getDiscoveredResourceUrls().isEmpty())
             {
@@ -99,13 +122,12 @@ public final class AddonRunnable implements Runnable
                addon.setServiceRegistry(new NullServiceRegistry());
                addon.setStatus(Status.STARTED);
 
-               return new Callable<Object>()
+               shutdownCallback = new Callable<Object>()
                {
                   @Override
                   public Object call() throws Exception
                   {
-                     addon.setStatus(Status.STOPPING);
-                     addon.setStatus(Status.STOPPED);
+                     addon.setStatus(Status.LOADED);
                      return null;
                   }
                };
@@ -119,15 +141,15 @@ public final class AddonRunnable implements Runnable
                final BeanManager manager = container.getBeanManager();
                Assert.notNull(manager, "BeanManager was null");
 
-               final ContainerControlImpl control = (ContainerControlImpl) BeanManagerUtils.getContextualInstance(
-                        manager, ContainerControl.class);
                AddonRepositoryProducer repositoryProducer = BeanManagerUtils.getContextualInstance(manager,
                         AddonRepositoryProducer.class);
-               repositoryProducer.setAddonDir(forge.getAddonDir());
+               repositoryProducer.setRespository(addon.getRepository());
 
-               ForgeProducer forgeProducer = BeanManagerUtils.getContextualInstance(manager,
-                        ForgeProducer.class);
+               ForgeProducer forgeProducer = BeanManagerUtils.getContextualInstance(manager, ForgeProducer.class);
                forgeProducer.setForge(forge);
+
+               AddonProducer addonProducer = BeanManagerUtils.getContextualInstance(manager, AddonProducer.class);
+               addonProducer.setAddon(addon);
 
                AddonRegistryProducer addonRegistryProducer = BeanManagerUtils.getContextualInstance(manager,
                         AddonRegistryProducer.class);
@@ -139,48 +161,58 @@ public final class AddonRunnable implements Runnable
                         ServiceRegistryProducer.class);
                serviceRegistryProducer.setServiceRegistry(new ServiceRegistryImpl(addon, manager, extension));
 
-               Assert.notNull(control, "Container control was null.");
-
                ServiceRegistry registry = BeanManagerUtils.getContextualInstance(manager, ServiceRegistry.class);
                Assert.notNull(registry, "Service registry was null.");
                addon.setServiceRegistry(registry);
 
-               ((AddonRegistryImpl) forge.getAddonRegistry()).clearWaiting(addon);
-
                logger.info("Services loaded from addon [" + addon.getId() + "] -  " + registry.getServices());
 
-               Callable<Object> listener = new Callable<Object>()
+               shutdownCallback = new Callable<Object>()
                {
                   @Override
                   public Object call() throws Exception
                   {
-                     addon.setStatus(Status.STOPPING);
-                     control.removeShutdownListener(this);
-                     control.stop();
+                     try
+                     {
+                        manager.fireEvent(new PreShutdown());
+                     }
+                     catch (Exception e)
+                     {
+                        logger.log(Level.SEVERE, "Failed to execute pre-Shutdown event: ", e);
+                     }
+                     finally
+                     {
+                        addon.setStatus(Status.LOADED);
+                        if (operation != null)
+                           operation.cancel(true);
+                     }
+
                      weld.shutdown();
-                     operation.cancel(true);
-                     addon.setStatus(Status.STOPPED);
                      return null;
                   }
                };
-
-               control.registerShutdownListener(listener);
-               control.start();
 
                operation = Threads.runAsync(new Callable<Object>()
                {
                   @Override
                   public Object call() throws Exception
                   {
-                     manager.fireEvent(new Perform());
-                     return null;
+                     return forge.getLockManager().performLocked(LockMode.READ, new Callable<Object>()
+                     {
+                        @Override
+                        public Object call() throws Exception
+                        {
+                           manager.fireEvent(new Perform());
+                           return null;
+                        }
+                     });
                   }
                });
 
                addon.setStatus(Status.STARTED);
-
-               return listener;
             }
+
+            return shutdownCallback;
          }
          catch (Exception e)
          {

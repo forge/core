@@ -9,8 +9,8 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.CDI;
 import javax.enterprise.inject.spi.InjectionPoint;
 
-import org.jboss.forge.container.Addon;
-import org.jboss.forge.container.AddonRegistry;
+import org.jboss.forge.container.addons.Addon;
+import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.container.services.ServiceRegistry;

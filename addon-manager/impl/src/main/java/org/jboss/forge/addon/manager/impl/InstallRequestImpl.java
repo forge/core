@@ -19,9 +19,11 @@ import org.jboss.forge.addon.manager.AddonManager;
 import org.jboss.forge.addon.manager.InstallRequest;
 import org.jboss.forge.addon.manager.impl.filters.DirectAddonFilter;
 import org.jboss.forge.addon.manager.impl.filters.LocalResourceFilter;
-import org.jboss.forge.container.AddonDependency;
-import org.jboss.forge.container.AddonId;
-import org.jboss.forge.container.AddonRepository;
+import org.jboss.forge.container.Forge;
+import org.jboss.forge.container.addons.AddonId;
+import org.jboss.forge.container.repositories.AddonDependencyEntry;
+import org.jboss.forge.container.repositories.AddonRepository;
+import org.jboss.forge.container.repositories.MutableAddonRepository;
 import org.jboss.forge.container.util.Predicate;
 import org.jboss.forge.dependencies.Coordinate;
 import org.jboss.forge.dependencies.DependencyNode;
@@ -37,7 +39,7 @@ import org.jboss.forge.dependencies.collection.DependencyNodeUtil;
 public class InstallRequestImpl implements InstallRequest
 {
    private AddonManager addonManager;
-   private AddonRepository repository;
+   private Forge forge;
 
    private DependencyNode requestedAddonNode;
    private Stack<DependencyNode> requiredAddons = new Stack<DependencyNode>();
@@ -50,10 +52,10 @@ public class InstallRequestImpl implements InstallRequest
     * 
     * @param addonManager
     */
-   InstallRequestImpl(AddonManager addonManager, AddonRepository repository, DependencyNode requestedAddonNode)
+   InstallRequestImpl(AddonManager addonManager, Forge forge, DependencyNode requestedAddonNode)
    {
       this.addonManager = addonManager;
-      this.repository = repository;
+      this.forge = forge;
       this.requestedAddonNode = requestedAddonNode;
 
       /*
@@ -117,19 +119,35 @@ public class InstallRequestImpl implements InstallRequest
       for (DependencyNode requiredAddon : getRequiredAddons())
       {
          AddonId requiredAddonId = toAddonId(requiredAddon);
-         if (repository.isDeployed(requiredAddonId))
+         boolean deployed = false;
+         for (AddonRepository repository : forge.getRepositories())
          {
-            log.info("Addon " + requiredAddonId + " is already deployed. Skipping...");
+            if (repository.isDeployed(requiredAddonId))
+            {
+               log.info("Addon " + requiredAddonId + " is already deployed. Skipping...");
+               deployed = true;
+               break;
+            }
          }
-         else
+
+         if (!deployed)
          {
             addonManager.install(requiredAddonId).perform();
          }
       }
 
       AddonId requestedAddonId = toAddonId(requestedAddonNode);
-      deploy(requestedAddonId, requestedAddonNode);
-      repository.enable(requestedAddonId);
+
+      for (AddonRepository repository : forge.getRepositories())
+      {
+         if (repository instanceof MutableAddonRepository)
+         {
+            MutableAddonRepository mutableRespository = (MutableAddonRepository) repository;
+            deploy(mutableRespository, requestedAddonId, requestedAddonNode);
+            mutableRespository.enable(requestedAddonId);
+            break;
+         }
+      }
    }
 
    private AddonId toAddonId(DependencyNode node)
@@ -156,7 +174,7 @@ public class InstallRequestImpl implements InstallRequest
       return AddonId.from(coord.getGroupId() + ":" + coord.getArtifactId(), coord.getVersion(), apiVersion);
    }
 
-   private void deploy(AddonId addon, DependencyNode root)
+   private void deploy(MutableAddonRepository repository, AddonId addon, DependencyNode root)
    {
       List<File> resourceJars = toResourceJars(DependencyNodeUtil.select(root, new LocalResourceFilter(root)));
 
@@ -164,8 +182,9 @@ public class InstallRequestImpl implements InstallRequest
       {
          log.fine("No resource JARs found for " + addon);
       }
-      List<AddonDependency> addonDependencies =
-               toAddonDependencies(DependencyNodeUtil.select(root.getChildren().iterator(), new DirectAddonFilter(root)));
+      List<AddonDependencyEntry> addonDependencies =
+               toAddonDependencies(DependencyNodeUtil
+                        .select(root.getChildren().iterator(), new DirectAddonFilter(root)));
 
       if (addonDependencies.isEmpty())
       {
@@ -175,9 +194,9 @@ public class InstallRequestImpl implements InstallRequest
       repository.deploy(addon, addonDependencies, resourceJars);
    }
 
-   private List<AddonDependency> toAddonDependencies(List<DependencyNode> dependencies)
+   private List<AddonDependencyEntry> toAddonDependencies(List<DependencyNode> dependencies)
    {
-      List<AddonDependency> addonDependencies = new ArrayList<AddonDependency>();
+      List<AddonDependencyEntry> addonDependencies = new ArrayList<AddonDependencyEntry>();
       for (DependencyNode dep : dependencies)
       {
          boolean export = false;
@@ -190,7 +209,7 @@ public class InstallRequestImpl implements InstallRequest
             else if ("provided".equalsIgnoreCase(scopeType))
                export = false;
          }
-         AddonDependency addonDep = AddonDependency.create(toAddonId(dep), export, optional);
+         AddonDependencyEntry addonDep = AddonDependencyEntry.create(toAddonId(dep), export, optional);
          addonDependencies.add(addonDep);
       }
       return addonDependencies;

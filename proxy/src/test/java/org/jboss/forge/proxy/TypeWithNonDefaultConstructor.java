@@ -14,6 +14,5 @@ public class TypeWithNonDefaultConstructor
 {
    public TypeWithNonDefaultConstructor(Object foo)
    {
-      System.out.println(foo);
    }
 }

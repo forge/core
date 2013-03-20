@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.jboss.forge.container.AddonDependency;
+import org.jboss.forge.container.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
 import org.jboss.shrinkwrap.api.ArchivePaths;
@@ -72,7 +72,7 @@ public class ForgeArchiveImpl extends ContainerBase<ForgeArchive> implements For
     */
    private static final ArchivePath PATH_SERVICE_PROVIDERS = ArchivePaths.create(PATH_CLASSES, "META-INF/services");
 
-   private List<AddonDependency> addonDependencies = new ArrayList<AddonDependency>();
+   private List<AddonDependencyEntry> addonDependencies = new ArrayList<AddonDependencyEntry>();
 
    // -------------------------------------------------------------------------------------||
    // Instance Members -------------------------------------------------------------------||
@@ -84,7 +84,7 @@ public class ForgeArchiveImpl extends ContainerBase<ForgeArchive> implements For
 
    /**
     * Create a new {@link ForgeArchive} with any type storage engine as backing.
-    *
+    * 
     * @param delegate The storage backing.
     */
    public ForgeArchiveImpl(final Archive<?> delegate)
@@ -98,7 +98,7 @@ public class ForgeArchiveImpl extends ContainerBase<ForgeArchive> implements For
 
    /**
     * {@inheritDoc}
-    *
+    * 
     * @see org.jboss.shrinkwrap.impl.base.container.ContainerBase#getManifestPath()
     */
    @Override
@@ -114,7 +114,7 @@ public class ForgeArchiveImpl extends ContainerBase<ForgeArchive> implements For
 
    /**
     * {@inheritDoc}
-    *
+    * 
     * @see org.jboss.shrinkwrap.impl.base.container.ContainerBase#getClassesPath()
     */
    @Override
@@ -125,7 +125,7 @@ public class ForgeArchiveImpl extends ContainerBase<ForgeArchive> implements For
 
    /**
     * {@inheritDoc}
-    *
+    * 
     * @see org.jboss.shrinkwrap.impl.base.container.ContainerBase#getLibraryPath()
     */
    @Override
@@ -153,7 +153,7 @@ public class ForgeArchiveImpl extends ContainerBase<ForgeArchive> implements For
    }
 
    @Override
-   public ForgeArchive addAsAddonDependencies(AddonDependency... dependencies)
+   public ForgeArchive addAsAddonDependencies(AddonDependencyEntry... dependencies)
    {
       if (dependencies != null)
          addonDependencies.addAll(Arrays.asList(dependencies));
@@ -161,7 +161,7 @@ public class ForgeArchiveImpl extends ContainerBase<ForgeArchive> implements For
    }
 
    @Override
-   public List<AddonDependency> getAddonDependencies()
+   public List<AddonDependencyEntry> getAddonDependencies()
    {
       return addonDependencies;
    }

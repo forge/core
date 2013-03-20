@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.mocks.AbstractImplementation;
 import org.jboss.forge.container.mocks.ExportedAbstractClass;

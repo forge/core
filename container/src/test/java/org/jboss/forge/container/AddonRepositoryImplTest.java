@@ -11,7 +11,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.impl.AddonRepositoryImpl;
+import org.jboss.forge.container.repositories.AddonDependencyEntry;
+import org.jboss.forge.container.repositories.AddonRepository;
+import org.jboss.forge.container.repositories.MutableAddonRepository;
+import org.jboss.forge.container.versions.SingleVersion;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -22,18 +27,18 @@ public class AddonRepositoryImplTest
    public void testMinorVersionCompatible() throws Exception
    {
       AddonId entry = AddonId.fromCoordinates("com.example.plugin,40,1.0.0-SNAPSHOT");
-      Assert.assertTrue(AddonRepositoryImpl.isApiCompatible("1.0.1.Final", entry));
-      Assert.assertTrue(AddonRepositoryImpl.isApiCompatible("1.0.2.Final", entry));
-      Assert.assertTrue(AddonRepositoryImpl.isApiCompatible("1.0.2000.Final", entry));
-      Assert.assertTrue(AddonRepositoryImpl.isApiCompatible("1.0.2-SNAPSHOT", entry));
-      Assert.assertTrue(AddonRepositoryImpl.isApiCompatible("1.0.1000-SNAPSHOT", entry));
-      Assert.assertTrue(AddonRepositoryImpl.isApiCompatible("1.0.1000-adsfasfsd", entry));
-      Assert.assertTrue(AddonRepositoryImpl.isApiCompatible("1.1.0.Final", entry));
-      Assert.assertTrue(AddonRepositoryImpl.isApiCompatible("1.1.1.Final", entry));
-      Assert.assertTrue(AddonRepositoryImpl.isApiCompatible("1.2.0.Final", entry));
-      Assert.assertTrue(AddonRepositoryImpl.isApiCompatible("1.2.1.Final", entry));
-      Assert.assertFalse(AddonRepositoryImpl.isApiCompatible("2.0.0.Final", entry));
-      Assert.assertFalse(AddonRepositoryImpl.isApiCompatible("s1.0.0.Final", entry));
+      Assert.assertTrue(AddonRepositoryImpl.isApiCompatible(new SingleVersion("1.0.1.Final"), entry));
+      Assert.assertTrue(AddonRepositoryImpl.isApiCompatible(new SingleVersion("1.0.2.Final"), entry));
+      Assert.assertTrue(AddonRepositoryImpl.isApiCompatible(new SingleVersion("1.0.2000.Final"), entry));
+      Assert.assertTrue(AddonRepositoryImpl.isApiCompatible(new SingleVersion("1.0.2-SNAPSHOT"), entry));
+      Assert.assertTrue(AddonRepositoryImpl.isApiCompatible(new SingleVersion("1.0.1000-SNAPSHOT"), entry));
+      Assert.assertTrue(AddonRepositoryImpl.isApiCompatible(new SingleVersion("1.0.1000-adsfasfsd"), entry));
+      Assert.assertTrue(AddonRepositoryImpl.isApiCompatible(new SingleVersion("1.1.0.Final"), entry));
+      Assert.assertTrue(AddonRepositoryImpl.isApiCompatible(new SingleVersion("1.1.1.Final"), entry));
+      Assert.assertTrue(AddonRepositoryImpl.isApiCompatible(new SingleVersion("1.2.0.Final"), entry));
+      Assert.assertTrue(AddonRepositoryImpl.isApiCompatible(new SingleVersion("1.2.1.Final"), entry));
+      Assert.assertFalse(AddonRepositoryImpl.isApiCompatible(new SingleVersion("2.0.0.Final"), entry));
+      Assert.assertFalse(AddonRepositoryImpl.isApiCompatible(new SingleVersion("s1.0.0.Final"), entry));
       Assert.assertTrue(AddonRepositoryImpl.isApiCompatible(null, entry));
    }
 
@@ -41,26 +46,27 @@ public class AddonRepositoryImplTest
    public void testMinorVersionCompatibleBackwards() throws Exception
    {
       AddonId entry = AddonId.fromCoordinates("com.example.plugin,20.0i,1.1.0-SNAPSHOT");
-      Assert.assertFalse(AddonRepositoryImpl.isApiCompatible("1.0.1.Final", entry));
-      Assert.assertFalse(AddonRepositoryImpl.isApiCompatible("1.0.2.Final", entry));
-      Assert.assertFalse(AddonRepositoryImpl.isApiCompatible("1.0.2000.Final", entry));
-      Assert.assertFalse(AddonRepositoryImpl.isApiCompatible("1.0.2-SNAPSHOT", entry));
-      Assert.assertFalse(AddonRepositoryImpl.isApiCompatible("1.0.1000-SNAPSHOT", entry));
-      Assert.assertFalse(AddonRepositoryImpl.isApiCompatible("1.0.1000-adsfasfsd", entry));
-      Assert.assertTrue(AddonRepositoryImpl.isApiCompatible("1.1.0.Final", entry));
-      Assert.assertTrue(AddonRepositoryImpl.isApiCompatible("1.1.1.Final", entry));
-      Assert.assertTrue(AddonRepositoryImpl.isApiCompatible("1.2.0.Final", entry));
-      Assert.assertTrue(AddonRepositoryImpl.isApiCompatible("1.2.1.Final", entry));
-      Assert.assertFalse(AddonRepositoryImpl.isApiCompatible("2.0.0.Final", entry));
-      Assert.assertFalse(AddonRepositoryImpl.isApiCompatible("s1.0.0.Final", entry));
-      Assert.assertTrue(AddonRepositoryImpl.isApiCompatible("", entry));
+      Assert.assertFalse(AddonRepositoryImpl.isApiCompatible(new SingleVersion("1.0.1.Final"), entry));
+      Assert.assertFalse(AddonRepositoryImpl.isApiCompatible(new SingleVersion("1.0.2.Final"), entry));
+      Assert.assertFalse(AddonRepositoryImpl.isApiCompatible(new SingleVersion("1.0.2000.Final"), entry));
+      Assert.assertFalse(AddonRepositoryImpl.isApiCompatible(new SingleVersion("1.0.2-SNAPSHOT"), entry));
+      Assert.assertFalse(AddonRepositoryImpl.isApiCompatible(new SingleVersion("1.0.1000-SNAPSHOT"), entry));
+      Assert.assertFalse(AddonRepositoryImpl.isApiCompatible(new SingleVersion("1.0.1000-adsfasfsd"), entry));
+      Assert.assertTrue(AddonRepositoryImpl.isApiCompatible(new SingleVersion("1.1.0.Final"), entry));
+      Assert.assertTrue(AddonRepositoryImpl.isApiCompatible(new SingleVersion("1.1.1.Final"), entry));
+      Assert.assertTrue(AddonRepositoryImpl.isApiCompatible(new SingleVersion("1.2.0.Final"), entry));
+      Assert.assertTrue(AddonRepositoryImpl.isApiCompatible(new SingleVersion("1.2.1.Final"), entry));
+      Assert.assertFalse(AddonRepositoryImpl.isApiCompatible(new SingleVersion("2.0.0.Final"), entry));
+      Assert.assertFalse(AddonRepositoryImpl.isApiCompatible(new SingleVersion("s1.0.0.Final"), entry));
+      Assert.assertTrue(AddonRepositoryImpl.isApiCompatible(new SingleVersion(""), entry));
       Assert.assertTrue(AddonRepositoryImpl.isApiCompatible(null, entry));
    }
 
    @Test
    public void testAddonDirNaming() throws Exception
    {
-      AddonRepository repository = AddonRepositoryImpl.forDirectory(File.createTempFile("addonDir", "test"));
+      AddonRepository repository = AddonRepositoryImpl.forDirectory(new ForgeImpl(),
+               File.createTempFile("addonDir", "test"));
       File dir = repository.getAddonBaseDir(AddonId.from("123#$%456", "!@#789*-0"));
       Assert.assertEquals("123-456-789-0", dir.getName());
    }
@@ -68,10 +74,11 @@ public class AddonRepositoryImplTest
    @Test
    public void testDeployAddonEntryNoDependencies() throws Exception
    {
-      AddonRepository repository = AddonRepositoryImpl.forDirectory(File.createTempFile("addonDir", "test"));
+      MutableAddonRepository repository = AddonRepositoryImpl.forDirectory(new ForgeImpl(),
+               File.createTempFile("addonDir", "test"));
 
       AddonId addon = AddonId.from("1", "2");
-      repository.deploy(addon, new ArrayList<AddonDependency>(), new ArrayList<File>());
+      repository.deploy(addon, new ArrayList<AddonDependencyEntry>(), new ArrayList<File>());
 
       Assert.assertEquals(0, repository.getAddonDependencies(addon).size());
    }
@@ -79,10 +86,11 @@ public class AddonRepositoryImplTest
    @Test
    public void testDeployAddonEntrySingleDependency() throws Exception
    {
-      AddonRepository repository = AddonRepositoryImpl.forDirectory(File.createTempFile("addonDir", "test"));
+      MutableAddonRepository repository = AddonRepositoryImpl.forDirectory(new ForgeImpl(),
+               File.createTempFile("addonDir", "test"));
 
       AddonId addon = AddonId.from("1", "2");
-      AddonDependency dependency = AddonDependency.create(AddonId.from("nm", "ver"), false, true);
+      AddonDependencyEntry dependency = AddonDependencyEntry.create(AddonId.from("nm", "ver"), false, true);
       repository.deploy(addon, Arrays.asList(dependency), new ArrayList<File>());
 
       Assert.assertEquals(1, repository.getAddonDependencies(addon).size());
@@ -92,11 +100,12 @@ public class AddonRepositoryImplTest
    @Test
    public void testDeployAddonEntryMultipleDependencies() throws Exception
    {
-      AddonRepository repository = AddonRepositoryImpl.forDirectory(File.createTempFile("addonDir", "test"));
+      MutableAddonRepository repository = AddonRepositoryImpl.forDirectory(new ForgeImpl(),
+               File.createTempFile("addonDir", "test"));
 
       AddonId addon = AddonId.from("1", "2");
-      AddonDependency dependency0 = AddonDependency.create(AddonId.from("nm1", "ver"), true);
-      AddonDependency dependency1 = AddonDependency.create(AddonId.from("nm2", "ver"));
+      AddonDependencyEntry dependency0 = AddonDependencyEntry.create(AddonId.from("nm1", "ver"), true, false);
+      AddonDependencyEntry dependency1 = AddonDependencyEntry.create(AddonId.from("nm2", "ver"));
 
       repository.deploy(addon, Arrays.asList(dependency0, dependency1), new ArrayList<File>());
 

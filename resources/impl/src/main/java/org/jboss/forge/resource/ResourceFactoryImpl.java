@@ -17,7 +17,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jboss.forge.container.AddonRegistry;
+import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.resource.events.ResourceEvent;
 import org.jboss.forge.resource.transaction.ResourceTransaction;

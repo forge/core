@@ -4,7 +4,7 @@ import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.Typed;
 import javax.inject.Singleton;
 
-import org.jboss.forge.container.AddonRegistry;
+import org.jboss.forge.container.addons.AddonRegistry;
 
 @Singleton
 public class AddonRegistryProducer

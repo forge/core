@@ -14,9 +14,9 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.Addon;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
-import org.jboss.forge.container.AddonDependency;
-import org.jboss.forge.container.AddonId;
 import org.jboss.forge.container.Forge;
+import org.jboss.forge.container.addons.AddonId;
+import org.jboss.forge.container.repositories.AddonDependencyEntry;
 import org.jboss.forge.container.util.Predicate;
 import org.jboss.forge.projects.Project;
 import org.jboss.forge.projects.ProjectFactory;
@@ -42,8 +42,8 @@ public class ProjectFactoryImplTest
                .create(ForgeArchive.class)
                .addBeansXML()
                .addAsAddonDependencies(
-                        AddonDependency.create(AddonId.from("org.jboss.forge:maven", "2.0.0-SNAPSHOT")),
-                        AddonDependency.create(AddonId.from("org.jboss.forge:projects", "2.0.0-SNAPSHOT"))
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:maven", "2.0.0-SNAPSHOT")),
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:projects", "2.0.0-SNAPSHOT"))
                );
 
       return archive;
@@ -67,12 +67,13 @@ public class ProjectFactoryImplTest
    @Test
    public void testFindProject() throws Exception
    {
-      DirectoryResource addonDir = factory.create(forge.getAddonDir()).reify(DirectoryResource.class);
+      DirectoryResource addonDir = factory.create(forge.getRepositories().get(0).getRootDirectory()).reify(
+               DirectoryResource.class);
       DirectoryResource projectDir = addonDir.createTempResource();
       Assert.assertNull(projectFactory.findProject(projectDir));
-      
+
       Project project = projectFactory.createProject(projectDir);
-      
+
       Assert.assertNotNull(project);
       Assert.assertNotNull(projectFactory.findProject(projectDir));
       Assert.assertNull(projectFactory.findProject(projectDir, new Predicate<Project>()
@@ -83,7 +84,7 @@ public class ProjectFactoryImplTest
             return false;
          }
       }));
-      
+
       projectDir.delete(true);
    }
 }

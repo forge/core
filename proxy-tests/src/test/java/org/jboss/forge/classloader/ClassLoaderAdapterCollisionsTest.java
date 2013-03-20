@@ -26,9 +26,9 @@ import org.jboss.forge.classloader.mock.collisions.ClassWithPassthroughMethod;
 import org.jboss.forge.classloader.mock.collisions.InterfaceValue;
 import org.jboss.forge.classloader.mock.collisions.InterfaceWithGetterAndSetter;
 import org.jboss.forge.classloader.mock.collisions.InterfaceWithPassthroughMethod;
-import org.jboss.forge.container.AddonDependency;
-import org.jboss.forge.container.AddonId;
-import org.jboss.forge.container.AddonRegistry;
+import org.jboss.forge.container.addons.AddonId;
+import org.jboss.forge.container.addons.AddonRegistry;
+import org.jboss.forge.container.repositories.AddonDependencyEntry;
 import org.jboss.forge.proxy.ClassLoaderAdapterBuilder;
 import org.jboss.forge.proxy.Proxies;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -46,8 +46,8 @@ public class ClassLoaderAdapterCollisionsTest
                .addBeansXML()
                .addPackages(true, ClassWithGetterAndSetter.class.getPackage())
                .addAsAddonDependencies(
-                        AddonDependency.create(AddonId.from("dep", "1")),
-                        AddonDependency.create(AddonId.from("dep", "2"))
+                        AddonDependencyEntry.create(AddonId.from("dep", "1")),
+                        AddonDependencyEntry.create(AddonId.from("dep", "2"))
                );
 
       return archive;
@@ -291,9 +291,9 @@ public class ClassLoaderAdapterCollisionsTest
       ClassCreatesInstanceFromClassLoader creator;
       try
       {
+         @SuppressWarnings("unused")
          ClassWithGetterAndSetter result = new ClassCreatesInstanceFromClassLoader()
                   .create(dep2Loader, ClassWithGetterAndSetter.class);
-         System.out.println(result);
          Assert.fail("Should have received a " + ClassCastException.class.getName());
       }
       catch (ClassCastException e)

@@ -15,7 +15,7 @@ import org.jboss.aesh.cl.OptionBuilder;
 import org.jboss.aesh.cl.ParserBuilder;
 import org.jboss.aesh.cl.internal.ParameterInt;
 import org.jboss.forge.aesh.ShellContext;
-import org.jboss.forge.container.AddonRegistry;
+import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.convert.Converter;
 import org.jboss.forge.convert.ConverterFactory;
 import org.jboss.forge.ui.UICommand;

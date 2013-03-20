@@ -4,8 +4,9 @@ import java.lang.reflect.Method;
 
 import javax.enterprise.inject.spi.InjectionPoint;
 
-import org.jboss.forge.container.Addon;
-import org.jboss.forge.container.AddonRegistry;
+import org.jboss.forge.container.addons.Addon;
+import org.jboss.forge.container.addons.AddonRegistry;
+import org.jboss.forge.container.util.AddonFilters;
 import org.jboss.forge.container.util.Addons;
 import org.jboss.forge.container.util.Assert;
 import org.jboss.forge.proxy.ForgeProxy;
@@ -55,7 +56,7 @@ public class ExportedInstanceLazyLoader implements ForgeProxy
    private Object loadObject() throws Exception
    {
       Object result = null;
-      for (Addon addon : registry.getServiceRegistries().keySet())
+      for (Addon addon : registry.getRegisteredAddons(AddonFilters.allStarted()))
       {
          Addons.waitUntilStarted(addon);
          ServiceRegistry serviceRegistry = addon.getServiceRegistry();

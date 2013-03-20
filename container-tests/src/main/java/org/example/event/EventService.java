@@ -32,19 +32,16 @@ public class EventService
 
    public void handleLocalRequest(@Observes @Named("1") Object event)
    {
-      System.out.println("Request: ****** " + event + " in " + Thread.currentThread().getContextClassLoader());
       localRequestRecieved = true;
    }
 
    public void handleRemoteResponse(@Observes @Named("2") Object event)
    {
-      System.out.println("Response: ****** " + event + " in " + Thread.currentThread().getContextClassLoader());
       remoteResponseRecieved = true;
    }
 
    public void handleWrongResponse(@Observes @Named("3") Object event)
    {
-      System.out.println("Wrong response: ****** " + event + " in " + Thread.currentThread().getContextClassLoader());
       wrongResponseRecieved = true;
    }
 

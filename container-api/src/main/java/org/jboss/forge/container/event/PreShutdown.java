@@ -15,23 +15,4 @@ package org.jboss.forge.container.event;
  */
 public final class PreShutdown
 {
-   private final Shutdown.ExitStatus status;
-
-   public PreShutdown()
-   {
-      this.status = Shutdown.ExitStatus.NORMAL;
-   }
-
-   public PreShutdown(final Shutdown.ExitStatus status)
-   {
-      this.status = status;
-   }
-
-   /**
-    * Get the status with which the shell is shutting down.
-    */
-   public Shutdown.ExitStatus getStatus()
-   {
-      return status;
-   }
 }

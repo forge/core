@@ -1,3 +1,9 @@
+/*
+ * Copyright 2013 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Eclipse Public License version 1.0, available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.jboss.forge.container;
 
 import javax.inject.Inject;
@@ -34,12 +40,12 @@ public class ContainerLifecycleTest
    @Test
    public void testContainerStartup()
    {
-      Assert.assertTrue(observer.isObservedPostStartup());
+      Assert.assertTrue(observer.isObservedPerform());
    }
 
    @Test
    @Ignore("FORGE-820")
-   //TODO: Remove the ignore annotation when FORGE-820 is solved
+   // TODO: Remove the ignore annotation when FORGE-820 is solved
    public void testContainerSupportsXPath()
    {
       Assert.assertNotNull(XPathFactory.newInstance().newXPath());

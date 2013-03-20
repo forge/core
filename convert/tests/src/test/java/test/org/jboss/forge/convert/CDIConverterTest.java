@@ -14,8 +14,8 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.Addon;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
-import org.jboss.forge.container.AddonDependency;
-import org.jboss.forge.container.AddonId;
+import org.jboss.forge.container.addons.AddonId;
+import org.jboss.forge.container.repositories.AddonDependencyEntry;
 import org.jboss.forge.convert.Converter;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
@@ -34,7 +34,7 @@ public class CDIConverterTest
                .addBeansXML()
                .addClass(CDIConverterTest.class)
                .addAsAddonDependencies(
-                        AddonDependency.create(AddonId.from("org.jboss.forge:convert", "2.0.0-SNAPSHOT")));
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:convert", "2.0.0-SNAPSHOT")));
 
       return archive;
    }

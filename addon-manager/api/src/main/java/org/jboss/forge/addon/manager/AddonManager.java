@@ -7,13 +7,15 @@
 
 package org.jboss.forge.addon.manager;
 
-import org.jboss.forge.container.AddonId;
+import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.services.Exported;
 
 @Exported
 public interface AddonManager
 {
-   public abstract InstallRequest install(AddonId addonId);
+   public abstract InstallRequest install(AddonId id);
 
-   public abstract boolean remove(AddonId entry);
+   public abstract boolean remove(AddonId id);
+
+   public abstract boolean disable(AddonId id);
 }

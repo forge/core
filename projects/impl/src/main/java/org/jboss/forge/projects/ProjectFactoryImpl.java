@@ -8,7 +8,7 @@ package org.jboss.forge.projects;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.container.AddonRegistry;
+import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.container.util.Predicate;
 import org.jboss.forge.resource.DirectoryResource;

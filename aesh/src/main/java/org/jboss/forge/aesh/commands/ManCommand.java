@@ -17,7 +17,7 @@ import org.jboss.aesh.console.Console;
 import org.jboss.aesh.extensions.manual.Man;
 import org.jboss.aesh.util.Parser;
 import org.jboss.forge.aesh.ShellContext;
-import org.jboss.forge.container.AddonRegistry;
+import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.context.UIBuilder;
