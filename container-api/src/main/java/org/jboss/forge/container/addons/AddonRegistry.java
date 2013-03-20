@@ -51,8 +51,6 @@ public interface AddonRegistry
    /**
     * Stop the given {@link Addon} that originated from this {@link AddonRegistry}. Also stop all dependent
     * {@link Addon} instances. Dependents for which this {@link Addon} is an optional dependency will be restarted.
-    * 
-    * @return the {@link Set} of all stopped addons.
     */
-   Set<Addon> stop(Addon addon);
+   void stop(Addon addon);
 }

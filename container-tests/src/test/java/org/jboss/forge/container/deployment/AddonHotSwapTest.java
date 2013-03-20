@@ -1,6 +1,5 @@
 package org.jboss.forge.container.deployment;
 
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -14,6 +13,7 @@ import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.repositories.AddonDependencyEntry;
 import org.jboss.forge.container.repositories.AddonRepository;
 import org.jboss.forge.container.repositories.MutableAddonRepository;
+import org.jboss.forge.container.util.Addons;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -74,11 +74,10 @@ public class AddonHotSwapTest
       ClassLoader depTwoClassloader = depTwo.getClassLoader();
 
       ((MutableAddonRepository) repository).disable(depTwoId);
-      registry.stop(depTwo);
+      Addons.waitUntilStopped(depOne, 10, TimeUnit.SECONDS);
 
       ((MutableAddonRepository) repository).enable(depTwoId);
-      Future<Addon> future = registry.start(depTwoId);
-      future.get(10, TimeUnit.SECONDS); // shouldn't take this long
+      Addons.waitUntilStarted(depOne, 10, TimeUnit.SECONDS);
 
       /*
        * Verify existing references are updated.

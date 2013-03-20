@@ -52,6 +52,23 @@ public class Addons
       try
       {
          long start = System.currentTimeMillis();
+         while (!addon.getStatus().isStarted()
+                  && System.currentTimeMillis() < (start + TimeUnit.MILLISECONDS.convert(quantity, unit)))
+         {
+            Thread.sleep(10);
+         }
+      }
+      catch (Exception e)
+      {
+         throw new ContainerException("Addon [" + addon + "] was not stopped.", e);
+      }
+   }
+
+   public static void waitUntilStopped(Addon addon, int quantity, TimeUnit unit)
+   {
+      try
+      {
+         long start = System.currentTimeMillis();
          while (addon.getStatus().isStarted()
                   && System.currentTimeMillis() < (start + TimeUnit.MILLISECONDS.convert(quantity, unit)))
          {

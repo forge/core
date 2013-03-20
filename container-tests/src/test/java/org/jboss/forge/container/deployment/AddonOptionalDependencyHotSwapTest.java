@@ -1,7 +1,5 @@
 package org.jboss.forge.container.deployment;
 
-import java.util.Set;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -75,20 +73,16 @@ public class AddonOptionalDependencyHotSwapTest
       ClassLoader depOneClassloader = depOne.getClassLoader();
       ClassLoader depTwoClassloader = depTwo.getClassLoader();
 
-      ((MutableAddonRepository) repository).disable(depTwoId);
-      Set<Addon> stopped = registry.stop(depTwo);
+      ((MutableAddonRepository) depTwo.getRepository()).disable(depTwoId);
+      Addons.waitUntilStopped(depTwo, 10, TimeUnit.SECONDS);
+      Addons.waitUntilStarted(depOne, 10, TimeUnit.SECONDS);
 
-      Assert.assertFalse(stopped.contains(depOne));
-      Assert.assertTrue(stopped.contains(depTwo));
-
+      Assert.assertNotNull(depOne.getClassLoader());
       Assert.assertNotEquals(depOneClassloader, depOne.getClassLoader());
       depOneClassloader = depOne.getClassLoader();
 
       ((MutableAddonRepository) repository).enable(depTwoId);
-      Future<Addon> future = registry.start(depTwoId);
-      future.get(10, TimeUnit.SECONDS); // shouldn't take this long
-
-      Addons.waitUntilStarted(depOne, 10, TimeUnit.SECONDS); // shouldn't take this long
+      Addons.waitUntilStarted(depTwo, 10, TimeUnit.SECONDS);
 
       Assert.assertNotEquals(depOneClassloader, depOne.getClassLoader());
       Assert.assertNotEquals(depOneClassloader.toString(), depOne.getClassLoader().toString());

@@ -65,9 +65,6 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
 
       try
       {
-         System.out.println("Executing test class: "
-                  + testMethodExecutor.getInstance().getClass().getName());
-
          final String testClassName = testMethodExecutor.getInstance().getClass().getName();
          final AddonRegistry addonRegistry = forge.getAddonRegistry();
 

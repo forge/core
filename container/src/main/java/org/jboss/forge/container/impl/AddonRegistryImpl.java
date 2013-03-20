@@ -271,7 +271,7 @@ public class AddonRegistryImpl implements AddonRegistry
                   loadAddon(addon.getId());
                   if (addon.getStatus().isLoaded())
                   {
-                     doStart(getRegisteredAddon(addon.getId()));
+                     doStart((AddonImpl) addon);
                   }
                }
 
@@ -446,15 +446,15 @@ public class AddonRegistryImpl implements AddonRegistry
    }
 
    @Override
-   public Set<Addon> stop(final Addon addonToStop)
+   public void stop(final Addon addonToStop)
    {
       Assert.notNull(addonToStop, "Addon must not be null.");
       Assert.isTrue(tree.contains(addonToStop), "Addon to stop must originate this AddonRegistry.");
 
-      return lock.performLocked(LockMode.WRITE, new Callable<Set<Addon>>()
+      lock.performLocked(LockMode.WRITE, new Callable<Void>()
       {
          @Override
-         public Set<Addon> call() throws Exception
+         public Void call() throws Exception
          {
             final List<Addon> toStop = new ArrayList<Addon>();
             final Queue<Addon> toRestart = new LinkedList<Addon>();
@@ -463,7 +463,6 @@ public class AddonRegistryImpl implements AddonRegistry
             {
                calculateAddonsToStop(addonToStop, toStop, toRestart);
                toRestart.removeAll(toStop);
-               toStop.add(addonToStop);
 
                for (Addon addon : toStop)
                {
@@ -473,11 +472,17 @@ public class AddonRegistryImpl implements AddonRegistry
                for (Addon addon : toRestart)
                {
                   doStop(addon);
+               }
+
+               doStop(addonToStop);
+
+               for (Addon addon : toRestart)
+               {
                   start(addon.getId());
                }
             }
 
-            return new HashSet<Addon>(toStop);
+            return null;
          }
 
          private void calculateAddonsToStop(final Addon addonToStop, final List<Addon> toStop,
