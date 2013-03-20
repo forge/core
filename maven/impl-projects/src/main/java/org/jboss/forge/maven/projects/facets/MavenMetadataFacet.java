@@ -42,7 +42,7 @@ public class MavenMetadataFacet extends BaseFacet<Project> implements MetadataFa
    @Override
    public void setOrigin(final Project project)
    {
-      this.setOrigin(project);
+      super.setOrigin(project);
    }
 
    @Override
