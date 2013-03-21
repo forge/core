@@ -7,6 +7,7 @@
 package org.jboss.forge.aesh.commands;
 
 import java.net.URL;
+import java.util.Arrays;
 
 import javax.inject.Inject;
 
@@ -62,6 +63,7 @@ public class ManCommand implements UICommand, Completion
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
+      arguments.setDefaultValue(Arrays.asList(getMetadata().getName()));
       arguments.setLabel("");
       arguments.setRequired(false);
       builder.add(arguments);
@@ -76,8 +78,7 @@ public class ManCommand implements UICommand, Completion
    @Override
    public Result execute(UIContext context) throws Exception
    {
-      if (arguments.getValue() != null &&
-               context instanceof ShellContext)
+      if (context instanceof ShellContext)
       {
          Console console = ((ShellContext) context).getShell().getConsole();
          try
