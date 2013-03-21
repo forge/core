@@ -166,8 +166,6 @@ if $cygwin; then
 fi
 
 forge_exec_cmd="\"$JAVACMD\" $FORGE_DEBUG_ARGS $FORGE_OPTS \"-Dforge.home=${FORGE_HOME}\" \
-   \"-Dorg.jboss.forge.log.file=${FORGE_HOME}/log/forge.log\" \
-   \"-Dlogging.configuration=file:${FORGE_HOME}/logging.properties\" \
    -cp \"${FORGE_HOME}/lib/*\" $FORGE_MAIN_CLASS"
 
 eval $forge_exec_cmd "$QUOTED_ARGS"
