@@ -86,9 +86,9 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
 
       AddonRegistry registry = runnable.getForge().getAddonRegistry();
 
-      Future<Addon> future = registry.start(addonToDeploy);
       try
       {
+         Future<Addon> future = registry.start(addonToDeploy);
          Addon addon = future.get();
          if (addon.getStatus().isFailed())
          {

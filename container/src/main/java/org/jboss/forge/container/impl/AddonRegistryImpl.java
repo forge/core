@@ -9,6 +9,7 @@ package org.jboss.forge.container.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -233,7 +234,17 @@ public class AddonRegistryImpl implements AddonRegistry
    @Override
    public String toString()
    {
-      return tree.toString();
+      StringBuilder builder = new StringBuilder();
+
+      Iterator<Addon> iterator = tree.iterator();
+      while (iterator.hasNext())
+      {
+         builder.append(iterator.next().toString());
+         if (iterator.hasNext())
+            builder.append("\n");
+      }
+
+      return builder.toString();
    }
 
    @Override

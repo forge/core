@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.forge.container.addons.Addon;
@@ -125,11 +126,25 @@ public class ForgeImpl implements Forge
 
                      if (!enabled && addon.getStatus().isStarted())
                      {
-                        registry.stop(addon);
+                        try
+                        {
+                           registry.stop(addon);
+                        }
+                        catch (Exception e)
+                        {
+                           logger.log(Level.SEVERE, "Error occurred.", e);
+                        }
                      }
                   }
 
-                  futures.addAll(registry.startAll());
+                  try
+                  {
+                     futures.addAll(registry.startAll());
+                  }
+                  catch (Exception e)
+                  {
+                     logger.log(Level.SEVERE, "Error occurred.", e);
+                  }
                }
                Thread.sleep(100);
             }
@@ -143,7 +158,7 @@ public class ForgeImpl implements Forge
          }
          catch (Exception e)
          {
-            throw new ContainerException(e);
+            logger.log(Level.SEVERE, "Error occurred.", e);
          }
          finally
          {
