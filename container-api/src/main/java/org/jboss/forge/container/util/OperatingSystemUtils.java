@@ -41,6 +41,11 @@ public final class OperatingSystemUtils
       return getOsName().startsWith("Linux") || getOsName().startsWith("linux");
    }
 
+   public static File getForgeHomeDir()
+   {
+      return new File(System.getProperty("forge.home")).getAbsoluteFile();
+   }
+
    public static File getUserHomeDir()
    {
       return new File(System.getProperty("user.home")).getAbsoluteFile();
@@ -49,6 +54,11 @@ public final class OperatingSystemUtils
    public static String getUserHomePath()
    {
       return getUserHomeDir().getAbsolutePath();
+   }
+
+   public static File getUserForgeDir()
+   {
+      return new File(getUserHomeDir(), ".forge").getAbsoluteFile();
    }
 
    public static void setPretendWindows(boolean value)

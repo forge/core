@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.ServiceLoader;
 import java.util.logging.Logger;
 
@@ -24,6 +25,7 @@ import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.impl.AddonRepositoryImpl;
 import org.jboss.forge.container.repositories.AddonRepository;
 import org.jboss.forge.container.repositories.MutableAddonRepository;
+import org.jboss.forge.container.util.OperatingSystemUtils;
 import org.jboss.forge.dependencies.Coordinate;
 import org.jboss.forge.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.dependencies.builder.DependencyQueryBuilder;
@@ -47,13 +49,46 @@ public class Bootstrap
 
    public static void main(final String[] args)
    {
+      final List<String> bootstrapArgs = new ArrayList<String>();
+      final Properties systemProperties = System.getProperties();
+      // Set system properties
+      for (String arg : args)
+      {
+         if (arg.startsWith("-D"))
+         {
+            final String name;
+            final String value;
+            final int index = arg.indexOf("=");
+            if (index == -1)
+            {
+               name = arg.substring(2);
+               value = "true";
+            } else
+            {
+               name = arg.substring(2, index);
+               value = arg.substring(index + 1);
+            }
+            systemProperties.setProperty(name, value);
+         }
+         else
+         {
+            bootstrapArgs.add(arg);
+         }
+      }
+
+      // Check for the forge log directory
+      final String logDir = systemProperties.getProperty("org.jboss.forge.log.file",
+            new File(OperatingSystemUtils.getUserForgeDir(), "log/forge.log").getAbsolutePath());
+      // Ensure this value is always set
+      systemProperties.setProperty("org.jboss.forge.log.file", logDir);
+
       // Look for a logmanager before any logging takes place
       final String logManagerName = getServiceName(Bootstrap.class.getClassLoader(), "java.util.logging.LogManager");
       if (logManagerName != null)
       {
-         System.setProperty("java.util.logging.manager", logManagerName);
+         systemProperties.setProperty("java.util.logging.manager", logManagerName);
       }
-      Bootstrap bootstrap = new Bootstrap(args);
+      Bootstrap bootstrap = new Bootstrap(bootstrapArgs.toArray(new String[bootstrapArgs.size()]));
       bootstrap.start();
    }
 
