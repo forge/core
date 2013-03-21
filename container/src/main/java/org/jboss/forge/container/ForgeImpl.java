@@ -154,7 +154,6 @@ public class ForgeImpl implements Forge
             {
                Thread.sleep(100);
             }
-            System.out.println("Exiting...");
          }
          catch (Exception e)
          {
