@@ -19,9 +19,9 @@ import org.jboss.forge.container.addons.Status;
 import org.jboss.forge.container.event.Perform;
 import org.jboss.forge.container.event.PreShutdown;
 import org.jboss.forge.container.lock.LockMode;
+import org.jboss.forge.container.modules.AddonResourceLoader;
 import org.jboss.forge.container.modules.ModularURLScanner;
 import org.jboss.forge.container.modules.ModularWeld;
-import org.jboss.forge.container.modules.AddonResourceLoader;
 import org.jboss.forge.container.modules.ModuleScanResult;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.container.util.Assert;
@@ -87,6 +87,9 @@ public final class AddonRunnable implements Runnable
    @Override
    public void run()
    {
+      Thread currentThread = Thread.currentThread();
+      String name = currentThread.getName();
+      currentThread.setName(addon.getId().toCoordinates());
       try
       {
          forge.getLockManager().performLocked(LockMode.READ, new Callable<Void>()
@@ -94,12 +97,12 @@ public final class AddonRunnable implements Runnable
             @Override
             public Void call() throws Exception
             {
-               logger.info("> Starting container [" + addon.getId() + "]");
+               logger.info("> Starting container");
                long start = System.currentTimeMillis();
                container = new AddonContainerStartup();
                shutdownCallable = ClassLoaders.executeIn(addon.getClassLoader(), container);
-               logger.info(">> Started container [" + addon.getId() + "] - "
-                        + (System.currentTimeMillis() - start) + "ms" + "                    >>");
+               logger.info(">> Started container - "
+                        + (System.currentTimeMillis() - start) + "ms");
                return null;
             }
          });
@@ -108,6 +111,10 @@ public final class AddonRunnable implements Runnable
       {
          logger.log(Level.SEVERE, "Failed to start addon " + addon.getId(), e);
          throw e;
+      }
+      finally
+      {
+         currentThread.setName(name);
       }
    }
 
