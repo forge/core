@@ -19,9 +19,8 @@ public class AddonRepositoryProducer
       return repository;
    }
 
-   public void setRespository(AddonRepository repository)
+   public void setRepository(AddonRepository repository)
    {
       this.repository = repository;
-      ;
    }
 }

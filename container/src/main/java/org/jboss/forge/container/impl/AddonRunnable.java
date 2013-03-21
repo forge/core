@@ -167,7 +167,7 @@ public final class AddonRunnable implements Runnable
 
                AddonRepositoryProducer repositoryProducer = BeanManagerUtils.getContextualInstance(manager,
                         AddonRepositoryProducer.class);
-               repositoryProducer.setRespository(addon.getRepository());
+               repositoryProducer.setRepository(addon.getRepository());
 
                ForgeProducer forgeProducer = BeanManagerUtils.getContextualInstance(manager, ForgeProducer.class);
                forgeProducer.setForge(forge);
