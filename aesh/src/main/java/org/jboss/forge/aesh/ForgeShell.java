@@ -28,8 +28,10 @@ import org.jboss.aesh.console.settings.Settings;
 import org.jboss.aesh.terminal.CharacterType;
 import org.jboss.aesh.terminal.Color;
 import org.jboss.aesh.terminal.TerminalCharacter;
+import org.jboss.forge.container.Forge;
 import org.jboss.forge.container.addons.Addon;
 import org.jboss.forge.container.addons.AddonRegistry;
+import org.jboss.forge.container.event.PreShutdown;
 import org.jboss.forge.container.event.Startup;
 import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.container.services.ExportedInstance;
@@ -49,6 +51,9 @@ public class ForgeShell
 
    private List<ShellCommand> commands;
 
+    @Inject
+    private Forge forge;
+
    @Inject
    private Addon self;
 
@@ -60,6 +65,11 @@ public class ForgeShell
       initShell();
       startShell();
    }
+
+    public void stop(@Observes PreShutdown shutdown) throws Exception {
+        if(console != null)
+            console.stop();
+    }
 
    public void addCommand(ShellCommand command)
    {
@@ -172,10 +182,7 @@ public class ForgeShell
 
    public void stopShell() throws IOException
    {
-      if (console != null)
-         console.stop();
-
-      registry.stop(self);
+      forge.stop();
    }
 
    private Prompt createPrompt()
