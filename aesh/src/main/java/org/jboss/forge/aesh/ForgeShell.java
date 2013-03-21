@@ -30,7 +30,7 @@ import org.jboss.aesh.terminal.Color;
 import org.jboss.aesh.terminal.TerminalCharacter;
 import org.jboss.forge.container.addons.Addon;
 import org.jboss.forge.container.addons.AddonRegistry;
-import org.jboss.forge.container.event.Perform;
+import org.jboss.forge.container.event.Startup;
 import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.ui.UICommand;
@@ -55,7 +55,7 @@ public class ForgeShell
    @Inject
    private AddonRegistry registry;
 
-   public void observe(@Observes Perform startup) throws Exception
+   public void observe(@Observes Startup startup) throws Exception
    {
       initShell();
       startShell();

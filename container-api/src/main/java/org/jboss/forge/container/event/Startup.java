@@ -13,6 +13,6 @@ package org.jboss.forge.container.event;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public final class Perform
+public final class Startup
 {
 }

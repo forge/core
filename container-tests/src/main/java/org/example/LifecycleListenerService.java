@@ -5,7 +5,7 @@ import java.io.IOException;
 import javax.enterprise.event.Observes;
 import javax.inject.Singleton;
 
-import org.jboss.forge.container.event.Perform;
+import org.jboss.forge.container.event.Startup;
 import org.jboss.forge.container.event.PreShutdown;
 import org.jboss.forge.container.services.Exported;
 
@@ -19,7 +19,7 @@ public class LifecycleListenerService
    private boolean performObserved;
    private boolean preShutdownObserved;
 
-   public void perform(@Observes Perform event) throws IOException
+   public void perform(@Observes Startup event) throws IOException
    {
       performObserved = true;
    }
