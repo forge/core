@@ -1,2 +1,2 @@
-org.jboss.forge.bootstrap.listener.InstallRequiredAddonsListener
+#org.jboss.forge.bootstrap.listener.InstallRequiredAddonsListener
 org.jboss.forge.bootstrap.listener.GreetingListener
