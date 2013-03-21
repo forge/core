@@ -6,10 +6,7 @@
  */
 package org.jboss.forge.container.addons;
 
-import java.util.concurrent.Callable;
-
 import org.jboss.forge.container.lock.LockManager;
-import org.jboss.forge.container.lock.LockMode;
 import org.jboss.forge.container.util.Assert;
 import org.jboss.forge.container.versions.VersionRange;
 
@@ -55,19 +52,6 @@ public class AddonDependencyImpl implements AddonDependency
    public Addon getDependency()
    {
       return dependency;
-   }
-
-   public void setDependency(final Addon dependency)
-   {
-      lockManager.performLocked(LockMode.WRITE, new Callable<Object>()
-      {
-         @Override
-         public Object call() throws Exception
-         {
-            AddonDependencyImpl.this.dependency = dependency;
-            return dependency;
-         }
-      });
    }
 
    @Override

@@ -109,30 +109,36 @@ public class ForgeImpl implements Forge
             Set<Future<Addon>> futures = new HashSet<Future<Addon>>();
             do
             {
-               for (Addon addon : registry.getRegisteredAddons())
+               if (!isStartingAddons(futures))
                {
-                  boolean enabled = false;
-                  for (AddonRepository repository : repositories)
+                  for (Addon addon : registry.getRegisteredAddons())
                   {
-                     if (repository.isEnabled(addon.getId()))
+                     boolean enabled = false;
+                     for (AddonRepository repository : repositories)
                      {
-                        enabled = true;
-                        break;
+                        if (repository.isEnabled(addon.getId()))
+                        {
+                           enabled = true;
+                           break;
+                        }
+                     }
+
+                     if (!enabled && addon.getStatus().isStarted())
+                     {
+                        registry.stop(addon);
                      }
                   }
 
-                  if (!enabled && addon.getStatus().isStarted())
-                  {
-                     registry.stop(addon);
-                  }
+                  futures.addAll(registry.startAll());
                }
-
-               futures.addAll(registry.startAll());
-
-               if (alive == true && (serverMode || isStartingAddons(futures)))
-                  Thread.sleep(100);
+               Thread.sleep(100);
             }
-            while (alive == true && (serverMode || isStartingAddons(futures)));
+            while (alive && serverMode);
+
+            while (alive && isStartingAddons(futures))
+            {
+               Thread.sleep(100);
+            }
             System.out.println("Exiting...");
          }
          catch (Exception e)

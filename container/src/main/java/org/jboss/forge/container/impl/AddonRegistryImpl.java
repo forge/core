@@ -463,7 +463,7 @@ public class AddonRegistryImpl implements AddonRegistry
             {
                calculateAddonsToStop(addonToStop, toStop, toRestart);
                toRestart.removeAll(toStop);
-               
+
                Collections.reverse(toStop);
                for (Addon addon : toStop)
                {
@@ -558,7 +558,7 @@ public class AddonRegistryImpl implements AddonRegistry
                   toStop.add(addon);
                }
             });
-            
+
             for (Addon addon : toStop)
             {
                doStop(addon);
@@ -620,10 +620,18 @@ public class AddonRegistryImpl implements AddonRegistry
       {
          throw new IllegalStateException("Cannot start additional addons once Shutdown has been initiated.");
       }
-      AddonRunnable runnable = new AddonRunnable(forge, addon);
-      Future<Addon> result = executor.submit(runnable, (Addon) addon);
-      addon.setFuture(result);
-      addon.setRunnable(runnable);
-      return result;
+
+      if (addon.getFuture() == null)
+      {
+         AddonRunnable runnable = new AddonRunnable(forge, addon);
+         Future<Addon> result = executor.submit(runnable, (Addon) addon);
+         addon.setFuture(result);
+         addon.setRunnable(runnable);
+         return result;
+      }
+      else
+      {
+         return addon.getFuture();
+      }
    }
 }
