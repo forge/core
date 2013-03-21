@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.parser.xml;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -77,7 +78,7 @@ public class XMLParser
       try
       {
          fis = new FileInputStream(file);
-         return parse(fis);
+         return parse(new BufferedInputStream(fis, 2048));
       }
       finally
       {
