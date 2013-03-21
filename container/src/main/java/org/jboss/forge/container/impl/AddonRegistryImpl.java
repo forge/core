@@ -578,9 +578,13 @@ public class AddonRegistryImpl implements AddonRegistry
    {
       Assert.notNull(repository, "Repository must not be null.");
 
-      if (!loaders.containsKey(repository))
-         loaders.put(repository, new AddonModuleLoader(repository, forge.getRuntimeClassLoader()));
-      return loaders.get(repository);
+      AddonModuleLoader moduleLoader = loaders.get(repository);
+      if (moduleLoader == null)
+      {
+         moduleLoader = new AddonModuleLoader(repository, forge.getRuntimeClassLoader());
+         loaders.put(repository, moduleLoader);
+      }
+      return moduleLoader;
    }
 
    private void doStop(Addon addon)
