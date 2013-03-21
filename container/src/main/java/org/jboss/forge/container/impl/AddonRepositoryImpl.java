@@ -599,7 +599,6 @@ public final class AddonRepositoryImpl implements MutableAddonRepository
 
       while (installed == null)
       {
-         Thread.sleep(10);
          try
          {
             installed = XMLParser.parse(registryFile);
