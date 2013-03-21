@@ -20,6 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -61,7 +62,18 @@ public class AddonRegistryImpl implements AddonRegistry
    private final LockManager lock;
    private final AddonTree tree;
 
-   private final ExecutorService executor = Executors.newFixedThreadPool(BATCH_SIZE);
+   private final ExecutorService executor = Executors.newFixedThreadPool(BATCH_SIZE, new ThreadFactory()
+   {
+      @Override
+      public Thread newThread(Runnable runnable)
+      {
+         Thread thread = new Thread(runnable);
+         if(runnable instanceof AddonRunnable)
+            thread.setName(((AddonRunnable) runnable).getAddon().getId().toCoordinates());
+         return thread;
+      }
+   });
+   
    private final Map<AddonRepository, AddonModuleLoader> loaders = new ConcurrentHashMap<AddonRepository, AddonModuleLoader>();
 
    public AddonRegistryImpl(Forge forge, LockManager lock)
