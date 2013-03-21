@@ -3,7 +3,7 @@ package org.jboss.forge.parser.java.hints;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import org.jboss.forge.container.event.Startup;
+import org.jboss.forge.container.event.PostStartup;
 import org.jboss.forge.environment.Environment;
 import org.jboss.forge.parser.java.resources.JavaResource;
 import org.jboss.forge.ui.hints.HintsLookup;
@@ -25,7 +25,7 @@ public class InputTypeHintsRegistrant
       this.environment = environment;
    }
 
-   public void initialize(@Observes Startup event)
+   public void initialize(@Observes PostStartup event)
    {
       HintsLookup hints = new HintsLookup(environment);
       hints.setInputType(JavaResource.class, InputTypes.JAVA_CLASS_PICKER);

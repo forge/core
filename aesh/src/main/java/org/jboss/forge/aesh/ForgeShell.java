@@ -32,7 +32,7 @@ import org.jboss.forge.container.Forge;
 import org.jboss.forge.container.addons.Addon;
 import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.event.PreShutdown;
-import org.jboss.forge.container.event.Startup;
+import org.jboss.forge.container.event.PostStartup;
 import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.ui.UICommand;
@@ -60,7 +60,7 @@ public class ForgeShell
    @Inject
    private AddonRegistry registry;
 
-   public void observe(@Observes Startup startup) throws Exception
+   public void observe(@Observes PostStartup startup) throws Exception
    {
       initShell();
       startShell();

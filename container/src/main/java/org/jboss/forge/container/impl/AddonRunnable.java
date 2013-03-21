@@ -16,7 +16,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import org.jboss.forge.container.Forge;
 import org.jboss.forge.container.addons.Addon;
 import org.jboss.forge.container.addons.Status;
-import org.jboss.forge.container.event.Startup;
+import org.jboss.forge.container.event.PostStartup;
 import org.jboss.forge.container.event.PreShutdown;
 import org.jboss.forge.container.lock.LockMode;
 import org.jboss.forge.container.modules.AddonResourceLoader;
@@ -226,7 +226,7 @@ public final class AddonRunnable implements Runnable
                         @Override
                         public Object call() throws Exception
                         {
-                           manager.fireEvent(new Startup());
+                           manager.fireEvent(new PostStartup());
                            return null;
                         }
                      });
