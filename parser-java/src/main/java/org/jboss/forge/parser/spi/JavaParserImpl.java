@@ -7,6 +7,7 @@
 
 package org.jboss.forge.parser.spi;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -51,7 +52,7 @@ public class JavaParserImpl implements JavaParserProvider
       FileInputStream stream = new FileInputStream(file);
       try
       {
-         return parse(stream);
+         return parse(new BufferedInputStream(stream));
       }
       finally
       {

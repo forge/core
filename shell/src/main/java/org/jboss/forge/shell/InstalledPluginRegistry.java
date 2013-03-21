@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.shell;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -120,6 +121,7 @@ public class InstalledPluginRegistry
       return result;
    }
 
+   @SuppressWarnings("resource")
    public static PluginEntry install(final String name, final String apiVersion, String slot)
    {
       if (Strings.isNullOrEmpty(name))
@@ -151,7 +153,16 @@ public class InstalledPluginRegistry
 
          if (registryFile.exists())
          {
-            installed = XMLParser.parse(new FileInputStream(registryFile));
+            FileInputStream in = null;
+            try
+            {
+               in = new FileInputStream(registryFile);
+               installed = XMLParser.parse(new BufferedInputStream(in));
+            }
+            finally
+            {
+               Streams.closeQuietly(in);
+            }
          }
          else
          {
