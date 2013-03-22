@@ -36,7 +36,7 @@ public enum JPAContainer
    CUSTOM_JTA(CustomJTAContainer.class),
    CUSTOM_NON_JTA(NonJTAContainer.class),
    TOMEE(TomEEContainer.class),
-   LJS(LeanJavaServerContainer.class);
+   SAP_LEAN_JAVA_SERVER(LeanJavaServerContainer.class);
 
    private Class<? extends PersistenceContainer> containerType;
 

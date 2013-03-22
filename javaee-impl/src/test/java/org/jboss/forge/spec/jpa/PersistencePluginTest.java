@@ -196,9 +196,9 @@ public class PersistencePluginTest extends AbstractJPATest
    }
 
    @Test
-   public void testSetupLjsPersistence() throws Exception {
+   public void testSetupSAPLeanJavaServerPersistence() throws Exception {
        queueInputLines("", "");
-       getShell().execute("persistence setup --provider HIBERNATE --container LJS");        
+       getShell().execute("persistence setup --provider HIBERNATE --container SAP_LEAN_JAVA_SERVER");
        PersistenceDescriptor config = getProject().getFacet(PersistenceFacet.class).getConfig();
        List<PersistenceUnitDef> units = config.listUnits();
        PersistenceUnitDef unit = units.get(0);
