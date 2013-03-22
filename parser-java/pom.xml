@@ -15,6 +15,11 @@
       <module>addon</module>
       <module>tests</module>
    </modules>
+
+   <properties>
+      <version.java-parser>1.0.0.Alpha1</version.java-parser>
+   </properties>
+
    <dependencyManagement>
       <dependencies>
          <dependency>
@@ -26,6 +31,16 @@
             <groupId>org.jboss.forge</groupId>
             <artifactId>parser-java-impl</artifactId>
             <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>java-parser-api</artifactId>
+            <version>${version.java-parser}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>java-parser-impl</artifactId>
+            <version>${version.java-parser}</version>
          </dependency>
       </dependencies>
    </dependencyManagement>
