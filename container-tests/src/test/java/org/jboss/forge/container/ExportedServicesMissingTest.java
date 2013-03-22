@@ -17,7 +17,7 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @RunWith(Arquillian.class)
-public class RemoteServicesMissingTest
+public class ExportedServicesMissingTest
 {
    @Deployment
    @ShouldThrowException(DeploymentException.class)
