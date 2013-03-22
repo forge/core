@@ -5,7 +5,7 @@ import javax.inject.Inject;
 import org.jboss.forge.shell.ShellPrintWriter;
 import org.jboss.forge.spec.javaee.jpa.api.DatabaseType;
 
-public class LeanJavaServerContainer extends JavaEEDefaultContainer {
+public class SAPLeanJavaServerContainer extends JavaEEDefaultContainer {
 
     private static final String DEFAULT_DATA_SOURCE = "jdbc/DefaultDB";
     
