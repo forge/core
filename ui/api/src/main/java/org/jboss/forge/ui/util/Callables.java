@@ -22,7 +22,7 @@ public final class Callables
    }
 
    /**
-    * Wrap a constant value into a Callable Object
+    * Wrap a constant value into a {@link Callable} instance.
     */
    public static <T> Callable<T> returning(T value)
    {
@@ -30,7 +30,7 @@ public final class Callables
    }
 
    /**
-    * Calls the {@link Callable} avoiding the checked exception
+    * Calls the {@link Callable} avoiding the checked {@link Exception}.
     */
    public static <T> T call(Callable<T> c)
    {
@@ -53,7 +53,7 @@ public final class Callables
    }
 
    /**
-    * Simple callable class that returns the same value
+    * Simple {@link Callable} class that returns the given value.
     */
    static class ConstantCallable<V> implements Callable<V>
    {
