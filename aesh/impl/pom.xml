@@ -2,22 +2,43 @@
    <modelVersion>4.0.0</modelVersion>
    <parent>
       <groupId>org.jboss.forge</groupId>
-      <artifactId>forge-parent</artifactId>
+      <artifactId>aesh-parent</artifactId>
       <version>2.0.0-SNAPSHOT</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
-   <artifactId>aesh-test</artifactId>
-   <name>Forge - Aesh Test Addon</name>
+   <artifactId>aesh-impl</artifactId>
+   <name>Forge - Aesh Addon Impl</name>
    <dependencies>
       <dependency>
          <groupId>org.jboss.forge</groupId>
+         <artifactId>aesh-api</artifactId>
+         <scope>provided</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.aesh</groupId>
          <artifactId>aesh</artifactId>
-         <version>2.0.0-SNAPSHOT</version>
-         <classifier>forge-addon</classifier>
+         <version>0.36</version>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.aesh</groupId>
+         <artifactId>aesh-extensions</artifactId>
+         <version>0.34</version>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge</groupId>
          <artifactId>forge-addon-container-api</artifactId>
+         <scope>provided</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>ui-api</artifactId>
+         <version>2.0.0-SNAPSHOT</version>
+         <scope>provided</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>convert-api</artifactId>
+         <version>2.0.0-SNAPSHOT</version>
          <scope>provided</scope>
       </dependency>
    </dependencies>

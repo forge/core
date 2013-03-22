@@ -95,7 +95,6 @@
             <module>addon-manager</module>
             <module>addons</module>
             <module>aesh</module>
-            <module>aesh-test</module>
             <module>dependencies</module>
             <module>environment</module>
             <module>facets</module>

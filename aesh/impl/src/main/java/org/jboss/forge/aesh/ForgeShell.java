@@ -51,8 +51,8 @@ public class ForgeShell
 
    private List<ShellCommand> commands;
 
-    @Inject
-    private Forge forge;
+   @Inject
+   private Forge forge;
 
    @Inject
    private Addon self;
@@ -66,10 +66,11 @@ public class ForgeShell
       startShell();
    }
 
-    public void stop(@Observes PreShutdown shutdown) throws Exception {
-        if(console != null)
-            console.stop();
-    }
+   public void stop(@Observes PreShutdown shutdown) throws Exception
+   {
+      if (console != null)
+         console.stop();
+   }
 
    public void addCommand(ShellCommand command)
    {
@@ -83,6 +84,7 @@ public class ForgeShell
 
       for (ExportedInstance<ShellStreamProvider> provider : registry.getExportedInstances(ShellStreamProvider.class))
       {
+         System.out.println("Loaded shell stream provider: " + provider);
          // Configure the stream here. This will only execute if there is a addon deployed BEFORE aesh, which is the
          // case in tests. We control that order there (or can fix if it is not working.)
 
