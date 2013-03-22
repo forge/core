@@ -60,15 +60,15 @@ public class ForgeShell
    @Inject
    private AddonRegistry registry;
 
-   public void observe(@Observes PostStartup startup) throws Exception
+   void observe(@Observes PostStartup startup) throws Exception
    {
       initShell();
       startShell();
    }
 
-   public void stop(@Observes PreShutdown shutdown) throws Exception
+   void stop(@Observes PreShutdown shutdown) throws Exception
    {
-      if (console != null)
+      if (console != null && console.isRunning())
          console.stop();
    }
 
@@ -164,6 +164,7 @@ public class ForgeShell
 
    public void startShell() throws Exception
    {
+      initShell();
       console.start();
    }
 
@@ -184,7 +185,11 @@ public class ForgeShell
 
    public void stopShell() throws IOException
    {
-      forge.stop();
+      if (console != null && console.isRunning())
+      {
+         console.stop();
+         console.reset();
+      }
    }
 
    private Prompt createPrompt()

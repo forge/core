@@ -1,9 +1,18 @@
 package org.jboss.forge.aesh;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+
 import javax.inject.Inject;
 
-import junit.framework.TestCase;
-
+import org.jboss.aesh.console.Config;
+import org.jboss.aesh.console.settings.Settings;
+import org.jboss.aesh.edit.KeyOperation;
+import org.jboss.aesh.edit.actions.Operation;
+import org.jboss.aesh.terminal.Key;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.Addon;
@@ -12,7 +21,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,29 +31,22 @@ import org.junit.runner.RunWith;
  */
 @Ignore
 @RunWith(Arquillian.class)
-public class AeshAddonTest extends TestCase
+public class AeshAddonTest
 {
-
-   // private KeyOperation completeChar = new KeyOperation(Key.CTRL_I, Operation.COMPLETE);
-
-   public AeshAddonTest()
-   {
-   }
+   private KeyOperation completeChar = new KeyOperation(Key.CTRL_I, Operation.COMPLETE);
 
    @Deployment
-   @Dependencies(@Addon(name = "org.jboss.forge:ui", version = "2.0.0-SNAPSHOT"))
+   @Dependencies({ @Addon(name = "org.jboss.forge:ui", version = "2.0.0-SNAPSHOT"),
+            @Addon(name = "org.jboss.forge:aesh", version = "2.0.0-SNAPSHOT") })
    public static ForgeArchive getDeployment()
    {
-      ForgeArchive archive = ShrinkWrap
-               .create(ForgeArchive.class)
-               .addPackages(true, ForgeShell.class.getPackage())
-               .addAsLibraries(Maven.resolver().loadPomFromFile("pom.xml")
-                        .resolve("org.jboss.aesh:aesh:0.33").withTransitivity().asFile())
-               .addAsLibraries(Maven.resolver().loadPomFromFile("pom.xml")
-                        .resolve("org.jboss.aesh:aesh-extensions:0.33").withTransitivity().asFile())
+      ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
+               .addClasses(FooCommand.class)
                .addBeansXML()
                .addAsAddonDependencies(
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:ui", "2.0.0-SNAPSHOT")));
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:ui", "2.0.0-SNAPSHOT")),
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:aesh", "2.0.0-SNAPSHOT"))
+               );
 
       return archive;
    }
@@ -56,45 +58,53 @@ public class AeshAddonTest extends TestCase
    private FooCommand fooCommand;
 
    @Test
-   public void testContainerInjection()
+   public void testContainerInjection() throws Exception
    {
-      /*
-       * try {
-       * 
-       * Assert.assertNotNull(shell);
-       * 
-       * PipedOutputStream outputStream = new PipedOutputStream(); PipedInputStream pipedInputStream = new
-       * PipedInputStream(outputStream); ByteArrayOutputStream out = new ByteArrayOutputStream();
-       * 
-       * setupSettings(pipedInputStream, out);
-       * 
-       * shell.initShell(); shell.addCommand(new ShellCommand(fooCommand));
-       * 
-       * outputStream.write(("foo\n").getBytes()); shell.startShell(); String outString = out.toString();
-       * assertEquals("boo", outString.substring(shell.getPrompt().length() + "foo\n".length()));
-       * 
-       * outputStream.write("fo".getBytes()); outputStream.write(completeChar.getFirstValue());
-       * outputStream.write("\n".getBytes()); shell.startShell(); outString = out.toString();
-       * 
-       * outputStream.write(("list-services\n").getBytes()); shell.startShell(); // System.out.println("OUT:"+
-       * out.toString());
-       * 
-       * outputStream.write(("exit\n").getBytes()); shell.startShell();
-       * 
-       * // shell.stopShell(); } catch (Exception ioe) { ioe.printStackTrace(); }
-       */
+      Assert.assertNotNull(shell);
+
+      PipedOutputStream outputStream = new PipedOutputStream();
+      PipedInputStream pipedInputStream = new PipedInputStream(outputStream);
+      ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+      setupSettings(pipedInputStream, out);
+
+      shell.addCommand(new ShellCommand(fooCommand, shell));
+
+      outputStream.write(("foo\n").getBytes());
+      shell.stopShell();
+      shell.startShell();
+      String outString = out.toString();
+      Assert.assertEquals("boo", outString.substring(shell.getPrompt().length() + "foo\n".length()));
+
+      outputStream.write("fo".getBytes());
+      outputStream.write(completeChar.getFirstValue());
+      outputStream.write("\n".getBytes());
+      shell.stopShell();
+      shell.startShell();
+      outString = out.toString();
+
+      outputStream.write(("list-services\n").getBytes());
+      shell.stopShell();
+      shell.startShell();
+      System.out.println("OUT:" + out.toString());
+
+      outputStream.write(("exit\n").getBytes());
+      shell.stopShell();
+      shell.startShell();
+
+      shell.stopShell();
    }
 
-   // private void setupSettings(InputStream input, OutputStream out)
-   // {
-   // Settings.getInstance().setName("test");
-   // Settings.getInstance().setInputStream(input);
-   // Settings.getInstance().setStdOut(out);
-   // // aeshProducer.getSettings().setStdOut(new ByteArrayOutputStream());
-   // if (!Config.isOSPOSIXCompatible())
-   // Settings.getInstance().setAnsiConsole(false);
-   //
-   // Settings.getInstance().getOperationManager().addOperation(new KeyOperation(10, Operation.NEW_LINE));
-   // }
+   private void setupSettings(InputStream input, OutputStream out)
+   {
+      Settings.getInstance().setName("test");
+      Settings.getInstance().setInputStream(input);
+      Settings.getInstance().setStdOut(out);
+      // aeshProducer.getSettings().setStdOut(new ByteArrayOutputStream());
+      if (!Config.isOSPOSIXCompatible())
+         Settings.getInstance().setAnsiConsole(false);
+
+      Settings.getInstance().getOperationManager().addOperation(new KeyOperation(Key.ENTER, Operation.NEW_LINE));
+   }
 
 }

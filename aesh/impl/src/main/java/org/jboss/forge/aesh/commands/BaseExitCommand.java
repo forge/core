@@ -8,8 +8,8 @@ package org.jboss.forge.aesh.commands;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.aesh.ForgeShell;
 import org.jboss.forge.aesh.ShellContext;
+import org.jboss.forge.container.Forge;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.context.UIBuilder;
 import org.jboss.forge.ui.context.UIContext;
@@ -26,7 +26,7 @@ public abstract class BaseExitCommand implements UICommand
 {
 
    @Inject
-   private ForgeShell aeshell;
+   private Forge forge;
 
    @Override
    public UICommandMetadata getMetadata()
@@ -53,7 +53,7 @@ public abstract class BaseExitCommand implements UICommand
    @Override
    public Result execute(UIContext context) throws Exception
    {
-      aeshell.stopShell();
+      forge.stop();
       return Results.success("");
    }
 
