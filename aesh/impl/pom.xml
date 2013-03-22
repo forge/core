@@ -22,7 +22,7 @@
       <dependency>
          <groupId>org.jboss.aesh</groupId>
          <artifactId>aesh-extensions</artifactId>
-         <version>0.34</version>
+         <version>0.36</version>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge</groupId>
