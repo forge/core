@@ -8,8 +8,8 @@ package org.jboss.forge.ui.impl;
 
 import java.util.concurrent.Callable;
 
+import org.jboss.forge.container.util.Callables;
 import org.jboss.forge.ui.input.UISelectOne;
-import org.jboss.forge.ui.util.Callables;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

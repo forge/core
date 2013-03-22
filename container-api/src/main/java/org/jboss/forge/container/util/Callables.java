@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.ui.util;
+package org.jboss.forge.container.util;
 
 import java.util.concurrent.Callable;
 
@@ -13,8 +13,8 @@ import java.util.concurrent.Callable;
  * Utility to create and handle {@link Callable} objects
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-
 public final class Callables
 {
    private Callables()

@@ -11,11 +11,11 @@ import java.util.concurrent.Callable;
 
 import javax.enterprise.inject.Vetoed;
 
+import org.jboss.forge.container.util.Callables;
 import org.jboss.forge.convert.Converter;
 import org.jboss.forge.ui.input.UICompleter;
 import org.jboss.forge.ui.input.UIInput;
 import org.jboss.forge.ui.input.UIInputMany;
-import org.jboss.forge.ui.util.Callables;
 
 /**
  * Implementation of a {@link UIInput} object
