@@ -35,6 +35,6 @@ public class ModularWeld extends Weld
    @Override
    protected Deployment createDeployment(final ResourceLoader resourceLoader, final Bootstrap bootstrap)
    {
-      return new ModularWeldDeployment(bootstrap, resourceLoader, scanResult);
+      return new ModularWeldDeployment(bootstrap, scanResult.getResourceLoader(), scanResult);
    }
 }

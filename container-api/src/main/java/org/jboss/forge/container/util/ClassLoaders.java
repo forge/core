@@ -33,6 +33,10 @@ public class ClassLoaders
          SecurityActions.setContextClassLoader(loader);
          return task.call();
       }
+      catch (RuntimeException e)
+      {
+         throw e;
+      }
       catch (Exception e)
       {
          throw new ContainerException("Error invoking Task within ClassLoader [" + loader + "]", e);
