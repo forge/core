@@ -1,25 +1,20 @@
 package org.jboss.forge.container;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.ServiceLoader;
-import java.util.Set;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.forge.container.addons.Addon;
 import org.jboss.forge.container.addons.AddonRegistry;
-import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.impl.AddonRegistryImpl;
 import org.jboss.forge.container.impl.AddonRepositoryImpl;
 import org.jboss.forge.container.lock.LockManager;
 import org.jboss.forge.container.repositories.AddonRepository;
 import org.jboss.forge.container.spi.ContainerLifecycleListener;
 import org.jboss.forge.container.spi.ListenerRegistration;
+import org.jboss.forge.container.util.AddonFilters;
 import org.jboss.forge.container.versions.SingleVersion;
 import org.jboss.forge.container.versions.Version;
 import org.jboss.modules.Module;
@@ -107,12 +102,11 @@ public class ForgeImpl implements Forge
          try
          {
             alive = true;
-            Set<Future<Addon>> futures = new HashSet<Future<Addon>>();
             do
             {
-               if (!isStartingAddons(futures))
+               if (!isStartingAddons())
                {
-                  for (Addon addon : registry.getRegisteredAddons())
+                  for (Addon addon : registry.getAddons())
                   {
                      boolean enabled = false;
                      for (AddonRepository repository : repositories)
@@ -139,7 +133,7 @@ public class ForgeImpl implements Forge
 
                   try
                   {
-                     futures.addAll(registry.startAll());
+                     registry.startAll();
                   }
                   catch (Exception e)
                   {
@@ -150,7 +144,7 @@ public class ForgeImpl implements Forge
             }
             while (alive && serverMode);
 
-            while (alive && isStartingAddons(futures))
+            while (alive && isStartingAddons())
             {
                Thread.sleep(100);
             }
@@ -167,6 +161,11 @@ public class ForgeImpl implements Forge
       }
       fireAfterContainerStoppedEvent(loader);
       return this;
+   }
+
+   private boolean isStartingAddons()
+   {
+      return !registry.getAddons(AddonFilters.allStarting()).isEmpty();
    }
 
    private void fireBeforeContainerStartedEvent(ClassLoader loader)
@@ -205,26 +204,6 @@ public class ForgeImpl implements Forge
          listener.afterStop(this);
       }
 
-   }
-
-   private boolean isStartingAddons(Set<Future<Addon>> futures)
-   {
-      for (Future<Addon> future : futures)
-      {
-         try
-         {
-            future.get(0, TimeUnit.MILLISECONDS);
-         }
-         catch (TimeoutException e)
-         {
-            return true;
-         }
-         catch (Exception e)
-         {
-            throw new ContainerException(e);
-         }
-      }
-      return false;
    }
 
    @Override

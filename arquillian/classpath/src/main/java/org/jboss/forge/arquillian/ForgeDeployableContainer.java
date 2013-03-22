@@ -88,8 +88,9 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
 
       try
       {
-         Future<Addon> future = registry.start(addonToDeploy);
-         Addon addon = future.get();
+         Future<Void> future = registry.start(addonToDeploy);
+         future.get();
+         Addon addon = registry.getAddon(addonToDeploy);
          if (addon.getStatus().isFailed())
          {
             ContainerException e = new ContainerException("Addon " + addonToDeploy + " failed to deploy.");
@@ -187,7 +188,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       try
       {
          repository.disable(addonToUndeploy);
-         Addon addonToStop = registry.getRegisteredAddon(addonToUndeploy);
+         Addon addonToStop = registry.getAddon(addonToUndeploy);
          registry.stop(addonToStop);
          Addons.waitUntilStopped(addonToStop);
       }

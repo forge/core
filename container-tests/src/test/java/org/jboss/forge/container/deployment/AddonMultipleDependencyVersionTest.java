@@ -67,7 +67,7 @@ public class AddonMultipleDependencyVersionTest
    public void testVersionLookup() throws Exception
    {
       int count = 0;
-      for (Addon addon : registry.getRegisteredAddons(AddonFilters.allStarted()))
+      for (Addon addon : registry.getAddons(AddonFilters.allStarted()))
       {
          for (Class<?> service : addon.getServiceRegistry().getServices())
          {

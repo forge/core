@@ -66,7 +66,7 @@ public class AddonManagerTest
    @Test
    public void testInstallingAddonWithSingleOptionalAddonDependency() throws InterruptedException
    {
-      int addonCount = registry.getRegisteredAddons().size();
+      int addonCount = registry.getAddons().size();
       AddonId addon = AddonId.fromCoordinates("org.jboss.forge:example,2.0.0-SNAPSHOT");
       InstallRequest request = addonManager.install(addon);
 
@@ -92,16 +92,16 @@ public class AddonManagerTest
       Assert.assertTrue(dependency.isOptional());
       Assert.assertFalse(dependency.isExported());
 
-      Assert.assertTrue(registry.getRegisteredAddon(AddonId.from("org.jboss.forge:example2", "2.0.0-SNAPSHOT"))
+      Assert.assertTrue(registry.getAddon(AddonId.from("org.jboss.forge:example2", "2.0.0-SNAPSHOT"))
                .getStatus().isMissing());
 
-      Assert.assertEquals(addonCount + 1, registry.getRegisteredAddons().size());
+      Assert.assertEquals(addonCount + 1, registry.getAddons().size());
    }
 
    @Test
    public void testInstallingAlreadyInstalledAddonWithTwoRequiredAddonDependency() throws InterruptedException
    {
-      final int addonInitialCount = registry.getRegisteredAddons().size();
+      final int addonInitialCount = registry.getAddons().size();
       AddonId resources = AddonId.fromCoordinates("org.jboss.forge:resources,2.0.0-SNAPSHOT");
       InstallRequest request = addonManager.install(resources);
 
@@ -133,6 +133,6 @@ public class AddonManagerTest
 
       Thread.sleep(500);
 
-      Assert.assertEquals(addonInitialCount, registry.getRegisteredAddons().size());
+      Assert.assertEquals(addonInitialCount, registry.getAddons().size());
    }
 }

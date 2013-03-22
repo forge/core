@@ -19,6 +19,7 @@ import org.jboss.forge.container.modules.AddonModuleLoader;
 import org.jboss.forge.container.repositories.AddonRepository;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.container.util.Assert;
+import org.jboss.forge.container.util.CompletedFuture;
 import org.jboss.forge.container.util.Sets;
 import org.jboss.modules.Module;
 
@@ -36,7 +37,7 @@ public class AddonImpl implements Addon
       public AddonModuleLoader moduleLoader;
       public Module module;
       public AddonRunnable runnable;
-      public Future<Addon> future;
+      public Future<Void> future = new CompletedFuture<Void>(null);
       public AddonRepository repository;
       public ServiceRegistry registry;
 
@@ -60,6 +61,11 @@ public class AddonImpl implements Addon
 
       this.id = id;
       this.lock = lock;
+   }
+
+   public boolean canBeStarted()
+   {
+      return getRunnable() == null && getStatus().isLoaded();
    }
 
    public void reset()
@@ -173,12 +179,13 @@ public class AddonImpl implements Addon
       return Collections.unmodifiableSet(state.missingDependencies);
    }
 
-   public Future<Addon> getFuture()
+   @Override
+   public Future<Void> getFuture()
    {
       return state.future;
    }
 
-   public void setFuture(Future<Addon> future)
+   public void setFuture(Future<Void> future)
    {
       Assert.notNull(future, "Future must not be null.");
       this.state.future = future;
@@ -229,5 +236,4 @@ public class AddonImpl implements Addon
          return false;
       return true;
    }
-
 }

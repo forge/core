@@ -15,24 +15,9 @@ import org.jboss.forge.container.services.ExportedInstance;
  * Provides methods for registering, starting, stopping, and interacting with registered {@link Addon} instances.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
  */
 public interface AddonRegistry
 {
-   boolean isRegistered(AddonId id);
-
-   Addon getRegisteredAddon(AddonId id);
-
-   /**
-    * Get all currently registered {@link Addon} instances.
-    */
-   Set<Addon> getRegisteredAddons();
-
-   /**
-    * Get all registered {@link Addon} instances matching the given {@link AddonFilter}.
-    */
-   Set<Addon> getRegisteredAddons(AddonFilter filter);
-
    <T> Set<ExportedInstance<T>> getExportedInstances(Class<T> clazz);
 
    <T> Set<ExportedInstance<T>> getExportedInstances(String clazz);
@@ -42,11 +27,29 @@ public interface AddonRegistry
    <T> ExportedInstance<T> getExportedInstance(String type);
 
    /**
-    * Start the given {@link AddonId} and all its dependencies, if possible. Return a {@link Future} which can be used
-    * to retrieve the final {@link Addon} after the operation has been performed. Existing dependents for which this
-    * {@link AddonId} is an optional dependency will be restarted.
+    * Get the registered {@link Addon} for the given {@link AddonId} instance. If no such {@link Addon} is currently
+    * registered, register it and return the new reference.
+    * 
+    * @return the registered {@link Addon} (Never null.)
     */
-   Future<Addon> start(AddonId addon);
+   Addon getAddon(AddonId id);
+
+   /**
+    * Get all currently registered {@link Addon} instances.
+    */
+   Set<Addon> getAddons();
+
+   /**
+    * Get all registered {@link Addon} instances matching the given {@link AddonFilter}.
+    */
+   Set<Addon> getAddons(AddonFilter filter);
+
+   /**
+    * Start the given {@link AddonId} and all its dependencies, if possible. Return a {@link Future} which can be used
+    * to wait while the {@link Addon} boot-up sequence is executed. Existing dependents for which this {@link AddonId}
+    * is an optional {@link AddonDependency} will be restarted.
+    */
+   Future<Void> start(AddonId addon);
 
    /**
     * Stop the given {@link Addon} that originated from this {@link AddonRegistry}. Also stop all dependent

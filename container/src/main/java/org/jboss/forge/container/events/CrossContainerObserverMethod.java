@@ -31,7 +31,7 @@ public class CrossContainerObserverMethod
             if (contextClassLoader.equals(eventClassLoader))
             {
                AddonRegistry addonRegistry = CDI.current().select(AddonRegistry.class).get();
-               for (Addon addon : addonRegistry.getRegisteredAddons(AddonFilters.allStarted()))
+               for (Addon addon : addonRegistry.getAddons(AddonFilters.allStarted()))
                {
                   // Events should not be fired back into the container from which they originated
                   ClassLoader addonClassLoader = addon.getClassLoader();

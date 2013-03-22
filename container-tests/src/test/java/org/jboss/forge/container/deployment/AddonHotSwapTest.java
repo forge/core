@@ -67,8 +67,8 @@ public class AddonHotSwapTest
       AddonId depOneId = AddonId.from("dep", "1");
       AddonId depTwoId = AddonId.from("dep", "2");
 
-      Addon depOne = registry.getRegisteredAddon(depOneId);
-      Addon depTwo = registry.getRegisteredAddon(depTwoId);
+      Addon depOne = registry.getAddon(depOneId);
+      Addon depTwo = registry.getAddon(depTwoId);
 
       ClassLoader depOneClassloader = depOne.getClassLoader();
       ClassLoader depTwoClassloader = depTwo.getClassLoader();
@@ -90,11 +90,11 @@ public class AddonHotSwapTest
       /*
        * Now retrieving fresh references.
        */
-      Assert.assertNotEquals(depOneClassloader, registry.getRegisteredAddon(depOneId).getClassLoader());
-      Assert.assertNotEquals(depOneClassloader.toString(), registry.getRegisteredAddon(depOneId).getClassLoader()
+      Assert.assertNotEquals(depOneClassloader, registry.getAddon(depOneId).getClassLoader());
+      Assert.assertNotEquals(depOneClassloader.toString(), registry.getAddon(depOneId).getClassLoader()
                .toString());
-      Assert.assertNotEquals(depTwoClassloader, registry.getRegisteredAddon(depTwoId).getClassLoader());
-      Assert.assertNotEquals(depTwoClassloader.toString(), registry.getRegisteredAddon(depTwoId).getClassLoader()
+      Assert.assertNotEquals(depTwoClassloader, registry.getAddon(depTwoId).getClassLoader());
+      Assert.assertNotEquals(depTwoClassloader.toString(), registry.getAddon(depTwoId).getClassLoader()
                .toString());
    }
 

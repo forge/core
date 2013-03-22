@@ -1,12 +1,12 @@
 package org.jboss.forge.container;
 
+import javax.enterprise.inject.spi.DeploymentException;
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
-import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.mocks.ServiceBean;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
@@ -20,7 +20,7 @@ import org.junit.runner.RunWith;
 public class RemoteServicesMissingTest
 {
    @Deployment
-   @ShouldThrowException(ContainerException.class)
+   @ShouldThrowException(DeploymentException.class)
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)

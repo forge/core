@@ -88,10 +88,11 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
          lock.join();
 
          Object instance = null;
-         for (Addon addon : addonRegistry.getRegisteredAddons())
+         for (Addon addon : addonRegistry.getAddons())
          {
-            Future<Addon> future = addonRegistry.start(addon.getId());
-            future.get();
+            Future<Void> future = addon.getFuture();
+            if (future != null)
+               future.get();
 
             if (addon.getStatus().isStarted())
             {

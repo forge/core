@@ -7,6 +7,7 @@
 package org.jboss.forge.container.addons;
 
 import java.util.Set;
+import java.util.concurrent.Future;
 
 import org.jboss.forge.container.repositories.AddonRepository;
 import org.jboss.forge.container.services.ServiceRegistry;
@@ -49,4 +50,10 @@ public interface Addon
     * Get the {@link Set} of {@link AddonDependency} for this {@link Addon} (never <code>null</code>.)
     */
    public Set<AddonDependency> getDependencies();
+
+   /**
+    * Return the {@link Future} representing the boot-up sequence for this {@link Addon} instance. Returns
+    * <code>null</code> if the {@link Addon} is not starting, {@link Status#isStarted()} or {@link Status#isFailed()}
+    */
+   public Future<Void> getFuture();
 }

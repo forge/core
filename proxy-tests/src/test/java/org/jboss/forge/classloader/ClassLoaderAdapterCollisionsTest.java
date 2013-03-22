@@ -80,7 +80,7 @@ public class ClassLoaderAdapterCollisionsTest
    public void testSimpleAssignmentCollision() throws Exception
    {
       ClassLoader thisLoader = ClassLoaderAdapterCollisionsTest.class.getClassLoader();
-      ClassLoader dep1Loader = registry.getRegisteredAddon(AddonId.from("dep", "1")).getClassLoader();
+      ClassLoader dep1Loader = registry.getAddon(AddonId.from("dep", "1")).getClassLoader();
 
       ClassWithGetterAndSetter enhanced;
       try
@@ -113,7 +113,7 @@ public class ClassLoaderAdapterCollisionsTest
    public void testParameterTypeCollision() throws Exception
    {
       ClassLoader thisLoader = ClassLoaderAdapterCollisionsTest.class.getClassLoader();
-      ClassLoader loader1 = registry.getRegisteredAddon(AddonId.from("dep", "1")).getClassLoader();
+      ClassLoader loader1 = registry.getAddon(AddonId.from("dep", "1")).getClassLoader();
 
       try
       {
@@ -145,7 +145,7 @@ public class ClassLoaderAdapterCollisionsTest
    public void testParameterTypeCollisionRoundTrip() throws Exception
    {
       ClassLoader thisLoader = ClassLoaderAdapterCollisionsTest.class.getClassLoader();
-      ClassLoader loader1 = registry.getRegisteredAddon(AddonId.from("dep", "1")).getClassLoader();
+      ClassLoader loader1 = registry.getAddon(AddonId.from("dep", "1")).getClassLoader();
 
       try
       {
@@ -181,7 +181,7 @@ public class ClassLoaderAdapterCollisionsTest
    public void testInterfaceSimpleAssignmentCollision() throws Exception
    {
       ClassLoader thisLoader = ClassLoaderAdapterCollisionsTest.class.getClassLoader();
-      ClassLoader dep1Loader = registry.getRegisteredAddon(AddonId.from("dep", "1")).getClassLoader();
+      ClassLoader dep1Loader = registry.getAddon(AddonId.from("dep", "1")).getClassLoader();
 
       InterfaceWithGetterAndSetter enhanced;
       try
@@ -215,7 +215,7 @@ public class ClassLoaderAdapterCollisionsTest
    public void testInterfaceParameterTypeCollision() throws Exception
    {
       ClassLoader thisLoader = ClassLoaderAdapterCollisionsTest.class.getClassLoader();
-      ClassLoader loader1 = registry.getRegisteredAddon(AddonId.from("dep", "1")).getClassLoader();
+      ClassLoader loader1 = registry.getAddon(AddonId.from("dep", "1")).getClassLoader();
 
       try
       {
@@ -247,7 +247,7 @@ public class ClassLoaderAdapterCollisionsTest
    public void testInterfaceParameterTypeCollisionRoundTrip() throws Exception
    {
       ClassLoader thisLoader = ClassLoaderAdapterCollisionsTest.class.getClassLoader();
-      ClassLoader loader1 = registry.getRegisteredAddon(AddonId.from("dep", "1")).getClassLoader();
+      ClassLoader loader1 = registry.getAddon(AddonId.from("dep", "1")).getClassLoader();
 
       try
       {
@@ -285,8 +285,8 @@ public class ClassLoaderAdapterCollisionsTest
    public void testReturnTypeEnhancementFromThirdPartyLoader() throws Exception
    {
       ClassLoader thisLoader = ClassLoaderAdapterCollisionsTest.class.getClassLoader();
-      ClassLoader dep1Loader = registry.getRegisteredAddon(AddonId.from("dep", "1")).getClassLoader();
-      ClassLoader dep2Loader = registry.getRegisteredAddon(AddonId.from("dep", "2")).getClassLoader();
+      ClassLoader dep1Loader = registry.getAddon(AddonId.from("dep", "1")).getClassLoader();
+      ClassLoader dep2Loader = registry.getAddon(AddonId.from("dep", "2")).getClassLoader();
 
       ClassCreatesInstanceFromClassLoader creator;
       try
@@ -316,8 +316,8 @@ public class ClassLoaderAdapterCollisionsTest
    public void testReturnTypeNativeAccessAfterParameterTypeEnhancementFromEnhancedClass() throws Exception
    {
       ClassLoader thisLoader = ClassLoaderAdapterCollisionsTest.class.getClassLoader();
-      ClassLoader dep1Loader = registry.getRegisteredAddon(AddonId.from("dep", "1")).getClassLoader();
-      ClassLoader dep2Loader = registry.getRegisteredAddon(AddonId.from("dep", "2")).getClassLoader();
+      ClassLoader dep1Loader = registry.getAddon(AddonId.from("dep", "1")).getClassLoader();
+      ClassLoader dep2Loader = registry.getAddon(AddonId.from("dep", "2")).getClassLoader();
 
       ClassImplementsInterfaceWithArrayParameterModification modifier = (ClassImplementsInterfaceWithArrayParameterModification) ClassLoaderAdapterBuilder
                .callingLoader(thisLoader)

@@ -42,7 +42,6 @@ import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.container.util.AddonFilters;
 import org.jboss.forge.container.util.Assert;
-import org.jboss.forge.container.util.CompletedFuture;
 import org.jboss.forge.container.util.ValuedVisitor;
 import org.jboss.forge.container.util.Visitor;
 import org.jboss.forge.container.versions.SingleVersionRange;
@@ -82,7 +81,7 @@ public class AddonRegistryImpl implements AddonRegistry
     * AddonRegistry methods
     */
    @Override
-   public AddonImpl getRegisteredAddon(final AddonId id)
+   public AddonImpl getAddon(final AddonId id)
    {
       return lock.performLocked(LockMode.READ, new Callable<AddonImpl>()
       {
@@ -95,13 +94,13 @@ public class AddonRegistryImpl implements AddonRegistry
    }
 
    @Override
-   public Set<Addon> getRegisteredAddons()
+   public Set<Addon> getAddons()
    {
-      return getRegisteredAddons(AddonFilters.all());
+      return getAddons(AddonFilters.all());
    }
 
    @Override
-   public Set<Addon> getRegisteredAddons(final AddonFilter filter)
+   public Set<Addon> getAddons(final AddonFilter filter)
    {
       return lock.performLocked(LockMode.READ, new Callable<Set<Addon>>()
       {
@@ -117,19 +116,6 @@ public class AddonRegistryImpl implements AddonRegistry
             }
 
             return result;
-         }
-      });
-   }
-
-   @Override
-   public boolean isRegistered(final AddonId id)
-   {
-      return lock.performLocked(LockMode.READ, new Callable<Boolean>()
-      {
-         @Override
-         public Boolean call() throws Exception
-         {
-            return getRegisteredAddon(id) != null;
          }
       });
    }
@@ -239,7 +225,8 @@ public class AddonRegistryImpl implements AddonRegistry
       Iterator<Addon> iterator = tree.iterator();
       while (iterator.hasNext())
       {
-         builder.append(iterator.next().toString());
+         Addon addon = iterator.next();
+         builder.append(addon.toString());
          if (iterator.hasNext())
             builder.append("\n");
       }
@@ -248,21 +235,17 @@ public class AddonRegistryImpl implements AddonRegistry
    }
 
    @Override
-   public Future<Addon> start(final AddonId id)
+   public Future<Void> start(final AddonId id)
    {
-      return lock.performLocked(LockMode.WRITE, new Callable<Future<Addon>>()
+      return lock.performLocked(LockMode.WRITE, new Callable<Future<Void>>()
       {
          @Override
-         public Future<Addon> call() throws Exception
+         public Future<Void> call() throws Exception
          {
-            Future<Addon> result = null;
-            AddonImpl addonToStart = getRegisteredAddon(id);
+            AddonImpl addonToStart = getAddon(id);
+            Future<Void> result = addonToStart.getFuture();
 
-            if (addonToStart.getFuture() != null)
-            {
-               result = addonToStart.getFuture();
-            }
-            else if (addonToStart.getStatus().isLoaded())
+            if (addonToStart.canBeStarted())
             {
                List<Addon> toStart = new ArrayList<Addon>();
                calculateAddonsToStart(addonToStart, toStart);
@@ -271,7 +254,7 @@ public class AddonRegistryImpl implements AddonRegistry
                {
                   if (addon.getStatus().isStarted())
                   {
-                     doStop(getRegisteredAddon(addon.getId()));
+                     doStop(getAddon(addon.getId()));
                   }
                }
 
@@ -286,11 +269,6 @@ public class AddonRegistryImpl implements AddonRegistry
                      doStart((AddonImpl) addon);
                   }
                }
-
-            }
-            else
-            {
-               result = new CompletedFuture<Addon>(addonToStart);
             }
 
             return result;
@@ -452,7 +430,7 @@ public class AddonRegistryImpl implements AddonRegistry
       for (AddonDependencyEntry entry : entries)
       {
          result.add(new AddonDependencyImpl(lock, addon, new SingleVersionRange(entry.getId().getVersion()),
-                  getRegisteredAddon(entry.getId()), entry.isExported(), entry.isOptional()));
+                  getAddon(entry.getId()), entry.isExported(), entry.isOptional()));
       }
       return result;
    }
@@ -534,14 +512,14 @@ public class AddonRegistryImpl implements AddonRegistry
       });
    }
 
-   public Set<Future<Addon>> startAll()
+   public Set<Future<Void>> startAll()
    {
-      return lock.performLocked(LockMode.WRITE, new Callable<Set<Future<Addon>>>()
+      return lock.performLocked(LockMode.WRITE, new Callable<Set<Future<Void>>>()
       {
          @Override
-         public Set<Future<Addon>> call() throws Exception
+         public Set<Future<Void>> call() throws Exception
          {
-            Set<Future<Addon>> result = new LinkedHashSet<Future<Addon>>();
+            Set<Future<Void>> result = new LinkedHashSet<Future<Void>>();
             for (AddonRepository repository : forge.getRepositories())
             {
                for (AddonId enabled : repository.listEnabled())
@@ -602,12 +580,12 @@ public class AddonRegistryImpl implements AddonRegistry
    {
       if (addon != null)
       {
-         Future<Addon> future = ((AddonImpl) addon).getFuture();
+         AddonRunnable runnable = ((AddonImpl) addon).getRunnable();
          try
          {
-            if (future != null)
+            if (runnable != null)
             {
-               ((AddonImpl) addon).getRunnable().shutdown();
+               runnable.shutdown();
             }
          }
          catch (Exception e)
@@ -616,6 +594,7 @@ public class AddonRegistryImpl implements AddonRegistry
          }
          finally
          {
+            Future<Void> future = addon.getFuture();
             if (future != null && !future.isDone())
                future.cancel(true);
 
@@ -630,24 +609,26 @@ public class AddonRegistryImpl implements AddonRegistry
       }
    }
 
-   private Future<Addon> doStart(AddonImpl addon)
+   private Future<Void> doStart(AddonImpl addon)
    {
       if (executor.isShutdown())
       {
          throw new IllegalStateException("Cannot start additional addons once Shutdown has been initiated.");
       }
 
-      if (addon.getFuture() == null)
+      Future<Void> result = null;
+      if (addon.getRunnable() == null)
       {
          AddonRunnable runnable = new AddonRunnable(forge, addon);
-         Future<Addon> result = executor.submit(runnable, (Addon) addon);
+         result = executor.submit(runnable, null);
          addon.setFuture(result);
          addon.setRunnable(runnable);
-         return result;
       }
       else
       {
-         return addon.getFuture();
+         result = addon.getFuture();
       }
+
+      return result;
    }
 }

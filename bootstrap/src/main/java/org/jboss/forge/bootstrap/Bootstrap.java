@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.ServiceLoader;
-import java.util.logging.Logger;
 
 import org.jboss.forge.addon.manager.InstallRequest;
 import org.jboss.forge.addon.manager.impl.AddonManagerImpl;
@@ -35,11 +34,11 @@ import org.jboss.forge.maven.dependencies.MavenDependencyResolver;
 
 /**
  * A class with a main method to bootstrap Forge.
- *
+ * 
  * You can deploy addons by calling {@link Bootstrap#install(String)}
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 public class Bootstrap
 {
@@ -63,7 +62,8 @@ public class Bootstrap
             {
                name = arg.substring(2);
                value = "true";
-            } else
+            }
+            else
             {
                name = arg.substring(2, index);
                value = arg.substring(index + 1);
@@ -78,7 +78,7 @@ public class Bootstrap
 
       // Check for the forge log directory
       final String logDir = systemProperties.getProperty("org.jboss.forge.log.file",
-            new File(OperatingSystemUtils.getUserForgeDir(), "log/forge.log").getAbsolutePath());
+               new File(OperatingSystemUtils.getUserForgeDir(), "log/forge.log").getAbsolutePath());
       // Ensure this value is always set
       systemProperties.setProperty("org.jboss.forge.log.file", logDir);
 
@@ -94,12 +94,10 @@ public class Bootstrap
 
    private Bootstrap(String[] args)
    {
-      final Logger logger = Logger.getLogger(Bootstrap.class.getName());
       boolean listInstalled = false;
       String installAddon = null;
       String removeAddon = null;
       forge = ServiceLoader.load(Forge.class).iterator().next();
-
 
       List<AddonRepository> repositories = new ArrayList<AddonRepository>();
       if (args.length > 0)
@@ -127,7 +125,7 @@ public class Bootstrap
                forge.setServerMode(false);
             }
             else
-               logger.warning("Unknown option: " + args[i]);
+               System.out.println("Unknown option: " + args[i]);
          }
       }
 
@@ -274,7 +272,8 @@ public class Bootstrap
                   line = line.substring(0, i);
                }
                line = line.trim();
-               if (line.length() == 0) continue;
+               if (line.length() == 0)
+                  continue;
                return line;
             }
 
@@ -288,7 +287,8 @@ public class Bootstrap
             try
             {
                stream.close();
-            } catch (IOException ignored)
+            }
+            catch (IOException ignored)
             {
                // ignore
             }

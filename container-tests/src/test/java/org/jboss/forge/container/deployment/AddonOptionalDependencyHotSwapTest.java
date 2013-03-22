@@ -67,8 +67,8 @@ public class AddonOptionalDependencyHotSwapTest
       AddonId depOneId = AddonId.from("dep", "1");
       AddonId depTwoId = AddonId.from("dep", "2");
 
-      Addon depOne = registry.getRegisteredAddon(depOneId);
-      Addon depTwo = registry.getRegisteredAddon(depTwoId);
+      Addon depOne = registry.getAddon(depOneId);
+      Addon depTwo = registry.getAddon(depTwoId);
 
       ClassLoader depOneClassloader = depOne.getClassLoader();
       ClassLoader depTwoClassloader = depTwo.getClassLoader();

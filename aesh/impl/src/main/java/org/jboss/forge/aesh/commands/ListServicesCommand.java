@@ -71,7 +71,7 @@ public class ListServicesCommand implements UICommand
    private String listServices() throws IOException
    {
       StringBuilder builder = new StringBuilder();
-      Set<Addon> addons = registry.getRegisteredAddons();
+      Set<Addon> addons = registry.getAddons();
       for (Addon addon : addons)
       {
          Set<Class<?>> serviceClasses = addon.getServiceRegistry().getServices();

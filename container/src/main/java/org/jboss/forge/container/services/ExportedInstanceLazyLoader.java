@@ -9,6 +9,7 @@ import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.util.AddonFilters;
 import org.jboss.forge.container.util.Addons;
 import org.jboss.forge.container.util.Assert;
+import org.jboss.forge.container.util.ClassLoaders;
 import org.jboss.forge.proxy.ForgeProxy;
 import org.jboss.forge.proxy.Proxies;
 
@@ -56,22 +57,26 @@ public class ExportedInstanceLazyLoader implements ForgeProxy
    private Object loadObject() throws Exception
    {
       Object result = null;
-      for (Addon addon : registry.getRegisteredAddons(AddonFilters.allStarted()))
+      for (Addon addon : registry.getAddons(AddonFilters.allLoaded()))
       {
-         Addons.waitUntilStarted(addon);
-         ServiceRegistry serviceRegistry = addon.getServiceRegistry();
-         if (serviceRegistry.hasService(serviceType))
+         if (ClassLoaders.containsClass(addon.getClassLoader(), serviceType))
          {
-            ExportedInstance<?> instance = serviceRegistry.getExportedInstance(serviceType);
-            Assert.notNull(instance, "Exported Instance of [" + serviceType.getName()
-                     + "] not found in originating ServiceRegistry [" + addon.getId() + "].");
-            if (instance instanceof ExportedInstanceImpl)
-               // FIXME remove the need for this implementation coupling
-               result = ((ExportedInstanceImpl<?>) instance).get(new LocalServiceInjectionPoint(injectionPoint,
-                        serviceType));
-            else
-               result = instance.get();
-            break;
+            Addons.waitUntilStarted(addon);
+
+            ServiceRegistry serviceRegistry = addon.getServiceRegistry();
+            if (serviceRegistry.hasService(serviceType))
+            {
+               ExportedInstance<?> instance = serviceRegistry.getExportedInstance(serviceType);
+               Assert.notNull(instance, "Exported Instance of [" + serviceType.getName()
+                        + "] not found in originating ServiceRegistry [" + addon.getId() + "].");
+               if (instance instanceof ExportedInstanceImpl)
+                  // FIXME remove the need for this implementation coupling
+                  result = ((ExportedInstanceImpl<?>) instance).get(new LocalServiceInjectionPoint(injectionPoint,
+                           serviceType));
+               else
+                  result = instance.get();
+               break;
+            }
          }
       }
 
