@@ -42,13 +42,13 @@ public final class Callables
       {
          return c.call();
       }
-      catch (RuntimeException re)
+      catch (RuntimeException e)
       {
-         throw re;
+         throw e;
       }
       catch (Exception e)
       {
-         throw new RuntimeException(e);
+         throw new RuntimeException("Error invoking Callable [c]", e);
       }
    }
 
