@@ -18,7 +18,7 @@ import java.io.UnsupportedEncodingException;
 
 /**
  * Stream utilities.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public abstract class Streams
@@ -82,6 +82,11 @@ public abstract class Streams
       return new ByteArrayInputStream(data.getBytes());
    }
 
+   /**
+    * Closes the resource without throwing any exception
+    *
+    * @param source the resource to be closed. May be null
+    */
    public static void closeQuietly(final Closeable source)
    {
       if (source != null)

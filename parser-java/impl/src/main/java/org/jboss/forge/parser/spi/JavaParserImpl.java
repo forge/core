@@ -7,6 +7,7 @@
 
 package org.jboss.forge.parser.spi;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -27,6 +28,7 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.jdt.internal.compiler.util.Util;
 import org.eclipse.jface.text.Document;
+import org.jboss.forge.container.util.Streams;
 import org.jboss.forge.parser.ParserException;
 import org.jboss.forge.parser.java.JavaAnnotation;
 import org.jboss.forge.parser.java.JavaClass;
@@ -48,8 +50,16 @@ public class JavaParserImpl implements JavaParserProvider
    @Override
    public JavaSource<?> parse(final File file) throws FileNotFoundException
    {
-      FileInputStream stream = new FileInputStream(file);
-      return parse(stream);
+      FileInputStream stream = null;
+      try
+      {
+         stream = new FileInputStream(file);
+         return parse(new BufferedInputStream(stream));
+      }
+      finally
+      {
+         Streams.closeQuietly(stream);
+      }
    }
 
    @Override
@@ -66,17 +76,7 @@ public class JavaParserImpl implements JavaParserProvider
       }
       finally
       {
-         if (data != null)
-         {
-            try
-            {
-               data.close();
-            }
-            catch (IOException e)
-            {
-               throw new IllegalStateException(e);
-            }
-         }
+         Streams.closeQuietly(data);
       }
    }
 
