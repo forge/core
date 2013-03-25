@@ -62,6 +62,8 @@ import org.jboss.forge.spec.javaee.PersistenceFacet;
 import org.jboss.forge.spec.javaee.RestActivatorType;
 import org.jboss.forge.spec.javaee.RestApplicationFacet;
 import org.jboss.forge.spec.javaee.RestFacet;
+import org.jboss.forge.spec.javaee.rest.events.RestGeneratedResources;
+
 import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -80,6 +82,9 @@ public class RestPlugin implements Plugin
 
    @Inject
    private Event<InstallFacets> request;
+   
+   @Inject
+   private Event<RestGeneratedResources> generatedEvent;
 
    @Inject
    @Current
@@ -153,6 +158,8 @@ public class RestPlugin implements Plugin
       }
 
       final JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+      List<JavaResource> endpoints = new ArrayList<JavaResource>();  // for RestGeneratedResources event
+      List<JavaResource> entities  = new ArrayList<JavaResource>();  // for RestGeneratedResources event
       for (JavaResource jr : javaTargets)
       {
          JavaClass entity = (JavaClass) (jr).getJavaSource();
@@ -210,16 +217,21 @@ public class RestPlugin implements Plugin
          /*
           * Save the sources
           */
-         java.saveJavaSource(entity);
+         entities.add(java.saveJavaSource(entity));
 
          if (!java.getJavaResource(resource).exists()
                   || prompt.promptBoolean("Endpoint [" + resource.getQualifiedName() + "] already, exists. Overwrite?"))
          {
-            java.saveJavaSource(resource);
+        	 endpoints.add(java.saveJavaSource(resource));
             ShellMessages.success(out, "Generated REST endpoint for [" + entity.getQualifiedName() + "]");
+            
          }
          else
             ShellMessages.info(out, "Aborted REST endpoint generation for [" + entity.getQualifiedName() + "]");
+      }
+      if (! entities.isEmpty())
+      {
+         generatedEvent.fire(new RestGeneratedResources(entities, endpoints));
       }
    }
 
