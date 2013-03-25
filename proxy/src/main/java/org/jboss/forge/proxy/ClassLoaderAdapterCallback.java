@@ -174,11 +174,29 @@ public class ClassLoaderAdapterCallback implements MethodHandler
             }
             else
             {
-               result = enhance(callingLoader, resultInstanceLoader, method, returnTypeHierarchy);
+               if (result.getClass().isEnum())
+                  result = enhanceEnum(callingLoader, result);
+               else
+                  result = enhance(callingLoader, resultInstanceLoader, method, returnTypeHierarchy);
             }
          }
       }
       return result;
+   }
+
+   @SuppressWarnings({ "unchecked", "rawtypes" })
+   private Object enhanceEnum(ClassLoader loader, Object instance)
+   {
+      try
+      {
+         Class<Enum> callingType = (Class<Enum>) loader.loadClass(instance.getClass().getName());
+         return Enum.valueOf(callingType, ((Enum) instance).name());
+      }
+      catch (ClassNotFoundException e)
+      {
+         throw new ContainerException(
+                  "Could not enhance instance [" + instance + "] of type [" + instance.getClass() + "]", e);
+      }
    }
 
    @SuppressWarnings("unchecked")
@@ -286,6 +304,10 @@ public class ClassLoaderAdapterCallback implements MethodHandler
             else if (delegateParameterType.isPrimitive())
             {
                parameterValues.add(parameterValue);
+            }
+            else if (delegateParameterType.isEnum())
+            {
+               parameterValues.add(enhanceEnum(methodLoader, parameterValue));
             }
             else
             {

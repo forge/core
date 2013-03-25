@@ -44,7 +44,11 @@ public class ClassLoaderInterceptor implements ForgeProxy
 
                return thisMethod.invoke(delegate, args);
             }
-            catch (Throwable e)
+            catch (RuntimeException e)
+            {
+               throw e;
+            }
+            catch (Exception e)
             {
                throw new ContainerException(
                         "Failed during invocation of proxy method [" + delegate.getClass().getName() + "."
