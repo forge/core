@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.services.ExportedInstance;
@@ -20,6 +21,7 @@ import org.jboss.forge.resource.DirectoryResource;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
+@Singleton
 public class ProjectFactoryImpl implements ProjectFactory
 {
    @Inject
