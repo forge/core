@@ -13,7 +13,7 @@ import java.util.concurrent.Future;
 import org.jboss.forge.container.addons.Addon;
 import org.jboss.forge.container.addons.AddonDependency;
 import org.jboss.forge.container.addons.AddonId;
-import org.jboss.forge.container.addons.Status;
+import org.jboss.forge.container.addons.AddonStatus;
 import org.jboss.forge.container.lock.LockManager;
 import org.jboss.forge.container.modules.AddonModuleLoader;
 import org.jboss.forge.container.repositories.AddonRepository;
@@ -30,7 +30,7 @@ public class AddonImpl implements Addon
 {
    private static class Memento
    {
-      public Status status = Status.MISSING;
+      public AddonStatus status = AddonStatus.MISSING;
       public Set<AddonDependency> dependencies = Sets.getConcurrentSet();
       public Set<AddonDependency> missingDependencies = Sets.getConcurrentSet();
 
@@ -154,12 +154,12 @@ public class AddonImpl implements Addon
    }
 
    @Override
-   public Status getStatus()
+   public AddonStatus getStatus()
    {
       return state.status;
    }
 
-   public Addon setStatus(Status status)
+   public Addon setStatus(AddonStatus status)
    {
       Assert.notNull(status, "Status must not be null.");
       this.state.status = status;

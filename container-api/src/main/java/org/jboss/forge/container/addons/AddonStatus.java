@@ -6,7 +6,7 @@
  */
 package org.jboss.forge.container.addons;
 
-public enum Status
+public enum AddonStatus
 {
    MISSING, LOADED, STARTED, FAILED;
 

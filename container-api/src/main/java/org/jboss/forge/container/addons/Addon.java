@@ -42,9 +42,9 @@ public interface Addon
    public AddonRepository getRepository();
 
    /**
-    * Get the {@link Status} of this {@link Addon}.
+    * Get the {@link AddonStatus} of this {@link Addon}.
     */
-   public Status getStatus();
+   public AddonStatus getStatus();
 
    /**
     * Get the {@link Set} of {@link AddonDependency} for this {@link Addon} (never <code>null</code>.)
@@ -53,7 +53,7 @@ public interface Addon
 
    /**
     * Return the {@link Future} representing the boot-up sequence for this {@link Addon} instance. Returns
-    * <code>null</code> if the {@link Addon} is not starting, {@link Status#isStarted()} or {@link Status#isFailed()}
+    * <code>null</code> if the {@link Addon} is not starting, {@link AddonStatus#isStarted()} or {@link AddonStatus#isFailed()}
     */
    public Future<Void> getFuture();
 }

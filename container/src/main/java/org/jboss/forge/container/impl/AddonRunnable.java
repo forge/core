@@ -15,7 +15,7 @@ import javax.enterprise.inject.spi.BeanManager;
 
 import org.jboss.forge.container.Forge;
 import org.jboss.forge.container.addons.Addon;
-import org.jboss.forge.container.addons.Status;
+import org.jboss.forge.container.addons.AddonStatus;
 import org.jboss.forge.container.event.PostStartup;
 import org.jboss.forge.container.event.PreShutdown;
 import org.jboss.forge.container.lock.LockMode;
@@ -48,7 +48,7 @@ public final class AddonRunnable implements Runnable
       @Override
       public Object call() throws Exception
       {
-         addon.setStatus(Status.LOADED);
+         addon.setStatus(AddonStatus.LOADED);
          return null;
       }
    };
@@ -144,14 +144,14 @@ public final class AddonRunnable implements Runnable
                 * This is an import-only addon and does not require weld, nor provide remote services.
                 */
                addon.setServiceRegistry(new NullServiceRegistry());
-               addon.setStatus(Status.STARTED);
+               addon.setStatus(AddonStatus.STARTED);
 
                shutdownCallback = new Callable<Object>()
                {
                   @Override
                   public Object call() throws Exception
                   {
-                     addon.setStatus(Status.LOADED);
+                     addon.setStatus(AddonStatus.LOADED);
                      return null;
                   }
                };
@@ -206,7 +206,7 @@ public final class AddonRunnable implements Runnable
                      }
                      finally
                      {
-                        addon.setStatus(Status.LOADED);
+                        addon.setStatus(AddonStatus.LOADED);
                         if (operation != null)
                            operation.cancel(true);
                      }
@@ -233,14 +233,14 @@ public final class AddonRunnable implements Runnable
                   }
                });
 
-               addon.setStatus(Status.STARTED);
+               addon.setStatus(AddonStatus.STARTED);
             }
 
             return shutdownCallback;
          }
          catch (Exception e)
          {
-            addon.setStatus(Status.FAILED);
+            addon.setStatus(AddonStatus.FAILED);
             throw e;
          }
       }

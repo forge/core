@@ -32,7 +32,7 @@ import org.jboss.forge.container.addons.AddonFilter;
 import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.addons.AddonTree;
-import org.jboss.forge.container.addons.Status;
+import org.jboss.forge.container.addons.AddonStatus;
 import org.jboss.forge.container.lock.LockManager;
 import org.jboss.forge.container.lock.LockMode;
 import org.jboss.forge.container.modules.AddonModuleLoader;
@@ -131,7 +131,7 @@ public class AddonRegistryImpl implements AddonRegistry
             Set<ExportedInstance<T>> result = new HashSet<ExportedInstance<T>>();
             for (Addon addon : tree)
             {
-               if (Status.STARTED.equals(addon.getStatus()))
+               if (AddonStatus.STARTED.equals(addon.getStatus()))
                {
                   ServiceRegistry serviceRegistry = addon.getServiceRegistry();
                   result.addAll(serviceRegistry.getExportedInstances(type));
@@ -411,7 +411,7 @@ public class AddonRegistryImpl implements AddonRegistry
                   addon.setModuleLoader(moduleLoader);
                   addon.setModule(module);
                   addon.setRepository(repository);
-                  addon.setStatus(Status.LOADED);
+                  addon.setStatus(AddonStatus.LOADED);
                }
                catch (Exception e)
                {
