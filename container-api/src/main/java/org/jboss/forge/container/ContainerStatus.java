@@ -15,7 +15,12 @@ package org.jboss.forge.container;
  */
 public enum ContainerStatus
 {
-   STARTED, STOPPED;
+   STARTING, STARTED, STOPPED;
+
+   public boolean isStarting()
+   {
+      return this == STARTING;
+   }
 
    public boolean isStarted()
    {

@@ -287,6 +287,6 @@ public class ForgeImpl implements Forge
    @Override
    public ContainerStatus getStatus()
    {
-      return status;
+      return isStartingAddons() ? ContainerStatus.STARTING : status;
    }
 }
