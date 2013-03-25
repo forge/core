@@ -6,10 +6,14 @@
  */
 package org.jboss.forge.projects;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.services.ExportedInstance;
+import org.jboss.forge.container.spi.ListenerRegistration;
 import org.jboss.forge.container.util.Predicate;
 import org.jboss.forge.resource.DirectoryResource;
 
@@ -20,6 +24,8 @@ public class ProjectFactoryImpl implements ProjectFactory
 {
    @Inject
    private AddonRegistry registry;
+
+   private final List<ProjectListener> projectListeners = new ArrayList<ProjectListener>();
 
    @Override
    public Project findProject(DirectoryResource target)
@@ -94,8 +100,34 @@ public class ProjectFactoryImpl implements ProjectFactory
             }
          }
       }
-
+      if (result != null)
+      {
+         // Notify listeners
+         fireProjectCreated(result);
+      }
       return result;
    }
 
+   private void fireProjectCreated(Project project)
+   {
+      for (ProjectListener listener : projectListeners)
+      {
+         listener.projectCreated(project);
+      }
+   }
+
+   @Override
+   public ListenerRegistration<ProjectListener> addProjectListener(final ProjectListener listener)
+   {
+      projectListeners.add(listener);
+      return new ListenerRegistration<ProjectListener>()
+      {
+         @Override
+         public ProjectListener removeListener()
+         {
+            projectListeners.remove(listener);
+            return listener;
+         }
+      };
+   }
 }

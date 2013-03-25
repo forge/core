@@ -7,6 +7,8 @@ package org.jboss.forge.projects.impl;
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
+import java.util.Collections;
+
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -19,9 +21,12 @@ import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.repositories.AddonDependencyEntry;
 import org.jboss.forge.container.util.Predicate;
 import org.jboss.forge.projects.Project;
+import org.jboss.forge.projects.ProjectFacet;
 import org.jboss.forge.projects.ProjectFactory;
+import org.jboss.forge.projects.ProjectType;
 import org.jboss.forge.resource.DirectoryResource;
 import org.jboss.forge.resource.ResourceFactory;
+import org.jboss.forge.ui.wizard.UIWizardStep;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -62,6 +67,36 @@ public class ProjectFactoryImplTest
    public void testInjectionNotNull()
    {
       Assert.assertNotNull(projectFactory);
+   }
+
+   @Test
+   public void testCreateProject() throws Exception
+   {
+      DirectoryResource addonDir = factory.create(forge.getRepositories().get(0).getRootDirectory()).reify(
+               DirectoryResource.class);
+      DirectoryResource projectDir = addonDir.createTempResource();
+      Project project = projectFactory.createProject(projectDir, new ProjectType()
+      {
+
+         @Override
+         public String getType()
+         {
+            return "Test Type";
+         }
+
+         @Override
+         public Class<? extends UIWizardStep> getSetupFlow()
+         {
+            return null;
+         }
+
+         @Override
+         public Iterable<Class<? extends ProjectFacet>> getRequiredFacets()
+         {
+            return Collections.emptySet();
+         }
+      });
+      Assert.assertNotNull(project);
    }
 
    @Test

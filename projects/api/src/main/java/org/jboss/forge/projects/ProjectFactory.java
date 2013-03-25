@@ -7,12 +7,13 @@
 package org.jboss.forge.projects;
 
 import org.jboss.forge.container.services.Exported;
+import org.jboss.forge.container.spi.ListenerRegistration;
 import org.jboss.forge.container.util.Predicate;
 import org.jboss.forge.resource.DirectoryResource;
 
 /**
  * Used to create new or obtain references to existing {@link Project} instances.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Exported
@@ -33,4 +34,12 @@ public interface ProjectFactory
     * Create a {@link Project} with the given {@link ProjectType} instances in the specified {@link DirectoryResource}.
     */
    public Project createProject(DirectoryResource targetDir, ProjectType... types);
+
+   /**
+    * Register a listener for project events
+    *
+    * @param listener
+    * @return
+    */
+   public ListenerRegistration<ProjectListener> addProjectListener(ProjectListener listener);
 }

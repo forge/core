@@ -558,6 +558,7 @@ public abstract class BaseModuleSpecProvider implements ModuleSpecProvider
       systemPaths.add("org/jboss/forge/container/modules");
       systemPaths.add("org/jboss/forge/container/modules/providers");
       systemPaths.add("org/jboss/forge/container/services");
+      systemPaths.add("org/jboss/forge/container/spi");
       systemPaths.add("org/jboss/forge/container/util");
       systemPaths.add("org/jboss/forge/container/util/cdi");
       systemPaths.add("org/jboss/forge/container/versions");
