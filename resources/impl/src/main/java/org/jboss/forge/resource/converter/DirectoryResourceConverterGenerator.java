@@ -13,31 +13,35 @@ import javax.inject.Inject;
 import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.convert.ConverterGenerator;
 import org.jboss.forge.resource.DirectoryResource;
-import org.jboss.forge.resource.Resource;
 
+/**
+ * Generates {@link DirectoryResourceConverter}
+ *
+ * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
+ *
+ */
 @Exported
-public class ResourceConverterGenerator implements ConverterGenerator
+public class DirectoryResourceConverterGenerator implements ConverterGenerator
 {
 
    @Inject
-   private Instance<ResourceConverter> converter;
+   private Instance<DirectoryResourceConverter> converter;
 
    @Override
    public boolean handles(Class<?> source, Class<?> target)
    {
-      // All resources except DirectoryResource, because it will be handled by DirectoryResourceConverter
-      return Resource.class.isAssignableFrom(target) && !DirectoryResource.class.isAssignableFrom(target);
+      return DirectoryResource.class.isAssignableFrom(target);
    }
 
    @Override
-   public ResourceConverter generateConverter(Class<?> source, Class<?> target)
+   public DirectoryResourceConverter generateConverter(Class<?> source, Class<?> target)
    {
       return converter.get();
    }
 
    @Override
-   public Class<ResourceConverter> getConverterType()
+   public Class<DirectoryResourceConverter> getConverterType()
    {
-      return ResourceConverter.class;
+      return DirectoryResourceConverter.class;
    }
 }
