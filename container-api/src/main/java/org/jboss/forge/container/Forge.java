@@ -18,7 +18,7 @@ import org.jboss.forge.container.versions.Version;
 
 /**
  * Operations for initializing, starting, interacting with, and stopping a {@link Forge} container.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public interface Forge
@@ -97,5 +97,14 @@ public interface Forge
     */
    public ClassLoader getRuntimeClassLoader();
 
+   /**
+    * Get the {@link LockManager} associated with this {@link Forge} instance
+    */
    public LockManager getLockManager();
+
+   /**
+    * Get the current status of this {@link Forge} container
+    */
+   public ContainerStatus getStatus();
+
 }

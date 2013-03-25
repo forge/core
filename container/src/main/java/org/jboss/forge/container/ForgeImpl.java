@@ -25,6 +25,8 @@ public class ForgeImpl implements Forge
    private static Logger logger = Logger.getLogger(ForgeImpl.class.getName());
 
    private volatile boolean alive = false;
+   private volatile ContainerStatus status = ContainerStatus.STOPPED;
+
    private boolean serverMode = true;
    private AddonRegistryImpl registry;
    private List<ContainerLifecycleListener> registeredListeners = new ArrayList<ContainerLifecycleListener>();
@@ -178,6 +180,7 @@ public class ForgeImpl implements Forge
       {
          listener.beforeStart(this);
       }
+      status = ContainerStatus.STARTED;
    }
 
    private void fireBeforeContainerStoppedEvent(ClassLoader loader)
@@ -190,6 +193,7 @@ public class ForgeImpl implements Forge
       {
          listener.beforeStop(this);
       }
+      status = ContainerStatus.STOPPED;
    }
 
    private void fireAfterContainerStoppedEvent(ClassLoader loader)
@@ -278,5 +282,11 @@ public class ForgeImpl implements Forge
    {
       if (alive)
          throw new IllegalStateException("Cannot modify a running Forge instance. Call .stop() first.");
+   }
+
+   @Override
+   public ContainerStatus getStatus()
+   {
+      return status;
    }
 }
