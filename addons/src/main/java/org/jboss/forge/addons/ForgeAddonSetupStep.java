@@ -21,7 +21,7 @@ import org.jboss.forge.ui.wizard.UIWizardStep;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 public class ForgeAddonSetupStep implements UIWizardStep
 {
@@ -45,6 +45,7 @@ public class ForgeAddonSetupStep implements UIWizardStep
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
+      splitApiImpl.setLabel("Split API and Implementation projects");
       builder.add(splitApiImpl);
    }
 
