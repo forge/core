@@ -8,6 +8,7 @@ package org.jboss.forge.projects.impl;
  */
 
 import java.util.Collections;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
 
@@ -19,10 +20,12 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.Forge;
 import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.repositories.AddonDependencyEntry;
+import org.jboss.forge.container.spi.ListenerRegistration;
 import org.jboss.forge.container.util.Predicate;
 import org.jboss.forge.projects.Project;
 import org.jboss.forge.projects.ProjectFacet;
 import org.jboss.forge.projects.ProjectFactory;
+import org.jboss.forge.projects.ProjectListener;
 import org.jboss.forge.projects.ProjectType;
 import org.jboss.forge.resource.DirectoryResource;
 import org.jboss.forge.resource.ResourceFactory;
@@ -75,6 +78,16 @@ public class ProjectFactoryImplTest
       DirectoryResource addonDir = factory.create(forge.getRepositories().get(0).getRootDirectory()).reify(
                DirectoryResource.class);
       DirectoryResource projectDir = addonDir.createTempResource();
+      final AtomicBoolean projectSet = new AtomicBoolean(false);
+      ListenerRegistration<ProjectListener> registration = projectFactory.addProjectListener(new ProjectListener()
+      {
+         @Override
+         public void projectCreated(Project project)
+         {
+            projectSet.set(true);
+         }
+      });
+      Assert.assertNotNull("Should not have returned a null listener registration", registration);
       Project project = projectFactory.createProject(projectDir, new ProjectType()
       {
 
@@ -96,7 +109,9 @@ public class ProjectFactoryImplTest
             return Collections.emptySet();
          }
       });
+      registration.removeListener();
       Assert.assertNotNull(project);
+      Assert.assertTrue("Listener was not called", projectSet.get());
    }
 
    @Test
