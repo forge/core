@@ -191,7 +191,7 @@ public class MavenFacetImpl extends BaseFacet<Project> implements ProjectFacet, 
    @Override
    public MavenPomResource getPomResource()
    {
-      return (MavenPomResource) getOrigin().getProjectRoot().getChild("pom.xml").reify(MavenPomResource.class);
+      return getOrigin().getProjectRoot().getChild("pom.xml").reify(MavenPomResource.class);
    }
 
    @Override
@@ -359,6 +359,7 @@ public class MavenFacetImpl extends BaseFacet<Project> implements ProjectFacet, 
       return executeMaven(parameters.toArray(new String[] {}));
    }
 
+   @SuppressWarnings("resource")
    public boolean executeMaven(final String[] selected)
    {
       return executeMaven(new NullOutputStream(), selected);
