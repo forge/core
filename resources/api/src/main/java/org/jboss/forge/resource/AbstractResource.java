@@ -65,7 +65,7 @@ public abstract class AbstractResource<T> extends AbstractFaceted<ResourceFacet>
 
    /**
     * Strategy method for returning child resources. Subclasses should implement or override this method.
-    * 
+    *
     * @return
     */
    protected abstract List<Resource<?>> doListResources();
@@ -129,6 +129,6 @@ public abstract class AbstractResource<T> extends AbstractFaceted<ResourceFacet>
    @Override
    public <F extends ResourceFacet> boolean supports(F facet)
    {
-      return facet instanceof ResourceFacet;
+      return facet != null;
    }
 }

@@ -16,7 +16,7 @@ import org.jboss.forge.container.util.OperatingSystemUtils;
 
 /**
  * A standard, build-in, resource for representing directories on the file-system.
- * 
+ *
  * @author Mike Brock
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -67,6 +67,7 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
     * Obtain a reference to the child {@link DirectoryResourceImpl}. If that resource does not exist, return a new
     * instance. If the resource exists and is not a {@link DirectoryResourceImpl}, throw {@link ResourceException}
     */
+   @Override
    public DirectoryResourceImpl getChildDirectory(final String name) throws ResourceException
    {
       Resource<?> result = getChild(name);
@@ -86,6 +87,7 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
       return (DirectoryResourceImpl) result;
    }
 
+   @Override
    public DirectoryResourceImpl getOrCreateChildDirectory(String name)
    {
       DirectoryResourceImpl child = getChildDirectory(name);
@@ -101,6 +103,7 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
     * requested type and does not exist, return null. If the result is not of the requested type and exists, throw
     * {@link ResourceException}
     */
+   @Override
    @SuppressWarnings("unchecked")
    public <E, T extends Resource<E>> T getChildOfType(final Class<T> type, final String name) throws ResourceException
    {
