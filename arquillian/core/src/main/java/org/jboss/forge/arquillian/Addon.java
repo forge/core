@@ -13,5 +13,8 @@ public @interface Addon
 {
    String name();
 
-   String version();
+   /**
+    * Always attempt to run against the latest version by default
+    */
+   String version() default "LATEST";
 }
