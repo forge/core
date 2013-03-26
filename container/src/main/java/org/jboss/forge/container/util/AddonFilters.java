@@ -6,10 +6,6 @@
  */
 package org.jboss.forge.container.util;
 
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
 import org.jboss.forge.container.addons.Addon;
 import org.jboss.forge.container.addons.AddonFilter;
 
@@ -37,19 +33,7 @@ public class AddonFilters
          @Override
          public boolean accept(Addon addon)
          {
-            try
-            {
-               Future<Void> future = addon.getFuture();
-               future.get(0, TimeUnit.MILLISECONDS);
-            }
-            catch (TimeoutException e)
-            {
-               return true;
-            }
-            catch (Exception dontCare)
-            {
-            }
-            return false;
+            return !addon.getFuture().isDone();
          }
       };
    }
