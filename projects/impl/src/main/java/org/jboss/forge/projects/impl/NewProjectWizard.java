@@ -74,13 +74,13 @@ public class NewProjectWizard implements UIWizard
    @Override
    public void initializeUI(final UIBuilder builder) throws Exception
    {
-      named.setLabel("Project name");
+      named.setLabel("Project name:");
       named.setRequired(true);
 
-      topLevelPackage.setLabel("Top level package");
+      topLevelPackage.setLabel("Top level package:");
       topLevelPackage.setRequired(true);
 
-      targetLocation.setLabel("Project location");
+      targetLocation.setLabel("Project location:");
 
       UISelection<Resource<?>> currentSelection = builder.getUIContext().getInitialSelection();
       if (currentSelection != null)
@@ -106,7 +106,7 @@ public class NewProjectWizard implements UIWizard
                      && !targetLocation.getValue().listResources().isEmpty();
          }
       });
-
+      type.setLabel("Project Type:");
       type.setRequired(true);
       type.setItemLabelConverter(new Converter<ProjectType, String>()
       {
