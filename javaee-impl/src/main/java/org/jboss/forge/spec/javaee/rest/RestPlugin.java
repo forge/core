@@ -62,7 +62,7 @@ import org.jboss.forge.spec.javaee.PersistenceFacet;
 import org.jboss.forge.spec.javaee.RestActivatorType;
 import org.jboss.forge.spec.javaee.RestApplicationFacet;
 import org.jboss.forge.spec.javaee.RestFacet;
-import org.jboss.forge.spec.javaee.rest.events.RestGeneratedResources;
+import org.jboss.forge.spec.javaee.events.RestGeneratedResources;
 
 import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;
@@ -82,7 +82,7 @@ public class RestPlugin implements Plugin
 
    @Inject
    private Event<InstallFacets> request;
-   
+
    @Inject
    private Event<RestGeneratedResources> generatedEvent;
 
@@ -224,7 +224,7 @@ public class RestPlugin implements Plugin
          {
         	 endpoints.add(java.saveJavaSource(resource));
             ShellMessages.success(out, "Generated REST endpoint for [" + entity.getQualifiedName() + "]");
-            
+
          }
          else
             ShellMessages.info(out, "Aborted REST endpoint generation for [" + entity.getQualifiedName() + "]");

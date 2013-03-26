@@ -13,19 +13,18 @@ import java.util.List;
 import javax.enterprise.event.Observes;
 import javax.inject.Singleton;
 
-import org.jboss.forge.resources.Resource;
 import org.jboss.forge.resources.java.JavaResource;
-import org.jboss.forge.spec.javaee.rest.events.RestGeneratedResources;
+import org.jboss.forge.spec.javaee.events.RestGeneratedResources;
 
 /**
  * @author <a href="mailto:salmon.charles@gmail.com">charless</a>
- * 
+ *
  */
 @Singleton
 public class RestGeneratedResourcesEventObserver {
 	private final List<JavaResource> endpoints = new ArrayList<JavaResource>();
 	private final List<JavaResource> entities = new ArrayList<JavaResource>();
-	
+
 	void generated(@Observes final RestGeneratedResources event)
 	   {
 			for (JavaResource jr: event.getEndpoints()) {
@@ -35,7 +34,7 @@ public class RestGeneratedResourcesEventObserver {
 				this.entities.add(jr);
 			}
 	   }
-	
+
 	public List<JavaResource> getEndpoints() {
 		return endpoints;
 	}
