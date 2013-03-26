@@ -16,7 +16,6 @@ import org.jboss.forge.addon.manager.AddonManager;
 import org.jboss.forge.addon.manager.impl.AddonManagerImpl;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.addons.AddonId;
-import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.impl.AddonRepositoryImpl;
 import org.jboss.forge.maven.dependencies.FileResourceFactory;
 import org.jboss.forge.maven.dependencies.MavenContainer;
@@ -65,7 +64,5 @@ public class MultipleRepositoryTest
                new MavenContainer()));
 
       manager.install(AddonId.from("org.jboss", null));
-
-      AddonRegistry registry = forge.getAddonRegistry();
    }
 }

@@ -19,11 +19,11 @@ import org.jboss.forge.resource.VirtualResource;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @SuppressWarnings("rawtypes")
-public abstract class JavaMemberResource<T extends Member> extends VirtualResource<T>
+public abstract class AbstractJavaMemberResource<T extends Member> extends VirtualResource<T>
 {
    private final T member;
 
-   public JavaMemberResource(ResourceFactory factory, final Resource<?> parent, final T member)
+   public AbstractJavaMemberResource(ResourceFactory factory, final Resource<?> parent, final T member)
    {
       super(factory, parent);
       this.member = member;

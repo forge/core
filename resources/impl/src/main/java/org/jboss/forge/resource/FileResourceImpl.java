@@ -15,35 +15,30 @@ import java.util.List;
  * Represents any regular file which Forge does not hav any special handler for.
  * 
  * @author Mike Brock
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class UnknownFileResource extends FileResource<UnknownFileResource>
+public class FileResourceImpl extends AbstractFileResource<FileResourceImpl>
 {
-   public UnknownFileResource(final ResourceFactory factory)
+   public FileResourceImpl(final ResourceFactory factory)
    {
       super(factory, null);
    }
 
-   public UnknownFileResource(final ResourceFactory factory, final File file)
+   public FileResourceImpl(final ResourceFactory factory, final File file)
    {
       super(factory, file);
    }
 
    @Override
-   public UnknownFileResource createFrom(final File file)
+   public FileResourceImpl createFrom(final File file)
    {
-      return new UnknownFileResource(resourceFactory, file);
+      return new FileResourceImpl(resourceFactory, file);
    }
 
    @Override
    protected List<Resource<?>> doListResources()
    {
       return Collections.emptyList();
-   }
-
-   @Override
-   public String toString()
-   {
-      return file.getName();
    }
 
    @Override

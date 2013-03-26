@@ -56,7 +56,7 @@ public class URLResourceGeneratorTest
       URL url = new URL("http://forge.jboss.org");
       Resource<?> resource = factory.create(url);
       Assert.assertNotNull(resource);
-      Assert.assertEquals(URLResource.class, resource.getClass());
+      Assert.assertTrue(resource instanceof URLResource);
       Assert.assertSame(url, resource.getUnderlyingResourceObject());
    }
 

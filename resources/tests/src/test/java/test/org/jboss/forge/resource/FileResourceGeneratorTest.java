@@ -16,7 +16,7 @@ import org.jboss.forge.resource.DirectoryResource;
 import org.jboss.forge.resource.FileResource;
 import org.jboss.forge.resource.Resource;
 import org.jboss.forge.resource.ResourceFactory;
-import org.jboss.forge.resource.UnknownFileResource;
+import org.jboss.forge.resource.FileResourceImpl;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -52,7 +52,7 @@ public class FileResourceGeneratorTest
    {
       FileResource<?> resource = factory.create(new File(UUID.randomUUID().toString())).reify(FileResource.class);
       Assert.assertNotNull(resource);
-      Assert.assertEquals(UnknownFileResource.class, resource.getClass());
+      Assert.assertEquals(FileResourceImpl.class, resource.getClass());
    }
 
    @Test
@@ -61,7 +61,7 @@ public class FileResourceGeneratorTest
       File file = File.createTempFile("temp", "file");
       FileResource<?> resource = factory.create(file).reify(FileResource.class);
       Assert.assertNotNull(resource);
-      Assert.assertEquals(UnknownFileResource.class, resource.getClass());
+      Assert.assertEquals(FileResourceImpl.class, resource.getClass());
    }
 
    @Test

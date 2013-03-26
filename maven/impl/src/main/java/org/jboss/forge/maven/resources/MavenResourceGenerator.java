@@ -1,3 +1,9 @@
+/*
+ * Copyright 2012 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Eclipse Public License version 1.0, available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.jboss.forge.maven.resources;
 
 import java.io.File;
@@ -24,7 +30,7 @@ public class MavenResourceGenerator implements ResourceGenerator<MavenPomResourc
    @SuppressWarnings("unchecked")
    public <T extends Resource<File>> T getResource(ResourceFactory factory, Class<MavenPomResource> type, File resource)
    {
-      return (T) new MavenPomResource(factory, resource);
+      return (T) new MavenPomResourceImpl(factory, resource);
    }
 
    @Override

@@ -24,6 +24,7 @@ public class AddonDependencyImpl implements AddonDependency
    private Addon dependency;
    private VersionRange dependencyVersionRange;
 
+   @SuppressWarnings("unused")
    private LockManager lockManager;
 
    public AddonDependencyImpl(LockManager lockManager,

@@ -7,61 +7,15 @@
 
 package org.jboss.forge.maven.resources;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Profile;
 import org.jboss.forge.resource.Resource;
-import org.jboss.forge.resource.ResourceFactory;
-import org.jboss.forge.resource.VirtualResource;
 
 /**
+ * Represents a Maven profile.
+ * 
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class MavenProfileResource extends VirtualResource<Profile>
+public interface MavenProfileResource extends Resource<Profile>
 {
-   private final Profile profile;
-
-   public MavenProfileResource(ResourceFactory factory, Resource<?> parent, Profile profile)
-   {
-      super(factory, parent);
-      this.profile = profile;
-   }
-
-   @Override
-   public String getName()
-   {
-      return profile.getId();
-   }
-
-   @Override
-   protected List<Resource<?>> doListResources()
-   {
-      List<Resource<?>> children = new ArrayList<Resource<?>>();
-      for (Dependency dep : profile.getDependencies())
-      {
-         children.add(new MavenDependencyResource(this, dep));
-      }
-      return children;
-   }
-
-   @Override
-   public Profile getUnderlyingResourceObject()
-   {
-      return profile;
-   }
-
-   @Override
-   public boolean delete() throws UnsupportedOperationException
-   {
-      throw new UnsupportedOperationException("not supported");
-   }
-
-   @Override
-   public boolean delete(boolean recursive) throws UnsupportedOperationException
-   {
-      throw new UnsupportedOperationException("not supported");
-   }
 }

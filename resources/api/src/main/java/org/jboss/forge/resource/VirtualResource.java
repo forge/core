@@ -3,6 +3,8 @@ package org.jboss.forge.resource;
 import java.io.InputStream;
 
 /**
+ * An abstract implementation of a virtual resource handle.
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public abstract class VirtualResource<T> extends AbstractResource<T>

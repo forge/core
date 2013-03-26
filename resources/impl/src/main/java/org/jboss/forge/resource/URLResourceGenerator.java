@@ -30,7 +30,7 @@ public class URLResourceGenerator implements ResourceGenerator<URLResource, URL>
    @SuppressWarnings("unchecked")
    public <T extends Resource<URL>> T getResource(ResourceFactory factory, Class<URLResource> type, URL resource)
    {
-      return (T) new URLResource(factory, resource);
+      return (T) new URLResourceImpl(factory, resource);
    }
 
    @Override

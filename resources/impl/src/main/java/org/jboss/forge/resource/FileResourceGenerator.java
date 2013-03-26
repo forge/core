@@ -22,8 +22,8 @@ public class FileResourceGenerator implements ResourceGenerator<FileResource<?>,
    public <T extends Resource<File>> T getResource(ResourceFactory factory, Class<FileResource<?>> type, File resource)
    {
       if (DirectoryResource.class.isAssignableFrom(type) || (resource.exists() && resource.isDirectory()))
-         return (T) new DirectoryResource(factory, resource);
-      return (T) new UnknownFileResource(factory, resource);
+         return (T) new DirectoryResourceImpl(factory, resource);
+      return (T) new FileResourceImpl(factory, resource);
    }
 
    @Override
@@ -31,6 +31,6 @@ public class FileResourceGenerator implements ResourceGenerator<FileResource<?>,
    {
       if (DirectoryResource.class.isAssignableFrom(type) || (resource.exists() && resource.isDirectory()))
          return DirectoryResource.class;
-      return UnknownFileResource.class;
+      return FileResourceImpl.class;
    }
 }

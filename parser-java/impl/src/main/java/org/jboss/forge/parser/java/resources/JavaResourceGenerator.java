@@ -24,7 +24,7 @@ public class JavaResourceGenerator implements ResourceGenerator<JavaResource, Fi
    @SuppressWarnings("unchecked")
    public <T extends Resource<File>> T getResource(ResourceFactory factory, Class<JavaResource> type, File resource)
    {
-      return (T) new JavaResource(factory, resource);
+      return (T) new JavaResourceImpl(factory, resource);
    }
 
    @Override

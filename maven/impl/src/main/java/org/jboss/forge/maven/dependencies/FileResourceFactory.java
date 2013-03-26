@@ -7,12 +7,14 @@
 package org.jboss.forge.maven.dependencies;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.List;
 
 import javax.enterprise.inject.Vetoed;
 
+import org.jboss.forge.resource.AbstractFileResource;
 import org.jboss.forge.resource.Resource;
 import org.jboss.forge.resource.ResourceFactory;
-import org.jboss.forge.resource.UnknownFileResource;
 import org.jboss.forge.resource.events.ResourceEvent;
 
 /**
@@ -35,8 +37,27 @@ public class FileResourceFactory implements ResourceFactory
    public <E> Resource<E> create(E underlyingResource)
    {
       if (underlyingResource instanceof File)
-         return (Resource<E>) new UnknownFileResource(this, (File) underlyingResource);
+         return (Resource<E>) createFileResource((File) underlyingResource);
       return null;
+   }
+
+   @SuppressWarnings({ "rawtypes", "unchecked" })
+   private <E> Resource<E> createFileResource(File resource)
+   {
+      return new AbstractFileResource(this, resource)
+      {
+         @Override
+         public Resource createFrom(File file)
+         {
+            return createFileResource(file);
+         }
+
+         @Override
+         protected List<File> doListResources()
+         {
+            return Collections.emptyList();
+         }
+      };
    }
 
    @Override

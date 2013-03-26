@@ -53,7 +53,6 @@ public class ClassLoaderAdapterEnumCollisionsTest
    @Inject
    private AddonRegistry registry;
 
-   @SuppressWarnings("unchecked")
    @Test
    public void testSimpleEnumCollision() throws Exception
    {
@@ -66,7 +65,8 @@ public class ClassLoaderAdapterEnumCollisionsTest
          SimpleEnum local = (SimpleEnum) foreignType.getMethod("getEnum")
                   .invoke(foreignType.newInstance());
 
-         Assert.fail("Should have received a " + ClassCastException.class.getName());
+         Assert.fail("Should have received a " + ClassCastException.class.getName() + " but got a real object ["
+                  + local + "]");
       }
       catch (ClassCastException e)
       {
