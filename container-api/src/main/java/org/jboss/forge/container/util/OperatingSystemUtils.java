@@ -70,4 +70,26 @@ public final class OperatingSystemUtils
    {
       return System.getProperty("line.separator");
    }
+
+   /**
+    * The following characters are invalid as file or folder names on Windows using NTFS:
+    *
+    * / ? < > \ : * | ” and any character you can type with the Ctrl key
+    *
+    * @param filename
+    * @return
+    */
+   public static String getSafeFilename(String filename)
+   {
+      String safeFilename;
+      if (isWindows())
+      {
+         safeFilename = filename.replaceAll("[/?<>\\\\:*|\"]", "_");
+      }
+      else
+      {
+         safeFilename = filename;
+      }
+      return safeFilename;
+   }
 }
