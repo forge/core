@@ -1,6 +1,5 @@
 package org.jboss.forge.arquillian;
 
-import java.io.File;
 import java.util.Collection;
 
 import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
@@ -11,7 +10,6 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.arquillian.archive.ForgeRemoteAddon;
 import org.jboss.forge.arquillian.runner.CDIEnricherRemoteExtensionWorkaround;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 
 public class ForgeDeploymentPackager implements DeploymentPackager
 {
@@ -37,12 +35,5 @@ public class ForgeDeploymentPackager implements DeploymentPackager
          throw new IllegalArgumentException(
                   "Invalid Archive type. Ensure that your @Deployment method returns type 'ForgeArchive'.");
       }
-   }
-
-   protected static File[] resolveDependencies(final String coords)
-   {
-      return Maven.resolver().loadPomFromFile("pom.xml")
-               .resolve(coords)
-               .withTransitivity().asFile();
    }
 }
