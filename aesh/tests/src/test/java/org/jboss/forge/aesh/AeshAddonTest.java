@@ -37,7 +37,9 @@ public class AeshAddonTest
 
    @Deployment
    @Dependencies({ @Addon(name = "org.jboss.forge:ui", version = "2.0.0-SNAPSHOT"),
-            @Addon(name = "org.jboss.forge:aesh", version = "2.0.0-SNAPSHOT") })
+            @Addon(name = "org.jboss.forge:aesh-test-harness", version = "2.0.0-SNAPSHOT"),
+            @Addon(name = "org.jboss.forge:aesh", version = "2.0.0-SNAPSHOT")
+   })
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)

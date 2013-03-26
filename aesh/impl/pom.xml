@@ -18,6 +18,11 @@
          <scope>provided</scope>
       </dependency>
       <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>aesh-spi</artifactId>
+         <scope>provided</scope>
+      </dependency>
+      <dependency>
          <groupId>org.jboss.aesh</groupId>
          <artifactId>aesh</artifactId>
          <version>0.36</version>

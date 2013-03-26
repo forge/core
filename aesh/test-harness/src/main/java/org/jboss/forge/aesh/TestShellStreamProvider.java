@@ -6,6 +6,8 @@
  */
 package org.jboss.forge.aesh;
 
+import org.jboss.forge.aesh.spi.ShellStreamProvider;
+
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
