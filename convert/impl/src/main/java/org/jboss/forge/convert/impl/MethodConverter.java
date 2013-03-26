@@ -11,11 +11,11 @@ import java.lang.reflect.Method;
 
 import javax.enterprise.inject.Vetoed;
 
-import org.jboss.forge.convert.BaseConverter;
+import org.jboss.forge.convert.AbstractConverter;
 import org.jboss.forge.convert.exception.ConversionException;
 
 @Vetoed
-public class MethodConverter<S, T> extends BaseConverter<S, T>
+public class MethodConverter<S, T> extends AbstractConverter<S, T>
 {
    private final Object instance;
    private final Method method;

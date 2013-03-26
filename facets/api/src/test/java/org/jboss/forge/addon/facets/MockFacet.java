@@ -1,11 +1,11 @@
 package org.jboss.forge.addon.facets;
 
-import org.jboss.forge.facets.BaseFacet;
+import org.jboss.forge.facets.AbstractFacet;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class MockFacet extends BaseFacet<MockFaceted>
+public class MockFacet extends AbstractFacet<MockFaceted>
 {
    public MockFacet(MockFaceted origin)
    {

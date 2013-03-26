@@ -29,7 +29,7 @@ import javax.enterprise.inject.spi.InjectionPoint;
 /**
  *
  */
-class ImmutableBean<T> extends BaseImmutableBean<T>
+class ImmutableBean<T> extends AbstractImmutableBean<T>
 {
    private final ContextualLifecycle<T> lifecycle;
 

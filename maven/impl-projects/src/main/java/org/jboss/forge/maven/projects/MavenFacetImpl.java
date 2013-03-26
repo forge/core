@@ -39,7 +39,7 @@ import org.apache.maven.settings.Repository;
 import org.apache.maven.settings.Settings;
 import org.jboss.forge.container.util.OperatingSystemUtils;
 import org.jboss.forge.environment.Environment;
-import org.jboss.forge.facets.BaseFacet;
+import org.jboss.forge.facets.AbstractFacet;
 import org.jboss.forge.maven.dependencies.MavenContainer;
 import org.jboss.forge.maven.environment.Network;
 import org.jboss.forge.maven.projects.util.NativeSystemCall;
@@ -56,7 +56,7 @@ import org.sonatype.aether.util.repository.DefaultProxySelector;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class MavenFacetImpl extends BaseFacet<Project> implements ProjectFacet, MavenFacet
+public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFacet, MavenFacet
 {
    private ProjectBuildingRequest request;
    private ProjectBuildingResult buildingResult;

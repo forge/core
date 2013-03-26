@@ -10,7 +10,7 @@ import org.jboss.modules.ModuleLoader;
 import org.jboss.modules.ModuleSpec.Builder;
 import org.jboss.modules.filter.PathFilters;
 
-public class WeldClasspathSpec extends BaseModuleSpecProvider
+public class WeldClasspathSpec extends AbstractModuleSpecProvider
 {
    public static final ModuleIdentifier ID = ModuleIdentifier.create("org.jboss.weld");
 

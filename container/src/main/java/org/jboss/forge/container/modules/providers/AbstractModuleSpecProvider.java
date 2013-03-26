@@ -19,7 +19,10 @@ import org.jboss.modules.ModuleSpec;
 import org.jboss.modules.ModuleSpec.Builder;
 import org.jboss.modules.filter.PathFilters;
 
-public abstract class BaseModuleSpecProvider implements ModuleSpecProvider
+/**
+ * This class is the base class for any {@link ModuleSpecProvider} implementation inside Forge
+ */
+public abstract class AbstractModuleSpecProvider implements ModuleSpecProvider
 {
    @Override
    public ModuleSpec get(ModuleLoader loader, ModuleIdentifier id)
@@ -827,16 +830,5 @@ public abstract class BaseModuleSpecProvider implements ModuleSpecProvider
       systemPaths.add("org/xml/sax");
       systemPaths.add("org/xml/sax/ext");
       systemPaths.add("org/xml/sax/helpers");
-
-      // Set<String> loaderPaths = getLoaderPaths();
-      // Set<String> missing = new HashSet<String>();
-      // missing.addAll(loaderPaths);
-      // missing.removeAll(systemPaths);
-      //
-      // Set<String> extra = new HashSet<String>();
-      // extra.addAll(systemPaths);
-      // extra.removeAll(loaderPaths);
-
-      // systemPaths.addAll(loaderPaths);
    }
 }

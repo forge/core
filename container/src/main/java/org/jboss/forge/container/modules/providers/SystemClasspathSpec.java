@@ -5,7 +5,7 @@ import java.util.Set;
 
 import org.jboss.modules.ModuleIdentifier;
 
-public class SystemClasspathSpec extends BaseModuleSpecProvider
+public class SystemClasspathSpec extends AbstractModuleSpecProvider
 {
    public static final ModuleIdentifier ID = ModuleIdentifier.create("javax.api");
 

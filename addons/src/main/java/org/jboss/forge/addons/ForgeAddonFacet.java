@@ -6,7 +6,7 @@
  */
 package org.jboss.forge.addons;
 
-import org.jboss.forge.facets.BaseFacet;
+import org.jboss.forge.facets.AbstractFacet;
 import org.jboss.forge.projects.Project;
 import org.jboss.forge.projects.ProjectFacet;
 
@@ -14,7 +14,7 @@ import org.jboss.forge.projects.ProjectFacet;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class ForgeAddonFacet extends BaseFacet<Project> implements ProjectFacet
+public class ForgeAddonFacet extends AbstractFacet<Project> implements ProjectFacet
 {
    @Override
    public boolean install()

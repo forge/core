@@ -5,7 +5,7 @@ import java.util.Set;
 
 import org.jboss.modules.ModuleIdentifier;
 
-public class SunJDKClasspathSpec extends BaseModuleSpecProvider
+public class SunJDKClasspathSpec extends AbstractModuleSpecProvider
 {
    public static final ModuleIdentifier ID = ModuleIdentifier.create("sun.jdk");
 

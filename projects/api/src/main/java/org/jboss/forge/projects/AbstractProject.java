@@ -10,14 +10,14 @@ package org.jboss.forge.projects;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jboss.forge.facets.BaseFaceted;
+import org.jboss.forge.facets.AbstractFaceted;
 
 /**
  * Convenience base class for {@link Project} implementations.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public abstract class BaseProject extends BaseFaceted<ProjectFacet> implements Project
+public abstract class AbstractProject extends AbstractFaceted<ProjectFacet> implements Project
 {
    private final Map<Object, Object> attributes = new HashMap<Object, Object>();
 
@@ -60,7 +60,7 @@ public abstract class BaseProject extends BaseFaceted<ProjectFacet> implements P
          return false;
       if (getClass() != obj.getClass())
          return false;
-      BaseProject other = (BaseProject) obj;
+      AbstractProject other = (AbstractProject) obj;
       if (getProjectRoot() == null)
       {
          if (other.getProjectRoot() != null)

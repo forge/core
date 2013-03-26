@@ -11,13 +11,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.jboss.forge.facets.BaseFaceted;
+import org.jboss.forge.facets.AbstractFaceted;
 
 /**
  * @author Mike Brock <cbrock@redhat.com>
  * @author <a href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>
  */
-public abstract class AbstractResource<T> extends BaseFaceted<ResourceFacet> implements Resource<T>
+public abstract class AbstractResource<T> extends AbstractFaceted<ResourceFacet> implements Resource<T>
 {
    protected final ResourceFactory resourceFactory;
    protected Resource<?> parent;

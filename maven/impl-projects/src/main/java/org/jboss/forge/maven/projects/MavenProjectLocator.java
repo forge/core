@@ -13,7 +13,7 @@ import org.jboss.forge.maven.projects.facets.MavenDependencyFacet;
 import org.jboss.forge.maven.projects.facets.MavenMetadataFacet;
 import org.jboss.forge.maven.projects.facets.MavenPackagingFacet;
 import org.jboss.forge.maven.projects.facets.MavenResourceFacet;
-import org.jboss.forge.projects.BaseProject;
+import org.jboss.forge.projects.AbstractProject;
 import org.jboss.forge.projects.Project;
 import org.jboss.forge.projects.ProjectFacet;
 import org.jboss.forge.projects.ProjectLocator;
@@ -29,7 +29,7 @@ public class MavenProjectLocator implements ProjectLocator
    @Override
    public Project createProject(final DirectoryResource dir)
    {
-      Project project = new BaseProject()
+      Project project = new AbstractProject()
       {
          @Override
          public boolean supports(ProjectFacet type)

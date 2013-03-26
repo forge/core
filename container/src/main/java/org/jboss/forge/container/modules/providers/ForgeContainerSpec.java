@@ -11,7 +11,7 @@ import org.jboss.modules.ModuleLoader;
 import org.jboss.modules.ModuleSpec.Builder;
 import org.jboss.modules.filter.PathFilters;
 
-public class ForgeContainerSpec extends BaseModuleSpecProvider
+public class ForgeContainerSpec extends AbstractModuleSpecProvider
 {
    public static final ModuleIdentifier ID = ModuleIdentifier.create("org.jboss.forge.container.api");
 

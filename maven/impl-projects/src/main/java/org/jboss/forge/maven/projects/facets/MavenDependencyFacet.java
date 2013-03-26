@@ -28,7 +28,7 @@ import org.jboss.forge.dependencies.DependencyResolver;
 import org.jboss.forge.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.dependencies.builder.DependencyQueryBuilder;
 import org.jboss.forge.dependencies.util.Dependencies;
-import org.jboss.forge.facets.BaseFacet;
+import org.jboss.forge.facets.AbstractFacet;
 import org.jboss.forge.maven.dependencies.MavenDependencyAdapter;
 import org.jboss.forge.maven.dependencies.NonSnapshotDependencyFilter;
 import org.jboss.forge.maven.projects.MavenFacet;
@@ -40,7 +40,7 @@ import org.jboss.forge.projects.facets.DependencyFacet;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Dependent
-public class MavenDependencyFacet extends BaseFacet<Project> implements DependencyFacet
+public class MavenDependencyFacet extends AbstractFacet<Project> implements DependencyFacet
 {
    private final DependencyResolver resolver;
 

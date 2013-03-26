@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 
  * @param <FACETTYPE> the base {@link Facet} type supported by this {@link Faceted} type.
  */
-public abstract class BaseFaceted<FACETTYPE extends Facet<?>> implements Faceted<FACETTYPE>
+public abstract class AbstractFaceted<FACETTYPE extends Facet<?>> implements Faceted<FACETTYPE>
 {
    private Set<FACETTYPE> facets = Collections.newSetFromMap(new ConcurrentHashMap<FACETTYPE, Boolean>());
 

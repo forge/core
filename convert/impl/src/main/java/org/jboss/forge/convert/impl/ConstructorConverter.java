@@ -11,7 +11,7 @@ import java.lang.reflect.Constructor;
 
 import javax.enterprise.inject.Vetoed;
 
-import org.jboss.forge.convert.BaseConverter;
+import org.jboss.forge.convert.AbstractConverter;
 import org.jboss.forge.convert.exception.ConversionException;
 
 /**
@@ -25,7 +25,7 @@ import org.jboss.forge.convert.exception.ConversionException;
  */
 
 @Vetoed
-public class ConstructorConverter<SOURCETYPE, TARGETTYPE> extends BaseConverter<SOURCETYPE, TARGETTYPE>
+public class ConstructorConverter<SOURCETYPE, TARGETTYPE> extends AbstractConverter<SOURCETYPE, TARGETTYPE>
 {
    private final Constructor<TARGETTYPE> constructor;
 

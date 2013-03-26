@@ -15,7 +15,7 @@ import javax.inject.Inject;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.jboss.forge.environment.Environment;
-import org.jboss.forge.facets.BaseFacet;
+import org.jboss.forge.facets.AbstractFacet;
 import org.jboss.forge.maven.projects.MavenFacet;
 import org.jboss.forge.maven.projects.MavenFacetImpl;
 import org.jboss.forge.projects.Project;
@@ -31,7 +31,7 @@ import com.google.common.base.Strings;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Dependent
-public class MavenPackagingFacet extends BaseFacet<Project> implements PackagingFacet
+public class MavenPackagingFacet extends AbstractFacet<Project> implements PackagingFacet
 {
    @Inject
    private Event<PackagingChanged> event;

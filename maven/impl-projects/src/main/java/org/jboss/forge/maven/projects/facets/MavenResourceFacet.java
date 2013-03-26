@@ -12,7 +12,7 @@ import java.util.List;
 
 import javax.enterprise.context.Dependent;
 
-import org.jboss.forge.facets.BaseFacet;
+import org.jboss.forge.facets.AbstractFacet;
 import org.jboss.forge.maven.projects.MavenFacet;
 import org.jboss.forge.projects.Project;
 import org.jboss.forge.projects.facets.ResourceFacet;
@@ -23,7 +23,7 @@ import org.jboss.forge.resource.FileResource;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Dependent
-public class MavenResourceFacet extends BaseFacet<Project> implements ResourceFacet
+public class MavenResourceFacet extends AbstractFacet<Project> implements ResourceFacet
 {
    @Override
    public List<DirectoryResource> getResourceFolders()

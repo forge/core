@@ -69,7 +69,7 @@ import java.util.Set;
  * 
  * @see org.apache.deltaspike.core.util.bean.WrappingBeanBuilder
  */
-class ImmutableBeanWrapper<T> extends BaseImmutableBean<T>
+class ImmutableBeanWrapper<T> extends AbstractImmutableBean<T>
 {
    private final Bean<T> wrapped;
 

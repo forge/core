@@ -3,7 +3,7 @@ package org.jboss.forge.addon.facets;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class BaseFacetTest
+public class FacetTest
 {
    @Test
    public void testGetOriginReturnsOriginFromInstantiation()

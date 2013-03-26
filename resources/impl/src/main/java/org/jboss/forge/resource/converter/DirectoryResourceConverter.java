@@ -12,7 +12,7 @@ import java.io.File;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jboss.forge.convert.BaseConverter;
+import org.jboss.forge.convert.AbstractConverter;
 import org.jboss.forge.resource.DirectoryResource;
 import org.jboss.forge.resource.Resource;
 import org.jboss.forge.resource.ResourceFactory;
@@ -25,7 +25,7 @@ import org.jboss.forge.resource.ResourceFactory;
  */
 
 @Singleton
-public class DirectoryResourceConverter extends BaseConverter<File, DirectoryResource>
+public class DirectoryResourceConverter extends AbstractConverter<File, DirectoryResource>
 {
    private final ResourceFactory resourceFactory;
 

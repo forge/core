@@ -13,7 +13,7 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.jboss.forge.dependencies.Dependency;
 import org.jboss.forge.dependencies.builder.DependencyBuilder;
-import org.jboss.forge.facets.BaseFacet;
+import org.jboss.forge.facets.AbstractFacet;
 import org.jboss.forge.maven.projects.MavenFacet;
 import org.jboss.forge.maven.projects.MavenFacetImpl;
 import org.jboss.forge.projects.Project;
@@ -23,7 +23,7 @@ import org.jboss.forge.projects.facets.MetadataFacet;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Dependent
-public class MavenMetadataFacet extends BaseFacet<Project> implements MetadataFacet
+public class MavenMetadataFacet extends AbstractFacet<Project> implements MetadataFacet
 {
    @Override
    public String getProjectName()

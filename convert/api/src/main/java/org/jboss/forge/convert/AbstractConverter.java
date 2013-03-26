@@ -1,12 +1,12 @@
 package org.jboss.forge.convert;
 
-public abstract class BaseConverter<SOURCETYPE, TARGETTYPE> implements Converter<SOURCETYPE, TARGETTYPE>
+public abstract class AbstractConverter<SOURCETYPE, TARGETTYPE> implements Converter<SOURCETYPE, TARGETTYPE>
 {
 
    private Class<SOURCETYPE> sourceType;
    private Class<TARGETTYPE> targetType;
 
-   public BaseConverter(Class<SOURCETYPE> sourceType, Class<TARGETTYPE> targetType)
+   public AbstractConverter(Class<SOURCETYPE> sourceType, Class<TARGETTYPE> targetType)
    {
       super();
       this.sourceType = sourceType;

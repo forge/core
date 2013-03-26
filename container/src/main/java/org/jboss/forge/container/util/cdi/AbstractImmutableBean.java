@@ -44,9 +44,9 @@ import org.jboss.weld.literal.DefaultLiteral;
  * 
  * @see ImmutableBeanWrapper
  */
-abstract class BaseImmutableBean<T> implements Bean<T>
+abstract class AbstractImmutableBean<T> implements Bean<T>
 {
-   private static final Logger LOG = Logger.getLogger(BaseImmutableBean.class.getName());
+   private static final Logger LOG = Logger.getLogger(AbstractImmutableBean.class.getName());
 
    private final Class<?> beanClass;
    private final String name;
@@ -75,7 +75,7 @@ abstract class BaseImmutableBean<T> implements Bean<T>
     * @param toString the string which should be returned by #{@link #toString()}
     * @throws IllegalArgumentException if the beanClass is null
     */
-   public BaseImmutableBean(Class<?> beanClass,
+   public AbstractImmutableBean(Class<?> beanClass,
             String name,
             Set<Annotation> qualifiers,
             Class<? extends Annotation> scope,

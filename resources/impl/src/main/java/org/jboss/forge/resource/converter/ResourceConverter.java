@@ -11,7 +11,7 @@ import java.io.File;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.convert.BaseConverter;
+import org.jboss.forge.convert.AbstractConverter;
 import org.jboss.forge.resource.ResourceFactory;
 import org.jboss.forge.resource.Resource;
 
@@ -22,7 +22,7 @@ import org.jboss.forge.resource.Resource;
  *
  */
 @SuppressWarnings("rawtypes")
-public class ResourceConverter extends BaseConverter<Object, Resource>
+public class ResourceConverter extends AbstractConverter<Object, Resource>
 {
    private final ResourceFactory resourceFactory;
 
