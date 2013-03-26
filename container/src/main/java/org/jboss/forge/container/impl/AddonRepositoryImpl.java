@@ -110,6 +110,7 @@ public final class AddonRepositoryImpl implements MutableAddonRepository
    {
       return lock.performLocked(LockMode.WRITE, new Callable<Boolean>()
       {
+         @SuppressWarnings("resource")
          @Override
          public Boolean call() throws Exception
          {
