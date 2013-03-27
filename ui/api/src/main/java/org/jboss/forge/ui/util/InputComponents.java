@@ -195,6 +195,11 @@ public final class InputComponents
          if (requiredMessage == null)
          {
             String labelValue = input.getLabel() == null ? input.getName() : input.getLabel();
+            // Chop : off
+            if (labelValue.endsWith(":"))
+            {
+               labelValue = labelValue.substring(0, labelValue.length() - 1);
+            }
             requiredMessage = labelValue + " is required!";
          }
       }
