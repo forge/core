@@ -20,6 +20,8 @@
       <dependency>
          <groupId>org.jboss.forge</groupId>
          <artifactId>aesh-spi</artifactId>
+         <classifier>forge-addon</classifier>
+         <version>2.0.0-SNAPSHOT</version>
          <scope>provided</scope>
       </dependency>
       <dependency>
