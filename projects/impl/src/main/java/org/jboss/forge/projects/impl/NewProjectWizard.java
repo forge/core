@@ -121,10 +121,11 @@ public class NewProjectWizard implements UIWizard
       List<ProjectType> projectTypes = new ArrayList<ProjectType>();
       for (ExportedInstance<ProjectType> instance : registry.getExportedInstances(ProjectType.class))
       {
-         projectTypes.add(instance.get());
+         ProjectType projectType = instance.get();
+         projectTypes.add(projectType);
+         type.setDefaultValue(projectType);
       }
       type.setValueChoices(projectTypes);
-
       builder.add(named).add(topLevelPackage).add(targetLocation).add(overwrite).add(type);
    }
 
