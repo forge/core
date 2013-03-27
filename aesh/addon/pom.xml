@@ -51,9 +51,19 @@
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-jar-plugin</artifactId>
-            <configuration>
-               <classifier>forge-addon</classifier>
-            </configuration>
+            <executions>
+               <execution>
+                  <id>create-forge-addon</id>
+                  <phase>package</phase>
+                  <goals>
+                     <goal>jar</goal>
+                  </goals>
+                  <inherited>false</inherited>
+                  <configuration>
+                     <classifier>forge-addon</classifier>
+                  </configuration>
+               </execution>
+            </executions>
          </plugin>
       </plugins>
    </build>
