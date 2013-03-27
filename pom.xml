@@ -107,17 +107,6 @@
             <module>convert</module>
          </modules>
       </profile>
-
-      <profile>
-         <id>javadoc</id>
-         <activation>
-            <activeByDefault>false</activeByDefault>
-         </activation>
-         <modules>
-            <module>container-api</module>
-            <module>parser-xml</module>
-         </modules>
-      </profile>
    </profiles>
 
    <dependencyManagement>
@@ -470,6 +459,7 @@
                   <outputDirectory>${project.build.directory}/javadoc/${project.version}</outputDirectory>
                   <reportOutputDirectory>${project.build.directory}/javadoc/${project.version}</reportOutputDirectory>
                   <destDir>${project.build.directory}/javadoc/${project.version}</destDir>
+                  <failOnError>false</failOnError>
                </configuration>
                <executions>
                   <execution>
