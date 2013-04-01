@@ -139,17 +139,17 @@ public final class AddonRepositoryImpl implements MutableAddonRepository
                 * Write out the addon module dependency configuration
                 */
                Node addonXml = getXmlRoot(descriptor);
-               Node dependenciesNode = addonXml.createChild("dependencies");
+               Node dependenciesNode = addonXml.getOrCreate("dependencies");
 
-               if (dependencies != null)
-                  for (AddonDependencyEntry dependency : dependencies)
-                  {
-                     Node dep = dependenciesNode.createChild("dependency");
-                     dep.attribute(ATTR_NAME, dependency.getId().getName());
-                     dep.attribute(ATTR_VERSION, dependency.getId().getVersion());
-                     dep.attribute(ATTR_EXPORT, dependency.isExported());
-                     dep.attribute(ATTR_OPTIONAL, dependency.isOptional());
-                  }
+               // TODO: Check if dependency does not repeat
+               for (AddonDependencyEntry dependency : dependencies)
+               {
+                  Node dep = dependenciesNode.createChild("dependency");
+                  dep.attribute(ATTR_NAME, dependency.getId().getName());
+                  dep.attribute(ATTR_VERSION, dependency.getId().getVersion());
+                  dep.attribute(ATTR_EXPORT, dependency.isExported());
+                  dep.attribute(ATTR_OPTIONAL, dependency.isOptional());
+               }
 
                FileOutputStream fos = null;
                try
