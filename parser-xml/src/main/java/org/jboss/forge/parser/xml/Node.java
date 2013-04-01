@@ -16,7 +16,7 @@ import java.util.Map;
  * {@link Node} is a data structure representing a container in a classic tree. May sometimes be synonymous with the
  * term "Element" in XML. It may contain a {@link Map} of attributes ({@link String}s), a reference to a {@link List} of
  * child {@link Node}s, and text data.
- * 
+ *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:andrew.rubinger@jboss.org">ALR</a>
@@ -72,7 +72,7 @@ public class Node
 
    /**
     * Creates a root {@link Node}
-    * 
+    *
     * @param name The name of the node
     */
    public Node(final String name) throws IllegalArgumentException
@@ -82,7 +82,7 @@ public class Node
 
    /**
     * Creates a {@link Node}
-    * 
+    *
     * @param name The name of the node
     * @param parent The parent node. Use null to denote a root.
     * @throws IllegalArgumentException If the name is not specified or contains any space characters
@@ -118,7 +118,7 @@ public class Node
     * Add or override a named attribute.<br/>
     * <br/>
     * value will be converted to String using String.valueOf(value);
-    * 
+    *
     * @param name The attribute name
     * @param value The given value
     * @return This {@link Node}
@@ -131,7 +131,7 @@ public class Node
 
    /**
     * Add or override a named attribute.<br/>
-    * 
+    *
     * @param name The attribute name
     * @param value The given value
     * @return This {@link Node}
@@ -144,7 +144,7 @@ public class Node
 
    /**
     * Get a named attribute.<br/>
-    * 
+    *
     * @param name The attribute name
     * @return The attribute value or null of none defined.
     */
@@ -155,7 +155,7 @@ public class Node
 
    /**
     * Remove a named attribute.<br/>
-    * 
+    *
     * @param name The attribute name
     * @return The attribute value that was removed, or null if the attribute with the given name was not found.
     * @throws IllegalArgumentException If the name is not specified
@@ -174,7 +174,7 @@ public class Node
 
    /**
     * Get all defined attributes for this Node in an immutable view
-    * 
+    *
     * @return All defined attributes.
     */
    public Map<String, String> getAttributes()
@@ -184,7 +184,7 @@ public class Node
 
    /**
     * Returns whether or not this {@link Node} represents a comment
-    * 
+    *
     * @return
     */
    public boolean isComment()
@@ -194,7 +194,7 @@ public class Node
 
    /**
     * Marks this {@link Node} as a comment
-    * 
+    *
     * @param comment Whether or not this is a comment
     * @return
     * @throws IllegalArgumentException If this node has children
@@ -214,7 +214,7 @@ public class Node
 
    /**
     * Obtains the root {@link Node} for this reference
-    * 
+    *
     * @return
     */
    public Node getRoot()
@@ -236,7 +236,7 @@ public class Node
 
    /**
     * Returns whether or not this {@link Node} is a root
-    * 
+    *
     * @return
     */
    public boolean isRoot()
@@ -252,7 +252,7 @@ public class Node
     * Create a new {@link Node} with given name. <br/>
     * <br/>
     * The new {@link Node} will have this as parent.
-    * 
+    *
     * @param name The name of the {@link Node}.
     * @return A new child {@link Node}
     * @throws IllegalArgumentException If the name is not specified
@@ -269,7 +269,7 @@ public class Node
       return createChild(Patterns.from(name));
    }
 
-   public Node createChild(final Pattern... patterns)
+   Node createChild(final Pattern... patterns)
    {
       return CreateQuery.INSTANCE.execute(this, patterns);
    }
@@ -278,7 +278,7 @@ public class Node
     * Get or create a named child node. <br/>
     * <br/>
     * If a named node is found using {@link #getSingle(String)} it is returned, else a new child node is created.
-    * 
+    *
     * @param name The child node name.
     * @return The existing node or a new node, never null.
     * @see #getSingle(String)
@@ -290,7 +290,7 @@ public class Node
       return getOrCreate(Patterns.from(name));
    }
 
-   public Node getOrCreate(final Pattern... patterns)
+   Node getOrCreate(final Pattern... patterns)
    {
       return GetOrCreateQuery.INSTANCE.execute(this, includeRootPatternFirst(patterns));
    }
@@ -299,7 +299,7 @@ public class Node
     * Get a single child node.<br/>
     * <br/>
     * If multiple children are found with same name it is considered a IllegalArgumentException.
-    * 
+    *
     * @param name The child node name
     * @return The named child node or null if non found
     * @throws IllegalArgumentException if multiple children with name exists.
@@ -309,14 +309,14 @@ public class Node
       return getSingle(Patterns.from(name));
    }
 
-   public Node getSingle(final Pattern... patterns)
+   Node getSingle(final Pattern... patterns)
    {
       return AbsoluteGetSingleQuery.INSTANCE.execute(this, includeRootPatternFirst(patterns));
    }
 
    /**
     * Get all children with a specific name.
-    * 
+    *
     * @param name The child node name.
     * @return All found children, or empty list if none found.
     */
@@ -327,18 +327,18 @@ public class Node
 
    /**
     * Get all children matching the specified query.
-    * 
+    *
     * @param query The query to use for finding relevant child nodes
     * @return All found children, or empty list if none found.
     */
-   public List<Node> get(final Pattern... patterns)
+   List<Node> get(final Pattern... patterns)
    {
       return AbsoluteGetQuery.INSTANCE.execute(this, includeRootPatternFirst(patterns));
    }
 
    /**
     * Remove all child nodes found at the given query.
-    * 
+    *
     * @return the {@link List} of removed children.
     * @throws IllegalArgumentException If the specified name is not specified
     */
@@ -359,11 +359,11 @@ public class Node
 
    /**
     * Remove all child nodes found at the given {@link Pattern}s.
-    * 
+    *
     * @return the {@link List} of removed children.
     * @throws IllegalArgumentException If pattern is not specified
     */
-   public List<Node> removeChildren(final Pattern pattern, final Pattern... patterns)
+   List<Node> removeChildren(final Pattern pattern, final Pattern... patterns)
    {
       // Precondition check
       final Pattern[] merged = this.validateAndMergePatternInput(pattern, patterns);
@@ -382,7 +382,7 @@ public class Node
 
    /**
     * Remove a single child from this {@link Node}
-    * 
+    *
     * @return true if this node contained the given child
     */
    public boolean removeChild(final Node child)
@@ -392,7 +392,7 @@ public class Node
 
    /**
     * Remove a single child from this {@link Node}
-    * 
+    *
     * @return true if this node contained the given child
     * @throws IllegalArgumentException if multiple children with name exist.
     */
@@ -414,7 +414,7 @@ public class Node
     * Set the Nodes text body.<br/>
     * <br/>
     * text will be converted to String using String.valueOf(text);
-    * 
+    *
     * @param text
     * @return
     * @see #text(String)
@@ -426,7 +426,7 @@ public class Node
 
    /**
     * Set the Nodes text body.
-    * 
+    *
     * @param text The text content
     * @return This
     */
@@ -438,7 +438,7 @@ public class Node
 
    /**
     * Get the Nodes text body.
-    * 
+    *
     * @return Set body or null if none.
     */
    public String getText()
@@ -478,7 +478,7 @@ public class Node
 
    /**
     * Get the Nodes name.
-    * 
+    *
     * @return Given name.
     */
    public String getName()
@@ -488,7 +488,7 @@ public class Node
 
    /**
     * Get the Nodes parent.
-    * 
+    *
     * @return The given parent or null if root node.
     */
    public Node getParent()
@@ -498,7 +498,7 @@ public class Node
 
    /**
     * Get all the defined children for this node in an immutable view.
-    * 
+    *
     * @return All children or empty list if none.
     */
    public List<Node> getChildren()
@@ -512,7 +512,7 @@ public class Node
 
    /**
     * {@inheritDoc}
-    * 
+    *
     * @see java.lang.Object#toString()
     */
    @Override
@@ -526,7 +526,7 @@ public class Node
 
    /**
     * Returns a multiline {@link String} format of this {@link Node} and all children
-    * 
+    *
     * @param verbose
     * @return
     */
@@ -580,7 +580,7 @@ public class Node
 
    /**
     * Validates that at least one pattern was specified, merges all patterns together, and returns the result
-    * 
+    *
     * @param pattern
     * @param patterns
     * @return
