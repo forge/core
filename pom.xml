@@ -646,6 +646,7 @@
                   <outputDirectory>${project.build.directory}/javadoc/${project.version}</outputDirectory>
                   <reportOutputDirectory>${project.build.directory}/javadoc/${project.version}</reportOutputDirectory>
                   <destDir>${project.build.directory}/javadoc/${project.version}</destDir>
+                  <failOnError>false</failOnError>
                </configuration>
                <executions>
                   <execution>
@@ -824,11 +825,9 @@
          </activation>
          <modules>
             <module>event-bus-api</module>
-            <module>parser-java-api</module>
             <module>parser-xml</module>
             <module>maven-api</module>
             <module>shell-api</module>
-            <module>parser-java</module>
             <module>project-model-maven</module>
             <module>test-harness</module>
             <module>test-harness-web</module>
