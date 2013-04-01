@@ -808,6 +808,7 @@
             <module>shell</module>
             <module>javaee-api</module>
             <module>javaee-impl</module>
+            <module>javadoc</module>
             <module>scaffold-api</module>
             <module>scaffold-plugins</module>
             <module>scaffold-faces</module>
@@ -835,6 +836,7 @@
             <module>scaffold-api</module>
          </modules>
       </profile>
+   
    </profiles>
 
    <scm>
