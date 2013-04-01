@@ -245,7 +245,7 @@
         <module-def name="org.freemarker">
             <maven-resource group="org.freemarker" artifact="freemarker" />
         </module-def>
-		
+
 		<module-def name="org.javassist">
 			<maven-resource group="javassist" artifact="javassist" />
 		</module-def>
@@ -323,11 +323,11 @@
 		</module-def>
 
 		<module-def name="org.jboss.forge.parser.java.api">
-			<maven-resource group="org.jboss.forge" artifact="forge-parser-java-api" />
+			<maven-resource group="org.jboss.forge" artifact="java-parser-api" />
 		</module-def>
 
 		<module-def name="org.jboss.forge.parser.java.impl">
-			<maven-resource group="org.jboss.forge" artifact="forge-parser-java" />
+			<maven-resource group="org.jboss.forge" artifact="java-parser-impl" />
 		</module-def>
 
 		<module-def name="org.jboss.forge.parser.xml">
