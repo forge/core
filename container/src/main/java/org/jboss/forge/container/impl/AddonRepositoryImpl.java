@@ -63,6 +63,9 @@ public final class AddonRepositoryImpl implements MutableAddonRepository
    private static final String REGISTRY_DESCRIPTOR_NAME = "installed.xml";
    private static final String ADDON_DESCRIPTOR_FILENAME = "addon.xml";
 
+   private static final String DEPENDENCY_TAG_NAME = "dependency";
+   private static final String DEPENDENCIES_TAG_NAME = "dependencies";
+
    private LockManager lock;
 
    public static MutableAddonRepository forDirectory(Forge forge, File dir)
@@ -139,13 +142,25 @@ public final class AddonRepositoryImpl implements MutableAddonRepository
                 * Write out the addon module dependency configuration
                 */
                Node addonXml = getXmlRoot(descriptor);
-               Node dependenciesNode = addonXml.getOrCreate("dependencies");
+               Node dependenciesNode = addonXml.getOrCreate(DEPENDENCIES_TAG_NAME);
 
-               // TODO: Check if dependency does not repeat
                for (AddonDependencyEntry dependency : dependencies)
                {
-                  Node dep = dependenciesNode.createChild("dependency");
-                  dep.attribute(ATTR_NAME, dependency.getId().getName());
+                  String name = dependency.getId().getName();
+                  Node dep = null;
+                  for (Node node : dependenciesNode.get(DEPENDENCY_TAG_NAME))
+                  {
+                     if (name.equals(node.getAttribute(ATTR_NAME)))
+                     {
+                        dep = node;
+                        break;
+                     }
+                  }
+                  if (dep == null)
+                  {
+                     dep = dependenciesNode.createChild(DEPENDENCY_TAG_NAME);
+                     dep.attribute(ATTR_NAME, name);
+                  }
                   dep.attribute(ATTR_VERSION, dependency.getId().getVersion());
                   dep.attribute(ATTR_EXPORT, dependency.isExported());
                   dep.attribute(ATTR_OPTIONAL, dependency.isOptional());
