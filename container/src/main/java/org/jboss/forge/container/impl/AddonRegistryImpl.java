@@ -21,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -60,7 +61,7 @@ public class AddonRegistryImpl implements AddonRegistry
    private final Forge forge;
    private final LockManager lock;
    private final AddonTree tree;
-   private volatile int starting = 0;
+   private AtomicInteger starting = new AtomicInteger();
 
    private final ExecutorService executor = Executors.newFixedThreadPool(BATCH_SIZE);
 
@@ -620,7 +621,7 @@ public class AddonRegistryImpl implements AddonRegistry
       Future<Void> result = null;
       if (addon.getRunnable() == null)
       {
-         starting++;
+         starting.incrementAndGet();
          AddonRunnable runnable = new AddonRunnable(forge, addon);
          result = executor.submit(runnable, null);
          addon.setFuture(result);
@@ -636,11 +637,11 @@ public class AddonRegistryImpl implements AddonRegistry
 
    void finishedStarting(Addon addon)
    {
-      starting--;
+      starting.decrementAndGet();
    }
 
    public boolean isStartingAddons()
    {
-      return starting > 0;
+      return starting.get() > 0;
    }
 }
