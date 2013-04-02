@@ -57,11 +57,12 @@ public class AddonRegistryImpl implements AddonRegistry
    private static final String PROP_CONCURRENT_PLUGINS = "forge.concurrentAddons";
    private static final int BATCH_SIZE = Integer.getInteger(PROP_CONCURRENT_PLUGINS, Runtime.getRuntime()
             .availableProcessors());
+   // private static final int BATCH_SIZE = 1;
 
    private final Forge forge;
    private final LockManager lock;
    private final AddonTree tree;
-   private AtomicInteger starting = new AtomicInteger();
+   private final AtomicInteger starting = new AtomicInteger();
 
    private final ExecutorService executor = Executors.newFixedThreadPool(BATCH_SIZE);
 
@@ -260,9 +261,6 @@ public class AddonRegistryImpl implements AddonRegistry
                   }
                }
 
-               result = doStart(addonToStart);
-               Collections.reverse(toStart);
-
                for (Addon addon : toStart)
                {
                   loadAddon(addon.getId());
@@ -271,6 +269,8 @@ public class AddonRegistryImpl implements AddonRegistry
                      doStart((AddonImpl) addon);
                   }
                }
+
+               result = doStart(addonToStart);
             }
 
             return result;
@@ -522,12 +522,11 @@ public class AddonRegistryImpl implements AddonRegistry
          public Set<Future<Void>> call() throws Exception
          {
             Set<Future<Void>> result = new LinkedHashSet<Future<Void>>();
-            for (AddonRepository repository : forge.getRepositories())
+            List<Addon> toStart = loadAllEnabled();
+
+            for (Addon addonToStart : toStart)
             {
-               for (AddonId enabled : repository.listEnabled())
-               {
-                  result.add(start(enabled));
-               }
+               result.add(start(addonToStart.getId()));
             }
             return result;
          }
@@ -635,11 +634,27 @@ public class AddonRegistryImpl implements AddonRegistry
       return result;
    }
 
-   void finishedStarting(Addon addon)
+   private List<Addon> loadAllEnabled()
+   {
+      List<Addon> toStart = new ArrayList<Addon>();
+      for (AddonRepository repository : forge.getRepositories())
+      {
+         for (AddonId enabled : repository.listEnabled())
+         {
+            toStart.add(getAddon(enabled));
+         }
+      }
+      return toStart;
+   }
+
+   public void finishedStarting(AddonImpl addon)
    {
       starting.decrementAndGet();
    }
 
+   /**
+    * Returns <code>true</code> if there are currently any Addons being started.
+    */
    public boolean isStartingAddons()
    {
       return starting.get() > 0;

@@ -217,24 +217,18 @@ public final class AddonRunnable implements Runnable
                   }
                };
 
+               addon.setStatus(AddonStatus.STARTED);
+
                operation = Threads.runAsync(new Callable<Object>()
                {
                   @Override
                   public Object call() throws Exception
                   {
-                     return forge.getLockManager().performLocked(LockMode.READ, new Callable<Object>()
-                     {
-                        @Override
-                        public Object call() throws Exception
-                        {
-                           manager.fireEvent(new PostStartup());
-                           return null;
-                        }
-                     });
+                     manager.fireEvent(new PostStartup());
+                     return null;
                   }
                });
 
-               addon.setStatus(AddonStatus.STARTED);
             }
 
             return shutdownCallback;

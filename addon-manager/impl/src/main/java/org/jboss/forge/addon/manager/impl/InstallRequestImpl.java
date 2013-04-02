@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
+import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
 import org.jboss.forge.addon.manager.AddonManager;
@@ -21,6 +22,7 @@ import org.jboss.forge.addon.manager.impl.filters.DirectAddonFilter;
 import org.jboss.forge.addon.manager.impl.filters.LocalResourceFilter;
 import org.jboss.forge.container.Forge;
 import org.jboss.forge.container.addons.AddonId;
+import org.jboss.forge.container.lock.LockMode;
 import org.jboss.forge.container.repositories.AddonDependencyEntry;
 import org.jboss.forge.container.repositories.AddonRepository;
 import org.jboss.forge.container.repositories.MutableAddonRepository;
@@ -116,38 +118,46 @@ public class InstallRequestImpl implements InstallRequest
    @Override
    public void perform()
    {
-      for (DependencyNode requiredAddon : getRequiredAddons())
+      forge.getLockManager().performLocked(LockMode.WRITE, new Callable<Void>()
       {
-         AddonId requiredAddonId = toAddonId(requiredAddon);
-         boolean deployed = false;
-         for (AddonRepository repository : forge.getRepositories())
+         @Override
+         public Void call() throws Exception
          {
-            if (repository.isDeployed(requiredAddonId))
+            for (DependencyNode requiredAddon : getRequiredAddons())
             {
-               log.info("Addon " + requiredAddonId + " is already deployed. Skipping...");
-               deployed = true;
-               break;
+               AddonId requiredAddonId = toAddonId(requiredAddon);
+               boolean deployed = false;
+               for (AddonRepository repository : forge.getRepositories())
+               {
+                  if (repository.isDeployed(requiredAddonId))
+                  {
+                     log.info("Addon " + requiredAddonId + " is already deployed. Skipping...");
+                     deployed = true;
+                     break;
+                  }
+               }
+
+               if (!deployed)
+               {
+                  addonManager.install(requiredAddonId).perform();
+               }
             }
-         }
 
-         if (!deployed)
-         {
-            addonManager.install(requiredAddonId).perform();
-         }
-      }
+            AddonId requestedAddonId = toAddonId(requestedAddonNode);
 
-      AddonId requestedAddonId = toAddonId(requestedAddonNode);
-
-      for (AddonRepository repository : forge.getRepositories())
-      {
-         if (repository instanceof MutableAddonRepository)
-         {
-            MutableAddonRepository mutableRespository = (MutableAddonRepository) repository;
-            deploy(mutableRespository, requestedAddonId, requestedAddonNode);
-            mutableRespository.enable(requestedAddonId);
-            break;
+            for (AddonRepository repository : forge.getRepositories())
+            {
+               if (repository instanceof MutableAddonRepository)
+               {
+                  MutableAddonRepository mutableRespository = (MutableAddonRepository) repository;
+                  deploy(mutableRespository, requestedAddonId, requestedAddonNode);
+                  mutableRespository.enable(requestedAddonId);
+                  break;
+               }
+            }
+            return null;
          }
-      }
+      });
    }
 
    private AddonId toAddonId(DependencyNode node)

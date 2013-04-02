@@ -35,7 +35,8 @@ public class NewProjectWizardTest
 {
    @Deployment
    @Dependencies({
-            @Addon(name = "org.jboss.forge:projects", version = "2.0.0-SNAPSHOT")
+      @Addon(name = "org.jboss.forge:projects", version = "2.0.0-SNAPSHOT"),
+      @Addon(name = "org.jboss.forge:ui", version = "2.0.0-SNAPSHOT")
    })
    public static ForgeArchive getDeployment()
    {
