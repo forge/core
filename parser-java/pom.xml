@@ -17,7 +17,7 @@
    </modules>
 
    <properties>
-      <version.java-parser>1.0.0.Alpha1</version.java-parser>
+      <version.java-parser>1.0.1.Final</version.java-parser>
    </properties>
 
    <dependencyManagement>
