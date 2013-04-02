@@ -114,6 +114,7 @@ public final class AddonRunnable implements Runnable
       }
       finally
       {
+         ((AddonRegistryImpl) forge.getAddonRegistry()).finishedStarting(addon);
          currentThread.setName(name);
       }
    }

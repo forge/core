@@ -31,8 +31,8 @@ import org.jboss.forge.container.addons.AddonDependencyImpl;
 import org.jboss.forge.container.addons.AddonFilter;
 import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.addons.AddonRegistry;
-import org.jboss.forge.container.addons.AddonTree;
 import org.jboss.forge.container.addons.AddonStatus;
+import org.jboss.forge.container.addons.AddonTree;
 import org.jboss.forge.container.lock.LockManager;
 import org.jboss.forge.container.lock.LockMode;
 import org.jboss.forge.container.modules.AddonModuleLoader;
@@ -60,6 +60,7 @@ public class AddonRegistryImpl implements AddonRegistry
    private final Forge forge;
    private final LockManager lock;
    private final AddonTree tree;
+   private volatile int starting = 0;
 
    private final ExecutorService executor = Executors.newFixedThreadPool(BATCH_SIZE);
 
@@ -619,6 +620,7 @@ public class AddonRegistryImpl implements AddonRegistry
       Future<Void> result = null;
       if (addon.getRunnable() == null)
       {
+         starting++;
          AddonRunnable runnable = new AddonRunnable(forge, addon);
          result = executor.submit(runnable, null);
          addon.setFuture(result);
@@ -630,5 +632,15 @@ public class AddonRegistryImpl implements AddonRegistry
       }
 
       return result;
+   }
+
+   void finishedStarting(Addon addon)
+   {
+      starting--;
+   }
+
+   public boolean isStartingAddons()
+   {
+      return starting > 0;
    }
 }

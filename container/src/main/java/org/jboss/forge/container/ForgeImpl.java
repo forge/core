@@ -14,7 +14,6 @@ import org.jboss.forge.container.lock.LockManager;
 import org.jboss.forge.container.repositories.AddonRepository;
 import org.jboss.forge.container.spi.ContainerLifecycleListener;
 import org.jboss.forge.container.spi.ListenerRegistration;
-import org.jboss.forge.container.util.AddonFilters;
 import org.jboss.forge.container.versions.SingleVersion;
 import org.jboss.forge.container.versions.Version;
 import org.jboss.modules.Module;
@@ -167,7 +166,7 @@ public class ForgeImpl implements Forge
 
    private boolean isStartingAddons()
    {
-      return !registry.getAddons(AddonFilters.allStarting()).isEmpty();
+      return registry.isStartingAddons();
    }
 
    private void fireBeforeContainerStartedEvent(ClassLoader loader)

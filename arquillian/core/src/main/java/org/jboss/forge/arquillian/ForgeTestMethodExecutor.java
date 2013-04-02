@@ -68,24 +68,7 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
          final String testClassName = testMethodExecutor.getInstance().getClass().getName();
          final AddonRegistry addonRegistry = forge.getAddonRegistry();
 
-         Thread lock = new Thread(new Runnable()
-         {
-            @Override
-            public void run()
-            {
-               forge.getLockManager().performLocked(LockMode.WRITE, new Callable<Void>()
-               {
-                  @Override
-                  public Void call() throws Exception
-                  {
-                     return null;
-                  }
-               });
-            }
-         });
-
-         lock.start();
-         lock.join();
+         waitUntilStable(forge);
 
          Object instance = null;
          for (Addon addon : addonRegistry.getAddons())
@@ -190,6 +173,14 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
                   + testMethodExecutor.getMethod().getName() + "()";
          System.out.println(message);
          throw new IllegalStateException(message, e);
+      }
+   }
+
+   private void waitUntilStable(Forge forge) throws InterruptedException
+   {
+      while (forge.getStatus().isStarting())
+      {
+         Thread.sleep(10);
       }
    }
 }
