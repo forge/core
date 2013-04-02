@@ -417,8 +417,8 @@ public class AddonRegistryImpl implements AddonRegistry
                }
                catch (Exception e)
                {
-                  // logger.log(Level.FINE, "Failed to load addon [" + addonId + "]", e);
-                  // // throw new ContainerException("Failed to load addon [" + addonId + "]", e);
+                  logger.log(Level.FINE, "Failed to load addon [" + addonId + "]", e);
+                  // throw new ContainerException("Failed to load addon [" + addonId + "]", e);
                }
             }
          }

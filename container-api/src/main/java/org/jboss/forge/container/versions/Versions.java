@@ -56,4 +56,16 @@ public class Versions
       }
       return false;
    }
+
+   public static boolean areEqual(Version left, Version right)
+   {
+      if (left == right)
+         return true;
+      if (left == null || right == null)
+         return false;
+      if (left.getVersionString().equals(right.getVersionString()))
+         return true;
+
+      return false;
+   }
 }

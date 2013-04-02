@@ -43,7 +43,7 @@ import org.jboss.forge.parser.xml.XMLParserException;
 
 /**
  * Used to perform Addon installation/registration operations.
- *
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:koen.aers@gmail.com">Koen Aers</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
@@ -434,11 +434,12 @@ public final class AddonRepositoryImpl implements MutableAddonRepository
                   if (child != null)
                   {
                      if ((addon.getApiVersion() == null)
-                              || addon.getApiVersion().equals(
-                                       new SingleVersion(child.getAttribute(ATTR_API_VERSION))))
+                              || Versions.areEqual(new SingleVersion(child.getAttribute(ATTR_API_VERSION)),
+                                       addon.getApiVersion()))
                      {
                         if ((addon.getVersion() == null)
-                                 || addon.getVersion().equals(new SingleVersion(child.getAttribute(ATTR_VERSION))))
+                                 || Versions.areEqual(new SingleVersion(child.getAttribute(ATTR_VERSION)),
+                                          addon.getVersion()))
                         {
                            return AddonId.from(child.getAttribute(ATTR_NAME),
                                     child.getAttribute(ATTR_VERSION),
@@ -523,8 +524,11 @@ public final class AddonRepositoryImpl implements MutableAddonRepository
          @Override
          public Boolean call() throws Exception
          {
-            return getAddonBaseDir(addon).exists() && getAddonDescriptorFile(addon).exists()
-                     && !getAddonResources(addon).isEmpty();
+            File addonBaseDir = getAddonBaseDir(addon);
+            File addonDescriptorFile = getAddonDescriptorFile(addon);
+            List<File> addonResources = getAddonResources(addon);
+
+            return addonBaseDir.exists() && addonDescriptorFile.exists() && !addonResources.isEmpty();
          }
       });
    }

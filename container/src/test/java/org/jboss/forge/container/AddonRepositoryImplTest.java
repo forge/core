@@ -78,7 +78,37 @@ public class AddonRepositoryImplTest
                File.createTempFile("addonDir", "test"));
 
       AddonId addon = AddonId.from("1", "2");
+      ArrayList<File> resourceJars = new ArrayList<File>();
+      File tempJar = File.createTempFile("addon" + addon.getName(), ".jar");
+      tempJar.createNewFile();
+      resourceJars.add(tempJar);
+
+      Assert.assertFalse(repository.isDeployed(addon));
+      repository.deploy(addon, new ArrayList<AddonDependencyEntry>(), resourceJars);
+      Assert.assertTrue(repository.isDeployed(addon));
+
+      Assert.assertFalse(repository.isEnabled(addon));
+      repository.enable(addon);
+      Assert.assertTrue(repository.isEnabled(addon));
+
+      Assert.assertEquals(0, repository.getAddonDependencies(addon).size());
+   }
+
+   @Test
+   public void testDeployAddonEntryNoDependenciesOrResources() throws Exception
+   {
+      MutableAddonRepository repository = AddonRepositoryImpl.forDirectory(new ForgeImpl(),
+               File.createTempFile("addonDir", "test"));
+
+      AddonId addon = AddonId.from("1", "2");
+
+      Assert.assertFalse(repository.isDeployed(addon));
       repository.deploy(addon, new ArrayList<AddonDependencyEntry>(), new ArrayList<File>());
+      Assert.assertFalse(repository.isDeployed(addon));
+
+      Assert.assertFalse(repository.isEnabled(addon));
+      repository.enable(addon);
+      Assert.assertTrue(repository.isEnabled(addon));
 
       Assert.assertEquals(0, repository.getAddonDependencies(addon).size());
    }

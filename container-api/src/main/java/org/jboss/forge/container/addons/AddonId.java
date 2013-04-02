@@ -108,7 +108,7 @@ public class AddonId
          return true;
       if (obj == null)
          return false;
-      if (getClass() != obj.getClass())
+      if (!(obj instanceof AddonId))
          return false;
       AddonId other = (AddonId) obj;
       if (name == null)
