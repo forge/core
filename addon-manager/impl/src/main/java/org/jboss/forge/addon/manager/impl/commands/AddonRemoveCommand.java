@@ -10,6 +10,7 @@ import org.jboss.forge.addon.manager.AddonManager;
 import org.jboss.forge.container.Forge;
 import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.repositories.AddonRepository;
+import org.jboss.forge.container.repositories.MutableAddonRepository;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.context.UIBuilder;
 import org.jboss.forge.ui.context.UIContext;
@@ -52,9 +53,13 @@ public class AddonRemoveCommand implements UICommand, AddonCommandConstants
       Set<AddonId> choices = new HashSet<AddonId>();
       for (AddonRepository repository : forge.getRepositories())
       {
-         for (AddonId id : repository.listEnabled())
+         // Avoid immutable repositories
+         if (repository instanceof MutableAddonRepository)
          {
-            choices.add(id);
+            for (AddonId id : repository.listEnabled())
+            {
+               choices.add(id);
+            }
          }
       }
       addons.setValueChoices(choices);
