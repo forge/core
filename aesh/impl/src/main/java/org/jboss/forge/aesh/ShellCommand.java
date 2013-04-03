@@ -19,6 +19,7 @@ import org.jboss.aesh.console.Console;
 import org.jboss.aesh.console.ConsoleOutput;
 import org.jboss.aesh.util.FileLister;
 import org.jboss.forge.aesh.util.CommandLineUtil;
+import org.jboss.forge.aesh.util.UICommandDelegate;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.input.UIInput;
 import org.jboss.forge.ui.input.InputComponent;
@@ -38,7 +39,7 @@ public class ShellCommand implements Completion
 
    public ShellCommand(UICommand command, ForgeShell aeshell) throws Exception
    {
-      this.command = command;
+      this.command = new UICommandDelegate(command);
       this.context = new ShellContext(aeshell);
       this.aeshell = aeshell;
       command.initializeUI(context);
