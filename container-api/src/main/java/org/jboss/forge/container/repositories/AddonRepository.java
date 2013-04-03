@@ -7,6 +7,7 @@
 package org.jboss.forge.container.repositories;
 
 import java.io.File;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -42,4 +43,6 @@ public interface AddonRepository
    public List<AddonId> listEnabled();
 
    public List<AddonId> listEnabledCompatibleWithVersion(final String version);
+
+   public boolean isModifiedSince(Date date);
 }

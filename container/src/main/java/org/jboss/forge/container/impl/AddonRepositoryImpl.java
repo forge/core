@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -636,5 +637,11 @@ public final class AddonRepositoryImpl implements MutableAddonRepository
       }
 
       return installed;
+   }
+
+   @Override
+   public boolean isModifiedSince(Date date)
+   {
+      return new Date(getRepositoryRegistryFile().lastModified()).after(date);
    }
 }

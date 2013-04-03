@@ -6,19 +6,21 @@
  */
 package org.jboss.forge.container;
 
+import java.io.File;
 import java.util.List;
 
 import org.jboss.forge.container.addons.Addon;
 import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.lock.LockManager;
 import org.jboss.forge.container.repositories.AddonRepository;
+import org.jboss.forge.container.repositories.AddonRepositoryMode;
 import org.jboss.forge.container.spi.ContainerLifecycleListener;
 import org.jboss.forge.container.spi.ListenerRegistration;
 import org.jboss.forge.container.versions.Version;
 
 /**
  * Operations for initializing, starting, interacting with, and stopping a {@link Forge} container.
- *
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public interface Forge
@@ -64,21 +66,15 @@ public interface Forge
    public AddonRegistry getAddonRegistry();
 
    /**
-    * Get the {@link List} of configured {@link AddonRepository} instances.
+    * Get an immutable {@link List} of configured {@link AddonRepository} instances.
     */
    public List<AddonRepository> getRepositories();
 
    /**
-    * Set the {@link List} of configured {@link AddonRepository} instances. This method must not be called once
-    * {@link Forge} is started.
+    * Add an {@link AddonRepository} to be scanned for deployed and enabled {@link Addon} instances. This method must
+    * not be called once {@link Forge} is started.
     */
-   public Forge setRepositories(List<AddonRepository> repositories);
-
-   /**
-    * Set the array of configured {@link AddonRepository} instances. This method must not be called once {@link Forge}
-    * is started.
-    */
-   public Forge setRepositories(AddonRepository... repositories);
+   public Forge addRepository(AddonRepositoryMode mode, File repository);
 
    /**
     * Get the current runtime API version of {@link Forge}.

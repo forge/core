@@ -16,7 +16,7 @@ import org.jboss.forge.addon.manager.AddonManager;
 import org.jboss.forge.addon.manager.impl.AddonManagerImpl;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.addons.AddonId;
-import org.jboss.forge.container.impl.AddonRepositoryImpl;
+import org.jboss.forge.container.repositories.AddonRepositoryMode;
 import org.jboss.forge.maven.dependencies.FileResourceFactory;
 import org.jboss.forge.maven.dependencies.MavenContainer;
 import org.jboss.forge.maven.dependencies.MavenDependencyResolver;
@@ -56,8 +56,8 @@ public class MultipleRepositoryTest
       Forge forge = new ForgeImpl();
       File repodir1 = File.createTempFile("forge", "repo1");
       File repodir2 = File.createTempFile("forge", "repo2");
-      forge.setRepositories(AddonRepositoryImpl.forDirectory(forge, repodir1),
-               AddonRepositoryImpl.forDirectory(forge, repodir2));
+      forge.addRepository(AddonRepositoryMode.MUTABLE, repodir1);
+      forge.addRepository(AddonRepositoryMode.MUTABLE, repodir2);
       forge.startAsync();
 
       AddonManager manager = new AddonManagerImpl(forge, new MavenDependencyResolver(new FileResourceFactory(),

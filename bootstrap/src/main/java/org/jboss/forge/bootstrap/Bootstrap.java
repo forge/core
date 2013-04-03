@@ -21,8 +21,8 @@ import org.jboss.forge.addon.manager.InstallRequest;
 import org.jboss.forge.addon.manager.impl.AddonManagerImpl;
 import org.jboss.forge.container.Forge;
 import org.jboss.forge.container.addons.AddonId;
-import org.jboss.forge.container.impl.AddonRepositoryImpl;
 import org.jboss.forge.container.repositories.AddonRepository;
+import org.jboss.forge.container.repositories.AddonRepositoryMode;
 import org.jboss.forge.container.repositories.MutableAddonRepository;
 import org.jboss.forge.container.util.OperatingSystemUtils;
 import org.jboss.forge.dependencies.Coordinate;
@@ -99,7 +99,6 @@ public class Bootstrap
       String removeAddon = null;
       forge = ServiceLoader.load(Forge.class).iterator().next();
 
-      List<AddonRepository> repositories = new ArrayList<AddonRepository>();
       if (args.length > 0)
       {
          for (int i = 0; i < args.length; i++)
@@ -118,7 +117,7 @@ public class Bootstrap
             }
             else if ("--addonDir".equals(args[i]))
             {
-               repositories.add(AddonRepositoryImpl.forDirectory(forge, new File(args[++i])));
+               forge.addRepository(AddonRepositoryMode.MUTABLE, new File(args[++i]));
             }
             else if ("--batchMode".equals(args[i]))
             {
@@ -128,9 +127,6 @@ public class Bootstrap
                System.out.println("Unknown option: " + args[i]);
          }
       }
-
-      if (!repositories.isEmpty())
-         forge.setRepositories(repositories);
 
       if (listInstalled)
          list();

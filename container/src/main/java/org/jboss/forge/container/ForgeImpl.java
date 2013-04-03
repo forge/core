@@ -1,6 +1,9 @@
 package org.jboss.forge.container;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.logging.Level;
@@ -12,8 +15,11 @@ import org.jboss.forge.container.impl.AddonRegistryImpl;
 import org.jboss.forge.container.impl.AddonRepositoryImpl;
 import org.jboss.forge.container.lock.LockManager;
 import org.jboss.forge.container.repositories.AddonRepository;
+import org.jboss.forge.container.repositories.AddonRepositoryMode;
+import org.jboss.forge.container.repositories.ImmutableAddonRepository;
 import org.jboss.forge.container.spi.ContainerLifecycleListener;
 import org.jboss.forge.container.spi.ListenerRegistration;
+import org.jboss.forge.container.util.Assert;
 import org.jboss.forge.container.versions.SingleVersion;
 import org.jboss.forge.container.versions.Version;
 import org.jboss.modules.Module;
@@ -33,6 +39,7 @@ public class ForgeImpl implements Forge
    private ClassLoader loader;
 
    private List<AddonRepository> repositories = new ArrayList<AddonRepository>();
+   private Date lastCheckCompleted;
 
    private final LockManager lock = new LockManagerImpl();
 
@@ -79,6 +86,7 @@ public class ForgeImpl implements Forge
          @Override
          public void run()
          {
+            Thread.currentThread().setName("Forge Container " + ForgeImpl.this);
             ForgeImpl.this.start(loader);
          };
       }.start();
@@ -105,40 +113,50 @@ public class ForgeImpl implements Forge
             alive = true;
             do
             {
+               boolean dirty = false;
                if (!isStartingAddons())
                {
-                  for (Addon addon : registry.getAddons())
+                  Date nextCheck = new Date();
+                  for (AddonRepository repository : repositories)
                   {
-                     boolean enabled = false;
-                     for (AddonRepository repository : repositories)
+                     if (lastCheckCompleted == null || repository.isModifiedSince(lastCheckCompleted))
                      {
-                        if (repository.isEnabled(addon.getId()))
+                        dirty = true;
+                        for (Addon addon : registry.getAddons())
                         {
-                           enabled = true;
-                           break;
-                        }
-                     }
+                           boolean enabled = false;
+                           if (repository.isEnabled(addon.getId()))
+                           {
+                              enabled = true;
+                              break;
+                           }
 
-                     if (!enabled && addon.getStatus().isStarted())
-                     {
-                        try
-                        {
-                           registry.stop(addon);
-                        }
-                        catch (Exception e)
-                        {
-                           logger.log(Level.SEVERE, "Error occurred.", e);
+                           if (!enabled && addon.getStatus().isStarted())
+                           {
+                              try
+                              {
+                                 registry.stop(addon);
+                              }
+                              catch (Exception e)
+                              {
+                                 logger.log(Level.SEVERE, "Error occurred.", e);
+                              }
+                           }
                         }
                      }
                   }
+                  lastCheckCompleted = nextCheck;
 
-                  try
+                  if (dirty)
                   {
-                     registry.startAll();
-                  }
-                  catch (Exception e)
-                  {
-                     logger.log(Level.SEVERE, "Error occurred.", e);
+                     try
+                     {
+                        registry.startAll();
+                     }
+                     catch (Exception e)
+                     {
+                        logger.log(Level.SEVERE, "Error occurred.", e);
+                     }
                   }
                }
                Thread.sleep(100);
@@ -255,25 +273,20 @@ public class ForgeImpl implements Forge
    @Override
    public List<AddonRepository> getRepositories()
    {
-      return repositories;
+      return Collections.unmodifiableList(repositories);
    }
 
    @Override
-   public Forge setRepositories(AddonRepository... repositories)
+   public Forge addRepository(AddonRepositoryMode mode, File directory)
    {
-      List<AddonRepository> temp = new ArrayList<AddonRepository>();
-      for (AddonRepository repository : repositories)
-      {
-         temp.add(repository);
-      }
-      return setRepositories(temp);
-   }
+      Assert.notNull(mode, "Addon repository mode must not be null.");
+      Assert.notNull(mode, "Addon repository directory must not be null.");
 
-   @Override
-   public Forge setRepositories(List<AddonRepository> repositories)
-   {
       assertNotAlive();
-      this.repositories = repositories;
+      if (mode.isMutable())
+         this.repositories.add(AddonRepositoryImpl.forDirectory(this, directory));
+      else if (mode.isImmutable())
+         this.repositories.add(new ImmutableAddonRepository(AddonRepositoryImpl.forDirectory(this, directory)));
       return this;
    }
 
