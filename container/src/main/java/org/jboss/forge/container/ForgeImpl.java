@@ -39,7 +39,7 @@ public class ForgeImpl implements Forge
    private ClassLoader loader;
 
    private List<AddonRepository> repositories = new ArrayList<AddonRepository>();
-   private Date lastCheckCompleted;
+   private Date lastCheckCompleted = new Date(0);
 
    private final LockManager lock = new LockManagerImpl();
 
@@ -118,7 +118,7 @@ public class ForgeImpl implements Forge
                   Date nextCheck = new Date();
                   for (AddonRepository repository : repositories)
                   {
-                     if (lastCheckCompleted == null || repository.isModifiedSince(lastCheckCompleted))
+                     if (repository.isModifiedSince(lastCheckCompleted))
                      {
                         dirty = true;
                         for (Addon addon : registry.getAddons())
@@ -141,12 +141,12 @@ public class ForgeImpl implements Forge
                               }
                            }
                         }
-                        lastCheckCompleted = nextCheck;
                      }
                   }
 
                   if (dirty)
                   {
+                     lastCheckCompleted = nextCheck;
                      try
                      {
                         registry.startAll();

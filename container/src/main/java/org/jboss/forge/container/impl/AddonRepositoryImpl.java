@@ -640,8 +640,18 @@ public final class AddonRepositoryImpl implements MutableAddonRepository
    }
 
    @Override
-   public boolean isModifiedSince(Date date)
+   public boolean isModifiedSince(final Date date)
    {
-      return new Date(getRepositoryRegistryFile().lastModified()).after(date);
+      Assert.notNull(date, "Date to compare must not be null.");
+      final Date lastModified = new Date(getRepositoryRegistryFile().lastModified());
+
+      return lock.performLocked(LockMode.READ, new Callable<Boolean>()
+      {
+         @Override
+         public Boolean call() throws Exception
+         {
+            return lastModified.after(date) || date.equals(lastModified);
+         }
+      });
    }
 }
