@@ -7,6 +7,7 @@
 package org.jboss.forge.container.util;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.jboss.forge.container.addons.Addon;
 import org.jboss.forge.container.exception.ContainerException;
@@ -52,11 +53,18 @@ public class Addons
       try
       {
          long start = System.currentTimeMillis();
-         while (!addon.getStatus().isStarted()
-                  && System.currentTimeMillis() < (start + TimeUnit.MILLISECONDS.convert(quantity, unit)))
+         while (!addon.getStatus().isStarted())
          {
+            if (System.currentTimeMillis() > (start + TimeUnit.MILLISECONDS.convert(quantity, unit)))
+            {
+               throw new TimeoutException("Timeout expired waiting for [" + addon + "] to start.");
+            }
             Thread.sleep(10);
          }
+      }
+      catch (RuntimeException re)
+      {
+         throw re;
       }
       catch (Exception e)
       {
@@ -69,11 +77,18 @@ public class Addons
       try
       {
          long start = System.currentTimeMillis();
-         while (addon.getStatus().isStarted()
-                  && System.currentTimeMillis() < (start + TimeUnit.MILLISECONDS.convert(quantity, unit)))
+         while (addon.getStatus().isStarted())
          {
+            if (System.currentTimeMillis() > (start + TimeUnit.MILLISECONDS.convert(quantity, unit)))
+            {
+               throw new TimeoutException("Timeout expired waiting for [" + addon + "] to stop.");
+            }
             Thread.sleep(10);
          }
+      }
+      catch (RuntimeException re)
+      {
+         throw re;
       }
       catch (Exception e)
       {
