@@ -1,5 +1,6 @@
 package org.jboss.forge.se.init;
 
+import java.io.File;
 import java.lang.reflect.Method;
 import java.util.Set;
 
@@ -8,6 +9,7 @@ import org.jboss.forge.container.ForgeImpl;
 import org.jboss.forge.container.addons.Addon;
 import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.addons.AddonRegistry;
+import org.jboss.forge.container.repositories.AddonRepositoryMode;
 import org.jboss.forge.container.util.AddonFilters;
 import org.jboss.forge.proxy.ClassLoaderAdapterCallback;
 import org.junit.Assert;
@@ -46,6 +48,7 @@ public class BootstrapClassLoaderTestCase
    public void shouldBeAbleToPassClassesIntoDelegate() throws Exception
    {
       Forge instance = ForgeFactory.getInstance();
+      instance.addRepository(AddonRepositoryMode.IMMUTABLE, new File("blah"));
       instance.getRepositories().get(0).getAddonResources(AddonId.from("a", "1"));
    }
 
