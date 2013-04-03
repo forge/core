@@ -4,19 +4,21 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.forge.container.addons.Addon;
 import org.jboss.forge.container.addons.AddonRegistry;
+import org.jboss.forge.container.addons.ImmutableAddonRepository;
 import org.jboss.forge.container.impl.AddonRegistryImpl;
 import org.jboss.forge.container.impl.AddonRepositoryImpl;
 import org.jboss.forge.container.lock.LockManager;
 import org.jboss.forge.container.repositories.AddonRepository;
 import org.jboss.forge.container.repositories.AddonRepositoryMode;
-import org.jboss.forge.container.repositories.ImmutableAddonRepository;
 import org.jboss.forge.container.spi.ContainerLifecycleListener;
 import org.jboss.forge.container.spi.ListenerRegistration;
 import org.jboss.forge.container.util.Assert;
@@ -39,7 +41,7 @@ public class ForgeImpl implements Forge
    private ClassLoader loader;
 
    private List<AddonRepository> repositories = new ArrayList<AddonRepository>();
-   private Date lastCheckCompleted = new Date(0);
+   private Map<AddonRepository, Integer> lastRepoVersionSeen = new HashMap<AddonRepository, Integer>();
 
    private final LockManager lock = new LockManagerImpl();
 
@@ -115,11 +117,13 @@ public class ForgeImpl implements Forge
                boolean dirty = false;
                if (!isStartingAddons())
                {
-                  Date nextCheck = new Date();
                   for (AddonRepository repository : repositories)
                   {
-                     if (repository.isModifiedSince(lastCheckCompleted))
+                     int repoVersion = repository.getVersion();
+                     if (repoVersion > lastRepoVersionSeen.get(repository))
                      {
+                        System.out.println("** FORGE UPDATING PLUGIN STATUSES **");
+                        lastRepoVersionSeen.put(repository, repoVersion);
                         dirty = true;
                         for (Addon addon : registry.getAddons())
                         {
@@ -146,7 +150,6 @@ public class ForgeImpl implements Forge
 
                   if (dirty)
                   {
-                     lastCheckCompleted = nextCheck;
                      try
                      {
                         registry.startAll();
@@ -281,10 +284,14 @@ public class ForgeImpl implements Forge
       Assert.notNull(mode, "Addon repository directory must not be null.");
 
       assertNotAlive();
-      if (mode.isMutable())
-         this.repositories.add(AddonRepositoryImpl.forDirectory(this, directory));
-      else if (mode.isImmutable())
-         this.repositories.add(new ImmutableAddonRepository(AddonRepositoryImpl.forDirectory(this, directory)));
+      AddonRepository repository = AddonRepositoryImpl.forDirectory(this, directory);
+
+      if (mode.isImmutable())
+         repository = new ImmutableAddonRepository(repository);
+
+      this.repositories.add(repository);
+      lastRepoVersionSeen.put(repository, 0);
+
       return this;
    }
 

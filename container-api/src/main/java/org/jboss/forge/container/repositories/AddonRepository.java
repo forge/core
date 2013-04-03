@@ -44,5 +44,7 @@ public interface AddonRepository
 
    public List<AddonId> listEnabledCompatibleWithVersion(final String version);
 
-   public boolean isModifiedSince(Date date);
+   public Date getLastModified();
+
+   public int getVersion();
 }

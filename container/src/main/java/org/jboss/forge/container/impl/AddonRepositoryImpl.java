@@ -101,6 +101,8 @@ public final class AddonRepositoryImpl implements MutableAddonRepository
 
    private File addonDir;
 
+   private int version = 1;
+
    private AddonRepositoryImpl(LockManager lock, File dir)
    {
       // TODO Assert.notNull(lock, "LockManager must not be null.");
@@ -212,16 +214,7 @@ public final class AddonRepositoryImpl implements MutableAddonRepository
                   Node child = installed.getSingle("addon@" + ATTR_NAME + "=" + addon.getName() + "&"
                            + ATTR_VERSION + "=" + addon.getVersion());
                   installed.removeChild(child);
-                  FileOutputStream outStream = null;
-                  try
-                  {
-                     outStream = new FileOutputStream(registryFile);
-                     Streams.write(XMLParser.toXMLInputStream(installed), outStream);
-                  }
-                  finally
-                  {
-                     Streams.closeQuietly(outStream);
-                  }
+                  saveRegistryFile(installed);
                   return true;
                }
                catch (IOException e)
@@ -231,7 +224,6 @@ public final class AddonRepositoryImpl implements MutableAddonRepository
             }
             return false;
          }
-
       });
    }
 
@@ -257,17 +249,8 @@ public final class AddonRepositoryImpl implements MutableAddonRepository
                installed.getOrCreate("addon@" + ATTR_NAME + "=" + (addon.getName() == null ? "" : addon.getName()) +
                         "&" + ATTR_VERSION + "=" + addon.getVersion())
                         .attribute(ATTR_API_VERSION, (addon.getApiVersion() == null ? "" : addon.getApiVersion()));
-               FileOutputStream destination = null;
-               try
-               {
-                  destination = new FileOutputStream(registryFile);
-                  Streams.write(XMLParser.toXMLInputStream(installed), destination);
-               }
-               finally
-               {
-                  Streams.closeQuietly(destination);
-               }
 
+               saveRegistryFile(installed);
                return true;
             }
             catch (FileNotFoundException e)
@@ -640,18 +623,46 @@ public final class AddonRepositoryImpl implements MutableAddonRepository
    }
 
    @Override
-   public boolean isModifiedSince(final Date date)
+   public Date getLastModified()
    {
-      Assert.notNull(date, "Date to compare must not be null.");
-      final Date lastModified = new Date(getRepositoryRegistryFile().lastModified());
-
-      return lock.performLocked(LockMode.READ, new Callable<Boolean>()
+      return lock.performLocked(LockMode.READ, new Callable<Date>()
       {
          @Override
-         public Boolean call() throws Exception
+         public Date call() throws Exception
          {
-            return lastModified.after(date) || date.equals(lastModified);
+            Date lastModified = new Date(getRepositoryRegistryFile().lastModified());
+            System.out.println("**** Last modified [" + lastModified.getTime() + "] repo ["
+                     + getRepositoryRegistryFile().getAbsolutePath() + "] ****");
+            return lastModified;
          }
       });
    }
+
+   @Override
+   public int getVersion()
+   {
+      return version;
+   }
+
+   private void saveRegistryFile(Node installed) throws FileNotFoundException
+   {
+      FileOutputStream outStream = null;
+      try
+      {
+         // TODO need to replace this with actual file-system transactionality, but should work for the common case
+         outStream = new FileOutputStream(getRepositoryRegistryFile());
+         incrementVersion();
+         Streams.write(XMLParser.toXMLInputStream(installed), outStream);
+      }
+      finally
+      {
+         Streams.closeQuietly(outStream);
+      }
+   }
+
+   private void incrementVersion()
+   {
+      version++;
+   }
+
 }

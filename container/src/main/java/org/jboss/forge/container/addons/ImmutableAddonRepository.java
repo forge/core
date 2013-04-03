@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.container.repositories;
+package org.jboss.forge.container.addons;
 
 import java.io.File;
 import java.util.Date;
@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.jboss.forge.container.addons.AddonId;
+import org.jboss.forge.container.repositories.AddonDependencyEntry;
+import org.jboss.forge.container.repositories.AddonRepository;
 
 /**
  * An immutable {@link AddonRepository} implementation that delegates to a wrapped instance.
@@ -85,9 +87,15 @@ public class ImmutableAddonRepository implements AddonRepository
    }
 
    @Override
-   public boolean isModifiedSince(Date date)
+   public Date getLastModified()
    {
-      return delegate.isModifiedSince(date);
+      return delegate.getLastModified();
+   }
+
+   @Override
+   public int getVersion()
+   {
+      return delegate.getVersion();
    }
 
 }
