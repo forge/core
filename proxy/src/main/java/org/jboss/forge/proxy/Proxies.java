@@ -374,4 +374,13 @@ public class Proxies
       }
       return false;
    }
+
+   /**
+    * Determine if the given {@link Class} type is a native language type.
+    */
+   public static boolean isLanguageType(Class<?> type)
+   {
+      return type.getName().startsWith("[L") || type.getName().matches("^(java\\.lang|java\\.io).*")
+               || type.isPrimitive();
+   }
 }

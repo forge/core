@@ -7,7 +7,12 @@
 
 package org.jboss.forge.proxy;
 
+import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -89,6 +94,21 @@ public class ProxiesTest
    {
       Assert.assertFalse(Proxies.isInstantiable(TypeWithNonDefaultConstructor.class));
       Assert.assertTrue(Proxies.isInstantiable(Bean.class));
+   }
+
+   @Test
+   public void testJavaLangAndJavaIOAreLanguageTypes() throws Exception
+   {
+      Object[] foo = new Object[] {};
+      Assert.assertTrue(Proxies.isLanguageType(foo.getClass()));
+      Assert.assertTrue(Proxies.isLanguageType(Object.class));
+      Assert.assertTrue(Proxies.isLanguageType(InputStream.class));
+      Assert.assertTrue(Proxies.isLanguageType(Runnable.class));
+      Assert.assertTrue(Proxies.isLanguageType(String.class));
+      Assert.assertFalse(Proxies.isLanguageType(BigDecimal.class));
+      Assert.assertFalse(Proxies.isLanguageType(List.class));
+      Assert.assertFalse(Proxies.isLanguageType(Set.class));
+      Assert.assertFalse(Proxies.isLanguageType(Map.class));
    }
 
 }

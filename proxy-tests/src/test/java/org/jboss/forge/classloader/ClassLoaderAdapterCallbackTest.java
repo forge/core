@@ -19,7 +19,7 @@ import org.junit.Test;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class ProxiesTest
+public class ClassLoaderAdapterCallbackTest
 {
    ForgeProxy handler = new ForgeProxy()
    {
@@ -35,11 +35,10 @@ public class ProxiesTest
          return new MockService();
       }
    };
-   
+
    @Test
    public void testNestedProxy() throws Exception
    {
-
       Object object = Proxies.enhance(MockService.class, handler);
       Proxies.enhance(object.getClass(), handler);
    }
@@ -47,7 +46,7 @@ public class ProxiesTest
    @Test
    public void testNestedDupicateProxyAdapterCallback() throws Exception
    {
-      ClassLoader loader = ProxiesTest.class.getClassLoader();
+      ClassLoader loader = ClassLoaderAdapterCallbackTest.class.getClassLoader();
       MockService original = new MockService();
       MockService object = ClassLoaderAdapterCallback.enhance(loader, loader, original, MockService.class);
       MockService object2 = ClassLoaderAdapterCallback.enhance(loader, loader, object, object.getClass());
@@ -57,7 +56,7 @@ public class ProxiesTest
    @Test
    public void testProxyAdapterCallbackNestedInteraction() throws Exception
    {
-      ClassLoader loader = ProxiesTest.class.getClassLoader();
+      ClassLoader loader = ClassLoaderAdapterCallbackTest.class.getClassLoader();
       MockService original = new MockService();
       MockService object = ClassLoaderAdapterCallback.enhance(loader, loader, original, MockService.class);
       MockResult result = object.getResult();
@@ -68,7 +67,7 @@ public class ProxiesTest
    public void testNestedProxyAdapterCallback() throws Exception
    {
       MockService object = Proxies.enhance(MockService.class, handler);
-      ClassLoader loader = ProxiesTest.class.getClassLoader();
+      ClassLoader loader = ClassLoaderAdapterCallbackTest.class.getClassLoader();
       MockService object2 = ClassLoaderAdapterCallback.enhance(loader, loader, object, MockService.class);
       Assert.assertNotSame(object, object2);
    }
