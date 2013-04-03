@@ -223,12 +223,13 @@ public class ClassLoaderAdapterCallback implements MethodHandler
    private boolean returnTypeNeedsEnhancement(Class<?> methodReturnType, Object returnValue,
             Class<?> unwrappedReturnValueType)
    {
-      if (unwrappedReturnValueType.getName().contains("java.lang") || unwrappedReturnValueType.isPrimitive())
+      if (unwrappedReturnValueType.getName().matches("^(java\\.lang|java\\.io).*")
+               || unwrappedReturnValueType.isPrimitive())
       {
          return false;
       }
       else if (!Object.class.equals(methodReturnType)
-               && (methodReturnType.getName().startsWith("java.lang") || methodReturnType.isPrimitive()))
+               && (methodReturnType.getName().matches("^(java\\.lang|java\\.io).*") || methodReturnType.isPrimitive()))
       {
          return false;
       }
