@@ -15,6 +15,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.aesh.ShellContext;
 import org.jboss.forge.container.addons.Addon;
 import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.ui.UICommand;
@@ -48,7 +49,7 @@ public class ListServicesCommand implements UICommand
    @Override
    public boolean isEnabled(UIContext context)
    {
-      return true;
+      return (context instanceof ShellContext);
    }
 
    @Override

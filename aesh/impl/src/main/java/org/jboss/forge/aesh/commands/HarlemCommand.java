@@ -31,7 +31,7 @@ public class HarlemCommand implements UICommand {
 
     @Override
     public boolean isEnabled(UIContext context) {
-        return true;
+        return (context instanceof ShellContext);
     }
 
     @Override
