@@ -73,9 +73,7 @@ public class AddonHotSwapTest
       ClassLoader depOneClassloader = depOne.getClassLoader();
       ClassLoader depTwoClassloader = depTwo.getClassLoader();
 
-      System.out.println("**** Disabling dep,2 **** LMT [" + repository.getLastModified().getTime() + "]");
       ((MutableAddonRepository) repository).disable(depTwoId);
-      System.out.println("**** Waiting for dep,2 to STOP **** LMT [" + repository.getLastModified().getTime() + "]");
       Addons.waitUntilStopped(depOne, 10, TimeUnit.SECONDS);
 
       ((MutableAddonRepository) repository).enable(depTwoId);

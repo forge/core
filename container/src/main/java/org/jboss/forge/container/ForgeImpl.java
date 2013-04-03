@@ -122,7 +122,6 @@ public class ForgeImpl implements Forge
                      int repoVersion = repository.getVersion();
                      if (repoVersion > lastRepoVersionSeen.get(repository))
                      {
-                        System.out.println("** FORGE UPDATING PLUGIN STATUSES **");
                         lastRepoVersionSeen.put(repository, repoVersion);
                         dirty = true;
                         for (Addon addon : registry.getAddons())

@@ -630,10 +630,7 @@ public final class AddonRepositoryImpl implements MutableAddonRepository
          @Override
          public Date call() throws Exception
          {
-            Date lastModified = new Date(getRepositoryRegistryFile().lastModified());
-            System.out.println("**** Last modified [" + lastModified.getTime() + "] repo ["
-                     + getRepositoryRegistryFile().getAbsolutePath() + "] ****");
-            return lastModified;
+            return new Date(getRepositoryRegistryFile().lastModified());
          }
       });
    }
