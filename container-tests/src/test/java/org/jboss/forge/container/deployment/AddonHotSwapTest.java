@@ -73,10 +73,10 @@ public class AddonHotSwapTest
       ClassLoader depOneClassloader = depOne.getClassLoader();
       ClassLoader depTwoClassloader = depTwo.getClassLoader();
 
-      ((MutableAddonRepository) repository).disable(depTwoId);
+      registry.stop(depTwo);
       Addons.waitUntilStopped(depOne, 10, TimeUnit.SECONDS);
 
-      ((MutableAddonRepository) repository).enable(depTwoId);
+      registry.start(depTwoId);
       Addons.waitUntilStarted(depOne, 10, TimeUnit.SECONDS);
 
       /*
