@@ -63,7 +63,6 @@ public class ForgeShell
 
    void observe(@Observes PostStartup startup) throws Exception
    {
-      initShell();
       startShell();
    }
 
@@ -79,7 +78,7 @@ public class ForgeShell
       console.addCompletion(command);
    }
 
-   public void initShell() throws Exception
+   private void initShell() throws Exception
    {
       prompt = createPrompt();
 

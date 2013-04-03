@@ -14,11 +14,13 @@ import org.jboss.forge.ui.metadata.UICategory;
 import org.jboss.forge.ui.metadata.UICommandMetadata;
 import org.jboss.forge.ui.result.Result;
 
+import javax.enterprise.inject.Vetoed;
 import java.net.URL;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  */
+@Vetoed
 public class UICommandDelegate implements UICommand {
 
     private UICommand delegate;

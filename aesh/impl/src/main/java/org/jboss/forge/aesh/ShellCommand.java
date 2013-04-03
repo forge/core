@@ -43,7 +43,7 @@ public class ShellCommand implements Completion
       this.context = new ShellContext(aeshell);
       this.aeshell = aeshell;
       command.initializeUI(context);
-      generateParser(command);
+      generateParser(this.command);
    }
 
    public Console getConsole()
@@ -204,7 +204,24 @@ public class ShellCommand implements Completion
       }
    }
 
-   @Override
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ShellCommand)) return false;
+
+        ShellCommand that = (ShellCommand) o;
+
+        if (!command.getMetadata().getName().equals(that.command.getMetadata().getName())) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return command.getMetadata().getName().hashCode();
+    }
+
+    @Override
    public String toString()
    {
       return "ShellCommand{" +
