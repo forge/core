@@ -1,4 +1,4 @@
-package org.jboss.forge.container.deployment;
+package org.jboss.forge.container.hotswap;
 
 import java.util.concurrent.TimeUnit;
 
