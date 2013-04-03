@@ -128,7 +128,6 @@ public class ForgeImpl implements Forge
                            if (repository.isEnabled(addon.getId()))
                            {
                               enabled = true;
-                              break;
                            }
 
                            if (!enabled && addon.getStatus().isStarted())
@@ -143,9 +142,9 @@ public class ForgeImpl implements Forge
                               }
                            }
                         }
+                        lastCheckCompleted = nextCheck;
                      }
                   }
-                  lastCheckCompleted = nextCheck;
 
                   if (dirty)
                   {
