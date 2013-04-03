@@ -231,7 +231,7 @@ public class ForgeShell
             }
             catch (Exception e)
             {
-               e.printStackTrace();
+               logger.log(Level.SEVERE, "Faile to verify commands.", e);
             }
             for (ShellCommand command : commands)
             {
@@ -262,8 +262,7 @@ public class ForgeShell
                }
                catch (IllegalArgumentException iae)
                {
-                  // System.out.println("Command: " + command + ", did not match: " + output.getBuffer());
-                  // ignored for now
+                  logger.log(Level.INFO, "Command: " + command + ", did not match: " + output.getBuffer());
                }
             }
             // if we didnt find any commands matching
