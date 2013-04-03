@@ -128,6 +128,8 @@ public class Bootstrap
          }
       }
 
+      if (forge.getRepositories().isEmpty())
+         forge.addRepository(AddonRepositoryMode.MUTABLE, new File(OperatingSystemUtils.getUserForgeDir(), "addons"));
       if (listInstalled)
          list();
       if (installAddon != null)
