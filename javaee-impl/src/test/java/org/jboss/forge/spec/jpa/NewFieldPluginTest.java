@@ -14,8 +14,10 @@ import static org.junit.Assert.assertTrue;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -24,6 +26,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.parser.java.Annotation;
+import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
@@ -179,6 +183,44 @@ public class NewFieldPluginTest extends AbstractJPATest
       assertEquals(originalSize, javaClass.getFields().size());
       assertFalse(javaClass.hasImport("org.jboss.NotANumber"));
       assertFalse(javaClass.hasSyntaxErrors());
+   }
+
+   @Test
+   public void testNewLobField() throws Exception
+   {
+      Project project = getProject();
+      JavaClass javaClass = generateEntity(project);
+
+      getShell().execute(ConstraintInspector.getName(FieldPlugin.class)
+               + " lob --named image --length 10000");
+
+      javaClass = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(javaClass).getJavaSource();
+      assertLobField(javaClass, "image", 10000);
+   }
+
+   @Test
+   public void testNewLobFieldDefaultLength() throws Exception
+   {
+      Project project = getProject();
+      JavaClass javaClass = generateEntity(project);
+
+      getShell().execute(ConstraintInspector.getName(FieldPlugin.class)
+               + " lob --named image");
+
+      javaClass = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(javaClass).getJavaSource();
+      assertLobField(javaClass, "image", Integer.MAX_VALUE);
+   }
+   
+   private void assertLobField(JavaClass javaClass, String fieldName, int length) {
+       assertTrue(javaClass.hasField(fieldName));
+       Field<JavaClass> imageField = javaClass.getField(fieldName);
+       assertEquals("byte", imageField.getType());
+       assertTrue(javaClass.hasImport(Lob.class));  
+       assertTrue(imageField.hasAnnotation(Lob.class));
+       assertTrue(imageField.hasAnnotation(Column.class));
+       Annotation<JavaClass> columnAnnotation = imageField.getAnnotation(Column.class);
+       assertEquals(String.valueOf(length), columnAnnotation.getLiteralValue("length"));
+       assertFalse(javaClass.hasSyntaxErrors());
    }
 
    @Test
