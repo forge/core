@@ -230,13 +230,14 @@ public class ForgeShell
             }
             catch (Exception e)
             {
-               logger.log(Level.SEVERE, "Faile to verify commands.", e);
+               logger.log(Level.SEVERE, "Failed to verify commands.", e);
             }
             for (ShellCommand command : commands)
             {
                try
                {
                   cl = command.parse(output.getBuffer());
+                   logger.info("Parsing: "+output.getBuffer()+", CommandLine is:"+cl);
                   if (cl != null)
                   {
                      // need some way of deciding if the command is standalone
@@ -254,13 +255,17 @@ public class ForgeShell
                         }
                         catch (Exception e)
                         {
-                           logger.log(Level.SEVERE, "Command " + command + " failed to run with: " + output);
+                           logger.log(Level.SEVERE, "Command " + command + " failed to run with: " + output, e);
                         }
                      }
                   }
                }
                catch (IllegalArgumentException iae)
                {
+                   if(iae.getMessage().startsWith("Option")) {
+                       console.pushToStdOut(iae.getMessage()+Config.getLineSeparator());
+                       return 0;
+                   }
                   logger.log(Level.INFO, "Command: " + command + ", did not match: " + output.getBuffer());
                }
             }

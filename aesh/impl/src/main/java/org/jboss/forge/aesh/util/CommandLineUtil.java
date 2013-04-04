@@ -22,6 +22,7 @@ import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.input.UIInput;
 import org.jboss.forge.ui.input.InputComponent;
 import org.jboss.forge.ui.input.UIInputMany;
+import org.jboss.forge.ui.input.UISelectOne;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
@@ -45,7 +46,10 @@ public class CommandLineUtil {
                 else {
                     parameter.addOption(
                             new OptionBuilder().name(input.getName().charAt(0)).
-                                    longName(input.getName()).description(input.getLabel()).create());
+                                    longName(input.getName())
+                                    .description(input.getLabel())
+                                    .required(input.isRequired())
+                                    .create());
                 }
             }
         }
@@ -67,13 +71,12 @@ public class CommandLineUtil {
             }
             else if(commandLine.hasOption(input.getName()) &&
                     input instanceof UIInputMany) {
-                //TODO
-                //String value = commandLine.getOptionValue(input.getName());
-                //setInputManyValue((UIInputMany) input, commandLine.getArguments(), registry);
+                setInputManyValue((UIInputMany) input, commandLine.getOptionValues(input.getName()), registry);
             }
-            else
-                ((UIInput) input).setValue(null);
-
+            else if(commandLine.hasOption(input.getName()) &&
+                    input instanceof UISelectOne) {
+                setInputValue((UISelectOne) input, commandLine.getOptionValue(input.getName()), registry);
+            }
         }
     }
 
@@ -118,5 +121,26 @@ public class CommandLineUtil {
         }
         input.setValue(convertedType);
     }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private static void setInputValue(final UISelectOne<Object> input, Object value,
+                                      AddonRegistry registry) {
+        Object convertedType = value;
+        if (value != null) {
+            if(converterFactory == null)
+                converterFactory = registry.getExportedInstance(ConverterFactory.class).get();
+            Class<? extends Object> source = value.getClass();
+            Class<Object> target = input.getValueType();
+            if (converterFactory != null) {
+                Converter converter = converterFactory.getConverter(source, target);
+                convertedType = converter.convert(value);
+            }
+            else {
+                System.err.println("Converter Factory was not deployed !! Cannot convert from " + source + " to " + target);
+            }
+        }
+        input.setValue(convertedType);
+    }
+
 
 }

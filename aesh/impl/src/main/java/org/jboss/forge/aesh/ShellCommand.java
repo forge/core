@@ -99,6 +99,10 @@ public class ShellCommand implements Completion
       // complete command names
       if (param.getName().startsWith(completeOperation.getBuffer()))
          completeOperation.addCompletionCandidate(param.getName());
+      //display all the options/arguments
+      else if(param.getName().equals(completeOperation.getBuffer().trim())) {
+          completeOperation.addCompletionCandidates(param.getOptionLongNamesWithDash());
+      }
       // complete options/arguments
       else if (completeOperation.getBuffer().startsWith(param.getName()))
       {
@@ -107,16 +111,33 @@ public class ShellCommand implements Completion
                            .findCompleteObject(completeOperation.getBuffer());
          if (completeObject.doDisplayOptions())
          {
-            if (param.getOptionLongNamesWithDash().size() > 1)
-            {
-               completeOperation.addCompletionCandidates(param.getOptionLongNamesWithDash());
-            }
-            else
-            {
-               completeOperation.addCompletionCandidates(param.getOptionLongNamesWithDash());
-               completeOperation.setOffset(completeOperation.getCursor() -
-                        completeObject.getOffset());
-            }
+             //we have a partial/full name
+             if(completeObject.getName() != null && completeObject.getName().length() > 0) {
+                 if(param.findPossibleLongNamesWitdDash(completeObject.getName()).size() > 0) {
+                     //only one param
+                     if(param.findPossibleLongNamesWitdDash(completeObject.getName()).size() == 1) {
+                         completeOperation.addCompletionCandidate( param.findPossibleLongNamesWitdDash(completeObject.getName()).get(0));
+                         completeOperation.setOffset(completeOperation.getCursor() -
+                                 completeObject.getOffset());
+                     }
+                     //multiple params
+                     else
+                         completeOperation.addCompletionCandidates(param.findPossibleLongNamesWitdDash(completeObject.getName()));
+                 }
+             }
+             //display all our params
+             else {
+                 if (param.getOptionLongNamesWithDash().size() > 1)
+                 {
+                     completeOperation.addCompletionCandidates(param.getOptionLongNamesWithDash());
+                 }
+                 else
+                 {
+                     completeOperation.addCompletionCandidates(param.getOptionLongNamesWithDash());
+                     completeOperation.setOffset(completeOperation.getCursor() -
+                             completeObject.getOffset());
+                 }
+             }
          }
          // try to complete an options value
          else if (completeObject.isOption())
@@ -136,6 +157,15 @@ public class ShellCommand implements Completion
             else if (inputOption != null && inputOption.getValueType() == Boolean.class)
             {
                // TODO
+            }
+            else if (inputOption != null && inputOption.getValueType() == String.class) {
+               //if it has a default value we can try to auto complete that
+                if(inputOption instanceof UIInput) {
+                    if(completeObject.getValue() == null ||
+                            completeObject.getValue().startsWith(((UIInput) inputOption).getValue().toString())) {
+                        completeOperation.addCompletionCandidate(((UIInput) inputOption).getValue().toString());
+                    }
+                }
             }
             // this shouldnt be needed
             if (inputOption != null && inputOption instanceof UIInput)
@@ -200,7 +230,6 @@ public class ShellCommand implements Completion
                }
             }
          }
-
       }
    }
 
