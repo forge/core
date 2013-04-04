@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -238,7 +239,7 @@ public class FieldPlugin implements Plugin
          shell.println("Could not locate the @Entity requested. No update was made.");
       }
    }
-
+   
    @Command(value = "string", help = "Add a String field to an existing @Entity class")
    public void newStringField(
             @Option(name = "named",
@@ -257,6 +258,33 @@ public class FieldPlugin implements Plugin
       }
    }
 
+   @Command(value = "lob", help = "Add a byte[] field, annotated with @Lob, to an existing @Entity class")
+   public void newLobField(
+           @Option(name = "named",
+           required = true,
+           description = "The field name",
+           type = PromptType.JAVA_VARIABLE_NAME) final String fieldName,
+           @Option(name = "length",
+           required = false,
+           description = "Lob column length") Integer length)
+   {
+       try
+       {
+           JavaClass entity = getJavaClass();
+           if (length == null)
+           {
+               length = Integer.MAX_VALUE;
+           }
+           addFieldTo(entity, byte[].class, fieldName, Lob.class).addAnnotation(Column.class).setLiteralValue("length",
+                    Integer.toString(length));
+           project.getFacet(JavaSourceFacet.class).saveJavaSource(entity);
+       }
+       catch (FileNotFoundException e)
+       {
+           shell.println("Could not locate the @Entity requested. No update was made.");
+       }
+   }
+   
    @Command(value = "oneToOne", help = "Add a One-to-one relationship field to an existing @Entity class")
    public void newOneToOneRelationship(
             @Option(name = "named",
@@ -666,10 +694,17 @@ public class FieldPlugin implements Plugin
 
       Field<JavaClass> field = targetEntity.addField();
       field.setName(fieldName).setPrivate().setType(fieldType).addAnnotation(annotation);
-      if (!fieldType.getCanonicalName().startsWith("java.lang.") && !fieldType.isPrimitive()
-               && !fieldType.getCanonicalName().equals(targetEntity.getCanonicalName()))
+      
+      Class<?> fieldTypeForImport = fieldType;
+      if (fieldType.getComponentType() != null)
       {
-         targetEntity.addImport(fieldType);
+          fieldTypeForImport = fieldType.getComponentType();
+      }
+      
+      if (!fieldTypeForImport.getCanonicalName().startsWith("java.lang.") && !fieldTypeForImport.isPrimitive()
+               && !fieldTypeForImport.getCanonicalName().equals(targetEntity.getCanonicalName()))
+      {
+         targetEntity.addImport(fieldTypeForImport);
       }
       Refactory.createGetterAndSetter(targetEntity, field);
       updateToString(targetEntity);
