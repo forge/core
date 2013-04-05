@@ -25,20 +25,20 @@ What's new and noteworthy?
 Get Started:
 -------------------------------------------------------------------------------
 * Download [JBoss Forge 2.0.0.Alpha2](https://repository.jboss.org/nexus/service/local/artifact/maven/redirect?r=releases&g=org.jboss.forge&a=forge-distribution&v=2.0.0.Alpha2&e=zip)
-* Extract the ZIP to a folder and navigate to forge-2.0.0.Alpha1/bin folder
+* Extract the ZIP to a folder and navigate to forge-2.0.0.Alpha2/bin folder
 
 Forge is now ready to go. 
 
 Install the required addons by running the following commands:
 
-    forge --install org.jboss.forge:projects,2.0.0.Alpha1    
-    forge --install org.jboss.forge:maven,2.0.0.Alpha1
+    forge --install org.jboss.forge:projects,2.0.0.Alpha2    
+    forge --install org.jboss.forge:maven,2.0.0.Alpha2
 
 - Forge will install the required dependencies for each addon.
 
 If you wish to install the prototype Forge 2 Shell called Aesh, be sure to run the following:
     
-    forge --install org.jboss.forge:aesh,2.0.0.Alpha1
+    forge --install org.jboss.forge:aesh,2.0.0.Alpha2
 
 If you wish to remove any addon, you can use the following command:
     
@@ -51,6 +51,20 @@ Using Forge 2 inside Eclipse
 
 This plugin starts the Forge 2 Container and your installed addons, so you can use them directly in your workspace
 - Press Ctrl + 5 to show the installed addons that you may interact with (these addons use the UI addon, hence providing a user interface - see Developing an UI Addon for more details).
+
+NOTE: The eclipse plugin already bundles the following addons 
+* addon-manager
+* convert
+* dependencies
+* environment
+* facets
+* maven,projects
+* resources
+* ui
+* ui-hints 
+
+In Forge 2.0.0.Alpha2, you MUST delete these addons from your ~/.forge location, otherwise you'll get some ClassCastExceptions (see [this issue](https://issues.jboss.org/browse/FORGE-843))
+
 
 Developing an Addon
 -------------------------------------------------------------------------------
