@@ -53,6 +53,19 @@ public interface MavenPluginFacet extends Facet
    void removePlugin(Dependency dependency);
    
    void updatePlugin(final MavenPlugin plugin);
+   
+   List<MavenPlugin> listConfiguredManagedPlugins();
+
+   boolean hasManagedPlugin(Dependency dependency);
+
+   MavenPlugin getManagedPlugin(Dependency dependency);
+
+   void addManagedPlugin(MavenPlugin plugin);
+
+   void removeManagedPlugin(Dependency dependency);
+   
+   void updateManagedPlugin(final MavenPlugin plugin);
+
 
    /**
     * Add a {@link KnownRepository} to the project build system. This is where dependencies can be found, downloaded,
