@@ -15,6 +15,7 @@ import javax.enterprise.context.Dependent;
 
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.PluginManagement;
 import org.apache.maven.model.Repository;
 import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.maven.MavenPluginFacet;
@@ -57,70 +58,70 @@ public class MavenPluginFacetImpl extends BaseFacet implements MavenPluginFacet,
             return false;
         }
     }
-
-    @Override
-    public List<MavenPlugin> listConfiguredPlugins() {
-        MavenCoreFacet mavenCoreFacet = project.getFacet(MavenCoreFacet.class);
-        Build build = mavenCoreFacet.getPOM().getBuild();
+    
+    private List<org.apache.maven.model.Plugin> getPluginsPOM(boolean managedPlugin) {
+    	MavenCoreFacet mavenCoreFacet = project.getFacet(MavenCoreFacet.class);
+    	Build build = mavenCoreFacet.getPOM().getBuild();
+    	if (build != null) {
+    		if (managedPlugin) {
+    			PluginManagement pluginManagement = build.getPluginManagement();
+    			if (pluginManagement != null) {
+    				return pluginManagement.getPlugins();
+    			}
+    		} else {
+    			return build.getPlugins();
+    		}
+    	}
+    	return null;
+    }
+    
+    private List<MavenPlugin> listConfiguredPlugins(boolean managedPlugin) {
         List<MavenPlugin> plugins = new ArrayList<MavenPlugin>();
-        if (build != null) {
-            List<org.apache.maven.model.Plugin> pomPlugins = build.getPlugins();
+        List<org.apache.maven.model.Plugin> pomPlugins =getPluginsPOM(managedPlugin);
+        if (pomPlugins != null) {
+            for (org.apache.maven.model.Plugin plugin : pomPlugins) {
+                MavenPluginAdapter adapter = new MavenPluginAdapter(plugin);
+                MavenPluginBuilder pluginBuilder = MavenPluginBuilder
+                        .create()
+                        .setDependency(
+                                DependencyBuilder.create().setGroupId(plugin.getGroupId())
+                                        .setArtifactId(plugin.getArtifactId()).setVersion(plugin.getVersion()))
 
-            if (pomPlugins != null) {
-                for (org.apache.maven.model.Plugin plugin : pomPlugins) {
-                    MavenPluginAdapter adapter = new MavenPluginAdapter(plugin);
-                    MavenPluginBuilder pluginBuilder = MavenPluginBuilder
-                            .create()
-                            .setDependency(
-                                    DependencyBuilder.create().setGroupId(plugin.getGroupId())
-                                            .setArtifactId(plugin.getArtifactId()).setVersion(plugin.getVersion()))
-
-                            .setConfiguration(adapter.getConfig());
-                    for (Execution execution : adapter.listExecutions())
-                    {
-                       pluginBuilder.addExecution(execution);
-                    }
-                    plugins.add(pluginBuilder);
+                        .setConfiguration(adapter.getConfig());
+                for (Execution execution : adapter.listExecutions())
+                {
+                   pluginBuilder.addExecution(execution);
                 }
+                plugins.add(pluginBuilder);
             }
         }
-
         return plugins;
     }
-
-    @Override
-    public void addPlugin(final MavenPlugin plugin) {
+    
+    private void addPlugin(final MavenPlugin plugin, boolean managedPlugin) {
         MavenCoreFacet mavenCoreFacet = project.getFacet(MavenCoreFacet.class);
         Model pom = mavenCoreFacet.getPOM();
         Build build = pom.getBuild();
-        if (build == null) {
-            build = new Build();
+        if (build == null) build = new Build();
+        if (managedPlugin) {
+        	PluginManagement pluginManagement = build.getPluginManagement();
+			if (pluginManagement == null) {
+				pluginManagement = new PluginManagement();
+				build.setPluginManagement(pluginManagement);
+			}
+			pluginManagement.addPlugin(new MavenPluginAdapter(plugin));
+        } else {
+        	build.addPlugin(new MavenPluginAdapter(plugin));
         }
-
-        build.addPlugin(new MavenPluginAdapter(plugin));
         pom.setBuild(build);
         mavenCoreFacet.setPOM(pom);
     }
-
-    @Override
-    public boolean hasPlugin(final Dependency dependency) {
-        try {
-            getPlugin(dependency);
-            return true;
-        } catch (PluginNotFoundException ex) {
-            return false;
-        }
-    }
-
-    @Override
-    public MavenPlugin getPlugin(final Dependency dependency) {
+    
+    private MavenPlugin getPlugin(final Dependency dependency, boolean managedPlugin) {
         String groupId = dependency.getGroupId();
+        groupId = (groupId == null) || groupId.equals("") ?  DEFAULT_GROUPID : groupId;
 
-        if ((groupId == null) || groupId.equals("")) {
-            groupId = DEFAULT_GROUPID;
-        }
-
-        for (MavenPlugin mavenPlugin : listConfiguredPlugins()) {
+        for (MavenPlugin mavenPlugin : listConfiguredPlugins(managedPlugin)) {
             Dependency temp = mavenPlugin.getDependency();
             if (DependencyBuilder.areEquivalent(temp, DependencyBuilder.create(dependency).setGroupId(groupId))) {
                 return mavenPlugin;
@@ -128,57 +129,116 @@ public class MavenPluginFacetImpl extends BaseFacet implements MavenPluginFacet,
         }
 
         throw new PluginNotFoundException(groupId, dependency.getArtifactId());
-
+    }
+    
+    public boolean hasPlugin(final Dependency dependency, boolean managedPlugin) {
+        try {
+            getPlugin(dependency, managedPlugin);
+            return true;
+        } catch (PluginNotFoundException ex) {
+            return false;
+        }
+    }
+    
+    private void removePlugin(final Dependency dependency, boolean managedPlugin) {
+        MavenCoreFacet mavenCoreFacet = project.getFacet(MavenCoreFacet.class);
+        List<org.apache.maven.model.Plugin> pomPlugins = getPluginsPOM(managedPlugin);
+		if (pomPlugins != null) {
+            for (org.apache.maven.model.Plugin pomPlugin : pomPlugins) {
+                Dependency pluginDep = DependencyBuilder.create().setGroupId(pomPlugin.getGroupId())
+                        .setArtifactId(pomPlugin.getArtifactId());
+                
+                if (DependencyBuilder.areEquivalent(pluginDep, dependency)) {
+                	Model pom = mavenCoreFacet.getPOM();
+                	if (managedPlugin) {
+                		pom.getBuild().getPluginManagement().removePlugin(pomPlugin);
+            		} else {
+            			pom.getBuild().removePlugin(pomPlugin);
+            		}
+                    mavenCoreFacet.setPOM(pom);
+                }
+            }
+        }	
+    }
+    
+    private void updatePlugin(final MavenPlugin plugin, boolean managedPlugin) {
+    	MavenCoreFacet mavenCoreFacet = project.getFacet(MavenCoreFacet.class);
+        List<org.apache.maven.model.Plugin> pomPlugins = getPluginsPOM(managedPlugin);
+        if (pomPlugins != null) {
+        	for (org.apache.maven.model.Plugin pomPlugin : pomPlugins) {
+	            Dependency pluginDep = DependencyBuilder.create().setGroupId(pomPlugin.getGroupId())
+	                     .setArtifactId(pomPlugin.getArtifactId());
+	
+	            if (DependencyBuilder.areEquivalent(pluginDep, plugin.getDependency())) {
+	               MavenPluginAdapter adapter = new MavenPluginAdapter(plugin);
+	               pomPlugin.setConfiguration(adapter.getConfiguration());
+	               mavenCoreFacet.setPOM(mavenCoreFacet.getPOM());
+	               break;
+	            }
+	       }
+        }
     }
 
     @Override
-    public void removePlugin(final Dependency dependency) {
-        MavenCoreFacet mavenCoreFacet = project.getFacet(MavenCoreFacet.class);
+    public List<MavenPlugin> listConfiguredPlugins() {
+    	return listConfiguredPlugins(false);
+    }
+    
+    @Override
+    public List<MavenPlugin> listConfiguredManagedPlugins() {
+    	return listConfiguredPlugins(true);
+    }
 
-        Build build = mavenCoreFacet.getPOM().getBuild();
-        if (build != null) {
-            List<org.apache.maven.model.Plugin> pomPlugins = build.getPlugins();
-            if (pomPlugins != null) {
-                for (org.apache.maven.model.Plugin pomPlugin : pomPlugins) {
-                    Dependency pluginDep = DependencyBuilder.create().setGroupId(pomPlugin.getGroupId())
-                            .setArtifactId(pomPlugin.getArtifactId());
-                    
-                    if (DependencyBuilder.areEquivalent(pluginDep, dependency)) {
-                        Model pom = mavenCoreFacet.getPOM();
-                        pom.getBuild().removePlugin(pomPlugin);
-                        mavenCoreFacet.setPOM(pom);
-                    }
-                }
-            }
-        }
+    @Override
+    public void addPlugin(final MavenPlugin plugin) {
+    	addPlugin(plugin, false);
+    }
+    
+    @Override
+    public void addManagedPlugin(final MavenPlugin plugin) {
+    	addPlugin(plugin, true);
+    }
+    
+    @Override
+    public MavenPlugin getPlugin(final Dependency dependency) {
+        return getPlugin(dependency, false);
+    }
+    
+    @Override
+    public MavenPlugin getManagedPlugin(final Dependency dependency) {
+    	return getPlugin(dependency, true);
+    }
+
+    @Override
+    public boolean hasPlugin(final Dependency dependency) {
+        return hasPlugin(dependency,false);
+    }
+    
+    @Override
+    public boolean hasManagedPlugin(final Dependency dependency) {
+    	return hasPlugin(dependency,true);
+    }
+    
+    @Override
+    public void removePlugin(final Dependency dependency) {
+        removePlugin(dependency, false);
+    }
+    
+    @Override
+    public void removeManagedPlugin(final Dependency dependency) {
+    	removePlugin(dependency, true);
     }
     
    @Override
    public void updatePlugin(final MavenPlugin plugin)
    {
-      MavenCoreFacet mavenCoreFacet = project.getFacet(MavenCoreFacet.class);
-      Model pom = mavenCoreFacet.getPOM();
-      Build build = pom.getBuild();
-      if (build != null)
-      {
-         List<org.apache.maven.model.Plugin> pomPlugins = build.getPlugins();
-         if (pomPlugins != null)
-         {
-            for (org.apache.maven.model.Plugin pomPlugin : pomPlugins)
-            {
-               Dependency pluginDep = DependencyBuilder.create().setGroupId(pomPlugin.getGroupId())
-                        .setArtifactId(pomPlugin.getArtifactId());
-
-               if (DependencyBuilder.areEquivalent(pluginDep, plugin.getDependency()))
-               {
-                  MavenPluginAdapter adapter = new MavenPluginAdapter(plugin);
-                  pomPlugin.setConfiguration(adapter.getConfiguration());
-                  mavenCoreFacet.setPOM(pom);
-                  break;
-               }
-            }
-         }
-      }
+     updatePlugin(plugin, false);
+   }
+   
+   @Override
+   public void updateManagedPlugin(final MavenPlugin plugin)
+   {
+	   updatePlugin(plugin, true);
    }
 
     @Override
