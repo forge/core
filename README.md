@@ -1,56 +1,67 @@
 ## JBoss Forge 2.0
 
+The fastest way to build applications, share your software, and enjoy doing it.
+
+
 What's new and noteworthy? 
 -------------------------------------------------------------------------------
 
-- Addons: What were previously called "Plugins" in Forge 1, are now "Addons" in Forge 2. This decision was made to clear up confusing verbiage like, "Plugin X has N Plugins" (due to the org.jboss.forge.plugins.Plugin interface.)
+* Addons: What were previously called "Plugins" in Forge 1, are now "Addons" in Forge 2. This decision was made to clear up confusing verbiage like, "Plugin X has N Plugins" (due to the org.jboss.forge.plugins.Plugin interface.)
 
-- We are currently in the process of migrating Forge 1 to Forge 2, so expect to find some Forge 1 functionality missing in this first Alpha version.
+* We are currently in the process of migrating Forge 1 to Forge 2, so expect to find some Forge 1 functionality missing in this first Alpha version.
 
-- Modular Container fully rewritten: The Forge runtime is now a fully functional Java module system based on JBoss Modules (The same engine behind JBoss AS 7+ and JBoss EAP). This means you may now pick-and-choose which addons are important for you.
+* Modular Container fully rewritten: The Forge runtime is now a fully functional Java module system based on JBoss Modules (The same engine behind JBoss AS 7+ and JBoss EAP). This means you may now pick-and-choose which addons are important for you.
 
-- Smaller, leaner, and faster. Forge 2 now sports a slimmer 7 megabyte download size, and starts up in under three seconds. (Compared to upwards of 10+ seconds for Forge 1)
+* Smaller, leaner, and faster. Forge 2 now sports a slimmer 7 megabyte download size, and starts up in under three seconds. (Compared to upwards of 10+ seconds for Forge 1)
 
-- Better IDE Integration: Forge 2 addons have been de-coupled from the command line, meaning you can create addons that run as wizards in the IDE, or commands in the shell - the same code works in both environments.
+* Better IDE Integration: Forge 2 addons have been de-coupled from the command line, meaning you can create addons that run as wizards in the IDE, or commands in the shell - the same code works in both environments.
 
-=== Download Forge 2:    
+## Download Forge 2:    
 
-Eclipse Update Site - http://download.jboss.org/jbosstools/builds/staging/jbosstools-forge_master/all/repo/
-Command line tools - https://repository.jboss.org/nexus/service/local/artifact/maven/redirect?r=releases&g=org.jboss.forge&a=forge-distribution&v=2.0.0.Alpha1&e=zip
+- Eclipse Update Site - http://download.jboss.org/jbosstools/builds/staging/jbosstools-forge_master/all/repo/
+- Command line tools - https://repository.jboss.org/nexus/service/local/artifact/maven/redirect?r=releases&g=org.jboss.forge&a=forge-distribution&v=2.0.0.Alpha2&e=zip
 
 
 Get Started:
 -------------------------------------------------------------------------------
-# Download Forge 2.0.0.Alpha1 ( https://repository.jboss.org/nexus/service/local/artifact/maven/redirect?r=releases&g=org.jboss.forge&a=forge-distribution&v=2.0.0.Alpha1&e=zip )
-# Extract the ZIP to a folder and navigate to forge-2.0.0.Alpha1/bin folder
-- Forge is now ready to go. 
-# Install the required addons by running the following commands:
-    forge --install org.jboss.forge:projects,2.0.0.Alpha1
+* Download [JBoss Forge 2.0.0.Alpha2](https://repository.jboss.org/nexus/service/local/artifact/maven/redirect?r=releases&g=org.jboss.forge&a=forge-distribution&v=2.0.0.Alpha2&e=zip)
+* Extract the ZIP to a folder and navigate to forge-2.0.0.Alpha1/bin folder
+
+Forge is now ready to go. 
+
+Install the required addons by running the following commands:
+
+    forge --install org.jboss.forge:projects,2.0.0.Alpha1    
     forge --install org.jboss.forge:maven,2.0.0.Alpha1
 
-Forge will install the required dependencies for each addon.
+- Forge will install the required dependencies for each addon.
 
-# If you wish to install the prototype Forge 2 Shell called Aesh, be sure to run the following:
+If you wish to install the prototype Forge 2 Shell called Aesh, be sure to run the following:
+    
     forge --install org.jboss.forge:aesh,2.0.0.Alpha1
 
-# If you wish to remove any addon, you can use the following command:
+If you wish to remove any addon, you can use the following command:
+    
     forge --remove addon
 
 Using Forge 2 inside Eclipse
 -------------------------------------------------------------------------------
-# Install the Forge 2 Eclipse Plugin using this link http://download.jboss.org/jbosstools/builds/staging/jbosstools-forge_master/all/repo/ and restart Eclipse (add screenshots)
-- This plugin starts the Forge 2 Container and your installed addons, so you can use them directly in your workspace
 
-# Press Ctrl + 5 to show the installed addons that you may interact with (these addons use the UI addon, hence providing a user interface - see Developing an UI Addon for more details).
+- Install the Forge 2 Eclipse Plugin from http://download.jboss.org/jbosstools/builds/staging/jbosstools-forge_master/all/repo/ and restart Eclipse
+
+This plugin starts the Forge 2 Container and your installed addons, so you can use them directly in your workspace
+- Press Ctrl + 5 to show the installed addons that you may interact with (these addons use the UI addon, hence providing a user interface - see Developing an UI Addon for more details).
 
 Developing an Addon
 -------------------------------------------------------------------------------
-Forge addons are simple Maven projects with a special classifier "forge-addon". This classifier is used while installing an addon so Forge can calculate its dependencies automatically freeing you from the Classloader hell(http://robjsoftware.org/2007/07/13/classloader-hell/)
+Forge addons are simple Maven projects with a special classifier "forge-addon". This classifier is used while installing an addon so Forge can calculate its dependencies automatically releasing you from the [Classloader hell](http://robjsoftware.org/2007/07/13/classloader-hell/)
 
-# Create a Maven project
-# Forge Addons must be packaged with a 'forge-addon' classifier. Add this plugin configuration to your pom.xml:
+Create a Maven project
 
-   <build>
+Forge Addons must be packaged with a 'forge-addon' classifier. Add this plugin configuration to your pom.xml:
+
+```xml 
+    <build>
       <plugins>
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -70,61 +81,71 @@ Forge addons are simple Maven projects with a special classifier "forge-addon". 
             </executions>
          </plugin>
       </plugins>
-   </build>
-         
-# To expose services in your Addon for injection and service lookups in other addons, your types must be annotated with @Exported: 
+    </build>
+```
 
-@Exported
-public class ServiceImpl
-{
-   public ServiceResult performTask() {
-        // Do stuff...
-   }
-}
+- To expose services in your Addon for injection and service lookups in other addons, your types must be annotated with *@Exported*: 
+
+    @Exported
+    public class ServiceImpl
+    {
+       public ServiceResult performTask() {
+            // Do stuff...
+       }
+    }
 
 However, best practices favor placing the @Exported annotation on a service interface, otherwise consumers will be required to request your specific service implementation. For example:
 
-@Exported
-public interface ServiceType
-{
-   public ServiceResult performTask();
-}
+    @Exported
+    public interface ServiceType
+    {
+       public ServiceResult performTask();
+    }
 
 Then simply implement the service interface, and the @Exported annotation will be inherited automatically:
 
-public class ServiceImpl implements ServiceType
-{
-   public ServiceResult performTask() {
-        // Do stuff...
-   }
-}
+    public class ServiceImpl implements ServiceType
+    {
+       public ServiceResult performTask() {
+            // Do stuff...
+       }
+    }
 
-# Do a mvn clean install to your project
-# run ./forge --install yourgroupId:artifactId,version. (NOTE: This coordinate is NOT the same as maven's. You MUST use a comma (,) between the artifactId and the version)
+Install your project in the local maven repository:
+
+    mvn clean install
+
+Run
+
+    ./forge --install yourgroupId:artifactId,version
+
+NOTE: This coordinate is NOT the same as maven's. You MUST use a comma (,) between the artifactId and the version)
 
 Add User Inputs to your Addon
 -------------------------------------------------------------------------------
-# Follow the procedures described in "Developing an Addon"
-# Add a dependency to the UI addon in your pom.xml, like this
+- Follow the procedures described in (Developing an Addon)
+- Add a dependency to the UI addon in your pom.xml, like this
 
+```xml 
       <dependency>
          <groupId>org.jboss.forge</groupId>
          <artifactId>ui</artifactId>
          <classifier>forge-addon</classifier>
          <version>2.0.0.Alpha1</version>
       </dependency>
+```
 
-# Create a java class
- - If your wizard contains a single page, implement UICommand, otherwise, UIWizard
- 
- 
- === Restart Forge Container inside Eclipse
- ----------------------------------------------------------------------------------
+- Create a java class
+
+If your wizard contains a single page, implement UICommand, otherwise, UIWizard
+  
+Restart Forge Container inside Eclipse
+----------------------------------------------------------------------------------
  
  If you need to restart the forge container running inside eclipse:
  
- # Open the Plug-in Registry view
- # In the pull down menu, check the 'Show Advanced Operations'
- # Choose the plugin named 'org.jboss.tools.forge.core.ext'
- # Right-click on it and select 'Stop' and then 'Start'
+ - Open the Plug-in Registry view
+ - In the pull down menu, check the 'Show Advanced Operations'
+ - Choose the plugin named 'org.jboss.tools.forge.core.ext'
+ - Right-click on it and select 'Stop' and then 'Start'
  
