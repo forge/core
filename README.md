@@ -6,23 +6,25 @@ The fastest way to build applications, share your software, and enjoy doing it.
 What's new and noteworthy? 
 -------------------------------------------------------------------------------
 
-* Addons: What were previously called "Plugins" in Forge 1, are now "Addons" in Forge 2. This decision was made to clear up confusing verbiage like, "Plugin X has N Plugins" (due to the org.jboss.forge.plugins.Plugin interface.)
+* **Addons**: What were previously called "Plugins" in Forge 1, are now "Addons" in Forge 2. This decision was made to clear up confusing verbiage like, "Plugin X has N Plugins" (due to the org.jboss.forge.plugins.Plugin interface.)
 
 * We are currently in the process of migrating Forge 1 to Forge 2, so expect to find some Forge 1 functionality missing in this first Alpha version.
 
-* Modular Container fully rewritten: The Forge runtime is now a fully functional Java module system based on JBoss Modules (The same engine behind JBoss AS 7+ and JBoss EAP). This means you may now pick-and-choose which addons are important for you.
+* **Modular Container fully rewritten**: The Forge runtime is now a fully functional Java module system based on JBoss Modules (The same engine behind JBoss AS 7+ and JBoss EAP). This means you may now pick-and-choose which addons are important for you.
 
-* Smaller, leaner, and faster. Forge 2 now sports a slimmer 7 megabyte download size, and starts up in under three seconds. (Compared to upwards of 10+ seconds for Forge 1)
+* **Smaller, leaner, and faster**: Forge 2 now sports a slimmer 7 megabyte download size, and starts up in under three seconds. (Compared to upwards of 10+ seconds for Forge 1)
 
-* Better IDE Integration: Forge 2 addons have been de-coupled from the command line, meaning you can create addons that run as wizards in the IDE, or commands in the shell - the same code works in both environments.
+* **Better IDE Integration**: Forge 2 addons have been de-coupled from the command line, meaning you can create addons that run as wizards in the IDE, or commands in the shell - the same code works in both environments.
 
 ## Download Forge 2:    
+Forge 2 is packaged inside an Eclipse plugin and also as a standalone ZIP file. They are independent of each other.
+It is worth mentioning that the Eclipse plugin does not support access to shell yet.
 
 - Eclipse Update Site - http://download.jboss.org/jbosstools/builds/staging/jbosstools-forge_master/all/repo/
 - Command line tools - https://repository.jboss.org/nexus/service/local/artifact/maven/redirect?r=releases&g=org.jboss.forge&a=forge-distribution&v=2.0.0.Alpha2&e=zip
 
 
-Get Started:
+Get Started with the Command line tools:
 -------------------------------------------------------------------------------
 * Download [JBoss Forge 2.0.0.Alpha2](https://repository.jboss.org/nexus/service/local/artifact/maven/redirect?r=releases&g=org.jboss.forge&a=forge-distribution&v=2.0.0.Alpha2&e=zip)
 * Extract the ZIP to a folder and navigate to forge-2.0.0.Alpha2/bin folder
@@ -31,20 +33,25 @@ Forge is now ready to go.
 
 Install the required addons by running the following commands:
 
+```shell
     forge --install org.jboss.forge:projects,2.0.0.Alpha2    
     forge --install org.jboss.forge:maven,2.0.0.Alpha2
+```
 
 - Forge will install the required dependencies for each addon.
 
 If you wish to install the prototype Forge 2 Shell called Aesh, be sure to run the following:
-    
+```shell    
     forge --install org.jboss.forge:aesh,2.0.0.Alpha2
+```
 
 If you wish to remove any addon, you can use the following command:
-    
-    forge --remove addon
 
-Using Forge 2 inside Eclipse
+```shell    
+    forge --remove addon
+```
+
+Get Started with the Forge 2 Eclipse Plugin:
 -------------------------------------------------------------------------------
 
 - Install the Forge 2 Eclipse Plugin from http://download.jboss.org/jbosstools/builds/staging/jbosstools-forge_master/all/repo/ and restart Eclipse
@@ -98,8 +105,8 @@ Forge Addons must be packaged with a 'forge-addon' classifier. Add this plugin c
     </build>
 ```
 
-- To expose services in your Addon for injection and service lookups in other addons, your types must be annotated with *@Exported*: 
-
+To expose services in your Addon for injection and service lookups in other addons, your types must be annotated with **@Exported**: 
+```java
     @Exported
     public class ServiceImpl
     {
@@ -107,33 +114,39 @@ Forge Addons must be packaged with a 'forge-addon' classifier. Add this plugin c
             // Do stuff...
        }
     }
+```
 
-However, best practices favor placing the @Exported annotation on a service interface, otherwise consumers will be required to request your specific service implementation. For example:
-
+However, best practices favor placing the **@Exported** annotation on a service interface, otherwise consumers will be required to request your specific service implementation. For example:
+```java
     @Exported
     public interface ServiceType
     {
        public ServiceResult performTask();
     }
+```
 
-Then simply implement the service interface, and the @Exported annotation will be inherited automatically:
-
+Then simply implement the service interface, and the **@Exported** annotation will be inherited automatically:
+```java
     public class ServiceImpl implements ServiceType
     {
        public ServiceResult performTask() {
             // Do stuff...
        }
     }
+```
 
 Install your project in the local maven repository:
 
+```shell
     mvn clean install
-
+```
 Run
 
+```shell
     ./forge --install yourgroupId:artifactId,version
+```
 
-NOTE: This coordinate is NOT the same as maven's. You MUST use a comma (,) between the artifactId and the version)
+**NOTE: This coordinate is NOT the same as maven's. You MUST use a comma (,) between the artifactId and the version**
 
 Add User Inputs to your Addon
 -------------------------------------------------------------------------------
@@ -145,7 +158,7 @@ Add User Inputs to your Addon
          <groupId>org.jboss.forge</groupId>
          <artifactId>ui</artifactId>
          <classifier>forge-addon</classifier>
-         <version>2.0.0.Alpha1</version>
+         <version>2.0.0.Alpha2</version>
       </dependency>
 ```
 
