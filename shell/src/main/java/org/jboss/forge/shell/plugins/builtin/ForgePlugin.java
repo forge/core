@@ -484,8 +484,11 @@ public class ForgePlugin implements Plugin
                            @Override
                            public boolean accept(Dependency dependency)
                            {
-                              // We are only interested in versions higher than the current version
-                              return dependency.getVersion().compareTo(runtimeVersion) > 0;
+                              // We are only interested in 1.x Final versions higher than the current version
+                              // TODO: Consider the version string for 2.x and higher releases when porting.
+                              String version = dependency.getVersion();
+                              return version.compareTo(runtimeVersion) > 0 && version.startsWith("1.")
+                                       && version.endsWith(".Final");
                            }
                         }
                )).setRepositories(new DependencyRepositoryImpl(DependencyFacet.KnownRepository.JBOSS_NEXUS));
