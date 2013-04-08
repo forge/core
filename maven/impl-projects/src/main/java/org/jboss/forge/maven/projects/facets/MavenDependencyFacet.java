@@ -438,7 +438,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    public List<DependencyRepository> getRepositories()
    {
       List<DependencyRepository> results = new ArrayList<DependencyRepository>();
-      MavenFacet maven = (MavenFacet) getOrigin().getFacet(MavenFacet.class);
+      MavenFacet maven = getOrigin().getFacet(MavenFacet.class);
       Model pom = maven.getPOM();
       List<Repository> repos = pom.getRepositories();
       for (Repository repo : repos)

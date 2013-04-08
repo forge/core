@@ -42,6 +42,7 @@ import org.jboss.forge.environment.Environment;
 import org.jboss.forge.facets.AbstractFacet;
 import org.jboss.forge.maven.dependencies.MavenContainer;
 import org.jboss.forge.maven.environment.Network;
+import org.jboss.forge.maven.projects.MavenFacet;
 import org.jboss.forge.maven.projects.util.NativeSystemCall;
 import org.jboss.forge.maven.projects.util.NullOutputStream;
 import org.jboss.forge.maven.projects.util.RepositoryUtils;
@@ -359,6 +360,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
       return executeMaven(parameters.toArray(new String[] {}));
    }
 
+   @SuppressWarnings("resource")
    public boolean executeMaven(final String[] selected)
    {
       return executeMaven(new NullOutputStream(), selected);

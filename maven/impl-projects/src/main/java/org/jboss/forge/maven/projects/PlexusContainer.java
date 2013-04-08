@@ -19,7 +19,7 @@ import org.jboss.forge.container.util.ClassLoaders;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Singleton
-public class PlexusContainer
+class PlexusContainer
 {
    private org.codehaus.plexus.PlexusContainer plexusContainer;
 
@@ -69,7 +69,7 @@ public class PlexusContainer
                      }
                   });
       }
-      return (org.codehaus.plexus.PlexusContainer) plexusContainer;
+      return plexusContainer;
    }
 
 }

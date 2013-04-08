@@ -18,6 +18,7 @@ import org.jboss.forge.environment.Environment;
 import org.jboss.forge.facets.AbstractFacet;
 import org.jboss.forge.maven.projects.MavenFacet;
 import org.jboss.forge.maven.projects.MavenFacetImpl;
+import org.jboss.forge.maven.projects.MavenProjectBuilder;
 import org.jboss.forge.projects.Project;
 import org.jboss.forge.projects.building.ProjectBuilder;
 import org.jboss.forge.projects.events.PackagingChanged;
