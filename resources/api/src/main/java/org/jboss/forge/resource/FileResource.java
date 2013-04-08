@@ -5,7 +5,7 @@ import java.io.InputStream;
 
 /**
  * A standard, built-in resource for representing files on the filesystem.
- * 
+ *
  * @author Mike Brock
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -18,7 +18,7 @@ public interface FileResource<T extends FileResource<T>> extends Resource<File>
 
    /**
     * Returns true if the underlying resource has been modified on the file system since it was initially loaded.
-    * 
+    *
     * @return boolean true if resource is changed.
     */
    public boolean isStale();
@@ -81,5 +81,10 @@ public interface FileResource<T extends FileResource<T>> extends Resource<File>
     * Rename this {@link Resource} to the given {@link FileResource}
     */
    public boolean renameTo(final FileResource<?> target);
+
+   /**
+    * Returns the size of the file denoted by this abstract pathname
+    */
+   public long getSize();
 
 }

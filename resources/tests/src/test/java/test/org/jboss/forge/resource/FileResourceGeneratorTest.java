@@ -1,6 +1,8 @@
 package test.org.jboss.forge.resource;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -11,12 +13,14 @@ import org.jboss.forge.arquillian.Addon;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.addons.AddonId;
+import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.repositories.AddonDependencyEntry;
+import org.jboss.forge.container.util.Streams;
 import org.jboss.forge.resource.DirectoryResource;
 import org.jboss.forge.resource.FileResource;
+import org.jboss.forge.resource.FileResourceImpl;
 import org.jboss.forge.resource.Resource;
 import org.jboss.forge.resource.ResourceFactory;
-import org.jboss.forge.resource.FileResourceImpl;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -96,4 +100,27 @@ public class FileResourceGeneratorTest
       Assert.assertTrue(childResource.exists());
    }
 
+   @Test
+   public void testFileSize() throws Exception
+   {
+      File file = File.createTempFile("temp", "file");
+
+      FileOutputStream fos = new FileOutputStream(file);
+      Streams.write(new ByteArrayInputStream("Test".getBytes()), fos);
+      fos.close();
+
+      FileResource<?> fileResource = factory.create(file).reify(FileResource.class);
+
+      Assert.assertEquals(file.length(), fileResource.getSize());
+      file.delete();
+   }
+
+   @Test(expected = ContainerException.class)
+   public void testDirectorySize() throws Exception
+   {
+      File dir = File.createTempFile("temp", "file");
+      dir.delete();
+      dir.mkdir();
+      factory.create(dir).reify(DirectoryResource.class).getSize();
+   }
 }

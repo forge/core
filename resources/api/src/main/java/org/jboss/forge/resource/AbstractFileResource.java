@@ -424,4 +424,10 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
       }
       return false;
    }
+
+   @Override
+   public long getSize()
+   {
+      return file.length();
+   }
 }

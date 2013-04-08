@@ -186,4 +186,10 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
       return (obj instanceof DirectoryResourceImpl) && ((DirectoryResourceImpl) obj).file.equals(file);
    }
 
+   @Override
+   public long getSize()
+   {
+      throw new UnsupportedOperationException("getSize not supported for DirectoryResource objects");
+   }
+
 }
