@@ -18,7 +18,6 @@ import org.apache.maven.model.Profile;
 import org.apache.maven.model.Repository;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.jboss.forge.resource.AbstractFileResource;
-import org.jboss.forge.resource.FileResource;
 import org.jboss.forge.resource.Resource;
 import org.jboss.forge.resource.ResourceFactory;
 
@@ -92,6 +91,7 @@ public class MavenPomResourceImpl extends AbstractFileResource<MavenPomResource>
       }
    }
 
+   @Override
    public Model getCurrentModel()
    {
       initialize();

@@ -23,7 +23,7 @@ public final class ShrinkWrapUtil
 
    /**
     * Export an {@link Archive} to a {@link File}
-    * 
+    *
     * @param archive Archive to export
     */
    public static void toFile(File target, final Archive<?> archive)
@@ -38,6 +38,7 @@ public final class ShrinkWrapUtil
       }
    }
 
+   @SuppressWarnings("resource")
    public static void unzip(File baseDir, Archive<?> archive)
    {
       try
@@ -61,7 +62,16 @@ public final class ShrinkWrapUtil
 
             Node node = entry.getValue();
             Asset asset = node.getAsset();
-            Streams.write(asset.openStream(), new FileOutputStream(target));
+            FileOutputStream fos = null;
+            try
+            {
+               fos = new FileOutputStream(target);
+               Streams.write(asset.openStream(), fos);
+            }
+            finally
+            {
+               Streams.closeQuietly(fos);
+            }
          }
       }
       catch (Exception e)
@@ -72,7 +82,7 @@ public final class ShrinkWrapUtil
 
    /**
     * Creates a tmp folder and exports the file. Returns the URL for that file location.
-    * 
+    *
     * @param archive Archive to export
     * @return
     */

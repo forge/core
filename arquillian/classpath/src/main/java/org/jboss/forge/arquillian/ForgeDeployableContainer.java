@@ -159,7 +159,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
          runnable = new ForgeRunnable(addonDir, ClassLoader.getSystemClassLoader());
          thread = new Thread(runnable, "Arquillian Forge Runtime");
          System.out.println("Executing test case with addon dir [" + addonDir + "]");
-         this.repository = (MutableAddonRepository) AddonRepositoryImpl.forDirectory(runnable.forge, addonDir);
+         this.repository = AddonRepositoryImpl.forDirectory(runnable.forge, addonDir);
 
          thread.start();
       }
