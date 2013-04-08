@@ -430,4 +430,23 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
    {
       return file.length();
    }
+
+   @Override
+   public boolean isExecutable()
+   {
+      return (this.file.canExecute() && !this.file.isDirectory());
+   }
+
+   @Override
+   public boolean isReadable()
+   {
+      return (this.file.canRead() && !this.file.isDirectory());
+   }
+
+   @Override
+   public boolean isWritable()
+   {
+      return (this.file.canWrite() && !this.file.isDirectory());
+   }
+
 }

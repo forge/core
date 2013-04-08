@@ -123,4 +123,29 @@ public class FileResourceGeneratorTest
       dir.mkdir();
       factory.create(dir).reify(DirectoryResource.class).getSize();
    }
+
+   @Test
+   public void testFileFlags() throws Exception
+   {
+      File tempFile = File.createTempFile("temp", "file");
+      tempFile.deleteOnExit();
+      FileResource<?> resource = factory.create(tempFile).reify(FileResource.class);
+      Assert.assertFalse(resource.isExecutable());
+      Assert.assertTrue(resource.isReadable());
+      Assert.assertTrue(resource.isWritable());
+   }
+
+   @Test
+   public void testDirectoryFlags() throws Exception
+   {
+      File dir = File.createTempFile("temp", "file");
+      dir.delete();
+      dir.mkdir();
+      dir.deleteOnExit();
+      DirectoryResource resource = factory.create(dir).reify(DirectoryResource.class);
+      Assert.assertFalse(resource.isExecutable());
+      Assert.assertFalse(resource.isReadable());
+      Assert.assertFalse(resource.isWritable());
+   }
+
 }

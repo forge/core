@@ -87,4 +87,19 @@ public interface FileResource<T extends FileResource<T>> extends Resource<File>
     */
    public long getSize();
 
+   /**
+    * Returns if a file is writable
+    */
+   public boolean isWritable();
+
+   /**
+    * Returns if a file is readable
+    */
+   public boolean isReadable();
+
+   /**
+    * Returns if a file is executable
+    */
+   public boolean isExecutable();
+
 }
