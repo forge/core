@@ -124,6 +124,7 @@ public class JavaResourceImpl extends AbstractFileResource<JavaResource> impleme
       }
    }
 
+   @Override
    public JavaResourceImpl setContents(final JavaSource<?> source)
    {
       setContents(source.toString());
@@ -133,6 +134,7 @@ public class JavaResourceImpl extends AbstractFileResource<JavaResource> impleme
    /**
     * Attempts to perform cast automatically. This can lead to problems.
     */
+   @Override
    public JavaSource<?> getJavaSource() throws FileNotFoundException
    {
       return JavaParser.parse(file);
