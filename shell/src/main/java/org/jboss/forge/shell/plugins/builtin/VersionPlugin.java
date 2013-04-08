@@ -6,6 +6,9 @@
  */
 package org.jboss.forge.shell.plugins.builtin;
 
+import javax.inject.Inject;
+
+import org.jboss.forge.ForgeEnvironment;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.DefaultCommand;
 import org.jboss.forge.shell.plugins.Help;
@@ -21,10 +24,14 @@ import org.jboss.forge.shell.plugins.Topic;
 @Help("Displays the current Forge version.")
 public class VersionPlugin implements Plugin
 {
+
+   @Inject
+   private ForgeEnvironment environment;
+
    @DefaultCommand
    public void show(final PipeOut out)
    {
-      String version = getClass().getPackage().getImplementationVersion();
+      String version = environment.getRuntimeVersion();
       out.println("JBoss Forge, version [ " + version + " ] - JBoss, by Red Hat, Inc. [ http://jboss.org/forge ]");
    }
 }
