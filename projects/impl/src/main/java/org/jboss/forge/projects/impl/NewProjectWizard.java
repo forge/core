@@ -153,7 +153,18 @@ public class NewProjectWizard implements UIWizard
 
       if (targetDir.mkdirs() || overwrite.getValue())
       {
-         Project project = projectFactory.createProject(targetDir, type.getValue());
+         ProjectType value = type.getValue();
+
+         Project project = null;
+         if (value != null)
+         {
+            project = projectFactory.createProject(targetDir, value.getRequiredFacets());
+         }
+         else
+         {
+            project = projectFactory.createProject(targetDir);
+         }
+
          if (project != null)
          {
             MetadataFacet metadataFacet = project.getFacet(MetadataFacet.class);
@@ -163,7 +174,7 @@ public class NewProjectWizard implements UIWizard
             context.setAttribute(Project.class, project);
          }
          else
-            result = Results.fail("Could not create project of type: [" + type.getValue() + "]");
+            result = Results.fail("Could not create project of type: [" + value + "]");
       }
       else
          result = Results.fail("Could not create target location: " + targetDir);

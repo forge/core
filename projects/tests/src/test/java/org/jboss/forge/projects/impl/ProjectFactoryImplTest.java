@@ -7,7 +7,6 @@ package org.jboss.forge.projects.impl;
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
@@ -23,13 +22,10 @@ import org.jboss.forge.container.repositories.AddonDependencyEntry;
 import org.jboss.forge.container.spi.ListenerRegistration;
 import org.jboss.forge.container.util.Predicate;
 import org.jboss.forge.projects.Project;
-import org.jboss.forge.projects.ProjectFacet;
 import org.jboss.forge.projects.ProjectFactory;
 import org.jboss.forge.projects.ProjectListener;
-import org.jboss.forge.projects.ProjectType;
 import org.jboss.forge.resource.DirectoryResource;
 import org.jboss.forge.resource.ResourceFactory;
-import org.jboss.forge.ui.wizard.UIWizardStep;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -89,27 +85,7 @@ public class ProjectFactoryImplTest
          }
       });
       Assert.assertNotNull("Should not have returned a null listener registration", registration);
-      Project project = projectFactory.createProject(projectDir, new ProjectType()
-      {
-
-         @Override
-         public String getType()
-         {
-            return "Test Type";
-         }
-
-         @Override
-         public Class<? extends UIWizardStep> getSetupFlow()
-         {
-            return null;
-         }
-
-         @Override
-         public Iterable<Class<? extends ProjectFacet>> getRequiredFacets()
-         {
-            return Collections.emptySet();
-         }
-      });
+      Project project = projectFactory.createProject(projectDir);
       registration.removeListener();
       Assert.assertNotNull(project);
       Assert.assertTrue("Listener was not called", projectSet.get());

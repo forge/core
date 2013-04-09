@@ -13,7 +13,7 @@ import org.jboss.forge.resource.DirectoryResource;
 
 /**
  * Used to create new or obtain references to existing {@link Project} instances.
- *
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Exported
@@ -31,15 +31,17 @@ public interface ProjectFactory
    public Project findProject(final DirectoryResource target, Predicate<Project> filter);
 
    /**
-    * Create a {@link Project} with the given {@link ProjectType} instances in the specified {@link DirectoryResource}.
+    * Create a {@link Project} in the specified {@link DirectoryResource}.
     */
-   public Project createProject(DirectoryResource targetDir, ProjectType... types);
+   public Project createProject(DirectoryResource projectDir);
+
+   /**
+    * Create a {@link Project} with the given {@link ProjectFacet} types in the specified {@link DirectoryResource}.
+    */
+   public Project createProject(DirectoryResource targetDir, Iterable<Class<? extends ProjectFacet>> facetTypes);
 
    /**
     * Register a listener for project events
-    *
-    * @param listener
-    * @return
     */
    public ListenerRegistration<ProjectListener> addProjectListener(ProjectListener listener);
 }

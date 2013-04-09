@@ -71,7 +71,13 @@ public class ProjectFactoryImpl implements ProjectFactory
    }
 
    @Override
-   public Project createProject(DirectoryResource target, ProjectType... types)
+   public Project createProject(DirectoryResource projectDir)
+   {
+      return createProject(projectDir, null);
+   }
+
+   @Override
+   public Project createProject(DirectoryResource target, Iterable<Class<? extends ProjectFacet>> facetTypes)
    {
       Project result = null;
       for (ExportedInstance<ProjectLocator> instance : registry.getExportedInstances(ProjectLocator.class))
@@ -82,29 +88,22 @@ public class ProjectFactoryImpl implements ProjectFactory
             break;
       }
 
-      if (result != null && types != null)
+      if (result != null && facetTypes != null)
       {
-         for (ProjectType type : types)
+         for (Class<? extends ProjectFacet> facetType : facetTypes)
          {
-            Iterable<Class<? extends ProjectFacet>> facetTypes = type.getRequiredFacets();
-            if (facetTypes != null)
+            ProjectFacet facet = registry.getExportedInstance(facetType).get();
+            facet.setOrigin(result);
+            if (!result.install(facet))
             {
-               for (Class<? extends ProjectFacet> facetType : facetTypes)
-               {
-                  ProjectFacet facet = registry.getExportedInstance(facetType).get();
-                  facet.setOrigin(result);
-                  if (!result.install(facet))
-                  {
-                     throw new IllegalStateException("Could not install Facet [" + facet + "] of type [" + facetType
-                              + "] into Project [" + result + "]");
-                  }
-               }
+               throw new IllegalStateException("Could not install Facet [" + facet + "] of type [" + facetType
+                        + "] into Project [" + result + "]");
             }
          }
       }
+
       if (result != null)
       {
-         // Notify listeners
          fireProjectCreated(result);
       }
       return result;

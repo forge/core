@@ -7,6 +7,7 @@ package org.jboss.forge.projects.impl;
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +20,9 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.repositories.AddonDependencyEntry;
+import org.jboss.forge.container.util.Files;
 import org.jboss.forge.resource.DirectoryResource;
+import org.jboss.forge.resource.ResourceFactory;
 import org.jboss.forge.ui.context.UIBuilder;
 import org.jboss.forge.ui.context.UIContext;
 import org.jboss.forge.ui.context.UIContextBase;
@@ -35,8 +38,8 @@ public class NewProjectWizardTest
 {
    @Deployment
    @Dependencies({
-      @Addon(name = "org.jboss.forge:projects", version = "2.0.0-SNAPSHOT"),
-      @Addon(name = "org.jboss.forge:ui", version = "2.0.0-SNAPSHOT")
+            @Addon(name = "org.jboss.forge:projects", version = "2.0.0-SNAPSHOT"),
+            @Addon(name = "org.jboss.forge:ui", version = "2.0.0-SNAPSHOT")
    })
    public static ForgeArchive getDeployment()
    {
@@ -54,6 +57,9 @@ public class NewProjectWizardTest
 
    @Inject
    private NewProjectWizard command;
+
+   @Inject
+   private ResourceFactory factory;
 
    @Test
    public void testInjectionNotNull()
@@ -83,30 +89,41 @@ public class NewProjectWizardTest
          }
       };
 
-      command.initializeUI(builder);
-      command.getNamed().setValue("test");
-      command.getTopLevelPackage().setValue("org.example");
+      File tempDir = File.createTempFile("forge", "projectTests");
+      tempDir.delete();
 
-      command.validate(new UIValidationContext()
+      try
       {
-         @Override
-         public UIContext getUIContext()
+         command.initializeUI(builder);
+         command.getTargetLocation().setValue(factory.create(DirectoryResource.class, tempDir));
+         command.getNamed().setValue("test");
+         command.getTopLevelPackage().setValue("org.example");
+
+         command.validate(new UIValidationContext()
          {
-            return context;
-         }
+            @Override
+            public UIContext getUIContext()
+            {
+               return context;
+            }
 
-         @Override
-         public void addValidationError(InputComponent<?, ?> input, String errorMessage)
-         {
-         }
-      });
+            @Override
+            public void addValidationError(InputComponent<?, ?> input, String errorMessage)
+            {
+            }
+         });
 
-      DirectoryResource targetDirectory = command.getTargetLocation().getValue().getChildDirectory("test");
+         DirectoryResource targetDirectory = command.getTargetLocation().getValue().getChildDirectory("test");
 
-      Assert.assertFalse(targetDirectory.exists());
-      command.execute(context);
-      Assert.assertTrue(targetDirectory.exists());
+         Assert.assertFalse(targetDirectory.exists());
+         command.execute(context);
+         Assert.assertTrue(targetDirectory.exists());
 
-      targetDirectory.delete(true);
+         targetDirectory.delete(true);
+      }
+      finally
+      {
+         Files.delete(tempDir, true);
+      }
    }
 }
