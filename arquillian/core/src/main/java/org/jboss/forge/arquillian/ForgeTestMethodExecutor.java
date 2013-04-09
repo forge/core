@@ -19,7 +19,6 @@ package org.jboss.forge.arquillian;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
 import org.jboss.arquillian.container.test.spi.ContainerMethodExecutor;
@@ -30,7 +29,6 @@ import org.jboss.forge.arquillian.protocol.ForgeProtocolConfiguration;
 import org.jboss.forge.container.Forge;
 import org.jboss.forge.container.addons.Addon;
 import org.jboss.forge.container.addons.AddonRegistry;
-import org.jboss.forge.container.lock.LockMode;
 import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.container.services.ServiceRegistry;
 
