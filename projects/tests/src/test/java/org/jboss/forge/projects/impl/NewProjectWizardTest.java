@@ -57,6 +57,8 @@ public class NewProjectWizardTest
 
    @Inject
    private NewProjectWizard command;
+   @Inject
+   private NewProjectWizard command2;
 
    @Inject
    private ResourceFactory factory;
@@ -95,8 +97,14 @@ public class NewProjectWizardTest
       try
       {
          command.initializeUI(builder);
+
+         Assert.assertFalse(command.getOverwrite().isEnabled());
+
          command.getTargetLocation().setValue(factory.create(DirectoryResource.class, tempDir));
          command.getNamed().setValue("test");
+
+         Assert.assertFalse(command.getOverwrite().isEnabled());
+
          command.getTopLevelPackage().setValue("org.example");
 
          command.validate(new UIValidationContext()
@@ -120,6 +128,49 @@ public class NewProjectWizardTest
          Assert.assertTrue(targetDirectory.exists());
 
          targetDirectory.delete(true);
+      }
+      finally
+      {
+         Files.delete(tempDir, true);
+      }
+   }
+
+   @Test
+   public void testOverwriteEnabledWhenTargetDirectoryExistsNotEmpty() throws Exception
+   {
+      final List<InputComponent<?, ?>> inputs = new ArrayList<InputComponent<?, ?>>();
+
+      final UIContext context = new UIContextBase();
+      final UIBuilder builder = new UIBuilder()
+      {
+         @Override
+         public UIBuilder add(InputComponent<?, ?> input)
+         {
+            inputs.add(input);
+            return this;
+         }
+
+         @Override
+         public UIContext getUIContext()
+         {
+            return context;
+         }
+      };
+
+      File tempDir = File.createTempFile("forge", "projectTests");
+      tempDir.delete();
+      new File(tempDir, "test/something").mkdirs();
+
+      try
+      {
+         command2.initializeUI(builder);
+
+         Assert.assertFalse(command2.getOverwrite().isEnabled());
+
+         command2.getTargetLocation().setValue(factory.create(DirectoryResource.class, tempDir));
+         command2.getNamed().setValue("test");
+
+         Assert.assertTrue(command2.getOverwrite().isEnabled());
       }
       finally
       {

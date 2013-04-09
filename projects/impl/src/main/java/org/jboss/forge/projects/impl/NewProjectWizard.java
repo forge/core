@@ -101,9 +101,10 @@ public class NewProjectWizard implements UIWizard
          @Override
          public Boolean call() throws Exception
          {
-            return targetLocation.getValue() != null
-                     && targetLocation.getValue().exists()
-                     && !targetLocation.getValue().listResources().isEmpty();
+            String projectName = named.getValue();
+            return targetLocation.getValue() != null && projectName != null
+                     && targetLocation.getValue().getChild(projectName).exists()
+                     && !targetLocation.getValue().getChild(projectName).listResources().isEmpty();
          }
       });
       type.setLabel("Project Type:");
