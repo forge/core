@@ -44,7 +44,7 @@ import org.jboss.forge.parser.xml.XMLParserException;
 
 /**
  * Used to perform Addon installation/registration operations.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:koen.aers@gmail.com">Koen Aers</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
@@ -195,7 +195,6 @@ public final class AddonRepositoryImpl implements MutableAddonRepository
    {
       return lock.performLocked(LockMode.WRITE, new Callable<Boolean>()
       {
-         @SuppressWarnings("resource")
          @Override
          public Boolean call() throws Exception
          {
@@ -232,7 +231,6 @@ public final class AddonRepositoryImpl implements MutableAddonRepository
    {
       return lock.performLocked(LockMode.WRITE, new Callable<Boolean>()
       {
-         @SuppressWarnings("resource")
          @Override
          public Boolean call() throws Exception
          {
@@ -641,6 +639,7 @@ public final class AddonRepositoryImpl implements MutableAddonRepository
       return version;
    }
 
+   @SuppressWarnings("resource")
    private void saveRegistryFile(Node installed) throws FileNotFoundException
    {
       FileOutputStream outStream = null;
