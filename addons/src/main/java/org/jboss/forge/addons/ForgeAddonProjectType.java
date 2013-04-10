@@ -15,7 +15,7 @@ import org.jboss.forge.ui.wizard.UIWizardStep;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 public class ForgeAddonProjectType implements ProjectType
 {
