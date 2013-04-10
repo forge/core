@@ -94,7 +94,9 @@ public class DependencyInstallerImplTest
 
       DependencyBuilder dependency = DependencyBuilder.create("org.jboss.forge:forge-addon-container-api");
       Assert.assertFalse(deps.hasEffectiveDependency(dependency));
+      Assert.assertFalse(deps.hasEffectiveManagedDependency(dependency));
       installer.install(project, dependency);
       Assert.assertTrue(deps.hasEffectiveDependency(dependency));
+      Assert.assertTrue(deps.hasEffectiveManagedDependency(dependency));
    }
 }
