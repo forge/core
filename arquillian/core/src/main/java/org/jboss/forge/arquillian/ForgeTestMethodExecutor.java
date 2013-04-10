@@ -33,8 +33,6 @@ import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.container.util.Annotations;
 import org.jboss.forge.container.util.ClassLoaders;
-import org.junit.After;
-import org.junit.Before;
 
 /**
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
@@ -192,7 +190,7 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
       for (Method m : clazz.getMethods())
       {
          if (Annotations.isAnnotationPresent(m,
-                  (Class<? extends Annotation>) clazz.getClassLoader().loadClass(Before.class.getName())))
+                  (Class<? extends Annotation>) clazz.getClassLoader().loadClass("org.junit.Before")))
          {
             m.invoke(instance);
          }
@@ -205,7 +203,7 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
       for (Method m : clazz.getMethods())
       {
          if (Annotations.isAnnotationPresent(m,
-                  (Class<? extends Annotation>) clazz.getClassLoader().loadClass(After.class.getName())))
+                  (Class<? extends Annotation>) clazz.getClassLoader().loadClass("org.junit.After")))
          {
             m.invoke(instance);
          }
