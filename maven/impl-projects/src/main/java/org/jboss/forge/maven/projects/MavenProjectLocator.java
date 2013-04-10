@@ -62,6 +62,7 @@ public class MavenProjectLocator implements ProjectLocator
       };
 
       MavenFacet mavenFacet = factory.create(MavenFacet.class, project);
+      MavenPluginFacet mavenPluginFacet = factory.create(MavenPluginFacet.class, project);
       MetadataFacet metadataFacet = factory.create(MavenMetadataFacet.class, project);
       PackagingFacet packagingFacet = factory.create(MavenPackagingFacet.class, project);
       DependencyFacet dependencyFacet = factory.create(MavenDependencyFacet.class, project);
@@ -72,6 +73,7 @@ public class MavenProjectLocator implements ProjectLocator
                && project.install(packagingFacet)
                && project.install(dependencyFacet)
                && project.install(resourceFacet)
+               && project.install(mavenPluginFacet)
 
       ))
       {

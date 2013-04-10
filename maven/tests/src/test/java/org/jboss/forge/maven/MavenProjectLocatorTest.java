@@ -17,7 +17,14 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.Forge;
 import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.repositories.AddonDependencyEntry;
+import org.jboss.forge.maven.projects.MavenFacet;
+import org.jboss.forge.maven.projects.MavenPluginFacet;
 import org.jboss.forge.maven.projects.MavenProjectLocator;
+import org.jboss.forge.projects.Project;
+import org.jboss.forge.projects.facets.DependencyFacet;
+import org.jboss.forge.projects.facets.MetadataFacet;
+import org.jboss.forge.projects.facets.PackagingFacet;
+import org.jboss.forge.projects.facets.ResourceFacet;
 import org.jboss.forge.resource.DirectoryResource;
 import org.jboss.forge.resource.FileResource;
 import org.jboss.forge.resource.ResourceFactory;
@@ -78,4 +85,20 @@ public class MavenProjectLocatorTest
 
       projectDir.delete(true);
    }
+
+   @SuppressWarnings("unchecked")
+   @Test
+   public void testEnabledFacets() throws Exception
+   {
+      DirectoryResource addonDir = factory.create(forge.getRepositories().get(0).getRootDirectory()).reify(
+               DirectoryResource.class);
+      DirectoryResource projectDir = addonDir.createTempResource();
+      Project project = locator.createProject(projectDir);
+      boolean hasFacets = project.hasAllFacets(MavenFacet.class, MavenPluginFacet.class,
+               MetadataFacet.class, PackagingFacet.class, DependencyFacet.class, ResourceFacet.class);
+      Assert.assertTrue(hasFacets);
+
+      projectDir.delete(true);
+   }
+
 }
