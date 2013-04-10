@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.jar.JarFile;
+import java.util.logging.Logger;
 
 import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.exception.ContainerException;
@@ -41,6 +42,7 @@ public class AddonModuleLoader extends ModuleLoader
    private final Iterable<ModuleSpecProvider> moduleProviders;
    private AddonRepository repository;
    private AddonModuleIdentifierCache moduleCache;
+   private static final Logger logger = Logger.getLogger(AddonModuleLoader.class.getName());
 
    public AddonModuleLoader(AddonRepository repository, ClassLoader loader)
    {
@@ -137,6 +139,7 @@ public class AddonModuleLoader extends ModuleLoader
          catch (ContainerException e)
          {
             // TODO implement proper fault handling. For now, abort.
+            logger.warning(e.getMessage());
             return null;
          }
 

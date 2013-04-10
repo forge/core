@@ -6,12 +6,20 @@
  */
 package org.jboss.forge.addons;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.inject.Inject;
 
+import org.jboss.forge.container.Forge;
+import org.jboss.forge.container.addons.AddonId;
+import org.jboss.forge.container.repositories.AddonRepository;
+import org.jboss.forge.projects.Project;
 import org.jboss.forge.ui.context.UIBuilder;
 import org.jboss.forge.ui.context.UIContext;
 import org.jboss.forge.ui.context.UIValidationContext;
 import org.jboss.forge.ui.input.UIInput;
+import org.jboss.forge.ui.input.UISelectMany;
 import org.jboss.forge.ui.metadata.UICommandMetadata;
 import org.jboss.forge.ui.result.NavigationResult;
 import org.jboss.forge.ui.result.Result;
@@ -27,6 +35,12 @@ public class ForgeAddonSetupStep implements UIWizardStep
 {
    @Inject
    private UIInput<Boolean> splitApiImpl;
+
+   @Inject
+   private UISelectMany<AddonId> addons;
+
+   @Inject
+   private Forge forge;
 
    @Override
    public UICommandMetadata getMetadata()
@@ -45,8 +59,18 @@ public class ForgeAddonSetupStep implements UIWizardStep
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      splitApiImpl.setLabel("Split API and Implementation projects");
-      builder.add(splitApiImpl);
+      splitApiImpl.setLabel("Split API and Implementation projects?");
+      addons.setLabel("Depend on these addons:");
+      Set<AddonId> choices = new HashSet<AddonId>();
+      for (AddonRepository repository : forge.getRepositories())
+      {
+         for (AddonId id : repository.listEnabled())
+         {
+            choices.add(id);
+         }
+      }
+      addons.setValueChoices(choices);
+      builder.add(splitApiImpl).add(addons);
    }
 
    @Override
@@ -58,6 +82,8 @@ public class ForgeAddonSetupStep implements UIWizardStep
    @Override
    public Result execute(UIContext context) throws Exception
    {
+      Project project = (Project) context.getAttribute(Project.class);
+
       return null;
    }
 
