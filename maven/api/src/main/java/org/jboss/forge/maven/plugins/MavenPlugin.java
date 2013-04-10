@@ -9,6 +9,7 @@ package org.jboss.forge.maven.plugins;
 
 import java.util.List;
 
+import org.jboss.forge.dependencies.Coordinate;
 import org.jboss.forge.dependencies.Dependency;
 
 /**
@@ -19,14 +20,29 @@ import org.jboss.forge.dependencies.Dependency;
 
 public interface MavenPlugin extends PluginElement
 {
-   Dependency getDependency();
+   /**
+    * Returns the {@link Coordinate} represented by this plugin
+    */
+   Coordinate getCoordinate();
 
+   /**
+    * Returns the {@link Configuration} associated with this plugin, if any
+    */
    Configuration getConfig();
 
+   /**
+    * Return the list of {@link Execution} associated with this plugin, if any
+    */
    List<Execution> listExecutions();
 
+   /**
+    * @return if this plugin extensions is enabled
+    */
    boolean isExtensionsEnabled();
 
+   /**
+    * @return the dependencies for this plugin, if any
+    */
    List<Dependency> getDirectDependencies();
 
 }

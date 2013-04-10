@@ -19,7 +19,7 @@ import org.jboss.forge.dependencies.Dependency;
 public class MavenPluginImpl implements MavenPlugin
 {
 
-   private Dependency dependency;
+   private Coordinate coordinate;
    private Configuration configuration;
    private final List<Execution> executions = new ArrayList<Execution>();
    private boolean extensions;
@@ -31,19 +31,19 @@ public class MavenPluginImpl implements MavenPlugin
 
    public MavenPluginImpl(final MavenPlugin plugin)
    {
-      this.dependency = plugin.getDependency();
-      this.configuration = plugin.getConfig();
+      setCoordinate(plugin.getCoordinate());
+      setConfiguration(plugin.getConfig());
    }
 
    @Override
-   public Dependency getDependency()
+   public Coordinate getCoordinate()
    {
-      return dependency;
+      return coordinate;
    }
 
-   public void setDependency(final Dependency dependency)
+   public void setCoordinate(Coordinate coordinate)
    {
-      this.dependency = dependency;
+      this.coordinate = coordinate;
    }
 
    @Override
@@ -78,7 +78,7 @@ public class MavenPluginImpl implements MavenPlugin
    public String toString()
    {
       StringBuilder b = new StringBuilder("<plugin>");
-      appendDependency(b, dependency);
+      appendCoordinates(b, coordinate, true);
 
       if (extensions)
       {
@@ -138,7 +138,7 @@ public class MavenPluginImpl implements MavenPlugin
 
    private void appendDependency(StringBuilder builder, Dependency appendDependency)
    {
-      appendDependencyData(builder, appendDependency.getCoordinate(), true);
+      appendCoordinates(builder, appendDependency.getCoordinate(), true);
       if (!appendDependency.getExcludedCoordinates().isEmpty())
       {
          builder.append("<exclusions>");
@@ -153,11 +153,11 @@ public class MavenPluginImpl implements MavenPlugin
    private void appendExclusion(StringBuilder builder, Coordinate exclusion)
    {
       builder.append("<exclusion>");
-      appendDependencyData(builder, exclusion, false);
+      appendCoordinates(builder, exclusion, false);
       builder.append("</exclusion>");
    }
 
-   private void appendDependencyData(StringBuilder builder, Coordinate coordinate, boolean withVersion)
+   private void appendCoordinates(StringBuilder builder, Coordinate coordinate, boolean withVersion)
    {
       if (coordinate.getGroupId() != null)
       {

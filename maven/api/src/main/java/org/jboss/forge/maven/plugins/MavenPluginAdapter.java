@@ -12,14 +12,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.maven.model.Exclusion;
+import org.apache.maven.model.Plugin;
 import org.apache.maven.model.PluginExecution;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.jboss.forge.dependencies.Coordinate;
 import org.jboss.forge.dependencies.Dependency;
+import org.jboss.forge.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.dependencies.builder.DependencyBuilder;
 
 /**
+ * A plugin adapter for {@link Plugin} and {@link MavenPlugin}
+ *
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
  */
 
@@ -29,11 +33,11 @@ public class MavenPluginAdapter extends org.apache.maven.model.Plugin implements
 
    public MavenPluginAdapter(final MavenPlugin mavenPlugin)
    {
-      Dependency dependency = mavenPlugin.getDependency();
+      Coordinate coordinate = mavenPlugin.getCoordinate();
 
-      setGroupId(dependency.getCoordinate().getGroupId());
-      setArtifactId(dependency.getCoordinate().getArtifactId());
-      setVersion(dependency.getCoordinate().getVersion());
+      setGroupId(coordinate.getGroupId());
+      setArtifactId(coordinate.getArtifactId());
+      setVersion(coordinate.getVersion());
       setConfiguration(parseConfig(mavenPlugin.getConfig()));
       setExecutions(transformExecutions(mavenPlugin));
       if (mavenPlugin.isExtensionsEnabled())
@@ -152,9 +156,9 @@ public class MavenPluginAdapter extends org.apache.maven.model.Plugin implements
    }
 
    @Override
-   public Dependency getDependency()
+   public Coordinate getCoordinate()
    {
-      return DependencyBuilder.create()
+      return CoordinateBuilder.create()
                .setGroupId(getGroupId())
                .setArtifactId(getArtifactId())
                .setVersion(getVersion());

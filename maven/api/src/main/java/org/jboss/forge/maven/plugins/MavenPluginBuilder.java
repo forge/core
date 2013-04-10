@@ -9,6 +9,7 @@ package org.jboss.forge.maven.plugins;
 
 import java.util.List;
 
+import org.jboss.forge.dependencies.Coordinate;
 import org.jboss.forge.dependencies.Dependency;
 
 /**
@@ -44,14 +45,14 @@ public class MavenPluginBuilder implements MavenPlugin, PluginElement
    }
 
    @Override
-   public Dependency getDependency()
+   public Coordinate getCoordinate()
    {
-      return plugin.getDependency();
+      return plugin.getCoordinate();
    }
 
-   public MavenPluginBuilder setDependency(final Dependency dependency)
+   public MavenPluginBuilder setCoordinate(final Coordinate coordinate)
    {
-      plugin.setDependency(dependency);
+      plugin.setCoordinate(coordinate);
       return this;
    }
 
