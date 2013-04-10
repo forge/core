@@ -82,6 +82,21 @@ public class ClassLoaders
       }
    }
 
+   public static Class<?> loadClass(ClassLoader loader, String typeName)
+   {
+      Assert.notNull(loader, "Class loader to inspect must not be null.");
+      Assert.notNull(typeName, "Class name to load must not be null.");
+
+      try
+      {
+         return loader.loadClass(typeName);
+      }
+      catch (ClassNotFoundException e)
+      {
+         throw new ContainerException(e);
+      }
+   }
+
    public static Class<?> loadClass(ClassLoader loader, Class<?> type)
    {
       Assert.notNull(loader, "Class loader to inspect must not be null.");

@@ -31,6 +31,10 @@ import org.jboss.forge.container.addons.Addon;
 import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.container.services.ServiceRegistry;
+import org.jboss.forge.container.util.Annotations;
+import org.jboss.forge.container.util.ClassLoaders;
+import org.junit.After;
+import org.junit.Before;
 
 /**
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
@@ -68,7 +72,8 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
 
          waitUntilStable(forge);
 
-         Object instance = null;
+         Object testInstance = null;
+         Class<?> testClass = null;
          for (Addon addon : addonRegistry.getAddons())
          {
             Future<Void> future = addon.getFuture();
@@ -78,13 +83,14 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
             if (addon.getStatus().isStarted())
             {
                ServiceRegistry registry = addon.getServiceRegistry();
-               ExportedInstance<?> testInstance = registry.getExportedInstance(testClassName);
+               ExportedInstance<?> exportedInstance = registry.getExportedInstance(testClassName);
 
-               if (testInstance != null)
+               if (exportedInstance != null)
                {
-                  if (instance == null)
+                  if (testInstance == null)
                   {
-                     instance = testInstance.get();
+                     testInstance = exportedInstance.get();
+                     testClass = ClassLoaders.loadClass(addon.getClassLoader(), testClassName);
                   }
                   else
                   {
@@ -96,7 +102,7 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
             }
          }
 
-         if (instance == null)
+         if (testInstance == null)
             throw new IllegalStateException(
                      "Test runner could not locate test class in any deployment. "
                               + "Verify that your test case is deployed in an addon that supports remote " +
@@ -105,7 +111,7 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
          TestResult result = null;
          try
          {
-            Method method = instance.getClass().getMethod(testMethodExecutor.getMethod().getName());
+            Method method = testInstance.getClass().getMethod(testMethodExecutor.getMethod().getName());
             Annotation[] annotations = method.getAnnotations();
 
             for (Annotation annotation : annotations)
@@ -126,7 +132,10 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
                               + testMethodExecutor.getInstance().getClass().getName() + "."
                               + testMethodExecutor.getMethod().getName() + "()");
 
-                     method.invoke(instance);
+                     invokeBefore(testClass, testInstance);
+                     method.invoke(testInstance);
+                     invokeAfter(testClass, testInstance);
+
                      result = new TestResult(Status.PASSED);
                   }
                   finally
@@ -171,6 +180,32 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
                   + testMethodExecutor.getMethod().getName() + "()";
          System.out.println(message);
          throw new IllegalStateException(message, e);
+      }
+   }
+
+   @SuppressWarnings("unchecked")
+   private void invokeBefore(Class<?> clazz, Object instance) throws Exception
+   {
+      for (Method m : clazz.getMethods())
+      {
+         if (Annotations.isAnnotationPresent(m,
+                  (Class<? extends Annotation>) clazz.getClassLoader().loadClass(Before.class.getName())))
+         {
+            m.invoke(instance);
+         }
+      }
+   }
+
+   @SuppressWarnings("unchecked")
+   private void invokeAfter(Class<?> clazz, Object instance) throws Exception
+   {
+      for (Method m : clazz.getMethods())
+      {
+         if (Annotations.isAnnotationPresent(m,
+                  (Class<? extends Annotation>) clazz.getClassLoader().loadClass(After.class.getName())))
+         {
+            m.invoke(instance);
+         }
       }
    }
 
