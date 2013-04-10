@@ -20,8 +20,10 @@ import org.apache.maven.model.Plugin;
 import org.apache.maven.model.PluginManagement;
 import org.apache.maven.model.Repository;
 import org.jboss.forge.container.exception.ContainerException;
+import org.jboss.forge.dependencies.Coordinate;
 import org.jboss.forge.dependencies.Dependency;
 import org.jboss.forge.dependencies.DependencyRepository;
+import org.jboss.forge.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.dependencies.util.Dependencies;
 import org.jboss.forge.facets.AbstractFacet;
@@ -83,8 +85,8 @@ public class MavenPluginFacetImpl extends AbstractFacet<Project> implements Mave
          MavenPluginAdapter adapter = new MavenPluginAdapter(plugin);
          MavenPluginBuilder pluginBuilder = MavenPluginBuilder
                   .create()
-                  .setDependency(
-                           DependencyBuilder.create().setGroupId(plugin.getGroupId())
+                  .setCoordinate(
+                           CoordinateBuilder.create().setGroupId(plugin.getGroupId())
                                     .setArtifactId(plugin.getArtifactId()).setVersion(plugin.getVersion()))
 
                   .setConfiguration(adapter.getConfig());
@@ -129,8 +131,8 @@ public class MavenPluginFacetImpl extends AbstractFacet<Project> implements Mave
 
       for (MavenPlugin mavenPlugin : listConfiguredPlugins(managedPlugin))
       {
-         Dependency temp = mavenPlugin.getDependency();
-         if (Dependencies.areEquivalent(temp, DependencyBuilder.create(dependency).setGroupId(groupId)))
+         Coordinate temp = mavenPlugin.getCoordinate();
+         if (temp.equals(CoordinateBuilder.create(temp).setGroupId(groupId)))
          {
             return mavenPlugin;
          }
@@ -181,10 +183,10 @@ public class MavenPluginFacetImpl extends AbstractFacet<Project> implements Mave
       List<org.apache.maven.model.Plugin> pomPlugins = getPluginsPOM(build, managedPlugin);
       for (org.apache.maven.model.Plugin pomPlugin : pomPlugins)
       {
-         Dependency pluginDep = DependencyBuilder.create().setGroupId(pomPlugin.getGroupId())
+         Coordinate pluginCoord = CoordinateBuilder.create().setGroupId(pomPlugin.getGroupId())
                   .setArtifactId(pomPlugin.getArtifactId());
 
-         if (Dependencies.areEquivalent(pluginDep, plugin.getDependency()))
+         if (pluginCoord.equals(plugin.getCoordinate()))
          {
             MavenPluginAdapter adapter = new MavenPluginAdapter(plugin);
             pomPlugin.setConfiguration(adapter.getConfiguration());
