@@ -186,6 +186,9 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
    @SuppressWarnings("unchecked")
    private void invokeBefore(Class<?> clazz, Object instance) throws Exception
    {
+      if (clazz.getSuperclass() != null && !Object.class.equals(clazz.getSuperclass()))
+         invokeBefore(clazz.getSuperclass(), instance);
+
       for (Method m : clazz.getMethods())
       {
          if (Annotations.isAnnotationPresent(m,
@@ -207,6 +210,9 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
             m.invoke(instance);
          }
       }
+
+      if (clazz.getSuperclass() != null && !Object.class.equals(clazz.getSuperclass()))
+         invokeAfter(clazz.getSuperclass(), instance);
    }
 
    private void waitUntilStable(Forge forge) throws InterruptedException
