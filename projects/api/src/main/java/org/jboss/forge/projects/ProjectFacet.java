@@ -15,10 +15,4 @@ import org.jboss.forge.facets.Facet;
  */
 public interface ProjectFacet extends Facet<Project>
 {
-   /**
-    * Set the {@link Project} to which this {@link Facet} belongs. Should only be set once, since each {@link Project}
-    * receives its own unique instance of all compatible {@link Facet} types. This method must be called before invoking
-    * any operations on {@code this} instance.
-    */
-   public void setOrigin(Project project);
 }

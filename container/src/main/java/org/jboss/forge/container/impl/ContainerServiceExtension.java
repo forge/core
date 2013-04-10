@@ -11,6 +11,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +21,7 @@ import java.util.logging.Logger;
 
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.AfterBeanDiscovery;
 import javax.enterprise.inject.spi.Annotated;
 import javax.enterprise.inject.spi.AnnotatedParameter;
@@ -70,9 +72,20 @@ public class ContainerServiceExtension implements Extension
    {
       Annotated annotated = event.getInjectionPoint().getAnnotated();
 
-      Exported exported = getExported(annotated);
       Class<?> injectionPointDeclaringType = Types.toClass(event.getInjectionPoint().getMember().getDeclaringClass());
       Class<?> injectionBeanValueType = Types.toClass(annotated.getBaseType());
+
+      if (Instance.class.isAssignableFrom(injectionBeanValueType))
+      {
+         Type type = event.getInjectionPoint().getType();
+         if (type instanceof ParameterizedType)
+         {
+            Type[] types = ((ParameterizedType) type).getActualTypeArguments();
+            injectionBeanValueType = Types.toClass(types[0]);
+         }
+      }
+
+      Exported exported = getExported(injectionBeanValueType);
 
       boolean local = isClassLocal(injectionPointDeclaringType, injectionBeanValueType);
       if (!local)
@@ -184,9 +197,8 @@ public class ContainerServiceExtension implements Extension
       return false;
    }
 
-   private Exported getExported(Annotated annotated)
+   private Exported getExported(Class<?> clazz)
    {
-      Class<?> clazz = Types.toClass(annotated.getBaseType());
       return Annotations.getAnnotation(clazz, Exported.class);
    }
 }

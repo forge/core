@@ -38,17 +38,18 @@ public class ContainerServiceInstanceTest
    }
 
    @Inject
-   private Instance<ExportedInterface> instances;
+   private Instance<ExportedInterface> instanceInterfaceInstance;
 
    @Test
    @Ignore
    public void testRegisteredServices()
    {
-      for (ExportedInterface instance : instances)
+      Assert.assertNotNull(instanceInterfaceInstance.get());
+      for (ExportedInterface instance : instanceInterfaceInstance)
       {
          Assert.assertNotNull(instance);
       }
-      Instance<ImplementingClass1> implementation = instances.select(ImplementingClass1.class);
+      Instance<ImplementingClass1> implementation = instanceInterfaceInstance.select(ImplementingClass1.class);
       Assert.assertTrue(implementation.get() instanceof AbstractImplementation);
    }
 }

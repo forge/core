@@ -4,7 +4,7 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.projects;
+package org.jboss.forge.projects.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +16,12 @@ import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.container.spi.ListenerRegistration;
 import org.jboss.forge.container.util.Predicate;
+import org.jboss.forge.facets.FacetFactory;
+import org.jboss.forge.projects.Project;
+import org.jboss.forge.projects.ProjectFacet;
+import org.jboss.forge.projects.ProjectFactory;
+import org.jboss.forge.projects.ProjectListener;
+import org.jboss.forge.projects.ProjectLocator;
 import org.jboss.forge.resource.DirectoryResource;
 
 /**
@@ -26,6 +32,9 @@ public class ProjectFactoryImpl implements ProjectFactory
 {
    @Inject
    private AddonRegistry registry;
+
+   @Inject
+   private FacetFactory factory;
 
    private final List<ProjectListener> projectListeners = new ArrayList<ProjectListener>();
 
@@ -92,8 +101,7 @@ public class ProjectFactoryImpl implements ProjectFactory
       {
          for (Class<? extends ProjectFacet> facetType : facetTypes)
          {
-            ProjectFacet facet = registry.getExportedInstance(facetType).get();
-            facet.setOrigin(result);
+            ProjectFacet facet = factory.create(facetType, result);
             if (!result.install(facet))
             {
                throw new IllegalStateException("Could not install Facet [" + facet + "] of type [" + facetType

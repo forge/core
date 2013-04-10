@@ -1,4 +1,4 @@
-package org.jboss.forge.maven.dependencies;
+package org.jboss.forge.dependencies.util;
 
 import org.jboss.forge.dependencies.Dependency;
 

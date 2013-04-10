@@ -11,6 +11,7 @@
    <name>Forge - Facets Addon Parent</name>
    <modules>
       <module>api</module>
+      <module>impl</module>
       <module>addon</module>
    </modules>
    <dependencyManagement>
@@ -18,6 +19,11 @@
          <dependency>
             <groupId>org.jboss.forge</groupId>
             <artifactId>facets-api</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>facets-impl</artifactId>
             <version>${project.version}</version>
          </dependency>
       </dependencies>

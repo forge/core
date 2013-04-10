@@ -59,12 +59,15 @@ public class MavenDependencyAdapter extends org.apache.maven.model.Dependency im
       this.setClassifier(dep.getCoordinate().getClassifier());
       this.setSystemPath(dep.getCoordinate().getSystemPath());
 
-      for (Coordinate exclusion : dep.getExcludedCoordinates())
+      if (dep.getExcludedCoordinates() != null)
       {
-         Exclusion temp = new Exclusion();
-         temp.setArtifactId(exclusion.getArtifactId());
-         temp.setGroupId(exclusion.getGroupId());
-         this.getExclusions().add(temp);
+         for (Coordinate exclusion : dep.getExcludedCoordinates())
+         {
+            Exclusion temp = new Exclusion();
+            temp.setArtifactId(exclusion.getArtifactId());
+            temp.setGroupId(exclusion.getGroupId());
+            this.getExclusions().add(temp);
+         }
       }
    }
 

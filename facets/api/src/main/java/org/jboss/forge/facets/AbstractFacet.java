@@ -12,7 +12,7 @@ package org.jboss.forge.facets;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>, <a
  *         href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>
  */
-public abstract class AbstractFacet<FACETED extends Faceted<?>> implements Facet<FACETED>
+public abstract class AbstractFacet<FACETED extends Faceted<?>> implements Facet<FACETED>, MutableOrigin<FACETED>
 {
    protected FACETED origin;
 
@@ -25,7 +25,8 @@ public abstract class AbstractFacet<FACETED extends Faceted<?>> implements Facet
    /**
     * Set the <FACETED> origin on which this {@link Facet} will operate.
     */
-   protected void setOrigin(FACETED origin)
+   @Override
+   public void setOrigin(FACETED origin)
    {
       this.origin = origin;
    }

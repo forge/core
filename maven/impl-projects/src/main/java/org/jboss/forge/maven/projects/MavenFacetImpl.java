@@ -78,6 +78,8 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
 
    public ProjectBuilder getBuilder()
    {
+      if(builder == null)
+         builder = plexus.lookup(ProjectBuilder.class);
       return builder;
    }
 
@@ -360,7 +362,6 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
       return executeMaven(parameters.toArray(new String[] {}));
    }
 
-   @SuppressWarnings("resource")
    public boolean executeMaven(final String[] selected)
    {
       return executeMaven(new NullOutputStream(), selected);
