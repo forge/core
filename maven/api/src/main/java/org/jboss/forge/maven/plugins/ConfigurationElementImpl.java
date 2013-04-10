@@ -42,7 +42,7 @@ public class ConfigurationElementImpl implements ConfigurationElement
    }
 
    @Override
-   public boolean hasChilderen()
+   public boolean hasChildren()
    {
       return children != null && children.size() > 0;
    }
@@ -156,7 +156,7 @@ public class ConfigurationElementImpl implements ConfigurationElement
                return element;
             }
 
-            if (!directChildsOnly && element.hasChilderen())
+            if (!directChildsOnly && element.hasChildren())
             {
                try
                {

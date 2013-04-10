@@ -31,9 +31,9 @@ public class ConfigurationElementBuilder implements ConfigurationElement
    }
 
    @Override
-   public boolean hasChilderen()
+   public boolean hasChildren()
    {
-      return configurationElement.hasChilderen();
+      return configurationElement.hasChildren();
    }
 
    @Override

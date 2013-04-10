@@ -14,6 +14,12 @@ import javax.inject.Inject;
 import org.jboss.forge.container.Forge;
 import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.repositories.AddonRepository;
+import org.jboss.forge.dependencies.builder.CoordinateBuilder;
+import org.jboss.forge.dependencies.builder.DependencyBuilder;
+import org.jboss.forge.maven.plugins.ExecutionBuilder;
+import org.jboss.forge.maven.plugins.MavenPluginBuilder;
+import org.jboss.forge.maven.plugins.MavenPluginImpl;
+import org.jboss.forge.maven.projects.MavenPluginFacet;
 import org.jboss.forge.projects.Project;
 import org.jboss.forge.ui.context.UIBuilder;
 import org.jboss.forge.ui.context.UIContext;
@@ -23,13 +29,14 @@ import org.jboss.forge.ui.input.UISelectMany;
 import org.jboss.forge.ui.metadata.UICommandMetadata;
 import org.jboss.forge.ui.result.NavigationResult;
 import org.jboss.forge.ui.result.Result;
+import org.jboss.forge.ui.result.Results;
 import org.jboss.forge.ui.util.Categories;
 import org.jboss.forge.ui.util.Metadata;
 import org.jboss.forge.ui.wizard.UIWizardStep;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- *
+ * 
  */
 public class ForgeAddonSetupStep implements UIWizardStep
 {
@@ -59,7 +66,7 @@ public class ForgeAddonSetupStep implements UIWizardStep
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      splitApiImpl.setLabel("Split API and Implementation projects?");
+      splitApiImpl.setLabel("Split API and Implementation projects?").setDefaultValue(Boolean.FALSE);
       addons.setLabel("Depend on these addons:");
       Set<AddonId> choices = new HashSet<AddonId>();
       for (AddonRepository repository : forge.getRepositories())
@@ -83,8 +90,18 @@ public class ForgeAddonSetupStep implements UIWizardStep
    public Result execute(UIContext context) throws Exception
    {
       Project project = (Project) context.getAttribute(Project.class);
-
-      return null;
+      MavenPluginFacet pluginFacet = project.getFacet(MavenPluginFacet.class);
+      if (splitApiImpl.getValue())
+      {
+      }
+      else
+      {
+      }
+      CoordinateBuilder compilerPlugin = CoordinateBuilder.create().setGroupId("org.apache.maven.plugins")
+               .setArtifactId("maven-compiler-plugin");
+      
+      MavenPluginBuilder.create().  setDependency(DependencyBuilder.create().setCoordinate(compilerPlugin)).addExecution(ExecutionBuilder.);
+      return Results.success("Forge project created");
    }
 
    @Override

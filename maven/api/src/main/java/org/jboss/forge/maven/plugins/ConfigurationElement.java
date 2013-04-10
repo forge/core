@@ -18,7 +18,7 @@ public interface ConfigurationElement extends PluginElement
 
    boolean isPlugin();
 
-   boolean hasChilderen();
+   boolean hasChildren();
 
    String getText();
 
