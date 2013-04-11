@@ -34,6 +34,7 @@ import org.jboss.forge.ui.context.UIValidationContext;
 import org.jboss.forge.ui.input.UIInput;
 import org.jboss.forge.ui.input.UISelectMany;
 import org.jboss.forge.ui.metadata.UICommandMetadata;
+import org.jboss.forge.ui.metadata.WithAttributes;
 import org.jboss.forge.ui.result.NavigationResult;
 import org.jboss.forge.ui.result.Result;
 import org.jboss.forge.ui.result.Results;
@@ -52,9 +53,15 @@ import org.jboss.forge.ui.wizard.UIWizardStep;
 public class ForgeAddonSetupStep implements UIWizardStep
 {
    @Inject
+   @WithAttributes(label = "Create API,Implementation,Tests and Addon modules")
    private UIInput<Boolean> splitProjects;
 
    @Inject
+   @WithAttributes(label = "Forge Version:", required = true)
+   private UIInput<String> forgeVersion;
+
+   @Inject
+   @WithAttributes(label = "Depend on these addons:")
    private UISelectMany<AddonId> addons;
 
    @Inject
@@ -86,9 +93,8 @@ public class ForgeAddonSetupStep implements UIWizardStep
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      splitProjects.setLabel("Create API,Implementation,Tests and Addon modules").setDefaultValue(
-               Boolean.FALSE);
-      addons.setLabel("Depend on these addons:");
+      forgeVersion.setDefaultValue(forge.getVersion().getVersionString());
+      splitProjects.setDefaultValue(Boolean.FALSE);
       Set<AddonId> choices = new HashSet<AddonId>();
       for (AddonRepository repository : forge.getRepositories())
       {
@@ -98,7 +104,7 @@ public class ForgeAddonSetupStep implements UIWizardStep
          }
       }
       addons.setValueChoices(choices);
-      builder.add(splitProjects).add(addons);
+      builder.add(forgeVersion).add(splitProjects).add(addons);
    }
 
    @Override
@@ -169,7 +175,6 @@ public class ForgeAddonSetupStep implements UIWizardStep
                Arrays.<Class<? extends ProjectFacet>> asList(ForgeAddonAPIFacet.class, ForgeSimpleAddonFacet.class));
       return project;
    }
-
 
    private Project createTestsProject(DirectoryResource projectRoot)
    {
