@@ -18,6 +18,7 @@ import org.jboss.forge.container.spi.ListenerRegistration;
 import org.jboss.forge.container.util.Predicate;
 import org.jboss.forge.facets.FacetFactory;
 import org.jboss.forge.projects.Project;
+import org.jboss.forge.projects.ProjectAssociationProvider;
 import org.jboss.forge.projects.ProjectFacet;
 import org.jboss.forge.projects.ProjectFactory;
 import org.jboss.forge.projects.ProjectListener;
@@ -112,6 +113,19 @@ public class ProjectFactoryImpl implements ProjectFactory
 
       if (result != null)
       {
+         DirectoryResource parentDir = result.getProjectRoot().getParent().reify(DirectoryResource.class);
+         if (parentDir != null)
+         {
+            for (ExportedInstance<ProjectAssociationProvider> providerInstance : registry
+                     .getExportedInstances(ProjectAssociationProvider.class))
+            {
+               ProjectAssociationProvider provider = providerInstance.get();
+               if (provider.canAssociate(result, parentDir))
+               {
+                  provider.associate(result, parentDir);
+               }
+            }
+         }
          fireProjectCreated(result);
       }
       return result;
