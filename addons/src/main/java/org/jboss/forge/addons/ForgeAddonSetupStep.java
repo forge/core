@@ -125,6 +125,8 @@ public class ForgeAddonSetupStep implements UIWizardStep
          createAPIProject(projectRoot);
          // Create IMPL Project
          createImplProject(projectRoot);
+         // Create SPI Project
+         createSPIProject(projectRoot);
          // Create TESTS Project
          createTestsProject(projectRoot);
       }
@@ -159,6 +161,15 @@ public class ForgeAddonSetupStep implements UIWizardStep
                Arrays.<Class<? extends ProjectFacet>> asList(ForgeAddonImplFacet.class, ForgeSimpleAddonFacet.class));
       return project;
    }
+
+   private Project createSPIProject(final DirectoryResource projectRoot)
+   {
+      DirectoryResource location = projectRoot.getOrCreateChildDirectory("spi");
+      Project project = projectFactory.createProject(location,
+               Arrays.<Class<? extends ProjectFacet>> asList(ForgeAddonAPIFacet.class, ForgeSimpleAddonFacet.class));
+      return project;
+   }
+
 
    private Project createTestsProject(DirectoryResource projectRoot)
    {
