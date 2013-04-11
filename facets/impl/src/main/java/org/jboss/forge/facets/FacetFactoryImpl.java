@@ -6,6 +6,9 @@
  */
 package org.jboss.forge.facets;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.inject.Inject;
 
 import org.jboss.forge.container.addons.AddonRegistry;
@@ -35,5 +38,33 @@ public class FacetFactoryImpl implements FacetFactory
       else
          throw new IllegalArgumentException("Facet type [" + type.getName() + "] does not support setting an origin.");
       return instance;
+   }
+
+   @Override
+   public <FACET extends Facet<E>, E extends Faceted<? extends Facet<?>>> Iterable<FACET> createFacets(Class<FACET> type)
+   {
+      Set<ExportedInstance<FACET>> instances = registry.getExportedInstances(type);
+      Set<FACET> facets = new HashSet<FACET>(instances.size());
+      for (ExportedInstance<FACET> instance : instances)
+      {
+         facets.add(instance.get());
+      }
+      return facets;
+   }
+
+   @Override
+   public <FACET extends Facet<E>, E extends Faceted<? extends Facet<?>>> Iterable<FACET> createFacets(
+            Class<FACET> type, E origin)
+   {
+      Iterable<FACET> facets = createFacets(type);
+      for (FACET facet : facets)
+      {
+         if (facet instanceof MutableOrigin)
+            ((MutableOrigin<E>) facet).setOrigin(origin);
+         else
+            throw new IllegalArgumentException("Facet type [" + type.getName()
+                     + "] does not support setting an origin.");
+      }
+      return facets;
    }
 }
