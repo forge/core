@@ -14,14 +14,10 @@ import javax.inject.Inject;
 import org.jboss.forge.container.Forge;
 import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.repositories.AddonRepository;
-import org.jboss.forge.dependencies.builder.CoordinateBuilder;
-import org.jboss.forge.maven.plugins.ConfigurationBuilder;
-import org.jboss.forge.maven.plugins.ConfigurationElementBuilder;
-import org.jboss.forge.maven.plugins.ExecutionBuilder;
-import org.jboss.forge.maven.plugins.MavenPlugin;
-import org.jboss.forge.maven.plugins.MavenPluginBuilder;
-import org.jboss.forge.maven.projects.MavenPluginFacet;
+import org.jboss.forge.dependencies.builder.DependencyBuilder;
+import org.jboss.forge.facets.FacetFactory;
 import org.jboss.forge.projects.Project;
+import org.jboss.forge.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.ui.context.UIBuilder;
 import org.jboss.forge.ui.context.UIContext;
 import org.jboss.forge.ui.context.UIValidationContext;
@@ -48,7 +44,13 @@ public class ForgeAddonSetupStep implements UIWizardStep
    private UISelectMany<AddonId> addons;
 
    @Inject
+   private DependencyInstaller dependencyInstaller;
+
+   @Inject
    private Forge forge;
+
+   @Inject
+   private FacetFactory facetFactory;
 
    @Override
    public UICommandMetadata getMetadata()
@@ -78,36 +80,38 @@ public class ForgeAddonSetupStep implements UIWizardStep
          }
       }
       addons.setValueChoices(choices);
-      builder.add(splitApiImpl).add(addons);
+      builder.add(addons);
    }
 
    @Override
    public void validate(UIValidationContext validator)
    {
-
    }
 
    @Override
    public Result execute(UIContext context) throws Exception
    {
       Project project = (Project) context.getAttribute(Project.class);
-      MavenPluginFacet pluginFacet = project.getFacet(MavenPluginFacet.class);
-      MavenPlugin forgeAddon = MavenPluginBuilder
-               .create()
-               .setCoordinate(CoordinateBuilder.create().setGroupId("org.apache.maven.plugins")
-                        .setArtifactId("maven-compiler-plugin"))
-               .addExecution(
-                        ExecutionBuilder
-                                 .create()
-                                 .setId("create-forge-addon")
-                                 .setPhase("package")
-                                 .addGoal("jar")
-                                 .setConfig(
-                                          ConfigurationBuilder.create().addConfigurationElement(
-                                                   ConfigurationElementBuilder.create().setName("classifier")
-                                                            .setText("forge-addon"))));
-      pluginFacet.addPlugin(forgeAddon);
-      return Results.success("Forge project created");
+      ForgeAddonFacet facet = facetFactory.create(ForgeAddonFacet.class, project);
+
+      Result result;
+      if (project.install(facet))
+      {
+         for (AddonId addon : addons.getValue())
+         {
+            String[] mavenCoords = addon.getName().split(":");
+            DependencyBuilder dependency = DependencyBuilder.create().setGroupId(mavenCoords[0])
+                     .setArtifactId(mavenCoords[1])
+                     .setVersion(addon.getVersion().getVersionString()).setClassifier("forge-addon");
+            dependencyInstaller.installManaged(project, dependency);
+         }
+         result = Results.success("Forge project created");
+      }
+      else
+      {
+         result = Results.fail("Failure while installing the Forge facet");
+      }
+      return result;
    }
 
    @Override

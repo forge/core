@@ -31,6 +31,7 @@ public class ForgeSimpleAddonFacet extends AbstractFacet<Project> implements Pro
    @Override
    public boolean install()
    {
+      installer.install(getOrigin(), forgeApi);
       return true;
    }
 

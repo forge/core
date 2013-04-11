@@ -31,7 +31,7 @@ public class ForgeAddonFacet extends AbstractFacet<Project> implements ProjectFa
       MavenPlugin forgeAddon = MavenPluginBuilder
                .create()
                .setCoordinate(CoordinateBuilder.create().setGroupId("org.apache.maven.plugins")
-                        .setArtifactId("maven-compiler-plugin"))
+                        .setArtifactId("maven-jar-plugin"))
                .addExecution(
                         ExecutionBuilder
                                  .create()

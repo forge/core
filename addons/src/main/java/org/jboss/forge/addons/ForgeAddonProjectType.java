@@ -6,12 +6,8 @@
  */
 package org.jboss.forge.addons;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.jboss.forge.projects.ProjectFacet;
 import org.jboss.forge.projects.ProjectType;
-import org.jboss.forge.projects.facets.DependencyFacet;
 import org.jboss.forge.ui.wizard.UIWizardStep;
 
 /**
@@ -35,8 +31,6 @@ public class ForgeAddonProjectType implements ProjectType
    @Override
    public Iterable<Class<? extends ProjectFacet>> getRequiredFacets()
    {
-      List<Class<? extends ProjectFacet>> result = new ArrayList<Class<? extends ProjectFacet>>();
-      result.add(DependencyFacet.class);
-      return result;
+      return null;
    }
 }
