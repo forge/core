@@ -10,6 +10,7 @@ package org.jboss.forge.ui.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jboss.forge.container.util.Strings;
 import org.jboss.forge.convert.CompositeConverter;
 import org.jboss.forge.convert.Converter;
 import org.jboss.forge.convert.ConverterFactory;
@@ -192,7 +193,7 @@ public final class InputComponents
       if (input.isRequired() && !InputComponents.hasValue(input))
       {
          requiredMessage = input.getRequiredMessage();
-         if (requiredMessage == null)
+         if (Strings.isNullOrEmpty(requiredMessage))
          {
             String labelValue = input.getLabel() == null ? input.getName() : input.getLabel();
             // Chop : off

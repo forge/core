@@ -16,16 +16,18 @@ import javax.inject.Inject;
 
 import org.jboss.forge.environment.Environment;
 import org.jboss.forge.ui.impl.facets.HintsFacetImpl;
+import org.jboss.forge.ui.input.InputComponent;
 import org.jboss.forge.ui.input.UIInput;
 import org.jboss.forge.ui.input.UIInputMany;
 import org.jboss.forge.ui.input.UISelectMany;
 import org.jboss.forge.ui.input.UISelectOne;
+import org.jboss.forge.ui.metadata.WithAttributes;
 
 /**
  * Produces UIInput objects
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ *
  */
 public class UIInputProducer
 {
@@ -46,6 +48,7 @@ public class UIInputProducer
          Type[] typeArguments = parameterizedType.getActualTypeArguments();
          Class<T> valueType = (Class<T>) typeArguments[0];
          UISelectOne<T> result = new UISelectOneImpl<T>(name, valueType);
+         preconfigureInput(result, injectionPoint.getAnnotated().getAnnotation(WithAttributes.class));
          HintsFacetImpl hintsFacet = new HintsFacetImpl(result, environment);
          result.install(hintsFacet);
          return result;
@@ -71,6 +74,7 @@ public class UIInputProducer
          Type[] typeArguments = parameterizedType.getActualTypeArguments();
          Class<T> valueType = (Class<T>) typeArguments[0];
          UISelectMany<T> result = new UISelectManyImpl<T>(name, valueType);
+         preconfigureInput(result, injectionPoint.getAnnotated().getAnnotation(WithAttributes.class));
          HintsFacetImpl hintsFacet = new HintsFacetImpl(result, environment);
          result.install(hintsFacet);
          return result;
@@ -96,6 +100,7 @@ public class UIInputProducer
          Type[] typeArguments = parameterizedType.getActualTypeArguments();
          Class<T> valueType = (Class<T>) typeArguments[0];
          UIInputImpl<T> result = new UIInputImpl<T>(name, valueType);
+         preconfigureInput(result, injectionPoint.getAnnotated().getAnnotation(WithAttributes.class));
          HintsFacetImpl hintsFacet = new HintsFacetImpl(result, environment);
          result.install(hintsFacet);
          return result;
@@ -121,6 +126,7 @@ public class UIInputProducer
          Type[] typeArguments = parameterizedType.getActualTypeArguments();
          Class<T> valueType = (Class<T>) typeArguments[0];
          UIInputManyImpl<T> result = new UIInputManyImpl<T>(name, valueType);
+         preconfigureInput(result, injectionPoint.getAnnotated().getAnnotation(WithAttributes.class));
          HintsFacetImpl hintsFacet = new HintsFacetImpl(result, environment);
          result.install(hintsFacet);
          return result;
@@ -129,6 +135,20 @@ public class UIInputProducer
       {
          throw new IllegalStateException("Cannot inject a generic instance of type " + UIInput.class.getName()
                   + "<?,?> without specifying concrete generic types at injection point " + injectionPoint + ".");
+      }
+   }
+
+   /**
+    * Pre-configure input based on WithAttributes info if annotation exists
+    */
+   private void preconfigureInput(InputComponent<?, ?> input, WithAttributes atts)
+   {
+      if (atts != null)
+      {
+         input.setEnabled(atts.enabled());
+         input.setLabel(atts.label());
+         input.setRequired(atts.required());
+         input.setRequiredMessage(atts.requiredMessage());
       }
    }
 }

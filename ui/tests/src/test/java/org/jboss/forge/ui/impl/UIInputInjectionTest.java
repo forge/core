@@ -30,6 +30,7 @@ import org.jboss.forge.ui.input.UIInput;
 import org.jboss.forge.ui.input.UIInputMany;
 import org.jboss.forge.ui.input.UISelectMany;
 import org.jboss.forge.ui.input.UISelectOne;
+import org.jboss.forge.ui.metadata.WithAttributes;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -42,10 +43,12 @@ public class UIInputInjectionTest
    @Dependencies(@Addon(name = "org.jboss.forge:ui", version = "2.0.0-SNAPSHOT"))
    public static ForgeArchive getDeployment()
    {
-      ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
+      ForgeArchive archive = ShrinkWrap
+               .create(ForgeArchive.class)
                .addBeansXML()
                .addClasses(Career.class)
-               .addAsAddonDependencies(AddonDependencyEntry.create(AddonId.from("org.jboss.forge:ui", "2.0.0-SNAPSHOT")));
+               .addAsAddonDependencies(
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:ui", "2.0.0-SNAPSHOT")));
 
       return archive;
    }
@@ -61,6 +64,10 @@ public class UIInputInjectionTest
 
    @Inject
    UIInputMany<String> unknown;
+
+   @Inject
+   @WithAttributes(label = "Attributed Input", enabled = false, required = false, requiredMessage = "REQUIRED_MESSAGE")
+   UIInputMany<String> attributedInput;
 
    @Test
    public void testInjectionNotNull()
@@ -180,5 +187,14 @@ public class UIInputInjectionTest
       hints.setInputType(InputTypes.TEXTAREA);
       Assert.assertSame(firstName, firstName);
       Assert.assertSame(InputTypes.TEXTAREA, hints.getInputType());
+   }
+
+   @Test
+   public void testInputWithAttributes()
+   {
+      Assert.assertEquals("Attributed Input", attributedInput.getLabel());
+      Assert.assertFalse(attributedInput.isEnabled());
+      Assert.assertFalse(attributedInput.isRequired());
+      Assert.assertEquals("REQUIRED_MESSAGE", attributedInput.getRequiredMessage());
    }
 }
