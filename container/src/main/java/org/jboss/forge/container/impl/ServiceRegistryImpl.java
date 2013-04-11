@@ -13,6 +13,7 @@ import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.container.services.ExportedInstanceImpl;
 import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.container.util.Addons;
+import org.jboss.forge.container.util.Annotations;
 import org.jboss.forge.container.util.Assert;
 import org.jboss.forge.container.util.Sets;
 
@@ -198,7 +199,7 @@ public class ServiceRegistryImpl implements ServiceRegistry
       {
          if (requestedLoadedType.isAssignableFrom(type))
          {
-            Set<Bean<?>> beans = manager.getBeans(type);
+            Set<Bean<?>> beans = manager.getBeans(type, Annotations.getQualifiersFrom(type));
             Class<? extends T> assignableClass = (Class<? extends T>) type;
             result.add(new ExportedInstanceImpl<T>(
                      addon.getClassLoader(),

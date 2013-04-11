@@ -7,6 +7,7 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.InjectionPoint;
 
+import org.jboss.forge.container.util.Annotations;
 import org.jboss.forge.container.util.ClassLoaders;
 import org.jboss.forge.proxy.ClassLoaderInterceptor;
 import org.jboss.forge.proxy.Proxies;
@@ -60,7 +61,8 @@ public class ExportedInstanceImpl<R> implements ExportedInstance<R>
          @Override
          public Object call() throws Exception
          {
-            Bean<R> bean = (Bean<R>) manager.resolve(manager.getBeans(actualType));
+            Bean<R> bean = (Bean<R>) manager.resolve(manager.getBeans(actualType,
+                     Annotations.getQualifiersFrom(actualType)));
             context = manager.createCreationalContext(bean);
             Object delegate = manager.getInjectableReference(injectionPoint, context);
             return Proxies.enhance(loader, delegate, new ClassLoaderInterceptor(loader, delegate));
