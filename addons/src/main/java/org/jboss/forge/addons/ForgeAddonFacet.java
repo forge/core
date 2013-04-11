@@ -6,11 +6,8 @@
  */
 package org.jboss.forge.addons;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.facets.AbstractFacet;
-import org.jboss.forge.facets.FacetFactory;
 import org.jboss.forge.maven.plugins.ConfigurationBuilder;
 import org.jboss.forge.maven.plugins.ConfigurationElementBuilder;
 import org.jboss.forge.maven.plugins.ExecutionBuilder;
@@ -22,25 +19,14 @@ import org.jboss.forge.projects.ProjectFacet;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 public class ForgeAddonFacet extends AbstractFacet<Project> implements ProjectFacet
 {
-   @Inject
-   private FacetFactory factory;
 
    @Override
    public boolean install()
    {
-      Project project = getOrigin();
-
-      // TODO: Implement and change to @RequiresFacet
-      if (!project.hasFacet(MavenPluginFacet.class))
-      {
-         MavenPluginFacet facet = factory.create(MavenPluginFacet.class, project);
-         project.install(facet);
-      }
-
       MavenPluginFacet pluginFacet = getOrigin().getFacet(MavenPluginFacet.class);
       MavenPlugin forgeAddon = MavenPluginBuilder
                .create()
@@ -64,11 +50,5 @@ public class ForgeAddonFacet extends AbstractFacet<Project> implements ProjectFa
    public boolean isInstalled()
    {
       return false;
-   }
-
-   @Override
-   public void setOrigin(Project origin)
-   {
-      super.setOrigin(origin);
    }
 }

@@ -18,7 +18,7 @@ import org.jboss.forge.projects.facets.DependencyFacet;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 public class ForgeSimpleAddonFacet extends AbstractFacet<Project> implements ProjectFacet
 {
@@ -27,11 +27,11 @@ public class ForgeSimpleAddonFacet extends AbstractFacet<Project> implements Pro
 
    @Inject
    private DependencyInstaller installer;
-   
+
    @Override
    public boolean install()
    {
-      return false;
+      return true;
    }
 
    @Override
@@ -39,11 +39,5 @@ public class ForgeSimpleAddonFacet extends AbstractFacet<Project> implements Pro
    {
       DependencyFacet dependencies = origin.getFacet(DependencyFacet.class);
       return dependencies != null && dependencies.hasEffectiveDependency(forgeApi);
-   }
-
-   @Override
-   public void setOrigin(Project origin)
-   {
-      super.setOrigin(origin);
    }
 }
