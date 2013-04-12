@@ -7,11 +7,12 @@ import org.jboss.forge.container.impl.PerformanceTunedBootstrapConfiguration;
 import org.jboss.weld.bootstrap.api.Bootstrap;
 import org.jboss.weld.bootstrap.spi.BeanDeploymentArchive;
 import org.jboss.weld.bootstrap.spi.BootstrapConfiguration;
+import org.jboss.weld.bootstrap.spi.CDI11Deployment;
 import org.jboss.weld.environment.se.discovery.AbstractWeldSEDeployment;
 import org.jboss.weld.environment.se.discovery.ImmutableBeanDeploymentArchive;
 import org.jboss.weld.resources.spi.ResourceLoader;
 
-public class ModularWeldDeployment extends AbstractWeldSEDeployment
+public class ModularWeldDeployment extends AbstractWeldSEDeployment implements CDI11Deployment
 {
    private final BeanDeploymentArchive beanDeploymentArchive;
 
@@ -32,6 +33,12 @@ public class ModularWeldDeployment extends AbstractWeldSEDeployment
 
    @Override
    public BeanDeploymentArchive loadBeanDeploymentArchive(Class<?> beanClass)
+   {
+      return beanDeploymentArchive;
+   }
+
+   @Override
+   public BeanDeploymentArchive getBeanDeploymentArchive(Class<?> beanClass)
    {
       return beanDeploymentArchive;
    }
