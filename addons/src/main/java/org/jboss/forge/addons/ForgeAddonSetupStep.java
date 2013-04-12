@@ -88,6 +88,7 @@ public class ForgeAddonSetupStep implements UIWizardStep
       configureVersions();
       configureSplitProjects();
       configureAddonDependencies();
+
       builder.add(forgeVersion).add(splitProjects).add(addons);
    }
 
