@@ -48,7 +48,11 @@ public class BootstrapClassLoaderTestCase
    public void shouldBeAbleToPassClassesIntoDelegate() throws Exception
    {
       Forge instance = ForgeFactory.getInstance();
-      instance.addRepository(AddonRepositoryMode.IMMUTABLE, new File("blah"));
+      File tempDir = File.createTempFile("test", "repository");
+      tempDir.delete();
+      tempDir.mkdir();
+      tempDir.deleteOnExit();
+      instance.addRepository(AddonRepositoryMode.IMMUTABLE, tempDir);
       instance.getRepositories().get(0).getAddonResources(AddonId.from("a", "1"));
    }
 
