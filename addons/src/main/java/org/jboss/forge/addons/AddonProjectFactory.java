@@ -8,12 +8,15 @@
 package org.jboss.forge.addons;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.inject.Inject;
 
 import org.jboss.forge.addons.facets.ForgeAddonAPIFacet;
 import org.jboss.forge.addons.facets.ForgeAddonFacet;
 import org.jboss.forge.addons.facets.ForgeAddonImplFacet;
+import org.jboss.forge.addons.facets.ForgeAddonSPIFacet;
 import org.jboss.forge.addons.facets.ForgeAddonTestFacet;
 import org.jboss.forge.addons.facets.ForgeSimpleAddonFacet;
 import org.jboss.forge.container.addons.AddonId;
@@ -24,6 +27,7 @@ import org.jboss.forge.projects.Project;
 import org.jboss.forge.projects.ProjectFacet;
 import org.jboss.forge.projects.ProjectFactory;
 import org.jboss.forge.projects.dependencies.DependencyInstaller;
+import org.jboss.forge.projects.facets.MetadataFacet;
 import org.jboss.forge.projects.facets.PackagingFacet;
 import org.jboss.forge.resource.DirectoryResource;
 
@@ -63,21 +67,23 @@ public class AddonProjectFactory
    public Project createAddonProject(Project project, Version forgeVersion, Iterable<AddonId> dependencyAddons)
    {
       // Project is the parent project
-      DirectoryResource projectRoot = project.getProjectRoot();
       project.getFacet(PackagingFacet.class).setPackagingType("pom");
+      MetadataFacet metadata = project.getFacet(MetadataFacet.class);
+      // TODO: Verify nomenclature
+      metadata.setProjectName(metadata.getProjectName() + "-parent");
       project.getProjectRoot().getChild("src").delete(true);
       installSelectedAddons(project, dependencyAddons, true);
 
       // Create ADDON Project
-      createAddonProject(projectRoot);
+      createSubmoduleProject(project, "addon", ForgeAddonFacet.class);
       // Create API Project
-      createAPIProject(projectRoot);
+      createSubmoduleProject(project, "api", ForgeAddonAPIFacet.class);
       // Create IMPL Project
-      createImplProject(projectRoot);
+      createSubmoduleProject(project, "impl", ForgeAddonImplFacet.class);
       // Create SPI Project
-      createSPIProject(projectRoot);
+      createSubmoduleProject(project, "spi", ForgeAddonSPIFacet.class);
       // Create TESTS Project
-      createTestsProject(projectRoot);
+      createSubmoduleProject(project, "tests", ForgeAddonTestFacet.class);
       return project;
    }
 
@@ -87,12 +93,12 @@ public class AddonProjectFactory
     * @param project
     * @return
     */
-   private void configureAddonProject(Project project)
+   private void configureAddonProject(final Project project)
    {
       project.install(facetFactory.create(ForgeAddonFacet.class, project));
    }
 
-   private void installSelectedAddons(Project project, Iterable<AddonId> addons, boolean managed)
+   private void installSelectedAddons(final Project project, Iterable<AddonId> addons, boolean managed)
    {
       for (AddonId addon : addons)
       {
@@ -111,44 +117,20 @@ public class AddonProjectFactory
       }
    }
 
-   private Project createAddonProject(final DirectoryResource projectRoot)
+   private Project createSubmoduleProject(final Project parent, String moduleName,
+            Class<? extends ProjectFacet>... requiredProjectFacets)
    {
-      DirectoryResource location = projectRoot.getOrCreateChildDirectory("addon");
-      Project project = projectFactory.createProject(location);
-      configureAddonProject(project);
+      DirectoryResource location = parent.getProjectRoot().getOrCreateChildDirectory(moduleName);
+
+      Set<Class<? extends ProjectFacet>> facets = new HashSet<Class<? extends ProjectFacet>>();
+      facets.addAll(Arrays.asList(requiredProjectFacets));
+      facets.add(ForgeSimpleAddonFacet.class);
+
+      Project project = projectFactory.createProject(location, facets);
+
+      MetadataFacet metadata = project.getFacet(MetadataFacet.class);
+      MetadataFacet metadataParent = parent.getFacet(MetadataFacet.class);
+      metadata.setProjectName(metadataParent.getProjectName() + "-" + moduleName);
       return project;
    }
-
-   private Project createAPIProject(final DirectoryResource projectRoot)
-   {
-      DirectoryResource location = projectRoot.getOrCreateChildDirectory("api");
-      Project project = projectFactory.createProject(location,
-               Arrays.<Class<? extends ProjectFacet>> asList(ForgeAddonAPIFacet.class, ForgeSimpleAddonFacet.class));
-      return project;
-   }
-
-   private Project createImplProject(final DirectoryResource projectRoot)
-   {
-      DirectoryResource location = projectRoot.getOrCreateChildDirectory("impl");
-      Project project = projectFactory.createProject(location,
-               Arrays.<Class<? extends ProjectFacet>> asList(ForgeAddonImplFacet.class, ForgeSimpleAddonFacet.class));
-      return project;
-   }
-
-   private Project createSPIProject(final DirectoryResource projectRoot)
-   {
-      DirectoryResource location = projectRoot.getOrCreateChildDirectory("spi");
-      Project project = projectFactory.createProject(location,
-               Arrays.<Class<? extends ProjectFacet>> asList(ForgeAddonAPIFacet.class, ForgeSimpleAddonFacet.class));
-      return project;
-   }
-
-   private Project createTestsProject(DirectoryResource projectRoot)
-   {
-      DirectoryResource location = projectRoot.getOrCreateChildDirectory("tests");
-      Project project = projectFactory.createProject(location,
-               Arrays.<Class<? extends ProjectFacet>> asList(ForgeAddonTestFacet.class, ForgeSimpleAddonFacet.class));
-      return project;
-   }
-
 }

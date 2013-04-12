@@ -4,7 +4,6 @@
 
    <artifactId>ARTIFACT_ID</artifactId>
    <groupId>GROUP_ID</groupId>
-   <version>VERSION</version>
-   <name>NAME</name>
+   <version>1.0.0-SNAPSHOT</version>
 
 </project>
