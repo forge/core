@@ -14,7 +14,7 @@ import java.util.Map;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class UIContextBase implements UIContext
+public class AbstractUIContext implements UIContext
 {
    private Map<Object, Object> map = new HashMap<Object, Object>();
 

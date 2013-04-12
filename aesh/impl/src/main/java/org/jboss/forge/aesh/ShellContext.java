@@ -14,7 +14,7 @@ import org.jboss.aesh.cl.CommandLineParser;
 import org.jboss.aesh.console.ConsoleOutput;
 import org.jboss.forge.ui.context.UIBuilder;
 import org.jboss.forge.ui.context.UIContext;
-import org.jboss.forge.ui.context.UIContextBase;
+import org.jboss.forge.ui.context.AbstractUIContext;
 import org.jboss.forge.ui.context.UISelection;
 import org.jboss.forge.ui.context.UIValidationContext;
 import org.jboss.forge.ui.input.InputComponent;
@@ -22,7 +22,7 @@ import org.jboss.forge.ui.input.InputComponent;
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  */
-public class ShellContext extends UIContextBase implements UIValidationContext, UIContext, UIBuilder
+public class ShellContext extends AbstractUIContext implements UIValidationContext, UIContext, UIBuilder
 {
 
    private boolean standalone = false;

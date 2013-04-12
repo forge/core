@@ -25,7 +25,7 @@ import org.jboss.forge.resource.DirectoryResource;
 import org.jboss.forge.resource.ResourceFactory;
 import org.jboss.forge.ui.context.UIBuilder;
 import org.jboss.forge.ui.context.UIContext;
-import org.jboss.forge.ui.context.UIContextBase;
+import org.jboss.forge.ui.context.AbstractUIContext;
 import org.jboss.forge.ui.context.UIValidationContext;
 import org.jboss.forge.ui.input.InputComponent;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -74,7 +74,7 @@ public class NewProjectWizardTest
    {
       final List<InputComponent<?, ?>> inputs = new ArrayList<InputComponent<?, ?>>();
 
-      final UIContext context = new UIContextBase();
+      final UIContext context = new AbstractUIContext();
       final UIBuilder builder = new UIBuilder()
       {
          @Override
@@ -140,7 +140,7 @@ public class NewProjectWizardTest
    {
       final List<InputComponent<?, ?>> inputs = new ArrayList<InputComponent<?, ?>>();
 
-      final UIContext context = new UIContextBase();
+      final UIContext context = new AbstractUIContext();
       final UIBuilder builder = new UIBuilder()
       {
          @Override
