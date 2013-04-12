@@ -130,7 +130,7 @@ public class AddonProjectFactory
 
       MetadataFacet metadata = project.getFacet(MetadataFacet.class);
       MetadataFacet metadataParent = parent.getFacet(MetadataFacet.class);
-      metadata.setProjectName(metadataParent.getProjectName() + "-" + moduleName);
+      metadata.setProjectName(metadataParent.getProjectName().replace("-parent", "") + "-" + moduleName);
       return project;
    }
 }
