@@ -17,6 +17,7 @@ import org.jboss.forge.addons.facets.ForgeAddonImplFacet;
 import org.jboss.forge.addons.facets.ForgeAddonTestFacet;
 import org.jboss.forge.addons.facets.ForgeSimpleAddonFacet;
 import org.jboss.forge.container.addons.AddonId;
+import org.jboss.forge.container.versions.Version;
 import org.jboss.forge.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.facets.FacetFactory;
 import org.jboss.forge.projects.Project;
@@ -44,7 +45,7 @@ public class AddonProjectFactory
    @Inject
    private DependencyInstaller dependencyInstaller;
 
-   public Project createSimpleAddonProject(Project project, Iterable<AddonId> dependencyAddons)
+   public Project createSimpleAddonProject(Project project, Version forgeVersion, Iterable<AddonId> dependencyAddons)
    {
       configureAddonProject(project);
       installSelectedAddons(project, dependencyAddons, false);
@@ -55,10 +56,11 @@ public class AddonProjectFactory
     * Create a Forge Project with the full structure (api,impl,tests,spi and addon)
     *
     * @param project
+    * @param forgeVersion
     * @param dependencyAddons
     * @return the project root
     */
-   public Project createAddonProject(Project project, Iterable<AddonId> dependencyAddons)
+   public Project createAddonProject(Project project, Version forgeVersion, Iterable<AddonId> dependencyAddons)
    {
       // Project is the parent project
       DirectoryResource projectRoot = project.getProjectRoot();

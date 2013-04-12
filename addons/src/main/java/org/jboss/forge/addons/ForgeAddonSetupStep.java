@@ -6,7 +6,9 @@
  */
 package org.jboss.forge.addons;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -14,13 +16,19 @@ import javax.inject.Inject;
 import org.jboss.forge.container.Forge;
 import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.repositories.AddonRepository;
+import org.jboss.forge.container.versions.SingleVersion;
+import org.jboss.forge.container.versions.Version;
+import org.jboss.forge.dependencies.Coordinate;
+import org.jboss.forge.dependencies.DependencyResolver;
+import org.jboss.forge.dependencies.builder.CoordinateBuilder;
+import org.jboss.forge.dependencies.builder.DependencyQueryBuilder;
 import org.jboss.forge.projects.Project;
-import org.jboss.forge.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.ui.context.UIBuilder;
 import org.jboss.forge.ui.context.UIContext;
 import org.jboss.forge.ui.context.UIValidationContext;
 import org.jboss.forge.ui.input.UIInput;
 import org.jboss.forge.ui.input.UISelectMany;
+import org.jboss.forge.ui.input.UISelectOne;
 import org.jboss.forge.ui.metadata.UICommandMetadata;
 import org.jboss.forge.ui.metadata.WithAttributes;
 import org.jboss.forge.ui.result.NavigationResult;
@@ -45,14 +53,14 @@ public class ForgeAddonSetupStep implements UIWizardStep
 
    @Inject
    @WithAttributes(label = "Forge Version:", required = true)
-   private UIInput<String> forgeVersion;
+   private UISelectOne<Version> forgeVersion;
 
    @Inject
    @WithAttributes(label = "Depend on these addons:")
    private UISelectMany<AddonId> addons;
 
    @Inject
-   private DependencyInstaller dependencyInstaller;
+   private DependencyResolver dependencyResolver;
 
    @Inject
    private Forge forge;
@@ -77,7 +85,14 @@ public class ForgeAddonSetupStep implements UIWizardStep
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      forgeVersion.setDefaultValue(forge.getVersion().getVersionString());
+      Coordinate c = CoordinateBuilder.create().setGroupId("org.jboss.forge").setArtifactId("forge-addon-container");
+      List<Version> versions = new ArrayList<Version>();
+      for (Coordinate versionCoord : dependencyResolver.resolveVersions(DependencyQueryBuilder.create(c)))
+      {
+         versions.add(new SingleVersion(versionCoord.getVersion()));
+      }
+      forgeVersion.setValueChoices(versions);
+      forgeVersion.setDefaultValue(forge.getVersion());
       splitProjects.setDefaultValue(Boolean.FALSE);
       Set<AddonId> choices = new HashSet<AddonId>();
       for (AddonRepository repository : forge.getRepositories())
@@ -103,11 +118,11 @@ public class ForgeAddonSetupStep implements UIWizardStep
       Iterable<AddonId> dependencyAddons = addons.getValue();
       if (splitProjects.getValue())
       {
-         addonProjectFactory.createAddonProject(project, dependencyAddons);
+         addonProjectFactory.createAddonProject(project, forgeVersion.getValue(), dependencyAddons);
       }
       else
       {
-         addonProjectFactory.createSimpleAddonProject(project, dependencyAddons);
+         addonProjectFactory.createSimpleAddonProject(project, forgeVersion.getValue(), dependencyAddons);
       }
       return Results.success();
    }
