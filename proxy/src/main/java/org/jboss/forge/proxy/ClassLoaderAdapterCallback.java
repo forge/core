@@ -379,7 +379,7 @@ public class ClassLoaderAdapterCallback implements MethodHandler
                         Proxies.unwrapProxyTypes(delegateType, callingLoader, delegateLoader));
                if (hierarchy == null || hierarchy.length == 0)
                {
-                  Logger.getLogger(getClass().getName()).severe(
+                  Logger.getLogger(getClass().getName()).fine(
                            "Must specify at least one non-final type to enhance for Object: "
                                     + delegate + " of type " + delegate.getClass());
 
