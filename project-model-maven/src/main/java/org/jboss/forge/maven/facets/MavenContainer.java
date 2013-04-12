@@ -104,8 +104,7 @@ public class MavenContainer
             }
          }
 
-         // No repository set, enable central
-         if (!offline && settingsRepos.isEmpty())
+         if (!offline)
          {
             KnownRepository repo = KnownRepository.CENTRAL;
             settingsRepos.add(RepositoryUtils.toArtifactRepository(repo.getId(), repo.getUrl(), null, true, false));
