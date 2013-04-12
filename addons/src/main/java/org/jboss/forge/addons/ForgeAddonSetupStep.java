@@ -85,15 +85,19 @@ public class ForgeAddonSetupStep implements UIWizardStep
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      Coordinate c = CoordinateBuilder.create().setGroupId("org.jboss.forge").setArtifactId("forge-addon-container");
-      List<Version> versions = new ArrayList<Version>();
-      for (Coordinate versionCoord : dependencyResolver.resolveVersions(DependencyQueryBuilder.create(c)))
-      {
-         versions.add(new SingleVersion(versionCoord.getVersion()));
-      }
-      forgeVersion.setValueChoices(versions);
-      forgeVersion.setDefaultValue(forge.getVersion());
+      configureVersions();
+      configureSplitProjects();
+      configureAddonDependencies();
+      builder.add(forgeVersion).add(splitProjects).add(addons);
+   }
+
+   private void configureSplitProjects()
+   {
       splitProjects.setDefaultValue(Boolean.FALSE);
+   }
+
+   private void configureAddonDependencies()
+   {
       Set<AddonId> choices = new HashSet<AddonId>();
       for (AddonRepository repository : forge.getRepositories())
       {
@@ -103,7 +107,18 @@ public class ForgeAddonSetupStep implements UIWizardStep
          }
       }
       addons.setValueChoices(choices);
-      builder.add(forgeVersion).add(splitProjects).add(addons);
+   }
+
+   private void configureVersions()
+   {
+      Coordinate c = CoordinateBuilder.create().setGroupId("org.jboss.forge").setArtifactId("forge-addon-container");
+      List<Version> versions = new ArrayList<Version>();
+      for (Coordinate versionCoord : dependencyResolver.resolveVersions(DependencyQueryBuilder.create(c)))
+      {
+         versions.add(new SingleVersion(versionCoord.getVersion()));
+      }
+      forgeVersion.setValueChoices(versions);
+      forgeVersion.setDefaultValue(forge.getVersion());
    }
 
    @Override
@@ -132,5 +147,4 @@ public class ForgeAddonSetupStep implements UIWizardStep
    {
       return null;
    }
-
 }
