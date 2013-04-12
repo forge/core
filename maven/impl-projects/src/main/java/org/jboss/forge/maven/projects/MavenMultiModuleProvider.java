@@ -17,7 +17,7 @@ import org.jboss.forge.resource.DirectoryResource;
 
 /**
  * Setup parent-child relation of Maven projects.
- *
+ * 
  * @author <a href="mailto:torben@jit-central.com">Torben Jaeger</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -32,22 +32,28 @@ public class MavenMultiModuleProvider implements ProjectAssociationProvider
       if (canAssociate(project, parentDir))
       {
          Project parent = projectFactory.findProject(parentDir);
-         MavenFacet parentMCF = parent.getFacet(MavenFacet.class);
-         Model parentPom = parentMCF.getPOM();
+         MavenFacet parentMavenFacet = parent.getFacet(MavenFacet.class);
+         Model parentPom = parentMavenFacet.getPOM();
          parentPom.setPackaging("pom");
-         parentPom.addModule(project.getProjectRoot().toString());
-         parentMCF.setPOM(parentPom);
 
-         MavenFacet mcf = project.getFacet(MavenFacet.class);
-         Model pom = mcf.getPOM();
+         String moduleDir = project.getProjectRoot().getFullyQualifiedName()
+                  .substring(parent.getProjectRoot().getFullyQualifiedName().length());
+         if (moduleDir.startsWith("/"))
+            moduleDir = moduleDir.substring(1);
+         
+         parentPom.addModule(moduleDir);
+         parentMavenFacet.setPOM(parentPom);
 
-         Parent parentEntry = new Parent();
-         parentEntry.setGroupId(parentPom.getGroupId());
-         parentEntry.setArtifactId(parentPom.getArtifactId());
-         parentEntry.setVersion(parentPom.getVersion());
+         MavenFacet projectMavenFacet = project.getFacet(MavenFacet.class);
+         Model pom = projectMavenFacet.getPOM();
 
-         pom.setParent(parentEntry);
-         mcf.setPOM(pom);
+         Parent projectParent = new Parent();
+         projectParent.setGroupId(parentPom.getGroupId());
+         projectParent.setArtifactId(parentPom.getArtifactId());
+         projectParent.setVersion(parentPom.getVersion());
+
+         pom.setParent(projectParent);
+         projectMavenFacet.setPOM(pom);
       }
    }
 
