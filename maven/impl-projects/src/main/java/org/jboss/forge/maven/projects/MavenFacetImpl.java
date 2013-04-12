@@ -129,8 +129,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
             }
          }
 
-         // No repository set, enable central
-         if (!offline && settingsRepos.isEmpty())
+         if (!offline)
          {
             settingsRepos.add(RepositoryUtils.toArtifactRepository("CENTRAL", "http://repo1.maven.org/maven2/", null,
                      true, false));
