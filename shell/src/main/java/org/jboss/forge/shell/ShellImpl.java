@@ -114,11 +114,17 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    static final String PROP_IGNORE_EOF = "IGNOREEOF";
    static final int DEFAULT_IGNORE_EOF = 1;
 
-   public static final String FORGE_CONFIG_DIR = System.getProperty("user.home") + "/.forge/";
+   public static final String FORGE_CONFIG_DIR;
+   static {
+	   FORGE_CONFIG_DIR = System.getProperty(
+			   PROP_FORGE_CONFIG_DIR, 
+			   System.getProperty("user.home") + "/.forge/");	   
+   }
+
    public static final String FORGE_COMMAND_HISTORY_FILE = "cmd_history";
    public static final String FORGE_CONFIG_FILE = "config";
    public static final String OFFLINE_FLAG = "OFFLINE";
-
+   
    @Inject
    @Parameters
    private List<String> parameters;
@@ -371,7 +377,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       environment.setProperty("CWD", getCurrentDirectory().getFullyQualifiedName());
       environment.setProperty("SHELL", this);
    }
-
+   
    private void initSignalHandlers()
    {
       try

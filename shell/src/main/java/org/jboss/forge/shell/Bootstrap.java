@@ -41,6 +41,7 @@ public class Bootstrap
    public static final String PROP_PLUGIN_DIR = "org.jboss.forge.pluginDir";
    public static final String PROP_EVALUATE = "org.jboss.forge.evaluate";
    private static final String ARG_PLUGIN_DIR = "-pluginDir";
+   private static final String ARG_CONFIG_DIR = "-configDir";
    private static final String ARG_EVALUATE = "-e";
 
    private static boolean pluginSystemEnabled = !Boolean.getBoolean("forge.plugins.disable");
@@ -62,6 +63,7 @@ public class Bootstrap
    private static void readArguments(String[] args)
    {
       readPluginDirArgument(args);
+      readConfigDirArgument(args);
       readEvaluateArgument(args);
    }
 
@@ -72,6 +74,18 @@ public class Bootstrap
          if (ARG_PLUGIN_DIR.equals(args[i]) && i + 1 < args.length)
          {
             System.setProperty(PROP_PLUGIN_DIR, args[i + 1]);
+            return;
+         }
+      }
+   }
+
+   private static void readConfigDirArgument(String[] args)
+   {
+      for (int i = 0; i < args.length; i++)
+      {
+         if (ARG_CONFIG_DIR.equals(args[i]) && i + 1 < args.length)
+         {
+            System.setProperty(ShellImpl.PROP_FORGE_CONFIG_DIR, args[i + 1]);
             return;
          }
       }
