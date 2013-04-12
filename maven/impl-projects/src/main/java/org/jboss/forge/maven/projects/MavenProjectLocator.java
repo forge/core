@@ -14,9 +14,7 @@ import org.jboss.forge.maven.projects.facets.MavenDependencyFacet;
 import org.jboss.forge.maven.projects.facets.MavenMetadataFacet;
 import org.jboss.forge.maven.projects.facets.MavenPackagingFacet;
 import org.jboss.forge.maven.projects.facets.MavenResourceFacet;
-import org.jboss.forge.projects.AbstractProject;
 import org.jboss.forge.projects.Project;
-import org.jboss.forge.projects.ProjectFacet;
 import org.jboss.forge.projects.ProjectLocator;
 import org.jboss.forge.projects.facets.DependencyFacet;
 import org.jboss.forge.projects.facets.MetadataFacet;
@@ -40,26 +38,7 @@ public class MavenProjectLocator implements ProjectLocator
    @Override
    public Project createProject(final DirectoryResource dir)
    {
-      Project project = new AbstractProject()
-      {
-         @Override
-         public boolean supports(ProjectFacet type)
-         {
-            return true;
-         }
-
-         @Override
-         public DirectoryResource getProjectRoot()
-         {
-            return dir;
-         }
-
-         @Override
-         public String toString()
-         {
-            return dir.toString();
-         }
-      };
+      Project project = new MavenProject(dir);
 
       MavenFacet mavenFacet = factory.create(MavenFacet.class, project);
       MavenPluginFacet mavenPluginFacet = factory.create(MavenPluginFacet.class, project);
