@@ -38,7 +38,7 @@ import org.jboss.forge.resource.DirectoryResource;
  *
  */
 @SuppressWarnings("unchecked")
-public class AddonProjectFactory
+class AddonProjectFactory
 {
    @Inject
    private FacetFactory facetFactory;
