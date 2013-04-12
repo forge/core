@@ -25,6 +25,7 @@ import org.jboss.forge.ui.input.SingleValued;
 import org.jboss.forge.ui.input.UIInput;
 import org.jboss.forge.ui.input.UISelectOne;
 import org.jboss.forge.ui.metadata.UICommandMetadata;
+import org.jboss.forge.ui.metadata.WithAttributes;
 import org.jboss.forge.ui.result.NavigationResult;
 import org.jboss.forge.ui.result.Result;
 import org.jboss.forge.ui.result.Results;
@@ -44,18 +45,23 @@ public class NewProjectWizard implements UIWizard
    private ResourceFactory resourceFactory;
 
    @Inject
+   @WithAttributes(label = "Project name:", required = true)
    private UIInput<String> named;
 
    @Inject
+   @WithAttributes(label = "Top level package:", required = true)
    private UIInput<String> topLevelPackage;
 
    @Inject
+   @WithAttributes(label = "Project location:")
    private UIInput<DirectoryResource> targetLocation;
 
    @Inject
+   @WithAttributes(label = "Overwrite existing project location")
    private UIInput<Boolean> overwrite;
 
    @Inject
+   @WithAttributes(label = "Project Type:", required = true)
    private UISelectOne<ProjectType> type;
 
    @Override
@@ -74,14 +80,6 @@ public class NewProjectWizard implements UIWizard
    @Override
    public void initializeUI(final UIBuilder builder) throws Exception
    {
-      named.setLabel("Project name:");
-      named.setRequired(true);
-
-      topLevelPackage.setLabel("Top level package:");
-      topLevelPackage.setRequired(true);
-
-      targetLocation.setLabel("Project location:");
-
       UISelection<Resource<?>> currentSelection = builder.getUIContext().getInitialSelection();
       if (currentSelection != null)
       {
@@ -95,7 +93,6 @@ public class NewProjectWizard implements UIWizard
       {
          targetLocation.setDefaultValue(resourceFactory.create(DirectoryResource.class, new File("")));
       }
-      overwrite.setLabel("Overwrite existing project location");
       overwrite.setDefaultValue(false).setEnabled(new Callable<Boolean>()
       {
          @Override
@@ -107,8 +104,7 @@ public class NewProjectWizard implements UIWizard
                      && !targetLocation.getValue().getChild(projectName).listResources().isEmpty();
          }
       });
-      type.setLabel("Project Type:");
-      type.setRequired(true);
+
       type.setItemLabelConverter(new Converter<ProjectType, String>()
       {
          @Override
