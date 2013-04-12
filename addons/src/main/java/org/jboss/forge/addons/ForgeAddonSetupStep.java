@@ -6,28 +6,16 @@
  */
 package org.jboss.forge.addons;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.addons.facets.ForgeAddonAPIFacet;
-import org.jboss.forge.addons.facets.ForgeAddonFacet;
-import org.jboss.forge.addons.facets.ForgeAddonImplFacet;
-import org.jboss.forge.addons.facets.ForgeAddonTestFacet;
-import org.jboss.forge.addons.facets.ForgeSimpleAddonFacet;
 import org.jboss.forge.container.Forge;
 import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.repositories.AddonRepository;
-import org.jboss.forge.dependencies.builder.DependencyBuilder;
-import org.jboss.forge.facets.FacetFactory;
 import org.jboss.forge.projects.Project;
-import org.jboss.forge.projects.ProjectFacet;
-import org.jboss.forge.projects.ProjectFactory;
 import org.jboss.forge.projects.dependencies.DependencyInstaller;
-import org.jboss.forge.projects.facets.PackagingFacet;
-import org.jboss.forge.resource.DirectoryResource;
 import org.jboss.forge.ui.context.UIBuilder;
 import org.jboss.forge.ui.context.UIContext;
 import org.jboss.forge.ui.context.UIValidationContext;
@@ -49,7 +37,6 @@ import org.jboss.forge.ui.wizard.UIWizardStep;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  *
  */
-@SuppressWarnings("unchecked")
 public class ForgeAddonSetupStep implements UIWizardStep
 {
    @Inject
@@ -71,10 +58,7 @@ public class ForgeAddonSetupStep implements UIWizardStep
    private Forge forge;
 
    @Inject
-   private FacetFactory facetFactory;
-
-   @Inject
-   private ProjectFactory projectFactory;
+   private AddonProjectFactory addonProjectFactory;
 
    @Override
    public UICommandMetadata getMetadata()
@@ -115,103 +99,17 @@ public class ForgeAddonSetupStep implements UIWizardStep
    @Override
    public Result execute(UIContext context) throws Exception
    {
-      Project project = (Project) context.getAttribute(Project.class);
+      final Project project = (Project) context.getAttribute(Project.class);
+      Iterable<AddonId> dependencyAddons = addons.getValue();
       if (splitProjects.getValue())
       {
-         // Project is the parent project
-         DirectoryResource projectRoot = project.getProjectRoot();
-         project.getFacet(PackagingFacet.class).setPackagingType("pom");
-         project.getProjectRoot().getChild("src").delete(true);
-         installSelectedAddons(project, true);
-         // FIXME: Support multimodule projects
-
-         // Create ADDON Project
-         createAddonProject(projectRoot);
-         // Create API Project
-         createAPIProject(projectRoot);
-         // Create IMPL Project
-         createImplProject(projectRoot);
-         // Create SPI Project
-         createSPIProject(projectRoot);
-         // Create TESTS Project
-         createTestsProject(projectRoot);
+         addonProjectFactory.createAddonProject(project, dependencyAddons);
       }
       else
       {
-         configureAddonProject(project);
-         installSelectedAddons(project, false);
+         addonProjectFactory.createSimpleAddonProject(project, dependencyAddons);
       }
       return Results.success();
-   }
-
-   private Project createAddonProject(final DirectoryResource projectRoot)
-   {
-      DirectoryResource location = projectRoot.getOrCreateChildDirectory("addon");
-      Project project = projectFactory.createProject(location);
-      configureAddonProject(project);
-      return project;
-   }
-
-   private Project createAPIProject(final DirectoryResource projectRoot)
-   {
-      DirectoryResource location = projectRoot.getOrCreateChildDirectory("api");
-      Project project = projectFactory.createProject(location,
-               Arrays.<Class<? extends ProjectFacet>> asList(ForgeAddonAPIFacet.class, ForgeSimpleAddonFacet.class));
-      return project;
-   }
-
-   private Project createImplProject(final DirectoryResource projectRoot)
-   {
-      DirectoryResource location = projectRoot.getOrCreateChildDirectory("impl");
-      Project project = projectFactory.createProject(location,
-               Arrays.<Class<? extends ProjectFacet>> asList(ForgeAddonImplFacet.class, ForgeSimpleAddonFacet.class));
-      return project;
-   }
-
-   private Project createSPIProject(final DirectoryResource projectRoot)
-   {
-      DirectoryResource location = projectRoot.getOrCreateChildDirectory("spi");
-      Project project = projectFactory.createProject(location,
-               Arrays.<Class<? extends ProjectFacet>> asList(ForgeAddonAPIFacet.class, ForgeSimpleAddonFacet.class));
-      return project;
-   }
-
-   private Project createTestsProject(DirectoryResource projectRoot)
-   {
-      DirectoryResource location = projectRoot.getOrCreateChildDirectory("tests");
-      Project project = projectFactory.createProject(location,
-               Arrays.<Class<? extends ProjectFacet>> asList(ForgeAddonTestFacet.class, ForgeSimpleAddonFacet.class));
-      return project;
-   }
-
-   /**
-    * Configure addon
-    *
-    * @param project
-    * @return
-    */
-   private void configureAddonProject(Project project)
-   {
-      project.install(facetFactory.create(ForgeAddonFacet.class, project));
-   }
-
-   private void installSelectedAddons(Project project, boolean managed)
-   {
-      for (AddonId addon : addons.getValue())
-      {
-         String[] mavenCoords = addon.getName().split(":");
-         DependencyBuilder dependency = DependencyBuilder.create().setGroupId(mavenCoords[0])
-                  .setArtifactId(mavenCoords[1])
-                  .setVersion(addon.getVersion().getVersionString()).setClassifier("forge-addon");
-         if (managed)
-         {
-            dependencyInstaller.installManaged(project, dependency);
-         }
-         else
-         {
-            dependencyInstaller.install(project, dependency);
-         }
-      }
    }
 
    @Override
