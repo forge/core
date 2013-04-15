@@ -118,7 +118,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    static {
 	   FORGE_CONFIG_DIR = System.getProperty(
 			   PROP_FORGE_CONFIG_DIR, 
-			   System.getProperty("user.home") + "/.forge/");	   
+			   OSUtils.getDefaultForgePath());	   
    }
 
    public static final String FORGE_COMMAND_HISTORY_FILE = "cmd_history";

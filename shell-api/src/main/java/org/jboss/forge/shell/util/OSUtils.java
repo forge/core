@@ -52,6 +52,16 @@ public final class OSUtils
       return getUserHomeDir().getAbsolutePath();
    }
 
+   public static File getDefaultForgeDir()
+   {
+      return new File(getUserHomeDir(), ".forge");
+   }
+
+   public static String getDefaultForgePath()
+   {
+      return getDefaultForgeDir().getAbsolutePath();
+   }
+
    public static void setPretendWindows(boolean value)
    {
       PRETEND_WINDOWS = value;
