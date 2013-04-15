@@ -106,6 +106,22 @@ public class MavenPlugin implements Plugin
       out.println("Set version [ " + version + " ]");
    }
 
+
+   @Command("set-name")
+   public void setName(final PipeOut out,
+            @Option(description = "the new name; for example: \"UI-Layer\"") final String name)
+   {
+      Assert.notNull(name, "Name must not be empty");
+
+      MavenCoreFacet mvn = project.getFacet(MavenCoreFacet.class);
+
+      Model pom = mvn.getPOM();
+      pom.setName(name);
+      mvn.setPOM(pom);
+
+      out.println("Set name [ " + name + " ]");
+   }
+   
    @Command("set-parent")
    public void setParent(
             @Option(name = "parentId",
