@@ -160,6 +160,52 @@ public class InstallRequestImpl implements InstallRequest
       });
    }
 
+   @Override
+   public void perform(final AddonRepository target)
+   {
+      forge.getLockManager().performLocked(LockMode.WRITE, new Callable<Void>()
+      {
+         @Override
+         public Void call() throws Exception
+         {
+            for (DependencyNode requiredAddon : getRequiredAddons())
+            {
+               AddonId requiredAddonId = toAddonId(requiredAddon);
+               boolean deployed = false;
+               for (AddonRepository repository : forge.getRepositories())
+               {
+                  if (repository.isDeployed(requiredAddonId))
+                  {
+                     log.info("Addon " + requiredAddonId + " is already deployed. Skipping...");
+                     deployed = true;
+                     break;
+                  }
+               }
+
+               if (!deployed)
+               {
+                  addonManager.install(requiredAddonId).perform(target);
+               }
+            }
+
+            AddonId requestedAddonId = toAddonId(requestedAddonNode);
+
+            if (target instanceof MutableAddonRepository)
+            {
+               MutableAddonRepository mutableRespository = (MutableAddonRepository) target;
+               deploy(mutableRespository, requestedAddonId, requestedAddonNode);
+               mutableRespository.enable(requestedAddonId);
+            }
+            else
+            {
+               throw new IllegalArgumentException("Addon repository [" + target.getRootDirectory().getAbsolutePath()
+                        + "] is not writable.");
+            }
+            return null;
+         }
+      });
+   }
+
    private AddonId toAddonId(DependencyNode node)
    {
       Coordinate coord = node.getDependency().getCoordinate();

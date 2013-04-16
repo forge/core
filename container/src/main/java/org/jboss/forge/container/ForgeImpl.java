@@ -276,7 +276,7 @@ public class ForgeImpl implements Forge
    }
 
    @Override
-   public Forge addRepository(AddonRepositoryMode mode, File directory)
+   public AddonRepository addRepository(AddonRepositoryMode mode, File directory)
    {
       Assert.notNull(mode, "Addon repository mode must not be null.");
       Assert.notNull(mode, "Addon repository directory must not be null.");
@@ -290,7 +290,7 @@ public class ForgeImpl implements Forge
       this.repositories.add(repository);
       lastRepoVersionSeen.put(repository, 0);
 
-      return this;
+      return repository;
    }
 
    public void assertNotAlive()

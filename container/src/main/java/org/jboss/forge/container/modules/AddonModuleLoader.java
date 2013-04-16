@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
+import org.jboss.forge.container.Forge;
 import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.impl.AddonRepositoryImpl;
@@ -39,17 +40,17 @@ import org.jboss.modules.filter.PathFilters;
  */
 public class AddonModuleLoader extends ModuleLoader
 {
-   private final Iterable<ModuleSpecProvider> moduleProviders;
-   private AddonRepository repository;
-   private AddonModuleIdentifierCache moduleCache;
    private static final Logger logger = Logger.getLogger(AddonModuleLoader.class.getName());
 
-   public AddonModuleLoader(AddonRepository repository, ClassLoader loader)
-   {
-      this.repository = repository;
-      this.moduleCache = new AddonModuleIdentifierCache();
+   private Forge forge;
+   private final Iterable<ModuleSpecProvider> moduleProviders;
+   private AddonModuleIdentifierCache moduleCache;
 
-      moduleProviders = ServiceLoader.load(ModuleSpecProvider.class, loader);
+   public AddonModuleLoader(Forge forge)
+   {
+      this.forge = forge;
+      this.moduleCache = new AddonModuleIdentifierCache();
+      moduleProviders = ServiceLoader.load(ModuleSpecProvider.class, forge.getRuntimeClassLoader());
       installModuleMBeanServer();
    }
 
@@ -116,41 +117,44 @@ public class AddonModuleLoader extends ModuleLoader
 
    public ModuleSpec findAddonModule(ModuleIdentifier id)
    {
-      AddonId found = findInstalledModule(id);
-
-      if (found != null)
+      for (AddonRepository repository : forge.getRepositories())
       {
-         Builder builder = ModuleSpec.build(id);
+         AddonId found = findInstalledModule(repository, id);
 
-         // Set up the ClassPath for this addon Module
-
-         builder.addDependency(DependencySpec.createModuleDependencySpec(SystemClasspathSpec.ID));
-         builder.addDependency(DependencySpec.createModuleDependencySpec(PathFilters.acceptAll(),
-                  PathFilters.rejectAll(), null, ForgeContainerSpec.ID, false));
-         builder.addDependency(DependencySpec.createModuleDependencySpec(PathFilters.acceptAll(),
-                  PathFilters.rejectAll(), null, WeldClasspathSpec.ID, false));
-
-         builder.addDependency(DependencySpec.createLocalDependencySpec(PathFilters.acceptAll(),
-                  PathFilters.acceptAll()));
-         try
+         if (found != null)
          {
-            addAddonDependencies(found, builder);
-         }
-         catch (ContainerException e)
-         {
-            // TODO implement proper fault handling. For now, abort.
-            logger.warning(e.getMessage());
-            return null;
-         }
+            Builder builder = ModuleSpec.build(id);
 
-         addLocalResources(found, builder);
+            // Set up the ClassPath for this addon Module
 
-         return builder.create();
+            builder.addDependency(DependencySpec.createModuleDependencySpec(SystemClasspathSpec.ID));
+            builder.addDependency(DependencySpec.createModuleDependencySpec(PathFilters.acceptAll(),
+                     PathFilters.rejectAll(), null, ForgeContainerSpec.ID, false));
+            builder.addDependency(DependencySpec.createModuleDependencySpec(PathFilters.acceptAll(),
+                     PathFilters.rejectAll(), null, WeldClasspathSpec.ID, false));
+
+            builder.addDependency(DependencySpec.createLocalDependencySpec(PathFilters.acceptAll(),
+                     PathFilters.acceptAll()));
+            try
+            {
+               addAddonDependencies(repository, found, builder);
+            }
+            catch (ContainerException e)
+            {
+               // TODO implement proper fault handling. For now, abort.
+               logger.warning(e.getMessage());
+               return null;
+            }
+
+            addLocalResources(repository, found, builder);
+
+            return builder.create();
+         }
       }
       return null;
    }
 
-   private void addLocalResources(AddonId found, Builder builder)
+   private void addLocalResources(AddonRepository repository, AddonId found, Builder builder)
    {
       List<File> resources = repository.getAddonResources(found);
       for (File file : resources)
@@ -181,7 +185,8 @@ public class AddonModuleLoader extends ModuleLoader
       }
    }
 
-   private void addAddonDependencies(AddonId found, Builder builder) throws ContainerException
+   private void addAddonDependencies(AddonRepository repository, AddonId found, Builder builder)
+            throws ContainerException
    {
       Set<AddonDependencyEntry> addons = repository.getAddonDependencies(found);
       for (AddonDependencyEntry dependency : addons)
@@ -205,7 +210,7 @@ public class AddonModuleLoader extends ModuleLoader
       }
    }
 
-   private AddonId findInstalledModule(ModuleIdentifier moduleId)
+   private AddonId findInstalledModule(AddonRepository repository, ModuleIdentifier moduleId)
    {
       AddonId found = null;
       for (AddonId addon : repository.listEnabledCompatibleWithVersion(AddonRepositoryImpl.getRuntimeAPIVersion()))
@@ -222,13 +227,17 @@ public class AddonModuleLoader extends ModuleLoader
    private ModuleIdentifier findCompatibleInstalledModule(AddonId addonId)
    {
       AddonId found = null;
-      for (AddonId addon : repository.listEnabledCompatibleWithVersion(AddonRepositoryImpl.getRuntimeAPIVersion()))
+
+      for (AddonRepository repository : forge.getRepositories())
       {
-         // TODO implement proper version-range resolution
-         if (addon.getName().equals(addonId.getName()))
+         for (AddonId addon : repository.listEnabledCompatibleWithVersion(AddonRepositoryImpl.getRuntimeAPIVersion()))
          {
-            found = addon;
-            break;
+            // TODO implement proper version-range resolution
+            if (addon.getName().equals(addonId.getName()))
+            {
+               found = addon;
+               break;
+            }
          }
       }
 
@@ -238,11 +247,6 @@ public class AddonModuleLoader extends ModuleLoader
       }
 
       return null;
-   }
-
-   public AddonRepository getRepository()
-   {
-      return repository;
    }
 
    @Override

@@ -68,7 +68,7 @@ public class Addons
       }
       catch (Exception e)
       {
-         throw new ContainerException("Addon [" + addon + "] was not stopped.", e);
+         throw new ContainerException("Addon [" + addon + "] was not started.", e);
       }
    }
 

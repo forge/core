@@ -8,61 +8,71 @@ package org.jboss.forge.container;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
-import org.example.LifecycleListenerService;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.manager.AddonManager;
 import org.jboss.forge.addon.manager.impl.AddonManagerImpl;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.addons.AddonId;
+import org.jboss.forge.container.repositories.AddonRepository;
 import org.jboss.forge.container.repositories.AddonRepositoryMode;
+import org.jboss.forge.container.util.Addons;
+import org.jboss.forge.container.util.Files;
 import org.jboss.forge.maven.dependencies.FileResourceFactory;
 import org.jboss.forge.maven.dependencies.MavenContainer;
 import org.jboss.forge.maven.dependencies.MavenDependencyResolver;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.junit.Ignore;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Ignore
-@RunWith(Arquillian.class)
 public class MultipleRepositoryTest
 {
-   @Deployment
-   public static ForgeArchive getDeployment()
+   static File repodir1;
+   static File repodir2;
+
+   @BeforeClass
+   public static void init() throws IOException
    {
-      return ShrinkWrap.create(ForgeArchive.class).addBeansXML();
+      repodir1 = File.createTempFile("forge", "repo1");
+      repodir2 = File.createTempFile("forge", "repo2");
    }
 
-   @Deployment(name = "deployed,1")
-   public static ForgeArchive getDeployed1()
+   @AfterClass
+   public static void teardown()
    {
-      return ShrinkWrap.create(ForgeArchive.class).addBeansXML();
-   }
-
-   @Deployment(name = "deployed,2")
-   public static ForgeArchive getDeployed2()
-   {
-      return ShrinkWrap.create(ForgeArchive.class).addBeansXML().addClass(LifecycleListenerService.class);
+      Files.delete(repodir1, true);
+      Files.delete(repodir2, true);
    }
 
    @Test
    public void testInstallIntoMultipleRepositoriesDefaultsToFirst() throws IOException
    {
       Forge forge = new ForgeImpl();
-      File repodir1 = File.createTempFile("forge", "repo1");
-      File repodir2 = File.createTempFile("forge", "repo2");
-      forge.addRepository(AddonRepositoryMode.MUTABLE, repodir1);
-      forge.addRepository(AddonRepositoryMode.MUTABLE, repodir2);
+      AddonRepository left = forge.addRepository(AddonRepositoryMode.MUTABLE, repodir1);
+      AddonRepository right = forge.addRepository(AddonRepositoryMode.MUTABLE, repodir2);
       forge.startAsync();
 
       AddonManager manager = new AddonManagerImpl(forge, new MavenDependencyResolver(new FileResourceFactory(),
                new MavenContainer()));
 
-      manager.install(AddonId.from("org.jboss", null));
+      AddonId facets = AddonId.from("org.jboss.forge:facets", "2.0.0-SNAPSHOT");
+      AddonId convert = AddonId.from("org.jboss.forge:convert", "2.0.0-SNAPSHOT");
+      AddonId resources = AddonId.from("org.jboss.forge:resources", "2.0.0-SNAPSHOT");
+
+      manager.install(facets).perform(left);
+      manager.install(convert).perform(left);
+      manager.install(resources).perform(right);
+
+      Assert.assertFalse(left.isDeployed(resources));
+      Assert.assertFalse(right.isDeployed(convert));
+      Assert.assertFalse(right.isDeployed(facets));
+      Assert.assertTrue(left.isDeployed(convert));
+      Assert.assertTrue(left.isDeployed(convert));
+      Assert.assertTrue(right.isDeployed(resources));
+
+      Addons.waitUntilStarted(forge.getAddonRegistry().getAddon(resources), 10, TimeUnit.SECONDS);
    }
 }

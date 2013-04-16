@@ -235,9 +235,9 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
             @Override
             public Object call() throws Exception
             {
-               forge.setServerMode(true)
-                        .addRepository(AddonRepositoryMode.MUTABLE, addonDir)
-                        .start(loader);
+               forge.setServerMode(true);
+               forge.addRepository(AddonRepositoryMode.MUTABLE, addonDir);
+               forge.start(loader);
                return forge;
             }
          });

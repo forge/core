@@ -74,7 +74,7 @@ public interface Forge
     * Add an {@link AddonRepository} to be scanned for deployed and enabled {@link Addon} instances. This method must
     * not be called once {@link Forge} is started.
     */
-   public Forge addRepository(AddonRepositoryMode mode, File repository);
+   public AddonRepository addRepository(AddonRepositoryMode mode, File repository);
 
    /**
     * Get the current runtime API version of {@link Forge}.

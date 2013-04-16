@@ -13,11 +13,9 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -66,7 +64,7 @@ public class AddonRegistryImpl implements AddonRegistry
 
    private final ExecutorService executor = Executors.newFixedThreadPool(BATCH_SIZE);
 
-   private final Map<AddonRepository, AddonModuleLoader> loaders = new ConcurrentHashMap<AddonRepository, AddonModuleLoader>();
+   private AddonModuleLoader loader;
 
    public AddonRegistryImpl(Forge forge, LockManager lock)
    {
@@ -568,13 +566,11 @@ public class AddonRegistryImpl implements AddonRegistry
    {
       Assert.notNull(repository, "Repository must not be null.");
 
-      AddonModuleLoader moduleLoader = loaders.get(repository);
-      if (moduleLoader == null)
+      if (loader == null)
       {
-         moduleLoader = new AddonModuleLoader(repository, forge.getRuntimeClassLoader());
-         loaders.put(repository, moduleLoader);
+         loader = new AddonModuleLoader(forge);
       }
-      return moduleLoader;
+      return loader;
    }
 
    private void doStop(Addon addon)
