@@ -7,6 +7,7 @@
 package org.jboss.forge.aesh;
 
 import org.jboss.aesh.cl.CommandLine;
+import org.jboss.aesh.cl.exception.RequiredOptionException;
 import org.jboss.aesh.complete.CompleteOperation;
 import org.junit.Test;
 
@@ -83,7 +84,7 @@ public class ShellCommandTest {
             cl = command.parse("foo-bar --name FOO --help halp --targetLocation /tmp");
             fail();
         }
-        catch (IllegalArgumentException iae) {
+        catch (RequiredOptionException iae) {
         }
 
     }

@@ -7,7 +7,6 @@
 package org.jboss.forge.aesh;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.jboss.aesh.cl.CommandLineParser;
@@ -111,43 +110,4 @@ public class ShellContext extends AbstractUIContext implements UIValidationConte
       return null; // not implemented
    }
 
-   @Override
-   public UISelection<Object> getInitialSelection()
-   {
-      return new UISelection<Object>()
-      {
-
-         @Override
-         public Iterator<Object> iterator()
-         {
-            return new ArrayList<Object>().iterator();
-         }
-
-         @Override
-         public Object get()
-         {
-            return null;
-         }
-
-         @Override
-         public int size()
-         {
-            return 0;
-         }
-      };
-   }
-
-    @Override
-    public Object getAttribute(Object key) {
-        return null;
-    }
-
-    @Override
-    public Object removeAttribute(Object key) {
-        return null;
-    }
-
-    @Override
-    public void setAttribute(Object key, Object value) {
-    }
 }
