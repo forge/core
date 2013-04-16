@@ -19,7 +19,7 @@ import org.jboss.forge.resource.ResourceFactory;
 
 /**
  * Converts a {@link File} object to a {@link Resource}
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 
@@ -40,11 +40,14 @@ public class FileResourceConverter extends AbstractConverter<Object, FileResourc
    @SuppressWarnings("unchecked")
    public FileResource convert(Object source)
    {
-      File file = null;
-      if (source instanceof File)
+      File file;
+      if (source == null)
+         return null;
+      else if (source instanceof File)
          file = (File) source;
       else
          file = new File(source.toString());
+
       return resourceFactory.create(FileResource.class, file);
    }
 }

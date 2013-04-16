@@ -19,9 +19,9 @@ import org.jboss.forge.resource.ResourceFactory;
 
 /**
  * Converts a {@link File} object to a {@link Resource}
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ *
  */
 
 @Singleton
@@ -39,8 +39,10 @@ public class DirectoryResourceConverter extends AbstractConverter<Object, Direct
    @Override
    public DirectoryResource convert(Object source)
    {
-      File file = null;
-      if (source instanceof File)
+      File file;
+      if (source == null)
+         return null;
+      else if (source instanceof File)
          file = (File) source;
       else
          file = new File(source.toString());

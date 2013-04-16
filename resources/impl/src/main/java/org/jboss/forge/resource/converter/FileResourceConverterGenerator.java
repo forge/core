@@ -17,9 +17,9 @@ import org.jboss.forge.resource.FileResource;
 
 /**
  * Generates {@link DirectoryResourceConverter}
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ *
  */
 @Exported
 public class FileResourceConverterGenerator implements ConverterGenerator
@@ -31,7 +31,7 @@ public class FileResourceConverterGenerator implements ConverterGenerator
    @Override
    public boolean handles(Class<?> source, Class<?> target)
    {
-      return FileResource.class.isAssignableFrom(target);
+      return FileResource.class.isAssignableFrom(target) && !DirectoryResource.class.isAssignableFrom(target);
    }
 
    @Override
