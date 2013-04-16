@@ -104,17 +104,19 @@ public final class InputComponents
       final Iterable<Object> convertedValues;
       if (value != null)
       {
+         List<Object> convertedValuesList = new ArrayList<Object>();
          if (value instanceof Iterable)
          {
-            // TODO: Should convert each value ?
-            convertedValues = (Iterable<Object>) value;
+            for (Object itValue : (Iterable) value)
+            {
+               convertedValuesList.add(convertToUIInputValue(converterFactory, input, itValue));
+            }
          }
          else
          {
-            List<Object> convertedValuesList = new ArrayList<Object>();
             convertedValuesList.add(convertToUIInputValue(converterFactory, input, value));
-            convertedValues = convertedValuesList;
          }
+         convertedValues = convertedValuesList;
       }
       else
       {
