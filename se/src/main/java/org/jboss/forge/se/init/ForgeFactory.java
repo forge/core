@@ -15,9 +15,23 @@ public class ForgeFactory
    {
       try
       {
-         final BootstrapClassLoader cl = new BootstrapClassLoader("bootpath");
-         Class<?> bootstrapType = cl.loadClass("org.jboss.forge.container.ForgeImpl");
-         return (Forge) ClassLoaderAdapterCallback.enhance(ForgeFactory.class.getClassLoader(), cl,
+         final BootstrapClassLoader loader = new BootstrapClassLoader("bootpath");
+         Class<?> bootstrapType = loader.loadClass("org.jboss.forge.container.ForgeImpl");
+         return (Forge) ClassLoaderAdapterCallback.enhance(ForgeFactory.class.getClassLoader(), loader,
+                  bootstrapType.newInstance(), Forge.class);
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
+   public static Forge getInstance(ClassLoader loader)
+   {
+      try
+      {
+         Class<?> bootstrapType = loader.loadClass("org.jboss.forge.container.ForgeImpl");
+         return (Forge) ClassLoaderAdapterCallback.enhance(ForgeFactory.class.getClassLoader(), loader,
                   bootstrapType.newInstance(), Forge.class);
       }
       catch (Exception e)
