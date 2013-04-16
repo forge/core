@@ -69,114 +69,23 @@ public class CommandLineUtil {
 
     public static void populateUIInputs(CommandLine commandLine,
                                         ShellContext context, AddonRegistry registry) {
-        for(InputComponent<?, ?> input : context.getInputs()) {
-            if(commandLine.hasOption(input.getName()) &&
-                    input instanceof UIInput) {
-                String value = commandLine.getOptionValue(input.getName());
-                setInputValue((UIInput<Object>) input, value, registry);
-            }
-            else if(input.getName().equals("arguments") &&
+        for(InputComponent<?, Object> input : context.getInputs()) {
+            if(input.getName().equals("arguments") &&
                     input instanceof UIInputMany) {
-                setInputManyValue((UIInputMany) input, commandLine.getArguments(), registry);
+                setInput(input, commandLine.getArguments(), registry);
             }
-            else if(commandLine.hasOption(input.getName()) &&
-                    input instanceof UIInputMany) {
-                setInputManyValue((UIInputMany) input, commandLine.getOptionValues(input.getName()), registry);
-            }
-            else if(commandLine.hasOption(input.getName()) &&
-                    input instanceof UISelectOne) {
-                setInputValue((UISelectOne) input, commandLine.getOptionValue(input.getName()), registry);
-            }
-        }
-    }
-
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    private static void setInputManyValue(final UIInputMany<?> input, List<String> values,
-                                          AddonRegistry registry) {
-
-        if(values != null && !values.isEmpty()) {
-            List list = new ArrayList(values.size());
-            if(converterFactory == null)
-                converterFactory =  registry.getExportedInstance(ConverterFactory.class).get();
-            for(String s : values) {
-                Object convertedType = s;
-                Class<? extends Object> source = s.getClass();
-                Class<Object> target = (Class<Object>) input.getValueType();
-                Converter converter = converterFactory.getConverter(source, target);
-                convertedType = converter.convert(s);
-
-                list.add(convertedType);
-            }
-
-            input.setValue(list);
-        }
-    }
-
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    private static void setInputValue(final UIInput<Object> input, Object value,
-                                      AddonRegistry registry) {
-        Object convertedType = value;
-        if (value != null) {
-            if(converterFactory == null)
-                converterFactory = registry.getExportedInstance(ConverterFactory.class).get();
-            Class<? extends Object> source = value.getClass();
-            Class<Object> target = input.getValueType();
-            if (converterFactory != null) {
-                Converter converter = converterFactory.getConverter(source, target);
-                convertedType = converter.convert(value);
-            }
+            else if (input instanceof UIInputMany)
+                setInput(input, commandLine.getOptionValues(input.getName()), registry);
             else {
-                System.err.println("Converter Factory was not deployed !! Cannot convert from " + source + " to " + target);
+                setInput(input, commandLine.getOptionValue(input.getName()), registry);
             }
         }
-        logger.info("UIINPUT: setting "+input+", to:"+convertedType+", was: "+value);
-
-        input.setValue(convertedType);
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    private static void setInputValue(final UISelectOne<Object> input, Object value,
-                                      AddonRegistry registry) {
-        /*
-        Object convertedType = value;
-        if (value != null) {
-            if(converterFactory == null)
-                converterFactory = registry.getExportedInstance(ConverterFactory.class).get();
-            Class<? extends Object> source = value.getClass();
-            Class<Object> target = input.getValueType();
-            if (converterFactory != null) {
-                Converter converter = converterFactory.getConverter(source, target);
-                convertedType = converter.convert(value);
-            }
-            else {
-                System.err.println("Converter Factory was not deployed !! Cannot convert from " + source + " to " + target);
-            }
-        }
-        input.setValue(convertedType);
-        */
-
-        if(value != null) {
-            if(converterFactory == null)
-                converterFactory = registry.getExportedInstance(ConverterFactory.class).get();
-
-            UISelectOne<Object> selectOne = input;
-            Converter<Object, String> converter = (Converter<Object, String>) InputComponents.getItemLabelConverter(
-                    converterFactory, selectOne);
-            String value2 = converter.convert(InputComponents.getValueFor(input));
-            final Map<String, Object> items = new HashMap<String, Object>();
-            Iterable<Object> valueChoices = selectOne.getValueChoices();
-            if (valueChoices != null) {
-                for (Object choice : valueChoices) {
-                    String itemLabel = converter.convert(choice);
-                    if(itemLabel.equals(value.toString())) {
-                        input.setValue(choice);
-                        logger.info("UIINPUT: setting "+input+", to:"+choice+", was: "+value);
-                    }
-                    //items.put(itemLabel, choice);
-                }
-            }
-        }
-
+    public static void setInput(InputComponent<?, Object> input, Object value, AddonRegistry registry) {
+        if(converterFactory == null)
+            converterFactory =  registry.getExportedInstance(ConverterFactory.class).get();
+        InputComponents.setValueFor(converterFactory, input, value);
     }
 
 }

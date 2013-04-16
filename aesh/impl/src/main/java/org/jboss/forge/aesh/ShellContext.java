@@ -26,7 +26,7 @@ public class ShellContext extends AbstractUIContext implements UIValidationConte
 {
 
    private boolean standalone = false;
-   private List<InputComponent<?, ?>> inputs = new ArrayList<InputComponent<?, ?>>();
+   private List<InputComponent<?, Object>> inputs = new ArrayList<InputComponent<?, Object>>();
    private ForgeShell aeshell;
    private CommandLineParser parser;
    private ConsoleOutput consoleOutput;
@@ -74,11 +74,11 @@ public class ShellContext extends AbstractUIContext implements UIValidationConte
    @Override
    public UIBuilder add(InputComponent<?, ?> input)
    {
-      inputs.add(input);
+      inputs.add((InputComponent<?, Object>) input);
       return this;
    }
 
-   public List<InputComponent<?, ?>> getInputs()
+   public List<InputComponent<?, Object>> getInputs()
    {
       return inputs;
    }
@@ -97,7 +97,7 @@ public class ShellContext extends AbstractUIContext implements UIValidationConte
    public void addValidationError(InputComponent<?, ?> input, String errorMessage)
    {
       // TODO: ignoring errorMessage for now
-      inputs.add(input);
+      inputs.add((InputComponent<?, Object>) input);
    }
 
    @Override
