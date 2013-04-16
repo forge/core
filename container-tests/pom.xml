@@ -17,6 +17,11 @@
       </dependency>
       <dependency>
          <groupId>org.jboss.forge</groupId>
+         <artifactId>forge-se</artifactId>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
          <artifactId>example</artifactId>
          <classifier>forge-addon</classifier>
          <scope>test</scope>

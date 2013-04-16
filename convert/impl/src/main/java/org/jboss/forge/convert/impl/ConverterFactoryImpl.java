@@ -40,6 +40,7 @@ public class ConverterFactoryImpl implements ConverterFactory
             break;
          }
       }
+
       if (result == null)
       {
          if (String.class.equals(target))

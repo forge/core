@@ -76,7 +76,11 @@ public class ClassLoaderAdapterCallback implements MethodHandler
 
                return enhanceResult(thisMethod, result);
             }
-            catch (Throwable e)
+            catch (RuntimeException e)
+            {
+               throw e;
+            }
+            catch (Exception e)
             {
                throw new ContainerException(
                         "Could not invoke proxy method [" + delegate.getClass().getName() + "."

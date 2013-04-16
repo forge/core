@@ -184,7 +184,8 @@ public final class AddonRunnable implements Runnable
                         ContainerServiceExtension.class);
                ServiceRegistryProducer serviceRegistryProducer = BeanManagerUtils.getContextualInstance(manager,
                         ServiceRegistryProducer.class);
-               serviceRegistryProducer.setServiceRegistry(new ServiceRegistryImpl(addon, manager, extension));
+               serviceRegistryProducer.setServiceRegistry(new ServiceRegistryImpl(forge.getLockManager(), addon,
+                        manager, extension));
 
                ServiceRegistry registry = BeanManagerUtils.getContextualInstance(manager, ServiceRegistry.class);
                Assert.notNull(registry, "Service registry was null.");

@@ -15,14 +15,18 @@ import org.jboss.forge.addon.manager.impl.AddonManagerImpl;
 import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.repositories.AddonRepository;
 import org.jboss.forge.container.repositories.AddonRepositoryMode;
+import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.container.util.Addons;
 import org.jboss.forge.container.util.Files;
+import org.jboss.forge.convert.ConverterFactory;
 import org.jboss.forge.maven.dependencies.FileResourceFactory;
 import org.jboss.forge.maven.dependencies.MavenContainer;
 import org.jboss.forge.maven.dependencies.MavenDependencyResolver;
-import org.junit.AfterClass;
+import org.jboss.forge.resource.DirectoryResource;
+import org.jboss.forge.se.init.ForgeFactory;
+import org.junit.After;
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -33,24 +37,24 @@ public class MultipleRepositoryTest
    static File repodir1;
    static File repodir2;
 
-   @BeforeClass
-   public static void init() throws IOException
+   @Before
+   public void init() throws IOException
    {
       repodir1 = File.createTempFile("forge", "repo1");
       repodir2 = File.createTempFile("forge", "repo2");
    }
 
-   @AfterClass
-   public static void teardown()
+   @After
+   public void teardown()
    {
       Files.delete(repodir1, true);
       Files.delete(repodir2, true);
    }
 
    @Test
-   public void testInstallIntoMultipleRepositoriesDefaultsToFirst() throws IOException
+   public void testAddonsCanReferenceDependenciesInOtherRepositories() throws IOException
    {
-      Forge forge = new ForgeImpl();
+      Forge forge = ForgeFactory.getInstance(Forge.class.getClassLoader());
       AddonRepository left = forge.addRepository(AddonRepositoryMode.MUTABLE, repodir1);
       AddonRepository right = forge.addRepository(AddonRepositoryMode.MUTABLE, repodir2);
       forge.startAsync();
@@ -61,6 +65,13 @@ public class MultipleRepositoryTest
       AddonId facets = AddonId.from("org.jboss.forge:facets", "2.0.0-SNAPSHOT");
       AddonId convert = AddonId.from("org.jboss.forge:convert", "2.0.0-SNAPSHOT");
       AddonId resources = AddonId.from("org.jboss.forge:resources", "2.0.0-SNAPSHOT");
+
+      Assert.assertFalse(left.isDeployed(resources));
+      Assert.assertFalse(left.isDeployed(facets));
+      Assert.assertFalse(left.isDeployed(convert));
+      Assert.assertFalse(right.isDeployed(resources));
+      Assert.assertFalse(right.isDeployed(facets));
+      Assert.assertFalse(right.isDeployed(convert));
 
       manager.install(facets).perform(left);
       manager.install(convert).perform(left);
@@ -74,5 +85,58 @@ public class MultipleRepositoryTest
       Assert.assertTrue(right.isDeployed(resources));
 
       Addons.waitUntilStarted(forge.getAddonRegistry().getAddon(resources), 10, TimeUnit.SECONDS);
+
+      forge.stop();
+   }
+
+   @Test
+   public void testAddonsDontFailIfDuplicatedInOtherRepositories() throws IOException, Exception
+   {
+      Forge forge = ForgeFactory.getInstance(Forge.class.getClassLoader());
+      AddonRepository left = forge.addRepository(AddonRepositoryMode.MUTABLE, repodir1);
+      AddonRepository right = forge.addRepository(AddonRepositoryMode.MUTABLE, repodir2);
+
+      AddonManager manager = new AddonManagerImpl(forge, new MavenDependencyResolver(new FileResourceFactory(),
+               new MavenContainer()));
+
+      AddonId facets = AddonId.from("org.jboss.forge:facets", "2.0.0-SNAPSHOT");
+      AddonId convert = AddonId.from("org.jboss.forge:convert", "2.0.0-SNAPSHOT");
+      AddonId resources = AddonId.from("org.jboss.forge:resources", "2.0.0-SNAPSHOT");
+
+      Assert.assertFalse(left.isDeployed(resources));
+      Assert.assertFalse(left.isDeployed(facets));
+      Assert.assertFalse(left.isDeployed(convert));
+      Assert.assertFalse(right.isDeployed(resources));
+      Assert.assertFalse(right.isDeployed(facets));
+      Assert.assertFalse(right.isDeployed(convert));
+
+      manager.install(facets).perform(left);
+      manager.install(convert).perform(left);
+      manager.install(resources).perform(left);
+      manager.install(resources).perform(right);
+
+      Assert.assertFalse(right.isDeployed(facets));
+      Assert.assertFalse(right.isDeployed(convert));
+      Assert.assertTrue(left.isDeployed(resources));
+      Assert.assertTrue(left.isDeployed(convert));
+      Assert.assertTrue(left.isDeployed(resources));
+      Assert.assertTrue(right.isDeployed(resources));
+
+      forge.startAsync();
+
+      Addons.waitUntilStarted(forge.getAddonRegistry().getAddon(resources), 10, TimeUnit.SECONDS);
+      Addons.waitUntilStarted(forge.getAddonRegistry().getAddon(facets), 10, TimeUnit.SECONDS);
+      Addons.waitUntilStarted(forge.getAddonRegistry().getAddon(convert), 10, TimeUnit.SECONDS);
+
+      System.out.println("Getting instances.");
+      ExportedInstance<ConverterFactory> instance = forge.getAddonRegistry()
+               .getExportedInstance(ConverterFactory.class);
+      ConverterFactory factory = instance.get();
+
+      factory.getConverter(File.class,
+               forge.getAddonRegistry().getAddon(resources).getClassLoader()
+                        .loadClass(DirectoryResource.class.getName()));
+
+      forge.stop();
    }
 }

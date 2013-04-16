@@ -3,12 +3,16 @@ package org.jboss.forge.container.impl;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 
 import org.jboss.forge.container.exception.ContainerException;
+import org.jboss.forge.container.lock.LockManager;
+import org.jboss.forge.container.lock.LockMode;
 import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.container.services.ExportedInstanceImpl;
 import org.jboss.forge.container.services.ServiceRegistry;
@@ -27,8 +31,12 @@ public class ServiceRegistryImpl implements ServiceRegistry
 
    private Logger log = Logger.getLogger(getClass().getName());
 
-   public ServiceRegistryImpl(AddonImpl addon, BeanManager manager, ContainerServiceExtension extension)
+   private LockManager lock;
+
+   public ServiceRegistryImpl(LockManager lock, AddonImpl addon, BeanManager manager,
+            ContainerServiceExtension extension)
    {
+      this.lock = lock;
       this.addon = addon;
       this.manager = manager;
 
@@ -47,7 +55,6 @@ public class ServiceRegistryImpl implements ServiceRegistry
    @SuppressWarnings("unchecked")
    public <T> ExportedInstance<T> getExportedInstance(String clazz)
    {
-      Addons.waitUntilStarted(addon);
       Class<T> type;
       try
       {
@@ -63,7 +70,6 @@ public class ServiceRegistryImpl implements ServiceRegistry
    @Override
    public <T> ExportedInstance<T> getExportedInstance(Class<T> clazz)
    {
-      Addons.waitUntilStarted(addon);
       return getExportedInstance(clazz, clazz);
    }
 
@@ -73,53 +79,63 @@ public class ServiceRegistryImpl implements ServiceRegistry
     * @return
     */
    @SuppressWarnings("unchecked")
-   private <T> ExportedInstance<T> getExportedInstance(Class<T> requestedType, Class<T> actualType)
+   private <T> ExportedInstance<T> getExportedInstance(final Class<T> requestedType, final Class<T> actualType)
    {
       Assert.notNull(requestedType, "Requested Class type may not be null");
       Assert.notNull(actualType, "Actual Class type may not be null");
       Addons.waitUntilStarted(addon);
-
-      final Class<T> requestedLoadedType;
-      final Class<? extends T> actualLoadedType;
-      try
+      return lock.performLocked(LockMode.READ, new Callable<ExportedInstance<T>>()
       {
-         requestedLoadedType = loadAddonClass(requestedType);
-      }
-      catch (ClassNotFoundException cnfe)
-      {
-         log.fine("Class " + requestedType.getName() + " is not present in this addon classloader");
-         return null;
-      }
-      try
-      {
-         actualLoadedType = loadAddonClass(actualType);
-      }
-      catch (ClassNotFoundException cnfe)
-      {
-         log.fine("Class " + actualType.getName() + " is not present in this addon classloader");
-         return null;
-      }
-
-      try
-      {
-         ExportedInstance<T> result = null;
-         Set<Bean<?>> beans = manager.getBeans(requestedLoadedType);
-         if (!beans.isEmpty())
+         @Override
+         public ExportedInstance<T> call() throws Exception
          {
-            result = new ExportedInstanceImpl<T>(
-                     addon.getClassLoader(),
-                     manager, (Bean<T>)
-                     manager.resolve(beans),
-                     requestedLoadedType,
-                     actualLoadedType
-                     );
+            /*
+             * Double checked waiting, with timeout to prevent complete deadlocks.
+             */
+            Addons.waitUntilStarted(addon, 10, TimeUnit.SECONDS);
+            final Class<T> requestedLoadedType;
+            final Class<? extends T> actualLoadedType;
+            try
+            {
+               requestedLoadedType = loadAddonClass(requestedType);
+            }
+            catch (ClassNotFoundException cnfe)
+            {
+               log.fine("Class " + requestedType.getName() + " is not present in this addon classloader");
+               return null;
+            }
+            try
+            {
+               actualLoadedType = loadAddonClass(actualType);
+            }
+            catch (ClassNotFoundException cnfe)
+            {
+               log.fine("Class " + actualType.getName() + " is not present in this addon classloader");
+               return null;
+            }
+
+            try
+            {
+               ExportedInstance<T> result = null;
+               Set<Bean<?>> beans = manager.getBeans(requestedLoadedType);
+               if (!beans.isEmpty())
+               {
+                  result = new ExportedInstanceImpl<T>(
+                           addon.getClassLoader(),
+                           manager, (Bean<T>)
+                           manager.resolve(beans),
+                           requestedLoadedType,
+                           actualLoadedType
+                           );
+               }
+               return result;
+            }
+            catch (Exception e)
+            {
+               throw new ContainerException("Error while fetching exported instance", e);
+            }
          }
-         return result;
-      }
-      catch (Exception e)
-      {
-         throw new ContainerException("Error while fetching exported instance", e);
-      }
+      });
    }
 
    @Override
@@ -215,7 +231,7 @@ public class ServiceRegistryImpl implements ServiceRegistry
 
    /**
     * Ensures that the returned class is loaded from the addon
-    *
+    * 
     * @param actualType
     * @return
     * @throws ClassNotFoundException

@@ -95,7 +95,8 @@ public class AddonModuleLoader extends ModuleLoader
    {
       try
       {
-         return loadModule(moduleCache.getModuleId(addonId));
+         Module result = loadModule(moduleCache.getModuleId(addonId));
+         return result;
       }
       catch (ModuleLoadException e)
       {
