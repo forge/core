@@ -14,36 +14,35 @@ import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.convert.ConverterGenerator;
 import org.jboss.forge.resource.DirectoryResource;
 import org.jboss.forge.resource.FileResource;
-import org.jboss.forge.resource.Resource;
 
+/**
+ * Generates {@link DirectoryResourceConverter}
+ * 
+ * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
+ * 
+ */
 @Exported
-public class ResourceConverterGenerator implements ConverterGenerator
+public class FileResourceConverterGenerator implements ConverterGenerator
 {
 
    @Inject
-   private Instance<ResourceConverter> converter;
+   private Instance<FileResourceConverter> converter;
 
    @Override
    public boolean handles(Class<?> source, Class<?> target)
    {
-      /*
-       * All resources except DirectoryResource and FileResource, because it will be handled by
-       * DirectoryResourceConverter
-       */
-      return Resource.class.isAssignableFrom(target)
-               && !DirectoryResource.class.isAssignableFrom(target)
-               && !FileResource.class.isAssignableFrom(target);
+      return FileResource.class.isAssignableFrom(target);
    }
 
    @Override
-   public ResourceConverter generateConverter(Class<?> source, Class<?> target)
+   public FileResourceConverter generateConverter(Class<?> source, Class<?> target)
    {
       return converter.get();
    }
 
    @Override
-   public Class<ResourceConverter> getConverterType()
+   public Class<FileResourceConverter> getConverterType()
    {
-      return ResourceConverter.class;
+      return FileResourceConverter.class;
    }
 }
