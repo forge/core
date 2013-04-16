@@ -13,37 +13,38 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jboss.forge.convert.AbstractConverter;
-import org.jboss.forge.resource.DirectoryResource;
+import org.jboss.forge.resource.FileResource;
 import org.jboss.forge.resource.Resource;
 import org.jboss.forge.resource.ResourceFactory;
 
 /**
  * Converts a {@link File} object to a {@link Resource}
  * 
- * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 
 @Singleton
-public class DirectoryResourceConverter extends AbstractConverter<Object, DirectoryResource>
+@SuppressWarnings("rawtypes")
+public class FileResourceConverter extends AbstractConverter<Object, FileResource>
 {
    private final ResourceFactory resourceFactory;
 
    @Inject
-   public DirectoryResourceConverter(ResourceFactory resourceFactory)
+   public FileResourceConverter(ResourceFactory resourceFactory)
    {
-      super(Object.class, DirectoryResource.class);
+      super(Object.class, FileResource.class);
       this.resourceFactory = resourceFactory;
    }
 
    @Override
-   public DirectoryResource convert(Object source)
+   @SuppressWarnings("unchecked")
+   public FileResource convert(Object source)
    {
       File file = null;
       if (source instanceof File)
          file = (File) source;
       else
          file = new File(source.toString());
-      return resourceFactory.create(DirectoryResource.class, file);
+      return resourceFactory.create(FileResource.class, file);
    }
 }
