@@ -26,7 +26,7 @@
       <dependency>
          <groupId>org.jboss.aesh</groupId>
          <artifactId>aesh</artifactId>
-         <version>0.36</version>
+         <version>0.37</version>
       </dependency>
       <dependency>
          <groupId>org.jboss.aesh</groupId>

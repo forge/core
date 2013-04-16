@@ -19,6 +19,10 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jboss.aesh.cl.CommandLine;
+import org.jboss.aesh.cl.exception.ArgumentParserException;
+import org.jboss.aesh.cl.exception.CommandLineParserException;
+import org.jboss.aesh.cl.exception.OptionParserException;
+import org.jboss.aesh.cl.exception.RequiredOptionException;
 import org.jboss.aesh.console.Config;
 import org.jboss.aesh.console.Console;
 import org.jboss.aesh.console.ConsoleCallback;
@@ -251,7 +255,7 @@ public class ForgeShell
                         try
                         {
                            command.run(output, cl);
-                           break;
+                            return 0;
                         }
                         catch (Exception e)
                         {
@@ -260,20 +264,25 @@ public class ForgeShell
                      }
                   }
                }
-               catch (IllegalArgumentException iae)
+               catch (CommandLineParserException iae)
                {
-                   if(iae.getMessage().startsWith("Option")) {
+                   if(iae instanceof OptionParserException ||
+                           iae instanceof ArgumentParserException ||
+                           iae instanceof RequiredOptionException) {
                        console.pushToStdOut(iae.getMessage()+Config.getLineSeparator());
+                       logger.info("GOT: "+iae.getMessage()+"\n Parser: "+ command.getContext().getParser());
                        return 0;
                    }
-                  logger.log(Level.INFO, "Command: " + command + ", did not match: " + output.getBuffer());
+                   else {
+                       logger.log(Level.INFO, "Command: " + command + ", did not match: " + output.getBuffer()+
+                               "\n"+iae.getMessage());
+                   }
                }
             }
             // if we didnt find any commands matching
             if (cl == null)
             {
-               console.pushToStdOut(output.getBuffer() + ": command not found."
-                        + Config.getLineSeparator());
+               console.pushToStdOut(output.getBuffer() + ": command not found."+ Config.getLineSeparator());
             }
          }
          return 0;

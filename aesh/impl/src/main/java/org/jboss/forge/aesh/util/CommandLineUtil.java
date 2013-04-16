@@ -7,12 +7,16 @@
 package org.jboss.forge.aesh.util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 
 import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.cl.CommandLineParser;
 import org.jboss.aesh.cl.OptionBuilder;
 import org.jboss.aesh.cl.ParserBuilder;
+import org.jboss.aesh.cl.exception.OptionParserException;
 import org.jboss.aesh.cl.internal.ParameterInt;
 import org.jboss.forge.aesh.ShellContext;
 import org.jboss.forge.container.addons.AddonRegistry;
@@ -23,33 +27,39 @@ import org.jboss.forge.ui.input.UIInput;
 import org.jboss.forge.ui.input.InputComponent;
 import org.jboss.forge.ui.input.UIInputMany;
 import org.jboss.forge.ui.input.UISelectOne;
+import org.jboss.forge.ui.util.InputComponents;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  */
 public class CommandLineUtil {
 
+    private static final Logger logger = Logger.getLogger(CommandLineUtil.class.getName());
+
     private static ConverterFactory converterFactory = null;
 
     public static CommandLineParser generateParser(UICommand command, ShellContext context) {
         ParserBuilder builder = new ParserBuilder();
 
-               ParameterInt parameter =
+        ParameterInt parameter =
                 new ParameterInt(command.getMetadata().getName(), command.getMetadata().getDescription());
         for(InputComponent<?, ?> input : context.getInputs()) {
             if(!input.getName().equals("arguments")) {
-                if(input.getValueType() == Boolean.class) {
-                    parameter.addOption(
-                            new OptionBuilder().name(input.getName().charAt(0)).
-                                    longName(input.getName()).hasValue(false).description(input.getLabel()).create());
+                try {
+                    if(input.getValueType() == Boolean.class) {
+                        parameter.addOption(
+                                new OptionBuilder().longName(input.getName()).hasValue(false).description(input.getLabel()).create());
+                    }
+                    else {
+                        parameter.addOption(
+                                new OptionBuilder().longName(input.getName())
+                                        .description(input.getLabel())
+                                        .required(input.isRequired())
+                                        .create());
+                    }
                 }
-                else {
-                    parameter.addOption(
-                            new OptionBuilder().name(input.getName().charAt(0)).
-                                    longName(input.getName())
-                                    .description(input.getLabel())
-                                    .required(input.isRequired())
-                                    .create());
+                catch (OptionParserException e) {
+                    //ignored for now
                 }
             }
         }
@@ -119,12 +129,15 @@ public class CommandLineUtil {
                 System.err.println("Converter Factory was not deployed !! Cannot convert from " + source + " to " + target);
             }
         }
+        logger.info("UIINPUT: setting "+input+", to:"+convertedType+", was: "+value);
+
         input.setValue(convertedType);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private static void setInputValue(final UISelectOne<Object> input, Object value,
                                       AddonRegistry registry) {
+        /*
         Object convertedType = value;
         if (value != null) {
             if(converterFactory == null)
@@ -140,7 +153,30 @@ public class CommandLineUtil {
             }
         }
         input.setValue(convertedType);
-    }
+        */
 
+        if(value != null) {
+            if(converterFactory == null)
+                converterFactory = registry.getExportedInstance(ConverterFactory.class).get();
+
+            UISelectOne<Object> selectOne = input;
+            Converter<Object, String> converter = (Converter<Object, String>) InputComponents.getItemLabelConverter(
+                    converterFactory, selectOne);
+            String value2 = converter.convert(InputComponents.getValueFor(input));
+            final Map<String, Object> items = new HashMap<String, Object>();
+            Iterable<Object> valueChoices = selectOne.getValueChoices();
+            if (valueChoices != null) {
+                for (Object choice : valueChoices) {
+                    String itemLabel = converter.convert(choice);
+                    if(itemLabel.equals(value.toString())) {
+                        input.setValue(choice);
+                        logger.info("UIINPUT: setting "+input+", to:"+choice+", was: "+value);
+                    }
+                    //items.put(itemLabel, choice);
+                }
+            }
+        }
+
+    }
 
 }

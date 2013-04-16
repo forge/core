@@ -136,4 +136,18 @@ public class ShellContext extends AbstractUIContext implements UIValidationConte
          }
       };
    }
+
+    @Override
+    public Object getAttribute(Object key) {
+        return null;
+    }
+
+    @Override
+    public Object removeAttribute(Object key) {
+        return null;
+    }
+
+    @Override
+    public void setAttribute(Object key, Object value) {
+    }
 }

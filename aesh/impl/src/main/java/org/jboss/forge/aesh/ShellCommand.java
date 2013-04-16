@@ -7,10 +7,12 @@
 package org.jboss.forge.aesh;
 
 import java.io.File;
+import java.util.logging.Logger;
 
 import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.cl.CommandLineCompletionParser;
 import org.jboss.aesh.cl.ParsedCompleteObject;
+import org.jboss.aesh.cl.exception.CommandLineParserException;
 import org.jboss.aesh.cl.internal.ParameterInt;
 import org.jboss.aesh.complete.CompleteOperation;
 import org.jboss.aesh.complete.Completion;
@@ -31,6 +33,7 @@ import org.jboss.forge.ui.result.Result;
  */
 public class ShellCommand implements Completion
 {
+    private static final Logger logger = Logger.getLogger(ShellCommand.class.getName());
 
    private UICommand command;
    private ShellContext context;
@@ -71,7 +74,7 @@ public class ShellCommand implements Completion
       context.setParser(CommandLineUtil.generateParser(command, context));
    }
 
-   public CommandLine parse(String line) throws IllegalArgumentException
+   public CommandLine parse(String line) throws CommandLineParserException
    {
       return context.getParser().parse(line);
    }
@@ -106,11 +109,17 @@ public class ShellCommand implements Completion
       // complete options/arguments
       else if (completeOperation.getBuffer().startsWith(param.getName()))
       {
-         ParsedCompleteObject completeObject =
-                  new CommandLineCompletionParser(context.getParser())
-                           .findCompleteObject(completeOperation.getBuffer());
-         if (completeObject.doDisplayOptions())
-         {
+          ParsedCompleteObject completeObject = null;
+          try {
+              completeObject = new CommandLineCompletionParser(context.getParser())
+                       .findCompleteObject(completeOperation.getBuffer());
+          }
+          catch (CommandLineParserException e) {
+              logger.info(e.getMessage());
+             return;
+          }
+          logger.info("ParsedCompleteObject: "+completeObject);
+          if (completeObject.doDisplayOptions()) {
              //we have a partial/full name
              if(completeObject.getName() != null && completeObject.getName().length() > 0) {
                  if(param.findPossibleLongNamesWitdDash(completeObject.getName()).size() > 0) {
@@ -161,8 +170,8 @@ public class ShellCommand implements Completion
             else if (inputOption != null && inputOption.getValueType() == String.class) {
                //if it has a default value we can try to auto complete that
                 if(inputOption instanceof UIInput) {
-                    if(completeObject.getValue() == null ||
-                            completeObject.getValue().startsWith(((UIInput) inputOption).getValue().toString())) {
+                    if(completeObject.getValue() == null || ((((UIInput) inputOption).getValue() != null) &&
+                            completeObject.getValue().startsWith(((UIInput) inputOption).getValue().toString()))) {
                         completeOperation.addCompletionCandidate(((UIInput) inputOption).getValue().toString());
                     }
                 }

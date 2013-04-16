@@ -12,6 +12,7 @@ import static org.junit.Assert.assertNull;
 import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.cl.CommandLineParser;
 import org.jboss.aesh.cl.OptionBuilder;
+import org.jboss.aesh.cl.exception.CommandLineParserException;
 import org.jboss.aesh.cl.internal.ParameterInt;
 import org.jboss.forge.aesh.ShellContext;
 import org.jboss.forge.ui.UICommand;
@@ -32,10 +33,6 @@ import org.junit.Test;
 @Ignore
 public class CommandLineUtilTest
 {
-
-   public CommandLineUtilTest(String name)
-   {
-   }
 
    @Test
    public void testGenerateParser() throws Exception
@@ -59,7 +56,7 @@ public class CommandLineUtilTest
    }
 
    @Test
-   public void testPopulateUIInputs()
+   public void testPopulateUIInputs() throws CommandLineParserException
    {
       UIInput<String> input1 = new UIInputImpl<String>("str", String.class);
       UIInput<Integer> input2 = new UIInputImpl<Integer>("int", Integer.class);
