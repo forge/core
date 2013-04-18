@@ -289,6 +289,7 @@ public class NewProjectPlugin implements Plugin
       validTypes.add(PackagingType.BASIC);
       validTypes.add(PackagingType.JAR);
       validTypes.add(PackagingType.WAR);
+      validTypes.add(PackagingType.EAR);
       validTypes.add(PackagingType.BUNDLE);
       return validTypes;
    }
