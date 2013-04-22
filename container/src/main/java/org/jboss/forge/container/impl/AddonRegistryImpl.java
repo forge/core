@@ -66,13 +66,13 @@ public class AddonRegistryImpl implements AddonRegistry
 
    private AddonModuleLoader loader;
 
-   public AddonRegistryImpl(Forge forge, LockManager lock)
+   public AddonRegistryImpl(Forge forge)
    {
       Assert.notNull(forge, "Forge instance must not be null.");
-      Assert.notNull(lock, "LockManager must not be null.");
+      Assert.notNull(forge.getLockManager(), "LockManager must not be null.");
 
       this.forge = forge;
-      this.lock = lock;
+      this.lock = forge.getLockManager();
       this.tree = new AddonTree(lock);
 
       logger.log(Level.FINE, "Instantiated AddonRegistryImpl: " + this);

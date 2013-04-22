@@ -50,7 +50,7 @@ public class ForgeImpl implements Forge
          logger.warning("Could not detect Forge runtime version - " +
                   "loading all addons, but failures may occur if versions are not compatible.");
 
-      registry = new AddonRegistryImpl(this, lock);
+      registry = new AddonRegistryImpl(this);
    }
 
    @Override
