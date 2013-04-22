@@ -68,8 +68,8 @@
       <version.mvel>2.1.0.Final</version.mvel>
       <version.shrinkwrap.resolver>2.0.0-beta-3</version.shrinkwrap.resolver>
       <version.slf4j>1.6.1</version.slf4j>
-      <version.weld>2.0.0.CR2</version.weld>
-      <version.weld.spi>2.0.Beta8</version.weld.spi>
+      <version.weld>2.0.0.CR4</version.weld>
+      <version.weld.spi>2.0.CR4</version.weld.spi>
    </properties>
 
    <profiles>
