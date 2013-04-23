@@ -28,7 +28,7 @@ import org.junit.Test;
 
 /**
  * LsMavenPomPluginTestCase
- * 
+ *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
@@ -98,9 +98,9 @@ public class NewProjectPluginTest extends AbstractShellTest
    }
 
    /**
-    * 
+    *
     * Tests trying to create a zip (invalid) project, then changing to jar
-    * 
+    *
     * @throws Exception
     */
    @Test
@@ -131,6 +131,17 @@ public class NewProjectPluginTest extends AbstractShellTest
                project.getFacet(MavenPluginFacet.class)
                         .getPlugin(DependencyBuilder.create("org.apache.maven.plugins:maven-war-plugin")).getConfig()
                         .getConfigurationElement("failOnMissingWebXml").getText());
+   }
+
+   @Test()
+   public void testCreateEarProject() throws Exception
+   {
+      initializeJavaProject();
+      queueInputLines("Y", "Y");
+      getShell().execute("new-project --named eartest --topLevelPackage com.test --type ear");
+      Project project = getProject();
+      assertEquals("com.test", project.getFacet(MetadataFacet.class).getTopLevelPackage());
+      assertEquals(PackagingType.EAR, project.getFacet(MavenPackagingFacet.class).getPackagingType());
    }
 
    @Test

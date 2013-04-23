@@ -9,7 +9,7 @@ package org.jboss.forge.project.packaging;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 public enum PackagingType
 {
@@ -17,6 +17,7 @@ public enum PackagingType
    BASIC("pom", "Basic Project"),
    JAR("jar", "Java Application"),
    WAR("war", "Java Web Application"),
+   EAR("ear", "Java Enterprise Application"),
    BUNDLE("bundle", "OSGI Bundle Project"),
    OTHER("", "Other packaging type");
 
