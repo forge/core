@@ -26,9 +26,7 @@ import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.dependencies.DependencyMetadata;
 import org.jboss.forge.project.dependencies.DependencyRepository;
-import org.jboss.forge.project.dependencies.DependencyRepositoryImpl;
 import org.jboss.forge.project.dependencies.DependencyResolverProvider;
-import org.jboss.forge.project.facets.DependencyFacet.KnownRepository;
 import org.jboss.forge.project.services.ResourceFactory;
 import org.jboss.forge.resources.DependencyResource;
 import org.jboss.forge.resources.DirectoryResource;
@@ -345,21 +343,9 @@ public class RepositoryLookup implements DependencyResolverProvider
       temp.addAll(repositories);
 
       List<RemoteRepository> remoteRepos = new ArrayList<RemoteRepository>();
-      boolean hasCentral = false;
       for (DependencyRepository deprep : temp)
       {
          remoteRepos.add(convertToMavenRepo(deprep));
-         if (KnownRepository.CENTRAL.getUrl().equals(deprep.getUrl()))
-         {
-            hasCentral = true;
-         }
-      }
-      if (!hasCentral)
-      {
-         RemoteRepository central = convertToMavenRepo(new DependencyRepositoryImpl(KnownRepository.CENTRAL.getId(),
-                  KnownRepository.CENTRAL.getUrl()));
-         central.setPolicy(true, new RepositoryPolicy().setEnabled(false));
-         remoteRepos.add(central);
       }
       return remoteRepos;
    }
