@@ -133,6 +133,17 @@ public class NewProjectPluginTest extends AbstractShellTest
                         .getConfigurationElement("failOnMissingWebXml").getText());
    }
 
+   @Test()
+   public void testCreateEarProject() throws Exception
+   {
+      initializeJavaProject();
+      queueInputLines("Y", "Y");
+      getShell().execute("new-project --named eartest --topLevelPackage com.test --type ear");
+      Project project = getProject();
+      assertEquals("com.test", project.getFacet(MetadataFacet.class).getTopLevelPackage());
+      assertTrue(PackagingType.EAR == project.getFacet(MavenPackagingFacet.class).getPackagingType());
+   }
+
    @Test
    public void testCreateJarProjectWithMain() throws Exception
    {
