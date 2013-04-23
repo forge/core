@@ -16,6 +16,7 @@ public class NewProjectPackagingTypeCompleter extends SimpleTokenCompleter
    @Override
    public Iterable<?> getCompletionTokens()
    {
-      return Arrays.asList(PackagingType.BASIC, PackagingType.JAR, PackagingType.WAR, PackagingType.BUNDLE);
+      return Arrays.asList(PackagingType.BASIC, PackagingType.JAR, PackagingType.WAR, PackagingType.BUNDLE,
+               PackagingType.EAR);
    }
 }

@@ -14,6 +14,7 @@ package org.jboss.forge.project.packaging;
 public enum PackagingType
 {
    NONE("", "None"),
+   EAR("ear", "EAR Project"),
    BASIC("pom", "Basic Project"),
    JAR("jar", "Java Application"),
    WAR("war", "Java Web Application"),
