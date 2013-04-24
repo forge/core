@@ -12,9 +12,9 @@ import org.jboss.forge.container.spi.ContainerLifecycleListener;
 
 public class TestLifecycleListener implements ContainerLifecycleListener
 {
-   public static int beforeStartTimesCalled;
-   public static int beforeStopTimesCalled;
-   public static int afterStopTimesCalled;
+   public int beforeStartTimesCalled;
+   public int beforeStopTimesCalled;
+   public int afterStopTimesCalled;
 
    @Override
    public void beforeStart(Forge forge) throws ContainerException

@@ -36,6 +36,7 @@ public class ForgeImpl implements Forge
    private boolean serverMode = true;
    private AddonRegistryImpl registry;
    private List<ContainerLifecycleListener> registeredListeners = new ArrayList<ContainerLifecycleListener>();
+   private List<ListenerRegistration<ContainerLifecycleListener>> loadedListenerRegistrations = new ArrayList<ListenerRegistration<ContainerLifecycleListener>>();
 
    private ClassLoader loader;
 
@@ -105,6 +106,13 @@ public class ForgeImpl implements Forge
    {
       assertNotAlive();
       this.loader = loader;
+
+      for (ContainerLifecycleListener listener : ServiceLoader.load(ContainerLifecycleListener.class, loader))
+      {
+         ListenerRegistration<ContainerLifecycleListener> registration = addContainerLifecycleListener(listener);
+         loadedListenerRegistrations.add(registration);
+      }
+
       fireBeforeContainerStartedEvent(loader);
       if (!alive)
       {
@@ -178,6 +186,10 @@ public class ForgeImpl implements Forge
          }
       }
       fireAfterContainerStoppedEvent(loader);
+      for (ListenerRegistration<ContainerLifecycleListener> registation : loadedListenerRegistrations)
+      {
+         registation.removeListener();
+      }
       return this;
    }
 
@@ -192,20 +204,12 @@ public class ForgeImpl implements Forge
       {
          listener.beforeStart(this);
       }
-      for (ContainerLifecycleListener listener : ServiceLoader.load(ContainerLifecycleListener.class, loader))
-      {
-         listener.beforeStart(this);
-      }
       status = ContainerStatus.STARTED;
    }
 
    private void fireBeforeContainerStoppedEvent(ClassLoader loader)
    {
       for (ContainerLifecycleListener listener : registeredListeners)
-      {
-         listener.beforeStop(this);
-      }
-      for (ContainerLifecycleListener listener : ServiceLoader.load(ContainerLifecycleListener.class, loader))
       {
          listener.beforeStop(this);
       }
@@ -218,12 +222,6 @@ public class ForgeImpl implements Forge
       {
          listener.afterStop(this);
       }
-
-      for (ContainerLifecycleListener listener : ServiceLoader.load(ContainerLifecycleListener.class, loader))
-      {
-         listener.afterStop(this);
-      }
-
    }
 
    @Override
@@ -303,5 +301,10 @@ public class ForgeImpl implements Forge
    public ContainerStatus getStatus()
    {
       return isStartingAddons() ? ContainerStatus.STARTING : status;
+   }
+
+   public List<ContainerLifecycleListener> getRegisteredListeners()
+   {
+      return Collections.unmodifiableList(registeredListeners);
    }
 }
