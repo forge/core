@@ -286,7 +286,7 @@ public class ClassLoaderAdapterCallback implements MethodHandler
                Class<?> loadedClass;
                try
                {
-                  loadedClass = delegateLoader.loadClass(paramClassValue.getName());
+                  loadedClass = delegateLoader.loadClass(Proxies.unwrapProxyClassName(paramClassValue));
                }
                catch (ClassNotFoundException e)
                {
@@ -294,7 +294,7 @@ public class ClassLoaderAdapterCallback implements MethodHandler
                   // Trying with delegate ClassLoader;
                   try
                   {
-                     loadedClass = unwrappedDelegateLoader.loadClass(paramClassValue.getName());
+                     loadedClass = unwrappedDelegateLoader.loadClass(Proxies.unwrapProxyClassName(paramClassValue));
                   }
                   catch (ClassNotFoundException cnfe)
                   {
