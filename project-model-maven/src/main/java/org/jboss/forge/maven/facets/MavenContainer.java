@@ -82,8 +82,6 @@ public class MavenContainer
                   new File(settings.getLocalRepository()).toURI().toURL().toString(), null, true, true);
          request.setLocalRepository(localRepository);
 
-         List<ArtifactRepository> settingsRepos = request.getRemoteRepositories();
-         request.setRemoteRepositories(settingsRepos);
          request.setSystemProperties(System.getProperties());
          MavenRepositorySystemSession repositorySession = new MavenRepositorySystemSession();
          Proxy activeProxy = settings.getActiveProxy();
