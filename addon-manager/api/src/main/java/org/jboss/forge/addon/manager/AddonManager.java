@@ -8,14 +8,30 @@
 package org.jboss.forge.addon.manager;
 
 import org.jboss.forge.container.addons.AddonId;
+import org.jboss.forge.container.repositories.AddonRepository;
 import org.jboss.forge.container.services.Exported;
 
+/**
+ * Responsible for installing, removing, enabling, and disabling {@link AddonId} instances in any registered
+ * {@link AddonRepository}.
+ * 
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ */
 @Exported
 public interface AddonManager
 {
+   /**
+    * Create a new {@link InstallRequest} for the given {@link AddonId}.
+    */
    public abstract InstallRequest install(AddonId id);
 
-   public abstract boolean remove(AddonId id);
+   /**
+    * Create a new {@link RemoveRequest} for the given {@link AddonId}.
+    */
+   public abstract RemoveRequest remove(AddonId id);
 
-   public abstract boolean disable(AddonId id);
+   /**
+    * Create a new {@link DisableRequest} for the given {@link AddonId}.
+    */
+   public abstract DisableRequest disable(AddonId id);
 }

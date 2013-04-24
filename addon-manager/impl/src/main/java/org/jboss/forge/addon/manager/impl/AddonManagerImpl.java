@@ -10,11 +10,12 @@ package org.jboss.forge.addon.manager.impl;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.manager.AddonManager;
+import org.jboss.forge.addon.manager.DisableRequest;
 import org.jboss.forge.addon.manager.InstallRequest;
+import org.jboss.forge.addon.manager.RemoveRequest;
 import org.jboss.forge.container.Forge;
 import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.repositories.AddonRepository;
-import org.jboss.forge.container.repositories.MutableAddonRepository;
 import org.jboss.forge.dependencies.AddonDependencyResolver;
 import org.jboss.forge.dependencies.DependencyNode;
 import org.jboss.forge.dependencies.builder.DependencyQueryBuilder;
@@ -49,24 +50,14 @@ public class AddonManagerImpl implements AddonManager
    }
 
    @Override
-   public boolean remove(AddonId id)
+   public RemoveRequest remove(AddonId id)
    {
-      for (AddonRepository repository : forge.getRepositories())
-      {
-         if (repository instanceof MutableAddonRepository && repository.isEnabled(id))
-            return ((MutableAddonRepository) repository).undeploy(id);
-      }
-      return false;
+      return new RemoveRequestImpl(this, forge, id);
    }
 
    @Override
-   public boolean disable(AddonId id)
+   public DisableRequest disable(AddonId id)
    {
-      for (AddonRepository repository : forge.getRepositories())
-      {
-         if (repository instanceof MutableAddonRepository && repository.isEnabled(id))
-            return ((MutableAddonRepository) repository).disable(id);
-      }
-      return false;
+      return new DisableRequestImpl(this, forge, id);
    }
 }

@@ -81,8 +81,8 @@ public class AddonRemoveCommand implements UICommand, AddonCommandConstants
          AddonId addonId = iterator.next();
          builder.append(addonId.toCoordinates());
 
-         manager.disable(addonId);
-         manager.remove(addonId);
+         manager.disable(addonId).perform();
+         manager.remove(addonId).perform();
 
          if (iterator.hasNext())
             builder.append(", ");
