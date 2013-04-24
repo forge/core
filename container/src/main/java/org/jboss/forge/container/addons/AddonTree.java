@@ -30,7 +30,7 @@ public class AddonTree implements Iterable<Addon>
    public AddonTree(LockManager lock)
    {
       this.lock = lock;
-      this.root = new AddonImpl(lock, AddonId.from(AddonTree.class.getName(), UUID.randomUUID().toString()));
+      this.root = new AddonImpl(lock, AddonId.from("ROOT ADDON NODE", UUID.randomUUID().toString()));
    }
 
    public void add(final Addon addon)

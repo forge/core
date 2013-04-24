@@ -27,7 +27,6 @@ import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.container.util.Assert;
 import org.jboss.forge.container.util.BeanManagerUtils;
 import org.jboss.forge.container.util.ClassLoaders;
-import org.jboss.forge.container.util.Threads;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 import org.jboss.weld.resources.spi.ResourceLoader;
@@ -222,16 +221,7 @@ public final class AddonRunnable implements Runnable
 
                addon.setStatus(AddonStatus.STARTED);
 
-               operation = Threads.runAsync(new Callable<Object>()
-               {
-                  @Override
-                  public Object call() throws Exception
-                  {
-                     manager.fireEvent(new PostStartup());
-                     return null;
-                  }
-               });
-
+               manager.fireEvent(new PostStartup());
             }
 
             return shutdownCallback;

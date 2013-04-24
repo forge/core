@@ -74,7 +74,8 @@ public class AddonRemoveCommand implements UICommand, AddonCommandConstants
    @Override
    public Result execute(UIContext context) throws Exception
    {
-      Iterator<AddonId> iterator = addons.getValue().iterator();
+      Iterable<AddonId> value = addons.getValue();
+      Iterator<AddonId> iterator = value.iterator();
       StringBuilder builder = new StringBuilder();
       while (iterator.hasNext())
       {

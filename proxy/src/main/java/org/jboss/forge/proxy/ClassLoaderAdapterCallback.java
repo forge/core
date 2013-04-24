@@ -315,7 +315,8 @@ public class ClassLoaderAdapterCallback implements MethodHandler
             else
             {
                final Class<?> parameterType = parameterValue.getClass();
-               if (!delegateParameterType.isAssignableFrom(parameterType))
+               if (!Proxies.isLanguageType(parameterType) 
+                        || !delegateParameterType.isAssignableFrom(parameterType))
                {
                   Class<?>[] compatibleClassHierarchy = ProxyTypeInspector.getCompatibleClassHierarchy(
                            valueDelegateLoader, unwrappedValueType);

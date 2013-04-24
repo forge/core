@@ -309,22 +309,31 @@ public class AddonRegistryImpl implements AddonRegistry
       Assert.notNull(addonId, "AddonId to load must not be null.");
 
       AddonImpl addon = null;
-      for (AddonRepository repository : forge.getRepositories())
+      for (Addon existing : tree)
       {
-         addon = loadAddonFromRepository(repository, addonId);
-         if (addon != null)
+         if (existing.getId().equals(addonId))
+         {
+            addon = (AddonImpl) existing;
             break;
+         }
       }
 
       if (addon == null)
       {
-         for (Addon existing : tree)
+         for (AddonRepository repository : forge.getRepositories())
          {
-            if (existing.getId().equals(addonId))
-            {
-               addon = (AddonImpl) existing;
+            addon = loadAddonFromRepository(repository, addonId);
+            if (addon != null)
                break;
-            }
+         }
+      }
+      else if (addon.getStatus().isMissing())
+      {
+         for (AddonRepository repository : forge.getRepositories())
+         {
+            Addon loaded = loadAddonFromRepository(repository, addonId);
+            if (loaded != null && !loaded.getStatus().isMissing())
+               break;
          }
       }
 

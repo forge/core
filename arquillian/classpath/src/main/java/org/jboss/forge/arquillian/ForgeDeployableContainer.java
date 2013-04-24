@@ -30,7 +30,6 @@ import org.jboss.forge.container.addons.Addon;
 import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.exception.ContainerException;
-import org.jboss.forge.container.impl.AddonRepositoryImpl;
 import org.jboss.forge.container.repositories.AddonRepositoryMode;
 import org.jboss.forge.container.repositories.MutableAddonRepository;
 import org.jboss.forge.container.util.Addons;
@@ -84,6 +83,8 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
          throw new IllegalArgumentException(
                   "Invalid Archive type. Ensure that your @Deployment method returns type 'ForgeArchive'.");
       }
+
+      System.out.println("Deployed [" + addonToDeploy + "]");
 
       AddonRegistry registry = runnable.getForge().getAddonRegistry();
 
@@ -159,7 +160,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
          runnable = new ForgeRunnable(addonDir, ClassLoader.getSystemClassLoader());
          thread = new Thread(runnable, "Arquillian Forge Runtime");
          System.out.println("Executing test case with addon dir [" + addonDir + "]");
-         this.repository = AddonRepositoryImpl.forDirectory(runnable.forge, addonDir);
+         this.repository = (MutableAddonRepository) runnable.forge.addRepository(AddonRepositoryMode.MUTABLE, addonDir);
 
          thread.start();
       }
@@ -200,6 +201,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       finally
       {
          repository.undeploy(addonToUndeploy);
+         System.out.println("Undeployed [" + addonToUndeploy + "]");
       }
    }
 

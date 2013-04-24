@@ -30,5 +30,6 @@ public class InputTypeHintsRegistrant
       HintsLookup hints = new HintsLookup(environment);
       hints.setInputType(FileResource.class, InputTypes.FILE_PICKER);
       hints.setInputType(DirectoryResource.class, InputTypes.FILE_PICKER);
+      System.out.println("Initialized Resources InputType Hints");
    }
 }

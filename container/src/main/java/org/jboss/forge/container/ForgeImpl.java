@@ -4,13 +4,16 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.forge.container.addons.Addon;
+import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.addons.ImmutableAddonRepository;
 import org.jboss.forge.container.impl.AddonRegistryImpl;
@@ -124,38 +127,37 @@ public class ForgeImpl implements Forge
                boolean dirty = false;
                if (!isStartingAddons())
                {
+                  Set<AddonId> enabled = new HashSet<AddonId>();
                   for (AddonRepository repository : repositories)
                   {
                      int repoVersion = repository.getVersion();
                      if (repoVersion > lastRepoVersionSeen.get(repository))
                      {
+                        logger.log(Level.INFO, "Detected changes in repository [" + repository + "].");
                         lastRepoVersionSeen.put(repository, repoVersion);
                         dirty = true;
-                        for (Addon addon : registry.getAddons())
-                        {
-                           boolean enabled = false;
-                           if (repository.isEnabled(addon.getId()))
-                           {
-                              enabled = true;
-                           }
-
-                           if (!enabled && addon.getStatus().isStarted())
-                           {
-                              try
-                              {
-                                 registry.stop(addon);
-                              }
-                              catch (Exception e)
-                              {
-                                 logger.log(Level.SEVERE, "Error occurred.", e);
-                              }
-                           }
-                        }
                      }
+
+                     enabled.addAll(repository.listEnabled());
                   }
 
                   if (dirty)
                   {
+                     for (Addon addon : registry.getAddons())
+                     {
+                        if (!enabled.contains(addon.getId()) && addon.getStatus().isStarted())
+                        {
+                           try
+                           {
+                              registry.stop(addon);
+                           }
+                           catch (Exception e)
+                           {
+                              logger.log(Level.SEVERE, "Error occurred.", e);
+                           }
+                        }
+                     }
+
                      try
                      {
                         registry.startAll();

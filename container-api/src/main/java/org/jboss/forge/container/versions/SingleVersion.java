@@ -52,15 +52,13 @@ public class SingleVersion implements Version
          return true;
       if (obj == null)
          return false;
-      if (getClass() != obj.getClass())
-         return false;
-      SingleVersion other = (SingleVersion) obj;
-      if (version == null)
+      Version other = (Version) obj;
+      if (getVersionString() == null)
       {
-         if (other.version != null)
+         if (other.getVersionString() != null)
             return false;
       }
-      else if (!version.equals(other.version))
+      else if (!getVersionString().equals(other.getVersionString()))
          return false;
       return true;
    }

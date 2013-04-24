@@ -224,15 +224,15 @@ public class AddonImpl implements Addon
          return true;
       if (obj == null)
          return false;
-      if (getClass() != obj.getClass())
+      if (!(obj instanceof Addon))
          return false;
       AddonImpl other = (AddonImpl) obj;
       if (id == null)
       {
-         if (other.id != null)
+         if (other.getId() != null)
             return false;
       }
-      else if (!id.equals(other.id))
+      else if (!id.equals(other.getId()))
          return false;
       return true;
    }

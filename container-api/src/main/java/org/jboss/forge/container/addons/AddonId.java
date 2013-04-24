@@ -113,17 +113,17 @@ public class AddonId
       AddonId other = (AddonId) obj;
       if (name == null)
       {
-         if (other.name != null)
+         if (other.getName() != null)
             return false;
       }
-      else if (!name.equals(other.name))
+      else if (!name.equals(other.getName()))
          return false;
       if (version == null)
       {
-         if (other.version != null)
+         if (other.getVersion() != null)
             return false;
       }
-      else if (!version.equals(other.version))
+      else if (!version.equals(other.getVersion()))
          return false;
       return true;
    }

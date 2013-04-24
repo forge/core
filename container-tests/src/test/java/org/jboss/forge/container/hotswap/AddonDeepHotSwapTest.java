@@ -25,7 +25,7 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class AddonDeepHotSwapTest
 {
-   @Deployment(order = 3)
+   @Deployment(order = 5)
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
@@ -56,7 +56,7 @@ public class AddonDeepHotSwapTest
       return archive;
    }
 
-   @Deployment(name = "dep,3", testable = false, order = 1)
+   @Deployment(name = "dep,3", testable = false, order = 3)
    public static ForgeArchive getDeploymentDep3()
    {
       ForgeArchive archive = ShrinkWrap
@@ -67,7 +67,7 @@ public class AddonDeepHotSwapTest
       return archive;
    }
 
-   @Deployment(name = "dep,4", testable = false, order = 1)
+   @Deployment(name = "dep,4", testable = false, order = 4)
    public static ForgeArchive getDeploymentDep4()
    {
       ForgeArchive archive = ShrinkWrap
@@ -100,6 +100,11 @@ public class AddonDeepHotSwapTest
       ClassLoader dep2Classloader = dep2.getClassLoader();
       ClassLoader dep3Classloader = dep3.getClassLoader();
       ClassLoader dep4Classloader = dep4.getClassLoader();
+
+      Addons.waitUntilStarted(dep1, 10, TimeUnit.SECONDS);
+      Addons.waitUntilStarted(dep2, 10, TimeUnit.SECONDS);
+      Addons.waitUntilStarted(dep3, 10, TimeUnit.SECONDS);
+      Addons.waitUntilStarted(dep4, 10, TimeUnit.SECONDS);
 
       ((MutableAddonRepository) repository).disable(dep4Id);
       Addons.waitUntilStopped(dep1, 10, TimeUnit.SECONDS);

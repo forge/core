@@ -657,4 +657,10 @@ public final class AddonRepositoryImpl implements MutableAddonRepository
       version++;
    }
 
+   @Override
+   public String toString()
+   {
+      return getRootDirectory().getAbsolutePath();
+   }
+
 }
