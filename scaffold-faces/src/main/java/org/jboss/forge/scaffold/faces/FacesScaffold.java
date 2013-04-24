@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.scaffold.faces;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -36,6 +37,7 @@ import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.facets.BaseFacet;
 import org.jboss.forge.project.facets.DependencyFacet;
+import org.jboss.forge.project.facets.FacetNotFoundException;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.project.facets.events.InstallFacets;
@@ -329,8 +331,6 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
                   this.taglibTemplate.render(context), true));
 
          createInitializers(entity);
-         this.project.getFacet(JavaSourceFacet.class).saveJavaSource(entity);
-
       }
       catch (Exception e)
       {
@@ -584,8 +584,9 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
                new CompositeWidgetBuilderConfig<W, M>().setWidgetBuilders(newWidgetBuilders));
    }
 
-   protected void createInitializers(final JavaClass entity)
+   protected void createInitializers(final JavaClass entity) throws FacetNotFoundException, FileNotFoundException
    {
+      boolean dirtyBit = false;
       for (Field<JavaClass> field : entity.getFields())
       {
          if (field.hasAnnotation(OneToOne.class))
@@ -594,12 +595,14 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
             if (oneToOne.getStringValue("mappedBy") == null && oneToOne.getStringValue("cascade") == null)
             {
                oneToOne.setEnumValue("cascade", CascadeType.ALL);
+               dirtyBit = true;
             }
             String methodName = "new" + field.getTypeInspector().getName();
             if (!entity.hasMethodSignature(methodName))
             {
                entity.addMethod().setName(methodName).setReturnTypeVoid().setPublic()
                         .setBody("this." + field.getName() + " = new " + field.getType() + "();");
+               dirtyBit = true;
             }
          }
       }
@@ -611,14 +614,20 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
             if (oneToOne.getStringValue("mappedBy") == null && oneToOne.getStringValue("cascade") == null)
             {
                oneToOne.setEnumValue("cascade", CascadeType.ALL);
+               dirtyBit = true;
             }
             String methodName = "new" + method.getReturnTypeInspector().getName();
             if (!entity.hasMethodSignature(methodName))
             {
                entity.addMethod().setName(methodName).setReturnTypeVoid().setPublic()
                         .setBody("this." + method.getName() + " = new " + method.getReturnType() + "();");
+               dirtyBit = true;
             }
          }
+      }
+      if(dirtyBit)
+      {
+         this.project.getFacet(JavaSourceFacet.class).saveJavaSource(entity);
       }
    }
 
