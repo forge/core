@@ -47,6 +47,7 @@
 				<inspectionResultProcessors>
 					<array>
 						<notRequiredInspectionResultProcessor xmlns="java:org.jboss.forge.scaffold.faces.metawidget.inspectionresultprocessor"/>
+						<generatedValueInspectionResultProcessor xmlns="java:org.jboss.forge.scaffold.faces.metawidget.inspectionresultprocessor"/>
 					</array>
 				</inspectionResultProcessors>
 				

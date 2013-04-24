@@ -45,6 +45,12 @@
                         </compositeInspector>
                 </inspector>
                 
+                <inspectionResultProcessors>
+                    <array>
+                        <generatedValueInspectionResultProcessor xmlns="java:org.jboss.forge.scaffold.faces.metawidget.inspectionresultprocessor"/>
+                    </array>
+                </inspectionResultProcessors>
+                
                 <widgetBuilder>
                         <compositeWidgetBuilder xmlns="java:org.metawidget.widgetbuilder.composite" config="CompositeWidgetBuilderConfig">
                                 <widgetBuilders>

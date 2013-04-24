@@ -43,6 +43,12 @@
                                 </inspectors>
                         </compositeInspector>
                 </inspector>
+                
+                <inspectionResultProcessors>
+                    <array>
+                        <generatedValueInspectionResultProcessor xmlns="java:org.jboss.forge.scaffold.faces.metawidget.inspectionresultprocessor"/>
+                    </array>
+                </inspectionResultProcessors>
 		
                 <widgetBuilder>
                         <queryByExampleWidgetBuilder xmlns="java:org.jboss.forge.scaffold.faces.metawidget.widgetbuilder"/>

@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.scaffold.faces.metawidget.inspector;
 
+import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.GENERATED_VALUE;
 import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.N_TO_MANY;
 import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.ONE_TO_ONE;
 import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.PRIMARY_KEY;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.Embedded;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -132,6 +134,10 @@ public class ForgeInspector
       if (property.isAnnotationPresent(Id.class))
       {
          attributes.put(PRIMARY_KEY, TRUE);
+      }
+      if( property.isAnnotationPresent(GeneratedValue.class))
+      {
+         attributes.put(GENERATED_VALUE, TRUE);
       }
 
       return attributes;

@@ -33,6 +33,11 @@ public final class ForgeInspectionResultConstants
     */
 
    public static final String REVERSE_PRIMARY_KEY = "reverse-primary-key";
+   
+   /**
+    * Whether the field represents a generated value
+    */
+   public static final String GENERATED_VALUE = "generated-value";
 
    //
    // Private constructor
