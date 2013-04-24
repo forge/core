@@ -68,7 +68,8 @@ public final class AddonRunnable implements Runnable
             @Override
             public Void call() throws Exception
             {
-               logger.info("< Stopping container [" + addon.getId() + "]");
+               logger.info("< Stopping container [" + addon.getId() + "] [" + addon.getRepository().getRootDirectory()
+                        + "]");
                long start = System.currentTimeMillis();
                ClassLoaders.executeIn(addon.getClassLoader(), shutdownCallable);
                logger.info("<< Stopped container [" + addon.getId() + "] - "
@@ -97,7 +98,8 @@ public final class AddonRunnable implements Runnable
             @Override
             public Void call() throws Exception
             {
-               logger.info("> Starting container [" + addon.getId() + "]");
+               logger.info("> Starting container [" + addon.getId() + "] [" + addon.getRepository().getRootDirectory()
+                        + "]");
                long start = System.currentTimeMillis();
                container = new AddonContainerStartup();
                shutdownCallable = ClassLoaders.executeIn(addon.getClassLoader(), container);

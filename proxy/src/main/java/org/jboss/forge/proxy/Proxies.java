@@ -380,7 +380,11 @@ public class Proxies
     */
    public static boolean isLanguageType(Class<?> type)
    {
-      return type.getName().startsWith("[L") || type.getName().matches("^(java\\.lang|java\\.io).*")
+      boolean result = type.getName().startsWith("[L") || type.getName().matches("^(java\\.lang|java\\.io).*")
                || type.isPrimitive();
+
+      result = result && !(Iterable.class.getName().equals(type.getName()));
+
+      return result;
    }
 }
