@@ -597,7 +597,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
                oneToOne.setEnumValue("cascade", CascadeType.ALL);
                dirtyBit = true;
             }
-            String methodName = "new" + field.getTypeInspector().getName();
+            String methodName = "new" + StringUtils.capitalize(field.getName());
             if (!entity.hasMethodSignature(methodName))
             {
                entity.addMethod().setName(methodName).setReturnTypeVoid().setPublic()
@@ -616,11 +616,12 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
                oneToOne.setEnumValue("cascade", CascadeType.ALL);
                dirtyBit = true;
             }
-            String methodName = "new" + method.getReturnTypeInspector().getName();
+            String fieldName = StringUtils.camelCase(method.getName().substring(3));
+            String methodName = "new" + StringUtils.capitalize(fieldName);
             if (!entity.hasMethodSignature(methodName))
             {
                entity.addMethod().setName(methodName).setReturnTypeVoid().setPublic()
-                        .setBody("this." + method.getName() + " = new " + method.getReturnType() + "();");
+                        .setBody("this." + fieldName + " = new " + method.getReturnType() + "();");
                dirtyBit = true;
             }
          }
