@@ -7,20 +7,21 @@
 package org.jboss.forge.container.addons;
 
 import org.jboss.forge.container.impl.AddonImpl;
-import org.jboss.forge.container.util.Callables;
 import org.jboss.forge.container.util.Visitor;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class StopAllAddonsVisitor implements Visitor<Addon>
+public class MarkLoadedAddonsDirtyVisitor implements Visitor<Addon>
 {
    private AddonTree tree;
+   private AddonImpl source;
 
-   public StopAllAddonsVisitor(AddonTree tree)
+   public MarkLoadedAddonsDirtyVisitor(AddonTree tree, AddonImpl addon)
    {
       this.tree = tree;
+      this.source = addon;
    }
 
    @Override
@@ -29,7 +30,17 @@ public class StopAllAddonsVisitor implements Visitor<Addon>
       if (instance instanceof AddonImpl)
       {
          AddonImpl addon = (AddonImpl) instance;
-         Callables.call(new StopAddonCallable(tree, addon));
+         if (!addon.isDirty() && addon.getStatus().isLoaded())
+         {
+            for (AddonDependency dep : addon.getDependencies())
+            {
+               if (dep.getDependency().equals(source))
+               {
+                  addon.setDirty(true);
+                  tree.depthFirst(new MarkLoadedAddonsDirtyVisitor(tree, addon));
+               }
+            }
+         }
       }
    }
 

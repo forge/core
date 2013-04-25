@@ -14,11 +14,11 @@ import org.jboss.forge.container.util.Visitor;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class StopAddonVisitor implements Visitor<Addon>
+public class StopDirtyAddonsVisitor implements Visitor<Addon>
 {
    private AddonTree tree;
 
-   public StopAddonVisitor(AddonTree tree)
+   public StopDirtyAddonsVisitor(AddonTree tree)
    {
       this.tree = tree;
    }

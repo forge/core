@@ -58,6 +58,7 @@ public class StopAddonCallable implements Callable<Void>
 
             Set<AddonDependency> dependencies = addon.getDependencies();
             ((AddonImpl) addon).reset();
+            addon.setDirty(false);
 
             for (AddonDependency dependency : dependencies)
             {

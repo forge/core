@@ -7,30 +7,24 @@
 package org.jboss.forge.container.addons;
 
 import org.jboss.forge.container.impl.AddonImpl;
-import org.jboss.forge.container.util.Callables;
 import org.jboss.forge.container.util.Visitor;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
  */
-public class StopAllAddonsVisitor implements Visitor<Addon>
+public class CheckDirtyStatusVisitor implements Visitor<Addon>
 {
-   private AddonTree tree;
-
-   public StopAllAddonsVisitor(AddonTree tree)
-   {
-      this.tree = tree;
-   }
+   boolean dirty = false;
 
    @Override
    public void visit(Addon instance)
    {
-      if (instance instanceof AddonImpl)
-      {
-         AddonImpl addon = (AddonImpl) instance;
-         Callables.call(new StopAddonCallable(tree, addon));
-      }
+      if (((AddonImpl) instance).isDirty())
+         dirty = true;
    }
 
+   public boolean isDirty()
+   {
+      return dirty;
+   }
 }

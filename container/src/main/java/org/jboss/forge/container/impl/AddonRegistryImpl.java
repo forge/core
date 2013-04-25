@@ -6,7 +6,6 @@
  */
 package org.jboss.forge.container.impl;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -14,7 +13,6 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,10 +26,12 @@ import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.addons.AddonStatus;
 import org.jboss.forge.container.addons.AddonTree;
-import org.jboss.forge.container.addons.MarkAddonDirtyVisitor;
-import org.jboss.forge.container.addons.StopAddonVisitor;
+import org.jboss.forge.container.addons.CheckDirtyStatusVisitor;
+import org.jboss.forge.container.addons.MarkDisabledLoadedAddonsDirtyVisitor;
+import org.jboss.forge.container.addons.MarkLoadedAddonsDirtyVisitor;
+import org.jboss.forge.container.addons.StartEnabledAddonsVisitor;
 import org.jboss.forge.container.addons.StopAllAddonsVisitor;
-import org.jboss.forge.container.addons.StopDisabledAddonsVisitor;
+import org.jboss.forge.container.addons.StopDirtyAddonsVisitor;
 import org.jboss.forge.container.lock.LockManager;
 import org.jboss.forge.container.lock.LockMode;
 import org.jboss.forge.container.modules.AddonModuleLoader;
@@ -349,7 +349,7 @@ public class AddonRegistryImpl implements AddonRegistry
                   addon.setStatus(AddonStatus.LOADED);
 
                   System.out.println("Loaded module " + module);
-                  tree.depthFirst(new MarkAddonDirtyVisitor(tree, addon));
+                  tree.depthFirst(new MarkLoadedAddonsDirtyVisitor(tree, addon));
 
                }
                catch (Exception e)
@@ -381,32 +381,25 @@ public class AddonRegistryImpl implements AddonRegistry
          @Override
          public Void call() throws Exception
          {
-            List<AddonImpl> enabled = loadAllEnabled();
+            Set<AddonId> enabled = getAllEnabled();
 
-            tree.breadthFirst(new StopDisabledAddonsVisitor(tree, enabled));
-            tree.breadthFirst(new StopAddonVisitor(tree));
+            tree.breadthFirst(new MarkDisabledLoadedAddonsDirtyVisitor(tree, enabled));
 
-            for (AddonImpl enabledAddon : enabled)
+            CheckDirtyStatusVisitor dirty;
+            do
             {
-               AddonImpl addonToStart = getAddon(enabledAddon.getId());
-               if (!addonToStart.getStatus().isStarted() && addonToStart.canBeStarted())
-               {
-                  if (executor.isShutdown())
-                  {
-                     throw new IllegalStateException("Cannot start additional addons once Shutdown has been initiated.");
-                  }
-
-                  Future<Void> result = null;
-                  if (addonToStart.getRunnable() == null)
-                  {
-                     starting.incrementAndGet();
-                     AddonRunnable runnable = new AddonRunnable(forge, addonToStart);
-                     result = executor.submit(runnable, null);
-                     addonToStart.setFuture(result);
-                     addonToStart.setRunnable(runnable);
-                  }
-               }
+               dirty = new CheckDirtyStatusVisitor();
+               tree.breadthFirst(new StopDirtyAddonsVisitor(tree));
+               tree.depthFirst(dirty);
             }
+            while (dirty.isDirty());
+
+            for (AddonId addonId : enabled)
+            {
+               loadAddon(addonId);
+            }
+
+            tree.depthFirst(new StartEnabledAddonsVisitor(forge, tree, executor, starting, enabled));
             return null;
          }
       });
@@ -441,14 +434,14 @@ public class AddonRegistryImpl implements AddonRegistry
       return loader;
    }
 
-   private List<AddonImpl> loadAllEnabled()
+   private Set<AddonId> getAllEnabled()
    {
-      List<AddonImpl> result = new ArrayList<AddonImpl>();
+      Set<AddonId> result = new HashSet<AddonId>();
       for (AddonRepository repository : forge.getRepositories())
       {
          for (AddonId enabled : repository.listEnabled())
          {
-            result.add(getAddon(enabled));
+            result.add(enabled);
          }
       }
       return result;

@@ -62,6 +62,8 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       File destDir = repository.getAddonBaseDir(addonToDeploy);
       destDir.mkdirs();
 
+      System.out.println("Deploying [" + addonToDeploy + "] to repository [" + repository + "]");
+
       if (archive instanceof ForgeArchive)
       {
          ShrinkWrapUtil.toFile(new File(destDir.getAbsolutePath() + "/" + archive.getName()), archive);
@@ -112,8 +114,6 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
          throw new IllegalArgumentException(
                   "Invalid Archive type. Ensure that your @Deployment method returns type 'ForgeArchive'.");
       }
-
-      System.out.println("Deployed [" + addonToDeploy + "]");
 
       return new ProtocolMetaData().addContext(runnable.getForge());
    }
@@ -195,6 +195,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    {
       AddonId addonToUndeploy = getAddonEntry(deploymentInstance.get());
       AddonRegistry registry = runnable.getForge().getAddonRegistry();
+      System.out.print("Undeploying [" + addonToUndeploy + "] ... ");
 
       try
       {
@@ -209,7 +210,6 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       finally
       {
          repository.undeploy(addonToUndeploy);
-         System.out.println("Undeployed [" + addonToUndeploy + "]");
       }
    }
 

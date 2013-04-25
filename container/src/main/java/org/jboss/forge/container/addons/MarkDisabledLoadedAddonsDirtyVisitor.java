@@ -6,22 +6,21 @@
  */
 package org.jboss.forge.container.addons;
 
-import java.util.List;
+import java.util.Set;
 
 import org.jboss.forge.container.impl.AddonImpl;
-import org.jboss.forge.container.util.Callables;
 import org.jboss.forge.container.util.Visitor;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class StopDisabledAddonsVisitor implements Visitor<Addon>
+public class MarkDisabledLoadedAddonsDirtyVisitor implements Visitor<Addon>
 {
    private AddonTree tree;
-   private List<AddonImpl> enabled;
+   private Set<AddonId> enabled;
 
-   public StopDisabledAddonsVisitor(AddonTree tree, List<AddonImpl> enabled)
+   public MarkDisabledLoadedAddonsDirtyVisitor(AddonTree tree, Set<AddonId> enabled)
    {
       this.tree = tree;
       this.enabled = enabled;
@@ -33,12 +32,11 @@ public class StopDisabledAddonsVisitor implements Visitor<Addon>
       if (instance instanceof AddonImpl)
       {
          AddonImpl addon = (AddonImpl) instance;
-         if (!enabled.contains(addon))
+         if (!enabled.contains(addon.getId()) && addon.getStatus().isLoaded())
          {
-            tree.depthFirst(new MarkAddonDirtyVisitor(tree, addon));
-            Callables.call(new StopAddonCallable(tree, addon));
+            addon.setDirty(true);
+            tree.depthFirst(new MarkLoadedAddonsDirtyVisitor(tree, addon));
          }
       }
    }
-
 }

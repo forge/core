@@ -40,7 +40,7 @@ public class AddonImpl implements Addon
       public Future<Void> future = new CompletedFuture<Void>(null);
       public AddonRepository repository;
       public ServiceRegistry registry;
-      public boolean dirty = false;
+      public boolean dirty = true;
 
       @Override
       public String toString()
