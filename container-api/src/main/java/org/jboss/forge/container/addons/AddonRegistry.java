@@ -7,7 +7,6 @@
 package org.jboss.forge.container.addons;
 
 import java.util.Set;
-import java.util.concurrent.Future;
 
 import org.jboss.forge.container.services.ExportedInstance;
 
@@ -43,17 +42,4 @@ public interface AddonRegistry
     * Get all registered {@link Addon} instances matching the given {@link AddonFilter}.
     */
    Set<Addon> getAddons(AddonFilter filter);
-
-   /**
-    * Start the given {@link AddonId} and all its dependencies, if possible. Return a {@link Future} which can be used
-    * to wait while the {@link Addon} boot-up sequence is executed. Existing dependents for which this {@link AddonId}
-    * is an optional {@link AddonDependency} will be restarted.
-    */
-   Future<Void> start(AddonId addon);
-
-   /**
-    * Stop the given {@link Addon} that originated from this {@link AddonRegistry}. Also stop all dependent
-    * {@link Addon} instances. Dependents for which this {@link Addon} is an optional dependency will be restarted.
-    */
-   void stop(Addon addon);
 }

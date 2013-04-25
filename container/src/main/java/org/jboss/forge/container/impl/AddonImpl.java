@@ -40,6 +40,7 @@ public class AddonImpl implements Addon
       public Future<Void> future = new CompletedFuture<Void>(null);
       public AddonRepository repository;
       public ServiceRegistry registry;
+      public boolean dirty = false;
 
       @Override
       public String toString()
@@ -151,6 +152,16 @@ public class AddonImpl implements Addon
       Assert.notNull(registry, "Registry must not be null.");
       this.state.registry = registry;
       return this;
+   }
+
+   public void setDirty(boolean dirty)
+   {
+      this.state.dirty  = dirty;
+   }
+   
+   public boolean isDirty()
+   {
+      return this.state.dirty;
    }
 
    @Override

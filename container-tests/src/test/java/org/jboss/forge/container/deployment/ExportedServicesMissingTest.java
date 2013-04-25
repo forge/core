@@ -1,4 +1,4 @@
-package org.jboss.forge.container;
+package org.jboss.forge.container.deployment;
 
 import javax.enterprise.inject.spi.DeploymentException;
 import javax.inject.Inject;
