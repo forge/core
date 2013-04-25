@@ -18,10 +18,10 @@ import org.jboss.forge.container.repositories.AddonRepository;
 
 /**
  * An immutable {@link AddonRepository} implementation that delegates to a wrapped instance.
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 public class ImmutableAddonRepository implements AddonRepository
 {
@@ -98,4 +98,9 @@ public class ImmutableAddonRepository implements AddonRepository
       return delegate.getVersion();
    }
 
+   @Override
+   public String toString()
+   {
+      return delegate.toString() + " (Immutable)";
+   }
 }
