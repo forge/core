@@ -895,6 +895,10 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       {
          nullablePkType = Byte.class.getSimpleName();
       }
+      else if ("long".equals(pkType))
+      {
+         nullablePkType = Long.class.getSimpleName();
+      }
 
       context.put("primaryKey", pkName);
       context.put("primaryKeyCC", StringUtils.capitalize(pkName));
