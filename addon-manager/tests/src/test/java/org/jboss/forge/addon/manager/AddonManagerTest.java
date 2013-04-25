@@ -11,6 +11,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -23,6 +24,7 @@ import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.repositories.AddonDependencyEntry;
 import org.jboss.forge.container.repositories.AddonRepository;
+import org.jboss.forge.container.util.Addons;
 import org.jboss.forge.container.versions.SingleVersion;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
@@ -67,22 +69,22 @@ public class AddonManagerTest
    public void testInstallingAddonWithSingleOptionalAddonDependency() throws InterruptedException
    {
       int addonCount = registry.getAddons().size();
-      AddonId addon = AddonId.fromCoordinates("org.jboss.forge:example,2.0.0-SNAPSHOT");
-      InstallRequest request = addonManager.install(addon);
+      AddonId example = AddonId.fromCoordinates("org.jboss.forge:example,2.0.0-SNAPSHOT");
+      InstallRequest request = addonManager.install(example);
 
       Assert.assertEquals(0, request.getRequiredAddons().size());
       Assert.assertEquals(1, request.getOptionalAddons().size());
 
       request.perform();
 
-      Assert.assertTrue(repository.isEnabled(addon));
-      Assert.assertEquals(2, repository.getAddonResources(addon).size());
-      Assert.assertTrue(repository.getAddonResources(addon).contains(
-               new File(repository.getAddonBaseDir(addon), "commons-lang-2.6.jar")));
-      Assert.assertTrue(repository.getAddonResources(addon).contains(
-               new File(repository.getAddonBaseDir(addon), "example-2.0.0-SNAPSHOT-forge-addon.jar")));
+      Assert.assertTrue(repository.isEnabled(example));
+      Assert.assertEquals(2, repository.getAddonResources(example).size());
+      Assert.assertTrue(repository.getAddonResources(example).contains(
+               new File(repository.getAddonBaseDir(example), "commons-lang-2.6.jar")));
+      Assert.assertTrue(repository.getAddonResources(example).contains(
+               new File(repository.getAddonBaseDir(example), "example-2.0.0-SNAPSHOT-forge-addon.jar")));
 
-      Set<AddonDependencyEntry> dependencies = repository.getAddonDependencies(addon);
+      Set<AddonDependencyEntry> dependencies = repository.getAddonDependencies(example);
       Assert.assertEquals(1, dependencies.size());
       AddonDependencyEntry dependency = dependencies.toArray(new AddonDependencyEntry[dependencies.size()])[0];
       Assert.assertEquals("org.jboss.forge:example2", dependency
@@ -95,7 +97,8 @@ public class AddonManagerTest
       Assert.assertTrue(registry.getAddon(AddonId.from("org.jboss.forge:example2", "2.0.0-SNAPSHOT"))
                .getStatus().isMissing());
 
-      Assert.assertEquals(addonCount + 1, registry.getAddons().size());
+      Addons.waitUntilStarted(registry.getAddon(example), 10, TimeUnit.SECONDS);
+      Assert.assertEquals(addonCount + 2, registry.getAddons().size());
    }
 
    @Test
@@ -131,8 +134,7 @@ public class AddonManagerTest
       }
       Assert.assertTrue("Addons not detected as dependency: " + addonDependenciesIds, addonDependenciesIds.isEmpty());
 
-      Thread.sleep(500);
-
+      Addons.waitUntilStarted(registry.getAddon(resources), 10, TimeUnit.SECONDS);
       Assert.assertEquals(addonInitialCount, registry.getAddons().size());
    }
 }

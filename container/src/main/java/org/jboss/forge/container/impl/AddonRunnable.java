@@ -15,6 +15,7 @@ import javax.enterprise.inject.spi.BeanManager;
 
 import org.jboss.forge.container.Forge;
 import org.jboss.forge.container.addons.Addon;
+import org.jboss.forge.container.addons.AddonDependency;
 import org.jboss.forge.container.addons.AddonStatus;
 import org.jboss.forge.container.event.PostStartup;
 import org.jboss.forge.container.event.PreShutdown;
@@ -24,6 +25,7 @@ import org.jboss.forge.container.modules.ModularURLScanner;
 import org.jboss.forge.container.modules.ModularWeld;
 import org.jboss.forge.container.modules.ModuleScanResult;
 import org.jboss.forge.container.services.ServiceRegistry;
+import org.jboss.forge.container.util.Addons;
 import org.jboss.forge.container.util.Assert;
 import org.jboss.forge.container.util.BeanManagerUtils;
 import org.jboss.forge.container.util.ClassLoaders;
@@ -107,6 +109,9 @@ public final class AddonRunnable implements Runnable
                return null;
             }
          });
+
+         if (container.postStartupTask != null)
+            ClassLoaders.executeIn(addon.getClassLoader(), container.postStartupTask);
       }
       catch (RuntimeException e)
       {
@@ -128,6 +133,7 @@ public final class AddonRunnable implements Runnable
    public class AddonContainerStartup implements Callable<Callable<Object>>
    {
       private Future<Object> operation;
+      private Callable<Void> postStartupTask;
 
       @Override
       public Callable<Object> call() throws Exception
@@ -219,9 +225,23 @@ public final class AddonRunnable implements Runnable
                   }
                };
 
-               addon.setStatus(AddonStatus.STARTED);
+               postStartupTask = new Callable<Void>()
+               {
+                  @Override
+                  public Void call() throws Exception
+                  {
+                     for (AddonDependency dependency : addon.getDependencies())
+                     {
+                        if (dependency.getDependency().getStatus().isLoaded())
+                           Addons.waitUntilStarted(dependency.getDependency());
+                     }
 
-               manager.fireEvent(new PostStartup());
+                     addon.setStatus(AddonStatus.STARTED);
+                     
+                     manager.fireEvent(new PostStartup());
+                     return null;
+                  }
+               };
             }
 
             return shutdownCallback;

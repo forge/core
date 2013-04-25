@@ -69,6 +69,24 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
 
          repository.deploy(addonToDeploy, ((ForgeArchive) archive).getAddonDependencies(), new ArrayList<File>());
          repository.enable(addonToDeploy);
+         
+         AddonRegistry registry = runnable.getForge().getAddonRegistry();
+         try
+         {
+            Future<Void> future = registry.start(addonToDeploy);
+            future.get();
+            Addon addon = registry.getAddon(addonToDeploy);
+            if (addon.getStatus().isFailed())
+            {
+               ContainerException e = new ContainerException("Addon " + addonToDeploy + " failed to deploy.");
+               deployment.deployedWithError(e);
+               throw e;
+            }
+         }
+         catch (Exception e)
+         {
+            throw new DeploymentException("Failed to deploy " + addonToDeploy, e);
+         }
       }
       else if (archive instanceof ForgeRemoteAddon)
       {
@@ -86,24 +104,6 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
 
       System.out.println("Deployed [" + addonToDeploy + "]");
 
-      AddonRegistry registry = runnable.getForge().getAddonRegistry();
-
-      try
-      {
-         Future<Void> future = registry.start(addonToDeploy);
-         future.get();
-         Addon addon = registry.getAddon(addonToDeploy);
-         if (addon.getStatus().isFailed())
-         {
-            ContainerException e = new ContainerException("Addon " + addonToDeploy + " failed to deploy.");
-            deployment.deployedWithError(e);
-            throw e;
-         }
-      }
-      catch (Exception e)
-      {
-         throw new DeploymentException("Failed to deploy " + addonToDeploy, e);
-      }
 
       return new ProtocolMetaData().addContext(runnable.getForge());
    }

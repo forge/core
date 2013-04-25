@@ -62,7 +62,7 @@ public class AddonRegistryImpl implements AddonRegistry
    private final AddonTree tree;
    private final AtomicInteger starting = new AtomicInteger();
 
-   private final ExecutorService executor = Executors.newFixedThreadPool(BATCH_SIZE);
+   private final ExecutorService executor = Executors.newCachedThreadPool();
 
    private AddonModuleLoader loader;
 
@@ -662,6 +662,10 @@ public class AddonRegistryImpl implements AddonRegistry
     */
    public boolean isStartingAddons()
    {
+      /*
+       * Force a full configuration rescan.
+       */
+      startAll();
       return starting.get() > 0;
    }
 }

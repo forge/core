@@ -69,6 +69,7 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
          final AddonRegistry addonRegistry = forge.getAddonRegistry();
 
          waitUntilStable(forge);
+         System.out.println("Forge stable, executing test.");
 
          Object testInstance = null;
          Class<?> testClass = null;
