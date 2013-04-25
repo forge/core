@@ -80,6 +80,10 @@ public class DependencyInstallerImpl implements DependencyInstaller
             List<Coordinate> versions = deps.resolveAvailableVersions(DependencyQueryBuilder.create(
                      dependency.getCoordinate()).setFilter(new NonSnapshotDependencyFilter()));
 
+            if (versions.isEmpty())
+               versions = deps.resolveAvailableVersions(DependencyQueryBuilder.create(
+                        dependency.getCoordinate()));
+
             if (!versions.isEmpty())
                toInstall = DependencyBuilder.create(dependency).setVersion(
                         versions.get(versions.size() - 1).getVersion());

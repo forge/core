@@ -348,7 +348,6 @@ public class AddonRegistryImpl implements AddonRegistry
                   addon.setRepository(repository);
                   addon.setStatus(AddonStatus.LOADED);
 
-                  System.out.println("Loaded module " + module);
                   tree.depthFirst(new MarkLoadedAddonsDirtyVisitor(tree, addon));
 
                }
