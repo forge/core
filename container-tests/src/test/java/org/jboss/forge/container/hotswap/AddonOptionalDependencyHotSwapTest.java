@@ -83,6 +83,7 @@ public class AddonOptionalDependencyHotSwapTest
 
       ((MutableAddonRepository) repository).enable(depTwoId);
       Addons.waitUntilStarted(depTwo, 10, TimeUnit.SECONDS);
+      Thread.sleep(1000);
 
       Assert.assertNotEquals(depOneClassloader, depOne.getClassLoader());
       Assert.assertNotEquals(depOneClassloader.toString(), depOne.getClassLoader().toString());

@@ -6,19 +6,13 @@
  */
 package org.jboss.forge.container.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,6 +26,12 @@ import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.addons.AddonStatus;
 import org.jboss.forge.container.addons.AddonTree;
+import org.jboss.forge.container.addons.CheckDirtyStatusVisitor;
+import org.jboss.forge.container.addons.MarkDisabledLoadedAddonsDirtyVisitor;
+import org.jboss.forge.container.addons.MarkLoadedAddonsDirtyVisitor;
+import org.jboss.forge.container.addons.StartEnabledAddonsVisitor;
+import org.jboss.forge.container.addons.StopAllAddonsVisitor;
+import org.jboss.forge.container.addons.StopDirtyAddonsVisitor;
 import org.jboss.forge.container.lock.LockManager;
 import org.jboss.forge.container.lock.LockMode;
 import org.jboss.forge.container.modules.AddonModuleLoader;
@@ -42,7 +42,6 @@ import org.jboss.forge.container.services.ServiceRegistry;
 import org.jboss.forge.container.util.AddonFilters;
 import org.jboss.forge.container.util.Assert;
 import org.jboss.forge.container.util.ValuedVisitor;
-import org.jboss.forge.container.util.Visitor;
 import org.jboss.forge.container.versions.SingleVersionRange;
 import org.jboss.modules.Module;
 
@@ -52,10 +51,6 @@ import org.jboss.modules.Module;
 public class AddonRegistryImpl implements AddonRegistry
 {
    private static final Logger logger = Logger.getLogger(AddonRegistryImpl.class.getName());
-   private static final String PROP_CONCURRENT_PLUGINS = "forge.concurrentAddons";
-   private static final int BATCH_SIZE = Integer.getInteger(PROP_CONCURRENT_PLUGINS, Runtime.getRuntime()
-            .availableProcessors());
-   // private static final int BATCH_SIZE = 1;
 
    private final Forge forge;
    private final LockManager lock;
@@ -235,75 +230,6 @@ public class AddonRegistryImpl implements AddonRegistry
       return builder.toString();
    }
 
-   @Override
-   public Future<Void> start(final AddonId id)
-   {
-      return lock.performLocked(LockMode.WRITE, new Callable<Future<Void>>()
-      {
-         @Override
-         public Future<Void> call() throws Exception
-         {
-            AddonImpl addonToStart = getAddon(id);
-            Future<Void> result = addonToStart.getFuture();
-
-            if (addonToStart.canBeStarted())
-            {
-               List<Addon> toStart = new ArrayList<Addon>();
-               calculateAddonsToStart(addonToStart, toStart);
-
-               for (Addon addon : toStart)
-               {
-                  if (addon.getStatus().isStarted())
-                  {
-                     doStop(getAddon(addon.getId()));
-                  }
-               }
-
-               for (Addon addon : toStart)
-               {
-                  loadAddon(addon.getId());
-                  if (addon.getStatus().isLoaded())
-                  {
-                     doStart((AddonImpl) addon);
-                  }
-               }
-
-               result = doStart(addonToStart);
-            }
-
-            return result;
-         }
-
-         private void calculateAddonsToStart(final Addon addonToStart, final List<Addon> toStart)
-         {
-            if (!toStart.contains(addonToStart))
-            {
-               Visitor<Addon> visitor = new Visitor<Addon>()
-               {
-                  @Override
-                  public void visit(Addon instance)
-                  {
-                     for (AddonDependency dependency : instance.getDependencies())
-                     {
-                        if (!toStart.contains(instance))
-                        {
-                           if (dependency.getDependency().equals(addonToStart)
-                                    || toStart.contains(dependency.getDependency()))
-                           {
-                              toStart.add(instance);
-                              calculateAddonsToStart(instance, toStart);
-                           }
-                        }
-                     }
-                  }
-               };
-
-               tree.depthFirst(visitor);
-            }
-         }
-      });
-   }
-
    private AddonImpl loadAddon(AddonId addonId)
    {
       Assert.notNull(addonId, "AddonId to load must not be null.");
@@ -421,6 +347,10 @@ public class AddonRegistryImpl implements AddonRegistry
                   addon.setModule(module);
                   addon.setRepository(repository);
                   addon.setStatus(AddonStatus.LOADED);
+
+                  System.out.println("Loaded module " + module);
+                  tree.depthFirst(new MarkLoadedAddonsDirtyVisitor(tree, addon));
+
                }
                catch (Exception e)
                {
@@ -444,98 +374,33 @@ public class AddonRegistryImpl implements AddonRegistry
       return result;
    }
 
-   @Override
-   public void stop(final Addon addonToStop)
+   public void forceUpdate()
    {
-      Assert.notNull(addonToStop, "Addon must not be null.");
-      Assert.isTrue(tree.contains(addonToStop), "Addon to stop must originate this AddonRegistry.");
-
       lock.performLocked(LockMode.WRITE, new Callable<Void>()
       {
          @Override
          public Void call() throws Exception
          {
-            final List<Addon> toStop = new ArrayList<Addon>();
-            final Queue<Addon> toRestart = new LinkedList<Addon>();
+            Set<AddonId> enabled = getAllEnabled();
 
-            if (addonToStop.getStatus().isStarted())
+            tree.breadthFirst(new MarkDisabledLoadedAddonsDirtyVisitor(tree, enabled));
+
+            CheckDirtyStatusVisitor dirty;
+            do
             {
-               calculateAddonsToStop(addonToStop, toStop, toRestart);
-               toRestart.removeAll(toStop);
+               dirty = new CheckDirtyStatusVisitor();
+               tree.breadthFirst(new StopDirtyAddonsVisitor(tree));
+               tree.depthFirst(dirty);
+            }
+            while (dirty.isDirty());
 
-               Collections.reverse(toStop);
-               for (Addon addon : toStop)
-               {
-                  doStop(addon);
-               }
-
-               for (Addon addon : toRestart)
-               {
-                  doStop(addon);
-               }
-
-               doStop(addonToStop);
-
-               for (Addon addon : toRestart)
-               {
-                  start(addon.getId());
-               }
+            for (AddonId addonId : enabled)
+            {
+               loadAddon(addonId);
             }
 
+            tree.depthFirst(new StartEnabledAddonsVisitor(forge, tree, executor, starting, enabled));
             return null;
-         }
-
-         private void calculateAddonsToStop(final Addon addonToStop, final List<Addon> toStop,
-                  final Queue<Addon> toRestart)
-         {
-            Visitor<Addon> visitor = new Visitor<Addon>()
-            {
-               @Override
-               public void visit(Addon instance)
-               {
-                  if (instance.getStatus().isStarted())
-                  {
-                     for (AddonDependency dependency : instance.getDependencies())
-                     {
-                        if (!(toStop.contains(instance) || toRestart.contains(instance)))
-                        {
-                           if (dependency.getDependency().equals(addonToStop)
-                                    || toStop.contains(dependency.getDependency())
-                                    || toRestart.contains(dependency.getDependency()))
-                           {
-                              if (dependency.isOptional())
-                                 toRestart.add(instance);
-                              else
-                                 toStop.add(instance);
-
-                              calculateAddonsToStop(instance, toStop, toRestart);
-                           }
-                        }
-                     }
-                  }
-               }
-            };
-
-            tree.breadthFirst(visitor);
-         }
-      });
-   }
-
-   public Set<Future<Void>> startAll()
-   {
-      return lock.performLocked(LockMode.WRITE, new Callable<Set<Future<Void>>>()
-      {
-         @Override
-         public Set<Future<Void>> call() throws Exception
-         {
-            Set<Future<Void>> result = new LinkedHashSet<Future<Void>>();
-            List<Addon> toStart = loadAllEnabled();
-
-            for (Addon addonToStart : toStart)
-            {
-               result.add(start(addonToStart.getId()));
-            }
-            return result;
          }
       });
    }
@@ -547,20 +412,7 @@ public class AddonRegistryImpl implements AddonRegistry
          @Override
          public Void call() throws Exception
          {
-            final List<Addon> toStop = new ArrayList<Addon>();
-            tree.breadthFirst(new Visitor<Addon>()
-            {
-               @Override
-               public void visit(Addon addon)
-               {
-                  toStop.add(addon);
-               }
-            });
-
-            for (Addon addon : toStop)
-            {
-               doStop(addon);
-            }
+            tree.breadthFirst(new StopAllAddonsVisitor(tree));
 
             List<Runnable> waiting = executor.shutdownNow();
             if (waiting != null && !waiting.isEmpty())
@@ -582,74 +434,17 @@ public class AddonRegistryImpl implements AddonRegistry
       return loader;
    }
 
-   private void doStop(Addon addon)
+   private Set<AddonId> getAllEnabled()
    {
-      if (addon != null)
-      {
-         AddonRunnable runnable = ((AddonImpl) addon).getRunnable();
-         try
-         {
-            if (runnable != null)
-            {
-               runnable.shutdown();
-            }
-         }
-         catch (Exception e)
-         {
-            logger.log(Level.WARNING, "Failed to shut down addon " + addon, e);
-         }
-         finally
-         {
-            Future<Void> future = addon.getFuture();
-            if (future != null && !future.isDone())
-               future.cancel(true);
-
-            Set<AddonDependency> dependencies = addon.getDependencies();
-            ((AddonImpl) addon).reset();
-
-            for (AddonDependency dependency : dependencies)
-            {
-               tree.reattach(dependency.getDependency());
-            }
-         }
-      }
-   }
-
-   private Future<Void> doStart(AddonImpl addon)
-   {
-      if (executor.isShutdown())
-      {
-         throw new IllegalStateException("Cannot start additional addons once Shutdown has been initiated.");
-      }
-
-      Future<Void> result = null;
-      if (addon.getRunnable() == null)
-      {
-         starting.incrementAndGet();
-         AddonRunnable runnable = new AddonRunnable(forge, addon);
-         result = executor.submit(runnable, null);
-         addon.setFuture(result);
-         addon.setRunnable(runnable);
-      }
-      else
-      {
-         result = addon.getFuture();
-      }
-
-      return result;
-   }
-
-   private List<Addon> loadAllEnabled()
-   {
-      List<Addon> toStart = new ArrayList<Addon>();
+      Set<AddonId> result = new HashSet<AddonId>();
       for (AddonRepository repository : forge.getRepositories())
       {
          for (AddonId enabled : repository.listEnabled())
          {
-            toStart.add(getAddon(enabled));
+            result.add(enabled);
          }
       }
-      return toStart;
+      return result;
    }
 
    public void finishedStarting(AddonImpl addon)
@@ -665,7 +460,7 @@ public class AddonRegistryImpl implements AddonRegistry
       /*
        * Force a full configuration rescan.
        */
-      startAll();
+      forceUpdate();
       return starting.get() > 0;
    }
 }

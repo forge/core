@@ -62,6 +62,8 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       File destDir = repository.getAddonBaseDir(addonToDeploy);
       destDir.mkdirs();
 
+      System.out.println("Deploying [" + addonToDeploy + "] to repository [" + repository + "]");
+
       if (archive instanceof ForgeArchive)
       {
          ShrinkWrapUtil.toFile(new File(destDir.getAbsolutePath() + "/" + archive.getName()), archive);
@@ -69,11 +71,22 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
 
          repository.deploy(addonToDeploy, ((ForgeArchive) archive).getAddonDependencies(), new ArrayList<File>());
          repository.enable(addonToDeploy);
-         
+
+         while (runnable.forge.getStatus().isStarting())
+         {
+            try
+            {
+               Thread.sleep(100);
+            }
+            catch (InterruptedException e)
+            {
+               e.printStackTrace();
+            }
+         }
          AddonRegistry registry = runnable.getForge().getAddonRegistry();
          try
          {
-            Future<Void> future = registry.start(addonToDeploy);
+            Future<Void> future = registry.getAddon(addonToDeploy).getFuture();
             future.get();
             Addon addon = registry.getAddon(addonToDeploy);
             if (addon.getStatus().isFailed())
@@ -101,9 +114,6 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
          throw new IllegalArgumentException(
                   "Invalid Archive type. Ensure that your @Deployment method returns type 'ForgeArchive'.");
       }
-
-      System.out.println("Deployed [" + addonToDeploy + "]");
-
 
       return new ProtocolMetaData().addContext(runnable.getForge());
    }
@@ -160,7 +170,6 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
          runnable = new ForgeRunnable(addonDir, ClassLoader.getSystemClassLoader());
          thread = new Thread(runnable, "Arquillian Forge Runtime");
          System.out.println("Executing test case with addon dir [" + addonDir + "]");
-         this.repository = (MutableAddonRepository) runnable.forge.addRepository(AddonRepositoryMode.MUTABLE, addonDir);
 
          thread.start();
       }
@@ -186,12 +195,12 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    {
       AddonId addonToUndeploy = getAddonEntry(deploymentInstance.get());
       AddonRegistry registry = runnable.getForge().getAddonRegistry();
+      System.out.print("Undeploying [" + addonToUndeploy + "] ... ");
 
       try
       {
          repository.disable(addonToUndeploy);
          Addon addonToStop = registry.getAddon(addonToUndeploy);
-         registry.stop(addonToStop);
          Addons.waitUntilStopped(addonToStop);
       }
       catch (Exception e)
@@ -201,7 +210,6 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       finally
       {
          repository.undeploy(addonToUndeploy);
-         System.out.println("Undeployed [" + addonToUndeploy + "]");
       }
    }
 
@@ -237,8 +245,9 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
             @Override
             public Object call() throws Exception
             {
+               repository = (MutableAddonRepository) runnable.forge
+                        .addRepository(AddonRepositoryMode.MUTABLE, addonDir);
                forge.setServerMode(true);
-               forge.addRepository(AddonRepositoryMode.MUTABLE, addonDir);
                forge.start(loader);
                return forge;
             }

@@ -92,7 +92,7 @@ public class AddonTree implements Iterable<Addon>
    /*
     * Traversal methods.
     */
-   public void depthFirst(Visitor<Addon> visitor)
+   public synchronized void depthFirst(Visitor<Addon> visitor)
    {
       Set<Addon> seen = new HashSet<Addon>();
       seen.add(root);
@@ -113,7 +113,7 @@ public class AddonTree implements Iterable<Addon>
       }
    }
 
-   public void breadthFirst(Visitor<Addon> visitor)
+   public synchronized void breadthFirst(Visitor<Addon> visitor)
    {
       Queue<Addon> queue = new LinkedList<Addon>();
       Set<Addon> seen = new HashSet<Addon>();
@@ -181,4 +181,23 @@ public class AddonTree implements Iterable<Addon>
       return visitor.hasResult();
    }
 
+   @Override
+   public String toString()
+   {
+      final StringBuilder result = new StringBuilder();
+      breadthFirst(new Visitor<Addon>()
+      {
+         @Override
+         public void visit(Addon instance)
+         {
+            result.append(instance.toString());
+
+            if (((AddonImpl) instance).isDirty())
+               result.append(" - dirty");
+
+            result.append("\n");
+         }
+      });
+      return result.toString();
+   }
 }
