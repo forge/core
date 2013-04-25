@@ -82,6 +82,13 @@ public class EntityWidgetBuilder
     */
 
    private static final String TOP_LEVEL_PARAMETERIZED_TYPE = "top-level-parameterized-type";
+   
+   /**
+    * When expanding OneToOne or Embedded types in the data table rows, we must also generate the right EL expressions,
+    * containing references to the instance being expanded instead of the top level element.
+    */
+   
+   private static final String PARAMETERIZED_TYPE_PATH = "parameterized-type-path";
 
    /**
     * Current Forge Configuration. Useful to retrieve <code>targetDir</code>.
@@ -500,6 +507,7 @@ public class EntityWidgetBuilder
             Map<String, String> embeddedAttributes = CollectionUtils.newHashMap();
             embeddedAttributes.put(TOP_LEVEL_PARAMETERIZED_TYPE, componentType);
             embeddedAttributes.put(PARAMETERIZED_TYPE, columnType);
+            embeddedAttributes.put(PARAMETERIZED_TYPE_PATH, columnAttributes.get(NAME));
             addColumnComponents(dataTable, embeddedAttributes, elements, metawidget);
             return;
          }
@@ -515,7 +523,6 @@ public class EntityWidgetBuilder
       }
 
       // Create the column
-
       super.addColumnComponent(dataTable, tableAttributes, elementName, columnAttributes, metawidget);
       List<StaticWidget> columns = dataTable.getChildren();
       HtmlColumn column = (HtmlColumn) columns.get(columns.size() - 1);
@@ -566,6 +573,18 @@ public class EntityWidgetBuilder
                            + primaryKeyName));
          link.getChildren().add(param);
          link.getChildren().add(column.getChildren().remove(1));
+         if (tableAttributes.get(PARAMETERIZED_TYPE_PATH) != null)
+         {
+            // Recreate the EL expression. This is done to ensure that correctly nested EL expressions are created for
+            // expanded entities. The originally created expression in super.addColumnComponent is incorrect for
+            // expanded entities since it assumes that all referenced names are at the same level
+            String valueExpression = dataTable.getAttribute("var") + StringUtils.SEPARATOR_DOT_CHAR
+                     + tableAttributes.get(PARAMETERIZED_TYPE_PATH) + StringUtils.SEPARATOR_DOT_CHAR
+                     + StringUtils.decapitalize(columnAttributes.get(NAME));
+            
+            StaticHtmlMetawidget output = (StaticHtmlMetawidget) link.getChildren().get(1);
+            output.setValue(valueExpression);
+         }
          column.getChildren().add(link);
 
          // If bidirectional, add a footer facet
