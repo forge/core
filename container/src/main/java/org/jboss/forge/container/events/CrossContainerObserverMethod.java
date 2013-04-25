@@ -7,7 +7,7 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.CDI;
-import javax.enterprise.inject.spi.InjectionPoint;
+import javax.enterprise.inject.spi.EventMetadata;
 
 import org.jboss.forge.container.addons.Addon;
 import org.jboss.forge.container.addons.AddonRegistry;
@@ -19,11 +19,11 @@ import org.jboss.forge.container.util.Annotations;
 
 public class CrossContainerObserverMethod
 {
-   public void handleEvent(@Observes @Any Object event, InjectionPoint ip)
+   public void handleEvent(@Observes @Any Object event, EventMetadata metadata)
    {
       if (Annotations.isAnnotationPresent(event.getClass(), Exported.class))
       {
-         Set<Annotation> qualifiers = ip.getQualifiers();
+         Set<Annotation> qualifiers = metadata.getQualifiers();
          try
          {
             ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();

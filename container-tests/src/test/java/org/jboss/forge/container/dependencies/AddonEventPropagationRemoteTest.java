@@ -13,14 +13,12 @@ import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Ignore
 @RunWith(Arquillian.class)
 public class AddonEventPropagationRemoteTest
 {
