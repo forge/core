@@ -105,6 +105,8 @@ public class ProxiesTest
       Assert.assertTrue(Proxies.isLanguageType(InputStream.class));
       Assert.assertTrue(Proxies.isLanguageType(Runnable.class));
       Assert.assertTrue(Proxies.isLanguageType(String.class));
+      Assert.assertTrue(Proxies.isLanguageType(Class.class));
+      Assert.assertTrue(Proxies.isLanguageType(ClassLoader.class));
       Assert.assertFalse(Proxies.isLanguageType(BigDecimal.class));
       Assert.assertFalse(Proxies.isLanguageType(List.class));
       Assert.assertFalse(Proxies.isLanguageType(Set.class));
