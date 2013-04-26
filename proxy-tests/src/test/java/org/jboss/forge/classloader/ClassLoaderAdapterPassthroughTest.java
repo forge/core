@@ -7,25 +7,14 @@
 
 package org.jboss.forge.classloader;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
-import org.jboss.forge.classloader.mock.collisions.ClassCreatesInstanceFromClassLoader;
-import org.jboss.forge.classloader.mock.collisions.ClassImplementsInterfaceExtendsInterfaceValue;
-import org.jboss.forge.classloader.mock.collisions.ClassImplementsInterfaceModifiableContext;
-import org.jboss.forge.classloader.mock.collisions.ClassImplementsInterfaceWithArrayParameterModification;
-import org.jboss.forge.classloader.mock.collisions.ClassImplementsInterfaceWithGetterAndSetter;
-import org.jboss.forge.classloader.mock.collisions.ClassImplementsInterfaceWithPassthroughMethod;
+import org.jboss.forge.classloader.mock.MockResult;
 import org.jboss.forge.classloader.mock.collisions.ClassWithGetterAndSetter;
 import org.jboss.forge.classloader.mock.collisions.ClassWithPassthroughMethod;
-import org.jboss.forge.classloader.mock.collisions.InterfaceValue;
-import org.jboss.forge.classloader.mock.collisions.InterfaceWithGetterAndSetter;
-import org.jboss.forge.classloader.mock.collisions.InterfaceWithPassthroughMethod;
 import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.container.repositories.AddonDependencyEntry;
@@ -44,6 +33,7 @@ public class ClassLoaderAdapterPassthroughTest
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                .addBeansXML()
+               .addClass(MockResult.class)
                .addAsAddonDependencies(
                         AddonDependencyEntry.create(AddonId.from("dep", "1"))
                );
@@ -65,7 +55,7 @@ public class ClassLoaderAdapterPassthroughTest
    private AddonRegistry registry;
 
    @Test
-   public void testParameterTypeCollision() throws Exception
+   public void testParameterPassthrough() throws Exception
    {
       ClassLoader thisLoader = ClassLoaderAdapterPassthroughTest.class.getClassLoader();
       ClassLoader loader1 = registry.getAddon(AddonId.from("dep", "1")).getClassLoader();

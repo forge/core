@@ -298,8 +298,11 @@ public class ClassLoaderAdapterCallback implements MethodHandler
                   }
                   catch (ClassNotFoundException cnfe)
                   {
-                     // No way, here is the original class and god bless you :)
-                     loadedClass = paramClassValue;
+                     /*
+                      * No way, here is the original class and god bless you :) Also unwrap any proxy types since we
+                      * don't know about this object, there is no reason to pass a proxied class type.
+                      */
+                     loadedClass = Proxies.unwrapProxyTypes(paramClassValue);
                   }
                }
                parameterValues.add(loadedClass);

@@ -6,6 +6,8 @@
  */
 package org.jboss.forge.classloader.mock.collisions;
 
+import org.jboss.forge.proxy.Proxies;
+
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
@@ -30,4 +32,8 @@ public class ClassWithClassAsParameter
       return (referenceType.isAssignableFrom(type));
    }
 
+   public boolean isProxyType(Class<?> type)
+   {
+      return Proxies.isProxyType(type);
+   }
 }

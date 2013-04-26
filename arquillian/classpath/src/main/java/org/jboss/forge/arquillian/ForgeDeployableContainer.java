@@ -195,7 +195,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    {
       AddonId addonToUndeploy = getAddonEntry(deploymentInstance.get());
       AddonRegistry registry = runnable.getForge().getAddonRegistry();
-      System.out.print("Undeploying [" + addonToUndeploy + "] ... ");
+      System.out.println("Undeploying [" + addonToUndeploy + "] ... ");
 
       try
       {
