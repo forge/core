@@ -70,20 +70,21 @@ class AddonProjectFactory
       project.getFacet(PackagingFacet.class).setPackagingType("pom");
       MetadataFacet metadata = project.getFacet(MetadataFacet.class);
       // TODO: Verify nomenclature
-      metadata.setProjectName(metadata.getProjectName() + "-parent");
+      String projectName = metadata.getProjectName();
+      metadata.setProjectName(projectName + "-parent");
       project.getProjectRoot().getChild("src").delete(true);
       installSelectedAddons(project, dependencyAddons, true);
 
       // Create ADDON Project
-      createSubmoduleProject(project, "addon", ForgeAddonFacet.class);
+      createSubmoduleProject(project, "addon", projectName, ForgeAddonFacet.class);
       // Create API Project
-      createSubmoduleProject(project, "api", ForgeAddonAPIFacet.class);
+      createSubmoduleProject(project, "api", projectName + "-api", ForgeAddonAPIFacet.class);
       // Create IMPL Project
-      createSubmoduleProject(project, "impl", ForgeAddonImplFacet.class);
+      createSubmoduleProject(project, "impl", projectName + "-impl", ForgeAddonImplFacet.class);
       // Create SPI Project
-      createSubmoduleProject(project, "spi", ForgeAddonSPIFacet.class);
+      createSubmoduleProject(project, "spi", projectName + "-spi", ForgeAddonSPIFacet.class);
       // Create TESTS Project
-      createSubmoduleProject(project, "tests", ForgeAddonTestFacet.class);
+      createSubmoduleProject(project, "tests", projectName + "-tests", ForgeAddonTestFacet.class);
       return project;
    }
 
@@ -117,7 +118,7 @@ class AddonProjectFactory
       }
    }
 
-   private Project createSubmoduleProject(final Project parent, String moduleName,
+   private Project createSubmoduleProject(final Project parent, String moduleName, String artifactId,
             Class<? extends ProjectFacet>... requiredProjectFacets)
    {
       DirectoryResource location = parent.getProjectRoot().getOrCreateChildDirectory(moduleName);
@@ -129,8 +130,7 @@ class AddonProjectFactory
       Project project = projectFactory.createProject(location, facets);
 
       MetadataFacet metadata = project.getFacet(MetadataFacet.class);
-      MetadataFacet metadataParent = parent.getFacet(MetadataFacet.class);
-      metadata.setProjectName(metadataParent.getProjectName().replace("-parent", "") + "-" + moduleName);
+      metadata.setProjectName(artifactId);
       return project;
    }
 }
