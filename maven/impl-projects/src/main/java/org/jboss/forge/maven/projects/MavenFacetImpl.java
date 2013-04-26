@@ -165,10 +165,27 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
          MavenPomResource pom = getPomResource();
          if (!pom.createNewFile())
             throw new IllegalStateException("Could not create POM file.");
-
-         pom.setContents(getClass().getClassLoader().getResourceAsStream("/pom-template.xml"));
+         pom.setContents(createDefaultPOM());
       }
       return isInstalled();
+   }
+
+   private String createDefaultPOM()
+   {
+      MavenXpp3Writer writer = new MavenXpp3Writer();
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      org.apache.maven.project.MavenProject mavenProject = new org.apache.maven.project.MavenProject();
+      mavenProject.setModelVersion("4.0.0");
+      try
+      {
+         writer.write(baos, mavenProject.getModel());
+         return baos.toString();
+      }
+      catch (IOException e)
+      {
+         // Should not happen
+         throw new RuntimeException("Failed to create default pom.xml", e);
+      }
    }
 
    @Override

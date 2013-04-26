@@ -28,7 +28,6 @@ import org.jboss.forge.projects.ProjectFacet;
 import org.jboss.forge.projects.ProjectFactory;
 import org.jboss.forge.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.projects.facets.MetadataFacet;
-import org.jboss.forge.projects.facets.PackagingFacet;
 import org.jboss.forge.resource.DirectoryResource;
 
 /**
@@ -67,12 +66,10 @@ class AddonProjectFactory
    public Project createAddonProject(Project project, Version forgeVersion, Iterable<AddonId> dependencyAddons)
    {
       // Project is the parent project
-      project.getFacet(PackagingFacet.class).setPackagingType("pom");
       MetadataFacet metadata = project.getFacet(MetadataFacet.class);
       // TODO: Verify nomenclature
       String projectName = metadata.getProjectName();
       metadata.setProjectName(projectName + "-parent");
-      project.getProjectRoot().getChild("src").delete(true);
       installSelectedAddons(project, dependencyAddons, true);
 
       // Create ADDON Project
@@ -85,6 +82,8 @@ class AddonProjectFactory
       createSubmoduleProject(project, "spi", projectName + "-spi", ForgeAddonSPIFacet.class);
       // Create TESTS Project
       createSubmoduleProject(project, "tests", projectName + "-tests", ForgeAddonTestFacet.class);
+
+      project.getProjectRoot().getChild("src").delete(true);
       return project;
    }
 
