@@ -102,4 +102,9 @@ public interface FileResource<T extends FileResource<T>> extends Resource<File>
     */
    public boolean isExecutable();
 
+   /**
+    * A parent for a FileResource is always a DirectoryResource
+    */
+   @Override
+   public DirectoryResource getParent();
 }
