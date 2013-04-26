@@ -6,6 +6,8 @@
  */
 package org.jboss.forge.classloader.mock.collisions;
 
+import org.jboss.forge.proxy.Proxies;
+
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
@@ -22,5 +24,10 @@ public class ClassWithGetterAndSetter
    public void setPassthrough(ClassWithPassthroughMethod passthrough)
    {
       this.passthrough = passthrough;
+   }
+
+   public boolean assertPassthroughNotProxied()
+   {
+      return Proxies.isForgeProxy(passthrough);
    }
 }
