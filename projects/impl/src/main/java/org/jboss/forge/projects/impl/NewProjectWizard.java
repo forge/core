@@ -53,6 +53,10 @@ public class NewProjectWizard implements UIWizard
    private UIInput<String> topLevelPackage;
 
    @Inject
+   @WithAttributes(label = "Version:", required = false)
+   private UIInput<String> version;
+
+   @Inject
    @WithAttributes(label = "Project location:")
    private UIInput<DirectoryResource> targetLocation;
 
@@ -80,6 +84,8 @@ public class NewProjectWizard implements UIWizard
    @Override
    public void initializeUI(final UIBuilder builder) throws Exception
    {
+      version.setDefaultValue("1.0.0-SNAPSHOT");
+
       UISelection<Resource<?>> currentSelection = builder.getUIContext().getInitialSelection();
       if (currentSelection != null)
       {
@@ -123,7 +129,7 @@ public class NewProjectWizard implements UIWizard
          type.setDefaultValue(projectType);
       }
       type.setValueChoices(projectTypes);
-      builder.add(named).add(topLevelPackage).add(targetLocation).add(overwrite).add(type);
+      builder.add(named).add(topLevelPackage).add(version).add(targetLocation).add(overwrite).add(type);
    }
 
    @Override
@@ -166,6 +172,7 @@ public class NewProjectWizard implements UIWizard
          {
             MetadataFacet metadataFacet = project.getFacet(MetadataFacet.class);
             metadataFacet.setProjectName(named.getValue());
+            metadataFacet.setProjectVersion(version.getValue());
             metadataFacet.setTopLevelPackage(topLevelPackage.getValue());
 
             context.setAttribute(Project.class, project);

@@ -16,15 +16,17 @@ import org.jboss.forge.projects.ProjectFacet;
  */
 public interface MetadataFacet extends ProjectFacet
 {
-   void setProjectName(String name);
-
    String getProjectName();
 
-   void setTopLevelPackage(String groupId);
+   void setProjectName(String name);
 
    String getTopLevelPackage();
 
+   void setTopLevelPackage(String groupId);
+
    String getProjectVersion();
+
+   void setProjectVersion(String version);
 
    Dependency getOutputDependency();
 

@@ -40,6 +40,15 @@ public class MavenMetadataFacet extends AbstractFacet<Project> implements Metada
    }
 
    @Override
+   public void setProjectVersion(String version)
+   {
+      MavenFacet mvn = getOrigin().getFacet(MavenFacet.class);
+      Model pom = mvn.getPOM();
+      pom.setVersion(version);
+      mvn.setPOM(pom);
+   }
+
+   @Override
    public void setOrigin(final Project project)
    {
       super.setOrigin(project);

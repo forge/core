@@ -22,6 +22,7 @@ import org.jboss.forge.projects.Project;
 import org.jboss.forge.projects.ProjectFactory;
 import org.jboss.forge.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.projects.facets.DependencyFacet;
+import org.jboss.forge.projects.facets.MetadataFacet;
 import org.jboss.forge.resource.DirectoryResource;
 import org.jboss.forge.resource.ResourceFactory;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -77,6 +78,10 @@ public class DependencyInstallerImplTest
                DirectoryResource.class);
       projectDir = addonDir.createTempResource();
       project = projectFactory.createProject(projectDir);
+      MetadataFacet metadataFacet = project.getFacet(MetadataFacet.class);
+      metadataFacet.setProjectName("test");
+      metadataFacet.setProjectVersion("1.0");
+      metadataFacet.setTopLevelPackage("org.test");
       Assert.assertNotNull("Could not create test project", project);
    }
 
