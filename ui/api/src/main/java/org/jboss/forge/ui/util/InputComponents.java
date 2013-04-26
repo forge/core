@@ -23,9 +23,9 @@ import org.jboss.forge.ui.input.SingleValued;
 
 /**
  * Utilities for {@link InputComponent} objects
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public final class InputComponents
@@ -66,7 +66,7 @@ public final class InputComponents
 
    /**
     * Sets the value in the provided {@link InputComponent}, making any necessary conversions
-    *
+    * 
     * @param component
     * @param value
     */
@@ -127,7 +127,7 @@ public final class InputComponents
 
    /**
     * Returns the converted value that matches the input
-    *
+    * 
     * @param input
     * @param value
     * @return
@@ -135,28 +135,31 @@ public final class InputComponents
    private static Object convertToUIInputValue(final ConverterFactory converterFactory,
             final InputComponent<?, Object> input, final Object value)
    {
-      final Object convertedType;
+      Object convertedType = value;
       Class<Object> sourceType = (Class<Object>) value.getClass();
       Class<Object> targetType = input.getValueType();
       Converter<String, Object> valueConverter = input.getValueConverter();
-      if (valueConverter != null)
+      if (!targetType.isAssignableFrom(sourceType))
       {
-         if (value instanceof String)
+         if (valueConverter != null)
          {
-            convertedType = valueConverter.convert((String) value);
+            if (value instanceof String)
+            {
+               convertedType = valueConverter.convert((String) value);
+            }
+            else
+            {
+               Converter<Object, String> stringConverter = converterFactory.getConverter(sourceType, String.class);
+               CompositeConverter compositeConverter = new CompositeConverter(stringConverter, valueConverter);
+               convertedType = compositeConverter.convert(value);
+            }
+
          }
          else
          {
-            Converter<Object, String> stringConverter = converterFactory.getConverter(sourceType, String.class);
-            CompositeConverter compositeConverter = new CompositeConverter(stringConverter, valueConverter);
-            convertedType = compositeConverter.convert(value);
+            Converter<Object, Object> converter = converterFactory.getConverter(sourceType, targetType);
+            convertedType = converter.convert(value);
          }
-
-      }
-      else
-      {
-         Converter<Object, Object> converter = converterFactory.getConverter(sourceType, targetType);
-         convertedType = converter.convert(value);
       }
       return convertedType;
    }
@@ -185,7 +188,7 @@ public final class InputComponents
 
    /**
     * Validate if the input has a value. If not, return the error message
-    *
+    * 
     * @param input
     * @return
     */
@@ -210,9 +213,9 @@ public final class InputComponents
    }
 
    /**
-    *
+    * 
     * Returns the item label converter, that is
-    *
+    * 
     * @param converterFactory May be null
     * @param input
     * @return the item label converter of a {@link SelectComponent} or a {@link Converter} instance from the
