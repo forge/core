@@ -7,6 +7,8 @@ package org.jboss.forge.maven;
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
+import java.io.File;
+
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -29,6 +31,7 @@ import org.jboss.forge.resource.DirectoryResource;
 import org.jboss.forge.resource.FileResource;
 import org.jboss.forge.resource.ResourceFactory;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.FileAsset;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,6 +49,8 @@ public class MavenProjectLocatorTest
    {
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
+               .add(new FileAsset(new File("src/test/resources/pom-template.xml")),
+                        "org/jboss/forge/maven/pom-template.xml")
                .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create(AddonId.from("org.jboss.forge:maven", "2.0.0-SNAPSHOT")),
@@ -79,7 +84,7 @@ public class MavenProjectLocatorTest
       FileResource<?> pomFile = projectDir.getChild("pom.xml").reify(FileResource.class);
       Assert.assertFalse(locator.containsProject(projectDir));
       pomFile.createNewFile();
-      pomFile.setContents(getClass().getClassLoader().getResourceAsStream("/pom-template.xml"));
+      pomFile.setContents(getClass().getResourceAsStream("pom-template.xml"));
 
       Assert.assertTrue(locator.containsProject(projectDir));
 

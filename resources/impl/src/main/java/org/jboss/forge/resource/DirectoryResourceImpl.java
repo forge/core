@@ -157,7 +157,7 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
    }
 
    @Override
-   public synchronized Resource<?> getParent()
+   public synchronized DirectoryResource getParent()
    {
       if (parent == null)
       {
@@ -169,7 +169,7 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
 
          parent = createFrom(parentFile);
       }
-      return parent;
+      return (DirectoryResource) parent;
    }
 
    @Override

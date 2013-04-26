@@ -17,7 +17,7 @@ import org.jboss.forge.resource.DirectoryResource;
 
 /**
  * Setup parent-child relation of Maven projects.
- * 
+ *
  * @author <a href="mailto:torben@jit-central.com">Torben Jaeger</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -52,6 +52,9 @@ public class MavenMultiModuleProvider implements ProjectAssociationProvider
          projectParent.setArtifactId(parentPom.getArtifactId());
          projectParent.setVersion(parentPom.getVersion());
 
+         // Reuse GroupId and version from parent
+         pom.setGroupId(null);
+         pom.setVersion(null);
          pom.setParent(projectParent);
          projectMavenFacet.setPOM(pom);
       }

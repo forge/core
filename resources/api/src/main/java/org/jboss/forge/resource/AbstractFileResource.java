@@ -82,7 +82,7 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
     * @return An instance of the resource parent.
     */
    @Override
-   public Resource<?> getParent()
+   public DirectoryResource getParent()
    {
       return file.getParentFile() != null ? resourceFactory.create(DirectoryResource.class, file.getParentFile())
                : null;
