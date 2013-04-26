@@ -376,9 +376,9 @@ public class Proxies
    }
 
    /**
-    * Determine if the given {@link Class} type is a native language type.
+    * Determine if the given {@link Class} type does not require {@link ClassLoader} proxying.
     */
-   public static boolean isLanguageType(Class<?> type)
+   public static boolean isPassthroughType(Class<?> type)
    {
       boolean result = type.getName().startsWith("[L")
                || type.getName().matches("^(java\\.lang).*")
@@ -387,6 +387,15 @@ public class Proxies
                || type.isPrimitive();
 
       result = result && !(Iterable.class.getName().equals(type.getName()));
+
+      return result;
+   }
+
+   public static boolean isLanguageType(Class<?> type)
+   {
+      boolean result = type.getName().startsWith("[L")
+               || type.getName().matches("^(java\\.).*")
+               || type.isPrimitive();
 
       return result;
    }

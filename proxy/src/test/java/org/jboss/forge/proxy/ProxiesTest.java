@@ -97,7 +97,7 @@ public class ProxiesTest
    }
 
    @Test
-   public void testJavaLangAndJavaIOAreLanguageTypes() throws Exception
+   public void testIsLangugageType() throws Exception
    {
       Object[] foo = new Object[] {};
       Assert.assertTrue(Proxies.isLanguageType(foo.getClass()));
@@ -107,10 +107,29 @@ public class ProxiesTest
       Assert.assertTrue(Proxies.isLanguageType(String.class));
       Assert.assertTrue(Proxies.isLanguageType(Class.class));
       Assert.assertTrue(Proxies.isLanguageType(ClassLoader.class));
-      Assert.assertFalse(Proxies.isLanguageType(BigDecimal.class));
-      Assert.assertFalse(Proxies.isLanguageType(List.class));
-      Assert.assertFalse(Proxies.isLanguageType(Set.class));
-      Assert.assertFalse(Proxies.isLanguageType(Map.class));
+      Assert.assertTrue(Proxies.isLanguageType(BigDecimal.class));
+      Assert.assertTrue(Proxies.isLanguageType(List.class));
+      Assert.assertTrue(Proxies.isLanguageType(Set.class));
+      Assert.assertTrue(Proxies.isLanguageType(Iterable.class));
+      Assert.assertTrue(Proxies.isLanguageType(Map.class));
+   }
+
+   @Test
+   public void testCertainLangugageTypesRequireProxying() throws Exception
+   {
+      Object[] foo = new Object[] {};
+      Assert.assertTrue(Proxies.isPassthroughType(foo.getClass()));
+      Assert.assertTrue(Proxies.isPassthroughType(Object.class));
+      Assert.assertTrue(Proxies.isPassthroughType(InputStream.class));
+      Assert.assertTrue(Proxies.isPassthroughType(Runnable.class));
+      Assert.assertTrue(Proxies.isPassthroughType(String.class));
+      Assert.assertTrue(Proxies.isPassthroughType(Class.class));
+      Assert.assertTrue(Proxies.isPassthroughType(ClassLoader.class));
+      Assert.assertFalse(Proxies.isPassthroughType(BigDecimal.class));
+      Assert.assertFalse(Proxies.isPassthroughType(List.class));
+      Assert.assertFalse(Proxies.isPassthroughType(Set.class));
+      Assert.assertFalse(Proxies.isPassthroughType(Iterable.class));
+      Assert.assertFalse(Proxies.isPassthroughType(Map.class));
    }
 
 }

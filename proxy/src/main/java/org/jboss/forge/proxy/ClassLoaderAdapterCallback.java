@@ -227,11 +227,11 @@ public class ClassLoaderAdapterCallback implements MethodHandler
    private boolean returnTypeNeedsEnhancement(Class<?> methodReturnType, Object returnValue,
             Class<?> unwrappedReturnValueType)
    {
-      if (Proxies.isLanguageType(unwrappedReturnValueType))
+      if (Proxies.isPassthroughType(unwrappedReturnValueType))
       {
          return false;
       }
-      else if (!Object.class.equals(methodReturnType) && Proxies.isLanguageType(methodReturnType))
+      else if (!Object.class.equals(methodReturnType) && Proxies.isPassthroughType(methodReturnType))
       {
          return false;
       }
@@ -315,7 +315,7 @@ public class ClassLoaderAdapterCallback implements MethodHandler
             else
             {
                final Class<?> parameterType = parameterValue.getClass();
-               if (!Proxies.isLanguageType(parameterType) 
+               if ((!Proxies.isPassthroughType(delegateParameterType) && Proxies.isLanguageType(delegateParameterType))
                         || !delegateParameterType.isAssignableFrom(parameterType))
                {
                   Class<?>[] compatibleClassHierarchy = ProxyTypeInspector.getCompatibleClassHierarchy(
