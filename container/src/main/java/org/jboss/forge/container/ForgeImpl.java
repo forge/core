@@ -44,6 +44,8 @@ public class ForgeImpl implements Forge
 
    private final LockManager lock = new LockManagerImpl();
 
+   private String[] args;
+
    public ForgeImpl()
    {
       if (!AddonRepositoryImpl.hasRuntimeAPIVersion())
@@ -209,6 +211,19 @@ public class ForgeImpl implements Forge
    {
       alive = false;
       return this;
+   }
+
+   @Override
+   public void setArgs(String[] args)
+   {
+      assertNotAlive();
+      this.args = args;
+   }
+
+   @Override
+   public String[] getArgs()
+   {
+      return args;
    }
 
    @Override

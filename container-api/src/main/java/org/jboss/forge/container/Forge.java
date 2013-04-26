@@ -103,4 +103,18 @@ public interface Forge
     */
    public ContainerStatus getStatus();
 
+   /**
+    * Set the arguments with which {@link Forge} should start. Typically this will simply be passed through from
+    * <code>public static void main(String[] args)</code>.
+    */
+   public void setArgs(String[] args);
+
+   /**
+    * Get the arguments with which {@link Forge} should start. Typically this will simply be passed through from
+    * <code>public static void main(String[] args)</code>.
+    * 
+    * @return the arguments, or <code>null</code> if no arguments were set.
+    */
+   public String[] getArgs();
+
 }

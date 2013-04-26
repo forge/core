@@ -98,6 +98,8 @@ public class Bootstrap
       String installAddon = null;
       String removeAddon = null;
       forge = ServiceLoader.load(Forge.class).iterator().next();
+      
+      forge.setArgs(args);
 
       if (args.length > 0)
       {
