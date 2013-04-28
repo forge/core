@@ -62,20 +62,22 @@ public class ExportedInstanceLazyLoader implements ForgeProxy
          if (ClassLoaders.containsClass(addon.getClassLoader(), serviceType))
          {
             Addons.waitUntilStarted(addon);
-
-            ServiceRegistry serviceRegistry = addon.getServiceRegistry();
-            if (serviceRegistry.hasService(serviceType))
+            if (!addon.getStatus().isFailed())
             {
-               ExportedInstance<?> instance = serviceRegistry.getExportedInstance(serviceType);
-               Assert.notNull(instance, "Exported Instance of [" + serviceType.getName()
-                        + "] not found in originating ServiceRegistry [" + addon.getId() + "].");
-               if (instance instanceof ExportedInstanceImpl)
-                  // FIXME remove the need for this implementation coupling
-                  result = ((ExportedInstanceImpl<?>) instance).get(new LocalServiceInjectionPoint(injectionPoint,
-                           serviceType));
-               else
-                  result = instance.get();
-               break;
+               ServiceRegistry serviceRegistry = addon.getServiceRegistry();
+               if (serviceRegistry.hasService(serviceType))
+               {
+                  ExportedInstance<?> instance = serviceRegistry.getExportedInstance(serviceType);
+                  Assert.notNull(instance, "Exported Instance of [" + serviceType.getName()
+                           + "] not found in originating ServiceRegistry [" + addon.getId() + "].");
+                  if (instance instanceof ExportedInstanceImpl)
+                     // FIXME remove the need for this implementation coupling
+                     result = ((ExportedInstanceImpl<?>) instance).get(new LocalServiceInjectionPoint(injectionPoint,
+                              serviceType));
+                  else
+                     result = instance.get();
+                  break;
+               }
             }
          }
       }

@@ -1,3 +1,9 @@
+/*
+ * Copyright 2012 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Eclipse Public License version 1.0, available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.jboss.forge.container.services;
 
 import java.lang.annotation.Annotation;
@@ -12,6 +18,9 @@ import javax.enterprise.inject.spi.Annotated;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.InjectionPoint;
 
+/**
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ */
 public class ExportedInstanceInjectionPoint implements InjectionPoint
 {
    private final InjectionPoint wrapped;
@@ -70,6 +79,6 @@ public class ExportedInstanceInjectionPoint implements InjectionPoint
    @Override
    public String toString()
    {
-      return wrapped.getAnnotated().getBaseType().toString();
+      return wrapped.toString();
    }
 }
