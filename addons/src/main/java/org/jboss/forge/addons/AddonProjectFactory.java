@@ -10,6 +10,7 @@ package org.jboss.forge.addons;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
@@ -39,6 +40,9 @@ import org.jboss.forge.resource.DirectoryResource;
 @SuppressWarnings("unchecked")
 class AddonProjectFactory
 {
+
+   private Logger log = Logger.getLogger(getClass().getName());
+
    @Inject
    private FacetFactory facetFactory;
 
@@ -70,6 +74,14 @@ class AddonProjectFactory
       // TODO: Verify nomenclature
       String projectName = metadata.getProjectName();
       metadata.setProjectName(projectName + "-parent");
+      DirectoryResource newRoot = project.getProjectRoot().getParent().getChildDirectory(metadata.getProjectName());
+      // FORGE-877: there's an eclipse (not m2e) limitation that says if a project is located directly in the workspace
+      // folder, then the project name must match the project folder name
+      if (!project.getProjectRoot().renameTo(newRoot))
+      {
+         log.warning("Could not rename project root. Erasing " + newRoot);
+         newRoot.delete(true);
+      }
       installSelectedAddons(project, dependencyAddons, true);
 
       // Create ADDON Project
