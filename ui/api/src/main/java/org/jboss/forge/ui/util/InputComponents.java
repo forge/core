@@ -23,9 +23,9 @@ import org.jboss.forge.ui.input.SingleValued;
 
 /**
  * Utilities for {@link InputComponent} objects
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ *
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public final class InputComponents
@@ -66,7 +66,7 @@ public final class InputComponents
 
    /**
     * Sets the value in the provided {@link InputComponent}, making any necessary conversions
-    * 
+    *
     * @param component
     * @param value
     */
@@ -127,7 +127,7 @@ public final class InputComponents
 
    /**
     * Returns the converted value that matches the input
-    * 
+    *
     * @param input
     * @param value
     * @return
@@ -188,7 +188,7 @@ public final class InputComponents
 
    /**
     * Validate if the input has a value. If not, return the error message
-    * 
+    *
     * @param input
     * @return
     */
@@ -206,16 +206,16 @@ public final class InputComponents
             {
                labelValue = labelValue.substring(0, labelValue.length() - 1);
             }
-            requiredMessage = labelValue + " is required!";
+            requiredMessage = labelValue + " is required";
          }
       }
       return requiredMessage;
    }
 
    /**
-    * 
+    *
     * Returns the item label converter, that is
-    * 
+    *
     * @param converterFactory May be null
     * @param input
     * @return the item label converter of a {@link SelectComponent} or a {@link Converter} instance from the
