@@ -22,6 +22,7 @@ import org.jboss.forge.container.impl.AddonRepositoryImpl;
 import org.jboss.forge.container.modules.providers.ForgeContainerSpec;
 import org.jboss.forge.container.modules.providers.SystemClasspathSpec;
 import org.jboss.forge.container.modules.providers.WeldClasspathSpec;
+import org.jboss.forge.container.modules.providers.XPathJDKClasspathSpec;
 import org.jboss.forge.container.repositories.AddonDependencyEntry;
 import org.jboss.forge.container.repositories.AddonRepository;
 import org.jboss.modules.DependencySpec;
@@ -129,6 +130,7 @@ public class AddonModuleLoader extends ModuleLoader
             // Set up the ClassPath for this addon Module
 
             builder.addDependency(DependencySpec.createModuleDependencySpec(SystemClasspathSpec.ID));
+            builder.addDependency(DependencySpec.createModuleDependencySpec(XPathJDKClasspathSpec.ID));
             builder.addDependency(DependencySpec.createModuleDependencySpec(PathFilters.acceptAll(),
                      PathFilters.rejectAll(), null, ForgeContainerSpec.ID, false));
             builder.addDependency(DependencySpec.createModuleDependencySpec(PathFilters.acceptAll(),
