@@ -420,6 +420,7 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
       if (file.renameTo(target))
       {
          resourceFactory.fireEvent(new ResourceRenamed(this, original.getAbsolutePath(), file.getAbsolutePath()));
+         file = target;
          return true;
       }
       return false;

@@ -148,4 +148,15 @@ public class FileResourceGeneratorTest
       Assert.assertFalse(resource.isWritable());
    }
 
+   @Test
+   public void testRenameResource() throws Exception
+   {
+      File file = File.createTempFile("temp", "file");
+      FileResource<?> resource = factory.create(file).reify(FileResource.class);
+      Assert.assertNotNull(resource);
+      FileResource<?> child = resource.getParent().getChild("testFile").reify(FileResource.class);
+      resource.renameTo(child);
+      Assert.assertEquals(child.getFullyQualifiedName(), resource.getFullyQualifiedName());
+   }
+
 }
