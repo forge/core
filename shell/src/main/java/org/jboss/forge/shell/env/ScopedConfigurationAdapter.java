@@ -24,7 +24,7 @@ import org.jboss.forge.env.ConfigurationScope;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 @Typed()
 public class ScopedConfigurationAdapter implements Configuration
@@ -58,7 +58,7 @@ public class ScopedConfigurationAdapter implements Configuration
       Configuration configuration = delegates.get(scope);
       if (configuration == null)
       {
-         throw new IllegalStateException("No delegates were found in configuration - cannot retrieve scope");
+         throw new IllegalArgumentException("No delegates were found in configuration - cannot retrieve scope");
       }
       return configuration;
    }
