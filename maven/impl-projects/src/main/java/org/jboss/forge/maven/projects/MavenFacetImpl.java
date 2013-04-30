@@ -13,7 +13,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
@@ -31,14 +33,16 @@ import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingResult;
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
-import org.apache.maven.settings.Mirror;
+import org.apache.maven.settings.Profile;
 import org.apache.maven.settings.Proxy;
+import org.apache.maven.settings.Repository;
 import org.apache.maven.settings.Settings;
 import org.jboss.forge.container.util.OperatingSystemUtils;
 import org.jboss.forge.environment.Environment;
 import org.jboss.forge.facets.AbstractFacet;
 import org.jboss.forge.maven.dependencies.MavenContainer;
 import org.jboss.forge.maven.environment.Network;
+import org.jboss.forge.maven.projects.MavenFacet;
 import org.jboss.forge.maven.projects.util.NativeSystemCall;
 import org.jboss.forge.maven.projects.util.NullOutputStream;
 import org.jboss.forge.maven.projects.util.RepositoryUtils;
@@ -48,7 +52,6 @@ import org.jboss.forge.projects.ProjectFacet;
 import org.jboss.forge.resource.DirectoryResource;
 import org.jboss.forge.resource.ResourceFactory;
 import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManager;
-import org.sonatype.aether.util.repository.DefaultMirrorSelector;
 import org.sonatype.aether.util.repository.DefaultProxySelector;
 
 /**
@@ -75,7 +78,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
 
    public ProjectBuilder getBuilder()
    {
-      if (builder == null)
+      if(builder == null)
          builder = plexus.lookup(ProjectBuilder.class);
       return builder;
    }
@@ -100,14 +103,41 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
          // TODO this reference to the M2_REPO should probably be centralized
 
          MavenExecutionRequest executionRequest = new DefaultMavenExecutionRequest();
-         plexus.lookup(MavenExecutionRequestPopulator.class).populateFromSettings(executionRequest, settings);
-         plexus.lookup(MavenExecutionRequestPopulator.class).populateDefaults(executionRequest);
+         plexus.lookup(MavenExecutionRequestPopulator.class).populateFromSettings(executionRequest,
+                  container.getSettings());
          request = executionRequest.getProjectBuildingRequest();
+
          ArtifactRepository localRepository = RepositoryUtils.toArtifactRepository("local",
                   new File(settings.getLocalRepository()).toURI().toURL().toString(), null, true, true);
          request.setLocalRepository(localRepository);
 
+         List<ArtifactRepository> settingsRepos = new ArrayList<ArtifactRepository>();
+         List<String> activeProfiles = settings.getActiveProfiles();
+
+         Map<String, Profile> profiles = settings.getProfilesAsMap();
+
+         for (String id : activeProfiles)
+         {
+            Profile profile = profiles.get(id);
+            if (profile != null)
+            {
+               List<Repository> repositories = profile.getRepositories();
+               for (Repository repository : repositories)
+               {
+                  settingsRepos.add(RepositoryUtils.convertFromMavenSettingsRepository(repository));
+               }
+            }
+         }
+
+         if (!offline)
+         {
+            settingsRepos.add(RepositoryUtils.toArtifactRepository("CENTRAL", "http://repo1.maven.org/maven2/", null,
+                     true, false));
+         }
+
+         request.setRemoteRepositories(settingsRepos);
          request.setSystemProperties(System.getProperties());
+
          MavenRepositorySystemSession repositorySession = new MavenRepositorySystemSession();
          Proxy activeProxy = settings.getActiveProxy();
          if (activeProxy != null)
@@ -118,17 +148,6 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
          }
          repositorySession.setLocalRepositoryManager(new SimpleLocalRepositoryManager(settings.getLocalRepository()));
          repositorySession.setOffline(offline);
-         List<Mirror> mirrors = executionRequest.getMirrors();
-         if (mirrors != null)
-         {
-            DefaultMirrorSelector mirrorSelector = new DefaultMirrorSelector();
-            for (Mirror mirror : mirrors)
-            {
-               mirrorSelector.add(mirror.getId(), mirror.getUrl(), mirror.getLayout(), false, mirror.getMirrorOf(),
-                        mirror.getMirrorOfLayouts());
-            }
-            repositorySession.setMirrorSelector(mirrorSelector);
-         }
 
          request.setRepositorySession(repositorySession);
          request.setProcessPlugins(false);
