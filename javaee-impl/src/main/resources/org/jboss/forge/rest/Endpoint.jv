@@ -20,7 +20,7 @@ import javax.ws.rs.core.UriBuilder;
 @Path("/${resourcePath}")
 public class ${entityTable}Endpoint
 {
-   @PersistenceContext
+   @PersistenceContext(unitName="${persistenceUnitName}")
    private EntityManager em;
 
    @POST

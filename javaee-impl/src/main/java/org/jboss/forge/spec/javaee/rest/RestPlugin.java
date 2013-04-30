@@ -63,6 +63,8 @@ import org.jboss.forge.spec.javaee.RestActivatorType;
 import org.jboss.forge.spec.javaee.RestApplicationFacet;
 import org.jboss.forge.spec.javaee.RestFacet;
 import org.jboss.forge.spec.javaee.events.RestGeneratedResources;
+import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceUnitDef;
 
 import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;
@@ -186,9 +188,11 @@ public class RestPlugin implements Plugin
          map.put("setIdStatement", idSetterName);
          map.put("getIdStatement", idGetterName);
          map.put("contentType", contentType);
+         String persistenceUnitName = getPersistenceUnitName();
          String entityTable = getEntityTable(entity);
          String selectExpression = getSelectExpression(entity, entityTable);
          String idClause = getIdClause(entity, entityTable);
+         map.put("persistenceUnitName", persistenceUnitName);
          map.put("entityTable", entityTable);
          map.put("selectExpression", selectExpression);
          map.put("idClause", idClause);
@@ -522,6 +526,30 @@ public class RestPlugin implements Plugin
       {
          ShellMessages.info(out, "Skipped non-@Entity Java resource ["
                   + entity.getQualifiedName() + "]");
+      }
+   }
+
+   private String getPersistenceUnitName()
+   {
+      PersistenceFacet persistence = project.getFacet(PersistenceFacet.class);
+      PersistenceDescriptor persistenceDescriptor = persistence.getConfig();
+      List<PersistenceUnitDef> units = persistenceDescriptor.listUnits();
+      if (units.size() == 1)
+      {
+         return units.get(0).getName();
+      }
+      else
+      {
+         List<String> unitNames = new ArrayList<String>(); 
+         for(PersistenceUnitDef unitDef: units)
+         {
+            unitNames.add(unitDef.getName());
+         }
+         String chosenUnit = prompt
+                  .promptChoiceTyped(
+                           "Multiple persistence units were detected. Which persistence unit do you want to inject in the REST resources?",
+                           unitNames, unitNames.get(0));
+         return chosenUnit;
       }
    }
 }
