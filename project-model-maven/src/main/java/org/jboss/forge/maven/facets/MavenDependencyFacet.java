@@ -40,7 +40,6 @@ import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.facets.FacetNotFoundException;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
-import org.sonatype.aether.repository.RemoteRepository;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -464,10 +463,11 @@ public class MavenDependencyFacet extends BaseFacet implements DependencyFacet, 
    {
       List<DependencyRepository> results = new ArrayList<DependencyRepository>();
       MavenCoreFacet maven = project.getFacet(MavenCoreFacet.class);
-      List<RemoteRepository> remoteProjectRepositories = maven.getMavenProject().getRemoteProjectRepositories();
-      for (RemoteRepository remoteRepository : remoteProjectRepositories)
+      Model pom = maven.getPOM();
+      List<Repository> repos = pom.getRepositories();
+      for (Repository repo : repos)
       {
-         results.add(new DependencyRepositoryImpl(remoteRepository.getId(), remoteRepository.getUrl()));
+         results.add(new DependencyRepositoryImpl(repo.getId(), repo.getUrl()));
       }
       return Collections.unmodifiableList(results);
    }
