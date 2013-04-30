@@ -45,12 +45,18 @@ public class ForgeEnvironmentImpl implements ForgeEnvironment
    @Override
    public DirectoryResource getPluginDirectory()
    {
+      File pluginDirFile;
+
       String pluginDir = System.getProperty(Bootstrap.PROP_PLUGIN_DIR);
       if (pluginDir == null)
       {
-         pluginDir = getProperty(ShellImpl.PROP_FORGE_CONFIG_DIR) + "plugins/";
+         pluginDirFile = new File(getProperty(ShellImpl.PROP_FORGE_CONFIG_DIR).toString(), "plugins");
       }
-      FileResource<?> resource = (FileResource<?>) resourceFactory.getResourceFrom(new File(pluginDir));
+      else
+      {
+         pluginDirFile = new File(pluginDir);
+      }
+      FileResource<?> resource = (FileResource<?>) resourceFactory.getResourceFrom(pluginDirFile);
       if (!resource.exists())
       {
          resource.mkdirs();
