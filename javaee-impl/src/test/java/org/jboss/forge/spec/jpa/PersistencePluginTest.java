@@ -77,21 +77,20 @@ public class PersistencePluginTest extends AbstractJPATest
 
       Assert.assertEquals(5, unit.getProperties().size());
 
-      Assert.assertEquals(HIBERNATE_TRANSACTION_JTA_PLATFORM, unit.getProperties().get(0).getName());
-      Assert.assertEquals(WEBLOGIC_JTA_PLATFORM, unit.getProperties().get(0).getValue());
+      Assert.assertEquals("hibernate.hbm2ddl.auto", unit.getProperties().get(0).getName());
+      Assert.assertEquals("create-drop", unit.getProperties().get(0).getValue());
 
-      Assert.assertEquals("hibernate.hbm2ddl.auto", unit.getProperties().get(1).getName());
-      Assert.assertEquals("create-drop", unit.getProperties().get(1).getValue());
+      Assert.assertEquals("hibernate.show_sql", unit.getProperties().get(1).getName());
+      Assert.assertEquals("true", unit.getProperties().get(1).getValue());
 
-      Assert.assertEquals("hibernate.show_sql", unit.getProperties().get(2).getName());
+      Assert.assertEquals("hibernate.format_sql", unit.getProperties().get(2).getName());
       Assert.assertEquals("true", unit.getProperties().get(2).getValue());
 
-      Assert.assertEquals("hibernate.format_sql", unit.getProperties().get(3).getName());
+      Assert.assertEquals("hibernate.transaction.flush_before_completion", unit.getProperties().get(3).getName());
       Assert.assertEquals("true", unit.getProperties().get(3).getValue());
-
-      Assert.assertEquals("hibernate.transaction.flush_before_completion", unit.getProperties().get(4).getName());
-      Assert.assertEquals("true", unit.getProperties().get(4).getValue());
-
+      
+      Assert.assertEquals(HIBERNATE_TRANSACTION_JTA_PLATFORM, unit.getProperties().get(4).getName());
+      Assert.assertEquals(WEBLOGIC_JTA_PLATFORM, unit.getProperties().get(4).getValue());
    }
 
    @Test

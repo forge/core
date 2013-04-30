@@ -11,6 +11,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import javax.persistence.PersistenceContext;
 import javax.ws.rs.Path;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -25,12 +26,17 @@ import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.resources.java.JavaResource;
+import org.jboss.forge.spec.javaee.PersistenceFacet;
 import org.jboss.forge.spec.javaee.RestApplicationFacet;
 import org.jboss.forge.spec.javaee.RestFacet;
 import org.jboss.forge.spec.javaee.RestWebXmlFacet;
 import org.jboss.forge.spec.javaee.ServletFacet;
+import org.jboss.forge.spec.javaee.jpa.PersistencePlugin;
 import org.jboss.forge.spec.javaee.rest.RestWebXmlFacetImpl;
 import org.jboss.forge.spec.jpa.AbstractJPATest;
+import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceUnitDef;
+import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.TransactionType;
 import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
 import org.jboss.shrinkwrap.descriptor.impl.spec.servlet.web.WebAppDescriptorImpl;
 import org.jboss.shrinkwrap.descriptor.spi.node.Node;
@@ -137,6 +143,8 @@ public class RestPluginTest extends AbstractJPATest
       JavaClass endpoint = (JavaClass) resource.getJavaSource();
 
       assertEquals("/users", endpoint.getAnnotation(Path.class).getStringValue());
+      assertEquals("forge-default",
+               endpoint.getField("em").getAnnotation(PersistenceContext.class).getStringValue("unitName"));
       assertEquals("java.util.List", endpoint.getMethod("listAll").getQualifiedReturnType());
       Method<JavaClass> method = endpoint.getMethod("findById", Long.class);
       Type<JavaClass> returnTypeInspector = method.getReturnTypeInspector();
@@ -168,6 +176,8 @@ public class RestPluginTest extends AbstractJPATest
       JavaClass endpoint = (JavaClass) resource.getJavaSource();
 
       assertEquals("/users", endpoint.getAnnotation(Path.class).getStringValue());
+      assertEquals("forge-default",
+               endpoint.getField("em").getAnnotation(PersistenceContext.class).getStringValue("unitName"));
       assertTrue(endpoint.toString().contains("entity.setObjectId(id);"));
       getShell().execute("build");
    }
@@ -193,6 +203,8 @@ public class RestPluginTest extends AbstractJPATest
       JavaClass endpoint = (JavaClass) resource.getJavaSource();
 
       assertEquals("/user2s", endpoint.getAnnotation(Path.class).getStringValue());
+      assertEquals("forge-default",
+               endpoint.getField("em").getAnnotation(PersistenceContext.class).getStringValue("unitName"));
       assertTrue(endpoint.toString().contains("entity.setObjectId(id);"));
       getShell().execute("build");
    }
@@ -218,6 +230,8 @@ public class RestPluginTest extends AbstractJPATest
       JavaClass endpoint = (JavaClass) resource.getJavaSource();
 
       assertEquals("/user3s", endpoint.getAnnotation(Path.class).getStringValue());
+      assertEquals("forge-default",
+               endpoint.getField("em").getAnnotation(PersistenceContext.class).getStringValue("unitName"));
       assertTrue(endpoint.toString().contains("entity.setObjectId(id);"));
       getShell().execute("build");
    }
@@ -247,6 +261,8 @@ public class RestPluginTest extends AbstractJPATest
       JavaClass userEndpoint = (JavaClass) userResource.getJavaSource();
 
       assertEquals("/users", userEndpoint.getAnnotation(Path.class).getStringValue());
+      assertEquals("forge-default",
+               userEndpoint.getField("em").getAnnotation(PersistenceContext.class).getStringValue("unitName"));
       assertEquals("java.util.List", userEndpoint.getMethod("listAll").getQualifiedReturnType());
       Method<JavaClass> findUserByIdMethod = userEndpoint.getMethod("findById", Long.class);
       Type<JavaClass> returnTypeInspector = findUserByIdMethod.getReturnTypeInspector();
@@ -259,6 +275,8 @@ public class RestPluginTest extends AbstractJPATest
       JavaClass groupEndpoint = (JavaClass) groupResource.getJavaSource();
 
       assertEquals("/groups", groupEndpoint.getAnnotation(Path.class).getStringValue());
+      assertEquals("forge-default",
+               groupEndpoint.getField("em").getAnnotation(PersistenceContext.class).getStringValue("unitName"));
       assertEquals("java.util.List", groupEndpoint.getMethod("listAll").getQualifiedReturnType());
       Method<JavaClass> findGroupByIdMethod = userEndpoint.getMethod("findById", Long.class);
       returnTypeInspector = findGroupByIdMethod.getReturnTypeInspector();
@@ -286,6 +304,45 @@ public class RestPluginTest extends AbstractJPATest
                "servlet-mapping/servlet-name=" + RestWebXmlFacetImpl.JAXRS_SERVLET);
       assertNotNull(servletName);
       assertEquals("/rest/*", servletName.getParent().getSingle("url-pattern").getText());
+   }
+   
+   @Test
+   public void testCreateEndpointWithMultiplePersistenceUnits() throws Exception
+   {
+      Project project = getProject();
+      JavaClass entity = generateEntity(project, null, "User");
+      assertFalse(entity.hasAnnotation(XmlRootElement.class));
+      
+      PersistenceFacet persistenceFacet = project.getFacet(PersistenceFacet.class);
+      PersistenceDescriptor persistenceConfig = persistenceFacet.getConfig();
+      PersistenceUnitDef defaultUnit = persistenceConfig.persistenceUnit(PersistencePlugin.DEFAULT_UNIT_NAME);
+      persistenceConfig.persistenceUnit("rest-plugin-test").name("rest-plugin-test")
+               .description("PU for REST plugin test")
+               .provider(defaultUnit.getProvider())
+               .transactionType(TransactionType.valueOf(defaultUnit.getTransactionType()))
+               .jtaDataSource(defaultUnit.getJtaDataSource()).excludeUnlistedClasses();
+      persistenceFacet.saveConfig(persistenceConfig);
+
+      setupRest();
+
+      queueInputLines("","2");
+      getShell().execute("rest endpoint-from-entity");
+
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+      JavaResource resource = java.getJavaResource(java.getBasePackage() + ".rest.UserEndpoint");
+      JavaClass endpoint = (JavaClass) resource.getJavaSource();
+
+      assertEquals("/users", endpoint.getAnnotation(Path.class).getStringValue());
+      assertEquals("rest-plugin-test",
+               endpoint.getField("em").getAnnotation(PersistenceContext.class).getStringValue("unitName"));
+      assertEquals("java.util.List", endpoint.getMethod("listAll").getQualifiedReturnType());
+      Method<JavaClass> method = endpoint.getMethod("findById", Long.class);
+      Type<JavaClass> returnTypeInspector = method.getReturnTypeInspector();
+      assertEquals("javax.ws.rs.core.Response", returnTypeInspector
+                        .getQualifiedName());
+
+      assertTrue(java.getJavaResource(entity).getJavaSource().hasAnnotation(XmlRootElement.class));
+      getShell().execute("build");
    }
 
    private void setupRest() throws Exception

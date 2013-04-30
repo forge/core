@@ -531,15 +531,24 @@ public class RestPlugin implements Plugin
 
    private String getPersistenceUnitName()
    {
+      // This is currently limited to accessing the persistence units of the current project only, and not of
+      // dependencies (like an EJB module with a PU that is accessible on the classpath, but not in WEB-INF/lib).
       PersistenceFacet persistence = project.getFacet(PersistenceFacet.class);
       PersistenceDescriptor persistenceDescriptor = persistence.getConfig();
       List<PersistenceUnitDef> units = persistenceDescriptor.listUnits();
+      
+      // If there is only one PU, then use it irrespective of whether it excludes unlisted classes or not.
       if (units.size() == 1)
       {
          return units.get(0).getName();
       }
       else
       {
+         // Otherwise just prompt the user to choose a PU. It is not wise to choose a PU on behalf of the user using
+         // techniques like matching class names in the PU since a class could be present in multiple PUs, including PUs
+         // that allow unlisted classes to be managed. In such an event, we may choose the wrong PU, when the user might
+         // have wanted the PU with classpath scanning. Letting the user choose the PU to be used for the injected
+         // PersistenceContext is safest. 
          List<String> unitNames = new ArrayList<String>(); 
          for(PersistenceUnitDef unitDef: units)
          {

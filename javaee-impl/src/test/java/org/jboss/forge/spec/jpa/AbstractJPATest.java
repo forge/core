@@ -35,8 +35,8 @@ public abstract class AbstractJPATest extends SingletonAbstractShellTest
       initializeJavaProject();
       if ((getProject() != null) && !getProject().hasFacet(PersistenceFacet.class))
       {
-         queueInputLines("");
-         getShell().execute("project install-facet forge.spec.jpa");
+         queueInputLines("", "", "");
+         getShell().execute("persistence setup --provider HIBERNATE --container JBOSS_AS7");
       }
    }
 
