@@ -79,4 +79,9 @@ public class ForgeProxySelector extends ProxySelector
       defaultProxySelector.connectFailed(uri, sa, ioe);
    }
 
+   public ProxySelector getDefaultProxySelector()
+   {
+      return defaultProxySelector;
+   }
+
 }
