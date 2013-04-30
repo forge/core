@@ -6,10 +6,13 @@
  */
 package org.jboss.forge.shell.project;
 
+import java.net.ProxySelector;
+
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.jboss.forge.env.Configuration;
 import org.jboss.forge.project.BaseProject;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.MetadataFacet;
@@ -18,6 +21,8 @@ import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.events.InitProject;
 import org.jboss.forge.shell.events.PostStartup;
+import org.jboss.forge.shell.util.ForgeProxySelector;
+import org.jboss.forge.shell.util.ProxySettings;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -29,15 +34,34 @@ public class ProjectInitializer
    private final Event<InitProject> init;
 
    private final ProjectFactory projectFactory;
+   private final Configuration configuration;
 
    @Inject
    public ProjectInitializer(final Shell shell, final CurrentProject currentProjectHolder,
-            final Event<InitProject> init, final ProjectFactory projectFactory)
+            final Event<InitProject> init, final ProjectFactory projectFactory, final Configuration configuration)
    {
       this.shell = shell;
       this.cp = currentProjectHolder;
       this.init = init;
       this.projectFactory = projectFactory;
+      this.configuration = configuration;
+      setProxy();
+   }
+
+   private void setProxy()
+   {
+      ProxySettings proxySettings = ProxySettings.fromForgeConfiguration(configuration);
+      if (proxySettings == null)
+      {
+         // There is no proxy configured
+         return;
+      }
+      if (!(ProxySelector.getDefault() instanceof ForgeProxySelector))
+      {
+         ForgeProxySelector selector = new ForgeProxySelector(ProxySelector.getDefault(),
+                  proxySettings);
+         ProxySelector.setDefault(selector);
+      }
    }
 
    public void postStartupTrigger(@Observes final PostStartup event)
