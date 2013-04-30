@@ -8,7 +8,6 @@
 package org.jboss.forge.shell.plugins.builtin;
 
 import java.io.IOException;
-import java.net.ProxySelector;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -70,10 +69,8 @@ import org.jboss.forge.shell.plugins.PipeOut;
 import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.Topic;
 import org.jboss.forge.shell.util.Files;
-import org.jboss.forge.shell.util.ForgeProxySelector;
 import org.jboss.forge.shell.util.PluginRef;
 import org.jboss.forge.shell.util.PluginUtil;
-import org.jboss.forge.shell.util.ProxySettings;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -288,8 +285,6 @@ public class ForgePlugin implements Plugin
             buildDir.delete(true);
             buildDir.mkdir();
          }
-
-         prepareProxyForJGit();
 
          ShellMessages.info(out, "Checking out plugin source files to [" + buildDir.getFullyQualifiedName()
                   + "] via 'git'");
@@ -522,22 +517,6 @@ public class ForgePlugin implements Plugin
       wait.stop();
       ShellMessages.success(shell, "Forge will now restart to complete the update...");
       System.exit(0);
-   }
-
-   private void prepareProxyForJGit()
-   {
-      ProxySettings proxySettings = ProxySettings.fromForgeConfiguration(configuration);
-      if (proxySettings == null)
-      {
-         // There is no proxy configured
-         return;
-      }
-      if (!(ProxySelector.getDefault() instanceof ForgeProxySelector))
-      {
-         ForgeProxySelector selector = new ForgeProxySelector(ProxySelector.getDefault(),
-                  proxySettings);
-         ProxySelector.setDefault(selector);
-      }
    }
 
    /*
