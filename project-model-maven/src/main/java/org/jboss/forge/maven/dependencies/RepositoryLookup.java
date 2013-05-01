@@ -18,17 +18,17 @@ import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
 import org.jboss.forge.ForgeEnvironment;
+import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.maven.RepositoryUtils;
 import org.jboss.forge.maven.facets.MavenContainer;
 import org.jboss.forge.parser.java.util.Strings;
+import org.jboss.forge.project.Project;
 import org.jboss.forge.project.ProjectModelException;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.dependencies.DependencyMetadata;
 import org.jboss.forge.project.dependencies.DependencyRepository;
-import org.jboss.forge.project.dependencies.DependencyRepositoryImpl;
 import org.jboss.forge.project.dependencies.DependencyResolverProvider;
-import org.jboss.forge.project.facets.DependencyFacet.KnownRepository;
 import org.jboss.forge.project.services.ResourceFactory;
 import org.jboss.forge.resources.DependencyResource;
 import org.jboss.forge.resources.DirectoryResource;
@@ -64,6 +64,7 @@ public class RepositoryLookup implements DependencyResolverProvider
    private MavenContainer container;
    private ResourceFactory factory;
    private ForgeEnvironment environment;
+   private Project project;
 
    public RepositoryLookup()
    {
@@ -71,11 +72,12 @@ public class RepositoryLookup implements DependencyResolverProvider
 
    @Inject
    public RepositoryLookup(final MavenContainer container, final ResourceFactory factory,
-            final ForgeEnvironment environment)
+            final ForgeEnvironment environment, final Project project)
    {
       this.container = container;
       this.factory = factory;
       this.environment = environment;
+      this.project = project;
    }
 
    @Override
@@ -342,24 +344,21 @@ public class RepositoryLookup implements DependencyResolverProvider
    private List<RemoteRepository> convertToMavenRepos(final List<DependencyRepository> repositories)
    {
       List<DependencyRepository> temp = new ArrayList<DependencyRepository>();
-      temp.addAll(repositories);
-
       List<RemoteRepository> remoteRepos = new ArrayList<RemoteRepository>();
-      boolean hasCentral = false;
-      for (DependencyRepository deprep : temp)
+
+      if (repositories == null || repositories.size() == 0)
       {
-         remoteRepos.add(convertToMavenRepo(deprep));
-         if (KnownRepository.CENTRAL.getUrl().equals(deprep.getUrl()))
-         {
-            hasCentral = true;
-         }
+         MavenCoreFacet maven = project.getFacet(MavenCoreFacet.class);
+         remoteRepos.addAll(maven.getMavenProject().getRemoteProjectRepositories());
       }
-      if (!hasCentral)
+      else
       {
-         RemoteRepository central = convertToMavenRepo(new DependencyRepositoryImpl(KnownRepository.CENTRAL.getId(),
-                  KnownRepository.CENTRAL.getUrl()));
-         central.setPolicy(true, new RepositoryPolicy().setEnabled(false));
-         remoteRepos.add(central);
+         temp.addAll(repositories);
+
+         for (DependencyRepository deprep : temp)
+         {
+            remoteRepos.add(convertToMavenRepo(deprep));
+         }
       }
       return remoteRepos;
    }
