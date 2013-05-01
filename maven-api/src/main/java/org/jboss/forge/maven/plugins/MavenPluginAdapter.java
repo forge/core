@@ -143,6 +143,11 @@ public class MavenPluginAdapter extends org.apache.maven.model.Plugin implements
 
       return new ConfigurationImpl(dom);
    }
+   
+   
+   public void setConfig(Configuration configuration) {
+      setConfiguration(parseConfig(configuration));
+   }
 
    @Override
    public Dependency getDependency()

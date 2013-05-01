@@ -14,18 +14,23 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.maven.MavenPluginFacet;
 import org.jboss.forge.maven.facets.exceptions.PluginNotFoundException;
+import org.jboss.forge.maven.plugins.ConfigurationElement;
 import org.jboss.forge.maven.plugins.MavenPlugin;
+import org.jboss.forge.maven.plugins.MavenPluginAdapter;
 import org.jboss.forge.maven.plugins.MavenPluginBuilder;
 import org.jboss.forge.maven.util.ProjectModelTest;
 import org.jboss.forge.project.Project;
@@ -42,7 +47,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
+ * @author <a href="mailto:salmon_charles@gmail.com">Charles-Edouard Salmon</a>
  */
 @RunWith(Arquillian.class)
 public class MavenPluginFacetTest extends ProjectModelTest
@@ -157,6 +162,29 @@ public class MavenPluginFacetTest extends ProjectModelTest
       MavenPluginFacet mavenPluginFacet = testProject.getFacet(MavenPluginFacet.class);
       boolean hasPlugin = mavenPluginFacet.hasPlugin(DependencyBuilder.create("test.plugins:fake"));
       assertFalse(hasPlugin);
+   }
+
+   @Test
+   public void testUpdatePlugin() throws Exception
+   {
+      MavenPluginFacet mavenPluginFacet = getProject().getFacet(MavenPluginFacet.class);
+      MavenPluginBuilder plugin = MavenPluginBuilder.create().setDependency(
+               DependencyBuilder.create().setGroupId("org.charless").setArtifactId("octopress-plugin")
+                        .setVersion("0.1"));
+
+      mavenPluginFacet.addPlugin(plugin);
+      assertTrue(mavenPluginFacet.hasPlugin(plugin.getDependency()));
+      assertThat(0, is(mavenPluginFacet.getPlugin(plugin.getDependency()).getConfig().listConfigurationElements().size()));
+      assertThat(mavenPluginFacet.getPlugin(plugin.getDependency()).getDependency().getVersion(), is("0.1"));
+         
+      MavenPluginAdapter updatedPlugin = new MavenPluginAdapter(plugin);
+      updatedPlugin.setVersion("0.9");
+      updatedPlugin.setConfiguration(Xpp3DomBuilder.build(
+               new ByteArrayInputStream("<configuration><test>a value</test></configuration>".getBytes()), "UTF-8"));
+      
+      mavenPluginFacet.updatePlugin(updatedPlugin);
+      assertThat(mavenPluginFacet.getPlugin(updatedPlugin.getDependency()).getDependency().getVersion(), is("0.9"));
+      assertThat(1, is(mavenPluginFacet.getPlugin(updatedPlugin.getDependency()).getConfig().listConfigurationElements().size()));
    }
 
    @Test
