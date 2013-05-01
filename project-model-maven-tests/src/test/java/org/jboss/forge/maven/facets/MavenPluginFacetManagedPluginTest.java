@@ -213,9 +213,11 @@ public class MavenPluginFacetManagedPluginTest extends ProjectModelTest
                         .setVersion("3.0"));
       mavenPluginFacet.addManagedPlugin(plugin);
       assertThat(getNumberOfManagedPlugins(project), is(++nrOfManagedPlugins));
-	  
+      
       mavenPluginFacet.removeManagedPlugin(DependencyBuilder.create("org.apache.maven.plugins:maven-site-plugin"));
-	  assertThat(getNumberOfManagedPlugins(project), is(--nrOfManagedPlugins));
+	  
+      
+      assertThat(getNumberOfManagedPlugins(project), is(--nrOfManagedPlugins));
    }
 
    @Test
