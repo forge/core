@@ -13,13 +13,14 @@ import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
 import org.apache.maven.artifact.repository.layout.FlatRepositoryLayout;
 import org.apache.maven.settings.Repository;
 import org.apache.maven.settings.RepositoryPolicy;
+import org.jboss.forge.maven.projects.P2ArtifactRepositoryLayout;
 import org.sonatype.aether.repository.Authentication;
 
 /**
  * Repository Utils
- * 
+ *
  * @author George Gastaldi <gegastaldi@gmail.com>
- * 
+ *
  */
 public final class RepositoryUtils
 {
@@ -49,6 +50,8 @@ public final class RepositoryUtils
          result.setLayout(new DefaultRepositoryLayout());
       else if ("flat".equals(layout))
          result.setLayout(new FlatRepositoryLayout());
+      else if ("p2".equals(layout))
+         result.setLayout(new P2ArtifactRepositoryLayout());
 
       RepositoryPolicy releases = repository.getReleases();
       if (releases != null)
