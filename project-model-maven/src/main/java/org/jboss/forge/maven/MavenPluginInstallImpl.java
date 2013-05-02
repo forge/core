@@ -37,7 +37,16 @@ public class MavenPluginInstallImpl implements MavenPluginInstaller
 {
    private final ShellPrompt prompt;
 
+   /**
+    * Merge the plugin definition with existing configuration
+    */
    private boolean mergeWithExisting = true;
+
+   /**
+    * Filter plugin definition with existing hierarchy configuration All properties having equivalent counterparts in
+    * the hierarchy (in plugin or plugin mamnagement sections of the parent) will be removed from the new plugin
+    * definition (to preserve hierarchy precedence.
+    */
    private boolean preserveHierarchyPrecedence = true;
 
    @Inject
@@ -53,16 +62,18 @@ public class MavenPluginInstallImpl implements MavenPluginInstaller
       Dependency pluginCoordinates = DependencyBuilder.create().setGroupId(plugin.getDependency().getGroupId())
                .setArtifactId(plugin.getDependency().getArtifactId());
       MavenPlugin managedPlugin = null;
-      if (plugins.hasManagedPlugin(pluginCoordinates)) {
+      if (plugins.hasManagedPlugin(pluginCoordinates))
+      {
          managedPlugin = plugins.getManagedPlugin(pluginCoordinates);
       }
-      
+
       MavenPlugin existing = null;
       // existing represents the plugin(management) as it exists currently throughout the entire hierarchy
       if (managed && plugins.hasEffectiveManagedPlugin(pluginCoordinates))
       {
          existing = plugins.getEffectiveManagedPlugin(pluginCoordinates);
-         if (plugins.hasManagedPlugin(pluginCoordinates) && ! isMergeWithExisting()) {
+         if (plugins.hasManagedPlugin(pluginCoordinates) && !mergeWithExisting)
+         {
             // If no merge, existing should not have any of the direct managed-plugin configuration
             existing = diff(existing, plugins.getManagedPlugin(pluginCoordinates));
          }
@@ -70,15 +81,17 @@ public class MavenPluginInstallImpl implements MavenPluginInstaller
       else if (plugins.hasEffectivePlugin(pluginCoordinates))
       {
          existing = plugins.getEffectivePlugin(pluginCoordinates);
-         if (plugins.hasPlugin(pluginCoordinates) && ! isMergeWithExisting()) {
+         if (plugins.hasPlugin(pluginCoordinates) && !mergeWithExisting)
+         {
             // If no merge, existing should not have any of the direct plugin configuration
             existing = diff(existing, plugins.getPlugin(pluginCoordinates));
          }
       }
 
       MavenPlugin filteredPlugin = plugin;
-      // The filtered plugin preserve the hierarchy, by preventing installing properties already defined with the same values
-      if (existing != null && isPreserveHierarchyPrecedence()) 
+      // The filtered plugin preserve the hierarchy, by preventing installing properties already defined with the same
+      // values
+      if (existing != null && preserveHierarchyPrecedence)
       {
          filteredPlugin = diff(plugin, existing);
       }
@@ -88,31 +101,34 @@ public class MavenPluginInstallImpl implements MavenPluginInstaller
          // The plugin section does not exists but a plugin management section in the direct pom does
          filteredPlugin = diff(filteredPlugin, managedPlugin);
       }
-      
+
       MavenPlugin mergedPlugin = filteredPlugin;
       // merged plugin is a merge with the direct plugin(management)
-      if (isMergeWithExisting()) {
+      if (mergeWithExisting)
+      {
          if (managed && managedPlugin != null)
          {
             mergedPlugin = plugins.merge(mergedPlugin, managedPlugin);
          }
-         else if (! managed && plugins.hasPlugin(pluginCoordinates))
+         else if (!managed && plugins.hasPlugin(pluginCoordinates))
          {
             mergedPlugin = plugins.merge(mergedPlugin, plugins.getPlugin(pluginCoordinates));
          }
       }
-      
+
       // Resolve version
       String versionToInstall = plugin.getDependency().getVersion();
-      if (mergedPlugin.getDependency().getVersion() == null) {
+      if (mergedPlugin.getDependency().getVersion() == null)
+      {
          // null version means no version was specified or already defined in the hierarchy
-         if (versionToInstall == null) {
+         if (versionToInstall == null)
+         {
             versionToInstall = promptVersion(deps, pluginCoordinates, null).getVersion();
          }
       }
-      
+
       // Install the plugin
-      MavenPluginAdapter pluginToInstall = new MavenPluginAdapter(isMergeWithExisting() ? mergedPlugin:filteredPlugin);
+      MavenPluginAdapter pluginToInstall = new MavenPluginAdapter(mergeWithExisting ? mergedPlugin : filteredPlugin);
       pluginToInstall.setVersion(versionToInstall);
       if (!managed)
       {
@@ -143,11 +159,12 @@ public class MavenPluginInstallImpl implements MavenPluginInstaller
             pluginToInstall.setVersion(null); // handled by the plugin management section
          }
       }
-      else {
-         if(existing != null
-                  && Strings.areEqual(versionToInstall,existing.getDependency().getVersion()) )
+      else
+      {
+         if (existing != null
+                  && Strings.areEqual(versionToInstall, existing.getDependency().getVersion()))
          {
-            // Same version in the hierarchy, no need to specify the version 
+            // Same version in the hierarchy, no need to specify the version
             pluginToInstall.setVersion(null);
          }
       }
@@ -222,8 +239,8 @@ public class MavenPluginInstallImpl implements MavenPluginInstaller
 
    /**
     * Remove from the dominant plugin all the properties that are identical in the recessive plugin If a property exist
-    * in the recessive plugin but not in dominant, it will be ignored 
-    * <b>Important: the artifactId and groupId properties are not affected</b>
+    * in the recessive plugin but not in dominant, it will be ignored <b>Important: the artifactId and groupId
+    * properties are not affected</b>
     */
    private MavenPluginAdapter diff(final MavenPlugin dominant, final MavenPlugin recessive)
    {
@@ -236,7 +253,7 @@ public class MavenPluginInstallImpl implements MavenPluginInstaller
             // Remove version as dominant and recessive have the same one
             merged.setVersion(null);
          }
-         
+
          // Extension
          if (dominant.isExtensionsEnabled() == recessive.isExtensionsEnabled())
          {
@@ -276,8 +293,8 @@ public class MavenPluginInstallImpl implements MavenPluginInstaller
             {
                PluginExecution pluginExecutionRecessive = entry.getValue();
                PluginExecution pluginExecutionDominant = dominantExec.get(entry.getKey());
-               if (pluginExecutionRecessive != null && pluginExecutionDominant != null) 
-               {  
+               if (pluginExecutionRecessive != null && pluginExecutionDominant != null)
+               {
                   PluginExecution pluginExecutionMerged = mergedExec.get(entry.getKey());
                   // Phase
                   if (Strings.areEqual(pluginExecutionRecessive.getPhase(), pluginExecutionDominant.getPhase()))
@@ -310,7 +327,7 @@ public class MavenPluginInstallImpl implements MavenPluginInstaller
                               (Xpp3Dom) pluginExecutionDominant.getConfiguration());
                      Configuration pluginExecutionMergedCfg = new ConfigurationImpl(
                               (Xpp3Dom) pluginExecutionMerged.getConfiguration());
-                     
+
                      for (ConfigurationElement e : pluginExecutionDominantCfg.listConfigurationElements())
                      {
                         // FIXME: recursively do a diff of childrens, if any
@@ -322,52 +339,32 @@ public class MavenPluginInstallImpl implements MavenPluginInstaller
                         {
                            if (Strings.areEqual(cfgExecElmtsRefMap.get(e.getName()), e.toString()))
                            {
-                              // Remove the execution configuration element as dominant and recessive have the same element
+                              // Remove the execution configuration element as dominant and recessive have the same
+                              // element
                               pluginExecutionMergedCfg.removeConfigurationElement(e.getName());
                            }
                         }
                      }
-                     if ((pluginExecutionMergedCfg == null) || (!pluginExecutionMergedCfg.hasConfigurationElements())) {
+                     if ((pluginExecutionMergedCfg == null) || (!pluginExecutionMergedCfg.hasConfigurationElements()))
+                     {
                         pluginExecutionMerged.setConfiguration(null);
                      }
-                     try {
+                     try
+                     {
                         pluginExecutionMerged.setConfiguration(Xpp3DomBuilder.build(
                                  new ByteArrayInputStream(pluginExecutionMergedCfg.toString().getBytes()), "UTF-8"));
                      }
-                     catch (Exception ex) {
+                     catch (Exception ex)
+                     {
                         throw new RuntimeException("Exception while parsing configuration", ex);
                      }
-                     
+
                   }
                }
             }
          }
       }
       return merged;
-   }
-   
-   @Override
-   public boolean isMergeWithExisting()
-   {
-      return mergeWithExisting;
-   }
-
-   @Override
-   public void setMergeWithExisting(boolean mergeWithExisting)
-   {
-      this.mergeWithExisting = mergeWithExisting;
-   }
-   
-   @Override
-   public boolean isPreserveHierarchyPrecedence()
-   {
-      return preserveHierarchyPrecedence;
-   }
-   
-   @Override
-   public void setPreserveHierarchyPrecedence(boolean preserveHierarchyPrecedence)
-   {
-      this.preserveHierarchyPrecedence = preserveHierarchyPrecedence;
    }
 
 }

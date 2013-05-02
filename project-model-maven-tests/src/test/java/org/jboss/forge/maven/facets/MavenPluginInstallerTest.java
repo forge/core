@@ -14,7 +14,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.util.HashMap;
@@ -44,7 +43,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="mailto:salmon_charles@gmail.com">Charles-Edouard Salmon</a>
  */
 @RunWith(Arquillian.class)
 public class MavenPluginInstallerTest extends AbstractShellTest
@@ -60,7 +59,7 @@ public class MavenPluginInstallerTest extends AbstractShellTest
       MavenPluginFacet plugins = project.getFacet(MavenPluginFacet.class);
       MavenPluginAdapter pluginToInstall = new MavenPluginAdapter(createMavenSitePlugin());
       Dependency dependency = pluginToInstall.getDependency();
-      
+
       installer.install(project, pluginToInstall);
 
       Assert.assertTrue(plugins.hasPlugin(dependency));
@@ -68,11 +67,11 @@ public class MavenPluginInstallerTest extends AbstractShellTest
       Assert.assertEquals("3.0", plugins.getManagedPlugin(dependency).getDependency().getVersion());
       MavenPlugin directPlugin = plugins.getPlugin(dependency);
       Assert.assertNull(directPlugin.getDependency().getVersion());
-      Assert.assertEquals("org.apache.maven.plugins",directPlugin.getDependency().getGroupId());
-      Assert.assertEquals("maven-site-plugin",directPlugin.getDependency().getArtifactId());
+      Assert.assertEquals("org.apache.maven.plugins", directPlugin.getDependency().getGroupId());
+      Assert.assertEquals("maven-site-plugin", directPlugin.getDependency().getArtifactId());
       assertPluginsConfigurationsEquals(pluginToInstall, directPlugin);
    }
-   
+
    @Test
    public void testInstallMerge() throws Exception
    {
@@ -80,31 +79,23 @@ public class MavenPluginInstallerTest extends AbstractShellTest
       MavenPluginFacet plugins = project.getFacet(MavenPluginFacet.class);
       MavenPluginAdapter pluginToInstall = new MavenPluginAdapter(createMavenSitePlugin());
       Dependency dependency = pluginToInstall.getDependency();
-      
+
       installer.install(project, pluginToInstall);
       Assert.assertTrue(plugins.hasPlugin(dependency));
       assertPluginsConfigurationsEquals(pluginToInstall, plugins.getPlugin(dependency));
-      
+
       // Change the version and remove the configuration
-      MavenPluginAdapter newPluginToInstall = new MavenPluginAdapter((MavenPlugin)pluginToInstall);
+      MavenPluginAdapter newPluginToInstall = new MavenPluginAdapter((MavenPlugin) pluginToInstall);
       newPluginToInstall.setVersion("3.1");
       removePluginConfiguration(newPluginToInstall);
-      
+
       // Re-install with merge
-      installer.setMergeWithExisting(true);  // should force to keep the configuration
       installer.install(project, newPluginToInstall);
       assertPluginsConfigurationsEquals(pluginToInstall, plugins.getPlugin(dependency));
       Assert.assertEquals("3.1", plugins.getManagedPlugin(dependency).getDependency().getVersion());
-      
-      
-      // Re-install without merge
-      installer.setMergeWithExisting(false);  // should force to delete the configuration
-      installer.install(project, newPluginToInstall);
-      Assert.assertEquals(0, plugins.getPlugin(dependency).getConfig().listConfigurationElements().size());
-      Assert.assertEquals("3.1", plugins.getManagedPlugin(dependency).getDependency().getVersion());
 
    }
-   
+
    @Test
    public void testInstallMergeUpdateConfig() throws Exception
    {
@@ -112,33 +103,31 @@ public class MavenPluginInstallerTest extends AbstractShellTest
       MavenPluginFacet plugins = project.getFacet(MavenPluginFacet.class);
       MavenPluginAdapter pluginToInstall = new MavenPluginAdapter(createMavenSitePlugin());
       Dependency dependency = pluginToInstall.getDependency();
-      
-      // First, install the plugin management 
+
+      // First, install the plugin management
       installer.installManaged(project, pluginToInstall);
       Assert.assertTrue(plugins.hasManagedPlugin(dependency));
       assertPluginsConfigurationsEquals(pluginToInstall, plugins.getManagedPlugin(dependency));
-      
+
       // And the plugin, with the configuration kept in the plugin-management section
-      installer.setMergeWithExisting(true); 
       installer.install(project, pluginToInstall);
       Assert.assertEquals(0, plugins.getPlugin(dependency).getConfig().listConfigurationElements().size());
 
       // Change the configuration (the version of the plugin findbugs-maven-plugin)
       MavenPluginAdapter newPluginToInstall = changePluginConfiguration(pluginToInstall);
-      
+
       // Re-install the plugin
       // Should now have the new reportPlugin configuration defined in the plugin section,
       // while the generateReports should remains in the plugin-management section
-      installer.setMergeWithExisting(true); // keep equals properties in management section
       installer.install(project, newPluginToInstall);
       Configuration plufinConfiguration = plugins.getPlugin(dependency).getConfig();
       Assert.assertEquals(1, plufinConfiguration.listConfigurationElements().size());
       Assert.assertTrue(plufinConfiguration.hasConfigurationElement("reportPlugins"));
-      Assert.assertEquals("<reportPlugins><plugin><groupId>org.codehaus.mojo</groupId><artifactId>findbugs-maven-plugin</artifactId><version>2.4</version></plugin></reportPlugins>",plufinConfiguration.getConfigurationElement("reportPlugins").toString()); 
+      Assert.assertEquals(
+               "<reportPlugins><plugin><groupId>org.codehaus.mojo</groupId><artifactId>findbugs-maven-plugin</artifactId><version>2.4</version></plugin></reportPlugins>",
+               plufinConfiguration.getConfigurationElement("reportPlugins").toString());
    }
-   
 
-   
    @Test
    public void testInstallManaged() throws Exception
    {
@@ -154,7 +143,7 @@ public class MavenPluginInstallerTest extends AbstractShellTest
       Assert.assertEquals("3.0", plugins.getManagedPlugin(dependency).getDependency().getVersion());
       assertPluginsConfigurationsEquals(pluginToInstall, plugins.getManagedPlugin(dependency));
    }
-   
+
    @Test
    public void testInstallManagedMerge() throws Exception
    {
@@ -167,25 +156,19 @@ public class MavenPluginInstallerTest extends AbstractShellTest
       Assert.assertTrue(plugins.hasManagedPlugin(dependency));
       Assert.assertFalse(plugins.hasPlugin(dependency));
       assertPluginsConfigurationsEquals(pluginToInstall, plugins.getManagedPlugin(dependency));
-      
+
       // Change the version and remove the configuration
-      MavenPluginAdapter newPluginToInstall = new MavenPluginAdapter((MavenPlugin)pluginToInstall);
+      MavenPluginAdapter newPluginToInstall = new MavenPluginAdapter((MavenPlugin) pluginToInstall);
       newPluginToInstall.setVersion("3.1");
       removePluginConfiguration(newPluginToInstall);
-      
+
       // Re-install with merge
-      installer.setMergeWithExisting(true);  // should force to keep the configuration
       installer.installManaged(project, newPluginToInstall);
       assertPluginsConfigurationsEquals(pluginToInstall, plugins.getManagedPlugin(dependency));
       Assert.assertEquals("3.1", plugins.getManagedPlugin(dependency).getDependency().getVersion());
-      
-      // Re-install without merge
-      installer.setMergeWithExisting(false);  // should force to delete the configuration
-      installer.installManaged(project, newPluginToInstall);
-      Assert.assertEquals(0, plugins.getManagedPlugin(dependency).getConfig().listConfigurationElements().size());
-      Assert.assertEquals("3.1", plugins.getManagedPlugin(dependency).getDependency().getVersion());
+
    }
-   
+
    @Test
    public void testInstallManagedChild() throws Exception
    {
@@ -193,33 +176,26 @@ public class MavenPluginInstallerTest extends AbstractShellTest
       MavenPluginFacet plugins = project.getFacet(MavenPluginFacet.class);
       MavenPluginAdapter pluginToInstall = new MavenPluginAdapter(createMavenSitePlugin());
       Dependency dependency = pluginToInstall.getDependency();
-      
+
       // Make sure project is builded as expected
       Assert.assertTrue(plugins.hasEffectiveManagedPlugin(dependency));
       assertPluginsConfigurationsEquals(pluginToInstall, plugins.getEffectiveManagedPlugin(dependency));
       Assert.assertTrue(plugins.hasEffectivePlugin(dependency));
-      Assert.assertEquals(1,plugins.getEffectivePlugin(dependency).listExecutions().size());
-      
+      Assert.assertEquals(1, plugins.getEffectivePlugin(dependency).listExecutions().size());
+
       // Install the dependency as a plugin-management
-      // As the plugin is defined exactly the same in the hierarchy, 
+      // As the plugin is defined exactly the same in the hierarchy,
       // the installed managed plugin should have only the artifactId defined
-      installer.setMergeWithExisting(false);
       installer.installManaged(project, pluginToInstall);
       Assert.assertTrue(plugins.hasManagedPlugin(dependency));
       MavenPluginAdapter installedManagedPlugin = new MavenPluginAdapter(plugins.getManagedPlugin(dependency));
-      Assert.assertEquals(0,installedManagedPlugin.getConfig().listConfigurationElements().size());
+      Assert.assertEquals(0, installedManagedPlugin.getConfig().listConfigurationElements().size());
       Assert.assertNull(installedManagedPlugin.getDependency().getVersion());
-      
-      installer.setMergeWithExisting(true);  // In that case, the merge should not change anything
-      installer.installManaged(project, pluginToInstall);
-      Assert.assertTrue(plugins.hasManagedPlugin(dependency));
-      installedManagedPlugin = new MavenPluginAdapter(plugins.getManagedPlugin(dependency));
-      Assert.assertEquals(0,installedManagedPlugin.getConfig().listConfigurationElements().size());
-      Assert.assertNull(installedManagedPlugin.getDependency().getVersion());
-      
+
       // Add plugin-management the same execution as defined in the plugin section of the parent
-      // Should append the execution in the plugin-management of the child, because the execution is not defined in the plugin-management of parent
-      MavenPluginAdapter effectivePlugin =  new MavenPluginAdapter(plugins.getEffectivePlugin(dependency));
+      // Should append the execution in the plugin-management of the child, because the execution is not defined in the
+      // plugin-management of parent
+      MavenPluginAdapter effectivePlugin = new MavenPluginAdapter(plugins.getEffectivePlugin(dependency));
       PluginExecution pluginExecution = new PluginExecution();
       pluginExecution.setId(effectivePlugin.getExecutions().get(0).getId());
       pluginExecution.setPhase(effectivePlugin.getExecutions().get(0).getPhase());
@@ -228,14 +204,18 @@ public class MavenPluginInstallerTest extends AbstractShellTest
       pluginToInstall.addExecution(pluginExecution);
       installer.installManaged(project, pluginToInstall);
       installedManagedPlugin = new MavenPluginAdapter(plugins.getManagedPlugin(dependency));
-      Assert.assertEquals(1,installedManagedPlugin.listExecutions().size());
-      Assert.assertEquals(effectivePlugin.getExecutions().get(0).getId(), installedManagedPlugin.getExecutions().get(0).getId());
-      Assert.assertEquals(effectivePlugin.getExecutions().get(0).getPhase(), installedManagedPlugin.getExecutions().get(0).getPhase());
-      Assert.assertEquals(effectivePlugin.getExecutions().get(0).getGoals(), installedManagedPlugin.getExecutions().get(0).getGoals());
-      Assert.assertEquals(effectivePlugin.getExecutions().get(0).getConfiguration(), installedManagedPlugin.getExecutions().get(0).getConfiguration());
-      
+      Assert.assertEquals(1, installedManagedPlugin.listExecutions().size());
+      Assert.assertEquals(effectivePlugin.getExecutions().get(0).getId(), installedManagedPlugin.getExecutions().get(0)
+               .getId());
+      Assert.assertEquals(effectivePlugin.getExecutions().get(0).getPhase(), installedManagedPlugin.getExecutions()
+               .get(0).getPhase());
+      Assert.assertEquals(effectivePlugin.getExecutions().get(0).getGoals(), installedManagedPlugin.getExecutions()
+               .get(0).getGoals());
+      Assert.assertEquals(effectivePlugin.getExecutions().get(0).getConfiguration(), installedManagedPlugin
+               .getExecutions().get(0).getConfiguration());
+
    }
-   
+
    @Test
    public void testInstallChild() throws Exception
    {
@@ -243,32 +223,32 @@ public class MavenPluginInstallerTest extends AbstractShellTest
       MavenPluginFacet plugins = project.getFacet(MavenPluginFacet.class);
       MavenPluginAdapter pluginToInstall = new MavenPluginAdapter(createMavenSitePlugin());
       Dependency dependency = pluginToInstall.getDependency();
-      
+
       // Make sure project is builded as expected
       Assert.assertTrue(plugins.hasEffectiveManagedPlugin(dependency));
       assertPluginsConfigurationsEquals(pluginToInstall, plugins.getEffectiveManagedPlugin(dependency));
       Assert.assertTrue(plugins.hasEffectivePlugin(dependency));
-      Assert.assertEquals(1,plugins.getEffectivePlugin(dependency).listExecutions().size());
-      
+      Assert.assertEquals(1, plugins.getEffectivePlugin(dependency).listExecutions().size());
+
       // Install the dependency as a plugin
-      // As the plugin is defined exactly the same in the hierarchy, 
+      // As the plugin is defined exactly the same in the hierarchy,
       // the installed managed plugin should have only the artifactId defined
       // while the installed plugin will only have the artifactId
-      installer.setMergeWithExisting(false);
       installer.install(project, pluginToInstall);
       Assert.assertTrue(plugins.hasManagedPlugin(dependency));
       MavenPluginAdapter installedManagedPlugin = new MavenPluginAdapter(plugins.getManagedPlugin(dependency));
-      Assert.assertEquals(0,installedManagedPlugin.getConfig().listConfigurationElements().size());
-      Assert.assertEquals("3.0",installedManagedPlugin.getDependency().getVersion());
+      Assert.assertEquals(0, installedManagedPlugin.getConfig().listConfigurationElements().size());
+      Assert.assertEquals("3.0", installedManagedPlugin.getDependency().getVersion());
       Assert.assertTrue(plugins.hasPlugin(dependency));
       MavenPluginAdapter installedPlugin = new MavenPluginAdapter(plugins.getPlugin(dependency));
-      Assert.assertEquals(0,installedPlugin.getConfig().listConfigurationElements().size());
+      Assert.assertEquals(0, installedPlugin.getConfig().listConfigurationElements().size());
       Assert.assertNull(installedPlugin.getDependency().getVersion());
-      
+
       // Add plugin-management the same execution as defined in the plugin section of the parent
-      // Because the execution is defined in the plugin parent, only the id of the execution should be installed into direct pom
+      // Because the execution is defined in the plugin parent, only the id of the execution should be installed into
+      // direct pom
       // The rest of the execution configuration should be left in parent
-      MavenPluginAdapter effectivePlugin =  new MavenPluginAdapter(plugins.getEffectivePlugin(dependency));
+      MavenPluginAdapter effectivePlugin = new MavenPluginAdapter(plugins.getEffectivePlugin(dependency));
       PluginExecution pluginExecution = new PluginExecution();
       pluginExecution.setId(effectivePlugin.getExecutions().get(0).getId());
       pluginExecution.setPhase(effectivePlugin.getExecutions().get(0).getPhase());
@@ -279,97 +259,106 @@ public class MavenPluginInstallerTest extends AbstractShellTest
       pluginToInstall = changePluginConfiguration(pluginToInstall);
       installer.install(project, pluginToInstall);
       installedPlugin = new MavenPluginAdapter(plugins.getPlugin(dependency));
-      effectivePlugin =  new MavenPluginAdapter(plugins.getEffectivePlugin(dependency));
+      effectivePlugin = new MavenPluginAdapter(plugins.getEffectivePlugin(dependency));
       // Execution, direct vs effective
-      Assert.assertEquals(1,effectivePlugin.listExecutions().size());
-      Assert.assertEquals(1,installedPlugin.listExecutions().size());
+      Assert.assertEquals(1, effectivePlugin.listExecutions().size());
+      Assert.assertEquals(1, installedPlugin.listExecutions().size());
       // Id
-      Assert.assertEquals("test-site",effectivePlugin.getExecutions().get(0).getId());
+      Assert.assertEquals("test-site", effectivePlugin.getExecutions().get(0).getId());
       Assert.assertEquals("test-site", installedPlugin.getExecutions().get(0).getId());
       // Phase
-      Assert.assertEquals("post-site",effectivePlugin.getExecutions().get(0).getPhase());
+      Assert.assertEquals("post-site", effectivePlugin.getExecutions().get(0).getPhase());
       Assert.assertNull(installedPlugin.getExecutions().get(0).getPhase());
       // Goals
       Assert.assertEquals(1, effectivePlugin.getExecutions().get(0).getGoals().size());
       Assert.assertEquals("run", effectivePlugin.getExecutions().get(0).getGoals().get(0));
-      Assert.assertEquals(0,installedPlugin.getExecutions().get(0).getGoals().size());
+      Assert.assertEquals(0, installedPlugin.getExecutions().get(0).getGoals().size());
       // configuration
       Assert.assertNull(installedPlugin.getExecutions().get(0).getConfiguration());
       // Check configuration
       Assert.assertEquals(1, installedPlugin.getConfig().listConfigurationElements().size());
-      Assert.assertEquals("<reportPlugins><plugin><groupId>org.codehaus.mojo</groupId><artifactId>findbugs-maven-plugin</artifactId><version>2.4</version></plugin></reportPlugins>",installedPlugin.getConfig().getConfigurationElement("reportPlugins").toString()); 
+      Assert.assertEquals(
+               "<reportPlugins><plugin><groupId>org.codehaus.mojo</groupId><artifactId>findbugs-maven-plugin</artifactId><version>2.4</version></plugin></reportPlugins>",
+               installedPlugin.getConfig().getConfigurationElement("reportPlugins").toString());
 
    }
-   
-   
-   private void assertPluginsConfigurationsEquals(MavenPlugin ref, MavenPlugin chg) {
+
+   private void assertPluginsConfigurationsEquals(MavenPlugin ref, MavenPlugin chg)
+   {
       assertNotNull(ref);
       assertNotNull(chg);
       // Config
-      Map<String, String> cfgElmtsRefMap = new HashMap<String,String>();
-      if (ref.getConfig() != null || chg.getConfig() != null) {
+      Map<String, String> cfgElmtsRefMap = new HashMap<String, String>();
+      if (ref.getConfig() != null || chg.getConfig() != null)
+      {
          assertNotNull(ref.getConfig());
          assertNotNull(chg.getConfig());
-         assertEquals(ref.getConfig().listConfigurationElements().size(), chg.getConfig().listConfigurationElements().size());
-         for (ConfigurationElement e: ref.getConfig().listConfigurationElements()) {
+         assertEquals(ref.getConfig().listConfigurationElements().size(), chg.getConfig().listConfigurationElements()
+                  .size());
+         for (ConfigurationElement e : ref.getConfig().listConfigurationElements())
+         {
             cfgElmtsRefMap.put(e.getName(), e.getText() == null ? "" : e.getText().trim());
          }
-         for (ConfigurationElement e: chg.getConfig().listConfigurationElements()) {
+         for (ConfigurationElement e : chg.getConfig().listConfigurationElements())
+         {
             assertNotNull(cfgElmtsRefMap.get(e.getName()));
             assertEquals(cfgElmtsRefMap.get(e.getName()), e.getText() == null ? "" : e.getText().trim());
          }
       }
    }
 
-   private Plugin createMavenSitePlugin() throws Exception {
-      Plugin plugin = createPlugin("org.apache.maven.plugins","maven-site-plugin","3.0");
-      String mavenSitePluginCfg = 
+   private Plugin createMavenSitePlugin() throws Exception
+   {
+      Plugin plugin = createPlugin("org.apache.maven.plugins", "maven-site-plugin", "3.0");
+      String mavenSitePluginCfg =
                "<configuration>" +
-               "   <reportPlugins>" +
-               "       <plugin>" +
-               "           <groupId>org.codehaus.mojo</groupId>" +
-               "           <artifactId>findbugs-maven-plugin</artifactId>" +
-               "           <version>2.3.2</version>" +
-               "       </plugin>" +
-               "   </reportPlugins>" +
-               "   <generateReports>true</generateReports>" +
-               "</configuration>";
+                        "   <reportPlugins>" +
+                        "       <plugin>" +
+                        "           <groupId>org.codehaus.mojo</groupId>" +
+                        "           <artifactId>findbugs-maven-plugin</artifactId>" +
+                        "           <version>2.3.2</version>" +
+                        "       </plugin>" +
+                        "   </reportPlugins>" +
+                        "   <generateReports>true</generateReports>" +
+                        "</configuration>";
       Xpp3Dom dom;
       dom = Xpp3DomBuilder.build(
-              new ByteArrayInputStream(mavenSitePluginCfg.getBytes()),
-              "UTF-8");
+               new ByteArrayInputStream(mavenSitePluginCfg.getBytes()),
+               "UTF-8");
 
       plugin.setConfiguration(dom);
       return plugin;
-  }
-   
-  public void  removePluginConfiguration(MavenPluginAdapter plugin) throws Exception {
+   }
+
+   public void removePluginConfiguration(MavenPluginAdapter plugin) throws Exception
+   {
       Xpp3Dom dom = Xpp3DomBuilder.build(
-              new ByteArrayInputStream("<configuration></configuration>".getBytes()), "UTF-8");
+               new ByteArrayInputStream("<configuration></configuration>".getBytes()), "UTF-8");
 
       plugin.setConfiguration(dom);
    }
-  
-  public MavenPluginAdapter changePluginConfiguration(MavenPlugin pluginToInstall) throws Exception {
-     MavenPluginAdapter newPluginToInstall = new MavenPluginAdapter((MavenPlugin)pluginToInstall);
-     String mavenSitePluginCfg = 
-              "<configuration>" +
-              "   <reportPlugins>" +
-              "       <plugin>" +
-              "           <groupId>org.codehaus.mojo</groupId>" +
-              "           <artifactId>findbugs-maven-plugin</artifactId>" +
-              "           <version>2.4</version>" +
-              "       </plugin>" +
-              "   </reportPlugins>" +
-              "   <generateReports>true</generateReports>" +
-              "</configuration>";
-     Xpp3Dom dom;
-     dom = Xpp3DomBuilder.build(
-             new ByteArrayInputStream(mavenSitePluginCfg.getBytes()),
-             "UTF-8");
-     newPluginToInstall.setConfiguration(dom);
-     return newPluginToInstall;
-  }
+
+   public MavenPluginAdapter changePluginConfiguration(MavenPlugin pluginToInstall) throws Exception
+   {
+      MavenPluginAdapter newPluginToInstall = new MavenPluginAdapter((MavenPlugin) pluginToInstall);
+      String mavenSitePluginCfg =
+               "<configuration>" +
+                        "   <reportPlugins>" +
+                        "       <plugin>" +
+                        "           <groupId>org.codehaus.mojo</groupId>" +
+                        "           <artifactId>findbugs-maven-plugin</artifactId>" +
+                        "           <version>2.4</version>" +
+                        "       </plugin>" +
+                        "   </reportPlugins>" +
+                        "   <generateReports>true</generateReports>" +
+                        "</configuration>";
+      Xpp3Dom dom;
+      dom = Xpp3DomBuilder.build(
+               new ByteArrayInputStream(mavenSitePluginCfg.getBytes()),
+               "UTF-8");
+      newPluginToInstall.setConfiguration(dom);
+      return newPluginToInstall;
+   }
 
    private Plugin createPlugin(String groupId, String artifactId, String version)
    {
@@ -380,21 +369,26 @@ public class MavenPluginInstallerTest extends AbstractShellTest
 
       return plugin;
    }
-   
-   private void debugPom(Project project) {
+
+   private void debugPom(Project project)
+   {
       Resource pom = project.getProjectRoot().getChild("pom.xml");
       System.out.println(pom.getFullyQualifiedName());
-      try {
+      try
+      {
          BufferedReader in = new BufferedReader(new InputStreamReader(pom.getResourceInputStream()));
          String line = null;
-         while((line = in.readLine()) != null) {
+         while ((line = in.readLine()) != null)
+         {
             System.out.println(line);
          }
-      } catch (Exception e) {
-         System.out.println("Error while trying to read pom file:"+e);
+      }
+      catch (Exception e)
+      {
+         System.out.println("Error while trying to read pom file:" + e);
       }
    }
-   
+
    protected Project initializeProjectWithChild() throws Exception
    {
       getShell().setCurrentResource(createTempFolder());
@@ -403,67 +397,73 @@ public class MavenPluginInstallerTest extends AbstractShellTest
       // Alter pom to add a plugin management
       Resource pom = getProject().getProjectRoot().getChild("pom.xml");
       StringBuffer pomStr = new StringBuffer();
-      try {
+      try
+      {
          BufferedReader in = new BufferedReader(new InputStreamReader(pom.getResourceInputStream()));
          String line = null;
-         while((line = in.readLine()) != null) {
-            if (line.matches(".*<build>.*")) {
+         while ((line = in.readLine()) != null)
+         {
+            if (line.matches(".*<build>.*"))
+            {
                line +=
-                    "<pluginManagement>"+
-                     "<plugins>"+
-                        "<plugin>"+
-                          "<artifactId>maven-site-plugin</artifactId>"+
-                          "<version>3.0</version>"+
-                          "<configuration>"+
-                            "<reportPlugins>"+
-                              "<plugin>"+
-                                "<groupId>org.codehaus.mojo</groupId>"+
-                                "<artifactId>findbugs-maven-plugin</artifactId>"+
-                                "<version>2.3.2</version>"+
-                              "</plugin>"+
-                            "</reportPlugins>"+
-                            "<generateReports>true</generateReports>"+
-                          "</configuration>"+
-                        "</plugin>"+
-                      "</plugins>"+
-                    "</pluginManagement>"+
-                    "<plugins>"+
-                      "<plugin>"+
-                        "<artifactId>maven-site-plugin</artifactId>"+
-                        "<executions>"+
-                            "<execution>"+
-                              "<id>test-site</id>"+
-                              "<phase>post-site</phase>"+
-                              "<goals>"+
-                                "<goal>run</goal>"+
-                              "</goals>"+
-                              "<configuration>"+
-                               "<tempWebappDirectory>/tmp</tempWebappDirectory>"+
-                              "</configuration>"+
-                            "</execution>"+
-                         "</executions>"+     
-                      "</plugin>"+
-                    "</plugins>";
+                        "<pluginManagement>" +
+                                 "<plugins>" +
+                                 "<plugin>" +
+                                 "<artifactId>maven-site-plugin</artifactId>" +
+                                 "<version>3.0</version>" +
+                                 "<configuration>" +
+                                 "<reportPlugins>" +
+                                 "<plugin>" +
+                                 "<groupId>org.codehaus.mojo</groupId>" +
+                                 "<artifactId>findbugs-maven-plugin</artifactId>" +
+                                 "<version>2.3.2</version>" +
+                                 "</plugin>" +
+                                 "</reportPlugins>" +
+                                 "<generateReports>true</generateReports>" +
+                                 "</configuration>" +
+                                 "</plugin>" +
+                                 "</plugins>" +
+                                 "</pluginManagement>" +
+                                 "<plugins>" +
+                                 "<plugin>" +
+                                 "<artifactId>maven-site-plugin</artifactId>" +
+                                 "<executions>" +
+                                 "<execution>" +
+                                 "<id>test-site</id>" +
+                                 "<phase>post-site</phase>" +
+                                 "<goals>" +
+                                 "<goal>run</goal>" +
+                                 "</goals>" +
+                                 "<configuration>" +
+                                 "<tempWebappDirectory>/tmp</tempWebappDirectory>" +
+                                 "</configuration>" +
+                                 "</execution>" +
+                                 "</executions>" +
+                                 "</plugin>" +
+                                 "</plugins>";
             }
-            pomStr.append(line+"\n");
+            pomStr.append(line + "\n");
          }
-      } catch (Exception e) {
-         System.out.println("Error while trying to read pom file:"+e);
       }
-      
-      try {
+      catch (Exception e)
+      {
+         System.out.println("Error while trying to read pom file:" + e);
+      }
+
+      try
+      {
          BufferedWriter bw = new BufferedWriter(new FileWriter(new File(pom.getFullyQualifiedName()), false));
          bw.write(pomStr.toString());
          bw.close();
-       } 
-      catch (Exception e) {
-         System.out.println("Error while trying to write pom file:"+e);
-       }
-      
-      queueInputLines("Y","Y","Y");
+      }
+      catch (Exception e)
+      {
+         System.out.println("Error while trying to write pom file:" + e);
+      }
+
+      queueInputLines("Y", "Y", "Y");
       getShell().execute("new-project --named testchild --type pom");
       return getProject();
    }
-   
 
 }
