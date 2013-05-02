@@ -106,7 +106,8 @@ public class RepositoryLookupTest extends ProjectModelTest
    {
       Dependency dep = DependencyBuilder.create("org.jboss.seam.international:seam-international:[3.0.0,)");
       DependencyRepository repo = new DependencyRepositoryImpl(KnownRepository.JBOSS_NEXUS);
-      List<DependencyResource> artifacts = resolver.resolveDependencies(dep, Arrays.asList(repo));
+      DependencyRepository repoCentral = new DependencyRepositoryImpl(KnownRepository.CENTRAL);
+      List<DependencyResource> artifacts = resolver.resolveDependencies(dep, Arrays.asList(repo, repoCentral));
       assertTrue(artifacts.size() >= 1);
    }
 
