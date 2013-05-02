@@ -8,9 +8,7 @@
 package org.jboss.forge.maven.facets;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -22,9 +20,8 @@ import org.apache.maven.execution.MavenExecutionRequestPopulator;
 import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
-import org.apache.maven.settings.Profile;
+import org.apache.maven.settings.Mirror;
 import org.apache.maven.settings.Proxy;
-import org.apache.maven.settings.Repository;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.building.DefaultSettingsBuilderFactory;
 import org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
@@ -38,9 +35,9 @@ import org.codehaus.plexus.logging.console.ConsoleLoggerManager;
 import org.jboss.forge.ForgeEnvironment;
 import org.jboss.forge.maven.RepositoryUtils;
 import org.jboss.forge.project.ProjectModelException;
-import org.jboss.forge.project.facets.DependencyFacet.KnownRepository;
 import org.jboss.forge.shell.util.OSUtils;
 import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManager;
+import org.sonatype.aether.util.repository.DefaultMirrorSelector;
 import org.sonatype.aether.util.repository.DefaultProxySelector;
 
 /**
@@ -79,40 +76,13 @@ public class MavenContainer
 
          MavenExecutionRequest executionRequest = new DefaultMavenExecutionRequest();
          lookup(MavenExecutionRequestPopulator.class).populateFromSettings(executionRequest, getSettings());
+         lookup(MavenExecutionRequestPopulator.class).populateDefaults(executionRequest);
          request = executionRequest.getProjectBuildingRequest();
-
          ArtifactRepository localRepository = RepositoryUtils.toArtifactRepository("local",
                   new File(settings.getLocalRepository()).toURI().toURL().toString(), null, true, true);
          request.setLocalRepository(localRepository);
 
-         List<ArtifactRepository> settingsRepos = new ArrayList<ArtifactRepository>();
-         List<String> activeProfiles = settings.getActiveProfiles();
-
-         @SuppressWarnings("unchecked")
-         Map<String, Profile> profiles = settings.getProfilesAsMap();
-
-         for (String id : activeProfiles)
-         {
-            Profile profile = profiles.get(id);
-            if(profile != null)
-            {
-               List<Repository> repositories = profile.getRepositories();
-               for (Repository repository : repositories)
-               {
-                  settingsRepos.add(RepositoryUtils.convertFromMavenSettingsRepository(repository));
-               }
-            }
-         }
-
-         if (!offline)
-         {
-            KnownRepository repo = KnownRepository.CENTRAL;
-            settingsRepos.add(RepositoryUtils.toArtifactRepository(repo.getId(), repo.getUrl(), null, true, false));
-         }
-
-         request.setRemoteRepositories(settingsRepos);
          request.setSystemProperties(System.getProperties());
-
          MavenRepositorySystemSession repositorySession = new MavenRepositorySystemSession();
          Proxy activeProxy = settings.getActiveProxy();
          if (activeProxy != null)
@@ -123,7 +93,18 @@ public class MavenContainer
          }
          repositorySession.setLocalRepositoryManager(new SimpleLocalRepositoryManager(settings.getLocalRepository()));
          repositorySession.setOffline(offline);
-
+         List<Mirror> mirrors = executionRequest.getMirrors();
+         if (mirrors != null)
+         {
+            DefaultMirrorSelector mirrorSelector = new DefaultMirrorSelector();
+            for (Mirror mirror : mirrors)
+            {
+               mirrorSelector.add(mirror.getId(), mirror.getUrl(), mirror.getLayout(), false, mirror.getMirrorOf(),
+                        mirror.getMirrorOfLayouts());
+            }
+            repositorySession.setMirrorSelector(mirrorSelector);
+         }
+         
          request.setRepositorySession(repositorySession);
          request.setProcessPlugins(false);
          // request.setPluginArtifactRepositories(Arrays.asList(localRepository));
