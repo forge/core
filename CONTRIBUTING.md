@@ -10,7 +10,7 @@ If you don't have the Git client (`git`), get it from: <http://git-scm.com/>
 
 Here are the steps in detail:
 
-1. [Fork](https://github.com/forge/core/fork_select) the project. This creates a the project in your own Git with the default remote name 'origin'.
+1. [Fork](https://github.com/forge/core/fork) the project. This creates a the project in your own Git with the default remote name 'origin'.
 
 2. Clone your fork. This creates and populates a directory in your local file system.
 
