@@ -24,6 +24,17 @@
       <dependencies>
          <dependency>
             <groupId>org.jboss.forge</groupId>
+            <artifactId>aesh</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>aesh</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
             <artifactId>aesh-api</artifactId>
             <version>${project.version}</version>
          </dependency>
@@ -34,6 +45,12 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.forge</groupId>
+            <artifactId>aesh-spi</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
             <artifactId>aesh-impl</artifactId>
             <version>${project.version}</version>
          </dependency>
@@ -41,6 +58,12 @@
             <groupId>org.jboss.forge</groupId>
             <artifactId>aesh-test-harness</artifactId>
             <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>aesh-test-harness</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
          </dependency>
       </dependencies>
    </dependencyManagement>

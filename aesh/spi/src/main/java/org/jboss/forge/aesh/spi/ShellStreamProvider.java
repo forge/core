@@ -6,6 +6,9 @@
  */
 package org.jboss.forge.aesh.spi;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import org.jboss.forge.container.services.Exported;
 
 /**
@@ -14,5 +17,11 @@ import org.jboss.forge.container.services.Exported;
 @Exported
 public interface ShellStreamProvider
 {
-   // Methods to do Stream configuration/get stream handles
+   InputStream getInputStream();
+
+   OutputStream getStdOut();
+
+   OutputStream getStdErr();
+   
+   void reset();
 }

@@ -86,14 +86,12 @@ public class ForgeShell
    {
       prompt = createPrompt();
 
-      for (ExportedInstance<ShellStreamProvider> provider : registry.getExportedInstances(ShellStreamProvider.class))
+      for (ExportedInstance<ShellStreamProvider> instance : registry.getExportedInstances(ShellStreamProvider.class))
       {
-         System.out.println("Loaded shell stream provider: " + provider);
-         // Configure the stream here. This will only execute if there is a addon deployed BEFORE aesh, which is the
-         // case in tests. We control that order there (or can fix if it is not working.)
-
-         // in the test @Inject the ShellStreamProvider and if there is one deployed, it will work. Otherwise there
-         // will be problems when you call .get();
+         ShellStreamProvider provider = instance.get();
+         Settings.getInstance().setInputStream(provider.getInputStream());
+         Settings.getInstance().setStdOut(provider.getStdOut());
+         Settings.getInstance().setStdErr(provider.getStdErr());
       }
 
       Settings.getInstance().setReadInputrc(false);
@@ -241,7 +239,7 @@ public class ForgeShell
                try
                {
                   cl = command.parse(output.getBuffer());
-                   logger.info("Parsing: "+output.getBuffer()+", CommandLine is:"+cl);
+                  logger.info("Parsing: " + output.getBuffer() + ", CommandLine is:" + cl);
                   if (cl != null)
                   {
                      // need some way of deciding if the command is standalone
@@ -255,7 +253,7 @@ public class ForgeShell
                         try
                         {
                            command.run(output, cl);
-                            return 0;
+                           return 0;
                         }
                         catch (Exception e)
                         {
@@ -266,23 +264,25 @@ public class ForgeShell
                }
                catch (CommandLineParserException iae)
                {
-                   if(iae instanceof OptionParserException ||
+                  if (iae instanceof OptionParserException ||
                            iae instanceof ArgumentParserException ||
-                           iae instanceof RequiredOptionException) {
-                       console.pushToStdOut(iae.getMessage()+Config.getLineSeparator());
-                       logger.info("GOT: "+iae.getMessage()+"\n Parser: "+ command.getContext().getParser());
-                       return 0;
-                   }
-                   else {
-                       logger.log(Level.INFO, "Command: " + command + ", did not match: " + output.getBuffer()+
-                               "\n"+iae.getMessage());
-                   }
+                           iae instanceof RequiredOptionException)
+                  {
+                     console.pushToStdOut(iae.getMessage() + Config.getLineSeparator());
+                     logger.info("GOT: " + iae.getMessage() + "\n Parser: " + command.getContext().getParser());
+                     return 0;
+                  }
+                  else
+                  {
+                     logger.log(Level.INFO, "Command: " + command + ", did not match: " + output.getBuffer() +
+                              "\n" + iae.getMessage());
+                  }
                }
             }
             // if we didnt find any commands matching
             if (cl == null)
             {
-               console.pushToStdOut(output.getBuffer() + ": command not found."+ Config.getLineSeparator());
+               console.pushToStdOut(output.getBuffer() + ": command not found." + Config.getLineSeparator());
             }
          }
          return 0;
