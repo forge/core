@@ -50,6 +50,8 @@ public final class RepositoryUtils
          result.setLayout(new DefaultRepositoryLayout());
       else if ("flat".equals(layout))
          result.setLayout(new FlatRepositoryLayout());
+      else if ("p2".equals(layout))
+         result.setLayout(new P2ArtifactRepositoryLayout());
 
       RepositoryPolicy releases = repository.getReleases();
       if (releases != null)
