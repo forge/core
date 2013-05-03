@@ -31,11 +31,6 @@ public class TestShellConfiguration implements ShellConfiguration
    private ByteArrayOutputStream stdout = new ByteArrayOutputStream();
    private ByteArrayOutputStream stderr = new ByteArrayOutputStream();
 
-   public TestShellConfiguration()
-   {
-      System.out.println("Created new: " + this);
-   }
-
    @Override
    public synchronized void configure()
    {
