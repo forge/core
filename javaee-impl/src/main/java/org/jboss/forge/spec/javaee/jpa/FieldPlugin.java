@@ -302,7 +302,11 @@ public class FieldPlugin implements Plugin
             @Option(name = "fetchType",
                      required = false,
                      description = "Whether the association should be lazily loaded or must be eagerly fetched.") final FetchType fetchType,
-            @Option(name = "required", required = false, flagOnly = true, description = "Whether the association is required. Sets the optional attribute to false.") final boolean required)
+            @Option(name = "required", required = false, flagOnly = true, description = "Whether the association is required. Sets the optional attribute to false.") final boolean required,
+            @Option(name = "cascade",
+                     required = false,
+                     completer = CascadeTypeCompleter.class,
+                     description = "Define the set of operations that are cascaded to the target.") final CascadeType[] cascadeTypes)
    {
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
 
@@ -337,6 +341,10 @@ public class FieldPlugin implements Plugin
             // Set the optional attribute of @OneToOne/@ManyToOne only when false, since the default value is true
             annotation.setLiteralValue("optional", "false");
          }
+         if(cascadeTypes !=null && cascadeTypes.length > 0)
+         {
+            annotation.setEnumArrayValue("cascade", cascadeTypes);
+         }
          java.saveJavaSource(entityClass);
       }
       catch (FileNotFoundException e)
@@ -361,7 +369,10 @@ public class FieldPlugin implements Plugin
                      type = PromptType.JAVA_VARIABLE_NAME) final String inverseFieldName,
             @Option(name = "fetchType",
                      required = false,
-                     description = "Whether the association should be lazily loaded or must be eagerly fetched.") final FetchType fetchType)
+                     description = "Whether the association should be lazily loaded or must be eagerly fetched.") final FetchType fetchType,
+            @Option(name = "cascade",
+                     required = false,
+                     description = "Define the set of operations that are cascaded to the target.") final CascadeType[] cascadeTypes)
    {
 
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
@@ -423,6 +434,10 @@ public class FieldPlugin implements Plugin
          {
             annotation.setEnumValue("fetch", fetchType);
          }
+         if(cascadeTypes !=null && cascadeTypes.length > 0)
+         {
+            annotation.setEnumArrayValue("cascade", cascadeTypes);
+         }
          java.saveJavaSource(entity);
       }
       catch (FileNotFoundException e)
@@ -448,7 +463,10 @@ public class FieldPlugin implements Plugin
                      type = PromptType.JAVA_VARIABLE_NAME) final String inverseFieldName,
             @Option(name = "fetchType",
                      required = false,
-                     description = "Whether the association should be lazily loaded or must be eagerly fetched.") final FetchType fetchType)
+                     description = "Whether the association should be lazily loaded or must be eagerly fetched.") final FetchType fetchType,
+            @Option(name = "cascade",
+                     required = false,
+                     description = "Define the set of operations that are cascaded to the target.") final CascadeType[] cascadeTypes)
    {
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
 
@@ -506,6 +524,10 @@ public class FieldPlugin implements Plugin
          {
             annotation.setEnumValue("fetch", fetchType);
          }
+         if(cascadeTypes !=null && cascadeTypes.length > 0)
+         {
+            annotation.setEnumArrayValue("cascade", cascadeTypes);
+         }
          java.saveJavaSource(one);
       }
       catch (FileNotFoundException e)
@@ -531,7 +553,10 @@ public class FieldPlugin implements Plugin
             @Option(name = "fetchType",
                      required = false,
                      description = "Whether the association should be lazily loaded or must be eagerly fetched.") final FetchType fetchType,
-            @Option(name = "required", required = false, flagOnly = true, description = "Whether the association is required. Sets the optional attribute to false.") final boolean required)
+            @Option(name = "required", required = false, flagOnly = true, description = "Whether the association is required. Sets the optional attribute to false.") final boolean required,
+            @Option(name = "cascade",
+                     required = false,
+                     description = "Define the set of operations that are cascaded to the target.") final CascadeType[] cascadeTypes)
    {
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
 
@@ -591,6 +616,10 @@ public class FieldPlugin implements Plugin
          {
             // Set the optional attribute of @OneToOne/@ManyToOne only when false, since the default value is true
             manyAnnotation.setLiteralValue("optional", "false");
+         }
+         if(cascadeTypes !=null && cascadeTypes.length > 0)
+         {
+            manyAnnotation.setEnumArrayValue("cascade", cascadeTypes);
          }
          java.saveJavaSource(many);
       }

@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.spec.jpa;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -14,6 +15,7 @@ import static org.junit.Assert.assertTrue;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -351,7 +353,73 @@ public class NewFieldPluginTest extends AbstractJPATest
       assertFalse(rightEntity.hasImport(OneToOne.class));
       assertFalse(rightEntity.hasSyntaxErrors());
    }
+   
+   @Test
+   public void testNewOneToOneRelationshipCascadeSingle() throws Exception
+   {
+      Project project = getProject();
+      JavaClass rightEntity = generateEntity(project);
+      JavaClass leftEntity = generateEntity(project);
 
+      getShell().execute(
+               ConstraintInspector.getName(FieldPlugin.class) + " oneToOne --named right --fieldType ~."
+                        + PersistenceFacetImpl.DEFAULT_ENTITY_PACKAGE + "."
+                        + rightEntity.getName() + " --cascade ALL");
+
+      leftEntity = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(leftEntity).getJavaSource();
+
+      assertTrue(leftEntity.hasAnnotation(Entity.class));
+      assertTrue(leftEntity.hasField("right"));
+      assertTrue(leftEntity.getField("right").getType().equals(rightEntity.getName()));
+      assertTrue(leftEntity.getField("right").hasAnnotation(OneToOne.class));
+      assertArrayEquals(
+               new CascadeType[] { CascadeType.ALL },
+               leftEntity.getField("right").getAnnotation(OneToOne.class)
+                        .getEnumArrayValue(CascadeType.class, "cascade"));
+      assertTrue(leftEntity.hasImport(rightEntity.getQualifiedName()));
+      assertTrue(leftEntity.hasImport(OneToOne.class));
+      assertFalse(leftEntity.hasSyntaxErrors());
+
+      rightEntity = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(rightEntity).getJavaSource();
+
+      assertFalse(rightEntity.hasField("left"));
+      assertFalse(rightEntity.hasImport(leftEntity.getQualifiedName()));
+      assertFalse(rightEntity.hasImport(OneToOne.class));
+      assertFalse(rightEntity.hasSyntaxErrors());
+   }
+
+   @Test
+   public void testNewOneToOneRelationshipCascadeMultiple() throws Exception
+   {
+      Project project = getProject();
+      JavaClass rightEntity = generateEntity(project);
+      JavaClass leftEntity = generateEntity(project);
+
+      getShell().execute(
+               ConstraintInspector.getName(FieldPlugin.class) + " oneToOne --named right --fieldType ~."
+                        + PersistenceFacetImpl.DEFAULT_ENTITY_PACKAGE + "."
+                        + rightEntity.getName() + " --cascade PERSIST MERGE");
+
+      leftEntity = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(leftEntity).getJavaSource();
+
+      assertTrue(leftEntity.hasAnnotation(Entity.class));
+      assertTrue(leftEntity.hasField("right"));
+      assertTrue(leftEntity.getField("right").getType().equals(rightEntity.getName()));
+      assertTrue(leftEntity.getField("right").hasAnnotation(OneToOne.class));
+      assertArrayEquals(new CascadeType[] { CascadeType.PERSIST, CascadeType.MERGE }, leftEntity.getField("right")
+               .getAnnotation(OneToOne.class).getEnumArrayValue(CascadeType.class, "cascade"));
+      assertTrue(leftEntity.hasImport(rightEntity.getQualifiedName()));
+      assertTrue(leftEntity.hasImport(OneToOne.class));
+      assertFalse(leftEntity.hasSyntaxErrors());
+
+      rightEntity = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(rightEntity).getJavaSource();
+
+      assertFalse(rightEntity.hasField("left"));
+      assertFalse(rightEntity.hasImport(leftEntity.getQualifiedName()));
+      assertFalse(rightEntity.hasImport(OneToOne.class));
+      assertFalse(rightEntity.hasSyntaxErrors());
+   }
+   
    @Test
    public void testNewManyToManyRelationship() throws Exception
    {
@@ -412,6 +480,84 @@ public class NewFieldPluginTest extends AbstractJPATest
       assertNull(leftEntity.getField("right").getAnnotation(ManyToMany.class).getStringValue("mappedBy"));
       assertEquals(FetchType.EAGER,
                leftEntity.getField("right").getAnnotation(ManyToMany.class).getEnumValue(FetchType.class, "fetch"));
+      assertTrue(leftEntity.hasImport(rightEntity.getQualifiedName()));
+      assertTrue(leftEntity.hasImport(ManyToMany.class));
+      assertFalse(leftEntity.hasSyntaxErrors());
+
+      rightEntity = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(rightEntity).getJavaSource();
+
+      assertFalse(rightEntity.hasField("left"));
+      assertFalse(rightEntity.hasImport(leftEntity.getQualifiedName()));
+      assertFalse(rightEntity.hasImport(ManyToMany.class));
+      assertFalse(rightEntity.hasSyntaxErrors());
+   }
+   
+   @Test
+   public void testNewManyToManyRelationshipCascadeSingle() throws Exception
+   {
+      Project project = getProject();
+      JavaClass rightEntity = generateEntity(project);
+      JavaClass leftEntity = generateEntity(project);
+
+      getShell().execute(
+               ConstraintInspector.getName(FieldPlugin.class) + " manyToMany --named right --fieldType ~."
+                        + PersistenceFacetImpl.DEFAULT_ENTITY_PACKAGE + "."
+                        + rightEntity.getName() + " --cascade ALL");
+
+      leftEntity = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(leftEntity).getJavaSource();
+
+      assertTrue(leftEntity.hasAnnotation(Entity.class));
+      assertTrue(leftEntity.hasField("right"));
+      assertTrue(leftEntity.getField("right").getType().equals("Set"));
+      assertTrue(leftEntity.getMethod("getRight").getReturnTypeInspector().toString()
+               .equals("Set<" + rightEntity.getName() + ">"));
+      assertTrue(leftEntity.getField("right").getTypeInspector().getTypeArguments().get(0).getQualifiedName()
+               .equals(rightEntity.getQualifiedName()));
+      assertTrue(leftEntity.getField("right").hasAnnotation(ManyToMany.class));
+      assertNull(leftEntity.getField("right").getAnnotation(ManyToMany.class).getStringValue("mappedBy"));
+      assertArrayEquals(
+               new CascadeType[] { CascadeType.ALL },
+               leftEntity.getField("right").getAnnotation(ManyToMany.class)
+                        .getEnumArrayValue(CascadeType.class, "cascade"));
+      assertTrue(leftEntity.hasImport(rightEntity.getQualifiedName()));
+      assertTrue(leftEntity.hasImport(ManyToMany.class));
+      assertFalse(leftEntity.hasSyntaxErrors());
+
+      rightEntity = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(rightEntity).getJavaSource();
+
+      assertFalse(rightEntity.hasField("left"));
+      assertFalse(rightEntity.hasImport(leftEntity.getQualifiedName()));
+      assertFalse(rightEntity.hasImport(ManyToMany.class));
+      assertFalse(rightEntity.hasSyntaxErrors());
+   }
+   
+   @Test
+   public void testNewManyToManyRelationshipCascadeMultiple() throws Exception
+   {
+      Project project = getProject();
+      JavaClass rightEntity = generateEntity(project);
+      JavaClass leftEntity = generateEntity(project);
+
+      getShell().execute(
+               ConstraintInspector.getName(FieldPlugin.class) + " manyToMany --named right --fieldType ~."
+                        + PersistenceFacetImpl.DEFAULT_ENTITY_PACKAGE + "."
+                        + rightEntity.getName() + " --cascade PERSIST MERGE");
+
+      leftEntity = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(leftEntity).getJavaSource();
+
+      assertTrue(leftEntity.hasAnnotation(Entity.class));
+      assertTrue(leftEntity.hasField("right"));
+      assertTrue(leftEntity.getField("right").getType().equals("Set"));
+      assertTrue(leftEntity.getMethod("getRight").getReturnTypeInspector().toString()
+               .equals("Set<" + rightEntity.getName() + ">"));
+      assertTrue(leftEntity.getField("right").getTypeInspector().getTypeArguments().get(0).getQualifiedName()
+               .equals(rightEntity.getQualifiedName()));
+      assertTrue(leftEntity.getField("right").hasAnnotation(ManyToMany.class));
+      assertNull(leftEntity.getField("right").getAnnotation(ManyToMany.class).getStringValue("mappedBy"));
+      assertArrayEquals(
+               new CascadeType[] { CascadeType.PERSIST, CascadeType.MERGE },
+               leftEntity.getField("right").getAnnotation(ManyToMany.class)
+                        .getEnumArrayValue(CascadeType.class, "cascade"));
       assertTrue(leftEntity.hasImport(rightEntity.getQualifiedName()));
       assertTrue(leftEntity.hasImport(ManyToMany.class));
       assertFalse(leftEntity.hasSyntaxErrors());
@@ -484,6 +630,84 @@ public class NewFieldPluginTest extends AbstractJPATest
       assertNull(leftEntity.getField("right").getAnnotation(OneToMany.class).getStringValue("mappedBy"));
       assertEquals(FetchType.EAGER,
                leftEntity.getField("right").getAnnotation(OneToMany.class).getEnumValue(FetchType.class, "fetch"));
+      assertTrue(leftEntity.hasImport(rightEntity.getQualifiedName()));
+      assertTrue(leftEntity.hasImport(OneToMany.class));
+      assertFalse(leftEntity.hasSyntaxErrors());
+
+      rightEntity = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(rightEntity).getJavaSource();
+
+      assertFalse(rightEntity.hasField("left"));
+      assertFalse(rightEntity.hasImport(leftEntity.getQualifiedName()));
+      assertFalse(rightEntity.hasImport(OneToMany.class));
+      assertFalse(rightEntity.hasSyntaxErrors());
+   }
+   
+   @Test
+   public void testNewOneToManyRelationshipCascadeSingle() throws Exception
+   {
+      Project project = getProject();
+      JavaClass rightEntity = generateEntity(project);
+      JavaClass leftEntity = generateEntity(project);
+
+      getShell().execute(
+               ConstraintInspector.getName(FieldPlugin.class) + " oneToMany --named right --fieldType ~."
+                        + PersistenceFacetImpl.DEFAULT_ENTITY_PACKAGE + "."
+                        + rightEntity.getName() + " --cascade ALL");
+
+      leftEntity = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(leftEntity).getJavaSource();
+
+      assertTrue(leftEntity.hasAnnotation(Entity.class));
+      assertTrue(leftEntity.hasField("right"));
+
+      assertTrue(leftEntity.getField("right").getType().equals("Set"));
+      assertTrue(leftEntity.getField("right").getTypeInspector().getTypeArguments().get(0).getQualifiedName()
+               .equals(rightEntity.getQualifiedName()));
+
+      assertTrue(leftEntity.getField("right").hasAnnotation(OneToMany.class));
+      assertNull(leftEntity.getField("right").getAnnotation(OneToMany.class).getStringValue("mappedBy"));
+      assertArrayEquals(
+               new CascadeType[] { CascadeType.ALL },
+               leftEntity.getField("right").getAnnotation(OneToMany.class)
+                        .getEnumArrayValue(CascadeType.class, "cascade"));
+      assertTrue(leftEntity.hasImport(rightEntity.getQualifiedName()));
+      assertTrue(leftEntity.hasImport(OneToMany.class));
+      assertFalse(leftEntity.hasSyntaxErrors());
+
+      rightEntity = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(rightEntity).getJavaSource();
+
+      assertFalse(rightEntity.hasField("left"));
+      assertFalse(rightEntity.hasImport(leftEntity.getQualifiedName()));
+      assertFalse(rightEntity.hasImport(OneToMany.class));
+      assertFalse(rightEntity.hasSyntaxErrors());
+   }
+   
+   @Test
+   public void testNewOneToManyRelationshipMultiple() throws Exception
+   {
+      Project project = getProject();
+      JavaClass rightEntity = generateEntity(project);
+      JavaClass leftEntity = generateEntity(project);
+
+      getShell().execute(
+               ConstraintInspector.getName(FieldPlugin.class) + " oneToMany --named right --fieldType ~."
+                        + PersistenceFacetImpl.DEFAULT_ENTITY_PACKAGE + "."
+                        + rightEntity.getName() + " --cascade PERSIST MERGE");
+
+      leftEntity = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(leftEntity).getJavaSource();
+
+      assertTrue(leftEntity.hasAnnotation(Entity.class));
+      assertTrue(leftEntity.hasField("right"));
+
+      assertTrue(leftEntity.getField("right").getType().equals("Set"));
+      assertTrue(leftEntity.getField("right").getTypeInspector().getTypeArguments().get(0).getQualifiedName()
+               .equals(rightEntity.getQualifiedName()));
+
+      assertTrue(leftEntity.getField("right").hasAnnotation(OneToMany.class));
+      assertNull(leftEntity.getField("right").getAnnotation(OneToMany.class).getStringValue("mappedBy"));
+      assertArrayEquals(
+               new CascadeType[] { CascadeType.PERSIST, CascadeType.MERGE },
+               leftEntity.getField("right").getAnnotation(OneToMany.class)
+                        .getEnumArrayValue(CascadeType.class, "cascade"));
       assertTrue(leftEntity.hasImport(rightEntity.getQualifiedName()));
       assertTrue(leftEntity.hasImport(OneToMany.class));
       assertFalse(leftEntity.hasSyntaxErrors());
@@ -581,6 +805,72 @@ public class NewFieldPluginTest extends AbstractJPATest
       assertTrue(leftEntity.getField("right").hasAnnotation(ManyToOne.class));
       assertNull(leftEntity.getField("right").getAnnotation(ManyToOne.class).getStringValue("mappedBy"));
       assertEquals("false", leftEntity.getField("right").getAnnotation(ManyToOne.class).getLiteralValue("optional"));
+      assertTrue(leftEntity.hasImport(rightEntity.getQualifiedName()));
+      assertTrue(leftEntity.hasImport(ManyToOne.class));
+      assertFalse(leftEntity.hasSyntaxErrors());
+
+      rightEntity = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(rightEntity).getJavaSource();
+
+      assertFalse(rightEntity.hasField("left"));
+      assertFalse(rightEntity.hasImport(leftEntity.getQualifiedName()));
+      assertFalse(rightEntity.hasImport(OneToMany.class));
+      assertFalse(rightEntity.hasSyntaxErrors());
+   }
+   
+   @Test
+   public void testNewManyToOneRelationshipCascadeSingle() throws Exception
+   {
+      Project project = getProject();
+      JavaClass rightEntity = generateEntity(project);
+      JavaClass leftEntity = generateEntity(project);
+
+      getShell().execute(
+               ConstraintInspector.getName(FieldPlugin.class) + " manyToOne --named right --fieldType ~."
+                        + PersistenceFacetImpl.DEFAULT_ENTITY_PACKAGE + "."
+                        + rightEntity.getName() + " --cascade ALL");
+
+      leftEntity = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(leftEntity).getJavaSource();
+
+      assertTrue(leftEntity.hasAnnotation(Entity.class));
+      assertTrue(leftEntity.hasField("right"));
+      assertEquals(rightEntity.getName(), leftEntity.getField("right").getType());
+      assertTrue(leftEntity.getField("right").hasAnnotation(ManyToOne.class));
+      assertNull(leftEntity.getField("right").getAnnotation(ManyToOne.class).getStringValue("mappedBy"));
+      assertArrayEquals(new CascadeType[] { CascadeType.ALL }, leftEntity.getField("right")
+               .getAnnotation(ManyToOne.class).getEnumArrayValue(CascadeType.class, "cascade"));
+      assertTrue(leftEntity.hasImport(rightEntity.getQualifiedName()));
+      assertTrue(leftEntity.hasImport(ManyToOne.class));
+      assertFalse(leftEntity.hasSyntaxErrors());
+
+      rightEntity = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(rightEntity).getJavaSource();
+
+      assertFalse(rightEntity.hasField("left"));
+      assertFalse(rightEntity.hasImport(leftEntity.getQualifiedName()));
+      assertFalse(rightEntity.hasImport(OneToMany.class));
+      assertFalse(rightEntity.hasSyntaxErrors());
+   }
+   
+   @Test
+   public void testNewManyToOneRelationshipCascadeMultiple() throws Exception
+   {
+      Project project = getProject();
+      JavaClass rightEntity = generateEntity(project);
+      JavaClass leftEntity = generateEntity(project);
+
+      getShell().execute(
+               ConstraintInspector.getName(FieldPlugin.class) + " manyToOne --named right --fieldType ~."
+                        + PersistenceFacetImpl.DEFAULT_ENTITY_PACKAGE + "."
+                        + rightEntity.getName() + " --cascade PERSIST MERGE");
+
+      leftEntity = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(leftEntity).getJavaSource();
+
+      assertTrue(leftEntity.hasAnnotation(Entity.class));
+      assertTrue(leftEntity.hasField("right"));
+      assertEquals(rightEntity.getName(), leftEntity.getField("right").getType());
+      assertTrue(leftEntity.getField("right").hasAnnotation(ManyToOne.class));
+      assertNull(leftEntity.getField("right").getAnnotation(ManyToOne.class).getStringValue("mappedBy"));
+      assertArrayEquals(new CascadeType[] { CascadeType.PERSIST, CascadeType.MERGE }, leftEntity.getField("right")
+               .getAnnotation(ManyToOne.class).getEnumArrayValue(CascadeType.class, "cascade"));
       assertTrue(leftEntity.hasImport(rightEntity.getQualifiedName()));
       assertTrue(leftEntity.hasImport(ManyToOne.class));
       assertFalse(leftEntity.hasSyntaxErrors());
