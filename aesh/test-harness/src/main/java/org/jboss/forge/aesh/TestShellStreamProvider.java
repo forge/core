@@ -33,6 +33,7 @@ public class TestShellStreamProvider implements ShellStreamProvider
       stdin = new PipedOutputStream();
       stdout = new ByteArrayOutputStream();
       stderr = new ByteArrayOutputStream();
+      inputStream = null;
    }
 
    @Override
