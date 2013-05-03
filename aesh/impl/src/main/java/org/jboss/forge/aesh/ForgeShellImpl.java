@@ -221,6 +221,7 @@ public class ForgeShellImpl implements ForgeShell
       public int readConsoleOutput(ConsoleOutput output) throws IOException
       {
          CommandLine cl = null;
+         int result = 1;
          if (output.getBuffer() != null && !output.getBuffer().trim().isEmpty())
          {
             // TODO: should clean this up
@@ -251,11 +252,13 @@ public class ForgeShellImpl implements ForgeShell
                         try
                         {
                            command.run(output, cl);
-                           return 0;
+                           result = 0;
+                           break;
                         }
                         catch (Exception e)
                         {
                            logger.log(Level.SEVERE, "Command " + command + " failed to run with: " + output, e);
+                           result = 1;
                         }
                      }
                   }
@@ -268,7 +271,8 @@ public class ForgeShellImpl implements ForgeShell
                   {
                      console.pushToStdOut(iae.getMessage() + Config.getLineSeparator());
                      logger.info("GOT: " + iae.getMessage() + "\n Parser: " + command.getContext().getParser());
-                     return 0;
+                     result = 1;
+                     break;
                   }
                   else
                   {
@@ -283,7 +287,7 @@ public class ForgeShellImpl implements ForgeShell
                console.pushToStdOut(output.getBuffer() + ": command not found." + Config.getLineSeparator());
             }
          }
-         return 0;
+         return result;
       }
    }
 }

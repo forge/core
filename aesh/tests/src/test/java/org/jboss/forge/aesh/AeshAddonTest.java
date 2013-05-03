@@ -1,6 +1,6 @@
 package org.jboss.forge.aesh;
 
-import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -65,6 +65,7 @@ public class AeshAddonTest
 
       streams.getStdIn().write(("foo\n").getBytes());
       System.out.println("OUT:" + streams.getStdOut().toString());
+      System.out.println("ERR:" + streams.getStdErr().toString());
 
       String prompt = shell.getPrompt();
       Assert.assertEquals("[forge]$ ", prompt);
@@ -72,39 +73,22 @@ public class AeshAddonTest
       streams.getStdIn().write("fo".getBytes());
       streams.getStdIn().write(completeChar.getFirstValue());
       System.out.println("OUT:" + streams.getStdOut().toString());
+      System.out.println("ERR:" + streams.getStdErr().toString());
       streams.getStdIn().write("\n".getBytes());
+      ShellTests.waitForCallback(streams.getStdOut(), 10, TimeUnit.SECONDS);
       System.out.println("OUT:" + streams.getStdOut().toString());
-
-      reset();
+      System.out.println("ERR:" + streams.getStdErr().toString());
 
       streams.getStdIn().write(("list-services\n").getBytes());
+      ShellTests.waitForCallback(streams.getStdOut(), 10, TimeUnit.SECONDS);
       System.out.println("OUT:" + streams.getStdOut().toString());
-
-      reset();
+      System.out.println("ERR:" + streams.getStdErr().toString());
 
       streams.getStdIn().write(("exit\n").getBytes());
       System.out.println("OUT:" + streams.getStdOut().toString());
-
-      reset();
+      System.out.println("ERR:" + streams.getStdErr().toString());
 
       shell.stopShell();
-   }
-
-   private void reset()
-   {
-      try
-      {
-         shell.stopShell();
-         shell.startShell();
-      }
-      catch (IOException e)
-      {
-         throw new RuntimeException(e);
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException(e);
-      }
    }
 
 }

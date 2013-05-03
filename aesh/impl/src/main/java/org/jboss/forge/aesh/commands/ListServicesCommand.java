@@ -81,7 +81,7 @@ public class ListServicesCommand implements UICommand
             builder.append(type.getName()).append("\n");
             for (Method method : type.getMethods())
             {
-               builder.append("\n\type - " + getName(method));
+               builder.append("\n\ttype - " + getName(method));
             }
             builder.append("\n");
          }
