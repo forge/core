@@ -6,14 +6,13 @@
  */
 package org.jboss.forge.aesh;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.cl.exception.RequiredOptionException;
 import org.jboss.aesh.complete.CompleteOperation;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
