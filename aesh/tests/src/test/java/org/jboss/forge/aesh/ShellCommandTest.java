@@ -17,75 +17,77 @@ import org.junit.Test;
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  */
-public class ShellCommandTest {
+public class ShellCommandTest
+{
 
+   @Test
+   public void testShellCommandCompletion() throws Exception
+   {
+      ForgeShell forgeShell = new ForgeShellImpl();
+      ShellCommand command = new ShellCommand(null, forgeShell, new FooCommand());
 
-    @Test
-    public void testShellCommandCompletion() throws Exception {
-        ForgeShell forgeShell = new ForgeShell();
-        ShellCommand command = new ShellCommand(new FooCommand(), forgeShell);
+      CompleteOperation completeOperation = new CompleteOperation("foo-bar -", 8);
 
-        CompleteOperation completeOperation = new CompleteOperation("foo-bar -",8);
+      command.complete(completeOperation);
+      assertEquals("--name", completeOperation.getCompletionCandidates().get(0));
+      assertEquals("--help", completeOperation.getCompletionCandidates().get(1));
 
-        command.complete(completeOperation);
-        assertEquals("--name", completeOperation.getCompletionCandidates().get(0));
-        assertEquals("--help", completeOperation.getCompletionCandidates().get(1));
+      completeOperation = new CompleteOperation("foo-bar ", 7);
 
-        completeOperation = new CompleteOperation("foo-bar ",7);
+      command.complete(completeOperation);
+      assertEquals("--name", completeOperation.getCompletionCandidates().get(0));
+      assertEquals("--help", completeOperation.getCompletionCandidates().get(1));
 
-        command.complete(completeOperation);
-        assertEquals("--name", completeOperation.getCompletionCandidates().get(0));
-        assertEquals("--help", completeOperation.getCompletionCandidates().get(1));
+      completeOperation = new CompleteOperation("foo-bar --na", 12);
+      command.complete(completeOperation);
+      assertEquals("--name", completeOperation.getCompletionCandidates().get(0));
 
-        completeOperation = new CompleteOperation("foo-bar --na",12);
-        command.complete(completeOperation);
-        assertEquals("--name", completeOperation.getCompletionCandidates().get(0));
+      completeOperation = new CompleteOperation("foo-bar --name", 14);
+      command.complete(completeOperation);
+      assertEquals("--name", completeOperation.getCompletionCandidates().get(0));
 
-        completeOperation = new CompleteOperation("foo-bar --name",14);
-        command.complete(completeOperation);
-        assertEquals("--name", completeOperation.getCompletionCandidates().get(0));
+      completeOperation = new CompleteOperation("foo-bar --h", 14);
+      command.complete(completeOperation);
+      assertEquals("--help", completeOperation.getCompletionCandidates().get(0));
 
-        completeOperation = new CompleteOperation("foo-bar --h",14);
-        command.complete(completeOperation);
-        assertEquals("--help", completeOperation.getCompletionCandidates().get(0));
+      completeOperation = new CompleteOperation("foo-bar --b", 14);
+      command.complete(completeOperation);
+      assertEquals("--bool", completeOperation.getCompletionCandidates().get(0));
+      assertEquals("--bar", completeOperation.getCompletionCandidates().get(1));
+      assertEquals("--bar2", completeOperation.getCompletionCandidates().get(2));
 
-        completeOperation = new CompleteOperation("foo-bar --b",14);
-        command.complete(completeOperation);
-        assertEquals("--bool", completeOperation.getCompletionCandidates().get(0));
-        assertEquals("--bar", completeOperation.getCompletionCandidates().get(1));
-        assertEquals("--bar2", completeOperation.getCompletionCandidates().get(2));
+      /*
+       * completeOperation = new CompleteOperation("foo-bar --bar ",14); command.complete(completeOperation);
+       * System.out.println(completeOperation);
+       */
+   }
 
-        /*
-        completeOperation = new CompleteOperation("foo-bar --bar ",14);
-        command.complete(completeOperation);
-        System.out.println(completeOperation);
-        */
-    }
+   @Test
+   public void testShellCommandParse() throws Exception
+   {
+      ForgeShell forgeShell = new ForgeShellImpl();
+      ShellCommand command = new ShellCommand(null, forgeShell, new FooCommand());
 
-    @Test
-    public void testShellCommandParse() throws Exception {
-        ForgeShell forgeShell = new ForgeShell();
-        ShellCommand command = new ShellCommand(new FooCommand(), forgeShell);
+      CommandLine cl = command.parse("foo-bar --name FOO --help halp --bar BAR");
 
-        CommandLine cl = command.parse("foo-bar --name FOO --help halp --bar BAR");
+      assertEquals("FOO", cl.getOptionValue("name"));
+      assertEquals("halp", cl.getOptionValue("help"));
 
-        assertEquals("FOO", cl.getOptionValue("name"));
-        assertEquals("halp", cl.getOptionValue("help"));
+      cl = command.parse("foo-bar --name FOO --help halp --targetLocation /tmp --bar BAR");
 
-        cl = command.parse("foo-bar --name FOO --help halp --targetLocation /tmp --bar BAR");
+      assertEquals("FOO", cl.getOptionValue("name"));
+      assertEquals("halp", cl.getOptionValue("help"));
+      assertEquals("/tmp", cl.getOptionValue("targetLocation"));
 
-        assertEquals("FOO", cl.getOptionValue("name"));
-        assertEquals("halp", cl.getOptionValue("help"));
-        assertEquals("/tmp", cl.getOptionValue("targetLocation"));
+      try
+      {
+         cl = command.parse("foo-bar --name FOO --help halp --targetLocation /tmp");
+         fail();
+      }
+      catch (RequiredOptionException iae)
+      {
+      }
 
-
-        try {
-            cl = command.parse("foo-bar --name FOO --help halp --targetLocation /tmp");
-            fail();
-        }
-        catch (RequiredOptionException iae) {
-        }
-
-    }
+   }
 
 }

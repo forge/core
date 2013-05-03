@@ -32,7 +32,7 @@ import org.jboss.aesh.console.settings.Settings;
 import org.jboss.aesh.terminal.CharacterType;
 import org.jboss.aesh.terminal.Color;
 import org.jboss.aesh.terminal.TerminalCharacter;
-import org.jboss.forge.aesh.spi.ShellStreamProvider;
+import org.jboss.forge.aesh.spi.ShellConfiguration;
 import org.jboss.forge.container.Forge;
 import org.jboss.forge.container.addons.Addon;
 import org.jboss.forge.container.addons.AddonRegistry;
@@ -47,9 +47,9 @@ import org.jboss.forge.ui.UICommand;
  */
 @Singleton
 @Exported
-public class ForgeShell
+public class ForgeShellImpl implements ForgeShell
 {
-   private static final Logger logger = Logger.getLogger(ForgeShell.class.getName());
+   private static final Logger logger = Logger.getLogger(ForgeShellImpl.class.getName());
 
    private Console console;
    private Prompt prompt;
@@ -86,16 +86,14 @@ public class ForgeShell
    {
       prompt = createPrompt();
 
-      for (ExportedInstance<ShellStreamProvider> instance : registry.getExportedInstances(ShellStreamProvider.class))
-      {
-         ShellStreamProvider provider = instance.get();
-         Settings.getInstance().setInputStream(provider.getInputStream());
-         Settings.getInstance().setStdOut(provider.getStdOut());
-         Settings.getInstance().setStdErr(provider.getStdErr());
-      }
-
       Settings.getInstance().setReadInputrc(false);
       Settings.getInstance().setLogging(true);
+
+      for (ExportedInstance<ShellConfiguration> instance : registry.getExportedInstances(ShellConfiguration.class))
+      {
+         ShellConfiguration provider = instance.get();
+         provider.configure();
+      }
 
       commands = new ArrayList<ShellCommand>();
       console = Console.getInstance();
@@ -109,7 +107,7 @@ public class ForgeShell
          UICommand command = instance.get();
          try
          {
-            addCommand(new ShellCommand(command, this));
+            addCommand(new ShellCommand(registry, this, command));
          }
          catch (Exception e)
          {
@@ -129,7 +127,7 @@ public class ForgeShell
          {
             if (!doCommandExist(instance.get().getMetadata().getName()))
             {
-               addCommand(new ShellCommand(instance.get(), this));
+               addCommand(new ShellCommand(registry, this, instance.get()));
             }
          }
          Iterator<ShellCommand> iterable = commands.iterator();

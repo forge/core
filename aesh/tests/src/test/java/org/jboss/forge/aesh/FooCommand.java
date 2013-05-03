@@ -6,9 +6,6 @@
  */
 package org.jboss.forge.aesh;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.inject.Inject;
 
 import org.jboss.forge.container.services.Exported;
@@ -18,9 +15,7 @@ import org.jboss.forge.ui.context.UIBuilder;
 import org.jboss.forge.ui.context.UIContext;
 import org.jboss.forge.ui.context.UIValidationContext;
 import org.jboss.forge.ui.impl.UIInputImpl;
-import org.jboss.forge.ui.input.UICompleter;
 import org.jboss.forge.ui.input.UIInput;
-import org.jboss.forge.ui.input.InputComponent;
 import org.jboss.forge.ui.metadata.UICommandMetadata;
 import org.jboss.forge.ui.result.Result;
 import org.jboss.forge.ui.result.Results;

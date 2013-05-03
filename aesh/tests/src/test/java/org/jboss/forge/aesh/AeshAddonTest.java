@@ -1,14 +1,9 @@
 package org.jboss.forge.aesh;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 
 import javax.inject.Inject;
 
-import org.jboss.aesh.console.Config;
-import org.jboss.aesh.console.settings.Settings;
 import org.jboss.aesh.edit.KeyOperation;
 import org.jboss.aesh.edit.actions.Operation;
 import org.jboss.aesh.terminal.Key;
@@ -40,13 +35,13 @@ public class AeshAddonTest
    })
    public static ForgeArchive getDeployment()
    {
-      ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
+      ForgeArchive archive = ShrinkWrap
+               .create(ForgeArchive.class)
                .addClasses(FooCommand.class)
                .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create(AddonId.from("org.jboss.forge:ui", "2.0.0-SNAPSHOT")),
                         AddonDependencyEntry.create(AddonId.from("org.jboss.forge:aesh", "2.0.0-SNAPSHOT")),
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:aesh-spi", "2.0.0-SNAPSHOT")),
                         AddonDependencyEntry.create(AddonId.from("org.jboss.forge:aesh-test-harness", "2.0.0-SNAPSHOT")),
                         AddonDependencyEntry.create(AddonId.from("org.jboss.forge:resources", "2.0.0-SNAPSHOT"))
                );
@@ -56,48 +51,40 @@ public class AeshAddonTest
 
    @Inject
    private ForgeShell shell;
-   
+
    @Inject
-   private TestShellStreamProvider shellStreamProvider;
+   private TestShellConfiguration streams;
 
    @Inject
    private FooCommand fooCommand;
-
-   PipedOutputStream outputStream;
-   ByteArrayOutputStream out;
 
    @Test
    public void testContainerInjection() throws Exception
    {
       Assert.assertNotNull(shell);
 
-      reset();
-
-      shell.addCommand(new ShellCommand(fooCommand, shell));
-
-      outputStream.write(("foo\n").getBytes());
-      System.out.println("OUT:" + out.toString());
+      streams.getStdIn().write(("foo\n").getBytes());
+      System.out.println("OUT:" + streams.getStdOut().toString());
 
       String prompt = shell.getPrompt();
       Assert.assertEquals("[forge]$ ", prompt);
 
-      outputStream.write("fo".getBytes());
-      outputStream.write(completeChar.getFirstValue());
-      System.out.println("OUT:" + out.toString());
-      outputStream.write("\n".getBytes());
-      System.out.println("OUT:" + out.toString());
-      
+      streams.getStdIn().write("fo".getBytes());
+      streams.getStdIn().write(completeChar.getFirstValue());
+      System.out.println("OUT:" + streams.getStdOut().toString());
+      streams.getStdIn().write("\n".getBytes());
+      System.out.println("OUT:" + streams.getStdOut().toString());
+
       reset();
 
-      outputStream.write(("list-services\n").getBytes());
-      System.out.println("OUT:" + out.toString());
-      
-      reset();
-      
+      streams.getStdIn().write(("list-services\n").getBytes());
+      System.out.println("OUT:" + streams.getStdOut().toString());
 
-      outputStream.write(("exit\n").getBytes());
-      System.out.println("OUT:" + out.toString());
-      
+      reset();
+
+      streams.getStdIn().write(("exit\n").getBytes());
+      System.out.println("OUT:" + streams.getStdOut().toString());
+
       reset();
 
       shell.stopShell();
@@ -108,19 +95,6 @@ public class AeshAddonTest
       try
       {
          shell.stopShell();
-         
-         outputStream = new PipedOutputStream();
-         out = new ByteArrayOutputStream();
-         
-         Settings.getInstance().setName("test");
-         Settings.getInstance().setInputStream(new PipedInputStream(outputStream));
-         Settings.getInstance().setStdOut(out);
-         
-         if (!Config.isOSPOSIXCompatible())
-            Settings.getInstance().setAnsiConsole(false);
-
-         Settings.getInstance().getOperationManager().addOperation(new KeyOperation(Key.ENTER, Operation.NEW_LINE));
-
          shell.startShell();
       }
       catch (IOException e)

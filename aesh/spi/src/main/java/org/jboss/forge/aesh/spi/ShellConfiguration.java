@@ -6,22 +6,18 @@
  */
 package org.jboss.forge.aesh.spi;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-
 import org.jboss.forge.container.services.Exported;
 
 /**
+ * Used to configure the shell before it is initialized.
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Exported
-public interface ShellStreamProvider
+public interface ShellConfiguration
 {
-   InputStream getInputStream();
-
-   OutputStream getStdOut();
-
-   OutputStream getStdErr();
-   
-   void reset();
+   /**
+    * Perform any necessary configuration.
+    */
+   void configure();
 }

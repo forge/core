@@ -22,6 +22,7 @@ import org.jboss.aesh.console.ConsoleOutput;
 import org.jboss.aesh.util.FileLister;
 import org.jboss.forge.aesh.util.CommandLineUtil;
 import org.jboss.forge.aesh.util.UICommandDelegate;
+import org.jboss.forge.container.addons.AddonRegistry;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.input.UIInput;
 import org.jboss.forge.ui.input.InputComponent;
@@ -33,25 +34,27 @@ import org.jboss.forge.ui.result.Result;
  */
 public class ShellCommand implements Completion
 {
-    private static final Logger logger = Logger.getLogger(ShellCommand.class.getName());
+   private static final Logger logger = Logger.getLogger(ShellCommand.class.getName());
 
+   private AddonRegistry registry;
+   private ForgeShell shell;
    private UICommand command;
+
    private ShellContext context;
 
-   private ForgeShell aeshell;
-
-   public ShellCommand(UICommand command, ForgeShell aeshell) throws Exception
+   public ShellCommand(AddonRegistry registry, ForgeShell shell, UICommand command) throws Exception
    {
+      this.registry = registry;
       this.command = new UICommandDelegate(command);
-      this.context = new ShellContext(aeshell);
-      this.aeshell = aeshell;
+      this.context = new ShellContext(shell);
+      this.shell = shell;
       command.initializeUI(context);
       generateParser(this.command);
    }
 
    public Console getConsole()
    {
-      return aeshell.getConsole();
+      return shell.getConsole();
    }
 
    public ShellContext getContext()
@@ -59,9 +62,9 @@ public class ShellCommand implements Completion
       return context;
    }
 
-   public ForgeShell getAeshell()
+   public ForgeShell getForgeShell()
    {
-      return aeshell;
+      return shell;
    }
 
    public UICommand getCommand()
@@ -81,7 +84,7 @@ public class ShellCommand implements Completion
 
    public void run(ConsoleOutput consoleOutput, CommandLine commandLine) throws Exception
    {
-      CommandLineUtil.populateUIInputs(commandLine, context, getAeshell().getRegistry());
+      CommandLineUtil.populateUIInputs(commandLine, context, registry);
       context.setConsoleOutput(consoleOutput);
       Result result = command.execute(context);
       if (result != null &&
@@ -102,51 +105,61 @@ public class ShellCommand implements Completion
       // complete command names
       if (param.getName().startsWith(completeOperation.getBuffer()))
          completeOperation.addCompletionCandidate(param.getName());
-      //display all the options/arguments
-      else if(param.getName().equals(completeOperation.getBuffer().trim())) {
-          completeOperation.addCompletionCandidates(param.getOptionLongNamesWithDash());
+      // display all the options/arguments
+      else if (param.getName().equals(completeOperation.getBuffer().trim()))
+      {
+         completeOperation.addCompletionCandidates(param.getOptionLongNamesWithDash());
       }
       // complete options/arguments
       else if (completeOperation.getBuffer().startsWith(param.getName()))
       {
-          ParsedCompleteObject completeObject = null;
-          try {
-              completeObject = new CommandLineCompletionParser(context.getParser())
-                       .findCompleteObject(completeOperation.getBuffer());
-          }
-          catch (CommandLineParserException e) {
-              logger.info(e.getMessage());
-             return;
-          }
-          logger.info("ParsedCompleteObject: "+completeObject);
-          if (completeObject.doDisplayOptions()) {
-             //we have a partial/full name
-             if(completeObject.getName() != null && completeObject.getName().length() > 0) {
-                 if(param.findPossibleLongNamesWitdDash(completeObject.getName()).size() > 0) {
-                     //only one param
-                     if(param.findPossibleLongNamesWitdDash(completeObject.getName()).size() == 1) {
-                         completeOperation.addCompletionCandidate( param.findPossibleLongNamesWitdDash(completeObject.getName()).get(0));
-                         completeOperation.setOffset(completeOperation.getCursor() -
-                                 completeObject.getOffset());
-                     }
-                     //multiple params
-                     else
-                         completeOperation.addCompletionCandidates(param.findPossibleLongNamesWitdDash(completeObject.getName()));
-                 }
-             }
-             //display all our params
-             else {
-                 if (param.getOptionLongNamesWithDash().size() > 1)
-                 {
-                     completeOperation.addCompletionCandidates(param.getOptionLongNamesWithDash());
-                 }
-                 else
-                 {
-                     completeOperation.addCompletionCandidates(param.getOptionLongNamesWithDash());
+         ParsedCompleteObject completeObject = null;
+         try
+         {
+            completeObject = new CommandLineCompletionParser(context.getParser())
+                     .findCompleteObject(completeOperation.getBuffer());
+         }
+         catch (CommandLineParserException e)
+         {
+            logger.info(e.getMessage());
+            return;
+         }
+         logger.info("ParsedCompleteObject: " + completeObject);
+         if (completeObject.doDisplayOptions())
+         {
+            // we have a partial/full name
+            if (completeObject.getName() != null && completeObject.getName().length() > 0)
+            {
+               if (param.findPossibleLongNamesWitdDash(completeObject.getName()).size() > 0)
+               {
+                  // only one param
+                  if (param.findPossibleLongNamesWitdDash(completeObject.getName()).size() == 1)
+                  {
+                     completeOperation.addCompletionCandidate(param.findPossibleLongNamesWitdDash(
+                              completeObject.getName()).get(0));
                      completeOperation.setOffset(completeOperation.getCursor() -
-                             completeObject.getOffset());
-                 }
-             }
+                              completeObject.getOffset());
+                  }
+                  // multiple params
+                  else
+                     completeOperation.addCompletionCandidates(param.findPossibleLongNamesWitdDash(completeObject
+                              .getName()));
+               }
+            }
+            // display all our params
+            else
+            {
+               if (param.getOptionLongNamesWithDash().size() > 1)
+               {
+                  completeOperation.addCompletionCandidates(param.getOptionLongNamesWithDash());
+               }
+               else
+               {
+                  completeOperation.addCompletionCandidates(param.getOptionLongNamesWithDash());
+                  completeOperation.setOffset(completeOperation.getCursor() -
+                           completeObject.getOffset());
+               }
+            }
          }
          // try to complete an options value
          else if (completeObject.isOption())
@@ -167,14 +180,17 @@ public class ShellCommand implements Completion
             {
                // TODO
             }
-            else if (inputOption != null && inputOption.getValueType() == String.class) {
-               //if it has a default value we can try to auto complete that
-                if(inputOption instanceof UIInput) {
-                    if(completeObject.getValue() == null || ((((UIInput) inputOption).getValue() != null) &&
-                            completeObject.getValue().startsWith(((UIInput) inputOption).getValue().toString()))) {
-                        completeOperation.addCompletionCandidate(((UIInput) inputOption).getValue().toString());
-                    }
-                }
+            else if (inputOption != null && inputOption.getValueType() == String.class)
+            {
+               // if it has a default value we can try to auto complete that
+               if (inputOption instanceof UIInput)
+               {
+                  if (completeObject.getValue() == null || ((((UIInput) inputOption).getValue() != null) &&
+                           completeObject.getValue().startsWith(((UIInput) inputOption).getValue().toString())))
+                  {
+                     completeOperation.addCompletionCandidate(((UIInput) inputOption).getValue().toString());
+                  }
+               }
             }
             // this shouldnt be needed
             if (inputOption != null && inputOption instanceof UIInput)
@@ -242,30 +258,35 @@ public class ShellCommand implements Completion
       }
    }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ShellCommand)) return false;
+   @Override
+   public boolean equals(Object o)
+   {
+      if (this == o)
+         return true;
+      if (!(o instanceof ShellCommand))
+         return false;
 
-        ShellCommand that = (ShellCommand) o;
+      ShellCommand that = (ShellCommand) o;
 
-        if (!command.getMetadata().getName().equals(that.command.getMetadata().getName())) return false;
+      if (!command.getMetadata().getName().equals(that.command.getMetadata().getName()))
+         return false;
 
-        return true;
-    }
+      return true;
+   }
 
-    @Override
-    public int hashCode() {
-        return command.getMetadata().getName().hashCode();
-    }
+   @Override
+   public int hashCode()
+   {
+      return command.getMetadata().getName().hashCode();
+   }
 
-    @Override
+   @Override
    public String toString()
    {
       return "ShellCommand{" +
                "command=" + command +
                ", context=" + context +
-               ", aeshell=" + aeshell +
+               ", shell=" + shell +
                '}';
    }
 }
