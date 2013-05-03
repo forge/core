@@ -7,6 +7,7 @@
 package org.jboss.forge.shell.command;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.Set;
 
@@ -90,6 +91,19 @@ public class Execution
                if (parmTypes[i].isEnum())
                {
                   paramStaging[i] = Enums.valueOf(parmTypes[i], parameterArray[i]);
+               }
+               else if(parmTypes[i].isArray() && parmTypes[i].getComponentType().isEnum())
+               {
+                  Object[] array = (Object[]) parameterArray[i];
+                  if (array != null)
+                  {
+                     Object enums = Array.newInstance(parmTypes[i].getComponentType(), array.length);
+                     for (int ctr = 0; ctr < array.length; ctr++)
+                     {
+                        Array.set(enums, ctr, Enums.valueOf(parmTypes[i].getComponentType(), array[ctr]));
+                     }
+                     paramStaging[i] = enums;
+                  }
                }
                else
                {
