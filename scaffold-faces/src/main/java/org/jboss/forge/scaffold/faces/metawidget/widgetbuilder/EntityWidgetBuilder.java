@@ -583,7 +583,7 @@ public class EntityWidgetBuilder
                      + StringUtils.decapitalize(columnAttributes.get(NAME));
             
             StaticHtmlMetawidget output = (StaticHtmlMetawidget) link.getChildren().get(1);
-            output.setValue(valueExpression);
+            output.setValue(StaticFacesUtils.wrapExpression(valueExpression));
          }
          column.getChildren().add(link);
 

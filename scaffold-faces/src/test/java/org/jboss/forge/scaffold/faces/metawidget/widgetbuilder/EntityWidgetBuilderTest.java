@@ -415,10 +415,10 @@ public class EntityWidgetBuilderTest
       result += "<ui:param name=\"_collection\" value=\"#{foo.bars}\"/>";
       result += "<h:dataTable id=\"fooBars\" styleClass=\"data-table\" value=\"#{forgeview:asList(_collection)}\" var=\"_item\">";
       result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Name\"/></f:facet>";
-      result += "<h:link outcome=\"/entityWidgetBuilderTest$FooOneToOne/view\"><f:param name=\"id\" value=\"#{_item.id}\"/><h:outputText id=\"itemName\" value=\"#{_item.name}\"/></h:link>";
+      result += "<h:link outcome=\"/entityWidgetBuilderTest$FooOneToOne/view\"><f:param name=\"id\" value=\"#{_item.id}\"/><h:outputText id=\"itemBarName\" value=\"#{_item.bar.name}\"/></h:link>";
       result += "</h:column>";
       result += "<h:column><f:facet name=\"header\"><h:outputText value=\"Description\"/></f:facet>";
-      result += "<h:link outcome=\"/entityWidgetBuilderTest$FooOneToOne/view\"><f:param name=\"id\" value=\"#{_item.id}\"/><h:outputText id=\"itemDescription\" value=\"#{_item.description}\"/></h:link>";
+      result += "<h:link outcome=\"/entityWidgetBuilderTest$FooOneToOne/view\"><f:param name=\"id\" value=\"#{_item.id}\"/><h:outputText id=\"itemBarDescription\" value=\"#{_item.bar.description}\"/></h:link>";
       result += "</h:column>";
       result += "<h:column footerClass=\"remove-column\" headerClass=\"remove-column\"><h:commandLink action=\"#{_collection.remove(_item)}\" styleClass=\"remove-button\"/></h:column>";
       result += "</h:dataTable>";
