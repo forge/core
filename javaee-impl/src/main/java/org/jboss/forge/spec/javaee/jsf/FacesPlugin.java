@@ -67,8 +67,10 @@ public class FacesPlugin implements Plugin
       if (!project.hasFacet(FacesAPIFacet.class))
       {
          request.fire(new InstallFacets(FacesAPIFacet.class));
-         if (!project.hasFacet(CDIFacet.class)) {
-            if (prompt.promptBoolean("Do you also want to install CDI?", true)) {
+         if (!project.hasFacet(CDIFacet.class))
+         {
+            if (prompt.promptBoolean("Do you also want to install CDI?", true))
+            {
                request.fire(new InstallFacets(CDIFacet.class));
             }
          }
@@ -76,12 +78,16 @@ public class FacesPlugin implements Plugin
       FacesFacet facet = project.getFacet(FacesFacet.class);
       if (facet.getFacesServletMappings().isEmpty())
       {
-          if (prompt.promptBoolean("Do you also want to install the Faces servlet and mapping?", false)) {
-              facet.setFacesMapping("*.xhtml");
-              facet.setFacesMapping("/faces/*");
-          }
+         String servletVersion = project.getFacet(ServletFacet.class).getConfig().getVersion();
+         int majorVersion = Integer.parseInt(servletVersion.split("[.]")[0]);
+         if (majorVersion < 3
+                  || prompt.promptBoolean("Do you also want to install the Faces servlet and mapping?", false))
+         {
+            facet.setFacesMapping("*.xhtml");
+            facet.setFacesMapping("/faces/*");
+         }
       }
-      
+
       if (project.hasFacet(FacesFacet.class))
       {
          ShellMessages.success(out, "JavaServer Faces is installed.");
@@ -113,7 +119,8 @@ public class FacesPlugin implements Plugin
 
       out.println();
       out.println(out.renderColor(ShellColor.BOLD, "Project State: ") + facet.getProjectStage());
-      out.println(out.renderColor(ShellColor.BOLD, "FacesServlet Mappings: ") + facet.getEffectiveFacesServletMappings());
+      out.println(out.renderColor(ShellColor.BOLD, "FacesServlet Mappings: ")
+               + facet.getEffectiveFacesServletMappings());
       out.println(out.renderColor(ShellColor.BOLD, "Faces Default Suffixes: ") + facet.getFacesDefaultSuffixes());
       out.println(out.renderColor(ShellColor.BOLD, "Facelets Default Suffixes: ")
                + facet.getFaceletsDefaultSuffixes());
@@ -145,7 +152,7 @@ public class FacesPlugin implements Plugin
       {
          throw new RuntimeException(templateEx);
       }
-      
+
       if (!target.exists())
       {
          ((FileResource<?>) target).createNewFile();
