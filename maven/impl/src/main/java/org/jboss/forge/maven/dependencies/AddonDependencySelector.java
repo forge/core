@@ -3,6 +3,7 @@ package org.jboss.forge.maven.dependencies;
 import org.sonatype.aether.collection.DependencyCollectionContext;
 import org.sonatype.aether.collection.DependencySelector;
 import org.sonatype.aether.graph.Dependency;
+import org.sonatype.aether.graph.Exclusion;
 import org.sonatype.aether.util.graph.selector.StaticDependencySelector;
 
 /**
@@ -10,39 +11,69 @@ import org.sonatype.aether.util.graph.selector.StaticDependencySelector;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class AddonDependencySelector
-         implements DependencySelector
+public class AddonDependencySelector implements DependencySelector
 {
    private static final String FORGE_ADDON = "forge-addon";
    private final int depth;
+   private final Dependency parent;
 
    public AddonDependencySelector()
    {
       this.depth = 0;
+      this.parent = null;
    }
 
-   public AddonDependencySelector(int depth)
+   public AddonDependencySelector(Dependency parent, int depth)
    {
       this.depth = depth;
+      this.parent = parent;
    }
 
    @Override
    public boolean selectDependency(Dependency dependency)
    {
-      boolean optional = dependency.isOptional();
+      boolean result = false;
+      if (!isExcluded(dependency))
+      {
+         boolean optional = dependency.isOptional();
 
-      if (depth < 1)
-         return !optional;
+         if (depth < 1)
+            return !optional;
 
-      String scope = dependency.getScope();
-      String classifier = dependency.getArtifact().getClassifier();
+         String scope = dependency.getScope();
+         String classifier = dependency.getArtifact().getClassifier();
 
-      if ("test".equals(scope))
-         return false;
+         if ("test".equals(scope))
+            return false;
 
-      boolean result = (FORGE_ADDON.equals(classifier) && depth == 1)
-               || (!FORGE_ADDON.equals(classifier) && !"provided".equals(scope) && !optional);
+         result = (FORGE_ADDON.equals(classifier) && depth == 1)
+                  || (!FORGE_ADDON.equals(classifier) && !"provided".equals(scope) && !optional);
+      }
+      return result;
+   }
 
+   private boolean isExcluded(Dependency dependency)
+   {
+      boolean result = false;
+      if (parent != null && parent.getExclusions().size() > 0)
+      {
+         for (Exclusion exclusion : parent.getExclusions())
+         {
+            if (exclusion != null)
+            {
+               if (exclusion.getArtifactId() != null
+                        && exclusion.getArtifactId().equals(dependency.getArtifact().getArtifactId()))
+               {
+                  if (exclusion.getGroupId() != null
+                           && exclusion.getGroupId().equals(dependency.getArtifact().getGroupId()))
+                  {
+                     result = true;
+                     break;
+                  }
+               }
+            }
+         }
+      }
       return result;
    }
 
@@ -53,7 +84,7 @@ public class AddonDependencySelector
       {
          return new StaticDependencySelector(false);
       }
-      return new AddonDependencySelector(depth + 1);
+      return new AddonDependencySelector(context.getDependency(), depth + 1);
    }
 
    @Override
