@@ -34,9 +34,9 @@ import org.jboss.forge.dependencies.collection.DependencyNodeUtil;
 /**
  * When an addon is installed, another addons could be required. This object returns the necessary information for the
  * installation of an addon to succeed, like required addons and dependencies
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ *
  */
 public class InstallRequestImpl implements InstallRequest
 {
@@ -51,7 +51,7 @@ public class InstallRequestImpl implements InstallRequest
 
    /**
     * Package-access constructor. Only AddonManager should be allowed to call this constructor.
-    * 
+    *
     * @param addonManager
     */
    InstallRequestImpl(AddonManager addonManager, Forge forge, DependencyNode requestedAddonNode)
@@ -84,7 +84,7 @@ public class InstallRequestImpl implements InstallRequest
 
    /*
     * (non-Javadoc)
-    * 
+    *
     * @see org.jboss.forge.addon.manager.impl.InstallRequest#getRequestedAddon()
     */
    @Override
@@ -95,7 +95,7 @@ public class InstallRequestImpl implements InstallRequest
 
    /*
     * (non-Javadoc)
-    * 
+    *
     * @see org.jboss.forge.addon.manager.impl.InstallRequest#getOptionalAddons()
     */
    @Override
@@ -106,7 +106,7 @@ public class InstallRequestImpl implements InstallRequest
 
    /*
     * (non-Javadoc)
-    * 
+    *
     * @see org.jboss.forge.addon.manager.impl.InstallRequest#getRequiredAddons()
     */
    @Override
@@ -127,13 +127,16 @@ public class InstallRequestImpl implements InstallRequest
             {
                AddonId requiredAddonId = toAddonId(requiredAddon);
                boolean deployed = false;
-               for (AddonRepository repository : forge.getRepositories())
+               if (!requiredAddon.getDependency().getCoordinate().isSnapshot())
                {
-                  if (repository.isDeployed(requiredAddonId))
+                  for (AddonRepository repository : forge.getRepositories())
                   {
-                     log.info("Addon " + requiredAddonId + " is already deployed. Skipping...");
-                     deployed = true;
-                     break;
+                     if (repository.isDeployed(requiredAddonId))
+                     {
+                        log.info("Addon " + requiredAddonId + " is already deployed. Skipping...");
+                        deployed = true;
+                        break;
+                     }
                   }
                }
 
@@ -149,9 +152,9 @@ public class InstallRequestImpl implements InstallRequest
             {
                if (repository instanceof MutableAddonRepository)
                {
-                  MutableAddonRepository mutableRespository = (MutableAddonRepository) repository;
-                  deploy(mutableRespository, requestedAddonId, requestedAddonNode);
-                  mutableRespository.enable(requestedAddonId);
+                  MutableAddonRepository mutableRepository = (MutableAddonRepository) repository;
+                  deploy(mutableRepository, requestedAddonId, requestedAddonNode);
+                  mutableRepository.enable(requestedAddonId);
                   break;
                }
             }
