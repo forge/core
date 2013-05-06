@@ -10,92 +10,58 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
-import org.jboss.forge.parser.JavaParser;
+import org.jboss.forge.container.services.Exported;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class JavaParserServiceImpl implements JavaParserService
+@Exported
+public interface JavaSourceFactory
 {
    /**
     * Open the given {@link File}, parsing its contents into a new {@link JavaClass} instance.
     */
-   @Override
-   public JavaSource<?> parse(final File file) throws FileNotFoundException
-   {
-      return JavaParser.parse(file);
-   }
+   public JavaSource<?> parse(final File file) throws FileNotFoundException;
 
    /**
     * Read the given {@link InputStream} and parse the data into a new {@link JavaClass} instance.
     */
-   @Override
-   public JavaSource<?> parse(final InputStream data)
-   {
-      return JavaParser.parse(data);
-   }
+   public JavaSource<?> parse(final InputStream data);
 
    /**
     * Parse the given character array into a new {@link JavaClass} instance.
     */
-   @Override
-   public JavaSource<?> parse(final char[] data)
-   {
-      return JavaParser.parse(data);
-   }
+   public JavaSource<?> parse(final char[] data);
 
    /**
     * Parse the given String data into a new {@link JavaClass} instance.
     */
-   @Override
-   public JavaSource<?> parse(final String data)
-   {
-      return JavaParser.parse(data);
-   }
+   public JavaSource<?> parse(final String data);
 
    /**
     * Create a new empty {@link JavaClass} instance.
     */
-   @Override
-   public <T extends JavaSource<?>> T create(final Class<T> type)
-   {
-      return JavaParser.create(type);
-   }
+   public <T extends JavaSource<?>> T create(final Class<T> type);
 
    /**
     * Read the given {@link File} and parse its data into a new {@link JavaSource} instance of the given type.
     * 
     * @throws FileNotFoundException
     */
-   @Override
-   public <T extends JavaSource<?>> T parse(final Class<T> type, final File file) throws FileNotFoundException
-   {
-      return JavaParser.parse(type, file);
-   }
+   public <T extends JavaSource<?>> T parse(final Class<T> type, final File file) throws FileNotFoundException;
 
    /**
     * Read the given {@link InputStream} and parse its data into a new {@link JavaSource} instance of the given type.
     */
-   public <T extends JavaSource<?>> T parse(final Class<T> type, final InputStream data)
-   {
-      return JavaParser.parse(type, data);
-   }
+   public <T extends JavaSource<?>> T parse(final Class<T> type, final InputStream data);
 
    /**
     * Read the given character array and parse its data into a new {@link JavaSource} instance of the given type.
     */
-   @Override
-   public <T extends JavaSource<?>> T parse(final Class<T> type, final char[] data)
-   {
-      return JavaParser.parse(type, data);
-   }
+   public <T extends JavaSource<?>> T parse(final Class<T> type, final char[] data);
 
    /**
     * Read the given string and parse its data into a new {@link JavaSource} instance of the given type.
     */
-   @Override
-   public <T extends JavaSource<?>> T parse(final Class<T> type, final String data)
-   {
-      return JavaParser.parse(type, data);
-   }
+   public <T extends JavaSource<?>> T parse(final Class<T> type, final String data);
 }

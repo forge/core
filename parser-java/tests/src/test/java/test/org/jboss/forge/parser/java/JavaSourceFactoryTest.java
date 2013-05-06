@@ -17,14 +17,14 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.repositories.AddonDependencyEntry;
 import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.JavaParserService;
+import org.jboss.forge.parser.java.JavaSourceFactory;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class JavaParserServiceTest
+public class JavaSourceFactoryTest
 {
    @Deployment
    @Dependencies({
@@ -42,12 +42,12 @@ public class JavaParserServiceTest
    }
 
    @Inject
-   private JavaParserService parser;
+   private JavaSourceFactory factory;
 
    @Test
    public void testJavaResourceCreation() throws Exception
    {
-      JavaClass javaClass = parser.create(JavaClass.class).setPackage("org.jboss.forge.test").setName("Example");
+      JavaClass javaClass = factory.create(JavaClass.class).setPackage("org.jboss.forge.test").setName("Example");
       Assert.assertEquals(0, javaClass.getMembers().size());
    }
 }
