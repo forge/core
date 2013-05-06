@@ -82,33 +82,18 @@ public class InstallRequestImpl implements InstallRequest
       }
    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.forge.addon.manager.impl.InstallRequest#getRequestedAddon()
-    */
    @Override
    public DependencyNode getRequestedAddon()
    {
       return this.requestedAddonNode;
    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.forge.addon.manager.impl.InstallRequest#getOptionalAddons()
-    */
    @Override
    public List<DependencyNode> getOptionalAddons()
    {
       return Collections.unmodifiableList(optionalAddons);
    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.forge.addon.manager.impl.InstallRequest#getRequiredAddons()
-    */
    @Override
    public List<DependencyNode> getRequiredAddons()
    {
@@ -126,13 +111,12 @@ public class InstallRequestImpl implements InstallRequest
             for (DependencyNode requiredAddon : getRequiredAddons())
             {
                AddonId requiredAddonId = toAddonId(requiredAddon);
-
                AddonRepository deployed = null;
                for (AddonRepository repository : forge.getRepositories())
                {
                   if (repository.isDeployed(requiredAddonId))
                   {
-                     log.info("Addon " + requiredAddonId + " is already deployed. Skipping...");
+                     log.info("Addon " + requiredAddonId + " is already deployed.");
                      deployed = repository;
                      break;
                   }
@@ -142,8 +126,9 @@ public class InstallRequestImpl implements InstallRequest
                {
                   addonManager.install(requiredAddonId).perform();
                }
-               else if(requiredAddon.getDependency().getCoordinate().isSnapshot())
+               else if (requiredAddon.getDependency().getCoordinate().isSnapshot())
                {
+                  log.info("Re-installing Addon SNAPSHOT " + requiredAddonId + ".");
                   addonManager.install(requiredAddonId).perform(deployed);
                }
             }
@@ -154,9 +139,9 @@ public class InstallRequestImpl implements InstallRequest
             {
                if (repository instanceof MutableAddonRepository)
                {
-                  MutableAddonRepository mutableRespository = (MutableAddonRepository) repository;
-                  deploy(mutableRespository, requestedAddonId, requestedAddonNode);
-                  mutableRespository.enable(requestedAddonId);
+                  MutableAddonRepository mutableRepository = (MutableAddonRepository) repository;
+                  deploy(mutableRepository, requestedAddonId, requestedAddonNode);
+                  mutableRepository.enable(requestedAddonId);
                   break;
                }
             }
@@ -182,7 +167,7 @@ public class InstallRequestImpl implements InstallRequest
                {
                   if (repository.isDeployed(requiredAddonId))
                   {
-                     log.info("Addon " + requiredAddonId + " is already deployed. Skipping...");
+                     log.info("Addon " + requiredAddonId + " is already deployed.");
                      deployed = repository;
                      break;
                   }
@@ -192,8 +177,9 @@ public class InstallRequestImpl implements InstallRequest
                {
                   addonManager.install(requiredAddonId).perform();
                }
-               else if(requiredAddon.getDependency().getCoordinate().isSnapshot())
+               else if (requiredAddon.getDependency().getCoordinate().isSnapshot())
                {
+                  log.info("Re-installing Addon SNAPSHOT " + requiredAddonId + ".");
                   addonManager.install(requiredAddonId).perform(deployed);
                }
             }

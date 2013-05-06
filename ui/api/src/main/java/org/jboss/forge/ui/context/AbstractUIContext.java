@@ -10,18 +10,28 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A default implementation of {@link UIContext}.
- * 
+ * This class provides a skeletal implementation of the <tt>UIContext</tt> interface, to minimize the effort required to
+ * implement this interface.
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-public class AbstractUIContext implements UIContext
+public abstract class AbstractUIContext implements UIContext
 {
    private Map<Object, Object> map = new HashMap<Object, Object>();
+   private Object selection;
 
    @Override
-   public <T> UISelection<T> getInitialSelection()
+   @SuppressWarnings("unchecked")
+   public <SELECTIONTYPE> SELECTIONTYPE getSelection()
    {
-      return null;
+      return (SELECTIONTYPE) selection;
+   }
+
+   @Override
+   public <SELECTIONTYPE> void setSelection(SELECTIONTYPE resource)
+   {
+      this.selection = resource;
    }
 
    @Override
