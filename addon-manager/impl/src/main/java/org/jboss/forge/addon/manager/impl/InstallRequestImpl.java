@@ -126,20 +126,25 @@ public class InstallRequestImpl implements InstallRequest
             for (DependencyNode requiredAddon : getRequiredAddons())
             {
                AddonId requiredAddonId = toAddonId(requiredAddon);
-               boolean deployed = false;
+
+               AddonRepository deployed = null;
                for (AddonRepository repository : forge.getRepositories())
                {
                   if (repository.isDeployed(requiredAddonId))
                   {
                      log.info("Addon " + requiredAddonId + " is already deployed. Skipping...");
-                     deployed = true;
+                     deployed = repository;
                      break;
                   }
                }
 
-               if (!deployed)
+               if (deployed == null)
                {
                   addonManager.install(requiredAddonId).perform();
+               }
+               else if(requiredAddon.getDependency().getCoordinate().isSnapshot())
+               {
+                  addonManager.install(requiredAddonId).perform(deployed);
                }
             }
 
@@ -171,20 +176,25 @@ public class InstallRequestImpl implements InstallRequest
             for (DependencyNode requiredAddon : getRequiredAddons())
             {
                AddonId requiredAddonId = toAddonId(requiredAddon);
-               boolean deployed = false;
+
+               AddonRepository deployed = null;
                for (AddonRepository repository : forge.getRepositories())
                {
                   if (repository.isDeployed(requiredAddonId))
                   {
                      log.info("Addon " + requiredAddonId + " is already deployed. Skipping...");
-                     deployed = true;
+                     deployed = repository;
                      break;
                   }
                }
 
-               if (!deployed)
+               if (deployed == null)
                {
-                  addonManager.install(requiredAddonId).perform(target);
+                  addonManager.install(requiredAddonId).perform();
+               }
+               else if(requiredAddon.getDependency().getCoordinate().isSnapshot())
+               {
+                  addonManager.install(requiredAddonId).perform(deployed);
                }
             }
 
@@ -230,13 +240,13 @@ public class InstallRequestImpl implements InstallRequest
       return AddonId.from(coord.getGroupId() + ":" + coord.getArtifactId(), coord.getVersion(), apiVersion);
    }
 
-   private void deploy(MutableAddonRepository repository, AddonId addon, DependencyNode root)
+   private void deploy(MutableAddonRepository repository, AddonId addonId, DependencyNode root)
    {
       List<File> resourceJars = toResourceJars(DependencyNodeUtil.select(root, new LocalResourceFilter(root)));
 
       if (resourceJars.isEmpty())
       {
-         log.fine("No resource JARs found for " + addon);
+         log.fine("No resource JARs found for " + addonId);
       }
       List<AddonDependencyEntry> addonDependencies =
                toAddonDependencies(DependencyNodeUtil
@@ -244,10 +254,28 @@ public class InstallRequestImpl implements InstallRequest
 
       if (addonDependencies.isEmpty())
       {
-         log.fine("No dependencies found for addon " + addon);
+         log.fine("No dependencies found for addon " + addonId);
       }
-      log.info("Deploying addon " + addon);
-      repository.deploy(addon, addonDependencies, resourceJars);
+
+      boolean deploy = true;
+      if (repository.isDeployed(addonId))
+      {
+         if (root.getDependency().getCoordinate().isSnapshot())
+         {
+            log.fine("Removing previous deployment of " + addonId);
+            repository.undeploy(addonId);
+         }
+         else
+         {
+            deploy = false;
+         }
+      }
+
+      if (deploy)
+      {
+         log.info("Deploying addon " + addonId);
+         repository.deploy(addonId, addonDependencies, resourceJars);
+      }
    }
 
    private List<AddonDependencyEntry> toAddonDependencies(List<DependencyNode> dependencies)
