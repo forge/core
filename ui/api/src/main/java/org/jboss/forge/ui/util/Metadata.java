@@ -100,9 +100,14 @@ public class Metadata implements UICommandMetadata
       return metadata.getDocLocation();
    }
 
+   @Override
+   public String toString()
+   {
+      return metadata.toString();
+   }
+
    static class UICommandMetadataBase implements UICommandMetadata
    {
-
       protected String name;
       protected String description;
       protected UICategory category;
@@ -130,6 +135,16 @@ public class Metadata implements UICommandMetadata
       public URL getDocLocation()
       {
          return docLocation;
+      }
+
+      @Override
+      public String toString()
+      {
+         return "UICommandMetadataBase {" +
+                  "name: " + name +
+                  ", description: " + description +
+                  ", category: " + category +
+                  ", docLocation: " + docLocation + "]";
       }
 
    }

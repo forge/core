@@ -283,10 +283,6 @@ public class ShellCommand implements Completion
    @Override
    public String toString()
    {
-      return "ShellCommand{" +
-               "command=" + command +
-               ", context=" + context +
-               ", shell=" + shell +
-               '}';
+      return command.getMetadata().getName();
    }
 }

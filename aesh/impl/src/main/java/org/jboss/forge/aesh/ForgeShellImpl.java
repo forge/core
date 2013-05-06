@@ -33,6 +33,7 @@ import org.jboss.aesh.terminal.CharacterType;
 import org.jboss.aesh.terminal.Color;
 import org.jboss.aesh.terminal.TerminalCharacter;
 import org.jboss.forge.aesh.spi.ShellConfiguration;
+import org.jboss.forge.aesh.util.UICommandDelegate;
 import org.jboss.forge.container.Forge;
 import org.jboss.forge.container.addons.Addon;
 import org.jboss.forge.container.addons.AddonRegistry;
@@ -156,7 +157,7 @@ public class ForgeShellImpl implements ForgeShell
    {
       for (ExportedInstance<UICommand> command : uiCommands)
       {
-         if (command.get().getMetadata().getName().equals(name))
+         if (new UICommandDelegate(command.get()).getMetadata().getName().equals(name))
             return true;
       }
       return false;
