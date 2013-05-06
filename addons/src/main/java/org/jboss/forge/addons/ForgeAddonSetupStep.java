@@ -22,6 +22,8 @@ import org.jboss.forge.dependencies.Coordinate;
 import org.jboss.forge.dependencies.DependencyResolver;
 import org.jboss.forge.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.dependencies.builder.DependencyQueryBuilder;
+import org.jboss.forge.maven.projects.MavenFacet;
+import org.jboss.forge.maven.resources.MavenPomResource;
 import org.jboss.forge.projects.Project;
 import org.jboss.forge.ui.context.UIBuilder;
 import org.jboss.forge.ui.context.UIContext;
@@ -140,6 +142,9 @@ public class ForgeAddonSetupStep implements UIWizardStep
       {
          addonProjectFactory.createSimpleAddonProject(project, forgeVersion.getValue(), dependencyAddons);
       }
+
+      MavenPomResource pomResource = project.getFacet(MavenFacet.class).getPomResource();
+      context.setSelection(pomResource);
       return Results.success();
    }
 

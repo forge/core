@@ -126,10 +126,4 @@ public class MavenPomResourceImpl extends AbstractFileResource<MavenPomResource>
          }
       }
    }
-
-   @Override
-   public String toString()
-   {
-      return file.getName();
-   }
 }
