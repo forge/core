@@ -77,10 +77,9 @@ class AddonProjectFactory
       DirectoryResource newRoot = project.getProjectRoot().getParent().getChildDirectory(metadata.getProjectName());
       // FORGE-877: there's an eclipse (not m2e) limitation that says if a project is located directly in the workspace
       // folder, then the project name must match the project folder name
-      if (!project.getProjectRoot().renameTo(newRoot))
+      if (!newRoot.exists() && !project.getProjectRoot().renameTo(newRoot))
       {
-         log.warning("Could not rename project root. Erasing " + newRoot);
-         newRoot.delete(true);
+         log.warning("Could not rename project root");
       }
       installSelectedAddons(project, dependencyAddons, true);
 
