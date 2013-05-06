@@ -6,6 +6,8 @@
  */
 package org.jboss.forge.aesh.util;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.jboss.aesh.cl.CommandLine;
@@ -16,10 +18,14 @@ import org.jboss.aesh.cl.exception.OptionParserException;
 import org.jboss.aesh.cl.internal.ParameterInt;
 import org.jboss.forge.aesh.ShellContext;
 import org.jboss.forge.container.addons.AddonRegistry;
+import org.jboss.forge.convert.Converter;
 import org.jboss.forge.convert.ConverterFactory;
 import org.jboss.forge.ui.UICommand;
 import org.jboss.forge.ui.input.InputComponent;
+import org.jboss.forge.ui.input.UIInput;
 import org.jboss.forge.ui.input.UIInputMany;
+import org.jboss.forge.ui.input.UISelectMany;
+import org.jboss.forge.ui.input.UISelectOne;
 import org.jboss.forge.ui.util.InputComponents;
 
 /**
@@ -85,11 +91,61 @@ public class CommandLineUtil
          {
             setInput(input, commandLine.getOptionValues(input.getName()), registry);
          }
-         else
+         else if (input instanceof UIInput)
          {
             setInput(input, commandLine.getOptionValue(input.getName()), registry);
          }
+         else if (input instanceof UISelectMany)
+         {
+            setInputChoices((UISelectMany<Object>) input, commandLine.getOptionValues(input.getName()), registry);
+         }
+         else if (input instanceof UISelectOne)
+         {
+            setInputChoice((UISelectOne<Object>) input, commandLine.getOptionValue(input.getName()), registry);
+         }
       }
+   }
+
+   private static void setInputChoice(UISelectOne<Object> input, String optionValue, AddonRegistry registry)
+   {
+      Converter<Object, String> labelConverter = input.getItemLabelConverter();
+      boolean found = false;
+      for (Object choice : input.getValueChoices())
+      {
+         if (labelConverter.convert(choice).equals(optionValue))
+         {
+            input.setValue(choice);
+            found = true;
+            break;
+         }
+      }
+
+      if (!found)
+         logger.warning("Could not find matching value choice for input value [" + optionValue + "]");
+   }
+
+   private static void setInputChoices(UISelectMany<Object> input, List<String> optionValues,
+            AddonRegistry registry)
+   {
+      Converter<Object, String> labelConverter = input.getItemLabelConverter();
+      List<Object> selected = new ArrayList<Object>();
+      for (String optionValue : optionValues)
+      {
+         boolean found = false;
+         for (Object choice : input.getValueChoices())
+         {
+            if (labelConverter.convert(choice).equals(optionValue))
+            {
+               selected.add(choice);
+               found = true;
+               break;
+            }
+         }
+
+         if (!found)
+            logger.warning("Could not find matching value choice for input value [" + optionValue + "]");
+      }
+      input.setValue(selected);
    }
 
    public static void setInput(InputComponent<?, Object> input, Object value, AddonRegistry registry)
