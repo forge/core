@@ -15,6 +15,18 @@
       </dependency>
       <dependency>
          <groupId>org.jboss.forge</groupId>
+         <artifactId>aesh</artifactId>
+         <classifier>forge-addon</classifier>
+         <version>2.0.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>aesh-test-harness</artifactId>
+         <classifier>forge-addon</classifier>
+         <version>2.0.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
          <artifactId>ui</artifactId>
          <classifier>forge-addon</classifier>
          <version>2.0.0-SNAPSHOT</version>
