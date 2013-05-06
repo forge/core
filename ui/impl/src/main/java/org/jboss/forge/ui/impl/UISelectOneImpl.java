@@ -52,4 +52,10 @@ public class UISelectOneImpl<VALUETYPE> extends UISelectInputComponentBase<UISel
       return (value == null) ? Callables.call(defaultValue) : value;
    }
 
+   @Override
+   public String toString()
+   {
+      return "UISelectOneImpl [name=" + getName() + ", value=" + value + ", defaultValue=" + defaultValue + "]";
+   }
+
 }

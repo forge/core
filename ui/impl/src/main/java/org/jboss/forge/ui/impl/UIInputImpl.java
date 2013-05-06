@@ -90,4 +90,10 @@ public class UIInputImpl<VALUETYPE> extends UIInputComponentBase<UIInput<VALUETY
       this.converter = converter;
       return this;
    }
+
+   @Override
+   public String toString()
+   {
+      return "UIInputImpl [name=" + getName() + ", value=" + value + ", defaultValue=" + defaultValue + "]";
+   }
 }

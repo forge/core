@@ -52,4 +52,10 @@ public class UISelectManyImpl<VALUETYPE> extends UISelectInputComponentBase<UISe
    {
       return (value == null) ? Callables.call(defaultValue) : value;
    }
+
+   @Override
+   public String toString()
+   {
+      return "UISelectManyImpl [name=" + getName() + ", value=" + value + ", defaultValue=" + defaultValue + "]";
+   }
 }

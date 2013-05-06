@@ -93,4 +93,9 @@ public class UIInputManyImpl<VALUETYPE> extends UIInputComponentBase<UIInputMany
       return this;
    }
 
+   @Override
+   public String toString()
+   {
+      return "UIInputManyImpl [name=" + getName() + ", value=" + value + ", defaultValue=" + defaultValue + "]";
+   }
 }
