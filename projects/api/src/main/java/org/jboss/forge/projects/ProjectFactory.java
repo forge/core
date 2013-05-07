@@ -20,13 +20,14 @@ import org.jboss.forge.resource.DirectoryResource;
 public interface ProjectFactory
 {
    /**
-    * Locate a {@link Project} in the ancestry of the given {@link DirectoryResource}.
+    * Locate a {@link Project} in the ancestry of the given {@link DirectoryResource}. Return <code>null</code> if no
+    * {@link Project} could be located.
     */
    public Project findProject(final DirectoryResource target);
 
    /**
     * Locate a {@link Project} in the ancestry of the given {@link DirectoryResource}. Filter results using the given
-    * {@link Predicate}
+    * {@link Predicate}. Return <code>null</code> if no {@link Project} could be located.
     */
    public Project findProject(final DirectoryResource target, Predicate<Project> filter);
 
