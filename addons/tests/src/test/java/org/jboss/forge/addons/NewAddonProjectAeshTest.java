@@ -32,6 +32,7 @@ public class NewAddonProjectAeshTest
    @Dependencies({ @Addon(name = "org.jboss.forge:ui", version = "2.0.0-SNAPSHOT"),
             @Addon(name = "org.jboss.forge:aesh-test-harness", version = "2.0.0-SNAPSHOT"),
             @Addon(name = "org.jboss.forge:aesh", version = "2.0.0-SNAPSHOT"),
+            @Addon(name = "org.jboss.forge:dependencies", version = "2.0.0-SNAPSHOT"),
             @Addon(name = "org.jboss.forge:maven", version = "2.0.0-SNAPSHOT"),
             @Addon(name = "org.jboss.forge:addons", version = "2.0.0-SNAPSHOT"),
             @Addon(name = "org.jboss.forge:resources", version = "2.0.0-SNAPSHOT"),
@@ -43,6 +44,7 @@ public class NewAddonProjectAeshTest
                .create(ForgeArchive.class)
                .addBeansXML()
                .addAsAddonDependencies(
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:dependencies", "2.0.0-SNAPSHOT")),
                         AddonDependencyEntry.create(AddonId.from("org.jboss.forge:ui", "2.0.0-SNAPSHOT")),
                         AddonDependencyEntry.create(AddonId.from("org.jboss.forge:projects", "2.0.0-SNAPSHOT")),
                         AddonDependencyEntry.create(AddonId.from("org.jboss.forge:aesh", "2.0.0-SNAPSHOT")),
@@ -94,6 +96,12 @@ public class NewAddonProjectAeshTest
       Assert.assertNotNull(project);
 
       Assert.assertTrue(project.getProjectRoot().exists());
+
+      // TODO Wizard steps are not implemented by Aesh, so we can't actually invoke the entire wizard.
+
+      // DependencyFacet dependencies = project.getFacet(DependencyFacet.class);
+      // Assert.assertTrue(dependencies.hasEffectiveDependency(DependencyBuilder.create()
+      // .setGroupId("org.jboss.forge").setArtifactId("forge-addon-container-api")));
       // Assert.assertTrue("ADDON module is missing", projectRoot.getChild("addon").exists());
       // Assert.assertTrue("API module is missing", projectRoot.getChild("api").exists());
       // Assert.assertTrue("IMPL module is missing", projectRoot.getChild("impl").exists());
