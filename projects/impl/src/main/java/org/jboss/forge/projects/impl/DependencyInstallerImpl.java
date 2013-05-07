@@ -25,7 +25,7 @@ public class DependencyInstallerImpl implements DependencyInstaller
       // Exists in deps, no version change requested
       Dependency unversioned = getUnversioned(dependency);
       Dependency existing = deps.getEffectiveDependency(unversioned);
-      Dependency existingManaged = deps.getManagedDependency(unversioned);
+      Dependency existingManaged = deps.getEffectiveManagedDependency(unversioned);
 
       if (existing != null) // we already have the dep
       {

@@ -19,9 +19,10 @@ import org.jboss.forge.addons.facets.ForgeAddonFacet;
 import org.jboss.forge.addons.facets.ForgeAddonImplFacet;
 import org.jboss.forge.addons.facets.ForgeAddonSPIFacet;
 import org.jboss.forge.addons.facets.ForgeAddonTestFacet;
-import org.jboss.forge.addons.facets.ForgeSimpleAddonFacet;
+import org.jboss.forge.addons.facets.ForgeContainerAPIFacet;
 import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.versions.Version;
+import org.jboss.forge.dependencies.Dependency;
 import org.jboss.forge.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.facets.FacetFactory;
 import org.jboss.forge.projects.Project;
@@ -33,14 +34,13 @@ import org.jboss.forge.resource.DirectoryResource;
 
 /**
  * Creates Forge Addon projects
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 @SuppressWarnings("unchecked")
-class AddonProjectFactory
+class AddonProjectConfigurator
 {
-
    private Logger log = Logger.getLogger(getClass().getName());
 
    @Inject
@@ -52,26 +52,18 @@ class AddonProjectFactory
    @Inject
    private DependencyInstaller dependencyInstaller;
 
-   public Project createSimpleAddonProject(Project project, Version forgeVersion, Iterable<AddonId> dependencyAddons)
+   public void setupSimpleAddonProject(Project project, Version forgeVersion, Iterable<AddonId> dependencyAddons)
    {
-      configureAddonProject(project);
+      project.install(facetFactory.create(ForgeAddonFacet.class, project));
       installSelectedAddons(project, dependencyAddons, false);
-      return project;
    }
 
    /**
     * Create a Forge Project with the full structure (api,impl,tests,spi and addon)
-    *
-    * @param project
-    * @param forgeVersion
-    * @param dependencyAddons
-    * @return the project root
     */
-   public Project createAddonProject(Project project, Version forgeVersion, Iterable<AddonId> dependencyAddons)
+   public void setupAddonProject(Project project, Version forgeVersion, Iterable<AddonId> dependencyAddons)
    {
-      // Project is the parent project
       MetadataFacet metadata = project.getFacet(MetadataFacet.class);
-      // TODO: Verify nomenclature
       String projectName = metadata.getProjectName();
       metadata.setProjectName(projectName + "-parent");
       DirectoryResource newRoot = project.getProjectRoot().getParent().getChildDirectory(metadata.getProjectName());
@@ -81,32 +73,51 @@ class AddonProjectFactory
       {
          log.warning("Could not rename project root");
       }
-      installSelectedAddons(project, dependencyAddons, true);
 
-      // Create ADDON Project
-      createSubmoduleProject(project, "addon", projectName, ForgeAddonFacet.class);
-      // Create API Project
-      createSubmoduleProject(project, "api", projectName + "-api", ForgeAddonAPIFacet.class);
-      // Create IMPL Project
-      createSubmoduleProject(project, "impl", projectName + "-impl", ForgeAddonImplFacet.class);
-      // Create SPI Project
-      createSubmoduleProject(project, "spi", projectName + "-spi", ForgeAddonSPIFacet.class);
-      // Create TESTS Project
-      createSubmoduleProject(project, "tests", projectName + "-tests", ForgeAddonTestFacet.class);
+      dependencyInstaller.installManaged(project, DependencyBuilder.create(ForgeContainerAPIFacet.FORGE_API_DEPENDENCY)
+               .setVersion(forgeVersion.getVersionString()));
+
+      Project addonProject = createSubmoduleProject(project, "addon", projectName, ForgeAddonFacet.class);
+      Project apiProject = createSubmoduleProject(project, "api", projectName + "-api", ForgeAddonAPIFacet.class);
+      Project implProject = createSubmoduleProject(project, "impl", projectName + "-impl", ForgeAddonImplFacet.class);
+      Project spiProject = createSubmoduleProject(project, "spi", projectName + "-spi", ForgeAddonSPIFacet.class,
+               ForgeAddonFacet.class);
+      Project testsProject = createSubmoduleProject(project, "tests", projectName + "-tests",
+               ForgeAddonTestFacet.class, ForgeAddonFacet.class);
+
+      Dependency apiProjectDependency = apiProject.getFacet(MetadataFacet.class).getOutputDependency();
+      Dependency implProjectDependency = implProject.getFacet(MetadataFacet.class).getOutputDependency();
+
+      Dependency spiProjectDependency = DependencyBuilder.create(
+               spiProject.getFacet(MetadataFacet.class).getOutputDependency())
+               .setClassifier("forge-addon");
+
+      Dependency addonProjectDependency = DependencyBuilder.create(
+               addonProject.getFacet(MetadataFacet.class).getOutputDependency())
+               .setClassifier("forge-addon");
+
+      dependencyInstaller.installManaged(project, addonProjectDependency);
+      dependencyInstaller.installManaged(project, apiProjectDependency);
+      dependencyInstaller.installManaged(project, implProjectDependency);
+      dependencyInstaller.installManaged(project, spiProjectDependency);
+
+      installSelectedAddons(project, dependencyAddons, true);
+      installSelectedAddons(addonProject, dependencyAddons, false);
+      installSelectedAddons(testsProject, dependencyAddons, false);
+
+      dependencyInstaller.install(addonProject, DependencyBuilder.create(apiProjectDependency));
+      dependencyInstaller.install(addonProject, DependencyBuilder.create(implProjectDependency)
+               .setScopeType("runtime"));
+      dependencyInstaller.install(addonProject, DependencyBuilder.create(spiProjectDependency));
+
+      dependencyInstaller.install(implProject, DependencyBuilder.create(apiProjectDependency).setScopeType("provided"));
+      dependencyInstaller.install(implProject, DependencyBuilder.create(spiProjectDependency).setScopeType("provided"));
+
+      dependencyInstaller.install(apiProject, DependencyBuilder.create(spiProjectDependency).setScopeType("provided"));
+
+      dependencyInstaller.install(testsProject, addonProjectDependency);
 
       project.getProjectRoot().getChild("src").delete(true);
-      return project;
-   }
-
-   /**
-    * Configure addon
-    *
-    * @param project
-    * @return
-    */
-   private void configureAddonProject(final Project project)
-   {
-      project.install(facetFactory.create(ForgeAddonFacet.class, project));
    }
 
    private void installSelectedAddons(final Project project, Iterable<AddonId> addons, boolean managed)
@@ -135,7 +146,7 @@ class AddonProjectFactory
 
       Set<Class<? extends ProjectFacet>> facets = new HashSet<Class<? extends ProjectFacet>>();
       facets.addAll(Arrays.asList(requiredProjectFacets));
-      facets.add(ForgeSimpleAddonFacet.class);
+      facets.add(ForgeContainerAPIFacet.class);
 
       Project project = projectFactory.createProject(location, facets);
 

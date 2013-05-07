@@ -14,15 +14,15 @@ import org.jboss.forge.facets.AbstractFacet;
 import org.jboss.forge.projects.Project;
 import org.jboss.forge.projects.ProjectFacet;
 import org.jboss.forge.projects.dependencies.DependencyInstaller;
-import org.jboss.forge.projects.facets.DependencyFacet;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class ForgeSimpleAddonFacet extends AbstractFacet<Project> implements ProjectFacet
+public class ForgeContainerAPIFacet extends AbstractFacet<Project> implements ProjectFacet
 {
-   private Dependency forgeApi = DependencyBuilder.create().setArtifactId("forge-addon-container-api")
+   public static Dependency FORGE_API_DEPENDENCY = DependencyBuilder.create()
+            .setArtifactId("forge-addon-container-api")
             .setGroupId("org.jboss.forge").setScopeType("provided");
 
    @Inject
@@ -31,14 +31,13 @@ public class ForgeSimpleAddonFacet extends AbstractFacet<Project> implements Pro
    @Override
    public boolean install()
    {
-      installer.install(getOrigin(), forgeApi);
+      installer.install(getOrigin(), FORGE_API_DEPENDENCY);
       return true;
    }
 
    @Override
    public boolean isInstalled()
    {
-      DependencyFacet dependencies = origin.getFacet(DependencyFacet.class);
-      return dependencies != null && dependencies.hasEffectiveDependency(forgeApi);
+      return installer.isInstalled(origin, FORGE_API_DEPENDENCY);
    }
 }

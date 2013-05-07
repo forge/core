@@ -98,19 +98,6 @@ public class ProjectFactoryImpl implements ProjectFactory
             break;
       }
 
-      if (result != null && facetTypes != null)
-      {
-         for (Class<? extends ProjectFacet> facetType : facetTypes)
-         {
-            ProjectFacet facet = factory.create(facetType, result);
-            if (!result.install(facet))
-            {
-               throw new IllegalStateException("Could not install Facet [" + facet + "] of type [" + facetType
-                        + "] into Project [" + result + "]");
-            }
-         }
-      }
-
       if (result != null)
       {
          DirectoryResource parentDir = result.getProjectRoot().getParent().reify(DirectoryResource.class);
@@ -126,8 +113,24 @@ public class ProjectFactoryImpl implements ProjectFactory
                }
             }
          }
-         fireProjectCreated(result);
       }
+
+      if (result != null && facetTypes != null)
+      {
+         for (Class<? extends ProjectFacet> facetType : facetTypes)
+         {
+            ProjectFacet facet = factory.create(facetType, result);
+            if (!result.install(facet))
+            {
+               throw new IllegalStateException("Could not install Facet [" + facet + "] of type [" + facetType
+                        + "] into Project [" + result + "]");
+            }
+         }
+      }
+
+      if (result != null)
+         fireProjectCreated(result);
+
       return result;
    }
 

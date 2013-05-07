@@ -17,7 +17,7 @@ import org.jboss.forge.resource.DirectoryResource;
 
 /**
  * Setup parent-child relation of Maven projects.
- *
+ * 
  * @author <a href="mailto:torben@jit-central.com">Torben Jaeger</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -40,7 +40,7 @@ public class MavenMultiModuleProvider implements ProjectAssociationProvider
                   .substring(parent.getProjectRoot().getFullyQualifiedName().length());
          if (moduleDir.startsWith("/"))
             moduleDir = moduleDir.substring(1);
-         
+
          parentPom.addModule(moduleDir);
          parentMavenFacet.setPOM(parentPom);
 
@@ -51,6 +51,14 @@ public class MavenMultiModuleProvider implements ProjectAssociationProvider
          projectParent.setGroupId(parentPom.getGroupId());
          projectParent.setArtifactId(parentPom.getArtifactId());
          projectParent.setVersion(parentPom.getVersion());
+
+         DirectoryResource root = project.getProjectRoot();
+         DirectoryResource parentRoot = parent.getProjectRoot();
+
+         // Calculate parent relative path
+         String delta = root.getFullyQualifiedName().substring(parentRoot.getFullyQualifiedName().length());
+         String relativePath = delta.replaceAll("/(\\w+)", "../") + "pom.xml";
+         projectParent.setRelativePath(relativePath);
 
          // Reuse GroupId and version from parent
          pom.setGroupId(null);

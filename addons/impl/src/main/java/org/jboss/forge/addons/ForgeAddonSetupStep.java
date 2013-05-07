@@ -68,7 +68,7 @@ public class ForgeAddonSetupStep implements UIWizardStep
    private Forge forge;
 
    @Inject
-   private AddonProjectFactory addonProjectFactory;
+   private AddonProjectConfigurator addonProjectFactory;
 
    @Override
    public UICommandMetadata getMetadata()
@@ -136,11 +136,11 @@ public class ForgeAddonSetupStep implements UIWizardStep
       Iterable<AddonId> dependencyAddons = addons.getValue();
       if (splitProjects.getValue())
       {
-         addonProjectFactory.createAddonProject(project, forgeVersion.getValue(), dependencyAddons);
+         addonProjectFactory.setupAddonProject(project, forgeVersion.getValue(), dependencyAddons);
       }
       else
       {
-         addonProjectFactory.createSimpleAddonProject(project, forgeVersion.getValue(), dependencyAddons);
+         addonProjectFactory.setupSimpleAddonProject(project, forgeVersion.getValue(), dependencyAddons);
       }
 
       MavenPomResource pomResource = project.getFacet(MavenFacet.class).getPomResource();

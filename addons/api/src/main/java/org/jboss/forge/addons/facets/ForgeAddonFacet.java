@@ -19,13 +19,12 @@ import org.jboss.forge.projects.ProjectFacet;
 
 /**
  * Configures the current project as a forge addon
- *
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
 public class ForgeAddonFacet extends AbstractFacet<Project> implements ProjectFacet
 {
-
    @Override
    public boolean install()
    {
