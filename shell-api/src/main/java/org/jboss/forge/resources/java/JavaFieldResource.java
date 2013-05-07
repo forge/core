@@ -16,7 +16,9 @@ import org.jboss.forge.parser.java.FieldHolder;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.parser.java.Method;
+import org.jboss.forge.parser.java.util.Refactory;
 import org.jboss.forge.parser.java.util.Strings;
+import org.jboss.forge.parser.java.util.Types;
 import org.jboss.forge.resources.DeletionAware;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.resources.ResourceFlag;
@@ -77,6 +79,7 @@ public class JavaFieldResource extends JavaMemberResource<Field<? extends JavaSo
          ((FieldHolder) origin).removeField(field);
          if (!((FieldHolder) origin).hasField(field))
          {
+            updateToString((JavaClass) origin);
             ((JavaResource) this.getParent()).setContents(origin.toString());
             return true;
          }
@@ -116,4 +119,29 @@ public class JavaFieldResource extends JavaMemberResource<Field<? extends JavaSo
       }
       return result;
    }
+
+   /**
+    * Copied from FieldPlugin
+    */
+   private static void updateToString(final JavaClass targetEntity)
+   {
+      if (targetEntity.hasMethodSignature("toString"))
+      {
+         targetEntity.removeMethod(targetEntity.getMethod("toString"));
+      }
+      List<Field<JavaClass>> fields = new ArrayList<Field<JavaClass>>();
+      for (Field<JavaClass> f : targetEntity.getFields())
+      {
+         if (!"version".equals(f.getName())
+                  && (f.getTypeInspector().isPrimitive() || Types.isJavaLang(f.getType())))
+         {
+            fields.add(f);
+         }
+      }
+      if (!fields.isEmpty())
+      {
+         Refactory.createToStringFromFields(targetEntity, fields);
+      }
+   }
+
 }
