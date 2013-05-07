@@ -149,7 +149,7 @@ public class InstallRequestImpl implements InstallRequest
    @Override
    public void perform(final AddonRepository target)
    {
-      Assert.isTrue(!(target instanceof MutableAddonRepository), "Addon repository ["
+      Assert.isTrue(target instanceof MutableAddonRepository, "Addon repository ["
                + target.getRootDirectory().getAbsolutePath()
                + "] is not writable.");
 
