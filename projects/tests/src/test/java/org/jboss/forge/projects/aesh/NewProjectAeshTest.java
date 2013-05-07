@@ -1,14 +1,12 @@
 package org.jboss.forge.projects.aesh;
 
 import java.io.File;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.aesh.ForgeShell;
-import org.jboss.forge.aesh.ShellTests;
 import org.jboss.forge.aesh.TestShellConfiguration;
 import org.jboss.forge.arquillian.Addon;
 import org.jboss.forge.arquillian.Dependencies;
@@ -74,10 +72,7 @@ public class NewProjectAeshTest
 
       streams.getStdIn().write("\n".getBytes());
 
-      Thread.sleep(100);
-      ShellTests.waitForCallback(streams.getStdOut(), 10, TimeUnit.SECONDS);
-      Thread.sleep(100);
-      ShellTests.waitForCallback(streams.getStdOut(), 10, TimeUnit.SECONDS);
+      Thread.sleep(500); // TODO Need some form of synchronous waiting here.
 
       System.out.println("OUT:" + streams.getStdOut().toString());
       System.out.println("ERR:" + streams.getStdErr().toString());
