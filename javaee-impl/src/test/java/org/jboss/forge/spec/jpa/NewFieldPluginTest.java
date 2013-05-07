@@ -212,17 +212,18 @@ public class NewFieldPluginTest extends AbstractJPATest
       javaClass = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(javaClass).getJavaSource();
       assertLobField(javaClass, "image", Integer.MAX_VALUE);
    }
-   
-   private void assertLobField(JavaClass javaClass, String fieldName, int length) {
-       assertTrue(javaClass.hasField(fieldName));
-       Field<JavaClass> imageField = javaClass.getField(fieldName);
-       assertEquals("byte", imageField.getType());
-       assertTrue(javaClass.hasImport(Lob.class));  
-       assertTrue(imageField.hasAnnotation(Lob.class));
-       assertTrue(imageField.hasAnnotation(Column.class));
-       Annotation<JavaClass> columnAnnotation = imageField.getAnnotation(Column.class);
-       assertEquals(String.valueOf(length), columnAnnotation.getLiteralValue("length"));
-       assertFalse(javaClass.hasSyntaxErrors());
+
+   private void assertLobField(JavaClass javaClass, String fieldName, int length)
+   {
+      assertTrue(javaClass.hasField(fieldName));
+      Field<JavaClass> imageField = javaClass.getField(fieldName);
+      assertEquals("byte", imageField.getType());
+      assertTrue(javaClass.hasImport(Lob.class));
+      assertTrue(imageField.hasAnnotation(Lob.class));
+      assertTrue(imageField.hasAnnotation(Column.class));
+      Annotation<JavaClass> columnAnnotation = imageField.getAnnotation(Column.class);
+      assertEquals(String.valueOf(length), columnAnnotation.getLiteralValue("length"));
+      assertFalse(javaClass.hasSyntaxErrors());
    }
 
    @Test
@@ -290,7 +291,7 @@ public class NewFieldPluginTest extends AbstractJPATest
       assertTrue(rightEntity.hasImport(OneToOne.class));
       assertFalse(rightEntity.hasSyntaxErrors());
    }
-   
+
    @Test
    public void testNewOneToOneRelationshipEagerFetch() throws Exception
    {
@@ -322,7 +323,7 @@ public class NewFieldPluginTest extends AbstractJPATest
       assertFalse(rightEntity.hasImport(OneToOne.class));
       assertFalse(rightEntity.hasSyntaxErrors());
    }
-   
+
    @Test
    public void testNewOneToOneRelationshipNonOptional() throws Exception
    {
@@ -353,7 +354,7 @@ public class NewFieldPluginTest extends AbstractJPATest
       assertFalse(rightEntity.hasImport(OneToOne.class));
       assertFalse(rightEntity.hasSyntaxErrors());
    }
-   
+
    @Test
    public void testNewOneToOneRelationshipCascadeSingle() throws Exception
    {
@@ -419,7 +420,7 @@ public class NewFieldPluginTest extends AbstractJPATest
       assertFalse(rightEntity.hasImport(OneToOne.class));
       assertFalse(rightEntity.hasSyntaxErrors());
    }
-   
+
    @Test
    public void testNewManyToManyRelationship() throws Exception
    {
@@ -454,7 +455,7 @@ public class NewFieldPluginTest extends AbstractJPATest
       assertFalse(rightEntity.hasImport(ManyToMany.class));
       assertFalse(rightEntity.hasSyntaxErrors());
    }
-   
+
    @Test
    public void testNewManyToManyRelationshipEagerFetch() throws Exception
    {
@@ -491,7 +492,7 @@ public class NewFieldPluginTest extends AbstractJPATest
       assertFalse(rightEntity.hasImport(ManyToMany.class));
       assertFalse(rightEntity.hasSyntaxErrors());
    }
-   
+
    @Test
    public void testNewManyToManyRelationshipCascadeSingle() throws Exception
    {
@@ -530,7 +531,7 @@ public class NewFieldPluginTest extends AbstractJPATest
       assertFalse(rightEntity.hasImport(ManyToMany.class));
       assertFalse(rightEntity.hasSyntaxErrors());
    }
-   
+
    @Test
    public void testNewManyToManyRelationshipCascadeMultiple() throws Exception
    {
@@ -604,7 +605,7 @@ public class NewFieldPluginTest extends AbstractJPATest
       assertFalse(rightEntity.hasImport(OneToMany.class));
       assertFalse(rightEntity.hasSyntaxErrors());
    }
-   
+
    @Test
    public void testNewOneToManyRelationshipEagerFetch() throws Exception
    {
@@ -641,7 +642,7 @@ public class NewFieldPluginTest extends AbstractJPATest
       assertFalse(rightEntity.hasImport(OneToMany.class));
       assertFalse(rightEntity.hasSyntaxErrors());
    }
-   
+
    @Test
    public void testNewOneToManyRelationshipCascadeSingle() throws Exception
    {
@@ -680,7 +681,7 @@ public class NewFieldPluginTest extends AbstractJPATest
       assertFalse(rightEntity.hasImport(OneToMany.class));
       assertFalse(rightEntity.hasSyntaxErrors());
    }
-   
+
    @Test
    public void testNewOneToManyRelationshipMultiple() throws Exception
    {
@@ -719,7 +720,7 @@ public class NewFieldPluginTest extends AbstractJPATest
       assertFalse(rightEntity.hasImport(OneToMany.class));
       assertFalse(rightEntity.hasSyntaxErrors());
    }
-   
+
    @Test
    public void testNewManyToOneRelationship() throws Exception
    {
@@ -751,7 +752,7 @@ public class NewFieldPluginTest extends AbstractJPATest
       assertFalse(rightEntity.hasImport(OneToMany.class));
       assertFalse(rightEntity.hasSyntaxErrors());
    }
-   
+
    @Test
    public void testNewManyToOneRelationshipEagerFetch() throws Exception
    {
@@ -784,7 +785,7 @@ public class NewFieldPluginTest extends AbstractJPATest
       assertFalse(rightEntity.hasImport(OneToMany.class));
       assertFalse(rightEntity.hasSyntaxErrors());
    }
-   
+
    @Test
    public void testNewManyToOneRelationshipNonOptional() throws Exception
    {
@@ -816,7 +817,7 @@ public class NewFieldPluginTest extends AbstractJPATest
       assertFalse(rightEntity.hasImport(OneToMany.class));
       assertFalse(rightEntity.hasSyntaxErrors());
    }
-   
+
    @Test
    public void testNewManyToOneRelationshipCascadeSingle() throws Exception
    {
@@ -849,7 +850,7 @@ public class NewFieldPluginTest extends AbstractJPATest
       assertFalse(rightEntity.hasImport(OneToMany.class));
       assertFalse(rightEntity.hasSyntaxErrors());
    }
-   
+
    @Test
    public void testNewManyToOneRelationshipCascadeMultiple() throws Exception
    {
@@ -961,7 +962,7 @@ public class NewFieldPluginTest extends AbstractJPATest
       assertTrue(rightEntity.hasImport(ManyToOne.class));
       assertFalse(rightEntity.hasSyntaxErrors());
    }
-   
+
    @Test
    public void testNewManyToOneRelationshipInverse() throws Exception
    {
@@ -1177,6 +1178,27 @@ public class NewFieldPluginTest extends AbstractJPATest
                         + PersistenceFacetImpl.DEFAULT_ENTITY_PACKAGE + "."
                         + entity.getName()
                         + ".java --inverseFieldName left");
+   }
+
+   @Test
+   public void testAddAndRemoveField() throws Exception
+   {
+      Project project = getProject();
+      JavaClass javaClass = generateEntity(project);
+
+      getShell().execute(
+               ConstraintInspector.getName(FieldPlugin.class) + " boolean --named gamesPlayed --primitive false");
+      getShell().execute(ConstraintInspector.getName(FieldPlugin.class) + " boolean --named gamesWon");
+
+      queueInputLines("y", "y", "y");
+      getShell().execute("rm gamesPlayed::Boolean");
+      javaClass = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(javaClass).getJavaSource();
+      assertFalse(javaClass.hasField("gamesPlayed"));
+      assertTrue(javaClass.hasField("gamesWon"));
+      assertTrue(javaClass.getField("gamesWon").isPrimitive());
+      assertFalse(javaClass.hasSyntaxErrors());
+
+      getShell().execute("build");
    }
 
 }
