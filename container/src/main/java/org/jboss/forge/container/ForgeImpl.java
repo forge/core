@@ -243,7 +243,8 @@ public class ForgeImpl implements Forge
    @Override
    public Version getVersion()
    {
-      return new SingleVersion(AddonRepositoryImpl.getRuntimeAPIVersion());
+      return AddonRepositoryImpl.getRuntimeAPIVersion() == null ? null : new SingleVersion(
+               AddonRepositoryImpl.getRuntimeAPIVersion());
    }
 
    @Override
