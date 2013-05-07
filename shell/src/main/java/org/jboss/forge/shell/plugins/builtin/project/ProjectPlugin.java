@@ -21,7 +21,10 @@ import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.dependencies.DependencyInstaller;
+import org.jboss.forge.project.dependencies.DependencyQuery;
+import org.jboss.forge.project.dependencies.DependencyQueryBuilder;
 import org.jboss.forge.project.dependencies.DependencyRepository;
+import org.jboss.forge.project.dependencies.NonSnapshotDependencyFilter;
 import org.jboss.forge.project.dependencies.ScopeType;
 import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.facets.DependencyFacet.KnownRepository;
@@ -159,7 +162,9 @@ public class ProjectPlugin implements Plugin
          {
             if (Strings.isNullOrEmpty(gavCopy.getVersion()))
             {
-               gavCopy = shell.promptChoiceTyped("Add which version?", deps.resolveAvailableVersions(gavCopy));
+               DependencyQuery query = DependencyQueryBuilder.create(gavCopy).setFilter(
+                        new NonSnapshotDependencyFilter());
+               gavCopy = shell.promptChoiceTyped("Add which version?", deps.resolveAvailableVersions(query));
             }
          }
       }
