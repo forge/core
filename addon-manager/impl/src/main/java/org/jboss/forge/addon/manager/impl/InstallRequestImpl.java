@@ -26,6 +26,7 @@ import org.jboss.forge.container.lock.LockMode;
 import org.jboss.forge.container.repositories.AddonDependencyEntry;
 import org.jboss.forge.container.repositories.AddonRepository;
 import org.jboss.forge.container.repositories.MutableAddonRepository;
+import org.jboss.forge.container.util.Assert;
 import org.jboss.forge.container.util.Predicate;
 import org.jboss.forge.dependencies.Coordinate;
 import org.jboss.forge.dependencies.DependencyNode;
@@ -34,9 +35,9 @@ import org.jboss.forge.dependencies.collection.DependencyNodeUtil;
 /**
  * When an addon is installed, another addons could be required. This object returns the necessary information for the
  * installation of an addon to succeed, like required addons and dependencies
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ *
  */
 public class InstallRequestImpl implements InstallRequest
 {
@@ -51,7 +52,7 @@ public class InstallRequestImpl implements InstallRequest
 
    /**
     * Package-access constructor. Only AddonManager should be allowed to call this constructor.
-    * 
+    *
     * @param addonManager
     */
    InstallRequestImpl(AddonManager addonManager, Forge forge, DependencyNode requestedAddonNode)
@@ -103,33 +104,28 @@ public class InstallRequestImpl implements InstallRequest
    @Override
    public void perform()
    {
-      forge.getLockManager().performLocked(LockMode.WRITE, new Callable<Void>()
+      forge.getLockManager().performLocked(LockMode.WRITE, new Callable<AddonId>()
       {
          @Override
-         public Void call() throws Exception
+         public AddonId call() throws Exception
          {
             for (DependencyNode requiredAddon : getRequiredAddons())
             {
                AddonId requiredAddonId = toAddonId(requiredAddon);
-               AddonRepository deployed = null;
+               boolean deployed = false;
                for (AddonRepository repository : forge.getRepositories())
                {
                   if (repository.isDeployed(requiredAddonId))
                   {
-                     log.info("Addon " + requiredAddonId + " is already deployed.");
-                     deployed = repository;
+                     log.info("Addon " + requiredAddonId + " is already deployed. Skipping...");
+                     deployed = true;
                      break;
                   }
                }
 
-               if (deployed == null)
+               if (!deployed)
                {
                   addonManager.install(requiredAddonId).perform();
-               }
-               else if (requiredAddon.getDependency().getCoordinate().isSnapshot())
-               {
-                  log.info("Re-installing Addon SNAPSHOT " + requiredAddonId + ".");
-                  addonManager.install(requiredAddonId).perform(deployed);
                }
             }
 
@@ -145,7 +141,7 @@ public class InstallRequestImpl implements InstallRequest
                   break;
                }
             }
-            return null;
+            return requestedAddonId;
          }
       });
    }
@@ -153,51 +149,41 @@ public class InstallRequestImpl implements InstallRequest
    @Override
    public void perform(final AddonRepository target)
    {
-      forge.getLockManager().performLocked(LockMode.WRITE, new Callable<Void>()
+      Assert.isTrue(!(target instanceof MutableAddonRepository), "Addon repository ["
+               + target.getRootDirectory().getAbsolutePath()
+               + "] is not writable.");
+
+      forge.getLockManager().performLocked(LockMode.WRITE, new Callable<AddonId>()
       {
          @Override
-         public Void call() throws Exception
+         public AddonId call() throws Exception
          {
             for (DependencyNode requiredAddon : getRequiredAddons())
             {
                AddonId requiredAddonId = toAddonId(requiredAddon);
-
-               AddonRepository deployed = null;
+               boolean deployed = false;
                for (AddonRepository repository : forge.getRepositories())
                {
                   if (repository.isDeployed(requiredAddonId))
                   {
-                     log.info("Addon " + requiredAddonId + " is already deployed.");
-                     deployed = repository;
+                     log.info("Addon " + requiredAddonId + " is already deployed. Skipping...");
+                     deployed = true;
                      break;
                   }
                }
 
-               if (deployed == null)
+               if (!deployed)
                {
-                  addonManager.install(requiredAddonId).perform();
-               }
-               else if (requiredAddon.getDependency().getCoordinate().isSnapshot())
-               {
-                  log.info("Re-installing Addon SNAPSHOT " + requiredAddonId + ".");
-                  addonManager.install(requiredAddonId).perform(deployed);
+                  addonManager.install(requiredAddonId).perform(target);
                }
             }
 
             AddonId requestedAddonId = toAddonId(requestedAddonNode);
 
-            if (target instanceof MutableAddonRepository)
-            {
-               MutableAddonRepository mutableRespository = (MutableAddonRepository) target;
-               deploy(mutableRespository, requestedAddonId, requestedAddonNode);
-               mutableRespository.enable(requestedAddonId);
-            }
-            else
-            {
-               throw new IllegalArgumentException("Addon repository [" + target.getRootDirectory().getAbsolutePath()
-                        + "] is not writable.");
-            }
-            return null;
+            MutableAddonRepository mutableRepository = (MutableAddonRepository) target;
+            deploy(mutableRepository, requestedAddonId, requestedAddonNode);
+            mutableRepository.enable(requestedAddonId);
+            return requestedAddonId;
          }
       });
    }
@@ -226,13 +212,13 @@ public class InstallRequestImpl implements InstallRequest
       return AddonId.from(coord.getGroupId() + ":" + coord.getArtifactId(), coord.getVersion(), apiVersion);
    }
 
-   private void deploy(MutableAddonRepository repository, AddonId addonId, DependencyNode root)
+   private void deploy(MutableAddonRepository repository, AddonId addon, DependencyNode root)
    {
       List<File> resourceJars = toResourceJars(DependencyNodeUtil.select(root, new LocalResourceFilter(root)));
 
       if (resourceJars.isEmpty())
       {
-         log.fine("No resource JARs found for " + addonId);
+         log.fine("No resource JARs found for " + addon);
       }
       List<AddonDependencyEntry> addonDependencies =
                toAddonDependencies(DependencyNodeUtil
@@ -240,28 +226,10 @@ public class InstallRequestImpl implements InstallRequest
 
       if (addonDependencies.isEmpty())
       {
-         log.fine("No dependencies found for addon " + addonId);
+         log.fine("No dependencies found for addon " + addon);
       }
-
-      boolean deploy = true;
-      if (repository.isDeployed(addonId))
-      {
-         if (root.getDependency().getCoordinate().isSnapshot())
-         {
-            log.fine("Removing previous deployment of " + addonId);
-            repository.undeploy(addonId);
-         }
-         else
-         {
-            deploy = false;
-         }
-      }
-
-      if (deploy)
-      {
-         log.info("Deploying addon " + addonId);
-         repository.deploy(addonId, addonDependencies, resourceJars);
-      }
+      log.info("Deploying addon " + addon);
+      repository.deploy(addon, addonDependencies, resourceJars);
    }
 
    private List<AddonDependencyEntry> toAddonDependencies(List<DependencyNode> dependencies)
