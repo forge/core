@@ -19,6 +19,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.repositories.AddonDependencyEntry;
 import org.jboss.forge.facets.FacetFactory;
+import org.jboss.forge.facets.FacetNotFoundException;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -35,7 +36,11 @@ public class FacetFactoryTest
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
                .addBeansXML()
-               .addClasses(FacetFactoryTest.class, MockFacet.class, MockFaceted.class, SubMockFacet.class,
+               .addClasses(FacetFactoryTest.class,
+                        MockFacet.class,
+                        MockFaceted.class,
+                        SubMockFacet.class,
+                        NotFoundMockFacet.class,
                         TestQualifier.class)
                .addAsAddonDependencies(
                         AddonDependencyEntry.create(AddonId.from("org.jboss.forge:facets", "2.0.0-SNAPSHOT")));
@@ -56,6 +61,28 @@ public class FacetFactoryTest
    {
       MockFacet facet = facetFactory.create(MockFacet.class);
       Assert.assertNotNull(facet);
+   }
+
+   @Test
+   public void testNotFoundFacetCreation() throws Exception
+   {
+      try
+      {
+         facetFactory.create(NotFoundMockFacet.class);
+      }
+      catch (Throwable e)
+      {
+         boolean found = false;
+         while (e.getCause() != null && e.getCause() != e)
+         {
+            e = e.getCause();
+            if (e instanceof FacetNotFoundException)
+            {
+               found = true;
+            }
+         }
+         Assert.assertTrue(found);
+      }
    }
 
    @Test

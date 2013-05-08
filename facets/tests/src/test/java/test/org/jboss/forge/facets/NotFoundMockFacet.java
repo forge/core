@@ -7,24 +7,11 @@
 
 package test.org.jboss.forge.facets;
 
-import org.jboss.forge.facets.AbstractFacet;
+import org.jboss.forge.facets.Facet;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class MockFacet extends AbstractFacet<MockFaceted>
+public interface NotFoundMockFacet extends Facet<MockFaceted>
 {
-
-   @Override
-   public boolean install()
-   {
-      return true;
-   }
-
-   @Override
-   public boolean isInstalled()
-   {
-      return true;
-   }
-
 }

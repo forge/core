@@ -28,6 +28,8 @@ public class FacetFactoryImpl implements FacetFactory
    {
       Assert.notNull(type, "Facet type must not be null.");
       ExportedInstance<FACET> instance = registry.getExportedInstance(type);
+      if (instance == null)
+         throw new FacetNotFoundException("Could not find Facet of type [" + type.getName() + "]");
       return instance.get();
    }
 

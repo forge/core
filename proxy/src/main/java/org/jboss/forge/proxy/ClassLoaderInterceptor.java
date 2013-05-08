@@ -9,7 +9,6 @@ package org.jboss.forge.proxy;
 import java.lang.reflect.Method;
 import java.util.concurrent.Callable;
 
-import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.util.ClassLoaders;
 
 /**
@@ -37,29 +36,16 @@ public class ClassLoaderInterceptor implements ForgeProxy
          {
             try
             {
-               try
+               if (thisMethod.getDeclaringClass().getName().equals(ForgeProxy.class.getName()))
                {
-                  if (thisMethod.getDeclaringClass().getName().equals(ForgeProxy.class.getName()))
-                  {
-                     return delegate;
-                  }
+                  return delegate;
                }
-               catch (Exception e)
-               {
-               }
-
-               return thisMethod.invoke(delegate, args);
-            }
-            catch (RuntimeException e)
-            {
-               throw e;
             }
             catch (Exception e)
             {
-               throw new ContainerException(
-                        "Failed during invocation of proxy method [" + delegate.getClass().getName() + "."
-                                 + thisMethod.getName() + "()] in ClassLoader [" + loader + "]", e);
             }
+
+            return thisMethod.invoke(delegate, args);
          }
       };
 
