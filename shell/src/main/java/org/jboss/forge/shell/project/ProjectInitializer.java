@@ -6,7 +6,6 @@
  */
 package org.jboss.forge.shell.project;
 
-import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
@@ -17,7 +16,6 @@ import org.jboss.forge.project.services.ProjectFactory;
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.events.InitProject;
-import org.jboss.forge.shell.events.PostStartup;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -26,23 +24,16 @@ public class ProjectInitializer
 {
    private final Shell shell;
    private final CurrentProject cp;
-   private final Event<InitProject> init;
 
    private final ProjectFactory projectFactory;
 
    @Inject
    public ProjectInitializer(final Shell shell, final CurrentProject currentProjectHolder,
-            final Event<InitProject> init, final ProjectFactory projectFactory)
+            final ProjectFactory projectFactory)
    {
       this.shell = shell;
       this.cp = currentProjectHolder;
-      this.init = init;
       this.projectFactory = projectFactory;
-   }
-
-   public void postStartupTrigger(@Observes final PostStartup event)
-   {
-      init.fire(new InitProject());
    }
 
    public void doInit(@Observes final InitProject event)
