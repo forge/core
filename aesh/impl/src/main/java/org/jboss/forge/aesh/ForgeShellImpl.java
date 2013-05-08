@@ -274,19 +274,24 @@ public class ForgeShellImpl implements ForgeShell
                    //try to get next command in the wizard
                    UIWizard wizard = (UIWizard) wizardSteps.get(0).getCommand();
                    NavigationResult navResult = wizard.next(wizardSteps.get(0).getContext());
+                   //we have another step, lets add it to the list
+                   //this will be processed next
                    if(navResult != null)
                    {
                        Object cmd = navResult.getNext();
                        wizardSteps.add(new ShellCommand(registry, getForgeShell(), (UICommand) cmd ));
                    }
+                   //we have come to the final step, execute the wizard
+                   else
+                       return executeWizardSteps();
                }
-               else
-                   return executeWizardSteps();
+
 
            }
            catch (CommandLineParserException e)
            {
-               //parser exception
+               //parser exception (we must add some logic here to give the user more info on
+               //what input was wrong to prevent loosing all the steps in the wizard.
            }
            catch (Exception e)
            {
