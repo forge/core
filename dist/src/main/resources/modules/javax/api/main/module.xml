@@ -86,6 +86,7 @@
 				<path name="javax/swing/undo" />
 				<path name="javax/tools" />
 				<path name="javax/xml" />
+				<path name="javax/xml/bind" />
 				<path name="javax/xml/crypto" />
 				<path name="javax/xml/crypto/dom" />
 				<path name="javax/xml/crypto/dsig" />
@@ -124,3 +125,4 @@
 		</system>
 	</dependencies>
 </module>
+
