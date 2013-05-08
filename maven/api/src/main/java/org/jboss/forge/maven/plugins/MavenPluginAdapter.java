@@ -187,4 +187,8 @@ public class MavenPluginAdapter extends org.apache.maven.model.Plugin implements
       return dependencies;
    }
 
+   public void setConfig(Configuration configuration)
+   {
+      setConfiguration(parseConfig(configuration));
+   }
 }

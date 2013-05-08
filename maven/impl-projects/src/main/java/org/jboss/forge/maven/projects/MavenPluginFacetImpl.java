@@ -7,30 +7,32 @@
 
 package org.jboss.forge.maven.projects;
 
+
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.context.Dependent;
 
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
-import org.apache.maven.model.Plugin;
+import org.apache.maven.model.PluginExecution;
 import org.apache.maven.model.PluginManagement;
 import org.apache.maven.model.Repository;
-import org.jboss.forge.container.exception.ContainerException;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.jboss.forge.dependencies.Coordinate;
-import org.jboss.forge.dependencies.Dependency;
 import org.jboss.forge.dependencies.DependencyRepository;
 import org.jboss.forge.dependencies.builder.CoordinateBuilder;
-import org.jboss.forge.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.dependencies.util.Dependencies;
 import org.jboss.forge.facets.AbstractFacet;
 import org.jboss.forge.maven.plugins.Execution;
 import org.jboss.forge.maven.plugins.MavenPlugin;
 import org.jboss.forge.maven.plugins.MavenPluginAdapter;
 import org.jboss.forge.maven.plugins.MavenPluginBuilder;
+import org.jboss.forge.maven.projects.facets.exceptions.PluginNotFoundException;
+import org.jboss.forge.parser.java.util.Strings;
 import org.jboss.forge.projects.Project;
 
 /**
@@ -54,8 +56,10 @@ public class MavenPluginFacetImpl extends AbstractFacet<Project> implements Mave
       return getOrigin().hasFacet(MavenFacet.class);
    }
 
-   private List<org.apache.maven.model.Plugin> getPluginsPOM(Build build, boolean managedPlugin)
+   private List<org.apache.maven.model.Plugin> getPluginsPOM(boolean managedPlugin, boolean effectivePlugin)
    {
+      MavenFacet mavenCoreFacet = getOrigin().getFacet(MavenFacet.class);
+      Build build = mavenCoreFacet.getPOM().getBuild();
       if (build != null)
       {
          if (managedPlugin)
@@ -74,12 +78,10 @@ public class MavenPluginFacetImpl extends AbstractFacet<Project> implements Mave
       return Collections.emptyList();
    }
 
-   private List<MavenPlugin> listConfiguredPlugins(boolean managedPlugin)
+   private List<MavenPlugin> listConfiguredPlugins(boolean managedPlugin, boolean effectivePlugin)
    {
       List<MavenPlugin> plugins = new ArrayList<MavenPlugin>();
-      MavenFacet mavenCoreFacet = getOrigin().getFacet(MavenFacet.class);
-      Build build = mavenCoreFacet.getPOM().getBuild();
-      List<org.apache.maven.model.Plugin> pomPlugins = getPluginsPOM(build, managedPlugin);
+      List<org.apache.maven.model.Plugin> pomPlugins = getPluginsPOM(managedPlugin, effectivePlugin);
       for (org.apache.maven.model.Plugin plugin : pomPlugins)
       {
          MavenPluginAdapter adapter = new MavenPluginAdapter(plugin);
@@ -101,8 +103,8 @@ public class MavenPluginFacetImpl extends AbstractFacet<Project> implements Mave
 
    private void addPlugin(final MavenPlugin plugin, boolean managedPlugin)
    {
-      MavenFacet maven = getOrigin().getFacet(MavenFacet.class);
-      Model pom = maven.getPOM();
+      MavenFacet mavenCoreFacet = getOrigin().getFacet(MavenFacet.class);
+      Model pom = mavenCoreFacet.getPOM();
       Build build = pom.getBuild();
       if (build == null)
          build = new Build();
@@ -121,91 +123,103 @@ public class MavenPluginFacetImpl extends AbstractFacet<Project> implements Mave
          build.addPlugin(new MavenPluginAdapter(plugin));
       }
       pom.setBuild(build);
-      maven.setPOM(pom);
+      mavenCoreFacet.setPOM(pom);
    }
 
-   private MavenPlugin getPlugin(final Dependency dependency, boolean managedPlugin)
+   private MavenPlugin getPlugin(final Coordinate dependency, boolean managedPlugin, boolean effectivePlugin)
    {
-      String groupId = dependency.getCoordinate().getGroupId();
+      String groupId = dependency.getGroupId();
       groupId = (groupId == null) || groupId.equals("") ? DEFAULT_GROUPID : groupId;
 
-      for (MavenPlugin mavenPlugin : listConfiguredPlugins(managedPlugin))
+      for (MavenPlugin mavenPlugin : listConfiguredPlugins(managedPlugin, effectivePlugin))
       {
          Coordinate temp = mavenPlugin.getCoordinate();
-         if (temp.equals(CoordinateBuilder.create(temp).setGroupId(groupId)))
+         if (Dependencies.areEquivalent(temp, CoordinateBuilder.create(dependency).setGroupId(groupId)))
          {
             return mavenPlugin;
          }
       }
 
-      throw new ContainerException("Plugin " + dependency.getCoordinate() + " was not found");
+      throw new PluginNotFoundException(groupId, dependency.getArtifactId());
    }
 
-   public boolean hasPlugin(final Dependency dependency, boolean managedPlugin)
+   public boolean hasPlugin(final Coordinate dependency, boolean managedPlugin, boolean effectivePlugin)
    {
       try
       {
-         getPlugin(dependency, managedPlugin);
+         getPlugin(dependency, managedPlugin, effectivePlugin);
          return true;
       }
-      catch (ContainerException ex)
+      catch (PluginNotFoundException ex)
       {
          return false;
       }
    }
 
-   private void removePlugin(final Dependency dependency, boolean managedPlugin)
+   private void removePlugin(final Coordinate dependency, boolean managedPlugin)
    {
-      MavenFacet maven = getOrigin().getFacet(MavenFacet.class);
-      Model pom = maven.getPOM();
-      Build build = pom.getBuild();
-      List<org.apache.maven.model.Plugin> pomPlugins = getPluginsPOM(build, managedPlugin);
-      Iterator<Plugin> it = pomPlugins.iterator();
-      while (it.hasNext())
+      // Get plugin
+      MavenPlugin pluginToRemove = null;
+      if (managedPlugin && hasManagedPlugin(dependency))
       {
-         org.apache.maven.model.Plugin pomPlugin = it.next();
-         Dependency pluginDep = DependencyBuilder.create().setGroupId(pomPlugin.getGroupId())
-                  .setArtifactId(pomPlugin.getArtifactId());
-
-         if (Dependencies.areEquivalent(pluginDep, dependency))
-         {
-            it.remove();
-         }
+         pluginToRemove = getManagedPlugin(dependency);
       }
-      maven.setPOM(pom);
+      else if (hasPlugin(dependency))
+      {
+         pluginToRemove = getPlugin(dependency);
+      }
+      // Remove if it exists
+      if (pluginToRemove != null)
+      {
+         MavenFacet mavenCoreFacet = getOrigin().getFacet(MavenFacet.class);
+         Model pom = mavenCoreFacet.getPOM();
+         Build build = pom.getBuild(); // We know for sure it isnt null because the plugin exists
+         if (managedPlugin)
+         {
+            PluginManagement pluginManagement = build.getPluginManagement(); // We know for sure it isnt null because
+                                                                             // the plugin exists
+            pluginManagement.removePlugin(new MavenPluginAdapter(pluginToRemove));
+         }
+         else
+         {
+            build.removePlugin(new MavenPluginAdapter(pluginToRemove));
+         }
+         pom.setBuild(build);
+         mavenCoreFacet.setPOM(pom);
+      }
    }
 
    private void updatePlugin(final MavenPlugin plugin, boolean managedPlugin)
    {
-      MavenFacet maven = getOrigin().getFacet(MavenFacet.class);
-      Model pom = maven.getPOM();
-      Build build = pom.getBuild();
-      List<org.apache.maven.model.Plugin> pomPlugins = getPluginsPOM(build, managedPlugin);
-      for (org.apache.maven.model.Plugin pomPlugin : pomPlugins)
+      this.removePlugin(plugin.getCoordinate(), managedPlugin);
+      if (!this.hasPlugin(plugin.getCoordinate(), managedPlugin, false))
       {
-         Coordinate pluginCoord = CoordinateBuilder.create().setGroupId(pomPlugin.getGroupId())
-                  .setArtifactId(pomPlugin.getArtifactId());
-
-         if (pluginCoord.equals(plugin.getCoordinate()))
-         {
-            MavenPluginAdapter adapter = new MavenPluginAdapter(plugin);
-            pomPlugin.setConfiguration(adapter.getConfiguration());
-            maven.setPOM(pom);
-            break;
-         }
+         this.addPlugin(plugin, managedPlugin);
       }
    }
 
    @Override
    public List<MavenPlugin> listConfiguredPlugins()
    {
-      return listConfiguredPlugins(false);
+      return listConfiguredPlugins(false, false);
+   }
+
+   @Override
+   public List<MavenPlugin> listConfiguredEffectivePlugins()
+   {
+      return listConfiguredPlugins(false, true);
    }
 
    @Override
    public List<MavenPlugin> listConfiguredManagedPlugins()
    {
-      return listConfiguredPlugins(true);
+      return listConfiguredPlugins(true, false);
+   }
+
+   @Override
+   public List<MavenPlugin> listConfiguredEffectiveManagedPlugins()
+   {
+      return listConfiguredPlugins(true, true);
    }
 
    @Override
@@ -221,37 +235,61 @@ public class MavenPluginFacetImpl extends AbstractFacet<Project> implements Mave
    }
 
    @Override
-   public MavenPlugin getPlugin(final Dependency dependency)
+   public MavenPlugin getPlugin(final Coordinate coordinate)
    {
-      return getPlugin(dependency, false);
+      return getPlugin(coordinate, false, false);
    }
 
    @Override
-   public MavenPlugin getManagedPlugin(final Dependency dependency)
+   public MavenPlugin getEffectivePlugin(final Coordinate dependency)
    {
-      return getPlugin(dependency, true);
+      return getPlugin(dependency, false, true);
    }
 
    @Override
-   public boolean hasPlugin(final Dependency dependency)
+   public MavenPlugin getManagedPlugin(final Coordinate dependency)
    {
-      return hasPlugin(dependency, false);
+      return getPlugin(dependency, true, false);
    }
 
    @Override
-   public boolean hasManagedPlugin(final Dependency dependency)
+   public MavenPlugin getEffectiveManagedPlugin(final Coordinate dependency)
    {
-      return hasPlugin(dependency, true);
+      return getPlugin(dependency, true, true);
    }
 
    @Override
-   public void removePlugin(final Dependency dependency)
+   public boolean hasPlugin(final Coordinate dependency)
+   {
+      return hasPlugin(dependency, false, false);
+   }
+
+   @Override
+   public boolean hasEffectivePlugin(final Coordinate dependency)
+   {
+      return hasPlugin(dependency, false, true);
+   }
+
+   @Override
+   public boolean hasManagedPlugin(final Coordinate dependency)
+   {
+      return hasPlugin(dependency, true, false);
+   }
+
+   @Override
+   public boolean hasEffectiveManagedPlugin(final Coordinate managedDependency)
+   {
+      return hasPlugin(managedDependency, true, true);
+   }
+
+   @Override
+   public void removePlugin(final Coordinate dependency)
    {
       removePlugin(dependency, false);
    }
 
    @Override
-   public void removeManagedPlugin(final Dependency dependency)
+   public void removeManagedPlugin(final Coordinate dependency)
    {
       removePlugin(dependency, true);
    }
@@ -347,9 +385,116 @@ public class MavenPluginFacetImpl extends AbstractFacet<Project> implements Mave
    }
 
    @Override
-   public void setOrigin(final Project project)
+   public MavenPlugin merge(final MavenPlugin dominant, final MavenPlugin recessive)
    {
-      super.setOrigin(project);
+      MavenPluginAdapter merged = new MavenPluginAdapter(dominant);
+      if (Dependencies.areEquivalent(dominant.getCoordinate(), recessive.getCoordinate()))
+      {
+         MavenPluginAdapter recessiveAdaptater = new MavenPluginAdapter(recessive);
+         // Merge the configurations
+         Xpp3Dom mergedDomConfig = Xpp3Dom.mergeXpp3Dom((Xpp3Dom) merged.getConfiguration(),
+                  (Xpp3Dom) recessiveAdaptater.getConfiguration());
+         merged.setConfiguration(mergedDomConfig);
+         // Merge the executions
+         List<PluginExecution> mergedExecutions = mergePluginsExecutions(merged.getExecutionsAsMap(),
+                  recessiveAdaptater.getExecutionsAsMap());
+         merged.setExecutions(mergedExecutions);
+         // Merge dependencies; only version required, we already know that groupId and artifactId are equals
+         if (Strings.isNullOrEmpty(merged.getVersion()))
+         {
+            merged.setVersion(recessiveAdaptater.getVersion());
+         }
+         // Extension flag
+         if (Strings.isNullOrEmpty(merged.getExtensions()))
+         {
+            merged.setExtensions(recessiveAdaptater.getExtensions());
+         }
+         // Inherited flag
+         if (Strings.isNullOrEmpty(merged.getInherited()))
+         {
+            merged.setExtensions(recessiveAdaptater.getInherited());
+         }
+      }
+      return merged;
    }
 
+   private List<PluginExecution> mergePluginsExecutions(final Map<String, PluginExecution> dominant,
+            final Map<String, PluginExecution> recessive)
+   {
+      List<PluginExecution> executions = new ArrayList<PluginExecution>();
+      // Create a list of dominant executions, with the configurations merged with recessive if needed
+      for (Map.Entry<String, PluginExecution> entry : dominant.entrySet())
+      {
+         PluginExecution pluginExecution = entry.getValue();
+         PluginExecution mergedPluginExecution = new PluginExecution();
+         mergedPluginExecution.setId(pluginExecution.getId());
+         // Phase
+         if (Strings.isNullOrEmpty(pluginExecution.getPhase()) && recessive.containsKey(entry.getKey()))
+         {
+            mergedPluginExecution.setPhase(recessive.get(entry.getKey()).getPhase());
+         }
+         else
+         {
+            mergedPluginExecution.setPhase(pluginExecution.getPhase());
+         }
+         // Goals
+         Map<String, Boolean> hasGoals = new HashMap<String, Boolean>();
+         for (String goal : pluginExecution.getGoals())
+         {
+            mergedPluginExecution.addGoal(goal);
+            hasGoals.put(goal, new Boolean(true));
+         }
+         if (recessive.containsKey(entry.getKey()))
+         {
+            for (String goal : recessive.get(entry.getKey()).getGoals())
+            {
+               if (!hasGoals.containsKey(goal))
+               {
+                  mergedPluginExecution.addGoal(goal);
+               }
+            }
+         }
+         // Configurations
+         if (pluginExecution.getConfiguration() != null)
+         {
+            if (recessive.containsKey(entry.getKey())
+                     && recessive.get(entry.getKey()).getConfiguration() != null)
+            {
+               // Merge configurations
+               Xpp3Dom mergedDomConfig = Xpp3Dom.mergeXpp3Dom((Xpp3Dom) pluginExecution.getConfiguration(),
+                        (Xpp3Dom) recessive.get(entry.getKey()).getConfiguration());
+               mergedPluginExecution.setConfiguration(mergedDomConfig);
+            }
+            else
+            {
+               // Keep master config
+               mergedPluginExecution.setConfiguration(pluginExecution.getConfiguration());
+            }
+         }
+         executions.add(mergedPluginExecution);
+      }
+      // Add the executions of the recessive that are not defined in dominant
+      for (Map.Entry<String, PluginExecution> entry : recessive.entrySet())
+      {
+         if (!dominant.containsKey(entry.getKey()))
+         {
+            PluginExecution pluginExecution = entry.getValue();
+            PluginExecution mergedPluginExecution = new PluginExecution();
+            mergedPluginExecution.setId(pluginExecution.getId());
+            mergedPluginExecution.setPhase(pluginExecution.getPhase());
+            // Goals
+            for (String goal : pluginExecution.getGoals())
+            {
+               mergedPluginExecution.addGoal(goal);
+            }
+            // Configuration
+            if (pluginExecution.getConfiguration() != null)
+            {
+               mergedPluginExecution.setConfiguration(pluginExecution.getConfiguration());
+            }
+            executions.add(mergedPluginExecution);
+         }
+      }
+      return executions;
+   }
 }

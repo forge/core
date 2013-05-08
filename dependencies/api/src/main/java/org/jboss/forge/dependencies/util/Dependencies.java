@@ -41,4 +41,32 @@ public class Dependencies
                !(l.getCoordinate().getClassifier() != null ? !l.getCoordinate().getClassifier()
                         .equals(r.getCoordinate().getClassifier()) : r.getCoordinate().getClassifier() != null);
    }
+   /**
+    * Compare the {@link Coordinate} of each given {@link Dependency} for equivalence.
+    */
+   public static boolean areEquivalent(Coordinate l, Coordinate r)
+   {
+      if (l == r)
+      {
+         return true;
+      }
+      if ((l == null) && (r == null))
+      {
+         return true;
+      }
+      else if ((l == null) || (r == null))
+      {
+         return false;
+      }
+
+      return !(l.getArtifactId() != null ? !l.getArtifactId()
+               .equals(r.getArtifactId()) : r.getArtifactId() != null)
+               &&
+               !(l.getGroupId() != null ? !l.getGroupId()
+                        .equals(r.getGroupId()) : r.getGroupId() != null)
+               &&
+               !(l.getClassifier() != null ? !l.getClassifier()
+                        .equals(r.getClassifier()) : r.getClassifier() != null);
+   }
+
 }
