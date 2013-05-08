@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ ~ Copyright 2012 Red Hat, Inc. and/or its affiliates.
+ ~
+ ~ Licensed under the Eclipse Public License version 1.0, available at
+ ~ http://www.eclipse.org/legal/epl-v10.html
+-->
+
+<module xmlns="urn:jboss:module:1.0" name="org.jboss.forge.scaffoldx.impl">
+
+   <resources>
+      <!-- Insert resources here -->
+   </resources>
+
+   <dependencies>
+      <module name="org.jboss.forge.shell.api" services="import">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+      
+      <module name="org.jboss.forge.javaee.api" services="import">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+      
+      <module name="org.jboss.forge.javaee.impl" services="import">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+      
+      <module name="org.jboss.forge.scaffoldx.api" services="import">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+      
+      <module name="org.jboss.seam.render" services="import">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+      
+      <module name="org.jboss.forge.scaffold.impl" services="import">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+      
+      <module name="org.mvel" />
+      <module name="javax.api" />
+   </dependencies>
+
+</module>

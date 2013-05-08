@@ -343,6 +343,16 @@
 			<maven-resource group="org.jboss.forge" artifact="forge-scaffold-faces" />
 			<maven-resource group="org.metawidget.modules" artifact="metawidget-all" />
 		</module-def>
+		
+        <module-def name="org.jboss.forge.scaffoldx.api">
+            <maven-resource group="org.jboss.forge" artifact="forge-scaffoldx-api" />
+        	<maven-resource group="org.metawidget.modules" artifact="metawidget-all" />
+        </module-def>
+
+        <module-def name="org.jboss.forge.scaffoldx.impl">
+            <maven-resource group="org.jboss.forge" artifact="forge-scaffoldx-plugins" />
+        	<maven-resource group="org.jboss.forge" artifact="forge-scaffoldx-faces" />
+        </module-def>
 
 		<module-def name="org.jboss.forge.shell.api">
 			<maven-resource group="org.jboss.forge" artifact="forge-shell-api" />

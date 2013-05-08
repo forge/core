@@ -102,6 +102,20 @@
             <include path="META-INF" />
          </imports>
       </module>
+      
+      <module name="org.jboss.forge.scaffoldx.api" services="import">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
+
+      <module name="org.jboss.forge.scaffoldx.impl" services="import">
+         <imports>
+            <include path="**" />
+            <include path="META-INF" />
+         </imports>
+      </module>
 
       <module name="org.jboss.forge.shell.api" services="import">
          <imports>

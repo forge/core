@@ -577,7 +577,7 @@ public class ForgePlugin implements Plugin
          // TODO Weld bug requires us to correct /add module for Seam Render dependency
          List<String> groupIds = Arrays.asList("org.jboss.seam.render", "org.jboss.forge");
          List<String> providedDeps = Arrays.asList("forge-javaee-api", "forge-maven-api", "forge-scaffold-api",
-                  "forge-shell-api");
+                  "forge-scaffoldx-api", "forge-shell-api");
          List<Dependency> dependencies = deps.getDependencies();
          for (Dependency dependency : dependencies)
          {
@@ -702,6 +702,8 @@ public class ForgePlugin implements Plugin
                .attribute("services", "import");
       dependencies.createChild("module").attribute("name", "org.jboss.forge.scaffold.api")
                .attribute("services", "import");
+      dependencies.createChild("module").attribute("name", "org.jboss.forge.scaffoldx.api")
+               .attribute("services", "import");
       dependencies.createChild("module").attribute("name", "org.jboss.forge.shell.api")
                .attribute("services", "import");
       dependencies.createChild("module").attribute("name", "org.jboss.seam.render").attribute("services", "import");
@@ -745,6 +747,12 @@ public class ForgePlugin implements Plugin
          {
             module.getSingle("dependencies").createChild("module")
                      .attribute("name", "org.jboss.forge.scaffold.api")
+                     .attribute("services", "import");
+         }
+         else if (DependencyBuilder.areEquivalent(d, DependencyBuilder.create("org.jboss.forge:forge-scaffoldx-api")))
+         {
+            module.getSingle("dependencies").createChild("module")
+                     .attribute("name", "org.jboss.forge.scaffoldx.api")
                      .attribute("services", "import");
          }
          else if (DependencyBuilder.areEquivalent(d, DependencyBuilder.create("org.jboss.forge:forge-maven-api")))
