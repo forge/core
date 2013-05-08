@@ -17,6 +17,7 @@ import org.jboss.forge.ForgeEnvironment;
 import org.jboss.forge.project.services.ResourceFactory;
 import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.FileResource;
+import org.jboss.forge.shell.util.OSUtils;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -98,8 +99,12 @@ public class ForgeEnvironmentImpl implements ForgeEnvironment
    @Override
    public DirectoryResource getConfigDirectory()
    {
-      FileResource<?> resource = (FileResource<?>) resourceFactory.getResourceFrom(new File(
-               (String) getProperty(ShellImpl.PROP_FORGE_CONFIG_DIR)));
+      String forgeConfigDir = (String) getProperty(ShellImpl.PROP_FORGE_CONFIG_DIR);
+      if (forgeConfigDir == null)
+      {
+         forgeConfigDir = System.getProperty(ShellImpl.PROP_FORGE_CONFIG_DIR, OSUtils.getDefaultForgePath());
+      }
+      FileResource<?> resource = (FileResource<?>) resourceFactory.getResourceFrom(new File(forgeConfigDir));
       if (!resource.exists())
       {
          if (!resource.mkdirs())
