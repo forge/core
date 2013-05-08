@@ -6,8 +6,10 @@
  */
 package org.jboss.forge.container.addons;
 
+import java.util.Collections;
 import java.util.Set;
 
+import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.container.services.ExportedInstance;
 
 /**
@@ -17,12 +19,36 @@ import org.jboss.forge.container.services.ExportedInstance;
  */
 public interface AddonRegistry
 {
+   /**
+    * Get the set of currently available {@link Exported} services of the given {@link Class} type. Return
+    * {@link Collections#EMPTY_SET} if no matching services are found.
+    * 
+    * @return the {@link Set} of {@link ExportedInstance} objects (Never null.)
+    */
    <T> Set<ExportedInstance<T>> getExportedInstances(Class<T> clazz);
 
+   /**
+    * Get the set of currently available {@link Exported} services types with {@link Class#getName()} matching the given
+    * name. Return {@link Collections#EMPTY_SET} if no matching services are found.
+    * 
+    * @return the {@link Set} of {@link ExportedInstance} objects (Never null.)
+    */
    <T> Set<ExportedInstance<T>> getExportedInstances(String clazz);
 
+   /**
+    * Get an instance of any currently available {@link Exported} service of the given {@link Class} type. Return
+    * <code>null</code> if no matching service can be found.
+    * 
+    * @return the {@link ExportedInstance} (May be null.)
+    */
    <T> ExportedInstance<T> getExportedInstance(Class<T> type);
 
+   /**
+    * Get an instance of any currently available {@link Exported} service types with {@link Class#getName()} matching
+    * the given name. Return <code>null</code> if no matching service can be found.
+    * 
+    * @return the {@link ExportedInstance} (May be null.)
+    */
    <T> ExportedInstance<T> getExportedInstance(String type);
 
    /**
@@ -35,11 +61,15 @@ public interface AddonRegistry
 
    /**
     * Get all currently registered {@link Addon} instances.
+    * 
+    * @return the {@link Set} of {@link Addon} instances. (Never null.)
     */
    Set<Addon> getAddons();
 
    /**
     * Get all registered {@link Addon} instances matching the given {@link AddonFilter}.
+    * 
+    * @return the {@link Set} of {@link Addon} instances. (Never null.)
     */
    Set<Addon> getAddons(AddonFilter filter);
 }

@@ -50,7 +50,7 @@ import org.jboss.forge.ui.wizard.UIWizardStep;
 public class ForgeAddonSetupStep implements UIWizardStep
 {
    @Inject
-   @WithAttributes(label = "Create API,Implementation,Tests and Addon modules")
+   @WithAttributes(label = "Create API, Impl, SPI, Tests, and Addon modules")
    private UIInput<Boolean> splitProjects;
 
    @Inject
