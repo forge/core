@@ -33,6 +33,7 @@ import org.jboss.aesh.terminal.CharacterType;
 import org.jboss.aesh.terminal.Color;
 import org.jboss.aesh.terminal.TerminalCharacter;
 import org.jboss.forge.aesh.spi.ShellConfiguration;
+import org.jboss.forge.aesh.util.CommandLineUtil;
 import org.jboss.forge.aesh.util.UICommandDelegate;
 import org.jboss.forge.container.Forge;
 import org.jboss.forge.container.addons.Addon;
@@ -42,6 +43,9 @@ import org.jboss.forge.container.event.PreShutdown;
 import org.jboss.forge.container.services.Exported;
 import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.ui.UICommand;
+import org.jboss.forge.ui.result.NavigationResult;
+import org.jboss.forge.ui.result.Result;
+import org.jboss.forge.ui.wizard.UIWizard;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
@@ -54,6 +58,7 @@ public class ForgeShellImpl implements ForgeShell
 
    private Console console;
    private Prompt prompt;
+    private List<ShellCommand> wizardSteps = new ArrayList<ShellCommand>();
 
    private List<ShellCommand> commands;
 
@@ -216,13 +221,15 @@ public class ForgeShellImpl implements ForgeShell
       return new Prompt(chars);
    }
 
+    private ForgeShell getForgeShell() {
+        return this;
+    }
+
    class ForgeConsoleCallback implements ConsoleCallback
    {
       @Override
       public int readConsoleOutput(ConsoleOutput output) throws IOException
       {
-         CommandLine cl = null;
-         int result = 1;
          if (output.getBuffer() != null && !output.getBuffer().trim().isEmpty())
          {
             // TODO: should clean this up
@@ -234,35 +241,116 @@ public class ForgeShellImpl implements ForgeShell
             {
                logger.log(Level.SEVERE, "Failed to verify commands.", e);
             }
-            for (ShellCommand command : commands)
+             //we're currently not in a wizard context
+             if(wizardSteps.size() == 0)
+                 return parseUICommand(output);
+             else
+                 return parseWizardStep(output);
+         }
+         return -1;
+      }
+
+
+       /**
+        * We're in a wizard and we need to add the steps in a list so they can be executed
+        * when we've come to the end of the wizard.
+        *
+        * @throws IOException
+        */
+       private int parseWizardStep(ConsoleOutput output) throws IOException
+       {
+           //get latest command added
+           ShellCommand currentCommand = wizardSteps.get(wizardSteps.size() - 1);
+           try
+           {
+               CommandLine cl = currentCommand.parse(output.getBuffer());
+               if(cl != null)
+               {
+                   //populate the inputs to the context
+                   CommandLineUtil.populateUIInputs(cl, currentCommand.getContext(), registry);
+                   currentCommand.getContext().setConsoleOutput(output);
+
+                   //so now the options are parsed and added to the uicontext of that command
+                   //try to get next command in the wizard
+                   UIWizard wizard = (UIWizard) wizardSteps.get(0).getCommand();
+                   NavigationResult navResult = wizard.next(wizardSteps.get(0).getContext());
+                   if(navResult != null)
+                   {
+                       Object cmd = navResult.getNext();
+                       wizardSteps.add(new ShellCommand(registry, getForgeShell(), (UICommand) cmd ));
+                   }
+               }
+               else
+                   return executeWizardSteps();
+
+           }
+           catch (CommandLineParserException e)
+           {
+               //parser exception
+           }
+           catch (Exception e)
+           {
+               //wizard.next(..) exception
+           }
+
+           return 0;
+       }
+
+       /**
+        * When the wizard is at its final step, go through all the commands and execute them
+        *
+        * @throws IOException
+        */
+       private int executeWizardSteps() throws IOException
+       {
+           for(ShellCommand command : wizardSteps)
+           {
+               try
+               {
+                  Result result = command.getCommand().execute(command.getContext());
+                   if (result != null &&
+                           result.getMessage() != null && result.getMessage().length() > 0)
+                       getConsole().pushToStdOut(result.getMessage() + Config.getLineSeparator());
+               }
+               catch (Exception e)
+               {
+                  //not sure what we do here, need to think about it
+               }
+           }
+           //empty the list
+           wizardSteps.clear();
+           return 1;
+       }
+
+       private int parseUICommand(ConsoleOutput output) throws IOException
+       {
+           int result = 1;
+           CommandLine cl = null;
+           for (ShellCommand command : commands)
             {
                try
                {
-                  cl = command.parse(output.getBuffer());
+                 cl = command.parse(output.getBuffer());
                   logger.info("Parsing: " + output.getBuffer() + ", CommandLine is:" + cl);
-                  if (cl != null)
-                  {
-                     // need some way of deciding if the command is standalone
-                     if (command.getContext().isStandalone())
-                     {
-                        // console.
-
-                     }
-                     else
-                     {
-                        try
-                        {
+                   if (cl != null)
+                   {
+                       if(command.getCommand() instanceof UIWizard)
+                       {
+                           wizardSteps.add(command);
+                           return parseWizardStep(output);
+                       }
+                       try
+                       {
                            command.run(output, cl);
                            result = 0;
                            break;
-                        }
-                        catch (Exception e)
-                        {
+                       }
+                       catch (Exception e)
+                       {
                            logger.log(Level.SEVERE, "Command " + command + " failed to run with: " + output, e);
                            result = 1;
-                        }
-                     }
-                  }
+                       }
+                   }
                }
                catch (CommandLineParserException iae)
                {
@@ -282,13 +370,15 @@ public class ForgeShellImpl implements ForgeShell
                   }
                }
             }
-            // if we didnt find any commands matching
+                // if we didnt find any commands matching
             if (cl == null)
             {
                console.pushToStdOut(output.getBuffer() + ": command not found." + Config.getLineSeparator());
             }
-         }
-         return result;
-      }
+
+           return result;
+       }
    }
+
+
 }
