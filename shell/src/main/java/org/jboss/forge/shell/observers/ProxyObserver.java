@@ -12,7 +12,7 @@ import java.net.ProxySelector;
 import javax.enterprise.event.Observes;
 
 import org.jboss.forge.env.Configuration;
-import org.jboss.forge.shell.events.PostStartup;
+import org.jboss.forge.shell.events.Startup;
 import org.jboss.forge.shell.util.ForgeProxySelector;
 import org.jboss.forge.shell.util.ProxySettings;
 
@@ -24,7 +24,7 @@ import org.jboss.forge.shell.util.ProxySettings;
  */
 public class ProxyObserver
 {
-   public void setProxy(@Observes PostStartup event, Configuration configuration)
+   public void setProxy(@Observes Startup event, Configuration configuration)
    {
       ProxySettings proxySettings = ProxySettings.fromForgeConfiguration(configuration);
       if (proxySettings == null)
