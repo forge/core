@@ -15,7 +15,6 @@ import org.jboss.forge.dependencies.Dependency;
 import org.jboss.forge.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.facets.AbstractFacet;
 import org.jboss.forge.maven.projects.MavenFacet;
-import org.jboss.forge.maven.projects.MavenFacetImpl;
 import org.jboss.forge.projects.Project;
 import org.jboss.forge.projects.facets.MetadataFacet;
 
@@ -28,15 +27,26 @@ public class MavenMetadataFacet extends AbstractFacet<Project> implements Metada
    @Override
    public String getProjectName()
    {
-      return ((MavenFacetImpl) getOrigin().getFacet(MavenFacet.class)).getPartialProjectBuildingResult().getProject()
-               .getArtifactId();
+      MavenFacet mvn = getOrigin().getFacet(MavenFacet.class);
+      Model pom = mvn.getPOM();
+      return pom.getArtifactId();
    }
 
    @Override
    public String getProjectVersion()
    {
-      return ((MavenFacetImpl) getOrigin().getFacet(MavenFacet.class)).getPartialProjectBuildingResult().getProject()
-               .getVersion();
+      MavenFacet mvn = getOrigin().getFacet(MavenFacet.class);
+      Model pom = mvn.getPOM();
+      String version = pom.getVersion();
+      if (version == null)
+      {
+         Parent parent = pom.getParent();
+         if (parent != null)
+         {
+            version = parent.getVersion();
+         }
+      }
+      return version;
    }
 
    @Override
@@ -87,12 +97,13 @@ public class MavenMetadataFacet extends AbstractFacet<Project> implements Metada
    @Override
    public String getTopLevelPackage()
    {
-      String groupId = getOrigin().getFacet(MavenFacet.class).getPOM().getGroupId();
+      Model pom = getOrigin().getFacet(MavenFacet.class).getPOM();
+      String groupId = pom.getGroupId();
 
       // If groupId is null, try to grab the parent's groupId
       if (groupId == null)
       {
-         Parent parent = getOrigin().getFacet(MavenFacet.class).getPOM().getParent();
+         Parent parent = pom.getParent();
          if (parent != null)
          {
             groupId = parent.getGroupId();

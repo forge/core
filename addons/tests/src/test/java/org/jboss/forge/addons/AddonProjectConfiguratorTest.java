@@ -73,22 +73,27 @@ public class AddonProjectConfiguratorTest
                DirectoryResource.class);
       DirectoryResource projectDir = addonDir.createTempResource();
       Project project = projectFactory.createProject(projectDir);
+      MetadataFacet metadataFacet = project.getFacet(MetadataFacet.class);
+      metadataFacet.setProjectName("testproject");
+      metadataFacet.setProjectVersion("1.0.0-SNAPSHOT");
+      metadataFacet.setTopLevelPackage("com.acme.testproject");
+
       SingleVersion forgeVersion = new SingleVersion("2.0.0.Alpha3");
       addonProjectFactory.setupAddonProject(project, forgeVersion, Collections.<AddonId> emptyList());
 
       DirectoryResource projectRoot = project.getProjectRoot();
-
-      Project addonProject = projectFactory.findProject(projectRoot.getChildDirectory("addon"));
-      Project apiProject = projectFactory.findProject(projectRoot.getChildDirectory("api"));
-      Project implProject = projectFactory.findProject(projectRoot.getChildDirectory("impl"));
-      Project spiProject = projectFactory.findProject(projectRoot.getChildDirectory("spi"));
-      Project testsProject = projectFactory.findProject(projectRoot.getChildDirectory("tests"));
 
       Assert.assertTrue("ADDON module is missing", projectRoot.getChild("addon").exists());
       Assert.assertTrue("API module is missing", projectRoot.getChild("api").exists());
       Assert.assertTrue("IMPL module is missing", projectRoot.getChild("impl").exists());
       Assert.assertTrue("SPI module is missing", projectRoot.getChild("spi").exists());
       Assert.assertTrue("TESTS module is missing", projectRoot.getChild("tests").exists());
+
+      Project addonProject = projectFactory.findProject(projectRoot.getChildDirectory("addon"));
+      Project apiProject = projectFactory.findProject(projectRoot.getChildDirectory("api"));
+      Project implProject = projectFactory.findProject(projectRoot.getChildDirectory("impl"));
+      Project spiProject = projectFactory.findProject(projectRoot.getChildDirectory("spi"));
+      Project testsProject = projectFactory.findProject(projectRoot.getChildDirectory("tests"));
 
       Dependency addonDependency = DependencyBuilder.create(
                addonProject.getFacet(MetadataFacet.class).getOutputDependency())
@@ -193,7 +198,7 @@ public class AddonProjectConfiguratorTest
                .getScopeType());
       Assert.assertEquals("compile",
                addonProject.getFacet(DependencyFacet.class).getEffectiveDependency(spiDependency)
-               .getScopeType());
+                        .getScopeType());
 
       Assert.assertTrue(addonProject.getFacet(DependencyFacet.class).hasDirectDependency(
                ForgeContainerAPIFacet.FORGE_API_DEPENDENCY));
@@ -213,6 +218,8 @@ public class AddonProjectConfiguratorTest
       Assert.assertTrue(testsProject.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(addonDependency));
       Assert.assertNull(testsProject.getFacet(DependencyFacet.class).getDirectDependency(addonDependency)
                .getScopeType());
+      Assert.assertNotNull("ADDON module is not present in the TESTS module",
+               testsProject.getFacet(DependencyFacet.class).getEffectiveDependency(addonDependency));
       Assert.assertEquals("compile",
                testsProject.getFacet(DependencyFacet.class).getEffectiveDependency(addonDependency)
                         .getScopeType());
@@ -220,6 +227,8 @@ public class AddonProjectConfiguratorTest
       Assert.assertFalse(testsProject.getFacet(DependencyFacet.class).hasDirectDependency(spiDependency));
       Assert.assertFalse(testsProject.getFacet(DependencyFacet.class).hasDirectManagedDependency(spiDependency));
       Assert.assertTrue(testsProject.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(spiDependency));
+      Assert.assertNotNull("SPI module is not present in the TESTS module", testsProject
+               .getFacet(DependencyFacet.class).getEffectiveDependency(spiDependency));
       Assert.assertEquals("compile", testsProject.getFacet(DependencyFacet.class).getEffectiveDependency(spiDependency)
                .getScopeType());
 
