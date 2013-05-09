@@ -18,6 +18,9 @@ public class XPathJDKClasspathSpec extends AbstractModuleSpecProvider
       paths.add("com/sun/org/apache/xerces/internal/jaxp/datatype");
       paths.add("com/sun/org/apache/xerces/internal/jaxp/validation");
       paths.add("com/sun/org/apache/xerces/internal/parsers");
+      paths.add("com/sun/org/apache/xml/internal");
+      paths.add("com/sun/org/apache/xml/internal/serializer");
+      paths.add("com/sun/org/apache/xml/internal/util");
       paths.add("com/sun/org/apache/xpath/internal/jaxp");
       paths.add("com/sun/xml/internal/stream");
       paths.add("com/sun/xml/internal/stream/events");
