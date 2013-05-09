@@ -68,8 +68,8 @@ class AddonProjectConfigurator
       metadata.setProjectName(projectName + "-parent");
       DirectoryResource newRoot = project.getProjectRoot().getParent().getChildDirectory(metadata.getProjectName());
       // FORGE-877: there's an eclipse (not m2e) limitation that says if a project is located directly in the workspace
-      // folder, then the project name must match the project folder name
-      if (!newRoot.exists() && !project.getProjectRoot().renameTo(newRoot))
+      // folder, then the imported project's name is always the same as the folder it is contained in.
+      if (newRoot.exists() || !project.getProjectRoot().renameTo(newRoot))
       {
          log.warning("Could not rename project root");
       }
