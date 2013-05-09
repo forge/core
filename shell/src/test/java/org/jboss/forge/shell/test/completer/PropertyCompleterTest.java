@@ -4,7 +4,7 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.spec.validation.completer;
+package org.jboss.forge.shell.test.completer;
 
 import static org.jboss.forge.parser.JavaParser.create;
 import static org.junit.Assert.assertEquals;
@@ -19,7 +19,7 @@ import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.resources.java.JavaResource;
-import org.jboss.forge.spec.javaee.validation.completer.PropertyCompleter;
+import org.jboss.forge.shell.completer.PropertyCompleter;
 import org.jboss.forge.test.SingletonAbstractShellTest;
 import org.junit.Before;
 import org.junit.Test;

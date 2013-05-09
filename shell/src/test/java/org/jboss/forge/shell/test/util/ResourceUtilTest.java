@@ -4,10 +4,10 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.spec.validation.util;
+package org.jboss.forge.shell.test.util;
 
-import static org.jboss.forge.spec.javaee.validation.util.ResourceHelper.getJavaClassFromResource;
-import static org.jboss.forge.spec.javaee.validation.util.ResourceHelper.hasAnnotation;
+import static org.jboss.forge.shell.util.ResourceUtil.getJavaClassFromResource;
+import static org.jboss.forge.shell.util.ResourceUtil.hasAnnotation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -35,7 +35,7 @@ import org.junit.runner.RunWith;
  * @author Kevin Pollet
  */
 @RunWith(Arquillian.class)
-public class ResourceHelperTest extends SingletonAbstractShellTest
+public class ResourceUtilTest extends SingletonAbstractShellTest
 {
    @Test
    public void testHasAnnotation() throws Exception
