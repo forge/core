@@ -453,7 +453,10 @@ public class ClassLoaderAdapterCallback implements MethodHandler
             {
                try
                {
-                  // FIXME Why is this failing to proxy the type
+                  /*
+                   * FIXME Why is this failing to proxy the type. Race condition in class definition or loading?
+                   */
+                  Thread.sleep(10);
                   c = f.createClass();
                }
                catch (Exception e1)
