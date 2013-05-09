@@ -40,6 +40,7 @@ public class AddonProjectConfiguratorTest
 {
    @Deployment
    @Dependencies({
+            @Addon(name = "org.jboss.forge:javaee", version = "2.0.0-SNAPSHOT"),
             @Addon(name = "org.jboss.forge:projects", version = "2.0.0-SNAPSHOT"),
             @Addon(name = "org.jboss.forge:maven", version = "2.0.0-SNAPSHOT")
    })
@@ -49,6 +50,7 @@ public class AddonProjectConfiguratorTest
                addBeansXML().
                addPackages(true, AddonProjectConfigurator.class.getPackage()).
                addAsAddonDependencies(
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:javaee", "2.0.0-SNAPSHOT")),
                         AddonDependencyEntry.create(AddonId.from("org.jboss.forge:maven", "2.0.0-SNAPSHOT")),
                         AddonDependencyEntry.create(AddonId.from("org.jboss.forge:projects", "2.0.0-SNAPSHOT"))
                );

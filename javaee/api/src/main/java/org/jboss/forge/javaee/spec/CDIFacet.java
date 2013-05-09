@@ -12,6 +12,12 @@ import org.jboss.forge.projects.ProjectFacet;
 import org.jboss.forge.resource.FileResource;
 import org.jboss.shrinkwrap.descriptor.api.beans10.BeansDescriptor;
 
+/**
+ * If installed, this {@link Project} supports features from the CDI specification.
+ *
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
+ */
 public interface CDIFacet extends ProjectFacet
 {
    /**
