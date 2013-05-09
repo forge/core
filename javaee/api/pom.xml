@@ -21,5 +21,15 @@
          <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>projects</artifactId>
+         <classifier>forge-addon</classifier>
+         <scope>provided</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.shrinkwrap.descriptors</groupId>
+         <artifactId>shrinkwrap-descriptors-api-javaee</artifactId>
+      </dependency>
    </dependencies>
 </project>

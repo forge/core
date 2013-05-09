@@ -29,6 +29,11 @@
          <artifactId>javaee-spi</artifactId>
          <classifier>forge-addon</classifier>
       </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>projects</artifactId>
+         <classifier>forge-addon</classifier>
+      </dependency>
    </dependencies>
    <build>
       <plugins>
