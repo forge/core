@@ -55,7 +55,7 @@ public class AddonRegistryImpl implements AddonRegistry
    private final Forge forge;
    private final LockManager lock;
    private final AddonTree tree;
-   private final AtomicInteger starting = new AtomicInteger();
+   private final AtomicInteger starting = new AtomicInteger(-1);
 
    private final ExecutorService executor = Executors.newCachedThreadPool();
 
@@ -380,6 +380,9 @@ public class AddonRegistryImpl implements AddonRegistry
          @Override
          public Void call() throws Exception
          {
+            if (starting.get() == -1)
+               starting.set(0);
+
             Set<AddonId> enabled = getAllEnabled();
 
             tree.breadthFirst(new MarkDisabledLoadedAddonsDirtyVisitor(tree, enabled));
@@ -416,7 +419,7 @@ public class AddonRegistryImpl implements AddonRegistry
             List<Runnable> waiting = executor.shutdownNow();
             if (waiting != null && !waiting.isEmpty())
                logger.info("(" + waiting.size() + ") addons were aborted while loading.");
-
+            starting.set(-1);
             return null;
          }
       });
@@ -456,6 +459,9 @@ public class AddonRegistryImpl implements AddonRegistry
     */
    public boolean isStartingAddons()
    {
+      if (starting.get() == -1)
+         return false;
+
       /*
        * Force a full configuration rescan.
        */

@@ -123,7 +123,7 @@ public class ForgeImpl implements Forge
             do
             {
                boolean dirty = false;
-               if (!isStartingAddons())
+               if (!registry.isStartingAddons())
                {
                   for (AddonRepository repository : repositories)
                   {
@@ -152,7 +152,7 @@ public class ForgeImpl implements Forge
             }
             while (alive && serverMode);
 
-            while (alive && isStartingAddons())
+            while (alive && registry.isStartingAddons())
             {
                Thread.sleep(100);
             }
@@ -173,11 +173,6 @@ public class ForgeImpl implements Forge
          registation.removeListener();
       }
       return this;
-   }
-
-   private boolean isStartingAddons()
-   {
-      return registry.isStartingAddons();
    }
 
    private void fireBeforeContainerStartedEvent(ClassLoader loader)
@@ -296,7 +291,7 @@ public class ForgeImpl implements Forge
    @Override
    public ContainerStatus getStatus()
    {
-      boolean startingAddons = isStartingAddons();
+      boolean startingAddons = registry.isStartingAddons();
       return startingAddons ? ContainerStatus.STARTING : status;
    }
 
