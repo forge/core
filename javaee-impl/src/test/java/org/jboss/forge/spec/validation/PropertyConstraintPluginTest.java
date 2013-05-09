@@ -7,7 +7,7 @@
 package org.jboss.forge.spec.validation;
 
 import static org.jboss.forge.shell.util.ConstraintInspector.getName;
-import static org.jboss.forge.spec.javaee.validation.util.ResourceHelper.getJavaClassFromResource;
+import static org.jboss.forge.shell.util.ResourceUtil.getJavaClassFromResource;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;

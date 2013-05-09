@@ -7,7 +7,7 @@
 package org.jboss.forge.spec.javaee.validation;
 
 import static org.jboss.forge.shell.PromptType.JAVA_CLASS;
-import static org.jboss.forge.spec.javaee.validation.util.ResourceHelper.getJavaClassFromResource;
+import static org.jboss.forge.shell.util.ResourceUtil.getJavaClassFromResource;
 
 import java.io.FileNotFoundException;
 
@@ -37,6 +37,7 @@ import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.shell.Shell;
+import org.jboss.forge.shell.completer.PropertyCompleter;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.Command;
 import org.jboss.forge.shell.plugins.Option;
@@ -44,7 +45,6 @@ import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresResource;
 import org.jboss.forge.spec.javaee.ValidationFacet;
-import org.jboss.forge.spec.javaee.validation.completer.PropertyCompleter;
 import org.jboss.forge.spec.javaee.validation.util.JavaHelper;
 
 /**
