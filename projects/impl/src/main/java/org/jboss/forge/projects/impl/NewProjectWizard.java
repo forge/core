@@ -2,6 +2,8 @@ package org.jboss.forge.projects.impl;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -128,6 +130,16 @@ public class NewProjectWizard implements UIWizard
          projectTypes.add(projectType);
          type.setDefaultValue(projectType);
       }
+      Collections.sort(projectTypes, new Comparator<ProjectType>()
+      {
+         @Override
+         public int compare(ProjectType left, ProjectType right)
+         {
+            if (left == null || left.getType() == null || right == null || right.getType() == null)
+               return 0;
+            return left.getType().compareTo(right.getType());
+         }
+      });
       type.setValueChoices(projectTypes);
       builder.add(named).add(topLevelPackage).add(version).add(targetLocation).add(overwrite).add(type);
    }
