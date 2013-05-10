@@ -40,6 +40,11 @@
          <artifactId>javaee</artifactId>
          <classifier>forge-addon</classifier>
       </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>parser-java</artifactId>
+         <classifier>forge-addon</classifier>
+      </dependency>
    </dependencies>
    <build>
       <plugins>

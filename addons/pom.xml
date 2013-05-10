@@ -34,6 +34,21 @@
             <artifactId>addons-impl</artifactId>
             <version>${project.version}</version>
          </dependency>
+         <!-- Dependent Addons -->
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>dependencies</artifactId>
+            <classifier>forge-addon</classifier>
+            <version>2.0.0-SNAPSHOT</version>
+            <scope>provided</scope>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>resources</artifactId>
+            <classifier>forge-addon</classifier>
+            <version>2.0.0-SNAPSHOT</version>
+            <scope>provided</scope>
+         </dependency>
          <dependency>
             <groupId>org.jboss.forge</groupId>
             <artifactId>projects</artifactId>
@@ -55,6 +70,12 @@
          <dependency>
             <groupId>org.jboss.forge</groupId>
             <artifactId>javaee</artifactId>
+            <classifier>forge-addon</classifier>
+            <version>2.0.0-SNAPSHOT</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>parser-java</artifactId>
             <classifier>forge-addon</classifier>
             <version>2.0.0-SNAPSHOT</version>
          </dependency>

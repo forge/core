@@ -6,24 +6,25 @@
  */
 package org.jboss.forge.addons.facets;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.jboss.forge.dependencies.builder.CoordinateBuilder;
-import org.jboss.forge.facets.AbstractFacet;
 import org.jboss.forge.maven.plugins.ConfigurationBuilder;
 import org.jboss.forge.maven.plugins.ConfigurationElementBuilder;
 import org.jboss.forge.maven.plugins.ExecutionBuilder;
 import org.jboss.forge.maven.plugins.MavenPlugin;
 import org.jboss.forge.maven.plugins.MavenPluginBuilder;
 import org.jboss.forge.maven.projects.MavenPluginFacet;
-import org.jboss.forge.projects.Project;
 import org.jboss.forge.projects.ProjectFacet;
 
 /**
  * Configures the current project as a forge addon
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-public class ForgeAddonFacet extends AbstractFacet<Project> implements ProjectFacet
+public class ForgeAddonFacet extends AbstractForgeAddonFacet
 {
    @Override
    public boolean install()
@@ -44,12 +45,12 @@ public class ForgeAddonFacet extends AbstractFacet<Project> implements ProjectFa
                                                    ConfigurationElementBuilder.create().setName("classifier")
                                                             .setText("forge-addon"))));
       pluginFacet.addPlugin(forgeAddon);
-      return true;
+      return super.install();
    }
 
    @Override
-   public boolean isInstalled()
+   protected List<Class<? extends ProjectFacet>> getRequiredFacets()
    {
-      return false;
+      return Collections.emptyList();
    }
 }

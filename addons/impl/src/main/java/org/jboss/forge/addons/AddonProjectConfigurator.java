@@ -25,7 +25,6 @@ import org.jboss.forge.container.versions.Version;
 import org.jboss.forge.dependencies.Dependency;
 import org.jboss.forge.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.facets.FacetFactory;
-import org.jboss.forge.javaee.spec.CDIFacet;
 import org.jboss.forge.projects.Project;
 import org.jboss.forge.projects.ProjectFacet;
 import org.jboss.forge.projects.ProjectFactory;
@@ -79,8 +78,8 @@ class AddonProjectConfigurator
                .setVersion(forgeVersion.getVersionString()));
 
       Project addonProject = createSubmoduleProject(project, "addon", projectName, ForgeAddonFacet.class);
-      Project apiProject = createSubmoduleProject(project, "api", projectName + "-api", ForgeAddonAPIFacet.class, CDIFacet.class);
-      Project implProject = createSubmoduleProject(project, "impl", projectName + "-impl", ForgeAddonImplFacet.class, CDIFacet.class);
+      Project apiProject = createSubmoduleProject(project, "api", projectName + "-api", ForgeAddonAPIFacet.class);
+      Project implProject = createSubmoduleProject(project, "impl", projectName + "-impl", ForgeAddonImplFacet.class);
       Project spiProject = createSubmoduleProject(project, "spi", projectName + "-spi", ForgeAddonSPIFacet.class,
                ForgeAddonFacet.class);
       Project testsProject = createSubmoduleProject(project, "tests", projectName + "-tests",

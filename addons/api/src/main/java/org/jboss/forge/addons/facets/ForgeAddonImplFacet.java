@@ -7,8 +7,11 @@
 
 package org.jboss.forge.addons.facets;
 
-import org.jboss.forge.facets.AbstractFacet;
-import org.jboss.forge.projects.Project;
+import java.util.Arrays;
+import java.util.List;
+
+import org.jboss.forge.javaee.spec.CDIFacet;
+import org.jboss.forge.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.projects.ProjectFacet;
 
 /**
@@ -17,18 +20,12 @@ import org.jboss.forge.projects.ProjectFacet;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  *
  */
-public class ForgeAddonImplFacet extends AbstractFacet<Project> implements ProjectFacet
+public class ForgeAddonImplFacet extends AbstractForgeAddonFacet
 {
-
    @Override
-   public boolean install()
+   @SuppressWarnings("unchecked")
+   protected List<Class<? extends ProjectFacet>> getRequiredFacets()
    {
-      return true;
-   }
-
-   @Override
-   public boolean isInstalled()
-   {
-      return false;
+      return Arrays.<Class<? extends ProjectFacet>> asList(CDIFacet.class, JavaSourceFacet.class);
    }
 }

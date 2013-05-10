@@ -7,8 +7,9 @@
 
 package org.jboss.forge.addons.facets;
 
-import org.jboss.forge.facets.AbstractFacet;
-import org.jboss.forge.projects.Project;
+import java.util.Arrays;
+import java.util.List;
+
 import org.jboss.forge.projects.ProjectFacet;
 
 /**
@@ -17,18 +18,15 @@ import org.jboss.forge.projects.ProjectFacet;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  *
  */
-public class ForgeAddonTestFacet extends AbstractFacet<Project> implements ProjectFacet
+public class ForgeAddonTestFacet extends AbstractForgeAddonFacet
 {
 
    @Override
-   public boolean install()
+   @SuppressWarnings("unchecked")
+   protected List<Class<? extends ProjectFacet>> getRequiredFacets()
    {
-      return true;
+      return Arrays.<Class<? extends ProjectFacet>>asList();
    }
 
-   @Override
-   public boolean isInstalled()
-   {
-      return false;
-   }
+
 }
