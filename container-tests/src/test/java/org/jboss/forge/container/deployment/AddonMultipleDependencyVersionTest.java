@@ -69,7 +69,7 @@ public class AddonMultipleDependencyVersionTest
       int count = 0;
       for (Addon addon : registry.getAddons(AddonFilters.allStarted()))
       {
-         for (Class<?> service : addon.getServiceRegistry().getServices())
+         for (Class<?> service : addon.getServiceRegistry().getExportedTypes())
          {
             if (service.getName().equals(LifecycleListenerService.class.getName()))
             {
