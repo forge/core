@@ -93,8 +93,8 @@ public class MavenPackagingFacet extends AbstractFacet<Project> implements Packa
    public Resource<?> getFinalArtifact()
    {
       MavenFacetImpl mvn = (MavenFacetImpl) getOrigin().getFacet(MavenFacet.class);
-      String directory = mvn.getPartialProjectBuildingResult().getProject().getBuild().getDirectory();
-      String finalName = mvn.getPartialProjectBuildingResult().getProject().getBuild().getFinalName();
+      String directory = mvn.getProjectBuildingResult().getProject().getBuild().getDirectory();
+      String finalName = mvn.getProjectBuildingResult().getProject().getBuild().getFinalName();
 
       if (Strings.isNullOrEmpty(directory))
       {

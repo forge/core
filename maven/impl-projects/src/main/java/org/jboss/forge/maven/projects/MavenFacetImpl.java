@@ -29,7 +29,6 @@ import org.apache.maven.execution.MavenExecutionRequestPopulator;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.project.ProjectBuilder;
-import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingResult;
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
@@ -42,7 +41,6 @@ import org.jboss.forge.environment.Environment;
 import org.jboss.forge.facets.AbstractFacet;
 import org.jboss.forge.maven.dependencies.MavenContainer;
 import org.jboss.forge.maven.environment.Network;
-import org.jboss.forge.maven.projects.MavenFacet;
 import org.jboss.forge.maven.projects.util.NativeSystemCall;
 import org.jboss.forge.maven.projects.util.NullOutputStream;
 import org.jboss.forge.maven.projects.util.RepositoryUtils;
@@ -78,7 +76,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
 
    public ProjectBuilder getBuilder()
    {
-      if(builder == null)
+      if (builder == null)
          builder = plexus.lookup(ProjectBuilder.class);
       return builder;
    }
@@ -256,47 +254,10 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
       invalidateBuildingResults();
    }
 
-   public ProjectBuildingResult getPartialProjectBuildingResult()
-   {
-      if (this.buildingResult == null)
-      {
-         ProjectBuildingRequest request = null;
-         File pomFile = getPomResource().getUnderlyingResourceObject();
-         try
-         {
-            // Attempt partial build first
-            request = getRequest();
-            buildingResult = getBuilder().build(pomFile, request);
-         }
-         catch (ProjectBuildingException partial)
-         {
-            // try full build if that fails
-            if (request != null)
-            {
-               try
-               {
-                  request.setResolveDependencies(true);
-                  buildingResult = getBuilder().build(pomFile, request);
-                  fullBuildingResult = buildingResult;
-               }
-               catch (Exception full)
-               {
-                  throw new RuntimeException(full);
-               }
-            }
-            else
-            {
-               throw new RuntimeException(partial);
-            }
-         }
-      }
-      return buildingResult;
-   }
-
    /*
     * POM manipulation methods
     */
-   public ProjectBuildingResult getFullProjectBuildingResult()
+   public ProjectBuildingResult getProjectBuildingResult()
    {
       if (this.fullBuildingResult == null)
       {
@@ -336,7 +297,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
       String result = input;
       if (input != null)
       {
-         Properties properties = getPartialProjectBuildingResult().getProject().getProperties();
+         Properties properties = getProjectBuildingResult().getProject().getProperties();
 
          for (Entry<Object, Object> e : properties.entrySet())
          {
@@ -378,7 +339,6 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
       return executeMaven(parameters.toArray(new String[] {}));
    }
 
-   @SuppressWarnings("resource")
    public boolean executeMaven(final String[] selected)
    {
       return executeMaven(new NullOutputStream(), selected);
