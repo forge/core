@@ -9,13 +9,14 @@ package org.jboss.forge.shell.buffers;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 
 import org.jboss.forge.shell.console.jline.Terminal;
 import org.jboss.forge.shell.integration.BufferManager;
 
 /**
  * A buffer to wrap JLine.
- * 
+ *
  * @author Mike Brock
  */
 public class JLineScreenBuffer implements BufferManager
@@ -137,20 +138,22 @@ public class JLineScreenBuffer implements BufferManager
    @Override
    public synchronized void write(String s)
    {
-      if (bufferSize + s.length() >= maxBufferSize)
+      byte[] bytes = s.getBytes(Charset.forName("UTF-8"));
+      int length = bytes.length;
+      if (bufferSize + length >= maxBufferSize)
       {
          flushBuffer();
          write(s);
       }
 
-      buffer.put(s.getBytes());
-      bufferSize += s.length();
+      buffer.put(bytes);
+      bufferSize += length;
       _flush();
    }
 
    /**
     * For data that exceeds the maximum size of the buffer, write out the data in segments.
-    * 
+    *
     * @param b
     * @param offset
     * @param length

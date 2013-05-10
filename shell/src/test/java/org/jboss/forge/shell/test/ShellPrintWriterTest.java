@@ -6,8 +6,11 @@
  */
 package org.jboss.forge.shell.test;
 
+import static org.junit.matchers.JUnitMatchers.containsString;
+
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.test.AbstractShellTest;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -60,4 +63,13 @@ public class ShellPrintWriterTest extends AbstractShellTest
    {
       getShell().renderColor(null, null);
    }
+
+   @Test
+   public void testPrintUTF8Chars() throws Exception
+   {
+      String str = "\u2501 Hello World";
+      getShell().println(str);
+      Assert.assertThat(getOutput(), containsString(str));
+   }
+
 }
