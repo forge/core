@@ -72,4 +72,14 @@ public class FacetFactoryImpl implements FacetFactory
       }
       return facets;
    }
+
+   @Override
+   @SuppressWarnings("unchecked")
+   public <FACET extends Facet<E>, E extends Faceted<? extends Facet<?>>> FACET install(Class<FACET> type, E origin)
+            throws FacetNotFoundException
+   {
+      FACET facet = create(type, origin);
+      ((Faceted<FACET>) origin).install(facet);
+      return facet;
+   }
 }

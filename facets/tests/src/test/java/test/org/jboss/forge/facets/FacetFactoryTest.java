@@ -122,4 +122,12 @@ public class FacetFactoryTest
       Assert.assertNotSame(first, second);
    }
 
+   @Test
+   public void testFacetInstall() throws Exception
+   {
+      MockFaceted faceted = new MockFaceted();
+      MockFacet facet = facetFactory.install(MockFacet.class, faceted);
+      Assert.assertNotNull(facet);
+      Assert.assertTrue(faceted.hasFacet(MockFacet.class));
+   }
 }
