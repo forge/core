@@ -6,16 +6,14 @@
  */
 package org.jboss.forge.addons.facets;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.jboss.forge.dependencies.builder.CoordinateBuilder;
+import org.jboss.forge.facets.AbstractFacet;
 import org.jboss.forge.maven.plugins.ConfigurationBuilder;
 import org.jboss.forge.maven.plugins.ConfigurationElementBuilder;
 import org.jboss.forge.maven.plugins.ExecutionBuilder;
-import org.jboss.forge.maven.plugins.MavenPlugin;
 import org.jboss.forge.maven.plugins.MavenPluginBuilder;
 import org.jboss.forge.maven.projects.MavenPluginFacet;
+import org.jboss.forge.projects.Project;
 import org.jboss.forge.projects.ProjectFacet;
 
 /**
@@ -24,13 +22,14 @@ import org.jboss.forge.projects.ProjectFacet;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-public class ForgeAddonFacet extends AbstractForgeAddonFacet
+public class ForgeAddonFacet extends AbstractFacet<Project> implements ProjectFacet
 {
+
    @Override
    public boolean install()
    {
       MavenPluginFacet pluginFacet = getOrigin().getFacet(MavenPluginFacet.class);
-      MavenPlugin forgeAddon = MavenPluginBuilder
+      MavenPluginBuilder plugin = MavenPluginBuilder
                .create()
                .setCoordinate(CoordinateBuilder.create().setGroupId("org.apache.maven.plugins")
                         .setArtifactId("maven-jar-plugin"))
@@ -44,13 +43,14 @@ public class ForgeAddonFacet extends AbstractForgeAddonFacet
                                           ConfigurationBuilder.create().addConfigurationElement(
                                                    ConfigurationElementBuilder.create().setName("classifier")
                                                             .setText("forge-addon"))));
-      pluginFacet.addPlugin(forgeAddon);
-      return super.install();
+      pluginFacet.addPlugin(plugin);
+      return true;
    }
 
    @Override
-   protected List<Class<? extends ProjectFacet>> getRequiredFacets()
+   public boolean isInstalled()
    {
-      return Collections.emptyList();
+      return false;
    }
+
 }

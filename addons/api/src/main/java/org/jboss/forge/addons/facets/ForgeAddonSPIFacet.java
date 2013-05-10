@@ -26,7 +26,7 @@ public class ForgeAddonSPIFacet extends AbstractForgeAddonFacet
    @Override
    protected List<Class<? extends ProjectFacet>> getRequiredFacets()
    {
-      return Arrays.<Class<? extends ProjectFacet>> asList(JavaSourceFacet.class);
+      return Arrays.<Class<? extends ProjectFacet>> asList(JavaSourceFacet.class, ForgeAddonFacet.class);
    }
 
 }

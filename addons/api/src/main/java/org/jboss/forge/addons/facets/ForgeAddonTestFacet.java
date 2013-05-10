@@ -7,10 +7,16 @@
 
 package org.jboss.forge.addons.facets;
 
+import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.List;
 
+import org.jboss.forge.parser.JavaParser;
+import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.parser.java.facets.JavaSourceFacet;
+import org.jboss.forge.projects.Project;
 import org.jboss.forge.projects.ProjectFacet;
+import org.jboss.forge.projects.facets.MetadataFacet;
 
 /**
  * Configures the project as an Addon Test project
@@ -22,11 +28,35 @@ public class ForgeAddonTestFacet extends AbstractForgeAddonFacet
 {
 
    @Override
+   public boolean install()
+   {
+      if (super.install())
+      {
+         Project project = getOrigin();
+         String topLevelPackage = project.getFacet(MetadataFacet.class).getTopLevelPackage();
+         JavaClass testClass = JavaParser.create(JavaClass.class).setPackage(topLevelPackage);
+         testClass.setName("AbstractTestCase").setAbstract(true);
+         JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+         try
+         {
+            facet.saveTestJavaSource(testClass.getEnclosingType());
+         }
+         catch (FileNotFoundException ffe)
+         {
+            // this is not good :P
+            ffe.printStackTrace();
+         }
+
+         return true;
+      }
+      return false;
+   }
+
+   @Override
    @SuppressWarnings("unchecked")
    protected List<Class<? extends ProjectFacet>> getRequiredFacets()
    {
-      return Arrays.<Class<? extends ProjectFacet>>asList();
+      return Arrays.<Class<? extends ProjectFacet>> asList(JavaSourceFacet.class);
    }
-
 
 }
