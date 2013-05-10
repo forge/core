@@ -39,7 +39,7 @@ public class NullServiceRegistry implements ServiceRegistry
    }
 
    @Override
-   public Set<Class<?>> getServices()
+   public <T> Set<ExportedInstance<T>> getExportedInstances(String clazz)
    {
       // no-op
       return Collections.emptySet();
@@ -60,7 +60,14 @@ public class NullServiceRegistry implements ServiceRegistry
    }
 
    @Override
-   public Set<ExportedInstance<Object>> getExportedInstances(String typeName)
+   public Set<Class<?>> getExportedTypes()
+   {
+      // no-op
+      return Collections.emptySet();
+   }
+
+   @Override
+   public <T> Set<Class<T>> getExportedTypes(Class<T> type)
    {
       // no-op
       return Collections.emptySet();

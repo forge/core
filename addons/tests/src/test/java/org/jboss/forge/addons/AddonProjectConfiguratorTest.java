@@ -23,6 +23,7 @@ import org.jboss.forge.container.repositories.AddonDependencyEntry;
 import org.jboss.forge.container.versions.SingleVersion;
 import org.jboss.forge.dependencies.Dependency;
 import org.jboss.forge.dependencies.builder.DependencyBuilder;
+import org.jboss.forge.javaee.spec.CDIFacet;
 import org.jboss.forge.maven.projects.MavenFacet;
 import org.jboss.forge.projects.Project;
 import org.jboss.forge.projects.ProjectFactory;
@@ -123,6 +124,7 @@ public class AddonProjectConfiguratorTest
        * Verify impl/ sub-module
        */
       Assert.assertEquals("../pom.xml", implProject.getFacet(MavenFacet.class).getPOM().getParent().getRelativePath());
+      Assert.assertTrue(implProject.hasFacet(CDIFacet.class));
 
       Assert.assertTrue(implProject.getFacet(DependencyFacet.class).hasDirectDependency(apiDependency));
       Assert.assertFalse(implProject.getFacet(DependencyFacet.class).hasDirectManagedDependency(apiDependency));
@@ -147,6 +149,7 @@ public class AddonProjectConfiguratorTest
        * Verify api/ sub-module
        */
       Assert.assertEquals("../pom.xml", apiProject.getFacet(MavenFacet.class).getPOM().getParent().getRelativePath());
+      Assert.assertTrue(apiProject.hasFacet(CDIFacet.class));
 
       Assert.assertTrue(apiProject.getFacet(DependencyFacet.class).hasDirectDependency(spiDependency));
       Assert.assertFalse(apiProject.getFacet(DependencyFacet.class).hasDirectManagedDependency(spiDependency));
@@ -177,6 +180,7 @@ public class AddonProjectConfiguratorTest
        * Verify addon/ sub-module
        */
       Assert.assertEquals("../pom.xml", addonProject.getFacet(MavenFacet.class).getPOM().getParent().getRelativePath());
+      Assert.assertTrue(addonProject.hasFacet(CDIFacet.class));
 
       Assert.assertTrue(addonProject.getFacet(DependencyFacet.class).hasDirectDependency(apiDependency));
       Assert.assertFalse(addonProject.getFacet(DependencyFacet.class).hasDirectManagedDependency(apiDependency));

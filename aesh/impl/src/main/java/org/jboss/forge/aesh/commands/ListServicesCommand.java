@@ -75,7 +75,7 @@ public class ListServicesCommand implements UICommand
       Set<Addon> addons = registry.getAddons();
       for (Addon addon : addons)
       {
-         Set<Class<?>> serviceClasses = addon.getServiceRegistry().getServices();
+         Set<Class<?>> serviceClasses = addon.getServiceRegistry().getExportedTypes();
          for (Class<?> type : serviceClasses)
          {
             builder.append(type.getName()).append("\n");

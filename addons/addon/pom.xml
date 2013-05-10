@@ -39,6 +39,7 @@
          <groupId>org.jboss.forge</groupId>
          <artifactId>javaee</artifactId>
          <classifier>forge-addon</classifier>
+         <scope>provided</scope>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge</groupId>

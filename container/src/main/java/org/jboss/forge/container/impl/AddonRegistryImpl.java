@@ -468,4 +468,48 @@ public class AddonRegistryImpl implements AddonRegistry
       forceUpdate();
       return starting.get() > 0;
    }
+
+   @Override
+   public Set<Class<?>> getExportedTypes()
+   {
+      return lock.performLocked(LockMode.READ, new Callable<Set<Class<?>>>()
+      {
+         @Override
+         public Set<Class<?>> call() throws Exception
+         {
+            Set<Class<?>> result = new HashSet<Class<?>>();
+            for (Addon addon : tree)
+            {
+               if (AddonStatus.STARTED.equals(addon.getStatus()))
+               {
+                  ServiceRegistry serviceRegistry = addon.getServiceRegistry();
+                  result.addAll(serviceRegistry.getExportedTypes());
+               }
+            }
+            return result;
+         }
+      });
+   }
+
+   @Override
+   public <T> Set<Class<T>> getExportedTypes(final Class<T> type)
+   {
+      return lock.performLocked(LockMode.READ, new Callable<Set<Class<T>>>()
+      {
+         @Override
+         public Set<Class<T>> call() throws Exception
+         {
+            Set<Class<T>> result = new HashSet<Class<T>>();
+            for (Addon addon : tree)
+            {
+               if (AddonStatus.STARTED.equals(addon.getStatus()))
+               {
+                  ServiceRegistry serviceRegistry = addon.getServiceRegistry();
+                  result.addAll(serviceRegistry.getExportedTypes(type));
+               }
+            }
+            return result;
+         }
+      });
+   }
 }

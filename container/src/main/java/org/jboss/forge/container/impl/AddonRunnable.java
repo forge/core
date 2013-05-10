@@ -198,7 +198,7 @@ public final class AddonRunnable implements Runnable
                Assert.notNull(registry, "Service registry was null.");
                addon.setServiceRegistry(registry);
 
-               logger.info("Services loaded from addon [" + addon.getId() + "] -  " + registry.getServices());
+               logger.info("Services loaded from addon [" + addon.getId() + "] -  " + registry.getExportedTypes());
 
                shutdownCallback = new Callable<Object>()
                {
@@ -237,7 +237,7 @@ public final class AddonRunnable implements Runnable
                      }
 
                      addon.setStatus(AddonStatus.STARTED);
-                     
+
                      manager.fireEvent(new PostStartup());
                      return null;
                   }

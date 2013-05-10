@@ -52,6 +52,21 @@ public interface AddonRegistry
    <T> ExportedInstance<T> getExportedInstance(String type);
 
    /**
+    * Get a {@link Set} of all currently available {@link Exported} service types.
+    * 
+    * @return the {@link Set} of {@link Class} types (Never null.)
+    */
+   Set<Class<?>> getExportedTypes();
+
+   /**
+    * Get a {@link Set} of currently available {@link Exported} service types for which
+    * {@link Class#isAssignableFrom(Class)} returns <code>true</code>.
+    * 
+    * @return the {@link Set} of {@link Class} types (Never null.)
+    */
+   <T> Set<Class<T>> getExportedTypes(Class<T> type);
+
+   /**
     * Get the registered {@link Addon} for the given {@link AddonId} instance. If no such {@link Addon} is currently
     * registered, register it and return the new reference.
     * 

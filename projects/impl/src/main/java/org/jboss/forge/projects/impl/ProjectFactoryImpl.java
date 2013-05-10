@@ -8,6 +8,7 @@ package org.jboss.forge.projects.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -31,6 +32,8 @@ import org.jboss.forge.resource.DirectoryResource;
 @Singleton
 public class ProjectFactoryImpl implements ProjectFactory
 {
+   private static final Logger log = Logger.getLogger(ProjectFactoryImpl.class.getName());
+
    @Inject
    private AddonRegistry registry;
 
@@ -77,6 +80,19 @@ public class ProjectFactoryImpl implements ProjectFactory
             r = (r.getParent() == null ? null : r.getParent().reify(DirectoryResource.class));
          }
       }
+
+      if (result != null)
+      {
+         for (Class<ProjectFacet> instance : registry.getExportedTypes(ProjectFacet.class))
+         {
+            ProjectFacet facet = factory.create(instance, result);
+            if (facet != null && facet.isInstalled() && result.install(facet))
+            {
+               log.fine("Installed Facet [" + facet + "] into Project [" + result + "]");
+            }
+         }
+      }
+
       return result;
    }
 
@@ -124,6 +140,18 @@ public class ProjectFactoryImpl implements ProjectFactory
             {
                throw new IllegalStateException("Could not install Facet [" + facet + "] of type [" + facetType
                         + "] into Project [" + result + "]");
+            }
+         }
+      }
+
+      if (result != null)
+      {
+         for (Class<ProjectFacet> instance : registry.getExportedTypes(ProjectFacet.class))
+         {
+            ProjectFacet facet = factory.create(instance, result);
+            if (facet != null && facet.isInstalled() && result.install(facet))
+            {
+               log.fine("Installed Facet [" + facet + "] into Project [" + result + "]");
             }
          }
       }

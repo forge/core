@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 
+import org.jboss.forge.container.addons.Addon;
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.lock.LockManager;
 import org.jboss.forge.container.lock.LockMode;
@@ -139,12 +140,6 @@ public class ServiceRegistryImpl implements ServiceRegistry
    }
 
    @Override
-   public Set<Class<?>> getServices()
-   {
-      return services;
-   }
-
-   @Override
    public boolean hasService(String clazz)
    {
       try
@@ -229,12 +224,27 @@ public class ServiceRegistryImpl implements ServiceRegistry
       return result;
    }
 
+   @Override
+   public Set<Class<?>> getExportedTypes()
+   {
+      return services;
+   }
+
+   @Override
+   @SuppressWarnings("unchecked")
+   public <T> Set<Class<T>> getExportedTypes(Class<T> type)
+   {
+      Set<Class<T>> result = new HashSet<Class<T>>();
+      for (Class<?> serviceType : services)
+      {
+         if (type.isAssignableFrom(serviceType))
+            result.add((Class<T>) serviceType);
+      }
+      return result;
+   }
+
    /**
-    * Ensures that the returned class is loaded from the addon
-    * 
-    * @param actualType
-    * @return
-    * @throws ClassNotFoundException
+    * Ensures that the returned class is loaded from the {@link Addon}
     */
    @SuppressWarnings("unchecked")
    private <T> Class<T> loadAddonClass(Class<T> actualType) throws ClassNotFoundException
