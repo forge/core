@@ -15,7 +15,7 @@ import javax.inject.Inject;
 
 import org.jboss.forge.dependencies.Dependency;
 import org.jboss.forge.dependencies.builder.DependencyBuilder;
-import org.jboss.forge.javaee.BaseJavaEEFacet;
+import org.jboss.forge.javaee.AbstractJavaEEFacet;
 import org.jboss.forge.javaee.spec.CDIFacet;
 import org.jboss.forge.projects.Project;
 import org.jboss.forge.projects.dependencies.DependencyInstaller;
@@ -33,7 +33,7 @@ import org.jboss.shrinkwrap.descriptor.api.beans10.BeansDescriptor;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  *
  */
-public class CDIFacetImpl extends BaseJavaEEFacet implements CDIFacet
+public class CDIFacetImpl extends AbstractJavaEEFacet implements CDIFacet
 {
 
    @Inject

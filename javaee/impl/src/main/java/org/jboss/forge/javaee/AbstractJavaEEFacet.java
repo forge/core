@@ -25,7 +25,7 @@ import org.jboss.forge.projects.facets.DependencyFacet;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  *
  */
-public abstract class BaseJavaEEFacet extends AbstractFacet<Project> implements ProjectFacet
+public abstract class AbstractJavaEEFacet extends AbstractFacet<Project> implements ProjectFacet
 {
    // Version is statically set
    protected static final Dependency JAVAEE6 =
@@ -35,7 +35,7 @@ public abstract class BaseJavaEEFacet extends AbstractFacet<Project> implements 
    private final DependencyInstaller installer;
 
    @Inject
-   public BaseJavaEEFacet(final DependencyInstaller installer)
+   public AbstractJavaEEFacet(final DependencyInstaller installer)
    {
       this.installer = installer;
    }
