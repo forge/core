@@ -100,7 +100,7 @@ public abstract class AbstractJavaEEFacet extends AbstractFacet<Project> impleme
       return true;
    }
 
-   public DependencyInstaller getInstaller()
+   protected DependencyInstaller getInstaller()
    {
       return installer;
    }
