@@ -37,7 +37,7 @@ public abstract class AbstractForgeAddonFacet extends AbstractFacet<Project> imp
    {
       for (Class<? extends ProjectFacet> facet : getRequiredFacets())
       {
-         getOrigin().install(facetFactory.create(facet, getOrigin()));
+         facetFactory.install(facet, getOrigin());
       }
       return true;
    }
