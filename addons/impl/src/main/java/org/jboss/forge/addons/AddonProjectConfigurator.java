@@ -83,7 +83,7 @@ class AddonProjectConfigurator
       Project spiProject = createSubmoduleProject(project, "spi", projectName + "-spi", ForgeAddonSPIFacet.class,
                ForgeAddonFacet.class);
       Project testsProject = createSubmoduleProject(project, "tests", projectName + "-tests",
-               ForgeAddonTestFacet.class, ForgeAddonFacet.class);
+               ForgeAddonTestFacet.class);
 
       Dependency apiProjectDependency = apiProject.getFacet(MetadataFacet.class).getOutputDependency();
       Dependency implProjectDependency = implProject.getFacet(MetadataFacet.class).getOutputDependency();

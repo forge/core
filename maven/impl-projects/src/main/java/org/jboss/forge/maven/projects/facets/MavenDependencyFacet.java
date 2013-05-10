@@ -20,6 +20,8 @@ import javax.inject.Inject;
 import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Repository;
+import org.apache.maven.project.DependencyResolutionResult;
+import org.apache.maven.project.ProjectBuildingResult;
 import org.jboss.forge.dependencies.Coordinate;
 import org.jboss.forge.dependencies.Dependency;
 import org.jboss.forge.dependencies.DependencyQuery;
@@ -168,11 +170,9 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    public List<Dependency> getEffectiveDependencies()
    {
       MavenFacet maven = getOrigin().getFacet(MavenFacet.class);
-      List<Dependency> deps = MavenDependencyAdapter.fromAetherList(
-               ((MavenFacetImpl) maven).getFullProjectBuildingResult()
-                        .getDependencyResolutionResult()
-                        .getDependencies()
-               );
+      ProjectBuildingResult projectBuildingResult = ((MavenFacetImpl) maven).getProjectBuildingResult();
+      DependencyResolutionResult dependencyResolutionResult = projectBuildingResult.getDependencyResolutionResult();
+      List<Dependency> deps = MavenDependencyAdapter.fromAetherList(dependencyResolutionResult.getDependencies());
 
       List<Dependency> result = new ArrayList<Dependency>();
       for (Dependency dependency : deps)
@@ -228,7 +228,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    public Dependency getEffectiveManagedDependency(final Dependency manDep)
    {
       MavenFacet maven = getOrigin().getFacet(MavenFacet.class);
-      DependencyManagement depMan = ((MavenFacetImpl) maven).getFullProjectBuildingResult().getProject()
+      DependencyManagement depMan = ((MavenFacetImpl) maven).getProjectBuildingResult().getProject()
                .getDependencyManagement();
       List<Dependency> managedDependencies = (depMan != null ? MavenDependencyAdapter.fromMavenList(depMan
                .getDependencies()) : new ArrayList<Dependency>());
