@@ -7,6 +7,8 @@
 package org.jboss.forge.javaee;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
@@ -20,10 +22,10 @@ import org.jboss.forge.projects.facets.DependencyFacet;
 
 /**
  * A base facet implementation for Facets which require Java EE library APIs to be installed.
- *
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 public abstract class AbstractJavaEEFacet extends AbstractFacet<Project> implements ProjectFacet
 {
@@ -40,21 +42,32 @@ public abstract class AbstractJavaEEFacet extends AbstractFacet<Project> impleme
       this.installer = installer;
    }
 
+   /**
+    * Return a {@link Map} where KEY represents a {@link Dependency} to be installed if none of the VALUE
+    * {@link Dependency} are installed.
+    */
+   abstract protected Map<Dependency, List<Dependency>> getRequiredDependencyOptions();
+
    @Override
    public boolean install()
    {
-      Project project = getOrigin();
-      for (Dependency requirement : getRequiredDependencies())
+      DependencyFacet deps = origin.getFacet(DependencyFacet.class);
+      for (Entry<Dependency, List<Dependency>> group : getRequiredDependencyOptions().entrySet())
       {
-         if (!getInstaller().isInstalled(project, requirement))
+         boolean satisfied = false;
+         for (Dependency dependency : group.getValue())
          {
-            DependencyFacet deps = project.getFacet(DependencyFacet.class);
-            if (!deps.hasEffectiveManagedDependency(requirement) && !deps.hasDirectManagedDependency(JAVAEE6))
+            if (deps.hasEffectiveDependency(dependency))
             {
-               getInstaller().installManaged(project, JAVAEE6);
+               satisfied = true;
+               break;
             }
-            Dependency providedDep = DependencyBuilder.create(requirement).setScopeType("provided");
-            getInstaller().install(project, providedDep);
+         }
+
+         if (!satisfied)
+         {
+            installer.installManaged(origin, JAVAEE6);
+            installer.install(origin, group.getKey());
          }
       }
       return true;
@@ -63,22 +76,33 @@ public abstract class AbstractJavaEEFacet extends AbstractFacet<Project> impleme
    @Override
    public boolean isInstalled()
    {
-      Project project = getOrigin();
-      DependencyFacet deps = project.getFacet(DependencyFacet.class);
-      for (Dependency requirement : getRequiredDependencies())
+      return dependencyRequirementsMet();
+   }
+
+   protected boolean dependencyRequirementsMet()
+   {
+      DependencyFacet deps = origin.getFacet(DependencyFacet.class);
+      for (Entry<Dependency, List<Dependency>> group : getRequiredDependencyOptions().entrySet())
       {
-         if (!deps.hasEffectiveDependency(requirement))
+         boolean satisfied = false;
+         for (Dependency dependency : group.getValue())
          {
-            return false;
+            if (deps.hasEffectiveDependency(dependency))
+            {
+               satisfied = true;
+               break;
+            }
          }
+
+         if (!satisfied)
+            return false;
       }
       return true;
    }
-
-   abstract protected List<Dependency> getRequiredDependencies();
 
    public DependencyInstaller getInstaller()
    {
       return installer;
    }
+
 }

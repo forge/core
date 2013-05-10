@@ -9,7 +9,9 @@ package org.jboss.forge.javaee.cdi;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -29,12 +31,19 @@ import org.jboss.shrinkwrap.descriptor.api.beans10.BeansDescriptor;
 
 /**
  * Implementation of {@link CDIFacet}
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 public class CDIFacetImpl extends AbstractJavaEEFacet implements CDIFacet
 {
+   private static final Dependency JBOSS_ANNOTATION_API = DependencyBuilder
+            .create("org.jboss.spec.javax.annotation:jboss-annotations-api_1.1_spec");
+   private static final Dependency JAVAX_INTERCEPTOR_API = DependencyBuilder
+            .create("org.jboss.spec.javax.interceptor:jboss-interceptors-api_1.1_spec");
+   private static final Dependency JAVAX_INJECT = DependencyBuilder.create("javax.inject:javax.inject");
+   private static final Dependency JAVAX_ANNOTATION_API = DependencyBuilder.create("javax.annotation:jsr250-api");
+   private static final Dependency CDI_API = DependencyBuilder.create("javax.enterprise:cdi-api");
 
    @Inject
    public CDIFacetImpl(DependencyInstaller installer)
@@ -45,8 +54,7 @@ public class CDIFacetImpl extends AbstractJavaEEFacet implements CDIFacet
    @Override
    public boolean isInstalled()
    {
-      return getConfigFile().exists()
-               && super.isInstalled();
+      return getConfigFile().exists() && super.isInstalled();
    }
 
    @Override
@@ -102,14 +110,16 @@ public class CDIFacetImpl extends AbstractJavaEEFacet implements CDIFacet
    }
 
    @Override
-   protected List<Dependency> getRequiredDependencies()
+   protected Map<Dependency, List<Dependency>> getRequiredDependencyOptions()
    {
-      return Arrays.asList(
-               (Dependency) DependencyBuilder.create("javax.enterprise:cdi-api"),
-               DependencyBuilder.create("javax.inject:javax.inject"),
-               DependencyBuilder.create("org.jboss.spec.javax.interceptor:jboss-interceptors-api_1.1_spec"),
-               DependencyBuilder.create("org.jboss.spec.javax.annotation:jboss-annotations-api_1.1_spec")
-               );
+      Map<Dependency, List<Dependency>> result = new LinkedHashMap<Dependency, List<Dependency>>();
+
+      result.put(CDI_API, Arrays.asList(CDI_API));
+      result.put(JAVAX_ANNOTATION_API, Arrays.asList(JAVAX_ANNOTATION_API, JBOSS_ANNOTATION_API));
+      result.put(JAVAX_INJECT, Arrays.asList(JAVAX_INJECT));
+      result.put(JAVAX_INTERCEPTOR_API, Arrays.asList(JAVAX_INTERCEPTOR_API));
+
+      return result;
    }
 
 }

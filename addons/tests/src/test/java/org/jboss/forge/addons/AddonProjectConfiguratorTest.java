@@ -50,7 +50,8 @@ public class AddonProjectConfiguratorTest
                addBeansXML().
                addPackages(true, AddonProjectConfigurator.class.getPackage()).
                addAsAddonDependencies(
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:addons", "2.0.0-SNAPSHOT"))
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:addons", "2.0.0-SNAPSHOT")),
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:javaee", "2.0.0-SNAPSHOT"))
                );
    }
 
@@ -138,6 +139,7 @@ public class AddonProjectConfiguratorTest
       Assert.assertEquals("provided", implProject.getFacet(DependencyFacet.class).getDirectDependency(spiDependency)
                .getScopeType());
 
+      Assert.assertTrue(implProject.getFacet(DependencyFacet.class).getManagedDependencies().isEmpty());
       Assert.assertTrue(implProject.getFacet(DependencyFacet.class).hasDirectDependency(
                ForgeContainerAPIFacet.FORGE_API_DEPENDENCY));
       Assert.assertFalse(implProject.getFacet(DependencyFacet.class).hasDirectManagedDependency(
@@ -157,6 +159,7 @@ public class AddonProjectConfiguratorTest
       Assert.assertEquals("provided", apiProject.getFacet(DependencyFacet.class).getDirectDependency(spiDependency)
                .getScopeType());
 
+      Assert.assertTrue(apiProject.getFacet(DependencyFacet.class).getManagedDependencies().isEmpty());
       Assert.assertTrue(apiProject.getFacet(DependencyFacet.class).hasDirectDependency(
                ForgeContainerAPIFacet.FORGE_API_DEPENDENCY));
       Assert.assertFalse(apiProject.getFacet(DependencyFacet.class).hasDirectManagedDependency(
@@ -169,6 +172,7 @@ public class AddonProjectConfiguratorTest
        */
       Assert.assertEquals("../pom.xml", spiProject.getFacet(MavenFacet.class).getPOM().getParent().getRelativePath());
 
+      Assert.assertTrue(spiProject.getFacet(DependencyFacet.class).getManagedDependencies().isEmpty());
       Assert.assertTrue(spiProject.getFacet(DependencyFacet.class).hasDirectDependency(
                ForgeContainerAPIFacet.FORGE_API_DEPENDENCY));
       Assert.assertFalse(spiProject.getFacet(DependencyFacet.class).hasDirectManagedDependency(
@@ -203,6 +207,7 @@ public class AddonProjectConfiguratorTest
                addonProject.getFacet(DependencyFacet.class).getEffectiveDependency(spiDependency)
                         .getScopeType());
 
+      Assert.assertTrue(addonProject.getFacet(DependencyFacet.class).getManagedDependencies().isEmpty());
       Assert.assertTrue(addonProject.getFacet(DependencyFacet.class).hasDirectDependency(
                ForgeContainerAPIFacet.FORGE_API_DEPENDENCY));
       Assert.assertFalse(addonProject.getFacet(DependencyFacet.class).hasDirectManagedDependency(
@@ -231,6 +236,7 @@ public class AddonProjectConfiguratorTest
       Assert.assertFalse(testsProject.getFacet(DependencyFacet.class).hasDirectManagedDependency(spiDependency));
       Assert.assertTrue(testsProject.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(spiDependency));
 
+      Assert.assertTrue(testsProject.getFacet(DependencyFacet.class).getManagedDependencies().isEmpty());
       Assert.assertTrue(testsProject.getFacet(DependencyFacet.class).hasDirectDependency(
                ForgeContainerAPIFacet.FORGE_API_DEPENDENCY));
       Assert.assertFalse(testsProject.getFacet(DependencyFacet.class).hasDirectManagedDependency(

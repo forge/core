@@ -21,13 +21,12 @@ import org.jboss.forge.maven.dependencies.MavenContainer;
 import org.jboss.forge.maven.dependencies.MavenDependencyResolver;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-@Ignore
 public class MavenDependencyResolverTest
 {
    private MavenDependencyResolver resolver;
@@ -61,7 +60,6 @@ public class MavenDependencyResolverTest
    }
 
    @Test(expected = RuntimeException.class)
-   // TODO it would be nice to figure out how to resolve all artifacts with a given groupId
    public void testResolveWildcardArtifactId() throws Exception
    {
       DependencyQuery query = DependencyQueryBuilder.create(CoordinateBuilder.create().setGroupId("org.jboss.forge")
@@ -75,6 +73,16 @@ public class MavenDependencyResolverTest
    {
       DependencyQuery query = DependencyQueryBuilder.create(CoordinateBuilder
                .create("org.jboss.forge:dependencies-api"));
+      List<Coordinate> versions = resolver.resolveVersions(query);
+      Assert.assertNotNull(versions);
+      Assert.assertFalse(versions.isEmpty());
+   }
+
+   @Test
+   public void testResolveVersions2() throws Exception
+   {
+      DependencyQuery query = DependencyQueryBuilder.create(CoordinateBuilder
+               .create("javax.annotation:jsr250-api"));
       List<Coordinate> versions = resolver.resolveVersions(query);
       Assert.assertNotNull(versions);
       Assert.assertFalse(versions.isEmpty());
@@ -118,7 +126,7 @@ public class MavenDependencyResolverTest
       DependencyNode root = resolver.resolveAddonDependencyHierarchy(DependencyQueryBuilder
                .create("org.jboss.forge:addons:jar:forge-addon:2.0.0-SNAPSHOT"));
       Assert.assertNotNull(root);
-      Assert.assertEquals(2, root.getChildren().size());
+      Assert.assertEquals(7, root.getChildren().size());
    }
 
    @Test

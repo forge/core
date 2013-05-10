@@ -8,7 +8,7 @@
 package org.jboss.forge.addons;
 
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -98,10 +98,14 @@ class AddonProjectConfigurator
                addonProject.getFacet(MetadataFacet.class).getOutputDependency())
                .setClassifier("forge-addon");
 
-      dependencyInstaller.installManaged(project, addonProjectDependency);
-      dependencyInstaller.installManaged(project, apiProjectDependency);
-      dependencyInstaller.installManaged(project, implProjectDependency);
-      dependencyInstaller.installManaged(project, spiProjectDependency);
+      dependencyInstaller.installManaged(project,
+               DependencyBuilder.create(addonProjectDependency).setVersion("${project.version}"));
+      dependencyInstaller.installManaged(project,
+               DependencyBuilder.create(apiProjectDependency).setVersion("${project.version}"));
+      dependencyInstaller.installManaged(project,
+               DependencyBuilder.create(implProjectDependency).setVersion("${project.version}"));
+      dependencyInstaller.installManaged(project,
+               DependencyBuilder.create(spiProjectDependency).setVersion("${project.version}"));
 
       installSelectedAddons(project, dependencyAddons, true);
       installSelectedAddons(addonProject, dependencyAddons, false);
@@ -146,9 +150,9 @@ class AddonProjectConfigurator
    {
       DirectoryResource location = parent.getProjectRoot().getOrCreateChildDirectory(moduleName);
 
-      Set<Class<? extends ProjectFacet>> facets = new HashSet<Class<? extends ProjectFacet>>();
-      facets.addAll(Arrays.asList(requiredProjectFacets));
+      Set<Class<? extends ProjectFacet>> facets = new LinkedHashSet<Class<? extends ProjectFacet>>();
       facets.add(ForgeContainerAPIFacet.class);
+      facets.addAll(Arrays.asList(requiredProjectFacets));
 
       Project project = projectFactory.createProject(location, facets);
 
