@@ -32,6 +32,7 @@ import org.jboss.forge.resource.DirectoryResource;
 import org.jboss.forge.resource.ResourceFactory;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -225,10 +226,6 @@ public class AddonProjectConfiguratorTest
       Assert.assertFalse(testsProject.getFacet(DependencyFacet.class).hasDirectDependency(spiDependency));
       Assert.assertFalse(testsProject.getFacet(DependencyFacet.class).hasDirectManagedDependency(spiDependency));
       Assert.assertTrue(testsProject.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(spiDependency));
-      Assert.assertNotNull("SPI module is not present in the TESTS module", testsProject
-               .getFacet(DependencyFacet.class).getEffectiveDependency(spiDependency));
-      Assert.assertEquals("compile", testsProject.getFacet(DependencyFacet.class).getEffectiveDependency(spiDependency)
-               .getScopeType());
 
       Assert.assertTrue(testsProject.getFacet(DependencyFacet.class).hasDirectDependency(
                ForgeContainerAPIFacet.FORGE_API_DEPENDENCY));
@@ -236,5 +233,39 @@ public class AddonProjectConfiguratorTest
                ForgeContainerAPIFacet.FORGE_API_DEPENDENCY));
       Assert.assertTrue(testsProject.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(
                ForgeContainerAPIFacet.FORGE_API_DEPENDENCY));
+   }
+
+   @Test
+   @Ignore("FORGE-894")
+   public void testDependencyResolution()
+   {
+      DirectoryResource addonDir = resourceFactory.create(forge.getRepositories().get(0).getRootDirectory()).reify(
+               DirectoryResource.class);
+      DirectoryResource projectDir = addonDir.createTempResource();
+      Project project = projectFactory.createProject(projectDir);
+      MetadataFacet metadataFacet = project.getFacet(MetadataFacet.class);
+      metadataFacet.setProjectName("testproject");
+      metadataFacet.setProjectVersion("1.0.0-SNAPSHOT");
+      metadataFacet.setTopLevelPackage("com.acme.testproject");
+
+      SingleVersion forgeVersion = new SingleVersion("2.0.0.Alpha3");
+      addonProjectFactory.setupAddonProject(project, forgeVersion, Collections.<AddonId> emptyList());
+
+      DirectoryResource projectRoot = project.getProjectRoot();
+
+      Assert.assertTrue("SPI module is missing", projectRoot.getChild("spi").exists());
+      Assert.assertTrue("TESTS module is missing", projectRoot.getChild("tests").exists());
+
+      Project spiProject = projectFactory.findProject(projectRoot.getChildDirectory("spi"));
+      Project testsProject = projectFactory.findProject(projectRoot.getChildDirectory("tests"));
+
+      Dependency spiDependency = DependencyBuilder.create(
+               spiProject.getFacet(MetadataFacet.class).getOutputDependency())
+               .setClassifier("forge-addon");
+      Assert.assertNotNull("SPI module is not present in the TESTS module", testsProject
+               .getFacet(DependencyFacet.class).getEffectiveDependency(spiDependency));
+      Assert.assertEquals("compile",
+               testsProject.getFacet(DependencyFacet.class).getEffectiveDependency(spiDependency)
+                        .getScopeType());
    }
 }
