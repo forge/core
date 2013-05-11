@@ -114,4 +114,11 @@ public class ProjectFactoryImplTest
 
       projectDir.delete(true);
    }
+
+   @Test
+   public void testCreateTempProject()
+   {
+      Project project = projectFactory.createTempProject();
+      Assert.assertNotNull(project);
+   }
 }

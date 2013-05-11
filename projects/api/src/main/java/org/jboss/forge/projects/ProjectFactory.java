@@ -42,6 +42,11 @@ public interface ProjectFactory
    public Project createProject(DirectoryResource targetDir, Iterable<Class<? extends ProjectFacet>> facetTypes);
 
    /**
+    * Create a {@link Project} in a temporary location. This method is useful for testing purposes.
+    */
+   public Project createTempProject();
+
+   /**
     * Register a listener for project events
     */
    public ListenerRegistration<ProjectListener> addProjectListener(ProjectListener listener);

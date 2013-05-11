@@ -6,6 +6,8 @@
  */
 package org.jboss.forge.projects.impl;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -13,7 +15,10 @@ import java.util.logging.Logger;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jboss.forge.container.Forge;
 import org.jboss.forge.container.addons.AddonRegistry;
+import org.jboss.forge.container.repositories.AddonRepository;
+import org.jboss.forge.container.repositories.MutableAddonRepository;
 import org.jboss.forge.container.services.ExportedInstance;
 import org.jboss.forge.container.spi.ListenerRegistration;
 import org.jboss.forge.container.util.Predicate;
@@ -25,6 +30,7 @@ import org.jboss.forge.projects.ProjectFactory;
 import org.jboss.forge.projects.ProjectListener;
 import org.jboss.forge.projects.ProjectLocator;
 import org.jboss.forge.resource.DirectoryResource;
+import org.jboss.forge.resource.ResourceFactory;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -36,6 +42,12 @@ public class ProjectFactoryImpl implements ProjectFactory
 
    @Inject
    private AddonRegistry registry;
+
+   @Inject
+   private ResourceFactory resourceFactory;
+
+   @Inject
+   private Forge forge;
 
    @Inject
    private FacetFactory factory;
@@ -168,6 +180,36 @@ public class ProjectFactoryImpl implements ProjectFactory
       {
          listener.projectCreated(project);
       }
+   }
+
+   @Override
+   public Project createTempProject()
+   {
+      List<AddonRepository> repositories = forge.getRepositories();
+      File rootDirectory = null;
+      for (AddonRepository addonRepository : repositories)
+      {
+         if (addonRepository instanceof MutableAddonRepository)
+         {
+            rootDirectory = addonRepository.getRootDirectory();
+         }
+      }
+      if (rootDirectory == null)
+      {
+         try
+         {
+            rootDirectory = File.createTempFile("forgeproject", ".tmp");
+            rootDirectory.delete();
+            rootDirectory.mkdirs();
+         }
+         catch (IOException e)
+         {
+            throw new RuntimeException("Could not create temp folder", e);
+         }
+      }
+      DirectoryResource addonDir = resourceFactory.create(DirectoryResource.class, rootDirectory);
+      DirectoryResource projectDir = addonDir.createTempResource();
+      return createProject(projectDir);
    }
 
    @Override
