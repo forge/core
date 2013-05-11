@@ -128,7 +128,6 @@ public class NewProjectWizard implements UIWizard
       {
          ProjectType projectType = instance.get();
          projectTypes.add(projectType);
-         type.setDefaultValue(projectType);
       }
       Collections.sort(projectTypes, new Comparator<ProjectType>()
       {
@@ -140,6 +139,10 @@ public class NewProjectWizard implements UIWizard
             return left.getType().compareTo(right.getType());
          }
       });
+      if(!projectTypes.isEmpty())
+      {
+         type.setDefaultValue(projectTypes.get(0));
+      }
       type.setValueChoices(projectTypes);
       builder.add(named).add(topLevelPackage).add(version).add(targetLocation).add(overwrite).add(type);
    }
