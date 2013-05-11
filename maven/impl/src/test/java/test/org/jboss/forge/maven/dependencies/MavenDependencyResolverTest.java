@@ -48,7 +48,7 @@ public class MavenDependencyResolverTest
    @Test
    public void testResolveClassifiedArtifact() throws Exception
    {
-      CoordinateBuilder coordinate = CoordinateBuilder.create("org.jboss.forge:resources:2.0.0-SNAPSHOT")
+      CoordinateBuilder coordinate = CoordinateBuilder.create("org.jboss.forge:resources:2.0.0.Alpha3")
                .setClassifier("forge-addon");
       DependencyQueryBuilder query = DependencyQueryBuilder.create(coordinate).setFilter(addonFilter);
       Set<Dependency> artifacts = resolver.resolveDependencies(query);
@@ -102,7 +102,7 @@ public class MavenDependencyResolverTest
    public void testResolveArtifact() throws Exception
    {
       DependencyQuery query = DependencyQueryBuilder
-               .create("org.jboss.forge:resources:jar:forge-addon:2.0.0-SNAPSHOT");
+               .create("org.jboss.forge:resources:jar:forge-addon:2.0.0.Alpha3");
       Dependency artifact = resolver.resolveArtifact(query);
       Assert.assertNotNull(artifact);
       Assert.assertTrue("Artifact does not exist: " + artifact, artifact.getArtifact().exists());
@@ -113,7 +113,7 @@ public class MavenDependencyResolverTest
    {
       DependencyNode root = resolver
                .resolveDependencyHierarchy(DependencyQueryBuilder
-                        .create("org.jboss.forge:resources:jar:forge-addon:2.0.0-SNAPSHOT"));
+                        .create("org.jboss.forge:resources:jar:forge-addon:2.0.0.Alpha3"));
       Assert.assertNotNull(root);
       Assert.assertEquals(5, root.getChildren().size());
       Assert.assertEquals("convert", root.getChildren().get(1).getDependency().getCoordinate().getArtifactId());
@@ -124,7 +124,7 @@ public class MavenDependencyResolverTest
    public void testResolveProvidedAddons() throws Exception
    {
       DependencyNode root = resolver.resolveAddonDependencyHierarchy(DependencyQueryBuilder
-               .create("org.jboss.forge:addons:jar:forge-addon:2.0.0-SNAPSHOT"));
+               .create("org.jboss.forge:addons:jar:forge-addon:2.0.0.Alpha3"));
       Assert.assertNotNull(root);
       Assert.assertEquals(7, root.getChildren().size());
    }
@@ -133,7 +133,7 @@ public class MavenDependencyResolverTest
    public void testResolveProvidedAddons2() throws Exception
    {
       DependencyNode root = resolver.resolveAddonDependencyHierarchy(DependencyQueryBuilder
-               .create("org.jboss.forge:resources:jar:forge-addon:2.0.0-SNAPSHOT"));
+               .create("org.jboss.forge:resources:jar:forge-addon:2.0.0.Alpha3"));
       Assert.assertNotNull(root);
       Assert.assertEquals(5, root.getChildren().size());
    }
