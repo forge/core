@@ -23,6 +23,7 @@ import org.jboss.forge.projects.Project;
 import org.jboss.forge.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.projects.facets.PackagingFacet;
 import org.jboss.forge.projects.facets.ResourceFacet;
+import org.jboss.forge.projects.facets.WebResourceFacet;
 import org.jboss.forge.resource.DirectoryResource;
 import org.jboss.forge.resource.FileResource;
 import org.jboss.shrinkwrap.descriptor.api.DescriptorImporter;
@@ -98,9 +99,8 @@ public class CDIFacetImpl extends AbstractJavaEEFacet implements CDIFacet
       PackagingFacet packaging = project.getFacet(PackagingFacet.class);
       if ("war".equals(packaging.getPackagingType()))
       {
-         // DirectoryResource webRoot = project.getFacet(WebResourceFacet.class).getWebRootDirectory();
-         // return (FileResource<?>) webRoot.getChild("WEB-INF" + File.separator + "beans.xml");
-         throw new UnsupportedOperationException("Not implemented yet");
+         DirectoryResource webRoot = project.getFacet(WebResourceFacet.class).getWebRootDirectory();
+         return (FileResource<?>) webRoot.getChild("WEB-INF" + File.separator + "beans.xml");
       }
       else
       {
