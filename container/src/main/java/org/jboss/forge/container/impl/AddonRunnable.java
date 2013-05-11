@@ -113,10 +113,10 @@ public final class AddonRunnable implements Runnable
          if (container.postStartupTask != null)
             ClassLoaders.executeIn(addon.getClassLoader(), container.postStartupTask);
       }
-      catch (RuntimeException e)
+      catch (Throwable e)
       {
          logger.log(Level.SEVERE, "Failed to start addon " + addon.getId(), e);
-         throw e;
+         throw new RuntimeException(e);
       }
       finally
       {
