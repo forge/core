@@ -15,7 +15,7 @@
 
    <artifactId>forge-distribution</artifactId>
 
-   <name>JBoss Forge - Distribution Build</name>
+   <name>Forge - Distribution Build</name>
    <packaging>pom</packaging>
 
    <properties>

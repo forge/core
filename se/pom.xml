@@ -15,7 +15,7 @@
 
    <artifactId>forge-se</artifactId>
 
-   <name>JBoss Forge - Java SE UberJar Build</name>
+   <name>Forge - Java SE UberJar Build</name>
 
    <build>
       <plugins>
