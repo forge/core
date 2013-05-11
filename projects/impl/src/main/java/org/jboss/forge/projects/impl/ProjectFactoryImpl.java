@@ -209,7 +209,9 @@ public class ProjectFactoryImpl implements ProjectFactory
       }
       DirectoryResource addonDir = resourceFactory.create(DirectoryResource.class, rootDirectory);
       DirectoryResource projectDir = addonDir.createTempResource();
-      return createProject(projectDir);
+      projectDir.deleteOnExit();
+      Project project = createProject(projectDir);
+      return project;
    }
 
    @Override

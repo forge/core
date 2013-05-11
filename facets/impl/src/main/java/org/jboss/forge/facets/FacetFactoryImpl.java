@@ -79,7 +79,11 @@ public class FacetFactoryImpl implements FacetFactory
             throws FacetNotFoundException
    {
       FACET facet = create(type, origin);
-      ((Faceted<FACET>) origin).install(facet);
+      Faceted<FACET> faceted = (Faceted<FACET>) origin;
+      if (!faceted.hasFacet(type))
+      {
+         faceted.install(facet);
+      }
       return facet;
    }
 }

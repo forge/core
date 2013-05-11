@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package test.org.jboss.forge.javaee.cdi;
+package test.org.jboss.forge.javaee.servlet;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -18,22 +18,25 @@ import org.jboss.forge.arquillian.Addon;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.facets.FacetFactory;
-import org.jboss.forge.javaee.spec.CDIFacet;
+import org.jboss.forge.javaee.spec.ServletFacet;
 import org.jboss.forge.projects.Project;
 import org.jboss.forge.projects.ProjectFactory;
-import org.jboss.shrinkwrap.descriptor.api.beans10.BeansDescriptor;
+import org.jboss.forge.projects.facets.MetadataFacet;
+import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import test.org.jboss.forge.javaee.JavaEETestHelper;
 
 @RunWith(Arquillian.class)
-public class CDIFacetTest
+public class ServletFacetTest
 {
    @Deployment
    @Dependencies({
             @Addon(name = "org.jboss.forge:javaee", version = "2.0.0-SNAPSHOT"),
-            @Addon(name = "org.jboss.forge:maven", version = "2.0.0-SNAPSHOT")
+            @Addon(name = "org.jboss.forge:maven", version = "2.0.0-SNAPSHOT"),
+            @Addon(name = "org.jboss.forge:projects", version = "2.0.0-SNAPSHOT")
    })
    public static ForgeArchive getDeployment()
    {
@@ -47,15 +50,16 @@ public class CDIFacetTest
    private FacetFactory facetFactory;
 
    @Test
-   public void testBeansXMLCreatedWhenInstalled() throws Exception
+   public void testWebXMLCreatedWhenInstalled() throws Exception
    {
       Project project = projectFactory.createTempProject();
-      CDIFacet cdiFacet = facetFactory.create(CDIFacet.class, project);
-      assertNotNull(cdiFacet);
-      project.install(cdiFacet);
-      assertTrue(project.hasFacet(CDIFacet.class));
-      BeansDescriptor config = project.getFacet(CDIFacet.class).getConfig();
+      ServletFacet facet = facetFactory.install(ServletFacet.class, project);
+      assertNotNull(facet);
+      assertTrue(project.hasFacet(ServletFacet.class));
+      WebAppDescriptor config = facet.getConfig();
       assertNotNull(config);
+      String projectName = project.getFacet(MetadataFacet.class).getProjectName();
+      Assert.assertFalse(config.getAllDisplayName().isEmpty());
+      Assert.assertEquals(projectName, config.getAllDisplayName().get(0));
    }
-
 }
