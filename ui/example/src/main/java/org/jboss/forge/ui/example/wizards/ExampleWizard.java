@@ -8,12 +8,14 @@ package org.jboss.forge.ui.example.wizards;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.resource.DirectoryResource;
 import org.jboss.forge.ui.context.UIBuilder;
 import org.jboss.forge.ui.context.UIContext;
 import org.jboss.forge.ui.context.UISelection;
 import org.jboss.forge.ui.context.UIValidationContext;
 import org.jboss.forge.ui.input.UIInput;
 import org.jboss.forge.ui.metadata.UICommandMetadata;
+import org.jboss.forge.ui.metadata.WithAttributes;
 import org.jboss.forge.ui.result.NavigationResult;
 import org.jboss.forge.ui.result.Result;
 import org.jboss.forge.ui.result.Results;
@@ -30,6 +32,10 @@ public class ExampleWizard implements UIWizard
    private UIInput<Boolean> showSelectComponents;
 
    @Inject
+   @WithAttributes(label = "Folder Location:")
+   private UIInput<DirectoryResource> directory;
+
+   @Inject
    private UIInput<Boolean> goToLastStep;
 
    @Override
@@ -42,7 +48,7 @@ public class ExampleWizard implements UIWizard
    public void initializeUI(UIBuilder builder) throws Exception
    {
       firstName.setRequired(true).setRequiredMessage("First Name must be informed !");
-      builder.add(firstName).add(showSelectComponents).add(goToLastStep);
+      builder.add(firstName).add(showSelectComponents).add(goToLastStep).add(directory);
    }
 
    @Override
