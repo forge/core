@@ -62,7 +62,7 @@
       <version.arquillian>1.0.3.Final</version.arquillian>
       <version.arquillian.container>1.0.0.CR5</version.arquillian.container>
       <version.cdi>1.1</version.cdi>
-      <version.javassist>3.17.1-GA</version.javassist>
+      <version.javassist>1-SNAPSHOT</version.javassist>
       <version.jboss.spec>3.0.2.Final</version.jboss.spec>
       <version.jboss.modules>3</version.jboss.modules>
       <version.junit>4.11</version.junit>
@@ -157,8 +157,8 @@
          </dependency>
 
          <dependency>
-            <groupId>org.javassist</groupId>
-            <artifactId>javassist</artifactId>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>forge-javassist</artifactId>
             <version>${version.javassist}</version>
             <scope>compile</scope>
          </dependency>
