@@ -249,6 +249,14 @@ public class AddonProjectConfiguratorTest
 
       Assert.assertTrue(project.hasFacet(CDIFacet.class));
       Assert.assertTrue(project.hasFacet(JavaSourceFacet.class));
+
+      Assert.assertFalse(project.getFacet(DependencyFacet.class).getManagedDependencies().isEmpty());
+      Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectDependency(
+               ForgeContainerAPIFacet.FORGE_API_DEPENDENCY));
+      Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(
+               ForgeContainerAPIFacet.FORGE_API_DEPENDENCY));
+      Assert.assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(
+               ForgeContainerAPIFacet.FORGE_API_DEPENDENCY));
    }
 
    @Test

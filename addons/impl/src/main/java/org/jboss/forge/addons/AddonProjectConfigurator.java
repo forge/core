@@ -55,6 +55,7 @@ class AddonProjectConfigurator
 
    public void setupSimpleAddonProject(Project project, Version forgeVersion, Iterable<AddonId> dependencyAddons)
    {
+      facetFactory.install(ForgeContainerAPIFacet.class, project);
       facetFactory.install(ForgeAddonFacet.class, project);
       facetFactory.install(ForgeAddonAPIFacet.class, project);
       installSelectedAddons(project, dependencyAddons, false);
