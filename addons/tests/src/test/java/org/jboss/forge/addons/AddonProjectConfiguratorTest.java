@@ -17,7 +17,6 @@ import org.jboss.forge.addons.facets.ForgeContainerAPIFacet;
 import org.jboss.forge.arquillian.Addon;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
-import org.jboss.forge.container.Forge;
 import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.repositories.AddonDependencyEntry;
 import org.jboss.forge.container.versions.SingleVersion;
@@ -25,12 +24,12 @@ import org.jboss.forge.dependencies.Dependency;
 import org.jboss.forge.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.javaee.spec.CDIFacet;
 import org.jboss.forge.maven.projects.MavenFacet;
+import org.jboss.forge.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.projects.Project;
 import org.jboss.forge.projects.ProjectFactory;
 import org.jboss.forge.projects.facets.DependencyFacet;
 import org.jboss.forge.projects.facets.MetadataFacet;
 import org.jboss.forge.resource.DirectoryResource;
-import org.jboss.forge.resource.ResourceFactory;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -61,19 +60,10 @@ public class AddonProjectConfiguratorTest
    @Inject
    private ProjectFactory projectFactory;
 
-   @Inject
-   private ResourceFactory resourceFactory;
-
-   @Inject
-   private Forge forge;
-
    @Test
    public void testCreateAddonProject()
    {
-      DirectoryResource addonDir = resourceFactory.create(forge.getRepositories().get(0).getRootDirectory()).reify(
-               DirectoryResource.class);
-      DirectoryResource projectDir = addonDir.createTempResource();
-      Project project = projectFactory.createProject(projectDir);
+      Project project = projectFactory.createTempProject();
       MetadataFacet metadataFacet = project.getFacet(MetadataFacet.class);
       metadataFacet.setProjectName("testproject");
       metadataFacet.setProjectVersion("1.0.0-SNAPSHOT");
@@ -246,13 +236,26 @@ public class AddonProjectConfiguratorTest
    }
 
    @Test
+   public void testSimpleAddonProject()
+   {
+      Project project = projectFactory.createTempProject();
+      MetadataFacet metadataFacet = project.getFacet(MetadataFacet.class);
+      metadataFacet.setProjectName("testproject");
+      metadataFacet.setProjectVersion("1.0.0-SNAPSHOT");
+      metadataFacet.setTopLevelPackage("com.acme.testproject");
+
+      SingleVersion forgeVersion = new SingleVersion("2.0.0.Alpha3");
+      addonProjectFactory.setupSimpleAddonProject(project, forgeVersion, Collections.<AddonId> emptyList());
+
+      Assert.assertTrue(project.hasFacet(CDIFacet.class));
+      Assert.assertTrue(project.hasFacet(JavaSourceFacet.class));
+   }
+
+   @Test
    @Ignore("FORGE-894")
    public void testDependencyResolution()
    {
-      DirectoryResource addonDir = resourceFactory.create(forge.getRepositories().get(0).getRootDirectory()).reify(
-               DirectoryResource.class);
-      DirectoryResource projectDir = addonDir.createTempResource();
-      Project project = projectFactory.createProject(projectDir);
+      Project project = projectFactory.createTempProject();
       MetadataFacet metadataFacet = project.getFacet(MetadataFacet.class);
       metadataFacet.setProjectName("testproject");
       metadataFacet.setProjectVersion("1.0.0-SNAPSHOT");
