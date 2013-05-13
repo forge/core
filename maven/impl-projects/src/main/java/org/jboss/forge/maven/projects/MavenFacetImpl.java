@@ -32,6 +32,7 @@ import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingResult;
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
+import org.apache.maven.settings.Mirror;
 import org.apache.maven.settings.Profile;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Repository;
@@ -50,6 +51,7 @@ import org.jboss.forge.projects.ProjectFacet;
 import org.jboss.forge.resource.DirectoryResource;
 import org.jboss.forge.resource.ResourceFactory;
 import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManager;
+import org.sonatype.aether.util.repository.DefaultMirrorSelector;
 import org.sonatype.aether.util.repository.DefaultProxySelector;
 
 /**
@@ -103,13 +105,15 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
          MavenExecutionRequest executionRequest = new DefaultMavenExecutionRequest();
          plexus.lookup(MavenExecutionRequestPopulator.class).populateFromSettings(executionRequest,
                   container.getSettings());
+         plexus.lookup(MavenExecutionRequestPopulator.class).populateDefaults(executionRequest);
+
          request = executionRequest.getProjectBuildingRequest();
 
          ArtifactRepository localRepository = RepositoryUtils.toArtifactRepository("local",
                   new File(settings.getLocalRepository()).toURI().toURL().toString(), null, true, true);
          request.setLocalRepository(localRepository);
 
-         List<ArtifactRepository> settingsRepos = new ArrayList<ArtifactRepository>();
+         List<ArtifactRepository> settingsRepos = new ArrayList<ArtifactRepository>(request.getRemoteRepositories());
          List<String> activeProfiles = settings.getActiveProfiles();
 
          Map<String, Profile> profiles = settings.getProfilesAsMap();
@@ -126,13 +130,6 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
                }
             }
          }
-
-         if (!offline)
-         {
-            settingsRepos.add(RepositoryUtils.toArtifactRepository("CENTRAL", "http://repo1.maven.org/maven2/", null,
-                     true, false));
-         }
-
          request.setRemoteRepositories(settingsRepos);
          request.setSystemProperties(System.getProperties());
 
@@ -146,10 +143,20 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
          }
          repositorySession.setLocalRepositoryManager(new SimpleLocalRepositoryManager(settings.getLocalRepository()));
          repositorySession.setOffline(offline);
+         List<Mirror> mirrors = executionRequest.getMirrors();
+         if (mirrors != null)
+         {
+            DefaultMirrorSelector mirrorSelector = new DefaultMirrorSelector();
+            for (Mirror mirror : mirrors)
+            {
+               mirrorSelector.add(mirror.getId(), mirror.getUrl(), mirror.getLayout(), false, mirror.getMirrorOf(),
+                        mirror.getMirrorOfLayouts());
+            }
+            repositorySession.setMirrorSelector(mirrorSelector);
+         }
 
          request.setRepositorySession(repositorySession);
          request.setProcessPlugins(false);
-         // request.setPluginArtifactRepositories(Arrays.asList(localRepository));
          request.setResolveDependencies(false);
          return request;
       }
@@ -339,6 +346,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
       return executeMaven(parameters.toArray(new String[] {}));
    }
 
+   @SuppressWarnings("resource")
    public boolean executeMaven(final String[] selected)
    {
       return executeMaven(new NullOutputStream(), selected);
