@@ -18,9 +18,9 @@ import org.sonatype.aether.repository.Authentication;
 
 /**
  * Repository Utils
- *
+ * 
  * @author George Gastaldi <gegastaldi@gmail.com>
- *
+ * 
  */
 public final class RepositoryUtils
 {
@@ -82,6 +82,10 @@ public final class RepositoryUtils
       else if ("flat".equals(layout))
       {
          result.setLayout(new FlatRepositoryLayout());
+      }
+      else if ("p2".equals(layout))
+      {
+         result.setLayout(new P2ArtifactRepositoryLayout());
       }
       result.setReleaseUpdatePolicy(new ArtifactRepositoryPolicy(containsReleases,
                ArtifactRepositoryPolicy.UPDATE_POLICY_NEVER,
