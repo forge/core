@@ -68,10 +68,7 @@ public class PersistenceFacetImpl extends BaseJavaEEFacet implements Persistence
          FileResource<?> descriptor = getConfigFile();
          if (!descriptor.exists())
          {
-
-            PersistenceDescriptor descriptorContents = Descriptors.create(PersistenceDescriptor.class)
-                     .version("2.0");
-            descriptor.setContents(descriptorContents.exportAsString());
+            createDefaultConfig(descriptor);
          }
       }
       return super.install();
@@ -112,8 +109,20 @@ public class PersistenceFacetImpl extends BaseJavaEEFacet implements Persistence
    public PersistenceDescriptor getConfig()
    {
       DescriptorImporter<PersistenceDescriptor> importer = Descriptors.importAs(PersistenceDescriptor.class);
-      PersistenceDescriptor descriptor = importer.from(getConfigFile().getResourceInputStream());
+      final FileResource<?> configFile = getConfigFile();
+      if (!configFile.exists())
+      {
+         createDefaultConfig(configFile);
+      }
+      PersistenceDescriptor descriptor = importer.from(configFile.getResourceInputStream());
       return descriptor;
+   }
+   
+   private void createDefaultConfig(FileResource<?> descriptor)
+   {
+      PersistenceDescriptor descriptorContents = Descriptors.create(PersistenceDescriptor.class)
+               .version("2.0");
+      descriptor.setContents(descriptorContents.exportAsString());
    }
 
    @Override
