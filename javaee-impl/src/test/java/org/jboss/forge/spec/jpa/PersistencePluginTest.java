@@ -52,13 +52,13 @@ public class PersistencePluginTest extends AbstractJPATest
 
       queueInputLines("", "");
       getShell().execute(
-               "persistence setup --provider HIBERNATE --container JBOSS_AS7");
+               "persistence setup --provider HIBERNATE --container JBOSS_AS6");
 
       PersistenceDescriptor config = project.getFacet(PersistenceFacet.class).getConfig();
       List<PersistenceUnitDef> units = config.listUnits();
       PersistenceUnitDef unit = units.get(0);
 
-      Assert.assertEquals("java:jboss/datasources/ExampleDS", unit.getJtaDataSource());
+      Assert.assertEquals("java:/DefaultDS", unit.getJtaDataSource());
    }
 
    @Test
@@ -108,6 +108,23 @@ public class PersistencePluginTest extends AbstractJPATest
 
       Assert.assertEquals("java:jboss/datasources/ExampleDS", unit.getJtaDataSource());
    }
+   
+   @Test
+   public void testWildflyDataSource() throws Exception
+   {
+      Project project = getProject();
+
+      queueInputLines("", "");
+      getShell().execute(
+               "persistence setup --provider HIBERNATE --container WILDFLY");
+
+      PersistenceDescriptor config = project.getFacet(PersistenceFacet.class).getConfig();
+      List<PersistenceUnitDef> units = config.listUnits();
+      PersistenceUnitDef unit = units.get(0);
+
+      Assert.assertEquals("java:jboss/datasources/ExampleDS", unit.getJtaDataSource());
+   }
+   
 
    @Test
    public void testHibernateProperties() throws Exception

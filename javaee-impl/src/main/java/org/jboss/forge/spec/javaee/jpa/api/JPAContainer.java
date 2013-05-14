@@ -30,6 +30,7 @@ public enum JPAContainer
    JBOSS_AS6(JBossAS6Container.class),
    JBOSS_AS7(JBossAS7Container.class),
    JBOSS_EAP6(JBossAS7Container.class),
+   WILDFLY(JBossAS7Container.class),
    GLASSFISH_3(GlassFish3Container.class),
    WEBLOGIC_12C(WebLogic12cContainer.class),
    CUSTOM_JDBC(CustomJDBCContainer.class),
