@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import org.jboss.forge.resources.DeletionAware;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.shell.Shell;
+import org.jboss.forge.shell.ShellMessages;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.DefaultCommand;
 import org.jboss.forge.shell.plugins.Help;
@@ -50,6 +51,12 @@ public class RmPlugin implements Plugin
 
    private void deleteResource(final boolean recursive, final boolean force, Resource<?> resource)
    {
+      if (!resource.exists())
+      {
+         ShellMessages.error(shell, "rm: cannot remove '" + resource.getFullyQualifiedName()
+                  + "': No such resource exists");
+         return;
+      }
       if (force
                || shell.promptBoolean("delete: " + resource.getName() + ": are you sure?",
                         true))

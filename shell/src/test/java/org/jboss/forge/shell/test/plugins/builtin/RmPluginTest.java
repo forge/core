@@ -7,7 +7,9 @@
 package org.jboss.forge.shell.test.plugins.builtin;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.matchers.JUnitMatchers.containsString;
 
 import java.util.List;
 
@@ -16,6 +18,7 @@ import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
+import org.jboss.forge.resources.Resource;
 import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.test.AbstractShellTest;
@@ -69,5 +72,15 @@ public class RmPluginTest extends AbstractShellTest
       // Check results
       List<?> members = javaResource.getJavaSource().getMembers();
       assertTrue(members.isEmpty());
+   }
+
+   @Test
+   public void testErrorRemovingMissingResource() throws Exception
+   {
+      final Resource<?> missingResource = getProject().getProjectRoot().getChild("foo-file.txt");
+      getShell().execute("rm " + missingResource.getName());
+      assertThat(getOutput(), containsString("rm: cannot remove '" + missingResource.getFullyQualifiedName()
+               + "': No such resource exists"));
+
    }
 }
