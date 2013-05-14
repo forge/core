@@ -43,7 +43,6 @@ import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.project.facets.events.InstallFacets;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.resources.java.JavaResource;
-import org.jboss.forge.shell.PromptType;
 import org.jboss.forge.shell.ShellMessages;
 import org.jboss.forge.shell.ShellPrompt;
 import org.jboss.forge.shell.plugins.Alias;
@@ -52,7 +51,6 @@ import org.jboss.forge.shell.plugins.Current;
 import org.jboss.forge.shell.plugins.Option;
 import org.jboss.forge.shell.plugins.PipeOut;
 import org.jboss.forge.shell.plugins.Plugin;
-import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresProject;
 import org.jboss.forge.shell.plugins.SetupCommand;
 import org.jboss.forge.shell.project.ProjectScoped;
@@ -60,7 +58,6 @@ import org.jboss.forge.spec.javaee.EJBFacet;
 import org.jboss.forge.spec.javaee.JTAFacet;
 import org.jboss.forge.spec.javaee.PersistenceFacet;
 import org.jboss.forge.spec.javaee.RestActivatorType;
-import org.jboss.forge.spec.javaee.RestApplicationFacet;
 import org.jboss.forge.spec.javaee.RestFacet;
 import org.jboss.forge.spec.javaee.events.RestGeneratedResources;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceDescriptor;
@@ -75,7 +72,6 @@ import freemarker.template.TemplateException;
  * @author <a href="mailto:sso@adorsys.de">Sandro Sonntag</a>
  */
 @Alias("rest")
-@RequiresFacet(RestFacet.class)
 @RequiresProject
 public class RestPlugin implements Plugin
 {
@@ -100,31 +96,14 @@ public class RestPlugin implements Plugin
    Configuration configuration;
 
    @SetupCommand
-   public void setup(@Option(name = "activatorType") RestActivatorType activatorType, final PipeOut out)
+   public void setup(@Option(name = "activatorType", defaultValue = "WEB_XML") RestActivatorType activatorType, final PipeOut out)
    {
       if (!project.hasFacet(RestFacet.class))
       {
+         configuration.setProperty(RestFacet.ACTIVATOR_CHOICE, activatorType.toString());
          request.fire(new InstallFacets(RestFacet.class));
       }
-
-      String rootpath = prompt.prompt("What root path do you want to use for your resources?", "/rest");
-      configuration.addProperty(RestFacet.ROOTPATH, rootpath);
-
-      if (activatorType == null || activatorType == RestActivatorType.WEB_XML
-               && !project.hasFacet(RestWebXmlFacetImpl.class))
-      {
-         request.fire(new InstallFacets(RestWebXmlFacetImpl.class));
-      }
-      else if (activatorType == RestActivatorType.APP_CLASS && !project.hasFacet(RestApplicationFacet.class))
-      {
-         String pkg = prompt.promptCommon("In what package do you want to store the Application class?",
-                  PromptType.JAVA_PACKAGE);
-         String restApplication = prompt.prompt("How do you want to name the Application class?", "RestApplication");
-         configuration.addProperty(RestApplicationFacet.REST_APPLICATIONCLASS_PACKAGE, pkg);
-         configuration.addProperty(RestApplicationFacet.REST_APPLICATIONCLASS_NAME, restApplication);
-         request.fire(new InstallFacets(RestApplicationFacet.class));
-      }
-
+      
       if (project.hasFacet(RestFacet.class))
       {
          ShellMessages.success(out, "Rest Web Services (JAX-RS) is installed.");

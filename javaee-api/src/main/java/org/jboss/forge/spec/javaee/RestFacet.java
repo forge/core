@@ -17,5 +17,6 @@ import org.jboss.forge.project.Project;
 public interface RestFacet extends Facet
 {
     public static final String ROOTPATH = "rootpath";
+    public static final String ACTIVATOR_CHOICE = "activatorChoice";
     public String getApplicationPath();
 }

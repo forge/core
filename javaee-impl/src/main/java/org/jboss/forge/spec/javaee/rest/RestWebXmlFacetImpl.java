@@ -11,7 +11,6 @@ import javax.inject.Inject;
 import org.jboss.forge.env.Configuration;
 import org.jboss.forge.project.facets.BaseFacet;
 import org.jboss.forge.shell.plugins.Alias;
-import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.spec.javaee.RestFacet;
 import org.jboss.forge.spec.javaee.RestWebXmlFacet;
 import org.jboss.forge.spec.javaee.ServletFacet;
@@ -22,7 +21,6 @@ import org.jboss.shrinkwrap.descriptor.spi.node.Node;
  * @Author Paul Bakker - paul.bakker@luminis.eu
  */
 @Alias("forge.spec.jaxrs.webxml")
-@RequiresFacet(RestFacet.class)
 public class RestWebXmlFacetImpl extends BaseFacet implements RestWebXmlFacet
 {
    public static final String JAXRS_SERVLET = "javax.ws.rs.core.Application";
@@ -72,17 +70,20 @@ public class RestWebXmlFacetImpl extends BaseFacet implements RestWebXmlFacet
    @Override
    public String getServletPath()
    {
-      ServletFacet servlet = project.getFacet(ServletFacet.class);
-      WebAppDescriptorImpl web = (WebAppDescriptorImpl) servlet.getConfig();
-
-      Node node = web.getRootNode();
-      Node servletClass = node.getSingle("servlet-mapping/servlet-name=" + JAXRS_SERVLET);
-      if (servletClass != null)
+      if (project.hasFacet(ServletFacet.class))
       {
-         Node url = servletClass.getParent().getSingle("url-pattern");
-         if (url != null)
+         ServletFacet servlet = project.getFacet(ServletFacet.class);
+         WebAppDescriptorImpl web = (WebAppDescriptorImpl) servlet.getConfig();
+
+         Node node = web.getRootNode();
+         Node servletClass = node.getSingle("servlet-mapping/servlet-name=" + JAXRS_SERVLET);
+         if (servletClass != null)
          {
-            return url.getText();
+            Node url = servletClass.getParent().getSingle("url-pattern");
+            if (url != null)
+            {
+               return url.getText();
+            }
          }
       }
       return null;

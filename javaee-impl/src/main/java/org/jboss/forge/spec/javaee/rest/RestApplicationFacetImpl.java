@@ -26,7 +26,7 @@ import org.jboss.forge.spec.javaee.RestFacet;
  * @Author Paul Bakker - paul.bakker@luminis.eu
  */
 @Alias("forge.spec.jaxrs.applicationclass")
-@RequiresFacet({ RestFacet.class, JavaSourceFacet.class })
+@RequiresFacet(JavaSourceFacet.class)
 public class RestApplicationFacetImpl extends BaseFacet implements RestApplicationFacet
 {
    private String classPackage;
