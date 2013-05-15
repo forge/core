@@ -80,12 +80,7 @@ public class MavenDependencyResolver implements DependencyResolver, AddonDepende
 
       Artifact queryArtifact = coordinateToMavenArtifact(query.getCoordinate());
 
-      List<RemoteRepository> remoteRepos = convertToMavenRepos(query.getDependencyRepositories(), settings);
-      if (remoteRepos.isEmpty())
-         remoteRepos = convertToMavenRepos(
-                  Arrays.asList(new DependencyRepository("central", "http://repo1.maven.org/maven2")),
-                  settings);
-      remoteRepos.addAll(container.getEnabledRepositoriesFromProfile(settings));
+      List<RemoteRepository> remoteRepos = getRemoteRepositories(query, settings);
 
       CollectRequest collectRequest = new CollectRequest(new org.sonatype.aether.graph.Dependency(queryArtifact,
                query.getScopeType()), remoteRepos);
@@ -165,12 +160,7 @@ public class MavenDependencyResolver implements DependencyResolver, AddonDepende
 
          Artifact artifact = coordinateToMavenArtifact(dep);
 
-         List<RemoteRepository> remoteRepos = convertToMavenRepos(query.getDependencyRepositories(), settings);
-         if (remoteRepos.isEmpty())
-            remoteRepos = convertToMavenRepos(
-                     Arrays.asList(new DependencyRepository("central", "http://repo1.maven.org/maven2")),
-                     settings);
-         remoteRepos.addAll(container.getEnabledRepositoriesFromProfile(settings));
+         List<RemoteRepository> remoteRepos = getRemoteRepositories(query, settings);
 
          VersionRangeRequest rangeRequest = new VersionRangeRequest(artifact, remoteRepos, null);
 
@@ -189,12 +179,7 @@ public class MavenDependencyResolver implements DependencyResolver, AddonDepende
       RepositorySystem system = container.getRepositorySystem();
       Settings settings = container.getSettings();
 
-      List<RemoteRepository> remoteRepos = convertToMavenRepos(query.getDependencyRepositories(), settings);
-      if (remoteRepos.isEmpty())
-         remoteRepos = convertToMavenRepos(
-                  Arrays.asList(new DependencyRepository("central", "http://repo1.maven.org/maven2")),
-                  settings);
-      remoteRepos.addAll(container.getEnabledRepositoriesFromProfile(settings));
+      List<RemoteRepository> remoteRepos = getRemoteRepositories(query, settings);
 
       MavenRepositorySystemSession session = container.setupRepoSession(system, settings);
 
@@ -266,8 +251,10 @@ public class MavenDependencyResolver implements DependencyResolver, AddonDepende
 
          final CoordinateBuilder coord = CoordinateBuilder.create(query.getCoordinate());
          Artifact queryArtifact = coordinateToMavenArtifact(coord);
+
+         List<RemoteRepository> remoteRepos = getRemoteRepositories(query, settings);
          CollectRequest collectRequest = new CollectRequest(new org.sonatype.aether.graph.Dependency(queryArtifact,
-                  null), container.getEnabledRepositoriesFromProfile(settings));
+                  null), remoteRepos);
 
          DependencyRequest dr = new DependencyRequest(collectRequest, null);
 
@@ -312,8 +299,10 @@ public class MavenDependencyResolver implements DependencyResolver, AddonDepende
 
          final CoordinateBuilder coord = CoordinateBuilder.create(query.getCoordinate());
          Artifact queryArtifact = coordinateToMavenArtifact(coord);
+
+         List<RemoteRepository> remoteRepos = getRemoteRepositories(query, settings);
          CollectRequest collectRequest = new CollectRequest(new org.sonatype.aether.graph.Dependency(queryArtifact,
-                  null), container.getEnabledRepositoriesFromProfile(settings));
+                  null), remoteRepos);
 
          DependencyRequest dr = new DependencyRequest(collectRequest, null);
 
@@ -325,5 +314,17 @@ public class MavenDependencyResolver implements DependencyResolver, AddonDepende
       {
          throw new DependencyException("Could not resolve dependencies for addon [" + query.getCoordinate() + "]", e);
       }
+   }
+
+
+   private List<RemoteRepository> getRemoteRepositories(DependencyQuery query, Settings settings)
+   {
+      List<RemoteRepository> remoteRepos = convertToMavenRepos(query.getDependencyRepositories(), settings);
+      if (remoteRepos.isEmpty())
+         remoteRepos = convertToMavenRepos(
+                  Arrays.asList(new DependencyRepository("central", "http://repo1.maven.org/maven2")),
+                  settings);
+      remoteRepos.addAll(container.getEnabledRepositoriesFromProfile(settings));
+      return remoteRepos;
    }
 }

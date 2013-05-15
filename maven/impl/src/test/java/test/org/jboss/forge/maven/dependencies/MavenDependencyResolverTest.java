@@ -124,9 +124,9 @@ public class MavenDependencyResolverTest
    public void testResolveProvidedAddons() throws Exception
    {
       DependencyNode root = resolver.resolveAddonDependencyHierarchy(DependencyQueryBuilder
-               .create("org.jboss.forge:addons:jar:forge-addon:2.0.0-SNAPSHOT"));
+               .create("org.jboss.forge:addons:jar:forge-addon:2.0.0.Alpha3"));
       Assert.assertNotNull(root);
-      Assert.assertEquals(7, root.getChildren().size());
+      Assert.assertEquals(3, root.getChildren().size());
    }
 
    @Test
