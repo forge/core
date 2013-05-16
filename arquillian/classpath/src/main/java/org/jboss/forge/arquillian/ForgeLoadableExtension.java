@@ -14,5 +14,6 @@ public class ForgeLoadableExtension implements LoadableExtension
       builder.service(DeployableContainer.class, ForgeDeployableContainer.class);
       builder.service(DeploymentScenarioGenerator.class, ForgeDeploymentScenarioGenerator.class);
       builder.service(Protocol.class, ForgeProtocol.class);
+      // builder.service(AuxiliaryArchiveProcessor.class, ForgeAuxiliaryArchiveProcessor.class);
    }
 }

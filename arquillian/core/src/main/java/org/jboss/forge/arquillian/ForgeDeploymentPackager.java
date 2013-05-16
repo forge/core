@@ -2,13 +2,11 @@ package org.jboss.forge.arquillian;
 
 import java.util.Collection;
 
-import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.container.test.spi.TestDeployment;
 import org.jboss.arquillian.container.test.spi.client.deployment.DeploymentPackager;
 import org.jboss.arquillian.container.test.spi.client.deployment.ProtocolArchiveProcessor;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.arquillian.archive.ForgeRemoteAddon;
-import org.jboss.forge.arquillian.runner.CDIEnricherRemoteExtensionWorkaround;
 import org.jboss.shrinkwrap.api.Archive;
 
 public class ForgeDeploymentPackager implements DeploymentPackager
@@ -20,7 +18,6 @@ public class ForgeDeploymentPackager implements DeploymentPackager
       {
          ForgeArchive deployment = ForgeArchive.class.cast(testDeployment.getApplicationArchive());
 
-         deployment.addAsServiceProvider(RemoteLoadableExtension.class, CDIEnricherRemoteExtensionWorkaround.class);
          deployment.addAsLibraries(testDeployment.getAuxiliaryArchives());
          deployment.addClasses(ForgeArchive.class);
 
