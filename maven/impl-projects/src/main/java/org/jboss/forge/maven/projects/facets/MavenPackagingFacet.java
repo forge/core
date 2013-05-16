@@ -125,7 +125,21 @@ public class MavenPackagingFacet extends AbstractFacet<Project> implements Packa
    {
       MavenFacet mavenFacet = getOrigin().getFacet(MavenFacet.class);
       Model pom = mavenFacet.getPOM();
-      return pom.getBuild().getFinalName();
+      Build build = pom.getBuild();
+      return build != null ? build.getFinalName() : getDefaultFinalName();
+   }
+
+   /**
+    * @return The maven calculated final name as specified in http://maven.apache.org/pom.html
+    */
+   private String getDefaultFinalName()
+   {
+      MavenFacet mavenFacet = getOrigin().getFacet(MavenFacet.class);
+      Model pom = mavenFacet.getPOM();
+      String version = pom.getVersion();
+      if (version == null && pom.getParent() != null)
+         version = pom.getParent().getVersion();
+      return pom.getArtifactId() + "-" + version;
    }
 
    @Override
