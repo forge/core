@@ -24,7 +24,6 @@ import org.jboss.forge.projects.ProjectFactory;
 import org.jboss.forge.projects.facets.MetadataFacet;
 import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -51,7 +50,6 @@ public class ServletFacetTest
    private FacetFactory facetFactory;
 
    @Test
-   @Ignore("Conflicts with Arquillian + JBoss Modules")
    public void testWebXMLCreatedWhenInstalled() throws Exception
    {
       Project project = projectFactory.createTempProject();

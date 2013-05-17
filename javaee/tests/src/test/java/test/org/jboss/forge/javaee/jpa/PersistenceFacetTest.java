@@ -22,7 +22,6 @@ import org.jboss.forge.projects.Project;
 import org.jboss.forge.projects.ProjectFactory;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -63,7 +62,6 @@ public class PersistenceFacetTest
    }
 
    @Test
-   @Ignore("Conflicts with Arquillian + JBoss Modules")
    public void testCanWritePersistenceConfigFile() throws Exception
    {
       facetFactory.install(PersistenceFacet.class, project);
