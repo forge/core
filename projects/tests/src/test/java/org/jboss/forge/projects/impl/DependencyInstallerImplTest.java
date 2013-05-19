@@ -97,7 +97,7 @@ public class DependencyInstallerImplTest
    {
       DependencyFacet deps = project.getFacet(DependencyFacet.class);
 
-      DependencyBuilder dependency = DependencyBuilder.create("org.jboss.forge:forge-addon-container-api");
+      DependencyBuilder dependency = DependencyBuilder.create("org.jboss.forge.furnace:furnace-api");
       Assert.assertFalse(deps.hasEffectiveDependency(dependency));
       Assert.assertFalse(deps.hasEffectiveManagedDependency(dependency));
       installer.install(project, dependency);

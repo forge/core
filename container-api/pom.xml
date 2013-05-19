@@ -9,7 +9,8 @@
       <relativePath>../pom.xml</relativePath>
    </parent>
 
-   <artifactId>forge-addon-container-api</artifactId>
+   <groupId>org.jboss.forge.furnace</groupId>
+   <artifactId>furnace-api</artifactId>
 
    <name>Forge - Addon Container API</name>
 

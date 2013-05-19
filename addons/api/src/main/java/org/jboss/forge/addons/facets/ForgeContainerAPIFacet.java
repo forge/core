@@ -22,8 +22,9 @@ import org.jboss.forge.projects.dependencies.DependencyInstaller;
 public class ForgeContainerAPIFacet extends AbstractFacet<Project> implements ProjectFacet
 {
    public static Dependency FORGE_API_DEPENDENCY = DependencyBuilder.create()
-            .setArtifactId("forge-addon-container-api")
-            .setGroupId("org.jboss.forge").setScopeType("provided");
+            .setGroupId("org.jboss.forge.furnace")
+            .setArtifactId("furnace-api")
+            .setScopeType("provided");
 
    @Inject
    private DependencyInstaller installer;

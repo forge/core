@@ -7,7 +7,8 @@
    General Public ~ License along with this software; if not, write to the Free ~ Software Foundation, Inc., 51 Franklin St, 
    Fifth Floor, Boston, MA ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org. -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
    <modelVersion>4.0.0</modelVersion>
 
    <parent>
@@ -17,17 +18,15 @@
       <relativePath>../pom.xml</relativePath>
    </parent>
 
-   <artifactId>forge-addon-container</artifactId>
-   <packaging>jar</packaging>
-   <name>Forge - Addon Container</name>
+   <groupId>org.jboss.forge.furnace</groupId>
+   <artifactId>furnace</artifactId>
 
-   <properties>
-   </properties>
+   <name>Furnace - Addon Container</name>
 
    <dependencies>
       <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>forge-addon-container-api</artifactId>
+         <groupId>org.jboss.forge.furnace</groupId>
+         <artifactId>furnace-api</artifactId>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge</groupId>
@@ -40,8 +39,8 @@
       </dependency>
 
       <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>forge-proxy</artifactId>
+         <groupId>org.jboss.forge.furnace</groupId>
+         <artifactId>furnace-proxy</artifactId>
       </dependency>
 
       <dependency>
@@ -64,18 +63,6 @@
       <dependency>
          <groupId>org.slf4j</groupId>
          <artifactId>slf4j-jdk14</artifactId>
-      </dependency>
-
-      <!-- Tests -->
-      <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>forge-test-harness</artifactId>
-         <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.arquillian.container</groupId>
-         <artifactId>arquillian-weld-se-embedded-1.1</artifactId>
-         <scope>test</scope>
       </dependency>
 
    </dependencies>

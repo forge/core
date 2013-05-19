@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
 
    <parent>
@@ -80,17 +81,20 @@
             <activeByDefault>true</activeByDefault>
          </activation>
          <modules>
-            <module>arquillian</module>
             <module>bootstrap</module>
+            <module>parser-xml</module>
+            <module>dist</module>
+
+            <module>arquillian</module>
+            <module>test-harness</module>
+            
+            <!-- TODO: Move Furnace -->
             <module>container</module>
             <module>container-api</module>
             <module>container-tests</module>
-            <module>parser-xml</module>
             <module>proxy</module>
             <module>proxy-tests</module>
             <module>se</module>
-            <module>test-harness</module>
-            <module>dist</module>
 
             <!-- TODO: Remove these modules -->
             <module>addon-manager</module>
@@ -113,6 +117,60 @@
 
    <dependencyManagement>
       <dependencies>
+         <!-- Furnace Container -->
+         <dependency>
+            <groupId>org.jboss.forge.furnace</groupId>
+            <artifactId>furnace-api</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.furnace</groupId>
+            <artifactId>furnace</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.furnace</groupId>
+            <artifactId>furnace-proxy</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.furnace</groupId>
+            <artifactId>furnace-se</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>forge-jboss-modules</artifactId>
+            <version>${version.jboss.modules}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>forge-javassist</artifactId>
+            <version>${version.javassist}</version>
+            <scope>compile</scope>
+         </dependency>
+         
+         
+         <!-- Test Harneses Dependencies -->
+         <dependency>
+            <groupId>org.jboss.forge.test</groupId>
+            <artifactId>forge-test-harness</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.test</groupId>
+            <artifactId>arquillian-forge-classpath</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.test</groupId>
+            <artifactId>arquillian-forge-core</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+         </dependency>
+
          <!-- SLF4J Logging API -->
          <dependency>
             <groupId>org.slf4j</groupId>
@@ -136,12 +194,7 @@
             <artifactId>jboss-logmanager</artifactId>
             <version>${version.org.jboss.logmanager.jboss-logmanager}</version>
          </dependency>
-
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-jboss-modules</artifactId>
-            <version>${version.jboss.modules}</version>
-         </dependency>
+         
          <dependency>
             <groupId>org.jboss.spec</groupId>
             <artifactId>jboss-javaee-6.0</artifactId>
@@ -155,13 +208,6 @@
             <version>${version.cdi}</version>
          </dependency>
 
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-javassist</artifactId>
-            <version>${version.javassist}</version>
-            <scope>compile</scope>
-         </dependency>
-
          <!-- Test Dependencies -->
          <dependency>
             <groupId>junit</groupId>
@@ -169,12 +215,7 @@
             <version>${version.junit}</version>
             <scope>test</scope>
          </dependency>
-         <dependency>
-            <groupId>org.jboss.arquillian.container</groupId>
-            <artifactId>arquillian-weld-se-embedded-1.1</artifactId>
-            <version>${version.arquillian.container}</version>
-            <scope>test</scope>
-         </dependency>
+         
          <!-- The Shrinkwrap resolver BOM should be placed BEFORE the arquillian BOM, otherwise, it will be useless -->
          <dependency>
             <groupId>org.jboss.shrinkwrap.resolver</groupId>
@@ -216,16 +257,6 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-proxy</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-se</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
             <artifactId>addon-manager</artifactId>
             <version>${project.version}</version>
          </dependency>
@@ -237,16 +268,6 @@
          <dependency>
             <groupId>org.jboss.forge</groupId>
             <artifactId>forge-parser-xml</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-addon-container-api</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-addon-container</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>
@@ -284,31 +305,6 @@
             <artifactId>example</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
-         </dependency>
-         <!-- Test Dependencies -->
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-test-harness</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>arquillian-forge-classpath</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>arquillian-forge-managed</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>arquillian-forge-remote</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
          </dependency>
       </dependencies>
    </dependencyManagement>
@@ -509,7 +505,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore />
+                              <ignore/>
                            </action>
                         </pluginExecution>
                         <pluginExecution>
@@ -526,7 +522,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore />
+                              <ignore/>
                            </action>
                         </pluginExecution>
                         <pluginExecution>
@@ -543,7 +539,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore />
+                              <ignore/>
                            </action>
                         </pluginExecution>
                         <pluginExecution>
@@ -562,7 +558,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore />
+                              <ignore/>
                            </action>
                         </pluginExecution>
                      </pluginExecutions>

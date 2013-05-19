@@ -3,8 +3,8 @@
    <modelVersion>4.0.0</modelVersion>
 
    <parent>
+      <groupId>org.jboss.forge.test</groupId>
       <artifactId>arquillian-forge-parent</artifactId>
-      <groupId>org.jboss.forge</groupId>
       <version>2.0.0-SNAPSHOT</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
@@ -13,6 +13,10 @@
    <name>Forge - Arquillian Container Adapter - Core</name>
 
    <dependencies>
+      <dependency>
+         <groupId>org.jboss.forge.furnace</groupId>
+         <artifactId>furnace-api</artifactId>
+      </dependency>
       <dependency>
          <groupId>org.jboss.forge</groupId>
          <artifactId>addon-manager-impl</artifactId>
@@ -28,10 +32,6 @@
       <dependency>
          <groupId>org.jboss.forge</groupId>
          <artifactId>resources-api</artifactId>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>forge-addon-container-api</artifactId>
       </dependency>
       <dependency>
          <groupId>junit</groupId>

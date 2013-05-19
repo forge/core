@@ -112,7 +112,7 @@ public class ForgeAddonSetupStep implements UIWizardStep
 
    private void configureVersions()
    {
-      Coordinate c = CoordinateBuilder.create().setGroupId("org.jboss.forge").setArtifactId("forge-addon-container");
+      Coordinate c = CoordinateBuilder.create().setGroupId("org.jboss.forge.furnace").setArtifactId("furnace");
       List<Version> versions = new ArrayList<Version>();
       for (Coordinate versionCoord : dependencyResolver.resolveVersions(DependencyQueryBuilder.create(c)))
       {

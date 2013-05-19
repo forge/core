@@ -18,8 +18,8 @@
          <artifactId>java-parser-impl</artifactId>
       </dependency>
       <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>forge-addon-container-api</artifactId>
+         <groupId>org.jboss.forge.furnace</groupId>
+         <artifactId>furnace-api</artifactId>
          <scope>provided</scope>
       </dependency>
       <dependency>

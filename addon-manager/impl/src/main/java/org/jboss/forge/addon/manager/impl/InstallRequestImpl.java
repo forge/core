@@ -198,8 +198,8 @@ public class InstallRequestImpl implements InstallRequest
                   public boolean accept(DependencyNode node)
                   {
                      Coordinate coordinate = node.getDependency().getCoordinate();
-                     return "org.jboss.forge".equals(coordinate.getGroupId())
-                              && "forge-addon-container-api".equals(coordinate.getArtifactId());
+                     return "org.jboss.forge.furnace".equals(coordinate.getGroupId())
+                              && "furnace-api".equals(coordinate.getArtifactId());
                   }
                });
 

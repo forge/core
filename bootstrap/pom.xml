@@ -25,8 +25,8 @@
          <artifactId>resources-api</artifactId>
       </dependency>
       <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>forge-addon-container</artifactId>
+         <groupId>org.jboss.forge.furnace</groupId>
+         <artifactId>furnace</artifactId>
       </dependency>
       <!-- Optional log manager dependency -->
       <dependency>

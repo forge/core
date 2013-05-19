@@ -103,7 +103,7 @@ public class NewAddonProjectAeshTest
 
       // DependencyFacet dependencies = project.getFacet(DependencyFacet.class);
       // Assert.assertTrue(dependencies.hasEffectiveDependency(DependencyBuilder.create()
-      // .setGroupId("org.jboss.forge").setArtifactId("forge-addon-container-api")));
+      // .setGroupId("org.jboss.forge.furnace").setArtifactId("furnace-api")));
       // Assert.assertTrue("ADDON module is missing", projectRoot.getChild("addon").exists());
       // Assert.assertTrue("API module is missing", projectRoot.getChild("api").exists());
       // Assert.assertTrue("IMPL module is missing", projectRoot.getChild("impl").exists());

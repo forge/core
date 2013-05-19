@@ -11,13 +11,8 @@
 
    <dependencies>
       <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>forge-addon-container-api</artifactId>
-         <scope>provided</scope>
-      </dependency>
-      <dependency>
-         <groupId>javax.enterprise</groupId>
-         <artifactId>cdi-api</artifactId>
+         <groupId>org.jboss.forge.furnace</groupId>
+         <artifactId>furnace-api</artifactId>
          <scope>provided</scope>
       </dependency>
       <dependency>
@@ -41,12 +36,12 @@
       </dependency>
 
       <dependency>
-         <groupId>org.jboss.forge</groupId>
+         <groupId>org.jboss.forge.test</groupId>
          <artifactId>forge-test-harness</artifactId>
          <scope>test</scope>
       </dependency>
       <dependency>
-         <groupId>org.jboss.forge</groupId>
+         <groupId>org.jboss.forge.test</groupId>
          <artifactId>arquillian-forge-classpath</artifactId>
          <scope>test</scope>
       </dependency>

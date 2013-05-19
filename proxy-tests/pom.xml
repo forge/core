@@ -3,7 +3,8 @@
 <!-- ~ Copyright 2012 Red Hat, Inc. and/or its affiliates. ~ ~ Licensed under the Eclipse Public License version 1.0, available 
    at ~ http://www.eclipse.org/legal/epl-v10.html -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
    <modelVersion>4.0.0</modelVersion>
 
    <parent>
@@ -19,8 +20,8 @@
 
    <dependencies>
       <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>forge-proxy</artifactId>
+         <groupId>org.jboss.forge.furnace</groupId>
+         <artifactId>furnace-proxy</artifactId>
          <scope>test</scope>
       </dependency>
 
@@ -35,16 +36,16 @@
          <groupId>org.jboss.forge</groupId>
          <artifactId>ui-example</artifactId>
          <version>${project.version}</version>
-		 <classifier>forge-addon</classifier>
+         <classifier>forge-addon</classifier>
          <scope>test</scope>
       </dependency>
       <dependency>
-         <groupId>org.jboss.forge</groupId>
+         <groupId>org.jboss.forge.test</groupId>
          <artifactId>forge-test-harness</artifactId>
          <scope>test</scope>
       </dependency>
       <dependency>
-         <groupId>org.jboss.forge</groupId>
+         <groupId>org.jboss.forge.test</groupId>
          <artifactId>arquillian-forge-classpath</artifactId>
          <scope>test</scope>
       </dependency>

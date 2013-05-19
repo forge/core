@@ -42,6 +42,8 @@ import org.jboss.forge.resource.DirectoryResource;
 @SuppressWarnings("unchecked")
 class AddonProjectConfigurator
 {
+   private static final String FORGE_ADDON_CLASSIFIER = "forge-addon";
+
    private Logger log = Logger.getLogger(getClass().getName());
 
    @Inject
@@ -55,6 +57,7 @@ class AddonProjectConfigurator
 
    public void setupSimpleAddonProject(Project project, Version forgeVersion, Iterable<AddonId> dependencyAddons)
    {
+      // TODO Use or remove forgeVersion parameter
       facetFactory.install(ForgeContainerAPIFacet.class, project);
       facetFactory.install(ForgeAddonFacet.class, project);
       facetFactory.install(ForgeAddonAPIFacet.class, project);
@@ -94,11 +97,11 @@ class AddonProjectConfigurator
 
       Dependency spiProjectDependency = DependencyBuilder.create(
                spiProject.getFacet(MetadataFacet.class).getOutputDependency())
-               .setClassifier("forge-addon");
+               .setClassifier(FORGE_ADDON_CLASSIFIER);
 
       Dependency addonProjectDependency = DependencyBuilder.create(
                addonProject.getFacet(MetadataFacet.class).getOutputDependency())
-               .setClassifier("forge-addon");
+               .setClassifier(FORGE_ADDON_CLASSIFIER);
 
       dependencyInstaller.installManaged(project,
                DependencyBuilder.create(addonProjectDependency).setVersion("${project.version}"));
@@ -135,7 +138,7 @@ class AddonProjectConfigurator
          String[] mavenCoords = addon.getName().split(":");
          DependencyBuilder dependency = DependencyBuilder.create().setGroupId(mavenCoords[0])
                   .setArtifactId(mavenCoords[1])
-                  .setVersion(addon.getVersion().getVersionString()).setClassifier("forge-addon");
+                  .setVersion(addon.getVersion().getVersionString()).setClassifier(FORGE_ADDON_CLASSIFIER);
          if (managed)
          {
             dependencyInstaller.installManaged(project, dependency);

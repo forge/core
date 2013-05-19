@@ -13,19 +13,19 @@
       <relativePath>../pom.xml</relativePath>
    </parent>
 
-   <artifactId>forge-proxy</artifactId>
+   <groupId>org.jboss.forge.furnace</groupId>
+   <artifactId>furnace-proxy</artifactId>
 
-   <name>Forge - Proxy Utilities</name>
+   <name>Furnace - Proxy Utilities</name>
 
    <dependencies>
       <dependency>
          <groupId>org.jboss.forge</groupId>
          <artifactId>forge-javassist</artifactId>
       </dependency>
-
       <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>forge-addon-container-api</artifactId>
+         <groupId>org.jboss.forge.furnace</groupId>
+         <artifactId>furnace-api</artifactId>
       </dependency>
    </dependencies>
 </project>

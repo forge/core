@@ -69,7 +69,7 @@ public class AddonProjectConfiguratorTest
       metadataFacet.setProjectVersion("1.0.0-SNAPSHOT");
       metadataFacet.setTopLevelPackage("com.acme.testproject");
 
-      SingleVersion forgeVersion = new SingleVersion("2.0.0.Alpha3");
+      SingleVersion forgeVersion = new SingleVersion("2.0.0-SNAPSHOT");
       addonProjectFactory.setupAddonProject(project, forgeVersion, Collections.<AddonId> emptyList());
 
       DirectoryResource projectRoot = project.getProjectRoot();
@@ -244,7 +244,7 @@ public class AddonProjectConfiguratorTest
       metadataFacet.setProjectVersion("1.0.0-SNAPSHOT");
       metadataFacet.setTopLevelPackage("com.acme.testproject");
 
-      SingleVersion forgeVersion = new SingleVersion("2.0.0.Alpha3");
+      SingleVersion forgeVersion = new SingleVersion("2.0.0-SNAPSHOT");
       addonProjectFactory.setupSimpleAddonProject(project, forgeVersion, Collections.<AddonId> emptyList());
 
       Assert.assertTrue(project.hasFacet(CDIFacet.class));
