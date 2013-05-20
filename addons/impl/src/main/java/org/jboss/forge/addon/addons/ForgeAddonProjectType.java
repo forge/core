@@ -19,7 +19,7 @@ public class ForgeAddonProjectType implements ProjectType
    @Override
    public String getType()
    {
-      return "Furnace Addon";
+      return "Forge Addon";
    }
 
    @Override
