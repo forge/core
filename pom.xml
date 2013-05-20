@@ -70,6 +70,7 @@
       <version.org.jboss.logmanager.jboss-logmanager>1.4.1.Final</version.org.jboss.logmanager.jboss-logmanager>
       <version.shrinkwrap.resolver>2.0.0-beta-3</version.shrinkwrap.resolver>
       <version.slf4j>1.6.1</version.slf4j>
+      <version.xmlparser>1.0.0.Final</version.xmlparser>
       <version.weld>2.0.0.Final</version.weld>
       <version.weld.spi>2.0.Final</version.weld.spi>
    </properties>
@@ -82,7 +83,6 @@
          </activation>
          <modules>
             <module>bootstrap</module>
-            <module>parser-xml</module>
             <module>dist</module>
 
             <module>arquillian</module>
@@ -156,8 +156,8 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-parser-xml</artifactId>
-            <version>${project.version}</version>
+            <artifactId>xml-parser</artifactId>
+            <version>${version.xmlparser}</version>
          </dependency>
          
          

@@ -30,7 +30,7 @@
       </dependency>
       <dependency>
          <groupId>org.jboss.forge</groupId>
-         <artifactId>forge-parser-xml</artifactId>
+         <artifactId>xml-parser</artifactId>
       </dependency>
 
       <dependency>

@@ -12,7 +12,7 @@
    <groupId>org.jboss.forge.furnace</groupId>
    <artifactId>furnace-api</artifactId>
 
-   <name>Forge - Addon Container API</name>
+   <name>Furnace - Addon Container API</name>
 
    <dependencies>
       <dependency>

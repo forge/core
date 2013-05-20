@@ -14,9 +14,9 @@
       <relativePath>../pom.xml</relativePath>
    </parent>
 
-   <artifactId>forge-proxy-tests</artifactId>
+   <artifactId>furnace-proxy-tests</artifactId>
 
-   <name>Forge - Proxy Tests</name>
+   <name>Furnace - Proxy Tests</name>
 
    <dependencies>
       <dependency>
