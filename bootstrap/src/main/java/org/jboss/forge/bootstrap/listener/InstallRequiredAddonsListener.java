@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.jboss.forge.addon.dependencies.Coordinate;
+import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
+import org.jboss.forge.addon.dependencies.builder.DependencyQueryBuilder;
 import org.jboss.forge.addon.manager.InstallRequest;
 import org.jboss.forge.addon.manager.impl.AddonManagerImpl;
 import org.jboss.forge.container.Forge;
@@ -19,12 +22,9 @@ import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.exception.ContainerException;
 import org.jboss.forge.container.repositories.AddonRepository;
 import org.jboss.forge.container.spi.ContainerLifecycleListener;
-import org.jboss.forge.dependencies.Coordinate;
-import org.jboss.forge.dependencies.builder.CoordinateBuilder;
-import org.jboss.forge.dependencies.builder.DependencyQueryBuilder;
-import org.jboss.forge.maven.dependencies.FileResourceFactory;
-import org.jboss.forge.maven.dependencies.MavenContainer;
-import org.jboss.forge.maven.dependencies.MavenDependencyResolver;
+import org.jboss.forge.maven.addon.dependencies.FileResourceFactory;
+import org.jboss.forge.maven.addon.dependencies.MavenContainer;
+import org.jboss.forge.maven.addon.dependencies.MavenDependencyResolver;
 
 /**
  * Installs the required core org.jboss.forge {@link Addon} instances.

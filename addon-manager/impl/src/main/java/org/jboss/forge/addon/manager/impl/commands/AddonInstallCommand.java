@@ -4,16 +4,16 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jboss.forge.addon.manager.AddonManager;
+import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.context.UIBuilder;
+import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIValidationContext;
+import org.jboss.forge.addon.ui.input.UIInput;
+import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
+import org.jboss.forge.addon.ui.result.Result;
+import org.jboss.forge.addon.ui.result.Results;
+import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.container.addons.AddonId;
-import org.jboss.forge.ui.UICommand;
-import org.jboss.forge.ui.context.UIBuilder;
-import org.jboss.forge.ui.context.UIContext;
-import org.jboss.forge.ui.context.UIValidationContext;
-import org.jboss.forge.ui.input.UIInput;
-import org.jboss.forge.ui.metadata.UICommandMetadata;
-import org.jboss.forge.ui.result.Result;
-import org.jboss.forge.ui.result.Results;
-import org.jboss.forge.ui.util.Metadata;
 
 @Singleton
 public class AddonInstallCommand implements UICommand

@@ -1,6 +1,6 @@
 package org.jboss.forge.addon.facets;
 
-import org.jboss.forge.facets.AbstractFaceted;
+import org.jboss.forge.addon.facets.AbstractFaceted;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

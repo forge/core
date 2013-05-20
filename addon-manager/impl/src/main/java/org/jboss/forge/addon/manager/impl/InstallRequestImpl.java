@@ -16,6 +16,9 @@ import java.util.Stack;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
+import org.jboss.forge.addon.dependencies.Coordinate;
+import org.jboss.forge.addon.dependencies.DependencyNode;
+import org.jboss.forge.addon.dependencies.collection.DependencyNodeUtil;
 import org.jboss.forge.addon.manager.AddonManager;
 import org.jboss.forge.addon.manager.InstallRequest;
 import org.jboss.forge.addon.manager.impl.filters.DirectAddonFilter;
@@ -28,9 +31,6 @@ import org.jboss.forge.container.repositories.AddonRepository;
 import org.jboss.forge.container.repositories.MutableAddonRepository;
 import org.jboss.forge.container.util.Assert;
 import org.jboss.forge.container.util.Predicate;
-import org.jboss.forge.dependencies.Coordinate;
-import org.jboss.forge.dependencies.DependencyNode;
-import org.jboss.forge.dependencies.collection.DependencyNodeUtil;
 
 /**
  * When an addon is installed, another addons could be required. This object returns the necessary information for the

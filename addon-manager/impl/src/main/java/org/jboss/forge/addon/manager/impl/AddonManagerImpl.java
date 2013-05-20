@@ -9,6 +9,9 @@ package org.jboss.forge.addon.manager.impl;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.addon.dependencies.AddonDependencyResolver;
+import org.jboss.forge.addon.dependencies.DependencyNode;
+import org.jboss.forge.addon.dependencies.builder.DependencyQueryBuilder;
 import org.jboss.forge.addon.manager.AddonManager;
 import org.jboss.forge.addon.manager.DisableRequest;
 import org.jboss.forge.addon.manager.InstallRequest;
@@ -16,9 +19,6 @@ import org.jboss.forge.addon.manager.RemoveRequest;
 import org.jboss.forge.container.Forge;
 import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.repositories.AddonRepository;
-import org.jboss.forge.dependencies.AddonDependencyResolver;
-import org.jboss.forge.dependencies.DependencyNode;
-import org.jboss.forge.dependencies.builder.DependencyQueryBuilder;
 
 /**
  * Installs addons into an {@link AddonRepository}

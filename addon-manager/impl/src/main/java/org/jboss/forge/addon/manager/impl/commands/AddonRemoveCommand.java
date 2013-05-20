@@ -7,19 +7,19 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.manager.AddonManager;
+import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.context.UIBuilder;
+import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIValidationContext;
+import org.jboss.forge.addon.ui.input.UISelectMany;
+import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
+import org.jboss.forge.addon.ui.result.Result;
+import org.jboss.forge.addon.ui.result.Results;
+import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.container.Forge;
 import org.jboss.forge.container.addons.AddonId;
 import org.jboss.forge.container.repositories.AddonRepository;
 import org.jboss.forge.container.repositories.MutableAddonRepository;
-import org.jboss.forge.ui.UICommand;
-import org.jboss.forge.ui.context.UIBuilder;
-import org.jboss.forge.ui.context.UIContext;
-import org.jboss.forge.ui.context.UIValidationContext;
-import org.jboss.forge.ui.input.UISelectMany;
-import org.jboss.forge.ui.metadata.UICommandMetadata;
-import org.jboss.forge.ui.result.Result;
-import org.jboss.forge.ui.result.Results;
-import org.jboss.forge.ui.util.Metadata;
 
 public class AddonRemoveCommand implements UICommand, AddonCommandConstants
 {

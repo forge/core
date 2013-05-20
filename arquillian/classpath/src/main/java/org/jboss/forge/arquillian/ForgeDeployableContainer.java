@@ -35,9 +35,9 @@ import org.jboss.forge.container.repositories.MutableAddonRepository;
 import org.jboss.forge.container.util.Addons;
 import org.jboss.forge.container.util.ClassLoaders;
 import org.jboss.forge.container.util.Files;
-import org.jboss.forge.maven.dependencies.FileResourceFactory;
-import org.jboss.forge.maven.dependencies.MavenContainer;
-import org.jboss.forge.maven.dependencies.MavenDependencyResolver;
+import org.jboss.forge.maven.addon.dependencies.FileResourceFactory;
+import org.jboss.forge.maven.addon.dependencies.MavenContainer;
+import org.jboss.forge.maven.addon.dependencies.MavenDependencyResolver;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
