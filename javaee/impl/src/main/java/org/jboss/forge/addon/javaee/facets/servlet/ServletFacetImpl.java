@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.javaee.facet.servlet;
+package org.jboss.forge.addon.javaee.facets.servlet;
 
 import java.io.File;
 import java.io.InputStream;
@@ -20,8 +20,8 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.facets.FacetFactory;
-import org.jboss.forge.addon.javaee.facet.AbstractJavaEEFacet;
-import org.jboss.forge.addon.javaee.facet.ServletFacet;
+import org.jboss.forge.addon.javaee.facets.AbstractJavaEEFacet;
+import org.jboss.forge.addon.javaee.facets.ServletFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;

@@ -23,7 +23,7 @@ import org.jboss.forge.addon.addons.facets.ForgeContainerAPIFacet;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.facets.FacetFactory;
-import org.jboss.forge.addon.javaee.facet.CDIFacet;
+import org.jboss.forge.addon.javaee.facets.CDIFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectFactory;

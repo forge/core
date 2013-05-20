@@ -16,7 +16,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.javaee.JavaEETestHelper;
-import org.jboss.forge.addon.javaee.facet.CDIFacet;
+import org.jboss.forge.addon.javaee.facets.CDIFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.arquillian.Addon;

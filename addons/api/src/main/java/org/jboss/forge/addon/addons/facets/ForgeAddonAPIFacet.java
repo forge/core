@@ -10,7 +10,7 @@ package org.jboss.forge.addon.addons.facets;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jboss.forge.addon.javaee.facet.CDIFacet;
+import org.jboss.forge.addon.javaee.facets.CDIFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.ProjectFacet;
 
