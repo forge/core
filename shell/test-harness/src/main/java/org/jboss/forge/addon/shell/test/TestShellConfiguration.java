@@ -71,5 +71,4 @@ public class TestShellConfiguration implements ShellConfiguration
    {
       return stderr;
    }
-
 }

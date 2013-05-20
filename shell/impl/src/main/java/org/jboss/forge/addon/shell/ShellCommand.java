@@ -84,7 +84,7 @@ public class ShellCommand implements Completion
       return context.getParser().parse(line);
    }
 
-   public void run(ConsoleOutput consoleOutput, CommandLine commandLine) throws Exception
+   public Result run(ConsoleOutput consoleOutput, CommandLine commandLine) throws Exception
    {
       CommandLineUtil.populateUIInputs(commandLine, context, registry);
       context.setConsoleOutput(consoleOutput);
@@ -92,6 +92,7 @@ public class ShellCommand implements Completion
       if (result != null &&
                result.getMessage() != null && result.getMessage().length() > 0)
          getConsole().pushToStdOut(result.getMessage() + Config.getLineSeparator());
+      return result;
    }
 
    public boolean isStandalone()

@@ -22,7 +22,7 @@ import org.junit.runner.RunWith;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Ignore
+@Ignore("Problematic test. Needs digging.")
 @RunWith(Arquillian.class)
 public class NewProjectAeshTest
 {

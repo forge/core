@@ -10,13 +10,12 @@ package org.jboss.forge.addon.ui.result;
 import org.jboss.forge.addon.ui.UICommand;
 
 /**
+ * Utilities for creating {@link Result} instances.
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public abstract class Results implements Result, Failed
+public final class Results
 {
-   private final String message;
-   private Throwable exception;
-
    public static final Result success()
    {
       return success(null);
@@ -24,17 +23,17 @@ public abstract class Results implements Result, Failed
 
    public static final Result success(String message)
    {
-      return new ResultSuccess(message);
+      return new SuccessfulResult(message);
    }
 
    public static final Result fail(String message)
    {
-      return new ResultsFail(message);
+      return new FailedResult(message);
    }
 
    public static final Result fail(String message, Throwable e)
    {
-      return new ResultsFail(message, e);
+      return new FailedResult(message, e);
    }
 
    public static final NavigationResult navigateTo(Class<? extends UICommand> next)
@@ -50,26 +49,48 @@ public abstract class Results implements Result, Failed
       return new NavigationResultImpl(message, next);
    }
 
-   Results(String message)
+   private static class SuccessfulResult implements Result
    {
-      this.message = message;
+      private String message;
+
+      SuccessfulResult(String message)
+      {
+         this.message = message;
+      }
+
+      @Override
+      public String getMessage()
+      {
+         return message;
+      }
    }
 
-   public Results(String message, Throwable e)
+   private static class FailedResult implements Result, Failed
    {
-      this.message = message;
-      this.exception = e;
-   }
+      private String message;
+      private Throwable e;
 
-   @Override
-   public String getMessage()
-   {
-      return this.message;
-   }
+      FailedResult(String message)
+      {
+         this.message = message;
+      }
 
-   @Override
-   public Throwable getException()
-   {
-      return exception;
+      public FailedResult(String message, Throwable e)
+      {
+         this.message = message;
+         this.e = e;
+      }
+
+      @Override
+      public String getMessage()
+      {
+         return message;
+      }
+
+      @Override
+      public Throwable getException()
+      {
+         return e;
+      }
    }
 }

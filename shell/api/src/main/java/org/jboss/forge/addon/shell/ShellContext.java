@@ -72,6 +72,7 @@ public class ShellContext extends AbstractUIContext implements UIValidationConte
    }
 
    @Override
+   @SuppressWarnings("unchecked")
    public UIBuilder add(InputComponent<?, ?> input)
    {
       inputs.add((InputComponent<?, Object>) input);
@@ -94,6 +95,7 @@ public class ShellContext extends AbstractUIContext implements UIValidationConte
    }
 
    @Override
+   @SuppressWarnings("unchecked")
    public void addValidationError(InputComponent<?, ?> input, String errorMessage)
    {
       // TODO: ignoring errorMessage for now
@@ -137,17 +139,20 @@ public class ShellContext extends AbstractUIContext implements UIValidationConte
       };
    }
 
-    @Override
-    public Object getAttribute(Object key) {
-        return null;
-    }
+   @Override
+   public Object getAttribute(Object key)
+   {
+      return null;
+   }
 
-    @Override
-    public Object removeAttribute(Object key) {
-        return null;
-    }
+   @Override
+   public Object removeAttribute(Object key)
+   {
+      return null;
+   }
 
-    @Override
-    public void setAttribute(Object key, Object value) {
-    }
+   @Override
+   public void setAttribute(Object key, Object value)
+   {
+   }
 }

@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,13 +34,14 @@ import org.jboss.aesh.console.settings.Settings;
 import org.jboss.aesh.terminal.CharacterType;
 import org.jboss.aesh.terminal.Color;
 import org.jboss.aesh.terminal.TerminalCharacter;
-import org.jboss.forge.addon.shell.ForgeShell;
+import org.jboss.forge.addon.shell.spi.CommandExecutionListener;
 import org.jboss.forge.addon.shell.spi.ShellConfiguration;
 import org.jboss.forge.addon.shell.util.CommandLineUtil;
 import org.jboss.forge.addon.shell.util.UICommandDelegate;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
+import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
@@ -48,6 +50,8 @@ import org.jboss.forge.furnace.event.PostStartup;
 import org.jboss.forge.furnace.event.PreShutdown;
 import org.jboss.forge.furnace.services.Exported;
 import org.jboss.forge.furnace.services.ExportedInstance;
+import org.jboss.forge.furnace.spi.ListenerRegistration;
+import org.jboss.forge.furnace.util.Assert;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
@@ -73,15 +77,33 @@ public class ForgeShellImpl implements ForgeShell
    @Inject
    private AddonRegistry registry;
 
+   private List<CommandExecutionListener> commandListeners = new CopyOnWriteArrayList<CommandExecutionListener>();
+
    void observe(@Observes PostStartup startup) throws Exception
    {
       startShell();
    }
 
+   @Override
+   public void startShell() throws Exception
+   {
+      initShell();
+      console.start();
+   }
+
    void stop(@Observes PreShutdown shutdown) throws Exception
    {
+      stopShell();
+   }
+
+   @Override
+   public void stopShell() throws IOException
+   {
       if (console != null && console.isRunning())
+      {
          console.stop();
+         console.reset();
+      }
    }
 
    public void addCommand(ShellCommand command)
@@ -167,34 +189,21 @@ public class ForgeShellImpl implements ForgeShell
       return false;
    }
 
-   public void startShell() throws Exception
-   {
-      initShell();
-      console.start();
-   }
-
    public AddonRegistry getRegistry()
    {
       return registry;
    }
 
+   @Override
    public String getPrompt()
    {
       return prompt.getPromptAsString();
    }
 
+   @Override
    public Console getConsole()
    {
       return console;
-   }
-
-   public void stopShell() throws IOException
-   {
-      if (console != null && console.isRunning())
-      {
-         console.stop();
-         console.reset();
-      }
    }
 
    private Prompt createPrompt()
@@ -274,7 +283,7 @@ public class ForgeShellImpl implements ForgeShell
                }
                // we have come to the final step, execute the wizard
                else
-                  return executeWizardSteps();
+                  return executeWizardSteps(output);
             }
 
          }
@@ -296,20 +305,27 @@ public class ForgeShellImpl implements ForgeShell
        * 
        * @throws IOException
        */
-      private int executeWizardSteps() throws IOException
+      private int executeWizardSteps(ConsoleOutput output) throws IOException
       {
          for (ShellCommand command : wizardSteps)
          {
+            Result result = null;
             try
             {
-               Result result = command.getCommand().execute(command.getContext());
+               invokePreCommandExecutedListeners(command.getCommand(), command.getContext());
+               result = command.getCommand().execute(command.getContext());
                if (result != null &&
                         result.getMessage() != null && result.getMessage().length() > 0)
                   getConsole().pushToStdOut(result.getMessage() + Config.getLineSeparator());
             }
             catch (Exception e)
             {
-               // not sure what we do here, need to think about it
+               result = Results.fail("Command " + command + " failed to run with: " + output, e);
+               result = Results.fail("Failed to execute:" + getConsole().getHistory().getCurrent(), e);
+            }
+            finally
+            {
+               invokePostCommandExecutedListeners(command.getCommand(), command.getContext(), result);
             }
          }
          // empty the list
@@ -317,9 +333,42 @@ public class ForgeShellImpl implements ForgeShell
          return 1;
       }
 
+      private void invokePreCommandExecutedListeners(UICommand command, ShellContext context)
+      {
+         for (CommandExecutionListener listener : commandListeners)
+         {
+            listener.preCommandExecuted(command, context);
+         }
+
+         Set<ExportedInstance<CommandExecutionListener>> instances = registry
+                  .getExportedInstances(CommandExecutionListener.class);
+         for (ExportedInstance<CommandExecutionListener> exportedInstance : instances)
+         {
+            CommandExecutionListener listener = exportedInstance.get();
+            if (listener != null)
+               listener.preCommandExecuted(command, context);
+         }
+      }
+
+      private void invokePostCommandExecutedListeners(UICommand command, ShellContext context, Result result)
+      {
+         for (CommandExecutionListener listener : commandListeners)
+         {
+            listener.postCommandExecuted(command, context, result);
+         }
+
+         Set<ExportedInstance<CommandExecutionListener>> instances = registry
+                  .getExportedInstances(CommandExecutionListener.class);
+         for (ExportedInstance<CommandExecutionListener> exportedInstance : instances)
+         {
+            CommandExecutionListener listener = exportedInstance.get();
+            if (listener != null)
+               listener.postCommandExecuted(command, context, result);
+         }
+      }
+
       private int parseUICommand(ConsoleOutput output) throws IOException
       {
-         int result = 1;
          CommandLine cl = null;
          for (ShellCommand command : commands)
          {
@@ -334,16 +383,22 @@ public class ForgeShellImpl implements ForgeShell
                      wizardSteps.add(command);
                      return parseWizardStep(output);
                   }
+
+                  Result result = null;
                   try
                   {
-                     command.run(output, cl);
-                     result = 0;
+                     invokePreCommandExecutedListeners(command.getCommand(), command.getContext());
+                     result = command.run(output, cl);
                      break;
                   }
                   catch (Exception e)
                   {
+                     result = Results.fail("Command " + command + " failed to run with: " + output, e);
                      logger.log(Level.SEVERE, "Command " + command + " failed to run with: " + output, e);
-                     result = 1;
+                  }
+                  finally
+                  {
+                     invokePostCommandExecutedListeners(command.getCommand(), command.getContext(), result);
                   }
                }
             }
@@ -355,7 +410,6 @@ public class ForgeShellImpl implements ForgeShell
                {
                   console.pushToStdOut(iae.getMessage() + Config.getLineSeparator());
                   logger.info("GOT: " + iae.getMessage() + "\n Parser: " + command.getContext().getParser());
-                  result = 1;
                   break;
                }
                else
@@ -371,8 +425,26 @@ public class ForgeShellImpl implements ForgeShell
             console.pushToStdOut(output.getBuffer() + ": command not found." + Config.getLineSeparator());
          }
 
-         return result;
+         return 0;
       }
+   }
+
+   @Override
+   public ListenerRegistration<CommandExecutionListener> addCommandExecutionListener(
+            final CommandExecutionListener listener)
+   {
+      Assert.notNull(listener, "Listener must not be null.");
+      commandListeners.add(listener);
+
+      return new ListenerRegistration<CommandExecutionListener>()
+      {
+         @Override
+         public CommandExecutionListener removeListener()
+         {
+            commandListeners.remove(listener);
+            return listener;
+         }
+      };
    }
 
 }

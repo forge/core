@@ -9,13 +9,14 @@ package org.jboss.forge.addon.ui.result;
 
 import org.jboss.forge.addon.ui.UICommand;
 
-class NavigationResultImpl extends Results implements NavigationResult
+class NavigationResultImpl implements Result, NavigationResult
 {
    private Class<? extends UICommand> next;
+   private String message;
 
    public NavigationResultImpl(String message, Class<? extends UICommand> next)
    {
-      super(message);
+      this.message = message;
       this.next = next;
    }
 
@@ -23,6 +24,12 @@ class NavigationResultImpl extends Results implements NavigationResult
    public Class<? extends UICommand> getNext()
    {
       return next;
+   }
+
+   @Override
+   public String getMessage()
+   {
+      return message;
    }
 
 }
