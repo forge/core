@@ -26,7 +26,7 @@ import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.util.InputComponents;
-import org.jboss.forge.container.addons.AddonRegistry;
+import org.jboss.forge.furnace.addons.AddonRegistry;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>

@@ -11,8 +11,8 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.forge.arquillian.Addon;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
-import org.jboss.forge.container.addons.AddonId;
-import org.jboss.forge.container.repositories.AddonDependencyEntry;
+import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 
 /**

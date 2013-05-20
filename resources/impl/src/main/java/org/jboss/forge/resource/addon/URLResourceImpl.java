@@ -18,7 +18,7 @@ import org.jboss.forge.addon.resource.ResourceFacet;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.URLResource;
 import org.jboss.forge.addon.resource.VirtualResource;
-import org.jboss.forge.container.util.Assert;
+import org.jboss.forge.furnace.util.Assert;
 
 /**
  * Represents a {@link URL} resource

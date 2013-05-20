@@ -3,7 +3,7 @@ package org.jboss.forge.addon.manager.impl.filters;
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.forge.addon.dependencies.DependencyNode;
 import org.jboss.forge.addon.dependencies.collection.DependencyNodeUtil;
-import org.jboss.forge.container.util.Predicate;
+import org.jboss.forge.furnace.util.Predicate;
 
 /**
  * Checks if an addon node is a direct dependency of another node (root)

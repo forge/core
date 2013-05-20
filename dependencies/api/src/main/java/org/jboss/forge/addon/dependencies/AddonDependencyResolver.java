@@ -6,9 +6,9 @@
  */
 package org.jboss.forge.addon.dependencies;
 
-import org.jboss.forge.container.addons.Addon;
-import org.jboss.forge.container.repositories.AddonRepository;
-import org.jboss.forge.container.services.Exported;
+import org.jboss.forge.furnace.addons.Addon;
+import org.jboss.forge.furnace.repositories.AddonRepository;
+import org.jboss.forge.furnace.services.Exported;
 
 /**
  * A resolver that knows how to construct {@link DependencyNode} graphs for use in deploying {@link Addon} instances to

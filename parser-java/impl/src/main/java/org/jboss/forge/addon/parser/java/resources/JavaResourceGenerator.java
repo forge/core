@@ -6,7 +6,7 @@ import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.ResourceGenerator;
-import org.jboss.forge.container.services.Exported;
+import org.jboss.forge.furnace.services.Exported;
 
 @Exported
 public class JavaResourceGenerator implements ResourceGenerator<JavaResource, File>

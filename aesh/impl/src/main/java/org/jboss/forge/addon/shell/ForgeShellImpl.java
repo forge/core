@@ -41,13 +41,13 @@ import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
-import org.jboss.forge.container.Forge;
-import org.jboss.forge.container.addons.Addon;
-import org.jboss.forge.container.addons.AddonRegistry;
-import org.jboss.forge.container.event.PostStartup;
-import org.jboss.forge.container.event.PreShutdown;
-import org.jboss.forge.container.services.Exported;
-import org.jboss.forge.container.services.ExportedInstance;
+import org.jboss.forge.furnace.Furnace;
+import org.jboss.forge.furnace.addons.Addon;
+import org.jboss.forge.furnace.addons.AddonRegistry;
+import org.jboss.forge.furnace.event.PostStartup;
+import org.jboss.forge.furnace.event.PreShutdown;
+import org.jboss.forge.furnace.services.Exported;
+import org.jboss.forge.furnace.services.ExportedInstance;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
@@ -65,7 +65,7 @@ public class ForgeShellImpl implements ForgeShell
    private List<ShellCommand> commands;
 
    @Inject
-   private Forge forge;
+   private Furnace forge;
 
    @Inject
    private Addon self;

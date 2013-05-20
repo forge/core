@@ -7,9 +7,9 @@
 package org.jboss.forge.addon.projects;
 
 import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.container.services.Exported;
-import org.jboss.forge.container.spi.ListenerRegistration;
-import org.jboss.forge.container.util.Predicate;
+import org.jboss.forge.furnace.services.Exported;
+import org.jboss.forge.furnace.spi.ListenerRegistration;
+import org.jboss.forge.furnace.util.Predicate;
 
 /**
  * Used to create new or obtain references to existing {@link Project} instances.

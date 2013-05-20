@@ -6,19 +6,19 @@
  */
 package org.jboss.forge.se.init;
 
-import org.jboss.forge.container.Forge;
+import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.proxy.ClassLoaderAdapterCallback;
 
 public class ForgeFactory
 {
-   public static Forge getInstance()
+   public static Furnace getInstance()
    {
       try
       {
          final BootstrapClassLoader loader = new BootstrapClassLoader("bootpath");
-         Class<?> bootstrapType = loader.loadClass("org.jboss.forge.container.ForgeImpl");
-         return (Forge) ClassLoaderAdapterCallback.enhance(ForgeFactory.class.getClassLoader(), loader,
-                  bootstrapType.newInstance(), Forge.class);
+         Class<?> bootstrapType = loader.loadClass("org.jboss.forge.furnace.FurnaceImpl");
+         return (Furnace) ClassLoaderAdapterCallback.enhance(ForgeFactory.class.getClassLoader(), loader,
+                  bootstrapType.newInstance(), Furnace.class);
       }
       catch (Exception e)
       {
@@ -26,13 +26,13 @@ public class ForgeFactory
       }
    }
 
-   public static Forge getInstance(ClassLoader loader)
+   public static Furnace getInstance(ClassLoader loader)
    {
       try
       {
-         Class<?> bootstrapType = loader.loadClass("org.jboss.forge.container.ForgeImpl");
-         return (Forge) ClassLoaderAdapterCallback.enhance(ForgeFactory.class.getClassLoader(), loader,
-                  bootstrapType.newInstance(), Forge.class);
+         Class<?> bootstrapType = loader.loadClass("org.jboss.forge.furnace.FurnaceImpl");
+         return (Furnace) ClassLoaderAdapterCallback.enhance(ForgeFactory.class.getClassLoader(), loader,
+                  bootstrapType.newInstance(), Furnace.class);
       }
       catch (Exception e)
       {

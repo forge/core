@@ -10,7 +10,7 @@ package org.jboss.forge.addon.dependencies;
 import java.util.List;
 import java.util.Set;
 
-import org.jboss.forge.container.services.Exported;
+import org.jboss.forge.furnace.services.Exported;
 
 @Exported
 public interface DependencyResolver

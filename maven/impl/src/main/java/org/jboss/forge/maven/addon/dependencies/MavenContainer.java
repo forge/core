@@ -35,7 +35,7 @@ import org.sonatype.aether.repository.RemoteRepository;
 import org.sonatype.aether.spi.connector.RepositoryConnectorFactory;
 
 /**
- * Configures the Maven API for usage inside Forge
+ * Configures the Maven API for usage inside Furnace
  *
  * TODO: Remove in the future, use the ShrinkWrap Descriptors API ?
  */

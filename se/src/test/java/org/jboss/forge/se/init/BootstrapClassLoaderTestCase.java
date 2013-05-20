@@ -4,13 +4,13 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.util.Set;
 
-import org.jboss.forge.container.Forge;
-import org.jboss.forge.container.ForgeImpl;
-import org.jboss.forge.container.addons.Addon;
-import org.jboss.forge.container.addons.AddonId;
-import org.jboss.forge.container.addons.AddonRegistry;
-import org.jboss.forge.container.repositories.AddonRepositoryMode;
-import org.jboss.forge.container.util.AddonFilters;
+import org.jboss.forge.furnace.Furnace;
+import org.jboss.forge.furnace.FurnaceImpl;
+import org.jboss.forge.furnace.addons.Addon;
+import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.addons.AddonRegistry;
+import org.jboss.forge.furnace.repositories.AddonRepositoryMode;
+import org.jboss.forge.furnace.util.AddonFilters;
 import org.jboss.forge.proxy.ClassLoaderAdapterCallback;
 import org.junit.Assert;
 import org.junit.Test;
@@ -21,16 +21,16 @@ public class BootstrapClassLoaderTestCase
    public void shouldBeAbleToLoadEnvironment() throws Exception
    {
       final BootstrapClassLoader cl = new BootstrapClassLoader("bootpath");
-      Class<?> bootstrapType = cl.loadClass("org.jboss.forge.container.ForgeImpl");
+      Class<?> bootstrapType = cl.loadClass("org.jboss.forge.furnace.FurnaceImpl");
       Method method = bootstrapType.getMethod("startAsync", new Class<?>[] { ClassLoader.class });
       Object result = method.invoke(bootstrapType.newInstance(), cl);
-      Assert.assertEquals(ForgeImpl.class.getName(), result.getClass().getName());
+      Assert.assertEquals(FurnaceImpl.class.getName(), result.getClass().getName());
    }
 
    @Test
    public void shouldBeAbleToUseFactoryDelegateTypesafely() throws Exception
    {
-      Forge instance = ForgeFactory.getInstance();
+      Furnace instance = ForgeFactory.getInstance();
       Assert.assertNotNull(instance);
       AddonRegistry registry = instance.getAddonRegistry();
       Assert.assertNotNull(registry);
@@ -39,7 +39,7 @@ public class BootstrapClassLoaderTestCase
    @Test
    public void shouldBeAbleToPassPrimitivesIntoDelegate() throws Exception
    {
-      Forge instance = ForgeFactory.getInstance();
+      Furnace instance = ForgeFactory.getInstance();
       Assert.assertNotNull(instance);
       instance.setServerMode(false);
    }
@@ -47,7 +47,7 @@ public class BootstrapClassLoaderTestCase
    @Test
    public void shouldBeAbleToPassClassesIntoDelegate() throws Exception
    {
-      Forge instance = ForgeFactory.getInstance();
+      Furnace instance = ForgeFactory.getInstance();
       File tempDir = File.createTempFile("test", "repository");
       tempDir.delete();
       tempDir.mkdir();
@@ -59,7 +59,7 @@ public class BootstrapClassLoaderTestCase
    @Test
    public void shouldBeAbleToPassInterfacesIntoDelegate() throws Exception
    {
-      Forge instance = ForgeFactory.getInstance();
+      Furnace instance = ForgeFactory.getInstance();
       Set<Addon> addons = instance.getAddonRegistry().getAddons(AddonFilters.allStarted());
       Assert.assertNotNull(addons);
    }
@@ -76,7 +76,7 @@ public class BootstrapClassLoaderTestCase
    @Test
    public void shouldBeAbleToEnhanceAddonIdIntoDelegate() throws Exception
    {
-      Forge instance = ForgeFactory.getInstance();
+      Furnace instance = ForgeFactory.getInstance();
       ClassLoader fromLoader = AddonId.class.getClassLoader();
       ClassLoader toLoader = instance.getClass().getSuperclass().getClassLoader();
       ClassLoaderAdapterCallback.enhance(fromLoader, toLoader,

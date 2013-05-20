@@ -13,7 +13,7 @@ import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
-import org.jboss.forge.container.addons.AddonId;
+import org.jboss.forge.furnace.addons.AddonId;
 
 @Singleton
 public class AddonInstallCommand implements UICommand

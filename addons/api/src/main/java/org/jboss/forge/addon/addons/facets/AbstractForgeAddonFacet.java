@@ -17,7 +17,7 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 
 /**
- * Abstract class for all Forge facets
+ * Abstract class for all Furnace facets
  *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  *

@@ -24,13 +24,13 @@ import org.jboss.forge.addon.projects.ProjectListener;
 import org.jboss.forge.addon.projects.ProjectLocator;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.container.Forge;
-import org.jboss.forge.container.addons.AddonRegistry;
-import org.jboss.forge.container.repositories.AddonRepository;
-import org.jboss.forge.container.repositories.MutableAddonRepository;
-import org.jboss.forge.container.services.ExportedInstance;
-import org.jboss.forge.container.spi.ListenerRegistration;
-import org.jboss.forge.container.util.Predicate;
+import org.jboss.forge.furnace.Furnace;
+import org.jboss.forge.furnace.addons.AddonRegistry;
+import org.jboss.forge.furnace.repositories.AddonRepository;
+import org.jboss.forge.furnace.repositories.MutableAddonRepository;
+import org.jboss.forge.furnace.services.ExportedInstance;
+import org.jboss.forge.furnace.spi.ListenerRegistration;
+import org.jboss.forge.furnace.util.Predicate;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -47,7 +47,7 @@ public class ProjectFactoryImpl implements ProjectFactory
    private ResourceFactory resourceFactory;
 
    @Inject
-   private Forge forge;
+   private Furnace forge;
 
    @Inject
    private FacetFactory factory;

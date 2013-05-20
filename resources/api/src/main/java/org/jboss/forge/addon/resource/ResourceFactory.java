@@ -7,7 +7,7 @@
 package org.jboss.forge.addon.resource;
 
 import org.jboss.forge.addon.resource.events.ResourceEvent;
-import org.jboss.forge.container.services.Exported;
+import org.jboss.forge.furnace.services.Exported;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

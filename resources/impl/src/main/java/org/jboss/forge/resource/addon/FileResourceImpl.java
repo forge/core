@@ -17,7 +17,7 @@ import org.jboss.forge.addon.resource.ResourceFacet;
 import org.jboss.forge.addon.resource.ResourceFactory;
 
 /**
- * Represents any regular file which Forge does not hav any special handler for.
+ * Represents any regular file which Furnace does not hav any special handler for.
  * 
  * @author Mike Brock
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

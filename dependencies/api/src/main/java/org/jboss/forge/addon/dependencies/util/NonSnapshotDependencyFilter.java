@@ -2,7 +2,7 @@ package org.jboss.forge.addon.dependencies.util;
 
 
 import org.jboss.forge.addon.dependencies.Dependency;
-import org.jboss.forge.container.util.Predicate;
+import org.jboss.forge.furnace.util.Predicate;
 
 /**
  * {@link Predicate} used to filter out SNAPSHOT {@link Dependency} instances.

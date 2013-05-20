@@ -24,8 +24,8 @@ import org.jboss.forge.addon.resource.ResourceGenerator;
 import org.jboss.forge.addon.resource.events.ResourceEvent;
 import org.jboss.forge.addon.resource.transaction.ResourceTransaction;
 import org.jboss.forge.addon.resource.transaction.ResourceTransactionManager;
-import org.jboss.forge.container.addons.AddonRegistry;
-import org.jboss.forge.container.services.ExportedInstance;
+import org.jboss.forge.furnace.addons.AddonRegistry;
+import org.jboss.forge.furnace.services.ExportedInstance;
 
 /**
  * @author <a href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>

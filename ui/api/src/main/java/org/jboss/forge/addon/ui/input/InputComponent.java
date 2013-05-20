@@ -11,7 +11,7 @@ import java.util.concurrent.Callable;
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.facets.Faceted;
 import org.jboss.forge.addon.ui.facets.HintsFacet;
-import org.jboss.forge.container.services.Exported;
+import org.jboss.forge.furnace.services.Exported;
 
 /**
  * This is the parent interface of all inputs.

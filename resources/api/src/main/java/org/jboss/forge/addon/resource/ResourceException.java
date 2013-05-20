@@ -1,7 +1,7 @@
 package org.jboss.forge.addon.resource;
 
 /**
- * Represents a generic Exception thrown by the Forge {@link Resource} API
+ * Represents a generic Exception thrown by the Furnace {@link Resource} API
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 

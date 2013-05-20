@@ -16,12 +16,12 @@ import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.addon.dependencies.builder.DependencyQueryBuilder;
 import org.jboss.forge.addon.manager.InstallRequest;
 import org.jboss.forge.addon.manager.impl.AddonManagerImpl;
-import org.jboss.forge.container.Forge;
-import org.jboss.forge.container.addons.Addon;
-import org.jboss.forge.container.addons.AddonId;
-import org.jboss.forge.container.exception.ContainerException;
-import org.jboss.forge.container.repositories.AddonRepository;
-import org.jboss.forge.container.spi.ContainerLifecycleListener;
+import org.jboss.forge.furnace.Furnace;
+import org.jboss.forge.furnace.addons.Addon;
+import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.exception.ContainerException;
+import org.jboss.forge.furnace.repositories.AddonRepository;
+import org.jboss.forge.furnace.spi.ContainerLifecycleListener;
 import org.jboss.forge.maven.addon.dependencies.FileResourceFactory;
 import org.jboss.forge.maven.addon.dependencies.MavenContainer;
 import org.jboss.forge.maven.addon.dependencies.MavenDependencyResolver;
@@ -55,7 +55,7 @@ public class InstallRequiredAddonsListener implements ContainerLifecycleListener
    };
 
    @Override
-   public void beforeStart(Forge forge) throws ContainerException
+   public void beforeStart(Furnace forge) throws ContainerException
    {
       if (Boolean.getBoolean("skipPreInstall"))
       {
@@ -84,18 +84,18 @@ public class InstallRequiredAddonsListener implements ContainerLifecycleListener
    }
 
    @Override
-   public void beforeStop(Forge forge) throws ContainerException
+   public void beforeStop(Furnace forge) throws ContainerException
    {
       // Do nothing
    }
 
    @Override
-   public void afterStop(Forge forge) throws ContainerException
+   public void afterStop(Furnace forge) throws ContainerException
    {
       // Do nothing
    }
 
-   private void install(Forge forge, Iterable<AddonId> addons)
+   private void install(Furnace forge, Iterable<AddonId> addons)
    {
       try
       {

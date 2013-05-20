@@ -16,9 +16,9 @@ import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.facets.FacetNotFoundException;
 import org.jboss.forge.addon.facets.Faceted;
 import org.jboss.forge.addon.facets.MutableOrigin;
-import org.jboss.forge.container.addons.AddonRegistry;
-import org.jboss.forge.container.services.ExportedInstance;
-import org.jboss.forge.container.util.Assert;
+import org.jboss.forge.furnace.addons.AddonRegistry;
+import org.jboss.forge.furnace.services.ExportedInstance;
+import org.jboss.forge.furnace.util.Assert;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

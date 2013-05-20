@@ -21,7 +21,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.DependencyNode;
-import org.jboss.forge.container.util.Predicate;
+import org.jboss.forge.furnace.util.Predicate;
 
 /**
  * Provides utility methods for working with {@link Dependency} and {@link DependencyNode} objects
@@ -219,7 +219,7 @@ public final class DependencyNodeUtil
    }
 
    /**
-    * Check if the {@link Dependency} object is pointing to a Forge Addon artifact
+    * Check if the {@link Dependency} object is pointing to a Furnace Addon artifact
     * 
     * @param coordinate
     * @return

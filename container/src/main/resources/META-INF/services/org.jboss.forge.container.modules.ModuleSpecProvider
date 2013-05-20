@@ -1,6 +1,0 @@
-org.jboss.forge.container.modules.providers.ForgeContainerSpec
-org.jboss.forge.container.modules.providers.SunMiscClasspathSpec
-org.jboss.forge.container.modules.providers.SunJDKClasspathSpec
-org.jboss.forge.container.modules.providers.SystemClasspathSpec
-org.jboss.forge.container.modules.providers.WeldClasspathSpec
-org.jboss.forge.container.modules.providers.XPathJDKClasspathSpec

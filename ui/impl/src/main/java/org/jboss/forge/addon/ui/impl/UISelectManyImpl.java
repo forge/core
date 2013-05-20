@@ -9,7 +9,7 @@ package org.jboss.forge.addon.ui.impl;
 import java.util.concurrent.Callable;
 
 import org.jboss.forge.addon.ui.input.UISelectMany;
-import org.jboss.forge.container.util.Callables;
+import org.jboss.forge.furnace.util.Callables;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

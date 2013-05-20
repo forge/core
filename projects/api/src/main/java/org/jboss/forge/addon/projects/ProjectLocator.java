@@ -1,7 +1,7 @@
 package org.jboss.forge.addon.projects;
 
 import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.container.services.Exported;
+import org.jboss.forge.furnace.services.Exported;
 
 /**
  * Locates project root directories, and creates instances of projects for that type.

@@ -8,11 +8,11 @@ package org.jboss.forge.addon.manager.impl;
 
 import org.jboss.forge.addon.manager.AddonManager;
 import org.jboss.forge.addon.manager.RemoveRequest;
-import org.jboss.forge.container.Forge;
-import org.jboss.forge.container.addons.AddonId;
-import org.jboss.forge.container.repositories.AddonRepository;
-import org.jboss.forge.container.repositories.MutableAddonRepository;
-import org.jboss.forge.container.util.Assert;
+import org.jboss.forge.furnace.Furnace;
+import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.repositories.AddonRepository;
+import org.jboss.forge.furnace.repositories.MutableAddonRepository;
+import org.jboss.forge.furnace.util.Assert;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -23,13 +23,13 @@ public class RemoveRequestImpl implements RemoveRequest
    @SuppressWarnings("unused")
    private AddonManager manager;
    
-   private Forge forge;
+   private Furnace forge;
    private AddonId id;
 
-   public RemoveRequestImpl(AddonManager manager, Forge forge, AddonId id)
+   public RemoveRequestImpl(AddonManager manager, Furnace forge, AddonId id)
    {
       Assert.notNull(manager, "AddonManager must not be null.");
-      Assert.notNull(forge, "Forge must not be null.");
+      Assert.notNull(forge, "Furnace must not be null.");
       Assert.notNull(id, "AddonId must not be null.");
       this.manager = manager;
       this.forge = forge;

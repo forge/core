@@ -43,7 +43,7 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.container.util.OperatingSystemUtils;
+import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.forge.maven.addon.dependencies.MavenContainer;
 import org.jboss.forge.maven.addon.environment.Network;
 import org.jboss.forge.maven.addon.projects.MavenFacet;

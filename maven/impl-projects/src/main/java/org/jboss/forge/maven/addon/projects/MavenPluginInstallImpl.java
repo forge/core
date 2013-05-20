@@ -17,7 +17,7 @@ import org.jboss.forge.addon.dependencies.util.Dependencies;
 import org.jboss.forge.addon.dependencies.util.NonSnapshotDependencyFilter;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
-import org.jboss.forge.container.util.Predicate;
+import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.forge.maven.addon.plugins.Configuration;
 import org.jboss.forge.maven.addon.plugins.ConfigurationElement;
 import org.jboss.forge.maven.addon.plugins.ConfigurationImpl;

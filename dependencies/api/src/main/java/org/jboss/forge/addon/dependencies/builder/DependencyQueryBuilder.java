@@ -15,7 +15,7 @@ import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.DependencyQuery;
 import org.jboss.forge.addon.dependencies.DependencyRepository;
-import org.jboss.forge.container.util.Predicate;
+import org.jboss.forge.furnace.util.Predicate;
 
 /**
  * Builds a {@link DependencyQuery} object

@@ -32,11 +32,11 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
-import org.jboss.forge.container.Forge;
-import org.jboss.forge.container.addons.AddonId;
-import org.jboss.forge.container.repositories.AddonRepository;
-import org.jboss.forge.container.versions.SingleVersion;
-import org.jboss.forge.container.versions.Version;
+import org.jboss.forge.furnace.Furnace;
+import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.repositories.AddonRepository;
+import org.jboss.forge.furnace.versions.SingleVersion;
+import org.jboss.forge.furnace.versions.Version;
 
 /**
  * Called when the Next button is pressed and the {@link ForgeAddonProjectType} is selected in NewProjectWizard
@@ -52,7 +52,7 @@ public class ForgeAddonSetupStep implements UIWizardStep
    private UIInput<Boolean> splitProjects;
 
    @Inject
-   @WithAttributes(label = "Forge Version:", required = true)
+   @WithAttributes(label = "Furnace Version:", required = true)
    private UISelectOne<Version> forgeVersion;
 
    @Inject
@@ -63,7 +63,7 @@ public class ForgeAddonSetupStep implements UIWizardStep
    private DependencyResolver dependencyResolver;
 
    @Inject
-   private Forge forge;
+   private Furnace forge;
 
    @Inject
    private AddonProjectConfigurator addonProjectFactory;
@@ -71,9 +71,9 @@ public class ForgeAddonSetupStep implements UIWizardStep
    @Override
    public UICommandMetadata getMetadata()
    {
-      return Metadata.forCommand(getClass()).name("Forge Addon Setup")
-               .description("Enable Forge Addon development in your project.")
-               .category(Categories.create("Project", "Forge"));
+      return Metadata.forCommand(getClass()).name("Furnace Addon Setup")
+               .description("Enable Furnace Addon development in your project.")
+               .category(Categories.create("Project", "Furnace"));
    }
 
    @Override

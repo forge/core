@@ -16,7 +16,7 @@
  */
 package org.jboss.forge.arquillian.archive;
 
-import org.jboss.forge.container.addons.AddonId;
+import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
 import org.jboss.shrinkwrap.impl.base.container.ContainerBase;

@@ -7,9 +7,9 @@
 
 package org.jboss.forge.addon.manager;
 
-import org.jboss.forge.container.addons.AddonId;
-import org.jboss.forge.container.repositories.AddonRepository;
-import org.jboss.forge.container.services.Exported;
+import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.repositories.AddonRepository;
+import org.jboss.forge.furnace.services.Exported;
 
 /**
  * Responsible for installing, removing, enabling, and disabling {@link AddonId} instances in any registered

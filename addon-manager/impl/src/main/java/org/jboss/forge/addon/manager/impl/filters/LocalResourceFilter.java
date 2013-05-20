@@ -2,7 +2,7 @@ package org.jboss.forge.addon.manager.impl.filters;
 
 import org.jboss.forge.addon.dependencies.DependencyNode;
 import org.jboss.forge.addon.dependencies.collection.DependencyNodeUtil;
-import org.jboss.forge.container.util.Predicate;
+import org.jboss.forge.furnace.util.Predicate;
 
 /**
  * Figures out if a {@link DependencyNode} should be treated as a JAR or as an Addon. Also if that dependency is a

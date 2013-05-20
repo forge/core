@@ -12,7 +12,7 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.convert.ConverterGenerator;
 import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.container.services.Exported;
+import org.jboss.forge.furnace.services.Exported;
 
 /**
  * Generates {@link DirectoryResourceConverter}

@@ -2,7 +2,7 @@ package org.jboss.forge.addon.projects;
 
 import org.jboss.forge.addon.facets.Facet;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
-import org.jboss.forge.container.services.Exported;
+import org.jboss.forge.furnace.services.Exported;
 
 /**
  * Provides additional project configuration for use during new project creation.

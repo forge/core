@@ -15,8 +15,8 @@ import org.jboss.forge.addon.shell.test.TestShellConfiguration;
 import org.jboss.forge.arquillian.Addon;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
-import org.jboss.forge.container.addons.AddonId;
-import org.jboss.forge.container.repositories.AddonDependencyEntry;
+import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -81,7 +81,7 @@ public class NewAddonProjectAeshTest
                "--named lincoln " +
                "--topLevelPackage org.lincoln " +
                "--targetLocation " + target.getAbsolutePath() + " " +
-               "--type \"Forge Addon\" " +
+               "--type \"Furnace Addon\" " +
                "--overwrite " +
                "--version 1.0.0-SNAPSHOT").getBytes());
 

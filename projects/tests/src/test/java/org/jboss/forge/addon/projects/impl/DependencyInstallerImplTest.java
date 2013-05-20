@@ -22,9 +22,9 @@ import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.arquillian.Addon;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
-import org.jboss.forge.container.Forge;
-import org.jboss.forge.container.addons.AddonId;
-import org.jboss.forge.container.repositories.AddonDependencyEntry;
+import org.jboss.forge.furnace.Furnace;
+import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.After;
 import org.junit.Assert;
@@ -59,7 +59,7 @@ public class DependencyInstallerImplTest
    private ResourceFactory factory;
 
    @Inject
-   private Forge forge;
+   private Furnace forge;
 
    @Inject
    private ProjectFactory projectFactory;

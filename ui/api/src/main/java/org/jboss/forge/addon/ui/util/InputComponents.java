@@ -19,7 +19,7 @@ import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.ManyValued;
 import org.jboss.forge.addon.ui.input.SelectComponent;
 import org.jboss.forge.addon.ui.input.SingleValued;
-import org.jboss.forge.container.util.Strings;
+import org.jboss.forge.furnace.util.Strings;
 
 /**
  * Utilities for {@link InputComponent} objects

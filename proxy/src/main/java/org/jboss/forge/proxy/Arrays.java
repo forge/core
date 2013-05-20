@@ -6,7 +6,7 @@
  */
 package org.jboss.forge.proxy;
 
-import org.jboss.forge.container.util.Assert;
+import org.jboss.forge.furnace.util.Assert;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

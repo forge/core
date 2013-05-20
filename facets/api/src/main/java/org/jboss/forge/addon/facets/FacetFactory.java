@@ -6,7 +6,7 @@
  */
 package org.jboss.forge.addon.facets;
 
-import org.jboss.forge.container.services.Exported;
+import org.jboss.forge.furnace.services.Exported;
 
 /**
  * Responsible for instantiation of new {@link Facet} instances.

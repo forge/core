@@ -10,7 +10,7 @@ import javax.enterprise.inject.Vetoed;
 
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
-import org.jboss.forge.container.services.Exported;
+import org.jboss.forge.furnace.services.Exported;
 
 /**
  * Fired when a {@link Project} is configured to produce a new {@link PackagingFacet#getString()}

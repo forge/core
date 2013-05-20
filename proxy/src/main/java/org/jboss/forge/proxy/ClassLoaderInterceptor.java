@@ -9,7 +9,7 @@ package org.jboss.forge.proxy;
 import java.lang.reflect.Method;
 import java.util.concurrent.Callable;
 
-import org.jboss.forge.container.util.ClassLoaders;
+import org.jboss.forge.furnace.util.ClassLoaders;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

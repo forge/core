@@ -2,7 +2,7 @@ package org.jboss.forge.addon.projects.dependencies;
 
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.container.services.Exported;
+import org.jboss.forge.furnace.services.Exported;
 
 /**
  * Responsible for installing a given {@link Dependency} into the current project. Resolves available dependencies.

@@ -14,7 +14,7 @@ import javax.enterprise.inject.Vetoed;
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInput;
-import org.jboss.forge.container.util.Callables;
+import org.jboss.forge.furnace.util.Callables;
 
 /**
  * Implementation of a {@link UIInput} object

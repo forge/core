@@ -7,10 +7,10 @@
 
 package org.jboss.forge.addon.manager;
 
-import org.jboss.forge.container.addons.Addon;
-import org.jboss.forge.container.addons.AddonId;
-import org.jboss.forge.container.repositories.AddonRepository;
-import org.jboss.forge.container.repositories.MutableAddonRepository;
+import org.jboss.forge.furnace.addons.Addon;
+import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.repositories.AddonRepository;
+import org.jboss.forge.furnace.repositories.MutableAddonRepository;
 
 /**
  * This object is responsible for disabling an {@link Addon}.

@@ -3,7 +3,7 @@ package org.example;
 import javax.inject.Inject;
 
 import org.example.other.OtherExampleAddon;
-import org.jboss.forge.container.services.Exported;
+import org.jboss.forge.furnace.services.Exported;
 
 @Exported
 public class ExampleService

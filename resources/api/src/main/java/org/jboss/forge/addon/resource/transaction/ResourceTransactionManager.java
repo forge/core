@@ -8,7 +8,7 @@
 package org.jboss.forge.addon.resource.transaction;
 
 import org.jboss.forge.addon.resource.ResourceException;
-import org.jboss.forge.container.services.Exported;
+import org.jboss.forge.furnace.services.Exported;
 
 /**
  * The ResourceTransactionManager interface allows

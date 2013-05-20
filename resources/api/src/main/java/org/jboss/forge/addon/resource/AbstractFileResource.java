@@ -15,8 +15,8 @@ import org.jboss.forge.addon.resource.events.ResourceDeleted;
 import org.jboss.forge.addon.resource.events.ResourceModified;
 import org.jboss.forge.addon.resource.events.ResourceRenamed;
 import org.jboss.forge.addon.resource.events.TempResourceCreated;
-import org.jboss.forge.container.util.Assert;
-import org.jboss.forge.container.util.OperatingSystemUtils;
+import org.jboss.forge.furnace.util.Assert;
+import org.jboss.forge.furnace.util.OperatingSystemUtils;
 
 /**
  * A standard, built-in resource for representing files on the filesystem.

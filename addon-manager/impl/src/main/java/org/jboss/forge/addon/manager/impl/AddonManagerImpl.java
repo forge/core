@@ -16,9 +16,9 @@ import org.jboss.forge.addon.manager.AddonManager;
 import org.jboss.forge.addon.manager.DisableRequest;
 import org.jboss.forge.addon.manager.InstallRequest;
 import org.jboss.forge.addon.manager.RemoveRequest;
-import org.jboss.forge.container.Forge;
-import org.jboss.forge.container.addons.AddonId;
-import org.jboss.forge.container.repositories.AddonRepository;
+import org.jboss.forge.furnace.Furnace;
+import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.repositories.AddonRepository;
 
 /**
  * Installs addons into an {@link AddonRepository}
@@ -30,10 +30,10 @@ import org.jboss.forge.container.repositories.AddonRepository;
 public class AddonManagerImpl implements AddonManager
 {
    private AddonDependencyResolver resolver;
-   private Forge forge;
+   private Furnace forge;
 
    @Inject
-   public AddonManagerImpl(Forge forge, AddonDependencyResolver resolver)
+   public AddonManagerImpl(Furnace forge, AddonDependencyResolver resolver)
    {
       this.forge = forge;
       this.resolver = resolver;

@@ -2,8 +2,8 @@ package org.jboss.forge.arquillian.archive;
 
 import java.util.List;
 
-import org.jboss.forge.container.addons.AddonDependency;
-import org.jboss.forge.container.repositories.AddonDependencyEntry;
+import org.jboss.forge.furnace.addons.AddonDependency;
+import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.asset.Asset;
 import org.jboss.shrinkwrap.api.container.LibraryContainer;
@@ -11,7 +11,7 @@ import org.jboss.shrinkwrap.api.container.ResourceContainer;
 import org.jboss.shrinkwrap.api.container.ServiceProviderContainer;
 
 /**
- * Archive representing a Forge Addon deployment.
+ * Archive representing a Furnace Addon deployment.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */

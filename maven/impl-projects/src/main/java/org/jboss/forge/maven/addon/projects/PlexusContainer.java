@@ -13,7 +13,7 @@ import javax.inject.Singleton;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.logging.console.ConsoleLoggerManager;
-import org.jboss.forge.container.util.ClassLoaders;
+import org.jboss.forge.furnace.util.ClassLoaders;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

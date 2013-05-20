@@ -17,7 +17,7 @@ import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
-import org.jboss.forge.container.Forge;
+import org.jboss.forge.furnace.Furnace;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
@@ -26,7 +26,7 @@ public abstract class AbstractExitCommand implements UICommand
 {
 
    @Inject
-   private Forge forge;
+   private Furnace forge;
 
    @Override
    public UICommandMetadata getMetadata()

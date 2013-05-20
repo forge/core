@@ -23,14 +23,14 @@ import org.jboss.forge.addon.manager.AddonManager;
 import org.jboss.forge.addon.manager.InstallRequest;
 import org.jboss.forge.addon.manager.impl.filters.DirectAddonFilter;
 import org.jboss.forge.addon.manager.impl.filters.LocalResourceFilter;
-import org.jboss.forge.container.Forge;
-import org.jboss.forge.container.addons.AddonId;
-import org.jboss.forge.container.lock.LockMode;
-import org.jboss.forge.container.repositories.AddonDependencyEntry;
-import org.jboss.forge.container.repositories.AddonRepository;
-import org.jboss.forge.container.repositories.MutableAddonRepository;
-import org.jboss.forge.container.util.Assert;
-import org.jboss.forge.container.util.Predicate;
+import org.jboss.forge.furnace.Furnace;
+import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.lock.LockMode;
+import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.furnace.repositories.AddonRepository;
+import org.jboss.forge.furnace.repositories.MutableAddonRepository;
+import org.jboss.forge.furnace.util.Assert;
+import org.jboss.forge.furnace.util.Predicate;
 
 /**
  * When an addon is installed, another addons could be required. This object returns the necessary information for the
@@ -42,7 +42,7 @@ import org.jboss.forge.container.util.Predicate;
 public class InstallRequestImpl implements InstallRequest
 {
    private AddonManager addonManager;
-   private Forge forge;
+   private Furnace forge;
 
    private DependencyNode requestedAddonNode;
    private Stack<DependencyNode> requiredAddons = new Stack<DependencyNode>();
@@ -55,7 +55,7 @@ public class InstallRequestImpl implements InstallRequest
     *
     * @param addonManager
     */
-   InstallRequestImpl(AddonManager addonManager, Forge forge, DependencyNode requestedAddonNode)
+   InstallRequestImpl(AddonManager addonManager, Furnace forge, DependencyNode requestedAddonNode)
    {
       this.addonManager = addonManager;
       this.forge = forge;

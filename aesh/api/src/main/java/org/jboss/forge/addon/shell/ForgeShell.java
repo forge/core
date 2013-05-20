@@ -9,7 +9,7 @@ package org.jboss.forge.addon.shell;
 import java.io.IOException;
 
 import org.jboss.aesh.console.Console;
-import org.jboss.forge.container.services.Exported;
+import org.jboss.forge.furnace.services.Exported;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

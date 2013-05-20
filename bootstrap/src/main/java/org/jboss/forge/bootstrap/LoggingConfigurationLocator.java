@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import org.jboss.forge.container.util.OperatingSystemUtils;
+import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.logmanager.ConfigurationLocator;
 
 /**

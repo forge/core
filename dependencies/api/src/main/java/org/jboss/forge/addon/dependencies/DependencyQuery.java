@@ -9,7 +9,7 @@ package org.jboss.forge.addon.dependencies;
 
 import java.util.List;
 
-import org.jboss.forge.container.util.Predicate;
+import org.jboss.forge.furnace.util.Predicate;
 
 /**
  * A parameter object which is used to search dependencies

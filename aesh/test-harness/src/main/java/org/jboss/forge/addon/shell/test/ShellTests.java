@@ -10,7 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.jboss.forge.container.exception.ContainerException;
+import org.jboss.forge.furnace.exception.ContainerException;
 
 /**
  * Utilities for testing shell interactions.

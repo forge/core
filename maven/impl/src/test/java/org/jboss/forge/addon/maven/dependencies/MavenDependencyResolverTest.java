@@ -15,7 +15,7 @@ import org.jboss.forge.addon.dependencies.DependencyNode;
 import org.jboss.forge.addon.dependencies.DependencyQuery;
 import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.addon.dependencies.builder.DependencyQueryBuilder;
-import org.jboss.forge.container.util.Predicate;
+import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.forge.maven.addon.dependencies.FileResourceFactory;
 import org.jboss.forge.maven.addon.dependencies.MavenContainer;
 import org.jboss.forge.maven.addon.dependencies.MavenDependencyResolver;

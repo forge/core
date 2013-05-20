@@ -12,7 +12,7 @@ import java.util.List;
 import org.jboss.forge.addon.facets.Faceted;
 
 /**
- * A Resource is an abstraction on top of usable items within a Forge project. For instance, files, source code, etc.
+ * A Resource is an abstraction on top of usable items within a Furnace project. For instance, files, source code, etc.
  * Like a simplified virtual file system, a Resource is represented hierarchically with a parent and children. This
  * allows addons to say, direct access to project elements within a consistent API from files to class members. </br>
  * However, Resource instances should be treated as representative query result objects. A modification to an instance

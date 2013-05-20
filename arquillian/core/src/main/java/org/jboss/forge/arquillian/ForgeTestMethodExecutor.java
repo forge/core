@@ -26,13 +26,13 @@ import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.jboss.forge.arquillian.protocol.ForgeProtocolConfiguration;
-import org.jboss.forge.container.Forge;
-import org.jboss.forge.container.addons.Addon;
-import org.jboss.forge.container.addons.AddonRegistry;
-import org.jboss.forge.container.services.ExportedInstance;
-import org.jboss.forge.container.services.ServiceRegistry;
-import org.jboss.forge.container.util.Annotations;
-import org.jboss.forge.container.util.ClassLoaders;
+import org.jboss.forge.furnace.Furnace;
+import org.jboss.forge.furnace.addons.Addon;
+import org.jboss.forge.furnace.addons.AddonRegistry;
+import org.jboss.forge.furnace.services.ExportedInstance;
+import org.jboss.forge.furnace.services.ServiceRegistry;
+import org.jboss.forge.furnace.util.Annotations;
+import org.jboss.forge.furnace.util.ClassLoaders;
 
 /**
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
@@ -40,9 +40,9 @@ import org.jboss.forge.container.util.ClassLoaders;
  */
 public class ForgeTestMethodExecutor implements ContainerMethodExecutor
 {
-   private Forge forge;
+   private Furnace forge;
 
-   public ForgeTestMethodExecutor(ForgeProtocolConfiguration config, final Forge forge)
+   public ForgeTestMethodExecutor(ForgeProtocolConfiguration config, final Furnace forge)
    {
       if (config == null)
       {
@@ -50,7 +50,7 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
       }
       if (forge == null)
       {
-         throw new IllegalArgumentException("Forge runtime must be provided");
+         throw new IllegalArgumentException("Furnace runtime must be provided");
       }
       this.forge = forge;
    }
@@ -69,7 +69,7 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
          final AddonRegistry addonRegistry = forge.getAddonRegistry();
 
          waitUntilStable(forge);
-         System.out.println("Forge stable, executing test.");
+         System.out.println("Furnace stable, executing test.");
 
          Object testInstance = null;
          Class<?> testClass = null;
@@ -214,7 +214,7 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
          invokeAfter(clazz.getSuperclass(), instance);
    }
 
-   private void waitUntilStable(Forge forge) throws InterruptedException
+   private void waitUntilStable(Furnace forge) throws InterruptedException
    {
       while (forge.getStatus().isStarting())
       {

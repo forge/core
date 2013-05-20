@@ -14,9 +14,9 @@ import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.convert.ConverterGenerator;
 import org.jboss.forge.addon.convert.exception.ConverterNotFoundException;
-import org.jboss.forge.container.addons.AddonRegistry;
-import org.jboss.forge.container.services.Exported;
-import org.jboss.forge.container.services.ExportedInstance;
+import org.jboss.forge.furnace.addons.AddonRegistry;
+import org.jboss.forge.furnace.services.Exported;
+import org.jboss.forge.furnace.services.ExportedInstance;
 
 @Exported
 @Singleton

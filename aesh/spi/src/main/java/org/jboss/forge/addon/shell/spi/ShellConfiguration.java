@@ -6,7 +6,7 @@
  */
 package org.jboss.forge.addon.shell.spi;
 
-import org.jboss.forge.container.services.Exported;
+import org.jboss.forge.furnace.services.Exported;
 
 /**
  * Used to configure the shell before it is initialized.

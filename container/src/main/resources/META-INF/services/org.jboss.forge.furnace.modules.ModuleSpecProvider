@@ -1,0 +1,6 @@
+org.jboss.forge.furnace.modules.providers.FurnaceContainerSpec
+org.jboss.forge.furnace.modules.providers.SunMiscClasspathSpec
+org.jboss.forge.furnace.modules.providers.SunJDKClasspathSpec
+org.jboss.forge.furnace.modules.providers.SystemClasspathSpec
+org.jboss.forge.furnace.modules.providers.WeldClasspathSpec
+org.jboss.forge.furnace.modules.providers.XPathJDKClasspathSpec

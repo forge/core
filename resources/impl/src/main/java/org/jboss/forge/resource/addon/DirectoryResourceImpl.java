@@ -17,7 +17,7 @@ import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceException;
 import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.container.util.OperatingSystemUtils;
+import org.jboss.forge.furnace.util.OperatingSystemUtils;
 
 /**
  * A standard, build-in, resource for representing directories on the file-system.

@@ -13,7 +13,7 @@ import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.jboss.forge.arquillian.ForgeDeploymentPackager;
 import org.jboss.forge.arquillian.ForgeTestMethodExecutor;
-import org.jboss.forge.container.Forge;
+import org.jboss.forge.furnace.Furnace;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -55,12 +55,12 @@ public class ForgeProtocol implements Protocol<ForgeProtocolConfiguration>
          };
       }
 
-      Collection<Forge> contexts = metaData.getContexts(Forge.class);
+      Collection<Furnace> contexts = metaData.getContexts(Furnace.class);
       if (contexts.size() == 0)
       {
          throw new IllegalArgumentException(
-                  "No " + Forge.class.getName() + " found in " + ProtocolMetaData.class.getName() + ". " +
-                           "Forge protocol can not be used");
+                  "No " + Furnace.class.getName() + " found in " + ProtocolMetaData.class.getName() + ". " +
+                           "Furnace protocol can not be used");
       }
       return new ForgeTestMethodExecutor(protocolConfiguration, contexts.iterator().next());
    }

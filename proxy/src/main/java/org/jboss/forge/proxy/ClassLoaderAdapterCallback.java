@@ -20,8 +20,8 @@ import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 import javassist.util.proxy.ProxyObject;
 
-import org.jboss.forge.container.exception.ContainerException;
-import org.jboss.forge.container.util.ClassLoaders;
+import org.jboss.forge.furnace.exception.ContainerException;
+import org.jboss.forge.furnace.util.ClassLoaders;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

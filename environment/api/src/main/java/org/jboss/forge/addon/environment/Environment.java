@@ -9,7 +9,7 @@ package org.jboss.forge.addon.environment;
 
 import java.util.Map;
 
-import org.jboss.forge.container.services.Exported;
+import org.jboss.forge.furnace.services.Exported;
 
 /**
  * An {@link Environment} stores information separated into categories

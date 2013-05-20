@@ -30,11 +30,11 @@ import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.container.addons.AddonId;
-import org.jboss.forge.container.versions.Version;
+import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.versions.Version;
 
 /**
- * Creates Forge Addon projects
+ * Creates Furnace Addon projects
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
@@ -65,7 +65,7 @@ class AddonProjectConfigurator
    }
 
    /**
-    * Create a Forge Project with the full structure (api,impl,tests,spi and addon)
+    * Create a Furnace Project with the full structure (api,impl,tests,spi and addon)
     */
    public void setupAddonProject(Project project, Version forgeVersion, Iterable<AddonId> dependencyAddons)
    {

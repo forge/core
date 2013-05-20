@@ -24,17 +24,17 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.arquillian.archive.ForgeRemoteAddon;
 import org.jboss.forge.arquillian.protocol.ForgeProtocolDescription;
 import org.jboss.forge.arquillian.util.ShrinkWrapUtil;
-import org.jboss.forge.container.Forge;
-import org.jboss.forge.container.ForgeImpl;
-import org.jboss.forge.container.addons.Addon;
-import org.jboss.forge.container.addons.AddonId;
-import org.jboss.forge.container.addons.AddonRegistry;
-import org.jboss.forge.container.exception.ContainerException;
-import org.jboss.forge.container.repositories.AddonRepositoryMode;
-import org.jboss.forge.container.repositories.MutableAddonRepository;
-import org.jboss.forge.container.util.Addons;
-import org.jboss.forge.container.util.ClassLoaders;
-import org.jboss.forge.container.util.Files;
+import org.jboss.forge.furnace.Furnace;
+import org.jboss.forge.furnace.FurnaceImpl;
+import org.jboss.forge.furnace.addons.Addon;
+import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.addons.AddonRegistry;
+import org.jboss.forge.furnace.exception.ContainerException;
+import org.jboss.forge.furnace.repositories.AddonRepositoryMode;
+import org.jboss.forge.furnace.repositories.MutableAddonRepository;
+import org.jboss.forge.furnace.util.Addons;
+import org.jboss.forge.furnace.util.ClassLoaders;
+import org.jboss.forge.furnace.util.Files;
 import org.jboss.forge.maven.addon.dependencies.FileResourceFactory;
 import org.jboss.forge.maven.addon.dependencies.MavenContainer;
 import org.jboss.forge.maven.addon.dependencies.MavenDependencyResolver;
@@ -121,7 +121,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    @Override
    public void deploy(Descriptor descriptor) throws DeploymentException
    {
-      throw new UnsupportedOperationException("Descriptors not supported by Forge");
+      throw new UnsupportedOperationException("Descriptors not supported by Furnace");
    }
 
    private AddonId getAddonEntry(Deployment deployment)
@@ -168,7 +168,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       {
          this.addonDir = File.createTempFile("forge", "test-addon-dir");
          runnable = new ForgeRunnable(addonDir, ClassLoader.getSystemClassLoader());
-         thread = new Thread(runnable, "Arquillian Forge Runtime");
+         thread = new Thread(runnable, "Arquillian Furnace Runtime");
          System.out.println("Executing test case with addon dir [" + addonDir + "]");
 
          thread.start();
@@ -179,7 +179,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       }
       catch (Exception e)
       {
-         throw new LifecycleException("Could not start Forge runnable.", e);
+         throw new LifecycleException("Could not start Furnace runnable.", e);
       }
    }
 
@@ -216,23 +216,23 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    @Override
    public void undeploy(Descriptor descriptor) throws DeploymentException
    {
-      throw new UnsupportedOperationException("Descriptors not supported by Forge");
+      throw new UnsupportedOperationException("Descriptors not supported by Furnace");
    }
 
    private class ForgeRunnable implements Runnable
    {
-      private Forge forge;
+      private Furnace forge;
       private ClassLoader loader;
       private File addonDir;
 
       public ForgeRunnable(File addonDir, ClassLoader loader)
       {
-         this.forge = new ForgeImpl();
+         this.forge = new FurnaceImpl();
          this.addonDir = addonDir;
          this.loader = loader;
       }
 
-      public Forge getForge()
+      public Furnace getForge()
       {
          return forge;
       }

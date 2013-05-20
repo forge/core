@@ -8,7 +8,7 @@ import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.hints.HintsLookup;
 import org.jboss.forge.addon.ui.hints.InputTypes;
-import org.jboss.forge.container.event.PostStartup;
+import org.jboss.forge.furnace.event.PostStartup;
 
 /**
  * Only active when ui-hints addon is installed.

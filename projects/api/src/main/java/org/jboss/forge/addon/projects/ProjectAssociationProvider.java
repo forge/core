@@ -8,7 +8,7 @@
 package org.jboss.forge.addon.projects;
 
 import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.container.services.Exported;
+import org.jboss.forge.furnace.services.Exported;
 
 /**
  * @author <a href="mailto:torben@jit-central.com">Torben Jaeger</a>

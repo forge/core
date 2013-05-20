@@ -16,7 +16,7 @@ import org.jboss.forge.addon.facets.AbstractFaceted;
 import org.jboss.forge.addon.ui.facets.HintsFacet;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.UIInput;
-import org.jboss.forge.container.util.Callables;
+import org.jboss.forge.furnace.util.Callables;
 
 /**
  * Implementation of a {@link UIInput} object

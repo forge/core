@@ -10,8 +10,8 @@ package org.jboss.forge.addon.manager;
 import java.util.List;
 
 import org.jboss.forge.addon.dependencies.DependencyNode;
-import org.jboss.forge.container.addons.Addon;
-import org.jboss.forge.container.repositories.AddonRepository;
+import org.jboss.forge.furnace.addons.Addon;
+import org.jboss.forge.furnace.repositories.AddonRepository;
 
 /**
  * When an addon is installed, another addons could be required. This object returns the necessary information for the
