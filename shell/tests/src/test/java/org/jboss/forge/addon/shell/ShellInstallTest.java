@@ -11,7 +11,7 @@ import org.jboss.forge.maven.addon.dependencies.MavenContainer;
 import org.jboss.forge.maven.addon.dependencies.MavenDependencyResolver;
 import org.junit.Test;
 
-public class TestAeshInstall
+public class ShellInstallTest
 {
    @Test
    public void test()
@@ -19,7 +19,7 @@ public class TestAeshInstall
       Furnace forge = new FurnaceImpl();
       AddonManager addonManager = new AddonManagerImpl(forge, new MavenDependencyResolver(
                new FileResourceFactory(), new MavenContainer()));
-      InstallRequest request = addonManager.install(AddonId.from("org.jboss.forge.addon:aesh", "2.0.0-SNAPSHOT"));
+      InstallRequest request = addonManager.install(AddonId.from("org.jboss.forge.addon:shell", "2.0.0-SNAPSHOT"));
       request.perform();
    }
 }

@@ -26,7 +26,7 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @RunWith(Arquillian.class)
-public class AeshAddonTest
+public class ShellAddonTest
 {
    private KeyOperation completeChar = new KeyOperation(Key.CTRL_I, Operation.COMPLETE);
 
