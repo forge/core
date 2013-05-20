@@ -70,9 +70,9 @@
       <version.org.jboss.logmanager.jboss-logmanager>1.4.1.Final</version.org.jboss.logmanager.jboss-logmanager>
       <version.shrinkwrap.resolver>2.0.0-beta-3</version.shrinkwrap.resolver>
       <version.slf4j>1.6.1</version.slf4j>
-      <version.xmlparser>1.0.0.Final</version.xmlparser>
       <version.weld>2.0.0.Final</version.weld>
       <version.weld.spi>2.0.Final</version.weld.spi>
+      <version.xmlparser>1.0.0.Final</version.xmlparser>
    </properties>
 
    <profiles>
