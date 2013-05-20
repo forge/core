@@ -1,4 +1,4 @@
-package org.jboss.forge.se.init;
+package org.jboss.forge.furnace.se;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -10,6 +10,8 @@ import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.repositories.AddonRepositoryMode;
+import org.jboss.forge.furnace.se.BootstrapClassLoader;
+import org.jboss.forge.furnace.se.ForgeFactory;
 import org.jboss.forge.furnace.util.AddonFilters;
 import org.jboss.forge.proxy.ClassLoaderAdapterCallback;
 import org.junit.Assert;

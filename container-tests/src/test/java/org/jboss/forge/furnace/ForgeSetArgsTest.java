@@ -11,8 +11,8 @@ import java.io.IOException;
 
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.repositories.AddonRepositoryMode;
+import org.jboss.forge.furnace.se.ForgeFactory;
 import org.jboss.forge.furnace.util.Files;
-import org.jboss.forge.se.init.ForgeFactory;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

@@ -1,4 +1,4 @@
-package org.jboss.forge.se.init;
+package org.jboss.forge.furnace.se;
 
 import java.io.Closeable;
 import java.io.File;
