@@ -6,9 +6,13 @@
       <version>2.0.0-SNAPSHOT</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
+   
+   <groupId>org.jboss.forge.addon</groupId>
    <artifactId>parser-java-parent</artifactId>
+   
    <packaging>pom</packaging>
    <name>Forge - Java Parser Addon Parent</name>
+   
    <modules>
       <module>api</module>
       <module>impl</module>
@@ -23,12 +27,12 @@
    <dependencyManagement>
       <dependencies>
          <dependency>
-            <groupId>org.jboss.forge</groupId>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>parser-java-api</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>
-            <groupId>org.jboss.forge</groupId>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>parser-java-impl</artifactId>
             <version>${project.version}</version>
          </dependency>

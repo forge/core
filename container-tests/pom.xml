@@ -7,8 +7,10 @@
       <version>2.0.0-SNAPSHOT</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
+
    <artifactId>furnace-tests</artifactId>
    <name>Furnace - Addon Container Tests</name>
+
    <dependencies>
       <dependency>
          <groupId>org.jboss.forge.furnace</groupId>
@@ -21,27 +23,27 @@
          <scope>test</scope>
       </dependency>
       <dependency>
-         <groupId>org.jboss.forge</groupId>
+         <groupId>org.jboss.forge.addon</groupId>
          <artifactId>example</artifactId>
          <classifier>forge-addon</classifier>
          <scope>test</scope>
       </dependency>
       <dependency>
-         <groupId>org.jboss.forge</groupId>
+         <groupId>org.jboss.forge.addon</groupId>
          <artifactId>facets</artifactId>
          <classifier>forge-addon</classifier>
          <version>2.0.0-SNAPSHOT</version>
          <scope>test</scope>
       </dependency>
       <dependency>
-         <groupId>org.jboss.forge</groupId>
+         <groupId>org.jboss.forge.addon</groupId>
          <artifactId>resources</artifactId>
          <classifier>forge-addon</classifier>
          <version>2.0.0-SNAPSHOT</version>
          <scope>test</scope>
       </dependency>
       <dependency>
-         <groupId>org.jboss.forge</groupId>
+         <groupId>org.jboss.forge.addon</groupId>
          <artifactId>convert</artifactId>
          <classifier>forge-addon</classifier>
          <version>2.0.0-SNAPSHOT</version>

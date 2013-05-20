@@ -185,7 +185,7 @@ public class Bootstrap
          }
          else
          {
-            String coordinates = "org.jboss.forge:" + addonCoordinates;
+            String coordinates = "org.jboss.forge.addon:" + addonCoordinates;
             CoordinateBuilder coordinate = CoordinateBuilder.create(coordinates);
             List<Coordinate> versions = resolver.resolveVersions(DependencyQueryBuilder.create(coordinate));
             if (versions.isEmpty())
@@ -222,7 +222,7 @@ public class Bootstrap
          }
          else
          {
-            String coordinates = "org.jboss.forge:" + addonCoordinates;
+            String coordinates = "org.jboss.forge.addon:" + addonCoordinates;
             REPOS: for (AddonRepository repository : forge.getRepositories())
             {
                for (AddonId id : repository.listEnabled())

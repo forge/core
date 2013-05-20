@@ -35,8 +35,8 @@ public class MavenWebResourceFacetTest
 
    @Deployment
    @Dependencies({
-            @Addon(name = "org.jboss.forge:projects", version = "2.0.0-SNAPSHOT"),
-            @Addon(name = "org.jboss.forge:maven", version = "2.0.0-SNAPSHOT")
+            @Addon(name = "org.jboss.forge.addon:projects", version = "2.0.0-SNAPSHOT"),
+            @Addon(name = "org.jboss.forge.addon:maven", version = "2.0.0-SNAPSHOT")
    })
    public static ForgeArchive getDeployment()
    {
@@ -44,8 +44,8 @@ public class MavenWebResourceFacetTest
                .create(ForgeArchive.class)
                .addBeansXML()
                .addAsAddonDependencies(
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:maven", "2.0.0-SNAPSHOT")),
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:projects", "2.0.0-SNAPSHOT"))
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:maven", "2.0.0-SNAPSHOT")),
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:projects", "2.0.0-SNAPSHOT"))
                );
 
       return archive;

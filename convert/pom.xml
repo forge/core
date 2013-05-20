@@ -6,9 +6,13 @@
       <version>2.0.0-SNAPSHOT</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
+   
+   <groupId>org.jboss.forge.addon</groupId>
    <artifactId>convert-parent</artifactId>
+   
    <packaging>pom</packaging>
    <name>Forge - Convert Addon Parent</name>
+   
    <modules>
       <module>api</module>
       <module>impl</module>
@@ -18,18 +22,18 @@
    <dependencyManagement>
       <dependencies>
          <dependency>
-            <groupId>org.jboss.forge</groupId>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>convert</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
-            <groupId>org.jboss.forge</groupId>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>convert-api</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>
-            <groupId>org.jboss.forge</groupId>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>convert-impl</artifactId>
             <version>${project.version}</version>
          </dependency>

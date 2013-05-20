@@ -62,9 +62,9 @@ public class MultipleRepositoryTest
       AddonManager manager = new AddonManagerImpl(forge, new MavenDependencyResolver(new FileResourceFactory(),
                new MavenContainer()));
 
-      AddonId facets = AddonId.from("org.jboss.forge:facets", "2.0.0-SNAPSHOT");
-      AddonId convert = AddonId.from("org.jboss.forge:convert", "2.0.0-SNAPSHOT");
-      AddonId resources = AddonId.from("org.jboss.forge:resources", "2.0.0-SNAPSHOT");
+      AddonId facets = AddonId.from("org.jboss.forge.addon:facets", "2.0.0-SNAPSHOT");
+      AddonId convert = AddonId.from("org.jboss.forge.addon:convert", "2.0.0-SNAPSHOT");
+      AddonId resources = AddonId.from("org.jboss.forge.addon:resources", "2.0.0-SNAPSHOT");
 
       Assert.assertFalse(left.isDeployed(resources));
       Assert.assertFalse(left.isDeployed(facets));
@@ -99,9 +99,9 @@ public class MultipleRepositoryTest
       AddonManager manager = new AddonManagerImpl(forge, new MavenDependencyResolver(new FileResourceFactory(),
                new MavenContainer()));
 
-      AddonId facets = AddonId.from("org.jboss.forge:facets", "2.0.0-SNAPSHOT");
-      AddonId convert = AddonId.from("org.jboss.forge:convert", "2.0.0-SNAPSHOT");
-      AddonId resources = AddonId.from("org.jboss.forge:resources", "2.0.0-SNAPSHOT");
+      AddonId facets = AddonId.from("org.jboss.forge.addon:facets", "2.0.0-SNAPSHOT");
+      AddonId convert = AddonId.from("org.jboss.forge.addon:convert", "2.0.0-SNAPSHOT");
+      AddonId resources = AddonId.from("org.jboss.forge.addon:resources", "2.0.0-SNAPSHOT");
 
       Assert.assertFalse(left.isDeployed(resources));
       Assert.assertFalse(left.isDeployed(facets));

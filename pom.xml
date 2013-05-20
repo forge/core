@@ -149,6 +149,16 @@
             <version>${version.javassist}</version>
             <scope>compile</scope>
          </dependency>
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>forge-bootstrap</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>forge-parser-xml</artifactId>
+            <version>${project.version}</version>
+         </dependency>
          
          
          <!-- Test Harneses Dependencies -->
@@ -251,57 +261,47 @@
 
          <!-- Forge Dependencies -->
          <dependency>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-bootstrap</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>addon-manager</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>
-            <groupId>org.jboss.forge</groupId>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>addon-manager-impl</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-parser-xml</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>dependencies-api</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>
-            <groupId>org.jboss.forge</groupId>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>dependencies-impl</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>
-            <groupId>org.jboss.forge</groupId>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>maven-api</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>
-            <groupId>org.jboss.forge</groupId>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>maven-impl</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>
-            <groupId>org.jboss.forge</groupId>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>resources-api</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>
-            <groupId>org.jboss.forge</groupId>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>resources-impl</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>
-            <groupId>org.jboss.forge</groupId>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>example</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
@@ -590,7 +590,7 @@
                      <!-- <ignore></ignore> -->
                   </ignores>
                   <excludes>
-                     <exclude>org/jboss/forge/**/*.class</exclude>
+                     <exclude>org.jboss.forge.addon/**/*.class</exclude>
                   </excludes>
                </instrumentation>
             </configuration>

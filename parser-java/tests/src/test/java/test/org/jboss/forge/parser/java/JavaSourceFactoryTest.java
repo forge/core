@@ -28,14 +28,14 @@ public class JavaSourceFactoryTest
 {
    @Deployment
    @Dependencies({
-            @Addon(name = "org.jboss.forge:parser-java", version = "2.0.0-SNAPSHOT")
+            @Addon(name = "org.jboss.forge.addon:parser-java", version = "2.0.0-SNAPSHOT")
    })
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                .addBeansXML()
                .addAsAddonDependencies(
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:parser-java", "2.0.0-SNAPSHOT"))
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:parser-java", "2.0.0-SNAPSHOT"))
                );
 
       return archive;

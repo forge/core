@@ -27,12 +27,12 @@ import org.junit.runner.RunWith;
 public class NewProjectAeshTest
 {
    @Deployment
-   @Dependencies({ @Addon(name = "org.jboss.forge:ui", version = "2.0.0-SNAPSHOT"),
-            @Addon(name = "org.jboss.forge:aesh-test-harness", version = "2.0.0-SNAPSHOT"),
-            @Addon(name = "org.jboss.forge:aesh", version = "2.0.0-SNAPSHOT"),
-            @Addon(name = "org.jboss.forge:maven", version = "2.0.0-SNAPSHOT"),
-            @Addon(name = "org.jboss.forge:resources", version = "2.0.0-SNAPSHOT"),
-            @Addon(name = "org.jboss.forge:projects", version = "2.0.0-SNAPSHOT")
+   @Dependencies({ @Addon(name = "org.jboss.forge.addon:ui", version = "2.0.0-SNAPSHOT"),
+            @Addon(name = "org.jboss.forge.addon:aesh-test-harness", version = "2.0.0-SNAPSHOT"),
+            @Addon(name = "org.jboss.forge.addon:aesh", version = "2.0.0-SNAPSHOT"),
+            @Addon(name = "org.jboss.forge.addon:maven", version = "2.0.0-SNAPSHOT"),
+            @Addon(name = "org.jboss.forge.addon:resources", version = "2.0.0-SNAPSHOT"),
+            @Addon(name = "org.jboss.forge.addon:projects", version = "2.0.0-SNAPSHOT")
    })
    public static ForgeArchive getDeployment()
    {
@@ -40,11 +40,11 @@ public class NewProjectAeshTest
                .create(ForgeArchive.class)
                .addBeansXML()
                .addAsAddonDependencies(
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:ui", "2.0.0-SNAPSHOT")),
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:projects", "2.0.0-SNAPSHOT")),
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:aesh", "2.0.0-SNAPSHOT")),
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:aesh-test-harness", "2.0.0-SNAPSHOT")),
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:resources", "2.0.0-SNAPSHOT"))
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:ui", "2.0.0-SNAPSHOT")),
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:projects", "2.0.0-SNAPSHOT")),
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:aesh", "2.0.0-SNAPSHOT")),
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:aesh-test-harness", "2.0.0-SNAPSHOT")),
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:resources", "2.0.0-SNAPSHOT"))
                );
 
       return archive;

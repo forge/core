@@ -125,7 +125,7 @@ public class InstallRequiredAddonsListener implements ContainerLifecycleListener
       }
       else
       {
-         String coordinates = "org.jboss.forge:" + addonCoordinate;
+         String coordinates = "org.jboss.forge.addon:" + addonCoordinate;
          CoordinateBuilder coordinate = CoordinateBuilder.create(coordinates);
          List<Coordinate> versions = resolver.resolveVersions(DependencyQueryBuilder.create(coordinate));
          if (versions.isEmpty())

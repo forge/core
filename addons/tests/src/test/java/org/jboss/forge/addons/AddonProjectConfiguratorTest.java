@@ -41,7 +41,7 @@ public class AddonProjectConfiguratorTest
 {
    @Deployment
    @Dependencies({
-            @Addon(name = "org.jboss.forge:addons", version = "2.0.0-SNAPSHOT")
+            @Addon(name = "org.jboss.forge.addon:addons", version = "2.0.0-SNAPSHOT")
    })
    public static ForgeArchive getDeployment()
    {
@@ -49,8 +49,8 @@ public class AddonProjectConfiguratorTest
                addBeansXML().
                addPackages(true, AddonProjectConfigurator.class.getPackage()).
                addAsAddonDependencies(
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:addons", "2.0.0-SNAPSHOT")),
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:javaee", "2.0.0-SNAPSHOT"))
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:addons", "2.0.0-SNAPSHOT")),
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:javaee", "2.0.0-SNAPSHOT"))
                );
    }
 

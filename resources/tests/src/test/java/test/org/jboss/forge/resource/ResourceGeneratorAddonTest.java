@@ -22,14 +22,14 @@ import org.junit.runner.RunWith;
 public class ResourceGeneratorAddonTest
 {
    @Deployment(order = 1)
-   @Dependencies({ @Addon(name = "org.jboss.forge:resources", version = "2.0.0-SNAPSHOT") })
+   @Dependencies({ @Addon(name = "org.jboss.forge.addon:resources", version = "2.0.0-SNAPSHOT") })
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
                .addBeansXML()
                .addAsAddonDependencies(
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:resources", "2.0.0-SNAPSHOT")),
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:resources", "2.0.0-SNAPSHOT")),
                         AddonDependencyEntry.create(AddonId.from("mockstring", "1")));
 
       return archive;
@@ -42,7 +42,7 @@ public class ResourceGeneratorAddonTest
                .addClasses(MockStringResource.class, MockStringResourceGenerator.class)
                .addBeansXML()
                .addAsAddonDependencies(
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:resources", "2.0.0-SNAPSHOT"))
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:resources", "2.0.0-SNAPSHOT"))
                );
 
       return archive;

@@ -1,47 +1,49 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
    <modelVersion>4.0.0</modelVersion>
    <parent>
-      <groupId>org.jboss.forge</groupId>
+      <groupId>org.jboss.forge.addon</groupId>
       <artifactId>addons-parent</artifactId>
       <version>2.0.0-SNAPSHOT</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
+   
    <artifactId>addons</artifactId>
    <name>Forge - Addon Development Addon</name>
+   
    <dependencies>
       <dependency>
-         <groupId>org.jboss.forge</groupId>
+         <groupId>org.jboss.forge.addon</groupId>
          <artifactId>addons-api</artifactId>
          <scope>compile</scope>
       </dependency>
       <dependency>
-         <groupId>org.jboss.forge</groupId>
+         <groupId>org.jboss.forge.addon</groupId>
          <artifactId>addons-impl</artifactId>
          <scope>runtime</scope>
       </dependency>
       <dependency>
-         <groupId>org.jboss.forge</groupId>
+         <groupId>org.jboss.forge.addon</groupId>
          <artifactId>ui</artifactId>
          <classifier>forge-addon</classifier>
       </dependency>
       <dependency>
-         <groupId>org.jboss.forge</groupId>
+         <groupId>org.jboss.forge.addon</groupId>
          <artifactId>maven</artifactId>
          <classifier>forge-addon</classifier>
       </dependency>
       <dependency>
-         <groupId>org.jboss.forge</groupId>
+         <groupId>org.jboss.forge.addon</groupId>
          <artifactId>projects</artifactId>
          <classifier>forge-addon</classifier>
       </dependency>
       <dependency>
-         <groupId>org.jboss.forge</groupId>
+         <groupId>org.jboss.forge.addon</groupId>
          <artifactId>javaee</artifactId>
          <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>
       <dependency>
-         <groupId>org.jboss.forge</groupId>
+         <groupId>org.jboss.forge.addon</groupId>
          <artifactId>parser-java</artifactId>
          <classifier>forge-addon</classifier>
       </dependency>

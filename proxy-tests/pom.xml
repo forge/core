@@ -33,13 +33,6 @@
       </dependency>
 
       <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>ui-example</artifactId>
-         <version>${project.version}</version>
-         <classifier>forge-addon</classifier>
-         <scope>test</scope>
-      </dependency>
-      <dependency>
          <groupId>org.jboss.forge.test</groupId>
          <artifactId>forge-test-harness</artifactId>
          <scope>test</scope>
@@ -47,6 +40,13 @@
       <dependency>
          <groupId>org.jboss.forge.test</groupId>
          <artifactId>arquillian-forge-classpath</artifactId>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>ui-example</artifactId>
+         <version>${project.version}</version>
+         <classifier>forge-addon</classifier>
          <scope>test</scope>
       </dependency>
    </dependencies>

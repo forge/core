@@ -251,10 +251,10 @@ public interface DependencyFacet extends ProjectFacet
     * {@link DependencyRepository} instances for this {@link Project}. By default, SNAPSHOT versions are excluded. For
     * example:
     * <p>
-    * <code>dependencyFacet.resolveAvailableVersions("org.jboss.forge:example:[1.0.0,]");</code><br>
-    * <code>dependencyFacet.resolveAvailableVersions("org.jboss.forge:example:[1.0.0,)");</code><br>
-    * <code>dependencyFacet.resolveAvailableVersions("org.jboss.forge:example:(1.0.0,3.0.0]");</code><br>
-    * <code>dependencyFacet.resolveAvailableVersions("org.jboss.forge:example:[1.0.0,3.0.0]");</code>
+    * <code>dependencyFacet.resolveAvailableVersions("org.jboss.forge.addon:example:[1.0.0,]");</code><br>
+    * <code>dependencyFacet.resolveAvailableVersions("org.jboss.forge.addon:example:[1.0.0,)");</code><br>
+    * <code>dependencyFacet.resolveAvailableVersions("org.jboss.forge.addon:example:(1.0.0,3.0.0]");</code><br>
+    * <code>dependencyFacet.resolveAvailableVersions("org.jboss.forge.addon:example:[1.0.0,3.0.0]");</code>
     * <p>
     * For more comprehensive resolution features, see {@link #resolveAvailableVersions(DependencyQuery)} or
     * {@link DependencyResolver}

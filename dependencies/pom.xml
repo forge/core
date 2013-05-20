@@ -6,30 +6,35 @@
       <version>2.0.0-SNAPSHOT</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
+   
+   <groupId>org.jboss.forge.addon</groupId>
    <artifactId>dependencies-parent</artifactId>
+   
    <packaging>pom</packaging>
    <name>Forge - Dependencies Addon Parent</name>
+   
    <modules>
       <module>api</module>
       <module>impl</module>
       <module>addon</module>
       <module>tests</module>
    </modules>
+   
    <dependencyManagement>
       <dependencies>
          <dependency>
-            <groupId>org.jboss.forge</groupId>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>dependencies</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
-            <groupId>org.jboss.forge</groupId>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>dependencies-api</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>
-            <groupId>org.jboss.forge</groupId>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>dependencies-impl</artifactId>
             <version>${project.version}</version>
          </dependency>

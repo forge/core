@@ -33,15 +33,15 @@ public class URLResourceGeneratorTest
 {
    @Deployment
    @Dependencies({
-            @Addon(name = "org.jboss.forge:facets", version = "2.0.0-SNAPSHOT"),
-            @Addon(name = "org.jboss.forge:resources", version = "2.0.0-SNAPSHOT") })
+            @Addon(name = "org.jboss.forge.addon:facets", version = "2.0.0-SNAPSHOT"),
+            @Addon(name = "org.jboss.forge.addon:resources", version = "2.0.0-SNAPSHOT") })
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                .addBeansXML()
                .addAsAddonDependencies(
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:facets", "2.0.0-SNAPSHOT")),
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:resources", "2.0.0-SNAPSHOT"))
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:facets", "2.0.0-SNAPSHOT")),
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:resources", "2.0.0-SNAPSHOT"))
                );
 
       return archive;

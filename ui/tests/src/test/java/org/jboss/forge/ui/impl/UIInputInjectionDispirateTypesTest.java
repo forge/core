@@ -27,12 +27,12 @@ import org.junit.runner.RunWith;
 public class UIInputInjectionDispirateTypesTest
 {
    @Deployment
-   @Dependencies(@Addon(name = "org.jboss.forge:ui", version = "2.0.0-SNAPSHOT"))
+   @Dependencies(@Addon(name = "org.jboss.forge.addon:ui", version = "2.0.0-SNAPSHOT"))
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                .addBeansXML()
-               .addAsAddonDependencies(AddonDependencyEntry.create(AddonId.from("org.jboss.forge:ui", "2.0.0-SNAPSHOT")));
+               .addAsAddonDependencies(AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:ui", "2.0.0-SNAPSHOT")));
 
       return archive;
    }

@@ -7,7 +7,9 @@
       <relativePath>../pom.xml</relativePath>
    </parent>
 
+   <groupId>org.jboss.forge.addon</groupId>
    <artifactId>aesh-parent</artifactId>
+   
    <packaging>pom</packaging>
    <name>Forge - Aesh Addon Parent</name>
 
@@ -38,44 +40,44 @@
             <version>${version.aesh.extensions}</version>
          </dependency>
          <dependency>
-            <groupId>org.jboss.forge</groupId>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>aesh</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>
-            <groupId>org.jboss.forge</groupId>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>aesh</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
-            <groupId>org.jboss.forge</groupId>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>aesh-api</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>
-            <groupId>org.jboss.forge</groupId>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>aesh-spi</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>
-            <groupId>org.jboss.forge</groupId>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>aesh-spi</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
-            <groupId>org.jboss.forge</groupId>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>aesh-impl</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>
-            <groupId>org.jboss.forge</groupId>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>aesh-test-harness</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>
-            <groupId>org.jboss.forge</groupId>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>aesh-test-harness</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>

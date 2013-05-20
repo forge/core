@@ -34,8 +34,8 @@ import org.junit.runner.RunWith;
 public class ManyValuesInjectionTest
 {
    @Deployment
-   @Dependencies({ @Addon(name = "org.jboss.forge:ui", version = "2.0.0-SNAPSHOT"),
-            @Addon(name = "org.jboss.forge:convert", version = "2.0.0-SNAPSHOT") })
+   @Dependencies({ @Addon(name = "org.jboss.forge.addon:ui", version = "2.0.0-SNAPSHOT"),
+            @Addon(name = "org.jboss.forge.addon:convert", version = "2.0.0-SNAPSHOT") })
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap
@@ -43,8 +43,8 @@ public class ManyValuesInjectionTest
                .addBeansXML()
                .addClasses(Career.class)
                .addAsAddonDependencies(
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:convert", "2.0.0-SNAPSHOT")),
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:ui", "2.0.0-SNAPSHOT")));
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:convert", "2.0.0-SNAPSHOT")),
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:ui", "2.0.0-SNAPSHOT")));
 
       return archive;
    }

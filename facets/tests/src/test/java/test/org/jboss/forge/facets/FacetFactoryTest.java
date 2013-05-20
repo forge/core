@@ -30,7 +30,7 @@ public class FacetFactoryTest
 {
 
    @Deployment
-   @Dependencies(@Addon(name = "org.jboss.forge:facets", version = "2.0.0-SNAPSHOT"))
+   @Dependencies(@Addon(name = "org.jboss.forge.addon:facets", version = "2.0.0-SNAPSHOT"))
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap
@@ -43,7 +43,7 @@ public class FacetFactoryTest
                         NotFoundMockFacet.class,
                         TestQualifier.class)
                .addAsAddonDependencies(
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:facets", "2.0.0-SNAPSHOT")));
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:facets", "2.0.0-SNAPSHOT")));
       return archive;
    }
 

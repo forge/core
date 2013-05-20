@@ -19,7 +19,7 @@ public class TestAeshInstall
       Forge forge = new ForgeImpl();
       AddonManager addonManager = new AddonManagerImpl(forge, new MavenDependencyResolver(
                new FileResourceFactory(), new MavenContainer()));
-      InstallRequest request = addonManager.install(AddonId.from("org.jboss.forge:aesh", "2.0.0-SNAPSHOT"));
+      InstallRequest request = addonManager.install(AddonId.from("org.jboss.forge.addon:aesh", "2.0.0-SNAPSHOT"));
       request.perform();
    }
 }

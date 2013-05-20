@@ -30,17 +30,17 @@ import org.junit.runner.RunWith;
 public class ResourceHintsTest
 {
    @Deployment
-   @Dependencies({ @Addon(name = "org.jboss.forge:ui-hints", version = "2.0.0-SNAPSHOT"),
-            @Addon(name = "org.jboss.forge:environment", version = "2.0.0-SNAPSHOT"),
-            @Addon(name = "org.jboss.forge:resources", version = "2.0.0-SNAPSHOT") })
+   @Dependencies({ @Addon(name = "org.jboss.forge.addon:ui-hints", version = "2.0.0-SNAPSHOT"),
+            @Addon(name = "org.jboss.forge.addon:environment", version = "2.0.0-SNAPSHOT"),
+            @Addon(name = "org.jboss.forge.addon:resources", version = "2.0.0-SNAPSHOT") })
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
                .addBeansXML()
                .addAsAddonDependencies(
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:resources", "2.0.0-SNAPSHOT")),
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:ui-hints", "2.0.0-SNAPSHOT"))
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:resources", "2.0.0-SNAPSHOT")),
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:ui-hints", "2.0.0-SNAPSHOT"))
                );
 
       return archive;

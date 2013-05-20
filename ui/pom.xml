@@ -6,9 +6,13 @@
       <version>2.0.0-SNAPSHOT</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
+   
+   <groupId>org.jboss.forge.addon</groupId>
    <artifactId>ui-parent</artifactId>
+   
    <packaging>pom</packaging>
    <name>Forge - UI Addon Parent</name>
+   
    <modules>
       <module>api</module>
       <module>impl</module>
@@ -16,15 +20,16 @@
       <module>tests</module>
       <module>example</module>
    </modules>
+   
    <dependencyManagement>
       <dependencies>
          <dependency>
-            <groupId>org.jboss.forge</groupId>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>ui-api</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>
-            <groupId>org.jboss.forge</groupId>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>ui-impl</artifactId>
             <version>${project.version}</version>
          </dependency>

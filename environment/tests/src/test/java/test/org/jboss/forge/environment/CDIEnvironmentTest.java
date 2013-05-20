@@ -28,7 +28,7 @@ import org.junit.runner.RunWith;
 public class CDIEnvironmentTest
 {
    @Deployment
-   @Dependencies(@Addon(name = "org.jboss.forge:environment", version = "2.0.0-SNAPSHOT"))
+   @Dependencies(@Addon(name = "org.jboss.forge.addon:environment", version = "2.0.0-SNAPSHOT"))
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap
@@ -36,7 +36,7 @@ public class CDIEnvironmentTest
                .addPackages(true, CDIEnvironmentTest.class.getPackage())
                .addBeansXML()
                .addAsAddonDependencies(
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge:environment", "2.0.0-SNAPSHOT")));
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:environment", "2.0.0-SNAPSHOT")));
       return archive;
    }
 
