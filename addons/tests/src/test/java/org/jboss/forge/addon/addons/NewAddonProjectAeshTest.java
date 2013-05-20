@@ -32,8 +32,8 @@ public class NewAddonProjectAeshTest
 {
    @Deployment
    @Dependencies({ @Addon(name = "org.jboss.forge.addon:ui", version = "2.0.0-SNAPSHOT"),
-            @Addon(name = "org.jboss.forge.addon:aesh-test-harness", version = "2.0.0-SNAPSHOT"),
-            @Addon(name = "org.jboss.forge.addon:aesh", version = "2.0.0-SNAPSHOT"),
+            @Addon(name = "org.jboss.forge.addon:shell-test-harness", version = "2.0.0-SNAPSHOT"),
+            @Addon(name = "org.jboss.forge.addon:shell", version = "2.0.0-SNAPSHOT"),
             @Addon(name = "org.jboss.forge.addon:dependencies", version = "2.0.0-SNAPSHOT"),
             @Addon(name = "org.jboss.forge.addon:maven", version = "2.0.0-SNAPSHOT"),
             @Addon(name = "org.jboss.forge.addon:addons", version = "2.0.0-SNAPSHOT"),
@@ -49,8 +49,8 @@ public class NewAddonProjectAeshTest
                         AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:dependencies", "2.0.0-SNAPSHOT")),
                         AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:ui", "2.0.0-SNAPSHOT")),
                         AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:projects", "2.0.0-SNAPSHOT")),
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:aesh", "2.0.0-SNAPSHOT")),
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:aesh-test-harness", "2.0.0-SNAPSHOT")),
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:shell", "2.0.0-SNAPSHOT")),
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:shell-test-harness", "2.0.0-SNAPSHOT")),
                         AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:resources", "2.0.0-SNAPSHOT"))
                );
 

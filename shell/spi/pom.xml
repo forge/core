@@ -2,13 +2,12 @@
    <modelVersion>4.0.0</modelVersion>
    <parent>
       <groupId>org.jboss.forge.addon</groupId>
-      <artifactId>aesh-parent</artifactId>
+      <artifactId>shell-parent</artifactId>
       <version>2.0.0-SNAPSHOT</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
-   <artifactId>aesh-test-harness</artifactId>
-   <name>Forge - Aesh Addon Test Harness</name>
-
+   <artifactId>shell-spi</artifactId>
+   <name>Forge - Shell SPI Addon</name>
    <dependencies>
       <dependency>
          <groupId>org.jboss.forge.furnace</groupId>
@@ -16,12 +15,10 @@
          <scope>provided</scope>
       </dependency>
       <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>aesh-spi</artifactId>
-         <classifier>forge-addon</classifier>
+         <groupId>org.jboss.aesh</groupId>
+         <artifactId>aesh</artifactId>
       </dependency>
    </dependencies>
-
    <build>
       <plugins>
          <plugin>

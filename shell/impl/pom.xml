@@ -2,23 +2,23 @@
    <modelVersion>4.0.0</modelVersion>
    <parent>
       <groupId>org.jboss.forge.addon</groupId>
-      <artifactId>aesh-parent</artifactId>
+      <artifactId>shell-parent</artifactId>
       <version>2.0.0-SNAPSHOT</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
 
-   <artifactId>aesh-impl</artifactId>
-   <name>Forge - Aesh Addon Impl</name>
+   <artifactId>shell-impl</artifactId>
+   <name>Forge - Shell Addon Impl</name>
 
    <dependencies>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>aesh-api</artifactId>
+         <artifactId>shell-api</artifactId>
          <scope>provided</scope>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>aesh-spi</artifactId>
+         <artifactId>shell-spi</artifactId>
          <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>

@@ -2,47 +2,26 @@
    <modelVersion>4.0.0</modelVersion>
    <parent>
       <groupId>org.jboss.forge.addon</groupId>
-      <artifactId>aesh-parent</artifactId>
+      <artifactId>shell-parent</artifactId>
       <version>2.0.0-SNAPSHOT</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
-
-   <artifactId>aesh</artifactId>
-   <name>Forge - Aesh Addon</name>
+   <artifactId>shell-test-harness</artifactId>
+   <name>Forge - Shell Addon Test Harness</name>
 
    <dependencies>
       <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>aesh-api</artifactId>
+         <groupId>org.jboss.forge.furnace</groupId>
+         <artifactId>furnace-api</artifactId>
+         <scope>provided</scope>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>aesh-impl</artifactId>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>aesh-spi</artifactId>
+         <artifactId>shell-spi</artifactId>
          <classifier>forge-addon</classifier>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>aesh-test-harness</artifactId>
-         <classifier>forge-addon</classifier>
-         <optional>true</optional>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>ui</artifactId>
-         <classifier>forge-addon</classifier>
-         <version>2.0.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>convert</artifactId>
-         <classifier>forge-addon</classifier>
-         <version>2.0.0-SNAPSHOT</version>
       </dependency>
    </dependencies>
+
    <build>
       <plugins>
          <plugin>

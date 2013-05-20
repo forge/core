@@ -99,7 +99,7 @@
             <!-- TODO: Remove these modules -->
             <module>addon-manager</module>
             <module>addons</module>
-            <module>aesh</module>
+            <module>shell</module>
             <module>dependencies</module>
             <module>environment</module>
             <module>facets</module>

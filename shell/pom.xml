@@ -8,10 +8,10 @@
    </parent>
 
    <groupId>org.jboss.forge.addon</groupId>
-   <artifactId>aesh-parent</artifactId>
+   <artifactId>shell-parent</artifactId>
    
    <packaging>pom</packaging>
-   <name>Forge - Aesh Addon Parent</name>
+   <name>Forge - Shell Addon Parent</name>
 
    <modules>
       <module>api</module>
@@ -41,44 +41,44 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>aesh</artifactId>
+            <artifactId>shell</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>aesh</artifactId>
-            <version>${project.version}</version>
-            <classifier>forge-addon</classifier>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>aesh-api</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>aesh-spi</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>aesh-spi</artifactId>
+            <artifactId>shell</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>aesh-impl</artifactId>
+            <artifactId>shell-api</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>aesh-test-harness</artifactId>
+            <artifactId>shell-spi</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>aesh-test-harness</artifactId>
+            <artifactId>shell-spi</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>shell-impl</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>shell-test-harness</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>shell-test-harness</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>
