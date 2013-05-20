@@ -26,29 +26,28 @@ It is worth mentioning that the Eclipse plugin does not support access to shell 
 
 Get Started with the Command line tools:
 -------------------------------------------------------------------------------
-* Download [JBoss Forge 2.0.0.Alpha2](https://repository.jboss.org/nexus/service/local/artifact/maven/redirect?r=releases&g=org.jboss.forge&a=forge-distribution&v=2.0.0.Alpha2&e=zip)
-* Extract the ZIP to a folder and navigate to forge-2.0.0.Alpha2/bin folder
+* Download [JBoss Forge 2.0.0.Alpha4](https://repository.jboss.org/nexus/service/local/artifact/maven/redirect?r=releases&g=org.jboss.forge&a=forge-distribution&v=2.0.0.Alpha4&e=zip)
+* Extract the ZIP to a folder and navigate to forge-2.0.0.Alpha4/bin folder
 
 Forge is now ready to go. 
 
 Install the required addons by running the following commands:
 
 ```shell
-    forge --install org.jboss.forge:projects,2.0.0.Alpha2    
-    forge --install org.jboss.forge:maven,2.0.0.Alpha2
+    forge --install groupId:artifactId,version
 ```
 
 - Forge will install the required dependencies for each addon.
 
 If you wish to install the prototype Forge 2 Shell called Aesh, be sure to run the following:
 ```shell    
-    forge --install org.jboss.forge:aesh,2.0.0.Alpha2
+    forge --install shell
 ```
 
 If you wish to remove any addon, you can use the following command:
 
 ```shell    
-    forge --remove addon
+    forge --remove groupId:artifactId,version
 ```
 
 Get Started with the Forge 2 Eclipse Plugin:
@@ -158,7 +157,7 @@ Add User Inputs to your Addon
          <groupId>org.jboss.forge</groupId>
          <artifactId>ui</artifactId>
          <classifier>forge-addon</classifier>
-         <version>2.0.0.Alpha2</version>
+         <version>2.0.0.Alpha4</version>
       </dependency>
 ```
 
