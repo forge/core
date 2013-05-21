@@ -22,8 +22,14 @@ import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnit;
 @Exported
 public interface PersistenceProvider
 {
+
    /**
-    * Get the name of this provider.
+    * Get the name of this provider
+    */
+   String getName();
+
+   /**
+    * Get the classname of this provider.
     */
    String getProvider();
 

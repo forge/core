@@ -112,4 +112,10 @@ public class HibernateProvider implements PersistenceProvider
    {
       return new HibernateMetaModelProvider();
    }
+
+   @Override
+   public String getName()
+   {
+      return "Hibernate";
+   }
 }

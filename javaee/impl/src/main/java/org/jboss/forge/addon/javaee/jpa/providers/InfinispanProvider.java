@@ -61,4 +61,10 @@ public class InfinispanProvider implements PersistenceProvider
    {
       return new HibernateMetaModelProvider();
    }
+
+   @Override
+   public String getName()
+   {
+      return "Infinispan";
+   }
 }

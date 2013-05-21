@@ -120,4 +120,9 @@ public class EclipseLinkProvider implements PersistenceProvider
       return new EclipseLinkMetaModelProvider();
    }
 
+   @Override
+   public String getName()
+   {
+      return "Eclipse Link";
+   }
 }

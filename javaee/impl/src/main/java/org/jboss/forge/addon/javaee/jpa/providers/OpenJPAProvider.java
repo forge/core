@@ -110,4 +110,9 @@ public class OpenJPAProvider implements PersistenceProvider
       return new OpenJPAMetaModelProvider();
    }
 
+   @Override
+   public String getName()
+   {
+      return "OpenJPA";
+   }
 }
