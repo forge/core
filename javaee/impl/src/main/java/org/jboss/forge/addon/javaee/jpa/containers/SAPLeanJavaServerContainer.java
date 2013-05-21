@@ -8,13 +8,13 @@ public class SAPLeanJavaServerContainer extends JavaEEDefaultContainer
    private static final String DEFAULT_DATA_SOURCE = "jdbc/DefaultDB";
 
    @Override
-   protected String getDefaultDataSource()
+   public String getDefaultDataSource()
    {
       return DEFAULT_DATA_SOURCE;
    }
 
    @Override
-   protected DatabaseType getDefaultDatabaseType()
+   public DatabaseType getDefaultDatabaseType()
    {
       return DatabaseType.HSQLDB;
    }

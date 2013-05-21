@@ -40,6 +40,12 @@ public class CustomJTAContainer implements PersistenceContainer
    }
 
    @Override
+   public boolean isJTASupported()
+   {
+      return true;
+   }
+
+   @Override
    public String getName()
    {
       return "Custom JTA";

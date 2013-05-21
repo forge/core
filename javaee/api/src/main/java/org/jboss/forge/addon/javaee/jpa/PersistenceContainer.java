@@ -36,4 +36,8 @@ public interface PersistenceContainer
    PersistenceUnit<PersistenceDescriptor> setupConnection(PersistenceUnit<PersistenceDescriptor> unit,
             JPADataSource dataSource);
 
+   /**
+    * @return true if this {@link PersistenceContainer} supports JTA configuration
+    */
+   boolean isJTASupported();
 }

@@ -46,6 +46,12 @@ public class NonJTAContainer implements PersistenceContainer
    }
 
    @Override
+   public boolean isJTASupported()
+   {
+      return false;
+   }
+
+   @Override
    public String getName()
    {
       return "Non-JTA Container";

@@ -17,13 +17,13 @@ public class WildflyContainer extends JavaEEDefaultContainer
    private static final String EXAMPLE_DS = "java:jboss/datasources/ExampleDS";
 
    @Override
-   protected DatabaseType getDefaultDatabaseType()
+   public DatabaseType getDefaultDatabaseType()
    {
       return DatabaseType.HSQLDB;
    }
 
    @Override
-   protected String getDefaultDataSource()
+   public String getDefaultDataSource()
    {
       return EXAMPLE_DS;
    }

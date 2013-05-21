@@ -49,6 +49,12 @@ public class WebLogic12cContainer implements PersistenceContainer
    }
 
    @Override
+   public boolean isJTASupported()
+   {
+      return true;
+   }
+
+   @Override
    public String getName()
    {
       return "Oracle Weblogic 12c";

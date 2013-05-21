@@ -17,13 +17,13 @@ public class GlassFish3Container extends JavaEEDefaultContainer
    private static final String DEFAULT_DS = "jdbc/__default";
 
    @Override
-   protected DatabaseType getDefaultDatabaseType()
+   public DatabaseType getDefaultDatabaseType()
    {
       return DatabaseType.DERBY;
    }
 
    @Override
-   protected String getDefaultDataSource()
+   public String getDefaultDataSource()
    {
       return DEFAULT_DS;
    }

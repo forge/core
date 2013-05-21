@@ -13,13 +13,13 @@ public class TomEEContainer extends JavaEEDefaultContainer
    private static final String DEFAULT_DATASOURCE_NAME = "Default JDBC Database";
 
    @Override
-   protected DatabaseType getDefaultDatabaseType()
+   public DatabaseType getDefaultDatabaseType()
    {
       return DatabaseType.HSQLDB;
    }
 
    @Override
-   protected String getDefaultDataSource()
+   public String getDefaultDataSource()
    {
       return DEFAULT_DATASOURCE_NAME;
    }

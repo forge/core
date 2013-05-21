@@ -17,13 +17,13 @@ public class JBossAS6Container extends JavaEEDefaultContainer
    private static final String DEFAULT_DS = "java:/DefaultDS";
 
    @Override
-   protected DatabaseType getDefaultDatabaseType()
+   public DatabaseType getDefaultDatabaseType()
    {
       return DatabaseType.HSQLDB;
    }
 
    @Override
-   protected String getDefaultDataSource()
+   public String getDefaultDataSource()
    {
       return DEFAULT_DS;
    }

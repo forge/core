@@ -60,6 +60,12 @@ public class CustomJDBCContainer implements PersistenceContainer
    }
 
    @Override
+   public boolean isJTASupported()
+   {
+      return false;
+   }
+
+   @Override
    public String getName()
    {
       return "Custom JDBC";

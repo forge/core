@@ -21,6 +21,7 @@ import org.jboss.forge.addon.javaee.jpa.providers.HibernateProvider;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
+import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
@@ -43,6 +44,10 @@ public class PersistenceSetupWizard implements UIWizard
    @Inject
    @WithAttributes(label = "Provider:", required = true, requiredMessage = "Please select a persistence provider")
    private UISelectOne<PersistenceProvider> providers;
+
+   @Inject
+   @WithAttributes(label = "Install a JPA 2 metamodel generator?")
+   private UIInput<Boolean> configureMetadata;
 
    @Inject
    private JBossEAP6Container defaultContainer;
@@ -71,7 +76,8 @@ public class PersistenceSetupWizard implements UIWizard
    {
       initContainers();
       initProviders();
-      builder.add(containers).add(providers);
+      initConfigureMetadata();
+      builder.add(containers).add(providers).add(configureMetadata);
    }
 
    private void initContainers()
@@ -132,6 +138,11 @@ public class PersistenceSetupWizard implements UIWizard
       providers.setDefaultValue(defaultProvider);
    }
 
+   private void initConfigureMetadata()
+   {
+      configureMetadata.setDefaultValue(Boolean.FALSE);
+   }
+
    @Override
    public void validate(UIValidationContext validator)
    {
@@ -141,13 +152,25 @@ public class PersistenceSetupWizard implements UIWizard
    @Override
    public Result execute(UIContext context) throws Exception
    {
+      context.setAttribute(PersistenceProvider.class, providers.getValue());
+      context.setAttribute(PersistenceContainer.class, containers.getValue());
       return Results.success();
    }
 
    @Override
    public NavigationResult next(UIContext context) throws Exception
    {
-      return Results.navigateTo(PersistenceSetupDataSourceStep.class);
+      context.setAttribute(PersistenceProvider.class, providers.getValue());
+      PersistenceContainer container = containers.getValue();
+      context.setAttribute(PersistenceContainer.class, container);
+      if (container.isJTASupported())
+      {
+         return Results.navigateTo(PersistenceSetupDataSourceStep.class);
+      }
+      else
+      {
+         return Results.navigateTo(PersistenceSetupJDBCDataStep.class);
+      }
    }
 
 }
