@@ -31,6 +31,6 @@ public class JBossAS7Container extends JavaEEDefaultContainer
    @Override
    public String getName()
    {
-      return "JBoss AS7";
+      return "JBoss Application Server 7.x";
    }
 }

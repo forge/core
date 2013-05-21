@@ -31,6 +31,6 @@ public class GlassFish3Container extends JavaEEDefaultContainer
    @Override
    public String getName()
    {
-      return "Glassfish 3.x";
+      return "Oracle Glassfish 3.x";
    }
 }

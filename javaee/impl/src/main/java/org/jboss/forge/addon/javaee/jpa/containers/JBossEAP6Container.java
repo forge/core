@@ -31,6 +31,6 @@ public class JBossEAP6Container extends JavaEEDefaultContainer
    @Override
    public String getName()
    {
-      return "JBoss EAP 6.x";
+      return "JBoss Enterprise Application Platform 6.x";
    }
 }

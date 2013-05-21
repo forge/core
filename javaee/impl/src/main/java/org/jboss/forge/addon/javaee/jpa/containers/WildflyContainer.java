@@ -31,6 +31,6 @@ public class WildflyContainer extends JavaEEDefaultContainer
    @Override
    public String getName()
    {
-      return "Wildfly";
+      return "Wildfly Application Server";
    }
 }
