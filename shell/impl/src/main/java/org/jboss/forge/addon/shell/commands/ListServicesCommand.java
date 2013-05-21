@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
@@ -24,20 +25,23 @@ import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
+import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
-import org.jboss.forge.furnace.addons.AddonRegistry;
+import org.jboss.forge.furnace.addons.AddonFilter;
+import org.jboss.forge.furnace.lock.LockMode;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  */
 public class ListServicesCommand implements UICommand
 {
-   private AddonRegistry registry;
+   private Furnace furnace;
 
    @Inject
-   public ListServicesCommand(AddonRegistry registry)
+   public ListServicesCommand(Furnace furnace)
    {
-      this.registry = registry;
+      this.furnace = furnace;
+      ;
    }
 
    @Override
@@ -71,22 +75,41 @@ public class ListServicesCommand implements UICommand
 
    private String listServices() throws IOException
    {
-      StringBuilder builder = new StringBuilder();
-      Set<Addon> addons = registry.getAddons();
-      for (Addon addon : addons)
-      {
-         Set<Class<?>> serviceClasses = addon.getServiceRegistry().getExportedTypes();
-         for (Class<?> type : serviceClasses)
-         {
-            builder.append(type.getName()).append("\n");
-            for (Method method : type.getMethods())
-            {
-               builder.append("\n\ttype - " + getName(method));
-            }
-            builder.append("\n");
-         }
-      }
+      final StringBuilder builder = new StringBuilder();
 
+      furnace.getLockManager().performLocked(LockMode.READ, new Callable<Void>()
+      {
+
+         @Override
+         public Void call() throws Exception
+         {
+            Set<Addon> addons = furnace.getAddonRegistry().getAddons(new AddonFilter()
+            {
+               @Override
+               public boolean accept(Addon addon)
+               {
+                  return addon.getStatus().isStarted();
+               }
+            });
+
+            for (Addon addon : addons)
+            {
+               Set<Class<?>> serviceClasses = addon.getServiceRegistry().getExportedTypes();
+               for (Class<?> type : serviceClasses)
+               {
+                  builder.append(type.getName()).append("\n");
+                  for (Method method : type.getMethods())
+                  {
+                     builder.append("\n\ttype - " + getName(method));
+                  }
+                  builder.append("\n");
+               }
+            }
+
+            return null;
+         }
+
+      });
       return builder.toString();
    }
 

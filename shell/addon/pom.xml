@@ -26,7 +26,7 @@
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>shell-test-harness</artifactId>
+         <artifactId>shell-test-configurator</artifactId>
          <classifier>forge-addon</classifier>
          <optional>true</optional>
       </dependency>

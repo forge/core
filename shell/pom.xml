@@ -17,6 +17,7 @@
       <module>api</module>
       <module>impl</module>
       <module>spi</module>
+      <module>test-config</module>
       <module>test-harness</module>
       <module>addon</module>
       <module>tests</module>
@@ -75,6 +76,12 @@
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>shell-test-harness</artifactId>
             <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>shell-test-configurator</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
