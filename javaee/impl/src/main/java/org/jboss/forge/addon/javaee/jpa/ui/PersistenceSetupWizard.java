@@ -7,15 +7,17 @@
 
 package org.jboss.forge.addon.javaee.jpa.ui;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Comparator;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.javaee.jpa.PersistenceContainer;
 import org.jboss.forge.addon.javaee.jpa.PersistenceProvider;
+import org.jboss.forge.addon.javaee.jpa.containers.JBossEAP6Container;
+import org.jboss.forge.addon.javaee.jpa.providers.HibernateProvider;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
@@ -43,6 +45,12 @@ public class PersistenceSetupWizard implements UIWizard
    private UISelectOne<PersistenceProvider> providers;
 
    @Inject
+   private JBossEAP6Container defaultContainer;
+
+   @Inject
+   private HibernateProvider defaultProvider;
+
+   @Inject
    private AddonRegistry addonRegistry;
 
    @Override
@@ -68,7 +76,15 @@ public class PersistenceSetupWizard implements UIWizard
 
    private void initContainers()
    {
-      List<PersistenceContainer> persistenceContainers = new ArrayList<PersistenceContainer>();
+      Set<PersistenceContainer> persistenceContainers = new TreeSet<PersistenceContainer>(
+               new Comparator<PersistenceContainer>()
+               {
+                  @Override
+                  public int compare(PersistenceContainer o1, PersistenceContainer o2)
+                  {
+                     return o1.getName().compareTo(o2.getName());
+                  }
+               });
       Set<ExportedInstance<PersistenceContainer>> exportedInstances = addonRegistry
                .getExportedInstances(PersistenceContainer.class);
       for (ExportedInstance<PersistenceContainer> exportedInstance : exportedInstances)
@@ -84,11 +100,20 @@ public class PersistenceSetupWizard implements UIWizard
          }
       });
       containers.setValueChoices(persistenceContainers);
+      containers.setDefaultValue(defaultContainer);
    }
 
    private void initProviders()
    {
-      List<PersistenceProvider> persistenceProviders = new ArrayList<PersistenceProvider>();
+      Set<PersistenceProvider> persistenceProviders = new TreeSet<PersistenceProvider>(
+               new Comparator<PersistenceProvider>()
+               {
+                  @Override
+                  public int compare(PersistenceProvider o1, PersistenceProvider o2)
+                  {
+                     return o1.getName().compareTo(o2.getName());
+                  }
+               });
       Set<ExportedInstance<PersistenceProvider>> exportedInstances = addonRegistry
                .getExportedInstances(PersistenceProvider.class);
       for (ExportedInstance<PersistenceProvider> exportedInstance : exportedInstances)
@@ -104,6 +129,7 @@ public class PersistenceSetupWizard implements UIWizard
          }
       });
       providers.setValueChoices(persistenceProviders);
+      providers.setDefaultValue(defaultProvider);
    }
 
    @Override
