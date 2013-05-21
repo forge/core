@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.javaee.facets.cdi;
+package org.jboss.forge.addon.javaee.cdi;
 
 import java.io.File;
 import java.util.Arrays;
@@ -17,7 +17,7 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
-import org.jboss.forge.addon.javaee.facets.AbstractJavaEEFacet;
+import org.jboss.forge.addon.javaee.AbstractJavaEEFacet;
 import org.jboss.forge.addon.javaee.facets.CDIFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
