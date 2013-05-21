@@ -52,9 +52,6 @@ public class ShellTestHarnessTest
    }
 
    @Inject
-   private ForgeShell shell;
-
-   @Inject
    private ShellTest test;
 
    @Test
