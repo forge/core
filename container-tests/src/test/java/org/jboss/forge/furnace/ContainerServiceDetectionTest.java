@@ -2,13 +2,13 @@ package org.jboss.forge.furnace;
 
 import java.util.Set;
 
+import javax.enterprise.inject.AmbiguousResolutionException;
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.addons.AddonRegistry;
-import org.jboss.forge.furnace.exception.ContainerException;
 import org.jboss.forge.furnace.mocks.AbstractImplementation;
 import org.jboss.forge.furnace.mocks.ExportedAbstractClass;
 import org.jboss.forge.furnace.mocks.ExportedConcreteClass;
@@ -63,13 +63,13 @@ public class ContainerServiceDetectionTest
       Assert.assertNotNull(registry.getExportedInstance(ImplementingClass2.class).get());
    }
 
-   @Test(expected = ContainerException.class)
+   @Test(expected = AmbiguousResolutionException.class)
    public void testGetExportedInstanceBySharedAbstractClass()
    {
       registry.getExportedInstance(AbstractImplementation.class);
    }
 
-   @Test(expected = ContainerException.class)
+   @Test(expected = AmbiguousResolutionException.class)
    public void testGetExportedInstanceBySharedInterface()
    {
       registry.getExportedInstance(ExportedInterface.class);

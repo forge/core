@@ -72,7 +72,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
          repository.deploy(addonToDeploy, ((ForgeArchive) archive).getAddonDependencies(), new ArrayList<File>());
          repository.enable(addonToDeploy);
 
-         while (runnable.forge.getStatus().isStarting())
+         while (runnable.furnace.getStatus().isStarting())
          {
             try
             {
@@ -104,7 +104,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       else if (archive instanceof ForgeRemoteAddon)
       {
          ForgeRemoteAddon remoteAddon = (ForgeRemoteAddon) archive;
-         AddonManager addonManager = new AddonManagerImpl(runnable.forge, new MavenDependencyResolver(
+         AddonManager addonManager = new AddonManagerImpl(runnable.furnace, new MavenDependencyResolver(
                   new FileResourceFactory(), new MavenContainer()));
          InstallRequest request = addonManager.install(remoteAddon.getAddonId());
          request.perform();
@@ -166,7 +166,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    {
       try
       {
-         this.addonDir = File.createTempFile("forge", "test-addon-dir");
+         this.addonDir = File.createTempFile("furnace", "test-addon-dir");
          runnable = new ForgeRunnable(addonDir, ClassLoader.getSystemClassLoader());
          thread = new Thread(runnable, "Arquillian Furnace Runtime");
          System.out.println("Executing test case with addon dir [" + addonDir + "]");
@@ -221,42 +221,49 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
 
    private class ForgeRunnable implements Runnable
    {
-      private Furnace forge;
+      private Furnace furnace;
       private ClassLoader loader;
       private File addonDir;
 
       public ForgeRunnable(File addonDir, ClassLoader loader)
       {
-         this.forge = new FurnaceImpl();
+         this.furnace = new FurnaceImpl();
          this.addonDir = addonDir;
          this.loader = loader;
       }
 
       public Furnace getForge()
       {
-         return forge;
+         return furnace;
       }
 
       @Override
       public void run()
       {
-         ClassLoaders.executeIn(loader, new Callable<Object>()
+         try
          {
-            @Override
-            public Object call() throws Exception
+            ClassLoaders.executeIn(loader, new Callable<Object>()
             {
-               repository = (MutableAddonRepository) runnable.forge
-                        .addRepository(AddonRepositoryMode.MUTABLE, addonDir);
-               forge.setServerMode(true);
-               forge.start(loader);
-               return forge;
-            }
-         });
+               @Override
+               public Object call() throws Exception
+               {
+                  repository = (MutableAddonRepository) runnable.furnace
+                           .addRepository(AddonRepositoryMode.MUTABLE, addonDir);
+                  furnace.setServerMode(true);
+                  furnace.start(loader);
+                  return furnace;
+               }
+            });
+         }
+         catch (Exception e)
+         {
+            throw new RuntimeException("Failed to start Furnace container.", e);
+         }
       }
 
       public void stop()
       {
-         forge.stop();
+         furnace.stop();
          Thread.currentThread().interrupt();
       }
 

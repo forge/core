@@ -18,7 +18,7 @@ public class ClassLoaders
    /**
     * Execute the given {@link Callable} in the {@link ClassLoader} provided. Return the result, if any.
     */
-   public static <T> T executeIn(ClassLoader loader, Callable<T> task)
+   public static <T> T executeIn(ClassLoader loader, Callable<T> task) throws Exception
    {
       if (task == null)
          return null;
@@ -32,14 +32,6 @@ public class ClassLoaders
       {
          SecurityActions.setContextClassLoader(loader);
          return task.call();
-      }
-      catch (RuntimeException e)
-      {
-         throw e;
-      }
-      catch (Exception e)
-      {
-         throw new ContainerException("Error invoking Task within ClassLoader [" + loader + "]", e);
       }
       finally
       {

@@ -11,7 +11,6 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 
 import org.jboss.forge.furnace.addons.Addon;
-import org.jboss.forge.furnace.exception.ContainerException;
 import org.jboss.forge.furnace.lock.LockManager;
 import org.jboss.forge.furnace.lock.LockMode;
 import org.jboss.forge.furnace.services.ExportedInstance;
@@ -102,39 +101,33 @@ public class ServiceRegistryImpl implements ServiceRegistry
             }
             catch (ClassNotFoundException cnfe)
             {
-               log.fine("Class " + requestedType.getName() + " is not present in this addon classloader");
+               log.fine("Class " + requestedType.getName() + " is not present in this addon ClassLoader");
                return null;
             }
+
             try
             {
                actualLoadedType = loadAddonClass(actualType);
             }
             catch (ClassNotFoundException cnfe)
             {
-               log.fine("Class " + actualType.getName() + " is not present in this addon classloader");
+               log.fine("Class " + actualType.getName() + " is not present in this addon ClassLoader");
                return null;
             }
 
-            try
+            ExportedInstance<T> result = null;
+            Set<Bean<?>> beans = manager.getBeans(requestedLoadedType);
+            if (!beans.isEmpty())
             {
-               ExportedInstance<T> result = null;
-               Set<Bean<?>> beans = manager.getBeans(requestedLoadedType);
-               if (!beans.isEmpty())
-               {
-                  result = new ExportedInstanceImpl<T>(
-                           addon.getClassLoader(),
-                           manager, (Bean<T>)
-                           manager.resolve(beans),
-                           requestedLoadedType,
-                           actualLoadedType
-                           );
-               }
-               return result;
+               result = new ExportedInstanceImpl<T>(
+                        addon.getClassLoader(),
+                        manager, (Bean<T>)
+                        manager.resolve(beans),
+                        requestedLoadedType,
+                        actualLoadedType
+                        );
             }
-            catch (Exception e)
-            {
-               throw new ContainerException("Error while fetching exported instance", e);
-            }
+            return result;
          }
       });
    }
@@ -197,6 +190,7 @@ public class ServiceRegistryImpl implements ServiceRegistry
    {
       Addons.waitUntilStarted(addon);
       Set<ExportedInstance<T>> result = new HashSet<ExportedInstance<T>>();
+
       Class<T> requestedLoadedType;
       try
       {
@@ -206,6 +200,7 @@ public class ServiceRegistryImpl implements ServiceRegistry
       {
          return result;
       }
+
       for (Class<?> type : services)
       {
          if (requestedLoadedType.isAssignableFrom(type))

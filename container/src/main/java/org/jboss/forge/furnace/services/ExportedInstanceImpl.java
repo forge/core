@@ -13,6 +13,7 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.InjectionPoint;
 
+import org.jboss.forge.furnace.exception.ContainerException;
 import org.jboss.forge.furnace.services.ExportedInstance;
 import org.jboss.forge.furnace.util.Annotations;
 import org.jboss.forge.furnace.util.ClassLoaders;
@@ -55,7 +56,15 @@ public class ExportedInstanceImpl<R> implements ExportedInstance<R>
          }
       };
 
-      return (R) ClassLoaders.executeIn(loader, task);
+      try
+      {
+         return (R) ClassLoaders.executeIn(loader, task);
+      }
+      catch (Exception e)
+      {
+         throw new ContainerException("Failed to enhance instance of [" + actualType + "] with proxy for ClassLoader ["
+                  + loader + "]");
+      }
    }
 
    @SuppressWarnings("unchecked")
@@ -76,7 +85,15 @@ public class ExportedInstanceImpl<R> implements ExportedInstance<R>
          }
       };
 
-      return ClassLoaders.executeIn(loader, task);
+      try
+      {
+         return ClassLoaders.executeIn(loader, task);
+      }
+      catch (Exception e)
+      {
+         throw new ContainerException("Failed to enhance instance of [" + actualType + "] with proxy for ClassLoader ["
+                  + loader + "]");
+      }
    }
 
    @Override

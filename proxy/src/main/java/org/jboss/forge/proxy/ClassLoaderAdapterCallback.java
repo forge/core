@@ -62,37 +62,23 @@ public class ClassLoaderAdapterCallback implements MethodHandler
          {
             try
             {
-               try
+               if (thisMethod.getDeclaringClass().equals(callingLoader.loadClass(ForgeProxy.class.getName())))
                {
-                  if (thisMethod.getDeclaringClass().equals(callingLoader.loadClass(ForgeProxy.class.getName())))
-                  {
-                     return delegate;
-                  }
+                  return delegate;
                }
-               catch (Exception e)
-               {
-               }
-
-               Method delegateMethod = getDelegateMethod(thisMethod);
-
-               List<Object> parameterValues = convertParameterValues(args, delegateMethod);
-
-               AccessibleObject.setAccessible(new AccessibleObject[] { delegateMethod }, true);
-               Object result = delegateMethod.invoke(delegate, parameterValues.toArray());
-
-               return enhanceResult(thisMethod, result);
-            }
-            catch (RuntimeException e)
-            {
-               throw e;
             }
             catch (Exception e)
             {
-               throw new ContainerException(
-                        "Could not invoke proxy method [" + delegate.getClass().getName() + "."
-                                 + thisMethod.getName() + "()] in ClassLoader ["
-                                 + delegateLoader + "]", e);
             }
+
+            Method delegateMethod = getDelegateMethod(thisMethod);
+
+            List<Object> parameterValues = convertParameterValues(args, delegateMethod);
+
+            AccessibleObject.setAccessible(new AccessibleObject[] { delegateMethod }, true);
+            Object result = delegateMethod.invoke(delegate, parameterValues.toArray());
+
+            return enhanceResult(thisMethod, result);
          }
 
          private Method getDelegateMethod(final Method proxy) throws ClassNotFoundException, NoSuchMethodException
@@ -381,131 +367,104 @@ public class ClassLoaderAdapterCallback implements MethodHandler
       // best to use type inspection of the given callingLoader ClassLoader to figure out the proper type.
       final Class<?> delegateType = delegate.getClass();
 
-      return ClassLoaders.executeIn(JAVASSIST_LOADER, new Callable<T>()
+      try
       {
-         @Override
-         public T call() throws Exception
+         return ClassLoaders.executeIn(JAVASSIST_LOADER, new Callable<T>()
          {
-            Class<?>[] hierarchy = null;
-            if (types == null || types.length == 0)
+            @Override
+            public T call() throws Exception
             {
-               hierarchy = ProxyTypeInspector.getCompatibleClassHierarchy(callingLoader,
-                        Proxies.unwrapProxyTypes(delegateType, callingLoader, delegateLoader));
-               if (hierarchy == null || hierarchy.length == 0)
+               Class<?>[] hierarchy = null;
+               if (types == null || types.length == 0)
                {
-                  Logger.getLogger(getClass().getName()).fine(
-                           "Must specify at least one non-final type to enhance for Object: "
-                                    + delegate + " of type " + delegate.getClass());
-
-                  return (T) delegate;
-                  // throw new
-                  // IllegalArgumentException("Must specify at least one non-final type to enhance for Object: " +
-                  // delegate + " of type " + delegate.getClass());
-               }
-            }
-            else
-               hierarchy = Arrays.copy(types, new Class<?>[types.length]);
-
-            MethodFilter filter = new MethodFilter()
-            {
-               @Override
-               public boolean isHandled(Method method)
-               {
-                  if (!method.getDeclaringClass().getName().contains("java.lang")
-                           || ("toString".equals(method.getName()) && method.getParameterTypes().length == 0))
-                     return true;
-                  return false;
-               }
-            };
-
-            Object enhancedResult = null;
-
-            ProxyFactory f = new ProxyFactory();
-
-            f.setUseCache(true);
-
-            Class<?> first = hierarchy[0];
-            if (!first.isInterface())
-            {
-               f.setSuperclass(Proxies.unwrapProxyTypes(first, callingLoader, delegateLoader));
-               hierarchy = Arrays.shiftLeft(hierarchy, new Class<?>[hierarchy.length - 1]);
-            }
-
-            int index = Arrays.indexOf(hierarchy, ProxyObject.class);
-            if (index >= 0)
-            {
-               hierarchy = Arrays.removeElementAtIndex(hierarchy, index);
-            }
-
-            if (!Proxies.isProxyType(first) && !Arrays.contains(hierarchy, ForgeProxy.class))
-               hierarchy = Arrays.append(hierarchy, ForgeProxy.class);
-
-            if (hierarchy.length > 0)
-               f.setInterfaces(hierarchy);
-
-            f.setFilter(filter);
-            Class<?> c = null;
-            try
-            {
-               c = f.createClass();
-            }
-            catch (Exception e)
-            {
-               try
-               {
-                  /*
-                   * FIXME Why is this failing to proxy the type. Race condition in class definition or loading?
-                   */
-                  Thread.sleep(10);
-                  c = f.createClass();
-               }
-               catch (Exception e1)
-               {
-                  throw e;
-               }
-            }
-
-            try
-            {
-               enhancedResult = c.newInstance();
-            }
-            catch (InstantiationException e)
-            {
-               throw new IllegalStateException(e);
-            }
-            catch (IllegalAccessException e)
-            {
-               throw new IllegalStateException(e);
-            }
-
-            try
-            {
-               ((ProxyObject) enhancedResult)
-                        .setHandler(new ClassLoaderAdapterCallback(callingLoader, delegateLoader, delegate));
-            }
-            catch (ClassCastException e)
-            {
-               Class<?>[] interfaces = enhancedResult.getClass().getInterfaces();
-               for (Class<?> javassistType : interfaces)
-               {
-                  if (ProxyObject.class.getName().equals(javassistType.getName()))
+                  hierarchy = ProxyTypeInspector.getCompatibleClassHierarchy(callingLoader,
+                           Proxies.unwrapProxyTypes(delegateType, callingLoader, delegateLoader));
+                  if (hierarchy == null || hierarchy.length == 0)
                   {
-                     String callbackClassName = ClassLoaderAdapterCallback.class.getName();
-                     ClassLoader javassistLoader = javassistType.getClassLoader();
-                     Constructor<?> callbackConstructor = javassistLoader.loadClass(callbackClassName)
-                              .getConstructors()[0];
+                     Logger.getLogger(getClass().getName()).fine(
+                              "Must specify at least one non-final type to enhance for Object: "
+                                       + delegate + " of type " + delegate.getClass());
 
-                     Class<?> typeArgument = javassistLoader.loadClass(MethodHandler.class.getName());
-                     Method setHandlerMethod = javassistType.getMethod("setHandler", typeArgument);
-                     setHandlerMethod.invoke(enhancedResult,
-                              callbackConstructor.newInstance(callingLoader, delegateLoader, delegate));
+                     return (T) delegate;
                   }
                }
+               else
+                  hierarchy = Arrays.copy(types, new Class<?>[types.length]);
+
+               MethodFilter filter = new MethodFilter()
+               {
+                  @Override
+                  public boolean isHandled(Method method)
+                  {
+                     if (!method.getDeclaringClass().getName().contains("java.lang")
+                              || ("toString".equals(method.getName()) && method.getParameterTypes().length == 0))
+                        return true;
+                     return false;
+                  }
+               };
+
+               Object enhancedResult = null;
+
+               ProxyFactory f = new ProxyFactory();
+
+               f.setUseCache(true);
+
+               Class<?> first = hierarchy[0];
+               if (!first.isInterface())
+               {
+                  f.setSuperclass(Proxies.unwrapProxyTypes(first, callingLoader, delegateLoader));
+                  hierarchy = Arrays.shiftLeft(hierarchy, new Class<?>[hierarchy.length - 1]);
+               }
+
+               int index = Arrays.indexOf(hierarchy, ProxyObject.class);
+               if (index >= 0)
+               {
+                  hierarchy = Arrays.removeElementAtIndex(hierarchy, index);
+               }
+
+               if (!Proxies.isProxyType(first) && !Arrays.contains(hierarchy, ForgeProxy.class))
+                  hierarchy = Arrays.append(hierarchy, ForgeProxy.class);
+
+               if (hierarchy.length > 0)
+                  f.setInterfaces(hierarchy);
+
+               f.setFilter(filter);
+               Class<?> c = f.createClass();
+               enhancedResult = c.newInstance();
+
+               try
+               {
+                  ((ProxyObject) enhancedResult)
+                           .setHandler(new ClassLoaderAdapterCallback(callingLoader, delegateLoader, delegate));
+               }
+               catch (ClassCastException e)
+               {
+                  Class<?>[] interfaces = enhancedResult.getClass().getInterfaces();
+                  for (Class<?> javassistType : interfaces)
+                  {
+                     if (ProxyObject.class.getName().equals(javassistType.getName()))
+                     {
+                        String callbackClassName = ClassLoaderAdapterCallback.class.getName();
+                        ClassLoader javassistLoader = javassistType.getClassLoader();
+                        Constructor<?> callbackConstructor = javassistLoader.loadClass(callbackClassName)
+                                 .getConstructors()[0];
+
+                        Class<?> typeArgument = javassistLoader.loadClass(MethodHandler.class.getName());
+                        Method setHandlerMethod = javassistType.getMethod("setHandler", typeArgument);
+                        setHandlerMethod.invoke(enhancedResult,
+                                 callbackConstructor.newInstance(callingLoader, delegateLoader, delegate));
+                     }
+                  }
+               }
+
+               return (T) enhancedResult;
             }
 
-            return (T) enhancedResult;
-         }
-
-      });
+         });
+      }
+      catch (Exception e)
+      {
+         throw new ContainerException("Failed to create proxy for type [" + delegateType + "]", e);
+      }
    }
 }

@@ -9,15 +9,10 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.addon.resource.FileResource;
-import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.arquillian.Addon;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.addons.AddonId;
-import org.jboss.forge.furnace.exception.ContainerException;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Streams;
 import org.jboss.forge.resource.addon.FileResourceImpl;
@@ -115,7 +110,7 @@ public class FileResourceGeneratorTest
       file.delete();
    }
 
-   @Test(expected = ContainerException.class)
+   @Test(expected = UnsupportedOperationException.class)
    public void testDirectorySize() throws Exception
    {
       File dir = File.createTempFile("temp", "file");

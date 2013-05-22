@@ -11,7 +11,6 @@ import java.util.concurrent.Callable;
 import javax.inject.Singleton;
 
 import org.codehaus.plexus.DefaultPlexusContainer;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.logging.console.ConsoleLoggerManager;
 import org.jboss.forge.furnace.util.ClassLoaders;
 
@@ -25,24 +24,24 @@ class PlexusContainer
 
    public <T> T lookup(final Class<T> type)
    {
-      return ClassLoaders.executeIn(Thread.currentThread().getContextClassLoader(), new Callable<T>()
+      try
       {
-         @Override
-         public T call() throws Exception
+         return ClassLoaders.executeIn(Thread.currentThread().getContextClassLoader(), new Callable<T>()
          {
-            try
+            @Override
+            public T call() throws Exception
             {
                return getPlexusContainer().lookup(type);
             }
-            catch (ComponentLookupException e)
-            {
-               throw new RuntimeException("Could not look up component of type [" + type.getName() + "]", e);
-            }
-         }
-      });
+         });
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException("Could not look up component of type [" + type.getName() + "]", e);
+      }
    }
 
-   private org.codehaus.plexus.PlexusContainer getPlexusContainer()
+   private org.codehaus.plexus.PlexusContainer getPlexusContainer() throws Exception
    {
       if (plexusContainer == null)
       {

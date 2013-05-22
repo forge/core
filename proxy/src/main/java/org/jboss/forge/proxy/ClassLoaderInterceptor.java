@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.proxy;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.concurrent.Callable;
 
@@ -45,7 +46,18 @@ public class ClassLoaderInterceptor implements ForgeProxy
             {
             }
 
-            return thisMethod.invoke(delegate, args);
+            Object result;
+            try
+            {
+               result = thisMethod.invoke(delegate, args);
+            }
+            catch (InvocationTargetException e)
+            {
+               if (e.getCause() instanceof Exception)
+                  throw (Exception) e.getCause();
+               throw e;
+            }
+            return result;
          }
       };
 
