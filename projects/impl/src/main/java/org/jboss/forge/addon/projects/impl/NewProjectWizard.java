@@ -119,6 +119,10 @@ public class NewProjectWizard implements UIWizard
 
       // Add Project types
       List<ProjectType> projectTypes = new ArrayList<ProjectType>();
+      for (ProjectType projectType : type.getValueChoices())
+      {
+         projectTypes.add(projectType);
+      }
       Collections.sort(projectTypes, new Comparator<ProjectType>()
       {
          @Override
@@ -129,7 +133,7 @@ public class NewProjectWizard implements UIWizard
             return left.getType().compareTo(right.getType());
          }
       });
-      if(!projectTypes.isEmpty())
+      if (!projectTypes.isEmpty())
       {
          type.setDefaultValue(projectTypes.get(0));
       }
