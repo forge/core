@@ -28,7 +28,7 @@ import org.junit.runner.RunWith;
 public class ShellCommandListenerTest
 {
    @Deployment
-   @Dependencies({ @Addon(name = "org.jboss.forge.addon:ui", version = "2.0.0-SNAPSHOT"),
+   @Dependencies({
             @Addon(name = "org.jboss.forge.addon:shell-test-harness", version = "2.0.0-SNAPSHOT")
    })
    public static ForgeArchive getDeployment()
@@ -38,7 +38,6 @@ public class ShellCommandListenerTest
                .addClasses(MockCommandExecutionListener.class)
                .addBeansXML()
                .addAsAddonDependencies(
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:ui", "2.0.0-SNAPSHOT")),
                         AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:shell-test-harness",
                                  "2.0.0-SNAPSHOT"))
                );
