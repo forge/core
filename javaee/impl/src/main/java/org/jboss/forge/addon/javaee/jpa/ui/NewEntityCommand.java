@@ -6,8 +6,6 @@
  */
 package org.jboss.forge.addon.javaee.jpa.ui;
 
-import java.util.Arrays;
-
 import javax.inject.Inject;
 import javax.persistence.GenerationType;
 
@@ -51,7 +49,7 @@ public class NewEntityCommand implements UICommand
    public void initializeUI(UIBuilder builder) throws Exception
    {
       targetPackage.getFacet(HintsFacet.class).setInputType(InputTypes.JAVA_PACKAGE_PICKER);
-      idStrategy.setValueChoices(Arrays.asList(GenerationType.values()));
+      idStrategy.setDefaultValue(GenerationType.AUTO);
       builder.add(named).add(targetPackage).add(idStrategy);
    }
 

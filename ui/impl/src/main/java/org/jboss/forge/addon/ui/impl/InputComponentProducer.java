@@ -9,6 +9,7 @@ package org.jboss.forge.addon.ui.impl;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.EnumSet;
 
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
@@ -17,6 +18,7 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.environment.Environment;
 import org.jboss.forge.addon.ui.impl.facets.HintsFacetImpl;
 import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.input.SelectComponent;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.input.UISelectMany;
@@ -25,11 +27,11 @@ import org.jboss.forge.addon.ui.metadata.WithAttributes;
 
 /**
  * Produces UIInput objects
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
-public class UIInputProducer
+public class InputComponentProducer
 {
    @Inject
    private Environment environment;
@@ -141,6 +143,7 @@ public class UIInputProducer
    /**
     * Pre-configure input based on WithAttributes info if annotation exists
     */
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    private void preconfigureInput(InputComponent<?, ?> input, WithAttributes atts)
    {
       if (atts != null)
@@ -149,6 +152,13 @@ public class UIInputProducer
          input.setLabel(atts.label());
          input.setRequired(atts.required());
          input.setRequiredMessage(atts.requiredMessage());
+      }
+
+      // Auto-populate Enums on SelectComponents
+      if (input instanceof SelectComponent && input.getValueType().isEnum())
+      {
+         Class<? extends Enum> enumClass = input.getValueType().asSubclass(Enum.class);
+         ((SelectComponent) input).setValueChoices(EnumSet.allOf(enumClass));
       }
    }
 }

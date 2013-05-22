@@ -46,7 +46,7 @@ public class UIInputInjectionTest
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
                .addBeansXML()
-               .addClasses(Career.class)
+               .addClasses(Career.class, Gender.class)
                .addAsAddonDependencies(
                         AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:ui", "2.0.0-SNAPSHOT")));
 
@@ -69,6 +69,23 @@ public class UIInputInjectionTest
    @WithAttributes(label = "Attributed Input", enabled = false, required = false, requiredMessage = "REQUIRED_MESSAGE")
    UIInputMany<String> attributedInput;
 
+   @Inject
+   UISelectOne<Gender> gender;
+
+   @Test
+   public void testEnumValuesAvailability() throws Exception
+   {
+      Assert.assertNotNull(gender);
+      Iterable<Gender> valueChoices = gender.getValueChoices();
+      Iterator<Gender> it = valueChoices.iterator();
+      Assert.assertNotNull(it);
+      Assert.assertTrue(it.hasNext());
+      Assert.assertEquals(Gender.MALE, it.next());
+      Assert.assertTrue(it.hasNext());
+      Assert.assertEquals(Gender.FEMALE, it.next());
+      Assert.assertFalse(it.hasNext());
+   }
+
    @Test
    public void testInjectionNotNull()
    {
@@ -76,6 +93,7 @@ public class UIInputInjectionTest
       Assert.assertNotNull(careers);
       Assert.assertNotNull(partners);
       Assert.assertNotNull(unknown);
+      Assert.assertNotNull(gender);
    }
 
    @Test
