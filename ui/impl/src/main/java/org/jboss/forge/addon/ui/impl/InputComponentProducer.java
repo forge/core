@@ -9,7 +9,9 @@ package org.jboss.forge.addon.ui.impl;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
@@ -24,6 +26,10 @@ import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
+import org.jboss.forge.furnace.addons.AddonRegistry;
+import org.jboss.forge.furnace.services.Exported;
+import org.jboss.forge.furnace.services.ExportedInstance;
+import org.jboss.forge.furnace.util.Annotations;
 
 /**
  * Produces UIInput objects
@@ -33,8 +39,16 @@ import org.jboss.forge.addon.ui.metadata.WithAttributes;
  */
 public class InputComponentProducer
 {
-   @Inject
    private Environment environment;
+   private AddonRegistry addonRegistry;
+
+   @Inject
+   public InputComponentProducer(Environment environment, AddonRegistry addonRegistry)
+   {
+      super();
+      this.environment = environment;
+      this.addonRegistry = addonRegistry;
+   }
 
    @Produces
    @SuppressWarnings("unchecked")
@@ -154,11 +168,28 @@ public class InputComponentProducer
          input.setRequiredMessage(atts.requiredMessage());
       }
 
-      // Auto-populate Enums on SelectComponents
-      if (input instanceof SelectComponent && input.getValueType().isEnum())
+      if (input instanceof SelectComponent)
       {
-         Class<? extends Enum> enumClass = input.getValueType().asSubclass(Enum.class);
-         ((SelectComponent) input).setValueChoices(EnumSet.allOf(enumClass));
+         SelectComponent selectComponent = (SelectComponent) input;
+         Class<?> valueType = input.getValueType();
+         Iterable<?> choices = null;
+         // Auto-populate Enums on SelectComponents
+         if (valueType.isEnum())
+         {
+            Class<? extends Enum> enumClass = valueType.asSubclass(Enum.class);
+            choices = EnumSet.allOf(enumClass);
+         }
+         // Auto-populate Exported values on SelectComponents
+         else if (Annotations.isAnnotationPresent(valueType, Exported.class))
+         {
+            List<Object> choiceList = new ArrayList<Object>();
+            for (ExportedInstance exportedInstance : addonRegistry.getExportedInstances(valueType))
+            {
+               choiceList.add(exportedInstance.get());
+            }
+            choices = choiceList;
+         }
+         selectComponent.setValueChoices(choices);
       }
    }
 }

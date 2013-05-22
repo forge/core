@@ -32,14 +32,9 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
-import org.jboss.forge.furnace.addons.AddonRegistry;
-import org.jboss.forge.furnace.services.ExportedInstance;
 
 public class NewProjectWizard implements UIWizard
 {
-   @Inject
-   private AddonRegistry registry;
-
    @Inject
    private ProjectFactory projectFactory;
 
@@ -124,11 +119,6 @@ public class NewProjectWizard implements UIWizard
 
       // Add Project types
       List<ProjectType> projectTypes = new ArrayList<ProjectType>();
-      for (ExportedInstance<ProjectType> instance : registry.getExportedInstances(ProjectType.class))
-      {
-         ProjectType projectType = instance.get();
-         projectTypes.add(projectType);
-      }
       Collections.sort(projectTypes, new Comparator<ProjectType>()
       {
          @Override
