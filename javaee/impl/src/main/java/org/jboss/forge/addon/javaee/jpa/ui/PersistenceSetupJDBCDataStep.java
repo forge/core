@@ -20,6 +20,7 @@ import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.facets.HintsFacet;
 import org.jboss.forge.addon.ui.hints.InputTypes;
 import org.jboss.forge.addon.ui.input.UIInput;
+import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.NavigationResult;
@@ -33,7 +34,7 @@ public class PersistenceSetupJDBCDataStep implements UIWizardStep
 
    @Inject
    @WithAttributes(label = "Database Type:", required = true)
-   private UIInput<DatabaseType> dbType;
+   private UISelectOne<DatabaseType> dbType;
 
    @Inject
    @WithAttributes(label = "JDBC Driver:", required = true)
