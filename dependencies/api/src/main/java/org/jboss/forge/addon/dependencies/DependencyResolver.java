@@ -12,16 +12,19 @@ import java.util.Set;
 
 import org.jboss.forge.furnace.services.Exported;
 
+/**
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ */
 @Exported
 public interface DependencyResolver
 {
    /**
-    * Resolve a single artifact
+    * Resolve a single {@link Dependency} matching the given {@link DependencyQuery}.
     */
    Dependency resolveArtifact(DependencyQuery query);
 
    /**
-    * Resolve all the dependencies from a {@link DependencyQuery} object.
+    * Resolve all dependencies for the {@link Dependency} resolved by the given {@link DependencyQuery} object.
     * 
     * The {@link Dependency} object included inside the {@link DependencyQuery} object is not included in the
     * {@link Set} returned
@@ -29,7 +32,8 @@ public interface DependencyResolver
    Set<Dependency> resolveDependencies(DependencyQuery query);
 
    /**
-    * Resolve the entire dependency hierarchy for the given {@link DependencyQuery}
+    * Resolve the entire dependency hierarchy for the given {@link DependencyQuery}. Return results as a graph of
+    * {@link DependencyNode} instances.
     */
    DependencyNode resolveDependencyHierarchy(DependencyQuery query);
 
@@ -37,4 +41,15 @@ public interface DependencyResolver
     * Resolve the versions from a {@link Dependency} object contained in the {@link DependencyQuery} object.
     */
    List<Coordinate> resolveVersions(DependencyQuery query);
+
+   /**
+    * Resolve {@link DependencyMetadata} for a given {@link DependencyQuery}, searching the default repository. This
+    * returns information about the configured repositories, dependencies, and managed dependencies of the given query.
+    * <p>
+    * Note: This method does not accept version ranges. A single version must be specified.
+    * <p>
+    * <b>Valid query version:</b> 1.0 <b><br>
+    * Invalid query version:</b> [1.0,2.0]
+    */
+   DependencyMetadata resolveDependencyMetadata(DependencyQuery query);
 }

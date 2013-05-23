@@ -24,6 +24,7 @@ import org.jboss.forge.addon.dependencies.AddonDependencyResolver;
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.DependencyException;
+import org.jboss.forge.addon.dependencies.DependencyMetadata;
 import org.jboss.forge.addon.dependencies.DependencyQuery;
 import org.jboss.forge.addon.dependencies.DependencyRepository;
 import org.jboss.forge.addon.dependencies.DependencyResolver;
@@ -35,6 +36,7 @@ import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.furnace.services.Exported;
 import org.jboss.forge.furnace.util.Predicate;
+import org.jboss.forge.furnace.util.Strings;
 import org.jboss.shrinkwrap.resolver.impl.maven.logging.LogTransferListener;
 import org.sonatype.aether.RepositorySystem;
 import org.sonatype.aether.artifact.Artifact;
@@ -43,6 +45,8 @@ import org.sonatype.aether.collection.DependencyCollectionContext;
 import org.sonatype.aether.collection.DependencyTraverser;
 import org.sonatype.aether.graph.DependencyNode;
 import org.sonatype.aether.repository.RemoteRepository;
+import org.sonatype.aether.resolution.ArtifactDescriptorRequest;
+import org.sonatype.aether.resolution.ArtifactDescriptorResult;
 import org.sonatype.aether.resolution.ArtifactRequest;
 import org.sonatype.aether.resolution.ArtifactResolutionException;
 import org.sonatype.aether.resolution.ArtifactResult;
@@ -316,6 +320,37 @@ public class MavenDependencyResolver implements DependencyResolver, AddonDepende
       }
    }
 
+   @Override
+   public DependencyMetadata resolveDependencyMetadata(final DependencyQuery query)
+   {
+      try
+      {
+         if (Strings.isNullOrEmpty(query.getCoordinate().getVersion()))
+         {
+            throw new IllegalArgumentException("Dependency query coordinate version must be specified.");
+         }
+
+         RepositorySystem system = container.getRepositorySystem();
+         Settings settings = container.getSettings();
+         MavenRepositorySystemSession session = container.setupRepoSession(system, settings);
+
+         Artifact artifact = coordinateToMavenArtifact(query.getCoordinate());
+
+         List<RemoteRepository> mavenRepositories = getRemoteRepositories(query, settings);
+         ArtifactDescriptorRequest ar = new ArtifactDescriptorRequest(artifact, mavenRepositories, null);
+         ArtifactDescriptorResult results = system.readArtifactDescriptor(session, ar);
+
+         Artifact a = results.getArtifact();
+         Dependency d = DependencyBuilder.create().setArtifactId(a.getArtifactId()).setGroupId(a.getGroupId())
+                  .setVersion(a.getBaseVersion());
+
+         return new DependencyMetadataImpl(d, results);
+      }
+      catch (Exception e)
+      {
+         throw new DependencyException("Unable to resolve any artifacts for query [" + query + "]", e);
+      }
+   }
 
    private List<RemoteRepository> getRemoteRepositories(DependencyQuery query, Settings settings)
    {

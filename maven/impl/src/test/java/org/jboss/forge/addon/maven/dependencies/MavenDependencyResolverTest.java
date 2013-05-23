@@ -11,9 +11,11 @@ import java.util.Set;
 
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.forge.addon.dependencies.Dependency;
+import org.jboss.forge.addon.dependencies.DependencyMetadata;
 import org.jboss.forge.addon.dependencies.DependencyNode;
 import org.jboss.forge.addon.dependencies.DependencyQuery;
 import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
+import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.dependencies.builder.DependencyQueryBuilder;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.forge.maven.addon.dependencies.FileResourceFactory;
@@ -106,6 +108,17 @@ public class MavenDependencyResolverTest
       Dependency artifact = resolver.resolveArtifact(query);
       Assert.assertNotNull(artifact);
       Assert.assertTrue("Artifact does not exist: " + artifact, artifact.getArtifact().exists());
+   }
+
+   @Test
+   public void testResolveMetadata() throws Exception
+   {
+      DependencyQuery query = DependencyQueryBuilder
+               .create("org.jboss.forge:resources:jar:forge-addon:2.0.0.Alpha3");
+      DependencyMetadata metadata = resolver.resolveDependencyMetadata(query);
+      Assert.assertNotNull(metadata);
+      Assert.assertTrue(metadata.getDependencies().contains(
+               DependencyBuilder.create("junit:junit:4.11")));
    }
 
    @Test
