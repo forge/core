@@ -8,6 +8,7 @@ package org.jboss.forge.proxy;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -76,9 +77,18 @@ public class ClassLoaderAdapterCallback implements MethodHandler
             List<Object> parameterValues = convertParameterValues(args, delegateMethod);
 
             AccessibleObject.setAccessible(new AccessibleObject[] { delegateMethod }, true);
-            Object result = delegateMethod.invoke(delegate, parameterValues.toArray());
+            try
+            {
+               Object result = delegateMethod.invoke(delegate, parameterValues.toArray());
+               return enhanceResult(thisMethod, result);
+            }
+            catch (InvocationTargetException e)
+            {
+               if (e.getCause() instanceof Exception)
+                  throw (Exception) e.getCause();
+               throw e;
+            }
 
-            return enhanceResult(thisMethod, result);
          }
 
          private Method getDelegateMethod(final Method proxy) throws ClassNotFoundException, NoSuchMethodException
