@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.javaee.jpa.ui;
+package org.jboss.forge.addon.javaee.jpa;
 
 import javax.inject.Inject;
 
