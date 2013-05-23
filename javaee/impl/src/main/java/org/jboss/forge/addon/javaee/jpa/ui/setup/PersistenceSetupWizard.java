@@ -105,25 +105,27 @@ public class PersistenceSetupWizard implements UIWizard
    @Override
    public void validate(UIValidationContext validator)
    {
-
+      // NOOP
    }
 
    @Override
    public Result execute(final UIContext context) throws Exception
    {
-      context.setAttribute(PersistenceProvider.class, providers.getValue());
-      context.setAttribute(PersistenceContainer.class, containers.getValue());
-      context.setAttribute("ConfigureMetadata", configureMetadata.getValue());
+      applyUIValues(context);
       return Results.success();
    }
 
    @Override
    public NavigationResult next(UIContext context) throws Exception
    {
-      context.setAttribute(PersistenceProvider.class, providers.getValue());
-      PersistenceContainer container = containers.getValue();
-      context.setAttribute(PersistenceContainer.class, container);
+      applyUIValues(context);
       return Results.navigateTo(PersistenceSetupConnectionStep.class);
    }
 
+   private void applyUIValues(final UIContext context)
+   {
+      context.setAttribute(PersistenceProvider.class, providers.getValue());
+      context.setAttribute(PersistenceContainer.class, containers.getValue());
+      context.setAttribute("ConfigureMetadata", configureMetadata.getValue());
+   }
 }

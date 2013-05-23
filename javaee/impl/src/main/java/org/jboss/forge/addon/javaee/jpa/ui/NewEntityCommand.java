@@ -28,15 +28,15 @@ import org.jboss.forge.addon.ui.util.Metadata;
 public class NewEntityCommand implements UICommand
 {
    @Inject
-   @WithAttributes(label = "Entity named", required = true, requiredMessage = "Entity named must be specified.")
+   @WithAttributes(label = "Entity name", required = true)
    private UIInput<String> named;
 
    @Inject
-   @WithAttributes(label = "Target package", required = true, requiredMessage = "Target package must be specified.")
+   @WithAttributes(label = "Target package", required = true)
    private UIInput<String> targetPackage;
 
    @Inject
-   @WithAttributes(label = "ID Column Generation Strategy", required = true, requiredMessage = "ID Column Generation Strategy must be specified.")
+   @WithAttributes(label = "ID Column Generation Strategy", required = true)
    private UISelectOne<GenerationType> idStrategy;
 
    @Override
@@ -56,14 +56,12 @@ public class NewEntityCommand implements UICommand
    @Override
    public void validate(UIValidationContext validator)
    {
-      // TODO Auto-generated method stub
-
    }
 
    @Override
    public Result execute(UIContext context) throws Exception
    {
-      // TODO Auto-generated method stub
+      
       return null;
    }
 

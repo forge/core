@@ -11,14 +11,12 @@ import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.addon.facets.FacetFactory;
-import org.jboss.forge.addon.javaee.facets.PersistenceFacet;
-import org.jboss.forge.addon.javaee.facets.PersistenceMetaModelFacet;
 import org.jboss.forge.addon.javaee.jpa.DatabaseType;
 import org.jboss.forge.addon.javaee.jpa.JPADataSource;
 import org.jboss.forge.addon.javaee.jpa.PersistenceContainer;
 import org.jboss.forge.addon.javaee.jpa.PersistenceProvider;
 import org.jboss.forge.addon.javaee.jpa.containers.JavaEEDefaultContainer;
+import org.jboss.forge.addon.javaee.jpa.ui.PersistenceManager;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.resource.DirectoryResource;
@@ -38,21 +36,9 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
-import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceDescriptor;
-import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnit;
-import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnitTransactionType;
 
 public class PersistenceSetupConnectionStep implements UIWizardStep
 {
-   public static final String DEFAULT_UNIT_NAME = "forge-default";
-   private static final String DEFAULT_UNIT_DESC = "Forge Persistence Unit";
-
-   @Inject
-   private ProjectFactory projectFactory;
-
-   @Inject
-   private FacetFactory facetFactory;
-
    @Inject
    @WithAttributes(label = "Database Type:", required = true)
    private UISelectOne<DatabaseType> dbType;
@@ -76,6 +62,12 @@ public class PersistenceSetupConnectionStep implements UIWizardStep
    @Inject
    @WithAttributes(label = "Password:", required = true)
    private UIInput<String> password;
+
+   @Inject
+   private ProjectFactory projectFactory;
+
+   @Inject
+   private PersistenceManager persistenceManager;
 
    @Override
    public NavigationResult next(UIContext context) throws Exception
@@ -151,13 +143,15 @@ public class PersistenceSetupConnectionStep implements UIWizardStep
       });
    }
 
-   private JPADataSource getDataSource()
+   private JPADataSource getDataSource(UIContext context)
    {
       JPADataSource dataSource = new JPADataSource();
       dataSource.setDatabase(dbType.getValue());
       dataSource.setDatabaseURL(databaseURL.getValue());
       dataSource.setUsername(username.getValue());
       dataSource.setPassword(password.getValue());
+      dataSource.setProvider((PersistenceProvider) context.getAttribute(PersistenceProvider.class));
+      dataSource.setContainer((PersistenceContainer) context.getAttribute(PersistenceContainer.class));
       return dataSource;
    }
 
@@ -165,15 +159,10 @@ public class PersistenceSetupConnectionStep implements UIWizardStep
    public void validate(UIValidationContext validator)
    {
       UIContext uiContext = validator.getUIContext();
-      PersistenceContainer pc = (PersistenceContainer) uiContext.getAttribute(PersistenceContainer.class);
-      PersistenceProvider pp = (PersistenceProvider) uiContext.getAttribute(PersistenceProvider.class);
-      JPADataSource ds = getDataSource();
-      ds.setContainer(pc);
-      ds.setProvider(pp);
+      JPADataSource ds = getDataSource(uiContext);
       try
       {
-         pc.validate(ds);
-         pp.validate(ds);
+         ds.validate();
       }
       catch (Exception e)
       {
@@ -185,37 +174,11 @@ public class PersistenceSetupConnectionStep implements UIWizardStep
    public Result execute(UIContext context) throws Exception
    {
       Project project = getSelectedProject(context);
-      if (project != null)
-      {
-         if (!project.hasFacet(PersistenceFacet.class))
-         {
-            facetFactory.install(PersistenceFacet.class, project);
-         }
-         PersistenceContainer container = (PersistenceContainer) context.getAttribute(PersistenceContainer.class);
-         PersistenceProvider provider = (PersistenceProvider) context.getAttribute(PersistenceProvider.class);
-         PersistenceFacet facet = project.getFacet(PersistenceFacet.class);
-         JPADataSource dataSource = getDataSource();
-
-         // Setup JPA
-         PersistenceDescriptor config = facet.getConfig();
-         PersistenceUnit<PersistenceDescriptor> unit = config.createPersistenceUnit();
-         unit.name(DEFAULT_UNIT_NAME).description(DEFAULT_UNIT_DESC);
-         unit.transactionType(container.isJTASupported() ? PersistenceUnitTransactionType._JTA
-                  : PersistenceUnitTransactionType._RESOURCE_LOCAL);
-         unit.provider(provider.getProvider());
-
-         container.setupConnection(unit, dataSource);
-         provider.configure(unit, dataSource);
-         facet.saveConfig(config);
-         if ((Boolean) context.getAttribute("ConfigureMetadata"))
-         {
-            facetFactory.install(PersistenceMetaModelFacet.class, project);
-         }
-      }
+      JPADataSource dataSource = getDataSource(context);
+      Boolean configureMetadata = (Boolean) context.getAttribute("ConfigureMetadata");
+      persistenceManager.setup(project, dataSource, configureMetadata);
       return Results.success("Persistence (JPA) is installed.");
    }
-
-   // Helper methods
 
    /**
     * Returns the selected project. null if no project is found

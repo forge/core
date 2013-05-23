@@ -139,4 +139,10 @@ public class JPADataSource
    {
       return provider;
    }
+
+   public void validate() throws Exception
+   {
+      getContainer().validate(this);
+      getProvider().validate(this);
+   }
 }

@@ -206,7 +206,7 @@ public final class InputComponents
             {
                labelValue = labelValue.substring(0, labelValue.length() - 1);
             }
-            requiredMessage = labelValue + " is required";
+            requiredMessage = labelValue + " must be specified.";
          }
       }
       return requiredMessage;
