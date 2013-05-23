@@ -657,6 +657,12 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       String errorLocation = getAccessStrategy().getWebPaths(web.getWebResource("error.xhtml")).get(1);
       servletConfig.errorPage(404, errorLocation);
       servletConfig.errorPage(500, errorLocation);
+      
+      // Use the server timezone since we accept dates in that timezone, and it makes sense to display them in the same
+      if (servletConfig.getContextParam("javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE") == null)
+      {
+         servletConfig.contextParam("javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE", "true");
+      }
 
       servlet.saveConfig(servletConfig);
    }
