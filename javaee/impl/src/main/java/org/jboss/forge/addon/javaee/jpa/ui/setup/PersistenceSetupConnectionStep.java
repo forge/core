@@ -147,6 +147,7 @@ public class PersistenceSetupConnectionStep implements UIWizardStep
    {
       JPADataSource dataSource = new JPADataSource();
       dataSource.setDatabase(dbType.getValue());
+      dataSource.setJndiDataSource(dataSourceName.getValue());
       dataSource.setDatabaseURL(databaseURL.getValue());
       dataSource.setUsername(username.getValue());
       dataSource.setPassword(password.getValue());
@@ -193,6 +194,36 @@ public class PersistenceSetupConnectionStep implements UIWizardStep
          project = projectFactory.findProject((DirectoryResource) resource);
       }
       return project;
+   }
+
+   public UISelectOne<DatabaseType> getDbType()
+   {
+      return dbType;
+   }
+
+   public UIInput<String> getDataSourceName()
+   {
+      return dataSourceName;
+   }
+
+   public UIInput<String> getJdbcDriver()
+   {
+      return jdbcDriver;
+   }
+
+   public UIInput<String> getDatabaseURL()
+   {
+      return databaseURL;
+   }
+
+   public UIInput<String> getUsername()
+   {
+      return username;
+   }
+
+   public UIInput<String> getPassword()
+   {
+      return password;
    }
 
 }

@@ -128,4 +128,19 @@ public class PersistenceSetupWizard implements UIWizard
       context.setAttribute(PersistenceContainer.class, containers.getValue());
       context.setAttribute("ConfigureMetadata", configureMetadata.getValue());
    }
+
+   public UISelectOne<PersistenceContainer> getContainers()
+   {
+      return containers;
+   }
+
+   public UISelectOne<PersistenceProvider> getProviders()
+   {
+      return providers;
+   }
+
+   public UIInput<Boolean> getConfigureMetadata()
+   {
+      return configureMetadata;
+   }
 }
