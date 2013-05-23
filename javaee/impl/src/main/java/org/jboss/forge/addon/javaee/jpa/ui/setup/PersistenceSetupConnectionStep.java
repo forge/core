@@ -14,7 +14,7 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.javaee.jpa.DatabaseType;
 import org.jboss.forge.addon.javaee.jpa.JPADataSource;
 import org.jboss.forge.addon.javaee.jpa.PersistenceContainer;
-import org.jboss.forge.addon.javaee.jpa.PersistenceManager;
+import org.jboss.forge.addon.javaee.jpa.PersistenceOperations;
 import org.jboss.forge.addon.javaee.jpa.PersistenceProvider;
 import org.jboss.forge.addon.javaee.jpa.containers.JavaEEDefaultContainer;
 import org.jboss.forge.addon.projects.Project;
@@ -67,7 +67,7 @@ public class PersistenceSetupConnectionStep implements UIWizardStep
    private ProjectFactory projectFactory;
 
    @Inject
-   private PersistenceManager persistenceManager;
+   private PersistenceOperations persistenceOperations;
 
    @Override
    public NavigationResult next(UIContext context) throws Exception
@@ -176,7 +176,7 @@ public class PersistenceSetupConnectionStep implements UIWizardStep
       Project project = getSelectedProject(context);
       JPADataSource dataSource = getDataSource(context);
       Boolean configureMetadata = (Boolean) context.getAttribute("ConfigureMetadata");
-      persistenceManager.setup(project, dataSource, configureMetadata);
+      persistenceOperations.setup(project, dataSource, configureMetadata);
       return Results.success("Persistence (JPA) is installed.");
    }
 

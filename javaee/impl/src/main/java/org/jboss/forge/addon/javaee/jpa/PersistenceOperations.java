@@ -8,19 +8,19 @@
 package org.jboss.forge.addon.javaee.jpa;
 
 import javax.inject.Inject;
+import javax.persistence.GenerationType;
 
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.javaee.facets.PersistenceFacet;
 import org.jboss.forge.addon.javaee.facets.PersistenceMetaModelFacet;
-import org.jboss.forge.addon.javaee.jpa.JPADataSource;
-import org.jboss.forge.addon.javaee.jpa.PersistenceContainer;
-import org.jboss.forge.addon.javaee.jpa.PersistenceProvider;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.resource.DirectoryResource;
+import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnit;
 import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnitTransactionType;
 
-public class PersistenceManager
+public class PersistenceOperations
 {
    public static final String DEFAULT_UNIT_NAME = "forge-default";
    private static final String DEFAULT_UNIT_DESC = "Forge Persistence Unit";
@@ -28,7 +28,7 @@ public class PersistenceManager
    private FacetFactory facetFactory;
 
    @Inject
-   public PersistenceManager(FacetFactory facetFactory)
+   public PersistenceOperations(FacetFactory facetFactory)
    {
       super();
       this.facetFactory = facetFactory;
@@ -67,6 +67,12 @@ public class PersistenceManager
       {
          facetFactory.install(PersistenceMetaModelFacet.class, project);
       }
+   }
+
+   public JavaSource<?> newEntity(String entityName, String targetPackage, GenerationType strategy,
+            DirectoryResource targetDirectory)
+   {
+      return null;
    }
 
 }
