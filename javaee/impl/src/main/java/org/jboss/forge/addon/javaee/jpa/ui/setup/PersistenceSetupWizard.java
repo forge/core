@@ -109,10 +109,11 @@ public class PersistenceSetupWizard implements UIWizard
    }
 
    @Override
-   public Result execute(UIContext context) throws Exception
+   public Result execute(final UIContext context) throws Exception
    {
       context.setAttribute(PersistenceProvider.class, providers.getValue());
       context.setAttribute(PersistenceContainer.class, containers.getValue());
+      context.setAttribute("ConfigureMetadata", configureMetadata.getValue());
       return Results.success();
    }
 
