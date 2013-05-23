@@ -122,14 +122,7 @@ public class PersistenceSetupWizard implements UIWizard
       context.setAttribute(PersistenceProvider.class, providers.getValue());
       PersistenceContainer container = containers.getValue();
       context.setAttribute(PersistenceContainer.class, container);
-      if (container.isJTASupported())
-      {
-         return Results.navigateTo(PersistenceSetupDataSourceStep.class);
-      }
-      else
-      {
-         return Results.navigateTo(PersistenceSetupJDBCDataStep.class);
-      }
+      return Results.navigateTo(PersistenceSetupConnectionStep.class);
    }
 
 }

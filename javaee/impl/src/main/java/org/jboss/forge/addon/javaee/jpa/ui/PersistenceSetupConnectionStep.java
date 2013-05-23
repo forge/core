@@ -7,6 +7,8 @@
 
 package org.jboss.forge.addon.javaee.jpa.ui;
 
+import java.util.concurrent.Callable;
+
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.javaee.jpa.DatabaseType;
@@ -29,7 +31,7 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 
-public class PersistenceSetupJDBCDataStep implements UIWizardStep
+public class PersistenceSetupConnectionStep implements UIWizardStep
 {
 
    @Inject
@@ -37,20 +39,24 @@ public class PersistenceSetupJDBCDataStep implements UIWizardStep
    private UISelectOne<DatabaseType> dbType;
 
    @Inject
+   @WithAttributes(label = "DataSource Name:", required = true)
+   private UIInput<String> dataSourceName;
+
+   @Inject
    @WithAttributes(label = "JDBC Driver:", required = true)
-   UIInput<String> jdbcDriver;
+   private UIInput<String> jdbcDriver;
 
    @Inject
    @WithAttributes(label = "Database URL:", required = true)
-   UIInput<String> databaseURL;
+   private UIInput<String> databaseURL;
 
    @Inject
    @WithAttributes(label = "Username:", required = true)
-   UIInput<String> username;
+   private UIInput<String> username;
 
    @Inject
    @WithAttributes(label = "Password:", required = true)
-   UIInput<String> password;
+   private UIInput<String> password;
 
    @Override
    public NavigationResult next(UIContext context) throws Exception
@@ -62,7 +68,7 @@ public class PersistenceSetupJDBCDataStep implements UIWizardStep
    @Override
    public UICommandMetadata getMetadata()
    {
-      return Metadata.forCommand(PersistenceSetupJDBCDataStep.class).name("JPA: JDBC Connection setup")
+      return Metadata.forCommand(PersistenceSetupConnectionStep.class).name("JPA: Connection Settings")
                .description("Configure your connection settings");
    }
 
@@ -77,22 +83,53 @@ public class PersistenceSetupJDBCDataStep implements UIWizardStep
    {
       UIContext uiContext = builder.getUIContext();
       PersistenceContainer pc = (PersistenceContainer) uiContext.getAttribute(PersistenceContainer.class);
-      PersistenceProvider pp = (PersistenceProvider) uiContext.getAttribute(PersistenceProvider.class);
-      initDBType(pc, pp);
-      password.getFacet(HintsFacet.class).setInputType(InputTypes.SECRET);
-      builder.add(dbType).add(jdbcDriver).add(databaseURL).add(username).add(password);
-   }
-
-   private void initDBType(PersistenceContainer pc, PersistenceProvider pp)
-   {
-      if (pc instanceof JavaEEDefaultContainer)
+      initDBType(uiContext);
+      initDatasourceName(uiContext);
+      builder.add(dbType);
+      if (pc.isJTASupported())
       {
-         dbType.setDefaultValue(((JavaEEDefaultContainer) pc).getDefaultDatabaseType());
+         builder.add(dataSourceName);
       }
       else
       {
-         dbType.setDefaultValue(DatabaseType.DEFAULT);
+         password.getFacet(HintsFacet.class).setInputType(InputTypes.SECRET);
+         builder.add(jdbcDriver).add(databaseURL).add(username).add(password);
       }
+   }
+
+   private void initDatasourceName(final UIContext uiContext)
+   {
+      dataSourceName.setDefaultValue(new Callable<String>()
+      {
+         @Override
+         public String call() throws Exception
+         {
+            PersistenceContainer pc = (PersistenceContainer) uiContext.getAttribute(PersistenceContainer.class);
+            if (pc instanceof JavaEEDefaultContainer)
+            {
+               return ((JavaEEDefaultContainer) pc).getDefaultDataSource();
+            }
+            return null;
+         }
+      });
+   }
+
+   private void initDBType(final UIContext uiContext)
+   {
+      dbType.setDefaultValue(new Callable<DatabaseType>()
+      {
+         @Override
+         public DatabaseType call() throws Exception
+         {
+            DatabaseType type = DatabaseType.DEFAULT;
+            PersistenceContainer pc = (PersistenceContainer) uiContext.getAttribute(PersistenceContainer.class);
+            if (pc instanceof JavaEEDefaultContainer)
+            {
+               type = ((JavaEEDefaultContainer) pc).getDefaultDatabaseType();
+            }
+            return type;
+         }
+      });
    }
 
    private JPADataSource getDataSource()
