@@ -11,7 +11,7 @@ import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.furnace.event.PostStartup;
 
 /**
- * Only active when ui-hints addon is installed.
+ * Only active when ui-spi addon is installed.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */

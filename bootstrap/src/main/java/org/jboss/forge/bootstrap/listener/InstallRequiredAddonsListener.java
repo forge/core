@@ -48,7 +48,7 @@ public class InstallRequiredAddonsListener implements ContainerLifecycleListener
             "convert",
             "dependencies",
             "facets",
-            "ui-hints",
+            "ui-spi",
             "addon-manager",
             "projects",
             "resources"

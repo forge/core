@@ -124,7 +124,7 @@ public class AddonManagerTest
       List<String> addonDependenciesIds = new ArrayList<String>();
       addonDependenciesIds.add("org.jboss.forge.addon:convert");
       addonDependenciesIds.add("org.jboss.forge.addon:facets");
-      addonDependenciesIds.add("org.jboss.forge.addon:ui-hints");
+      addonDependenciesIds.add("org.jboss.forge.addon:ui-spi");
 
       for (AddonDependencyEntry dependency : dependencies)
       {

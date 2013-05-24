@@ -130,6 +130,7 @@ public class MavenDependencyResolverTest
       Assert.assertNotNull(root);
       Assert.assertEquals(5, root.getChildren().size());
       Assert.assertEquals("convert", root.getChildren().get(1).getDependency().getCoordinate().getArtifactId());
+      //TODO: ui-hints was changed to ui-spi since 2.0.0.Alpha5
       Assert.assertEquals("ui-hints", root.getChildren().get(2).getDependency().getCoordinate().getArtifactId());
    }
 

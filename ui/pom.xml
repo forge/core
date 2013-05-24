@@ -16,6 +16,7 @@
    <modules>
       <module>api</module>
       <module>impl</module>
+      <module>spi</module>
       <module>addon</module>
       <module>tests</module>
       <module>example</module>
@@ -32,6 +33,12 @@
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>ui-impl</artifactId>
             <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>ui-spi</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
          </dependency>
       </dependencies>
    </dependencyManagement>

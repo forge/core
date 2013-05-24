@@ -67,7 +67,7 @@ NOTE: The eclipse plugin already bundles the following addons
 * maven,projects
 * resources
 * ui
-* ui-hints 
+* ui-spi 
 
 In Forge 2.0.0.Alpha2, you MUST delete these addons from your ~/.forge location, otherwise you'll get some ClassCastExceptions (see [this issue](https://issues.jboss.org/browse/FORGE-843))
 

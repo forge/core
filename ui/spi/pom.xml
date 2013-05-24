@@ -9,9 +9,9 @@
    </parent>
    
    <groupId>org.jboss.forge.addon</groupId>
-   <artifactId>ui-hints</artifactId>
+   <artifactId>ui-spi</artifactId>
    
-   <name>Forge - UI Addon Input Hints</name>
+   <name>Forge - UI Addon SPI</name>
    
    <dependencies>
       <dependency>

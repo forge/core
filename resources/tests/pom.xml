@@ -15,7 +15,7 @@
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>ui-hints</artifactId>
+         <artifactId>ui-spi</artifactId>
          <classifier>forge-addon</classifier>
          <version>2.0.0-SNAPSHOT</version>
       </dependency>

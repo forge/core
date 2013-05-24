@@ -30,7 +30,7 @@ import org.junit.runner.RunWith;
 public class ParserHintsTest
 {
    @Deployment
-   @Dependencies({ @Addon(name = "org.jboss.forge.addon:ui-hints", version = "2.0.0-SNAPSHOT"),
+   @Dependencies({ @Addon(name = "org.jboss.forge.addon:ui-spi", version = "2.0.0-SNAPSHOT"),
             @Addon(name = "org.jboss.forge.addon:environment", version = "2.0.0-SNAPSHOT"),
             @Addon(name = "org.jboss.forge.addon:resources", version = "2.0.0-SNAPSHOT"),
             @Addon(name = "org.jboss.forge.addon:parser-java", version = "2.0.0-SNAPSHOT") })
@@ -41,7 +41,7 @@ public class ParserHintsTest
                .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:resources", "2.0.0-SNAPSHOT")),
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:ui-hints", "2.0.0-SNAPSHOT")),
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:ui-spi", "2.0.0-SNAPSHOT")),
                         AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:parser-java", "2.0.0-SNAPSHOT")),
                         AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:environment", "2.0.0-SNAPSHOT"))
                );
