@@ -7,7 +7,7 @@ import org.jboss.forge.addon.environment.Environment;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.hints.HintsLookup;
-import org.jboss.forge.addon.ui.hints.InputTypes;
+import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.furnace.event.PostStartup;
 
 /**
@@ -28,7 +28,7 @@ public class InputTypeHintsRegistrant
    public void initialize(@Observes PostStartup event)
    {
       HintsLookup hints = new HintsLookup(environment);
-      hints.setInputType(FileResource.class, InputTypes.FILE_PICKER);
-      hints.setInputType(DirectoryResource.class, InputTypes.FILE_PICKER);
+      hints.setInputType(FileResource.class, InputType.FILE_PICKER);
+      hints.setInputType(DirectoryResource.class, InputType.FILE_PICKER);
    }
 }

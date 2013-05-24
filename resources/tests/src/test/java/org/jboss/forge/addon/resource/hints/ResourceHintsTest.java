@@ -15,7 +15,7 @@ import org.jboss.forge.addon.environment.Environment;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.hints.HintsLookup;
 import org.jboss.forge.addon.ui.hints.InputType;
-import org.jboss.forge.addon.ui.hints.InputTypes;
+import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.arquillian.Addon;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -61,6 +61,6 @@ public class ResourceHintsTest
       HintsLookup hints = new HintsLookup(environment);
       InputType type = hints.getInputType(FileResource.class);
       Assert.assertNotNull(type);
-      Assert.assertEquals(InputTypes.FILE_PICKER, type);
+      Assert.assertEquals(InputType.FILE_PICKER, type);
    }
 }

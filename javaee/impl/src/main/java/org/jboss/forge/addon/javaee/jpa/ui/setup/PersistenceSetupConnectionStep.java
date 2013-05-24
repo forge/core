@@ -25,8 +25,7 @@ import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
-import org.jboss.forge.addon.ui.facets.HintsFacet;
-import org.jboss.forge.addon.ui.hints.InputTypes;
+import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
@@ -60,7 +59,7 @@ public class PersistenceSetupConnectionStep implements UIWizardStep
    private UIInput<String> username;
 
    @Inject
-   @WithAttributes(label = "Password:", required = true)
+   @WithAttributes(label = "Password:", required = true, type = InputType.SECRET)
    private UIInput<String> password;
 
    @Inject
@@ -103,7 +102,6 @@ public class PersistenceSetupConnectionStep implements UIWizardStep
       }
       else
       {
-         password.getFacet(HintsFacet.class).setInputType(InputTypes.SECRET);
          builder.add(jdbcDriver).add(databaseURL).add(username).add(password);
       }
    }

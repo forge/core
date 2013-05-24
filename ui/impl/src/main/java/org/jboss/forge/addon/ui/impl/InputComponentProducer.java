@@ -18,6 +18,8 @@ import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.environment.Environment;
+import org.jboss.forge.addon.ui.facets.HintsFacet;
+import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.impl.facets.HintsFacetImpl;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.SelectComponent;
@@ -64,9 +66,9 @@ public class InputComponentProducer
          Type[] typeArguments = parameterizedType.getActualTypeArguments();
          Class<T> valueType = (Class<T>) typeArguments[0];
          UISelectOne<T> result = new UISelectOneImpl<T>(name, valueType);
-         preconfigureInput(result, injectionPoint.getAnnotated().getAnnotation(WithAttributes.class));
          HintsFacetImpl hintsFacet = new HintsFacetImpl(result, environment);
          result.install(hintsFacet);
+         preconfigureInput(result, injectionPoint.getAnnotated().getAnnotation(WithAttributes.class));
          return result;
       }
       else
@@ -90,9 +92,9 @@ public class InputComponentProducer
          Type[] typeArguments = parameterizedType.getActualTypeArguments();
          Class<T> valueType = (Class<T>) typeArguments[0];
          UISelectMany<T> result = new UISelectManyImpl<T>(name, valueType);
-         preconfigureInput(result, injectionPoint.getAnnotated().getAnnotation(WithAttributes.class));
          HintsFacetImpl hintsFacet = new HintsFacetImpl(result, environment);
          result.install(hintsFacet);
+         preconfigureInput(result, injectionPoint.getAnnotated().getAnnotation(WithAttributes.class));
          return result;
       }
       else
@@ -116,9 +118,9 @@ public class InputComponentProducer
          Type[] typeArguments = parameterizedType.getActualTypeArguments();
          Class<T> valueType = (Class<T>) typeArguments[0];
          UIInputImpl<T> result = new UIInputImpl<T>(name, valueType);
-         preconfigureInput(result, injectionPoint.getAnnotated().getAnnotation(WithAttributes.class));
          HintsFacetImpl hintsFacet = new HintsFacetImpl(result, environment);
          result.install(hintsFacet);
+         preconfigureInput(result, injectionPoint.getAnnotated().getAnnotation(WithAttributes.class));
          return result;
       }
       else
@@ -142,9 +144,9 @@ public class InputComponentProducer
          Type[] typeArguments = parameterizedType.getActualTypeArguments();
          Class<T> valueType = (Class<T>) typeArguments[0];
          UIInputManyImpl<T> result = new UIInputManyImpl<T>(name, valueType);
-         preconfigureInput(result, injectionPoint.getAnnotated().getAnnotation(WithAttributes.class));
          HintsFacetImpl hintsFacet = new HintsFacetImpl(result, environment);
          result.install(hintsFacet);
+         preconfigureInput(result, injectionPoint.getAnnotated().getAnnotation(WithAttributes.class));
          return result;
       }
       else
@@ -166,6 +168,10 @@ public class InputComponentProducer
          input.setLabel(atts.label());
          input.setRequired(atts.required());
          input.setRequiredMessage(atts.requiredMessage());
+         if (atts.type() != InputType.DEFAULT)
+         {
+            input.getFacet(HintsFacet.class).setInputType(atts.type());
+         }
       }
 
       if (input instanceof SelectComponent)

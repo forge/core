@@ -15,7 +15,7 @@ import org.jboss.forge.addon.environment.Environment;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.ui.hints.HintsLookup;
 import org.jboss.forge.addon.ui.hints.InputType;
-import org.jboss.forge.addon.ui.hints.InputTypes;
+import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.arquillian.Addon;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -64,6 +64,6 @@ public class ParserHintsTest
       HintsLookup hints = new HintsLookup(environment);
       InputType type = hints.getInputType(JavaResource.class);
       Assert.assertNotNull(type);
-      Assert.assertEquals(InputTypes.JAVA_CLASS_PICKER, type);
+      Assert.assertEquals(InputType.JAVA_CLASS_PICKER, type);
    }
 }

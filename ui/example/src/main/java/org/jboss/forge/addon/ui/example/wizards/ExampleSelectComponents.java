@@ -16,7 +16,7 @@ import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.facets.HintsFacet;
-import org.jboss.forge.addon.ui.hints.InputTypes;
+import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.NavigationResult;
@@ -43,8 +43,8 @@ public class ExampleSelectComponents implements UIWizardStep
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      radioBean.getFacet(HintsFacet.class).setInputType(InputTypes.SELECT_ONE_RADIO);
-      radioBeanTwo.getFacet(HintsFacet.class).setInputType(InputTypes.SELECT_ONE_RADIO);
+      radioBean.getFacet(HintsFacet.class).setInputType(InputType.SELECT_ONE_RADIO);
+      radioBeanTwo.getFacet(HintsFacet.class).setInputType(InputType.SELECT_ONE_RADIO);
       radioBean.setValueChoices(Arrays.asList(new Bean("One"), new Bean("Two"), new Bean("Three")));
       radioBeanTwo.setValueChoices(Arrays.asList(new Bean("A"), new Bean("B"), new Bean("C")));
 

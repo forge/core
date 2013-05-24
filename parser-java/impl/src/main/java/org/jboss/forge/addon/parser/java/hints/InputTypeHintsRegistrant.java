@@ -6,7 +6,7 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.environment.Environment;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.ui.hints.HintsLookup;
-import org.jboss.forge.addon.ui.hints.InputTypes;
+import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.furnace.event.PostStartup;
 
 /**
@@ -28,6 +28,6 @@ public class InputTypeHintsRegistrant
    public void initialize(@Observes PostStartup event)
    {
       HintsLookup hints = new HintsLookup(environment);
-      hints.setInputType(JavaResource.class, InputTypes.JAVA_CLASS_PICKER);
+      hints.setInputType(JavaResource.class, InputType.JAVA_CLASS_PICKER);
    }
 }

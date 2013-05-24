@@ -21,8 +21,7 @@ import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
-import org.jboss.forge.addon.ui.facets.HintsFacet;
-import org.jboss.forge.addon.ui.hints.InputTypes;
+import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
@@ -41,7 +40,7 @@ public class NewEntityCommand implements UICommand
    private UIInput<String> named;
 
    @Inject
-   @WithAttributes(label = "Target package")
+   @WithAttributes(label = "Target package", type = InputType.JAVA_PACKAGE_PICKER)
    private UIInput<String> targetPackage;
 
    @Inject
@@ -67,7 +66,6 @@ public class NewEntityCommand implements UICommand
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      targetPackage.getFacet(HintsFacet.class).setInputType(InputTypes.JAVA_PACKAGE_PICKER);
       idStrategy.setDefaultValue(GenerationType.AUTO);
       builder.add(named).add(targetPackage).add(idStrategy);
       if (getSelectedProject(builder.getUIContext()) == null)
