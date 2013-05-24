@@ -13,6 +13,7 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.ui.test.WizardTester;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 
 /**
@@ -33,6 +34,7 @@ public abstract class JavaEETestHelper
    {
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
+               .addPackages(true, WizardTester.class.getPackage())
                .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:projects", "2.0.0-SNAPSHOT")),
