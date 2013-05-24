@@ -36,7 +36,7 @@ public final class InputComponents
     */
    public static InputType getInputType(InputComponent<?, ?> input)
    {
-      InputType result = null;
+      InputType result = InputType.DEFAULT;
       if (input.hasFacet(HintsFacet.class))
       {
          HintsFacet facet = input.getFacet(HintsFacet.class);
