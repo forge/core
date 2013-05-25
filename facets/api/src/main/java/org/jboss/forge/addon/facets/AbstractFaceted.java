@@ -18,15 +18,7 @@ public abstract class AbstractFaceted<FACETTYPE extends Facet<?>> implements Fac
    @Override
    public boolean hasFacet(Class<? extends FACETTYPE> type)
    {
-      try
-      {
-         getFacet(type);
-         return true;
-      }
-      catch (FacetNotFoundException e)
-      {
-         return false;
-      }
+      return safeGetFacet(type) != null;
    }
 
    @Override
@@ -52,34 +44,23 @@ public abstract class AbstractFaceted<FACETTYPE extends Facet<?>> implements Fac
    }
 
    @Override
-   @SuppressWarnings("unchecked")
    public <F extends FACETTYPE> F getFacet(Class<F> type) throws FacetNotFoundException
    {
-      for (FACETTYPE facet : facets)
+      F facet = safeGetFacet(type);
+      if (facet == null)
       {
-         if (type.isAssignableFrom(facet.getClass()))
-            return (F) facet;
+         throw new FacetNotFoundException("No Facet of type [" + type + "] is installed.");
       }
-      throw new FacetNotFoundException("No Facet of type [" + type + "] is installed.");
+      else
+      {
+         return facet;
+      }
    }
 
    @Override
    public Iterable<FACETTYPE> getFacets()
    {
       return Collections.unmodifiableCollection(facets);
-   }
-
-   @Override
-   @SuppressWarnings("unchecked")
-   public <F extends FACETTYPE> Iterable<F> getFacets(Class<F> type)
-   {
-      Set<F> result = new HashSet<F>();
-      for (FACETTYPE facet : facets)
-      {
-         if (type.isAssignableFrom(facet.getClass()))
-            result.add((F) facet);
-      }
-      return result;
    }
 
    @Override
@@ -101,11 +82,46 @@ public abstract class AbstractFaceted<FACETTYPE extends Facet<?>> implements Fac
    }
 
    @Override
+   @SuppressWarnings("unchecked")
+   public <F extends FACETTYPE> Iterable<F> getFacets(Class<F> type)
+   {
+      Set<F> result = new HashSet<F>();
+      for (FACETTYPE facet : facets)
+      {
+         if (type.isInstance(facet))
+         {
+            result.add((F) facet);
+         }
+      }
+      return result;
+   }
+
+   /**
+    * Returns the installed facet that is an instance of the provided type argument, null otherwise.
+    * 
+    * It does not throw any exception
+    * 
+    * @param type the facet type
+    * @return the Facet if found, otherwise, null
+    */
+   @SuppressWarnings("unchecked")
+   private <F extends FACETTYPE> F safeGetFacet(Class<F> type)
+
+   {
+      for (FACETTYPE facet : facets)
+      {
+         if (type.isInstance(facet))
+         {
+            return (F) facet;
+         }
+      }
+      return null;
+   }
+
+   @Override
    public boolean uninstall(FACETTYPE facet)
    {
-      if (facet.isInstalled())
-         return facet.uninstall();
-      return true;
+      return (facet.isInstalled()) ? facet.uninstall() : true;
    }
 
 }
