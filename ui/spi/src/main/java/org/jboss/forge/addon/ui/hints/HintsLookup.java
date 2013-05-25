@@ -25,7 +25,8 @@ public class HintsLookup implements Category
 
    public InputType getInputType(Class<?> valueType)
    {
-      return (InputType) environment.get(HintsLookup.class).get(valueType);
+      InputType inputType = (InputType) environment.get(HintsLookup.class).get(valueType);
+      return inputType == null ? InputType.DEFAULT : inputType;
    }
 
    public void setInputType(Class<?> valueType, InputType type)

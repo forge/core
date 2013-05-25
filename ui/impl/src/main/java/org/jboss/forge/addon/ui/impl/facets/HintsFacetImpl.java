@@ -45,11 +45,6 @@ public class HintsFacetImpl extends AbstractFacet<InputComponent<?, ?>> implemen
       return getOrigin().hasFacet(this.getClass());
    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.forge.ui.facets.HintsFacet#getInputType()
-    */
    @Override
    public InputType getInputType()
    {
@@ -57,15 +52,9 @@ public class HintsFacetImpl extends AbstractFacet<InputComponent<?, ?>> implemen
       {
          inputType = hintsLookup.getInputType(getOrigin().getValueType());
       }
-      // TODO should we calculate and return a default input type here, or elsewhere?
       return inputType;
    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.forge.ui.facets.HintsFacet#setInputType(org.jboss.forge.ui.hints.InputType)
-    */
    @Override
    public HintsFacet setInputType(InputType type)
    {
