@@ -13,6 +13,7 @@ import java.util.List;
 import org.jboss.forge.addon.convert.CompositeConverter;
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.convert.ConverterFactory;
+import org.jboss.forge.addon.facets.Facet;
 import org.jboss.forge.addon.ui.facets.HintsFacet;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.InputComponent;
@@ -23,9 +24,9 @@ import org.jboss.forge.furnace.util.Strings;
 
 /**
  * Utilities for {@link InputComponent} objects
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public final class InputComponents
@@ -37,11 +38,20 @@ public final class InputComponents
    public static InputType getInputType(InputComponent<?, ?> input)
    {
       InputType result = InputType.DEFAULT;
-      if (input.hasFacet(HintsFacet.class))
+      for (Facet f : input.getFacets())
       {
-         HintsFacet facet = input.getFacet(HintsFacet.class);
-         result = facet.getInputType();
+         if (HintsFacet.class.isInstance(f))
+         {
+            result = ((HintsFacet) f).getInputType();
+            break;
+         }
       }
+      // FIXME: The following code does NOT work when called from Eclipse. Could it be a bug in CLAC ?
+      // if (input.hasFacet(HintsFacet.class))
+      // {
+      // HintsFacet facet = input.getFacet(HintsFacet.class);
+      // result = facet.getInputType();
+      // }
       return result;
    }
 
@@ -66,7 +76,7 @@ public final class InputComponents
 
    /**
     * Sets the value in the provided {@link InputComponent}, making any necessary conversions
-    *
+    * 
     * @param component
     * @param value
     */
@@ -127,7 +137,7 @@ public final class InputComponents
 
    /**
     * Returns the converted value that matches the input
-    *
+    * 
     * @param input
     * @param value
     * @return
@@ -188,7 +198,7 @@ public final class InputComponents
 
    /**
     * Validate if the input has a value. If not, return the error message
-    *
+    * 
     * @param input
     * @return
     */
@@ -213,9 +223,9 @@ public final class InputComponents
    }
 
    /**
-    *
+    * 
     * Returns the item label converter, that is
-    *
+    * 
     * @param converterFactory May be null
     * @param input
     * @return the item label converter of a {@link SelectComponent} or a {@link Converter} instance from the
