@@ -19,6 +19,7 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.environment.Environment;
 import org.jboss.forge.addon.ui.facets.HintsFacet;
+import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.impl.facets.HintsFacetImpl;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.SelectComponent;
@@ -167,7 +168,10 @@ public class InputComponentProducer
          input.setLabel(atts.label());
          input.setRequired(atts.required());
          input.setRequiredMessage(atts.requiredMessage());
-         input.getFacet(HintsFacet.class).setInputType(atts.type());
+         if (atts.type() != InputType.DEFAULT)
+         {
+            input.getFacet(HintsFacet.class).setInputType(atts.type());
+         }
       }
 
       if (input instanceof SelectComponent)
