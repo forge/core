@@ -7,7 +7,15 @@
 
 package org.jboss.forge.ui.test;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+
+import javax.enterprise.inject.Produces;
+import javax.enterprise.inject.spi.InjectionPoint;
+import javax.inject.Inject;
+
 import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.ui.test.impl.UIContextImpl;
@@ -22,11 +30,32 @@ import org.jboss.forge.ui.test.impl.WizardTesterImpl;
 public class WizardTesterFactory
 {
 
-   // @Produces
-   // public <W extends UIWizard> WizardTester<W> produceWizardTester(InjectionPoint injectionPoint)
-   // {
-   // return null;
-   // }
+   @Inject
+   private AddonRegistry addonRegistry;
+
+   @Inject
+   private ResourceFactory resourceFactory;
+
+   @SuppressWarnings("unchecked")
+   @Produces
+   public <W extends UIWizard> WizardTester<W> produceWizardTester(InjectionPoint injectionPoint) throws Exception
+   {
+      Type type = injectionPoint.getAnnotated().getBaseType();
+
+      if (type instanceof ParameterizedType)
+      {
+         ParameterizedType parameterizedType = (ParameterizedType) type;
+
+         Type[] typeArguments = parameterizedType.getActualTypeArguments();
+         Class<W> wizardClass = (Class<W>) typeArguments[0];
+         return WizardTesterFactory.create(wizardClass, addonRegistry);
+      }
+      else
+      {
+         throw new IllegalStateException("Cannot inject a generic instance of type " + WizardTester.class.getName()
+                  + "<?> without specifying concrete generic types at injection point " + injectionPoint + ".");
+      }
+   }
 
    public static <W extends UIWizard> WizardTesterImpl<W> create(Class<W> wizardClass, AddonRegistry addonRegistry,
             Resource<?>... initialSelection) throws Exception

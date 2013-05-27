@@ -21,10 +21,20 @@ public class UIContextImpl extends AbstractUIContext implements UISelection<Reso
 
    public UIContextImpl(Resource<?>... initialSelection)
    {
-      this(Arrays.asList(initialSelection));
+      setInitialSelection(initialSelection);
    }
 
    public UIContextImpl(List<Resource<?>> initialSelection)
+   {
+      setInitialSelection(initialSelection);
+   }
+
+   public void setInitialSelection(Resource<?>... initialSelection)
+   {
+      this.selection = Arrays.asList(initialSelection);
+   }
+
+   public void setInitialSelection(List<Resource<?>> initialSelection)
    {
       this.selection = initialSelection;
    }

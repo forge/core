@@ -27,11 +27,9 @@ import org.jboss.forge.arquillian.Addon;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.addons.AddonId;
-import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.ui.test.WizardListener;
 import org.jboss.forge.ui.test.WizardTester;
-import org.jboss.forge.ui.test.WizardTesterFactory;
 import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnit;
 import org.junit.Assert;
@@ -54,7 +52,10 @@ public class PersistenceSetupWizardTest
    }
 
    @Inject
-   private AddonRegistry addonRegistry;
+   private HibernateProvider defaultProvider;
+
+   @Inject
+   private CustomJTAContainer customJTAProvider;
 
    @Inject
    private ProjectFactory projectFactory;
@@ -62,19 +63,20 @@ public class PersistenceSetupWizardTest
    @Inject
    private FacetFactory facetFactory;
 
+   @Inject
+   private WizardTester<PersistenceSetupWizard> tester;
+
    @Test
    public void testNewEntity() throws Exception
    {
       // Execute SUT
       final Project project = projectFactory.createTempProject();
-
-      WizardTester<PersistenceSetupWizard> tester = WizardTesterFactory.create(PersistenceSetupWizard.class,
-               addonRegistry, project.getProjectRoot());
+      tester.setInitialSelection(project.getProjectRoot());
 
       Assert.assertFalse(tester.canFlipToPreviousPage());
       // Setting UI values
-      tester.setValueFor("providers", addonRegistry.getExportedInstance(HibernateProvider.class).get());
-      tester.setValueFor("containers", addonRegistry.getExportedInstance(CustomJTAContainer.class).get());
+      tester.setValueFor("providers", defaultProvider);
+      tester.setValueFor("containers", customJTAProvider);
       Assert.assertTrue(tester.canFlipToNextPage());
 
       String result = tester.next();

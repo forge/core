@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.jboss.forge.addon.convert.ConverterFactory;
+import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
@@ -40,6 +41,12 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
       this.addonRegistry = addonRegistry;
       this.context = contextImpl;
       pages.add(createBuilder(wizardClass));
+   }
+
+   @Override
+   public void setInitialSelection(Resource<?>... selection)
+   {
+      context.setInitialSelection(selection);
    }
 
    @SuppressWarnings("unchecked")
