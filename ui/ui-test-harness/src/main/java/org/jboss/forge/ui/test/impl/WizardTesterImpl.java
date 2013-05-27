@@ -67,7 +67,7 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
       {
          throw new IllegalStateException("Wizard is already on the first page");
       }
-      pages.poll();
+      pages.removeLast();
    }
 
    @Override
