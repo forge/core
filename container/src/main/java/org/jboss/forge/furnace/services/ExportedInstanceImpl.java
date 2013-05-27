@@ -63,7 +63,7 @@ public class ExportedInstanceImpl<R> implements ExportedInstance<R>
       catch (Exception e)
       {
          throw new ContainerException("Failed to enhance instance of [" + actualType + "] with proxy for ClassLoader ["
-                  + loader + "]");
+                  + loader + "]", e);
       }
    }
 
