@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
    <modelVersion>4.0.0</modelVersion>
    <parent>
       <groupId>org.jboss.forge</groupId>
@@ -6,13 +7,13 @@
       <version>2.0.0-SNAPSHOT</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
-   
+
    <groupId>org.jboss.forge.addon</groupId>
    <artifactId>ui-parent</artifactId>
-   
+
    <packaging>pom</packaging>
    <name>Forge - UI Addon Parent</name>
-   
+
    <modules>
       <module>api</module>
       <module>impl</module>
@@ -20,10 +21,17 @@
       <module>addon</module>
       <module>tests</module>
       <module>example</module>
+      <module>ui-test-harness</module>
    </modules>
-   
+
    <dependencyManagement>
       <dependencies>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>ui</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
+         </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>ui-api</artifactId>
