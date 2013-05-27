@@ -41,14 +41,14 @@ public interface WizardTester<W extends UIWizard>
     * 
     * @throws Exception this is the first page or there are validation errors
     */
-   public boolean canFlipToNextPage() throws Exception;
+   public boolean canFlipToNextPage();
 
    /**
     * Is it possible to navigate to the previous page ?
     * 
     * @throws Exception this is the first page or there are validation errors
     */
-   public boolean canFlipToPreviousPage() throws Exception;
+   public boolean canFlipToPreviousPage();
 
    /**
     * Is the current wizard page valid ?
@@ -61,10 +61,13 @@ public interface WizardTester<W extends UIWizard>
 
    /**
     * The validation errors for the current page
-    * 
-    * @return
     */
    public List<String> getValidationErrors();
+
+   /**
+    * Is the wizard allowed to finish?
+    */
+   public boolean canFinish();
 
    /**
     * Finish clicked

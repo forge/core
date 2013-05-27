@@ -71,16 +71,29 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
    }
 
    @Override
-   public boolean canFlipToNextPage() throws Exception
+   public boolean canFlipToNextPage()
    {
       UIBuilderImpl currentBuilder = getCurrentBuilder();
-      return currentBuilder.getWizard().next(context) != null;
+      try
+      {
+         return currentBuilder.getWizard().next(context) != null;
+      }
+      catch (Exception e)
+      {
+         throw new IllegalStateException(e);
+      }
    }
 
    @Override
    public boolean canFlipToPreviousPage()
    {
       return pages.size() > 1;
+   }
+
+   @Override
+   public boolean canFinish()
+   {
+      return getValidationErrors().isEmpty() && !canFlipToNextPage();
    }
 
    @Override
