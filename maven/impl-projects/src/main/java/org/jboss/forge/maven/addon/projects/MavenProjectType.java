@@ -13,6 +13,7 @@ import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectType;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 import org.jboss.forge.maven.addon.projects.facets.MavenDependencyFacet;
+import org.jboss.forge.maven.addon.projects.facets.MavenJavaSourceFacet;
 import org.jboss.forge.maven.addon.projects.facets.MavenMetadataFacet;
 import org.jboss.forge.maven.addon.projects.facets.MavenPackagingFacet;
 import org.jboss.forge.maven.addon.projects.facets.MavenResourceFacet;
@@ -44,6 +45,7 @@ public class MavenProjectType implements ProjectType
       result.add(MavenPackagingFacet.class);
       result.add(MavenDependencyFacet.class);
       result.add(MavenResourceFacet.class);
+      result.add(MavenJavaSourceFacet.class);
       return result;
    }
 }
