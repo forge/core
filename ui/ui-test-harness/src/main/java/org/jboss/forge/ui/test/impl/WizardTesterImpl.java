@@ -18,7 +18,6 @@ import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.ui.test.WizardListener;
-import org.jboss.forge.ui.test.WizardState;
 import org.jboss.forge.ui.test.WizardTester;
 
 /**
@@ -35,9 +34,7 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
 
    private final UIContextImpl context;
 
-   private WizardState state = WizardState.FIRST;
-
-   WizardTesterImpl(Class<W> wizardClass, AddonRegistry addonRegistry, UIContextImpl contextImpl)
+   public WizardTesterImpl(Class<W> wizardClass, AddonRegistry addonRegistry, UIContextImpl contextImpl)
             throws Exception
    {
       this.addonRegistry = addonRegistry;
@@ -130,12 +127,6 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
             listener.wizardExecuted(wizard, result);
          }
       }
-   }
-
-   @Override
-   public WizardState getCurrentState()
-   {
-      return state;
    }
 
    private UIBuilderImpl getCurrentBuilder()

@@ -57,8 +57,6 @@ public interface WizardTester<W extends UIWizard>
     */
    public boolean isValid();
 
-   public WizardState getCurrentState();
-
    /**
     * The validation errors for the current page
     */

@@ -15,7 +15,7 @@ import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.ui.context.AbstractUIContext;
 import org.jboss.forge.addon.ui.context.UISelection;
 
-class UIContextImpl extends AbstractUIContext implements UISelection<Resource<?>>
+public class UIContextImpl extends AbstractUIContext implements UISelection<Resource<?>>
 {
    private List<Resource<?>> selection;
 
