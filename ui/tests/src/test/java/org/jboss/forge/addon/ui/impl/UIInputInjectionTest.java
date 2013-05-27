@@ -199,7 +199,7 @@ public class UIInputInjectionTest
    {
       HintsFacet hints = firstName.getFacet(HintsFacet.class);
       InputType inputType = hints.getInputType();
-      Assert.assertNull(inputType);
+      Assert.assertEquals(InputType.DEFAULT, inputType);
 
       hints.setInputType(InputType.TEXTAREA);
       Assert.assertSame(firstName, firstName);
