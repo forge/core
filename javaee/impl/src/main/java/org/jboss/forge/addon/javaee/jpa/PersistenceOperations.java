@@ -27,7 +27,6 @@ import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.furnace.util.Strings;
 import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.util.Refactory;
@@ -120,9 +119,7 @@ public class PersistenceOperations
             GenerationType idStrategy)
    {
       JavaClass javaClass = createJavaClass(entityName, entityPackage, idStrategy);
-      String pkg = Strings.isNullOrEmpty(javaClass.getPackage()) ? "" : javaClass.getPackage() + ".";
-      String className = pkg + javaClass.getName();
-      JavaResource javaResource = getJavaResource(target, className);
+      JavaResource javaResource = getJavaResource(target, javaClass.getName());
       javaResource.setContents(javaClass);
       return javaResource;
    }
