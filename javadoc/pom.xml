@@ -19,7 +19,7 @@
 
    <artifactId>forge-javadoc</artifactId>
 
-   <name>Forge - Java Doc</name>
+   <name>Forge - Javadoc</name>
    <packaging>jar</packaging>
 
    <build>
@@ -73,7 +73,7 @@
          <artifactId>forge-shell-api</artifactId>
       </dependency>
 
-   </dependencies> 
+   </dependencies>
 
    <profiles>
       <profile>
@@ -86,7 +86,7 @@
          </activation>
          <build>
             <plugins>
-               <plugin>         
+               <plugin>
                   <groupId>org.apache.maven.plugins</groupId>
                   <artifactId>maven-dependency-plugin</artifactId>
                   <executions>
@@ -99,13 +99,13 @@
                         <configuration>
                            <classifier>sources</classifier>
                            <outputDirectory>${project.build.directory}/sources-javadoc</outputDirectory>
-                           <excludeTransitive>true</excludeTransitive>                     
+                           <excludeTransitive>true</excludeTransitive>
                            <includeArtifactIds>forge-dev-plugins,forge-event-bus,forge-git-tools,forge-javaee-api,forge-maven-api,forge-parser-xml,forge-scaffold-api,forge-scaffoldx-api,forge-shell-api</includeArtifactIds>
                         </configuration>
                      </execution>
                   </executions>
-               </plugin>         
-               
+               </plugin>
+
                <plugin>
                   <artifactId>maven-javadoc-plugin</artifactId>
                   <executions>
@@ -120,7 +120,7 @@
                            <links>
                              <link>http://download.oracle.com/javaee/6/api</link>
                              <link>http://download.oracle.com/javase/6/docs/api/</link>
-                           </links>                     
+                           </links>
                            <keywords>true</keywords>
                            <author>true</author>
                         </configuration>
@@ -133,3 +133,4 @@
       </profile>
    </profiles>
 </project>
+
