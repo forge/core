@@ -23,6 +23,7 @@ import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.ProjectListener;
 import org.jboss.forge.addon.projects.ProjectLocator;
 import org.jboss.forge.addon.resource.DirectoryResource;
+import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonRegistry;
@@ -55,13 +56,13 @@ public class ProjectFactoryImpl implements ProjectFactory
    private final List<ProjectListener> projectListeners = new ArrayList<ProjectListener>();
 
    @Override
-   public Project findProject(DirectoryResource target)
+   public Project findProject(FileResource<?> target)
    {
       return findProject(target, null);
    }
 
    @Override
-   public Project findProject(DirectoryResource target, Predicate<Project> filter)
+   public Project findProject(FileResource<?> target, Predicate<Project> filter)
    {
       if (filter == null)
       {
@@ -78,18 +79,18 @@ public class ProjectFactoryImpl implements ProjectFactory
       Project result = null;
       for (ExportedInstance<ProjectLocator> instance : registry.getExportedInstances(ProjectLocator.class))
       {
-         DirectoryResource r = target;
+         DirectoryResource r = (target instanceof DirectoryResource) ? (DirectoryResource) target : target.getParent();
          while (r != null && result == null)
          {
             ProjectLocator locator = instance.get();
-            if (locator.containsProject(target))
+            if (locator.containsProject(r))
             {
-               result = locator.createProject(target);
+               result = locator.createProject(r);
                if (!filter.accept(result))
                   result = null;
             }
 
-            r = (r.getParent() == null ? null : r.getParent().reify(DirectoryResource.class));
+            r = r.getParent();
          }
       }
 

@@ -16,12 +16,9 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.ProjectListener;
-import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.arquillian.Addon;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
-import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
@@ -55,12 +52,6 @@ public class ProjectFactoryImplTest
    }
 
    @Inject
-   private ResourceFactory factory;
-
-   @Inject
-   private Furnace forge;
-
-   @Inject
    private ProjectFactory projectFactory;
 
    @Test
@@ -72,9 +63,6 @@ public class ProjectFactoryImplTest
    @Test
    public void testCreateProject() throws Exception
    {
-      DirectoryResource addonDir = factory.create(forge.getRepositories().get(0).getRootDirectory()).reify(
-               DirectoryResource.class);
-      DirectoryResource projectDir = addonDir.createTempResource();
       final AtomicBoolean projectSet = new AtomicBoolean(false);
       ListenerRegistration<ProjectListener> registration = projectFactory.addProjectListener(new ProjectListener()
       {
@@ -85,7 +73,7 @@ public class ProjectFactoryImplTest
          }
       });
       Assert.assertNotNull("Should not have returned a null listener registration", registration);
-      Project project = projectFactory.createProject(projectDir);
+      Project project = projectFactory.createTempProject();
       registration.removeListener();
       Assert.assertNotNull(project);
       Assert.assertTrue("Listener was not called", projectSet.get());
@@ -94,16 +82,11 @@ public class ProjectFactoryImplTest
    @Test
    public void testFindProject() throws Exception
    {
-      DirectoryResource addonDir = factory.create(forge.getRepositories().get(0).getRootDirectory()).reify(
-               DirectoryResource.class);
-      DirectoryResource projectDir = addonDir.createTempResource();
-      Assert.assertNull(projectFactory.findProject(projectDir));
-
-      Project project = projectFactory.createProject(projectDir);
+      Project project = projectFactory.createTempProject();
 
       Assert.assertNotNull(project);
-      Assert.assertNotNull(projectFactory.findProject(projectDir));
-      Assert.assertNull(projectFactory.findProject(projectDir, new Predicate<Project>()
+      Assert.assertNotNull(projectFactory.findProject(project.getProjectRoot()));
+      Assert.assertNull(projectFactory.findProject(project.getProjectRoot(), new Predicate<Project>()
       {
          @Override
          public boolean accept(Project type)
@@ -112,7 +95,9 @@ public class ProjectFactoryImplTest
          }
       }));
 
-      projectDir.delete(true);
+      Assert.assertNotNull(projectFactory.findProject(project.getProjectRoot().getChildDirectory("src/main/java")));
+
+      project.getProjectRoot().delete(true);
    }
 
    @Test
