@@ -856,8 +856,49 @@
             <module>javaee-api</module>
             <module>scaffold-api</module>
             <module>scaffoldx-api</module>
+            <module>javadoc</module>
          </modules>
       </profile>
+
+      <profile>
+         <id>release</id>
+         <activation>
+            <activeByDefault>false</activeByDefault>
+            <property>
+               <name>release</name>
+               <value>true</value>
+            </property>
+         </activation>
+         <modules>
+            <module>event-bus-api</module>
+            <module>parser-java-api</module>
+            <module>parser-xml</module>
+            <module>maven-api</module>
+            <module>shell-api</module>
+            <module>git-tools</module>
+            <module>git-tools-tests</module>
+            <module>parser-java</module>
+            <module>project-model-maven</module>
+            <module>project-model-maven-tests</module>
+            <module>test-harness</module>
+            <module>test-harness-web</module>
+            <module>shell</module>
+            <module>javaee-api</module>
+            <module>javaee-impl</module>
+            <module>scaffold-api</module>
+            <module>scaffold-plugins</module>
+            <module>scaffoldx-api</module>
+            <module>scaffoldx-plugins</module>
+            <module>scaffold-faces</module>
+            <module>scaffoldx-faces</module>
+            <module>dev-plugins</module>
+            <module>plugin-loader</module>
+            <module>tracking</module>
+            <module>javadoc</module>
+            <module>dist</module>
+         </modules>
+      </profile>
+   
    </profiles>
 
    <scm>
