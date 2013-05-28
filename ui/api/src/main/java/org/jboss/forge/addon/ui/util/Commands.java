@@ -3,7 +3,7 @@ package org.jboss.forge.addon.ui.util;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 

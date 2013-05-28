@@ -23,9 +23,8 @@ import org.jboss.forge.addon.shell.CommandManager;
 import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
 import org.jboss.forge.addon.shell.util.CommandControllerComparator;
-import org.jboss.forge.addon.ui.DefaultUIProgressMonitor;
-import org.jboss.forge.addon.ui.UICommand;
-import org.jboss.forge.addon.ui.UIProgressMonitor;
+import org.jboss.forge.addon.ui.UIRuntime;
+import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -34,9 +33,10 @@ import org.jboss.forge.addon.ui.controller.CommandControllerFactory;
 import org.jboss.forge.addon.ui.input.UIPrompt;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.output.UIOutput;
+import org.jboss.forge.addon.ui.progress.DefaultUIProgressMonitor;
+import org.jboss.forge.addon.ui.progress.UIProgressMonitor;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
-import org.jboss.forge.addon.ui.spi.UIRuntime;
 import org.jboss.forge.addon.ui.util.Metadata;
 
 /**

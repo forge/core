@@ -18,11 +18,12 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.environment.Environment;
-import org.jboss.forge.addon.ui.InputComponentFactory;
+import org.jboss.forge.addon.ui.annotation.Option;
 import org.jboss.forge.addon.ui.facets.HintsFacet;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.impl.facets.HintsFacetImpl;
 import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.InputComponentInjectionEnricher;
 import org.jboss.forge.addon.ui.input.SelectComponent;
 import org.jboss.forge.addon.ui.input.UIInput;
@@ -223,8 +224,8 @@ public class InputComponentProducer implements InputComponentFactory
    /**
     * Pre-configure input based on WithAttributes info if annotation exists
     */
-   @SuppressWarnings({ "unchecked" })
-   private void preconfigureInput(InputComponent<?, ?> input, WithAttributes atts)
+   @SuppressWarnings("unchecked")
+   public void preconfigureInput(InputComponent<?, ?> input, WithAttributes atts)
    {
       if (atts != null)
       {
@@ -249,6 +250,42 @@ public class InputComponentProducer implements InputComponentFactory
             {
                InputComponents.setDefaultValueFor(converterFactory, (InputComponent<?, Object>) input,
                         atts.defaultValue());
+            }
+            finally
+            {
+               instance.release(converterFactory);
+            }
+
+         }
+      }
+   }
+
+   @SuppressWarnings("unchecked")
+   public void preconfigureInput(InputComponent<?, ?> input, Option option)
+   {
+      if (option != null)
+      {
+         input.setEnabled(option.enabled());
+         input.setLabel(option.label());
+         input.setRequired(option.required());
+         input.setRequiredMessage(option.requiredMessage());
+         input.setDescription(option.description());
+
+         // Set input type
+         if (option.type() != InputType.DEFAULT)
+         {
+            input.getFacet(HintsFacet.class).setInputType(option.type());
+         }
+
+         // Set Default Value
+         if (!"".equals(option.defaultValue()))
+         {
+            Imported<ConverterFactory> instance = addonRegistry.getServices(ConverterFactory.class);
+            ConverterFactory converterFactory = instance.get();
+            try
+            {
+               InputComponents.setDefaultValueFor(converterFactory, (InputComponent<?, Object>) input,
+                        option.defaultValue());
             }
             finally
             {

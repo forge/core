@@ -7,7 +7,7 @@
 
 package org.jboss.forge.addon.ui.result;
 
-import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.command.UICommand;
 
 /**
  * Utilities for creating {@link Result} instances.

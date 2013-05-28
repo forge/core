@@ -7,7 +7,7 @@
 
 package org.jboss.forge.addon.ui.context;
 
-import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.command.UICommand;
 
 /**
  * Provides a {@link UIContext} object

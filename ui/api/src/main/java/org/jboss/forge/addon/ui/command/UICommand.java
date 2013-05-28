@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.ui;
+package org.jboss.forge.addon.ui.command;
 
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -22,7 +22,7 @@ import org.jboss.forge.addon.ui.result.Results;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
  */
-public interface UICommand extends UIValidator
+public interface UICommand
 {
    /**
     * @param context the {@link UIContext} provided by the UI implementation, never null
@@ -46,6 +46,13 @@ public interface UICommand extends UIValidator
     * @throws Exception if anything wrong happens
     */
    public void initializeUI(UIBuilder builder) throws Exception;
+
+   /**
+    * Validate the current {@link UICommand}.
+    * 
+    * @param validator the {@link UIValidationContext} object that holds validation errors
+    */
+   public abstract void validate(UIValidationContext context);
 
    /**
     * Called when the {@link UICommand} should be executed.

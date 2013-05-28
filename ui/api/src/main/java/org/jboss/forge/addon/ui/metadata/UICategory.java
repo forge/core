@@ -6,7 +6,7 @@
  */
 package org.jboss.forge.addon.ui.metadata;
 
-import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.command.UICommand;
 
 /**
  * The category a {@link UICommand} belongs to

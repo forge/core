@@ -15,8 +15,8 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.resource.FileResource;
-import org.jboss.forge.addon.ui.AbstractUICommand;
-import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.command.AbstractUICommand;
+import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIContextProvider;
 import org.jboss.forge.addon.ui.context.UISelection;
@@ -39,7 +39,7 @@ public abstract class AbstractProjectCommand extends AbstractUICommand
 
    private boolean constraintsSatisfied(UIContext context)
    {
-      Set<Class<ProjectFacet>> facets = FacetInspector.getRequiredFacets(getMetadata(null).getType());
+      Set<Class<ProjectFacet>> facets = FacetInspector.getRequiredFacets(getMetadata(context).getType());
       return FacetInspector.isConstraintSatisfied(getSelectedProject(context), facets);
    }
 

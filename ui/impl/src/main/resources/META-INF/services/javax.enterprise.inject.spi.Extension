@@ -1,1 +1,2 @@
-org.jboss.forge.addon.ui.impl.CommandScopedExtension
+org.jboss.forge.addon.ui.impl.extension.CommandScopedExtension
+org.jboss.forge.addon.ui.impl.extension.AnnotatedCommandExtension

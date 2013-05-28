@@ -16,7 +16,6 @@ import javax.enterprise.inject.Vetoed;
 
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.facets.AbstractFaceted;
-import org.jboss.forge.addon.ui.UIValidator;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.facets.HintsFacet;
 import org.jboss.forge.addon.ui.input.InputComponent;
@@ -24,6 +23,7 @@ import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.ValueChangeListener;
 import org.jboss.forge.addon.ui.input.events.ValueChangeEvent;
 import org.jboss.forge.addon.ui.util.InputComponents;
+import org.jboss.forge.addon.ui.validate.UIValidator;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.forge.furnace.util.Callables;
 

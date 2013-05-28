@@ -7,7 +7,7 @@
 
 package org.jboss.forge.addon.shell.ui;
 
-import org.jboss.forge.addon.ui.AbstractUICommand;
+import org.jboss.forge.addon.ui.command.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.util.Categories;

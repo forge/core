@@ -7,8 +7,8 @@
 
 package org.jboss.forge.addon.ui.context;
 
-import org.jboss.forge.addon.ui.UIProgressMonitor;
 import org.jboss.forge.addon.ui.input.UIPrompt;
+import org.jboss.forge.addon.ui.progress.UIProgressMonitor;
 
 /**
  * A {@link UIExecutionContext} is created when the execution phase is requested

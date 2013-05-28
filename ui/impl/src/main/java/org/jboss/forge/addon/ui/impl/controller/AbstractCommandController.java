@@ -10,13 +10,13 @@ package org.jboss.forge.addon.ui.impl.controller;
 import java.util.List;
 import java.util.Set;
 
-import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.UIRuntime;
+import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.impl.context.UIValidationContextImpl;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.output.UIMessage;
-import org.jboss.forge.addon.ui.spi.UIRuntime;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.util.Assert;
 

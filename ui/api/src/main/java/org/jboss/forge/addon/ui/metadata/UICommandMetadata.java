@@ -9,7 +9,7 @@ package org.jboss.forge.addon.ui.metadata;
 
 import java.net.URL;
 
-import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.command.UICommand;
 
 /**
  * Describes a {@link UICommand} implementation
@@ -27,7 +27,7 @@ public interface UICommandMetadata
    /**
     * Returns the {@link Class} of the corresponding {@link UICommand}.
     */
-   Class<? extends UICommand> getType();
+   Class<?> getType();
 
    /**
     * Return the name of the corresponding {@link UICommand}.

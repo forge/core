@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.ui;
+package org.jboss.forge.addon.ui.progress;
 
 /**
  * A Progress Monitor implementation based on http://www.eclipse.org/articles/Article-Progress-Monitors/article.html

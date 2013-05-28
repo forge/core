@@ -5,7 +5,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.ui;
+package org.jboss.forge.addon.ui.progress;
+
 
 /**
  * Default implementation for {@link UIProgressMonitor}
