@@ -39,15 +39,14 @@ import org.jboss.forge.furnace.util.Annotations;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
  */
-public class InputComponentProducer
+public class InputComponentFactory
 {
    private Environment environment;
    private AddonRegistry addonRegistry;
 
    @Inject
-   public InputComponentProducer(Environment environment, AddonRegistry addonRegistry)
+   public InputComponentFactory(Environment environment, AddonRegistry addonRegistry)
    {
-      super();
       this.environment = environment;
       this.addonRegistry = addonRegistry;
    }
@@ -65,11 +64,8 @@ public class InputComponentProducer
 
          Type[] typeArguments = parameterizedType.getActualTypeArguments();
          Class<T> valueType = (Class<T>) typeArguments[0];
-         UISelectOne<T> result = new UISelectOneImpl<T>(name, valueType);
-         HintsFacetImpl hintsFacet = new HintsFacetImpl(result, environment);
-         result.install(hintsFacet);
-         preconfigureInput(result, injectionPoint.getAnnotated().getAnnotation(WithAttributes.class));
-         return result;
+         WithAttributes withAttributes = injectionPoint.getAnnotated().getAnnotation(WithAttributes.class);
+         return createSelectOne(name, valueType, withAttributes);
       }
       else
       {
@@ -91,11 +87,8 @@ public class InputComponentProducer
 
          Type[] typeArguments = parameterizedType.getActualTypeArguments();
          Class<T> valueType = (Class<T>) typeArguments[0];
-         UISelectMany<T> result = new UISelectManyImpl<T>(name, valueType);
-         HintsFacetImpl hintsFacet = new HintsFacetImpl(result, environment);
-         result.install(hintsFacet);
-         preconfigureInput(result, injectionPoint.getAnnotated().getAnnotation(WithAttributes.class));
-         return result;
+         WithAttributes withAttributes = injectionPoint.getAnnotated().getAnnotation(WithAttributes.class);
+         return createSelectMany(name, valueType, withAttributes);
       }
       else
       {
@@ -117,11 +110,8 @@ public class InputComponentProducer
 
          Type[] typeArguments = parameterizedType.getActualTypeArguments();
          Class<T> valueType = (Class<T>) typeArguments[0];
-         UIInputImpl<T> result = new UIInputImpl<T>(name, valueType);
-         HintsFacetImpl hintsFacet = new HintsFacetImpl(result, environment);
-         result.install(hintsFacet);
-         preconfigureInput(result, injectionPoint.getAnnotated().getAnnotation(WithAttributes.class));
-         return result;
+         WithAttributes withAttributes = injectionPoint.getAnnotated().getAnnotation(WithAttributes.class);
+         return createInput(name, valueType, withAttributes);
       }
       else
       {
@@ -143,17 +133,50 @@ public class InputComponentProducer
 
          Type[] typeArguments = parameterizedType.getActualTypeArguments();
          Class<T> valueType = (Class<T>) typeArguments[0];
-         UIInputManyImpl<T> result = new UIInputManyImpl<T>(name, valueType);
-         HintsFacetImpl hintsFacet = new HintsFacetImpl(result, environment);
-         result.install(hintsFacet);
-         preconfigureInput(result, injectionPoint.getAnnotated().getAnnotation(WithAttributes.class));
-         return result;
+         WithAttributes withAttributes = injectionPoint.getAnnotated().getAnnotation(WithAttributes.class);
+         return createInputMany(name, valueType, withAttributes);
       }
       else
       {
          throw new IllegalStateException("Cannot inject a generic instance of type " + UIInput.class.getName()
                   + "<?,?> without specifying concrete generic types at injection point " + injectionPoint + ".");
       }
+   }
+
+   public <T> UIInput<T> createInput(String name, Class<T> valueType, WithAttributes withAttributes)
+   {
+      UIInputImpl<T> result = new UIInputImpl<T>(name, valueType);
+      HintsFacetImpl hintsFacet = new HintsFacetImpl(result, environment);
+      result.install(hintsFacet);
+      preconfigureInput(result, withAttributes);
+      return result;
+   }
+
+   public <T> UIInputMany<T> createInputMany(String name, Class<T> valueType, WithAttributes withAttributes)
+   {
+      UIInputManyImpl<T> result = new UIInputManyImpl<T>(name, valueType);
+      HintsFacetImpl hintsFacet = new HintsFacetImpl(result, environment);
+      result.install(hintsFacet);
+      preconfigureInput(result, withAttributes);
+      return result;
+   }
+
+   public <T> UISelectOne<T> createSelectOne(String name, Class<T> valueType, WithAttributes withAttributes)
+   {
+      UISelectOne<T> result = new UISelectOneImpl<T>(name, valueType);
+      HintsFacetImpl hintsFacet = new HintsFacetImpl(result, environment);
+      result.install(hintsFacet);
+      preconfigureInput(result, withAttributes);
+      return result;
+   }
+
+   public <T> UISelectMany<T> createSelectMany(String name, Class<T> valueType, WithAttributes withAttributes)
+   {
+      UISelectMany<T> result = new UISelectManyImpl<T>(name, valueType);
+      HintsFacetImpl hintsFacet = new HintsFacetImpl(result, environment);
+      result.install(hintsFacet);
+      preconfigureInput(result, withAttributes);
+      return result;
    }
 
    /**
@@ -198,4 +221,5 @@ public class InputComponentProducer
          selectComponent.setValueChoices(choices);
       }
    }
+
 }

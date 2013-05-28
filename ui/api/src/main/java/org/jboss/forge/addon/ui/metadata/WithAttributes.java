@@ -22,7 +22,7 @@ import org.jboss.forge.addon.ui.input.InputComponent;
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Target({ ElementType.FIELD, ElementType.PARAMETER })
 public @interface WithAttributes
 {
    /**
