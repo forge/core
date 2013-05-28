@@ -14,7 +14,6 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -44,8 +43,6 @@ public class ContainerLifecycleTest
    }
 
    @Test
-   @Ignore("FORGE-820")
-   // TODO: Remove the ignore annotation when FORGE-820 is solved
    public void testContainerSupportsXPath()
    {
       Assert.assertNotNull(XPathFactory.newInstance().newXPath());
