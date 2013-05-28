@@ -16,15 +16,15 @@ import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.addon.dependencies.builder.DependencyQueryBuilder;
 import org.jboss.forge.addon.manager.InstallRequest;
 import org.jboss.forge.addon.manager.impl.AddonManagerImpl;
+import org.jboss.forge.addon.maven.dependencies.FileResourceFactory;
+import org.jboss.forge.addon.maven.dependencies.MavenContainer;
+import org.jboss.forge.addon.maven.dependencies.MavenDependencyResolver;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.exception.ContainerException;
 import org.jboss.forge.furnace.repositories.AddonRepository;
 import org.jboss.forge.furnace.spi.ContainerLifecycleListener;
-import org.jboss.forge.maven.addon.dependencies.FileResourceFactory;
-import org.jboss.forge.maven.addon.dependencies.MavenContainer;
-import org.jboss.forge.maven.addon.dependencies.MavenDependencyResolver;
 
 /**
  * Installs the required core org.jboss.forge {@link Addon} instances.

@@ -22,15 +22,15 @@ import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.addon.dependencies.builder.DependencyQueryBuilder;
 import org.jboss.forge.addon.manager.InstallRequest;
 import org.jboss.forge.addon.manager.impl.AddonManagerImpl;
+import org.jboss.forge.addon.maven.dependencies.FileResourceFactory;
+import org.jboss.forge.addon.maven.dependencies.MavenContainer;
+import org.jboss.forge.addon.maven.dependencies.MavenDependencyResolver;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.repositories.AddonRepository;
 import org.jboss.forge.furnace.repositories.AddonRepositoryMode;
 import org.jboss.forge.furnace.repositories.MutableAddonRepository;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
-import org.jboss.forge.maven.addon.dependencies.FileResourceFactory;
-import org.jboss.forge.maven.addon.dependencies.MavenContainer;
-import org.jboss.forge.maven.addon.dependencies.MavenDependencyResolver;
 
 /**
  * A class with a main method to bootstrap Furnace.

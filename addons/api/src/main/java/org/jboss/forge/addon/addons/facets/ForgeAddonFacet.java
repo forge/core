@@ -8,13 +8,13 @@ package org.jboss.forge.addon.addons.facets;
 
 import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.addon.facets.AbstractFacet;
+import org.jboss.forge.addon.maven.plugins.ConfigurationBuilder;
+import org.jboss.forge.addon.maven.plugins.ConfigurationElementBuilder;
+import org.jboss.forge.addon.maven.plugins.ExecutionBuilder;
+import org.jboss.forge.addon.maven.plugins.MavenPluginBuilder;
+import org.jboss.forge.addon.maven.projects.MavenPluginFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
-import org.jboss.forge.maven.addon.plugins.ConfigurationBuilder;
-import org.jboss.forge.maven.addon.plugins.ConfigurationElementBuilder;
-import org.jboss.forge.maven.addon.plugins.ExecutionBuilder;
-import org.jboss.forge.maven.addon.plugins.MavenPluginBuilder;
-import org.jboss.forge.maven.addon.projects.MavenPluginFacet;
 
 /**
  * Configures the current project as a forge addon

@@ -13,7 +13,7 @@ import static org.junit.Assert.assertNull;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Repository;
-import org.jboss.forge.maven.addon.projects.util.RepositoryUtils;
+import org.jboss.forge.addon.maven.projects.util.RepositoryUtils;
 import org.junit.Test;
 
 /**

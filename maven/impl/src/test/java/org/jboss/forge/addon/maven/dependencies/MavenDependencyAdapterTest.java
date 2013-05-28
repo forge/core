@@ -13,7 +13,7 @@ import org.apache.maven.model.Exclusion;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
-import org.jboss.forge.maven.addon.dependencies.MavenDependencyAdapter;
+import org.jboss.forge.addon.maven.dependencies.MavenDependencyAdapter;
 import org.junit.Test;
 
 /**
