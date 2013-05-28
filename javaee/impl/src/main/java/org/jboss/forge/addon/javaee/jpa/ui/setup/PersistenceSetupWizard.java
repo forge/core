@@ -14,8 +14,12 @@ import org.jboss.forge.addon.javaee.jpa.PersistenceContainer;
 import org.jboss.forge.addon.javaee.jpa.PersistenceProvider;
 import org.jboss.forge.addon.javaee.jpa.containers.JBossEAP6Container;
 import org.jboss.forge.addon.javaee.jpa.providers.HibernateProvider;
+import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectOne;
@@ -44,6 +48,9 @@ public class PersistenceSetupWizard implements UIWizard
    private UIInput<Boolean> configureMetadata;
 
    @Inject
+   private ProjectFactory projectFactory;
+
+   @Inject
    private JBossEAP6Container defaultContainer;
 
    @Inject
@@ -56,10 +63,13 @@ public class PersistenceSetupWizard implements UIWizard
                .description("Setup JPA in your project").category(Categories.create("JPA"));
    }
 
+   /**
+    * Return true only if a project is selected
+    */
    @Override
    public boolean isEnabled(UIContext context)
    {
-      return true;
+      return getSelectedProject(context) != null;
    }
 
    @Override
@@ -143,4 +153,19 @@ public class PersistenceSetupWizard implements UIWizard
    {
       return configureMetadata;
    }
+
+   /**
+    * Returns the selected project. null if no project is found
+    */
+   protected Project getSelectedProject(UIContext context)
+   {
+      Project project = null;
+      UISelection<FileResource<?>> initialSelection = context.getInitialSelection();
+      if (initialSelection != null)
+      {
+         project = projectFactory.findProject(initialSelection.get());
+      }
+      return project;
+   }
+
 }

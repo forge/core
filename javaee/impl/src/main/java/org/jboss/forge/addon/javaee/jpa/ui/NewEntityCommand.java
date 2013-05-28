@@ -10,12 +10,12 @@ import javax.inject.Inject;
 import javax.persistence.GenerationType;
 
 import org.jboss.forge.addon.javaee.jpa.PersistenceOperations;
+import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
-import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -67,24 +67,30 @@ public class NewEntityCommand implements UICommand
    public void initializeUI(UIBuilder builder) throws Exception
    {
       idStrategy.setDefaultValue(GenerationType.AUTO);
-      builder.add(named).add(targetPackage).add(idStrategy);
-      if (getSelectedProject(builder.getUIContext()) == null)
+      Project project = getSelectedProject(builder.getUIContext());
+      if (project == null)
       {
-         UISelection<Resource<?>> currentSelection = builder.getUIContext().getInitialSelection();
+         UISelection<FileResource<?>> currentSelection = builder.getUIContext().getInitialSelection();
          if (currentSelection != null)
          {
-            Resource<?> resource = currentSelection.get();
+            FileResource<?> resource = currentSelection.get();
             if (resource instanceof DirectoryResource)
             {
                targetLocation.setDefaultValue((DirectoryResource) resource);
             }
-            else if (resource instanceof FileResource)
+            else
             {
-               targetLocation.setDefaultValue(((FileResource<?>) resource).getParent());
+               targetLocation.setDefaultValue(resource.getParent());
             }
          }
-         builder.add(targetLocation);
       }
+      else
+      {
+         JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+         targetLocation.setDefaultValue(facet.getSourceFolder()).setEnabled(false);
+      }
+      builder.add(targetLocation);
+      builder.add(targetPackage).add(named).add(idStrategy);
    }
 
    @Override
@@ -124,14 +130,12 @@ public class NewEntityCommand implements UICommand
     */
    protected Project getSelectedProject(UIContext context)
    {
-      UISelection<Resource<?>> initialSelection = context.getInitialSelection();
-      Resource<?> resource = initialSelection.get();
       Project project = null;
-      if (resource instanceof DirectoryResource)
+      UISelection<FileResource<?>> initialSelection = context.getInitialSelection();
+      if (initialSelection != null)
       {
-         project = projectFactory.findProject((DirectoryResource) resource);
+         project = projectFactory.findProject(initialSelection.get());
       }
       return project;
    }
-
 }
