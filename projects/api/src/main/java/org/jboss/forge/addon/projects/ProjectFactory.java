@@ -21,13 +21,13 @@ import org.jboss.forge.furnace.util.Predicate;
 public interface ProjectFactory
 {
    /**
-    * Locate a {@link Project} in the ancestry of the given {@link DirectoryResource}. Return <code>null</code> if no
+    * Locate a {@link Project} in the ancestry of the given {@link FileResource}. Return <code>null</code> if no
     * {@link Project} could be located.
     */
    public Project findProject(final FileResource<?> target);
 
    /**
-    * Locate a {@link Project} in the ancestry of the given {@link DirectoryResource}. Filter results using the given
+    * Locate a {@link Project} in the ancestry of the given {@link FileResource}. Filter results using the given
     * {@link Predicate}. Return <code>null</code> if no {@link Project} could be located.
     */
    public Project findProject(final FileResource<?> target, Predicate<Project> filter);
