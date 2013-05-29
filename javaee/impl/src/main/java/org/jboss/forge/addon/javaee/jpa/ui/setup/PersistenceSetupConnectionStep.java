@@ -198,7 +198,8 @@ public class PersistenceSetupConnectionStep implements UIWizardStep
       JPADataSource dataSource = getDataSource(context);
       Boolean configureMetadata = (Boolean) context.getAttribute("ConfigureMetadata");
       String puName = persistenceUnitName.getValue();
-      persistenceOperations.setup(puName, project, dataSource, configureMetadata);
+      FileResource<?> configFile = persistenceOperations.setup(puName, project, dataSource, configureMetadata);
+      context.setSelection(configFile);
       return Results.success("Persistence (JPA) is installed.");
    }
 

@@ -27,6 +27,7 @@ import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.resource.DirectoryResource;
+import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.util.Refactory;
@@ -61,8 +62,9 @@ public class PersistenceOperations
     * @param dataSource
     * @param configureMetadata
     */
-   public void setup(String unitName, Project project, JPADataSource dataSource, boolean configureMetadata)
+   public FileResource<?> setup(String unitName, Project project, JPADataSource dataSource, boolean configureMetadata)
    {
+      FileResource<?> result = null;
       if (project != null)
       {
          PersistenceFacet facet = facetFactory.install(PersistenceFacet.class, project);
@@ -78,11 +80,13 @@ public class PersistenceOperations
          container.setupConnection(unit, dataSource);
          provider.configure(unit, dataSource);
          facet.saveConfig(config);
+         result = facet.getConfigFile();
       }
       if (configureMetadata)
       {
          facetFactory.install(PersistenceMetaModelFacet.class, project);
       }
+      return result;
    }
 
    /**
