@@ -31,6 +31,7 @@ import org.jboss.forge.furnace.util.Strings;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public final class InputComponents
 {
+   private static final String COLON = ":";
 
    /**
     * @return the {@link InputType} object associated to this {@link InputComponent}
@@ -212,7 +213,7 @@ public final class InputComponents
          {
             String labelValue = input.getLabel() == null ? input.getName() : input.getLabel();
             // Chop : off
-            if (labelValue.endsWith(":"))
+            if (labelValue.endsWith(COLON))
             {
                labelValue = labelValue.substring(0, labelValue.length() - 1);
             }
@@ -240,5 +241,28 @@ public final class InputComponents
          converter = converterFactory.getConverter(input.getValueType(), String.class);
       }
       return converter;
+   }
+
+   /**
+    * Returns the label for this component
+    * 
+    * @param input the input component
+    * @param addColon should a colon be added in the end of the label ?
+    * @return the label with a colon in the end if addColon is true
+    */
+   public static String getLabelFor(InputComponent<?, ?> input, boolean addColon)
+   {
+      String label = input.getLabel();
+      // If no label was provided, use name
+      if (label == null)
+      {
+         label = input.getName();
+      }
+      // if a colon is required, add it
+      if (addColon && !label.endsWith(COLON))
+      {
+         label += COLON;
+      }
+      return label;
    }
 }
