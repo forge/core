@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.forge.addon.maven.projects.facets.MavenDependencyFacet;
-import org.jboss.forge.addon.maven.projects.facets.MavenJavaSourceFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenMetadataFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenPackagingFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenResourceFacet;
@@ -22,12 +21,12 @@ import org.jboss.forge.addon.ui.wizard.UIWizardStep;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class MavenProjectType implements ProjectType
+public class MavenResourcesProjectType implements ProjectType
 {
    @Override
    public String getType()
    {
-      return "Maven";
+      return "Maven - Resources";
    }
 
    @Override
@@ -45,7 +44,6 @@ public class MavenProjectType implements ProjectType
       result.add(MavenPackagingFacet.class);
       result.add(MavenDependencyFacet.class);
       result.add(MavenResourceFacet.class);
-      result.add(MavenJavaSourceFacet.class);
       return result;
    }
 }
