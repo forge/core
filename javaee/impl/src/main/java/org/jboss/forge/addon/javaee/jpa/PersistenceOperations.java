@@ -42,8 +42,8 @@ import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnitTransact
  */
 public class PersistenceOperations
 {
-   private static final String DEFAULT_UNIT_NAME = "forge-default";
-   private static final String DEFAULT_UNIT_DESC = "Forge Persistence Unit";
+   public static final String DEFAULT_UNIT_NAME = "forge-default";
+   public static final String DEFAULT_UNIT_DESC = "Forge Persistence Unit";
 
    @Inject
    private ProjectFactory projectFactory;
@@ -61,7 +61,7 @@ public class PersistenceOperations
     * @param dataSource
     * @param configureMetadata
     */
-   public void setup(Project project, JPADataSource dataSource, boolean configureMetadata)
+   public void setup(String unitName, Project project, JPADataSource dataSource, boolean configureMetadata)
    {
       if (project != null)
       {
@@ -70,7 +70,7 @@ public class PersistenceOperations
          PersistenceProvider provider = dataSource.getProvider();
          PersistenceDescriptor config = facet.getConfig();
          PersistenceUnit<PersistenceDescriptor> unit = config.createPersistenceUnit();
-         unit.name(DEFAULT_UNIT_NAME).description(DEFAULT_UNIT_DESC);
+         unit.name(unitName).description(DEFAULT_UNIT_DESC);
          unit.transactionType(container.isJTASupported() ? PersistenceUnitTransactionType._JTA
                   : PersistenceUnitTransactionType._RESOURCE_LOCAL);
          unit.provider(provider.getProvider());

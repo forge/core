@@ -11,6 +11,7 @@ import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.addon.javaee.facets.PersistenceFacet;
 import org.jboss.forge.addon.javaee.jpa.DatabaseType;
 import org.jboss.forge.addon.javaee.jpa.JPADataSource;
 import org.jboss.forge.addon.javaee.jpa.PersistenceContainer;
@@ -19,8 +20,7 @@ import org.jboss.forge.addon.javaee.jpa.PersistenceProvider;
 import org.jboss.forge.addon.javaee.jpa.containers.JavaEEDefaultContainer;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
-import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UISelection;
@@ -35,32 +35,38 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
+import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnit;
 
 public class PersistenceSetupConnectionStep implements UIWizardStep
 {
    @Inject
-   @WithAttributes(label = "Database Type:", required = true)
+   @WithAttributes(label = "Database Type", required = true)
    private UISelectOne<DatabaseType> dbType;
 
    @Inject
-   @WithAttributes(label = "DataSource Name:", required = true)
+   @WithAttributes(label = "DataSource Name", required = true)
    private UIInput<String> dataSourceName;
 
    @Inject
-   @WithAttributes(label = "JDBC Driver:", required = true)
+   @WithAttributes(label = "JDBC Driver", required = true)
    private UIInput<String> jdbcDriver;
 
    @Inject
-   @WithAttributes(label = "Database URL:", required = true)
+   @WithAttributes(label = "Database URL", required = true)
    private UIInput<String> databaseURL;
 
    @Inject
-   @WithAttributes(label = "Username:", required = true)
+   @WithAttributes(label = "Username", required = true)
    private UIInput<String> username;
 
    @Inject
-   @WithAttributes(label = "Password:", required = true, type = InputType.SECRET)
+   @WithAttributes(label = "Password", required = true, type = InputType.SECRET)
    private UIInput<String> password;
+
+   @Inject
+   @WithAttributes(label = "Persistence Unit Name", required = true)
+   private UIInput<String> persistenceUnitName;
 
    @Inject
    private ProjectFactory projectFactory;
@@ -95,6 +101,7 @@ public class PersistenceSetupConnectionStep implements UIWizardStep
       PersistenceContainer pc = (PersistenceContainer) uiContext.getAttribute(PersistenceContainer.class);
       initDBType(uiContext);
       initDatasourceName(uiContext);
+      builder.add(persistenceUnitName.setDefaultValue(PersistenceOperations.DEFAULT_UNIT_NAME));
       builder.add(dbType);
       if (pc.isJTASupported())
       {
@@ -167,6 +174,21 @@ public class PersistenceSetupConnectionStep implements UIWizardStep
       {
          validator.addValidationError(null, e.getMessage());
       }
+      // Validate Persistence Unit Name
+      Project project = getSelectedProject(uiContext);
+      if (project.hasFacet(PersistenceFacet.class))
+      {
+         PersistenceDescriptor config = project.getFacet(PersistenceFacet.class).getConfig();
+         for (PersistenceUnit<PersistenceDescriptor> persistenceUnit : config.getAllPersistenceUnit())
+         {
+            if (persistenceUnitName.getValue().equals(persistenceUnit.getName()))
+            {
+               validator.addValidationError(persistenceUnitName,
+                        "Persistence unit name already exists in persistence descriptor.");
+               break;
+            }
+         }
+      }
    }
 
    @Override
@@ -175,7 +197,8 @@ public class PersistenceSetupConnectionStep implements UIWizardStep
       Project project = getSelectedProject(context);
       JPADataSource dataSource = getDataSource(context);
       Boolean configureMetadata = (Boolean) context.getAttribute("ConfigureMetadata");
-      persistenceOperations.setup(project, dataSource, configureMetadata);
+      String puName = persistenceUnitName.getValue();
+      persistenceOperations.setup(puName, project, dataSource, configureMetadata);
       return Results.success("Persistence (JPA) is installed.");
    }
 
@@ -184,12 +207,11 @@ public class PersistenceSetupConnectionStep implements UIWizardStep
     */
    protected Project getSelectedProject(UIContext context)
    {
-      UISelection<Resource<?>> initialSelection = context.getInitialSelection();
-      Resource<?> resource = initialSelection.get();
       Project project = null;
-      if (resource instanceof DirectoryResource)
+      UISelection<FileResource<?>> initialSelection = context.getInitialSelection();
+      if (initialSelection != null)
       {
-         project = projectFactory.findProject((DirectoryResource) resource);
+         project = projectFactory.findProject(initialSelection.get());
       }
       return project;
    }

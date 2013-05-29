@@ -36,11 +36,11 @@ public class PersistenceSetupWizard implements UIWizard
 {
 
    @Inject
-   @WithAttributes(label = "Container:", required = true, requiredMessage = "Please select a persistence container")
+   @WithAttributes(label = "Container", required = true)
    private UISelectOne<PersistenceContainer> containers;
 
    @Inject
-   @WithAttributes(label = "Provider:", required = true, requiredMessage = "Please select a persistence provider")
+   @WithAttributes(label = "Provider", required = true)
    private UISelectOne<PersistenceProvider> providers;
 
    @Inject
