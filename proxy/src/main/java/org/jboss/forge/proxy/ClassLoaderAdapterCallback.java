@@ -151,6 +151,11 @@ public class ClassLoaderAdapterCallback implements MethodHandler
          {
             resultInstanceLoader = Proxies.unwrapProxyTypes(unwrappedResultType, callingLoader, delegateLoader,
                      unwrappedResultType.getClassLoader()).getClassLoader();
+            // FORGE-928: java.util.ArrayList.class.getClassLoader() returns null
+            if (resultInstanceLoader == null)
+            {
+               resultInstanceLoader = getClass().getClassLoader();
+            }
          }
 
          Class<?> returnType = method.getReturnType();
