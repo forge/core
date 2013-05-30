@@ -4,12 +4,18 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jboss.forge.addon.manager.AddonManager;
+import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.addon.projects.facets.MetadataFacet;
+import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
+import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
@@ -23,13 +29,19 @@ public class AddonInstallCommand implements UICommand
    private AddonManager addonManager;
 
    @Inject
+   @WithAttributes(label = "Group ID", required = true)
    private UIInput<String> groupId;
 
    @Inject
+   @WithAttributes(label = "Name", required = true)
    private UIInput<String> name;
 
    @Inject
+   @WithAttributes(label = "Version", required = true)
    private UIInput<String> version;
+
+   @Inject
+   private ProjectFactory projectFactory;
 
    @Override
    public UICommandMetadata getMetadata()
@@ -47,30 +59,15 @@ public class AddonInstallCommand implements UICommand
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      initializeGroupIdInput(builder);
-      initializeNameInput(builder);
-      initializeVersionInput(builder);
-   }
-
-   private void initializeGroupIdInput(UIBuilder builder)
-   {
-      groupId.setLabel("Group Id:");
-      groupId.setRequired(true);
-      builder.add(groupId);
-   }
-
-   private void initializeNameInput(UIBuilder builder)
-   {
-      name.setLabel("Name:");
-      name.setRequired(true);
-      builder.add(name);
-   }
-
-   private void initializeVersionInput(UIBuilder builder)
-   {
-      version.setLabel("Version:");
-      version.setRequired(true);
-      builder.add(version);
+      Project project = getSelectedProject(builder.getUIContext());
+      if (project != null)
+      {
+         MetadataFacet facet = project.getFacet(MetadataFacet.class);
+         groupId.setDefaultValue(facet.getTopLevelPackage());
+         name.setDefaultValue(facet.getProjectName());
+         version.setDefaultValue(facet.getProjectVersion());
+      }
+      builder.add(groupId).add(name).add(version);
    }
 
    @Override
@@ -98,4 +95,17 @@ public class AddonInstallCommand implements UICommand
       return groupId.getValue() + ':' + name.getValue() + ',' + version.getValue();
    }
 
+   /**
+    * Returns the selected project. null if no project is found
+    */
+   protected Project getSelectedProject(UIContext context)
+   {
+      Project project = null;
+      UISelection<FileResource<?>> initialSelection = context.getInitialSelection();
+      if (initialSelection != null)
+      {
+         project = projectFactory.findProject(initialSelection.get());
+      }
+      return project;
+   }
 }

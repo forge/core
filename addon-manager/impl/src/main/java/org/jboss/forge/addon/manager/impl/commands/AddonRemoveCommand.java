@@ -1,5 +1,6 @@
 package org.jboss.forge.addon.manager.impl.commands;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -7,12 +8,18 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.manager.AddonManager;
+import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.addon.projects.facets.MetadataFacet;
+import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
+import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
@@ -31,7 +38,11 @@ public class AddonRemoveCommand implements UICommand, AddonCommandConstants
    private AddonManager manager;
 
    @Inject
+   @WithAttributes(label = "Installed addons")
    private UISelectMany<AddonId> addons;
+
+   @Inject
+   private ProjectFactory projectFactory;
 
    @Override
    public boolean isEnabled(UIContext context)
@@ -49,7 +60,6 @@ public class AddonRemoveCommand implements UICommand, AddonCommandConstants
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      addons.setLabel("Installed addons");
       Set<AddonId> choices = new HashSet<AddonId>();
       for (AddonRepository repository : forge.getRepositories())
       {
@@ -63,6 +73,17 @@ public class AddonRemoveCommand implements UICommand, AddonCommandConstants
          }
       }
       addons.setValueChoices(choices);
+      Project project = getSelectedProject(builder.getUIContext());
+      if (project != null)
+      {
+         MetadataFacet facet = project.getFacet(MetadataFacet.class);
+         String name = facet.getTopLevelPackage() + facet.getProjectName();
+         AddonId selectedAddonId = AddonId.from(name, facet.getProjectVersion());
+         if (choices.contains(selectedAddonId))
+         {
+            addons.setDefaultValue(Arrays.asList(selectedAddonId));
+         }
+      }
       builder.add(addons);
    }
 
@@ -89,6 +110,20 @@ public class AddonRemoveCommand implements UICommand, AddonCommandConstants
             builder.append(", ");
       }
       return Results.success("Removed addons: " + builder.toString());
+   }
+
+   /**
+    * Returns the selected project. null if no project is found
+    */
+   protected Project getSelectedProject(UIContext context)
+   {
+      Project project = null;
+      UISelection<FileResource<?>> initialSelection = context.getInitialSelection();
+      if (initialSelection != null)
+      {
+         project = projectFactory.findProject(initialSelection.get());
+      }
+      return project;
    }
 
 }
