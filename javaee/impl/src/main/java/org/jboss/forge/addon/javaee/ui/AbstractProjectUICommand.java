@@ -12,12 +12,11 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.resource.FileResource;
-import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UISelection;
-import org.jboss.forge.addon.ui.context.UIValidationContext;
 
-public abstract class AbstractUICommand implements UICommand
+public abstract class AbstractProjectUICommand extends AbstractUICommand
 {
    @Inject
    protected ProjectFactory projectFactory;
@@ -34,16 +33,5 @@ public abstract class AbstractUICommand implements UICommand
          project = projectFactory.findProject(initialSelection.get());
       }
       return project;
-   }
-
-   @Override
-   public boolean isEnabled(UIContext context)
-   {
-      return true;
-   }
-
-   @Override
-   public void validate(UIValidationContext validator)
-   {
    }
 }

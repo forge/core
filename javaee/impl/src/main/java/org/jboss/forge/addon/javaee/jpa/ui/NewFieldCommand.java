@@ -9,7 +9,7 @@ package org.jboss.forge.addon.javaee.jpa.ui;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.addon.javaee.ui.AbstractUICommand;
+import org.jboss.forge.addon.javaee.ui.AbstractProjectUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.hints.InputType;
@@ -20,7 +20,7 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
 
-public class NewFieldCommand extends AbstractUICommand
+public class NewFieldCommand extends AbstractProjectUICommand
 {
 
    @Inject
