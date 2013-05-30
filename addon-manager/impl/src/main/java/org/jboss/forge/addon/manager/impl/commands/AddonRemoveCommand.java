@@ -1,6 +1,6 @@
 package org.jboss.forge.addon.manager.impl.commands;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -77,11 +77,11 @@ public class AddonRemoveCommand implements UICommand, AddonCommandConstants
       if (project != null)
       {
          MetadataFacet facet = project.getFacet(MetadataFacet.class);
-         String name = facet.getTopLevelPackage() + facet.getProjectName();
+         String name = facet.getTopLevelPackage() + ":" + facet.getProjectName();
          AddonId selectedAddonId = AddonId.from(name, facet.getProjectVersion());
          if (choices.contains(selectedAddonId))
          {
-            addons.setDefaultValue(Arrays.asList(selectedAddonId));
+            addons.setDefaultValue(Collections.singleton(selectedAddonId));
          }
       }
       builder.add(addons);
