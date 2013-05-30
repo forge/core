@@ -7,9 +7,6 @@
 
 package org.jboss.forge.classloader.system;
 
-import java.io.File;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -18,7 +15,6 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.Furnace;
-import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.proxy.ClassLoaderAdapterBuilder;
 import org.jboss.forge.proxy.Proxies;
@@ -58,14 +54,6 @@ public class SystemClassLoaderNullClassLoaderAdapterTest
    public void testIterableTypesAreProxied() throws Exception
    {
       ClassLoader thisLoader = SystemClassLoaderNullClassLoaderAdapterTest.class.getClassLoader();
-
-      List<File> dep1resources = furnace.getRepositories().get(0).getAddonResources(AddonId.from("dep", "1"));
-
-      List<URL> urls = new ArrayList<URL>();
-      for (File file : dep1resources)
-      {
-         urls.add(file.toURI().toURL());
-      }
 
       ClassLoader dep1Loader = new EmptyClassLoader();
       Class<?> foreignType = dep1Loader.loadClass(ArrayListFactory.class.getName());
