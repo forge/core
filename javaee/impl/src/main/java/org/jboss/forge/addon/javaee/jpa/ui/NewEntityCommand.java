@@ -10,17 +10,15 @@ import javax.inject.Inject;
 import javax.persistence.GenerationType;
 
 import org.jboss.forge.addon.javaee.jpa.PersistenceOperations;
+import org.jboss.forge.addon.javaee.ui.AbstractUICommand;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
-import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UISelection;
-import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectOne;
@@ -33,7 +31,7 @@ import org.jboss.forge.addon.ui.util.Metadata;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class NewEntityCommand implements UICommand
+public class NewEntityCommand extends AbstractUICommand
 {
    @Inject
    @WithAttributes(label = "Entity name", required = true)
@@ -50,9 +48,6 @@ public class NewEntityCommand implements UICommand
    @Inject
    @WithAttributes(label = "Target Directory", required = true)
    private UIInput<DirectoryResource> targetLocation;
-
-   @Inject
-   private ProjectFactory projectFactory;
 
    @Inject
    private PersistenceOperations persistenceOperations;
@@ -94,11 +89,6 @@ public class NewEntityCommand implements UICommand
    }
 
    @Override
-   public void validate(UIValidationContext validator)
-   {
-   }
-
-   @Override
    public Result execute(UIContext context) throws Exception
    {
       String entityName = named.getValue();
@@ -117,25 +107,5 @@ public class NewEntityCommand implements UICommand
       }
       context.setSelection(javaResource);
       return Results.success("Entity " + javaResource + " created");
-   }
-
-   @Override
-   public boolean isEnabled(UIContext context)
-   {
-      return true;
-   }
-
-   /**
-    * Returns the selected project. null if no project is found
-    */
-   protected Project getSelectedProject(UIContext context)
-   {
-      Project project = null;
-      UISelection<FileResource<?>> initialSelection = context.getInitialSelection();
-      if (initialSelection != null)
-      {
-         project = projectFactory.findProject(initialSelection.get());
-      }
-      return project;
    }
 }

@@ -9,10 +9,9 @@ package org.jboss.forge.addon.javaee.jpa.ui;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.javaee.ui.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
-import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
@@ -21,7 +20,7 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
 
-public class NewFieldCommand implements UICommand
+public class NewFieldCommand extends AbstractUICommand
 {
 
    @Inject
@@ -39,21 +38,9 @@ public class NewFieldCommand implements UICommand
    }
 
    @Override
-   public boolean isEnabled(UIContext context)
-   {
-      return true;
-   }
-
-   @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
       builder.add(fieldName).add(typeName);
-   }
-
-   @Override
-   public void validate(UIValidationContext validator)
-   {
-
    }
 
    @Override

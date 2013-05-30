@@ -18,12 +18,11 @@ import org.jboss.forge.addon.javaee.jpa.PersistenceContainer;
 import org.jboss.forge.addon.javaee.jpa.PersistenceOperations;
 import org.jboss.forge.addon.javaee.jpa.PersistenceProvider;
 import org.jboss.forge.addon.javaee.jpa.containers.JavaEEDefaultContainer;
+import org.jboss.forge.addon.javaee.ui.AbstractUICommand;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
-import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
@@ -38,7 +37,7 @@ import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnit;
 
-public class PersistenceSetupConnectionStep implements UIWizardStep
+public class PersistenceSetupConnectionStep extends AbstractUICommand implements UIWizardStep
 {
    @Inject
    @WithAttributes(label = "Database Type", required = true)
@@ -67,9 +66,6 @@ public class PersistenceSetupConnectionStep implements UIWizardStep
    @Inject
    @WithAttributes(label = "Persistence Unit Name", required = true)
    private UIInput<String> persistenceUnitName;
-
-   @Inject
-   private ProjectFactory projectFactory;
 
    @Inject
    private PersistenceOperations persistenceOperations;
@@ -201,20 +197,6 @@ public class PersistenceSetupConnectionStep implements UIWizardStep
       FileResource<?> configFile = persistenceOperations.setup(puName, project, dataSource, configureMetadata);
       context.setSelection(configFile);
       return Results.success("Persistence (JPA) is installed.");
-   }
-
-   /**
-    * Returns the selected project. null if no project is found
-    */
-   protected Project getSelectedProject(UIContext context)
-   {
-      Project project = null;
-      UISelection<FileResource<?>> initialSelection = context.getInitialSelection();
-      if (initialSelection != null)
-      {
-         project = projectFactory.findProject(initialSelection.get());
-      }
-      return project;
    }
 
    public UISelectOne<DatabaseType> getDbType()
