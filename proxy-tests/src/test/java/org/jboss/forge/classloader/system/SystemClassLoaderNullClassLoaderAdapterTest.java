@@ -51,7 +51,7 @@ public class SystemClassLoaderNullClassLoaderAdapterTest
 
    @SuppressWarnings("unchecked")
    @Test
-   public void testIterableTypesAreProxied() throws Exception
+   public void testNullSystemClassLoaderDefaultsToFurnaceProxyCL() throws Exception
    {
       ClassLoader thisLoader = SystemClassLoaderNullClassLoaderAdapterTest.class.getClassLoader();
 
