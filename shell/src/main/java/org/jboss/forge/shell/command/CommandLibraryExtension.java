@@ -8,6 +8,7 @@ package org.jboss.forge.shell.command;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,10 +21,13 @@ import java.util.Set;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.Extension;
-import javax.enterprise.inject.spi.ProcessBean;
+import javax.enterprise.inject.spi.InjectionPoint;
+import javax.enterprise.inject.spi.ProcessInjectionTarget;
+import javax.enterprise.inject.spi.ProcessManagedBean;
 
 import org.jboss.forge.bus.util.Annotations;
 import org.jboss.forge.project.Facet;
+import org.jboss.forge.project.Project;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.Command;
@@ -51,7 +55,7 @@ public class CommandLibraryExtension implements Extension
    }
 
    @SuppressWarnings("unchecked")
-   public void scan(@Observes final ProcessBean<?> event)
+   public void scan(@Observes final ProcessManagedBean<?> event) throws Exception
    {
       Bean<?> bean = event.getBean();
 
@@ -72,6 +76,25 @@ public class CommandLibraryExtension implements Extension
       if (Facet.class.isAssignableFrom(clazz) && !clazz.isInterface() && !clazz.isAnnotation())
       {
          facetTypes.add((Class<Facet>) clazz);
+      }
+   }
+
+   /**
+    * Facets should never inject Project. See FORGE-929
+    */
+   public <T extends Facet> void validateFacet(@Observes ProcessInjectionTarget<T> injectionTarget)
+   {
+      Class<T> facetClass = injectionTarget.getAnnotatedType().getJavaClass();
+      Set<InjectionPoint> injectionPoints = injectionTarget.getInjectionTarget().getInjectionPoints();
+      for (InjectionPoint injectionPoint : injectionPoints)
+      {
+         Type baseType = injectionPoint.getAnnotated().getBaseType();
+         if (baseType instanceof Class && Project.class.isAssignableFrom((Class<?>) baseType))
+         {
+            throw new IllegalStateException("Facet "
+                     + facetClass.getName()
+                     + " must not @Inject Project. Please remove it and use getProject() instead.");
+         }
       }
    }
 
