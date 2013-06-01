@@ -27,7 +27,6 @@ import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectOne;
-import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
@@ -78,9 +77,9 @@ public class PersistenceSetupConnectionStep extends AbstractProjectUICommand imp
    }
 
    @Override
-   public UICommandMetadata getMetadata()
+   public Metadata getMetadata()
    {
-      return Metadata.forCommand(PersistenceSetupConnectionStep.class).name("JPA: Connection Settings")
+      return super.getMetadata().name("JPA: Connection Settings")
                .description("Configure your connection settings");
    }
 

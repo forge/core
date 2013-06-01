@@ -15,6 +15,8 @@ import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UISelection;
+import org.jboss.forge.addon.ui.util.Categories;
+import org.jboss.forge.addon.ui.util.Metadata;
 
 public abstract class AbstractProjectUICommand extends AbstractUICommand
 {
@@ -33,5 +35,11 @@ public abstract class AbstractProjectUICommand extends AbstractUICommand
          project = projectFactory.findProject(initialSelection.get());
       }
       return project;
+   }
+
+   @Override
+   public Metadata getMetadata()
+   {
+      return super.getMetadata().category(Categories.create("Java EE"));
    }
 }

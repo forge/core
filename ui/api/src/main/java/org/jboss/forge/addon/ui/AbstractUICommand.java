@@ -9,7 +9,6 @@ package org.jboss.forge.addon.ui;
 
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
-import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.util.Metadata;
 
 /**
@@ -26,7 +25,7 @@ public abstract class AbstractUICommand implements UICommand
    }
 
    @Override
-   public UICommandMetadata getMetadata()
+   public Metadata getMetadata()
    {
       return Metadata.forCommand(getClass());
    }

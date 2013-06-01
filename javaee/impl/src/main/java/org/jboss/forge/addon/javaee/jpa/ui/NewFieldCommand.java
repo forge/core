@@ -14,7 +14,6 @@ import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
-import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
@@ -32,9 +31,9 @@ public class NewFieldCommand extends AbstractProjectUICommand
    private UIInput<String> typeName;
 
    @Override
-   public UICommandMetadata getMetadata()
+   public Metadata getMetadata()
    {
-      return Metadata.forCommand(getClass()).name("JPA: New Field").description("Create a new field");
+      return super.getMetadata().name("JPA: New Field").description("Create a new field");
    }
 
    @Override
