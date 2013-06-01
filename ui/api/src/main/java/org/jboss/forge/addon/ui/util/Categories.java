@@ -13,12 +13,12 @@ import org.jboss.forge.furnace.util.Assert;
 
 /**
  * Utility for creating hierarchical {@link UICategory} instances.
- *
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class Categories
 {
-   private static final String DEFAULT = "";
+   public static final String DEFAULT = "";
 
    /**
     * Using the given category names, produce a hierarchical {@link UICategory} instance.
@@ -68,7 +68,7 @@ public class Categories
       @Override
       public String toString()
       {
-         return getName() + "/" + (getSubCategory() != null ? getSubCategory() : "");
+         return getName() + (getSubCategory() != null ? "/" + getSubCategory() : "");
       }
 
       @Override
