@@ -52,8 +52,10 @@ public class PersistenceSetupWizard extends AbstractProjectUICommand implements 
    @Override
    public Metadata getMetadata()
    {
-      return super.getMetadata().name("JPA: Setup")
-               .description("Setup JPA in your project").category(Categories.create("JPA"));
+      Metadata metadata = super.getMetadata();
+      return metadata.name("JPA: Setup")
+               .description("Setup JPA in your project")
+               .category(Categories.create(metadata.getCategory().getName(), "JPA"));
    }
 
    /**

@@ -17,6 +17,7 @@ import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
+import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 
 public class NewFieldCommand extends AbstractProjectUICommand
@@ -33,7 +34,9 @@ public class NewFieldCommand extends AbstractProjectUICommand
    @Override
    public Metadata getMetadata()
    {
-      return super.getMetadata().name("JPA: New Field").description("Create a new field");
+      Metadata metadata = super.getMetadata();
+      return metadata.name("JPA: New Field").description("Create a new field")
+               .category(Categories.create(metadata.getCategory().getName(), "JPA"));
    }
 
    @Override
