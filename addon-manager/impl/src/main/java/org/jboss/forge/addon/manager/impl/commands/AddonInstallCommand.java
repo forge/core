@@ -1,28 +1,25 @@
 package org.jboss.forge.addon.manager.impl.commands;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import org.jboss.forge.addon.manager.AddonManager;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.resource.FileResource;
-import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UISelection;
-import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.UIInput;
-import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
+import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.furnace.addons.AddonId;
 
-@Singleton
-public class AddonInstallCommand implements UICommand
+public class AddonInstallCommand extends AbstractUICommand implements AddonCommandConstants
 {
 
    @Inject
@@ -44,16 +41,11 @@ public class AddonInstallCommand implements UICommand
    private ProjectFactory projectFactory;
 
    @Override
-   public UICommandMetadata getMetadata()
+   public Metadata getMetadata()
    {
-      return Metadata.forCommand(getClass()).name(AddonCommandConstants.ADDON_INSTALL_COMMAND_NAME)
-               .description(AddonCommandConstants.ADDON_INSTALL_COMMAND_DESCRIPTION);
-   }
-
-   @Override
-   public boolean isEnabled(UIContext context)
-   {
-      return true;
+      return super.getMetadata().name(ADDON_INSTALL_COMMAND_NAME)
+               .description(ADDON_INSTALL_COMMAND_DESCRIPTION)
+               .category(Categories.create(ADDON_MANAGER_CATEGORIES));
    }
 
    @Override
@@ -68,11 +60,6 @@ public class AddonInstallCommand implements UICommand
          version.setDefaultValue(facet.getProjectVersion());
       }
       builder.add(groupId).add(name).add(version);
-   }
-
-   @Override
-   public void validate(UIValidationContext context)
-   {
    }
 
    @Override

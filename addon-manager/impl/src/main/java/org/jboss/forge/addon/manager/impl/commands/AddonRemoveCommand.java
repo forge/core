@@ -12,23 +12,22 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.resource.FileResource;
-import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UISelection;
-import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.UISelectMany;
-import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
+import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.repositories.AddonRepository;
 import org.jboss.forge.furnace.repositories.MutableAddonRepository;
 
-public class AddonRemoveCommand implements UICommand, AddonCommandConstants
+public class AddonRemoveCommand extends AbstractUICommand implements AddonCommandConstants
 {
 
    @Inject
@@ -45,16 +44,10 @@ public class AddonRemoveCommand implements UICommand, AddonCommandConstants
    private ProjectFactory projectFactory;
 
    @Override
-   public boolean isEnabled(UIContext context)
+   public Metadata getMetadata()
    {
-      return true;
-   }
-
-   @Override
-   public UICommandMetadata getMetadata()
-   {
-      return Metadata.forCommand(getClass()).name(ADDON_REMOVE_COMMAND_NAME)
-               .description(ADDON_REMOVE_COMMAND_DESCRIPTION);
+      return super.getMetadata().name(ADDON_REMOVE_COMMAND_NAME)
+               .description(ADDON_REMOVE_COMMAND_DESCRIPTION).category(Categories.create(ADDON_MANAGER_CATEGORIES));
    }
 
    @Override
@@ -85,11 +78,6 @@ public class AddonRemoveCommand implements UICommand, AddonCommandConstants
          }
       }
       builder.add(addons);
-   }
-
-   @Override
-   public void validate(UIValidationContext context)
-   {
    }
 
    @Override
