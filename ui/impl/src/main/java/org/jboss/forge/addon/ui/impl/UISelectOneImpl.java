@@ -14,7 +14,7 @@ import org.jboss.forge.furnace.util.Callables;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class UISelectOneImpl<VALUETYPE> extends UISelectInputComponentBase<UISelectOne<VALUETYPE>, VALUETYPE> implements
+public class UISelectOneImpl<VALUETYPE> extends AbstractUISelectInputComponent<UISelectOne<VALUETYPE>, VALUETYPE> implements
          UISelectOne<VALUETYPE>
 {
    private VALUETYPE value;

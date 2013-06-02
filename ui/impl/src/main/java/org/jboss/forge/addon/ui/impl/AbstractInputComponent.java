@@ -27,12 +27,13 @@ import org.jboss.forge.furnace.util.Callables;
  */
 @Vetoed
 @SuppressWarnings("unchecked")
-public abstract class UIInputComponentBase<IMPLTYPE extends InputComponent<IMPLTYPE, VALUETYPE>, VALUETYPE> extends AbstractFaceted<HintsFacet>
+public abstract class AbstractInputComponent<IMPLTYPE extends InputComponent<IMPLTYPE, VALUETYPE>, VALUETYPE> extends AbstractFaceted<HintsFacet>
          implements InputComponent<IMPLTYPE, VALUETYPE>
 {
    private final String name;
 
    private String label;
+   private String description;
    private Callable<Boolean> enabled = Callables.returning(Boolean.TRUE);
    private Callable<Boolean> required = Callables.returning(Boolean.FALSE);
    private String requiredMessage;
@@ -40,7 +41,7 @@ public abstract class UIInputComponentBase<IMPLTYPE extends InputComponent<IMPLT
    private Class<VALUETYPE> type;
    private Converter<String, VALUETYPE> valueConverter;
 
-   public UIInputComponentBase(String name, Class<VALUETYPE> type)
+   public AbstractInputComponent(String name, Class<VALUETYPE> type)
    {
       this.name = name;
       this.type = type;
@@ -56,6 +57,12 @@ public abstract class UIInputComponentBase<IMPLTYPE extends InputComponent<IMPLT
    public String getName()
    {
       return name;
+   }
+
+   @Override
+   public String getDescription()
+   {
+      return description;
    }
 
    @Override
@@ -94,6 +101,13 @@ public abstract class UIInputComponentBase<IMPLTYPE extends InputComponent<IMPLT
    public IMPLTYPE setLabel(String label)
    {
       this.label = label;
+      return (IMPLTYPE) this;
+   }
+
+   @Override
+   public IMPLTYPE setDescription(String description)
+   {
+      this.description = description;
       return (IMPLTYPE) this;
    }
 
@@ -142,5 +156,4 @@ public abstract class UIInputComponentBase<IMPLTYPE extends InputComponent<IMPLT
       this.valueConverter = converter;
       return (IMPLTYPE) this;
    }
-
 }

@@ -21,13 +21,13 @@ import org.jboss.forge.addon.ui.input.SelectComponent;
  */
 @Vetoed
 @SuppressWarnings("unchecked")
-public abstract class UISelectInputComponentBase<IMPLTYPE extends SelectComponent<IMPLTYPE, VALUETYPE>, VALUETYPE> extends UIInputComponentBase<IMPLTYPE, VALUETYPE>
+public abstract class AbstractUISelectInputComponent<IMPLTYPE extends SelectComponent<IMPLTYPE, VALUETYPE>, VALUETYPE> extends AbstractInputComponent<IMPLTYPE, VALUETYPE>
          implements SelectComponent<IMPLTYPE, VALUETYPE>
 {
    private Iterable<VALUETYPE> choices;
    private Converter<VALUETYPE, String> itemLabelConverter;
 
-   public UISelectInputComponentBase(String name, Class<VALUETYPE> type)
+   public AbstractUISelectInputComponent(String name, Class<VALUETYPE> type)
    {
       super(name, type);
    }

@@ -24,6 +24,8 @@ public interface InputComponent<IMPLTYPE, VALUETYPE> extends Faceted<HintsFacet>
    String getLabel();
 
    String getName();
+   
+   String getDescription();
 
    Class<VALUETYPE> getValueType();
 
@@ -38,6 +40,8 @@ public interface InputComponent<IMPLTYPE, VALUETYPE> extends Faceted<HintsFacet>
    IMPLTYPE setEnabled(Callable<Boolean> callable);
 
    IMPLTYPE setLabel(String label);
+   
+   IMPLTYPE setDescription(String description);
 
    IMPLTYPE setRequired(boolean required);
 

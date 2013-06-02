@@ -24,7 +24,7 @@ import org.jboss.forge.furnace.util.Callables;
  * @param <VALUETYPE>
  */
 @Vetoed
-public class UIInputImpl<VALUETYPE> extends UIInputComponentBase<UIInput<VALUETYPE>, VALUETYPE> implements
+public class UIInputImpl<VALUETYPE> extends AbstractInputComponent<UIInput<VALUETYPE>, VALUETYPE> implements
          UIInput<VALUETYPE>
 {
    private VALUETYPE value;

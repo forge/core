@@ -41,6 +41,11 @@ public @interface WithAttributes
    String requiredMessage() default "";
 
    /**
+    * The description for this input
+    */
+   String description() default "";
+
+   /**
     * Is this input enabled?
     */
    boolean enabled() default true;

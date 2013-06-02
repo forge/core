@@ -14,7 +14,7 @@ import org.jboss.forge.furnace.util.Callables;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class UISelectManyImpl<VALUETYPE> extends UISelectInputComponentBase<UISelectMany<VALUETYPE>, VALUETYPE>
+public class UISelectManyImpl<VALUETYPE> extends AbstractUISelectInputComponent<UISelectMany<VALUETYPE>, VALUETYPE>
          implements
          UISelectMany<VALUETYPE>
 {

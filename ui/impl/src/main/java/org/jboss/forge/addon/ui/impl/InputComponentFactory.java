@@ -191,6 +191,7 @@ public class InputComponentFactory
          input.setLabel(atts.label());
          input.setRequired(atts.required());
          input.setRequiredMessage(atts.requiredMessage());
+         input.setDescription(atts.description());
          if (atts.type() != InputType.DEFAULT)
          {
             input.getFacet(HintsFacet.class).setInputType(atts.type());
