@@ -36,6 +36,6 @@ public class FileResourceGenerator implements ResourceGenerator<FileResource<?>,
    {
       if (DirectoryResource.class.isAssignableFrom(type) || (resource.exists() && resource.isDirectory()))
          return DirectoryResource.class;
-      return FileResourceImpl.class;
+      return FileResource.class;
    }
 }
