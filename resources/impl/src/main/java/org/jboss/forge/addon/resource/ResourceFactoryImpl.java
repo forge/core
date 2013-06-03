@@ -4,26 +4,18 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.resource.addon;
+package org.jboss.forge.addon.resource;
 
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.addon.resource.ResourceException;
-import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.addon.resource.ResourceGenerator;
 import org.jboss.forge.addon.resource.events.ResourceEvent;
 import org.jboss.forge.addon.resource.transaction.ResourceTransaction;
 import org.jboss.forge.addon.resource.transaction.ResourceTransactionManager;
+import org.jboss.forge.addon.resource.util.RelatedClassComparator;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.ExportedInstance;
 
@@ -49,7 +41,7 @@ public class ResourceFactoryImpl implements ResourceFactory, ResourceTransaction
       T result = null;
       synchronized (this)
       {
-         Map<Class<?>, Resource<?>> generated = new HashMap<Class<?>, Resource<?>>();
+         TreeMap<Class<?>, Resource<?>> generated = new TreeMap<Class<?>, Resource<?>>(new RelatedClassComparator());
          for (ExportedInstance<ResourceGenerator> instance : getRegisteredResourceGenerators())
          {
             ResourceGenerator generator = instance.get();
@@ -63,62 +55,19 @@ public class ResourceFactoryImpl implements ResourceFactory, ResourceTransaction
             }
             instance.release(generator);
          }
-
-         /*
-          * Choose the resource that is most specialized. TODO This needs to handle forks in the type hierarchy.
-          */
-         for (Entry<Class<?>, Resource<?>> entry : generated.entrySet())
+         if (generated.size() > 0)
          {
-            Class<?> generatedType = entry.getKey();
-            Resource<?> resource = entry.getValue();
-            if (result == null || result.getClass().isAssignableFrom(resource.getClass()))
-            {
-               result = (T) resource;
-               if (generatedType.equals(type))
-                  break;
-            }
+            result = (T) generated.lastEntry().getValue();
          }
       }
       return result;
    }
 
    @Override
-   @SuppressWarnings({ "unchecked", "rawtypes" })
+   @SuppressWarnings("unchecked")
    public <E> Resource<E> create(E underlyingResource)
    {
-      Resource<E> result = null;
-      synchronized (this)
-      {
-         List<Resource<?>> generated = new ArrayList<Resource<?>>();
-         for (ExportedInstance<ResourceGenerator> instance : getRegisteredResourceGenerators())
-         {
-            ResourceGenerator generator = instance.get();
-            if (generator.handles(Resource.class, underlyingResource))
-            {
-               Resource resource = generator.getResource(this, Resource.class, underlyingResource);
-               generated.add(resource);
-            }
-            instance.release(generator);
-         }
-
-         /*
-          * Choose the resource that is most specialized. TODO This needs to handle forks in the type hierarchy.
-          */
-         for (Resource<?> resource : generated)
-         {
-            if (result == null || result.getClass().isAssignableFrom(resource.getClass()))
-            {
-               result = (Resource<E>) resource;
-            }
-         }
-      }
-      // Transaction Hook
-      if (result != null && transaction != null)
-      {
-         result = transaction.decorateResource(result);
-      }
-
-      return result;
+      return create(Resource.class, underlyingResource);
    }
 
    @SuppressWarnings("rawtypes")
@@ -130,14 +79,28 @@ public class ResourceFactoryImpl implements ResourceFactory, ResourceTransaction
    @Override
    public ResourceFactory fireEvent(ResourceEvent event)
    {
-      manager.fireEvent(event, new Annotation[] {});
+      manager.fireEvent(event);
       return this;
    }
 
+   /**
+    * The methods below are unused until FORGE-801 is resolved
+    */
    @Override
    public ResourceTransaction getCurrentTransaction()
    {
       return transaction;
+   }
+
+   @SuppressWarnings("unused")
+   private <T> Resource<?> bindTransactionHook(Resource<?> result)
+   {
+      // Transaction Hook
+      if (result != null && transaction != null)
+      {
+         result = transaction.decorateResource(result);
+      }
+      return result;
    }
 
    @Override

@@ -1,4 +1,4 @@
-package org.jboss.forge.resource.addon.hints;
+package org.jboss.forge.addon.resource.hints;
 
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;

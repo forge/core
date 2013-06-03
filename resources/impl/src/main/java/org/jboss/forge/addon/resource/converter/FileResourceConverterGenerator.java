@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.resource.addon.converter;
+package org.jboss.forge.addon.resource.converter;
 
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;

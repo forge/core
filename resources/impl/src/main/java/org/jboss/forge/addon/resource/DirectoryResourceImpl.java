@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.resource.addon;
+package org.jboss.forge.addon.resource;
 
 import java.io.File;
 import java.io.IOException;
