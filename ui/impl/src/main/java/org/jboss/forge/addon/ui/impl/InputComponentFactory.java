@@ -215,7 +215,9 @@ public class InputComponentFactory
             List<Object> choiceList = new ArrayList<Object>();
             for (ExportedInstance exportedInstance : addonRegistry.getExportedInstances(valueType))
             {
-               choiceList.add(exportedInstance.get());
+               Object instance = exportedInstance.get();
+               choiceList.add(instance);
+               exportedInstance.release(instance);
             }
             choices = choiceList;
          }
