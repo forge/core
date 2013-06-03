@@ -69,7 +69,6 @@ public class JavaParserResourcesTest
    }
 
    @Test
-   @Ignore("FORGE-935")
    public void testJavaResourceCreationSpecialized() throws Exception
    {
       JavaClass javaClass = JavaParser.create(JavaClass.class).setPackage("org.jboss.forge.test").setName("Example");
