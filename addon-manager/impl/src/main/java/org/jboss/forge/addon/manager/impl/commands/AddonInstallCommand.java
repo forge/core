@@ -26,15 +26,15 @@ public class AddonInstallCommand extends AbstractUICommand implements AddonComma
    private AddonManager addonManager;
 
    @Inject
-   @WithAttributes(label = "Group ID", required = true)
+   @WithAttributes(label = "Group ID", description = "The value of <groupId> from the addon's pom.xml", required = true)
    private UIInput<String> groupId;
 
    @Inject
-   @WithAttributes(label = "Name", required = true)
+   @WithAttributes(label = "Name", description = "The value of <artifactId> from the addon's pom.xml", required = true)
    private UIInput<String> name;
 
    @Inject
-   @WithAttributes(label = "Version", required = true)
+   @WithAttributes(label = "Version", description = "The value of <version> from the addon's pom.xml", required = true)
    private UIInput<String> version;
 
    @Inject
