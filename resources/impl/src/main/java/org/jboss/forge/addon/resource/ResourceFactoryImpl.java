@@ -41,7 +41,8 @@ public class ResourceFactoryImpl implements ResourceFactory, ResourceTransaction
       T result = null;
       synchronized (this)
       {
-         TreeMap<Class<?>, Resource<?>> generated = new TreeMap<Class<?>, Resource<?>>(new RelatedClassComparator());
+         TreeMap<Class<?>, ResourceGenerator> generated = new TreeMap<Class<?>, ResourceGenerator>(
+                  new RelatedClassComparator());
          for (ExportedInstance<ResourceGenerator> instance : getRegisteredResourceGenerators())
          {
             ResourceGenerator generator = instance.get();
@@ -50,14 +51,14 @@ public class ResourceFactoryImpl implements ResourceFactory, ResourceTransaction
                Class resourceType = generator.getResourceType(type, underlyingResource);
                if (type.isAssignableFrom(resourceType))
                {
-                  generated.put(resourceType, generator.getResource(this, type, underlyingResource));
+                  generated.put(resourceType, generator);
                }
             }
             instance.release(generator);
          }
          if (generated.size() > 0)
          {
-            result = (T) generated.lastEntry().getValue();
+            result = (T) generated.lastEntry().getValue().getResource(this, type, underlyingResource);
          }
       }
       return result;
