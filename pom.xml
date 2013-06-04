@@ -59,7 +59,7 @@
       <forge.scm.url>http://github.com/forge/core</forge.scm.url>
       <forge.release.codename>Two</forge.release.codename>
       <forge.release.version>${project.version}</forge.release.version>
-      <version.arquillian>1.0.3.Final</version.arquillian>
+      <version.arquillian>1.0.4.Final</version.arquillian>
       <version.arquillian.container>1.0.0.CR5</version.arquillian.container>
       <version.cdi>1.1</version.cdi>
       <version.javassist>1</version.javassist>
