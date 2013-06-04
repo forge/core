@@ -40,10 +40,9 @@ public class UIInputManyImpl<VALUETYPE> extends AbstractInputComponent<UIInputMa
    }
 
    @Override
-   @SuppressWarnings("unchecked")
    public UICompleter<VALUETYPE> getCompleter()
    {
-      return this.completer == null ? new NoopCompleter() : this.completer;
+      return this.completer;
    }
 
    @Override

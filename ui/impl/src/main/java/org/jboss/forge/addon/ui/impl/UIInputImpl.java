@@ -38,10 +38,9 @@ public class UIInputImpl<VALUETYPE> extends AbstractInputComponent<UIInput<VALUE
    }
 
    @Override
-   @SuppressWarnings("unchecked")
    public UICompleter<VALUETYPE> getCompleter()
    {
-      return this.completer == null ? new NoopCompleter() : this.completer;
+      return this.completer;
    }
 
    @Override
