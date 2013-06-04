@@ -270,7 +270,7 @@ public class MavenJavaSourceFacet extends AbstractFacet<Project> implements Java
                {
                   visitSources(resource, visitor);
                }
-               if (resource instanceof JavaResource)
+               else if (resource instanceof JavaResource)
                {
                   visitor.visit((JavaResource) resource);
                }
