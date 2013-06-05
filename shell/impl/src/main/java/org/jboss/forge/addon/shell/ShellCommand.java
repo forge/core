@@ -25,6 +25,7 @@ import org.jboss.forge.addon.shell.ShellContext;
 import org.jboss.forge.addon.shell.util.CommandLineUtil;
 import org.jboss.forge.addon.shell.util.UICommandDelegate;
 import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.input.HasCompleter;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UIInputMany;
@@ -111,7 +112,7 @@ public class ShellCommand implements Completion
       // display all the options/arguments
       else if (param.getName().equals(completeOperation.getBuffer().trim()))
       {
-         completeOperation.addCompletionCandidates(param.getOptionLongNamesWithDash());
+          defaultCompletion(completeOperation);
       }
       // complete options/arguments
       else if (completeOperation.getBuffer().startsWith(param.getName()))
@@ -124,10 +125,10 @@ public class ShellCommand implements Completion
          }
          catch (CommandLineParserException e)
          {
-            logger.info(e.getMessage());
+            logger.warning(e.getMessage());
             return;
          }
-         logger.info("ParsedCompleteObject: " + completeObject);
+         //logger.info("ParsedCompleteObject: " + completeObject);
          if (completeObject.doDisplayOptions())
          {
             // we have a partial/full name
@@ -167,99 +168,143 @@ public class ShellCommand implements Completion
          // try to complete an options value
          else if (completeObject.isOption())
          {
-            InputComponent inputOption = context.findInput(completeObject.getName());
-            // option type == File
-            if (inputOption != null && inputOption.getValueType() == File.class)
-            {
-               completeOperation.setOffset(completeOperation.getCursor());
-               if (completeObject.getValue() == null)
-                  new FileLister("", new File(System.getProperty("user.dir")))
-                           .findMatchingDirectories(completeOperation);
-               else
-                  new FileLister(completeObject.getValue(), new File(System.getProperty("user.dir")))
-                           .findMatchingDirectories(completeOperation);
-            }
-            else if (inputOption != null && inputOption.getValueType() == Boolean.class)
-            {
-               // TODO
-            }
-            else if (inputOption != null && inputOption.getValueType() == String.class)
-            {
-               // if it has a default value we can try to auto complete that
-               if (inputOption instanceof UIInput)
-               {
-                  if (completeObject.getValue() == null || ((((UIInput) inputOption).getValue() != null) &&
-                           completeObject.getValue().startsWith(((UIInput) inputOption).getValue().toString())))
-                  {
-                     completeOperation.addCompletionCandidate(((UIInput) inputOption).getValue().toString());
-                  }
-               }
-            }
-            // this shouldnt be needed
-            if (inputOption != null && inputOption instanceof UIInput)
-            {
-               Iterable<String> iter = ((UIInput) inputOption).getCompleter().getCompletionProposals(null, inputOption,
-                        completeObject.getValue());
-               if (iter != null)
-               {
-                  for (String s : iter)
-                     completeOperation.addCompletionCandidate(s);
-               }
-               if (completeOperation.getCompletionCandidates().size() == 1)
-               {
-                  completeOperation.setOffset(completeOperation.getCursor() -
-                           completeObject.getOffset());
-               }
-            }
+             optionCompletion(completeOperation, completeObject);
          }
          // try to complete a argument value
          else if (completeObject.isArgument())
          {
-            InputComponent inputOption = context.findInput("arguments"); // default for arguments
-
-            if (inputOption != null && inputOption.getValueType() == File.class)
-            {
-               completeOperation.setOffset(completeOperation.getCursor());
-               if (completeObject.getValue() == null)
-                  new FileLister("", new File(System.getProperty("user.dir")))
-                           .findMatchingDirectories(completeOperation);
-               else
-                  new FileLister(completeObject.getValue(), new File(System.getProperty("user.dir")))
-                           .findMatchingDirectories(completeOperation);
-            }
-            else if (inputOption != null && inputOption.getValueType() == Boolean.class)
-            {
-               // TODO
-            }
-            // check if the command actually implements Completion
-            else if (command instanceof Completion)
-            {
-               ((Completion) command).complete(completeOperation);
-            }
-            else
-            {
-               // this shouldnt be needed
-               if (inputOption != null && inputOption instanceof UIInputMany)
-               {
-                  Iterable<String> iter = ((UIInputMany) inputOption).getCompleter().getCompletionProposals(null,
-                           inputOption, completeObject.getValue());
-                  if (iter != null)
-                  {
-                     for (String s : iter)
-                     {
-                        completeOperation.addCompletionCandidate(s);
-                     }
-                  }
-                  if (completeOperation.getCompletionCandidates().size() == 1)
-                  {
-                     completeOperation.setOffset(completeOperation.getCursor() -
-                              completeObject.getOffset());
-                  }
-               }
-            }
+             argumentCompletion(completeOperation, completeObject);
          }
       }
    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private void defaultCompletion(CompleteOperation completeOperation) {
+        //first see if it has an "arguments" option
+        InputComponent inputOption = context.findInput("arguments"); // default for arguments
+
+        //use the arguments completor as default if it has any
+        if(inputOption != null && (inputOption instanceof HasCompleter && ((HasCompleter) inputOption).getCompleter() != null))
+        {
+            completeOperation.setOffset(completeOperation.getCursor() - 0);
+            for(Object o : ((HasCompleter) inputOption).getCompleter().getCompletionProposals(null, inputOption, ""))
+            {
+                completeOperation.addCompletionCandidate(o.toString());
+            }
+        }
+        else {
+            completeOperation.addCompletionCandidates(context.getParser().getParameters().get(0).getOptionLongNamesWithDash());
+        }
+    }
+
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private void optionCompletion(CompleteOperation completeOperation, ParsedCompleteObject completeObject)
+    {
+        InputComponent inputOption = context.findInput(completeObject.getName());
+        // option type == File
+        if (inputOption != null && inputOption.getValueType() == File.class)
+        {
+            completeOperation.setOffset(completeOperation.getCursor());
+            if (completeObject.getValue() == null)
+                new FileLister("", new File(System.getProperty("user.dir")))
+                        .findMatchingDirectories(completeOperation);
+            else
+                new FileLister(completeObject.getValue(), new File(System.getProperty("user.dir")))
+                        .findMatchingDirectories(completeOperation);
+        }
+        else if (inputOption != null && inputOption.getValueType() == Boolean.class)
+        {
+            // TODO
+        }
+        else if (inputOption != null && inputOption.getValueType() == String.class)
+        {
+            // if it has a default value we can try to auto complete that
+            if (inputOption instanceof UIInput)
+            {
+                if (completeObject.getValue() == null || ((((UIInput) inputOption).getValue() != null) &&
+                        completeObject.getValue().startsWith(((UIInput) inputOption).getValue().toString())))
+                {
+                    completeOperation.addCompletionCandidate(((UIInput) inputOption).getValue().toString());
+                }
+            }
+        }
+        // this shouldnt be needed
+        if (inputOption != null && inputOption instanceof UIInput)
+        {
+            Iterable<String> iter = ((UIInput) inputOption).getCompleter().getCompletionProposals(null, inputOption,
+                    completeObject.getValue());
+            if (iter != null)
+            {
+                for (String s : iter)
+                    completeOperation.addCompletionCandidate(s);
+            }
+            if (completeOperation.getCompletionCandidates().size() == 1)
+            {
+                completeOperation.setOffset(completeOperation.getCursor() -
+                        completeObject.getOffset());
+            }
+        }
+
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private void argumentCompletion(CompleteOperation completeOperation, ParsedCompleteObject completeObject)
+    {
+        InputComponent inputOption = context.findInput("arguments"); // default for arguments
+
+        //use the arguments completor as default if it has any
+        if(inputOption != null && (inputOption instanceof HasCompleter && ((HasCompleter) inputOption).getCompleter() != null))
+        {
+            if(completeObject.getValue() != null)
+                completeOperation.setOffset(completeOperation.getCursor() - completeObject.getValue().length());
+            for(Object o : ((HasCompleter) inputOption).getCompleter().getCompletionProposals(null, inputOption, completeObject.getValue()))
+            {
+                completeOperation.addCompletionCandidate(o.toString());
+            }
+        }
+
+        else if (inputOption != null && inputOption.getValueType() == File.class)
+        {
+            completeOperation.setOffset(completeOperation.getCursor());
+            if (completeObject.getValue() == null)
+                new FileLister("", new File(System.getProperty("user.dir")))
+                        .findMatchingDirectories(completeOperation);
+            else
+                new FileLister(completeObject.getValue(), new File(System.getProperty("user.dir")))
+                        .findMatchingDirectories(completeOperation);
+        }
+        else if (inputOption != null && inputOption.getValueType() == Boolean.class)
+        {
+            // TODO
+        }
+        // check if the command actually implements Completion
+        else if (command instanceof Completion)
+        {
+            ((Completion) command).complete(completeOperation);
+        }
+        else
+        {
+            // this shouldnt be needed
+            if (inputOption != null && inputOption instanceof UIInputMany)
+            {
+                Iterable<String> iter = ((UIInputMany) inputOption).getCompleter().getCompletionProposals(null,
+                        inputOption, completeObject.getValue());
+                if (iter != null)
+                {
+                    for (String s : iter)
+                    {
+                        completeOperation.addCompletionCandidate(s);
+                    }
+                }
+                if (completeOperation.getCompletionCandidates().size() == 1)
+                {
+                    completeOperation.setOffset(completeOperation.getCursor() -
+                            completeObject.getOffset());
+                }
+            }
+        }
+    }
 
    @Override
    public boolean equals(Object o)

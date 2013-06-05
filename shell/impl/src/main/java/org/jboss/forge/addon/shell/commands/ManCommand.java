@@ -7,7 +7,10 @@
 package org.jboss.forge.addon.shell.commands;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
@@ -22,6 +25,8 @@ import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
+import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Result;
@@ -66,6 +71,35 @@ public class ManCommand implements UICommand, Completion
       arguments.setDefaultValue(Arrays.asList(getMetadata().getName()));
       arguments.setLabel("");
       arguments.setRequired(false);
+
+       arguments.setCompleter( new UICompleter<String>() {
+           @Override
+           public Iterable<String> getCompletionProposals(InputComponent<?, String> input, String value) {
+               List<String> manCommands = new ArrayList<String>();
+               // list all commands
+               if (value == null || value.trim().length() < 1)
+               {
+                   for (ExportedInstance<UICommand> instance : registry.getExportedInstances(UICommand.class))
+                   {
+                       manCommands.add(instance.get().getMetadata().getName());
+                   }
+               }
+               // find the last
+               else
+               {
+                   String item = Parser.findEscapedSpaceWordCloseToEnd(value.trim());
+                   //completeOperation.setOffset(completeOperation.getCursor() -
+                   //        item.length());
+                   for (ExportedInstance<UICommand> instance : registry.getExportedInstances(UICommand.class))
+                   {
+                       if (instance.get().getMetadata().getName().startsWith(item))
+                           manCommands.add(instance.get().getMetadata().getName());
+                   }
+               }
+
+               return manCommands;
+           }
+       });
       builder.add(arguments);
    }
 
