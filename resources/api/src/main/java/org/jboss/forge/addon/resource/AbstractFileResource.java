@@ -450,4 +450,11 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
       return (this.file.canWrite() && !this.file.isDirectory());
    }
 
+   @Override
+   public String getFullyQualifiedName()
+   {
+      return getParent() != null ? getParent().getFullyQualifiedName() + File.separator + getName() : getName();
+   }
+   
+
 }
