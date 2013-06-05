@@ -25,9 +25,6 @@ import org.jboss.forge.addon.ui.util.Metadata;
 public class ClearCommand implements UICommand
 {
 
-   @Inject
-   private UIInput<String> clear;
-
    @Override
    public UICommandMetadata getMetadata()
    {
@@ -43,9 +40,6 @@ public class ClearCommand implements UICommand
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      clear.setLabel("clear");
-      clear.setRequired(true);
-      builder.add(clear);
    }
 
    @Override

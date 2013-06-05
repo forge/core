@@ -105,92 +105,88 @@ public class ShellCommand implements Completion
    @Override
    public void complete(CompleteOperation completeOperation)
    {
-      ParameterInt param = context.getParser().getParameters().get(0);
-      // complete command names
-      if (param.getName().startsWith(completeOperation.getBuffer()))
-         completeOperation.addCompletionCandidate(param.getName());
-      // display all the options/arguments
-      else if (param.getName().equals(completeOperation.getBuffer().trim()))
-      {
-          defaultCompletion(completeOperation);
-      }
-      // complete options/arguments
-      else if (completeOperation.getBuffer().startsWith(param.getName()))
-      {
-         ParsedCompleteObject completeObject = null;
-         try
-         {
-            completeObject = new CommandLineCompletionParser(context.getParser())
-                     .findCompleteObject(completeOperation.getBuffer());
-         }
-         catch (CommandLineParserException e)
-         {
-            logger.warning(e.getMessage());
-            return;
-         }
-         //logger.info("ParsedCompleteObject: " + completeObject);
-         if (completeObject.doDisplayOptions())
-         {
-            // we have a partial/full name
-            if (completeObject.getName() != null && completeObject.getName().length() > 0)
-            {
-               if (param.findPossibleLongNamesWitdDash(completeObject.getName()).size() > 0)
+       try {
+           ParameterInt param = context.getParser().getParameters().get(0);
+           // complete command names
+           if (param.getName().startsWith(completeOperation.getBuffer()))
+               completeOperation.addCompletionCandidate(param.getName());
+               // display all the options/arguments
+           else if (param.getName().equals(completeOperation.getBuffer().trim()))
+           {
+               defaultCompletion(completeOperation);
+           }
+           // complete options/arguments
+           else if (completeOperation.getBuffer().startsWith(param.getName()))
+           {
+               ParsedCompleteObject completeObject = null;
+               completeObject = new CommandLineCompletionParser(context.getParser())
+                       .findCompleteObject(completeOperation.getBuffer());
+               //logger.info("ParsedCompleteObject: " + completeObject);
+               if (completeObject.doDisplayOptions())
                {
-                  // only one param
-                  if (param.findPossibleLongNamesWitdDash(completeObject.getName()).size() == 1)
-                  {
-                     completeOperation.addCompletionCandidate(param.findPossibleLongNamesWitdDash(
-                              completeObject.getName()).get(0));
-                     completeOperation.setOffset(completeOperation.getCursor() -
-                              completeObject.getOffset());
-                  }
-                  // multiple params
-                  else
-                     completeOperation.addCompletionCandidates(param.findPossibleLongNamesWitdDash(completeObject
-                              .getName()));
+                   // we have a partial/full name
+                   if (completeObject.getName() != null && completeObject.getName().length() > 0)
+                   {
+                       if (param.findPossibleLongNamesWitdDash(completeObject.getName()).size() > 0)
+                       {
+                           // only one param
+                           if (param.findPossibleLongNamesWitdDash(completeObject.getName()).size() == 1)
+                           {
+                               completeOperation.addCompletionCandidate(param.findPossibleLongNamesWitdDash(
+                                       completeObject.getName()).get(0));
+                               completeOperation.setOffset(completeOperation.getCursor() -
+                                       completeObject.getOffset());
+                           }
+                           // multiple params
+                           else
+                               completeOperation.addCompletionCandidates(param.findPossibleLongNamesWitdDash(completeObject
+                                       .getName()));
+                       }
+                   }
+                   // display all our params
+                   else
+                   {
+                       if (param.getOptionLongNamesWithDash().size() > 1)
+                       {
+                           completeOperation.addCompletionCandidates(param.getOptionLongNamesWithDash());
+                       }
+                       else
+                       {
+                           completeOperation.addCompletionCandidates(param.getOptionLongNamesWithDash());
+                           completeOperation.setOffset(completeOperation.getCursor() -
+                                   completeObject.getOffset());
+                       }
+                   }
                }
-            }
-            // display all our params
-            else
-            {
-               if (param.getOptionLongNamesWithDash().size() > 1)
+               // try to complete an options value
+               else if (completeObject.isOption())
                {
-                  completeOperation.addCompletionCandidates(param.getOptionLongNamesWithDash());
+                   optionCompletion(completeOperation, completeObject);
                }
-               else
+               // try to complete a argument value
+               else if (completeObject.isArgument())
                {
-                  completeOperation.addCompletionCandidates(param.getOptionLongNamesWithDash());
-                  completeOperation.setOffset(completeOperation.getCursor() -
-                           completeObject.getOffset());
+                   argumentCompletion(completeOperation, completeObject);
                }
-            }
-         }
-         // try to complete an options value
-         else if (completeObject.isOption())
-         {
-             optionCompletion(completeOperation, completeObject);
-         }
-         // try to complete a argument value
-         else if (completeObject.isArgument())
-         {
-             argumentCompletion(completeOperation, completeObject);
-         }
-      }
+           }
+       }
+       catch (CommandLineParserException e)
+       {
+           logger.warning(e.getMessage());
+           return;
+       }
    }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private void defaultCompletion(CompleteOperation completeOperation) {
+    private void defaultCompletion(CompleteOperation completeOperation) throws CommandLineParserException {
         //first see if it has an "arguments" option
         InputComponent inputOption = context.findInput("arguments"); // default for arguments
 
         //use the arguments completor as default if it has any
-        if(inputOption != null && (inputOption instanceof HasCompleter && ((HasCompleter) inputOption).getCompleter() != null))
+        if(inputOption != null)
         {
-            completeOperation.setOffset(completeOperation.getCursor() - 0);
-            for(Object o : ((HasCompleter) inputOption).getCompleter().getCompletionProposals(null, inputOption, ""))
-            {
-                completeOperation.addCompletionCandidate(o.toString());
-            }
+            argumentCompletion(completeOperation, new CommandLineCompletionParser(context.getParser())
+                     .findCompleteObject(completeOperation.getBuffer()));
         }
         else {
             completeOperation.addCompletionCandidates(context.getParser().getParameters().get(0).getOptionLongNamesWithDash());

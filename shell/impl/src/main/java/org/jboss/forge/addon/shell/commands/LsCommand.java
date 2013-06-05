@@ -93,16 +93,6 @@ public class LsCommand implements UICommand
    @Override
    public Result execute(UIContext context) throws Exception
    {
-      StringBuilder builder = new StringBuilder();
-      if (arguments.getValue() != null)
-      {
-         Iterator<File> iter = arguments.getValue().iterator();
-         while (iter.hasNext())
-         {
-            builder.append(iter.next().getAbsolutePath() + ", ");
-         }
-      }
-
       return Results.success(listMany(arguments.getValue(), (ShellContext) context));
    }
 
@@ -110,11 +100,14 @@ public class LsCommand implements UICommand
    {
       if (arguments.getValue() != null)
       {
-         Iterator<File> iter = arguments.getValue().iterator();
-         while (iter.hasNext())
-         {
-            return listLs(iter.next(), context);
-         }
+         StringBuilder builder = new StringBuilder();
+          for (File file : arguments.getValue()) {
+              if (builder.length() > 0) {
+                  builder.append("\n").append(file.getAbsolutePath()).append("\n");
+              }
+              builder.append(listLs(file, context));
+          }
+          return builder.toString();
       }
       return null;
    }
