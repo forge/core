@@ -175,7 +175,7 @@ public class UIInputInjectionTest
    public void testCompleter()
    {
       UICompleter<String> originalCompleter = firstName.getCompleter();
-      Assert.assertNotNull(originalCompleter);
+      Assert.assertNull(originalCompleter);
       Assert.assertEquals(firstName, firstName.setCompleter(new UICompleter<String>()
       {
          @Override
@@ -191,8 +191,6 @@ public class UIInputInjectionTest
       Assert.assertEquals("two", iterator.next());
       Assert.assertEquals("three", iterator.next());
       Assert.assertFalse(iterator.hasNext());
-
-      Assert.assertFalse(originalCompleter.getCompletionProposals(null, null, null).iterator().hasNext());
    }
 
    @Test
