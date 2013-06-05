@@ -133,21 +133,22 @@ class AddonProjectConfigurator
 
    private void installSelectedAddons(final Project project, Iterable<AddonId> addons, boolean managed)
    {
-      for (AddonId addon : addons)
-      {
-         String[] mavenCoords = addon.getName().split(":");
-         DependencyBuilder dependency = DependencyBuilder.create().setGroupId(mavenCoords[0])
-                  .setArtifactId(mavenCoords[1])
-                  .setVersion(addon.getVersion().getVersionString()).setClassifier(FORGE_ADDON_CLASSIFIER);
-         if (managed)
+      if (addons != null)
+         for (AddonId addon : addons)
          {
-            dependencyInstaller.installManaged(project, dependency);
+            String[] mavenCoords = addon.getName().split(":");
+            DependencyBuilder dependency = DependencyBuilder.create().setGroupId(mavenCoords[0])
+                     .setArtifactId(mavenCoords[1])
+                     .setVersion(addon.getVersion().getVersionString()).setClassifier(FORGE_ADDON_CLASSIFIER);
+            if (managed)
+            {
+               dependencyInstaller.installManaged(project, dependency);
+            }
+            else
+            {
+               dependencyInstaller.install(project, dependency);
+            }
          }
-         else
-         {
-            dependencyInstaller.install(project, dependency);
-         }
-      }
    }
 
    private Project createSubmoduleProject(final Project parent, String moduleName, String artifactId,
