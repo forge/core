@@ -6,19 +6,24 @@
  */
 package org.jboss.forge.addon.ui.input;
 
+import org.jboss.forge.addon.ui.context.UIContext;
 
 /**
- * @param VALUETYPE The value type to be provided by completion.
+ * Adds an auto-complete behavior on fields
+ * 
+ * @param <VALUETYPE> The value type to be provided by completion.
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
 public interface UICompleter<VALUETYPE>
 {
    /**
     * Get completion proposals for the provided {@link UIInput} and un-converted partial {@link String} value.
     * 
+    * @param context The {@link UIContext} used in this interaction
     * @param input The {@link UIInput} currently being completed.
     * @param value The user input value requiring completion, or null, if no value yet exists. These values will undergo
     *           conversion to fit the type required by the corresponding {@link UIInput}.
     */
-   Iterable<String> getCompletionProposals(InputComponent<?, VALUETYPE> input, String value);
+   Iterable<String> getCompletionProposals(UIContext context, InputComponent<?, VALUETYPE> input, String value);
 }

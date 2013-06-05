@@ -198,7 +198,7 @@ public class ShellCommand implements Completion
             // this shouldnt be needed
             if (inputOption != null && inputOption instanceof UIInput)
             {
-               Iterable<String> iter = ((UIInput) inputOption).getCompleter().getCompletionProposals(inputOption,
+               Iterable<String> iter = ((UIInput) inputOption).getCompleter().getCompletionProposals(null, inputOption,
                         completeObject.getValue());
                if (iter != null)
                {
@@ -241,7 +241,7 @@ public class ShellCommand implements Completion
                // this shouldnt be needed
                if (inputOption != null && inputOption instanceof UIInputMany)
                {
-                  Iterable<String> iter = ((UIInputMany) inputOption).getCompleter().getCompletionProposals(
+                  Iterable<String> iter = ((UIInputMany) inputOption).getCompleter().getCompletionProposals(null,
                            inputOption, completeObject.getValue());
                   if (iter != null)
                   {

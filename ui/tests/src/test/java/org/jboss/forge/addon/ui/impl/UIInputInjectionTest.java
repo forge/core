@@ -15,6 +15,7 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.convert.Converter;
+import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.facets.HintsFacet;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.InputComponent;
@@ -178,20 +179,20 @@ public class UIInputInjectionTest
       Assert.assertEquals(firstName, firstName.setCompleter(new UICompleter<String>()
       {
          @Override
-         public Iterable<String> getCompletionProposals(InputComponent<?, String> input, String value)
+         public Iterable<String> getCompletionProposals(UIContext context, InputComponent<?, String> input, String value)
          {
             return Arrays.asList("one", "two", "three");
          }
       }));
       Assert.assertNotEquals(originalCompleter, firstName.getCompleter());
 
-      Iterator<String> iterator = firstName.getCompleter().getCompletionProposals(null, null).iterator();
+      Iterator<String> iterator = firstName.getCompleter().getCompletionProposals(null, null, null).iterator();
       Assert.assertEquals("one", iterator.next());
       Assert.assertEquals("two", iterator.next());
       Assert.assertEquals("three", iterator.next());
       Assert.assertFalse(iterator.hasNext());
 
-      Assert.assertFalse(originalCompleter.getCompletionProposals(null, null).iterator().hasNext());
+      Assert.assertFalse(originalCompleter.getCompletionProposals(null, null, null).iterator().hasNext());
    }
 
    @Test

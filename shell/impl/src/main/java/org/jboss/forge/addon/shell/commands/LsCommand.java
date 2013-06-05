@@ -56,7 +56,7 @@ public class LsCommand implements UICommand
       about.setCompleter(new UICompleter<String>()
       {
          @Override
-         public Iterable<String> getCompletionProposals(InputComponent<?, String> input, String value)
+         public Iterable<String> getCompletionProposals(UIContext context, InputComponent<?, String> input, String value)
          {
             List<String> out = new ArrayList<String>();
             out.add("foo1");

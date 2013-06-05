@@ -16,10 +16,12 @@ import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.facets.Facet;
 import org.jboss.forge.addon.ui.facets.HintsFacet;
 import org.jboss.forge.addon.ui.hints.InputType;
+import org.jboss.forge.addon.ui.input.HasCompleter;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.ManyValued;
 import org.jboss.forge.addon.ui.input.SelectComponent;
 import org.jboss.forge.addon.ui.input.SingleValued;
+import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.furnace.util.Strings;
 
 /**
@@ -264,5 +266,26 @@ public final class InputComponents
          label += COLON;
       }
       return label;
+   }
+
+   /**
+    * Returns the completer associated with this {@link InputComponent} or null if it is not available
+    * 
+    * @param inputComponent
+    * @return the {@link UICompleter} associated with this {@link InputComponent} or null if not available or the
+    *         {@link InputComponent} does not implement {@link HasCompleter}
+    */
+   public static <VALUETYPE> UICompleter<VALUETYPE> getCompleterFor(InputComponent<?, VALUETYPE> inputComponent)
+   {
+      final UICompleter<VALUETYPE> result;
+      if (inputComponent instanceof HasCompleter)
+      {
+         result = ((HasCompleter) inputComponent).getCompleter();
+      }
+      else
+      {
+         result = null;
+      }
+      return result;
    }
 }
