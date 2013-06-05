@@ -102,7 +102,7 @@ public class NewFieldCommand extends AbstractProjectUICommand implements UIWizar
       {
 
          @Override
-         public Iterable<String> getCompletionProposals(InputComponent<?, String> input, String value)
+         public Iterable<String> getCompletionProposals(UIContext context, InputComponent<?, String> input, String value)
          {
             List<String> list = new ArrayList<String>();
             for (int i = 0; i < 10; i++)
