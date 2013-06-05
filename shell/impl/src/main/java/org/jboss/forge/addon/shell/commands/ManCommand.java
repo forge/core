@@ -74,7 +74,7 @@ public class ManCommand implements UICommand, Completion
 
        arguments.setCompleter( new UICompleter<String>() {
            @Override
-           public Iterable<String> getCompletionProposals(InputComponent<?, String> input, String value) {
+           public Iterable<String> getCompletionProposals(UIContext context, InputComponent<?, String> input, String value) {
                List<String> manCommands = new ArrayList<String>();
                // list all commands
                if (value == null || value.trim().length() < 1)
