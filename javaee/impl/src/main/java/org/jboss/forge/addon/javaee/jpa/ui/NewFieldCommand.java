@@ -23,8 +23,6 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.hints.InputType;
-import org.jboss.forge.addon.ui.input.InputComponent;
-import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
@@ -65,8 +63,15 @@ public class NewFieldCommand extends AbstractProjectUICommand implements UIWizar
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      final List<JavaResource> entities = new ArrayList<JavaResource>();
       Project project = getSelectedProject(builder.getUIContext());
+      setupEntities(project);
+      setupRelationshipType();
+      builder.add(entity).add(fieldName).add(typeName).add(relationshipType);
+   }
+
+   private void setupEntities(Project project)
+   {
+      final List<JavaResource> entities = new ArrayList<JavaResource>();
       if (project != null)
       {
          project.getFacet(JavaSourceFacet.class).visitJavaSources(new JavaResourceVisitor()
@@ -90,6 +95,10 @@ public class NewFieldCommand extends AbstractProjectUICommand implements UIWizar
          });
       }
       entity.setValueChoices(entities);
+   }
+
+   private void setupRelationshipType()
+   {
       relationshipType.setItemLabelConverter(new Converter<RelationshipType, String>()
       {
          @Override
@@ -98,22 +107,7 @@ public class NewFieldCommand extends AbstractProjectUICommand implements UIWizar
             return (source == null) ? null : source.getDescription();
          }
       });
-      fieldName.setCompleter(new UICompleter<String>()
-      {
-
-         @Override
-         public Iterable<String> getCompletionProposals(UIContext context, InputComponent<?, String> input, String value)
-         {
-            List<String> list = new ArrayList<String>();
-            for (int i = 0; i < 10; i++)
-            {
-               list.add(value + i);
-            }
-            return list;
-         }
-      });
       relationshipType.setDefaultValue(RelationshipType.BASIC);
-      builder.add(entity).add(fieldName).add(typeName).add(relationshipType);
    }
 
    @Override
