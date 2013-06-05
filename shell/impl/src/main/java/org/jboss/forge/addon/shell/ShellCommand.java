@@ -226,7 +226,7 @@ public class ShellCommand implements Completion
             }
         }
         // this shouldnt be needed
-        if (inputOption != null && inputOption instanceof UIInput)
+        if (inputOption != null && (inputOption instanceof UIInput && ((UIInput) inputOption).getCompleter() != null))
         {
             Iterable<String> iter = ((UIInput) inputOption).getCompleter().getCompletionProposals(null, inputOption,
                     completeObject.getValue());
