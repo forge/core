@@ -2,6 +2,7 @@ package org.jboss.forge.arquillian.util;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -23,7 +24,7 @@ public final class ShrinkWrapUtil
 
    /**
     * Export an {@link Archive} to a {@link File}
-    *
+    * 
     * @param archive Archive to export
     */
    public static void toFile(File target, final Archive<?> archive)
@@ -63,13 +64,16 @@ public final class ShrinkWrapUtil
             Node node = entry.getValue();
             Asset asset = node.getAsset();
             FileOutputStream fos = null;
+            InputStream is = null;
             try
             {
                fos = new FileOutputStream(target);
-               Streams.write(asset.openStream(), fos);
+               is = asset.openStream();
+               Streams.write(is, fos);
             }
             finally
             {
+               Streams.closeQuietly(is);
                Streams.closeQuietly(fos);
             }
          }
@@ -82,7 +86,7 @@ public final class ShrinkWrapUtil
 
    /**
     * Creates a tmp folder and exports the file. Returns the URL for that file location.
-    *
+    * 
     * @param archive Archive to export
     * @return
     */
