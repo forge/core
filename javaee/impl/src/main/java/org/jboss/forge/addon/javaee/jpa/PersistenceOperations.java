@@ -9,6 +9,8 @@ package org.jboss.forge.addon.javaee.jpa;
 
 import java.io.FileNotFoundException;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.Column;
@@ -31,6 +33,7 @@ import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.util.Refactory;
+import org.jboss.forge.parser.java.util.Types;
 import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnit;
 import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnitTransactionType;
@@ -167,5 +170,62 @@ public class PersistenceOperations
       path = path.replace(".", "/") + ".java";
       JavaResource target = sourceDir.getChildOfType(JavaResource.class, path);
       return target;
+   }
+
+   /**
+    * 
+    * @param project
+    * @param targetEntity
+    * @param fieldType
+    * @param fieldName
+    * @param annotation
+    * @return
+    * @throws FileNotFoundException
+    */
+   public Field<JavaClass> addFieldTo(final JavaClass targetEntity, final String fieldType,
+            final String fieldName, String... annotations)
+            throws FileNotFoundException
+   {
+      if (targetEntity.hasField(fieldName))
+      {
+         throw new IllegalStateException("Entity already has a field named [" + fieldName + "]");
+      }
+      Field<JavaClass> field = targetEntity.addField();
+      field.setName(fieldName).setPrivate().setType(fieldType);
+      for (String annotation : annotations)
+      {
+         field.addAnnotation(annotation);
+      }
+
+      String fieldTypeForImport = Types.stripArray(fieldType);
+      if (!fieldTypeForImport.startsWith("java.lang.") && fieldTypeForImport.contains(".")
+               && !fieldTypeForImport.equals(targetEntity.getCanonicalName()))
+      {
+         targetEntity.addImport(fieldTypeForImport);
+      }
+      Refactory.createGetterAndSetter(targetEntity, field);
+      updateToString(targetEntity);
+      return field;
+   }
+
+   private void updateToString(final JavaClass targetEntity)
+   {
+      if (targetEntity.hasMethodSignature("toString"))
+      {
+         targetEntity.removeMethod(targetEntity.getMethod("toString"));
+      }
+      List<Field<JavaClass>> fields = new ArrayList<Field<JavaClass>>();
+      for (Field<JavaClass> f : targetEntity.getFields())
+      {
+         if (!"id".equals(f.getName()) && !"version".equals(f.getName())
+                  && (f.getTypeInspector().isPrimitive() || Types.isJavaLang(f.getType())))
+         {
+            fields.add(f);
+         }
+      }
+      if (!fields.isEmpty())
+      {
+         Refactory.createToStringFromFields(targetEntity, fields);
+      }
    }
 }

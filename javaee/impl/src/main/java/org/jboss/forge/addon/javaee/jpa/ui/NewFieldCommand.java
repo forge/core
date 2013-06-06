@@ -12,9 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 
 import org.jboss.forge.addon.convert.Converter;
+import org.jboss.forge.addon.javaee.jpa.PersistenceOperations;
 import org.jboss.forge.addon.javaee.ui.AbstractProjectUICommand;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
@@ -32,10 +34,11 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
+import org.jboss.forge.parser.java.Field;
+import org.jboss.forge.parser.java.JavaClass;
 
 public class NewFieldCommand extends AbstractProjectUICommand implements UIWizard
 {
-
    @Inject
    @WithAttributes(label = "Entity", description = "The entity which the field will be created", required = true, type = InputType.SELECT_ONE_DROPDOWN)
    private UISelectOne<JavaResource> entity;
@@ -51,6 +54,9 @@ public class NewFieldCommand extends AbstractProjectUICommand implements UIWizar
    @Inject
    @WithAttributes(label = "Relationship", description = "The type of the relationship", type = InputType.SELECT_ONE_RADIO)
    private UISelectOne<RelationshipType> relationshipType;
+
+   @Inject
+   private PersistenceOperations persistenceOperations;
 
    @Override
    public Metadata getMetadata()
@@ -113,6 +119,20 @@ public class NewFieldCommand extends AbstractProjectUICommand implements UIWizar
    @Override
    public Result execute(UIContext context) throws Exception
    {
+      JavaResource javaResource = entity.getValue();
+      String fieldType = typeName.getValue();
+      String fieldNameStr = fieldName.getValue();
+      // TODO: Improve this
+      String annotation = Column.class.getCanonicalName();
+      JavaClass targetEntity = (JavaClass) javaResource.getJavaSource();
+      Field<JavaClass> field = persistenceOperations.addFieldTo(targetEntity, fieldType, fieldNameStr, annotation);
+      Project selectedProject = getSelectedProject(context);
+      if (selectedProject != null)
+      {
+         JavaSourceFacet facet = selectedProject.getFacet(JavaSourceFacet.class);
+         facet.saveJavaSource(field.getOrigin());
+      }
+      context.setSelection(javaResource);
       return Results.success("Field " + fieldName.getValue() + " created");
    }
 
