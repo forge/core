@@ -17,6 +17,7 @@ import org.jboss.forge.addon.convert.exception.ConverterNotFoundException;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Exported;
 import org.jboss.forge.furnace.services.ExportedInstance;
+import org.jboss.forge.furnace.util.Annotations;
 
 @Exported
 @Singleton
@@ -43,7 +44,11 @@ public class ConverterFactoryImpl implements ConverterFactory
 
       if (result == null)
       {
-         if (String.class.equals(target))
+         if (String.class.equals(source) && Annotations.isAnnotationPresent(target, Exported.class))
+         {
+            result = (Converter<S, T>) new StringToExportedConverter<T>(target, registry);
+         }
+         else if (String.class.equals(target))
          {
             result = (Converter<S, T>) Converters.TO_STRING;
          }
