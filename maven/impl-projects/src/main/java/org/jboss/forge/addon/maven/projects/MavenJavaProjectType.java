@@ -47,4 +47,10 @@ public class MavenJavaProjectType implements ProjectType
       result.add(MavenJavaSourceFacet.class);
       return result;
    }
+
+   @Override
+   public String toString()
+   {
+      return "java";
+   }
 }

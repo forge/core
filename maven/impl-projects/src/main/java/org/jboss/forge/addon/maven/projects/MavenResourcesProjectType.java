@@ -46,4 +46,11 @@ public class MavenResourcesProjectType implements ProjectType
       result.add(MavenResourceFacet.class);
       return result;
    }
+
+   @Override
+   public String toString()
+   {
+      return "resources";
+   }
+
 }
