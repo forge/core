@@ -17,6 +17,8 @@ import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.dependencies.DependencyInstaller;
+import org.jboss.forge.project.dependencies.DependencyQueryBuilder;
+import org.jboss.forge.project.dependencies.NonSnapshotDependencyFilter;
 import org.jboss.forge.project.dependencies.ScopeType;
 import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.facets.JavaSourceFacet;
@@ -47,7 +49,7 @@ import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.Property;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- *
+ * 
  */
 @Alias("persistence")
 @RequiresFacet(JavaSourceFacet.class)
@@ -222,7 +224,9 @@ public class PersistencePlugin implements Plugin
             DependencyFacet deps = project.getFacet(DependencyFacet.class);
             for (Dependency dependency : provider.listDependencies())
             {
-               List<Dependency> versions = deps.resolveAvailableVersions(dependency);
+               DependencyQueryBuilder query = DependencyQueryBuilder.create(dependency).setFilter(
+                        new NonSnapshotDependencyFilter());
+               List<Dependency> versions = deps.resolveAvailableVersions(query);
                if (!versions.isEmpty())
                {
                   Dependency choice = prompt.promptChoiceTyped("Install which version of [" + dependency + "]?",
