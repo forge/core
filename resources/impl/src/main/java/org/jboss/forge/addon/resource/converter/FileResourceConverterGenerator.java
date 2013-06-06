@@ -13,7 +13,6 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.convert.ConverterGenerator;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
-import org.jboss.forge.furnace.services.Exported;
 
 /**
  * Generates {@link DirectoryResourceConverter}
@@ -21,7 +20,6 @@ import org.jboss.forge.furnace.services.Exported;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  *
  */
-@Exported
 public class FileResourceConverterGenerator implements ConverterGenerator
 {
 

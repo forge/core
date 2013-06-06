@@ -14,9 +14,7 @@ import org.jboss.forge.addon.convert.ConverterGenerator;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.furnace.services.Exported;
 
-@Exported
 public class ResourceConverterGenerator implements ConverterGenerator
 {
 
