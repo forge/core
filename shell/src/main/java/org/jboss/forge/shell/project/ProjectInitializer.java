@@ -9,7 +9,6 @@ package org.jboss.forge.shell.project;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import org.jboss.forge.project.BaseProject;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.MetadataFacet;
 import org.jboss.forge.project.services.ProjectFactory;
@@ -48,24 +47,6 @@ public class ProjectInitializer
          if (newRoot != null)
          {
             Project oldProject = cp.getCurrent();
-
-            Project temp = new BaseProject()
-            {
-               @Override
-               public DirectoryResource getProjectRoot()
-               {
-                  return newRoot;
-               }
-
-               @Override
-               public boolean exists()
-               {
-                  return false;
-               }
-            };
-
-            cp.setCurrentProject(temp);
-
             if (oldProject != null)
             {
                DirectoryResource oldProjectRoot = oldProject.getProjectRoot();
