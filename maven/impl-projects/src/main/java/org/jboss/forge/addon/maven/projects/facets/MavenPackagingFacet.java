@@ -25,8 +25,7 @@ import org.jboss.forge.addon.projects.events.PackagingChanged;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
-
-import com.google.common.base.Strings;
+import org.jboss.forge.furnace.util.Strings;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
