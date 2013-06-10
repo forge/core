@@ -41,7 +41,7 @@ public interface UIContext
    public void setAttribute(Object key, Object value);
 
    /**
-    * Get the user's initial selection.
+    * Get the user's initial selection. Never null
     */
    <SELECTIONTYPE> UISelection<SELECTIONTYPE> getInitialSelection();
 

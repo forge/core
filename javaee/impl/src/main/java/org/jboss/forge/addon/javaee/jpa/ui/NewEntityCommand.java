@@ -68,7 +68,7 @@ public class NewEntityCommand extends AbstractProjectUICommand
       if (project == null)
       {
          UISelection<FileResource<?>> currentSelection = builder.getUIContext().getInitialSelection();
-         if (currentSelection != null)
+         if (!currentSelection.isEmpty())
          {
             FileResource<?> resource = currentSelection.get();
             if (resource instanceof DirectoryResource)

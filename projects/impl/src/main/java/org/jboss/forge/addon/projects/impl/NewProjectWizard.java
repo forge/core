@@ -84,7 +84,7 @@ public class NewProjectWizard implements UIWizard
       version.setDefaultValue("1.0.0-SNAPSHOT");
 
       UISelection<Resource<?>> currentSelection = builder.getUIContext().getInitialSelection();
-      if (currentSelection != null)
+      if (!currentSelection.isEmpty())
       {
          Resource<?> resource = currentSelection.get();
          if (resource instanceof DirectoryResource)

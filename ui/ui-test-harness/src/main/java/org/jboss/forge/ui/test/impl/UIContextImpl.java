@@ -63,4 +63,10 @@ public class UIContextImpl extends AbstractUIContext implements UISelection<Reso
    {
       return selection.size();
    }
+
+   @Override
+   public boolean isEmpty()
+   {
+      return selection.isEmpty();
+   }
 }

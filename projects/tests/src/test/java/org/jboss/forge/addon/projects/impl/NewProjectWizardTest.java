@@ -15,7 +15,6 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.projects.impl.NewProjectWizard;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.ui.context.AbstractUIContext;
@@ -24,6 +23,7 @@ import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.util.Selections;
 import org.jboss.forge.arquillian.Addon;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -81,8 +81,7 @@ public class NewProjectWizardTest
          @Override
          public <SELECTIONTYPE> UISelection<SELECTIONTYPE> getInitialSelection()
          {
-            // TODO Auto-generated method stub
-            return null;
+            return Selections.emptySelection();
          }
       };
       final UIBuilder builder = new UIBuilder()
@@ -155,8 +154,7 @@ public class NewProjectWizardTest
          @Override
          public <SELECTIONTYPE> UISelection<SELECTIONTYPE> getInitialSelection()
          {
-            // TODO Auto-generated method stub
-            return null;
+            return Selections.emptySelection();
          }
       };
       final UIBuilder builder = new UIBuilder()

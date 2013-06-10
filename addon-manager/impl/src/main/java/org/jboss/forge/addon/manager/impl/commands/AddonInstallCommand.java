@@ -89,7 +89,7 @@ public class AddonInstallCommand extends AbstractUICommand implements AddonComma
    {
       Project project = null;
       UISelection<FileResource<?>> initialSelection = context.getInitialSelection();
-      if (initialSelection != null)
+      if (!initialSelection.isEmpty())
       {
          project = projectFactory.findProject(initialSelection.get());
       }

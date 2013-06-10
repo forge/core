@@ -107,7 +107,7 @@ public class AddonRemoveCommand extends AbstractUICommand implements AddonComman
    {
       Project project = null;
       UISelection<FileResource<?>> initialSelection = context.getInitialSelection();
-      if (initialSelection != null)
+      if (!initialSelection.isEmpty())
       {
          project = projectFactory.findProject(initialSelection.get());
       }

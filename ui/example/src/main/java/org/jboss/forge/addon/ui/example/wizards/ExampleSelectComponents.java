@@ -76,7 +76,7 @@ public class ExampleSelectComponents implements UIWizardStep
    public boolean isEnabled(UIContext context)
    {
       UISelection<?> selection = context.getInitialSelection();
-      return selection != null;
+      return !selection.isEmpty();
    }
 
    @Override

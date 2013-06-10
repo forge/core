@@ -65,7 +65,7 @@ public class ExampleStepOne implements UIWizardStep
    public boolean isEnabled(UIContext context)
    {
       UISelection<?> selection = context.getInitialSelection();
-      return selection != null;
+      return !selection.isEmpty();
    }
 
    @Override

@@ -7,7 +7,6 @@
 package org.jboss.forge.addon.shell;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.jboss.aesh.cl.CommandLineParser;
@@ -18,6 +17,7 @@ import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.util.Selections;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
@@ -110,33 +110,13 @@ public class ShellContext extends AbstractUIContext implements UIValidationConte
 
    public <T> UISelection<T> getCurrentSelection()
    {
-      return null; // not implemented
+      return Selections.emptySelection(); // not implemented
    }
 
    @Override
    public UISelection<Object> getInitialSelection()
    {
-      return new UISelection<Object>()
-      {
-
-         @Override
-         public Iterator<Object> iterator()
-         {
-            return new ArrayList<Object>().iterator();
-         }
-
-         @Override
-         public Object get()
-         {
-            return null;
-         }
-
-         @Override
-         public int size()
-         {
-            return 0;
-         }
-      };
+      return Selections.emptySelection();
    }
 
    @Override
