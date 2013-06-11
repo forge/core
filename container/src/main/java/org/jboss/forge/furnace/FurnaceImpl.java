@@ -16,8 +16,6 @@ import java.util.ServiceLoader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.jboss.forge.furnace.ContainerStatus;
-import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.addons.ImmutableAddonRepository;
 import org.jboss.forge.furnace.impl.AddonRegistryImpl;
@@ -280,8 +278,14 @@ public class FurnaceImpl implements Furnace
    {
       Assert.notNull(mode, "Addon repository mode must not be null.");
       Assert.notNull(mode, "Addon repository directory must not be null.");
-
       assertNotAlive();
+      for (AddonRepository registeredRepo : repositories)
+      {
+         if (registeredRepo.getRootDirectory().equals(directory))
+         {
+            throw new IllegalArgumentException("There is already a repository defined with this path: " + directory);
+         }
+      }
       AddonRepository repository = AddonRepositoryImpl.forDirectory(this, directory);
 
       if (mode.isImmutable())

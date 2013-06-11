@@ -17,7 +17,6 @@ import org.jboss.forge.addon.maven.dependencies.FileResourceFactory;
 import org.jboss.forge.addon.maven.dependencies.MavenContainer;
 import org.jboss.forge.addon.maven.dependencies.MavenDependencyResolver;
 import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.repositories.AddonRepository;
 import org.jboss.forge.furnace.repositories.AddonRepositoryMode;
@@ -140,4 +139,13 @@ public class MultipleRepositoryTest
 
       forge.stop();
    }
+
+   @Test(expected = IllegalArgumentException.class)
+   public void testCannotAddTwoRepositoriesToSameLocation() throws IOException
+   {
+      Furnace forge = ForgeFactory.getInstance(Furnace.class.getClassLoader());
+      forge.addRepository(AddonRepositoryMode.MUTABLE, repodir1);
+      forge.addRepository(AddonRepositoryMode.MUTABLE, repodir1);
+   }
+
 }
