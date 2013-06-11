@@ -130,6 +130,8 @@ public class ServletFacetImpl extends AbstractJavaEEFacet implements ServletFace
                   .displayName(projectName)
                   .createSessionConfig()
                   .sessionTimeout(30).up();
+         // FORGE-657
+         unit.createMimeMapping().extension("ico").mimeType("image/x-icon");
          child.setContents(unit.exportAsString());
       }
 
