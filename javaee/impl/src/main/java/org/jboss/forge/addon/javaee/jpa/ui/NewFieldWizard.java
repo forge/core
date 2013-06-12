@@ -163,34 +163,42 @@ public class NewFieldWizard extends AbstractProjectUICommand implements UIWizard
       String fieldNameStr = fieldName.getValue();
       Field<JavaClass> field;
       JavaClass targetEntity = (JavaClass) javaResource.getJavaSource();
-      if (primitive.getValue())
+      RelationshipType value = relationshipType.getValue();
+      if (value == RelationshipType.BASIC)
       {
-         String fieldType = getPrimitiveTypeFor(typeName.getValue());
-         field = persistenceOperations.addFieldTo(targetEntity, fieldType, fieldNameStr,
-                  Column.class.getCanonicalName());
-      }
-      else if (lob.getValue())
-      {
-         String fieldType = byte[].class.getName();
-         field = persistenceOperations.addFieldTo(targetEntity, fieldType, fieldNameStr, Lob.class.getName());
-         // TODO: Specify column length somewhere ?
-         field.addAnnotation(Column.class).setLiteralValue("length", String.valueOf(Integer.MAX_VALUE));
+         if (primitive.getValue())
+         {
+            String fieldType = getPrimitiveTypeFor(typeName.getValue());
+            field = persistenceOperations.addFieldTo(targetEntity, fieldType, fieldNameStr,
+                     Column.class.getCanonicalName());
+         }
+         else if (lob.getValue())
+         {
+            String fieldType = byte[].class.getName();
+            field = persistenceOperations.addFieldTo(targetEntity, fieldType, fieldNameStr, Lob.class.getName());
+            // TODO: Specify column length somewhere ?
+            field.addAnnotation(Column.class).setLiteralValue("length", String.valueOf(Integer.MAX_VALUE));
+         }
+         else
+         {
+            String fieldType = typeName.getValue();
+            field = persistenceOperations.addFieldTo(targetEntity, fieldType, fieldNameStr,
+                     Column.class.getCanonicalName());
+         }
+         Project selectedProject = getSelectedProject(context);
+         if (selectedProject != null)
+         {
+            JavaSourceFacet facet = selectedProject.getFacet(JavaSourceFacet.class);
+            facet.saveJavaSource(field.getOrigin());
+         }
+         context.setSelection(javaResource);
+         return Results.success("Field " + fieldName.getValue() + " created");
       }
       else
       {
-         String fieldType = typeName.getValue();
-         field = persistenceOperations.addFieldTo(targetEntity, fieldType, fieldNameStr,
-                  Column.class.getCanonicalName());
+         // Field creation will occur in NewFieldRelationshipWizardStep
+         return Results.success();
       }
-      Project selectedProject = getSelectedProject(context);
-      if (selectedProject != null)
-      {
-         JavaSourceFacet facet = selectedProject.getFacet(JavaSourceFacet.class);
-         facet.saveJavaSource(field.getOrigin());
-      }
-      context.setAttribute(Field.class, field);
-      context.setSelection(javaResource);
-      return Results.success("Field " + fieldName.getValue() + " created");
    }
 
    @Override
@@ -228,8 +236,9 @@ public class NewFieldWizard extends AbstractProjectUICommand implements UIWizard
    {
       context.setAttribute(JavaResource.class, entity.getValue());
       context.setAttribute("fieldName", fieldName.getValue());
-      context.setAttribute("type", typeName.getValue());
-      context.setAttribute(RelationshipType.class, relationshipType.getValue());
+      context.setAttribute("fieldType", typeName.getValue());
+      // XXX: CCE on CLAC when getAttribute of this enum is executed
+      context.setAttribute(RelationshipType.class, relationshipType.getValue().name());
       if (relationshipType.getValue() == RelationshipType.BASIC)
       {
          return null;
