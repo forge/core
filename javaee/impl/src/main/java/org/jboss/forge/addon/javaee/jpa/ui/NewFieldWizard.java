@@ -41,7 +41,7 @@ import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.util.Types;
 
-public class NewFieldCommand extends AbstractProjectUICommand implements UIWizard
+public class NewFieldWizard extends AbstractProjectUICommand implements UIWizard
 {
    @Inject
    @WithAttributes(label = "Entity", description = "The entity which the field will be created", required = true, type = InputType.SELECT_ONE_DROPDOWN)
@@ -91,7 +91,15 @@ public class NewFieldCommand extends AbstractProjectUICommand implements UIWizar
          @Override
          public Boolean call() throws Exception
          {
-            return !primitive.getValue();
+            return !primitive.getValue() && relationshipType.getValue() == RelationshipType.BASIC;
+         }
+      });
+      primitive.setEnabled(new Callable<Boolean>()
+      {
+         @Override
+         public Boolean call() throws Exception
+         {
+            return relationshipType.getValue() == RelationshipType.BASIC;
          }
       });
       typeName.setEnabled(new Callable<Boolean>()
@@ -180,6 +188,7 @@ public class NewFieldCommand extends AbstractProjectUICommand implements UIWizar
          JavaSourceFacet facet = selectedProject.getFacet(JavaSourceFacet.class);
          facet.saveJavaSource(field.getOrigin());
       }
+      context.setAttribute(Field.class, field);
       context.setSelection(javaResource);
       return Results.success("Field " + fieldName.getValue() + " created");
    }
@@ -217,6 +226,17 @@ public class NewFieldCommand extends AbstractProjectUICommand implements UIWizar
    @Override
    public NavigationResult next(UIContext context) throws Exception
    {
-      return null;
+      context.setAttribute(JavaResource.class, entity.getValue());
+      context.setAttribute("fieldName", fieldName.getValue());
+      context.setAttribute("type", typeName.getValue());
+      context.setAttribute(RelationshipType.class, relationshipType.getValue());
+      if (relationshipType.getValue() == RelationshipType.BASIC)
+      {
+         return null;
+      }
+      else
+      {
+         return Results.navigateTo(NewFieldRelationshipWizardStep.class);
+      }
    }
 }
