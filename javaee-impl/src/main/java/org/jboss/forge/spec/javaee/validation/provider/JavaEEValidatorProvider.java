@@ -12,19 +12,24 @@ import java.util.Set;
 
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.spec.javaee.descriptor.ValidationDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class JavaEEValidatorProvider implements ValidationProvider
 {
+   private ValidationDescriptor descriptor;
+
    public JavaEEValidatorProvider()
-   {}
+   {
+      this.descriptor = Descriptors.create(ValidationDescriptor.class);
+   }
 
    @Override
    public ValidationDescriptor getDefaultDescriptor()
    {
-      return null;
+      return descriptor;
    }
 
    @Override

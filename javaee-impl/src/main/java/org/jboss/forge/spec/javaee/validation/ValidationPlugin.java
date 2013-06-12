@@ -60,7 +60,7 @@ public class ValidationPlugin implements Plugin
 
    @Command(value = "setup", help = "Setup validation for this project")
    public void setup(
-            @Option(name = "provider", defaultValue = "HIBERNATE_VALIDATOR", required = true) final BVProvider providerType,
+            @Option(name = "provider", defaultValue = "JAVA_EE", required = true) final BVProvider providerType,
             @Option(name = "messageInterpolator", type = PromptType.JAVA_CLASS) final String messageInterpolator,
             @Option(name = "traversableResolver", type = PromptType.JAVA_CLASS) final String traversableResolver,
             @Option(name = "constraintValidatorFactory", type = PromptType.JAVA_CLASS) final String constraintValidatorFactory)
