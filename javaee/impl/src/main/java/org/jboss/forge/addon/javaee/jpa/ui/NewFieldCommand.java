@@ -10,10 +10,12 @@ package org.jboss.forge.addon.javaee.jpa.ui;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.javaee.jpa.PersistenceOperations;
@@ -24,6 +26,7 @@ import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectOne;
@@ -36,6 +39,7 @@ import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.parser.java.util.Types;
 
 public class NewFieldCommand extends AbstractProjectUICommand implements UIWizard
 {
@@ -56,6 +60,14 @@ public class NewFieldCommand extends AbstractProjectUICommand implements UIWizar
    private UISelectOne<RelationshipType> relationshipType;
 
    @Inject
+   @WithAttributes(label = "Use Primitive Version?", description = "For this field type, use the primitive version")
+   private UIInput<Boolean> primitive;
+
+   @Inject
+   @WithAttributes(label = "Is LOB?", description = "If the relationship is a LOB, in this case, it will ignore the value in the Type field")
+   private UIInput<Boolean> lob;
+
+   @Inject
    private PersistenceOperations persistenceOperations;
 
    @Override
@@ -72,7 +84,25 @@ public class NewFieldCommand extends AbstractProjectUICommand implements UIWizar
       Project project = getSelectedProject(builder.getUIContext());
       setupEntities(project);
       setupRelationshipType();
-      builder.add(entity).add(fieldName).add(typeName).add(relationshipType);
+      lob.setDefaultValue(Boolean.FALSE);
+      primitive.setDefaultValue(Boolean.FALSE);
+      lob.setEnabled(new Callable<Boolean>()
+      {
+         @Override
+         public Boolean call() throws Exception
+         {
+            return !primitive.getValue();
+         }
+      });
+      typeName.setEnabled(new Callable<Boolean>()
+      {
+         @Override
+         public Boolean call() throws Exception
+         {
+            return !lob.getValue();
+         }
+      });
+      builder.add(entity).add(fieldName).add(typeName).add(relationshipType).add(lob).add(primitive);
    }
 
    private void setupEntities(Project project)
@@ -101,6 +131,8 @@ public class NewFieldCommand extends AbstractProjectUICommand implements UIWizar
          });
       }
       entity.setValueChoices(entities);
+      if (!entities.isEmpty())
+         entity.setDefaultValue(entities.get(0));
    }
 
    private void setupRelationshipType()
@@ -120,12 +152,28 @@ public class NewFieldCommand extends AbstractProjectUICommand implements UIWizar
    public Result execute(UIContext context) throws Exception
    {
       JavaResource javaResource = entity.getValue();
-      String fieldType = typeName.getValue();
       String fieldNameStr = fieldName.getValue();
-      // TODO: Improve this
-      String annotation = Column.class.getCanonicalName();
+      Field<JavaClass> field;
       JavaClass targetEntity = (JavaClass) javaResource.getJavaSource();
-      Field<JavaClass> field = persistenceOperations.addFieldTo(targetEntity, fieldType, fieldNameStr, annotation);
+      if (primitive.getValue())
+      {
+         String fieldType = getPrimitiveTypeFor(typeName.getValue());
+         field = persistenceOperations.addFieldTo(targetEntity, fieldType, fieldNameStr,
+                  Column.class.getCanonicalName());
+      }
+      else if (lob.getValue())
+      {
+         String fieldType = byte[].class.getName();
+         field = persistenceOperations.addFieldTo(targetEntity, fieldType, fieldNameStr, Lob.class.getName());
+         // TODO: Specify column length somewhere ?
+         field.addAnnotation(Column.class).setLiteralValue("length", String.valueOf(Integer.MAX_VALUE));
+      }
+      else
+      {
+         String fieldType = typeName.getValue();
+         field = persistenceOperations.addFieldTo(targetEntity, fieldType, fieldNameStr,
+                  Column.class.getCanonicalName());
+      }
       Project selectedProject = getSelectedProject(context);
       if (selectedProject != null)
       {
@@ -134,6 +182,36 @@ public class NewFieldCommand extends AbstractProjectUICommand implements UIWizar
       }
       context.setSelection(javaResource);
       return Results.success("Field " + fieldName.getValue() + " created");
+   }
+
+   @Override
+   public void validate(UIValidationContext validator)
+   {
+      super.validate(validator);
+      if (primitive.getValue())
+      {
+         String primitiveType = getPrimitiveTypeFor(typeName.getValue());
+         if (primitiveType == null)
+         {
+            validator.addValidationError(typeName, "Type is not a wrapper of a primitive type");
+         }
+      }
+   }
+
+   private String getPrimitiveTypeFor(String value)
+   {
+      if (value == null)
+         return null;
+      String val = value.toLowerCase().replaceAll("java.lang.", "");
+      if (val.equals("integer"))
+      {
+         val = "int";
+      }
+      else if (val.equals("character"))
+      {
+         val = "char";
+      }
+      return (Types.isPrimitive(val)) ? val : null;
    }
 
    @Override
