@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 
  * @param <FACETTYPE> the base {@link Facet} type supported by this {@link Faceted} type.
  */
-public abstract class AbstractFaceted<FACETTYPE extends Facet<?>> implements Faceted<FACETTYPE>
+public abstract class AbstractFaceted<FACETTYPE extends Facet<?>> implements MutableFaceted<FACETTYPE>
 {
    private Set<FACETTYPE> facets = Collections.newSetFromMap(new ConcurrentHashMap<FACETTYPE, Boolean>());
 
@@ -68,7 +68,9 @@ public abstract class AbstractFaceted<FACETTYPE extends Facet<?>> implements Fac
    {
       if (facet.getOrigin() != this)
          throw new IllegalArgumentException("[" + facet + "].getOrigin() was [" + facet.getOrigin()
-                  + "] but needed to be [" + this + "].");
+                  + "] but needed to be [" + this + "]. If your facet type implements "
+                  + MutableOrigin.class.getSimpleName() + ", " +
+                  "ensure that a valid origin was supplied during facet creation.");
 
       if (supports(facet))
       {

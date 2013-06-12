@@ -9,7 +9,7 @@ package org.jboss.forge.addon.ui.input;
 import java.util.concurrent.Callable;
 
 import org.jboss.forge.addon.convert.Converter;
-import org.jboss.forge.addon.facets.Faceted;
+import org.jboss.forge.addon.facets.MutableFaceted;
 import org.jboss.forge.addon.ui.facets.HintsFacet;
 import org.jboss.forge.furnace.services.Exported;
 
@@ -19,7 +19,7 @@ import org.jboss.forge.furnace.services.Exported;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Exported
-public interface InputComponent<IMPLTYPE, VALUETYPE> extends Faceted<HintsFacet>
+public interface InputComponent<IMPLTYPE, VALUETYPE> extends MutableFaceted<HintsFacet>
 {
    String getLabel();
 

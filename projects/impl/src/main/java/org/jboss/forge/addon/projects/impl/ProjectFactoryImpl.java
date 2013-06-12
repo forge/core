@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jboss.forge.addon.facets.Facet;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectAssociationProvider;
@@ -99,7 +100,7 @@ public class ProjectFactoryImpl implements ProjectFactory
          for (Class<ProjectFacet> instance : registry.getExportedTypes(ProjectFacet.class))
          {
             ProjectFacet facet = factory.create(instance, result);
-            if (facet != null && facet.isInstalled() && result.install(facet))
+            if (facet != null && facet.isInstalled() && factory.install(facet, result))
             {
                log.fine("Installed Facet [" + facet + "] into Project [" + result + "]");
             }
@@ -148,11 +149,14 @@ public class ProjectFactoryImpl implements ProjectFactory
       {
          for (Class<? extends ProjectFacet> facetType : facetTypes)
          {
-            ProjectFacet facet = factory.create(facetType, result);
-            if (!result.install(facet))
+            try
             {
-               throw new IllegalStateException("Could not install Facet [" + facet + "] of type [" + facetType
-                        + "] into Project [" + result + "]");
+               factory.install(facetType, result);
+            }
+            catch (RuntimeException e)
+            {
+               throw new IllegalStateException("Could not install " + Facet.class.getSimpleName() + " of type ["
+                        + facetType + "] into Project [" + result + "]");
             }
          }
       }
@@ -162,7 +166,7 @@ public class ProjectFactoryImpl implements ProjectFactory
          for (Class<ProjectFacet> instance : registry.getExportedTypes(ProjectFacet.class))
          {
             ProjectFacet facet = factory.create(instance, result);
-            if (facet != null && facet.isInstalled() && result.install(facet))
+            if (facet != null && facet.isInstalled() && factory.install(facet, result))
             {
                log.fine("Installed Facet [" + facet + "] into Project [" + result + "]");
             }

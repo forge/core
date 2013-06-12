@@ -8,6 +8,7 @@ package org.jboss.forge.addon.facets;
 
 /**
  * @author <a href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  * @param <FACETTYPE> the base {@link Facet} type supported by this {@link Faceted} type.
  */
@@ -46,16 +47,6 @@ public interface Faceted<FACETTYPE extends Facet<?>>
     * Return a {@link Iterable} of the currently installed {@link Facet}s matching the given type.
     */
    <F extends FACETTYPE> Iterable<F> getFacets(Class<F> type);
-
-   /**
-    * Install and register the given {@link Facet}. If the facet is already installed, return true.
-    */
-   boolean install(FACETTYPE facet);
-
-   /**
-    * Remove the given {@link Facet} from the internal collection of installed facets.
-    */
-   boolean uninstall(FACETTYPE facet);
 
    /**
     * Return true if the given {@link Facet} is supported.

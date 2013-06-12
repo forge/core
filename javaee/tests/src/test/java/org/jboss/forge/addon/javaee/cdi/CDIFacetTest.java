@@ -26,7 +26,6 @@ import org.jboss.shrinkwrap.descriptor.api.beans10.BeansDescriptor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-
 @RunWith(Arquillian.class)
 public class CDIFacetTest
 {
@@ -50,9 +49,8 @@ public class CDIFacetTest
    public void testBeansXMLCreatedWhenInstalled() throws Exception
    {
       Project project = projectFactory.createTempProject();
-      CDIFacet cdiFacet = facetFactory.create(CDIFacet.class, project);
+      CDIFacet cdiFacet = facetFactory.install(CDIFacet.class, project);
       assertNotNull(cdiFacet);
-      project.install(cdiFacet);
       assertTrue(project.hasFacet(CDIFacet.class));
       BeansDescriptor config = project.getFacet(CDIFacet.class).getConfig();
       assertNotNull(config);

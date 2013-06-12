@@ -11,11 +11,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.addon.facets.Facet;
-import org.jboss.forge.addon.facets.FacetFactory;
-import org.jboss.forge.addon.facets.FacetNotFoundException;
-import org.jboss.forge.addon.facets.Faceted;
-import org.jboss.forge.addon.facets.MutableOrigin;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.ExportedInstance;
 import org.jboss.forge.furnace.util.Assert;
@@ -79,16 +74,46 @@ public class FacetFactoryImpl implements FacetFactory
    }
 
    @Override
-   @SuppressWarnings("unchecked")
    public <FACET extends Facet<E>, E extends Faceted<? extends Facet<?>>> FACET install(Class<FACET> type, E origin)
             throws FacetNotFoundException
    {
       FACET facet = create(type, origin);
-      Faceted<FACET> faceted = (Faceted<FACET>) origin;
-      if (!faceted.hasFacet(type))
+      if (!install(facet, origin))
       {
-         faceted.install(facet);
+         throw new IllegalStateException("Facet type [" + type.getName()
+                  + "] could not be installed completely into [" + origin
+                  + "] of type [" + origin.getClass().getName()
+                  + "]. You may wish to check for inconsistent origin state.");
       }
       return facet;
+   }
+
+   @Override
+   @SuppressWarnings("unchecked")
+   public <FACET extends Facet<E>, E extends Faceted<? extends Facet<?>>> boolean install(FACET facet, E origin)
+   {
+      Assert.notNull(origin, "Facet instance must not be null.");
+      Assert.notNull(origin, "Origin instance must not be null.");
+
+      Faceted<FACET> faceted = (Faceted<FACET>) origin;
+      Assert.isTrue(faceted instanceof MutableFaceted, "The given origin [" + origin + "] is not an instance of ["
+               + MutableFaceted.class.getName() + "], and does not support " + Facet.class.getSimpleName()
+               + " installation.");
+
+      if (facet.getOrigin() == null && facet instanceof MutableOrigin)
+      {
+         ((MutableOrigin<E>) facet).setOrigin(origin);
+      }
+
+      Assert.isTrue(origin.equals(facet.getOrigin()), "The given origin [" + origin + "] is not an instance of ["
+               + MutableFaceted.class.getName() + "], and does not support " + Facet.class.getSimpleName()
+               + " installation.");
+
+      boolean result = false;
+      if (faceted.hasFacet((Class<? extends FACET>) facet.getClass()))
+         result = true;
+      else
+         result = ((MutableFaceted<FACET>) faceted).install(facet);
+      return result;
    }
 }

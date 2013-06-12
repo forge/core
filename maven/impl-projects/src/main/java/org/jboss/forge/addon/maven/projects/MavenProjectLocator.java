@@ -10,18 +10,12 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.maven.dependencies.MavenDependencyResolver;
-import org.jboss.forge.addon.maven.projects.MavenFacet;
-import org.jboss.forge.addon.maven.projects.MavenPluginFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenDependencyFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenMetadataFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenPackagingFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenResourceFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectLocator;
-import org.jboss.forge.addon.projects.facets.DependencyFacet;
-import org.jboss.forge.addon.projects.facets.MetadataFacet;
-import org.jboss.forge.addon.projects.facets.PackagingFacet;
-import org.jboss.forge.addon.projects.facets.ResourceFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
@@ -42,21 +36,16 @@ public class MavenProjectLocator implements ProjectLocator
    {
       Project project = new MavenProject(dir);
 
-      MavenFacet mavenFacet = factory.create(MavenFacet.class, project);
-      MavenPluginFacet mavenPluginFacet = factory.create(MavenPluginFacet.class, project);
-      MetadataFacet metadataFacet = factory.create(MavenMetadataFacet.class, project);
-      PackagingFacet packagingFacet = factory.create(MavenPackagingFacet.class, project);
-      DependencyFacet dependencyFacet = factory.create(MavenDependencyFacet.class, project);
-      ResourceFacet resourceFacet = factory.create(MavenResourceFacet.class, project);
-
-      if (!(project.install(mavenFacet)
-               && project.install(metadataFacet)
-               && project.install(packagingFacet)
-               && project.install(dependencyFacet)
-               && project.install(resourceFacet)
-               && project.install(mavenPluginFacet)
-
-      ))
+      try
+      {
+         factory.install(MavenFacet.class, project);
+         factory.install(MavenPluginFacet.class, project);
+         factory.install(MavenMetadataFacet.class, project);
+         factory.install(MavenPackagingFacet.class, project);
+         factory.install(MavenDependencyFacet.class, project);
+         factory.install(MavenResourceFacet.class, project);
+      }
+      catch (RuntimeException e)
       {
          throw new IllegalStateException("Could not install Maven into Project located at ["
                   + dir.getFullyQualifiedName() + "]");
