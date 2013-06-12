@@ -209,7 +209,8 @@ public class InputComponentFactory
             ConverterFactory converterFactory = exportedInstance.get();
             try
             {
-               InputComponents.setValueFor(converterFactory, (InputComponent<?, Object>) input, atts.defaultValue());
+               InputComponents.setDefaultValueFor(converterFactory, (InputComponent<?, Object>) input,
+                        atts.defaultValue());
             }
             finally
             {

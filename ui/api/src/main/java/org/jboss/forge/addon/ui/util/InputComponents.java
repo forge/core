@@ -88,16 +88,36 @@ public final class InputComponents
    {
       if (component instanceof SingleValued)
       {
-         setSingleInputValue(converterFactory, component, value);
+         setSingleInputValue(converterFactory, component, value, false);
       }
       else if (component instanceof ManyValued)
       {
-         setManyInputValue(converterFactory, component, value);
+         setManyInputValue(converterFactory, component, value, false);
+      }
+   }
+
+   /**
+    * Sets the default value in the provided {@link InputComponent}, making any necessary conversions
+    * 
+    * @param component
+    * @param value
+    */
+   public static void setDefaultValueFor(final ConverterFactory converterFactory,
+            final InputComponent<?, Object> component,
+            final Object value)
+   {
+      if (component instanceof SingleValued)
+      {
+         setSingleInputValue(converterFactory, component, value, true);
+      }
+      else if (component instanceof ManyValued)
+      {
+         setManyInputValue(converterFactory, component, value, true);
       }
    }
 
    private static void setSingleInputValue(final ConverterFactory converterFactory,
-            final InputComponent<?, Object> input, final Object value)
+            final InputComponent<?, Object> input, final Object value, boolean defaultValue)
    {
       final Object convertedType;
       if (value != null)
@@ -108,11 +128,18 @@ public final class InputComponents
       {
          convertedType = null;
       }
-      ((SingleValued) input).setValue(convertedType);
+      if (defaultValue)
+      {
+         ((SingleValued) input).setDefaultValue(convertedType);
+      }
+      else
+      {
+         ((SingleValued) input).setValue(convertedType);
+      }
    }
 
    private static void setManyInputValue(final ConverterFactory converterFactory,
-            final InputComponent<?, Object> input, Object value)
+            final InputComponent<?, Object> input, Object value, boolean defaultValue)
    {
       final Iterable<Object> convertedValues;
       if (value != null)
@@ -135,7 +162,14 @@ public final class InputComponents
       {
          convertedValues = null;
       }
-      ((ManyValued) input).setValue(convertedValues);
+      if (defaultValue)
+      {
+         ((ManyValued) input).setDefaultValue(convertedValues);
+      }
+      else
+      {
+         ((ManyValued) input).setValue(convertedValues);
+      }
    }
 
    /**
