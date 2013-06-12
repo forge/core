@@ -17,6 +17,7 @@ import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Inject;
 
+import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.environment.Environment;
 import org.jboss.forge.addon.ui.facets.HintsFacet;
 import org.jboss.forge.addon.ui.hints.InputType;
@@ -28,6 +29,7 @@ import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
+import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Exported;
 import org.jboss.forge.furnace.services.ExportedInstance;
@@ -192,9 +194,28 @@ public class InputComponentFactory
          input.setRequired(atts.required());
          input.setRequiredMessage(atts.requiredMessage());
          input.setDescription(atts.description());
+
+         // Set input type
          if (atts.type() != InputType.DEFAULT)
          {
             input.getFacet(HintsFacet.class).setInputType(atts.type());
+         }
+
+         // Set Default Value
+         if (!"".equals(atts.defaultValue()))
+         {
+            ExportedInstance<ConverterFactory> exportedInstance = addonRegistry
+                     .getExportedInstance(ConverterFactory.class);
+            ConverterFactory converterFactory = exportedInstance.get();
+            try
+            {
+               InputComponents.setValueFor(converterFactory, (InputComponent<?, Object>) input, atts.defaultValue());
+            }
+            finally
+            {
+               exportedInstance.release(converterFactory);
+            }
+
          }
       }
 
@@ -224,5 +245,4 @@ public class InputComponentFactory
          selectComponent.setValueChoices(choices);
       }
    }
-
 }

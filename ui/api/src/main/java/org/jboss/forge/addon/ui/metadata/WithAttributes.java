@@ -54,4 +54,9 @@ public @interface WithAttributes
     * The InputType for this {@link InputComponent}
     */
    InputType type() default InputType.DEFAULT;
+
+   /**
+    * The default value for this {@link InputComponent}
+    */
+   String defaultValue() default "";
 }

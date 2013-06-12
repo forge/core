@@ -60,11 +60,11 @@ public class NewFieldWizard extends AbstractProjectUICommand implements UIWizard
    private UISelectOne<RelationshipType> relationshipType;
 
    @Inject
-   @WithAttributes(label = "Use Primitive Version?", description = "For this field type, use the primitive version")
+   @WithAttributes(label = "Use Primitive Version?", description = "For this field type, use the primitive version", defaultValue = "false")
    private UIInput<Boolean> primitive;
 
    @Inject
-   @WithAttributes(label = "Is LOB?", description = "If the relationship is a LOB, in this case, it will ignore the value in the Type field")
+   @WithAttributes(label = "Is LOB?", description = "If the relationship is a LOB, in this case, it will ignore the value in the Type field", defaultValue = "false")
    private UIInput<Boolean> lob;
 
    @Inject
@@ -84,8 +84,6 @@ public class NewFieldWizard extends AbstractProjectUICommand implements UIWizard
       Project project = getSelectedProject(builder.getUIContext());
       setupEntities(project);
       setupRelationshipType();
-      lob.setDefaultValue(Boolean.FALSE);
-      primitive.setDefaultValue(Boolean.FALSE);
       lob.setEnabled(new Callable<Boolean>()
       {
          @Override

@@ -42,7 +42,7 @@ public class NewFieldRelationshipWizardStep extends AbstractProjectUICommand imp
    private UIInput<String> inverseFieldName;
 
    @Inject
-   @WithAttributes(label = "Required", description = "Is this field required ?")
+   @WithAttributes(label = "Required", description = "Is this field required ?", defaultValue = "false")
    private UIInput<Boolean> required;
 
    @Inject
@@ -58,7 +58,6 @@ public class NewFieldRelationshipWizardStep extends AbstractProjectUICommand imp
       UIContext context = builder.getUIContext();
       RelationshipType relationship = RelationshipType.valueOf(context.getAttribute(RelationshipType.class).toString());
       cascadeType.setValueChoices(EnumSet.range(CascadeType.PERSIST, CascadeType.DETACH));
-      required.setDefaultValue(Boolean.FALSE);
       switch (relationship)
       {
       case MANY_TO_MANY:
