@@ -1,5 +1,8 @@
 package org.jboss.forge.addon.manager.impl.commands;
 
+import java.util.Set;
+import java.util.TreeSet;
+
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.manager.AddonManager;
@@ -11,6 +14,8 @@ import org.jboss.forge.addon.ui.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UISelection;
+import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
@@ -52,13 +57,31 @@ public class AddonInstallCommand extends AbstractUICommand implements AddonComma
    public void initializeUI(UIBuilder builder) throws Exception
    {
       Project project = getSelectedProject(builder.getUIContext());
+      final String topLevelPackage;
       if (project != null)
       {
          MetadataFacet facet = project.getFacet(MetadataFacet.class);
-         groupId.setDefaultValue(facet.getTopLevelPackage());
+         topLevelPackage = facet.getTopLevelPackage();
+         groupId.setDefaultValue(topLevelPackage);
          name.setDefaultValue(facet.getProjectName());
          version.setDefaultValue(facet.getProjectVersion());
       }
+      else
+      {
+         topLevelPackage = null;
+      }
+      groupId.setCompleter(new UICompleter<String>()
+      {
+         @Override
+         public Iterable<String> getCompletionProposals(UIContext context, InputComponent<?, String> input, String value)
+         {
+            Set<String> items = new TreeSet<String>();
+            if (topLevelPackage != null)
+               items.add(topLevelPackage);
+            items.add("org.jboss.forge.addon");
+            return items;
+         }
+      });
       builder.add(groupId).add(name).add(version);
    }
 
