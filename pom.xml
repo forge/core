@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
 
    <parent>
@@ -10,7 +9,7 @@
 
    <groupId>org.jboss.forge</groupId>
    <artifactId>forge-parent</artifactId>
-   <version>2.0.0-SNAPSHOT</version>
+   <version>2.0.0.Alpha5</version>
    <packaging>pom</packaging>
 
    <name>Forge - Parent</name>
@@ -504,7 +503,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore/>
+                              <ignore />
                            </action>
                         </pluginExecution>
                         <pluginExecution>
@@ -521,7 +520,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore/>
+                              <ignore />
                            </action>
                         </pluginExecution>
                         <pluginExecution>
@@ -538,7 +537,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore/>
+                              <ignore />
                            </action>
                         </pluginExecution>
                         <pluginExecution>
@@ -557,7 +556,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore/>
+                              <ignore />
                            </action>
                         </pluginExecution>
                      </pluginExecutions>
@@ -601,7 +600,7 @@
       <connection>${forge.scm.connection}</connection>
       <developerConnection>${forge.developer.connection}</developerConnection>
       <url>${forge.scm.url}</url>
-      <tag>HEAD</tag>
+      <tag>2.0.0.Alpha5</tag>
    </scm>
 </project>
 
