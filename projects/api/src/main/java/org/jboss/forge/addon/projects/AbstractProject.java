@@ -17,7 +17,7 @@ import org.jboss.forge.addon.facets.AbstractFaceted;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public abstract class AbstractProject extends AbstractFaceted<ProjectFacet> implements Project
+public abstract class AbstractProject extends AbstractFaceted<ProjectFacet, Project> implements Project
 {
    private final Map<Object, Object> attributes = new HashMap<Object, Object>();
 

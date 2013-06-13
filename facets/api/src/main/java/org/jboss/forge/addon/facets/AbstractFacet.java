@@ -12,21 +12,22 @@ package org.jboss.forge.addon.facets;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>, <a
  *         href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>
  */
-public abstract class AbstractFacet<FACETED extends Faceted<?>> implements Facet<FACETED>, MutableOrigin<FACETED>
+public abstract class AbstractFacet<FACETEDTYPE extends Faceted<FACETTYPE, FACETEDTYPE>, FACETTYPE extends Facet<FACETEDTYPE, FACETTYPE>>
+         implements Facet<FACETEDTYPE, FACETTYPE>, MutableOrigin<FACETEDTYPE, FACETTYPE>
 {
-   protected FACETED origin;
+   protected FACETEDTYPE origin;
 
    @Override
-   public FACETED getOrigin()
+   public FACETEDTYPE getOrigin()
    {
       return this.origin;
    }
 
    /**
-    * Set the <FACETED> origin on which this {@link Facet} will operate.
+    * Set the <FACETEDTYPE> origin on which this {@link Facet} will operate.
     */
    @Override
-   public void setOrigin(FACETED origin)
+   public void setOrigin(FACETEDTYPE origin)
    {
       this.origin = origin;
    }
@@ -58,7 +59,7 @@ public abstract class AbstractFacet<FACETED extends Faceted<?>> implements Facet
          return false;
       if (getClass() != obj.getClass())
          return false;
-      AbstractFacet<?> other = (AbstractFacet<?>) obj;
+      AbstractFacet<?, ?> other = (AbstractFacet<?, ?>) obj;
       if (origin == null)
       {
          if (other.origin != null)

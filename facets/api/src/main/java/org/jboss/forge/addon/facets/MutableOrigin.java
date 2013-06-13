@@ -11,12 +11,13 @@ package org.jboss.forge.addon.facets;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface MutableOrigin<FACETED extends Faceted<?>> extends Facet<FACETED>
+public interface MutableOrigin<FACETEDTYPE extends Faceted<FACETTYPE, FACETEDTYPE>, FACETTYPE extends Facet<FACETEDTYPE, FACETTYPE>>
+         extends Facet<FACETEDTYPE, FACETTYPE>
 {
    /**
     * Set the {@link Faceted} origin to which this {@link Facet} belongs. Should only be set once, since each
     * {@link Faceted} instance receives its own unique instance of all compatible {@link Facet} types. This method must
     * be called before invoking any operations on {@code this} instance.
     */
-   void setOrigin(FACETED origin);
+   void setOrigin(FACETEDTYPE origin);
 }

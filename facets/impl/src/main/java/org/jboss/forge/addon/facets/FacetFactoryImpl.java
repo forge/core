@@ -6,11 +6,14 @@
  */
 package org.jboss.forge.addon.facets;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.addon.facets.constraints.FacetInspector;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.ExportedInstance;
 import org.jboss.forge.furnace.util.Assert;
@@ -24,33 +27,36 @@ public class FacetFactoryImpl implements FacetFactory
    private AddonRegistry registry;
 
    @Override
-   public <FACET extends Facet<E>, E extends Faceted<? extends Facet<?>>> FACET create(Class<FACET> type)
+   public <FACETEDTYPE extends Faceted<FACETTYPE, FACETEDTYPE>, FACETTYPE extends Facet<FACETEDTYPE, FACETTYPE>> FACETTYPE create(
+            Class<FACETTYPE> type)
    {
       Assert.notNull(type, "Facet type must not be null.");
-      ExportedInstance<FACET> instance = registry.getExportedInstance(type);
+      ExportedInstance<FACETTYPE> instance = registry.getExportedInstance(type);
       if (instance == null)
          throw new FacetNotFoundException("Could not find Facet of type [" + type.getName() + "]");
       return instance.get();
    }
 
    @Override
-   public <FACET extends Facet<E>, E extends Faceted<? extends Facet<?>>> FACET create(Class<FACET> type, E origin)
+   public <FACETEDTYPE extends Faceted<FACETTYPE, FACETEDTYPE>, FACETTYPE extends Facet<FACETEDTYPE, FACETTYPE>> FACETTYPE create(
+            Class<FACETTYPE> type, FACETEDTYPE origin)
    {
-      FACET instance = create(type);
+      FACETTYPE instance = create(type);
       if (instance instanceof MutableOrigin)
-         ((MutableOrigin<E>) instance).setOrigin(origin);
+         ((MutableOrigin<FACETEDTYPE, FACETTYPE>) instance).setOrigin(origin);
       else
          throw new IllegalArgumentException("Facet type [" + type.getName() + "] does not support setting an origin.");
       return instance;
    }
 
    @Override
-   public <FACET extends Facet<E>, E extends Faceted<? extends Facet<?>>> Iterable<FACET> createFacets(Class<FACET> type)
+   public <FACETEDTYPE extends Faceted<FACETTYPE, FACETEDTYPE>, FACETTYPE extends Facet<FACETEDTYPE, FACETTYPE>> Iterable<FACETTYPE> createFacets(
+            Class<FACETTYPE> type)
    {
       Assert.notNull(type, "Facet type must not be null.");
-      Set<ExportedInstance<FACET>> instances = registry.getExportedInstances(type);
-      Set<FACET> facets = new HashSet<FACET>(instances.size());
-      for (ExportedInstance<FACET> instance : instances)
+      Set<ExportedInstance<FACETTYPE>> instances = registry.getExportedInstances(type);
+      Set<FACETTYPE> facets = new HashSet<FACETTYPE>(instances.size());
+      for (ExportedInstance<FACETTYPE> instance : instances)
       {
          facets.add(instance.get());
       }
@@ -58,14 +64,14 @@ public class FacetFactoryImpl implements FacetFactory
    }
 
    @Override
-   public <FACET extends Facet<E>, E extends Faceted<? extends Facet<?>>> Iterable<FACET> createFacets(
-            Class<FACET> type, E origin)
+   public <FACETEDTYPE extends Faceted<FACETTYPE, FACETEDTYPE>, FACETTYPE extends Facet<FACETEDTYPE, FACETTYPE>> Iterable<FACETTYPE> createFacets(
+            Class<FACETTYPE> type, FACETEDTYPE origin)
    {
-      Iterable<FACET> facets = createFacets(type);
-      for (FACET facet : facets)
+      Iterable<FACETTYPE> facets = createFacets(type);
+      for (FACETTYPE facet : facets)
       {
          if (facet instanceof MutableOrigin)
-            ((MutableOrigin<E>) facet).setOrigin(origin);
+            ((MutableOrigin<FACETEDTYPE, FACETTYPE>) facet).setOrigin(origin);
          else
             throw new IllegalArgumentException("Facet type [" + type.getName()
                      + "] does not support setting an origin.");
@@ -74,10 +80,11 @@ public class FacetFactoryImpl implements FacetFactory
    }
 
    @Override
-   public <FACET extends Facet<E>, E extends Faceted<? extends Facet<?>>> FACET install(Class<FACET> type, E origin)
+   public <FACETEDTYPE extends Faceted<FACETTYPE, FACETEDTYPE>, FACETTYPE extends Facet<FACETEDTYPE, FACETTYPE>> FACETTYPE install(
+            Class<FACETTYPE> type, FACETEDTYPE origin)
             throws FacetNotFoundException
    {
-      FACET facet = create(type, origin);
+      FACETTYPE facet = create(type, origin);
       if (!install(facet, origin))
       {
          throw new IllegalStateException("Facet type [" + type.getName()
@@ -90,30 +97,46 @@ public class FacetFactoryImpl implements FacetFactory
 
    @Override
    @SuppressWarnings("unchecked")
-   public <FACET extends Facet<E>, E extends Faceted<? extends Facet<?>>> boolean install(FACET facet, E origin)
+   public <FACETEDTYPE extends Faceted<FACETTYPE, FACETEDTYPE>, FACETTYPE extends Facet<FACETEDTYPE, FACETTYPE>> boolean install(
+            FACETTYPE facet, FACETEDTYPE origin)
    {
       Assert.notNull(origin, "Facet instance must not be null.");
       Assert.notNull(origin, "Origin instance must not be null.");
 
-      Faceted<FACET> faceted = (Faceted<FACET>) origin;
+      Faceted<FACETTYPE, FACETEDTYPE> faceted = (Faceted<FACETTYPE, FACETEDTYPE>) origin;
       Assert.isTrue(faceted instanceof MutableFaceted, "The given origin [" + origin + "] is not an instance of ["
                + MutableFaceted.class.getName() + "], and does not support " + Facet.class.getSimpleName()
                + " installation.");
 
       if (facet.getOrigin() == null && facet instanceof MutableOrigin)
       {
-         ((MutableOrigin<E>) facet).setOrigin(origin);
+         ((MutableOrigin<FACETEDTYPE, FACETTYPE>) facet).setOrigin(origin);
       }
 
       Assert.isTrue(origin.equals(facet.getOrigin()), "The given origin [" + origin + "] is not an instance of ["
                + MutableFaceted.class.getName() + "], and does not support " + Facet.class.getSimpleName()
                + " installation.");
 
+      List<Class<FACETTYPE>> requiredFacets = FacetInspector.getRequiredFacets(facet.getClass());
+      List<Class<FACETTYPE>> facetsToInstall = new ArrayList<Class<FACETTYPE>>();
+      for (Class<FACETTYPE> requirement : requiredFacets)
+      {
+         if (!origin.hasFacet(requirement))
+         {
+            facetsToInstall.add(requirement);
+         }
+      }
+
+      for (Class<FACETTYPE> requirement : facetsToInstall)
+      {
+         install(requirement, origin);
+      }
+
       boolean result = false;
-      if (faceted.hasFacet((Class<? extends FACET>) facet.getClass()))
+      if (faceted.hasFacet((Class<? extends FACETTYPE>) facet.getClass()))
          result = true;
       else
-         result = ((MutableFaceted<FACET>) faceted).install(facet);
+         result = ((MutableFaceted<FACETEDTYPE, FACETTYPE>) faceted).install(facet);
       return result;
    }
 }

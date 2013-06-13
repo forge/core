@@ -13,7 +13,8 @@ package org.jboss.forge.addon.facets;
  * 
  * @param <FACETTYPE> the base {@link Facet} type supported by this {@link MutableFaceted} type.
  */
-public interface MutableFaceted<FACETTYPE extends Facet<?>> extends Faceted<FACETTYPE>
+public interface MutableFaceted<FACETEDTYPE extends Faceted<FACETTYPE, FACETEDTYPE>, FACETTYPE extends Facet<FACETEDTYPE, FACETTYPE>>
+         extends Faceted<FACETTYPE, FACETEDTYPE>
 {
    /**
     * Install and register the given {@link Facet}. If the facet is already installed, return true.
