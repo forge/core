@@ -21,8 +21,8 @@ public interface FacetFactory
     * 
     * @throws FacetNotFoundException if no implementation can be found.
     */
-   public <FACETEDTYPE extends Faceted<FACETTYPE, FACETEDTYPE>, FACETTYPE extends Facet<FACETEDTYPE, FACETTYPE>> FACETTYPE create(
-            Class<FACETTYPE> type) throws FacetNotFoundException;
+   public <FACET extends Facet<E>, E extends Faceted<? extends Facet<?>>> FACET create(Class<FACET> type)
+            throws FacetNotFoundException;
 
    /**
     * Create a new instance of the given {@link Facet} type. If it is also an instance of {@link MutableOrigin}, then
@@ -30,23 +30,22 @@ public interface FacetFactory
     * 
     * @throws FacetNotFoundException if no implementation can be found.
     */
-   public <FACETEDTYPE extends Faceted<FACETTYPE, FACETEDTYPE>, FACETTYPE extends Facet<FACETEDTYPE, FACETTYPE>> FACETTYPE create(
-            Class<FACETTYPE> type, FACETEDTYPE origin) throws FacetNotFoundException;
+   public <FACET extends Facet<E>, E extends Faceted<? extends Facet<?>>> FACET create(Class<FACET> type, E origin)
+            throws FacetNotFoundException;
 
    /**
     * Get all instantiable {@link Facet} instances implementing the given {@link Facet} type. Returns an empty
     * {@link Iterable} if no matching implementations can be found.
     */
-   public <FACETEDTYPE extends Faceted<FACETTYPE, FACETEDTYPE>, FACETTYPE extends Facet<FACETEDTYPE, FACETTYPE>> Iterable<FACETTYPE> createFacets(
-            Class<FACETTYPE> type);
+   public <FACET extends Facet<E>, E extends Faceted<? extends Facet<?>>> Iterable<FACET> createFacets(Class<FACET> type);
 
    /**
     * Get all instantiable {@link Facet} instances implementing the given {@link Facet} type. If it is also an instance
     * of {@link MutableOrigin}, then use the given origin instance as the {@link Facet#getOrigin()}. Returns an empty
     * {@link Iterable} if no matching implementations can be found.
     */
-   public <FACETEDTYPE extends Faceted<FACETTYPE, FACETEDTYPE>, FACETTYPE extends Facet<FACETEDTYPE, FACETTYPE>> Iterable<FACETTYPE> createFacets(
-            Class<FACETTYPE> type, FACETEDTYPE origin);
+   public <FACET extends Facet<E>, E extends Faceted<? extends Facet<?>>> Iterable<FACET> createFacets(
+            Class<FACET> type, E origin);
 
    /**
     * Create and installs a new instance of the given {@link Facet} type.
@@ -56,8 +55,8 @@ public interface FacetFactory
     * @throws FacetNotFoundException if no implementation can be found.
     * @throws IllegalStateException if installation failed
     */
-   public <FACETEDTYPE extends Faceted<FACETTYPE, FACETEDTYPE>, FACETTYPE extends Facet<FACETEDTYPE, FACETTYPE>> FACETTYPE install(
-            Class<FACETTYPE> type, FACETEDTYPE origin) throws FacetNotFoundException;
+   public <FACET extends Facet<E>, E extends Faceted<? extends Facet<?>>> FACET install(Class<FACET> type, E origin)
+            throws FacetNotFoundException;
 
    /**
     * Install a {@link Facet} instance into the given origin.
@@ -68,6 +67,6 @@ public interface FacetFactory
     * 
     * @return <code>true</code> if installation was successful; <code>false</code> if installation failed.
     */
-   public <FACETEDTYPE extends Faceted<FACETTYPE, FACETEDTYPE>, FACETTYPE extends Facet<FACETEDTYPE, FACETTYPE>> boolean install(
-            FACETTYPE facet, FACETEDTYPE origin) throws IllegalArgumentException;
+   public <FACET extends Facet<E>, E extends Faceted<? extends Facet<?>>> boolean install(FACET facet, E origin)
+            throws IllegalArgumentException;
 }

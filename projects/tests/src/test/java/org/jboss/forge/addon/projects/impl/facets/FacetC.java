@@ -1,9 +1,9 @@
 package org.jboss.forge.addon.projects.impl.facets;
 
 import org.jboss.forge.addon.facets.AbstractFacet;
-import org.jboss.forge.addon.facets.constraints.RequiresFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
+import org.jboss.forge.addon.projects.facets.RequiresFacet;
 
 @RequiresFacet(FacetB.class)
 public class FacetC extends AbstractFacet<Project> implements ProjectFacet

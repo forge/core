@@ -12,7 +12,7 @@ package org.jboss.forge.addon.facets;
  * 
  * @param <FACETTYPE> the base {@link Facet} type supported by this {@link Faceted} type.
  */
-public interface Faceted<FACETTYPE extends Facet<FACETEDTYPE, FACETTYPE>, FACETEDTYPE extends Faceted<FACETTYPE, FACETEDTYPE>>
+public interface Faceted<FACETTYPE extends Facet<?>>
 {
    /**
     * Return true if a facet of the given type is present; return false otherwise.

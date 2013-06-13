@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.facets.constraints;
+package org.jboss.forge.addon.projects.facets;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -13,11 +13,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.jboss.forge.addon.facets.Facet;
-import org.jboss.forge.addon.facets.Faceted;
+import org.jboss.forge.addon.projects.ProjectFacet;
 
 /**
- * The annotated element requires the given {@link Facet} types.
+ * The annotated element requires the given {@link ProjectFacet}
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -27,7 +26,7 @@ import org.jboss.forge.addon.facets.Faceted;
 public @interface RequiresFacet
 {
    /**
-    * The facets required by the annotated {@link Faceted}
+    * The facets required by the annotated {@link ProjectFacet}
     */
-   Class<? extends Facet<?, ?>>[] value();
+   Class<? extends ProjectFacet>[] value();
 }

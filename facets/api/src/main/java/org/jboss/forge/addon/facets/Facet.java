@@ -12,7 +12,7 @@ import org.jboss.forge.furnace.services.Exported;
  * A {@link Facet} is an access point to common functionality, file manipulations, descriptors that extend a
  * {@link Faceted} instance. When implementing this interface, consider extending {@link AbstractFacet} for convenience.
  * 
- * @param <FACETEDTYPE> The {@link Faceted} type to which this {@link Facet} may attach.
+ * @param <FACETED> The {@link Faceted} type to which this {@link Facet} may attach.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>
@@ -20,12 +20,12 @@ import org.jboss.forge.furnace.services.Exported;
  * @see {@link AbstractFacet}
  */
 @Exported
-public interface Facet<FACETEDTYPE extends Faceted<FACETTYPE, FACETEDTYPE>, FACETTYPE extends Facet<FACETEDTYPE, FACETTYPE>>
+public interface Facet<FACETED extends Faceted<?>>
 {
    /**
     * Return the {@link Faceted} instance on which this {@link Facet} operates.
     */
-   FACETEDTYPE getOrigin();
+   FACETED getOrigin();
 
    /**
     * Perform necessary setup for this {@link Facet} to be considered installed in the given {@link Faceted} instance.

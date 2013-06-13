@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.jboss.forge.addon.facets.Facet;
 import org.jboss.forge.addon.projects.ProjectFacet;
+import org.jboss.forge.addon.projects.facets.RequiresFacet;
 import org.jboss.forge.addon.projects.facets.RequiresPackagingType;
 import org.jboss.forge.furnace.util.Annotations;
 
@@ -23,6 +24,29 @@ import org.jboss.forge.furnace.util.Annotations;
  */
 public abstract class ConstraintInspector
 {
+   /**
+    * Inspect the given {@link Class} for any dependencies to {@link ProjectFacet} types.
+    */
+   @SuppressWarnings("unchecked")
+   public static List<Class<? extends ProjectFacet>> getFacetDependencies(final Class<? extends ProjectFacet> type)
+   {
+      List<Class<? extends ProjectFacet>> result = new ArrayList<Class<? extends ProjectFacet>>();
+
+      if (Annotations.isAnnotationPresent(type, RequiresFacet.class))
+      {
+         RequiresFacet requires = Annotations.getAnnotation(type, RequiresFacet.class);
+         if (requires.value() != null)
+         {
+            for (Class<? extends Facet<?>> facetType : requires.value())
+            {
+               if (ProjectFacet.class.isAssignableFrom(facetType))
+                  result.add((Class<? extends ProjectFacet>) facetType);
+            }
+         }
+      }
+
+      return result;
+   }
 
    /**
     * Inspect the given {@link Class} for any dependencies to packaging types.
