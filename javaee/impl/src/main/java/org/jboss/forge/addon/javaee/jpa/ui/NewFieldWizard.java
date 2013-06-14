@@ -18,7 +18,7 @@ import javax.persistence.Entity;
 import javax.persistence.Lob;
 
 import org.jboss.forge.addon.convert.Converter;
-import org.jboss.forge.addon.javaee.jpa.PersistenceOperations;
+import org.jboss.forge.addon.javaee.jpa.FieldOperations;
 import org.jboss.forge.addon.javaee.ui.AbstractProjectUICommand;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
@@ -68,7 +68,7 @@ public class NewFieldWizard extends AbstractProjectUICommand implements UIWizard
    private UIInput<Boolean> lob;
 
    @Inject
-   private PersistenceOperations persistenceOperations;
+   private FieldOperations fieldOperations;
 
    @Override
    public Metadata getMetadata()
@@ -167,20 +167,20 @@ public class NewFieldWizard extends AbstractProjectUICommand implements UIWizard
          if (primitive.getValue())
          {
             String fieldType = getPrimitiveTypeFor(typeName.getValue());
-            field = persistenceOperations.addFieldTo(targetEntity, fieldType, fieldNameStr,
+            field = fieldOperations.addFieldTo(targetEntity, fieldType, fieldNameStr,
                      Column.class.getCanonicalName());
          }
          else if (lob.getValue())
          {
             String fieldType = byte[].class.getName();
-            field = persistenceOperations.addFieldTo(targetEntity, fieldType, fieldNameStr, Lob.class.getName());
+            field = fieldOperations.addFieldTo(targetEntity, fieldType, fieldNameStr, Lob.class.getName());
             // TODO: Specify column length somewhere ?
             field.addAnnotation(Column.class).setLiteralValue("length", String.valueOf(Integer.MAX_VALUE));
          }
          else
          {
             String fieldType = typeName.getValue();
-            field = persistenceOperations.addFieldTo(targetEntity, fieldType, fieldNameStr,
+            field = fieldOperations.addFieldTo(targetEntity, fieldType, fieldNameStr,
                      Column.class.getCanonicalName());
          }
          Project selectedProject = getSelectedProject(context);

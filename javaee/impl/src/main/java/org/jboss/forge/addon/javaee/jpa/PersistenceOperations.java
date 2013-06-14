@@ -9,19 +9,13 @@ package org.jboss.forge.addon.javaee.jpa;
 
 import java.io.FileNotFoundException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
 
 import javax.inject.Inject;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
 import javax.persistence.Version;
 
 import org.jboss.forge.addon.facets.FacetFactory;
@@ -34,13 +28,9 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
-import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.parser.java.Annotation;
 import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.parser.java.util.Refactory;
-import org.jboss.forge.parser.java.util.Types;
 import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnit;
 import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnitTransactionType;
@@ -177,168 +167,5 @@ public class PersistenceOperations
       path = path.replace(".", "/") + ".java";
       JavaResource target = sourceDir.getChildOfType(JavaResource.class, path);
       return target;
-   }
-
-   /**
-    * 
-    * @param project
-    * @param targetEntity
-    * @param fieldType
-    * @param fieldName
-    * @param annotation
-    * @return
-    * @throws FileNotFoundException
-    */
-   public Field<JavaClass> addFieldTo(final JavaClass targetEntity, final String fieldType,
-            final String fieldName, String... annotations)
-            throws FileNotFoundException
-   {
-      if (targetEntity.hasField(fieldName))
-      {
-         throw new IllegalStateException("Entity already has a field named [" + fieldName + "]");
-      }
-      Field<JavaClass> field = targetEntity.addField();
-      field.setName(fieldName).setPrivate().setType(fieldType);
-      for (String annotation : annotations)
-      {
-         field.addAnnotation(annotation);
-      }
-
-      String fieldTypeForImport = Types.stripArray(fieldType);
-      if (!fieldTypeForImport.startsWith("java.lang.") && fieldTypeForImport.contains(".")
-               && !fieldTypeForImport.equals(targetEntity.getCanonicalName()))
-      {
-         targetEntity.addImport(fieldTypeForImport);
-      }
-      Refactory.createGetterAndSetter(targetEntity, field);
-      updateToString(targetEntity);
-      return field;
-   }
-
-   public void newOneToOneRelationship(Project project, final JavaResource resource, final String fieldName,
-            final String fieldType,
-            final String inverseFieldName,
-            final FetchType fetchType, final boolean required,
-            final Iterable<CascadeType> cascadeTypes) throws FileNotFoundException
-   {
-      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
-      JavaClass entityClass = getJavaClassFrom(resource);
-      JavaClass fieldEntityClass;
-      if (areTypesSame(fieldType, entityClass.getCanonicalName()))
-      {
-         fieldEntityClass = entityClass;
-      }
-      else
-      {
-         fieldEntityClass = findEntity(project, fieldType);
-      }
-
-      Field<JavaClass> localField = addFieldTo(entityClass, fieldEntityClass.getName(), fieldName,
-               OneToOne.class.getName());
-      Annotation<JavaClass> annotation = localField.getAnnotation(OneToOne.class);
-      if ((inverseFieldName != null) && !inverseFieldName.isEmpty())
-      {
-         Field<JavaClass> inverseField = addFieldTo(fieldEntityClass, entityClass.getName(), inverseFieldName,
-                  OneToOne.class.getName());
-         inverseField.getAnnotation(OneToOne.class).setStringValue("mappedBy", localField.getName());
-         java.saveJavaSource(fieldEntityClass);
-      }
-
-      if (fetchType != null)
-      {
-         annotation.setEnumValue("fetch", fetchType);
-      }
-      if (required)
-      {
-         // Set the optional attribute of @OneToOne/@ManyToOne only when false, since the default value is true
-         annotation.setLiteralValue("optional", "false");
-      }
-      if (cascadeTypes != null)
-      {
-         List<CascadeType> cascades = new ArrayList<CascadeType>();
-         for (CascadeType cascade : cascadeTypes)
-         {
-            cascades.add(cascade);
-         }
-         if (!cascades.isEmpty())
-         {
-            // If all cascades selected, use CascadeType.ALL
-            if (cascades.containsAll(EnumSet.range(CascadeType.PERSIST, CascadeType.DETACH)))
-            {
-               cascades.clear();
-               cascades.add(CascadeType.ALL);
-            }
-            annotation.setEnumArrayValue("cascade", cascades.toArray(new CascadeType[cascades.size()]));
-         }
-      }
-   }
-
-   private void updateToString(final JavaClass targetEntity)
-   {
-      if (targetEntity.hasMethodSignature("toString"))
-      {
-         targetEntity.removeMethod(targetEntity.getMethod("toString"));
-      }
-      List<Field<JavaClass>> fields = new ArrayList<Field<JavaClass>>();
-      for (Field<JavaClass> f : targetEntity.getFields())
-      {
-         if (!"id".equals(f.getName()) && !"version".equals(f.getName())
-                  && (f.getTypeInspector().isPrimitive() || Types.isJavaLang(f.getType())))
-         {
-            fields.add(f);
-         }
-      }
-      if (!fields.isEmpty())
-      {
-         Refactory.createToStringFromFields(targetEntity, fields);
-      }
-   }
-
-   private JavaClass findEntity(Project project, final String entity) throws FileNotFoundException
-   {
-      JavaClass result = null;
-
-      PersistenceFacet scaffold = project.getFacet(PersistenceFacet.class);
-      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
-
-      if (entity != null)
-      {
-         result = getJavaClassFrom(java.getJavaResource(entity));
-         if (result == null)
-         {
-            result = getJavaClassFrom(java.getJavaResource(scaffold.getEntityPackage() + "." + entity));
-         }
-      }
-
-      if (result == null)
-      {
-         throw new FileNotFoundException("Could not locate JavaClass on which to operate.");
-      }
-
-      return result;
-   }
-
-   private JavaClass getJavaClassFrom(final Resource<?> resource) throws FileNotFoundException
-   {
-      JavaSource<?> source = ((JavaResource) resource).getJavaSource();
-      if (!source.isClass())
-      {
-         throw new IllegalStateException("Current resource is not a JavaClass!");
-      }
-      return (JavaClass) source;
-   }
-
-   /**
-    * Checks if the types are the same, removing the ".java" in the end of the string in case it exists
-    * 
-    * @param from
-    * @param to
-    * @return
-    */
-   private boolean areTypesSame(String from, String to)
-   {
-      String fromCompare = from.endsWith(".java") ? from.substring(0, from.length() - 5) : from;
-      String toCompare = to.endsWith(".java") ? to.substring(0, to.length() - 5) : to;
-      return fromCompare.equals(toCompare);
    }
 }
