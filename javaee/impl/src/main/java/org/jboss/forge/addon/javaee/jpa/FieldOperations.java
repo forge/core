@@ -16,6 +16,7 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.FetchType;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -224,6 +225,146 @@ public class FieldOperations
       }
       addCascade(cascadeTypes, manyAnnotation);
       java.saveJavaSource(many);
+   }
+
+   public void newOneToManyRelationship(
+            final Project project,
+            final JavaResource resource,
+            final String fieldName,
+            final String fieldType,
+            final String inverseFieldName,
+            final FetchType fetchType,
+            final boolean required,
+            final Iterable<CascadeType> cascadeTypes)
+            throws FileNotFoundException
+   {
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+      JavaClass one = getJavaClassFrom(resource);
+
+      JavaClass many;
+      // Field type may end with .java
+      if (areTypesSame(fieldType, one.getCanonicalName()))
+      {
+         many = one;
+      }
+      else
+      {
+         many = findEntity(project, fieldType);
+         one.addImport(many.getQualifiedName());
+      }
+
+      if (one.hasField(fieldName))
+      {
+         throw new IllegalStateException("Entity [" + one.getCanonicalName() + "] already has a field named ["
+                  + fieldName + "]");
+      }
+      if (!Strings.isNullOrEmpty(inverseFieldName) && many.hasField(inverseFieldName))
+      {
+         throw new IllegalStateException("Entity [" + many.getCanonicalName() + "] already has a field named ["
+                  + inverseFieldName + "]");
+      }
+
+      one.addImport(Set.class);
+      one.addImport(HashSet.class);
+
+      Field<JavaClass> oneField = one.addField("private Set<" + many.getName() + "> " + fieldName + "= new HashSet<"
+               + many.getName() + ">();");
+      Annotation<JavaClass> annotation = oneField.addAnnotation(OneToMany.class);
+      Refactory.createGetterAndSetter(one, oneField);
+
+      if (!Strings.isNullOrEmpty(inverseFieldName))
+      {
+         annotation.setStringValue("mappedBy", inverseFieldName);
+         annotation.setLiteralValue("cascade", "CascadeType.ALL");
+         annotation.getOrigin().addImport(CascadeType.class);
+         annotation.setLiteralValue("orphanRemoval", "true");
+         if (!many.getCanonicalName().equals(one.getCanonicalName()))
+         {
+            many.addImport(one);
+         }
+         Field<JavaClass> manyField = many.addField("private " + one.getName() + " " + inverseFieldName + ";");
+         manyField.addAnnotation(ManyToOne.class);
+         Refactory.createGetterAndSetter(many, manyField);
+         java.saveJavaSource(many);
+      }
+
+      if (fetchType != null && fetchType != FetchType.LAZY)
+      {
+         annotation.setEnumValue("fetch", fetchType);
+      }
+      addCascade(cascadeTypes, annotation);
+      java.saveJavaSource(one);
+   }
+
+   public void newManyToManyRelationship(
+            final Project project,
+            final JavaResource resource,
+            final String fieldName,
+            final String fieldType,
+            final String inverseFieldName,
+            final FetchType fetchType,
+            final boolean required,
+            final Iterable<CascadeType> cascadeTypes) throws FileNotFoundException
+   {
+
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+      JavaClass entity = getJavaClassFrom(resource);
+      JavaClass otherEntity;
+      if (areTypesSame(fieldType, entity.getCanonicalName()))
+      {
+         otherEntity = entity;
+      }
+      else
+      {
+         otherEntity = findEntity(project, fieldType);
+         entity.addImport(otherEntity.getQualifiedName());
+      }
+
+      if (entity.hasField(fieldName))
+      {
+         throw new IllegalStateException("Entity [" + entity.getCanonicalName() + "] already has a field named ["
+                  + fieldName + "]");
+      }
+      if (!Strings.isNullOrEmpty(inverseFieldName) && otherEntity.hasField(inverseFieldName))
+      {
+         throw new IllegalStateException("Entity [" + otherEntity.getCanonicalName()
+                  + "] already has a field named ["
+                  + inverseFieldName + "]");
+      }
+
+      entity.addImport(Set.class);
+      entity.addImport(HashSet.class);
+      Field<JavaClass> field = entity.addField("private Set<" + otherEntity.getName() + "> " + fieldName
+               + "= new HashSet<"
+               + otherEntity.getName() + ">();");
+      Annotation<JavaClass> annotation = field.addAnnotation(ManyToMany.class);
+      Refactory.createGetterAndSetter(entity, field);
+
+      if (!Strings.isNullOrEmpty(inverseFieldName))
+      {
+         annotation.setStringValue("mappedBy", inverseFieldName);
+
+         otherEntity.addImport(Set.class);
+         otherEntity.addImport(HashSet.class);
+         if (!otherEntity.getCanonicalName().equals(entity.getCanonicalName()))
+         {
+            otherEntity.addImport(entity.getQualifiedName());
+         }
+         Field<JavaClass> otherField = otherEntity.addField("private Set<" + entity.getName() + "> "
+                  + inverseFieldName
+                  + "= new HashSet<" + entity.getName() + ">();");
+         otherField.addAnnotation(ManyToMany.class);
+         Refactory.createGetterAndSetter(otherEntity, otherField);
+
+         java.saveJavaSource(otherEntity);
+      }
+
+      if (fetchType != null)
+      {
+         annotation.setEnumValue("fetch", fetchType);
+      }
+      addCascade(cascadeTypes, annotation);
+      java.saveJavaSource(entity);
    }
 
    private void updateToString(final JavaClass targetEntity)

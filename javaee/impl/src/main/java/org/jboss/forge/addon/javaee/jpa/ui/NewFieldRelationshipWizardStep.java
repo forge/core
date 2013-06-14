@@ -86,14 +86,16 @@ public class NewFieldRelationshipWizardStep extends AbstractProjectUICommand imp
       switch (relationship)
       {
       case MANY_TO_MANY:
-         // persistenceOperations.addManyToMany(context);
+         persistenceOperations.newManyToManyRelationship(project, entity, fieldName, fieldType,
+                  inverseFieldName.getValue(), fetchType.getValue(), required.getValue(), cascadeType.getValue());
          break;
       case MANY_TO_ONE:
          persistenceOperations.newManyToOneRelationship(project, entity, fieldName, fieldType,
                   inverseFieldName.getValue(), fetchType.getValue(), required.getValue(), cascadeType.getValue());
          break;
       case ONE_TO_MANY:
-         // persistenceOperations.addOneToMany(context);
+         persistenceOperations.newOneToManyRelationship(project, entity, fieldName, fieldType,
+                  inverseFieldName.getValue(), fetchType.getValue(), required.getValue(), cascadeType.getValue());
          break;
       case ONE_TO_ONE:
          persistenceOperations.newOneToOneRelationship(project, entity, fieldName, fieldType,
@@ -102,7 +104,7 @@ public class NewFieldRelationshipWizardStep extends AbstractProjectUICommand imp
       default:
          throw new UnsupportedOperationException("Relationship " + relationship + " is not supported");
       }
-      return Results.success();
+      return Results.success("Relationship " + relationship.getDescription() + " created");
    }
 
    @Override
