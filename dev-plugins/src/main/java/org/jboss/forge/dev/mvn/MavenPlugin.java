@@ -15,6 +15,8 @@ import javax.inject.Inject;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.jboss.forge.maven.MavenCoreFacet;
+import org.jboss.forge.maven.plugins.MavenPluginBuilder;
+import org.jboss.forge.maven.plugins.MavenPluginInstaller;
 import org.jboss.forge.parser.java.util.Assert;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.Dependency;
@@ -51,16 +53,18 @@ public class MavenPlugin implements Plugin
    private final ProjectFactory factory;
    private final ResourceFactory resources;
    private final BeanManager manager;
+   private final MavenPluginInstaller mavenPluginInstaller;
 
    @Inject
    public MavenPlugin(final Shell shell, final Project project, final ProjectFactory factory,
-            final ResourceFactory resources, BeanManager manager)
+            final ResourceFactory resources, final MavenPluginInstaller mavenPluginInstaller, BeanManager manager)
    {
       this.shell = shell;
       this.project = project;
       this.factory = factory;
       this.resources = resources;
       this.manager = manager;
+      this.mavenPluginInstaller = mavenPluginInstaller;
    }
 
    @Command("set-groupid")
@@ -106,7 +110,6 @@ public class MavenPlugin implements Plugin
       out.println("Set version [ " + version + " ]");
    }
 
-
    @Command("set-name")
    public void setName(final PipeOut out,
             @Option(description = "the new name; for example: \"UI-Layer\"") final String name)
@@ -121,7 +124,7 @@ public class MavenPlugin implements Plugin
 
       out.println("Set name [ " + name + " ]");
    }
-   
+
    @Command("set-parent")
    public void setParent(
             @Option(name = "parentId",
@@ -254,8 +257,35 @@ public class MavenPlugin implements Plugin
    @Command("update")
    public void updateDependencies()
    {
-      if(!new VersionUpdater(project, shell, this.factory, manager).update()) {
+      if (!new VersionUpdater(project, shell, this.factory, manager).update())
+      {
          shell.println("No nothing to update");
+      }
+   }
+
+   @Command("add-plugin")
+   public void addPlugin(
+            @Option(description = "dependency identifier of plugin, ex: \"org.jboss.forge:forge-maven-plugin:1.0.0.Final\"",
+                     required = true) final Dependency gav,
+            final PipeOut out)
+   {
+      MavenPluginBuilder plugin = MavenPluginBuilder.create().setDependency(gav);
+      if (!mavenPluginInstaller.isInstalled(project, plugin))
+      {
+         mavenPluginInstaller.install(project, plugin);
+      }
+   }
+
+   @Command("add-managed-plugin")
+   public void addManagedPlugin(
+            @Option(description = "dependency identifier of plugin, ex: \"org.jboss.forge:forge-maven-plugin:1.0.0.Final\"",
+                     required = true) final Dependency gav,
+            final PipeOut out)
+   {
+      MavenPluginBuilder plugin = MavenPluginBuilder.create().setDependency(gav);
+      if (!mavenPluginInstaller.isInstalled(project, plugin))
+      {
+         mavenPluginInstaller.installManaged(project, plugin);
       }
    }
 }
