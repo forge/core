@@ -359,7 +359,7 @@ public class FieldOperations
          java.saveJavaSource(otherEntity);
       }
 
-      if (fetchType != null)
+      if (fetchType != null && fetchType != FetchType.LAZY)
       {
          annotation.setEnumValue("fetch", fetchType);
       }
