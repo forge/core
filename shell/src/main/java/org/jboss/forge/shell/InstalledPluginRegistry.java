@@ -28,7 +28,7 @@ import org.jboss.forge.shell.util.Streams;
 
 /**
  * Used to perform {@link Plugin} installation/registration operations.
- *
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:koen.aers@gmail.com">Koen Aers</a>
  */
@@ -93,13 +93,16 @@ public class InstalledPluginRegistry
       return result;
    }
 
+   @SuppressWarnings("resource")
    public static List<PluginEntry> list()
    {
       List<PluginEntry> result = new ArrayList<PluginEntry>();
       File registryFile = getRegistryFile();
+      FileInputStream stream = null;
       try
       {
-         Node installed = XMLParser.parse(new FileInputStream(registryFile));
+         stream = new FileInputStream(registryFile);
+         Node installed = XMLParser.parse(stream);
          List<Node> list = installed.get("plugin");
          for (Node plugin : list)
          {
@@ -117,6 +120,10 @@ public class InstalledPluginRegistry
       catch (FileNotFoundException e)
       {
          // this is OK, no plugins installed
+      }
+      finally
+      {
+         Streams.closeQuietly(stream);
       }
       return result;
    }
@@ -191,6 +198,7 @@ public class InstalledPluginRegistry
       }
    }
 
+   @SuppressWarnings("resource")
    public static void remove(final PluginEntry plugin)
    {
       if (plugin == null)
@@ -201,9 +209,11 @@ public class InstalledPluginRegistry
       File registryFile = getRegistryFile();
       if (registryFile.exists())
       {
+         FileInputStream stream = null;
          try
          {
-            Node installed = XMLParser.parse(new FileInputStream(registryFile));
+            stream = new FileInputStream(registryFile);
+            Node installed = XMLParser.parse(stream);
 
             Node child = installed.getSingle("plugin@" + ATTR_NAME + "=" + plugin.getName() + "&"
                      + ATTR_API_VERSION
@@ -215,9 +225,14 @@ public class InstalledPluginRegistry
          {
             // already removed
          }
+         finally
+         {
+            Streams.closeQuietly(stream);
+         }
       }
    }
 
+   @SuppressWarnings("resource")
    public static PluginEntry get(final PluginEntry plugin)
    {
       if (plugin == null)
@@ -228,9 +243,11 @@ public class InstalledPluginRegistry
       File registryFile = getRegistryFile();
       if (registryFile.exists())
       {
+         FileInputStream stream = null;
          try
          {
-            Node installed = XMLParser.parse(new FileInputStream(registryFile));
+            stream = new FileInputStream(registryFile);
+            Node installed = XMLParser.parse(stream);
 
             List<Node> children = installed.get("plugin@" + ATTR_NAME + "=" + plugin.getName());
             for (Node child : children)
@@ -254,6 +271,10 @@ public class InstalledPluginRegistry
          catch (FileNotFoundException e)
          {
             // already removed
+         }
+         finally
+         {
+            Streams.closeQuietly(stream);
          }
       }
 
@@ -283,11 +304,11 @@ public class InstalledPluginRegistry
 
    /**
     * This method only returns true if:
-    *
+    * 
     * - The major version of pluginApiVersion is equal to the major version of runtimeVersion AND
-    *
+    * 
     * - The minor version of pluginApiVersion is less or equal to the minor version of runtimeVersion
-    *
+    * 
     * @param runtimeVersion a version in the format x.x.x
     * @param pluginApiVersion a version in the format x.x.x
     * @return
