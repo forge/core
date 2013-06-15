@@ -60,6 +60,7 @@ import org.jboss.forge.shell.events.PluginInstalled;
 import org.jboss.forge.shell.events.PluginRemoved;
 import org.jboss.forge.shell.events.ReinitializeEnvironment;
 import org.jboss.forge.shell.exceptions.Abort;
+import org.jboss.forge.shell.exceptions.AbortedException;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.Command;
 import org.jboss.forge.shell.plugins.DefaultCommand;
@@ -230,6 +231,7 @@ public class ForgePlugin implements Plugin
          if (plugin.isGit())
          {
             installFromGit(plugin.getGitRepo(), Strings.isNullOrEmpty(version) ? plugin.getGitRef() : version, null,
+                     false,
                      out);
          }
          else
@@ -262,30 +264,51 @@ public class ForgePlugin implements Plugin
    public void installFromGit(
             @Option(description = "git repo", required = true) final String gitRepo,
             @Option(name = "ref", description = "branch or tag to build") final String refName,
-            @Option(name = "checkoutDir", description = "directory in which to clone the repository") final Resource<?> checkoutDir,
+            @Option(name = "checkoutDir", description = "directory in which to clone the repository") final Resource<?> checkoutResource,
+            @Option(name = "keepSources", description = "keep the sources after checking out", defaultValue = "false", flagOnly = true) final boolean keepSources,
             final PipeOut out) throws Exception
    {
-
-      DirectoryResource workspace = shell.getCurrentDirectory().createTempResource();
+      DirectoryResource buildDir;
+      if (checkoutResource != null)
+      {
+         if (!(checkoutResource instanceof FileResource<?>))
+         {
+            throw new IllegalArgumentException("Checkout dir must be a directory path");
+         }
+         FileResource<?> checkoutDir = (FileResource<?>) checkoutResource;
+         // Resource already exists
+         if (checkoutDir.exists())
+         {
+            // Check if it is already a directory
+            if (!checkoutDir.isDirectory())
+            {
+               throw new RuntimeException("Resource " + checkoutDir.getFullyQualifiedName()
+                        + " is not a valid directory.");
+            }
+            buildDir = checkoutDir.reify(DirectoryResource.class);
+            if (!shell.promptBoolean("Directory " + buildDir.getFullyQualifiedName()
+                     + " already exists. Do you want to overwrite?", false))
+            {
+               throw new AbortedException("Directory " + buildDir.getFullyQualifiedName()
+                        + " already exists");
+            }
+            buildDir.delete(true);
+            buildDir.mkdirs();
+         }
+         else
+         {
+            // Resource does not exist. Create it
+            checkoutDir.mkdirs();
+            buildDir = checkoutDir.reify(DirectoryResource.class);
+         }
+      }
+      else
+      {
+         buildDir = shell.getCurrentDirectory().createTempResource();
+      }
 
       try
       {
-         DirectoryResource buildDir = workspace.getChildDirectory("repo");
-         if (checkoutDir != null)
-         {
-            if (!checkoutDir.exists() && (checkoutDir instanceof FileResource<?>))
-            {
-               ((FileResource<?>) checkoutDir).mkdirs();
-            }
-            buildDir = checkoutDir.reify(DirectoryResource.class);
-         }
-
-         if (buildDir.exists())
-         {
-            buildDir.delete(true);
-            buildDir.mkdir();
-         }
-
          ShellMessages.info(out, "Checking out plugin source files to [" + buildDir.getFullyQualifiedName()
                   + "] via 'git'");
          Git repo = GitUtils.clone(buildDir, gitRepo);
@@ -391,12 +414,20 @@ public class ForgePlugin implements Plugin
       }
       finally
       {
-         if (checkoutDir != null)
+         if (buildDir != null)
          {
-            ShellMessages.info(out,
-                     "Cleaning up temp workspace [" + workspace.getFullyQualifiedName()
-                              + "]");
-            workspace.delete(true);
+            if (keepSources)
+            {
+               ShellMessages.info(out,
+                        "Sources are kept in [" + buildDir.getFullyQualifiedName() + "]");
+            }
+            else
+            {
+               ShellMessages.info(out,
+                        "Cleaning up temp workspace [" + buildDir.getFullyQualifiedName()
+                                 + "]");
+               buildDir.delete(true);
+            }
          }
       }
 
@@ -464,7 +495,7 @@ public class ForgePlugin implements Plugin
 
    /**
     * Returns the latest available distribution
-    *
+    * 
     * @return
     */
    private Dependency getLatestAvailableDistribution()
@@ -493,7 +524,7 @@ public class ForgePlugin implements Plugin
 
    /**
     * Unpacks the dependency info a specific folder
-    *
+    * 
     * @param dependency
     */
    private void updateForge(Dependency dependency) throws IOException
