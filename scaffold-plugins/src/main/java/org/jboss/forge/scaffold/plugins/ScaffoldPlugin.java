@@ -175,9 +175,9 @@ public class ScaffoldPlugin implements Plugin
          if (!generatedResources.isEmpty())
          {
             generatedEvent.fire(new ScaffoldGeneratedResources(provider, prepareResources(generatedResources)));
+            ShellMessages.success(writer, "Generated UI for [" + entity.getQualifiedName() + "]");
          }
 
-         ShellMessages.success(writer, "Generated UI for [" + entity.getQualifiedName() + "]");
       }
 
    }
