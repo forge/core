@@ -9,6 +9,8 @@ package org.jboss.forge.shell.command;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import javax.enterprise.context.spi.CreationalContext;
@@ -22,6 +24,7 @@ import org.jboss.forge.shell.constraint.ConstraintException;
 import org.jboss.forge.shell.events.CommandExecuted;
 import org.jboss.forge.shell.events.CommandExecuted.Status;
 import org.jboss.forge.shell.events.CommandMissing;
+import org.jboss.forge.shell.events.CommandVetoed;
 import org.jboss.forge.shell.events.PreCommandExecution;
 import org.jboss.forge.shell.exceptions.CommandExecutionException;
 import org.jboss.forge.shell.plugins.AliasLiteral;
@@ -92,7 +95,7 @@ public class Execution
                {
                   paramStaging[i] = Enums.valueOf(parmTypes[i], parameterArray[i]);
                }
-               else if(parmTypes[i].isArray() && parmTypes[i].getComponentType().isEnum())
+               else if (parmTypes[i].isArray() && parmTypes[i].getComponentType().isEnum())
                {
                   Object[] array = (Object[]) parameterArray[i];
                   if (array != null)
@@ -143,11 +146,13 @@ public class Execution
 
                Status status = Status.FAILURE;
                ClassLoader current = Thread.currentThread().getContextClassLoader();
+               Map<Object, Object> executionContext = new HashMap<Object, Object>();
                boolean vetoed = false;
                try
                {
                   Thread.currentThread().setContextClassLoader(plugin.getClass().getClassLoader());
-                  PreCommandExecution event = new PreCommandExecution(command, originalStatement, parameterArray);
+                  PreCommandExecution event = new PreCommandExecution(command, originalStatement, parameterArray,
+                           executionContext);
                   manager.fireEvent(event, new Annotation[0]);
                   vetoed = event.isVetoed();
                   if (!vetoed)
@@ -163,11 +168,16 @@ public class Execution
                finally
                {
                   Thread.currentThread().setContextClassLoader(current);
-                  if (!vetoed)
+                  if (vetoed)
                   {
-                     manager.fireEvent(new CommandExecuted(status, command, originalStatement, parameterArray),
-                              new Annotation[0]);
+                     manager.fireEvent(new CommandVetoed(command, parameterArray, originalStatement, executionContext));
                   }
+                  else
+                  {
+                     manager.fireEvent(new CommandExecuted(status, command, originalStatement, parameterArray,
+                              executionContext));
+                  }
+                  executionContext.clear();
                }
             }
          }

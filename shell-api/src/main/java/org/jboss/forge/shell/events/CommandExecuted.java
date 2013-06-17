@@ -7,14 +7,16 @@
 
 package org.jboss.forge.shell.events;
 
+import java.util.Map;
+
 import org.jboss.forge.shell.command.CommandMetadata;
 
 /**
  * Fired after a plugin/command has been executed and has finished processing.
- *
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:koen.aers@gmail.com">Koen Aers</a>
- *
+ * 
  */
 public final class CommandExecuted
 {
@@ -27,18 +29,16 @@ public final class CommandExecuted
    private CommandMetadata command;
    private Object[] parameters;
    private String originalStatement;
-
-   public CommandExecuted()
-   {
-   }
+   private Map<Object, Object> context;
 
    public CommandExecuted(final Status status, final CommandMetadata command, final String originalStatement,
-            Object[] parameters)
+            Object[] parameters, Map<Object, Object> context)
    {
       this.status = status;
       this.command = command;
       this.originalStatement = originalStatement;
       this.parameters = parameters;
+      this.context = context;
    }
 
    public Status getStatus()
@@ -59,5 +59,10 @@ public final class CommandExecuted
    public String getOriginalStatement()
    {
       return originalStatement;
+   }
+
+   public Map<Object, Object> getContext()
+   {
+      return context;
    }
 }
