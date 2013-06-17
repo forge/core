@@ -4,7 +4,7 @@
     <parent>
         <artifactId>forge-parent</artifactId>
         <groupId>org.jboss.forge</groupId>
-        <version>1.3.1.Final</version>
+        <version>1.3.2-SNAPSHOT</version>
     </parent>
     <artifactId>forge-scaffoldx-api</artifactId>
     <name>Forge - Scaffolding from X API</name>
