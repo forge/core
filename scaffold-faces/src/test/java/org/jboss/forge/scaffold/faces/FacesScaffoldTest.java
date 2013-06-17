@@ -22,6 +22,7 @@ import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.scaffold.faces.metawidget.widgetbuilder.EntityWidgetBuilder;
 import org.jboss.forge.scaffold.faces.metawidget.widgetbuilder.EntityWidgetBuilderConfig;
+import org.jboss.forge.scaffold.util.ScaffoldUtil;
 import org.jboss.forge.shell.exceptions.PluginExecutionException;
 import org.jboss.forge.shell.util.Streams;
 import org.jboss.forge.spec.javaee.ServletFacet;
@@ -115,6 +116,28 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
       queueInputLines("", "");
       getShell().execute("scaffold from-entity");
+   }
+   
+   @Test()
+   public void testCannotGenerateFromImmutableEntity() throws Exception
+   {
+      Project project = setupScaffoldProject();
+      
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+      ScaffoldUtil
+               .createOrOverwrite(
+                        null,
+                        java.getJavaResource("org/jboss/forge/scaffold/faces/ImmutableClass.java"),
+                        getClass()
+                                 .getResourceAsStream(
+                                          "/org/jboss/forge/scaffold/faces/ImmutableClass.java"),
+                        true);
+
+      queueInputLines("", "");
+      getShell().execute("scaffold from-entity org.jboss.forge.scaffold.faces.ImmutableClass");
+      
+      String commandOutput = getOutput();
+      Assert.assertTrue(commandOutput.contains("Skipped non-@Entity Java resource [org.jboss.forge.scaffold.faces.ImmutableClass]"));
    }
 
    @Test
@@ -1104,7 +1127,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
 
       CompositeWidgetBuilder<StaticXmlWidget, StaticXmlMetawidget> newWidgetBuilder = new FacesScaffold(null, null,
                null,
-               null).insertRichFacesWidgetBuilder(existingWidgetBuilder);
+               null, null).insertRichFacesWidgetBuilder(existingWidgetBuilder);
 
       assertTrue(newWidgetBuilder.getWidgetBuilders()[0] instanceof EntityWidgetBuilder);
       assertTrue(newWidgetBuilder.getWidgetBuilders()[1] instanceof ReadOnlyWidgetBuilder);
@@ -1115,7 +1138,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
                new CompositeWidgetBuilderConfig<StaticXmlWidget, StaticXmlMetawidget>().setWidgetBuilders(
                         new ReadOnlyWidgetBuilder(), new HtmlWidgetBuilder()));
 
-      newWidgetBuilder = new FacesScaffold(null, null, null, null).insertRichFacesWidgetBuilder(existingWidgetBuilder);
+      newWidgetBuilder = new FacesScaffold(null, null, null, null, null).insertRichFacesWidgetBuilder(existingWidgetBuilder);
 
       assertTrue(newWidgetBuilder.getWidgetBuilders()[0] instanceof ReadOnlyWidgetBuilder);
       assertTrue(newWidgetBuilder.getWidgetBuilders()[1] instanceof RichFacesWidgetBuilder);
@@ -1127,7 +1150,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
                new CompositeWidgetBuilderConfig<StaticXmlWidget, StaticXmlMetawidget>().setWidgetBuilders(
                         new EntityWidgetBuilder(new EntityWidgetBuilderConfig()), new ReadOnlyWidgetBuilder()));
 
-      newWidgetBuilder = new FacesScaffold(null, null, null, null).insertRichFacesWidgetBuilder(existingWidgetBuilder);
+      newWidgetBuilder = new FacesScaffold(null, null, null, null, null).insertRichFacesWidgetBuilder(existingWidgetBuilder);
 
       assertTrue(newWidgetBuilder.getWidgetBuilders()[0] instanceof EntityWidgetBuilder);
       assertTrue(newWidgetBuilder.getWidgetBuilders()[1] instanceof ReadOnlyWidgetBuilder);
@@ -1139,7 +1162,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
                new CompositeWidgetBuilderConfig<StaticXmlWidget, StaticXmlMetawidget>().setWidgetBuilders(
                         new EntityWidgetBuilder(new EntityWidgetBuilderConfig()), new HtmlWidgetBuilder()));
 
-      newWidgetBuilder = new FacesScaffold(null, null, null, null).insertRichFacesWidgetBuilder(existingWidgetBuilder);
+      newWidgetBuilder = new FacesScaffold(null, null, null, null, null).insertRichFacesWidgetBuilder(existingWidgetBuilder);
 
       assertTrue(newWidgetBuilder.getWidgetBuilders()[0] instanceof RichFacesWidgetBuilder);
       assertTrue(newWidgetBuilder.getWidgetBuilders()[1] instanceof EntityWidgetBuilder);
@@ -1152,7 +1175,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
                         new EntityWidgetBuilder(new EntityWidgetBuilderConfig()), new RichFacesWidgetBuilder(),
                         new HtmlWidgetBuilder()));
 
-      newWidgetBuilder = new FacesScaffold(null, null, null, null).insertRichFacesWidgetBuilder(existingWidgetBuilder);
+      newWidgetBuilder = new FacesScaffold(null, null, null, null, null).insertRichFacesWidgetBuilder(existingWidgetBuilder);
 
       assertTrue(newWidgetBuilder.getWidgetBuilders()[0] instanceof EntityWidgetBuilder);
       assertTrue(newWidgetBuilder.getWidgetBuilders()[1] instanceof RichFacesWidgetBuilder);

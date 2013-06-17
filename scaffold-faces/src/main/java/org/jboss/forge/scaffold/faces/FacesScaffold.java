@@ -12,6 +12,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,9 +28,11 @@ import org.jboss.forge.env.Configuration;
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.Annotation;
 import org.jboss.forge.parser.java.Field;
+import org.jboss.forge.parser.java.FieldHolder;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.Member;
 import org.jboss.forge.parser.java.Method;
+import org.jboss.forge.parser.java.Parameter;
 import org.jboss.forge.parser.xml.Node;
 import org.jboss.forge.parser.xml.XMLParser;
 import org.jboss.forge.project.Project;
@@ -49,6 +52,8 @@ import org.jboss.forge.scaffold.ScaffoldProvider;
 import org.jboss.forge.scaffold.TemplateStrategy;
 import org.jboss.forge.scaffold.faces.metawidget.config.ForgeConfigReader;
 import org.jboss.forge.scaffold.util.ScaffoldUtil;
+import org.jboss.forge.shell.ShellMessages;
+import org.jboss.forge.shell.ShellPrintWriter;
 import org.jboss.forge.shell.ShellPrompt;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.Help;
@@ -76,6 +81,7 @@ import org.metawidget.statically.faces.component.html.widgetbuilder.richfaces.Ri
 import org.metawidget.statically.html.widgetbuilder.HtmlTag;
 import org.metawidget.statically.javacode.StaticJavaMetawidget;
 import org.metawidget.util.ArrayUtils;
+import org.metawidget.util.ClassUtils;
 import org.metawidget.util.CollectionUtils;
 import org.metawidget.util.XmlUtils;
 import org.metawidget.util.simple.StringUtils;
@@ -159,6 +165,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    protected StaticJavaMetawidget qbeMetawidget;
 
    private Configuration config;
+   private ShellPrintWriter writer;
 
    //
    // Constructor
@@ -168,12 +175,14 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    public FacesScaffold(final Configuration config,
             final ShellPrompt prompt,
             final TemplateCompiler compiler,
-            final Event<InstallFacets> install)
+            final Event<InstallFacets> install,
+            final ShellPrintWriter writer)
    {
       this.config = config;
       this.prompt = prompt;
       this.compiler = compiler;
       this.install = install;
+      this.writer = writer;
 
       this.resolver = new ClassLoaderTemplateResolver(FacesScaffold.class.getClassLoader());
 
@@ -236,6 +245,12 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    public List<Resource<?>> generateFromEntity(String targetDir, final Resource<?> template, final JavaClass entity,
             final boolean overwrite)
    {
+      if(!isScaffoldable(entity))
+      {
+         ShellMessages.info(writer, "Skipping @Entity Java resource [" + entity.getQualifiedName() + "]");
+         return Collections.emptyList();
+      }
+      
       resetMetaWidgets();
 
       // FORGE-460: setupRichFaces during generateFromEntity, not during setup, as generally 'richfaces setup' is called
@@ -910,5 +925,93 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       context.put("primaryKeyCC", StringUtils.capitalize(pkName));
       context.put("primaryKeyType", pkType);
       context.put("nullablePrimaryKeyType", nullablePkType);
+   }
+   
+   private boolean isScaffoldable(JavaClass entity)
+   {
+      int setterCount = 0;
+      for (Method<JavaClass> method : entity.getMethods())
+      {
+         // Exclude static methods
+
+         if (method.isStatic())
+         {
+            continue;
+         }
+
+         // Get type
+
+         List<Parameter<JavaClass>> parameters = method.getParameters();
+
+         if (parameters.size() != 1)
+         {
+            continue;
+         }
+
+         // Get name
+
+         String setterPropertyName = getSetterProperty(method);
+
+         if (setterPropertyName == null)
+         {
+            continue;
+         }
+
+         Field<?> privateField = getPrivateField((FieldHolder<?>) entity, setterPropertyName);
+
+         if (privateField != null)
+         {
+            // TODO Verify other aspects like whether the property is transient or has a generated value etc.
+            setterCount++;
+         }
+      }
+      if (setterCount > 0)
+      {
+         return true;
+      }
+      else
+      {
+         return false;
+      }
+   }
+   
+   /**
+    * Returns the property name corresponding to the given 'setter' method.
+    * Returns null if the supplied method is not a setter. 
+    *
+    * @param method a single-parametered method. May return non-void (ie. for Fluent interfaces)
+    * @return the property name
+    */
+   private String getSetterProperty(final Method<?> method)
+   {
+      String methodName = method.getName();
+
+      if (!methodName.startsWith(ClassUtils.JAVABEAN_SET_PREFIX))
+      {
+         return null;
+      }
+
+      String propertyName = methodName.substring(ClassUtils.JAVABEAN_SET_PREFIX.length());
+
+      return StringUtils.decapitalize(propertyName);
+   }
+   
+   /**
+    * Gets the private field representing the given <code>propertyName</code> within the given class.
+    *
+    * @return the private Field for this propertyName, or null if no such field (should not throw NoSuchFieldException)
+    */
+   private Field<?> getPrivateField(final FieldHolder<?> fieldHolder, final String propertyName)
+   {
+      Field<?> field = fieldHolder.getField(propertyName);
+
+      // FORGE-402: support fields starting with capital letter
+
+      if (field == null && !Character.isUpperCase(propertyName.charAt( 0 )))
+      {
+         field = fieldHolder.getField(StringUtils.capitalize(propertyName));
+      }
+
+      return field;
    }
 }
