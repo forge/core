@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2013 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -12,24 +12,25 @@ import java.util.Map;
 import org.jboss.forge.shell.command.CommandMetadata;
 
 /**
- * Fired before a plugin/command is executed
+ * Fired when a command is vetoed
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
+ * 
  */
-public final class PreCommandExecution
+public class CommandVetoed
 {
    private CommandMetadata command;
    private Object[] parameters;
    private String originalStatement;
-   private boolean vetoed;
    private Map<Object, Object> context;
 
-   public PreCommandExecution(final CommandMetadata command, final String originalStatement,
-            Object[] parameters, Map<Object, Object> context)
+   public CommandVetoed(CommandMetadata command, Object[] parameters, String originalStatement,
+            Map<Object, Object> context)
    {
+      super();
       this.command = command;
-      this.originalStatement = originalStatement;
       this.parameters = parameters;
+      this.originalStatement = originalStatement;
       this.context = context;
    }
 
@@ -38,9 +39,19 @@ public final class PreCommandExecution
       return command;
    }
 
+   public void setCommand(CommandMetadata command)
+   {
+      this.command = command;
+   }
+
    public Object[] getParameters()
    {
       return parameters;
+   }
+
+   public void setParameters(Object[] parameters)
+   {
+      this.parameters = parameters;
    }
 
    public String getOriginalStatement()
@@ -48,17 +59,9 @@ public final class PreCommandExecution
       return originalStatement;
    }
 
-   public boolean isVetoed()
+   public void setOriginalStatement(String originalStatement)
    {
-      return vetoed;
-   }
-
-   /**
-    * Vetoes the execution of this command
-    */
-   public void veto()
-   {
-      this.vetoed = true;
+      this.originalStatement = originalStatement;
    }
 
    public Map<Object, Object> getContext()
