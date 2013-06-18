@@ -214,7 +214,7 @@ public class ForgePlugin implements Plugin
    @Command(value = "install-plugin",
             help = "Installs a plugin from the configured Forge plugin index")
    public void installFromIndex(
-            @Option(description = "plugin-name", completer = IndexPluginNameCompleter.class) final String pluginName,
+            @Option(description = "plugin-name", completer = IndexPluginNameCompleter.class, required = true) final String pluginName,
             @Option(name = "version", description = "branch, tag, or version to build") final String version,
             final PipeOut out) throws Exception
    {
