@@ -67,7 +67,7 @@
       <version.junit>4.11</version.junit>
       <version.mvel>2.1.0.Final</version.mvel>
       <version.org.jboss.logmanager.jboss-logmanager>1.4.1.Final</version.org.jboss.logmanager.jboss-logmanager>
-      <version.shrinkwrap.resolver>2.0.0-beta-3</version.shrinkwrap.resolver>
+      <version.shrinkwrap.resolver>2.0.0</version.shrinkwrap.resolver>
       <version.slf4j>1.6.1</version.slf4j>
       <version.weld>2.0.1.Final</version.weld>
       <version.weld.spi>2.0.Final</version.weld.spi>
