@@ -20,5 +20,22 @@
          <artifactId>configuration-api</artifactId>
          <scope>provided</scope>
       </dependency>
+      <dependency>
+         <groupId>commons-configuration</groupId>
+         <artifactId>commons-configuration</artifactId>
+         <version>1.9</version>
+      </dependency>
+
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>projects</artifactId>
+         <classifier>forge-addon</classifier>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>environment</artifactId>
+         <classifier>forge-addon</classifier>
+      </dependency>
+
    </dependencies>
 </project>
