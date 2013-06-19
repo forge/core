@@ -6,20 +6,24 @@
  */
 package org.jboss.forge.addon.resource;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
 import org.jboss.forge.addon.facets.Faceted;
+import org.jboss.forge.furnace.addons.Addon;
 
 /**
- * A Resource is an abstraction on top of usable items within a Furnace project. For instance, files, source code, etc.
- * Like a simplified virtual file system, a Resource is represented hierarchically with a parent and children. This
- * allows addons to say, direct access to project elements within a consistent API from files to class members. </br>
- * However, Resource instances should be treated as representative query result objects. A modification to an instance
- * variable in a resource will not be persisted. Rather than thinking of the Resource object as meta-data (which it is
- * not), it is better conceptualized as a wrapper or "view" of an underlying resource such as a File. For this reason,
- * custom Resource types should never implement any sort of static cache and should preferably lazily initialize their
- * data.
+ * A {@link Resource} is an abstraction on top of usable items within a Furnace project. For instance, files, source
+ * code, etc. Like a simplified virtual file system, a Resource is represented hierarchically with a parent and
+ * children. This allows {@link Addon} instances to, for example, directly access to project elements within a
+ * consistent API from files to class members.
+ * <p>
+ * However, resource instances should be treated as representative query result objects. A modification to an instance
+ * variable in a resource will not be persisted. Rather than thinking of the resource object as meta-data (which it is
+ * not), it is better conceptualized as a wrapper or "view" of an underlying resource such as a {@link File}. For this
+ * reason, custom resource types should never implement any sort of static cache and should preferably lazily initialize
+ * their data.
  * 
  * @author Mike Brock
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -29,14 +33,14 @@ public interface Resource<T> extends Faceted<ResourceFacet>
 {
 
    /**
-    * Delete this resource, return true if successful, false if not.
+    * Delete this {@link Resource}, return <code>true</code> if successful, <code>false</code> if not.
     * 
     * @throws UnsupportedOperationException if deleting is not supported by the underlying implementation.
     */
    boolean delete() throws UnsupportedOperationException;
 
    /**
-    * Delete this resource, return true if successful, false if not.
+    * Delete this resource, return <code>true</code> if successful, <code>false</code> if not.
     * 
     * @param recursive if false and this resource both supports recursive deletion and contains children, deletion will
     *           not occur; otherwise, if true, deletion will propagate to all child resources. Implementations may
@@ -46,24 +50,24 @@ public interface Resource<T> extends Faceted<ResourceFacet>
    boolean delete(boolean recursive) throws UnsupportedOperationException;
 
    /**
-    * Return the common name of the resource. If it's a file, for instance, just the file name.
+    * Return the common name of the {@link Resource}. If it's a file, for instance, just the file name.
     * 
-    * @return The name of the resource.
+    * @return The name of the {@link Resource}.
     */
    String getName();
 
    /**
-    * Return the fully qualified name of the resource (if applicable). In the case of a file, this would normally be the
-    * full path name.
+    * Return the fully qualified name of the resource (if applicable). In the case of a {@link File} resource, this
+    * would normally be the full path name.
     * 
     * @return The fully qualified name.
     */
    String getFullyQualifiedName();
 
    /**
-    * Get the parent of the current resource. Returns null if the current resource is the project root.
+    * Get the parent of the current resource. Returns <code>null</code> if the current resource is the filesystem root.
     * 
-    * @return An instance of the resource parent.
+    * @return An instance of the {@link Resource} parent.
     */
    Resource<?> getParent();
 
@@ -71,12 +75,12 @@ public interface Resource<T> extends Faceted<ResourceFacet>
     * Create a new resource instance for the target resource reference of the type that this current resource is.
     * 
     * @param file The target reference to create the resource instance from.
-    * @return A new resource.
+    * @return A new {@link Resource} instance.
     */
    Resource<T> createFrom(T file);
 
    /**
-    * Return a list of child resources of the current resource.
+    * Return a list of child resources of the current resource. (Never null.)
     */
    List<Resource<?>> listResources();
 
@@ -86,7 +90,7 @@ public interface Resource<T> extends Faceted<ResourceFacet>
    List<Resource<?>> listResources(ResourceFilter filter);
 
    /**
-    * Get the underlying object represented by this {@link Resource}
+    * Get the underlying object represented by this {@link Resource}.
     */
    T getUnderlyingResourceObject();
 
@@ -96,24 +100,24 @@ public interface Resource<T> extends Faceted<ResourceFacet>
    InputStream getResourceInputStream();
 
    /**
-    * Get a child of this resource. Returns null if no child by the given name can be found.
+    * Get a child of this resource. Returns <code>null</code> if no child by the given name can be found.
     */
    Resource<?> getChild(String name);
 
    /**
-    * Return true if this {@link Resource} exists, return false if not.
+    * Return <code>true</code> if this {@link Resource} exists, return <code>false</code> if not.
     */
    boolean exists();
 
    /**
     * Ask this {@link Resource} if it is actually a resource of the given type; if it is, return a new reference to the
-    * resource as the given type, otherwise return null.
+    * resource as the given type, otherwise return <code>null</code>.
     */
    <R extends Resource<?>> R reify(final Class<R> type);
 
    /**
     * Return the {@link ResourceFactory} with which this {@link Resource} was created. If no factory was used, return
-    * null.
+    * <code>null</code>.
     */
    ResourceFactory getResourceFactory();
 }

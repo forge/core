@@ -383,7 +383,7 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
    public <R extends Resource<?>> R reify(final Class<R> type)
    {
       Resource<?> result = resourceFactory.create((Class) type, file);
-      if (type.isAssignableFrom(result.getClass()))
+      if (result != null && type.isAssignableFrom(result.getClass()))
       {
          return (R) result;
       }

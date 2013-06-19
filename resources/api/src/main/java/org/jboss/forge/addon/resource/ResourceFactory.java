@@ -18,12 +18,16 @@ public interface ResourceFactory
 {
    /**
     * Create a {@link Resource} of the given type, using the provided underlying resource instance.
+    * 
+    * @return <code>null</code> if no resource could be created for the given object.
     */
    public abstract <E, T extends Resource<E>> T create(Class<T> type, E underlyingResource);
 
    /**
     * Create a {@link Resource} to represent the provided underlying resource. The resource type will be detected
     * automatically.
+    * 
+    * @return <code>null</code> if no resource could be created for the given object.
     */
    public abstract <E> Resource<E> create(E underlyingResource);
 

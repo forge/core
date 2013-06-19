@@ -15,6 +15,7 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.forge.furnace.util.Streams;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
@@ -49,7 +50,8 @@ public class FileResourceGeneratorTest
    @Test
    public void testCreateUnknownFileResource() throws Exception
    {
-      FileResource<?> resource = factory.create(new File(UUID.randomUUID().toString())).reify(FileResource.class);
+      File tempFile = new File(UUID.randomUUID().toString());
+      FileResource<?> resource = factory.create(tempFile).reify(FileResource.class);
       Assert.assertNotNull(resource);
       Assert.assertEquals(FileResourceImpl.class, resource.getClass());
    }
@@ -57,7 +59,8 @@ public class FileResourceGeneratorTest
    @Test
    public void testCreateFileResource() throws Exception
    {
-      File file = File.createTempFile("temp", "file");
+      File file = File.createTempFile("forge", "testCreateFileResource");
+      file.deleteOnExit();
       FileResource<?> resource = factory.create(file).reify(FileResource.class);
       Assert.assertNotNull(resource);
       Assert.assertEquals(FileResourceImpl.class, resource.getClass());
@@ -66,9 +69,10 @@ public class FileResourceGeneratorTest
    @Test
    public void testCreateDirectoryResource() throws Exception
    {
-      File dir = File.createTempFile("temp", "file");
+      File dir = File.createTempFile("forge", "testCreateDirectoryResource");
       dir.delete();
       dir.mkdir();
+      dir.deleteOnExit();
 
       Resource<File> resource = factory.create(dir);
       Assert.assertNotNull(resource);
@@ -79,12 +83,14 @@ public class FileResourceGeneratorTest
    @Test
    public void testCreateDirectoryResourceViaRiefy() throws Exception
    {
-      File dir = File.createTempFile("temp", "file");
+      File dir = File.createTempFile("forge", "testCreateDirectoryResourceViaRiefy");
       dir.delete();
       dir.mkdir();
+      dir.deleteOnExit();
 
       File child = new File(dir, "child");
       child.mkdir();
+      child.deleteOnExit();
 
       DirectoryResource resource = factory.create(dir).reify(DirectoryResource.class);
       Assert.assertNotNull(resource);
@@ -98,7 +104,8 @@ public class FileResourceGeneratorTest
    @Test
    public void testFileSize() throws Exception
    {
-      File file = File.createTempFile("temp", "file");
+      File file = File.createTempFile("forge", "testFileSize");
+      file.deleteOnExit();
 
       FileOutputStream fos = new FileOutputStream(file);
       Streams.write(new ByteArrayInputStream("Test".getBytes()), fos);
@@ -113,19 +120,25 @@ public class FileResourceGeneratorTest
    @Test(expected = UnsupportedOperationException.class)
    public void testDirectorySize() throws Exception
    {
-      File dir = File.createTempFile("temp", "file");
+      File dir = File.createTempFile("forge", "testDirectorySize");
       dir.delete();
       dir.mkdir();
+      dir.deleteOnExit();
       factory.create(dir).reify(DirectoryResource.class).getSize();
    }
 
    @Test
    public void testFileFlags() throws Exception
    {
-      File tempFile = File.createTempFile("temp", "file");
+      File tempFile = File.createTempFile("forge", "testFileFlags");
       tempFile.deleteOnExit();
       FileResource<?> resource = factory.create(tempFile).reify(FileResource.class);
-      Assert.assertFalse(resource.isExecutable());
+
+      if (OperatingSystemUtils.isWindows())
+         Assert.assertTrue(resource.isExecutable());
+      else
+         Assert.assertFalse(resource.isExecutable());
+
       Assert.assertTrue(resource.isReadable());
       Assert.assertTrue(resource.isWritable());
    }
@@ -133,25 +146,39 @@ public class FileResourceGeneratorTest
    @Test
    public void testDirectoryFlags() throws Exception
    {
-      File dir = File.createTempFile("temp", "file");
-      dir.delete();
-      dir.mkdir();
-      dir.deleteOnExit();
-      DirectoryResource resource = factory.create(dir).reify(DirectoryResource.class);
+      File file = File.createTempFile("forge", "testDirectoryFlags");
+      file.delete();
+      DirectoryResource resource = factory.create(file).reify(DirectoryResource.class);
+      resource.deleteOnExit();
+      resource.mkdir();
       Assert.assertFalse(resource.isExecutable());
       Assert.assertFalse(resource.isReadable());
       Assert.assertFalse(resource.isWritable());
    }
 
    @Test
+   public void testReifyDirectoryResourceFailsIfFileExists() throws Exception
+   {
+      File tempFile = File.createTempFile("forge", "testReifyDirectoryResourceFailsIfFileExists");
+      tempFile.deleteOnExit();
+      DirectoryResource reified = factory.create(tempFile).reify(DirectoryResource.class);
+      Assert.assertNull(reified);
+   }
+
+   @Test
    public void testRenameResource() throws Exception
    {
-      File file = File.createTempFile("temp", "file");
-      FileResource<?> resource = factory.create(file).reify(FileResource.class);
-      Assert.assertNotNull(resource);
-      FileResource<?> child = resource.getParent().getChild("testFile").reify(FileResource.class);
-      resource.renameTo(child);
-      Assert.assertEquals(child.getFullyQualifiedName(), resource.getFullyQualifiedName());
+      File tempFile = File.createTempFile("forge", "testRenameResource");
+      tempFile.delete();
+      DirectoryResource tempDir = factory.create(tempFile).reify(DirectoryResource.class);
+      tempDir.deleteOnExit();
+
+      Assert.assertNotNull(tempDir);
+      FileResource<?> child = tempDir.getChild("testFile").reify(FileResource.class);
+      FileResource<?> child2 = tempDir.getChild("testFile2").reify(FileResource.class);
+      Assert.assertTrue(child.createNewFile());
+      Assert.assertTrue(child.renameTo(child2));
+      Assert.assertEquals(child.getFullyQualifiedName(), child2.getFullyQualifiedName());
    }
 
 }

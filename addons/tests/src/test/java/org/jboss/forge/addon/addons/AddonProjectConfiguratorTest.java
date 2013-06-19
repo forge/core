@@ -66,7 +66,7 @@ public class AddonProjectConfiguratorTest
    {
       Project project = projectFactory.createTempProject();
       project.getProjectRoot().deleteOnExit();
-      
+
       MetadataFacet metadataFacet = project.getFacet(MetadataFacet.class);
       metadataFacet.setProjectName("testproject");
       metadataFacet.setProjectVersion("1.0.0-SNAPSHOT");
@@ -236,6 +236,9 @@ public class AddonProjectConfiguratorTest
                ForgeContainerAPIFacet.FORGE_API_DEPENDENCY));
       Assert.assertTrue(testsProject.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(
                ForgeContainerAPIFacet.FORGE_API_DEPENDENCY));
+
+      project.getProjectRoot().delete(true);
+      project.getProjectRoot().deleteOnExit();
    }
 
    @Test
@@ -243,7 +246,7 @@ public class AddonProjectConfiguratorTest
    {
       Project project = projectFactory.createTempProject();
       project.getProjectRoot().deleteOnExit();
-      
+
       MetadataFacet metadataFacet = project.getFacet(MetadataFacet.class);
       metadataFacet.setProjectName("testproject");
       metadataFacet.setProjectVersion("1.0.0-SNAPSHOT");
@@ -262,6 +265,9 @@ public class AddonProjectConfiguratorTest
                ForgeContainerAPIFacet.FORGE_API_DEPENDENCY));
       Assert.assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(
                ForgeContainerAPIFacet.FORGE_API_DEPENDENCY));
+
+      project.getProjectRoot().delete(true);
+      project.getProjectRoot().deleteOnExit();
    }
 
    @Test
@@ -270,7 +276,7 @@ public class AddonProjectConfiguratorTest
    {
       Project project = projectFactory.createTempProject();
       project.getProjectRoot().deleteOnExit();
-      
+
       MetadataFacet metadataFacet = project.getFacet(MetadataFacet.class);
       metadataFacet.setProjectName("testproject");
       metadataFacet.setProjectVersion("1.0.0-SNAPSHOT");
