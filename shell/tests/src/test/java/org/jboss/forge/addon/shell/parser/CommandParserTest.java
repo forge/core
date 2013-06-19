@@ -16,7 +16,6 @@ import org.jboss.forge.addon.shell.FooCommand;
 import org.jboss.forge.addon.shell.ForgeShell;
 import org.jboss.forge.addon.shell.ForgeShellImpl;
 import org.jboss.forge.addon.shell.ShellCommand;
-import org.jboss.forge.addon.shell.TestWizard;
 import org.junit.Test;
 
 /**

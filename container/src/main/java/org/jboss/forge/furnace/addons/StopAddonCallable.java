@@ -52,6 +52,8 @@ public class StopAddonCallable implements Callable<Void>
          }
          finally
          {
+            addon.cancelFuture();
+            addon.reset();
             addon.setDirty(false);
 
             for (AddonDependency dependency : dependencies)

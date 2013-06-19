@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.jar.JarFile;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.forge.furnace.Furnace;
@@ -266,17 +265,8 @@ public class AddonModuleLoader extends ModuleLoader
 
    public void releaseAddonModule(AddonId addonId)
    {
-      try
-      {
-         Module module = loadModule(addonId);
-         unloadModuleLocal(module);
-         moduleJarFileCache.closeJarFileReferences(module.getIdentifier());
-      }
-      catch (ModuleLoadException e)
-      {
-         logger.log(Level.WARNING, "Could not unload Module for Addon [" + addonId.toCoordinates()
-                  + "], future errors may occur.", e);
-      }
+      ModuleIdentifier id = moduleCache.getModuleId(addonId);
+      moduleJarFileCache.closeJarFileReferences(id);
       moduleCache.clear(addonId);
    }
 

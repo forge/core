@@ -42,7 +42,7 @@ class AddonModuleJarFileCache
             }
             catch (IOException e)
             {
-               logger.log(Level.WARNING, "Could not close JAR file reference [" + file + "]", e);
+               logger.log(Level.WARNING, "Could not close JAR file reference [" + file + "] for module [" + id + "]", e);
             }
          }
       }
@@ -53,7 +53,7 @@ class AddonModuleJarFileCache
       Assert.notNull(id, "Module reference must not be null.");
       Assert.notNull(file, "JarFile reference must not be null.");
 
-      System.out.println("Adding JarFile [" + file.getName() + "] for module [" + id + "] ");
+      System.out.println("Adding JarFile [" + file.getName() + "] for module [" + id + "]");
       Set<JarFile> files = map.get(id);
       if (files == null)
       {

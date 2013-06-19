@@ -114,7 +114,8 @@ public final class AddonRunnable implements Runnable
       }
       catch (Throwable e)
       {
-         logger.log(Level.SEVERE, "Failed to start addon " + addon.getId(), e);
+         logger.log(Level.SEVERE, "Failed to start addon [" + addon.getId() + "] with module [" + addon.getModule()
+                  + "]", e);
          throw new RuntimeException(e);
       }
       finally
@@ -157,8 +158,7 @@ public final class AddonRunnable implements Runnable
                   @Override
                   public Object call() throws Exception
                   {
-                     addon.cancelFuture();
-                     addon.reset();
+                     addon.setStatus(AddonStatus.LOADED);
                      return null;
                   }
                };
@@ -214,8 +214,7 @@ public final class AddonRunnable implements Runnable
                      }
                      finally
                      {
-                        addon.cancelFuture();
-                        addon.reset();
+                        addon.setStatus(AddonStatus.LOADED);
                      }
 
                      weld.shutdown();
