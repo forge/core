@@ -48,6 +48,7 @@
                 <inspectionResultProcessors>
                     <array>
                         <generatedValueInspectionResultProcessor xmlns="java:org.jboss.forge.scaffold.faces.metawidget.inspectionresultprocessor"/>
+                        <richfacesCalendarInspectionResultProcessor xmlns="java:org.jboss.forge.scaffold.faces.metawidget.inspectionresultprocessor"/>
                     </array>
                 </inspectionResultProcessors>
                 
