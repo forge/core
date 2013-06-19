@@ -41,6 +41,18 @@
             <artifactId>configuration-impl</artifactId>
             <version>${project.version}</version>
          </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>environment</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>projects</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
+         </dependency>
       </dependencies>
    </dependencyManagement>
 </project>
