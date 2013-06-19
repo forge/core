@@ -72,7 +72,7 @@ public class AddonImpl implements Addon
    public void reset()
    {
       if (getModuleLoader() != null)
-         getModuleLoader().removeFromCache(id);
+         getModuleLoader().releaseAddonModule(id);
       this.state = new Memento();
    }
 
