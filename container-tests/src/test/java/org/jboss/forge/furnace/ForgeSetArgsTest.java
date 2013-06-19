@@ -29,6 +29,7 @@ public class ForgeSetArgsTest
    public void init() throws IOException
    {
       repodir1 = File.createTempFile("forge", "repo1");
+      repodir1.deleteOnExit();
    }
 
    @After

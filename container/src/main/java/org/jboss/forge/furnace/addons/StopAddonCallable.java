@@ -8,11 +8,9 @@ package org.jboss.forge.furnace.addons;
 
 import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.jboss.forge.furnace.addons.AddonDependency;
 import org.jboss.forge.furnace.impl.AddonImpl;
 import org.jboss.forge.furnace.impl.AddonRunnable;
 
@@ -39,6 +37,7 @@ public class StopAddonCallable implements Callable<Void>
    {
       if (addon != null)
       {
+         Set<AddonDependency> dependencies = addon.getDependencies();
          AddonRunnable runnable = ((AddonImpl) addon).getRunnable();
          try
          {
@@ -53,12 +52,6 @@ public class StopAddonCallable implements Callable<Void>
          }
          finally
          {
-            Future<Void> future = addon.getFuture();
-            if (future != null && !future.isDone())
-               future.cancel(true);
-
-            Set<AddonDependency> dependencies = addon.getDependencies();
-            ((AddonImpl) addon).reset();
             addon.setDirty(false);
 
             for (AddonDependency dependency : dependencies)

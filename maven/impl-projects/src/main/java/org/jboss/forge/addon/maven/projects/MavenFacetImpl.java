@@ -159,6 +159,10 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
          request.setResolveDependencies(false);
          return request;
       }
+      catch (RuntimeException e)
+      {
+         throw e;
+      }
       catch (Exception e)
       {
          throw new RuntimeException(
@@ -277,6 +281,10 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
                request.setResolveDependencies(true);
                buildingResult = getBuilder().build(pomFile, request);
                fullBuildingResult = buildingResult;
+            }
+            catch (RuntimeException full)
+            {
+               throw full;
             }
             catch (Exception full)
             {

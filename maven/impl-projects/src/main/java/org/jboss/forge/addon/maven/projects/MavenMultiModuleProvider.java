@@ -6,6 +6,8 @@
  */
 package org.jboss.forge.addon.maven.projects;
 
+import java.io.File;
+
 import javax.inject.Inject;
 
 import org.apache.maven.model.Model;
@@ -39,7 +41,7 @@ public class MavenMultiModuleProvider implements ProjectAssociationProvider
 
          String moduleDir = project.getProjectRoot().getFullyQualifiedName()
                   .substring(parent.getProjectRoot().getFullyQualifiedName().length());
-         if (moduleDir.startsWith("/"))
+         if (moduleDir.startsWith(File.separator))
             moduleDir = moduleDir.substring(1);
 
          parentPom.addModule(moduleDir);
@@ -58,7 +60,7 @@ public class MavenMultiModuleProvider implements ProjectAssociationProvider
 
          // Calculate parent relative path
          String delta = root.getFullyQualifiedName().substring(parentRoot.getFullyQualifiedName().length());
-         String relativePath = delta.replaceAll("/(\\w+)", "../") + "pom.xml";
+         String relativePath = delta.replaceAll("(/|\\\\)(\\w+)", "../") + "pom.xml";
          projectParent.setRelativePath(relativePath);
 
          // Reuse GroupId and version from parent
