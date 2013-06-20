@@ -52,7 +52,7 @@ public class NewFieldWizard extends AbstractProjectUICommand implements UIWizard
    private UIInput<String> fieldName;
 
    @Inject
-   @WithAttributes(label = "Type", description = "The type intended to be used for this field", type = InputType.JAVA_CLASS_PICKER)
+   @WithAttributes(label = "Type", description = "The type intended to be used for this field", type = InputType.JAVA_CLASS_PICKER, required = true)
    private UIInput<String> typeName;
 
    @Inject
