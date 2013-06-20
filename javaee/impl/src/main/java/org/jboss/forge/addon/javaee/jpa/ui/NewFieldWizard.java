@@ -236,7 +236,8 @@ public class NewFieldWizard extends AbstractProjectUICommand implements UIWizard
       context.setAttribute("fieldName", fieldName.getValue());
       context.setAttribute("fieldType", typeName.getValue());
       // XXX: CCE on CLAC when getAttribute of this enum is executed
-      context.setAttribute(RelationshipType.class, relationshipType.getValue().name());
+      context.setAttribute(RelationshipType.class, relationshipType.getValue());
+      context.getAttribute(RelationshipType.class);
       if (relationshipType.getValue() == RelationshipType.BASIC)
       {
          return null;

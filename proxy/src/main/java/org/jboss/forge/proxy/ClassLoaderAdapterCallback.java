@@ -267,26 +267,6 @@ public class ClassLoaderAdapterCallback implements MethodHandler
             parameterValues.add(null);
          else
          {
-            Object unwrappedValue = Proxies.unwrap(parameterValue);
-            Class<?> unwrappedValueType = Proxies.unwrapProxyTypes(unwrappedValue.getClass(), delegateMethod
-                     .getDeclaringClass().getClassLoader(), callingLoader,
-                     delegateLoader, unwrappedValue.getClass()
-                              .getClassLoader());
-
-            ClassLoader valueDelegateLoader = delegateLoader;
-            ClassLoader methodLoader = delegateMethod.getDeclaringClass().getClassLoader();
-            if (methodLoader != null && ClassLoaders.containsClass(methodLoader, unwrappedValueType))
-            {
-               valueDelegateLoader = methodLoader;
-            }
-
-            ClassLoader valueCallingLoader = callingLoader;
-            if (!ClassLoaders.containsClass(callingLoader, unwrappedValueType))
-            {
-               valueCallingLoader = unwrappedValueType.getClassLoader();
-            }
-
-            // If it is a class, use the delegateLoader loaded version
             if (parameterValue instanceof Class<?>)
             {
                Class<?> paramClassValue = (Class<?>) parameterValue;
@@ -314,31 +294,67 @@ public class ClassLoaderAdapterCallback implements MethodHandler
                }
                parameterValues.add(loadedClass);
             }
-            else if (delegateParameterType.isPrimitive())
-            {
-               parameterValues.add(parameterValue);
-            }
-            else if (delegateParameterType.isEnum())
-            {
-               parameterValues.add(enhanceEnum(methodLoader, parameterValue));
-            }
             else
             {
-               final Class<?> parameterType = parameterValue.getClass();
-               if ((!Proxies.isPassthroughType(delegateParameterType) && Proxies.isLanguageType(delegateParameterType))
-                        || !delegateParameterType.isAssignableFrom(parameterType))
+               Object unwrappedValue = Proxies.unwrapOnce(parameterValue);
+               if (delegateParameterType.isAssignableFrom(unwrappedValue.getClass()) 
+                        && !Proxies.isLanguageType(unwrappedValue.getClass()))
                {
-                  Class<?>[] compatibleClassHierarchy = ProxyTypeInspector.getCompatibleClassHierarchy(
-                           valueDelegateLoader, unwrappedValueType);
-                  if (compatibleClassHierarchy.length == 0)
-                     compatibleClassHierarchy = new Class[] { delegateParameterType };
-                  Object delegateParameterValue = enhance(valueDelegateLoader, valueCallingLoader, parameterValue,
-                           compatibleClassHierarchy);
-                  parameterValues.add(delegateParameterValue);
+                  // https://issues.jboss.org/browse/FORGE-939
+                  parameterValues.add(unwrappedValue);
                }
                else
                {
-                  parameterValues.add(Proxies.unwrap(parameterValue));
+                  unwrappedValue = Proxies.unwrap(parameterValue);
+                  Class<?> unwrappedValueType = Proxies.unwrapProxyTypes(unwrappedValue.getClass(), delegateMethod
+                           .getDeclaringClass().getClassLoader(), callingLoader,
+                           delegateLoader, unwrappedValue.getClass()
+                                    .getClassLoader());
+
+                  ClassLoader valueDelegateLoader = delegateLoader;
+                  ClassLoader methodLoader = delegateMethod.getDeclaringClass().getClassLoader();
+                  if (methodLoader != null && ClassLoaders.containsClass(methodLoader, unwrappedValueType))
+                  {
+                     valueDelegateLoader = methodLoader;
+                  }
+
+                  ClassLoader valueCallingLoader = callingLoader;
+                  if (!ClassLoaders.containsClass(callingLoader, unwrappedValueType))
+                  {
+                     valueCallingLoader = unwrappedValueType.getClassLoader();
+                  }
+
+                  // If it is a class, use the delegateLoader loaded version
+
+                  if (delegateParameterType.isPrimitive())
+                  {
+                     parameterValues.add(parameterValue);
+                  }
+                  else if (delegateParameterType.isEnum())
+                  {
+                     parameterValues.add(enhanceEnum(methodLoader, parameterValue));
+                  }
+                  else
+                  {
+                     final Class<?> parameterType = parameterValue.getClass();
+                     if ((!Proxies.isPassthroughType(delegateParameterType) && Proxies
+                              .isLanguageType(delegateParameterType))
+                              || !delegateParameterType.isAssignableFrom(parameterType))
+                     {
+                        Class<?>[] compatibleClassHierarchy = ProxyTypeInspector.getCompatibleClassHierarchy(
+                                 valueDelegateLoader, unwrappedValueType);
+                        if (compatibleClassHierarchy.length == 0)
+                           compatibleClassHierarchy = new Class[] { delegateParameterType };
+                        Object delegateParameterValue = enhance(valueDelegateLoader, valueCallingLoader,
+                                 parameterValue,
+                                 compatibleClassHierarchy);
+                        parameterValues.add(delegateParameterValue);
+                     }
+                     else
+                     {
+                        parameterValues.add(unwrappedValue);
+                     }
+                  }
                }
             }
          }
@@ -389,90 +405,108 @@ public class ClassLoaderAdapterCallback implements MethodHandler
             @Override
             public T call() throws Exception
             {
-               Class<?>[] hierarchy = null;
-               if (types == null || types.length == 0)
-               {
-                  hierarchy = ProxyTypeInspector.getCompatibleClassHierarchy(callingLoader,
-                           Proxies.unwrapProxyTypes(delegateType, callingLoader, delegateLoader));
-                  if (hierarchy == null || hierarchy.length == 0)
-                  {
-                     Logger.getLogger(getClass().getName()).fine(
-                              "Must specify at least one non-final type to enhance for Object: "
-                                       + delegate + " of type " + delegate.getClass());
-
-                     return (T) delegate;
-                  }
-               }
-               else
-                  hierarchy = Arrays.copy(types, new Class<?>[types.length]);
-
-               MethodFilter filter = new MethodFilter()
-               {
-                  @Override
-                  public boolean isHandled(Method method)
-                  {
-                     if (!method.getDeclaringClass().getName().contains("java.lang")
-                              || ("toString".equals(method.getName()) && method.getParameterTypes().length == 0))
-                        return true;
-                     return false;
-                  }
-               };
-
-               Object enhancedResult = null;
-
-               ProxyFactory f = new ProxyFactory();
-
-               f.setUseCache(true);
-
-               Class<?> first = hierarchy[0];
-               if (!first.isInterface())
-               {
-                  f.setSuperclass(Proxies.unwrapProxyTypes(first, callingLoader, delegateLoader));
-                  hierarchy = Arrays.shiftLeft(hierarchy, new Class<?>[hierarchy.length - 1]);
-               }
-
-               int index = Arrays.indexOf(hierarchy, ProxyObject.class);
-               if (index >= 0)
-               {
-                  hierarchy = Arrays.removeElementAtIndex(hierarchy, index);
-               }
-
-               if (!Proxies.isProxyType(first) && !Arrays.contains(hierarchy, ForgeProxy.class))
-                  hierarchy = Arrays.append(hierarchy, ForgeProxy.class);
-
-               if (hierarchy.length > 0)
-                  f.setInterfaces(hierarchy);
-
-               f.setFilter(filter);
-               Class<?> c = f.createClass();
-               enhancedResult = c.newInstance();
-
                try
                {
-                  ((ProxyObject) enhancedResult)
-                           .setHandler(new ClassLoaderAdapterCallback(callingLoader, delegateLoader, delegate));
-               }
-               catch (ClassCastException e)
-               {
-                  Class<?>[] interfaces = enhancedResult.getClass().getInterfaces();
-                  for (Class<?> javassistType : interfaces)
+                  Class<?>[] hierarchy = null;
+                  if (types == null || types.length == 0)
                   {
-                     if (ProxyObject.class.getName().equals(javassistType.getName()))
+                     hierarchy = ProxyTypeInspector.getCompatibleClassHierarchy(callingLoader,
+                              Proxies.unwrapProxyTypes(delegateType, callingLoader, delegateLoader));
+                     if (hierarchy == null || hierarchy.length == 0)
                      {
-                        String callbackClassName = ClassLoaderAdapterCallback.class.getName();
-                        ClassLoader javassistLoader = javassistType.getClassLoader();
-                        Constructor<?> callbackConstructor = javassistLoader.loadClass(callbackClassName)
-                                 .getConstructors()[0];
+                        Logger.getLogger(getClass().getName()).fine(
+                                 "Must specify at least one non-final type to enhance for Object: "
+                                          + delegate + " of type " + delegate.getClass());
 
-                        Class<?> typeArgument = javassistLoader.loadClass(MethodHandler.class.getName());
-                        Method setHandlerMethod = javassistType.getMethod("setHandler", typeArgument);
-                        setHandlerMethod.invoke(enhancedResult,
-                                 callbackConstructor.newInstance(callingLoader, delegateLoader, delegate));
+                        return (T) delegate;
                      }
                   }
-               }
+                  else
+                     hierarchy = Arrays.copy(types, new Class<?>[types.length]);
 
-               return (T) enhancedResult;
+                  MethodFilter filter = new MethodFilter()
+                  {
+                     @Override
+                     public boolean isHandled(Method method)
+                     {
+                        if (!method.getDeclaringClass().getName().contains("java.lang")
+                                 || ("toString".equals(method.getName()) && method.getParameterTypes().length == 0))
+                           return true;
+                        return false;
+                     }
+                  };
+
+                  Object enhancedResult = null;
+
+                  ProxyFactory f = new ProxyFactory()
+                  {
+                     @Override
+                     protected ClassLoader getClassLoader0()
+                     {
+                        ClassLoader result = callingLoader;
+                        if (!ClassLoaders.containsClass(result, ProxyObject.class))
+                           result = super.getClassLoader0();
+                        return result;
+                     };
+                  };
+
+                  f.setUseCache(true);
+
+                  Class<?> first = hierarchy[0];
+                  if (!first.isInterface())
+                  {
+                     f.setSuperclass(Proxies.unwrapProxyTypes(first, callingLoader, delegateLoader));
+                     hierarchy = Arrays.shiftLeft(hierarchy, new Class<?>[hierarchy.length - 1]);
+                  }
+
+                  int index = Arrays.indexOf(hierarchy, ProxyObject.class);
+                  if (index >= 0)
+                  {
+                     hierarchy = Arrays.removeElementAtIndex(hierarchy, index);
+                  }
+
+                  if (!Proxies.isProxyType(first) && !Arrays.contains(hierarchy, ForgeProxy.class))
+                     hierarchy = Arrays.append(hierarchy, ForgeProxy.class);
+
+                  if (hierarchy.length > 0)
+                     f.setInterfaces(hierarchy);
+
+                  f.setFilter(filter);
+                  Class<?> c = f.createClass();
+                  enhancedResult = c.newInstance();
+
+                  try
+                  {
+                     ((ProxyObject) enhancedResult)
+                              .setHandler(new ClassLoaderAdapterCallback(callingLoader, delegateLoader, delegate));
+                  }
+                  catch (ClassCastException e)
+                  {
+                     Class<?>[] interfaces = enhancedResult.getClass().getInterfaces();
+                     for (Class<?> javassistType : interfaces)
+                     {
+                        if (ProxyObject.class.getName().equals(javassistType.getName()))
+                        {
+                           String callbackClassName = ClassLoaderAdapterCallback.class.getName();
+                           ClassLoader javassistLoader = javassistType.getClassLoader();
+                           Constructor<?> callbackConstructor = javassistLoader.loadClass(callbackClassName)
+                                    .getConstructors()[0];
+
+                           Class<?> typeArgument = javassistLoader.loadClass(MethodHandler.class.getName());
+                           Method setHandlerMethod = javassistType.getMethod("setHandler", typeArgument);
+                           setHandlerMethod.invoke(enhancedResult,
+                                    callbackConstructor.newInstance(callingLoader, delegateLoader, delegate));
+                        }
+                     }
+                  }
+
+                  return (T) enhancedResult;
+               }
+               catch (Exception e)
+               {
+                  // Added try/catch for debug breakpoint purposes only.
+                  throw e;
+               }
             }
 
          });
