@@ -32,6 +32,7 @@ public class ConfigurationTest
 
    @Deployment
    @Dependencies({
+            @Addon(name = "org.jboss.forge.addon:maven", version = "2.0.0-SNAPSHOT"),
             @Addon(name = "org.jboss.forge.addon:projects", version = "2.0.0-SNAPSHOT"),
             @Addon(name = "org.jboss.forge.addon:configuration", version = "2.0.0-SNAPSHOT")
    })
@@ -41,6 +42,8 @@ public class ConfigurationTest
                .create(ForgeArchive.class)
                .addBeansXML()
                .addAsAddonDependencies(
+                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:maven",
+                                 "2.0.0-SNAPSHOT")),
                         AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:projects",
                                  "2.0.0-SNAPSHOT")),
                         AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:configuration",
