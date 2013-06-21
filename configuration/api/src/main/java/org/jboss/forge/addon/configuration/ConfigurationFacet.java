@@ -20,8 +20,6 @@ public interface ConfigurationFacet extends ProjectFacet
 {
    /**
     * Returns the current configuration for this project.
-    * 
-    * @return null if this facet is not installed
     */
    public Configuration getConfiguration();
 
