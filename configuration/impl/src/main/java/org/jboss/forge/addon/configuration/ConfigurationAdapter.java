@@ -6,33 +6,23 @@
  */
 package org.jboss.forge.addon.configuration;
 
-import java.lang.annotation.Annotation;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-import javax.enterprise.context.Dependent;
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.Vetoed;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-@Dependent
-@ConfigAdapterQualifier
+@Vetoed
 public class ConfigurationAdapter implements Configuration
 {
    private ScopedConfigurationAdapter parent;
    private org.apache.commons.configuration.Configuration delegate;
-   private BeanManager bm;
-
-   public ConfigurationAdapter()
-   {
-   }
 
    public ConfigurationAdapter(final ScopedConfigurationAdapter parent,
             final org.apache.commons.configuration.Configuration delegate)
@@ -41,30 +31,9 @@ public class ConfigurationAdapter implements Configuration
       this.delegate = delegate;
    }
 
-   public ConfigurationAdapter(org.apache.commons.configuration.Configuration delegate)
-   {
-      this.parent = null;
-      this.delegate = delegate;
-   }
-
    public org.apache.commons.configuration.Configuration getDelegate()
    {
       return delegate;
-   }
-
-   public void setParent(ScopedConfigurationAdapter parent)
-   {
-      this.parent = parent;
-   }
-
-   public void setDelegate(org.apache.commons.configuration.Configuration delegate)
-   {
-      this.delegate = delegate;
-   }
-
-   public void setBeanManager(BeanManager bm)
-   {
-      this.bm = bm;
    }
 
    @Override
@@ -80,28 +49,7 @@ public class ConfigurationAdapter implements Configuration
    @Override
    public Configuration subset(final String prefix)
    {
-      ConfigurationAdapter adapter = getContextualInstance(bm, ConfigurationAdapter.class,
-               new ConfigAdapterQualifierLiteral());
-      adapter.setParent(parent);
-      adapter.setDelegate(delegate.subset(prefix));
-      adapter.setBeanManager(bm);
-      return adapter;
-   }
-
-   @SuppressWarnings("unchecked")
-   private static <T> T getContextualInstance(final BeanManager manager, final Class<T> type, Annotation... qualifiers)
-   {
-      T result = null;
-      Bean<T> bean = (Bean<T>) manager.resolve(manager.getBeans(type, qualifiers));
-      if (bean != null)
-      {
-         CreationalContext<T> context = manager.createCreationalContext(bean);
-         if (context != null)
-         {
-            result = (T) manager.getReference(bean, type, context);
-         }
-      }
-      return result;
+      return new ConfigurationAdapter(parent, delegate.subset(prefix));
    }
 
    @Override

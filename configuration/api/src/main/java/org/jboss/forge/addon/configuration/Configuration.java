@@ -13,10 +13,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
+import org.jboss.forge.furnace.services.Exported;
+
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author Commons Configuration team
  */
+@Exported
 public interface Configuration
 {
    /**

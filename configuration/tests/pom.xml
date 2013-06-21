@@ -20,18 +20,15 @@
          <artifactId>configuration</artifactId>
          <classifier>forge-addon</classifier>
       </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.test</groupId>
+         <artifactId>forge-test-harness</artifactId>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.test</groupId>
+         <artifactId>arquillian-forge-classpath</artifactId>
+         <scope>test</scope>
+      </dependency>
    </dependencies>
-   <build>
-      <plugins>
-         <plugin>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>2.3.2</version>
-            <configuration>
-               <source>1.6</source>
-               <target>1.6</target>
-               <encoding>UTF-8</encoding>
-            </configuration>
-         </plugin>
-      </plugins>
-   </build>
 </project>
