@@ -98,8 +98,8 @@ public class FacetFactoryImpl implements FacetFactory
    public <FACETEDTYPE extends Faceted<?>, FACETTYPE extends Facet<FACETEDTYPE>> boolean install(
             FACETEDTYPE origin, FACETTYPE facet)
    {
-      Assert.notNull(origin, "Facet instance must not be null.");
       Assert.notNull(origin, "Origin instance must not be null.");
+      Assert.notNull(facet, "Facet instance must not be null.");
 
       Set<Class<FACETTYPE>> seen = new LinkedHashSet<Class<FACETTYPE>>();
       return install(seen, origin, facet);
