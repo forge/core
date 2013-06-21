@@ -38,7 +38,7 @@ public class ConfigurationFacetImpl extends AbstractFacet<Project> implements Co
    @Override
    public FileResource<?> getConfigLocation()
    {
-      return getOrigin().getProjectRoot().getChild(".forge_settings").reify(FileResource.class);
+      return getFaceted().getProjectRoot().getChild(".forge_settings").reify(FileResource.class);
    }
 
    @Override
