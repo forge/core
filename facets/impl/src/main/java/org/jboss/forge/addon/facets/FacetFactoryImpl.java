@@ -8,6 +8,7 @@ package org.jboss.forge.addon.facets;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -94,13 +95,21 @@ public class FacetFactoryImpl implements FacetFactory
    }
 
    @Override
-   @SuppressWarnings({ "unchecked", "rawtypes" })
    public <FACETEDTYPE extends Faceted<?>, FACETTYPE extends Facet<FACETEDTYPE>> boolean install(
             FACETEDTYPE origin, FACETTYPE facet)
    {
       Assert.notNull(origin, "Facet instance must not be null.");
       Assert.notNull(origin, "Origin instance must not be null.");
 
+      Set<Class<FACETTYPE>> seen = new LinkedHashSet<Class<FACETTYPE>>();
+      return install(seen, origin, facet);
+   }
+
+   @SuppressWarnings({ "rawtypes", "unchecked" })
+   private <FACETEDTYPE extends Faceted<?>, FACETTYPE extends Facet<FACETEDTYPE>> boolean install(
+            Set<Class<FACETTYPE>> seen, FACETEDTYPE origin, FACETTYPE facet)
+   {
+      seen.add((Class<FACETTYPE>) facet.getClass());
       Faceted<FACETTYPE> faceted = (Faceted<FACETTYPE>) origin;
       Assert.isTrue(faceted instanceof MutableFaceted, "The given origin [" + origin + "] is not an instance of ["
                + MutableFaceted.class.getName() + "], and does not support " + Facet.class.getSimpleName()
@@ -115,20 +124,31 @@ public class FacetFactoryImpl implements FacetFactory
                + MutableFaceted.class.getName() + "], and does not support " + Facet.class.getSimpleName()
                + " installation.");
 
-      List<Class<FACETTYPE>> requiredFacets = FacetInspector.getRequiredFacets(facet.getClass());
+      Set<Class<FACETTYPE>> requiredFacets = FacetInspector.getRequiredFacets(facet.getClass());
+
       List<Class<FACETTYPE>> facetsToInstall = new ArrayList<Class<FACETTYPE>>();
-      for (Class<FACETTYPE> requirement : requiredFacets)
+      for (Class<FACETTYPE> requirementType : requiredFacets)
       {
-         if (!origin.hasFacet((Class) requirement) && !requirement.isAssignableFrom(facet.getClass()))
+         boolean isSeen = false;
+         for (Class<FACETTYPE> seenType : seen)
          {
-            facetsToInstall.add(requirement);
+            if (requirementType.isAssignableFrom(seenType))
+            {
+               isSeen = true;
+               break;
+            }
+         }
+
+         if (!isSeen && !origin.hasFacet((Class) requirementType))
+         {
+            facetsToInstall.add(requirementType);
          }
       }
 
-      for (Class<FACETTYPE> requirement : facetsToInstall)
+      for (Class<FACETTYPE> requirementType : facetsToInstall)
       {
-         if (!faceted.hasFacet(requirement))
-            install(origin, requirement);
+         FACETTYPE requirement = create(requirementType, origin);
+         install(seen, origin, requirement);
       }
 
       boolean result = false;
@@ -138,4 +158,5 @@ public class FacetFactoryImpl implements FacetFactory
          result = ((MutableFaceted<FACETTYPE>) faceted).install(facet);
       return result;
    }
+
 }

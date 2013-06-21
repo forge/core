@@ -7,8 +7,8 @@
 
 package org.jboss.forge.addon.facets.constraints;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import org.jboss.forge.addon.facets.Facet;
 import org.jboss.forge.addon.facets.Faceted;
@@ -25,10 +25,10 @@ public abstract class FacetInspector
     * Inspect the given {@link Class} for any dependencies to {@link Facet} types.
     */
    @SuppressWarnings("unchecked")
-   public static <FACETEDTYPE extends Faceted<FACETTYPE>, FACETTYPE extends Facet<FACETEDTYPE>> List<Class<FACETTYPE>> getRequiredFacets(
+   public static <FACETEDTYPE extends Faceted<FACETTYPE>, FACETTYPE extends Facet<FACETEDTYPE>> Set<Class<FACETTYPE>> getRequiredFacets(
             final Class<FACETTYPE> type)
    {
-      List<Class<FACETTYPE>> result = new ArrayList<Class<FACETTYPE>>();
+      Set<Class<FACETTYPE>> result = new LinkedHashSet<Class<FACETTYPE>>();
 
       if (Annotations.isAnnotationPresent(type, RequiresFacet.class))
       {
