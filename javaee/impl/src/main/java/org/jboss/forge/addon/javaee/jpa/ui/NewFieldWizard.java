@@ -24,8 +24,10 @@ import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
@@ -81,8 +83,7 @@ public class NewFieldWizard extends AbstractProjectUICommand implements UIWizard
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      Project project = getSelectedProject(builder.getUIContext());
-      setupEntities(project);
+      setupEntities(builder.getUIContext());
       setupRelationshipType();
       lob.setEnabled(new Callable<Boolean>()
       {
@@ -111,8 +112,10 @@ public class NewFieldWizard extends AbstractProjectUICommand implements UIWizard
       builder.add(entity).add(fieldName).add(typeName).add(relationshipType).add(lob).add(primitive);
    }
 
-   private void setupEntities(Project project)
+   private void setupEntities(UIContext context)
    {
+      UISelection<FileResource<?>> selection = context.getInitialSelection();
+      Project project = getSelectedProject(context);
       final List<JavaResource> entities = new ArrayList<JavaResource>();
       if (project != null)
       {
@@ -137,8 +140,19 @@ public class NewFieldWizard extends AbstractProjectUICommand implements UIWizard
          });
       }
       entity.setValueChoices(entities);
-      if (!entities.isEmpty())
-         entity.setDefaultValue(entities.get(0));
+      int idx = -1;
+      if (!selection.isEmpty())
+      {
+         idx = entities.indexOf(selection.get());
+      }
+      if (idx == -1)
+      {
+         idx = entities.size() - 1;
+      }
+      if (idx != -1)
+      {
+         entity.setDefaultValue(entities.get(idx));
+      }
    }
 
    private void setupRelationshipType()
