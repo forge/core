@@ -25,14 +25,20 @@ public class ConfigurationFacetImpl extends AbstractFacet<Project> implements Co
    @Override
    public boolean install()
    {
-      this.configuration = ConfigurationProducer.readConfig(getConfigLocation().getUnderlyingResourceObject());
       return true;
    }
 
    @Override
    public boolean isInstalled()
    {
-      return getConfigLocation().exists();
+      return true;
+   }
+
+   @Override
+   public boolean uninstall()
+   {
+      getConfigLocation().delete();
+      return true;
    }
 
    @Override
@@ -44,6 +50,10 @@ public class ConfigurationFacetImpl extends AbstractFacet<Project> implements Co
    @Override
    public Configuration getConfiguration()
    {
-      return configuration;
+      if (this.configuration == null)
+      {
+         this.configuration = ConfigurationProducer.readConfig(getConfigLocation().getUnderlyingResourceObject());
+      }
+      return this.configuration;
    }
 }
