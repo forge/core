@@ -29,17 +29,6 @@
          <artifactId>projects</artifactId>
          <classifier>forge-addon</classifier>
       </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>environment</artifactId>
-         <classifier>forge-addon</classifier>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>environment</artifactId>
-         <classifier>forge-addon</classifier>
-      </dependency>
-
    </dependencies>
    <build>
       <plugins>

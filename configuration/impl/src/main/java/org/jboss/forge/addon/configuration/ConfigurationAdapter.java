@@ -21,13 +21,10 @@ import javax.enterprise.inject.Vetoed;
 @Vetoed
 public class ConfigurationAdapter implements Configuration
 {
-   private ScopedConfigurationAdapter parent;
    private org.apache.commons.configuration.Configuration delegate;
 
-   public ConfigurationAdapter(final ScopedConfigurationAdapter parent,
-            final org.apache.commons.configuration.Configuration delegate)
+   public ConfigurationAdapter(final org.apache.commons.configuration.Configuration delegate)
    {
-      this.parent = parent;
       this.delegate = delegate;
    }
 
@@ -37,19 +34,9 @@ public class ConfigurationAdapter implements Configuration
    }
 
    @Override
-   public Configuration getScopedConfiguration(final ConfigurationScope scope)
-   {
-      if (parent == null)
-      {
-         throw new IllegalArgumentException("No Configuration registered to scope type: " + scope);
-      }
-      return parent.getScopedConfiguration(scope);
-   }
-
-   @Override
    public Configuration subset(final String prefix)
    {
-      return new ConfigurationAdapter(parent, delegate.subset(prefix));
+      return new ConfigurationAdapter(delegate.subset(prefix));
    }
 
    @Override

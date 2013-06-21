@@ -23,12 +23,6 @@ import org.jboss.forge.furnace.services.Exported;
 public interface Configuration
 {
    /**
-    * Get the underlying {@link Configuration} instance of the given {@link ConfigurationScope} type. If no such type is
-    * available, throw {@link IllegalArgumentException}
-    */
-   public Configuration getScopedConfiguration(ConfigurationScope scope);
-
-   /**
     * Return a decorator Configuration containing every key from the current Configuration that starts with the
     * specified prefix. The prefix is removed from the keys in the subset. For example, if the configuration contains
     * the following properties:
