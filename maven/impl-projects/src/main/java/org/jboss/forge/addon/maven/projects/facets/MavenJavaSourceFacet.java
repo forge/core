@@ -81,7 +81,7 @@ public class MavenJavaSourceFacet extends AbstractFacet<Project> implements Java
    @Override
    public String getBasePackage()
    {
-      return Packages.toValidPackageName(getOrigin().getFacet(MavenFacet.class).getPOM().getGroupId());
+      return Packages.toValidPackageName(getFaceted().getFacet(MavenFacet.class).getPOM().getGroupId());
    }
 
    @Override
@@ -93,7 +93,7 @@ public class MavenJavaSourceFacet extends AbstractFacet<Project> implements Java
    @Override
    public DirectoryResource getSourceFolder()
    {
-      MavenFacet mavenFacet = getOrigin().getFacet(MavenFacet.class);
+      MavenFacet mavenFacet = getFaceted().getFacet(MavenFacet.class);
       Build build = mavenFacet.getPOM().getBuild();
       String srcFolderName;
       if (build != null && build.getSourceDirectory() != null)
@@ -104,14 +104,14 @@ public class MavenJavaSourceFacet extends AbstractFacet<Project> implements Java
       {
          srcFolderName = "src" + File.separator + "main" + File.separator + "java";
       }
-      DirectoryResource projectRoot = getOrigin().getProjectRoot();
+      DirectoryResource projectRoot = getFaceted().getProjectRoot();
       return projectRoot.getChildDirectory(srcFolderName);
    }
 
    @Override
    public DirectoryResource getTestSourceFolder()
    {
-      MavenFacet mavenFacet = getOrigin().getFacet(MavenFacet.class);
+      MavenFacet mavenFacet = getFaceted().getFacet(MavenFacet.class);
       Build build = mavenFacet.getPOM().getBuild();
       String srcFolderName;
       if (build != null && build.getTestSourceDirectory() != null)
@@ -122,7 +122,7 @@ public class MavenJavaSourceFacet extends AbstractFacet<Project> implements Java
       {
          srcFolderName = "src" + File.separator + "test" + File.separator + "java";
       }
-      DirectoryResource projectRoot = getOrigin().getProjectRoot();
+      DirectoryResource projectRoot = getFaceted().getProjectRoot();
       return projectRoot.getChildDirectory(srcFolderName);
    }
 
@@ -143,7 +143,7 @@ public class MavenJavaSourceFacet extends AbstractFacet<Project> implements Java
          }
 
          // FIXME WOW this needs to be simplified somehow...
-         MavenFacet maven = getOrigin().getFacet(MavenFacet.class);
+         MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
          Model pom = maven.getPOM();
          Build build = pom.getBuild();
          if (build == null)

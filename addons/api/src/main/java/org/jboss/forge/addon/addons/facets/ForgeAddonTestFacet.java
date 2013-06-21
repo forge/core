@@ -32,7 +32,7 @@ public class ForgeAddonTestFacet extends AbstractForgeAddonFacet
    {
       if (super.install())
       {
-         Project project = getOrigin();
+         Project project = getFaceted();
          String topLevelPackage = project.getFacet(MetadataFacet.class).getTopLevelPackage();
          JavaClass testClass = JavaParser.create(JavaClass.class).setPackage(topLevelPackage);
          testClass.setName("AbstractTestCase").setAbstract(true);

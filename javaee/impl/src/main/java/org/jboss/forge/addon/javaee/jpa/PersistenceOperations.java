@@ -77,7 +77,7 @@ public class PersistenceOperations
       FileResource<?> result = null;
       if (project != null)
       {
-         PersistenceFacet facet = facetFactory.install(PersistenceFacet.class, project);
+         PersistenceFacet facet = facetFactory.install(project, PersistenceFacet.class);
          PersistenceContainer container = dataSource.getContainer();
          PersistenceProvider provider = dataSource.getProvider();
          PersistenceDescriptor config = facet.getConfig();
@@ -94,7 +94,7 @@ public class PersistenceOperations
       }
       if (configureMetadata)
       {
-         facetFactory.install(PersistenceMetaModelFacet.class, project);
+         facetFactory.install(project, PersistenceMetaModelFacet.class);
       }
       return result;
    }
@@ -113,7 +113,7 @@ public class PersistenceOperations
    public JavaResource newEntity(Project project, String entityName, String entityPackage, GenerationType idStrategy)
             throws FileNotFoundException
    {
-      final JavaSourceFacet java = facetFactory.install(JavaSourceFacet.class, project);
+      final JavaSourceFacet java = facetFactory.install(project, JavaSourceFacet.class);
       JavaClass javaClass = createJavaClass(entityName, entityPackage, idStrategy);
       return java.saveJavaSource(javaClass);
    }

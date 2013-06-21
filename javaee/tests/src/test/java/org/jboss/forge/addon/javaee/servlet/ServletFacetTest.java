@@ -53,7 +53,7 @@ public class ServletFacetTest
    public void testWebXMLCreatedWhenInstalled() throws Exception
    {
       Project project = projectFactory.createTempProject();
-      ServletFacet facet = facetFactory.install(ServletFacet.class, project);
+      ServletFacet facet = facetFactory.install(project, ServletFacet.class);
       assertNotNull(facet);
       assertTrue(project.hasFacet(ServletFacet.class));
       WebAppDescriptor config = facet.getConfig();

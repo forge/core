@@ -27,7 +27,7 @@ public class MavenMetadataFacet extends AbstractFacet<Project> implements Metada
    @Override
    public String getProjectName()
    {
-      MavenFacet mvn = getOrigin().getFacet(MavenFacet.class);
+      MavenFacet mvn = getFaceted().getFacet(MavenFacet.class);
       Model pom = mvn.getPOM();
       return pom.getArtifactId();
    }
@@ -35,7 +35,7 @@ public class MavenMetadataFacet extends AbstractFacet<Project> implements Metada
    @Override
    public String getProjectVersion()
    {
-      MavenFacet mvn = getOrigin().getFacet(MavenFacet.class);
+      MavenFacet mvn = getFaceted().getFacet(MavenFacet.class);
       Model pom = mvn.getPOM();
       String version = pom.getVersion();
       if (version == null)
@@ -52,16 +52,16 @@ public class MavenMetadataFacet extends AbstractFacet<Project> implements Metada
    @Override
    public void setProjectVersion(String version)
    {
-      MavenFacet mvn = getOrigin().getFacet(MavenFacet.class);
+      MavenFacet mvn = getFaceted().getFacet(MavenFacet.class);
       Model pom = mvn.getPOM();
       pom.setVersion(version);
       mvn.setPOM(pom);
    }
 
    @Override
-   public void setOrigin(final Project project)
+   public void setFaceted(final Project project)
    {
-      super.setOrigin(project);
+      super.setFaceted(project);
    }
 
    @Override
@@ -73,13 +73,13 @@ public class MavenMetadataFacet extends AbstractFacet<Project> implements Metada
    @Override
    public boolean isInstalled()
    {
-      return getOrigin().hasFacet(MavenFacet.class);
+      return getFaceted().hasFacet(MavenFacet.class);
    }
 
    @Override
    public void setProjectName(final String name)
    {
-      MavenFacet mvn = getOrigin().getFacet(MavenFacet.class);
+      MavenFacet mvn = getFaceted().getFacet(MavenFacet.class);
       Model pom = mvn.getPOM();
       pom.setArtifactId(name);
       mvn.setPOM(pom);
@@ -88,7 +88,7 @@ public class MavenMetadataFacet extends AbstractFacet<Project> implements Metada
    @Override
    public void setTopLevelPackage(final String groupId)
    {
-      MavenFacet mvn = getOrigin().getFacet(MavenFacet.class);
+      MavenFacet mvn = getFaceted().getFacet(MavenFacet.class);
       Model pom = mvn.getPOM();
       pom.setGroupId(groupId);
       mvn.setPOM(pom);
@@ -97,7 +97,7 @@ public class MavenMetadataFacet extends AbstractFacet<Project> implements Metada
    @Override
    public String getTopLevelPackage()
    {
-      Model pom = getOrigin().getFacet(MavenFacet.class).getPOM();
+      Model pom = getFaceted().getFacet(MavenFacet.class).getPOM();
       String groupId = pom.getGroupId();
 
       // If groupId is null, try to grab the parent's groupId

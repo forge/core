@@ -34,7 +34,7 @@ public class MavenWebResourceFacet extends AbstractFacet<Project> implements Web
    @Override
    public DirectoryResource getWebRootDirectory()
    {
-      return getOrigin().getProjectRoot()
+      return getFaceted().getProjectRoot()
                .getChildDirectory("src" + File.separator + "main" + File.separator + "webapp");
    }
 
@@ -49,7 +49,7 @@ public class MavenWebResourceFacet extends AbstractFacet<Project> implements Web
    @Override
    public boolean isInstalled()
    {
-      Project project = getOrigin();
+      Project project = getFaceted();
       MavenFacet mavenFacet = project.getFacet(MavenFacet.class);
       String packagingType = project.getFacet(PackagingFacet.class).getPackagingType();
 
@@ -67,7 +67,7 @@ public class MavenWebResourceFacet extends AbstractFacet<Project> implements Web
             folder.mkdirs();
          }
 
-         MavenPluginFacet plugins = getOrigin().getFacet(MavenPluginFacet.class);
+         MavenPluginFacet plugins = getFaceted().getFacet(MavenPluginFacet.class);
          Coordinate mvnWarPluginDep = CoordinateBuilder.create().setGroupId("org.apache.maven.plugins")
                   .setArtifactId("maven-war-plugin")
                   .setVersion("2.3");

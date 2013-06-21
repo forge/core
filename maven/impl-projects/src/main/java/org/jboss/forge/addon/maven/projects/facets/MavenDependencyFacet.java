@@ -55,7 +55,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    @Override
    public boolean isInstalled()
    {
-      return getOrigin().hasFacet(MavenFacet.class);
+      return getFaceted().hasFacet(MavenFacet.class);
    }
 
    @Override
@@ -69,7 +69,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    {
       removeDependency(dep);
 
-      MavenFacet maven = getOrigin().getFacet(MavenFacet.class);
+      MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
       Model pom = maven.getPOM();
       List<Dependency> dependencies = MavenDependencyAdapter.fromMavenList(pom.getDependencies());
       dependencies.add(dep);
@@ -80,7 +80,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    @Override
    public boolean hasDirectDependency(final Dependency dependency)
    {
-      MavenFacet maven = getOrigin().getFacet(MavenFacet.class);
+      MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
       Model pom = maven.getPOM();
       List<Dependency> dependencies = MavenDependencyAdapter.fromMavenList(pom.getDependencies());
 
@@ -97,7 +97,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    @Override
    public void removeDependency(final Dependency dep)
    {
-      MavenFacet maven = getOrigin().getFacet(MavenFacet.class);
+      MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
       Model pom = maven.getPOM();
       List<Dependency> dependencies = MavenDependencyAdapter.fromMavenList(pom.getDependencies());
 
@@ -117,7 +117,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    @Override
    public List<Dependency> getDependencies()
    {
-      MavenFacet maven = getOrigin().getFacet(MavenFacet.class);
+      MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
       Model pom = maven.getPOM();
       List<Dependency> dependencies = MavenDependencyAdapter.fromMavenList(pom.getDependencies());
 
@@ -133,7 +133,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    @Override
    public Dependency getDirectDependency(final Dependency dependency)
    {
-      MavenFacet maven = getOrigin().getFacet(MavenFacet.class);
+      MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
       Model pom = maven.getPOM();
       List<Dependency> dependencies = MavenDependencyAdapter.fromMavenList(pom.getDependencies());
 
@@ -169,7 +169,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    @Override
    public List<Dependency> getEffectiveDependencies()
    {
-      MavenFacet maven = getOrigin().getFacet(MavenFacet.class);
+      MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
       ProjectBuildingResult projectBuildingResult = ((MavenFacetImpl) maven).getProjectBuildingResult();
       DependencyResolutionResult dependencyResolutionResult = projectBuildingResult.getDependencyResolutionResult();
       List<Dependency> deps = MavenDependencyAdapter.fromAetherList(dependencyResolutionResult.getDependencies());
@@ -188,7 +188,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    {
       if (!hasEffectiveManagedDependency(resolveProperties(manDep)))
       {
-         MavenFacet maven = getOrigin().getFacet(MavenFacet.class);
+         MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
          Model pom = maven.getPOM();
          DependencyManagement depMan = pom.getDependencyManagement();
          depMan = depMan != null ? depMan : new DependencyManagement();
@@ -206,7 +206,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    {
       removeManagedDependency(dep);
 
-      MavenFacet maven = getOrigin().getFacet(MavenFacet.class);
+      MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
       Model pom = maven.getPOM();
       DependencyManagement depMan = pom.getDependencyManagement();
       depMan = depMan != null ? depMan : new DependencyManagement();
@@ -227,7 +227,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    @Override
    public Dependency getEffectiveManagedDependency(final Dependency manDep)
    {
-      MavenFacet maven = getOrigin().getFacet(MavenFacet.class);
+      MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
       DependencyManagement depMan = ((MavenFacetImpl) maven).getProjectBuildingResult().getProject()
                .getDependencyManagement();
       List<Dependency> managedDependencies = (depMan != null ? MavenDependencyAdapter.fromMavenList(depMan
@@ -246,7 +246,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    @Override
    public boolean hasDirectManagedDependency(final Dependency managedDependency)
    {
-      MavenFacet maven = getOrigin().getFacet(MavenFacet.class);
+      MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
       Model pom = maven.getPOM();
       DependencyManagement depMan = pom.getDependencyManagement();
 
@@ -266,7 +266,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    @Override
    public void removeManagedDependency(final Dependency manDep)
    {
-      MavenFacet maven = getOrigin().getFacet(MavenFacet.class);
+      MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
       Model pom = maven.getPOM();
       DependencyManagement depMan = pom.getDependencyManagement();
       depMan = depMan != null ? depMan : new DependencyManagement();
@@ -290,7 +290,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    @Override
    public List<Dependency> getManagedDependencies()
    {
-      MavenFacet maven = getOrigin().getFacet(MavenFacet.class);
+      MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
       Model pom = maven.getPOM();
       DependencyManagement depMan = pom.getDependencyManagement();
 
@@ -311,7 +311,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    @Override
    public Dependency getManagedDependency(final Dependency manDep)
    {
-      MavenFacet maven = getOrigin().getFacet(MavenFacet.class);
+      MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
       Model pom = maven.getPOM();
       DependencyManagement depMan = pom.getDependencyManagement();
 
@@ -331,7 +331,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    @Override
    public Map<String, String> getProperties()
    {
-      MavenFacet maven = getOrigin().getFacet(MavenFacet.class);
+      MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
       Model pom = maven.getPOM();
 
       Properties properties = pom.getProperties();
@@ -346,7 +346,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    @Override
    public void setProperty(final String name, final String value)
    {
-      MavenFacet maven = getOrigin().getFacet(MavenFacet.class);
+      MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
       Model pom = maven.getPOM();
 
       Properties properties = pom.getProperties();
@@ -357,7 +357,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    @Override
    public String getProperty(final String name)
    {
-      MavenFacet maven = getOrigin().getFacet(MavenFacet.class);
+      MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
       Model pom = maven.getPOM();
 
       Properties properties = pom.getProperties();
@@ -368,7 +368,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    @Override
    public Dependency resolveProperties(final Dependency dependency)
    {
-      MavenFacet mvn = getOrigin().getFacet(MavenFacet.class);
+      MavenFacet mvn = getFaceted().getFacet(MavenFacet.class);
       DependencyBuilder builder = DependencyBuilder.create(dependency);
 
       builder.setGroupId(mvn.resolveProperties(dependency.getCoordinate().getGroupId()));
@@ -384,7 +384,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    @Override
    public String removeProperty(final String name)
    {
-      MavenFacet maven = getOrigin().getFacet(MavenFacet.class);
+      MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
       Model pom = maven.getPOM();
 
       Properties properties = pom.getProperties();
@@ -424,7 +424,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    {
       if (!hasRepository(url))
       {
-         MavenFacet maven = getOrigin().getFacet(MavenFacet.class);
+         MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
          Model pom = maven.getPOM();
          Repository repo = new Repository();
          repo.setId(name);
@@ -438,7 +438,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    public List<DependencyRepository> getRepositories()
    {
       List<DependencyRepository> results = new ArrayList<DependencyRepository>();
-      MavenFacet maven = getOrigin().getFacet(MavenFacet.class);
+      MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
       Model pom = maven.getPOM();
       List<Repository> repos = pom.getRepositories();
       for (Repository repo : repos)
@@ -453,7 +453,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    {
       if (url != null)
       {
-         MavenFacet maven = getOrigin().getFacet(MavenFacet.class);
+         MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
          Model pom = maven.getPOM();
          List<Repository> repositories = pom.getRepositories();
          for (Repository repo : repositories)
@@ -472,7 +472,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    {
       if (url != null)
       {
-         MavenFacet maven = getOrigin().getFacet(MavenFacet.class);
+         MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
          Model pom = maven.getPOM();
          List<Repository> repos = pom.getRepositories();
          for (Repository repo : repos)
@@ -530,8 +530,8 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    }
 
    @Override
-   public void setOrigin(Project project)
+   public void setFaceted(Project project)
    {
-      super.setOrigin(project);
+      super.setFaceted(project);
    }
 }

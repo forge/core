@@ -65,7 +65,7 @@ public class MavenWebResourceFacetTest
    {
       DirectoryResource target = resourceFactory.create(DirectoryResource.class, new File("target"));
       Project project = projectFactory.createProject(target.getOrCreateChildDirectory("project"));
-      WebResourceFacet facet = facetFactory.install(WebResourceFacet.class, project);
+      WebResourceFacet facet = facetFactory.install(project, WebResourceFacet.class);
       Assert.assertTrue(project.hasFacet(WebResourceFacet.class));
       Assert.assertTrue(facet.getWebRootDirectory().exists());
    }

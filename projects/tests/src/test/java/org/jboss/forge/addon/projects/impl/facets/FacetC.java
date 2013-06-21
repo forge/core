@@ -17,7 +17,7 @@ public class FacetC extends AbstractFacet<Project> implements ProjectFacet
    @Override
    public boolean isInstalled()
    {
-      return getOrigin().hasFacet(getClass());
+      return getFaceted().hasFacet(getClass());
    }
 
 }

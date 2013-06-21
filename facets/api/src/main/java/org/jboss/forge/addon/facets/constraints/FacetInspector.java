@@ -25,7 +25,7 @@ public abstract class FacetInspector
     * Inspect the given {@link Class} for any dependencies to {@link Facet} types.
     */
    @SuppressWarnings("unchecked")
-   public static <FACETEDTYPE extends Faceted<FACETTYPE, FACETEDTYPE>, FACETTYPE extends Facet<FACETEDTYPE, FACETTYPE>> List<Class<FACETTYPE>> getRequiredFacets(
+   public static <FACETEDTYPE extends Faceted<FACETTYPE>, FACETTYPE extends Facet<FACETEDTYPE>> List<Class<FACETTYPE>> getRequiredFacets(
             final Class<FACETTYPE> type)
    {
       List<Class<FACETTYPE>> result = new ArrayList<Class<FACETTYPE>>();
@@ -35,7 +35,7 @@ public abstract class FacetInspector
          RequiresFacet requires = Annotations.getAnnotation(type, RequiresFacet.class);
          if (requires.value() != null)
          {
-            for (Class<? extends Facet<?, ?>> facetType : requires.value())
+            for (Class<? extends Facet<?>> facetType : requires.value())
             {
                if (Facet.class.isAssignableFrom(facetType))
                   result.add((Class<FACETTYPE>) facetType);

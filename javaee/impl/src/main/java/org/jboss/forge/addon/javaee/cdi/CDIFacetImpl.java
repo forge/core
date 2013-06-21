@@ -95,7 +95,7 @@ public class CDIFacetImpl extends AbstractJavaEEFacet implements CDIFacet
    @Override
    public FileResource<?> getConfigFile()
    {
-      Project project = getOrigin();
+      Project project = getFaceted();
       PackagingFacet packaging = project.getFacet(PackagingFacet.class);
       if ("war".equals(packaging.getPackagingType()))
       {

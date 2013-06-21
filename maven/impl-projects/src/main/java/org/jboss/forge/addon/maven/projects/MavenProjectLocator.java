@@ -38,12 +38,12 @@ public class MavenProjectLocator implements ProjectLocator
 
       try
       {
-         factory.install(MavenFacet.class, project);
-         factory.install(MavenPluginFacet.class, project);
-         factory.install(MavenMetadataFacet.class, project);
-         factory.install(MavenPackagingFacet.class, project);
-         factory.install(MavenDependencyFacet.class, project);
-         factory.install(MavenResourceFacet.class, project);
+         factory.install(project, MavenFacet.class);
+         factory.install(project, MavenPluginFacet.class);
+         factory.install(project, MavenMetadataFacet.class);
+         factory.install(project, MavenPackagingFacet.class);
+         factory.install(project, MavenDependencyFacet.class);
+         factory.install(project, MavenResourceFacet.class);
       }
       catch (RuntimeException e)
       {

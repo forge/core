@@ -96,7 +96,7 @@ public class PersistenceSetupWizardTest
       Assert.assertEquals(2, counter.get());
 
       // Check SUT values
-      PersistenceDescriptor config = facetFactory.install(PersistenceFacet.class, project).getConfig();
+      PersistenceDescriptor config = facetFactory.install(project, PersistenceFacet.class).getConfig();
       List<PersistenceUnit<PersistenceDescriptor>> allUnits = config.getAllPersistenceUnit();
       PersistenceUnit<PersistenceDescriptor> unit = allUnits.get(0);
 

@@ -100,7 +100,7 @@ public class ProjectFactoryImpl implements ProjectFactory
          for (Class<ProjectFacet> instance : registry.getExportedTypes(ProjectFacet.class))
          {
             ProjectFacet facet = factory.create(instance, result);
-            if (facet != null && facet.isInstalled() && factory.install(facet, result))
+            if (facet != null && facet.isInstalled() && factory.install(result, facet))
             {
                log.fine("Installed Facet [" + facet + "] into Project [" + result + "]");
             }
@@ -151,7 +151,7 @@ public class ProjectFactoryImpl implements ProjectFactory
          {
             try
             {
-               factory.install(facetType, result);
+               factory.install(result, facetType);
             }
             catch (RuntimeException e)
             {
@@ -166,7 +166,7 @@ public class ProjectFactoryImpl implements ProjectFactory
          for (Class<ProjectFacet> instance : registry.getExportedTypes(ProjectFacet.class))
          {
             ProjectFacet facet = factory.create(instance, result);
-            if (facet != null && facet.isInstalled() && factory.install(facet, result))
+            if (facet != null && facet.isInstalled() && factory.install(result, facet))
             {
                log.fine("Installed Facet [" + facet + "] into Project [" + result + "]");
             }

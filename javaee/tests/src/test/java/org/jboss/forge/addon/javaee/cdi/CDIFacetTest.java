@@ -49,7 +49,7 @@ public class CDIFacetTest
    public void testBeansXMLCreatedWhenInstalled() throws Exception
    {
       Project project = projectFactory.createTempProject();
-      CDIFacet cdiFacet = facetFactory.install(CDIFacet.class, project);
+      CDIFacet cdiFacet = facetFactory.install(project, CDIFacet.class);
       assertNotNull(cdiFacet);
       assertTrue(project.hasFacet(CDIFacet.class));
       BeansDescriptor config = project.getFacet(CDIFacet.class).getConfig();

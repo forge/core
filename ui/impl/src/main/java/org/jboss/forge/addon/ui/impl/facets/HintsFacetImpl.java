@@ -24,7 +24,7 @@ public class HintsFacetImpl extends AbstractFacet<InputComponent<?, ?>> implemen
 
    public HintsFacetImpl(InputComponent<?, ?> origin, Environment environment)
    {
-      super.setOrigin(origin);
+      super.setFaceted(origin);
       if (environment == null)
       {
          throw new IllegalStateException("Environment must not be null.");
@@ -42,7 +42,7 @@ public class HintsFacetImpl extends AbstractFacet<InputComponent<?, ?>> implemen
    @Override
    public boolean isInstalled()
    {
-      return getOrigin().hasFacet(this.getClass());
+      return getFaceted().hasFacet(this.getClass());
    }
 
    @Override
@@ -50,7 +50,7 @@ public class HintsFacetImpl extends AbstractFacet<InputComponent<?, ?>> implemen
    {
       if (inputType == null)
       {
-         inputType = hintsLookup.getInputType(getOrigin().getValueType());
+         inputType = hintsLookup.getInputType(getFaceted().getValueType());
       }
       return inputType;
    }

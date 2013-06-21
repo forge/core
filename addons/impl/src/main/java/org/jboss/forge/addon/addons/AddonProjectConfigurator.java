@@ -58,9 +58,9 @@ class AddonProjectConfigurator
    public void setupSimpleAddonProject(Project project, Version forgeVersion, Iterable<AddonId> dependencyAddons)
    {
       // TODO Use or remove forgeVersion parameter
-      facetFactory.install(ForgeContainerAPIFacet.class, project);
-      facetFactory.install(ForgeAddonFacet.class, project);
-      facetFactory.install(ForgeAddonAPIFacet.class, project);
+      facetFactory.install(project, ForgeContainerAPIFacet.class);
+      facetFactory.install(project, ForgeAddonFacet.class);
+      facetFactory.install(project, ForgeAddonAPIFacet.class);
       installSelectedAddons(project, dependencyAddons, false);
    }
 

@@ -13,6 +13,6 @@ import org.jboss.forge.addon.facets.Facet;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface ProjectFacet extends Facet<Project, ProjectFacet>
+public interface ProjectFacet extends Facet<Project>
 {
 }

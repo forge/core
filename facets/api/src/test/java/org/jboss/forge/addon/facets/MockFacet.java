@@ -9,7 +9,7 @@ public class MockFacet extends AbstractFacet<MockFaceted>
 {
    public MockFacet(MockFaceted origin)
    {
-      super.setOrigin(origin);
+      super.setFaceted(origin);
    }
 
    public boolean isSupported()

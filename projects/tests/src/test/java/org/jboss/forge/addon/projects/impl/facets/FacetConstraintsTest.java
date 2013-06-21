@@ -61,7 +61,7 @@ public class FacetConstraintsTest
    public void testFacetFactoryInstallationInstallsDependencies() throws Exception
    {
       Project project = projectFactory.createTempProject();
-      facetFactory.install(FacetA.class, project);
+      facetFactory.install(project, FacetA.class);
 
       Assert.assertTrue(project.hasFacet(FacetA.class));
       Assert.assertTrue(project.hasFacet(FacetB.class));
@@ -69,10 +69,20 @@ public class FacetConstraintsTest
    }
 
    @Test
+   public void testProjectFacetInstallationSkipsSelfReferentialDependencies() throws Exception
+   {
+      Project project = projectFactory.createTempProject();
+      facetFactory.install(project, FacetA.class);
+
+      Assert.assertTrue(project.hasFacet(FacetA.class));
+      Assert.assertTrue(project.hasFacet(FacetB.class));
+   }
+
+   @Test
    public void testProjectFacetInstallationInstallsDependencies() throws Exception
    {
       Project project = projectFactory.createTempProject();
-      facetFactory.install(FacetA.class, project);
+      facetFactory.install(project, FacetA.class);
 
       Assert.assertTrue(project.hasFacet(FacetA.class));
       Assert.assertTrue(project.hasFacet(FacetB.class));

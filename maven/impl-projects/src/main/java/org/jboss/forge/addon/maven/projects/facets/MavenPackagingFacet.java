@@ -43,9 +43,9 @@ public class MavenPackagingFacet extends AbstractFacet<Project> implements Packa
    private Environment environment;
 
    @Override
-   public void setOrigin(Project origin)
+   public void setFaceted(Project origin)
    {
-      super.setOrigin(origin);
+      super.setFaceted(origin);
    }
 
    @Override
@@ -55,19 +55,19 @@ public class MavenPackagingFacet extends AbstractFacet<Project> implements Packa
 
       if (!oldType.equals(type))
       {
-         MavenFacet mavenFacet = getOrigin().getFacet(MavenFacet.class);
+         MavenFacet mavenFacet = getFaceted().getFacet(MavenFacet.class);
          Model pom = mavenFacet.getPOM();
          pom.setPackaging(type);
          mavenFacet.setPOM(pom);
 
-         event.fire(new PackagingChanged(getOrigin(), oldType, type));
+         event.fire(new PackagingChanged(getFaceted(), oldType, type));
       }
    }
 
    @Override
    public String getPackagingType()
    {
-      MavenFacet mavenFacet = getOrigin().getFacet(MavenFacet.class);
+      MavenFacet mavenFacet = getFaceted().getFacet(MavenFacet.class);
       Model pom = mavenFacet.getPOM();
       return pom.getPackaging();
    }
@@ -75,7 +75,7 @@ public class MavenPackagingFacet extends AbstractFacet<Project> implements Packa
    @Override
    public boolean isInstalled()
    {
-      return getOrigin().hasFacet(MavenFacet.class);
+      return getFaceted().hasFacet(MavenFacet.class);
    }
 
    @Override
@@ -91,7 +91,7 @@ public class MavenPackagingFacet extends AbstractFacet<Project> implements Packa
    @Override
    public Resource<?> getFinalArtifact()
    {
-      MavenFacetImpl mvn = (MavenFacetImpl) getOrigin().getFacet(MavenFacet.class);
+      MavenFacetImpl mvn = (MavenFacetImpl) getFaceted().getFacet(MavenFacet.class);
       String directory = mvn.getProjectBuildingResult().getProject().getBuild().getDirectory();
       String finalName = mvn.getProjectBuildingResult().getProject().getBuild().getFinalName();
 
@@ -116,13 +116,13 @@ public class MavenPackagingFacet extends AbstractFacet<Project> implements Packa
    @Override
    public ProjectBuilder createBuilder()
    {
-      return new MavenProjectBuilder(environment, getOrigin());
+      return new MavenProjectBuilder(environment, getFaceted());
    }
 
    @Override
    public String getFinalName()
    {
-      MavenFacet mavenFacet = getOrigin().getFacet(MavenFacet.class);
+      MavenFacet mavenFacet = getFaceted().getFacet(MavenFacet.class);
       Model pom = mavenFacet.getPOM();
       Build build = pom.getBuild();
       return build != null ? build.getFinalName() : getDefaultFinalName();
@@ -133,7 +133,7 @@ public class MavenPackagingFacet extends AbstractFacet<Project> implements Packa
     */
    private String getDefaultFinalName()
    {
-      MavenFacet mavenFacet = getOrigin().getFacet(MavenFacet.class);
+      MavenFacet mavenFacet = getFaceted().getFacet(MavenFacet.class);
       Model pom = mavenFacet.getPOM();
       String version = pom.getVersion();
       if (version == null && pom.getParent() != null)
@@ -144,7 +144,7 @@ public class MavenPackagingFacet extends AbstractFacet<Project> implements Packa
    @Override
    public void setFinalName(final String finalName)
    {
-      MavenFacet mavenFacet = getOrigin().getFacet(MavenFacet.class);
+      MavenFacet mavenFacet = getFaceted().getFacet(MavenFacet.class);
       Model pom = mavenFacet.getPOM();
       Build build = pom.getBuild();
       if (build == null)

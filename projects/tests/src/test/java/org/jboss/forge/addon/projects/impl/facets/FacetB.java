@@ -5,7 +5,7 @@ import org.jboss.forge.addon.facets.constraints.RequiresFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 
-@RequiresFacet(FacetB.class)
+@RequiresFacet({ FacetB.class, FacetC.class })
 public class FacetB extends AbstractFacet<Project> implements ProjectFacet
 {
    @Override
@@ -17,7 +17,7 @@ public class FacetB extends AbstractFacet<Project> implements ProjectFacet
    @Override
    public boolean isInstalled()
    {
-      return getOrigin().hasFacet(getClass());
+      return getFaceted().hasFacet(getClass());
    }
 
 }

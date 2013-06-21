@@ -60,7 +60,7 @@ public class ServletFacetImpl extends AbstractJavaEEFacet implements ServletFace
    @Override
    public boolean isInstalled()
    {
-      Project project = getOrigin();
+      Project project = getFaceted();
       if (!project.hasFacet(WebResourceFacet.class))
       {
          return false;
@@ -74,9 +74,9 @@ public class ServletFacetImpl extends AbstractJavaEEFacet implements ServletFace
    {
       if (!isInstalled())
       {
-         Project project = getOrigin();
+         Project project = getFaceted();
          // Install required facets
-         WebResourceFacet webFacet = facetFactory.install(WebResourceFacet.class, project);
+         WebResourceFacet webFacet = facetFactory.install(project, WebResourceFacet.class);
          DirectoryResource webRoot = webFacet.getWebRootDirectory();
          if (!webRoot.exists())
          {
@@ -119,7 +119,7 @@ public class ServletFacetImpl extends AbstractJavaEEFacet implements ServletFace
    @Override
    public FileResource<?> getConfigFile()
    {
-      Project project = getOrigin();
+      Project project = getFaceted();
       DirectoryResource webRoot = project.getFacet(WebResourceFacet.class).getWebRootDirectory();
       final FileResource<?> child = (FileResource<?>) webRoot.getChild("WEB-INF" + File.separator + "web.xml");
 
@@ -144,7 +144,7 @@ public class ServletFacetImpl extends AbstractJavaEEFacet implements ServletFace
    @Override
    public List<Resource<?>> getResources()
    {
-      DirectoryResource webRoot = getOrigin().getFacet(WebResourceFacet.class).getWebRootDirectory();
+      DirectoryResource webRoot = getFaceted().getFacet(WebResourceFacet.class).getWebRootDirectory();
       return listChildrenRecursively(webRoot);
    }
 
@@ -163,7 +163,7 @@ public class ServletFacetImpl extends AbstractJavaEEFacet implements ServletFace
    @Override
    public List<Resource<?>> getResources(final ResourceFilter filter)
    {
-      DirectoryResource webRoot = getOrigin().getFacet(WebResourceFacet.class).getWebRootDirectory();
+      DirectoryResource webRoot = getFaceted().getFacet(WebResourceFacet.class).getWebRootDirectory();
       return listChildrenRecursively(webRoot, filter);
    }
 

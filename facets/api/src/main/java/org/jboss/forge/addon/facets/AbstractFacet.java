@@ -9,16 +9,17 @@ package org.jboss.forge.addon.facets;
 /**
  * A base convenience {@link Facet} abstract class.
  * 
+ * @param <FACETEDTYPE> The {@link Faceted} type to which this {@link Facet} may attach.
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>, <a
  *         href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>
  */
-public abstract class AbstractFacet<FACETEDTYPE extends Faceted<FACETTYPE, FACETEDTYPE>, FACETTYPE extends Facet<FACETEDTYPE, FACETTYPE>>
-         implements Facet<FACETEDTYPE, FACETTYPE>, MutableOrigin<FACETEDTYPE, FACETTYPE>
+public abstract class AbstractFacet<FACETEDTYPE extends Faceted<?>> implements MutableFacet<FACETEDTYPE>
 {
    protected FACETEDTYPE origin;
 
    @Override
-   public FACETEDTYPE getOrigin()
+   public FACETEDTYPE getFaceted()
    {
       return this.origin;
    }
@@ -27,7 +28,7 @@ public abstract class AbstractFacet<FACETEDTYPE extends Faceted<FACETTYPE, FACET
     * Set the <FACETEDTYPE> origin on which this {@link Facet} will operate.
     */
    @Override
-   public void setOrigin(FACETEDTYPE origin)
+   public void setFaceted(FACETEDTYPE origin)
    {
       this.origin = origin;
    }
@@ -59,7 +60,7 @@ public abstract class AbstractFacet<FACETEDTYPE extends Faceted<FACETTYPE, FACET
          return false;
       if (getClass() != obj.getClass())
          return false;
-      AbstractFacet<?, ?> other = (AbstractFacet<?, ?>) obj;
+      AbstractFacet<?> other = (AbstractFacet<?>) obj;
       if (origin == null)
       {
          if (other.origin != null)

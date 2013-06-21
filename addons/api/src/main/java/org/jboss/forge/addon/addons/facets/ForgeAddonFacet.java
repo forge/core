@@ -28,7 +28,7 @@ public class ForgeAddonFacet extends AbstractFacet<Project> implements ProjectFa
    @Override
    public boolean install()
    {
-      MavenPluginFacet pluginFacet = getOrigin().getFacet(MavenPluginFacet.class);
+      MavenPluginFacet pluginFacet = getFaceted().getFacet(MavenPluginFacet.class);
       MavenPluginBuilder plugin = MavenPluginBuilder
                .create()
                .setCoordinate(CoordinateBuilder.create().setGroupId("org.apache.maven.plugins")

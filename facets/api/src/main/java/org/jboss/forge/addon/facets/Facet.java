@@ -20,12 +20,12 @@ import org.jboss.forge.furnace.services.Exported;
  * @see {@link AbstractFacet}
  */
 @Exported
-public interface Facet<FACETEDTYPE extends Faceted<FACETTYPE, FACETEDTYPE>, FACETTYPE extends Facet<FACETEDTYPE, FACETTYPE>>
+public interface Facet<FACETEDTYPE extends Faceted<?>>
 {
    /**
     * Return the {@link Faceted} instance on which this {@link Facet} operates.
     */
-   FACETEDTYPE getOrigin();
+   FACETEDTYPE getFaceted();
 
    /**
     * Perform necessary setup for this {@link Facet} to be considered installed in the given {@link Faceted} instance.

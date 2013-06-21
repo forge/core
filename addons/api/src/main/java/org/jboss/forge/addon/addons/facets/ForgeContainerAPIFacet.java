@@ -32,7 +32,7 @@ public class ForgeContainerAPIFacet extends AbstractFacet<Project> implements Pr
    @Override
    public boolean install()
    {
-      Dependency dependency = installer.install(getOrigin(), FORGE_API_DEPENDENCY);
+      Dependency dependency = installer.install(getFaceted(), FORGE_API_DEPENDENCY);
       return dependency != null;
    }
 

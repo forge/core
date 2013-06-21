@@ -57,18 +57,11 @@ public class FacetFactoryTest
    }
 
    @Test
-   public void testFacetCreation() throws Exception
-   {
-      MockFacet facet = facetFactory.create(MockFacet.class);
-      Assert.assertNotNull(facet);
-   }
-
-   @Test
    public void testNotFoundFacetCreation() throws Exception
    {
       try
       {
-         facetFactory.create(NotFoundMockFacet.class);
+         facetFactory.create(NotFoundMockFacet.class, new MockFaceted());
       }
       catch (Throwable e)
       {
@@ -90,35 +83,23 @@ public class FacetFactoryTest
    {
       MockFaceted faceted = new MockFaceted();
       MockFacet facet = facetFactory.create(MockFacet.class, faceted);
-      Assert.assertEquals(faceted, facet.getOrigin());
-   }
-
-   @Test
-   public void testMultipleFacetCreation() throws Exception
-   {
-      Iterable<MockFacet> facets = facetFactory.createFacets(MockFacet.class);
-      Iterator<MockFacet> it = facets.iterator();
-      Assert.assertTrue(it.hasNext());
-      MockFacet first = it.next();
-      Assert.assertTrue(it.hasNext());
-      MockFacet second = it.next();
-      Assert.assertNotSame(first, second);
+      Assert.assertEquals(faceted, facet.getFaceted());
    }
 
    @Test
    public void testMultipleFacetOrigin() throws Exception
    {
       MockFaceted faceted = new MockFaceted();
-      Iterable<MockFacet> facets = facetFactory.createFacets(MockFacet.class, faceted);
+      Iterable<MockFacet> facets = facetFactory.createFacets(faceted, MockFacet.class);
       Iterator<MockFacet> it = facets.iterator();
       Assert.assertTrue(it.hasNext());
       MockFacet first = it.next();
-      Assert.assertEquals(faceted, first.getOrigin());
+      Assert.assertEquals(faceted, first.getFaceted());
       Assert.assertNotNull(first);
       Assert.assertTrue(it.hasNext());
       MockFacet second = it.next();
       Assert.assertNotNull(second);
-      Assert.assertEquals(faceted, second.getOrigin());
+      Assert.assertEquals(faceted, second.getFaceted());
       Assert.assertNotSame(first, second);
    }
 
@@ -126,7 +107,7 @@ public class FacetFactoryTest
    public void testFacetInstall() throws Exception
    {
       MockFaceted faceted = new MockFaceted();
-      MockFacet facet = facetFactory.install(MockFacet.class, faceted);
+      MockFacet facet = facetFactory.install(faceted, MockFacet.class);
       Assert.assertNotNull(facet);
       Assert.assertTrue(faceted.hasFacet(MockFacet.class));
    }

@@ -29,5 +29,5 @@ public @interface RequiresFacet
    /**
     * The facets required by the annotated {@link Faceted}
     */
-   Class<? extends Facet<?, ?>>[] value();
+   Class<? extends Facet<?>>[] value();
 }

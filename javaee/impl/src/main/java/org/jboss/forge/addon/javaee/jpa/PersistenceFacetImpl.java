@@ -82,14 +82,14 @@ public class PersistenceFacetImpl extends AbstractJavaEEFacet implements Persist
    @Override
    public String getEntityPackage()
    {
-      JavaSourceFacet sourceFacet = getOrigin().getFacet(JavaSourceFacet.class);
+      JavaSourceFacet sourceFacet = getFaceted().getFacet(JavaSourceFacet.class);
       return sourceFacet.getBasePackage() + "." + DEFAULT_ENTITY_PACKAGE;
    }
 
    @Override
    public DirectoryResource getEntityPackageDir()
    {
-      JavaSourceFacet sourceFacet = getOrigin().getFacet(JavaSourceFacet.class);
+      JavaSourceFacet sourceFacet = getFaceted().getFacet(JavaSourceFacet.class);
 
       DirectoryResource entityRoot = sourceFacet.getBasePackageResource().getChildDirectory(DEFAULT_ENTITY_PACKAGE);
       if (!entityRoot.exists())
@@ -130,7 +130,7 @@ public class PersistenceFacetImpl extends AbstractJavaEEFacet implements Persist
    @Override
    public FileResource<?> getConfigFile()
    {
-      ResourceFacet resources = getOrigin().getFacet(ResourceFacet.class);
+      ResourceFacet resources = getFaceted().getFacet(ResourceFacet.class);
       return (FileResource<?>) resources.getResourceFolder().getChild("META-INF" + File.separator + "persistence.xml");
    }
 

@@ -16,7 +16,7 @@ import org.jboss.forge.addon.resource.Resource;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface Project extends Faceted<ProjectFacet, Project>
+public interface Project extends Faceted<ProjectFacet>
 {
    /**
     * Get a value from this project's internal attributes. If the value is not set, return <code>null</code> instead.

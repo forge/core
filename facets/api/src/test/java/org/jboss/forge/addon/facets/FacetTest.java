@@ -11,6 +11,6 @@ public class FacetTest
       MockFaceted faceted = new MockFaceted();
       MockFacet facet = new MockFacet(faceted);
 
-      Assert.assertEquals(faceted, facet.getOrigin());
+      Assert.assertEquals(faceted, facet.getFaceted());
    }
 }

@@ -7,17 +7,18 @@
 package org.jboss.forge.addon.facets;
 
 /**
- * A {@link Facet} with a mutable {@link #getOrigin()}.
+ * A {@link Facet} with a mutable {@link #getFaceted()}.
+ * 
+ * @param <FACETEDTYPE> The {@link Faceted} type to which this {@link Facet} may attach.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface MutableOrigin<FACETEDTYPE extends Faceted<FACETTYPE, FACETEDTYPE>, FACETTYPE extends Facet<FACETEDTYPE, FACETTYPE>>
-         extends Facet<FACETEDTYPE, FACETTYPE>
+public interface MutableFacet<FACETEDTYPE extends Faceted<?>> extends Facet<FACETEDTYPE>
 {
    /**
     * Set the {@link Faceted} origin to which this {@link Facet} belongs. Should only be set once, since each
     * {@link Faceted} instance receives its own unique instance of all compatible {@link Facet} types. This method must
     * be called before invoking any operations on {@code this} instance.
     */
-   void setOrigin(FACETEDTYPE origin);
+   void setFaceted(FACETEDTYPE origin);
 }

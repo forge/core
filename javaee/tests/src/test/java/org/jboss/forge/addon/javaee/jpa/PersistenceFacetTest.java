@@ -57,14 +57,14 @@ public class PersistenceFacetTest
    @Test
    public void testInstall()
    {
-      facetFactory.install(PersistenceFacet.class, project);
+      facetFactory.install(project, PersistenceFacet.class);
       Assert.assertTrue(project.hasFacet(PersistenceFacet.class));
    }
 
    @Test
    public void testCanWritePersistenceConfigFile() throws Exception
    {
-      facetFactory.install(PersistenceFacet.class, project);
+      facetFactory.install(project, PersistenceFacet.class);
       PersistenceFacet persistence = project.getFacet(PersistenceFacet.class);
       assertNotNull(persistence);
 

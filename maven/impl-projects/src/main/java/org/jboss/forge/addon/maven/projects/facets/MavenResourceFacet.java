@@ -37,27 +37,27 @@ public class MavenResourceFacet extends AbstractFacet<Project> implements Resour
    @Override
    public DirectoryResource getResourceFolder()
    {
-      return getOrigin().getProjectRoot().getChildDirectory("src" + File.separator + "main"
+      return getFaceted().getProjectRoot().getChildDirectory("src" + File.separator + "main"
                + File.separator + "resources");
    }
 
    @Override
    public DirectoryResource getTestResourceFolder()
    {
-      return getOrigin().getProjectRoot().getChildDirectory("src" + File.separator + "test"
+      return getFaceted().getProjectRoot().getChildDirectory("src" + File.separator + "test"
                + File.separator + "resources");
    }
 
    @Override
-   public void setOrigin(Project origin)
+   public void setFaceted(Project origin)
    {
-      super.setOrigin(origin);
+      super.setFaceted(origin);
    }
 
    @Override
    public boolean isInstalled()
    {
-      return getOrigin().hasFacet(MavenFacet.class) && getResourceFolder().exists();
+      return getFaceted().hasFacet(MavenFacet.class) && getResourceFolder().exists();
    }
 
    @Override
