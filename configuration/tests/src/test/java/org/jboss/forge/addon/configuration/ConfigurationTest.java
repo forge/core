@@ -68,7 +68,7 @@ public class ConfigurationTest
    public void testProjectFacet() throws Exception
    {
       Project project = projectFactory.createTempProject();
-      ConfigurationFacet facet = facetFactory.install(ConfigurationFacet.class, project);
+      ConfigurationFacet facet = facetFactory.install(project, ConfigurationFacet.class);
       Assert.assertFalse(facet.getConfigLocation().exists());
       Configuration config = facet.getConfiguration();
       config.setProperty("key", "value");
