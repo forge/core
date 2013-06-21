@@ -1,12 +1,10 @@
-package org.jboss.forge.addon.projects.impl.facets;
+package org.jboss.forge.addon.facets.requirements;
 
-import org.jboss.forge.addon.facets.AbstractFacet;
+import org.jboss.forge.addon.facets.MockFacet;
 import org.jboss.forge.addon.facets.constraints.RequiresFacet;
-import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.ProjectFacet;
 
 @RequiresFacet({ FacetB.class, FacetC.class })
-public class FacetB extends AbstractFacet<Project> implements ProjectFacet
+public class FacetB extends MockFacet
 {
    @Override
    public boolean install()

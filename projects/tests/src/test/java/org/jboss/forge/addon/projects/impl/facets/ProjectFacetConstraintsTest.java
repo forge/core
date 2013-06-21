@@ -25,7 +25,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class FacetConstraintsTest
+public class ProjectFacetConstraintsTest
 {
    @Deployment
    @Dependencies({
@@ -37,7 +37,7 @@ public class FacetConstraintsTest
    {
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
-               .addClasses(FacetA.class, FacetB.class, FacetC.class)
+               .addClasses(ProjectFacetA.class, ProjectFacetB.class, ProjectFacetC.class)
                .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:projects", "2.0.0-SNAPSHOT"))
@@ -61,21 +61,21 @@ public class FacetConstraintsTest
    public void testFacetFactoryInstallationInstallsDependencies() throws Exception
    {
       Project project = projectFactory.createTempProject();
-      facetFactory.install(project, FacetA.class);
+      facetFactory.install(project, ProjectFacetA.class);
 
-      Assert.assertTrue(project.hasFacet(FacetA.class));
-      Assert.assertTrue(project.hasFacet(FacetB.class));
-      Assert.assertTrue(project.hasFacet(FacetC.class));
+      Assert.assertTrue(project.hasFacet(ProjectFacetA.class));
+      Assert.assertTrue(project.hasFacet(ProjectFacetB.class));
+      Assert.assertTrue(project.hasFacet(ProjectFacetC.class));
    }
 
    @Test
    public void testProjectFacetInstallationInstallsDependencies() throws Exception
    {
       Project project = projectFactory.createTempProject();
-      facetFactory.install(project, FacetB.class);
+      facetFactory.install(project, ProjectFacetB.class);
 
-      Assert.assertTrue(project.hasFacet(FacetB.class));
-      Assert.assertTrue(project.hasFacet(FacetC.class));
+      Assert.assertTrue(project.hasFacet(ProjectFacetB.class));
+      Assert.assertTrue(project.hasFacet(ProjectFacetC.class));
    }
 
 }

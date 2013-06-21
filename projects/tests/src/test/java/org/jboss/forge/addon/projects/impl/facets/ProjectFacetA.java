@@ -5,8 +5,8 @@ import org.jboss.forge.addon.facets.constraints.RequiresFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 
-@RequiresFacet(FacetB.class)
-public class FacetC extends AbstractFacet<Project> implements ProjectFacet
+@RequiresFacet(ProjectFacetB.class)
+public class ProjectFacetA extends AbstractFacet<Project> implements ProjectFacet
 {
    @Override
    public boolean install()
