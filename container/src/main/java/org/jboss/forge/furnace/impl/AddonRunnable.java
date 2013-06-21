@@ -7,7 +7,6 @@
 package org.jboss.forge.furnace.impl;
 
 import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -115,7 +114,8 @@ public final class AddonRunnable implements Runnable
       }
       catch (Throwable e)
       {
-         logger.log(Level.SEVERE, "Failed to start addon " + addon.getId(), e);
+         logger.log(Level.SEVERE, "Failed to start addon [" + addon.getId() + "] with module [" + addon.getModule()
+                  + "]", e);
          throw new RuntimeException(e);
       }
       finally
@@ -132,7 +132,6 @@ public final class AddonRunnable implements Runnable
 
    public class AddonContainerStartup implements Callable<Callable<Object>>
    {
-      private Future<Object> operation;
       private Callable<Void> postStartupTask;
 
       @Override
@@ -216,8 +215,6 @@ public final class AddonRunnable implements Runnable
                      finally
                      {
                         addon.setStatus(AddonStatus.LOADED);
-                        if (operation != null)
-                           operation.cancel(true);
                      }
 
                      weld.shutdown();

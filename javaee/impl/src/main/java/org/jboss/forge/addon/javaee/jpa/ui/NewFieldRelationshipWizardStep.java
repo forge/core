@@ -13,7 +13,7 @@ import javax.inject.Inject;
 import javax.persistence.CascadeType;
 import javax.persistence.FetchType;
 
-import org.jboss.forge.addon.javaee.jpa.PersistenceOperations;
+import org.jboss.forge.addon.javaee.jpa.FieldOperations;
 import org.jboss.forge.addon.javaee.ui.AbstractProjectUICommand;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
@@ -50,7 +50,7 @@ public class NewFieldRelationshipWizardStep extends AbstractProjectUICommand imp
    private UISelectMany<CascadeType> cascadeType;
 
    @Inject
-   private PersistenceOperations persistenceOperations;
+   private FieldOperations persistenceOperations;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
@@ -86,13 +86,16 @@ public class NewFieldRelationshipWizardStep extends AbstractProjectUICommand imp
       switch (relationship)
       {
       case MANY_TO_MANY:
-         // persistenceOperations.addManyToMany(context);
+         persistenceOperations.newManyToManyRelationship(project, entity, fieldName, fieldType,
+                  inverseFieldName.getValue(), fetchType.getValue(), required.getValue(), cascadeType.getValue());
          break;
       case MANY_TO_ONE:
-         // persistenceOperations.addManyToOne(context);
+         persistenceOperations.newManyToOneRelationship(project, entity, fieldName, fieldType,
+                  inverseFieldName.getValue(), fetchType.getValue(), required.getValue(), cascadeType.getValue());
          break;
       case ONE_TO_MANY:
-         // persistenceOperations.addOneToMany(context);
+         persistenceOperations.newOneToManyRelationship(project, entity, fieldName, fieldType,
+                  inverseFieldName.getValue(), fetchType.getValue(), required.getValue(), cascadeType.getValue());
          break;
       case ONE_TO_ONE:
          persistenceOperations.newOneToOneRelationship(project, entity, fieldName, fieldType,
@@ -101,7 +104,7 @@ public class NewFieldRelationshipWizardStep extends AbstractProjectUICommand imp
       default:
          throw new UnsupportedOperationException("Relationship " + relationship + " is not supported");
       }
-      return Results.success();
+      return Results.success("Relationship " + relationship.getDescription() + " created");
    }
 
    @Override

@@ -30,31 +30,28 @@ public class TestShellConfiguration implements ShellConfiguration
    private PipedOutputStream stdin = new PipedOutputStream();
    private ByteArrayOutputStream stdout = new ByteArrayOutputStream();
    private ByteArrayOutputStream stderr = new ByteArrayOutputStream();
+   PipedInputStream inputStream;
 
    @Override
    public synchronized void configure()
    {
       try
       {
-         reset();
-         Settings.getInstance().setInputStream(new PipedInputStream(stdin));
-         Settings.getInstance().setStdOut(stdout);
-         Settings.getInstance().setStdErr(stderr);
-         Settings.getInstance().setName("test");
-         Settings.getInstance().setTerminal(new TestTerminal());
-         Settings.getInstance().getOperationManager().addOperation(new KeyOperation(Key.ENTER, Operation.NEW_LINE));
+         Settings settings = Settings.getInstance();
+
+         inputStream = new PipedInputStream(stdin);
+         settings.setInputStream(inputStream);
+         settings.setStdOut(stdout);
+         settings.setStdErr(stderr);
+         settings.setName("test");
+         settings.setLogging(true);
+         settings.setTerminal(new TestTerminal());
+         settings.getOperationManager().addOperation(new KeyOperation(Key.ENTER, Operation.NEW_LINE));
       }
       catch (IOException e)
       {
          throw new RuntimeException("Could not configure Shell.", e);
       }
-   }
-
-   private void reset()
-   {
-      stdin = new PipedOutputStream();
-      stdout = new ByteArrayOutputStream();
-      stderr = new ByteArrayOutputStream();
    }
 
    public synchronized OutputStream getStdIn()

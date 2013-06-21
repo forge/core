@@ -69,10 +69,19 @@ public class AddonImpl implements Addon
       return getRunnable() == null && getStatus().isLoaded();
    }
 
+   public boolean cancelFuture()
+   {
+      boolean result = false;
+      Future<Void> future = getFuture();
+      if (future != null && !future.isDone())
+         result = future.cancel(true);
+      return result;
+   }
+
    public void reset()
    {
       if (getModuleLoader() != null)
-         getModuleLoader().removeFromCache(id);
+         getModuleLoader().releaseAddonModule(id);
       this.state = new Memento();
    }
 
@@ -156,9 +165,9 @@ public class AddonImpl implements Addon
 
    public void setDirty(boolean dirty)
    {
-      this.state.dirty  = dirty;
+      this.state.dirty = dirty;
    }
-   
+
    public boolean isDirty()
    {
       return this.state.dirty;

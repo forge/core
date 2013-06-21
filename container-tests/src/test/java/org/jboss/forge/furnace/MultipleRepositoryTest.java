@@ -41,7 +41,9 @@ public class MultipleRepositoryTest
    public void init() throws IOException
    {
       repodir1 = File.createTempFile("forge", "repo1");
+      repodir1.deleteOnExit();
       repodir2 = File.createTempFile("forge", "repo2");
+      repodir2.deleteOnExit();
    }
 
    @After
@@ -54,12 +56,12 @@ public class MultipleRepositoryTest
    @Test
    public void testAddonsCanReferenceDependenciesInOtherRepositories() throws IOException
    {
-      Furnace forge = ForgeFactory.getInstance(Furnace.class.getClassLoader());
-      AddonRepository left = forge.addRepository(AddonRepositoryMode.MUTABLE, repodir1);
-      AddonRepository right = forge.addRepository(AddonRepositoryMode.MUTABLE, repodir2);
-      forge.startAsync();
+      Furnace furnace = ForgeFactory.getInstance(Furnace.class.getClassLoader());
+      AddonRepository left = furnace.addRepository(AddonRepositoryMode.MUTABLE, repodir1);
+      AddonRepository right = furnace.addRepository(AddonRepositoryMode.MUTABLE, repodir2);
+      furnace.startAsync();
 
-      AddonManager manager = new AddonManagerImpl(forge, new MavenDependencyResolver(new FileResourceFactory(),
+      AddonManager manager = new AddonManagerImpl(furnace, new MavenDependencyResolver(new FileResourceFactory(),
                new MavenContainer()));
 
       AddonId facets = AddonId.from("org.jboss.forge.addon:facets", "2.0.0-SNAPSHOT");
@@ -84,9 +86,9 @@ public class MultipleRepositoryTest
       Assert.assertTrue(left.isDeployed(convert));
       Assert.assertTrue(right.isDeployed(resources));
 
-      Addons.waitUntilStarted(forge.getAddonRegistry().getAddon(resources), 10, TimeUnit.SECONDS);
+      Addons.waitUntilStarted(furnace.getAddonRegistry().getAddon(resources), 10, TimeUnit.SECONDS);
 
-      forge.stop();
+      furnace.stop();
    }
 
    @Test

@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
 
    <parent>
@@ -68,7 +67,7 @@
       <version.junit>4.11</version.junit>
       <version.mvel>2.1.0.Final</version.mvel>
       <version.org.jboss.logmanager.jboss-logmanager>1.4.1.Final</version.org.jboss.logmanager.jboss-logmanager>
-      <version.shrinkwrap.resolver>2.0.0-beta-3</version.shrinkwrap.resolver>
+      <version.shrinkwrap.resolver>2.0.0</version.shrinkwrap.resolver>
       <version.slf4j>1.6.1</version.slf4j>
       <version.weld>2.0.1.Final</version.weld>
       <version.weld.spi>2.0.Final</version.weld.spi>
@@ -87,7 +86,7 @@
 
             <module>arquillian</module>
             <module>test-harness</module>
-            
+
             <!-- TODO: Move Furnace -->
             <module>container</module>
             <module>container-api</module>
@@ -110,6 +109,7 @@
             <module>resources</module>
             <module>ui</module>
             <module>convert</module>
+            <module>configuration</module>
          </modules>
       </profile>
    </profiles>
@@ -158,8 +158,8 @@
             <artifactId>xml-parser</artifactId>
             <version>${version.xmlparser}</version>
          </dependency>
-         
-         
+
+
          <!-- Test Harneses Dependencies -->
          <dependency>
             <groupId>org.jboss.forge.test</groupId>
@@ -203,7 +203,7 @@
             <artifactId>jboss-logmanager</artifactId>
             <version>${version.org.jboss.logmanager.jboss-logmanager}</version>
          </dependency>
-         
+
          <dependency>
             <groupId>org.jboss.spec</groupId>
             <artifactId>jboss-javaee-6.0</artifactId>
@@ -224,7 +224,7 @@
             <version>${version.junit}</version>
             <scope>test</scope>
          </dependency>
-         
+
          <!-- The Shrinkwrap resolver BOM should be placed BEFORE the arquillian BOM, otherwise, it will be useless -->
          <dependency>
             <groupId>org.jboss.shrinkwrap.resolver</groupId>
@@ -504,7 +504,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore/>
+                              <ignore />
                            </action>
                         </pluginExecution>
                         <pluginExecution>
@@ -521,7 +521,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore/>
+                              <ignore />
                            </action>
                         </pluginExecution>
                         <pluginExecution>
@@ -538,7 +538,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore/>
+                              <ignore />
                            </action>
                         </pluginExecution>
                         <pluginExecution>
@@ -557,7 +557,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore/>
+                              <ignore />
                            </action>
                         </pluginExecution>
                      </pluginExecutions>

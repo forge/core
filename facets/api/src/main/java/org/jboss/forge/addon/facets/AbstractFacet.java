@@ -25,7 +25,7 @@ public abstract class AbstractFacet<FACETEDTYPE extends Faceted<?>> implements M
    }
 
    /**
-    * Set the <FACETEDTYPE> origin on which this {@link Facet} will operate.
+    * Set the <FACETED> origin on which this {@link Facet} will operate.
     */
    @Override
    public void setFaceted(FACETEDTYPE origin)

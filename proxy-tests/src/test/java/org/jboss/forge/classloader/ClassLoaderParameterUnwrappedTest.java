@@ -128,8 +128,9 @@ public class ClassLoaderParameterUnwrappedTest
 
       Assert.assertTrue(Proxies.isForgeProxy(classFilter));
 
-      Assert.assertTrue(classFilter.verify(enhancedResult.getClass()));
-      Assert.assertFalse(classFilter.isProxyType(enhancedResult.getClass()));
+      Class<? extends MockResult> enhancedResultType = enhancedResult.getClass();
+      Assert.assertTrue(classFilter.verify(enhancedResultType));
+      Assert.assertFalse(classFilter.isProxyType(enhancedResultType));
       Assert.assertTrue(classFilter.verify(delegate.getClass()));
       Assert.assertFalse(classFilter.isProxyType(delegate.getClass()));
       Assert.assertTrue(classFilter.verify(foreignType));

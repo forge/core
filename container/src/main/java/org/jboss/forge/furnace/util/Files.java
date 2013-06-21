@@ -10,9 +10,6 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.forge.furnace.util.OperatingSystemUtils;
-import org.jboss.forge.furnace.util.Streams;
-
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -42,6 +39,7 @@ public final class Files
 
    public static boolean delete(File file)
    {
+      Assert.notNull(file, "File to delete must not be null.");
       return delete(file, false);
    }
 
@@ -53,48 +51,45 @@ public final class Files
     */
    public static void deleteOnExit(File file)
    {
+      Assert.notNull(file, "File to delete must not be null.");
       file.deleteOnExit();
    }
 
    public static boolean delete(File file, final boolean recursive)
    {
+      Assert.notNull(file, "File to delete must not be null.");
+
+      boolean result = false;
       if (recursive)
       {
-         if (_deleteRecursive(file, true))
+         result = _deleteRecursive(file, true);
+      }
+      else
+      {
+         if ((file.listFiles() != null) && (file.listFiles().length != 0))
          {
-            return true;
+            throw new RuntimeException("directory not empty");
          }
-         return false;
-      }
 
-      if ((file.listFiles() != null) && (file.listFiles().length != 0))
-      {
-         throw new RuntimeException("directory not empty");
-      }
+         if (OperatingSystemUtils.isWindows())
+         {
+            System.gc(); // ensure no lingering handles that would prevent deletion
+         }
 
-      if (OperatingSystemUtils.isWindows())
-      {
-         System.gc(); // ensure no lingering handles that would prevent deletion
+         file.deleteOnExit(); // be paranoid
+         result = file.delete();
       }
-
-      file.deleteOnExit(); // be paranoid
-      if (file.delete())
-      {
-         return true;
-      }
-      return false;
+      return result;
    }
 
    private static boolean _deleteRecursive(final File file, final boolean collect)
    {
+      Assert.notNull(file, "File to delete must not be null.");
+
+      boolean result = true;
       if (collect && OperatingSystemUtils.isWindows())
       {
          System.gc(); // ensure no lingering handles that would prevent deletion
-      }
-
-      if (file == null)
-      {
-         return false;
       }
 
       File[] children = file.listFiles();
@@ -104,19 +99,20 @@ public final class Files
          {
             if (sf.isDirectory())
             {
-               _deleteRecursive(sf, false);
+               if (!_deleteRecursive(sf, false))
+                  result = false;
             }
             else
             {
+               sf.deleteOnExit(); // be paranoid
                if (!sf.delete())
-               {
-                  throw new RuntimeException("failed to delete: " + sf.getAbsolutePath());
-               }
+                  result = false;
             }
          }
       }
 
-      return file.delete();
+      file.deleteOnExit(); // be paranoid
+      return file.delete() && result;
    }
 
    /**
@@ -148,10 +144,10 @@ public final class Files
     * <strong>Note:</strong> Setting <code>preserveFileDate</code> to <code>true</code> tries to preserve the file's
     * last modified date/times using {@link File#setLastModified(long)}, however it is not guaranteed that the operation
     * will succeed. If the modification operation fails, no indication is provided.
-    *
+    * 
     * @param srcFile an existing file to copy, must not be <code>null</code>
     * @param destDir the directory to place the copy in, must not be <code>null</code>
-    *
+    * 
     * @throws NullPointerException if source or destination is <code>null</code>
     * @throws IOException if source or destination is invalid
     * @throws IOException if an IO error occurs during copying
@@ -178,11 +174,11 @@ public final class Files
     * This method copies the contents of the specified source file to the specified destination file. The directory
     * holding the destination file is created if it does not exist. If the destination file exists, then this method
     * will overwrite it.
-    *
+    * 
     * @param srcFile an existing file to copy, must not be <code>null</code>
     * @param destFile the new file, must not be <code>null</code>
     * @param preserveFileDate true if the file date of the copy should be the same as the original
-    *
+    * 
     * @throws NullPointerException if source or destination is <code>null</code>
     * @throws IOException if source or destination is invalid
     * @throws IOException if an IO error occurs during copying
@@ -226,7 +222,7 @@ public final class Files
 
    /**
     * Internal copy file method.
-    *
+    * 
     * @param srcFile the validated source file, must not be <code>null</code>
     * @param destFile the validated destination file, must not be <code>null</code>
     * @throws IOException if an error occurs
@@ -284,10 +280,10 @@ public final class Files
     * <strong>Note:</strong> Setting <code>preserveFileDate</code> to {@code true} tries to preserve the files' last
     * modified date/times using {@link File#setLastModified(long)}, however it is not guaranteed that those operations
     * will succeed. If the modification operation fails, no indication is provided.
-    *
+    * 
     * @param srcDir an existing directory to copy, must not be {@code null}
     * @param destDir the new directory, must not be {@code null}
-    *
+    * 
     * @throws NullPointerException if source or destination is {@code null}
     * @throws IOException if source or destination is invalid
     * @throws IOException if an IO error occurs during copying
@@ -309,33 +305,33 @@ public final class Files
     * <strong>Note:</strong> Setting <code>preserveFileDate</code> to {@code true} tries to preserve the files' last
     * modified date/times using {@link File#setLastModified(long)}, however it is not guaranteed that those operations
     * will succeed. If the modification operation fails, no indication is provided.
-    *
+    * 
     * <h4>Example: Copy directories only</h4>
-    *
+    * 
     * <pre>
     * // only copy the directory structure
     * FileUtils.copyDirectory(srcDir, destDir, DirectoryFileFilter.DIRECTORY, false);
     * </pre>
-    *
+    * 
     * <h4>Example: Copy directories and txt files</h4>
-    *
+    * 
     * <pre>
     * // Create a filter for &quot;.txt&quot; files
     * IOFileFilter txtSuffixFilter = FileFilterUtils.suffixFileFilter(&quot;.txt&quot;);
     * IOFileFilter txtFiles = FileFilterUtils.andFileFilter(FileFileFilter.FILE, txtSuffixFilter);
-    *
+    * 
     * // Create a filter for either directories or &quot;.txt&quot; files
     * FileFilter filter = FileFilterUtils.orFileFilter(DirectoryFileFilter.DIRECTORY, txtFiles);
-    *
+    * 
     * // Copy using the filter
     * FileUtils.copyDirectory(srcDir, destDir, filter, false);
     * </pre>
-    *
+    * 
     * @param srcDir an existing directory to copy, must not be {@code null}
     * @param destDir the new directory, must not be {@code null}
     * @param filter the filter to apply, null means copy all directories and files
     * @param preserveFileDate true if the file date of the copy should be the same as the original
-    *
+    * 
     * @throws NullPointerException if source or destination is {@code null}
     * @throws IOException if source or destination is invalid
     * @throws IOException if an IO error occurs during copying
@@ -385,7 +381,7 @@ public final class Files
 
    /**
     * Internal copy directory method.
-    *
+    * 
     * @param srcDir the validated source directory, must not be {@code null}
     * @param destDir the validated destination directory, must not be {@code null}
     * @param filter the filter to apply, null means copy all directories and files

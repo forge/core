@@ -45,12 +45,15 @@ public class AddonModuleLoader extends ModuleLoader
 
    private Furnace forge;
    private final Iterable<ModuleSpecProvider> moduleProviders;
+
    private AddonModuleIdentifierCache moduleCache;
+   private AddonModuleJarFileCache moduleJarFileCache;
 
    public AddonModuleLoader(Furnace forge)
    {
       this.forge = forge;
       this.moduleCache = new AddonModuleIdentifierCache();
+      this.moduleJarFileCache = new AddonModuleJarFileCache();
       moduleProviders = ServiceLoader.load(ModuleSpecProvider.class, forge.getRuntimeClassLoader());
       installModuleMBeanServer();
    }
@@ -149,7 +152,7 @@ public class AddonModuleLoader extends ModuleLoader
                return null;
             }
 
-            addLocalResources(repository, found, builder);
+            addLocalResources(repository, found, builder, id);
 
             return builder.create();
          }
@@ -157,7 +160,7 @@ public class AddonModuleLoader extends ModuleLoader
       return null;
    }
 
-   private void addLocalResources(AddonRepository repository, AddonId found, Builder builder)
+   private void addLocalResources(AddonRepository repository, AddonId found, Builder builder, ModuleIdentifier id)
    {
       List<File> resources = repository.getAddonResources(found);
       for (File file : resources)
@@ -174,9 +177,11 @@ public class AddonModuleLoader extends ModuleLoader
             }
             else if (file.length() > 0)
             {
+               JarFile jarFile = new JarFile(file);
+               moduleJarFileCache.addJarFileReference(id, jarFile);
                builder.addResourceRoot(
                         ResourceLoaderSpec.createResourceLoaderSpec(
-                                 ResourceLoaders.createJarResourceLoader(file.getName(), new JarFile(file)),
+                                 ResourceLoaders.createJarResourceLoader(file.getName(), jarFile),
                                  PathFilters.acceptAll())
                         );
             }
@@ -258,8 +263,10 @@ public class AddonModuleLoader extends ModuleLoader
       return "AddonModuleLoader";
    }
 
-   public void removeFromCache(AddonId addonId)
+   public void releaseAddonModule(AddonId addonId)
    {
+      ModuleIdentifier id = moduleCache.getModuleId(addonId);
+      moduleJarFileCache.closeJarFileReferences(id);
       moduleCache.clear(addonId);
    }
 

@@ -59,6 +59,7 @@ public class NewProjectWizardTest
 
    @Inject
    private NewProjectWizard command;
+   
    @Inject
    private NewProjectWizard command2;
 

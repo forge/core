@@ -220,6 +220,32 @@ public class Proxies
       return result;
    }
 
+   @SuppressWarnings("unchecked")
+   public static <T> T unwrapOnce(Object object)
+   {
+      T result = (T) object;
+
+      if (object != null)
+      {
+         if (isForgeProxy(result))
+         {
+            try
+            {
+               Method method = result.getClass().getMethod("getDelegate");
+               method.setAccessible(true);
+               result = (T) method.invoke(result);
+            }
+            catch (Exception e)
+            {
+            }
+         }
+
+         if (result == null)
+            result = (T) object;
+      }
+      return result;
+   }
+
    /**
     * Returns true if the given object was created via {@link Proxies}.
     */

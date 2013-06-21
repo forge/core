@@ -41,7 +41,6 @@ public class ListServicesCommand implements UICommand
    public ListServicesCommand(Furnace furnace)
    {
       this.furnace = furnace;
-      ;
    }
 
    @Override

@@ -56,7 +56,7 @@ public class AddonProjectConfiguratorTest
    }
 
    @Inject
-   private AddonProjectConfigurator addonProjectFactory;
+   private AddonProjectConfigurator configurator;
 
    @Inject
    private ProjectFactory projectFactory;
@@ -65,13 +65,15 @@ public class AddonProjectConfiguratorTest
    public void testCreateAddonProject()
    {
       Project project = projectFactory.createTempProject();
+      project.getProjectRoot().deleteOnExit();
+
       MetadataFacet metadataFacet = project.getFacet(MetadataFacet.class);
       metadataFacet.setProjectName("testproject");
       metadataFacet.setProjectVersion("1.0.0-SNAPSHOT");
       metadataFacet.setTopLevelPackage("com.acme.testproject");
 
       SingleVersion forgeVersion = new SingleVersion("2.0.0-SNAPSHOT");
-      addonProjectFactory.setupAddonProject(project, forgeVersion, Collections.<AddonId> emptyList());
+      configurator.setupAddonProject(project, forgeVersion, Collections.<AddonId> emptyList());
 
       DirectoryResource projectRoot = project.getProjectRoot();
 
@@ -234,19 +236,24 @@ public class AddonProjectConfiguratorTest
                ForgeContainerAPIFacet.FORGE_API_DEPENDENCY));
       Assert.assertTrue(testsProject.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(
                ForgeContainerAPIFacet.FORGE_API_DEPENDENCY));
+
+      project.getProjectRoot().delete(true);
+      project.getProjectRoot().deleteOnExit();
    }
 
    @Test
    public void testSimpleAddonProject()
    {
       Project project = projectFactory.createTempProject();
+      project.getProjectRoot().deleteOnExit();
+
       MetadataFacet metadataFacet = project.getFacet(MetadataFacet.class);
       metadataFacet.setProjectName("testproject");
       metadataFacet.setProjectVersion("1.0.0-SNAPSHOT");
       metadataFacet.setTopLevelPackage("com.acme.testproject");
 
       SingleVersion forgeVersion = new SingleVersion("2.0.0-SNAPSHOT");
-      addonProjectFactory.setupSimpleAddonProject(project, forgeVersion, Collections.<AddonId> emptyList());
+      configurator.setupSimpleAddonProject(project, forgeVersion, Collections.<AddonId> emptyList());
 
       Assert.assertTrue(project.hasFacet(CDIFacet.class));
       Assert.assertTrue(project.hasFacet(JavaSourceFacet.class));
@@ -258,6 +265,9 @@ public class AddonProjectConfiguratorTest
                ForgeContainerAPIFacet.FORGE_API_DEPENDENCY));
       Assert.assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(
                ForgeContainerAPIFacet.FORGE_API_DEPENDENCY));
+
+      project.getProjectRoot().delete(true);
+      project.getProjectRoot().deleteOnExit();
    }
 
    @Test
@@ -265,13 +275,15 @@ public class AddonProjectConfiguratorTest
    public void testDependencyResolution()
    {
       Project project = projectFactory.createTempProject();
+      project.getProjectRoot().deleteOnExit();
+
       MetadataFacet metadataFacet = project.getFacet(MetadataFacet.class);
       metadataFacet.setProjectName("testproject");
       metadataFacet.setProjectVersion("1.0.0-SNAPSHOT");
       metadataFacet.setTopLevelPackage("com.acme.testproject");
 
       SingleVersion forgeVersion = new SingleVersion("2.0.0.Alpha3");
-      addonProjectFactory.setupAddonProject(project, forgeVersion, Collections.<AddonId> emptyList());
+      configurator.setupAddonProject(project, forgeVersion, Collections.<AddonId> emptyList());
 
       DirectoryResource projectRoot = project.getProjectRoot();
 
