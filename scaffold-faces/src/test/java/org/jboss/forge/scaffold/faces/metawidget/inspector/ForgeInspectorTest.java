@@ -6,8 +6,15 @@
  */
 package org.jboss.forge.scaffold.faces.metawidget.inspector;
 
+import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.INVERSE_FIELD;
+import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.JPA_MANY_TO_MANY;
+import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.JPA_MANY_TO_ONE;
+import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.JPA_ONE_TO_MANY;
+import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.JPA_ONE_TO_ONE;
+import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.JPA_REL_TYPE;
 import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.N_TO_MANY;
 import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.ONE_TO_ONE;
+import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.OWNING_FIELD;
 import static org.metawidget.inspector.InspectionResultConstants.ENTITY;
 import static org.metawidget.inspector.InspectionResultConstants.NAME;
 import static org.metawidget.inspector.InspectionResultConstants.PROPERTY;
@@ -51,40 +58,60 @@ public class ForgeInspectorTest
       assertEquals(PROPERTY, property.getNodeName());
       assertEquals("embedded", property.getAttribute(NAME));
       assertEquals(TRUE, property.getAttribute(ONE_TO_ONE));
-      assertEquals(2, property.getAttributes().getLength());
+      assertEquals(JPA_ONE_TO_ONE, property.getAttribute(JPA_REL_TYPE));
+      assertEquals(3, property.getAttributes().getLength());
 
       property = XmlUtils.getNextSiblingElement(property);
       assertEquals(PROPERTY, property.getNodeName());
       assertEquals("manyToMany", property.getAttribute(NAME));
       assertEquals(TRUE, property.getAttribute(N_TO_MANY));
-      assertEquals(2, property.getAttributes().getLength());
+      assertEquals(JPA_MANY_TO_MANY, property.getAttribute(JPA_REL_TYPE));
+      assertEquals(3, property.getAttributes().getLength());
 
       property = XmlUtils.getNextSiblingElement(property);
       assertEquals(PROPERTY, property.getNodeName());
       assertEquals("manyToOne", property.getAttribute(NAME));
       assertEquals("#{forgeInspectorTest$BarBean.all}", property.getAttribute(FACES_LOOKUP));
       assertEquals("#{forgeInspectorTest$BarBean.converter}", property.getAttribute(FACES_CONVERTER_ID));
-      assertEquals(3, property.getAttributes().getLength());
+      assertEquals(JPA_MANY_TO_ONE, property.getAttribute(JPA_REL_TYPE));
+      assertEquals(5, property.getAttributes().getLength());
 
+      property = XmlUtils.getNextSiblingElement(property);
+      assertEquals(PROPERTY, property.getNodeName());
+      assertEquals("manyToOneBidi", property.getAttribute(NAME));
+      assertEquals("#{forgeInspectorTest$BarBean.all}", property.getAttribute(FACES_LOOKUP));
+      assertEquals("#{forgeInspectorTest$BarBean.converter}", property.getAttribute(FACES_CONVERTER_ID));
+      assertEquals("foos", property.getAttribute(INVERSE_FIELD));
+      assertEquals("manyToOneBidi", property.getAttribute(OWNING_FIELD));
+      assertEquals(JPA_MANY_TO_ONE, property.getAttribute(JPA_REL_TYPE));
+      assertEquals(6, property.getAttributes().getLength());
+      
       property = XmlUtils.getNextSiblingElement(property);
       assertEquals(PROPERTY, property.getNodeName());
       assertEquals("oneToMany", property.getAttribute(NAME));
       assertEquals(TRUE, property.getAttribute(N_TO_MANY));
-      assertEquals(2, property.getAttributes().getLength());
+      assertEquals("oneToMany", property.getAttribute(INVERSE_FIELD));
+      assertEquals("bar", property.getAttribute(OWNING_FIELD));
+      assertEquals(JPA_ONE_TO_MANY, property.getAttribute(JPA_REL_TYPE));
+      assertEquals(5, property.getAttributes().getLength());
 
       property = XmlUtils.getNextSiblingElement(property);
       assertEquals(PROPERTY, property.getNodeName());
       assertEquals("oneToOne", property.getAttribute(NAME));
       assertEquals(TRUE, property.getAttribute(ONE_TO_ONE));
-      assertEquals(2, property.getAttributes().getLength());
+      assertEquals(JPA_ONE_TO_ONE, property.getAttribute(JPA_REL_TYPE));
+      assertEquals(3, property.getAttributes().getLength());
 
       property = XmlUtils.getNextSiblingElement(property);
       assertEquals(PROPERTY, property.getNodeName());
       assertEquals("oneToOneMappedBy", property.getAttribute(NAME));
       assertEquals(TRUE, property.getAttribute(ONE_TO_ONE));
-      assertEquals(2, property.getAttributes().getLength());
+      assertEquals("oneToOneMappedBy", property.getAttribute(INVERSE_FIELD));
+      assertEquals("foo", property.getAttribute(OWNING_FIELD));
+      assertEquals(JPA_ONE_TO_ONE, property.getAttribute(JPA_REL_TYPE));
+      assertEquals(5, property.getAttributes().getLength());
 
-      assertEquals(6, entity.getChildNodes().getLength());
+      assertEquals(7, entity.getChildNodes().getLength());
    }
 
    //
@@ -122,9 +149,15 @@ public class ForgeInspectorTest
 
          return null;
       }
+      
+      @ManyToOne
+      public Bar getManyToOneBidi() {
+
+         return null;
+      }
 
       @ManyToMany
-      public Bar getManyToMany() {
+      public Set<Bar> getManyToMany() {
 
          return null;
       }
@@ -133,6 +166,24 @@ public class ForgeInspectorTest
    static class Bar
    {
       public String getName() {
+
+         return null;
+      }
+      
+      @OneToOne()
+      public Foo getFoo()
+      {
+         return null;
+      }
+      
+      @ManyToOne()
+      public Foo getBar()
+      {
+         return null;
+      }
+      
+      @OneToMany(mappedBy="manyToOneBidi")
+      public Set<Foo> getFoos() {
 
          return null;
       }

@@ -138,6 +138,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    //
    protected CompiledTemplateResource backingBeanTemplate;
    protected int backingBeanTemplateQbeMetawidgetIndent;
+   protected int backingBeanTemplateRmEntityMetawidgetIndent;
    protected CompiledTemplateResource viewUtilsTemplate;
    protected CompiledTemplateResource taglibTemplate;
    protected CompiledTemplateResource viewTemplate;
@@ -163,6 +164,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    protected StaticHtmlMetawidget searchMetawidget;
    protected StaticHtmlMetawidget beanMetawidget;
    protected StaticJavaMetawidget qbeMetawidget;
+   protected StaticJavaMetawidget rmEntityMetawidget;
 
    private Configuration config;
    private ShellPrintWriter writer;
@@ -239,6 +241,10 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       this.qbeMetawidget = new StaticJavaMetawidget();
       this.qbeMetawidget.setConfigReader(configReader);
       this.qbeMetawidget.setConfig("scaffold/faces/metawidget-qbe.xml");
+      
+      this.rmEntityMetawidget = new StaticJavaMetawidget();
+      this.rmEntityMetawidget.setConfigReader(configReader);
+      this.rmEntityMetawidget.setConfig("scaffold/faces/metawidget-remove-entity.xml");
    }
 
    @Override
@@ -270,18 +276,30 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
          context.put("entity", entity);
          String ccEntity = StringUtils.decapitalize(entity.getName());
          context.put("ccEntity", ccEntity);
+         context.put("rmEntity", ccEntity + "ToDelete");
          setPrimaryKeyMetaData(context, entity);
 
          // Prepare qbeMetawidget
          this.qbeMetawidget.setPath(entity.getQualifiedName());
          StringWriter stringWriter = new StringWriter();
          this.qbeMetawidget.write(stringWriter, this.backingBeanTemplateQbeMetawidgetIndent);
-
          context.put("qbeMetawidget", stringWriter.toString().trim());
+         
+         // Prepare removeEntityMetawidget
+         this.rmEntityMetawidget.setPath(entity.getQualifiedName());
+         stringWriter = new StringWriter();
+         this.rmEntityMetawidget.write(stringWriter, this.backingBeanTemplateRmEntityMetawidgetIndent);
+         context.put("rmEntityMetawidget", stringWriter.toString().trim());
+         
+         // Prepare Java imports
          Set<String> qbeMetawidgetImports = this.qbeMetawidget.getImports();
-         qbeMetawidgetImports.remove(entity.getQualifiedName());
-         context.put("qbeMetawidgetImports",
-                  CollectionUtils.toString(qbeMetawidgetImports, ";\r\nimport ", true, false));
+         Set<String> rmEntityMetawidgetImports = this.rmEntityMetawidget.getImports();
+         Set<String> metawidgetImports = CollectionUtils.newHashSet();
+         metawidgetImports.addAll(qbeMetawidgetImports);
+         metawidgetImports.addAll(rmEntityMetawidgetImports);
+         metawidgetImports.remove(entity.getQualifiedName());
+         context.put("metawidgetImports",
+                  CollectionUtils.toString(metawidgetImports, ";\r\nimport ", true, false));
 
          // Create the Backing Bean for this entity
          JavaClass viewBean = JavaParser.parse(JavaClass.class, this.backingBeanTemplate.render(context));
@@ -484,6 +502,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
          this.backingBeanTemplate = this.compiler.compile(BACKING_BEAN_TEMPLATE);
          String template = Streams.toString(this.backingBeanTemplate.getSourceTemplateResource().getInputStream());
          this.backingBeanTemplateQbeMetawidgetIndent = parseIndent(template, "@{qbeMetawidget}");
+         this.backingBeanTemplateRmEntityMetawidgetIndent = parseIndent(template, "@{rmEntityMetawidget}");
       }
       if (this.viewUtilsTemplate == null)
       {
