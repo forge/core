@@ -110,6 +110,7 @@
             <module>ui</module>
             <module>convert</module>
             <module>configuration</module>
+            <module>scaffold</module>
          </modules>
       </profile>
    </profiles>
