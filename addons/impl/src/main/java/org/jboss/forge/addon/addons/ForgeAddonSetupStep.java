@@ -7,9 +7,9 @@
 package org.jboss.forge.addon.addons;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.inject.Inject;
 
@@ -40,10 +40,10 @@ import org.jboss.forge.furnace.versions.Version;
 
 /**
  * Called when the Next button is pressed and the {@link ForgeAddonProjectType} is selected in NewProjectWizard
- *
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 public class ForgeAddonSetupStep implements UIWizardStep
 {
@@ -99,7 +99,7 @@ public class ForgeAddonSetupStep implements UIWizardStep
 
    private void configureAddonDependencies()
    {
-      Set<AddonId> choices = new HashSet<AddonId>();
+      Set<AddonId> choices = new TreeSet<AddonId>();
       for (AddonRepository repository : forge.getRepositories())
       {
          for (AddonId id : repository.listEnabled())

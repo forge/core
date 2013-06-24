@@ -1,9 +1,9 @@
 package org.jboss.forge.addon.manager.impl.commands;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.inject.Inject;
 
@@ -53,7 +53,7 @@ public class AddonRemoveCommand extends AbstractUICommand implements AddonComman
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      Set<AddonId> choices = new HashSet<AddonId>();
+      Set<AddonId> choices = new TreeSet<AddonId>();
       for (AddonRepository repository : forge.getRepositories())
       {
          // Avoid immutable repositories

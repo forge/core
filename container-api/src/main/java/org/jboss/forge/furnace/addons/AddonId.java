@@ -7,7 +7,7 @@ import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
 
-public class AddonId
+public class AddonId implements Comparable<AddonId>
 {
    private String name;
    private Version apiVersion;
@@ -128,4 +128,13 @@ public class AddonId
       return true;
    }
 
+   @Override
+   public int compareTo(AddonId o)
+   {
+      if (o == null)
+      {
+         return -1;
+      }
+      return toCoordinates().compareTo(o.toCoordinates());
+   }
 }
