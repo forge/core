@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.jboss.forge.addon.facets.Facet;
 import org.jboss.forge.addon.projects.ProjectFacet;
+import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.Resource;
 
 /**
@@ -20,26 +21,29 @@ import org.jboss.forge.addon.resource.Resource;
 public interface ScaffoldProvider extends ProjectFacet
 {
    /**
+    * Return the name for this {@link ScaffoldProvider}
+    * 
+    * Ex: faces
+    */
+   String getName();
+
+   /**
+    * Return the description for this {@link ScaffoldProvider}
+    * 
+    * Ex: JavaServer Faces
+    */
+   String getDescription();
+
+   /**
     * Set up this scaffold provider, installing any necessary {@link Facet} or {@link Plugin} implementations as
     * necessary. Install the templates in the provider to the src/main/templates directory of the project.
     */
-   List<Resource<?>> setup(String targetDir, boolean overwrite, boolean installTemplates);
+   List<Resource<?>> setup(DirectoryResource targetDir, boolean overwrite, boolean installTemplates);
 
    /**
-    * Generate a set of create, read, update, delete pages for the given collection of resources {@link Resource}.
-    * Note that any collection of Resource instances can be provided to the {@link ScaffoldProvider}. It is the 
+    * Generate a set of create, read, update, delete pages for the given collection of resources {@link Resource}. Note
+    * that any collection of Resource instances can be provided to the {@link ScaffoldProvider}. It is the
     * responsibility of the ScaffoldProvider to verify whether it can act on the provided resource.
     */
-   List<Resource<?>> generateFrom(List<Resource<?>> resource, String targetDir, boolean overwrite);
-   
-   /**
-    * Get the {@link AccessStrategy} for this {@link ScaffoldProvider}.
-    */
-   AccessStrategy getAccessStrategy();
-
-   /**
-    * Get the {@link TemplateStrategy} for this {@link ScaffoldProvider}.
-    */
-   TemplateStrategy getTemplateStrategy();
-
+   List<Resource<?>> generateFrom(List<Resource<?>> resource, DirectoryResource targetDir, boolean overwrite);
 }
