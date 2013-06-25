@@ -60,10 +60,18 @@ public class CommandParserTest
       assertEquals("--bar", completeOperation.getCompletionCandidates().get(1));
       assertEquals("--bar2", completeOperation.getCompletionCandidates().get(2));
 
-      /*
-       * completeOperation = new CompleteOperation("foo-bar --bar ",14); command.complete(completeOperation);
-       * System.out.println(completeOperation);
-       */
+       completeOperation = new CompleteOperation("foo-bar --name ", 15);
+       command.complete(completeOperation);
+       assertEquals("BAR", completeOperation.getCompletionCandidates().get(0));
+
+       completeOperation = new CompleteOperation("foo-bar --name B",16);
+       command.complete(completeOperation);
+       assertEquals("AR", completeOperation.getCompletionCandidates().get(0));
+
+       completeOperation = new CompleteOperation("foo-bar --help ",16);
+       command.complete(completeOperation);
+       assertEquals("HELP", completeOperation.getCompletionCandidates().get(0));
+       assertEquals("HALP", completeOperation.getCompletionCandidates().get(1));
    }
 
    @Test

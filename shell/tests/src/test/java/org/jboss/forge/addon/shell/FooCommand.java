@@ -9,17 +9,22 @@ package org.jboss.forge.addon.shell;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.resource.DirectoryResource;
+import org.jboss.forge.addon.resource.DirectoryResourceImpl;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.impl.UIInputImpl;
+import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.furnace.services.Exported;
+
+import java.util.ArrayList;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
@@ -63,6 +68,7 @@ public class FooCommand implements UICommand
        name = new UIInputImpl<String>("name", String.class);
       name.setLabel("name the foo");
       name.setRequired(true);
+       name.setDefaultValue("BAR");
 
        bar = new UIInputImpl<String>("bar", String.class);
        bar.setLabel("bar");
@@ -77,6 +83,18 @@ public class FooCommand implements UICommand
 
        help = new UIInputImpl<String>("help", String.class);
        help.setLabel("foo");
+       help.setCompleter(new UICompleter<String>() {
+           @Override
+           public Iterable<String> getCompletionProposals(UIContext context, InputComponent<?, String> input, String value) {
+               if(value == null || value.length() == 0) {
+                   ArrayList<String> list = new ArrayList<String>();
+                   list.add("HELP");
+                   list.add("HALP");
+                   return list;
+               }
+               return null;
+           }
+       });
 
        targetLocation = new UIInputImpl<DirectoryResource>("targetLocation", DirectoryResource.class);
        targetLocation.setLabel("project location");

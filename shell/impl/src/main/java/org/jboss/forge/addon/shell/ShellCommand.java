@@ -25,10 +25,7 @@ import org.jboss.forge.addon.shell.ShellContext;
 import org.jboss.forge.addon.shell.util.CommandLineUtil;
 import org.jboss.forge.addon.shell.util.UICommandDelegate;
 import org.jboss.forge.addon.ui.UICommand;
-import org.jboss.forge.addon.ui.input.HasCompleter;
-import org.jboss.forge.addon.ui.input.InputComponent;
-import org.jboss.forge.addon.ui.input.UIInput;
-import org.jboss.forge.addon.ui.input.UIInputMany;
+import org.jboss.forge.addon.ui.input.*;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 
@@ -198,7 +195,8 @@ public class ShellCommand implements Completion
     private void optionCompletion(CompleteOperation completeOperation, ParsedCompleteObject completeObject)
     {
         InputComponent inputOption = context.findInput(completeObject.getName());
-        // option type == File
+        //atm the FileLister requires the CompleteOperation object so it need
+        //to be handled here and not for each inputcomponents.setCompleter
         if (inputOption != null && inputOption.getValueType() == File.class)
         {
             completeOperation.setOffset(completeOperation.getCursor());
@@ -209,36 +207,53 @@ public class ShellCommand implements Completion
                 new FileLister(completeObject.getValue(), new File(System.getProperty("user.dir")))
                         .findMatchingDirectories(completeOperation);
         }
-        else if (inputOption != null && inputOption.getValueType() == Boolean.class)
+        //TODO: need to implement for Directory/FileResource
+        /*
+        if (inputOption != null && inputOption.getValueType() == FileResource.class)
         {
-            // TODO
         }
-        else if (inputOption != null && inputOption.getValueType() == String.class)
-        {
-            // if it has a default value we can try to auto complete that
-            if (inputOption instanceof UIInput)
-            {
-                if (completeObject.getValue() == null || ((((UIInput) inputOption).getValue() != null) &&
-                        completeObject.getValue().startsWith(((UIInput) inputOption).getValue().toString())))
-                {
-                    completeOperation.addCompletionCandidate(((UIInput) inputOption).getValue().toString());
+        */
+
+        if(inputOption != null && (inputOption instanceof SingleValued &&
+                ((SingleValued) inputOption).getValue() != null)) {
+            //need to check if the default matches the complete value
+            if(completeObject.getValue().length() == 0) {
+                completeOperation.addCompletionCandidate(((SingleValued) inputOption).getValue().toString());
+                return;
+            }
+            else {
+                String defaultValue = ((SingleValued) inputOption).getValue().toString();
+                if(defaultValue.startsWith(completeObject.getValue())) {
+                    completeOperation.addCompletionCandidate(defaultValue.substring(completeObject.getValue().length()));
+                    return;
                 }
             }
         }
-        // this shouldnt be needed
-        if (inputOption != null && (inputOption instanceof UIInput && ((UIInput) inputOption).getCompleter() != null))
+        if(inputOption != null && inputOption instanceof SelectComponent) {
+            if(completeObject.getValue() == null || completeObject.getValue().length() == 0) {
+                for (Object o : ((SelectComponent) inputOption).getValueChoices()) {
+                    completeOperation.addCompletionCandidate(o.toString());
+                }
+            }
+            else {
+                for(Object o : ((SelectComponent) inputOption).getValueChoices()) {
+                    if(o.toString().startsWith(completeObject.getValue()))
+                        completeOperation.addCompletionCandidate(o.toString());
+                }
+            }
+        }
+        if (inputOption != null && (inputOption instanceof HasCompleter && ((HasCompleter) inputOption).getCompleter() != null))
         {
-            Iterable<String> iter = ((UIInput) inputOption).getCompleter().getCompletionProposals(null, inputOption,
+            Iterable iter = ((HasCompleter) inputOption).getCompleter().getCompletionProposals(null, inputOption,
                     completeObject.getValue());
             if (iter != null)
             {
-                for (String s : iter)
-                    completeOperation.addCompletionCandidate(s);
+                for (Object s : iter)
+                    completeOperation.addCompletionCandidate(s.toString());
             }
             if (completeOperation.getCompletionCandidates().size() == 1)
             {
-                completeOperation.setOffset(completeOperation.getCursor() -
-                        completeObject.getOffset());
+                completeOperation.setOffset(completeOperation.getCursor() - completeObject.getOffset());
             }
         }
 

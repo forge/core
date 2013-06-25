@@ -7,6 +7,7 @@
 package org.jboss.forge.addon.shell.parser;
 
 import org.jboss.aesh.cl.CommandLine;
+import org.jboss.aesh.complete.CompleteOperation;
 import org.jboss.aesh.console.ConsoleOperation;
 import org.jboss.aesh.console.ConsoleOutput;
 import org.jboss.aesh.console.operator.ControlOperator;
@@ -84,7 +85,7 @@ public class RunnningCommandParserTest
     private TestWizard testWizard;
 
     @Test
-    public void tesetWizardParse() throws Exception {
+    public void testWizardParse() throws Exception {
         ShellCommand command = new ShellCommand(null, shell, testWizard);
         String input = "test-project --named foo --type war --topLevelPackage org.foo --targetLocation /tmp";
         CommandLine cl = command.parse(input);
@@ -96,6 +97,16 @@ public class RunnningCommandParserTest
 
         //ConsoleOutput output = new ConsoleOutput(new ConsoleOperation(ControlOperator.NONE, input));
         //Result result = command.run(output, cl);
+
+    }
+
+    @Test
+    public void testWizardComplete() throws Exception {
+        ShellCommand command = new ShellCommand(null, shell, testWizard);
+        CompleteOperation complete = new CompleteOperation("test-project --named foo --type ",20);
+        command.complete(complete);
+
+        System.out.println("after complete: "+complete.toString());
 
     }
 
