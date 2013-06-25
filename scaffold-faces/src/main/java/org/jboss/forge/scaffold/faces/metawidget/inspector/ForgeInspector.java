@@ -7,9 +7,16 @@
 package org.jboss.forge.scaffold.faces.metawidget.inspector;
 
 import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.GENERATED_VALUE;
+import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.INVERSE_FIELD;
+import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.JPA_MANY_TO_MANY;
+import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.JPA_MANY_TO_ONE;
+import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.JPA_ONE_TO_ONE;
 import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.N_TO_MANY;
+import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.JPA_ONE_TO_MANY;
 import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.ONE_TO_ONE;
+import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.OWNING_FIELD;
 import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.PRIMARY_KEY;
+import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.JPA_REL_TYPE;
 import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.REVERSE_PRIMARY_KEY;
 import static org.metawidget.inspector.InspectionResultConstants.LOOKUP;
 import static org.metawidget.inspector.InspectionResultConstants.TRUE;
@@ -37,6 +44,7 @@ import org.metawidget.statically.faces.StaticFacesUtils;
 import org.metawidget.util.ClassUtils;
 import org.metawidget.util.CollectionUtils;
 import org.metawidget.util.simple.StringUtils;
+import org.w3c.dom.Element;
 
 /**
  * Inspects Forge-specific metadata.
@@ -46,6 +54,7 @@ import org.metawidget.util.simple.StringUtils;
 public class ForgeInspector
          extends BaseObjectInspector
 {
+
    //
    // Constructor
    //
@@ -60,6 +69,11 @@ public class ForgeInspector
       super(config);
    }
 
+   @Override
+   public Element inspectAsDom( Object toInspect, String type, String... names ) {
+      return super.inspectAsDom(toInspect, type, names);
+   }
+   
    //
    // Protected methods
    //
@@ -75,12 +89,19 @@ public class ForgeInspector
       if (property.isAnnotationPresent(OneToOne.class) || property.isAnnotationPresent(Embedded.class))
       {
          attributes.put(ONE_TO_ONE, TRUE);
+         attributes.put(JPA_REL_TYPE, JPA_ONE_TO_ONE);
+         getReversePrimaryKey(property, attributes);
+         if (property.isAnnotationPresent(OneToOne.class))
+         {
+            getOneToOneBidirectionalProperties(property, attributes);
+         }
       }
 
       // ManyToOne
 
       if (property.isAnnotationPresent(ManyToOne.class))
       {
+         attributes.put(JPA_REL_TYPE, JPA_MANY_TO_ONE);
          attributes
                   .put(FACES_LOOKUP,
                            StaticFacesUtils.wrapExpression(StringUtils.decapitalize(ClassUtils.getSimpleName(property
@@ -93,14 +114,8 @@ public class ForgeInspector
 
          // Reverse primary key
 
-         for (Property reverseProperty : getProperties(property.getType()).values())
-         {
-            if (reverseProperty.isAnnotationPresent(Id.class))
-            {
-               attributes.put(REVERSE_PRIMARY_KEY, reverseProperty.getName());
-               break;
-            }
-         }
+         getReversePrimaryKey(property, attributes);
+         getManyToOneBidirectionalProperties(property, attributes);
       }
 
       // OneToMany and ManyToMany
@@ -108,6 +123,17 @@ public class ForgeInspector
       if (property.isAnnotationPresent(OneToMany.class) || property.isAnnotationPresent(ManyToMany.class))
       {
          attributes.put(N_TO_MANY, TRUE);
+         getCollectionReversePrimaryKey(property, attributes);
+         if (property.isAnnotationPresent(OneToMany.class))
+         {
+            attributes.put(JPA_REL_TYPE, JPA_ONE_TO_MANY);
+            getOneToManyBidirectionalProperties(property, attributes);
+         }
+         else
+         {
+            attributes.put(JPA_REL_TYPE, JPA_MANY_TO_MANY);
+            getManyToManyBidirectionalProperties(property, attributes);
+         }
       }
 
       // Enums
@@ -142,4 +168,125 @@ public class ForgeInspector
 
       return attributes;
    }
+   
+   private void getReversePrimaryKey(Property property, Map<String, String> attributes)
+   {
+      // Reverse primary key
+
+      for (Property reverseProperty : getProperties(property.getType()).values())
+      {
+         if (reverseProperty.isAnnotationPresent(Id.class))
+         {
+            attributes.put(REVERSE_PRIMARY_KEY, reverseProperty.getName());
+            break;
+         }
+      }
+   }
+   
+   private void getCollectionReversePrimaryKey(Property property, Map<String, String> attributes)
+   {
+      // Reverse primary key
+
+      for (Property reverseProperty : getProperties(property.getGenericType()).values())
+      {
+         if (reverseProperty.isAnnotationPresent(Id.class))
+         {
+            attributes.put(REVERSE_PRIMARY_KEY, reverseProperty.getName());
+            break;
+         }
+      }
+   }
+   
+   private void getOneToOneBidirectionalProperties(Property property, Map<String, String> attributes)
+   {
+      String owningProperty = property.getAnnotation(OneToOne.class).mappedBy();
+      /*
+       * Set the inverse association only when the mappedBy attribute is available. We do not support the ability to
+       * identify the owning and inverse sides through JoinColumn or PrimaryKeyJoinColumn annotations yet.
+       */
+      if (!owningProperty.isEmpty())
+      {
+         attributes.put(INVERSE_FIELD, property.getName());
+         for (Property reverseProperty : getProperties(property.getType()).values())
+         {
+            String reversePropertyName = reverseProperty.getName();
+            if (reversePropertyName.equals(owningProperty))
+            {
+               attributes.put(OWNING_FIELD, reversePropertyName);
+               break;
+            }
+         }
+      }
+   }
+
+   private void getManyToOneBidirectionalProperties(Property property, Map<String, String> attributes)
+   {
+      String propertyName = property.getName();
+      // The ManyToOne side is always the owning side
+      attributes.put(OWNING_FIELD, propertyName);
+      for (Property reverseProperty : getProperties(property.getType()).values())
+      {
+         if (reverseProperty.isAnnotationPresent(OneToMany.class))
+         {
+            String mappedPropertyName = reverseProperty.getAnnotation(OneToMany.class).mappedBy();
+            /*
+             * Set the inverse association only when the mappedBy attribute is available. This is as per the JPA
+             * specification. We'll ignore the ability of JPA providers like Hibernate to automatically treat a
+             * OneToMany field as the inverse side of the association.
+             */
+            if (mappedPropertyName.equals(propertyName))
+            {
+               attributes.put(INVERSE_FIELD, reverseProperty.getName());
+               break;
+            }
+         }
+      }
+   }
+
+   private void getOneToManyBidirectionalProperties(Property property, Map<String, String> attributes)
+   {
+      String owningProperty = property.getAnnotation(OneToMany.class).mappedBy();
+      /*
+       * Set the inverse association only when the mappedBy attribute is available. This is as per the JPA
+       * specification. We'll ignore the ability of JPA providers like Hibernate to automatically treat a OneToMany
+       * field as the inverse side of the association.
+       */
+      if (!owningProperty.isEmpty())
+      {
+         attributes.put(INVERSE_FIELD, property.getName());
+         for (Property reverseProperty : getProperties(property.getGenericType()).values())
+         {
+            String reversePropertyName = reverseProperty.getName();
+            if (reversePropertyName.equals(owningProperty))
+            {
+               attributes.put(OWNING_FIELD, reversePropertyName);
+               break;
+            }
+         }
+      }
+   }
+
+   private void getManyToManyBidirectionalProperties(Property property, Map<String, String> attributes)
+   {
+      String owningProperty = property.getAnnotation(ManyToMany.class).mappedBy();
+      /*
+       * Set the inverse association only when the mappedBy attribute is available. This is as per the JPA
+       * specification. We'll ignore the ability of JPA providers like Hibernate to automatically treat a ManyToMany
+       * field as the inverse side of the association.
+       */
+      if (!owningProperty.isEmpty())
+      {
+         attributes.put(INVERSE_FIELD, property.getName());
+         for (Property reverseProperty : getProperties(property.getGenericType()).values())
+         {
+            String reversePropertyName = reverseProperty.getName();
+            if (reversePropertyName.equals(owningProperty))
+            {
+               attributes.put(OWNING_FIELD, reversePropertyName);
+               break;
+            }
+         }
+      }
+   }
+
 }
