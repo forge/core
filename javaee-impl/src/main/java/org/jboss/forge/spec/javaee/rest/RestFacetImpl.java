@@ -16,6 +16,7 @@ import org.jboss.forge.env.Configuration;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.dependencies.DependencyInstaller;
+import org.jboss.forge.project.facets.MetadataFacet;
 import org.jboss.forge.project.facets.events.InstallFacets;
 import org.jboss.forge.shell.PromptType;
 import org.jboss.forge.shell.ShellPrompt;
@@ -38,10 +39,10 @@ public class RestFacetImpl extends BaseJavaEEFacet implements RestFacet
 
    @Inject
    private Configuration configuration;
-   
+
    @Inject
    private ShellPrompt prompt;
-   
+
    @Inject
    private Event<InstallFacets> request;
 
@@ -58,17 +59,18 @@ public class RestFacetImpl extends BaseJavaEEFacet implements RestFacet
       String activatorChoice = configuration.getString(RestFacet.ACTIVATOR_CHOICE);
       if (activatorChoice == null || activatorChoice.equals(""))
       {
-         activatorType = prompt.promptEnum("How do you want to activate REST resources in your application ?", RestActivatorType.class,
+         activatorType = prompt.promptEnum("How do you want to activate REST resources in your application ?",
+                  RestActivatorType.class,
                   RestActivatorType.WEB_XML);
       }
       else
       {
          activatorType = RestActivatorType.valueOf(activatorChoice);
       }
-      
+
       String rootpath = prompt.prompt("What root path do you want to use for your resources?", "/rest");
       configuration.addProperty(RestFacet.ROOTPATH, rootpath);
-      
+
       if (activatorType == null || activatorType == RestActivatorType.WEB_XML
                && !project.hasFacet(RestWebXmlFacetImpl.class))
       {
@@ -77,7 +79,7 @@ public class RestFacetImpl extends BaseJavaEEFacet implements RestFacet
       else if (activatorType == RestActivatorType.APP_CLASS && !project.hasFacet(RestApplicationFacet.class))
       {
          String pkg = prompt.promptCommon("In what package do you want to store the Application class?",
-                  PromptType.JAVA_PACKAGE);
+                  PromptType.JAVA_PACKAGE, project.getFacet(MetadataFacet.class).getTopLevelPackage() + ".rest");
          String restApplication = prompt.prompt("How do you want to name the Application class?", "RestApplication");
          configuration.addProperty(RestApplicationFacet.REST_APPLICATIONCLASS_PACKAGE, pkg);
          configuration.addProperty(RestApplicationFacet.REST_APPLICATIONCLASS_NAME, restApplication);
@@ -100,8 +102,8 @@ public class RestFacetImpl extends BaseJavaEEFacet implements RestFacet
    protected List<Dependency> getRequiredDependencies()
    {
       return Arrays.asList(
-              (Dependency) DependencyBuilder.create("org.jboss.spec.javax.ws.rs:jboss-jaxrs-api_1.1_spec")
-      );
+               (Dependency) DependencyBuilder.create("org.jboss.spec.javax.ws.rs:jboss-jaxrs-api_1.1_spec")
+               );
    }
 
    @Override
