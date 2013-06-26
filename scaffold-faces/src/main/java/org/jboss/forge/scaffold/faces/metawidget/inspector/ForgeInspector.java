@@ -48,7 +48,7 @@ import org.w3c.dom.Element;
 
 /**
  * Inspects Forge-specific metadata.
- *
+ * 
  * @author Richard Kennard
  */
 public class ForgeInspector
@@ -70,10 +70,24 @@ public class ForgeInspector
    }
 
    @Override
-   public Element inspectAsDom( Object toInspect, String type, String... names ) {
+   public Element inspectAsDom(Object toInspect, String type, String... names)
+   {
+      this.setTypeUnderInspection(type);
       return super.inspectAsDom(toInspect, type, names);
    }
-   
+
+   private String typeUnderInspection;
+
+   public String getTypeUnderInspection()
+   {
+      return typeUnderInspection;
+   }
+
+   public void setTypeUnderInspection(String typeUnderInspection)
+   {
+      this.typeUnderInspection = typeUnderInspection;
+   }
+
    //
    // Protected methods
    //
@@ -161,14 +175,14 @@ public class ForgeInspector
       {
          attributes.put(PRIMARY_KEY, TRUE);
       }
-      if( property.isAnnotationPresent(GeneratedValue.class))
+      if (property.isAnnotationPresent(GeneratedValue.class))
       {
          attributes.put(GENERATED_VALUE, TRUE);
       }
 
       return attributes;
    }
-   
+
    private void getReversePrimaryKey(Property property, Map<String, String> attributes)
    {
       // Reverse primary key
@@ -182,7 +196,7 @@ public class ForgeInspector
          }
       }
    }
-   
+
    private void getCollectionReversePrimaryKey(Property property, Map<String, String> attributes)
    {
       // Reverse primary key
@@ -196,7 +210,7 @@ public class ForgeInspector
          }
       }
    }
-   
+
    private void getOneToOneBidirectionalProperties(Property property, Map<String, String> attributes)
    {
       String owningProperty = property.getAnnotation(OneToOne.class).mappedBy();
@@ -210,7 +224,9 @@ public class ForgeInspector
          for (Property reverseProperty : getProperties(property.getType()).values())
          {
             String reversePropertyName = reverseProperty.getName();
-            if (reversePropertyName.equals(owningProperty))
+            String reversePropertyType = reverseProperty.getType();
+            if (reverseProperty.isAnnotationPresent(OneToOne.class) && reversePropertyName.equals(owningProperty)
+                     && reversePropertyType.equals(getTypeUnderInspection()))
             {
                attributes.put(OWNING_FIELD, reversePropertyName);
                break;
@@ -229,12 +245,13 @@ public class ForgeInspector
          if (reverseProperty.isAnnotationPresent(OneToMany.class))
          {
             String mappedPropertyName = reverseProperty.getAnnotation(OneToMany.class).mappedBy();
+            String reversePropertyType = reverseProperty.getGenericType();
             /*
              * Set the inverse association only when the mappedBy attribute is available. This is as per the JPA
              * specification. We'll ignore the ability of JPA providers like Hibernate to automatically treat a
              * OneToMany field as the inverse side of the association.
              */
-            if (mappedPropertyName.equals(propertyName))
+            if (reversePropertyType.equals(getTypeUnderInspection()) && mappedPropertyName.equals(propertyName))
             {
                attributes.put(INVERSE_FIELD, reverseProperty.getName());
                break;
@@ -257,7 +274,9 @@ public class ForgeInspector
          for (Property reverseProperty : getProperties(property.getGenericType()).values())
          {
             String reversePropertyName = reverseProperty.getName();
-            if (reversePropertyName.equals(owningProperty))
+            String reversePropertyType = reverseProperty.getType();
+            if (reverseProperty.isAnnotationPresent(ManyToOne.class) && reversePropertyName.equals(owningProperty)
+                     && reversePropertyType.equals(getTypeUnderInspection()))
             {
                attributes.put(OWNING_FIELD, reversePropertyName);
                break;
@@ -280,7 +299,9 @@ public class ForgeInspector
          for (Property reverseProperty : getProperties(property.getGenericType()).values())
          {
             String reversePropertyName = reverseProperty.getName();
-            if (reversePropertyName.equals(owningProperty))
+            String reversePropertyGenericType = reverseProperty.getGenericType();
+            if (reverseProperty.isAnnotationPresent(ManyToMany.class) && reversePropertyName.equals(owningProperty)
+                     && reversePropertyGenericType.equals(getTypeUnderInspection()))
             {
                attributes.put(OWNING_FIELD, reversePropertyName);
                break;
