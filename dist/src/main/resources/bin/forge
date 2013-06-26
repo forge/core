@@ -169,7 +169,7 @@ if $cygwin; then
   MODULE_PATH=`cygpath --windows --path "$MODULE_PATH"`
 fi
 
-forge_exec_cmd="\"$JAVACMD\" $FORGE_DEBUG_ARGS $FORGE_OPTS \"-Dforge.home=${FORGE_HOME}\"  \"-Dforge.shell.colorEnabled=true\" -jar \"${FORGE_HOME}/jboss-modules.jar\" -modulepath \"$MODULE_PATH\" org.jboss.forge"
+forge_exec_cmd="\"$JAVACMD\" $FORGE_DEBUG_ARGS $FORGE_OPTS \"-Djava.awt.headless=true\" \"-Dforge.home=${FORGE_HOME}\" \"-Dforge.shell.colorEnabled=true\" -jar \"${FORGE_HOME}/jboss-modules.jar\" -modulepath \"$MODULE_PATH\" org.jboss.forge"
 
 eval $forge_exec_cmd "$QUOTED_ARGS"
 
