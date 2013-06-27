@@ -1,6 +1,5 @@
 package org.jboss.forge.addon.projects.impl;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -32,6 +31,7 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
+import org.jboss.forge.furnace.util.OperatingSystemUtils;
 
 public class NewProjectWizard implements UIWizard
 {
@@ -94,7 +94,7 @@ public class NewProjectWizard implements UIWizard
       }
       else
       {
-         targetLocation.setDefaultValue(resourceFactory.create(DirectoryResource.class, new File("")));
+         targetLocation.setDefaultValue(resourceFactory.create(DirectoryResource.class, OperatingSystemUtils.getUserHomeDir()));
       }
       overwrite.setDefaultValue(false).setEnabled(new Callable<Boolean>()
       {
