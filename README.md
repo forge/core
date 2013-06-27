@@ -21,13 +21,15 @@ Forge 2 is packaged inside an Eclipse plugin and also as a standalone ZIP file. 
 It is worth mentioning that the Eclipse plugin does not support access to shell yet.
 
 - Eclipse Update Site - http://download.jboss.org/jbosstools/builds/staging/jbosstools-forge_master/all/repo/
-- Command line tools - https://repository.jboss.org/nexus/service/local/artifact/maven/redirect?r=releases&g=org.jboss.forge&a=forge-distribution&v=2.0.0.Alpha2&e=zip
+- Command line tools - https://repository.jboss.org/nexus/service/local/artifact/maven/redirect?r=releases&g=org.jboss.forge&a=forge-distribution&v=2.0.0.Alpha6&e=zip
 
 
 Get Started with the Command line tools:
 -------------------------------------------------------------------------------
-* Download [JBoss Forge 2.0.0.Alpha4](https://repository.jboss.org/nexus/service/local/artifact/maven/redirect?r=releases&g=org.jboss.forge&a=forge-distribution&v=2.0.0.Alpha4&e=zip)
-* Extract the ZIP to a folder and navigate to forge-2.0.0.Alpha4/bin folder
+*NOTE:* The shell is not fully working at the moment, so we recommend you to use the Forge 2 Eclipse Plugin
+
+* Download [JBoss Forge 2.0.0.Alpha6](https://repository.jboss.org/nexus/service/local/artifact/maven/redirect?r=releases&g=org.jboss.forge&a=forge-distribution&v=2.0.0.Alpha6&e=zip)
+* Extract the ZIP to a folder and navigate to forge-2.0.0.Alpha6/bin folder
 
 Forge is now ready to go. 
 
@@ -64,13 +66,11 @@ NOTE: The eclipse plugin already bundles the following addons
 * dependencies
 * environment
 * facets
+* javaee
 * maven,projects
 * resources
 * ui
 * ui-spi 
-
-In Forge 2.0.0.Alpha2, you MUST delete these addons from your ~/.forge location, otherwise you'll get some ClassCastExceptions (see [this issue](https://issues.jboss.org/browse/FORGE-843))
-
 
 Developing an Addon
 -------------------------------------------------------------------------------
@@ -157,7 +157,7 @@ Add User Inputs to your Addon
          <groupId>org.jboss.forge</groupId>
          <artifactId>ui</artifactId>
          <classifier>forge-addon</classifier>
-         <version>2.0.0.Alpha4</version>
+         <version>2.0.0.Alpha6</version>
       </dependency>
 ```
 
