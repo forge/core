@@ -307,11 +307,12 @@ public class ForgePlugin implements Plugin
          buildDir = shell.getCurrentDirectory().createTempResource();
       }
 
+      Git repo = null;
       try
       {
          ShellMessages.info(out, "Checking out plugin source files to [" + buildDir.getFullyQualifiedName()
                   + "] via 'git'");
-         Git repo = GitUtils.clone(buildDir, gitRepo);
+         repo = GitUtils.clone(buildDir, gitRepo);
 
          Ref ref = null;
          String targetRef = refName;
@@ -414,6 +415,7 @@ public class ForgePlugin implements Plugin
       }
       finally
       {
+         GitUtils.close(repo);
          if (buildDir != null)
          {
             if (keepSources)
