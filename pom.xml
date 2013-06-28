@@ -87,14 +87,6 @@
             <module>arquillian</module>
             <module>test-harness</module>
 
-            <!-- TODO: Move Furnace -->
-            <module>container</module>
-            <module>container-api</module>
-            <module>container-tests</module>
-            <module>proxy</module>
-            <module>proxy-tests</module>
-            <module>se</module>
-
             <!-- TODO: Remove these modules -->
             <module>addon-manager</module>
             <module>addons</module>
