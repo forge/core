@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
 
    <parent>
@@ -61,16 +62,13 @@
       <version.arquillian>1.0.4.Final</version.arquillian>
       <version.arquillian.container>1.0.0.CR5</version.arquillian.container>
       <version.cdi>1.1</version.cdi>
-      <version.javassist>1</version.javassist>
+      <version.furnace>2.0.0.Alpha6</version.furnace>
       <version.jboss.spec>3.0.2.Final</version.jboss.spec>
-      <version.jboss.modules>3</version.jboss.modules>
       <version.junit>4.11</version.junit>
       <version.mvel>2.1.0.Final</version.mvel>
       <version.org.jboss.logmanager.jboss-logmanager>1.4.1.Final</version.org.jboss.logmanager.jboss-logmanager>
       <version.shrinkwrap.resolver>2.0.0</version.shrinkwrap.resolver>
       <version.slf4j>1.6.1</version.slf4j>
-      <version.weld>2.0.1.Final</version.weld>
-      <version.weld.spi>2.0.Final</version.weld.spi>
       <version.xmlparser>1.0.0.Final</version.xmlparser>
    </properties>
 
@@ -113,33 +111,22 @@
          <dependency>
             <groupId>org.jboss.forge.furnace</groupId>
             <artifactId>furnace-api</artifactId>
-            <version>${project.version}</version>
+            <version>${version.furnace}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.furnace</groupId>
             <artifactId>furnace</artifactId>
-            <version>${project.version}</version>
+            <version>${version.furnace}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.furnace</groupId>
             <artifactId>furnace-proxy</artifactId>
-            <version>${project.version}</version>
+            <version>${version.furnace}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.furnace</groupId>
             <artifactId>furnace-se</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-jboss-modules</artifactId>
-            <version>${version.jboss.modules}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-javassist</artifactId>
-            <version>${version.javassist}</version>
-            <scope>compile</scope>
+            <version>${version.furnace}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge</groupId>
@@ -232,23 +219,6 @@
             <version>${version.arquillian}</version>
             <type>pom</type>
             <scope>import</scope>
-         </dependency>
-
-         <!-- Weld -->
-         <dependency>
-            <groupId>org.jboss.weld</groupId>
-            <artifactId>weld-core</artifactId>
-            <version>${version.weld}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.weld</groupId>
-            <artifactId>weld-spi</artifactId>
-            <version>${version.weld.spi}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.weld.se</groupId>
-            <artifactId>weld-se-core</artifactId>
-            <version>${version.weld}</version>
          </dependency>
 
          <!-- Forge Dependencies -->
