@@ -372,8 +372,17 @@ public abstract class GitUtils
       return newBranch;
    }
 
+   /**
+    * Closes a Git repository.
+    * Invoke this before deleting the Git repository on Windows to prevent errors due to unclosed file handles.  
+    * 
+    * @param repo The repository to close.
+    */
    public static void close(final Git repo)
    {
-      repo.getRepository().close();
+      if (repo != null)
+      {
+         repo.getRepository().close();
+      }
    }
 }
