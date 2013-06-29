@@ -64,6 +64,45 @@ public class QueryByExampleWidgetBuilderTest
                "int abc = this.example.getAbc();if (abc != 0) { predicatesList.add(builder.equal(root.get(\"abc\"), abc)); }",
                widget.toString());
    }
+   
+   public void testLong()
+   {
+      QueryByExampleWidgetBuilder widgetBuilder = new QueryByExampleWidgetBuilder();
+      Map<String, String> attributes = CollectionUtils.newHashMap();
+      attributes.put(NAME, "abc");
+      attributes.put(TYPE, long.class.getName());
+      StaticWidget widget = widgetBuilder.buildWidget(PROPERTY, attributes, new StaticJavaMetawidget());
+
+      assertEquals(
+               "long abc = this.example.getAbc();if (abc != 0) { predicatesList.add(builder.equal(root.get(\"abc\"), abc)); }",
+               widget.toString());
+   }
+   
+   public void testShort()
+   {
+      QueryByExampleWidgetBuilder widgetBuilder = new QueryByExampleWidgetBuilder();
+      Map<String, String> attributes = CollectionUtils.newHashMap();
+      attributes.put(NAME, "abc");
+      attributes.put(TYPE, short.class.getName());
+      StaticWidget widget = widgetBuilder.buildWidget(PROPERTY, attributes, new StaticJavaMetawidget());
+
+      assertEquals(
+               "short abc = this.example.getAbc();if (abc != 0) { predicatesList.add(builder.equal(root.get(\"abc\"), abc)); }",
+               widget.toString());
+   }
+   
+   public void testByte()
+   {
+      QueryByExampleWidgetBuilder widgetBuilder = new QueryByExampleWidgetBuilder();
+      Map<String, String> attributes = CollectionUtils.newHashMap();
+      attributes.put(NAME, "abc");
+      attributes.put(TYPE, byte.class.getName());
+      StaticWidget widget = widgetBuilder.buildWidget(PROPERTY, attributes, new StaticJavaMetawidget());
+
+      assertEquals(
+               "byte abc = this.example.getAbc();if (abc != 0) { predicatesList.add(builder.equal(root.get(\"abc\"), abc)); }",
+               widget.toString());
+   }
 
    public void testLookup()
    {

@@ -70,7 +70,9 @@ public class QueryByExampleWidgetBuilder
 
       // int or short
 
-      if (int.class.equals(clazz) || short.class.equals(clazz) || byte.class.equals(clazz))
+      if (int.class.equals(clazz) || short.class.equals(clazz) || byte.class.equals(clazz) || long.class.equals(clazz)
+               || Integer.class.equals(clazz) || Short.class.equals(clazz) || Byte.class.equals(clazz)
+               || Long.class.equals(clazz))
       {
          StaticJavaStub toReturn = new StaticJavaStub();
          toReturn.getChildren().add(

@@ -95,7 +95,9 @@ public class UnsearchableWidgetProcessor
       {
          Class<?> clazz = WidgetBuilderUtils.getActualClassOrType(attributes,null);
 
-         if (String.class.equals(clazz) || int.class.equals(clazz))
+         if (String.class.equals(clazz) || int.class.equals(clazz) || short.class.equals(clazz)
+                  || byte.class.equals(clazz) || long.class.equals(clazz) || Integer.class.equals(clazz)
+                  || Short.class.equals(clazz) || Byte.class.equals(clazz) || Long.class.equals(clazz))
          {
             return true;
          }

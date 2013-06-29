@@ -59,6 +59,46 @@ public class UnsearchableWidgetProcessorTest
       attributes.put(TYPE, "com.test.domain.Foo");
       assertTrue(widgetProcessor.processWidget(new HtmlInputText(), PROPERTY, attributes, metawidget) == null);
    }
+   
+   public void testPassthroughNumericalType()
+   {
+      StaticXmlMetawidget metawidget = new StaticHtmlMetawidget();
+      UnsearchableWidgetProcessor widgetProcessor = new UnsearchableWidgetProcessor();
+      widgetProcessor.onStartBuild(metawidget);
+
+      Map<String, String> attributes = CollectionUtils.newHashMap();
+      attributes.put(TYPE, int.class.getName());
+      assertTrue(widgetProcessor.processWidget(new HtmlInputText(), PROPERTY, attributes, metawidget) != null);
+      
+      attributes.put(TYPE, long.class.getName());
+      assertTrue(widgetProcessor.processWidget(new HtmlInputText(), PROPERTY, attributes, metawidget) != null);
+      
+      attributes.put(TYPE, short.class.getName());
+      assertTrue(widgetProcessor.processWidget(new HtmlInputText(), PROPERTY, attributes, metawidget) != null);
+      
+      attributes.put(TYPE, byte.class.getName());
+      assertTrue(widgetProcessor.processWidget(new HtmlInputText(), PROPERTY, attributes, metawidget) != null);
+   }
+   
+   public void testPassthroughBoxedNumericalType()
+   {
+      StaticXmlMetawidget metawidget = new StaticHtmlMetawidget();
+      UnsearchableWidgetProcessor widgetProcessor = new UnsearchableWidgetProcessor();
+      widgetProcessor.onStartBuild(metawidget);
+
+      Map<String, String> attributes = CollectionUtils.newHashMap();
+      attributes.put(TYPE, Integer.class.getName());
+      assertTrue(widgetProcessor.processWidget(new HtmlInputText(), PROPERTY, attributes, metawidget) != null);
+      
+      attributes.put(TYPE, Long.class.getName());
+      assertTrue(widgetProcessor.processWidget(new HtmlInputText(), PROPERTY, attributes, metawidget) != null);
+      
+      attributes.put(TYPE, Short.class.getName());
+      assertTrue(widgetProcessor.processWidget(new HtmlInputText(), PROPERTY, attributes, metawidget) != null);
+      
+      attributes.put(TYPE, Byte.class.getName());
+      assertTrue(widgetProcessor.processWidget(new HtmlInputText(), PROPERTY, attributes, metawidget) != null);
+   }
 
    public void testSuppressTooMany()
    {
