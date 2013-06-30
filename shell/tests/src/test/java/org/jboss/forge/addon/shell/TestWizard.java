@@ -79,19 +79,8 @@ public class TestWizard implements UIWizard
    {
       version.setDefaultValue("1.0.0-SNAPSHOT");
 
-      UISelection<Resource<?>> currentSelection = builder.getUIContext().getInitialSelection();
-      if (currentSelection != null)
-      {
-         Resource<?> resource = currentSelection.get();
-         if (resource instanceof DirectoryResource)
-         {
-            targetLocation.setDefaultValue((DirectoryResource) resource);
-         }
-      }
-      else
-      {
-         targetLocation.setDefaultValue(resourceFactory.create(DirectoryResource.class, new File("")));
-      }
+      targetLocation.setDefaultValue(resourceFactory.create(DirectoryResource.class, new File("/foo/bar")));
+
       overwrite.setDefaultValue(false).setEnabled(new Callable<Boolean>()
       {
          @Override

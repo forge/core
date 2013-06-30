@@ -8,6 +8,7 @@ package org.jboss.forge.addon.shell.parser;
 
 import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.complete.CompleteOperation;
+import org.jboss.aesh.console.Config;
 import org.jboss.aesh.console.ConsoleOperation;
 import org.jboss.aesh.console.ConsoleOutput;
 import org.jboss.aesh.console.operator.ControlOperator;
@@ -103,10 +104,15 @@ public class RunnningCommandParserTest
     @Test
     public void testWizardComplete() throws Exception {
         ShellCommand command = new ShellCommand(null, shell, testWizard);
-        CompleteOperation complete = new CompleteOperation("test-project --named foo --type ",20);
+        CompleteOperation complete = new CompleteOperation("test-project --named foo --targetLocation /tm",20);
+        command.complete(complete);
+        if(Config.isOSPOSIXCompatible())
+            assertEquals("p", complete.getCompletionCandidates().get(0));
+
+        complete = new CompleteOperation("test-project --named foo --type ",20);
         command.complete(complete);
 
-        System.out.println("after complete: "+complete.toString());
+        System.out.println("after complete: " + complete.toString());
 
     }
 
@@ -125,3 +131,4 @@ public class RunnningCommandParserTest
     }
 
 }
+

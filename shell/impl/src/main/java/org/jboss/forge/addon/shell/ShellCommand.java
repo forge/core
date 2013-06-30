@@ -20,8 +20,8 @@ import org.jboss.aesh.console.Config;
 import org.jboss.aesh.console.Console;
 import org.jboss.aesh.console.ConsoleOutput;
 import org.jboss.aesh.util.FileLister;
-import org.jboss.forge.addon.shell.ForgeShell;
-import org.jboss.forge.addon.shell.ShellContext;
+import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.shell.util.CommandLineUtil;
 import org.jboss.forge.addon.shell.util.UICommandDelegate;
 import org.jboss.forge.addon.ui.UICommand;
@@ -197,22 +197,41 @@ public class ShellCommand implements Completion
         InputComponent inputOption = context.findInput(completeObject.getName());
         //atm the FileLister requires the CompleteOperation object so it need
         //to be handled here and not for each inputcomponents.setCompleter
-        if (inputOption != null && inputOption.getValueType() == File.class)
+        if (inputOption != null &&
+                ((inputOption.getValueType() == File.class) || (inputOption.getValueType() == FileResource.class)))
         {
             completeOperation.setOffset(completeOperation.getCursor());
-            if (completeObject.getValue() == null)
-                new FileLister("", new File(System.getProperty("user.dir")))
+            if (completeObject.getValue() == null) {
+                //use default value if its set
+                if(inputOption.getValueType() == SingleValued.class &&
+                        ((SingleValued) inputOption).getValue() != null) {
+                    new FileLister("", new File(((SingleValued) inputOption).getValue().toString()))
+                            .findMatchingDirectories(completeOperation);
+                }
+                else
+                    new FileLister("", new File(System.getProperty("user.dir")))
                         .findMatchingDirectories(completeOperation);
+            }
             else
                 new FileLister(completeObject.getValue(), new File(System.getProperty("user.dir")))
                         .findMatchingDirectories(completeOperation);
         }
-        //TODO: need to implement for Directory/FileResource
-        /*
-        if (inputOption != null && inputOption.getValueType() == FileResource.class)
-        {
+        else if(inputOption != null && inputOption.getValueType() == DirectoryResource.class) {
+                completeOperation.setOffset(completeOperation.getCursor());
+                if (completeObject.getValue() == null) {
+
+                    if(((SingleValued) inputOption).getValue() != null) {
+                        new FileLister("", new File(((SingleValued) inputOption).getValue().toString()),
+                                FileLister.Filter.DIRECTORY).findMatchingDirectories(completeOperation);
+                    }
+                    else
+                        new FileLister("", new File(System.getProperty("user.dir")), FileLister.Filter.DIRECTORY)
+                                .findMatchingDirectories(completeOperation);
+                }
+                else
+                    new FileLister(completeObject.getValue(), new File(System.getProperty("user.dir")),
+                            FileLister.Filter.DIRECTORY).findMatchingDirectories(completeOperation);
         }
-        */
 
         if(inputOption != null && (inputOption instanceof SingleValued &&
                 ((SingleValued) inputOption).getValue() != null)) {
