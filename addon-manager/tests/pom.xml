@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
    <modelVersion>4.0.0</modelVersion>
    <parent>
       <groupId>org.jboss.forge</groupId>
@@ -29,12 +30,6 @@
          <version>${project.version}</version>
          <classifier>forge-addon</classifier>
       </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>example</artifactId>
-         <version>${project.version}</version>
-         <classifier>forge-addon</classifier>
-      </dependency>
 
       <dependency>
          <groupId>org.jboss.forge.test</groupId>
@@ -47,4 +42,66 @@
          <scope>test</scope>
       </dependency>
    </dependencies>
+
+   <build>
+      <testResources>
+         <testResource>
+            <directory>src/test/resources</directory>
+            <filtering>true</filtering>
+         </testResource>
+      </testResources>
+      <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-resources-plugin</artifactId>
+            <executions>
+               <execution>
+                  <id>default-testResources</id>
+                  <phase>process-test-resources</phase>
+                  <goals>
+                     <goal>testResources</goal>
+                  </goals>
+                  <configuration>
+                     <nonFilteredFileExtensions>
+                        <nonFilteredFileExtension>jar</nonFilteredFileExtension>
+                     </nonFilteredFileExtensions>
+                  </configuration>
+               </execution>
+               <execution>
+                  <id>copy-repository</id>
+                  <phase>process-test-resources</phase>
+                  <goals>
+                     <goal>copy-resources</goal>
+                  </goals>
+                  <configuration>
+                     <outputDirectory>${basedir}/target/repository</outputDirectory>
+                     <resources>
+                        <resource>
+                           <directory>${basedir}/src/test/resources/repository</directory>
+                           <filtering>false</filtering>
+                        </resource>
+                     </resources>
+                  </configuration>
+               </execution>
+               <execution>
+                  <id>copy-settings</id>
+                  <phase>process-test-resources</phase>
+                  <goals>
+                     <goal>copy-resources</goal>
+                  </goals>
+                  <configuration>
+                     <outputDirectory>${basedir}/target/settings/profiles</outputDirectory>
+                     <resources>
+                        <resource>
+                           <directory>${basedir}/src/test/resources/profiles</directory>
+                           <filtering>true</filtering>
+                        </resource>
+                     </resources>
+                     <escapeString>\</escapeString>
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
+      </plugins>
+   </build>
 </project>

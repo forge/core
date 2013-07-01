@@ -41,6 +41,7 @@ import org.jboss.shrinkwrap.resolver.impl.maven.logging.LogTransferListener;
 import org.sonatype.aether.RepositorySystem;
 import org.sonatype.aether.artifact.Artifact;
 import org.sonatype.aether.collection.CollectRequest;
+import org.sonatype.aether.collection.CollectResult;
 import org.sonatype.aether.collection.DependencyCollectionContext;
 import org.sonatype.aether.collection.DependencyTraverser;
 import org.sonatype.aether.graph.DependencyNode;
@@ -210,7 +211,7 @@ public class MavenDependencyResolver implements DependencyResolver, AddonDepende
                   .setArtifactId(artifact.getArtifactId())
                   .setClassifier(artifact.getClassifier())
                   .setPackaging(artifact.getExtension())
-                  .setVersion(artifact.getVersion());
+                  .setVersion(artifact.getBaseVersion());
       }
       catch (ArtifactResolutionException e)
       {
@@ -240,16 +241,16 @@ public class MavenDependencyResolver implements DependencyResolver, AddonDepende
                {
                   return false;
                }
-               boolean result;
+               boolean shouldRecurse;
                if (query.getScopeType() != null)
                {
-                  result = query.getScopeType().equals(dependency.getScope());
+                  shouldRecurse = query.getScopeType().equals(dependency.getScope());
                }
                else
                {
-                  result = !"test".equals(dependency.getScope());
+                  shouldRecurse = !"test".equals(dependency.getScope());
                }
-               return result;
+               return shouldRecurse;
             }
 
             @Override
@@ -267,9 +268,7 @@ public class MavenDependencyResolver implements DependencyResolver, AddonDepende
          CollectRequest collectRequest = new CollectRequest(new org.sonatype.aether.graph.Dependency(queryArtifact,
                   null), remoteRepos);
 
-         DependencyRequest dr = new DependencyRequest(collectRequest, null);
-
-         DependencyResult result = system.resolveDependencies(session, dr);
+         CollectResult result = system.collectDependencies(session, collectRequest);
          DependencyNodeBuilder hierarchy = MavenConvertUtils.toDependencyNode(factory, null, result.getRoot());
          return hierarchy;
       }
