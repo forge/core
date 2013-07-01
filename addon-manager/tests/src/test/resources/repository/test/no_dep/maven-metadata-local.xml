@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+   <groupId>test</groupId>
+   <artifactId>no_dep</artifactId>
+   <versioning>
+      <release>1.0.0.Final</release>
+      <snapshot>1.1.2-SNAPSHOT</snapshot>
+      <versions>
+         <version>1.0.0.Final</version>
+         <version>1.0.1.Final</version>
+         <version>1.1.0.Final</version>
+         <version>1.1.1.Final</version>
+         <version>2.0.0e.Final</version>
+      </versions>
+      <lastUpdated>20130310152137</lastUpdated>
+   </versioning>
+</metadata>
+
