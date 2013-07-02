@@ -61,8 +61,15 @@ import org.sonatype.aether.version.Version;
 @Exported
 public class MavenDependencyResolver implements DependencyResolver, AddonDependencyResolver
 {
-   private MavenContainer container;
-   private ResourceFactory factory;
+   private final MavenContainer container;
+   private final ResourceFactory factory;
+
+   public MavenDependencyResolver()
+   {
+      super();
+      this.container = new MavenContainer();
+      this.factory = new FileResourceFactory();
+   }
 
    @Inject
    public MavenDependencyResolver(ResourceFactory factory, MavenContainer container)
