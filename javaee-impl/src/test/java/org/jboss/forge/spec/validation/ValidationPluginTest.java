@@ -69,7 +69,7 @@ public class ValidationPluginTest extends SingletonAbstractShellTest
       ValidationDescriptor providerDescriptor = HIBERNATE_VALIDATOR.getValidationProvider(getBeanManager())
                .getDefaultDescriptor();
 
-      assertValidationDescriptorValuesAreEquals(providerDescriptor, generatedDescriptor);
+      assertDefaultProviderValidationDescriptorValuesAreEquals(providerDescriptor, generatedDescriptor);
 
       // Apache Bean Validation
       queueInputLines("", "");
@@ -83,7 +83,7 @@ public class ValidationPluginTest extends SingletonAbstractShellTest
       generatedDescriptor = facet.getConfig();
       providerDescriptor = APACHE_BEAN_VALIDATION.getValidationProvider(getBeanManager()).getDefaultDescriptor();
 
-      assertValidationDescriptorValuesAreEquals(providerDescriptor, generatedDescriptor);
+      assertDefaultProviderValidationDescriptorValuesAreEquals(providerDescriptor, generatedDescriptor);
    }
 
    @Test
@@ -158,15 +158,11 @@ public class ValidationPluginTest extends SingletonAbstractShellTest
       }
    }
 
-   private void assertValidationDescriptorValuesAreEquals(final ValidationDescriptor expected,
+   private void assertDefaultProviderValidationDescriptorValuesAreEquals(final ValidationDescriptor expected,
             final ValidationDescriptor actual)
    {
       assertNotNull(expected);
       assertNotNull(actual);
       assertEquals(expected.getDefaultProvider(), actual.getDefaultProvider());
-      assertEquals(expected.getMessageInterpolator(), actual.getMessageInterpolator());
-      assertEquals(expected.getTraversableResolver(), actual.getTraversableResolver());
-      assertEquals(expected.getConstraintValidatorFactory(), actual.getConstraintValidatorFactory());
-      assertEquals(expected.getConstraintMappings(), actual.getConstraintMappings());
    }
 }

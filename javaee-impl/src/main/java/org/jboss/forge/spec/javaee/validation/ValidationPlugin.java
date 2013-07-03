@@ -85,11 +85,24 @@ public class ValidationPlugin implements Plugin
       if (provider.getDefaultDescriptor() != null)
       {
          final ValidationDescriptor providerDescriptor = provider.getDefaultDescriptor();
-         final ValidationDescriptor descriptor = Descriptors.create(ValidationDescriptor.class)
-                  .setDefaultProvider(providerDescriptor.getDefaultProvider())
-                  .setMessageInterpolator( messageInterpolator == null ? providerDescriptor.getMessageInterpolator() : messageInterpolator)
-                  .setTraversableResolver( traversableResolver == null ? providerDescriptor.getTraversableResolver() : traversableResolver)
-                  .setConstraintValidatorFactory( constraintValidatorFactory == null ? providerDescriptor.getConstraintValidatorFactory() : constraintValidatorFactory);
+         final ValidationDescriptor descriptor = Descriptors.create(ValidationDescriptor.class);
+         String defaultProvider = providerDescriptor.getDefaultProvider();
+         if (defaultProvider != null && !defaultProvider.isEmpty())
+         {
+            descriptor.setDefaultProvider(defaultProvider);
+         }
+         if (messageInterpolator != null)
+         {
+            descriptor.setMessageInterpolator(messageInterpolator);
+         }
+         if (traversableResolver != null)
+         {
+            descriptor.setTraversableResolver(traversableResolver);
+         }
+         if (constraintValidatorFactory != null)
+         {
+            descriptor.setConstraintValidatorFactory(constraintValidatorFactory);
+         }
          
          project.getFacet(ValidationFacet.class).saveConfig(descriptor);
       }

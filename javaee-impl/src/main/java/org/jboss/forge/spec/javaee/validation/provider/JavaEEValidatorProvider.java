@@ -7,7 +7,6 @@
 package org.jboss.forge.spec.javaee.validation.provider;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.jboss.forge.project.dependencies.Dependency;
@@ -35,7 +34,7 @@ public class JavaEEValidatorProvider implements ValidationProvider
    @Override
    public Set<Dependency> getDependencies()
    {
-      return new HashSet<Dependency>();
+      return Collections.emptySet();
    }
 
    @Override
