@@ -6,8 +6,7 @@
  */
 package org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.awt.Color;
 import java.text.MessageFormat;
@@ -129,6 +128,8 @@ public class ForgePropertyStyleTest
       assertEquals( "aFIELD", ((ForgeProperty) property).getName() );
       assertEquals( "public getaFIELD() : String", ((ForgeProperty) property).getReadMethod().toSignature() );
       assertEquals( "public setaFIELD(String) : void", ((ForgeProperty) property).getWriteMethod().toSignature() );
+      
+      assertNull(properties.get("x"));
 
       assertEquals( 3, properties.size() );
    }

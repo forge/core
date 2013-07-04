@@ -185,6 +185,12 @@ public class ForgePropertyStyle
          {
             continue;
          }
+         
+         // Exclude non-public methods. Section 8.3.1 of the JavaBean specification requires that getters be public.
+         if (!method.isPublic())
+         {
+            continue;
+         }
 
          // Get type
 
@@ -271,6 +277,12 @@ public class ForgePropertyStyle
          // Exclude static methods
 
          if (method.isStatic())
+         {
+            continue;
+         }
+         
+         // Exclude non-public methods. Section 8.3.1 of the JavaBean specification requires that setters be public.
+         if (!method.isPublic())
          {
             continue;
          }

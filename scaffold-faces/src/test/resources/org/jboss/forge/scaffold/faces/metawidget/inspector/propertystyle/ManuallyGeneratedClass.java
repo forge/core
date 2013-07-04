@@ -30,6 +30,19 @@ public class ManuallyGeneratedClass
    {
       this.normalField = _normalField;
    }
+   
+   //
+   // Ordinary methods, not JavaBean properties
+   //
+   private String getX()
+   {
+      return null;
+   }
+
+   private void setX(String x)
+   {
+      return;
+   }
 
    //
    // URL
