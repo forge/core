@@ -6,6 +6,8 @@
  */
 package org.jboss.forge.scaffold.faces.scenario.petclinic;
 
+import static org.junit.matchers.JUnitMatchers.containsString;
+
 import java.util.Arrays;
 
 import javax.inject.Inject;
@@ -104,10 +106,10 @@ public class FacesScaffoldPetClinicTest extends AbstractFacesScaffoldTest
 
       metawidget = "\t\t\t\t\t<h:link outcome=\"/" + targetDir + "/pet/view\">\r\n";
       metawidget += "\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n";
-      metawidget += "\t\t\t\t\t\t<h:outputText id=\"itemOwner\" value=\"#{_item.owner}\"/>\r\n";
+      metawidget += "\t\t\t\t\t\t<h:outputText id=\"owneriditemOwnerId\" value=\"Owner id : #{_item.owner.id}\"/>\r\n";
       metawidget += "\t\t\t\t\t</h:link>\r\n";
 
-      Assert.assertTrue(contents.contains(metawidget));
+      Assert.assertThat(contents, containsString(metawidget));
 
       // Check create screen has h:selectBooleanCheckbox
 
