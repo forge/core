@@ -43,7 +43,7 @@ public class FacetFactoryTest
                         NotFoundMockFacet.class,
                         TestQualifier.class)
                .addAsAddonDependencies(
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:facets", "2.0.0-SNAPSHOT")));
+                        AddonDependencyEntry.create("org.jboss.forge.addon:facets", "2.0.0-SNAPSHOT"));
       return archive;
    }
 

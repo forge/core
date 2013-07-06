@@ -26,6 +26,8 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.repositories.AddonRepository;
 import org.jboss.forge.furnace.util.Addons;
 import org.jboss.forge.furnace.versions.SingleVersion;
+import org.jboss.forge.furnace.versions.SingleVersionRange;
+import org.jboss.forge.furnace.versions.Versions;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -50,7 +52,7 @@ public class AddonManagerTest
                .create(ForgeArchive.class)
                .addBeansXML()
                .addAsAddonDependencies(
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:addon-manager", "2.0.0-SNAPSHOT"))
+                        AddonDependencyEntry.create("org.jboss.forge.addon:addon-manager", "2.0.0-SNAPSHOT")
                );
 
       return archive;
@@ -87,10 +89,8 @@ public class AddonManagerTest
       Set<AddonDependencyEntry> dependencies = repository.getAddonDependencies(example);
       Assert.assertEquals(1, dependencies.size());
       AddonDependencyEntry dependency = dependencies.toArray(new AddonDependencyEntry[dependencies.size()])[0];
-      Assert.assertEquals("org.jboss.forge.addon:example2", dependency
-               .getId().getName());
-      Assert.assertEquals(new SingleVersion("2.0.0-SNAPSHOT"), dependency
-               .getId().getVersion());
+      Assert.assertEquals("org.jboss.forge.addon:example2", dependency.getName());
+      Assert.assertEquals(new SingleVersionRange(new SingleVersion("2.0.0-SNAPSHOT")), dependency.getVersionRange());
       Assert.assertTrue(dependency.isOptional());
       Assert.assertFalse(dependency.isExported());
 
@@ -98,7 +98,7 @@ public class AddonManagerTest
                .getStatus().isMissing());
 
       Addons.waitUntilStarted(registry.getAddon(example), 10, TimeUnit.SECONDS);
-      Assert.assertEquals(addonCount + 2, registry.getAddons().size());
+      Assert.assertEquals(addonCount + 1, registry.getAddons().size());
    }
 
    @Test
@@ -128,9 +128,9 @@ public class AddonManagerTest
 
       for (AddonDependencyEntry dependency : dependencies)
       {
-         Assert.assertTrue("Not a valid addon dependency: " + dependency.getId().getName(),
-                  addonDependenciesIds.remove(dependency.getId().getName()));
-         Assert.assertEquals(new SingleVersion("2.0.0-SNAPSHOT"), dependency.getId().getVersion());
+         Assert.assertTrue("Not a valid addon dependency: " + dependency.getName(),
+                  addonDependenciesIds.remove(dependency.getName()));
+         Assert.assertEquals(Versions.parseMultipleVersionRange("2.0.0-SNAPSHOT"), dependency.getVersionRange());
       }
       Assert.assertTrue("Addons not detected as dependency: " + addonDependenciesIds, addonDependenciesIds.isEmpty());
 

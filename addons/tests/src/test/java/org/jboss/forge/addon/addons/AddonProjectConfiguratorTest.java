@@ -50,8 +50,8 @@ public class AddonProjectConfiguratorTest
                addBeansXML().
                addPackages(true, AddonProjectConfigurator.class.getPackage()).
                addAsAddonDependencies(
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:addons", "2.0.0-SNAPSHOT")),
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:javaee", "2.0.0-SNAPSHOT"))
+                        AddonDependencyEntry.create("org.jboss.forge.addon:addons", "2.0.0-SNAPSHOT"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:javaee", "2.0.0-SNAPSHOT")
                );
    }
 

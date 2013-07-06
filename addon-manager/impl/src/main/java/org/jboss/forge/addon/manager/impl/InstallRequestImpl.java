@@ -35,9 +35,9 @@ import org.jboss.forge.furnace.util.Predicate;
 /**
  * When an addon is installed, another addons could be required. This object returns the necessary information for the
  * installation of an addon to succeed, like required addons and dependencies
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 public class InstallRequestImpl implements InstallRequest
 {
@@ -52,7 +52,7 @@ public class InstallRequestImpl implements InstallRequest
 
    /**
     * Package-access constructor. Only AddonManager should be allowed to call this constructor.
-    *
+    * 
     * @param addonManager
     */
    InstallRequestImpl(AddonManager addonManager, Furnace forge, DependencyNode requestedAddonNode)
@@ -247,7 +247,8 @@ public class InstallRequestImpl implements InstallRequest
             else if ("provided".equalsIgnoreCase(scopeType))
                export = false;
          }
-         AddonDependencyEntry addonDep = AddonDependencyEntry.create(toAddonId(dep), export, optional);
+         AddonDependencyEntry addonDep = AddonDependencyEntry.create(toAddonId(dep).getName(), toAddonId(dep)
+                  .getVersion().toString(), export, optional);
          addonDependencies.add(addonDep);
       }
       return addonDependencies;

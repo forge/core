@@ -40,10 +40,10 @@ public class ParserHintsTest
                .create(ForgeArchive.class)
                .addBeansXML()
                .addAsAddonDependencies(
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:resources", "2.0.0-SNAPSHOT")),
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:ui-spi", "2.0.0-SNAPSHOT")),
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:parser-java", "2.0.0-SNAPSHOT")),
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:environment", "2.0.0-SNAPSHOT"))
+                        AddonDependencyEntry.create("org.jboss.forge.addon:resources", "2.0.0-SNAPSHOT"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-spi", "2.0.0-SNAPSHOT"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:parser-java", "2.0.0-SNAPSHOT"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:environment", "2.0.0-SNAPSHOT")
                );
 
       return archive;

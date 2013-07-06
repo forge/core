@@ -29,8 +29,8 @@ public class ResourceGeneratorAddonTest
                .create(ForgeArchive.class)
                .addBeansXML()
                .addAsAddonDependencies(
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:resources", "2.0.0-SNAPSHOT")),
-                        AddonDependencyEntry.create(AddonId.from("mockstring", "1")));
+                        AddonDependencyEntry.create("org.jboss.forge.addon:resources", "2.0.0-SNAPSHOT"),
+                        AddonDependencyEntry.create("mockstring", "1"));
 
       return archive;
    }
@@ -42,7 +42,7 @@ public class ResourceGeneratorAddonTest
                .addClasses(MockStringResource.class, MockStringResourceGenerator.class)
                .addBeansXML()
                .addAsAddonDependencies(
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:resources", "2.0.0-SNAPSHOT"))
+                        AddonDependencyEntry.create("org.jboss.forge.addon:resources", "2.0.0-SNAPSHOT")
                );
 
       return archive;

@@ -138,4 +138,16 @@ public class InstallRequiredAddonsListener implements ContainerLifecycleListener
       return addon;
    }
 
+   @Override
+   public void beforeConfigurationScan(Furnace forge) throws ContainerException
+   {
+      // Do nothing
+   }
+
+   @Override
+   public void afterConfigurationScan(Furnace forge) throws ContainerException
+   {
+      // Do nothing
+   }
+
 }

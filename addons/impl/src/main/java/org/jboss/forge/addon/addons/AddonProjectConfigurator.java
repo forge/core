@@ -81,7 +81,7 @@ class AddonProjectConfigurator
       }
 
       dependencyInstaller.installManaged(project, DependencyBuilder.create(ForgeContainerAPIFacet.FORGE_API_DEPENDENCY)
-               .setVersion(forgeVersion.getVersionString()));
+               .setVersion(forgeVersion.toString()));
 
       Project addonProject =
                createSubmoduleProject(project, "addon", projectName, ForgeAddonFacet.class, CDIFacet.class);
@@ -139,7 +139,7 @@ class AddonProjectConfigurator
             String[] mavenCoords = addon.getName().split(":");
             DependencyBuilder dependency = DependencyBuilder.create().setGroupId(mavenCoords[0])
                      .setArtifactId(mavenCoords[1])
-                     .setVersion(addon.getVersion().getVersionString()).setClassifier(FORGE_ADDON_CLASSIFIER);
+                     .setVersion(addon.getVersion().toString()).setClassifier(FORGE_ADDON_CLASSIFIER);
             if (managed)
             {
                dependencyInstaller.installManaged(project, dependency);

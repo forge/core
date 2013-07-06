@@ -34,7 +34,7 @@ public class CDIConverterTest
                .addBeansXML()
                .addClass(CDIConverterTest.class)
                .addAsAddonDependencies(
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:convert", "2.0.0-SNAPSHOT")));
+                        AddonDependencyEntry.create("org.jboss.forge.addon:convert", "2.0.0-SNAPSHOT"));
 
       return archive;
    }

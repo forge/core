@@ -33,7 +33,7 @@ public class UIWizardDiscoveryTest
                .create(ForgeArchive.class)
                .addClasses(MyFirstWizard.class)
                .addBeansXML()
-               .addAsAddonDependencies(AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:ui", "2.0.0-SNAPSHOT")));
+               .addAsAddonDependencies(AddonDependencyEntry.create("org.jboss.forge.addon:ui", "2.0.0-SNAPSHOT"));
 
       return archive;
    }

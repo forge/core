@@ -48,7 +48,7 @@ public class PersistenceSetupWizardTest
    public static ForgeArchive getDeployment()
    {
       return JavaEETestHelper.getDeployment().addAsAddonDependencies(
-               AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:ui", "2.0.0-SNAPSHOT")));
+               AddonDependencyEntry.create("org.jboss.forge.addon:ui", "2.0.0-SNAPSHOT"));
    }
 
    @Inject

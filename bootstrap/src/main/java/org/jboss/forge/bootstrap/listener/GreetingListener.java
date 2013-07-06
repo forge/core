@@ -52,4 +52,16 @@ public class GreetingListener implements ContainerLifecycleListener
       // Do nothing
    }
 
+   @Override
+   public void beforeConfigurationScan(Furnace forge) throws ContainerException
+   {
+      // Do nothing
+   }
+
+   @Override
+   public void afterConfigurationScan(Furnace forge) throws ContainerException
+   {
+      // Do nothing
+   }
+
 }

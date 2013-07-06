@@ -38,8 +38,8 @@ public class ShellCommandListenerTest
                .addClasses(MockCommandExecutionListener.class)
                .addBeansXML()
                .addAsAddonDependencies(
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:shell-test-harness",
-                                 "2.0.0-SNAPSHOT"))
+                        AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness",
+                                 "2.0.0-SNAPSHOT")
                );
 
       return archive;

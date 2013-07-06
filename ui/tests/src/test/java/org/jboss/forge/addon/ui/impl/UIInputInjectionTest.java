@@ -48,7 +48,7 @@ public class UIInputInjectionTest
                .addBeansXML()
                .addClasses(Career.class, Gender.class)
                .addAsAddonDependencies(
-                        AddonDependencyEntry.create(AddonId.from("org.jboss.forge.addon:ui", "2.0.0-SNAPSHOT")));
+                        AddonDependencyEntry.create("org.jboss.forge.addon:ui", "2.0.0-SNAPSHOT"));
 
       return archive;
    }
