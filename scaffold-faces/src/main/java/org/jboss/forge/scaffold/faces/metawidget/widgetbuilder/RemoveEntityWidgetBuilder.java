@@ -70,7 +70,7 @@ public class RemoveEntityWidgetBuilder implements WidgetBuilder<StaticJavaWidget
          getValue.putImport(type);
          toReturn.getChildren().add(getValue);
          String fieldToNullify = name.equals(ownerField) ? inverseField : ownerField;
-         JavaStatement removeRelationship = new JavaStatement("deletableEntity.set"
+         JavaStatement removeRelationship = new JavaStatement(name + ".set"
                   + StringUtils.capitalize(fieldToNullify)
                   + "(null)");
          toReturn.getChildren().add(removeRelationship);

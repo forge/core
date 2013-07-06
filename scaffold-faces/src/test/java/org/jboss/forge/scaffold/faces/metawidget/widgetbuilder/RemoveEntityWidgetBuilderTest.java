@@ -69,7 +69,7 @@ public class RemoveEntityWidgetBuilderTest
       attributes.put(OWNING_FIELD, "foo");
       attributes.put(INVERSE_FIELD, "bar");
       assertEquals(
-               "Example foo = deletableEntity.getFoo();deletableEntity.setBar(null);this.entityManager.merge(foo);",
+               "Example foo = deletableEntity.getFoo();foo.setBar(null);this.entityManager.merge(foo);",
                widgetBuilder.buildWidget(PROPERTY, attributes, new StaticJavaMetawidget()).toString());
    }
 
@@ -85,7 +85,7 @@ public class RemoveEntityWidgetBuilderTest
       attributes.put(OWNING_FIELD, "foo");
       attributes.put(INVERSE_FIELD, "bar");
       assertEquals(
-               "Example bar = deletableEntity.getBar();deletableEntity.setFoo(null);this.entityManager.merge(bar);",
+               "Example bar = deletableEntity.getBar();bar.setFoo(null);this.entityManager.merge(bar);",
                widgetBuilder.buildWidget(PROPERTY, attributes, new StaticJavaMetawidget()).toString());
    }
    

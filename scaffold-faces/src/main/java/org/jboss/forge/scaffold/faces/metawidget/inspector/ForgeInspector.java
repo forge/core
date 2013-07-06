@@ -214,13 +214,14 @@ public class ForgeInspector
    private void getOneToOneBidirectionalProperties(Property property, Map<String, String> attributes)
    {
       String owningProperty = property.getAnnotation(OneToOne.class).mappedBy();
+      String propertyName = property.getName();
       /*
        * Set the inverse association only when the mappedBy attribute is available. We do not support the ability to
        * identify the owning and inverse sides through JoinColumn or PrimaryKeyJoinColumn annotations yet.
        */
       if (!owningProperty.isEmpty())
       {
-         attributes.put(INVERSE_FIELD, property.getName());
+         attributes.put(INVERSE_FIELD, propertyName);
          for (Property reverseProperty : getProperties(property.getType()).values())
          {
             String reversePropertyName = reverseProperty.getName();
@@ -230,6 +231,25 @@ public class ForgeInspector
             {
                attributes.put(OWNING_FIELD, reversePropertyName);
                break;
+            }
+         }
+      }
+      else
+      {
+         for (Property reverseProperty : getProperties(property.getType()).values())
+         {
+            String reversePropertyName = reverseProperty.getName();
+            String reversePropertyType = reverseProperty.getType();
+            if (reverseProperty.isAnnotationPresent(OneToOne.class)
+                     && !reverseProperty.getAnnotation(OneToOne.class).mappedBy().isEmpty())
+            {
+               owningProperty = reverseProperty.getAnnotation(OneToOne.class).mappedBy();
+               if (propertyName.equals(owningProperty) && reversePropertyType.equals(getTypeUnderInspection()))
+               {
+                  attributes.put(OWNING_FIELD, propertyName);
+                  attributes.put(INVERSE_FIELD, reversePropertyName);
+                  break;
+               }
             }
          }
       }
@@ -288,6 +308,7 @@ public class ForgeInspector
    private void getManyToManyBidirectionalProperties(Property property, Map<String, String> attributes)
    {
       String owningProperty = property.getAnnotation(ManyToMany.class).mappedBy();
+      String propertyName = property.getName();
       /*
        * Set the inverse association only when the mappedBy attribute is available. This is as per the JPA
        * specification. We'll ignore the ability of JPA providers like Hibernate to automatically treat a ManyToMany
@@ -295,7 +316,7 @@ public class ForgeInspector
        */
       if (!owningProperty.isEmpty())
       {
-         attributes.put(INVERSE_FIELD, property.getName());
+         attributes.put(INVERSE_FIELD, propertyName);
          for (Property reverseProperty : getProperties(property.getGenericType()).values())
          {
             String reversePropertyName = reverseProperty.getName();
@@ -305,6 +326,26 @@ public class ForgeInspector
             {
                attributes.put(OWNING_FIELD, reversePropertyName);
                break;
+            }
+         }
+      }
+      else
+      {
+         for (Property reverseProperty : getProperties(property.getGenericType()).values())
+         {
+            String reversePropertyName = reverseProperty.getName();
+            String reversePropertyGenericType = reverseProperty.getGenericType();
+            if (reverseProperty.isAnnotationPresent(ManyToMany.class)
+                     && !reverseProperty.getAnnotation(ManyToMany.class).mappedBy().isEmpty())
+            {
+               owningProperty = reverseProperty.getAnnotation(ManyToMany.class).mappedBy();
+               if (propertyName.equals(owningProperty)
+                        && reversePropertyGenericType.equals(getTypeUnderInspection()))
+               {
+                  attributes.put(OWNING_FIELD, propertyName);
+                  attributes.put(INVERSE_FIELD, reversePropertyName);
+                  break;
+               }
             }
          }
       }
