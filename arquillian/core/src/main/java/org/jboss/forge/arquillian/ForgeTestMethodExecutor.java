@@ -63,6 +63,8 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
          throw new IllegalArgumentException("TestMethodExecutor must be specified");
       }
 
+      Object testInstance = null;
+      Class<?> testClass = null;
       try
       {
          final String testClassName = testMethodExecutor.getInstance().getClass().getName();
@@ -71,8 +73,6 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
          waitUntilStable(forge);
          System.out.println("Furnace stable, executing test.");
 
-         Object testInstance = null;
-         Class<?> testClass = null;
          for (Addon addon : addonRegistry.getAddons())
          {
             Future<Void> future = addon.getFuture();
@@ -100,77 +100,6 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
                }
             }
          }
-
-         if (testInstance == null)
-            throw new IllegalStateException(
-                     "Test runner could not locate test class in any deployment. "
-                              + "Verify that your test case is deployed in an addon that supports remote " +
-                              "services (Did you forget beans.xml in your deployment?)");
-
-         TestResult result = null;
-         try
-         {
-            Method method = testInstance.getClass().getMethod(testMethodExecutor.getMethod().getName());
-            Annotation[] annotations = method.getAnnotations();
-
-            for (Annotation annotation : annotations)
-            {
-               if ("org.junit.Ignore".equals(annotation.getClass().getName()))
-               {
-                  result = new TestResult(Status.SKIPPED);
-               }
-            }
-
-            if (result == null)
-            {
-               try
-               {
-                  try
-                  {
-                     System.out.println("Executing test method: "
-                              + testMethodExecutor.getInstance().getClass().getName() + "."
-                              + testMethodExecutor.getMethod().getName() + "()");
-
-                     invokeBefore(testClass, testInstance);
-                     method.invoke(testInstance);
-                     invokeAfter(testClass, testInstance);
-
-                     result = new TestResult(Status.PASSED);
-                  }
-                  finally
-                  {
-                  }
-               }
-               catch (InvocationTargetException e)
-               {
-                  if (e.getCause() != null && e.getCause() instanceof Exception)
-                     throw (Exception) e.getCause();
-                  else
-                     throw e;
-               }
-            }
-         }
-         catch (AssertionError e)
-         {
-            result = new TestResult(Status.FAILED, e);
-         }
-         catch (Exception e)
-         {
-            result = new TestResult(Status.FAILED, e);
-
-            Throwable cause = e.getCause();
-            while (cause != null)
-            {
-               if (cause instanceof AssertionError)
-               {
-                  result = new TestResult(Status.FAILED, cause);
-                  break;
-               }
-               cause = cause.getCause();
-            }
-         }
-
-         return result;
       }
       catch (Exception e)
       {
@@ -179,6 +108,91 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
                   + testMethodExecutor.getMethod().getName() + "()";
          System.out.println(message);
          throw new IllegalStateException(message, e);
+      }
+
+      if (testInstance != null)
+      {
+         try
+         {
+            TestResult result = null;
+            try
+            {
+               Method method = testInstance.getClass().getMethod(testMethodExecutor.getMethod().getName());
+               Annotation[] annotations = method.getAnnotations();
+
+               for (Annotation annotation : annotations)
+               {
+                  if ("org.junit.Ignore".equals(annotation.getClass().getName()))
+                  {
+                     result = new TestResult(Status.SKIPPED);
+                  }
+               }
+
+               if (result == null)
+               {
+                  try
+                  {
+                     try
+                     {
+                        System.out.println("Executing test method: "
+                                 + testMethodExecutor.getInstance().getClass().getName() + "."
+                                 + testMethodExecutor.getMethod().getName() + "()");
+
+                        invokeBefore(testClass, testInstance);
+                        method.invoke(testInstance);
+                        invokeAfter(testClass, testInstance);
+
+                        result = new TestResult(Status.PASSED);
+                     }
+                     finally
+                     {
+                     }
+                  }
+                  catch (InvocationTargetException e)
+                  {
+                     if (e.getCause() != null && e.getCause() instanceof Exception)
+                        throw (Exception) e.getCause();
+                     else
+                        throw e;
+                  }
+               }
+            }
+            catch (AssertionError e)
+            {
+               result = new TestResult(Status.FAILED, e);
+            }
+            catch (Exception e)
+            {
+               result = new TestResult(Status.FAILED, e);
+
+               Throwable cause = e.getCause();
+               while (cause != null)
+               {
+                  if (cause instanceof AssertionError)
+                  {
+                     result = new TestResult(Status.FAILED, cause);
+                     break;
+                  }
+                  cause = cause.getCause();
+               }
+            }
+            return result;
+         }
+         catch (Exception e)
+         {
+            String message = "Error launching test "
+                     + testMethodExecutor.getInstance().getClass().getName() + "."
+                     + testMethodExecutor.getMethod().getName() + "()";
+            System.out.println(message);
+            throw new IllegalStateException(message, e);
+         }
+      }
+      else
+      {
+         throw new IllegalStateException(
+                  "Test runner could not locate test class in any deployment. "
+                           + "Verify that your test case is deployed in an addon that supports remote " +
+                           "services (Did you forget beans.xml in your deployment?)");
       }
    }
 

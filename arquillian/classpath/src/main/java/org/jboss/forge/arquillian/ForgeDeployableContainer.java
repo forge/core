@@ -35,6 +35,8 @@ import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.exception.ContainerException;
 import org.jboss.forge.furnace.repositories.AddonRepositoryMode;
 import org.jboss.forge.furnace.repositories.MutableAddonRepository;
+import org.jboss.forge.furnace.spi.ContainerLifecycleListener;
+import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.forge.furnace.util.Addons;
 import org.jboss.forge.furnace.util.ClassLoaders;
 import org.jboss.forge.furnace.util.Files;
@@ -69,10 +71,14 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
          ShrinkWrapUtil.toFile(new File(destDir.getAbsolutePath() + "/" + archive.getName()), archive);
          ShrinkWrapUtil.unzip(destDir, archive);
 
+         ConfigurationScanListener listener = new ConfigurationScanListener();
+         ListenerRegistration<ContainerLifecycleListener> registration = runnable.furnace
+                  .addContainerLifecycleListener(listener);
+
          repository.deploy(addonToDeploy, ((ForgeArchive) archive).getAddonDependencies(), new ArrayList<File>());
          repository.enable(addonToDeploy);
 
-         while (runnable.furnace.getStatus().isStarting())
+         while (runnable.furnace.getStatus().isStarting() || !listener.isConfigurationScanned())
          {
             try
             {
@@ -83,12 +89,15 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
                e.printStackTrace();
             }
          }
+
+         registration.removeListener();
+
          AddonRegistry registry = runnable.getForge().getAddonRegistry();
+         Addon addon = registry.getAddon(addonToDeploy);
          try
          {
-            Future<Void> future = registry.getAddon(addonToDeploy).getFuture();
+            Future<Void> future = addon.getFuture();
             future.get();
-            Addon addon = registry.getAddon(addonToDeploy);
             if (addon.getStatus().isFailed())
             {
                ContainerException e = new ContainerException("Addon " + addonToDeploy + " failed to deploy.");
