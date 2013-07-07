@@ -1,3 +1,9 @@
+/*
+ * Copyright 2013 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Eclipse Public License version 1.0, available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.jboss.forge.arquillian;
 
 import java.io.File;
@@ -43,6 +49,9 @@ import org.jboss.forge.furnace.util.Files;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
+/**
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ */
 public class ForgeDeployableContainer implements DeployableContainer<ForgeContainerConfiguration>
 {
    @Inject
@@ -116,7 +125,44 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
          AddonManager addonManager = new AddonManagerImpl(runnable.furnace, new MavenDependencyResolver(
                   new FileResourceFactory(), new MavenContainer()));
          InstallRequest request = addonManager.install(remoteAddon.getAddonId());
+
+         ConfigurationScanListener listener = new ConfigurationScanListener();
+         ListenerRegistration<ContainerLifecycleListener> registration = runnable.furnace
+                  .addContainerLifecycleListener(listener);
+
          request.perform();
+
+         while (runnable.furnace.getStatus().isStarting() || !listener.isConfigurationScanned())
+         {
+            try
+            {
+               Thread.sleep(100);
+            }
+            catch (InterruptedException e)
+            {
+               e.printStackTrace();
+            }
+         }
+
+         registration.removeListener();
+
+         AddonRegistry registry = runnable.getForge().getAddonRegistry();
+         Addon addon = registry.getAddon(addonToDeploy);
+         try
+         {
+            Future<Void> future = addon.getFuture();
+            future.get();
+            if (addon.getStatus().isFailed())
+            {
+               ContainerException e = new ContainerException("Addon " + addonToDeploy + " failed to deploy.");
+               deployment.deployedWithError(e);
+               throw e;
+            }
+         }
+         catch (Exception e)
+         {
+            throw new DeploymentException("Failed to deploy " + addonToDeploy, e);
+         }
       }
       else
       {

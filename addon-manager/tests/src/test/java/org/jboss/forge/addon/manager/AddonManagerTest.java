@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.inject.Inject;
 
@@ -68,7 +69,7 @@ public class AddonManagerTest
    private AddonRepository repository;
 
    @Test
-   public void testInstallingAddonWithSingleOptionalAddonDependency() throws InterruptedException
+   public void testInstallingAddonWithSingleOptionalAddonDependency() throws InterruptedException, TimeoutException
    {
       int addonCount = registry.getAddons().size();
       AddonId example = AddonId.fromCoordinates("org.jboss.forge.addon:example,2.0.0-SNAPSHOT");
@@ -102,7 +103,8 @@ public class AddonManagerTest
    }
 
    @Test
-   public void testInstallingAlreadyInstalledAddonWithTwoRequiredAddonDependency() throws InterruptedException
+   public void testInstallingAlreadyInstalledAddonWithTwoRequiredAddonDependency() throws InterruptedException,
+            TimeoutException
    {
       final int addonInitialCount = registry.getAddons().size();
       AddonId resources = AddonId.fromCoordinates("org.jboss.forge.addon:resources,2.0.0-SNAPSHOT");
