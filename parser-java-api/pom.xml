@@ -16,7 +16,7 @@
       <relocation>
          <groupId>org.jboss.forge</groupId>
          <artifactId>java-parser-api</artifactId>
-         <version>1.0.1.Final</version>
+         <version>1.1.0.Final</version>
       </relocation>
    </distributionManagement>
 </project>
