@@ -21,7 +21,14 @@ public class ConsoleInputSession
    private InputStream consoleStream;
    private InputStream externalInputStream;
 
-   private final ArrayBlockingQueue<String> blockingQueue = new ArrayBlockingQueue<String>(1000);
+   /*
+    * A queue to hold characters that have been read from the raw console. This is declared as static, as a hack, to
+    * allow characters to be read by an eventually terminating reader thread without being lost. This is necessary due
+    * to the blocking read on System.in in the reader thread. One reader thread can be blocked reading System.in while
+    * awaiting termination during an internal restart of Forge, and another reader thread would have just started but
+    * would be awaiting the lock on System.in.
+    */
+   private static final ArrayBlockingQueue<String> blockingQueue = new ArrayBlockingQueue<String>(1000);
 
    private volatile boolean connected;
 
@@ -45,7 +52,7 @@ public class ConsoleInputSession
                   b = blockingQueue.poll(365, TimeUnit.DAYS);
                   c = 0;
                }
-
+               
                if (b != null)
                {
                   return b.charAt(c++);
@@ -110,7 +117,6 @@ public class ConsoleInputSession
    public void stop()
    {
       connected = false;
-      blockingQueue.offer("");
    }
 
    public InputStream getExternalInputStream()
