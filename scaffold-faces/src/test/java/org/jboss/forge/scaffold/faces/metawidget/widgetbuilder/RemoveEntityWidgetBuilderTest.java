@@ -115,7 +115,7 @@ public class RemoveEntityWidgetBuilderTest
       attributes.put(OWNING_FIELD, "foo");
       attributes.put(INVERSE_FIELD, "bar");
       assertEquals(
-               "Iterator<Example> iterBar = deletableEntity.getBar().iterator();for (; iterBar.hasNext() ;)  { Example example = iterBar.next();example.setFoo(null);iterBar.remove();this.entityManager.merge(example); }",
+               "Iterator<Example> iterBar = deletableEntity.getBar().iterator();for (; iterBar.hasNext() ;)  { Example nextInBar = iterBar.next();nextInBar.setFoo(null);iterBar.remove();this.entityManager.merge(nextInBar); }",
                widgetBuilder.buildWidget(PROPERTY, attributes, new StaticJavaMetawidget()).toString());
    }
 
@@ -171,7 +171,7 @@ public class RemoveEntityWidgetBuilderTest
       attributes.put(OWNING_FIELD, "foo");
       attributes.put(INVERSE_FIELD, "bar");
       assertEquals(
-               "Iterator<Example> iterBar = deletableEntity.getBar().iterator();for (; iterBar.hasNext() ;)  { Example example = iterBar.next();example.getFoo().remove(deletableEntity);iterBar.remove();this.entityManager.merge(example); }",
+               "Iterator<Example> iterBar = deletableEntity.getBar().iterator();for (; iterBar.hasNext() ;)  { Example nextInBar = iterBar.next();nextInBar.getFoo().remove(deletableEntity);iterBar.remove();this.entityManager.merge(nextInBar); }",
                widgetBuilder.buildWidget(PROPERTY, attributes, new StaticJavaMetawidget()).toString());
    }
 
@@ -188,7 +188,7 @@ public class RemoveEntityWidgetBuilderTest
       attributes.put(OWNING_FIELD, "foo");
       attributes.put(INVERSE_FIELD, "bar");
       assertEquals(
-               "Iterator<Example> iterFoo = deletableEntity.getFoo().iterator();for (; iterFoo.hasNext() ;)  { Example example = iterFoo.next();example.getBar().remove(deletableEntity);iterFoo.remove();this.entityManager.merge(example); }",
+               "Iterator<Example> iterFoo = deletableEntity.getFoo().iterator();for (; iterFoo.hasNext() ;)  { Example nextInFoo = iterFoo.next();nextInFoo.getBar().remove(deletableEntity);iterFoo.remove();this.entityManager.merge(nextInFoo); }",
                widgetBuilder.buildWidget(PROPERTY, attributes, new StaticJavaMetawidget()).toString());
    }
 }

@@ -114,7 +114,7 @@ public class RemoveEntityWidgetBuilder implements WidgetBuilder<StaticJavaWidget
 
             JavaStatement collectionModifiers = new JavaStatement("for (; iter" + capitalizedName + ".hasNext() ;) ");
 
-            String scopedVariable = StringUtils.decapitalize(simpleParameterizedType);
+            String scopedVariable = "nextIn" + capitalizedName;
             JavaStatement iterable = new JavaStatement(simpleParameterizedType + " " + scopedVariable
                      + " = iter" + capitalizedName + ".next()");
             collectionModifiers.getChildren().add(iterable);
@@ -152,7 +152,7 @@ public class RemoveEntityWidgetBuilder implements WidgetBuilder<StaticJavaWidget
 
             JavaStatement collectionModifiers = new JavaStatement("for (; iter" + capitalizedName + ".hasNext() ;) ");
 
-            String scopedVariable = StringUtils.decapitalize(simpleParameterizedType);
+            String scopedVariable = "nextIn" + capitalizedName;
             JavaStatement iterable = new JavaStatement(simpleParameterizedType + " " + scopedVariable
                      + " = iter" + capitalizedName + ".next()");
             collectionModifiers.getChildren().add(iterable);
