@@ -39,6 +39,7 @@ import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.exception.ContainerException;
+import org.jboss.forge.furnace.lock.LockMode;
 import org.jboss.forge.furnace.repositories.AddonRepositoryMode;
 import org.jboss.forge.furnace.repositories.MutableAddonRepository;
 import org.jboss.forge.furnace.spi.ContainerLifecycleListener;
@@ -65,9 +66,17 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    private Map<Deployment, AddonId> deployedAddons = new HashMap<Deployment, AddonId>();
    private Thread thread;
 
+   private boolean undeploying = false;
+
    @Override
    public ProtocolMetaData deploy(Archive<?> archive) throws DeploymentException
    {
+      if (undeploying)
+      {
+         undeploying = false;
+         cleanup();
+      }
+
       Deployment deployment = deploymentInstance.get();
       final AddonId addonToDeploy = getAddonEntry(deployment);
       File destDir = repository.getAddonBaseDir(addonToDeploy);
@@ -175,6 +184,30 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       return new ProtocolMetaData().addContext(runnable.getForge());
    }
 
+   private void cleanup()
+   {
+      runnable.getForge().getLockManager().performLocked(LockMode.WRITE, new Callable<Void>()
+      {
+         @Override
+         public Void call() throws Exception
+         {
+            for (AddonId enabled : repository.listEnabled())
+            {
+               try
+               {
+                  repository.disable(enabled);
+                  repository.undeploy(enabled);
+               }
+               catch (Exception e)
+               {
+                  e.printStackTrace();
+               }
+            }
+            return null;
+         }
+      });
+   }
+
    @Override
    public void deploy(Descriptor descriptor) throws DeploymentException
    {
@@ -250,6 +283,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
    @Override
    public void undeploy(Archive<?> archive) throws DeploymentException
    {
+      undeploying = true;
       AddonId addonToUndeploy = getAddonEntry(deploymentInstance.get());
       AddonRegistry registry = runnable.getForge().getAddonRegistry();
       System.out.println("Undeploying [" + addonToUndeploy + "] ... ");
