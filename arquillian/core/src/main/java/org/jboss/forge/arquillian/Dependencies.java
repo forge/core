@@ -11,5 +11,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Dependencies
 {
-   Addon[] value();
+   AddonDependency[] value();
 }

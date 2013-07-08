@@ -19,7 +19,7 @@ import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.arquillian.Addon;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.Furnace;
@@ -35,10 +35,10 @@ public class MavenMultiModuleProviderTest
 {
    @Deployment
    @Dependencies({
-            @Addon(name = "org.jboss.forge.addon:resources", version = "2.0.0-SNAPSHOT"),
-            @Addon(name = "org.jboss.forge.addon:projects", version = "2.0.0-SNAPSHOT"),
-            @Addon(name = "org.jboss.forge.addon:ui", version = "2.0.0-SNAPSHOT"),
-            @Addon(name = "org.jboss.forge.addon:maven", version = "2.0.0-SNAPSHOT")
+            @AddonDependency(name = "org.jboss.forge.addon:resources", version = "2.0.0-SNAPSHOT"),
+            @AddonDependency(name = "org.jboss.forge.addon:projects", version = "2.0.0-SNAPSHOT"),
+            @AddonDependency(name = "org.jboss.forge.addon:ui", version = "2.0.0-SNAPSHOT"),
+            @AddonDependency(name = "org.jboss.forge.addon:maven", version = "2.0.0-SNAPSHOT")
    })
    public static ForgeArchive getDeployment()
    {

@@ -8,7 +8,7 @@
 package org.jboss.forge.addon.javaee;
 
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.forge.arquillian.Addon;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.addons.AddonId;
@@ -26,9 +26,9 @@ public abstract class JavaEETestHelper
 {
    @Deployment
    @Dependencies({
-            @Addon(name = "org.jboss.forge.addon:projects", version = "2.0.0-SNAPSHOT"),
-            @Addon(name = "org.jboss.forge.addon:javaee", version = "2.0.0-SNAPSHOT"),
-            @Addon(name = "org.jboss.forge.addon:maven", version = "2.0.0-SNAPSHOT")
+            @AddonDependency(name = "org.jboss.forge.addon:projects", version = "2.0.0-SNAPSHOT"),
+            @AddonDependency(name = "org.jboss.forge.addon:javaee", version = "2.0.0-SNAPSHOT"),
+            @AddonDependency(name = "org.jboss.forge.addon:maven", version = "2.0.0-SNAPSHOT")
    })
    public static ForgeArchive getDeployment()
    {

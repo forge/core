@@ -16,7 +16,7 @@ import org.jboss.aesh.terminal.Key;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.shell.test.ShellTest;
-import org.jboss.forge.arquillian.Addon;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.addons.AddonId;
@@ -35,9 +35,9 @@ public class ShellAddonTest
    private KeyOperation completeChar = new KeyOperation(Key.CTRL_I, Operation.COMPLETE);
 
    @Deployment
-   @Dependencies({ @Addon(name = "org.jboss.forge.addon:ui", version = "2.0.0-SNAPSHOT"),
-            @Addon(name = "org.jboss.forge.addon:shell-test-harness", version = "2.0.0-SNAPSHOT"),
-            @Addon(name = "org.jboss.forge.addon:resources", version = "2.0.0-SNAPSHOT")
+   @Dependencies({ @AddonDependency(name = "org.jboss.forge.addon:ui", version = "2.0.0-SNAPSHOT"),
+            @AddonDependency(name = "org.jboss.forge.addon:shell-test-harness", version = "2.0.0-SNAPSHOT"),
+            @AddonDependency(name = "org.jboss.forge.addon:resources", version = "2.0.0-SNAPSHOT")
    })
    public static ForgeArchive getDeployment()
    {

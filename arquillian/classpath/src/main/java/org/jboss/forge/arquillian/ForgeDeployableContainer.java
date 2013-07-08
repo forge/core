@@ -109,14 +109,16 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
             future.get();
             if (addon.getStatus().isFailed())
             {
-               ContainerException e = new ContainerException("Addon " + addonToDeploy + " failed to deploy.");
+               DeploymentException e = new DeploymentException("AddonDependency " + addonToDeploy
+                        + " failed to deploy.");
                deployment.deployedWithError(e);
                throw e;
             }
          }
          catch (Exception e)
          {
-            throw new DeploymentException("Failed to deploy " + addonToDeploy, e);
+            deployment.deployedWithError(e);
+            throw new DeploymentException("AddonDependency " + addonToDeploy + " failed to deploy.", e);
          }
       }
       else if (archive instanceof ForgeRemoteAddon)
@@ -154,7 +156,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
             future.get();
             if (addon.getStatus().isFailed())
             {
-               ContainerException e = new ContainerException("Addon " + addonToDeploy + " failed to deploy.");
+               ContainerException e = new ContainerException("AddonDependency " + addonToDeploy + " failed to deploy.");
                deployment.deployedWithError(e);
                throw e;
             }

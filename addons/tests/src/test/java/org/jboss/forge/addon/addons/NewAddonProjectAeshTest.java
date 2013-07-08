@@ -12,7 +12,7 @@ import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.shell.ForgeShell;
 import org.jboss.forge.addon.shell.test.TestShellConfiguration;
-import org.jboss.forge.arquillian.Addon;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.addons.AddonId;
@@ -31,14 +31,14 @@ import org.junit.runner.RunWith;
 public class NewAddonProjectAeshTest
 {
    @Deployment
-   @Dependencies({ @Addon(name = "org.jboss.forge.addon:ui", version = "2.0.0-SNAPSHOT"),
-            @Addon(name = "org.jboss.forge.addon:shell-test-harness", version = "2.0.0-SNAPSHOT"),
-            @Addon(name = "org.jboss.forge.addon:shell", version = "2.0.0-SNAPSHOT"),
-            @Addon(name = "org.jboss.forge.addon:dependencies", version = "2.0.0-SNAPSHOT"),
-            @Addon(name = "org.jboss.forge.addon:maven", version = "2.0.0-SNAPSHOT"),
-            @Addon(name = "org.jboss.forge.addon:addons", version = "2.0.0-SNAPSHOT"),
-            @Addon(name = "org.jboss.forge.addon:resources", version = "2.0.0-SNAPSHOT"),
-            @Addon(name = "org.jboss.forge.addon:projects", version = "2.0.0-SNAPSHOT")
+   @Dependencies({ @AddonDependency(name = "org.jboss.forge.addon:ui", version = "2.0.0-SNAPSHOT"),
+            @AddonDependency(name = "org.jboss.forge.addon:shell-test-harness", version = "2.0.0-SNAPSHOT"),
+            @AddonDependency(name = "org.jboss.forge.addon:shell", version = "2.0.0-SNAPSHOT"),
+            @AddonDependency(name = "org.jboss.forge.addon:dependencies", version = "2.0.0-SNAPSHOT"),
+            @AddonDependency(name = "org.jboss.forge.addon:maven", version = "2.0.0-SNAPSHOT"),
+            @AddonDependency(name = "org.jboss.forge.addon:addons", version = "2.0.0-SNAPSHOT"),
+            @AddonDependency(name = "org.jboss.forge.addon:resources", version = "2.0.0-SNAPSHOT"),
+            @AddonDependency(name = "org.jboss.forge.addon:projects", version = "2.0.0-SNAPSHOT")
    })
    public static ForgeArchive getDeployment()
    {
@@ -81,7 +81,7 @@ public class NewAddonProjectAeshTest
                "--named lincoln " +
                "--topLevelPackage org.lincoln " +
                "--targetLocation " + target.getAbsolutePath() + " " +
-               "--type \"Furnace Addon\" " +
+               "--type \"Furnace AddonDependency\" " +
                "--overwrite " +
                "--version 1.0.0-SNAPSHOT").getBytes());
 

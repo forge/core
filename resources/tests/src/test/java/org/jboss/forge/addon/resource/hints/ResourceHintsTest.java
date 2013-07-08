@@ -16,7 +16,7 @@ import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.hints.HintsLookup;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.hints.InputType;
-import org.jboss.forge.arquillian.Addon;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.addons.AddonId;
@@ -30,9 +30,9 @@ import org.junit.runner.RunWith;
 public class ResourceHintsTest
 {
    @Deployment
-   @Dependencies({ @Addon(name = "org.jboss.forge.addon:ui-spi", version = "2.0.0-SNAPSHOT"),
-            @Addon(name = "org.jboss.forge.addon:environment", version = "2.0.0-SNAPSHOT"),
-            @Addon(name = "org.jboss.forge.addon:resources", version = "2.0.0-SNAPSHOT") })
+   @Dependencies({ @AddonDependency(name = "org.jboss.forge.addon:ui-spi", version = "2.0.0-SNAPSHOT"),
+            @AddonDependency(name = "org.jboss.forge.addon:environment", version = "2.0.0-SNAPSHOT"),
+            @AddonDependency(name = "org.jboss.forge.addon:resources", version = "2.0.0-SNAPSHOT") })
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap

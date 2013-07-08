@@ -46,7 +46,7 @@ public class ForgeDeploymentScenarioGenerator implements DeploymentScenarioGener
       Collection<DeploymentDescription> deployments = new ArrayList<DeploymentDescription>();
 
       if (dependency.value() != null)
-         for (Addon addon : dependency.value())
+         for (AddonDependency addon : dependency.value())
          {
             AddonId id = AddonId.from(addon.name(), addon.version());
             DeploymentDescription deploymentDescription = new DeploymentDescription(id.toCoordinates(),

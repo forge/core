@@ -4,7 +4,7 @@ import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.shrinkwrap.api.Archive;
 
 /**
- * Archive representing a Furnace Addon deployment.
+ * Archive representing a Furnace AddonDependency deployment.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */

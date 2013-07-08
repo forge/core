@@ -11,7 +11,7 @@ import org.jboss.shrinkwrap.api.container.ResourceContainer;
 import org.jboss.shrinkwrap.api.container.ServiceProviderContainer;
 
 /**
- * Archive representing a Furnace Addon deployment.
+ * Archive representing a Furnace AddonDependency deployment.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */

@@ -24,7 +24,7 @@ import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.util.Selections;
-import org.jboss.forge.arquillian.Addon;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.addons.AddonId;
@@ -40,8 +40,8 @@ public class NewProjectWizardTest
 {
    @Deployment
    @Dependencies({
-            @Addon(name = "org.jboss.forge.addon:projects", version = "2.0.0-SNAPSHOT"),
-            @Addon(name = "org.jboss.forge.addon:ui", version = "2.0.0-SNAPSHOT")
+            @AddonDependency(name = "org.jboss.forge.addon:projects", version = "2.0.0-SNAPSHOT"),
+            @AddonDependency(name = "org.jboss.forge.addon:ui", version = "2.0.0-SNAPSHOT")
    })
    public static ForgeArchive getDeployment()
    {
