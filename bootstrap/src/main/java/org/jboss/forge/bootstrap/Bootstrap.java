@@ -20,8 +20,8 @@ import java.util.ServiceLoader;
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.addon.dependencies.builder.DependencyQueryBuilder;
-import org.jboss.forge.addon.manager.InstallRequest;
 import org.jboss.forge.addon.manager.impl.AddonManagerImpl;
+import org.jboss.forge.addon.manager.request.AddonActionRequest;
 import org.jboss.forge.addon.maven.dependencies.FileResourceFactory;
 import org.jboss.forge.addon.maven.dependencies.MavenContainer;
 import org.jboss.forge.addon.maven.dependencies.MavenDependencyResolver;
@@ -98,7 +98,7 @@ public class Bootstrap
       String installAddon = null;
       String removeAddon = null;
       forge = ServiceLoader.load(Furnace.class).iterator().next();
-      
+
       forge.setArgs(args);
 
       if (args.length > 0)
@@ -196,7 +196,8 @@ public class Bootstrap
             addon = AddonId.from(vCoord.getGroupId() + ":" + vCoord.getArtifactId(), vCoord.getVersion());
          }
 
-         InstallRequest request = addonManager.install(addon);
+         // FIXME: May prompt for confirmation
+         AddonActionRequest request = addonManager.install(addon);
          System.out.println(request);
          request.perform();
       }
@@ -260,9 +261,10 @@ public class Bootstrap
       final InputStream stream = classLoader.getResourceAsStream("META-INF/services/" + className);
       if (stream != null)
       {
+         BufferedReader reader = null;
          try
          {
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+            reader = new BufferedReader(new InputStreamReader(stream));
             String line;
             while ((line = reader.readLine()) != null)
             {
@@ -276,7 +278,6 @@ public class Bootstrap
                   continue;
                return line;
             }
-
          }
          catch (IOException ignored)
          {
@@ -286,9 +287,20 @@ public class Bootstrap
          {
             try
             {
-               stream.close();
+               if (reader != null)
+                  reader.close();
             }
             catch (IOException ignored)
+            {
+               // ignore
+            }
+
+            try
+            {
+               if (stream != null)
+                  stream.close();
+            }
+            catch (IOException e)
             {
                // ignore
             }
