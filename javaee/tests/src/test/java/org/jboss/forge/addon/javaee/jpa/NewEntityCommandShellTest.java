@@ -46,6 +46,7 @@ public class NewEntityCommandShellTest
                .create(ForgeArchive.class)
                .addBeansXML()
                .addAsAddonDependencies(
+                        AddonDependencyEntry.create("org.jboss.forge.furnace:container-cdi", "2.0.0-SNAPSHOT"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:javaee", "2.0.0-SNAPSHOT"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness",
                                  "2.0.0-SNAPSHOT"),
