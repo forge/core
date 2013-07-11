@@ -9,6 +9,12 @@
    <name>Forge - Environment Addon Tests</name>
    <dependencies>
       <dependency>
+         <groupId>org.jboss.forge.furnace</groupId>
+         <artifactId>container-cdi</artifactId>
+         <classifier>forge-addon</classifier>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>environment-impl</artifactId>
       </dependency>

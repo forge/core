@@ -47,5 +47,13 @@
          <artifactId>arquillian-forge-classpath</artifactId>
          <scope>test</scope>
       </dependency>
+
+      <!-- Furnace Container -->
+      <dependency>
+         <groupId>org.jboss.forge.furnace</groupId>
+         <artifactId>container-cdi</artifactId>
+         <classifier>forge-addon</classifier>
+         <scope>test</scope>
+      </dependency>
    </dependencies>
 </project>
