@@ -60,12 +60,27 @@ public class AddonManagerImpl implements AddonManager
 {
    private final Furnace furnace;
    private final AddonDependencyResolver resolver;
+   private final boolean updateSnapshotDependencies;
 
    @Inject
    public AddonManagerImpl(final Furnace forge, final AddonDependencyResolver resolver)
    {
       this.furnace = forge;
       this.resolver = resolver;
+      this.updateSnapshotDependencies = true;
+   }
+
+   /**
+    * Used by Arquillian
+    * 
+    * @param updateDependencies if forge should care about updating SNAPSHOT dependencies
+    */
+   public AddonManagerImpl(final Furnace forge, final AddonDependencyResolver resolver,
+            boolean updateSnapshotDependencies)
+   {
+      this.furnace = forge;
+      this.resolver = resolver;
+      this.updateSnapshotDependencies = updateSnapshotDependencies;
    }
 
    @Override
@@ -203,8 +218,7 @@ public class AddonManagerImpl implements AddonManager
       if (installedAddons.contains(addon))
       {
          // Already contains the installed addon. Update ONLY if the version is SNAPSHOT
-         // TODO: Another asserts may be made at this point, like using timestamps
-         if (Versions.isSnapshot(addonInfo.getAddon().getVersion()))
+         if (Versions.isSnapshot(addonInfo.getAddon().getVersion()) && updateSnapshotDependencies)
          {
             request = createUpdateRequest(addonInfo, addonInfo, repository, furnace);
          }

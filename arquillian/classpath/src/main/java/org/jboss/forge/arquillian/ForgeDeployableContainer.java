@@ -130,7 +130,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       else if (archive instanceof ForgeRemoteAddon)
       {
          ForgeRemoteAddon remoteAddon = (ForgeRemoteAddon) archive;
-         AddonManager addonManager = new AddonManagerImpl(runnable.furnace, new MavenDependencyResolver());
+         AddonManager addonManager = new AddonManagerImpl(runnable.furnace, new MavenDependencyResolver(), false);
 
          addonManager.install(remoteAddon.getAddonId()).perform();
 
