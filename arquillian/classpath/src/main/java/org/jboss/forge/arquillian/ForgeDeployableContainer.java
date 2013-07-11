@@ -118,7 +118,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
                DeploymentException e = new DeploymentException("AddonDependency " + addonToDeploy
                         + " failed to deploy.");
                deployment.deployedWithError(e);
-               throw e;
+               throw new DeploymentException("AddonDependency " + addonToDeploy + " failed to deploy.", e);
             }
          }
          catch (Exception e)
