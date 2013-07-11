@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
    <modelVersion>4.0.0</modelVersion>
    <parent>
       <groupId>org.jboss.forge.addon</groupId>
@@ -9,21 +10,6 @@
    <artifactId>scaffold</artifactId>
    <name>Forge - Scaffold Addon</name>
    <dependencies>
-      <dependency>
-         <groupId>org.jboss.forge.furnace</groupId>
-         <artifactId>furnace-api</artifactId>
-         <scope>provided</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>ui</artifactId>
-         <classifier>forge-addon</classifier>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>projects</artifactId>
-         <classifier>forge-addon</classifier>
-      </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>scaffold-api</artifactId>
@@ -37,6 +23,26 @@
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>scaffold-spi</artifactId>
          <classifier>forge-addon</classifier>
+      </dependency>
+
+      <!-- Addon Dependencies -->
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>ui</artifactId>
+         <classifier>forge-addon</classifier>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>projects</artifactId>
+         <classifier>forge-addon</classifier>
+      </dependency>
+
+      <!-- Furnace Container -->
+      <dependency>
+         <groupId>org.jboss.forge.furnace</groupId>
+         <artifactId>container-cdi</artifactId>
+         <classifier>forge-addon</classifier>
+         <scope>test</scope>
       </dependency>
    </dependencies>
    <build>

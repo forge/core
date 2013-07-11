@@ -19,6 +19,8 @@
          <artifactId>parser-java-impl</artifactId>
          <scope>runtime</scope>
       </dependency>
+      
+      <!-- Addon Dependencies -->
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>resources</artifactId>
@@ -39,6 +41,14 @@
          <version>2.0.0-SNAPSHOT</version>
          <classifier>forge-addon</classifier>
          <optional>true</optional>
+      </dependency>
+
+      <!-- Furnace Container -->
+      <dependency>
+         <groupId>org.jboss.forge.furnace</groupId>
+         <artifactId>container-cdi</artifactId>
+         <classifier>forge-addon</classifier>
+         <scope>provided</scope>
       </dependency>
    </dependencies>
    <build>

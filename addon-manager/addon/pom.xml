@@ -13,11 +13,17 @@
 
    <dependencies>
       <dependency>
-         <groupId>org.jboss.forge.furnace</groupId>
-         <artifactId>container-cdi</artifactId>
-         <classifier>forge-addon</classifier>
-         <optional>true</optional>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>addon-manager-api</artifactId>
+         <scope>compile</scope>
       </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>addon-manager-impl</artifactId>
+         <scope>runtime</scope>
+      </dependency>
+
+      <!-- Addon Dependencies -->
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>dependencies</artifactId>
@@ -35,15 +41,13 @@
          <classifier>forge-addon</classifier>
          <optional>true</optional>
       </dependency>
+
+      <!-- Furnace Container -->
       <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>addon-manager-api</artifactId>
-         <scope>compile</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>addon-manager-impl</artifactId>
-         <scope>runtime</scope>
+         <groupId>org.jboss.forge.furnace</groupId>
+         <artifactId>container-cdi</artifactId>
+         <classifier>forge-addon</classifier>
+         <scope>provided</scope>
       </dependency>
    </dependencies>
 

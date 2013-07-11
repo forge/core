@@ -13,7 +13,7 @@
    <dependencies>
       <dependency>
          <groupId>org.jboss.forge.furnace</groupId>
-         <artifactId>furnace-api</artifactId>
+         <artifactId>container-cdi-api</artifactId>
          <scope>provided</scope>
       </dependency>
       <dependency>
@@ -33,12 +33,6 @@
          <artifactId>ui-spi</artifactId>
          <classifier>forge-addon</classifier>
          <scope>provided</scope>
-      </dependency>
-      
-      <dependency>
-         <groupId>org.jboss.forge.furnace</groupId>
-         <artifactId>container-cdi</artifactId>
-         <classifier>forge-addon</classifier>
       </dependency>
 
       <dependency>

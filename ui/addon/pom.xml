@@ -37,10 +37,13 @@
          <artifactId>ui-spi</artifactId>
          <classifier>forge-addon</classifier>
       </dependency>
+      
+      <!-- Furnace Container -->
       <dependency>
          <groupId>org.jboss.forge.furnace</groupId>
          <artifactId>container-cdi</artifactId>
          <classifier>forge-addon</classifier>
+         <scope>provided</scope>
       </dependency>
    </dependencies>
    <build>
