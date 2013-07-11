@@ -25,6 +25,7 @@ import org.apache.maven.settings.building.SettingsBuilder;
 import org.apache.maven.settings.building.SettingsBuildingException;
 import org.apache.maven.settings.building.SettingsBuildingRequest;
 import org.apache.maven.settings.building.SettingsBuildingResult;
+import org.jboss.shrinkwrap.resolver.impl.maven.bootstrap.MavenSettingsBuilder;
 import org.sonatype.aether.RepositorySystem;
 import org.sonatype.aether.connector.wagon.WagonProvider;
 import org.sonatype.aether.connector.wagon.WagonRepositoryConnectorFactory;
@@ -36,7 +37,7 @@ import org.sonatype.aether.spi.connector.RepositoryConnectorFactory;
 
 /**
  * Configures the Maven API for usage inside Furnace
- *
+ * 
  * TODO: Remove in the future, use the ShrinkWrap Descriptors API ?
  */
 public class MavenContainer
@@ -71,18 +72,41 @@ public class MavenContainer
       {
          SettingsBuilder settingsBuilder = new DefaultSettingsBuilderFactory().newInstance();
          SettingsBuildingRequest settingsRequest = new DefaultSettingsBuildingRequest();
-         settingsRequest
-                  .setUserSettingsFile(new File(getUserHomeDir(), "/.m2/settings.xml"));
-
-         if (M2_HOME != null)
-            settingsRequest.setGlobalSettingsFile(new File(M2_HOME, "/conf/settings.xml"));
-
+         String userSettingsLocation = System.getProperty(MavenSettingsBuilder.ALT_USER_SETTINGS_XML_LOCATION);
+         if (userSettingsLocation != null)
+         {
+            settingsRequest.setUserSettingsFile(new File(userSettingsLocation));
+         }
+         else
+         {
+            settingsRequest.setUserSettingsFile(new File(getUserHomeDir(), "/.m2/settings.xml"));
+         }
+         String globalSettingsLocation = System.getProperty(MavenSettingsBuilder.ALT_GLOBAL_SETTINGS_XML_LOCATION);
+         if (globalSettingsLocation != null)
+         {
+            settingsRequest.setGlobalSettingsFile(new File(globalSettingsLocation));
+         }
+         else
+         {
+            if (M2_HOME != null)
+            {
+               settingsRequest.setGlobalSettingsFile(new File(M2_HOME, "/conf/settings.xml"));
+            }
+         }
          SettingsBuildingResult settingsBuildingResult = settingsBuilder.build(settingsRequest);
          Settings effectiveSettings = settingsBuildingResult.getEffectiveSettings();
 
          if (effectiveSettings.getLocalRepository() == null)
          {
-            effectiveSettings.setLocalRepository(getUserHomePath() + "/.m2/repository");
+            String userRepositoryLocation = System.getProperty(MavenSettingsBuilder.ALT_LOCAL_REPOSITORY_LOCATION);
+            if (userRepositoryLocation != null)
+            {
+               effectiveSettings.setLocalRepository(userRepositoryLocation);
+            }
+            else
+            {
+               effectiveSettings.setLocalRepository(getUserHomePath() + "/.m2/repository");
+            }
          }
 
          return effectiveSettings;

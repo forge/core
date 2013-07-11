@@ -17,10 +17,11 @@ import org.jboss.forge.furnace.services.Exported;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Exported
-public interface AddonDependencyResolver
+public interface AddonDependencyResolver extends DependencyResolver
 {
    /**
     * Resolve the dependency hierarchy for use during {@link Addon} installation.
     */
    public DependencyNode resolveAddonDependencyHierarchy(final DependencyQuery query);
+
 }
