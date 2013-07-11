@@ -108,14 +108,31 @@
    <dependencyManagement>
       <dependencies>
          <!-- Furnace Container -->
+
          <dependency>
             <groupId>org.jboss.forge.furnace</groupId>
-            <artifactId>furnace-api</artifactId>
+            <artifactId>container-cdi</artifactId>
+            <classifier>forge-addon</classifier>
+            <version>${version.furnace}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.furnace</groupId>
+            <artifactId>container-cdi-api</artifactId>
+            <version>${version.furnace}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.furnace</groupId>
+            <artifactId>container-cdi-impl</artifactId>
             <version>${version.furnace}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.furnace</groupId>
             <artifactId>furnace</artifactId>
+            <version>${version.furnace}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.furnace</groupId>
+            <artifactId>furnace-api</artifactId>
             <version>${version.furnace}</version>
          </dependency>
          <dependency>
@@ -467,7 +484,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore />
+                              <ignore/>
                            </action>
                         </pluginExecution>
                         <pluginExecution>
@@ -484,7 +501,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore />
+                              <ignore/>
                            </action>
                         </pluginExecution>
                         <pluginExecution>
@@ -501,7 +518,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore />
+                              <ignore/>
                            </action>
                         </pluginExecution>
                         <pluginExecution>
@@ -520,7 +537,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore />
+                              <ignore/>
                            </action>
                         </pluginExecution>
                      </pluginExecutions>

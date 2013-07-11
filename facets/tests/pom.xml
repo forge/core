@@ -9,6 +9,12 @@
    <name>Forge - Facets Addon Tests</name>
    <dependencies>
       <dependency>
+         <groupId>org.jboss.forge.furnace</groupId>
+         <artifactId>container-cdi</artifactId>
+         <classifier>forge-addon</classifier>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
          <groupId>org.jboss.forge.test</groupId>
          <artifactId>forge-test-harness</artifactId>
          <scope>test</scope>
