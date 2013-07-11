@@ -17,8 +17,6 @@
       <module>impl</module>
       <module>addon</module>
       <module>tests</module>
-      <module>example</module>
-      <module>example2</module>
    </modules>
 
 

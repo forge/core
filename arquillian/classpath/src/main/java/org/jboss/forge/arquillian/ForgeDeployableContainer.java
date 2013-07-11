@@ -24,10 +24,7 @@ import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaD
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.forge.addon.manager.AddonManager;
-import org.jboss.forge.addon.manager.InstallRequest;
 import org.jboss.forge.addon.manager.impl.AddonManagerImpl;
-import org.jboss.forge.addon.maven.dependencies.FileResourceFactory;
-import org.jboss.forge.addon.maven.dependencies.MavenContainer;
 import org.jboss.forge.addon.maven.dependencies.MavenDependencyResolver;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.arquillian.archive.ForgeRemoteAddon;
@@ -133,29 +130,9 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       else if (archive instanceof ForgeRemoteAddon)
       {
          ForgeRemoteAddon remoteAddon = (ForgeRemoteAddon) archive;
-         AddonManager addonManager = new AddonManagerImpl(runnable.furnace, new MavenDependencyResolver(
-                  new FileResourceFactory(), new MavenContainer()));
-         InstallRequest request = addonManager.install(remoteAddon.getAddonId());
+         AddonManager addonManager = new AddonManagerImpl(runnable.furnace, new MavenDependencyResolver(), false);
 
-         ConfigurationScanListener listener = new ConfigurationScanListener();
-         ListenerRegistration<ContainerLifecycleListener> registration = runnable.furnace
-                  .addContainerLifecycleListener(listener);
-
-         request.perform();
-
-         while (runnable.furnace.getStatus().isStarting() || !listener.isConfigurationScanned())
-         {
-            try
-            {
-               Thread.sleep(100);
-            }
-            catch (InterruptedException e)
-            {
-               e.printStackTrace();
-            }
-         }
-
-         registration.removeListener();
+         addonManager.install(remoteAddon.getAddonId()).perform();
 
          AddonRegistry registry = runnable.getForge().getAddonRegistry();
          Addon addon = registry.getAddon(addonToDeploy);
