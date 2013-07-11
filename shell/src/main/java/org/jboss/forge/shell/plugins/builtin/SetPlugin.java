@@ -50,7 +50,14 @@ public class SetPlugin implements Plugin
       }
       else
       {
-         forge.setProperty(variable, Echo.tokensToString(value));
+         if (value == null)
+         {
+            forge.removeProperty(variable);
+         }
+         else
+         {
+            forge.setProperty(variable, Echo.tokensToString(value));
+         }
       }
    }
 
