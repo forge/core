@@ -28,7 +28,6 @@ import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
-import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Callables;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -40,7 +39,8 @@ import org.junit.runner.RunWith;
 public class UIInputInjectionTest
 {
    @Deployment
-   @Dependencies(@AddonDependency(name = "org.jboss.forge.addon:ui", version = "2.0.0-SNAPSHOT"))
+   @Dependencies({ @AddonDependency(name = "org.jboss.forge.addon:ui", version = "2.0.0-SNAPSHOT"),
+      @AddonDependency(name = "org.jboss.forge.furnace:container-cdi", version = "2.0.0-SNAPSHOT") })
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap
@@ -48,7 +48,8 @@ public class UIInputInjectionTest
                .addBeansXML()
                .addClasses(Career.class, Gender.class)
                .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui", "2.0.0-SNAPSHOT"));
+                        AddonDependencyEntry.create("org.jboss.forge.addon:ui", "2.0.0-SNAPSHOT"),
+                        AddonDependencyEntry.create("org.jboss.forge.furnace:container-cdi", "2.0.0-SNAPSHOT"));
 
       return archive;
    }
