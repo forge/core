@@ -7,7 +7,6 @@
 package org.jboss.forge.addon.shell.commands;
 
 import java.io.File;
-import java.util.Iterator;
 
 import javax.inject.Inject;
 
@@ -28,65 +27,76 @@ import org.jboss.forge.addon.ui.util.Metadata;
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  */
-public class LessCommand implements UICommand {
+public class LessCommand implements UICommand
+{
 
    @Inject
    private UIInputMany<File> arguments;
 
-    @Override
-    public UICommandMetadata getMetadata() {
-        return Metadata.forCommand(getClass())
-                .name("less")
-                .description("less - opposite of more");
-    }
+   @Override
+   public UICommandMetadata getMetadata()
+   {
+      return Metadata.forCommand(getClass())
+               .name("less")
+               .description("less - opposite of more");
+   }
 
-    @Override
-    public boolean isEnabled(UIContext context) {
-        return (context instanceof ShellContext);
-    }
+   @Override
+   public boolean isEnabled(UIContext context)
+   {
+      return (context instanceof ShellContext);
+   }
 
-    @Override
-    public void initializeUI(UIBuilder builder) throws Exception {
-        arguments.setLabel("");
-        arguments.setRequired(false);
-        builder.add(arguments);
-    }
+   @Override
+   public void initializeUI(UIBuilder builder) throws Exception
+   {
+      arguments.setLabel("");
+      arguments.setRequired(false);
+      builder.add(arguments);
+   }
 
-    @Override
-    public void validate(UIValidationContext validator) {
-    }
+   @Override
+   public void validate(UIValidationContext validator)
+   {
+   }
 
-    @Override
-    public Result execute(UIContext context) throws Exception {
-        if(arguments.getValue() != null &&
-                context instanceof ShellContext) {
-                    Iterator<File> iter = arguments.getValue().iterator();
+   @Override
+   public Result execute(UIContext context) throws Exception
+   {
+      if (arguments.getValue() != null &&
+               context instanceof ShellContext)
+      {
 
-            Console console = ((ShellContext) context).getShell().getConsole();
-            File file = arguments.getValue().iterator().next();
-            //a simple hack that we should try to avoid
-            //probably the converter that add the cwd dir if the
-            //user input start with ~/
-            if(file.getAbsolutePath().contains("~/")) {
-                file = new File(Config.getHomeDir()+file.getAbsolutePath().substring(
-                        file.getAbsolutePath().indexOf("~/")+1));
-            }
-            if(file.isFile()) {
-                Less less = new Less(console);
-                less.setFile(file);
-                less.attach(((ShellContext) context).getConsoleOutput());
-                return Results.success();
-            }
-            else if(file.isDirectory()) {
-                return Results.fail(file.getAbsolutePath() + " is a directory");
-            }
-            else {
-                return Results.fail(file.getAbsolutePath() + " No such file or directory");
-            }
-        }
-        else {
-            return Results.fail("Missing filename (\"less --help\" for help)");
-        }
-    }
+         Console console = ((ShellContext) context).getShell().getConsole();
+         File file = arguments.getValue().iterator().next();
+         // a simple hack that we should try to avoid
+         // probably the converter that add the cwd dir if the
+         // user input start with ~/
+         if (file.getAbsolutePath().contains("~/"))
+         {
+            file = new File(Config.getHomeDir() + file.getAbsolutePath().substring(
+                     file.getAbsolutePath().indexOf("~/") + 1));
+         }
+         if (file.isFile())
+         {
+            Less less = new Less(console);
+            less.setFile(file);
+            less.attach(((ShellContext) context).getConsoleOutput());
+            return Results.success();
+         }
+         else if (file.isDirectory())
+         {
+            return Results.fail(file.getAbsolutePath() + " is a directory");
+         }
+         else
+         {
+            return Results.fail(file.getAbsolutePath() + " No such file or directory");
+         }
+      }
+      else
+      {
+         return Results.fail("Missing filename (\"less --help\" for help)");
+      }
+   }
 
 }

@@ -10,6 +10,8 @@ package org.jboss.forge.ui.test.impl;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.enterprise.inject.Vetoed;
+
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.ui.input.InputComponent;
@@ -27,6 +29,7 @@ import org.jboss.forge.ui.test.WizardTester;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
  */
+@Vetoed
 public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
 {
    private final AddonRegistry addonRegistry;

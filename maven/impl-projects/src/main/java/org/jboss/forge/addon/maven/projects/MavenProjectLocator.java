@@ -9,7 +9,6 @@ package org.jboss.forge.addon.maven.projects;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.facets.FacetFactory;
-import org.jboss.forge.addon.maven.dependencies.MavenDependencyResolver;
 import org.jboss.forge.addon.maven.projects.facets.MavenDependencyFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenMetadataFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenPackagingFacet;
@@ -25,9 +24,6 @@ import org.jboss.forge.addon.resource.Resource;
  */
 public class MavenProjectLocator implements ProjectLocator
 {
-   @Inject
-   private MavenDependencyResolver resolver;
-
    @Inject
    private FacetFactory factory;
 

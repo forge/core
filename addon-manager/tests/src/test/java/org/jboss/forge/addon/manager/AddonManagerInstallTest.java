@@ -26,7 +26,6 @@ import org.jboss.forge.addon.manager.request.UpdateRequest;
 import org.jboss.forge.addon.maven.dependencies.MavenDependencyResolver;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
-import org.jboss.forge.furnace.repositories.AddonRepository;
 import org.jboss.forge.furnace.repositories.AddonRepositoryMode;
 import org.jboss.forge.furnace.util.Files;
 import org.jboss.shrinkwrap.resolver.impl.maven.bootstrap.MavenSettingsBuilder;
@@ -66,7 +65,6 @@ public class AddonManagerInstallTest
    private AddonManager addonManager;
    private MavenDependencyResolver resolver;
    private File repository;
-   private AddonRepository addonRepository;
 
    @Before
    public void setUp() throws IOException
@@ -76,7 +74,7 @@ public class AddonManagerInstallTest
       repository = File.createTempFile("furnace-repo", ".tmp");
       repository.delete();
       repository.mkdir();
-      addonRepository = furnace.addRepository(AddonRepositoryMode.MUTABLE, repository);
+      furnace.addRepository(AddonRepositoryMode.MUTABLE, repository);
       addonManager = new AddonManagerImpl(furnace, resolver);
    }
 

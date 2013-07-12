@@ -77,6 +77,7 @@ public class CommandLineUtil
       return builder.generateParser();
    }
 
+   @SuppressWarnings("unchecked")
    public static void populateUIInputs(CommandLine commandLine,
             ShellContext context, AddonRegistry registry)
    {

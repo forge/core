@@ -4,11 +4,9 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
-import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
@@ -29,6 +27,7 @@ public class ResourceGeneratorAddonTest
                .create(ForgeArchive.class)
                .addBeansXML()
                .addAsAddonDependencies(
+                        AddonDependencyEntry.create("org.jboss.forge.furnace:container-cdi", "2.0.0-SNAPSHOT"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:resources", "2.0.0-SNAPSHOT"),
                         AddonDependencyEntry.create("mockstring", "1"));
 
@@ -42,6 +41,7 @@ public class ResourceGeneratorAddonTest
                .addClasses(MockStringResource.class, MockStringResourceGenerator.class)
                .addBeansXML()
                .addAsAddonDependencies(
+                        AddonDependencyEntry.create("org.jboss.forge.furnace:container-cdi", "2.0.0-SNAPSHOT"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:resources", "2.0.0-SNAPSHOT")
                );
 

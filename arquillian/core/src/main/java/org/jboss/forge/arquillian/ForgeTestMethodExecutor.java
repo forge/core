@@ -9,7 +9,6 @@ package org.jboss.forge.arquillian;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.concurrent.Future;
 
 import org.jboss.arquillian.container.test.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
@@ -65,10 +64,6 @@ public class ForgeTestMethodExecutor implements ContainerMethodExecutor
 
          for (Addon addon : addonRegistry.getAddons())
          {
-            Future<Void> future = addon.getFuture();
-            if (future != null)
-               future.get();
-
             if (addon.getStatus().isStarted())
             {
                ServiceRegistry registry = addon.getServiceRegistry();

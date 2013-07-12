@@ -98,7 +98,7 @@ public class ShellCommand implements Completion
       return context.isStandalone();
    }
 
-   @SuppressWarnings({ "rawtypes", "unchecked" })
+   @SuppressWarnings({ })
    @Override
    public void complete(CompleteOperation completeOperation)
    {
@@ -174,7 +174,7 @@ public class ShellCommand implements Completion
        }
    }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({ "rawtypes" })
     private void defaultCompletion(CompleteOperation completeOperation) throws CommandLineParserException {
         //first see if it has an "arguments" option
         InputComponent inputOption = context.findInput("arguments"); // default for arguments

@@ -1,16 +1,20 @@
 package org.jboss.forge.addon.shell;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.concurrent.Callable;
+
+import javax.inject.Inject;
+
 import org.jboss.forge.addon.convert.Converter;
-import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.ProjectType;
-import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
-import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.SingleValued;
 import org.jboss.forge.addon.ui.input.UIInput;
@@ -23,14 +27,6 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
-
-import javax.inject.Inject;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.concurrent.Callable;
 
 public class TestWizard implements UIWizard
 {
@@ -144,40 +140,7 @@ public class TestWizard implements UIWizard
    @Override
    public Result execute(UIContext context) throws Exception
    {
-      Result result = Results.success("New project has been created.");
-      DirectoryResource directory = targetLocation.getValue();
-      DirectoryResource targetDir = directory.getChildDirectory(named.getValue());
-
-      if (targetDir.mkdirs() || overwrite.getValue())
-      {
-         ProjectType value = type.getValue();
-
-         Project project = null;
-         if (value != null)
-         {
-            //project = projectFactory.createProject(targetDir, value.getRequiredFacets());
-         }
-         else
-         {
-            //project = projectFactory.createProject(targetDir);
-         }
-
-         if (project != null)
-         {
-            MetadataFacet metadataFacet = project.getFacet(MetadataFacet.class);
-            metadataFacet.setProjectName(named.getValue());
-            metadataFacet.setProjectVersion(version.getValue());
-            metadataFacet.setTopLevelPackage(topLevelPackage.getValue());
-
-            context.setAttribute(Project.class, project);
-         }
-         else
-            result = Results.fail("Could not create project of type: [" + value + "]");
-      }
-      else
-         result = Results.fail("Could not create target location: " + targetDir);
-
-      return result;
+      return Results.fail("Not implemented.");
    }
 
    public UIInput<String> getNamed()

@@ -89,7 +89,6 @@ public class ServletFacetImpl extends AbstractJavaEEFacet implements ServletFace
    /*
     * Facet Methods
     */
-   @SuppressWarnings("resource")
    @Override
    public WebAppDescriptor getConfig()
    {

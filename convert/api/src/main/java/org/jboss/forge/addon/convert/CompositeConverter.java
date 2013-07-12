@@ -37,6 +37,7 @@ public class CompositeConverter implements Converter<Object, Object>
    /**
     * This method always returns the last object converted from the list
     */
+   @SuppressWarnings("unchecked")
    @Override
    public Object convert(Object source)
    {

@@ -13,15 +13,11 @@ import javax.inject.Inject;
 import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.complete.CompleteOperation;
 import org.jboss.aesh.console.Config;
-import org.jboss.aesh.edit.KeyOperation;
-import org.jboss.aesh.edit.actions.Operation;
-import org.jboss.aesh.terminal.Key;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.shell.ForgeShell;
 import org.jboss.forge.addon.shell.ShellCommand;
 import org.jboss.forge.addon.shell.TestWizard;
-import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.addon.shell.util.CommandLineUtil;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -39,8 +35,6 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class RunnningCommandParserTest
 {
-   private KeyOperation completeChar = new KeyOperation(Key.CTRL_I, Operation.COMPLETE);
-
    @Deployment
    @Dependencies({ @AddonDependency(name = "org.jboss.forge.addon:ui", version = "2.0.0-SNAPSHOT"),
             @AddonDependency(name = "org.jboss.forge.addon:shell-test-harness", version = "2.0.0-SNAPSHOT"),
@@ -72,9 +66,6 @@ public class RunnningCommandParserTest
 
    @Inject
    private AddonRegistry registry;
-
-   @Inject
-   private ShellTest test;
 
    @Inject
    private TestWizard testWizard;
@@ -121,7 +112,7 @@ public class RunnningCommandParserTest
 
       CommandLineUtil.populateUIInputs(cl, command.getContext(), registry);
 
-      assertEquals("foo", ((UIInput) command.getContext().findInput("named")).getValue());
+      assertEquals("foo", ((UIInput<?>) command.getContext().findInput("named")).getValue());
       // this doesnt work yet
       // assertEquals("war", ((UISelectOne) command.getContext().findInput("type")).getValue());
 

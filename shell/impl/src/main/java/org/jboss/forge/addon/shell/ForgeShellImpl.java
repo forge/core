@@ -43,8 +43,6 @@ import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
-import org.jboss.forge.furnace.Furnace;
-import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.event.PostStartup;
 import org.jboss.forge.furnace.event.PreShutdown;
@@ -67,12 +65,6 @@ public class ForgeShellImpl implements ForgeShell
    private List<ShellCommand> wizardSteps = new ArrayList<ShellCommand>();
 
    private List<ShellCommand> commands;
-
-   @Inject
-   private Furnace forge;
-
-   @Inject
-   private Addon self;
 
    @Inject
    private AddonRegistry registry;

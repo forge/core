@@ -69,6 +69,7 @@ public class ShellAddonTest
    public void testContainerInjection() throws Exception
    {
       Assert.assertNotNull(shell);
+      Assert.assertNotNull(fooCommand);
 
       test.getStdIn().write(("foo\n").getBytes());
       System.out.println("OUT:" + test.getStdOut());

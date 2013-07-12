@@ -15,7 +15,6 @@ import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.ui.test.impl.UIContextImpl;
 import org.jboss.forge.ui.test.impl.WizardTesterImpl;
@@ -32,9 +31,9 @@ public class WizardTesterFactory
    @Inject
    private AddonRegistry addonRegistry;
 
-   @SuppressWarnings("unchecked")
    @Produces
-   public <W extends UIWizard> WizardTester<W> produceWizardTester(InjectionPoint injectionPoint) throws Exception
+   @SuppressWarnings("rawtypes")
+   public WizardTester produceWizardTester(InjectionPoint injectionPoint) throws Exception
    {
       Type type = injectionPoint.getAnnotated().getBaseType();
 
@@ -43,7 +42,7 @@ public class WizardTesterFactory
          ParameterizedType parameterizedType = (ParameterizedType) type;
 
          Type[] typeArguments = parameterizedType.getActualTypeArguments();
-         Class<W> wizardClass = (Class<W>) typeArguments[0];
+         Class<?> wizardClass = (Class<?>) typeArguments[0];
          return WizardTesterFactory.create(wizardClass, addonRegistry);
       }
       else
@@ -53,10 +52,11 @@ public class WizardTesterFactory
       }
    }
 
-   public static <W extends UIWizard> WizardTesterImpl<W> create(Class<W> wizardClass, AddonRegistry addonRegistry,
+   @SuppressWarnings({ "unchecked", "rawtypes" })
+   public static WizardTesterImpl<?> create(Class<?> wizardClass, AddonRegistry addonRegistry,
             Resource<?>... initialSelection) throws Exception
    {
       UIContextImpl context = new UIContextImpl(initialSelection);
-      return new WizardTesterImpl<W>(wizardClass, addonRegistry, context);
+      return new WizardTesterImpl(wizardClass, addonRegistry, context);
    }
 }

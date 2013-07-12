@@ -83,7 +83,7 @@ public class MavenMultiModuleProviderTest
       metadata.setTopLevelPackage("com.project.parent");
 
       DirectoryResource subProjectDir = parentProject.getProjectRoot().getChildDirectory("sub");
-      Project subProject = projectFactory.createProject(subProjectDir);
+      projectFactory.createProject(subProjectDir);
 
       MavenFacet mavenFacet = parentProject.getFacet(MavenFacet.class);
       List<String> modules = mavenFacet.getPOM().getModules();

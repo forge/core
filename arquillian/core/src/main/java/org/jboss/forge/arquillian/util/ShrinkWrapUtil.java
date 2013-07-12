@@ -39,7 +39,6 @@ public final class ShrinkWrapUtil
       }
    }
 
-   @SuppressWarnings("resource")
    public static void unzip(File baseDir, Archive<?> archive)
    {
       try

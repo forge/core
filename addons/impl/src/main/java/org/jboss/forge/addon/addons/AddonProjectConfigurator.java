@@ -31,6 +31,7 @@ import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.services.Exported;
 import org.jboss.forge.furnace.versions.Version;
 
 /**
@@ -39,8 +40,9 @@ import org.jboss.forge.furnace.versions.Version;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
  */
+@Exported
 @SuppressWarnings("unchecked")
-class AddonProjectConfigurator
+public class AddonProjectConfigurator
 {
    private static final String FORGE_ADDON_CLASSIFIER = "forge-addon";
 

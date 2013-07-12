@@ -242,6 +242,7 @@
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>addon-manager</artifactId>
+            <classifier>forge-addon</classifier>
             <version>${project.version}</version>
          </dependency>
          <dependency>

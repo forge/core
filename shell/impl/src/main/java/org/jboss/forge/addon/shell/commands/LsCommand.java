@@ -3,7 +3,6 @@ package org.jboss.forge.addon.shell.commands;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;

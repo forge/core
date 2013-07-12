@@ -25,7 +25,6 @@ import org.jboss.forge.addon.parser.java.JavaSourceFactory;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.parser.java.Field;
@@ -45,9 +44,6 @@ public class PersistenceOperations
 {
    public static final String DEFAULT_UNIT_NAME = "forge-default";
    public static final String DEFAULT_UNIT_DESC = "Forge Persistence Unit";
-
-   @Inject
-   private ProjectFactory projectFactory;
 
    @Inject
    private FacetFactory facetFactory;
@@ -156,7 +152,7 @@ public class PersistenceOperations
       Refactory.createGetterAndSetter(javaClass, id);
       Refactory.createGetterAndSetter(javaClass, version);
       Refactory.createToStringFromFields(javaClass, id);
-      Refactory.createHashCodeAndEquals(javaClass);
+      Refactory.createHashCodeAndEquals(javaClass, id);
       return javaClass;
    }
 
