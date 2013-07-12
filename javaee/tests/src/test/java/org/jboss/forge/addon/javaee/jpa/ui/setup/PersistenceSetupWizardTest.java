@@ -15,7 +15,6 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.facets.FacetFactory;
-import org.jboss.forge.addon.javaee.JavaEETestHelper;
 import org.jboss.forge.addon.javaee.facets.PersistenceFacet;
 import org.jboss.forge.addon.javaee.jpa.containers.CustomJTAContainer;
 import org.jboss.forge.addon.javaee.jpa.providers.HibernateProvider;
@@ -26,10 +25,10 @@ import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
-import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.ui.test.WizardListener;
 import org.jboss.forge.ui.test.WizardTester;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnit;
 import org.junit.Assert;
@@ -42,13 +41,23 @@ public class PersistenceSetupWizardTest
    @Deployment
    @Dependencies({
             @AddonDependency(name = "org.jboss.forge.addon:ui", version = "2.0.0-SNAPSHOT"),
+            @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness", version = "2.0.0-SNAPSHOT"),
             @AddonDependency(name = "org.jboss.forge.addon:javaee", version = "2.0.0-SNAPSHOT"),
             @AddonDependency(name = "org.jboss.forge.addon:maven", version = "2.0.0-SNAPSHOT")
    })
    public static ForgeArchive getDeployment()
    {
-      return JavaEETestHelper.getDeployment().addAsAddonDependencies(
-               AddonDependencyEntry.create("org.jboss.forge.addon:ui", "2.0.0-SNAPSHOT"));
+      return ShrinkWrap
+               .create(ForgeArchive.class)
+               .addBeansXML()
+               .addAsAddonDependencies(
+                        AddonDependencyEntry.create("org.jboss.forge.furnace:container-cdi", "2.0.0-SNAPSHOT"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:projects", "2.0.0-SNAPSHOT"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:javaee", "2.0.0-SNAPSHOT"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:maven", "2.0.0-SNAPSHOT"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:ui", "2.0.0-SNAPSHOT"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness", "2.0.0-SNAPSHOT")
+               );
    }
 
    @Inject

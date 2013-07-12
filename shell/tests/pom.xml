@@ -42,11 +42,17 @@
          <version>${project.version}</version>
          <scope>test</scope>
       </dependency>
+      
       <!-- Furnace Container -->
       <dependency>
          <groupId>org.jboss.forge.furnace</groupId>
          <artifactId>container-cdi</artifactId>
          <classifier>forge-addon</classifier>
+         <scope>provided</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.furnace</groupId>
+         <artifactId>furnace-api</artifactId>
          <scope>provided</scope>
       </dependency>
    </dependencies>

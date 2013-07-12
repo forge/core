@@ -6,27 +6,52 @@
       <artifactId>ui-parent</artifactId>
       <version>2.0.0-SNAPSHOT</version>
    </parent>
+
    <artifactId>ui-test-harness</artifactId>
    <name>Forge - UI Test Harness</name>
+
    <dependencies>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>ui</artifactId>
          <classifier>forge-addon</classifier>
-         <scope>provided</scope>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>resources</artifactId>
          <version>2.0.0-SNAPSHOT</version>
          <classifier>forge-addon</classifier>
-         <scope>provided</scope>
       </dependency>
+
+      <!-- Furnace Container -->
       <dependency>
          <groupId>org.jboss.forge.furnace</groupId>
-         <artifactId>container-cdi-api</artifactId>
+         <artifactId>container-cdi</artifactId>
+         <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>
    </dependencies>
+
+   <build>
+      <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <executions>
+               <execution>
+                  <id>create-forge-addon</id>
+                  <phase>package</phase>
+                  <goals>
+                     <goal>jar</goal>
+                  </goals>
+                  <inherited>false</inherited>
+                  <configuration>
+                     <classifier>forge-addon</classifier>
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
+      </plugins>
+   </build>
 
 </project>

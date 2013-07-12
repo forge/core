@@ -16,6 +16,12 @@
          <scope>provided</scope>
       </dependency>
       <dependency>
+         <groupId>org.jboss.forge.furnace</groupId>
+         <artifactId>furnace-api</artifactId>
+         <scope>provided</scope>
+      </dependency>
+      
+      <dependency>
          <groupId>org.jboss.forge</groupId>
          <artifactId>java-parser-api</artifactId>
       </dependency>

@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
    <modelVersion>4.0.0</modelVersion>
    <parent>
       <groupId>org.jboss.forge.addon</groupId>
@@ -6,10 +7,10 @@
       <version>2.0.0-SNAPSHOT</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
-   
+
    <artifactId>addons</artifactId>
    <name>Forge - Addon Development Addon</name>
-   
+
    <dependencies>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
@@ -21,7 +22,15 @@
          <artifactId>addons-impl</artifactId>
          <scope>runtime</scope>
       </dependency>
-      
+
+      <!-- Furnace Container -->
+      <dependency>
+         <groupId>org.jboss.forge.furnace</groupId>
+         <artifactId>container-cdi</artifactId>
+         <classifier>forge-addon</classifier>
+         <scope>provided</scope>
+      </dependency>
+
       <!-- Addon Dependencies -->
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
@@ -48,14 +57,6 @@
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>parser-java</artifactId>
          <classifier>forge-addon</classifier>
-      </dependency>
-
-      <!-- Furnace Container -->
-      <dependency>
-         <groupId>org.jboss.forge.furnace</groupId>
-         <artifactId>container-cdi</artifactId>
-         <classifier>forge-addon</classifier>
-         <scope>provided</scope>
       </dependency>
    </dependencies>
    <build>

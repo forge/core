@@ -15,7 +15,6 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.facets.FacetFactory;
-import org.jboss.forge.addon.javaee.JavaEETestHelper;
 import org.jboss.forge.addon.javaee.facets.ServletFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
@@ -23,11 +22,12 @@ import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 
 @RunWith(Arquillian.class)
 public class ServletFacetTest
@@ -35,12 +35,18 @@ public class ServletFacetTest
    @Deployment
    @Dependencies({
             @AddonDependency(name = "org.jboss.forge.addon:javaee", version = "2.0.0-SNAPSHOT"),
-            @AddonDependency(name = "org.jboss.forge.addon:maven", version = "2.0.0-SNAPSHOT"),
-            @AddonDependency(name = "org.jboss.forge.addon:projects", version = "2.0.0-SNAPSHOT")
+            @AddonDependency(name = "org.jboss.forge.addon:maven", version = "2.0.0-SNAPSHOT")
    })
    public static ForgeArchive getDeployment()
    {
-      return JavaEETestHelper.getDeployment();
+      return ShrinkWrap.create(ForgeArchive.class)
+               .addBeansXML()
+               .addAsAddonDependencies(
+                        AddonDependencyEntry.create("org.jboss.forge.furnace:container-cdi", "2.0.0-SNAPSHOT"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:projects", "2.0.0-SNAPSHOT"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:javaee", "2.0.0-SNAPSHOT"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:maven", "2.0.0-SNAPSHOT")
+               );
    }
 
    @Inject

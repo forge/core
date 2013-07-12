@@ -15,7 +15,6 @@ import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.ui.test.impl.UIContextImpl;
@@ -32,9 +31,6 @@ public class WizardTesterFactory
 
    @Inject
    private AddonRegistry addonRegistry;
-
-   @Inject
-   private ResourceFactory resourceFactory;
 
    @SuppressWarnings("unchecked")
    @Produces

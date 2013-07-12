@@ -7,11 +7,7 @@
 
 package org.jboss.forge.addon.javaee;
 
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
-import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.ui.test.WizardTester;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -22,16 +18,9 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
  */
-public abstract class JavaEETestHelper
+public final class JavaEETestHelper
 {
-   @Deployment
-   @Dependencies({
-            @AddonDependency(name = "org.jboss.forge.furnace:container-cdi", version = "2.0.0-SNAPSHOT"),
-            @AddonDependency(name = "org.jboss.forge.addon:projects", version = "2.0.0-SNAPSHOT"),
-            @AddonDependency(name = "org.jboss.forge.addon:javaee", version = "2.0.0-SNAPSHOT"),
-            @AddonDependency(name = "org.jboss.forge.addon:maven", version = "2.0.0-SNAPSHOT")
-   })
-   public static ForgeArchive getDeployment()
+   public static ForgeArchive getDeploymentx()
    {
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)

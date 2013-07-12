@@ -13,7 +13,6 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.addons.AddonProjectConfigurator;
 import org.jboss.forge.addon.addons.facets.ForgeContainerAPIFacet;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
@@ -42,17 +41,17 @@ public class AddonProjectConfiguratorTest
 {
    @Deployment
    @Dependencies({
+            @AddonDependency(name = "org.jboss.forge.furnace:container-cdi", version = "2.0.0-SNAPSHOT"),
             @AddonDependency(name = "org.jboss.forge.addon:addons", version = "2.0.0-SNAPSHOT")
    })
    public static ForgeArchive getDeployment()
    {
       return ShrinkWrap.create(ForgeArchive.class).
                addBeansXML().
-               addPackages(true, AddonProjectConfigurator.class.getPackage()).
                addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace:container-cdi", "2.0.0-SNAPSHOT"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:addons", "2.0.0-SNAPSHOT"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:javaee", "2.0.0-SNAPSHOT")
+                        AddonDependencyEntry.create("org.jboss.forge.addon:javaee", "2.0.0-SNAPSHOT"),
+                        AddonDependencyEntry.create("org.jboss.forge.furnace:container-cdi", "2.0.0-SNAPSHOT")
                );
    }
 
