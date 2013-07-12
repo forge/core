@@ -8,9 +8,9 @@
 package org.jboss.forge.addon.addons.facets;
 
 import java.io.FileNotFoundException;
-import java.util.Arrays;
-import java.util.List;
 
+import org.jboss.forge.addon.facets.AbstractFacet;
+import org.jboss.forge.addon.facets.constraints.RequiresFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
@@ -20,43 +20,40 @@ import org.jboss.forge.parser.java.JavaClass;
 
 /**
  * Configures the project as an Addon Test project
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
-public class ForgeAddonTestFacet extends AbstractForgeAddonFacet
+@RequiresFacet({ ForgeContainerAddonFacet.class })
+public class ForgeAddonTestFacet extends AbstractFacet<Project> implements ProjectFacet
 {
 
    @Override
    public boolean install()
    {
-      if (super.install())
+      Project project = getFaceted();
+      String topLevelPackage = project.getFacet(MetadataFacet.class).getTopLevelPackage();
+      JavaClass testClass = JavaParser.create(JavaClass.class).setPackage(topLevelPackage);
+      testClass.setName("AbstractTestCase").setAbstract(true);
+      JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+      try
       {
-         Project project = getFaceted();
-         String topLevelPackage = project.getFacet(MetadataFacet.class).getTopLevelPackage();
-         JavaClass testClass = JavaParser.create(JavaClass.class).setPackage(topLevelPackage);
-         testClass.setName("AbstractTestCase").setAbstract(true);
-         JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
-         try
-         {
-            facet.saveTestJavaSource(testClass.getEnclosingType());
-         }
-         catch (FileNotFoundException ffe)
-         {
-            // this is not good :P
-            ffe.printStackTrace();
-         }
-
-         return true;
+         facet.saveTestJavaSource(testClass.getEnclosingType());
       }
-      return false;
+      catch (FileNotFoundException ffe)
+      {
+         ffe.printStackTrace();
+         return false;
+      }
+
+      return true;
    }
 
-   @Override
    @SuppressWarnings("unchecked")
-   protected List<Class<? extends ProjectFacet>> getRequiredFacets()
+   @Override
+   public boolean isInstalled()
    {
-      return Arrays.<Class<? extends ProjectFacet>> asList(JavaSourceFacet.class);
+      return getFaceted().hasAllFacets(ForgeContainerAddonFacet.class);
    }
 
 }

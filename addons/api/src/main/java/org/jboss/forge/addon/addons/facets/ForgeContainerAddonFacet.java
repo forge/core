@@ -16,14 +16,17 @@ import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 
 /**
- * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * Configures the current project as a forge addon
  * 
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-public class ForgeContainerAPIFacet extends AbstractFacet<Project> implements ProjectFacet
+public class ForgeContainerAddonFacet extends AbstractFacet<Project> implements ProjectFacet
 {
-   public static Dependency FORGE_CONTAINER_API_DEPENDENCY = DependencyBuilder.create()
+   public static Dependency FORGE_CONTAINER_DEPENDENCY = DependencyBuilder.create()
             .setGroupId("org.jboss.forge.furnace")
             .setArtifactId("container-cdi")
+            .setClassifier("forge-addon")
             .setScopeType("provided");
 
    @Inject
@@ -32,13 +35,14 @@ public class ForgeContainerAPIFacet extends AbstractFacet<Project> implements Pr
    @Override
    public boolean install()
    {
-      Dependency dependency = installer.install(getFaceted(), FORGE_CONTAINER_API_DEPENDENCY);
+      Dependency dependency = installer.install(getFaceted(), FORGE_CONTAINER_DEPENDENCY);
       return dependency != null;
    }
 
    @Override
    public boolean isInstalled()
    {
-      return installer.isInstalled(origin, FORGE_CONTAINER_API_DEPENDENCY);
+      return installer.isInstalled(origin, FORGE_CONTAINER_DEPENDENCY);
    }
+
 }

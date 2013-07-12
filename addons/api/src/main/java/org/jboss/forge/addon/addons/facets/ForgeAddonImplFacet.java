@@ -7,25 +7,30 @@
 
 package org.jboss.forge.addon.addons.facets;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.jboss.forge.addon.javaee.facets.CDIFacet;
-import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
+import org.jboss.forge.addon.facets.AbstractFacet;
+import org.jboss.forge.addon.facets.constraints.RequiresFacet;
+import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 
 /**
  * Configures the project as an Addon IMPL project
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
-public class ForgeAddonImplFacet extends AbstractForgeAddonFacet
+@RequiresFacet({ ForgeContainerAPIFacet.class })
+public class ForgeAddonImplFacet extends AbstractFacet<Project> implements ProjectFacet
 {
    @Override
-   @SuppressWarnings("unchecked")
-   protected List<Class<? extends ProjectFacet>> getRequiredFacets()
+   public boolean install()
    {
-      return Arrays.<Class<? extends ProjectFacet>> asList(CDIFacet.class, JavaSourceFacet.class);
+      return true;
+   }
+
+   @Override
+   @SuppressWarnings("unchecked")
+   public boolean isInstalled()
+   {
+      return getFaceted().hasAllFacets(ForgeContainerAPIFacet.class);
    }
 }

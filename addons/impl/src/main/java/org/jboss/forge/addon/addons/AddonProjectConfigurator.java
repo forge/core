@@ -20,10 +20,11 @@ import org.jboss.forge.addon.addons.facets.ForgeAddonImplFacet;
 import org.jboss.forge.addon.addons.facets.ForgeAddonSPIFacet;
 import org.jboss.forge.addon.addons.facets.ForgeAddonTestFacet;
 import org.jboss.forge.addon.addons.facets.ForgeContainerAPIFacet;
+import org.jboss.forge.addon.addons.facets.ForgeContainerAddonFacet;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.facets.FacetFactory;
-import org.jboss.forge.addon.javaee.facets.CDIFacet;
+import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectFactory;
@@ -60,9 +61,9 @@ public class AddonProjectConfigurator
    public void setupSimpleAddonProject(Project project, Version forgeVersion, Iterable<AddonId> dependencyAddons)
    {
       // TODO Use or remove forgeVersion parameter
-      facetFactory.install(project, ForgeContainerAPIFacet.class);
+      facetFactory.install(project, ForgeContainerAddonFacet.class);
       facetFactory.install(project, ForgeAddonFacet.class);
-      facetFactory.install(project, ForgeAddonAPIFacet.class);
+      facetFactory.install(project, JavaSourceFacet.class);
       installSelectedAddons(project, dependencyAddons, false);
    }
 
@@ -82,15 +83,17 @@ public class AddonProjectConfigurator
          log.warning("Could not rename project root");
       }
 
-      dependencyInstaller.installManaged(project, DependencyBuilder.create(ForgeContainerAPIFacet.FORGE_API_DEPENDENCY)
-               .setVersion(forgeVersion.toString()));
+      facetFactory.install(project, JavaSourceFacet.class);
+      dependencyInstaller.installManaged(project,
+               DependencyBuilder.create(ForgeContainerAPIFacet.FORGE_CONTAINER_API_DEPENDENCY)
+                        .setVersion(forgeVersion.toString()));
+      dependencyInstaller.installManaged(project,
+               DependencyBuilder.create(ForgeContainerAddonFacet.FORGE_CONTAINER_DEPENDENCY)
+                        .setVersion(forgeVersion.toString()));
 
-      Project addonProject =
-               createSubmoduleProject(project, "addon", projectName, ForgeAddonFacet.class, CDIFacet.class);
-      Project apiProject =
-               createSubmoduleProject(project, "api", projectName + "-api", ForgeAddonAPIFacet.class, CDIFacet.class);
-      Project implProject =
-               createSubmoduleProject(project, "impl", projectName + "-impl", ForgeAddonImplFacet.class, CDIFacet.class);
+      Project addonProject = createSubmoduleProject(project, "addon", projectName, ForgeAddonFacet.class);
+      Project apiProject = createSubmoduleProject(project, "api", projectName + "-api", ForgeAddonAPIFacet.class);
+      Project implProject = createSubmoduleProject(project, "impl", projectName + "-impl", ForgeAddonImplFacet.class);
       Project spiProject = createSubmoduleProject(project, "spi", projectName + "-spi", ForgeAddonSPIFacet.class);
       Project testsProject = createSubmoduleProject(project, "tests", projectName + "-tests", ForgeAddonTestFacet.class);
 

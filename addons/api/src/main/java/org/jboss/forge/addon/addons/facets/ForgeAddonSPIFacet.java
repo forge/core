@@ -7,26 +7,31 @@
 
 package org.jboss.forge.addon.addons.facets;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
+import org.jboss.forge.addon.facets.AbstractFacet;
+import org.jboss.forge.addon.facets.constraints.RequiresFacet;
+import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 
 /**
  * Configures the project as an Addon SPI project
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
-public class ForgeAddonSPIFacet extends AbstractForgeAddonFacet
+@RequiresFacet({ ForgeAddonFacet.class })
+public class ForgeAddonSPIFacet extends AbstractFacet<Project> implements ProjectFacet
 {
-
-   @SuppressWarnings("unchecked")
    @Override
-   protected List<Class<? extends ProjectFacet>> getRequiredFacets()
+   public boolean install()
    {
-      return Arrays.<Class<? extends ProjectFacet>> asList(JavaSourceFacet.class, ForgeAddonFacet.class);
+      return true;
+   }
+
+   @Override
+   @SuppressWarnings("unchecked")
+   public boolean isInstalled()
+   {
+      return getFaceted().hasAllFacets(ForgeAddonFacet.class);
    }
 
 }
