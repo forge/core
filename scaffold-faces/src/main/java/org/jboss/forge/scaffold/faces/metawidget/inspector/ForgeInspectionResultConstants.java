@@ -35,11 +35,13 @@ public final class ForgeInspectionResultConstants
    /**
     * Whether the field is an Id.
     */
+
    public static final String PRIMARY_KEY = "primary-key";
 
    /**
-    * The reverse primary key of a JPA relationship.
+    * The reverse primary key of a ManyToOne relationship.
     */
+
    public static final String REVERSE_PRIMARY_KEY = "reverse-primary-key";
    
    /**
@@ -56,7 +58,7 @@ public final class ForgeInspectionResultConstants
     * The inverse field of a bi-directional relationship
     */
    public static final String INVERSE_FIELD = "inverse-field";
-   
+
    //
    // Private constructor
    //

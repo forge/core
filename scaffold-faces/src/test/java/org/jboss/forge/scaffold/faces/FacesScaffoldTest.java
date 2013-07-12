@@ -8,7 +8,6 @@ package org.jboss.forge.scaffold.faces;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.junit.matchers.JUnitMatchers.containsString;
 
 import java.util.Arrays;
 import java.util.List;
@@ -722,11 +721,11 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
                .append("<h:outputText id=\"customerBeanCustomerLastName\" value=\"#{customerBean.customer.lastName}\"/>")
                .append(CRLF);
       metawidget.append("\t\t\t").append("<h:outputText/>").append(CRLF);
-      metawidget.append("\t\t\t").append("<h:outputLabel for=\"employeridcustomerBeanCustomerEmployerId\" value=\"Employer:\"/>")
+      metawidget.append("\t\t\t").append("<h:outputLabel for=\"customerBeanCustomerEmployer\" value=\"Employer:\"/>")
                .append(CRLF);
       metawidget
                .append("\t\t\t")
-               .append("<h:link id=\"employeridcustomerBeanCustomerEmployerId\" outcome=\"/employer/view\" value=\"Employer id : #{customerBean.customer.employer.id}\">")
+               .append("<h:link id=\"customerBeanCustomerEmployer\" outcome=\"/employer/view\" value=\"#{customerBean.customer.employer}\">")
                .append(CRLF);
       metawidget.append("\t\t\t\t").append("<f:param name=\"id\" value=\"#{customerBean.customer.employer.id}\"/>")
                .append(CRLF);
@@ -734,7 +733,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       metawidget.append("\t\t\t").append("<h:outputText/>").append(CRLF);
       metawidget.append("\t\t").append("</h:panelGrid>");
 
-      Assert.assertThat(contents, containsString(metawidget.toString()));
+      Assert.assertTrue(contents.contains(metawidget));
 
       // Create
 
@@ -776,7 +775,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
                .append("<h:selectOneMenu converter=\"#{employerBean.converter}\" id=\"customerBeanCustomerEmployer\" value=\"#{customerBean.customer.employer}\">")
                .append(CRLF);
       metawidget.append("\t\t\t\t\t\t").append("<f:selectItem/>").append(CRLF);
-      metawidget.append("\t\t\t\t\t\t").append("<f:selectItems itemLabel=\"Employer id : #{_item.id}\" itemValue=\"#{_item}\" value=\"#{employerBean.all}\" var=\"_item\"/>").append(CRLF);
+      metawidget.append("\t\t\t\t\t\t").append("<f:selectItems value=\"#{employerBean.all}\"/>").append(CRLF);
       metawidget.append("\t\t\t\t\t").append("</h:selectOneMenu>").append(CRLF);
       metawidget.append("\t\t\t\t\t").append("<h:message for=\"customerBeanCustomerEmployer\" styleClass=\"error\"/>")
                .append(CRLF);
@@ -784,7 +783,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       metawidget.append("\t\t\t\t").append("<h:outputText/>").append(CRLF);
       metawidget.append("\t\t\t").append("</h:panelGrid>");
 
-      Assert.assertThat(contents,  containsString(metawidget.toString()));
+      Assert.assertTrue(contents.contains(metawidget));
 
       // Search
 
@@ -1006,8 +1005,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
                                                    "value=\"#{requestScope['customerBeanCustomerGroceriesSelect']}\">")
                .append(CRLF);
       metawidget.append("\t\t\t\t\t\t\t").append("<f:selectItem/>").append(CRLF);
-      metawidget.append("\t\t\t\t\t\t\t").append("<f:selectItems itemLabel=\"Grocery id : #{_item.id}\" " +
-               "itemValue=\"#{_item}\" value=\"#{groceryBean.all}\" var=\"_item\"/>").append(CRLF);
+      metawidget.append("\t\t\t\t\t\t\t").append("<f:selectItems value=\"#{groceryBean.all}\"/>").append(CRLF);
       metawidget.append("\t\t\t\t\t\t").append("</h:selectOneMenu>").append(CRLF);
       metawidget
                .append("\t\t\t\t\t\t")
@@ -1025,7 +1023,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
       metawidget.append("\t\t\t\t").append("<h:outputText/>").append(CRLF);
       metawidget.append("\t\t\t").append("</h:panelGrid>");
 
-      Assert.assertThat(contents, containsString(metawidget.toString()));
+      Assert.assertTrue(contents.contains(metawidget));
       Assert.assertTrue(contents.contains("xmlns:forgeview=\"http://jboss.org/forge/view\""));
 
       // Search

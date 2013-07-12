@@ -8,7 +8,6 @@ package org.jboss.forge.scaffold.faces.metawidget.widgetbuilder;
 
 import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.N_TO_MANY;
 import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.ONE_TO_ONE;
-import static org.jboss.forge.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.REVERSE_PRIMARY_KEY;
 import static org.metawidget.inspector.InspectionResultConstants.INVERSE_RELATIONSHIP;
 import static org.metawidget.inspector.InspectionResultConstants.NAME;
 import static org.metawidget.inspector.InspectionResultConstants.PARAMETERIZED_TYPE;
@@ -69,10 +68,9 @@ public class EntityWidgetBuilderTest
       attributes.put(TYPE, Bar.class.getName());
       attributes.put(READ_ONLY, TRUE);
       attributes.put(FACES_LOOKUP, "#{barBean.all}");
-      attributes.put(REVERSE_PRIMARY_KEY, "id");
       StaticWidget widget = widgetBuilder.buildWidget(PROPERTY, attributes, metawidget);
 
-      String result = "<h:link outcome=\"/entityWidgetBuilderTest$Bar/view\" value=\"EntityWidgetBuilderTest$Bar id : #{foo.bar.id}\">";
+      String result = "<h:link outcome=\"/entityWidgetBuilderTest$Bar/view\" value=\"#{foo.bar}\">";
       result += "<f:param name=\"id\" value=\"#{foo.bar.id}\"/>";
       result += "</h:link>";
 
