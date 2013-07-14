@@ -105,7 +105,7 @@ public class ConsoleInputSession
             }
          }
       };
-
+      readerThread.setDaemon(true);
       readerThread.start();
    }
 
