@@ -17,9 +17,6 @@ import org.jboss.forge.addon.dependencies.DependencyQuery;
 import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.dependencies.builder.DependencyQueryBuilder;
-import org.jboss.forge.addon.maven.dependencies.FileResourceFactory;
-import org.jboss.forge.addon.maven.dependencies.MavenContainer;
-import org.jboss.forge.addon.maven.dependencies.MavenDependencyResolver;
 import org.jboss.forge.furnace.util.Predicate;
 import org.junit.Assert;
 import org.junit.Before;
@@ -130,25 +127,7 @@ public class MavenDependencyResolverTest
       Assert.assertNotNull(root);
       Assert.assertEquals(5, root.getChildren().size());
       Assert.assertEquals("convert", root.getChildren().get(1).getDependency().getCoordinate().getArtifactId());
-      //TODO: ui-hints was changed to ui-spi since 2.0.0.Alpha5
+      // TODO: ui-hints was changed to ui-spi since 2.0.0.Alpha5
       Assert.assertEquals("ui-hints", root.getChildren().get(2).getDependency().getCoordinate().getArtifactId());
-   }
-
-   @Test
-   public void testResolveProvidedAddons() throws Exception
-   {
-      DependencyNode root = resolver.resolveAddonDependencyHierarchy(DependencyQueryBuilder
-               .create("org.jboss.forge:addons:jar:forge-addon:2.0.0.Alpha3"));
-      Assert.assertNotNull(root);
-      Assert.assertEquals(3, root.getChildren().size());
-   }
-
-   @Test
-   public void testResolveProvidedAddons2() throws Exception
-   {
-      DependencyNode root = resolver.resolveAddonDependencyHierarchy(DependencyQueryBuilder
-               .create("org.jboss.forge:resources:jar:forge-addon:2.0.0.Alpha3"));
-      Assert.assertNotNull(root);
-      Assert.assertEquals(5, root.getChildren().size());
    }
 }

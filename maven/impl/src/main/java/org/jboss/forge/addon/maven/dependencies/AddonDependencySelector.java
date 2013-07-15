@@ -1,10 +1,10 @@
 package org.jboss.forge.addon.maven.dependencies;
 
-import org.sonatype.aether.collection.DependencyCollectionContext;
-import org.sonatype.aether.collection.DependencySelector;
-import org.sonatype.aether.graph.Dependency;
-import org.sonatype.aether.graph.Exclusion;
-import org.sonatype.aether.util.graph.selector.StaticDependencySelector;
+import org.eclipse.aether.collection.DependencyCollectionContext;
+import org.eclipse.aether.collection.DependencySelector;
+import org.eclipse.aether.graph.Dependency;
+import org.eclipse.aether.graph.Exclusion;
+import org.eclipse.aether.util.graph.selector.StaticDependencySelector;
 
 /**
  * A dependency selector that filters based on their scope and classifier "forge-addon"

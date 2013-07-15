@@ -12,13 +12,14 @@ import java.security.AccessController;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 
+import javax.enterprise.inject.ResolutionException;
+
 import org.apache.maven.wagon.Wagon;
 import org.apache.maven.wagon.providers.file.FileWagon;
 import org.apache.maven.wagon.providers.http.LightweightHttpWagon;
 import org.apache.maven.wagon.providers.http.LightweightHttpWagonAuthenticator;
 import org.apache.maven.wagon.providers.http.LightweightHttpsWagon;
-import org.jboss.shrinkwrap.resolver.api.ResolutionException;
-import org.sonatype.aether.connector.wagon.WagonProvider;
+import org.eclipse.aether.connector.wagon.WagonProvider;
 
 class ManualWagonProvider implements WagonProvider
 {
