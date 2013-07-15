@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.enterprise.context.Dependent;
 
+import org.apache.maven.model.Build;
 import org.jboss.forge.addon.facets.AbstractFacet;
 import org.jboss.forge.addon.maven.projects.MavenFacet;
 import org.jboss.forge.addon.projects.Project;
@@ -20,7 +21,10 @@ import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 
 /**
+ * Handles Maven Resource folders
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
 @Dependent
 public class MavenResourceFacet extends AbstractFacet<Project> implements ResourceFacet
@@ -37,15 +41,38 @@ public class MavenResourceFacet extends AbstractFacet<Project> implements Resour
    @Override
    public DirectoryResource getResourceFolder()
    {
-      return getFaceted().getProjectRoot().getChildDirectory("src" + File.separator + "main"
-               + File.separator + "resources");
+      MavenFacet mavenFacet = getFaceted().getFacet(MavenFacet.class);
+      Build build = mavenFacet.getPOM().getBuild();
+      final String resFolderName;
+      if (build != null && !build.getResources().isEmpty() && build.getResources().get(0).getDirectory() != null)
+      {
+         resFolderName = build.getResources().get(0).getDirectory();
+      }
+      else
+      {
+         resFolderName = "src" + File.separator + "main" + File.separator + "resources";
+      }
+      DirectoryResource projectRoot = getFaceted().getProjectRoot();
+      return projectRoot.getChildDirectory(resFolderName);
    }
 
    @Override
    public DirectoryResource getTestResourceFolder()
    {
-      return getFaceted().getProjectRoot().getChildDirectory("src" + File.separator + "test"
-               + File.separator + "resources");
+      MavenFacet mavenFacet = getFaceted().getFacet(MavenFacet.class);
+      Build build = mavenFacet.getPOM().getBuild();
+      final String resFolderName;
+      if (build != null && !build.getTestResources().isEmpty()
+               && build.getTestResources().get(0).getDirectory() != null)
+      {
+         resFolderName = build.getTestResources().get(0).getDirectory();
+      }
+      else
+      {
+         resFolderName = "src" + File.separator + "test" + File.separator + "resources";
+      }
+      DirectoryResource projectRoot = getFaceted().getProjectRoot();
+      return projectRoot.getChildDirectory(resFolderName);
    }
 
    @Override

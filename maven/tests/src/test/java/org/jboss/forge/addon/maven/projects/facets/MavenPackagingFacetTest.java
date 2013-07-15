@@ -57,8 +57,6 @@ public class MavenPackagingFacetTest
    @Before
    public void setUp()
    {
-      ClassLoader classLoader = Inject.class.getClassLoader();
-      System.out.println(classLoader);
       project = projectFactory.createTempProject();
    }
 
