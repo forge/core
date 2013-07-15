@@ -12,6 +12,7 @@ import org.jboss.forge.addon.manager.request.DisableRequest;
 import org.jboss.forge.addon.manager.request.EnableRequest;
 import org.jboss.forge.addon.manager.request.InstallRequest;
 import org.jboss.forge.addon.manager.request.RemoveRequest;
+import org.jboss.forge.addon.manager.spi.AddonInfo;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.repositories.AddonRepository;
 import org.jboss.forge.furnace.services.Exported;

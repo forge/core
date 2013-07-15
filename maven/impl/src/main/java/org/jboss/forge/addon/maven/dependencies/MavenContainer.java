@@ -150,7 +150,7 @@ public class MavenContainer
       return getUserHomeDir().getAbsolutePath();
    }
 
-   MavenRepositorySystemSession setupRepoSession(final RepositorySystem repoSystem, final Settings settings)
+   public MavenRepositorySystemSession setupRepoSession(final RepositorySystem repoSystem, final Settings settings)
    {
       MavenRepositorySystemSession session = new MavenRepositorySystemSession();
       session.setOffline(false);

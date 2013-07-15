@@ -9,10 +9,10 @@ package org.jboss.forge.addon.manager.impl.request;
 
 import java.util.Arrays;
 
-import org.jboss.forge.addon.manager.AddonInfo;
 import org.jboss.forge.addon.manager.request.DeployRequest;
 import org.jboss.forge.addon.manager.request.RemoveRequest;
 import org.jboss.forge.addon.manager.request.UpdateRequest;
+import org.jboss.forge.addon.manager.spi.AddonInfo;
 
 /**
  * An update consists in a two-step process: Remove the original addon and install the new one

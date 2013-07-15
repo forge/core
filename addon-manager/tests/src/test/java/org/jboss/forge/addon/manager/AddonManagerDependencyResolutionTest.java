@@ -17,7 +17,9 @@ import java.util.ServiceLoader;
 import java.util.Set;
 
 import org.jboss.forge.addon.manager.impl.AddonManagerImpl;
-import org.jboss.forge.addon.maven.dependencies.MavenDependencyResolver;
+import org.jboss.forge.addon.manager.spi.AddonDependencyResolver;
+import org.jboss.forge.addon.manager.spi.AddonInfo;
+import org.jboss.forge.addon.maven.addon.MavenAddonDependencyResolver;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.shrinkwrap.resolver.impl.maven.bootstrap.MavenSettingsBuilder;
@@ -54,13 +56,13 @@ public class AddonManagerDependencyResolutionTest
 
    private Furnace furnace;
    private AddonManager addonManager;
-   private MavenDependencyResolver resolver;
+   private AddonDependencyResolver resolver;
 
    @Before
    public void setUp() throws IOException
    {
       furnace = ServiceLoader.load(Furnace.class).iterator().next();
-      resolver = new MavenDependencyResolver();
+      resolver = new MavenAddonDependencyResolver();
       addonManager = new AddonManagerImpl(furnace, resolver);
    }
 

@@ -16,7 +16,7 @@
          <artifactId>container-cdi-api</artifactId>
          <scope>provided</scope>
       </dependency>
-      
+
       <dependency>
          <groupId>org.jboss.forge</groupId>
          <artifactId>xml-parser</artifactId>
@@ -33,6 +33,12 @@
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>addon-manager-spi</artifactId>
+         <classifier>forge-addon</classifier>
+         <scope>provided</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
          <artifactId>resources-api</artifactId>
          <scope>provided</scope>
       </dependency>
@@ -42,4 +48,67 @@
          <scope>provided</scope>
       </dependency>
    </dependencies>
+
+   <build>
+      <testResources>
+         <testResource>
+            <directory>src/test/resources</directory>
+            <filtering>true</filtering>
+         </testResource>
+      </testResources>
+      <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-resources-plugin</artifactId>
+            <executions>
+               <execution>
+                  <id>default-testResources</id>
+                  <phase>process-test-resources</phase>
+                  <goals>
+                     <goal>testResources</goal>
+                  </goals>
+                  <configuration>
+                     <nonFilteredFileExtensions>
+                        <nonFilteredFileExtension>jar</nonFilteredFileExtension>
+                     </nonFilteredFileExtensions>
+                  </configuration>
+               </execution>
+               <execution>
+                  <id>copy-repository</id>
+                  <phase>process-test-resources</phase>
+                  <goals>
+                     <goal>copy-resources</goal>
+                  </goals>
+                  <configuration>
+                     <outputDirectory>${basedir}/target/repository</outputDirectory>
+                     <resources>
+                        <resource>
+                           <directory>${basedir}/src/test/resources/repository</directory>
+                           <filtering>false</filtering>
+                        </resource>
+                     </resources>
+                  </configuration>
+               </execution>
+               <execution>
+                  <id>copy-settings</id>
+                  <phase>process-test-resources</phase>
+                  <goals>
+                     <goal>copy-resources</goal>
+                  </goals>
+                  <configuration>
+                     <outputDirectory>${basedir}/target/settings/profiles</outputDirectory>
+                     <resources>
+                        <resource>
+                           <directory>${basedir}/src/test/resources/profiles</directory>
+                           <filtering>true</filtering>
+                        </resource>
+                     </resources>
+                     <escapeString>\</escapeString>
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
+      </plugins>
+   </build>
+
 </project>

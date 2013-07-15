@@ -25,6 +25,7 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.forge.addon.manager.AddonManager;
 import org.jboss.forge.addon.manager.impl.AddonManagerImpl;
+import org.jboss.forge.addon.maven.addon.MavenAddonDependencyResolver;
 import org.jboss.forge.addon.maven.dependencies.MavenDependencyResolver;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.arquillian.archive.ForgeRemoteAddon;
@@ -130,7 +131,7 @@ public class ForgeDeployableContainer implements DeployableContainer<ForgeContai
       else if (archive instanceof ForgeRemoteAddon)
       {
          ForgeRemoteAddon remoteAddon = (ForgeRemoteAddon) archive;
-         AddonManager addonManager = new AddonManagerImpl(runnable.furnace, new MavenDependencyResolver(), false);
+         AddonManager addonManager = new AddonManagerImpl(runnable.furnace, new MavenAddonDependencyResolver(), false);
 
          addonManager.install(remoteAddon.getAddonId()).perform();
 

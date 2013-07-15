@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2013 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -21,48 +21,28 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import javax.inject.Inject;
-
-import org.jboss.forge.addon.dependencies.AddonDependencyResolver;
-import org.jboss.forge.addon.dependencies.Coordinate;
-import org.jboss.forge.addon.dependencies.Dependency;
-import org.jboss.forge.addon.dependencies.DependencyNode;
-import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
-import org.jboss.forge.addon.dependencies.builder.DependencyNodeBuilder;
-import org.jboss.forge.addon.dependencies.builder.DependencyQueryBuilder;
-import org.jboss.forge.addon.dependencies.collection.DependencyNodeUtil;
-import org.jboss.forge.addon.manager.AddonInfo;
 import org.jboss.forge.addon.manager.AddonManager;
-import org.jboss.forge.addon.manager.impl.filters.DirectAddonFilter;
-import org.jboss.forge.addon.manager.impl.util.AddonUtils;
 import org.jboss.forge.addon.manager.request.AddonActionRequest;
 import org.jboss.forge.addon.manager.request.DeployRequest;
 import org.jboss.forge.addon.manager.request.DisableRequest;
 import org.jboss.forge.addon.manager.request.EnableRequest;
 import org.jboss.forge.addon.manager.request.InstallRequest;
 import org.jboss.forge.addon.manager.request.RemoveRequest;
+import org.jboss.forge.addon.manager.spi.AddonDependencyResolver;
+import org.jboss.forge.addon.manager.spi.AddonInfo;
 import org.jboss.forge.furnace.Furnace;
-import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.repositories.AddonRepository;
 import org.jboss.forge.furnace.repositories.MutableAddonRepository;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.versions.Versions;
 
-/**
- * Installs addons into an {@link AddonRepository}
- * 
- * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
- */
 public class AddonManagerImpl implements AddonManager
 {
    private final Furnace furnace;
    private final AddonDependencyResolver resolver;
    private final boolean updateSnapshotDependencies;
 
-   @Inject
    public AddonManagerImpl(final Furnace forge, final AddonDependencyResolver resolver)
    {
       this.furnace = forge;
@@ -86,42 +66,7 @@ public class AddonManagerImpl implements AddonManager
    @Override
    public AddonInfo info(final AddonId addonId)
    {
-      return info(addonId, null);
-   }
-
-   /**
-    * Creates an {@link AddonInfo} object, based on the {@link AddonId} and a {@link DependencyNode} if available
-    * 
-    * @param addonId the {@link AddonId} to be interpreted
-    * @param originalNode the node this AddonId represents from the original request. May be null
-    * @return a Lazy version of an {@link AddonInfo}, which retrieves the resources only when
-    *         {@link AddonInfo#getResources()} is called
-    */
-   private AddonInfo info(final AddonId addonId, final DependencyNode originalNode)
-   {
-      // Even though originalNode is not null, this must be done, otherwise Maven will prune repeated nodes
-      Coordinate coordinate = AddonUtils.toDependencyCoordinate(addonId);
-      DependencyNode requestedAddonNode = resolver.resolveAddonDependencyHierarchy(DependencyQueryBuilder
-               .create(coordinate));
-      final AddonInfoBuilder builder;
-      if (originalNode == null)
-      {
-         builder = AddonInfoBuilder.from(addonId, requestedAddonNode);
-      }
-      else
-      {
-         // Set optional and scope flag from the original node
-         Dependency originalDependency = originalNode.getDependency();
-         Dependency newDependency = DependencyBuilder.create(requestedAddonNode.getDependency())
-                  .setScopeType(originalDependency.getScopeType())
-                  .setOptional(originalDependency.isOptional());
-         DependencyNodeBuilder newDependencyNode = DependencyNodeBuilder.create(null, newDependency);
-         newDependencyNode.getChildren().addAll(requestedAddonNode.getChildren());
-         builder = AddonInfoBuilder.from(addonId, newDependencyNode);
-      }
-      addDependencies(builder, requestedAddonNode);
-      // This is done to ensure lazy loading of AddonInfo.getResources()
-      return new LazyAddonInfo(resolver, builder);
+      return resolver.resolveAddonDependencyHierarchy(addonId);
    }
 
    @Override
@@ -275,33 +220,6 @@ public class AddonManagerImpl implements AddonManager
          if (!addons.contains(id))
          {
             collectRequiredAddons(id, addons);
-         }
-      }
-   }
-
-   /**
-    * Adds the required and optional dependencies of an {@link Addon}
-    * 
-    * @param builder
-    * @param requestedAddonNode
-    */
-   private void addDependencies(AddonInfoBuilder builder, DependencyNode requestedAddonNode)
-   {
-      List<DependencyNode> addons = DependencyNodeUtil.select(requestedAddonNode.getChildren().iterator(),
-               new DirectAddonFilter(
-                        requestedAddonNode));
-      for (DependencyNode node : addons)
-      {
-         AddonId childId = AddonUtils.from(node);
-         if (node.getDependency().isOptional())
-         {
-            AddonInfo info = info(childId, node);
-            builder.addOptionalDependency(info);
-         }
-         else
-         {
-            AddonInfo info = info(childId, node);
-            builder.addRequiredDependency(info);
          }
       }
    }

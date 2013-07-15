@@ -5,20 +5,15 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.manager.impl;
+package org.jboss.forge.addon.maven.addon;
 
 import java.io.File;
-import java.util.Iterator;
 import java.util.Set;
 
-import org.jboss.forge.addon.dependencies.AddonDependencyResolver;
-import org.jboss.forge.addon.dependencies.DependencyNode;
-import org.jboss.forge.addon.dependencies.builder.DependencyQueryBuilder;
-import org.jboss.forge.addon.dependencies.collection.DependencyNodeUtil;
-import org.jboss.forge.addon.manager.AddonInfo;
-import org.jboss.forge.addon.manager.impl.filters.LocalResourceFilter;
-import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.manager.spi.AddonDependencyResolver;
+import org.jboss.forge.addon.manager.spi.AddonInfo;
 import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 
 /**
  * Makes {@link AddonInfo#getResources()} lazy
@@ -57,15 +52,15 @@ class LazyAddonInfo implements AddonInfo
    }
 
    @Override
-   public DependencyNode getDependencyNode()
-   {
-      return builder.getDependencyNode();
-   }
-
-   @Override
    public AddonId getAddon()
    {
       return builder.getAddon();
+   }
+
+   @Override
+   public Set<AddonDependencyEntry> getDependencyEntries()
+   {
+      return builder.getDependencyEntries();
    }
 
    @Override
@@ -88,20 +83,11 @@ class LazyAddonInfo implements AddonInfo
 
    public void resolveResources(AddonInfoBuilder addonInfo)
    {
-      DependencyNode node = addonInfo.getDependencyNode();
-      LocalResourceFilter filter = new LocalResourceFilter(node);
-      Iterator<DependencyNode> it = DependencyNodeUtil.breadthFirstIterator(node);
-      while (it.hasNext())
+      AddonId addon = addonInfo.getAddon();
+      File[] resources = resolver.resolveResources(addon);
+      for (File resource : resources)
       {
-         DependencyNode resourceNode = it.next();
-         // Add resources
-         if (filter.accept(resourceNode))
-         {
-            FileResource<?> artifact = resolver.resolveArtifact(
-                     DependencyQueryBuilder.create(resourceNode.getDependency().getCoordinate())).getArtifact();
-            addonInfo.addResource(artifact.getUnderlyingResourceObject());
-
-         }
+         addonInfo.addResource(resource);
       }
    }
 }

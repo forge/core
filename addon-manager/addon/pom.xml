@@ -26,11 +26,6 @@
       <!-- Addon Dependencies -->
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>dependencies</artifactId>
-         <classifier>forge-addon</classifier>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
          <artifactId>ui</artifactId>
          <classifier>forge-addon</classifier>
          <optional>true</optional>
@@ -40,6 +35,12 @@
          <artifactId>projects</artifactId>
          <classifier>forge-addon</classifier>
          <optional>true</optional>
+      </dependency>
+      
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>addon-manager-spi</artifactId>
+         <classifier>forge-addon</classifier>
       </dependency>
 
       <!-- Furnace Container -->

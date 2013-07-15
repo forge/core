@@ -7,7 +7,7 @@
 
 package org.jboss.forge.addon.manager.request;
 
-import org.jboss.forge.addon.manager.AddonInfo;
+import org.jboss.forge.addon.manager.spi.AddonInfo;
 
 /**
  * Super interface for actions targeted at a specific addon

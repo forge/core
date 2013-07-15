@@ -8,14 +8,11 @@
 package org.jboss.forge.addon.manager.impl.request;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import org.jboss.forge.addon.manager.AddonInfo;
-import org.jboss.forge.addon.manager.impl.util.AddonUtils;
 import org.jboss.forge.addon.manager.request.DeployRequest;
+import org.jboss.forge.addon.manager.spi.AddonInfo;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.lock.LockMode;
@@ -66,17 +63,7 @@ class DeployRequestImpl extends AbstractAddonActionRequest implements DeployRequ
          log.fine("No resource JARs found for " + addon);
       }
 
-      List<AddonDependencyEntry> addonDependencies = new ArrayList<AddonDependencyEntry>();
-      for (AddonInfo required : addonInfo.getRequiredAddons())
-      {
-         AddonDependencyEntry addonDep = AddonUtils.toDependencyEntry(required.getDependencyNode());
-         addonDependencies.add(addonDep);
-      }
-      for (AddonInfo optional : addonInfo.getOptionalAddons())
-      {
-         AddonDependencyEntry addonDep = AddonUtils.toDependencyEntry(optional.getDependencyNode());
-         addonDependencies.add(addonDep);
-      }
+      Set<AddonDependencyEntry> addonDependencies = addonInfo.getDependencyEntries();
       if (addonDependencies.isEmpty())
       {
          log.fine("No dependencies found for addon " + addon);

@@ -23,7 +23,8 @@ import org.jboss.forge.addon.manager.request.AddonActionRequest;
 import org.jboss.forge.addon.manager.request.DeployRequest;
 import org.jboss.forge.addon.manager.request.InstallRequest;
 import org.jboss.forge.addon.manager.request.UpdateRequest;
-import org.jboss.forge.addon.maven.dependencies.MavenDependencyResolver;
+import org.jboss.forge.addon.manager.spi.AddonDependencyResolver;
+import org.jboss.forge.addon.maven.addon.MavenAddonDependencyResolver;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.repositories.AddonRepositoryMode;
@@ -63,14 +64,14 @@ public class AddonManagerInstallTest
 
    private Furnace furnace;
    private AddonManager addonManager;
-   private MavenDependencyResolver resolver;
+   private AddonDependencyResolver resolver;
    private File repository;
 
    @Before
    public void setUp() throws IOException
    {
       furnace = ServiceLoader.load(Furnace.class).iterator().next();
-      resolver = new MavenDependencyResolver();
+      resolver = new MavenAddonDependencyResolver();
       repository = File.createTempFile("furnace-repo", ".tmp");
       repository.delete();
       repository.mkdir();
@@ -128,23 +129,6 @@ public class AddonManagerInstallTest
       Assert.assertEquals(2, install.getActions().size());
    }
 
-   // UI Depends on convert, facets, ui-spi, environment
-   @SuppressWarnings("unchecked")
-   @Test
-   public void testInstallUIAddon() throws IOException
-   {
-      InstallRequest install;
-      AddonId addonUI = AddonId.from("org.jboss.forge.addon:ui", "2.0.0.Alpha6");
-      install = addonManager.install(addonUI);
-      List<?> actions = install.getActions();
-      Assert.assertEquals(5, install.getActions().size());
-      Assert.assertThat((List<DeployRequest>) actions, everyItem(isA(DeployRequest.class)));
-      install.perform();
-      install = addonManager.install(addonUI);
-      // No actions should be needed, since we have all the needed addons
-      Assert.assertEquals(0, install.getActions().size());
-   }
-
    @SuppressWarnings("unchecked")
    @Test
    public void testInstallTwoDeps() throws IOException
@@ -155,18 +139,4 @@ public class AddonManagerInstallTest
       Assert.assertEquals(2, actions.size());
       Assert.assertThat((List<DeployRequest>) actions, everyItem(isA(DeployRequest.class)));
    }
-
-   @SuppressWarnings("unchecked")
-   @Test
-   public void testInstallAddonAddon()
-   {
-      // Addons depends directly on Projects, UI, Maven, parser-java, javaee
-      // Addons depends indirectly on Environment, Dependencies, resources, facets, ui-spi, convert
-      AddonId addon = AddonId.from("org.jboss.forge.addon:addons", "2.0.0.Alpha6");
-      InstallRequest install = addonManager.install(addon);
-      List<?> actions = install.getActions();
-      Assert.assertEquals(12, actions.size());
-      Assert.assertThat((List<DeployRequest>) actions, everyItem(isA(DeployRequest.class)));
-   }
-
 }

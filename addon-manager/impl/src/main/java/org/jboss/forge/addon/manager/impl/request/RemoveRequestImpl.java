@@ -8,8 +8,8 @@ package org.jboss.forge.addon.manager.impl.request;
 
 import java.util.concurrent.Callable;
 
-import org.jboss.forge.addon.manager.AddonInfo;
 import org.jboss.forge.addon.manager.request.RemoveRequest;
+import org.jboss.forge.addon.manager.spi.AddonInfo;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.lock.LockMode;

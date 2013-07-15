@@ -17,14 +17,10 @@ import java.util.List;
 import java.util.Properties;
 import java.util.ServiceLoader;
 
-import org.jboss.forge.addon.dependencies.Coordinate;
-import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
-import org.jboss.forge.addon.dependencies.builder.DependencyQueryBuilder;
 import org.jboss.forge.addon.manager.impl.AddonManagerImpl;
 import org.jboss.forge.addon.manager.request.AddonActionRequest;
-import org.jboss.forge.addon.maven.dependencies.FileResourceFactory;
-import org.jboss.forge.addon.maven.dependencies.MavenContainer;
-import org.jboss.forge.addon.maven.dependencies.MavenDependencyResolver;
+import org.jboss.forge.addon.manager.spi.AddonDependencyResolver;
+import org.jboss.forge.addon.maven.addon.MavenAddonDependencyResolver;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.repositories.AddonRepository;
@@ -174,7 +170,7 @@ public class Bootstrap
    {
       try
       {
-         MavenDependencyResolver resolver = new MavenDependencyResolver(new FileResourceFactory(), new MavenContainer());
+         AddonDependencyResolver resolver = new MavenAddonDependencyResolver();
          AddonManagerImpl addonManager = new AddonManagerImpl(forge, resolver);
 
          AddonId addon;
@@ -185,15 +181,13 @@ public class Bootstrap
          }
          else
          {
-            String coordinates = "org.jboss.forge.addon:" + addonCoordinates;
-            CoordinateBuilder coordinate = CoordinateBuilder.create(coordinates);
-            List<Coordinate> versions = resolver.resolveVersions(DependencyQueryBuilder.create(coordinate));
-            if (versions.isEmpty())
+            String coordinate = "org.jboss.forge.addon:" + addonCoordinates;
+            AddonId[] versions = resolver.resolveVersions(coordinate);
+            if (versions.length == 0)
             {
                throw new IllegalArgumentException("No Artifact version found for " + coordinate);
             }
-            Coordinate vCoord = versions.get(versions.size() - 1);
-            addon = AddonId.from(vCoord.getGroupId() + ":" + vCoord.getArtifactId(), vCoord.getVersion());
+            addon = versions[versions.length - 1];
          }
 
          // FIXME: May prompt for confirmation

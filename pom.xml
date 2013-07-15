@@ -247,6 +247,12 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>addon-manager-spi</artifactId>
+            <classifier>forge-addon</classifier>
+            <version>${project.version}</version>
+         </dependency>         
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>addon-manager-impl</artifactId>
             <version>${project.version}</version>
          </dependency>

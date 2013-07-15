@@ -5,16 +5,19 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.manager.impl;
+package org.jboss.forge.addon.maven.addon;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
-import org.jboss.forge.addon.dependencies.DependencyNode;
-import org.jboss.forge.addon.manager.AddonInfo;
+import org.jboss.forge.addon.manager.spi.AddonInfo;
 import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 
 /**
  * Information about an addon
@@ -25,39 +28,37 @@ import org.jboss.forge.furnace.addons.AddonId;
 public class AddonInfoBuilder implements AddonInfo
 {
    private final AddonId addon;
-   private final DependencyNode dependencyNode;
 
-   private final Set<AddonInfo> requiredAddons = new HashSet<AddonInfo>();
-   private final Set<AddonInfo> optionalAddons = new HashSet<AddonInfo>();
+   private final Map<AddonInfo, Boolean> requiredAddons = new HashMap<AddonInfo, Boolean>();
+   private final Map<AddonInfo, Boolean> optionalAddons = new HashMap<AddonInfo, Boolean>();
    private final Set<File> resources = new HashSet<File>();
 
-   private AddonInfoBuilder(AddonId addon, DependencyNode dependencyNode)
+   private AddonInfoBuilder(AddonId addon)
    {
       this.addon = addon;
-      this.dependencyNode = dependencyNode;
    }
 
-   public static AddonInfoBuilder from(AddonId addonId, DependencyNode dependencyNode)
+   public static AddonInfoBuilder from(AddonId addonId)
    {
-      AddonInfoBuilder builder = new AddonInfoBuilder(addonId, dependencyNode);
+      AddonInfoBuilder builder = new AddonInfoBuilder(addonId);
       return builder;
    }
 
-   public AddonInfoBuilder addOptionalDependency(AddonInfo addonInfo)
+   public AddonInfoBuilder addRequiredDependency(AddonInfo addonInfo, boolean exported)
    {
-      optionalAddons.add(addonInfo);
+      requiredAddons.put(addonInfo, exported);
+      return this;
+   }
+
+   public AddonInfoBuilder addOptionalDependency(AddonInfo addonInfo, boolean exported)
+   {
+      optionalAddons.put(addonInfo, exported);
       return this;
    }
 
    public AddonInfoBuilder addResource(File file)
    {
       resources.add(file);
-      return this;
-   }
-
-   public AddonInfoBuilder addRequiredDependency(AddonInfo addonInfo)
-   {
-      requiredAddons.add(addonInfo);
       return this;
    }
 
@@ -73,7 +74,7 @@ public class AddonInfoBuilder implements AddonInfo
    @Override
    public Set<AddonInfo> getOptionalAddons()
    {
-      return Collections.unmodifiableSet(optionalAddons);
+      return Collections.unmodifiableSet(optionalAddons.keySet());
    }
 
    /**
@@ -82,7 +83,7 @@ public class AddonInfoBuilder implements AddonInfo
    @Override
    public Set<AddonInfo> getRequiredAddons()
    {
-      return Collections.unmodifiableSet(requiredAddons);
+      return Collections.unmodifiableSet(requiredAddons.keySet());
    }
 
    @Override
@@ -91,13 +92,23 @@ public class AddonInfoBuilder implements AddonInfo
       return Collections.unmodifiableSet(resources);
    }
 
-   /**
-    * This method is used internally for performance reasons
-    */
    @Override
-   public DependencyNode getDependencyNode()
+   public Set<AddonDependencyEntry> getDependencyEntries()
    {
-      return dependencyNode;
+      Set<AddonDependencyEntry> entries = new HashSet<AddonDependencyEntry>();
+      for (Entry<AddonInfo, Boolean> entry : requiredAddons.entrySet())
+      {
+         AddonId key = entry.getKey().getAddon();
+         Boolean exported = entry.getValue();
+         entries.add(AddonDependencyEntry.create(key.getName(), key.getVersion().toString(), exported, false));
+      }
+      for (Entry<AddonInfo, Boolean> entry : optionalAddons.entrySet())
+      {
+         AddonId key = entry.getKey().getAddon();
+         Boolean exported = entry.getValue();
+         entries.add(AddonDependencyEntry.create(key.getName(), key.getVersion().toString(), exported, true));
+      }
+      return entries;
    }
 
    @Override

@@ -20,7 +20,6 @@ import javax.inject.Inject;
 
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.apache.maven.settings.Settings;
-import org.jboss.forge.addon.dependencies.AddonDependencyResolver;
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.DependencyException;
@@ -31,7 +30,6 @@ import org.jboss.forge.addon.dependencies.DependencyResolver;
 import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.dependencies.builder.DependencyNodeBuilder;
-import org.jboss.forge.addon.dependencies.collection.DependencyNodeUtil;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.furnace.services.Exported;
@@ -41,7 +39,6 @@ import org.jboss.shrinkwrap.resolver.impl.maven.logging.LogTransferListener;
 import org.sonatype.aether.RepositorySystem;
 import org.sonatype.aether.artifact.Artifact;
 import org.sonatype.aether.collection.CollectRequest;
-import org.sonatype.aether.collection.CollectResult;
 import org.sonatype.aether.collection.DependencyCollectionContext;
 import org.sonatype.aether.collection.DependencyTraverser;
 import org.sonatype.aether.graph.DependencyNode;
@@ -60,7 +57,7 @@ import org.sonatype.aether.util.graph.selector.ScopeDependencySelector;
 import org.sonatype.aether.version.Version;
 
 @Exported
-public class MavenDependencyResolver implements DependencyResolver, AddonDependencyResolver
+public class MavenDependencyResolver implements DependencyResolver
 {
    private final MavenContainer container;
    private final ResourceFactory factory;
@@ -216,65 +213,6 @@ public class MavenDependencyResolver implements DependencyResolver, AddonDepende
       catch (ArtifactResolutionException e)
       {
          throw new MavenOperationException(e);
-      }
-   }
-
-   @Override
-   public org.jboss.forge.addon.dependencies.DependencyNode resolveAddonDependencyHierarchy(final DependencyQuery query)
-   {
-      try
-      {
-         RepositorySystem system = container.getRepositorySystem();
-         Settings settings = container.getSettings();
-         MavenRepositorySystemSession session = container.setupRepoSession(system, settings);
-         session.setTransferListener(new LogTransferListener());
-
-         session.setDependencyTraverser(new DependencyTraverser()
-         {
-            @Override
-            public boolean traverseDependency(org.sonatype.aether.graph.Dependency dependency)
-            {
-               boolean isForgeAddon = DependencyNodeUtil.FORGE_ADDON_CLASSIFIER.equals(dependency.getArtifact()
-                        .getClassifier());
-               // We don't want to traverse non-addons optional dependencies
-               if (!isForgeAddon && dependency.isOptional())
-               {
-                  return false;
-               }
-               boolean shouldRecurse;
-               if (query.getScopeType() != null)
-               {
-                  shouldRecurse = query.getScopeType().equals(dependency.getScope());
-               }
-               else
-               {
-                  shouldRecurse = !"test".equals(dependency.getScope());
-               }
-               return shouldRecurse;
-            }
-
-            @Override
-            public DependencyTraverser deriveChildTraverser(DependencyCollectionContext context)
-            {
-               return this;
-            }
-         });
-         session.setDependencySelector(new AddonDependencySelector());
-
-         final CoordinateBuilder coord = CoordinateBuilder.create(query.getCoordinate());
-         Artifact queryArtifact = coordinateToMavenArtifact(coord);
-
-         List<RemoteRepository> remoteRepos = getRemoteRepositories(query, settings);
-         CollectRequest collectRequest = new CollectRequest(new org.sonatype.aether.graph.Dependency(queryArtifact,
-                  null), remoteRepos);
-
-         CollectResult result = system.collectDependencies(session, collectRequest);
-         DependencyNodeBuilder hierarchy = MavenConvertUtils.toDependencyNode(factory, null, result.getRoot());
-         return hierarchy;
-      }
-      catch (Exception e)
-      {
-         throw new DependencyException("Could not resolve dependencies for addon [" + query.getCoordinate() + "]", e);
       }
    }
 

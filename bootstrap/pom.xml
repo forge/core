@@ -16,6 +16,11 @@
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>addon-manager-spi</artifactId>
+         <classifier>forge-addon</classifier>
+      </dependency>      
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
          <artifactId>maven-impl</artifactId>
       </dependency>
       <dependency>

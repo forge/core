@@ -9,8 +9,8 @@ package org.jboss.forge.addon.manager.impl.request;
 
 import java.util.logging.Logger;
 
-import org.jboss.forge.addon.manager.AddonInfo;
 import org.jboss.forge.addon.manager.request.AddonActionRequest;
+import org.jboss.forge.addon.manager.spi.AddonInfo;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.repositories.MutableAddonRepository;
 import org.jboss.forge.furnace.spi.ContainerLifecycleListener;

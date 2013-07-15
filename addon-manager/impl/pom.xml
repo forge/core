@@ -17,11 +17,19 @@
          <artifactId>container-cdi-api</artifactId>
          <scope>provided</scope>
       </dependency>
-      
+
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>addon-manager-api</artifactId>
       </dependency>
+
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>addon-manager-spi</artifactId>
+         <classifier>forge-addon</classifier>
+         <scope>provided</scope>
+      </dependency>
+
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>dependencies-api</artifactId>

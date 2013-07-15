@@ -17,6 +17,7 @@
          <artifactId>addon-manager</artifactId>
          <classifier>forge-addon</classifier>
       </dependency>
+
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>resources</artifactId>
@@ -28,6 +29,11 @@
          <artifactId>maven</artifactId>
          <version>${project.version}</version>
          <classifier>forge-addon</classifier>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>maven-impl</artifactId>
+         <scope>provided</scope>
       </dependency>
 
       <dependency>

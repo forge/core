@@ -5,13 +5,13 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.manager;
+package org.jboss.forge.addon.manager.spi;
 
 import java.io.File;
 import java.util.Set;
 
-import org.jboss.forge.addon.dependencies.DependencyNode;
 import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 
 /**
  * Information about an addon
@@ -42,9 +42,7 @@ public interface AddonInfo
    public Set<File> getResources();
 
    /**
-    * Returns the {@link DependencyNode} for this Addon
-    * 
-    * @return
+    * Return the dependency entries based on the dependent addons for this {@link AddonInfo}
     */
-   public DependencyNode getDependencyNode();
+   public Set<AddonDependencyEntry> getDependencyEntries();
 }

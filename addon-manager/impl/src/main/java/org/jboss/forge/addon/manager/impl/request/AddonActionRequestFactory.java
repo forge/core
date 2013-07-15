@@ -9,7 +9,6 @@ package org.jboss.forge.addon.manager.impl.request;
 
 import java.util.List;
 
-import org.jboss.forge.addon.manager.AddonInfo;
 import org.jboss.forge.addon.manager.request.AddonActionRequest;
 import org.jboss.forge.addon.manager.request.DeployRequest;
 import org.jboss.forge.addon.manager.request.DisableRequest;
@@ -17,6 +16,7 @@ import org.jboss.forge.addon.manager.request.EnableRequest;
 import org.jboss.forge.addon.manager.request.InstallRequest;
 import org.jboss.forge.addon.manager.request.RemoveRequest;
 import org.jboss.forge.addon.manager.request.UpdateRequest;
+import org.jboss.forge.addon.manager.spi.AddonInfo;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.repositories.MutableAddonRepository;
 
