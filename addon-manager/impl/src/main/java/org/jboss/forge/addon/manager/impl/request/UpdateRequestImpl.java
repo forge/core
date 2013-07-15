@@ -11,6 +11,7 @@ import org.jboss.forge.addon.manager.request.DeployRequest;
 import org.jboss.forge.addon.manager.request.RemoveRequest;
 import org.jboss.forge.addon.manager.request.UpdateRequest;
 import org.jboss.forge.addon.manager.spi.AddonInfo;
+import org.jboss.forge.furnace.addons.AddonId;
 
 /**
  * An update consists in a two-step process: Remove the original addon and install the new one
@@ -57,6 +58,15 @@ class UpdateRequestImpl implements UpdateRequest
    @Override
    public String toString()
    {
-      return "Update: [" + removeRequest.getRequestedAddonInfo() + "]";
+      AddonId oldAddon = removeRequest.getRequestedAddonInfo().getAddon();
+      AddonId newAddon = deployRequest.getRequestedAddonInfo().getAddon();
+      if (oldAddon.getVersion().equals(newAddon.getVersion()))
+      {
+         return "Update: [" + newAddon + "]";
+      }
+      else
+      {
+         return "Update: from [" + oldAddon + "] to [" + newAddon + "]";
+      }
    }
 }
