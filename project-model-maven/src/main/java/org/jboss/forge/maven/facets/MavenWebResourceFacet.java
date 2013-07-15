@@ -90,7 +90,7 @@ public class MavenWebResourceFacet extends BaseFacet implements WebResourceFacet
 
          MavenPluginFacet plugins = project.getFacet(MavenPluginFacet.class);
          DependencyBuilder mvnWarPluginDep = DependencyBuilder.create("org.apache.maven.plugins:maven-war-plugin")
-                  .setVersion("2.1.1");
+                  .setVersion("2.4");
 
          MavenPlugin plugin;
          if (!plugins.hasPlugin(mvnWarPluginDep))
