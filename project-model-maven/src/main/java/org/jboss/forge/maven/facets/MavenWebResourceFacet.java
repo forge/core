@@ -14,11 +14,13 @@ import javax.enterprise.context.Dependent;
 
 import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.maven.MavenPluginFacet;
+import org.jboss.forge.maven.plugins.Configuration;
 import org.jboss.forge.maven.plugins.ConfigurationElementBuilder;
 import org.jboss.forge.maven.plugins.MavenPlugin;
 import org.jboss.forge.maven.plugins.MavenPluginBuilder;
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.Project;
+import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.facets.BaseFacet;
 import org.jboss.forge.project.facets.JavaSourceFacet;
@@ -45,7 +47,28 @@ public class MavenWebResourceFacet extends BaseFacet implements WebResourceFacet
    @Override
    public DirectoryResource getWebRootDirectory()
    {
-      return project.getProjectRoot().getChildDirectory("src" + File.separator + "main" + File.separator + "webapp");
+      MavenPluginFacet mavenPluginFacet = project.getFacet(MavenPluginFacet.class);
+      final String webappFolderName;
+      Dependency mvnWarPluginDep = DependencyBuilder.create("org.apache.maven.plugins:maven-war-plugin");
+      if (mavenPluginFacet.hasPlugin(mvnWarPluginDep))
+      {
+         MavenPlugin warPlugin = mavenPluginFacet.getPlugin(mvnWarPluginDep);
+         Configuration config = warPlugin.getConfig();
+         if (config.hasConfigurationElement("warSourceDirectory"))
+         {
+            webappFolderName = config.getConfigurationElement("warSourceDirectory").getText();
+         }
+         else
+         {
+            webappFolderName = "src" + File.separator + "main" + File.separator + "webapp";
+         }
+      }
+      else
+      {
+         webappFolderName = "src" + File.separator + "main" + File.separator + "webapp";
+      }
+      DirectoryResource projectRoot = project.getProjectRoot();
+      return projectRoot.getChildDirectory(webappFolderName);
    }
 
    @Override
