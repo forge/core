@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.enterprise.context.Dependent;
 
+import org.apache.maven.model.Build;
 import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.Project;
@@ -45,15 +46,38 @@ public class MavenResourceFacet extends BaseFacet implements ResourceFacet, Face
    @Override
    public DirectoryResource getResourceFolder()
    {
-      return project.getProjectRoot().getChildDirectory("src" + File.separator + "main"
-               + File.separator + "resources");
+      MavenCoreFacet mavenFacet = project.getFacet(MavenCoreFacet.class);
+      Build build = mavenFacet.getPOM().getBuild();
+      final String resFolderName;
+      if (build != null && !build.getResources().isEmpty() && build.getResources().get(0).getDirectory() != null)
+      {
+         resFolderName = build.getResources().get(0).getDirectory();
+      }
+      else
+      {
+         resFolderName = "src" + File.separator + "main" + File.separator + "resources";
+      }
+      DirectoryResource projectRoot = project.getProjectRoot();
+      return projectRoot.getChildDirectory(resFolderName);
    }
 
    @Override
    public DirectoryResource getTestResourceFolder()
    {
-      return project.getProjectRoot().getChildDirectory("src" + File.separator + "test"
-               + File.separator + "resources");
+      MavenCoreFacet mavenFacet = project.getFacet(MavenCoreFacet.class);
+      Build build = mavenFacet.getPOM().getBuild();
+      final String resFolderName;
+      if (build != null && !build.getTestResources().isEmpty()
+               && build.getTestResources().get(0).getDirectory() != null)
+      {
+         resFolderName = build.getTestResources().get(0).getDirectory();
+      }
+      else
+      {
+         resFolderName = "src" + File.separator + "test" + File.separator + "resources";
+      }
+      DirectoryResource projectRoot = project.getProjectRoot();
+      return projectRoot.getChildDirectory(resFolderName);
    }
 
    @Override
