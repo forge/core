@@ -16,6 +16,7 @@ import javax.enterprise.context.Dependent;
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.addon.facets.AbstractFacet;
+import org.jboss.forge.addon.maven.plugins.Configuration;
 import org.jboss.forge.addon.maven.plugins.ConfigurationElementBuilder;
 import org.jboss.forge.addon.maven.plugins.MavenPlugin;
 import org.jboss.forge.addon.maven.plugins.MavenPluginBuilder;
@@ -34,8 +35,29 @@ public class MavenWebResourceFacet extends AbstractFacet<Project> implements Web
    @Override
    public DirectoryResource getWebRootDirectory()
    {
-      return getFaceted().getProjectRoot()
-               .getChildDirectory("src" + File.separator + "main" + File.separator + "webapp");
+      Project project = getFaceted();
+      MavenPluginFacet mavenPluginFacet = project.getFacet(MavenPluginFacet.class);
+      final String webappFolderName;
+      Coordinate mvnWarPluginDep = CoordinateBuilder.create("org.apache.maven.plugins:maven-war-plugin");
+      if (mavenPluginFacet.hasPlugin(mvnWarPluginDep))
+      {
+         MavenPlugin warPlugin = mavenPluginFacet.getPlugin(mvnWarPluginDep);
+         Configuration config = warPlugin.getConfig();
+         if (config.hasConfigurationElement("warSourceDirectory"))
+         {
+            webappFolderName = config.getConfigurationElement("warSourceDirectory").getText();
+         }
+         else
+         {
+            webappFolderName = "src" + File.separator + "main" + File.separator + "webapp";
+         }
+      }
+      else
+      {
+         webappFolderName = "src" + File.separator + "main" + File.separator + "webapp";
+      }
+      DirectoryResource projectRoot = project.getProjectRoot();
+      return projectRoot.getChildDirectory(webappFolderName);
    }
 
    @Override
