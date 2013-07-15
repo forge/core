@@ -31,4 +31,11 @@ class EnableRequestImpl extends AbstractAddonActionRequest implements EnableRequ
       AddonId id = getRequestedAddonInfo().getAddon();
       repository.enable(id);
    }
+
+   @Override
+   public String toString()
+   {
+      return "Enable: [" + addonInfo + "]";
+   }
+
 }

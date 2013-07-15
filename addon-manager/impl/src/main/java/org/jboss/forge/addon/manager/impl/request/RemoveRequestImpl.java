@@ -40,6 +40,11 @@ class RemoveRequestImpl extends AbstractAddonActionRequest implements RemoveRequ
             return null;
          }
       });
+   }
 
+   @Override
+   public String toString()
+   {
+      return "Remove: [" + addonInfo + "]";
    }
 }

@@ -7,8 +7,6 @@
 
 package org.jboss.forge.addon.manager.impl.request;
 
-import java.util.Arrays;
-
 import org.jboss.forge.addon.manager.request.DeployRequest;
 import org.jboss.forge.addon.manager.request.RemoveRequest;
 import org.jboss.forge.addon.manager.request.UpdateRequest;
@@ -59,6 +57,6 @@ class UpdateRequestImpl implements UpdateRequest
    @Override
    public String toString()
    {
-      return Arrays.toString(new Object[] { removeRequest, deployRequest });
+      return "Update: [" + removeRequest.getRequestedAddonInfo() + "]";
    }
 }

@@ -32,4 +32,10 @@ class DisableRequestImpl extends AbstractAddonActionRequest implements DisableRe
       AddonId id = getRequestedAddonInfo().getAddon();
       repository.disable(id);
    }
+
+   @Override
+   public String toString()
+   {
+      return "Disable: [" + getRequestedAddonInfo() + "]";
+   }
 }

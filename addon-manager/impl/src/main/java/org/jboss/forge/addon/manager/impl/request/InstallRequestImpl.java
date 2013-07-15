@@ -52,4 +52,25 @@ class InstallRequestImpl implements InstallRequest
       return addonInfo;
    }
 
+   @Override
+   public String toString()
+   {
+      StringBuilder sb = new StringBuilder();
+      sb.append("Installation request for [");
+      sb.append(addonInfo).append("] will: \r\n");
+      if (actions.isEmpty())
+      {
+         sb.append("Do nothing");
+      }
+      else
+      {
+         for (AddonActionRequest action : actions)
+         {
+            sb.append(action.toString());
+            sb.append("\n");
+         }
+      }
+      return sb.toString();
+   }
+
 }

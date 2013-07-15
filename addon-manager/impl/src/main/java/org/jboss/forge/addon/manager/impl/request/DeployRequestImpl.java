@@ -71,4 +71,11 @@ class DeployRequestImpl extends AbstractAddonActionRequest implements DeployRequ
       log.info("Deploying addon " + addon);
       repository.deploy(addon, addonDependencies, resourceJars);
    }
+
+   @Override
+   public String toString()
+   {
+      return "Deploy: [" + getRequestedAddonInfo() + "]";
+   }
+
 }
