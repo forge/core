@@ -70,7 +70,7 @@ public class MavenWebResourceFacet extends AbstractFacet<Project> implements Web
          MavenPluginFacet plugins = getFaceted().getFacet(MavenPluginFacet.class);
          Coordinate mvnWarPluginDep = CoordinateBuilder.create().setGroupId("org.apache.maven.plugins")
                   .setArtifactId("maven-war-plugin")
-                  .setVersion("2.3");
+                  .setVersion("2.4");
 
          MavenPlugin plugin;
          if (!plugins.hasPlugin(mvnWarPluginDep))

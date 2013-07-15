@@ -167,7 +167,7 @@ public class MavenJavaSourceFacet extends AbstractFacet<Project> implements Java
             // FIXME this should find the most recent version using DependencyResolver
             javaSourcePlugin.setGroupId("org.apache.maven.plugins");
             javaSourcePlugin.setArtifactId("maven-compiler-plugin");
-            javaSourcePlugin.setVersion("2.3.2");
+            javaSourcePlugin.setVersion("3.1");
 
             try
             {
