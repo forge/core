@@ -26,6 +26,7 @@ import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.dependencies.builder.DependencyNodeBuilder;
 import org.jboss.forge.addon.maven.MavenContainer;
+import org.jboss.forge.addon.maven.MavenOperationException;
 import org.jboss.forge.addon.maven.util.MavenConvertUtils;
 import org.jboss.forge.addon.maven.util.MavenRepositories;
 import org.jboss.forge.addon.resource.FileResource;
