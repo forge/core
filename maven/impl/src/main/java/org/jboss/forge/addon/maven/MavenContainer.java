@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.maven.dependencies;
+package org.jboss.forge.addon.maven;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -25,6 +25,7 @@ import org.apache.maven.settings.building.SettingsBuilder;
 import org.apache.maven.settings.building.SettingsBuildingException;
 import org.apache.maven.settings.building.SettingsBuildingRequest;
 import org.apache.maven.settings.building.SettingsBuildingResult;
+import org.jboss.forge.addon.maven.dependencies.ClasspathWorkspaceReader;
 import org.sonatype.aether.RepositorySystem;
 import org.sonatype.aether.connector.wagon.WagonProvider;
 import org.sonatype.aether.connector.wagon.WagonRepositoryConnectorFactory;
@@ -37,7 +38,7 @@ import org.sonatype.aether.spi.connector.RepositoryConnectorFactory;
 /**
  * Configures the Maven API for usage inside Furnace
  * 
- * TODO: Remove in the future, use the ShrinkWrap Descriptors API ?
+ * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
 public class MavenContainer
 {

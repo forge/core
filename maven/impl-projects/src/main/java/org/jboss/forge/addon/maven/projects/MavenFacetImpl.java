@@ -39,7 +39,7 @@ import org.apache.maven.settings.Repository;
 import org.apache.maven.settings.Settings;
 import org.jboss.forge.addon.environment.Environment;
 import org.jboss.forge.addon.facets.AbstractFacet;
-import org.jboss.forge.addon.maven.dependencies.MavenContainer;
+import org.jboss.forge.addon.maven.MavenContainer;
 import org.jboss.forge.addon.maven.environment.Network;
 import org.jboss.forge.addon.maven.projects.util.NativeSystemCall;
 import org.jboss.forge.addon.maven.projects.util.RepositoryUtils;
