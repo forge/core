@@ -17,7 +17,7 @@ public enum PromptType
    ANY(new String[] { ".*" }),
    DEPENDENCY_ID(new String[] { "[^:]+:[^:]+:?([^:]+:?){0,3}" }),
    JAVA_PACKAGE(
-            new String[] { "(?i)(~\\.)?([a-z0-9_]+\\.?)+[a-z0-9_]",
+            new String[] { "((?i)(~\\.)?([a-z0-9_]+\\.?)+[a-z0-9_])?",
                      "^(?!.*\\b(" + Patterns.JAVA_KEYWORDS + ")\\b.*).*$" }),
    JAVA_VARIABLE_NAME(new String[] { "^(?!(" + Patterns.JAVA_KEYWORDS + ")$)[A-Za-z0-9$_]+$" }),
    JAVA_CLASS(new String[] { "(?i)(~\\.)?([a-z0-9_]+\\.?)+[a-z0-9_]",
