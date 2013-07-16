@@ -9,6 +9,7 @@ package org.jboss.forge.addon.manager.spi;
 import java.io.File;
 
 import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.services.Exported;
 
 /**
  * A resolver that knows how to construct a graph of the requested Addon
@@ -16,6 +17,7 @@ import org.jboss.forge.furnace.addons.AddonId;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
+@Exported
 public interface AddonDependencyResolver
 {
    /**

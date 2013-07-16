@@ -60,6 +60,12 @@
          <classifier>forge-addon</classifier>
          <optional>true</optional>
       </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>addon-manager-spi</artifactId>
+         <classifier>forge-addon</classifier>
+         <optional>true</optional>
+      </dependency>
 
       <!-- Furnace Container -->
       <dependency>
