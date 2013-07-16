@@ -13,6 +13,7 @@ import static org.junit.Assert.assertNull;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Repository;
+import org.eclipse.aether.repository.AuthenticationContext;
 import org.jboss.forge.addon.maven.projects.util.RepositoryUtils;
 import org.junit.Test;
 
@@ -29,36 +30,6 @@ public class RepositoryUtilsTest
    public void testConvertFromMavenProxyExpectNull()
    {
       assertNull(RepositoryUtils.convertFromMavenProxy(null));
-   }
-
-   @Test
-   public void testConvertFromMavenProxyWithoutAuth()
-   {
-      Proxy proxySettings = new Proxy();
-      proxySettings.setHost("foo.com");
-      proxySettings.setPort(3128);
-      org.sonatype.aether.repository.Proxy proxyObj = RepositoryUtils.convertFromMavenProxy(proxySettings);
-      assertNotNull(proxyObj);
-      assertEquals(proxySettings.getHost(), proxyObj.getHost());
-      assertEquals(proxySettings.getPort(), proxyObj.getPort());
-      assertNull(proxyObj.getAuthentication().getUsername());
-      assertNull(proxyObj.getAuthentication().getPassword());
-   }
-
-   @Test
-   public void testConvertFromMavenProxyWithAuth()
-   {
-      Proxy proxySettings = new Proxy();
-      proxySettings.setHost("foo.com");
-      proxySettings.setPort(3128);
-      proxySettings.setUsername("john");
-      proxySettings.setPassword("doe");
-      org.sonatype.aether.repository.Proxy proxyObj = RepositoryUtils.convertFromMavenProxy(proxySettings);
-      assertNotNull(proxyObj);
-      assertEquals(proxySettings.getHost(), proxyObj.getHost());
-      assertEquals(proxySettings.getPort(), proxyObj.getPort());
-      assertEquals(proxySettings.getUsername(), proxyObj.getAuthentication().getUsername());
-      assertEquals(proxySettings.getPassword(), proxyObj.getAuthentication().getPassword());
    }
 
    @Test

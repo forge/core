@@ -10,10 +10,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.maven.settings.Settings;
+import org.eclipse.aether.repository.RemoteRepository;
 import org.jboss.forge.addon.dependencies.DependencyQuery;
 import org.jboss.forge.addon.dependencies.DependencyRepository;
 import org.jboss.forge.addon.maven.MavenContainer;
-import org.sonatype.aether.repository.RemoteRepository;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

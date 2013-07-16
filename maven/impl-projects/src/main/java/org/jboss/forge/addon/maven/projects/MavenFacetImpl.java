@@ -31,12 +31,17 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingResult;
-import org.apache.maven.repository.internal.MavenRepositorySystemSession;
+import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.apache.maven.settings.Mirror;
 import org.apache.maven.settings.Profile;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Repository;
 import org.apache.maven.settings.Settings;
+import org.eclipse.aether.DefaultRepositorySystemSession;
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.repository.LocalRepository;
+import org.eclipse.aether.util.repository.DefaultMirrorSelector;
+import org.eclipse.aether.util.repository.DefaultProxySelector;
 import org.jboss.forge.addon.environment.Environment;
 import org.jboss.forge.addon.facets.AbstractFacet;
 import org.jboss.forge.addon.maven.MavenContainer;
@@ -49,9 +54,6 @@ import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
-import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManager;
-import org.sonatype.aether.util.repository.DefaultMirrorSelector;
-import org.sonatype.aether.util.repository.DefaultProxySelector;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -105,7 +107,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
          plexus.lookup(MavenExecutionRequestPopulator.class).populateFromSettings(executionRequest,
                   container.getSettings());
          plexus.lookup(MavenExecutionRequestPopulator.class).populateDefaults(executionRequest);
-
+         RepositorySystem system = plexus.lookup(RepositorySystem.class);
          request = executionRequest.getProjectBuildingRequest();
 
          ArtifactRepository localRepository = RepositoryUtils.toArtifactRepository("local",
@@ -131,8 +133,8 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
          }
          request.setRemoteRepositories(settingsRepos);
          request.setSystemProperties(System.getProperties());
-
-         MavenRepositorySystemSession repositorySession = new MavenRepositorySystemSession();
+         
+         DefaultRepositorySystemSession repositorySession = MavenRepositorySystemUtils.newSession();
          Proxy activeProxy = settings.getActiveProxy();
          if (activeProxy != null)
          {
@@ -140,7 +142,8 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
             dps.add(RepositoryUtils.convertFromMavenProxy(activeProxy), activeProxy.getNonProxyHosts());
             repositorySession.setProxySelector(dps);
          }
-         repositorySession.setLocalRepositoryManager(new SimpleLocalRepositoryManager(settings.getLocalRepository()));
+         LocalRepository localRepo = new LocalRepository(settings.getLocalRepository());
+         repositorySession.setLocalRepositoryManager(system.newLocalRepositoryManager(repositorySession, localRepo));
          repositorySession.setOffline(offline);
          List<Mirror> mirrors = executionRequest.getMirrors();
          if (mirrors != null)

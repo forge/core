@@ -14,8 +14,7 @@ import java.util.Map;
 
 import org.apache.maven.model.building.DefaultModelBuilderFactory;
 import org.apache.maven.model.building.ModelBuilder;
-import org.apache.maven.repository.internal.MavenRepositorySystemSession;
-import org.apache.maven.repository.internal.MavenServiceLocator;
+import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.apache.maven.settings.Profile;
 import org.apache.maven.settings.Repository;
 import org.apache.maven.settings.Settings;
@@ -25,15 +24,20 @@ import org.apache.maven.settings.building.SettingsBuilder;
 import org.apache.maven.settings.building.SettingsBuildingException;
 import org.apache.maven.settings.building.SettingsBuildingRequest;
 import org.apache.maven.settings.building.SettingsBuildingResult;
+import org.eclipse.aether.DefaultRepositoryCache;
+import org.eclipse.aether.DefaultRepositorySystemSession;
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.connector.wagon.WagonProvider;
+import org.eclipse.aether.connector.wagon.WagonRepositoryConnectorFactory;
+import org.eclipse.aether.impl.DefaultServiceLocator;
+import org.eclipse.aether.repository.Authentication;
+import org.eclipse.aether.repository.LocalRepository;
+import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.repository.RepositoryPolicy;
+import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
+import org.eclipse.aether.util.repository.AuthenticationBuilder;
+import org.eclipse.aether.util.repository.SimpleResolutionErrorPolicy;
 import org.jboss.forge.addon.maven.dependencies.ClasspathWorkspaceReader;
-import org.sonatype.aether.RepositorySystem;
-import org.sonatype.aether.connector.wagon.WagonProvider;
-import org.sonatype.aether.connector.wagon.WagonRepositoryConnectorFactory;
-import org.sonatype.aether.impl.internal.DefaultServiceLocator;
-import org.sonatype.aether.repository.Authentication;
-import org.sonatype.aether.repository.LocalRepository;
-import org.sonatype.aether.repository.RemoteRepository;
-import org.sonatype.aether.spi.connector.RepositoryConnectorFactory;
 
 /**
  * Configures the Maven API for usage inside Furnace
@@ -74,7 +78,8 @@ public class MavenContainer
             List<Repository> repositories = profile.getRepositories();
             for (Repository repository : repositories)
             {
-               settingsRepos.add(new RemoteRepository(repository.getId(), repository.getLayout(), repository.getUrl()));
+               settingsRepos.add(new RemoteRepository.Builder(repository.getId(), repository.getLayout(), repository
+                        .getUrl()).build());
             }
          }
       }
@@ -135,7 +140,7 @@ public class MavenContainer
    public RepositorySystem getRepositorySystem()
    {
 
-      final DefaultServiceLocator locator = new MavenServiceLocator();
+      final DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
       locator.setServices(ModelBuilder.class, new DefaultModelBuilderFactory().newInstance());
       // Installing Wagon to fetch from HTTP repositories
       locator.setServices(WagonProvider.class, new ManualWagonProvider());
@@ -144,13 +149,14 @@ public class MavenContainer
       return repositorySystem;
    }
 
-   public static org.sonatype.aether.repository.Proxy convertFromMavenProxy(org.apache.maven.settings.Proxy proxy)
+   public static org.eclipse.aether.repository.Proxy convertFromMavenProxy(org.apache.maven.settings.Proxy proxy)
    {
-      org.sonatype.aether.repository.Proxy result = null;
+      org.eclipse.aether.repository.Proxy result = null;
       if (proxy != null)
       {
-         Authentication auth = new Authentication(proxy.getUsername(), proxy.getPassword());
-         result = new org.sonatype.aether.repository.Proxy(proxy.getProtocol(), proxy.getHost(), proxy.getPort(), auth);
+         Authentication auth = new AuthenticationBuilder().addUsername(proxy.getUsername())
+                  .addPassword(proxy.getPassword()).build();
+         result = new org.eclipse.aether.repository.Proxy(proxy.getProtocol(), proxy.getHost(), proxy.getPort(), auth);
       }
       return result;
    }
@@ -165,15 +171,16 @@ public class MavenContainer
       return getUserHomeDir().getAbsolutePath();
    }
 
-   public MavenRepositorySystemSession setupRepoSession(final RepositorySystem repoSystem, final Settings settings)
+   public DefaultRepositorySystemSession setupRepoSession(final RepositorySystem repoSystem, final Settings settings)
    {
-      MavenRepositorySystemSession session = new MavenRepositorySystemSession();
+      DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
       session.setOffline(false);
 
       LocalRepository localRepo = new LocalRepository(new File(settings.getLocalRepository()), "");
-      session.setLocalRepositoryManager(repoSystem.newLocalRepositoryManager(localRepo));
-      session.setTransferErrorCachingEnabled(false);
-      session.setNotFoundCachingEnabled(false);
+      session.setLocalRepositoryManager(repoSystem.newLocalRepositoryManager(session, localRepo));
+      session.setChecksumPolicy(RepositoryPolicy.CHECKSUM_POLICY_IGNORE);
+      session.setCache(new DefaultRepositoryCache());
+      session.setResolutionErrorPolicy(new SimpleResolutionErrorPolicy(true, true));
       session.setWorkspaceReader(new ClasspathWorkspaceReader());
       return session;
    }

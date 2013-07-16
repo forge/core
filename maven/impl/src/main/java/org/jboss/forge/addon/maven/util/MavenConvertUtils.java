@@ -13,6 +13,12 @@ import java.util.List;
 
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
+import org.eclipse.aether.artifact.Artifact;
+import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.graph.DependencyNode;
+import org.eclipse.aether.repository.Authentication;
+import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.util.repository.AuthenticationBuilder;
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.DependencyRepository;
@@ -20,25 +26,20 @@ import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.dependencies.builder.DependencyNodeBuilder;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
-import org.sonatype.aether.artifact.Artifact;
-import org.sonatype.aether.graph.DependencyNode;
-import org.sonatype.aether.repository.Authentication;
-import org.sonatype.aether.repository.RemoteRepository;
-import org.sonatype.aether.util.artifact.DefaultArtifact;
 
 public class MavenConvertUtils
 {
    static RemoteRepository convertToMavenRepo(final DependencyRepository repo, final Settings settings)
    {
-      RemoteRepository remoteRepository = new RemoteRepository(repo.getId(), "default", repo.getUrl());
+      RemoteRepository.Builder remoteRepositoryBuilder = new RemoteRepository.Builder(repo.getId(), "default", repo.getUrl());
       Proxy activeProxy = settings.getActiveProxy();
       if (activeProxy != null)
       {
-         Authentication auth = new Authentication(activeProxy.getUsername(), activeProxy.getPassword());
-         remoteRepository.setProxy(new org.sonatype.aether.repository.Proxy(activeProxy.getProtocol(), activeProxy
+         Authentication auth = new AuthenticationBuilder().addUsername(activeProxy.getUsername()).addPassword(activeProxy.getPassword()).build();
+         remoteRepositoryBuilder.setProxy(new org.eclipse.aether.repository.Proxy(activeProxy.getProtocol(), activeProxy
                   .getHost(), activeProxy.getPort(), auth));
       }
-      return remoteRepository;
+      return remoteRepositoryBuilder.build();
    }
 
    static List<RemoteRepository> convertToMavenRepos(final List<DependencyRepository> repositories,
@@ -61,7 +62,7 @@ public class MavenConvertUtils
 
    public static Dependency convertToDependency(ResourceFactory factory, DependencyNode node)
    {
-      org.sonatype.aether.graph.Dependency artifactDependency = node.getDependency();
+      org.eclipse.aether.graph.Dependency artifactDependency = node.getDependency();
       Artifact artifact = artifactDependency.getArtifact();
       File file = artifact.getFile();
 

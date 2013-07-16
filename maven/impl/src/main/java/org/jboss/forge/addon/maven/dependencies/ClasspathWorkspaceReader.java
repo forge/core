@@ -20,12 +20,12 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.eclipse.aether.artifact.Artifact;
+import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.repository.WorkspaceReader;
+import org.eclipse.aether.repository.WorkspaceRepository;
 import org.jboss.forge.parser.xml.Node;
 import org.jboss.forge.parser.xml.XMLParser;
-import org.sonatype.aether.artifact.Artifact;
-import org.sonatype.aether.repository.WorkspaceReader;
-import org.sonatype.aether.repository.WorkspaceRepository;
-import org.sonatype.aether.util.artifact.DefaultArtifact;
 
 /**
  * {@link WorkspaceReader} implementation capable of reading from the ClassPath
