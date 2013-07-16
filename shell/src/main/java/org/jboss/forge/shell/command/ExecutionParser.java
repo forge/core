@@ -35,6 +35,7 @@ import org.jboss.forge.shell.exceptions.PluginExecutionException;
 import org.jboss.forge.shell.plugins.PipeOut;
 import org.jboss.forge.shell.util.Enums;
 import org.jboss.forge.shell.util.GeneralUtils;
+import org.jboss.forge.shell.util.Packages;
 import org.mvel2.util.ParseTools;
 
 /**
@@ -222,7 +223,15 @@ public class ExecutionParser
             {
                // make sure the current option value is OK
                ShellMessages.info(shell, "Could not parse [" + value + "]... please try again...");
-               value = shell.promptCommon(optionDescriptor, promptType);
+               if (promptType.equals(PromptType.JAVA_PACKAGE))
+               {
+                  String defaultPackage = value == null ? "" : Packages.toValidPackageName((String) value);
+                  value = shell.promptCommon(optionDescriptor, promptType, defaultPackage);
+               }
+               else
+               {
+                  value = shell.promptCommon(optionDescriptor, promptType);
+               }
             }
             else if (option.isRequired() && (value == null) && (!option.hasDefaultValue()))
             {
