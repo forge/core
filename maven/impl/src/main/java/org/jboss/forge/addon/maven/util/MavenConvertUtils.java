@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.maven.dependencies;
+package org.jboss.forge.addon.maven.util;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ import org.sonatype.aether.repository.Authentication;
 import org.sonatype.aether.repository.RemoteRepository;
 import org.sonatype.aether.util.artifact.DefaultArtifact;
 
-class MavenConvertUtils
+public class MavenConvertUtils
 {
    static RemoteRepository convertToMavenRepo(final DependencyRepository repo, final Settings settings)
    {
@@ -52,14 +52,14 @@ class MavenConvertUtils
       return remoteRepos;
    }
 
-   static Artifact coordinateToMavenArtifact(final Coordinate dep)
+   public static Artifact coordinateToMavenArtifact(final Coordinate dep)
    {
       Artifact artifact = new DefaultArtifact(dep.getGroupId(), dep.getArtifactId(), dep.getClassifier(),
                dep.getPackaging() == null ? "jar" : dep.getPackaging(), dep.getVersion());
       return artifact;
    }
 
-   static Dependency convertToDependency(ResourceFactory factory, DependencyNode node)
+   public static Dependency convertToDependency(ResourceFactory factory, DependencyNode node)
    {
       org.sonatype.aether.graph.Dependency artifactDependency = node.getDependency();
       Artifact artifact = artifactDependency.getArtifact();
@@ -77,7 +77,7 @@ class MavenConvertUtils
       return d;
    }
 
-   static DependencyNodeBuilder toDependencyNode(ResourceFactory factory,
+   public static DependencyNodeBuilder toDependencyNode(ResourceFactory factory,
             org.jboss.forge.addon.dependencies.DependencyNode parent, DependencyNode aetherNode)
    {
       DependencyNodeBuilder node = DependencyNodeBuilder.create(parent,

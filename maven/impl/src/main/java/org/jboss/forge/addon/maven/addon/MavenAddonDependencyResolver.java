@@ -16,6 +16,7 @@ import org.apache.maven.settings.Settings;
 import org.jboss.forge.addon.manager.spi.AddonDependencyResolver;
 import org.jboss.forge.addon.manager.spi.AddonInfo;
 import org.jboss.forge.addon.maven.MavenContainer;
+import org.jboss.forge.addon.maven.util.MavenRepositories;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.sonatype.aether.RepositorySystem;
 import org.sonatype.aether.artifact.Artifact;
@@ -92,8 +93,10 @@ public class MavenAddonDependencyResolver implements AddonDependencyResolver
       });
       session.setDependencySelector(new AddonDependencySelector());
       Dependency dependency = new Dependency(queryArtifact, null);
-      CollectRequest collectRequest = new CollectRequest(dependency,
-               container.getEnabledRepositoriesFromProfile(settings));
+
+      List<RemoteRepository> repositories = MavenRepositories.getRemoteRepositories(container, settings);
+
+      CollectRequest collectRequest = new CollectRequest(dependency, repositories);
       DependencyResult result;
       try
       {
@@ -171,9 +174,9 @@ public class MavenAddonDependencyResolver implements AddonDependencyResolver
 
          Artifact artifact = new DefaultArtifact(toMavenCoords(AddonId.from(addonName, version)));
 
-         List<RemoteRepository> remoteRepos = container.getEnabledRepositoriesFromProfile(settings);
+         List<RemoteRepository> repositories = MavenRepositories.getRemoteRepositories(container, settings);
 
-         VersionRangeRequest rangeRequest = new VersionRangeRequest(artifact, remoteRepos, null);
+         VersionRangeRequest rangeRequest = new VersionRangeRequest(artifact, repositories, null);
 
          VersionRangeResult rangeResult = system.resolveVersionRange(session, rangeRequest);
          return rangeResult;
@@ -247,8 +250,10 @@ public class MavenAddonDependencyResolver implements AddonDependencyResolver
       });
       session.setDependencySelector(new AddonDependencySelector());
       Artifact queryArtifact = new DefaultArtifact(coords);
-      CollectRequest collectRequest = new CollectRequest(new Dependency(queryArtifact, null),
-               container.getEnabledRepositoriesFromProfile(settings));
+
+      List<RemoteRepository> repositories = MavenRepositories.getRemoteRepositories(container, settings);
+      CollectRequest collectRequest = new CollectRequest(new Dependency(queryArtifact, null), repositories);
+      
       CollectResult result;
       try
       {
