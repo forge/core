@@ -37,12 +37,29 @@ public class Packages
          throw new IllegalArgumentException("Package should not be null");
       }
       StringBuilder sb = new StringBuilder(pkg.length());
+      boolean hasIdentifierStarted = false; 
       for (int i = 0; i < pkg.length(); i++)
       {
-         char c = pkg.charAt(i);
-         if (c == '.' || Character.isJavaIdentifierPart(c))
+         int c = pkg.codePointAt(i);
+         if(!hasIdentifierStarted)
          {
-            sb.append(c);
+            if(Character.isJavaIdentifierStart(c))
+            {
+               sb.appendCodePoint(c);
+               hasIdentifierStarted = true;
+            }
+         }
+         else
+         {
+            if (Character.isJavaIdentifierPart(c))
+            {
+               sb.appendCodePoint(c);
+            }
+            else if(c == '.')
+            {
+               sb.appendCodePoint(c);
+               hasIdentifierStarted = false;
+            }
          }
       }
       return sb.toString();

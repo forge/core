@@ -28,10 +28,17 @@ public class PackagesTest
    }
 
    @Test
-   public void testToInvalidPackage()
+   public void testInvalidPackage()
    {
       String pkg = "com.example.app-demo";
       Assert.assertEquals("com.example.appdemo", Packages.toValidPackageName(pkg));
+   }
+   
+   @Test
+   public void testAllInvalidPackage()
+   {
+      String pkg = ".-";
+      Assert.assertEquals("", Packages.toValidPackageName(pkg));
    }
 
 }
