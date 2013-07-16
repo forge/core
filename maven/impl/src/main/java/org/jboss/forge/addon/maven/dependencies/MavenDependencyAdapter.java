@@ -71,7 +71,7 @@ public class MavenDependencyAdapter extends org.apache.maven.model.Dependency im
       }
    }
 
-   public MavenDependencyAdapter(final org.sonatype.aether.graph.Dependency dep)
+   public MavenDependencyAdapter(final org.eclipse.aether.graph.Dependency dep)
    {
       if (dep == null)
       {
@@ -106,10 +106,10 @@ public class MavenDependencyAdapter extends org.apache.maven.model.Dependency im
       return null;
    }
 
-   private void setExclusions(final Collection<org.sonatype.aether.graph.Exclusion> exclusions)
+   private void setExclusions(final Collection<org.eclipse.aether.graph.Exclusion> exclusions)
    {
       List<Exclusion> result = new ArrayList<Exclusion>();
-      for (org.sonatype.aether.graph.Exclusion exclusion : exclusions)
+      for (org.eclipse.aether.graph.Exclusion exclusion : exclusions)
       {
          Exclusion temp = new Exclusion();
          temp.setArtifactId(exclusion.getArtifactId());
@@ -181,10 +181,10 @@ public class MavenDependencyAdapter extends org.apache.maven.model.Dependency im
       return getCoordinate().toString();
    }
 
-   public static List<Dependency> fromAetherList(final List<org.sonatype.aether.graph.Dependency> dependencies)
+   public static List<Dependency> fromAetherList(final List<org.eclipse.aether.graph.Dependency> dependencies)
    {
       List<Dependency> result = new ArrayList<Dependency>();
-      for (org.sonatype.aether.graph.Dependency dependency : dependencies)
+      for (org.eclipse.aether.graph.Dependency dependency : dependencies)
       {
          result.add(new MavenDependencyAdapter(dependency));
       }

@@ -23,7 +23,7 @@
    </modules>
 
    <properties>
-      <version.maven>3.0.5</version.maven>
+      <version.maven>3.1.0</version.maven>
    </properties>
 
    <dependencyManagement>

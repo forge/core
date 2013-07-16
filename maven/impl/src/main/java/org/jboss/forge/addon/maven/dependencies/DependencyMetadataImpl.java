@@ -9,13 +9,13 @@ package org.jboss.forge.addon.maven.dependencies;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.aether.artifact.Artifact;
+import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.resolution.ArtifactDescriptorResult;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.DependencyMetadata;
 import org.jboss.forge.addon.dependencies.DependencyRepository;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
-import org.sonatype.aether.artifact.Artifact;
-import org.sonatype.aether.repository.RemoteRepository;
-import org.sonatype.aether.resolution.ArtifactDescriptorResult;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -39,19 +39,19 @@ public class DependencyMetadataImpl implements DependencyMetadata
       }
 
       managedDependencies = new ArrayList<Dependency>();
-      for (org.sonatype.aether.graph.Dependency d : descriptor.getManagedDependencies())
+      for (org.eclipse.aether.graph.Dependency d : descriptor.getManagedDependencies())
       {
          managedDependencies.add(convertToForge(d));
       }
 
       dependencies = new ArrayList<Dependency>();
-      for (org.sonatype.aether.graph.Dependency d : descriptor.getDependencies())
+      for (org.eclipse.aether.graph.Dependency d : descriptor.getDependencies())
       {
          dependencies.add(convertToForge(d));
       }
    }
 
-   private Dependency convertToForge(org.sonatype.aether.graph.Dependency d)
+   private Dependency convertToForge(org.eclipse.aether.graph.Dependency d)
    {
       Artifact a = d.getArtifact();
       Dependency dep = DependencyBuilder.create()

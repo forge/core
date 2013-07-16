@@ -13,8 +13,9 @@ import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
 import org.apache.maven.artifact.repository.layout.FlatRepositoryLayout;
 import org.apache.maven.settings.Repository;
 import org.apache.maven.settings.RepositoryPolicy;
+import org.eclipse.aether.repository.Authentication;
+import org.eclipse.aether.util.repository.AuthenticationBuilder;
 import org.jboss.forge.addon.maven.projects.P2ArtifactRepositoryLayout;
-import org.sonatype.aether.repository.Authentication;
 
 /**
  * Repository Utils
@@ -28,13 +29,13 @@ public final class RepositoryUtils
    {
    }
 
-   public static org.sonatype.aether.repository.Proxy convertFromMavenProxy(org.apache.maven.settings.Proxy proxy)
+   public static org.eclipse.aether.repository.Proxy convertFromMavenProxy(org.apache.maven.settings.Proxy proxy)
    {
-      org.sonatype.aether.repository.Proxy result = null;
+      org.eclipse.aether.repository.Proxy result = null;
       if (proxy != null)
       {
-         Authentication auth = new Authentication(proxy.getUsername(), proxy.getPassword());
-         result = new org.sonatype.aether.repository.Proxy(proxy.getProtocol(), proxy.getHost(), proxy.getPort(), auth);
+         Authentication auth = new AuthenticationBuilder().addUsername(proxy.getUsername()).addPassword(proxy.getPassword()).build();
+         result = new org.eclipse.aether.repository.Proxy(proxy.getProtocol(), proxy.getHost(), proxy.getPort(), auth);
       }
       return result;
    }

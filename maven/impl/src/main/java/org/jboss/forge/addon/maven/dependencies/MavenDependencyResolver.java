@@ -18,8 +18,27 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.apache.maven.settings.Settings;
+import org.eclipse.aether.DefaultRepositorySystemSession;
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.artifact.Artifact;
+import org.eclipse.aether.collection.CollectRequest;
+import org.eclipse.aether.collection.DependencyCollectionContext;
+import org.eclipse.aether.collection.DependencyTraverser;
+import org.eclipse.aether.graph.DependencyNode;
+import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.resolution.ArtifactDescriptorRequest;
+import org.eclipse.aether.resolution.ArtifactDescriptorResult;
+import org.eclipse.aether.resolution.ArtifactRequest;
+import org.eclipse.aether.resolution.ArtifactResolutionException;
+import org.eclipse.aether.resolution.ArtifactResult;
+import org.eclipse.aether.resolution.DependencyRequest;
+import org.eclipse.aether.resolution.DependencyResolutionException;
+import org.eclipse.aether.resolution.DependencyResult;
+import org.eclipse.aether.resolution.VersionRangeRequest;
+import org.eclipse.aether.resolution.VersionRangeResult;
+import org.eclipse.aether.util.graph.selector.ScopeDependencySelector;
+import org.eclipse.aether.version.Version;
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.DependencyException;
@@ -35,26 +54,6 @@ import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.furnace.services.Exported;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.forge.furnace.util.Strings;
-import org.jboss.shrinkwrap.resolver.impl.maven.logging.LogTransferListener;
-import org.sonatype.aether.RepositorySystem;
-import org.sonatype.aether.artifact.Artifact;
-import org.sonatype.aether.collection.CollectRequest;
-import org.sonatype.aether.collection.DependencyCollectionContext;
-import org.sonatype.aether.collection.DependencyTraverser;
-import org.sonatype.aether.graph.DependencyNode;
-import org.sonatype.aether.repository.RemoteRepository;
-import org.sonatype.aether.resolution.ArtifactDescriptorRequest;
-import org.sonatype.aether.resolution.ArtifactDescriptorResult;
-import org.sonatype.aether.resolution.ArtifactRequest;
-import org.sonatype.aether.resolution.ArtifactResolutionException;
-import org.sonatype.aether.resolution.ArtifactResult;
-import org.sonatype.aether.resolution.DependencyRequest;
-import org.sonatype.aether.resolution.DependencyResolutionException;
-import org.sonatype.aether.resolution.DependencyResult;
-import org.sonatype.aether.resolution.VersionRangeRequest;
-import org.sonatype.aether.resolution.VersionRangeResult;
-import org.sonatype.aether.util.graph.selector.ScopeDependencySelector;
-import org.sonatype.aether.version.Version;
 
 @Exported
 public class MavenDependencyResolver implements DependencyResolver
@@ -85,13 +84,13 @@ public class MavenDependencyResolver implements DependencyResolver
       RepositorySystem system = container.getRepositorySystem();
       Settings settings = container.getSettings();
 
-      MavenRepositorySystemSession session = container.setupRepoSession(system, settings);
+      DefaultRepositorySystemSession session = container.setupRepoSession(system, settings);
 
       Artifact queryArtifact = coordinateToMavenArtifact(query.getCoordinate());
 
       List<RemoteRepository> remoteRepos = getRemoteRepositories(query, settings);
 
-      CollectRequest collectRequest = new CollectRequest(new org.sonatype.aether.graph.Dependency(queryArtifact,
+      CollectRequest collectRequest = new CollectRequest(new org.eclipse.aether.graph.Dependency(queryArtifact,
                query.getScopeType()), remoteRepos);
 
       DependencyRequest request = new DependencyRequest(collectRequest, null);
@@ -165,8 +164,7 @@ public class MavenDependencyResolver implements DependencyResolver
          RepositorySystem maven = container.getRepositorySystem();
          Settings settings = container.getSettings();
 
-         MavenRepositorySystemSession session = container.setupRepoSession(maven, settings);
-
+         DefaultRepositorySystemSession session = container.setupRepoSession(maven, settings);
          Artifact artifact = coordinateToMavenArtifact(dep);
 
          List<RemoteRepository> remoteRepos = getRemoteRepositories(query, settings);
@@ -190,8 +188,7 @@ public class MavenDependencyResolver implements DependencyResolver
 
       List<RemoteRepository> remoteRepos = getRemoteRepositories(query, settings);
 
-      MavenRepositorySystemSession session = container.setupRepoSession(system, settings);
-
+      DefaultRepositorySystemSession session = container.setupRepoSession(system, settings);
       Artifact queryArtifact = coordinateToMavenArtifact(query.getCoordinate());
       ArtifactRequest request = new ArtifactRequest(queryArtifact, remoteRepos, null);
       try
@@ -223,13 +220,11 @@ public class MavenDependencyResolver implements DependencyResolver
       {
          RepositorySystem system = container.getRepositorySystem();
          Settings settings = container.getSettings();
-         MavenRepositorySystemSession session = container.setupRepoSession(system, settings);
-         session.setTransferListener(new LogTransferListener());
-
+         DefaultRepositorySystemSession session = container.setupRepoSession(system, settings);
          session.setDependencyTraverser(new DependencyTraverser()
          {
             @Override
-            public boolean traverseDependency(org.sonatype.aether.graph.Dependency dependency)
+            public boolean traverseDependency(org.eclipse.aether.graph.Dependency dependency)
             {
                if (query.getScopeType() != null)
                   return query.getScopeType().equals(dependency.getScope());
@@ -249,7 +244,7 @@ public class MavenDependencyResolver implements DependencyResolver
          Artifact queryArtifact = coordinateToMavenArtifact(coord);
 
          List<RemoteRepository> remoteRepos = getRemoteRepositories(query, settings);
-         CollectRequest collectRequest = new CollectRequest(new org.sonatype.aether.graph.Dependency(queryArtifact,
+         CollectRequest collectRequest = new CollectRequest(new org.eclipse.aether.graph.Dependency(queryArtifact,
                   null), remoteRepos);
 
          DependencyRequest dr = new DependencyRequest(collectRequest, null);
@@ -276,8 +271,7 @@ public class MavenDependencyResolver implements DependencyResolver
 
          RepositorySystem system = container.getRepositorySystem();
          Settings settings = container.getSettings();
-         MavenRepositorySystemSession session = container.setupRepoSession(system, settings);
-
+         DefaultRepositorySystemSession session = container.setupRepoSession(system, settings);
          Artifact artifact = coordinateToMavenArtifact(query.getCoordinate());
 
          List<RemoteRepository> mavenRepositories = getRemoteRepositories(query, settings);
