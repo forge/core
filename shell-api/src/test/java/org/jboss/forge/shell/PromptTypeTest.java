@@ -27,6 +27,7 @@ public class PromptTypeTest
       assertFalse(PromptType.JAVA_PACKAGE.matches("org.jboss."));
       assertTrue(PromptType.JAVA_PACKAGE.matches("org.jboss_project"));
       assertFalse(PromptType.JAVA_PACKAGE.matches("org.jboss_$f00"));
+      assertTrue(PromptType.JAVA_PACKAGE.matches(""));
    }
 
    @Test
