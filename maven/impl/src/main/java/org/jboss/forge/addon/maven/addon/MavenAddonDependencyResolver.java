@@ -15,7 +15,6 @@ import java.util.Set;
 import org.apache.maven.settings.Settings;
 import org.jboss.forge.addon.manager.spi.AddonDependencyResolver;
 import org.jboss.forge.addon.manager.spi.AddonInfo;
-import org.jboss.forge.addon.maven.dependencies.AddonDependencySelector;
 import org.jboss.forge.addon.maven.dependencies.MavenContainer;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.sonatype.aether.RepositorySystem;

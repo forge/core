@@ -1,4 +1,4 @@
-package org.jboss.forge.addon.maven.dependencies;
+package org.jboss.forge.addon.maven.addon;
 
 import org.sonatype.aether.collection.DependencyCollectionContext;
 import org.sonatype.aether.collection.DependencySelector;
@@ -11,7 +11,7 @@ import org.sonatype.aether.util.graph.selector.StaticDependencySelector;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class AddonDependencySelector implements DependencySelector
+class AddonDependencySelector implements DependencySelector
 {
    private static final String FORGE_ADDON = "forge-addon";
    private final int depth;
