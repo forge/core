@@ -25,7 +25,6 @@ import org.apache.maven.settings.building.SettingsBuilder;
 import org.apache.maven.settings.building.SettingsBuildingException;
 import org.apache.maven.settings.building.SettingsBuildingRequest;
 import org.apache.maven.settings.building.SettingsBuildingResult;
-import org.jboss.shrinkwrap.resolver.impl.maven.bootstrap.MavenSettingsBuilder;
 import org.sonatype.aether.RepositorySystem;
 import org.sonatype.aether.connector.wagon.WagonProvider;
 import org.sonatype.aether.connector.wagon.WagonRepositoryConnectorFactory;
@@ -43,6 +42,21 @@ import org.sonatype.aether.spi.connector.RepositoryConnectorFactory;
 public class MavenContainer
 {
    private static final String M2_HOME = System.getenv().get("M2_HOME");
+
+   /**
+    * Sets an alternate location to Maven user settings.xml configuration
+    */
+   public static final String ALT_USER_SETTINGS_XML_LOCATION = "org.apache.maven.user-settings";
+
+   /**
+    * Sets an alternate location of Maven global settings.xml configuration
+    */
+   public static final String ALT_GLOBAL_SETTINGS_XML_LOCATION = "org.apache.maven.global-settings";
+
+   /**
+    * Sets an alternate location of Maven local repository
+    */
+   public static final String ALT_LOCAL_REPOSITORY_LOCATION = "maven.repo.local";
 
    public List<RemoteRepository> getEnabledRepositoriesFromProfile(Settings settings)
    {
@@ -72,7 +86,7 @@ public class MavenContainer
       {
          SettingsBuilder settingsBuilder = new DefaultSettingsBuilderFactory().newInstance();
          SettingsBuildingRequest settingsRequest = new DefaultSettingsBuildingRequest();
-         String userSettingsLocation = System.getProperty(MavenSettingsBuilder.ALT_USER_SETTINGS_XML_LOCATION);
+         String userSettingsLocation = System.getProperty(ALT_USER_SETTINGS_XML_LOCATION);
          if (userSettingsLocation != null)
          {
             settingsRequest.setUserSettingsFile(new File(userSettingsLocation));
@@ -81,7 +95,7 @@ public class MavenContainer
          {
             settingsRequest.setUserSettingsFile(new File(getUserHomeDir(), "/.m2/settings.xml"));
          }
-         String globalSettingsLocation = System.getProperty(MavenSettingsBuilder.ALT_GLOBAL_SETTINGS_XML_LOCATION);
+         String globalSettingsLocation = System.getProperty(ALT_GLOBAL_SETTINGS_XML_LOCATION);
          if (globalSettingsLocation != null)
          {
             settingsRequest.setGlobalSettingsFile(new File(globalSettingsLocation));
@@ -98,7 +112,7 @@ public class MavenContainer
 
          if (effectiveSettings.getLocalRepository() == null)
          {
-            String userRepositoryLocation = System.getProperty(MavenSettingsBuilder.ALT_LOCAL_REPOSITORY_LOCATION);
+            String userRepositoryLocation = System.getProperty(ALT_LOCAL_REPOSITORY_LOCATION);
             if (userRepositoryLocation != null)
             {
                effectiveSettings.setLocalRepository(userRepositoryLocation);
