@@ -124,7 +124,8 @@ public class ConsoleInputSession
             }
             catch (InterruptedException e)
             {
-               //
+               // Stop reading
+               break;
             }
          }
       }
@@ -152,7 +153,8 @@ public class ConsoleInputSession
             }
             catch (InterruptedException e)
             {
-               //
+               // Stop reading
+               break;
             }
          }
       }
