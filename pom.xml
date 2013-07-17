@@ -67,7 +67,6 @@
       <version.junit>4.11</version.junit>
       <version.mvel>2.1.0.Final</version.mvel>
       <version.org.jboss.logmanager.jboss-logmanager>1.4.1.Final</version.org.jboss.logmanager.jboss-logmanager>
-      <version.shrinkwrap.resolver>2.0.0</version.shrinkwrap.resolver>
       <version.slf4j>1.6.1</version.slf4j>
       <version.xmlparser>1.0.0.Final</version.xmlparser>
    </properties>
@@ -222,14 +221,6 @@
             <scope>test</scope>
          </dependency>
 
-         <!-- The Shrinkwrap resolver BOM should be placed BEFORE the arquillian BOM, otherwise, it will be useless -->
-         <dependency>
-            <groupId>org.jboss.shrinkwrap.resolver</groupId>
-            <artifactId>shrinkwrap-resolver-bom</artifactId>
-            <version>${version.shrinkwrap.resolver}</version>
-            <type>pom</type>
-            <scope>import</scope>
-         </dependency>
          <dependency>
             <groupId>org.jboss.arquillian</groupId>
             <artifactId>arquillian-bom</artifactId>
