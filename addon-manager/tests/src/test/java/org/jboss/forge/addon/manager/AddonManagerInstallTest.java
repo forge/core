@@ -24,12 +24,12 @@ import org.jboss.forge.addon.manager.request.DeployRequest;
 import org.jboss.forge.addon.manager.request.InstallRequest;
 import org.jboss.forge.addon.manager.request.UpdateRequest;
 import org.jboss.forge.addon.manager.spi.AddonDependencyResolver;
+import org.jboss.forge.addon.maven.MavenContainer;
 import org.jboss.forge.addon.maven.addon.MavenAddonDependencyResolver;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.repositories.AddonRepositoryMode;
 import org.jboss.forge.furnace.util.Files;
-import org.jboss.shrinkwrap.resolver.impl.maven.bootstrap.MavenSettingsBuilder;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -43,8 +43,8 @@ public class AddonManagerInstallTest
    @BeforeClass
    public static void setRemoteRepository() throws IOException
    {
-      System.setProperty(MavenSettingsBuilder.ALT_USER_SETTINGS_XML_LOCATION, getAbsolutePath("profiles/settings.xml"));
-      System.setProperty(MavenSettingsBuilder.ALT_LOCAL_REPOSITORY_LOCATION, "target/the-other-repository");
+      System.setProperty(MavenContainer.ALT_USER_SETTINGS_XML_LOCATION, getAbsolutePath("profiles/settings.xml"));
+      System.setProperty(MavenContainer.ALT_LOCAL_REPOSITORY_LOCATION, "target/the-other-repository");
    }
 
    private static String getAbsolutePath(String path) throws FileNotFoundException
@@ -58,8 +58,8 @@ public class AddonManagerInstallTest
    @AfterClass
    public static void clearRemoteRepository()
    {
-      System.clearProperty(MavenSettingsBuilder.ALT_USER_SETTINGS_XML_LOCATION);
-      System.clearProperty(MavenSettingsBuilder.ALT_LOCAL_REPOSITORY_LOCATION);
+      System.clearProperty(MavenContainer.ALT_USER_SETTINGS_XML_LOCATION);
+      System.clearProperty(MavenContainer.ALT_LOCAL_REPOSITORY_LOCATION);
    }
 
    private Furnace furnace;
