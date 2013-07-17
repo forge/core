@@ -30,13 +30,16 @@ public class ConsoleInputSession
     * would be awaiting the lock on System.in.
     */
    private static final ArrayBlockingQueue<Integer> blockingQueue = new ArrayBlockingQueue<Integer>(1000);
+   
+   private boolean isEmbedded;
 
    private volatile boolean connected;
 
-   public ConsoleInputSession(InputStream consoleStream)
+   public ConsoleInputSession(InputStream consoleStream, boolean isEmbedded)
    {
       this.consoleStream = consoleStream;
       this.connected = true;
+      this.isEmbedded = isEmbedded;
 
       this.externalInputStream = new InputStream()
       {
@@ -67,7 +70,7 @@ public class ConsoleInputSession
    private void startReader()
    {
       Thread readerThread = null;
-      if (OSUtils.isWindows())
+      if (OSUtils.isWindows() && !isEmbedded)
       {
          readerThread = new WindowsReaderThread();
       }

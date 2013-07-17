@@ -498,7 +498,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
 
       if ((inputPipe == null) && (_redirectedStream == null))
       {
-         inputPipe = new ConsoleInputSession(System.in);
+         inputPipe = new ConsoleInputSession(System.in, environment.isEmbedded());
       }
       if (outputStream == null)
       {
@@ -506,7 +506,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       }
 
       Terminal terminal;
-      if (Boolean.getBoolean("forge.compatibility.IDE"))
+      if (environment.isEmbedded())
       {
          terminal = new IdeTerminal();
       }
