@@ -10,6 +10,8 @@ import java.util.concurrent.Callable;
 
 import javax.inject.Singleton;
 
+import org.codehaus.plexus.ContainerConfiguration;
+import org.codehaus.plexus.DefaultContainerConfiguration;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.logging.console.ConsoleLoggerManager;
 import org.jboss.forge.furnace.util.ClassLoaders;
@@ -54,7 +56,8 @@ class PlexusContainer
                      {
                         try
                         {
-                           plexusContainer = new DefaultPlexusContainer();
+                           ContainerConfiguration config = new DefaultContainerConfiguration().setAutoWiring(true);
+                           plexusContainer = new DefaultPlexusContainer(config);
                            ConsoleLoggerManager loggerManager = new ConsoleLoggerManager();
                            loggerManager.setThreshold("ERROR");
                            ((DefaultPlexusContainer) plexusContainer).setLoggerManager(loggerManager);
