@@ -62,7 +62,7 @@ public class IgnoreEofKeyListener implements KeyListener
          }
          else
          {
-            shell.print("exit");
+            shell.println("exit");
             shutdown.fire(new Shutdown(Status.NORMAL));
          }
          return true;

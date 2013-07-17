@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import org.fusesource.jansi.internal.WindowsSupport;
 import org.jboss.forge.shell.util.OSUtils;
 
 /**
@@ -28,7 +29,7 @@ public class ConsoleInputSession
     * awaiting termination during an internal restart of Forge, and another reader thread would have just started but
     * would be awaiting the lock on System.in.
     */
-   private static final ArrayBlockingQueue<String> blockingQueue = new ArrayBlockingQueue<String>(1000);
+   private static final ArrayBlockingQueue<Integer> blockingQueue = new ArrayBlockingQueue<Integer>(1000);
 
    private volatile boolean connected;
 
@@ -39,23 +40,17 @@ public class ConsoleInputSession
 
       this.externalInputStream = new InputStream()
       {
-         private String b;
-         private int c;
+         private Integer b;
 
          @Override
          public int read() throws IOException
          {
             try
             {
-               if (b == null || c == b.length())
-               {
-                  b = blockingQueue.poll(365, TimeUnit.DAYS);
-                  c = 0;
-               }
-               
+               b = blockingQueue.poll(365, TimeUnit.DAYS);
                if (b != null)
                {
-                  return b.charAt(c++);
+                  return b;
                }
             }
             catch (InterruptedException e)
@@ -71,47 +66,25 @@ public class ConsoleInputSession
 
    private void startReader()
    {
-      Thread readerThread = new Thread()
+      Thread readerThread = null;
+      if (OSUtils.isWindows())
       {
-         @Override
-         public void run()
-         {
-            while (connected)
-            {
-               try
-               {
-                  byte[] bBuf = new byte[20];
-                  int read = consoleStream.read(bBuf);
-
-                  if (read > 0)
-                  {
-                     blockingQueue.put(new String(bBuf, 0, read));
-                  }
-
-                  Thread.sleep(10);
-               }
-               catch (IOException e)
-               {
-                  if (connected)
-                  {
-                     connected = false;
-                     throw new RuntimeException("broken pipe");
-                  }
-               }
-               catch (InterruptedException e)
-               {
-                  //
-               }
-            }
-         }
-      };
-
+         readerThread = new WindowsReaderThread();
+      }
+      else
+      {
+         readerThread = new GenericReaderThread();
+      }
+      readerThread.setDaemon(true);
       readerThread.start();
    }
 
    public void interruptPipe()
    {
-      blockingQueue.offer(OSUtils.getLineSeparator());
+      for(byte b : OSUtils.getLineSeparator().getBytes())
+      {
+         blockingQueue.offer((int) b);
+      }
    }
 
    public void stop()
@@ -122,6 +95,69 @@ public class ConsoleInputSession
    public InputStream getExternalInputStream()
    {
       return externalInputStream;
+   }
+
+   /**
+    * The generic reader thread implementation for OSes other than Windows. Relies on reading from System,in with the
+    * terminal having being set to raw mode through stty.
+    */
+   private final class GenericReaderThread extends Thread
+   {
+      @Override
+      public void run()
+      {
+         while (connected)
+         {
+            try
+            {
+               int read = consoleStream.read();
+               blockingQueue.put(read);
+               Thread.sleep(10);
+            }
+            catch (IOException e)
+            {
+               if (connected)
+               {
+                  connected = false;
+                  throw new RuntimeException("broken pipe");
+               }
+            }
+            catch (InterruptedException e)
+            {
+               // Stop reading
+               break;
+            }
+         }
+      }
+   }
+
+   /**
+    * The reader thread for Windows. Delegates to Jansi to obtain the keystrokes since System.in does not provide
+    * keystrokes for arrow keys in a clean way.
+    * 
+    * See FORGE-942: the keystrokes for special events are available via System.in only when some special sequence of
+    * events is triggered, and not in all cases.
+    */
+   private final class WindowsReaderThread extends Thread
+   {
+      @Override
+      public void run()
+      {
+         while (connected)
+         {
+            try
+            {
+               int read = WindowsSupport.readByte();
+               blockingQueue.put(read);
+               Thread.sleep(10);
+            }
+            catch (InterruptedException e)
+            {
+               // Stop reading
+               break;
+            }
+         }
+      }
    }
 
 }

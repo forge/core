@@ -187,10 +187,10 @@ public class OptionValueResolverCompleter implements CommandCompleter
       for (Resource<?> r : new PathspecParser(resourceFactory, shell.getCurrentResource(), val + "*")
                .resolve())
       {
-         // Add result to the results list, and append a '/' if the
+         // Add result to the results list, and append a file separator ('/' or '\\') if the
          // resource has children.
-         String name = ("~".equals(val) ? "~/" : "") + r.getName()
-                  + (r.isFlagSet(ResourceFlag.Node) ? "/" : "");
+         String name = ("~".equals(val) ? "~" + File.separator : "") + r.getName()
+                  + (r.isFlagSet(ResourceFlag.Node) ? File.separator : "");
          results.add(name);
       }
 

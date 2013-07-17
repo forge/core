@@ -104,7 +104,7 @@ public class PathspecParser
       // for windows, support drive letter prefixes here.
       else if (isWindows && path.matches("^[a-zA-Z]{1,1}:(/|\\\\).*"))
       {
-         int idx = path.indexOf(slashChar) + 1;
+         int idx = path.lastIndexOf(slashChar) + 1;
          r = new DirectoryResource(factory, new File(path.substring(0, idx)).getAbsoluteFile());
          cursor = idx;
       }
