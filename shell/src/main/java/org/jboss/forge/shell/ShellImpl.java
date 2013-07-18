@@ -1015,6 +1015,12 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
       }
 
       Ansi ansi = new Ansi();
+      
+      // Handle the darker Window consoles by increasing intensity
+      if(OSUtils.isWindows() && !environment.isEmbedded())
+      {
+         ansi.a(Ansi.Attribute.INTENSITY_BOLD);
+      }
 
       switch (color)
       {
