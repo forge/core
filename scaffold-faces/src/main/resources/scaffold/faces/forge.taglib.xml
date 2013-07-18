@@ -10,5 +10,13 @@
 			java.util.List asList(java.util.Collection)
 		</function-signature>
 	</function>
+    
+    <function>
+        <function-name>display</function-name>
+        <function-class>@{viewPackage}.ViewUtils</function-class>
+        <function-signature>
+            java.lang.String display(java.lang.Object)
+        </function-signature>
+    </function>
 	
 </facelet-taglib>

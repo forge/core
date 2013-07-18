@@ -49,6 +49,8 @@ import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlOutputTe
 import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlSelectOneMenu;
 import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlWidgetBuilder;
 import org.metawidget.statically.faces.component.html.widgetbuilder.Param;
+import org.metawidget.statically.faces.component.html.widgetbuilder.SelectItem;
+import org.metawidget.statically.faces.component.html.widgetbuilder.SelectItems;
 import org.metawidget.statically.faces.component.widgetprocessor.ReadableIdProcessor;
 import org.metawidget.statically.faces.component.widgetprocessor.RequiredAttributeProcessor;
 import org.metawidget.statically.faces.component.widgetprocessor.StandardBindingProcessor;
@@ -89,6 +91,8 @@ public class EntityWidgetBuilder
     */
    
    private static final String PARAMETERIZED_TYPE_PATH = "parameterized-type-path";
+   
+   private static final String SELECT_ITEM = "_item";
 
    /**
     * Current Forge Configuration. Useful to retrieve <code>targetDir</code>.
@@ -195,7 +199,17 @@ public class EntityWidgetBuilder
 
                return outputText;
             }
+            
          }
+      }
+      
+      // Change the labels of the f:selectItems in the h:select widget (when FACES_LOOKUP is present)
+      String facesLookup = attributes.get( FACES_LOOKUP );
+
+      if ( facesLookup != null && !"".equals( facesLookup ) ) {
+         HtmlSelectOneMenu select = new HtmlSelectOneMenu();
+         addSelectItems( select, facesLookup, attributes );
+         return select;
       }
 
       // Render collection tables with links
@@ -368,8 +382,7 @@ public class EntityWidgetBuilder
          String simpleComponentType = ClassUtils.getSimpleName(componentType);
          String controllerName = StringUtils.decapitalize(simpleComponentType);
          select.setConverter(StaticFacesUtils.wrapExpression(controllerName + "Bean.converter"));
-         Map<String, String> emptyAttributes = CollectionUtils.newHashMap();
-         addSelectItems(select, StaticFacesUtils.wrapExpression(controllerName + "Bean.all"), emptyAttributes);
+         addSelectItems(select, StaticFacesUtils.wrapExpression(controllerName + "Bean.all"), attributes);
          panelGrid.getChildren().add(select);
 
          // Create 'Add' button
@@ -573,6 +586,15 @@ public class EntityWidgetBuilder
                            + primaryKeyName));
          link.getChildren().add(param);
          link.getChildren().add(column.getChildren().remove(1));
+         if(columnAttributes.containsKey(FACES_LOOKUP) && columnAttributes.containsKey(REVERSE_PRIMARY_KEY))
+         {
+            StaticHtmlMetawidget output = (StaticHtmlMetawidget) link.getChildren().get(1);
+            String displayExpression = "forgeview:display(" + dataTable.getAttribute("var")
+                     + StringUtils.SEPARATOR_DOT_CHAR
+                     + StringUtils.decapitalize(columnAttributes.get(NAME)) + ")";
+            ((BaseStaticXmlWidget) link).putAdditionalNamespaceURI("forgeview", "http://jboss.org/forge/view");
+            output.setValue(StaticFacesUtils.wrapExpression(displayExpression));
+         }
          if (tableAttributes.get(PARAMETERIZED_TYPE_PATH) != null)
          {
             // Recreate the EL expression. This is done to ensure that correctly nested EL expressions are created for
@@ -628,6 +650,40 @@ public class EntityWidgetBuilder
          }
       }
    }
+   
+   /**
+    * Overrriden to enhance the default f:selectItem widget with more suitable item labels
+    */
+   @Override
+   protected void addSelectItems( HtmlSelectOneMenu select, String valueExpression, Map<String, String> attributes ) {
+
+      // Empty option
+      //
+      // Note: a 'null' value (rather than an empty String') renders an <f:selectItem/> rather
+      // than an <f:selectItem itemValue=""/>. This works out better if the HtmlSelectOneMenu has
+      // a converter, because the empty String may not be a compatible value
+
+      if ( WidgetBuilderUtils.needsEmptyLookupItem( attributes ) ) {
+         addSelectItem( select, null, null );
+      }
+
+      // Add the select items
+
+      SelectItems selectItems = new SelectItems();
+      selectItems.putAttribute("value", valueExpression);
+
+      // For each item to be displayed, set the label to the reverse primary key value
+      if (attributes.containsKey(REVERSE_PRIMARY_KEY))
+      {
+         selectItems.putAttribute("var", SELECT_ITEM);
+         selectItems.putAttribute("itemValue", StaticFacesUtils.wrapExpression(SELECT_ITEM));
+         String displayExpression = "forgeview:display(_item)";
+         ((BaseStaticXmlWidget) selectItems).putAdditionalNamespaceURI("forgeview", "http://jboss.org/forge/view");
+         selectItems.putAttribute("itemLabel", StaticFacesUtils.wrapExpression(displayExpression));
+      }
+
+      select.getChildren().add( selectItems );
+   }
 
    //
    // Private methods
@@ -649,5 +705,14 @@ public class EntityWidgetBuilder
       }
 
       return target;
+   }
+   
+   private void addSelectItem( HtmlSelectOneMenu select, String value, String label ) {
+
+      SelectItem selectItem = new SelectItem();
+      selectItem.putAttribute( "itemLabel", label );
+      selectItem.putAttribute( "itemValue", value );
+
+      select.getChildren().add( selectItem );
    }
 }

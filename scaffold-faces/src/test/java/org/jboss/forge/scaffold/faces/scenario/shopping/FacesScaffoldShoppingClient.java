@@ -109,8 +109,14 @@ public class FacesScaffoldShoppingClient
                   .setSelectedAttribute("3", true);
          page = page.getHtmlElementById("create:customerBeanCustomerOrders:customerBeanCustomerOrdersAdd").click();
          table = (HtmlTable) page.getHtmlElementById("create:customerBeanCustomerOrders");
-         assertTrue( "Address street: Address Street #2, City: Address City #2, zipCode: 0".equals(table.getCellAt(2, 0).getTextContent()) || "Address street: Address Street #3, City: Address City #3, zipCode: 0".equals(table.getCellAt(2, 0).getTextContent() ));
-         assertTrue( "Address street: Address Street #2, City: Address City #2, zipCode: 0".equals(table.getCellAt(3, 0).getTextContent()) || "Address street: Address Street #3, City: Address City #3, zipCode: 0".equals(table.getCellAt(3, 0).getTextContent() ));
+         assertTrue("Address street: Address Street #2, City: Address City #2, zipCode: 0".equals(table.getCellAt(2, 0)
+                  .getTextContent())
+                  || "Address street: Address Street #3, City: Address City #3, zipCode: 0".equals(table
+                           .getCellAt(2, 0).getTextContent()));
+         assertTrue("Address street: Address Street #2, City: Address City #2, zipCode: 0".equals(table.getCellAt(3, 0)
+                  .getTextContent())
+                  || "Address street: Address Street #3, City: Address City #3, zipCode: 0".equals(table
+                           .getCellAt(3, 0).getTextContent()));
          assertTrue(!table.getCellAt(2, 0).getTextContent().equals(table.getCellAt(3, 0).getTextContent()));
 
          page = page.getAnchorByText("Save").click();
