@@ -5,7 +5,6 @@ import java.util.TreeSet;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.addon.manager.AddonManager;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
@@ -23,6 +22,7 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.manager.AddonManager;
 
 public class AddonInstallCommand extends AbstractUICommand implements AddonCommandConstants
 {

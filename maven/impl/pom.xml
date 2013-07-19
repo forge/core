@@ -63,9 +63,8 @@
       </dependency>
 
       <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>addon-manager-spi</artifactId>
-         <classifier>forge-addon</classifier>
+         <groupId>org.jboss.forge.furnace</groupId>
+         <artifactId>furnace-manager-spi</artifactId>
          <scope>provided</scope>
       </dependency>
       <dependency>

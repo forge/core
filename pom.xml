@@ -144,6 +144,7 @@
             <artifactId>furnace-se</artifactId>
             <version>${version.furnace}</version>
          </dependency>
+         
          <dependency>
             <groupId>org.jboss.forge</groupId>
             <artifactId>forge-bootstrap</artifactId>
@@ -231,9 +232,34 @@
 
          <!-- Forge Dependencies -->
          <dependency>
+            <groupId>org.jboss.forge.furnace</groupId>
+            <artifactId>furnace-manager</artifactId>
+            <version>${project.version}</version>            
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.furnace</groupId>
+            <artifactId>furnace-manager-api</artifactId>
+            <version>${project.version}</version>            
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.furnace</groupId>
+            <artifactId>furnace-manager-spi</artifactId>
+            <version>${project.version}</version>            
+         </dependency>
+         <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>addon-manager</artifactId>
             <classifier>forge-addon</classifier>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>addon-manager-api</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>addon-manager-impl</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>
@@ -242,11 +268,6 @@
             <classifier>forge-addon</classifier>
             <version>${project.version}</version>
          </dependency>         
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>addon-manager-impl</artifactId>
-            <version>${project.version}</version>
-         </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>dependencies-api</artifactId>
@@ -482,7 +503,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore/>
+                              <ignore />
                            </action>
                         </pluginExecution>
                         <pluginExecution>
@@ -499,7 +520,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore/>
+                              <ignore />
                            </action>
                         </pluginExecution>
                         <pluginExecution>
@@ -516,7 +537,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore/>
+                              <ignore />
                            </action>
                         </pluginExecution>
                         <pluginExecution>
@@ -535,7 +556,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore/>
+                              <ignore />
                            </action>
                         </pluginExecution>
                      </pluginExecutions>

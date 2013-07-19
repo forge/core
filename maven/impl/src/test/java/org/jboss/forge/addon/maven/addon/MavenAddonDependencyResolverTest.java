@@ -12,8 +12,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.hamcrest.CoreMatchers;
-import org.jboss.forge.addon.manager.spi.AddonInfo;
 import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.manager.spi.AddonInfo;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

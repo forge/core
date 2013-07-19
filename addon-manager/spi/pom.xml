@@ -9,6 +9,10 @@
    <artifactId>addon-manager-spi</artifactId>
    <name>Forge - Addon Manager SPI</name>
    <dependencies>
+      <dependency>
+         <groupId>org.jboss.forge.furnace</groupId>
+         <artifactId>furnace-manager-spi</artifactId>
+      </dependency>
       <!-- Furnace Container -->
       <dependency>
          <groupId>org.jboss.forge.furnace</groupId>

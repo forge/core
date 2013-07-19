@@ -10,9 +10,9 @@ package org.jboss.forge.addon.maven.addon;
 import java.io.File;
 import java.util.Set;
 
-import org.jboss.forge.addon.manager.spi.AddonDependencyResolver;
-import org.jboss.forge.addon.manager.spi.AddonInfo;
 import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.manager.spi.AddonDependencyResolver;
+import org.jboss.forge.furnace.manager.spi.AddonInfo;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 
 /**

@@ -32,11 +32,11 @@ import org.eclipse.aether.resolution.DependencyResult;
 import org.eclipse.aether.resolution.VersionRangeRequest;
 import org.eclipse.aether.resolution.VersionRangeResult;
 import org.eclipse.aether.version.Version;
-import org.jboss.forge.addon.manager.spi.AddonDependencyResolver;
-import org.jboss.forge.addon.manager.spi.AddonInfo;
 import org.jboss.forge.addon.maven.MavenContainer;
 import org.jboss.forge.addon.maven.util.MavenRepositories;
 import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.manager.spi.AddonDependencyResolver;
+import org.jboss.forge.furnace.manager.spi.AddonInfo;
 
 /**
  * Maven implementation of the {@link AddonDependencyResolver} used by the AddonManager
