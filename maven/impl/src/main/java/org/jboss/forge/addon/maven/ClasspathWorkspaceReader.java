@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.maven.dependencies;
+package org.jboss.forge.addon.maven;
 
 import java.io.File;
 import java.util.ArrayList;

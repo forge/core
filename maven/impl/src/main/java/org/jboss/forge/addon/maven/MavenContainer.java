@@ -37,7 +37,6 @@ import org.eclipse.aether.repository.RepositoryPolicy;
 import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
 import org.eclipse.aether.util.repository.SimpleResolutionErrorPolicy;
-import org.jboss.forge.addon.maven.dependencies.ClasspathWorkspaceReader;
 
 /**
  * Configures the Maven API for usage inside Furnace
