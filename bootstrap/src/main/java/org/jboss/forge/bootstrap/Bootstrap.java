@@ -17,10 +17,10 @@ import java.util.List;
 import java.util.Properties;
 import java.util.ServiceLoader;
 
-import org.jboss.forge.addon.maven.addon.MavenAddonDependencyResolver;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.manager.impl.AddonManagerImpl;
+import org.jboss.forge.furnace.manager.maven.addon.MavenAddonDependencyResolver;
 import org.jboss.forge.furnace.manager.request.AddonActionRequest;
 import org.jboss.forge.furnace.manager.spi.AddonDependencyResolver;
 import org.jboss.forge.furnace.repositories.AddonRepository;

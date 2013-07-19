@@ -138,16 +138,25 @@
             <artifactId>furnace-se</artifactId>
             <version>${version.furnace}</version>
          </dependency>
-         
          <dependency>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>forge-bootstrap</artifactId>
-            <version>${project.version}</version>
+            <groupId>org.jboss.forge.furnace</groupId>
+            <artifactId>furnace-manager</artifactId>
+            <version>${version.furnace}</version>
          </dependency>
          <dependency>
-            <groupId>org.jboss.forge</groupId>
-            <artifactId>xml-parser</artifactId>
-            <version>${version.xmlparser}</version>
+            <groupId>org.jboss.forge.furnace</groupId>
+            <artifactId>furnace-manager-api</artifactId>
+            <version>${version.furnace}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.furnace</groupId>
+            <artifactId>furnace-manager-spi</artifactId>
+            <version>${version.furnace}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.furnace</groupId>
+            <artifactId>furnace-manager-resolver-maven</artifactId>
+            <version>${version.furnace}</version>
          </dependency>
 
 
@@ -217,20 +226,16 @@
          </dependency>
 
          <!-- Forge Dependencies -->
+
          <dependency>
-            <groupId>org.jboss.forge.furnace</groupId>
-            <artifactId>furnace-manager</artifactId>
-            <version>${project.version}</version>            
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>forge-bootstrap</artifactId>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
-            <groupId>org.jboss.forge.furnace</groupId>
-            <artifactId>furnace-manager-api</artifactId>
-            <version>${project.version}</version>            
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.furnace</groupId>
-            <artifactId>furnace-manager-spi</artifactId>
-            <version>${project.version}</version>            
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>xml-parser</artifactId>
+            <version>${version.xmlparser}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
@@ -253,7 +258,7 @@
             <artifactId>addon-manager-spi</artifactId>
             <classifier>forge-addon</classifier>
             <version>${project.version}</version>
-         </dependency>         
+         </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>dependencies-api</artifactId>
@@ -489,7 +494,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore />
+                              <ignore/>
                            </action>
                         </pluginExecution>
                         <pluginExecution>
@@ -506,7 +511,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore />
+                              <ignore/>
                            </action>
                         </pluginExecution>
                         <pluginExecution>
@@ -523,7 +528,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore />
+                              <ignore/>
                            </action>
                         </pluginExecution>
                         <pluginExecution>
@@ -542,7 +547,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore />
+                              <ignore/>
                            </action>
                         </pluginExecution>
                      </pluginExecutions>
