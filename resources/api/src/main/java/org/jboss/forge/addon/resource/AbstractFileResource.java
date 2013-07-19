@@ -17,6 +17,7 @@ import org.jboss.forge.addon.resource.events.ResourceRenamed;
 import org.jboss.forge.addon.resource.events.TempResourceCreated;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
+import org.jboss.forge.furnace.util.Streams;
 
 /**
  * A standard, built-in resource for representing files on the filesystem.
@@ -52,11 +53,6 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
       return getFullyQualifiedName();
    }
 
-   /**
-    * Get the actual underlying file resource that this resource instance represents, whether existing or non-existing.
-    * 
-    * @return An instance of {@link File}
-    */
    @Override
    public File getUnderlyingResourceObject()
    {
@@ -76,11 +72,6 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
       }
    }
 
-   /**
-    * Get the parent of the current resource. Returns null if the current resource is the project root.
-    * 
-    * @return An instance of the resource parent.
-    */
    @Override
    public DirectoryResource getParent()
    {
@@ -110,39 +101,24 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
       return getUnderlyingResourceObject().exists();
    }
 
-   /**
-    * Return true if this {@link AbstractFileResource} exists and is actually a directory, otherwise return false;
-    */
    @Override
    public boolean isDirectory()
    {
       return file.isDirectory();
    }
 
-   /**
-    * Returns true if the underlying resource has been modified on the file system since it was initially loaded.
-    * 
-    * @return boolean true if resource is changed.
-    */
    @Override
    public boolean isStale()
    {
       return lastModification != getUnderlyingResourceObject().lastModified();
    }
 
-   /**
-    * Re-read the last modified timestamp for this resource.
-    */
    @Override
    public void markUpToDate()
    {
       lastModification = getUnderlyingResourceObject().lastModified();
    }
 
-   /**
-    * Create a new single directory for this resource. This will not succeed if any parent directories needed for this
-    * resource to exist are missing. You should consider using {@link #mkdirs()}
-    */
    @Override
    public boolean mkdir()
    {
@@ -154,9 +130,6 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
       return false;
    }
 
-   /**
-    * Create all directories required for this resource to exist.
-    */
    @Override
    public boolean mkdirs()
    {
@@ -168,18 +141,12 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
       return false;
    }
 
-   /**
-    * Delete this file, non-recursively.
-    */
    @Override
    public boolean delete()
    {
       return delete(false);
    }
 
-   /**
-    * Delete this {@link Resource}, and all child resources.
-    */
    @Override
    public boolean delete(final boolean recursive)
    {
@@ -211,12 +178,6 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
       return false;
    }
 
-   /**
-    * Requests that the file or directory denoted by this resource be deleted when the virtual machine terminates.
-    * <p>
-    * Once deletion has been requested, it is not possible to cancel the request. This method should therefore be used
-    * with care.
-    */
    @Override
    public void deleteOnExit()
    {
@@ -257,9 +218,20 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
       return file.delete();
    }
 
-   /**
-    * Set the contents of this {@link AbstractFileResource} to the given {@link String}
-    */
+   @Override
+   public String getContents()
+   {
+      InputStream stream = getResourceInputStream();
+      try
+      {
+         return Streams.toString(stream);
+      }
+      finally
+      {
+         Streams.closeQuietly(stream);
+      }
+   }
+
    @Override
    public T setContents(String data)
    {
@@ -270,9 +242,6 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
       return setContents(data.toCharArray());
    }
 
-   /**
-    * Set the contents of this {@link AbstractFileResource} to the given character array.
-    */
    @Override
    public T setContents(final char[] data)
    {
@@ -281,9 +250,6 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
 
    @Override
    @SuppressWarnings("unchecked")
-   /**
-    * Set the contents of this {@link FileResource} to the contents of the given {@link InputStream}.
-    */
    public T setContents(final InputStream data)
    {
       Assert.notNull(data, "InputStream must not be null.");
@@ -334,9 +300,6 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
       return (T) this;
    }
 
-   /**
-    * Create the file in the underlying resource system. Necessary directory paths will be created automatically.
-    */
    @Override
    public boolean createNewFile()
    {
@@ -361,9 +324,6 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
 
    @Override
    @SuppressWarnings("unchecked")
-   /**
-    * Create a temporary {@link FileResource}
-    */
    public T createTempResource()
    {
       try
@@ -393,27 +353,18 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
       }
    }
 
-   /**
-    * Rename this resource to the given path.
-    */
    @Override
    public boolean renameTo(final String pathspec)
    {
       return renameTo(new File(pathspec));
    }
 
-   /**
-    * Rename this resource to the given {@link AbstractFileResource}
-    */
    @Override
    public boolean renameTo(final FileResource<?> target)
    {
       return renameTo(target.getUnderlyingResourceObject());
    }
 
-   /**
-    * Rename this resource to the given {@link File} name.
-    */
    private boolean renameTo(final File target)
    {
       File original = file.getAbsoluteFile();

@@ -9,7 +9,6 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.resource.FileResourceImpl;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -179,6 +178,24 @@ public class FileResourceGeneratorTest
       Assert.assertTrue(child.createNewFile());
       Assert.assertTrue(child.renameTo(child2));
       Assert.assertEquals(child.getFullyQualifiedName(), child2.getFullyQualifiedName());
+   }
+
+   @Test
+   public void testGetSetContents() throws Exception
+   {
+      File file = File.createTempFile("forge", "testFileReadWrite");
+      file.deleteOnExit();
+
+      FileOutputStream fos = new FileOutputStream(file);
+      Streams.write(new ByteArrayInputStream("READ".getBytes()), fos);
+      fos.close();
+
+      FileResource<?> fileResource = factory.create(file).reify(FileResource.class);
+
+      Assert.assertEquals("READ", fileResource.getContents());
+      fileResource.setContents("WRITE");
+      Assert.assertEquals("WRITE", fileResource.getContents());
+      file.delete();
    }
 
 }
