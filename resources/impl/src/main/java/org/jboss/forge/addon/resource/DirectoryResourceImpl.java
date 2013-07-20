@@ -9,19 +9,15 @@ package org.jboss.forge.addon.resource;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.jboss.forge.addon.resource.AbstractFileResource;
-import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.addon.resource.ResourceException;
-import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 
 /**
  * A standard, build-in, resource for representing directories on the file-system.
- *
+ * 
  * @author Mike Brock
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -197,4 +193,27 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
       throw new UnsupportedOperationException("getSize not supported for DirectoryResource objects");
    }
 
+   @Override
+   public DirectoryResource setContents(char[] data)
+   {
+      throw new UnsupportedOperationException("setContents(char[]) is not supported on DirectoryResource objects");
+   }
+
+   @Override
+   public DirectoryResource setContents(InputStream data)
+   {
+      throw new UnsupportedOperationException("setContents(InputStream) is not supported on DirectoryResource objects");
+   }
+
+   @Override
+   public DirectoryResource setContents(String data)
+   {
+      throw new UnsupportedOperationException("setContents(String) is not supported on DirectoryResource objects");
+   }
+
+   @Override
+   public String getContents()
+   {
+      throw new UnsupportedOperationException("getContents() is not supported on DirectoryResource objects");
+   }
 }
