@@ -179,7 +179,7 @@ public class MavenContainer
       session.setLocalRepositoryManager(repoSystem.newLocalRepositoryManager(session, localRepo));
       session.setChecksumPolicy(RepositoryPolicy.CHECKSUM_POLICY_IGNORE);
       session.setCache(new DefaultRepositoryCache());
-      session.setResolutionErrorPolicy(new SimpleResolutionErrorPolicy(true, true));
+      session.setResolutionErrorPolicy(new SimpleResolutionErrorPolicy(false, true));
       session.setWorkspaceReader(new ClasspathWorkspaceReader());
       return session;
    }
