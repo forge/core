@@ -16,6 +16,13 @@
          <scope>test</scope>
       </dependency>
       <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>resources</artifactId>
+         <classifier>forge-addon</classifier>
+         <version>${project.version}</version>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
          <groupId>org.jboss.forge.furnace</groupId>
          <artifactId>container-cdi</artifactId>
          <classifier>forge-addon</classifier>
