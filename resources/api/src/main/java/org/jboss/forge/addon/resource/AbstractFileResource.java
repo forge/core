@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 
 import org.jboss.forge.addon.resource.events.ResourceCreated;
 import org.jboss.forge.addon.resource.events.ResourceDeleted;
@@ -233,6 +234,20 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
    }
 
    @Override
+   public String getContents(Charset charset)
+   {
+      InputStream stream = getResourceInputStream();
+      try
+      {
+         return Streams.toString(stream, charset);
+      }
+      finally
+      {
+         Streams.closeQuietly(stream);
+      }
+   }
+
+   @Override
    public T setContents(String data)
    {
       if (data == null)
@@ -240,6 +255,22 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
          data = "";
       }
       return setContents(data.toCharArray());
+   }
+
+   @Override
+   public T setContents(String data, Charset charset)
+   {
+      if (data == null)
+      {
+         data = "";
+      }
+      return setContents(data.toCharArray(), charset);
+   }
+
+   @Override
+   public T setContents(char[] data, Charset charset)
+   {
+      return setContents(new ByteArrayInputStream(new String(data).getBytes(charset)));
    }
 
    @Override

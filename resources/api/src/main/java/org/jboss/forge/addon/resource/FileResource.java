@@ -2,6 +2,7 @@ package org.jboss.forge.addon.resource;
 
 import java.io.File;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 
 /**
  * A standard, built-in resource for representing files on the filesystem.
@@ -48,19 +49,34 @@ public interface FileResource<T extends FileResource<T>> extends Resource<File>
    public void deleteOnExit();
 
    /**
-    * Get the entire contents of this {@link FileResource}, returned as a {@link String}.
+    * Get the entire contents of this {@link FileResource}, returned as a {@link String} using UTF-8 encoding.
     */
    public String getContents();
 
    /**
-    * Set the contents of this {@link FileResource} to the given {@link String}
+    * Get the entire contents of this {@link FileResource}, returned as a {@link String} using the specified encoding.
+    */
+   public String getContents(Charset charset);
+
+   /**
+    * Set the contents of this {@link FileResource} to the given {@link String} using UTF-8 encoding.
     */
    public T setContents(String data);
 
    /**
-    * Set the contents of this {@link FileResource} to the given character array.
+    * Set the contents of this {@link FileResource} to the given {@link String} using the specified encoding.
+    */
+   public T setContents(String data, Charset charset);
+   
+   /**
+    * Set the contents of this {@link FileResource} to the given character array using UTF-8 encoding.
     */
    public T setContents(final char[] data);
+
+   /**
+    * Set the contents of this {@link FileResource} to the given character array using the specified encoding.
+    */
+   public T setContents(final char[] data, Charset charset);
 
    /**
     * Set the contents of this {@link FileResource} to the contents of the given {@link InputStream}.

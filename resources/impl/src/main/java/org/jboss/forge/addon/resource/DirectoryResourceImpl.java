@@ -10,6 +10,7 @@ package org.jboss.forge.addon.resource;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -215,5 +216,26 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
    public String getContents()
    {
       throw new UnsupportedOperationException("getContents() is not supported on DirectoryResource objects");
+   }
+
+   @Override
+   public DirectoryResource setContents(char[] data, Charset charset)
+   {
+      throw new UnsupportedOperationException(
+               "setContents(char[], Charset) is not supported on DirectoryResource objects");
+   }
+
+   @Override
+   public DirectoryResource setContents(String data, Charset charset)
+   {
+      throw new UnsupportedOperationException(
+               "setContents(String, Charset) is not supported on DirectoryResource objects");
+   }
+
+   @Override
+   public String getContents(Charset charset)
+   {
+      throw new UnsupportedOperationException(
+               "getContents(Charset) is not supported on DirectoryResource objects");
    }
 }
