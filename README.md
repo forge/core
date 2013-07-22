@@ -176,13 +176,13 @@ Add User Inputs to your Addon
 
 If your wizard contains a single page, implement UICommand, otherwise, UIWizard
   
-Restart Forge Container inside Eclipse
+Install your Addon
 ----------------------------------------------------------------------------------
  
- If you need to restart the forge container running inside eclipse:
- 
- - Open the Plug-in Registry view
- - In the pull down menu, check the 'Show Advanced Operations'
- - Choose the plugin named 'org.jboss.tools.forge.core.ext'
- - Right-click on it and select 'Stop' and then 'Start'
- 
+Depending on the Forge environment in which you are running, installation steps will differ. 
+
+For Eclipse:
+* Open the Forge quick-assist menu, select either "Build and install an Addon" or "Install an addon" to build and install your project, or install a pre-built maven artifact.
+
+For the Shell:
+* Make sure that you have run a `mvn install` prior to executing `forge --install artifactId:groupId:version` on the native system terminal command line.
