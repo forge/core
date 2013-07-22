@@ -104,7 +104,19 @@ Forge Addons must be packaged with a 'forge-addon' classifier. Add this plugin c
     </build>
 ```
 
-To expose services in your Addon for injection and service lookups in other addons, your types must be annotated with **@Exported**: 
+Use the Forge CDI Container
+
+In order to use CDI in your addon, you need to reference the Furnace CDI container addon in your `pom.xml` file.
+```
+<dependency>
+   <groupId>org.jboss.forge.furnace</groupId>
+   <artifactId>container-cdi</artifactId>
+   <classifier>forge-addon</classifier>
+   <scope>provided</scope>
+</dependency>
+```
+
+Once this is done, to expose services in your Addon for injection and service lookups in other addons, your types must be annotated with **@Exported**: 
 ```java
     @Exported
     public class ServiceImpl
@@ -157,7 +169,6 @@ Add User Inputs to your Addon
          <groupId>org.jboss.forge</groupId>
          <artifactId>ui</artifactId>
          <classifier>forge-addon</classifier>
-         <version>2.0.0.Alpha6</version>
       </dependency>
 ```
 
