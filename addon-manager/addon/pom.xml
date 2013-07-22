@@ -22,6 +22,17 @@
          <artifactId>addon-manager-impl</artifactId>
          <scope>runtime</scope>
       </dependency>
+      
+      <dependency>
+         <groupId>org.jboss.forge.furnace</groupId>
+         <artifactId>furnace-manager-resolver-maven</artifactId>
+         <exclusions>
+            <exclusion>
+               <groupId>org.jboss.forge.furnace</groupId>
+               <artifactId>furnace-manager-spi</artifactId>
+            </exclusion>
+         </exclusions>
+      </dependency>
 
       <!-- Addon Dependencies -->
       <dependency>
