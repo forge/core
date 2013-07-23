@@ -115,7 +115,7 @@ public class ConsoleInputSession
             {
                int read = consoleStream.read();
                blockingQueue.put(read);
-               Thread.sleep(10);
+               Thread.yield();
             }
             catch (IOException e)
             {
@@ -152,7 +152,7 @@ public class ConsoleInputSession
             {
                int read = WindowsSupport.readByte();
                blockingQueue.put(read);
-               Thread.sleep(10);
+               Thread.yield();
             }
             catch (InterruptedException e)
             {
