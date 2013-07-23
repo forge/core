@@ -22,7 +22,7 @@
          <artifactId>addon-manager-impl</artifactId>
          <scope>runtime</scope>
       </dependency>
-      
+
       <!-- Addon Dependencies -->
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
@@ -36,7 +36,7 @@
          <classifier>forge-addon</classifier>
          <optional>true</optional>
       </dependency>
-      
+
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>addon-manager-spi</artifactId>

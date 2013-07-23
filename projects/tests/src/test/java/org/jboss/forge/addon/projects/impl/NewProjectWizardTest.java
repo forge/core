@@ -28,7 +28,6 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.furnace.util.Files;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -59,7 +58,7 @@ public class NewProjectWizardTest
 
    @Inject
    private NewProjectWizard command;
-   
+
    @Inject
    private NewProjectWizard command2;
 
@@ -141,7 +140,7 @@ public class NewProjectWizardTest
       }
       finally
       {
-         Files.delete(tempDir, true);
+         tempDir.delete();
       }
    }
 
@@ -191,7 +190,7 @@ public class NewProjectWizardTest
       }
       finally
       {
-         Files.delete(tempDir, true);
+         tempDir.delete();
       }
    }
 }

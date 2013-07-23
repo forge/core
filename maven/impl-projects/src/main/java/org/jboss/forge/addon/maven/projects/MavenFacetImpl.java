@@ -44,7 +44,6 @@ import org.eclipse.aether.util.repository.DefaultMirrorSelector;
 import org.eclipse.aether.util.repository.DefaultProxySelector;
 import org.jboss.forge.addon.environment.Environment;
 import org.jboss.forge.addon.facets.AbstractFacet;
-import org.jboss.forge.addon.maven.MavenContainer;
 import org.jboss.forge.addon.maven.environment.Network;
 import org.jboss.forge.addon.maven.projects.util.NativeSystemCall;
 import org.jboss.forge.addon.maven.projects.util.RepositoryUtils;
@@ -53,6 +52,7 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
+import org.jboss.forge.furnace.manager.maven.MavenContainer;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 
 /**
@@ -133,7 +133,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
          }
          request.setRemoteRepositories(settingsRepos);
          request.setSystemProperties(System.getProperties());
-         
+
          DefaultRepositorySystemSession repositorySession = MavenRepositorySystemUtils.newSession();
          Proxy activeProxy = settings.getActiveProxy();
          if (activeProxy != null)

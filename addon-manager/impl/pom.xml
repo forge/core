@@ -21,24 +21,28 @@
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>addon-manager-api</artifactId>
+         <scope>provided</scope>
       </dependency>
-      
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>addon-manager-spi</artifactId>
+         <classifier>forge-addon</classifier>
+         <scope>provided</scope>
+      </dependency>
+
       <dependency>
          <groupId>org.jboss.forge.furnace</groupId>
          <artifactId>furnace-manager</artifactId>
          <exclusions>
             <exclusion>
                <groupId>org.jboss.forge.furnace</groupId>
+               <artifactId>furnace-manager-api</artifactId>
+            </exclusion>
+            <exclusion>
+               <groupId>org.jboss.forge.furnace</groupId>
                <artifactId>furnace-manager-spi</artifactId>
             </exclusion>
          </exclusions>
-      </dependency>
-
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>addon-manager-spi</artifactId>
-         <classifier>forge-addon</classifier>
-         <scope>provided</scope>
       </dependency>
 
       <dependency>
