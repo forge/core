@@ -9,15 +9,22 @@
 
    <artifactId>maven-impl</artifactId>
    <name>Forge - Maven Impl</name>
-   <properties>
-      <aether.version>0.9.0.M2</aether.version>
-   </properties>
 
    <dependencies>
       <dependency>
          <groupId>org.jboss.forge.furnace</groupId>
          <artifactId>container-cdi-api</artifactId>
          <scope>provided</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.furnace</groupId>
+         <artifactId>furnace-manager-resolver-maven</artifactId>
+         <exclusions>
+            <exclusion>
+               <groupId>org.jboss.forge.furnace</groupId>
+               <artifactId>furnace-manager-spi</artifactId>
+            </exclusion>
+         </exclusions>
       </dependency>
 
       <dependency>
@@ -28,38 +35,6 @@
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>maven-api</artifactId>
-      </dependency>
-
-      <!-- Aether -->
-      <dependency>
-         <groupId>org.apache.maven</groupId>
-         <artifactId>maven-aether-provider</artifactId>
-         <version>3.1.0</version>
-      </dependency>
-      <dependency>
-         <groupId>org.eclipse.aether</groupId>
-         <artifactId>aether-connector-file</artifactId>
-         <version>${aether.version}</version>
-      </dependency>
-      <dependency>
-         <groupId>org.eclipse.aether</groupId>
-         <artifactId>aether-connector-wagon</artifactId>
-         <version>${aether.version}</version>
-      </dependency>
-      <dependency>
-         <groupId>org.apache.maven.wagon</groupId>
-         <artifactId>wagon-http-lightweight</artifactId>
-         <version>2.4</version>
-      </dependency>
-      <dependency>
-         <groupId>org.apache.maven.wagon</groupId>
-         <artifactId>wagon-file</artifactId>
-         <version>2.4</version>
-      </dependency>
-      <dependency>
-         <groupId>org.apache.maven</groupId>
-         <artifactId>maven-settings-builder</artifactId>
-         <version>${version.maven}</version>
       </dependency>
 
       <dependency>
