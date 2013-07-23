@@ -126,7 +126,8 @@ public class PrimaryKeyFacesScaffoldTest extends AbstractFacesScaffoldTest
                .append("<h:selectOneMenu converter=\"#{stateBean.converter}\" id=\"parentBeanExampleState\" value=\"#{parentBean.example.state}\">")
                .append(CRLF);
       metawidget.append("\t\t\t\t\t\t\t\t").append("<f:selectItem/>").append(CRLF);
-      metawidget.append("\t\t\t\t\t\t\t\t").append("<f:selectItems value=\"#{stateBean.all}\"/>").append(CRLF);
+      metawidget.append("\t\t\t\t\t\t\t\t").append("<f:selectItems itemLabel=\"#{forgeview:display(_item)}\" " +
+               "itemValue=\"#{_item}\" value=\"#{stateBean.all}\" var=\"_item\"/>").append(CRLF);
       metawidget.append("\t\t\t\t\t\t\t").append("</h:selectOneMenu>").append(CRLF);
       metawidget.append("\t\t\t\t\t\t\t").append("<h:message for=\"parentBeanExampleState\" styleClass=\"error\"/>")
                .append(CRLF);
@@ -163,7 +164,8 @@ public class PrimaryKeyFacesScaffoldTest extends AbstractFacesScaffoldTest
                .append("\t\t\t\t\t")
                .append("<h:selectOneMenu converter=\"#{stateBean.converter}\" id=\"parentBeanParentState\" required=\"true\" value=\"#{parentBean.parent.state}\">")
                .append(CRLF);
-      metawidget.append("\t\t\t\t\t\t").append("<f:selectItems value=\"#{stateBean.all}\"/>").append(CRLF);
+      metawidget.append("\t\t\t\t\t\t").append("<f:selectItems itemLabel=\"#{forgeview:display(_item)}\" " +
+               "itemValue=\"#{_item}\" value=\"#{stateBean.all}\" var=\"_item\"/>").append(CRLF);
       metawidget.append("\t\t\t\t\t").append("</h:selectOneMenu>").append(CRLF);
       metawidget.append("\t\t\t\t\t").append("<h:message for=\"parentBeanParentState\" styleClass=\"error\"/>")
                .append(CRLF);

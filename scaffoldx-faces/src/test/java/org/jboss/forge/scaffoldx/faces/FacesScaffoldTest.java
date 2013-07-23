@@ -744,7 +744,7 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
                .append("<h:selectOneMenu converter=\"#{employerBean.converter}\" id=\"customerBeanCustomerEmployer\" value=\"#{customerBean.customer.employer}\">")
                .append(CRLF);
       metawidget.append("\t\t\t\t\t\t").append("<f:selectItem/>").append(CRLF);
-      metawidget.append("\t\t\t\t\t\t").append("<f:selectItems value=\"#{employerBean.all}\"/>").append(CRLF);
+      metawidget.append("\t\t\t\t\t\t").append("<f:selectItems itemLabel=\"#{forgeview:display(_item)}\" itemValue=\"#{_item}\" value=\"#{employerBean.all}\" var=\"_item\"/>").append(CRLF);
       metawidget.append("\t\t\t\t\t").append("</h:selectOneMenu>").append(CRLF);
       metawidget.append("\t\t\t\t\t").append("<h:message for=\"customerBeanCustomerEmployer\" styleClass=\"error\"/>")
                .append(CRLF);
@@ -977,7 +977,8 @@ public class FacesScaffoldTest extends AbstractFacesScaffoldTest
                                                    "value=\"#{requestScope['customerBeanCustomerGroceriesSelect']}\">")
                .append(CRLF);
       metawidget.append("\t\t\t\t\t\t\t").append("<f:selectItem/>").append(CRLF);
-      metawidget.append("\t\t\t\t\t\t\t").append("<f:selectItems value=\"#{groceryBean.all}\"/>").append(CRLF);
+      metawidget.append("\t\t\t\t\t\t\t").append("<f:selectItems itemLabel=\"#{forgeview:display(_item)}\" " +
+               "itemValue=\"#{_item}\" value=\"#{groceryBean.all}\" var=\"_item\"/>").append(CRLF);
       metawidget.append("\t\t\t\t\t\t").append("</h:selectOneMenu>").append(CRLF);
       metawidget
                .append("\t\t\t\t\t\t")

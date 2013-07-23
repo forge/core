@@ -105,7 +105,7 @@ public class FacesScaffoldPetClinicTest extends AbstractFacesScaffoldTest
 
       metawidget = "\t\t\t\t\t<h:link outcome=\"/" + targetDir + "/pet/view\">\r\n";
       metawidget += "\t\t\t\t\t\t<f:param name=\"id\" value=\"#{_item.id}\"/>\r\n";
-      metawidget += "\t\t\t\t\t\t<h:outputText id=\"itemOwner\" value=\"#{_item.owner}\"/>\r\n";
+      metawidget += "\t\t\t\t\t\t<h:outputText id=\"forgeviewdisplayitemOwner\" value=\"#{forgeview:display(_item.owner)}\"/>\r\n";
       metawidget += "\t\t\t\t\t</h:link>\r\n";
 
       Assert.assertTrue(contents.contains(metawidget));
