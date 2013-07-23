@@ -312,14 +312,22 @@ public class PathspecParser
    {
       int start = cursor;
 
-      // capture can start with a '/'
-      if (path.charAt(cursor) == '/')
+      // capture can start with a '/' or '\\' (the latter on Windows only)
+      if (path.charAt(cursor) == '/' || (OSUtils.isWindows() && path.charAt(cursor) == '\\'))
       {
          cursor++;
       }
 
-      while ((cursor < length) && (path.charAt(cursor) != '/'))
+      while ((cursor < length))
       {
+         if (OSUtils.isWindows() && path.charAt(cursor) == '\\')
+         {
+            break;
+         }
+         if (path.charAt(cursor) == '/')
+         {
+            break;
+         }
          cursor++;
       }
 
