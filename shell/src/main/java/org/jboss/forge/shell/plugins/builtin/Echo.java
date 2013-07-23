@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.shell.plugins.builtin;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -96,7 +97,7 @@ public class Echo implements Plugin
                case 'W':
                   builder.append(new String(expr, start, i - start - 1));
                   String v = (String) shell.getEnvironment().getProperty("CWD");
-                  builder.append(v.substring(v.lastIndexOf('/') + 1));
+                  builder.append(v.substring(v.lastIndexOf(File.separator) + 1));
                   start = i + 1;
                   break;
 

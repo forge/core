@@ -27,6 +27,7 @@ import org.jboss.forge.shell.command.OptionMetadata;
 import org.jboss.forge.shell.command.parser.CommandParserContext;
 import org.jboss.forge.shell.util.BeanManagerUtils;
 import org.jboss.forge.shell.util.JavaPathspecParser;
+import org.jboss.forge.shell.util.OSUtils;
 import org.jboss.forge.shell.util.PathspecParser;
 
 public class OptionValueResolverCompleter implements CommandCompleter
@@ -194,7 +195,9 @@ public class OptionValueResolverCompleter implements CommandCompleter
          results.add(name);
       }
 
-      int lastNest = val.lastIndexOf(File.separatorChar);
+      int lastForwardSlash = val.lastIndexOf('/');
+      int lastBackslash = OSUtils.isWindows() ? val.lastIndexOf('\\') : -1;
+      int lastNest = Math.max(lastForwardSlash, lastBackslash);
 
       // Record the current index point in the buffer. If we're at
       // the separator char
