@@ -35,12 +35,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * FIXME This test needs to be refactored to be a bit less brittle. It breaks when addon POMs change.
+ * Addon Manager installation tests
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @RunWith(Arquillian.class)
-public class AddonInstancesAreSingletonsTest
+public class AddonManagerTest
 {
    @BeforeClass
    public static void setRemoteRepository() throws IOException
@@ -90,7 +90,7 @@ public class AddonInstancesAreSingletonsTest
    private AddonManager addonManager;
 
    @Test
-   public void testInstallingAddonWithSingleOptionalAddonDependency() throws InterruptedException, TimeoutException
+   public void testInstallingAddonWithNoDependency() throws InterruptedException, TimeoutException
    {
       int addonCount = registry.getAddons().size();
       final AddonId exampleId = AddonId.fromCoordinates("test:no_dep,1.0.0.Final");
