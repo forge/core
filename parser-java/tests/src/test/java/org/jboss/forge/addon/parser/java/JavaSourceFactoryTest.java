@@ -46,7 +46,7 @@ public class JavaSourceFactoryTest
    @Test
    public void testJavaResourceCreation() throws Exception
    {
-      JavaClass javaClass = factory.create(JavaClass.class).setPackage("org.jboss.forge.test").setName("Example");
+      JavaClass javaClass = factory.create(JavaClass.class).setPackage("org.jboss.forge.furnace.test").setName("Example");
       Assert.assertEquals(0, javaClass.getMembers().size());
    }
 }
