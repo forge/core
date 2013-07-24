@@ -164,19 +164,19 @@
          <dependency>
             <groupId>org.jboss.forge.furnace.test</groupId>
             <artifactId>furnace-test-harness</artifactId>
-            <version>${project.version}</version>
+            <version>${version.furnace}</version>
             <scope>test</scope>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.furnace.test</groupId>
             <artifactId>arquillian-furnace-classpath</artifactId>
-            <version>${project.version}</version>
+            <version>${version.furnace}</version>
             <scope>test</scope>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.furnace.test</groupId>
             <artifactId>arquillian-forge-core</artifactId>
-            <version>${project.version}</version>
+            <version>${version.furnace}</version>
             <scope>test</scope>
          </dependency>
 

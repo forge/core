@@ -21,7 +21,6 @@
       <module>tests</module>
    </modules>
 
-
    <dependencyManagement>
       <dependencies>
          <dependency>
@@ -43,19 +42,19 @@
          <dependency>
             <groupId>org.jboss.forge.furnace</groupId>
             <artifactId>furnace-manager-api</artifactId>
-            <version>${project.version}</version>
+            <version>${version.furnace}</version>
          </dependency>
 
          <dependency>
             <groupId>org.jboss.forge.furnace</groupId>
             <artifactId>furnace-manager-spi</artifactId>
-            <version>${project.version}</version>
+            <version>${version.furnace}</version>
          </dependency>
 
          <dependency>
             <groupId>org.jboss.forge.furnace</groupId>
             <artifactId>furnace-manager</artifactId>
-            <version>${project.version}</version>
+            <version>${version.furnace}</version>
          </dependency>
 
          <dependency>
