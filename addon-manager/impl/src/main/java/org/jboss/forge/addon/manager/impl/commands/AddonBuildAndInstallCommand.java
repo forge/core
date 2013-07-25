@@ -23,6 +23,8 @@ import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.manager.AddonManager;
+import org.jboss.forge.furnace.manager.request.InstallRequest;
+import org.jboss.forge.furnace.manager.request.RemoveRequest;
 import org.jboss.forge.furnace.util.Addons;
 
 public class AddonBuildAndInstallCommand extends AbstractUICommand implements AddonCommandConstants
@@ -85,9 +87,11 @@ public class AddonBuildAndInstallCommand extends AbstractUICommand implements Ad
       try
       {
          AddonId id = AddonId.from(coordinate.getGroupId() + ":" + coordinate.getArtifactId(), coordinate.getVersion());
-         addonManager.remove(id).perform();
+         RemoveRequest removeRequest = addonManager.remove(id);
+         removeRequest.perform();
          Addons.waitUntilStopped(registry.getAddon(id));
-         addonManager.install(id).perform();
+         InstallRequest installRequest = addonManager.install(id);
+         installRequest.perform();
          return Results.success("Addon " + coordinate.toString() + " was installed succesfully.");
       }
       catch (Throwable t)
