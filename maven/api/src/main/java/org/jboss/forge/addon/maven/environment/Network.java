@@ -25,6 +25,6 @@ public class Network implements Category
     */
    public static boolean isOffline(Environment environment)
    {
-      return environment.get(Network.class).containsKey(OFFLINE) == false;
+      return environment.get(Network.class).containsKey(OFFLINE);
    }
 }
