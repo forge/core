@@ -96,7 +96,7 @@ public class AddonProjectConfiguratorTest
       Assert.assertTrue(implProject.hasFacet(JavaSourceFacet.class));
       Assert.assertTrue(spiProject.hasFacet(JavaSourceFacet.class));
       Assert.assertTrue(testsProject.hasFacet(JavaSourceFacet.class));
-      
+
       Assert.assertFalse(addonProject.hasFacet(JavaSourceFacet.class));
       Assert.assertTrue(apiProject.hasFacet(CDIFacet.class));
       Assert.assertTrue(implProject.hasFacet(CDIFacet.class));
@@ -270,12 +270,17 @@ public class AddonProjectConfiguratorTest
 
       Assert.assertTrue(project.hasFacet(ForgeContainerAddonFacet.class));
       Assert.assertTrue(project.hasFacet(JavaSourceFacet.class));
+      Assert.assertTrue(project.hasFacet(CDIFacet.class));
 
       Assert.assertFalse(project.getFacet(DependencyFacet.class).getManagedDependencies().isEmpty());
       Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectDependency(
                ForgeContainerAddonFacet.FORGE_CONTAINER_DEPENDENCY));
+      Assert.assertNull(project.getFacet(DependencyFacet.class).getDirectDependency(
+               ForgeContainerAddonFacet.FORGE_CONTAINER_DEPENDENCY).getCoordinate().getVersion());
       Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(
                ForgeContainerAddonFacet.FORGE_CONTAINER_DEPENDENCY));
+      Assert.assertNotNull(project.getFacet(DependencyFacet.class).getDirectManagedDependency(
+               ForgeContainerAddonFacet.FORGE_CONTAINER_DEPENDENCY).getCoordinate().getVersion());
       Assert.assertFalse(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(
                ForgeContainerAPIFacet.FORGE_CONTAINER_API_DEPENDENCY));
 

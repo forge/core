@@ -309,7 +309,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    }
 
    @Override
-   public Dependency getManagedDependency(final Dependency manDep)
+   public Dependency getDirectManagedDependency(final Dependency manDep)
    {
       MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
       Model pom = maven.getPOM();

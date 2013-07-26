@@ -93,7 +93,7 @@ public class DependencyInstallerImpl implements DependencyInstaller
                         + dependency.getCoordinate() + "].");
             }
          }
-         return updateAll(deps, toInstall, toInstall);
+         return updateAll(deps, toInstall, unversioned);
       }
    }
 

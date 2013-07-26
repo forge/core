@@ -114,7 +114,7 @@ public interface DependencyFacet extends ProjectFacet
     * <p/>
     * <b>Notice:</b> This method checks the entire project managed dependency structure, meaning that if a managed
     * dependency is declared somewhere else in the hierarchy, it will not be detected by
-    * {@link #getManagedDependency(Dependency)} and will not be removable via
+    * {@link #getDirectManagedDependency(Dependency)} and will not be removable via
     * {@link #removeManagedDependency(Dependency)}.
     */
    public Dependency getEffectiveManagedDependency(Dependency manDep);
@@ -132,7 +132,7 @@ public interface DependencyFacet extends ProjectFacet
     * 
     * @return
     */
-   public Dependency getManagedDependency(Dependency managedDependency);
+   public Dependency getDirectManagedDependency(Dependency managedDependency);
 
    /**
     * Return a list of all build dependency properties.(Build properties such, as ${my.version}, can be used anywhere in
