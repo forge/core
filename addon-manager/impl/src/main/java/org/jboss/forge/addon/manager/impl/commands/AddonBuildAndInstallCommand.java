@@ -39,7 +39,7 @@ public class AddonBuildAndInstallCommand extends AbstractUICommand implements Ad
 
    @Inject
    private ProjectFactory projectFactory;
-   
+
    @Inject
    private AddonRegistry registry;
 
@@ -56,13 +56,13 @@ public class AddonBuildAndInstallCommand extends AbstractUICommand implements Ad
    @Override
    public boolean isEnabled(UIContext context)
    {
-      project = getSelectedProject(context);
-      return project != null;
+      return containsProject(context);
    }
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
+      project = getSelectedProject(builder.getUIContext());
       if (project != null)
       {
          projectRoot.setDefaultValue(project.getProjectRoot());
@@ -98,6 +98,17 @@ public class AddonBuildAndInstallCommand extends AbstractUICommand implements Ad
       {
          return Results.fail("Addon " + coordinate.toString() + " could not be installed.", t);
       }
+   }
+
+   protected boolean containsProject(UIContext context)
+   {
+      UISelection<FileResource<?>> initialSelection = context.getInitialSelection();
+      if (!initialSelection.isEmpty())
+      {
+         return projectFactory.containsProject(initialSelection.get());
+      }
+      return false;
+
    }
 
    /**
