@@ -43,6 +43,12 @@ public interface ProjectFactory
    public Project createProject(DirectoryResource targetDir, Iterable<Class<? extends ProjectFacet>> facetTypes);
 
    /**
+    * Returns true if a {@link Project} exists in the ancestry of the given {@link FileResource}. false if no
+    * {@link Project} could be located
+    */
+   public boolean containsProject(final FileResource<?> target);
+
+   /**
     * Create a {@link Project} in a temporary location. This method is useful for testing purposes.
     */
    public Project createTempProject();

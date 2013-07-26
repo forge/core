@@ -234,4 +234,24 @@ public class ProjectFactoryImpl implements ProjectFactory
          }
       };
    }
+
+   @Override
+   public boolean containsProject(FileResource<?> target)
+   {
+      boolean result = false;
+      DirectoryResource dir = (target instanceof DirectoryResource) ? (DirectoryResource) target : target.getParent();
+      for (ExportedInstance<ProjectLocator> instance : registry.getExportedInstances(ProjectLocator.class))
+      {
+         ProjectLocator locator = instance.get();
+         DirectoryResource r = dir;
+         while (r != null && !result)
+         {
+            result = locator.containsProject(r);
+            r = r.getParent();
+         }
+         if (result)
+            break;
+      }
+      return result;
+   }
 }

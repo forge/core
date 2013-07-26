@@ -16,6 +16,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.ProjectListener;
+import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -105,4 +106,19 @@ public class ProjectFactoryImplTest
       Project project = projectFactory.createTempProject();
       Assert.assertNotNull(project);
    }
+
+   @Test
+   public void testContainsProject()
+   {
+      Project project = projectFactory.createTempProject();
+      Assert.assertNotNull(project);
+      DirectoryResource projectRoot = project.getProjectRoot();
+      Assert.assertTrue(projectFactory.containsProject(projectRoot));
+      Assert.assertTrue(projectFactory.containsProject(projectRoot.getChildDirectory("src")));
+
+      projectRoot.delete(true);
+
+      Assert.assertFalse(projectFactory.containsProject(projectRoot));
+   }
+
 }
