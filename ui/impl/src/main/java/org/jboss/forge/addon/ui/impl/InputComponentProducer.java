@@ -19,6 +19,7 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.environment.Environment;
+import org.jboss.forge.addon.ui.InputComponentFactory;
 import org.jboss.forge.addon.ui.facets.HintsFacet;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.impl.facets.HintsFacetImpl;
@@ -41,13 +42,13 @@ import org.jboss.forge.furnace.util.Annotations;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
  */
-public class InputComponentFactory
+public class InputComponentProducer implements InputComponentFactory
 {
    private Environment environment;
    private AddonRegistry addonRegistry;
 
    @Inject
-   public InputComponentFactory(Environment environment, AddonRegistry addonRegistry)
+   public InputComponentProducer(Environment environment, AddonRegistry addonRegistry)
    {
       this.environment = environment;
       this.addonRegistry = addonRegistry;
@@ -67,7 +68,9 @@ public class InputComponentFactory
          Type[] typeArguments = parameterizedType.getActualTypeArguments();
          Class<T> valueType = (Class<T>) typeArguments[0];
          WithAttributes withAttributes = injectionPoint.getAnnotated().getAnnotation(WithAttributes.class);
-         return createSelectOne(name, valueType, withAttributes);
+         UISelectOne<T> input = createSelectOne(name, valueType);
+         preconfigureInput(input, withAttributes);
+         return input;
       }
       else
       {
@@ -90,7 +93,9 @@ public class InputComponentFactory
          Type[] typeArguments = parameterizedType.getActualTypeArguments();
          Class<T> valueType = (Class<T>) typeArguments[0];
          WithAttributes withAttributes = injectionPoint.getAnnotated().getAnnotation(WithAttributes.class);
-         return createSelectMany(name, valueType, withAttributes);
+         UISelectMany<T> input = createSelectMany(name, valueType);
+         preconfigureInput(input, withAttributes);
+         return input;
       }
       else
       {
@@ -113,7 +118,9 @@ public class InputComponentFactory
          Type[] typeArguments = parameterizedType.getActualTypeArguments();
          Class<T> valueType = (Class<T>) typeArguments[0];
          WithAttributes withAttributes = injectionPoint.getAnnotated().getAnnotation(WithAttributes.class);
-         return createInput(name, valueType, withAttributes);
+         UIInput<T> input = createInput(name, valueType);
+         preconfigureInput(input, withAttributes);
+         return input;
       }
       else
       {
@@ -136,7 +143,9 @@ public class InputComponentFactory
          Type[] typeArguments = parameterizedType.getActualTypeArguments();
          Class<T> valueType = (Class<T>) typeArguments[0];
          WithAttributes withAttributes = injectionPoint.getAnnotated().getAnnotation(WithAttributes.class);
-         return createInputMany(name, valueType, withAttributes);
+         UIInputMany<T> input = createInputMany(name, valueType);
+         preconfigureInput(input, withAttributes);
+         return input;
       }
       else
       {
@@ -145,40 +154,28 @@ public class InputComponentFactory
       }
    }
 
-   public <T> UIInput<T> createInput(String name, Class<T> valueType, WithAttributes withAttributes)
+   @Override
+   public <T> UIInput<T> createInput(String name, Class<T> valueType)
    {
-      UIInputImpl<T> result = new UIInputImpl<T>(name, valueType);
-      HintsFacetImpl hintsFacet = new HintsFacetImpl(result, environment);
-      result.install(hintsFacet);
-      preconfigureInput(result, withAttributes);
-      return result;
+      return new UIInputImpl<T>(name, valueType);
    }
 
-   public <T> UIInputMany<T> createInputMany(String name, Class<T> valueType, WithAttributes withAttributes)
+   @Override
+   public <T> UIInputMany<T> createInputMany(String name, Class<T> valueType)
    {
-      UIInputManyImpl<T> result = new UIInputManyImpl<T>(name, valueType);
-      HintsFacetImpl hintsFacet = new HintsFacetImpl(result, environment);
-      result.install(hintsFacet);
-      preconfigureInput(result, withAttributes);
-      return result;
+      return new UIInputManyImpl<T>(name, valueType);
    }
 
-   public <T> UISelectOne<T> createSelectOne(String name, Class<T> valueType, WithAttributes withAttributes)
+   @Override
+   public <T> UISelectOne<T> createSelectOne(String name, Class<T> valueType)
    {
-      UISelectOne<T> result = new UISelectOneImpl<T>(name, valueType);
-      HintsFacetImpl hintsFacet = new HintsFacetImpl(result, environment);
-      result.install(hintsFacet);
-      preconfigureInput(result, withAttributes);
-      return result;
+      return new UISelectOneImpl<T>(name, valueType);
    }
 
-   public <T> UISelectMany<T> createSelectMany(String name, Class<T> valueType, WithAttributes withAttributes)
+   @Override
+   public <T> UISelectMany<T> createSelectMany(String name, Class<T> valueType)
    {
-      UISelectMany<T> result = new UISelectManyImpl<T>(name, valueType);
-      HintsFacetImpl hintsFacet = new HintsFacetImpl(result, environment);
-      result.install(hintsFacet);
-      preconfigureInput(result, withAttributes);
-      return result;
+      return new UISelectManyImpl<T>(name, valueType);
    }
 
    /**
@@ -187,6 +184,8 @@ public class InputComponentFactory
    @SuppressWarnings({ "unchecked", "rawtypes" })
    private void preconfigureInput(InputComponent<?, ?> input, WithAttributes atts)
    {
+      HintsFacetImpl hintsFacet = new HintsFacetImpl(input, environment);
+      input.install(hintsFacet);
       if (atts != null)
       {
          input.setEnabled(atts.enabled());
