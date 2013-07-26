@@ -23,7 +23,7 @@ public class ForgeContainerAPIFacet extends AbstractFacet<Project> implements Pr
 {
    public static Dependency FORGE_CONTAINER_API_DEPENDENCY = DependencyBuilder.create()
             .setGroupId("org.jboss.forge.furnace")
-            .setArtifactId("container-cdi")
+            .setArtifactId("container-cdi-api")
             .setScopeType("provided");
 
    @Inject
