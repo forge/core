@@ -24,6 +24,7 @@ import org.jboss.forge.addon.addons.facets.ForgeContainerAddonFacet;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.facets.FacetFactory;
+import org.jboss.forge.addon.javaee.facets.CDIFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
@@ -62,6 +63,7 @@ public class AddonProjectConfigurator
    {
       // TODO Use or remove forgeVersion parameter
       facetFactory.install(project, ForgeContainerAddonFacet.class);
+      facetFactory.install(project, CDIFacet.class);
       facetFactory.install(project, ForgeAddonFacet.class);
       facetFactory.install(project, JavaSourceFacet.class);
       installSelectedAddons(project, dependencyAddons, false);
@@ -92,10 +94,14 @@ public class AddonProjectConfigurator
                         .setVersion(forgeVersion.toString()));
 
       Project addonProject = createSubmoduleProject(project, "addon", projectName, ForgeAddonFacet.class);
-      Project apiProject = createSubmoduleProject(project, "api", projectName + "-api", ForgeAddonAPIFacet.class);
-      Project implProject = createSubmoduleProject(project, "impl", projectName + "-impl", ForgeAddonImplFacet.class);
-      Project spiProject = createSubmoduleProject(project, "spi", projectName + "-spi", ForgeAddonSPIFacet.class);
-      Project testsProject = createSubmoduleProject(project, "tests", projectName + "-tests", ForgeAddonTestFacet.class);
+      Project apiProject = createSubmoduleProject(project, "api", projectName + "-api", ForgeAddonAPIFacet.class,
+               JavaSourceFacet.class, CDIFacet.class);
+      Project implProject = createSubmoduleProject(project, "impl", projectName + "-impl", ForgeAddonImplFacet.class,
+               JavaSourceFacet.class, CDIFacet.class);
+      Project spiProject = createSubmoduleProject(project, "spi", projectName + "-spi", ForgeAddonSPIFacet.class,
+               JavaSourceFacet.class, CDIFacet.class);
+      Project testsProject = createSubmoduleProject(project, "tests", projectName + "-tests",
+               ForgeAddonTestFacet.class, JavaSourceFacet.class);
 
       Dependency apiProjectDependency = apiProject.getFacet(MetadataFacet.class).getOutputDependency();
       Dependency implProjectDependency = implProject.getFacet(MetadataFacet.class).getOutputDependency();

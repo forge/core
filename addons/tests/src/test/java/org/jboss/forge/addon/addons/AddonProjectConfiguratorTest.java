@@ -17,6 +17,7 @@ import org.jboss.forge.addon.addons.facets.ForgeContainerAPIFacet;
 import org.jboss.forge.addon.addons.facets.ForgeContainerAddonFacet;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
+import org.jboss.forge.addon.javaee.facets.CDIFacet;
 import org.jboss.forge.addon.maven.projects.MavenFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
@@ -91,10 +92,16 @@ public class AddonProjectConfiguratorTest
       Project testsProject = projectFactory.findProject(projectRoot.getChildDirectory("tests"));
 
       Assert.assertFalse(addonProject.hasFacet(JavaSourceFacet.class));
-      Assert.assertFalse(apiProject.hasFacet(JavaSourceFacet.class));
-      Assert.assertFalse(implProject.hasFacet(JavaSourceFacet.class));
-      Assert.assertFalse(spiProject.hasFacet(JavaSourceFacet.class));
-      Assert.assertFalse(testsProject.hasFacet(JavaSourceFacet.class));
+      Assert.assertTrue(apiProject.hasFacet(JavaSourceFacet.class));
+      Assert.assertTrue(implProject.hasFacet(JavaSourceFacet.class));
+      Assert.assertTrue(spiProject.hasFacet(JavaSourceFacet.class));
+      Assert.assertTrue(testsProject.hasFacet(JavaSourceFacet.class));
+      
+      Assert.assertFalse(addonProject.hasFacet(JavaSourceFacet.class));
+      Assert.assertTrue(apiProject.hasFacet(CDIFacet.class));
+      Assert.assertTrue(implProject.hasFacet(CDIFacet.class));
+      Assert.assertTrue(spiProject.hasFacet(CDIFacet.class));
+      Assert.assertFalse(testsProject.hasFacet(CDIFacet.class));
 
       Dependency addonDependency = DependencyBuilder.create(
                addonProject.getFacet(MetadataFacet.class).getOutputDependency())
