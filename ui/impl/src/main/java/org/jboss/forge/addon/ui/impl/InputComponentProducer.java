@@ -157,25 +157,33 @@ public class InputComponentProducer implements InputComponentFactory
    @Override
    public <T> UIInput<T> createInput(String name, Class<T> valueType)
    {
-      return new UIInputImpl<T>(name, valueType);
+      UIInputImpl<T> input = new UIInputImpl<T>(name, valueType);
+      configureRequiredFacets(input);
+      return input;
    }
 
    @Override
    public <T> UIInputMany<T> createInputMany(String name, Class<T> valueType)
    {
-      return new UIInputManyImpl<T>(name, valueType);
+      UIInputManyImpl<T> input = new UIInputManyImpl<T>(name, valueType);
+      configureRequiredFacets(input);
+      return input;
    }
 
    @Override
    public <T> UISelectOne<T> createSelectOne(String name, Class<T> valueType)
    {
-      return new UISelectOneImpl<T>(name, valueType);
+      UISelectOneImpl<T> input = new UISelectOneImpl<T>(name, valueType);
+      configureRequiredFacets(input);
+      return input;
    }
 
    @Override
    public <T> UISelectMany<T> createSelectMany(String name, Class<T> valueType)
    {
-      return new UISelectManyImpl<T>(name, valueType);
+      UISelectManyImpl<T> input = new UISelectManyImpl<T>(name, valueType);
+      configureRequiredFacets(input);
+      return input;
    }
 
    /**
@@ -184,8 +192,6 @@ public class InputComponentProducer implements InputComponentFactory
    @SuppressWarnings({ "unchecked", "rawtypes" })
    private void preconfigureInput(InputComponent<?, ?> input, WithAttributes atts)
    {
-      HintsFacetImpl hintsFacet = new HintsFacetImpl(input, environment);
-      input.install(hintsFacet);
       if (atts != null)
       {
          input.setEnabled(atts.enabled());
@@ -244,5 +250,11 @@ public class InputComponentProducer implements InputComponentFactory
          }
          selectComponent.setValueChoices(choices);
       }
+   }
+
+   private void configureRequiredFacets(InputComponent<?, ?> input)
+   {
+      HintsFacetImpl hintsFacet = new HintsFacetImpl(input, environment);
+      input.install(hintsFacet);
    }
 }

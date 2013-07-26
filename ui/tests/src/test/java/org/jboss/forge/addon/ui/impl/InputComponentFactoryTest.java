@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.ui.InputComponentFactory;
+import org.jboss.forge.addon.ui.facets.HintsFacet;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.input.UISelectMany;
@@ -51,6 +52,7 @@ public class InputComponentFactoryTest
    {
       UIInput<String> input = factory.createInput("foo", String.class);
       Assert.assertNotNull(input);
+      Assert.assertTrue(input.hasFacet(HintsFacet.class));
    }
 
    @Test
@@ -58,6 +60,7 @@ public class InputComponentFactoryTest
    {
       UIInputMany<String> input = factory.createInputMany("foo", String.class);
       Assert.assertNotNull(input);
+      Assert.assertTrue(input.hasFacet(HintsFacet.class));
    }
 
    @Test
@@ -65,6 +68,7 @@ public class InputComponentFactoryTest
    {
       UISelectMany<String> input = factory.createSelectMany("foo", String.class);
       Assert.assertNotNull(input);
+      Assert.assertTrue(input.hasFacet(HintsFacet.class));
    }
 
    @Test
@@ -72,5 +76,6 @@ public class InputComponentFactoryTest
    {
       UISelectOne<String> input = factory.createSelectOne("foo", String.class);
       Assert.assertNotNull(input);
+      Assert.assertTrue(input.hasFacet(HintsFacet.class));
    }
 }
