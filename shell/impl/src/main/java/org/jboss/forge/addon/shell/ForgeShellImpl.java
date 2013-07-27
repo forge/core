@@ -7,6 +7,8 @@
 package org.jboss.forge.addon.shell;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -75,7 +77,24 @@ public class ForgeShellImpl implements ForgeShell
 
    void observe(@Observes PostStartup startup) throws Exception
    {
-      startShell();
+      if (!Boolean.getBoolean("forge.compatibility.IDE")) {
+         startShell();
+      }
+   }
+   
+   @Override
+   public void setInputStream(InputStream is) {
+      Settings.getInstance().setInputStream(is);
+   }
+   
+   @Override
+   public void setStdOut(OutputStream os) {
+      Settings.getInstance().setStdOut(os);
+   }
+   
+   @Override
+   public void setStdErr(OutputStream os) {
+      Settings.getInstance().setStdErr(os);
    }
 
    @Override

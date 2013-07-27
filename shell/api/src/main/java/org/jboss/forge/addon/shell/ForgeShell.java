@@ -7,6 +7,8 @@
 package org.jboss.forge.addon.shell;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.jboss.aesh.console.Console;
 import org.jboss.forge.addon.shell.spi.CommandExecutionListener;
@@ -21,6 +23,21 @@ import org.jboss.forge.furnace.spi.ListenerRegistration;
 @Exported
 public interface ForgeShell
 {
+   /**
+    * Set InputStream
+    */
+   public void setInputStream(InputStream is);
+   
+   /**
+    * Set StdOut
+    */
+   public void setStdOut(OutputStream os);
+   
+   /**
+    * Set StdErr
+    */
+   public void setStdErr(OutputStream os);
+   
    /**
     * Start the shell.
     */
