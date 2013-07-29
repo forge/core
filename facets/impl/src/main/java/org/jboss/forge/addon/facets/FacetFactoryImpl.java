@@ -29,7 +29,7 @@ public class FacetFactoryImpl implements FacetFactory
 
    @Override
    public <FACETEDTYPE extends Faceted<?>, FACETTYPE extends Facet<FACETEDTYPE>> FACETTYPE create(
-            Class<FACETTYPE> type, FACETEDTYPE origin)
+            FACETEDTYPE origin, Class<FACETTYPE> type)
    {
       FACETTYPE instance = create(type);
       if (instance instanceof MutableFacet)
@@ -83,7 +83,7 @@ public class FacetFactoryImpl implements FacetFactory
             FACETEDTYPE origin, Class<FACETTYPE> type)
             throws FacetNotFoundException
    {
-      FACETTYPE facet = create(type, origin);
+      FACETTYPE facet = create(origin, type);
       if (!install(origin, facet))
       {
          throw new IllegalStateException("Facet type [" + type.getName()
@@ -147,7 +147,7 @@ public class FacetFactoryImpl implements FacetFactory
 
       for (Class<FACETTYPE> requirementType : facetsToInstall)
       {
-         FACETTYPE requirement = create(requirementType, origin);
+         FACETTYPE requirement = create(origin, requirementType);
          install(seen, origin, requirement);
       }
 

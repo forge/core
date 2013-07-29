@@ -61,7 +61,7 @@ public class FacetFactoryTest
    {
       try
       {
-         facetFactory.create(NotFoundMockFacet.class, new MockFaceted());
+         facetFactory.create(new MockFaceted(), NotFoundMockFacet.class);
       }
       catch (Throwable e)
       {
@@ -82,7 +82,7 @@ public class FacetFactoryTest
    public void testFacetOrigin() throws Exception
    {
       MockFaceted faceted = new MockFaceted();
-      MockFacet facet = facetFactory.create(MockFacet.class, faceted);
+      MockFacet facet = facetFactory.create(faceted, MockFacet.class);
       Assert.assertEquals(faceted, facet.getFaceted());
    }
 

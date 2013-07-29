@@ -23,7 +23,7 @@ public interface FacetFactory
     * @throws FacetNotFoundException if no implementation can be found.
     */
    public <FACETEDTYPE extends Faceted<?>, FACETTYPE extends Facet<FACETEDTYPE>> FACETTYPE create(
-            Class<FACETTYPE> type, FACETEDTYPE origin) throws FacetNotFoundException;
+            FACETEDTYPE origin, Class<FACETTYPE> type) throws FacetNotFoundException;
 
    /**
     * Get all instantiable {@link Facet} instances implementing the given {@link Facet} type. If it is also an instance
