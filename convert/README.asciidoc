@@ -1,0 +1,77 @@
+== Convert
+:idprefix: id_ 
+
+This addon enables the injection of converters for general purposes
+
+=== Depends on
+
+[options="header"]
+|===
+|Addon |Exported |Optional
+
+|container-cdi
+|No
+|No
+
+|===
+
+== Setup
+
+=== Service consumer
+
+To consume exported services of this addon, you must add it a dependency in the *pom.xml* of your `forge-addon` classified artifact:
+
+[source,xml]
+----
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>convert</artifactId>
+         <classifier>forge-addon</classifier>
+         <version>${version}</version>
+      </dependency>
+----
+
+== Features
+
+Injecting a specific converter:: Whenever you need to convert to a specific object, the converter addon is your pal:
+
+[source,java]
+----
+@Exported
+public interface AnAddonInterface
+{
+
+}
+
+public class TestResultOne implements AnAddonInterface
+{
+   @Override
+   public String toString()
+   {
+      return "one";
+   }
+}
+
+public class TestResultTwo implements AnAddonInterface
+{
+   @Override
+   public String toString()
+   {
+      return "two";
+   }
+}
+
+public class ExampleAddon 
+{
+
+   @Inject
+   private Converter<String, AnAddonInterface> converter;
+	
+   public void execute() {
+       AnAddonInterface one = converter.convert("one");
+       AnAddonInterface two  = converter.convert("two");
+   }
+}
+
+----
+

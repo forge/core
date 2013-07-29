@@ -45,6 +45,22 @@ There are basically four input types:
 
 |===
 
+== Setup
+
+=== Service consumer
+
+To consume exported services of this addon, you must add it a dependency in the *pom.xml* of your `forge-addon` classified artifact:
+
+[source,xml]
+----
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>ui</artifactId>
+         <classifier>forge-addon</classifier>
+         <version>${version}</version>
+      </dependency>
+----
+
 == Features
 
 Implementing a simple dialog box:: When interaction does not present a complex workflow and has little arguments
@@ -175,18 +191,3 @@ public class ExampleAddon extends AbstractUICommand
 
 }
 ----
-
- 
-
-== Setup
-
-=== Service consumer
-
-To consume exported services of this addon, you must add it a dependency in the *pom.xml* of your `forge-addon` classified artifact:
-
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>ui</artifactId>
-         <classifier>forge-addon</classifier>
-         <version>${version}</version>
-      </dependency>
