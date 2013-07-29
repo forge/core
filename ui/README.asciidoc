@@ -1,0 +1,23 @@
+UI Addon for JBoss Forge 2.0 / Furnace 
+======================================
+George Gastaldi <ggastald@redhat.com>
+:idprefix: id_
+
+Addon description 
+    
+== Setup 
+
+=== Installation 
+
+    forge --install ui 
+
+=== As a dependency of another addon: 
+
+Add this to your *pom.xml*: 
+
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>ui</artifactId>
+         <version>${forge.version}</version>
+         <classifier>forge-addon</classifier>
+      </dependency>
