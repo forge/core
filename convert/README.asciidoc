@@ -1,6 +1,8 @@
 == Convert
 :idprefix: id_ 
 
+This addon provides *standalone* functionality, and *exports services* for use in other addons. 
+ 
 This addon enables the injection of converters for general purposes
 
 === Depends on
@@ -17,9 +19,9 @@ This addon enables the injection of converters for general purposes
 
 == Setup
 
-=== Service consumer
+This Addon requires the following installation steps.
 
-To consume exported services of this addon, you must add it a dependency in the *pom.xml* of your `forge-addon` classified artifact:
+=== Add configuration to pom.xml 
 
 [source,xml]
 ----
@@ -33,45 +35,75 @@ To consume exported services of this addon, you must add it a dependency in the 
 
 == Features
 
-Injecting a specific converter:: Whenever you need to convert to a specific object, the converter addon is your pal:
+Injection of Converter APIs:: This addon also allows for injection of some of the core converter APIs into your
+objects. Below is a list of all injectable API types.
+
+[options="header"]
+|===
+|Injectable Type |Description
+
+|@Inject Converter<SOURCE,TARGET> converter;
+|A reference to a converter that is able to convert from the SOURCE type to TARGET type
+
+|@Inject ConverterFactory converterFactory;
+|A reference to the converter factory that produces Converter objects
+
+|===
+
+Creation of converters using ConverterGenerator:: By implementing the ConverterGenerator interface, your addon can automatically support usage of the Convert addon in other addons.
 
 [source,java]
 ----
-@Exported
-public interface AnAddonInterface
-{
-
-}
-
-public class TestResultOne implements AnAddonInterface
-{
-   @Override
-   public String toString()
-   {
-      return "one";
-   }
-}
-
-public class TestResultTwo implements AnAddonInterface
-{
-   @Override
-   public String toString()
-   {
-      return "two";
-   }
-}
-
-public class ExampleAddon 
+public class DirectoryResourceConverterGenerator implements ConverterGenerator
 {
 
    @Inject
-   private Converter<String, AnAddonInterface> converter;
-	
-   public void execute() {
-       AnAddonInterface one = converter.convert("one");
-       AnAddonInterface two  = converter.convert("two");
+   private Instance<DirectoryResourceConverter> converter;
+
+   @Override
+   public boolean handles(Class<?> source, Class<?> target)
+   {
+      return DirectoryResource.class.isAssignableFrom(target);
+   }
+
+   @Override
+   public DirectoryResourceConverter generateConverter(Class<?> source, Class<?> target)
+   {
+      return converter.get();
+   }
+
+   @Override
+   public Class<DirectoryResourceConverter> getConverterType()
+   {
+      return DirectoryResourceConverter.class;
    }
 }
 
-----
 
+
+@Singleton
+public class DirectoryResourceConverter extends AbstractConverter<Object, DirectoryResource>
+{
+   private final ResourceFactory resourceFactory;
+
+   @Inject
+   public DirectoryResourceConverter(ResourceFactory resourceFactory)
+   {
+      super(Object.class, DirectoryResource.class);
+      this.resourceFactory = resourceFactory;
+   }
+
+   @Override
+   public DirectoryResource convert(Object source)
+   {
+      File file;
+      if (source == null)
+         return null;
+      else if (source instanceof File)
+         file = (File) source;
+      else
+         file = new File(source.toString());
+      return resourceFactory.create(DirectoryResource.class, file);
+   }
+}
+----

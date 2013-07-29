@@ -1,6 +1,8 @@
 == UI (User Interface)
 :idprefix: id_ 
 
+This addon *exports services* for use in other addons. 
+
 This addon enables the creation of user interfaces making them agnostic to the underlying UI provider.
 
 In practice, that means that your code will run in any UI provider without requiring any changes.
