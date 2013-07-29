@@ -15,13 +15,15 @@ This Addon requires the following installation steps.
 
 To use this addon, you must add it as a dependency in the *pom.xml* of your `forge-addon` classified artifact:
 
+[source,xml] 
+----
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>facets</artifactId>
          <classifier>forge-addon</classifier>
          <version>${version}</version>
       </dependency>
-      
+----      
 == Features
 
 Modular functionality::
