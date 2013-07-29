@@ -8,7 +8,7 @@ package org.jboss.forge.addon.ui.input;
 
 
 /**
- * A {@link UISelectMany} should be used when the number of items to be chosen are known before rendering the component.
+ * A {@link UISelectOne} should be used when the number of items to be chosen are known before rendering the component.
  *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  *
