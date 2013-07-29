@@ -39,12 +39,12 @@ This addon requires the following installation steps.
 
 To use this addon, you must add it as a dependency in the *pom.xml* of your `forge-addon` classified artifact:
 
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>resources</artifactId>
-         <classifier>forge-addon</classifier>
-         <version>${version}</version>
-      </dependency>
+<dependency>
+    <groupId>org.jboss.forge.addon</groupId>
+    <artifactId>resources</artifactId>
+    <classifier>forge-addon</classifier>
+    <version>${version}</version>
+</dependency>
       
 == Features
 

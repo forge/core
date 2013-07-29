@@ -1,7 +1,8 @@
 == Addon Manager
 :idprefix: id_ 
 
-This addon allows another addons to be installed/removed
+This addon provides *standalone* functionality, and *exports services* for use in other addons. The addon-manager 
+provides services and ui-commands to perform addon installation and removal tasks.
 
 === Depends on
 
@@ -9,19 +10,19 @@ This addon allows another addons to be installed/removed
 |===
 |Addon |Exported |Optional
 
-|container-cdi
-|No
-|No
-
-|ui
-|No
+|addon-manager-spi
+|Yes
 |Yes
 
 |projects
 |No
 |Yes
 
-|addon-manager-spi
+|ui
+|No
+|Yes
+
+|org.jboss.forge.furnace:container-cdi
 |No
 |No
 
@@ -29,20 +30,54 @@ This addon allows another addons to be installed/removed
 
 == Setup
 
-=== Service consumer
+This addon requires the following installation steps.
 
-To consume exported services of this addon, you must add it a dependency in the *pom.xml* of your `forge-addon` classified artifact:
+=== Add configuration to pom.xml 
+
+To consume exported services of this addon, you must add it a dependency in the *pom.xml* of your `forge-addon` 
+classified artifact:
 
 [source,xml]
 ----
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>addon-manager</artifactId>
-         <classifier>forge-addon</classifier>
-         <version>${version}</version>
-      </dependency>
+<dependency>
+    <groupId>org.jboss.forge.addon</groupId>
+    <artifactId>addon-manager</artifactId>
+    <classifier>forge-addon</classifier>
+    <version>${version}</version>
+</dependency>
 ----
 
 == Features
 
-- Installation of addons through AddonManager
+Installation and removal of addons through UI commands::
+ The addon-manager addon provides several ui-command implementations to aid with the installation and removal of 
+ addons from one or more repositories through a user interface.
+
+ * *Install an Addon* - Installs a single addon from Maven 
+ * *Remove Addon(s)* - Removes one or more installed addons.
+ * *Build and Install an Addon* (Requires project) - Builds the current selected project and installs it as an addon.
++
+More installation methods will become available as they are developed/contributed, but the addon-manager does not
+currently support installation directly from Git repositories.
+ 
+Installation and removal od addons through AddonManager service::
+ The addon-manager addon provides the `AddonManager` service for use in addons which intend to perform installation
+and removal of addons programatically.
++
+[source,java]
+----
+ExportedInstance<AddonManager> managerInstance = addonRegistry.getExportedInstance(AddonManager.class);
+AddonManager manager = managerInstance.get();
+InstallRequest request = manager.install(AddonId.from("org.example:example", "0.0.1-SNAPSHOT"));
+request.perform();
+----
++
+[NOTE] 
+====
+If your addon uses the Furnace CDI container, services such as the `AddonManager` may also be accessed via
+dependency injection:
+
+----
+@Inject private AddonManager factory;
+----
+==== 
