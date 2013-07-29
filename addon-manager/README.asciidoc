@@ -1,0 +1,48 @@
+== Addon Manager
+:idprefix: id_ 
+
+This addon allows another addons to be installed/removed
+
+=== Depends on
+
+[options="header"]
+|===
+|Addon |Exported |Optional
+
+|container-cdi
+|No
+|No
+
+|ui
+|No
+|Yes
+
+|projects
+|No
+|Yes
+
+|addon-manager-spi
+|No
+|No
+
+|===
+
+== Setup
+
+=== Service consumer
+
+To consume exported services of this addon, you must add it a dependency in the *pom.xml* of your `forge-addon` classified artifact:
+
+[source,xml]
+----
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>addon-manager</artifactId>
+         <classifier>forge-addon</classifier>
+         <version>${version}</version>
+      </dependency>
+----
+
+== Features
+
+- Installation of addons through AddonManager
