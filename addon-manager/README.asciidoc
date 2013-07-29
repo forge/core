@@ -11,20 +11,20 @@ provides services and ui-commands to perform addon installation and removal task
 |Addon |Exported |Optional
 
 |addon-manager-spi
-|Yes
-|Yes
+|yes
+|no
 
 |projects
-|No
-|Yes
+|no
+|yes
 
 |ui
-|No
-|Yes
+|no
+|yes
 
 |org.jboss.forge.furnace:container-cdi
-|No
-|No
+|no
+|no
 
 |===
 
