@@ -53,6 +53,9 @@ Abstraction of low-level functionality::
 deletion, and listing of child resources.
 
 ResourceFactory service for resource creation::
+The ResourceFactory is used for creating both generic and specific resources from underlying resource instances.
+When creating resources, the factory will select the most appropriate resource API type to represent the given 
+real or virtual resource.
 +
 [source,java]
 ----
@@ -60,6 +63,31 @@ ExportedInstance<ResourceFactory> factoryInstance = addonRegistry.getExportedIns
 ResourceFactory factory = factoryInstance.get();
 Resource<?> resource = factory.create(...);
 ----
+
+Built-in support for common resource types::
+The resources addon comes pre-configured with several types for interacting with common resources.
++
+[options="header"]
+|===
+|Resource |Underlying Type |Description
+
+|FileResource<?>
+|`java.io.File`
+|Used to interact with the standard Java filesystem API. Can be extended with custom resource
+types to provide name or contents based specialization. (E.g.: PropertiesFileResource)
+
+
+|DirectoryResource
+|`java.io.File`
+|Used to interact with directories via standard Java filesystem API.
+
+
+|URLResource
+|`java.net.URL`
+|Used to interact with standard Java URLs.
+
+|===
+
 
 Custom resource types::
  The resources API may be extended to support custom resource types. This is a two step process involving creation of
