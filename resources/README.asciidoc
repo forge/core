@@ -1,0 +1,110 @@
+== resources
+:idprefix: id_ 
+
+
+This addon *exports services* for use in other addons. The Resources addon provides APIs and services for interacting
+with real and virtual resources, typically for the purpose of reading and manipulating files or other data-structures.
+The resources API also allows for wrapping of low-level resource constructs with higher level operations.
+
+=== Depends on
+
+[options="header"]
+|===
+|Addon |Exported |Optional
+
+|convert
+|no
+|yes
+
+
+|facets
+|yes
+|no
+
+|ui-spi
+|no
+|no
+
+|org.jboss.forge.furnace:container-cdi
+|no
+|no
+
+|===
+
+== Setup
+
+This Addon requires the following installation steps.
+
+=== Add configuration to pom.xml 
+
+To use this addon, you must add it as a dependency in the *pom.xml* of your `forge-addon` classified artifact:
+
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>resources</artifactId>
+         <classifier>forge-addon</classifier>
+         <version>${version}</version>
+      </dependency>
+      
+== Features
+
+Abstraction of low-level functionality::
+ This enables abstraction of common operations such as testing for existence, retrieving input streams, naming, 
+deletion, and listing of child resources.
+
+ResourceFactory service for resource creation::
++
+[source,java]
+----
+ExportedInstance<ResourceFactory> factoryInstance = addonRegistry.getExportedInstance(ResourceFactory.class);
+ResourceFactory factory = factoryInstance.get();
+Resource<?> resource = factory.create(...);
+----
+
+Custom resource types::
+ The resources API may be extended to support custom resource types. This is a two step process involving creation of
+a `ResourceGenerator`, and of a new type that extends from `org.jboss.forge.addon.resource.Resource`.
++
+[source,java]
+----
+public class Thing {
+}
+----
++
+[source,java]
+----
+public class MyResource extends AbstractResource<Thing> implements Resource<Thing> {
+   public void doSomething() {
+     // custom functionality for your resource
+  }
+}
+----
++
+Once the resource interface has been implemented, simply add methods and functionality to the resource implementation; 
+this allows consumers of the resource type to use the functionality you have created. You may then implement a resource
+generator, which will be responsible for constructing instances via the `ResourceFactory`.
++
+[source,java]
+----
+public class MyResourceGenerator implements ResourceGenerator<MyResource, Thing> {
+   @Override
+   public boolean handles(Class<?> type, Object resource) {
+      return resource instanceof Thing;
+   }
+
+   @Override
+   public <T extends MyResource> T getResource(ResourceFactory factory, Class<MyResource> type, Thing resource) {
+      return (T) new MyResource(resource);
+   }
+
+   @Override
+   public <T extends MyResource> Class<?> getResourceType(Class<MyResource> type, Thing resource) {
+      return MyResource.class;
+   }
+}
+----
+
+Consistent programming experience::
+ Because the resources API provides a consistent set of interfaces for interacting with real and virtual resources, 
+it is used in a number of addons and should be considered the standard approach for interacting with both the local
+file-system, as well as with other resource types.

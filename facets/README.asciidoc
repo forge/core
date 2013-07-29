@@ -65,7 +65,8 @@ handles the installation of facets directly.
 [source,java]
 ----
 FacetedObject faceted = new FacetedObject();
-ExportedInstance<FacetFactory> factory = addonRegistry.getExportedInstance(FacetFactory.class);
+ExportedInstance<FacetFactory> factoryInstance = addonRegistry.getExportedInstance(FacetFactory.class);
+FacetFactory factory = factoryInstance.get();
 MyFacet facet = factory.install(faceted, MyFacet.class);
 ---- 
 
