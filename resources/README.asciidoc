@@ -33,7 +33,7 @@ The resources API also allows for wrapping of low-level resource constructs with
 
 == Setup
 
-This Addon requires the following installation steps.
+This addon requires the following installation steps.
 
 === Add configuration to pom.xml 
 
@@ -63,6 +63,16 @@ ExportedInstance<ResourceFactory> factoryInstance = addonRegistry.getExportedIns
 ResourceFactory factory = factoryInstance.get();
 Resource<?> resource = factory.create(...);
 ----
++
+[NOTE] 
+====
+If your addon uses the Furnace CDI container, services such as the `ResourceFactory` may also be accessed via
+dependency injection:
+
+----
+@Inject private ResourceFactory factory;
+----
+==== 
 
 Built-in support for common resource types::
 The resources addon comes pre-configured with several types for interacting with common resources.
@@ -91,7 +101,8 @@ types to provide name or contents based specialization. (E.g.: PropertiesFileRes
 
 Custom resource types::
  The resources API may be extended to support custom resource types. This is a two step process involving creation of
-a `ResourceGenerator`, and of a new type that extends from `org.jboss.forge.addon.resource.Resource`.
+a new type that extends from `Resource`, and a `ResourceGenerator`. These custom resource types will be made 
+automatically available to other addons depending on the resources addon.
 +
 [source,java]
 ----

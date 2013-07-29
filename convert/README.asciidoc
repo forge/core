@@ -1,9 +1,8 @@
 == Convert
 :idprefix: id_ 
 
-This addon provides *standalone* functionality, and *exports services* for use in other addons. 
- 
-This addon enables the injection of converters for general purposes
+This addon *exports services* for use in other addons. The convert addon enables the creation and lookup of 
+static and dynamic converters for general purpose use.
 
 === Depends on
 
@@ -19,91 +18,107 @@ This addon enables the injection of converters for general purposes
 
 == Setup
 
-This Addon requires the following installation steps.
+This addon requires the following installation steps.
 
 === Add configuration to pom.xml 
 
 [source,xml]
 ----
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>convert</artifactId>
-         <classifier>forge-addon</classifier>
-         <version>${version}</version>
-      </dependency>
+<dependency>
+    <groupId>org.jboss.forge.addon</groupId>
+    <artifactId>convert</artifactId>
+    <classifier>forge-addon</classifier>
+    <version>${version}</version>
+</dependency>
 ----
 
 == Features
 
-Injection of Converter APIs:: This addon also allows for injection of some of the core converter APIs into your
-objects. Below is a list of all injectable API types.
-
-[options="header"]
-|===
-|Injectable Type |Description
-
-|@Inject Converter<SOURCE,TARGET> converter;
-|A reference to a converter that is able to convert from the SOURCE type to TARGET type
-
-|@Inject ConverterFactory converterFactory;
-|A reference to the converter factory that produces Converter objects
-
-|===
-
-Creation of converters using ConverterGenerator:: By implementing the ConverterGenerator interface, your addon can automatically support usage of the Convert addon in other addons.
-
+ConverterFactory service for converter creation::
+The `ConverterFactory` is used for creating both generic and specific converter instances for specified types. When creating
+converters, the factory will select the most appropriate converter type for the specified type arguments.
++
 [source,java]
 ----
-public class DirectoryResourceConverterGenerator implements ConverterGenerator
-{
+ExportedInstance<ConverterFactory> factoryInstance = addonRegistry.getExportedInstance(ConverterFactory.class);
+ConverterFactory factory = factoryInstance.get();
+Converter<String, Integer> converter = factory.create(String.class, Integer.class);
+----
++
+[NOTE] 
+====
+If your addon uses the Furnace CDI container, services such as the `ConverterFactory` may also be accessed via
+dependency injection:
 
-   @Inject
-   private Instance<DirectoryResourceConverter> converter;
+----
+@Inject private ConverterFactory factory;
+----
 
-   @Override
-   public boolean handles(Class<?> source, Class<?> target)
-   {
-      return DirectoryResource.class.isAssignableFrom(target);
-   }
+Additionally, you may directly inject typed converters:
+----
+@Inject Converter<SOURCE,TARGET> converter;
+----
+====
 
-   @Override
-   public DirectoryResourceConverter generateConverter(Class<?> source, Class<?> target)
-   {
-      return converter.get();
-   }
-
-   @Override
-   public Class<DirectoryResourceConverter> getConverterType()
-   {
-      return DirectoryResourceConverter.class;
-   }
+Custom converters:: 
+The convert API can be extended to register converters for types that are not supported by default. This is a two 
+step process involving creation of a new type that extends from `Converter`, and of a `ConverterGenerator`. 
+These custom converters will be made automatically available to other addons that depend on the convert addon.
++
+[source,java]
+----
+public class Thing {
+   private Object value;
+   
+   // getters and setters
 }
-
-
-
-@Singleton
-public class DirectoryResourceConverter extends AbstractConverter<Object, DirectoryResource>
+----
++
+Implement the `Converter` interface:
++
+[source,java]
+----
+public class ThingConverter extends AbstractConverter<Object, Thing> implements Converter<Object, Thing>
 {
-   private final ResourceFactory resourceFactory;
-
-   @Inject
-   public DirectoryResourceConverter(ResourceFactory resourceFactory)
+   public ThingConverter()
    {
-      super(Object.class, DirectoryResource.class);
-      this.resourceFactory = resourceFactory;
+      super(Object.class, Thing.class);
    }
 
    @Override
    public DirectoryResource convert(Object source)
    {
-      File file;
-      if (source == null)
-         return null;
-      else if (source instanceof File)
-         file = (File) source;
-      else
-         file = new File(source.toString());
-      return resourceFactory.create(DirectoryResource.class, file);
+      return new Thing(source);
    }
 }
 ----
++
+Implement a `ConverterGenerator`:
++
+[source,java]
+----
+public class ThingConverterGenerator implements ConverterGenerator
+{
+   @Override
+   public boolean handles(Class<?> source, Class<?> target)
+   {
+      return Thing.class.isAssignableFrom(target);
+   }
+
+   @Override
+   public ThingResourceConverter generateConverter(Class<?> source, Class<?> target)
+   {
+      return new ThingConverter();
+   }
+
+   @Override
+   public Class<ThingResourceConverter> getConverterType()
+   {
+      return DirectoryResourceConverter.class;
+   }
+}
+----
+
+Consistent programming experience::
+ Because the convert API provides a consistent set of interfaces for performing type conversion, it is used in a 
+number of addons and should be considered the standard approach for converting values.
