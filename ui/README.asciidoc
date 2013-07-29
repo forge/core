@@ -49,7 +49,7 @@ There are basically four input types:
 
 Implementing a simple dialog box:: When interaction does not present a complex workflow and has little arguments
 
-Create a class that extends the *_org.jboss.forge.addon.ui.AbstractUICommand_* and implement the required methods. 
+Create a class that extends from *_org.jboss.forge.addon.ui.AbstractUICommand_* and implement the required methods. 
 For each input, inject it in your addon using the CDI @Inject annotation and add it to the UIBuilder:
 
 [source,java]
