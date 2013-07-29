@@ -48,6 +48,14 @@ public class MyFacet extends AbstractFacet<FacetedObject> implements Facet<Facet
 }
 ----
 +
+And the corresponding Faceted type.
++
+[source,java]
+----
+public class FacetedObject extends AbstractFaceted<MyFacet> implements Faceted<MyFacet> {
+}
+----
++
 Once the facet interfaces are implemented, simply add methods and functionality to the facet implementation. This allows
 consumers of the facet to use the functionality you have created:
 +
@@ -69,6 +77,16 @@ ExportedInstance<FacetFactory> factoryInstance = addonRegistry.getExportedInstan
 FacetFactory factory = factoryInstance.get();
 MyFacet facet = factory.install(faceted, MyFacet.class);
 ---- 
++
+[NOTE] 
+====
+If your addon uses the Furnace CDI container, services such as the `FacetFactory` may also be accessed via
+dependency injection:
+
+----
+@Inject private FacetFactory factory;
+----
+==== 
 
 Consistent programming experience::
  Because the Facet API provides an abstract model for extending functionality of an API, it is used in a number of addons
