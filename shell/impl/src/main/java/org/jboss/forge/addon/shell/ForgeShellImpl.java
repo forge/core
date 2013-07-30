@@ -112,7 +112,7 @@ public class ForgeShellImpl implements ForgeShell
       for (ExportedInstance<AeshSettingsProvider> instance : registry.getExportedInstances(AeshSettingsProvider.class))
       {
          AeshSettingsProvider provider = instance.get();
-         settings = provider.buildSettings();
+         settings = provider.buildAeshSettings();
       }
       
       if (settings == null) {
