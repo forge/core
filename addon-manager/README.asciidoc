@@ -34,16 +34,15 @@ This addon requires the following installation steps.
 
 === Add configuration to pom.xml 
 
-To consume exported services of this addon, you must add it a dependency in the *pom.xml* of your `forge-addon` 
-classified artifact:
+To use this addon, you must add it as a dependency in the *pom.xml* of your `forge-addon` classified artifact:
 
 [source,xml]
 ----
 <dependency>
-    <groupId>org.jboss.forge.addon</groupId>
-    <artifactId>addon-manager</artifactId>
-    <classifier>forge-addon</classifier>
-    <version>${version}</version>
+   <groupId>org.jboss.forge.addon</groupId>
+   <artifactId>addon-manager</artifactId>
+   <classifier>forge-addon</classifier>
+   <version>${version}</version>
 </dependency>
 ----
 
@@ -66,18 +65,18 @@ and removal of addons programatically.
 +
 [source,java]
 ----
-ExportedInstance<AddonManager> managerInstance = addonRegistry.getExportedInstance(AddonManager.class);
-AddonManager manager = managerInstance.get();
+@Inject private AddonManager manager;
 InstallRequest request = manager.install(AddonId.from("org.example:example", "0.0.1-SNAPSHOT"));
 request.perform();
 ----
 +
-[NOTE] 
+[TIP] 
 ====
-If your addon uses the Furnace CDI container, services such as the `AddonManager` may also be accessed via
-dependency injection:
+If your addon uses a container that does not support "@Inject" annotations, services such as the `AddonManager` may also be 
+accessed via the `AddonRegistry`:
 
 ----
-@Inject private AddonManager factory;
+Imported<AddonManager> imported = addonRegistry.getServices(AddonManager.class);
+AddonManager manager = imported.get();
 ----
 ==== 

@@ -1,7 +1,8 @@
 == parser-java
 :idprefix: id_ 
 
-This addon provides *standalone* functionality, and *exports services* for use in other addons. 
+This addon provides *exports services* for use in other addons. The Java parser addon provides APIs and services for parsing Java
+types including classes, enums, interfaces, annotations, and package-info types. 
 
 === Depends on
 
@@ -38,37 +39,60 @@ To use this addon, you must add it as a dependency in the *pom.xml* of your `for
 
 [source,xml]
 ----
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>parser-java</artifactId>
-         <classifier>forge-addon</classifier>
-         <version>${version}</version>
-      </dependency>
+<dependency>
+   <groupId>org.jboss.forge.addon</groupId>
+   <artifactId>parser-java</artifactId>
+   <classifier>forge-addon</classifier>
+   <version>${version}</version>
+</dependency>
 ----
 
 == Features
 
-Injecting JavaSourceFactory:: Allows creation and parsing of Java sources 
+JavaSourceFactory for java source parsing and generation:: 
+The JavaSourceFactory allows for parsing and generation of Java sources via a type-safe and fluent API.
 
 [source,java]
 ----
 @Inject 
-JavaSourceFactory factory;
+private JavaSourceFactory factory;
 
 JavaClass myClass = factory.parse(JavaClass.class, "public class MyClass{}");
+----
++
+[TIP] 
+====
+If your addon uses a container that does not support "@Inject" annotations, services such as the `JavaSourceFactory` may also be 
+accessed via the `AddonRegistry`:
 
 ----
+Imported<JavaSourceFactory> imported = addonRegistry.getServices(JavaSourceFactory.class);
+JavaSourceFactory factory = imported.get();
+----
+==== 
 
-Facets addon integration:: Read and persist java sources easily in your project
+(Optional) projects addon integration:: 
+When the projects addon is installed, the `JavaSourceFacet` will be retrievable from appropriately configured projects that 
+include java source code.
 
 [source,java]
 ----
-
 Project project = ...
 JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
-...
 ----
 
-Resources addon integration:: Custom resources for dealing with java types, methods and fields
+(Optional) resources addon integration:: 
+When the resources addon is installed, additional resources types for dealing with java types, methods and fields will be 
+available for use via the `ResourceFactory`.
++
+[source,java]
+----
+ResourceFactory factory = ...
+JavaResource resource = (JavaResource) factory.create(new File(".../MyJavaClass.java"));
+----
++
+`JavaResource` types also expose `JavaFieldResource` and `JavaMethodResource` via `JavaResource.listResources()`.
 
-ui-spi integration:: Registers the _InputType.JAVA_CLASS_PICKER_ for UIInput<JavaResource> injections
+(Optional) ui-spi addon integration:: 
+When the ui-spi addon is installed, the _InputType.JAVA_CLASS_PICKER_ input type hint will be registered for UIInput<JavaResource>
+instances.

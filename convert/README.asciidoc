@@ -22,13 +22,15 @@ This addon requires the following installation steps.
 
 === Add configuration to pom.xml 
 
+To use this addon, you must add it as a dependency in the *pom.xml* of your `forge-addon` classified artifact:
+
 [source,xml]
 ----
 <dependency>
-    <groupId>org.jboss.forge.addon</groupId>
-    <artifactId>convert</artifactId>
-    <classifier>forge-addon</classifier>
-    <version>${version}</version>
+   <groupId>org.jboss.forge.addon</groupId>
+   <artifactId>convert</artifactId>
+   <classifier>forge-addon</classifier>
+   <version>${version}</version>
 </dependency>
 ----
 
@@ -40,18 +42,20 @@ converters, the factory will select the most appropriate converter type for the 
 +
 [source,java]
 ----
-ExportedInstance<ConverterFactory> factoryInstance = addonRegistry.getExportedInstance(ConverterFactory.class);
-ConverterFactory factory = factoryInstance.get();
+@Inject 
+private ConverterFactory factory;
+
 Converter<String, Integer> converter = factory.create(String.class, Integer.class);
 ----
 +
-[NOTE] 
+[TIP] 
 ====
-If your addon uses the Furnace CDI container, services such as the `ConverterFactory` may also be accessed via
-dependency injection:
+If your addon uses a container that does not support "@Inject" annotations, services such as the `ConverterFactory` may also be 
+accessed via the `AddonRegistry`:
 
 ----
-@Inject private ConverterFactory factory;
+Imported<ConverterFactory> imported = addonRegistry.getServices(ConverterFactory.class);
+ConverterFactory factory = imported.get();
 ----
 
 Additionally, you may directly inject typed converters:

@@ -1,25 +1,26 @@
 == UI (User Interface)
 :idprefix: id_ 
 
-This addon *exports services* for use in other addons. 
+This addon *exports services* for use in other addons. The 'ui' addon enables the creation of host-agnostic user interface 
+commands and wizards that run in any API compliant environment.
 
-This addon enables the creation of user interfaces making them agnostic to the underlying UI provider.
-
-In practice, that means that your code will run in any UI provider without requiring any changes.
+In practice, that means that your command and wizard code will run in any UI provider without requiring functional changes.
  
 The UI addon is directly used by UI providers (Eclipse, IDEA, Netbeans, Shell) to render Wizards and single dialog boxes.
 The Eclipse UI provider follows the http://www.eclipse.org/articles/Article-UI-Guidelines/Contents.html#Wizards[Eclipse User Interface Guidelines] 
 
-NOTE: Implementations of UICommand are displayed in the Forge Quick Assist menu in Eclipse (When Ctrl+5 is pressed)
+NOTE: Implementations of UICommand are displayed in the Forge Quick Assist menu in Eclipse (When Ctrl+5 is pressed). Additionally, 
+the Forge shell automatically makes UICommand instances available as functions; tab completion proposals are supported for command
+names, option names, and option arguments.  
 
 === UI Components
 
-There are basically four input types: 
+There are four input types: 
 
-- *UIInput* : Prompts for a single value. (Eg: Textbox).
-- *UIInputMany* : Prompts for multiple values.  
-- *UISelectOne* : Should be used when the number of items to be chosen are known before rendering the component. Allows selection of only one value (Eg: Combo box)
-- *UISelectMany* : Should be used when the number of items to be chosen are known before rendering the component. Allows selection of multiple values (Eg: Checkbox table)
+- *UIInput* : Prompts for a single value where the set of valid values has not been pre-determined..
+- *UIInputMany* : Prompts for multiple values where the set of valid values has not been pre-determined.
+- *UISelectOne* : Prompts for selection of a single value from a collection of pre-determined valid values. 
+- *UISelectMany* : Prompts for selection of multiple values from a collection of pre-determined valid values.
 
 === Depends on
 
@@ -38,12 +39,12 @@ There are basically four input types:
 
 |facets
 |yes
-|yes
+|no
 
 
 |ui-spi
 |yes
-|yes
+|no
 
 |===
 
@@ -53,17 +54,16 @@ This addon requires the following installation steps.
 
 === Add configuration to pom.xml 
 
-To consume exported services of this addon, you must add it a dependency in the *pom.xml* of your `forge-addon` 
-classified artifact:
+To use this addon, you must add it as a dependency in the *pom.xml* of your `forge-addon` classified artifact:
 
 [source,xml]
 ----
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>ui</artifactId>
-         <classifier>forge-addon</classifier>
-         <version>${version}</version>
-      </dependency>
+<dependency>
+   <groupId>org.jboss.forge.addon</groupId>
+   <artifactId>ui</artifactId>
+   <classifier>forge-addon</classifier>
+   <version>${version}</version>
+</dependency>
 ----
 
 == Features

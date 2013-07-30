@@ -42,10 +42,10 @@ To use this addon, you must add it as a dependency in the *pom.xml* of your `for
 [source,xml] 
 ----
 <dependency>
-    <groupId>org.jboss.forge.addon</groupId>
-    <artifactId>resources</artifactId>
-    <classifier>forge-addon</classifier>
-    <version>${version}</version>
+   <groupId>org.jboss.forge.addon</groupId>
+   <artifactId>resources</artifactId>
+   <classifier>forge-addon</classifier>
+   <version>${version}</version>
 </dependency>
 ----
       
@@ -62,18 +62,20 @@ real or virtual resource.
 +
 [source,java]
 ----
-ExportedInstance<ResourceFactory> factoryInstance = addonRegistry.getExportedInstance(ResourceFactory.class);
-ResourceFactory factory = factoryInstance.get();
+@Inject 
+private ResourceFactory factory;
+
 Resource<?> resource = factory.create(...);
 ----
 +
-[NOTE] 
+[TIP] 
 ====
-If your addon uses the Furnace CDI container, services such as the `ResourceFactory` may also be accessed via
-dependency injection:
+If your addon uses a container that does not support "@Inject" annotations, services such as the `ResourceFactory` may also be 
+accessed via the `AddonRegistry`:
 
 ----
-@Inject private ResourceFactory factory;
+Imported<ResourceFactory> imported = addonRegistry.getServices(ResourceFactory.class);
+ResourceFactory factory = imported.get();
 ----
 ==== 
 

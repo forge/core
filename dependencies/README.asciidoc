@@ -28,10 +28,10 @@ This addon requires the following installation steps.
 To use this addon, you must add it as a dependency in the *pom.xml* of your `forge-addon` classified artifact:
 
 <dependency>
-    <groupId>org.jboss.forge.addon</groupId>
-    <artifactId>dependencies</artifactId>
-    <classifier>forge-addon</classifier>
-    <version>${version}</version>
+   <groupId>org.jboss.forge.addon</groupId>
+   <artifactId>dependencies</artifactId>
+   <classifier>forge-addon</classifier>
+   <version>${version}</version>
 </dependency>
       
 == Features
@@ -49,21 +49,24 @@ capable of handling the given `DependencyQuery`.
 +
 [source,java]
 ----
-Set<ExportedInstance<DependencyResolver>> resolverInstances = addonRegistry.getExportedInstances(DependencyResolver.class);
-for( ExportedInstance<DependencyResolver> instance : resolverInstances )
-DependencyResolver resolver = instance.get();
+@Inject 
+private DependencyResolver resolver;
+
 Set<Dependency> dependencies = resolver.resolveDependencies(...);
 DependencyMetadata metadata = resolver.resolveDependencyMetadata(...);
 ----
 +
-[NOTE] 
+[TIP] 
 ====
-If your addon uses a container supporting "@Inject" annotations, services such as the `DependencyResolver` may also be 
-accessed via dependency injection:
+If your addon uses a container that does not support "@Inject" annotations, services such as the `DependencyResolver` may also be 
+accessed via the `AddonRegistry`:
 
 ----
-@Inject 
-private DependencyResolver resolver;
+Imported<DependencyResolver> imported = addonRegistry.getServices(DependencyResolver.class);
+for(ExportedInstance<DependencyResolver> instance : imported)
+{
+   DependencyResolver resolver = instance.get();
+}
 ----
 ==== 
 

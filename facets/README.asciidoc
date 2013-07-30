@@ -17,12 +17,12 @@ To use this addon, you must add it as a dependency in the *pom.xml* of your `for
 
 [source,xml] 
 ----
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>facets</artifactId>
-         <classifier>forge-addon</classifier>
-         <version>${version}</version>
-      </dependency>
+<dependency>
+   <groupId>org.jboss.forge.addon</groupId>
+   <artifactId>facets</artifactId>
+   <classifier>forge-addon</classifier>
+   <version>${version}</version>
+</dependency>
 ----      
 == Features
 
@@ -74,19 +74,21 @@ handles the installation of facets directly.
 +
 [source,java]
 ----
+@Inject
+private FacetFactory factory;
+
 FacetedObject faceted = new FacetedObject();
-ExportedInstance<FacetFactory> factoryInstance = addonRegistry.getExportedInstance(FacetFactory.class);
-FacetFactory factory = factoryInstance.get();
 MyFacet facet = factory.install(faceted, MyFacet.class);
 ---- 
 +
-[NOTE] 
+[TIP] 
 ====
-If your addon uses the Furnace CDI container, services such as the `FacetFactory` may also be accessed via
-dependency injection:
+If your addon uses a container that does not support "@Inject" annotations, services such as the `FacetFactory` may also be 
+accessed via the `AddonRegistry`:
 
 ----
-@Inject private FacetFactory factory;
+Imported<FacetFactory> imported = addonRegistry.getServices(FacetFactory.class);
+FacetFactory factory = imported.get();
 ----
 ==== 
 
