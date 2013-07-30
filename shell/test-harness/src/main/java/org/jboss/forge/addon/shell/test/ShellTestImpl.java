@@ -27,10 +27,10 @@ public class ShellTestImpl implements ShellTest
 {
 //   private TestShellConfiguration config;
    private TestCommandListener listener;
-   private TestSettingsProvider provider;
+   private TestAeshSettingsProvider provider;
 
    @Inject
-   public ShellTestImpl(TestSettingsProvider provider, TestCommandListener listener)
+   public ShellTestImpl(TestAeshSettingsProvider provider, TestCommandListener listener)
    {
       this.listener = listener;
       this.provider = provider;

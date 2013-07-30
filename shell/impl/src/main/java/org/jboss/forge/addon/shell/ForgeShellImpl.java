@@ -112,7 +112,7 @@ public class ForgeShellImpl implements ForgeShell
       Imported<AeshSettingsProvider> instances = registry.getServices(AeshSettingsProvider.class);
       for (AeshSettingsProvider provider : instances)
       {
-         settings = provider.buildSettings();
+         settings = provider.buildAeshSettings();
          instances.release(provider);
       }
       
