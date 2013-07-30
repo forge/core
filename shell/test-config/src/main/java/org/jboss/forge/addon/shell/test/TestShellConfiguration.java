@@ -12,7 +12,6 @@ import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jboss.aesh.console.settings.Settings;
@@ -32,41 +31,41 @@ public class TestShellConfiguration implements ShellConfiguration
    private ByteArrayOutputStream stdout = new ByteArrayOutputStream();
    private ByteArrayOutputStream stderr = new ByteArrayOutputStream();
    PipedInputStream inputStream;
-   
+
    @Override
    public synchronized void configure()
    {
-//      try
-//      {
-//         Settings settings = Settings.getInstance();
-//
-//         inputStream = new PipedInputStream(stdin);
-//         settings.setInputStream(inputStream);
-//         settings.setStdOut(stdout);
-//         settings.setStdErr(stderr);
-//         settings.setName("test");
-//         settings.setLogging(true);
-//         settings.setTerminal(new TestTerminal());
-//         settings.getOperationManager().addOperation(new KeyOperation(Key.ENTER, Operation.NEW_LINE));
-//      }
-//      catch (IOException e)
-//      {
-//         throw new RuntimeException("Could not configure Shell.", e);
-//      }
+      try
+      {
+         Settings settings = Settings.getInstance();
+
+         inputStream = new PipedInputStream(stdin);
+         settings.setInputStream(inputStream);
+         settings.setStdOut(stdout);
+         settings.setStdErr(stderr);
+         settings.setName("test");
+         settings.setLogging(true);
+         settings.setTerminal(new TestTerminal());
+         settings.getOperationManager().addOperation(new KeyOperation(Key.ENTER, Operation.NEW_LINE));
+      }
+      catch (IOException e)
+      {
+         throw new RuntimeException("Could not configure Shell.", e);
+      }
    }
 
-//   public synchronized OutputStream getStdIn()
-//   {
-//      return stdin;
-//   }
-//
-//   public synchronized ByteArrayOutputStream getStdOut()
-//   {
-//      return stdout;
-//   }
-//
-//   public synchronized ByteArrayOutputStream getStdErr()
-//   {
-//      return stderr;
-//   }
+   public synchronized OutputStream getStdIn()
+   {
+      return stdin;
+   }
+
+   public synchronized ByteArrayOutputStream getStdOut()
+   {
+      return stdout;
+   }
+
+   public synchronized ByteArrayOutputStream getStdErr()
+   {
+      return stderr;
+   }
 }

@@ -11,7 +11,7 @@ import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.shell.ForgeShell;
-import org.jboss.forge.addon.shell.test.TestSettingsProvider;
+import org.jboss.forge.addon.shell.test.TestShellConfiguration;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -61,7 +61,7 @@ public class NewAddonProjectAeshTest
    private ForgeShell shell;
 
    @Inject
-   private TestSettingsProvider streams;
+   private TestShellConfiguration streams;
 
    @Inject
    private ProjectFactory projectFactory;
@@ -96,7 +96,7 @@ public class NewAddonProjectAeshTest
       Project project = projectFactory.findProject(projectRoot.getChildDirectory("lincoln"));
 
       Assert.assertNotNull(project);
- 
+
       Assert.assertTrue(project.getProjectRoot().exists());
 
       // TODO Wizard steps are not implemented by Aesh, so we can't actually invoke the entire wizard.

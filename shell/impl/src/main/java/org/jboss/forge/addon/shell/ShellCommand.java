@@ -103,7 +103,7 @@ public class ShellCommand implements Completion
    public void complete(CompleteOperation completeOperation)
    {
        try {
-           ParameterInt param = context.getParser().getParameter();
+           ParameterInt param = context.getParser().getParameters().get(0);
            // complete command names
            if (param.getName().startsWith(completeOperation.getBuffer()))
                completeOperation.addCompletionCandidate(param.getName());
@@ -186,7 +186,7 @@ public class ShellCommand implements Completion
                      .findCompleteObject(completeOperation.getBuffer()));
         }
         else {
-            completeOperation.addCompletionCandidates(context.getParser().getParameter().getOptionLongNamesWithDash());
+            completeOperation.addCompletionCandidates(context.getParser().getParameters().get(0).getOptionLongNamesWithDash());
         }
     }
 

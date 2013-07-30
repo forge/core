@@ -73,7 +73,7 @@ public class CommandLineUtil
             }
          }
       }
-      builder.parameter(parameter);
+      builder.addParameter(parameter);
       return builder.generateParser();
    }
 
