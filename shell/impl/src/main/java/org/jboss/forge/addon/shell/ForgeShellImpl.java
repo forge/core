@@ -67,6 +67,9 @@ public class ForgeShellImpl implements ForgeShell
    private Settings settings;
    private Prompt prompt;
    private List<ShellCommand> wizardSteps = new ArrayList<ShellCommand>();
+   
+   private InputStream inputStream;
+   private OutputStream stdOut, stdErr;
 
    private List<ShellCommand> commands;
 
@@ -84,22 +87,23 @@ public class ForgeShellImpl implements ForgeShell
    
    @Override
    public void setInputStream(InputStream is) {
-      Settings.getInstance().setInputStream(is);
+      inputStream = is;
    }
    
    @Override
    public void setStdOut(OutputStream os) {
-      Settings.getInstance().setStdOut(os);
+      stdOut = os;
    }
    
    @Override
    public void setStdErr(OutputStream os) {
-      Settings.getInstance().setStdErr(os);
+      stdErr = os;
    }
 
    @Override
    public void startShell() throws Exception
    {
+      if (console.isRunning()) return;
       initShell();
       console.start();
    }
@@ -136,13 +140,23 @@ public class ForgeShellImpl implements ForgeShell
       }
       
       if (settings == null) {
-         settings = new SettingsBuilder()
+         SettingsBuilder sb = new SettingsBuilder()
             .readInputrc(false)
-            .logging(true)
-            .create();
+            .logging(true);
+         if (inputStream != null) {
+            sb.inputStream(inputStream);
+         }
+         if (stdOut != null) {
+            sb.outputStream(stdOut);
+         }
+         if (stdErr != null) {
+            sb.outputStreamError(stdErr);
+         }  
+         settings = sb.create();
       }
 
       commands = new ArrayList<ShellCommand>();
+      
       console = new Console(settings);
       console.setPrompt(prompt);
       console.setConsoleCallback(new ForgeConsoleCallback());
