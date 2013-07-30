@@ -16,7 +16,7 @@ import org.jboss.forge.addon.convert.ConverterGenerator;
 import org.jboss.forge.addon.convert.exception.ConverterNotFoundException;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Exported;
-import org.jboss.forge.furnace.services.ExportedInstance;
+import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Annotations;
 
 @Exported
@@ -31,10 +31,9 @@ public class ConverterFactoryImpl implements ConverterFactory
    public <S, T> Converter<S, T> getConverter(Class<S> source, Class<T> target)
    {
       Converter<S, T> result = null;
-      for (ExportedInstance<ConverterGenerator> generatorInstance : registry
-               .getExportedInstances(ConverterGenerator.class))
+      Imported<ConverterGenerator> instances = registry.getInstance(ConverterGenerator.class);
+      for (ConverterGenerator generator : instances)
       {
-         ConverterGenerator generator = generatorInstance.get();
          if (generator.handles(source, target))
          {
             result = (Converter<S, T>) generator.generateConverter(source, target);
@@ -46,7 +45,7 @@ public class ConverterFactoryImpl implements ConverterFactory
       {
          if (String.class.equals(source) && Annotations.isAnnotationPresent(target, Exported.class))
          {
-            result = (Converter<S, T>) new StringToExportedConverter<T>(target, registry);
+            result = (Converter<S, T>) new StringToImportedInstanceConverter<T>(target, registry);
          }
          else if (String.class.equals(target))
          {

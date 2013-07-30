@@ -153,7 +153,7 @@ public class CommandLineUtil
    {
       if (converterFactory == null)
       {
-         converterFactory = registry.getExportedInstance(ConverterFactory.class).get();
+         converterFactory = registry.getInstance(ConverterFactory.class).get();
       }
       InputComponents.setValueFor(converterFactory, input, value);
    }

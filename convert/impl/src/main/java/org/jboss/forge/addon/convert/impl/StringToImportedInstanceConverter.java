@@ -7,14 +7,12 @@
 
 package org.jboss.forge.addon.convert.impl;
 
-import java.util.Set;
-
 import javax.enterprise.inject.Vetoed;
 
 import org.jboss.forge.addon.convert.AbstractConverter;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Exported;
-import org.jboss.forge.furnace.services.ExportedInstance;
+import org.jboss.forge.furnace.services.Imported;
 
 /**
  * Lookups in the {@link AddonRegistry} an {@link Exported} instance based on the {@link Object#toString()} method
@@ -24,11 +22,11 @@ import org.jboss.forge.furnace.services.ExportedInstance;
  * @param <TARGETTYPE> a type declaring the {@link Exported} annotation
  */
 @Vetoed
-public class StringToExportedConverter<TARGETTYPE> extends AbstractConverter<String, TARGETTYPE>
+public class StringToImportedInstanceConverter<TARGETTYPE> extends AbstractConverter<String, TARGETTYPE>
 {
    private AddonRegistry addonRegistry;
 
-   public StringToExportedConverter(Class<TARGETTYPE> targetType, AddonRegistry addonRegistry)
+   public StringToImportedInstanceConverter(Class<TARGETTYPE> targetType, AddonRegistry addonRegistry)
    {
       super(String.class, targetType);
       this.addonRegistry = addonRegistry;
@@ -37,21 +35,12 @@ public class StringToExportedConverter<TARGETTYPE> extends AbstractConverter<Str
    @Override
    public TARGETTYPE convert(String source)
    {
-      Set<ExportedInstance<TARGETTYPE>> exportedInstances = addonRegistry.getExportedInstances(getTargetType());
-      for (ExportedInstance<TARGETTYPE> exportedInstance : exportedInstances)
+      Imported<TARGETTYPE> instances = addonRegistry.getInstance(getTargetType());
+      for (TARGETTYPE instance : instances)
       {
-         TARGETTYPE targetObj = null;
-         try
+         if (source.equals(instance.toString()))
          {
-            targetObj = exportedInstance.get();
-            if (source.equals(targetObj.toString()))
-            {
-               return targetObj;
-            }
-         }
-         finally
-         {
-            exportedInstance.release(targetObj);
+            return instance;
          }
       }
       return null;

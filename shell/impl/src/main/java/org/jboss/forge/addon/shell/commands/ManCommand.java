@@ -10,6 +10,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import javax.inject.Inject;
 
 import org.jboss.aesh.complete.CompleteOperation;
@@ -31,7 +32,6 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.furnace.addons.AddonRegistry;
-import org.jboss.forge.furnace.services.ExportedInstance;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
@@ -70,34 +70,36 @@ public class ManCommand implements UICommand, Completion
       arguments.setLabel("");
       arguments.setRequired(false);
 
-       arguments.setCompleter( new UICompleter<String>() {
-           @Override
-           public Iterable<String> getCompletionProposals(UIContext context, InputComponent<?, String> input, String value) {
-               List<String> manCommands = new ArrayList<String>();
-               // list all commands
-               if (value == null || value.trim().length() < 1)
+      arguments.setCompleter(new UICompleter<String>()
+      {
+         @Override
+         public Iterable<String> getCompletionProposals(UIContext context, InputComponent<?, String> input, String value)
+         {
+            List<String> manCommands = new ArrayList<String>();
+            // list all commands
+            if (value == null || value.trim().length() < 1)
+            {
+               for (UICommand instance : registry.getInstance(UICommand.class))
                {
-                   for (ExportedInstance<UICommand> instance : registry.getExportedInstances(UICommand.class))
-                   {
-                       manCommands.add(instance.get().getMetadata().getName());
-                   }
+                  manCommands.add(instance.getMetadata().getName());
                }
-               // find the last
-               else
+            }
+            // find the last
+            else
+            {
+               String item = Parser.findEscapedSpaceWordCloseToEnd(value.trim());
+               // completeOperation.setOffset(completeOperation.getCursor() -
+               // item.length());
+               for (UICommand instance : registry.getInstance(UICommand.class))
                {
-                   String item = Parser.findEscapedSpaceWordCloseToEnd(value.trim());
-                   //completeOperation.setOffset(completeOperation.getCursor() -
-                   //        item.length());
-                   for (ExportedInstance<UICommand> instance : registry.getExportedInstances(UICommand.class))
-                   {
-                       if (instance.get().getMetadata().getName().startsWith(item))
-                           manCommands.add(instance.get().getMetadata().getName());
-                   }
+                  if (instance.getMetadata().getName().startsWith(item))
+                     manCommands.add(instance.getMetadata().getName());
                }
+            }
 
-               return manCommands;
-           }
-       });
+            return manCommands;
+         }
+      });
       builder.add(arguments);
    }
 
@@ -144,9 +146,9 @@ public class ManCommand implements UICommand, Completion
          // list all commands
          if (completeOperation.getBuffer().trim().equals("man"))
          {
-            for (ExportedInstance<UICommand> instance : registry.getExportedInstances(UICommand.class))
+            for (UICommand instance : registry.getInstance(UICommand.class))
             {
-               completeOperation.addCompletionCandidate(instance.get().getMetadata().getName());
+               completeOperation.addCompletionCandidate(instance.getMetadata().getName());
             }
          }
          // find the last
@@ -155,10 +157,10 @@ public class ManCommand implements UICommand, Completion
             String item = Parser.findEscapedSpaceWordCloseToEnd(completeOperation.getBuffer().trim());
             completeOperation.setOffset(completeOperation.getCursor() -
                      item.length());
-            for (ExportedInstance<UICommand> instance : registry.getExportedInstances(UICommand.class))
+            for (UICommand instance : registry.getInstance(UICommand.class))
             {
-               if (instance.get().getMetadata().getName().startsWith(item))
-                  completeOperation.addCompletionCandidate(instance.get().getMetadata().getName());
+               if (instance.getMetadata().getName().startsWith(item))
+                  completeOperation.addCompletionCandidate(instance.getMetadata().getName());
             }
          }
       }
@@ -170,10 +172,10 @@ public class ManCommand implements UICommand, Completion
 
    private URL getCommand(String name)
    {
-      for (ExportedInstance<UICommand> instance : registry.getExportedInstances(UICommand.class))
+      for (UICommand instance : registry.getInstance(UICommand.class))
       {
-         if (instance.get().getMetadata().getName().equals(name))
-            return instance.get().getMetadata().getDocLocation();
+         if (instance.getMetadata().getName().equals(name))
+            return instance.getMetadata().getDocLocation();
       }
       return null;
    }

@@ -17,7 +17,7 @@ import org.jboss.forge.addon.resource.transaction.ResourceTransaction;
 import org.jboss.forge.addon.resource.transaction.ResourceTransactionManager;
 import org.jboss.forge.addon.resource.util.RelatedClassComparator;
 import org.jboss.forge.furnace.addons.AddonRegistry;
-import org.jboss.forge.furnace.services.ExportedInstance;
+import org.jboss.forge.furnace.services.Imported;
 
 /**
  * @author <a href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>
@@ -43,9 +43,9 @@ public class ResourceFactoryImpl implements ResourceFactory, ResourceTransaction
       {
          TreeMap<Class<?>, ResourceGenerator> generated = new TreeMap<Class<?>, ResourceGenerator>(
                   new RelatedClassComparator());
-         for (ExportedInstance<ResourceGenerator> instance : getRegisteredResourceGenerators())
+         Imported<ResourceGenerator> instances = registry.getInstance(ResourceGenerator.class);
+         for (ResourceGenerator generator : instances)
          {
-            ResourceGenerator generator = instance.get();
             if (generator.handles(type, underlyingResource))
             {
                Class resourceType = generator.getResourceType(type, underlyingResource);
@@ -54,7 +54,7 @@ public class ResourceFactoryImpl implements ResourceFactory, ResourceTransaction
                   generated.put(resourceType, generator);
                }
             }
-            instance.release(generator);
+            instances.release(generator);
          }
          if (generated.size() > 0)
          {
@@ -69,12 +69,6 @@ public class ResourceFactoryImpl implements ResourceFactory, ResourceTransaction
    public <E> Resource<E> create(E underlyingResource)
    {
       return create(Resource.class, underlyingResource);
-   }
-
-   @SuppressWarnings("rawtypes")
-   private Iterable<ExportedInstance<ResourceGenerator>> getRegisteredResourceGenerators()
-   {
-      return registry.getExportedInstances(ResourceGenerator.class);
    }
 
    @Override

@@ -47,7 +47,7 @@ import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.event.PostStartup;
 import org.jboss.forge.furnace.event.PreShutdown;
 import org.jboss.forge.furnace.services.Exported;
-import org.jboss.forge.furnace.services.ExportedInstance;
+import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.forge.furnace.util.Assert;
 
@@ -111,10 +111,11 @@ public class ForgeShellImpl implements ForgeShell
       Settings.getInstance().setReadInputrc(false);
       Settings.getInstance().setLogging(true);
 
-      for (ExportedInstance<ShellConfiguration> instance : registry.getExportedInstances(ShellConfiguration.class))
+      Imported<ShellConfiguration> instances = registry.getInstance(ShellConfiguration.class);
+      for (ShellConfiguration config : instances)
       {
-         ShellConfiguration provider = instance.get();
-         provider.configure();
+         config.configure();
+         instances.release(config);
       }
 
       commands = new ArrayList<ShellCommand>();
@@ -127,12 +128,11 @@ public class ForgeShellImpl implements ForgeShell
 
    private void refreshAvailableCommands()
    {
-      Set<ExportedInstance<UICommand>> instances = registry.getExportedInstances(UICommand.class);
+      Imported<UICommand> instances = registry.getInstance(UICommand.class);
 
       Set<UICommand> loaded = new HashSet<UICommand>();
-      for (ExportedInstance<UICommand> instance : instances)
+      for (UICommand command : instances)
       {
-         UICommand command = instance.get();
          loaded.add(command);
          if (!isCommandLoaded(command))
          {
@@ -142,7 +142,7 @@ public class ForgeShellImpl implements ForgeShell
             }
             catch (Exception e)
             {
-               logger.log(Level.SEVERE, "Failed to load command [" + instance + "]");
+               logger.log(Level.SEVERE, "Failed to load command [" + command + "]");
             }
          }
       }
@@ -332,13 +332,13 @@ public class ForgeShellImpl implements ForgeShell
             listener.preCommandExecuted(command, context);
          }
 
-         Set<ExportedInstance<CommandExecutionListener>> instances = registry
-                  .getExportedInstances(CommandExecutionListener.class);
-         for (ExportedInstance<CommandExecutionListener> exportedInstance : instances)
+         Imported<CommandExecutionListener> instances = registry
+                  .getInstance(CommandExecutionListener.class);
+         for (CommandExecutionListener listener : instances)
          {
-            CommandExecutionListener listener = exportedInstance.get();
             if (listener != null)
                listener.preCommandExecuted(command, context);
+            instances.release(listener);
          }
       }
 
@@ -349,13 +349,13 @@ public class ForgeShellImpl implements ForgeShell
             listener.postCommandExecuted(command, context, result);
          }
 
-         Set<ExportedInstance<CommandExecutionListener>> instances = registry
-                  .getExportedInstances(CommandExecutionListener.class);
-         for (ExportedInstance<CommandExecutionListener> exportedInstance : instances)
+         Imported<CommandExecutionListener> instances = registry
+                  .getInstance(CommandExecutionListener.class);
+         for (CommandExecutionListener listener : instances)
          {
-            CommandExecutionListener listener = exportedInstance.get();
             if (listener != null)
                listener.postCommandExecuted(command, context, result);
+            instances.release(listener);
          }
       }
 

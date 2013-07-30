@@ -16,7 +16,7 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.facets.constraints.FacetInspector;
 import org.jboss.forge.furnace.addons.AddonRegistry;
-import org.jboss.forge.furnace.services.ExportedInstance;
+import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Assert;
 
 /**
@@ -43,8 +43,8 @@ public class FacetFactoryImpl implements FacetFactory
             Class<FACETTYPE> type)
    {
       Assert.notNull(type, "Facet type must not be null.");
-      ExportedInstance<FACETTYPE> instance = registry.getExportedInstance(type);
-      if (instance == null)
+      Imported<FACETTYPE> instance = registry.getInstance(type);
+      if (!instance.isSatisfied() && !instance.isAmbiguous())
          throw new FacetNotFoundException("Could not find Facet of type [" + type.getName() + "]");
       return instance.get();
    }
@@ -69,11 +69,11 @@ public class FacetFactoryImpl implements FacetFactory
             Class<FACETTYPE> type)
    {
       Assert.notNull(type, "Facet type must not be null.");
-      Set<ExportedInstance<FACETTYPE>> instances = registry.getExportedInstances(type);
-      Set<FACETTYPE> facets = new HashSet<FACETTYPE>(instances.size());
-      for (ExportedInstance<FACETTYPE> instance : instances)
+      Imported<FACETTYPE> instances = registry.getInstance(type);
+      Set<FACETTYPE> facets = new HashSet<FACETTYPE>();
+      for (FACETTYPE instance : instances)
       {
-         facets.add(instance.get());
+         facets.add(instance);
       }
       return facets;
    }

@@ -33,7 +33,7 @@ import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Exported;
-import org.jboss.forge.furnace.services.ExportedInstance;
+import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Annotations;
 
 /**
@@ -209,9 +209,8 @@ public class InputComponentProducer implements InputComponentFactory
          // Set Default Value
          if (!"".equals(atts.defaultValue()))
          {
-            ExportedInstance<ConverterFactory> exportedInstance = addonRegistry
-                     .getExportedInstance(ConverterFactory.class);
-            ConverterFactory converterFactory = exportedInstance.get();
+            Imported<ConverterFactory> instance = addonRegistry.getInstance(ConverterFactory.class);
+            ConverterFactory converterFactory = instance.get();
             try
             {
                InputComponents.setDefaultValueFor(converterFactory, (InputComponent<?, Object>) input,
@@ -219,7 +218,7 @@ public class InputComponentProducer implements InputComponentFactory
             }
             finally
             {
-               exportedInstance.release(converterFactory);
+               instance.release(converterFactory);
             }
 
          }
@@ -240,11 +239,11 @@ public class InputComponentProducer implements InputComponentFactory
          else if (Annotations.isAnnotationPresent(valueType, Exported.class))
          {
             List<Object> choiceList = new ArrayList<Object>();
-            for (ExportedInstance exportedInstance : addonRegistry.getExportedInstances(valueType))
+            Imported instances = addonRegistry.getInstance(valueType);
+            for (Object instance : instances)
             {
-               Object instance = exportedInstance.get();
                choiceList.add(instance);
-               exportedInstance.release(instance);
+               instances.release(instance);
             }
             choices = choiceList;
          }

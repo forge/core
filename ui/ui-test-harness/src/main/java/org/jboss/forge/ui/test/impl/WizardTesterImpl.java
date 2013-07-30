@@ -146,7 +146,7 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
 
    private UIBuilderImpl createBuilder(Class<W> wizardClass) throws Exception
    {
-      W wizard = addonRegistry.getExportedInstance(wizardClass).get();
+      W wizard = addonRegistry.getInstance(wizardClass).get();
       UIBuilderImpl builder = new UIBuilderImpl(context, wizard);
       wizard.initializeUI(builder);
       return builder;
@@ -175,6 +175,6 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
 
    private ConverterFactory getConverterFactory()
    {
-      return addonRegistry.getExportedInstance(ConverterFactory.class).get();
+      return addonRegistry.getInstance(ConverterFactory.class).get();
    }
 }

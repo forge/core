@@ -30,7 +30,7 @@ import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.repositories.AddonRepository;
 import org.jboss.forge.furnace.repositories.MutableAddonRepository;
-import org.jboss.forge.furnace.services.ExportedInstance;
+import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.forge.furnace.util.Predicate;
 
@@ -78,12 +78,12 @@ public class ProjectFactoryImpl implements ProjectFactory
       }
 
       Project result = null;
-      for (ExportedInstance<ProjectLocator> instance : registry.getExportedInstances(ProjectLocator.class))
+      Imported<ProjectLocator> instances = registry.getInstance(ProjectLocator.class);
+      for (ProjectLocator locator : instances)
       {
          DirectoryResource r = (target instanceof DirectoryResource) ? (DirectoryResource) target : target.getParent();
          while (r != null && result == null)
          {
-            ProjectLocator locator = instance.get();
             if (locator.containsProject(r))
             {
                result = locator.createProject(r);
@@ -93,6 +93,7 @@ public class ProjectFactoryImpl implements ProjectFactory
 
             r = r.getParent();
          }
+         instances.release(locator);
       }
 
       if (result != null)
@@ -120,12 +121,13 @@ public class ProjectFactoryImpl implements ProjectFactory
    public Project createProject(DirectoryResource target, Iterable<Class<? extends ProjectFacet>> facetTypes)
    {
       Project result = null;
-      for (ExportedInstance<ProjectLocator> instance : registry.getExportedInstances(ProjectLocator.class))
+      Imported<ProjectLocator> instances = registry.getInstance(ProjectLocator.class);
+      for (ProjectLocator locator : instances)
       {
-         ProjectLocator locator = instance.get();
          result = locator.createProject(target);
          if (result != null)
             break;
+         instances.release(locator);
       }
 
       if (result != null)
@@ -133,14 +135,15 @@ public class ProjectFactoryImpl implements ProjectFactory
          DirectoryResource parentDir = result.getProjectRoot().getParent().reify(DirectoryResource.class);
          if (parentDir != null)
          {
-            for (ExportedInstance<ProjectAssociationProvider> providerInstance : registry
-                     .getExportedInstances(ProjectAssociationProvider.class))
+            Imported<ProjectAssociationProvider> locatorInstances = registry
+                     .getInstance(ProjectAssociationProvider.class);
+            for (ProjectAssociationProvider provider : locatorInstances)
             {
-               ProjectAssociationProvider provider = providerInstance.get();
                if (provider.canAssociate(result, parentDir))
                {
                   provider.associate(result, parentDir);
                }
+               locatorInstances.release(provider);
             }
          }
       }
@@ -240,9 +243,9 @@ public class ProjectFactoryImpl implements ProjectFactory
    {
       boolean result = false;
       DirectoryResource dir = (target instanceof DirectoryResource) ? (DirectoryResource) target : target.getParent();
-      for (ExportedInstance<ProjectLocator> instance : registry.getExportedInstances(ProjectLocator.class))
+      Imported<ProjectLocator> instances = registry.getInstance(ProjectLocator.class);
+      for (ProjectLocator locator : instances)
       {
-         ProjectLocator locator = instance.get();
          DirectoryResource r = dir;
          while (r != null && !result)
          {
@@ -251,6 +254,7 @@ public class ProjectFactoryImpl implements ProjectFactory
          }
          if (result)
             break;
+         instances.release(locator);
       }
       return result;
    }

@@ -62,19 +62,20 @@ public class FacetFactoryTest
       try
       {
          facetFactory.create(new MockFaceted(), NotFoundMockFacet.class);
+         Assert.fail("Should have thrown exception.");
       }
       catch (Throwable e)
       {
-         boolean found = false;
+         boolean causeIsFacetNotFoundException = false;
          while (e.getCause() != null && e.getCause() != e)
          {
             e = e.getCause();
             if (e instanceof FacetNotFoundException)
             {
-               found = true;
+               causeIsFacetNotFoundException = true;
             }
          }
-         Assert.assertTrue(found);
+         Assert.assertTrue(causeIsFacetNotFoundException);
       }
    }
 
