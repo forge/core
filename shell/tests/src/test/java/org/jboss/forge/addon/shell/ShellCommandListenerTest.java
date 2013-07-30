@@ -10,7 +10,7 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.shell.test.TestAeshSettingsProvider;
+import org.jboss.forge.addon.shell.test.TestSettingsProvider;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -50,7 +50,7 @@ public class ShellCommandListenerTest
    private ForgeShell shell;
 
    @Inject
-   private TestAeshSettingsProvider streams;
+   private TestSettingsProvider streams;
 
    @Test
    public void testCommandExecutionListenerTriggers() throws Exception
