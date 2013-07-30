@@ -60,7 +60,7 @@ Installation and removal of addons through UI commands::
 More installation methods will become available as they are developed/contributed, but the addon-manager does not
 currently support installation directly from Git repositories.
  
-Installation and removal od addons through AddonManager service::
+Installation and removal of addons through AddonManager service::
  The addon-manager addon provides the `AddonManager` service for use in addons which intend to perform installation
 and removal of addons programatically.
 +
