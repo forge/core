@@ -13,18 +13,31 @@ import org.jboss.forge.furnace.util.Predicate;
 
 /**
  * A parameter object which is used to search dependencies
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 public interface DependencyQuery
 {
+   /**
+    * Return the {@link Coordinate} pattern for this query.
+    */
    Coordinate getCoordinate();
 
+   /**
+    * Return the scope type restriction for this query.
+    */
    String getScopeType();
 
+   /**
+    * Return the {@link Dependency} filter {@link Predicate} for this {@link DependencyQuery}.
+    */
    Predicate<Dependency> getDependencyFilter();
 
+   /**
+    * Return the {@link DependencyRepository} instances to be queried against. If none are provided, use system default
+    * or externally-configured repositories.
+    */
    List<DependencyRepository> getDependencyRepositories();
 
 }

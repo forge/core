@@ -17,6 +17,9 @@ public class DependencyRepository
    private final String id;
    private final String url;
 
+   /**
+    * Create a new repository with the given id/name and URL.
+    */
    public DependencyRepository(final String id, final String url)
    {
       if (id == null || id.isEmpty())
@@ -31,11 +34,17 @@ public class DependencyRepository
       this.url = url;
    }
 
+   /**
+    * Get the repository name or id;
+    */
    public String getId()
    {
       return id;
    }
 
+   /**
+    * Get the repository URL.
+    */
    public String getUrl()
    {
       return url;

@@ -1,0 +1,87 @@
+== dependencies
+:idprefix: id_ 
+
+
+This addon *provides classes* for use in other addons. The dependencies addon provides APIs and services for interacting
+with artifact repositories, artifact dependencies, and dependency metadata. This is typically for the purpose of 
+resolving project libraries and other resources. The dependencies addon provides an abstract API for interacting
+with an artifact repository.
+
+=== Depends on
+
+[options="header"]
+|===
+|Addon |Exported |Optional
+
+|resources
+|yes
+|no
+
+|===
+
+== Setup
+
+This addon requires the following installation steps.
+
+=== Add configuration to pom.xml 
+
+To use this addon, you must add it as a dependency in the *pom.xml* of your `forge-addon` classified artifact:
+
+<dependency>
+    <groupId>org.jboss.forge.addon</groupId>
+    <artifactId>dependencies</artifactId>
+    <classifier>forge-addon</classifier>
+    <version>${version}</version>
+</dependency>
+      
+== Features
+
+Abstraction of Dependency Repository systems::
+ The dependencies addon provides a layer of abstraction over native repository systems such as maven, ivy, or even
+osgi and java module repositories. This does not mean that all repositories will be compatible via this API; however,
+it does mean that methods of interacting with each repository are standardized and consistent. 
+
+DependencyResolver service for dependency resolution::
+ The `DependencyResolver` service interface is provided (not implemented) by the dependencies addon, so that other
+addons may provide implementations. Addons depending on the dependencies addon may then request service instances
+of the `DependencyResolver` and either select a specific resolver, or iterate over the results until a resolver is
+capable of handling the given `DependencyQuery`.  
++
+[source,java]
+----
+Set<ExportedInstance<DependencyResolver>> resolverInstances = addonRegistry.getExportedInstances(DependencyResolver.class);
+for( ExportedInstance<DependencyResolver> instance : resolverInstances )
+DependencyResolver resolver = instance.get();
+Set<Dependency> dependencies = resolver.resolveDependencies(...);
+DependencyMetadata metadata = resolver.resolveDependencyMetadata(...);
+----
++
+[NOTE] 
+====
+If your addon uses a container supporting "@Inject" annotations, services such as the `DependencyResolver` may also be 
+accessed via dependency injection:
+
+----
+@Inject 
+private DependencyResolver resolver;
+----
+==== 
+
+Comprehensive dependency query API::
+The dependency resolution functions of the dependencies addon functions primarily using the `DependencyQuery` API, with
+the fluent `DependencyQueryBuilder` used to specify query criteria.
++
+[source,java]
+----
+DependencyQueryBuilder.create(CoordinateBuilder.create()
+      .setGroupId("org.jboss.forge.furnace")
+      .setArtifactId("furnace"))
+   .setFilter(...)
+   .setRepositories(...)
+   .setScopeType(...)
+----
+
+Consistent programming experience::
+ Because the dependencies API provides a consistent set of interfaces for interacting with artifact repositories, 
+it is used in a number of addons and should be considered the standard approach for interacting with artifact and
+dependency repositories.
