@@ -28,22 +28,22 @@ There are basically four input types:
 |Addon |Exported |Optional
 
 |org.jboss.forge.furnace:container-cdi
-|No
-|No
+|no
+|no
 
 |convert
-|Yes
-|No
+|yes
+|no
 
 
 |facets
-|Yes
-|Yes
+|yes
+|yes
 
 
 |ui-spi
-|Yes
-|Yes
+|yes
+|yes
 
 |===
 

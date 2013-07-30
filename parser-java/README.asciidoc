@@ -1,0 +1,74 @@
+== parser-java
+:idprefix: id_ 
+
+This addon provides *standalone* functionality, and *exports services* for use in other addons. 
+
+=== Depends on
+
+[options="header"]
+|===
+|Addon |Exported |Optional
+
+|resources
+|no
+|yes
+
+
+|projects
+|no
+|yes
+
+|ui-spi
+|no
+|yes
+
+|org.jboss.forge.furnace:container-cdi
+|no
+|no
+
+|===
+
+== Setup
+
+This Addon requires the following installation steps.
+
+=== Add configuration to pom.xml 
+
+To use this addon, you must add it as a dependency in the *pom.xml* of your `forge-addon` classified artifact:
+
+[source,xml]
+----
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>parser-java</artifactId>
+         <classifier>forge-addon</classifier>
+         <version>${version}</version>
+      </dependency>
+----
+
+== Features
+
+Injecting JavaSourceFactory:: Allows creation and parsing of Java sources 
+
+[source,java]
+----
+@Inject 
+JavaSourceFactory factory;
+
+JavaClass myClass = factory.parse(JavaClass.class, "public class MyClass{}");
+
+----
+
+Facets addon integration:: Read and persist java sources easily in your project
+
+[source,java]
+----
+
+Project project = ...
+JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+...
+----
+
+Resources addon integration:: Custom resources for dealing with java types, methods and fields
+
+ui-spi integration:: Registers the _InputType.JAVA_CLASS_PICKER_ for UIInput<JavaResource> injections
