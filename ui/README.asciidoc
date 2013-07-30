@@ -27,7 +27,7 @@ There are basically four input types:
 |===
 |Addon |Exported |Optional
 
-|container-cdi
+|org.jboss.forge.furnace:container-cdi
 |No
 |No
 
@@ -49,9 +49,12 @@ There are basically four input types:
 
 == Setup
 
-=== Service consumer
+This addon requires the following installation steps.
 
-To consume exported services of this addon, you must add it a dependency in the *pom.xml* of your `forge-addon` classified artifact:
+=== Add configuration to pom.xml 
+
+To consume exported services of this addon, you must add it a dependency in the *pom.xml* of your `forge-addon` 
+classified artifact:
 
 [source,xml]
 ----
@@ -160,7 +163,7 @@ public class WizardNextStep extends AbstractUICommand implements UIWizardStep
 }
 ----
 
-Creating components dynamically:: If the number of inputs are unknown at compile time, it is possible to create inputs using InputComponentFactory:
+Creating components programmatically:: If the number of inputs are unknown at compile time, it is possible to create inputs using InputComponentFactory:
 
 [source,java]
 ----
