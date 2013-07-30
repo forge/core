@@ -31,11 +31,12 @@ import org.jboss.aesh.console.ConsoleCallback;
 import org.jboss.aesh.console.ConsoleOutput;
 import org.jboss.aesh.console.Prompt;
 import org.jboss.aesh.console.settings.Settings;
+import org.jboss.aesh.console.settings.SettingsBuilder;
 import org.jboss.aesh.terminal.CharacterType;
 import org.jboss.aesh.terminal.Color;
 import org.jboss.aesh.terminal.TerminalCharacter;
+import org.jboss.forge.addon.shell.spi.AeshSettingsProvider;
 import org.jboss.forge.addon.shell.spi.CommandExecutionListener;
-import org.jboss.forge.addon.shell.spi.ShellConfiguration;
 import org.jboss.forge.addon.shell.util.CommandLineUtil;
 import org.jboss.forge.addon.shell.util.UICommandDelegate;
 import org.jboss.forge.addon.ui.UICommand;
@@ -61,6 +62,7 @@ public class ForgeShellImpl implements ForgeShell
    private static final Logger logger = Logger.getLogger(ForgeShellImpl.class.getName());
 
    private Console console;
+   private Settings settings;
    private Prompt prompt;
    private List<ShellCommand> wizardSteps = new ArrayList<ShellCommand>();
 
@@ -94,7 +96,6 @@ public class ForgeShellImpl implements ForgeShell
       if (console != null && console.isRunning())
       {
          console.stop();
-         console.reset();
       }
    }
 
@@ -108,17 +109,21 @@ public class ForgeShellImpl implements ForgeShell
    {
       prompt = createPrompt();
 
-      Settings.getInstance().setReadInputrc(false);
-      Settings.getInstance().setLogging(true);
-
-      for (ExportedInstance<ShellConfiguration> instance : registry.getExportedInstances(ShellConfiguration.class))
+      for (ExportedInstance<AeshSettingsProvider> instance : registry.getExportedInstances(AeshSettingsProvider.class))
       {
-         ShellConfiguration provider = instance.get();
-         provider.configure();
+         AeshSettingsProvider provider = instance.get();
+         settings = provider.buildSettings();
+      }
+      
+      if (settings == null) {
+         settings = new SettingsBuilder()
+            .readInputrc(false)
+            .logging(true)
+            .create();
       }
 
       commands = new ArrayList<ShellCommand>();
-      console = Console.getInstance();
+      console = new Console(settings);
       console.setPrompt(prompt);
       console.setConsoleCallback(new ForgeConsoleCallback());
 

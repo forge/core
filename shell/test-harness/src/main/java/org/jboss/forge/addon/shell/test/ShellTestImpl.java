@@ -25,14 +25,15 @@ import org.jboss.forge.furnace.util.Assert;
 @Singleton
 public class ShellTestImpl implements ShellTest
 {
-   private TestShellConfiguration config;
+//   private TestShellConfiguration config;
    private TestCommandListener listener;
+   private TestSettingsProvider provider;
 
    @Inject
-   public ShellTestImpl(TestShellConfiguration config, TestCommandListener listener)
+   public ShellTestImpl(TestSettingsProvider provider, TestCommandListener listener)
    {
       this.listener = listener;
-      this.config = config;
+      this.provider = provider;
    }
 
    @Override
@@ -46,7 +47,7 @@ public class ShellTestImpl implements ShellTest
          if (!line.trim().endsWith("\n"))
             line = line + "\n";
          listener.reset();
-         config.getStdIn().write(line.getBytes());
+         provider.getStdIn().write(line.getBytes());
          while (!listener.isExecuted())
          {
             Thread.sleep(10);
@@ -71,7 +72,7 @@ public class ShellTestImpl implements ShellTest
          if (!line.trim().endsWith("\n"))
             line = line + "\n";
          listener.reset();
-         config.getStdIn().write(line.getBytes());
+         provider.getStdIn().write(line.getBytes());
          long start = System.currentTimeMillis();
          while (!listener.isExecuted())
          {
@@ -101,13 +102,13 @@ public class ShellTestImpl implements ShellTest
    @Override
    public void waitForStdOut(String value, int quantity, TimeUnit unit) throws TimeoutException
    {
-      waitForStream(value, config.getStdOut(), quantity, unit);
+      waitForStream(value, provider.getStdOut(), quantity, unit);
    }
 
    @Override
    public void waitForStdErr(String value, int quantity, TimeUnit unit) throws TimeoutException
    {
-      waitForStream(value, config.getStdErr(), quantity, unit);
+      waitForStream(value, provider.getStdErr(), quantity, unit);
    }
 
    private void waitForStream(String value, ByteArrayOutputStream stream, int quantity, TimeUnit unit)
@@ -116,8 +117,8 @@ public class ShellTestImpl implements ShellTest
       stream.reset();
       try
       {
-         config.getStdIn().write(value.getBytes());
-         config.getStdIn().flush();
+         provider.getStdIn().write(value.getBytes());
+         provider.getStdIn().flush();
       }
       catch (IOException e)
       {
@@ -146,19 +147,19 @@ public class ShellTestImpl implements ShellTest
    @Override
    public OutputStream getStdIn()
    {
-      return config.getStdIn();
+      return provider.getStdIn();
    }
 
    @Override
    public String getStdOut()
    {
-      return config.getStdOut().toString();
+      return provider.getStdOut().toString();
    }
 
    @Override
    public String getStdErr()
    {
-      return config.getStdErr().toString();
+      return provider.getStdErr().toString();
    }
 
 }
