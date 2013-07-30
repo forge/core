@@ -78,7 +78,7 @@ public class ProjectFactoryImpl implements ProjectFactory
       }
 
       Project result = null;
-      Imported<ProjectLocator> instances = registry.getInstance(ProjectLocator.class);
+      Imported<ProjectLocator> instances = registry.getServices(ProjectLocator.class);
       for (ProjectLocator locator : instances)
       {
          DirectoryResource r = (target instanceof DirectoryResource) ? (DirectoryResource) target : target.getParent();
@@ -121,7 +121,7 @@ public class ProjectFactoryImpl implements ProjectFactory
    public Project createProject(DirectoryResource target, Iterable<Class<? extends ProjectFacet>> facetTypes)
    {
       Project result = null;
-      Imported<ProjectLocator> instances = registry.getInstance(ProjectLocator.class);
+      Imported<ProjectLocator> instances = registry.getServices(ProjectLocator.class);
       for (ProjectLocator locator : instances)
       {
          result = locator.createProject(target);
@@ -136,7 +136,7 @@ public class ProjectFactoryImpl implements ProjectFactory
          if (parentDir != null)
          {
             Imported<ProjectAssociationProvider> locatorInstances = registry
-                     .getInstance(ProjectAssociationProvider.class);
+                     .getServices(ProjectAssociationProvider.class);
             for (ProjectAssociationProvider provider : locatorInstances)
             {
                if (provider.canAssociate(result, parentDir))
@@ -243,7 +243,7 @@ public class ProjectFactoryImpl implements ProjectFactory
    {
       boolean result = false;
       DirectoryResource dir = (target instanceof DirectoryResource) ? (DirectoryResource) target : target.getParent();
-      Imported<ProjectLocator> instances = registry.getInstance(ProjectLocator.class);
+      Imported<ProjectLocator> instances = registry.getServices(ProjectLocator.class);
       for (ProjectLocator locator : instances)
       {
          DirectoryResource r = dir;

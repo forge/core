@@ -35,7 +35,7 @@ public class StringToImportedInstanceConverter<TARGETTYPE> extends AbstractConve
    @Override
    public TARGETTYPE convert(String source)
    {
-      Imported<TARGETTYPE> instances = addonRegistry.getInstance(getTargetType());
+      Imported<TARGETTYPE> instances = addonRegistry.getServices(getTargetType());
       for (TARGETTYPE instance : instances)
       {
          if (source.equals(instance.toString()))

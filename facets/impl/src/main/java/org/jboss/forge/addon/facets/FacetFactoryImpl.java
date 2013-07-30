@@ -43,7 +43,7 @@ public class FacetFactoryImpl implements FacetFactory
             Class<FACETTYPE> type)
    {
       Assert.notNull(type, "Facet type must not be null.");
-      Imported<FACETTYPE> instance = registry.getInstance(type);
+      Imported<FACETTYPE> instance = registry.getServices(type);
       if (!instance.isSatisfied() && !instance.isAmbiguous())
          throw new FacetNotFoundException("Could not find Facet of type [" + type.getName() + "]");
       return instance.get();
@@ -69,7 +69,7 @@ public class FacetFactoryImpl implements FacetFactory
             Class<FACETTYPE> type)
    {
       Assert.notNull(type, "Facet type must not be null.");
-      Imported<FACETTYPE> instances = registry.getInstance(type);
+      Imported<FACETTYPE> instances = registry.getServices(type);
       Set<FACETTYPE> facets = new HashSet<FACETTYPE>();
       for (FACETTYPE instance : instances)
       {

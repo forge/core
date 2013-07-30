@@ -111,7 +111,7 @@ public class ForgeShellImpl implements ForgeShell
       Settings.getInstance().setReadInputrc(false);
       Settings.getInstance().setLogging(true);
 
-      Imported<ShellConfiguration> instances = registry.getInstance(ShellConfiguration.class);
+      Imported<ShellConfiguration> instances = registry.getServices(ShellConfiguration.class);
       for (ShellConfiguration config : instances)
       {
          config.configure();
@@ -128,7 +128,7 @@ public class ForgeShellImpl implements ForgeShell
 
    private void refreshAvailableCommands()
    {
-      Imported<UICommand> instances = registry.getInstance(UICommand.class);
+      Imported<UICommand> instances = registry.getServices(UICommand.class);
 
       Set<UICommand> loaded = new HashSet<UICommand>();
       for (UICommand command : instances)
@@ -333,7 +333,7 @@ public class ForgeShellImpl implements ForgeShell
          }
 
          Imported<CommandExecutionListener> instances = registry
-                  .getInstance(CommandExecutionListener.class);
+                  .getServices(CommandExecutionListener.class);
          for (CommandExecutionListener listener : instances)
          {
             if (listener != null)
@@ -350,7 +350,7 @@ public class ForgeShellImpl implements ForgeShell
          }
 
          Imported<CommandExecutionListener> instances = registry
-                  .getInstance(CommandExecutionListener.class);
+                  .getServices(CommandExecutionListener.class);
          for (CommandExecutionListener listener : instances)
          {
             if (listener != null)

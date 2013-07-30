@@ -43,7 +43,7 @@ public class ResourceFactoryImpl implements ResourceFactory, ResourceTransaction
       {
          TreeMap<Class<?>, ResourceGenerator> generated = new TreeMap<Class<?>, ResourceGenerator>(
                   new RelatedClassComparator());
-         Imported<ResourceGenerator> instances = registry.getInstance(ResourceGenerator.class);
+         Imported<ResourceGenerator> instances = registry.getServices(ResourceGenerator.class);
          for (ResourceGenerator generator : instances)
          {
             if (generator.handles(type, underlyingResource))

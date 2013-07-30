@@ -31,7 +31,7 @@ public class ConverterFactoryImpl implements ConverterFactory
    public <S, T> Converter<S, T> getConverter(Class<S> source, Class<T> target)
    {
       Converter<S, T> result = null;
-      Imported<ConverterGenerator> instances = registry.getInstance(ConverterGenerator.class);
+      Imported<ConverterGenerator> instances = registry.getServices(ConverterGenerator.class);
       for (ConverterGenerator generator : instances)
       {
          if (generator.handles(source, target))

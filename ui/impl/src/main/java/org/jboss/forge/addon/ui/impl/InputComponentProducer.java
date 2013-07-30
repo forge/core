@@ -209,7 +209,7 @@ public class InputComponentProducer implements InputComponentFactory
          // Set Default Value
          if (!"".equals(atts.defaultValue()))
          {
-            Imported<ConverterFactory> instance = addonRegistry.getInstance(ConverterFactory.class);
+            Imported<ConverterFactory> instance = addonRegistry.getServices(ConverterFactory.class);
             ConverterFactory converterFactory = instance.get();
             try
             {
@@ -239,7 +239,7 @@ public class InputComponentProducer implements InputComponentFactory
          else if (Annotations.isAnnotationPresent(valueType, Exported.class))
          {
             List<Object> choiceList = new ArrayList<Object>();
-            Imported instances = addonRegistry.getInstance(valueType);
+            Imported instances = addonRegistry.getServices(valueType);
             for (Object instance : instances)
             {
                choiceList.add(instance);

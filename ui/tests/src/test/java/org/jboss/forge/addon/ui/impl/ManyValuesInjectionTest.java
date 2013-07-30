@@ -71,7 +71,7 @@ public class ManyValuesInjectionTest
    public void testIterableConversion()
    {
       Iterable<String> stringIterable = Arrays.asList("TECHNOLOGY", "MEDICINE");
-      InputComponents.setValueFor(addonRegistry.getInstance(ConverterFactory.class).get(),
+      InputComponents.setValueFor(addonRegistry.getServices(ConverterFactory.class).get(),
                (InputComponent) inputMany, stringIterable);
       Iterable<Career> value = inputMany.getValue();
       Assert.assertNotNull(value);

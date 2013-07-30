@@ -79,7 +79,7 @@ public class ManCommand implements UICommand, Completion
             // list all commands
             if (value == null || value.trim().length() < 1)
             {
-               for (UICommand instance : registry.getInstance(UICommand.class))
+               for (UICommand instance : registry.getServices(UICommand.class))
                {
                   manCommands.add(instance.getMetadata().getName());
                }
@@ -90,7 +90,7 @@ public class ManCommand implements UICommand, Completion
                String item = Parser.findEscapedSpaceWordCloseToEnd(value.trim());
                // completeOperation.setOffset(completeOperation.getCursor() -
                // item.length());
-               for (UICommand instance : registry.getInstance(UICommand.class))
+               for (UICommand instance : registry.getServices(UICommand.class))
                {
                   if (instance.getMetadata().getName().startsWith(item))
                      manCommands.add(instance.getMetadata().getName());
@@ -146,7 +146,7 @@ public class ManCommand implements UICommand, Completion
          // list all commands
          if (completeOperation.getBuffer().trim().equals("man"))
          {
-            for (UICommand instance : registry.getInstance(UICommand.class))
+            for (UICommand instance : registry.getServices(UICommand.class))
             {
                completeOperation.addCompletionCandidate(instance.getMetadata().getName());
             }
@@ -157,7 +157,7 @@ public class ManCommand implements UICommand, Completion
             String item = Parser.findEscapedSpaceWordCloseToEnd(completeOperation.getBuffer().trim());
             completeOperation.setOffset(completeOperation.getCursor() -
                      item.length());
-            for (UICommand instance : registry.getInstance(UICommand.class))
+            for (UICommand instance : registry.getServices(UICommand.class))
             {
                if (instance.getMetadata().getName().startsWith(item))
                   completeOperation.addCompletionCandidate(instance.getMetadata().getName());
@@ -172,7 +172,7 @@ public class ManCommand implements UICommand, Completion
 
    private URL getCommand(String name)
    {
-      for (UICommand instance : registry.getInstance(UICommand.class))
+      for (UICommand instance : registry.getServices(UICommand.class))
       {
          if (instance.getMetadata().getName().equals(name))
             return instance.getMetadata().getDocLocation();
