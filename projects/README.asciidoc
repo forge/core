@@ -3,6 +3,8 @@
 
 This addon provides *standalone* functionality and *exports services* for use in other addons. The projects addon allows for project creation, modification and comprehension. It also provides integration points for build tools, dependency management systems, and source file manipulation.
 
+The projects addon also supplies the "New Project" wizard
+
 === Depends on
 
 [options="header"]
@@ -217,6 +219,55 @@ class CustomProjectListener implements ProjectListener {
 ----
 +
 TIP: `ProjectListener` instances may also be registered directly via the `ProjectFactory.addProjectListener(ProjectListener listener)` method
+
+(Optional) ui addon integration::
+ The projects addon supplies a `UIWizard` implementation called "New Project". This, as the name suggests, is used for creating new projects from a UI provider such as Eclipse, IntelliJ, NetBeans, or the command line shell (CLI).
++
+Additional project types can be supplied to the "New Project" wizard via extension of the `ProjectType` service interface. New implementations are automatically detected by the "New Project" wizard when it is executed.
++
+[source,java]
+----
+public class CustomProjectType implements ProjectType {
+
+   @Override
+   public String getType() {
+      return "Custom - With Mustard";
+   }
+
+   @Override
+   public Class<? extends UIWizardStep> getSetupFlow() {
+      return CustomWithMustardWizard.class;
+   }
+
+   @Override
+   public Iterable<Class<? extends ProjectFacet>> getRequiredFacets() {
+      List<Class<? extends ProjectFacet>> result = new ArrayList<Class<? extends ProjectFacet>>();
+      result.add(ProjectFacetA.class);
+      result.add(ProjectFacetB.class);
+      return result;
+   }
+
+   @Override
+   public String toString() {
+      return "Custom - With Mustard";
+   }
+}
+----
++
+Notice that our custom project type is able to specify additional `UIWizard` steps that must be completed before the project is created, and may also provide a set of Facet types which must be installed before the given `UIWizard` step is executed.
+
+
+Ready for use in tests::
+ To facilitate testing, or other situations where temporary projects may be required, the `ProjectFactory` also provides a method for temporary project creation. `Project` instances created in this way are placed in the system temp directory, and can be deleted at will; otherwise, they will eventually be deleted by the operating system.
++
+[source,java]
+----
+@Inject 
+private ProjectFactory factory;
+...
+Project temp = factory.createTempProject();
+----
+
 
 Consistent programming experience::
  Because the Project API provides an abstract model for interacting with existing and creating new projects, it is used in a number of addons and should be considered the standard approach for project manipulation.

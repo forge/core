@@ -23,7 +23,12 @@ import org.jboss.forge.furnace.services.Exported;
 public interface Facet<FACETEDTYPE extends Faceted<?>>
 {
    /**
-    * Return the {@link Faceted} instance on which this {@link Facet} operates.
+    * Return the {@link Faceted} instance on which this {@link Facet} operates. Each {@link Facet} belongs to a
+    * {@link Faceted} object (an object that has facets). Once this {@link Facet} has been installed, the
+    * {@link Faceted} instance cannot be changed.
+    * <p>
+    * Typically, the {@link Faceted} instance is provided at {@link Facet} creation time, when the facet is constructed
+    * via the {@link FacetFactory}.
     */
    FACETEDTYPE getFaceted();
 
